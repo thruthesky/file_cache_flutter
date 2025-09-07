@@ -1046,7 +1046,7 @@ class FontAwesomeIcons {
   /// Solid Ban icon
   ///
   /// https://fontawesome.com/icons/ban?style=solid
-  /// 404, abort, ban, block, cancel, delete, deny, disabled, entry, failed, forbidden, hide, no, not, not found, prohibit, prohibited, remove, stop, trash
+  /// 404, abort, ban, block, cancel, circle, delete, deny, disabled, entry, failed, forbidden, hide, no, not, not found, prohibit, prohibited, remove, slash, stop, trash
   static const IconData ban = IconDataSolid(0xf05e);
 
   /// Alias cancel for icon [ban]
@@ -1056,7 +1056,7 @@ class FontAwesomeIcons {
   /// Solid Ban Smoking icon
   ///
   /// https://fontawesome.com/icons/ban-smoking?style=solid
-  /// ban, cancel, deny, disabled, forbidden, no, no smoking, non-smoking, not, prohibited, smoking
+  /// ban, cancel, circle, deny, disabled, forbidden, no, no smoking, non-smoking, not, prohibited, slash, smoking
   static const IconData banSmoking = IconDataSolid(0xf54d);
 
   /// Alias smoking-ban for icon [banSmoking]
@@ -10145,8 +10145,9 @@ class FontAwesomeIcons {
   ///
   /// https://fontawesome.com/icons/person-walking-dashed-line-arrow-right?style=solid
   /// exit, follow, refugee, uer
-  static const IconData personWalkingDashedLineArrowRight =
-      IconDataSolid(0xe553);
+  static const IconData personWalkingDashedLineArrowRight = IconDataSolid(
+    0xe553,
+  );
 
   /// Solid Person Walking Luggage icon
   ///
