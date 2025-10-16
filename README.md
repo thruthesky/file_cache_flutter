@@ -1,5 +1,5 @@
 <p align="right">
-<a href="https://flutter.dev/docs/development/packages-and-plugins/favorites"><img src="https://raw.githubusercontent.com/felangel/bloc/master/assets/pub/flutter_favorite.png" width="100" alt="build"></a>
+<a href="https://flutter.dev/docs/development/packages-and-plugins/favorites"><img src="https://raw.githubusercontent.com/fluttercommunity/font_awesome_flutter/master/assets/pub/flutter_favorite.png" width="100" alt="build"></a>
 </p>
 
 # font_awesome_flutter 
