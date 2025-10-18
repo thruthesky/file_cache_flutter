@@ -76,7 +76,7 @@ class FaIcon extends Icon {
     Color? iconColor = color ?? iconTheme.color!;
     Paint? foreground;
     if (iconOpacity != 1.0) {
-      iconColor = iconColor.withOpacity(iconColor.opacity * iconOpacity);
+      iconColor = iconColor.withValues(alpha: iconColor.a * iconOpacity);
     }
     if (blendMode != null) {
       foreground = Paint()
