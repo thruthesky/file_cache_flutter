@@ -1,3 +1,9 @@
+## 10.11.0
+- Fix issues with spaces in icon file names since the last version - thanks @adil192!
+- Upgrade to Font Awesome 7.0.1 - thanks @adil192!
+- Add support for `find.byIcon` and `find.widgetByIcon`, closing #198 - thanks @adil192!
+- Added flutter favorite badge - thanks @Musaddiq625!
+
 ## 10.10.0
 - Upgrade to Font Awesome 7.0.0 - thanks @ManuelRauber!
   - **Note**: Font Awesome 7 does not include `.ttf` font files anymore, so the lib now uses the `.otf` files.
