@@ -109,13 +109,13 @@ void main(List<String> rawArgs) async {
         File('lib/fonts/icons.json'));
     await download(
         'https://raw.githubusercontent.com/FortAwesome/Font-Awesome/$defaultBranch/otfs/Font Awesome 7 Brands-Regular-400.otf',
-        File('lib/fonts/Font Awesome 7 Brands-Regular-400.otf'));
+        File('lib/fonts/Font-Awesome-7-Brands-Regular-400.otf'));
     await download(
         'https://raw.githubusercontent.com/FortAwesome/Font-Awesome/$defaultBranch/otfs/Font Awesome 7 Free-Regular-400.otf',
-        File('lib/fonts/Font Awesome 7 Free-Regular-400.otf'));
+        File('lib/fonts/Font-Awesome-7-Free-Regular-400.otf'));
     await download(
         'https://raw.githubusercontent.com/FortAwesome/Font-Awesome/$defaultBranch/otfs/Font Awesome 7 Free-Solid-900.otf',
-        File('lib/fonts/Font Awesome 7 Free-Solid-900.otf'));
+        File('lib/fonts/Font-Awesome-7-Free-Solid-900.otf'));
   } else {
     print(blue('Custom icons.json found, generating files'));
   }
