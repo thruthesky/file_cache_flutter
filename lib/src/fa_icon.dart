@@ -42,11 +42,13 @@ class FaIcon extends Icon {
   @override
   Widget build(BuildContext context) {
     assert(this.textDirection != null || debugCheckHasDirectionality(context));
-    final TextDirection textDirection = this.textDirection ?? Directionality.of(context);
+    final TextDirection textDirection =
+        this.textDirection ?? Directionality.of(context);
 
     final IconThemeData iconTheme = IconTheme.of(context);
 
-    final bool applyTextScaling = this.applyTextScaling ?? iconTheme.applyTextScaling ?? false;
+    final bool applyTextScaling =
+        this.applyTextScaling ?? iconTheme.applyTextScaling ?? false;
 
     final double tentativeIconSize = size ?? iconTheme.size ?? kDefaultFontSize;
 
@@ -102,15 +104,19 @@ class FaIcon extends Icon {
       fontFamilyFallback: icon.fontFamilyFallback,
       shadows: iconShadows,
       height:
-      1.0, // Makes sure the font's body is vertically centered within the iconSize x iconSize square.
+          1.0, // Makes sure the font's body is vertically centered within the iconSize x iconSize square.
       leadingDistribution: TextLeadingDistribution.even,
       foreground: foreground,
     );
 
     Widget iconWidget = RichText(
       overflow: TextOverflow.visible, // Never clip.
-      textDirection: textDirection, // Since we already fetched it for the assert...
-      text: TextSpan(text: String.fromCharCode(icon.codePoint), style: fontStyle),
+      textDirection:
+          textDirection, // Since we already fetched it for the assert...
+      text: TextSpan(
+        text: String.fromCharCode(icon.codePoint),
+        style: fontStyle,
+      ),
     );
 
     if (icon.matchTextDirection) {

@@ -5,10 +5,10 @@ import 'package:flutter/widgets.dart';
 /// Code points can be obtained from fontawesome.com
 class IconDataBrands extends IconData {
   const IconDataBrands(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeBrands',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeBrands',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome solid icon from a code point
@@ -16,10 +16,10 @@ class IconDataBrands extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataSolid extends IconData {
   const IconDataSolid(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeSolid',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeSolid',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome regular icon from a code point
@@ -27,10 +27,10 @@ class IconDataSolid extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataRegular extends IconData {
   const IconDataRegular(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeRegular',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeRegular',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome light icon from a code point. Only works if
@@ -39,10 +39,10 @@ class IconDataRegular extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataLight extends IconData {
   const IconDataLight(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeLight',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeLight',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome duotone icon from a code point. Only works if
@@ -58,10 +58,10 @@ class IconDataDuotone extends IconData {
   final IconData? secondary;
 
   const IconDataDuotone(super.codePoint, {this.secondary})
-      : super(
-          fontFamily: 'FontAwesomeDuotone',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeDuotone',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome thin icon from a code point. Only works if
@@ -70,10 +70,7 @@ class IconDataDuotone extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataThin extends IconData {
   const IconDataThin(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeThin',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(fontFamily: 'FontAwesomeThin', fontPackage: 'font_awesome_flutter');
 }
 
 /// [IconData] for a font awesome sharp thin icon from a code point. Only works if
@@ -82,10 +79,10 @@ class IconDataThin extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataSharpThin extends IconData {
   const IconDataSharpThin(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeSharpThin',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeSharpThin',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome sharp light icon from a code point. Only works if
@@ -94,10 +91,10 @@ class IconDataSharpThin extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataSharpLight extends IconData {
   const IconDataSharpLight(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeSharpLight',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeSharpLight',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome sharp regular icon from a code point. Only works if
@@ -106,10 +103,10 @@ class IconDataSharpLight extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataSharpRegular extends IconData {
   const IconDataSharpRegular(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeSharpRegular',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeSharpRegular',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
 
 /// [IconData] for a font awesome sharp solid icon from a code point. Only works if
@@ -118,8 +115,8 @@ class IconDataSharpRegular extends IconData {
 /// Code points can be obtained from fontawesome.com
 class IconDataSharpSolid extends IconData {
   const IconDataSharpSolid(super.codePoint)
-      : super(
-          fontFamily: 'FontAwesomeSharpSolid',
-          fontPackage: 'font_awesome_flutter',
-        );
+    : super(
+        fontFamily: 'FontAwesomeSharpSolid',
+        fontPackage: 'font_awesome_flutter',
+      );
 }
