@@ -1,3 +1,7 @@
+## 10.12.0
+- Fix flutter lint warnings - thanks @adil192!
+- Upgrade to Font Awesome 7.1.0
+
 ## 10.11.0
 - Fix issues with spaces in icon file names since the last version - thanks @adil192!
 - Upgrade to Font Awesome 7.0.1 - thanks @adil192!
