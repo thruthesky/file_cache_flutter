@@ -293,8 +293,6 @@ to complete successfully.
   print(blue('Generating name to icon mapping'));
 
   List<String> output = [
-    'library font_awesome_flutter;',
-    '',
     "import 'package:flutter/widgets.dart';",
     "import 'package:font_awesome_flutter/font_awesome_flutter.dart';",
     '',
@@ -352,8 +350,6 @@ to complete successfully.
 List<String> generateIconDefinitionClass(
     List<IconMetadata> metadata, Version version) {
   final List<String> output = [
-    'library font_awesome_flutter;',
-    '',
     "import 'package:flutter/widgets.dart';",
     "import 'package:font_awesome_flutter/src/icon_data.dart';",
     "export 'package:font_awesome_flutter/src/fa_icon.dart';",
