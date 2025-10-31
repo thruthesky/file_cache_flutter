@@ -130,10 +130,9 @@ class MessagingService {
       // // Update last saved token with token + uid if logged in
       lastSavedToken = tokenCache; // Subscribe to all users topic via API
       try {
-        await philgoApi<Map<String, dynamic>>(
+        await func<Map<String, dynamic>>(
           MessagingConfig.messagingSaveTokenApi,
           data: data,
-          auth: true,
         );
 
         // debugPrint('Successfully subscribed to all users topic');

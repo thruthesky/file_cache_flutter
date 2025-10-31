@@ -641,11 +641,11 @@ Future<ChatRoom?> deleteChatRoomPhotoUrl(String roomId) async {
   return updatedRoom;
 }
 
+@Deprecated('Use moderateChatMessage instead')
 Future<void> moderateChat(String roomId, String messageId) async {
-  await philgoApi(
+  await func(
     ChatRoomApi.moderate,
     data: {'room_id': roomId, 'message_id': messageId},
-    auth: true,
   );
 }
 

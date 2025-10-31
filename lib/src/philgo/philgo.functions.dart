@@ -3,38 +3,34 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
+import 'package:flutter/foundation.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
-/// 이 함수는 PhilGo PHP API 서버에 사용자의 Firebase ID Token 을 함께 실어서, POST 요청을 보낸다.
+/// 이 함수는 PhilGo PHP API 서버의 /func.php 로 접속해서,
+/// 데이터를 송/수신 한다.
 ///
-/// PhilGo API 로 데이터 송/수신을 할 때에 이 함수를 쓰면 된다.
-///
-/// This must be used on Client Side only.
-/// This is not a hook. so, it can be used in any function.
-///
-/// @param url url to fetch
-/// @param options options for the request
-/// @returns API response
-Future<T> philgoApi<T>(
-  String action, {
+/// [functionName] 호출할 함수 이름
+/// [data] 전송할 데이터
+/// [debug] 디버그 모드
+/// [alertOnError] 에러 발생 시 알림 여부
+Future<T> func<T>(
+  String functionName, {
   RecordType? data,
-  bool debug = false,
+  bool debug = true,
   bool alertOnError = true,
-  bool auth = false,
   Map<String, String>? headers,
 }) async {
   // 기본 옵션 설정
   data = data ?? <String, dynamic>{};
-  data['action'] = action;
+  data['func'] = functionName;
 
   final url = Config.phpApiUrl;
 
   try {
-    // 사용자 Firebase ID Token 을 전달
-    if (auth) {
-      await patchToken(data);
-    }
+    // Firebase ID Token 추가
+    data = await patchToken(data);
 
     if (debug) {
       // queryParameters는 모든 값이 String이어야 하므로 변환
@@ -45,7 +41,7 @@ Future<T> philgoApi<T>(
     }
 
     // Create Dio instance
-    final dio = Dio();
+    final dio = createDio();
 
     // Override headers if provided
     if (headers != null) {
@@ -82,6 +78,23 @@ Future<T> philgoApi<T>(
     // ================================================================
     // 에러 발생 : Handle Dio-specific errors
     // ================================================================
+
+    // ===============================================================
+    // Handshake 에러 (서버 접속 실패, SSL 인증서 검증 실패, 인터넷 미연결) 체크
+    // 클라이언트에서 서버로 접속할 수 없는 경우를 처리합니다.
+    // ===============================================================
+    if (dioError.message?.contains('Handshake') ?? false) {
+      final userMessage =
+          '서버와 접속이 안됩니다. 인터넷이 연결되었는지, 서버 접속 도메인이 올바른지 확인을 해 주세요';
+      log('Handshake 에러 발생: ${dioError.message}, 원인: ${dioError.error}');
+
+      // 사용자에게 명확한 메시지 표시
+      if (alertOnError) {
+        showSafeErrorDialog(userMessage);
+      }
+      throw Exception(userMessage);
+    }
+
     final data = dioError.response?.data;
     log('philgoApi() DioException: $data, $dioError');
 
@@ -175,7 +188,7 @@ Future<T> philgoApi<T>(
     final errorMessage =
         '$errorPrefix ${httpStatusCode(dioError.response?.statusCode ?? 0)} ${dioError.response?.statusMessage ?? ''} $serverMessage';
     if (alertOnError) {
-      showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n$errorMessage');
+      showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n(1) $errorMessage');
     }
     throw Exception(errorMessage);
   } catch (e) {
@@ -185,27 +198,43 @@ Future<T> philgoApi<T>(
       debugLog('ALERT: url: $url');
       debugLog('ALERT: data: $data');
       debugLog('ALERT: error message: ${e.toString()}');
-      showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n${e.toString()}');
+      showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n(2) ${e.toString()}');
     }
     rethrow; // re-throw the error to be handled by the caller
   }
 }
 
-/// Add firebase id token to data
-Future<String?> patchToken(RecordType data) async {
+Dio createDio() {
+  final dio = Dio();
+
+  if (kDebugMode) {
+    // 디버그일 때만 SSL 무시 (자체 서명 인증서 허용)
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final httpClient = HttpClient();
+      httpClient.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return httpClient;
+    };
+  }
+
+  return dio;
+}
+
+///
+Future<RecordType> patchToken(RecordType data) async {
   final auth = fb_auth.FirebaseAuth.instance;
   if (auth.currentUser == null) {
-    return null;
+    return data;
   }
 
   try {
     final token = await auth.currentUser!.getIdToken();
-    data['token'] = token;
-    return token;
+    data['id_token'] = token ?? '';
   } catch (e) {
     debugLog('Error getting Firebase ID token: $e');
-    return null;
+    data['id_token'] = '';
   }
+  return data;
 }
 
 /// HTTP status code messages
@@ -242,7 +271,7 @@ String httpStatusCode(int statusCode) {
 /// ```
 Future<User> philgoApiUserMy() async {
   // user.my 엔드포인트 호출 - 인증 필수
-  final response = await philgoApi('user.my', auth: true);
+  final response = await func('user.my');
 
   // 성공적으로 사용자 정보 반환
   return User.fromJson(response);
@@ -250,7 +279,7 @@ Future<User> philgoApiUserMy() async {
 
 Future<User> philgoApiUserVerify() async {
   // user.verify 엔드포인트 호출 - 인증 필수
-  final response = await philgoApi('user.verify', auth: true);
+  final response = await func('get_my_data');
 
   // 성공적으로 사용자 정보 반환
   return User.fromJson(response);
@@ -258,7 +287,7 @@ Future<User> philgoApiUserVerify() async {
 
 Future<User> philgoApiUserUpdate(Map<String, dynamic> userData) async {
   // user.update 엔드포인트 호출 - 인증 필수
-  final response = await philgoApi('user.update', data: userData, auth: true);
+  final response = await func('update_my_profile', data: userData);
   return User.fromJson(response);
 }
 
@@ -321,10 +350,9 @@ Future<Post> philgoApiCreatePost(RecordType data) async {
   try {
     // post.create 엔드포인트 호출
     // auth: true로 Firebase ID Token 자동 포함
-    final response = await philgoApi<Map<String, dynamic>>(
-      'post.create',
+    final response = await func<Map<String, dynamic>>(
+      'create_post_func',
       data: cleanedData,
-      auth: true, // 인증 필수 - 게시글 작성자 확인
       alertOnError: true, // 에러 시 자동으로 다이얼로그 표시
     );
 
@@ -452,10 +480,9 @@ Future<Post> philgoApiUpdatePost(RecordType data) async {
   try {
     // post.update 엔드포인트 호출
     // auth: true로 Firebase ID Token 자동 포함
-    final response = await philgoApi<Map<String, dynamic>>(
-      'post.update',
+    final response = await func<Map<String, dynamic>>(
+      'post_update_func',
       data: cleanedData,
-      auth: true, // 인증 필수 - 게시글 소유자 확인
       alertOnError: true, // 에러 시 자동으로 다이얼로그 표시
     );
 
@@ -504,10 +531,9 @@ Future<Comment> philgoApiCreateComment(RecordType data) async {
   /// check if data['idx_root'] exists. if not, show an error.
 
   ///
-  final response = await philgoApi<Map<String, dynamic>>(
-    'comment.create',
+  final response = await func<Map<String, dynamic>>(
+    'create_comment_func',
     data: data,
-    auth: true, // 인증 필수 - 게시글 작성자 확인
     alertOnError: true, // 에러 시 자동으로 다이얼로그 표시
   );
 
@@ -515,10 +541,9 @@ Future<Comment> philgoApiCreateComment(RecordType data) async {
 }
 
 Future<Comment> philgoApiUpdateComment(RecordType data) async {
-  final response = await philgoApi<Map<String, dynamic>>(
-    'comment.update',
+  final response = await func<Map<String, dynamic>>(
+    'update_comment_func',
     data: data,
-    auth: true, // 인증 필수 - 게시글 작성자 확인
     alertOnError: true, // 에러 시 자동으로 다이얼로그 표시
   );
 
@@ -745,7 +770,7 @@ Future<void> philgoApiFileDelete(String? fileUrl) async {
 
 Future<String> philgoApiGetAdminUserUid() async {
   // app.admins
-  final response = await philgoApi('app.admins');
+  final response = await func('get_admins');
 
   final chatAdmin = response['chat_admin'] as String?;
   log('Admin user uid: $chatAdmin', name: 'Got admin user uid from philgo API');

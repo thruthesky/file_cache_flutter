@@ -47,7 +47,7 @@ class Config {
   static String philgoUrl = 'https://philgo.com/';
 
   static String get phpApiUrl {
-    return 'https://philgo.com/api.php';
+    return 'https://local.philgo.com:444/func.php';
   }
 
   /// Returns the file server URL based on the environment.

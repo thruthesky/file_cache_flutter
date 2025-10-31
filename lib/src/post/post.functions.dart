@@ -25,8 +25,8 @@ Future<PostList> getPosts({
   int limit = 20,
 }) async {
   [postId, category] = getEnvironmentalPostId(postId, category);
-  final res = await philgoApi(
-    'post.list',
+  final res = await func(
+    'post_list',
     data: {
       if (postId != null) 'post_id': postId,
       if (category != null) 'category': category,
@@ -41,7 +41,7 @@ Future<PostList> getPosts({
 }
 
 Future<Post> getPost(int id) async {
-  final res = await philgoApi('post.view', data: {'idx': id});
+  final res = await func('post.view', data: {'idx': id});
   // debugLog('getPost: $res');
 
   final post = Post.fromJson(res);
@@ -54,7 +54,7 @@ Future<Post> getPost(int id) async {
 }
 
 Future<List<Post>> getLatestByUser(String uid, {int limit = 10}) async {
-  final res = await philgoApi<List<dynamic>>(
+  final res = await func<List<dynamic>>(
     'post.latest-by-user',
     data: {'uid': uid, 'limit': limit},
   );
@@ -73,8 +73,8 @@ Future<Post> createPost({
   postId = ret[0]!;
   category = ret[1];
   category = getEnvironmentalCategory(category);
-  final res = await philgoApi(
-    'post.create',
+  final res = await func(
+    'create_post_func',
     data: {
       'post_id': postId,
       if (category != null) 'category': category,
