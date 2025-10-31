@@ -379,7 +379,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
 
     try {
       // API 호출하여 이용약관 가져오기
-      final response = await philgoApi('help.terms-and-conditions');
+      final response = await func('help.terms-and-conditions');
 
       // 로딩 다이얼로그 닫기
       if (mounted) Navigator.of(context).pop();
@@ -438,7 +438,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
 
     try {
       // API 호출하여 개인정보 처리 정책 가져오기
-      final response = await philgoApi('help.privacy');
+      final response = await func('help.privacy');
 
       // 로딩 다이얼로그 닫기
       if (mounted) Navigator.of(context).pop();
