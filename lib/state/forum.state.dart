@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/router.dart';
 import 'package:provider/provider.dart';
-import 'package:v6_apps/v6_apps.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class ForumState extends ChangeNotifier {
   static ForumState of(BuildContext context, {bool listen = false}) {

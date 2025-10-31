@@ -8,7 +8,7 @@ import 'package:philgo/screens/user/profile.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
-import 'package:v6_apps/v6_apps.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class MenuHome extends StatefulWidget {
   const MenuHome({super.key});

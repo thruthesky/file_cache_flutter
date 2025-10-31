@@ -260,7 +260,7 @@ packages:
   easy_phone_sign_in:
     dependency: "direct main"
     description:
-      path: "../../packages/easy_phone_sign_in"
+      path: "packages/easy_phone_sign_in"
       relative: true
     source: path
     version: "0.0.17"
@@ -591,7 +591,7 @@ packages:
   font_awesome_flutter:
     dependency: "direct main"
     description:
-      path: "../../packages/font_awesome_flutter"
+      path: "packages/font_awesome_flutter"
       relative: true
     source: path
     version: "10.9.0"
@@ -931,6 +931,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  philgo_v6_flutter:
+    dependency: "direct main"
+    description:
+      path: "packages/philgo_v6_flutter"
+      relative: true
+    source: path
+    version: "0.0.2"
   platform:
     dependency: transitive
     description:
@@ -1248,13 +1255,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.1"
-  v6_apps:
-    dependency: "direct main"
-    description:
-      path: "../.."
-      relative: true
-    source: path
-    version: "0.0.2"
   vector_math:
     dependency: transitive
     description:

@@ -12,7 +12,7 @@ dependencies:
   cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.8
   easy_phone_sign_in:
-    path: ../../packages/easy_phone_sign_in
+    path: packages/easy_phone_sign_in
   file_picker: ^10.3.3
   firebase_auth: ^5.6.1
   firebase_core: ^3.15.1
@@ -35,13 +35,13 @@ dependencies:
   provider: ^6.1.5+1
   receive_sharing_intent: ^1.8.1
   url_launcher: ^6.3.2
-  v6_apps:
-    path: ../..
   webview_flutter: ^4.13.0
+  philgo_v6_flutter:
+    path: packages/philgo_v6_flutter
 
 dependency_overrides:
   font_awesome_flutter:
-    path: ../../packages/font_awesome_flutter
+    path: packages/font_awesome_flutter
 
 dev_dependencies:
   flutter_launcher_icons: "^0.14.4"

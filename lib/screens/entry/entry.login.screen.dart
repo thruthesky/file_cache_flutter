@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
-import 'package:v6_apps/v6_apps.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class EntryLoginScreen extends StatefulWidget {
   const EntryLoginScreen({super.key});

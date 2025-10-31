@@ -19,7 +19,7 @@ import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:v6_apps/v6_apps.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 

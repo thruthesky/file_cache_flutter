@@ -5,7 +5,7 @@ import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:provider/provider.dart';
-import 'package:v6_apps/v6_apps.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});

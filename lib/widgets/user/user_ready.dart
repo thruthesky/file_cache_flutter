@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:provider/provider.dart';
-import 'package:v6_apps/v6_apps.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// UserReady 위젯은 AppState 에서 user 정보가 준비될 때까지 로딩 인디케이터를 보여주고,
 /// user 정보가 준비되면 builder 함수를 호출하여 실제 UI를 렌더링한다.

@@ -1,4 +1,4 @@
-import 'package:v6_apps/v6_apps.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class PhilGoAppConfig {
   static List<PostCategoryItem> getCategories() {

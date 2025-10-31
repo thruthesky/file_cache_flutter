@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:v6_apps/post/models/post.model.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class CarouselWidget extends StatefulWidget {
   final List<Post> posts;
