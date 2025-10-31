@@ -204,6 +204,11 @@ Future<T> func<T>(
   }
 }
 
+/// Dio 인스턴스 생성
+///
+/// 디버그 모드일 때 SSL 인증서 검증을 무시하도록 설정:
+/// 왜?
+/// 개발 환경에서 MkCert 를 통해서 자체 서명된 SSL 인증서를 사용하는데, Simulator 에서 macOS 로 접속 할 때, SSL 인증서 검증이 실패할 수 있기 때문.
 Dio createDio() {
   final dio = Dio();
 
