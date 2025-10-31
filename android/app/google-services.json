@@ -1,0 +1,235 @@
+{
+  "project_info": {
+    "project_number": "675064809117",
+    "firebase_url": "https://philgo-64b1a.firebaseio.com",
+    "project_id": "philgo-64b1a",
+    "storage_bucket": "philgo-64b1a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675064809117:android:3bb3c634091c488f52f674",
+        "android_client_info": {
+          "package_name": "com.philgo.philgo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0HlooLpPJeB8MQRru4T3hnSPKvQ_b5Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philgo.philgo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675064809117:android:35b9f3ca9f97bf0a",
+        "android_client_info": {
+          "package_name": "com.philgo.philov"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0HlooLpPJeB8MQRru4T3hnSPKvQ_b5Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philgo.philgo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675064809117:android:01afe1ca4ea7351d",
+        "android_client_info": {
+          "package_name": "com.philgo.www"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0HlooLpPJeB8MQRru4T3hnSPKvQ_b5Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philgo.philgo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675064809117:android:d8030c36205e323a52f674",
+        "android_client_info": {
+          "package_name": "com.withcenter.philchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675064809117-ke7i2g667qe1jjkunhh5ttoce37ohqu5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.withcenter.philchat",
+            "certificate_hash": "6d37d128be6511cd7f3e05112dbaa6a12c3a0779"
+          }
+        },
+        {
+          "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0HlooLpPJeB8MQRru4T3hnSPKvQ_b5Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philgo.philgo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675064809117:android:46993c2d1cf83fe052f674",
+        "android_client_info": {
+          "package_name": "com.withcenter.philgo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0HlooLpPJeB8MQRru4T3hnSPKvQ_b5Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philgo.philgo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675064809117:android:87c9994f93fc341f52f674",
+        "android_client_info": {
+          "package_name": "com.withcenter.philov"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0HlooLpPJeB8MQRru4T3hnSPKvQ_b5Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philgo.philgo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

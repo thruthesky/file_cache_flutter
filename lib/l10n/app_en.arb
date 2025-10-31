@@ -1,0 +1,405 @@
+{
+    "login": "Login",
+    "@login": {
+        "description": "The conventional newborn programmer greeting"
+    },
+    "name": "Name",
+    "@name": {
+        "description": "A field label for entering a name"
+    },
+    "philgoCommunityTitle": "The Largest Korean Community in the Philippines",
+    "@philgoCommunityTitle": {
+        "description": "Title for PhilGo Korean community carousel item"
+    },
+    "philgoCommunitySubtitle": "Find all the information about life in the Philippines on PhilGo",
+    "@philgoCommunitySubtitle": {
+        "description": "Subtitle for PhilGo Korean community carousel item"
+    },
+    "realTimeInfoTitle": "Real-time Information Sharing",
+    "@realTimeInfoTitle": {
+        "description": "Title for real-time information sharing carousel item"
+    },
+    "realTimeInfoSubtitle": "Check local news and living information in the Philippines in real-time",
+    "@realTimeInfoSubtitle": {
+        "description": "Subtitle for real-time information sharing carousel item"
+    },
+    "businessNetworkingTitle": "Business Networking",
+    "@businessNetworkingTitle": {
+        "description": "Title for business networking carousel item"
+    },
+    "businessNetworkingSubtitle": "Network with Koreans doing business in the Philippines",
+    "@businessNetworkingSubtitle": {
+        "description": "Subtitle for business networking carousel item"
+    },
+    "safeCommunityTitle": "Safe Community",
+    "@safeCommunityTitle": {
+        "description": "Title for safe community carousel item"
+    },
+    "safeCommunitySubtitle": "A trusted community with verified members",
+    "@safeCommunitySubtitle": {
+        "description": "Subtitle for safe community carousel item"
+    },
+    "home": "Home",
+    "@home": {
+        "description": "Home screen title"
+    },
+    "chat": "Chat",
+    "@chat": {
+        "description": "Chat navigation item label"
+    },
+    "forum": "Forum",
+    "@forum": {
+        "description": "Forum navigation item label"
+    },
+    "create": "Create",
+    "@create": {
+        "description": "Create/Write navigation item label"
+    },
+    "company": "Directory",
+    "@company": {
+        "description": "Company/Business directory navigation item label"
+    },
+    "menu": "Menu",
+    "@menu": {
+        "description": "Menu navigation item label"
+    },
+  "loginWithPhoneTitle": "Login with Phone",
+  "@loginWithPhoneTitle": {"description": "AppBar title for phone login"},
+  "loginWithPhoneHeader": "Sign in using your phone number.",
+  "@loginWithPhoneHeader": {"description": "Header text above phone sign-in"},
+  "loginPhoneSmsNotice": "We will send an SMS to verify your phone number.",
+  "@loginPhoneSmsNotice": {"description": "Notice about SMS verification"},
+  "enterPhoneNumber": "Enter your phone number",
+  "@enterPhoneNumber": {"description": "Label/hint for phone number field"},
+  "phoneNumber": "Phone number",
+  "@phoneNumber": {"description": "Short label for phone number"},
+  "enterSmsCode": "Enter SMS code",
+  "@enterSmsCode": {"description": "Label/hint for SMS code field"},
+  "resendSms": "Resend SMS",
+  "@resendSms": {"description": "Resend SMS button label"},
+  "verifySmsCode": "Verify SMS code",
+  "@verifySmsCode": {"description": "Verify SMS code button label"},
+  "verifyPhoneNumber": "Verify phone number",
+  "@verifyPhoneNumber": {"description": "Verify phone number button label"},
+  "sendSmsCode": "Send SMS code",
+  "@sendSmsCode": {"description": "Button label to send an SMS verification code"},
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {"description": "Terms link label and dialog title"},
+  "termsContent": "Terms of Service content",
+  "@termsContent": {"description": "Terms content placeholder"},
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {"description": "Privacy policy link label and dialog title"},
+  "close": "Close",
+  "@close": {"description": "Close button label"},
+  "phoneAuthFailed": "Phone number verification failed",
+  "community": "Community",
+  "@community": {
+    "description": "Community category label"
+  },
+  "qna": "Q&A",
+  "@qna": {
+    "description": "Questions and Answers category label"
+  },
+  "discussion": "Discussion",
+  "@discussion": {
+    "description": "Discussion category label"
+  },
+  "business": "Business",
+  "@business": {
+    "description": "Business category label"
+  },
+  "buyAndSell": "Buy & Sell",
+  "@buyAndSell": {
+    "description": "Buy and Sell category label"
+  },
+  "hotel": "Hotel",
+  "@hotel": {
+    "description": "Hotel category label"
+  },
+  "jobs": "Jobs",
+  "@jobs": {
+    "description": "Jobs category label"
+  },
+  "noOfPosts": "{count} posts",
+  "@noOfPosts": {
+    "description": "Number of posts in a category",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "writePost": "Write",
+  "@writePost": {
+    "description": "Button label to write a new post"
+  },
+  "like": "Like",
+  "@like": {
+    "description": "Like button label for posts"
+  },
+  "comment": "Comment",
+  "@comment": {
+    "description": "Comment button label for posts"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share button label for posts"
+  },
+  "editProfile": "Edit Profile",
+  "@editProfile": {
+    "description": "Edit Profile app bar label"
+  },
+  "enterComment": "Enter your comment",
+  "@enterComment": {
+    "description": "Comments text field hint"
+  },
+  "comments": "Comments",
+  "@comments": {
+    "description": "Comments section header label"
+  },
+  "beTheFirstToComment": "Be the first one to comment",
+  "@beTheFirstToComment": {
+    "description": "Label posts with no comments under it"
+  },
+  "reply": "Reply",
+  "@reply": {
+    "description": "Button text to reply to a comment"
+  },
+  "nickname": "Nickname",
+  "@nickname": {
+    "description": "Label for nickname field"
+  },
+  "nicknameHint": "Enter your nickname",
+  "@nicknameHint": {
+    "description": "Hint text for nickname field"
+  },
+  "fullName": "Name",
+  "@fullName": {
+    "description": "Label for full name field"
+  },
+  "fullNameHint": "Enter your name",
+  "@fullNameHint": {
+    "description": "Hint text for full name field"
+  },
+  "birthDate": "Birth Date",
+  "@birthDate": {
+    "description": "Label for birth date field"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Label for gender field"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Label for male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Label for female gender option"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "nicknameRequired": "Please enter a nickname",
+  "@nicknameRequired": {
+    "description": "Error message when nickname is empty"
+  },
+  "profileUpdateSuccess": "Profile updated successfully",
+  "@profileUpdateSuccess": {
+    "description": "Success message after profile update"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Post title field label"
+  },
+  "postTitleHint": "Enter your post title",
+  "@postTitleHint": {
+    "description": "Hint text for post title field"
+  },
+  "content": "Content",
+  "@content": {
+    "description": "Post content field label"
+  },
+  "postContentHint": "Write your post content here...",
+  "@postContentHint": {
+    "description": "Hint text for post content field"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "titleRequired": "Please enter a title",
+  "@titleRequired": {
+    "description": "Error message when title is empty"
+  },
+  "contentRequired": "Please enter content for your post",
+  "@contentRequired": {
+    "description": "Error message when content is empty"
+  },
+  "writeIn": "Write in",
+  "@writeIn": {
+    "description": "Text for write in category title (e.g., 'Write in Community')"
+  },
+  "tapPhotoChange": "Tap photo to change",
+  "@tapPhotoChange": {
+    "description": "Text instruction for changing profile photo"
+  },
+  "nicknameDisplayHint": "This name will be displayed to other users",
+  "@nicknameDisplayHint": {
+    "description": "Hint text explaining nickname visibility"
+  },
+  "enterRealNameHint": "Please enter your real name",
+  "@enterRealNameHint": {
+    "description": "Hint text for entering real name"
+  },
+  "selectBirthDateHint": "Please select your date of birth",
+  "@selectBirthDateHint": {
+    "description": "Hint text for selecting birth date"
+  },
+  "profileRequiredFieldsNotice": "Name, birth date, and gender are required\nfor identity verification when login fails.",
+  "@profileRequiredFieldsNotice": {
+    "description": "Notice explaining why name, gender, and birth date are required for identity verification"
+  },
+  "menuTitle": "Menu",
+  "@menuTitle": {
+    "description": "Main menu section title"
+  },
+  "menuSubtitle": "View all PhilGo services",
+  "@menuSubtitle": {
+    "description": "Main menu section subtitle"
+  },
+  "editProfileTitle": "Edit Profile",
+  "@editProfileTitle": {
+    "description": "Edit profile menu item title"
+  },
+  "editProfileSubtitle": "Manage my information",
+  "@editProfileSubtitle": {
+    "description": "Edit profile menu item subtitle"
+  },
+  "openChatTitle": "Open Chat Room",
+  "@openChatTitle": {
+    "description": "Open chat menu item title"
+  },
+  "openChatSubtitle": "Connect with people",
+  "@openChatSubtitle": {
+    "description": "Open chat menu item subtitle"
+  },
+  "bannerAdTitle": "Banner Ads",
+  "@bannerAdTitle": {
+    "description": "Banner ad menu item title"
+  },
+  "bannerAdSubtitle": "Home screen advertisements",
+  "@bannerAdSubtitle": {
+    "description": "Banner ad menu item subtitle"
+  },
+  "pointAdTitle": "Point Ads",
+  "@pointAdTitle": {
+    "description": "Point ad menu item title"
+  },
+  "pointAdSubtitle": "Earn and use points",
+  "@pointAdSubtitle": {
+    "description": "Point ad menu item subtitle"
+  },
+  "businessDirectoryTitle": "Business Directory",
+  "@businessDirectoryTitle": {
+    "description": "Business directory menu item title"
+  },
+  "businessDirectorySubtitle": "Business information",
+  "@businessDirectorySubtitle": {
+    "description": "Business directory menu item subtitle"
+  },
+  "familySiteTitle": "Family Sites",
+  "@familySiteTitle": {
+    "description": "Family site menu item title"
+  },
+  "familySiteSubtitle": "Connected services",
+  "@familySiteSubtitle": {
+    "description": "Family site menu item subtitle"
+  },
+  "appGuideTitle": "App Guide",
+  "@appGuideTitle": {
+    "description": "App guide menu item title"
+  },
+  "appGuideSubtitle": "Help & support",
+  "@appGuideSubtitle": {
+    "description": "App guide menu item subtitle"
+  },
+  "termsOfServiceTitle": "Terms of Service",
+  "@termsOfServiceTitle": {
+    "description": "Terms of service menu item title"
+  },
+  "termsOfServiceSubtitle": "Service terms",
+  "@termsOfServiceSubtitle": {
+    "description": "Terms of service menu item subtitle"
+  },
+  "privacyPolicyTitle": "Privacy Policy",
+  "@privacyPolicyTitle": {
+    "description": "Privacy policy menu item title"
+  },
+  "privacyPolicySubtitle": "Privacy protection",
+  "@privacyPolicySubtitle": {
+    "description": "Privacy policy menu item subtitle"
+  },
+  "withdrawTitle": "Account Withdrawal",
+  "@withdrawTitle": {
+    "description": "Account withdrawal menu item title"
+  },
+  "withdrawSubtitle": "Delete account",
+  "@withdrawSubtitle": {
+    "description": "Account withdrawal menu item subtitle"
+  },
+  "logoutTitle": "Logout",
+  "@logoutTitle": {
+    "description": "Logout menu item title"
+  },
+  "logoutSubtitle": "Sign out safely",
+  "@logoutSubtitle": {
+    "description": "Logout menu item subtitle"
+  },
+  "year": "Year",
+  "@year": {
+    "description": "Year label for date selector"
+  },
+  "month": "Month",
+  "@month": {
+    "description": "Month label for date selector"
+  },
+  "day": "Day",
+  "@day": {
+    "description": "Day label for date selector"
+  },
+  "yearUnit": "",
+  "@yearUnit": {
+    "description": "Year unit suffix (empty for English)"
+  },
+  "monthUnit": "",
+  "@monthUnit": {
+    "description": "Month unit suffix (empty for English)"
+  },
+  "dayUnit": "",
+  "@dayUnit": {
+    "description": "Day unit suffix (empty for English)"
+  },
+  "selectYearAndMonthFirst": "Please select year and month first",
+  "@selectYearAndMonthFirst": {
+    "description": "Error message when trying to select day without year and month"
+  },
+  "selectYearFirst": "Please select year first",
+  "@selectYearFirst": {
+    "description": "Error message when trying to select day without year"
+  },
+  "selectMonthFirst": "Please select month first",
+  "@selectMonthFirst": {
+    "description": "Error message when trying to select day without month"
+  },
+  "preferNotToSay": "Prefer not to say",
+  "@preferNotToSay": {
+    "description": "Gender option for users who prefer not to disclose their gender"
+  }
+}
