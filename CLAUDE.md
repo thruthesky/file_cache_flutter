@@ -9,7 +9,6 @@
 3. [주석 및 문서화](#주석-및-문서화)
 4. [개발 워크플로우](#개발-워크플로우)
 5. [참고 문서](#참고-문서)
-6. [Git 커밋](#git-커밋)
 
 ---
 
@@ -158,20 +157,8 @@ Text(
 4. ✅ TODO 목록 제시
 5. 실제 작업 시작
 
-### 2. Hot Reload 반드시 실행
 
-모든 Dart/Flutter 코드 수정 후 **반드시** `./reload.sh` 실행
-
-```bash
-./reload.sh
-```
-
-- 위젯 코드 수정 후
-- 스타일/Theme 변경 후
-- import 문 추가/수정 후
-- 모든 Dart 코드 변경 후
-
-### 3. 분석/설명 요청 시
+### 2. 분석/설명 요청 시
 
 "분석", "설명", "검토" 등의 키워드 포함 시:
 - ✅ 코드 읽기 및 분석만 수행
@@ -209,22 +196,6 @@ Text(
 | API 함수 | `philgo_app/lib/philgo/philgo.functions.dart` |
 | 커스텀 위젯 | `philgo_app/lib/widgets/` |
 | 번역 클래스 | `philgo_app/lib/l10n/app_localizations.dart` |
-
----
-
-## Git 커밋
-
-작업 완료 시 **반드시** Git 커밋 수행
-
-```bash
-git add .
-git commit -m "작업 내용을 명확하게 설명하는 메시지"
-```
-
-**커밋 메시지 예시**:
-- "UI 개선: 홈 화면 레이아웃 수정"
-- "기능 추가: 사용자 프로필 페이지"
-- "버그 수정: 로그인 오류 처리"
 
 ---
 
@@ -268,18 +239,6 @@ Selector<AppState, int>(
 
 ---
 
-## API 개발 규칙
-
-### API 호출 함수 작성
-
-- 파일: `philgo_app/lib/philgo/philgo.functions.dart`
-- 명명 규칙: `philgoApi{Module}{Action}`
-  - 예: `user.my` → `philgoApiUserMy()`
-  - 예: `post.create` → `philgoApiPostCreate()`
-- API 명세: `docs/www/api.md` 참조
-
----
-
 ## 체크리스트
 
 작업 시작 전:
@@ -291,8 +250,6 @@ Selector<AppState, int>(
 작업 완료 후:
 - [ ] 한국어 주석 추가
 - [ ] Theme 기반 스타일링 확인
-- [ ] Hot Reload 실행
-- [ ] Git 커밋
 
 ---
 
