@@ -1,0 +1,592 @@
+{
+    "@@locale": "zh",
+    "create_room": "创建房间",
+    "@create_room": {
+        "description": "The title of the application"
+    },
+    "create": "创建",
+    "@create": {
+        "description": "Button to create a new room"
+    },
+    "room_name": "房间名称",
+    "@room_name": {
+        "description": "The name of the chat room"
+    },
+    "enter_room_name": "请输入房间名称",
+    "@enter_room_name": {
+        "description": "Prompt to enter the room name"
+    },
+    "room_name_required": "房间名称是必填项",
+    "@room_name_required": {
+        "description": "Error message when room name is not provided"
+    },
+    "room_description": "房间描述",
+    "@room_description": {
+        "description": "Description of the chat room"
+    },
+    "enter_room_description": "请输入房间描述",
+    "@enter_room_description": {
+        "description": "Prompt to enter the room description"
+    },
+    "open_room": "开放房间",
+    "@open_room": {
+        "description": "Toggle to open the room for everyone"
+    },
+    "open_room_description": "对所有人开放加入",
+    "@open_room_description": {
+        "description": "Description of the open room toggle"
+    },
+    "block_advertisement": "屏蔽广告",
+    "@block_advertisement": {
+        "description": "Toggle to block advertisement messages in this room"
+    },
+    "block_advertisement_description": "在此房间中屏蔽广告消息",
+    "@block_advertisement_description": {
+        "description": "Description of the block advertisement toggle"
+    },
+    "creating": "正在创建...",
+    "@creating": {
+        "description": "Indicates that a room is being created"
+    },
+    "failed_to_create_room": "创建房间失败：{error}",
+    "@failed_to_create_room": {
+        "description": "Error message when room creation fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to create room: {error message}"
+            }
+        }
+    },
+    "failed_to_update_room": "更新房间失败：{error}",
+    "@failed_to_update_room": {
+        "description": "Error message when room update fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to update room: {error message}"
+            }
+        }
+    },
+    "report_select_reason": "请选择举报原因",
+    "@report_select_reason": {
+        "description": "Prompt to select a reason for reporting"
+    },
+    "report_success": "举报已成功提交",
+    "@report_success": {
+        "description": "Message displayed when a report is submitted successfully"
+    },
+    "report_message_already_reported": "此消息已被举报",
+    "@report_message_already_reported": {
+        "description": "Message displayed when a message is already reported"
+    },
+    "report_room_already_reported": "此房间已被举报",
+    "@report_room_already_reported": {
+        "description": "Message displayed when a room is already reported"
+    },
+    "report_submission_failed": "举报提交失败",
+    "@report_submission_failed": {
+        "description": "Message displayed when report submission fails"
+    },
+    "report_chat_room": "举报聊天室",
+    "@report_chat_room": {
+        "description": "Message displayed when reporting a chat room"
+    },
+    "report_chat_message": "举报聊天消息",
+    "@report_chat_message": {
+        "description": "Message displayed when reporting a chat message"
+    },
+    "close": "关闭",
+    "@close": {
+        "description": "Button to close the report dialog"
+    },
+    "cancel": "取消",
+    "@cancel": {
+        "description": "Button to cancel the report"
+    },
+    "report_submit": "提交",
+    "@report_submit": {
+        "description": "Button to submit the report"
+    },
+    "get_report_reason": "{reason, select, spam {垃圾信息} abusive {辱骂} violence {暴力} hate_speech {仇恨言论} inappropriate_content {不当内容} other {reason}}",
+    "@get_report_reason": {
+        "description": "Get localized text for report reason",
+        "placeholders": {
+            "reason": {
+                "type": "String",
+                "example": "Spam, Abusive, Violence, Hate Speech, Inappropriate Content, Other"
+            }
+        }
+    },
+    "save": "保存",
+    "@save": {
+        "description": "Button to save changes in the chat room"
+    },
+    "edit_chat_room_success": "成功",
+    "@edit_chat_room_success": {
+        "description": "Message displayed when editing a chat room is successful"
+    },
+    "edit_chat_room": "编辑聊天室",
+    "@edit_chat_room": {
+        "description": "Title of the edit chat room dialog"
+    },
+    "profile_photo_updated": "个人资料照片已更新",
+    "@profile_photo_updated": {
+        "description": "Message displayed when profile photo is updated"
+    },
+    "upload_photo_failed": "上传失败：{error}",
+    "@upload_photo_failed": {
+        "description": "Message displayed when upload fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Upload failed: {error message}"
+            }
+        }
+    },
+    "profile_photo_removed": "个人资料照片已删除",
+    "@profile_photo_removed": {
+        "description": "Message displayed when profile photo is removed"
+    },
+    "failed_to_remove_profile_photo": "删除个人资料照片失败：{error}",
+    "@failed_to_remove_profile_photo": {
+        "description": "Error message when failing to remove profile photo",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to remove profile photo: {error message}"
+            }
+        }
+    },
+    "members_count": "{count} 位成员",
+    "@members_count": {
+        "description": "Message displayed to show the number of members in a room",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5 members"
+            }
+        }
+    },
+    "menu": "菜单",
+    "@menu": {
+        "description": "Label for the menu"
+    },
+    "edit": "编辑",
+    "@edit": {
+        "description": "Label for the edit action"
+    },
+    "enterComment": "输入您的评论",
+    "@enterComment": {
+        "description": "Placeholder text for comment input field"
+    },
+    "profile": "个人资料",
+    "@profile": {
+        "description": "Label for the profile action"
+    },
+    "recent_post": "最近的帖子",
+    "@recent_post": {
+        "description": "Label for the recent post action"
+    },
+    "admin_chat_notice": "这是与我们管理团队的聊天。",
+    "@admin_chat_notice": {
+        "description": "Label for the admin chat notice"
+    },
+    "report": "举报",
+    "@report": {
+        "description": "Label for the report action"
+    },
+    "unblock_user": "解除屏蔽用户",
+    "@unblock_user": {
+        "description": "Label for the unblock user action"
+    },
+    "block_user": "屏蔽用户",
+    "@block_user": {
+        "description": "Label for the block user action"
+    },
+    "leave": "离开",
+    "@leave": {
+        "description": "Label for the leave action"
+    },
+    "leave_room": "离开房间",
+    "@leave_room": {
+        "description": "Label for the leave room action"
+    },
+    "leave_room_confirmation": "您确定要离开这个房间吗？",
+    "@leave_room_confirmation": {
+        "description": "Confirmation message displayed when a user tries to leave a room"
+    },
+    "chat_room": "聊天室",
+    "@chat_room": {
+        "description": "Label for the chat room"
+    },
+    "protocol_create": "房间已创建",
+    "@protocol_create": {
+        "description": "Message displayed when a room is successfully created"
+    },
+    "protocol_join": "{name} 已加入房间",
+    "@protocol_join": {
+        "description": "Message displayed when a user joins the room",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "{username} has joined the room"
+            }
+        }
+    },
+    "protocol_invitation_not_sent": "邀请未发送",
+    "@protocol_invitation_not_sent": {
+        "description": "Message displayed when an invitation is not sent"
+    },
+    "protocol_left": "{name} 离开了房间",
+    "@protocol_left": {
+        "description": "Message displayed when a user leaves the room",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "{username} left the room"
+            }
+        }
+    },
+    "protocol_removed": "{name} 已被移出房间",
+    "@protocol_removed": {
+        "description": "Message displayed when a user is removed from the room",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "{username} has been removed from the room"
+            }
+        }
+    },
+    "error_with_message": "错误：{message}",
+    "@error_with_message": {
+        "description": "Message displayed when there is an error",
+        "placeholders": {
+            "message": {
+                "type": "String",
+                "example": "Error: Something went wrong"
+            }
+        }
+    },
+    "send_message_to_start_conversation": "发送消息开始对话",
+    "@send_message_to_start_conversation": {
+        "description": "Message displayed to prompt the user to send a message"
+    },
+    "error": "错误",
+    "@error": {
+        "description": "Label for the error"
+    },
+    "ok": "确定",
+    "@ok": {
+        "description": "Label for the OK button"
+    },
+    "want_to_delete": "您要删除吗？",
+    "@want_to_delete": {
+        "description": "Confirmation message for deletion"
+    },
+    "confirm": "确认",
+    "@confirm": {
+        "description": "Confirm dialog title"
+    },
+    "yes": "是",
+    "@yes": {
+        "description": "Yes button text"
+    },
+    "no": "否",
+    "@no": {
+        "description": "No button text"
+    },
+    "no_posts_in_category": "此分类中没有帖子",
+    "@no_posts_in_category": {
+        "description": "Message when no posts exist in a category"
+    },
+    "be_first_to_post": "成为第一个发帖者",
+    "@be_first_to_post": {
+        "description": "Encouragement to create the first post"
+    },
+    "create_post": "创建帖子",
+    "@create_post": {
+        "description": "Button text to create a new post"
+    },
+    "leftroom_successfully": "成功离开房间",
+    "@leftroom_successfully": {
+        "description": "Message displayed when the user leaves the room successfully"
+    },
+    "login_required": "需要登录",
+    "@login_required": {
+        "description": "Message displayed when login is required"
+    },
+    "please_log_in_to_continue": "请登录以继续",
+    "@please_log_in_to_continue": {
+        "description": "Message displayed to prompt the user to log in"
+    },
+    "message_moderated_by_ai": "此消息已被AI审核屏蔽。",
+    "@message_moderated_by_ai": {
+        "description": "Message displayed when a message is moderated by AI"
+    },
+    "message_moderated_as_advertisement": "此广告已被屏蔽。",
+    "@message_moderated_as_advertisement": {
+        "description": "Message displayed when a message is moderated as an advertisement"
+    },
+    "blocked_message_tap_to_unblock": "来自被屏蔽用户的消息（点击解除屏蔽）",
+    "@blocked_message_tap_to_unblock": {
+        "description": "Message displayed for a blocked user"
+    },
+    "blocked_user_options": "被屏蔽用户选项",
+    "@blocked_user_options": {
+        "description": "Label for the blocked user options"
+    },
+    "blocked_user_subtitle": "此用户目前已被屏蔽",
+    "@blocked_user_subtitle": {
+        "description": "Subtitle displayed for a blocked user"
+    },
+    "unblock_user_description": "允许此用户再次向您发送消息",
+    "@unblock_user_description": {
+        "description": "Description displayed for the unblock user option"
+    },
+    "block_user_confirmation": "您确定要屏蔽此用户吗？",
+    "@block_user_confirmation": {
+        "description": "Confirmation message displayed when blocking a user"
+    },
+    "block_user_warning": "屏蔽此用户将阻止他们向您发送消息。",
+    "@block_user_warning": {
+        "description": "Warning message displayed when blocking a user"
+    },
+    "unblock_user_confirmation": "您确定要解除屏蔽此用户吗？",
+    "@unblock_user_confirmation": {
+        "description": "Confirmation message displayed when unblocking a user"
+    },
+    "user_unblocked": "用户已被解除屏蔽",
+    "@user_unblocked": {
+        "description": "Message displayed when a user is unblocked"
+    },
+    "uploading_images": "正在上传图片",
+    "@uploading_images": {
+        "description": "Message displayed when images are being uploaded"
+    },
+    "max_files_reached": "您最多可以选择 {max} 个文件。",
+    "@max_files_reached": {
+        "description": "Message displayed when the user reaches the maximum file selection limit",
+        "placeholders": {
+            "max": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "failed_to_send_message": "发送消息失败：{error}",
+    "@failed_to_send_message": {
+        "description": "Message displayed when a message fails to send",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to send message: Network error"
+            }
+        }
+    },
+    "attach_files": "附加文件",
+    "@attach_files": {
+        "description": "Label for the attach files button"
+    },
+    "type_message": "输入消息...",
+    "@type_message": {
+        "description": "Placeholder text for the message input field"
+    },
+    "select_files": "选择文件",
+    "@select_files": {
+        "description": "Select files"
+    },
+    "camera": "相机",
+    "@camera": {
+        "description": "Camera"
+    },
+    "gallery": "图库",
+    "@gallery": {
+        "description": "Gallery"
+    },
+    "failed_to_start_chat": "启动聊天失败：{error}",
+    "@failed_to_start_chat": {
+        "description": "Message displayed when failing to start a chat",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to start chat: User not found"
+            }
+        }
+    },
+    "search_friends": "搜索好友",
+    "@search_friends": {
+        "description": "Label for the search friends dialog"
+    },
+    "search_by_nickname": "按昵称搜索",
+    "@search_by_nickname": {
+        "description": "Label for the search by nickname input field"
+    },
+    "no_users_found": "未找到用户",
+    "@no_users_found": {
+        "description": "Message displayed when no users are found in the search"
+    },
+    "chat": "聊天",
+    "@chat": {
+        "description": "Label for the chat button"
+    },
+    "empty_chat_list": "{order, select, order {空聊天室} single_order {空好友列表} group_order {空群聊} open_order {空开放聊天} other {聊天室列表为空}}",
+    "@empty_chat_list": {
+        "description": "Get localized text for empty chat list",
+        "placeholders": {
+            "order": {
+                "type": "String",
+                "example": "open"
+            }
+        }
+    },
+    "turn_off_notifications": "关闭通知",
+    "@turn_off_notifications": {
+        "description": "Label for the turn off notifications button"
+    },
+    "turn_on_notifications": "开启通知",
+    "@turn_on_notifications": {
+        "description": "Label for the turn on notifications button"
+    },
+    "you": "您",
+    "@you": {
+        "description": "Label for the current user"
+    },
+    "no_recent_posts": "没有最近的帖子",
+    "@no_recent_posts": {
+        "description": "Message displayed when there are no recent posts"
+    },
+    "block": "屏蔽",
+    "@block": {
+        "description": "Label for the block button"
+    },
+    "unblock": "解除屏蔽",
+    "@unblock": {
+        "description": "Label for the unblock button"
+    },
+    "success_user_blocked": "用户已成功屏蔽。",
+    "@success_user_blocked": {
+        "description": "Message displayed when a user is successfully blocked"
+    },
+    "blocked_message": "来自被屏蔽用户的消息",
+    "@blocked_message": {
+        "description": "Message displayed when a user sends a message while blocked"
+    },
+    "time_days_ago": "{count}天前",
+    "@time_days_ago": {
+        "description": "Time ago format for days",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5d ago"
+            }
+        }
+    },
+    "time_hours_ago": "{count}小时前",
+    "@time_hours_ago": {
+        "description": "Time ago format for hours",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5h ago"
+            }
+        }
+    },
+    "time_minutes_ago": "{count}分钟前",
+    "@time_minutes_ago": {
+        "description": "Time ago format for minutes",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5m ago"
+            }
+        }
+    },
+    "time_just_now": "刚刚",
+    "@time_just_now": {
+        "description": "Time ago format for just now"
+    },
+    "today": "今天",
+    "@today": {
+        "description": "Label for today"
+    },
+    "yesterday": "昨天",
+    "@yesterday": {
+        "description": "Label for yesterday"
+    },
+    "now": "现在",
+    "@now": {
+        "description": "Label for now"
+    },
+    "member_count_formatted": "{count}名成员",
+    "@member_count_formatted": {
+        "description": "Format for member count",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5 members"
+            }
+        }
+    },
+    "take_photo_with_camera": "相机拍照",
+    "@take_photo_with_camera": {
+        "description": "Option to take a photo using the camera"
+    },
+    "record_video_with_camera": "相机录像",
+    "@record_video_with_camera": {
+        "description": "Option to record a video using the camera"
+    },
+    "select_from_gallery": "从相册选择",
+    "@select_from_gallery": {
+        "description": "Option to select media from the gallery"
+    },
+    "upload_file": "上传文件",
+    "@upload_file": {
+        "description": "Option to upload a file from device storage"
+    },
+    "select_upload_option": "选择上传选项",
+    "@select_upload_option": {
+        "description": "Title for the upload option bottom sheet"
+    },
+    "reply": "回复",
+    "@reply": {
+        "description": "Button text to reply to a comment"
+    },
+    "like": "点赞",
+    "@like": {
+        "description": "Button text for liking a post"
+    },
+    "comment": "评论",
+    "@comment": {
+        "description": "Button text for commenting on a post"
+    },
+    "share": "分享",
+    "@share": {
+        "description": "Button text for sharing a post"
+    },
+    "beTheFirstToComment": "成为第一个评论的人",
+    "@beTheFirstToComment": {
+        "description": "Prompt to add the first comment to a post"
+    },
+    "update": "更新",
+    "@update": {
+        "description": "Button text for updating a post or comment"
+    },
+    "updateComment": "更新评论",
+    "@updateComment": {
+        "description": "Title for updating a comment"
+    },
+    "join_url": "邀请链接",
+    "copied_to_clipboard": "已复制到剪贴板",
+    "receive_share_choose_post_or_chat": "1. 选择 `创建帖子` 或 `发送到聊天`",
+    "receive_share_choose_chat": "1. 选择 `发送到聊天好友`",
+    "receive_share_create_post": "创建新帖子",
+    "receive_share_image_and_text_chat": "仅图像或文本可以发送到聊天",
+    "receive_share_send_chat": "发送到聊天好友",
+    "receive_share_choose_friend": "2. 选择要发送的好友",
+    "receive_share_select_category": "2. 选择要发布的类别",
+    "receive_share_open": "打开",
+    "receive_share_send": "发送",
+    "receive_share": "接收分享",
+    "view_profile": "查看个人资料"
+}

@@ -1,0 +1,453 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Japanese (`ja`).
+class LibTrJa extends LibTr {
+  LibTrJa([String locale = 'ja']) : super(locale);
+
+  @override
+  String get create_room => 'ルーム作成';
+
+  @override
+  String get create => '作成';
+
+  @override
+  String get room_name => 'ルーム名';
+
+  @override
+  String get enter_room_name => 'ルーム名を入力してください';
+
+  @override
+  String get room_name_required => 'ルーム名は必須です';
+
+  @override
+  String get room_description => 'ルームの説明';
+
+  @override
+  String get enter_room_description => 'ルームの説明を入力してください';
+
+  @override
+  String get open_room => 'オープンルーム';
+
+  @override
+  String get open_room_description => '誰でも参加できるようにオープン';
+
+  @override
+  String get block_advertisement => '広告ブロック';
+
+  @override
+  String get block_advertisement_description => 'このルームで広告メッセージをブロック';
+
+  @override
+  String get creating => '作成中...';
+
+  @override
+  String failed_to_create_room(String error) {
+    return 'ルーム作成に失敗しました：$error';
+  }
+
+  @override
+  String failed_to_update_room(String error) {
+    return 'ルーム更新に失敗しました：$error';
+  }
+
+  @override
+  String get report_select_reason => '通報理由を選択してください';
+
+  @override
+  String get report_success => '通報が正常に送信されました';
+
+  @override
+  String get report_message_already_reported => 'このメッセージは既に通報されています';
+
+  @override
+  String get report_room_already_reported => 'このルームは既に通報されています';
+
+  @override
+  String get report_submission_failed => '通報の送信に失敗しました';
+
+  @override
+  String get report_chat_room => 'チャットルームを通報';
+
+  @override
+  String get report_chat_message => 'チャットメッセージを通報';
+
+  @override
+  String get close => '閉じる';
+
+  @override
+  String get cancel => 'キャンセル';
+
+  @override
+  String get report_submit => '送信';
+
+  @override
+  String get_report_reason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'spam': 'スパム',
+      'abusive': '侮辱的',
+      'violence': '暴力',
+      'hate_speech': 'ヘイトスピーチ',
+      'inappropriate_content': '不適切なコンテンツ',
+      'other': 'reason',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get edit_chat_room_success => '成功';
+
+  @override
+  String get edit_chat_room => 'チャットルームを編集';
+
+  @override
+  String get profile_photo_updated => 'プロフィール写真が更新されました';
+
+  @override
+  String upload_photo_failed(String error) {
+    return 'アップロードに失敗しました：$error';
+  }
+
+  @override
+  String get profile_photo_removed => 'プロフィール写真が削除されました';
+
+  @override
+  String failed_to_remove_profile_photo(String error) {
+    return 'プロフィール写真の削除に失敗しました：$error';
+  }
+
+  @override
+  String members_count(int count) {
+    return '$count 名のメンバー';
+  }
+
+  @override
+  String get menu => 'メニュー';
+
+  @override
+  String get edit => '編集';
+
+  @override
+  String get enterComment => 'コメントを入力してください';
+
+  @override
+  String get profile => 'プロフィール';
+
+  @override
+  String get recent_post => '最近の投稿';
+
+  @override
+  String get admin_chat_notice => 'これは管理チームとのチャットです。';
+
+  @override
+  String get report => '通報';
+
+  @override
+  String get unblock_user => 'ユーザーのブロック解除';
+
+  @override
+  String get block_user => 'ユーザーをブロック';
+
+  @override
+  String get leave => '退出';
+
+  @override
+  String get leave_room => 'ルームを退出';
+
+  @override
+  String get leave_room_confirmation => '本当にこのルームを退出しますか？';
+
+  @override
+  String get chat_room => 'チャットルーム';
+
+  @override
+  String get protocol_create => 'ルームが作成されました';
+
+  @override
+  String protocol_join(String name) {
+    return '$nameさんがルームに参加しました';
+  }
+
+  @override
+  String get protocol_invitation_not_sent => '招待が送信されませんでした';
+
+  @override
+  String protocol_left(String name) {
+    return '$nameさんがルームを退出しました';
+  }
+
+  @override
+  String protocol_removed(String name) {
+    return '$nameさんがルームから削除されました';
+  }
+
+  @override
+  String error_with_message(String message) {
+    return 'エラー：$message';
+  }
+
+  @override
+  String get send_message_to_start_conversation => 'メッセージを送信して会話を開始';
+
+  @override
+  String get error => 'エラー';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get want_to_delete => '削除しますか？';
+
+  @override
+  String get confirm => '確認';
+
+  @override
+  String get yes => 'はい';
+
+  @override
+  String get no => 'いいえ';
+
+  @override
+  String get no_posts_in_category => 'このカテゴリに投稿はありません';
+
+  @override
+  String get be_first_to_post => '最初の投稿者になりましょう';
+
+  @override
+  String get create_post => '投稿を作成';
+
+  @override
+  String get leftroom_successfully => 'ルームを正常に退出しました';
+
+  @override
+  String get login_required => 'ログインが必要です';
+
+  @override
+  String get please_log_in_to_continue => '続行するにはログインしてください';
+
+  @override
+  String get message_moderated_by_ai => 'このメッセージはAIモデレーションによりブロックされました。';
+
+  @override
+  String get message_moderated_as_advertisement => 'この広告はブロックされました。';
+
+  @override
+  String get blocked_message_tap_to_unblock =>
+      'ブロックされたユーザーからのメッセージ（タップしてブロック解除）';
+
+  @override
+  String get blocked_user_options => 'ブロックされたユーザーのオプション';
+
+  @override
+  String get blocked_user_subtitle => 'このユーザーは現在ブロックされています';
+
+  @override
+  String get unblock_user_description => 'このユーザーが再びメッセージを送信できるようにします';
+
+  @override
+  String get block_user_confirmation => '本当にこのユーザーをブロックしますか？';
+
+  @override
+  String get block_user_warning => 'このユーザーをブロックすると、メッセージを送信できなくなります。';
+
+  @override
+  String get unblock_user_confirmation => '本当にこのユーザーのブロックを解除しますか？';
+
+  @override
+  String get user_unblocked => 'ユーザーのブロックが解除されました';
+
+  @override
+  String get uploading_images => '画像をアップロード中';
+
+  @override
+  String max_files_reached(int max) {
+    return '最大$max個のファイルを選択できます。';
+  }
+
+  @override
+  String failed_to_send_message(String error) {
+    return 'メッセージの送信に失敗しました：$error';
+  }
+
+  @override
+  String get attach_files => 'ファイルを添付';
+
+  @override
+  String get type_message => 'メッセージを入力...';
+
+  @override
+  String get select_files => 'ファイルを選択';
+
+  @override
+  String get camera => 'カメラ';
+
+  @override
+  String get gallery => 'ギャラリー';
+
+  @override
+  String failed_to_start_chat(String error) {
+    return 'チャットの開始に失敗しました：$error';
+  }
+
+  @override
+  String get search_friends => '友達を検索';
+
+  @override
+  String get search_by_nickname => 'ニックネームで検索';
+
+  @override
+  String get no_users_found => 'ユーザーが見つかりません';
+
+  @override
+  String get chat => 'チャット';
+
+  @override
+  String empty_chat_list(String order) {
+    String _temp0 = intl.Intl.selectLogic(order, {
+      'order': '空のチャットルーム',
+      'single_order': '空の友達リスト',
+      'group_order': '空のグループチャット',
+      'open_order': '空のオープンチャット',
+      'other': 'チャットルームリストが空です',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get turn_off_notifications => '通知をオフにする';
+
+  @override
+  String get turn_on_notifications => '通知をオンにする';
+
+  @override
+  String get you => 'あなた';
+
+  @override
+  String get no_recent_posts => '最近の投稿はありません';
+
+  @override
+  String get block => 'ブロック';
+
+  @override
+  String get unblock => 'ブロック解除';
+
+  @override
+  String get success_user_blocked => 'ユーザーが正常にブロックされました。';
+
+  @override
+  String get blocked_message => 'ブロックされたユーザーからのメッセージ';
+
+  @override
+  String time_days_ago(int count) {
+    return '$count日前';
+  }
+
+  @override
+  String time_hours_ago(int count) {
+    return '$count時間前';
+  }
+
+  @override
+  String time_minutes_ago(int count) {
+    return '$count分前';
+  }
+
+  @override
+  String get time_just_now => 'たった今';
+
+  @override
+  String get today => '今日';
+
+  @override
+  String get yesterday => '昨日';
+
+  @override
+  String get now => '今';
+
+  @override
+  String member_count_formatted(int count) {
+    return '$count名';
+  }
+
+  @override
+  String get take_photo_with_camera => 'カメラで写真を撮る';
+
+  @override
+  String get record_video_with_camera => 'カメラで動画を録画';
+
+  @override
+  String get select_from_gallery => 'ギャラリーから選択';
+
+  @override
+  String get upload_file => 'ファイルアップロード';
+
+  @override
+  String get select_upload_option => 'アップロードオプションを選択';
+
+  @override
+  String get reply => '返信';
+
+  @override
+  String get like => 'いいね';
+
+  @override
+  String get comment => 'コメント';
+
+  @override
+  String get share => '共有';
+
+  @override
+  String get beTheFirstToComment => '最初のコメントを投稿しよう';
+
+  @override
+  String get update => '更新';
+
+  @override
+  String get updateComment => 'コメントを更新';
+
+  @override
+  String get join_url => '招待URL';
+
+  @override
+  String get copied_to_clipboard => 'クリップボードにコピーされました';
+
+  @override
+  String get receive_share_choose_post_or_chat =>
+      '1. `投稿を作成`するか`チャットに送信`するかを選択';
+
+  @override
+  String get receive_share_choose_chat => '1. `チャットに送信`を選択';
+
+  @override
+  String get receive_share_create_post => '`新しい投稿を作成`を選択';
+
+  @override
+  String get receive_share_image_and_text_chat => '`画像またはテキスト`のみをチャットに送信できます';
+
+  @override
+  String get receive_share_send_chat => '`チャットの友達に送信`を選択';
+
+  @override
+  String get receive_share_choose_friend => '2. 送信先の友達を選択';
+
+  @override
+  String get receive_share_select_category => '2. 投稿するカテゴリを選択';
+
+  @override
+  String get receive_share_open => 'オープン';
+
+  @override
+  String get receive_share_send => '送信';
+
+  @override
+  String get receive_share => '受信共有';
+
+  @override
+  String get view_profile => 'プロフィールを見る';
+}

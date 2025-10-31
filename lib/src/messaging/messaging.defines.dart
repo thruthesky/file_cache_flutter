@@ -1,0 +1,15 @@
+// ignore_for_file: constant_identifier_names
+class MessagingConfig {
+  const MessagingConfig();
+
+  static const String allUsersTopic = 'all_users';
+  static const String tokenPath = "fcm-tokens";
+  static const String subscribePath = "fcm-subscriptions";
+
+  // PHP API to save FCM token to database
+  static const String messagingSaveTokenApi = "fcm.save_token";
+}
+
+const String DEVICE = "device";
+const String TOKEN = "fcm_token";
+const String DOMAIN = "domain";

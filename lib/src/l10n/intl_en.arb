@@ -1,0 +1,631 @@
+{
+    "@@locale": "en",
+    "create_room": "Create Room",
+    "@create_room": {
+        "description": "The title of the application"
+    },
+    "create": "Create",
+    "@create": {
+        "description": "Button to create a new room"
+    },
+    "room_name": "Room Name",
+    "@room_name": {
+        "description": "The name of the chat room"
+    },
+    "enter_room_name": "Enter room name",
+    "@enter_room_name": {
+        "description": "Prompt to enter the room name"
+    },
+    "room_name_required": "Room name is required",
+    "@room_name_required": {
+        "description": "Error message when room name is not provided"
+    },
+    "room_description": "Room Description",
+    "@room_description": {
+        "description": "Description of the chat room"
+    },
+    "enter_room_description": "Enter room description",
+    "@enter_room_description": {
+        "description": "Prompt to enter the room description"
+    },
+    "open_room": "Open Room",
+    "@open_room": {
+        "description": "Toggle to open the room for everyone"
+    },
+    "open_room_description": "Open for everyone to join",
+    "@open_room_description": {
+        "description": "Description of the open room toggle"
+    },
+    "block_advertisement": "Block Advertisement",
+    "@block_advertisement": {
+        "description": "Toggle to block advertisement messages in this room"
+    },
+    "block_advertisement_description": "Block advertisement messages in this room",
+    "@block_advertisement_description": {
+        "description": "Description of the block advertisement toggle"
+    },
+    "creating": "Creating...",
+    "@creating": {
+        "description": "Indicates that a room is being created"
+    },
+    "failed_to_create_room": "Failed to create room: {error}",
+    "@failed_to_create_room": {
+        "description": "Error message when room creation fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to create room: {error message}"
+            }
+        }
+    },
+    "failed_to_update_room": "Failed to update room: {error}",
+    "@failed_to_update_room": {
+        "description": "Error message when room update fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to update room: {error message}"
+            }
+        }
+    },
+    "report_select_reason": "Select report reason.",
+    "@report_select_reason": {
+        "description": "Prompt to select a reason for reporting"
+    },
+    "report_success": "Report submitted successfully",
+    "@report_success": {
+        "description": "Message displayed when a report is submitted successfully"
+    },
+    "report_message_already_reported": "This message has already been reported",
+    "@report_message_already_reported": {
+        "description": "Message displayed when a message is already reported"
+    },
+    "report_room_already_reported": "This room has already been reported",
+    "@report_room_already_reported": {
+        "description": "Message displayed when a room is already reported"
+    },
+    "report_submission_failed": "Report submission failed",
+    "@report_submission_failed": {
+        "description": "Message displayed when report submission fails"
+    },
+    "report_chat_room": "Report Chat Room",
+    "@report_chat_room": {
+        "description": "Message displayed when reporting a chat room"
+    },
+    "report_chat_message": "Report Chat Message",
+    "@report_chat_message": {
+        "description": "Message displayed when reporting a chat message"
+    },
+    "close": "Close",
+    "@close": {
+        "description": "Button to close the report dialog"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Button to cancel the report"
+    },
+    "report_submit": "Submit",
+    "@report_submit": {
+        "description": "Button to submit the report"
+    },
+    "get_report_reason": "{reason, select, spam {Spam} abusive {Abusive} violence {Violence} hate_speech {Hate Speech} inappropriate_content {Inappropriate Content} other {reason}}",
+    "@get_report_reason": {
+        "description": "Get localized text for report reason",
+        "placeholders": {
+            "reason": {
+                "type": "String",
+                "example": "Spam, Abusive, Violence, Hate Speech, Inappropriate Content, Other"
+            }
+        }
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Button to save changes in the chat room"
+    },
+    "edit_chat_room_success": "Success",
+    "@edit_chat_room_success": {
+        "description": "Message displayed when editing a chat room is successful"
+    },
+    "edit_chat_room": "Edit Chat Room",
+    "@edit_chat_room": {
+        "description": "Title of the edit chat room dialog"
+    },
+    "profile_photo_updated": "Profile photo updated",
+    "@profile_photo_updated": {
+        "description": "Message displayed when profile photo is updated"
+    },
+    "upload_photo_failed": "Upload failed: {error}",
+    "@upload_photo_failed": {
+        "description": "Message displayed when upload fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Upload failed: {error message}"
+            }
+        }
+    },
+    "profile_photo_removed": "Profile photo removed",
+    "@profile_photo_removed": {
+        "description": "Message displayed when profile photo is removed"
+    },
+    "failed_to_remove_profile_photo": "Failed to remove profile photo: {error}",
+    "@failed_to_remove_profile_photo": {
+        "description": "Error message when failing to remove profile photo",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to remove profile photo: {error message}"
+            }
+        }
+    },
+    "members_count": "{count} members",
+    "@members_count": {
+        "description": "Message displayed to show the number of members in a room",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5 members"
+            }
+        }
+    },
+    "menu": "Menu",
+    "@menu": {
+        "description": "Label for the menu"
+    },
+    "edit": "Edit",
+    "@edit": {
+        "description": "Label for the edit action"
+    },
+    "enterComment": "Enter your comment",
+    "@enterComment": {
+        "description": "Placeholder text for comment input field"
+    },
+    "profile": "Profile",
+    "@profile": {
+        "description": "Label for the profile action"
+    },
+    "recent_post": "Recent Post",
+    "@recent_post": {
+        "description": "Label for the recent post action"
+    },
+    "admin_chat_notice": "This is a chat with our admin team.",
+    "@admin_chat_notice": {
+        "description": "Label for the admin chat notice"
+    },
+    "report": "Report",
+    "@report": {
+        "description": "Label for the report action"
+    },
+    "unblock_user": "Unblock User",
+    "@unblock_user": {
+        "description": "Label for the unblock user action"
+    },
+    "block_user": "Block User",
+    "@block_user": {
+        "description": "Label for the block user action"
+    },
+    "leave": "Leave",
+    "@leave": {
+        "description": "Label for the leave action"
+    },
+    "leave_room": "Leave Room",
+    "@leave_room": {
+        "description": "Label for the leave room action"
+    },
+    "leave_room_confirmation": "Are you sure you want to leave this room?",
+    "@leave_room_confirmation": {
+        "description": "Confirmation message displayed when a user tries to leave a room"
+    },
+    "chat_room": "Chat Room",
+    "@chat_room": {
+        "description": "Label for the chat room"
+    },
+    "protocol_create": "Room has been created",
+    "@protocol_create": {
+        "description": "Message displayed when a room is successfully created"
+    },
+    "protocol_join": "{name} has joined the room",
+    "@protocol_join": {
+        "description": "Message displayed when a user joins the room",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "{username} has joined the room"
+            }
+        }
+    },
+    "protocol_invitation_not_sent": "Invitation not sent",
+    "@protocol_invitation_not_sent": {
+        "description": "Message displayed when an invitation is not sent"
+    },
+    "protocol_left": "{name} left the room",
+    "@protocol_left": {
+        "description": "Message displayed when a user leaves the room",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "{username} left the room"
+            }
+        }
+    },
+    "protocol_removed": "{name} has been removed from the room",
+    "@protocol_removed": {
+        "description": "Message displayed when a user is removed from the room",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "{username} has been removed from the room"
+            }
+        }
+    },
+    "error_with_message": "Error: {message}",
+    "@error_with_message": {
+        "description": "Message displayed when there is an error",
+        "placeholders": {
+            "message": {
+                "type": "String",
+                "example": "Error: Something went wrong"
+            }
+        }
+    },
+    "send_message_to_start_conversation": "Send a message to start a conversation",
+    "@send_message_to_start_conversation": {
+        "description": "Message displayed to prompt the user to send a message"
+    },
+    "error": "Error",
+    "@error": {
+        "description": "Label for the error"
+    },
+    "ok": "OK",
+    "@ok": {
+        "description": "Label for the OK button"
+    },
+    "want_to_delete": "Do you want to delete?",
+    "@want_to_delete": {
+        "description": "Confirmation message for deletion"
+    },
+    "confirm": "Confirm",
+    "@confirm": {
+        "description": "Confirm dialog title"
+    },
+    "yes": "Yes",
+    "@yes": {
+        "description": "Yes button text"
+    },
+    "no": "No",
+    "@no": {
+        "description": "No button text"
+    },
+    "no_posts_in_category": "There are no posts in this category",
+    "@no_posts_in_category": {
+        "description": "Message when no posts exist in a category"
+    },
+    "be_first_to_post": "Be the first to post",
+    "@be_first_to_post": {
+        "description": "Encouragement to create the first post"
+    },
+    "create_post": "Create Post",
+    "@create_post": {
+        "description": "Button text to create a new post"
+    },
+    "leftroom_successfully": "Left the room successfully",
+    "@leftroom_successfully": {
+        "description": "Message displayed when the user leaves the room successfully"
+    },
+    "login_required": "Login required",
+    "@login_required": {
+        "description": "Message displayed when login is required"
+    },
+    "please_log_in_to_continue": "Please log in to continue",
+    "@please_log_in_to_continue": {
+        "description": "Message displayed to prompt the user to log in"
+    },
+    "message_moderated_by_ai": "This message was blocked by AI moderation.",
+    "@message_moderated_by_ai": {
+        "description": "Message displayed when a message is moderated by AI"
+    },
+    "message_moderated_as_advertisement": "This advertisement was blocked.",
+    "@message_moderated_as_advertisement": {
+        "description": "Message displayed when a message is moderated as an advertisement"
+    },
+    "blocked_message_tap_to_unblock": "Message from blocked user (tap to unblock)",
+    "@blocked_message_tap_to_unblock": {
+        "description": "Message displayed for a blocked user"
+    },
+    "blocked_user_options": "Blocked User Options",
+    "@blocked_user_options": {
+        "description": "Label for the blocked user options"
+    },
+    "blocked_user_subtitle": "This user is currently blocked",
+    "@blocked_user_subtitle": {
+        "description": "Subtitle displayed for a blocked user"
+    },
+    "unblock_user_description": "Allow this user to send you messages again",
+    "@unblock_user_description": {
+        "description": "Description displayed for the unblock user option"
+    },
+    "block_user_confirmation": "Are you sure you want to block this user?",
+    "@block_user_confirmation": {
+        "description": "Confirmation message displayed when blocking a user"
+    },
+    "block_user_warning": "Blocking this user will prevent them from sending you messages.",
+    "@block_user_warning": {
+        "description": "Warning message displayed when blocking a user"
+    },
+    "unblock_user_confirmation": "Are you sure you want to unblock this user?",
+    "@unblock_user_confirmation": {
+        "description": "Confirmation message displayed when unblocking a user"
+    },
+    "user_unblocked": "User has been unblocked",
+    "@user_unblocked": {
+        "description": "Message displayed when a user is unblocked"
+    },
+    "uploading_images": "Uploading images",
+    "@uploading_images": {
+        "description": "Message displayed when images are being uploaded"
+    },
+    "max_files_reached": "You can select up to {max} files.",
+    "@max_files_reached": {
+        "description": "Message displayed when the user reaches the maximum file selection limit",
+        "placeholders": {
+            "max": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    },
+    "failed_to_send_message": "Failed to send message: {error}",
+    "@failed_to_send_message": {
+        "description": "Message displayed when a message fails to send",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to send message: Network error"
+            }
+        }
+    },
+    "attach_files": "Attach files",
+    "@attach_files": {
+        "description": "Label for the attach files button"
+    },
+    "type_message": "Type a message...",
+    "@type_message": {
+        "description": "Placeholder text for the message input field"
+    },
+    "select_files": "Select Files",
+    "@select_files": {
+        "description": "Select files"
+    },
+    "camera":  "Camera",
+    "@camera": {
+        "description": "Camera"
+    },
+    "gallery": "Gallery",
+    "@gallery": {
+        "description": "Gallery"
+    },
+    "failed_to_start_chat": "Failed to start chat: {error}",
+    "@failed_to_start_chat": {
+        "description": "Message displayed when failing to start a chat",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to start chat: User not found"
+            }
+        }
+    },
+    "search_friends": "Search Friends",
+    "@search_friends": {
+        "description": "Label for the search friends dialog"
+    },
+    "search_by_nickname": "닉네임으로 검색",
+    "@search_by_nickname": {
+        "description": "Label for the search by nickname input field"
+    },
+    "no_users_found": "No users found",
+    "@no_users_found": {
+        "description": "Message displayed when no users are found in the search"
+    },
+    "chat": "Chat",
+    "@chat": {
+        "description": "Label for the chat button"
+    },
+    "empty_chat_list": "{order, select, order {Empty Chat Room} single_order {Empty Friends List} group_order {Empty Group Chat} open_order {Empty Open Chat} other {Chatroom list is empty}}",
+    "@empty_chat_list": {
+        "description": "Get localized text for empty chat list",
+        "placeholders": {
+            "order": {
+                "type": "String",
+                "example": "open"
+            }
+        }
+    },
+    "turn_off_notifications": "Turn off notifications",
+    "@turn_off_notifications": {
+        "description": "Label for the turn off notifications button"
+    },
+    "turn_on_notifications": "Turn on notifications",
+    "@turn_on_notifications": {
+        "description": "Label for the turn on notifications button"
+    },
+    "you": "You",
+    "@you": {
+        "description": "Label for the current user"
+    },
+    "no_recent_posts": "No recent posts",
+    "@no_recent_posts": {
+        "description": "Message displayed when there are no recent posts"
+    },
+    "block": "Block",
+    "@block": {
+        "description": "Label for the block button"
+    },
+    "unblock": "Unblock",
+    "@unblock": {
+        "description": "Label for the unblock button"
+    },
+    "success_user_blocked": "User successfully blocked.",
+    "@success_user_blocked": {
+        "description": "Message displayed when a user is successfully blocked"
+    },
+    "blocked_message": "Message from blocked user",
+    "@blocked_message": {
+        "description": "Message displayed when a user sends a message while blocked"
+    },
+    "time_days_ago": "{count}d ago",
+    "@time_days_ago": {
+        "description": "Time ago format for days",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5d ago"
+            }
+        }
+    },
+    "time_hours_ago": "{count}h ago",
+    "@time_hours_ago": {
+        "description": "Time ago format for hours",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5h ago"
+            }
+        }
+    },
+    "time_minutes_ago": "{count}m ago",
+    "@time_minutes_ago": {
+        "description": "Time ago format for minutes",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5m ago"
+            }
+        }
+    },
+    "time_just_now": "Just now",
+    "@time_just_now": {
+        "description": "Time ago format for just now"
+    },
+    "today": "Today",
+    "@today": {
+        "description": "Label for today"
+    },
+    "yesterday": "Yesterday",
+    "@yesterday": {
+        "description": "Label for yesterday"
+    },
+    "now": "Now",
+    "@now": {
+        "description": "Label for now"
+    },
+    "member_count_formatted": "{count} members",
+    "@member_count_formatted": {
+        "description": "Format for member count",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5 members"
+            }
+        }
+    },
+    "take_photo_with_camera": "Take Photo with Camera",
+    "@take_photo_with_camera": {
+        "description": "Option to take a photo using the camera"
+    },
+    "record_video_with_camera": "Record Video with Camera",
+    "@record_video_with_camera": {
+        "description": "Option to record a video using the camera"
+    },
+    "select_from_gallery": "Select from Gallery",
+    "@select_from_gallery": {
+        "description": "Option to select media from the gallery"
+    },
+    "upload_file": "Upload File",
+    "@upload_file": {
+        "description": "Option to upload a file from device storage"
+    },
+    "select_upload_option": "Select Upload Option",
+    "@select_upload_option": {
+        "description": "Title for the upload option bottom sheet"
+    },
+    "reply": "Reply",
+    "@reply": {
+        "description": "Button text to reply to a comment"
+    },
+    "like": "Like",
+    "@like": {
+        "description": "Button text for liking a post"
+    },
+    "comment": "Comment",
+    "@comment": {
+        "description": "Button text for commenting on a post"
+    },
+    "share": "Share",
+    "@share": {
+        "description": "Button text for sharing a post"
+    },
+    "beTheFirstToComment": "Be the first to comment",
+    "@beTheFirstToComment": {
+        "description": "Prompt to add the first comment to a post"
+    },
+    "update": "Update",
+    "@update": {
+        "description": "Button text for updating a post or comment"
+    },
+    "updateComment": "Update Comment",
+    "@updateComment": {
+        "description": "Title for updating a comment"
+    },
+    "join_url": "Invite url",
+    "@join_url": {
+        "description": "Invite url"
+    },
+    "copied_to_clipboard": "Copied to clipboard",
+    "@copied_to_clipboard": {
+        "description": "Message displayed when text is copied to clipboard"
+    },
+    "receive_share_choose_post_or_chat": "1. Choose `create a post` or `send to chat`",
+    "@receive_share_choose_post_or_chat": {
+        "description": "1. Choose `create a post` or `send to chat`"
+    },
+    "receive_share_choose_chat": "1. Choose `send to chat friend`",
+    "@receive_share_choose_chat": {
+        "description": "1. Choose `send to chat friend`"
+    },
+    "receive_share_create_post": "Create a new post",
+    "@receive_share_create_post": {
+        "description": "Choose `create a new post`"
+    },
+    "receive_share_image_and_text_chat": "Only image or text can be sent to chat",
+    "@receive_share_image_and_text_chat": {
+        "description": "Only image or text can be sent to chat"
+    },
+    "receive_share_send_chat": "Send to chat friend",
+    "@receive_share_send_chat": {
+        "description": "Choose `send to chat friend`"
+    },
+    "receive_share_choose_friend": "2. Select a friend to send",
+    "@receive_share_choose_friend": {
+        "description": "2. Select a friend to send"
+    },
+    "receive_share_select_category": "2. Select a category to post",
+    "@receive_share_select_category": {
+        "description": "2. Select a category to post"
+    },
+    "receive_share_open": "Open",
+    "@receive_share_open": {
+        "description": "Label for the open button"
+    },
+    "receive_share_send": "Send",
+    "@receive_share_send": {
+        "description": "Label for the send button"
+    },
+    "receive_share": "Receive Share",
+    "@receive_share": { 
+        "description": "Label for the receive share dialog"
+    },
+    "view_profile": "View",
+    "@view_profile": {
+        "description": "Label for the view  button"
+    }
+}
