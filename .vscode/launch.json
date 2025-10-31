@@ -8,7 +8,6 @@
             "name": "🚀 PhilGo - Simulator",
             "request": "launch",
             "type": "dart",
-            "cwd": "apps/philgo",
             "program": "lib/main.dart",
             "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
             "args": [
@@ -19,7 +18,7 @@
             "name": "PhilGo - Attach Simulator",
             "request": "attach",
             "type": "dart",
-            "cwd": "${workspaceFolder}/apps/philgo",
+            "cwd": "${workspaceFolder}",
             "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
             "vmServiceUri": "${command:dart.promptForVmService}",
             "args": [
@@ -28,26 +27,9 @@
             ]
         },
         {
-            "name": "WebChat - JaeHo: Chrome",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "apps/webchat",
-            "program": "lib/main.dart",
-            "deviceId": "chrome",
-        },
-        {
-            "name": "PhilGo - JaeHo: iPhone 16 Pro Max: Prod",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "philgo",
-            "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
-        },
-        {
             "name": "PhilGo - JaeHo: iPhone 16 Pro Max: Dev",
             "request": "launch",
             "type": "dart",
-            "cwd": "apps/philgo",
             "program": "lib/main.dart",
             "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
             "args": [
@@ -58,52 +40,10 @@
             "name": "PhilGo - JaeHo: iPhone",
             "request": "launch",
             "type": "dart",
-            "cwd": "apps/philgo",
             "program": "lib/main.dart",
             "deviceId": "00008140-001C24C93E93001C",
             "args": [
                 "--dart-define=ENV=dev"
-            ]
-        },
-        {
-            "name": "JaeHo: PhilChat iPhone 16 Pro Max: Dev",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "philchat",
-            "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
-            "args": [
-                "--dart-define=ENV=dev"
-            ]
-        },
-        {
-            "name": "WebChat Chrome dev",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "apps/webchat",
-            "program": "lib/main.dart",
-            "deviceId": "chrome",
-            "args": [
-                "--dart-define=ENV=dev",
-                "--dart-define=NEXT_JS_API_URL=http://172.25.224.1:3000/",
-                "--dart-define=PHP_API_URL=http://172.25.224.1:81/index.php",
-                "--web-browser-flag",
-                "--disable-web-security"
-            ]
-        },
-        {
-            "name": "Philgo Chrome dev",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "apps/philgo",
-            "program": "lib/main.dart",
-            "deviceId": "chrome",
-            "args": [
-                "--dart-define=ENV=dev",
-                "--dart-define=NEXT_JS_API_URL=http://172.25.224.1:3000/",
-                "--dart-define=PHP_API_URL=http://172.25.224.1:81/index.php",
-                "--web-browser-flag",
-                "--disable-web-security"
             ]
         },
         {
@@ -116,102 +56,6 @@
             "args": [
                 "--dart-define=ENV=dev",
             ]
-        },
-        {
-            "name": "philchat emulator-5554 dev",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "philchat",
-            "program": "lib/main.dart",
-            "deviceId": "emulator-5554",
-            "args": [
-                "--dart-define=ENV=dev"
-            ]
-        },
-        {
-            "name": "philchat emulator-5554 prod",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "philchat",
-            "program": "lib/main.dart",
-            "deviceId": "emulator-5554",
-        },
-        {
-            "name": "philchat emulator-5556 dev",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "philchat",
-            "program": "lib/main.dart",
-            "deviceId": "emulator-5556",
-            "args": [
-                "--dart-define=ENV=dev"
-            ]
-        },
-        {
-            "name": "philchat emulator-5556 prod",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "philchat",
-            "program": "lib/main.dart",
-            "deviceId": "emulator-5556",
-        },
-        {
-            "name": "philchat emulator-5558 prod",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "philchat",
-            "program": "lib/main.dart",
-            "deviceId": "emulator-5558",
-        },
-        {
-            "name": "v5_apps",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-            "name": "v5_apps (profile mode)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
-        },
-        {
-            "name": "v5_apps (release mode)",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "release"
-        },
-        {
-            "name": "PhilGo - Yves: iPhone 16 Pro Max: Dev",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "apps/philgo",
-            "program": "lib/main.dart",
-            "deviceId": "13620911-7CB1-4865-91F6-6A0B3A5CAD54",
-            "args": [
-                "--dart-define=ENV=dev"
-            ]
-        },
-        {
-            "name": "PhilGo - charles: iPhone 16 Pro Max: Dev",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "apps/philgo",
-            "program": "lib/main.dart",
-            "deviceId": "E2A8425E-ED75-48AF-83A9-DF82B972BF89",
-            "args": [
-                "--dart-define=ENV=dev"
-            ]
-        },
-        {
-            "name": "PhilGo - charles: iPhone (2) mobile",
-            "request": "launch",
-            "type": "dart",
-            "cwd": "apps/philgo",
-            "program": "lib/main.dart",
-            "deviceId": "00008030-000D445A11A3802E",
-            "args": [
-                "--dart-define=ENV=dev"
-            ]
-        },
+        }
     ]
 }
