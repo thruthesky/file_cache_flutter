@@ -13,7 +13,6 @@ class PostViewScreen extends StatefulWidget {
 
   static Future<Post?> Function(BuildContext ctx, Post post) push =
       (ctx, post) => ctx.push(routeName, extra: post);
-  static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
 
   final Post post;
 
@@ -24,21 +23,21 @@ class PostViewScreen extends StatefulWidget {
 }
 
 class _PostViewScreenState extends State<PostViewScreen> {
-  Post? postDetails;
+  Post? post;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchPostDetails();
+    loadPost();
   }
 
-  Future _fetchPostDetails() async {
+  Future loadPost() async {
     try {
       final details = await getPost(widget.post.idx);
 
       setState(() {
-        postDetails = details;
+        post = details;
         isLoading = false;
       });
     } catch (e) {
@@ -49,21 +48,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
-  List<String> get files =>
-      postDetails != null ? postDetails!.files : widget.post.files;
-  String get content =>
-      postDetails != null ? postDetails!.content : widget.post.content;
-  String get subject =>
-      postDetails != null ? postDetails!.subject : widget.post.subject;
-  String get nickname =>
-      postDetails != null ? postDetails!.nickname : widget.post.nickname;
+  List<String> get files => post != null ? post!.files : widget.post.files;
+  String get content => post != null ? post!.content : widget.post.content;
+  String get subject => post != null ? post!.subject : widget.post.subject;
+  String get nickname => post != null ? post!.nickname : widget.post.nickname;
   String get timeString => widget.post.timeString;
-  String get noOfView => postDetails != null
-      ? postDetails!.no_of_view.toString()
+  String get noOfView => post != null
+      ? post!.no_of_view.toString()
       : widget.post.no_of_view.toString();
-  int get noOfComment => postDetails != null
-      ? postDetails!.no_of_comment
-      : widget.post.no_of_comment;
+  int get noOfComment =>
+      post != null ? post!.no_of_comment : widget.post.no_of_comment;
 
   @override
   Widget build(BuildContext context) {
@@ -97,11 +91,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
               PostViewContent(isLoading: isLoading, content: content),
               SizedBox(height: 16),
               PostViewButtons(
-                post: postDetails,
+                post: post,
                 onTapUpdate: () async {
                   final updatedPost = await PostUpdateScreen.push(
                     context,
-                    post: postDetails!,
+                    post: post!,
                   );
                   if (updatedPost != null) {
                     widget.post.subject = updatedPost.subject;
@@ -110,7 +104,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                   if (updatedPost != null) {
                     setState(() {
-                      postDetails = updatedPost;
+                      post = updatedPost;
                     });
                   }
                 },
@@ -119,8 +113,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
               ReplyToPost(
                 post: widget.post,
                 onCreated: (createdComment) {
-                  postDetails?.comments.add(createdComment);
-                  postDetails!.no_of_comment += 1;
+                  post?.comments.add(createdComment);
+                  post!.no_of_comment += 1;
                   setState(() {});
                   showSuccessSnackBar(context, 'Comment has created');
                 },
@@ -129,28 +123,28 @@ class _PostViewScreenState extends State<PostViewScreen> {
               CommentDetailListView(
                 noOfComment: noOfComment,
                 isLoading: isLoading,
-                postDetails: postDetails,
+                post: post,
                 onReplied: (createdComment) {
-                  int? where = postDetails?.comments.indexWhere(
+                  int? where = post?.comments.indexWhere(
                     (comment) => comment.idx == createdComment.idx_parent,
                   );
 
                   if (where != null) {
-                    postDetails?.comments.insert(where + 1, createdComment);
+                    post?.comments.insert(where + 1, createdComment);
                   }
 
-                  postDetails!.no_of_comment += 1;
+                  post!.no_of_comment += 1;
 
                   setState(() {});
                   showSuccessSnackBar(context, 'A comment has replied');
                 },
                 onUpdated: (oldComment, updatedComment) {
-                  // int? where = postDetails?.comments.indexWhere(
+                  // int? where = post?.comments.indexWhere(
                   //   (comment) => comment.idx == updatedComment.idx,
                   // );
 
                   // if (where != null && where >= 0) {
-                  //   postDetails?.comments[where] = updatedComment;
+                  //   post?.comments[where] = updatedComment;
                   // }
 
                   oldComment.content = updatedComment.content;

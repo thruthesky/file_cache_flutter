@@ -211,14 +211,37 @@ final router = GoRouter(
       path: PostViewScreen.routeName,
       name: PostViewScreen.routeName,
       builder: (context, state) {
-        Post? post = state.extra as Post?;
+        // 안전한 타입 체크: Post 객체 직접 전달 또는 Map으로 전달 모두 지원
+        Post? post;
+        if (state.extra is Post) {
+          // Post 객체가 직접 전달된 경우 (일반적인 경우)
+          post = state.extra as Post;
+        } else if (state.extra is Map<String, dynamic>) {
+          // Map으로 전달된 경우 (예: {'post': post})
+          final extraMap = state.extra as Map<String, dynamic>;
+          post = extraMap['post'] as Post?;
+        }
+
+        // NavigationState fallback (웹 URL 접근 시)
         if (post == null) {
           final data = NavigationState.of(context, listen: false).data;
           if (data is Map<String, dynamic> && data['post'] != null) {
             post = data['post'] as Post?;
           }
         }
-        return PostViewScreen(post: post!);
+
+        // post가 여전히 null인 경우 (Toggle Select Widget Mode 등)
+        // 홈 화면으로 리다이렉트하여 에러 방지
+        if (post == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go(HomeScreen.routeName);
+          });
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        return PostViewScreen(post: post);
       },
     ),
     GoRoute(
