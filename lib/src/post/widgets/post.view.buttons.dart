@@ -16,18 +16,16 @@ class PostViewButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
+        // 좋아요 버튼 - TextButton.icon으로 Flat 디자인 구현
+        TextButton.icon(
+          style: TextButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           onPressed: () {
-            // Implement like functionality
+            // 좋아요 기능 구현 예정
           },
           icon: const FaIcon(FontAwesomeIcons.thumbsUp, size: 16),
-          label: Text(
-            LibTr.of(context)!.like,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          label: Text(LibTr.of(context)!.like),
         ),
         // SizedBox(width: 4),
         // ElevatedButton.icon(
@@ -44,30 +42,26 @@ class PostViewButtons extends StatelessWidget {
         //   ),
         // ),
         SizedBox(width: 8),
-        ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
+        // 공유 버튼 - TextButton.icon으로 Flat 디자인 구현
+        TextButton.icon(
+          style: TextButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           onPressed: () {
-            // Implement share functionality
+            // 공유 기능 구현 예정
           },
           icon: const FaIcon(FontAwesomeIcons.share, size: 16),
-          label: Text(
-            LibTr.of(context)!.share,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          label: Text(LibTr.of(context)!.share),
         ),
         Spacer(),
-        ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
+        // 수정 버튼 - TextButton.icon으로 Flat 디자인 구현
+        TextButton.icon(
+          style: TextButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           onPressed: onTapUpdate,
           icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
-          label: Text(
-            LibTr.of(context)!.edit,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          label: Text(LibTr.of(context)!.edit),
         ),
       ],
     );

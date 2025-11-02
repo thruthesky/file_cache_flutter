@@ -185,11 +185,13 @@ Future<T> func<T>(
       serverMessage = 'Failed to read error response body.';
     }
 
+    final slimErrorMessage = '$serverMessage';
+    if (alertOnError) {
+      showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n$slimErrorMessage');
+    }
+
     final errorMessage =
         '$errorPrefix ${httpStatusCode(dioError.response?.statusCode ?? 0)} ${dioError.response?.statusMessage ?? ''} $serverMessage';
-    if (alertOnError) {
-      showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n(1) $errorMessage');
-    }
     throw Exception(errorMessage);
   } catch (e) {
     debugLog('philgoApi() 에러: catch(e) $e');

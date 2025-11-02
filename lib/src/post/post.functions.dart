@@ -41,7 +41,7 @@ Future<PostList> getPosts({
 }
 
 Future<Post> getPost(int id) async {
-  final res = await func('post.view', data: {'idx': id});
+  final res = await func('post_view', data: {'idx': id});
   // debugLog('getPost: $res');
 
   final post = Post.fromJson(res);

@@ -9,14 +9,14 @@ class CommentDetailListView extends StatelessWidget {
     super.key,
     required this.noOfComment,
     required this.isLoading,
-    required this.postDetails,
+    required this.post,
     required this.onReplied,
     required this.onUpdated,
   });
 
   final int noOfComment;
   final bool isLoading;
-  final Post? postDetails;
+  final Post? post;
   final Function(Comment) onReplied;
   final Function(Comment, Comment) onUpdated;
 
@@ -58,8 +58,8 @@ class CommentDetailListView extends StatelessWidget {
         SizedBox(height: 24),
         if (isLoading)
           const Center(child: CircularProgressIndicator.adaptive())
-        else if (postDetails?.comments.isNotEmpty == true)
-          ...postDetails!.comments.map(
+        else if (post?.comments.isNotEmpty == true)
+          ...post!.comments.map(
             (comment) => CommentDetail(
               comment: comment,
               onReplied: onReplied,
