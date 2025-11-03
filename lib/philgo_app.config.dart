@@ -3,7 +3,7 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 class PhilGoAppConfig {
   static List<PostCategoryItem> getCategories() {
     final List<PostCategoryItem> categories = [
-      if (Config.isDevelopment)
+      if (Config.isDevelopment || Config.isJaeho)
         PostCategoryItem(postId: 'temp', category: null),
       PostCategoryItem(postId: 'freetalk', category: null),
       PostCategoryItem(postId: 'qna', category: null),
