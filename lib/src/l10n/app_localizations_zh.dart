@@ -134,6 +134,15 @@ class LibTrZh extends LibTr {
   String get edit => '编辑';
 
   @override
+  String get delete => '删除';
+
+  @override
+  String get delete_comment_confirmation => '您确定要删除此评论吗？';
+
+  @override
+  String get successfully_deleted => '评论已成功删除';
+
+  @override
   String get enterComment => '输入您的评论';
 
   @override

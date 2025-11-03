@@ -134,6 +134,15 @@ class LibTrJa extends LibTr {
   String get edit => '編集';
 
   @override
+  String get delete => '削除';
+
+  @override
+  String get delete_comment_confirmation => '本当にこのコメントを削除しますか？';
+
+  @override
+  String get successfully_deleted => 'コメントが正常に削除されました';
+
+  @override
   String get enterComment => 'コメントを入力してください';
 
   @override

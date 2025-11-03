@@ -311,6 +311,24 @@ abstract class LibTr {
   /// **'Edit'**
   String get edit;
 
+  /// Label for the delete action
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Confirmation message displayed when deleting a comment
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this comment?'**
+  String get delete_comment_confirmation;
+
+  /// Message displayed when a comment is deleted successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Comment deleted successfully'**
+  String get successfully_deleted;
+
   /// Placeholder text for comment input field
   ///
   /// In en, this message translates to:

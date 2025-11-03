@@ -137,6 +137,16 @@ class LibTrEn extends LibTr {
   String get edit => 'Edit';
 
   @override
+  String get delete => 'Delete';
+
+  @override
+  String get delete_comment_confirmation =>
+      'Are you sure you want to delete this comment?';
+
+  @override
+  String get successfully_deleted => 'Comment deleted successfully';
+
+  @override
   String get enterComment => 'Enter your comment';
 
   @override

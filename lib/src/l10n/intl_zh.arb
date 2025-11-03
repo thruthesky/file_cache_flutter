@@ -176,6 +176,18 @@
     "@edit": {
         "description": "Label for the edit action"
     },
+    "delete": "删除",
+    "@delete": {
+        "description": "Label for the delete action"
+    },
+    "successfully_deleted": "评论已成功删除",
+    "@successfully_deleted": {
+        "description": "Message displayed when a comment is deleted successfully"
+    },
+    "delete_comment_confirmation": "您确定要删除此评论吗？",
+    "@delete_comment_confirmation": {
+        "description": "Confirmation message displayed when deleting a comment"
+    },
     "enterComment": "输入您的评论",
     "@enterComment": {
         "description": "Placeholder text for comment input field"

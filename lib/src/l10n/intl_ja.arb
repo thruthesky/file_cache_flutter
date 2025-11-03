@@ -176,6 +176,18 @@
     "@edit": {
         "description": "Label for the edit action"
     },
+    "delete": "削除",
+    "@delete": {
+        "description": "Label for the delete action"
+    },
+    "delete_comment_confirmation": "本当にこのコメントを削除しますか？",
+    "@delete_comment_confirmation": {
+        "description": "Confirmation message displayed when deleting a comment"
+    },
+    "successfully_deleted": "コメントが正常に削除されました",
+    "@successfully_deleted": {
+        "description": "Message displayed when a comment is deleted successfully"
+    },
     "enterComment": "コメントを入力してください",
     "@enterComment": {
         "description": "Placeholder text for comment input field"
@@ -577,7 +589,6 @@
         "description": "Title for updating a comment"
     },
     "join_url": "招待URL",
-
     "copied_to_clipboard": "クリップボードにコピーされました",
     "receive_share_choose_post_or_chat": "1. `投稿を作成`するか`チャットに送信`するかを選択",
     "receive_share_choose_chat": "1. `チャットに送信`を選択",

@@ -77,6 +77,26 @@ class _CommentDetailState extends State<CommentDetail> {
                           }),
                           child: Text(LibTr.of(context)!.edit),
                         ),
+                        TextButton(
+                          onPressed: () async {
+                            final confirmed = await showConfirmDialog(
+                              message: LibTr.of(
+                                context,
+                              )!.delete_comment_confirmation,
+                            );
+                            if (confirmed) {
+                              await func(
+                                'delete_comment_func',
+                                data: {'idx': widget.comment.idx},
+                              );
+                              showSuccessSnackBar(
+                                context,
+                                LibTr.of(context)!.successfully_deleted,
+                              );
+                            }
+                          },
+                          child: Text(LibTr.of(context)!.delete),
+                        ),
                       ],
                     ),
                   ],

@@ -134,6 +134,15 @@ class LibTrKo extends LibTr {
   String get edit => '수정';
 
   @override
+  String get delete => '삭제';
+
+  @override
+  String get delete_comment_confirmation => '이 댓글을 삭제하시겠습니까?';
+
+  @override
+  String get successfully_deleted => '댓글이 성공적으로 삭제되었습니다';
+
+  @override
   String get enterComment => '댓글을 입력하세요';
 
   @override
