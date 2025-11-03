@@ -5,7 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "🚀 PhilGo - Simulator",
+            "name": "🚀 PhilGo - Simulator - jaeho",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
+            "args": [
+                "--dart-define=ENV=jaeho"
+            ]
+        },
+        {
+            "name": "🚀 PhilGo - Simulator - dev",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
