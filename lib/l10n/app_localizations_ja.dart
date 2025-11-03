@@ -331,4 +331,17 @@ class LoJa extends Lo {
 
   @override
   String get preferNotToSay => '回答しない';
+
+  @override
+  String get userProfile => 'User Profile';
+
+  @override
+  String get unknownUser => 'Unknown User';
+
+  @override
+  String get profileInformation => 'Profile Information';
+
+  @override
+  String get additionalInfoNotAvailable =>
+      'Additional information is not available';
 }

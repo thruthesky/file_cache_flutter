@@ -742,6 +742,30 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Prefer not to say'**
   String get preferNotToSay;
+
+  /// Title for user profile screen
+  ///
+  /// In en, this message translates to:
+  /// **'User Profile'**
+  String get userProfile;
+
+  /// Default text when user nickname is not available
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown User'**
+  String get unknownUser;
+
+  /// Section title for user profile information
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Information'**
+  String get profileInformation;
+
+  /// Message shown when no additional user information is available
+  ///
+  /// In en, this message translates to:
+  /// **'Additional information is not available'**
+  String get additionalInfoNotAvailable;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

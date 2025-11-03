@@ -1,1 +1,15 @@
-{}
+{
+  "ja": [
+    "userProfile",
+    "unknownUser",
+    "profileInformation",
+    "additionalInfoNotAvailable"
+  ],
+
+  "zh": [
+    "userProfile",
+    "unknownUser",
+    "profileInformation",
+    "additionalInfoNotAvailable"
+  ]
+}

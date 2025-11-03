@@ -157,9 +157,14 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   SubmitButton(
                     isLoading: isLoading,
                     onPressed: () async {
+                      if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
+
                       setState(() {
                         isLoading = true;
                       });
+
                       try {
                         final created = await philgoApiCreatePost({
                           'post_id': HomePostCategory.postId,

@@ -401,5 +401,21 @@
   "preferNotToSay": "Prefer not to say",
   "@preferNotToSay": {
     "description": "Gender option for users who prefer not to disclose their gender"
+  },
+  "userProfile": "User Profile",
+  "@userProfile": {
+    "description": "Title for user profile screen"
+  },
+  "unknownUser": "Unknown User",
+  "@unknownUser": {
+    "description": "Default text when user nickname is not available"
+  },
+  "profileInformation": "Profile Information",
+  "@profileInformation": {
+    "description": "Section title for user profile information"
+  },
+  "additionalInfoNotAvailable": "Additional information is not available",
+  "@additionalInfoNotAvailable": {
+    "description": "Message shown when no additional user information is available"
   }
 }

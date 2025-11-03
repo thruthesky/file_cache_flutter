@@ -1,5 +1,6 @@
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
+import 'package:philgo/screens/user/user.profile.screen.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -84,6 +85,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 nickname: nickname,
                 timeString: widget.post.timeString,
                 noOfView: noOfView,
+                onTapNickname: () {
+                  /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
+                  UserProfileScreen.push(
+                    context,
+                    firebaseUid: widget.post.firebase_uid,
+                    nickname: widget.post.nickname,
+                    photoUrl: widget.post.photo_url,
+                  );
+                },
               ),
               SizedBox(height: 16),
               if (hasImages) PostViewImages(files: files),
@@ -110,16 +120,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 },
               ),
               SizedBox(height: 16),
-              ReplyToPost(
-                post: widget.post,
-                onCreated: (createdComment) {
-                  post?.comments.add(createdComment);
-                  post!.no_of_comment += 1;
-                  setState(() {});
-                  showSuccessSnackBar(context, 'Comment has created');
-                },
-              ),
-              SizedBox(height: 32),
               CommentDetailListView(
                 noOfComment: noOfComment,
                 isLoading: isLoading,
@@ -154,6 +154,20 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 },
               ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ReplyToPost(
+            post: widget.post,
+            onCreated: (createdComment) {
+              post?.comments.add(createdComment);
+              post!.no_of_comment += 1;
+              setState(() {});
+              showSuccessSnackBar(context, 'Comment has created');
+            },
           ),
         ),
       ),

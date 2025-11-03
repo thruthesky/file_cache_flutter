@@ -331,4 +331,16 @@ class LoKo extends Lo {
 
   @override
   String get preferNotToSay => '응답하지 않음';
+
+  @override
+  String get userProfile => '사용자 프로필';
+
+  @override
+  String get unknownUser => '알 수 없는 사용자';
+
+  @override
+  String get profileInformation => '프로필 정보';
+
+  @override
+  String get additionalInfoNotAvailable => '추가 정보가 없습니다';
 }
