@@ -488,7 +488,7 @@ Future<Post> philgoApiUpdatePost(RecordType data) async {
     // post.update 엔드포인트 호출
     // auth: true로 Firebase ID Token 자동 포함
     final response = await func<Map<String, dynamic>>(
-      'post_update_func',
+      'update_post_func',
       data: cleanedData,
       alertOnError: true, // 에러 시 자동으로 다이얼로그 표시
     );

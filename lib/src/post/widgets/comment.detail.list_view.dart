@@ -24,38 +24,6 @@ class CommentDetailListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            FaIcon(
-              FontAwesomeIcons.solidMessageDots,
-              size: 24,
-              color: Colors.black,
-            ),
-            SizedBox(width: 16),
-            Text(
-              LibTr.of(context)!.comment,
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(width: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                noOfComment.toString(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 24),
         if (isLoading)
           const Center(child: CircularProgressIndicator.adaptive())
         else if (post?.comments.isNotEmpty == true)
