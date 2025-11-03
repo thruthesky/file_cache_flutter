@@ -59,17 +59,9 @@ class UserService {
   /// Initialize admin user by fetching from philgo API
   /// This sets the adminUserUid variable
   /// This will be used in chat room and other places
-  void initAdminUser() {
+  Future<void> initAdminUser() async {
     // Get admin user uid from philgo API
-    philgoApiGetAdminUserUid()
-        .then((String uid) {
-          if (uid.isEmpty) return;
-          adminUserUid = uid;
-          log('Admin user uid: $adminUserUid');
-        })
-        .catchError((error) {
-          log('Failed to get admin user uid: $error');
-        });
+    adminUserUid = await philgoApiGetAdminUserUid();
   }
 
   void initUserPresence() {
