@@ -154,7 +154,9 @@ Future<T> func<T>(
       // 서버 에러 메시지 파싱 시도
       final responseData = dioError.response?.data;
 
-      if (responseData is Map<String, dynamic>) {
+      if (dioError.response?.statusCode == 403) {
+        serverMessage = '403: 접근이 거부되었습니다. 권한이 없을 수 있습니다.';
+      } else if (responseData is Map<String, dynamic>) {
         if (responseData['message'] != null) {
           serverMessage =
               '${responseData['message']} (코드: ${responseData['error'] ?? 'UNKNOWN'})';

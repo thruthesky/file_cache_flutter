@@ -98,50 +98,41 @@ class MessagingService {
 
   /// Get FCM token and save to database
   Future<void> saveToken() async {
-    try {
-      final token = await FirebaseMessaging.instance.getToken();
-      if (token == null || token.isEmpty) {
-        debugPrint('FCM token is null or empty');
-        return;
-      }
-
-      // debugPrint('FCM Token: $token');
-
-      final data = <String, dynamic>{
-        DEVICE: getDeviceType(),
-        TOKEN: token,
-        DOMAIN: domain,
-      };
-      String tokenCache = token;
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        data['uid'] = user.uid;
-        tokenCache = token + user.uid;
-      }
-
-      // debugPrint('FCM token saved to database: $token');
-
-      // If token is the same as last saved, skip API call
-      if (tokenCache == lastSavedToken) {
-        // debugPrint('Skip subscribing to all users topic: $token');
-        return;
-      }
-
-      // // Update last saved token with token + uid if logged in
-      lastSavedToken = tokenCache; // Subscribe to all users topic via API
-      try {
-        await func<Map<String, dynamic>>(
-          MessagingConfig.messagingSaveTokenApi,
-          data: data,
-        );
-
-        // debugPrint('Successfully subscribed to all users topic');
-      } catch (e) {
-        debugPrint('Error subscribing to topic: $e');
-      }
-    } catch (e) {
-      debugPrint('Error saving FCM token: $e');
+    final token = await FirebaseMessaging.instance.getToken();
+    if (token == null || token.isEmpty) {
+      debugPrint('FCM token is null or empty');
+      return;
     }
+
+    // debugPrint('FCM Token: $token');
+
+    final data = <String, dynamic>{
+      DEVICE: getDeviceType(),
+      TOKEN: token,
+      DOMAIN: domain,
+    };
+    String tokenCache = token;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      data['uid'] = user.uid;
+      tokenCache = token + user.uid;
+    }
+
+    // debugPrint('FCM token saved to database: $token');
+
+    // If token is the same as last saved, skip API call
+    if (tokenCache == lastSavedToken) {
+      // debugPrint('Skip subscribing to all users topic: $token');
+      return;
+    }
+
+    // // Update last saved token with token + uid if logged in
+    lastSavedToken = tokenCache; // Subscribe to all users topic via API
+
+    await func<Map<String, dynamic>>(
+      MessagingConfig.messagingSaveTokenApi,
+      data: data,
+    );
   }
 
   /// Setup message handlers for foreground, background, and terminated states
