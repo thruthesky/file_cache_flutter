@@ -1,6 +1,8 @@
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/user/user.profile.screen.dart';
+import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -47,6 +49,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
         isLoading = false;
       });
     }
+  }
+
+  bool isMine() {
+    final myIdx = AppState.of(context).user?.idx;
+    if (myIdx == null) return false;
+    return myIdx == widget.post.idx_member;
   }
 
   List<String> get files => post != null ? post!.files : widget.post.files;
@@ -102,6 +110,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
               SizedBox(height: 16),
               PostViewButtons(
                 post: post,
+                myPost: isMine(),
                 onTapUpdate: () async {
                   final updatedPost = await PostUpdateScreen.push(
                     context,
@@ -116,6 +125,21 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     setState(() {
                       post = updatedPost;
                     });
+                  }
+                },
+                onTapDelete: () async {
+                  debugLog("deleted post");
+
+                  final confirm = await showConfirmDialog(
+                    message: Lo.of(context)!.confirmDeletePost,
+                  );
+
+                  if (confirm) {
+                    await philgoApiDeletePost(widget.post.idx);
+
+                    if (context.mounted) {
+                      context.pop();
+                    }
                   }
                 },
               ),

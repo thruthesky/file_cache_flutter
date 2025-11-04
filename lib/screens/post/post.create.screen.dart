@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/widgets/post/upload.preview.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -71,11 +73,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
             // Delete uploaded files from server if any
             if (urls.isNotEmpty) {
-                // Delete all files in parallel for better performance
-                await Future.wait(
-                  urls.map((url) => philgoApiFileDelete(url)),
-                );
-                debugLog('All file deletions completed');
+              // Delete all files in parallel for better performance
+              await Future.wait(urls.map((url) => philgoApiFileDelete(url)));
+              debugLog('All file deletions completed');
             }
 
             // Exit the screen
@@ -168,14 +168,27 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       (url) => UploadPreview(
                         url: url,
                         onDelete: () async {
+                          // 삭제 확인 다이얼로그 표시
+                          final confirm = await showConfirmDialog(
+                            message: Lo.of(context)!.confirmDeleteImage,
+                          );
+
+                          if (confirm != true) return;
+
                           try {
                             debugLog("삭제 시작: $url");
                             await philgoApiFileDelete(url);
 
                             urls.remove(url);
                             setState(() {});
-                            // 배열에서 제거
                             debugLog("삭제 완료: $url");
+
+                            if (context.mounted) {
+                              showSuccessSnackBar(
+                                context,
+                                Lo.of(context)!.imageDeletedSuccess,
+                              );
+                            }
                           } catch (e) {
                             debugLog("파일 삭제 실패: $e");
                             showSafeErrorDialog("파일 삭제에 실패했습니다.");
@@ -225,20 +238,6 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     },
                   ),
                   const Spacer(),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.tertiaryContainer,
-                      foregroundColor: Theme.of(
-                        context,
-                      ).colorScheme.onTertiaryContainer,
-                    ),
-                    child: Text(T.cancel),
-                  ),
                   SubmitButton(
                     isLoading: isLoading,
                     onPressed: () async {
@@ -272,7 +271,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         });
 
                         if (context.mounted) {
-                          context.pop(created);
+                          await PostViewScreen.push(context, created);
                         }
                       } finally {
                         setState(() {

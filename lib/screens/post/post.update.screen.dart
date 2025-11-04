@@ -1,4 +1,7 @@
 import 'package:philgo/globals.dart';
+import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/widgets/post/loading.box.dart';
+import 'package:philgo/widgets/post/upload.preview.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -28,12 +31,17 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
   final _contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  int uploadingCount = 0; // 업로드 진행 중인 파일 개수 추적
+  List<String> urls = [];
+  List<String> newUrls = [];
+  bool filesDeleted = false; // 파일이 삭제되었는지 추적
 
   @override
   void initState() {
     super.initState();
     _titleController.text = widget.post.subject;
     _contentController.text = widget.post.content;
+    urls = List<String>.from(widget.post.files);
   }
 
   @override
@@ -41,6 +49,12 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  bool _hasChanges() {
+    return _titleController.text.trim() != widget.post.subject ||
+        _contentController.text.trim() != widget.post.content ||
+        newUrls.isNotEmpty;
   }
 
   @override
@@ -54,7 +68,47 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
         ),
         leading: IconButton(
           icon: const FaIcon(FontAwesomeIcons.lightArrowLeft),
-          onPressed: () => context.pop(),
+          onPressed: () async {
+            newUrls = urls
+                .where((url) => !widget.post.files.contains(url))
+                .toList();
+
+            if (!_hasChanges()) {
+              if (context.mounted) context.pop();
+              return;
+            }
+
+            final confirm = await showConfirmDialog(
+              message: LibTr.of(context)!.confirmDiscard,
+            );
+
+            if (confirm != true) return;
+
+            if (newUrls.isNotEmpty) {
+              await Future.wait(newUrls.map((url) => philgoApiFileDelete(url)));
+              debugLog('새로 추가된 파일 삭제 완료');
+            }
+
+            // 파일이 삭제되었거나 개수가 변경되었으면 최신 데이터 가져오기
+            final filesChanged =
+                filesDeleted || urls.length != widget.post.files.length;
+            debugLog(
+              'filesDeleted: $filesDeleted, urls.length: ${urls.length}, original: ${widget.post.files.length}',
+            );
+            debugLog('filesChanged: $filesChanged');
+
+            final result = filesChanged ? await getPost(widget.post.idx) : null;
+
+            if (result != null) {
+              debugLog(
+                'Returning updated post with ${result.files.length} files',
+              );
+            } else {
+              debugLog('No changes, returning null');
+            }
+
+            if (context.mounted) context.pop(result);
+          },
         ),
       ),
       body: Form(
@@ -104,42 +158,118 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                 },
               ),
               const SizedBox(height: 24),
+
+              if (urls.isNotEmpty || uploadingCount > 0)
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ...urls.map(
+                      (url) => UploadPreview(
+                        url: url,
+                        onDelete: () async {
+                          // 삭제 확인 다이얼로그 표시
+                          final confirm = await showConfirmDialog(
+                            message: Lo.of(context)!.confirmDeleteImage,
+                          );
+
+                          if (confirm != true) return;
+
+                          try {
+                            debugLog("삭제 시작: $url");
+
+                            urls.remove(url);
+                            filesDeleted = true; // 파일이 삭제됨을 표시
+
+                            setState(() {});
+
+                            await philgoApiUpdatePost({
+                              'idx': widget.post.idx,
+                              'files': urls,
+                            });
+
+                            debugLog("삭제 완료: $url");
+
+                            if (context.mounted) {
+                              showSuccessSnackBar(
+                                context,
+                                Lo.of(context)!.imageDeletedSuccess,
+                              );
+                            }
+                          } catch (e) {
+                            debugLog("파일 삭제 실패: $e");
+                            showSafeErrorDialog("파일 삭제에 실패했습니다.");
+                          }
+                        },
+                      ),
+                    ),
+                    ...List.generate(
+                      uploadingCount,
+                      (index) => const LoadingBox(),
+                    ),
+                  ],
+                ),
+
+              if (urls.isNotEmpty || uploadingCount > 0)
+                const SizedBox(height: 16),
+
               Row(
                 children: [
                   FileUpload(
                     file: true,
                     video: true,
                     child: const FaIcon(FontAwesomeIcons.lightCamera),
+                    onBeforeUpload: () {
+                      // 업로드 시작 시 카운트 증가
+                      setState(() {
+                        uploadingCount++;
+                      });
+                    },
                     onUploaded: (url) {
                       debugLog('url: $url');
+                      urls.add(url);
+                      // 업로드 완료 시 카운트 감소
+                      setState(() {
+                        uploadingCount--;
+                      });
+                    },
+                    onCancelled: () {
+                      // 업로드 취소 시 카운트 감소
+                      setState(() {
+                        uploadingCount--;
+                      });
                     },
                   ),
                   Spacer(),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.tertiaryContainer,
-                      foregroundColor: Theme.of(
-                        context,
-                      ).colorScheme.onTertiaryContainer,
-                    ),
-                    child: Text(T.cancel),
-                  ),
                   SubmitButton(
                     isLoading: isLoading,
                     onPressed: () async {
+                      // 업로드가 진행 중인지 확인
+                      if (uploadingCount > 0) {
+                        showSafeErrorDialog(
+                          'Image upload is in progress, please try again in a moment.',
+                        );
+                        return;
+                      }
+
+                      if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
+
                       setState(() {
                         isLoading = true;
                       });
+
                       try {
+                        // 파일 URL 목록 디버그 로그
+                        debugLog('업로드된 파일 개수: ${urls.length}');
+                        debugLog('파일 URL 목록: $urls');
+
                         final updated = await philgoApiUpdatePost({
                           'idx': widget.post.idx,
                           'subject': _titleController.text,
                           'content': _contentController.text,
+                          'files': urls, // 파일 목록 포함
                         });
 
                         if (context.mounted) {

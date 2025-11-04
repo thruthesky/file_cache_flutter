@@ -351,4 +351,17 @@ class LoEn extends Lo {
   @override
   String get additionalInfoNotAvailable =>
       'Additional information is not available';
+
+  @override
+  String get confirmDeletePost => 'Are you sure you want to delete this post?';
+
+  @override
+  String get postDeletedSuccess => 'Post deleted successfully';
+
+  @override
+  String get confirmDeleteImage =>
+      'Are you sure you want to delete this image?';
+
+  @override
+  String get imageDeletedSuccess => 'Image deleted successfully';
 }

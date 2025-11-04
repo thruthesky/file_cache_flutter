@@ -105,5 +105,9 @@
     "dayUnit": "日",
     "selectYearAndMonthFirst": "请先选择年份和月份",
     "selectYearFirst": "请先选择年份",
-    "selectMonthFirst": "请先选择月份"
+    "selectMonthFirst": "请先选择月份",
+    "confirmDeletePost": "您确定要删除此帖子吗？",
+    "postDeletedSuccess": "帖子删除成功",
+    "confirmDeleteImage": "您确定要删除此图片吗？",
+    "imageDeletedSuccess": "图片删除成功"
 }

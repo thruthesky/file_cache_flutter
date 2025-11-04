@@ -343,4 +343,16 @@ class LoKo extends Lo {
 
   @override
   String get additionalInfoNotAvailable => '추가 정보가 없습니다';
+
+  @override
+  String get confirmDeletePost => '이 게시글을 삭제하시겠습니까?';
+
+  @override
+  String get postDeletedSuccess => '게시글이 성공적으로 삭제되었습니다';
+
+  @override
+  String get confirmDeleteImage => '이 이미지를 삭제하시겠습니까?';
+
+  @override
+  String get imageDeletedSuccess => '이미지가 성공적으로 삭제되었습니다';
 }

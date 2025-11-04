@@ -343,4 +343,16 @@ class LoZh extends Lo {
   @override
   String get additionalInfoNotAvailable =>
       'Additional information is not available';
+
+  @override
+  String get confirmDeletePost => '您确定要删除此帖子吗？';
+
+  @override
+  String get postDeletedSuccess => '帖子删除成功';
+
+  @override
+  String get confirmDeleteImage => '您确定要删除此图片吗？';
+
+  @override
+  String get imageDeletedSuccess => '图片删除成功';
 }

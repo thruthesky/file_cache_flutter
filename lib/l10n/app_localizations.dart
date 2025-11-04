@@ -766,6 +766,30 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Additional information is not available'**
   String get additionalInfoNotAvailable;
+
+  /// Confirmation message for deleting a post
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this post?'**
+  String get confirmDeletePost;
+
+  /// Success message after deleting a post
+  ///
+  /// In en, this message translates to:
+  /// **'Post deleted successfully'**
+  String get postDeletedSuccess;
+
+  /// Confirmation message for deleting an image
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this image?'**
+  String get confirmDeleteImage;
+
+  /// Success message after deleting an image
+  ///
+  /// In en, this message translates to:
+  /// **'Image deleted successfully'**
+  String get imageDeletedSuccess;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

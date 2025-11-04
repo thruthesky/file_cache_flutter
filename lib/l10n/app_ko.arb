@@ -109,5 +109,9 @@
   "userProfile": "사용자 프로필",
   "unknownUser": "알 수 없는 사용자",
   "profileInformation": "프로필 정보",
-  "additionalInfoNotAvailable": "추가 정보가 없습니다"
+  "additionalInfoNotAvailable": "추가 정보가 없습니다",
+  "confirmDeletePost": "이 게시글을 삭제하시겠습니까?",
+  "postDeletedSuccess": "게시글이 성공적으로 삭제되었습니다",
+  "confirmDeleteImage": "이 이미지를 삭제하시겠습니까?",
+  "imageDeletedSuccess": "이미지가 성공적으로 삭제되었습니다"
 }

@@ -105,5 +105,9 @@
     "dayUnit": "日",
     "selectYearAndMonthFirst": "まず年と月を選択してください",
     "selectYearFirst": "まず年を選択してください",
-    "selectMonthFirst": "まず月を選択してください"
+    "selectMonthFirst": "まず月を選択してください",
+    "confirmDeletePost": "この投稿を削除してもよろしいですか？",
+    "postDeletedSuccess": "投稿が正常に削除されました",
+    "confirmDeleteImage": "この画像を削除してもよろしいですか？",
+    "imageDeletedSuccess": "画像が正常に削除されました"
 }

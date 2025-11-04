@@ -344,4 +344,16 @@ class LoJa extends Lo {
   @override
   String get additionalInfoNotAvailable =>
       'Additional information is not available';
+
+  @override
+  String get confirmDeletePost => 'この投稿を削除してもよろしいですか？';
+
+  @override
+  String get postDeletedSuccess => '投稿が正常に削除されました';
+
+  @override
+  String get confirmDeleteImage => 'この画像を削除してもよろしいですか？';
+
+  @override
+  String get imageDeletedSuccess => '画像が正常に削除されました';
 }

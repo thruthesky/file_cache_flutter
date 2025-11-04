@@ -417,5 +417,21 @@
   "additionalInfoNotAvailable": "Additional information is not available",
   "@additionalInfoNotAvailable": {
     "description": "Message shown when no additional user information is available"
+  },
+  "confirmDeletePost": "Are you sure you want to delete this post?",
+  "@confirmDeletePost": {
+    "description": "Confirmation message for deleting a post"
+  },
+  "postDeletedSuccess": "Post deleted successfully",
+  "@postDeletedSuccess": {
+    "description": "Success message after deleting a post"
+  },
+  "confirmDeleteImage": "Are you sure you want to delete this image?",
+  "@confirmDeleteImage": {
+    "description": "Confirmation message for deleting an image"
+  },
+  "imageDeletedSuccess": "Image deleted successfully",
+  "@imageDeletedSuccess": {
+    "description": "Success message after deleting an image"
   }
 }
