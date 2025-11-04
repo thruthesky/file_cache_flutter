@@ -17,6 +17,9 @@ class PostViewScreen extends StatefulWidget {
   static Future<Post?> Function(BuildContext ctx, Post post) push =
       (ctx, post) => ctx.push(routeName, extra: post);
 
+  static void Function(BuildContext ctx, Post post) pushReplacement =
+      (ctx, post) => ctx.pushReplacement(routeName, extra: post);
+
   final Post post;
 
   const PostViewScreen({super.key, required this.post});

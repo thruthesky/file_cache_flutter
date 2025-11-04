@@ -198,11 +198,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     ),
                     ...List.generate(
                       uploadingCount,
-                      (index) => const LoadingBox(
-                        width: 120,
-                        height: 120,
-                        borderRadius: 8,
-                      ),
+                      (index) => const LoadingBox(),
                     ),
                   ],
                 ),
@@ -271,7 +267,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         });
 
                         if (context.mounted) {
-                          await PostViewScreen.push(context, created);
+                          PostViewScreen.pushReplacement(context, created);
                         }
                       } finally {
                         setState(() {

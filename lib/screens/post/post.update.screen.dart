@@ -34,7 +34,6 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
   int uploadingCount = 0; // 업로드 진행 중인 파일 개수 추적
   List<String> urls = [];
   List<String> newUrls = [];
-  bool filesDeleted = false; // 파일이 삭제되었는지 추적
 
   @override
   void initState() {
@@ -49,12 +48,6 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
-  }
-
-  bool _hasChanges() {
-    return _titleController.text.trim() != widget.post.subject ||
-        _contentController.text.trim() != widget.post.content ||
-        newUrls.isNotEmpty;
   }
 
   @override
@@ -73,29 +66,19 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                 .where((url) => !widget.post.files.contains(url))
                 .toList();
 
-            if (!_hasChanges()) {
-              if (context.mounted) context.pop();
-              return;
-            }
-
-            final confirm = await showConfirmDialog(
-              message: LibTr.of(context)!.confirmDiscard,
-            );
-
-            if (confirm != true) return;
-
             if (newUrls.isNotEmpty) {
               await Future.wait(newUrls.map((url) => philgoApiFileDelete(url)));
-              debugLog('새로 추가된 파일 삭제 완료');
+              debugLog(
+                "---------------> delete all of the images that is uploaded!",
+              );
             }
 
-            // 파일이 삭제되었거나 개수가 변경되었으면 최신 데이터 가져오기
             final filesChanged =
-                filesDeleted || urls.length != widget.post.files.length;
+               urls.length != widget.post.files.length;
+
             debugLog(
-              'filesDeleted: $filesDeleted, urls.length: ${urls.length}, original: ${widget.post.files.length}',
+              '---------------------------------> filesChanged: $filesChanged',
             );
-            debugLog('filesChanged: $filesChanged');
 
             final result = filesChanged ? await getPost(widget.post.idx) : null;
 
@@ -178,9 +161,8 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                           try {
                             debugLog("삭제 시작: $url");
 
+                            await philgoApiFileDelete(url);
                             urls.remove(url);
-                            filesDeleted = true; // 파일이 삭제됨을 표시
-
                             setState(() {});
 
                             await philgoApiUpdatePost({
