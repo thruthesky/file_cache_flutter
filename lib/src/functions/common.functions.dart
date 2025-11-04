@@ -26,3 +26,22 @@ String cut(
   }
   return text;
 }
+
+/// Converts the string list to a single comma-separated string.
+///
+/// [list] List of strings to convert
+/// [separator] separator (default: ',')
+///
+/// Return value: comma-separated string
+///
+/// Example:
+/// ```dart
+/// listToCommaSeparatedString(['john', 'fred', 'elmo'])
+/// 결과: 'john,fred,elmo'
+///
+/// listToCommaSeparatedString(['apple', 'banana', 'cherry'], separator: ' | ')
+/// 결과: 'apple | banana | cherry'
+/// ```
+String listToCommaSeparatedString(List<String> list, {String separator = ','}) {
+  return list.join(separator);
+}

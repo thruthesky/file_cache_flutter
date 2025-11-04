@@ -666,9 +666,7 @@ Future<FileUploadResponse?> philgoApiFileUpload(
   }
 }
 
-/// 파일을 PhilGo 파일 서버에서 삭제합니다.
-///
-/// [fileUrl] 삭제할 파일의 URL
+
 Future<void> philgoApiFileDelete(String? fileUrl) async {
   // URL 유효성 검사
   if (fileUrl == null || fileUrl.isEmpty) {
@@ -682,29 +680,23 @@ Future<void> philgoApiFileDelete(String? fileUrl) async {
     // Firebase 토큰 가져오기
     final auth = fb_auth.FirebaseAuth.instance;
     final uid = auth.currentUser?.uid;
-    // 파일 삭제 URL
-    final deleteUrl = '${Config.fileServerUrl}delete.php';
+
+    // UID 검증 - 인증된 사용자만 파일 삭제 가능
+    if (uid == null) {
+      throw Exception('인증되지 않은 사용자입니다. 로그인이 필요합니다.');
+    }
+
+    // Config.fileDeleteUrl 사용 - URL 파라미터 방식
+    final deleteUrl = Config.fileDeleteUrl(uid, fileUrl);
 
     // 디버깅용 요청 정보 로깅
     debugLog('파일 삭제 요청:');
     debugLog('  - URL: $deleteUrl');
     debugLog('  - 삭제할 파일: $fileUrl');
-    debugLog('  - UID 포함: ${uid != null ? "예: $uid" : "아니오"}');
+    debugLog('  - UID: $uid');
 
-    // 요청 데이터 준비
-    // PHP의 $_REQUEST/$_POST로 읽을 수 있도록 form-urlencoded 형식으로 전송
-    final data = {'url': fileUrl, 'uid': uid};
-    debugLog('  data: $data');
-
-    // 삭제 요청
-    // contentType을 명시하지 않으면 Dio가 자동으로 application/x-www-form-urlencoded 사용
-    // 또는 명시적으로 설정 가능: Options(contentType: Headers.formUrlEncodedContentType)
-    final response = await dio.post(
-      deleteUrl,
-      data: data,
-      // PHP $_REQUEST/$_POST로 읽기 위해 json이 아닌 form-urlencoded 사용
-      options: Options(contentType: Headers.formUrlEncodedContentType),
-    );
+    // GET 요청으로 파일 삭제 (URL 파라미터 방식)
+    final response = await dio.get(deleteUrl);
 
     // 응답 상태 확인
     if (response.statusCode != 200) {

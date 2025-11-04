@@ -314,11 +314,17 @@ class _DateSelectorState extends State<DateSelector> {
                           // 선택되지 않은 항목에 따라 적절한 메시지 생성
                           String message = '';
                           if (selectedYear == null && selectedMonth == null) {
-                            message = widget.selectYearAndMonthFirstMessage ?? '먼저 연도와 월을 선택해주세요';
+                            message =
+                                widget.selectYearAndMonthFirstMessage ??
+                                '먼저 연도와 월을 선택해주세요';
                           } else if (selectedYear == null) {
-                            message = widget.selectYearFirstMessage ?? '먼저 연도를 선택해주세요';
+                            message =
+                                widget.selectYearFirstMessage ??
+                                '먼저 연도를 선택해주세요';
                           } else {
-                            message = widget.selectMonthFirstMessage ?? '먼저 월을 선택해주세요';
+                            message =
+                                widget.selectMonthFirstMessage ??
+                                '먼저 월을 선택해주세요';
                           }
 
                           // ScaffoldMessenger로 경고 스낵바 표시
