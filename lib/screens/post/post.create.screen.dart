@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/widgets/post/loading.box.dart';
 
 class PostCreateScreen extends StatefulWidget {
   static const String routeName = '/post-create';
@@ -24,6 +25,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   final _contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  int uploadingCount = 0; // 현재 진행 중인 업로드 개수 추적
   List<String> urls = [];
   @override
   void dispose() {
@@ -43,7 +45,22 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         ),
         leading: IconButton(
           icon: const FaIcon(FontAwesomeIcons.lightArrowLeft),
-          onPressed: () => context.pop(),
+          onPressed: () async {
+            // 제목이나 내용이 입력되어 있는지 확인
+            if (_titleController.text.trim().isNotEmpty ||
+                _contentController.text.trim().isNotEmpty) {
+              // 작성 중인 내용이 있으면 확인 대화상자 표시
+              final confirm = await showConfirmDialog(
+                message: LibTr.of(context)!.confirmDiscard,
+              );
+
+              if (confirm == true && context.mounted) {
+                context.pop();
+              }
+            } else {
+              context.pop();
+            }
+          },
         ),
       ),
       body: Form(
@@ -120,12 +137,35 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               ),
               const SizedBox(height: 24),
 
-              ...urls.map(
-                (url) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Image.network(thumbnail_image_url(url)),
+              if (urls.isNotEmpty || uploadingCount > 0)
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ...urls.map(
+                      (url) => ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          thumbnail_image_url(url),
+                          width: 120,
+                          height: 120,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    ...List.generate(
+                      uploadingCount,
+                      (index) => const LoadingBox(
+                        width: 120,
+                        height: 120,
+                        borderRadius: 8,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+
+              if (urls.isNotEmpty || uploadingCount > 0)
+                const SizedBox(height: 16),
 
               Row(
                 children: [
@@ -133,13 +173,28 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     file: true,
                     video: true,
                     child: const FaIcon(FontAwesomeIcons.lightCamera),
+                    onBeforeUpload: () {
+                      // 업로드 시작 시 카운트 증가
+                      setState(() {
+                        uploadingCount++;
+                      });
+                    },
                     onUploaded: (url) {
                       debugLog('url: $url');
                       urls.add(url);
-                      setState(() {});
+                      // 업로드 완료 시 카운트 감소
+                      setState(() {
+                        uploadingCount--;
+                      });
+                    },
+                    onCancelled: () {
+                      // 업로드 취소 시 카운트 감소
+                      setState(() {
+                        uploadingCount--;
+                      });
                     },
                   ),
-                  Spacer(),
+                  const Spacer(),
                   ElevatedButton(
                     onPressed: () {
                       context.pop();
@@ -157,6 +212,14 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   SubmitButton(
                     isLoading: isLoading,
                     onPressed: () async {
+                      // 업로드가 진행 중인지 확인
+                      if (uploadingCount > 0) {
+                        showSafeErrorDialog(
+                          'Image upload is in progress, please try again in a moment.',
+                        );
+                        return;
+                      }
+
                       if (!_formKey.currentState!.validate()) {
                         return;
                       }
@@ -166,11 +229,16 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       });
 
                       try {
+                        // 파일 URL 목록 디버그 로그
+                        debugLog('업로드된 파일 개수: ${urls.length}');
+                        debugLog('파일 URL 목록: $urls');
+
                         final created = await philgoApiCreatePost({
                           'post_id': HomePostCategory.postId,
                           'category': HomePostCategory.category,
                           'subject': _titleController.text,
                           'content': _contentController.text,
+                          'files': urls, 
                         });
 
                         if (context.mounted) {
