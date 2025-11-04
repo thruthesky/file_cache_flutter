@@ -7,62 +7,66 @@ class PostViewButtons extends StatelessWidget {
     super.key,
     required this.post,
     required this.onTapUpdate,
+    required this.onTapDelete,
+    required this.myPost,
   });
 
   final Post? post;
   final VoidCallback onTapUpdate;
+  final VoidCallback onTapDelete;
+  final bool myPost;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // 좋아요 버튼 - TextButton.icon으로 Flat 디자인 구현
+        // Like button - Flat design with TextButton.icon
         TextButton.icon(
           style: TextButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           onPressed: () {
-            // 좋아요 기능 구현 예정
+            // Like functionality to be implemented
           },
           icon: const FaIcon(FontAwesomeIcons.thumbsUp, size: 16),
           label: Text(LibTr.of(context)!.like),
         ),
-        // SizedBox(width: 4),
-        // ElevatedButton.icon(
-        //   style: ElevatedButton.styleFrom(
-        //     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        //   ),
-        //   onPressed: () {
-        //     // Implement comment functionality
-        //   },
-        //   icon: const FaIcon(FontAwesomeIcons.comment, size: 16),
-        //   label: Text(
-        //     LibTr.of(context)!.comment,
-        //     style: Theme.of(context).textTheme.bodyMedium,
-        //   ),
-        // ),
         SizedBox(width: 8),
-        // 공유 버튼 - TextButton.icon으로 Flat 디자인 구현
+        // Share button - Flat design with TextButton.icon
         TextButton.icon(
           style: TextButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           onPressed: () {
-            // 공유 기능 구현 예정
+            // Share functionality to be implemented
           },
           icon: const FaIcon(FontAwesomeIcons.share, size: 16),
           label: Text(LibTr.of(context)!.share),
         ),
         Spacer(),
-        // 수정 버튼 - TextButton.icon으로 Flat 디자인 구현
-        TextButton.icon(
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        // 내 게시글인 경우에만 수정/삭제 버튼 표시
+        if (myPost) ...[
+          // Edit button - Flat design with TextButton.icon
+          TextButton.icon(
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            onPressed: onTapUpdate,
+            icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
+            label: Text(LibTr.of(context)!.edit),
           ),
-          onPressed: onTapUpdate,
-          icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
-          label: Text(LibTr.of(context)!.edit),
-        ),
+          SizedBox(width: 8),
+          // Delete button - Flat design with TextButton.icon
+          TextButton.icon(
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: onTapDelete,
+            icon: const FaIcon(FontAwesomeIcons.trash, size: 16),
+            label: Text(LibTr.of(context)!.delete),
+          ),
+        ],
       ],
     );
   }

@@ -666,7 +666,6 @@ Future<FileUploadResponse?> philgoApiFileUpload(
   }
 }
 
-
 Future<void> philgoApiFileDelete(String? fileUrl) async {
   // URL 유효성 검사
   if (fileUrl == null || fileUrl.isEmpty) {
@@ -773,6 +772,40 @@ Future<void> philgoApiFileDelete(String? fileUrl) async {
     // 기타 예외 처리
     debugLog('파일 삭제 중 예기치 않은 오류: $e');
     debugLog('오류 타입: ${e.runtimeType}');
+    rethrow;
+  }
+}
+
+/// Delete a post with PhilGo v6 API
+///
+/// It validates and display error dialog if validation fails.
+///
+/// Returns true if deletion is successful.
+Future<bool> philgoApiDeletePost(int idx) async {
+  debugLog('게시글 삭제 시작:');
+  debugLog('  - idx: $idx');
+
+  try {
+    final response = await func<Map<String, dynamic>>(
+      'delete_post_func',
+      data: {'idx': idx},
+      alertOnError: true,
+    );
+
+    // API가 에러를 반환한 경우 처리
+    if (response['error'] != null) {
+      final userMessage = response['message'] ?? '게시글 삭제에 실패했습니다.';
+      debugLog('게시글 삭제 실패: ${response['error']} - $userMessage');
+
+      showSafeErrorDialog(userMessage);
+      throw Exception('게시글 삭제 실패: ${response['error']}');
+    }
+
+    debugLog('게시글 삭제 성공: idx=$idx');
+
+    return true;
+  } catch (e) {
+    debugLog('게시글 삭제 중 예외 발생: $e');
     rethrow;
   }
 }

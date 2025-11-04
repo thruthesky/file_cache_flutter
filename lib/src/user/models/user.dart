@@ -3,6 +3,7 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class User {
   final String uid;
+  final int? idx; // 사용자 인덱스 번호 (선택적)
   final String nickname;
   final String nicknameLowerCase;
   final String name;
@@ -16,6 +17,7 @@ class User {
 
   User({
     required this.uid,
+    this.idx,
     required this.nickname,
     required this.nicknameLowerCase,
     this.photoUrl,
@@ -31,6 +33,7 @@ class User {
     // log('user fromJson: $json');
     return User(
       uid: json['uid'] ?? '',
+      idx: json['idx'] != null ? safeParseInt(json['idx']) : null, // idx가 없으면 null 반환
       nickname: json['nickname'] ?? '',
       nicknameLowerCase: json['nickname_lower_case'] ?? '',
       photoUrl: json['photo_url'],
@@ -48,6 +51,7 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
+      'idx': idx, // 사용자 인덱스 번호
       'nickname': nickname,
       'nickname_lower_case': nicknameLowerCase,
       'photo_url': photoUrl,
@@ -61,6 +65,7 @@ class User {
     final data = snapshot.value as Map<dynamic, dynamic>;
     return User(
       uid: snapshot.key!,
+      idx: data['idx'], // 사용자 인덱스 번호 (선택적)
       nickname: data['nickname'] ?? '',
       nicknameLowerCase: data['nickname_lower_case'] ?? '',
       photoUrl: data['photo_url'],
