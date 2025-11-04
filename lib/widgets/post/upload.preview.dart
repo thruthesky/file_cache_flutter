@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// A widget that displays a **preview thumbnail** for an uploaded file or image.
@@ -16,6 +17,9 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 /// - [url] → The URL of the uploaded file or image.
 ///   It is passed through the `thumbnail_image_url()` function from the `philgo_v6_flutter` package
 ///   to get an optimized thumbnail version.
+/// - [onDelete] → An asynchronous callback triggered when the delete button
+///   (X icon) is tapped. It allows you to handle removal logic such as
+///   deleting from a list or performing API calls.
 ///
 /// ### Example:
 /// ```dart
@@ -24,6 +28,9 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 ///   width: 100,
 ///   height: 100,
 ///   borderRadius: 12,
+///   onDelete: () async {
+///     debugLog('Deleted image');
+///   },
 /// )
 /// ```
 ////// ### Notes:
@@ -35,6 +42,7 @@ class UploadPreview extends StatefulWidget {
   final double height;
   final double borderRadius;
   final String url;
+  final Future<void> Function() onDelete;
 
   const UploadPreview({
     super.key,
@@ -42,6 +50,7 @@ class UploadPreview extends StatefulWidget {
     this.height = 120.0,
     this.borderRadius = 8.0,
     required this.url,
+    required this.onDelete,
   });
 
   @override
@@ -51,14 +60,42 @@ class UploadPreview extends StatefulWidget {
 class _UploadPreviewState extends State<UploadPreview> {
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(widget.borderRadius),
-      child: Image.network(
-        thumbnail_image_url(widget.url),
-        width: widget.width,
-        height: widget.height,
-        fit: BoxFit.cover,
-      ),
+    return Stack(
+      children: [
+        // 이미지 프리뷰
+        ClipRRect(
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          child: Image.network(
+            thumbnail_image_url(widget.url),
+            width: widget.width,
+            height: widget.height,
+            fit: BoxFit.cover,
+          ),
+        ),
+        // 삭제 버튼 (우측 상단)
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: widget.onDelete,
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.errorContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.solidXmark,
+                  size: 14,
+                  color: Theme.of(context).colorScheme.onErrorContainer,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

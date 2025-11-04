@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/state/forum.state.dart';
+import 'package:philgo/widgets/post/upload.preview.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/widgets/post/loading.box.dart';
@@ -25,7 +26,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   final _contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
-  int uploadingCount = 0; // 현재 진행 중인 업로드 개수 추적
+  int uploadingCount = 0; // Track number of ongoing uploads
   List<String> urls = [];
   @override
   void dispose() {
@@ -46,18 +47,39 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         leading: IconButton(
           icon: const FaIcon(FontAwesomeIcons.lightArrowLeft),
           onPressed: () async {
-            // 제목이나 내용이 입력되어 있는지 확인
-            if (_titleController.text.trim().isNotEmpty ||
-                _contentController.text.trim().isNotEmpty) {
-              // 작성 중인 내용이 있으면 확인 대화상자 표시
-              final confirm = await showConfirmDialog(
-                message: LibTr.of(context)!.confirmDiscard,
-              );
+            // Check if there's any content (title, content, or uploaded files)
+            final hasContent =
+                _titleController.text.trim().isNotEmpty ||
+                _contentController.text.trim().isNotEmpty ||
+                urls.isNotEmpty;
 
-              if (confirm == true && context.mounted) {
-                context.pop();
-              }
-            } else {
+            // If no content, just exit
+            if (!hasContent) {
+              context.pop();
+              return;
+            }
+
+            // Show confirmation dialog if there's content
+            final confirm = await showConfirmDialog(
+              message: LibTr.of(context)!.confirmDiscard,
+            );
+
+            // User cancelled - don't exit
+            if (confirm != true) {
+              return;
+            }
+
+            // Delete uploaded files from server if any
+            if (urls.isNotEmpty) {
+                // Delete all files in parallel for better performance
+                await Future.wait(
+                  urls.map((url) => philgoApiFileDelete(url)),
+                );
+                debugLog('All file deletions completed');
+            }
+
+            // Exit the screen
+            if (context.mounted) {
               context.pop();
             }
           },
@@ -143,14 +165,22 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   runSpacing: 8,
                   children: [
                     ...urls.map(
-                      (url) => ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          thumbnail_image_url(url),
-                          width: 120,
-                          height: 120,
-                          fit: BoxFit.cover,
-                        ),
+                      (url) => UploadPreview(
+                        url: url,
+                        onDelete: () async {
+                          try {
+                            debugLog("삭제 시작: $url");
+                            await philgoApiFileDelete(url);
+
+                            urls.remove(url);
+                            setState(() {});
+                            // 배열에서 제거
+                            debugLog("삭제 완료: $url");
+                          } catch (e) {
+                            debugLog("파일 삭제 실패: $e");
+                            showSafeErrorDialog("파일 삭제에 실패했습니다.");
+                          }
+                        },
                       ),
                     ),
                     ...List.generate(
@@ -238,7 +268,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                           'category': HomePostCategory.category,
                           'subject': _titleController.text,
                           'content': _contentController.text,
-                          'files': urls, 
+                          'files': urls,
                         });
 
                         if (context.mounted) {
