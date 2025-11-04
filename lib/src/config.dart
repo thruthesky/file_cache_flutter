@@ -66,4 +66,12 @@ class Config {
     }
     return 'https://file.philgo.com/v5-files/';
   }
+
+  static String get fileUploadUrl {
+    return '${Config.fileServerUrl}upload.php';
+  }
+
+  static String fileDeleteUrl(String uid, String url) {
+    return '${Config.fileServerUrl}delete.php?uid=$uid&url=$url';
+  }
 }

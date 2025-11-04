@@ -359,7 +359,9 @@ Future<Post> philgoApiCreatePost(RecordType data) async {
   debugLog('  - 제목: ${cleanedData['subject']}'); // subject 필드 사용
   debugLog('  - 카테고리: ${cleanedData['category'] ?? '(미지정)'}'); // 카테고리는 옵션
   debugLog('  - 내용 길이: ${cleanedData['content'].toString().length}자');
-  debugLog('  - 파일 개수: ${data['files'] is List ? (data['files'] as List).length : 0}개');
+  debugLog(
+    '  - 파일 개수: ${data['files'] is List ? (data['files'] as List).length : 0}개',
+  );
 
   // ========== 3. API 호출 ==========
   try {
@@ -599,7 +601,7 @@ Future<FileUploadResponse?> philgoApiFileUpload(
     });
 
     // 파일 서버 URL
-    final uploadUrl = '${Config.fileServerUrl}upload.php';
+    final uploadUrl = Config.fileUploadUrl;
 
     // 파일 업로드 요청
     final response = await dio.post(
