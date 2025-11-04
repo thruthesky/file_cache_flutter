@@ -898,6 +898,12 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'View'**
   String get view_profile;
+
+  /// Confirmation message when user tries to leave without saving
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to discard your changes?'**
+  String get confirmDiscard;
 }
 
 class _LibTrDelegate extends LocalizationsDelegate<LibTr> {

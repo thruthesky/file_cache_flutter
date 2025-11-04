@@ -472,4 +472,7 @@ class LibTrEn extends LibTr {
 
   @override
   String get view_profile => 'View';
+
+  @override
+  String get confirmDiscard => 'Are you sure you want to discard your changes?';
 }

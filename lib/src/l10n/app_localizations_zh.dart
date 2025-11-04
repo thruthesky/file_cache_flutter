@@ -457,4 +457,7 @@ class LibTrZh extends LibTr {
 
   @override
   String get view_profile => '查看个人资料';
+
+  @override
+  String get confirmDiscard => '确定要丢弃正在编写的内容吗？';
 }

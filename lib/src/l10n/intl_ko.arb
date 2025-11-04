@@ -132,5 +132,6 @@
     "receive_share_open": "오픈",
     "receive_share_send": "전송",
     "receive_share": "공유 받기",
-    "view_profile": "보기"
+    "view_profile": "보기",
+    "confirmDiscard": "작성 중인 내용을 버리시겠습니까?"
 }

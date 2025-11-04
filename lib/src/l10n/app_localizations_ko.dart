@@ -459,4 +459,7 @@ class LibTrKo extends LibTr {
 
   @override
   String get view_profile => '보기';
+
+  @override
+  String get confirmDiscard => '작성 중인 내용을 버리시겠습니까?';
 }

@@ -459,4 +459,7 @@ class LibTrJa extends LibTr {
 
   @override
   String get view_profile => 'プロフィールを見る';
+
+  @override
+  String get confirmDiscard => '作成中の内容を破棄してもよろしいですか？';
 }

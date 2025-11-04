@@ -600,5 +600,6 @@
     "receive_share_open": "オープン",
     "receive_share_send": "送信",
     "receive_share": "受信共有",
-    "view_profile": "プロフィールを見る"
+    "view_profile": "プロフィールを見る",
+    "confirmDiscard": "作成中の内容を破棄してもよろしいですか？"
 }

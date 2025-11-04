@@ -348,12 +348,18 @@ Future<Post> philgoApiCreatePost(RecordType data) async {
     cleanedData['category'] = data['category'].toString().trim();
   }
 
+  // files는 옵션 - 업로드된 파일 URL 목록
+  if (data['files'] != null && data['files'] is List) {
+    cleanedData['files'] = data['files'];
+  }
+
   // ========== 2. 디버깅 정보 로깅 (개발 시 유용) ==========
   debugLog('게시글 작성 시작:');
   debugLog('  - post_id: ${cleanedData['post_id']}'); // post_id 로깅
   debugLog('  - 제목: ${cleanedData['subject']}'); // subject 필드 사용
   debugLog('  - 카테고리: ${cleanedData['category'] ?? '(미지정)'}'); // 카테고리는 옵션
   debugLog('  - 내용 길이: ${cleanedData['content'].toString().length}자');
+  debugLog('  - 파일 개수: ${data['files'] is List ? (data['files'] as List).length : 0}개');
 
   // ========== 3. API 호출 ==========
   try {

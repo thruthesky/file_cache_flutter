@@ -639,5 +639,9 @@
     "view_profile": "View",
     "@view_profile": {
         "description": "Label for the view  button"
+    },
+    "confirmDiscard": "Are you sure you want to discard your changes?",
+    "@confirmDiscard": {
+        "description": "Confirmation message when user tries to leave without saving"
     }
 }

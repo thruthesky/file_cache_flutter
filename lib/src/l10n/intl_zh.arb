@@ -600,5 +600,6 @@
     "receive_share_open": "打开",
     "receive_share_send": "发送",
     "receive_share": "接收分享",
-    "view_profile": "查看个人资料"
+    "view_profile": "查看个人资料",
+    "confirmDiscard": "确定要丢弃正在编写的内容吗？"
 }
