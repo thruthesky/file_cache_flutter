@@ -71,11 +71,6 @@ class UserStats extends StatelessWidget {
           );
         }
 
-        /// TODO: Replace with actual user data from user model
-        final mockPosts = 42;
-        final mockComments = 128;
-        final mockPoints = 2560;
-
         /// Show user stats when logged in (로그인한 경우 사용자 통계 표시)
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16),
