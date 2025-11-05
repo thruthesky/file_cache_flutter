@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/widgets/post/title.only.post.card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Home news widget displaying posts with category filters
@@ -258,26 +259,6 @@ class HighlightedPostCard extends StatelessWidget {
                 const PostImagePlaceholder(),
               const SizedBox(height: 16),
 
-              /// Category badge
-              if (post.category.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    post.category,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                ),
-              if (post.category.isNotEmpty) const SizedBox(height: 12),
-
               /// Title
               Text(
                 post.subject,
@@ -316,118 +297,6 @@ class PostImagePlaceholder extends StatelessWidget {
           FontAwesomeIcons.lightImage,
           size: 48,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
-  }
-}
-
-/// Title-only post card widget (2nd-5th posts)
-class TitleOnlyPostCard extends StatelessWidget {
-  final Post post;
-
-  const TitleOnlyPostCard({super.key, required this.post});
-
-  /// Get color for category (카테고리 색상 가져오기)
-  Color _getCategoryColor(BuildContext context, String category) {
-    switch (category) {
-      case '뉴스':
-        return Theme.of(context).colorScheme.primary;
-      case 'info':
-        return Theme.of(context).colorScheme.tertiary;
-      case '공지사항':
-        return Colors.orange;
-      case '생활의팁':
-        return Colors.green;
-      default:
-        return Theme.of(context).colorScheme.secondary;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () async {
-          await PostViewScreen.push(context, post);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              /// Category indicator dot (카테고리 표시 점)
-              if (post.category.isNotEmpty)
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _getCategoryColor(context, post.category),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              if (post.category.isNotEmpty) const SizedBox(width: 12),
-
-              /// Title and meta info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      post.subject,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        if (post.category.isNotEmpty) ...[
-                          Text(
-                            post.category,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: _getCategoryColor(
-                                    context,
-                                    post.category,
-                                  ),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '•',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              /// Views count (조회수)
-              Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.lightEye,
-                    size: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

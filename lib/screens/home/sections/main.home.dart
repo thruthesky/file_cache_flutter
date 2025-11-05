@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/widgets/home/home.news.dart';
+import 'package:philgo/widgets/home/latest.posts.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/home/user.stats.dart';
 
@@ -29,7 +31,10 @@ class _MainHomeState extends State<MainHome> {
               child: Row(
                 children: [
                   /// Philgo icon (Philgo 아이콘)
-                  const PhilGoLogoTriangles(size: 40),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: const PhilGoLogoTriangles(size: 40),
+                  ),
                   const SizedBox(width: 8),
 
                   /// PHILGO text (PHILGO 텍스트)
@@ -53,17 +58,35 @@ class _MainHomeState extends State<MainHome> {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
                 /// User stats widget
                 const UserStats(),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
                 const HomeNews(),
 
+                const SizedBox(height: 8),
+
+                /// Community posts section (커뮤니티 게시물 섹션)
+                const LatestPosts(
+                  titleName: 'Community',
+                  postId: 'freetalk',
+                  icon: FontAwesomeIcons.lightComments,
+                ),
+
+                const SizedBox(height: 8),
+
+                /// QnA posts section (질문답변 게시물 섹션)
+                const LatestPosts(
+                  titleName: 'QnA',
+                  postId: 'qna',
+                  icon: FontAwesomeIcons.lightCircleQuestion,
+                ),
+
                 /// Bottom spacing
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
               ],
             ),
           ),

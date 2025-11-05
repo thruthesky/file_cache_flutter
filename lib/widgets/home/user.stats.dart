@@ -82,57 +82,56 @@ class UserStats extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
-            children: [
-              /// User avatar (사용자 아바타)
-              UserAvatar(user: user, size: 60),
-              const SizedBox(width: 16),
+              children: [
+                /// User avatar (사용자 아바타)
+                UserAvatar(user: user, size: 60),
+                const SizedBox(width: 16),
 
-              /// User info and stats
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// User name
-                    Text(
-                      user.nickname.isNotEmpty ? user.nickname : user.uid,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                /// User info and stats
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// User name
+                      Text(
+                        user.nickname.isNotEmpty ? user.nickname : user.uid,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-                    /// Stats row: posts, comments, points with icons and containers
-                    Row(
-                      children: [
-                        /// Number of posts with icon
-                        StatContainer(
-                          icon: FontAwesomeIcons.lightFileLines,
-                          value: mockPosts.toString(),
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
+                      /// Stats row: posts, comments, points with icons and containers
+                      Row(
+                        children: [
+                          /// Number of posts with icon
+                          StatContainer(
+                            icon: FontAwesomeIcons.lightFileLines,
+                            value: user.noOfPost.toString(),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
 
-                        /// Number of comments with icon
-                        StatContainer(
-                          icon: FontAwesomeIcons.lightComments,
-                          value: mockComments.toString(),
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                        const SizedBox(width: 8),
+                          /// Number of comments with icon
+                          StatContainer(
+                            icon: FontAwesomeIcons.lightComments,
+                            value: user.noOfComment.toString(),
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          const SizedBox(width: 8),
 
-                        /// Points with icon
-                        StatContainer(
-                          icon: FontAwesomeIcons.lightCoins,
-                          value: mockPoints.toString(),
-                          color: Theme.of(context).colorScheme.tertiary,
-                        ),
-                      ],
-                    ),
-                  ],
+                          /// Points with icon
+                          StatContainer(
+                            icon: FontAwesomeIcons.lightCoins,
+                            value: user.point.toString(),
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
             ),
           ),
         );
