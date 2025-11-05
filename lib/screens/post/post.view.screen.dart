@@ -96,6 +96,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 nickname: nickname,
                 timeString: widget.post.timeString,
                 noOfView: noOfView,
+                photoUrl: widget.post.photo_url,
                 onTapNickname: () {
                   /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
                   UserProfileScreen.push(
