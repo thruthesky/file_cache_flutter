@@ -212,7 +212,7 @@ class PostsList extends StatelessWidget {
           /// First post - Highlighted card
           HighlightedPostCard(post: posts[0]),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
 
           /// Remaining posts - Title only
           ...posts.skip(1).take(4).map((post) => TitleOnlyPostCard(post: post)),
