@@ -7,11 +7,14 @@ class CommentDetail extends StatefulWidget {
     required this.comment,
     required this.onReplied,
     required this.onUpdated,
+    required this.onDeleted,
+    
   });
   final Comment comment;
 
   final Function(Comment) onReplied;
   final Function(Comment) onUpdated;
+  final Function(Comment) onDeleted;
 
   @override
   State<CommentDetail> createState() => _CommentDetailState();
@@ -89,10 +92,14 @@ class _CommentDetailState extends State<CommentDetail> {
                                 'delete_comment_func',
                                 data: {'idx': widget.comment.idx},
                               );
-                              showSuccessSnackBar(
-                                context,
-                                LibTr.of(context)!.successfully_deleted,
-                              );
+                              if (context.mounted) {
+                                showSuccessSnackBar(
+                                  context,
+                                  LibTr.of(context)!.successfully_deleted,
+                                );
+                                // Notify parent widget to remove this comment from the list
+                                widget.onDeleted(widget.comment);
+                              }
                             }
                           },
                           child: Text(LibTr.of(context)!.delete),

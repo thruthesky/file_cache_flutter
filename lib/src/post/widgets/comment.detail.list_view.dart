@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Opinionated comment detail list view for post view screen.
@@ -12,6 +11,7 @@ class CommentDetailListView extends StatelessWidget {
     required this.post,
     required this.onReplied,
     required this.onUpdated,
+    required this.onDeleted,
   });
 
   final int noOfComment;
@@ -19,6 +19,7 @@ class CommentDetailListView extends StatelessWidget {
   final Post? post;
   final Function(Comment) onReplied;
   final Function(Comment, Comment) onUpdated;
+  final Function(Comment) onDeleted;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,7 @@ class CommentDetailListView extends StatelessWidget {
               comment: comment,
               onReplied: onReplied,
               onUpdated: (updatecomment) => onUpdated(comment, updatecomment),
+              onDeleted: onDeleted,
             ),
           )
         else
