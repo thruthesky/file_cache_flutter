@@ -8,6 +8,7 @@ class PostViewHeader extends StatelessWidget {
     required this.nickname,
     required this.timeString,
     required this.noOfView,
+    this.photoUrl,
     this.onTapNickname,
   });
 
@@ -15,6 +16,8 @@ class PostViewHeader extends StatelessWidget {
   final String nickname;
   final String timeString;
   final String noOfView;
+
+  final String? photoUrl;
 
   /// Callback function to run when nickname clicks (go to profile screen)
   final VoidCallback? onTapNickname;
@@ -34,17 +37,23 @@ class PostViewHeader extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /// 사용자 아이콘과 닉네임 영역 - 클릭 시 프로필로 이동
-            GestureDetector(
+            InkWell(
               onTap: onTapNickname,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  FaIcon(
-                    FontAwesomeIcons.lightUser,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
+                  /// 프로필 이미지 또는 기본 아이콘
+                  photoUrl != null && photoUrl!.isNotEmpty
+                      ? CircleAvatar(
+                          radius: 12,
+                          backgroundImage: NetworkImage(photoUrl!),
+                          backgroundColor: Colors.grey[300],
+                        )
+                      : FaIcon(
+                          FontAwesomeIcons.lightUser,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
                   const SizedBox(width: 8),
                   Text(
                     nickname,
