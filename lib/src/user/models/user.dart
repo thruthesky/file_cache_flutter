@@ -3,13 +3,16 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class User {
   final String uid;
-  final int? idx; // 사용자 인덱스 번호 (선택적)
+  final int? idx;
   final String nickname;
   final String nicknameLowerCase;
   final String name;
   final String gender;
   String? photoUrl;
   final int? level;
+  final int? point;
+  final int? noOfPost;
+  final int? noOfComment;
   final int birthDay;
   final int birthMonth;
   final int birthYear;
@@ -22,6 +25,9 @@ class User {
     required this.nicknameLowerCase,
     this.photoUrl,
     this.level,
+    this.point,
+    this.noOfComment,
+    this.noOfPost,
     this.name = '',
     this.gender = '',
     this.birthDay = 0,
@@ -33,11 +39,16 @@ class User {
     // log('user fromJson: $json');
     return User(
       uid: json['uid'] ?? '',
-      idx: json['idx'] != null ? safeParseInt(json['idx']) : null, // idx가 없으면 null 반환
+      idx: json['idx'] != null
+          ? safeParseInt(json['idx'])
+          : null, // idx가 없으면 null 반환
       nickname: json['nickname'] ?? '',
       nicknameLowerCase: json['nickname_lower_case'] ?? '',
       photoUrl: json['photo_url'],
       level: json['level'],
+      point: json['point'] ?? 0,
+      noOfComment: json['no_of_comment'] ?? 0,
+      noOfPost: json['no_of_post'] ?? 0,
       name: json['name'] ?? '',
       gender: json['gender'] ?? '',
       // 생년월일 값들을 안전하게 int로 변환

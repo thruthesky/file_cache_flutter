@@ -18,13 +18,8 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: alignment,
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Theme.of(context).colorScheme.surface,
-      ),
       child: Avatar(
-        size: size / .8,
+        size: size,
         radius: 75.0,
         photoUrl: user.photoUrl ?? '',
       ),
