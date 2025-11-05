@@ -167,18 +167,22 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   showSuccessSnackBar(context, 'A comment has replied');
                 },
                 onUpdated: (oldComment, updatedComment) {
-                  // int? where = post?.comments.indexWhere(
-                  //   (comment) => comment.idx == updatedComment.idx,
-                  // );
-
-                  // if (where != null && where >= 0) {
-                  //   post?.comments[where] = updatedComment;
-                  // }
-
                   oldComment.content = updatedComment.content;
 
                   setState(() {});
                   showSuccessSnackBar(context, 'A comment has updated');
+                },
+                onDeleted: (deletedComment) {
+                  // Remove the deleted comment from the list
+                  post?.comments.removeWhere(
+                    (comment) => comment.idx == deletedComment.idx,
+                  );
+
+                  // Decrease comment count
+                  post!.no_of_comment -= 1;
+
+                  // Update UI
+                  setState(() {});
                 },
               ),
             ],
@@ -188,7 +192,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ReplyToPost(
+          child: CommentToPost(
             post: widget.post,
             onCreated: (createdComment) {
               post?.comments.add(createdComment);
