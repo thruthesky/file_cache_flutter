@@ -22,7 +22,7 @@ export 'src/chat/room/chat.room_screen.dart';
 export 'src/chat/widgets/search_friends_dialog.dart';
 
 // comment
-export 'src/comment/reply_to_post.dart';
+export 'src/comment/comment_to_post.dart';
 export 'src/comment/reply_to_comment.dart';
 export 'src/comment/comment.update.dart';
 

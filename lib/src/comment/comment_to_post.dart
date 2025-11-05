@@ -2,17 +2,17 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ReplyToPost extends StatefulWidget {
-  const ReplyToPost({super.key, required this.post, required this.onCreated});
+class CommentToPost extends StatefulWidget {
+  const CommentToPost({super.key, required this.post, required this.onCreated});
 
   final Post post;
   final Function(Comment) onCreated;
 
   @override
-  State<ReplyToPost> createState() => _ReplyToCommentFormState();
+  State<CommentToPost> createState() => _ReplyToCommentFormState();
 }
 
-class _ReplyToCommentFormState extends State<ReplyToPost> {
+class _ReplyToCommentFormState extends State<CommentToPost> {
   final contentController = TextEditingController();
 
   bool isCreatingReply = false;
@@ -41,7 +41,7 @@ class _ReplyToCommentFormState extends State<ReplyToPost> {
     }
   }
 
-  void onTapReplyToPost() async {
+  void onTapCommentToPost() async {
     try {
       setState(() {
         isCreatingReply = true;
@@ -95,7 +95,7 @@ class _ReplyToCommentFormState extends State<ReplyToPost> {
                 )
               : FaIcon(FontAwesomeIcons.solidPaperPlane),
           onPressed: () {
-            isTextEmpty ? null : onTapReplyToPost();
+            isTextEmpty ? null : onTapCommentToPost();
           },
         ),
         border: OutlineInputBorder(),
