@@ -18,6 +18,7 @@ class CommentUpdate extends StatefulWidget {
 class _CommentUpdateState extends State<CommentUpdate> {
   final contentController = TextEditingController();
   bool submitting = false;
+  bool isTextEmpty = false;
 
   List<String> imageUrls = [];
   int uploadingCount = 0;
@@ -27,6 +28,53 @@ class _CommentUpdateState extends State<CommentUpdate> {
     super.initState();
     contentController.text = widget.comment.content;
     imageUrls = List<String>.from(widget.comment.files);
+    isTextEmpty = contentController.text.trim().isEmpty;
+    contentController.addListener(onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    contentController.removeListener(onTextChanged);
+    contentController.dispose();
+  }
+
+  void onTextChanged() {
+    final isEmpty = contentController.text.trim().isEmpty;
+
+    if (isEmpty != isTextEmpty) {
+      setState(() {
+        isTextEmpty = isEmpty;
+      });
+    }
+  }
+
+  Future<void> onUpdateComment() async {
+    if (uploadingCount > 0) {
+      showSafeErrorDialog(
+        'Image upload is in progress, please try again in a moment.',
+      );
+      return;
+    }
+    setState(() {
+      submitting = true;
+    });
+    try {
+      final updatedComment = await philgoApiUpdateComment({
+        'idx': widget.comment.idx,
+        'content': contentController.text,
+        'files': imageUrls.join(','),
+      });
+      debugLog('updatedComment: $updatedComment');
+      widget.onUpdated(updatedComment);
+    } catch (e) {
+      debugLog('댓글 업데이트 실패: $e');
+      showSafeErrorDialog('댓글 업데이트에 실패했습니다: $e');
+    } finally {
+      setState(() {
+        submitting = false;
+      });
+    }
   }
 
   @override
@@ -95,40 +143,26 @@ class _CommentUpdateState extends State<CommentUpdate> {
                 setState(() {});
               },
             ),
+            suffixIcon: IconButton(
+              padding: const EdgeInsets.all(16.0),
+              icon: submitting
+                  ? CircularProgressIndicator.adaptive()
+                  : isTextEmpty
+                      ? FaIcon(
+                          FontAwesomeIcons.lightPaperPlane,
+                          color: Theme.of(context)
+                              .iconTheme
+                              .color!
+                              .withValues(alpha: 0.35),
+                        )
+                      : FaIcon(FontAwesomeIcons.solidPaperPlane),
+              onPressed: () async {
+                if (isTextEmpty) return;
+                await onUpdateComment();
+              },
+            ),
             border: const OutlineInputBorder(),
           ),
-        ),
-        const SizedBox(height: 8),
-        SubmitButton(
-          isLoading: submitting,
-          onPressed: () async {
-            if (uploadingCount > 0) {
-              showSafeErrorDialog(
-                'Image upload is in progress, please try again in a moment.',
-              );
-              return;
-            }
-            setState(() {
-              submitting = true;
-            });
-            try {
-              final updatedComment = await philgoApiUpdateComment({
-                'idx': widget.comment.idx,
-                'content': contentController.text,
-                'files': imageUrls.join(','),
-              });
-              debugLog('updatedComment: $updatedComment');
-              widget.onUpdated(updatedComment);
-            } catch (e) {
-              debugLog('댓글 업데이트 실패: $e');
-              showSafeErrorDialog('댓글 업데이트에 실패했습니다: $e');
-            } finally {
-              setState(() {
-                submitting = false;
-              });
-            }
-          },
-          child: Text(LibTr.of(context)!.update),
         ),
       ],
     );
