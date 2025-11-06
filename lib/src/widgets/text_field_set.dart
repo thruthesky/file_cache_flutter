@@ -202,7 +202,11 @@ class TextFieldSet extends StatelessWidget {
                 ).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
-          TextField(controller: controller, decoration: _buildDecoration()),
+          TextField(
+            controller: controller,
+            decoration: _buildDecoration(),
+            enabled: enabled,
+          ),
           if (bottomHint != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
