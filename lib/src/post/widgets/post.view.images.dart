@@ -31,7 +31,7 @@ class PostViewImages extends StatelessWidget {
             width: double.infinity,
             errorBuilder: (context, error, stackTrace) {
               return Container(
-                height: 200,
+                height: 80,
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Center(
                   child: FaIcon(

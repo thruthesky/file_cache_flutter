@@ -462,4 +462,7 @@ class LibTrJa extends LibTr {
 
   @override
   String get confirmDiscard => '作成中の内容を破棄してもよろしいですか？';
+
+  @override
+  String get confirm_delete_comment_image => 'この画像を削除してもよろしいですか？';
 }

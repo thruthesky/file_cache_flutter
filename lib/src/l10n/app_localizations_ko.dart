@@ -462,4 +462,7 @@ class LibTrKo extends LibTr {
 
   @override
   String get confirmDiscard => '작성 중인 내용을 버리시겠습니까?';
+
+  @override
+  String get confirm_delete_comment_image => '이 이미지를 삭제하시겠습니까?';
 }

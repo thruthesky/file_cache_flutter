@@ -475,4 +475,8 @@ class LibTrEn extends LibTr {
 
   @override
   String get confirmDiscard => 'Are you sure you want to discard your changes?';
+
+  @override
+  String get confirm_delete_comment_image =>
+      'Are you sure you want to delete this image?';
 }

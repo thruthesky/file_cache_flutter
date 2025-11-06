@@ -904,6 +904,12 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'Are you sure you want to discard your changes?'**
   String get confirmDiscard;
+
+  /// Confirmation message when deleting an image from a comment
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this image?'**
+  String get confirm_delete_comment_image;
 }
 
 class _LibTrDelegate extends LocalizationsDelegate<LibTr> {

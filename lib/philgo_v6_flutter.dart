@@ -93,6 +93,8 @@ export 'src/widgets/file_upload.dart';
 export 'src/widgets/full_screen_image_viewer.dart';
 export 'src/widgets/submit_button.dart';
 export 'src/widgets/text_field_set.dart';
+export 'src/widgets/loading.box.dart';
+export 'src/widgets/upload.preview.dart';
 
 // receive share
 export 'src/receive_share/receive.share.service.dart';

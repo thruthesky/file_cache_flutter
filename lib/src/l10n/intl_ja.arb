@@ -601,5 +601,6 @@
     "receive_share_send": "送信",
     "receive_share": "受信共有",
     "view_profile": "プロフィールを見る",
-    "confirmDiscard": "作成中の内容を破棄してもよろしいですか？"
+    "confirmDiscard": "作成中の内容を破棄してもよろしいですか？",
+    "confirm_delete_comment_image": "この画像を削除してもよろしいですか？"
 }

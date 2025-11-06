@@ -460,4 +460,7 @@ class LibTrZh extends LibTr {
 
   @override
   String get confirmDiscard => '确定要丢弃正在编写的内容吗？';
+
+  @override
+  String get confirm_delete_comment_image => '确定要删除此图片吗？';
 }

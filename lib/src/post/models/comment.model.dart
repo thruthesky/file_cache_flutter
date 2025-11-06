@@ -4,6 +4,7 @@ class Comment {
   /// ! NOT MUTABLE FIELDS !
   /// * This is for updating the comment purposes only.
   String content;
+  List<String> files;
 
   /// Mutable fields
   final int idx;
@@ -18,9 +19,6 @@ class Comment {
 
   final int idx_root;
   final int depth;
-
-  // 파일 목록 (이미지, 비디오 등)
-  final List<String> files;
 
   // 사진, 비디오, 유튜브 링크 여부
   final String? hasImage; // "y" 또는 ""
