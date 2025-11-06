@@ -56,10 +56,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
-  bool isMine() {
+  bool isPostMine() {
     final myIdx = AppState.of(context).user?.idx;
     if (myIdx == null) return false;
     return myIdx == widget.post.idx_member;
+  }
+
+  bool isCommentMine(int idxMember) {
+    final myIdx = AppState.of(context).user?.idx;
+    if (myIdx == null) return false;
+    return myIdx == idxMember;
   }
 
   List<String> get files => post != null ? post!.files : widget.post.files;
@@ -116,7 +122,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
               SizedBox(height: 16),
               PostViewButtons(
                 post: post,
-                myPost: isMine(),
+                myPost: isPostMine(),
                 onTapUpdate: () async {
                   /// 댓글이 있는 경우 수정 불가
                   if (post!.no_of_comment >= 1) {
@@ -171,6 +177,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
               ),
               SizedBox(height: 16),
               CommentDetailListView(
+                myComment: isCommentMine,
                 noOfComment: noOfComment,
                 isLoading: isLoading,
                 post: post,
