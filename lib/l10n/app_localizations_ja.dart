@@ -356,4 +356,15 @@ class LoJa extends Lo {
 
   @override
   String get imageDeletedSuccess => '画像が正常に削除されました';
+
+  @override
+  String get alert => 'Alert';
+
+  @override
+  String get postWithCommentsCannotBeDeleted =>
+      'Posts with comments cannot be deleted';
+
+  @override
+  String get postWithCommentsCannotBeEdited =>
+      'Posts with comments cannot be edited';
 }

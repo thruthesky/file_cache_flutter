@@ -355,4 +355,13 @@ class LoKo extends Lo {
 
   @override
   String get imageDeletedSuccess => '이미지가 성공적으로 삭제되었습니다';
+
+  @override
+  String get alert => '알림';
+
+  @override
+  String get postWithCommentsCannotBeDeleted => '댓글이 있는 게시글은 삭제할 수 없습니다';
+
+  @override
+  String get postWithCommentsCannotBeEdited => '댓글이 있는 게시글은 수정할 수 없습니다';
 }

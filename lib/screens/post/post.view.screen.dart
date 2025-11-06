@@ -42,6 +42,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
     try {
       final details = await getPost(widget.post.idx);
 
+      debugLog('------> LOADED POST: $details');
+
       setState(() {
         post = details;
         isLoading = false;
@@ -116,6 +118,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 post: post,
                 myPost: isMine(),
                 onTapUpdate: () async {
+                  /// 댓글이 있는 경우 수정 불가
+                  if (post!.no_of_comment >= 1) {
+                    showInfoDialog(
+                      context,
+                      Lo.of(context)!.alert,
+                      Lo.of(context)!.postWithCommentsCannotBeEdited,
+                    );
+                    return;
+                  }
+
                   final updatedPost = await PostUpdateScreen.push(
                     context,
                     post: post!,
@@ -132,6 +144,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   }
                 },
                 onTapDelete: () async {
+                  /// 댓글이 있는 경우 삭제 불가
+                  if (post!.no_of_comment >= 1) {
+                    showInfoDialog(
+                      context,
+                      Lo.of(context)!.alert,
+                      Lo.of(context)!.postWithCommentsCannotBeDeleted,
+                    );
+                    return;
+                  }
+
                   debugLog("deleted post");
 
                   final confirm = await showConfirmDialog(

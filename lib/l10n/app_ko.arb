@@ -113,5 +113,8 @@
   "confirmDeletePost": "이 게시글을 삭제하시겠습니까?",
   "postDeletedSuccess": "게시글이 성공적으로 삭제되었습니다",
   "confirmDeleteImage": "이 이미지를 삭제하시겠습니까?",
-  "imageDeletedSuccess": "이미지가 성공적으로 삭제되었습니다"
+  "imageDeletedSuccess": "이미지가 성공적으로 삭제되었습니다",
+  "alert": "알림",
+  "postWithCommentsCannotBeDeleted": "댓글이 있는 게시글은 삭제할 수 없습니다",
+  "postWithCommentsCannotBeEdited": "댓글이 있는 게시글은 수정할 수 없습니다"
 }

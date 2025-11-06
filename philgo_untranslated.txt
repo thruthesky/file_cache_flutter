@@ -3,13 +3,19 @@
     "userProfile",
     "unknownUser",
     "profileInformation",
-    "additionalInfoNotAvailable"
+    "additionalInfoNotAvailable",
+    "alert",
+    "postWithCommentsCannotBeDeleted",
+    "postWithCommentsCannotBeEdited"
   ],
 
   "zh": [
     "userProfile",
     "unknownUser",
     "profileInformation",
-    "additionalInfoNotAvailable"
+    "additionalInfoNotAvailable",
+    "alert",
+    "postWithCommentsCannotBeDeleted",
+    "postWithCommentsCannotBeEdited"
   ]
 }

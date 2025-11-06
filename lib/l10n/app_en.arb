@@ -433,5 +433,17 @@
   "imageDeletedSuccess": "Image deleted successfully",
   "@imageDeletedSuccess": {
     "description": "Success message after deleting an image"
+  },
+  "alert": "Alert",
+  "@alert": {
+    "description": "Alert dialog title"
+  },
+  "postWithCommentsCannotBeDeleted": "Posts with comments cannot be deleted",
+  "@postWithCommentsCannotBeDeleted": {
+    "description": "Error message when trying to delete a post that has comments"
+  },
+  "postWithCommentsCannotBeEdited": "Posts with comments cannot be edited",
+  "@postWithCommentsCannotBeEdited": {
+    "description": "Error message when trying to edit a post that has comments"
   }
 }

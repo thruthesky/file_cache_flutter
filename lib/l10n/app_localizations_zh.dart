@@ -355,4 +355,15 @@ class LoZh extends Lo {
 
   @override
   String get imageDeletedSuccess => '图片删除成功';
+
+  @override
+  String get alert => 'Alert';
+
+  @override
+  String get postWithCommentsCannotBeDeleted =>
+      'Posts with comments cannot be deleted';
+
+  @override
+  String get postWithCommentsCannotBeEdited =>
+      'Posts with comments cannot be edited';
 }

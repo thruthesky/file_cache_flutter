@@ -364,4 +364,15 @@ class LoEn extends Lo {
 
   @override
   String get imageDeletedSuccess => 'Image deleted successfully';
+
+  @override
+  String get alert => 'Alert';
+
+  @override
+  String get postWithCommentsCannotBeDeleted =>
+      'Posts with comments cannot be deleted';
+
+  @override
+  String get postWithCommentsCannotBeEdited =>
+      'Posts with comments cannot be edited';
 }

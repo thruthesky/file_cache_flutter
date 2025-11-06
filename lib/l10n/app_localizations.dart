@@ -790,6 +790,24 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Image deleted successfully'**
   String get imageDeletedSuccess;
+
+  /// Alert dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Alert'**
+  String get alert;
+
+  /// Error message when trying to delete a post that has comments
+  ///
+  /// In en, this message translates to:
+  /// **'Posts with comments cannot be deleted'**
+  String get postWithCommentsCannotBeDeleted;
+
+  /// Error message when trying to edit a post that has comments
+  ///
+  /// In en, this message translates to:
+  /// **'Posts with comments cannot be edited'**
+  String get postWithCommentsCannotBeEdited;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {
