@@ -189,7 +189,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                             }
                           } catch (e) {
                             debugLog("파일 삭제 실패: $e");
-                            showSafeErrorDialog("파일 삭제에 실패했습니다.");
+                            showSafeErrorDialog("파일 삭제에 실패했습니다: $e");
                           }
                         },
                       ),
@@ -225,10 +225,8 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       });
                     },
                     onCancelled: () {
-                      // 업로드 취소 시 카운트 감소
-                      setState(() {
-                        uploadingCount--;
-                      });
+                      uploadingCount--;
+                      setState(() {});
                     },
                   ),
                   const Spacer(),

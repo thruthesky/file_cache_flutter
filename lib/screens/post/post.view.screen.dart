@@ -197,6 +197,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 },
                 onUpdated: (oldComment, updatedComment) {
                   oldComment.content = updatedComment.content;
+                  oldComment.files = updatedComment.files;
 
                   setState(() {});
                   showSuccessSnackBar(context, 'A comment has updated');
