@@ -50,6 +50,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
       });
     } catch (e) {
       d('Error fetching post details: $e');
+    } finally {
       setState(() {
         isLoading = false;
       });
