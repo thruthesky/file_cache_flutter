@@ -84,6 +84,16 @@ class _CommentDetailState extends State<CommentDetail> {
                     ],
                     Row(
                       children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            widget.comment?.good != null &&
+                                    widget.comment!.good > 0
+                                ? "${LibTr.of(context)!.like} ${widget.comment!.good}"
+                                : LibTr.of(context)!.like,
+                          ),
+                        ),
+
                         /// 답글 버튼 - 항상 표시
                         TextButton(
                           onPressed: () => setState(() {

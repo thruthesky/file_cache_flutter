@@ -5,6 +5,7 @@ class Comment {
   /// * This is for updating the comment purposes only.
   String content;
   List<String> files;
+  final int good;
 
   /// Mutable fields
   final int idx;
@@ -79,6 +80,7 @@ class Comment {
     this.firebase_uid = '',
     this.nickname = '',
     this.photo_url = '',
+    this.good = 0,
     this.level = 0,
     this.point = 0,
     required this.idx_root,
@@ -139,6 +141,7 @@ class Comment {
       firebase_uid: json['firebase_uid'] ?? '',
       nickname: json['nickname'] ?? '',
       photo_url: json['photo_url'] ?? '',
+      good: json['good'] ?? 0,
       level: json['level'] ?? 0,
       point: json['point'] ?? 0,
       idx_root: json['idx_root'] ?? 0,

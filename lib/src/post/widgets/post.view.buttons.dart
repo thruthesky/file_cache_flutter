@@ -10,12 +10,10 @@ class PostViewButtons extends StatelessWidget {
     required this.onTapDelete,
     required this.myPost,
   });
-
   final Post? post;
   final VoidCallback onTapUpdate;
   final VoidCallback onTapDelete;
   final bool myPost;
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -29,7 +27,11 @@ class PostViewButtons extends StatelessWidget {
             // Like functionality to be implemented
           },
           icon: const FaIcon(FontAwesomeIcons.thumbsUp, size: 16),
-          label: Text(LibTr.of(context)!.like),
+          label: Text(
+            post?.good != null && post!.good > 0
+                ? "${LibTr.of(context)!.like} ${post!.good}"
+                : LibTr.of(context)!.like,
+          ),
         ),
         SizedBox(width: 8),
         // Share button - Flat design with TextButton.icon

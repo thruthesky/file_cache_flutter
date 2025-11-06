@@ -118,6 +118,19 @@ class PostListTile extends StatelessWidget {
                         color: Theme.of(context).colorScheme.outline,
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    FaIcon(
+                      FontAwesomeIcons.lightThumbsUp,
+                      size: 12,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${post.good}',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -195,6 +208,19 @@ class PostListTile extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       '${post.no_of_comment}',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    FaIcon(
+                      FontAwesomeIcons.lightThumbsUp,
+                      size: 12,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${post.good}',
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),

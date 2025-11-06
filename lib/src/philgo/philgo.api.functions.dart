@@ -820,3 +820,7 @@ Future<String> philgoApiGetAdminUserUid() async {
   // 성공적으로 사용자 정보 반환
   return chatAdmin ?? '';
 }
+
+Future<void> philgoApiLikePost() async {
+  // TODO : make api like post
+}
