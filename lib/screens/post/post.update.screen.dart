@@ -1,7 +1,5 @@
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/widgets/post/loading.box.dart';
-import 'package:philgo/widgets/post/upload.preview.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -73,8 +71,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               );
             }
 
-            final filesChanged =
-               urls.length != widget.post.files.length;
+            final filesChanged = urls.length != widget.post.files.length;
 
             debugLog(
               '---------------------------------> filesChanged: $filesChanged',
