@@ -5,16 +5,18 @@ class CommentDetail extends StatefulWidget {
   const CommentDetail({
     super.key,
     required this.comment,
+    required this.myComment,
+    required this.hasReplies,
     required this.onReplied,
     required this.onUpdated,
     required this.onDeleted,
-    this.allComments = const [],
   });
   final Comment comment;
+  final bool myComment;
+  final bool hasReplies;
   final Function(Comment) onReplied;
   final Function(Comment) onUpdated;
   final Function(Comment) onDeleted;
-  final List<Comment> allComments;
 
   @override
   State<CommentDetail> createState() => _CommentDetailState();
@@ -23,13 +25,6 @@ class CommentDetail extends StatefulWidget {
 class _CommentDetailState extends State<CommentDetail> {
   bool reply = false;
   bool update = false;
-
-  /// If there is a comment with idx in this comment as idx_parent, a reply exists
-  bool get hasReplies {
-    return widget.allComments.any(
-      (comment) => comment.idx_parent == widget.comment.idx,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,15 +85,15 @@ class _CommentDetailState extends State<CommentDetail> {
                         ),
 
                         /// 수정 버튼 - 내 댓글인 경우에만 표시
-                        TextButton(
-                          onPressed: () => setState(() {
-                            update = !update;
-                            reply = false;
-                          }),
-                          child: Text(LibTr.of(context)!.edit),
-                        ),
+                        if (!widget.hasReplies && widget.myComment) ...[
+                          TextButton(
+                            onPressed: () => setState(() {
+                              update = !update;
+                              reply = false;
+                            }),
+                            child: Text(LibTr.of(context)!.edit),
+                          ),
 
-                        if (!hasReplies)
                           TextButton(
                             onPressed: () async {
                               final confirmed = await showConfirmDialog(
@@ -123,6 +118,7 @@ class _CommentDetailState extends State<CommentDetail> {
                             },
                             child: Text(LibTr.of(context)!.delete),
                           ),
+                        ],
                       ],
                     ),
                   ],

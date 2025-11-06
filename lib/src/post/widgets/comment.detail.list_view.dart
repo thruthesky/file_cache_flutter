@@ -12,6 +12,7 @@ class CommentDetailListView extends StatelessWidget {
     required this.onReplied,
     required this.onUpdated,
     required this.onDeleted,
+    required this.myComment,
   });
 
   final int noOfComment;
@@ -20,6 +21,13 @@ class CommentDetailListView extends StatelessWidget {
   final Function(Comment) onReplied;
   final Function(Comment, Comment) onUpdated;
   final Function(Comment) onDeleted;
+  final bool Function(int idxMember) myComment;
+
+  bool hasReplies(Comment comment) {
+    return post!.comments.any(
+      (c) => c.idx_parent == comment.idx,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +38,9 @@ class CommentDetailListView extends StatelessWidget {
         else if (post?.comments.isNotEmpty == true)
           ...post!.comments.map(
             (comment) => CommentDetail(
+              myComment: myComment(comment.idx_member),
+              hasReplies: hasReplies(comment),
               comment: comment,
-              allComments: post!.comments,
               onReplied: onReplied,
               onUpdated: (updatecomment) => onUpdated(comment, updatecomment),
               onDeleted: onDeleted,
