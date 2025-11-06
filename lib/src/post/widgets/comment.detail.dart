@@ -26,13 +26,22 @@ class _CommentDetailState extends State<CommentDetail> {
   bool reply = false;
   bool update = false;
 
+  double getDepthMargin(int depth) {
+    return switch (depth) {
+      1 => 0,
+      2 => 32.0,
+      3 => 48.0,
+      _ => 64.0, // depth >= 4
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          margin: EdgeInsets.only(left: 32.0 * (widget.comment.depth - 1)),
+          margin: EdgeInsets.only(left: getDepthMargin(widget.comment.depth)),
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
