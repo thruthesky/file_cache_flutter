@@ -8,13 +8,13 @@ class CommentDetail extends StatefulWidget {
     required this.onReplied,
     required this.onUpdated,
     required this.onDeleted,
-    
+    this.allComments = const [],
   });
   final Comment comment;
-
   final Function(Comment) onReplied;
   final Function(Comment) onUpdated;
   final Function(Comment) onDeleted;
+  final List<Comment> allComments;
 
   @override
   State<CommentDetail> createState() => _CommentDetailState();
@@ -23,6 +23,14 @@ class CommentDetail extends StatefulWidget {
 class _CommentDetailState extends State<CommentDetail> {
   bool reply = false;
   bool update = false;
+
+  /// If there is a comment with idx in this comment as idx_parent, a reply exists
+  bool get hasReplies {
+    return widget.allComments.any(
+      (comment) => comment.idx_parent == widget.comment.idx,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -64,8 +72,15 @@ class _CommentDetailState extends State<CommentDetail> {
                       widget.comment.content,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
+
+                    /// Show files (images) attached to comments
+                    if (widget.comment.files.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      PostViewImages(files: widget.comment.files),
+                    ],
                     Row(
                       children: [
+                        /// 답글 버튼 - 항상 표시
                         TextButton(
                           onPressed: () => setState(() {
                             reply = !reply;
@@ -73,6 +88,8 @@ class _CommentDetailState extends State<CommentDetail> {
                           }),
                           child: Text(LibTr.of(context)!.reply),
                         ),
+
+                        /// 수정 버튼 - 내 댓글인 경우에만 표시
                         TextButton(
                           onPressed: () => setState(() {
                             update = !update;
@@ -80,30 +97,32 @@ class _CommentDetailState extends State<CommentDetail> {
                           }),
                           child: Text(LibTr.of(context)!.edit),
                         ),
-                        TextButton(
-                          onPressed: () async {
-                            final confirmed = await showConfirmDialog(
-                              message: LibTr.of(
-                                context,
-                              )!.delete_comment_confirmation,
-                            );
-                            if (confirmed) {
-                              await func(
-                                'delete_comment_func',
-                                data: {'idx': widget.comment.idx},
-                              );
-                              if (context.mounted) {
-                                showSuccessSnackBar(
+
+                        if (!hasReplies)
+                          TextButton(
+                            onPressed: () async {
+                              final confirmed = await showConfirmDialog(
+                                message: LibTr.of(
                                   context,
-                                  LibTr.of(context)!.successfully_deleted,
+                                )!.delete_comment_confirmation,
+                              );
+                              if (confirmed) {
+                                await func(
+                                  'delete_comment_func',
+                                  data: {'idx': widget.comment.idx},
                                 );
-                                // Notify parent widget to remove this comment from the list
-                                widget.onDeleted(widget.comment);
+                                if (context.mounted) {
+                                  showSuccessSnackBar(
+                                    context,
+                                    LibTr.of(context)!.successfully_deleted,
+                                  );
+                                  // Notify parent widget to remove this comment from the list
+                                  widget.onDeleted(widget.comment);
+                                }
                               }
-                            }
-                          },
-                          child: Text(LibTr.of(context)!.delete),
-                        ),
+                            },
+                            child: Text(LibTr.of(context)!.delete),
+                          ),
                       ],
                     ),
                   ],

@@ -19,6 +19,9 @@ class Comment {
   final int idx_root;
   final int depth;
 
+  // 파일 목록 (이미지, 비디오 등)
+  final List<String> files;
+
   // 사진, 비디오, 유튜브 링크 여부
   final String? hasImage; // "y" 또는 ""
   final String? hasVideo; // "y" 또는 ""
@@ -83,6 +86,7 @@ class Comment {
     required this.idx_root,
     required this.depth,
     this.content = '',
+    this.files = const [],
     this.hasImage,
     this.hasVideo,
     this.hasYoutube,
@@ -142,6 +146,9 @@ class Comment {
       idx_root: json['idx_root'] ?? 0,
       depth: json['depth'] ?? 0,
       content: json['content'],
+      files: json['files'] != null
+          ? List<String>.from(json['files'] as List)
+          : [],
       hasImage: json['hasImage'],
       hasVideo: json['hasVideo'],
       hasYoutube: json['hasYoutube'],
@@ -204,6 +211,7 @@ class Comment {
       'idx_root': idx_root,
       'depth': depth,
       'content': content,
+      'files': files,
     };
 
     // 미디어 관련 필드들 - null이 아닌 경우만 추가

@@ -31,6 +31,7 @@ class CommentDetailListView extends StatelessWidget {
           ...post!.comments.map(
             (comment) => CommentDetail(
               comment: comment,
+              allComments: post!.comments,
               onReplied: onReplied,
               onUpdated: (updatecomment) => onUpdated(comment, updatecomment),
               onDeleted: onDeleted,
