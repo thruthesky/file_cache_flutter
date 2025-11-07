@@ -124,6 +124,33 @@ class _PostViewScreenState extends State<PostViewScreen> {
               PostViewButtons(
                 post: post,
                 myPost: isPostMine(),
+                onLike: () async {
+                  /// Call like API and update the like count
+                  try {
+                    final updatedGood = await philgoApiLikePost(
+                      widget.post.idx,
+                    );
+                    debugLog('Widget Post idx: ${widget.post.idx}');
+                    debugLog('Post liked, new good count: $updatedGood');
+
+                    // Update the good count in the current post object
+                    (post ?? widget.post).good = updatedGood;
+                    setState(() {});
+
+                    if (context.mounted) {
+                      showSuccessSnackBar(context, 'Post liked');
+                    }
+                  } catch (e) {
+                    d('Error liking post: $e');
+
+                    // Handle already-liked error
+                    if (e.toString().contains('already-liked')) {
+                      if (context.mounted) {
+                        showErrorSnackBar(context, 'Already liked this post');
+                      }
+                    }
+                  }
+                },
                 onTapUpdate: () async {
                   /// 댓글이 있는 경우 수정 불가
                   if (post!.no_of_comment >= 1) {
