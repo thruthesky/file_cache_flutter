@@ -87,9 +87,8 @@ class _CommentDetailState extends State<CommentDetail> {
                         TextButton(
                           onPressed: () {},
                           child: Text(
-                            widget.comment?.good != null &&
-                                    widget.comment!.good > 0
-                                ? "${LibTr.of(context)!.like} ${widget.comment!.good}"
+                            widget.comment.good > 0
+                                ? "${LibTr.of(context)!.like} ${widget.comment.good}"
                                 : LibTr.of(context)!.like,
                           ),
                         ),
