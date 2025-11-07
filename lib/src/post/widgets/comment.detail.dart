@@ -84,8 +84,39 @@ class _CommentDetailState extends State<CommentDetail> {
                     ],
                     Row(
                       children: [
+                        /// Like button for comments
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            try {
+                              final updatedGood = await philgoApiLikePost(
+                                widget.comment.idx,
+                              );
+                              debugLog(
+                                'Comment liked, new good count: $updatedGood',
+                              );
+
+                              // Update the good count in the comment
+
+                              widget.comment.good = updatedGood;
+                              setState(() {});
+
+                              if (context.mounted) {
+                                showSuccessSnackBar(context, 'Comment liked');
+                              }
+                            } catch (e) {
+                              d('Error liking comment: $e');
+
+                              // Handle already-liked error
+                              if (e.toString().contains('already-liked')) {
+                                if (context.mounted) {
+                                  showErrorSnackBar(
+                                    context,
+                                    'Already liked this comment',
+                                  );
+                                }
+                              }
+                            }
+                          },
                           child: Text(
                             widget.comment.good > 0
                                 ? "${LibTr.of(context)!.like} ${widget.comment.good}"

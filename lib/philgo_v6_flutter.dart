@@ -45,7 +45,7 @@ export 'src/messaging/widget/push_notification_icon.dart';
 
 // philgo
 export 'src/philgo/philgo.api.functions.dart';
-export 'src/philgo/file_upload_reponse.model.dart';
+export 'src/philgo/file_upload_response.model.dart';
 
 export './src/models/common.models.dart';
 export './src/post/models/comment.model.dart';

@@ -187,7 +187,7 @@ Future<T> func<T>(
       serverMessage = 'Failed to read error response body.';
     }
 
-    final slimErrorMessage = '$serverMessage';
+    final slimErrorMessage = serverMessage;
     if (alertOnError) {
       showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n$slimErrorMessage');
     }
@@ -821,6 +821,15 @@ Future<String> philgoApiGetAdminUserUid() async {
   return chatAdmin ?? '';
 }
 
-Future<void> philgoApiLikePost() async {
-  // TODO : make api like post
+Future<int> philgoApiLikePost(int idx) async {
+  final response = await func<Map<String, dynamic>>(
+    'like_func',
+    data: {'idx': idx},
+    alertOnError: false,
+  );
+
+  debugLog("response from like_func: $response");
+
+  // Return the updated good count from the response
+  return response['good'] ?? 0;
 }

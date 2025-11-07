@@ -8,6 +8,7 @@ class Post {
   int no_of_comment;
   String content;
   String subject;
+  int good; 
 
   // 필수 필드들
   final int idx;
@@ -17,7 +18,6 @@ class Post {
   final int no_of_view;
   final int stamp;
   final String timeString;
-  final int good;
   final int no_of_attach;
   final String nickname;
   final int idx_member;

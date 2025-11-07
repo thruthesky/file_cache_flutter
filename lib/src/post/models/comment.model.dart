@@ -5,7 +5,7 @@ class Comment {
   /// * This is for updating the comment purposes only.
   String content;
   List<String> files;
-  final int good;
+  int good; // Mutable for like updates
 
   /// Mutable fields
   final int idx;

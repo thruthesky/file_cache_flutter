@@ -8,11 +8,13 @@ class PostViewButtons extends StatelessWidget {
     required this.post,
     required this.onTapUpdate,
     required this.onTapDelete,
+    required this.onLike,
     required this.myPost,
   });
   final Post? post;
   final VoidCallback onTapUpdate;
   final VoidCallback onTapDelete;
+  final VoidCallback onLike;
   final bool myPost;
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,7 @@ class PostViewButtons extends StatelessWidget {
           style: TextButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
-          onPressed: () {
-            // Like functionality to be implemented
-          },
+          onPressed: onLike,
           icon: const FaIcon(FontAwesomeIcons.thumbsUp, size: 16),
           label: Text(
             post?.good != null && post!.good > 0
