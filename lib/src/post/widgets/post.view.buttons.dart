@@ -33,18 +33,6 @@ class PostViewButtons extends StatelessWidget {
                 : LibTr.of(context)!.like,
           ),
         ),
-        SizedBox(width: 8),
-        // Share button - Flat design with TextButton.icon
-        TextButton.icon(
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          ),
-          onPressed: () {
-            // Share functionality to be implemented
-          },
-          icon: const FaIcon(FontAwesomeIcons.share, size: 16),
-          label: Text(LibTr.of(context)!.share),
-        ),
         Spacer(),
         // 내 게시글인 경우에만 수정/삭제 버튼 표시
         if (myPost) ...[
