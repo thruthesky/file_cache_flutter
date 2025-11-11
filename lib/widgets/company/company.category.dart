@@ -1,4 +1,3 @@
-import 'package:easy_phone_sign_in/easy_phone_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
@@ -7,7 +6,7 @@ import 'package:philgo/widgets/company/company.category.empty.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Category Card Widget
-/// Displays a single company category with icon, name, count, and view more button
+/// Displays a single company category with icon, name, count, and horizontal list of companies
 class CompanyCategory extends StatelessWidget {
   const CompanyCategory({
     super.key,
@@ -15,12 +14,14 @@ class CompanyCategory extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.count,
+    required this.companies,
   });
 
   final String name;
   final IconData icon;
   final Color color;
   final int count;
+  final List<Company> companies;
 
   @override
   Widget build(BuildContext context) {
@@ -89,17 +90,20 @@ class CompanyCategory extends StatelessWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.symmetric(horizontal: sp.s16),
-                itemCount: count,
+                itemCount: companies.length,
                 separatorBuilder: (context, index) => SizedBox(width: sp.s16),
                 itemBuilder: (context, index) {
+                  final company = companies[index];
                   return SizedBox(
                     width: 280,
                     child: CompanyCard(
-                      name: 'Company ${index + 1}',
+                      name: company.name.isNotEmpty ? company.name : company.title,
                       categoryIcon: icon,
-                      imageUrl: null,
+                      imageUrl: company.title_image_url.isNotEmpty
+                          ? company.title_image_url
+                          : company.logo_url,
                       onTap: () {
-                        debugLog('Tapped on company ${index + 1}');
+                        debugLog('Tapped on company: ${company.name} (idx: ${company.idx})');
                       },
                     ),
                   );

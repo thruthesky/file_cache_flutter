@@ -30,7 +30,7 @@ class CompanyCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: scheme.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(sp.s16),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -44,47 +44,36 @@ class CompanyCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         // Show placeholder if image fails to load
-                        return _buildPlaceholder(scheme);
+                        return _CompanyCardPlaceholder(
+                          scheme: scheme,
+                          categoryIcon: categoryIcon,
+                        );
                       },
                     )
-                  : _buildPlaceholder(scheme),
+                  : _CompanyCardPlaceholder(
+                      scheme: scheme,
+                      categoryIcon: categoryIcon,
+                    ),
             ),
 
-            // Company name section
-            Padding(
+            // Company name section with background
+            Container(
+              width: double.infinity,
               padding: EdgeInsets.all(sp.s16),
-              child: Row(
-                children: [
-                  // Category icon
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: FaIcon(
-                        categoryIcon,
-                        size: 20,
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: sp.s12),
-
-                  // Company name
-                  Expanded(
-                    child: Text(
-                      name,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(sp.s16),
+                  bottomRight: Radius.circular(sp.s16),
+                ),
+              ),
+              child: Text(
+                name,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -92,9 +81,20 @@ class CompanyCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  /// Build placeholder with category icon when no image is available
-  Widget _buildPlaceholder(ColorScheme scheme) {
+/// Build placeholder with category icon when no image is available
+class _CompanyCardPlaceholder extends StatelessWidget {
+  const _CompanyCardPlaceholder({
+    required this.scheme,
+    required this.categoryIcon,
+  });
+
+  final ColorScheme scheme;
+  final IconData categoryIcon;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       color: scheme.surfaceContainerHighest,
       child: Center(
