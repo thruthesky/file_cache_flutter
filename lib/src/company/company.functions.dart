@@ -86,3 +86,11 @@ Future<CompanyList> getCompanies({
 
   throw Exception('Unexpected response format: ${response.runtimeType}');
 }
+
+Future<Company> getCompany(int idx) async {
+  debugLog('Fetching company id: $idx');
+  final response = await func('get_company', data: {'idx': idx}, debug: true);
+  debugLog('company: $response');
+
+  return Company.fromJson(response);
+}
