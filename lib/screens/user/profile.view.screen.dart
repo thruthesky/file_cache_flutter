@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
-class UserProfileScreen extends StatefulWidget {
+class ProfileViewScreen extends StatefulWidget {
   static const String routeName = '/user-profile';
 
   static Future<void> push(
@@ -23,7 +23,7 @@ class UserProfileScreen extends StatefulWidget {
     );
   }
 
-  const UserProfileScreen({
+  const ProfileViewScreen({
     super.key,
     required this.firebaseUid,
     this.nickname,
@@ -37,10 +37,10 @@ class UserProfileScreen extends StatefulWidget {
   final String? photoUrl;
 
   @override
-  State<UserProfileScreen> createState() => _UserProfileScreenState();
+  State<ProfileViewScreen> createState() => _ProfileViewScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
+class _ProfileViewScreenState extends State<ProfileViewScreen> {
   bool isLoading = true;
   User? user;
 

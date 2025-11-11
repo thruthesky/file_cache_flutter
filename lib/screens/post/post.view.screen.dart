@@ -1,7 +1,7 @@
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
-import 'package:philgo/screens/user/user.profile.screen.dart';
+import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +108,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 photoUrl: widget.post.photo_url,
                 onTapNickname: () {
                   /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
-                  UserProfileScreen.push(
+                  ProfileViewScreen.push(
                     context,
                     firebaseUid: widget.post.firebase_uid,
                     nickname: widget.post.nickname,

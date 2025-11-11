@@ -12,8 +12,8 @@ import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/user/profile.screen.dart';
-import 'package:philgo/screens/user/user.profile.screen.dart';
+import 'package:philgo/screens/user/profile.edit.screen.dart';
+import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -260,16 +260,16 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: ProfileScreen.routeName,
-      name: ProfileScreen.routeName,
-      builder: (context, state) => const ProfileScreen(),
+      path: ProfileEditScreen.routeName,
+      name: ProfileEditScreen.routeName,
+      builder: (context, state) => const ProfileEditScreen(),
     ),
     GoRoute(
-      path: UserProfileScreen.routeName,
-      name: UserProfileScreen.routeName,
+      path: ProfileViewScreen.routeName,
+      name: ProfileViewScreen.routeName,
       builder: (context, state) {
         final extraMap = state.extra as Map<String, dynamic>;
-        return UserProfileScreen(
+        return ProfileViewScreen(
           firebaseUid: extraMap['firebaseUid'] as String,
           nickname: extraMap['nickname'] as String?,
           photoUrl: extraMap['photoUrl'] as String?,

@@ -8,21 +8,21 @@ import 'package:philgo/widgets/user/user_ready.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileEditScreen extends StatefulWidget {
   // You may add routeName with dynamic parameters if needed like this:
   // static const String routeName = '/screen-name/:id';
   // And update the push and go methods accordingly like below.
   // static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName.replaceFirst(':id'));
-  static const String routeName = '/profile';
+  static const String routeName = '/edit-profile';
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
-  const ProfileScreen({super.key});
+  const ProfileEditScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileEditScreen> createState() => _ProfileEditScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 

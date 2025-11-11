@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
-import 'package:philgo/screens/user/profile.screen.dart';
+import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -59,7 +59,7 @@ class _MenuHomeState extends State<MenuHome>
         'title': T.editProfileTitle,
         'subtitle': T.editProfileSubtitle,
         'color': Colors.blue,
-        'onTap': () => ProfileScreen.push(context),
+        'onTap': () => ProfileEditScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.comments,
