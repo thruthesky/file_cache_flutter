@@ -109,5 +109,10 @@
     "confirmDeletePost": "您确定要删除此帖子吗？",
     "postDeletedSuccess": "帖子删除成功",
     "confirmDeleteImage": "您确定要删除此图片吗？",
-    "imageDeletedSuccess": "图片删除成功"
+    "imageDeletedSuccess": "图片删除成功",
+    "location": "位置",
+    "contactInformation": "联系方式",
+    "mobileNumber": "手机号码",
+    "description": "说明",
+    "familySite": "家族网站"
 }

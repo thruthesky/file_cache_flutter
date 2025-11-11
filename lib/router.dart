@@ -6,6 +6,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/about/about.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
+import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -244,6 +245,20 @@ final router = GoRouter(
         }
 
         return PostViewScreen(post: post);
+      },
+    ),
+    GoRoute(
+      path: CompanyViewScreen.routeName,
+      name: CompanyViewScreen.routeName,
+      builder: (context, state) {
+        int companyIdx = 0;
+        if (state.extra is int) {
+          companyIdx = state.extra as int;
+        }
+
+        debugLog('🔍 CompanyViewScreen: Received companyIdx=$companyIdx');
+
+        return CompanyViewScreen(companyIdx: companyIdx);
       },
     ),
     GoRoute(

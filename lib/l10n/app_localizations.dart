@@ -856,6 +856,36 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Be the first to register a company in this category!'**
   String get registerCompanyPrompt;
+
+  /// Label for location information
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// Section title for contact information
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get contactInformation;
+
+  /// Label for mobile number
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number'**
+  String get mobileNumber;
+
+  /// Label for description section
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// Label for family site section
+  ///
+  /// In en, this message translates to:
+  /// **'Family Site'**
+  String get familySite;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

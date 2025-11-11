@@ -402,4 +402,19 @@ class LoJa extends Lo {
   @override
   String get registerCompanyPrompt =>
       'Be the first to register a company in this category!';
+
+  @override
+  String get location => '所在地';
+
+  @override
+  String get contactInformation => '連絡先情報';
+
+  @override
+  String get mobileNumber => '携帯電話番号';
+
+  @override
+  String get description => '説明';
+
+  @override
+  String get familySite => 'ファミリーサイト';
 }

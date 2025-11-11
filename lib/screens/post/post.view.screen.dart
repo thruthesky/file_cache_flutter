@@ -38,7 +38,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     loadPost();
   }
 
-  Future loadPost() async {
+  Future<void> loadPost() async {
     try {
       final details = await getPost(widget.post.idx);
 

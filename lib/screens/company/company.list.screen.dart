@@ -8,7 +8,7 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 /// Company Directory Screen
 /// Displays company categories and allows navigation to company creation
 class CompanyListScreen extends StatefulWidget {
-  static const String routeName = '/company-view';
+  static const String routeName = '/company-list';
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
 
@@ -130,10 +130,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
   /// Fetch companies from API
   Future<void> _loadCompanies() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
+    isLoading = true;
+    errorMessage = null;
+    setState(() {});
 
     try {
       final result = await getCompanies();

@@ -401,4 +401,19 @@ class LoZh extends Lo {
   @override
   String get registerCompanyPrompt =>
       'Be the first to register a company in this category!';
+
+  @override
+  String get location => '位置';
+
+  @override
+  String get contactInformation => '联系方式';
+
+  @override
+  String get mobileNumber => '手机号码';
+
+  @override
+  String get description => '说明';
+
+  @override
+  String get familySite => '家族网站';
 }

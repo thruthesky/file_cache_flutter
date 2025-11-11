@@ -482,5 +482,25 @@
   "registerCompanyPrompt": "Be the first to register a company in this category!",
   "@registerCompanyPrompt": {
     "description": "Prompt text encouraging users to register a company"
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Label for location information"
+  },
+  "contactInformation": "Contact Information",
+  "@contactInformation": {
+    "description": "Section title for contact information"
+  },
+  "mobileNumber": "Mobile Number",
+  "@mobileNumber": {
+    "description": "Label for mobile number"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Label for description section"
+  },
+  "familySite": "Family Site",
+  "@familySite": {
+    "description": "Label for family site section"
   }
 }

@@ -410,4 +410,19 @@ class LoEn extends Lo {
   @override
   String get registerCompanyPrompt =>
       'Be the first to register a company in this category!';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get contactInformation => 'Contact Information';
+
+  @override
+  String get mobileNumber => 'Mobile Number';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get familySite => 'Family Site';
 }

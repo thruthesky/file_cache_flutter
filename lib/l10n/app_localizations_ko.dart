@@ -398,4 +398,19 @@ class LoKo extends Lo {
 
   @override
   String get registerCompanyPrompt => '이 카테고리에서 처음으로 업체를 등록하세요!';
+
+  @override
+  String get location => '위치';
+
+  @override
+  String get contactInformation => '연락처 정보';
+
+  @override
+  String get mobileNumber => '휴대폰 번호';
+
+  @override
+  String get description => '설명';
+
+  @override
+  String get familySite => '패밀리 사이트';
 }
