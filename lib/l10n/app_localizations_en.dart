@@ -390,6 +390,9 @@ class LoEn extends Lo {
   String get registerCompany => 'Register';
 
   @override
+  String get updateCompany => 'Update Company';
+
+  @override
   String companiesRegistered(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -425,4 +428,70 @@ class LoEn extends Lo {
 
   @override
   String get familySite => 'Family Site';
+
+  @override
+  String get basicInformation => 'Basic Information';
+
+  @override
+  String get companyName => 'Company Name';
+
+  @override
+  String get enterCompanyName => 'Enter company name';
+
+  @override
+  String get companyNameRequired => 'Company name is required';
+
+  @override
+  String get companyTitle => 'Company Title';
+
+  @override
+  String get enterCompanyTitle => 'Enter company title or slogan';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get selectCategory => 'Select category';
+
+  @override
+  String get pleaseSelectCategory => 'Please select a category';
+
+  @override
+  String get enterDescription => 'Enter company description';
+
+  @override
+  String get locationInformation => 'Location Information';
+
+  @override
+  String get enterLocation => 'Enter location (e.g., Manila, Cebu)';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get enterAddress => 'Enter detailed address';
+
+  @override
+  String get enterMobileNumber => 'Enter mobile number';
+
+  @override
+  String get images => 'Images';
+
+  @override
+  String get logoImage => 'Logo Image';
+
+  @override
+  String get titleImage => 'Title Image';
+
+  @override
+  String get businessLicense => 'Business License';
+
+  @override
+  String get tapToUploadImage => 'Tap to upload image';
+
+  @override
+  String get companyRegistered => 'Company registered successfully';
+
+  @override
+  String get companyUpdated => 'Company updated successfully';
 }

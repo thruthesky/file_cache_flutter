@@ -378,7 +378,10 @@ class LoZh extends Lo {
       'When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.';
 
   @override
-  String get registerCompany => 'Register';
+  String get registerCompany => '注册';
+
+  @override
+  String get updateCompany => '修改商家';
 
   @override
   String companiesRegistered(int count) {
@@ -416,4 +419,70 @@ class LoZh extends Lo {
 
   @override
   String get familySite => '家族网站';
+
+  @override
+  String get basicInformation => '基本信息';
+
+  @override
+  String get companyName => '商家名称';
+
+  @override
+  String get enterCompanyName => '请输入商家名称';
+
+  @override
+  String get companyNameRequired => '商家名称为必填项';
+
+  @override
+  String get companyTitle => '商家标题';
+
+  @override
+  String get enterCompanyTitle => '请输入商家标题或口号';
+
+  @override
+  String get category => '类别';
+
+  @override
+  String get selectCategory => '选择类别';
+
+  @override
+  String get pleaseSelectCategory => '请选择类别';
+
+  @override
+  String get enterDescription => '请输入商家说明';
+
+  @override
+  String get locationInformation => '位置信息';
+
+  @override
+  String get enterLocation => '请输入地区（例如：马尼拉、宿务）';
+
+  @override
+  String get address => '地址';
+
+  @override
+  String get enterAddress => '请输入详细地址';
+
+  @override
+  String get enterMobileNumber => '请输入手机号码';
+
+  @override
+  String get images => '图片';
+
+  @override
+  String get logoImage => '标志图片';
+
+  @override
+  String get titleImage => '标题图片';
+
+  @override
+  String get businessLicense => '营业执照';
+
+  @override
+  String get tapToUploadImage => '点击上传图片';
+
+  @override
+  String get companyRegistered => '商家注册成功';
+
+  @override
+  String get companyUpdated => '商家信息更新成功';
 }

@@ -379,6 +379,9 @@ class LoKo extends Lo {
   String get registerCompany => '등록';
 
   @override
+  String get updateCompany => '업체 수정';
+
+  @override
   String companiesRegistered(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -413,4 +416,70 @@ class LoKo extends Lo {
 
   @override
   String get familySite => '패밀리 사이트';
+
+  @override
+  String get basicInformation => '기본 정보';
+
+  @override
+  String get companyName => '업체명';
+
+  @override
+  String get enterCompanyName => '업체명을 입력하세요';
+
+  @override
+  String get companyNameRequired => '업체명은 필수 항목입니다';
+
+  @override
+  String get companyTitle => '업체 타이틀';
+
+  @override
+  String get enterCompanyTitle => '업체 타이틀 또는 슬로건을 입력하세요';
+
+  @override
+  String get category => '카테고리';
+
+  @override
+  String get selectCategory => '카테고리 선택';
+
+  @override
+  String get pleaseSelectCategory => '카테고리를 선택해주세요';
+
+  @override
+  String get enterDescription => '업체 설명을 입력하세요';
+
+  @override
+  String get locationInformation => '위치 정보';
+
+  @override
+  String get enterLocation => '지역을 입력하세요 (예: 마닐라, 세부)';
+
+  @override
+  String get address => '주소';
+
+  @override
+  String get enterAddress => '상세 주소를 입력하세요';
+
+  @override
+  String get enterMobileNumber => '휴대폰 번호를 입력하세요';
+
+  @override
+  String get images => '이미지';
+
+  @override
+  String get logoImage => '로고 이미지';
+
+  @override
+  String get titleImage => '타이틀 이미지';
+
+  @override
+  String get businessLicense => '사업자 등록증';
+
+  @override
+  String get tapToUploadImage => '탭하여 이미지 업로드';
+
+  @override
+  String get companyRegistered => '업체가 성공적으로 등록되었습니다';
+
+  @override
+  String get companyUpdated => '업체 정보가 성공적으로 수정되었습니다';
 }

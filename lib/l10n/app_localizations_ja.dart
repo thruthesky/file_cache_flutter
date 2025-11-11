@@ -379,7 +379,10 @@ class LoJa extends Lo {
       'When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.';
 
   @override
-  String get registerCompany => 'Register';
+  String get registerCompany => '登録';
+
+  @override
+  String get updateCompany => '業者を修正';
 
   @override
   String companiesRegistered(int count) {
@@ -417,4 +420,70 @@ class LoJa extends Lo {
 
   @override
   String get familySite => 'ファミリーサイト';
+
+  @override
+  String get basicInformation => '基本情報';
+
+  @override
+  String get companyName => '業者名';
+
+  @override
+  String get enterCompanyName => '業者名を入力してください';
+
+  @override
+  String get companyNameRequired => '業者名は必須項目です';
+
+  @override
+  String get companyTitle => '業者タイトル';
+
+  @override
+  String get enterCompanyTitle => '業者のタイトルまたはスローガンを入力してください';
+
+  @override
+  String get category => 'カテゴリー';
+
+  @override
+  String get selectCategory => 'カテゴリーを選択';
+
+  @override
+  String get pleaseSelectCategory => 'カテゴリーを選択してください';
+
+  @override
+  String get enterDescription => '業者の説明を入力してください';
+
+  @override
+  String get locationInformation => '所在地情報';
+
+  @override
+  String get enterLocation => '地域を入力してください（例：マニラ、セブ）';
+
+  @override
+  String get address => '住所';
+
+  @override
+  String get enterAddress => '詳細な住所を入力してください';
+
+  @override
+  String get enterMobileNumber => '携帯電話番号を入力してください';
+
+  @override
+  String get images => '画像';
+
+  @override
+  String get logoImage => 'ロゴ画像';
+
+  @override
+  String get titleImage => 'タイトル画像';
+
+  @override
+  String get businessLicense => '事業者登録証';
+
+  @override
+  String get tapToUploadImage => 'タップして画像をアップロード';
+
+  @override
+  String get companyRegistered => '業者が正常に登録されました';
+
+  @override
+  String get companyUpdated => '業者情報が正常に更新されました';
 }

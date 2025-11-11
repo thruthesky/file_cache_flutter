@@ -462,6 +462,10 @@
   "@registerCompany": {
     "description": "Button text for registering a company"
   },
+  "updateCompany": "Update Company",
+  "@updateCompany": {
+    "description": "Button text for updating a company"
+  },
   "companiesRegistered": "{count, plural, =0{Total 0 companies registered.} =1{Total 1 company registered.} other{Total {count} companies registered.}}",
   "@companiesRegistered": {
     "description": "Text showing number of companies registered",
@@ -502,5 +506,93 @@
   "familySite": "Family Site",
   "@familySite": {
     "description": "Label for family site section"
+  },
+  "basicInformation": "Basic Information",
+  "@basicInformation": {
+    "description": "Section title for basic information"
+  },
+  "companyName": "Company Name",
+  "@companyName": {
+    "description": "Label for company name field"
+  },
+  "enterCompanyName": "Enter company name",
+  "@enterCompanyName": {
+    "description": "Hint text for company name field"
+  },
+  "companyNameRequired": "Company name is required",
+  "@companyNameRequired": {
+    "description": "Validation message for company name"
+  },
+  "companyTitle": "Company Title",
+  "@companyTitle": {
+    "description": "Label for company title field"
+  },
+  "enterCompanyTitle": "Enter company title or slogan",
+  "@enterCompanyTitle": {
+    "description": "Hint text for company title field"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Label for category field"
+  },
+  "selectCategory": "Select category",
+  "@selectCategory": {
+    "description": "Hint text for category dropdown"
+  },
+  "pleaseSelectCategory": "Please select a category",
+  "@pleaseSelectCategory": {
+    "description": "Error message for category selection"
+  },
+  "enterDescription": "Enter company description",
+  "@enterDescription": {
+    "description": "Hint text for description field"
+  },
+  "locationInformation": "Location Information",
+  "@locationInformation": {
+    "description": "Section title for location information"
+  },
+  "enterLocation": "Enter location (e.g., Manila, Cebu)",
+  "@enterLocation": {
+    "description": "Hint text for location field"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Label for address field"
+  },
+  "enterAddress": "Enter detailed address",
+  "@enterAddress": {
+    "description": "Hint text for address field"
+  },
+  "enterMobileNumber": "Enter mobile number",
+  "@enterMobileNumber": {
+    "description": "Hint text for mobile number field"
+  },
+  "images": "Images",
+  "@images": {
+    "description": "Section title for images"
+  },
+  "logoImage": "Logo Image",
+  "@logoImage": {
+    "description": "Label for logo image field"
+  },
+  "titleImage": "Title Image",
+  "@titleImage": {
+    "description": "Label for title image field"
+  },
+  "businessLicense": "Business License",
+  "@businessLicense": {
+    "description": "Label for business license field"
+  },
+  "tapToUploadImage": "Tap to upload image",
+  "@tapToUploadImage": {
+    "description": "Hint text for image upload"
+  },
+  "companyRegistered": "Company registered successfully",
+  "@companyRegistered": {
+    "description": "Success message for company registration"
+  },
+  "companyUpdated": "Company updated successfully",
+  "@companyUpdated": {
+    "description": "Success message for company update"
   }
 }

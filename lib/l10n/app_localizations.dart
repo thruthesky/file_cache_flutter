@@ -833,6 +833,12 @@ abstract class Lo {
   /// **'Register'**
   String get registerCompany;
 
+  /// Button text for updating a company
+  ///
+  /// In en, this message translates to:
+  /// **'Update Company'**
+  String get updateCompany;
+
   /// Text showing number of companies registered
   ///
   /// In en, this message translates to:
@@ -886,6 +892,138 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Family Site'**
   String get familySite;
+
+  /// Section title for basic information
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basicInformation;
+
+  /// Label for company name field
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get companyName;
+
+  /// Hint text for company name field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company name'**
+  String get enterCompanyName;
+
+  /// Validation message for company name
+  ///
+  /// In en, this message translates to:
+  /// **'Company name is required'**
+  String get companyNameRequired;
+
+  /// Label for company title field
+  ///
+  /// In en, this message translates to:
+  /// **'Company Title'**
+  String get companyTitle;
+
+  /// Hint text for company title field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company title or slogan'**
+  String get enterCompanyTitle;
+
+  /// Label for category field
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// Hint text for category dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get selectCategory;
+
+  /// Error message for category selection
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a category'**
+  String get pleaseSelectCategory;
+
+  /// Hint text for description field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company description'**
+  String get enterDescription;
+
+  /// Section title for location information
+  ///
+  /// In en, this message translates to:
+  /// **'Location Information'**
+  String get locationInformation;
+
+  /// Hint text for location field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter location (e.g., Manila, Cebu)'**
+  String get enterLocation;
+
+  /// Label for address field
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// Hint text for address field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter detailed address'**
+  String get enterAddress;
+
+  /// Hint text for mobile number field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter mobile number'**
+  String get enterMobileNumber;
+
+  /// Section title for images
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get images;
+
+  /// Label for logo image field
+  ///
+  /// In en, this message translates to:
+  /// **'Logo Image'**
+  String get logoImage;
+
+  /// Label for title image field
+  ///
+  /// In en, this message translates to:
+  /// **'Title Image'**
+  String get titleImage;
+
+  /// Label for business license field
+  ///
+  /// In en, this message translates to:
+  /// **'Business License'**
+  String get businessLicense;
+
+  /// Hint text for image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload image'**
+  String get tapToUploadImage;
+
+  /// Success message for company registration
+  ///
+  /// In en, this message translates to:
+  /// **'Company registered successfully'**
+  String get companyRegistered;
+
+  /// Success message for company update
+  ///
+  /// In en, this message translates to:
+  /// **'Company updated successfully'**
+  String get companyUpdated;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

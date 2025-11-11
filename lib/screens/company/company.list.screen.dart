@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/widgets/company/company.category.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
@@ -20,7 +21,9 @@ class CompanyListScreen extends StatefulWidget {
 
 class _CompanyListScreenState extends State<CompanyListScreen> {
   CompanyList? companyList;
+  Company? myCompany;
   bool isLoading = true;
+  bool isLoadingMyCompany = true;
   String? errorMessage;
 
   final List<Map<String, dynamic>> categories = [
@@ -125,7 +128,23 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   @override
   void initState() {
     super.initState();
+    _loadMyCompany();
     _loadCompanies();
+  }
+
+  /// Fetch current user's company
+  Future<void> _loadMyCompany() async {
+    try {
+      final result = await getMyCompany();
+      myCompany = result;
+      debugLog('My Company: $myCompany');
+    } catch (e) {
+      debugLog('Error loading my company: $e');
+    } finally {
+      setState(() {
+        isLoadingMyCompany = false;
+      });
+    }
   }
 
   /// Fetch companies from API
@@ -209,17 +228,31 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                     ),
                   ),
                   SizedBox(height: sp.s24),
-                  // Register button
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () {
-                        // TODO: Navigate to company creation page
-                      },
-                      icon: const FaIcon(FontAwesomeIcons.plus, size: 20),
-                      label: Text(T.registerCompany),
+                  // Register/Update button (hidden while loading)
+                  if (!isLoadingMyCompany)
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: () async {
+                          // Navigate to company form (with company data for update, null for create)
+                          await CompanyFormScreen.push(
+                            context,
+                            company: myCompany,
+                          );
+                        },
+                        icon: FaIcon(
+                          myCompany == null
+                              ? FontAwesomeIcons.plus
+                              : FontAwesomeIcons.penToSquare,
+                          size: 20,
+                        ),
+                        label: Text(
+                          myCompany == null
+                              ? T.registerCompany
+                              : T.updateCompany,
+                        ),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),

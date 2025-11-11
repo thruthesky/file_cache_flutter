@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/about/about.screen.dart';
+import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
@@ -296,6 +297,19 @@ final router = GoRouter(
       name: CompanyListScreen.routeName,
       builder: (context, state) {
         return const CompanyListScreen();
+      },
+    ),
+    GoRoute(
+      path: CompanyFormScreen.routeName,
+      name: CompanyFormScreen.routeName,
+      builder: (context, state) {
+        // Get company from extra parameter (for update mode)
+        Company? company;
+        if (state.extra is Company) {
+          company = state.extra as Company;
+        }
+
+        return CompanyFormScreen(company: company);
       },
     ),
     GoRoute(
