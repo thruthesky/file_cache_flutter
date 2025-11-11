@@ -94,3 +94,19 @@ Future<Company> getCompany(int idx) async {
 
   return Company.fromJson(response);
 }
+
+Future<Company?> getMyCompany() async {
+  debugLog('Fetching my company');
+  final response = await func('get_my_company', debug: true);
+  debugLog('My company response: $response');
+
+  // If the response has a 'data' key
+  if (response.containsKey('data')) {
+    if (response['data'] == null) {
+      debugLog('No company found for current user');
+      return null;
+    }
+  }
+
+  return Company.fromJson(response);
+}
