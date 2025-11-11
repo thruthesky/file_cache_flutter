@@ -162,7 +162,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                             urls.remove(url);
                             setState(() {});
 
-                            await philgoApiUpdatePost({
+                            await updatePost({
                               'idx': widget.post.idx,
                               'files': urls,
                             });
@@ -244,7 +244,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                         debugLog('업로드된 파일 개수: ${urls.length}');
                         debugLog('파일 URL 목록: $urls');
 
-                        final updated = await philgoApiUpdatePost({
+                        final updated = await updatePost({
                           'idx': widget.post.idx,
                           'subject': _titleController.text,
                           'content': _contentController.text,

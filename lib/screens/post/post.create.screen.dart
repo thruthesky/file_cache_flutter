@@ -254,7 +254,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         debugLog('업로드된 파일 개수: ${urls.length}');
                         debugLog('파일 URL 목록: $urls');
 
-                        final created = await philgoApiCreatePost({
+                        final created = await createPost({
                           'post_id': HomePostCategory.postId,
                           'category': HomePostCategory.category,
                           'subject': _titleController.text,

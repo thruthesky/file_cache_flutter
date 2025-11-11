@@ -195,7 +195,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   );
 
                   if (confirm) {
-                    await philgoApiDeletePost(widget.post.idx);
+                    await deletePost(widget.post.idx);
 
                     if (context.mounted) {
                       context.pop();
