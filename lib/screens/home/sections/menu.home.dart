@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/user/profile.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
+import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo/widgets/home/menu.tile.dart';
 
 class MenuHome extends StatefulWidget {
   const MenuHome({super.key});
@@ -50,7 +53,6 @@ class _MenuHomeState extends State<MenuHome>
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
-    // 메뉴 아이템 데이터
     final menuItems = [
       {
         'icon': FontAwesomeIcons.userPen,
@@ -91,14 +93,7 @@ class _MenuHomeState extends State<MenuHome>
         'title': T.businessDirectoryTitle,
         'subtitle': T.businessDirectorySubtitle,
         'color': Colors.purple,
-        'onTap': () {},
-      },
-      {
-        'icon': FontAwesomeIcons.sitemap,
-        'title': T.familySiteTitle,
-        'subtitle': T.familySiteSubtitle,
-        'color': Colors.teal,
-        'onTap': () {},
+        'onTap': () => CompanyViewScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.circleInfo,
@@ -173,10 +168,12 @@ class _MenuHomeState extends State<MenuHome>
                           );
                         },
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              padding: EdgeInsets.all(sp.s12),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: sp.s8,
+                                vertical: sp.s4,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
@@ -186,10 +183,9 @@ class _MenuHomeState extends State<MenuHome>
                                 ),
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: FaIcon(
-                                FontAwesomeIcons.compass,
-                                color: scheme.primary,
-                                size: 32,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: const PhilGoLogoTriangles(size: 44),
                               ),
                             ),
                             SizedBox(width: sp.s16),
@@ -229,119 +225,15 @@ class _MenuHomeState extends State<MenuHome>
                 itemCount: menuItems.length,
                 itemBuilder: (context, index) {
                   final item = menuItems[index];
-                  return Container(
-                        margin: EdgeInsets.only(bottom: sp.s12),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: item['onTap'] as VoidCallback?,
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              padding: EdgeInsets.all(sp.s16),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    scheme.surface,
-                                    scheme.surface.withValues(alpha: 0.95),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: (item['color'] as Color).withValues(
-                                      alpha: 0.1,
-                                    ),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  // 아이콘 컨테이너
-                                  Container(
-                                        width: 56,
-                                        height: 56,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              (item['color'] as Color)
-                                                  .withValues(alpha: 0.2),
-                                              (item['color'] as Color)
-                                                  .withValues(alpha: 0.1),
-                                            ],
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: FaIcon(
-                                            item['icon'] as IconData,
-                                            color: item['color'] as Color,
-                                            size: 24,
-                                          ),
-                                        ),
-                                      )
-                                      .animate(target: _isAnimated ? 1 : 0)
-                                      .scale(
-                                        delay: (50 * index).ms,
-                                        duration: 400.ms,
-                                        begin: const Offset(0.8, 0.8),
-                                        end: const Offset(1, 1),
-                                      ),
-                                  SizedBox(width: sp.s16),
-                                  // 텍스트 영역
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item['title'] as String,
-                                          style: theme.textTheme.titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                        ),
-                                        SizedBox(height: sp.s4),
-                                        Text(
-                                          item['subtitle'] as String,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: scheme.onSurfaceVariant,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // 화살표 아이콘
-                                  FaIcon(
-                                    FontAwesomeIcons.chevronRight,
-                                    size: 16,
-                                    color: scheme.onSurfaceVariant.withValues(
-                                      alpha: 0.5,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                      .animate(target: _isAnimated ? 1 : 0)
-                      .fadeIn(delay: (100 * index).ms, duration: 500.ms)
-                      .slideX(
-                        begin: 0.2,
-                        end: 0,
-                        delay: (100 * index).ms,
-                        duration: 500.ms,
-                        curve: Curves.easeOutCubic,
-                      );
+                  return MenuTile(
+                    icon: item['icon'] as IconData,
+                    title: item['title'] as String,
+                    subtitle: item['subtitle'] as String,
+                    color: item['color'] as Color,
+                    onTap: item['onTap'] as VoidCallback?,
+                    index: index,
+                    isAnimated: _isAnimated,
+                  );
                 },
               ),
             ),

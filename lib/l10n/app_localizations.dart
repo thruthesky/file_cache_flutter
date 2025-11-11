@@ -808,6 +808,54 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Posts with comments cannot be edited'**
   String get postWithCommentsCannotBeEdited;
+
+  /// Title for company directory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Company Directory'**
+  String get companyDirectoryTitle;
+
+  /// Button text for adding a new company
+  ///
+  /// In en, this message translates to:
+  /// **'Add Company'**
+  String get addCompany;
+
+  /// Description text for company directory
+  ///
+  /// In en, this message translates to:
+  /// **'When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.'**
+  String get companyDirectoryDescription;
+
+  /// Button text for registering a company
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerCompany;
+
+  /// Text showing number of companies registered
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Total 0 companies registered.} =1{Total 1 company registered.} other{Total {count} companies registered.}}'**
+  String companiesRegistered(int count);
+
+  /// Button text to view more items
+  ///
+  /// In en, this message translates to:
+  /// **'View More'**
+  String get viewMore;
+
+  /// Empty state message when no companies are registered
+  ///
+  /// In en, this message translates to:
+  /// **'No registered companies.'**
+  String get noRegisteredCompanies;
+
+  /// Prompt text encouraging users to register a company
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to register a company in this category!'**
+  String get registerCompanyPrompt;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

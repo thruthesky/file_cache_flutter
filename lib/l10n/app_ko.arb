@@ -116,5 +116,13 @@
   "imageDeletedSuccess": "이미지가 성공적으로 삭제되었습니다",
   "alert": "알림",
   "postWithCommentsCannotBeDeleted": "댓글이 있는 게시글은 삭제할 수 없습니다",
-  "postWithCommentsCannotBeEdited": "댓글이 있는 게시글은 수정할 수 없습니다"
+  "postWithCommentsCannotBeEdited": "댓글이 있는 게시글은 수정할 수 없습니다",
+  "companyDirectoryTitle": "업체 목록",
+  "addCompany": "업체 추가",
+  "companyDirectoryDescription": "업체를 등록하면 구글, 네이버 등에 검색되어 더 많은 고객에게 노출됩니다.",
+  "registerCompany": "등록",
+  "companiesRegistered": "{count, plural, =0{총 0개의 업체가 등록되어 있습니다.} =1{총 1개의 업체가 등록되어 있습니다.} other{총 {count}개의 업체가 등록되어 있습니다.}}",
+  "viewMore": "더보기",
+  "noRegisteredCompanies": "등록된 업체가 없습니다.",
+  "registerCompanyPrompt": "이 카테고리에서 처음으로 업체를 등록하세요!"
 }

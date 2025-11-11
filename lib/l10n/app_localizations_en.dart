@@ -375,4 +375,39 @@ class LoEn extends Lo {
   @override
   String get postWithCommentsCannotBeEdited =>
       'Posts with comments cannot be edited';
+
+  @override
+  String get companyDirectoryTitle => 'Company Directory';
+
+  @override
+  String get addCompany => 'Add Company';
+
+  @override
+  String get companyDirectoryDescription =>
+      'When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.';
+
+  @override
+  String get registerCompany => 'Register';
+
+  @override
+  String companiesRegistered(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Total $count companies registered.',
+      one: 'Total 1 company registered.',
+      zero: 'Total 0 companies registered.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get viewMore => 'View More';
+
+  @override
+  String get noRegisteredCompanies => 'No registered companies.';
+
+  @override
+  String get registerCompanyPrompt =>
+      'Be the first to register a company in this category!';
 }

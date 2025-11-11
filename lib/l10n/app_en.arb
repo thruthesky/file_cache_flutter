@@ -445,5 +445,42 @@
   "postWithCommentsCannotBeEdited": "Posts with comments cannot be edited",
   "@postWithCommentsCannotBeEdited": {
     "description": "Error message when trying to edit a post that has comments"
+  },
+  "companyDirectoryTitle": "Company Directory",
+  "@companyDirectoryTitle": {
+    "description": "Title for company directory screen"
+  },
+  "addCompany": "Add Company",
+  "@addCompany": {
+    "description": "Button text for adding a new company"
+  },
+  "companyDirectoryDescription": "When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.",
+  "@companyDirectoryDescription": {
+    "description": "Description text for company directory"
+  },
+  "registerCompany": "Register",
+  "@registerCompany": {
+    "description": "Button text for registering a company"
+  },
+  "companiesRegistered": "{count, plural, =0{Total 0 companies registered.} =1{Total 1 company registered.} other{Total {count} companies registered.}}",
+  "@companiesRegistered": {
+    "description": "Text showing number of companies registered",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewMore": "View More",
+  "@viewMore": {
+    "description": "Button text to view more items"
+  },
+  "noRegisteredCompanies": "No registered companies.",
+  "@noRegisteredCompanies": {
+    "description": "Empty state message when no companies are registered"
+  },
+  "registerCompanyPrompt": "Be the first to register a company in this category!",
+  "@registerCompanyPrompt": {
+    "description": "Prompt text encouraging users to register a company"
   }
 }

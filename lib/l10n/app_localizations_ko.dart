@@ -364,4 +364,38 @@ class LoKo extends Lo {
 
   @override
   String get postWithCommentsCannotBeEdited => '댓글이 있는 게시글은 수정할 수 없습니다';
+
+  @override
+  String get companyDirectoryTitle => '업체 목록';
+
+  @override
+  String get addCompany => '업체 추가';
+
+  @override
+  String get companyDirectoryDescription =>
+      '업체를 등록하면 구글, 네이버 등에 검색되어 더 많은 고객에게 노출됩니다.';
+
+  @override
+  String get registerCompany => '등록';
+
+  @override
+  String companiesRegistered(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '총 $count개의 업체가 등록되어 있습니다.',
+      one: '총 1개의 업체가 등록되어 있습니다.',
+      zero: '총 0개의 업체가 등록되어 있습니다.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get viewMore => '더보기';
+
+  @override
+  String get noRegisteredCompanies => '등록된 업체가 없습니다.';
+
+  @override
+  String get registerCompanyPrompt => '이 카테고리에서 처음으로 업체를 등록하세요!';
 }

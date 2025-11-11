@@ -6,7 +6,15 @@
     "additionalInfoNotAvailable",
     "alert",
     "postWithCommentsCannotBeDeleted",
-    "postWithCommentsCannotBeEdited"
+    "postWithCommentsCannotBeEdited",
+    "companyDirectoryTitle",
+    "addCompany",
+    "companyDirectoryDescription",
+    "registerCompany",
+    "companiesRegistered",
+    "viewMore",
+    "noRegisteredCompanies",
+    "registerCompanyPrompt"
   ],
 
   "zh": [
@@ -16,6 +24,14 @@
     "additionalInfoNotAvailable",
     "alert",
     "postWithCommentsCannotBeDeleted",
-    "postWithCommentsCannotBeEdited"
+    "postWithCommentsCannotBeEdited",
+    "companyDirectoryTitle",
+    "addCompany",
+    "companyDirectoryDescription",
+    "registerCompany",
+    "companiesRegistered",
+    "viewMore",
+    "noRegisteredCompanies",
+    "registerCompanyPrompt"
   ]
 }
