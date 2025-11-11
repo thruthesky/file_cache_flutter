@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/about/about.screen.dart';
-import 'package:philgo/screens/company/company.view.screen.dart';
+import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -277,10 +277,10 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: CompanyViewScreen.routeName,
-      name: CompanyViewScreen.routeName,
+      path: CompanyListScreen.routeName,
+      name: CompanyListScreen.routeName,
       builder: (context, state) {
-        return const CompanyViewScreen();
+        return const CompanyListScreen();
       },
     ),
     GoRoute(

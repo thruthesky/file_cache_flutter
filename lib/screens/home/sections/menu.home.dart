@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/screens/company/company.view.screen.dart';
+import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -93,7 +93,7 @@ class _MenuHomeState extends State<MenuHome>
         'title': T.businessDirectoryTitle,
         'subtitle': T.businessDirectorySubtitle,
         'color': Colors.purple,
-        'onTap': () => CompanyViewScreen.push(context),
+        'onTap': () => CompanyListScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.circleInfo,
