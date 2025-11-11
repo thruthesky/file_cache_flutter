@@ -1,3 +1,8 @@
+// company
+export 'src/company/models/company.model.dart';
+export 'src/company/models/company.list.model.dart';
+export 'src/company/company.functions.dart';
+
 // chat
 export 'src/chat/chat.defines.dart';
 export 'src/chat/chat.functions.dart';
