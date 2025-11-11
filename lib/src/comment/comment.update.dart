@@ -60,7 +60,7 @@ class _CommentUpdateState extends State<CommentUpdate> {
       submitting = true;
     });
     try {
-      final updatedComment = await philgoApiUpdateComment({
+      final updatedComment = await updateComment({
         'idx': widget.comment.idx,
         'content': contentController.text,
         'files': imageUrls.join(','),
@@ -148,14 +148,13 @@ class _CommentUpdateState extends State<CommentUpdate> {
               icon: submitting
                   ? CircularProgressIndicator.adaptive()
                   : isTextEmpty
-                      ? FaIcon(
-                          FontAwesomeIcons.lightPaperPlane,
-                          color: Theme.of(context)
-                              .iconTheme
-                              .color!
-                              .withValues(alpha: 0.35),
-                        )
-                      : FaIcon(FontAwesomeIcons.solidPaperPlane),
+                  ? FaIcon(
+                      FontAwesomeIcons.lightPaperPlane,
+                      color: Theme.of(
+                        context,
+                      ).iconTheme.color!.withValues(alpha: 0.35),
+                    )
+                  : FaIcon(FontAwesomeIcons.solidPaperPlane),
               onPressed: () async {
                 if (isTextEmpty) return;
                 await onUpdateComment();

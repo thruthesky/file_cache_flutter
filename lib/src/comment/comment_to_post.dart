@@ -57,7 +57,7 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
 
       setState(() {});
 
-      final createdComment = await philgoApiCreateComment({
+      final createdComment = await createComment({
         'idx_root': widget.post.idx,
         'content': contentController.text,
         'files': imageUrls.join(','),
