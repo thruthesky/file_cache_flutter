@@ -81,6 +81,15 @@ Future<CompanyList> getCompanies({
         'companies': companiesList,
         'config': {},
       });
+    } else {
+      debugLog('Response has no numeric keys, returning empty company list');
+      return CompanyList.fromJson({
+        'page': 1,
+        'company_count': 0,
+        'duration': '',
+        'companies': [],
+        'config': {},
+      });
     }
   }
 
