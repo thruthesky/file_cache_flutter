@@ -182,7 +182,6 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(T.companyDirectoryTitle),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: SingleChildScrollView(

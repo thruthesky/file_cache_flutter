@@ -42,19 +42,19 @@ class CompanyCategory extends StatelessWidget {
                 bottom: BorderSide(color: scheme.outlineVariant, width: 1),
               ),
             ),
-            padding: EdgeInsets.only(bottom: sp.s16),
+            padding: EdgeInsets.only(bottom: sp.s8),
             child: Row(
               children: [
                 // Icon container
                 Container(
-                  width: 56,
-                  height: 56,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: scheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
-                    child: FaIcon(icon, size: 24, color: scheme.onSurface),
+                    child: FaIcon(icon, size: 16, color: scheme.onSurface),
                   ),
                 ),
                 SizedBox(width: sp.s16),
@@ -65,7 +65,7 @@ class CompanyCategory extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),

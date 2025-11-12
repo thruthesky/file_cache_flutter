@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/widgets/company/company.image.placeholder.dart';
 
 /// Company Card Widget
 /// Displays a company card with full-width image (or category-based placeholder), and company name
@@ -24,14 +24,14 @@ class CompanyCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: scheme.surface,
-          borderRadius: BorderRadius.circular(sp.s16),
-        ),
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(sp.s12),
+      ),
+      child: GestureDetector(
+        onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -44,32 +44,26 @@ class CompanyCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         // Show placeholder if image fails to load
-                        return _CompanyCardPlaceholder(
-                          scheme: scheme,
-                          categoryIcon: categoryIcon,
-                        );
+                        return CompanyImagePlaceholder(icon: categoryIcon);
                       },
                     )
-                  : _CompanyCardPlaceholder(
-                      scheme: scheme,
-                      categoryIcon: categoryIcon,
-                    ),
+                  : CompanyImagePlaceholder(icon: categoryIcon),
             ),
 
             // Company name section with background
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(sp.s16),
+              padding: EdgeInsets.all(sp.s12),
               decoration: BoxDecoration(
                 color: scheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(sp.s16),
-                  bottomRight: Radius.circular(sp.s16),
+                  bottomLeft: Radius.circular(sp.s12),
+                  bottomRight: Radius.circular(sp.s12),
                 ),
               ),
               child: Text(
                 name,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
                 maxLines: 1,
@@ -77,31 +71,6 @@ class CompanyCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Build placeholder with category icon when no image is available
-class _CompanyCardPlaceholder extends StatelessWidget {
-  const _CompanyCardPlaceholder({
-    required this.scheme,
-    required this.categoryIcon,
-  });
-
-  final ColorScheme scheme;
-  final IconData categoryIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: scheme.surfaceContainerHighest,
-      child: Center(
-        child: FaIcon(
-          categoryIcon,
-          size: 64,
-          color: scheme.onSurfaceVariant.withValues(alpha: 0.3),
         ),
       ),
     );
