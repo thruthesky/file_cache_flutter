@@ -485,4 +485,13 @@ class LoZh extends Lo {
 
   @override
   String get companyUpdated => '商家信息更新成功';
+
+  @override
+  String get mobileContactMethod => 'Mobile Contact Method';
+
+  @override
+  String get sendText => 'Send Text';
+
+  @override
+  String get makeCall => 'Make Call';
 }

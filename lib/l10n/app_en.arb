@@ -594,5 +594,21 @@
   "companyUpdated": "Company updated successfully",
   "@companyUpdated": {
     "description": "Success message for company update"
+  },
+  "mobileContactMethod": "Mobile Contact Method",
+  "@mobileContactMethod": {
+    "description": "Label for mobile contact method selection"
+  },
+  "sendText": "Send Text",
+  "@sendText": {
+    "description": "Option for text message contact method"
+  },
+  "makeCall": "Make Call",
+  "@makeCall": {
+    "description": "Option for phone call contact method"
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Label for location field"
   }
 }

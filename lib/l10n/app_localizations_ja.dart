@@ -486,4 +486,13 @@ class LoJa extends Lo {
 
   @override
   String get companyUpdated => '業者情報が正常に更新されました';
+
+  @override
+  String get mobileContactMethod => 'Mobile Contact Method';
+
+  @override
+  String get sendText => 'Send Text';
+
+  @override
+  String get makeCall => 'Make Call';
 }

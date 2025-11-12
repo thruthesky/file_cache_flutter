@@ -403,7 +403,7 @@ class LoKo extends Lo {
   String get registerCompanyPrompt => '이 카테고리에서 처음으로 업체를 등록하세요!';
 
   @override
-  String get location => '위치';
+  String get location => '지역';
 
   @override
   String get contactInformation => '연락처 정보';
@@ -482,4 +482,13 @@ class LoKo extends Lo {
 
   @override
   String get companyUpdated => '업체 정보가 성공적으로 수정되었습니다';
+
+  @override
+  String get mobileContactMethod => '휴대폰 연락 방법';
+
+  @override
+  String get sendText => '문자 보내기';
+
+  @override
+  String get makeCall => '전화 걸기';
 }

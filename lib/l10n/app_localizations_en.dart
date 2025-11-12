@@ -494,4 +494,13 @@ class LoEn extends Lo {
 
   @override
   String get companyUpdated => 'Company updated successfully';
+
+  @override
+  String get mobileContactMethod => 'Mobile Contact Method';
+
+  @override
+  String get sendText => 'Send Text';
+
+  @override
+  String get makeCall => 'Make Call';
 }

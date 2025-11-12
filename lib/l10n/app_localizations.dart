@@ -863,7 +863,7 @@ abstract class Lo {
   /// **'Be the first to register a company in this category!'**
   String get registerCompanyPrompt;
 
-  /// Label for location information
+  /// Label for location field
   ///
   /// In en, this message translates to:
   /// **'Location'**
@@ -1024,6 +1024,24 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Company updated successfully'**
   String get companyUpdated;
+
+  /// Label for mobile contact method selection
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Contact Method'**
+  String get mobileContactMethod;
+
+  /// Option for text message contact method
+  ///
+  /// In en, this message translates to:
+  /// **'Send Text'**
+  String get sendText;
+
+  /// Option for phone call contact method
+  ///
+  /// In en, this message translates to:
+  /// **'Make Call'**
+  String get makeCall;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {
