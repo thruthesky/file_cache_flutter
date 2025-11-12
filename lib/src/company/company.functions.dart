@@ -110,3 +110,17 @@ Future<Company?> getMyCompany() async {
 
   return Company.fromJson(response);
 }
+
+Future<Company> createCompany() async {
+  debugLog('Creating my company');
+  final response = await func('create_my_company', debug: true);
+  debugLog('Create a compnay $response');
+  return Company.fromJson(response);
+}
+
+Future<Company> updateCompany(RecordType data) async {
+  debugLog('Updating company with data: $data');
+  final response = await func('update_my_company', data: data, debug: true);
+  debugLog('Update company response: $response');
+  return Company.fromJson(response);
+}
