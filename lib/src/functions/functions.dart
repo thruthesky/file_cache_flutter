@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Utility functions for PhilGo Chat Flutter Package
 ///
@@ -240,4 +241,26 @@ Future<bool> showConfirmDialog({required String message, String? title}) async {
 
   // null인 경우 (뒤로가기 버튼 등) false 반환
   return result ?? false;
+}
+
+/// Launch an external app or URL
+///
+/// Opens the given [url] using the device's default handler.
+/// - If [isExternal] is true, opens in an external application (e.g., browser, messaging app)
+/// - If [isExternal] is false, uses the platform's default behavior
+///
+/// Common use cases:
+/// - Phone calls: `launchApp('tel:+1234567890', false)`
+/// - Web links: `launchApp('https://example.com', true)`
+/// - Messaging apps: `launchApp('https://t.me/username', true)`
+Future<void> launchApp(String url, bool isExternal) async {
+  final uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(
+      uri,
+      mode: isExternal
+          ? LaunchMode.externalApplication
+          : LaunchMode.platformDefault,
+    );
+  }
 }
