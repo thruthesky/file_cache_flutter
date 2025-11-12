@@ -38,13 +38,12 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
   // Category and Business Type selection
   String? _selectedCategory;
-  String? _selectedBusinessType;
 
   // Checkbox state
   bool _useCompanyDomain = false;
 
   // Radio button state for contact method
-  String _mobileContactMethod = 'call'; // 'text' or 'call'
+  String? _mobileContactMethod; // 'text' or 'call', null if not selected
 
   // Image URLs (for update mode)
   String _logoUrl = '';
@@ -91,12 +90,18 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         ? null
         : category;
 
+    // Set mobile contact method from mobile_number_call_type
+    final callType = widget.company?.mobile_number_call_type;
+    if (callType == 'T') {
+      _mobileContactMethod = 'text';
+    } else if (callType == 'C') {
+      _mobileContactMethod = 'call';
+    }
+
     // Set image URLs
     _logoUrl = widget.company?.logo_url ?? '';
     _companyIntroImageUrl = widget.company?.title_image_url ?? '';
     _businessLicenseUrl = widget.company?.business_license_url ?? '';
-    // _kakaotalkQrImageUrl = widget.company?.kakaotalk_qr_image_url ?? '';
-    // _officeInteriorUrl = widget.company?.office_interior_url ?? '';
   }
 
   @override
@@ -677,7 +682,29 @@ class _ImageUploadFieldState extends State<_ImageUploadField> {
                   else
                     const _ImagePlaceholder(),
 
-                  /// 업로드 중 표시
+                  if (widget.imageUrl.isNotEmpty && !_isUploading)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () {
+                          widget.onImageSelected('');
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(sp.s8),
+                          decoration: BoxDecoration(
+                            color: scheme.errorContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          child: FaIcon(
+                            FontAwesomeIcons.solidTrash,
+                            size: 16,
+                            color: scheme.error,
+                          ),
+                        ),
+                      ),
+                    ),
+
                   if (_isUploading)
                     Container(
                       decoration: BoxDecoration(
