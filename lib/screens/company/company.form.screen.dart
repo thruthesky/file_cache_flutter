@@ -102,6 +102,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _logoUrl = widget.company?.logo_url ?? '';
     _companyIntroImageUrl = widget.company?.title_image_url ?? '';
     _businessLicenseUrl = widget.company?.business_license_url ?? '';
+    _officeInteriorUrl = widget.company?.photo_url ?? '';
   }
 
   @override
@@ -121,12 +122,41 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
   /// Handle form submission
   Future<void> _handleSubmit() async {
-    if (!_formKey.currentState!.validate()) {
+    // Validate mandatory fields
+    if (_nameController.text.trim().isEmpty) {
+      showErrorSnackBar(context, 'Please enter company name');
       return;
     }
-
+    if (_titleController.text.trim().isEmpty) {
+      showErrorSnackBar(context, 'Please enter company title');
+      return;
+    }
     if (_selectedCategory == null) {
       showErrorSnackBar(context, T.pleaseSelectCategory);
+      return;
+    }
+    if (_locationController.text.trim().isEmpty) {
+      showErrorSnackBar(context, 'Please select location');
+      return;
+    }
+    if (_addressController.text.trim().isEmpty) {
+      showErrorSnackBar(context, 'Please enter address');
+      return;
+    }
+    if (_landlineController.text.trim().isEmpty) {
+      showErrorSnackBar(context, 'Please enter landline number');
+      return;
+    }
+    if (_mobileNumberController.text.trim().isEmpty) {
+      showErrorSnackBar(context, 'Please enter mobile number');
+      return;
+    }
+    if (_descriptionController.text.trim().isEmpty) {
+      showErrorSnackBar(context, 'Please enter company description');
+      return;
+    }
+    if (_logoUrl.isEmpty) {
+      showErrorSnackBar(context, 'Please upload company logo');
       return;
     }
 
@@ -135,24 +165,64 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     });
 
     try {
-      // TODO: Implement API call to create or update company
-      // final result = await createOrUpdateCompany(...);
+      // Prepare company data for API
+      final companyData = <String, dynamic>{
+        'name': _nameController.text.trim(),
+        'title': _titleController.text.trim(),
+        'description': _descriptionController.text.trim(),
+        'category': _selectedCategory!,
+        'location': _locationController.text.trim(),
+        'address': _addressController.text.trim(),
+        'phone_number': _landlineController.text.trim(),
+        'mobile_number': _mobileNumberController.text.trim(),
+        'kakaotalk_id': _kakaotalkIdController.text.trim(),
+        'kakaotalk_qr_url': _kakaotalkQrUrlController.text.trim(),
+        'telegram_id': _telegramIdController.text.trim(),
+        'logo_url': _logoUrl,
+      };
 
-      if (context.mounted) {
-        showSuccessSnackBar(
-          context,
-          widget.company == null ? T.companyRegistered : T.companyUpdated,
-        );
-        context.pop();
+      // Add mobile contact method if selected
+      if (_mobileContactMethod != null) {
+        companyData['mobile_number_call_type'] = _mobileContactMethod == 'text'
+            ? 'T'
+            : 'C';
       }
+
+      // Add optional image URLs if provided
+      if (_companyIntroImageUrl.isNotEmpty) {
+        companyData['title_image_url'] = _companyIntroImageUrl;
+      }
+      if (_businessLicenseUrl.isNotEmpty) {
+        companyData['business_license_url'] = _businessLicenseUrl;
+      }
+      if (_kakaotalkQrImageUrl.isNotEmpty) {
+        companyData['kakaotalk_qr_image_url'] = _kakaotalkQrImageUrl;
+      }
+      if (_officeInteriorUrl.isNotEmpty) {
+        companyData['photo_url'] = _officeInteriorUrl;
+      }
+
+      // Call API to update company
+      final updatedCompany = await updateCompany(companyData);
+
+      if (!mounted) return;
+
+      showSuccessSnackBar(
+        context,
+        widget.company == null ? T.companyRegistered : T.companyUpdated,
+      );
+      // Return the updated company to the previous screen
+      if (!mounted) return;
+      context.pop(updatedCompany);
     } catch (e) {
-      if (context.mounted) {
-        showErrorSnackBar(context, 'Error: $e');
-      }
+      if (!mounted) return;
+      showErrorSnackBar(context, 'Error: $e');
     } finally {
-      setState(() {
-        _isSubmitting = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -187,7 +257,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               TextFieldSet(
                 controller: _nameController,
-                label: T.companyName,
+                label: '${T.companyName} *',
                 hintText: T.enterCompanyName,
                 prefixFaIconData: FontAwesomeIcons.lightBuilding,
                 padding: const EdgeInsets.symmetric(
@@ -208,7 +278,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               TextFieldSet(
                 controller: _titleController,
-                label: T.companyTitle,
+                label: '${T.companyTitle} *',
                 hintText: T.enterCompanyTitle,
                 prefixFaIconData: FontAwesomeIcons.lightHeading,
                 padding: const EdgeInsets.symmetric(
@@ -223,7 +293,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   vertical: 8.0,
                 ),
                 child: CategoryDropdownField(
-                  label: 'Business Type',
+                  label: 'Business Type *',
                   initialValue: _selectedCategory,
                   onChanged: (value) {
                     setState(() {
@@ -234,7 +304,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               ),
 
               CompanySelectLocation(
-                label: T.location,
+                label: '${T.location} *',
                 controller: _locationController,
                 onLocationSelected: (location) {
                   setState(() {
@@ -245,7 +315,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               TextFieldSet(
                 controller: _addressController,
-                label: T.address,
+                label: '${T.address} *',
                 hintText: T.enterAddress,
                 prefixFaIconData: FontAwesomeIcons.lightMapLocationDot,
                 padding: const EdgeInsets.symmetric(
@@ -268,7 +338,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               // Landline
               TextFieldSet(
                 controller: _landlineController,
-                label: T.phoneNumber,
+                label: '${T.phoneNumber} *',
                 hintText: T.enterPhoneNumber,
                 prefixFaIconData: FontAwesomeIcons.lightPhone,
                 padding: const EdgeInsets.symmetric(
@@ -281,7 +351,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               TextFieldSet(
                 controller: _mobileNumberController,
-                label: T.mobileNumber,
+                label: '${T.mobileNumber} *',
                 hintText: T.enterMobileNumber,
                 prefixFaIconData: FontAwesomeIcons.lightPhone,
                 padding: const EdgeInsets.symmetric(
@@ -354,6 +424,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               _ImageUploadField(
                 label: 'Upload Kakao QR Code',
                 imageUrl: _kakaotalkQrImageUrl,
+                enableQrScanner: true,
                 onImageSelected: (url) {
                   setState(() {
                     _kakaotalkQrImageUrl = url;
@@ -397,7 +468,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               TextFieldSet(
                 controller: _descriptionController,
-                label: T.description,
+                label: '${T.description} *',
                 hintText: T.enterDescription,
                 prefixFaIconData: FontAwesomeIcons.lightAlignLeft,
                 padding: const EdgeInsets.symmetric(
@@ -420,7 +491,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               /// 회사 로고 업로드
               _ImageUploadField(
-                label: "Company Logo",
+                label: "Company Logo *",
                 imageUrl: _logoUrl,
                 onImageSelected: (url) {
                   setState(() {
@@ -599,11 +670,13 @@ class _ImageUploadField extends StatefulWidget {
     required this.label,
     required this.imageUrl,
     required this.onImageSelected,
+    this.enableQrScanner = false,
   });
 
   final String label;
   final String imageUrl;
   final void Function(String) onImageSelected;
+  final bool enableQrScanner;
 
   @override
   State<_ImageUploadField> createState() => _ImageUploadFieldState();
