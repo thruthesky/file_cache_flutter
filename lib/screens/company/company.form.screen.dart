@@ -346,22 +346,14 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               SizedBox(height: sp.s8),
 
-              FileUpload(
-                onUploaded: (url) {
+              _ImageUploadField(
+                label: 'Upload Kakao QR Code',
+                imageUrl: _kakaotalkQrImageUrl,
+                onImageSelected: (url) {
                   setState(() {
                     _kakaotalkQrImageUrl = url;
                   });
                 },
-                image: true,
-                child: _ImageUploadField(
-                  label: 'Upload Kakao QR Code',
-                  imageUrl: _kakaotalkQrImageUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _kakaotalkQrImageUrl = url;
-                    });
-                  },
-                ),
               ),
 
               TextFieldSet(
@@ -422,60 +414,36 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               SizedBox(height: sp.s8),
 
               /// 회사 로고 업로드
-              FileUpload(
-                onUploaded: (url) {
+              _ImageUploadField(
+                label: "Company Logo",
+                imageUrl: _logoUrl,
+                onImageSelected: (url) {
                   setState(() {
                     _logoUrl = url;
                   });
                 },
-                image: true,
-                child: _ImageUploadField(
-                  label: "Company Logo",
-                  imageUrl: _logoUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _logoUrl = url;
-                    });
-                  },
-                ),
               ),
 
               /// 사업자 등록증 업로드 (Business license scan)
-              FileUpload(
-                onUploaded: (url) {
+              _ImageUploadField(
+                label: T.businessLicense,
+                imageUrl: _businessLicenseUrl,
+                onImageSelected: (url) {
                   setState(() {
                     _businessLicenseUrl = url;
                   });
                 },
-                image: true,
-                child: _ImageUploadField(
-                  label: T.businessLicense,
-                  imageUrl: _businessLicenseUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _businessLicenseUrl = url;
-                    });
-                  },
-                ),
               ),
 
               /// 회사 소개 이미지 업로드
-              FileUpload(
-                onUploaded: (url) {
+              _ImageUploadField(
+                label: 'Company Introduction Image',
+                imageUrl: _companyIntroImageUrl,
+                onImageSelected: (url) {
                   setState(() {
                     _companyIntroImageUrl = url;
                   });
                 },
-                image: true,
-                child: _ImageUploadField(
-                  label: 'Company Introduction Image',
-                  imageUrl: _companyIntroImageUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _companyIntroImageUrl = url;
-                    });
-                  },
-                ),
               ),
 
               /// 가이드라인 안내
@@ -514,22 +482,14 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               SizedBox(height: sp.s8),
 
               /// 사무실/매장 내부 사진 업로드
-              FileUpload(
-                onUploaded: (url) {
+              _ImageUploadField(
+                label: 'Office/Store Interior Photo',
+                imageUrl: _officeInteriorUrl,
+                onImageSelected: (url) {
                   setState(() {
                     _officeInteriorUrl = url;
                   });
                 },
-                image: true,
-                child: _ImageUploadField(
-                  label: 'Office/Store Interior Photo',
-                  imageUrl: _officeInteriorUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _officeInteriorUrl = url;
-                    });
-                  },
-                ),
               ),
 
               /// 가이드라인 안내
@@ -628,18 +588,25 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _ImageUploadField extends StatelessWidget {
+/// 이미지 업로드 필드 (FileUpload 통합)
+class _ImageUploadField extends StatefulWidget {
   const _ImageUploadField({
     required this.label,
     required this.imageUrl,
     required this.onImageSelected,
-    this.height = 240,
   });
 
   final String label;
   final String imageUrl;
-  final double height;
   final void Function(String) onImageSelected;
+
+  @override
+  State<_ImageUploadField> createState() => _ImageUploadFieldState();
+}
+
+class _ImageUploadFieldState extends State<_ImageUploadField> {
+  bool _isUploading = false;
+  double _uploadProgress = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -647,41 +614,108 @@ class _ImageUploadField extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: scheme.onSurface,
+    return FileUpload(
+      onBeforeUpload: () {
+        setState(() {
+          _isUploading = true;
+          _uploadProgress = 0.0;
+        });
+      },
+      onProgress: (progress) {
+        setState(() {
+          _uploadProgress = progress;
+        });
+      },
+      onUploaded: (url) {
+        setState(() {
+          _isUploading = false;
+        });
+        widget.onImageSelected(url);
+      },
+      onCancelled: () {
+        setState(() {
+          _isUploading = false;
+        });
+      },
+      image: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
+              ),
             ),
-          ),
-          SizedBox(height: sp.s8),
-          Container(
-            height: height,
-            decoration: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: scheme.outline),
-            ),
-            child: imageUrl.isNotEmpty
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const _ImagePlaceholder();
-                      },
+            SizedBox(height: sp.s8),
+            Container(
+              height: 240,
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: scheme.outline),
+              ),
+              child: Stack(
+                children: [
+                  /// 이미지 표시
+                  if (widget.imageUrl.isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        widget.imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const _ImagePlaceholder();
+                        },
+                      ),
+                    )
+                  else
+                    const _ImagePlaceholder(),
+
+                  /// 업로드 중 표시
+                  if (_isUploading)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: scheme.surface.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              value: _uploadProgress,
+                              strokeWidth: 3,
+                            ),
+                            SizedBox(height: sp.s16),
+                            Text(
+                              '${(_uploadProgress * 100).toInt()}%',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: scheme.primary,
+                              ),
+                            ),
+                            SizedBox(height: sp.s4),
+                            Text(
+                              'Uploading...',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  )
-                : const _ImagePlaceholder(),
-          ),
-        ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
