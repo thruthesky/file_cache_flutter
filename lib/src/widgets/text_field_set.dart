@@ -203,9 +203,11 @@ class TextFieldSet extends StatelessWidget {
               ),
             ),
           TextField(
+            readOnly: readOnly,
             controller: controller,
             decoration: _buildDecoration(),
             enabled: enabled,
+            onTap: onTap,
           ),
           if (bottomHint != null)
             Padding(

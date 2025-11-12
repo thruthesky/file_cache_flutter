@@ -106,3 +106,7 @@ export 'src/receive_share/receive.share.service.dart';
 export 'src/receive_share/receive.share.functions.dart';
 export 'src/receive_share/widgets/receive.share.dialog.dart';
 export 'src/receive_share/widgets/share.where.button.dart';
+
+// constants
+export 'src/constants.dart';
+export 'src/locations.dart';
