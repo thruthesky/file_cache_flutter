@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/widgets/company/category_dropdown_field.dart';
+import 'package:philgo/widgets/company/company.select.location.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company Form Screen
@@ -28,18 +30,28 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   late TextEditingController _descriptionController;
   late TextEditingController _locationController;
   late TextEditingController _addressController;
-  late TextEditingController _phoneNumberController;
+  late TextEditingController _landlineController;
   late TextEditingController _mobileNumberController;
   late TextEditingController _kakaotalkIdController;
+  late TextEditingController _kakaotalkQrUrlController;
   late TextEditingController _telegramIdController;
 
-  // Category selection
+  // Category and Business Type selection
   String? _selectedCategory;
+  String? _selectedBusinessType;
+
+  // Checkbox state
+  bool _useCompanyDomain = false;
+
+  // Radio button state for contact method
+  String _mobileContactMethod = 'call'; // 'text' or 'call'
 
   // Image URLs (for update mode)
   String _logoUrl = '';
   String _titleImageUrl = '';
   String _businessLicenseUrl = '';
+  String _kakaotalkQrImageUrl = '';
+  String _officeInteriorUrl = '';
 
   bool _isSubmitting = false;
 
@@ -59,7 +71,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _addressController = TextEditingController(
       text: widget.company?.address ?? '',
     );
-    _phoneNumberController = TextEditingController(
+    _landlineController = TextEditingController(
       text: widget.company?.phone_number ?? '',
     );
     _mobileNumberController = TextEditingController(
@@ -68,6 +80,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _kakaotalkIdController = TextEditingController(
       text: widget.company?.kakaotalk_id ?? '',
     );
+    _kakaotalkQrUrlController = TextEditingController(text: '');
     _telegramIdController = TextEditingController(
       text: widget.company?.telegram_id ?? '',
     );
@@ -82,6 +95,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _logoUrl = widget.company?.logo_url ?? '';
     _titleImageUrl = widget.company?.title_image_url ?? '';
     _businessLicenseUrl = widget.company?.business_license_url ?? '';
+    _kakaotalkQrImageUrl = '';
+    _officeInteriorUrl = '';
   }
 
   @override
@@ -91,9 +106,10 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _descriptionController.dispose();
     _locationController.dispose();
     _addressController.dispose();
-    _phoneNumberController.dispose();
+    _landlineController.dispose();
     _mobileNumberController.dispose();
     _kakaotalkIdController.dispose();
+    _kakaotalkQrUrlController.dispose();
     _telegramIdController.dispose();
     super.dispose();
   }
@@ -139,7 +155,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
     final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -156,7 +171,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
             children: [
               SizedBox(height: sp.s16),
 
-              /// 기본 정보
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: _SectionHeader(
@@ -166,7 +180,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               ),
               SizedBox(height: sp.s8),
 
-              /// 회사명
               TextFieldSet(
                 controller: _nameController,
                 label: T.companyName,
@@ -179,7 +192,15 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               ),
               SizedBox(height: sp.s16),
 
-              /// 회사 타이틀
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: _SectionHeader(
+                  icon: FontAwesomeIcons.lightCircleInfo,
+                  title: 'Detailed Information',
+                ),
+              ),
+              SizedBox(height: sp.s8),
+
               TextFieldSet(
                 controller: _titleController,
                 label: T.companyTitle,
@@ -190,69 +211,10 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   vertical: 8,
                 ),
               ),
-              SizedBox(height: sp.s16),
 
-              /// 카테고리
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                // TODO : Add Category dropdown here
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      T.category,
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: sp.s8),
-                  ],
-                ),
-              ),
-              SizedBox(height: sp.s8),
+              // TODO: Add company category
+              CompanySelectLocation(label: 'Location'),
 
-              /// 회사 설명
-              TextFieldSet(
-                controller: _descriptionController,
-                label: T.description,
-                hintText: T.enterDescription,
-                prefixFaIconData: FontAwesomeIcons.lightAlignLeft,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                maxLines: 5,
-              ),
-              SizedBox(height: sp.s24),
-
-              /// 위치 정보
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _SectionHeader(
-                  icon: FontAwesomeIcons.lightLocationDot,
-                  title: T.locationInformation,
-                ),
-              ),
-              SizedBox(height: sp.s8),
-
-              /// 위치
-              TextFieldSet(
-                controller: _locationController,
-                label: T.location,
-                hintText: T.enterLocation,
-                prefixFaIconData: FontAwesomeIcons.lightMapPin,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-              ),
-              SizedBox(height: sp.s16),
-
-              /// 주소
               TextFieldSet(
                 controller: _addressController,
                 label: T.address,
@@ -262,23 +224,22 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   horizontal: 24,
                   vertical: 8,
                 ),
-                maxLines: 2,
               ),
-              SizedBox(height: sp.s24),
 
-              /// 연락처 정보
+              SizedBox(height: sp.s8),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: _SectionHeader(
-                  icon: FontAwesomeIcons.lightPhone,
-                  title: T.contactInformation,
+                  icon: FontAwesomeIcons.lightCircleInfo,
+                  title: 'Contact Information',
                 ),
               ),
               SizedBox(height: sp.s8),
 
-              /// 전화번호
+              // Landline
               TextFieldSet(
-                controller: _phoneNumberController,
+                controller: _landlineController,
                 label: T.phoneNumber,
                 hintText: T.enterPhoneNumber,
                 prefixFaIconData: FontAwesomeIcons.lightPhone,
@@ -286,112 +247,148 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   horizontal: 24,
                   vertical: 8,
                 ),
-                keyboardType: TextInputType.phone,
               ),
-              SizedBox(height: sp.s16),
 
-              /// 모바일 번호
+              SizedBox(height: sp.s8),
+
               TextFieldSet(
                 controller: _mobileNumberController,
                 label: T.mobileNumber,
                 hintText: T.enterMobileNumber,
-                prefixFaIconData: FontAwesomeIcons.lightMobileScreen,
+                prefixFaIconData: FontAwesomeIcons.lightPhone,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 8,
                 ),
-                keyboardType: TextInputType.phone,
               ),
-              SizedBox(height: sp.s16),
 
-              /// 카카오톡 ID
+              SizedBox(height: sp.s8),
+
+              // TODO : Add radio mobile contact method such as 'send text' or 'make call'
               TextFieldSet(
                 controller: _kakaotalkIdController,
-                label: 'KakaoTalk ID',
-                hintText: 'Enter KakaoTalk ID',
-                prefixFaIconData: FontAwesomeIcons.comment,
+                label: 'KakaoID',
+                hintText: 'Enter kakaotalk ID',
+                prefixFaIconData: FontAwesomeIcons.message,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 8,
                 ),
               ),
-              SizedBox(height: sp.s16),
 
-              /// 텔레그램 ID
+              SizedBox(height: sp.s8),
+
+              _ImageUploadField(
+                label: 'Upload Kakao QR Code',
+                imageUrl: _kakaotalkQrImageUrl,
+                onImageSelected: (url) {
+                  _kakaotalkQrImageUrl = url;
+                  setState(() {});
+                },
+              ),
+
+              TextFieldSet(
+                controller: _kakaotalkIdController,
+                hintText: 'https://pf.kakao.com/...',
+                prefixFaIconData: FontAwesomeIcons.message,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+              ),
+
+              SizedBox(height: sp.s8),
+
               TextFieldSet(
                 controller: _telegramIdController,
                 label: 'Telegram ID',
-                hintText: 'Enter Telegram ID',
-                prefixFaIconData: FontAwesomeIcons.telegram,
+                hintText: "Enter Telegram ID",
+                prefixFaIconData: FontAwesomeIcons.message,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 8,
                 ),
               ),
-              SizedBox(height: sp.s24),
 
-              /// 이미지 정보
+              SizedBox(height: sp.s8),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: _SectionHeader(
-                  icon: FontAwesomeIcons.lightImages,
-                  title: T.images,
+                  icon: FontAwesomeIcons.lightCircleInfo,
+                  title: 'Company Introduction',
+                ),
+              ),
+
+              TextFieldSet(
+                controller: _descriptionController,
+                label: T.description,
+                hintText: T.enterDescription,
+                prefixFaIconData: FontAwesomeIcons.lightAlignLeft,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 4,
+                ),
+                maxLines: 5,
+              ),
+
+              SizedBox(height: sp.s8),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: _SectionHeader(
+                  icon: FontAwesomeIcons.lightCircleInfo,
+                  title: 'Image Upload',
                 ),
               ),
               SizedBox(height: sp.s8),
 
-              /// 로고 이미지
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                child: _ImageUploadField(
-                  label: T.logoImage,
-                  imageUrl: _logoUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _logoUrl = url;
-                    });
-                  },
-                ),
+              _ImageUploadField(
+                label: "Company Logo",
+                imageUrl:
+                    _businessLicenseUrl, // TODO: it should be company logo
+                onImageSelected: (url) {
+                  setState(() {
+                    _businessLicenseUrl = url;
+                  });
+                },
               ),
 
-              /// 타이틀 이미지
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                child: _ImageUploadField(
-                  label: T.titleImage,
-                  imageUrl: _titleImageUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _titleImageUrl = url;
-                    });
-                  },
-                ),
+              _ImageUploadField(
+                label: T.businessLicense,
+                imageUrl: _businessLicenseUrl,
+                onImageSelected: (url) {
+                  setState(() {
+                    _businessLicenseUrl = url;
+                  });
+                },
               ),
 
-              /// 사업자 등록증
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                child: _ImageUploadField(
-                  label: T.businessLicense,
-                  imageUrl: _businessLicenseUrl,
-                  onImageSelected: (url) {
-                    setState(() {
-                      _businessLicenseUrl = url;
-                    });
-                  },
-                ),
+              // TODO: add info 'Business license scan'
+              _ImageUploadField(
+                label: 'Company Introduction Image',
+                imageUrl:
+                    _businessLicenseUrl, // TODO: it should be company introduction image
+                onImageSelected: (url) {
+                  setState(() {
+                    _businessLicenseUrl = url;
+                  });
+                },
               ),
 
-              /// 제출 버튼
+              // TODO: add guidelines. Image briefly representing company introduction, Include logo and main service items, Text limited to around 100 characters (20 words)
+              _ImageUploadField(
+                label: 'Office/Store Interior Photo',
+                imageUrl:
+                    _businessLicenseUrl, // TODO: it should be office/store interior photo
+                onImageSelected: (url) {
+                  setState(() {
+                    _businessLicenseUrl = url;
+                  });
+                },
+              ),
+
+              // TODO: add info 'Office/Store Interior full view photo'
               SubmitButton.icon(
                 context: context,
                 padding: const EdgeInsets.symmetric(
@@ -471,55 +468,49 @@ class _ImageUploadField extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: scheme.onSurface,
-          ),
-        ),
-        SizedBox(height: sp.s8),
-        InkWell(
-          onTap: () {
-            // TODO: Implement image selection and upload
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Image upload coming soon'),
-                duration: const Duration(seconds: 2),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: 120,
-            decoration: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: scheme.outline),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
             ),
-            child: imageUrl.isNotEmpty
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const _ImagePlaceholder();
-                      },
-                    ),
-                  )
-                : const _ImagePlaceholder(),
           ),
-        ),
-      ],
+          SizedBox(height: sp.s8),
+          InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              height: 120,
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: scheme.outline),
+              ),
+              child: imageUrl.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const _ImagePlaceholder();
+                        },
+                      ),
+                    )
+                  : const _ImagePlaceholder(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-/// 이미지 플레이스홀더 위젯
 class _ImagePlaceholder extends StatelessWidget {
   const _ImagePlaceholder();
 
