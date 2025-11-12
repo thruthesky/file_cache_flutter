@@ -48,7 +48,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
   // Image URLs (for update mode)
   String _logoUrl = '';
-  String _titleImageUrl = '';
+  String _companyIntroImageUrl = '';
   String _businessLicenseUrl = '';
   String _kakaotalkQrImageUrl = '';
   String _officeInteriorUrl = '';
@@ -93,10 +93,10 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
     // Set image URLs
     _logoUrl = widget.company?.logo_url ?? '';
-    _titleImageUrl = widget.company?.title_image_url ?? '';
+    _companyIntroImageUrl = widget.company?.title_image_url ?? '';
     _businessLicenseUrl = widget.company?.business_license_url ?? '';
-    _kakaotalkQrImageUrl = '';
-    _officeInteriorUrl = '';
+    // _kakaotalkQrImageUrl = widget.company?.kakaotalk_qr_image_url ?? '';
+    // _officeInteriorUrl = widget.company?.office_interior_url ?? '';
   }
 
   @override
@@ -212,8 +212,31 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 ),
               ),
 
-              // TODO: Add company category
-              CompanySelectLocation(label: 'Location'),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 8.0,
+                ),
+                child: CategoryDropdownField(
+                  label: 'Business Type',
+                  initialValue: _selectedCategory,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  },
+                ),
+              ),
+
+              CompanySelectLocation(
+                label: T.location,
+                controller: _locationController,
+                onLocationSelected: (location) {
+                  setState(() {
+                    _locationController.text = location;
+                  });
+                },
+              ),
 
               TextFieldSet(
                 controller: _addressController,
@@ -264,7 +287,52 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               SizedBox(height: sp.s8),
 
-              // TODO : Add radio mobile contact method such as 'send text' or 'make call'
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      T.mobileContactMethod,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurface,
+                      ),
+                    ),
+                    SizedBox(height: sp.s8),
+                    RadioGroup<String>(
+                      groupValue: _mobileContactMethod,
+                      onChanged: (value) {
+                        setState(() {
+                          _mobileContactMethod = value!;
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: Text(T.sendText),
+                              value: 'text',
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: Text(T.makeCall),
+                              value: 'call',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: sp.s8),
+
               TextFieldSet(
                 controller: _kakaotalkIdController,
                 label: 'KakaoID',
@@ -278,17 +346,27 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
               SizedBox(height: sp.s8),
 
-              _ImageUploadField(
-                label: 'Upload Kakao QR Code',
-                imageUrl: _kakaotalkQrImageUrl,
-                onImageSelected: (url) {
-                  _kakaotalkQrImageUrl = url;
-                  setState(() {});
+              FileUpload(
+                onUploaded: (url) {
+                  setState(() {
+                    _kakaotalkQrImageUrl = url;
+                  });
                 },
+                image: true,
+                child: _ImageUploadField(
+                  label: 'Upload Kakao QR Code',
+                  imageUrl: _kakaotalkQrImageUrl,
+                  onImageSelected: (url) {
+                    setState(() {
+                      _kakaotalkQrImageUrl = url;
+                    });
+                  },
+                ),
               ),
 
               TextFieldSet(
-                controller: _kakaotalkIdController,
+                controller: _kakaotalkQrUrlController,
+                label: 'Kakao Channel URL',
                 hintText: 'https://pf.kakao.com/...',
                 prefixFaIconData: FontAwesomeIcons.message,
                 padding: const EdgeInsets.symmetric(
@@ -343,52 +421,152 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
               ),
               SizedBox(height: sp.s8),
 
-              _ImageUploadField(
-                label: "Company Logo",
-                imageUrl:
-                    _businessLicenseUrl, // TODO: it should be company logo
-                onImageSelected: (url) {
+              /// 회사 로고 업로드
+              FileUpload(
+                onUploaded: (url) {
+                  setState(() {
+                    _logoUrl = url;
+                  });
+                },
+                image: true,
+                child: _ImageUploadField(
+                  label: "Company Logo",
+                  imageUrl: _logoUrl,
+                  onImageSelected: (url) {
+                    setState(() {
+                      _logoUrl = url;
+                    });
+                  },
+                ),
+              ),
+
+              /// 사업자 등록증 업로드 (Business license scan)
+              FileUpload(
+                onUploaded: (url) {
                   setState(() {
                     _businessLicenseUrl = url;
                   });
                 },
+                image: true,
+                child: _ImageUploadField(
+                  label: T.businessLicense,
+                  imageUrl: _businessLicenseUrl,
+                  onImageSelected: (url) {
+                    setState(() {
+                      _businessLicenseUrl = url;
+                    });
+                  },
+                ),
               ),
 
-              _ImageUploadField(
-                label: T.businessLicense,
-                imageUrl: _businessLicenseUrl,
-                onImageSelected: (url) {
+              /// 회사 소개 이미지 업로드
+              FileUpload(
+                onUploaded: (url) {
                   setState(() {
-                    _businessLicenseUrl = url;
+                    _companyIntroImageUrl = url;
                   });
                 },
+                image: true,
+                child: _ImageUploadField(
+                  label: 'Company Introduction Image',
+                  imageUrl: _companyIntroImageUrl,
+                  onImageSelected: (url) {
+                    setState(() {
+                      _companyIntroImageUrl = url;
+                    });
+                  },
+                ),
               ),
 
-              // TODO: add info 'Business license scan'
-              _ImageUploadField(
-                label: 'Company Introduction Image',
-                imageUrl:
-                    _businessLicenseUrl, // TODO: it should be company introduction image
-                onImageSelected: (url) {
+              /// 가이드라인 안내
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Container(
+                  padding: EdgeInsets.all(sp.s8),
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.lightCircleInfo,
+                        size: 14,
+                        color: scheme.primary,
+                      ),
+                      SizedBox(width: sp.s8),
+                      Expanded(
+                        child: Text(
+                          'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: sp.s8),
+
+              /// 사무실/매장 내부 사진 업로드
+              FileUpload(
+                onUploaded: (url) {
                   setState(() {
-                    _businessLicenseUrl = url;
+                    _officeInteriorUrl = url;
                   });
                 },
+                image: true,
+                child: _ImageUploadField(
+                  label: 'Office/Store Interior Photo',
+                  imageUrl: _officeInteriorUrl,
+                  onImageSelected: (url) {
+                    setState(() {
+                      _officeInteriorUrl = url;
+                    });
+                  },
+                ),
               ),
 
-              // TODO: add guidelines. Image briefly representing company introduction, Include logo and main service items, Text limited to around 100 characters (20 words)
-              _ImageUploadField(
-                label: 'Office/Store Interior Photo',
-                imageUrl:
-                    _businessLicenseUrl, // TODO: it should be office/store interior photo
-                onImageSelected: (url) {
-                  setState(() {
-                    _businessLicenseUrl = url;
-                  });
-                },
+              /// 가이드라인 안내
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Container(
+                  padding: EdgeInsets.all(sp.s8),
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.lightCircleInfo,
+                        size: 14,
+                        color: scheme.primary,
+                      ),
+                      SizedBox(width: sp.s8),
+                      Expanded(
+                        child: Text(
+                          'Office/Store Interior full view photo',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
 
-              // TODO: add info 'Office/Store Interior full view photo'
+              SizedBox(height: sp.s16),
+
               SubmitButton.icon(
                 context: context,
                 padding: const EdgeInsets.symmetric(
@@ -450,16 +628,17 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-/// 이미지 업로드 위젯
 class _ImageUploadField extends StatelessWidget {
   const _ImageUploadField({
     required this.label,
     required this.imageUrl,
     required this.onImageSelected,
+    this.height = 240,
   });
 
   final String label;
   final String imageUrl;
+  final double height;
   final void Function(String) onImageSelected;
 
   @override
@@ -481,29 +660,26 @@ class _ImageUploadField extends StatelessWidget {
             ),
           ),
           SizedBox(height: sp.s8),
-          InkWell(
-            onTap: () {},
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              height: 120,
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: scheme.outline),
-              ),
-              child: imageUrl.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const _ImagePlaceholder();
-                        },
-                      ),
-                    )
-                  : const _ImagePlaceholder(),
+          Container(
+            height: height,
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: scheme.outline),
             ),
+            child: imageUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const _ImagePlaceholder();
+                      },
+                    ),
+                  )
+                : const _ImagePlaceholder(),
           ),
         ],
       ),
