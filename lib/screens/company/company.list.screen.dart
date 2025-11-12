@@ -174,6 +174,29 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         .toList();
   }
 
+  /// Handle company button press (Register or Update)
+  Future<void> _handleCreateOrUpdateButton() async {
+    if (isLoadingMyCompany) return;
+
+    // Update existing company
+    if (myCompany != null) {
+      final result = await CompanyFormScreen.push(context, company: myCompany);
+      if (result != null) setState(() => myCompany = result);
+      return;
+    }
+
+    // Create new company
+    setState(() => isLoadingMyCompany = true);
+    try {
+      myCompany = await createCompany();
+      if (mounted) {
+        showSuccessSnackBar(context, "Your company is already created");
+      }
+    } finally {
+      if (mounted) setState(() => isLoadingMyCompany = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
@@ -228,30 +251,27 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                   ),
                   SizedBox(height: sp.s24),
                   // Register/Update button (hidden while loading)
-                  if (!isLoadingMyCompany)
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: () async {
-                          // Navigate to company form (with company data for update, null for create)
-                          await CompanyFormScreen.push(
-                            context,
-                            company: myCompany,
-                          );
-                        },
-                        icon: FaIcon(
-                          myCompany == null
-                              ? FontAwesomeIcons.plus
-                              : FontAwesomeIcons.penToSquare,
-                          size: 20,
-                        ),
-                        label: Text(
-                          myCompany == null
-                              ? T.registerCompany
-                              : T.updateCompany,
-                        ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: isLoadingMyCompany
+                          ? null
+                          : _handleCreateOrUpdateButton,
+                      icon: FaIcon(
+                        myCompany == null
+                            ? FontAwesomeIcons.plus
+                            : FontAwesomeIcons.penToSquare,
+                        size: 20,
+                      ),
+                      label: Text(
+                        isLoadingMyCompany
+                            ? 'Loading...'
+                            : (myCompany == null
+                                  ? T.registerCompany
+                                  : T.updateCompany),
                       ),
                     ),
+                  ),
                 ],
               ),
             ),
