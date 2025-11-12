@@ -332,7 +332,7 @@ Future<FileUploadResponse?> philgoApiFileUpload(
       'file': await MultipartFile.fromFile(file.path, filename: fileName),
       'uid': fb_auth.FirebaseAuth.instance.currentUser?.uid,
       if (deleteFile != null) 'deleteFile': deleteFile,
-      if (qrCode) 'qrCode': 'true',
+      if (qrCode) 'decodeQrCode': 'Y',
     });
 
     // 파일 서버 URL

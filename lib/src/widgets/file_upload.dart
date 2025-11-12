@@ -20,6 +20,7 @@ class FileUpload extends StatefulWidget {
     this.video = false,
     this.audio = false,
     this.file = false,
+    this.isDecodeQr = false,
   });
 
   /// 탭 가능한 자식 위젯
@@ -51,6 +52,8 @@ class FileUpload extends StatefulWidget {
 
   /// 일반 파일 선택 가능 여부
   final bool file;
+
+  final bool isDecodeQr;
 
   @override
   State<FileUpload> createState() => _FileUploadState();
@@ -287,6 +290,7 @@ class _FileUploadState extends State<FileUpload> {
       final uploadedFile = await philgoApiFileUpload(
         path,
         deleteFile: widget.deleteFile,
+        qrCode: widget.isDecodeQr,
         onProgress: (progress) {
           // 업로드 진행률 콜백 호출
           widget.onProgress?.call(progress);
@@ -295,6 +299,9 @@ class _FileUploadState extends State<FileUpload> {
 
       if (uploadedFile != null) {
         debugLog('✅ 파일 업로드 성공: ${uploadedFile.url}');
+        debugLog(
+          '✅ QR CODEEEEEE -------------------------->>: ${uploadedFile.qr_code}',
+        );
         return uploadedFile;
       } else {
         debugLog('❌ 파일 업로드 실패');
