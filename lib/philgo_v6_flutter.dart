@@ -2,6 +2,14 @@
 export 'src/company/models/company.model.dart';
 export 'src/company/models/company.list.model.dart';
 export 'src/company/company.functions.dart';
+export 'src/company/widgets/company.card.dart';
+export 'src/company/widgets/company.category.dart';
+export 'src/company/widgets/company.category.dropdown.dart';
+export 'src/company/widgets/company.category.empty.dart';
+export 'src/company/widgets/company.category.tag.dart';
+export 'src/company/widgets/company.contact.button.dart';
+export 'src/company/widgets/company.image.placeholder.dart';
+export 'src/company/widgets/company.select.location.dart';
 
 // chat
 export 'src/chat/chat.defines.dart';
