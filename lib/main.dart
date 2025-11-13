@@ -225,7 +225,6 @@ class _MyAppState extends State<MyApp> {
       seedColor: const Color.fromARGB(255, 46, 160, 225),
       brightness: Brightness.light,
     );
-    // Material 3 Typography로 기본 크기 가져오기
     final typography = Typography.material2021();
     final baseTextTheme = typography.black;
 
@@ -234,7 +233,6 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
         colorScheme: cs,
         textTheme: GoogleFonts.interTextTheme(baseTextTheme).copyWith(
-          // Display styles - 명시적 폰트 크기
           displayLarge: GoogleFonts.inter(
             fontSize: 52,
             fontWeight: FontWeight.w700, // Bold
