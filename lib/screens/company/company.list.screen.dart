@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
-import 'package:philgo/widgets/company/company.category.dart';
+import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company Directory Screen
@@ -141,9 +141,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     } catch (e) {
       debugLog('Error loading my company: $e');
     } finally {
-      setState(() {
-        isLoadingMyCompany = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoadingMyCompany = false;
+        });
+      }
     }
   }
 
@@ -341,6 +343,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                       color: category['color'] as Color,
                       count: companiesInCategory.length,
                       companies: companiesInCategory,
+                      onCompanyTap: (company) {
+                        CompanyViewScreen.push(context, company.idx);
+                      },
                     ),
                   );
                 },
