@@ -127,9 +127,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 onLike: () async {
                   /// Call like API and update the like count
                   try {
-                    final updatedGood = await philgoApiLikePost(
-                      widget.post.idx,
-                    );
+                    final updatedGood = await likePost(widget.post.idx);
                     debugLog('Widget Post idx: ${widget.post.idx}');
                     debugLog('Post liked, new good count: $updatedGood');
 

@@ -262,34 +262,28 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: sp.s16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: sp.s16),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _SectionHeader(
+                _SectionHeader(
                   icon: FontAwesomeIcons.lightCircleInfo,
                   title: T.basicInformation,
                 ),
-              ),
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              TextFieldSet(
-                controller: _nameController,
-                label: '${T.companyName} *',
-                hintText: T.enterCompanyName,
-                prefixFaIconData: FontAwesomeIcons.lightBuilding,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                TextFieldSet(
+                  controller: _nameController,
+                  label: '${T.companyName} *',
+                  hintText: T.enterCompanyName,
+                  prefixFaIconData: FontAwesomeIcons.lightBuilding,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
+                Row(
                   children: [
                     Checkbox(
                       value: _useCompanyDomain,
@@ -302,424 +296,297 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     Text('Use Company Domain'),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Container(
-                  padding: EdgeInsets.all(sp.s8),
-                  decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.lightCircleInfo,
-                        size: 14,
-                        color: scheme.primary,
-                      ),
-                      SizedBox(width: sp.s8),
-                      Expanded(
-                        child: Text(
-                          'SEO features help expose your directory listing more on Google, Naver, and other search engines.',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                                height: 1.4,
-                              ),
+                _InfoBox(
+                  message:
+                      'SEO features help expose your directory listing more on Google, Naver, and other search engines.',
+                ),
+
+                if (_useCompanyDomain) ...[
+                  TextFieldSet(
+                    controller: _familySiteDomainController,
+                    label: 'Family Site Domain',
+                    hintText: 'e.g.) mycompany',
+                    prefixFaIconData: FontAwesomeIcons.lightHeading,
+                    decoration: InputDecoration(
+                      suffix: Text(
+                        '.philgo.com',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
-                    ],
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                ),
-              ),
+                  TextFieldSet(
+                    controller: _familySiteNameController,
+                    label: 'Family Site Name',
+                    hintText: 'Enter your family site name',
+                    prefixFaIconData: FontAwesomeIcons.lightHeading,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  TextFieldSet(
+                    controller: _familySiteDescriptionController,
+                    label: 'Family Site Description',
+                    hintText: 'Enter your family site description',
+                    prefixFaIconData: FontAwesomeIcons.lightHeading,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                ],
 
-              if (_useCompanyDomain) ...[
-                TextFieldSet(
-                  controller: _familySiteDomainController,
-                  label: 'Family Site Domain',
-                  hintText: 'Enter your family site domain',
-                  prefixFaIconData: FontAwesomeIcons.lightHeading,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                ),
-                TextFieldSet(
-                  controller: _familySiteNameController,
-                  label: 'Family Site Name',
-                  hintText: 'Enter your family site name',
-                  prefixFaIconData: FontAwesomeIcons.lightHeading,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                ),
-                TextFieldSet(
-                  controller: _familySiteDescriptionController,
-                  label: 'Family Site Description',
-                  hintText: 'Enter your family site description',
-                  prefixFaIconData: FontAwesomeIcons.lightHeading,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                ),
-              ],
+                SizedBox(height: sp.s16),
 
-              SizedBox(height: sp.s16),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _SectionHeader(
+                _SectionHeader(
                   icon: FontAwesomeIcons.lightCircleInfo,
                   title: 'Detailed Information',
                 ),
-              ),
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              TextFieldSet(
-                controller: _titleController,
-                label: '${T.companyTitle} *',
-                hintText: T.enterCompanyTitle,
-                prefixFaIconData: FontAwesomeIcons.lightHeading,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                TextFieldSet(
+                  controller: _titleController,
+                  label: '${T.companyTitle} *',
+                  hintText: T.enterCompanyTitle,
+                  prefixFaIconData: FontAwesomeIcons.lightHeading,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 8.0,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: CategoryDropdownField(
+                    label: 'Business Type *',
+                    initialValue: _selectedCategory,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                  ),
                 ),
-                child: CategoryDropdownField(
-                  label: 'Business Type *',
-                  initialValue: _selectedCategory,
-                  onChanged: (value) {
+
+                CompanySelectLocation(
+                  label: '${T.location} *',
+                  controller: _locationController,
+                  onLocationSelected: (location) {
                     setState(() {
-                      _selectedCategory = value;
+                      _locationController.text = location;
                     });
                   },
                 ),
-              ),
 
-              CompanySelectLocation(
-                label: '${T.location} *',
-                controller: _locationController,
-                onLocationSelected: (location) {
-                  setState(() {
-                    _locationController.text = location;
-                  });
-                },
-              ),
-
-              TextFieldSet(
-                controller: _addressController,
-                label: '${T.address} *',
-                hintText: T.enterAddress,
-                prefixFaIconData: FontAwesomeIcons.lightMapLocationDot,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                TextFieldSet(
+                  controller: _addressController,
+                  label: '${T.address} *',
+                  hintText: T.enterAddress,
+                  prefixFaIconData: FontAwesomeIcons.lightMapLocationDot,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _SectionHeader(
+                _SectionHeader(
                   icon: FontAwesomeIcons.lightCircleInfo,
                   title: 'Contact Information',
                 ),
-              ),
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              // Landline
-              TextFieldSet(
-                controller: _landlineController,
-                label: '${T.phoneNumber} *',
-                hintText: T.enterPhoneNumber,
-                prefixFaIconData: FontAwesomeIcons.lightPhone,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                // Landline
+                TextFieldSet(
+                  controller: _landlineController,
+                  label: '${T.phoneNumber} *',
+                  hintText: T.enterPhoneNumber,
+                  prefixFaIconData: FontAwesomeIcons.lightPhone,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              TextFieldSet(
-                controller: _mobileNumberController,
-                label: '${T.mobileNumber} *',
-                hintText: T.enterMobileNumber,
-                prefixFaIconData: FontAwesomeIcons.lightPhone,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                TextFieldSet(
+                  controller: _mobileNumberController,
+                  label: '${T.mobileNumber} *',
+                  hintText: T.enterMobileNumber,
+                  prefixFaIconData: FontAwesomeIcons.lightPhone,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      T.mobileContactMethod,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: sp.s8),
-                    RadioGroup<String>(
-                      groupValue: _mobileContactMethod,
-                      onChanged: (value) {
-                        _mobileContactMethod = value!;
-                        setState(() {});
-                      },
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text(T.sendText),
-                              value: 'text',
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        T.mobileContactMethod,
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: scheme.onSurface,
                             ),
-                          ),
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text(T.makeCall),
-                              value: 'call',
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ],
+                      SizedBox(height: sp.s8),
+                      RadioGroup<String>(
+                        groupValue: _mobileContactMethod,
+                        onChanged: (value) {
+                          _mobileContactMethod = value!;
+                          setState(() {});
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: Text(T.sendText),
+                                value: 'text',
+                              ),
+                            ),
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: Text(T.makeCall),
+                                value: 'call',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              TextFieldSet(
-                controller: _kakaotalkIdController,
-                label: 'KakaoID',
-                hintText: 'Enter kakaotalk ID',
-                prefixFaIconData: FontAwesomeIcons.message,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                TextFieldSet(
+                  controller: _kakaotalkIdController,
+                  label: 'KakaoID',
+                  hintText: 'Enter kakaotalk ID',
+                  prefixFaIconData: FontAwesomeIcons.message,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              _ImageUploadField(
-                label: 'Upload Kakao QR Code',
-                imageUrl: _kakaoTalkQrCode,
-                isDecodeQr: true,
-                onImageSelected: (url) {
-                  _kakaoTalkQrCode = url;
-                  setState(() {});
-                },
-              ),
-
-              TextFieldSet(
-                controller: _kakaotalkQrUrlController,
-                label: 'Kakao Channel URL',
-                hintText: 'https://pf.kakao.com/...',
-                prefixFaIconData: FontAwesomeIcons.message,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                _ImageUploadField(
+                  label: 'Upload Kakao QR Code',
+                  imageUrl: _kakaoTalkQrCode,
+                  isDecodeQr: true,
+                  onImageSelected: (url) {
+                    _kakaoTalkQrCode = url;
+                    setState(() {});
+                  },
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
-
-              TextFieldSet(
-                controller: _telegramIdController,
-                label: 'Telegram ID',
-                hintText: "Enter Telegram ID",
-                prefixFaIconData: FontAwesomeIcons.message,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                TextFieldSet(
+                  controller: _kakaotalkQrUrlController,
+                  label: 'Kakao Channel URL',
+                  hintText: 'https://pf.kakao.com/...',
+                  prefixFaIconData: FontAwesomeIcons.message,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _SectionHeader(
+                TextFieldSet(
+                  controller: _telegramIdController,
+                  label: 'Telegram ID',
+                  hintText: "Enter Telegram ID",
+                  prefixFaIconData: FontAwesomeIcons.message,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+
+                SizedBox(height: sp.s8),
+
+                _SectionHeader(
                   icon: FontAwesomeIcons.lightCircleInfo,
                   title: 'Company Introduction',
                 ),
-              ),
 
-              TextFieldSet(
-                controller: _descriptionController,
-                label: '${T.description} *',
-                hintText: T.enterDescription,
-                prefixFaIconData: FontAwesomeIcons.lightAlignLeft,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 4,
+                TextFieldSet(
+                  controller: _descriptionController,
+                  label: '${T.description} *',
+                  hintText: T.enterDescription,
+                  prefixFaIconData: FontAwesomeIcons.lightAlignLeft,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  maxLines: 5,
                 ),
-                maxLines: 5,
-              ),
 
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _SectionHeader(
+                _SectionHeader(
                   icon: FontAwesomeIcons.lightCircleInfo,
                   title: 'Image Upload',
                 ),
-              ),
-              SizedBox(height: sp.s8),
+                SizedBox(height: sp.s8),
 
-              /// 회사 로고 업로드
-              _ImageUploadField(
-                label: "Company Logo *",
-                imageUrl: _logoUrl,
-                onImageSelected: (url) {
-                  _logoUrl = url;
-                  setState(() {});
-                },
-              ),
-
-              /// 사업자 등록증 업로드 (Business license scan)
-              _ImageUploadField(
-                label: T.businessLicense,
-                imageUrl: _businessLicenseUrl,
-                onImageSelected: (url) {
-                  _businessLicenseUrl = url;
-                  setState(() {});
-                },
-              ),
-
-              /// 회사 소개 이미지 업로드
-              _ImageUploadField(
-                label: 'Company Introduction Image',
-                imageUrl: _companyIntroImageUrl,
-                onImageSelected: (url) {
-                  _companyIntroImageUrl = url;
-                  setState(() {});
-                },
-              ),
-
-              /// 가이드라인 안내
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Container(
-                  padding: EdgeInsets.all(sp.s8),
-                  decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.lightCircleInfo,
-                        size: 14,
-                        color: scheme.primary,
-                      ),
-                      SizedBox(width: sp.s8),
-                      Expanded(
-                        child: Text(
-                          'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                                height: 1.4,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
+                /// 회사 로고 업로드
+                _ImageUploadField(
+                  label: "Company Logo *",
+                  imageUrl: _logoUrl,
+                  onImageSelected: (url) {
+                    _logoUrl = url;
+                    setState(() {});
+                  },
                 ),
-              ),
 
-              SizedBox(height: sp.s8),
+                /// 사업자 등록증 업로드 (Business license scan)
+                _ImageUploadField(
+                  label: T.businessLicense,
+                  imageUrl: _businessLicenseUrl,
+                  onImageSelected: (url) {
+                    _businessLicenseUrl = url;
+                    setState(() {});
+                  },
+                ),
 
-              /// 사무실/매장 내부 사진 업로드
-              _ImageUploadField(
-                label: 'Office/Store Interior Photo',
-                imageUrl: _officeInteriorUrl,
-                onImageSelected: (url) {
-                  setState(() {
-                    _officeInteriorUrl = url;
-                  });
-                },
-              ),
+                /// 회사 소개 이미지 업로드
+                _ImageUploadField(
+                  label: 'Company Introduction Image',
+                  imageUrl: _companyIntroImageUrl,
+                  onImageSelected: (url) {
+                    _companyIntroImageUrl = url;
+                    setState(() {});
+                  },
+                ),
 
-              /// 가이드라인 안내
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Container(
-                  padding: EdgeInsets.all(sp.s8),
-                  decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
+                /// 가이드라인 안내
+                _InfoBox(
+                  message:
+                      'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).',
+                ),
+
+                SizedBox(height: sp.s8),
+
+                /// 사무실/매장 내부 사진 업로드
+                _ImageUploadField(
+                  label: 'Office/Store Interior Photo',
+                  imageUrl: _officeInteriorUrl,
+                  onImageSelected: (url) {
+                    setState(() {
+                      _officeInteriorUrl = url;
+                    });
+                  },
+                ),
+
+                /// 가이드라인 안내
+                _InfoBox(message: 'Office/Store Interior full view photo'),
+
+                SizedBox(height: sp.s16),
+
+                SubmitButton.icon(
+                  context: context,
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  alignment: Alignment.center,
+                  onPressed: _isSubmitting ? null : _handleSubmit,
+                  isLoading: _isSubmitting,
+                  icon: FaIcon(
+                    widget.company == null
+                        ? FontAwesomeIcons.lightPlus
+                        : FontAwesomeIcons.lightFloppyDisk,
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.lightCircleInfo,
-                        size: 14,
-                        color: scheme.primary,
-                      ),
-                      SizedBox(width: sp.s8),
-                      Expanded(
-                        child: Text(
-                          'Office/Store Interior full view photo',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                                height: 1.4,
-                              ),
-                        ),
-                      ),
-                    ],
+                  label: Text(
+                    widget.company == null
+                        ? T.registerCompany
+                        : T.updateCompany,
                   ),
                 ),
-              ),
-
-              SizedBox(height: sp.s16),
-
-              SubmitButton.icon(
-                context: context,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 24,
-                ),
-                alignment: Alignment.center,
-                onPressed: _isSubmitting ? null : _handleSubmit,
-                isLoading: _isSubmitting,
-                icon: FaIcon(
-                  widget.company == null
-                      ? FontAwesomeIcons.lightPlus
-                      : FontAwesomeIcons.lightFloppyDisk,
-                ),
-                label: Text(
-                  widget.company == null ? T.registerCompany : T.updateCompany,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -815,7 +682,7 @@ class _ImageUploadFieldState extends State<_ImageUploadField> {
       },
       image: true,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -942,6 +809,49 @@ class _ImagePlaceholder extends StatelessWidget {
             T.tapToUploadImage,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 정보 안내 박스 위젯
+///
+/// 사용자에게 도움이 되는 정보나 가이드를 표시하는 재사용 가능한 위젯
+class _InfoBox extends StatelessWidget {
+  const _InfoBox({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final sp = Theme.of(context).extension<AppSpacing>()!;
+    final scheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: EdgeInsets.all(sp.s8),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightCircleInfo,
+            size: 14,
+            color: scheme.primary,
+          ),
+          SizedBox(width: sp.s8),
+          Expanded(
+            child: Text(
+              message,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                height: 1.4,
+              ),
             ),
           ),
         ],

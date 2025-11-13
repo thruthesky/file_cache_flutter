@@ -54,7 +54,7 @@ class _CompanySelectLocationState extends State<CompanySelectLocation> {
       hintText: 'Select location',
       prefixFaIconData: FontAwesomeIcons.lightMapPin,
       readOnly: true,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       onTap: _openLocationModal,
     );
   }
