@@ -35,6 +35,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   late TextEditingController _kakaotalkIdController;
   late TextEditingController _kakaotalkQrUrlController;
   late TextEditingController _telegramIdController;
+  late TextEditingController _familySiteDomainController;
+  late TextEditingController _familySiteNameController;
+  late TextEditingController _familySiteDescriptionController;
 
   // Category and Business Type selection
   String? _selectedCategory;
@@ -80,8 +83,21 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       text: widget.company?.kakaotalk_id ?? '',
     );
     _kakaotalkQrUrlController = TextEditingController(text: '');
+
     _telegramIdController = TextEditingController(
       text: widget.company?.telegram_id ?? '',
+    );
+
+    _familySiteDomainController = TextEditingController(
+      text: widget.company?.family_site_domain ?? '',
+    );
+
+    _familySiteNameController = TextEditingController(
+      text: widget.company?.family_site_name ?? '',
+    );
+
+    _familySiteDescriptionController = TextEditingController(
+      text: widget.company?.family_site_description ?? '',
     );
 
     // Set category (convert empty string to null)
@@ -118,6 +134,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _kakaotalkIdController.dispose();
     _kakaotalkQrUrlController.dispose();
     _telegramIdController.dispose();
+    _familySiteDescriptionController.dispose();
+    _familySiteDomainController.dispose();
+    _familySiteNameController.dispose();
     super.dispose();
   }
 
@@ -161,9 +180,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       return;
     }
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    _isSubmitting = true;
+    setState(() {});
 
     try {
       // Prepare company data for API
@@ -180,6 +198,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         'kakaotalk_qr_code_url': _kakaotalkQrUrlController.text.trim(),
         'telegram_id': _telegramIdController.text.trim(),
         'logo_url': _logoUrl,
+        'family_site_domain': _familySiteDomainController.text.trim(),
+        'family_site_name': _familySiteNameController.text.trim(),
+        'family_site_description': _familySiteDescriptionController.text.trim(),
       };
 
       // Add mobile contact method if selected
@@ -220,9 +241,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       showErrorSnackBar(context, 'Error: $e');
     } finally {
       if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
+        _isSubmitting = false;
+        setState(() {});
       }
     }
   }
@@ -266,6 +286,88 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   vertical: 8,
                 ),
               ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: _useCompanyDomain,
+                      onChanged: (bool? value) {
+                        _useCompanyDomain = value!;
+                        setState(() {});
+                      },
+                    ),
+                    SizedBox(height: sp.s8),
+                    Text('Use Company Domain'),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Container(
+                  padding: EdgeInsets.all(sp.s8),
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.lightCircleInfo,
+                        size: 14,
+                        color: scheme.primary,
+                      ),
+                      SizedBox(width: sp.s8),
+                      Expanded(
+                        child: Text(
+                          'SEO features help expose your directory listing more on Google, Naver, and other search engines.',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              if (_useCompanyDomain) ...[
+                TextFieldSet(
+                  controller: _familySiteDomainController,
+                  label: 'Family Site Domain',
+                  hintText: 'Enter your family site domain',
+                  prefixFaIconData: FontAwesomeIcons.lightHeading,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
+                ),
+                TextFieldSet(
+                  controller: _familySiteNameController,
+                  label: 'Family Site Name',
+                  hintText: 'Enter your family site name',
+                  prefixFaIconData: FontAwesomeIcons.lightHeading,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
+                ),
+                TextFieldSet(
+                  controller: _familySiteDescriptionController,
+                  label: 'Family Site Description',
+                  hintText: 'Enter your family site description',
+                  prefixFaIconData: FontAwesomeIcons.lightHeading,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
+                ),
+              ],
+
               SizedBox(height: sp.s16),
 
               Padding(
@@ -382,9 +484,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     RadioGroup<String>(
                       groupValue: _mobileContactMethod,
                       onChanged: (value) {
-                        setState(() {
-                          _mobileContactMethod = value!;
-                        });
+                        _mobileContactMethod = value!;
+                        setState(() {});
                       },
                       child: Row(
                         children: [
@@ -427,9 +528,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 imageUrl: _kakaoTalkQrCode,
                 isDecodeQr: true,
                 onImageSelected: (url) {
-                  setState(() {
-                    _kakaoTalkQrCode = url;
-                  });
+                  _kakaoTalkQrCode = url;
+                  setState(() {});
                 },
               ),
 
@@ -495,9 +595,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 label: "Company Logo *",
                 imageUrl: _logoUrl,
                 onImageSelected: (url) {
-                  setState(() {
-                    _logoUrl = url;
-                  });
+                  _logoUrl = url;
+                  setState(() {});
                 },
               ),
 
@@ -506,9 +605,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 label: T.businessLicense,
                 imageUrl: _businessLicenseUrl,
                 onImageSelected: (url) {
-                  setState(() {
-                    _businessLicenseUrl = url;
-                  });
+                  _businessLicenseUrl = url;
+                  setState(() {});
                 },
               ),
 
@@ -517,9 +615,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 label: 'Company Introduction Image',
                 imageUrl: _companyIntroImageUrl,
                 onImageSelected: (url) {
-                  setState(() {
-                    _companyIntroImageUrl = url;
-                  });
+                  _companyIntroImageUrl = url;
+                  setState(() {});
                 },
               ),
 
@@ -665,7 +762,6 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-/// 이미지 업로드 필드 (FileUpload 통합)
 class _ImageUploadField extends StatefulWidget {
   const _ImageUploadField({
     required this.label,
