@@ -300,8 +300,6 @@ Future<User> philgoApiUserUpdate(Map<String, dynamic> userData) async {
   return User.fromJson(response);
 }
 
-
-
 /// 파일을 PhilGo 파일 서버에 업로드합니다.
 ///
 /// [filePath] 업로드할 파일의 경로
@@ -511,8 +509,6 @@ Future<void> philgoApiFileDelete(String? fileUrl) async {
   }
 }
 
-
-
 Future<String> philgoApiGetAdminUserUid() async {
   // app.admins
   final response = await func('get_admins');
@@ -522,17 +518,4 @@ Future<String> philgoApiGetAdminUserUid() async {
 
   // 성공적으로 사용자 정보 반환
   return chatAdmin ?? '';
-}
-
-Future<int> philgoApiLikePost(int idx) async {
-  final response = await func<Map<String, dynamic>>(
-    'like_func',
-    data: {'idx': idx},
-    alertOnError: false,
-  );
-
-  debugLog("response from like_func: $response");
-
-  // Return the updated good count from the response
-  return response['good'] ?? 0;
 }

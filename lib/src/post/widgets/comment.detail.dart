@@ -88,7 +88,7 @@ class _CommentDetailState extends State<CommentDetail> {
                         TextButton(
                           onPressed: () async {
                             try {
-                              final updatedGood = await philgoApiLikePost(
+                              final updatedGood = await likePost(
                                 widget.comment.idx,
                               );
                               debugLog(

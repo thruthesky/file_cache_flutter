@@ -1,5 +1,4 @@
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
-import 'package:philgo_v6_flutter/src/constants.dart';
 
 /// Fetch company list from PhilGo v6 API
 ///

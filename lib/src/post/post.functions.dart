@@ -353,3 +353,16 @@ Future<Comment> updateComment(RecordType data) async {
 
   return Comment.fromJson(response);
 }
+
+Future<int> likePost(int idx) async {
+  final response = await func<Map<String, dynamic>>(
+    'like_func',
+    data: {'idx': idx},
+    alertOnError: false,
+  );
+
+  debugLog("response from like_func: $response");
+
+  // Return the updated good count from the response
+  return response['good'] ?? 0;
+}
