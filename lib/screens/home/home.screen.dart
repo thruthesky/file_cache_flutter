@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ChatHome(), // 채팅
           ForumHome(), // 게시판
           CompanyHome(), // 업소록
-          CreateHome(), // 글쓰기
           MenuHome(), // 메뉴
         ],
       ),
@@ -92,14 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   : FontAwesomeIcons.thinBuilding,
             ),
             label: Lo.of(context)!.company,
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(
-              selectedItem == HomeNavigationItem.create
-                  ? FontAwesomeIcons.solidCirclePlus
-                  : FontAwesomeIcons.thinCirclePlus,
-            ),
-            label: Lo.of(context)!.create,
           ),
           BottomNavigationBarItem(
             icon: FaIcon(
