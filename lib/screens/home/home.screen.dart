@@ -7,7 +7,6 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'sections/chat.home.dart';
 import 'sections/forum.home.dart';
-import 'sections/create.home.dart';
 import 'sections/company.home.dart';
 import 'sections/menu.home.dart';
 import '../../l10n/app_localizations.dart';
