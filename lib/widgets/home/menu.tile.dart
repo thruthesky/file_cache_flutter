@@ -11,7 +11,6 @@ class MenuTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.color,
     required this.onTap,
     required this.index,
     required this.isAnimated,
@@ -20,7 +19,6 @@ class MenuTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final Color color;
   final VoidCallback? onTap;
   final int index;
   final bool isAnimated;
@@ -50,13 +48,6 @@ class MenuTile extends StatelessWidget {
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
                 child: Row(
                   children: [
@@ -65,18 +56,15 @@ class MenuTile extends StatelessWidget {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                color.withValues(alpha: 0.2),
-                                color.withValues(alpha: 0.1),
-                              ],
-                            ),
+                            color: scheme.primaryContainer,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Center(
-                            child: FaIcon(icon, color: color, size: 24),
+                            child: FaIcon(
+                              icon,
+                              color: scheme.onSurface,
+                              size: 24,
+                            ),
                           ),
                         )
                         .animate(target: isAnimated ? 1 : 0)

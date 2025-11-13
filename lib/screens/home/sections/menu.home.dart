@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/design/test.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
@@ -61,21 +60,18 @@ class _MenuHomeState extends State<MenuHome>
           'icon': FontAwesomeIcons.palette,
           'title': 'Design Test',
           'subtitle': 'View theme colors and text styles',
-          'color': Colors.deepPurple,
           'onTap': () => DesignScreen.push(context, ''),
         },
       {
         'icon': FontAwesomeIcons.userPen,
         'title': T.editProfileTitle,
         'subtitle': T.editProfileSubtitle,
-        'color': Colors.blue,
         'onTap': () => ProfileEditScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.comments,
         'title': T.openChatTitle,
         'subtitle': T.openChatSubtitle,
-        'color': Colors.green,
         'onTap': () {
           NavigationState.of(context, listen: false).openOpenChat();
         },
@@ -84,7 +80,6 @@ class _MenuHomeState extends State<MenuHome>
         'icon': FontAwesomeIcons.rectangleAd,
         'title': T.bannerAdTitle,
         'subtitle': T.bannerAdSubtitle,
-        'color': Colors.orange,
         'onTap': () {
           WebViewScreen.push(context, bannerPageUrl(), title: T.bannerAdTitle);
         },
@@ -93,7 +88,6 @@ class _MenuHomeState extends State<MenuHome>
         'icon': FontAwesomeIcons.coins,
         'title': T.pointAdTitle,
         'subtitle': T.pointAdSubtitle,
-        'color': Colors.amber,
         'onTap': () {
           WebViewScreen.push(context, pointPageUrl(), title: T.pointAdTitle);
         },
@@ -102,7 +96,6 @@ class _MenuHomeState extends State<MenuHome>
         'icon': FontAwesomeIcons.store,
         'title': T.businessDirectoryTitle,
         'subtitle': T.businessDirectorySubtitle,
-        'color': Colors.purple,
         'onTap': () {
           NavigationState.of(context, listen: false).openCompanyPage();
         },
@@ -111,35 +104,30 @@ class _MenuHomeState extends State<MenuHome>
         'icon': FontAwesomeIcons.circleInfo,
         'title': T.appGuideTitle,
         'subtitle': T.appGuideSubtitle,
-        'color': Colors.indigo,
         'onTap': () {},
       },
       {
         'icon': FontAwesomeIcons.fileContract,
         'title': T.termsOfServiceTitle,
         'subtitle': T.termsOfServiceSubtitle,
-        'color': Colors.blueGrey,
         'onTap': () {},
       },
       {
         'icon': FontAwesomeIcons.userShield,
         'title': T.privacyPolicyTitle,
         'subtitle': T.privacyPolicySubtitle,
-        'color': Colors.cyan,
         'onTap': () {},
       },
       {
         'icon': FontAwesomeIcons.userXmark,
         'title': T.withdrawTitle,
         'subtitle': T.withdrawSubtitle,
-        'color': Colors.red.shade400,
         'onTap': () {},
       },
       {
         'icon': FontAwesomeIcons.rightFromBracket,
         'title': T.logoutTitle,
         'subtitle': T.logoutSubtitle,
-        'color': Colors.red.shade600,
         'onTap': () async {
           await FirebaseAuth.instance.signOut();
           if (context.mounted) {
@@ -241,7 +229,6 @@ class _MenuHomeState extends State<MenuHome>
                     icon: item['icon'] as IconData,
                     title: item['title'] as String,
                     subtitle: item['subtitle'] as String,
-                    color: item['color'] as Color,
                     onTap: item['onTap'] as VoidCallback?,
                     index: index,
                     isAnimated: _isAnimated,
