@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:philgo/globals.dart';
 
 class DesignScreen extends StatefulWidget {
   static const String routeName = '/design';
@@ -18,6 +17,7 @@ class DesignScreen extends StatefulWidget {
 class _DesignScreenState extends State<DesignScreen> {
   bool _useDefaultTheme = true;
 
+  /// 새로운 테마 생성 (Inter 폰트 사용)
   ThemeData _createNewTheme() {
     final newColorScheme = ColorScheme.fromSeed(
       seedColor: const Color.fromARGB(255, 95, 188, 241),
@@ -30,9 +30,9 @@ class _DesignScreenState extends State<DesignScreen> {
     return ThemeData(
       useMaterial3: true,
       colorScheme: newColorScheme,
-      // Inter 폰트 적용 - 약간 줄인 크기
+      // Inter 폰트 적용
       textTheme: GoogleFonts.interTextTheme(baseTextTheme).copyWith(
-        // Display styles - 약간 줄인 크기
+        // Display styles
         displayLarge: GoogleFonts.inter(
           fontSize: 52,
           fontWeight: FontWeight.w700,
@@ -154,8 +154,6 @@ class _DesignScreenState extends State<DesignScreen> {
         scrolledUnderElevation: 0,
         shadowColor: Colors.transparent,
       ),
-      // Spacing Tokens 등록 (8 배수 기반)
-      extensions: const <ThemeExtension<dynamic>>[AppSpacing()],
     );
   }
 
@@ -248,8 +246,8 @@ class _DesignScreenState extends State<DesignScreen> {
                           ),
                           Text(
                             _useDefaultTheme
-                                ? 'Blue seed color, Roboto font'
-                                : 'Blue (another shade) seed color, Inter',
+                                ? 'Blue seed color, Inter font (Global)'
+                                : 'Blue (lighter) seed color, Inter font',
                             style: textTheme.bodySmall?.copyWith(
                               color: colorScheme.onPrimaryContainer,
                             ),

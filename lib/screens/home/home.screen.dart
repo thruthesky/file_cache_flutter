@@ -58,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       // BottomNavigationBar 추가
       bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 12,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: FaIcon(
@@ -111,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: Theme.of(context).primaryColor, // 선택된 항목 색상
         unselectedItemColor: Theme.of(
           context,
-        ).colorScheme.onSurface.withValues(alpha: 0.6), // 선택되지 않은 항목 색상
+        ).colorScheme.onSurface.withValues(alpha: 0.6),
+        iconSize: 28,
       ),
     );
   }

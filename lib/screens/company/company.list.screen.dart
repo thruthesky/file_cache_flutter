@@ -208,6 +208,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text(
+          T.companyDirectoryTitle,
+          style: theme.textTheme.titleLarge?.copyWith(),
+        ),
+        centerTitle: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -220,29 +225,25 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Icon
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.building,
-                        size: 32,
-                        color: scheme.primary,
+                  Center(
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.building,
+                          size: 32,
+                          color: scheme.primary,
+                        ),
                       ),
                     ),
                   ),
-                  SizedBox(height: sp.s16),
+
                   // Title
-                  Text(
-                    T.companyDirectoryTitle,
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   SizedBox(height: sp.s8),
                   // Description
                   Text(

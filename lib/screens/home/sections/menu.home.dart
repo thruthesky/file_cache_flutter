@@ -103,7 +103,9 @@ class _MenuHomeState extends State<MenuHome>
         'title': T.businessDirectoryTitle,
         'subtitle': T.businessDirectorySubtitle,
         'color': Colors.purple,
-        'onTap': () => CompanyListScreen.push(context),
+        'onTap': () {
+          NavigationState.of(context, listen: false).openCompanyPage();
+        },
       },
       {
         'icon': FontAwesomeIcons.circleInfo,
@@ -145,7 +147,6 @@ class _MenuHomeState extends State<MenuHome>
           }
         },
       },
-      
     ];
 
     return Container(

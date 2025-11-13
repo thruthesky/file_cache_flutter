@@ -86,9 +86,8 @@ class _LatestPostsState extends State<LatestPosts> {
                     const SizedBox(width: 8),
                     Text(
                       widget.titleName,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

@@ -47,4 +47,10 @@ class NavigationState extends ChangeNotifier {
     roomOrder = RoomOrder.openOrder;
     notifyListeners();
   }
+
+  void openCompanyPage() {
+    homeNav = HomeNavigationItem.company;
+    roomOrder = RoomOrder.openOrder;
+    notifyListeners();
+  }
 }
