@@ -47,7 +47,7 @@ class CompanyCategory extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest,
+                    color: scheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(

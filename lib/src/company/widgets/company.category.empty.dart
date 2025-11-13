@@ -18,8 +18,8 @@ class CompanyCategoryEmpty extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 120,
-          height: 120,
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
             color: scheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
@@ -27,7 +27,7 @@ class CompanyCategoryEmpty extends StatelessWidget {
           child: Center(
             child: FaIcon(
               FontAwesomeIcons.inbox,
-              size: 48,
+              size: 32,
               color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
           ),
