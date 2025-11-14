@@ -12,6 +12,7 @@ class FileUpload extends StatefulWidget {
     super.key,
     required this.child,
     required this.onUploaded,
+    this.onQrCodeDetected,
     this.deleteFile,
     this.onBeforeUpload,
     this.onCancelled,
@@ -29,6 +30,8 @@ class FileUpload extends StatefulWidget {
   /// 파일 업로드 완료 시 호출되는 콜백
   /// 파일 경로를 매개변수로 받음
   final Function(String)? onUploaded;
+
+  final Function(String?)? onQrCodeDetected;
 
   final String? deleteFile;
 
@@ -225,8 +228,10 @@ class _FileUploadState extends State<FileUpload> {
           // 파일 업로드
           final uploadedFile = await _uploadFile(image.path);
           if (uploadedFile != null) {
-            // 업로드된 파일 URL을 onUploaded 콜뱙9으로 전달
             widget.onUploaded?.call(uploadedFile.url);
+            if (widget.isDecodeQr) {
+              widget.onQrCodeDetected?.call(uploadedFile.qr_code);
+            }
           }
         }
       } else if (widget.video) {

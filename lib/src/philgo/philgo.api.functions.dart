@@ -519,3 +519,15 @@ Future<String> philgoApiGetAdminUserUid() async {
   // 성공적으로 사용자 정보 반환
   return chatAdmin ?? '';
 }
+
+Future<String> philgoApiGetTermsAndConditions() async {
+  final response = await func('get_terms_and_conditions');
+
+  return response['data'] as String? ?? '';
+}
+
+Future<String> philgoApiGetPrivacyPolicy() async {
+  final response = await func('get_privacy_policy');
+
+  return response['data'] as String? ?? '';
+}
