@@ -649,7 +649,7 @@ class LoKo extends Lo {
   String get guideStep2Title => '커뮤니티 둘러보기';
 
   @override
-  String get guideStep2Desc => '게시물과 업체를 둘러보고 다른 필리핀 분들과 연결하세요.';
+  String get guideStep2Desc => '게시물과 업체를 둘러보고 필리핀의 한인 커뮤니티와 연결하세요.';
 
   @override
   String get guideStep3Title => '이야기 공유하기';

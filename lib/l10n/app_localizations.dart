@@ -1346,7 +1346,7 @@ abstract class Lo {
   /// Step 2 description
   ///
   /// In en, this message translates to:
-  /// **'Browse through posts, companies, and connect with other Filipinos.'**
+  /// **'Browse through posts, companies, and connect with Korean community in the Philippines.'**
   String get guideStep2Desc;
 
   /// Step 3 title

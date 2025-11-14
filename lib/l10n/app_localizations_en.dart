@@ -673,7 +673,7 @@ class LoEn extends Lo {
 
   @override
   String get guideStep2Desc =>
-      'Browse through posts, companies, and connect with other Filipinos.';
+      'Browse through posts, companies, and connect with Korean community in the Philippines.';
 
   @override
   String get guideStep3Title => 'Share Your Story';
