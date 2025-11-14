@@ -610,5 +610,189 @@
   "location": "Location",
   "@location": {
     "description": "Label for location field"
+  },
+  "guideWelcomeTitle": "Welcome to PhilGo!",
+  "@guideWelcomeTitle": {
+    "description": "Welcome title in app guide"
+  },
+  "guideWelcomeSubtitle": "Share and communicate various information\nin the Philippines' largest Korean community",
+  "@guideWelcomeSubtitle": {
+    "description": "Welcome subtitle in app guide"
+  },
+  "guideFeaturesTitle": "Key Features",
+  "@guideFeaturesTitle": {
+    "description": "Features section title in app guide"
+  },
+  "guideFeatureCommunityTitle": "Community",
+  "@guideFeatureCommunityTitle": {
+    "description": "Community feature title"
+  },
+  "guideFeatureCommunityDesc": "Share and communicate information on various boards",
+  "@guideFeatureCommunityDesc": {
+    "description": "Community feature description"
+  },
+  "guideFeatureChatTitle": "Chat",
+  "@guideFeatureChatTitle": {
+    "description": "Chat feature title"
+  },
+  "guideFeatureChatDesc": "Connect quickly through real-time chat",
+  "@guideFeatureChatDesc": {
+    "description": "Chat feature description"
+  },
+  "guideFeatureDirectoryTitle": "Business Directory",
+  "@guideFeatureDirectoryTitle": {
+    "description": "Business directory feature title"
+  },
+  "guideFeatureDirectoryDesc": "Find Korean business information in the Philippines",
+  "@guideFeatureDirectoryDesc": {
+    "description": "Business directory feature description"
+  },
+  "guideFeatureWriteTitle": "Write",
+  "@guideFeatureWriteTitle": {
+    "description": "Write feature title"
+  },
+  "guideFeatureWriteDesc": "Write and share your posts freely",
+  "@guideFeatureWriteDesc": {
+    "description": "Write feature description"
+  },
+  "guideTipsTitle": "Usage Tips",
+  "@guideTipsTitle": {
+    "description": "Tips section title in app guide"
+  },
+  "guideTip1": "Complete your profile to connect with more people",
+  "@guideTip1": {
+    "description": "First tip in app guide"
+  },
+  "guideTip2": "Enable notifications so you don't miss important news",
+  "@guideTip2": {
+    "description": "Second tip in app guide"
+  },
+  "guideTip3": "Like posts you enjoy",
+  "@guideTip3": {
+    "description": "Third tip in app guide"
+  },
+  "guideTip4": "You can bookmark frequently visited boards",
+  "@guideTip4": {
+    "description": "Fourth tip in app guide"
+  },
+  "guideFaqTitle": "Frequently Asked Questions",
+  "@guideFaqTitle": {
+    "description": "FAQ section title in app guide"
+  },
+  "guideFaqQ1": "How do I write a post?",
+  "@guideFaqQ1": {
+    "description": "First FAQ question"
+  },
+  "guideFaqA1": "Tap the \"Write\" tab at the bottom, select a board, and write your post.",
+  "@guideFaqA1": {
+    "description": "First FAQ answer"
+  },
+  "guideFaqQ2": "How do I create a chat room?",
+  "@guideFaqQ2": {
+    "description": "Second FAQ question"
+  },
+  "guideFaqA2": "In the \"Chat\" tab, tap the + button to create a new chat room.",
+  "@guideFaqA2": {
+    "description": "Second FAQ answer"
+  },
+  "guideFaqQ3": "How do I register a business?",
+  "@guideFaqQ3": {
+    "description": "Third FAQ question"
+  },
+  "guideFaqA3": "In the \"Directory\" tab, tap the \"Add Company\" button to register business information.",
+  "@guideFaqA3": {
+    "description": "Third FAQ answer"
+  },
+  "guideFaqQ4": "Where can I edit my profile?",
+  "@guideFaqQ4": {
+    "description": "Fourth FAQ question"
+  },
+  "guideFaqA4": "Go to the \"Menu\" tab and select \"Edit Profile\" to change your information.",
+  "@guideFaqA4": {
+    "description": "Fourth FAQ answer"
+  },
+  "accountWithdrawalTitle": "Account Withdrawal",
+  "@accountWithdrawalTitle": {
+    "description": "Account withdrawal screen title"
+  },
+  "withdrawalIntroTitle": "Data Delete Request",
+  "@withdrawalIntroTitle": {
+    "description": "Withdrawal intro section title"
+  },
+  "withdrawalIntroSubtitle": "PhilGo Network provides you the right to permanently delete all personal information related to your account at any time.",
+  "@withdrawalIntroSubtitle": {
+    "description": "Withdrawal intro section subtitle"
+  },
+  "withdrawalStep1Title": "Data to be Deleted",
+  "@withdrawalStep1Title": {
+    "description": "Step 1 title for data deletion"
+  },
+  "withdrawalAccountInfoTitle": "Account Identity Information",
+  "@withdrawalAccountInfoTitle": {
+    "description": "Account information section title"
+  },
+  "withdrawalAccountInfoDesc": "Email, nickname, profile image",
+  "@withdrawalAccountInfoDesc": {
+    "description": "Account information description"
+  },
+  "withdrawalUsageHistoryTitle": "App Usage History",
+  "@withdrawalUsageHistoryTitle": {
+    "description": "Usage history section title"
+  },
+  "withdrawalUsageHistoryDesc": "Chats, posts, activity logs, notification tokens",
+  "@withdrawalUsageHistoryDesc": {
+    "description": "Usage history description"
+  },
+  "withdrawalAdditionalDataTitle": "Connected Additional Data",
+  "@withdrawalAdditionalDataTitle": {
+    "description": "Additional data section title"
+  },
+  "withdrawalAdditionalDataDesc": "Cloud backups, user settings, etc.",
+  "@withdrawalAdditionalDataDesc": {
+    "description": "Additional data description"
+  },
+  "withdrawalPaymentNote": "Payment and tax documentation will be retained separately for up to 5 years as required by relevant laws before destruction.",
+  "@withdrawalPaymentNote": {
+    "description": "Note about payment data retention"
+  },
+  "withdrawalStep2Title": "Deletion Method",
+  "@withdrawalStep2Title": {
+    "description": "Step 2 title for deletion method"
+  },
+  "withdrawalEmailRequest": "Email Request",
+  "@withdrawalEmailRequest": {
+    "description": "Email request method"
+  },
+  "withdrawalStep3Title": "Processing & Timeline",
+  "@withdrawalStep3Title": {
+    "description": "Step 3 title for processing timeline"
+  },
+  "withdrawalProcessingDesc": "After confirming your request, all data will be completely deleted within 7 business days, and you will receive a completion notification email.",
+  "@withdrawalProcessingDesc": {
+    "description": "Processing timeline description"
+  },
+  "withdrawalIrreversibleNote": "Once deletion is complete, recovery is impossible, and all remaining points and subscriptions will be forfeited.",
+  "@withdrawalIrreversibleNote": {
+    "description": "Warning about irreversible deletion"
+  },
+  "withdrawalStep4Title": "Data Retention Exceptions",
+  "@withdrawalStep4Title": {
+    "description": "Step 4 title for data retention exceptions"
+  },
+  "withdrawalRetentionDesc": "Only information necessary for fraud prevention, accounting audits, and legal compliance will be retained in a minimized form for the period prescribed by relevant laws before immediate destruction.",
+  "@withdrawalRetentionDesc": {
+    "description": "Data retention exception description"
+  },
+  "withdrawalStep5Title": "Contact",
+  "@withdrawalStep5Title": {
+    "description": "Step 5 title for contact information"
+  },
+  "withdrawalContactDesc": "For additional inquiries, please contact us at philgohelp@gmail.com anytime.",
+  "@withdrawalContactDesc": {
+    "description": "Contact information description"
+  },
+  "requestWithdrawal": "Request Withdrawal",
+  "@requestWithdrawal": {
+    "description": "Button text to request account withdrawal"
   }
 }

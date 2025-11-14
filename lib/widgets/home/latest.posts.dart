@@ -75,17 +75,10 @@ class _LatestPostsState extends State<LatestPosts> {
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: FaIcon(
-                    widget.icon ?? FontAwesomeIcons.lightNewspaper,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                FaIcon(
+                  widget.icon ?? FontAwesomeIcons.lightNewspaper,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -105,7 +98,7 @@ class _LatestPostsState extends State<LatestPosts> {
               child: Center(child: CircularProgressIndicator()),
             )
           else if (_posts.isEmpty)
-            const LatestPostsEmptyState()
+            const EmptyLatestPosts()
           else
             LatestPostsList(posts: _posts),
         ],
@@ -114,9 +107,8 @@ class _LatestPostsState extends State<LatestPosts> {
   }
 }
 
-/// Empty state widget for when no posts are found
-class LatestPostsEmptyState extends StatelessWidget {
-  const LatestPostsEmptyState({super.key});
+class EmptyLatestPosts extends StatelessWidget {
+  const EmptyLatestPosts({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +137,6 @@ class LatestPostsEmptyState extends StatelessWidget {
 }
 
 /// Posts list widget displaying posts in card format
-/// 카드 형식으로 게시물을 표시하는 목록 위젯
 class LatestPostsList extends StatelessWidget {
   final List<Post> posts;
 

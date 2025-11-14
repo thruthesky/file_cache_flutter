@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/widgets/information.box.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company Form Screen
@@ -296,7 +297,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     Text('Use Company Domain'),
                   ],
                 ),
-                _InfoBox(
+                InformationBox(
                   message:
                       'SEO features help expose your directory listing more on Google, Naver, and other search engines.',
                 ),
@@ -553,7 +554,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 ),
 
                 /// 가이드라인 안내
-                _InfoBox(
+                InformationBox(
                   message:
                       'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).',
                 ),
@@ -570,8 +571,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   },
                 ),
 
-                /// 가이드라인 안내
-                _InfoBox(message: 'Office/Store Interior full view photo'),
+                InformationBox(
+                  message: 'Office/Store Interior full view photo',
+                ),
 
                 SizedBox(height: sp.s16),
 
@@ -819,49 +821,6 @@ class _ImagePlaceholder extends StatelessWidget {
             T.tapToUploadImage,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 정보 안내 박스 위젯
-///
-/// 사용자에게 도움이 되는 정보나 가이드를 표시하는 재사용 가능한 위젯
-class _InfoBox extends StatelessWidget {
-  const _InfoBox({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final sp = Theme.of(context).extension<AppSpacing>()!;
-    final scheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: EdgeInsets.all(sp.s8),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          FaIcon(
-            FontAwesomeIcons.lightCircleInfo,
-            size: 14,
-            color: scheme.primary,
-          ),
-          SizedBox(width: sp.s8),
-          Expanded(
-            child: Text(
-              message,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                height: 1.4,
-              ),
             ),
           ),
         ],

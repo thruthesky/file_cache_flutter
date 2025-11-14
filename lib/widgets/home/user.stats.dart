@@ -11,11 +11,14 @@ class UserStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return Selector<AppState, User?>(
       selector: (_, appState) => appState.user,
       builder: (_, user, child) {
         if (user == null) {
-          /// Show login prompt when user is not logged in (로그인하지 않은 경우 로그인 안내 표시)
+          /// Show login prompt when user is not logged in
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             child: Padding(
@@ -27,15 +30,13 @@ class UserStats extends StatelessWidget {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest,
+                      color: scheme.surfaceContainerHighest,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.person_outline,
                       size: 32,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -47,20 +48,16 @@ class UserStats extends StatelessWidget {
                       children: [
                         Text(
                           'Login to see your profile',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: scheme.onSurface,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'View your posts, comments, and points',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ),
@@ -71,15 +68,45 @@ class UserStats extends StatelessWidget {
           );
         }
 
-        /// Show user stats when logged in (로그인한 경우 사용자 통계 표시)
+        /// Show user stats when logged in
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               children: [
-                /// User avatar (사용자 아바타)
-                UserAvatar(user: user, size: 60),
+                /// User avatar + badge
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    UserAvatar(user: user, size: 60),
+
+                    /// Level Badge
+                    Positioned(
+                      bottom: -8,
+                      right: -8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: scheme.primary,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: scheme.surface, width: 2),
+                        ),
+                        child: Text(
+                          "Lv.${user.level}",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(width: 16),
 
                 /// User info and stats
@@ -89,37 +116,38 @@ class UserStats extends StatelessWidget {
                     children: [
                       /// User name
                       Text(
-                        user.nickname.isNotEmpty ? user.nickname : user.uid,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        user.nickname.isNotEmpty
+                            ? user.nickname
+                            : 'Update your nickname',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
+
                       const SizedBox(height: 8),
 
-                      /// Stats row: posts, comments, points with icons and containers
+                      /// Stats row: posts, comments, points
                       Row(
                         children: [
-                          /// Number of posts with icon
                           StatContainer(
                             icon: FontAwesomeIcons.lightFileLines,
                             value: user.noOfPost.toString(),
-                            color: Theme.of(context).colorScheme.primary,
+                            color: scheme.primary,
                           ),
                           const SizedBox(width: 8),
 
-                          /// Number of comments with icon
                           StatContainer(
                             icon: FontAwesomeIcons.lightComments,
                             value: user.noOfComment.toString(),
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: scheme.secondary,
                           ),
                           const SizedBox(width: 8),
 
-                          /// Points with icon
                           StatContainer(
                             icon: FontAwesomeIcons.lightCoins,
                             value: user.point.toString(),
-                            color: Theme.of(context).colorScheme.tertiary,
+                            color: scheme.tertiary,
                           ),
                         ],
                       ),
@@ -135,15 +163,10 @@ class UserStats extends StatelessWidget {
   }
 }
 
-/// Individual stat container with icon, value, and label
+/// Individual stat container with icon and value
 class StatContainer extends StatelessWidget {
-  /// Icon to display
   final IconData icon;
-
-  /// Value text
   final String value;
-
-  /// Color for icon and value
   final Color color;
 
   const StatContainer({
@@ -155,6 +178,8 @@ class StatContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
@@ -164,23 +189,15 @@ class StatContainer extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// Icon
           FaIcon(icon, size: 14, color: color),
           const SizedBox(width: 6),
 
-          /// Value and label text
-          RichText(
-            text: TextSpan(
-              children: [
-                /// Value in bold
-                TextSpan(
-                  text: value,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                ),
-              ],
+          /// Value
+          Text(
+            value,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
           ),
         ],

@@ -1042,6 +1042,282 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Make Call'**
   String get makeCall;
+
+  /// Welcome title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to PhilGo!'**
+  String get guideWelcomeTitle;
+
+  /// Welcome subtitle in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Share and communicate various information\nin the Philippines\' largest Korean community'**
+  String get guideWelcomeSubtitle;
+
+  /// Features section title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Key Features'**
+  String get guideFeaturesTitle;
+
+  /// Community feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get guideFeatureCommunityTitle;
+
+  /// Community feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Share and communicate information on various boards'**
+  String get guideFeatureCommunityDesc;
+
+  /// Chat feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get guideFeatureChatTitle;
+
+  /// Chat feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Connect quickly through real-time chat'**
+  String get guideFeatureChatDesc;
+
+  /// Business directory feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Business Directory'**
+  String get guideFeatureDirectoryTitle;
+
+  /// Business directory feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Find Korean business information in the Philippines'**
+  String get guideFeatureDirectoryDesc;
+
+  /// Write feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Write'**
+  String get guideFeatureWriteTitle;
+
+  /// Write feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Write and share your posts freely'**
+  String get guideFeatureWriteDesc;
+
+  /// Tips section title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Tips'**
+  String get guideTipsTitle;
+
+  /// First tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile to connect with more people'**
+  String get guideTip1;
+
+  /// Second tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Enable notifications so you don\'t miss important news'**
+  String get guideTip2;
+
+  /// Third tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Like posts you enjoy'**
+  String get guideTip3;
+
+  /// Fourth tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'You can bookmark frequently visited boards'**
+  String get guideTip4;
+
+  /// FAQ section title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently Asked Questions'**
+  String get guideFaqTitle;
+
+  /// First FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'How do I write a post?'**
+  String get guideFaqQ1;
+
+  /// First FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the \"Write\" tab at the bottom, select a board, and write your post.'**
+  String get guideFaqA1;
+
+  /// Second FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'How do I create a chat room?'**
+  String get guideFaqQ2;
+
+  /// Second FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'In the \"Chat\" tab, tap the + button to create a new chat room.'**
+  String get guideFaqA2;
+
+  /// Third FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'How do I register a business?'**
+  String get guideFaqQ3;
+
+  /// Third FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'In the \"Directory\" tab, tap the \"Add Company\" button to register business information.'**
+  String get guideFaqA3;
+
+  /// Fourth FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'Where can I edit my profile?'**
+  String get guideFaqQ4;
+
+  /// Fourth FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'Go to the \"Menu\" tab and select \"Edit Profile\" to change your information.'**
+  String get guideFaqA4;
+
+  /// Account withdrawal screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Account Withdrawal'**
+  String get accountWithdrawalTitle;
+
+  /// Withdrawal intro section title
+  ///
+  /// In en, this message translates to:
+  /// **'Data Delete Request'**
+  String get withdrawalIntroTitle;
+
+  /// Withdrawal intro section subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'PhilGo Network provides you the right to permanently delete all personal information related to your account at any time.'**
+  String get withdrawalIntroSubtitle;
+
+  /// Step 1 title for data deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Data to be Deleted'**
+  String get withdrawalStep1Title;
+
+  /// Account information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Account Identity Information'**
+  String get withdrawalAccountInfoTitle;
+
+  /// Account information description
+  ///
+  /// In en, this message translates to:
+  /// **'Email, nickname, profile image'**
+  String get withdrawalAccountInfoDesc;
+
+  /// Usage history section title
+  ///
+  /// In en, this message translates to:
+  /// **'App Usage History'**
+  String get withdrawalUsageHistoryTitle;
+
+  /// Usage history description
+  ///
+  /// In en, this message translates to:
+  /// **'Chats, posts, activity logs, notification tokens'**
+  String get withdrawalUsageHistoryDesc;
+
+  /// Additional data section title
+  ///
+  /// In en, this message translates to:
+  /// **'Connected Additional Data'**
+  String get withdrawalAdditionalDataTitle;
+
+  /// Additional data description
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backups, user settings, etc.'**
+  String get withdrawalAdditionalDataDesc;
+
+  /// Note about payment data retention
+  ///
+  /// In en, this message translates to:
+  /// **'Payment and tax documentation will be retained separately for up to 5 years as required by relevant laws before destruction.'**
+  String get withdrawalPaymentNote;
+
+  /// Step 2 title for deletion method
+  ///
+  /// In en, this message translates to:
+  /// **'Deletion Method'**
+  String get withdrawalStep2Title;
+
+  /// Email request method
+  ///
+  /// In en, this message translates to:
+  /// **'Email Request'**
+  String get withdrawalEmailRequest;
+
+  /// Step 3 title for processing timeline
+  ///
+  /// In en, this message translates to:
+  /// **'Processing & Timeline'**
+  String get withdrawalStep3Title;
+
+  /// Processing timeline description
+  ///
+  /// In en, this message translates to:
+  /// **'After confirming your request, all data will be completely deleted within 7 business days, and you will receive a completion notification email.'**
+  String get withdrawalProcessingDesc;
+
+  /// Warning about irreversible deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Once deletion is complete, recovery is impossible, and all remaining points and subscriptions will be forfeited.'**
+  String get withdrawalIrreversibleNote;
+
+  /// Step 4 title for data retention exceptions
+  ///
+  /// In en, this message translates to:
+  /// **'Data Retention Exceptions'**
+  String get withdrawalStep4Title;
+
+  /// Data retention exception description
+  ///
+  /// In en, this message translates to:
+  /// **'Only information necessary for fraud prevention, accounting audits, and legal compliance will be retained in a minimized form for the period prescribed by relevant laws before immediate destruction.'**
+  String get withdrawalRetentionDesc;
+
+  /// Step 5 title for contact information
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get withdrawalStep5Title;
+
+  /// Contact information description
+  ///
+  /// In en, this message translates to:
+  /// **'For additional inquiries, please contact us at philgohelp@gmail.com anytime.'**
+  String get withdrawalContactDesc;
+
+  /// Button text to request account withdrawal
+  ///
+  /// In en, this message translates to:
+  /// **'Request Withdrawal'**
+  String get requestWithdrawal;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

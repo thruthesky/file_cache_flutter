@@ -491,4 +491,148 @@ class LoKo extends Lo {
 
   @override
   String get makeCall => '전화 걸기';
+
+  @override
+  String get guideWelcomeTitle => '필고에 오신 것을 환영합니다!';
+
+  @override
+  String get guideWelcomeSubtitle => '필리핀 최대 한인 커뮤니티에서\n다양한 정보를 공유하고 소통하세요';
+
+  @override
+  String get guideFeaturesTitle => '주요 기능';
+
+  @override
+  String get guideFeatureCommunityTitle => '커뮤니티';
+
+  @override
+  String get guideFeatureCommunityDesc => '다양한 게시판에서 정보를 공유하고 소통하세요';
+
+  @override
+  String get guideFeatureChatTitle => '채팅';
+
+  @override
+  String get guideFeatureChatDesc => '실시간 채팅으로 빠르게 대화를 나눌 수 있습니다';
+
+  @override
+  String get guideFeatureDirectoryTitle => '업소록';
+
+  @override
+  String get guideFeatureDirectoryDesc => '필리핀의 한인 업체 정보를 찾아보세요';
+
+  @override
+  String get guideFeatureWriteTitle => '글쓰기';
+
+  @override
+  String get guideFeatureWriteDesc => '자유롭게 게시글을 작성하고 공유하세요';
+
+  @override
+  String get guideTipsTitle => '사용 팁';
+
+  @override
+  String get guideTip1 => '프로필을 완성하면 더 많은 사람들과 소통할 수 있어요';
+
+  @override
+  String get guideTip2 => '알림 설정을 활성화하여 중요한 소식을 놓치지 마세요';
+
+  @override
+  String get guideTip3 => '마음에 드는 게시글에 좋아요를 눌러보세요';
+
+  @override
+  String get guideTip4 => '자주 보는 게시판은 즐겨찾기에 추가할 수 있어요';
+
+  @override
+  String get guideFaqTitle => '자주 묻는 질문';
+
+  @override
+  String get guideFaqQ1 => '게시글은 어떻게 작성하나요?';
+
+  @override
+  String get guideFaqA1 => '하단의 \"글쓰기\" 탭을 눌러 게시판을 선택하고 글을 작성할 수 있습니다.';
+
+  @override
+  String get guideFaqQ2 => '채팅방은 어떻게 만드나요?';
+
+  @override
+  String get guideFaqA2 => '\"채팅\" 탭에서 + 버튼을 눌러 새로운 채팅방을 만들 수 있습니다.';
+
+  @override
+  String get guideFaqQ3 => '업체는 어떻게 등록하나요?';
+
+  @override
+  String get guideFaqA3 => '\"업소록\" 탭에서 \"업체 추가\" 버튼을 눌러 업체 정보를 등록할 수 있습니다.';
+
+  @override
+  String get guideFaqQ4 => '프로필 정보는 어디서 수정하나요?';
+
+  @override
+  String get guideFaqA4 => '\"메뉴\" 탭에서 \"프로필 수정\"을 선택하여 내 정보를 변경할 수 있습니다.';
+
+  @override
+  String get accountWithdrawalTitle => '회원 탈퇴';
+
+  @override
+  String get withdrawalIntroTitle => '중요 안내';
+
+  @override
+  String get withdrawalIntroSubtitle =>
+      '회원 탈퇴는 영구적이며 되돌릴 수 없습니다.\n모든 데이터가 삭제되며 복구할 수 없습니다.\n진행하기 전에 아래 정보를 주의 깊게 확인해 주세요.';
+
+  @override
+  String get withdrawalStep1Title => '삭제 대상';
+
+  @override
+  String get withdrawalAccountInfoTitle => '계정 식별 정보';
+
+  @override
+  String get withdrawalAccountInfoDesc => '이메일, 닉네임, 프로필 이미지';
+
+  @override
+  String get withdrawalUsageHistoryTitle => '앱 사용 기록';
+
+  @override
+  String get withdrawalUsageHistoryDesc => '채팅·게시글·활동 이력, 알림 토큰';
+
+  @override
+  String get withdrawalAdditionalDataTitle => '연결된 추가 데이터';
+
+  @override
+  String get withdrawalAdditionalDataDesc => '클라우드 백업, 사용자 설정 등';
+
+  @override
+  String get withdrawalPaymentNote =>
+      '결제·세무 증빙 데이터는 관련 법령에 따라 최대 5년간 분리 보관 후 파기됩니다.';
+
+  @override
+  String get withdrawalStep2Title => '삭제 방법';
+
+  @override
+  String get withdrawalEmailRequest => '이메일 요청';
+
+  @override
+  String get withdrawalStep3Title => '처리 및 일정';
+
+  @override
+  String get withdrawalProcessingDesc =>
+      '요청 확인 후 영업일 기준 7일 이내 모든 데이터를 완전 삭제하며, 완료 안내 메일을 보내드립니다.';
+
+  @override
+  String get withdrawalIrreversibleNote =>
+      '삭제가 완료되면 복구는 불가하고, 남아 있던 포인트·구독도 모두 소멸합니다.';
+
+  @override
+  String get withdrawalStep4Title => '데이터 보존 예외';
+
+  @override
+  String get withdrawalRetentionDesc =>
+      '사기 방지·회계 감사·법적 의무 준수를 위해 필요한 정보만 관련 법령에서 정한 기간 동안 최소화하여 보관한 뒤 즉시 파기합니다.';
+
+  @override
+  String get withdrawalStep5Title => '문의';
+
+  @override
+  String get withdrawalContactDesc =>
+      '추가 문의는 philgohelp@gmail.com 으로 언제든지 연락해 주세요.';
+
+  @override
+  String get requestWithdrawal => '탈퇴 신청';
 }

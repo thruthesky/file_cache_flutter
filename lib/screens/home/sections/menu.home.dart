@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/design/test.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
+import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/privacy/privacy.screen.dart';
 import 'package:philgo/screens/terms/terms.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
@@ -106,7 +108,7 @@ class _MenuHomeState extends State<MenuHome>
         'icon': FontAwesomeIcons.circleInfo,
         'title': T.appGuideTitle,
         'subtitle': T.appGuideSubtitle,
-        'onTap': () {},
+        'onTap': () => AppGuideScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.fileContract,
@@ -124,7 +126,7 @@ class _MenuHomeState extends State<MenuHome>
         'icon': FontAwesomeIcons.userXmark,
         'title': T.withdrawTitle,
         'subtitle': T.withdrawSubtitle,
-        'onTap': () {},
+        'onTap': () => AccountWithdrawalScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.rightFromBracket,

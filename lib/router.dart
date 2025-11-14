@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/about/about.screen.dart';
+import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/design/test.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
+import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/privacy/privacy.screen.dart';
 import 'package:philgo/screens/terms/terms.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
@@ -337,6 +339,16 @@ final router = GoRouter(
       path: PrivacyScreen.routeName,
       name: PrivacyScreen.routeName,
       builder: (context, state) => const PrivacyScreen(),
+    ),
+    GoRoute(
+      path: AppGuideScreen.routeName,
+      name: AppGuideScreen.routeName,
+      builder: (context, state) => const AppGuideScreen(),
+    ),
+    GoRoute(
+      path: AccountWithdrawalScreen.routeName,
+      name: AccountWithdrawalScreen.routeName,
+      builder: (context, state) => const AccountWithdrawalScreen(),
     ),
   ],
 );

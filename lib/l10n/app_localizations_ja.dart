@@ -495,4 +495,158 @@ class LoJa extends Lo {
 
   @override
   String get makeCall => 'Make Call';
+
+  @override
+  String get guideWelcomeTitle => 'Welcome to PhilGo!';
+
+  @override
+  String get guideWelcomeSubtitle =>
+      'Share and communicate various information\nin the Philippines\' largest Korean community';
+
+  @override
+  String get guideFeaturesTitle => 'Key Features';
+
+  @override
+  String get guideFeatureCommunityTitle => 'Community';
+
+  @override
+  String get guideFeatureCommunityDesc =>
+      'Share and communicate information on various boards';
+
+  @override
+  String get guideFeatureChatTitle => 'Chat';
+
+  @override
+  String get guideFeatureChatDesc => 'Connect quickly through real-time chat';
+
+  @override
+  String get guideFeatureDirectoryTitle => 'Business Directory';
+
+  @override
+  String get guideFeatureDirectoryDesc =>
+      'Find Korean business information in the Philippines';
+
+  @override
+  String get guideFeatureWriteTitle => 'Write';
+
+  @override
+  String get guideFeatureWriteDesc => 'Write and share your posts freely';
+
+  @override
+  String get guideTipsTitle => 'Usage Tips';
+
+  @override
+  String get guideTip1 => 'Complete your profile to connect with more people';
+
+  @override
+  String get guideTip2 =>
+      'Enable notifications so you don\'t miss important news';
+
+  @override
+  String get guideTip3 => 'Like posts you enjoy';
+
+  @override
+  String get guideTip4 => 'You can bookmark frequently visited boards';
+
+  @override
+  String get guideFaqTitle => 'Frequently Asked Questions';
+
+  @override
+  String get guideFaqQ1 => 'How do I write a post?';
+
+  @override
+  String get guideFaqA1 =>
+      'Tap the \"Write\" tab at the bottom, select a board, and write your post.';
+
+  @override
+  String get guideFaqQ2 => 'How do I create a chat room?';
+
+  @override
+  String get guideFaqA2 =>
+      'In the \"Chat\" tab, tap the + button to create a new chat room.';
+
+  @override
+  String get guideFaqQ3 => 'How do I register a business?';
+
+  @override
+  String get guideFaqA3 =>
+      'In the \"Directory\" tab, tap the \"Add Company\" button to register business information.';
+
+  @override
+  String get guideFaqQ4 => 'Where can I edit my profile?';
+
+  @override
+  String get guideFaqA4 =>
+      'Go to the \"Menu\" tab and select \"Edit Profile\" to change your information.';
+
+  @override
+  String get accountWithdrawalTitle => 'Account Withdrawal';
+
+  @override
+  String get withdrawalIntroTitle => 'Data Delete Request';
+
+  @override
+  String get withdrawalIntroSubtitle =>
+      'PhilGo Network provides you the right to permanently delete all personal information related to your account at any time.';
+
+  @override
+  String get withdrawalStep1Title => 'Data to be Deleted';
+
+  @override
+  String get withdrawalAccountInfoTitle => 'Account Identity Information';
+
+  @override
+  String get withdrawalAccountInfoDesc => 'Email, nickname, profile image';
+
+  @override
+  String get withdrawalUsageHistoryTitle => 'App Usage History';
+
+  @override
+  String get withdrawalUsageHistoryDesc =>
+      'Chats, posts, activity logs, notification tokens';
+
+  @override
+  String get withdrawalAdditionalDataTitle => 'Connected Additional Data';
+
+  @override
+  String get withdrawalAdditionalDataDesc =>
+      'Cloud backups, user settings, etc.';
+
+  @override
+  String get withdrawalPaymentNote =>
+      'Payment and tax documentation will be retained separately for up to 5 years as required by relevant laws before destruction.';
+
+  @override
+  String get withdrawalStep2Title => 'Deletion Method';
+
+  @override
+  String get withdrawalEmailRequest => 'Email Request';
+
+  @override
+  String get withdrawalStep3Title => 'Processing & Timeline';
+
+  @override
+  String get withdrawalProcessingDesc =>
+      'After confirming your request, all data will be completely deleted within 7 business days, and you will receive a completion notification email.';
+
+  @override
+  String get withdrawalIrreversibleNote =>
+      'Once deletion is complete, recovery is impossible, and all remaining points and subscriptions will be forfeited.';
+
+  @override
+  String get withdrawalStep4Title => 'Data Retention Exceptions';
+
+  @override
+  String get withdrawalRetentionDesc =>
+      'Only information necessary for fraud prevention, accounting audits, and legal compliance will be retained in a minimized form for the period prescribed by relevant laws before immediate destruction.';
+
+  @override
+  String get withdrawalStep5Title => 'Contact';
+
+  @override
+  String get withdrawalContactDesc =>
+      'For additional inquiries, please contact us at philgohelp@gmail.com anytime.';
+
+  @override
+  String get requestWithdrawal => 'Request Withdrawal';
 }

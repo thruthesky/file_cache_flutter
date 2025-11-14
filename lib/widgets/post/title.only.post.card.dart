@@ -4,8 +4,6 @@ import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Title-only post card widget showing only title with arrow
-/// 제목과 화살표만 표시하는 게시물 카드 위젯
-///
 /// Features:
 /// - Shows post title (max 2 lines)
 /// - Shows ">" arrow at the end
