@@ -5,7 +5,6 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
 /// User statistics widget showing posts, comments, and points
-/// 사용자의 게시글, 댓글, 포인트를 표시하는 통계 위젯
 class UserStats extends StatelessWidget {
   const UserStats({super.key});
 

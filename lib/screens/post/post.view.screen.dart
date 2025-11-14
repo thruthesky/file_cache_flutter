@@ -1,3 +1,4 @@
+import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
@@ -72,7 +73,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
   List<String> get files => post != null ? post!.files : widget.post.files;
   String get content => post != null ? post!.content : widget.post.content;
   String get subject => post != null ? post!.subject : widget.post.subject;
-  String get nickname => post != null ? post!.nickname : widget.post.nickname;
+  String get nickname {
+    final name = post != null ? post!.nickname : widget.post.nickname;
+    return name.isEmpty ? 'No Name' : name;
+  }
+
   String get timeString => widget.post.timeString;
   String get noOfView => post != null
       ? post!.no_of_view.toString()

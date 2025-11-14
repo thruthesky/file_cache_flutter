@@ -1,9 +1,11 @@
 // import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/home/widgets/forum.category_header.dart';
-import 'package:philgo/screens/home/widgets/forum.no_items.dart';
+import 'package:philgo/widgets/empty.post.list.dart';
+import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:provider/provider.dart';
@@ -103,16 +105,53 @@ class _ForumHomeState extends State<ForumHome> {
                     },
                   );
                 },
-                noItemsFoundIndicatorBuilder: (context) => ForumNoItems(
-                  onCreated: (post) async {
-                    // PostCreateScreen에서 게시물이 생성되면 이 콜백이 호출됩니다.
-                    // 여기서 게시물 목록을 새로고침하거나 새 게시물을 목록 상단에 추가하는 등의 작업을 수행할 수 있습니다.
-                    debugLog('New post created: $post');
-                    // 예: await ForumState.of(context, listen: false).refreshPosts();
-                    // 또는 목록 상단에 새 게시물을 추가하는 로직
-                    onNewPostCreated(post);
-                  },
-                ),
+                noItemsFoundIndicatorBuilder: (context) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        EmptyPostList(),
+                        const SizedBox(height: 16),
+
+                        /// Create Post Button
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final post = await PostCreateScreen.push(context);
+                            debugLog('post: $post');
+                            if (post != null) {
+                              onNewPostCreated(post);
+                            }
+                          },
+                          icon: const FaIcon(
+                            FontAwesomeIcons.penToSquare,
+                            size: 18,
+                          ),
+                          label: Text(
+                            LibTr.of(context)!.create_post,
+                            style: Theme.of(context).textTheme.labelLarge!
+                                .copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ],
