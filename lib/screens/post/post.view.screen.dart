@@ -1,4 +1,3 @@
-import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
@@ -92,7 +91,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-
+        title: Text(subject),
         leading: BackButton(
           onPressed: () => Navigator.of(context).canPop()
               ? Navigator.of(context).pop()

@@ -100,6 +100,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             elevation: 0,
             backgroundColor: scheme.primaryContainer,
             foregroundColor: scheme.onPrimaryContainer,
+            title: _isCollapsed && company != null
+                ? Text(
+                    company!.name,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                    ),
+                  )
+                : null,
             leading: _isCollapsed
                 ? null // 접혔을 때는 기본 back button 사용
                 : IconButton(
