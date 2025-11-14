@@ -117,7 +117,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
     // Set image URLs
     _logoUrl = widget.company?.logo_url ?? '';
-    _kakaoTalkQrCodeUrl = widget.company?.kakaotalk_qr_code ?? '';
+    _kakaoTalkQrCodeUrl = widget.company?.kakaotalk_qr_code_url ?? '';
     _companyIntroImageUrl = widget.company?.title_image_url ?? '';
     _businessLicenseUrl = widget.company?.business_license_url ?? '';
     _officeInteriorUrl = widget.company?.photo_url ?? '';
