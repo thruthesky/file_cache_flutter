@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/design/test.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
+import 'package:philgo/screens/privacy/privacy.screen.dart';
+import 'package:philgo/screens/terms/terms.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
@@ -110,13 +112,13 @@ class _MenuHomeState extends State<MenuHome>
         'icon': FontAwesomeIcons.fileContract,
         'title': T.termsOfServiceTitle,
         'subtitle': T.termsOfServiceSubtitle,
-        'onTap': () {},
+        'onTap': () => TermsScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.userShield,
         'title': T.privacyPolicyTitle,
         'subtitle': T.privacyPolicySubtitle,
-        'onTap': () {},
+        'onTap': () => PrivacyScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.userXmark,

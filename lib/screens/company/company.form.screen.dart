@@ -31,7 +31,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   late TextEditingController _landlineController;
   late TextEditingController _mobileNumberController;
   late TextEditingController _kakaotalkIdController;
-  late TextEditingController _kakaotalkQrUrlController;
+  late TextEditingController _kakaotalkQrCodeController;
   late TextEditingController _telegramIdController;
   late TextEditingController _familySiteDomainController;
   late TextEditingController _familySiteNameController;
@@ -50,7 +50,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   String _logoUrl = '';
   String _companyIntroImageUrl = '';
   String _businessLicenseUrl = '';
-  String _kakaoTalkQrCode = '';
+  String _kakaoTalkQrCodeUrl = '';
   String _officeInteriorUrl = '';
 
   bool _isSubmitting = false;
@@ -80,7 +80,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _kakaotalkIdController = TextEditingController(
       text: widget.company?.kakaotalk_id ?? '',
     );
-    _kakaotalkQrUrlController = TextEditingController(text: '');
+    _kakaotalkQrCodeController = TextEditingController(
+      text: widget.company?.kakaotalk_qr_code ?? '',
+    );
 
     _telegramIdController = TextEditingController(
       text: widget.company?.telegram_id ?? '',
@@ -114,7 +116,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
     // Set image URLs
     _logoUrl = widget.company?.logo_url ?? '';
-    _kakaoTalkQrCode = widget.company?.kakaotalk_qr_code ?? '';
+    _kakaoTalkQrCodeUrl = widget.company?.kakaotalk_qr_code ?? '';
     _companyIntroImageUrl = widget.company?.title_image_url ?? '';
     _businessLicenseUrl = widget.company?.business_license_url ?? '';
     _officeInteriorUrl = widget.company?.photo_url ?? '';
@@ -130,7 +132,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _landlineController.dispose();
     _mobileNumberController.dispose();
     _kakaotalkIdController.dispose();
-    _kakaotalkQrUrlController.dispose();
+    _kakaotalkQrCodeController.dispose();
     _telegramIdController.dispose();
     _familySiteDescriptionController.dispose();
     _familySiteDomainController.dispose();
@@ -193,7 +195,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         'phone_number': _landlineController.text.trim(),
         'mobile_number': _mobileNumberController.text.trim(),
         'kakaotalk_id': _kakaotalkIdController.text.trim(),
-        'kakaotalk_qr_code_url': _kakaotalkQrUrlController.text.trim(),
+        'kakaotalk_qr_code': _kakaotalkQrCodeController.text.trim(),
         'telegram_id': _telegramIdController.text.trim(),
         'logo_url': _logoUrl,
         'family_site_domain': _familySiteDomainController.text.trim(),
@@ -215,8 +217,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       if (_businessLicenseUrl.isNotEmpty) {
         companyData['business_license_url'] = _businessLicenseUrl;
       }
-      if (_kakaoTalkQrCode.isNotEmpty) {
-        companyData['kakaotalk_qr_code'] = _kakaoTalkQrCode;
+      if (_kakaoTalkQrCodeUrl.isNotEmpty) {
+        companyData['kakaotalk_qr_code_url'] = _kakaoTalkQrCodeUrl;
       }
       if (_officeInteriorUrl.isNotEmpty) {
         companyData['photo_url'] = _officeInteriorUrl;
@@ -462,16 +464,22 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
                 _ImageUploadField(
                   label: 'Upload Kakao QR Code',
-                  imageUrl: _kakaoTalkQrCode,
+                  imageUrl: _kakaoTalkQrCodeUrl,
                   isDecodeQr: true,
                   onImageSelected: (url) {
-                    _kakaoTalkQrCode = url;
+                    _kakaoTalkQrCodeUrl = url;
                     setState(() {});
+                  },
+                  onQrCodeDecoded: (qrCode) {
+                    if (qrCode != null && qrCode.isNotEmpty) {
+                      _kakaotalkQrCodeController.text = qrCode;
+                      setState(() {});
+                    }
                   },
                 ),
 
                 TextFieldSet(
-                  controller: _kakaotalkQrUrlController,
+                  controller: _kakaotalkQrCodeController,
                   label: 'Kakao Channel URL',
                   hintText: 'https://pf.kakao.com/...',
                   prefixFaIconData: FontAwesomeIcons.message,
@@ -494,14 +502,16 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   icon: FontAwesomeIcons.lightCircleInfo,
                   title: 'Company Introduction',
                 ),
+                SizedBox(height: sp.s8),
 
                 TextFieldSet(
                   controller: _descriptionController,
                   label: '${T.description} *',
                   hintText: T.enterDescription,
                   prefixFaIconData: FontAwesomeIcons.lightAlignLeft,
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  maxLines: 5,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  maxLines: 8,
+                  minLines: 5,
                 ),
 
                 SizedBox(height: sp.s8),
@@ -555,9 +565,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   label: 'Office/Store Interior Photo',
                   imageUrl: _officeInteriorUrl,
                   onImageSelected: (url) {
-                    setState(() {
-                      _officeInteriorUrl = url;
-                    });
+                    _officeInteriorUrl = url;
+                    setState(() {});
                   },
                 ),
 
@@ -633,12 +642,14 @@ class _ImageUploadField extends StatefulWidget {
     required this.imageUrl,
     required this.onImageSelected,
     this.isDecodeQr = false,
+    this.onQrCodeDecoded,
   });
 
   final String label;
   final String imageUrl;
   final void Function(String) onImageSelected;
   final bool isDecodeQr;
+  final void Function(String?)? onQrCodeDecoded;
 
   @override
   State<_ImageUploadField> createState() => _ImageUploadFieldState();
@@ -655,7 +666,8 @@ class _ImageUploadFieldState extends State<_ImageUploadField> {
     final theme = Theme.of(context);
 
     return FileUpload(
-      isDecodeQr: true,
+      isDecodeQr: widget.isDecodeQr,
+      onQrCodeDetected: widget.onQrCodeDecoded,
       onBeforeUpload: () {
         setState(() {
           _isUploading = true;

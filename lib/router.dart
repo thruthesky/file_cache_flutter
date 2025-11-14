@@ -10,6 +10,8 @@ import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/design/test.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
+import 'package:philgo/screens/privacy/privacy.screen.dart';
+import 'package:philgo/screens/terms/terms.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
@@ -324,7 +326,17 @@ final router = GoRouter(
     GoRoute(
       path: DesignScreen.routeName,
       name: DesignScreen.routeName,
-      builder: (context, state) => DesignScreen(),
+      builder: (context, state) => const DesignScreen(),
+    ),
+    GoRoute(
+      path: TermsScreen.routeName,
+      name: TermsScreen.routeName,
+      builder: (context, state) => const TermsScreen(),
+    ),
+    GoRoute(
+      path: PrivacyScreen.routeName,
+      name: PrivacyScreen.routeName,
+      builder: (context, state) => const PrivacyScreen(),
     ),
   ],
 );
