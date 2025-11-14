@@ -135,11 +135,16 @@ class _DateSelectorState extends State<DateSelector> {
           (selectedMonth! < 1 || selectedMonth! > 12)) {
         selectedMonth = null;
       }
+      // Validate day: must be at least 1
+      if (selectedDay != null && selectedDay! < 1) {
+        selectedDay = null;
+      }
+      // Further validate day against the max day of the selected month
       if (selectedDay != null &&
           selectedMonth != null &&
           selectedYear != null) {
         final maxDay = _getMaxDayOfMonth(selectedYear!, selectedMonth!);
-        if (selectedDay! < 1 || selectedDay! > maxDay) {
+        if (selectedDay! > maxDay) {
           selectedDay = null;
         }
       }
