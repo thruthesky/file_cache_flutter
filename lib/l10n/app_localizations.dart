@@ -1058,7 +1058,7 @@ abstract class Lo {
   /// Features section title in app guide
   ///
   /// In en, this message translates to:
-  /// **'Key Features'**
+  /// **'App Features'**
   String get guideFeaturesTitle;
 
   /// Community feature title
@@ -1318,6 +1318,60 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Request Withdrawal'**
   String get requestWithdrawal;
+
+  /// Getting started section title
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get guideGettingStartedTitle;
+
+  /// Step 1 title
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your Account'**
+  String get guideStep1Title;
+
+  /// Step 1 description
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up with your email or social accounts to get started.'**
+  String get guideStep1Desc;
+
+  /// Step 2 title
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the Community'**
+  String get guideStep2Title;
+
+  /// Step 2 description
+  ///
+  /// In en, this message translates to:
+  /// **'Browse through posts, companies, and connect with other Filipinos.'**
+  String get guideStep2Desc;
+
+  /// Step 3 title
+  ///
+  /// In en, this message translates to:
+  /// **'Share Your Story'**
+  String get guideStep3Title;
+
+  /// Step 3 description
+  ///
+  /// In en, this message translates to:
+  /// **'Write posts, share experiences, and contribute to the community.'**
+  String get guideStep3Desc;
+
+  /// Step 4 title
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with Others'**
+  String get guideStep4Title;
+
+  /// Step 4 description
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with members, join discussions, and build your network.'**
+  String get guideStep4Desc;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

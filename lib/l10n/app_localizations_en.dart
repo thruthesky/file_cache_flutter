@@ -512,7 +512,7 @@ class LoEn extends Lo {
       'Share and communicate various information\nin the Philippines\' largest Korean community';
 
   @override
-  String get guideFeaturesTitle => 'Key Features';
+  String get guideFeaturesTitle => 'App Features';
 
   @override
   String get guideFeatureCommunityTitle => 'Community';
@@ -657,4 +657,35 @@ class LoEn extends Lo {
 
   @override
   String get requestWithdrawal => 'Request Withdrawal';
+
+  @override
+  String get guideGettingStartedTitle => 'Get Started';
+
+  @override
+  String get guideStep1Title => 'Create Your Account';
+
+  @override
+  String get guideStep1Desc =>
+      'Sign up with your email or social accounts to get started.';
+
+  @override
+  String get guideStep2Title => 'Explore the Community';
+
+  @override
+  String get guideStep2Desc =>
+      'Browse through posts, companies, and connect with other Filipinos.';
+
+  @override
+  String get guideStep3Title => 'Share Your Story';
+
+  @override
+  String get guideStep3Desc =>
+      'Write posts, share experiences, and contribute to the community.';
+
+  @override
+  String get guideStep4Title => 'Connect with Others';
+
+  @override
+  String get guideStep4Desc =>
+      'Chat with members, join discussions, and build your network.';
 }

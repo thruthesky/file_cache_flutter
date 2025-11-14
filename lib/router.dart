@@ -9,7 +9,6 @@ import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
-import 'package:philgo/screens/design/test.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/privacy/privacy.screen.dart';
@@ -324,11 +323,6 @@ final router = GoRouter(
         url: (state.extra as Map<String, dynamic>)['url'],
         title: (state.extra as Map<String, dynamic>)['title'] ?? '',
       ),
-    ),
-    GoRoute(
-      path: DesignScreen.routeName,
-      name: DesignScreen.routeName,
-      builder: (context, state) => const DesignScreen(),
     ),
     GoRoute(
       path: TermsScreen.routeName,

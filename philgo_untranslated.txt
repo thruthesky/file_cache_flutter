@@ -62,7 +62,16 @@
     "withdrawalRetentionDesc",
     "withdrawalStep5Title",
     "withdrawalContactDesc",
-    "requestWithdrawal"
+    "requestWithdrawal",
+    "guideGettingStartedTitle",
+    "guideStep1Title",
+    "guideStep1Desc",
+    "guideStep2Title",
+    "guideStep2Desc",
+    "guideStep3Title",
+    "guideStep3Desc",
+    "guideStep4Title",
+    "guideStep4Desc"
   ],
 
   "zh": [
@@ -128,6 +137,15 @@
     "withdrawalRetentionDesc",
     "withdrawalStep5Title",
     "withdrawalContactDesc",
-    "requestWithdrawal"
+    "requestWithdrawal",
+    "guideGettingStartedTitle",
+    "guideStep1Title",
+    "guideStep1Desc",
+    "guideStep2Title",
+    "guideStep2Desc",
+    "guideStep3Title",
+    "guideStep3Desc",
+    "guideStep4Title",
+    "guideStep4Desc"
   ]
 }

@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
-import 'package:philgo/screens/design/test.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/privacy/privacy.screen.dart';
@@ -58,14 +57,6 @@ class _MenuHomeState extends State<MenuHome>
     final theme = Theme.of(context);
 
     final menuItems = [
-      // 디자인 테스트 화면 (isJaeho 환경에서만 표시)
-      if (Config.isJaeho)
-        {
-          'icon': FontAwesomeIcons.palette,
-          'title': 'Design Test',
-          'subtitle': 'View theme colors and text styles',
-          'onTap': () => DesignScreen.push(context, ''),
-        },
       {
         'icon': FontAwesomeIcons.userPen,
         'title': T.editProfileTitle,

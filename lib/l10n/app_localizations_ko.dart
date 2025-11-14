@@ -499,7 +499,7 @@ class LoKo extends Lo {
   String get guideWelcomeSubtitle => '필리핀 최대 한인 커뮤니티에서\n다양한 정보를 공유하고 소통하세요';
 
   @override
-  String get guideFeaturesTitle => '주요 기능';
+  String get guideFeaturesTitle => '앱 기능';
 
   @override
   String get guideFeatureCommunityTitle => '커뮤니티';
@@ -635,4 +635,31 @@ class LoKo extends Lo {
 
   @override
   String get requestWithdrawal => '탈퇴 신청';
+
+  @override
+  String get guideGettingStartedTitle => '시작하기';
+
+  @override
+  String get guideStep1Title => '계정 만들기';
+
+  @override
+  String get guideStep1Desc => '이메일 또는 소셜 계정으로 가입하여 시작하세요.';
+
+  @override
+  String get guideStep2Title => '커뮤니티 둘러보기';
+
+  @override
+  String get guideStep2Desc => '게시물과 업체를 둘러보고 다른 필리핀 분들과 연결하세요.';
+
+  @override
+  String get guideStep3Title => '이야기 공유하기';
+
+  @override
+  String get guideStep3Desc => '게시물을 작성하고 경험을 공유하며 커뮤니티에 기여하세요.';
+
+  @override
+  String get guideStep4Title => '다른 사람들과 연결';
+
+  @override
+  String get guideStep4Desc => '회원들과 채팅하고 토론에 참여하며 네트워크를 구축하세요.';
 }

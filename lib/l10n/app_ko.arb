@@ -159,7 +159,7 @@
   "location": "지역",
   "guideWelcomeTitle": "필고에 오신 것을 환영합니다!",
   "guideWelcomeSubtitle": "필리핀 최대 한인 커뮤니티에서\n다양한 정보를 공유하고 소통하세요",
-  "guideFeaturesTitle": "주요 기능",
+  "guideFeaturesTitle": "앱 기능",
   "guideFeatureCommunityTitle": "커뮤니티",
   "guideFeatureCommunityDesc": "다양한 게시판에서 정보를 공유하고 소통하세요",
   "guideFeatureChatTitle": "채팅",
@@ -202,5 +202,14 @@
   "withdrawalRetentionDesc": "사기 방지·회계 감사·법적 의무 준수를 위해 필요한 정보만 관련 법령에서 정한 기간 동안 최소화하여 보관한 뒤 즉시 파기합니다.",
   "withdrawalStep5Title": "문의",
   "withdrawalContactDesc": "추가 문의는 philgohelp@gmail.com 으로 언제든지 연락해 주세요.",
-  "requestWithdrawal": "탈퇴 신청"
+  "requestWithdrawal": "탈퇴 신청",
+  "guideGettingStartedTitle": "시작하기",
+  "guideStep1Title": "계정 만들기",
+  "guideStep1Desc": "이메일 또는 소셜 계정으로 가입하여 시작하세요.",
+  "guideStep2Title": "커뮤니티 둘러보기",
+  "guideStep2Desc": "게시물과 업체를 둘러보고 다른 필리핀 분들과 연결하세요.",
+  "guideStep3Title": "이야기 공유하기",
+  "guideStep3Desc": "게시물을 작성하고 경험을 공유하며 커뮤니티에 기여하세요.",
+  "guideStep4Title": "다른 사람들과 연결",
+  "guideStep4Desc": "회원들과 채팅하고 토론에 참여하며 네트워크를 구축하세요."
 }

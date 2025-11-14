@@ -619,7 +619,7 @@
   "@guideWelcomeSubtitle": {
     "description": "Welcome subtitle in app guide"
   },
-  "guideFeaturesTitle": "Key Features",
+  "guideFeaturesTitle": "App Features",
   "@guideFeaturesTitle": {
     "description": "Features section title in app guide"
   },
@@ -794,5 +794,41 @@
   "requestWithdrawal": "Request Withdrawal",
   "@requestWithdrawal": {
     "description": "Button text to request account withdrawal"
+  },
+  "guideGettingStartedTitle": "Get Started",
+  "@guideGettingStartedTitle": {
+    "description": "Getting started section title"
+  },
+  "guideStep1Title": "Create Your Account",
+  "@guideStep1Title": {
+    "description": "Step 1 title"
+  },
+  "guideStep1Desc": "Sign up with your email or social accounts to get started.",
+  "@guideStep1Desc": {
+    "description": "Step 1 description"
+  },
+  "guideStep2Title": "Explore the Community",
+  "@guideStep2Title": {
+    "description": "Step 2 title"
+  },
+  "guideStep2Desc": "Browse through posts, companies, and connect with other Filipinos.",
+  "@guideStep2Desc": {
+    "description": "Step 2 description"
+  },
+  "guideStep3Title": "Share Your Story",
+  "@guideStep3Title": {
+    "description": "Step 3 title"
+  },
+  "guideStep3Desc": "Write posts, share experiences, and contribute to the community.",
+  "@guideStep3Desc": {
+    "description": "Step 3 description"
+  },
+  "guideStep4Title": "Connect with Others",
+  "@guideStep4Title": {
+    "description": "Step 4 title"
+  },
+  "guideStep4Desc": "Chat with members, join discussions, and build your network.",
+  "@guideStep4Desc": {
+    "description": "Step 4 description"
   }
 }
