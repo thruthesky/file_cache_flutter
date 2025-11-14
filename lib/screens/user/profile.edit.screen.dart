@@ -91,10 +91,19 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   onTapDelete: () async {
                     try {
                       await philgoApiFileDelete(login.photoUrl);
-                    } finally {
-                      await philgoApiUserUpdate({'photo_url': ''});
+                      final updatedUser = await philgoApiUserUpdate({
+                        'photo_url': '',
+                      });
                       if (context.mounted) {
-                        AppState.of(context).deletePhotoUrl();
+                        AppState.of(context).setUser(updatedUser);
+                        showSuccessSnackBar(context, 'Profile photo deleted');
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorSnackBar(
+                          context,
+                          'Failed to delete photo: $e',
+                        );
                       }
                     }
                   },
