@@ -211,19 +211,11 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
             : 'C';
       }
 
-      // Add optional image URLs if provided
-      if (_companyIntroImageUrl.isNotEmpty) {
-        companyData['title_image_url'] = _companyIntroImageUrl;
-      }
-      if (_businessLicenseUrl.isNotEmpty) {
-        companyData['business_license_url'] = _businessLicenseUrl;
-      }
-      if (_kakaoTalkQrCodeUrl.isNotEmpty) {
-        companyData['kakaotalk_qr_code_url'] = _kakaoTalkQrCodeUrl;
-      }
-      if (_officeInteriorUrl.isNotEmpty) {
-        companyData['photo_url'] = _officeInteriorUrl;
-      }
+      // Add optional image URLs (send empty string to delete)
+      companyData['title_image_url'] = _companyIntroImageUrl;
+      companyData['business_license_url'] = _businessLicenseUrl;
+      companyData['kakaotalk_qr_code_url'] = _kakaoTalkQrCodeUrl;
+      companyData['photo_url'] = _officeInteriorUrl;
 
       // Call API to update company
       final updatedCompany = await updateCompany(companyData);
@@ -471,6 +463,11 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     _kakaoTalkQrCodeUrl = url;
                     setState(() {});
                   },
+                  onDelete: () {
+                    _kakaoTalkQrCodeUrl = '';
+                    setState(() {});
+                    showSuccessSnackBar(context, 'Kakao QR Code deleted');
+                  },
                   onQrCodeDecoded: (qrCode) {
                     if (qrCode != null && qrCode.isNotEmpty) {
                       _kakaotalkQrCodeController.text = qrCode;
@@ -558,6 +555,11 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     _logoUrl = url;
                     setState(() {});
                   },
+                  onDelete: () {
+                    _logoUrl = '';
+                    setState(() {});
+                    showSuccessSnackBar(context, 'Company logo deleted');
+                  },
                 ),
 
                 /// 사업자 등록증 업로드 (Business license scan)
@@ -568,6 +570,11 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     _businessLicenseUrl = url;
                     setState(() {});
                   },
+                  onDelete: () {
+                    _businessLicenseUrl = '';
+                    setState(() {});
+                    showSuccessSnackBar(context, 'Business license deleted');
+                  },
                 ),
 
                 /// 회사 소개 이미지 업로드
@@ -577,6 +584,11 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   onImageSelected: (url) {
                     _companyIntroImageUrl = url;
                     setState(() {});
+                  },
+                  onDelete: () {
+                    _companyIntroImageUrl = '';
+                    setState(() {});
+                    showSuccessSnackBar(context, 'Company introduction image deleted');
                   },
                 ),
 
@@ -595,6 +607,11 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   onImageSelected: (url) {
                     _officeInteriorUrl = url;
                     setState(() {});
+                  },
+                  onDelete: () {
+                    _officeInteriorUrl = '';
+                    setState(() {});
+                    showSuccessSnackBar(context, 'Office interior photo deleted');
                   },
                 ),
 
@@ -670,6 +687,7 @@ class _ImageUploadField extends StatefulWidget {
     required this.label,
     required this.imageUrl,
     required this.onImageSelected,
+    this.onDelete,
     this.isDecodeQr = false,
     this.onQrCodeDecoded,
   });
@@ -677,6 +695,7 @@ class _ImageUploadField extends StatefulWidget {
   final String label;
   final String imageUrl;
   final void Function(String) onImageSelected;
+  final VoidCallback? onDelete;
   final bool isDecodeQr;
   final void Function(String?)? onQrCodeDecoded;
 
@@ -765,7 +784,11 @@ class _ImageUploadFieldState extends State<_ImageUploadField> {
                       right: 8,
                       child: GestureDetector(
                         onTap: () {
-                          widget.onImageSelected('');
+                          if (widget.onDelete != null) {
+                            widget.onDelete!();
+                          } else {
+                            widget.onImageSelected('');
+                          }
                         },
                         child: Container(
                           padding: EdgeInsets.all(sp.s8),
