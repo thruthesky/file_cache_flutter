@@ -505,14 +505,41 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 ),
                 SizedBox(height: sp.s8),
 
-                TextFieldSet(
-                  controller: _descriptionController,
-                  label: '${T.description} *',
-                  hintText: T.enterDescription,
-                  prefixFaIconData: FontAwesomeIcons.lightAlignLeft,
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  maxLines: 8,
-                  minLines: 5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// 라벨
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          '${T.description} *',
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: scheme.onSurface,
+                              ),
+                        ),
+                      ),
+
+                      /// 텍스트 필드
+                      TextField(
+                        controller: _descriptionController,
+                        maxLines: 8,
+                        minLines: 5,
+                        textAlignVertical: TextAlignVertical.top,
+                        decoration: InputDecoration(
+                          hintText: T.enterDescription,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignLabelWithHint: true,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 SizedBox(height: sp.s8),
