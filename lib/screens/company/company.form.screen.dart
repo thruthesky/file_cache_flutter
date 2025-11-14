@@ -459,14 +459,31 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   label: 'Upload Kakao QR Code',
                   imageUrl: _kakaoTalkQrCodeUrl,
                   isDecodeQr: true,
-                  onImageSelected: (url) {
-                    _kakaoTalkQrCodeUrl = url;
-                    setState(() {});
+                  onImageSelected: (url) async {
+                    try {
+                      await updateCompany({'kakaotalk_qr_code_url': url});
+                      _kakaoTalkQrCodeUrl = url;
+                      setState(() {});
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorDialog(context, 'Failed to upload QR code: $e');
+                      }
+                    }
                   },
-                  onDelete: () {
-                    _kakaoTalkQrCodeUrl = '';
-                    setState(() {});
-                    showSuccessSnackBar(context, 'Kakao QR Code deleted');
+                  onDelete: () async {
+                    try {
+                      await philgoApiFileDelete(_kakaoTalkQrCodeUrl);
+                      await updateCompany({'kakaotalk_qr_code_url': ''});
+                      _kakaoTalkQrCodeUrl = '';
+                      setState(() {});
+                      if (context.mounted) {
+                        showSuccessSnackBar(context, 'Kakao QR Code deleted');
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorSnackBar(context, 'Failed to delete: $e');
+                      }
+                    }
                   },
                   onQrCodeDecoded: (qrCode) {
                     if (qrCode != null && qrCode.isNotEmpty) {
@@ -551,14 +568,34 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 _ImageUploadField(
                   label: "Company Logo *",
                   imageUrl: _logoUrl,
-                  onImageSelected: (url) {
-                    _logoUrl = url;
-                    setState(() {});
+                  onImageSelected: (url) async {
+                    try {
+                      await updateCompany({'logo_url': url});
+                      _logoUrl = url;
+                      setState(() {});
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorDialog(context, 'Failed to upload photo: $e');
+                      }
+                    }
                   },
-                  onDelete: () {
-                    _logoUrl = '';
-                    setState(() {});
-                    showSuccessSnackBar(context, 'Company logo deleted');
+                  onDelete: () async {
+                    try {
+                      await philgoApiFileDelete(_logoUrl);
+                      await updateCompany({'logo_url': ''});
+                      _logoUrl = '';
+                      setState(() {});
+                      if (context.mounted) {
+                        showSuccessSnackBar(context, 'Company logo deleted');
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorSnackBar(
+                          context,
+                          'Failed to delete photo: $e',
+                        );
+                      }
+                    }
                   },
                 ),
 
@@ -566,14 +603,37 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 _ImageUploadField(
                   label: T.businessLicense,
                   imageUrl: _businessLicenseUrl,
-                  onImageSelected: (url) {
-                    _businessLicenseUrl = url;
-                    setState(() {});
+                  onImageSelected: (url) async {
+                    try {
+                      await updateCompany({'business_license_url': url});
+                      _businessLicenseUrl = url;
+                      setState(() {});
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorDialog(context, 'Failed to upload license: $e');
+                      }
+                    }
                   },
-                  onDelete: () {
-                    _businessLicenseUrl = '';
-                    setState(() {});
-                    showSuccessSnackBar(context, 'Business license deleted');
+                  onDelete: () async {
+                    try {
+                      await philgoApiFileDelete(_businessLicenseUrl);
+                      await updateCompany({'business_license_url': ''});
+                      _businessLicenseUrl = '';
+                      setState(() {});
+                      if (context.mounted) {
+                        showSuccessSnackBar(
+                          context,
+                          'Business license deleted',
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorSnackBar(
+                          context,
+                          'Failed to delete license: $e',
+                        );
+                      }
+                    }
                   },
                 ),
 
@@ -581,14 +641,37 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 _ImageUploadField(
                   label: 'Company Introduction Image',
                   imageUrl: _companyIntroImageUrl,
-                  onImageSelected: (url) {
-                    _companyIntroImageUrl = url;
-                    setState(() {});
+                  onImageSelected: (url) async {
+                    try {
+                      await updateCompany({'title_image_url': url});
+                      _companyIntroImageUrl = url;
+                      setState(() {});
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorDialog(context, 'Failed to upload image: $e');
+                      }
+                    }
                   },
-                  onDelete: () {
-                    _companyIntroImageUrl = '';
-                    setState(() {});
-                    showSuccessSnackBar(context, 'Company introduction image deleted');
+                  onDelete: () async {
+                    try {
+                      await philgoApiFileDelete(_companyIntroImageUrl);
+                      await updateCompany({'title_image_url': ''});
+                      _companyIntroImageUrl = '';
+                      setState(() {});
+                      if (context.mounted) {
+                        showSuccessSnackBar(
+                          context,
+                          'Company introduction image deleted',
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorSnackBar(
+                          context,
+                          'Failed to delete image: $e',
+                        );
+                      }
+                    }
                   },
                 ),
 
@@ -604,14 +687,37 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 _ImageUploadField(
                   label: 'Office/Store Interior Photo',
                   imageUrl: _officeInteriorUrl,
-                  onImageSelected: (url) {
-                    _officeInteriorUrl = url;
-                    setState(() {});
+                  onImageSelected: (url) async {
+                    try {
+                      await updateCompany({'photo_url': url});
+                      _officeInteriorUrl = url;
+                      setState(() {});
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorDialog(context, 'Failed to upload photo: $e');
+                      }
+                    }
                   },
-                  onDelete: () {
-                    _officeInteriorUrl = '';
-                    setState(() {});
-                    showSuccessSnackBar(context, 'Office interior photo deleted');
+                  onDelete: () async {
+                    try {
+                      await philgoApiFileDelete(_officeInteriorUrl);
+                      await updateCompany({'photo_url': ''});
+                      _officeInteriorUrl = '';
+                      setState(() {});
+                      if (context.mounted) {
+                        showSuccessSnackBar(
+                          context,
+                          'Office interior photo deleted',
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorSnackBar(
+                          context,
+                          'Failed to delete photo: $e',
+                        );
+                      }
+                    }
                   },
                 ),
 
