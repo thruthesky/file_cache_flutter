@@ -9,6 +9,9 @@ class PostListTile extends StatelessWidget {
   final Post post;
   final VoidCallback? onTap;
 
+  /// Returns the nickname or "No Name" if empty
+  String get displayName => post.nickname.isEmpty ? 'No Name' : post.nickname;
+
   @override
   Widget build(BuildContext context) {
     final hasImage = post.files.isNotEmpty ? true : false;
@@ -72,7 +75,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      post.nickname,
+                      displayName,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -170,7 +173,7 @@ class PostListTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      post.nickname,
+                      displayName,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     SizedBox(width: 16),
