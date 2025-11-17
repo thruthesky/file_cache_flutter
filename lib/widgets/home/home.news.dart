@@ -85,6 +85,7 @@ class _HomeNewsState extends State<HomeNews> {
         category: (config['category'] as String).isEmpty
             ? null
             : config['category'] as String,
+        has_image: true,
         limit: 5,
       );
 
@@ -153,7 +154,7 @@ class _HomeNewsState extends State<HomeNews> {
 
         const SizedBox(height: 16),
 
-        /// Posts list
+        /// Posts carousel
         if (_isLoading)
           const Padding(
             padding: EdgeInsets.all(32),
@@ -162,93 +163,178 @@ class _HomeNewsState extends State<HomeNews> {
         else if (_posts.isEmpty)
           const EmptyPostList()
         else
-          PostsList(posts: _posts),
+          PostsCarousel(posts: _posts),
       ],
     );
   }
 }
 
-/// Posts list widget displaying highlighted first post and title-only posts
-class PostsList extends StatelessWidget {
+/// Posts carousel widget with full-image cover cards
+class PostsCarousel extends StatelessWidget {
   final List<Post> posts;
 
-  const PostsList({super.key, required this.posts});
+  const PostsCarousel({super.key, required this.posts});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          /// First post - Highlighted card
-          HighlightedPostCard(post: posts[0]),
-
-          const SizedBox(height: 8),
-
-          /// Remaining posts - Title only
-          ...posts.skip(1).take(4).map((post) => TitleOnlyPostCard(post: post)),
-        ],
+    return SizedBox(
+      height: 400,
+      child: PageView.builder(
+        controller: PageController(viewportFraction: 0.9),
+        itemCount: posts.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: FullImageCard(post: posts[index]),
+          );
+        },
       ),
     );
   }
 }
 
-/// Highlighted post card widget (1st post)
-class HighlightedPostCard extends StatelessWidget {
+/// Full image cover card widget
+class FullImageCard extends StatelessWidget {
   final Post post;
 
-  const HighlightedPostCard({super.key, required this.post});
+  const FullImageCard({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
         onTap: () async {
           await PostViewScreen.push(context, post);
         },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Image placeholder or first image from post
-              if (post.files.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    post.files.first,
-                    width: double.infinity,
-                    height: 180,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const PostImagePlaceholder(),
-                  ),
-                )
-              else
-                const PostImagePlaceholder(),
-              const SizedBox(height: 16),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            /// Full background image
+            if (post.files.isNotEmpty)
+              Image.network(
+                post.files.first,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    const PostImagePlaceholder(),
+              )
+            else
+              const PostImagePlaceholder(),
 
-              /// Title
-              Text(
-                post.subject,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+            /// Gradient overlay for text readability
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.7),
+                  ],
+                  stops: const [0.5, 1.0],
+                ),
               ),
-              const SizedBox(height: 8),
-            ],
-          ),
+            ),
+
+            /// Content overlay at bottom
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    /// Title (max 2 lines)
+                    Text(
+                      post.subject,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+
+                    /// Content preview (max 1 line)
+                    if (post.content.isNotEmpty)
+                      Text(
+                        post.content,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                    const SizedBox(height: 12),
+
+                    /// Metadata: likes, views, date
+                    Row(
+                      children: [
+                        /// Likes
+                        const FaIcon(
+                          FontAwesomeIcons.lightHeart,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${post.good}',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Colors.white),
+                        ),
+                        const SizedBox(width: 16),
+
+                        /// Views
+                        const FaIcon(
+                          FontAwesomeIcons.lightEye,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${post.no_of_view}',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Colors.white),
+                        ),
+                        const SizedBox(width: 16),
+
+                        /// Date posted
+                        const FaIcon(
+                          FontAwesomeIcons.lightClock,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            post.timeString,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: Colors.white),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// Image placeholder widget
+/// Image placeholder widget with gradient background
 class PostImagePlaceholder extends StatelessWidget {
   const PostImagePlaceholder({super.key});
 
@@ -256,18 +342,38 @@ class PostImagePlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 180,
+      height: double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).colorScheme.primaryContainer,
+            Theme.of(context).colorScheme.secondaryContainer,
+          ],
+        ),
       ),
       child: Center(
-        child: FaIcon(
-          FontAwesomeIcons.lightImage,
-          size: 48,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.lightImage,
+              size: 64,
+              color: Theme.of(
+                context,
+              ).colorScheme.onPrimaryContainer.withValues(alpha: 0.4),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No image available',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onPrimaryContainer.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:philgo/themes/app.spacing.dart';
 
 class AppTheme {
@@ -12,59 +11,96 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: cs,
-      // Roboto TextTheme - Google Fonts 패키지를 통해 적용
-      textTheme: GoogleFonts.robotoTextTheme(
-        const TextTheme(
-          // Display styles
-          displayLarge: TextStyle(
-            fontWeight: FontWeight.w700, // Bold
-          ),
-          displayMedium: TextStyle(
-            fontWeight: FontWeight.w600, // SemiBold
-          ),
-          displaySmall: TextStyle(
-            fontWeight: FontWeight.w500, // Medium
-          ),
-          // Headline styles
-          headlineLarge: TextStyle(
-            fontWeight: FontWeight.w700, // Bold
-          ),
-          headlineMedium: TextStyle(
-            fontWeight: FontWeight.w600, // SemiBold
-          ),
-          headlineSmall: TextStyle(
-            fontWeight: FontWeight.w500, // Medium
-          ),
-          // Title styles
-          titleLarge: TextStyle(
-            fontWeight: FontWeight.w600, // SemiBold
-          ),
-          titleMedium: TextStyle(
-            fontWeight: FontWeight.w500, // Medium
-          ),
-          titleSmall: TextStyle(
-            fontWeight: FontWeight.w500, // Medium
-          ),
-          // Body styles
-          bodyLarge: TextStyle(
-            fontWeight: FontWeight.w400, // Regular
-          ),
-          bodyMedium: TextStyle(
-            fontWeight: FontWeight.w400, // Regular
-          ),
-          bodySmall: TextStyle(
-            fontWeight: FontWeight.w400, // Regular
-          ),
-          // Label styles
-          labelLarge: TextStyle(
-            fontWeight: FontWeight.w500, // Medium
-          ),
-          labelMedium: TextStyle(
-            fontWeight: FontWeight.w400, // Regular
-          ),
-          labelSmall: TextStyle(
-            fontWeight: FontWeight.w300, // Light
-          ),
+      // Pretendard 폰트 패밀리 적용
+      fontFamily: 'Pretendard',
+      textTheme: const TextTheme(
+        // Display styles - 큰 제목용 (약간 축소)
+        displayLarge: TextStyle(
+          fontSize: 52,
+          fontWeight: FontWeight.w700, // Bold
+          letterSpacing: -0.25,
+          height: 1.12,
+        ),
+        displayMedium: TextStyle(
+          fontSize: 42,
+          fontWeight: FontWeight.w600, // SemiBold
+          height: 1.16,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 34,
+          fontWeight: FontWeight.w600, // SemiBold
+          height: 1.22,
+        ),
+        // Headline styles - 헤드라인 (약간 축소)
+        headlineLarge: TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.w700, // Bold
+          height: 1.25,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 26,
+          fontWeight: FontWeight.w600, // SemiBold
+          height: 1.29,
+        ),
+        headlineSmall: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600, // SemiBold
+          height: 1.33,
+        ),
+        // Title styles - 타이틀 (약간 축소)
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600, // SemiBold
+        ),
+        titleMedium: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600, // SemiBold - 더 강조
+          letterSpacing: 0.15,
+          height: 1.5,
+        ),
+        titleSmall: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600, // SemiBold - 더 강조
+          letterSpacing: 0.1,
+          height: 1.43,
+        ),
+        // Body styles - 본문 (약간 축소)
+        bodyLarge: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400, // Regular
+          letterSpacing: 0.5,
+          height: 1.5,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w400, // Regular
+          letterSpacing: 0.25,
+          height: 1.43,
+        ),
+        bodySmall: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w400, // Regular
+          letterSpacing: 0.4,
+          height: 1.33,
+        ),
+        // Label styles - 버튼, 작은 라벨 (약간 축소)
+        labelLarge: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600, // SemiBold - 버튼 강조
+          letterSpacing: 0.1,
+          height: 1.43,
+        ),
+        labelMedium: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500, // Medium
+          letterSpacing: 0.5,
+          height: 1.33,
+        ),
+        labelSmall: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w500, // Medium - 더 강조
+          letterSpacing: 0.5,
+          height: 1.45,
         ),
       ),
       // Flat Design - ElevatedButton Theme

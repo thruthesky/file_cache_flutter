@@ -22,31 +22,13 @@ class _MainHomeState extends State<MainHome> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        /// Fixed header bar with Philgo branding (고정 헤더 바 - Philgo 브랜딩)
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  /// Philgo icon (Philgo 아이콘)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: const PhilGoLogoTriangles(size: 40),
-                  ),
-                  const SizedBox(width: 8),
-
-                  /// PHILGO text (PHILGO 텍스트)
-                  Text(
-                    'PHILGO',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                Image.asset('assets/img/logo/philgo_wide_logo.png', height: 32),
+              ],
             ),
           ),
         ),
@@ -57,11 +39,6 @@ class _MainHomeState extends State<MainHome> {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                const SizedBox(height: 8),
-
-                /// User stats widget
-                const UserStats(),
-
                 const SizedBox(height: 8),
 
                 const HomeNews(),

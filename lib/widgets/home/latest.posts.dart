@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
-import 'package:philgo/widgets/post/title.only.post.card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Latest posts widget displaying posts from a specific category
@@ -71,17 +72,60 @@ class _LatestPostsState extends State<LatestPosts> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Section header with icon and title
-          Row(
-            children: [
-              Text(
-                widget.titleName,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
+          /// Section header with icon, title, and View All button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            child: Row(
+              children: [
+                /// Icon
+                if (widget.icon != null) ...[
+                  FaIcon(
+                    widget.icon,
+                    size: 24,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                ],
+
+                /// Title
+                Text(
+                  widget.titleName,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+
+                const Spacer(),
+
+                /// View All button
+                TextButton(
+                  onPressed: () {
+                    // TODO: Navigate to full category view
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'View All',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      FaIcon(
+                        FontAwesomeIcons.lightChevronRight,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
+
+          const SizedBox(height: 8),
 
           /// Posts content area
           if (_isLoading)
@@ -99,7 +143,7 @@ class _LatestPostsState extends State<LatestPosts> {
   }
 }
 
-/// Posts list widget displaying posts in card format
+/// Posts list widget displaying posts in card format with PostListTile
 class LatestPostsList extends StatelessWidget {
   final List<Post> posts;
 
@@ -108,7 +152,28 @@ class LatestPostsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: posts.map((post) => TitleOnlyPostCard(post: post)).toList(),
+      children: posts.asMap().entries.map((entry) {
+        final index = entry.key;
+        final post = entry.value;
+
+        return Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: PostListTile(
+                post: post,
+                onTap: () async {
+                  await PostViewScreen.push(context, post);
+                },
+              ),
+            )
+            .animate()
+            .fadeIn(duration: 300.ms, delay: (index * 50).ms)
+            .slideX(
+              begin: -0.1,
+              end: 0,
+              duration: 300.ms,
+              delay: (index * 50).ms,
+            );
+      }).toList(),
     );
   }
 }
