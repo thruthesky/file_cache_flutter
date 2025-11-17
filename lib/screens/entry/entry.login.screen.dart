@@ -3,9 +3,9 @@ import 'package:easy_phone_sign_in/easy_phone_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
+import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class EntryLoginScreen extends StatefulWidget {

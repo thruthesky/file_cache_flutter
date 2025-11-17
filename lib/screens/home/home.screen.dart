@@ -58,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       // BottomNavigationBar 추가
       bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 12,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: FaIcon(

@@ -8,10 +8,12 @@ import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/privacy/privacy.screen.dart';
 import 'package:philgo/screens/terms/terms.screen.dart';
+import 'package:philgo/screens/theme/theme.preview.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
+import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/widgets/home/menu.tile.dart';
@@ -100,6 +102,12 @@ class _MenuHomeState extends State<MenuHome>
         'title': T.appGuideTitle,
         'subtitle': T.appGuideSubtitle,
         'onTap': () => AppGuideScreen.push(context),
+      },
+      {
+        'icon': FontAwesomeIcons.palette,
+        'title': '테마 미리보기',
+        'subtitle': '앱의 색상, 타이포그래피, 컴포넌트 확인',
+        'onTap': () => ThemePreviewScreen.push(context),
       },
       {
         'icon': FontAwesomeIcons.fileContract,

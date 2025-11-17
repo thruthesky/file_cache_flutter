@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:philgo/globals.dart';
+import 'package:philgo/themes/app.spacing.dart';
 
 /// Menu tile widget for displaying individual menu items
 /// Displays an icon, title, subtitle, and chevron in a styled container

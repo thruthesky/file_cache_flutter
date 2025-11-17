@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 
 /// App guide screen

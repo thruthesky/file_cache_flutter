@@ -72,24 +72,15 @@ class _LatestPostsState extends State<LatestPosts> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// Section header with icon and title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-            child: Row(
-              children: [
-                FaIcon(
-                  widget.icon ?? FontAwesomeIcons.lightNewspaper,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  widget.titleName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+          Row(
+            children: [
+              Text(
+                widget.titleName,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
 
           /// Posts content area
