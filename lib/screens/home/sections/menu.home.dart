@@ -1,7 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/themes/app.spacing.dart';
+import 'package:go_router/go_router.dart';
+import 'package:philgo/globals.dart';
+import 'package:philgo/screens/entry/entry.screen.dart';
+import 'package:philgo/screens/guide/app.guide.screen.dart';
+import 'package:philgo/screens/settings/settings.screen.dart';
+import 'package:philgo/screens/user/profile.edit.screen.dart';
+import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/widgets/home/user.stats.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class MenuHome extends StatefulWidget {
   const MenuHome({super.key});
@@ -13,7 +21,6 @@ class MenuHome extends StatefulWidget {
 class _MenuHomeState extends State<MenuHome> {
   @override
   Widget build(BuildContext context) {
-    final sp = Theme.of(context).extension<AppSpacing>()!;
     final scheme = Theme.of(context).colorScheme;
 
     return Column(
@@ -38,7 +45,7 @@ class _MenuHomeState extends State<MenuHome> {
                       size: 24,
                     ),
                     onPressed: () {
-                      // TODO: Navigate to settings screen
+                      context.push(SettingsScreen.routeName);
                     },
                     tooltip: 'Settings',
                   ),
@@ -64,17 +71,17 @@ class _MenuHomeState extends State<MenuHome> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     /// Edit Profile menu item
-                    _MenuAction(
+                    RoundedIconMenu(
                       icon: FontAwesomeIcons.lightPenToSquare,
                       label: 'Edit Profile',
                       color: scheme.tertiary,
                       onPressed: () {
-                        // TODO: Navigate to edit profile screen
+                        context.push(ProfileEditScreen.routeName);
                       },
                     ),
 
                     /// My Posts menu item
-                    _MenuAction(
+                    RoundedIconMenu(
                       icon: FontAwesomeIcons.lightFileLines,
                       label: 'My Posts',
                       color: scheme.tertiary,
@@ -84,7 +91,7 @@ class _MenuHomeState extends State<MenuHome> {
                     ),
 
                     /// My Comments menu item
-                    _MenuAction(
+                    RoundedIconMenu(
                       icon: FontAwesomeIcons.lightComments,
                       label: 'My Comments',
                       color: scheme.tertiary,
@@ -102,15 +109,16 @@ class _MenuHomeState extends State<MenuHome> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
+                      /// App Guide menu item
                       ListTile(
                         title: const Text('App Guide'),
                         trailing: FaIcon(
                           FontAwesomeIcons.lightChevronRight,
-                          size: 12,
+                          size: 16,
                           color: scheme.onSurfaceVariant,
                         ),
                         onTap: () {
-                          // TODO: Navigate to App Guide screen
+                          context.push(AppGuideScreen.routeName);
                         },
                       ),
 
@@ -119,11 +127,15 @@ class _MenuHomeState extends State<MenuHome> {
                         title: const Text('Banner Ads'),
                         trailing: FaIcon(
                           FontAwesomeIcons.lightChevronRight,
-                          size: 12,
+                          size: 16,
                           color: scheme.onSurfaceVariant,
                         ),
                         onTap: () {
-                          // TODO: Navigate to banner ads screen
+                          WebViewScreen.push(
+                            context,
+                            bannerPageUrl(),
+                            title: T.bannerAdTitle,
+                          );
                         },
                       ),
 
@@ -136,7 +148,25 @@ class _MenuHomeState extends State<MenuHome> {
                           color: scheme.onSurfaceVariant,
                         ),
                         onTap: () {
-                          // TODO: Navigate to point ads screen
+                          WebViewScreen.push(
+                            context,
+                            pointPageUrl(),
+                            title: T.bannerAdTitle,
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Logout'),
+                        trailing: FaIcon(
+                          FontAwesomeIcons.lightChevronRight,
+                          size: 12,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                          if (context.mounted) {
+                            context.go(EntryScreen.routeName);
+                          }
                         },
                       ),
                     ],
@@ -152,13 +182,14 @@ class _MenuHomeState extends State<MenuHome> {
 }
 
 /// Individual menu action widget with icon and label
-class _MenuAction extends StatelessWidget {
+class RoundedIconMenu extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
   final VoidCallback onPressed;
 
-  const _MenuAction({
+  const RoundedIconMenu({
+    super.key,
     required this.icon,
     required this.label,
     required this.color,

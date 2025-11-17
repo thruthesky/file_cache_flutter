@@ -2,17 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
-import 'package:philgo/widgets/post/title.only.post.card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
-/// Home news widget displaying posts with category filters
-
-///
-/// Features :
-/// - Shows minimum 5 posts
-/// - 1st post is a highlighted card
-/// - 2nd-5th posts show title only
-/// - Filter tabs: News, Travel, Info, Reminder, Tip
+/// Home widget displaying posts with category filters
 class HomeNews extends StatefulWidget {
   const HomeNews({super.key});
 

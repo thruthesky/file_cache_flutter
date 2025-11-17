@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/widgets/home/home.news.dart';
 import 'package:philgo/widgets/home/latest.posts.dart';
-import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
-import 'package:philgo/widgets/home/user.stats.dart';
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});

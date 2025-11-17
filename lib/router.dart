@@ -11,8 +11,7 @@ import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
-import 'package:philgo/screens/privacy/privacy.screen.dart';
-import 'package:philgo/screens/terms/terms.screen.dart';
+import 'package:philgo/screens/settings/settings.screen.dart';
 import 'package:philgo/screens/theme/theme.preview.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -326,16 +325,6 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: TermsScreen.routeName,
-      name: TermsScreen.routeName,
-      builder: (context, state) => const TermsScreen(),
-    ),
-    GoRoute(
-      path: PrivacyScreen.routeName,
-      name: PrivacyScreen.routeName,
-      builder: (context, state) => const PrivacyScreen(),
-    ),
-    GoRoute(
       path: AppGuideScreen.routeName,
       name: AppGuideScreen.routeName,
       builder: (context, state) => const AppGuideScreen(),
@@ -349,6 +338,11 @@ final router = GoRouter(
       path: ThemePreviewScreen.routeName,
       name: ThemePreviewScreen.routeName,
       builder: (context, state) => const ThemePreviewScreen(),
+    ),
+    GoRoute(
+      path: SettingsScreen.routeName,
+      name: SettingsScreen.routeName,
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );
