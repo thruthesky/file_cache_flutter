@@ -24,7 +24,7 @@ Future<PostList> getPosts({
   int page = 1,
   int limit = 20,
 }) async {
-  [postId, category] = getEnvironmentalPostId(postId, category);
+  // [postId, category] = getEnvironmentalPostId(postId, category);
   final res = await func(
     'post_list',
     data: {
@@ -356,7 +356,7 @@ Future<Comment> updateComment(RecordType data) async {
 
 Future<int> likePost(int idx) async {
   final response = await func<Map<String, dynamic>>(
-    'like_func',
+    'like',
     data: {'idx': idx},
     alertOnError: false,
   );

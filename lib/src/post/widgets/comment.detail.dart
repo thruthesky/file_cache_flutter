@@ -26,6 +26,8 @@ class _CommentDetailState extends State<CommentDetail> {
   bool reply = false;
   bool update = false;
 
+  bool _isLiked = false;
+
   double getDepthMargin(int depth) {
     return switch (depth) {
       1 => 0,
@@ -55,7 +57,9 @@ class _CommentDetailState extends State<CommentDetail> {
                     Row(
                       children: [
                         Text(
-                          widget.comment.nickname,
+                          widget.comment.nickname.isEmpty
+                              ? 'No Name'
+                              : widget.comment.nickname,
                           style: Theme.of(context).textTheme.titleSmall
                               ?.copyWith(fontWeight: FontWeight.w600),
                         ),
@@ -85,7 +89,12 @@ class _CommentDetailState extends State<CommentDetail> {
                     Row(
                       children: [
                         /// Like button for comments
-                        TextButton(
+                        TextButton.icon(
+                          style: TextButton.styleFrom(
+                            foregroundColor: _isLiked
+                                ? Theme.of(context).colorScheme.primary
+                                : null,
+                          ),
                           onPressed: () async {
                             try {
                               final updatedGood = await likePost(
@@ -96,8 +105,9 @@ class _CommentDetailState extends State<CommentDetail> {
                               );
 
                               // Update the good count in the comment
-
                               widget.comment.good = updatedGood;
+
+                              _isLiked = !_isLiked;
                               setState(() {});
 
                               if (context.mounted) {
@@ -117,7 +127,11 @@ class _CommentDetailState extends State<CommentDetail> {
                               }
                             }
                           },
-                          child: Text(
+                          icon: Icon(
+                            _isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
+                            size: 16,
+                          ),
+                          label: Text(
                             widget.comment.good > 0
                                 ? "${LibTr.of(context)!.like} ${widget.comment.good}"
                                 : LibTr.of(context)!.like,
