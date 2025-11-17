@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
+import 'package:philgo/screens/settings/language.screen.dart';
 import 'package:philgo/widgets/dialogs/policy.dialogs.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -20,6 +21,7 @@ class SettingsScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
+              /// Language Settings menu item
               ListTile(
                 title: const Text('Language Settings'),
                 trailing: FaIcon(
@@ -27,7 +29,7 @@ class SettingsScreen extends StatelessWidget {
                   size: 16,
                   color: scheme.onSurfaceVariant,
                 ),
-                onTap: () {},
+                onTap: () => context.push(LanguageScreen.routeName),
               ),
 
               /// Terms of Use menu item

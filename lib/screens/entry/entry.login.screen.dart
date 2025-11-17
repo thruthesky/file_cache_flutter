@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
+import 'package:philgo/widgets/dialogs/policy.dialogs.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class EntryLoginScreen extends StatefulWidget {
@@ -318,7 +319,9 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     TextButton.icon(
-                      onPressed: _showPrivacyPolicy,
+                      onPressed: () async {
+                        await showPrivacyPolicy(context);
+                      },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(
                           horizontal: sp.s12,
@@ -333,7 +336,9 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                     ),
                     SizedBox(width: sp.s12),
                     TextButton.icon(
-                      onPressed: _showTermsAndConditions,
+                      onPressed: () async {
+                        await showPrivacyPolicy(context);
+                      },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(
                           horizontal: sp.s12,
@@ -365,113 +370,5 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
       context,
       error.message ?? Lo.of(context)!.phoneAuthFailed,
     );
-  }
-
-  void _showTermsAndConditions() async {
-    // 로딩 다이얼로그 표시
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
-
-    try {
-      final String privacyData = await philgoApiGetTermsAndConditions();
-
-      if (mounted) Navigator.of(context).pop();
-
-      // 이용약관 내용 표시
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(Lo.of(context)!.termsOfService),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // API에서 받은 내용 표시
-                    // response 구조에 따라 적절한 필드 사용
-                    Text(privacyData.replaceAll('\\n', '\n')),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(Lo.of(context)!.close),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } catch (e) {
-      // 로딩 다이얼로그 닫기
-      if (mounted) Navigator.of(context).pop();
-
-      // 에러 처리 - 에러 메시지 표시
-      if (mounted) {
-        showErrorSnackBar(context, e.toString());
-      }
-    }
-  }
-
-  void _showPrivacyPolicy() async {
-    // 로딩 다이얼로그 표시
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
-
-    try {
-      // API 호출하여 개인정보 처리 정책 가져오기
-      final termsData = await philgoApiGetPrivacyPolicy();
-
-      // 로딩 다이얼로그 닫기
-      if (mounted) Navigator.of(context).pop();
-
-      // 개인정보 처리 정책 내용 표시
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(Lo.of(context)!.privacyPolicy),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // API에서 받은 내용 표시
-                    // response 구조에 따라 적절한 필드 사용
-                    Text(termsData.replaceAll('\\n', '\n')),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(Lo.of(context)!.close),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } catch (e) {
-      // 로딩 다이얼로그 닫기
-      if (mounted) Navigator.of(context).pop();
-
-      // 에러 처리 - 에러 메시지 표시
-      if (mounted) {
-        showErrorSnackBar(context, e.toString());
-      }
-    }
   }
 }
