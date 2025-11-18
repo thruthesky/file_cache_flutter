@@ -14,92 +14,43 @@ class AppTheme {
       // Pretendard 폰트 패밀리 적용
       fontFamily: 'Pretendard',
       textTheme: const TextTheme(
-        // Display styles - 큰 제목용 (약간 축소)
-        displayLarge: TextStyle(
-          fontSize: 52,
-          fontWeight: FontWeight.w700, // Bold
-          letterSpacing: -0.25,
-          height: 1.12,
-        ),
-        displayMedium: TextStyle(
-          fontSize: 42,
-          fontWeight: FontWeight.w600, // SemiBold
-          height: 1.16,
-        ),
-        displaySmall: TextStyle(
-          fontSize: 34,
-          fontWeight: FontWeight.w600, // SemiBold
-          height: 1.22,
-        ),
-        // Headline styles - 헤드라인 (약간 축소)
-        headlineLarge: TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.w700, // Bold
-          height: 1.25,
-        ),
-        headlineMedium: TextStyle(
-          fontSize: 26,
-          fontWeight: FontWeight.w600, // SemiBold
-          height: 1.29,
-        ),
-        headlineSmall: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w600, // SemiBold
-          height: 1.33,
-        ),
-        // Title styles - 타이틀 (약간 축소)
+        displayLarge: TextStyle(fontSize: 52),
+        displayMedium: TextStyle(fontSize: 42),
+        displaySmall: TextStyle(fontSize: 34),
+        headlineLarge: TextStyle(fontSize: 30),
+        headlineMedium: TextStyle(fontSize: 26, letterSpacing: -0.10),
+        headlineSmall: TextStyle(letterSpacing: -0.10),
         titleLarge: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600, // SemiBold
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.10,
         ),
         titleMedium: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600, // SemiBold - 더 강조
-          letterSpacing: 0.15,
-          height: 1.5,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.10,
         ),
         titleSmall: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600, // SemiBold - 더 강조
-          letterSpacing: 0.1,
-          height: 1.43,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.10,
         ),
-        // Body styles - 본문 (약간 축소)
-        bodyLarge: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w400, // Regular
-          letterSpacing: 0.5,
-          height: 1.5,
-        ),
+        bodyLarge: TextStyle(fontWeight: FontWeight.w400, letterSpacing: -0.10),
         bodyMedium: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w400, // Regular
-          letterSpacing: 0.25,
-          height: 1.43,
+          fontWeight: FontWeight.w400,
+          letterSpacing: -0.10,
         ),
-        bodySmall: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w400, // Regular
-          letterSpacing: 0.4,
-          height: 1.33,
-        ),
-        // Label styles - 버튼, 작은 라벨 (약간 축소)
+        bodySmall: TextStyle(fontWeight: FontWeight.w400, letterSpacing: -0.10),
         labelLarge: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600, // SemiBold - 버튼 강조
-          letterSpacing: 0.1,
-          height: 1.43,
+          fontWeight: FontWeight.w500,
+          letterSpacing: -0.10,
+          height: 1.20,
         ),
         labelMedium: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w500, // Medium
-          letterSpacing: 0.5,
+          fontWeight: FontWeight.w500,
+          letterSpacing: -0.10,
           height: 1.33,
         ),
         labelSmall: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w500, // Medium - 더 강조
-          letterSpacing: 0.5,
+          fontWeight: FontWeight.w500,
+          letterSpacing: -0.10,
           height: 1.45,
         ),
       ),
@@ -110,13 +61,19 @@ class AppTheme {
         shadowColor: Colors.transparent,
       ),
       // Flat Design - AppBar Theme
-      appBarTheme: const AppBarTheme(
-        elevation: 0, // Flat 디자인 - 그림자 제거
-        scrolledUnderElevation: 0, // 스크롤 시에도 elevation 0
-        surfaceTintColor: Colors.transparent, // 스크롤 시 회색 틴트 제거 (Material 3)
-        centerTitle: false, // 타이틀 왼쪽 정렬
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          fontFamily: 'Pretendard',
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.10,
+          fontSize: 22,
+          color: cs.onSurface,
+        ),
       ),
-      chipTheme: ChipThemeData(),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedIconTheme: const IconThemeData(size: 20),
         unselectedIconTheme: const IconThemeData(size: 20),

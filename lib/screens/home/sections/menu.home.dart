@@ -6,6 +6,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/settings/settings.screen.dart';
+import 'package:philgo/screens/theme/theme.preview.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/widgets/home/user.stats.dart';
@@ -169,6 +170,18 @@ class _MenuHomeState extends State<MenuHome> {
                           }
                         },
                       ),
+                      if (Config.isJaeho)
+                        ListTile(
+                          title: Text('Design Preview'),
+                          trailing: FaIcon(
+                            FontAwesomeIcons.lightChevronRight,
+                            size: 12,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                          onTap: () {
+                            context.push(ThemePreviewScreen.routeName);
+                          },
+                        ),
                     ],
                   ),
                 ),
