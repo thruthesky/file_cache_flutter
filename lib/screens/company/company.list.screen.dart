@@ -26,6 +26,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   bool isLoading = true;
   bool isLoadingMyCompany = true;
   String? errorMessage;
+  String? selectedCategoryId; // 선택된 카테고리 ID (null = Recently Updated)
 
   final List<Map<String, dynamic>> categories = [
     {
@@ -206,155 +207,147 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        title: Text(
-          T.companyDirectoryTitle,
-          style: theme.textTheme.titleLarge?.copyWith(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Top SafeArea
+        Container(
+          color: scheme.surface,
+          child: SafeArea(child: Container()),
         ),
-        centerTitle: false,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header section with icon and description
-            Padding(
-              padding: EdgeInsets.all(sp.s24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Icon
-                  Center(
-                    child: Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: scheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.building,
-                          size: 32,
-                          color: scheme.primary,
+
+        // Company Directory Title
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            T.companyDirectoryTitle,
+            style: theme.textTheme.headlineMedium,
+          ),
+        ),
+
+        // Body Content
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header section with icon and description
+                Padding(
+                  padding: EdgeInsets.all(sp.s24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Description
+                      Text(
+                        T.companyDirectoryDescription,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: scheme.onSurfaceVariant,
                         ),
                       ),
-                    ),
+                      SizedBox(height: sp.s24),
+                      // Register/Update button (hidden while loading)
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: isLoadingMyCompany
+                              ? null
+                              : _handleCreateOrUpdateButton,
+                          icon: FaIcon(
+                            myCompany == null
+                                ? FontAwesomeIcons.plus
+                                : FontAwesomeIcons.penToSquare,
+                            size: 20,
+                          ),
+                          label: Text(
+                            isLoadingMyCompany
+                                ? 'Loading...'
+                                : (myCompany == null
+                                      ? T.registerCompany
+                                      : T.updateCompany),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-
-                  // Title
-                  SizedBox(height: sp.s8),
-                  // Description
-                  Text(
-                    T.companyDirectoryDescription,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
-                  SizedBox(height: sp.s24),
-                  // Register/Update button (hidden while loading)
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: isLoadingMyCompany
-                          ? null
-                          : _handleCreateOrUpdateButton,
-                      icon: FaIcon(
-                        myCompany == null
-                            ? FontAwesomeIcons.plus
-                            : FontAwesomeIcons.penToSquare,
-                        size: 20,
-                      ),
-                      label: Text(
-                        isLoadingMyCompany
-                            ? 'Loading...'
-                            : (myCompany == null
-                                  ? T.registerCompany
-                                  : T.updateCompany),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Loading, Error, or Categories list
-            if (isLoading)
-              Padding(
-                padding: EdgeInsets.all(sp.s24),
-                child: const Center(child: CircularProgressIndicator()),
-              )
-            else if (errorMessage != null)
-              Padding(
-                padding: EdgeInsets.all(sp.s24),
-                child: Column(
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.triangleExclamation,
-                      size: 48,
-                      color: scheme.error,
-                    ),
-                    SizedBox(height: sp.s16),
-                    Text(
-                      'Failed to load companies',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: scheme.error,
-                      ),
-                    ),
-                    SizedBox(height: sp.s8),
-                    Text(
-                      errorMessage!,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: sp.s16),
-                    FilledButton.icon(
-                      onPressed: _loadCompanies,
-                      icon: const FaIcon(
-                        FontAwesomeIcons.arrowRotateRight,
-                        size: 16,
-                      ),
-                      label: const Text('Retry'),
-                    ),
-                  ],
                 ),
-              )
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.all(sp.s16),
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  final categoryId = category['id'] as String;
-                  final categoryName = category['name'] as String;
-                  final companiesInCategory = _getCompaniesByCategory(
-                    categoryId,
-                  );
 
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: sp.s8),
-                    child: CompanyCategory(
-                      name: categoryName,
-                      icon: category['icon'] as IconData,
-                      color: category['color'] as Color,
-                      count: companiesInCategory.length,
-                      companies: companiesInCategory,
-                      onCompanyTap: (company) {
-                        CompanyViewScreen.push(context, company.idx);
-                      },
+                // Loading, Error, or Categories list
+                if (isLoading)
+                  Padding(
+                    padding: EdgeInsets.all(sp.s24),
+                    child: const Center(child: CircularProgressIndicator()),
+                  )
+                else if (errorMessage != null)
+                  Padding(
+                    padding: EdgeInsets.all(sp.s24),
+                    child: Column(
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.triangleExclamation,
+                          size: 48,
+                          color: scheme.error,
+                        ),
+                        SizedBox(height: sp.s16),
+                        Text(
+                          'Failed to load companies',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: scheme.error,
+                          ),
+                        ),
+                        SizedBox(height: sp.s8),
+                        Text(
+                          errorMessage!,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: sp.s16),
+                        FilledButton.icon(
+                          onPressed: _loadCompanies,
+                          icon: const FaIcon(
+                            FontAwesomeIcons.arrowRotateRight,
+                            size: 16,
+                          ),
+                          label: const Text('Retry'),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
-          ],
+                  )
+                else
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(sp.s16),
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final category = categories[index];
+                      final categoryId = category['id'] as String;
+                      final categoryName = category['name'] as String;
+                      final companiesInCategory = _getCompaniesByCategory(
+                        categoryId,
+                      );
+
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: sp.s8),
+                        child: CompanyCategory(
+                          name: categoryName,
+                          icon: category['icon'] as IconData,
+                          color: category['color'] as Color,
+                          count: companiesInCategory.length,
+                          companies: companiesInCategory,
+                          onCompanyTap: (company) {
+                            CompanyViewScreen.push(context, company.idx);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

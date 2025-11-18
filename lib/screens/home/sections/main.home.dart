@@ -20,6 +20,7 @@ class _MainHomeState extends State<MainHome> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // 메인 홈 로고 영역 배경색 - primaryContainer 사용
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -62,6 +63,7 @@ class _MainHomeState extends State<MainHome> {
                   postId: 'qna',
                   icon: FontAwesomeIcons.lightCircleQuestion,
                 ),
+
                 /// Bottom spacing
                 const SizedBox(height: 16),
               ],

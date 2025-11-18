@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/settings/settings.screen.dart';
@@ -26,33 +27,39 @@ class _MenuHomeState extends State<MenuHome> {
 
     return Column(
       children: [
-        /// AppBar with Menu Page title and settings button
-        Container(
-          color: scheme.surface,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  /// Menu Page title
-                  Text('Menu', style: Theme.of(context).textTheme.titleLarge),
-                  const Spacer(),
+        // Top SafeArea
+        SafeArea(child: Container()),
 
-                  /// Settings button
-                  IconButton(
-                    icon: FaIcon(
-                      FontAwesomeIcons.lightGear,
-                      color: scheme.primary,
-                      size: 24,
-                    ),
-                    onPressed: () {
-                      context.push(SettingsScreen.routeName);
-                    },
-                    tooltip: 'Settings',
-                  ),
-                ],
+        /// Menu title with settings button
+        Container(
+          // 메뉴 타이틀 배경색 - primaryContainer 사용
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              /// Menu Page title
+              Text(
+                Lo.of(context)!.menu,
+                // primaryContainer 위에서 잘 보이도록 onPrimaryContainer 사용
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: scheme.onPrimaryContainer,
+                ),
               ),
-            ),
+              const Spacer(),
+
+              /// Settings button
+              IconButton(
+                icon: FaIcon(
+                  FontAwesomeIcons.lightGear,
+                  // 아이콘도 onPrimaryContainer 색상으로 조정
+                  color: scheme.onPrimaryContainer,
+                  size: 24,
+                ),
+                onPressed: () {
+                  context.push(SettingsScreen.routeName);
+                },
+                tooltip: 'Settings',
+              ),
+            ],
           ),
         ),
 

@@ -82,6 +82,14 @@ class AppTheme {
         ),
         type: BottomNavigationBarType.fixed, // 고정 타입
       ),
+      // Flat Design - FloatingActionButton Theme
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        elevation: 0, // Flat 디자인 - 그림자 제거
+        highlightElevation: 0,
+        backgroundColor: cs.primary,
+        foregroundColor: cs.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
 
       // Spacing Tokens 등록 (8 배수 기반)
       extensions: const <ThemeExtension<dynamic>>[AppSpacing()],
