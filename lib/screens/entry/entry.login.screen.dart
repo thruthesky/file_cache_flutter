@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
+import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/dialogs/policy.dialogs.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -362,6 +364,10 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
   }
 
   void _onSignInSuccess() {
+    // 로그인 성공 시 홈 탭으로 네비게이션 상태 초기화
+    NavigationState.of(context, listen: false).setHomeNavigation(
+      HomeNavigationItem.home,
+    );
     context.go(HomeScreen.routeName);
   }
 

@@ -24,8 +24,12 @@ class _MainHomeState extends State<MainHome> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/img/logo/philgo_wide_logo.png', height: 32),
+                Image.asset(
+                  'assets/img/logo/philgo_wide_logo_icon.png',
+                  height: 40,
+                ),
               ],
             ),
           ),
@@ -44,7 +48,7 @@ class _MainHomeState extends State<MainHome> {
                 const SizedBox(height: 8),
 
                 /// Community posts section (커뮤니티 게시물 섹션)
-                const LatestPosts(
+                LatestPosts(
                   titleName: 'Community',
                   postId: 'freetalk',
                   icon: FontAwesomeIcons.lightComments,
@@ -53,12 +57,11 @@ class _MainHomeState extends State<MainHome> {
                 const SizedBox(height: 8),
 
                 /// QnA posts section (질문답변 게시물 섹션)
-                const LatestPosts(
+                LatestPosts(
                   titleName: 'QnA',
                   postId: 'qna',
                   icon: FontAwesomeIcons.lightCircleQuestion,
                 ),
-
                 /// Bottom spacing
                 const SizedBox(height: 16),
               ],

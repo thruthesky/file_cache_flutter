@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/state/forum.state.dart';
+import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
@@ -101,7 +104,13 @@ class _LatestPostsState extends State<LatestPosts> {
                 /// View All button
                 TextButton(
                   onPressed: () {
-                    // TODO: Navigate to full category view
+                    ForumState.of(context, listen: false).setHomePostCategory(
+                      PostCategoryItem(postId: widget.postId, category: null),
+                    );
+                    NavigationState.of(
+                      context,
+                      listen: false,
+                    ).setHomeNavigation(HomeNavigationItem.forum);
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
