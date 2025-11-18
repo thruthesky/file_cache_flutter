@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/state/app.state.dart';
 
 class LanguageScreen extends StatefulWidget {
   static const String routeName = '/language';
@@ -10,10 +11,8 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  /// 선택된 언어 코드
   String? _selectedLanguage;
 
-  /// 지원하는 언어 목록
   final List<Map<String, String>> _languages = [
     {'code': 'en', 'name': 'English'},
     {'code': 'ko', 'name': '한국어'},
@@ -21,18 +20,28 @@ class _LanguageScreenState extends State<LanguageScreen> {
     {'code': 'zh', 'name': '中文'},
   ];
 
-  /// 언어 저장 함수
+  @override
+  void initState() {
+    super.initState();
+    final appState = AppState.of(context);
+    if (appState.locale != null) {
+      _selectedLanguage = appState.locale!.languageCode;
+    }
+  }
+
   void _saveLanguage() {
     if (_selectedLanguage == null) return;
 
+    final appState = AppState.of(context);
+    appState.setLocale(Locale(_selectedLanguage!));
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Language saved: $_selectedLanguage'),
+        content: Text('Language changed to $_selectedLanguage'),
         duration: const Duration(seconds: 2),
       ),
     );
 
-    // 이전 화면으로 돌아가기
     Navigator.of(context).pop();
   }
 
@@ -127,10 +136,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               minimumSize: const Size(double.infinity, 56),
             ),
-            child: const Text(
-              'Save Language',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            child: const Text('Save Language'),
           ),
         ),
       ),

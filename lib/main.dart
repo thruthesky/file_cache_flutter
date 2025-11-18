@@ -52,6 +52,10 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppState.of(context).initializeLocaleFromDevice();
+    });
+
     // ChatService.instance.initialize();
     UserService.instance.initialize(useUserPresence: true);
     initMessagingService();
@@ -220,17 +224,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      theme: AppTheme.lightTheme,
-      routerConfig: router,
-      localizationsDelegates: [
-        Lo.delegate,
-        LibTr.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: [...Lo.supportedLocales, ...LibTr.supportedLocales],
+    return Selector<AppState, Locale?>(
+      selector: (context, appState) => appState.locale,
+      builder: (context, locale, child) {
+        return MaterialApp.router(
+          theme: AppTheme.lightTheme,
+          routerConfig: router,
+          locale: locale, // AppState의 locale 사용
+          localizationsDelegates: [
+            Lo.delegate,
+            LibTr.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [...Lo.supportedLocales, ...LibTr.supportedLocales],
+        );
+      },
     );
   }
 }

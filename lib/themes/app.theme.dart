@@ -66,13 +66,6 @@ class AppTheme {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        titleTextStyle: TextStyle(
-          fontFamily: 'Pretendard',
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.10,
-          fontSize: 22,
-          color: cs.onSurface,
-        ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedIconTheme: const IconThemeData(size: 20),
