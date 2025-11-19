@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/company/form-sections/form.basic.info.dart';
+import 'package:philgo/screens/company/form-sections/form.contact.info.dart';
+import 'package:philgo/screens/company/form-sections/form.detailed.info.dart';
+import 'package:philgo/screens/company/form-sections/form.image.upload.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo/widgets/information.box.dart';
+import 'package:philgo/widgets/step.progress.indicator.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
-/// Company Form Screen
+/// 회사 정보 입력 폼 화면 - 멀티스텝
+/// Multi-step company form screen with transitions
 class CompanyFormScreen extends StatefulWidget {
   static const String routeName = '/company-form';
 
@@ -22,9 +28,7 @@ class CompanyFormScreen extends StatefulWidget {
 }
 
 class _CompanyFormScreenState extends State<CompanyFormScreen> {
-  final _formKey = GlobalKey<FormState>();
-
-  // Controllers for form fields
+  // 폼 필드 컨트롤러
   late TextEditingController _nameController;
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
@@ -39,21 +43,26 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   late TextEditingController _familySiteNameController;
   late TextEditingController _familySiteDescriptionController;
 
-  // Category and Business Type selection
+  // 카테고리 및 비즈니스 타입 선택
   String? _selectedCategory;
 
-  // Checkbox state
+  // 체크박스 상태
   bool _useCompanyDomain = false;
 
-  // Radio button state for contact method
-  String? _mobileContactMethod; // 'text' or 'call', null if not selected
+  // 모바일 연락 방법 (문자/전화)
+  String? _mobileContactMethod;
 
-  // Image URLs (for update mode)
+  // 이미지 URL
   String _logoUrl = '';
   String _companyIntroImageUrl = '';
   String _businessLicenseUrl = '';
   String _kakaoTalkQrCodeUrl = '';
   String _officeInteriorUrl = '';
+
+  // 스텝 관리
+  int _currentStep = 0;
+  final int _totalSteps = 4;
+  late PageController _pageController;
 
   bool _isSubmitting = false;
 
@@ -61,7 +70,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   void initState() {
     super.initState();
 
-    // Initialize controllers with existing data if updating
+    _pageController = PageController();
+
+    // 기존 데이터로 컨트롤러 초기화
     _nameController = TextEditingController(text: widget.company?.name ?? '');
     _titleController = TextEditingController(text: widget.company?.title ?? '');
     _descriptionController = TextEditingController(
@@ -102,13 +113,13 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       text: widget.company?.family_site_description ?? '',
     );
 
-    // Set category (convert empty string to null)
+    // 카테고리 설정
     final category = widget.company?.category;
     _selectedCategory = (category == null || category.isEmpty)
         ? null
         : category;
 
-    // Set mobile contact method from mobile_number_call_type
+    // 모바일 연락 방법 설정
     final callType = widget.company?.mobile_number_call_type;
     if (callType == 'T') {
       _mobileContactMethod = 'text';
@@ -116,7 +127,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       _mobileContactMethod = 'call';
     }
 
-    // Set image URLs
+    // 이미지 URL 설정
     _logoUrl = widget.company?.logo_url ?? '';
     _kakaoTalkQrCodeUrl = widget.company?.kakaotalk_qr_code_url ?? '';
     _companyIntroImageUrl = widget.company?.title_image_url ?? '';
@@ -126,6 +137,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
   @override
   void dispose() {
+    _pageController.dispose();
     _nameController.dispose();
     _titleController.dispose();
     _descriptionController.dispose();
@@ -142,43 +154,91 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     super.dispose();
   }
 
-  /// Handle form submission
+  /// 다음 스텝으로 이동
+  void _nextStep() {
+    if (!_validateCurrentStep()) {
+      return;
+    }
+
+    if (_currentStep < _totalSteps - 1) {
+      setState(() => _currentStep++);
+      _pageController.animateToPage(
+        _currentStep,
+        duration: 300.ms,
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  /// 이전 스텝으로 이동
+  void _backStep() {
+    if (_currentStep > 0) {
+      setState(() => _currentStep--);
+      _pageController.animateToPage(
+        _currentStep,
+        duration: 300.ms,
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  bool _validateCurrentStep() {
+    switch (_currentStep) {
+      case 0: // Basic Info
+        if (_nameController.text.trim().isEmpty) {
+          showErrorSnackBar(context, 'Please enter company name');
+          return false;
+        }
+        return true;
+
+      case 1: // Detailed Info
+        if (_titleController.text.trim().isEmpty) {
+          showErrorSnackBar(context, 'Please enter company title');
+          return false;
+        }
+        if (_selectedCategory == null) {
+          showErrorSnackBar(context, T.pleaseSelectCategory);
+          return false;
+        }
+        if (_locationController.text.trim().isEmpty) {
+          showErrorSnackBar(context, 'Please select location');
+          return false;
+        }
+        if (_addressController.text.trim().isEmpty) {
+          showErrorSnackBar(context, 'Please enter address');
+          return false;
+        }
+        if (_descriptionController.text.trim().isEmpty) {
+          showErrorSnackBar(context, 'Please enter company description');
+          return false;
+        }
+        return true;
+
+      case 2: // Contact Info
+        if (_landlineController.text.trim().isEmpty) {
+          showErrorSnackBar(context, 'Please enter landline number');
+          return false;
+        }
+        if (_mobileNumberController.text.trim().isEmpty) {
+          showErrorSnackBar(context, 'Please enter mobile number');
+          return false;
+        }
+        return true;
+
+      case 3: // Image Upload
+        if (_logoUrl.isEmpty) {
+          showErrorSnackBar(context, 'Please upload company logo');
+          return false;
+        }
+        return true;
+
+      default:
+        return true;
+    }
+  }
+
   Future<void> _handleSubmit() async {
-    // Validate mandatory fields
-    if (_nameController.text.trim().isEmpty) {
-      showErrorSnackBar(context, 'Please enter company name');
-      return;
-    }
-    if (_titleController.text.trim().isEmpty) {
-      showErrorSnackBar(context, 'Please enter company title');
-      return;
-    }
-    if (_selectedCategory == null) {
-      showErrorSnackBar(context, T.pleaseSelectCategory);
-      return;
-    }
-    if (_locationController.text.trim().isEmpty) {
-      showErrorSnackBar(context, 'Please select location');
-      return;
-    }
-    if (_addressController.text.trim().isEmpty) {
-      showErrorSnackBar(context, 'Please enter address');
-      return;
-    }
-    if (_landlineController.text.trim().isEmpty) {
-      showErrorSnackBar(context, 'Please enter landline number');
-      return;
-    }
-    if (_mobileNumberController.text.trim().isEmpty) {
-      showErrorSnackBar(context, 'Please enter mobile number');
-      return;
-    }
-    if (_descriptionController.text.trim().isEmpty) {
-      showErrorSnackBar(context, 'Please enter company description');
-      return;
-    }
-    if (_logoUrl.isEmpty) {
-      showErrorSnackBar(context, 'Please upload company logo');
+    if (!_validateCurrentStep()) {
       return;
     }
 
@@ -186,7 +246,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     setState(() {});
 
     try {
-      // Prepare company data for API
+      // API 전송용 회사 데이터 준비
       final companyData = <String, dynamic>{
         'name': _nameController.text.trim(),
         'title': _titleController.text.trim(),
@@ -205,20 +265,17 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         'family_site_description': _familySiteDescriptionController.text.trim(),
       };
 
-      // Add mobile contact method if selected
       if (_mobileContactMethod != null) {
         companyData['mobile_number_call_type'] = _mobileContactMethod == 'text'
             ? 'T'
             : 'C';
       }
 
-      // Add optional image URLs (send empty string to delete)
       companyData['title_image_url'] = _companyIntroImageUrl;
       companyData['business_license_url'] = _businessLicenseUrl;
       companyData['kakaotalk_qr_code_url'] = _kakaoTalkQrCodeUrl;
       companyData['photo_url'] = _officeInteriorUrl;
 
-      // Call API to update company
       final updatedCompany = await updateCompany(companyData);
 
       if (!mounted) return;
@@ -227,7 +284,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         context,
         widget.company == null ? T.companyRegistered : T.companyUpdated,
       );
-      // Return the updated company to the previous screen
+
       if (!mounted) return;
       context.pop(updatedCompany);
     } catch (e) {
@@ -241,747 +298,385 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     }
   }
 
+  String _getStepTitle() {
+    switch (_currentStep) {
+      case 0:
+        return T.basicInformation;
+      case 1:
+        return 'Detailed Information';
+      case 2:
+        return 'Contact Information';
+      case 3:
+        return 'Image Upload';
+      default:
+        return '';
+    }
+  }
+
+  IconData _getStepIcon() {
+    switch (_currentStep) {
+      case 0:
+        return FontAwesomeIcons.lightBuilding;
+      case 1:
+        return FontAwesomeIcons.lightCircleInfo;
+      case 2:
+        return FontAwesomeIcons.lightPhone;
+      case 3:
+        return FontAwesomeIcons.lightImages;
+      default:
+        return FontAwesomeIcons.lightCircleInfo;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
     final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: scheme.onSecondary,
         title: Text(
           widget.company == null ? T.registerCompany : T.updateCompany,
+          style: theme.textTheme.headlineMedium,
         ),
-        backgroundColor: scheme.primaryContainer,
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(sp.s16),
+            color: scheme.surface,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                StepProgressIndicator(
+                  totalSteps: _totalSteps,
+                  currentStep: _currentStep,
+                  height: 8,
+                  activeColor: scheme.primary,
+                  inactiveColor: scheme.secondary,
+                ),
                 SizedBox(height: sp.s16),
-
-                _SectionHeader(
-                  icon: FontAwesomeIcons.lightCircleInfo,
-                  title: T.basicInformation,
-                ),
-                SizedBox(height: sp.s8),
-
-                TextFieldSet(
-                  controller: _nameController,
-                  label: '${T.companyName} *',
-                  hintText: T.enterCompanyName,
-                  prefixFaIconData: FontAwesomeIcons.lightBuilding,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
                 Row(
                   children: [
-                    Checkbox(
-                      value: _useCompanyDomain,
-                      onChanged: (bool? value) {
-                        _useCompanyDomain = value!;
-                        setState(() {});
-                      },
+                    Container(
+                      padding: EdgeInsets.all(sp.s8),
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: FaIcon(
+                        _getStepIcon(),
+                        size: 20,
+                        color: scheme.primary,
+                      ),
                     ),
-                    SizedBox(height: sp.s8),
-                    Text('Use Company Domain'),
+                    SizedBox(width: sp.s12),
+                    Text(
+                      _getStepTitle(),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: scheme.onSurface,
+                      ),
+                    ),
                   ],
                 ),
-                InformationBox(
-                  message:
-                      'SEO features help expose your directory listing more on Google, Naver, and other search engines.',
-                ),
+              ],
+            ),
+          ),
 
-                if (_useCompanyDomain) ...[
-                  TextFieldSet(
-                    controller: _familySiteDomainController,
-                    label: 'Family Site Domain',
-                    hintText: 'e.g.) mycompany',
-                    prefixFaIconData: FontAwesomeIcons.lightHeading,
-                    decoration: InputDecoration(
-                      suffix: Text(
-                        '.philgo.com',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  TextFieldSet(
-                    controller: _familySiteNameController,
-                    label: 'Family Site Name',
-                    hintText: 'Enter your family site name',
-                    prefixFaIconData: FontAwesomeIcons.lightHeading,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  TextFieldSet(
-                    controller: _familySiteDescriptionController,
-                    label: 'Family Site Description',
-                    hintText: 'Enter your family site description',
-                    prefixFaIconData: FontAwesomeIcons.lightHeading,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                ],
-
-                SizedBox(height: sp.s16),
-
-                _SectionHeader(
-                  icon: FontAwesomeIcons.lightCircleInfo,
-                  title: 'Detailed Information',
-                ),
-                SizedBox(height: sp.s8),
-
-                TextFieldSet(
-                  controller: _titleController,
-                  label: '${T.companyTitle} *',
-                  hintText: T.enterCompanyTitle,
-                  prefixFaIconData: FontAwesomeIcons.lightHeading,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: CategoryDropdownField(
-                    label: 'Business Type *',
-                    initialValue: _selectedCategory,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCategory = value;
-                      });
+          /// 폼 컨텐츠 (PageView)
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (page) {
+                setState(() => _currentStep = page);
+              },
+              children: [
+                /// Step 0: 기본 정보
+                _buildStepContent(
+                  FormBasicInfo(
+                    nameController: _nameController,
+                    useCompanyDomain: _useCompanyDomain,
+                    onUseCompanyDomainChanged: (value) {
+                      setState(() => _useCompanyDomain = value);
                     },
+                    familySiteDomainController: _familySiteDomainController,
+                    familySiteNameController: _familySiteNameController,
+                    familySiteDescriptionController:
+                        _familySiteDescriptionController,
                   ),
                 ),
 
-                CompanySelectLocation(
-                  label: '${T.location} *',
-                  controller: _locationController,
-                  onLocationSelected: (location) {
-                    setState(() {
-                      _locationController.text = location;
-                    });
-                  },
-                ),
-
-                TextFieldSet(
-                  controller: _addressController,
-                  label: '${T.address} *',
-                  hintText: T.enterAddress,
-                  prefixFaIconData: FontAwesomeIcons.lightMapLocationDot,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
-                SizedBox(height: sp.s8),
-
-                _SectionHeader(
-                  icon: FontAwesomeIcons.lightCircleInfo,
-                  title: 'Contact Information',
-                ),
-                SizedBox(height: sp.s8),
-
-                // Landline
-                TextFieldSet(
-                  controller: _landlineController,
-                  label: '${T.phoneNumber} *',
-                  hintText: T.enterPhoneNumber,
-                  prefixFaIconData: FontAwesomeIcons.lightPhone,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
-                SizedBox(height: sp.s8),
-
-                TextFieldSet(
-                  controller: _mobileNumberController,
-                  label: '${T.mobileNumber} *',
-                  hintText: T.enterMobileNumber,
-                  prefixFaIconData: FontAwesomeIcons.lightPhone,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
-                SizedBox(height: sp.s8),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        T.mobileContactMethod,
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: scheme.onSurface,
-                            ),
-                      ),
-                      SizedBox(height: sp.s8),
-                      RadioGroup<String>(
-                        groupValue: _mobileContactMethod,
-                        onChanged: (value) {
-                          _mobileContactMethod = value!;
-                          setState(() {});
-                        },
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: RadioListTile<String>(
-                                title: Text(T.sendText),
-                                value: 'text',
-                              ),
-                            ),
-                            Expanded(
-                              child: RadioListTile<String>(
-                                title: Text(T.makeCall),
-                                value: 'call',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                /// Step 1: 상세 정보
+                _buildStepContent(
+                  FormDetailedInfo(
+                    titleController: _titleController,
+                    selectedCategory: _selectedCategory,
+                    onCategoryChanged: (value) {
+                      setState(() => _selectedCategory = value);
+                    },
+                    locationController: _locationController,
+                    onLocationSelected: (location) {
+                      setState(() => _locationController.text = location);
+                    },
+                    addressController: _addressController,
+                    descriptionController: _descriptionController,
                   ),
                 ),
 
-                SizedBox(height: sp.s8),
-
-                TextFieldSet(
-                  controller: _kakaotalkIdController,
-                  label: 'KakaoID',
-                  hintText: 'Enter kakaotalk ID',
-                  prefixFaIconData: FontAwesomeIcons.message,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
-                SizedBox(height: sp.s8),
-
-                _ImageUploadField(
-                  label: 'Upload Kakao QR Code',
-                  imageUrl: _kakaoTalkQrCodeUrl,
-                  isDecodeQr: true,
-                  onImageSelected: (url) async {
-                    try {
-                      await updateCompany({'kakaotalk_qr_code_url': url});
-                      _kakaoTalkQrCodeUrl = url;
-                      setState(() {});
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorDialog(context, 'Failed to upload QR code: $e');
+                /// Step 2: 연락처 정보
+                _buildStepContent(
+                  FormContactInfo(
+                    landlineController: _landlineController,
+                    mobileNumberController: _mobileNumberController,
+                    mobileContactMethod: _mobileContactMethod,
+                    onMobileContactMethodChanged: (value) {
+                      setState(() => _mobileContactMethod = value);
+                    },
+                    kakaotalkIdController: _kakaotalkIdController,
+                    kakaotalkQrCodeController: _kakaotalkQrCodeController,
+                    kakaoTalkQrCodeUrl: _kakaoTalkQrCodeUrl,
+                    onKakaoQrCodeSelected: (url) async {
+                      try {
+                        await updateCompany({'kakaotalk_qr_code_url': url});
+                        setState(() => _kakaoTalkQrCodeUrl = url);
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorDialog(
+                            context,
+                            'Failed to upload QR code: $e',
+                          );
+                        }
                       }
-                    }
-                  },
-                  onDelete: () async {
-                    try {
-                      await philgoApiFileDelete(_kakaoTalkQrCodeUrl);
-                      await updateCompany({'kakaotalk_qr_code_url': ''});
-                      _kakaoTalkQrCodeUrl = '';
-                      setState(() {});
-                      if (context.mounted) {
-                        showSuccessSnackBar(context, 'Kakao QR Code deleted');
+                    },
+                    onKakaoQrCodeDelete: () async {
+                      try {
+                        await philgoApiFileDelete(_kakaoTalkQrCodeUrl);
+                        await updateCompany({'kakaotalk_qr_code_url': ''});
+                        setState(() => _kakaoTalkQrCodeUrl = '');
+                        if (context.mounted) {
+                          showSuccessSnackBar(context, 'Kakao QR Code deleted');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorSnackBar(context, 'Failed to delete: $e');
+                        }
                       }
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorSnackBar(context, 'Failed to delete: $e');
+                    },
+                    onQrCodeDecoded: (qrCode) {
+                      if (qrCode != null && qrCode.isNotEmpty) {
+                        setState(
+                          () => _kakaotalkQrCodeController.text = qrCode,
+                        );
                       }
-                    }
-                  },
-                  onQrCodeDecoded: (qrCode) {
-                    if (qrCode != null && qrCode.isNotEmpty) {
-                      _kakaotalkQrCodeController.text = qrCode;
-                      setState(() {});
-                    }
-                  },
-                ),
-
-                TextFieldSet(
-                  controller: _kakaotalkQrCodeController,
-                  label: 'Kakao Channel URL',
-                  hintText: 'https://pf.kakao.com/...',
-                  prefixFaIconData: FontAwesomeIcons.message,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
-                SizedBox(height: sp.s8),
-
-                TextFieldSet(
-                  controller: _telegramIdController,
-                  label: 'Telegram ID',
-                  hintText: "Enter Telegram ID",
-                  prefixFaIconData: FontAwesomeIcons.message,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-
-                SizedBox(height: sp.s8),
-
-                _SectionHeader(
-                  icon: FontAwesomeIcons.lightCircleInfo,
-                  title: 'Company Introduction',
-                ),
-                SizedBox(height: sp.s8),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// 라벨
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        margin: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          '${T.description} *',
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: scheme.onSurface,
-                              ),
-                        ),
-                      ),
-
-                      /// 텍스트 필드
-                      TextField(
-                        controller: _descriptionController,
-                        maxLines: 8,
-                        minLines: 5,
-                        textAlignVertical: TextAlignVertical.top,
-                        decoration: InputDecoration(
-                          hintText: T.enterDescription,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          alignLabelWithHint: true,
-                        ),
-                      ),
-                    ],
+                    },
+                    telegramIdController: _telegramIdController,
                   ),
                 ),
 
-                SizedBox(height: sp.s8),
-
-                _SectionHeader(
-                  icon: FontAwesomeIcons.lightCircleInfo,
-                  title: 'Image Upload',
-                ),
-                SizedBox(height: sp.s8),
-
-                /// 회사 로고 업로드
-                _ImageUploadField(
-                  label: "Company Logo *",
-                  imageUrl: _logoUrl,
-                  onImageSelected: (url) async {
-                    try {
-                      await updateCompany({'logo_url': url});
-                      _logoUrl = url;
-                      setState(() {});
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorDialog(context, 'Failed to upload photo: $e');
+                /// Step 3: 이미지 업로드
+                _buildStepContent(
+                  FormImageUpload(
+                    logoUrl: _logoUrl,
+                    onLogoSelected: (url) async {
+                      try {
+                        await updateCompany({'logo_url': url});
+                        setState(() => _logoUrl = url);
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorDialog(
+                            context,
+                            'Failed to upload photo: $e',
+                          );
+                        }
                       }
-                    }
-                  },
-                  onDelete: () async {
-                    try {
-                      await philgoApiFileDelete(_logoUrl);
-                      await updateCompany({'logo_url': ''});
-                      _logoUrl = '';
-                      setState(() {});
-                      if (context.mounted) {
-                        showSuccessSnackBar(context, 'Company logo deleted');
+                    },
+                    onLogoDelete: () async {
+                      try {
+                        await philgoApiFileDelete(_logoUrl);
+                        await updateCompany({'logo_url': ''});
+                        setState(() => _logoUrl = '');
+                        if (context.mounted) {
+                          showSuccessSnackBar(context, 'Company logo deleted');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorSnackBar(
+                            context,
+                            'Failed to delete photo: $e',
+                          );
+                        }
                       }
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorSnackBar(
-                          context,
-                          'Failed to delete photo: $e',
-                        );
+                    },
+                    businessLicenseUrl: _businessLicenseUrl,
+                    onBusinessLicenseSelected: (url) async {
+                      try {
+                        await updateCompany({'business_license_url': url});
+                        setState(() => _businessLicenseUrl = url);
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorDialog(
+                            context,
+                            'Failed to upload license: $e',
+                          );
+                        }
                       }
-                    }
-                  },
-                ),
-
-                /// 사업자 등록증 업로드 (Business license scan)
-                _ImageUploadField(
-                  label: T.businessLicense,
-                  imageUrl: _businessLicenseUrl,
-                  onImageSelected: (url) async {
-                    try {
-                      await updateCompany({'business_license_url': url});
-                      _businessLicenseUrl = url;
-                      setState(() {});
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorDialog(context, 'Failed to upload license: $e');
+                    },
+                    onBusinessLicenseDelete: () async {
+                      try {
+                        await philgoApiFileDelete(_businessLicenseUrl);
+                        await updateCompany({'business_license_url': ''});
+                        setState(() => _businessLicenseUrl = '');
+                        if (context.mounted) {
+                          showSuccessSnackBar(
+                            context,
+                            'Business license deleted',
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorSnackBar(
+                            context,
+                            'Failed to delete license: $e',
+                          );
+                        }
                       }
-                    }
-                  },
-                  onDelete: () async {
-                    try {
-                      await philgoApiFileDelete(_businessLicenseUrl);
-                      await updateCompany({'business_license_url': ''});
-                      _businessLicenseUrl = '';
-                      setState(() {});
-                      if (context.mounted) {
-                        showSuccessSnackBar(
-                          context,
-                          'Business license deleted',
-                        );
+                    },
+                    companyIntroImageUrl: _companyIntroImageUrl,
+                    onCompanyIntroImageSelected: (url) async {
+                      try {
+                        await updateCompany({'title_image_url': url});
+                        setState(() => _companyIntroImageUrl = url);
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorDialog(
+                            context,
+                            'Failed to upload image: $e',
+                          );
+                        }
                       }
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorSnackBar(
-                          context,
-                          'Failed to delete license: $e',
-                        );
+                    },
+                    onCompanyIntroImageDelete: () async {
+                      try {
+                        await philgoApiFileDelete(_companyIntroImageUrl);
+                        await updateCompany({'title_image_url': ''});
+                        setState(() => _companyIntroImageUrl = '');
+                        if (context.mounted) {
+                          showSuccessSnackBar(
+                            context,
+                            'Company introduction image deleted',
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorSnackBar(
+                            context,
+                            'Failed to delete image: $e',
+                          );
+                        }
                       }
-                    }
-                  },
-                ),
-
-                /// 회사 소개 이미지 업로드
-                _ImageUploadField(
-                  label: 'Company Introduction Image',
-                  imageUrl: _companyIntroImageUrl,
-                  onImageSelected: (url) async {
-                    try {
-                      await updateCompany({'title_image_url': url});
-                      _companyIntroImageUrl = url;
-                      setState(() {});
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorDialog(context, 'Failed to upload image: $e');
+                    },
+                    officeInteriorUrl: _officeInteriorUrl,
+                    onOfficeInteriorSelected: (url) async {
+                      try {
+                        await updateCompany({'photo_url': url});
+                        setState(() => _officeInteriorUrl = url);
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorDialog(
+                            context,
+                            'Failed to upload photo: $e',
+                          );
+                        }
                       }
-                    }
-                  },
-                  onDelete: () async {
-                    try {
-                      await philgoApiFileDelete(_companyIntroImageUrl);
-                      await updateCompany({'title_image_url': ''});
-                      _companyIntroImageUrl = '';
-                      setState(() {});
-                      if (context.mounted) {
-                        showSuccessSnackBar(
-                          context,
-                          'Company introduction image deleted',
-                        );
+                    },
+                    onOfficeInteriorDelete: () async {
+                      try {
+                        await philgoApiFileDelete(_officeInteriorUrl);
+                        await updateCompany({'photo_url': ''});
+                        setState(() => _officeInteriorUrl = '');
+                        if (context.mounted) {
+                          showSuccessSnackBar(
+                            context,
+                            'Office interior photo deleted',
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorSnackBar(
+                            context,
+                            'Failed to delete photo: $e',
+                          );
+                        }
                       }
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorSnackBar(
-                          context,
-                          'Failed to delete image: $e',
-                        );
-                      }
-                    }
-                  },
-                ),
-
-                /// 가이드라인 안내
-                InformationBox(
-                  message:
-                      'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).',
-                ),
-
-                SizedBox(height: sp.s8),
-
-                /// 사무실/매장 내부 사진 업로드
-                _ImageUploadField(
-                  label: 'Office/Store Interior Photo',
-                  imageUrl: _officeInteriorUrl,
-                  onImageSelected: (url) async {
-                    try {
-                      await updateCompany({'photo_url': url});
-                      _officeInteriorUrl = url;
-                      setState(() {});
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorDialog(context, 'Failed to upload photo: $e');
-                      }
-                    }
-                  },
-                  onDelete: () async {
-                    try {
-                      await philgoApiFileDelete(_officeInteriorUrl);
-                      await updateCompany({'photo_url': ''});
-                      _officeInteriorUrl = '';
-                      setState(() {});
-                      if (context.mounted) {
-                        showSuccessSnackBar(
-                          context,
-                          'Office interior photo deleted',
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorSnackBar(
-                          context,
-                          'Failed to delete photo: $e',
-                        );
-                      }
-                    }
-                  },
-                ),
-
-                InformationBox(
-                  message: 'Office/Store Interior full view photo',
-                ),
-
-                SizedBox(height: sp.s16),
-
-                SubmitButton.icon(
-                  context: context,
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  alignment: Alignment.center,
-                  onPressed: _isSubmitting ? null : _handleSubmit,
-                  isLoading: _isSubmitting,
-                  icon: FaIcon(
-                    widget.company == null
-                        ? FontAwesomeIcons.lightPlus
-                        : FontAwesomeIcons.lightFloppyDisk,
-                  ),
-                  label: Text(
-                    widget.company == null
-                        ? T.registerCompany
-                        : T.updateCompany,
+                    },
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.icon, required this.title});
-
-  final IconData icon;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    final sp = Theme.of(context).extension<AppSpacing>()!;
-    final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
-
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(sp.s8),
-          decoration: BoxDecoration(
-            color: scheme.primaryContainer,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: FaIcon(icon, size: 20, color: scheme.primary),
-        ),
-        SizedBox(width: sp.s12),
-        Text(
-          title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: scheme.onSurface,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ImageUploadField extends StatefulWidget {
-  const _ImageUploadField({
-    required this.label,
-    required this.imageUrl,
-    required this.onImageSelected,
-    this.onDelete,
-    this.isDecodeQr = false,
-    this.onQrCodeDecoded,
-  });
-
-  final String label;
-  final String imageUrl;
-  final void Function(String) onImageSelected;
-  final VoidCallback? onDelete;
-  final bool isDecodeQr;
-  final void Function(String?)? onQrCodeDecoded;
-
-  @override
-  State<_ImageUploadField> createState() => _ImageUploadFieldState();
-}
-
-class _ImageUploadFieldState extends State<_ImageUploadField> {
-  bool _isUploading = false;
-  double _uploadProgress = 0.0;
-
-  @override
-  Widget build(BuildContext context) {
-    final sp = Theme.of(context).extension<AppSpacing>()!;
-    final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
-
-    return FileUpload(
-      isDecodeQr: widget.isDecodeQr,
-      onQrCodeDetected: widget.onQrCodeDecoded,
-      onBeforeUpload: () {
-        setState(() {
-          _isUploading = true;
-          _uploadProgress = 0.0;
-        });
-      },
-      onProgress: (progress) {
-        setState(() {
-          _uploadProgress = progress;
-        });
-      },
-      onUploaded: (url) {
-        setState(() {
-          _isUploading = false;
-        });
-        widget.onImageSelected(url);
-      },
-      onCancelled: () {
-        setState(() {
-          _isUploading = false;
-        });
-      },
-      image: true,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurface,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            Container(
-              height: 240,
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: scheme.outline),
-              ),
-              child: Stack(
-                children: [
-                  /// 이미지 표시
-                  if (widget.imageUrl.isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        widget.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const _ImagePlaceholder();
-                        },
-                      ),
-                    )
-                  else
-                    const _ImagePlaceholder(),
-
-                  if (widget.imageUrl.isNotEmpty && !_isUploading)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: () {
-                          if (widget.onDelete != null) {
-                            widget.onDelete!();
-                          } else {
-                            widget.onImageSelected('');
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(sp.s8),
-                          decoration: BoxDecoration(
-                            color: scheme.errorContainer,
-                            shape: BoxShape.circle,
-                          ),
-                          child: FaIcon(
-                            FontAwesomeIcons.solidTrash,
-                            size: 16,
-                            color: scheme.error,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  if (_isUploading)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: scheme.surface.withValues(alpha: 0.9),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              value: _uploadProgress,
-                              strokeWidth: 3,
-                            ),
-                            SizedBox(height: sp.s16),
-                            Text(
-                              '${(_uploadProgress * 100).toInt()}%',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: scheme.primary,
-                              ),
-                            ),
-                            SizedBox(height: sp.s4),
-                            Text(
-                              'Uploading...',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ImagePlaceholder extends StatelessWidget {
-  const _ImagePlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    final sp = Theme.of(context).extension<AppSpacing>()!;
-    final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FaIcon(
-            FontAwesomeIcons.lightImage,
-            size: 32,
-            color: scheme.onSurfaceVariant,
-          ),
-          SizedBox(height: sp.s8),
-          Text(
-            T.tapToUploadImage,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
-            ),
-          ),
         ],
       ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s16),
+          decoration: BoxDecoration(color: scheme.surface),
+          child: Row(
+            children: [
+              /// 뒤로가기 버튼
+              if (_currentStep > 0)
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _backStep,
+                    icon: const FaIcon(FontAwesomeIcons.lightChevronLeft),
+                    label: const Text('Back'),
+                  ).animate().fadeIn(duration: 200.ms).slideX(begin: -0.1),
+                ),
+
+              if (_currentStep > 0) SizedBox(width: sp.s12),
+
+              /// 다음/제출 버튼
+              Expanded(
+                flex: _currentStep == 0 ? 1 : 1,
+                child: _currentStep < _totalSteps - 1
+                    ? ElevatedButton.icon(
+                        onPressed: _nextStep,
+                        icon: const FaIcon(FontAwesomeIcons.lightChevronRight),
+                        label: const Text('Next'),
+                      ).animate().fadeIn(duration: 200.ms).slideX(begin: 0.2)
+                    : ElevatedButton.icon(
+                            onPressed: _isSubmitting ? null : _handleSubmit,
+                            icon: FaIcon(
+                              widget.company == null
+                                  ? FontAwesomeIcons.lightPlus
+                                  : FontAwesomeIcons.lightFloppyDisk,
+                            ),
+                            label: Text(
+                              widget.company == null
+                                  ? T.registerCompany
+                                  : T.updateCompany,
+                            ),
+                          )
+                          .animate()
+                          .fadeIn(duration: 200.ms)
+                          .scale(begin: const Offset(0.95, 0.95)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStepContent(Widget content) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: content
+          .animate()
+          .fadeIn(duration: 400.ms, delay: 100.ms)
+          .slideX(begin: 0.1, end: 0),
     );
   }
 }

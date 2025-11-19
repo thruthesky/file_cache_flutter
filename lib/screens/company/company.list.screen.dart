@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
@@ -148,7 +147,6 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     _loadCompaniesByCategory(categoryId);
   }
 
-  /// 회사 카드 탭 핸들러
   void _handleCompanyTap(Company company) {
     CompanyViewScreen.push(context, company.idx);
   }
