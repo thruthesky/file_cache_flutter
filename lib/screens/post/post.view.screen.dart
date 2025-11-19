@@ -94,8 +94,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        title: Text(subject),
         leading: BackButton(
           onPressed: () => Navigator.of(context).canPop()
               ? Navigator.of(context).pop()

@@ -197,6 +197,12 @@ abstract class Lo {
   /// **'Menu'**
   String get menu;
 
+  /// My page navigation item label
+  ///
+  /// In en, this message translates to:
+  /// **'My'**
+  String get my;
+
   /// AppBar title for phone login
   ///
   /// In en, this message translates to:

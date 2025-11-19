@@ -57,6 +57,9 @@ class LoJa extends Lo {
   String get menu => 'メニュー';
 
   @override
+  String get my => 'マイ';
+
+  @override
   String get loginWithPhoneTitle => '電話番号でログイン';
 
   @override

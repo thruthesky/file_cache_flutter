@@ -62,6 +62,9 @@ class LoEn extends Lo {
   String get menu => 'Menu';
 
   @override
+  String get my => 'My';
+
+  @override
   String get loginWithPhoneTitle => 'Login with Phone';
 
   @override

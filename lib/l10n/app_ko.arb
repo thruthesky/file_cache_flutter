@@ -15,6 +15,7 @@
   "create": "글쓰기",
   "company": "업소록",
   "menu": "메뉴",
+  "my": "마이",
   "loginWithPhoneTitle": "전화 번호 로그인",
   "loginWithPhoneHeader": "전화 번호로 로그인을 합니다.",
   "loginPhoneSmsNotice": "전화 번호 인증을 위해 SMS를 발송합니다.",

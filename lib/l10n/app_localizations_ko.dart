@@ -57,6 +57,9 @@ class LoKo extends Lo {
   String get menu => '메뉴';
 
   @override
+  String get my => '마이';
+
+  @override
   String get loginWithPhoneTitle => '전화 번호 로그인';
 
   @override

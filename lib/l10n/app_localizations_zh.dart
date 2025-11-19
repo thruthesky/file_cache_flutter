@@ -57,6 +57,9 @@ class LoZh extends Lo {
   String get menu => '菜单';
 
   @override
+  String get my => '我的';
+
+  @override
   String get loginWithPhoneTitle => '手机号码登录';
 
   @override

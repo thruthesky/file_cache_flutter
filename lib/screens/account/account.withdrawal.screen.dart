@@ -47,8 +47,10 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
               ? Navigator.of(context).pop()
               : context.go(HomeScreen.routeName),
         ),
-        title: Text(T.accountWithdrawalTitle),
-        backgroundColor: scheme.primaryContainer,
+        title: Text(
+          T.accountWithdrawalTitle,
+          style: theme.textTheme.headlineMedium,
+        ),
       ),
       // Body
       body: SingleChildScrollView(

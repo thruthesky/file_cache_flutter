@@ -13,14 +13,14 @@ import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/widgets/home/user.stats.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
-class MenuHome extends StatefulWidget {
-  const MenuHome({super.key});
+class MyPage extends StatefulWidget {
+  const MyPage({super.key});
 
   @override
-  State<MenuHome> createState() => _MenuHomeState();
+  State<MyPage> createState() => _MyPageState();
 }
 
-class _MenuHomeState extends State<MenuHome> {
+class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -36,9 +36,9 @@ class _MenuHomeState extends State<MenuHome> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Row(
             children: [
-              /// Menu Page title
+              /// My Page title
               Text(
-                Lo.of(context)!.menu,
+                'My Page',
                 // primaryContainer 위에서 잘 보이도록 onPrimaryContainer 사용
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: scheme.onPrimaryContainer,

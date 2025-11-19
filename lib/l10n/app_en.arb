@@ -63,6 +63,10 @@
     "@menu": {
         "description": "Menu navigation item label"
     },
+    "my": "My",
+    "@my": {
+        "description": "My page navigation item label"
+    },
   "loginWithPhoneTitle": "Login with Phone",
   "@loginWithPhoneTitle": {"description": "AppBar title for phone login"},
   "loginWithPhoneHeader": "Sign in using your phone number.",

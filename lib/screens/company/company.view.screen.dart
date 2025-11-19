@@ -99,15 +99,9 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             expandedHeight: 240,
             pinned: true,
             elevation: 0,
-            backgroundColor: scheme.primaryContainer,
             foregroundColor: scheme.onPrimaryContainer,
             title: _isCollapsed && company != null
-                ? Text(
-                    company!.name,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: scheme.onPrimaryContainer,
-                    ),
-                  )
+                ? Text(company!.name, style: theme.textTheme.headlineMedium)
                 : null,
             leading: _isCollapsed
                 ? null // 접혔을 때는 기본 back button 사용
@@ -260,10 +254,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           icon: FontAwesomeIcons.lightPhone,
                           label: T.phoneNumber,
                           value: company!.phone_number,
-                          onTap: () => launchApp(
-                            'tel:${company!.phone_number}',
-                            false,
-                          ),
+                          onTap: () =>
+                              launchApp('tel:${company!.phone_number}', false),
                         ),
 
                       /// 모바일 번호
@@ -272,10 +264,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           icon: FontAwesomeIcons.lightMobileScreen,
                           label: T.mobileNumber,
                           value: company!.mobile_number,
-                          onTap: () => launchApp(
-                            'tel:${company!.mobile_number}',
-                            false,
-                          ),
+                          onTap: () =>
+                              launchApp('tel:${company!.mobile_number}', false),
                         ),
 
                       /// 카카오톡 ID
