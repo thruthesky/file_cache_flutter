@@ -465,4 +465,31 @@ class LibTrJa extends LibTr {
 
   @override
   String get confirm_delete_comment_image => 'この画像を削除してもよろしいですか？';
+
+  @override
+  String get bookmarked_folders => 'ブックマークフォルダ';
+
+  @override
+  String get no_bookmarked_folders => 'ブックマークされたフォルダがありません';
+
+  @override
+  String get bookmarked_chats => 'ブックマークされたチャット';
+
+  @override
+  String get no_bookmarked_chats => 'このフォルダにブックマークされたチャットがありません';
+
+  @override
+  String get unpin_chat_room_title => 'チャットルームの固定を解除';
+
+  @override
+  String get unpin_chat_room_message => 'このチャットルームの固定を解除してもよろしいですか？';
+
+  @override
+  String get unpin => '固定解除';
+
+  @override
+  String get chat_room_unpinned => 'チャットルームの固定が解除されました';
+
+  @override
+  String get add_to_favorites => 'お気に入りに追加';
 }

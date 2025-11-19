@@ -58,7 +58,7 @@ class ChatRoomMessageListState extends State<ChatRoomMessageList> {
       key: ValueKey('messages_$roomId'), // Add key to prevent rebuilds
       query: FirebaseDatabase.instance
           .ref('chat/messages/$roomId')
-          .orderByChild('created_at'),
+          .orderByChild('sentAt'),
       reverseQuery: true,
       pageSize: 10,
       builder: (context, snapshot, _) {

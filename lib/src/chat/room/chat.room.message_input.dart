@@ -333,18 +333,18 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       }
 
       // moderate the message if it has an ID
-      if (messageId.isNotEmpty) {
-        // Add 1 second delay before moderating the message
-        Future.delayed(const Duration(seconds: 1), () {
-          moderateChat(widget.roomId, messageId)
-              .then((_) {
-                debugPrint('Message moderated successfully');
-              })
-              .catchError((e) {
-                debugPrint('Error moderating message: $e');
-              });
-        });
-      }
+      // if (messageId.isNotEmpty) {
+      //   // Add 1 second delay before moderating the message
+      //   Future.delayed(const Duration(seconds: 1), () {
+      //     moderateChat(widget.roomId, messageId)
+      //         .then((_) {
+      //           debugPrint('Message moderated successfully');
+      //         })
+      //         .catchError((e) {
+      //           debugPrint('Error moderating message: $e');
+      //         });
+      //   });
+      // }
 
       _messageController.clear();
       debugPrint('Message sent successfully');

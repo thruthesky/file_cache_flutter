@@ -158,39 +158,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
                               _buildMultipleImages(context),
                               if (message.text?.isNotEmpty == true)
                                 const SizedBox(height: 8),
-                            ] else if (message.imageUrl?.isNotEmpty ==
-                                true) ...[
-                              // Backward compatibility for single image
-                              GestureDetector(
-                                onTap: () => _showFullScreenImage(context, [
-                                  message.imageUrl!,
-                                ], 0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: CachedNetworkImage(
-                                    imageUrl: message.imageUrl!,
-                                    width: 200,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => Container(
-                                      width: 200,
-                                      height: 150,
-                                      color: Colors.grey[300],
-                                      child: const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        Container(
-                                          width: 200,
-                                          height: 150,
-                                          color: Colors.grey[300],
-                                          child: const Icon(Icons.error),
-                                        ),
-                                  ),
-                                ),
-                              ),
-                              if (message.text?.isNotEmpty == true)
-                                const SizedBox(height: 8),
                             ],
 
                             // Text message
@@ -244,7 +211,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
                     // Timestamp
                     Text(
-                      formatTimestamp(context, message.createdAt),
+                      formatTimestamp(context, message.sentAt),
                       style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                     ),
                   ],
@@ -516,7 +483,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
                     // Timestamp
                     Text(
-                      formatTimestamp(context, message.createdAt),
+                      formatTimestamp(context, message.sentAt),
                       style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                     ),
                   ],

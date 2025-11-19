@@ -128,7 +128,7 @@ class ChatRoomInitState extends State<ChatRoomInit> {
   void setupNewMessageListener() {
     final messagesRef = FirebaseDatabase.instance
         .ref('chat/messages/$roomId')
-        .orderByChild('created_at')
+        .orderByChild(SENT_AT)
         .limitToLast(1);
 
     newMessageSubscription = messagesRef.onChildAdded.listen((event) {
