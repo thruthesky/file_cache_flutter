@@ -138,5 +138,13 @@
     "businessLicense": "营业执照",
     "tapToUploadImage": "点击上传图片",
     "companyRegistered": "商家注册成功",
-    "companyUpdated": "商家信息更新成功"
+    "companyUpdated": "商家信息更新成功",
+    "unpin_chat_room_title": "取消固定聊天室",
+    "unpin_chat_room_message": "您确定要取消固定此聊天室吗？",
+    "unpin": "取消固定",
+    "chat_room_unpinned": "聊天室已取消固定",
+    "bookmarked_folders": "书签文件夹",
+    "no_bookmarked_folders": "没有书签文件夹",
+    "bookmarked_chats": "书签聊天",
+    "no_bookmarked_chats": "此文件夹中没有书签聊天"
 }

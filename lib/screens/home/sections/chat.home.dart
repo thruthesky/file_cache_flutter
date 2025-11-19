@@ -123,7 +123,7 @@ class _ChatHomeState extends State<ChatHome> {
                 // ),
                 const Spacer(),
                 IconButton(
-                  icon: const FaIcon(FontAwesomeIcons.sharpThinBookmark),
+                  icon: const FaIcon(FontAwesomeIcons.sharpSolidStar),
                   onPressed: () async {
                     // 즐겨찾기 폴더 목록 다이얼로그 표시
                     final folderName = await showDialog<String>(
@@ -135,9 +135,8 @@ class _ChatHomeState extends State<ChatHome> {
                     if (folderName != null && context.mounted) {
                       await showDialog(
                         context: context,
-                        builder: (context) => BookmarkedChatsDialog(
-                          folderName: folderName,
-                        ),
+                        builder: (context) =>
+                            BookmarkedChatsDialog(folderName: folderName),
                       );
                     }
                   },
@@ -163,6 +162,12 @@ class _ChatHomeState extends State<ChatHome> {
               ],
             ),
           ),
+        ),
+        // 고정된 채팅방 목록 (가로 스크롤)
+        PinnedChatRoomsList(
+          onTap: (roomId) {
+            ChatRoomScreen.push(context, roomId);
+          },
         ),
         Expanded(
           child: Selector<NavigationState, String>(

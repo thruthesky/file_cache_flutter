@@ -681,14 +681,26 @@ class LoZh extends Lo {
       'Chat with members, join discussions, and build your network.';
 
   @override
-  String get bookmarked_folders => 'Bookmarked Folders';
+  String get bookmarked_folders => '书签文件夹';
 
   @override
-  String get no_bookmarked_folders => 'No bookmarked folders';
+  String get no_bookmarked_folders => '没有书签文件夹';
 
   @override
-  String get bookmarked_chats => 'Bookmarked Chats';
+  String get bookmarked_chats => '书签聊天';
 
   @override
-  String get no_bookmarked_chats => 'No bookmarked chats in this folder';
+  String get no_bookmarked_chats => '此文件夹中没有书签聊天';
+
+  @override
+  String get unpin_chat_room_title => '取消固定聊天室';
+
+  @override
+  String get unpin_chat_room_message => '您确定要取消固定此聊天室吗？';
+
+  @override
+  String get unpin => '取消固定';
+
+  @override
+  String get chat_room_unpinned => '聊天室已取消固定';
 }

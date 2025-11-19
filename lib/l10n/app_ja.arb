@@ -138,5 +138,13 @@
     "businessLicense": "事業者登録証",
     "tapToUploadImage": "タップして画像をアップロード",
     "companyRegistered": "業者が正常に登録されました",
-    "companyUpdated": "業者情報が正常に更新されました"
+    "companyUpdated": "業者情報が正常に更新されました",
+    "unpin_chat_room_title": "チャットルームの固定を解除",
+    "unpin_chat_room_message": "このチャットルームの固定を解除してもよろしいですか？",
+    "unpin": "固定解除",
+    "chat_room_unpinned": "チャットルームの固定が解除されました",
+    "bookmarked_folders": "ブックマークフォルダ",
+    "no_bookmarked_folders": "ブックマークされたフォルダがありません",
+    "bookmarked_chats": "ブックマークされたチャット",
+    "no_bookmarked_chats": "このフォルダにブックマークされたチャットがありません"
 }

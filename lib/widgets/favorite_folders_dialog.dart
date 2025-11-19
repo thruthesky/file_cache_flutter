@@ -30,7 +30,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
               child: Row(
                 children: [
                   FaIcon(
-                    FontAwesomeIcons.lightBookmark,
+                    FontAwesomeIcons.sharpSolidStar,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 12),
@@ -67,7 +67,8 @@ class FavoriteFoldersDialog extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           T.no_bookmarked_folders,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
@@ -103,12 +104,15 @@ class FavoriteFoldersDialog extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             count.toString(),
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                 ),

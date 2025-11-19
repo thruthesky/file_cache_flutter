@@ -1396,6 +1396,30 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'No bookmarked chats in this folder'**
   String get no_bookmarked_chats;
+
+  /// Title for unpin chat room confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin Chat Room'**
+  String get unpin_chat_room_title;
+
+  /// Message for unpin chat room confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to unpin this chat room?'**
+  String get unpin_chat_room_message;
+
+  /// Unpin button text
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get unpin;
+
+  /// Success message after unpinning chat room
+  ///
+  /// In en, this message translates to:
+  /// **'Chat room unpinned successfully'**
+  String get chat_room_unpinned;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

@@ -700,4 +700,17 @@ class LoEn extends Lo {
 
   @override
   String get no_bookmarked_chats => 'No bookmarked chats in this folder';
+
+  @override
+  String get unpin_chat_room_title => 'Unpin Chat Room';
+
+  @override
+  String get unpin_chat_room_message =>
+      'Are you sure you want to unpin this chat room?';
+
+  @override
+  String get unpin => 'Unpin';
+
+  @override
+  String get chat_room_unpinned => 'Chat room unpinned successfully';
 }
