@@ -28,6 +28,7 @@ class SkeletonCompanyCard extends StatelessWidget {
                 duration: 1500.ms,
                 color: scheme.surface.withValues(alpha: 0.5),
               ),
+          const SizedBox(height: 16), // Match CompanyListGrid spacing
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -35,6 +36,7 @@ class SkeletonCompanyCard extends StatelessWidget {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 8,
+              mainAxisSpacing: 8, // Add vertical spacing between cards
               childAspectRatio: 1.2,
             ),
             itemCount: 4,

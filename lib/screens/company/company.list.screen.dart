@@ -253,6 +253,16 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
   List<Company> _getCompaniesByCategory(String categoryId) {
     if (companyList == null) return [];
-    return companyList!.companies;
+
+    // Filter out incomplete companies (idx=0 or missing required fields)
+    return companyList!.companies.where((company) {
+      // Exclude companies with idx=0 (invalid/placeholder companies)
+      if (company.idx == 0) return false;
+
+      // Exclude companies without a name (incomplete registration)
+      if (company.name.isEmpty) return false;
+
+      return true;
+    }).toList();
   }
 }
