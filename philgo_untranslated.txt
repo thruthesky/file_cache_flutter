@@ -71,7 +71,11 @@
     "guideStep3Title",
     "guideStep3Desc",
     "guideStep4Title",
-    "guideStep4Desc"
+    "guideStep4Desc",
+    "bookmarked_folders",
+    "no_bookmarked_folders",
+    "bookmarked_chats",
+    "no_bookmarked_chats"
   ],
 
   "zh": [
@@ -146,6 +150,10 @@
     "guideStep3Title",
     "guideStep3Desc",
     "guideStep4Title",
-    "guideStep4Desc"
+    "guideStep4Desc",
+    "bookmarked_folders",
+    "no_bookmarked_folders",
+    "bookmarked_chats",
+    "no_bookmarked_chats"
   ]
 }

@@ -680,4 +680,16 @@ class LoJa extends Lo {
   @override
   String get guideStep4Desc =>
       'Chat with members, join discussions, and build your network.';
+
+  @override
+  String get bookmarked_folders => 'Bookmarked Folders';
+
+  @override
+  String get no_bookmarked_folders => 'No bookmarked folders';
+
+  @override
+  String get bookmarked_chats => 'Bookmarked Chats';
+
+  @override
+  String get no_bookmarked_chats => 'No bookmarked chats in this folder';
 }

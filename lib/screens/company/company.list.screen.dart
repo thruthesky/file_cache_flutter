@@ -137,7 +137,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     try {
       final result = await getMyCompany();
       myCompany = result;
-      debugLog('My Company: $myCompany');
+      // debugLog('My Company: $myCompany');
     } catch (e) {
       debugLog('Error loading my company: $e');
     } finally {
@@ -158,7 +158,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     try {
       final result = await getCompanies();
       companyList = result;
-      debugLog('Company List: $companyList');
+      // debugLog('Company List: $companyList');
     } finally {
       isLoading = false;
       setState(() {});

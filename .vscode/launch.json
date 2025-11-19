@@ -60,7 +60,7 @@
             "name": "Philgo emulator-5554 dev",
             "request": "launch",
             "type": "dart",
-            "cwd": "apps/philgo",
+            // "cwd": "apps/philgo",
             "program": "lib/main.dart",
             "deviceId": "emulator-5554",
             "args": [

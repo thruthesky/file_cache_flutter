@@ -662,4 +662,16 @@ class LoKo extends Lo {
 
   @override
   String get guideStep4Desc => '회원들과 채팅하고 토론에 참여하며 네트워크를 구축하세요.';
+
+  @override
+  String get bookmarked_folders => '북마크 폴더';
+
+  @override
+  String get no_bookmarked_folders => '북마크된 폴더가 없습니다';
+
+  @override
+  String get bookmarked_chats => '북마크된 채팅';
+
+  @override
+  String get no_bookmarked_chats => '이 폴더에 북마크된 채팅이 없습니다';
 }
