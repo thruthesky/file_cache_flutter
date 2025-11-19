@@ -790,6 +790,636 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Image deleted successfully'**
   String get imageDeletedSuccess;
+
+  /// Alert dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Alert'**
+  String get alert;
+
+  /// Error message when trying to delete a post that has comments
+  ///
+  /// In en, this message translates to:
+  /// **'Posts with comments cannot be deleted'**
+  String get postWithCommentsCannotBeDeleted;
+
+  /// Error message when trying to edit a post that has comments
+  ///
+  /// In en, this message translates to:
+  /// **'Posts with comments cannot be edited'**
+  String get postWithCommentsCannotBeEdited;
+
+  /// Title for company directory screen
+  ///
+  /// In en, this message translates to:
+  /// **'Company Directory'**
+  String get companyDirectoryTitle;
+
+  /// Button text for adding a new company
+  ///
+  /// In en, this message translates to:
+  /// **'Add Company'**
+  String get addCompany;
+
+  /// Description text for company directory
+  ///
+  /// In en, this message translates to:
+  /// **'When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.'**
+  String get companyDirectoryDescription;
+
+  /// Button text for registering a company
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerCompany;
+
+  /// Button text for updating a company
+  ///
+  /// In en, this message translates to:
+  /// **'Update Company'**
+  String get updateCompany;
+
+  /// Text showing number of companies registered
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Total 0 companies registered.} =1{Total 1 company registered.} other{Total {count} companies registered.}}'**
+  String companiesRegistered(int count);
+
+  /// Button text to view more items
+  ///
+  /// In en, this message translates to:
+  /// **'View More'**
+  String get viewMore;
+
+  /// Empty state message when no companies are registered
+  ///
+  /// In en, this message translates to:
+  /// **'No registered companies.'**
+  String get noRegisteredCompanies;
+
+  /// Prompt text encouraging users to register a company
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to register a company in this category!'**
+  String get registerCompanyPrompt;
+
+  /// Label for location field
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// Section title for contact information
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get contactInformation;
+
+  /// Label for mobile number
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number'**
+  String get mobileNumber;
+
+  /// Label for description section
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// Label for family site section
+  ///
+  /// In en, this message translates to:
+  /// **'Family Site'**
+  String get familySite;
+
+  /// Section title for basic information
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basicInformation;
+
+  /// Label for company name field
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get companyName;
+
+  /// Hint text for company name field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company name'**
+  String get enterCompanyName;
+
+  /// Validation message for company name
+  ///
+  /// In en, this message translates to:
+  /// **'Company name is required'**
+  String get companyNameRequired;
+
+  /// Label for company title field
+  ///
+  /// In en, this message translates to:
+  /// **'Company Title'**
+  String get companyTitle;
+
+  /// Hint text for company title field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company title or slogan'**
+  String get enterCompanyTitle;
+
+  /// Label for category field
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// Hint text for category dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get selectCategory;
+
+  /// Error message for category selection
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a category'**
+  String get pleaseSelectCategory;
+
+  /// Hint text for description field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company description'**
+  String get enterDescription;
+
+  /// Section title for location information
+  ///
+  /// In en, this message translates to:
+  /// **'Location Information'**
+  String get locationInformation;
+
+  /// Hint text for location field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter location (e.g., Manila, Cebu)'**
+  String get enterLocation;
+
+  /// Label for address field
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// Hint text for address field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter detailed address'**
+  String get enterAddress;
+
+  /// Hint text for mobile number field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter mobile number'**
+  String get enterMobileNumber;
+
+  /// Section title for images
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get images;
+
+  /// Label for logo image field
+  ///
+  /// In en, this message translates to:
+  /// **'Logo Image'**
+  String get logoImage;
+
+  /// Label for title image field
+  ///
+  /// In en, this message translates to:
+  /// **'Title Image'**
+  String get titleImage;
+
+  /// Label for business license field
+  ///
+  /// In en, this message translates to:
+  /// **'Business License'**
+  String get businessLicense;
+
+  /// Hint text for image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload image'**
+  String get tapToUploadImage;
+
+  /// Success message for company registration
+  ///
+  /// In en, this message translates to:
+  /// **'Company registered successfully'**
+  String get companyRegistered;
+
+  /// Success message for company update
+  ///
+  /// In en, this message translates to:
+  /// **'Company updated successfully'**
+  String get companyUpdated;
+
+  /// Label for mobile contact method selection
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Contact Method'**
+  String get mobileContactMethod;
+
+  /// Option for text message contact method
+  ///
+  /// In en, this message translates to:
+  /// **'Send Text'**
+  String get sendText;
+
+  /// Option for phone call contact method
+  ///
+  /// In en, this message translates to:
+  /// **'Make Call'**
+  String get makeCall;
+
+  /// Welcome title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to PhilGo!'**
+  String get guideWelcomeTitle;
+
+  /// Welcome subtitle in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Share and communicate various information\nin the Philippines\' largest Korean community'**
+  String get guideWelcomeSubtitle;
+
+  /// Features section title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'App Features'**
+  String get guideFeaturesTitle;
+
+  /// Community feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get guideFeatureCommunityTitle;
+
+  /// Community feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Share and communicate information on various boards'**
+  String get guideFeatureCommunityDesc;
+
+  /// Chat feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get guideFeatureChatTitle;
+
+  /// Chat feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Connect quickly through real-time chat'**
+  String get guideFeatureChatDesc;
+
+  /// Business directory feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Business Directory'**
+  String get guideFeatureDirectoryTitle;
+
+  /// Business directory feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Find Korean business information in the Philippines'**
+  String get guideFeatureDirectoryDesc;
+
+  /// Write feature title
+  ///
+  /// In en, this message translates to:
+  /// **'Write'**
+  String get guideFeatureWriteTitle;
+
+  /// Write feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Write and share your posts freely'**
+  String get guideFeatureWriteDesc;
+
+  /// Tips section title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Tips'**
+  String get guideTipsTitle;
+
+  /// First tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile to connect with more people'**
+  String get guideTip1;
+
+  /// Second tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Enable notifications so you don\'t miss important news'**
+  String get guideTip2;
+
+  /// Third tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Like posts you enjoy'**
+  String get guideTip3;
+
+  /// Fourth tip in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'You can bookmark frequently visited boards'**
+  String get guideTip4;
+
+  /// FAQ section title in app guide
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently Asked Questions'**
+  String get guideFaqTitle;
+
+  /// First FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'How do I write a post?'**
+  String get guideFaqQ1;
+
+  /// First FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the \"Write\" tab at the bottom, select a board, and write your post.'**
+  String get guideFaqA1;
+
+  /// Second FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'How do I create a chat room?'**
+  String get guideFaqQ2;
+
+  /// Second FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'In the \"Chat\" tab, tap the + button to create a new chat room.'**
+  String get guideFaqA2;
+
+  /// Third FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'How do I register a business?'**
+  String get guideFaqQ3;
+
+  /// Third FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'In the \"Directory\" tab, tap the \"Add Company\" button to register business information.'**
+  String get guideFaqA3;
+
+  /// Fourth FAQ question
+  ///
+  /// In en, this message translates to:
+  /// **'Where can I edit my profile?'**
+  String get guideFaqQ4;
+
+  /// Fourth FAQ answer
+  ///
+  /// In en, this message translates to:
+  /// **'Go to the \"Menu\" tab and select \"Edit Profile\" to change your information.'**
+  String get guideFaqA4;
+
+  /// Account withdrawal screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Account Withdrawal'**
+  String get accountWithdrawalTitle;
+
+  /// Withdrawal intro section title
+  ///
+  /// In en, this message translates to:
+  /// **'Data Delete Request'**
+  String get withdrawalIntroTitle;
+
+  /// Withdrawal intro section subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'PhilGo Network provides you the right to permanently delete all personal information related to your account at any time.'**
+  String get withdrawalIntroSubtitle;
+
+  /// Step 1 title for data deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Data to be Deleted'**
+  String get withdrawalStep1Title;
+
+  /// Account information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Account Identity Information'**
+  String get withdrawalAccountInfoTitle;
+
+  /// Account information description
+  ///
+  /// In en, this message translates to:
+  /// **'Email, nickname, profile image'**
+  String get withdrawalAccountInfoDesc;
+
+  /// Usage history section title
+  ///
+  /// In en, this message translates to:
+  /// **'App Usage History'**
+  String get withdrawalUsageHistoryTitle;
+
+  /// Usage history description
+  ///
+  /// In en, this message translates to:
+  /// **'Chats, posts, activity logs, notification tokens'**
+  String get withdrawalUsageHistoryDesc;
+
+  /// Additional data section title
+  ///
+  /// In en, this message translates to:
+  /// **'Connected Additional Data'**
+  String get withdrawalAdditionalDataTitle;
+
+  /// Additional data description
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backups, user settings, etc.'**
+  String get withdrawalAdditionalDataDesc;
+
+  /// Note about payment data retention
+  ///
+  /// In en, this message translates to:
+  /// **'Payment and tax documentation will be retained separately for up to 5 years as required by relevant laws before destruction.'**
+  String get withdrawalPaymentNote;
+
+  /// Step 2 title for deletion method
+  ///
+  /// In en, this message translates to:
+  /// **'Deletion Method'**
+  String get withdrawalStep2Title;
+
+  /// Email request method
+  ///
+  /// In en, this message translates to:
+  /// **'Email Request'**
+  String get withdrawalEmailRequest;
+
+  /// Step 3 title for processing timeline
+  ///
+  /// In en, this message translates to:
+  /// **'Processing & Timeline'**
+  String get withdrawalStep3Title;
+
+  /// Processing timeline description
+  ///
+  /// In en, this message translates to:
+  /// **'After confirming your request, all data will be completely deleted within 7 business days, and you will receive a completion notification email.'**
+  String get withdrawalProcessingDesc;
+
+  /// Warning about irreversible deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Once deletion is complete, recovery is impossible, and all remaining points and subscriptions will be forfeited.'**
+  String get withdrawalIrreversibleNote;
+
+  /// Step 4 title for data retention exceptions
+  ///
+  /// In en, this message translates to:
+  /// **'Data Retention Exceptions'**
+  String get withdrawalStep4Title;
+
+  /// Data retention exception description
+  ///
+  /// In en, this message translates to:
+  /// **'Only information necessary for fraud prevention, accounting audits, and legal compliance will be retained in a minimized form for the period prescribed by relevant laws before immediate destruction.'**
+  String get withdrawalRetentionDesc;
+
+  /// Step 5 title for contact information
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get withdrawalStep5Title;
+
+  /// Contact information description
+  ///
+  /// In en, this message translates to:
+  /// **'For additional inquiries, please contact us at philgohelp@gmail.com anytime.'**
+  String get withdrawalContactDesc;
+
+  /// Button text to request account withdrawal
+  ///
+  /// In en, this message translates to:
+  /// **'Request Withdrawal'**
+  String get requestWithdrawal;
+
+  /// Getting started section title
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get guideGettingStartedTitle;
+
+  /// Step 1 title
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your Account'**
+  String get guideStep1Title;
+
+  /// Step 1 description
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up with your email or social accounts to get started.'**
+  String get guideStep1Desc;
+
+  /// Step 2 title
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the Community'**
+  String get guideStep2Title;
+
+  /// Step 2 description
+  ///
+  /// In en, this message translates to:
+  /// **'Browse through posts, companies, and connect with Korean community in the Philippines.'**
+  String get guideStep2Desc;
+
+  /// Step 3 title
+  ///
+  /// In en, this message translates to:
+  /// **'Share Your Story'**
+  String get guideStep3Title;
+
+  /// Step 3 description
+  ///
+  /// In en, this message translates to:
+  /// **'Write posts, share experiences, and contribute to the community.'**
+  String get guideStep3Desc;
+
+  /// Step 4 title
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with Others'**
+  String get guideStep4Title;
+
+  /// Step 4 description
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with members, join discussions, and build your network.'**
+  String get guideStep4Desc;
+
+  /// Title for bookmarked folders dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked Folders'**
+  String get bookmarked_folders;
+
+  /// Message when there are no bookmarked folders
+  ///
+  /// In en, this message translates to:
+  /// **'No bookmarked folders'**
+  String get no_bookmarked_folders;
+
+  /// Title for bookmarked chats dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked Chats'**
+  String get bookmarked_chats;
+
+  /// Message when there are no bookmarked chats in a folder
+  ///
+  /// In en, this message translates to:
+  /// **'No bookmarked chats in this folder'**
+  String get no_bookmarked_chats;
+
+  /// Title for unpin chat room confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin Chat Room'**
+  String get unpin_chat_room_title;
+
+  /// Message for unpin chat room confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to unpin this chat room?'**
+  String get unpin_chat_room_message;
+
+  /// Unpin button text
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get unpin;
+
+  /// Success message after unpinning chat room
+  ///
+  /// In en, this message translates to:
+  /// **'Chat room unpinned successfully'**
+  String get chat_room_unpinned;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

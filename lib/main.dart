@@ -222,107 +222,125 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // 중앙 집중식 Theme 구성 (버튼 색상 등)
     final cs = ColorScheme.fromSeed(
-      seedColor: const Color.fromARGB(255, 0, 84, 201),
+      seedColor: const Color.fromARGB(255, 46, 160, 225),
       brightness: Brightness.light,
     );
-
-    // Config.setGlobalContext는 initState의 addPostFrameCallback에서 처리
-    // build 메소드에서는 제거 (Navigator가 아직 준비되지 않음)
+    final typography = Typography.material2021();
+    final baseTextTheme = typography.black;
 
     return MaterialApp.router(
       theme: ThemeData(
         useMaterial3: true,
-        // Roboto 폰트 사용 - 모든 플랫폼에서 통일된 타이포그래피
-        // Dark Red 기반 Material 3 ColorScheme - 모든 색상 자동 생성
         colorScheme: cs,
-        // Roboto TextTheme - Google Fonts 패키지를 통해 적용
-        textTheme: GoogleFonts.robotoTextTheme(
-          const TextTheme(
-            // Display styles
-            displayLarge: TextStyle(
-              fontWeight: FontWeight.w700, // Bold
-            ),
-            displayMedium: TextStyle(
-              fontWeight: FontWeight.w600, // SemiBold
-            ),
-            displaySmall: TextStyle(
-              fontWeight: FontWeight.w500, // Medium
-            ),
-            // Headline styles
-            headlineLarge: TextStyle(
-              fontWeight: FontWeight.w700, // Bold
-            ),
-            headlineMedium: TextStyle(
-              fontWeight: FontWeight.w600, // SemiBold
-            ),
-            headlineSmall: TextStyle(
-              fontWeight: FontWeight.w500, // Medium
-            ),
-            // Title styles
-            titleLarge: TextStyle(
-              fontWeight: FontWeight.w600, // SemiBold
-            ),
-            titleMedium: TextStyle(
-              fontWeight: FontWeight.w500, // Medium
-            ),
-            titleSmall: TextStyle(
-              fontWeight: FontWeight.w500, // Medium
-            ),
-            // Body styles
-            bodyLarge: TextStyle(
-              fontWeight: FontWeight.w400, // Regular
-            ),
-            bodyMedium: TextStyle(
-              fontWeight: FontWeight.w400, // Regular
-            ),
-            bodySmall: TextStyle(
-              fontWeight: FontWeight.w400, // Regular
-            ),
-            // Label styles
-            labelLarge: TextStyle(
-              fontWeight: FontWeight.w500, // Medium
-            ),
-            labelMedium: TextStyle(
-              fontWeight: FontWeight.w400, // Regular
-            ),
-            labelSmall: TextStyle(
-              fontWeight: FontWeight.w300, // Light
-            ),
+        textTheme: GoogleFonts.interTextTheme(baseTextTheme).copyWith(
+          displayLarge: GoogleFonts.inter(
+            fontSize: 52,
+            fontWeight: FontWeight.w700, // Bold
+            letterSpacing: -0.25,
+          ),
+          displayMedium: GoogleFonts.inter(
+            fontSize: 40,
+            fontWeight: FontWeight.w600, // SemiBold
+            letterSpacing: 0,
+          ),
+          displaySmall: GoogleFonts.inter(
+            fontSize: 32,
+            fontWeight: FontWeight.w500, // Medium
+            letterSpacing: 0,
+          ),
+          // Headline styles
+          headlineLarge: GoogleFonts.inter(
+            fontSize: 28,
+            fontWeight: FontWeight.w700, // Bold
+            letterSpacing: 0,
+          ),
+          headlineMedium: GoogleFonts.inter(
+            fontSize: 24,
+            fontWeight: FontWeight.w600, // SemiBold
+            letterSpacing: 0,
+          ),
+          headlineSmall: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w500, // Medium
+            letterSpacing: 0,
+          ),
+          // Title styles
+          titleLarge: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600, // SemiBold
+            letterSpacing: 0,
+          ),
+          titleMedium: GoogleFonts.inter(
+            fontSize: 15,
+            fontWeight: FontWeight.w500, // Medium
+            letterSpacing: 0.15,
+          ),
+          titleSmall: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w500, // Medium
+            letterSpacing: 0.1,
+          ),
+          // Body styles
+          bodyLarge: GoogleFonts.inter(
+            fontSize: 15,
+            fontWeight: FontWeight.w400, // Regular
+            letterSpacing: 0.5,
+          ),
+          bodyMedium: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w400, // Regular
+            letterSpacing: 0.25,
+          ),
+          bodySmall: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w400, // Regular
+            letterSpacing: 0.4,
+          ),
+          // Label styles
+          labelLarge: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w500, // Medium
+            letterSpacing: 0.1,
+          ),
+          labelMedium: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w400, // Regular
+            letterSpacing: 0.5,
+          ),
+          labelSmall: GoogleFonts.inter(
+            fontSize: 10,
+            fontWeight: FontWeight.w300, // Light
+            letterSpacing: 0.5,
           ),
         ),
         // Flat Design - ElevatedButton Theme
         elevatedButtonTheme: ElevatedButtonThemeData(
           style:
               ElevatedButton.styleFrom(
-                elevation: 0, // Flat 디자인 - 그림자 제거
-                backgroundColor: cs.primaryContainer,
-                foregroundColor: cs.onPrimaryContainer,
-                shadowColor: Colors.transparent, // 그림자 색상 투명
+                elevation: 0,
+                backgroundColor: cs.primary,
+                foregroundColor: cs.onPrimary,
+                shadowColor: Colors.transparent,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
+                  horizontal: 28,
                   vertical: 16,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32), // 더 둥근 모서리
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 textStyle: const TextStyle(
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600, // 더 굵은 폰트
                   fontSize: 16,
                 ),
               ).copyWith(
-                // Hover, Focus, Pressed 상태에서도 elevation 0 유지
                 overlayColor: WidgetStateProperty.resolveWith<Color?>((
                   Set<WidgetState> states,
                 ) {
                   if (states.contains(WidgetState.pressed)) {
-                    return const Color(
-                      0xFFFFFFFF,
-                    ).withValues(alpha: 0.10); // 클릭 시 살짝 어둡게
+                    return Colors.black.withValues(alpha: 0.15);
                   }
                   if (states.contains(WidgetState.hovered)) {
-                    return const Color(
-                      0xFFFFFFFF,
-                    ).withValues(alpha: 0.06); // 호버 시 아주 살짝
+                    return Colors.black.withValues(alpha: 0.08);
                   }
                   return null;
                 }),

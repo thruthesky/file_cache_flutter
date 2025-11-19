@@ -8,21 +8,21 @@ import 'package:philgo/widgets/user/user_ready.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileEditScreen extends StatefulWidget {
   // You may add routeName with dynamic parameters if needed like this:
   // static const String routeName = '/screen-name/:id';
   // And update the push and go methods accordingly like below.
   // static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName.replaceFirst(':id'));
-  static const String routeName = '/profile';
+  static const String routeName = '/edit-profile';
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
-  const ProfileScreen({super.key});
+  const ProfileEditScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileEditScreen> createState() => _ProfileEditScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
@@ -91,10 +91,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTapDelete: () async {
                     try {
                       await philgoApiFileDelete(login.photoUrl);
-                    } finally {
-                      await philgoApiUserUpdate({'photo_url': ''});
+                      final updatedUser = await philgoApiUserUpdate({
+                        'photo_url': '',
+                      });
                       if (context.mounted) {
-                        AppState.of(context).deletePhotoUrl();
+                        AppState.of(context).setUser(updatedUser);
+                        showSuccessSnackBar(context, 'Profile photo deleted');
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        showErrorSnackBar(
+                          context,
+                          'Failed to delete photo: $e',
+                        );
                       }
                     }
                   },
@@ -119,6 +128,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   horizontal: 24,
                   vertical: 4.0,
                 ),
+                // Disable nickname field if user already has a nickname
+                enabled: user.nickname.isEmpty,
               ),
               SizedBox(height: 8),
               Divider(
@@ -239,8 +250,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                           SizedBox(height: 8),
-                          // TODO: Change the value of 'N' to whatever value must be sent via the API in order to save the gender as 'Prefer not to say'
-                          // I added this option because I saw in the new.philgo.com website that the 'Edit Profile' page had this option
                           Row(
                             children: [
                               SizedBox(
@@ -304,8 +313,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // API 호출을 위한 데이터 준비
       final data = <String, dynamic>{};
 
-      // 닉네임은 필수
-      data['nickname'] = _nicknameController.text.trim();
+      // 닉네임: 기존 닉네임이 없을 때만 업데이트 (첫 설정 시에만)
+      if (login.nickname.isEmpty) {
+        data['nickname'] = _nicknameController.text.trim();
+      }
 
       // 이름이 입력되었으면 추가
       data['name'] = _nameController.text.trim();

@@ -433,5 +433,434 @@
   "imageDeletedSuccess": "Image deleted successfully",
   "@imageDeletedSuccess": {
     "description": "Success message after deleting an image"
+  },
+  "alert": "Alert",
+  "@alert": {
+    "description": "Alert dialog title"
+  },
+  "postWithCommentsCannotBeDeleted": "Posts with comments cannot be deleted",
+  "@postWithCommentsCannotBeDeleted": {
+    "description": "Error message when trying to delete a post that has comments"
+  },
+  "postWithCommentsCannotBeEdited": "Posts with comments cannot be edited",
+  "@postWithCommentsCannotBeEdited": {
+    "description": "Error message when trying to edit a post that has comments"
+  },
+  "companyDirectoryTitle": "Company Directory",
+  "@companyDirectoryTitle": {
+    "description": "Title for company directory screen"
+  },
+  "addCompany": "Add Company",
+  "@addCompany": {
+    "description": "Button text for adding a new company"
+  },
+  "companyDirectoryDescription": "When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.",
+  "@companyDirectoryDescription": {
+    "description": "Description text for company directory"
+  },
+  "registerCompany": "Register",
+  "@registerCompany": {
+    "description": "Button text for registering a company"
+  },
+  "updateCompany": "Update Company",
+  "@updateCompany": {
+    "description": "Button text for updating a company"
+  },
+  "companiesRegistered": "{count, plural, =0{Total 0 companies registered.} =1{Total 1 company registered.} other{Total {count} companies registered.}}",
+  "@companiesRegistered": {
+    "description": "Text showing number of companies registered",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewMore": "View More",
+  "@viewMore": {
+    "description": "Button text to view more items"
+  },
+  "noRegisteredCompanies": "No registered companies.",
+  "@noRegisteredCompanies": {
+    "description": "Empty state message when no companies are registered"
+  },
+  "registerCompanyPrompt": "Be the first to register a company in this category!",
+  "@registerCompanyPrompt": {
+    "description": "Prompt text encouraging users to register a company"
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Label for location information"
+  },
+  "contactInformation": "Contact Information",
+  "@contactInformation": {
+    "description": "Section title for contact information"
+  },
+  "mobileNumber": "Mobile Number",
+  "@mobileNumber": {
+    "description": "Label for mobile number"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Label for description section"
+  },
+  "familySite": "Family Site",
+  "@familySite": {
+    "description": "Label for family site section"
+  },
+  "basicInformation": "Basic Information",
+  "@basicInformation": {
+    "description": "Section title for basic information"
+  },
+  "companyName": "Company Name",
+  "@companyName": {
+    "description": "Label for company name field"
+  },
+  "enterCompanyName": "Enter company name",
+  "@enterCompanyName": {
+    "description": "Hint text for company name field"
+  },
+  "companyNameRequired": "Company name is required",
+  "@companyNameRequired": {
+    "description": "Validation message for company name"
+  },
+  "companyTitle": "Company Title",
+  "@companyTitle": {
+    "description": "Label for company title field"
+  },
+  "enterCompanyTitle": "Enter company title or slogan",
+  "@enterCompanyTitle": {
+    "description": "Hint text for company title field"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Label for category field"
+  },
+  "selectCategory": "Select category",
+  "@selectCategory": {
+    "description": "Hint text for category dropdown"
+  },
+  "pleaseSelectCategory": "Please select a category",
+  "@pleaseSelectCategory": {
+    "description": "Error message for category selection"
+  },
+  "enterDescription": "Enter company description",
+  "@enterDescription": {
+    "description": "Hint text for description field"
+  },
+  "locationInformation": "Location Information",
+  "@locationInformation": {
+    "description": "Section title for location information"
+  },
+  "enterLocation": "Enter location (e.g., Manila, Cebu)",
+  "@enterLocation": {
+    "description": "Hint text for location field"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Label for address field"
+  },
+  "enterAddress": "Enter detailed address",
+  "@enterAddress": {
+    "description": "Hint text for address field"
+  },
+  "enterMobileNumber": "Enter mobile number",
+  "@enterMobileNumber": {
+    "description": "Hint text for mobile number field"
+  },
+  "images": "Images",
+  "@images": {
+    "description": "Section title for images"
+  },
+  "logoImage": "Logo Image",
+  "@logoImage": {
+    "description": "Label for logo image field"
+  },
+  "titleImage": "Title Image",
+  "@titleImage": {
+    "description": "Label for title image field"
+  },
+  "businessLicense": "Business License",
+  "@businessLicense": {
+    "description": "Label for business license field"
+  },
+  "tapToUploadImage": "Tap to upload image",
+  "@tapToUploadImage": {
+    "description": "Hint text for image upload"
+  },
+  "companyRegistered": "Company registered successfully",
+  "@companyRegistered": {
+    "description": "Success message for company registration"
+  },
+  "companyUpdated": "Company updated successfully",
+  "@companyUpdated": {
+    "description": "Success message for company update"
+  },
+  "mobileContactMethod": "Mobile Contact Method",
+  "@mobileContactMethod": {
+    "description": "Label for mobile contact method selection"
+  },
+  "sendText": "Send Text",
+  "@sendText": {
+    "description": "Option for text message contact method"
+  },
+  "makeCall": "Make Call",
+  "@makeCall": {
+    "description": "Option for phone call contact method"
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Label for location field"
+  },
+  "guideWelcomeTitle": "Welcome to PhilGo!",
+  "@guideWelcomeTitle": {
+    "description": "Welcome title in app guide"
+  },
+  "guideWelcomeSubtitle": "Share and communicate various information\nin the Philippines' largest Korean community",
+  "@guideWelcomeSubtitle": {
+    "description": "Welcome subtitle in app guide"
+  },
+  "guideFeaturesTitle": "App Features",
+  "@guideFeaturesTitle": {
+    "description": "Features section title in app guide"
+  },
+  "guideFeatureCommunityTitle": "Community",
+  "@guideFeatureCommunityTitle": {
+    "description": "Community feature title"
+  },
+  "guideFeatureCommunityDesc": "Share and communicate information on various boards",
+  "@guideFeatureCommunityDesc": {
+    "description": "Community feature description"
+  },
+  "guideFeatureChatTitle": "Chat",
+  "@guideFeatureChatTitle": {
+    "description": "Chat feature title"
+  },
+  "guideFeatureChatDesc": "Connect quickly through real-time chat",
+  "@guideFeatureChatDesc": {
+    "description": "Chat feature description"
+  },
+  "guideFeatureDirectoryTitle": "Business Directory",
+  "@guideFeatureDirectoryTitle": {
+    "description": "Business directory feature title"
+  },
+  "guideFeatureDirectoryDesc": "Find Korean business information in the Philippines",
+  "@guideFeatureDirectoryDesc": {
+    "description": "Business directory feature description"
+  },
+  "guideFeatureWriteTitle": "Write",
+  "@guideFeatureWriteTitle": {
+    "description": "Write feature title"
+  },
+  "guideFeatureWriteDesc": "Write and share your posts freely",
+  "@guideFeatureWriteDesc": {
+    "description": "Write feature description"
+  },
+  "guideTipsTitle": "Usage Tips",
+  "@guideTipsTitle": {
+    "description": "Tips section title in app guide"
+  },
+  "guideTip1": "Complete your profile to connect with more people",
+  "@guideTip1": {
+    "description": "First tip in app guide"
+  },
+  "guideTip2": "Enable notifications so you don't miss important news",
+  "@guideTip2": {
+    "description": "Second tip in app guide"
+  },
+  "guideTip3": "Like posts you enjoy",
+  "@guideTip3": {
+    "description": "Third tip in app guide"
+  },
+  "guideTip4": "You can bookmark frequently visited boards",
+  "@guideTip4": {
+    "description": "Fourth tip in app guide"
+  },
+  "guideFaqTitle": "Frequently Asked Questions",
+  "@guideFaqTitle": {
+    "description": "FAQ section title in app guide"
+  },
+  "guideFaqQ1": "How do I write a post?",
+  "@guideFaqQ1": {
+    "description": "First FAQ question"
+  },
+  "guideFaqA1": "Tap the \"Write\" tab at the bottom, select a board, and write your post.",
+  "@guideFaqA1": {
+    "description": "First FAQ answer"
+  },
+  "guideFaqQ2": "How do I create a chat room?",
+  "@guideFaqQ2": {
+    "description": "Second FAQ question"
+  },
+  "guideFaqA2": "In the \"Chat\" tab, tap the + button to create a new chat room.",
+  "@guideFaqA2": {
+    "description": "Second FAQ answer"
+  },
+  "guideFaqQ3": "How do I register a business?",
+  "@guideFaqQ3": {
+    "description": "Third FAQ question"
+  },
+  "guideFaqA3": "In the \"Directory\" tab, tap the \"Add Company\" button to register business information.",
+  "@guideFaqA3": {
+    "description": "Third FAQ answer"
+  },
+  "guideFaqQ4": "Where can I edit my profile?",
+  "@guideFaqQ4": {
+    "description": "Fourth FAQ question"
+  },
+  "guideFaqA4": "Go to the \"Menu\" tab and select \"Edit Profile\" to change your information.",
+  "@guideFaqA4": {
+    "description": "Fourth FAQ answer"
+  },
+  "accountWithdrawalTitle": "Account Withdrawal",
+  "@accountWithdrawalTitle": {
+    "description": "Account withdrawal screen title"
+  },
+  "withdrawalIntroTitle": "Data Delete Request",
+  "@withdrawalIntroTitle": {
+    "description": "Withdrawal intro section title"
+  },
+  "withdrawalIntroSubtitle": "PhilGo Network provides you the right to permanently delete all personal information related to your account at any time.",
+  "@withdrawalIntroSubtitle": {
+    "description": "Withdrawal intro section subtitle"
+  },
+  "withdrawalStep1Title": "Data to be Deleted",
+  "@withdrawalStep1Title": {
+    "description": "Step 1 title for data deletion"
+  },
+  "withdrawalAccountInfoTitle": "Account Identity Information",
+  "@withdrawalAccountInfoTitle": {
+    "description": "Account information section title"
+  },
+  "withdrawalAccountInfoDesc": "Email, nickname, profile image",
+  "@withdrawalAccountInfoDesc": {
+    "description": "Account information description"
+  },
+  "withdrawalUsageHistoryTitle": "App Usage History",
+  "@withdrawalUsageHistoryTitle": {
+    "description": "Usage history section title"
+  },
+  "withdrawalUsageHistoryDesc": "Chats, posts, activity logs, notification tokens",
+  "@withdrawalUsageHistoryDesc": {
+    "description": "Usage history description"
+  },
+  "withdrawalAdditionalDataTitle": "Connected Additional Data",
+  "@withdrawalAdditionalDataTitle": {
+    "description": "Additional data section title"
+  },
+  "withdrawalAdditionalDataDesc": "Cloud backups, user settings, etc.",
+  "@withdrawalAdditionalDataDesc": {
+    "description": "Additional data description"
+  },
+  "withdrawalPaymentNote": "Payment and tax documentation will be retained separately for up to 5 years as required by relevant laws before destruction.",
+  "@withdrawalPaymentNote": {
+    "description": "Note about payment data retention"
+  },
+  "withdrawalStep2Title": "Deletion Method",
+  "@withdrawalStep2Title": {
+    "description": "Step 2 title for deletion method"
+  },
+  "withdrawalEmailRequest": "Email Request",
+  "@withdrawalEmailRequest": {
+    "description": "Email request method"
+  },
+  "withdrawalStep3Title": "Processing & Timeline",
+  "@withdrawalStep3Title": {
+    "description": "Step 3 title for processing timeline"
+  },
+  "withdrawalProcessingDesc": "After confirming your request, all data will be completely deleted within 7 business days, and you will receive a completion notification email.",
+  "@withdrawalProcessingDesc": {
+    "description": "Processing timeline description"
+  },
+  "withdrawalIrreversibleNote": "Once deletion is complete, recovery is impossible, and all remaining points and subscriptions will be forfeited.",
+  "@withdrawalIrreversibleNote": {
+    "description": "Warning about irreversible deletion"
+  },
+  "withdrawalStep4Title": "Data Retention Exceptions",
+  "@withdrawalStep4Title": {
+    "description": "Step 4 title for data retention exceptions"
+  },
+  "withdrawalRetentionDesc": "Only information necessary for fraud prevention, accounting audits, and legal compliance will be retained in a minimized form for the period prescribed by relevant laws before immediate destruction.",
+  "@withdrawalRetentionDesc": {
+    "description": "Data retention exception description"
+  },
+  "withdrawalStep5Title": "Contact",
+  "@withdrawalStep5Title": {
+    "description": "Step 5 title for contact information"
+  },
+  "withdrawalContactDesc": "For additional inquiries, please contact us at philgohelp@gmail.com anytime.",
+  "@withdrawalContactDesc": {
+    "description": "Contact information description"
+  },
+  "requestWithdrawal": "Request Withdrawal",
+  "@requestWithdrawal": {
+    "description": "Button text to request account withdrawal"
+  },
+  "guideGettingStartedTitle": "Get Started",
+  "@guideGettingStartedTitle": {
+    "description": "Getting started section title"
+  },
+  "guideStep1Title": "Create Your Account",
+  "@guideStep1Title": {
+    "description": "Step 1 title"
+  },
+  "guideStep1Desc": "Sign up with your email or social accounts to get started.",
+  "@guideStep1Desc": {
+    "description": "Step 1 description"
+  },
+  "guideStep2Title": "Explore the Community",
+  "@guideStep2Title": {
+    "description": "Step 2 title"
+  },
+  "guideStep2Desc": "Browse through posts, companies, and connect with Korean community in the Philippines.",
+  "@guideStep2Desc": {
+    "description": "Step 2 description"
+  },
+  "guideStep3Title": "Share Your Story",
+  "@guideStep3Title": {
+    "description": "Step 3 title"
+  },
+  "guideStep3Desc": "Write posts, share experiences, and contribute to the community.",
+  "@guideStep3Desc": {
+    "description": "Step 3 description"
+  },
+  "guideStep4Title": "Connect with Others",
+  "@guideStep4Title": {
+    "description": "Step 4 title"
+  },
+  "guideStep4Desc": "Chat with members, join discussions, and build your network.",
+  "@guideStep4Desc": {
+    "description": "Step 4 description"
+  },
+  "bookmarked_folders": "Bookmarked Folders",
+  "@bookmarked_folders": {
+    "description": "Title for bookmarked folders dialog"
+  },
+  "no_bookmarked_folders": "No bookmarked folders",
+  "@no_bookmarked_folders": {
+    "description": "Message when there are no bookmarked folders"
+  },
+  "bookmarked_chats": "Bookmarked Chats",
+  "@bookmarked_chats": {
+    "description": "Title for bookmarked chats dialog"
+  },
+  "no_bookmarked_chats": "No bookmarked chats in this folder",
+  "@no_bookmarked_chats": {
+    "description": "Message when there are no bookmarked chats in a folder"
+  },
+  "unpin_chat_room_title": "Unpin Chat Room",
+  "@unpin_chat_room_title": {
+    "description": "Title for unpin chat room confirmation dialog"
+  },
+  "unpin_chat_room_message": "Are you sure you want to unpin this chat room?",
+  "@unpin_chat_room_message": {
+    "description": "Message for unpin chat room confirmation dialog"
+  },
+  "unpin": "Unpin",
+  "@unpin": {
+    "description": "Unpin button text"
+  },
+  "chat_room_unpinned": "Chat room unpinned successfully",
+  "@chat_room_unpinned": {
+    "description": "Success message after unpinning chat room"
   }
 }

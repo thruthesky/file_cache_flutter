@@ -5,14 +5,21 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/about/about.screen.dart';
+import 'package:philgo/screens/account/account.withdrawal.screen.dart';
+import 'package:philgo/screens/company/company.form.screen.dart';
+import 'package:philgo/screens/company/company.list.screen.dart';
+import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
+import 'package:philgo/screens/guide/app.guide.screen.dart';
+import 'package:philgo/screens/privacy/privacy.screen.dart';
+import 'package:philgo/screens/terms/terms.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/user/profile.screen.dart';
-import 'package:philgo/screens/user/user.profile.screen.dart';
+import 'package:philgo/screens/user/profile.edit.screen.dart';
+import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -246,6 +253,20 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      path: CompanyViewScreen.routeName,
+      name: CompanyViewScreen.routeName,
+      builder: (context, state) {
+        int companyIdx = 0;
+        if (state.extra is int) {
+          companyIdx = state.extra as int;
+        }
+
+        debugLog('🔍 CompanyViewScreen: Received companyIdx=$companyIdx');
+
+        return CompanyViewScreen(companyIdx: companyIdx);
+      },
+    ),
+    GoRoute(
       path: PostCreateScreen.routeName,
       name: PostCreateScreen.routeName,
       builder: (context, state) => const PostCreateScreen(),
@@ -259,20 +280,40 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: ProfileScreen.routeName,
-      name: ProfileScreen.routeName,
-      builder: (context, state) => const ProfileScreen(),
+      path: ProfileEditScreen.routeName,
+      name: ProfileEditScreen.routeName,
+      builder: (context, state) => const ProfileEditScreen(),
     ),
     GoRoute(
-      path: UserProfileScreen.routeName,
-      name: UserProfileScreen.routeName,
+      path: ProfileViewScreen.routeName,
+      name: ProfileViewScreen.routeName,
       builder: (context, state) {
         final extraMap = state.extra as Map<String, dynamic>;
-        return UserProfileScreen(
+        return ProfileViewScreen(
           firebaseUid: extraMap['firebaseUid'] as String,
           nickname: extraMap['nickname'] as String?,
           photoUrl: extraMap['photoUrl'] as String?,
         );
+      },
+    ),
+    GoRoute(
+      path: CompanyListScreen.routeName,
+      name: CompanyListScreen.routeName,
+      builder: (context, state) {
+        return const CompanyListScreen();
+      },
+    ),
+    GoRoute(
+      path: CompanyFormScreen.routeName,
+      name: CompanyFormScreen.routeName,
+      builder: (context, state) {
+        // Get company from extra parameter (for update mode)
+        Company? company;
+        if (state.extra is Company) {
+          company = state.extra as Company;
+        }
+
+        return CompanyFormScreen(company: company);
       },
     ),
     GoRoute(
@@ -282,6 +323,26 @@ final router = GoRouter(
         url: (state.extra as Map<String, dynamic>)['url'],
         title: (state.extra as Map<String, dynamic>)['title'] ?? '',
       ),
+    ),
+    GoRoute(
+      path: TermsScreen.routeName,
+      name: TermsScreen.routeName,
+      builder: (context, state) => const TermsScreen(),
+    ),
+    GoRoute(
+      path: PrivacyScreen.routeName,
+      name: PrivacyScreen.routeName,
+      builder: (context, state) => const PrivacyScreen(),
+    ),
+    GoRoute(
+      path: AppGuideScreen.routeName,
+      name: AppGuideScreen.routeName,
+      builder: (context, state) => const AppGuideScreen(),
+    ),
+    GoRoute(
+      path: AccountWithdrawalScreen.routeName,
+      name: AccountWithdrawalScreen.routeName,
+      builder: (context, state) => const AccountWithdrawalScreen(),
     ),
   ],
 );

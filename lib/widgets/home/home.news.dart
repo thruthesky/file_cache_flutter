@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/widgets/post/title.only.post.card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
@@ -159,40 +160,10 @@ class _HomeNewsState extends State<HomeNews> {
             child: Center(child: CircularProgressIndicator()),
           )
         else if (_posts.isEmpty)
-          const EmptyPosts()
+          const EmptyPostList()
         else
           PostsList(posts: _posts),
       ],
-    );
-  }
-}
-
-/// Empty state widget for when no posts are found
-class EmptyPosts extends StatelessWidget {
-  const EmptyPosts({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Center(
-        child: Column(
-          children: [
-            FaIcon(
-              FontAwesomeIcons.lightInboxOut,
-              size: 48,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No posts found',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

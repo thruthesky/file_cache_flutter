@@ -7,7 +7,6 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'sections/chat.home.dart';
 import 'sections/forum.home.dart';
-import 'sections/create.home.dart';
 import 'sections/company.home.dart';
 import 'sections/menu.home.dart';
 import '../../l10n/app_localizations.dart';
@@ -54,12 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ChatHome(), // 채팅
           ForumHome(), // 게시판
           CompanyHome(), // 업소록
-          CreateHome(), // 글쓰기
           MenuHome(), // 메뉴
         ],
       ),
       // BottomNavigationBar 추가
       bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 12,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: FaIcon(
@@ -95,14 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: FaIcon(
-              selectedItem == HomeNavigationItem.create
-                  ? FontAwesomeIcons.solidCirclePlus
-                  : FontAwesomeIcons.thinCirclePlus,
-            ),
-            label: Lo.of(context)!.create,
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(
               selectedItem == HomeNavigationItem.menu
                   ? FontAwesomeIcons.solidBars
                   : FontAwesomeIcons.thinBars,
@@ -121,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: Theme.of(context).primaryColor, // 선택된 항목 색상
         unselectedItemColor: Theme.of(
           context,
-        ).colorScheme.onSurface.withValues(alpha: 0.6), // 선택되지 않은 항목 색상
+        ).colorScheme.onSurface.withValues(alpha: 0.6),
+        iconSize: 28,
       ),
     );
   }

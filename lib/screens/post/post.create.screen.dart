@@ -4,10 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
-import 'package:philgo/widgets/post/upload.preview.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/widgets/post/loading.box.dart';
 
 class PostCreateScreen extends StatefulWidget {
   static const String routeName = '/post-create';
@@ -191,7 +189,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                             }
                           } catch (e) {
                             debugLog("파일 삭제 실패: $e");
-                            showSafeErrorDialog("파일 삭제에 실패했습니다.");
+                            showSafeErrorDialog("파일 삭제에 실패했습니다: $e");
                           }
                         },
                       ),
@@ -227,10 +225,8 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       });
                     },
                     onCancelled: () {
-                      // 업로드 취소 시 카운트 감소
-                      setState(() {
-                        uploadingCount--;
-                      });
+                      uploadingCount--;
+                      setState(() {});
                     },
                   ),
                   const Spacer(),
@@ -258,7 +254,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         debugLog('업로드된 파일 개수: ${urls.length}');
                         debugLog('파일 URL 목록: $urls');
 
-                        final created = await philgoApiCreatePost({
+                        final created = await createPost({
                           'post_id': HomePostCategory.postId,
                           'category': HomePostCategory.category,
                           'subject': _titleController.text,

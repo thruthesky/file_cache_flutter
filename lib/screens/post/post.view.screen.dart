@@ -1,7 +1,7 @@
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
-import 'package:philgo/screens/user/user.profile.screen.dart';
+import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
@@ -38,9 +38,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
     loadPost();
   }
 
-  Future loadPost() async {
+  Future<void> loadPost() async {
     try {
       final details = await getPost(widget.post.idx);
+
+      debugLog('------> LOADED POST: $details');
 
       setState(() {
         post = details;
@@ -48,22 +50,33 @@ class _PostViewScreenState extends State<PostViewScreen> {
       });
     } catch (e) {
       d('Error fetching post details: $e');
+    } finally {
       setState(() {
         isLoading = false;
       });
     }
   }
 
-  bool isMine() {
+  bool isPostMine() {
     final myIdx = AppState.of(context).user?.idx;
     if (myIdx == null) return false;
     return myIdx == widget.post.idx_member;
   }
 
+  bool isCommentMine(int idxMember) {
+    final myIdx = AppState.of(context).user?.idx;
+    if (myIdx == null) return false;
+    return myIdx == idxMember;
+  }
+
   List<String> get files => post != null ? post!.files : widget.post.files;
   String get content => post != null ? post!.content : widget.post.content;
   String get subject => post != null ? post!.subject : widget.post.subject;
-  String get nickname => post != null ? post!.nickname : widget.post.nickname;
+  String get nickname {
+    final name = post != null ? post!.nickname : widget.post.nickname;
+    return name.isEmpty ? 'No Name' : name;
+  }
+
   String get timeString => widget.post.timeString;
   String get noOfView => post != null
       ? post!.no_of_view.toString()
@@ -78,7 +91,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-
+        title: Text(subject),
         leading: BackButton(
           onPressed: () => Navigator.of(context).canPop()
               ? Navigator.of(context).pop()
@@ -99,7 +112,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 photoUrl: widget.post.photo_url,
                 onTapNickname: () {
                   /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
-                  UserProfileScreen.push(
+                  ProfileViewScreen.push(
                     context,
                     firebaseUid: widget.post.firebase_uid,
                     nickname: widget.post.nickname,
@@ -114,8 +127,43 @@ class _PostViewScreenState extends State<PostViewScreen> {
               SizedBox(height: 16),
               PostViewButtons(
                 post: post,
-                myPost: isMine(),
+                myPost: isPostMine(),
+                onLike: () async {
+                  /// Call like API and update the like count
+                  try {
+                    final updatedGood = await likePost(widget.post.idx);
+                    debugLog('Widget Post idx: ${widget.post.idx}');
+                    debugLog('Post liked, new good count: $updatedGood');
+
+                    // Update the good count in the current post object
+                    (post ?? widget.post).good = updatedGood;
+                    setState(() {});
+
+                    if (context.mounted) {
+                      showSuccessSnackBar(context, 'Post liked');
+                    }
+                  } catch (e) {
+                    d('Error liking post: $e');
+
+                    // Handle already-liked error
+                    if (e.toString().contains('already-liked')) {
+                      if (context.mounted) {
+                        showErrorSnackBar(context, 'Already liked this post');
+                      }
+                    }
+                  }
+                },
                 onTapUpdate: () async {
+                  /// 댓글이 있는 경우 수정 불가
+                  if (post!.no_of_comment >= 1) {
+                    showInfoDialog(
+                      context,
+                      Lo.of(context)!.alert,
+                      Lo.of(context)!.postWithCommentsCannotBeEdited,
+                    );
+                    return;
+                  }
+
                   final updatedPost = await PostUpdateScreen.push(
                     context,
                     post: post!,
@@ -132,6 +180,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   }
                 },
                 onTapDelete: () async {
+                  /// 댓글이 있는 경우 삭제 불가
+                  if (post!.no_of_comment >= 1) {
+                    showInfoDialog(
+                      context,
+                      Lo.of(context)!.alert,
+                      Lo.of(context)!.postWithCommentsCannotBeDeleted,
+                    );
+                    return;
+                  }
+
                   debugLog("deleted post");
 
                   final confirm = await showConfirmDialog(
@@ -139,7 +197,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   );
 
                   if (confirm) {
-                    await philgoApiDeletePost(widget.post.idx);
+                    await deletePost(widget.post.idx);
 
                     if (context.mounted) {
                       context.pop();
@@ -149,6 +207,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
               ),
               SizedBox(height: 16),
               CommentDetailListView(
+                myComment: isCommentMine,
                 noOfComment: noOfComment,
                 isLoading: isLoading,
                 post: post,
@@ -168,6 +227,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 },
                 onUpdated: (oldComment, updatedComment) {
                   oldComment.content = updatedComment.content;
+                  oldComment.files = updatedComment.files;
 
                   setState(() {});
                   showSuccessSnackBar(context, 'A comment has updated');

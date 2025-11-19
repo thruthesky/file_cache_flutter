@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/screens/company/company.list.screen.dart';
 
 class CompanyHome extends StatefulWidget {
   const CompanyHome({super.key});
@@ -10,6 +11,6 @@ class CompanyHome extends StatefulWidget {
 class _CompanyHomeState extends State<CompanyHome> {
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Company Home Screen'));
+    return CompanyListScreen();
   }
 }

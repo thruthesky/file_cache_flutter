@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/widgets/post/title.only.post.card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
@@ -74,23 +75,18 @@ class _LatestPostsState extends State<LatestPosts> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    FaIcon(
-                      widget.icon ?? FontAwesomeIcons.lightNewspaper,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.titleName,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                FaIcon(
+                  widget.icon ?? FontAwesomeIcons.lightNewspaper,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  widget.titleName,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -103,7 +99,7 @@ class _LatestPostsState extends State<LatestPosts> {
               child: Center(child: CircularProgressIndicator()),
             )
           else if (_posts.isEmpty)
-            const LatestPostsEmptyState()
+            const EmptyPostList()
           else
             LatestPostsList(posts: _posts),
         ],
@@ -112,38 +108,7 @@ class _LatestPostsState extends State<LatestPosts> {
   }
 }
 
-/// Empty state widget for when no posts are found
-class LatestPostsEmptyState extends StatelessWidget {
-  const LatestPostsEmptyState({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Center(
-        child: Column(
-          children: [
-            FaIcon(
-              FontAwesomeIcons.lightInboxOut,
-              size: 48,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No posts found',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// Posts list widget displaying posts in card format
-/// 카드 형식으로 게시물을 표시하는 목록 위젯
 class LatestPostsList extends StatelessWidget {
   final List<Post> posts;
 

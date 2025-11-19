@@ -27,7 +27,7 @@ class _MainHomeState extends State<MainHome> {
           color: Theme.of(context).colorScheme.primaryContainer,
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
                   /// Philgo icon (Philgo 아이콘)
@@ -43,7 +43,6 @@ class _MainHomeState extends State<MainHome> {
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
                     ),
                   ),
                 ],

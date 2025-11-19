@@ -1,7 +1,5 @@
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/widgets/post/loading.box.dart';
-import 'package:philgo/widgets/post/upload.preview.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -73,8 +71,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               );
             }
 
-            final filesChanged =
-               urls.length != widget.post.files.length;
+            final filesChanged = urls.length != widget.post.files.length;
 
             debugLog(
               '---------------------------------> filesChanged: $filesChanged',
@@ -165,7 +162,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                             urls.remove(url);
                             setState(() {});
 
-                            await philgoApiUpdatePost({
+                            await updatePost({
                               'idx': widget.post.idx,
                               'files': urls,
                             });
@@ -247,7 +244,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                         debugLog('업로드된 파일 개수: ${urls.length}');
                         debugLog('파일 URL 목록: $urls');
 
-                        final updated = await philgoApiUpdatePost({
+                        final updated = await updatePost({
                           'idx': widget.post.idx,
                           'subject': _titleController.text,
                           'content': _contentController.text,
