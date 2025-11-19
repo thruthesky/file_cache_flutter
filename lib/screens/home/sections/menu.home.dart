@@ -159,7 +159,7 @@ class _MenuHomeState extends State<MenuHome> {
                           WebViewScreen.push(
                             context,
                             pointPageUrl(),
-                            title: T.bannerAdTitle,
+                            title: T.pointAdTitle,
                           );
                         },
                       ),

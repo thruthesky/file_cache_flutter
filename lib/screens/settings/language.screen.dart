@@ -52,7 +52,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
     return Scaffold(
       /// AppBar
-      appBar: AppBar(title: const Text('Language Settings')),
+      appBar: AppBar(
+        title: Text('Language Settings', style: theme.textTheme.headlineMedium),
+      ),
 
       /// Body
       body: Padding(

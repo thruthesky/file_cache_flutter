@@ -74,7 +74,7 @@
             "program": "lib/main.dart",
             "deviceId": "42D835BF-0407-43B0-B9FE-80DFB4FBC929",
             "args": [
-                "--dart-define=ENV=jaeho",
+                "--dart-define=ENV=dev",
             ]
         },
         {

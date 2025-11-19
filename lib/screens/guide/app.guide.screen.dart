@@ -6,6 +6,7 @@ import 'package:philgo/screens/home/home.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
+import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 
 /// App guide screen
 /// A screen that guides users through the main features and usage of the PhilGo app.
@@ -34,7 +35,6 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
     return Scaffold(
@@ -45,8 +45,8 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
               ? Navigator.of(context).pop()
               : context.go(HomeScreen.routeName),
         ),
-        title: Text(T.appGuideTitle),
-        backgroundColor: scheme.primaryContainer,
+        title: Text(T.appGuideTitle, style: theme.textTheme.headlineMedium),
+        backgroundColor: theme.scaffoldBackgroundColor,
       ),
       // Body
       body: SingleChildScrollView(
@@ -58,7 +58,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
             IntroHeader(
               introTitle: T.guideWelcomeTitle,
               introDescription: T.guideWelcomeSubtitle,
-              introIcon: FontAwesomeIcons.lightHandWave,
+              introWidget: PhilGoLogoTriangles(animated: true, size: 128),
             ),
             SizedBox(height: sp.s32),
 

@@ -336,7 +336,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: scheme.onSecondary,
         title: Text(
           widget.company == null ? T.registerCompany : T.updateCompany,
           style: theme.textTheme.headlineMedium,
