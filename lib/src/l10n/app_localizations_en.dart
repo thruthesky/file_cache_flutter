@@ -479,4 +479,32 @@ class LibTrEn extends LibTr {
   @override
   String get confirm_delete_comment_image =>
       'Are you sure you want to delete this image?';
+
+  @override
+  String get bookmarked_folders => 'Bookmarked Folders';
+
+  @override
+  String get no_bookmarked_folders => 'No bookmarked folders';
+
+  @override
+  String get bookmarked_chats => 'Bookmarked Chats';
+
+  @override
+  String get no_bookmarked_chats => 'No bookmarked chats in this folder';
+
+  @override
+  String get unpin_chat_room_title => 'Unpin Chat Room';
+
+  @override
+  String get unpin_chat_room_message =>
+      'Are you sure you want to unpin this chat room?';
+
+  @override
+  String get unpin => 'Unpin';
+
+  @override
+  String get chat_room_unpinned => 'Chat room unpinned successfully';
+
+  @override
+  String get add_to_favorites => 'Add to Favorites';
 }

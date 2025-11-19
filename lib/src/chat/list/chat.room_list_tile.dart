@@ -1,4 +1,6 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class ChatRoomListTile extends StatefulWidget {
@@ -27,47 +29,72 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
   // room name or user name
   String get name {
-    if (room != null && room!.name.isNotEmpty) {
-      return room!.name;
-    } else if (join != null &&
-        (join!.nickname.isNotEmpty || join!.name.isNotEmpty)) {
-      return join!.nickname.isNotEmpty ? join!.nickname : join!.name;
-    } else {
-      return 'no-name';
+    if (join != null) {
+      if (join!.customName.isNotEmpty) {
+        return join!.customName;
+      }
+
+      if (isSingle) {
+        return join!.userDisplayName.isNotEmpty
+            ? join!.userDisplayName
+            : 'no name';
+      } else {
+        return join!.roomName.isNotEmpty ? join!.roomName : 'No name';
+      }
     }
+
+    if (room != null) {
+      return room!.name.isNotEmpty ? room!.name : 'No room name';
+    }
+    return 'no room name';
   }
 
   // photo URL for the room or user
   String? get photoUrl {
-    if (join != null) {
-      return join!.photoUrl.isNotEmpty
-          ? join!.photoUrl
-          : join!.imageUrl.isNotEmpty
-          ? join!.imageUrl
-          : null;
+    if (isSingle && join != null) {
+      return join!.userPhotoUrl.isNotEmpty ? join!.userPhotoUrl : null;
     }
-
-    if (room != null && room?.imageUrl?.isNotEmpty == true) {
-      return room!.imageUrl;
-    }
-
     return null;
   }
 
-  int get unreadCount {
-    if (join != null) return join!.unreadMessageCount;
+  int get unread {
+    String j = join.toString();
+    debugPrint(j);
+    if (join != null) return join!.unread;
     return 0;
   }
 
   String get subTitle {
-    if (join != null) return join!.lastText;
+    if (join?.lastMessage.text != null) return join!.lastMessage.text;
     if (room != null) return room!.description;
     return '';
   }
 
   int get lastMessageAt {
-    if (join != null) return join!.lastMessageAt;
+    if (join?.lastMessage.sentAt != null) {
+      return join!.lastMessage.sentAt;
+    }
     return 0;
+  }
+
+  /// 채팅방 고정 여부 확인
+  bool get isPinned {
+    return UserService.instance.pinnedChatRooms.contains(roomId);
+  }
+
+  /// 채팅방 고정/고정 해제 토글
+  Future<void> togglePinned() async {
+    if (loginUid() == null) return;
+
+    final ref = FirebaseDatabase.instance.ref('users/${myUid()}/pinnedChatRooms/$roomId');
+
+    if (isPinned) {
+      // 고정 해제
+      await ref.remove();
+    } else {
+      // 고정
+      await ref.set(true);
+    }
   }
 
   @override
@@ -137,9 +164,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   ),
               ],
             ),
-        trailing: showBadge && (unreadCount > 0)
-            ? buildUnreadBadge(unreadCount)
-            : null,
+        trailing: buildTrailing(showBadge),
         onTap: onTap ?? () => widget.onTap(roomId),
       ),
     );
@@ -157,6 +182,40 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         ),
 
         // Don't show online status if user is blocked
+      ],
+    );
+  }
+
+  /// 채팅방 타일 우측 트레일링 위젯 (읽지 않은 메시지 배지 + 고정 아이콘)
+  Widget buildTrailing(bool showBadge) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 읽지 않은 메시지 배지
+        if (showBadge && unread > 0) ...[
+          buildUnreadBadge(unread),
+          const SizedBox(width: 8),
+        ],
+        // 고정 아이콘 버튼
+        ValueListenableBuilder<Set<String>>(
+          valueListenable: UserService.instance.pinnedChatRoomsStream,
+          builder: (context, pinnedRooms, _) {
+            final isPinnedNow = pinnedRooms.contains(roomId);
+            return IconButton(
+              icon: FaIcon(
+                FontAwesomeIcons.thumbtack,
+                // 고정된 경우 노란색, 아닌 경우 회색
+                color: isPinnedNow
+                    ? Colors.yellow[700]
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                size: 18,
+              ),
+              onPressed: togglePinned,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            );
+          },
+        ),
       ],
     );
   }

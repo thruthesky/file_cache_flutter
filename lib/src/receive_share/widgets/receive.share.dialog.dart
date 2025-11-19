@@ -17,25 +17,29 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
 
   Map<String, String> status = {};
 
-  String getRoomName(ChatJoin room) {
-    if (room.nickname.isNotEmpty || room.name.isNotEmpty) {
-      return room.nickname.isNotEmpty ? room.nickname : room.name;
+  String getRoomName(ChatJoin join) {
+    if (join.customName != null && join.customName!.isNotEmpty) {
+      return join.customName!;
+    }
+
+    if (isSingleChatRoom(join.id)) {
+      return join.userDisplayName.isNotEmpty ? join.userDisplayName : 'no name';
     } else {
-      return 'no-name';
+      return join.roomName.isNotEmpty ? join.roomName : 'No room name';
     }
   }
 
   Future<void> sendToChat(ChatJoin room) async {
-    status[room.id!] = 'sending';
+    status[room.id] = 'sending';
     setState(() {});
     try {
-      await sendReceiveShareToChat(room.id!, widget.data);
-      status[room.id!] = 'sent';
+      await sendReceiveShareToChat(room.id, widget.data);
+      status[room.id] = 'sent';
       setState(() {});
     } catch (e) {
       if (mounted) {
         showErrorDialog(context, e.toString());
-        status[room.id!] = '';
+        status[room.id] = '';
         setState(() {});
       }
     }
@@ -147,36 +151,36 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
               ),
               Expanded(
                 child: ChatRoomJoinListBuilder(
-                  builder: (context, room) => Card(
-                    key: Key(room.id!),
+                  builder: (context, join) => Card(
+                    key: Key(join.id),
                     child: ListTile(
-                      leading: Avatar(photoUrl: room.photoUrl),
-                      title: Text(getRoomName(room)),
+                      leading: Avatar(photoUrl: join.userPhotoUrl),
+                      title: Text(getRoomName(join)),
                       trailing: OutlinedButton(
                         style: ButtonStyle(
                           visualDensity: VisualDensity.compact,
                         ),
-                        onPressed: status[room.id] == 'sending'
+                        onPressed: status[join.id] == 'sending'
                             ? null
                             : () async {
-                                if (status[room.id] == 'sent') {
+                                if (status[join.id] == 'sent') {
                                   if (Config.globalContext.mounted) {
                                     ChatRoomScreen.push(
                                       Config.globalContext,
-                                      room.id!,
+                                      join.id,
                                     );
                                   }
                                   return;
                                 }
-                                sendToChat(room);
+                                sendToChat(join);
                               },
-                        child: status[room.id] == 'sending'
+                        child: status[join.id] == 'sending'
                             ? SizedBox(
                                 height: 16,
                                 width: 16,
                                 child: CircularProgressIndicator.adaptive(),
                               )
-                            : status[room.id] == 'sent'
+                            : status[join.id] == 'sent'
                             ? Text(LibTr.of(context)!.receive_share_open)
                             : Text(LibTr.of(context)!.receive_share_send),
                       ),

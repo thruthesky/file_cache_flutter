@@ -134,5 +134,14 @@
     "receive_share": "공유 받기",
     "view_profile": "보기",
     "confirmDiscard": "작성 중인 내용을 버리시겠습니까?",
-    "confirm_delete_comment_image": "이 이미지를 삭제하시겠습니까?"
+    "confirm_delete_comment_image": "이 이미지를 삭제하시겠습니까?",
+    "bookmarked_folders": "북마크 폴더",
+    "no_bookmarked_folders": "북마크된 폴더가 없습니다",
+    "bookmarked_chats": "북마크된 채팅",
+    "no_bookmarked_chats": "이 폴더에 북마크된 채팅이 없습니다",
+    "unpin_chat_room_title": "채팅방 고정 해제",
+    "unpin_chat_room_message": "이 채팅방의 고정을 해제하시겠습니까?",
+    "unpin": "고정 해제",
+    "chat_room_unpinned": "채팅방 고정이 해제되었습니다",
+    "add_to_favorites": "즐겨찾기에 추가"
 }

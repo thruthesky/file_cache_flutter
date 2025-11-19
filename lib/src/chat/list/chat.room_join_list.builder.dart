@@ -19,17 +19,6 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
     );
   }
 
-  // Widget buildChatRoomList(String uid) {
-  //   return FirebaseDatabaseListView(
-  //     reverseQuery: true,
-  //     query: roomQuery(RoomOrder.order, uid),
-  //     pageSize: 20,
-  //     itemBuilder: (context, snapshot) {
-  //       return builder(context, ChatJoin.fromSnapshot(snapshot));
-  //     },
-  //   );
-  // }
-
   Widget buildChatRoomList(String uid) {
     return FirebaseDatabaseQueryBuilder(
       reverseQuery: true,

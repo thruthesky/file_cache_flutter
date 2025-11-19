@@ -463,4 +463,31 @@ class LibTrZh extends LibTr {
 
   @override
   String get confirm_delete_comment_image => '确定要删除此图片吗？';
+
+  @override
+  String get bookmarked_folders => '书签文件夹';
+
+  @override
+  String get no_bookmarked_folders => '没有书签文件夹';
+
+  @override
+  String get bookmarked_chats => '书签聊天';
+
+  @override
+  String get no_bookmarked_chats => '此文件夹中没有书签聊天';
+
+  @override
+  String get unpin_chat_room_title => '取消固定聊天室';
+
+  @override
+  String get unpin_chat_room_message => '您确定要取消固定此聊天室吗？';
+
+  @override
+  String get unpin => '取消固定';
+
+  @override
+  String get chat_room_unpinned => '聊天室已取消固定';
+
+  @override
+  String get add_to_favorites => '添加到收藏夹';
 }

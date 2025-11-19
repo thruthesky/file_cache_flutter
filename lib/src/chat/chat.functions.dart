@@ -124,9 +124,7 @@ bool isOpenChatSnapshot(DataSnapshot snapshot) {
 Future<void> resetUnreadMessageCounter(String roomId) async {
   if (loginUid() == null) return;
 
-  final unreadCountRef = joinRef(
-    loginUid()!,
-  ).child(roomId).child(UNREAD_MESSAGE_COUNT);
+  final unreadCountRef = joinRef(loginUid()!).child(roomId).child(UNREAD);
 
   await unreadCountRef.set(0);
 }
@@ -309,7 +307,7 @@ Future<String> sendChatProtocolMessage({
   await ref.set({
     SENDER_UID: myUid(),
     PROTOCOL: protocol,
-    CREATED_AT: ServerValue.timestamp,
+    SENT_AT: ServerValue.timestamp,
   });
   return ref.key!;
 }
@@ -346,7 +344,7 @@ Future<void> joinChatRoom(ChatRoom room) async {
       final snapshot = await myJoinRoomRef(room.id).get();
 
       Map<String, dynamic> data = {
-        UNREAD_MESSAGE_COUNT: 0,
+        UNREAD: 0,
         ROOM_NAME: room.name,
         ROOM_IMAGE_URL: room.imageUrl,
       };
@@ -448,7 +446,6 @@ Future<ChatRoom?> getChatRoom(String roomId) async {
 Future<String> sendMessage({
   required String roomId,
   required String text,
-  String? imageUrl,
   List<String>? urls,
   String? protocol,
 }) async {
@@ -458,9 +455,8 @@ Future<String> sendMessage({
 
   final messageData = {
     'text': cut(text, 2048, defaultValue: ""),
-    'image_url': imageUrl,
-    'sender_uid': myUid(),
-    'created_at': ServerValue.timestamp,
+    'senderUid': myUid(),
+    'sentAt': ServerValue.timestamp,
     'protocol': protocol,
   };
 

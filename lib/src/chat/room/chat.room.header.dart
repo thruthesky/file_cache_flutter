@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:dio/dio.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 /// Header widget for chat room screen showing room info and options
 class ChatRoomHeader extends StatelessWidget {
@@ -35,6 +39,10 @@ class ChatRoomHeader extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
+        /// 즐겨찾기 버튼 - 채팅방을 즐겨찾기 폴더에 추가
+        /// Firebase에서 실시간으로 즐겨찾기 상태를 확인하여 아이콘 변경
+        _FavoriteIconButton(roomId: roomId),
+
         // Push Notification Toggle
         PushNotificationIcon(subscriptionId: roomId, reverse: true),
 
@@ -386,5 +394,297 @@ class ChatRoomHeader extends StatelessWidget {
       return room!.name;
     }
     return "no-name";
+  }
+}
+
+/// 즐겨찾기 아이콘 버튼 - 실시간으로 즐겨찾기 상태를 확인하여 아이콘 표시
+/// Firebase의 chat/favorites 경로를 직접 구독하여 실시간 업데이트
+class _FavoriteIconButton extends StatefulWidget {
+  final String roomId;
+
+  const _FavoriteIconButton({required this.roomId});
+
+  @override
+  State<_FavoriteIconButton> createState() => _FavoriteIconButtonState();
+}
+
+class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
+  final _isFavoritedNotifier = ValueNotifier<bool>(false);
+  StreamSubscription<DatabaseEvent>? _favoritesSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToFavorites();
+  }
+
+  @override
+  void dispose() {
+    _favoritesSubscription?.cancel();
+    _isFavoritedNotifier.dispose();
+    super.dispose();
+  }
+
+  /// Firebase에서 즐겨찾기 상태를 실시간으로 구독
+  void _listenToFavorites() {
+    if (loginUid() == null) return;
+
+    final database = FirebaseDatabase.instance;
+    final favoritesRef = database.ref('chat/favorites/${loginUid()}');
+
+    _favoritesSubscription = favoritesRef.onValue.listen((event) {
+      bool isFavorited = false;
+
+      if (event.snapshot.exists && event.snapshot.value != null) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>;
+
+        // 모든 폴더를 순회하며 현재 roomId가 있는지 확인
+        for (var roomsData in data.values) {
+          if (roomsData is Map && roomsData.containsKey(widget.roomId)) {
+            isFavorited = true;
+            break;
+          }
+        }
+      }
+
+      _isFavoritedNotifier.value = isFavorited;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (loginUid() == null) {
+      return IconButton(
+        onPressed: () => _showFavoritesModal(context),
+        icon: const Icon(Icons.star_border),
+        tooltip: LibTr.of(context)!.add_to_favorites,
+      );
+    }
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isFavoritedNotifier,
+      builder: (context, isFavorited, child) {
+        return IconButton(
+          onPressed: () => _showFavoritesModal(context),
+          icon: Icon(
+            isFavorited ? Icons.star : Icons.star_border,
+            color: isFavorited ? Colors.amber : null,
+          ),
+          tooltip: LibTr.of(context)!.add_to_favorites,
+        );
+      },
+    );
+  }
+
+  /// 즐겨찾기 모달 표시
+  void _showFavoritesModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => _FavoritesModal(roomId: widget.roomId),
+    );
+  }
+}
+
+/// 즐겨찾기 폴더 모달 위젯 - 채팅방을 즐겨찾기 폴더에 추가/제거하는 모달
+class _FavoritesModal extends StatefulWidget {
+  final String roomId;
+
+  const _FavoritesModal({required this.roomId});
+
+  @override
+  State<_FavoritesModal> createState() => _FavoritesModalState();
+}
+
+class _FavoritesModalState extends State<_FavoritesModal> {
+  final Dio _dio = Dio();
+  Set<String> selectedFolders = {};
+  bool isLoading = false;
+  bool isLoadingInitial = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentFavorites();
+  }
+
+  /// 현재 채팅방이 속한 즐겨찾기 폴더 목록 로드
+  /// Firebase에서 각 폴더를 확인하여 현재 채팅방이 포함되어 있는지 체크
+  Future<void> _loadCurrentFavorites() async {
+    if (loginUid() == null) {
+      setState(() {
+        isLoadingInitial = false;
+      });
+      return;
+    }
+
+    setState(() {
+      isLoadingInitial = true;
+    });
+
+    try {
+      final database = FirebaseDatabase.instance;
+      final favoritesRef = database.ref('chat/favorites/${loginUid()}');
+      final snapshot = await favoritesRef.get();
+
+      if (snapshot.exists && snapshot.value != null) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+
+        // 각 폴더를 순회하며 현재 roomId가 있는지 확인
+        data.forEach((folderName, roomsData) {
+          if (roomsData is Map) {
+            // roomsData 맵에 현재 roomId가 키로 존재하는지 확인
+            if (roomsData.containsKey(widget.roomId)) {
+              selectedFolders.add(folderName.toString());
+            }
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading current favorites: $e');
+    } finally {
+      setState(() {
+        isLoadingInitial = false;
+      });
+    }
+  }
+
+  /// 즐겨찾기 폴더 토글 - 폴더를 추가하거나 제거
+  Future<void> _toggleFolder(String folderName) async {
+    if (loginUid() == null) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // API 호출하여 즐겨찾기 추가/제거
+      final response = await _dio.post(
+        'https://us-central1-philgo-64b1a.cloudfunctions.net/onFavorite',
+        data: {
+          'myUid': loginUid(),
+          'roomId': widget.roomId,
+          'folderName': folderName,
+        },
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          if (selectedFolders.contains(folderName)) {
+            selectedFolders.remove(folderName);
+          } else {
+            selectedFolders.add(folderName);
+          }
+        });
+
+        if (mounted) {
+          showSuccessSnackBar(
+            context,
+            selectedFolders.contains(folderName)
+                ? 'Added to $folderName'
+                : 'Removed from $folderName',
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showErrorSnackBar(context, 'Failed to update favorite: $e');
+      }
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          /// 헤더 - 제목과 닫기 버튼
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Add to Favorites',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                  tooltip: LibTr.of(context)!.close,
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+
+          /// 즐겨찾기 폴더 목록 - UserService에서 가져온 폴더들 표시
+          Flexible(
+            child: isLoadingInitial
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : ValueListenableBuilder<List<Map<String, dynamic>>>(
+                    valueListenable: UserService.instance.favoriteFoldersStream,
+                    builder: (context, folders, child) {
+                      if (folders.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            LibTr.of(context)!.no_bookmarked_folders,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: folders.length,
+                        itemBuilder: (context, index) {
+                          final folder = folders[index];
+                          final folderName = folder['folderName'] as String;
+                          final isSelected =
+                              selectedFolders.contains(folderName);
+
+                          return ListTile(
+                            leading: Checkbox(
+                              value: isSelected,
+                              onChanged: isLoading
+                                  ? null
+                                  : (value) => _toggleFolder(folderName),
+                            ),
+                            title: Text(folderName),
+                            subtitle: Text(
+                              '${folder['countFavorites']} chats',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            onTap:
+                                isLoading ? null : () => _toggleFolder(folderName),
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ),
+
+          if (isLoading && !isLoadingInitial)
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
+        ],
+      ),
+    );
   }
 }

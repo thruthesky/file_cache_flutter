@@ -602,5 +602,14 @@
     "receive_share": "受信共有",
     "view_profile": "プロフィールを見る",
     "confirmDiscard": "作成中の内容を破棄してもよろしいですか？",
-    "confirm_delete_comment_image": "この画像を削除してもよろしいですか？"
+    "confirm_delete_comment_image": "この画像を削除してもよろしいですか？",
+    "bookmarked_folders": "ブックマークフォルダ",
+    "no_bookmarked_folders": "ブックマークされたフォルダがありません",
+    "bookmarked_chats": "ブックマークされたチャット",
+    "no_bookmarked_chats": "このフォルダにブックマークされたチャットがありません",
+    "unpin_chat_room_title": "チャットルームの固定を解除",
+    "unpin_chat_room_message": "このチャットルームの固定を解除してもよろしいですか？",
+    "unpin": "固定解除",
+    "chat_room_unpinned": "チャットルームの固定が解除されました",
+    "add_to_favorites": "お気に入りに追加"
 }

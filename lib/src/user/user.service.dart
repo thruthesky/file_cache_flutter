@@ -27,6 +27,16 @@ class UserService {
   int unreadSingleCount = 0;
   final unreadSingleCountStream = ValueNotifier<int>(0);
 
+  // PINNED CHAT ROOMS
+  StreamSubscription<DatabaseEvent>? pinnedChatRoomsSubscription;
+  final Set<String> pinnedChatRooms = <String>{};
+  final pinnedChatRoomsStream = ValueNotifier<Set<String>>(<String>{});
+
+  // FAVORITE FOLDER
+  StreamSubscription<DatabaseEvent>? favoriteFoldersSubscription;
+  final List<Map<String, dynamic>> favoriteFolders = [];
+  final favoriteFoldersStream = ValueNotifier<List<Map<String, dynamic>>>([]);
+
   String adminUserUid = 'RaHIcr45pvPzYdcDIv6JoW8DnSH2';
 
   /// Callback when a user taps on user recent post item
@@ -51,7 +61,8 @@ class UserService {
     if (useUserPresence) {
       initUserPresence();
     }
-
+    initPinnedChatRooms();
+    initFavoriteFolders();
     initBlockedUsers();
     initAdminUser();
   }
@@ -145,15 +156,15 @@ class UserService {
         if (event.snapshot.exists && event.snapshot.value != null) {
           final data = event.snapshot.value as Map<dynamic, dynamic>;
           data.forEach((key, room) {
-            if (room['unread_message_count'] != null) {
+            if (room[UNREAD] != null) {
               if (room['single_order'] != null) {
                 if (blockedUsers.contains(getOtherUserUidFromChatRoomId(key))) {
-                  room['unread_message_count'] = 0;
+                  room[UNREAD] = 0;
                 }
-                unreadSingleCount += room['unread_message_count'] as int;
+                unreadSingleCount += room[UNREAD] as int;
               }
 
-              unreadCount += room['unread_message_count'] as int;
+              unreadCount += room[UNREAD] as int;
             }
           });
         }
@@ -167,8 +178,79 @@ class UserService {
         // log(unreadSingleCountStream.value.toString());
       },
       onError: (error) {
-        log('-----> Failed to load unread_message_count: $error');
+        log('-----> Failed to load unread_count: $error');
       },
     );
+  }
+
+  void initPinnedChatRooms() {
+    auth.authStateChanges().listen((fa.User? user) {
+      if (user != null) {
+        pinnedChatRoomsSubscription?.cancel();
+        final pinnedChatRoomsRef = database.ref(
+          'users/${user.uid}/pinnedChatRooms',
+        );
+        pinnedChatRoomsSubscription = pinnedChatRoomsRef.onValue.listen(
+          (event) {
+            pinnedChatRooms.clear();
+
+            if (event.snapshot.exists && event.snapshot.value != null) {
+              final data = event.snapshot.value as Map<dynamic, dynamic>;
+              debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
+              data.forEach((key, value) {
+                if (value == true) {
+                  pinnedChatRooms.add(key.toString());
+                }
+              });
+            }
+            debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
+            pinnedChatRoomsStream.value = {...pinnedChatRooms};
+          },
+          onError: (error) {
+            log('-----> Failed to load pinnedChatRooms: $error');
+          },
+        );
+      } else {
+        pinnedChatRooms.clear();
+        pinnedChatRoomsSubscription?.cancel();
+      }
+    });
+  }
+
+  void initFavoriteFolders() {
+    auth.authStateChanges().listen((fa.User? user) {
+      if (user != null) {
+        favoriteFoldersSubscription?.cancel();
+        final favoriteFoldersRef = database.ref(
+          'chat/favorites-folder-list/${user.uid}',
+        );
+        favoriteFoldersSubscription = favoriteFoldersRef.onValue.listen(
+          (event) {
+            favoriteFolders.clear();
+
+            if (event.snapshot.exists && event.snapshot.value != null) {
+              final data = event.snapshot.value as Map<dynamic, dynamic>;
+              debugPrint('favoriteFoldersRef::data: ${data.toString()}');
+              data.forEach((key, value) {
+                favoriteFolders.add({
+                  'folderName': key.toString(),
+                  'countFavorites': value,
+                });
+              });
+            }
+            debugPrint(
+              'favoriteFoldersRef::favoriteFolders: ${favoriteFolders.toString()}',
+            );
+            favoriteFoldersStream.value = [...favoriteFolders];
+          },
+          onError: (error) {
+            log('-----> Failed to load favoriteFoldersRef: $error');
+          },
+        );
+      } else {
+        favoriteFolders.clear();
+        favoriteFoldersSubscription?.cancel();
+      }
+    });
   }
 }

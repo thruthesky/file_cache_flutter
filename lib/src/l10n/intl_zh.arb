@@ -602,5 +602,14 @@
     "receive_share": "接收分享",
     "view_profile": "查看个人资料",
     "confirmDiscard": "确定要丢弃正在编写的内容吗？",
-    "confirm_delete_comment_image": "确定要删除此图片吗？"
+    "confirm_delete_comment_image": "确定要删除此图片吗？",
+    "bookmarked_folders": "书签文件夹",
+    "no_bookmarked_folders": "没有书签文件夹",
+    "bookmarked_chats": "书签聊天",
+    "no_bookmarked_chats": "此文件夹中没有书签聊天",
+    "unpin_chat_room_title": "取消固定聊天室",
+    "unpin_chat_room_message": "您确定要取消固定此聊天室吗？",
+    "unpin": "取消固定",
+    "chat_room_unpinned": "聊天室已取消固定",
+    "add_to_favorites": "添加到收藏夹"
 }

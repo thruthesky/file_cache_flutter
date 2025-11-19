@@ -49,8 +49,8 @@ Future<CompanyList> getCompanies({
     debug: true,
   );
 
-  debugLog('getCompanies response type: ${response.runtimeType}');
-  debugLog('getCompanies response: $response');
+  // debugLog('getCompanies response type: ${response.runtimeType}');
+  // debugLog('getCompanies response: $response');
 
   // PHP returns object with numeric keys like {0: {...}, 1: {...}}
   // Convert to List format
@@ -106,7 +106,7 @@ Future<Company> getCompany(int idx) async {
 Future<Company?> getMyCompany() async {
   debugLog('Fetching my company');
   final response = await func('get_my_company', debug: true);
-  debugLog('My company response: $response');
+  // debugLog('My company response: $response');
 
   // If the response has a 'data' key
   if (response.containsKey('data')) {
