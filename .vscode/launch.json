@@ -74,6 +74,16 @@
             "program": "lib/main.dart",
             "deviceId": "42D835BF-0407-43B0-B9FE-80DFB4FBC929",
             "args": [
+                "--dart-define=ENV=jaeho",
+            ]
+        },
+        {
+            "name": "Philgo - Fred: Iphone SE",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "82250337-2D08-439C-A8E6-D9D11E4575F8",
+            "args": [
                 "--dart-define=ENV=dev",
             ]
         },
