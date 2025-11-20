@@ -1,4 +1,5 @@
 {
+    "@@locale": "en",
     "login": "Login",
     "@login": {
         "description": "The conventional newborn programmer greeting"
@@ -92,6 +93,7 @@
   "close": "Close",
   "@close": {"description": "Close button label"},
   "phoneAuthFailed": "Phone number verification failed",
+  "@phoneAuthFailed": {"description": "Verification failed"},
   "community": "Community",
   "@community": {
     "description": "Community category label"
@@ -606,10 +608,6 @@
   "makeCall": "Make Call",
   "@makeCall": {
     "description": "Option for phone call contact method"
-  },
-  "location": "Location",
-  "@location": {
-    "description": "Label for location field"
   },
   "guideWelcomeTitle": "Welcome to PhilGo!",
   "@guideWelcomeTitle": {
