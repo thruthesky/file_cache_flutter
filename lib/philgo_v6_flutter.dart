@@ -19,6 +19,13 @@ export 'src/chat/list/chat.room_list_tile.dart';
 export 'src/chat/list/chat.room_list_view.dart';
 export 'src/chat/list/chat.room_join_list.builder.dart';
 
+// single chat room
+export './src/chat/room/single.chat_room.dart';
+export './src/chat/room/single.chat_room.init.dart';
+export './src/chat/room/single.chat_room.header.dart';
+export './src/chat/room/single.chat_room.message_list.dart';
+
+// chat room
 export './src/chat/room/chat.room.init.dart';
 export './src/chat/room/chat.room.message_list.dart';
 export './src/chat/room/chat.room_edit.dart';

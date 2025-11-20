@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,6 +28,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   ChatRoom? get room => widget.room;
   String get roomId => join?.id ?? room!.id;
   bool get isSingle => isSingleChatRoom(roomId);
+
+  /// 즐겨찾기 상태를 관리하는 ValueNotifier
+  final _isFavoritedNotifier = ValueNotifier<bool>(false);
+  StreamSubscription<DatabaseEvent>? _favoritesSubscription;
 
   // room name or user name
   String get name {
@@ -95,6 +101,46 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       // 고정
       await ref.set(true);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToFavorites();
+  }
+
+  @override
+  void dispose() {
+    _favoritesSubscription?.cancel();
+    _isFavoritedNotifier.dispose();
+    super.dispose();
+  }
+
+  /// Firebase에서 즐겨찾기 상태를 실시간으로 구독
+  /// chat/favorites/{uid} 경로의 모든 폴더를 확인하여 현재 roomId가 존재하는지 체크
+  void _listenToFavorites() {
+    if (loginUid() == null) return;
+
+    final database = FirebaseDatabase.instance;
+    final favoritesRef = database.ref('chat/favorites/${loginUid()}');
+
+    _favoritesSubscription = favoritesRef.onValue.listen((event) {
+      bool isFavorited = false;
+
+      if (event.snapshot.exists && event.snapshot.value != null) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>;
+
+        // 모든 폴더를 순회하며 현재 roomId가 있는지 확인
+        for (var roomsData in data.values) {
+          if (roomsData is Map && roomsData.containsKey(roomId)) {
+            isFavorited = true;
+            break;
+          }
+        }
+      }
+
+      _isFavoritedNotifier.value = isFavorited;
+    });
   }
 
   @override
@@ -186,7 +232,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     );
   }
 
-  /// 채팅방 타일 우측 트레일링 위젯 (읽지 않은 메시지 배지 + 고정 아이콘)
+  /// 채팅방 타일 우측 트레일링 위젯 (읽지 않은 메시지 배지 + 즐겨찾기 아이콘 + 고정 아이콘)
   Widget buildTrailing(bool showBadge) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -196,6 +242,21 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           buildUnreadBadge(unread),
           const SizedBox(width: 8),
         ],
+        // 즐겨찾기 아이콘 - 즐겨찾기에 추가된 경우에만 노란색 별 표시
+        ValueListenableBuilder<bool>(
+          valueListenable: _isFavoritedNotifier,
+          builder: (context, isFavorited, _) {
+            if (!isFavorited) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: FaIcon(
+                FontAwesomeIcons.solidStar,
+                color: Colors.amber,
+                size: 16,
+              ),
+            );
+          },
+        ),
         // 고정 아이콘 버튼
         ValueListenableBuilder<Set<String>>(
           valueListenable: UserService.instance.pinnedChatRoomsStream,

@@ -18,7 +18,7 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 Future<T> func<T>(
   String functionName, {
   RecordType? data,
-  bool debug = true,
+  bool debug = false,
   bool alertOnError = true,
   Map<String, String>? headers,
 }) async {
@@ -37,7 +37,7 @@ Future<T> func<T>(
       final stringParams = data.map(
         (key, value) => MapEntry(key, value?.toString() ?? ''),
       );
-      // log('GET URL: $url?${Uri(queryParameters: stringParams).query}');
+      log('GET URL: $url?${Uri(queryParameters: stringParams).query}');
     }
 
     // Create Dio instance

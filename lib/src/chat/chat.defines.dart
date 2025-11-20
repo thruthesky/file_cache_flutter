@@ -34,6 +34,7 @@ class RoomOrder {
 }
 
 const String UNREAD = 'unread';
+const String LAST_READ_AT = 'lastReadAt';
 
 const String SINGLE_CHATROOM_JOIN_SEPARATOR = '---';
 

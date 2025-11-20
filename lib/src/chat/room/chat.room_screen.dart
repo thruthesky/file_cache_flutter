@@ -33,87 +33,97 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     //  Scaffold(
     //   body:
     Login(
-      builder: (uid) => ChatRoomInit(
-        id: widget.id,
-        loading: loading(),
-        onRoomReady: (init) {
-          return Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(kToolbarHeight),
-              child: ChatRoomHeader(
-                room: init.room,
-                otherUser: init.otherUser,
-                roomId: init.room.id,
-                isSingleChat: init.isSingleChat,
-                onEditTap: () => showDialog<bool>(
-                  context: context,
-                  builder: (context) => ChatRoomEdit(room: init.room),
-                ),
-                onLeave: () {
-                  leaveChatRoom(
-                    roomId: init.room.id,
-                    success: () {
-                      // Show success message
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            content: Text(
-                              LibTr.of(context)!.leftroom_successfully,
-                            ),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+      builder: (uid) {
+        if (isSingleChatRoom(widget.id) || isFirebaseUid(widget.id)) {
+          return SingleChatRoom(
+            id: widget.id,
+            homeRouteName: widget.homeRouteName,
+          );
+        }
 
-                        if (Navigator.canPop(context)) {
-                          Navigator.of(context).pop();
-                        }
-                      }
-                    },
-                    error: (e) {
-                      debugPrint('Error leaving room: $e');
-
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            content: Text(LibTr.of(context)!.error),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
-                  );
-                  init.newMessageSubscription?.cancel();
-                },
-                onBackPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.of(context).pop();
-                  } else {
-                    context.go(widget.homeRouteName);
-                  }
-                },
-              ),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: ChatRoomMessageList(
-                    room: init.room,
-                    controller: messageListController,
-                  ),
-                ),
-                ChatRoomMessageInput(
+        return ChatRoomInit(
+          id: widget.id,
+          loading: loading(),
+          onRoomReady: (init) {
+            return Scaffold(
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(kToolbarHeight),
+                child: ChatRoomHeader(
+                  room: init.room,
+                  otherUser: init.otherUser,
                   roomId: init.room.id,
-                  onSend: () {
-                    messageListController.scrollToBottom();
+                  isSingleChat: init.isSingleChat,
+                  onEditTap: () => showDialog<bool>(
+                    context: context,
+                    builder: (context) => ChatRoomEdit(room: init.room),
+                  ),
+                  onLeave: () {
+                    leaveChatRoom(
+                      roomId: init.room.id,
+                      success: () {
+                        // Show success message
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              content: Text(
+                                LibTr.of(context)!.leftroom_successfully,
+                              ),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+
+                          if (Navigator.canPop(context)) {
+                            Navigator.of(context).pop();
+                          }
+                        }
+                      },
+                      error: (e) {
+                        debugPrint('Error leaving room: $e');
+
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              content: Text(LibTr.of(context)!.error),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                    );
+                    init.newMessageSubscription?.cancel();
+                  },
+                  onBackPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.of(context).pop();
+                    } else {
+                      context.go(widget.homeRouteName);
+                    }
                   },
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ChatRoomMessageList(
+                      room: init.room,
+                      controller: messageListController,
+                    ),
+                  ),
+                  ChatRoomMessageInput(
+                    roomId: init.room.id,
+                    onSend: () {
+                      messageListController.scrollToBottom();
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+
       // Loading of the Login of the user
       loading: loading(),
       notLoggedIn: Scaffold(
