@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: IndexedStack(
         index: selectedItem.index,
         children: const [
-          MainHome(), // 채팅
+          MainHome(), // 홈
           ChatHome(), // 채팅
           ForumHome(), // 게시판
           CompanyHome(), // 업소록

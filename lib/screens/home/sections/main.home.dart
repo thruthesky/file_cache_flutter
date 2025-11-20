@@ -20,56 +20,11 @@ class _MainHomeState extends State<MainHome> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // 메인 홈 로고 영역 배경색 - primaryContainer 사용
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/img/logo/philgo_wide_logo_icon.png',
-                  height: 40,
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        /// Scrollable content area
-        Expanded(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-
-                const HomeNews(),
-
-                const SizedBox(height: 8),
-
-                /// Community posts section (커뮤니티 게시물 섹션)
-                LatestPosts(
-                  titleName: 'Community',
-                  postId: 'freetalk',
-                  icon: FontAwesomeIcons.lightComments,
-                ),
-
-                const SizedBox(height: 8),
-
-                /// QnA posts section (질문답변 게시물 섹션)
-                LatestPosts(
-                  titleName: 'QnA',
-                  postId: 'qna',
-                  icon: FontAwesomeIcons.lightCircleQuestion,
-                ),
-
-                /// Bottom spacing
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-        ),
+        // user name
+        // user photo
+        // no of posts, comments
+        // 3 of the user's latest posts and comments
+        // advertisement banner
       ],
     );
   }
