@@ -57,6 +57,9 @@ class LoJa extends Lo {
   String get menu => 'メニュー';
 
   @override
+  String get my => 'マイ';
+
+  @override
   String get loginWithPhoneTitle => '電話番号でログイン';
 
   @override
@@ -704,4 +707,61 @@ class LoJa extends Lo {
 
   @override
   String get chat_room_unpinned => 'チャットルームの固定が解除されました';
+
+  @override
+  String get myActivity => 'My Activity';
+
+  @override
+  String get myPosts => 'My Posts';
+
+  @override
+  String get myComments => 'My Comments';
+
+  @override
+  String get posts => 'Posts';
+
+  @override
+  String get noPostsYet => 'No posts yet';
+
+  @override
+  String get noCommentsYet => 'No comments yet';
+
+  @override
+  String get views => 'Views';
+
+  @override
+  String get ago => 'ago';
+
+  @override
+  String get justNow => 'just now';
+
+  @override
+  String minutesAgo(int minutes) {
+    return '${minutes}m ago';
+  }
+
+  @override
+  String hoursAgo(int hours) {
+    return '${hours}h ago';
+  }
+
+  @override
+  String daysAgo(int days) {
+    return '${days}d ago';
+  }
+
+  @override
+  String weeksAgo(int weeks) {
+    return '${weeks}w ago';
+  }
+
+  @override
+  String monthsAgo(int months) {
+    return '${months}mo ago';
+  }
+
+  @override
+  String yearsAgo(int years) {
+    return '${years}y ago';
+  }
 }

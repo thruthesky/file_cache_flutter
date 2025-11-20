@@ -3,6 +3,7 @@
 //   1. The state must be changed in multiple paces.
 //   2. The state must be used in multiples places (on the screen)
 // Or it should be globals.dart
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:philgo/router.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,35 @@ class AppState extends ChangeNotifier {
   String phoneNumber = '';
   User? user;
   int idx = 0;
+
+  // Locale (언어 설정)
+  Locale? _locale;
+
+  static const List<String> supportedLanguageCodes = ['en', 'ko', 'ja', 'zh'];
+
+  Locale? get locale => _locale;
+
+  void setLocale(Locale locale) {
+    _locale = locale;
+    notifyListeners();
+  }
+
+  void initializeLocaleFromDevice() {
+    if (_locale != null) {
+      return;
+    }
+
+    final deviceLocale = ui.PlatformDispatcher.instance.locale;
+    final deviceLanguageCode = deviceLocale.languageCode;
+
+    if (supportedLanguageCodes.contains(deviceLanguageCode)) {
+      _locale = Locale(deviceLanguageCode);
+    } else {
+      _locale = const Locale('ko');
+    }
+
+    notifyListeners();
+  }
 
   void setFirebaseLogin(String uid, String phoneNumber) {
     uid = uid;

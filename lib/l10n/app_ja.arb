@@ -16,6 +16,7 @@
     "create": "投稿",
     "company": "業者録",
     "menu": "メニュー",
+    "my": "マイ",
     "sendSmsCode": "SMSコードを送信",
     "noOfPosts": "{count}件の投稿",
     "writePost": "投稿する",

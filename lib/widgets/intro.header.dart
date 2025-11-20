@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:philgo/globals.dart';
+import 'package:philgo/themes/app.spacing.dart';
 
 class IntroHeader extends StatelessWidget {
   const IntroHeader({
     super.key,
     required this.introTitle,
     required this.introDescription,
-    required this.introIcon,
+    this.introIcon,
+    this.introWidget,
   });
 
   final String introTitle;
   final String introDescription;
-  final IconData introIcon;
+  final IconData? introIcon;
+  final Widget? introWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,12 @@ class IntroHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(introIcon, size: 48, color: scheme.primary),
+          if (introWidget != null) ...[
+            introWidget!,
+          ] else if (introIcon != null) ...[
+            Icon(introIcon, size: 48, color: scheme.primary),
+          ],
+
           SizedBox(height: sp.s16),
           Text(
             introTitle,

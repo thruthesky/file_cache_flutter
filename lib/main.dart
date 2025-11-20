@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/globals.dart';
@@ -17,6 +16,7 @@ import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
+import 'package:philgo/themes/app.theme.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -51,6 +51,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppState.of(context).initializeLocaleFromDevice();
+    });
 
     // ChatService.instance.initialize();
     UserService.instance.initialize(useUserPresence: true);
@@ -220,155 +224,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // 중앙 집중식 Theme 구성 (버튼 색상 등)
-    final cs = ColorScheme.fromSeed(
-      seedColor: const Color.fromARGB(255, 46, 160, 225),
-      brightness: Brightness.light,
-    );
-    final typography = Typography.material2021();
-    final baseTextTheme = typography.black;
-
-    return MaterialApp.router(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: cs,
-        textTheme: GoogleFonts.interTextTheme(baseTextTheme).copyWith(
-          displayLarge: GoogleFonts.inter(
-            fontSize: 52,
-            fontWeight: FontWeight.w700, // Bold
-            letterSpacing: -0.25,
-          ),
-          displayMedium: GoogleFonts.inter(
-            fontSize: 40,
-            fontWeight: FontWeight.w600, // SemiBold
-            letterSpacing: 0,
-          ),
-          displaySmall: GoogleFonts.inter(
-            fontSize: 32,
-            fontWeight: FontWeight.w500, // Medium
-            letterSpacing: 0,
-          ),
-          // Headline styles
-          headlineLarge: GoogleFonts.inter(
-            fontSize: 28,
-            fontWeight: FontWeight.w700, // Bold
-            letterSpacing: 0,
-          ),
-          headlineMedium: GoogleFonts.inter(
-            fontSize: 24,
-            fontWeight: FontWeight.w600, // SemiBold
-            letterSpacing: 0,
-          ),
-          headlineSmall: GoogleFonts.inter(
-            fontSize: 20,
-            fontWeight: FontWeight.w500, // Medium
-            letterSpacing: 0,
-          ),
-          // Title styles
-          titleLarge: GoogleFonts.inter(
-            fontSize: 20,
-            fontWeight: FontWeight.w600, // SemiBold
-            letterSpacing: 0,
-          ),
-          titleMedium: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight: FontWeight.w500, // Medium
-            letterSpacing: 0.15,
-          ),
-          titleSmall: GoogleFonts.inter(
-            fontSize: 13,
-            fontWeight: FontWeight.w500, // Medium
-            letterSpacing: 0.1,
-          ),
-          // Body styles
-          bodyLarge: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight: FontWeight.w400, // Regular
-            letterSpacing: 0.5,
-          ),
-          bodyMedium: GoogleFonts.inter(
-            fontSize: 13,
-            fontWeight: FontWeight.w400, // Regular
-            letterSpacing: 0.25,
-          ),
-          bodySmall: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.w400, // Regular
-            letterSpacing: 0.4,
-          ),
-          // Label styles
-          labelLarge: GoogleFonts.inter(
-            fontSize: 13,
-            fontWeight: FontWeight.w500, // Medium
-            letterSpacing: 0.1,
-          ),
-          labelMedium: GoogleFonts.inter(
-            fontSize: 11,
-            fontWeight: FontWeight.w400, // Regular
-            letterSpacing: 0.5,
-          ),
-          labelSmall: GoogleFonts.inter(
-            fontSize: 10,
-            fontWeight: FontWeight.w300, // Light
-            letterSpacing: 0.5,
-          ),
-        ),
-        // Flat Design - ElevatedButton Theme
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style:
-              ElevatedButton.styleFrom(
-                elevation: 0,
-                backgroundColor: cs.primary,
-                foregroundColor: cs.onPrimary,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.w600, // 더 굵은 폰트
-                  fontSize: 16,
-                ),
-              ).copyWith(
-                overlayColor: WidgetStateProperty.resolveWith<Color?>((
-                  Set<WidgetState> states,
-                ) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return Colors.black.withValues(alpha: 0.15);
-                  }
-                  if (states.contains(WidgetState.hovered)) {
-                    return Colors.black.withValues(alpha: 0.08);
-                  }
-                  return null;
-                }),
-              ),
-        ),
-        // Flat Design - Card Theme
-        cardTheme: const CardThemeData(
-          elevation: 0, // Flat 디자인 - 그림자 제거
-          shadowColor: Colors.transparent,
-        ),
-        // Flat Design - AppBar Theme
-        appBarTheme: const AppBarTheme(
-          elevation: 0, // Flat 디자인 - 그림자 제거
-          scrolledUnderElevation: 0, // 스크롤 시에도 elevation 0
-          shadowColor: Colors.transparent,
-        ),
-        // Spacing Tokens 등록 (8 배수 기반)
-        extensions: const <ThemeExtension<dynamic>>[AppSpacing()],
-      ),
-      routerConfig: router,
-      localizationsDelegates: [
-        Lo.delegate,
-        LibTr.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: [...Lo.supportedLocales, ...LibTr.supportedLocales],
+    return Selector<AppState, Locale?>(
+      selector: (context, appState) => appState.locale,
+      builder: (context, locale, child) {
+        return MaterialApp.router(
+          theme: AppTheme.lightTheme,
+          routerConfig: router,
+          locale: locale, // AppState의 locale 사용
+          localizationsDelegates: [
+            Lo.delegate,
+            LibTr.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [...Lo.supportedLocales, ...LibTr.supportedLocales],
+        );
+      },
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 import 'package:philgo/widgets/information.box.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,8 +47,10 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
               ? Navigator.of(context).pop()
               : context.go(HomeScreen.routeName),
         ),
-        title: Text(T.accountWithdrawalTitle),
-        backgroundColor: scheme.primaryContainer,
+        title: Text(
+          T.accountWithdrawalTitle,
+          style: theme.textTheme.headlineMedium,
+        ),
       ),
       // Body
       body: SingleChildScrollView(

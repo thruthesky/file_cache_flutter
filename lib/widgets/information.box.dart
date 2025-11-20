@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/globals.dart';
+import 'package:philgo/themes/app.spacing.dart';
 
 class InformationBox extends StatelessWidget {
   const InformationBox({

@@ -44,16 +44,20 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
       debugLog('------> LOADED POST: $details');
 
-      setState(() {
-        post = details;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          post = details;
+          isLoading = false;
+        });
+      }
     } catch (e) {
       d('Error fetching post details: $e');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -90,8 +94,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        title: Text(subject),
         leading: BackButton(
           onPressed: () => Navigator.of(context).canPop()
               ? Navigator.of(context).pop()
@@ -137,7 +139,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                     // Update the good count in the current post object
                     (post ?? widget.post).good = updatedGood;
-                    setState(() {});
+                    if (mounted) {
+                      setState(() {});
+                    }
 
                     if (context.mounted) {
                       showSuccessSnackBar(context, 'Post liked');
@@ -173,7 +177,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     widget.post.content = updatedPost.content;
                   }
 
-                  if (updatedPost != null) {
+                  if (updatedPost != null && mounted) {
                     setState(() {
                       post = updatedPost;
                     });
@@ -222,15 +226,19 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                   post!.no_of_comment += 1;
 
-                  setState(() {});
-                  showSuccessSnackBar(context, 'A comment has replied');
+                  if (mounted) {
+                    setState(() {});
+                    showSuccessSnackBar(context, 'A comment has replied');
+                  }
                 },
                 onUpdated: (oldComment, updatedComment) {
                   oldComment.content = updatedComment.content;
                   oldComment.files = updatedComment.files;
 
-                  setState(() {});
-                  showSuccessSnackBar(context, 'A comment has updated');
+                  if (mounted) {
+                    setState(() {});
+                    showSuccessSnackBar(context, 'A comment has updated');
+                  }
                 },
                 onDeleted: (deletedComment) {
                   // Remove the deleted comment from the list
@@ -242,7 +250,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   post!.no_of_comment -= 1;
 
                   // Update UI
-                  setState(() {});
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
               ),
             ],
@@ -257,8 +267,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
             onCreated: (createdComment) {
               post?.comments.add(createdComment);
               post!.no_of_comment += 1;
-              setState(() {});
-              showSuccessSnackBar(context, 'Comment has created');
+              if (mounted) {
+                setState(() {});
+                showSuccessSnackBar(context, 'Comment has created');
+              }
             },
           ),
         ),

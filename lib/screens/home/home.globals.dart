@@ -6,5 +6,5 @@ enum HomeNavigationItem {
   chat, // 채팅
   forum, // 게시판
   company, // 업소록
-  menu, // 메뉴
+  my, // 메뉴
 }

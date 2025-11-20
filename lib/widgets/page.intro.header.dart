@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:philgo/globals.dart';
+import 'package:philgo/themes/app.spacing.dart';
 
 class IntroHeader extends StatelessWidget {
   const IntroHeader({

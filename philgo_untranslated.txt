@@ -71,7 +71,22 @@
     "guideStep3Title",
     "guideStep3Desc",
     "guideStep4Title",
-    "guideStep4Desc"
+    "guideStep4Desc",
+    "myActivity",
+    "myPosts",
+    "myComments",
+    "posts",
+    "noPostsYet",
+    "noCommentsYet",
+    "views",
+    "ago",
+    "justNow",
+    "minutesAgo",
+    "hoursAgo",
+    "daysAgo",
+    "weeksAgo",
+    "monthsAgo",
+    "yearsAgo"
   ],
 
   "zh": [
@@ -146,6 +161,21 @@
     "guideStep3Title",
     "guideStep3Desc",
     "guideStep4Title",
-    "guideStep4Desc"
+    "guideStep4Desc",
+    "myActivity",
+    "myPosts",
+    "myComments",
+    "posts",
+    "noPostsYet",
+    "noCommentsYet",
+    "views",
+    "ago",
+    "justNow",
+    "minutesAgo",
+    "hoursAgo",
+    "daysAgo",
+    "weeksAgo",
+    "monthsAgo",
+    "yearsAgo"
   ]
 }

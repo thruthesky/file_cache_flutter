@@ -11,6 +11,7 @@ class CompanyHome extends StatefulWidget {
 class _CompanyHomeState extends State<CompanyHome> {
   @override
   Widget build(BuildContext context) {
-    return CompanyListScreen();
+    // CompanyListScreen이 자체 AppBar를 가지므로 그대로 반환
+    return const CompanyListScreen();
   }
 }
