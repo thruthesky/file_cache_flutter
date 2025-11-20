@@ -287,7 +287,7 @@ abstract class Lo {
   /// **'Close'**
   String get close;
 
-  /// No description provided for @phoneAuthFailed.
+  /// Verification failed
   ///
   /// In en, this message translates to:
   /// **'Phone number verification failed'**
@@ -869,7 +869,7 @@ abstract class Lo {
   /// **'Be the first to register a company in this category!'**
   String get registerCompanyPrompt;
 
-  /// Label for location field
+  /// Label for location information
   ///
   /// In en, this message translates to:
   /// **'Location'**
