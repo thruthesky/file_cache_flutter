@@ -10,6 +10,3 @@
 [submodule "packages/philgo_v6_flutter"]
 	path = packages/philgo_v6_flutter
 	url = https://github.com/thruthesky/philgo_v6_flutter
-[submodule "packages/sns"]
-	path = packages/sns
-	url = https://github.com/thruthesky/sns
