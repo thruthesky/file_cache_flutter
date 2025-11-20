@@ -64,7 +64,9 @@ class _CompanyCategoryItem extends StatelessWidget {
       child: Ink(
         width: 88,
         decoration: BoxDecoration(
-          color: isSelected ? scheme.primaryContainer : scheme.surface,
+          color: isSelected
+              ? scheme.primaryContainer
+              : scheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
         ),
         child: InkWell(
