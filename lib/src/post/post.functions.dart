@@ -336,7 +336,6 @@ Future<Post> deletePost(int idx) async {
 /// Create a comment
 Future<Comment> createComment(RecordType data) async {
   /// check if data['idx_root'] exists. if not, show an error.
-
   final response = await func<Map<String, dynamic>>(
     'create_comment_func',
     data: data,
@@ -352,6 +351,67 @@ Future<Comment> updateComment(RecordType data) async {
   );
 
   return Comment.fromJson(response);
+}
+
+Future<PostList> getMyPosts({
+  required int myId,
+  int page = 1,
+  int limit = 20,
+}) async {
+  final res = await func(
+    'post_list',
+    data: {'idx_member': myId, 'page': page, 'limit': limit},
+    debug: true,
+  );
+  debugLog('getMyPosts: $res');
+  return PostList.fromJson(res);
+}
+
+/// Get comments by user
+/// Returns a list of Comment objects
+Future<List<Comment>> getMyComments({int page = 1, int limit = 20}) async {
+  final res = await func(
+    'get_my_comments',
+    data: {'page': page, 'limit': limit},
+    debug: true,
+  );
+
+  debugLog("GET MY COMMENTS ----------------> $res");
+
+  // The response is a map with numeric keys (0, 1, 2, ...) containing comment objects
+  // We need to convert it to a list of Comment objects
+  final List<Comment> comments = [];
+
+  if (res is Map) {
+    // Iterate through the map entries
+    for (var entry in res.entries) {
+      final key = entry.key;
+
+      // Check if the key is numeric (could be int or string like "0", "1", etc.)
+      bool isNumeric = false;
+
+      if (key is int) {
+        // Key is already an integer
+        isNumeric = true;
+      } else if (key is String) {
+        // Try to parse the string as an integer
+        try {
+          int.parse(key);
+          isNumeric = true;
+        } catch (e) {
+          // Not a numeric string
+        }
+      }
+
+      // If numeric key, parse as Comment
+      if (isNumeric && entry.value is Map) {
+        comments.add(Comment.fromJson(entry.value as Map<String, dynamic>));
+      }
+    }
+  }
+
+  debugLog('getMyComments: Parsed ${comments.length} comments');
+  return comments;
 }
 
 Future<int> likePost(int idx) async {
