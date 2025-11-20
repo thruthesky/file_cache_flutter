@@ -866,5 +866,95 @@
   "chat_room_unpinned": "Chat room unpinned successfully",
   "@chat_room_unpinned": {
     "description": "Success message after unpinning chat room"
+  },
+  "myActivity": "My Activity",
+  "@myActivity": {
+    "description": "Title for my activity screen"
+  },
+  "myPosts": "My Posts",
+  "@myPosts": {
+    "description": "Tab label for my posts"
+  },
+  "myComments": "My Comments",
+  "@myComments": {
+    "description": "Tab label for my comments"
+  },
+  "posts": "Posts",
+  "@posts": {
+    "description": "Label for posts"
+  },
+  "noPostsYet": "No posts yet",
+  "@noPostsYet": {
+    "description": "Empty state message when user has no posts"
+  },
+  "noCommentsYet": "No comments yet",
+  "@noCommentsYet": {
+    "description": "Empty state message when user has no comments"
+  },
+  "views": "Views",
+  "@views": {
+    "description": "Label for view count"
+  },
+  "ago": "ago",
+  "@ago": {
+    "description": "Suffix for time ago"
+  },
+  "justNow": "just now",
+  "@justNow": {
+    "description": "Text for very recent time"
+  },
+  "minutesAgo": "{minutes}m ago",
+  "@minutesAgo": {
+    "description": "Minutes ago format",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours}h ago",
+  "@hoursAgo": {
+    "description": "Hours ago format",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{days}d ago",
+  "@daysAgo": {
+    "description": "Days ago format",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "weeksAgo": "{weeks}w ago",
+  "@weeksAgo": {
+    "description": "Weeks ago format",
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "monthsAgo": "{months}mo ago",
+  "@monthsAgo": {
+    "description": "Months ago format",
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "yearsAgo": "{years}y ago",
+  "@yearsAgo": {
+    "description": "Years ago format",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
   }
 }

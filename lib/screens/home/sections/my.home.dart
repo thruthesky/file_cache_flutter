@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/settings/settings.screen.dart';
 import 'package:philgo/screens/theme/theme.preview.screen.dart';
+import 'package:philgo/screens/user/my.activity.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/widgets/home/user.stats.dart';
@@ -38,7 +38,7 @@ class _MyPageState extends State<MyPage> {
             children: [
               /// My Page title
               Text(
-                'My Page',
+                T.my,
                 // primaryContainer 위에서 잘 보이도록 onPrimaryContainer 사용
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: scheme.onPrimaryContainer,
@@ -81,7 +81,7 @@ class _MyPageState extends State<MyPage> {
                     /// Edit Profile menu item
                     RoundedIconMenu(
                       icon: FontAwesomeIcons.lightPenToSquare,
-                      label: 'Edit Profile',
+                      label: T.editProfileTitle,
                       color: scheme.tertiary,
                       onPressed: () {
                         context.push(ProfileEditScreen.routeName);
@@ -91,20 +91,28 @@ class _MyPageState extends State<MyPage> {
                     /// My Posts menu item
                     RoundedIconMenu(
                       icon: FontAwesomeIcons.lightFileLines,
-                      label: 'My Posts',
+                      label: T.myPosts,
                       color: scheme.tertiary,
                       onPressed: () {
-                        // TODO: Navigate to my posts screen
+                        // My Posts 탭으로 화면 열기
+                        MyActivityScreen.push(
+                          context,
+                          initialTab: MyActivityTab.posts,
+                        );
                       },
                     ),
 
                     /// My Comments menu item
                     RoundedIconMenu(
                       icon: FontAwesomeIcons.lightComments,
-                      label: 'My Comments',
+                      label: T.myComments,
                       color: scheme.tertiary,
                       onPressed: () {
-                        // TODO: Navigate to my comments screen
+                        // My Comments 탭으로 화면 열기
+                        MyActivityScreen.push(
+                          context,
+                          initialTab: MyActivityTab.comments,
+                        );
                       },
                     ),
                   ],
@@ -119,7 +127,7 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       /// App Guide menu item
                       ListTile(
-                        title: const Text('App Guide'),
+                        title: Text(T.appGuideTitle),
                         trailing: FaIcon(
                           FontAwesomeIcons.lightChevronRight,
                           size: 16,
@@ -132,7 +140,7 @@ class _MyPageState extends State<MyPage> {
 
                       /// Banner Ads menu item
                       ListTile(
-                        title: const Text('Banner Ads'),
+                        title: Text(T.bannerAdTitle),
                         trailing: FaIcon(
                           FontAwesomeIcons.lightChevronRight,
                           size: 16,
@@ -149,7 +157,7 @@ class _MyPageState extends State<MyPage> {
 
                       /// Point Ads menu item
                       ListTile(
-                        title: const Text('Point Ads'),
+                        title: Text(T.pointAdTitle),
                         trailing: FaIcon(
                           FontAwesomeIcons.lightChevronRight,
                           size: 12,
@@ -164,7 +172,7 @@ class _MyPageState extends State<MyPage> {
                         },
                       ),
                       ListTile(
-                        title: const Text('Logout'),
+                        title: Text(T.logoutTitle),
                         trailing: FaIcon(
                           FontAwesomeIcons.lightChevronRight,
                           size: 12,

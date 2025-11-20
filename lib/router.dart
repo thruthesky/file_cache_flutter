@@ -19,6 +19,7 @@ import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/screens/user/my.activity.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
@@ -295,6 +296,15 @@ final router = GoRouter(
           nickname: extraMap['nickname'] as String?,
           photoUrl: extraMap['photoUrl'] as String?,
         );
+      },
+    ),
+    GoRoute(
+      path: MyActivityScreen.routeName,
+      name: MyActivityScreen.routeName,
+      builder: (context, state) {
+        final initialTab =
+            state.extra as MyActivityTab? ?? MyActivityTab.posts;
+        return MyActivityScreen(initialTab: initialTab);
       },
     ),
     GoRoute(

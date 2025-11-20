@@ -1426,6 +1426,96 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Chat room unpinned successfully'**
   String get chat_room_unpinned;
+
+  /// Title for my activity screen
+  ///
+  /// In en, this message translates to:
+  /// **'My Activity'**
+  String get myActivity;
+
+  /// Tab label for my posts
+  ///
+  /// In en, this message translates to:
+  /// **'My Posts'**
+  String get myPosts;
+
+  /// Tab label for my comments
+  ///
+  /// In en, this message translates to:
+  /// **'My Comments'**
+  String get myComments;
+
+  /// Label for posts
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get posts;
+
+  /// Empty state message when user has no posts
+  ///
+  /// In en, this message translates to:
+  /// **'No posts yet'**
+  String get noPostsYet;
+
+  /// Empty state message when user has no comments
+  ///
+  /// In en, this message translates to:
+  /// **'No comments yet'**
+  String get noCommentsYet;
+
+  /// Label for view count
+  ///
+  /// In en, this message translates to:
+  /// **'Views'**
+  String get views;
+
+  /// Suffix for time ago
+  ///
+  /// In en, this message translates to:
+  /// **'ago'**
+  String get ago;
+
+  /// Text for very recent time
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get justNow;
+
+  /// Minutes ago format
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m ago'**
+  String minutesAgo(int minutes);
+
+  /// Hours ago format
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h ago'**
+  String hoursAgo(int hours);
+
+  /// Days ago format
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d ago'**
+  String daysAgo(int days);
+
+  /// Weeks ago format
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks}w ago'**
+  String weeksAgo(int weeks);
+
+  /// Months ago format
+  ///
+  /// In en, this message translates to:
+  /// **'{months}mo ago'**
+  String monthsAgo(int months);
+
+  /// Years ago format
+  ///
+  /// In en, this message translates to:
+  /// **'{years}y ago'**
+  String yearsAgo(int years);
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {
