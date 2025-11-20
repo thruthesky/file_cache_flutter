@@ -834,5 +834,37 @@
   "guideStep4Desc": "Chat with members, join discussions, and build your network.",
   "@guideStep4Desc": {
     "description": "Step 4 description"
+  },
+  "bookmarked_folders": "Bookmarked Folders",
+  "@bookmarked_folders": {
+    "description": "Title for bookmarked folders dialog"
+  },
+  "no_bookmarked_folders": "No bookmarked folders",
+  "@no_bookmarked_folders": {
+    "description": "Message when there are no bookmarked folders"
+  },
+  "bookmarked_chats": "Bookmarked Chats",
+  "@bookmarked_chats": {
+    "description": "Title for bookmarked chats dialog"
+  },
+  "no_bookmarked_chats": "No bookmarked chats in this folder",
+  "@no_bookmarked_chats": {
+    "description": "Message when there are no bookmarked chats in a folder"
+  },
+  "unpin_chat_room_title": "Unpin Chat Room",
+  "@unpin_chat_room_title": {
+    "description": "Title for unpin chat room confirmation dialog"
+  },
+  "unpin_chat_room_message": "Are you sure you want to unpin this chat room?",
+  "@unpin_chat_room_message": {
+    "description": "Message for unpin chat room confirmation dialog"
+  },
+  "unpin": "Unpin",
+  "@unpin": {
+    "description": "Unpin button text"
+  },
+  "chat_room_unpinned": "Chat room unpinned successfully",
+  "@chat_room_unpinned": {
+    "description": "Success message after unpinning chat room"
   }
 }

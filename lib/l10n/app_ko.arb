@@ -212,5 +212,13 @@
   "guideStep3Title": "이야기 공유하기",
   "guideStep3Desc": "게시물을 작성하고 경험을 공유하며 커뮤니티에 기여하세요.",
   "guideStep4Title": "다른 사람들과 연결",
-  "guideStep4Desc": "회원들과 채팅하고 토론에 참여하며 네트워크를 구축하세요."
+  "guideStep4Desc": "회원들과 채팅하고 토론에 참여하며 네트워크를 구축하세요.",
+  "bookmarked_folders": "북마크 폴더",
+  "no_bookmarked_folders": "북마크된 폴더가 없습니다",
+  "bookmarked_chats": "북마크된 채팅",
+  "no_bookmarked_chats": "이 폴더에 북마크된 채팅이 없습니다",
+  "unpin_chat_room_title": "채팅방 고정 해제",
+  "unpin_chat_room_message": "이 채팅방의 고정을 해제하시겠습니까?",
+  "unpin": "고정 해제",
+  "chat_room_unpinned": "채팅방 고정이 해제되었습니다"
 }

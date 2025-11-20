@@ -1378,6 +1378,54 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Chat with members, join discussions, and build your network.'**
   String get guideStep4Desc;
+
+  /// Title for bookmarked folders dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked Folders'**
+  String get bookmarked_folders;
+
+  /// Message when there are no bookmarked folders
+  ///
+  /// In en, this message translates to:
+  /// **'No bookmarked folders'**
+  String get no_bookmarked_folders;
+
+  /// Title for bookmarked chats dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked Chats'**
+  String get bookmarked_chats;
+
+  /// Message when there are no bookmarked chats in a folder
+  ///
+  /// In en, this message translates to:
+  /// **'No bookmarked chats in this folder'**
+  String get no_bookmarked_chats;
+
+  /// Title for unpin chat room confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin Chat Room'**
+  String get unpin_chat_room_title;
+
+  /// Message for unpin chat room confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to unpin this chat room?'**
+  String get unpin_chat_room_message;
+
+  /// Unpin button text
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get unpin;
+
+  /// Success message after unpinning chat room
+  ///
+  /// In en, this message translates to:
+  /// **'Chat room unpinned successfully'**
+  String get chat_room_unpinned;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

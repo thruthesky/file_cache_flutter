@@ -683,4 +683,28 @@ class LoJa extends Lo {
   @override
   String get guideStep4Desc =>
       'Chat with members, join discussions, and build your network.';
+
+  @override
+  String get bookmarked_folders => 'ブックマークフォルダ';
+
+  @override
+  String get no_bookmarked_folders => 'ブックマークされたフォルダがありません';
+
+  @override
+  String get bookmarked_chats => 'ブックマークされたチャット';
+
+  @override
+  String get no_bookmarked_chats => 'このフォルダにブックマークされたチャットがありません';
+
+  @override
+  String get unpin_chat_room_title => 'チャットルームの固定を解除';
+
+  @override
+  String get unpin_chat_room_message => 'このチャットルームの固定を解除してもよろしいですか？';
+
+  @override
+  String get unpin => '固定解除';
+
+  @override
+  String get chat_room_unpinned => 'チャットルームの固定が解除されました';
 }

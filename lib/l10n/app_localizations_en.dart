@@ -691,4 +691,29 @@ class LoEn extends Lo {
   @override
   String get guideStep4Desc =>
       'Chat with members, join discussions, and build your network.';
+
+  @override
+  String get bookmarked_folders => 'Bookmarked Folders';
+
+  @override
+  String get no_bookmarked_folders => 'No bookmarked folders';
+
+  @override
+  String get bookmarked_chats => 'Bookmarked Chats';
+
+  @override
+  String get no_bookmarked_chats => 'No bookmarked chats in this folder';
+
+  @override
+  String get unpin_chat_room_title => 'Unpin Chat Room';
+
+  @override
+  String get unpin_chat_room_message =>
+      'Are you sure you want to unpin this chat room?';
+
+  @override
+  String get unpin => 'Unpin';
+
+  @override
+  String get chat_room_unpinned => 'Chat room unpinned successfully';
 }
