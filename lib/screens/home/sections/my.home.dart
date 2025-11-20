@@ -1,0 +1,262 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:philgo/globals.dart';
+import 'package:philgo/screens/entry/entry.screen.dart';
+import 'package:philgo/screens/guide/app.guide.screen.dart';
+import 'package:philgo/screens/settings/settings.screen.dart';
+import 'package:philgo/screens/theme/theme.preview.screen.dart';
+import 'package:philgo/screens/user/my.activity.screen.dart';
+import 'package:philgo/screens/user/profile.edit.screen.dart';
+import 'package:philgo/screens/webview/webview.screen.dart';
+import 'package:philgo/widgets/home/user.stats.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+
+class MyPage extends StatefulWidget {
+  const MyPage({super.key});
+
+  @override
+  State<MyPage> createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        // Top SafeArea
+        SafeArea(child: Container()),
+
+        /// Menu title with settings button
+        Container(
+          // 메뉴 타이틀 배경색 - primaryContainer 사용
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              /// My Page title
+              Text(
+                T.my,
+                // primaryContainer 위에서 잘 보이도록 onPrimaryContainer 사용
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: scheme.onPrimaryContainer,
+                ),
+              ),
+              const Spacer(),
+
+              /// Settings button
+              IconButton(
+                icon: FaIcon(
+                  FontAwesomeIcons.lightGear,
+                  // 아이콘도 onPrimaryContainer 색상으로 조정
+                  color: scheme.onPrimaryContainer,
+                  size: 24,
+                ),
+                onPressed: () {
+                  context.push(SettingsScreen.routeName);
+                },
+                tooltip: 'Settings',
+              ),
+            ],
+          ),
+        ),
+
+        /// Scrollable content
+        Expanded(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                /// User stats widget
+                const UserStats(),
+
+                const SizedBox(height: 16),
+
+                /// Menu actions row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    /// Edit Profile menu item
+                    RoundedIconMenu(
+                      icon: FontAwesomeIcons.lightPenToSquare,
+                      label: T.editProfileTitle,
+                      color: scheme.tertiary,
+                      onPressed: () {
+                        context.push(ProfileEditScreen.routeName);
+                      },
+                    ),
+
+                    /// My Posts menu item
+                    RoundedIconMenu(
+                      icon: FontAwesomeIcons.lightFileLines,
+                      label: T.myPosts,
+                      color: scheme.tertiary,
+                      onPressed: () {
+                        // My Posts 탭으로 화면 열기
+                        MyActivityScreen.push(
+                          context,
+                          initialTab: MyActivityTab.posts,
+                        );
+                      },
+                    ),
+
+                    /// My Comments menu item
+                    RoundedIconMenu(
+                      icon: FontAwesomeIcons.lightComments,
+                      label: T.myComments,
+                      color: scheme.tertiary,
+                      onPressed: () {
+                        // My Comments 탭으로 화면 열기
+                        MyActivityScreen.push(
+                          context,
+                          initialTab: MyActivityTab.comments,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                /// Menu list items
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      /// App Guide menu item
+                      ListTile(
+                        title: Text(T.appGuideTitle),
+                        trailing: FaIcon(
+                          FontAwesomeIcons.lightChevronRight,
+                          size: 16,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        onTap: () {
+                          context.push(AppGuideScreen.routeName);
+                        },
+                      ),
+
+                      /// Banner Ads menu item
+                      ListTile(
+                        title: Text(T.bannerAdTitle),
+                        trailing: FaIcon(
+                          FontAwesomeIcons.lightChevronRight,
+                          size: 16,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        onTap: () {
+                          WebViewScreen.push(
+                            context,
+                            bannerPageUrl(),
+                            title: T.bannerAdTitle,
+                          );
+                        },
+                      ),
+
+                      /// Point Ads menu item
+                      ListTile(
+                        title: Text(T.pointAdTitle),
+                        trailing: FaIcon(
+                          FontAwesomeIcons.lightChevronRight,
+                          size: 12,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        onTap: () {
+                          WebViewScreen.push(
+                            context,
+                            pointPageUrl(),
+                            title: T.pointAdTitle,
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(T.logoutTitle),
+                        trailing: FaIcon(
+                          FontAwesomeIcons.lightChevronRight,
+                          size: 12,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                          if (context.mounted) {
+                            context.go(EntryScreen.routeName);
+                          }
+                        },
+                      ),
+                      if (Config.isJaeho)
+                        ListTile(
+                          title: Text('Design Preview'),
+                          trailing: FaIcon(
+                            FontAwesomeIcons.lightChevronRight,
+                            size: 12,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                          onTap: () {
+                            context.push(ThemePreviewScreen.routeName);
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Individual menu action widget with icon and label
+class RoundedIconMenu extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+
+  const RoundedIconMenu({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// Icon container with background
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Center(child: FaIcon(icon, size: 24, color: color)),
+            ),
+            const SizedBox(height: 8),
+
+            /// Label
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

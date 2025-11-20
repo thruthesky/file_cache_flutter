@@ -8,7 +8,7 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'sections/chat.home.dart';
 import 'sections/forum.home.dart';
 import 'sections/company.home.dart';
-import 'sections/menu.home.dart';
+import 'sections/my.home.dart';
 import '../../l10n/app_localizations.dart';
 
 // 홈 스크린
@@ -49,16 +49,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: IndexedStack(
         index: selectedItem.index,
         children: const [
-          MainHome(), // 채팅
+          MainHome(), // 홈
           ChatHome(), // 채팅
           ForumHome(), // 게시판
           CompanyHome(), // 업소록
-          MenuHome(), // 메뉴
+          MyPage(), // 메뉴
         ],
       ),
       // BottomNavigationBar 추가
       bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 12,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: FaIcon(
@@ -94,11 +93,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: FaIcon(
-              selectedItem == HomeNavigationItem.menu
-                  ? FontAwesomeIcons.solidBars
-                  : FontAwesomeIcons.thinBars,
+              selectedItem == HomeNavigationItem.my
+                  ? FontAwesomeIcons.solidUser
+                  : FontAwesomeIcons.thinUser,
             ),
-            label: Lo.of(context)!.menu,
+            label: Lo.of(context)!.my,
           ),
         ],
         currentIndex: selectedItem.index,

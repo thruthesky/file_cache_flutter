@@ -57,6 +57,9 @@ class LoKo extends Lo {
   String get menu => '메뉴';
 
   @override
+  String get my => '마이';
+
+  @override
   String get loginWithPhoneTitle => '전화 번호 로그인';
 
   @override
@@ -686,4 +689,61 @@ class LoKo extends Lo {
 
   @override
   String get chat_room_unpinned => '채팅방 고정이 해제되었습니다';
+
+  @override
+  String get myActivity => '내 활동';
+
+  @override
+  String get myPosts => '내 게시글';
+
+  @override
+  String get myComments => '내 댓글';
+
+  @override
+  String get posts => '게시글';
+
+  @override
+  String get noPostsYet => '작성한 게시글이 없습니다';
+
+  @override
+  String get noCommentsYet => '작성한 댓글이 없습니다';
+
+  @override
+  String get views => '조회';
+
+  @override
+  String get ago => '전';
+
+  @override
+  String get justNow => '방금 전';
+
+  @override
+  String minutesAgo(int minutes) {
+    return '$minutes분 전';
+  }
+
+  @override
+  String hoursAgo(int hours) {
+    return '$hours시간 전';
+  }
+
+  @override
+  String daysAgo(int days) {
+    return '$days일 전';
+  }
+
+  @override
+  String weeksAgo(int weeks) {
+    return '$weeks주 전';
+  }
+
+  @override
+  String monthsAgo(int months) {
+    return '$months개월 전';
+  }
+
+  @override
+  String yearsAgo(int years) {
+    return '$years년 전';
+  }
 }

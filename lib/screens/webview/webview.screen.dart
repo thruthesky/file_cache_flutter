@@ -33,11 +33,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: scheme.primaryContainer,
+        title: Text(widget.title, style: theme.textTheme.headlineMedium),
       ),
       body: WebViewWidget(controller: _controller),
     );

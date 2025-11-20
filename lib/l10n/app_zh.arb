@@ -16,6 +16,7 @@
     "create": "发布",
     "company": "商家",
     "menu": "菜单",
+    "my": "我的",
     "sendSmsCode": "发送短信验证码",
     "noOfPosts": "{count}篇文章",
     "writePost": "写文章",

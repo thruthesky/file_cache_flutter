@@ -39,10 +39,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(
           '${T.writeIn} ${HomePostCategory.label}',
-          style: Theme.of(context).textTheme.titleMedium,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
         leading: IconButton(
           icon: const FaIcon(FontAwesomeIcons.lightArrowLeft),

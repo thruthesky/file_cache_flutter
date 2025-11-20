@@ -27,7 +27,7 @@ class NavigationState extends ChangeNotifier {
   }
 
   // Home navigation
-  HomeNavigationItem homeNav = HomeNavigationItem.forum;
+  HomeNavigationItem homeNav = HomeNavigationItem.home;
 
   // Chat room order: single or group
   String roomOrder = RoomOrder.singleOrder;
