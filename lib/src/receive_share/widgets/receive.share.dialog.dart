@@ -18,8 +18,8 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
   Map<String, String> status = {};
 
   String getRoomName(ChatJoin join) {
-    if (join.customName != null && join.customName!.isNotEmpty) {
-      return join.customName!;
+    if (join.customName.isNotEmpty) {
+      return join.customName;
     }
 
     if (isSingleChatRoom(join.id)) {

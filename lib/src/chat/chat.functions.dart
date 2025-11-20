@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -116,19 +117,6 @@ bool isOpenChatSnapshot(DataSnapshot snapshot) {
       (snapshot.value as Map)[OPEN_ORDER] != null;
 }
 
-/// Resets the unread message counter for a user in a specific room to 0
-///
-/// [roomId] - The chat room ID
-/// When user is inside the room and new messages arrive, this function
-/// should be called to reset the unread message counter.
-Future<void> resetUnreadMessageCounter(String roomId) async {
-  if (loginUid() == null) return;
-
-  final unreadCountRef = joinRef(loginUid()!).child(roomId).child(UNREAD);
-
-  await unreadCountRef.set(0);
-}
-
 /// UID 가 입력되면, 나의 UID 와 합쳐서 1:1 채팅 방 ID 를 리턴한다.
 ///
 /// [otherUid] - 채팅방 ID 일 수 있고, Firebase UID 일 수 있다.
@@ -218,6 +206,131 @@ String? getOtherUserUidFromRoomId(String roomId) {
 
   return null;
 }
+
+bool startWith20(int number) {
+  String str = number.toString();
+  return str.startsWith("20");
+}
+
+/// Check if this is a chat with admin user
+bool isAdminChatRoom({required String roomId, String? otherUserUid}) {
+  if (!isSingleChatRoom(roomId)) return false;
+  if (otherUserUid == null || otherUserUid.isEmpty) {
+    return false;
+  }
+
+  return isAdminChatUser(otherUserUid);
+}
+
+// Check if this user is an admin chat user
+bool isAdminChatUser(String uid) {
+  if (UserService.instance.adminUserUid.isEmpty) {
+    // If contactUserUid is not set, assume it's not an admin chat
+    return false;
+  }
+
+  if (UserService.instance.adminUserUid.contains(uid)) {
+    // If other user is the contact user, it's an admin chat
+    return true;
+  }
+
+  return false; // Placeholder, replace with actual admin chat ID check
+}
+
+// Get Chat Join
+Future<ChatJoin?> getChatJoin(String roomId) async {
+  DatabaseReference ref = myJoinRoomRef(roomId);
+  final snapshot = await ref.get();
+  if (snapshot.exists) {
+    return ChatJoin.fromSnapshot(snapshot);
+  }
+  return null;
+}
+
+/// Resets the unread message counter for a user in a specific room to 0
+///
+/// [roomId] - The chat room ID
+/// When user is inside the room and new messages arrive, this function
+/// should be called to reset the unread message counter.
+Future<void> resetUnreadMessageCounter(String roomId) async {
+  if (loginUid() == null) return;
+
+  final joinRef = myJoinRoomRef(roomId);
+
+  await joinRef.update({UNREAD: 0, LAST_READ_AT: ServerValue.timestamp});
+}
+
+Future<void> resetChatJoin(String otherUserUid) async {
+  final Dio dio = Dio();
+  // API 호출하여 즐겨찾기 추가/제거
+  final response = await dio.post(
+    'https://us-central1-philgo-64b1a.cloudfunctions.net/onResetChatJoin',
+    data: {'myUid': loginUid(), 'otherUid': otherUserUid},
+    options: Options(headers: {'Content-Type': 'application/json'}),
+  );
+
+  if (response.statusCode == 200) {
+    log(
+      'Success to resetChatJoin',
+      name: "resetUnreadMessageCounter::${response.statusCode}",
+    );
+  } else {
+    log(
+      'faild to resetChatJoin',
+      name: "resetUnreadMessageCounter::${response.statusCode}",
+    );
+  }
+}
+
+/// Sends a message to a chat room
+Future<String> sendMessage({
+  required String roomId,
+  required String text,
+  List<String>? urls,
+  String? protocol,
+}) async {
+  final messageRef = FirebaseDatabase.instance
+      .ref('chat/messages/$roomId')
+      .push();
+
+  final messageData = {
+    'text': cut(text, 2048, defaultValue: ""),
+    'senderUid': myUid(),
+    'sentAt': ServerValue.timestamp,
+    'protocol': protocol,
+  };
+
+  // Add urls array if provided and not empty
+  if (urls != null && urls.isNotEmpty) {
+    messageData['urls'] = urls;
+  }
+
+  await messageRef.set(messageData);
+  return messageRef.key!; // Return the message ID
+}
+
+Future<void> leaveChatRoom({
+  required String roomId,
+  Function()? success,
+  Function(String error)? error,
+}) async {
+  try {
+    await sendChatProtocolMessage(roomId: roomId, protocol: ChatProtocol.left);
+
+    await myJoinRoomRef(roomId).set(null);
+
+    roomUserRef(roomId, myUid()).set(null).catchError((error) {
+      error?.call(error.toString());
+    });
+    success?.call();
+  } catch (e) {
+    error?.call(e.toString());
+  }
+}
+
+/// ====================================================================================
+/// TO BE DELETED IF NOT NEEDED FUNCTION BELOW
+/// ===================================================================================
 
 ///
 /// This create the chatRoom
@@ -408,11 +521,6 @@ Future inviteUser(String roomId, String uid) async {
   return roomInvitedUserRef(roomId, uid).set(true);
 }
 
-bool startWith20(int number) {
-  String str = number.toString();
-  return str.startsWith("20");
-}
-
 Future removeMyUidFromInvitedUser(String roomId) async {
   return roomInvitedUserRef(roomId, myUid()).set(null);
 }
@@ -440,52 +548,6 @@ Future<ChatRoom?> getChatRoom(String roomId) async {
   }
 
   return null;
-}
-
-/// Sends a message to a chat room
-Future<String> sendMessage({
-  required String roomId,
-  required String text,
-  List<String>? urls,
-  String? protocol,
-}) async {
-  final messageRef = FirebaseDatabase.instance
-      .ref('chat/messages/$roomId')
-      .push();
-
-  final messageData = {
-    'text': cut(text, 2048, defaultValue: ""),
-    'senderUid': myUid(),
-    'sentAt': ServerValue.timestamp,
-    'protocol': protocol,
-  };
-
-  // Add urls array if provided and not empty
-  if (urls != null && urls.isNotEmpty) {
-    messageData['urls'] = urls;
-  }
-
-  await messageRef.set(messageData);
-  return messageRef.key!; // Return the message ID
-}
-
-Future<void> leaveChatRoom({
-  required String roomId,
-  Function()? success,
-  Function(String error)? error,
-}) async {
-  try {
-    await sendChatProtocolMessage(roomId: roomId, protocol: ChatProtocol.left);
-
-    await myJoinRoomRef(roomId).set(null);
-
-    roomUserRef(roomId, myUid()).set(null).catchError((error) {
-      error?.call(error.toString());
-    });
-    success?.call();
-  } catch (e) {
-    error?.call(e.toString());
-  }
 }
 
 Future<void> editChatRoom({
@@ -657,7 +719,7 @@ Future<void> updateJoinRoomNickname(ChatRoom room, String nickname) async {
   if (nickname.isEmpty) return;
   if (nickname == room.nickname) return;
   await FirebaseDatabase.instance.ref().update({
-    'chat/joins/${myUid()}/${room.id}/nickname': nickname,
+    'chat/joins/${myUid()}/${room.id}/userDisplayName': nickname,
   });
 }
 
@@ -666,31 +728,6 @@ Future<void> updateJoinRoomPhotoUrl(ChatRoom room, String? imageUrl) async {
   if (imageUrl.isEmpty) return;
   if (imageUrl == room.imageUrl) return;
   await FirebaseDatabase.instance.ref().update({
-    'chat/joins/${myUid()}/${room.id}/imageUrl': imageUrl,
+    'chat/joins/${myUid()}/${room.id}/userPhotoUrl': imageUrl,
   });
-}
-
-/// Check if this is a chat with admin user
-bool isAdminChatRoom({required String roomId, String? otherUserUid}) {
-  if (!isSingleChatRoom(roomId)) return false;
-  if (otherUserUid == null || otherUserUid.isEmpty) {
-    return false;
-  }
-
-  return isAdminChatUser(otherUserUid);
-}
-
-// Check if this user is an admin chat user
-bool isAdminChatUser(String uid) {
-  if (UserService.instance.adminUserUid.isEmpty) {
-    // If contactUserUid is not set, assume it's not an admin chat
-    return false;
-  }
-
-  if (UserService.instance.adminUserUid.contains(uid)) {
-    // If other user is the contact user, it's an admin chat
-    return true;
-  }
-
-  return false; // Placeholder, replace with actual admin chat ID check
 }
