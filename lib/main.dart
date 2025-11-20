@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart' hide Config;
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo/firebase_options.dart';
@@ -14,6 +15,7 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
+import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -53,7 +55,18 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     // ChatService.instance.initialize();
-    UserService.instance.initialize(useUserPresence: true);
+    UserService.instance.initialize(
+      useUserPresence: true,
+      onTapViewProfile: (context, user) {
+        ProfileViewScreen.push(
+          globalContext,
+          firebaseUid: user.uid,
+          nickname: user.nickname,
+          photoUrl: user.photoUrl,
+        );
+      },
+      onTapUserRecentPostItem: (context, post) => {},
+    );
     initMessagingService();
     if (Platform.isAndroid) {
       // Android-specific initialization
