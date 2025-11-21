@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/themes/app.spacing.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Menu tile widget for displaying individual menu items
 /// Displays an icon, title, subtitle, and chevron in a styled container
@@ -46,20 +47,11 @@ class MenuTile extends StatelessWidget {
                   child: Row(
                     children: [
                       // Icon container
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: scheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Center(
-                          child: FaIcon(
-                            icon,
-                            color: scheme.onSurface,
-                            size: 24,
-                          ),
-                        ),
+                      IconContainer(
+                        icon: icon,
+                        size: 56,
+                        iconSize: 24,
+                        borderRadius: 16,
                       ),
                       SizedBox(width: sp.s16),
                       // Text area

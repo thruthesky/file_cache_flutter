@@ -94,8 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: FaIcon(
               selectedItem == HomeNavigationItem.menu
-                  ? FontAwesomeIcons.solidUser
-                  : FontAwesomeIcons.thinUser,
+                  ? FontAwesomeIcons.solidBars
+                  : FontAwesomeIcons.thinBars,
             ),
             label: 'Menu',
           ),

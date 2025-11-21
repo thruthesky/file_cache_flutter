@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// App guide screen
 /// A screen that guides users through the main features and usage of the PhilGo app.
@@ -170,14 +171,11 @@ class GuideStepWidget extends StatelessWidget {
           child: Row(
             children: [
               /// Icon badge
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: scheme.primary, size: 28),
+              IconContainer(
+                icon: icon,
+                size: 56,
+                iconSize: 28,
+                borderRadius: 12,
               ),
               SizedBox(width: sp.s16),
               Expanded(
@@ -308,14 +306,11 @@ class FeatureCardWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: scheme.primary, size: 28),
+              IconContainer(
+                icon: icon,
+                size: 56,
+                iconSize: 28,
+                borderRadius: 12,
               ),
               SizedBox(width: sp.s16),
               Expanded(
