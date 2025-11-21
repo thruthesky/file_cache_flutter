@@ -19,6 +19,7 @@ class UserStats extends StatelessWidget {
         if (user == null) {
           /// Show login prompt when user is not logged in
           return Card(
+            elevation: 0,
             margin: const EdgeInsets.symmetric(horizontal: 16),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -68,93 +69,94 @@ class UserStats extends StatelessWidget {
         }
 
         /// Show user stats when logged in
-        return Card(
+        return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              children: [
-                /// User avatar + badge
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    UserAvatar(user: user, size: 60),
-
-                    /// Level Badge
-                    Positioned(
-                      bottom: -8,
-                      right: -8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: scheme.primary,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: scheme.surface, width: 2),
-                        ),
-                        child: Text(
-                          "Lv.${user.level}",
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(width: 16),
-
-                /// User info and stats
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            children: [
+              /// User info card
+              Card(
+                elevation: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
                     children: [
-                      /// User name
-                      Text(
-                        user.nickname.isNotEmpty
-                            ? user.nickname
-                            : 'Update your nickname',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                      /// User avatar
+                      UserAvatar(user: user, size: 60),
+
+                      const SizedBox(width: 16),
+
+                      /// User info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// User name
+                            Text(
+                              user.nickname.isNotEmpty
+                                  ? user.nickname
+                                  : 'Update your nickname',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+
+                            const SizedBox(height: 4),
+
+                            /// Level indicator
+                            Text(
+                              'Level ${user.level}',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      /// Stats row: posts, comments, points
-                      Row(
-                        children: [
-                          StatContainer(
-                            icon: FontAwesomeIcons.lightFileLines,
-                            value: user.noOfPost.toString(),
-                            color: scheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-
-                          StatContainer(
-                            icon: FontAwesomeIcons.lightComments,
-                            value: user.noOfComment.toString(),
-                            color: scheme.secondary,
-                          ),
-                          const SizedBox(width: 8),
-
-                          StatContainer(
-                            icon: FontAwesomeIcons.lightCoins,
-                            value: user.point.toString(),
-                            color: scheme.tertiary,
-                          ),
-                        ],
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 12),
+
+              /// Three equal-sized stat boxes
+              Row(
+                children: [
+                  /// Posts stat
+                  Expanded(
+                    child: StatContainer(
+                      // value: user.noOfPost ?? 0,
+                      value: 1,
+                      label: 'Posts',
+                      icon: FontAwesomeIcons.lightFileLines,
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  /// Comments stat
+                  Expanded(
+                    child: StatContainer(
+                      value: 123,
+                      label: 'Comments',
+                      icon: FontAwesomeIcons.lightComment,
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  /// Points stat
+                  Expanded(
+                    child: StatContainer(
+                      value: 99999,
+                      label: 'Points',
+                      icon: FontAwesomeIcons.lightStar,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
@@ -162,44 +164,81 @@ class UserStats extends StatelessWidget {
   }
 }
 
-/// Individual stat container with icon and value
+/// Stat container component - displays a single stat with value and label
 class StatContainer extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final Color color;
-
   const StatContainer({
     super.key,
-    required this.icon,
     required this.value,
-    required this.color,
+    required this.label,
+    required this.icon,
   });
+
+  final int value;
+  final String label;
+  final IconData icon;
+
+  /// Format number in compact format (e.g., 1.0K, 10.0K, 1.5M)
+  String _formatNumber(int number) {
+    if (number < 1000) {
+      return number.toString();
+    } else if (number < 1000000) {
+      /// Format as K (thousands)
+      final k = number / 1000;
+      return '${k.toStringAsFixed(1)}K';
+    } else if (number < 1000000000) {
+      /// Format as M (millions)
+      final m = number / 1000000;
+      return '${m.toStringAsFixed(1)}M';
+    } else {
+      /// Format as B (billions)
+      final b = number / 1000000000;
+      return '${b.toStringAsFixed(1)}B';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FaIcon(icon, size: 14, color: color),
-          const SizedBox(width: 6),
-
-          /// Value
-          Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
+    return Card(
+      elevation: 0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /// Stat value with comma formatting
+            Text(
+              _formatNumber(value),
+              style: theme.textTheme.headlineLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.onSurface,
+              ),
             ),
-          ),
-        ],
+
+            const SizedBox(height: 8),
+
+            /// Stat label
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FaIcon(icon, size: 16, color: scheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            /// Stat icon
+          ],
+        ),
       ),
     );
   }
