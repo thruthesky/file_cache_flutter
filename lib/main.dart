@@ -69,7 +69,9 @@ class _MyAppState extends State<MyApp> {
           photoUrl: user.photoUrl,
         );
       },
-      onTapUserRecentPostItem: (context, post) => {},
+      onTapUserRecentPostItem: (context, post) => {
+        log(post.toString(), name: 'onTapUserRecentPostItem::'),
+      },
     );
     initMessagingService();
     if (Platform.isAndroid) {
