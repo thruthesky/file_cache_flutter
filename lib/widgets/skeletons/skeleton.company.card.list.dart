@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 // Skeleton Company Card used in company list screen
-class SkeletonCompanyCard extends StatelessWidget {
-  const SkeletonCompanyCard({super.key});
+class SkeletonCompanyCardList extends StatelessWidget {
+  const SkeletonCompanyCardList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,6 @@ class SkeletonCompanyCard extends StatelessWidget {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 8,
-              mainAxisSpacing: 8, // Add vertical spacing between cards
               childAspectRatio: 1.2,
             ),
             itemCount: 4,

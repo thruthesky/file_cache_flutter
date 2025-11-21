@@ -126,8 +126,8 @@ class UserStats extends StatelessWidget {
                   /// Posts stat
                   Expanded(
                     child: StatContainer(
-                      // value: user.noOfPost ?? 0,
-                      value: 1,
+                      value: user.noOfPost ?? 0,
+                      // value: 1,
                       label: 'Posts',
                       icon: FontAwesomeIcons.lightFileLines,
                     ),
@@ -138,7 +138,7 @@ class UserStats extends StatelessWidget {
                   /// Comments stat
                   Expanded(
                     child: StatContainer(
-                      value: 123,
+                      value: user.noOfComment ?? 0,
                       label: 'Comments',
                       icon: FontAwesomeIcons.lightComment,
                     ),
@@ -149,7 +149,7 @@ class UserStats extends StatelessWidget {
                   /// Points stat
                   Expanded(
                     child: StatContainer(
-                      value: 99999,
+                      value: user.point ?? 0,
                       label: 'Points',
                       icon: FontAwesomeIcons.lightStar,
                     ),

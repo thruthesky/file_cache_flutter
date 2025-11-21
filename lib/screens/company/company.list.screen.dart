@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
-import 'package:philgo/widgets/skeletons/skeleton.company.card.dart';
+import 'package:philgo/widgets/skeletons/skeleton.company.card.list.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company Directory Screen
@@ -225,7 +225,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         Expanded(
           child: SingleChildScrollView(
             child: isLoading
-                ? SkeletonCompanyCard()
+                ? SkeletonCompanyCardList()
                 : selectedCategoryId != null
                 ? _buildCategorySection(selectedCategoryId!)
                 : const SizedBox.shrink(),
