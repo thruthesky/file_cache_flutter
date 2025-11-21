@@ -53,10 +53,23 @@ Future<Post> getPost(int id) async {
   return post;
 }
 
-Future<List<Post>> getLatestByUser(String uid, {int limit = 10}) async {
+Future<List<Post>> getLatestByUser({
+  int? idx_member,
+  String? firebase_uid,
+  int limit = 10,
+  int page = 1,
+}) async {
+  if (idx_member == null && firebase_uid == null) {
+    throw ('idx_member or firebase_uid must exist');
+  }
   final res = await func<List<dynamic>>(
     'get_posts',
-    data: {'firebase_uid': uid, 'limit': limit},
+    data: {
+      'firebase_uid': firebase_uid,
+      'idx_member': idx_member,
+      'limit': limit,
+      'page': page,
+    },
     debug: true,
   );
   debugLog('getPosts: $res');
@@ -352,20 +365,6 @@ Future<Comment> updateComment(RecordType data) async {
   );
 
   return Comment.fromJson(response);
-}
-
-Future<PostList> getMyPosts({
-  required int myId,
-  int page = 1,
-  int limit = 20,
-}) async {
-  final res = await func(
-    'post_list',
-    data: {'idx_member': myId, 'page': page, 'limit': limit},
-    debug: true,
-  );
-  debugLog('getMyPosts: $res');
-  return PostList.fromJson(res);
 }
 
 /// Get latest comments from all users

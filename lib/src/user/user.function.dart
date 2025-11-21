@@ -108,135 +108,122 @@ void showProfileDialog(BuildContext context, User otherUser) {
   );
 }
 
-/// Show recent posts dialog
+/// 최근 게시글을 보여주는 바텀 시트
+/// Shows recent posts in a bottom sheet
 void showUserRecentPostsDialog({
   required BuildContext context,
   required User otherUser,
 }) {
-  showDialog(
+  showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
     builder: (context) {
-      return AlertDialog(
-        contentPadding: EdgeInsets.zero,
-        title: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, scrollController) {
+          return Column(
             children: [
-              Text(
-                LibTr.of(context)!.recent_post,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              /// 헤더 영역 - 타이틀과 닫기 버튼
+              /// Header area with title and close button
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-              ),
-              IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close),
-                tooltip: LibTr.of(context)!.close,
-              ),
-            ],
-          ),
-        ),
-
-        content: SingleChildScrollView(
-          child: FutureBuilder(
-            future: getLatestByUser(otherUser.uid),
-            builder: (context, asyncSnapshot) {
-              if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-
-              if (asyncSnapshot.hasError) {
-                return Center(child: Text('Error: ${asyncSnapshot.error}'));
-              }
-
-              List<Post>? posts = asyncSnapshot.data;
-
-              if (posts?.isEmpty ?? true) {
-                return Column(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(LibTr.of(context)!.no_recent_posts),
-                    ),
-                  ],
-                );
-              }
-
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 8,
-                children: [
-                  // Display recent posts for the user
-                  for (Post post in posts!)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: ListTile(
-                        onTap: () {
-                          UserService.instance.onTapUserRecentPostItem != null
-                              ? UserService.instance.onTapUserRecentPostItem!
-                                    .call(context, post)
-                              : showInfoDialog(
-                                  context,
-                                  'Recent post on tap',
-                                  'Use UserService to initialize onTapUserRecentPostItem',
-                                );
-                        },
-                        leading: post.photo_url.isNotEmpty
-                            ? Image.network(
-                                post.photo_url,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              )
-                            : null, //CircleAvatar(child: Icon(Icons.article)),
-                        title: Text(post.subject),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(post.content, maxLines: 1),
-                            Row(
-                              children: [
-                                // Row(
-                                //   children: [
-                                //     Icon(Icons.thumb_up),
-                                //     SizedBox(width: 4),
-                                //     Text(post.no_of_comment.toString()),
-                                //   ],
-                                // ),
-                                if (post.no_of_comment > 0)
-                                  Row(
-                                    children: [
-                                      Icon(Icons.forum),
-                                      SizedBox(width: 4),
-                                      Text(post.no_of_comment.toString()),
-                                    ],
-                                  ),
-
-                                Spacer(),
-                                Text(
-                                  formatTimestamp(context, post.stamp * 1000),
-                                  style: TextStyle(fontSize: 9),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                    Text(
+                      LibTr.of(context)!.recent_post,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                ],
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(LibTr.of(context)!.close),
-          ),
-        ],
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                      tooltip: LibTr.of(context)!.close,
+                    ),
+                  ],
+                ),
+              ),
+
+              /// 컨텐츠 영역 - 게시글 리스트
+              /// Content area with posts list
+              Expanded(
+                child: FutureBuilder(
+                  future: getLatestByUser(firebase_uid: otherUser.uid),
+                  builder: (context, asyncSnapshot) {
+                    if (asyncSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (asyncSnapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${asyncSnapshot.error}'),
+                      );
+                    }
+
+                    List<Post>? posts = asyncSnapshot.data;
+
+                    if (posts?.isEmpty ?? true) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(LibTr.of(context)!.no_recent_posts),
+                        ),
+                      );
+                    }
+
+                    return ListView.separated(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: posts!.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: PostListTile(
+                            post: post,
+                            onTap: () {
+                              UserService.instance.onTapUserRecentPostItem !=
+                                      null
+                                  ? UserService
+                                        .instance
+                                        .onTapUserRecentPostItem!
+                                        .call(context, post)
+                                  : showInfoDialog(
+                                      context,
+                                      'Recent post on tap',
+                                      'Use UserService to initialize onTapUserRecentPostItem',
+                                    );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       );
     },
   );
