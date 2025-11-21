@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
-import 'package:philgo/screens/settings/settings.screen.dart';
+import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo/widgets/home/ad.banner.dart';
-import 'package:philgo/widgets/home/latest.user.comments.dart';
-import 'package:philgo/widgets/home/latest.user.posts.dart';
-import 'package:philgo/widgets/home/user.stats.dart';
+import 'package:philgo/widgets/home/main/latest.user.comments.dart';
+import 'package:philgo/widgets/home/main/latest.user.posts.dart';
+import 'package:philgo/widgets/home/main/user.stats.dart';
 
 /// 메인 홈 화면
 ///
@@ -59,7 +58,10 @@ class _MainHomeState extends State<MainHome> {
                     size: 24,
                   ),
                   onPressed: () {
-                    context.push(SettingsScreen.routeName);
+                    NavigationState.of(
+                      context,
+                      listen: false,
+                    ).setHomeNavigation(HomeNavigationItem.menu);
                   },
                   tooltip: 'Settings',
                 ),

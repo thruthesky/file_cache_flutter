@@ -35,11 +35,9 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
     _loadPosts();
   }
 
-  /// API에서 게시글 불러오기
   Future<void> _loadPosts() async {
     final user = AppState.of(context, listen: false).user;
 
-    /// 로그인하지 않은 경우 로딩하지 않음
     if (user == null || user.idx == null) return;
 
     setState(() {
@@ -67,7 +65,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
     return Selector<AppState, User?>(
       selector: (_, appState) => appState.user,
-      builder: (_, user, __) {
+      builder: (_, user, _) {
         if (user == null) return const SizedBox.shrink();
 
         return Container(
@@ -80,7 +78,6 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 child: Row(
                   children: [
-                    /// 제목
                     Text(
                       'Latest Posts',
                       style: theme.textTheme.titleLarge?.copyWith(
@@ -91,7 +88,6 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
                     const Spacer(),
 
-                    /// View All 버튼 - MyActivityScreen의 posts 탭으로 이동
                     TextButton(
                       onPressed: () {
                         MyActivityScreen.push(
@@ -123,7 +119,6 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
               const SizedBox(height: 8),
 
-              /// 게시글 콘텐츠 영역
               if (_isLoading)
                 const Padding(
                   padding: EdgeInsets.all(32),

@@ -36,6 +36,7 @@ class MenuTile extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
         child:
             Container(
                   padding: EdgeInsets.all(sp.s16),

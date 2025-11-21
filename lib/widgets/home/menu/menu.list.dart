@@ -36,22 +36,9 @@ class _MenuListState extends State<MenuList> {
 
   /// 로그아웃 처리
   Future<void> _handleLogout() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Logout'),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
     );
 
     if (confirmed == true) {
@@ -83,11 +70,14 @@ class _MenuListState extends State<MenuList> {
           icon: FontAwesomeIcons.lightBuilding,
           title: 'Company Directory',
           subtitle: 'View company members and contacts',
-          onTap: () {
-            NavigationState.of(
-              context,
-              listen: false,
-            ).setHomeNavigation(HomeNavigationItem.company);
+          onTap: () async {
+            await Future.delayed(const Duration(milliseconds: 150));
+            if (context.mounted) {
+              NavigationState.of(
+                context,
+                listen: false,
+              ).setHomeNavigation(HomeNavigationItem.company);
+            }
           },
           index: 1,
           isAnimated: _isAnimated,
@@ -100,11 +90,14 @@ class _MenuListState extends State<MenuList> {
           icon: FontAwesomeIcons.lightComments,
           title: 'Open Chat Room',
           subtitle: 'Join public chat rooms',
-          onTap: () {
-            NavigationState.of(
-              context,
-              listen: false,
-            ).setHomeNavigation(HomeNavigationItem.chat);
+          onTap: () async {
+            await Future.delayed(const Duration(milliseconds: 150));
+            if (context.mounted) {
+              NavigationState.of(
+                context,
+                listen: false,
+              ).setHomeNavigation(HomeNavigationItem.chat);
+            }
           },
           index: 2,
           isAnimated: _isAnimated,
@@ -164,6 +157,8 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
+        SizedBox(height: widget.spacing),
+
         /// Privacy Policy
         MenuTile(
           icon: FontAwesomeIcons.lightShieldHalved,
@@ -176,7 +171,7 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
-        SizedBox(height: 16),
+        SizedBox(height: widget.spacing),
 
         /// Member Withdrawal
         MenuTile(

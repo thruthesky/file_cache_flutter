@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/user/my.activity.screen.dart';
 import 'package:philgo/state/app.state.dart';
@@ -68,7 +67,7 @@ class _LatestUserCommentsState extends State<LatestUserComments> {
 
     return Selector<AppState, User?>(
       selector: (_, appState) => appState.user,
-      builder: (_, user, __) {
+      builder: (_, user, _) {
         /// 로그인하지 않은 경우 표시하지 않음
         if (user == null) return const SizedBox.shrink();
 

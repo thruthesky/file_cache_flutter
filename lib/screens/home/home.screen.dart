@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ChatHome(), // 채팅
           ForumHome(), // 게시판
           CompanyHome(), // 업소록
-          MyPage(), // 메뉴
+          MenuHome(), // 메뉴
         ],
       ),
       // BottomNavigationBar 추가
@@ -93,11 +93,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: FaIcon(
-              selectedItem == HomeNavigationItem.my
+              selectedItem == HomeNavigationItem.menu
                   ? FontAwesomeIcons.solidUser
                   : FontAwesomeIcons.thinUser,
             ),
-            label: Lo.of(context)!.my,
+            label: 'Menu',
           ),
         ],
         currentIndex: selectedItem.index,
