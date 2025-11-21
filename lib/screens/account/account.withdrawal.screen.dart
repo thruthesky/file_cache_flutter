@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 import 'package:philgo/widgets/information.box.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Account withdrawal screen
@@ -165,6 +166,8 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
 
             /// Request withdrawal button
             RequestWithdrawalButtonWidget(isAnimated: _isAnimated),
+
+            SizedBox(height: sp.s32),
           ],
         ),
       ),
@@ -235,14 +238,11 @@ class DataCategoryWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: scheme.primary, size: 28),
+              IconContainer(
+                icon: icon,
+                size: 56,
+                iconSize: 28,
+                borderRadius: 12,
               ),
               SizedBox(width: sp.s16),
               Expanded(
@@ -298,18 +298,11 @@ class EmailRequestWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  FontAwesomeIcons.lightEnvelope,
-                  color: scheme.primary,
-                  size: 28,
-                ),
+              IconContainer(
+                icon: FontAwesomeIcons.lightEnvelope,
+                size: 56,
+                iconSize: 28,
+                borderRadius: 12,
               ),
               SizedBox(width: sp.s16),
               Expanded(
@@ -396,20 +389,15 @@ class RetentionInfoWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: scheme.tertiaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  FontAwesomeIcons.lightShieldCheck,
-                  color: scheme.tertiary,
-                  size: 28,
-                ),
+              IconContainer(
+                icon: FontAwesomeIcons.lightShieldCheck,
+                size: 56,
+                iconSize: 28,
+                borderRadius: 12,
+                backgroundColor: scheme.tertiaryContainer,
+                iconColor: scheme.tertiary,
               ),
               SizedBox(width: sp.s16),
               Expanded(
@@ -461,20 +449,13 @@ class ContactInfoWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  FontAwesomeIcons.lightCircleQuestion,
-                  color: scheme.primary,
-                  size: 28,
-                ),
+              IconContainer(
+                icon: FontAwesomeIcons.lightCircleQuestion,
+                size: 56,
+                iconSize: 28,
+                borderRadius: 12,
               ),
               SizedBox(width: sp.s16),
               Expanded(

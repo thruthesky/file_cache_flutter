@@ -23,10 +23,10 @@ class InformationBox extends StatelessWidget {
       padding: EdgeInsets.all(sp.s8),
       decoration: BoxDecoration(
         color: bgColor ?? scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (icon != null) ...[
             FaIcon(
