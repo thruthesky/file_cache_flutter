@@ -6,6 +6,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/main/latest.user.comments.dart';
 import 'package:philgo/widgets/user/latest.user.posts.dart';
 import 'package:philgo/widgets/home/main/user.stats.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// 메인 홈 화면
 ///
@@ -74,8 +75,11 @@ class _MainHomeState extends State<MainHome> {
           const UserStats(),
 
           SizedBox(height: sp.s8),
-
-          // const LatestUserPosts(),
+          Login(
+            builder: (uid) {
+              return LatestUserPosts(firebase_uid: uid);
+            },
+          ),
           SizedBox(height: sp.s8),
 
           const LatestUserComments(),
