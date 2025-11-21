@@ -55,8 +55,9 @@ Future<Post> getPost(int id) async {
 
 Future<List<Post>> getLatestByUser(String uid, {int limit = 10}) async {
   final res = await func<List<dynamic>>(
-    'post.latest-by-user',
-    data: {'uid': uid, 'limit': limit},
+    'get_posts',
+    data: {'firebase_uid': uid, 'limit': limit},
+    debug: true,
   );
   debugLog('getPosts: $res');
   return (res).map((e) => Post.fromJson(e as Map<String, dynamic>)).toList();
