@@ -4,7 +4,7 @@ import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/main/latest.user.comments.dart';
-import 'package:philgo/widgets/home/main/latest.user.posts.dart';
+import 'package:philgo/widgets/user/latest.user.posts.dart';
 import 'package:philgo/widgets/home/main/user.stats.dart';
 
 /// 메인 홈 화면
@@ -75,8 +75,7 @@ class _MainHomeState extends State<MainHome> {
 
           SizedBox(height: sp.s8),
 
-          const LatestUserPosts(),
-
+          // const LatestUserPosts(),
           SizedBox(height: sp.s8),
 
           const LatestUserComments(),
