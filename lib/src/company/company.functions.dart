@@ -49,50 +49,21 @@ Future<CompanyList> getCompanies({
     debug: true,
   );
 
-  // debugLog('getCompanies response type: ${response.runtimeType}');
-  // debugLog('getCompanies response: $response');
-
-  // PHP returns object with numeric keys like {0: {...}, 1: {...}}
-  // Convert to List format
-  if (response is Map) {
-    // Check if it's a numeric-keyed map (PHP array) vs metadata object
-    final hasNumericKeys = response.keys.any(
-      (key) => int.tryParse(key.toString()) != null,
-    );
-
-    if (hasNumericKeys) {
-      // Convert Map to List, ensuring each item is a Map<String, dynamic>
-      final companiesList = response.values.map((item) {
-        if (item is Map<String, dynamic>) {
-          return item;
-        } else if (item is Map) {
-          return Map<String, dynamic>.from(item);
-        } else {
-          debugLog('Unexpected item type: ${item.runtimeType}');
-          return <String, dynamic>{};
-        }
-      }).toList();
-
-      return CompanyList.fromJson({
-        'page': 1,
-        'company_count': companiesList.length,
-        'duration': '',
-        'companies': companiesList,
-        'config': {},
-      });
-    } else {
-      debugLog('Response has no numeric keys, returning empty company list');
-      return CompanyList.fromJson({
-        'page': 1,
-        'company_count': 0,
-        'duration': '',
-        'companies': [],
-        'config': {},
-      });
-    }
+  // API가 List를 직접 반환하는 경우 처리
+  if (response is List) {
+    debugLog('API returned List, converting to CompanyList structure');
+    final companiesData = {
+      'page': 1,
+      'company_count': response.length,
+      'duration': '',
+      'companies': response,
+      'config': {},
+    };
+    return CompanyList.fromJson(companiesData);
   }
 
-  throw Exception('Unexpected response format: ${response.runtimeType}');
+  // Map 형태로 반환된 경우 (정상적인 경우)
+  return CompanyList.fromJson(response as Map<String, dynamic>);
 }
 
 Future<Company> getCompany(int idx) async {

@@ -120,7 +120,7 @@ class _CategoryDropdownFieldState extends State<CategoryDropdownField> {
         Container(
           decoration: BoxDecoration(
             color: scheme.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: DropdownButtonFormField<String>(
             initialValue: _selectedCategory,

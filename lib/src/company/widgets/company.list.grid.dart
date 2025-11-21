@@ -27,7 +27,7 @@ class CompanyListGrid extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$name • $count',
+            name,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -43,7 +43,6 @@ class CompanyListGrid extends StatelessWidget {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 8,
-                mainAxisSpacing: 8, // Add vertical spacing between cards
                 childAspectRatio: 1.2,
               ),
               itemCount: companies.length,

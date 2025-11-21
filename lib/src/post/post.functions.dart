@@ -368,6 +368,24 @@ Future<PostList> getMyPosts({
   return PostList.fromJson(res);
 }
 
+/// Get latest comments from all users
+/// Returns a list of Comment objects
+Future<List<Comment>> getLatestComments({int page = 1, int limit = 20}) async {
+  final res = await func(
+    'get_latest_comments',
+    data: {'page': page, 'limit': limit},
+    debug: true,
+  );
+
+  debugLog("GET LATEST COMMENTS ----------------> $res");
+
+  final comments = res
+      .map((item) => Comment.fromJson(item as Map<String, dynamic>))
+      .toList();
+  debugLog('getLatestComments: Parsed ${comments.length} comments');
+  return comments;
+}
+
 /// Get comments by user
 /// Returns a list of Comment objects
 Future<List<Comment>> getMyComments({int page = 1, int limit = 20}) async {
@@ -379,38 +397,9 @@ Future<List<Comment>> getMyComments({int page = 1, int limit = 20}) async {
 
   debugLog("GET MY COMMENTS ----------------> $res");
 
-  // The response is a map with numeric keys (0, 1, 2, ...) containing comment objects
-  // We need to convert it to a list of Comment objects
-  final List<Comment> comments = [];
-
-  if (res is Map) {
-    // Iterate through the map entries
-    for (var entry in res.entries) {
-      final key = entry.key;
-
-      // Check if the key is numeric (could be int or string like "0", "1", etc.)
-      bool isNumeric = false;
-
-      if (key is int) {
-        // Key is already an integer
-        isNumeric = true;
-      } else if (key is String) {
-        // Try to parse the string as an integer
-        try {
-          int.parse(key);
-          isNumeric = true;
-        } catch (e) {
-          // Not a numeric string
-        }
-      }
-
-      // If numeric key, parse as Comment
-      if (isNumeric && entry.value is Map) {
-        comments.add(Comment.fromJson(entry.value as Map<String, dynamic>));
-      }
-    }
-  }
-
+  final comments = res
+      .map((item) => Comment.fromJson(item as Map<String, dynamic>))
+      .toList();
   debugLog('getMyComments: Parsed ${comments.length} comments');
   return comments;
 }

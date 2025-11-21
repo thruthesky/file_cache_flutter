@@ -59,7 +59,7 @@ class _CommentDetailState extends State<CommentDetail> {
                         Text(
                           widget.comment.nickname.isEmpty
                               ? 'No Name'
-                              : widget.comment.nickname,
+                              : cut(widget.comment.nickname, 15),
                           style: Theme.of(context).textTheme.titleSmall
                               ?.copyWith(fontWeight: FontWeight.w600),
                         ),
