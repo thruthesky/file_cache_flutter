@@ -116,6 +116,7 @@ export 'src/widgets/avatar.dart';
 export 'src/widgets/date_selector.dart';
 export 'src/widgets/file_upload.dart';
 export 'src/widgets/full_screen_image_viewer.dart';
+export 'src/widgets/icon.container.dart';
 export 'src/widgets/submit_button.dart';
 export 'src/widgets/text_field_set.dart';
 export 'src/widgets/loading.box.dart';

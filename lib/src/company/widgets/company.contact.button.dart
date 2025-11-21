@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../philgo_v6_flutter.dart';
 
 class CompanyContactButton extends StatelessWidget {
   final IconData icon;
@@ -33,13 +34,13 @@ class CompanyContactButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: scheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: FaIcon(icon, color: scheme.primary, size: 20),
+              IconContainer(
+                icon: icon,
+                size: 36,
+                iconSize: 20,
+                borderRadius: 8,
+                backgroundColor: scheme.primary.withValues(alpha: 0.1),
+                iconColor: scheme.primary,
               ),
               SizedBox(width: 16),
               Expanded(
