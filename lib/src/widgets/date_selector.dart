@@ -219,7 +219,6 @@ class _DateSelectorState extends State<DateSelector> {
             children: [
               // 연도 선택
               Expanded(
-                flex: 3,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
@@ -265,7 +264,6 @@ class _DateSelectorState extends State<DateSelector> {
 
               // 월 선택
               Expanded(
-                flex: 2,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
@@ -311,7 +309,6 @@ class _DateSelectorState extends State<DateSelector> {
 
               // 일 선택
               Expanded(
-                flex: 2,
                 child: GestureDetector(
                   // 연도나 월이 선택되지 않았을 때 탭 감지하여 경고 메시지 표시
                   onTap: (selectedYear == null || selectedMonth == null)

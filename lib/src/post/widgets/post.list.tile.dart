@@ -173,7 +173,7 @@ class PostListTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      displayName,
+                      cut(displayName, 15),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     SizedBox(width: 16),
