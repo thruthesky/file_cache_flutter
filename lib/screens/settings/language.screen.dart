@@ -6,6 +6,16 @@ class LanguageScreen extends StatefulWidget {
 
   const LanguageScreen({super.key});
 
+  /// 언어 설정 화면으로 이동
+  static Future<T?> push<T>(BuildContext context) {
+    return Navigator.push<T>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LanguageScreen(),
+      ),
+    );
+  }
+
   @override
   State<LanguageScreen> createState() => _LanguageScreenState();
 }

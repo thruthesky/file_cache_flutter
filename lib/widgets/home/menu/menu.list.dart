@@ -6,6 +6,7 @@ import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/screens/settings/language.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -65,6 +66,18 @@ class _MenuListState extends State<MenuList> {
 
         SizedBox(height: widget.spacing),
 
+        /// Language Settings
+        MenuTile(
+          icon: FontAwesomeIcons.lightLanguage,
+          title: 'Language',
+          subtitle: 'Change app language preference',
+          onTap: () => LanguageScreen.push(context),
+          index: 1,
+          isAnimated: _isAnimated,
+        ),
+
+        SizedBox(height: widget.spacing),
+
         /// Company Directory
         MenuTile(
           icon: FontAwesomeIcons.lightBuilding,
@@ -79,7 +92,7 @@ class _MenuListState extends State<MenuList> {
               ).setHomeNavigation(HomeNavigationItem.company);
             }
           },
-          index: 1,
+          index: 2,
           isAnimated: _isAnimated,
         ),
 
@@ -99,7 +112,7 @@ class _MenuListState extends State<MenuList> {
               ).setHomeNavigation(HomeNavigationItem.chat);
             }
           },
-          index: 2,
+          index: 3,
           isAnimated: _isAnimated,
         ),
 
@@ -113,7 +126,7 @@ class _MenuListState extends State<MenuList> {
           onTap: () {
             WebViewScreen.push(context, bannerPageUrl(), title: 'Banner Ads');
           },
-          index: 3,
+          index: 4,
           isAnimated: _isAnimated,
         ),
 
@@ -127,7 +140,7 @@ class _MenuListState extends State<MenuList> {
           onTap: () {
             WebViewScreen.push(context, pointPageUrl(), title: 'Point Ads');
           },
-          index: 4,
+          index: 5,
           isAnimated: _isAnimated,
         ),
 
@@ -139,7 +152,7 @@ class _MenuListState extends State<MenuList> {
           title: 'App Guide',
           subtitle: 'Learn how to use the app',
           onTap: () => AppGuideScreen.push(context),
-          index: 5,
+          index: 6,
           isAnimated: _isAnimated,
         ),
 
@@ -153,7 +166,7 @@ class _MenuListState extends State<MenuList> {
           onTap: () {
             showTermsAndConditions(context);
           },
-          index: 6,
+          index: 7,
           isAnimated: _isAnimated,
         ),
 
@@ -167,7 +180,7 @@ class _MenuListState extends State<MenuList> {
           onTap: () {
             showPrivacyPolicy(context);
           },
-          index: 7,
+          index: 8,
           isAnimated: _isAnimated,
         ),
 
@@ -181,7 +194,7 @@ class _MenuListState extends State<MenuList> {
           onTap: () {
             AccountWithdrawalScreen.push(context);
           },
-          index: 8,
+          index: 9,
           isAnimated: _isAnimated,
         ),
 
@@ -193,7 +206,7 @@ class _MenuListState extends State<MenuList> {
           title: 'Logout',
           subtitle: 'Sign out from your account',
           onTap: _handleLogout,
-          index: 9,
+          index: 10,
           isAnimated: _isAnimated,
         ),
 

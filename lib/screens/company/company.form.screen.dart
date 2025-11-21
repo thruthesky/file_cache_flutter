@@ -671,7 +671,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
   Widget _buildStepContent(Widget content) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: content
           .animate()
           .fadeIn(duration: 400.ms, delay: 100.ms)
