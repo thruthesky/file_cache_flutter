@@ -235,5 +235,7 @@
   "daysAgo": "{days}일 전",
   "weeksAgo": "{weeks}주 전",
   "monthsAgo": "{months}개월 전",
-  "yearsAgo": "{years}년 전"
+  "yearsAgo": "{years}년 전",
+  "latestPosts": "최근 게시글",
+  "viewAll": "전체 보기"
 }

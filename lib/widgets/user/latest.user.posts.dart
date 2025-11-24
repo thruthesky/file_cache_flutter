@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/state/app.state.dart';
@@ -91,7 +92,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
                 child: Row(
                   children: [
                     Text(
-                      'Latest Posts',
+                      T.latestPosts,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: scheme.onSurface,
@@ -113,7 +114,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'View All',
+                            T.viewAll,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.primary,
                             ),
@@ -163,7 +164,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No posts yet',
+              T.noPostsYet,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),

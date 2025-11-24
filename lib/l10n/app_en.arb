@@ -954,5 +954,13 @@
         "type": "int"
       }
     }
+  },
+  "latestPosts": "Latest Posts",
+  "@latestPosts": {
+    "description": "Title for latest posts section"
+  },
+  "viewAll": "View All",
+  "@viewAll": {
+    "description": "Button text to view all items"
   }
 }

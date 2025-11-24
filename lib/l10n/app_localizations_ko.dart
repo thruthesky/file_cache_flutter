@@ -746,4 +746,10 @@ class LoKo extends Lo {
   String yearsAgo(int years) {
     return '$years년 전';
   }
+
+  @override
+  String get latestPosts => '최근 게시글';
+
+  @override
+  String get viewAll => '전체 보기';
 }

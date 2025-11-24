@@ -1516,6 +1516,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'{years}y ago'**
   String yearsAgo(int years);
+
+  /// Title for latest posts section
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Posts'**
+  String get latestPosts;
+
+  /// Button text to view all items
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {
