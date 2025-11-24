@@ -102,10 +102,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
                     TextButton(
                       onPressed: () {
-                        MyActivityScreen.push(
-                          context,
-                          initialTab: MyActivityTab.posts,
-                        );
+                        MyActivityScreen.push(context);
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

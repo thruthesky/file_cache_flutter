@@ -302,9 +302,7 @@ final router = GoRouter(
       path: MyActivityScreen.routeName,
       name: MyActivityScreen.routeName,
       builder: (context, state) {
-        final initialTab =
-            state.extra as MyActivityTab? ?? MyActivityTab.posts;
-        return MyActivityScreen(initialTab: initialTab);
+        return MyActivityScreen();
       },
     ),
     GoRoute(

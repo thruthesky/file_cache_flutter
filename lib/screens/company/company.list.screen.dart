@@ -223,19 +223,26 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
         // Body Content (스크롤 가능)
         Expanded(
-          child: SingleChildScrollView(
-            child: isLoading
-                ? SkeletonCompanyCardList()
-                : selectedCategoryId != null
-                ? _buildCategorySection(selectedCategoryId!)
-                : const SizedBox.shrink(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: isLoading
+                    ? SkeletonCompanyCardList()
+                    : selectedCategoryId != null
+                    ? _buildCategorySection(
+                        selectedCategoryId!,
+                        constraints.maxHeight,
+                      )
+                    : const SizedBox.shrink(),
+              );
+            },
           ),
         ),
       ],
     );
   }
 
-  Widget _buildCategorySection(String categoryId) {
+  Widget _buildCategorySection(String categoryId, double availableHeight) {
     final category = categories.firstWhere(
       (cat) => cat['id'] == categoryId,
       orElse: () => {'id': '', 'name': '', 'icon': FontAwesomeIcons.ellipsis},
@@ -248,6 +255,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       count: categoryCompanies.length,
       companies: categoryCompanies,
       onCompanyTap: _handleCompanyTap,
+      availableHeight: availableHeight,
     );
   }
 

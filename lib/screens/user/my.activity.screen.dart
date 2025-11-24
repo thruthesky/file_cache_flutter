@@ -8,24 +8,16 @@ import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'sections/my.comments.dart';
 import 'sections/my.posts.dart';
-
-enum MyActivityTab { posts, comments }
 
 class MyActivityScreen extends StatefulWidget {
   static const String routeName = '/my-activity';
 
-  final MyActivityTab initialTab;
-
-  static Future<void> push(
-    BuildContext context, {
-    MyActivityTab initialTab = MyActivityTab.posts,
-  }) {
-    return context.push(routeName, extra: initialTab);
+  static Future<void> push(BuildContext context) {
+    return context.push(routeName);
   }
 
-  const MyActivityScreen({super.key, this.initialTab = MyActivityTab.posts});
+  const MyActivityScreen({super.key});
 
   @override
   State<MyActivityScreen> createState() => _MyActivityScreenState();
@@ -33,29 +25,16 @@ class MyActivityScreen extends StatefulWidget {
 
 class _MyActivityScreenState extends State<MyActivityScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
   static const int _pageSize = 20;
 
   int? myId;
 
   /// 페이지네이션 컨트롤러
   late PagingController<int, Post> _postsPagingController;
-  late PagingController<int, Comment> _commentsPagingController;
 
   @override
   void initState() {
-    super.initState();
-    // initialTab enum의 index를 사용하여 초기 탭 설정
-    _tabController = TabController(
-      length: 2,
-      vsync: this,
-      initialIndex: widget.initialTab.index,
-    );
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        setState(() {});
-      }
-    });
+    super.initState(); // initialTab enum의 index를 사용하여 초기 탭 설정
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = context.read<AppState>().user;
@@ -70,19 +49,11 @@ class _MyActivityScreenState extends State<MyActivityScreen>
           state.lastPageIsEmpty ? null : state.nextIntPageKey,
       fetchPage: _fetchPostsPage,
     );
-
-    _commentsPagingController = PagingController(
-      getNextPageKey: (state) =>
-          state.lastPageIsEmpty ? null : state.nextIntPageKey,
-      fetchPage: _fetchCommentsPage,
-    );
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _postsPagingController.dispose();
-    _commentsPagingController.dispose();
     super.dispose();
   }
 
@@ -94,12 +65,6 @@ class _MyActivityScreenState extends State<MyActivityScreen>
     );
 
     return posts;
-  }
-
-  Future<List<Comment>> _fetchCommentsPage(int pageKey) async {
-    final comments = await getMyComments(page: pageKey, limit: _pageSize);
-
-    return comments;
   }
 
   @override
@@ -133,58 +98,11 @@ class _MyActivityScreenState extends State<MyActivityScreen>
         ),
         title: Text(T.myActivity, style: theme.textTheme.headlineMedium),
         backgroundColor: theme.scaffoldBackgroundColor,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Container(
-            color: scheme.surface,
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: scheme.primary,
-              indicatorWeight: 3,
-              labelColor: scheme.primary,
-              unselectedLabelColor: scheme.onSurfaceVariant,
-              tabs: [
-                Tab(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FaIcon(FontAwesomeIcons.lightFileLines, size: 16),
-                      const SizedBox(width: 8),
-                      Text(T.myPosts),
-                      const SizedBox(width: 8),
-                    ],
-                  ),
-                ),
-                Tab(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FaIcon(FontAwesomeIcons.lightComments, size: 16),
-                      const SizedBox(width: 8),
-                      Text(T.myComments),
-                      const SizedBox(width: 8),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          MyPostsList(
-            pagingController: _postsPagingController,
-            errorBuilder: _buildErrorWidget,
-            emptyBuilder: _buildEmptyStateWidget,
-          ),
-          MyCommentsList(
-            pagingController: _commentsPagingController,
-            errorBuilder: _buildErrorWidget,
-            emptyBuilder: _buildEmptyStateWidget,
-          ),
-        ],
+      body: MyPostsList(
+        pagingController: _postsPagingController,
+        errorBuilder: _buildErrorWidget,
+        emptyBuilder: _buildEmptyStateWidget,
       ),
     );
   }

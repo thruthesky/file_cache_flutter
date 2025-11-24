@@ -112,8 +112,25 @@ class _ForumHomeState extends State<ForumHome> {
                       }
                     },
                     headerBuilder: (context, totalPostCount) {
-                      return ForumCategoryHeader(
-                        totalPostCount: totalPostCount,
+                      return Row(
+                        children: [
+                          ForumCategoryHeader(totalPostCount: totalPostCount),
+                          Spacer(),
+                          FilledButton.icon(
+                            onPressed: () async {
+                              final post = await PostCreateScreen.push(context);
+                              debugLog('post: $post');
+                              if (post != null) {
+                                onNewPostCreated(post);
+                              }
+                            },
+                            icon: const FaIcon(
+                              FontAwesomeIcons.penToSquare,
+                              size: 18,
+                            ),
+                            label: Text(LibTr.of(context)!.create_post),
+                          ),
+                        ],
                       );
                     },
                     noItemsFoundIndicatorBuilder: (context) {
@@ -122,23 +139,6 @@ class _ForumHomeState extends State<ForumHome> {
                   ),
                 ),
               ],
-            ),
-
-            // Floating Action Button
-            Positioned(
-              right: 16,
-              bottom: 16,
-              child: FloatingActionButton.extended(
-                onPressed: () async {
-                  final post = await PostCreateScreen.push(context);
-                  debugLog('post: $post');
-                  if (post != null) {
-                    onNewPostCreated(post);
-                  }
-                },
-                icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 18),
-                label: Text(LibTr.of(context)!.create_post),
-              ),
             ),
           ],
         );

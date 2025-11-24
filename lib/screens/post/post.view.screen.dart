@@ -261,7 +261,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: CommentToPost(
             post: widget.post,
             onCreated: (createdComment) {
