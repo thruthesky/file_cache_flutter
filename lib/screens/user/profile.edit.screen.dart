@@ -69,9 +69,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 video: true,
                 onUploaded: (url) async {
                   log('uploaded file url: $url');
-                  final user = await philgoApiUserUpdate({'photo_url': url});
+                  final updatedUser = await philgoApiUserUpdate({
+                    'photo_url': url,
+                  });
                   if (context.mounted) {
-                    AppState.of(context).setUser(user);
+                    // Update the global app state
+                    AppState.of(context).setUser(updatedUser);
+                    showSuccessSnackBar(
+                      context,
+                      'Profile photo updated successfully',
+                    );
                   }
                 },
                 onBeforeUpload: () {
