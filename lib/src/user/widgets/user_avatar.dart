@@ -18,11 +18,7 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: alignment,
-      child: Avatar(
-        size: size,
-        radius: 75.0,
-        photoUrl: user.photoUrl ?? '',
-      ),
+      child: Avatar(size: size, radius: 75.0, photoUrl: user.photoUrl ?? ''),
     );
   }
 }
