@@ -490,4 +490,36 @@ class LibTrZh extends LibTr {
 
   @override
   String get add_to_favorites => '添加到收藏夹';
+
+  @override
+  String get no_name => '无名称';
+
+  @override
+  String added_to_folder(String folderName) {
+    return '已添加到 $folderName';
+  }
+
+  @override
+  String removed_from_folder(String folderName) {
+    return '已从 $folderName 移除';
+  }
+
+  @override
+  String failed_to_update_favorite(String error) {
+    return '更新收藏夹失败：$error';
+  }
+
+  @override
+  String get create_new_folder => '创建新文件夹';
+
+  @override
+  String get folder_name => '文件夹名称';
+
+  @override
+  String get enter_folder_name => '输入文件夹名称';
+
+  @override
+  String chats_count(int count) {
+    return '$count 个聊天';
+  }
 }

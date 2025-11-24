@@ -611,5 +611,13 @@
     "unpin_chat_room_message": "このチャットルームの固定を解除してもよろしいですか？",
     "unpin": "固定解除",
     "chat_room_unpinned": "チャットルームの固定が解除されました",
-    "add_to_favorites": "お気に入りに追加"
+    "add_to_favorites": "お気に入りに追加",
+    "no_name": "名前なし",
+    "added_to_folder": "{folderName}に追加されました",
+    "removed_from_folder": "{folderName}から削除されました",
+    "failed_to_update_favorite": "お気に入りの更新に失敗しました：{error}",
+    "create_new_folder": "新しいフォルダを作成",
+    "folder_name": "フォルダ名",
+    "enter_folder_name": "フォルダ名を入力してください",
+    "chats_count": "{count}件のチャット"
 }

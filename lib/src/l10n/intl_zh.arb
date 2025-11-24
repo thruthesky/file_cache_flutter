@@ -611,5 +611,13 @@
     "unpin_chat_room_message": "您确定要取消固定此聊天室吗？",
     "unpin": "取消固定",
     "chat_room_unpinned": "聊天室已取消固定",
-    "add_to_favorites": "添加到收藏夹"
+    "add_to_favorites": "添加到收藏夹",
+    "no_name": "无名称",
+    "added_to_folder": "已添加到 {folderName}",
+    "removed_from_folder": "已从 {folderName} 移除",
+    "failed_to_update_favorite": "更新收藏夹失败：{error}",
+    "create_new_folder": "创建新文件夹",
+    "folder_name": "文件夹名称",
+    "enter_folder_name": "输入文件夹名称",
+    "chats_count": "{count} 个聊天"
 }

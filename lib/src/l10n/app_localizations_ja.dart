@@ -492,4 +492,36 @@ class LibTrJa extends LibTr {
 
   @override
   String get add_to_favorites => 'お気に入りに追加';
+
+  @override
+  String get no_name => '名前なし';
+
+  @override
+  String added_to_folder(String folderName) {
+    return '$folderNameに追加されました';
+  }
+
+  @override
+  String removed_from_folder(String folderName) {
+    return '$folderNameから削除されました';
+  }
+
+  @override
+  String failed_to_update_favorite(String error) {
+    return 'お気に入りの更新に失敗しました：$error';
+  }
+
+  @override
+  String get create_new_folder => '新しいフォルダを作成';
+
+  @override
+  String get folder_name => 'フォルダ名';
+
+  @override
+  String get enter_folder_name => 'フォルダ名を入力してください';
+
+  @override
+  String chats_count(int count) {
+    return '$count件のチャット';
+  }
 }

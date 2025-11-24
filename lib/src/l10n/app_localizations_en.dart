@@ -507,4 +507,36 @@ class LibTrEn extends LibTr {
 
   @override
   String get add_to_favorites => 'Add to Favorites';
+
+  @override
+  String get no_name => 'no-name';
+
+  @override
+  String added_to_folder(String folderName) {
+    return 'Added to $folderName';
+  }
+
+  @override
+  String removed_from_folder(String folderName) {
+    return 'Removed from $folderName';
+  }
+
+  @override
+  String failed_to_update_favorite(String error) {
+    return 'Failed to update favorite: $error';
+  }
+
+  @override
+  String get create_new_folder => 'Create New Folder';
+
+  @override
+  String get folder_name => 'Folder Name';
+
+  @override
+  String get enter_folder_name => 'Enter folder name';
+
+  @override
+  String chats_count(int count) {
+    return '$count chats';
+  }
 }

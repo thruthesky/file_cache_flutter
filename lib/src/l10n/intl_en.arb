@@ -683,5 +683,61 @@
     "add_to_favorites": "Add to Favorites",
     "@add_to_favorites": {
         "description": "Title for add to favorites dialog"
+    },
+    "no_name": "no-name",
+    "@no_name": {
+        "description": "Default name when user has no name"
+    },
+    "added_to_folder": "Added to {folderName}",
+    "@added_to_folder": {
+        "description": "Success message when adding to favorites folder",
+        "placeholders": {
+            "folderName": {
+                "type": "String",
+                "example": "Added to Friends"
+            }
+        }
+    },
+    "removed_from_folder": "Removed from {folderName}",
+    "@removed_from_folder": {
+        "description": "Success message when removing from favorites folder",
+        "placeholders": {
+            "folderName": {
+                "type": "String",
+                "example": "Removed from Friends"
+            }
+        }
+    },
+    "failed_to_update_favorite": "Failed to update favorite: {error}",
+    "@failed_to_update_favorite": {
+        "description": "Error message when failing to update favorite",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Failed to update favorite: Network error"
+            }
+        }
+    },
+    "create_new_folder": "Create New Folder",
+    "@create_new_folder": {
+        "description": "Title for create new folder dialog"
+    },
+    "folder_name": "Folder Name",
+    "@folder_name": {
+        "description": "Label for folder name input field"
+    },
+    "enter_folder_name": "Enter folder name",
+    "@enter_folder_name": {
+        "description": "Hint text for folder name input field"
+    },
+    "chats_count": "{count} chats",
+    "@chats_count": {
+        "description": "Format for chats count in folder",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "5 chats"
+            }
+        }
     }
 }

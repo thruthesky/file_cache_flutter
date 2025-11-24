@@ -38,7 +38,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     // log('user fromJson: $json');
     return User(
-      uid: json['uid'] ?? '',
+      uid: json['uid'] ?? json['firebase_uid'] ?? '',
       idx: json['idx'] != null
           ? safeParseInt(json['idx'])
           : null, // idx가 없으면 null 반환

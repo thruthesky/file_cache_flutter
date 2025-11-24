@@ -37,7 +37,10 @@ Future<T> func<T>(
       final stringParams = data.map(
         (key, value) => MapEntry(key, value?.toString() ?? ''),
       );
-      log('GET URL: $url?${Uri(queryParameters: stringParams).query}');
+      log(
+        'GET URL: $url?${Uri(queryParameters: stringParams).query}',
+        name: "$functionName::",
+      );
     }
 
     // Create Dio instance

@@ -143,5 +143,13 @@
     "unpin_chat_room_message": "이 채팅방의 고정을 해제하시겠습니까?",
     "unpin": "고정 해제",
     "chat_room_unpinned": "채팅방 고정이 해제되었습니다",
-    "add_to_favorites": "즐겨찾기에 추가"
+    "add_to_favorites": "즐겨찾기에 추가",
+    "no_name": "이름 없음",
+    "added_to_folder": "{folderName}에 추가되었습니다",
+    "removed_from_folder": "{folderName}에서 제거되었습니다",
+    "failed_to_update_favorite": "즐겨찾기 업데이트 실패: {error}",
+    "create_new_folder": "새 폴더 만들기",
+    "folder_name": "폴더 이름",
+    "enter_folder_name": "폴더 이름을 입력하세요",
+    "chats_count": "{count}개의 채팅"
 }

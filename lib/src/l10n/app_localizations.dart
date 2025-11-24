@@ -964,6 +964,54 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'Add to Favorites'**
   String get add_to_favorites;
+
+  /// Default name when user has no name
+  ///
+  /// In en, this message translates to:
+  /// **'no-name'**
+  String get no_name;
+
+  /// Success message when adding to favorites folder
+  ///
+  /// In en, this message translates to:
+  /// **'Added to {folderName}'**
+  String added_to_folder(String folderName);
+
+  /// Success message when removing from favorites folder
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from {folderName}'**
+  String removed_from_folder(String folderName);
+
+  /// Error message when failing to update favorite
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update favorite: {error}'**
+  String failed_to_update_favorite(String error);
+
+  /// Title for create new folder dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Folder'**
+  String get create_new_folder;
+
+  /// Label for folder name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Folder Name'**
+  String get folder_name;
+
+  /// Hint text for folder name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter folder name'**
+  String get enter_folder_name;
+
+  /// Format for chats count in folder
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chats'**
+  String chats_count(int count);
 }
 
 class _LibTrDelegate extends LocalizationsDelegate<LibTr> {

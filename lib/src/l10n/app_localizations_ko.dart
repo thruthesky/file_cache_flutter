@@ -492,4 +492,36 @@ class LibTrKo extends LibTr {
 
   @override
   String get add_to_favorites => '즐겨찾기에 추가';
+
+  @override
+  String get no_name => '이름 없음';
+
+  @override
+  String added_to_folder(String folderName) {
+    return '$folderName에 추가되었습니다';
+  }
+
+  @override
+  String removed_from_folder(String folderName) {
+    return '$folderName에서 제거되었습니다';
+  }
+
+  @override
+  String failed_to_update_favorite(String error) {
+    return '즐겨찾기 업데이트 실패: $error';
+  }
+
+  @override
+  String get create_new_folder => '새 폴더 만들기';
+
+  @override
+  String get folder_name => '폴더 이름';
+
+  @override
+  String get enter_folder_name => '폴더 이름을 입력하세요';
+
+  @override
+  String chats_count(int count) {
+    return '$count개의 채팅';
+  }
 }

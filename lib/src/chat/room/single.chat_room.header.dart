@@ -316,7 +316,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     if (join.userDisplayName.isNotEmpty) {
       return join.userDisplayName;
     }
-    return "no-name";
+    return LibTr.of(Config.globalContext)!.no_name;
   }
 }
 
@@ -421,7 +421,8 @@ class _FavoritesModal extends StatefulWidget {
 class _FavoritesModalState extends State<_FavoritesModal> {
   final Dio _dio = Dio();
   Set<String> selectedFolders = {};
-  bool isLoading = false;
+  /// 각 폴더별 로딩 상태를 추적하는 맵 - folderName을 키로 사용
+  Map<String, bool> folderLoadingStates = {};
   bool isLoadingInitial = true;
 
   @override
@@ -472,11 +473,11 @@ class _FavoritesModalState extends State<_FavoritesModal> {
   }
 
   /// 즐겨찾기 폴더 토글 - 폴더를 추가하거나 제거
-  Future<void> _toggleFolder(String folderName) async {
+  Future<void> addToFavoriteFolder(String folderName) async {
     if (loginUid() == null) return;
 
     setState(() {
-      isLoading = true;
+      folderLoadingStates[folderName] = true;
     });
 
     try {
@@ -504,20 +505,67 @@ class _FavoritesModalState extends State<_FavoritesModal> {
           showSuccessSnackBar(
             context,
             selectedFolders.contains(folderName)
-                ? 'Added to $folderName'
-                : 'Removed from $folderName',
+                ? LibTr.of(context)!.added_to_folder(folderName)
+                : LibTr.of(context)!.removed_from_folder(folderName),
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        showErrorSnackBar(context, 'Failed to update favorite: $e');
+        showErrorSnackBar(context, LibTr.of(context)!.failed_to_update_favorite(e.toString()));
       }
     } finally {
       setState(() {
-        isLoading = false;
+        folderLoadingStates[folderName] = false;
       });
     }
+  }
+
+  /// 새 폴더 생성 다이얼로그 표시
+  void _showCreateFolderDialog(BuildContext context) async {
+    final TextEditingController folderNameController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(LibTr.of(context)!.create_new_folder),
+        content: TextField(
+          controller: folderNameController,
+          decoration: InputDecoration(
+            labelText: LibTr.of(context)!.folder_name,
+            hintText: LibTr.of(context)!.enter_folder_name,
+            border: OutlineInputBorder(),
+          ),
+          autofocus: true,
+          onSubmitted: (value) {
+            if (value.trim().isNotEmpty) {
+              Navigator.of(dialogContext).pop();
+              addToFavoriteFolder(value.trim());
+            }
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(LibTr.of(context)!.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final folderName = folderNameController.text.trim();
+              if (folderName.isNotEmpty) {
+                await addToFavoriteFolder(folderName);
+                if (dialogContext.mounted) {
+                  Navigator.of(dialogContext).pop();
+                }
+              }
+            },
+            child: Text(LibTr.of(context)!.create),
+          ),
+        ],
+      ),
+    );
+    // Dispose controller after dialog is fully closed
+    // folderNameController.dispose();
   }
 
   @override
@@ -527,15 +575,25 @@ class _FavoritesModalState extends State<_FavoritesModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// 헤더 - 제목과 닫기 버튼
+          /// 헤더 - 제목, 폴더 추가 버튼, 닫기 버튼
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Add to Favorites',
-                  style: Theme.of(context).textTheme.titleLarge,
+                Row(
+                  children: [
+                    Text(
+                      LibTr.of(context)!.add_to_favorites,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    IconButton(
+                      onPressed: () =>
+                          _showCreateFolderDialog(Config.globalContext),
+                      icon: const Icon(Icons.add),
+                      tooltip: LibTr.of(context)!.create_new_folder,
+                    ),
+                  ],
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -578,34 +636,36 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                           final isSelected = selectedFolders.contains(
                             folderName,
                           );
+                          /// 현재 폴더의 로딩 상태 확인
+                          final isFolderLoading = folderLoadingStates[folderName] ?? false;
 
                           return ListTile(
-                            leading: Checkbox(
-                              value: isSelected,
-                              onChanged: isLoading
-                                  ? null
-                                  : (value) => _toggleFolder(folderName),
-                            ),
+                            leading: isFolderLoading
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Checkbox(
+                                    value: isSelected,
+                                    onChanged: (value) => addToFavoriteFolder(folderName),
+                                  ),
                             title: Text(folderName),
                             subtitle: Text(
-                              '${folder['countFavorites']} chats',
+                              LibTr.of(context)!.chats_count(folder['countFavorites'] as int),
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                            onTap: isLoading
+                            onTap: isFolderLoading
                                 ? null
-                                : () => _toggleFolder(folderName),
+                                : () => addToFavoriteFolder(folderName),
                           );
                         },
                       );
                     },
                   ),
           ),
-
-          if (isLoading && !isLoadingInitial)
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
         ],
       ),
     );
