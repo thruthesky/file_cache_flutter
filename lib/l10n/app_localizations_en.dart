@@ -773,4 +773,10 @@ class LoEn extends Lo {
   String yearsAgo(int years) {
     return '${years}y ago';
   }
+
+  @override
+  String get latestPosts => 'Latest Posts';
+
+  @override
+  String get viewAll => 'View All';
 }
