@@ -44,7 +44,7 @@ class User {
           : null, // idx가 없으면 null 반환
       nickname: json['nickname'] ?? '',
       nicknameLowerCase: json['nicknameLowerCase'] ?? '',
-      photoUrl: json['photoUrl'],
+      photoUrl: json['photo_url'] ?? '',
       level: json['level'],
       point: json['point'] ?? 0,
       noOfComment: json['no_of_comment'] ?? 0,

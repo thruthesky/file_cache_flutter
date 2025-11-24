@@ -9,6 +9,7 @@ class CompanyListGrid extends StatelessWidget {
     required this.count,
     required this.companies,
     this.onCompanyTap,
+    this.availableHeight,
   });
 
   final IconData icon;
@@ -16,6 +17,7 @@ class CompanyListGrid extends StatelessWidget {
   final int count;
   final List<Company> companies;
   final Function(Company)? onCompanyTap;
+  final double? availableHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,10 @@ class CompanyListGrid extends StatelessWidget {
           ),
           SizedBox(height: 16),
           if (count <= 0)
-            const Center(child: CompanyCategoryEmpty())
+            SizedBox(
+              height: availableHeight != null ? availableHeight! - 60 : 400,
+              child: const Center(child: CompanyCategoryEmpty()),
+            )
           else
             GridView.builder(
               shrinkWrap: true,

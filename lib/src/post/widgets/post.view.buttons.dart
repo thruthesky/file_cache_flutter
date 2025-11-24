@@ -40,7 +40,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
         // Like button - Flat design with TextButton.icon
         TextButton.icon(
           style: TextButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(vertical: 8),
             foregroundColor: _isLiked ? scheme.primary : null,
           ),
           onPressed: _handleLike,
@@ -62,17 +62,17 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           // Edit button - Flat design with TextButton.icon
           TextButton.icon(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: 8),
             ),
             onPressed: widget.onTapUpdate,
             icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
             label: Text(LibTr.of(context)!.edit),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 16),
           // Delete button - Flat design with TextButton.icon
           TextButton.icon(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: 8),
               foregroundColor: scheme.error,
             ),
             onPressed: widget.onTapDelete,
