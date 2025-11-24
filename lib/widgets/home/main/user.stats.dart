@@ -211,7 +211,7 @@ class StatContainer extends StatelessWidget {
             /// Stat value with comma formatting
             Text(
               _formatNumber(value),
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: theme.textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: scheme.onSurface,
               ),

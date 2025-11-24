@@ -80,10 +80,6 @@ class _MainHomeState extends State<MainHome> {
               return LatestUserPosts(firebase_uid: uid);
             },
           ),
-          SizedBox(height: sp.s8),
-
-          const LatestUserComments(),
-
           SizedBox(height: sp.s24),
         ],
       ),
