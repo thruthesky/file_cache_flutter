@@ -19,9 +19,9 @@ import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/user/my.activity.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
+import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -299,10 +299,10 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: MyActivityScreen.routeName,
-      name: MyActivityScreen.routeName,
+      path: UserActivityScreen.routeName,
+      name: UserActivityScreen.routeName,
       builder: (context, state) {
-        return MyActivityScreen();
+        return UserActivityScreen(uid: '',);
       },
     ),
     GoRoute(

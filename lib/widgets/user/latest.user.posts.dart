@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/user/my.activity.screen.dart';
+import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
@@ -102,7 +102,12 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
                     TextButton(
                       onPressed: () {
-                        MyActivityScreen.push(context);
+                        if (widget.firebase_uid != null) {
+                          UserActivityScreen.push(
+                            context,
+                            uid: widget.firebase_uid!,
+                          );
+                        }
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
