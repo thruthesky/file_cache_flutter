@@ -9,7 +9,6 @@ class PostListTile extends StatelessWidget {
   final Post post;
   final VoidCallback? onTap;
 
-  /// 닉네임이 비어있으면 "이름 없음"을 반환
   String displayName(BuildContext context) =>
       post.nickname.isEmpty ? LibTr.of(context)!.no_name : post.nickname;
 
@@ -68,7 +67,6 @@ class PostListTile extends StatelessWidget {
                 Text(
                   post.subject,
                   style: Theme.of(context).textTheme.titleMedium,
-                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
@@ -110,7 +108,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.no_of_view}',
+                      formatCompactNumber(post.no_of_view),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
@@ -123,7 +121,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.no_of_comment}',
+                      formatCompactNumber(post.no_of_comment),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
@@ -136,7 +134,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.good}',
+                      formatCompactNumber(post.good),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
@@ -193,18 +191,19 @@ class PostListTile extends StatelessWidget {
                         size: 12,
                         color: Theme.of(context).colorScheme.outline,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        post.timeString.split(" ").first,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
+
                       const SizedBox(width: 12),
                       FaIcon(
                         FontAwesomeIcons.lightEye,
                         size: 12,
                         color: Theme.of(context).colorScheme.outline,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        formatCompactNumber(post.no_of_view),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                       const SizedBox(width: 4),
                       Text(

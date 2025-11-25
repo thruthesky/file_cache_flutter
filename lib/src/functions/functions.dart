@@ -48,6 +48,25 @@ String formatDateTime(int timestamp) {
   return '$year-$month-$day $hour:$minute';
 }
 
+/// Format number in compact format (e.g., 1.0K, 10.0K, 1.5M)
+String formatCompactNumber(int number) {
+  if (number < 1000) {
+    return number.toString();
+  } else if (number < 1000000) {
+    // K (thousands)
+    final k = number / 1000;
+    return '${k.floorToDouble().toStringAsFixed(1)}K';
+  } else if (number < 1000000000) {
+    // M (millions)
+    final m = number / 1000000;
+    return '${m.floorToDouble().toStringAsFixed(1)}M';
+  } else {
+    // B (billions)
+    final b = number / 1000000000;
+    return '${b.floorToDouble().toStringAsFixed(1)}B';
+  }
+}
+
 /// Debug logging function
 void debugLog(String message) {
   if (kDebugMode) {
