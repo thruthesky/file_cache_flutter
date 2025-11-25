@@ -430,7 +430,7 @@ class LoKo extends Lo {
   String get enterCompanyName => '업체명을 입력하세요';
 
   @override
-  String get companyNameRequired => '업체명은 필수 항목입니다';
+  String get companyNameRequired => '회사명을 입력해주세요';
 
   @override
   String get companyTitle => '업체 타이틀';
@@ -776,4 +776,64 @@ class LoKo extends Lo {
 
   @override
   String get logoutConfirmMessage => '로그아웃 하시겠습니까?';
+
+  @override
+  String get companyTitleRequired => '회사 타이틀을 입력해주세요';
+
+  @override
+  String get locationRequired => '위치를 선택해주세요';
+
+  @override
+  String get addressRequired => '주소를 입력해주세요';
+
+  @override
+  String get descriptionRequired => '회사 설명을 입력해주세요';
+
+  @override
+  String get landlineRequired => '유선 전화번호를 입력해주세요';
+
+  @override
+  String get mobileNumberRequired => '휴대폰 번호를 입력해주세요';
+
+  @override
+  String get logoRequired => '회사 로고를 업로드해주세요';
+
+  @override
+  String get detailedInformation => '상세 정보';
+
+  @override
+  String get imageUpload => '이미지 업로드';
+
+  @override
+  String get kakaoQrCodeDeleted => '카카오 QR 코드가 삭제되었습니다';
+
+  @override
+  String get failedToDelete => '삭제 실패';
+
+  @override
+  String get companyLogoDeleted => '회사 로고가 삭제되었습니다';
+
+  @override
+  String get failedToDeletePhoto => '사진 삭제 실패';
+
+  @override
+  String get businessLicenseDeleted => '사업자 등록증이 삭제되었습니다';
+
+  @override
+  String get failedToDeleteLicense => '등록증 삭제 실패';
+
+  @override
+  String get companyIntroImageDeleted => '회사 소개 이미지가 삭제되었습니다';
+
+  @override
+  String get failedToDeleteImage => '이미지 삭제 실패';
+
+  @override
+  String get officeInteriorDeleted => '사무실 내부 사진이 삭제되었습니다';
+
+  @override
+  String get back => '이전';
+
+  @override
+  String get next => '다음';
 }

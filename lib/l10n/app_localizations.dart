@@ -917,7 +917,7 @@ abstract class Lo {
   /// **'Enter company name'**
   String get enterCompanyName;
 
-  /// Validation message for company name
+  /// Error message when company name is empty
   ///
   /// In en, this message translates to:
   /// **'Company name is required'**
@@ -1576,6 +1576,126 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Are you sure you want to logout?'**
   String get logoutConfirmMessage;
+
+  /// Error message when company title is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Company title is required'**
+  String get companyTitleRequired;
+
+  /// Error message when location is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Location is required'**
+  String get locationRequired;
+
+  /// Error message when address is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Address is required'**
+  String get addressRequired;
+
+  /// Error message when description is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Description is required'**
+  String get descriptionRequired;
+
+  /// Error message when landline is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Landline number is required'**
+  String get landlineRequired;
+
+  /// Error message when mobile number is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number is required'**
+  String get mobileNumberRequired;
+
+  /// Error message when logo is not uploaded
+  ///
+  /// In en, this message translates to:
+  /// **'Company logo is required'**
+  String get logoRequired;
+
+  /// Step title for detailed information
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed Information'**
+  String get detailedInformation;
+
+  /// Step title for image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Image Upload'**
+  String get imageUpload;
+
+  /// Success message after deleting Kakao QR code
+  ///
+  /// In en, this message translates to:
+  /// **'Kakao QR Code deleted'**
+  String get kakaoQrCodeDeleted;
+
+  /// Error message when deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete'**
+  String get failedToDelete;
+
+  /// Success message after deleting company logo
+  ///
+  /// In en, this message translates to:
+  /// **'Company logo deleted'**
+  String get companyLogoDeleted;
+
+  /// Error message when photo deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete photo'**
+  String get failedToDeletePhoto;
+
+  /// Success message after deleting business license
+  ///
+  /// In en, this message translates to:
+  /// **'Business license deleted'**
+  String get businessLicenseDeleted;
+
+  /// Error message when license deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete license'**
+  String get failedToDeleteLicense;
+
+  /// Success message after deleting company intro image
+  ///
+  /// In en, this message translates to:
+  /// **'Company introduction image deleted'**
+  String get companyIntroImageDeleted;
+
+  /// Error message when image deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete image'**
+  String get failedToDeleteImage;
+
+  /// Success message after deleting office interior photo
+  ///
+  /// In en, this message translates to:
+  /// **'Office interior photo deleted'**
+  String get officeInteriorDeleted;
+
+  /// Back button label
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// Next button label
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

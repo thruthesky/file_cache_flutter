@@ -434,7 +434,7 @@ class LoJa extends Lo {
   String get enterCompanyName => '業者名を入力してください';
 
   @override
-  String get companyNameRequired => '業者名は必須項目です';
+  String get companyNameRequired => '会社名を入力してください';
 
   @override
   String get companyTitle => '業者タイトル';
@@ -794,4 +794,64 @@ class LoJa extends Lo {
 
   @override
   String get logoutConfirmMessage => 'ログアウトしますか？';
+
+  @override
+  String get companyTitleRequired => '会社タイトルを入力してください';
+
+  @override
+  String get locationRequired => '場所を選択してください';
+
+  @override
+  String get addressRequired => '住所を入力してください';
+
+  @override
+  String get descriptionRequired => '会社説明を入力してください';
+
+  @override
+  String get landlineRequired => '固定電話番号を入力してください';
+
+  @override
+  String get mobileNumberRequired => '携帯電話番号を入力してください';
+
+  @override
+  String get logoRequired => '会社ロゴをアップロードしてください';
+
+  @override
+  String get detailedInformation => '詳細情報';
+
+  @override
+  String get imageUpload => '画像アップロード';
+
+  @override
+  String get kakaoQrCodeDeleted => 'カカオQRコードが削除されました';
+
+  @override
+  String get failedToDelete => '削除に失敗しました';
+
+  @override
+  String get companyLogoDeleted => '会社ロゴが削除されました';
+
+  @override
+  String get failedToDeletePhoto => '写真の削除に失敗しました';
+
+  @override
+  String get businessLicenseDeleted => '事業者登録証が削除されました';
+
+  @override
+  String get failedToDeleteLicense => '登録証の削除に失敗しました';
+
+  @override
+  String get companyIntroImageDeleted => '会社紹介画像が削除されました';
+
+  @override
+  String get failedToDeleteImage => '画像の削除に失敗しました';
+
+  @override
+  String get officeInteriorDeleted => 'オフィス内部写真が削除されました';
+
+  @override
+  String get back => '戻る';
+
+  @override
+  String get next => '次へ';
 }

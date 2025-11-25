@@ -994,5 +994,89 @@
   "logoutConfirmMessage": "Are you sure you want to logout?",
   "@logoutConfirmMessage": {
     "description": "Logout confirmation message"
+  },
+  "companyNameRequired": "Company name is required",
+  "@companyNameRequired": {
+    "description": "Error message when company name is empty"
+  },
+  "companyTitleRequired": "Company title is required",
+  "@companyTitleRequired": {
+    "description": "Error message when company title is empty"
+  },
+  "locationRequired": "Location is required",
+  "@locationRequired": {
+    "description": "Error message when location is empty"
+  },
+  "addressRequired": "Address is required",
+  "@addressRequired": {
+    "description": "Error message when address is empty"
+  },
+  "descriptionRequired": "Description is required",
+  "@descriptionRequired": {
+    "description": "Error message when description is empty"
+  },
+  "landlineRequired": "Landline number is required",
+  "@landlineRequired": {
+    "description": "Error message when landline is empty"
+  },
+  "mobileNumberRequired": "Mobile number is required",
+  "@mobileNumberRequired": {
+    "description": "Error message when mobile number is empty"
+  },
+  "logoRequired": "Company logo is required",
+  "@logoRequired": {
+    "description": "Error message when logo is not uploaded"
+  },
+  "detailedInformation": "Detailed Information",
+  "@detailedInformation": {
+    "description": "Step title for detailed information"
+  },
+  "imageUpload": "Image Upload",
+  "@imageUpload": {
+    "description": "Step title for image upload"
+  },
+  "kakaoQrCodeDeleted": "Kakao QR Code deleted",
+  "@kakaoQrCodeDeleted": {
+    "description": "Success message after deleting Kakao QR code"
+  },
+  "failedToDelete": "Failed to delete",
+  "@failedToDelete": {
+    "description": "Error message when deletion fails"
+  },
+  "companyLogoDeleted": "Company logo deleted",
+  "@companyLogoDeleted": {
+    "description": "Success message after deleting company logo"
+  },
+  "failedToDeletePhoto": "Failed to delete photo",
+  "@failedToDeletePhoto": {
+    "description": "Error message when photo deletion fails"
+  },
+  "businessLicenseDeleted": "Business license deleted",
+  "@businessLicenseDeleted": {
+    "description": "Success message after deleting business license"
+  },
+  "failedToDeleteLicense": "Failed to delete license",
+  "@failedToDeleteLicense": {
+    "description": "Error message when license deletion fails"
+  },
+  "companyIntroImageDeleted": "Company introduction image deleted",
+  "@companyIntroImageDeleted": {
+    "description": "Success message after deleting company intro image"
+  },
+  "failedToDeleteImage": "Failed to delete image",
+  "@failedToDeleteImage": {
+    "description": "Error message when image deletion fails"
+  },
+  "officeInteriorDeleted": "Office interior photo deleted",
+  "@officeInteriorDeleted": {
+    "description": "Success message after deleting office interior photo"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Back button label"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button label"
   }
 }
