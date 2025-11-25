@@ -34,6 +34,20 @@ String formatTimestamp(BuildContext context, int timestamp) {
   }
 }
 
+/// Formats a timestamp to YY-MM-DD HH:mm (military time, no seconds)
+/// timestamp should be in milliseconds
+String formatDateTime(int timestamp) {
+  final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+  final year = date.year.toString().substring(2); // YY
+  final month = date.month.toString().padLeft(2, '0'); // MM
+  final day = date.day.toString().padLeft(2, '0'); // DD
+  final hour = date.hour.toString().padLeft(2, '0'); // HH (24-hour)
+  final minute = date.minute.toString().padLeft(2, '0'); // mm
+
+  return '$year-$month-$day $hour:$minute';
+}
+
 /// Debug logging function
 void debugLog(String message) {
   if (kDebugMode) {
