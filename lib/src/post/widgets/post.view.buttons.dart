@@ -53,7 +53,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           label: Text(
             widget.post?.good != null && widget.post!.good > 0
                 ? "${LibTr.of(context)!.like} ${widget.post!.good}"
-                : LibTr.of(context)!.like,
+                : "${LibTr.of(context)!.like}  ",
           ),
         ),
         Spacer(),

@@ -7,7 +7,7 @@ class PostViewHeader extends StatelessWidget {
     super.key,
     required this.subject,
     required this.nickname,
-    required this.timeString,
+    required this.stamp,
     required this.noOfView,
     this.photoUrl,
     this.onTapNickname,
@@ -15,7 +15,7 @@ class PostViewHeader extends StatelessWidget {
 
   final String subject;
   final String nickname;
-  final String timeString;
+  final int stamp;
   final String noOfView;
 
   final String? photoUrl;
@@ -71,7 +71,7 @@ class PostViewHeader extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              timeString,
+              formatDateTime(stamp * 1000),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
