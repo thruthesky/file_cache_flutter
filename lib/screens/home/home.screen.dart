@@ -68,10 +68,31 @@ class _HomeScreenState extends State<HomeScreen> {
             label: Lo.of(context)!.home,
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(
-              selectedItem == HomeNavigationItem.chat
-                  ? FontAwesomeIcons.solidCommentDots
-                  : FontAwesomeIcons.thinCommentDots,
+            icon: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 12),
+                  child: FaIcon(
+                    selectedItem == HomeNavigationItem.chat
+                        ? FontAwesomeIcons.solidCommentDots
+                        : FontAwesomeIcons.thinCommentDots,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: ValueListenableBuilder<int>(
+                    valueListenable:
+                        UserService.instance.unreadSingleCountStream,
+                    builder: (context, unreadSingleCount, child) {
+                      if (unreadSingleCount == 0) {
+                        return const SizedBox.shrink();
+                      }
+                      return Badge(label: Text(unreadSingleCount.toString()));
+                    },
+                  ),
+                ),
+              ],
             ),
             label: Lo.of(context)!.chat,
           ),
