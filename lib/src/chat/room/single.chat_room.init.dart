@@ -65,7 +65,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
         otherUser = User.fromJson({'uid': otherUserUid});
       }
 
-      resetUnreadMessageCounter(roomId);
+      // resetUnreadMessageCounter(roomId);
       resetChatJoin(otherUserUid);
       setupNewMessageListener();
 
