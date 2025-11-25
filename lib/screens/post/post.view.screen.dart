@@ -87,6 +87,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
       : widget.post.no_of_view.toString();
   int get noOfComment =>
       post != null ? post!.no_of_comment : widget.post.no_of_comment;
+  String? get photoUrl => post?.photo_url ?? widget.post.photo_url;
+  String get firebaseUid => post?.firebase_uid ?? widget.post.firebase_uid;
 
   @override
   Widget build(BuildContext context) {
@@ -113,14 +115,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       nickname: nickname,
                       stamp: stamp,
                       noOfView: noOfView,
-                      photoUrl: widget.post.photo_url,
+                      photoUrl: photoUrl,
                       onTapNickname: () {
                         /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
                         ProfileViewScreen.push(
                           context,
-                          firebaseUid: widget.post.firebase_uid,
-                          nickname: widget.post.nickname,
-                          photoUrl: widget.post.photo_url,
+                          firebaseUid: firebaseUid,
+                          nickname: nickname,
+                          photoUrl: photoUrl,
                         );
                       },
                     ),
@@ -261,22 +263,24 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ),
               ),
             ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CommentToPost(
-            post: widget.post,
-            onCreated: (createdComment) {
-              post?.comments.add(createdComment);
-              post!.no_of_comment += 1;
-              if (mounted) {
-                setState(() {});
-                showSuccessSnackBar(context, 'Comment has created');
-              }
-            },
-          ),
-        ),
-      ),
+      bottomNavigationBar: post != null
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CommentToPost(
+                  post: post!,
+                  onCreated: (createdComment) {
+                    post?.comments.add(createdComment);
+                    post!.no_of_comment += 1;
+                    if (mounted) {
+                      setState(() {});
+                      showSuccessSnackBar(context, 'Comment has created');
+                    }
+                  },
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
