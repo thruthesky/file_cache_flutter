@@ -36,7 +36,7 @@ class _CommentListViewState extends State<CommentListView> {
             maxLines: 2,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
-              hintText: "Enter your comment...",
+              hintText: LibTr.of(context)!.enter_your_comment,
               /// 전송 버튼 아이콘
               suffixIcon: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -60,7 +60,7 @@ class _CommentListViewState extends State<CommentListView> {
 
               /// "Comments" 텍스트
               Text(
-                "Comments",
+                LibTr.of(context)!.comments,
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
@@ -93,9 +93,9 @@ class _CommentListViewState extends State<CommentListView> {
           /// 댓글 표시 영역
           /// 댓글이 있으면 댓글 목록 표시, 없으면 안내 메시지 표시
           if (hasComments)
-            Text("This post has comments")
+            Text(LibTr.of(context)!.this_post_has_comments)
           else
-            Text("Be the first to comment!"),
+            Text(LibTr.of(context)!.be_the_first_to_comment),
         ],
       ),
     );

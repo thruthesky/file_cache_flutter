@@ -524,4 +524,22 @@ class LibTrKo extends LibTr {
   String chats_count(int count) {
     return '$count개의 채팅';
   }
+
+  @override
+  String get post_from_blocked_user => '차단된 사용자의 게시물';
+
+  @override
+  String get something_went_wrong => '문제가 발생했습니다';
+
+  @override
+  String get enter_your_comment => '댓글을 입력하세요...';
+
+  @override
+  String get comments => '댓글';
+
+  @override
+  String get this_post_has_comments => '이 게시물에 댓글이 있습니다';
+
+  @override
+  String get be_the_first_to_comment => '첫 댓글을 남겨보세요!';
 }

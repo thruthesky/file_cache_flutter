@@ -524,4 +524,22 @@ class LibTrJa extends LibTr {
   String chats_count(int count) {
     return '$count件のチャット';
   }
+
+  @override
+  String get post_from_blocked_user => 'ブロックされたユーザーからの投稿';
+
+  @override
+  String get something_went_wrong => '問題が発生しました';
+
+  @override
+  String get enter_your_comment => 'コメントを入力してください...';
+
+  @override
+  String get comments => 'コメント';
+
+  @override
+  String get this_post_has_comments => 'この投稿にはコメントがあります';
+
+  @override
+  String get be_the_first_to_comment => '最初のコメントを投稿しよう！';
 }

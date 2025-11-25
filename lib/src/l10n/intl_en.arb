@@ -739,5 +739,33 @@
                 "example": "5 chats"
             }
         }
+    },
+    "no_name": "No Name",
+    "@no_name": {
+        "description": "Default display name when user has no name"
+    },
+    "post_from_blocked_user": "Post from blocked User",
+    "@post_from_blocked_user": {
+        "description": "Message shown for posts from blocked users"
+    },
+    "something_went_wrong": "Something went wrong",
+    "@something_went_wrong": {
+        "description": "Generic error message"
+    },
+    "enter_your_comment": "Enter your comment...",
+    "@enter_your_comment": {
+        "description": "Placeholder text for comment input field"
+    },
+    "comments": "Comments",
+    "@comments": {
+        "description": "Label for comments section"
+    },
+    "this_post_has_comments": "This post has comments",
+    "@this_post_has_comments": {
+        "description": "Message shown when post has comments"
+    },
+    "be_the_first_to_comment": "Be the first to comment!",
+    "@be_the_first_to_comment": {
+        "description": "Encouragement message when post has no comments"
     }
 }

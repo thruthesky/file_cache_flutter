@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Login
 ///
@@ -36,7 +37,9 @@ class Login extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return const Center(child: Text('Something went wrong'));
+          return Center(
+            child: Text(LibTr.of(context)!.something_went_wrong),
+          );
         }
 
         final user = snapshot.data;

@@ -619,5 +619,11 @@
     "create_new_folder": "新しいフォルダを作成",
     "folder_name": "フォルダ名",
     "enter_folder_name": "フォルダ名を入力してください",
-    "chats_count": "{count}件のチャット"
+    "chats_count": "{count}件のチャット",
+    "post_from_blocked_user": "ブロックされたユーザーからの投稿",
+    "something_went_wrong": "問題が発生しました",
+    "enter_your_comment": "コメントを入力してください...",
+    "comments": "コメント",
+    "this_post_has_comments": "この投稿にはコメントがあります",
+    "be_the_first_to_comment": "最初のコメントを投稿しよう！"
 }

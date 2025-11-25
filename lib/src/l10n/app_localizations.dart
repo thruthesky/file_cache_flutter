@@ -965,10 +965,10 @@ abstract class LibTr {
   /// **'Add to Favorites'**
   String get add_to_favorites;
 
-  /// Default name when user has no name
+  /// Default display name when user has no name
   ///
   /// In en, this message translates to:
-  /// **'no-name'**
+  /// **'No Name'**
   String get no_name;
 
   /// Success message when adding to favorites folder
@@ -1012,6 +1012,42 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'{count} chats'**
   String chats_count(int count);
+
+  /// Message shown for posts from blocked users
+  ///
+  /// In en, this message translates to:
+  /// **'Post from blocked User'**
+  String get post_from_blocked_user;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get something_went_wrong;
+
+  /// Placeholder text for comment input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your comment...'**
+  String get enter_your_comment;
+
+  /// Label for comments section
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get comments;
+
+  /// Message shown when post has comments
+  ///
+  /// In en, this message translates to:
+  /// **'This post has comments'**
+  String get this_post_has_comments;
+
+  /// Encouragement message when post has no comments
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to comment!'**
+  String get be_the_first_to_comment;
 }
 
 class _LibTrDelegate extends LocalizationsDelegate<LibTr> {
