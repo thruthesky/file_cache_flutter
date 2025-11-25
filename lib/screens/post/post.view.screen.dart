@@ -15,14 +15,14 @@ class PostViewScreen extends StatefulWidget {
   static const String routeName = '/post-view';
 
   static Future<Post?> Function(BuildContext ctx, Post post) push =
-      (ctx, post) => ctx.push(routeName, extra: post.idx);
+      (ctx, post) => ctx.push(routeName, extra: post);
 
   static void Function(BuildContext ctx, Post post) pushReplacement =
-      (ctx, post) => ctx.pushReplacement(routeName, extra: post.idx);
+      (ctx, post) => ctx.pushReplacement(routeName, extra: post);
 
-  final int postIdx;
+  final Post post;
 
-  const PostViewScreen({super.key, required this.postIdx});
+  const PostViewScreen({super.key, required this.post});
 
   @override
   State<PostViewScreen> createState() => _PostViewScreenState();
@@ -40,7 +40,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   Future<void> loadPost() async {
     try {
-      final details = await getPost(widget.postIdx);
+      final details = await getPost(widget.post.idx);
 
       debugLog('------> LOADED POST: $details');
 
@@ -63,8 +63,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   bool isPostMine() {
     final myIdx = AppState.of(context).user?.idx;
-    if (myIdx == null || post == null) return false;
-    return myIdx == post!.idx_member;
+    if (myIdx == null) return false;
+    return myIdx == widget.post.idx_member;
   }
 
   bool isCommentMine(int idxMember) {
@@ -73,17 +73,20 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return myIdx == idxMember;
   }
 
-  List<String> get files => post?.files ?? [];
-  String get content => post?.content ?? '';
-  String get subject => post?.subject ?? '';
+  List<String> get files => post != null ? post!.files : widget.post.files;
+  String get content => post != null ? post!.content : widget.post.content;
+  String get subject => post != null ? post!.subject : widget.post.subject;
   String get nickname {
-    final name = post?.nickname ?? '';
+    final name = post != null ? post!.nickname : widget.post.nickname;
     return name.isEmpty ? 'No Name' : name;
   }
 
-  int get stamp => post?.stamp ?? 0;
-  String get noOfView => post?.no_of_view.toString() ?? '0';
-  int get noOfComment => post?.no_of_comment ?? 0;
+  int get stamp => post?.stamp ?? widget.post.stamp;
+  String get noOfView => post != null
+      ? post!.no_of_view.toString()
+      : widget.post.no_of_view.toString();
+  int get noOfComment =>
+      post != null ? post!.no_of_comment : widget.post.no_of_comment;
 
   @override
   Widget build(BuildContext context) {
@@ -110,18 +113,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       nickname: nickname,
                       stamp: stamp,
                       noOfView: noOfView,
-                      photoUrl: post?.photo_url,
-                      onTapNickname: post != null
-                          ? () {
-                              /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
-                              ProfileViewScreen.push(
-                                context,
-                                firebaseUid: post!.firebase_uid,
-                                nickname: post!.nickname,
-                                photoUrl: post!.photo_url,
-                              );
-                            }
-                          : null,
+                      photoUrl: widget.post.photo_url,
+                      onTapNickname: () {
+                        /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
+                        ProfileViewScreen.push(
+                          context,
+                          firebaseUid: widget.post.firebase_uid,
+                          nickname: widget.post.nickname,
+                          photoUrl: widget.post.photo_url,
+                        );
+                      },
                     ),
                     SizedBox(height: 16),
                     if (hasImages) PostViewImages(files: files),
@@ -132,16 +133,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       post: post,
                       myPost: isPostMine(),
                       onLike: () async {
-                        if (post == null) return;
-
                         /// Call like API and update the like count
                         try {
-                          final updatedGood = await likePost(widget.postIdx);
-                          debugLog('Widget Post idx: ${widget.postIdx}');
+                          final updatedGood = await likePost(widget.post.idx);
+                          debugLog('Widget Post idx: ${widget.post.idx}');
                           debugLog('Post liked, new good count: $updatedGood');
 
                           // Update the good count in the current post object
-                          post!.good = updatedGood;
+                          (post ?? widget.post).good = updatedGood;
                           if (mounted) {
                             setState(() {});
                           }
@@ -161,8 +160,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         }
                       },
                       onTapUpdate: () async {
-                        if (post == null) return;
-
                         /// 댓글이 있는 경우 수정 불가
                         if (post!.no_of_comment >= 1) {
                           showInfoDialog(
@@ -177,6 +174,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           context,
                           post: post!,
                         );
+                        if (updatedPost != null) {
+                          widget.post.subject = updatedPost.subject;
+                          widget.post.content = updatedPost.content;
+                        }
 
                         if (updatedPost != null && mounted) {
                           setState(() {
@@ -185,8 +186,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         }
                       },
                       onTapDelete: () async {
-                        if (post == null) return;
-
                         /// 댓글이 있는 경우 삭제 불가
                         if (post!.no_of_comment >= 1) {
                           showInfoDialog(
@@ -204,7 +203,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         );
 
                         if (confirm) {
-                          await deletePost(widget.postIdx);
+                          await deletePost(widget.post.idx);
 
                           if (context.mounted) {
                             context.pop();
@@ -262,24 +261,22 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ),
               ),
             ),
-      bottomNavigationBar: post != null
-          ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CommentToPost(
-                  post: post!,
-                  onCreated: (createdComment) {
-                    post?.comments.add(createdComment);
-                    post!.no_of_comment += 1;
-                    if (mounted) {
-                      setState(() {});
-                      showSuccessSnackBar(context, 'Comment has created');
-                    }
-                  },
-                ),
-              ),
-            )
-          : null,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CommentToPost(
+            post: widget.post,
+            onCreated: (createdComment) {
+              post?.comments.add(createdComment);
+              post!.no_of_comment += 1;
+              if (mounted) {
+                setState(() {});
+                showSuccessSnackBar(context, 'Comment has created');
+              }
+            },
+          ),
+        ),
+      ),
     );
   }
 }
