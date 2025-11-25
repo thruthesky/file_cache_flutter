@@ -97,6 +97,13 @@ class PostListViewState extends State<PostListView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   widget.headerBuilder(context, _totalPostCount),
+                  Divider(
+                    height: 1,
+                    thickness: 0.5,
+                    color: Theme.of(
+                      context,
+                    ).dividerColor.withValues(alpha: 0.3),
+                  ),
                   PostListTile(post: post, onTap: () => widget.onTap(post)),
                 ],
               );

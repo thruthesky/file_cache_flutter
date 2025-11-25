@@ -65,6 +65,7 @@ class UserService {
     initFavoriteFolders();
     initBlockedUsers();
     initAdminUser();
+    initCountUnreadMessage();
   }
 
   /// Initialize admin user by fetching from philgo API
@@ -73,6 +74,16 @@ class UserService {
   Future<void> initAdminUser() async {
     // Get admin user uid from philgo API
     adminUserUid = await philgoApiGetAdminUserUid();
+  }
+
+  initCountUnreadMessage() {
+    auth.authStateChanges().listen((fa.User? user) {
+      if (user != null) {
+        countUnreadMessages(user);
+      } else {
+        unreadSingleCount = 0;
+      }
+    });
   }
 
   void initUserPresence() {
@@ -128,7 +139,7 @@ class UserService {
             }
             // blockedUsersStream.value = blockedUsers;
             blockedUsersStream.value = {...blockedUsers};
-            countUnreadMessages(user);
+
             // log('Blocked users updated: ${blockedUsersStream.value}');
             // log(blockedUsersStream.value.toString());
           },
@@ -148,34 +159,18 @@ class UserService {
 
   void countUnreadMessages(fa.User user) async {
     unreadCountSubscription?.cancel();
-    final unreadCountRef = database.ref('chat/joins/${user.uid}');
+    final unreadCountRef = database.ref('users/${user.uid}/chatUnreadCount');
     unreadCountSubscription = unreadCountRef.onValue.listen(
       (event) {
-        unreadCount = 0;
-        unreadSingleCount = 0;
+        log(event.snapshot.value.toString(), name: "event.snapshot.value::");
         if (event.snapshot.exists && event.snapshot.value != null) {
-          final data = event.snapshot.value as Map<dynamic, dynamic>;
-          data.forEach((key, room) {
-            if (room[UNREAD] != null) {
-              if (room['single_order'] != null) {
-                if (blockedUsers.contains(getOtherUserUidFromChatRoomId(key))) {
-                  room[UNREAD] = 0;
-                }
-                unreadSingleCount += room[UNREAD] as int;
-              }
-
-              unreadCount += room[UNREAD] as int;
-            }
-          });
+          final count = event.snapshot.value as int;
+          unreadCountStream.value = count;
+          unreadSingleCountStream.value = count;
+        } else {
+          unreadCountStream.value = 0;
+          unreadSingleCountStream.value = 0;
         }
-
-        // blockedUsersStream.value = blockedUsers;
-        unreadCountStream.value = unreadCount;
-        unreadSingleCountStream.value = unreadSingleCount;
-        // log('Unread count updated: ${unreadCountStream.value}');
-        // log(unreadCountStream.value.toString());
-        // log('Unread single count updated: ${unreadSingleCountStream.value}');
-        // log(unreadSingleCountStream.value.toString());
       },
       onError: (error) {
         log('-----> Failed to load unread_count: $error');

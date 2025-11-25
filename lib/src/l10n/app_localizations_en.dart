@@ -509,7 +509,7 @@ class LibTrEn extends LibTr {
   String get add_to_favorites => 'Add to Favorites';
 
   @override
-  String get no_name => 'no-name';
+  String get no_name => 'No Name';
 
   @override
   String added_to_folder(String folderName) {
@@ -539,4 +539,22 @@ class LibTrEn extends LibTr {
   String chats_count(int count) {
     return '$count chats';
   }
+
+  @override
+  String get post_from_blocked_user => 'Post from blocked User';
+
+  @override
+  String get something_went_wrong => 'Something went wrong';
+
+  @override
+  String get enter_your_comment => 'Enter your comment...';
+
+  @override
+  String get comments => 'Comments';
+
+  @override
+  String get this_post_has_comments => 'This post has comments';
+
+  @override
+  String get be_the_first_to_comment => 'Be the first to comment!';
 }

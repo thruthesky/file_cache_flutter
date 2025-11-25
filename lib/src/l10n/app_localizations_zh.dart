@@ -522,4 +522,22 @@ class LibTrZh extends LibTr {
   String chats_count(int count) {
     return '$count 个聊天';
   }
+
+  @override
+  String get post_from_blocked_user => '来自被屏蔽用户的帖子';
+
+  @override
+  String get something_went_wrong => '出了点问题';
+
+  @override
+  String get enter_your_comment => '输入您的评论...';
+
+  @override
+  String get comments => '评论';
+
+  @override
+  String get this_post_has_comments => '这篇帖子有评论';
+
+  @override
+  String get be_the_first_to_comment => '成为第一个评论的人！';
 }

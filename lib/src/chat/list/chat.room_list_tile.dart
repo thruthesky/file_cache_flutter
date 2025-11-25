@@ -92,7 +92,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Future<void> togglePinned() async {
     if (loginUid() == null) return;
 
-    final ref = FirebaseDatabase.instance.ref('users/${myUid()}/pinnedChatRooms/$roomId');
+    final ref = FirebaseDatabase.instance.ref(
+      'users/${myUid()}/pinnedChatRooms/$roomId',
+    );
 
     if (isPinned) {
       // 고정 해제
@@ -248,7 +250,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           builder: (context, isFavorited, _) {
             if (!isFavorited) return const SizedBox.shrink();
             return Padding(
-              padding: const EdgeInsets.only(right: 4),
+              padding: EdgeInsets.zero,
               child: FaIcon(
                 FontAwesomeIcons.solidStar,
                 color: Colors.amber,
@@ -263,12 +265,15 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           builder: (context, pinnedRooms, _) {
             final isPinnedNow = pinnedRooms.contains(roomId);
             return IconButton(
+              visualDensity: VisualDensity(horizontal: -4),
               icon: FaIcon(
                 FontAwesomeIcons.thumbtack,
                 // 고정된 경우 노란색, 아닌 경우 회색
                 color: isPinnedNow
                     ? Colors.yellow[700]
-                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.3),
                 size: 18,
               ),
               onPressed: togglePinned,

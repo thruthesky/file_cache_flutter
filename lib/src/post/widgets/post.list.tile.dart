@@ -9,18 +9,36 @@ class PostListTile extends StatelessWidget {
   final Post post;
   final VoidCallback? onTap;
 
-  /// Returns the nickname or "No Name" if empty
-  String get displayName => post.nickname.isEmpty ? 'No Name' : post.nickname;
+  String displayName(BuildContext context) =>
+      post.nickname.isEmpty ? LibTr.of(context)!.no_name : post.nickname;
 
   @override
   Widget build(BuildContext context) {
     final hasImage = post.files.isNotEmpty ? true : false;
 
-    return InkWell(
-      onTap: onTap,
-      child: hasImage
-          ? _buildTileWithImage(context)
-          : _buildTileWithoutImage(context),
+    return Blocked(
+      otherUserUid: post.firebase_uid,
+      no: () {
+        return InkWell(
+          onTap: onTap,
+          child: hasImage
+              ? _buildTileWithImage(context)
+              : _buildTileWithoutImage(context),
+        );
+      },
+      yes: () => ListTile(
+        visualDensity: VisualDensity(vertical: -4),
+        leading: Icon(FontAwesomeIcons.lightBan),
+        title: Text(
+          LibTr.of(context)!.post_from_blocked_user,
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontStyle: FontStyle.italic,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
     );
   }
 
@@ -74,7 +92,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      displayName,
+                      displayName(context),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -171,7 +189,7 @@ class PostListTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      cut(displayName, 8),
+                      cut(displayName(context), 8),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     SizedBox(width: 16),

@@ -619,5 +619,11 @@
     "create_new_folder": "创建新文件夹",
     "folder_name": "文件夹名称",
     "enter_folder_name": "输入文件夹名称",
-    "chats_count": "{count} 个聊天"
+    "chats_count": "{count} 个聊天",
+    "post_from_blocked_user": "来自被屏蔽用户的帖子",
+    "something_went_wrong": "出了点问题",
+    "enter_your_comment": "输入您的评论...",
+    "comments": "评论",
+    "this_post_has_comments": "这篇帖子有评论",
+    "be_the_first_to_comment": "成为第一个评论的人！"
 }
