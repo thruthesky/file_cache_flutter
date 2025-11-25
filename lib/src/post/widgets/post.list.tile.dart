@@ -26,7 +26,22 @@ class PostListTile extends StatelessWidget {
               : _buildTileWithoutImage(context),
         );
       },
-      yes: () => _buildTileWithoutImage(context, blocked: true),
+      yes: () {
+        return GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => UnblockUserDialog(
+                user: User.fromJson({'uid': post.firebase_uid}),
+                onUnblocked: () {
+                  // Optionally refresh or show success message
+                },
+              ),
+            );
+          },
+          child: _buildTileWithoutImage(context, blocked: true),
+        );
+      },
     );
   }
 
