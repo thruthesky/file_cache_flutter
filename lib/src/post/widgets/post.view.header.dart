@@ -42,23 +42,30 @@ class PostViewHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 /// 프로필 이미지 또는 기본 아이콘
-                photoUrl != null && photoUrl!.isNotEmpty
-                    ? CircleAvatar(
-                        radius: 12,
-                        backgroundImage: NetworkImage(photoUrl!),
-                        backgroundColor: Colors.grey[300],
-                      )
-                    : FaIcon(
-                        FontAwesomeIcons.lightUser,
-                        size: 16,
-                        color: Colors.grey[600],
+                GestureDetector(
+                  onTap: onTapNickname,
+                  child: Row(
+                    children: [
+                      photoUrl != null && photoUrl!.isNotEmpty
+                          ? CircleAvatar(
+                              radius: 12,
+                              backgroundImage: NetworkImage(photoUrl!),
+                              backgroundColor: Colors.grey[300],
+                            )
+                          : FaIcon(
+                              FontAwesomeIcons.lightUser,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
+                      const SizedBox(width: 8),
+                      Text(
+                        cut(nickname, 15),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                const SizedBox(width: 8),
-                Text(
-                  cut(nickname, 15),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w600,
+                    ],
                   ),
                 ),
               ],

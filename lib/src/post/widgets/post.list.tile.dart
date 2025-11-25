@@ -61,7 +61,6 @@ class PostListTile extends StatelessWidget {
                 Text(
                   post.subject,
                   style: Theme.of(context).textTheme.titleMedium,
-                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
@@ -103,7 +102,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.no_of_view}',
+                      formatCompactNumber(post.no_of_view),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
@@ -116,7 +115,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.no_of_comment}',
+                      formatCompactNumber(post.no_of_comment),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
@@ -129,7 +128,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.good}',
+                      formatCompactNumber(post.good),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
@@ -166,14 +165,13 @@ class PostListTile extends StatelessWidget {
                 Text(
                   post.subject,
                   style: Theme.of(context).textTheme.titleMedium,
-                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
                     Text(
-                      cut(displayName, 15),
+                      cut(displayName, 8),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     SizedBox(width: 16),
@@ -197,7 +195,7 @@ class PostListTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.no_of_view}',
+                      formatCompactNumber(post.no_of_view),
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
