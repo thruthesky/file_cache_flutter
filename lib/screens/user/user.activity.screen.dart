@@ -72,11 +72,11 @@ class _UserActivityScreenState extends State<UserActivityScreen>
       if (mounted) {
         setState(() {
           _user = User.fromJson(userData);
-          _isLoadingUser = false;
         });
       }
     } catch (e) {
       debugPrint('Error loading user: $e');
+    } finally {
       if (mounted) {
         setState(() {
           _isLoadingUser = false;
@@ -101,19 +101,13 @@ class _UserActivityScreenState extends State<UserActivityScreen>
     return posts;
   }
 
-  /// Determine if this is the current user's activity
-  bool get _isCurrentUser {
-    final currentUser = context.read<AppState>().user;
-    return currentUser?.uid == widget.uid;
-  }
-
   /// Get the appropriate title based on whether it's current user or another user
   String _getTitle(User? user) {
     final currentUser = context.read<AppState>().user;
     final isCurrentUser = currentUser?.uid == widget.uid;
 
     if (isCurrentUser) {
-      return T.myActivity;
+      return '${currentUser!.nickname}\'s Posts';
     } else if (user != null) {
       // Use the user's nickname or name
       final userName = user.nickname.isNotEmpty
@@ -140,7 +134,25 @@ class _UserActivityScreenState extends State<UserActivityScreen>
               ? Navigator.of(context).pop()
               : context.go(HomeScreen.routeName),
         ),
-        title: Text(_getTitle(_user), style: theme.textTheme.headlineMedium),
+        title: _isLoadingUser
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        scheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text('Loading...', style: theme.textTheme.headlineMedium),
+                ],
+              )
+            : Text(_getTitle(_user), style: theme.textTheme.headlineMedium),
         backgroundColor: theme.scaffoldBackgroundColor,
       ),
       body: UserPostsList(

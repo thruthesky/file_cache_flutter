@@ -7,6 +7,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/state/app.state.dart';
+import 'package:philgo/widgets/post/compact.post.list.tile.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,7 @@ class LatestUserPosts extends StatefulWidget {
     super.key,
     this.idx_member,
     this.firebase_uid,
-    this.limit = 10,
+    this.limit = 5,
   });
 
   final int? idx_member;
@@ -82,7 +83,8 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
         if (user == null) return const SizedBox.shrink();
 
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -175,7 +177,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
     );
   }
 
-  /// 게시글 리스트 위젯 - PostListTile 사용
+  /// 게시글 리스트 위젯 - CompactPostListTile 사용
   Widget _buildPostsList() {
     return Column(
       children: _posts.asMap().entries.map((entry) {
@@ -185,7 +187,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
         return Card(
               elevation: 0,
               margin: const EdgeInsets.only(bottom: 12),
-              child: PostListTile(
+              child: CompactPostListTile(
                 post: post,
                 onTap: () async {
                   await PostViewScreen.push(context, post);
