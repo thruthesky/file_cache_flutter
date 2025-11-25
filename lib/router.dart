@@ -221,9 +221,9 @@ final router = GoRouter(
       path: PostViewScreen.routeName,
       name: PostViewScreen.routeName,
       builder: (context, state) {
-        final postIdx = state.extra as int?;
+        final post = state.extra as Post?;
 
-        if (postIdx == null) {
+        if (post == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go(HomeScreen.routeName);
           });
@@ -232,7 +232,7 @@ final router = GoRouter(
           );
         }
 
-        return PostViewScreen(postIdx: postIdx);
+        return PostViewScreen(post: post);
       },
     ),
     GoRoute(

@@ -177,25 +177,6 @@ class StatContainer extends StatelessWidget {
   final String label;
   final IconData icon;
 
-  /// Format number in compact format (e.g., 1.0K, 10.0K, 1.5M)
-  String _formatNumber(int number) {
-    if (number < 1000) {
-      return number.toString();
-    } else if (number < 1000000) {
-      /// Format as K (thousands)
-      final k = number / 1000;
-      return '${k.toStringAsFixed(1)}K';
-    } else if (number < 1000000000) {
-      /// Format as M (millions)
-      final m = number / 1000000;
-      return '${m.toStringAsFixed(1)}M';
-    } else {
-      /// Format as B (billions)
-      final b = number / 1000000000;
-      return '${b.toStringAsFixed(1)}B';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -210,7 +191,7 @@ class StatContainer extends StatelessWidget {
           children: [
             /// Stat value with comma formatting
             Text(
-              _formatNumber(value),
+              formatCompactNumber(value),
               style: theme.textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: scheme.onSurface,
