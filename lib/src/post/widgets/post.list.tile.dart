@@ -206,7 +206,13 @@ class PostListTile extends StatelessWidget {
                         size: 12,
                         color: Theme.of(context).colorScheme.outline,
                       ),
-
+                      const SizedBox(width: 4),
+                      Text(
+                        post.timeString.split(" ").first,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       FaIcon(
                         FontAwesomeIcons.lightEye,
@@ -216,13 +222,6 @@ class PostListTile extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         formatCompactNumber(post.no_of_view),
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${post.no_of_view}',
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                           color: Theme.of(context).colorScheme.outline,
                         ),
