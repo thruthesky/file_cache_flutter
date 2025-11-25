@@ -146,7 +146,28 @@ Text(
 
 ## Development Workflow
 
-### 1. Pre-Work Checklist
+### 1. Hot Reload After Every Change
+
+**🔄 CRITICAL RULE: Always perform hot reload after making code changes**
+
+- ✅ **MUST** execute hot reload after every code modification
+- ✅ Use `mcp__dart__hot_reload` tool immediately after editing files
+- ✅ Verify changes are applied before proceeding to next task
+- ❌ NEVER skip hot reload - changes won't be visible without it
+
+**When to hot reload:**
+- After editing UI/design code
+- After modifying widgets
+- After changing Theme or styles
+- After fixing bugs
+- After ANY code change
+
+**How to hot reload:**
+```
+Use mcp__dart__hot_reload tool with clearRuntimeErrors: true
+```
+
+### 2. Pre-Work Checklist
 
 **Required Order**:
 1. Specify reference documents
@@ -156,14 +177,14 @@ Text(
 5. Start actual work
 
 
-### 2. When Analysis/Explanation is Requested
+### 3. When Analysis/Explanation is Requested
 
 When keywords like "analyze", "explain", "review" are included:
 - ✅ Only read and analyze code
 - ❌ NEVER modify source code
 - ❌ NEVER edit files
 
-### 3. When Naming is Requested
+### 4. When Naming is Requested
 
 When developer requests "naming" only:
 - ✅ Record appropriate Korean names as comments for each UI/widget/item in source code
@@ -183,7 +204,7 @@ class CommentHeader extends StatelessWidget {
 }
 ```
 
-### 4. When Design is Requested
+### 5. When Design is Requested
 
 When developer makes UI/design-related requests:
 - ✅ **Must refer to [App Design Guide](./docs/apps/app-design.md) first**

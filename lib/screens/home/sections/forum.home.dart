@@ -116,7 +116,8 @@ class _ForumHomeState extends State<ForumHome> {
                         children: [
                           ForumCategoryHeader(totalPostCount: totalPostCount),
                           Spacer(),
-                          FilledButton.icon(
+                          TextButton.icon(
+                            
                             onPressed: () async {
                               final post = await PostCreateScreen.push(context);
                               debugLog('post: $post');
