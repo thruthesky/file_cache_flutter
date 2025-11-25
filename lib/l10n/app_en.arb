@@ -962,5 +962,37 @@
   "viewAll": "View All",
   "@viewAll": {
     "description": "Button text to view all items"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings button tooltip and menu label"
+  },
+  "languageSettings": "Language Settings",
+  "@languageSettings": {
+    "description": "Language settings screen title"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Language dropdown hint text"
+  },
+  "saveLanguage": "Save Language",
+  "@saveLanguage": {
+    "description": "Save language button text"
+  },
+  "languageChanged": "Language changed successfully",
+  "@languageChanged": {
+    "description": "Success message after changing language"
+  },
+  "languageTitle": "Language",
+  "@languageTitle": {
+    "description": "Language menu item title"
+  },
+  "languageSubtitle": "Change app language preference",
+  "@languageSubtitle": {
+    "description": "Language menu item subtitle"
+  },
+  "logoutConfirmMessage": "Are you sure you want to logout?",
+  "@logoutConfirmMessage": {
+    "description": "Logout confirmation message"
   }
 }

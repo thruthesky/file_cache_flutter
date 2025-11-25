@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
@@ -63,7 +64,7 @@ class _MainHomeState extends State<MainHome> {
                       listen: false,
                     ).setHomeNavigation(HomeNavigationItem.menu);
                   },
-                  tooltip: 'Settings',
+                  tooltip: Lo.of(context)!.settings,
                 ),
               ],
             ),

@@ -1528,6 +1528,54 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'View All'**
   String get viewAll;
+
+  /// Settings button tooltip and menu label
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// Language settings screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Language Settings'**
+  String get languageSettings;
+
+  /// Language dropdown hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// Save language button text
+  ///
+  /// In en, this message translates to:
+  /// **'Save Language'**
+  String get saveLanguage;
+
+  /// Success message after changing language
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed successfully'**
+  String get languageChanged;
+
+  /// Language menu item title
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageTitle;
+
+  /// Language menu item subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Change app language preference'**
+  String get languageSubtitle;
+
+  /// Logout confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirmMessage;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

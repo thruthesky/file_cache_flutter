@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/widgets/home/menu/menu.list.dart';
 
 class MenuHome extends StatefulWidget {
@@ -25,7 +26,7 @@ class _MenuHomeState extends State<MenuHome> {
           child: Row(
             children: [
               Text(
-                'Menu',
+                Lo.of(context)!.menu,
                 style: theme.textTheme.headlineMedium?.copyWith(
                   color: scheme.onSurface,
                 ),

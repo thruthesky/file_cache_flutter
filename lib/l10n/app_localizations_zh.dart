@@ -769,4 +769,28 @@ class LoZh extends Lo {
 
   @override
   String get viewAll => 'View All';
+
+  @override
+  String get settings => '设置';
+
+  @override
+  String get languageSettings => '语言设置';
+
+  @override
+  String get selectLanguage => '选择语言';
+
+  @override
+  String get saveLanguage => '保存语言';
+
+  @override
+  String get languageChanged => '语言已更改';
+
+  @override
+  String get languageTitle => '语言';
+
+  @override
+  String get languageSubtitle => '更改应用语言偏好';
+
+  @override
+  String get logoutConfirmMessage => '您确定要退出吗？';
 }

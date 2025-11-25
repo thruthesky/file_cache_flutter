@@ -770,4 +770,28 @@ class LoJa extends Lo {
 
   @override
   String get viewAll => 'View All';
+
+  @override
+  String get settings => '設定';
+
+  @override
+  String get languageSettings => '言語設定';
+
+  @override
+  String get selectLanguage => '言語を選択';
+
+  @override
+  String get saveLanguage => '言語を保存';
+
+  @override
+  String get languageChanged => '言語が変更されました';
+
+  @override
+  String get languageTitle => '言語';
+
+  @override
+  String get languageSubtitle => 'アプリの言語設定を変更';
+
+  @override
+  String get logoutConfirmMessage => 'ログアウトしますか？';
 }

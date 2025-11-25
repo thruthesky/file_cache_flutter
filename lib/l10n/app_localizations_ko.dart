@@ -752,4 +752,28 @@ class LoKo extends Lo {
 
   @override
   String get viewAll => '전체 보기';
+
+  @override
+  String get settings => '설정';
+
+  @override
+  String get languageSettings => '언어 설정';
+
+  @override
+  String get selectLanguage => '언어 선택';
+
+  @override
+  String get saveLanguage => '언어 저장';
+
+  @override
+  String get languageChanged => '언어가 변경되었습니다';
+
+  @override
+  String get languageTitle => '언어';
+
+  @override
+  String get languageSubtitle => '앱 언어 설정 변경';
+
+  @override
+  String get logoutConfirmMessage => '로그아웃 하시겠습니까?';
 }

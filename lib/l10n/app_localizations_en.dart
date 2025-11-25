@@ -779,4 +779,28 @@ class LoEn extends Lo {
 
   @override
   String get viewAll => 'View All';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get languageSettings => 'Language Settings';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get saveLanguage => 'Save Language';
+
+  @override
+  String get languageChanged => 'Language changed successfully';
+
+  @override
+  String get languageTitle => 'Language';
+
+  @override
+  String get languageSubtitle => 'Change app language preference';
+
+  @override
+  String get logoutConfirmMessage => 'Are you sure you want to logout?';
 }

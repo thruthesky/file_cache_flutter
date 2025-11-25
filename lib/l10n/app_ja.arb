@@ -148,5 +148,13 @@
     "bookmarked_folders": "ブックマークフォルダ",
     "no_bookmarked_folders": "ブックマークされたフォルダがありません",
     "bookmarked_chats": "ブックマークされたチャット",
-    "no_bookmarked_chats": "このフォルダにブックマークされたチャットがありません"
+    "no_bookmarked_chats": "このフォルダにブックマークされたチャットがありません",
+    "settings": "設定",
+    "languageSettings": "言語設定",
+    "selectLanguage": "言語を選択",
+    "saveLanguage": "言語を保存",
+    "languageChanged": "言語が変更されました",
+    "languageTitle": "言語",
+    "languageSubtitle": "アプリの言語設定を変更",
+    "logoutConfirmMessage": "ログアウトしますか？"
 }

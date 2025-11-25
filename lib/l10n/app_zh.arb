@@ -148,5 +148,13 @@
     "bookmarked_folders": "书签文件夹",
     "no_bookmarked_folders": "没有书签文件夹",
     "bookmarked_chats": "书签聊天",
-    "no_bookmarked_chats": "此文件夹中没有书签聊天"
+    "no_bookmarked_chats": "此文件夹中没有书签聊天",
+    "settings": "设置",
+    "languageSettings": "语言设置",
+    "selectLanguage": "选择语言",
+    "saveLanguage": "保存语言",
+    "languageChanged": "语言已更改",
+    "languageTitle": "语言",
+    "languageSubtitle": "更改应用语言偏好",
+    "logoutConfirmMessage": "您确定要退出吗？"
 }
