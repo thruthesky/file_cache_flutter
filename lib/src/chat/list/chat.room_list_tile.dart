@@ -156,6 +156,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
       yes: () {
         return chatRoomTile(
+          blocked: true,
           subTitleWidget: Text(
             LibTr.of(context)!.blocked_message,
             style: TextStyle(
@@ -165,7 +166,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          showBadge: false,
           onTap: () => showDialog(
             context: context,
             builder: (context) => UnblockUserDialog(
@@ -186,7 +186,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget chatRoomTile({
     Widget? subTitleWidget,
     void Function()? onTap,
-    bool showBadge = true,
+    bool blocked = false,
   }) {
     return Card(
       // margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -212,7 +212,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   ),
               ],
             ),
-        trailing: buildTrailing(showBadge),
+        trailing: blocked ? null : buildTrailing(),
         onTap: onTap ?? () => widget.onTap(roomId),
       ),
     );
@@ -235,15 +235,12 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   }
 
   /// 채팅방 타일 우측 트레일링 위젯 (읽지 않은 메시지 배지 + 즐겨찾기 아이콘 + 고정 아이콘)
-  Widget buildTrailing(bool showBadge) {
+  Widget buildTrailing() {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         // 읽지 않은 메시지 배지
-        if (showBadge && unread > 0) ...[
-          buildUnreadBadge(unread),
-          const SizedBox(width: 8),
-        ],
+        if (unread > 0) ...[buildUnreadBadge(unread), const SizedBox(width: 8)],
         // 즐겨찾기 아이콘 - 즐겨찾기에 추가된 경우에만 노란색 별 표시
         ValueListenableBuilder<bool>(
           valueListenable: _isFavoritedNotifier,

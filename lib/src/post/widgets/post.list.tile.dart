@@ -27,19 +27,7 @@ class PostListTile extends StatelessWidget {
               : _buildTileWithoutImage(context),
         );
       },
-      yes: () => ListTile(
-        visualDensity: VisualDensity(vertical: -4),
-        leading: Icon(FontAwesomeIcons.lightBan),
-        title: Text(
-          LibTr.of(context)!.post_from_blocked_user,
-          style: TextStyle(
-            color: Colors.grey[500],
-            fontStyle: FontStyle.italic,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
+      yes: () => _buildTileWithoutImage(context, blocked: true),
     );
   }
 
@@ -163,7 +151,7 @@ class PostListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildTileWithoutImage(BuildContext context) {
+  Widget _buildTileWithoutImage(BuildContext context, {bool blocked = false}) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -175,80 +163,85 @@ class PostListTile extends StatelessWidget {
             child: Avatar(photoUrl: post.photo_url),
           ),
           SizedBox(width: 16),
-          // Expanded를 사용하여 Column이 Row의 나머지 공간을 차지하도록 함
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Expanded 제거하고 일반 Text 위젯 사용
-                // Column이 이미 Expanded로 감싸져 있어 너비가 제한됨
                 Text(
-                  post.subject,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  blocked
+                      ? "${LibTr.of(context)!.post_from_blocked_user} ${cut(displayName(context), 8)}"
+                      : post.subject,
+                  style: blocked
+                      ? Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        )
+                      : Theme.of(context).textTheme.titleMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      cut(displayName(context), 8),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    SizedBox(width: 16),
-                    FaIcon(
-                      FontAwesomeIcons.thinClock,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      post.timeString.split(" ").first,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                if (blocked == false) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text(
+                        cut(displayName(context), 8),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      SizedBox(width: 16),
+                      FaIcon(
+                        FontAwesomeIcons.thinClock,
+                        size: 12,
                         color: Theme.of(context).colorScheme.outline,
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    FaIcon(
-                      FontAwesomeIcons.lightEye,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${post.no_of_view}',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      const SizedBox(width: 4),
+                      Text(
+                        post.timeString.split(" ").first,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      FaIcon(
+                        FontAwesomeIcons.lightEye,
+                        size: 12,
                         color: Theme.of(context).colorScheme.outline,
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    FaIcon(
-                      FontAwesomeIcons.lightMessageDots,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${post.no_of_comment}',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      const SizedBox(width: 4),
+                      Text(
+                        '${post.no_of_view}',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      FaIcon(
+                        FontAwesomeIcons.lightMessageDots,
+                        size: 12,
                         color: Theme.of(context).colorScheme.outline,
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    FaIcon(
-                      FontAwesomeIcons.lightThumbsUp,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${post.good}',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      const SizedBox(width: 4),
+                      Text(
+                        '${post.no_of_comment}',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      FaIcon(
+                        FontAwesomeIcons.lightThumbsUp,
+                        size: 12,
                         color: Theme.of(context).colorScheme.outline,
                       ),
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${post.good}',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
