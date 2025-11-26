@@ -1528,6 +1528,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'View All'**
   String get viewAll;
+
+  /// Abbreviation for level
+  ///
+  /// In en, this message translates to:
+  /// **'Lv'**
+  String get lv;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

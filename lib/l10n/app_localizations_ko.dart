@@ -752,4 +752,7 @@ class LoKo extends Lo {
 
   @override
   String get viewAll => '전체 보기';
+
+  @override
+  String get lv => 'Lv';
 }

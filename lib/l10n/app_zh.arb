@@ -148,5 +148,6 @@
     "bookmarked_folders": "书签文件夹",
     "no_bookmarked_folders": "没有书签文件夹",
     "bookmarked_chats": "书签聊天",
-    "no_bookmarked_chats": "此文件夹中没有书签聊天"
+    "no_bookmarked_chats": "此文件夹中没有书签聊天",
+    "lv": "Lv"
 }

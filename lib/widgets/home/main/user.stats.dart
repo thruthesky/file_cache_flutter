@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
@@ -103,9 +104,9 @@ class UserStats extends StatelessWidget {
 
                             const SizedBox(height: 4),
 
-                            /// Level indicator
+                            /// Level indicator (레벨 표시)
                             Text(
-                              'Level ${user.level}',
+                              '${T.lv} ${user.level}',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: scheme.onSurfaceVariant,
                               ),
@@ -200,24 +201,13 @@ class StatContainer extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            /// Stat label
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FaIcon(icon, size: 16, color: scheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
+            /// Stat label - 아이콘 제거됨
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
             ),
-
-            const SizedBox(height: 8),
-
-            /// Stat icon
           ],
         ),
       ),

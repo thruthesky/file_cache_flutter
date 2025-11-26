@@ -770,4 +770,7 @@ class LoJa extends Lo {
 
   @override
   String get viewAll => 'View All';
+
+  @override
+  String get lv => 'Lv';
 }

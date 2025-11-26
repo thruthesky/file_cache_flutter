@@ -156,7 +156,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           // Handle already-liked error
                           if (e.toString().contains('already-liked')) {
                             if (context.mounted) {
-                              showErrorSnackBar(context, 'Already liked this post');
+                              showErrorSnackBar(
+                                context,
+                                'Already liked this post',
+                              );
                             }
                           }
                         }
@@ -211,6 +214,21 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             context.pop();
                           }
                         }
+                      },
+                      onTapBlock: () {
+                        showBlockDialog(
+                          context,
+                          User.fromJson({'uid': firebaseUid}),
+                        );
+                      },
+                      onTapReport: () {
+                        showReportDialog(
+                          context,
+                          'post/${post!.idx}',
+                          reportee: post!.firebase_uid.isNotEmpty
+                              ? post!.firebase_uid
+                              : "${post!.idx_member}",
+                        );
                       },
                     ),
                     SizedBox(height: 16),

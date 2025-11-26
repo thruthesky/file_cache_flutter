@@ -962,5 +962,9 @@
   "viewAll": "View All",
   "@viewAll": {
     "description": "Button text to view all items"
+  },
+  "lv": "Lv",
+  "@lv": {
+    "description": "Abbreviation for level"
   }
 }

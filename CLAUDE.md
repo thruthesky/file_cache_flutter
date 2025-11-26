@@ -27,6 +27,7 @@ This document outlines the mandatory rules to follow when collaborating with AI 
 **Rule**: Always use `Theme.of(context)` to apply styles
 
 ❌ **NEVER USE**:
+
 ```dart
 color: Colors.blue              // Hardcoded color
 fontSize: 16                    // Hardcoded size
@@ -34,6 +35,7 @@ backgroundColor: Colors.white  // Direct color specification
 ```
 
 ✅ **CORRECT WAY**:
+
 ```dart
 color: Theme.of(context).colorScheme.primary
 style: Theme.of(context).textTheme.bodyLarge
@@ -95,12 +97,14 @@ Location: Manage translations in `philgo_app/lib/l10n/*.arb` files
 ### 3. Use flutter_animate Package for Animations
 
 ❌ **NEVER USE**:
+
 ```dart
 Creating AnimationController directly
 Using AnimatedBuilder directly
 ```
 
 ✅ **ALWAYS USE**:
+
 ```dart
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -146,7 +150,7 @@ Text(
 
 ## Development Workflow
 
-### 1. Hot Reload After Every Change
+### 1. Hot reload changes after code modifications
 
 **🔄 CRITICAL RULE: Always perform hot reload after making code changes**
 
@@ -156,6 +160,7 @@ Text(
 - ❌ NEVER skip hot reload - changes won't be visible without it
 
 **When to hot reload:**
+
 - After editing UI/design code
 - After modifying widgets
 - After changing Theme or styles
@@ -163,6 +168,7 @@ Text(
 - After ANY code change
 
 **How to hot reload:**
+
 ```
 Use mcp__dart__hot_reload tool with clearRuntimeErrors: true
 ```
@@ -170,16 +176,17 @@ Use mcp__dart__hot_reload tool with clearRuntimeErrors: true
 ### 2. Pre-Work Checklist
 
 **Required Order**:
+
 1. Specify reference documents
 2. 5W1H Analysis (When, Where, What, How, Why, Who)
 3. 📝 Present Work Plan (PLAN)
 4. ✅ Present TODO List
 5. Start actual work
 
-
 ### 3. When Analysis/Explanation is Requested
 
 When keywords like "analyze", "explain", "review" are included:
+
 - ✅ Only read and analyze code
 - ❌ NEVER modify source code
 - ❌ NEVER edit files
@@ -187,16 +194,19 @@ When keywords like "analyze", "explain", "review" are included:
 ### 4. When Naming is Requested
 
 When developer requests "naming" only:
+
 - ✅ Record appropriate Korean names as comments for each UI/widget/item in source code
 - ✅ Define common terminology for smooth communication between developers
 - ✅ Add easy-to-understand descriptions for each code group
 
 **Naming Comment Rules**:
+
 - Add naming comments in `///` format at the top of each UI element or widget group
 - Names should be concise and clear in Korean
 - Express the role and function intuitively
 
 **Example**:
+
 ```dart
 /// Comment Header
 class CommentHeader extends StatelessWidget {
@@ -207,6 +217,7 @@ class CommentHeader extends StatelessWidget {
 ### 5. When Design is Requested
 
 When developer makes UI/design-related requests:
+
 - ✅ **Must refer to [App Design Guide](./docs/apps/app-design.md) first**
 - ✅ Follow Flat design principles (no borders/shadows)
 - ✅ Theme-based styling required
@@ -215,6 +226,7 @@ When developer makes UI/design-related requests:
 - ✅ Set elevation to 0
 
 **Design-Related Keywords**:
+
 - "design", "UI", "style", "color", "layout"
 - "button", "card", "menu", "list"
 - "spacing", "margin", "size", "font"
@@ -229,30 +241,31 @@ When developer makes UI/design-related requests:
 ### Required Reference Documents
 
 For all PhilGo app development requests:
+
 - [App Development Guidelines](./docs/apps/app-dev-guideline.md)
 - [PhilGo App Development Guidelines](./docs/apps/philgo/philgo-app-development-guideline.md)
 - [Flutter Coding Guidelines](./docs/apps/flutter-coding-guideline.md)
 
 ### Reference Documents by Keyword
 
-| Keyword | Reference Document |
-|---------|-------------------|
-| Design, Design | [App Design Guide](./docs/apps/app-design.md) |
-| Multilingual, i18n | [Flutter i18n](./docs/apps/app-l10n.md) |
-| State Management | [Flutter State Management](./docs/apps/state-management.md) |
+| Keyword                | Reference Document                                            |
+| ---------------------- | ------------------------------------------------------------- |
+| Design, Design         | [App Design Guide](./docs/apps/app-design.md)                 |
+| Multilingual, i18n     | [Flutter i18n](./docs/apps/app-l10n.md)                       |
+| State Management       | [Flutter State Management](./docs/apps/state-management.md)   |
 | API, PhilGo Connection | [PhilGo API Documentation](./docs/apps/flutter-philgo-api.md) |
-| Routing | [Flutter Routing](./docs/apps/routing.md) |
+| Routing                | [Flutter Routing](./docs/apps/routing.md)                     |
 
 ### Key File Locations
 
-| Purpose | Path |
-|---------|------|
-| Main Settings | `philgo_app/lib/main.dart` |
-| Translation Files | `philgo_app/lib/l10n/*.arb` |
-| State Management | `philgo_app/lib/state/app.state.dart` |
-| API Functions | `philgo_app/lib/philgo/philgo.functions.dart` |
-| Custom Widgets | `philgo_app/lib/widgets/` |
-| Translation Classes | `philgo_app/lib/l10n/app_localizations.dart` |
+| Purpose             | Path                                          |
+| ------------------- | --------------------------------------------- |
+| Main Settings       | `philgo_app/lib/main.dart`                    |
+| Translation Files   | `philgo_app/lib/l10n/*.arb`                   |
+| State Management    | `philgo_app/lib/state/app.state.dart`         |
+| API Functions       | `philgo_app/lib/philgo/philgo.functions.dart` |
+| Custom Widgets      | `philgo_app/lib/widgets/`                     |
+| Translation Classes | `philgo_app/lib/l10n/app_localizations.dart`  |
 
 ---
 
@@ -293,12 +306,14 @@ Selector<AppState, int>(
 ## Checklist
 
 Before starting work:
+
 - [ ] Check reference documents
 - [ ] Complete 5W1H analysis
 - [ ] Establish work plan
 - [ ] Create TODO list
 
 After completing work:
+
 - [ ] Add Korean comments
 - [ ] Verify Theme-based styling
 
