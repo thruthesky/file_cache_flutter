@@ -217,8 +217,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       },
                       onTapBlock: () {
                         showBlockDialog(
-                          context,
-                          User.fromJson({'uid': firebaseUid}),
+                          context: context,
+                          otherUserUid: firebaseUid,
                         );
                       },
                       onTapReport: () {

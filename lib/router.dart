@@ -221,9 +221,7 @@ final router = GoRouter(
       path: PostViewScreen.routeName,
       name: PostViewScreen.routeName,
       builder: (context, state) {
-        final post = state.extra as Post?;
-
-        if (post == null) {
+        if (state.extra == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go(HomeScreen.routeName);
           });
@@ -231,7 +229,13 @@ final router = GoRouter(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-
+        Post post;
+        if (state.extra is Post) {
+          post = state.extra as Post;
+        } else {
+          final extraMap = state.extra as Map<String, dynamic>;
+          post = Post.fromJson(extraMap);
+        }
         return PostViewScreen(post: post);
       },
     ),
