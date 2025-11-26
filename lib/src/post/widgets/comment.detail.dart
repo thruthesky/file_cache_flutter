@@ -1,4 +1,5 @@
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,6 +42,39 @@ class _CommentDetailState extends State<CommentDetail> {
 
   @override
   Widget build(BuildContext context) {
+    return Blocked(
+      otherUserUid: widget.comment.firebase_uid,
+      yes: () => buildBlockComment(),
+      no: () => buildComment(),
+    );
+  }
+
+  Widget buildBlockComment() {
+    return Container(
+      margin: EdgeInsets.only(left: getDepthMargin(widget.comment.depth)),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Avatar(photoUrl: widget.comment.photo_url),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              LibTr.of(context)!.comment_blocked_message,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontStyle: FontStyle.italic,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildComment() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -199,6 +233,20 @@ class _CommentDetailState extends State<CommentDetail> {
                             child: Text(LibTr.of(context)!.delete),
                           ),
                         ],
+                        if (!widget.myComment)
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                            ),
+                            onPressed: () {
+                              showBlockDialog(
+                                context: context,
+                                otherUserUid: widget.comment.firebase_uid,
+                              );
+                            },
+                            icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
+                            label: Text(LibTr.of(context)!.block),
+                          ),
                       ],
                     ),
                   ],

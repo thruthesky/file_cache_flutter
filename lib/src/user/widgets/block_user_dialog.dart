@@ -3,10 +3,14 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Dialog for confirming user block action
 class BlockUserDialog extends StatefulWidget {
-  final User user;
+  final String otherUserUid;
   final VoidCallback? onBlocked;
 
-  const BlockUserDialog({super.key, required this.user, this.onBlocked});
+  const BlockUserDialog({
+    super.key,
+    required this.otherUserUid,
+    this.onBlocked,
+  });
 
   @override
   State<BlockUserDialog> createState() => _BlockUserDialogState();
@@ -57,7 +61,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
     setState(() => _isLoading = true);
 
     try {
-      await blockUser(widget.user.uid);
+      await blockUser(widget.otherUserUid);
       if (mounted) {
         Navigator.of(context).pop();
         widget.onBlocked?.call();
@@ -75,11 +79,14 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
 
 /// Dialog for confirming user unblock action
 class UnblockUserDialog extends StatefulWidget {
-  final User user;
+  final String otherUserUid;
   final VoidCallback? onUnblocked;
 
-  const UnblockUserDialog({super.key, required this.user, this.onUnblocked});
-
+  const UnblockUserDialog({
+    super.key,
+    required this.otherUserUid,
+    this.onUnblocked,
+  });
   @override
   State<UnblockUserDialog> createState() => _UnblockUserDialogState();
 }
@@ -118,7 +125,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
     setState(() => _isLoading = true);
 
     try {
-      await unblockUser(widget.user.uid);
+      await unblockUser(widget.otherUserUid);
 
       if (mounted) {
         Navigator.of(context).pop();

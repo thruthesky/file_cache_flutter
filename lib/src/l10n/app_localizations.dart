@@ -1048,6 +1048,12 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'Be the first to comment!'**
   String get be_the_first_to_comment;
+
+  /// Message displayed for comments from blocked users
+  ///
+  /// In en, this message translates to:
+  /// **'Comment from blocked user'**
+  String get comment_blocked_message;
 }
 
 class _LibTrDelegate extends LocalizationsDelegate<LibTr> {

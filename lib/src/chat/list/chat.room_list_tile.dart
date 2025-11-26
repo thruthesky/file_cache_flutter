@@ -169,9 +169,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           onTap: () => showDialog(
             context: context,
             builder: (context) => UnblockUserDialog(
-              user: User.fromJson({
-                'uid': getOtherUserUidFromChatRoomId(roomId)!,
-              }),
+              otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
               onUnblocked: () {
                 // Show success message
               },

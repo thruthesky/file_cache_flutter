@@ -61,11 +61,21 @@ class UserService {
     if (useUserPresence) {
       initUserPresence();
     }
-    initPinnedChatRooms();
-    initFavoriteFolders();
-    initBlockedUsers();
+
+    initAuthStateChanges();
+
     initAdminUser();
-    initCountUnreadMessage();
+  }
+
+  void initAuthStateChanges() {
+    auth.authStateChanges().listen((fa.User? user) {
+      // User is signed in
+      log('User signed in: ${user?.uid}');
+      initPinnedChatRooms(user);
+      initFavoriteFolders(user);
+      initBlockedUsers(user);
+      initCountUnreadMessage(user);
+    });
   }
 
   /// Initialize admin user by fetching from philgo API
@@ -76,14 +86,12 @@ class UserService {
     adminUserUid = await philgoApiGetAdminUserUid();
   }
 
-  void initCountUnreadMessage() {
-    auth.authStateChanges().listen((fa.User? user) {
-      if (user != null) {
-        countUnreadMessages(user);
-      } else {
-        unreadSingleCount = 0;
-      }
-    });
+  void initCountUnreadMessage(fa.User? user) {
+    if (user != null) {
+      countUnreadMessages(user);
+    } else {
+      unreadSingleCount = 0;
+    }
   }
 
   void initUserPresence() {
@@ -120,46 +128,44 @@ class UserService {
     });
   }
 
-  void initBlockedUsers() {
-    auth.authStateChanges().listen((fa.User? user) {
-      if (user != null) {
-        blockedUsersSubscription?.cancel();
-        final blockedUsersRef = database.ref('users/${user.uid}/blocked_users');
-        blockedUsersSubscription = blockedUsersRef.onValue.listen(
-          (event) {
-            blockedUsers.clear();
+  void initBlockedUsers(fa.User? user) {
+    if (user != null) {
+      blockedUsersSubscription?.cancel();
+      final blockedUsersRef = userPrivateBlocksRef(user.uid);
+      blockedUsersSubscription = blockedUsersRef.onValue.listen(
+        (event) {
+          blockedUsers.clear();
 
-            if (event.snapshot.exists && event.snapshot.value != null) {
-              final data = event.snapshot.value as Map<dynamic, dynamic>;
-              data.forEach((key, value) {
-                if (value == true) {
-                  blockedUsers.add(key.toString());
-                }
-              });
-            }
-            // blockedUsersStream.value = blockedUsers;
-            blockedUsersStream.value = {...blockedUsers};
+          if (event.snapshot.exists && event.snapshot.value != null) {
+            final data = event.snapshot.value as Map<dynamic, dynamic>;
+            data.forEach((key, value) {
+              if (value == true) {
+                blockedUsers.add(key.toString());
+              }
+            });
+          }
+          // blockedUsersStream.value = blockedUsers;
+          blockedUsersStream.value = {...blockedUsers};
 
-            // log('Blocked users updated: ${blockedUsersStream.value}');
-            // log(blockedUsersStream.value.toString());
-          },
-          onError: (error) {
-            log('-----> Failed to load blocked users: $error');
-          },
-        );
-      } else {
-        blockedUsers.clear();
-        blockedUsersSubscription?.cancel();
-        unreadCount = 0;
-        unreadSingleCount = 0;
-        unreadCountSubscription?.cancel();
-      }
-    });
+          // log('Blocked users updated: ${blockedUsersStream.value}');
+          // log(blockedUsersStream.value.toString());
+        },
+        onError: (error) {
+          log('-----> Failed to load blocked users: $error');
+        },
+      );
+    } else {
+      blockedUsers.clear();
+      blockedUsersSubscription?.cancel();
+      unreadCount = 0;
+      unreadSingleCount = 0;
+      unreadCountSubscription?.cancel();
+    }
   }
 
   void countUnreadMessages(fa.User user) async {
     unreadCountSubscription?.cancel();
-    final unreadCountRef = database.ref('users/${user.uid}/chatUnreadCount');
+    final unreadCountRef = userChatUnreadCountRef(user.uid);
     unreadCountSubscription = unreadCountRef.onValue.listen(
       (event) {
         log(event.snapshot.value.toString(), name: "event.snapshot.value::");
@@ -178,74 +184,66 @@ class UserService {
     );
   }
 
-  void initPinnedChatRooms() {
-    auth.authStateChanges().listen((fa.User? user) {
-      if (user != null) {
-        pinnedChatRoomsSubscription?.cancel();
-        final pinnedChatRoomsRef = database.ref(
-          'users/${user.uid}/pinnedChatRooms',
-        );
-        pinnedChatRoomsSubscription = pinnedChatRoomsRef.onValue.listen(
-          (event) {
-            pinnedChatRooms.clear();
+  void initPinnedChatRooms(fa.User? user) {
+    if (user != null) {
+      pinnedChatRoomsSubscription?.cancel();
+      final pinnedChatRoomsRef = userPinnedChatRoomsRef(user.uid);
+      pinnedChatRoomsSubscription = pinnedChatRoomsRef.onValue.listen(
+        (event) {
+          pinnedChatRooms.clear();
 
-            if (event.snapshot.exists && event.snapshot.value != null) {
-              final data = event.snapshot.value as Map<dynamic, dynamic>;
-              debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
-              data.forEach((key, value) {
-                if (value == true) {
-                  pinnedChatRooms.add(key.toString());
-                }
-              });
-            }
-            debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
-            pinnedChatRoomsStream.value = {...pinnedChatRooms};
-          },
-          onError: (error) {
-            log('-----> Failed to load pinnedChatRooms: $error');
-          },
-        );
-      } else {
-        pinnedChatRooms.clear();
-        pinnedChatRoomsSubscription?.cancel();
-      }
-    });
+          if (event.snapshot.exists && event.snapshot.value != null) {
+            final data = event.snapshot.value as Map<dynamic, dynamic>;
+            debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
+            data.forEach((key, value) {
+              if (value == true) {
+                pinnedChatRooms.add(key.toString());
+              }
+            });
+          }
+          debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
+          pinnedChatRoomsStream.value = {...pinnedChatRooms};
+        },
+        onError: (error) {
+          log('-----> Failed to load pinnedChatRooms: $error');
+        },
+      );
+    } else {
+      pinnedChatRooms.clear();
+      pinnedChatRoomsSubscription?.cancel();
+    }
   }
 
-  void initFavoriteFolders() {
-    auth.authStateChanges().listen((fa.User? user) {
-      if (user != null) {
-        favoriteFoldersSubscription?.cancel();
-        final favoriteFoldersRef = database.ref(
-          'chat/favorites-folder-list/${user.uid}',
-        );
-        favoriteFoldersSubscription = favoriteFoldersRef.onValue.listen(
-          (event) {
-            favoriteFolders.clear();
+  void initFavoriteFolders(fa.User? user) {
+    if (user != null) {
+      favoriteFoldersSubscription?.cancel();
+      final favoriteFoldersRef = chatFavoritesFolderListRef(user.uid);
+      favoriteFoldersSubscription = favoriteFoldersRef.onValue.listen(
+        (event) {
+          favoriteFolders.clear();
 
-            if (event.snapshot.exists && event.snapshot.value != null) {
-              final data = event.snapshot.value as Map<dynamic, dynamic>;
-              debugPrint('favoriteFoldersRef::data: ${data.toString()}');
-              data.forEach((key, value) {
-                favoriteFolders.add({
-                  'folderName': key.toString(),
-                  'countFavorites': value,
-                });
+          if (event.snapshot.exists && event.snapshot.value != null) {
+            final data = event.snapshot.value as Map<dynamic, dynamic>;
+            debugPrint('favoriteFoldersRef::data: ${data.toString()}');
+            data.forEach((key, value) {
+              favoriteFolders.add({
+                'folderName': key.toString(),
+                'countFavorites': value,
               });
-            }
-            debugPrint(
-              'favoriteFoldersRef::favoriteFolders: ${favoriteFolders.toString()}',
-            );
-            favoriteFoldersStream.value = [...favoriteFolders];
-          },
-          onError: (error) {
-            log('-----> Failed to load favoriteFoldersRef: $error');
-          },
-        );
-      } else {
-        favoriteFolders.clear();
-        favoriteFoldersSubscription?.cancel();
-      }
-    });
+            });
+          }
+          debugPrint(
+            'favoriteFoldersRef::favoriteFolders: ${favoriteFolders.toString()}',
+          );
+          favoriteFoldersStream.value = [...favoriteFolders];
+        },
+        onError: (error) {
+          log('-----> Failed to load favoriteFoldersRef: $error');
+        },
+      );
+    } else {
+      favoriteFolders.clear();
+      favoriteFoldersSubscription?.cancel();
+    }
   }
 }

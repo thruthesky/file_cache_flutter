@@ -28,34 +28,41 @@ String getReportMessagePath(String messageId, String roomId) {
 }
 
 Future<void> createReport({
-  required String path,
+  required String type,
   required String reason,
-  String? reportee,
+  required int idx,
+  // String? reportee,
   required Function() success,
   required Function(String error) error,
 }) async {
   try {
-    DataSnapshot snapshot = await myReportRef()
-        .orderByChild('path')
-        .equalTo(path)
-        .get();
+    final res = await func(
+      'report',
+      data: {'type': type, 'idx': idx, 'reason': reason},
+      debug: true,
+    );
 
-    if (snapshot.exists) {
-      throw ('You already have reported this.');
-    }
+    // DataSnapshot snapshot = await myReportRef()
+    //     .orderByChild('path')
+    //     .equalTo(path)
+    //     .get();
 
-    final data = {
-      REPORT_PATH: path,
-      REPORT_REPORTER: myUid(),
-      REPORT_REPORTEE: reportee,
-      REPORT_REASON: reason,
-      REPORT_CREATED_AT: ServerValue.timestamp,
-    };
+    // if (snapshot.exists) {
+    //   throw ('You already have reported this.');
+    // }
 
-    DatabaseReference ref = myReportRef().push();
-    await ref.set(data);
+    // final data = {
+    //   REPORT_PATH: path,
+    //   REPORT_REPORTER: myUid(),
+    //   REPORT_REPORTEE: reportee,
+    //   REPORT_REASON: reason,
+    //   REPORT_CREATED_AT: ServerValue.timestamp,
+    // };
 
-    await reportsListRef().child(ref.key!).set(data);
+    // DatabaseReference ref = myReportRef().push();
+    // await ref.set(data);
+
+    // await reportsListRef().child(ref.key!).set(data);
 
     success();
   } catch (e) {

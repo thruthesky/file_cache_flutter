@@ -540,4 +540,7 @@ class LibTrZh extends LibTr {
 
   @override
   String get be_the_first_to_comment => '成为第一个评论的人！';
+
+  @override
+  String get comment_blocked_message => '来自被屏蔽用户的评论';
 }

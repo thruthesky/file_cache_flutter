@@ -542,4 +542,7 @@ class LibTrJa extends LibTr {
 
   @override
   String get be_the_first_to_comment => '最初のコメントを投稿しよう！';
+
+  @override
+  String get comment_blocked_message => 'ブロックされたユーザーのコメント';
 }

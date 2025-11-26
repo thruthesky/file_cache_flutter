@@ -625,5 +625,6 @@
     "enter_your_comment": "コメントを入力してください...",
     "comments": "コメント",
     "this_post_has_comments": "この投稿にはコメントがあります",
-    "be_the_first_to_comment": "最初のコメントを投稿しよう！"
+    "be_the_first_to_comment": "最初のコメントを投稿しよう！",
+    "comment_blocked_message": "ブロックされたユーザーのコメント"
 }

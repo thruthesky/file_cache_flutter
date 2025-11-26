@@ -557,4 +557,7 @@ class LibTrEn extends LibTr {
 
   @override
   String get be_the_first_to_comment => 'Be the first to comment!';
+
+  @override
+  String get comment_blocked_message => 'Comment from blocked user';
 }

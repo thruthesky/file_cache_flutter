@@ -642,14 +642,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Show report dialog for the message
   void _showReportDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => ReportChatMessage(
-        message: message,
-        roomId: roomId!,
-        onClose: () => Navigator.of(context).pop(),
-      ),
-    );
+    log('TODO SHOW REPORT DIALOG', name: '_showReportDialog::');
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => ReportChatMessage(
+    //     message: message,
+    //     roomId: roomId!,
+    //     onClose: () => Navigator.of(context).pop(),
+    //   ),
+    // );
   }
 
   /// Show block/unblock dialog for message sender
@@ -662,13 +663,13 @@ class ChatRoomMessageBubble extends StatelessWidget {
       builder: (context) => Blocked(
         otherUserUid: sender!.uid,
         yes: () => UnblockUserDialog(
-          user: sender!,
+          otherUserUid: sender!.uid,
           onUnblocked: () {
             // Optionally refresh or show success message
           },
         ),
         no: () => BlockUserDialog(
-          user: sender!,
+          otherUserUid: sender!.uid,
           onBlocked: () {
             // Optionally refresh or show success message
             if (isSingleChat) {
@@ -753,7 +754,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => UnblockUserDialog(
-        user: sender!,
+        otherUserUid: sender!.uid,
         onUnblocked: () {
           // Show success message
         },

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -201,13 +202,14 @@ class SingleChatRoomHeader extends StatelessWidget {
 
   /// Report room - show report dialog
   void reportRoom(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => ReportChatRoom(
-        roomId: join.id,
-        onClose: () => Navigator.of(context).pop(),
-      ),
-    );
+    log('TODO SHOW REPORT DIALOG', name: 'reportRoom::');
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => ReportChatRoom(
+    //     roomId: join.id,
+    //     onClose: () => Navigator.of(context).pop(),
+    //   ),
+    // );
   }
 
   /// Show confirmation dialog for leaving room
@@ -243,7 +245,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     showDialog(
       context: parentContext,
       builder: (context) => BlockUserDialog(
-        user: otherUser,
+        otherUserUid: otherUser.uid,
         onBlocked: () {
           Navigator.of(parentContext).pop(); // Close chat message.
         },
@@ -256,7 +258,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     showDialog(
       context: parentContext,
       builder: (context) => UnblockUserDialog(
-        user: otherUser,
+        otherUserUid: otherUser.uid,
         onUnblocked: () {
           // Optionally refresh or show success message
         },

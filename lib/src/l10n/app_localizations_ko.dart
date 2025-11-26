@@ -542,4 +542,7 @@ class LibTrKo extends LibTr {
 
   @override
   String get be_the_first_to_comment => '첫 댓글을 남겨보세요!';
+
+  @override
+  String get comment_blocked_message => '차단된 사용자의 댓글';
 }

@@ -81,6 +81,10 @@ DatabaseReference roomInvitedUserRef(String roomId, String uid) {
   return chatRoomRef(roomId).child(ROOM_INVITED_USERS).child(uid);
 }
 
+DatabaseReference chatFavoritesFolderListRef(String uid) {
+  return FirebaseDatabase.instance.ref('chat/favorites-folder-list/$uid');
+}
+
 // Returns a query for the chat rooms based on the room order and user ID
 // singleOrder - returns a list of single chat rooms for the user
 // groupOrder - returns a list of group chat rooms for the user
@@ -329,40 +333,48 @@ Future<void> leaveChatRoom({
 }
 
 /// Show block/unblock dialog
-void showBlockDialog(BuildContext parentContext, User otherUser) {
+void showBlockDialog({
+  required BuildContext context,
+  required String otherUserUid,
+  bool popOnBlocked = true,
+}) {
   showDialog(
-    context: parentContext,
-    builder: (context) => BlockUserDialog(
-      user: otherUser,
+    context: context,
+    builder: (ctx) => BlockUserDialog(
+      otherUserUid: otherUserUid,
       onBlocked: () {
-        Navigator.of(parentContext).pop(); // Close chat message.
-        // Optionally refresh or show success message
+        if (popOnBlocked) {
+          Navigator.of(context).pop();
+        }
       },
     ),
   );
 }
 
 /// Show block/unblock dialog
-void showUnblockDialog(BuildContext parentContext, User otherUser) {
+void showUnblockDialog({
+  required BuildContext context,
+  required String otherUserUid,
+  bool popOnUnblocked = false,
+}) {
   showDialog(
-    context: parentContext,
-    builder: (context) => UnblockUserDialog(
-      user: otherUser,
+    context: context,
+    builder: (ctx) => UnblockUserDialog(
+      otherUserUid: otherUserUid,
       onUnblocked: () {
-        // Optionally refresh or show success message
+        if (popOnUnblocked) {
+          Navigator.of(context).pop();
+        }
       },
     ),
   );
 }
 
-void showReportDialog(BuildContext context, String path, {String? reportee}) {
+void showReportDialog(BuildContext context, String type, {String? reportee}) {
   showDialog(
     context: context,
-    builder: (context) => ReportDialog(
-      path: path,
-      reportee: reportee,
-      onClose: () => Navigator.of(context).pop(),
-    ),
+    builder: (context) =>
+        ReportDialog(type: type, onClose: () => Navigator.of(context).pop()),
   );
 }
 

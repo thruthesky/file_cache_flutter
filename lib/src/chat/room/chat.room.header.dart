@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -207,7 +208,10 @@ class ChatRoomHeader extends StatelessWidget {
                               style: TextStyle(color: Colors.green),
                             ),
                             onTap: () {
-                              showUnblockDialog(parentContext, otherUser!);
+                              showUnblockDialog(
+                                context: parentContext,
+                                otherUserUid: otherUser!.uid,
+                              );
                             },
                           ),
                           no: () => ListTile(
@@ -215,7 +219,10 @@ class ChatRoomHeader extends StatelessWidget {
                             title: Text(LibTr.of(context)!.block_user),
                             onTap: () {
                               Navigator.of(context).pop();
-                              showBlockDialog(parentContext, otherUser!);
+                              showBlockDialog(
+                                context: parentContext,
+                                otherUserUid: otherUser!.uid,
+                              );
                             },
                           ),
                         ),
@@ -272,13 +279,14 @@ class ChatRoomHeader extends StatelessWidget {
 
   /// Report room - show report dialog
   void reportRoom(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => ReportChatRoom(
-        roomId: roomId,
-        onClose: () => Navigator.of(context).pop(),
-      ),
-    );
+    log('TODO SHOW REPORT DIALOG', name: 'reportRoom::');
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => ReportChatRoom(
+    //     roomId: roomId,
+    //     onClose: () => Navigator.of(context).pop(),
+    //   ),
+    // );
   }
 
   /// Show confirmation dialog for leaving room

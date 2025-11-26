@@ -15,8 +15,28 @@ DatabaseReference userRef(String uid) {
   return FirebaseDatabase.instance.ref(userPath(uid));
 }
 
+DatabaseReference userChatUnreadCountRef(String uid) {
+  return FirebaseDatabase.instance.ref('users/$uid/chatUnreadCount');
+}
+
+DatabaseReference userPinnedChatRoomsRef(String uid) {
+  return FirebaseDatabase.instance.ref('users/$uid/pinnedChatRooms');
+}
+
+String userPrivatePath(String uid) {
+  return 'user-private/$uid';
+}
+
+DatabaseReference userPrivateRef(String uid) {
+  return FirebaseDatabase.instance.ref(userPrivatePath(uid));
+}
+
+DatabaseReference userPrivateBlocksRef(String uid) {
+  return userPrivateRef(uid).child('blocks');
+}
+
 String myBlockedUsersPath() {
-  return 'users/${myUid()}/blocked_users';
+  return 'user-private/${myUid()}/blocks';
 }
 
 DatabaseReference myBlockedUsersRef() {
