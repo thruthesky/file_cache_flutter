@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
@@ -264,15 +266,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               showBlockDialog(
                                 context: context,
                                 otherUserUid: firebaseUid,
-                              );
-                            },
-                            onTapReport: () {
-                              showReportDialog(
-                                context,
-                                'post/${post!.idx}',
-                                reportee: post!.firebase_uid.isNotEmpty
-                                    ? post!.firebase_uid
-                                    : "${post!.idx_member}",
                               );
                             },
                           ),
