@@ -207,7 +207,7 @@ class ChatRoomHeader extends StatelessWidget {
                               style: TextStyle(color: Colors.green),
                             ),
                             onTap: () {
-                              showUnblockDialog(parentContext);
+                              showUnblockDialog(parentContext, otherUser!);
                             },
                           ),
                           no: () => ListTile(
@@ -215,7 +215,7 @@ class ChatRoomHeader extends StatelessWidget {
                             title: Text(LibTr.of(context)!.block_user),
                             onTap: () {
                               Navigator.of(context).pop();
-                              showBlockDialog(parentContext);
+                              showBlockDialog(parentContext, otherUser!);
                             },
                           ),
                         ),
@@ -307,37 +307,6 @@ class ChatRoomHeader extends StatelessWidget {
       // User confirmed to leave the room
       onLeave?.call();
     }
-  }
-
-  /// Show block/unblock dialog
-  void showBlockDialog(BuildContext parentContext) {
-    if (otherUser == null) return;
-
-    showDialog(
-      context: parentContext,
-      builder: (context) => BlockUserDialog(
-        user: otherUser!,
-        onBlocked: () {
-          Navigator.of(parentContext).pop(); // Close chat message.
-          // Optionally refresh or show success message
-        },
-      ),
-    );
-  }
-
-  /// Show block/unblock dialog
-  void showUnblockDialog(BuildContext parentContext) {
-    if (otherUser == null) return;
-
-    showDialog(
-      context: parentContext,
-      builder: (context) => UnblockUserDialog(
-        user: otherUser!,
-        onUnblocked: () {
-          // Optionally refresh or show success message
-        },
-      ),
-    );
   }
 
   Widget buildRoomTitle(BuildContext context) {
@@ -565,9 +534,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
           'roomId': widget.roomId,
           'folderName': folderName,
         },
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.statusCode == 200) {
@@ -654,8 +621,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         itemBuilder: (context, index) {
                           final folder = folders[index];
                           final folderName = folder['folderName'] as String;
-                          final isSelected =
-                              selectedFolders.contains(folderName);
+                          final isSelected = selectedFolders.contains(
+                            folderName,
+                          );
 
                           return ListTile(
                             leading: Checkbox(
@@ -669,8 +637,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                               '${folder['countFavorites']} chats',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                            onTap:
-                                isLoading ? null : () => _toggleFolder(folderName),
+                            onTap: isLoading
+                                ? null
+                                : () => _toggleFolder(folderName),
                           );
                         },
                       );

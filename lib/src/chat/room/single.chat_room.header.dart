@@ -421,6 +421,7 @@ class _FavoritesModal extends StatefulWidget {
 class _FavoritesModalState extends State<_FavoritesModal> {
   final Dio _dio = Dio();
   Set<String> selectedFolders = {};
+
   /// 각 폴더별 로딩 상태를 추적하는 맵 - folderName을 키로 사용
   Map<String, bool> folderLoadingStates = {};
   bool isLoadingInitial = true;
@@ -512,7 +513,10 @@ class _FavoritesModalState extends State<_FavoritesModal> {
       }
     } catch (e) {
       if (mounted) {
-        showErrorSnackBar(context, LibTr.of(context)!.failed_to_update_favorite(e.toString()));
+        showErrorSnackBar(
+          context,
+          LibTr.of(context)!.failed_to_update_favorite(e.toString()),
+        );
       }
     } finally {
       setState(() {
@@ -636,8 +640,10 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                           final isSelected = selectedFolders.contains(
                             folderName,
                           );
+
                           /// 현재 폴더의 로딩 상태 확인
-                          final isFolderLoading = folderLoadingStates[folderName] ?? false;
+                          final isFolderLoading =
+                              folderLoadingStates[folderName] ?? false;
 
                           return ListTile(
                             leading: isFolderLoading
@@ -650,11 +656,14 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                   )
                                 : Checkbox(
                                     value: isSelected,
-                                    onChanged: (value) => addToFavoriteFolder(folderName),
+                                    onChanged: (value) =>
+                                        addToFavoriteFolder(folderName),
                                   ),
                             title: Text(folderName),
                             subtitle: Text(
-                              LibTr.of(context)!.chats_count(folder['countFavorites'] as int),
+                              LibTr.of(
+                                context,
+                              )!.chats_count(folder['countFavorites'] as int),
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             onTap: isFolderLoading

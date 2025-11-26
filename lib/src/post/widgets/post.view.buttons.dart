@@ -10,12 +10,17 @@ class PostViewButtons extends StatefulWidget {
     required this.onTapDelete,
     required this.onLike,
     required this.myPost,
+    this.onTapBlock,
+    this.onTapReport,
   });
   final Post? post;
   final VoidCallback onTapUpdate;
   final VoidCallback onTapDelete;
   final VoidCallback onLike;
   final bool myPost;
+
+  final VoidCallback? onTapBlock;
+  final VoidCallback? onTapReport;
 
   @override
   State<PostViewButtons> createState() => _PostViewButtonsState();
@@ -35,7 +40,8 @@ class _PostViewButtonsState extends State<PostViewButtons> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Row(
+    return Wrap(
+      spacing: 16,
       children: [
         // Like button - Flat design with TextButton.icon
         TextButton.icon(
@@ -56,7 +62,28 @@ class _PostViewButtonsState extends State<PostViewButtons> {
                 : "${LibTr.of(context)!.like}  ",
           ),
         ),
-        Spacer(),
+
+        if (!widget.myPost) ...[
+          if (widget.onTapBlock != null)
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 8),
+              ),
+              onPressed: widget.onTapBlock,
+              icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
+              label: Text(LibTr.of(context)!.block),
+            ),
+
+          if (widget.onTapReport != null)
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 8),
+              ),
+              onPressed: widget.onTapReport,
+              icon: const FaIcon(FontAwesomeIcons.hexagonExclamation, size: 16),
+              label: Text(LibTr.of(context)!.report),
+            ),
+        ],
         // 내 게시글인 경우에만 수정/삭제 버튼 표시
         if (widget.myPost) ...[
           // Edit button - Flat design with TextButton.icon
@@ -68,7 +95,6 @@ class _PostViewButtonsState extends State<PostViewButtons> {
             icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
             label: Text(LibTr.of(context)!.edit),
           ),
-          SizedBox(width: 16),
           // Delete button - Flat design with TextButton.icon
           TextButton.icon(
             style: TextButton.styleFrom(

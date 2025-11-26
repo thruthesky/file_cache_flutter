@@ -328,6 +328,44 @@ Future<void> leaveChatRoom({
   }
 }
 
+/// Show block/unblock dialog
+void showBlockDialog(BuildContext parentContext, User otherUser) {
+  showDialog(
+    context: parentContext,
+    builder: (context) => BlockUserDialog(
+      user: otherUser,
+      onBlocked: () {
+        Navigator.of(parentContext).pop(); // Close chat message.
+        // Optionally refresh or show success message
+      },
+    ),
+  );
+}
+
+/// Show block/unblock dialog
+void showUnblockDialog(BuildContext parentContext, User otherUser) {
+  showDialog(
+    context: parentContext,
+    builder: (context) => UnblockUserDialog(
+      user: otherUser,
+      onUnblocked: () {
+        // Optionally refresh or show success message
+      },
+    ),
+  );
+}
+
+void showReportDialog(BuildContext context, String path, {String? reportee}) {
+  showDialog(
+    context: context,
+    builder: (context) => ReportDialog(
+      path: path,
+      reportee: reportee,
+      onClose: () => Navigator.of(context).pop(),
+    ),
+  );
+}
+
 /// ====================================================================================
 /// TO BE DELETED IF NOT NEEDED FUNCTION BELOW
 /// ===================================================================================

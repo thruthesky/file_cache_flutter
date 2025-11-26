@@ -29,14 +29,9 @@ class PostListTile extends StatelessWidget {
       yes: () {
         return GestureDetector(
           onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => UnblockUserDialog(
-                user: User.fromJson({'uid': post.firebase_uid}),
-                onUnblocked: () {
-                  // Optionally refresh or show success message
-                },
-              ),
+            showUnblockDialog(
+              context,
+              User.fromJson({'uid': post.firebase_uid}),
             );
           },
           child: _buildTileWithoutImage(context, blocked: true),

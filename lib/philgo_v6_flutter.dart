@@ -38,7 +38,7 @@ export 'src/chat/models/chat.message.dart';
 export 'src/chat/models/chat.room.dart';
 export 'src/chat/models/chat.last_message.dart';
 export 'src/chat/room/chat.create_room_screen.dart';
-export 'src/chat/room/chat.report.dart';
+export 'src/report/report.dart';
 export 'src/chat/room/chat.room.message_bubble.dart';
 export 'src/chat/room/chat.room_screen.dart';
 export 'src/chat/widgets/search_friends_dialog.dart';

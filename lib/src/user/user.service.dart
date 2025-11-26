@@ -76,7 +76,7 @@ class UserService {
     adminUserUid = await philgoApiGetAdminUserUid();
   }
 
-  initCountUnreadMessage() {
+  void initCountUnreadMessage() {
     auth.authStateChanges().listen((fa.User? user) {
       if (user != null) {
         countUnreadMessages(user);
