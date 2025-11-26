@@ -145,7 +145,8 @@ class _CommentDetailState extends State<CommentDetail> {
                       const SizedBox(height: 8),
                       PostViewImages(files: widget.comment.files),
                     ],
-                    Row(
+                    Wrap(
+                      spacing: 8,
                       children: [
                         /// Like button for comments
                         TextButton.icon(
@@ -153,6 +154,11 @@ class _CommentDetailState extends State<CommentDetail> {
                             foregroundColor: _isLiked
                                 ? Theme.of(context).colorScheme.primary
                                 : null,
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity(
+                              horizontal: -4,
+                              vertical: -4,
+                            ),
                           ),
                           onPressed: () async {
                             try {
@@ -199,6 +205,13 @@ class _CommentDetailState extends State<CommentDetail> {
 
                         /// 답글 버튼 - 항상 표시
                         TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity(
+                              horizontal: -4,
+                              vertical: -4,
+                            ),
+                          ),
                           onPressed: () => setState(() {
                             reply = !reply;
                             update = false;
@@ -209,6 +222,13 @@ class _CommentDetailState extends State<CommentDetail> {
                         /// 수정 버튼 - 내 댓글인 경우에만 표시
                         if (!widget.hasReplies && widget.myComment) ...[
                           TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              visualDensity: VisualDensity(
+                                horizontal: -4,
+                                vertical: -4,
+                              ),
+                            ),
                             onPressed: () => setState(() {
                               update = !update;
                               reply = false;
@@ -217,6 +237,13 @@ class _CommentDetailState extends State<CommentDetail> {
                           ),
 
                           TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              visualDensity: VisualDensity(
+                                horizontal: -4,
+                                vertical: -4,
+                              ),
+                            ),
                             onPressed: () async {
                               final confirmed = await showConfirmDialog(
                                 message: LibTr.of(
@@ -244,7 +271,11 @@ class _CommentDetailState extends State<CommentDetail> {
                         if (!widget.myComment) ...[
                           TextButton.icon(
                             style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 8),
+                              padding: EdgeInsets.zero,
+                              visualDensity: VisualDensity(
+                                horizontal: -4,
+                                vertical: -4,
+                              ),
                             ),
                             onPressed: () {
                               showBlockDialog(

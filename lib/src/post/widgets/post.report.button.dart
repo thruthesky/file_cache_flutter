@@ -154,7 +154,11 @@ class _PostReportButtonState extends State<PostReportButton> {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-      style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 8)),
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+      ),
+      // style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 8)),
       onPressed: _showReportReasonBottomSheet,
       icon: const FaIcon(FontAwesomeIcons.hexagonExclamation, size: 16),
       label: Text(LibTr.of(context)!.report),

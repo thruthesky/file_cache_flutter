@@ -44,7 +44,8 @@ class _PostViewButtonsState extends State<PostViewButtons> {
         // Like button - Flat design with TextButton.icon
         TextButton.icon(
           style: TextButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.zero,
+            visualDensity: VisualDensity(horizontal: -4, vertical: -4),
             foregroundColor: _isLiked ? scheme.primary : null,
           ),
           onPressed: _handleLike,
@@ -65,7 +66,8 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           if (widget.onTapBlock != null)
             TextButton.icon(
               style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity(horizontal: -4, vertical: -4),
               ),
               onPressed: widget.onTapBlock,
               icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
@@ -78,7 +80,8 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           // Edit button - Flat design with TextButton.icon
           TextButton.icon(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.zero,
+              visualDensity: VisualDensity(horizontal: -4, vertical: -4),
             ),
             onPressed: widget.onTapUpdate,
             icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
@@ -87,9 +90,11 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           // Delete button - Flat design with TextButton.icon
           TextButton.icon(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.zero,
+              visualDensity: VisualDensity(horizontal: -4, vertical: -4),
               foregroundColor: scheme.error,
             ),
+
             onPressed: widget.onTapDelete,
             icon: const FaIcon(FontAwesomeIcons.trash, size: 16),
             label: Text(LibTr.of(context)!.delete),
