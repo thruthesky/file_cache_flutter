@@ -1,5 +1,7 @@
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CommentDetail extends StatefulWidget {
   const CommentDetail({
@@ -76,9 +78,24 @@ class _CommentDetailState extends State<CommentDetail> {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      widget.comment.content,
+                    Linkify(
+                      onOpen: (link) async {
+                        final uri = Uri.parse(link.url);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      text: widget.comment.content,
                       style: Theme.of(context).textTheme.bodyMedium,
+                      linkStyle: Theme.of(context).textTheme.bodyLarge
+                          ?.copyWith(
+                            height: 1.6,
+                            color: Theme.of(context).colorScheme.primary,
+                            decoration: TextDecoration.underline,
+                          ),
                     ),
 
                     /// Show files (images) attached to comments
