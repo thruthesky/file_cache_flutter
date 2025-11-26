@@ -50,26 +50,34 @@ class _CommentDetailState extends State<CommentDetail> {
   }
 
   Widget buildBlockComment() {
-    return Container(
-      margin: EdgeInsets.only(left: getDepthMargin(widget.comment.depth)),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Avatar(photoUrl: widget.comment.photo_url),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              LibTr.of(context)!.comment_blocked_message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontStyle: FontStyle.italic,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.6),
+    return GestureDetector(
+      onTap: () {
+        showUnblockDialog(
+          context: context,
+          otherUserUid: widget.comment.firebase_uid,
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(left: getDepthMargin(widget.comment.depth)),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Avatar(photoUrl: widget.comment.photo_url),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '${LibTr.of(context)!.comment_blocked_message} ${widget.comment.nickname}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -242,6 +250,7 @@ class _CommentDetailState extends State<CommentDetail> {
                               showBlockDialog(
                                 context: context,
                                 otherUserUid: widget.comment.firebase_uid,
+                                popOnBlocked: false,
                               );
                             },
                             icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
