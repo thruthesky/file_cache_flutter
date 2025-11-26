@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? FontAwesomeIcons.solidBars
                   : FontAwesomeIcons.thinBars,
             ),
-            label: 'Menu',
+            label: Lo.of(context)!.menu,
           ),
         ],
         currentIndex: selectedItem.index,

@@ -433,7 +433,7 @@ class LoZh extends Lo {
   String get enterCompanyName => '请输入商家名称';
 
   @override
-  String get companyNameRequired => '商家名称为必填项';
+  String get companyNameRequired => '请输入公司名称';
 
   @override
   String get companyTitle => '商家标题';
@@ -772,4 +772,88 @@ class LoZh extends Lo {
 
   @override
   String get lv => 'Lv';
+
+  @override
+  String get settings => '设置';
+
+  @override
+  String get languageSettings => '语言设置';
+
+  @override
+  String get selectLanguage => '选择语言';
+
+  @override
+  String get saveLanguage => '保存语言';
+
+  @override
+  String get languageChanged => '语言已更改';
+
+  @override
+  String get languageTitle => '语言';
+
+  @override
+  String get languageSubtitle => '更改应用语言偏好';
+
+  @override
+  String get logoutConfirmMessage => '您确定要退出吗？';
+
+  @override
+  String get companyTitleRequired => '请输入公司标题';
+
+  @override
+  String get locationRequired => '请选择位置';
+
+  @override
+  String get addressRequired => '请输入地址';
+
+  @override
+  String get descriptionRequired => '请输入公司说明';
+
+  @override
+  String get landlineRequired => '请输入固定电话号码';
+
+  @override
+  String get mobileNumberRequired => '请输入手机号码';
+
+  @override
+  String get logoRequired => '请上传公司标志';
+
+  @override
+  String get detailedInformation => '详细信息';
+
+  @override
+  String get imageUpload => '图片上传';
+
+  @override
+  String get kakaoQrCodeDeleted => 'Kakao二维码已删除';
+
+  @override
+  String get failedToDelete => '删除失败';
+
+  @override
+  String get companyLogoDeleted => '公司标志已删除';
+
+  @override
+  String get failedToDeletePhoto => '照片删除失败';
+
+  @override
+  String get businessLicenseDeleted => '营业执照已删除';
+
+  @override
+  String get failedToDeleteLicense => '执照删除失败';
+
+  @override
+  String get companyIntroImageDeleted => '公司介绍图片已删除';
+
+  @override
+  String get failedToDeleteImage => '图片删除失败';
+
+  @override
+  String get officeInteriorDeleted => '办公室内部照片已删除';
+
+  @override
+  String get back => '返回';
+
+  @override
+  String get next => '下一步';
 }

@@ -782,4 +782,88 @@ class LoEn extends Lo {
 
   @override
   String get lv => 'Lv';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get languageSettings => 'Language Settings';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get saveLanguage => 'Save Language';
+
+  @override
+  String get languageChanged => 'Language changed successfully';
+
+  @override
+  String get languageTitle => 'Language';
+
+  @override
+  String get languageSubtitle => 'Change app language preference';
+
+  @override
+  String get logoutConfirmMessage => 'Are you sure you want to logout?';
+
+  @override
+  String get companyTitleRequired => 'Company title is required';
+
+  @override
+  String get locationRequired => 'Location is required';
+
+  @override
+  String get addressRequired => 'Address is required';
+
+  @override
+  String get descriptionRequired => 'Description is required';
+
+  @override
+  String get landlineRequired => 'Landline number is required';
+
+  @override
+  String get mobileNumberRequired => 'Mobile number is required';
+
+  @override
+  String get logoRequired => 'Company logo is required';
+
+  @override
+  String get detailedInformation => 'Detailed Information';
+
+  @override
+  String get imageUpload => 'Image Upload';
+
+  @override
+  String get kakaoQrCodeDeleted => 'Kakao QR Code deleted';
+
+  @override
+  String get failedToDelete => 'Failed to delete';
+
+  @override
+  String get companyLogoDeleted => 'Company logo deleted';
+
+  @override
+  String get failedToDeletePhoto => 'Failed to delete photo';
+
+  @override
+  String get businessLicenseDeleted => 'Business license deleted';
+
+  @override
+  String get failedToDeleteLicense => 'Failed to delete license';
+
+  @override
+  String get companyIntroImageDeleted => 'Company introduction image deleted';
+
+  @override
+  String get failedToDeleteImage => 'Failed to delete image';
+
+  @override
+  String get officeInteriorDeleted => 'Office interior photo deleted';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get next => 'Next';
 }

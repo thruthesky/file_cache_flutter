@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
@@ -38,8 +39,8 @@ class _MenuListState extends State<MenuList> {
   /// 로그아웃 처리
   Future<void> _handleLogout() async {
     final confirmed = await showConfirmDialog(
-      title: 'Logout',
-      message: 'Are you sure you want to logout?',
+      title: Lo.of(context)!.logoutTitle,
+      message: Lo.of(context)!.logoutConfirmMessage,
     );
 
     if (confirmed == true) {
@@ -57,8 +58,8 @@ class _MenuListState extends State<MenuList> {
         /// Edit Profile
         MenuTile(
           icon: FontAwesomeIcons.lightUser,
-          title: 'Edit Profile',
-          subtitle: 'Update your personal information',
+          title: Lo.of(context)!.editProfileTitle,
+          subtitle: Lo.of(context)!.editProfileSubtitle,
           onTap: () => ProfileEditScreen.push(context),
           index: 0,
           isAnimated: _isAnimated,
@@ -69,8 +70,8 @@ class _MenuListState extends State<MenuList> {
         /// Language Settings
         MenuTile(
           icon: FontAwesomeIcons.lightLanguage,
-          title: 'Language',
-          subtitle: 'Change app language preference',
+          title: Lo.of(context)!.languageTitle,
+          subtitle: Lo.of(context)!.languageSubtitle,
           onTap: () => LanguageScreen.push(context),
           index: 1,
           isAnimated: _isAnimated,
@@ -81,8 +82,8 @@ class _MenuListState extends State<MenuList> {
         /// Company Directory
         MenuTile(
           icon: FontAwesomeIcons.lightBuilding,
-          title: 'Company Directory',
-          subtitle: 'View company members and contacts',
+          title: Lo.of(context)!.businessDirectoryTitle,
+          subtitle: Lo.of(context)!.businessDirectorySubtitle,
           onTap: () async {
             await Future.delayed(const Duration(milliseconds: 150));
             if (context.mounted) {
@@ -101,8 +102,8 @@ class _MenuListState extends State<MenuList> {
         /// Open Chat room
         MenuTile(
           icon: FontAwesomeIcons.lightComments,
-          title: 'Open Chat Room',
-          subtitle: 'Join public chat rooms',
+          title: Lo.of(context)!.openChatTitle,
+          subtitle: Lo.of(context)!.openChatSubtitle,
           onTap: () async {
             await Future.delayed(const Duration(milliseconds: 150));
             if (context.mounted) {
@@ -121,10 +122,14 @@ class _MenuListState extends State<MenuList> {
         /// Banner Ads
         MenuTile(
           icon: FontAwesomeIcons.lightRectangleAd,
-          title: 'Banner Ads',
-          subtitle: 'Manage your banner advertisements',
+          title: Lo.of(context)!.bannerAdTitle,
+          subtitle: Lo.of(context)!.bannerAdSubtitle,
           onTap: () {
-            WebViewScreen.push(context, bannerPageUrl(), title: 'Banner Ads');
+            WebViewScreen.push(
+              context,
+              bannerPageUrl(),
+              title: Lo.of(context)!.bannerAdTitle,
+            );
           },
           index: 4,
           isAnimated: _isAnimated,
@@ -135,10 +140,14 @@ class _MenuListState extends State<MenuList> {
         /// Point Ads
         MenuTile(
           icon: FontAwesomeIcons.lightCoins,
-          title: 'Point Ads',
-          subtitle: 'Earn points by watching ads',
+          title: Lo.of(context)!.pointAdTitle,
+          subtitle: Lo.of(context)!.pointAdSubtitle,
           onTap: () {
-            WebViewScreen.push(context, pointPageUrl(), title: 'Point Ads');
+            WebViewScreen.push(
+              context,
+              pointPageUrl(),
+              title: Lo.of(context)!.pointAdTitle,
+            );
           },
           index: 5,
           isAnimated: _isAnimated,
@@ -149,8 +158,8 @@ class _MenuListState extends State<MenuList> {
         /// App Guide
         MenuTile(
           icon: FontAwesomeIcons.lightCircleQuestion,
-          title: 'App Guide',
-          subtitle: 'Learn how to use the app',
+          title: Lo.of(context)!.appGuideTitle,
+          subtitle: Lo.of(context)!.appGuideSubtitle,
           onTap: () => AppGuideScreen.push(context),
           index: 6,
           isAnimated: _isAnimated,
@@ -161,8 +170,8 @@ class _MenuListState extends State<MenuList> {
         /// Terms of Users
         MenuTile(
           icon: FontAwesomeIcons.lightFileLines,
-          title: 'Terms of Users',
-          subtitle: 'Read our terms and conditions',
+          title: Lo.of(context)!.termsOfServiceTitle,
+          subtitle: Lo.of(context)!.termsOfServiceSubtitle,
           onTap: () {
             showTermsAndConditions(context);
           },
@@ -175,8 +184,8 @@ class _MenuListState extends State<MenuList> {
         /// Privacy Policy
         MenuTile(
           icon: FontAwesomeIcons.lightShieldHalved,
-          title: 'Privacy Policy',
-          subtitle: 'Read our privacy policy',
+          title: Lo.of(context)!.privacyPolicyTitle,
+          subtitle: Lo.of(context)!.privacyPolicySubtitle,
           onTap: () {
             showPrivacyPolicy(context);
           },
@@ -189,8 +198,8 @@ class _MenuListState extends State<MenuList> {
         /// Member Withdrawal
         MenuTile(
           icon: FontAwesomeIcons.lightUserMinus,
-          title: 'Member Withdrawal',
-          subtitle: 'Delete your account permanently',
+          title: Lo.of(context)!.withdrawTitle,
+          subtitle: Lo.of(context)!.withdrawSubtitle,
           onTap: () {
             AccountWithdrawalScreen.push(context);
           },
@@ -203,8 +212,8 @@ class _MenuListState extends State<MenuList> {
         /// Logout Button
         MenuTile(
           icon: FontAwesomeIcons.lightRightFromBracket,
-          title: 'Logout',
-          subtitle: 'Sign out from your account',
+          title: Lo.of(context)!.logoutTitle,
+          subtitle: Lo.of(context)!.logoutSubtitle,
           onTap: _handleLogout,
           index: 10,
           isAnimated: _isAnimated,

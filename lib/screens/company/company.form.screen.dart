@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/company/form-sections/form.basic.info.dart';
 import 'package:philgo/screens/company/form-sections/form.contact.info.dart';
 import 'package:philgo/screens/company/form-sections/form.detailed.info.dart';
@@ -186,14 +187,14 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     switch (_currentStep) {
       case 0: // Basic Info
         if (_nameController.text.trim().isEmpty) {
-          showErrorSnackBar(context, 'Please enter company name');
+          showErrorSnackBar(context, Lo.of(context)!.companyNameRequired);
           return false;
         }
         return true;
 
       case 1: // Detailed Info
         if (_titleController.text.trim().isEmpty) {
-          showErrorSnackBar(context, 'Please enter company title');
+          showErrorSnackBar(context, Lo.of(context)!.companyTitleRequired);
           return false;
         }
         if (_selectedCategory == null) {
@@ -201,33 +202,33 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
           return false;
         }
         if (_locationController.text.trim().isEmpty) {
-          showErrorSnackBar(context, 'Please select location');
+          showErrorSnackBar(context, Lo.of(context)!.locationRequired);
           return false;
         }
         if (_addressController.text.trim().isEmpty) {
-          showErrorSnackBar(context, 'Please enter address');
+          showErrorSnackBar(context, Lo.of(context)!.addressRequired);
           return false;
         }
         if (_descriptionController.text.trim().isEmpty) {
-          showErrorSnackBar(context, 'Please enter company description');
+          showErrorSnackBar(context, Lo.of(context)!.descriptionRequired);
           return false;
         }
         return true;
 
       case 2: // Contact Info
         if (_landlineController.text.trim().isEmpty) {
-          showErrorSnackBar(context, 'Please enter landline number');
+          showErrorSnackBar(context, Lo.of(context)!.landlineRequired);
           return false;
         }
         if (_mobileNumberController.text.trim().isEmpty) {
-          showErrorSnackBar(context, 'Please enter mobile number');
+          showErrorSnackBar(context, Lo.of(context)!.mobileNumberRequired);
           return false;
         }
         return true;
 
       case 3: // Image Upload
         if (_logoUrl.isEmpty) {
-          showErrorSnackBar(context, 'Please upload company logo');
+          showErrorSnackBar(context, Lo.of(context)!.logoRequired);
           return false;
         }
         return true;
@@ -303,11 +304,11 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       case 0:
         return T.basicInformation;
       case 1:
-        return 'Detailed Information';
+        return Lo.of(context)!.detailedInformation;
       case 2:
-        return 'Contact Information';
+        return T.contactInformation;
       case 3:
-        return 'Image Upload';
+        return Lo.of(context)!.imageUpload;
       default:
         return '';
     }
@@ -456,11 +457,17 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'kakaotalk_qr_code_url': ''});
                         setState(() => _kakaoTalkQrCodeUrl = '');
                         if (context.mounted) {
-                          showSuccessSnackBar(context, 'Kakao QR Code deleted');
+                          showSuccessSnackBar(
+                            context,
+                            Lo.of(context)!.kakaoQrCodeDeleted,
+                          );
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorSnackBar(context, 'Failed to delete: $e');
+                          showErrorSnackBar(
+                            context,
+                            Lo.of(context)!.failedToDelete,
+                          );
                         }
                       }
                     },
@@ -498,13 +505,16 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'logo_url': ''});
                         setState(() => _logoUrl = '');
                         if (context.mounted) {
-                          showSuccessSnackBar(context, 'Company logo deleted');
+                          showSuccessSnackBar(
+                            context,
+                            Lo.of(context)!.companyLogoDeleted,
+                          );
                         }
                       } catch (e) {
                         if (context.mounted) {
                           showErrorSnackBar(
                             context,
-                            'Failed to delete photo: $e',
+                            Lo.of(context)!.failedToDeletePhoto,
                           );
                         }
                       }
@@ -531,14 +541,14 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         if (context.mounted) {
                           showSuccessSnackBar(
                             context,
-                            'Business license deleted',
+                            Lo.of(context)!.businessLicenseDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
                           showErrorSnackBar(
                             context,
-                            'Failed to delete license: $e',
+                            Lo.of(context)!.failedToDeleteLicense,
                           );
                         }
                       }
@@ -565,14 +575,14 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         if (context.mounted) {
                           showSuccessSnackBar(
                             context,
-                            'Company introduction image deleted',
+                            Lo.of(context)!.companyIntroImageDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
                           showErrorSnackBar(
                             context,
-                            'Failed to delete image: $e',
+                            Lo.of(context)!.failedToDeleteImage,
                           );
                         }
                       }
@@ -599,14 +609,14 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         if (context.mounted) {
                           showSuccessSnackBar(
                             context,
-                            'Office interior photo deleted',
+                            Lo.of(context)!.officeInteriorDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
                           showErrorSnackBar(
                             context,
-                            'Failed to delete photo: $e',
+                            Lo.of(context)!.failedToDeletePhoto,
                           );
                         }
                       }
@@ -630,7 +640,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   child: OutlinedButton.icon(
                     onPressed: _backStep,
                     icon: const FaIcon(FontAwesomeIcons.lightChevronLeft),
-                    label: const Text('Back'),
+                    label: Text(Lo.of(context)!.back),
                   ).animate().fadeIn(duration: 200.ms).slideX(begin: -0.1),
                 ),
 
@@ -643,7 +653,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     ? ElevatedButton.icon(
                         onPressed: _nextStep,
                         icon: const FaIcon(FontAwesomeIcons.lightChevronRight),
-                        label: const Text('Next'),
+                        label: Text(Lo.of(context)!.next),
                       ).animate().fadeIn(duration: 200.ms).slideX(begin: 0.2)
                     : ElevatedButton.icon(
                             onPressed: _isSubmitting ? null : _handleSubmit,
