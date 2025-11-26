@@ -2,104 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Helper widget to report a room
-// class ReportChatRoom extends StatelessWidget {
-//   final String roomId;
-//   final VoidCallback onClose;
+class ReportChatRoom extends StatelessWidget {
+  final String roomId;
+  final VoidCallback onClose;
 
-//   const ReportChatRoom({
-//     super.key,
-//     required this.roomId,
-//     required this.onClose,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ReportDialog(
-//       type: ROOM,
-//       path: getReportRoomPath(roomId),
-//       onClose: onClose,
-//     );
-//   }
-// }
-
-// /// Helper widget to report a message
-// class ReportChatMessage extends StatelessWidget {
-//   final ChatMessage message;
-//   final String roomId;
-//   final VoidCallback onClose;
-
-//   const ReportChatMessage({
-//     super.key,
-//     required this.message,
-//     required this.roomId,
-//     required this.onClose,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ReportDialog(
-//       type: MESSAGE,
-//       path: getReportMessagePath(message.id ?? '', roomId),
-//       reportee: message.senderUid,
-//       onClose: onClose,
-//     );
-//   }
-// }
-
-/// Main report dialog widget
-class ReportDialog extends StatefulWidget {
-  const ReportDialog({
+  const ReportChatRoom({
     super.key,
-    required this.type,
-    this.idx,
-    this.reason,
-    this.debug = true,
-    this.alertOnError = true,
-    this.onClose,
+    required this.roomId,
+    required this.onClose,
   });
 
-  final String type;
-  final int? idx;
-
-  final String? reason;
-
-  final bool debug;
-  final bool alertOnError;
-
-  final VoidCallback? onClose;
-
   @override
-  State<ReportDialog> createState() => _ReportDialogState();
+  Widget build(BuildContext context) {
+    return ReportChatDialog(path: getReportRoomPath(roomId), onClose: onClose);
+  }
 }
 
-class _ReportDialogState extends State<ReportDialog> {
+/// Helper widget to report a message
+class ReportChatMessage extends StatelessWidget {
+  final ChatMessage message;
+  final String roomId;
+  final VoidCallback onClose;
+
+  const ReportChatMessage({
+    super.key,
+    required this.message,
+    required this.roomId,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ReportChatDialog(
+      path: getReportMessagePath(message.id ?? '', roomId),
+      reportee: message.senderUid,
+      onClose: onClose,
+    );
+  }
+}
+
+/// Main report dialog widget
+class ReportChatDialog extends StatefulWidget {
+  final String path;
+  final String? reportee;
+  final VoidCallback onClose;
+
+  const ReportChatDialog({
+    super.key,
+    required this.path,
+    this.reportee,
+    required this.onClose,
+  });
+
+  @override
+  State<ReportChatDialog> createState() => _ReportChatDialogState();
+}
+
+class _ReportChatDialogState extends State<ReportChatDialog> {
   String _reportReason = '';
   bool _isSubmitting = false;
 
-  String getAlreadyReportedMessage(BuildContext context) {
-    if (widget.type == MESSAGE) {
-      return LibTr.of(context)!.report_message_already_reported;
-    } else if (widget.type == ROOM) {
-      return LibTr.of(context)!.report_room_already_reported;
-    } else if (widget.type == POST) {
-      return 'Post already reported';
-    } else if (widget.type == COMMENT) {
-      return 'Comment already reported';
-    }
-    return 'Already have Reported';
-  }
-
-  String getReportTitle(BuildContext context) {
-    if (widget.type == MESSAGE) {
-      return LibTr.of(context)!.report_chat_message;
-    } else if (widget.type == ROOM) {
-      return LibTr.of(context)!.report_chat_room;
-    } else if (widget.type == POST) {
-      return 'Report post';
-    } else if (widget.type == COMMENT) {
-      return 'Report comment';
-    }
-    return 'Report';
+  /// Determine report type based on path
+  String get reportType {
+    return widget.path.startsWith('chat/room') ? ROOM : MESSAGE;
   }
 
   /// Handle report submission
@@ -112,13 +77,13 @@ class _ReportDialogState extends State<ReportDialog> {
     setState(() => _isSubmitting = true);
 
     createReport(
-      type: widget.type,
-      idx: widget.idx ?? 0,
+      path: widget.path,
       reason: _reportReason,
+      reportee: widget.reportee,
       success: () {
         if (mounted) {
           showSuccessSnackBar(context, LibTr.of(context)!.report_success);
-          widget.onClose?.call();
+          widget.onClose();
           setState(() => _isSubmitting = false);
         }
       },
@@ -126,8 +91,13 @@ class _ReportDialogState extends State<ReportDialog> {
         if (mounted) {
           final errorMessage = e.toString();
           if (errorMessage.contains('already have reported')) {
-            showErrorSnackBar(context, getAlreadyReportedMessage(context));
-            widget.onClose?.call();
+            showErrorSnackBar(
+              context,
+              reportType == MESSAGE
+                  ? LibTr.of(context)!.report_message_already_reported
+                  : LibTr.of(context)!.report_room_already_reported,
+            );
+            widget.onClose();
           } else {
             showErrorSnackBar(
               context,
@@ -155,7 +125,9 @@ class _ReportDialogState extends State<ReportDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  getReportTitle(context),
+                  reportType == ROOM
+                      ? LibTr.of(context)!.report_chat_room
+                      : LibTr.of(context)!.report_chat_message,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 IconButton(

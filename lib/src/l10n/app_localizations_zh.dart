@@ -61,6 +61,9 @@ class LibTrZh extends LibTr {
   String get report_success => '举报已成功提交';
 
   @override
+  String get report_failed => '举报提交失败';
+
+  @override
   String get report_message_already_reported => '此消息已被举报';
 
   @override

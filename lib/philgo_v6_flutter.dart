@@ -38,13 +38,15 @@ export 'src/chat/models/chat.message.dart';
 export 'src/chat/models/chat.room.dart';
 export 'src/chat/models/chat.last_message.dart';
 export 'src/chat/room/chat.create_room_screen.dart';
-export 'src/report/report.dart';
 export 'src/chat/room/chat.room.message_bubble.dart';
 export 'src/chat/room/chat.room_screen.dart';
 export 'src/chat/widgets/search_friends_dialog.dart';
 export 'src/chat/widgets/pinned_chat_rooms_list.dart';
 export 'src/chat/widgets/chat.join.builder.dart';
 export 'src/chat/widgets/chat.room.builder.dart';
+
+// chat report
+export 'src/chat/report/chat.report.dart';
 
 // comment
 export 'src/comment/comment_to_post.dart';
@@ -92,9 +94,7 @@ export 'src/post/widgets/post.view.images.dart';
 
 export 'src/post/widgets/category.list.dart';
 
-// report
-export 'src/report/report.defines.dart';
-export 'src/report/report.functions.dart';
+export 'src/post/widgets/post.report.button.dart';
 
 // storage
 export 'src/storage/storage.functions.dart';

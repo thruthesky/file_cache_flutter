@@ -11,7 +11,6 @@ class PostViewButtons extends StatefulWidget {
     required this.onLike,
     required this.myPost,
     this.onTapBlock,
-    this.onTapReport,
   });
   final Post? post;
   final VoidCallback onTapUpdate;
@@ -20,7 +19,6 @@ class PostViewButtons extends StatefulWidget {
   final bool myPost;
 
   final VoidCallback? onTapBlock;
-  final VoidCallback? onTapReport;
 
   @override
   State<PostViewButtons> createState() => _PostViewButtonsState();
@@ -73,16 +71,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
               icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
               label: Text(LibTr.of(context)!.block),
             ),
-
-          if (widget.onTapReport != null)
-            TextButton.icon(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 8),
-              ),
-              onPressed: widget.onTapReport,
-              icon: const FaIcon(FontAwesomeIcons.hexagonExclamation, size: 16),
-              label: Text(LibTr.of(context)!.report),
-            ),
+          PostReportButton(type: 'post', idx: widget.post!.idx),
         ],
         // 내 게시글인 경우에만 수정/삭제 버튼 표시
         if (widget.myPost) ...[

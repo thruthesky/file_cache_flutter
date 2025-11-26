@@ -76,6 +76,10 @@
     "@report_success": {
         "description": "Message displayed when a report is submitted successfully"
     },
+    "report_failed": "通報の送信に失敗しました",
+    "@report_failed": {
+        "description": "Message displayed when a report submission fails"
+    },
     "report_message_already_reported": "このメッセージは既に通報されています",
     "@report_message_already_reported": {
         "description": "Message displayed when a message is already reported"

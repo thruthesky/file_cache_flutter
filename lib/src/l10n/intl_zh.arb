@@ -76,6 +76,10 @@
     "@report_success": {
         "description": "Message displayed when a report is submitted successfully"
     },
+    "report_failed": "举报提交失败",
+    "@report_failed": {
+        "description": "Message displayed when a report submission fails"
+    },
     "report_message_already_reported": "此消息已被举报",
     "@report_message_already_reported": {
         "description": "Message displayed when a message is already reported"

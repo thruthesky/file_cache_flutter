@@ -62,6 +62,9 @@ class LibTrEn extends LibTr {
   String get report_success => 'Report submitted successfully';
 
   @override
+  String get report_failed => 'Report submission failed';
+
+  @override
   String get report_message_already_reported =>
       'This message has already been reported';
 

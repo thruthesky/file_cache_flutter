@@ -279,14 +279,13 @@ class ChatRoomHeader extends StatelessWidget {
 
   /// Report room - show report dialog
   void reportRoom(BuildContext context) {
-    log('TODO SHOW REPORT DIALOG', name: 'reportRoom::');
-    // showDialog(
-    //   context: context,
-    //   builder: (context) => ReportChatRoom(
-    //     roomId: roomId,
-    //     onClose: () => Navigator.of(context).pop(),
-    //   ),
-    // );
+    showDialog(
+      context: context,
+      builder: (context) => ReportChatRoom(
+        roomId: roomId,
+        onClose: () => Navigator.of(context).pop(),
+      ),
+    );
   }
 
   /// Show confirmation dialog for leaving room

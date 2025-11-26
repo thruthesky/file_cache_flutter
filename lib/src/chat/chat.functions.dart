@@ -85,6 +85,32 @@ DatabaseReference chatFavoritesFolderListRef(String uid) {
   return FirebaseDatabase.instance.ref('chat/favorites-folder-list/$uid');
 }
 
+String get reportPath {
+  return 'reports';
+}
+
+DatabaseReference myReportRef() {
+  return FirebaseDatabase.instance.ref(reportPath).child(myUid());
+}
+
+String get reportListPath {
+  return 'reports-list';
+}
+
+DatabaseReference reportsListRef() {
+  return FirebaseDatabase.instance.ref(reportListPath);
+}
+
+/// Helper function to generate the report path for a room
+String getReportRoomPath(String roomId) {
+  return '$chatRoomsPath$roomId';
+}
+
+/// Helper function to generate the report path for a message
+String getReportMessagePath(String messageId, String roomId) {
+  return '${chatMessagePath(roomId)}/$messageId';
+}
+
 // Returns a query for the chat rooms based on the room order and user ID
 // singleOrder - returns a list of single chat rooms for the user
 // groupOrder - returns a list of group chat rooms for the user
@@ -370,11 +396,55 @@ void showUnblockDialog({
   );
 }
 
-void showReportDialog(BuildContext context, String type, {String? reportee}) {
+Future<void> createReport({
+  required String path,
+  required String reason,
+  String? reportee,
+  required Function() success,
+  required Function(String error) error,
+}) async {
+  try {
+    DataSnapshot snapshot = await myReportRef()
+        .orderByChild('path')
+        .equalTo(path)
+        .get();
+
+    if (snapshot.exists) {
+      throw ('You already have reported this.');
+    }
+
+    final data = {
+      REPORT_PATH: path,
+      REPORT_REPORTER: myUid(),
+      REPORT_REPORTEE: reportee,
+      REPORT_REASON: reason,
+      REPORT_CREATED_AT: ServerValue.timestamp,
+    };
+
+    DatabaseReference ref = myReportRef().push();
+    await ref.set(data);
+
+    await reportsListRef().child(ref.key!).set(data);
+
+    success();
+  } catch (e) {
+    error(e.toString());
+  }
+}
+
+/// Show report dialog for the message
+void showChatMessageReportDialog({
+  required BuildContext context,
+  required ChatMessage message,
+  required String? roomId,
+}) {
   showDialog(
     context: context,
-    builder: (context) =>
-        ReportDialog(type: type, onClose: () => Navigator.of(context).pop()),
+    builder: (context) => ReportChatMessage(
+      message: message,
+      roomId: roomId!,
+      onClose: () => Navigator.of(context).pop(),
+    ),
   );
 }
 

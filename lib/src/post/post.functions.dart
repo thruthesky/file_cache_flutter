@@ -415,3 +415,19 @@ Future<int> likePost(int idx) async {
   // Return the updated good count from the response
   return response['good'] ?? 0;
 }
+
+Future reportPost({
+  required String type,
+  required int idx,
+  required String reason,
+  bool debug = false,
+  bool alertOnError = true,
+}) async {
+  final response = await func<Map<String, dynamic>>(
+    'report',
+    data: {'type': type, 'idx': idx, 'reason': reason},
+    alertOnError: alertOnError,
+    debug: debug,
+  );
+  return response;
+}

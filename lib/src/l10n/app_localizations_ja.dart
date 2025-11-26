@@ -61,6 +61,9 @@ class LibTrJa extends LibTr {
   String get report_success => '通報が正常に送信されました';
 
   @override
+  String get report_failed => '通報の送信に失敗しました';
+
+  @override
   String get report_message_already_reported => 'このメッセージは既に通報されています';
 
   @override

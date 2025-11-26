@@ -197,6 +197,12 @@ abstract class LibTr {
   /// **'Report submitted successfully'**
   String get report_success;
 
+  /// Message displayed when a report submission fails
+  ///
+  /// In en, this message translates to:
+  /// **'Report submission failed'**
+  String get report_failed;
+
   /// Message displayed when a message is already reported
   ///
   /// In en, this message translates to:

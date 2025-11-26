@@ -76,6 +76,10 @@
     "@report_success": {
         "description": "Message displayed when a report is submitted successfully"
     },
+    "report_failed": "Report submission failed",
+    "@report_failed": {
+        "description": "Message displayed when a report submission fails"
+    },
     "report_message_already_reported": "This message has already been reported",
     "@report_message_already_reported": {
         "description": "Message displayed when a message is already reported"

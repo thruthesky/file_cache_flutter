@@ -599,7 +599,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.of(context).pop();
-                _showReportDialog(parentContext);
+                showChatMessageReportDialog(
+                  context: parentContext,
+                  message: message,
+                  roomId: roomId!,
+                );
               },
             ),
             const SizedBox(height: 8),
@@ -638,19 +642,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// Show report dialog for the message
-  void _showReportDialog(BuildContext context) {
-    log('TODO SHOW REPORT DIALOG', name: '_showReportDialog::');
-    // showDialog(
-    //   context: context,
-    //   builder: (context) => ReportChatMessage(
-    //     message: message,
-    //     roomId: roomId!,
-    //     onClose: () => Navigator.of(context).pop(),
-    //   ),
-    // );
   }
 
   /// Show block/unblock dialog for message sender

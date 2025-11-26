@@ -241,7 +241,7 @@ class _CommentDetailState extends State<CommentDetail> {
                             child: Text(LibTr.of(context)!.delete),
                           ),
                         ],
-                        if (!widget.myComment)
+                        if (!widget.myComment) ...[
                           TextButton.icon(
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 8),
@@ -256,6 +256,11 @@ class _CommentDetailState extends State<CommentDetail> {
                             icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
                             label: Text(LibTr.of(context)!.block),
                           ),
+                          PostReportButton(
+                            type: 'comment',
+                            idx: widget.comment.idx,
+                          ),
+                        ],
                       ],
                     ),
                   ],
