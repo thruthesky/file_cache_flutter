@@ -7,10 +7,7 @@ import 'package:philgo/globals.dart';
 /// 북마크된 채팅 목록 다이얼로그
 /// 특정 폴더에 저장된 북마크 채팅방 목록을 표시하고 선택 시 채팅방으로 이동
 class BookmarkedChatsDialog extends StatelessWidget {
-  const BookmarkedChatsDialog({
-    super.key,
-    required this.folderName,
-  });
+  const BookmarkedChatsDialog({super.key, required this.folderName});
 
   final String folderName;
 
@@ -51,7 +48,8 @@ class BookmarkedChatsDialog extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           folderName,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                         ),
@@ -98,9 +96,11 @@ class BookmarkedChatsDialog extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            LibTr.of(context)!
-                                .error_with_message(snapshot.error.toString()),
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            LibTr.of(
+                              context,
+                            )!.error_with_message(snapshot.error.toString()),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
                                   color: Theme.of(context).colorScheme.error,
                                 ),
                             textAlign: TextAlign.center,
@@ -125,7 +125,8 @@ class BookmarkedChatsDialog extends StatelessWidget {
                           const SizedBox(height: 16),
                           Text(
                             T.no_bookmarked_chats,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
                                   color: Theme.of(context).colorScheme.outline,
                                 ),
                             textAlign: TextAlign.center,
@@ -166,14 +167,15 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                 joinSnapshot.data?.snapshot.value == null) {
                               return ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
                                   child: FaIcon(
                                     FontAwesomeIcons.lightComments,
                                     size: 16,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ),
                                 title: Text(roomId),
@@ -192,19 +194,20 @@ class BookmarkedChatsDialog extends StatelessWidget {
 
                               return ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
-                                  backgroundImage: chatJoin.userPhotoUrl.isNotEmpty
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
+                                  backgroundImage:
+                                      chatJoin.userPhotoUrl.isNotEmpty
                                       ? NetworkImage(chatJoin.userPhotoUrl)
                                       : null,
                                   child: chatJoin.userPhotoUrl.isEmpty
                                       ? FaIcon(
                                           FontAwesomeIcons.lightUser,
                                           size: 16,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
                                         )
                                       : null,
                                 ),
@@ -212,16 +215,28 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                   chatJoin.customName.isNotEmpty
                                       ? chatJoin.customName
                                       : chatJoin.roomName.isNotEmpty
-                                          ? chatJoin.roomName
-                                          : chatJoin.userDisplayName,
+                                      ? chatJoin.roomName
+                                      : chatJoin.userDisplayName,
                                 ),
-                                subtitle: chatJoin.lastMessage.text.isNotEmpty
-                                    ? Text(
-                                        chatJoin.lastMessage.text,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      )
-                                    : null,
+                                subtitle: Blocked(
+                                  otherUserUid: getOtherUserUidFromChatRoomId(
+                                    roomId,
+                                  )!,
+                                  yes: () => Text(
+                                    LibTr.of(context)!.blocked_message,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  no: () {
+                                    return chatJoin.lastMessage.text.isNotEmpty
+                                        ? Text(
+                                            chatJoin.lastMessage.text,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        : SizedBox.shrink();
+                                  },
+                                ),
                                 trailing: chatJoin.unread > 0
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(
@@ -229,11 +244,12 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                           vertical: 4,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: Text(
                                           chatJoin.unread.toString(),
@@ -241,9 +257,9 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                               .textTheme
                                               .labelSmall
                                               ?.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onError,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onError,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                         ),
@@ -258,14 +274,15 @@ class BookmarkedChatsDialog extends StatelessWidget {
                               // 에러 발생 시 기본 표시
                               return ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
                                   child: FaIcon(
                                     FontAwesomeIcons.lightComments,
                                     size: 16,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ),
                                 title: Text(roomId),
@@ -295,8 +312,8 @@ class BookmarkedChatsDialog extends StatelessWidget {
                     Text(
                       LibTr.of(context)!.login_required,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ],
                 ),

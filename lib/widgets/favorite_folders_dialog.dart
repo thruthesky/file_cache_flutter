@@ -23,8 +23,8 @@ class FavoriteFoldersDialog extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4),
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
                 ),
               ),
               child: Row(
@@ -36,7 +36,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     T.bookmarked_folders,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const Spacer(),
                   IconButton(
