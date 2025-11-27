@@ -62,6 +62,7 @@ class _MenuHomeState extends State<MenuHome> {
               children: [
                 Text('Menu', style: theme.textTheme.titleLarge),
                 const Spacer(),
+                SizedBox(width: 48, height: 48),
               ],
             ),
           ),

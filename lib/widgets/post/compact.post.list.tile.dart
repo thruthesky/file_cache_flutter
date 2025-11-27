@@ -13,7 +13,10 @@ class CompactPostListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: InkWell(onTap: onTap, child: _buildThreeRowLayout(context)),
+      child: GestureDetector(
+        onTap: onTap,
+        child: _buildThreeRowLayout(context),
+      ),
     );
   }
 

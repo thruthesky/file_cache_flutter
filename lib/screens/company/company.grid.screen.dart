@@ -298,11 +298,10 @@ class _CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 0,
+        elevation: 2, // Subtle shadow for card depth
         color: scheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(sp.s16),
-          side: BorderSide(color: scheme.outlineVariant),
         ),
         child: Padding(
           padding: EdgeInsets.all(sp.s16),

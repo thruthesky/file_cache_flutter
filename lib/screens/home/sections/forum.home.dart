@@ -74,11 +74,24 @@ class _ForumHomeState extends State<ForumHome> {
                                 homePostCategory.postId == category.postId &&
                                 homePostCategory.category == category.category,
                             label: Text(category.getLabel(context)),
-                            // 선택된 칩의 배경색
-                            // 체크마크 색상
                             onSelected: (_) => ForumState.of(
                               context,
                             ).setHomePostCategory(category),
+                            // Selected chip background color - use primaryContainer for Material 3
+                            selectedColor: Theme.of(
+                              context,
+                            ).colorScheme.inversePrimary,
+                            // Selected chip checkmark and label color
+                            // Label color when selected
+                            labelStyle: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onPrimaryContainer,
+                            ),
+                            // Background color when not selected
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
                           ),
                           if (index == categories.length - 1)
                             const SizedBox(width: 16),
