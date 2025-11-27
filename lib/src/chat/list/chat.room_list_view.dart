@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class ChatRoomListView extends StatelessWidget {
@@ -41,24 +42,47 @@ class ChatRoomListView extends StatelessWidget {
         }
 
         if (snapshot.docs.isEmpty) {
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
+
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.info,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  LibTr.of(context)!.empty_chat_list(order),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.outlineVariant,
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24.0),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer.withValues(
+                        alpha: 0.3,
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: FaIcon(
+                      FontAwesomeIcons.lightComments,
+                      size: 64,
+                      color: colorScheme.primary,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  Text(
+                    LibTr.of(context)!.empty_chat_list(order),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Start a conversation to see it here',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface.withValues(alpha: 0.4),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -85,11 +109,13 @@ class ChatRoomListView extends StatelessWidget {
 
             if (RoomOrder.openOrder == order || uid == null) {
               return ChatRoomListTile(
+                key: ValueKey(doc.key),
                 room: ChatRoom.fromSnapshot(doc),
                 onTap: onTap,
               );
             }
             return ChatRoomListTile(
+              key: ValueKey(doc.key),
               join: ChatJoin.fromSnapshot(doc),
               onTap: onTap,
             );
