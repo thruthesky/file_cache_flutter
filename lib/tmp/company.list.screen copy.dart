@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
-import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company Directory Screen
@@ -146,9 +145,9 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
     _loadCompaniesByCategory(categoryId);
   }
 
-  void _handleCompanyTap(Company company) {
-    CompanyViewScreen.push(context, company.idx);
-  }
+  // void _handleCompanyTap(Company company) {
+  //   CompanyViewScreen.push(context, company.idx);
+  // }
 
   /// Handle company button press (Register or Update)
   Future<void> _handleCreateOrUpdateButton() async {
@@ -241,35 +240,35 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
     );
   }
 
-  Widget _buildCategorySection(String categoryId, double availableHeight) {
-    final category = categories.firstWhere(
-      (cat) => cat['id'] == categoryId,
-      orElse: () => {'id': '', 'name': '', 'icon': FontAwesomeIcons.ellipsis},
-    );
-    final categoryCompanies = _getCompaniesByCategory(categoryId);
+  // Widget _buildCategorySection(String categoryId, double availableHeight) {
+  //   final category = categories.firstWhere(
+  //     (cat) => cat['id'] == categoryId,
+  //     orElse: () => {'id': '', 'name': '', 'icon': FontAwesomeIcons.ellipsis},
+  //   );
+  //   final categoryCompanies = _getCompaniesByCategory(categoryId);
 
-    return CompanyListGrid(
-      icon: category['icon'] as IconData,
-      name: category['name'] as String,
-      count: categoryCompanies.length,
-      companies: categoryCompanies,
-      onCompanyTap: _handleCompanyTap,
-      availableHeight: availableHeight,
-    );
-  }
+  //   return CompanyListGrid(
+  //     icon: category['icon'] as IconData,
+  //     name: category['name'] as String,
+  //     count: categoryCompanies.length,
+  //     companies: categoryCompanies,
+  //     onCompanyTap: _handleCompanyTap,
+  //     availableHeight: availableHeight,
+  //   );
+  // }
 
-  List<Company> _getCompaniesByCategory(String categoryId) {
-    if (companyList == null) return [];
+  // List<Company> _getCompaniesByCategory(String categoryId) {
+  //   if (companyList == null) return [];
 
-    // Filter out incomplete companies (idx=0 or missing required fields)
-    return companyList!.companies.where((company) {
-      // Exclude companies with idx=0 (invalid/placeholder companies)
-      if (company.idx == 0) return false;
+  //   // Filter out incomplete companies (idx=0 or missing required fields)
+  //   return companyList!.companies.where((company) {
+  //     // Exclude companies with idx=0 (invalid/placeholder companies)
+  //     if (company.idx == 0) return false;
 
-      // Exclude companies without a name (incomplete registration)
-      if (company.name.isEmpty) return false;
+  //     // Exclude companies without a name (incomplete registration)
+  //     if (company.name.isEmpty) return false;
 
-      return true;
-    }).toList();
-  }
+  //     return true;
+  //   }).toList();
+  // }
 }
