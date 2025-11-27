@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,7 +18,16 @@ import 'package:provider/provider.dart';
 /// - PostListTile을 사용하여 게시글 표시
 /// - "View All" 버튼으로 MyActivityScreen으로 이동
 class LatestUserPosts extends StatefulWidget {
-  const LatestUserPosts({super.key});
+  const LatestUserPosts({
+    super.key,
+    this.idx_member,
+    this.firebase_uid,
+    this.limit = 10,
+  });
+
+  final int? idx_member;
+  final String? firebase_uid;
+  final int limit;
 
   @override
   State<LatestUserPosts> createState() => _LatestUserPostsState();
@@ -36,18 +47,19 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
   }
 
   Future<void> _loadPosts() async {
-    final user = AppState.of(context, listen: false).user;
-
-    if (user == null || user.idx == null) return;
-
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final postList = await getMyPosts(myId: user.idx!, limit: 3);
+      final posts = await getLatestByUser(
+        idx_member: widget.idx_member,
+        firebase_uid: widget.firebase_uid,
+        limit: widget.limit,
+      );
+      log(posts.toString(), name: "_loadPosts::");
 
-      _posts = postList.posts;
+      _posts = posts;
     } catch (e) {
       debugPrint('Error loading posts: $e');
     } finally {

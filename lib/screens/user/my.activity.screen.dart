@@ -87,13 +87,13 @@ class _MyActivityScreenState extends State<MyActivityScreen>
   }
 
   Future<List<Post>> _fetchPostsPage(int pageKey) async {
-    final postList = await getMyPosts(
-      myId: myId!,
+    final posts = await getLatestByUser(
+      idx_member: myId!,
       page: pageKey,
       limit: _pageSize,
     );
 
-    return postList.posts;
+    return posts;
   }
 
   Future<List<Comment>> _fetchCommentsPage(int pageKey) async {
