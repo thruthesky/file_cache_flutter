@@ -8,7 +8,7 @@ class Post {
   int no_of_comment;
   String content;
   String subject;
-  int good; 
+  int good;
 
   // 필수 필드들
   final int idx;
@@ -113,6 +113,8 @@ class Post {
   // 검열 결과
   final String? text9;
 
+  final String? text10;
+
   // 생성자
   Post({
     required this.idx,
@@ -189,6 +191,7 @@ class Post {
     this.char9,
     this.char10,
     this.text9,
+    this.text10,
   });
 
   // JSON 직렬화를 위한 factory 생성자
@@ -277,6 +280,7 @@ class Post {
       char9: json['char_9'] as String?,
       char10: json['char_10'] as String?,
       text9: json['text_9'] as String?,
+      text10: json['text_10'] as String?,
     );
   }
 
@@ -358,6 +362,7 @@ class Post {
       if (char9 != null) 'char_9': char9,
       if (char10 != null) 'char_10': char10,
       if (text9 != null) 'text_9': text9,
+      if (text10 != null) 'text_10': text10,
     };
   }
 
@@ -398,5 +403,12 @@ class Post {
     }
 
     return null; // 이미지가 없는 경우
+  }
+
+  int get reportCounter {
+    if (text10 == null) return 0;
+    if (text10!.isEmpty) return 0;
+
+    return text10!.split(',').where((e) => e.isNotEmpty).length;
   }
 }

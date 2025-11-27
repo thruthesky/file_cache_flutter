@@ -100,6 +100,7 @@ export 'src/post/widgets/post.report.button.dart';
 export 'src/storage/storage.functions.dart';
 
 // user
+export './src/user/user.defines.dart';
 export 'src/user/models/user.dart';
 export 'src/user/user.function.dart';
 export 'src/user/user.service.dart';
@@ -109,7 +110,7 @@ export 'src/user/widgets/login.dart';
 export 'src/user/widgets/online.status.dart';
 export 'src/user/widgets/user_avatar.dart';
 export 'src/user/widgets/user_avatar_with_upload_icon.dart';
-export './src/user/user.defines.dart';
+export 'src/user/widgets/blocked.user_list.dart';
 
 // widgets
 export 'src/widgets/avatar.dart';

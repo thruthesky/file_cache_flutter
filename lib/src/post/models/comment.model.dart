@@ -72,6 +72,8 @@ class Comment {
   final String? varchar19;
   final String? varchar20;
 
+  final String? text10;
+
   Comment({
     required this.idx,
     required this.idx_parent,
@@ -130,6 +132,7 @@ class Comment {
     this.varchar18,
     this.varchar19,
     this.varchar20,
+    this.text10,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -193,6 +196,7 @@ class Comment {
       varchar18: json['varchar18'],
       varchar19: json['varchar19'],
       varchar20: json['varchar20'],
+      text10: json['text10'],
     );
   }
 
@@ -213,6 +217,7 @@ class Comment {
       'depth': depth,
       'content': content,
       'files': files,
+      'text10': text10,
     };
 
     // 미디어 관련 필드들 - null이 아닌 경우만 추가
@@ -266,6 +271,7 @@ class Comment {
     if (varchar18 != null) json['varchar18'] = varchar18;
     if (varchar19 != null) json['varchar19'] = varchar19;
     if (varchar20 != null) json['varchar20'] = varchar20;
+    if (text10 != null) json['text10'] = text10;
 
     return json;
   }
@@ -273,5 +279,12 @@ class Comment {
   @override
   String toString() {
     return "Comment(${jsonEncode(toJson())})";
+  }
+
+  int get reportCounter {
+    if (text10 == null) return 0;
+    if (text10!.isEmpty) return 0;
+
+    return text10!.split(',').where((e) => e.isNotEmpty).length;
   }
 }

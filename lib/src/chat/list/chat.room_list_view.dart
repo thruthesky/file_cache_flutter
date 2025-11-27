@@ -16,7 +16,7 @@ class ChatRoomListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Login(
       builder: (uid) => buildChatRoomList(uid: uid),
-      notLoggedIn: buildChatRoomList(),
+      notLoggedIn: const Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 

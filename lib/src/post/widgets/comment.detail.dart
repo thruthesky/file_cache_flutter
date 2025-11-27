@@ -290,6 +290,7 @@ class _CommentDetailState extends State<CommentDetail> {
                           PostReportButton(
                             type: 'comment',
                             idx: widget.comment.idx,
+                            comment: widget.comment,
                           ),
                         ],
                       ],

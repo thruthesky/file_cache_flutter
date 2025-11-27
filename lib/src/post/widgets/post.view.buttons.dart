@@ -73,7 +73,11 @@ class _PostViewButtonsState extends State<PostViewButtons> {
               icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
               label: Text(LibTr.of(context)!.block),
             ),
-          PostReportButton(type: 'post', idx: widget.post!.idx),
+          PostReportButton(
+            type: 'post',
+            idx: widget.post!.idx,
+            post: widget.post!,
+          ),
         ],
         // 내 게시글인 경우에만 수정/삭제 버튼 표시
         if (widget.myPost) ...[
