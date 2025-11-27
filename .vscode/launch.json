@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "🚀 PhilGo - iPhone16",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "00008140-001C24C93E93001C",
+        },
+        {
             "name": "🚀 PhilGo - Simulator - jaeho - local db",
             "request": "launch",
             "type": "dart",
