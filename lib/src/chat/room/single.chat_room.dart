@@ -90,11 +90,15 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   controller: singleMessageListController,
                 ),
               ),
-              ChatRoomMessageInput(
-                roomId: init.join.id,
-                onSend: () {
-                  singleMessageListController.scrollToBottom();
-                },
+              Blocked(
+                otherUserUid: init.otherUser!.uid,
+                no: () => ChatRoomMessageInput(
+                  roomId: init.join.id,
+                  onSend: () {
+                    singleMessageListController.scrollToBottom();
+                  },
+                ),
+                yes: () => const SizedBox.shrink(),
               ),
             ],
           ),

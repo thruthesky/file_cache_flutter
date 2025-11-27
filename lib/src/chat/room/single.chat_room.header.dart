@@ -31,12 +31,20 @@ class SingleChatRoomHeader extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        /// 즐겨찾기 버튼 - 채팅방을 즐겨찾기 폴더에 추가
-        /// Firebase에서 실시간으로 즐겨찾기 상태를 확인하여 아이콘 변경
-        _FavoriteIconButton(roomId: join.id),
+        Blocked(
+          otherUserUid: otherUser.uid,
+          yes: () => const SizedBox.shrink(),
+          no: () => Row(
+            children: [
+              /// 즐겨찾기 버튼 - 채팅방을 즐겨찾기 폴더에 추가
+              /// Firebase에서 실시간으로 즐겨찾기 상태를 확인하여 아이콘 변경
+              _FavoriteIconButton(roomId: join.id),
 
-        // Push Notification Toggle
-        PushNotificationIcon(subscriptionId: join.id, reverse: true),
+              // Push Notification Toggle
+              PushNotificationIcon(subscriptionId: join.id, reverse: true),
+            ],
+          ),
+        ),
 
         // Gear Menu Button
         IconButton(
@@ -117,44 +125,6 @@ class SingleChatRoomHeader extends StatelessWidget {
                         ),
                       ),
                     ] else ...[
-                      ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                        visualDensity: VisualDensity(
-                          horizontal: -4,
-                          vertical: -2,
-                        ),
-                        leading: Avatar(photoUrl: getPhotoUrl()),
-                        title: Text(LibTr.of(context)!.profile),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          showProfileDialog(parentContext, otherUser);
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      ListTile(
-                        leading: const Icon(Icons.post_add),
-                        title: Text(LibTr.of(context)!.recent_post),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          showUserRecentPostsDialog(
-                            context: parentContext,
-                            otherUser: otherUser,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      // Regular chat options (report, block, leave)
-                      // Report option
-                      ListTile(
-                        leading: const Icon(Icons.report),
-                        title: Text(LibTr.of(context)!.report),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          reportRoom(parentContext);
-                        },
-                      ),
-                      const SizedBox(height: 8),
-
                       Blocked(
                         otherUserUid: otherUser.uid,
                         yes: () => ListTile(
@@ -167,13 +137,56 @@ class SingleChatRoomHeader extends StatelessWidget {
                             showUnblockDialog(parentContext);
                           },
                         ),
-                        no: () => ListTile(
-                          leading: Icon(Icons.block),
-                          title: Text(LibTr.of(context)!.block_user),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            showBlockDialog(parentContext);
-                          },
+                        no: () => Column(
+                          children: [
+                            ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              visualDensity: VisualDensity(
+                                horizontal: -4,
+                                vertical: -2,
+                              ),
+                              leading: Avatar(photoUrl: getPhotoUrl()),
+                              title: Text(LibTr.of(context)!.profile),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                showProfileDialog(parentContext, otherUser);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            ListTile(
+                              leading: const Icon(Icons.post_add),
+                              title: Text(LibTr.of(context)!.recent_post),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                showUserRecentPostsDialog(
+                                  context: parentContext,
+                                  otherUser: otherUser,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            // Regular chat options (report, block, leave)
+                            // Report option
+                            ListTile(
+                              leading: const Icon(Icons.report),
+                              title: Text(LibTr.of(context)!.report),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                reportRoom(parentContext);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            ListTile(
+                              leading: Icon(Icons.block),
+                              title: Text(LibTr.of(context)!.block_user),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                showBlockDialog(parentContext);
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 8),
