@@ -45,9 +45,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(T.editProfile, style: theme.textTheme.headlineMedium),
+        title: Text(T.editProfile, style: theme.textTheme.titleLarge),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
       ),
       body: UserReady(
         init: (context, user) async {

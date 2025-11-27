@@ -11,9 +11,7 @@ class LanguageScreen extends StatefulWidget {
   static Future<T?> push<T>(BuildContext context) {
     return Navigator.push<T>(
       context,
-      MaterialPageRoute(
-        builder: (context) => const LanguageScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const LanguageScreen()),
     );
   }
 
@@ -66,7 +64,11 @@ class _LanguageScreenState extends State<LanguageScreen> {
       appBar: AppBar(
         title: Text(
           Lo.of(context)!.languageSettings,
-          style: theme.textTheme.headlineMedium,
+          style: theme.textTheme.titleLarge,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
       ),
 

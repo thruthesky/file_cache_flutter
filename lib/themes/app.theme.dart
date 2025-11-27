@@ -67,7 +67,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: cs.surface, // Scaffold와 동일한 배경색 사용
+        backgroundColor: cs.surfaceContainerLow,
         centerTitle: false,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(

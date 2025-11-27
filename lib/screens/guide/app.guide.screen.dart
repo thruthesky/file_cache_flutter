@@ -36,6 +36,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = Theme.of(context).colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
     return Scaffold(
@@ -46,8 +47,11 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
               ? Navigator.of(context).pop()
               : context.go(HomeScreen.routeName),
         ),
-        title: Text(T.appGuideTitle, style: theme.textTheme.headlineMedium),
-        backgroundColor: theme.scaffoldBackgroundColor,
+        title: Text(T.appGuideTitle, style: theme.textTheme.titleLarge),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
       ),
       // Body
       body: SingleChildScrollView(
