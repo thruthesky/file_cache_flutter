@@ -74,8 +74,6 @@ class _MenuHomeState extends State<MenuHome> {
               spacing: 24,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 8),
-
                 /// Account Section
                 MenuSection(
                   title: 'Account',

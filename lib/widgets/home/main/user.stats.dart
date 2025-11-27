@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:philgo/globals.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';

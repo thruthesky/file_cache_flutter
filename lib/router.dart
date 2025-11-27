@@ -6,8 +6,9 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/about/about.screen.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
-import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
+import 'package:philgo/screens/company/company.form.screen.dart';
+import 'package:philgo/screens/company/company.grid.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
@@ -290,10 +291,23 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      path: CompanyGridScreen.routeName,
+      name: CompanyGridScreen.routeName,
+      builder: (context, state) {
+        return const CompanyGridScreen();
+      },
+    ),
+    GoRoute(
       path: CompanyListScreen.routeName,
       name: CompanyListScreen.routeName,
       builder: (context, state) {
-        return const CompanyListScreen();
+        final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+        final categoryName = state.uri.queryParameters['categoryName'] ?? '';
+
+        return CompanyListScreen(
+          categoryId: categoryId,
+          categoryName: categoryName,
+        );
       },
     ),
     GoRoute(
