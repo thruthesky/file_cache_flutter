@@ -17,10 +17,11 @@ class PostListTile extends StatelessWidget {
       otherUserUid: post.firebase_uid,
       no: () {
         return Card(
-          elevation: 0, // Flat 2.0 - no elevation
+          elevation: 2, // Subtle shadow for card depth
           margin: EdgeInsets.zero, // No margin (parent controls spacing)
+          color: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Flat 2.0 - 12 (8의 배수)
+            borderRadius: BorderRadius.circular(12),
           ),
           child: InkWell(
             onTap: onTap,
@@ -35,8 +36,9 @@ class PostListTile extends StatelessWidget {
       },
       yes: () {
         return Card(
-          elevation: 0,
+          elevation: 2, // Subtle shadow for card depth
           margin: EdgeInsets.zero,
+          color: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -67,8 +69,8 @@ class PostListTile extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8), // 16 (8의 배수)
           child: SizedBox(
-            width: 96, // 더 큰 이미지 (reference 참고)
-            height: 96,
+            width: 81, // 더 큰 이미지 (reference 참고)
+            height: 81,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16), // Flat 2.0 - 16 (8의 배수)
               child: CachedNetworkImage(
@@ -153,7 +155,7 @@ class PostListTile extends StatelessWidget {
                     Text(
                       post.timeString,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                        color: scheme.outline,
                       ),
                     ),
                   ],
@@ -230,7 +232,7 @@ class PostListTile extends StatelessWidget {
                 Text(
                   post.timeString,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
+                    color: scheme.outline,
                   ),
                 ),
               ],
@@ -260,9 +262,7 @@ class PostListTile extends StatelessWidget {
         const SizedBox(width: 4), // 4 (8의 배수)
         Text(
           '${post.no_of_view}',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
-          ),
+          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
         ),
         const SizedBox(width: 16), // 16 (8의 배수)
         /// 댓글수 (reference: 메시지 아이콘)
@@ -274,9 +274,7 @@ class PostListTile extends StatelessWidget {
         const SizedBox(width: 4), // 4 (8의 배수)
         Text(
           '${post.no_of_comment}',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
-          ),
+          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
         ),
         const SizedBox(width: 16), // 16 (8의 배수)
         /// 좋아요수 (reference: 하트 아이콘)
@@ -284,9 +282,7 @@ class PostListTile extends StatelessWidget {
         const SizedBox(width: 4), // 4 (8의 배수)
         Text(
           '${post.good}',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
-          ),
+          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
         ),
       ],
     );
