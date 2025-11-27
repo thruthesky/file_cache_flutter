@@ -236,6 +236,7 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
 
         /// Grid of company categories
         /// Wrapped in Expanded to provide bounded height constraint for GridView
+        /// Using mainAxisExtent to allow items to display at their natural height
         Expanded(
           child: GridView.builder(
             padding: EdgeInsets.all(sp.s16),

@@ -100,8 +100,13 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             pinned: true,
             elevation: 0,
             foregroundColor: scheme.onPrimaryContainer,
+            backgroundColor: scheme.surfaceContainerLow,
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(height: 1, color: scheme.outlineVariant),
+            ),
             title: _isCollapsed && company != null
-                ? Text(company!.name, style: theme.textTheme.headlineMedium)
+                ? Text(company!.name, style: theme.textTheme.titleLarge)
                 : null,
             leading: _isCollapsed
                 ? null // 접혔을 때는 기본 back button 사용
@@ -116,7 +121,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       child: const Icon(
                         Icons.arrow_back,
                         color: Colors.white,
-                        size: 24,
+                        size: 20,
                       ),
                     ),
                     onPressed: () => Navigator.pop(context),

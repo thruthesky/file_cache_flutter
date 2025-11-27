@@ -72,6 +72,7 @@ class UserStats extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16),
           child: Card(
             elevation: 0,
+
             /// Flat 2.0 - 미묘한 그림자 추가 (4% 투명도)
             child: Container(
               decoration: BoxDecoration(
@@ -87,7 +88,7 @@ class UserStats extends StatelessWidget {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
                     /// User info row
@@ -152,10 +153,7 @@ class UserStats extends StatelessWidget {
                         const SizedBox(width: 12),
 
                         /// Points stat
-                        StatContainer(
-                          value: user.point ?? 0,
-                          label: 'Points',
-                        ),
+                        StatContainer(value: user.point ?? 0, label: 'Points'),
                       ],
                     ),
                   ],
@@ -171,11 +169,7 @@ class UserStats extends StatelessWidget {
 
 /// Stat container component - perfectly square box with scaffold background
 class StatContainer extends StatelessWidget {
-  const StatContainer({
-    super.key,
-    required this.value,
-    required this.label,
-  });
+  const StatContainer({super.key, required this.value, required this.label});
 
   final int value;
   final String label;

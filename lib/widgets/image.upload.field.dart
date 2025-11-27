@@ -81,7 +81,7 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
               height: 240,
               decoration: BoxDecoration(
                 color: scheme.surface,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: scheme.outline),
               ),
               child: Stack(
@@ -89,7 +89,7 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
                   /// 이미지 표시
                   if (widget.imageUrl.isNotEmpty)
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                       child: Image.network(
                         widget.imageUrl,
                         fit: BoxFit.cover,

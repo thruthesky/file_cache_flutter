@@ -84,9 +84,9 @@ class FormDetailedInfo extends StatelessWidget {
                 child: Text(
                   '${T.description} *',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ),
               TextField(
@@ -97,7 +97,7 @@ class FormDetailedInfo extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: T.enterDescription,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   alignLabelWithHint: true,
                 ),

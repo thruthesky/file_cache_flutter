@@ -339,14 +339,19 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       appBar: AppBar(
         title: Text(
           widget.company == null ? T.registerCompany : T.updateCompany,
-          style: theme.textTheme.headlineMedium,
+          style: theme.textTheme.titleLarge,
+        ),
+        backgroundColor: scheme.surfaceContainerLow,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
       ),
       body: Column(
         children: [
           Container(
             padding: EdgeInsets.all(sp.s16),
-            color: scheme.surface,
+            color: scheme.surfaceContainerLow,
             child: Column(
               children: [
                 StepProgressIndicator(
@@ -631,7 +636,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s16),
-          decoration: BoxDecoration(color: scheme.surface),
+          decoration: BoxDecoration(color: scheme.surfaceContainerLow),
           child: Row(
             children: [
               /// 뒤로가기 버튼

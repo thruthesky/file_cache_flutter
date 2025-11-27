@@ -124,11 +124,15 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     return Scaffold(
       backgroundColor: scheme.surfaceContainerLow,
       appBar: AppBar(
-        backgroundColor: scheme.surface,
-        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
+        backgroundColor: scheme.surfaceContainerLow,
+        elevation: 1,
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const FaIcon(FontAwesomeIcons.lightChevronLeft, size: 20),
+          icon: const FaIcon(FontAwesomeIcons.chevronLeft, size: 24),
         ),
         title: Text(widget.categoryName, style: theme.textTheme.titleLarge),
       ),
@@ -218,7 +222,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           crossAxisCount: 2,
           crossAxisSpacing: sp.s16,
           mainAxisSpacing: sp.s16,
-          childAspectRatio: 0.85,
+          // childAspectRatio: 1.250,
+          mainAxisExtent: 155,
         ),
         itemCount: companyList!.companies.length,
         itemBuilder: (context, index) {

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
-import 'package:philgo/widgets/skeletons/skeleton.company.card.list.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company Directory Screen
@@ -221,23 +220,23 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
         ),
         const SizedBox(height: 16),
 
-        // Body Content (스크롤 가능)
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: isLoading
-                    ? SkeletonCompanyCardList()
-                    : selectedCategoryId != null
-                    ? _buildCategorySection(
-                        selectedCategoryId!,
-                        constraints.maxHeight,
-                      )
-                    : const SizedBox.shrink(),
-              );
-            },
-          ),
-        ),
+        // // Body Content (스크롤 가능)
+        // Expanded(
+        //   child: LayoutBuilder(
+        //     builder: (context, constraints) {
+        //       return SingleChildScrollView(
+        //         child: isLoading
+        //             ? SkeletonCompanyCardList()
+        //             : selectedCategoryId != null
+        //             ? _buildCategorySection(
+        //                 selectedCategoryId!,
+        //                 constraints.maxHeight,
+        //               )
+        //             : const SizedBox.shrink(),
+        //       );
+        //     },
+        //   ),
+        // ),
       ],
     );
   }
