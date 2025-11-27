@@ -181,155 +181,257 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     );
   }
 
+  /// 채팅방 타일 - 메인 UI 컴포넌트
   Widget chatRoomTile({
     Widget? subTitleWidget,
     void Function()? onTap,
     bool blocked = false,
   }) {
-    return Card(
-      // margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 8.0,
-        ),
-        leading: buildAvatar(),
-        title: buildTitle(),
-        subtitle:
-            subTitleWidget ??
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    // 고정된 방은 배경색 강조
+    final backgroundColor = isPinned
+        ? colorScheme.primaryContainer.withValues(alpha: 0.3)
+        : colorScheme.surface;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16.0),
+        // Flat design - no shadow, use color contrast
+        border: isPinned
+            ? Border.all(
+                color: colorScheme.primary.withValues(alpha: 0.2),
+                width: 1.5,
+              )
+            : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.0),
+          onTap: onTap ?? () => widget.onTap(roomId),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
               children: [
-                if (subTitle.isNotEmpty) Text(subTitle, maxLines: 1),
-                // if (kDebugMode) Text(roomId, style: TextStyle(fontSize: 8)),
-                if (lastMessageAt > 0)
-                  Text(
-                    formatTimestamp(context, lastMessageAt),
-                    style: TextStyle(fontSize: 8),
+                // Avatar with enhanced styling
+                buildAvatar(),
+                const SizedBox(width: 12),
+                // Content area
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildTitle(),
+                      const SizedBox(height: 4),
+                      subTitleWidget ??
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (subTitle.isNotEmpty)
+                                Text(
+                                  subTitle,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.6,
+                                    ),
+                                  ),
+                                ),
+                              if (lastMessageAt > 0) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  formatTimestamp(context, lastMessageAt),
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                    ],
                   ),
+                ),
+                // Trailing section
+                if (!blocked) ...[const SizedBox(width: 8), buildTrailing()],
               ],
             ),
-        trailing: blocked ? null : buildTrailing(),
-        onTap: onTap ?? () => widget.onTap(roomId),
+          ),
+        ),
       ),
     );
   }
 
+  /// 채팅방 제목 위젯
   Widget buildTitle() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Row(
       children: [
+        // 고정 아이콘 - 고정된 방만 표시
+        if (isPinned) ...[
+          FaIcon(
+            FontAwesomeIcons.lightThumbtack,
+            size: 14,
+            color: colorScheme.primary,
+          ),
+          const SizedBox(width: 6),
+        ],
         Expanded(
           child: Text(
             name,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ),
-
-        // Don't show online status if user is blocked
       ],
     );
   }
 
   /// 채팅방 타일 우측 트레일링 위젯 (읽지 않은 메시지 배지 + 즐겨찾기 아이콘 + 고정 아이콘)
   Widget buildTrailing() {
-    return Row(
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 읽지 않은 메시지 배지
-        if (unread > 0) ...[buildUnreadBadge(unread), const SizedBox(width: 8)],
-        // 즐겨찾기 아이콘 - 즐겨찾기에 추가된 경우에만 노란색 별 표시
-        ValueListenableBuilder<bool>(
-          valueListenable: _isFavoritedNotifier,
-          builder: (context, isFavorited, _) {
-            if (!isFavorited) return const SizedBox.shrink();
-            return Padding(
-              padding: EdgeInsets.zero,
-              child: FaIcon(
-                FontAwesomeIcons.solidStar,
-                color: Colors.amber,
-                size: 16,
-              ),
-            );
-          },
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 즐겨찾기 아이콘 - 즐겨찾기에 추가된 경우에만 별 표시
+            ValueListenableBuilder<bool>(
+              valueListenable: _isFavoritedNotifier,
+              builder: (context, isFavorited, _) {
+                if (!isFavorited) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: FaIcon(
+                    FontAwesomeIcons.solidStar,
+                    color: colorScheme.tertiary,
+                    size: 16,
+                  ),
+                );
+              },
+            ),
+            // 고정 아이콘 버튼
+            ValueListenableBuilder<Set<String>>(
+              valueListenable: UserService.instance.pinnedChatRoomsStream,
+              builder: (context, pinnedRooms, _) {
+                final isPinnedNow = pinnedRooms.contains(roomId);
+                return IconButton(
+                  visualDensity: const VisualDensity(
+                    horizontal: -4,
+                    vertical: -4,
+                  ),
+                  icon: FaIcon(
+                    isPinnedNow
+                        ? FontAwesomeIcons.solidThumbtack
+                        : FontAwesomeIcons.lightThumbtack,
+                    color: isPinnedNow
+                        ? colorScheme.primary
+                        : colorScheme.onSurface.withValues(alpha: 0.4),
+                    size: 18,
+                  ),
+                  onPressed: () async {
+                    await togglePinned();
+                    setState(() {});
+                  },
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                );
+              },
+            ),
+          ],
         ),
-        // 고정 아이콘 버튼
-        ValueListenableBuilder<Set<String>>(
-          valueListenable: UserService.instance.pinnedChatRoomsStream,
-          builder: (context, pinnedRooms, _) {
-            final isPinnedNow = pinnedRooms.contains(roomId);
-            return IconButton(
-              visualDensity: VisualDensity(horizontal: -4),
-              icon: FaIcon(
-                FontAwesomeIcons.thumbtack,
-                // 고정된 경우 노란색, 아닌 경우 회색
-                color: isPinnedNow
-                    ? Colors.yellow[700]
-                    : Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.3),
-                size: 18,
-              ),
-              onPressed: togglePinned,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            );
-          },
-        ),
+        // 읽지 않은 메시지 배지 - 하단에 배치
+        if (unread > 0) ...[
+          const SizedBox(height: 4),
+          buildUnreadBadge(unread),
+        ],
       ],
     );
   }
 
+  /// 읽지 않은 메시지 배지
   Widget buildUnreadBadge(int unreadCount) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(12),
+        color: colorScheme.error,
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         unreadCount > 99 ? '99+' : unreadCount.toString(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: colorScheme.onError,
+          fontWeight: FontWeight.w700,
+          fontSize: 11,
         ),
       ),
     );
   }
 
+  /// 아바타 위젯 - 온라인 상태 표시 포함
   Widget buildAvatar() {
-    return Stack(
-      children: [
-        Avatar(photoUrl: photoUrl),
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-        // Online status indicator - don't show if user is blocked
-        if (isSingle)
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: Blocked(
-              otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
-              yes: () => SizedBox.shrink(),
-              no: () => OnlineStatus(
-                uid: getOtherUserUidFromChatRoomId(roomId)!,
-                yes: Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.surface,
-                      width: 2,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        // Flat design - subtle color contrast instead of shadow
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+          width: 2,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Avatar(photoUrl: photoUrl),
+
+          // Online status indicator - don't show if user is blocked
+          if (isSingle)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Blocked(
+                otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
+                yes: () => const SizedBox.shrink(),
+                no: () => OnlineStatus(
+                  uid: getOtherUserUidFromChatRoomId(roomId)!,
+                  yes: Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: colorScheme.tertiary,
+                      border: Border.all(
+                        color: colorScheme.surface,
+                        width: 2.5,
+                      ),
+                      borderRadius: BorderRadius.circular(7),
                     ),
-                    borderRadius: BorderRadius.circular(6),
                   ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

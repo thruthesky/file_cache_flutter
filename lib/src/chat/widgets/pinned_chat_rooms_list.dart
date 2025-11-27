@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// 고정된 채팅방 목록 위젯
@@ -15,6 +16,9 @@ class PinnedChatRoomsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return ValueListenableBuilder<Set<String>>(
       valueListenable: UserService.instance.pinnedChatRoomsStream,
       builder: (context, pinnedChatRooms, _) {
@@ -24,24 +28,90 @@ class PinnedChatRoomsList extends StatelessWidget {
         }
 
         return Container(
-          // Theme의 surface 색상을 배경으로 사용
-          color: Theme.of(context).colorScheme.surface,
-          height: 96,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-            itemCount: pinnedChatRooms.length,
-            itemBuilder: (context, index) {
-              final roomId = pinnedChatRooms.elementAt(index);
-              return Blocked(
-                otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
-                yes: () => const SizedBox.shrink(),
-                no: () => _PinnedChatRoomItem(
-                  roomId: roomId,
-                  onTap: () => onTap(roomId),
+          // 고정된 채팅방 섹션 배경 - primaryContainer로 구분
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                colorScheme.primaryContainer.withValues(alpha: 0.15),
+                colorScheme.surface,
+              ],
+            ),
+            // Flat design - subtle border instead of shadow
+            border: Border(
+              bottom: BorderSide(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                width: 1,
+              ),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 섹션 헤더
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.solidThumbtack,
+                      size: 14,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Pinned Chats',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${pinnedChatRooms.length}',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
+              ),
+              // 가로 스크롤 리스트
+              SizedBox(
+                height: 108,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemCount: pinnedChatRooms.length,
+                  itemBuilder: (context, index) {
+                    final roomId = pinnedChatRooms.elementAt(index);
+                    return Blocked(
+                      otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
+                      yes: () => const SizedBox.shrink(),
+                      no: () => _PinnedChatRoomItem(
+                        roomId: roomId,
+                        onTap: () => onTap(roomId),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
           ),
         );
       },
@@ -117,6 +187,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return ChatJoinBuilder(
       roomId: roomId,
       builder: (context, join) {
@@ -142,62 +215,109 @@ class _PinnedChatRoomItem extends StatelessWidget {
           name = join.roomName.isNotEmpty ? join.roomName : 'No name';
         }
 
+        // 읽지 않은 메시지 수
+        final unreadCount = join.unread;
+
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: SizedBox(
-            width: 64,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 아바타와 닫기 버튼을 포함하는 Stack
-                Stack(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: onTap,
+              child: Container(
+                width: 76,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  // Flat design - subtle border for definition
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.2),
+                    width: 1.5,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 아바타 - 탭하면 채팅방으로 이동
-                    GestureDetector(
-                      onTap: onTap,
-                      child: Avatar(photoUrl: photoUrl, size: 56, radius: 28),
-                    ),
-                    // 우측 상단 닫기 버튼
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: GestureDetector(
-                        onTap: () => _showUnpinConfirmDialog(context),
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            // Theme의 error 색상 사용
-                            color: Theme.of(context).colorScheme.error,
-                            shape: BoxShape.circle,
-                            // surface 색상으로 테두리 추가 (가독성 향상)
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.surface,
-                              width: 2,
+                    // 아바타와 닫기 버튼을 포함하는 Stack
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        // 아바타
+                        Avatar(photoUrl: photoUrl, size: 56, radius: 28),
+                        // 우측 상단 닫기 버튼
+                        Positioned(
+                          right: -4,
+                          top: -4,
+                          child: GestureDetector(
+                            onTap: () => _showUnpinConfirmDialog(context),
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                color: colorScheme.errorContainer,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: colorScheme.surface,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.xmark,
+                                  color: colorScheme.onErrorContainer,
+                                  size: 12,
+                                ),
+                              ),
                             ),
                           ),
-                          child: Icon(
-                            Icons.close,
-                            // onError 색상 사용 (error 위의 텍스트 색상)
-                            color: Theme.of(context).colorScheme.onError,
-                            size: 12,
-                          ),
                         ),
+                        // 읽지 않은 메시지 배지
+                        if (unreadCount > 0)
+                          Positioned(
+                            left: -4,
+                            top: -4,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.error,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: colorScheme.surface,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Text(
+                                unreadCount > 99 ? '99+' : unreadCount.toString(),
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: colorScheme.onError,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    // 채팅방 이름 표시
+                    Text(
+                      name,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                // 채팅방 이름 표시
-                Text(
-                  name,
-                  // Theme의 bodySmall 텍스트 스타일 사용
-                  style: Theme.of(context).textTheme.bodySmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                ),
-              ],
+              ),
             ),
           ),
         );
