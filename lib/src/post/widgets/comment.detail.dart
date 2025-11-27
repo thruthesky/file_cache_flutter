@@ -175,7 +175,7 @@ class _CommentDetailState extends State<CommentDetail> {
                               _isLiked = !_isLiked;
                               setState(() {});
 
-                              if (context.mounted) {
+                              if (mounted) {
                                 showSuccessSnackBar(context, 'Comment liked');
                               }
                             } catch (e) {
@@ -183,7 +183,7 @@ class _CommentDetailState extends State<CommentDetail> {
 
                               // Handle already-liked error
                               if (e.toString().contains('already-liked')) {
-                                if (context.mounted) {
+                                if (mounted) {
                                   showErrorSnackBar(
                                     context,
                                     'Already liked this comment',
@@ -255,7 +255,7 @@ class _CommentDetailState extends State<CommentDetail> {
                                   'delete_comment_func',
                                   data: {'idx': widget.comment.idx},
                                 );
-                                if (context.mounted) {
+                                if (mounted) {
                                   showSuccessSnackBar(
                                     context,
                                     LibTr.of(context)!.successfully_deleted,
@@ -290,6 +290,7 @@ class _CommentDetailState extends State<CommentDetail> {
                           PostReportButton(
                             type: 'comment',
                             idx: widget.comment.idx,
+                            comment: widget.comment,
                           ),
                         ],
                       ],

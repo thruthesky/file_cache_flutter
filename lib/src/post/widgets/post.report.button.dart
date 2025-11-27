@@ -11,19 +11,35 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 /// - 타입(post/comment)에 따라 다른 신고 사유 목록 표시
 /// - 신고 완료 시 성공 메시지 표시
 class PostReportButton extends StatefulWidget {
-  const PostReportButton({super.key, required this.type, required this.idx});
+  const PostReportButton({
+    super.key,
+    required this.type,
+    required this.idx,
+    this.post,
+    this.comment,
+  });
 
   /// 신고 대상 타입 ('post' 또는 'comment')
   final String type;
 
   /// 신고 대상의 고유 ID
   final int idx;
+  final Post? post;
+  final Comment? comment;
 
   @override
   State<PostReportButton> createState() => _PostReportButtonState();
 }
 
 class _PostReportButtonState extends State<PostReportButton> {
+  int currentReportCounter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    currentReportCounter = getReportCounter();
+  }
+
   /// 타입에 따른 신고 사유 목록을 반환하는 메서드
   ///
   /// [type] 신고 대상 타입
@@ -55,6 +71,7 @@ class _PostReportButtonState extends State<PostReportButton> {
       }
       if (mounted && res['message'] != null && res['message']!.isNotEmpty) {
         showSuccessSnackBar(context, LibTr.of(context)!.report_success);
+        increaseCounter();
         return;
       }
     } catch (e) {
@@ -63,6 +80,20 @@ class _PostReportButtonState extends State<PostReportButton> {
         showErrorSnackBar(context, LibTr.of(context)!.report_failed);
       }
     }
+  }
+
+  void increaseCounter() {
+    currentReportCounter++;
+    setState(() {});
+  }
+
+  int getReportCounter() {
+    if (widget.type == 'post' && widget.post != null) {
+      return widget.post!.reportCounter;
+    } else if (widget.type == 'comment' && widget.comment != null) {
+      return widget.comment!.reportCounter;
+    }
+    return 0;
   }
 
   /// 신고 사유 선택 바텀 시트 모달을 표시하는 메서드
@@ -161,7 +192,9 @@ class _PostReportButtonState extends State<PostReportButton> {
       // style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 8)),
       onPressed: _showReportReasonBottomSheet,
       icon: const FaIcon(FontAwesomeIcons.hexagonExclamation, size: 16),
-      label: Text(LibTr.of(context)!.report),
+      label: Text(
+        "${LibTr.of(context)!.report} ${currentReportCounter > 0 ? currentReportCounter : ''}",
+      ),
     );
   }
 }

@@ -8,10 +8,7 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 /// 각 채팅방의 아바타를 클릭하면 해당 채팅방으로 이동하고,
 /// 우측 상단의 닫기 버튼을 클릭하면 고정 해제 확인 다이얼로그가 표시됩니다.
 class PinnedChatRoomsList extends StatelessWidget {
-  const PinnedChatRoomsList({
-    super.key,
-    required this.onTap,
-  });
+  const PinnedChatRoomsList({super.key, required this.onTap});
 
   /// 채팅방 클릭 시 호출되는 콜백
   final void Function(String roomId) onTap;
@@ -32,13 +29,17 @@ class PinnedChatRoomsList extends StatelessWidget {
           height: 96,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
             itemCount: pinnedChatRooms.length,
             itemBuilder: (context, index) {
               final roomId = pinnedChatRooms.elementAt(index);
-              return _PinnedChatRoomItem(
-                roomId: roomId,
-                onTap: () => onTap(roomId),
+              return Blocked(
+                otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
+                yes: () => const SizedBox.shrink(),
+                no: () => _PinnedChatRoomItem(
+                  roomId: roomId,
+                  onTap: () => onTap(roomId),
+                ),
               );
             },
           ),
@@ -50,10 +51,7 @@ class PinnedChatRoomsList extends StatelessWidget {
 
 /// 고정된 채팅방 개별 아이템
 class _PinnedChatRoomItem extends StatelessWidget {
-  const _PinnedChatRoomItem({
-    required this.roomId,
-    required this.onTap,
-  });
+  const _PinnedChatRoomItem({required this.roomId, required this.onTap});
 
   final String roomId;
   final VoidCallback onTap;
@@ -109,9 +107,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 에러 메시지 표시
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              LibTr.of(context)!.error_with_message(e.toString()),
-            ),
+            content: Text(LibTr.of(context)!.error_with_message(e.toString())),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -159,11 +155,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                     // 아바타 - 탭하면 채팅방으로 이동
                     GestureDetector(
                       onTap: onTap,
-                      child: Avatar(
-                        photoUrl: photoUrl,
-                        size: 56,
-                        radius: 28,
-                      ),
+                      child: Avatar(photoUrl: photoUrl, size: 56, radius: 28),
                     ),
                     // 우측 상단 닫기 버튼
                     Positioned(
