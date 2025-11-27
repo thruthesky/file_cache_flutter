@@ -9,148 +9,159 @@ class PostListTile extends StatelessWidget {
   final Post post;
   final VoidCallback? onTap;
 
-  String displayName(BuildContext context) =>
-      post.nickname.isEmpty ? LibTr.of(context)!.no_name : post.nickname;
-
   @override
   Widget build(BuildContext context) {
-    final hasImage = post.files.isNotEmpty ? true : false;
+    final hasImage = post.files.isNotEmpty;
 
     return Blocked(
       otherUserUid: post.firebase_uid,
       no: () {
-        return InkWell(
-          onTap: onTap,
-          child: hasImage
-              ? _buildTileWithImage(context)
-              : _buildTileWithoutImage(context),
+        return Card(
+          elevation: 0, // Flat 2.0 - no elevation
+          margin: EdgeInsets.zero, // No margin (parent controls spacing)
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12), // Flat 2.0 - 12 (8의 배수)
+          ),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(
+              12,
+            ), // Match card radius for ripple
+            child: hasImage
+                ? _buildTileWithImage(context)
+                : _buildTileWithoutImage(context),
+          ),
         );
       },
       yes: () {
-        return GestureDetector(
-          onTap: () {
-            showUnblockDialog(
-              context: context,
-              otherUserUid: post.firebase_uid,
-            );
-          },
-          child: _buildTileWithoutImage(context, blocked: true),
+        return Card(
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: InkWell(
+            onTap: () {
+              showUnblockDialog(
+                context: context,
+                otherUserUid: post.firebase_uid,
+              );
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: _buildTileWithoutImage(context, blocked: true),
+          ),
         );
       },
     );
   }
 
   Widget _buildTileWithImage(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 4,
       children: [
+        /// 이미지 (왼쪽) - Flat 2.0 디자인
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8), // 16 (8의 배수)
           child: SizedBox(
-            width: 120,
-            height: 90,
+            width: 96, // 더 큰 이미지 (reference 참고)
+            height: 96,
             child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
+              borderRadius: BorderRadius.circular(16), // Flat 2.0 - 16 (8의 배수)
               child: CachedNetworkImage(
                 imageUrl: post.files[0],
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
-                  color: Colors.grey[300],
-                  child: const Center(child: CircularProgressIndicator()),
+                  color: scheme.surfaceContainerHighest,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(Icons.error, color: Colors.grey),
+                  color: scheme.surfaceContainerHighest,
+                  child: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.lightImage,
+                      size: 20,
+                      color: scheme.outline,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
+
+        /// 게시글 정보 (오른쪽)
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: 12, bottom: 12, right: 12),
+            padding: const EdgeInsets.only(top: 16, bottom: 16, right: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// 게시글 제목 - reference처럼 더 강조
                 Text(
                   post.subject,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onSurface,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
+
+                /// 사용자 정보 및 날짜 표시
                 Row(
                   children: [
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(shape: BoxShape.circle),
-                      child: Avatar(photoUrl: post.photo_url),
-                    ),
-                    const SizedBox(width: 8),
+                    /// 사용자 아바타
+                    Avatar(photoUrl: post.photo_url, size: 20, radius: 10),
+                    const SizedBox(width: 6),
+
+                    /// 사용자 이름
                     Text(
-                      displayName(context),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.thinClock,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      post.timeString.split(" ").first,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    FaIcon(
-                      FontAwesomeIcons.lightEye,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      formatCompactNumber(post.no_of_view),
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
+                      _displayName(context),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    FaIcon(
-                      FontAwesomeIcons.lightMessageDots,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(width: 4),
+
+                    /// 구분자
                     Text(
-                      formatCompactNumber(post.no_of_comment),
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
+                      '•',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.outline,
                       ),
                     ),
                     const SizedBox(width: 8),
+
+                    /// 날짜
                     FaIcon(
-                      FontAwesomeIcons.lightThumbsUp,
-                      size: 12,
-                      color: Theme.of(context).colorScheme.outline,
+                      FontAwesomeIcons.lightClock,
+                      size: 14,
+                      color: scheme.outline,
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      formatCompactNumber(post.good),
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
+                      post.timeString,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+
+                /// 메타 정보: 조회수, 댓글수, 좋아요수
+                _buildMetaInfo(context),
               ],
             ),
           ),
@@ -160,101 +171,124 @@ class PostListTile extends StatelessWidget {
   }
 
   Widget _buildTileWithoutImage(BuildContext context, {bool blocked = false}) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: Avatar(photoUrl: post.photo_url),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  blocked
-                      ? "${LibTr.of(context)!.post_from_blocked_user} ${cut(displayName(context), 8)}"
-                      : post.subject,
-                  style: blocked
-                      ? Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        )
-                      : Theme.of(context).textTheme.titleMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (blocked == false) ...[
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        cut(displayName(context), 8),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      SizedBox(width: 16),
-                      FaIcon(
-                        FontAwesomeIcons.thinClock,
-                        size: 12,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        post.timeString.split(" ").first,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      FaIcon(
-                        FontAwesomeIcons.lightEye,
-                        size: 12,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        formatCompactNumber(post.no_of_view),
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      FaIcon(
-                        FontAwesomeIcons.lightMessageDots,
-                        size: 12,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${post.no_of_comment}',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      FaIcon(
-                        FontAwesomeIcons.lightThumbsUp,
-                        size: 12,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${post.good}',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                    ],
+          Text(
+            blocked
+                ? "${LibTr.of(context)!.post_from_blocked_user} ${cut(_displayName(context), 8)}"
+                : post.subject,
+            style: blocked
+                ? theme.textTheme.titleMedium!.copyWith(color: scheme.outline)
+                : theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onSurface,
                   ),
-                ],
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (blocked == false) ...[
+            const SizedBox(height: 8),
+
+            Row(
+              children: [
+                /// 사용자 아바타
+                Avatar(photoUrl: post.photo_url, size: 20, radius: 10),
+                const SizedBox(width: 6),
+
+                /// 사용자 이름
+                Text(
+                  _displayName(context),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+
+                /// 구분자
+                Text(
+                  '•',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.outline,
+                  ),
+                ),
+                const SizedBox(width: 8),
+
+                /// 날짜
+                FaIcon(
+                  FontAwesomeIcons.lightClock,
+                  size: 14,
+                  color: scheme.outline,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  post.timeString,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
-          ),
+            const SizedBox(height: 12),
+
+            _buildMetaInfo(context),
+          ],
         ],
       ),
+    );
+  }
+
+  String _displayName(BuildContext context) => post.nickname.isEmpty
+      ? LibTr.of(context)!.no_name
+      : cut(post.nickname, 8);
+
+  /// 메타 정보 - Flat 2.0 디자인 (reference 스타일)
+  Widget _buildMetaInfo(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Row(
+      children: [
+        /// 조회수 (reference: 눈 아이콘)
+        FaIcon(FontAwesomeIcons.lightEye, size: 16, color: scheme.outline),
+        const SizedBox(width: 4), // 4 (8의 배수)
+        Text(
+          '${post.no_of_view}',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(width: 16), // 16 (8의 배수)
+        /// 댓글수 (reference: 메시지 아이콘)
+        FaIcon(
+          FontAwesomeIcons.lightMessageDots,
+          size: 16,
+          color: scheme.outline,
+        ),
+        const SizedBox(width: 4), // 4 (8의 배수)
+        Text(
+          '${post.no_of_comment}',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(width: 16), // 16 (8의 배수)
+        /// 좋아요수 (reference: 하트 아이콘)
+        FaIcon(FontAwesomeIcons.lightThumbsUp, size: 16, color: scheme.outline),
+        const SizedBox(width: 4), // 4 (8의 배수)
+        Text(
+          '${post.good}',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 }

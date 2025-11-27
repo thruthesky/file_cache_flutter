@@ -79,14 +79,10 @@ class PostListViewState extends State<PostListView> {
     return PagingListener<int, Post>(
       controller: pagingController,
       builder: (context, state, fetchNextPage) => PagedListView.separated(
-        // 게시글 사이에 구분선 표시
-        separatorBuilder: (context, index) => Divider(
-          height: 1,
-          thickness: 0.5,
-          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
-        ),
+        // 게시글 사이에 간격 추가
+        separatorBuilder: (context, index) => const SizedBox(height: 8),
 
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         state: state,
         fetchNextPage: fetchNextPage,
         builderDelegate: PagedChildBuilderDelegate<Post>(
@@ -97,13 +93,7 @@ class PostListViewState extends State<PostListView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   widget.headerBuilder(context, _totalPostCount),
-                  Divider(
-                    height: 1,
-                    thickness: 0.5,
-                    color: Theme.of(
-                      context,
-                    ).dividerColor.withValues(alpha: 0.3),
-                  ),
+                  SizedBox(height: 8),
                   PostListTile(post: post, onTap: () => widget.onTap(post)),
                 ],
               );

@@ -117,52 +117,48 @@ class _CategoryDropdownFieldState extends State<CategoryDropdownField> {
         const SizedBox(height: 8),
 
         /// Dropdown
-        Container(
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: DropdownButtonFormField<String>(
-            initialValue: _selectedCategory,
-            decoration: InputDecoration(
-              hintText: widget.hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: scheme.outline),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: scheme.outline),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: scheme.primary, width: 2),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 16,
-              ),
+        DropdownButtonFormField<String>(
+          initialValue: _selectedCategory,
+          decoration: InputDecoration(
+            hintText: widget.hintText,
+            filled: true,
+            fillColor: scheme.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: BorderSide(color: scheme.outline),
             ),
-            items: categories.map((category) {
-              return DropdownMenuItem<String>(
-                value: category['id'] as String,
-                child: Text(category['name'] as String),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedCategory = value;
-
-                widget.onChanged(currentValue);
-              });
-            },
-            validator: (value) {
-              if (widget.validator != null) {
-                return widget.validator!(currentValue);
-              }
-              return null;
-            },
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: BorderSide(color: scheme.outline),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: BorderSide(color: scheme.primary, width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
           ),
+          items: categories.map((category) {
+            return DropdownMenuItem<String>(
+              value: category['id'] as String,
+              child: Text(category['name'] as String),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedCategory = value;
+
+              widget.onChanged(currentValue);
+            });
+          },
+          validator: (value) {
+            if (widget.validator != null) {
+              return widget.validator!(currentValue);
+            }
+            return null;
+          },
         ),
       ],
     );
