@@ -54,6 +54,7 @@ class _MenuListState extends State<MenuList> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 8,
       children: [
         /// Edit Profile
         MenuTile(
@@ -65,8 +66,6 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
-        SizedBox(height: widget.spacing),
-
         /// Language Settings
         MenuTile(
           icon: FontAwesomeIcons.lightLanguage,
@@ -76,8 +75,6 @@ class _MenuListState extends State<MenuList> {
           index: 1,
           isAnimated: _isAnimated,
         ),
-
-        SizedBox(height: widget.spacing),
 
         /// Company Directory
         MenuTile(
@@ -97,8 +94,6 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
-        SizedBox(height: widget.spacing),
-
         /// Open Chat room
         MenuTile(
           icon: FontAwesomeIcons.lightComments,
@@ -117,8 +112,6 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
-        SizedBox(height: widget.spacing),
-
         /// Banner Ads
         MenuTile(
           icon: FontAwesomeIcons.lightRectangleAd,
@@ -134,8 +127,6 @@ class _MenuListState extends State<MenuList> {
           index: 4,
           isAnimated: _isAnimated,
         ),
-
-        SizedBox(height: widget.spacing),
 
         /// Point Ads
         MenuTile(
@@ -153,7 +144,17 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
-        SizedBox(height: widget.spacing),
+        /// Blocked Users
+        MenuTile(
+          icon: FontAwesomeIcons.usersSlash,
+          title: 'Blocked Users',
+          subtitle: 'Manage your blocked users',
+          onTap: () {
+            showBlockedUserListDialog(context);
+          },
+          index: 5,
+          isAnimated: _isAnimated,
+        ),
 
         /// App Guide
         MenuTile(
@@ -164,8 +165,6 @@ class _MenuListState extends State<MenuList> {
           index: 6,
           isAnimated: _isAnimated,
         ),
-
-        SizedBox(height: widget.spacing),
 
         /// Terms of Users
         MenuTile(
@@ -179,8 +178,6 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
-        SizedBox(height: widget.spacing),
-
         /// Privacy Policy
         MenuTile(
           icon: FontAwesomeIcons.lightShieldHalved,
@@ -192,8 +189,6 @@ class _MenuListState extends State<MenuList> {
           index: 8,
           isAnimated: _isAnimated,
         ),
-
-        SizedBox(height: widget.spacing),
 
         /// Member Withdrawal
         MenuTile(
@@ -207,8 +202,6 @@ class _MenuListState extends State<MenuList> {
           isAnimated: _isAnimated,
         ),
 
-        SizedBox(height: widget.spacing),
-
         /// Logout Button
         MenuTile(
           icon: FontAwesomeIcons.lightRightFromBracket,
@@ -218,8 +211,6 @@ class _MenuListState extends State<MenuList> {
           index: 10,
           isAnimated: _isAnimated,
         ),
-
-        SizedBox(height: widget.spacing),
       ],
     );
   }
