@@ -31,20 +31,8 @@ class SingleChatRoomHeader extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        Blocked(
-          otherUserUid: otherUser.uid,
-          yes: () => const SizedBox.shrink(),
-          no: () => Row(
-            children: [
-              /// 즐겨찾기 버튼 - 채팅방을 즐겨찾기 폴더에 추가
-              /// Firebase에서 실시간으로 즐겨찾기 상태를 확인하여 아이콘 변경
-              _FavoriteIconButton(roomId: join.id),
-
-              // Push Notification Toggle
-              PushNotificationIcon(subscriptionId: join.id, reverse: true),
-            ],
-          ),
-        ),
+        _FavoriteIconButton(roomId: join.id),
+        PushNotificationIcon(subscriptionId: join.id, reverse: true),
 
         // Gear Menu Button
         IconButton(
