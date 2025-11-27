@@ -33,9 +33,13 @@ class PinnedChatRoomsList extends StatelessWidget {
             itemCount: pinnedChatRooms.length,
             itemBuilder: (context, index) {
               final roomId = pinnedChatRooms.elementAt(index);
-              return _PinnedChatRoomItem(
-                roomId: roomId,
-                onTap: () => onTap(roomId),
+              return Blocked(
+                otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
+                yes: () => const SizedBox.shrink(),
+                no: () => _PinnedChatRoomItem(
+                  roomId: roomId,
+                  onTap: () => onTap(roomId),
+                ),
               );
             },
           ),
