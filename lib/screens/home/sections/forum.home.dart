@@ -43,16 +43,21 @@ class _ForumHomeState extends State<ForumHome> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text(
                     Lo.of(context)!.forum,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
 
                 // Filter Chips (Category Tabs)
-                SizedBox(
+                Container(
                   height: 60,
-                  // 필터 칩 영역도 primaryContainer 배경색 사용
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                        width: 1,
+                      ),
+                    ),
+                  ),
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -70,13 +75,7 @@ class _ForumHomeState extends State<ForumHome> {
                                 homePostCategory.category == category.category,
                             label: Text(category.getLabel(context)),
                             // 선택된 칩의 배경색
-                            selectedColor: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer,
                             // 체크마크 색상
-                            checkmarkColor: Theme.of(
-                              context,
-                            ).colorScheme.primary,
                             onSelected: (_) => ForumState.of(
                               context,
                             ).setHomePostCategory(category),

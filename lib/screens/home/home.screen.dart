@@ -139,10 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ).setHomeNavigation(HomeNavigationItem.values[index]);
           },
           type: BottomNavigationBarType.fixed, // 5개 이상의 항목을 사용할 때 필요
-          selectedItemColor: Theme.of(context).primaryColor, // 선택된 항목 색상
-          unselectedItemColor: Theme.of(
-            context,
-          ).colorScheme.onSurface.withValues(alpha: 0.6),
+
           iconSize: 28,
         ),
       ),

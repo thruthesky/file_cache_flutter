@@ -94,6 +94,11 @@ class AppTheme {
         showSelectedLabels: true,
         showUnselectedLabels: true,
       ),
+      chipTheme: ChipThemeData(
+
+        showCheckmark: false,
+        
+        ),
       // Flat Design - FloatingActionButton Theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 0, // Flat 디자인 - 그림자 제거
