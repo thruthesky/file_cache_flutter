@@ -218,13 +218,25 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                       ? chatJoin.roomName
                                       : chatJoin.userDisplayName,
                                 ),
-                                subtitle: chatJoin.lastMessage.text.isNotEmpty
-                                    ? Text(
-                                        chatJoin.lastMessage.text,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      )
-                                    : null,
+                                subtitle: Blocked(
+                                  otherUserUid: getOtherUserUidFromChatRoomId(
+                                    roomId,
+                                  )!,
+                                  yes: () => Text(
+                                    LibTr.of(context)!.blocked_message,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  no: () {
+                                    return chatJoin.lastMessage.text.isNotEmpty
+                                        ? Text(
+                                            chatJoin.lastMessage.text,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        : SizedBox.shrink();
+                                  },
+                                ),
                                 trailing: chatJoin.unread > 0
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(
