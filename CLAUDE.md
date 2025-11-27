@@ -124,9 +124,9 @@ Container()
 
 ## Comments and Documentation
 
-### 1. Korean Comments Required
+### 1. English Comments Required
 
-Write detailed comments in Korean for all Dart files
+Write detailed comments in english for all Dart files
 
 ### 2. Enhanced Comments for Theme-Related Code
 

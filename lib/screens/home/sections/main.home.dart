@@ -35,54 +35,70 @@ class _MainHomeState extends State<MainHome> {
     final scheme = Theme.of(context).colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          /// SafeArea
-          SafeArea(child: Container()),
-
-          /// 앱바: 로고 + 설정 버튼
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                /// PhilGo 로고
-                Image.asset('assets/img/logo/philgo_wide_logo.png', height: 28),
-                const Spacer(),
-
-                /// 설정 버튼
-                IconButton(
-                  icon: FaIcon(
-                    FontAwesomeIcons.lightGear,
-                    color: scheme.onPrimaryContainer,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    NavigationState.of(
-                      context,
-                      listen: false,
-                    ).setHomeNavigation(HomeNavigationItem.menu);
-                  },
-                  tooltip: Lo.of(context)!.settings,
+    return Column(
+      children: [
+        /// SafeArea
+        SafeArea(
+          child:
+              /// 앱바: 로고 + 설정 버튼
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: scheme.outlineVariant, width: 1),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/img/logo/philgo_wide_logo_icon.png',
+                      height: 28,
+                    ),
+                    const Spacer(),
+
+                    /// 설정 버튼
+                    IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.lightGear,
+                        color: scheme.onSurface,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        NavigationState.of(
+                          context,
+                          listen: false,
+                        ).setHomeNavigation(HomeNavigationItem.menu);
+                      },
+                      tooltip: Lo.of(context)!.settings,
+                    ),
+                  ],
+                ),
+              ),
+        ),
+
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: sp.s16),
+                const UserStats(),
+
+                SizedBox(height: sp.s24),
+                Login(
+                  builder: (uid) {
+                    return LatestUserPosts(firebase_uid: uid);
+                  },
+                ),
+                SizedBox(height: sp.s24),
               ],
             ),
           ),
-
-          SizedBox(height: sp.s8),
-
-          const UserStats(),
-
-          SizedBox(height: sp.s8),
-          Login(
-            builder: (uid) {
-              return LatestUserPosts(firebase_uid: uid);
-            },
-          ),
-          SizedBox(height: sp.s24),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

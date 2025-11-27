@@ -179,14 +179,28 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
   /// 게시글 리스트 위젯 - CompactPostListTile 사용
   Widget _buildPostsList() {
+    final scheme = Theme.of(context).colorScheme;
+
     return Column(
       children: _posts.asMap().entries.map((entry) {
         final index = entry.key;
         final post = entry.value;
 
-        return Card(
-              elevation: 0,
+        return Container(
               margin: const EdgeInsets.only(bottom: 12),
+              /// Flat 2.0 - 미묘한 그림자 추가 (4% 투명도)
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0A000000), // 4% opacity black
+                    offset: Offset(0, 1),
+                    blurRadius: 2,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
               child: CompactPostListTile(
                 post: post,
                 onTap: () async {

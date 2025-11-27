@@ -1,5 +1,3 @@
-// import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -117,7 +115,6 @@ class _ForumHomeState extends State<ForumHome> {
                           ForumCategoryHeader(totalPostCount: totalPostCount),
                           Spacer(),
                           TextButton.icon(
-                            
                             onPressed: () async {
                               final post = await PostCreateScreen.push(context);
                               debugLog('post: $post');

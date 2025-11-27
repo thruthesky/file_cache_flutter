@@ -1,1 +1,1 @@
-Refer to this documentation [CLAUDE.md](/CLAUDE.md) 
+**Always refer to the documentation [CLAUDE.md](/CLAUDE.md)
