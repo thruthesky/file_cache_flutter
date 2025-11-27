@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/state/app.state.dart';
 
 class LanguageScreen extends StatefulWidget {
@@ -10,9 +11,7 @@ class LanguageScreen extends StatefulWidget {
   static Future<T?> push<T>(BuildContext context) {
     return Navigator.push<T>(
       context,
-      MaterialPageRoute(
-        builder: (context) => const LanguageScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const LanguageScreen()),
     );
   }
 
@@ -47,7 +46,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Language changed to $_selectedLanguage'),
+        content: Text(Lo.of(context)!.languageChanged),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -63,7 +62,14 @@ class _LanguageScreenState extends State<LanguageScreen> {
     return Scaffold(
       /// AppBar
       appBar: AppBar(
-        title: Text('Language Settings', style: theme.textTheme.headlineMedium),
+        title: Text(
+          Lo.of(context)!.languageSettings,
+          style: theme.textTheme.titleLarge,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
       ),
 
       /// Body
@@ -82,7 +88,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 value: _selectedLanguage,
                 isExpanded: true,
                 underline: const SizedBox(),
-                hint: const Text('Select Language'),
+                hint: Text(Lo.of(context)!.selectLanguage),
                 icon: Icon(Icons.arrow_drop_down, color: scheme.onSurface),
                 items: _languages.map((language) {
                   return DropdownMenuItem<String>(
@@ -148,7 +154,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               minimumSize: const Size(double.infinity, 56),
             ),
-            child: const Text('Save Language'),
+            child: Text(Lo.of(context)!.saveLanguage),
           ),
         ),
       ),

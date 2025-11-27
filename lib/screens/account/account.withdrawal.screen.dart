@@ -50,7 +50,11 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
         ),
         title: Text(
           T.accountWithdrawalTitle,
-          style: theme.textTheme.headlineMedium,
+          style: theme.textTheme.titleLarge,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
       ),
       // Body

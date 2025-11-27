@@ -45,9 +45,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(T.editProfile, style: theme.textTheme.headlineMedium),
+        title: Text(T.editProfile, style: theme.textTheme.titleLarge),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
       ),
       body: UserReady(
         init: (context, user) async {
@@ -69,9 +74,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 video: true,
                 onUploaded: (url) async {
                   log('uploaded file url: $url');
-                  final user = await philgoApiUserUpdate({'photo_url': url});
+                  final updatedUser = await philgoApiUserUpdate({
+                    'photo_url': url,
+                  });
                   if (context.mounted) {
-                    AppState.of(context).setUser(user);
+                    // Update the global app state
+                    AppState.of(context).setUser(updatedUser);
+                    showSuccessSnackBar(
+                      context,
+                      'Profile photo updated successfully',
+                    );
                   }
                 },
                 onBeforeUpload: () {

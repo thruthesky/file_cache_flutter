@@ -86,7 +86,9 @@
     "daysAgo",
     "weeksAgo",
     "monthsAgo",
-    "yearsAgo"
+    "yearsAgo",
+    "latestPosts",
+    "viewAll"
   ],
 
   "zh": [
@@ -176,6 +178,8 @@
     "daysAgo",
     "weeksAgo",
     "monthsAgo",
-    "yearsAgo"
+    "yearsAgo",
+    "latestPosts",
+    "viewAll"
   ]
 }

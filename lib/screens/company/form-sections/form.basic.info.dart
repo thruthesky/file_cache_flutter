@@ -6,6 +6,8 @@ import 'package:philgo/widgets/information.box.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company name and optional company domain fields
+///
+/// TODO: Translations
 class FormBasicInfo extends StatelessWidget {
   const FormBasicInfo({
     super.key,

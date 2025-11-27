@@ -6,22 +6,22 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/about/about.screen.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
-import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
+import 'package:philgo/screens/company/company.form.screen.dart';
+import 'package:philgo/screens/company/company.grid.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/settings/language.screen.dart';
-import 'package:philgo/screens/settings/settings.screen.dart';
 import 'package:philgo/screens/theme/theme.preview.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/user/my.activity.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
+import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -221,28 +221,7 @@ final router = GoRouter(
       path: PostViewScreen.routeName,
       name: PostViewScreen.routeName,
       builder: (context, state) {
-        // 안전한 타입 체크: Post 객체 직접 전달 또는 Map으로 전달 모두 지원
-        Post? post;
-        if (state.extra is Post) {
-          // Post 객체가 직접 전달된 경우 (일반적인 경우)
-          post = state.extra as Post;
-        } else if (state.extra is Map<String, dynamic>) {
-          // Map으로 전달된 경우 (예: {'post': post})
-          final extraMap = state.extra as Map<String, dynamic>;
-          post = extraMap['post'] as Post?;
-        }
-
-        // NavigationState fallback (웹 URL 접근 시)
-        if (post == null) {
-          final data = NavigationState.of(context, listen: false).data;
-          if (data is Map<String, dynamic> && data['post'] != null) {
-            post = data['post'] as Post?;
-          }
-        }
-
-        // post가 여전히 null인 경우 (Toggle Select Widget Mode 등)
-        // 홈 화면으로 리다이렉트하여 에러 방지
-        if (post == null) {
+        if (state.extra == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go(HomeScreen.routeName);
           });
@@ -250,7 +229,13 @@ final router = GoRouter(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-
+        Post post;
+        if (state.extra is Post) {
+          post = state.extra as Post;
+        } else {
+          final extraMap = state.extra as Map<String, dynamic>;
+          post = Post.fromJson(extraMap);
+        }
         return PostViewScreen(post: post);
       },
     ),
@@ -299,19 +284,30 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: MyActivityScreen.routeName,
-      name: MyActivityScreen.routeName,
+      path: UserActivityScreen.routeName,
+      name: UserActivityScreen.routeName,
       builder: (context, state) {
-        final initialTab =
-            state.extra as MyActivityTab? ?? MyActivityTab.posts;
-        return MyActivityScreen(initialTab: initialTab);
+        return UserActivityScreen(uid: '');
+      },
+    ),
+    GoRoute(
+      path: CompanyGridScreen.routeName,
+      name: CompanyGridScreen.routeName,
+      builder: (context, state) {
+        return const CompanyGridScreen();
       },
     ),
     GoRoute(
       path: CompanyListScreen.routeName,
       name: CompanyListScreen.routeName,
       builder: (context, state) {
-        return const CompanyListScreen();
+        final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+        final categoryName = state.uri.queryParameters['categoryName'] ?? '';
+
+        return CompanyListScreen(
+          categoryId: categoryId,
+          categoryName: categoryName,
+        );
       },
     ),
     GoRoute(
@@ -349,11 +345,6 @@ final router = GoRouter(
       path: ThemePreviewScreen.routeName,
       name: ThemePreviewScreen.routeName,
       builder: (context, state) => const ThemePreviewScreen(),
-    ),
-    GoRoute(
-      path: SettingsScreen.routeName,
-      name: SettingsScreen.routeName,
-      builder: (context, state) => const SettingsScreen(),
     ),
     GoRoute(
       path: LanguageScreen.routeName,

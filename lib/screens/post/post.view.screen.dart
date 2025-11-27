@@ -81,12 +81,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return name.isEmpty ? 'No Name' : name;
   }
 
-  String get timeString => widget.post.timeString;
+  int get stamp => post?.stamp ?? widget.post.stamp;
   String get noOfView => post != null
       ? post!.no_of_view.toString()
       : widget.post.no_of_view.toString();
   int get noOfComment =>
       post != null ? post!.no_of_comment : widget.post.no_of_comment;
+  String? get photoUrl => post?.photo_url ?? widget.post.photo_url;
+  String get firebaseUid => post?.firebase_uid ?? widget.post.firebase_uid;
 
   @override
   Widget build(BuildContext context) {
@@ -100,181 +102,243 @@ class _PostViewScreenState extends State<PostViewScreen> {
               : context.go(HomeScreen.routeName),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PostViewHeader(
-                subject: subject,
-                nickname: nickname,
-                timeString: widget.post.timeString,
-                noOfView: noOfView,
-                photoUrl: widget.post.photo_url,
-                onTapNickname: () {
-                  /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
-                  ProfileViewScreen.push(
-                    context,
-                    firebaseUid: widget.post.firebase_uid,
-                    nickname: widget.post.nickname,
-                    photoUrl: widget.post.photo_url,
-                  );
-                },
-              ),
-              SizedBox(height: 16),
-              if (hasImages) PostViewImages(files: files),
-              SizedBox(height: 16),
-              PostViewContent(isLoading: isLoading, content: content),
-              SizedBox(height: 16),
-              PostViewButtons(
-                post: post,
-                myPost: isPostMine(),
-                onLike: () async {
-                  /// Call like API and update the like count
-                  try {
-                    final updatedGood = await likePost(widget.post.idx);
-                    debugLog('Widget Post idx: ${widget.post.idx}');
-                    debugLog('Post liked, new good count: $updatedGood');
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Blocked(
+                      otherUserUid: firebaseUid,
+                      yes: () => GestureDetector(
+                        onTap: () {
+                          showUnblockDialog(
+                            context: context,
+                            otherUserUid: firebaseUid,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Avatar(photoUrl: photoUrl),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  '${LibTr.of(context)!.post_from_blocked_user} $nickname',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      no: () => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          PostViewHeader(
+                            subject: subject,
+                            nickname: nickname,
+                            stamp: stamp,
+                            noOfView: noOfView,
+                            photoUrl: photoUrl,
+                            onTapNickname: () {
+                              /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
+                              ProfileViewScreen.push(
+                                context,
+                                firebaseUid: firebaseUid,
+                                nickname: nickname,
+                                photoUrl: photoUrl,
+                              );
+                            },
+                          ),
+                          SizedBox(height: 16),
+                          if (hasImages) PostViewImages(files: files),
+                          SizedBox(height: 16),
+                          PostViewContent(isLoading: false, content: content),
+                          SizedBox(height: 16),
+                          PostViewButtons(
+                            post: post,
+                            myPost: isPostMine(),
+                            onLike: () async {
+                              /// Call like API and update the like count
+                              try {
+                                final updatedGood = await likePost(
+                                  widget.post.idx,
+                                );
+                                debugLog('Widget Post idx: ${widget.post.idx}');
+                                debugLog(
+                                  'Post liked, new good count: $updatedGood',
+                                );
 
-                    // Update the good count in the current post object
-                    (post ?? widget.post).good = updatedGood;
+                                // Update the good count in the current post object
+                                (post ?? widget.post).good = updatedGood;
+                                if (mounted) {
+                                  setState(() {});
+                                }
+
+                                if (context.mounted) {
+                                  showSuccessSnackBar(context, 'Post liked');
+                                }
+                              } catch (e) {
+                                d('Error liking post: $e');
+
+                                // Handle already-liked error
+                                if (e.toString().contains('already-liked')) {
+                                  if (context.mounted) {
+                                    showErrorSnackBar(
+                                      context,
+                                      'Already liked this post',
+                                    );
+                                  }
+                                }
+                              }
+                            },
+                            onTapUpdate: () async {
+                              /// 댓글이 있는 경우 수정 불가
+                              if (post!.no_of_comment >= 1) {
+                                showInfoDialog(
+                                  context,
+                                  Lo.of(context)!.alert,
+                                  Lo.of(
+                                    context,
+                                  )!.postWithCommentsCannotBeEdited,
+                                );
+                                return;
+                              }
+
+                              final updatedPost = await PostUpdateScreen.push(
+                                context,
+                                post: post!,
+                              );
+                              if (updatedPost != null) {
+                                widget.post.subject = updatedPost.subject;
+                                widget.post.content = updatedPost.content;
+                              }
+
+                              if (updatedPost != null && mounted) {
+                                setState(() {
+                                  post = updatedPost;
+                                });
+                              }
+                            },
+                            onTapDelete: () async {
+                              /// 댓글이 있는 경우 삭제 불가
+                              if (post!.no_of_comment >= 1) {
+                                showInfoDialog(
+                                  context,
+                                  Lo.of(context)!.alert,
+                                  Lo.of(
+                                    context,
+                                  )!.postWithCommentsCannotBeDeleted,
+                                );
+                                return;
+                              }
+
+                              debugLog("deleted post");
+
+                              final confirm = await showConfirmDialog(
+                                message: Lo.of(context)!.confirmDeletePost,
+                              );
+
+                              if (confirm) {
+                                await deletePost(widget.post.idx);
+
+                                if (context.mounted) {
+                                  context.pop();
+                                }
+                              }
+                            },
+                            onTapBlock: () {
+                              showBlockDialog(
+                                context: context,
+                                otherUserUid: firebaseUid,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+                    CommentDetailListView(
+                      myComment: isCommentMine,
+                      noOfComment: noOfComment,
+                      isLoading: false,
+                      post: post,
+                      onReplied: (createdComment) {
+                        int? where = post?.comments.indexWhere(
+                          (comment) => comment.idx == createdComment.idx_parent,
+                        );
+
+                        if (where != null) {
+                          post?.comments.insert(where + 1, createdComment);
+                        }
+
+                        post!.no_of_comment += 1;
+
+                        if (mounted) {
+                          setState(() {});
+                          showSuccessSnackBar(context, 'A comment has replied');
+                        }
+                      },
+                      onUpdated: (oldComment, updatedComment) {
+                        oldComment.content = updatedComment.content;
+                        oldComment.files = updatedComment.files;
+
+                        if (mounted) {
+                          setState(() {});
+                          showSuccessSnackBar(context, 'A comment has updated');
+                        }
+                      },
+                      onDeleted: (deletedComment) {
+                        // Remove the deleted comment from the list
+                        post?.comments.removeWhere(
+                          (comment) => comment.idx == deletedComment.idx,
+                        );
+
+                        // Decrease comment count
+                        post!.no_of_comment -= 1;
+
+                        // Update UI
+                        if (mounted) {
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+      bottomNavigationBar: post != null
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CommentToPost(
+                  post: post!,
+                  onCreated: (createdComment) {
+                    post?.comments.add(createdComment);
+                    post!.no_of_comment += 1;
                     if (mounted) {
                       setState(() {});
+                      showSuccessSnackBar(context, 'Comment has created');
                     }
-
-                    if (context.mounted) {
-                      showSuccessSnackBar(context, 'Post liked');
-                    }
-                  } catch (e) {
-                    d('Error liking post: $e');
-
-                    // Handle already-liked error
-                    if (e.toString().contains('already-liked')) {
-                      if (context.mounted) {
-                        showErrorSnackBar(context, 'Already liked this post');
-                      }
-                    }
-                  }
-                },
-                onTapUpdate: () async {
-                  /// 댓글이 있는 경우 수정 불가
-                  if (post!.no_of_comment >= 1) {
-                    showInfoDialog(
-                      context,
-                      Lo.of(context)!.alert,
-                      Lo.of(context)!.postWithCommentsCannotBeEdited,
-                    );
-                    return;
-                  }
-
-                  final updatedPost = await PostUpdateScreen.push(
-                    context,
-                    post: post!,
-                  );
-                  if (updatedPost != null) {
-                    widget.post.subject = updatedPost.subject;
-                    widget.post.content = updatedPost.content;
-                  }
-
-                  if (updatedPost != null && mounted) {
-                    setState(() {
-                      post = updatedPost;
-                    });
-                  }
-                },
-                onTapDelete: () async {
-                  /// 댓글이 있는 경우 삭제 불가
-                  if (post!.no_of_comment >= 1) {
-                    showInfoDialog(
-                      context,
-                      Lo.of(context)!.alert,
-                      Lo.of(context)!.postWithCommentsCannotBeDeleted,
-                    );
-                    return;
-                  }
-
-                  debugLog("deleted post");
-
-                  final confirm = await showConfirmDialog(
-                    message: Lo.of(context)!.confirmDeletePost,
-                  );
-
-                  if (confirm) {
-                    await deletePost(widget.post.idx);
-
-                    if (context.mounted) {
-                      context.pop();
-                    }
-                  }
-                },
+                  },
+                ),
               ),
-              SizedBox(height: 16),
-              CommentDetailListView(
-                myComment: isCommentMine,
-                noOfComment: noOfComment,
-                isLoading: isLoading,
-                post: post,
-                onReplied: (createdComment) {
-                  int? where = post?.comments.indexWhere(
-                    (comment) => comment.idx == createdComment.idx_parent,
-                  );
-
-                  if (where != null) {
-                    post?.comments.insert(where + 1, createdComment);
-                  }
-
-                  post!.no_of_comment += 1;
-
-                  if (mounted) {
-                    setState(() {});
-                    showSuccessSnackBar(context, 'A comment has replied');
-                  }
-                },
-                onUpdated: (oldComment, updatedComment) {
-                  oldComment.content = updatedComment.content;
-                  oldComment.files = updatedComment.files;
-
-                  if (mounted) {
-                    setState(() {});
-                    showSuccessSnackBar(context, 'A comment has updated');
-                  }
-                },
-                onDeleted: (deletedComment) {
-                  // Remove the deleted comment from the list
-                  post?.comments.removeWhere(
-                    (comment) => comment.idx == deletedComment.idx,
-                  );
-
-                  // Decrease comment count
-                  post!.no_of_comment -= 1;
-
-                  // Update UI
-                  if (mounted) {
-                    setState(() {});
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CommentToPost(
-            post: widget.post,
-            onCreated: (createdComment) {
-              post?.comments.add(createdComment);
-              post!.no_of_comment += 1;
-              if (mounted) {
-                setState(() {});
-                showSuccessSnackBar(context, 'Comment has created');
-              }
-            },
-          ),
-        ),
-      ),
+            )
+          : null,
     );
   }
 }

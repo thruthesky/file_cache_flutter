@@ -1,20 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/globals.dart';
-import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
-import 'package:philgo/widgets/skeletons/skeleton.company.card.list.dart';
+import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
-/// Company Directory Screen
-/// Displays company categories and allows navigation to company creation
-class CompanyListScreen extends StatefulWidget {
-  static const String routeName = '/company-list';
-  static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
-  static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
+/// Get icon for company category
+/// Returns appropriate FontAwesome icon based on category ID
+IconData _getCategoryIcon(String category) {
+  switch (category) {
+    case 'public-office':
+      return FontAwesomeIcons.lightBuilding;
+    case 'education':
+      return FontAwesomeIcons.lightGraduationCap;
+    case 'food':
+      return FontAwesomeIcons.lightUtensils;
+    case 'transport':
+      return FontAwesomeIcons.lightBus;
+    case 'hospital':
+      return FontAwesomeIcons.lightHospital;
+    case 'mart':
+      return FontAwesomeIcons.lightCartShopping;
+    case 'bank':
+      return FontAwesomeIcons.lightBuildingColumns;
+    case 'gadget':
+      return FontAwesomeIcons.lightMobileScreen;
+    case 'travel-agency':
+      return FontAwesomeIcons.lightPlaneDeparture;
+    case 'hotel':
+      return FontAwesomeIcons.lightHotel;
+    case 'rentcar':
+      return FontAwesomeIcons.lightCar;
+    case 'beauty':
+      return FontAwesomeIcons.lightScissors;
+    case 'real-estate':
+      return FontAwesomeIcons.lightHouseChimney;
+    case 'ktv':
+      return FontAwesomeIcons.lightMicrophone;
+    case 'spa':
+      return FontAwesomeIcons.lightSpa;
+    case 'etc':
+    default:
+      return FontAwesomeIcons.lightEllipsis;
+  }
+}
 
-  const CompanyListScreen({super.key});
+/// Company Category Screen
+/// Displays companies filtered by a specific category
+class CompanyListScreen extends StatefulWidget {
+  static const String routeName = '/company/category';
+
+  final String categoryId;
+  final String categoryName;
+
+  const CompanyListScreen({
+    super.key,
+    required this.categoryId,
+    required this.categoryName,
+  });
+
+  /// Navigation helper to push this screen
+  static Future<T?> push<T>(
+    BuildContext context, {
+    required String categoryId,
+    required String categoryName,
+  }) {
+    return context.push<T>(
+      '$routeName?categoryId=$categoryId&categoryName=$categoryName',
+    );
+  }
 
   @override
   State<CompanyListScreen> createState() => _CompanyListScreenState();
@@ -22,107 +76,26 @@ class CompanyListScreen extends StatefulWidget {
 
 class _CompanyListScreenState extends State<CompanyListScreen> {
   CompanyList? companyList;
-  Company? myCompany;
   bool isLoading = true;
-  bool isLoadingMyCompany = true;
   String? errorMessage;
-  String? selectedCategoryId = 'public-office'; // 기본 선택 카테고리: Public Office
-
-  // 카테고리별 회사 목록 캐시 (categoryId -> CompanyList)
-  final Map<String, CompanyList> _categoryCache = {};
-
-  final List<Map<String, dynamic>> categories = [
-    {
-      'id': 'public-office',
-      'name': 'Public Office',
-      'icon': FontAwesomeIcons.building,
-    },
-    {
-      'id': 'education',
-      'name': 'Education',
-      'icon': FontAwesomeIcons.graduationCap,
-    },
-    {'id': 'food', 'name': 'Food', 'icon': FontAwesomeIcons.utensils},
-    {'id': 'transport', 'name': 'Transport', 'icon': FontAwesomeIcons.bus},
-    {
-      'id': 'hospital',
-      'name': 'Hospital',
-      'icon': FontAwesomeIcons.hospitalUser,
-    },
-    {'id': 'mart', 'name': 'Mart', 'icon': FontAwesomeIcons.cartShopping},
-    {'id': 'bank', 'name': 'Bank', 'icon': FontAwesomeIcons.buildingColumns},
-    {'id': 'gadget', 'name': 'Gadget', 'icon': FontAwesomeIcons.mobileScreen},
-    {
-      'id': 'travel-agency',
-      'name': 'Travel',
-      'icon': FontAwesomeIcons.planeDeparture,
-    },
-    {'id': 'hotel', 'name': 'Hotel', 'icon': FontAwesomeIcons.hotel},
-    {'id': 'rentcar', 'name': 'Rent Car', 'icon': FontAwesomeIcons.car},
-    {'id': 'beauty', 'name': 'Beauty', 'icon': FontAwesomeIcons.scissors},
-    {
-      'id': 'real-estate',
-      'name': 'Real Estate',
-      'icon': FontAwesomeIcons.houseChimney,
-    },
-    {'id': 'ktv', 'name': 'KTV', 'icon': FontAwesomeIcons.microphone},
-    {'id': 'spa', 'name': 'Spa', 'icon': FontAwesomeIcons.spa},
-    {'id': 'etc', 'name': 'ETC', 'icon': FontAwesomeIcons.ellipsis},
-  ];
 
   @override
   void initState() {
     super.initState();
-    _loadMyCompany();
-    _loadCompaniesByCategory('public-office');
+    _loadCompanies();
   }
 
-  /// Fetch current user's company
-  Future<void> _loadMyCompany() async {
-    try {
-      final result = await getMyCompany();
-      myCompany = result;
-      // debugLog('My Company: $myCompany');
-    } catch (e) {
-      debugLog('Error loading my company: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoadingMyCompany = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _loadCompaniesByCategory(String categoryId) async {
-    if (_categoryCache.containsKey(categoryId)) {
-      debugLog('Loading category $categoryId from cache');
-      setState(() {
-        companyList = _categoryCache[categoryId];
-        isLoading = false;
-      });
-      return;
-    }
-
-    // 캐시에 없으면 API 호출
+  /// Fetch companies for the selected category
+  Future<void> _loadCompanies() async {
     setState(() {
       isLoading = true;
       errorMessage = null;
     });
 
     try {
-      debugLog('Fetching category $categoryId from API');
-      final result = await getCompanies(category: categoryId);
-
-      // 캐시에 저장
-      _categoryCache[categoryId] = result;
-
+      final result = await getCompanies(category: widget.categoryId);
       companyList = result;
-      debugLog(
-        'Company List for category $categoryId: ${companyList?.companies.length}',
-      );
     } catch (e) {
-      debugLog('Error loading companies: $e');
       if (mounted) {
         setState(() {
           errorMessage = 'Failed to load companies';
@@ -137,132 +110,134 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     }
   }
 
-  void _handleCategoryTap(String? categoryId) {
-    if (categoryId == null || categoryId == selectedCategoryId) return;
-
-    setState(() {
-      selectedCategoryId = categoryId;
-    });
-
-    _loadCompaniesByCategory(categoryId);
-  }
-
+  /// Navigate to company detail screen
   void _handleCompanyTap(Company company) {
     CompanyViewScreen.push(context, company.idx);
-  }
-
-  /// Handle company button press (Register or Update)
-  Future<void> _handleCreateOrUpdateButton() async {
-    if (isLoadingMyCompany) return;
-
-    // Update existing company
-    if (myCompany != null) {
-      final result = await CompanyFormScreen.push(context, company: myCompany);
-      if (result != null) setState(() => myCompany = result);
-      return;
-    }
-
-    // Create new company
-    setState(() => isLoadingMyCompany = true);
-    try {
-      myCompany = await createCompany();
-      if (mounted) {
-        showSuccessSnackBar(context, "Your company is already created");
-      }
-    } finally {
-      if (mounted) setState(() => isLoadingMyCompany = false);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
+    final sp = theme.extension<AppSpacing>()!;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Top SafeArea
-        Container(
-          color: scheme.surface,
-          child: SafeArea(child: Container()),
+    return Scaffold(
+      backgroundColor: scheme.surfaceContainerLow,
+      appBar: AppBar(
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
+        backgroundColor: scheme.surfaceContainerLow,
+        elevation: 1,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const FaIcon(FontAwesomeIcons.chevronLeft, size: 24),
+        ),
+        title: Text(widget.categoryName, style: theme.textTheme.titleLarge),
+      ),
+      body: _buildBody(scheme, theme, sp),
+    );
+  }
 
-        // Company Directory Title
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Row(
+  /// Build body content based on loading state
+  Widget _buildBody(ColorScheme scheme, ThemeData theme, AppSpacing sp) {
+    // Loading state
+    if (isLoading) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [Center(child: CircularProgressIndicator())],
+      );
+    }
+
+    // Error state
+    if (errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.all(sp.s24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                T.companyDirectoryTitle,
-                style: theme.textTheme.headlineMedium,
+              FaIcon(
+                FontAwesomeIcons.lightTriangleExclamation,
+                size: 48,
+                color: scheme.error,
               ),
-              Spacer(),
-              IconButton(
-                icon: FaIcon(
-                  myCompany != null
-                      ? FontAwesomeIcons.penToSquare
-                      : FontAwesomeIcons.circlePlus,
-                  color: scheme.onPrimaryContainer,
-                  size: 24,
+              SizedBox(height: sp.s16),
+              Text(
+                errorMessage!,
+                style: theme.textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: sp.s16),
+              FilledButton.icon(
+                onPressed: _loadCompanies,
+                icon: const FaIcon(
+                  FontAwesomeIcons.lightArrowRotateRight,
+                  size: 16,
                 ),
-                onPressed: _handleCreateOrUpdateButton,
-                tooltip: myCompany != null ? 'Edit Company' : 'Add Company',
+                label: const Text('Retry'),
               ),
             ],
           ),
         ),
+      );
+    }
 
-        const SizedBox(height: 8),
-        CompanyCategoryHeader(
-          categories: categories,
-          selectedCategoryId: selectedCategoryId,
-          onCategoryTap: _handleCategoryTap,
-        ),
-        const SizedBox(height: 16),
-
-        // Body Content (스크롤 가능)
-        Expanded(
-          child: SingleChildScrollView(
-            child: isLoading
-                ? SkeletonCompanyCardList()
-                : selectedCategoryId != null
-                ? _buildCategorySection(selectedCategoryId!)
-                : const SizedBox.shrink(),
+    // Empty state
+    if (companyList == null || companyList!.companies.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.all(sp.s24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                FontAwesomeIcons.lightBuildingCircleXmark,
+                size: 48,
+                color: scheme.onSurfaceVariant,
+              ),
+              SizedBox(height: sp.s16),
+              Text('No companies found', style: theme.textTheme.titleMedium),
+              SizedBox(height: sp.s8),
+              Text(
+                'There are no companies in ${widget.categoryName} category yet.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
-      ],
+      );
+    }
+
+    // Company grid
+    return RefreshIndicator(
+      onRefresh: _loadCompanies,
+      child: GridView.builder(
+        padding: EdgeInsets.all(sp.s16),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: sp.s16,
+          mainAxisSpacing: sp.s16,
+          // childAspectRatio: 1.250,
+          mainAxisExtent: 155,
+        ),
+        itemCount: companyList!.companies.length,
+        itemBuilder: (context, index) {
+          final company = companyList!.companies[index];
+          return CompanyCard(
+            name: company.name,
+            categoryIcon: _getCategoryIcon(company.category),
+            imageUrl: company.title_image_url.isNotEmpty
+                ? company.title_image_url
+                : company.logo_url,
+            onTap: () => _handleCompanyTap(company),
+          );
+        },
+      ),
     );
-  }
-
-  Widget _buildCategorySection(String categoryId) {
-    final category = categories.firstWhere(
-      (cat) => cat['id'] == categoryId,
-      orElse: () => {'id': '', 'name': '', 'icon': FontAwesomeIcons.ellipsis},
-    );
-    final categoryCompanies = _getCompaniesByCategory(categoryId);
-
-    return CompanyListGrid(
-      icon: category['icon'] as IconData,
-      name: category['name'] as String,
-      count: categoryCompanies.length,
-      companies: categoryCompanies,
-      onCompanyTap: _handleCompanyTap,
-    );
-  }
-
-  List<Company> _getCompaniesByCategory(String categoryId) {
-    if (companyList == null) return [];
-
-    // Filter out incomplete companies (idx=0 or missing required fields)
-    return companyList!.companies.where((company) {
-      // Exclude companies with idx=0 (invalid/placeholder companies)
-      if (company.idx == 0) return false;
-
-      // Exclude companies without a name (incomplete registration)
-      if (company.name.isEmpty) return false;
-
-      return true;
-    }).toList();
   }
 }

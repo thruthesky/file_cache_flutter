@@ -13,6 +13,7 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/forum.state.dart';
@@ -69,7 +70,7 @@ class _MyAppState extends State<MyApp> {
         );
       },
       onTapUserRecentPostItem: (context, post) => {
-        log(post.toString(), name: 'onTapUserRecentPostItem::'),
+        PostViewScreen.push(context, post),
       },
     );
     initMessagingService();

@@ -13,6 +13,8 @@ class AppTheme {
       colorScheme: cs,
       // Pretendard 폰트 패밀리 적용
       fontFamily: 'Pretendard',
+      // Flat 2.0 Design - 회색 배경색 (surface container)
+      scaffoldBackgroundColor: cs.surfaceContainerLow,
       textTheme: const TextTheme(
         displayLarge: TextStyle(fontSize: 52),
         displayMedium: TextStyle(fontSize: 42),
@@ -65,24 +67,34 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        backgroundColor: cs.surface, // Scaffold와 동일한 배경색 사용
+        backgroundColor: cs.surfaceContainerLow,
         centerTitle: false,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedIconTheme: const IconThemeData(size: 20),
-        unselectedIconTheme: const IconThemeData(size: 20),
+        selectedIconTheme: const IconThemeData(size: 24),
+        unselectedIconTheme: const IconThemeData(size: 24),
         selectedLabelStyle: const TextStyle(
           fontSize: 12,
-          height: 2.5,
-          fontWeight: FontWeight.w500,
+          height: 2.0,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.10,
         ),
         unselectedLabelStyle: const TextStyle(
           fontSize: 12,
-          height: 2.5,
+          height: 2.0,
           fontWeight: FontWeight.w400,
+          letterSpacing: -0.10,
         ),
         type: BottomNavigationBarType.fixed, // 고정 타입
+        backgroundColor: cs.surface, // 흰색 배경
+        selectedItemColor: cs.primary, // 선택된 아이템 색상
+        unselectedItemColor: cs.onSurfaceVariant, // 선택 안된 아이템 색상
+        elevation: 0, // Flat 디자인
+        /// Flat 2.0 - 미묘한 상단 테두리
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
       ),
+      chipTheme: ChipThemeData(showCheckmark: false),
       // Flat Design - FloatingActionButton Theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 0, // Flat 디자인 - 그림자 제거

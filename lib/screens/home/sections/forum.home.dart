@@ -1,5 +1,3 @@
-// import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -45,16 +43,21 @@ class _ForumHomeState extends State<ForumHome> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text(
                     Lo.of(context)!.forum,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
 
                 // Filter Chips (Category Tabs)
-                SizedBox(
+                Container(
                   height: 60,
-                  // 필터 칩 영역도 primaryContainer 배경색 사용
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                        width: 1,
+                      ),
+                    ),
+                  ),
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -71,17 +74,24 @@ class _ForumHomeState extends State<ForumHome> {
                                 homePostCategory.postId == category.postId &&
                                 homePostCategory.category == category.category,
                             label: Text(category.getLabel(context)),
-                            // 선택된 칩의 배경색
-                            selectedColor: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer,
-                            // 체크마크 색상
-                            checkmarkColor: Theme.of(
-                              context,
-                            ).colorScheme.primary,
                             onSelected: (_) => ForumState.of(
                               context,
                             ).setHomePostCategory(category),
+                            // Selected chip background color - use primaryContainer for Material 3
+                            selectedColor: Theme.of(
+                              context,
+                            ).colorScheme.inversePrimary,
+                            // Selected chip checkmark and label color
+                            // Label color when selected
+                            labelStyle: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onPrimaryContainer,
+                            ),
+                            // Background color when not selected
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
                           ),
                           if (index == categories.length - 1)
                             const SizedBox(width: 16),
@@ -112,8 +122,25 @@ class _ForumHomeState extends State<ForumHome> {
                       }
                     },
                     headerBuilder: (context, totalPostCount) {
-                      return ForumCategoryHeader(
-                        totalPostCount: totalPostCount,
+                      return Row(
+                        children: [
+                          ForumCategoryHeader(totalPostCount: totalPostCount),
+                          Spacer(),
+                          TextButton.icon(
+                            onPressed: () async {
+                              final post = await PostCreateScreen.push(context);
+                              debugLog('post: $post');
+                              if (post != null) {
+                                onNewPostCreated(post);
+                              }
+                            },
+                            icon: const FaIcon(
+                              FontAwesomeIcons.penToSquare,
+                              size: 18,
+                            ),
+                            label: Text(LibTr.of(context)!.create_post),
+                          ),
+                        ],
                       );
                     },
                     noItemsFoundIndicatorBuilder: (context) {
@@ -122,23 +149,6 @@ class _ForumHomeState extends State<ForumHome> {
                   ),
                 ),
               ],
-            ),
-
-            // Floating Action Button
-            Positioned(
-              right: 16,
-              bottom: 16,
-              child: FloatingActionButton.extended(
-                onPressed: () async {
-                  final post = await PostCreateScreen.push(context);
-                  debugLog('post: $post');
-                  if (post != null) {
-                    onNewPostCreated(post);
-                  }
-                },
-                icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 18),
-                label: Text(LibTr.of(context)!.create_post),
-              ),
             ),
           ],
         );

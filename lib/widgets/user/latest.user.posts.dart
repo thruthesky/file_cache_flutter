@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/user/my.activity.screen.dart';
+import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/state/app.state.dart';
+import 'package:philgo/widgets/post/compact.post.list.tile.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +24,7 @@ class LatestUserPosts extends StatefulWidget {
     super.key,
     this.idx_member,
     this.firebase_uid,
-    this.limit = 10,
+    this.limit = 5,
   });
 
   final int? idx_member;
@@ -81,7 +83,8 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
         if (user == null) return const SizedBox.shrink();
 
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -91,7 +94,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
                 child: Row(
                   children: [
                     Text(
-                      'Latest Posts',
+                      T.latestPosts,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: scheme.onSurface,
@@ -102,16 +105,18 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
                     TextButton(
                       onPressed: () {
-                        MyActivityScreen.push(
-                          context,
-                          initialTab: MyActivityTab.posts,
-                        );
+                        if (widget.firebase_uid != null) {
+                          UserActivityScreen.push(
+                            context,
+                            uid: widget.firebase_uid!,
+                          );
+                        }
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'View All',
+                            T.viewAll,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.primary,
                             ),
@@ -161,7 +166,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No posts yet',
+              T.noPostsYet,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
@@ -172,17 +177,31 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
     );
   }
 
-  /// 게시글 리스트 위젯 - PostListTile 사용
+  /// 게시글 리스트 위젯 - CompactPostListTile 사용
   Widget _buildPostsList() {
+    final scheme = Theme.of(context).colorScheme;
+
     return Column(
       children: _posts.asMap().entries.map((entry) {
         final index = entry.key;
         final post = entry.value;
 
-        return Card(
-              elevation: 0,
+        return Container(
               margin: const EdgeInsets.only(bottom: 12),
-              child: PostListTile(
+              /// Flat 2.0 - 미묘한 그림자 추가 (4% 투명도)
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0A000000), // 4% opacity black
+                    offset: Offset(0, 1),
+                    blurRadius: 2,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: CompactPostListTile(
                 post: post,
                 onTap: () async {
                   await PostViewScreen.push(context, post);
