@@ -114,6 +114,13 @@ class _MenuHomeState extends State<MenuHome> {
                         }
                       },
                     ),
+                    MenuItem(
+                      icon: FontAwesomeIcons.usersSlash,
+                      title: 'Blocked Users',
+                      onTap: () async {
+                        showBlockedUserListDialog(context);
+                      },
+                    ),
                   ],
                 ),
 

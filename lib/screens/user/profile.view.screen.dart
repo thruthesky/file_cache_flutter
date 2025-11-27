@@ -226,23 +226,21 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                     value: user?.noOfPost ?? 0,
                                     // value: 1,
                                     label: T.posts, // 'Posts',
-                                    icon: FontAwesomeIcons.lightFileLines,
                                   ),
                                 ),
 
                                 const SizedBox(width: 12),
 
-                        /// Comments stat
-                        Expanded(
-                          child: StatContainer(
-                            value: user?.noOfComment ?? 0,
-                            label: T.comments, // 'Comments',
-                            icon: FontAwesomeIcons.lightComment,
+                                /// Comments stat
+                                Expanded(
+                                  child: StatContainer(
+                                    value: user?.noOfComment ?? 0,
+                                    label: T.comments, // 'Comments',
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
 
                           SizedBox(height: 16),
                           LatestUserPosts(firebase_uid: widget.firebaseUid),
