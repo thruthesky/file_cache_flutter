@@ -129,6 +129,10 @@ class _UserActivityScreenState extends State<UserActivityScreen>
     return Scaffold(
       backgroundColor: scheme.surface,
       appBar: AppBar(
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
         leading: BackButton(
           onPressed: () => Navigator.of(context).canPop()
               ? Navigator.of(context).pop()
@@ -149,10 +153,10 @@ class _UserActivityScreenState extends State<UserActivityScreen>
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text('Loading...', style: theme.textTheme.headlineMedium),
+                  Text('Loading...', style: theme.textTheme.titleLarge),
                 ],
               )
-            : Text(_getTitle(_user), style: theme.textTheme.headlineMedium),
+            : Text(_getTitle(_user), style: theme.textTheme.titleLarge),
         backgroundColor: theme.scaffoldBackgroundColor,
       ),
       body: UserPostsList(
