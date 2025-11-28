@@ -1,8 +1,18 @@
 {
+  "ja": [
+    "philgoPhoneLogin",
+    "phoneNumberExample"
+  ],
+
   "ko": [
     "loginToSeeProfile",
     "viewPostsCommentsPoints",
     "updateYourNickname",
     "points"
+  ],
+
+  "zh": [
+    "philgoPhoneLogin",
+    "phoneNumberExample"
   ]
 }

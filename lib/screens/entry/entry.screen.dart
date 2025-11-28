@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.login.screen.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
@@ -22,9 +23,25 @@ class EntryScreen extends StatelessWidget {
                 animated: true,
                 rotating: true,
               ),
-              const SizedBox(height: 48),
-              // 로그인 버튼
-              ElevatedButton(
+              const SizedBox(height: 16),
+              // App title
+              Text(
+                "필고(PhilGo)",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 4),
+              // App description
+              Text(
+                "필리핀의 모든 것을 담았습니다",
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 40),
+              // 로그인 버튼 - Strong visual hierarchy
+              ElevatedButton.icon(
+                icon: const FaIcon(FontAwesomeIcons.lightRightToBracket, size: 16),
+                label: Text(Lo.of(context)!.login),
                 onPressed: () {
                   showGeneralDialog(
                     context: context,
@@ -60,10 +77,9 @@ class EntryScreen extends StatelessWidget {
                             ),
                           );
                         },
-                  );
-                },
-                child: Text(Lo.of(context)!.login),
-              ),
+                    );
+                  },
+                ),
             ],
           ),
         ),

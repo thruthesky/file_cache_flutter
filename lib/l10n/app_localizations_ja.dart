@@ -1083,4 +1083,10 @@ class LoJa extends Lo {
 
   @override
   String get points => 'ポイント';
+
+  @override
+  String get philgoPhoneLogin => 'PhilGo Phone Login';
+
+  @override
+  String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';
 }

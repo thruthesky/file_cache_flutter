@@ -149,16 +149,14 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                     ),
                                     SizedBox(width: sp.s12),
                                     Text(
-                                      "필고 전화번호 로그인",
+                                      Lo.of(context)!.philgoPhoneLogin,
                                       style: Theme.of(
                                         context,
                                       ).textTheme.titleLarge,
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: sp.s40),
-
-                                SizedBox(height: sp.s32 + sp.s8),
+                                SizedBox(height: sp.s24),
 
                                 // PhoneSignIn Widget - full width
                                 Padding(
@@ -242,7 +240,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                               top: 8.0,
                                             ),
                                             child: Text(
-                                              "예: 09123456789 또는 01012345678",
+                                              Lo.of(context)!.phoneNumberExample,
                                               style: Theme.of(
                                                 context,
                                               ).textTheme.bodySmall,

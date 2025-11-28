@@ -1083,4 +1083,10 @@ class LoKo extends Lo {
 
   @override
   String get points => 'Points';
+
+  @override
+  String get philgoPhoneLogin => '필고 전화번호 로그인';
+
+  @override
+  String get phoneNumberExample => '예: 09123456789 또는 01012345678';
 }
