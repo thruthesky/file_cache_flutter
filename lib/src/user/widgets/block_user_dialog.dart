@@ -61,7 +61,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
     setState(() => _isLoading = true);
 
     try {
-      await blockUser(widget.otherUserUid);
+      await toggleBlockUser(widget.otherUserUid);
       if (mounted) {
         Navigator.of(context).pop();
         widget.onBlocked?.call();
@@ -125,8 +125,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
     setState(() => _isLoading = true);
 
     try {
-      await unblockUser(widget.otherUserUid);
-
+      await toggleBlockUser(widget.otherUserUid);
       if (mounted) {
         Navigator.of(context).pop();
         widget.onUnblocked?.call();

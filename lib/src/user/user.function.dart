@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +62,7 @@ Future<User?> getUser(String uid) async {
 }
 
 /// Block a user
-Future blockUser(String otherUserUid) async {
+Future toggleBlockUser(String otherUserUid) async {
   if (loginUid() == null) {
     throw ('User must login first');
   }
@@ -69,17 +71,25 @@ Future blockUser(String otherUserUid) async {
     throw ('Cannot block yourself');
   }
 
-  await myBlockedUserRef(otherUserUid).set(true);
+  final res = await func(
+    'toggle_block_member',
+    data: {'blockee_firebase_uid': otherUserUid},
+    debug: true,
+  );
+  log(res.toString(), name: 'toggleBlockUser::');
+  return res['blocked'];
+
+  // await myBlockedUserRef(otherUserUid).set(true);
 }
 
 /// Unblock a user
-Future unblockUser(String uid) async {
-  if (loginUid() == null) {
-    throw ('User must login first');
-  }
+// Future unblockUser(String uid) async {
+//   if (loginUid() == null) {
+//     throw ('User must login first');
+//   }
 
-  await myBlockedUserRef(uid).remove();
-}
+//   await myBlockedUserRef(uid).remove();
+// }
 
 void showProfileDialog(BuildContext context, User otherUser) {
   showDialog(
