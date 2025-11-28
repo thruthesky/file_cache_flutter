@@ -64,239 +64,250 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           setState(() {});
         },
         builder: (context, user) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 32),
-              FileUpload(
-                deleteFile: user.photoUrl,
-                file: true,
-                video: true,
-                onUploaded: (url) async {
-                  log('uploaded file url: $url');
-                  final updatedUser = await philgoApiUserUpdate({
-                    'photo_url': url,
-                  });
-                  if (context.mounted) {
-                    // Update the global app state
-                    AppState.of(context).setUser(updatedUser);
-                    showSuccessSnackBar(
-                      context,
-                      'Profile photo updated successfully',
-                    );
-                  }
-                },
-                onBeforeUpload: () {
-                  log('before upload');
-                },
-                onCancelled: () {
-                  log('upload cancelled');
-                },
-                child: UserAvatarWithUploadIcon(
-                  size: 125,
-                  user: user,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16.0,
-                  ),
-                  alignment: Alignment.center,
-                  onTapDelete: () async {
-                    try {
-                      await philgoApiFileDelete(login.photoUrl);
-                      final updatedUser = await philgoApiUserUpdate({
-                        'photo_url': '',
-                      });
-                      if (context.mounted) {
-                        AppState.of(context).setUser(updatedUser);
-                        showSuccessSnackBar(context, 'Profile photo deleted');
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorSnackBar(
-                          context,
-                          'Failed to delete photo: $e',
-                        );
-                      }
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 32),
+                FileUpload(
+                  deleteFile: user.photoUrl,
+                  file: true,
+                  video: true,
+                  onUploaded: (url) async {
+                    log('uploaded file url: $url');
+                    final updatedUser = await philgoApiUserUpdate({
+                      'photo_url': url,
+                    });
+                    if (context.mounted) {
+                      // Update the global app state
+                      AppState.of(context).setUser(updatedUser);
+                      showSuccessSnackBar(
+                        context,
+                        'Profile photo updated successfully',
+                      );
                     }
                   },
-                ),
-              ),
-              SizedBox(height: 8),
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  T.tapPhotoChange,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ),
-              SizedBox(height: 16),
-              TextFieldSet(
-                label: T.nickname,
-                hintText: T.nicknameHint,
-                bottomHint: T.nicknameDisplayHint,
-                prefixFaIconData: FontAwesomeIcons.tag,
-                controller: _nicknameController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 4.0,
-                ),
-                // Disable nickname field if user already has a nickname
-                enabled: user.nickname.isEmpty,
-              ),
-              SizedBox(height: 8),
-              Divider(
-                color: Colors.grey,
-                thickness: 1,
-                indent: 24,
-                endIndent: 24,
-              ),
-              SizedBox(height: 8),
-              Padding(
-                padding: EdgeInsetsGeometry.symmetric(horizontal: 24),
-                child: Text(
-                  T.profileRequiredFieldsNotice,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ),
-              SizedBox(height: 8),
-              TextFieldSet(
-                label: T.fullName,
-                hintText: T.fullNameHint,
-                bottomHint: T.enterRealNameHint,
-                prefixFaIconData: FontAwesomeIcons.user,
-                controller: _nameController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8.0,
-                ),
-              ),
-              DateSelector(
-                date: birthDate,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8.0,
-                ),
-                bottomHint: T.selectBirthDateHint,
-                label: T.birthDate,
-                yearHint: T.year,
-                monthHint: T.month,
-                dayHint: T.day,
-                yearUnit: T.yearUnit,
-                monthUnit: T.monthUnit,
-                dayUnit: T.dayUnit,
-                selectYearAndMonthFirstMessage: T.selectYearAndMonthFirst,
-                selectYearFirstMessage: T.selectYearFirst,
-                selectMonthFirstMessage: T.selectMonthFirst,
-                onChange: (date) {
-                  birthDate = date;
-                },
-              ),
-              SizedBox(height: 8),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      T.gender,
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  onBeforeUpload: () {
+                    log('before upload');
+                  },
+                  onCancelled: () {
+                    log('upload cancelled');
+                  },
+                  child: UserAvatarWithUploadIcon(
+                    size: 125,
+                    user: user,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16.0,
                     ),
-                    SizedBox(height: 8),
-                    RadioGroup<String>(
-                      groupValue: gender,
-                      onChanged: (String? value) {
-                        setState(() {
-                          gender = value;
+                    alignment: Alignment.center,
+                    onTapDelete: () async {
+                      try {
+                        await philgoApiFileDelete(login.photoUrl);
+                        final updatedUser = await philgoApiUserUpdate({
+                          'photo_url': '',
                         });
-                      },
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: Radio<String>(value: "M"),
-                              ),
-                              SizedBox(width: 8),
-                              FaIcon(
-                                FontAwesomeIcons.mars,
-                                size: 16,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                T.male,
-                                style: Theme.of(context).textTheme.labelMedium!
-                                    .copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: Radio<String>(value: "F"),
-                              ),
-                              SizedBox(width: 8),
-                              FaIcon(FontAwesomeIcons.venus, size: 16),
-                              SizedBox(width: 4),
-                              Text(
-                                T.female,
-                                style: Theme.of(context).textTheme.labelMedium!
-                                    .copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: Radio<String>(value: "N"),
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                T.preferNotToSay,
-                                style: Theme.of(context).textTheme.labelMedium!
-                                    .copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                        if (context.mounted) {
+                          AppState.of(context).setUser(updatedUser);
+                          showSuccessSnackBar(context, 'Profile photo deleted');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          showErrorSnackBar(
+                            context,
+                            'Failed to delete photo: $e',
+                          );
+                        }
+                      }
+                    },
+                  ),
                 ),
-              ),
-              SubmitButton.icon(
-                context: context,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                alignment: Alignment.center,
-                onPressed: isLoading ? null : onProfileSubmit,
-                isLoading: isLoading,
-                icon: FaIcon(FontAwesomeIcons.floppyDisk),
-                label: Text(T.save),
-              ),
-            ],
+                SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    T.tapPhotoChange,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextFieldSet(
+                  label: T.nickname,
+                  hintText: T.nicknameHint,
+                  bottomHint: T.nicknameDisplayHint,
+                  prefixFaIconData: FontAwesomeIcons.tag,
+                  controller: _nicknameController,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 4.0,
+                  ),
+                  // Disable nickname field if user already has a nickname
+                  enabled: user.nickname.isEmpty,
+                ),
+                SizedBox(height: 8),
+                Divider(
+                  color: Colors.grey,
+                  thickness: 1,
+                  indent: 24,
+                  endIndent: 24,
+                ),
+                SizedBox(height: 8),
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 24),
+                  child: Text(
+                    T.profileRequiredFieldsNotice,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextFieldSet(
+                  label: T.fullName,
+                  hintText: T.fullNameHint,
+                  bottomHint: T.enterRealNameHint,
+                  prefixFaIconData: FontAwesomeIcons.user,
+                  controller: _nameController,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8.0,
+                  ),
+                ),
+                DateSelector(
+                  date: birthDate,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8.0,
+                  ),
+                  bottomHint: T.selectBirthDateHint,
+                  label: T.birthDate,
+                  yearHint: T.year,
+                  monthHint: T.month,
+                  dayHint: T.day,
+                  yearUnit: T.yearUnit,
+                  monthUnit: T.monthUnit,
+                  dayUnit: T.dayUnit,
+                  selectYearAndMonthFirstMessage: T.selectYearAndMonthFirst,
+                  selectYearFirstMessage: T.selectYearFirst,
+                  selectMonthFirstMessage: T.selectMonthFirst,
+                  onChange: (date) {
+                    birthDate = date;
+                  },
+                ),
+                SizedBox(height: 8),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        T.gender,
+                        style: Theme.of(context).textTheme.labelMedium!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      SizedBox(height: 8),
+                      RadioGroup<String>(
+                        groupValue: gender,
+                        onChanged: (String? value) {
+                          setState(() {
+                            gender = value;
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: Radio<String>(value: "M"),
+                                ),
+                                SizedBox(width: 8),
+                                FaIcon(
+                                  FontAwesomeIcons.mars,
+                                  size: 16,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  T.male,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: Radio<String>(value: "F"),
+                                ),
+                                SizedBox(width: 8),
+                                FaIcon(FontAwesomeIcons.venus, size: 16),
+                                SizedBox(width: 4),
+                                Text(
+                                  T.female,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: Radio<String>(value: "N"),
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  T.preferNotToSay,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SubmitButton.icon(
+                  context: context,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  alignment: Alignment.center,
+                  onPressed: isLoading ? null : onProfileSubmit,
+                  isLoading: isLoading,
+                  icon: FaIcon(FontAwesomeIcons.floppyDisk),
+                  label: Text(T.save),
+                ),
+              ],
+            ),
           );
         },
       ),

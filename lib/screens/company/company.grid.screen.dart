@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
@@ -25,104 +26,107 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
   bool isLoadingMyCompany = true;
 
   /// Category definitions with icons and descriptions
-  final List<Map<String, dynamic>> categories = [
-    {
-      'id': 'public-office',
-      'name': 'Public Office',
-      'description': 'Government services',
-      'icon': FontAwesomeIcons.lightBuilding,
-    },
-    {
-      'id': 'education',
-      'name': 'Education',
-      'description': 'Schools and learning',
-      'icon': FontAwesomeIcons.lightGraduationCap,
-    },
-    {
-      'id': 'food',
-      'name': 'Food & Drink',
-      'description': 'Restaurants and cafes',
-      'icon': FontAwesomeIcons.lightUtensils,
-    },
-    {
-      'id': 'transport',
-      'name': 'Transportation',
-      'description': 'Public and private transit',
-      'icon': FontAwesomeIcons.lightBus,
-    },
-    {
-      'id': 'hospital',
-      'name': 'Health & Hospitals',
-      'description': 'Clinics and care',
-      'icon': FontAwesomeIcons.lightHospital,
-    },
-    {
-      'id': 'mart',
-      'name': 'Shopping & Marts',
-      'description': 'Retail and groceries',
-      'icon': FontAwesomeIcons.lightCartShopping,
-    },
-    {
-      'id': 'bank',
-      'name': 'Banking & Finance',
-      'description': 'Financial institutions',
-      'icon': FontAwesomeIcons.lightBuildingColumns,
-    },
-    {
-      'id': 'gadget',
-      'name': 'Gadgets',
-      'description': 'Tech and devices',
-      'icon': FontAwesomeIcons.lightMobileScreen,
-    },
-    {
-      'id': 'travel-agency',
-      'name': 'Travel & Tourism',
-      'description': 'Destinations and booking',
-      'icon': FontAwesomeIcons.lightPlaneDeparture,
-    },
-    {
-      'id': 'hotel',
-      'name': 'Hotels',
-      'description': 'Places to stay',
-      'icon': FontAwesomeIcons.lightHotel,
-    },
-    {
-      'id': 'rentcar',
-      'name': 'Car Rental',
-      'description': 'Vehicle hire services',
-      'icon': FontAwesomeIcons.lightCar,
-    },
-    {
-      'id': 'beauty',
-      'name': 'Beauty & Wellness',
-      'description': 'Salons and self-care',
-      'icon': FontAwesomeIcons.lightScissors,
-    },
-    {
-      'id': 'real-estate',
-      'name': 'Real Estate',
-      'description': 'Property and housing',
-      'icon': FontAwesomeIcons.lightHouseChimney,
-    },
-    {
-      'id': 'ktv',
-      'name': 'Entertainment',
-      'description': 'Karaoke and fun',
-      'icon': FontAwesomeIcons.lightMicrophone,
-    },
-    {
-      'id': 'spa',
-      'name': 'Spa & Relaxation',
-      'description': 'Massage and retreats',
-      'icon': FontAwesomeIcons.lightSpa,
-    },
-    {
-      'id': 'etc',
-      'name': 'Other Services',
-      'description': 'Miscellaneous services',
-      'icon': FontAwesomeIcons.lightEllipsis,
-    },
-  ];
+  /// Translation keys are defined in app_localizations.dart
+  List<Map<String, dynamic>> _getCategories(BuildContext context) {
+    return [
+      {
+        'id': 'public-office',
+        'name': Lo.of(context)!.publicOffice,
+        'description': Lo.of(context)!.publicOfficeDesc,
+        'icon': FontAwesomeIcons.lightBuilding,
+      },
+      {
+        'id': 'education',
+        'name': Lo.of(context)!.education,
+        'description': Lo.of(context)!.educationDesc,
+        'icon': FontAwesomeIcons.lightGraduationCap,
+      },
+      {
+        'id': 'food',
+        'name': Lo.of(context)!.foodAndDrink,
+        'description': Lo.of(context)!.foodAndDrinkDesc,
+        'icon': FontAwesomeIcons.lightUtensils,
+      },
+      {
+        'id': 'transport',
+        'name': Lo.of(context)!.transportation,
+        'description': Lo.of(context)!.transportationDesc,
+        'icon': FontAwesomeIcons.lightBus,
+      },
+      {
+        'id': 'hospital',
+        'name': Lo.of(context)!.healthAndHospitals,
+        'description': Lo.of(context)!.healthAndHospitalsDesc,
+        'icon': FontAwesomeIcons.lightHospital,
+      },
+      {
+        'id': 'mart',
+        'name': Lo.of(context)!.shoppingAndMarts,
+        'description': Lo.of(context)!.shoppingAndMartsDesc,
+        'icon': FontAwesomeIcons.lightCartShopping,
+      },
+      {
+        'id': 'bank',
+        'name': Lo.of(context)!.bankingAndFinance,
+        'description': Lo.of(context)!.bankingAndFinanceDesc,
+        'icon': FontAwesomeIcons.lightBuildingColumns,
+      },
+      {
+        'id': 'gadget',
+        'name': Lo.of(context)!.gadgets,
+        'description': Lo.of(context)!.gadgetsDesc,
+        'icon': FontAwesomeIcons.lightMobileScreen,
+      },
+      {
+        'id': 'travel-agency',
+        'name': Lo.of(context)!.travelAndTourism,
+        'description': Lo.of(context)!.travelAndTourismDesc,
+        'icon': FontAwesomeIcons.lightPlaneDeparture,
+      },
+      {
+        'id': 'hotel',
+        'name': Lo.of(context)!.hotels,
+        'description': Lo.of(context)!.hotelsDesc,
+        'icon': FontAwesomeIcons.lightHotel,
+      },
+      {
+        'id': 'rentcar',
+        'name': Lo.of(context)!.carRental,
+        'description': Lo.of(context)!.carRentalDesc,
+        'icon': FontAwesomeIcons.lightCar,
+      },
+      {
+        'id': 'beauty',
+        'name': Lo.of(context)!.beautyAndWellness,
+        'description': Lo.of(context)!.beautyAndWellnessDesc,
+        'icon': FontAwesomeIcons.lightScissors,
+      },
+      {
+        'id': 'real-estate',
+        'name': Lo.of(context)!.realEstate,
+        'description': Lo.of(context)!.realEstateDesc,
+        'icon': FontAwesomeIcons.lightHouseChimney,
+      },
+      {
+        'id': 'ktv',
+        'name': Lo.of(context)!.entertainment,
+        'description': Lo.of(context)!.entertainmentDesc,
+        'icon': FontAwesomeIcons.lightMicrophone,
+      },
+      {
+        'id': 'spa',
+        'name': Lo.of(context)!.spaAndRelaxation,
+        'description': Lo.of(context)!.spaAndRelaxationDesc,
+        'icon': FontAwesomeIcons.lightSpa,
+      },
+      {
+        'id': 'etc',
+        'name': Lo.of(context)!.otherServices,
+        'description': Lo.of(context)!.otherServicesDesc,
+        'icon': FontAwesomeIcons.lightEllipsis,
+      },
+    ];
+  }
 
   @override
   void initState() {
@@ -199,6 +203,7 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
     final sp = theme.extension<AppSpacing>()!;
+    final categories = _getCategories(context);
 
     return Column(
       children: [
@@ -214,7 +219,10 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Company Directory', style: theme.textTheme.titleLarge),
+                Text(
+                  Lo.of(context)!.companyDirectoryTitle,
+                  style: theme.textTheme.titleLarge,
+                ),
                 const Spacer(),
                 IconButton(
                   icon: FaIcon(
@@ -226,8 +234,8 @@ class _CompanyGridScreenState extends State<CompanyGridScreen> {
                   ),
                   onPressed: _handleCreateOrUpdateButton,
                   tooltip: myCompany != null
-                      ? 'Edit my company'
-                      : 'Add my company',
+                      ? Lo.of(context)!.editMyCompany
+                      : Lo.of(context)!.addMyCompany,
                 ),
               ],
             ),

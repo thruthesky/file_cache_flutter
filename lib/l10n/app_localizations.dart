@@ -1702,6 +1702,462 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// Error message when companies fail to load
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load companies'**
+  String get failedToLoadCompanies;
+
+  /// Retry button label
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Empty state title when no companies are found
+  ///
+  /// In en, this message translates to:
+  /// **'No companies found'**
+  String get noCompaniesFound;
+
+  /// Empty state message for companies in a specific category
+  ///
+  /// In en, this message translates to:
+  /// **'There are no companies in {categoryName} category yet.'**
+  String noCompaniesInCategory(String categoryName);
+
+  /// Tooltip for edit company button
+  ///
+  /// In en, this message translates to:
+  /// **'Edit my company'**
+  String get editMyCompany;
+
+  /// Tooltip for add company button
+  ///
+  /// In en, this message translates to:
+  /// **'Add my company'**
+  String get addMyCompany;
+
+  /// Public office category name
+  ///
+  /// In en, this message translates to:
+  /// **'Public Office'**
+  String get publicOffice;
+
+  /// Public office category description
+  ///
+  /// In en, this message translates to:
+  /// **'Government services'**
+  String get publicOfficeDesc;
+
+  /// Education category name
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get education;
+
+  /// Education category description
+  ///
+  /// In en, this message translates to:
+  /// **'Schools and learning'**
+  String get educationDesc;
+
+  /// Food and drink category name
+  ///
+  /// In en, this message translates to:
+  /// **'Food & Drink'**
+  String get foodAndDrink;
+
+  /// Food and drink category description
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurants and cafes'**
+  String get foodAndDrinkDesc;
+
+  /// Transportation category name
+  ///
+  /// In en, this message translates to:
+  /// **'Transportation'**
+  String get transportation;
+
+  /// Transportation category description
+  ///
+  /// In en, this message translates to:
+  /// **'Public and private transit'**
+  String get transportationDesc;
+
+  /// Health category name
+  ///
+  /// In en, this message translates to:
+  /// **'Health & Hospitals'**
+  String get healthAndHospitals;
+
+  /// Health category description
+  ///
+  /// In en, this message translates to:
+  /// **'Clinics and care'**
+  String get healthAndHospitalsDesc;
+
+  /// Shopping category name
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping & Marts'**
+  String get shoppingAndMarts;
+
+  /// Shopping category description
+  ///
+  /// In en, this message translates to:
+  /// **'Retail and groceries'**
+  String get shoppingAndMartsDesc;
+
+  /// Banking category name
+  ///
+  /// In en, this message translates to:
+  /// **'Banking & Finance'**
+  String get bankingAndFinance;
+
+  /// Banking category description
+  ///
+  /// In en, this message translates to:
+  /// **'Financial institutions'**
+  String get bankingAndFinanceDesc;
+
+  /// Gadgets category name
+  ///
+  /// In en, this message translates to:
+  /// **'Gadgets'**
+  String get gadgets;
+
+  /// Gadgets category description
+  ///
+  /// In en, this message translates to:
+  /// **'Tech and devices'**
+  String get gadgetsDesc;
+
+  /// Travel category name
+  ///
+  /// In en, this message translates to:
+  /// **'Travel & Tourism'**
+  String get travelAndTourism;
+
+  /// Travel category description
+  ///
+  /// In en, this message translates to:
+  /// **'Destinations and booking'**
+  String get travelAndTourismDesc;
+
+  /// Hotels category name
+  ///
+  /// In en, this message translates to:
+  /// **'Hotels'**
+  String get hotels;
+
+  /// Hotels category description
+  ///
+  /// In en, this message translates to:
+  /// **'Places to stay'**
+  String get hotelsDesc;
+
+  /// Car rental category name
+  ///
+  /// In en, this message translates to:
+  /// **'Car Rental'**
+  String get carRental;
+
+  /// Car rental category description
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle hire services'**
+  String get carRentalDesc;
+
+  /// Beauty category name
+  ///
+  /// In en, this message translates to:
+  /// **'Beauty & Wellness'**
+  String get beautyAndWellness;
+
+  /// Beauty category description
+  ///
+  /// In en, this message translates to:
+  /// **'Salons and self-care'**
+  String get beautyAndWellnessDesc;
+
+  /// Real estate category name
+  ///
+  /// In en, this message translates to:
+  /// **'Real Estate'**
+  String get realEstate;
+
+  /// Real estate category description
+  ///
+  /// In en, this message translates to:
+  /// **'Property and housing'**
+  String get realEstateDesc;
+
+  /// Entertainment category name
+  ///
+  /// In en, this message translates to:
+  /// **'Entertainment'**
+  String get entertainment;
+
+  /// Entertainment category description
+  ///
+  /// In en, this message translates to:
+  /// **'Karaoke and fun'**
+  String get entertainmentDesc;
+
+  /// Spa category name
+  ///
+  /// In en, this message translates to:
+  /// **'Spa & Relaxation'**
+  String get spaAndRelaxation;
+
+  /// Spa category description
+  ///
+  /// In en, this message translates to:
+  /// **'Massage and retreats'**
+  String get spaAndRelaxationDesc;
+
+  /// Other services category name
+  ///
+  /// In en, this message translates to:
+  /// **'Other Services'**
+  String get otherServices;
+
+  /// Other services category description
+  ///
+  /// In en, this message translates to:
+  /// **'Miscellaneous services'**
+  String get otherServicesDesc;
+
+  /// Account section title in menu
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// Advertising section title in menu
+  ///
+  /// In en, this message translates to:
+  /// **'Advertising'**
+  String get advertising;
+
+  /// Support section title in menu
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// Account actions section title in menu
+  ///
+  /// In en, this message translates to:
+  /// **'Account Actions'**
+  String get accountActions;
+
+  /// Blocked users menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked Users'**
+  String get blockedUsers;
+
+  /// Writing guide section title
+  ///
+  /// In en, this message translates to:
+  /// **'Writing Guide'**
+  String get writingGuide;
+
+  /// Warning about defamation in posts
+  ///
+  /// In en, this message translates to:
+  /// **'Posts that defame others may be deleted'**
+  String get postDefamationWarning;
+
+  /// Warning about spam in posts
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisements and spam will be deleted immediately'**
+  String get postSpamWarning;
+
+  /// Warning about personal information in posts
+  ///
+  /// In en, this message translates to:
+  /// **'Do not include personal information'**
+  String get postPersonalInfoWarning;
+
+  /// Warning about copyright in posts
+  ///
+  /// In en, this message translates to:
+  /// **'Copyright infringing content cannot be posted'**
+  String get postCopyrightWarning;
+
+  /// Prefix for update screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Update:'**
+  String get updatePrefix;
+
+  /// Error message when trying to submit while upload is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Image upload is in progress, please try again in a moment.'**
+  String get uploadInProgress;
+
+  /// About screen title
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// Welcome message on about screen
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to About Screen'**
+  String get welcomeToAboutScreen;
+
+  /// Loading indicator text
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// Hint text for KakaoTalk ID field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter KakaoTalk ID'**
+  String get enterKakaotalkId;
+
+  /// Placeholder for Kakao channel URL field
+  ///
+  /// In en, this message translates to:
+  /// **'https://pf.kakao.com/...'**
+  String get kakaoChannelUrlPlaceholder;
+
+  /// Hint text for Telegram ID field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Telegram ID'**
+  String get enterTelegramId;
+
+  /// Example text for company name field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g.) mycompany'**
+  String get companyNameExample;
+
+  /// Hint text for family site name field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your family site name'**
+  String get enterFamilySiteName;
+
+  /// Hint text for family site description field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your family site description'**
+  String get enterFamilySiteDescription;
+
+  /// Error message when email app cannot be launched
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch email app'**
+  String get couldNotLaunchEmailApp;
+
+  /// Generic error label
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// Checkbox label for using company domain
+  ///
+  /// In en, this message translates to:
+  /// **'Use Company Domain'**
+  String get useCompanyDomain;
+
+  /// Information about SEO features
+  ///
+  /// In en, this message translates to:
+  /// **'SEO features help expose your directory listing more on Google, Naver, and other search engines.'**
+  String get seoFeaturesMessage;
+
+  /// Label for family site domain field
+  ///
+  /// In en, this message translates to:
+  /// **'Family Site Domain'**
+  String get familySiteDomain;
+
+  /// Label for family site name field
+  ///
+  /// In en, this message translates to:
+  /// **'Family Site Name'**
+  String get familySiteName;
+
+  /// Label for family site description field
+  ///
+  /// In en, this message translates to:
+  /// **'Family Site Description'**
+  String get familySiteDescription;
+
+  /// Label for KakaoTalk ID field
+  ///
+  /// In en, this message translates to:
+  /// **'KakaoID'**
+  String get kakaoId;
+
+  /// Label for Kakao QR code upload
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Kakao QR Code'**
+  String get uploadKakaoQrCode;
+
+  /// Label for Kakao channel URL field
+  ///
+  /// In en, this message translates to:
+  /// **'Kakao Channel URL'**
+  String get kakaoChannelUrl;
+
+  /// Label for Telegram ID field
+  ///
+  /// In en, this message translates to:
+  /// **'Telegram ID'**
+  String get telegramId;
+
+  /// Label for business type field
+  ///
+  /// In en, this message translates to:
+  /// **'Business Type'**
+  String get businessType;
+
+  /// Label for company logo upload
+  ///
+  /// In en, this message translates to:
+  /// **'Company Logo'**
+  String get companyLogo;
+
+  /// Label for company introduction image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Company Introduction Image'**
+  String get companyIntroImage;
+
+  /// Guideline text for company introduction image
+  ///
+  /// In en, this message translates to:
+  /// **'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).'**
+  String get companyIntroImageGuideline;
+
+  /// Label for office/store interior photo upload
+  ///
+  /// In en, this message translates to:
+  /// **'Office/Store Interior Photo'**
+  String get officeInteriorPhoto;
+
+  /// Guideline text for office interior photo
+  ///
+  /// In en, this message translates to:
+  /// **'Office/Store Interior full view photo'**
+  String get officeInteriorGuideline;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

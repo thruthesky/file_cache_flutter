@@ -134,26 +134,34 @@ class UserStats extends StatelessWidget {
 
                     /// Three equal-sized stat boxes - no dividers, square, scaffold background
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         /// Posts stat
-                        StatContainer(
-                          value: user.noOfPost ?? 0,
-                          label: 'Posts',
+                        Expanded(
+                          child: StatContainer(
+                            value: user.noOfPost ?? 0,
+                            label: 'Posts',
+                          ),
                         ),
 
                         const SizedBox(width: 12),
 
                         /// Comments stat
-                        StatContainer(
-                          value: user.noOfComment ?? 0,
-                          label: 'Comments',
+                        Expanded(
+                          child: StatContainer(
+                            value: user.noOfComment ?? 0,
+                            label: 'Comments',
+                          ),
                         ),
 
                         const SizedBox(width: 12),
 
                         /// Points stat
-                        StatContainer(value: user.point ?? 0, label: 'Points'),
+                        Expanded(
+                          child: StatContainer(
+                            value: user.point ?? 0,
+                            label: 'Points',
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -167,7 +175,8 @@ class UserStats extends StatelessWidget {
   }
 }
 
-/// Stat container component - perfectly square box with scaffold background
+/// Stat container component - responsive box with scaffold background
+/// Uses AspectRatio to maintain square shape while being flexible
 class StatContainer extends StatelessWidget {
   const StatContainer({super.key, required this.value, required this.label});
 
@@ -179,36 +188,37 @@ class StatContainer extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Container(
-      /// Make it perfectly square - 100x100
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        /// Use scaffold background color (same gray as page background)
-        color: scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          /// Stat value with comma formatting (no color - black by default)
-          Text(
-            formatCompactNumber(value),
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+    return AspectRatio(
+      /// Maintain 1:1 aspect ratio for square shape
+      aspectRatio: 1,
+      child: Container(
+        decoration: BoxDecoration(
+          /// Use scaffold background color (same gray as page background)
+          color: scheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /// Stat value with comma formatting (no color - black by default)
+            Text(
+              formatCompactNumber(value),
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 4),
+            const SizedBox(height: 4),
 
-          /// Stat label
-          Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
+            /// Stat label
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

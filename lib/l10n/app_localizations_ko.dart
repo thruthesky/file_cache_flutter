@@ -839,4 +839,236 @@ class LoKo extends Lo {
 
   @override
   String get next => '다음';
+
+  @override
+  String get failedToLoadCompanies => '업체 로딩 실패';
+
+  @override
+  String get retry => '재시도';
+
+  @override
+  String get noCompaniesFound => '업체를 찾을 수 없습니다';
+
+  @override
+  String noCompaniesInCategory(String categoryName) {
+    return '$categoryName 카테고리에 등록된 업체가 아직 없습니다.';
+  }
+
+  @override
+  String get editMyCompany => '내 업체 수정';
+
+  @override
+  String get addMyCompany => '내 업체 추가';
+
+  @override
+  String get publicOffice => '공공기관';
+
+  @override
+  String get publicOfficeDesc => '정부 서비스';
+
+  @override
+  String get education => '교육';
+
+  @override
+  String get educationDesc => '학교 및 학습';
+
+  @override
+  String get foodAndDrink => '음식 & 음료';
+
+  @override
+  String get foodAndDrinkDesc => '레스토랑 및 카페';
+
+  @override
+  String get transportation => '교통';
+
+  @override
+  String get transportationDesc => '대중교통 및 개인 교통';
+
+  @override
+  String get healthAndHospitals => '의료 & 병원';
+
+  @override
+  String get healthAndHospitalsDesc => '클리닉 및 진료';
+
+  @override
+  String get shoppingAndMarts => '쇼핑 & 마트';
+
+  @override
+  String get shoppingAndMartsDesc => '소매 및 식료품';
+
+  @override
+  String get bankingAndFinance => '은행 & 금융';
+
+  @override
+  String get bankingAndFinanceDesc => '금융 기관';
+
+  @override
+  String get gadgets => '가전제품';
+
+  @override
+  String get gadgetsDesc => '기술 및 기기';
+
+  @override
+  String get travelAndTourism => '여행 & 관광';
+
+  @override
+  String get travelAndTourismDesc => '여행지 및 예약';
+
+  @override
+  String get hotels => '호텔';
+
+  @override
+  String get hotelsDesc => '숙박 시설';
+
+  @override
+  String get carRental => '렌터카';
+
+  @override
+  String get carRentalDesc => '차량 대여 서비스';
+
+  @override
+  String get beautyAndWellness => '미용 & 웰빙';
+
+  @override
+  String get beautyAndWellnessDesc => '미용실 및 자기 관리';
+
+  @override
+  String get realEstate => '부동산';
+
+  @override
+  String get realEstateDesc => '부동산 및 주택';
+
+  @override
+  String get entertainment => '엔터테인먼트';
+
+  @override
+  String get entertainmentDesc => '노래방 및 오락';
+
+  @override
+  String get spaAndRelaxation => '스파 & 휴식';
+
+  @override
+  String get spaAndRelaxationDesc => '마사지 및 휴양';
+
+  @override
+  String get otherServices => '기타 서비스';
+
+  @override
+  String get otherServicesDesc => '기타 서비스';
+
+  @override
+  String get account => '계정';
+
+  @override
+  String get advertising => '광고';
+
+  @override
+  String get support => '지원';
+
+  @override
+  String get accountActions => '계정 작업';
+
+  @override
+  String get blockedUsers => '차단된 사용자';
+
+  @override
+  String get writingGuide => '작성 가이드';
+
+  @override
+  String get postDefamationWarning => '타인을 비방하는 게시글은 삭제될 수 있습니다';
+
+  @override
+  String get postSpamWarning => '광고 및 스팸은 즉시 삭제됩니다';
+
+  @override
+  String get postPersonalInfoWarning => '개인정보를 포함하지 마세요';
+
+  @override
+  String get postCopyrightWarning => '저작권을 침해하는 콘텐츠는 게시할 수 없습니다';
+
+  @override
+  String get updatePrefix => '수정:';
+
+  @override
+  String get uploadInProgress => '이미지 업로드가 진행 중입니다. 잠시 후 다시 시도해주세요.';
+
+  @override
+  String get about => '소개';
+
+  @override
+  String get welcomeToAboutScreen => '소개 화면에 오신 것을 환영합니다';
+
+  @override
+  String get loading => '로딩 중...';
+
+  @override
+  String get enterKakaotalkId => '카카오톡 ID를 입력하세요';
+
+  @override
+  String get kakaoChannelUrlPlaceholder => 'https://pf.kakao.com/...';
+
+  @override
+  String get enterTelegramId => '텔레그램 ID를 입력하세요';
+
+  @override
+  String get companyNameExample => '예) mycompany';
+
+  @override
+  String get enterFamilySiteName => '패밀리 사이트 이름을 입력하세요';
+
+  @override
+  String get enterFamilySiteDescription => '패밀리 사이트 설명을 입력하세요';
+
+  @override
+  String get couldNotLaunchEmailApp => '이메일 앱을 실행할 수 없습니다';
+
+  @override
+  String get error => '오류';
+
+  @override
+  String get useCompanyDomain => '회사 도메인 사용';
+
+  @override
+  String get seoFeaturesMessage =>
+      'SEO 기능은 Google, Naver 및 기타 검색 엔진에 디렉토리 목록을 더 많이 노출하는 데 도움이 됩니다.';
+
+  @override
+  String get familySiteDomain => '패밀리 사이트 도메인';
+
+  @override
+  String get familySiteName => '패밀리 사이트 이름';
+
+  @override
+  String get familySiteDescription => '패밀리 사이트 설명';
+
+  @override
+  String get kakaoId => '카카오ID';
+
+  @override
+  String get uploadKakaoQrCode => '카카오 QR 코드 업로드';
+
+  @override
+  String get kakaoChannelUrl => '카카오 채널 URL';
+
+  @override
+  String get telegramId => '텔레그램 ID';
+
+  @override
+  String get businessType => '업종';
+
+  @override
+  String get companyLogo => '회사 로고';
+
+  @override
+  String get companyIntroImage => '회사 소개 이미지';
+
+  @override
+  String get companyIntroImageGuideline =>
+      '회사 소개를 간략하게 나타내는 이미지입니다. 로고 및 주요 서비스 항목을 포함하세요. 텍스트는 약 100자(20단어) 정도로 제한됩니다.';
+
+  @override
+  String get officeInteriorPhoto => '사무실/매장 내부 사진';
+
+  @override
+  String get officeInteriorGuideline => '사무실/매장 내부 전체 사진';
 }

@@ -153,7 +153,7 @@ class _UserActivityScreenState extends State<UserActivityScreen>
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text('Loading...', style: theme.textTheme.titleLarge),
+                  Text(T.loading, style: theme.textTheme.titleLarge),
                 ],
               )
             : Text(_getTitle(_user), style: theme.textTheme.titleLarge),

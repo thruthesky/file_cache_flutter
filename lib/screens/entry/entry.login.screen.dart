@@ -57,11 +57,10 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Main content with left alignment
+              // Main content centered on all screen sizes
               Expanded(
                 child: SingleChildScrollView(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
+                  child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 520),
                       child: AnimatedContainer(
@@ -69,244 +68,226 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                         curve: Curves.easeOutCubic,
                         child: Card(
                           clipBehavior: Clip.antiAlias,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  scheme.surface,
-                                  scheme.surfaceContainerLow,
-                                ],
-                              ),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              sp.s32,
+                              sp.s40,
+                              sp.s32,
+                              sp.s32,
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                sp.s32,
-                                sp.s40,
-                                sp.s32,
-                                sp.s32,
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // App Logo with enhanced animations - left aligned
-                                  AnimatedScale(
-                                    duration: const Duration(milliseconds: 600),
-                                    curve: Curves.elasticOut,
-                                    scale: _animateHeader ? 1.0 : 0.8,
-                                    child: AnimatedSlide(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // App Logo with enhanced animations - left aligned
+                                AnimatedScale(
+                                  duration: const Duration(milliseconds: 600),
+                                  curve: Curves.elasticOut,
+                                  scale: _animateHeader ? 1.0 : 0.8,
+                                  child: AnimatedSlide(
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeOutCubic,
+                                    offset: _animateHeader
+                                        ? Offset.zero
+                                        : const Offset(0, 0.1),
+                                    child: AnimatedOpacity(
                                       duration: const Duration(
                                         milliseconds: 400,
                                       ),
-                                      curve: Curves.easeOutCubic,
-                                      offset: _animateHeader
-                                          ? Offset.zero
-                                          : const Offset(0, 0.1),
-                                      child: AnimatedOpacity(
-                                        duration: const Duration(
-                                          milliseconds: 400,
-                                        ),
-                                        curve: Curves.easeOut,
-                                        opacity: _animateHeader ? 1 : 0,
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Container(
-                                            padding: EdgeInsets.all(sp.s16),
-                                            decoration: BoxDecoration(
-                                              color: scheme.primary.withValues(
-                                                alpha: 0.05,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: const Hero(
-                                              tag: 'appLogo',
-                                              child: Image(
-                                                image: AssetImage(
-                                                  'assets/img/logo/philgo_v6_app_logo.png',
-                                                ),
-                                                width: 80,
-                                                height: 80,
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: sp.s24),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Hero(
-                                        tag: 'phoneIcon',
+                                      curve: Curves.easeOut,
+                                      opacity: _animateHeader ? 1 : 0,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
                                         child: Container(
-                                          padding: EdgeInsets.all(sp.s8),
+                                          padding: EdgeInsets.all(sp.s16),
                                           decoration: BoxDecoration(
                                             color: scheme.primary.withValues(
-                                              alpha: 0.1,
+                                              alpha: 0.05,
                                             ),
                                             borderRadius: BorderRadius.circular(
-                                              12,
+                                              20,
                                             ),
                                           ),
-                                          child: FaIcon(
-                                            FontAwesomeIcons.mobileScreen,
-                                            color: scheme.primary,
-                                            size: 20,
+                                          child: const Hero(
+                                            tag: 'appLogo',
+                                            child: Image(
+                                              image: AssetImage(
+                                                'assets/img/logo/philgo_v6_app_logo.png',
+                                              ),
+                                              width: 80,
+                                              height: 80,
+                                              fit: BoxFit.contain,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      SizedBox(width: sp.s12),
-                                      Text(
-                                        "필고 전화번호 로그인",
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleLarge,
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: sp.s40),
-
-                                  SizedBox(height: sp.s32 + sp.s8),
-
-                                  // PhoneSignIn Widget - full width
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: sp.s16,
                                     ),
-                                    child: AnimatedSlide(
+                                  ),
+                                ),
+                                SizedBox(height: sp.s24),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Hero(
+                                      tag: 'phoneIcon',
+                                      child: Container(
+                                        padding: EdgeInsets.all(sp.s8),
+                                        decoration: BoxDecoration(
+                                          color: scheme.primary.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: FaIcon(
+                                          FontAwesomeIcons.mobileScreen,
+                                          color: scheme.primary,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: sp.s12),
+                                    Text(
+                                      "필고 전화번호 로그인",
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleLarge,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: sp.s40),
+
+                                SizedBox(height: sp.s32 + sp.s8),
+
+                                // PhoneSignIn Widget - full width
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: sp.s16,
+                                  ),
+                                  child: AnimatedSlide(
+                                    duration: const Duration(milliseconds: 360),
+                                    curve: Curves.easeOutCubic,
+                                    offset: _animateForm
+                                        ? Offset.zero
+                                        : const Offset(0, 0.08),
+                                    child: AnimatedOpacity(
                                       duration: const Duration(
                                         milliseconds: 360,
                                       ),
-                                      curve: Curves.easeOutCubic,
-                                      offset: _animateForm
-                                          ? Offset.zero
-                                          : const Offset(0, 0.08),
-                                      child: AnimatedOpacity(
-                                        duration: const Duration(
-                                          milliseconds: 360,
+                                      curve: Curves.easeOut,
+                                      opacity: _animateForm ? 1 : 0,
+                                      child: Theme(
+                                        data: Theme.of(context).copyWith(
+                                          elevatedButtonTheme:
+                                              ElevatedButtonThemeData(
+                                                style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor:
+                                                      scheme.primary,
+                                                  foregroundColor:
+                                                      scheme.onPrimary,
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: sp.s16,
+                                                    horizontal: sp.s24,
+                                                  ),
+                                                  textStyle: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium
+                                                      ?.copyWith(
+                                                        color: scheme.onPrimary,
+                                                      ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
                                         ),
-                                        curve: Curves.easeOut,
-                                        opacity: _animateForm ? 1 : 0,
-                                        child: Theme(
-                                          data: Theme.of(context).copyWith(
-                                            elevatedButtonTheme:
-                                                ElevatedButtonThemeData(
-                                                  style: ElevatedButton.styleFrom(
-                                                    elevation: 0,
-                                                    backgroundColor:
-                                                        scheme.primary,
-                                                    foregroundColor:
-                                                        scheme.onPrimary,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          vertical: sp.s16,
-                                                          horizontal: sp.s24,
-                                                        ),
-                                                    textStyle: Theme.of(context)
-                                                        .textTheme
-                                                        .titleMedium
-                                                        ?.copyWith(
-                                                          color:
-                                                              scheme.onPrimary,
-                                                        ),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
+                                        child: PhoneSignIn(
+                                          onCompletePhoneNumber:
+                                              (String phoneNumber) {
+                                                // Normalize common local inputs to E.164 by country prefix heuristics
+                                                if (phoneNumber.startsWith(
+                                                  '10',
+                                                )) {
+                                                  return '+82$phoneNumber';
+                                                } else if (phoneNumber
+                                                    .startsWith('9')) {
+                                                  return '+63$phoneNumber';
+                                                }
+                                                return phoneNumber;
+                                              },
+                                          onSignInSuccess: _onSignInSuccess,
+                                          onSignInFailed: _onSignInFailed,
+                                          specialAccounts:
+                                              const SpecialAccounts(
+                                                reviewEmail: 'review@email.com',
+                                                reviewPassword: '12345zB,*c',
+                                                reviewPhoneNumber:
+                                                    '+11234567890',
+                                                reviewSmsCode: '123456',
+                                                emailLogin: true,
+                                              ),
+                                          labelPhoneNumber: Text(
+                                            Lo.of(context)!.enterPhoneNumber,
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium,
                                           ),
-                                          child: PhoneSignIn(
-                                            onCompletePhoneNumber:
-                                                (String phoneNumber) {
-                                                  // Normalize common local inputs to E.164 by country prefix heuristics
-                                                  if (phoneNumber.startsWith(
-                                                    '10',
-                                                  )) {
-                                                    return '+82$phoneNumber';
-                                                  } else if (phoneNumber
-                                                      .startsWith('9')) {
-                                                    return '+63$phoneNumber';
-                                                  }
-                                                  return phoneNumber;
-                                                },
-                                            onSignInSuccess: _onSignInSuccess,
-                                            onSignInFailed: _onSignInFailed,
-                                            specialAccounts:
-                                                const SpecialAccounts(
-                                                  reviewEmail:
-                                                      'review@email.com',
-                                                  reviewPassword: '12345zB,*c',
-                                                  reviewPhoneNumber:
-                                                      '+11234567890',
-                                                  reviewSmsCode: '123456',
-                                                  emailLogin: true,
-                                                ),
-                                            labelPhoneNumber: Text(
-                                              Lo.of(context)!.enterPhoneNumber,
+                                          labelUnderPhoneNumberTextField: Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 8.0,
+                                            ),
+                                            child: Text(
+                                              "예: 09123456789 또는 01012345678",
                                               style: Theme.of(
                                                 context,
-                                              ).textTheme.titleMedium,
+                                              ).textTheme.bodySmall,
                                             ),
-                                            labelUnderPhoneNumberTextField: Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 8.0,
-                                              ),
-                                              child: Text(
-                                                "예: 09123456789 또는 01012345678",
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.bodySmall,
-                                              ),
-                                            ),
-                                            labelPhoneNumberSelected: Text(
-                                              Lo.of(context)!.phoneNumber,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.titleMedium,
-                                            ),
-                                            labelOnSmsCodeTextField: Text(
-                                              Lo.of(context)!.enterSmsCode,
-                                            ),
-                                            hintTextSmsCodeTextField: Lo.of(
-                                              context,
-                                            )!.enterSmsCode,
-                                            labelRetry:
-                                                // SMS 재 전송 버튼을 표시하지 않음
-                                                SizedBox.shrink(),
-                                            // Text(
-                                            // Lo.of(context)!.resendSms,
-                                            // ),
-                                            labelVerifySmsCodeButton: Text(
-                                              Lo.of(context)!.verifySmsCode,
-                                            ),
-                                            labelVerifyPhoneNumberButton: Text(
-                                              Lo.of(context)!.sendSmsCode,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.copyWith(
-                                                    color: scheme.onPrimary,
-                                                    fontWeight: FontWeight.w300,
-                                                  ),
-                                            ),
-                                            hintTextPhoneNumberTextField: Lo.of(
-                                              context,
-                                            )!.phoneNumber,
                                           ),
+                                          labelPhoneNumberSelected: Text(
+                                            Lo.of(context)!.phoneNumber,
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium,
+                                          ),
+                                          labelOnSmsCodeTextField: Text(
+                                            Lo.of(context)!.enterSmsCode,
+                                          ),
+                                          hintTextSmsCodeTextField: Lo.of(
+                                            context,
+                                          )!.enterSmsCode,
+                                          labelRetry:
+                                              // SMS 재 전송 버튼을 표시하지 않음
+                                              SizedBox.shrink(),
+                                          // Text(
+                                          // Lo.of(context)!.resendSms,
+                                          // ),
+                                          labelVerifySmsCodeButton: Text(
+                                            Lo.of(context)!.verifySmsCode,
+                                          ),
+                                          labelVerifyPhoneNumberButton: Text(
+                                            Lo.of(context)!.sendSmsCode,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  color: scheme.onPrimary,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                          ),
+                                          hintTextPhoneNumberTextField: Lo.of(
+                                            context,
+                                          )!.phoneNumber,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -318,7 +299,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
               Padding(
                 padding: EdgeInsets.only(left: sp.s24),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton.icon(
                       onPressed: () async {
@@ -339,7 +320,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                     SizedBox(width: sp.s12),
                     TextButton.icon(
                       onPressed: () async {
-                        await showPrivacyPolicy(context);
+                        await showTermsAndConditions(context);
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(
@@ -365,9 +346,10 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
 
   void _onSignInSuccess() {
     // 로그인 성공 시 홈 탭으로 네비게이션 상태 초기화
-    NavigationState.of(context, listen: false).setHomeNavigation(
-      HomeNavigationItem.home,
-    );
+    NavigationState.of(
+      context,
+      listen: false,
+    ).setHomeNavigation(HomeNavigationItem.home);
     context.go(HomeScreen.routeName);
   }
 

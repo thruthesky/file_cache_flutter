@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/philgo_app.config.dart';
-import 'package:philgo/screens/about/about.screen.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
@@ -178,12 +177,6 @@ final router = GoRouter(
         developer.log('🔍 Go_ROUTE: HomeScreen');
         return const HomeScreen();
       },
-    ),
-
-    GoRoute(
-      path: AboutScreen.routeName,
-      name: AboutScreen.routeName,
-      builder: (context, state) => const AboutScreen(),
     ),
     GoRoute(
       path: EntryScreen.routeName,

@@ -45,7 +45,7 @@ class FormImageUpload extends StatelessWidget {
       children: [
         /// 회사 로고 업로드
         ImageUploadField(
-          label: "Company Logo *",
+          label: "${T.companyLogo} *",
           imageUrl: logoUrl,
           onImageSelected: onLogoSelected,
           onDelete: onLogoDelete,
@@ -61,7 +61,7 @@ class FormImageUpload extends StatelessWidget {
 
         /// 회사 소개 이미지 업로드
         ImageUploadField(
-          label: 'Company Introduction Image',
+          label: T.companyIntroImage,
           imageUrl: companyIntroImageUrl,
           onImageSelected: onCompanyIntroImageSelected,
           onDelete: onCompanyIntroImageDelete,
@@ -69,22 +69,21 @@ class FormImageUpload extends StatelessWidget {
 
         /// 소개 이미지 가이드라인
         InformationBox(
-          message:
-              'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).',
+          message: T.companyIntroImageGuideline,
         ),
 
         SizedBox(height: sp.s8),
 
         /// 사무실/매장 내부 사진 업로드
         ImageUploadField(
-          label: 'Office/Store Interior Photo',
+          label: T.officeInteriorPhoto,
           imageUrl: officeInteriorUrl,
           onImageSelected: onOfficeInteriorSelected,
           onDelete: onOfficeInteriorDelete,
         ),
 
         /// 내부 사진 가이드라인
-        InformationBox(message: 'Office/Store Interior full view photo'),
+        InformationBox(message: T.officeInteriorGuideline),
       ],
     );
   }

@@ -866,4 +866,239 @@ class LoEn extends Lo {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get failedToLoadCompanies => 'Failed to load companies';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get noCompaniesFound => 'No companies found';
+
+  @override
+  String noCompaniesInCategory(String categoryName) {
+    return 'There are no companies in $categoryName category yet.';
+  }
+
+  @override
+  String get editMyCompany => 'Edit my company';
+
+  @override
+  String get addMyCompany => 'Add my company';
+
+  @override
+  String get publicOffice => 'Public Office';
+
+  @override
+  String get publicOfficeDesc => 'Government services';
+
+  @override
+  String get education => 'Education';
+
+  @override
+  String get educationDesc => 'Schools and learning';
+
+  @override
+  String get foodAndDrink => 'Food & Drink';
+
+  @override
+  String get foodAndDrinkDesc => 'Restaurants and cafes';
+
+  @override
+  String get transportation => 'Transportation';
+
+  @override
+  String get transportationDesc => 'Public and private transit';
+
+  @override
+  String get healthAndHospitals => 'Health & Hospitals';
+
+  @override
+  String get healthAndHospitalsDesc => 'Clinics and care';
+
+  @override
+  String get shoppingAndMarts => 'Shopping & Marts';
+
+  @override
+  String get shoppingAndMartsDesc => 'Retail and groceries';
+
+  @override
+  String get bankingAndFinance => 'Banking & Finance';
+
+  @override
+  String get bankingAndFinanceDesc => 'Financial institutions';
+
+  @override
+  String get gadgets => 'Gadgets';
+
+  @override
+  String get gadgetsDesc => 'Tech and devices';
+
+  @override
+  String get travelAndTourism => 'Travel & Tourism';
+
+  @override
+  String get travelAndTourismDesc => 'Destinations and booking';
+
+  @override
+  String get hotels => 'Hotels';
+
+  @override
+  String get hotelsDesc => 'Places to stay';
+
+  @override
+  String get carRental => 'Car Rental';
+
+  @override
+  String get carRentalDesc => 'Vehicle hire services';
+
+  @override
+  String get beautyAndWellness => 'Beauty & Wellness';
+
+  @override
+  String get beautyAndWellnessDesc => 'Salons and self-care';
+
+  @override
+  String get realEstate => 'Real Estate';
+
+  @override
+  String get realEstateDesc => 'Property and housing';
+
+  @override
+  String get entertainment => 'Entertainment';
+
+  @override
+  String get entertainmentDesc => 'Karaoke and fun';
+
+  @override
+  String get spaAndRelaxation => 'Spa & Relaxation';
+
+  @override
+  String get spaAndRelaxationDesc => 'Massage and retreats';
+
+  @override
+  String get otherServices => 'Other Services';
+
+  @override
+  String get otherServicesDesc => 'Miscellaneous services';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get advertising => 'Advertising';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get accountActions => 'Account Actions';
+
+  @override
+  String get blockedUsers => 'Blocked Users';
+
+  @override
+  String get writingGuide => 'Writing Guide';
+
+  @override
+  String get postDefamationWarning => 'Posts that defame others may be deleted';
+
+  @override
+  String get postSpamWarning =>
+      'Advertisements and spam will be deleted immediately';
+
+  @override
+  String get postPersonalInfoWarning => 'Do not include personal information';
+
+  @override
+  String get postCopyrightWarning =>
+      'Copyright infringing content cannot be posted';
+
+  @override
+  String get updatePrefix => 'Update:';
+
+  @override
+  String get uploadInProgress =>
+      'Image upload is in progress, please try again in a moment.';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get welcomeToAboutScreen => 'Welcome to About Screen';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get enterKakaotalkId => 'Enter KakaoTalk ID';
+
+  @override
+  String get kakaoChannelUrlPlaceholder => 'https://pf.kakao.com/...';
+
+  @override
+  String get enterTelegramId => 'Enter Telegram ID';
+
+  @override
+  String get companyNameExample => 'e.g.) mycompany';
+
+  @override
+  String get enterFamilySiteName => 'Enter your family site name';
+
+  @override
+  String get enterFamilySiteDescription => 'Enter your family site description';
+
+  @override
+  String get couldNotLaunchEmailApp => 'Could not launch email app';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get useCompanyDomain => 'Use Company Domain';
+
+  @override
+  String get seoFeaturesMessage =>
+      'SEO features help expose your directory listing more on Google, Naver, and other search engines.';
+
+  @override
+  String get familySiteDomain => 'Family Site Domain';
+
+  @override
+  String get familySiteName => 'Family Site Name';
+
+  @override
+  String get familySiteDescription => 'Family Site Description';
+
+  @override
+  String get kakaoId => 'KakaoID';
+
+  @override
+  String get uploadKakaoQrCode => 'Upload Kakao QR Code';
+
+  @override
+  String get kakaoChannelUrl => 'Kakao Channel URL';
+
+  @override
+  String get telegramId => 'Telegram ID';
+
+  @override
+  String get businessType => 'Business Type';
+
+  @override
+  String get companyLogo => 'Company Logo';
+
+  @override
+  String get companyIntroImage => 'Company Introduction Image';
+
+  @override
+  String get companyIntroImageGuideline =>
+      'Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).';
+
+  @override
+  String get officeInteriorPhoto => 'Office/Store Interior Photo';
+
+  @override
+  String get officeInteriorGuideline => 'Office/Store Interior full view photo';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -98,7 +99,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          errorMessage = 'Failed to load companies';
+          errorMessage = T.failedToLoadCompanies;
         });
       }
     } finally {
@@ -176,7 +177,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                   FontAwesomeIcons.lightArrowRotateRight,
                   size: 16,
                 ),
-                label: const Text('Retry'),
+                label: Text(T.retry),
               ),
             ],
           ),
@@ -198,10 +199,10 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                 color: scheme.onSurfaceVariant,
               ),
               SizedBox(height: sp.s16),
-              Text('No companies found', style: theme.textTheme.titleMedium),
+              Text(T.noCompaniesFound, style: theme.textTheme.titleMedium),
               SizedBox(height: sp.s8),
               Text(
-                'There are no companies in ${widget.categoryName} category yet.',
+                T.noCompaniesInCategory(widget.categoryName),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -213,17 +214,36 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       );
     }
 
-    // Company grid
+    // Company grid with responsive aspect ratio
+    // Calculate appropriate aspect ratio based on screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = 2;
+    final horizontalPadding = sp.s16 * 2; // Left and right padding
+    final crossAxisSpacing = sp.s16;
+
+    // Calculate available width per card
+    final availableWidth = screenWidth - horizontalPadding - crossAxisSpacing;
+    final cardWidth = availableWidth / crossAxisCount;
+
+    // Card height calculation:
+    // - Image with 16:9 aspect ratio: cardWidth * (9/16)
+    // - Text section with padding: 12 (top) + 12 (bottom) + text height (~20)
+    final imageHeight = cardWidth * (9 / 16);
+    final textSectionHeight = 44.0; // 12 + 20 + 12
+    final cardHeight = imageHeight + textSectionHeight;
+
+    // Calculate childAspectRatio: width / height
+    final childAspectRatio = cardWidth / cardHeight;
+
     return RefreshIndicator(
       onRefresh: _loadCompanies,
       child: GridView.builder(
         padding: EdgeInsets.all(sp.s16),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: crossAxisCount,
           crossAxisSpacing: sp.s16,
           mainAxisSpacing: sp.s16,
-          // childAspectRatio: 1.250,
-          mainAxisExtent: 155,
+          childAspectRatio: childAspectRatio,
         ),
         itemCount: companyList!.companies.length,
         itemBuilder: (context, index) {

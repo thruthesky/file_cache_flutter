@@ -6,8 +6,6 @@ import 'package:philgo/widgets/information.box.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Company name and optional company domain fields
-///
-/// TODO: Translations
 class FormBasicInfo extends StatelessWidget {
   const FormBasicInfo({
     super.key,
@@ -53,24 +51,21 @@ class FormBasicInfo extends StatelessWidget {
               },
             ),
             Text(
-              'Use Company Domain',
+              T.useCompanyDomain,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
 
-        InformationBox(
-          message:
-              'SEO features help expose your directory listing more on Google, Naver, and other search engines.',
-        ),
+        InformationBox(message: T.seoFeaturesMessage),
 
         SizedBox(height: sp.s8),
 
         if (useCompanyDomain) ...[
           TextFieldSet(
             controller: familySiteDomainController,
-            label: 'Family Site Domain',
-            hintText: 'e.g.) mycompany',
+            label: T.familySiteDomain,
+            hintText: T.companyNameExample,
             prefixFaIconData: FontAwesomeIcons.lightHeading,
             decoration: InputDecoration(
               suffix: Text(
@@ -85,16 +80,16 @@ class FormBasicInfo extends StatelessWidget {
 
           TextFieldSet(
             controller: familySiteNameController,
-            label: 'Family Site Name',
-            hintText: 'Enter your family site name',
+            label: T.familySiteName,
+            hintText: T.enterFamilySiteName,
             prefixFaIconData: FontAwesomeIcons.lightHeading,
             padding: const EdgeInsets.symmetric(vertical: 8),
           ),
 
           TextFieldSet(
             controller: familySiteDescriptionController,
-            label: 'Family Site Description',
-            hintText: 'Enter your family site description',
+            label: T.familySiteDescription,
+            hintText: T.enterFamilySiteDescription,
             prefixFaIconData: FontAwesomeIcons.lightHeading,
             padding: const EdgeInsets.symmetric(vertical: 8),
           ),

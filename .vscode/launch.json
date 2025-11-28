@@ -32,18 +32,6 @@
             ]
         },
         {
-            "name": "PhilGo - Attach Simulator",
-            "request": "attach",
-            "type": "dart",
-            "cwd": "${workspaceFolder}",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
-            "vmServiceUri": "${command:dart.promptForVmService}",
-            "args": [
-                "--no-pause-isolates-on-exit",
-                "--no-pause-isolates-on-unhandled-exceptions"
-            ]
-        },
-        {
             "name": "PhilGo - JaeHo: iPhone 16 Pro Max: Dev",
             "request": "launch",
             "type": "dart",
@@ -94,5 +82,15 @@
                 "--dart-define=ENV=dev",
             ]
         },
+        {
+            "name": "Philgo - Fred: Ipad 10th generation",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "ABA5775C-DE54-414D-97B4-1F8382B7F684",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        }
     ]
 }
