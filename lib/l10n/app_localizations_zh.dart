@@ -1065,4 +1065,10 @@ class LoZh extends Lo {
 
   @override
   String get officeInteriorGuideline => '办公室/商店内部全景照片';
+
+  @override
+  String get philgoPhoneLogin => 'PhilGo Phone Login';
+
+  @override
+  String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';
 }

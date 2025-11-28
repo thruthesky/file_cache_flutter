@@ -1071,4 +1071,10 @@ class LoJa extends Lo {
 
   @override
   String get officeInteriorGuideline => 'オフィス/店舗内装全体写真';
+
+  @override
+  String get philgoPhoneLogin => 'PhilGo Phone Login';
+
+  @override
+  String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';
 }

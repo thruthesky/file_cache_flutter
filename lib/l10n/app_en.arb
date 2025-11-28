@@ -1392,5 +1392,13 @@
   "officeInteriorGuideline": "Office/Store Interior full view photo",
   "@officeInteriorGuideline": {
     "description": "Guideline text for office interior photo"
+  },
+  "philgoPhoneLogin": "PhilGo Phone Login",
+  "@philgoPhoneLogin": {
+    "description": "Title for PhilGo phone number login"
+  },
+  "phoneNumberExample": "e.g.: 09123456789 or 01012345678",
+  "@phoneNumberExample": {
+    "description": "Example text for phone number input format"
   }
 }

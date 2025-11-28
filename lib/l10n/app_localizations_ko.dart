@@ -1071,4 +1071,10 @@ class LoKo extends Lo {
 
   @override
   String get officeInteriorGuideline => '사무실/매장 내부 전체 사진';
+
+  @override
+  String get philgoPhoneLogin => '필고 전화번호 로그인';
+
+  @override
+  String get phoneNumberExample => '예: 09123456789 또는 01012345678';
 }

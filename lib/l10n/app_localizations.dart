@@ -2158,6 +2158,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Office/Store Interior full view photo'**
   String get officeInteriorGuideline;
+
+  /// Title for PhilGo phone number login
+  ///
+  /// In en, this message translates to:
+  /// **'PhilGo Phone Login'**
+  String get philgoPhoneLogin;
+
+  /// Example text for phone number input format
+  ///
+  /// In en, this message translates to:
+  /// **'e.g.: 09123456789 or 01012345678'**
+  String get phoneNumberExample;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {
