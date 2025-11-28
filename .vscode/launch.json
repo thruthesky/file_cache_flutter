@@ -82,5 +82,15 @@
                 "--dart-define=ENV=dev",
             ]
         },
+        {
+            "name": "Philgo - Fred: Ipad 10th generation",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "ABA5775C-DE54-414D-97B4-1F8382B7F684",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        }
     ]
 }
