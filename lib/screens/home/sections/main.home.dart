@@ -86,8 +86,6 @@ class _MainHomeState extends State<MainHome> {
               children: [
                 SizedBox(height: sp.s16),
                 const UserStats(),
-
-                SizedBox(height: sp.s24),
                 Login(
                   builder: (uid) {
                     return LatestUserPosts(firebase_uid: uid);
