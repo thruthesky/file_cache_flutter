@@ -12,6 +12,24 @@ This document outlines the mandatory rules to follow when collaborating with AI 
 
 ---
 
+## Standard Workflow
+
+This checklist must be completed whenever the user request a work:
+
+- [ ] Always use the dart_mcp MCP and DTD to hot reload after code changes.
+- [ ] Strictly follow the COT (Chain-of-Thought) approach. Clearly explain the flow of reasoning in all tasks.
+  - When the developer requests "cot", think step by step and approach problem-solving in stages.
+    - (1) First, understand the core of the problem in more detail.
+    - (2) Establish a plan for solving the problem.
+    - (3) Completely ignore the existing code and approach it fresh from the beginning.
+    - (4) Write completely new code to solve the problem.
+    - (5) Conduct testing step by step.
+- [ ] Strictly follow the TOT (Tree-of-Thought) approach. Break down complex tasks into smaller sub-tasks for processing.
+  - When the developer requests "tot", decompose the problem into multiple sub-problems, solve each sub-problem independently, and then integrate them finally.
+    - (1) First, decompose the problem into multiple sub-problems (branching).
+    - (2) Prepare independent solutions for each sub-problem.
+    - (3) Integrate the solutions of each sub-problem to derive the final solution.
+
 ## Top Priority Rules
 
 ### 1. Never Modify main.dart Theme Without Explicit Request
