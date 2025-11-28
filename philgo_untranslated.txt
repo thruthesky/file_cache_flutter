@@ -1,1 +1,8 @@
-{}
+{
+  "ko": [
+    "loginToSeeProfile",
+    "viewPostsCommentsPoints",
+    "updateYourNickname",
+    "points"
+  ]
+}

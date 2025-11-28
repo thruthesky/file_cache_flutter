@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
@@ -46,14 +47,14 @@ class UserStats extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Login to see your profile',
+                          T.loginToSeeProfile,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: scheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'View your posts, comments, and points',
+                          T.viewPostsCommentsPoints,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
@@ -108,7 +109,7 @@ class UserStats extends StatelessWidget {
                               Text(
                                 user.nickname.isNotEmpty
                                     ? user.nickname
-                                    : 'Update your nickname',
+                                    : T.updateYourNickname,
                                 style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -119,7 +120,7 @@ class UserStats extends StatelessWidget {
 
                               /// Level indicator (레벨 표시) - "Level: 1" format
                               Text(
-                                'Level ${user.level}',
+                                '${T.lv} ${user.level}',
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: scheme.primary,
                                 ),
@@ -139,7 +140,7 @@ class UserStats extends StatelessWidget {
                         Expanded(
                           child: StatContainer(
                             value: user.noOfPost ?? 0,
-                            label: 'Posts',
+                            label: T.posts,
                           ),
                         ),
 
@@ -149,7 +150,7 @@ class UserStats extends StatelessWidget {
                         Expanded(
                           child: StatContainer(
                             value: user.noOfComment ?? 0,
-                            label: 'Comments',
+                            label: T.comments,
                           ),
                         ),
 
@@ -159,7 +160,7 @@ class UserStats extends StatelessWidget {
                         Expanded(
                           child: StatContainer(
                             value: user.point ?? 0,
-                            label: 'Points',
+                            label: T.points,
                           ),
                         ),
                       ],

@@ -1065,4 +1065,16 @@ class LoZh extends Lo {
 
   @override
   String get officeInteriorGuideline => '办公室/商店内部全景照片';
+
+  @override
+  String get loginToSeeProfile => '登录查看您的个人资料';
+
+  @override
+  String get viewPostsCommentsPoints => '查看您的帖子、评论和积分';
+
+  @override
+  String get updateYourNickname => '请更新您的昵称';
+
+  @override
+  String get points => '积分';
 }

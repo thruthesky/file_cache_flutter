@@ -1392,5 +1392,21 @@
   "officeInteriorGuideline": "Office/Store Interior full view photo",
   "@officeInteriorGuideline": {
     "description": "Guideline text for office interior photo"
+  },
+  "loginToSeeProfile": "Login to see your profile",
+  "@loginToSeeProfile": {
+    "description": "Text prompting user to login to view their profile"
+  },
+  "viewPostsCommentsPoints": "View your posts, comments, and points",
+  "@viewPostsCommentsPoints": {
+    "description": "Description of what user can see after logging in"
+  },
+  "updateYourNickname": "Update your nickname",
+  "@updateYourNickname": {
+    "description": "Placeholder text when user has no nickname"
+  },
+  "points": "Points",
+  "@points": {
+    "description": "Label for user points/score"
   }
 }

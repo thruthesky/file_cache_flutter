@@ -343,5 +343,9 @@
     "monthsAgo": "{months}ヶ月前",
     "yearsAgo": "{years}年前",
     "latestPosts": "最新投稿",
-    "viewAll": "すべて表示"
+    "viewAll": "すべて表示",
+    "loginToSeeProfile": "ログインしてプロフィールを表示",
+    "viewPostsCommentsPoints": "投稿、コメント、ポイントを表示",
+    "updateYourNickname": "ニックネームを更新してください",
+    "points": "ポイント"
 }

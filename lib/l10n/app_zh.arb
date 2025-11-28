@@ -343,5 +343,9 @@
     "monthsAgo": "{months}个月前",
     "yearsAgo": "{years}年前",
     "latestPosts": "最新帖子",
-    "viewAll": "查看全部"
+    "viewAll": "查看全部",
+    "loginToSeeProfile": "登录查看您的个人资料",
+    "viewPostsCommentsPoints": "查看您的帖子、评论和积分",
+    "updateYourNickname": "请更新您的昵称",
+    "points": "积分"
 }

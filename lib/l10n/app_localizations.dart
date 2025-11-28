@@ -2158,6 +2158,30 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Office/Store Interior full view photo'**
   String get officeInteriorGuideline;
+
+  /// Text prompting user to login to view their profile
+  ///
+  /// In en, this message translates to:
+  /// **'Login to see your profile'**
+  String get loginToSeeProfile;
+
+  /// Description of what user can see after logging in
+  ///
+  /// In en, this message translates to:
+  /// **'View your posts, comments, and points'**
+  String get viewPostsCommentsPoints;
+
+  /// Placeholder text when user has no nickname
+  ///
+  /// In en, this message translates to:
+  /// **'Update your nickname'**
+  String get updateYourNickname;
+
+  /// Label for user points/score
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get points;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

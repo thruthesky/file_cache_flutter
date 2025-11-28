@@ -1071,4 +1071,16 @@ class LoJa extends Lo {
 
   @override
   String get officeInteriorGuideline => 'オフィス/店舗内装全体写真';
+
+  @override
+  String get loginToSeeProfile => 'ログインしてプロフィールを表示';
+
+  @override
+  String get viewPostsCommentsPoints => '投稿、コメント、ポイントを表示';
+
+  @override
+  String get updateYourNickname => 'ニックネームを更新してください';
+
+  @override
+  String get points => 'ポイント';
 }

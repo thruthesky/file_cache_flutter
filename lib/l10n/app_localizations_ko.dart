@@ -1071,4 +1071,16 @@ class LoKo extends Lo {
 
   @override
   String get officeInteriorGuideline => '사무실/매장 내부 전체 사진';
+
+  @override
+  String get loginToSeeProfile => 'Login to see your profile';
+
+  @override
+  String get viewPostsCommentsPoints => 'View your posts, comments, and points';
+
+  @override
+  String get updateYourNickname => 'Update your nickname';
+
+  @override
+  String get points => 'Points';
 }
