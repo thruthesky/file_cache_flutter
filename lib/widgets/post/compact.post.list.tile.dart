@@ -11,11 +11,17 @@ class CompactPostListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: GestureDetector(
-        onTap: onTap,
-        child: _buildThreeRowLayout(context),
+
+    return GestureDetector(
+      onTap: onTap,
+      // Add behavior to ensure entire area is tappable
+      behavior: HitTestBehavior.opaque,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          // Add background color to make the entire container tappable
+          child: _buildThreeRowLayout(context),
+        ),
       ),
     );
   }
