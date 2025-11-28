@@ -369,14 +369,14 @@ class LoJa extends Lo {
   String get postWithCommentsCannotBeEdited => 'コメントのある投稿は編集できません';
 
   @override
-  String get companyDirectoryTitle => 'Company Directory';
+  String get companyDirectoryTitle => '業者録';
 
   @override
-  String get addCompany => 'Add Company';
+  String get addCompany => '業者を追加';
 
   @override
   String get companyDirectoryDescription =>
-      'When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.';
+      '業者を登録すると、ナビゲーションバーなどに表示され、より多くのユーザーに見られます。';
 
   @override
   String get registerCompany => '登録';
@@ -389,22 +389,21 @@ class LoJa extends Lo {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Total $count companies registered.',
-      one: 'Total 1 company registered.',
-      zero: 'Total 0 companies registered.',
+      other: '合計$count社登録済み。',
+      one: '合計1社登録済み。',
+      zero: '合計0社登録済み。',
     );
     return '$_temp0';
   }
 
   @override
-  String get viewMore => 'View More';
+  String get viewMore => 'もっと見る';
 
   @override
-  String get noRegisteredCompanies => 'No registered companies.';
+  String get noRegisteredCompanies => '登録された業者はありません。';
 
   @override
-  String get registerCompanyPrompt =>
-      'Be the first to register a company in this category!';
+  String get registerCompanyPrompt => 'このカテゴリーで最初に業者を登録しましょう！';
 
   @override
   String get location => '所在地';
@@ -488,198 +487,184 @@ class LoJa extends Lo {
   String get companyUpdated => '業者情報が正常に更新されました';
 
   @override
-  String get mobileContactMethod => 'Mobile Contact Method';
+  String get mobileContactMethod => '携帯連絡方法';
 
   @override
-  String get sendText => 'Send Text';
+  String get sendText => 'メッセージを送信';
 
   @override
-  String get makeCall => 'Make Call';
+  String get makeCall => '電話をかける';
 
   @override
-  String get guideWelcomeTitle => 'Welcome to PhilGo!';
+  String get guideWelcomeTitle => 'PhilGoへようこそ！';
 
   @override
-  String get guideWelcomeSubtitle =>
-      'Share and communicate various information\nin the Philippines\' largest Korean community';
+  String get guideWelcomeSubtitle => 'フィリピン最大の韓国人コミュニティで\n様々な情報を共有して交流しましょう';
 
   @override
-  String get guideFeaturesTitle => 'App Features';
+  String get guideFeaturesTitle => 'アプリ機能';
 
   @override
-  String get guideFeatureCommunityTitle => 'Community';
+  String get guideFeatureCommunityTitle => 'コミュニティ';
 
   @override
-  String get guideFeatureCommunityDesc =>
-      'Share and communicate information on various boards';
+  String get guideFeatureCommunityDesc => '様々な掲示板で情報を共有して交流';
 
   @override
-  String get guideFeatureChatTitle => 'Chat';
+  String get guideFeatureChatTitle => 'チャット';
 
   @override
-  String get guideFeatureChatDesc => 'Connect quickly through real-time chat';
+  String get guideFeatureChatDesc => 'リアルタイムチャットで素早く接続';
 
   @override
-  String get guideFeatureDirectoryTitle => 'Business Directory';
+  String get guideFeatureDirectoryTitle => '業者録';
 
   @override
-  String get guideFeatureDirectoryDesc =>
-      'Find Korean business information in the Philippines';
+  String get guideFeatureDirectoryDesc => 'フィリピンの韓国人ビジネス情報を検索';
 
   @override
-  String get guideFeatureWriteTitle => 'Write';
+  String get guideFeatureWriteTitle => '投稿';
 
   @override
-  String get guideFeatureWriteDesc => 'Write and share your posts freely';
+  String get guideFeatureWriteDesc => '自由に投稿を作成して共有';
 
   @override
-  String get guideTipsTitle => 'Usage Tips';
+  String get guideTipsTitle => '使用のヒント';
 
   @override
-  String get guideTip1 => 'Complete your profile to connect with more people';
+  String get guideTip1 => 'プロフィールを完成させてより多くの人と繋がりましょう';
 
   @override
-  String get guideTip2 =>
-      'Enable notifications so you don\'t miss important news';
+  String get guideTip2 => '通知を有効にして重要なニュースを見逃さないようにしましょう';
 
   @override
-  String get guideTip3 => 'Like posts you enjoy';
+  String get guideTip3 => '気に入った投稿にいいねをしましょう';
 
   @override
-  String get guideTip4 => 'You can bookmark frequently visited boards';
+  String get guideTip4 => 'よく訪れる掲示板をブックマークできます';
 
   @override
-  String get guideFaqTitle => 'Frequently Asked Questions';
+  String get guideFaqTitle => 'よくある質問';
 
   @override
-  String get guideFaqQ1 => 'How do I write a post?';
+  String get guideFaqQ1 => '投稿はどのように作成しますか？';
 
   @override
-  String get guideFaqA1 =>
-      'Tap the \"Write\" tab at the bottom, select a board, and write your post.';
+  String get guideFaqA1 => '下部の「投稿」タブをタップし、掲示板を選択して投稿を作成します。';
 
   @override
-  String get guideFaqQ2 => 'How do I create a chat room?';
+  String get guideFaqQ2 => 'チャットルームはどのように作成しますか？';
 
   @override
-  String get guideFaqA2 =>
-      'In the \"Chat\" tab, tap the + button to create a new chat room.';
+  String get guideFaqA2 => '「チャット」タブで+ボタンをタップして新しいチャットルームを作成します。';
 
   @override
-  String get guideFaqQ3 => 'How do I register a business?';
+  String get guideFaqQ3 => '業者はどのように登録しますか？';
 
   @override
-  String get guideFaqA3 =>
-      'In the \"Directory\" tab, tap the \"Add Company\" button to register business information.';
+  String get guideFaqA3 => '「業者録」タブで「業者を追加」ボタンをタップしてビジネス情報を登録します。';
 
   @override
-  String get guideFaqQ4 => 'Where can I edit my profile?';
+  String get guideFaqQ4 => 'プロフィールはどこで編集できますか？';
 
   @override
-  String get guideFaqA4 =>
-      'Go to the \"Menu\" tab and select \"Edit Profile\" to change your information.';
+  String get guideFaqA4 => '「メニュー」タブに移動し、「プロフィール編集」を選択して情報を変更します。';
 
   @override
-  String get accountWithdrawalTitle => 'Account Withdrawal';
+  String get accountWithdrawalTitle => '会員退会';
 
   @override
-  String get withdrawalIntroTitle => 'Data Delete Request';
+  String get withdrawalIntroTitle => 'データ削除リクエスト';
 
   @override
   String get withdrawalIntroSubtitle =>
-      'PhilGo Network provides you the right to permanently delete all personal information related to your account at any time.';
+      'PhilGo Networkは、アカウントに関連するすべての個人情報をいつでも完全に削除する権利を提供します。';
 
   @override
-  String get withdrawalStep1Title => 'Data to be Deleted';
+  String get withdrawalStep1Title => '削除されるデータ';
 
   @override
-  String get withdrawalAccountInfoTitle => 'Account Identity Information';
+  String get withdrawalAccountInfoTitle => 'アカウント識別情報';
 
   @override
-  String get withdrawalAccountInfoDesc => 'Email, nickname, profile image';
+  String get withdrawalAccountInfoDesc => 'メールアドレス、ニックネーム、プロフィール画像';
 
   @override
-  String get withdrawalUsageHistoryTitle => 'App Usage History';
+  String get withdrawalUsageHistoryTitle => 'アプリ使用履歴';
 
   @override
-  String get withdrawalUsageHistoryDesc =>
-      'Chats, posts, activity logs, notification tokens';
+  String get withdrawalUsageHistoryDesc => 'チャット、投稿、活動ログ、通知トークン';
 
   @override
-  String get withdrawalAdditionalDataTitle => 'Connected Additional Data';
+  String get withdrawalAdditionalDataTitle => '接続された追加データ';
 
   @override
-  String get withdrawalAdditionalDataDesc =>
-      'Cloud backups, user settings, etc.';
+  String get withdrawalAdditionalDataDesc => 'クラウドバックアップ、ユーザー設定など';
 
   @override
   String get withdrawalPaymentNote =>
-      'Payment and tax documentation will be retained separately for up to 5 years as required by relevant laws before destruction.';
+      '支払いおよび税務書類は、関連法律により最大5年間別途保管された後、破棄されます。';
 
   @override
-  String get withdrawalStep2Title => 'Deletion Method';
+  String get withdrawalStep2Title => '削除方法';
 
   @override
-  String get withdrawalEmailRequest => 'Email Request';
+  String get withdrawalEmailRequest => 'メールリクエスト';
 
   @override
-  String get withdrawalStep3Title => 'Processing & Timeline';
+  String get withdrawalStep3Title => '処理とタイムライン';
 
   @override
   String get withdrawalProcessingDesc =>
-      'After confirming your request, all data will be completely deleted within 7 business days, and you will receive a completion notification email.';
+      'リクエストを確認後、すべてのデータは7営業日以内に完全に削除され、完了通知メールが送信されます。';
 
   @override
   String get withdrawalIrreversibleNote =>
-      'Once deletion is complete, recovery is impossible, and all remaining points and subscriptions will be forfeited.';
+      '削除が完了すると復元は不可能であり、残りのポイントや購読はすべて失効します。';
 
   @override
-  String get withdrawalStep4Title => 'Data Retention Exceptions';
+  String get withdrawalStep4Title => 'データ保持の例外';
 
   @override
   String get withdrawalRetentionDesc =>
-      'Only information necessary for fraud prevention, accounting audits, and legal compliance will be retained in a minimized form for the period prescribed by relevant laws before immediate destruction.';
+      '詐欺防止、会計監査、法的遵守に必要な情報のみ、関連法律で規定された期間中、最小限の形式で保管された後、即座に破棄されます。';
 
   @override
-  String get withdrawalStep5Title => 'Contact';
+  String get withdrawalStep5Title => 'お問い合わせ';
 
   @override
   String get withdrawalContactDesc =>
-      'For additional inquiries, please contact us at philgohelp@gmail.com anytime.';
+      '追加のお問い合わせは、philgohelp@gmail.comまでいつでもご連絡ください。';
 
   @override
-  String get requestWithdrawal => 'Request Withdrawal';
+  String get requestWithdrawal => '退会をリクエスト';
 
   @override
-  String get guideGettingStartedTitle => 'Get Started';
+  String get guideGettingStartedTitle => '始めましょう';
 
   @override
-  String get guideStep1Title => 'Create Your Account';
+  String get guideStep1Title => 'アカウントを作成';
 
   @override
-  String get guideStep1Desc =>
-      'Sign up with your email or social accounts to get started.';
+  String get guideStep1Desc => 'メールまたはソーシャルアカウントでサインアップして始めましょう。';
 
   @override
-  String get guideStep2Title => 'Explore the Community';
+  String get guideStep2Title => 'コミュニティを探索';
 
   @override
-  String get guideStep2Desc =>
-      'Browse through posts, companies, and connect with Korean community in the Philippines.';
+  String get guideStep2Desc => '投稿や業者を閲覧し、フィリピンの韓国人コミュニティと繋がりましょう。';
 
   @override
-  String get guideStep3Title => 'Share Your Story';
+  String get guideStep3Title => 'ストーリーを共有';
 
   @override
-  String get guideStep3Desc =>
-      'Write posts, share experiences, and contribute to the community.';
+  String get guideStep3Desc => '投稿を作成し、経験を共有し、コミュニティに貢献しましょう。';
 
   @override
-  String get guideStep4Title => 'Connect with Others';
+  String get guideStep4Title => '他の人と繋がる';
 
   @override
-  String get guideStep4Desc =>
-      'Chat with members, join discussions, and build your network.';
+  String get guideStep4Desc => 'メンバーとチャットし、ディスカッションに参加し、ネットワークを構築しましょう。';
 
   @override
   String get bookmarked_folders => 'ブックマークフォルダ';
@@ -706,67 +691,67 @@ class LoJa extends Lo {
   String get chat_room_unpinned => 'チャットルームの固定が解除されました';
 
   @override
-  String get myActivity => 'My Activity';
+  String get myActivity => 'マイアクティビティ';
 
   @override
-  String get myPosts => 'My Posts';
+  String get myPosts => 'マイ投稿';
 
   @override
-  String get myComments => 'My Comments';
+  String get myComments => 'マイコメント';
 
   @override
-  String get posts => 'Posts';
+  String get posts => '投稿';
 
   @override
-  String get noPostsYet => 'No posts yet';
+  String get noPostsYet => 'まだ投稿がありません';
 
   @override
-  String get noCommentsYet => 'No comments yet';
+  String get noCommentsYet => 'まだコメントがありません';
 
   @override
-  String get views => 'Views';
+  String get views => '閲覧数';
 
   @override
-  String get ago => 'ago';
+  String get ago => '前';
 
   @override
-  String get justNow => 'just now';
+  String get justNow => 'たった今';
 
   @override
   String minutesAgo(int minutes) {
-    return '${minutes}m ago';
+    return '$minutes分前';
   }
 
   @override
   String hoursAgo(int hours) {
-    return '${hours}h ago';
+    return '$hours時間前';
   }
 
   @override
   String daysAgo(int days) {
-    return '${days}d ago';
+    return '$days日前';
   }
 
   @override
   String weeksAgo(int weeks) {
-    return '${weeks}w ago';
+    return '$weeks週間前';
   }
 
   @override
   String monthsAgo(int months) {
-    return '${months}mo ago';
+    return '$monthsヶ月前';
   }
 
   @override
   String yearsAgo(int years) {
-    return '${years}y ago';
+    return '$years年前';
   }
 
   @override
-  String get latestPosts => 'Latest Posts';
+  String get latestPosts => '最新投稿';
 
   @override
-  String get viewAll => 'View All';
+  String get viewAll => 'すべて表示';
 
   @override
   String get lv => 'Lv';

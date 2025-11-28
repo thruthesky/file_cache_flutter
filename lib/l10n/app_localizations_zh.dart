@@ -368,14 +368,13 @@ class LoZh extends Lo {
   String get postWithCommentsCannotBeEdited => '有评论的帖子无法编辑';
 
   @override
-  String get companyDirectoryTitle => 'Company Directory';
+  String get companyDirectoryTitle => '商家目录';
 
   @override
-  String get addCompany => 'Add Company';
+  String get addCompany => '添加商家';
 
   @override
-  String get companyDirectoryDescription =>
-      'When you register a company, it will be displayed in the navigation bar and other locations, making it visible to more users.';
+  String get companyDirectoryDescription => '注册商家后，它将显示在导航栏和其他位置，让更多用户看到。';
 
   @override
   String get registerCompany => '注册';
@@ -388,22 +387,21 @@ class LoZh extends Lo {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Total $count companies registered.',
-      one: 'Total 1 company registered.',
-      zero: 'Total 0 companies registered.',
+      other: '共注册$count家商家。',
+      one: '共注册1家商家。',
+      zero: '共注册0家商家。',
     );
     return '$_temp0';
   }
 
   @override
-  String get viewMore => 'View More';
+  String get viewMore => '查看更多';
 
   @override
-  String get noRegisteredCompanies => 'No registered companies.';
+  String get noRegisteredCompanies => '没有注册的商家。';
 
   @override
-  String get registerCompanyPrompt =>
-      'Be the first to register a company in this category!';
+  String get registerCompanyPrompt => '成为第一个在此类别中注册商家的人！';
 
   @override
   String get location => '位置';
@@ -487,198 +485,181 @@ class LoZh extends Lo {
   String get companyUpdated => '商家信息更新成功';
 
   @override
-  String get mobileContactMethod => 'Mobile Contact Method';
+  String get mobileContactMethod => '手机联系方式';
 
   @override
-  String get sendText => 'Send Text';
+  String get sendText => '发送短信';
 
   @override
-  String get makeCall => 'Make Call';
+  String get makeCall => '拨打电话';
 
   @override
-  String get guideWelcomeTitle => 'Welcome to PhilGo!';
+  String get guideWelcomeTitle => '欢迎来到PhilGo！';
 
   @override
-  String get guideWelcomeSubtitle =>
-      'Share and communicate various information\nin the Philippines\' largest Korean community';
+  String get guideWelcomeSubtitle => '在菲律宾最大的韩国人社区\n分享和交流各种信息';
 
   @override
-  String get guideFeaturesTitle => 'App Features';
+  String get guideFeaturesTitle => '应用功能';
 
   @override
-  String get guideFeatureCommunityTitle => 'Community';
+  String get guideFeatureCommunityTitle => '社区';
 
   @override
-  String get guideFeatureCommunityDesc =>
-      'Share and communicate information on various boards';
+  String get guideFeatureCommunityDesc => '在各种论坛上分享和交流信息';
 
   @override
-  String get guideFeatureChatTitle => 'Chat';
+  String get guideFeatureChatTitle => '聊天';
 
   @override
-  String get guideFeatureChatDesc => 'Connect quickly through real-time chat';
+  String get guideFeatureChatDesc => '通过实时聊天快速连接';
 
   @override
-  String get guideFeatureDirectoryTitle => 'Business Directory';
+  String get guideFeatureDirectoryTitle => '商家目录';
 
   @override
-  String get guideFeatureDirectoryDesc =>
-      'Find Korean business information in the Philippines';
+  String get guideFeatureDirectoryDesc => '查找菲律宾韩国人的商业信息';
 
   @override
-  String get guideFeatureWriteTitle => 'Write';
+  String get guideFeatureWriteTitle => '发布';
 
   @override
-  String get guideFeatureWriteDesc => 'Write and share your posts freely';
+  String get guideFeatureWriteDesc => '自由撰写和分享您的帖子';
 
   @override
-  String get guideTipsTitle => 'Usage Tips';
+  String get guideTipsTitle => '使用提示';
 
   @override
-  String get guideTip1 => 'Complete your profile to connect with more people';
+  String get guideTip1 => '完善您的个人资料以与更多人建立联系';
 
   @override
-  String get guideTip2 =>
-      'Enable notifications so you don\'t miss important news';
+  String get guideTip2 => '启用通知以免错过重要新闻';
 
   @override
-  String get guideTip3 => 'Like posts you enjoy';
+  String get guideTip3 => '为您喜欢的帖子点赞';
 
   @override
-  String get guideTip4 => 'You can bookmark frequently visited boards';
+  String get guideTip4 => '您可以为经常访问的论坛添加书签';
 
   @override
-  String get guideFaqTitle => 'Frequently Asked Questions';
+  String get guideFaqTitle => '常见问题';
 
   @override
-  String get guideFaqQ1 => 'How do I write a post?';
+  String get guideFaqQ1 => '如何撰写帖子？';
 
   @override
-  String get guideFaqA1 =>
-      'Tap the \"Write\" tab at the bottom, select a board, and write your post.';
+  String get guideFaqA1 => '点击底部的「发布」选项卡，选择论坛，然后撰写您的帖子。';
 
   @override
-  String get guideFaqQ2 => 'How do I create a chat room?';
+  String get guideFaqQ2 => '如何创建聊天室？';
 
   @override
-  String get guideFaqA2 =>
-      'In the \"Chat\" tab, tap the + button to create a new chat room.';
+  String get guideFaqA2 => '在「聊天」选项卡中，点击+按钮创建新的聊天室。';
 
   @override
-  String get guideFaqQ3 => 'How do I register a business?';
+  String get guideFaqQ3 => '如何注册商家？';
 
   @override
-  String get guideFaqA3 =>
-      'In the \"Directory\" tab, tap the \"Add Company\" button to register business information.';
+  String get guideFaqA3 => '在「商家目录」选项卡中，点击「添加商家」按钮注册商家信息。';
 
   @override
-  String get guideFaqQ4 => 'Where can I edit my profile?';
+  String get guideFaqQ4 => '在哪里可以编辑我的个人资料？';
 
   @override
-  String get guideFaqA4 =>
-      'Go to the \"Menu\" tab and select \"Edit Profile\" to change your information.';
+  String get guideFaqA4 => '转到「菜单」选项卡并选择「编辑个人资料」以更改您的信息。';
 
   @override
-  String get accountWithdrawalTitle => 'Account Withdrawal';
+  String get accountWithdrawalTitle => '账户退出';
 
   @override
-  String get withdrawalIntroTitle => 'Data Delete Request';
+  String get withdrawalIntroTitle => '数据删除请求';
 
   @override
   String get withdrawalIntroSubtitle =>
-      'PhilGo Network provides you the right to permanently delete all personal information related to your account at any time.';
+      'PhilGo Network为您提供随时永久删除与您账户相关的所有个人信息的权利。';
 
   @override
-  String get withdrawalStep1Title => 'Data to be Deleted';
+  String get withdrawalStep1Title => '将被删除的数据';
 
   @override
-  String get withdrawalAccountInfoTitle => 'Account Identity Information';
+  String get withdrawalAccountInfoTitle => '账户身份信息';
 
   @override
-  String get withdrawalAccountInfoDesc => 'Email, nickname, profile image';
+  String get withdrawalAccountInfoDesc => '电子邮件、昵称、个人资料图片';
 
   @override
-  String get withdrawalUsageHistoryTitle => 'App Usage History';
+  String get withdrawalUsageHistoryTitle => '应用使用历史';
 
   @override
-  String get withdrawalUsageHistoryDesc =>
-      'Chats, posts, activity logs, notification tokens';
+  String get withdrawalUsageHistoryDesc => '聊天、帖子、活动日志、通知令牌';
 
   @override
-  String get withdrawalAdditionalDataTitle => 'Connected Additional Data';
+  String get withdrawalAdditionalDataTitle => '连接的其他数据';
 
   @override
-  String get withdrawalAdditionalDataDesc =>
-      'Cloud backups, user settings, etc.';
+  String get withdrawalAdditionalDataDesc => '云备份、用户设置等';
 
   @override
-  String get withdrawalPaymentNote =>
-      'Payment and tax documentation will be retained separately for up to 5 years as required by relevant laws before destruction.';
+  String get withdrawalPaymentNote => '支付和税务文档将根据相关法律单独保留最多5年，然后销毁。';
 
   @override
-  String get withdrawalStep2Title => 'Deletion Method';
+  String get withdrawalStep2Title => '删除方法';
 
   @override
-  String get withdrawalEmailRequest => 'Email Request';
+  String get withdrawalEmailRequest => '电子邮件请求';
 
   @override
-  String get withdrawalStep3Title => 'Processing & Timeline';
+  String get withdrawalStep3Title => '处理和时间表';
 
   @override
   String get withdrawalProcessingDesc =>
-      'After confirming your request, all data will be completely deleted within 7 business days, and you will receive a completion notification email.';
+      '确认您的请求后，所有数据将在7个工作日内完全删除，并且您将收到完成通知电子邮件。';
 
   @override
-  String get withdrawalIrreversibleNote =>
-      'Once deletion is complete, recovery is impossible, and all remaining points and subscriptions will be forfeited.';
+  String get withdrawalIrreversibleNote => '删除完成后无法恢复，所有剩余积分和订阅将被没收。';
 
   @override
-  String get withdrawalStep4Title => 'Data Retention Exceptions';
+  String get withdrawalStep4Title => '数据保留例外';
 
   @override
   String get withdrawalRetentionDesc =>
-      'Only information necessary for fraud prevention, accounting audits, and legal compliance will be retained in a minimized form for the period prescribed by relevant laws before immediate destruction.';
+      '只有防止欺诈、会计审计和法律合规所需的信息将以最小化的形式保留相关法律规定的期间，然后立即销毁。';
 
   @override
-  String get withdrawalStep5Title => 'Contact';
+  String get withdrawalStep5Title => '联系方式';
 
   @override
-  String get withdrawalContactDesc =>
-      'For additional inquiries, please contact us at philgohelp@gmail.com anytime.';
+  String get withdrawalContactDesc => '如有其他疑问，请随时通过philgohelp@gmail.com与我们联系。';
 
   @override
-  String get requestWithdrawal => 'Request Withdrawal';
+  String get requestWithdrawal => '请求退出';
 
   @override
-  String get guideGettingStartedTitle => 'Get Started';
+  String get guideGettingStartedTitle => '开始使用';
 
   @override
-  String get guideStep1Title => 'Create Your Account';
+  String get guideStep1Title => '创建您的账户';
 
   @override
-  String get guideStep1Desc =>
-      'Sign up with your email or social accounts to get started.';
+  String get guideStep1Desc => '使用电子邮件或社交账户注册以开始使用。';
 
   @override
-  String get guideStep2Title => 'Explore the Community';
+  String get guideStep2Title => '探索社区';
 
   @override
-  String get guideStep2Desc =>
-      'Browse through posts, companies, and connect with Korean community in the Philippines.';
+  String get guideStep2Desc => '浏览帖子和商家，与菲律宾的韩国人社区建立联系。';
 
   @override
-  String get guideStep3Title => 'Share Your Story';
+  String get guideStep3Title => '分享您的故事';
 
   @override
-  String get guideStep3Desc =>
-      'Write posts, share experiences, and contribute to the community.';
+  String get guideStep3Desc => '撰写帖子，分享经验，为社区做出贡献。';
 
   @override
-  String get guideStep4Title => 'Connect with Others';
+  String get guideStep4Title => '与他人联系';
 
   @override
-  String get guideStep4Desc =>
-      'Chat with members, join discussions, and build your network.';
+  String get guideStep4Desc => '与成员聊天，参与讨论，建立您的网络。';
 
   @override
   String get bookmarked_folders => '书签文件夹';
@@ -705,67 +686,67 @@ class LoZh extends Lo {
   String get chat_room_unpinned => '聊天室已取消固定';
 
   @override
-  String get myActivity => 'My Activity';
+  String get myActivity => '我的活动';
 
   @override
-  String get myPosts => 'My Posts';
+  String get myPosts => '我的帖子';
 
   @override
-  String get myComments => 'My Comments';
+  String get myComments => '我的评论';
 
   @override
-  String get posts => 'Posts';
+  String get posts => '帖子';
 
   @override
-  String get noPostsYet => 'No posts yet';
+  String get noPostsYet => '还没有帖子';
 
   @override
-  String get noCommentsYet => 'No comments yet';
+  String get noCommentsYet => '还没有评论';
 
   @override
-  String get views => 'Views';
+  String get views => '浏览量';
 
   @override
-  String get ago => 'ago';
+  String get ago => '前';
 
   @override
-  String get justNow => 'just now';
+  String get justNow => '刚刚';
 
   @override
   String minutesAgo(int minutes) {
-    return '${minutes}m ago';
+    return '$minutes分钟前';
   }
 
   @override
   String hoursAgo(int hours) {
-    return '${hours}h ago';
+    return '$hours小时前';
   }
 
   @override
   String daysAgo(int days) {
-    return '${days}d ago';
+    return '$days天前';
   }
 
   @override
   String weeksAgo(int weeks) {
-    return '${weeks}w ago';
+    return '$weeks周前';
   }
 
   @override
   String monthsAgo(int months) {
-    return '${months}mo ago';
+    return '$months个月前';
   }
 
   @override
   String yearsAgo(int years) {
-    return '${years}y ago';
+    return '$years年前';
   }
 
   @override
-  String get latestPosts => 'Latest Posts';
+  String get latestPosts => '最新帖子';
 
   @override
-  String get viewAll => 'View All';
+  String get viewAll => '查看全部';
 
   @override
   String get lv => 'Lv';

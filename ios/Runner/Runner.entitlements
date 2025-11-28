@@ -8,8 +8,6 @@
 	<array>
 		<string>webcredentials:philgo.com</string>
 		<string>applinks:philgo.com</string>
-		<string>webcredentials:new.philgo.com</string>
-		<string>applinks:new.philgo.com</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
