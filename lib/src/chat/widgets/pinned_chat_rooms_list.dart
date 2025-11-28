@@ -62,7 +62,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Pinned Chats',
+                      LibTr.of(context)!.pinned_chats,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.w600,
@@ -292,7 +292,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                unreadCount > 99 ? '99+' : unreadCount.toString(),
+                                unreadCount > 99
+                                    ? '99+'
+                                    : unreadCount.toString(),
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: colorScheme.onError,
                                   fontWeight: FontWeight.w700,

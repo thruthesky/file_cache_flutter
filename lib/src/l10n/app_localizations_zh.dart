@@ -546,4 +546,19 @@ class LibTrZh extends LibTr {
 
   @override
   String get comment_blocked_message => '来自被屏蔽用户的评论';
+
+  @override
+  String get pinned_chats => '固定的聊天';
+
+  @override
+  String get report_reason_category_error => '分类错误（广告）';
+
+  @override
+  String get report_reason_abuse => '骚扰/侮辱/脏话';
+
+  @override
+  String get report_reason_spam => '垃圾信息/灌水及不当内容';
+
+  @override
+  String get report_reason_other => '其他';
 }

@@ -563,4 +563,20 @@ class LibTrEn extends LibTr {
 
   @override
   String get comment_blocked_message => 'Comment from blocked user';
+
+  @override
+  String get pinned_chats => 'Pinned Chats';
+
+  @override
+  String get report_reason_category_error =>
+      'Category classification error (advertisement)';
+
+  @override
+  String get report_reason_abuse => 'Harassment/Insult/Profanity';
+
+  @override
+  String get report_reason_spam => 'Spam/Flooding and inappropriate content';
+
+  @override
+  String get report_reason_other => 'Other';
 }

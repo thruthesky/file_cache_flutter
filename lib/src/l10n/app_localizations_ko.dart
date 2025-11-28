@@ -548,4 +548,19 @@ class LibTrKo extends LibTr {
 
   @override
   String get comment_blocked_message => '차단된 사용자의 댓글';
+
+  @override
+  String get pinned_chats => '고정된 채팅';
+
+  @override
+  String get report_reason_category_error => '카테고리 분류 오류 (광고)';
+
+  @override
+  String get report_reason_abuse => '시비/모욕/욕설';
+
+  @override
+  String get report_reason_spam => '스팸/도배 및 부적절한 내용';
+
+  @override
+  String get report_reason_other => '기타';
 }

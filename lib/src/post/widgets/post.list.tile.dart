@@ -127,11 +127,14 @@ class PostListTile extends StatelessWidget {
                     const SizedBox(width: 6),
 
                     /// 사용자 이름
-                    Text(
-                      _displayName(context),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
+                    Flexible(
+                      child: Text(
+                        _displayName(context),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -204,11 +207,14 @@ class PostListTile extends StatelessWidget {
                 const SizedBox(width: 6),
 
                 /// 사용자 이름
-                Text(
-                  _displayName(context),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  child: Text(
+                    _displayName(context),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 8),

@@ -1060,6 +1060,36 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'Comment from blocked user'**
   String get comment_blocked_message;
+
+  /// Title for pinned chat rooms section
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned Chats'**
+  String get pinned_chats;
+
+  /// Report reason for posts in wrong category or spam ads
+  ///
+  /// In en, this message translates to:
+  /// **'Category classification error (advertisement)'**
+  String get report_reason_category_error;
+
+  /// Report reason for abusive or offensive content
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment/Insult/Profanity'**
+  String get report_reason_abuse;
+
+  /// Report reason for spam or inappropriate content
+  ///
+  /// In en, this message translates to:
+  /// **'Spam/Flooding and inappropriate content'**
+  String get report_reason_spam;
+
+  /// Report reason for other issues
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get report_reason_other;
 }
 
 class _LibTrDelegate extends LocalizationsDelegate<LibTr> {
