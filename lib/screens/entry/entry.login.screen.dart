@@ -156,9 +156,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: sp.s40),
-
-                                SizedBox(height: sp.s32 + sp.s8),
+                                SizedBox(height: sp.s24),
 
                                 // PhoneSignIn Widget - full width
                                 Padding(
