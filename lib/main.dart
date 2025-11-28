@@ -243,6 +243,7 @@ class _MyAppState extends State<MyApp> {
       selector: (context, appState) => appState.locale,
       builder: (context, locale, child) {
         return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           routerConfig: router,
           locale: locale, // AppState의 locale 사용
