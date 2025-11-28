@@ -8,42 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:675064809117:android:3bb3c634091c488f52f674",
-        "android_client_info": {
-          "package_name": "com.philgo.philgo"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD0HlooLpPJeB8MQRru4T3hnSPKvQ_b5Yg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.philgo.philgo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:675064809117:android:35b9f3ca9f97bf0a",
         "android_client_info": {
           "package_name": "com.philgo.philov"
@@ -166,6 +130,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "675064809117-7t1bv88t7h9qjkt6tft9aqt392sq6d54.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.withcenter.philgo",
+            "certificate_hash": "972dd778d11f84494989913995c5eb6264d2e886"
+          }
+        },
+        {
+          "client_id": "675064809117-a8v9o9tbi8vqin515p9ck90bcrc8jdbq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.withcenter.philgo",
+            "certificate_hash": "585d7302acb4d844e0ae5a59c2ecedd387df57ab"
+          }
+        },
         {
           "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
           "client_type": 3
