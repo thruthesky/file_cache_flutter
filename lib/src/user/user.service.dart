@@ -225,12 +225,16 @@ class UserService {
           if (event.snapshot.exists && event.snapshot.value != null) {
             final data = event.snapshot.value as Map<dynamic, dynamic>;
             debugPrint('favoriteFoldersRef::data: ${data.toString()}');
+
             data.forEach((key, value) {
               favoriteFolders.add({
                 'folderName': key.toString(),
                 'countFavorites': value,
               });
             });
+          }
+          if (favoriteFolders.isEmpty) {
+            favoriteFolders.add({'folderName': 'default', 'countFavorites': 0});
           }
           debugPrint(
             'favoriteFoldersRef::favoriteFolders: ${favoriteFolders.toString()}',
