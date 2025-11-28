@@ -46,13 +46,19 @@ class _PostReportButtonState extends State<PostReportButton> {
   /// - 'post': 게시물 신고 사유 (카테고리 오류, 시비/욕설, 스팸, 기타)
   /// - 'comment': 댓글 신고 사유 (시비/욕설, 스팸, 기타)
   /// - 기타: 기본 사유 (기타)
-  List<String> getReportReason(String type) {
+  List<String> getReportReason(BuildContext context, String type) {
+    final tr = LibTr.of(context)!;
     if (type == 'post') {
-      return ['카테고리 분류 오류 (광고)', '시비/모욕/욕설', '스팸/도배 및 부적절한 내용', '기타'];
+      return [
+        tr.report_reason_category_error,
+        tr.report_reason_abuse,
+        tr.report_reason_spam,
+        tr.report_reason_other
+      ];
     } else if (type == 'comment') {
-      return ['시비/모욕/욕설', '스팸/도배 및 부적절한 내용', '기타'];
+      return [tr.report_reason_abuse, tr.report_reason_spam, tr.report_reason_other];
     }
-    return ['기타'];
+    return [tr.report_reason_other];
   }
 
   /// 신고를 처리하는 메서드
@@ -104,7 +110,7 @@ class _PostReportButtonState extends State<PostReportButton> {
   /// - Theme 기반 스타일링으로 다크모드/라이트모드 자동 대응
   void _showReportReasonBottomSheet() {
     final scheme = Theme.of(context).colorScheme;
-    final reasons = getReportReason(widget.type);
+    final reasons = getReportReason(context, widget.type);
 
     showModalBottomSheet(
       context: context,

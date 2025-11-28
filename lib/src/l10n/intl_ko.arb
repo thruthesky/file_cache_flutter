@@ -159,5 +159,10 @@
     "comments": "댓글",
     "this_post_has_comments": "이 게시물에 댓글이 있습니다",
     "be_the_first_to_comment": "첫 댓글을 남겨보세요!",
-    "comment_blocked_message": "차단된 사용자의 댓글"
+    "comment_blocked_message": "차단된 사용자의 댓글",
+    "pinned_chats": "고정된 채팅",
+    "report_reason_category_error": "카테고리 분류 오류 (광고)",
+    "report_reason_abuse": "시비/모욕/욕설",
+    "report_reason_spam": "스팸/도배 및 부적절한 내용",
+    "report_reason_other": "기타"
 }

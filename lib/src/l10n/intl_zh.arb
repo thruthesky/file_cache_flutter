@@ -630,5 +630,10 @@
     "comments": "评论",
     "this_post_has_comments": "这篇帖子有评论",
     "be_the_first_to_comment": "成为第一个评论的人！",
-    "comment_blocked_message": "来自被屏蔽用户的评论"
+    "comment_blocked_message": "来自被屏蔽用户的评论",
+    "pinned_chats": "固定的聊天",
+    "report_reason_category_error": "分类错误（广告）",
+    "report_reason_abuse": "骚扰/侮辱/脏话",
+    "report_reason_spam": "垃圾信息/灌水及不当内容",
+    "report_reason_other": "其他"
 }

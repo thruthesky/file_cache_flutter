@@ -548,4 +548,19 @@ class LibTrJa extends LibTr {
 
   @override
   String get comment_blocked_message => 'ブロックされたユーザーのコメント';
+
+  @override
+  String get pinned_chats => '固定されたチャット';
+
+  @override
+  String get report_reason_category_error => 'カテゴリー分類エラー（広告）';
+
+  @override
+  String get report_reason_abuse => '嫌がらせ/侮辱/暴言';
+
+  @override
+  String get report_reason_spam => 'スパム/荒らし及び不適切な内容';
+
+  @override
+  String get report_reason_other => 'その他';
 }

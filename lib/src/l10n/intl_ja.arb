@@ -630,5 +630,10 @@
     "comments": "コメント",
     "this_post_has_comments": "この投稿にはコメントがあります",
     "be_the_first_to_comment": "最初のコメントを投稿しよう！",
-    "comment_blocked_message": "ブロックされたユーザーのコメント"
+    "comment_blocked_message": "ブロックされたユーザーのコメント",
+    "pinned_chats": "固定されたチャット",
+    "report_reason_category_error": "カテゴリー分類エラー（広告）",
+    "report_reason_abuse": "嫌がらせ/侮辱/暴言",
+    "report_reason_spam": "スパム/荒らし及び不適切な内容",
+    "report_reason_other": "その他"
 }
