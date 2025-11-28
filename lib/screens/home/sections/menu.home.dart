@@ -60,7 +60,7 @@ class _MenuHomeState extends State<MenuHome> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Menu', style: theme.textTheme.titleLarge),
+                Text(Lo.of(context)!.menu, style: theme.textTheme.titleLarge),
                 const Spacer(),
                 SizedBox(width: 48, height: 48),
               ],
@@ -77,7 +77,7 @@ class _MenuHomeState extends State<MenuHome> {
               children: [
                 /// Account Section
                 MenuSection(
-                  title: 'Account',
+                  title: Lo.of(context)!.account,
                   children: [
                     MenuItem(
                       icon: FontAwesomeIcons.user,
@@ -117,7 +117,7 @@ class _MenuHomeState extends State<MenuHome> {
                     ),
                     MenuItem(
                       icon: FontAwesomeIcons.usersSlash,
-                      title: 'Blocked Users',
+                      title: Lo.of(context)!.blockedUsers,
                       onTap: () async {
                         showBlockedUserListDialog(context);
                       },
@@ -127,7 +127,7 @@ class _MenuHomeState extends State<MenuHome> {
 
                 /// Advertising Section
                 MenuSection(
-                  title: 'Advertising',
+                  title: Lo.of(context)!.advertising,
                   children: [
                     MenuItem(
                       icon: FontAwesomeIcons.rectangleAd,
@@ -156,7 +156,7 @@ class _MenuHomeState extends State<MenuHome> {
 
                 /// Support & Information Section
                 MenuSection(
-                  title: 'Support',
+                  title: Lo.of(context)!.support,
                   children: [
                     MenuItem(
                       icon: FontAwesomeIcons.circleQuestion,
@@ -176,22 +176,19 @@ class _MenuHomeState extends State<MenuHome> {
                   ],
                 ),
 
-                /// Danger Zone Section
+                /// Account Actions Section
                 MenuSection(
-                  title: 'Danger Zone',
-                  isDanger: true,
+                  title: Lo.of(context)!.accountActions,
                   children: [
                     MenuItem(
                       icon: FontAwesomeIcons.userMinus,
                       title: Lo.of(context)!.withdrawTitle,
                       onTap: () => AccountWithdrawalScreen.push(context),
-                      isDanger: true,
                     ),
                     MenuItem(
                       icon: FontAwesomeIcons.rightFromBracket,
                       title: Lo.of(context)!.logoutTitle,
                       onTap: _handleLogout,
-                      isDanger: true,
                     ),
                   ],
                 ),

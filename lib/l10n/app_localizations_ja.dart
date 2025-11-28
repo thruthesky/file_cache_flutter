@@ -336,17 +336,16 @@ class LoJa extends Lo {
   String get preferNotToSay => '回答しない';
 
   @override
-  String get userProfile => 'User Profile';
+  String get userProfile => 'ユーザープロフィール';
 
   @override
-  String get unknownUser => 'Unknown User';
+  String get unknownUser => '不明なユーザー';
 
   @override
-  String get profileInformation => 'Profile Information';
+  String get profileInformation => 'プロフィール情報';
 
   @override
-  String get additionalInfoNotAvailable =>
-      'Additional information is not available';
+  String get additionalInfoNotAvailable => '追加情報はありません';
 
   @override
   String get confirmDeletePost => 'この投稿を削除してもよろしいですか？';
@@ -361,15 +360,13 @@ class LoJa extends Lo {
   String get imageDeletedSuccess => '画像が正常に削除されました';
 
   @override
-  String get alert => 'Alert';
+  String get alert => 'アラート';
 
   @override
-  String get postWithCommentsCannotBeDeleted =>
-      'Posts with comments cannot be deleted';
+  String get postWithCommentsCannotBeDeleted => 'コメントのある投稿は削除できません';
 
   @override
-  String get postWithCommentsCannotBeEdited =>
-      'Posts with comments cannot be edited';
+  String get postWithCommentsCannotBeEdited => 'コメントのある投稿は編集できません';
 
   @override
   String get companyDirectoryTitle => 'Company Directory';
@@ -857,4 +854,236 @@ class LoJa extends Lo {
 
   @override
   String get next => '次へ';
+
+  @override
+  String get failedToLoadCompanies => '業者の読み込みに失敗しました';
+
+  @override
+  String get retry => '再試行';
+
+  @override
+  String get noCompaniesFound => '業者が見つかりません';
+
+  @override
+  String noCompaniesInCategory(String categoryName) {
+    return '$categoryNameカテゴリーに登録された業者はまだありません。';
+  }
+
+  @override
+  String get editMyCompany => '私の業者を編集';
+
+  @override
+  String get addMyCompany => '私の業者を追加';
+
+  @override
+  String get publicOffice => '公共機関';
+
+  @override
+  String get publicOfficeDesc => '政府サービス';
+
+  @override
+  String get education => '教育';
+
+  @override
+  String get educationDesc => '学校と学習';
+
+  @override
+  String get foodAndDrink => '飲食';
+
+  @override
+  String get foodAndDrinkDesc => 'レストランとカフェ';
+
+  @override
+  String get transportation => '交通';
+
+  @override
+  String get transportationDesc => '公共交通機関と個人交通';
+
+  @override
+  String get healthAndHospitals => '医療・病院';
+
+  @override
+  String get healthAndHospitalsDesc => 'クリニックと診療';
+
+  @override
+  String get shoppingAndMarts => 'ショッピング・マート';
+
+  @override
+  String get shoppingAndMartsDesc => '小売と食料品';
+
+  @override
+  String get bankingAndFinance => '銀行・金融';
+
+  @override
+  String get bankingAndFinanceDesc => '金融機関';
+
+  @override
+  String get gadgets => 'ガジェット';
+
+  @override
+  String get gadgetsDesc => '技術とデバイス';
+
+  @override
+  String get travelAndTourism => '旅行・観光';
+
+  @override
+  String get travelAndTourismDesc => '目的地と予約';
+
+  @override
+  String get hotels => 'ホテル';
+
+  @override
+  String get hotelsDesc => '宿泊施設';
+
+  @override
+  String get carRental => 'レンタカー';
+
+  @override
+  String get carRentalDesc => '車両レンタルサービス';
+
+  @override
+  String get beautyAndWellness => '美容・ウェルネス';
+
+  @override
+  String get beautyAndWellnessDesc => 'サロンとセルフケア';
+
+  @override
+  String get realEstate => '不動産';
+
+  @override
+  String get realEstateDesc => '物件と住宅';
+
+  @override
+  String get entertainment => 'エンターテインメント';
+
+  @override
+  String get entertainmentDesc => 'カラオケと娯楽';
+
+  @override
+  String get spaAndRelaxation => 'スパ・リラクゼーション';
+
+  @override
+  String get spaAndRelaxationDesc => 'マッサージとリトリート';
+
+  @override
+  String get otherServices => 'その他のサービス';
+
+  @override
+  String get otherServicesDesc => 'その他のサービス';
+
+  @override
+  String get account => 'アカウント';
+
+  @override
+  String get advertising => '広告';
+
+  @override
+  String get support => 'サポート';
+
+  @override
+  String get accountActions => 'アカウント操作';
+
+  @override
+  String get blockedUsers => 'ブロックされたユーザー';
+
+  @override
+  String get writingGuide => '作成ガイド';
+
+  @override
+  String get postDefamationWarning => '他人を誹謗中傷する投稿は削除される可能性があります';
+
+  @override
+  String get postSpamWarning => '広告とスパムは即座に削除されます';
+
+  @override
+  String get postPersonalInfoWarning => '個人情報を含めないでください';
+
+  @override
+  String get postCopyrightWarning => '著作権を侵害するコンテンツは投稿できません';
+
+  @override
+  String get updatePrefix => '更新:';
+
+  @override
+  String get uploadInProgress => '画像のアップロードが進行中です。しばらくしてから再試行してください。';
+
+  @override
+  String get about => 'について';
+
+  @override
+  String get welcomeToAboutScreen => 'アバウト画面へようこそ';
+
+  @override
+  String get loading => '読み込み中...';
+
+  @override
+  String get enterKakaotalkId => 'カカオトークIDを入力してください';
+
+  @override
+  String get kakaoChannelUrlPlaceholder => 'https://pf.kakao.com/...';
+
+  @override
+  String get enterTelegramId => 'テレグラムIDを入力してください';
+
+  @override
+  String get companyNameExample => '例) mycompany';
+
+  @override
+  String get enterFamilySiteName => 'ファミリーサイト名を入力してください';
+
+  @override
+  String get enterFamilySiteDescription => 'ファミリーサイトの説明を入力してください';
+
+  @override
+  String get couldNotLaunchEmailApp => 'メールアプリを起動できませんでした';
+
+  @override
+  String get error => 'エラー';
+
+  @override
+  String get useCompanyDomain => '会社ドメインを使用';
+
+  @override
+  String get seoFeaturesMessage =>
+      'SEO機能は、Google、Naver、その他の検索エンジンでディレクトリリストをより多く表示するのに役立ちます。';
+
+  @override
+  String get familySiteDomain => 'ファミリーサイトドメイン';
+
+  @override
+  String get familySiteName => 'ファミリーサイト名';
+
+  @override
+  String get familySiteDescription => 'ファミリーサイト説明';
+
+  @override
+  String get kakaoId => 'カカオID';
+
+  @override
+  String get uploadKakaoQrCode => 'カカオQRコードをアップロード';
+
+  @override
+  String get kakaoChannelUrl => 'カカオチャンネルURL';
+
+  @override
+  String get telegramId => 'テレグラムID';
+
+  @override
+  String get businessType => '業種';
+
+  @override
+  String get companyLogo => '会社ロゴ';
+
+  @override
+  String get companyIntroImage => '会社紹介画像';
+
+  @override
+  String get companyIntroImageGuideline =>
+      '会社紹介を簡潔に表す画像です。ロゴと主要サービス項目を含めてください。テキストは約100文字（20語）程度に制限されます。';
+
+  @override
+  String get officeInteriorPhoto => 'オフィス/店舗内装写真';
+
+  @override
+  String get officeInteriorGuideline => 'オフィス/店舗内装全体写真';
 }

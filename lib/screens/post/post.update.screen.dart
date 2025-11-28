@@ -54,7 +54,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(
-          'Update: ${widget.post.subject}',
+          '${T.updatePrefix} ${widget.post.subject}',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         leading: IconButton(
@@ -288,23 +288,19 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Writing Guide',
+                          T.writingGuide,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Text('• Posts that defame others may be deleted'),
+                    Text('• ${T.postDefamationWarning}'),
                     const SizedBox(height: 4),
-                    const Text(
-                      '• Advertisements and spam will be deleted immediately',
-                    ),
+                    Text('• ${T.postSpamWarning}'),
                     const SizedBox(height: 4),
-                    const Text('• Do not include personal information'),
+                    Text('• ${T.postPersonalInfoWarning}'),
                     const SizedBox(height: 4),
-                    const Text(
-                      '• Copyright infringing content cannot be posted',
-                    ),
+                    Text('• ${T.postCopyrightWarning}'),
                   ],
                 ),
               ),

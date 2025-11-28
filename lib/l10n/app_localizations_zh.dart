@@ -335,17 +335,16 @@ class LoZh extends Lo {
   String get preferNotToSay => '不愿透露';
 
   @override
-  String get userProfile => 'User Profile';
+  String get userProfile => '用户资料';
 
   @override
-  String get unknownUser => 'Unknown User';
+  String get unknownUser => '未知用户';
 
   @override
-  String get profileInformation => 'Profile Information';
+  String get profileInformation => '个人资料';
 
   @override
-  String get additionalInfoNotAvailable =>
-      'Additional information is not available';
+  String get additionalInfoNotAvailable => '没有其他信息';
 
   @override
   String get confirmDeletePost => '您确定要删除此帖子吗？';
@@ -360,15 +359,13 @@ class LoZh extends Lo {
   String get imageDeletedSuccess => '图片删除成功';
 
   @override
-  String get alert => 'Alert';
+  String get alert => '警告';
 
   @override
-  String get postWithCommentsCannotBeDeleted =>
-      'Posts with comments cannot be deleted';
+  String get postWithCommentsCannotBeDeleted => '有评论的帖子无法删除';
 
   @override
-  String get postWithCommentsCannotBeEdited =>
-      'Posts with comments cannot be edited';
+  String get postWithCommentsCannotBeEdited => '有评论的帖子无法编辑';
 
   @override
   String get companyDirectoryTitle => 'Company Directory';
@@ -856,4 +853,235 @@ class LoZh extends Lo {
 
   @override
   String get next => '下一步';
+
+  @override
+  String get failedToLoadCompanies => '加载商家失败';
+
+  @override
+  String get retry => '重试';
+
+  @override
+  String get noCompaniesFound => '未找到商家';
+
+  @override
+  String noCompaniesInCategory(String categoryName) {
+    return '$categoryName类别中尚未注册商家。';
+  }
+
+  @override
+  String get editMyCompany => '编辑我的商家';
+
+  @override
+  String get addMyCompany => '添加我的商家';
+
+  @override
+  String get publicOffice => '公共机构';
+
+  @override
+  String get publicOfficeDesc => '政府服务';
+
+  @override
+  String get education => '教育';
+
+  @override
+  String get educationDesc => '学校和学习';
+
+  @override
+  String get foodAndDrink => '餐饮';
+
+  @override
+  String get foodAndDrinkDesc => '餐厅和咖啡馆';
+
+  @override
+  String get transportation => '交通';
+
+  @override
+  String get transportationDesc => '公共和私人交通';
+
+  @override
+  String get healthAndHospitals => '医疗·医院';
+
+  @override
+  String get healthAndHospitalsDesc => '诊所和护理';
+
+  @override
+  String get shoppingAndMarts => '购物·商场';
+
+  @override
+  String get shoppingAndMartsDesc => '零售和杂货';
+
+  @override
+  String get bankingAndFinance => '银行·金融';
+
+  @override
+  String get bankingAndFinanceDesc => '金融机构';
+
+  @override
+  String get gadgets => '电子产品';
+
+  @override
+  String get gadgetsDesc => '技术和设备';
+
+  @override
+  String get travelAndTourism => '旅行·旅游';
+
+  @override
+  String get travelAndTourismDesc => '目的地和预订';
+
+  @override
+  String get hotels => '酒店';
+
+  @override
+  String get hotelsDesc => '住宿设施';
+
+  @override
+  String get carRental => '租车';
+
+  @override
+  String get carRentalDesc => '车辆租赁服务';
+
+  @override
+  String get beautyAndWellness => '美容·保健';
+
+  @override
+  String get beautyAndWellnessDesc => '美容院和自我护理';
+
+  @override
+  String get realEstate => '房地产';
+
+  @override
+  String get realEstateDesc => '房产和住房';
+
+  @override
+  String get entertainment => '娱乐';
+
+  @override
+  String get entertainmentDesc => '卡拉OK和娱乐';
+
+  @override
+  String get spaAndRelaxation => '水疗·休闲';
+
+  @override
+  String get spaAndRelaxationDesc => '按摩和休养';
+
+  @override
+  String get otherServices => '其他服务';
+
+  @override
+  String get otherServicesDesc => '其他服务';
+
+  @override
+  String get account => '账户';
+
+  @override
+  String get advertising => '广告';
+
+  @override
+  String get support => '支持';
+
+  @override
+  String get accountActions => '账户操作';
+
+  @override
+  String get blockedUsers => '已屏蔽用户';
+
+  @override
+  String get writingGuide => '写作指南';
+
+  @override
+  String get postDefamationWarning => '诽谤他人的帖子可能会被删除';
+
+  @override
+  String get postSpamWarning => '广告和垃圾邮件将立即删除';
+
+  @override
+  String get postPersonalInfoWarning => '请勿包含个人信息';
+
+  @override
+  String get postCopyrightWarning => '侵犯版权的内容无法发布';
+
+  @override
+  String get updatePrefix => '更新:';
+
+  @override
+  String get uploadInProgress => '图片上传正在进行中，请稍后再试。';
+
+  @override
+  String get about => '关于';
+
+  @override
+  String get welcomeToAboutScreen => '欢迎来到关于界面';
+
+  @override
+  String get loading => '加载中...';
+
+  @override
+  String get enterKakaotalkId => '请输入 KakaoTalk ID';
+
+  @override
+  String get kakaoChannelUrlPlaceholder => 'https://pf.kakao.com/...';
+
+  @override
+  String get enterTelegramId => '请输入 Telegram ID';
+
+  @override
+  String get companyNameExample => '例如) mycompany';
+
+  @override
+  String get enterFamilySiteName => '请输入家族网站名称';
+
+  @override
+  String get enterFamilySiteDescription => '请输入家族网站描述';
+
+  @override
+  String get couldNotLaunchEmailApp => '无法启动邮件应用';
+
+  @override
+  String get error => '错误';
+
+  @override
+  String get useCompanyDomain => '使用公司域名';
+
+  @override
+  String get seoFeaturesMessage => 'SEO功能有助于在Google、Naver和其他搜索引擎上更多地展示您的目录列表。';
+
+  @override
+  String get familySiteDomain => '家族网站域名';
+
+  @override
+  String get familySiteName => '家族网站名称';
+
+  @override
+  String get familySiteDescription => '家族网站描述';
+
+  @override
+  String get kakaoId => 'KakaoID';
+
+  @override
+  String get uploadKakaoQrCode => '上传Kakao二维码';
+
+  @override
+  String get kakaoChannelUrl => 'Kakao频道URL';
+
+  @override
+  String get telegramId => 'Telegram ID';
+
+  @override
+  String get businessType => '业务类型';
+
+  @override
+  String get companyLogo => '公司标志';
+
+  @override
+  String get companyIntroImage => '公司介绍图片';
+
+  @override
+  String get companyIntroImageGuideline =>
+      '简要代表公司介绍的图片。包括标志和主要服务项目。文本限制在约100个字符（20个单词）左右。';
+
+  @override
+  String get officeInteriorPhoto => '办公室/商店内部照片';
+
+  @override
+  String get officeInteriorGuideline => '办公室/商店内部全景照片';
 }

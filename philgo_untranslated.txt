@@ -1,12 +1,5 @@
 {
   "ja": [
-    "userProfile",
-    "unknownUser",
-    "profileInformation",
-    "additionalInfoNotAvailable",
-    "alert",
-    "postWithCommentsCannotBeDeleted",
-    "postWithCommentsCannotBeEdited",
     "companyDirectoryTitle",
     "addCompany",
     "companyDirectoryDescription",
@@ -92,13 +85,6 @@
   ],
 
   "zh": [
-    "userProfile",
-    "unknownUser",
-    "profileInformation",
-    "additionalInfoNotAvailable",
-    "alert",
-    "postWithCommentsCannotBeDeleted",
-    "postWithCommentsCannotBeEdited",
     "companyDirectoryTitle",
     "addCompany",
     "companyDirectoryDescription",

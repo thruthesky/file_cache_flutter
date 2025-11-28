@@ -110,8 +110,8 @@ class FormContactInfo extends StatelessWidget {
         /// 카카오톡 ID
         TextFieldSet(
           controller: kakaotalkIdController,
-          label: 'KakaoID',
-          hintText: 'Enter kakaotalk ID',
+          label: T.kakaoId,
+          hintText: T.enterKakaotalkId,
           prefixFaIconData: FontAwesomeIcons.message,
           padding: const EdgeInsets.symmetric(vertical: 8),
         ),
@@ -120,7 +120,7 @@ class FormContactInfo extends StatelessWidget {
 
         /// 카카오톡 QR 코드 업로드
         ImageUploadField(
-          label: 'Upload Kakao QR Code',
+          label: T.uploadKakaoQrCode,
           imageUrl: kakaoTalkQrCodeUrl,
           isDecodeQr: true,
           onImageSelected: onKakaoQrCodeSelected,
@@ -131,8 +131,8 @@ class FormContactInfo extends StatelessWidget {
         /// 카카오 채널 URL
         TextFieldSet(
           controller: kakaotalkQrCodeController,
-          label: 'Kakao Channel URL',
-          hintText: 'https://pf.kakao.com/...',
+          label: T.kakaoChannelUrl,
+          hintText: T.kakaoChannelUrlPlaceholder,
           prefixFaIconData: FontAwesomeIcons.message,
           padding: const EdgeInsets.symmetric(vertical: 8),
         ),
@@ -142,8 +142,8 @@ class FormContactInfo extends StatelessWidget {
         /// 텔레그램 ID
         TextFieldSet(
           controller: telegramIdController,
-          label: 'Telegram ID',
-          hintText: "Enter Telegram ID",
+          label: T.telegramId,
+          hintText: T.enterTelegramId,
           prefixFaIconData: FontAwesomeIcons.message,
           padding: const EdgeInsets.symmetric(vertical: 8),
         ),

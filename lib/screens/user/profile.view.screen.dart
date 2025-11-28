@@ -83,7 +83,13 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(T.userProfile),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () => showMenuModal(context),

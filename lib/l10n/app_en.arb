@@ -1082,5 +1082,315 @@
   "next": "Next",
   "@next": {
     "description": "Next button label"
+  },
+  "failedToLoadCompanies": "Failed to load companies",
+  "@failedToLoadCompanies": {
+    "description": "Error message when companies fail to load"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button label"
+  },
+  "noCompaniesFound": "No companies found",
+  "@noCompaniesFound": {
+    "description": "Empty state title when no companies are found"
+  },
+  "noCompaniesInCategory": "There are no companies in {categoryName} category yet.",
+  "@noCompaniesInCategory": {
+    "description": "Empty state message for companies in a specific category",
+    "placeholders": {
+      "categoryName": {
+        "type": "String",
+        "example": "Restaurant"
+      }
+    }
+  },
+  "editMyCompany": "Edit my company",
+  "@editMyCompany": {
+    "description": "Tooltip for edit company button"
+  },
+  "addMyCompany": "Add my company",
+  "@addMyCompany": {
+    "description": "Tooltip for add company button"
+  },
+  "publicOffice": "Public Office",
+  "@publicOffice": {
+    "description": "Public office category name"
+  },
+  "publicOfficeDesc": "Government services",
+  "@publicOfficeDesc": {
+    "description": "Public office category description"
+  },
+  "education": "Education",
+  "@education": {
+    "description": "Education category name"
+  },
+  "educationDesc": "Schools and learning",
+  "@educationDesc": {
+    "description": "Education category description"
+  },
+  "foodAndDrink": "Food & Drink",
+  "@foodAndDrink": {
+    "description": "Food and drink category name"
+  },
+  "foodAndDrinkDesc": "Restaurants and cafes",
+  "@foodAndDrinkDesc": {
+    "description": "Food and drink category description"
+  },
+  "transportation": "Transportation",
+  "@transportation": {
+    "description": "Transportation category name"
+  },
+  "transportationDesc": "Public and private transit",
+  "@transportationDesc": {
+    "description": "Transportation category description"
+  },
+  "healthAndHospitals": "Health & Hospitals",
+  "@healthAndHospitals": {
+    "description": "Health category name"
+  },
+  "healthAndHospitalsDesc": "Clinics and care",
+  "@healthAndHospitalsDesc": {
+    "description": "Health category description"
+  },
+  "shoppingAndMarts": "Shopping & Marts",
+  "@shoppingAndMarts": {
+    "description": "Shopping category name"
+  },
+  "shoppingAndMartsDesc": "Retail and groceries",
+  "@shoppingAndMartsDesc": {
+    "description": "Shopping category description"
+  },
+  "bankingAndFinance": "Banking & Finance",
+  "@bankingAndFinance": {
+    "description": "Banking category name"
+  },
+  "bankingAndFinanceDesc": "Financial institutions",
+  "@bankingAndFinanceDesc": {
+    "description": "Banking category description"
+  },
+  "gadgets": "Gadgets",
+  "@gadgets": {
+    "description": "Gadgets category name"
+  },
+  "gadgetsDesc": "Tech and devices",
+  "@gadgetsDesc": {
+    "description": "Gadgets category description"
+  },
+  "travelAndTourism": "Travel & Tourism",
+  "@travelAndTourism": {
+    "description": "Travel category name"
+  },
+  "travelAndTourismDesc": "Destinations and booking",
+  "@travelAndTourismDesc": {
+    "description": "Travel category description"
+  },
+  "hotels": "Hotels",
+  "@hotels": {
+    "description": "Hotels category name"
+  },
+  "hotelsDesc": "Places to stay",
+  "@hotelsDesc": {
+    "description": "Hotels category description"
+  },
+  "carRental": "Car Rental",
+  "@carRental": {
+    "description": "Car rental category name"
+  },
+  "carRentalDesc": "Vehicle hire services",
+  "@carRentalDesc": {
+    "description": "Car rental category description"
+  },
+  "beautyAndWellness": "Beauty & Wellness",
+  "@beautyAndWellness": {
+    "description": "Beauty category name"
+  },
+  "beautyAndWellnessDesc": "Salons and self-care",
+  "@beautyAndWellnessDesc": {
+    "description": "Beauty category description"
+  },
+  "realEstate": "Real Estate",
+  "@realEstate": {
+    "description": "Real estate category name"
+  },
+  "realEstateDesc": "Property and housing",
+  "@realEstateDesc": {
+    "description": "Real estate category description"
+  },
+  "entertainment": "Entertainment",
+  "@entertainment": {
+    "description": "Entertainment category name"
+  },
+  "entertainmentDesc": "Karaoke and fun",
+  "@entertainmentDesc": {
+    "description": "Entertainment category description"
+  },
+  "spaAndRelaxation": "Spa & Relaxation",
+  "@spaAndRelaxation": {
+    "description": "Spa category name"
+  },
+  "spaAndRelaxationDesc": "Massage and retreats",
+  "@spaAndRelaxationDesc": {
+    "description": "Spa category description"
+  },
+  "otherServices": "Other Services",
+  "@otherServices": {
+    "description": "Other services category name"
+  },
+  "otherServicesDesc": "Miscellaneous services",
+  "@otherServicesDesc": {
+    "description": "Other services category description"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Account section title in menu"
+  },
+  "advertising": "Advertising",
+  "@advertising": {
+    "description": "Advertising section title in menu"
+  },
+  "support": "Support",
+  "@support": {
+    "description": "Support section title in menu"
+  },
+  "accountActions": "Account Actions",
+  "@accountActions": {
+    "description": "Account actions section title in menu"
+  },
+  "blockedUsers": "Blocked Users",
+  "@blockedUsers": {
+    "description": "Blocked users menu item"
+  },
+  "writingGuide": "Writing Guide",
+  "@writingGuide": {
+    "description": "Writing guide section title"
+  },
+  "postDefamationWarning": "Posts that defame others may be deleted",
+  "@postDefamationWarning": {
+    "description": "Warning about defamation in posts"
+  },
+  "postSpamWarning": "Advertisements and spam will be deleted immediately",
+  "@postSpamWarning": {
+    "description": "Warning about spam in posts"
+  },
+  "postPersonalInfoWarning": "Do not include personal information",
+  "@postPersonalInfoWarning": {
+    "description": "Warning about personal information in posts"
+  },
+  "postCopyrightWarning": "Copyright infringing content cannot be posted",
+  "@postCopyrightWarning": {
+    "description": "Warning about copyright in posts"
+  },
+  "updatePrefix": "Update:",
+  "@updatePrefix": {
+    "description": "Prefix for update screen title"
+  },
+  "uploadInProgress": "Image upload is in progress, please try again in a moment.",
+  "@uploadInProgress": {
+    "description": "Error message when trying to submit while upload is in progress"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About screen title"
+  },
+  "welcomeToAboutScreen": "Welcome to About Screen",
+  "@welcomeToAboutScreen": {
+    "description": "Welcome message on about screen"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+  "enterKakaotalkId": "Enter KakaoTalk ID",
+  "@enterKakaotalkId": {
+    "description": "Hint text for KakaoTalk ID field"
+  },
+  "kakaoChannelUrlPlaceholder": "https://pf.kakao.com/...",
+  "@kakaoChannelUrlPlaceholder": {
+    "description": "Placeholder for Kakao channel URL field"
+  },
+  "enterTelegramId": "Enter Telegram ID",
+  "@enterTelegramId": {
+    "description": "Hint text for Telegram ID field"
+  },
+  "companyNameExample": "e.g.) mycompany",
+  "@companyNameExample": {
+    "description": "Example text for company name field"
+  },
+  "enterFamilySiteName": "Enter your family site name",
+  "@enterFamilySiteName": {
+    "description": "Hint text for family site name field"
+  },
+  "enterFamilySiteDescription": "Enter your family site description",
+  "@enterFamilySiteDescription": {
+    "description": "Hint text for family site description field"
+  },
+  "couldNotLaunchEmailApp": "Could not launch email app",
+  "@couldNotLaunchEmailApp": {
+    "description": "Error message when email app cannot be launched"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Generic error label"
+  },
+  "useCompanyDomain": "Use Company Domain",
+  "@useCompanyDomain": {
+    "description": "Checkbox label for using company domain"
+  },
+  "seoFeaturesMessage": "SEO features help expose your directory listing more on Google, Naver, and other search engines.",
+  "@seoFeaturesMessage": {
+    "description": "Information about SEO features"
+  },
+  "familySiteDomain": "Family Site Domain",
+  "@familySiteDomain": {
+    "description": "Label for family site domain field"
+  },
+  "familySiteName": "Family Site Name",
+  "@familySiteName": {
+    "description": "Label for family site name field"
+  },
+  "familySiteDescription": "Family Site Description",
+  "@familySiteDescription": {
+    "description": "Label for family site description field"
+  },
+  "kakaoId": "KakaoID",
+  "@kakaoId": {
+    "description": "Label for KakaoTalk ID field"
+  },
+  "uploadKakaoQrCode": "Upload Kakao QR Code",
+  "@uploadKakaoQrCode": {
+    "description": "Label for Kakao QR code upload"
+  },
+  "kakaoChannelUrl": "Kakao Channel URL",
+  "@kakaoChannelUrl": {
+    "description": "Label for Kakao channel URL field"
+  },
+  "telegramId": "Telegram ID",
+  "@telegramId": {
+    "description": "Label for Telegram ID field"
+  },
+  "businessType": "Business Type",
+  "@businessType": {
+    "description": "Label for business type field"
+  },
+  "companyLogo": "Company Logo",
+  "@companyLogo": {
+    "description": "Label for company logo upload"
+  },
+  "companyIntroImage": "Company Introduction Image",
+  "@companyIntroImage": {
+    "description": "Label for company introduction image upload"
+  },
+  "companyIntroImageGuideline": "Image briefly representing company introduction. Include logo and main service items. Text limited to around 100 characters (20 words).",
+  "@companyIntroImageGuideline": {
+    "description": "Guideline text for company introduction image"
+  },
+  "officeInteriorPhoto": "Office/Store Interior Photo",
+  "@officeInteriorPhoto": {
+    "description": "Label for office/store interior photo upload"
+  },
+  "officeInteriorGuideline": "Office/Store Interior full view photo",
+  "@officeInteriorGuideline": {
+    "description": "Guideline text for office interior photo"
   }
 }

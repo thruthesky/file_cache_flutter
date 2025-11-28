@@ -339,7 +339,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                     SizedBox(width: sp.s12),
                     TextButton.icon(
                       onPressed: () async {
-                        await showPrivacyPolicy(context);
+                        await showTermsAndConditions(context);
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(
@@ -365,9 +365,10 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
 
   void _onSignInSuccess() {
     // 로그인 성공 시 홈 탭으로 네비게이션 상태 초기화
-    NavigationState.of(context, listen: false).setHomeNavigation(
-      HomeNavigationItem.home,
-    );
+    NavigationState.of(
+      context,
+      listen: false,
+    ).setHomeNavigation(HomeNavigationItem.home);
     context.go(HomeScreen.routeName);
   }
 

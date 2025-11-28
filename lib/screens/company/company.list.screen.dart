@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -98,7 +99,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          errorMessage = 'Failed to load companies';
+          errorMessage = T.failedToLoadCompanies;
         });
       }
     } finally {
@@ -176,7 +177,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                   FontAwesomeIcons.lightArrowRotateRight,
                   size: 16,
                 ),
-                label: const Text('Retry'),
+                label: Text(T.retry),
               ),
             ],
           ),
@@ -198,10 +199,10 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                 color: scheme.onSurfaceVariant,
               ),
               SizedBox(height: sp.s16),
-              Text('No companies found', style: theme.textTheme.titleMedium),
+              Text(T.noCompaniesFound, style: theme.textTheme.titleMedium),
               SizedBox(height: sp.s8),
               Text(
-                'There are no companies in ${widget.categoryName} category yet.',
+                T.noCompaniesInCategory(widget.categoryName),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),

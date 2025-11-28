@@ -506,7 +506,7 @@ class RequestWithdrawalButtonWidget extends StatelessWidget {
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Could not launch email app')),
+            SnackBar(content: Text(T.couldNotLaunchEmailApp)),
           );
         }
       }
@@ -514,7 +514,7 @@ class RequestWithdrawalButtonWidget extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text('${T.error}: $e')));
       }
     }
   }

@@ -46,7 +46,7 @@ class FormDetailedInfo extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: CategoryDropdownField(
-            label: 'Business Type *',
+            label: '${T.businessType} *',
             initialValue: selectedCategory,
             onChanged: onCategoryChanged,
           ),
