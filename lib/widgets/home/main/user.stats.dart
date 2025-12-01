@@ -17,6 +17,7 @@ class UserStats extends StatelessWidget {
     return Selector<AppState, User?>(
       selector: (_, appState) => appState.user,
       builder: (_, user, child) {
+        // Show loading state while checking user status
         if (user == null) {
           /// Show login prompt when user is not logged in
           return Card(
@@ -73,23 +74,18 @@ class UserStats extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            // Flat design - subtle border instead of shadow
-            border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.3),
-              width: 1,
-            ),
+            color: scheme.primaryContainer,
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 /// User info row
                 Row(
                   children: [
                     /// Enhanced user avatar with border
-                    UserAvatar(user: user, size: 60),
+                    UserAvatar(user: user, size: 64),
 
                     const SizedBox(width: 16),
 
@@ -211,18 +207,9 @@ class StatContainer extends StatelessWidget {
       aspectRatio: 1,
       child: Container(
         decoration: BoxDecoration(
-          /// Gradient background for visual interest
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              color.withValues(alpha: 0.1),
-              color.withValues(alpha: 0.05),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(12),
-          // Flat design - subtle border
-          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
+          /// Solid color background with theme color
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Padding(
           padding: const EdgeInsets.all(8),

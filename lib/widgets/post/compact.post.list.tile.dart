@@ -11,7 +11,6 @@ class CompactPostListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: onTap,
       // Add behavior to ensure entire area is tappable
@@ -38,36 +37,39 @@ class CompactPostListTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Left side: Thumbnail image
+          /// Left side: Thumbnail image with Hero transition
           if (hasImage) ...[
             SizedBox(
               width: 80,
               height: 80,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: CachedNetworkImage(
-                  imageUrl: post.files[0],
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: scheme.surfaceContainerHighest,
-                    child: Center(
-                      child: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: scheme.primary,
+              child: Hero(
+                tag: 'post-image-${post.idx}-0',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: CachedNetworkImage(
+                    imageUrl: post.files[0],
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: scheme.surfaceContainerHighest,
+                      child: Center(
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: scheme.primary,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: scheme.surfaceContainerHighest,
-                    child: Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.lightImage,
-                        size: 24,
-                        color: scheme.outline,
+                    errorWidget: (context, url, error) => Container(
+                      color: scheme.surfaceContainerHighest,
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.lightImage,
+                          size: 24,
+                          color: scheme.outline,
+                        ),
                       ),
                     ),
                   ),
@@ -86,7 +88,6 @@ class CompactPostListTile extends StatelessWidget {
                 Text(
                   post.subject,
                   style: theme.textTheme.titleMedium,
-                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),

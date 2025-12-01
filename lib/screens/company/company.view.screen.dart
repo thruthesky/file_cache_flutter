@@ -352,32 +352,12 @@ class CompanyHeaderImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (titleImageUrl.isNotEmpty) {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.network(
-            titleImageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return CompanyImagePlaceholder(iconOpacity: 0.5);
-            },
-          ),
-
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer.withValues(alpha: 0.8),
-                ],
-              ),
-            ),
-          ),
-        ],
+      return Image.network(
+        titleImageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return CompanyImagePlaceholder(iconOpacity: 0.5);
+        },
       );
     }
 
