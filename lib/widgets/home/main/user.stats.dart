@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -70,104 +71,112 @@ class UserStats extends StatelessWidget {
 
         /// Show user stats when logged in
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Card(
-            elevation: 0,
-
-            /// Flat 2.0 - 미묘한 그림자 추가 (4% 투명도)
-            child: Container(
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x0A000000), // 4% opacity black
-                    offset: Offset(0, 1),
-                    blurRadius: 2,
-                    spreadRadius: 0,
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            // Flat design - subtle border instead of shadow
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                /// User info row
+                Row(
                   children: [
-                    /// User info row
-                    Row(
-                      children: [
-                        /// User avatar
-                        UserAvatar(user: user, size: 60),
+                    /// Enhanced user avatar with border
+                    UserAvatar(user: user, size: 60),
 
-                        const SizedBox(width: 16),
+                    const SizedBox(width: 16),
 
-                        /// User info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    /// User info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// User name
+                          Text(
+                            user.nickname.isNotEmpty
+                                ? user.nickname
+                                : T.updateYourNickname,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: scheme.onSurface,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+
+                          const SizedBox(height: 6),
+
+                          /// Level indicator with icon
+                          Row(
                             children: [
-                              /// User name
-                              Text(
-                                user.nickname.isNotEmpty
-                                    ? user.nickname
-                                    : T.updateYourNickname,
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                              FaIcon(
+                                FontAwesomeIcons.lightCrown,
+                                size: 14,
+                                color: scheme.primary,
                               ),
-
-                              const SizedBox(height: 4),
-
-                              /// Level indicator (레벨 표시) - "Level: 1" format
+                              const SizedBox(width: 6),
                               Text(
                                 '${T.lv} ${user.level}',
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: scheme.primary,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    /// Three equal-sized stat boxes - no dividers, square, scaffold background
-                    Row(
-                      children: [
-                        /// Posts stat
-                        Expanded(
-                          child: StatContainer(
-                            value: user.noOfPost ?? 0,
-                            label: T.posts,
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        /// Comments stat
-                        Expanded(
-                          child: StatContainer(
-                            value: user.noOfComment ?? 0,
-                            label: T.comments,
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        /// Points stat
-                        Expanded(
-                          child: StatContainer(
-                            value: user.point ?? 0,
-                            label: T.points,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
+
+                const SizedBox(height: 20),
+
+                /// Three equal-sized stat boxes with icons
+                Row(
+                  children: [
+                    /// Posts stat
+                    Expanded(
+                      child: StatContainer(
+                        icon: FontAwesomeIcons.lightFileLines,
+                        value: user.noOfPost ?? 0,
+                        label: T.posts,
+                        color: scheme.primary,
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    /// Comments stat
+                    Expanded(
+                      child: StatContainer(
+                        icon: FontAwesomeIcons.lightComments,
+                        value: user.noOfComment ?? 0,
+                        label: T.comments,
+                        color: scheme.secondary,
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    /// Points stat
+                    Expanded(
+                      child: StatContainer(
+                        icon: FontAwesomeIcons.lightStar,
+                        value: user.point ?? 0,
+                        label: T.points,
+                        color: scheme.tertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         );
@@ -176,13 +185,21 @@ class UserStats extends StatelessWidget {
   }
 }
 
-/// Stat container component - responsive box with scaffold background
+/// Enhanced stat container with icon and color
 /// Uses AspectRatio to maintain square shape while being flexible
 class StatContainer extends StatelessWidget {
-  const StatContainer({super.key, required this.value, required this.label});
+  const StatContainer({
+    super.key,
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
 
+  final IconData icon;
   final int value;
   final String label;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -194,31 +211,54 @@ class StatContainer extends StatelessWidget {
       aspectRatio: 1,
       child: Container(
         decoration: BoxDecoration(
-          /// Use scaffold background color (same gray as page background)
-          color: scheme.surfaceContainerLow,
+          /// Gradient background for visual interest
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withValues(alpha: 0.1),
+              color.withValues(alpha: 0.05),
+            ],
+          ),
           borderRadius: BorderRadius.circular(12),
+          // Flat design - subtle border
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            /// Stat value with comma formatting (no color - black by default)
-            Text(
-              formatCompactNumber(value),
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Icon at top
+              FaIcon(icon, size: 20, color: color),
 
-            const SizedBox(height: 4),
+              const SizedBox(height: 6),
 
-            /// Stat label
-            Text(
-              label,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: scheme.onSurfaceVariant,
+              /// Stat value with compact formatting
+              Text(
+                formatCompactNumber(value),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurface,
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 2),
+
+              /// Stat label
+              Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurface.withValues(alpha: 0.6),
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );
