@@ -114,15 +114,20 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ),
 
           // Message bubble
-          Row(
-            mainAxisAlignment: isCurrentUser
-                ? MainAxisAlignment.end
-                : MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Message bubble content
-              Flexible(
-                child: Column(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                mainAxisAlignment: isCurrentUser
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Message bubble content - max 80% width
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth * 0.8,
+                    ),
+                    child: Column(
                   crossAxisAlignment: isCurrentUser
                       ? CrossAxisAlignment.end
                       : CrossAxisAlignment.start,
@@ -207,17 +212,19 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 4),
+                      const SizedBox(height: 4),
 
-                    // Timestamp
-                    Text(
-                      formatTimestamp(context, message.sentAt),
-                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-                    ),
-                  ],
+                      // Timestamp
+                      Text(
+                        formatTimestamp(context, message.sentAt),
+                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -423,15 +430,20 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ),
 
           // Blinded message bubble
-          Row(
-            mainAxisAlignment: isCurrentUser
-                ? MainAxisAlignment.end
-                : MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Blinded message content
-              Flexible(
-                child: Column(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                mainAxisAlignment: isCurrentUser
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Blinded message content - max 80% width
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth * 0.8,
+                    ),
+                    child: Column(
                   crossAxisAlignment: isCurrentUser
                       ? CrossAxisAlignment.end
                       : CrossAxisAlignment.start,
@@ -479,17 +491,19 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 4),
+                      const SizedBox(height: 4),
 
-                    // Timestamp
-                    Text(
-                      formatTimestamp(context, message.sentAt),
-                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-                    ),
-                  ],
+                      // Timestamp
+                      Text(
+                        formatTimestamp(context, message.sentAt),
+                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ],
       ),
