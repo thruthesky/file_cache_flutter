@@ -26,23 +26,16 @@ class CompanyCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
+    // Flat card design without elevation or shadows
     return Container(
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        // Modern elevation with subtle shadow
-        boxShadow: [
-          BoxShadow(
-            color: scheme.shadow.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           onTap: onTap,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -50,7 +43,7 @@ class CompanyCard extends StatelessWidget {
               /// Full-width image with category badge overlay
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+                  top: Radius.circular(16),
                 ),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
@@ -93,27 +86,18 @@ class CompanyCard extends StatelessWidget {
                         right: 10,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 7,
+                            horizontal: 10,
+                            vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: scheme.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: scheme.shadow.withValues(alpha: 0.15),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            color: scheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             categoryName,
-                            style: theme.textTheme.labelMedium?.copyWith(
+                            style: theme.textTheme.labelSmall?.copyWith(
                               color: scheme.onTertiaryContainer,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 11,
-                              letterSpacing: 0.3,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -125,13 +109,15 @@ class CompanyCard extends StatelessWidget {
 
               /// Company name section
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 child: Text(
                   name,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: scheme.onSurface,
-                    letterSpacing: -0.2,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

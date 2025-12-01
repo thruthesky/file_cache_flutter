@@ -71,28 +71,31 @@ class PostListTile extends StatelessWidget {
           child: SizedBox(
             width: 81, // 더 큰 이미지 (reference 참고)
             height: 81,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16), // Flat 2.0 - 16 (8의 배수)
-              child: CachedNetworkImage(
-                imageUrl: post.files[0],
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: scheme.surfaceContainerHighest,
-                  child: const Center(
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+            child: Hero(
+              tag: 'post-image-${post.idx}-0',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16), // Flat 2.0 - 16 (8의 배수)
+                child: CachedNetworkImage(
+                  imageUrl: post.files[0],
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: scheme.surfaceContainerHighest,
+                    child: const Center(
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     ),
                   ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: scheme.surfaceContainerHighest,
-                  child: Center(
-                    child: FaIcon(
-                      FontAwesomeIcons.lightImage,
-                      size: 20,
-                      color: scheme.outline,
+                  errorWidget: (context, url, error) => Container(
+                    color: scheme.surfaceContainerHighest,
+                    child: Center(
+                      child: FaIcon(
+                        FontAwesomeIcons.lightImage,
+                        size: 20,
+                        color: scheme.outline,
+                      ),
                     ),
                   ),
                 ),
@@ -194,7 +197,6 @@ class PostListTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface,
                   ),
-            maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
           if (blocked == false) ...[
