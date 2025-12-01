@@ -9,7 +9,7 @@
   "businessNetworkingTitle": "비즈니스 네트워킹",
   "businessNetworkingSubtitle": "필리핀에서 사업하는 한인들과 네트워킹하세요",
   "safeCommunityTitle": "안전한 커뮤니티",
-  "safeCommunitySubtitle": "검증된 회원들과 함께하는 신뢰할 수 있는 커뮤니티",
+  "safeCommunitySubtitle": "필리핀에 거주하는 모든 한인들과 함께하는 신뢰할 수 있는 커뮤니티",
   "home": "홈",
   "chat": "채팅",
   "forum": "게시판",
@@ -346,4 +346,5 @@
   "officeInteriorGuideline": "사무실/매장 내부 전체 사진",
   "philgoPhoneLogin": "필고 전화번호 로그인",
   "phoneNumberExample": "예: 09123456789 또는 01012345678"
+
 }
