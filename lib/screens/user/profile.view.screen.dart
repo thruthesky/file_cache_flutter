@@ -182,42 +182,94 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Row(
                               children: [
-                                /// Points stat
+                                /// Chat button with enhanced design
                                 Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      ChatRoomScreen.push(context, user!.uid);
-                                    },
-                                    child: Card(
-                                      elevation: 0,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 24,
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            FaIcon(
-                                              FontAwesomeIcons.message,
-                                              size: 24,
-                                              color: Theme.of(
-                                                context,
-                                              ).colorScheme.primary,
+                                  child: AspectRatio(
+                                    /// Maintain 1:1 aspect ratio for consistency with stat boxes
+                                    aspectRatio: 1,
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(12),
+                                        onTap: () {
+                                          ChatRoomScreen.push(context, user!.uid);
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            /// Gradient background matching stat boxes
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                    .withValues(alpha: 0.1),
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                    .withValues(alpha: 0.05),
+                                              ],
                                             ),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              T.chat,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.copyWith(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
-                                                  ),
+                                            borderRadius: BorderRadius.circular(12),
+                                            /// Flat design - subtle border
+                                            border: Border.all(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withValues(alpha: 0.2),
+                                              width: 1.5,
                                             ),
-                                          ],
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                /// Chat icon at top
+                                                FaIcon(
+                                                  FontAwesomeIcons.lightCommentDots,
+                                                  size: 20,
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
+                                                ),
+                                                const SizedBox(height: 6),
+                                                /// Large emphasis text
+                                                Text(
+                                                  '1:1',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge
+                                                      ?.copyWith(
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurface,
+                                                      ),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                /// Label text
+                                                Text(
+                                                  T.chat,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .labelSmall
+                                                      ?.copyWith(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurface
+                                                            .withValues(alpha: 0.6),
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -229,9 +281,10 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                 /// Posts stat
                                 Expanded(
                                   child: StatContainer(
+                                    icon: FontAwesomeIcons.lightFileLines,
                                     value: user?.noOfPost ?? 0,
-                                    // value: 1,
-                                    label: T.posts, // 'Posts',
+                                    label: T.posts,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
 
@@ -240,8 +293,10 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                 /// Comments stat
                                 Expanded(
                                   child: StatContainer(
+                                    icon: FontAwesomeIcons.lightComments,
                                     value: user?.noOfComment ?? 0,
-                                    label: T.comments, // 'Comments',
+                                    label: T.comments,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                               ],
