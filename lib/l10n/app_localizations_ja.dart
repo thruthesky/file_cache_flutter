@@ -861,6 +861,9 @@ class LoJa extends Lo {
   String get addMyCompany => '私の業者を追加';
 
   @override
+  String get allCategories => 'すべて';
+
+  @override
   String get publicOffice => '公共機関';
 
   @override

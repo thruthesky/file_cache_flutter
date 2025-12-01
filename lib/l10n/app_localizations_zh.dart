@@ -856,6 +856,9 @@ class LoZh extends Lo {
   String get addMyCompany => '添加我的商家';
 
   @override
+  String get allCategories => '全部';
+
+  @override
   String get publicOffice => '公共机构';
 
   @override

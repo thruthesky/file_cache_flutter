@@ -888,6 +888,9 @@ class LoEn extends Lo {
   String get addMyCompany => 'Add my company';
 
   @override
+  String get allCategories => 'All';
+
+  @override
   String get publicOffice => 'Public Office';
 
   @override

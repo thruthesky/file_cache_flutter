@@ -861,6 +861,9 @@ class LoKo extends Lo {
   String get addMyCompany => '내 업체 추가';
 
   @override
+  String get allCategories => '전체';
+
+  @override
   String get publicOffice => '공공기관';
 
   @override

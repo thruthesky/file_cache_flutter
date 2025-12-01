@@ -185,6 +185,7 @@
     "noCompaniesInCategory": "{categoryName}カテゴリーに登録された業者はまだありません。",
     "editMyCompany": "私の業者を編集",
     "addMyCompany": "私の業者を追加",
+    "allCategories": "すべて",
     "publicOffice": "公共機関",
     "publicOfficeDesc": "政府サービス",
     "education": "教育",

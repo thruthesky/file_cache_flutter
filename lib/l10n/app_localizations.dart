@@ -1739,6 +1739,12 @@ abstract class Lo {
   /// **'Add my company'**
   String get addMyCompany;
 
+  /// Filter chip label to show all categories
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allCategories;
+
   /// Public office category name
   ///
   /// In en, this message translates to:
