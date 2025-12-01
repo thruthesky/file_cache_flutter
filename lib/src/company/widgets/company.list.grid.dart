@@ -55,6 +55,7 @@ class CompanyListGrid extends StatelessWidget {
                 final company = companies[index];
                 return CompanyCard(
                   name: company.name.isNotEmpty ? company.name : company.title,
+                  categoryName: name,
                   categoryIcon: icon,
                   imageUrl: company.title_image_url.isNotEmpty
                       ? company.title_image_url
