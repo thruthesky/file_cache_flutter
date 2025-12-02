@@ -85,28 +85,56 @@ class SingleChatRoomHeader extends StatelessWidget {
                       roomId: join.id,
                       otherUserUid: otherUser.uid,
                     )) ...[
-                      // Admin chat notice
+                      // Admin chat notice with enhanced flat design
                       Container(
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          /// Gradient background for visual interest
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.1),
+                              Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.05),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          /// Flat design - subtle border
                           border: Border.all(
-                            color: Colors.blue.withValues(alpha: 0.3),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.3),
+                            width: 1.5,
                           ),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.info, color: Colors.blue, size: 20),
+                            Icon(
+                              Icons.info_outline,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 20,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 LibTr.of(context)!.admin_chat_notice,
-                                style: TextStyle(
-                                  color: Colors.blue[700],
-                                  fontSize: 14,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                               ),
                             ),
                           ],

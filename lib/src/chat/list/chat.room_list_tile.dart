@@ -275,15 +275,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
     return Row(
       children: [
-        // 고정 아이콘 - 고정된 방만 표시
-        if (isPinned) ...[
-          FaIcon(
-            FontAwesomeIcons.lightThumbtack,
-            size: 14,
-            color: colorScheme.primary,
-          ),
-          const SizedBox(width: 6),
-        ],
         Expanded(
           child: Text(
             name,
@@ -320,7 +311,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   padding: const EdgeInsets.only(right: 4.0),
                   child: FaIcon(
                     FontAwesomeIcons.solidStar,
-                    color: colorScheme.tertiary,
+                    color: Colors.amber,
                     size: 16,
                   ),
                 );
