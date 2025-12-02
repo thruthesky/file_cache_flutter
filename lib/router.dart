@@ -249,7 +249,15 @@ final router = GoRouter(
     GoRoute(
       path: PostCreateScreen.routeName,
       name: PostCreateScreen.routeName,
-      builder: (context, state) => const PostCreateScreen(),
+      // builder: (context, state) => const PostCreateScreen(),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+
+        return PostCreateScreen(
+          xFiles: extra['xFiles'],
+          content: extra['content'],
+        );
+      },
     ),
     GoRoute(
       path: PostUpdateScreen.routeName,
