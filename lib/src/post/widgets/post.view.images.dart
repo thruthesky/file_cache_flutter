@@ -7,10 +7,12 @@ class PostViewImages extends StatelessWidget {
     super.key,
     required this.files,
     required this.postIdx,
+    this.enableHeroTransition = false,
   });
 
   final List<String> files;
-  final int postIdx;
+  final int postIdx; // Kept for potential future use
+  final bool enableHeroTransition;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +23,10 @@ class PostViewImages extends StatelessWidget {
       children: files.asMap().entries.map((entry) {
         final index = entry.key;
         final imageUrl = entry.value;
+        final isFirstImage = index == 0;
 
-        return Container(
+        /// Hero transition for first image only to match PostListTile
+        final imageWidget = Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
@@ -34,45 +38,50 @@ class PostViewImages extends StatelessWidget {
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Hero(
-            tag: 'post-image-$postIdx-$index',
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                placeholder: (context, url) => Container(
-                  height: 200,
-                  color: scheme.surfaceContainerHighest,
-                  child: Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: scheme.primary,
-                      ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              placeholder: (context, url) => Container(
+                height: 200,
+                color: scheme.surfaceContainerHighest,
+                child: Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: scheme.primary,
                     ),
                   ),
                 ),
-                errorWidget: (context, url, error) {
-                  return Container(
-                    height: 200,
-                    color: scheme.surfaceContainerHighest,
-                    child: Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.lightImage,
-                        size: 48,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                    ),
-                  );
-                },
               ),
+              errorWidget: (context, url, error) {
+                return Container(
+                  height: 200,
+                  color: scheme.surfaceContainerHighest,
+                  child: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.lightImage,
+                      size: 48,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         );
+
+        /// Wrap first image with Hero for transition from PostListTile (conditional)
+        return isFirstImage && enableHeroTransition
+            ? Hero(
+                tag: 'post-image-$postIdx',
+                child: imageWidget,
+              )
+            : imageWidget;
       }).toList(),
     );
   }

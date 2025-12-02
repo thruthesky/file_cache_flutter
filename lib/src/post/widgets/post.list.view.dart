@@ -14,6 +14,9 @@ class PostListView extends StatefulWidget {
     required this.headerBuilder,
     required this.onTap,
     this.noItemsFoundIndicatorBuilder,
+    this.enableHeroTransition = false,
+    this.tileBuilder,
+    this.gridColumns,
   });
 
   final PostListViewController controller;
@@ -23,6 +26,15 @@ class PostListView extends StatefulWidget {
   final Widget Function(BuildContext context, int? totalPostCount)
   headerBuilder;
   final WidgetBuilder? noItemsFoundIndicatorBuilder;
+  final bool enableHeroTransition;
+
+  /// Optional custom tile builder for rendering individual post items
+  /// If null, defaults to PostListTile widget
+  final Widget Function(Post post, VoidCallback onTap)? tileBuilder;
+
+  /// Number of columns for grid layout
+  /// If null or 1, displays as a list. If 2 or more, displays as a grid
+  final int? gridColumns;
 
   @override
   State<PostListView> createState() => PostListViewState();
@@ -76,40 +88,129 @@ class PostListViewState extends State<PostListView> {
 
   @override
   Widget build(BuildContext context) {
+    final isGridLayout = widget.gridColumns != null && widget.gridColumns! > 1;
+
     return PagingListener<int, Post>(
       controller: pagingController,
-      builder: (context, state, fetchNextPage) => PagedListView.separated(
-        // 게시글 사이에 간격 추가
-        separatorBuilder: (context, index) => const SizedBox(height: 8),
+      builder: (context, state, fetchNextPage) {
+        /// Render as Masonry Grid Layout
+        if (isGridLayout) {
+          final items = state.items ?? [];
 
-        padding: const EdgeInsets.all(8.0),
-        state: state,
-        fetchNextPage: fetchNextPage,
-        builderDelegate: PagedChildBuilderDelegate<Post>(
-          noItemsFoundIndicatorBuilder: widget.noItemsFoundIndicatorBuilder,
-          itemBuilder: (context, post, index) {
-            if (index == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  widget.headerBuilder(context, _totalPostCount),
-                  SizedBox(height: 8),
-                  PostListTile(post: post, onTap: () => widget.onTap(post)),
-                ],
-              );
-            }
-            return PostListTile(
-              post: post,
-              // 사용자가 게시물을 탭했을 때 부모에서 전달받은 콜백 함수 실행
-              onTap: () => widget.onTap(post),
-            );
-          },
-          firstPageProgressIndicatorBuilder: (context) =>
-              const Center(child: CircularProgressIndicator.adaptive()),
-          newPageProgressIndicatorBuilder: (context) =>
-              const Center(child: CircularProgressIndicator.adaptive()),
-        ),
-      ),
+          /// Trigger initial load if needed
+          if (items.isEmpty && !state.isLoading && state.error == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              fetchNextPage();
+            });
+          }
+
+          return CustomScrollView(
+            slivers: [
+              /// Header section
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  child: widget.headerBuilder(context, _totalPostCount),
+                ),
+              ),
+
+              /// Masonry grid for posts
+              if (items.isEmpty && state.error == null)
+                const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                )
+              else if (items.isEmpty && state.error != null)
+                SliverToBoxAdapter(
+                  child: widget.noItemsFoundIndicatorBuilder?.call(context) ??
+                      const SizedBox.shrink(),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.all(8.0),
+                  sliver: SliverMasonryGrid.count(
+                    crossAxisCount: widget.gridColumns!,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childCount: items.length,
+                    itemBuilder: (context, index) {
+                      final post = items[index];
+
+                      /// Trigger pagination when near the end (after frame to avoid setState during build)
+                      if (index >= items.length - 3 && !state.isLoading) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (!state.isLoading) {
+                            fetchNextPage();
+                          }
+                        });
+                      }
+
+                      /// Build post tile
+                      return widget.tileBuilder?.call(post, () => widget.onTap(post)) ??
+                          PostListTile(
+                            post: post,
+                            onTap: () => widget.onTap(post),
+                            enableHeroTransition: widget.enableHeroTransition,
+                          );
+                    },
+                  ),
+                ),
+
+              /// Loading indicator for next page
+              if (state.isLoading && items.isNotEmpty)
+                const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+                  ),
+                ),
+
+              /// Bottom padding
+              const SliverPadding(padding: EdgeInsets.only(bottom: 8)),
+            ],
+          );
+        }
+
+        /// Render as List Layout (default)
+        return PagedListView.separated(
+          // 게시글 사이에 간격 추가
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
+
+          padding: const EdgeInsets.all(8.0),
+          state: state,
+          fetchNextPage: fetchNextPage,
+          builderDelegate: PagedChildBuilderDelegate<Post>(
+            noItemsFoundIndicatorBuilder: widget.noItemsFoundIndicatorBuilder,
+            itemBuilder: (context, post, index) {
+              /// Build post tile using custom builder or default PostListTile
+              final tile =
+                  widget.tileBuilder?.call(post, () => widget.onTap(post)) ??
+                      PostListTile(
+                        post: post,
+                        onTap: () => widget.onTap(post),
+                        enableHeroTransition: widget.enableHeroTransition,
+                      );
+
+              if (index == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    widget.headerBuilder(context, _totalPostCount),
+                    SizedBox(height: 8),
+                    tile,
+                  ],
+                );
+              }
+              return tile;
+            },
+            firstPageProgressIndicatorBuilder: (context) =>
+                const Center(child: CircularProgressIndicator.adaptive()),
+            newPageProgressIndicatorBuilder: (context) =>
+                const Center(child: CircularProgressIndicator.adaptive()),
+          ),
+        );
+      },
     );
   }
 }
