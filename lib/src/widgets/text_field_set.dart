@@ -58,6 +58,7 @@ class TextFieldSet extends StatelessWidget {
     this.bottomHint,
     this.groupId = EditableText,
     this.controller,
+    this.validator,
     this.focusNode,
     this.undoController,
     this.decoration = const InputDecoration(),
@@ -184,6 +185,9 @@ class TextFieldSet extends StatelessWidget {
   final String? hintText;
   final String? bottomHint;
 
+  /// Validator for the input value when used inside a [Form].
+  final FormFieldValidator<String>? validator;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -202,12 +206,13 @@ class TextFieldSet extends StatelessWidget {
                 ).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
-          TextField(
+          TextFormField(
             readOnly: readOnly,
             controller: controller,
             decoration: _buildDecoration(),
             enabled: enabled,
             onTap: onTap,
+            validator: validator,
           ),
           if (bottomHint != null)
             Padding(
