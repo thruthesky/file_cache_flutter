@@ -1113,6 +1113,10 @@
   "@addMyCompany": {
     "description": "Tooltip for add company button"
   },
+  "allCategories": "All",
+  "@allCategories": {
+    "description": "Filter chip label to show all categories"
+  },
   "publicOffice": "Public Office",
   "@publicOffice": {
     "description": "Public office category name"

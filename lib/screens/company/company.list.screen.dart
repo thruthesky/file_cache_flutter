@@ -2,9 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+
+/// Category Model
+/// Represents a company category with id, name, description, and icon
+class CompanyCategory {
+  final String id;
+  final String name;
+  final String description;
+  final IconData icon;
+
+  const CompanyCategory({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.icon,
+  });
+}
 
 /// Get icon for company category
 /// Returns appropriate FontAwesome icon based on category ID
@@ -46,47 +64,182 @@ IconData _getCategoryIcon(String category) {
   }
 }
 
-/// Company Category Screen
-/// Displays companies filtered by a specific category
+/// Company List Screen with Category Filters
+/// Displays all companies with filter chips to filter by category
 class CompanyListScreen extends StatefulWidget {
-  static const String routeName = '/company/category';
+  static const String routeName = '/company-list';
 
-  final String categoryId;
-  final String categoryName;
-
-  const CompanyListScreen({
-    super.key,
-    required this.categoryId,
-    required this.categoryName,
-  });
+  const CompanyListScreen({super.key});
 
   /// Navigation helper to push this screen
-  static Future<T?> push<T>(
-    BuildContext context, {
-    required String categoryId,
-    required String categoryName,
-  }) {
-    return context.push<T>(
-      '$routeName?categoryId=$categoryId&categoryName=$categoryName',
-    );
-  }
+  static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
+  static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
 
   @override
   State<CompanyListScreen> createState() => _CompanyListScreenState();
 }
 
 class _CompanyListScreenState extends State<CompanyListScreen> {
+  Company? myCompany;
+  bool isLoadingMyCompany = true;
   CompanyList? companyList;
   bool isLoading = true;
   String? errorMessage;
 
+  /// Currently selected category filter
+  /// null means "All" categories
+  String? selectedCategoryId;
+
+  /// Get list of all available categories with localized names
+  List<CompanyCategory> _getCategories(BuildContext context) {
+    return [
+      CompanyCategory(
+        id: 'public-office',
+        name: Lo.of(context)!.publicOffice,
+        description: Lo.of(context)!.publicOfficeDesc,
+        icon: FontAwesomeIcons.lightBuilding,
+      ),
+      CompanyCategory(
+        id: 'education',
+        name: Lo.of(context)!.education,
+        description: Lo.of(context)!.educationDesc,
+        icon: FontAwesomeIcons.lightGraduationCap,
+      ),
+      CompanyCategory(
+        id: 'food',
+        name: Lo.of(context)!.foodAndDrink,
+        description: Lo.of(context)!.foodAndDrinkDesc,
+        icon: FontAwesomeIcons.lightUtensils,
+      ),
+      CompanyCategory(
+        id: 'transport',
+        name: Lo.of(context)!.transportation,
+        description: Lo.of(context)!.transportationDesc,
+        icon: FontAwesomeIcons.lightBus,
+      ),
+      CompanyCategory(
+        id: 'hospital',
+        name: Lo.of(context)!.healthAndHospitals,
+        description: Lo.of(context)!.healthAndHospitalsDesc,
+        icon: FontAwesomeIcons.lightHospital,
+      ),
+      CompanyCategory(
+        id: 'mart',
+        name: Lo.of(context)!.shoppingAndMarts,
+        description: Lo.of(context)!.shoppingAndMartsDesc,
+        icon: FontAwesomeIcons.lightCartShopping,
+      ),
+      CompanyCategory(
+        id: 'bank',
+        name: Lo.of(context)!.bankingAndFinance,
+        description: Lo.of(context)!.bankingAndFinanceDesc,
+        icon: FontAwesomeIcons.lightBuildingColumns,
+      ),
+      CompanyCategory(
+        id: 'gadget',
+        name: Lo.of(context)!.gadgets,
+        description: Lo.of(context)!.gadgetsDesc,
+        icon: FontAwesomeIcons.lightMobileScreen,
+      ),
+      CompanyCategory(
+        id: 'travel-agency',
+        name: Lo.of(context)!.travelAndTourism,
+        description: Lo.of(context)!.travelAndTourismDesc,
+        icon: FontAwesomeIcons.lightPlaneDeparture,
+      ),
+      CompanyCategory(
+        id: 'hotel',
+        name: Lo.of(context)!.hotels,
+        description: Lo.of(context)!.hotelsDesc,
+        icon: FontAwesomeIcons.lightHotel,
+      ),
+      CompanyCategory(
+        id: 'rentcar',
+        name: Lo.of(context)!.carRental,
+        description: Lo.of(context)!.carRentalDesc,
+        icon: FontAwesomeIcons.lightCar,
+      ),
+      CompanyCategory(
+        id: 'beauty',
+        name: Lo.of(context)!.beautyAndWellness,
+        description: Lo.of(context)!.beautyAndWellnessDesc,
+        icon: FontAwesomeIcons.lightScissors,
+      ),
+      CompanyCategory(
+        id: 'real-estate',
+        name: Lo.of(context)!.realEstate,
+        description: Lo.of(context)!.realEstateDesc,
+        icon: FontAwesomeIcons.lightHouseChimney,
+      ),
+      CompanyCategory(
+        id: 'ktv',
+        name: Lo.of(context)!.entertainment,
+        description: Lo.of(context)!.entertainmentDesc,
+        icon: FontAwesomeIcons.lightMicrophone,
+      ),
+      CompanyCategory(
+        id: 'spa',
+        name: Lo.of(context)!.spaAndRelaxation,
+        description: Lo.of(context)!.spaAndRelaxationDesc,
+        icon: FontAwesomeIcons.lightSpa,
+      ),
+      CompanyCategory(
+        id: 'etc',
+        name: Lo.of(context)!.otherServices,
+        description: Lo.of(context)!.otherServicesDesc,
+        icon: FontAwesomeIcons.lightEllipsis,
+      ),
+    ];
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadMyCompany();
     _loadCompanies();
   }
 
-  /// Fetch companies for the selected category
+  /// Fetch current user's company
+  Future<void> _loadMyCompany() async {
+    try {
+      final result = await getMyCompany();
+      myCompany = result;
+    } catch (e) {
+      debugLog('Error loading my company: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingMyCompany = false;
+        });
+      }
+    }
+  }
+
+  /// Handle company registration button press (Register or Update)
+  Future<void> _handleCreateOrUpdateButton() async {
+    if (isLoadingMyCompany) return;
+
+    // Update existing company
+    if (myCompany != null) {
+      final result = await CompanyFormScreen.push(context, company: myCompany);
+      if (result != null) setState(() => myCompany = result);
+      return;
+    }
+
+    // Create new company
+    setState(() => isLoadingMyCompany = true);
+    try {
+      myCompany = await createCompany();
+      if (mounted) {
+        showSuccessSnackBar(context, "Your company is already created");
+      }
+    } finally {
+      if (mounted) setState(() => isLoadingMyCompany = false);
+    }
+  }
+
+  /// Fetch all companies
+  /// If selectedCategoryId is not null, filter by category
   Future<void> _loadCompanies() async {
     setState(() {
       isLoading = true;
@@ -94,7 +247,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     });
 
     try {
-      final result = await getCompanies(category: widget.categoryId);
+      // Load all companies or filtered by category
+      final result = await getCompanies(category: selectedCategoryId);
       companyList = result;
     } catch (e) {
       if (mounted) {
@@ -111,6 +265,17 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     }
   }
 
+  /// Handle category filter chip tap
+  /// Reload companies when category changes
+  void _handleCategoryFilterTap(String? categoryId) {
+    if (selectedCategoryId == categoryId) return;
+
+    setState(() {
+      selectedCategoryId = categoryId;
+    });
+    _loadCompanies();
+  }
+
   /// Navigate to company detail screen
   void _handleCompanyTap(Company company) {
     CompanyViewScreen.push(context, company.idx);
@@ -121,23 +286,97 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
     final sp = theme.extension<AppSpacing>()!;
+    final categories = _getCategories(context);
 
-    return Scaffold(
-      backgroundColor: scheme.surfaceContainerLow,
-      appBar: AppBar(
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: scheme.outlineVariant),
+    return Column(
+      children: [
+        /// Header with title and action button
+        SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: scheme.outlineVariant, width: 1),
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  Lo.of(context)!.companyDirectoryTitle,
+                  style: theme.textTheme.titleLarge,
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: FaIcon(
+                    myCompany != null
+                        ? FontAwesomeIcons.penToSquare
+                        : FontAwesomeIcons.circlePlus,
+                    color: scheme.onPrimaryContainer,
+                    size: 24,
+                  ),
+                  onPressed: _handleCreateOrUpdateButton,
+                  tooltip: myCompany != null
+                      ? Lo.of(context)!.editMyCompany
+                      : Lo.of(context)!.addMyCompany,
+                ),
+              ],
+            ),
+          ),
         ),
-        backgroundColor: scheme.surfaceContainerLow,
-        elevation: 1,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const FaIcon(FontAwesomeIcons.chevronLeft, size: 24),
+
+        /// Category filter chips
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s8),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: scheme.outlineVariant, width: 1),
+            ),
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                /// "All" filter chip
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: sp.s4),
+                  child: FilterChip(
+                    label: Text(Lo.of(context)!.allCategories),
+                    selected: selectedCategoryId == null,
+                    onSelected: (_) => _handleCategoryFilterTap(null),
+                    showCheckmark: false,
+                  ),
+                ),
+
+                /// Category filter chips
+                ...categories.map((category) {
+                  final isSelected = selectedCategoryId == category.id;
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: sp.s4),
+                    child: FilterChip(
+                      label: Text(category.name),
+                      selected: isSelected,
+                      onSelected: (_) => _handleCategoryFilterTap(category.id),
+                      showCheckmark: false,
+                      avatar: FaIcon(
+                        category.icon,
+                        size: 16,
+                        color: isSelected
+                            ? scheme.onSecondaryContainer
+                            : scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
         ),
-        title: Text(widget.categoryName, style: theme.textTheme.titleLarge),
-      ),
-      body: _buildBody(scheme, theme, sp),
+
+        /// Company list
+        Expanded(child: _buildBody(scheme, theme, sp)),
+      ],
     );
   }
 
@@ -187,6 +426,12 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     // Empty state
     if (companyList == null || companyList!.companies.isEmpty) {
+      final categoryName = selectedCategoryId == null
+          ? Lo.of(context)!.allCategories
+          : _getCategories(
+              context,
+            ).firstWhere((c) => c.id == selectedCategoryId).name;
+
       return Center(
         child: Padding(
           padding: EdgeInsets.all(sp.s24),
@@ -202,7 +447,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
               Text(T.noCompaniesFound, style: theme.textTheme.titleMedium),
               SizedBox(height: sp.s8),
               Text(
-                T.noCompaniesInCategory(widget.categoryName),
+                selectedCategoryId == null
+                    ? T.noRegisteredCompanies
+                    : T.noCompaniesInCategory(categoryName),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -248,8 +495,18 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         itemCount: companyList!.companies.length,
         itemBuilder: (context, index) {
           final company = companyList!.companies[index];
+
+          /// Get category name by matching category ID
+          final categoryName = _getCategories(context)
+              .firstWhere(
+                (c) => c.id == company.category,
+                orElse: () => _getCategories(context).last,
+              )
+              .name;
+
           return CompanyCard(
             name: company.name,
+            categoryName: categoryName,
             categoryIcon: _getCategoryIcon(company.category),
             imageUrl: company.title_image_url.isNotEmpty
                 ? company.title_image_url
