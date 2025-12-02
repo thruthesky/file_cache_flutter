@@ -86,8 +86,8 @@ class PostCard extends StatelessWidget {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black.withValues(alpha: 0.6),
-                            Colors.black.withValues(alpha: 0.8),
+                            Colors.black.withValues(alpha: 0.75),
+                            Colors.black.withValues(alpha: 0.95),
                           ],
                         ),
                       ),
@@ -124,45 +124,68 @@ class PostCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
 
-                              Text(
-                                post.nickname.isEmpty
-                                    ? LibTr.of(context)!.no_name
-                                    : cut(post.nickname, 5),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 11,
+                              // User nickname (flexible to avoid overflow on small screens)
+                              Expanded(
+                                child: Text(
+                                  post.nickname.isEmpty
+                                      ? LibTr.of(context)!.no_name
+                                      : cut(post.nickname, 5),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    fontSize: 11,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
                               ),
 
                               const SizedBox(width: 8),
-                              FaIcon(
-                                FontAwesomeIcons.calendar,
-                                size: 11,
-                                color: Colors.white.withValues(alpha: 0.9),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                formatTimestamp(context, post.stamp * 1000),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 11,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              FaIcon(
-                                FontAwesomeIcons.lightEye,
-                                size: 11,
-                                color: Colors.white.withValues(alpha: 0.9),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                formatCompactNumber(post.no_of_view),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 11,
-                                ),
+
+                              // Date + views cluster kept compact on the right
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.calendar,
+                                    size: 11,
+                                    color:
+                                        Colors.white.withValues(alpha: 0.9),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    formatTimestamp(
+                                      context,
+                                      post.stamp * 1000,
+                                    ),
+                                    style:
+                                        theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.white
+                                          .withValues(alpha: 0.9),
+                                      fontSize: 11,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  FaIcon(
+                                    FontAwesomeIcons.lightEye,
+                                    size: 11,
+                                    color:
+                                        Colors.white.withValues(alpha: 0.9),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    formatCompactNumber(post.no_of_view),
+                                    style:
+                                        theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.white
+                                          .withValues(alpha: 0.9),
+                                      fontSize: 11,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
                               ),
                             ],
                           ),

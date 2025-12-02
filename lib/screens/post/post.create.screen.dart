@@ -41,7 +41,14 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       appBar: AppBar(
         title: Text(
           '${T.writeIn} ${HomePostCategory.label}',
-          style: Theme.of(context).textTheme.headlineMedium,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
         ),
         leading: IconButton(
           icon: const FaIcon(FontAwesomeIcons.lightArrowLeft),
@@ -94,7 +101,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   children: [
@@ -115,13 +122,13 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              TextFormField(
+              const SizedBox(height: 16),
+              TextFieldSet(
+                padding: EdgeInsets.zero,
                 controller: _titleController,
+                label: T.title,
                 decoration: InputDecoration(
-                  labelText: T.title,
                   hintText: T.postTitleHint,
-
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -134,25 +141,44 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _contentController,
-                decoration: InputDecoration(
-                  labelText: T.content,
-                  hintText: T.postContentHint,
-
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignLabelWithHint: true,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        T.content,
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
+                    ),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return T.contentRequired;
+                        }
+                        return null;
+                      },
+                      controller: _contentController,
+                      maxLines: 8,
+                      minLines: 5,
+                      textAlignVertical: TextAlignVertical.top,
+                      decoration: InputDecoration(
+                        hintText: T.postContentHint,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        alignLabelWithHint: true,
+                      ),
+                    ),
+                  ],
                 ),
-                maxLines: 8,
-                minLines: 6,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return T.contentRequired;
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 24),
 
