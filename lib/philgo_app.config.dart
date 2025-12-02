@@ -10,10 +10,9 @@ class PhilGoAppConfig {
       PostCategoryItem(postId: 'freetalk', category: 'discussion'),
       PostCategoryItem(postId: 'business', category: null),
       PostCategoryItem(postId: 'buyandsell', category: null),
-      PostCategoryItem(postId: 'buyandsell', category: 'hotel'),
+      PostCategoryItem(postId: 'buyandsell', category: '호텔'),
       PostCategoryItem(postId: 'buyandsell', category: '렌트카'),
       PostCategoryItem(postId: 'wanted', category: null),
-      
     ];
 
     return categories;

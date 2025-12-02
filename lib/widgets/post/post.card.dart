@@ -28,9 +28,12 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            /// 80% - Image Section with dark gradient overlay for text
+            /// Image Section with dark gradient overlay for text
+            /// Use smaller aspect ratio for posts without images to create staggered layout
             AspectRatio(
-              aspectRatio: 1.0, // Square aspect ratio
+              aspectRatio: hasImage
+                  ? 1.0
+                  : 1.2, // Square for images, wider/shorter for no-image posts
               child: Stack(
                 fit: StackFit.expand,
                 children: [

@@ -25,7 +25,8 @@ class ForumHome extends StatefulWidget {
 class _ForumHomeState extends State<ForumHome> {
   List<PostCategoryItem> get categories => PhilGoAppConfig.getCategories();
 
-  late final PostListViewController controller = PostListViewController();
+  final GlobalKey<PostSimpleListViewState> listViewKey = GlobalKey();
+  final GlobalKey<PostGridViewState> gridViewKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -137,23 +138,25 @@ class _ForumHomeState extends State<ForumHome> {
                           selector: (context, state) =>
                               state.homeNav == HomeNavigationItem.forum,
                           builder: (context, isInForum, _) {
+                            final isGridLayout =
+                                homePostCategory.postId == 'buyandsell';
                             return PostListView(
-                              controller: controller,
+                              listViewKey: isGridLayout ? null : listViewKey,
+                              gridViewKey: isGridLayout ? gridViewKey : null,
                               postCategory: homePostCategory,
                               enableHeroTransition: isInForum,
-                              /// Use PostCard with 2-column masonry grid for main Buy & Sell category only
-                              /// Subcategories (hotel, 렌트카) use default list layout
+
+                              /// Use PostCard with 2-column masonry grid for all Buy & Sell categories
+                              /// Including main category and subcategories (hotel, 렌트카)
                               /// Masonry layout is automatically used when gridColumns > 1
-                              gridColumns: homePostCategory.postId == 'buyandsell' &&
-                                      homePostCategory.category == null
+                              gridColumns:
+                                  homePostCategory.postId == 'buyandsell'
                                   ? 2
                                   : null,
-                              tileBuilder: homePostCategory.postId == 'buyandsell' &&
-                                      homePostCategory.category == null
-                                  ? (post, onTap) => PostCard(
-                                        post: post,
-                                        onTap: onTap,
-                                      )
+                              tileBuilder:
+                                  homePostCategory.postId == 'buyandsell'
+                                  ? (post, onTap) =>
+                                        PostCard(post: post, onTap: onTap)
                                   : null,
                               // 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
                               onTap: (post) async {
@@ -171,31 +174,34 @@ class _ForumHomeState extends State<ForumHome> {
                                 }
                               },
                               headerBuilder: (context, totalPostCount) {
-                            return Row(
-                              children: [
-                                ForumCategoryHeader(
-                                  totalPostCount: totalPostCount,
-                                ),
-                                Spacer(),
-                                TextButton.icon(
-                                  onPressed: () async {
-                                    final post = await PostCreateScreen.push(
-                                      context,
-                                    );
-                                    debugLog('post: $post');
-                                    if (post != null) {
-                                      onNewPostCreated(post);
-                                    }
-                                  },
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.penToSquare,
-                                    size: 18,
-                                  ),
-                                  label: Text(LibTr.of(context)!.create_post),
-                                ),
-                              ],
-                            );
-                          },
+                                return Row(
+                                  children: [
+                                    ForumCategoryHeader(
+                                      totalPostCount: totalPostCount,
+                                    ),
+                                    Spacer(),
+                                    TextButton.icon(
+                                      onPressed: () async {
+                                        final post =
+                                            await PostCreateScreen.push(
+                                              context,
+                                            );
+                                        debugLog('post: $post');
+                                        if (post != null) {
+                                          onNewPostCreated(post);
+                                        }
+                                      },
+                                      icon: const FaIcon(
+                                        FontAwesomeIcons.penToSquare,
+                                        size: 18,
+                                      ),
+                                      label: Text(
+                                        LibTr.of(context)!.create_post,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                               noItemsFoundIndicatorBuilder: (context) {
                                 return const Center(child: EmptyPostList());
                               },
@@ -215,6 +221,8 @@ class _ForumHomeState extends State<ForumHome> {
   }
 
   void onNewPostCreated(Post newPost) {
-    controller.state.pagingController.refresh();
+    // Refresh the appropriate view (list or grid) based on which one is currently active
+    listViewKey.currentState?.pagingController.refresh();
+    gridViewKey.currentState?.pagingController.refresh();
   }
 }
