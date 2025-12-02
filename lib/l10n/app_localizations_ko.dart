@@ -36,7 +36,7 @@ class LoKo extends Lo {
   String get safeCommunityTitle => '안전한 커뮤니티';
 
   @override
-  String get safeCommunitySubtitle => '검증된 회원들과 함께하는 신뢰할 수 있는 커뮤니티';
+  String get safeCommunitySubtitle => '필리핀에 거주하는 모든 한인들과 함께하는 신뢰할 수 있는 커뮤니티';
 
   @override
   String get home => '홈';

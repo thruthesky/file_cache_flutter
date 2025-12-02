@@ -1,11 +1,14 @@
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
+import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
+import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class PostViewScreen extends StatefulWidget {
   // You may add routeName with dynamic parameters if needed like this:
@@ -201,9 +204,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                 ),
                                 SizedBox(height: 16),
                                 if (hasImages)
-                                  PostViewImages(
-                                    files: files,
-                                    postIdx: widget.post.idx,
+                                  Selector<NavigationState, bool>(
+                                    selector: (context, state) =>
+                                        state.homeNav ==
+                                        HomeNavigationItem.forum,
+                                    builder: (context, isInForum, _) {
+                                      return PostViewImages(
+                                        files: files,
+                                        postIdx: widget.post.idx,
+                                        enableHeroTransition: isInForum,
+                                      );
+                                    },
                                   ),
                                 SizedBox(height: 16),
                                 PostViewContent(
@@ -408,7 +419,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             color: Theme.of(context).colorScheme.surface,
                             border: Border(
                               bottom: BorderSide(
-                                color: Theme.of(context).colorScheme.outlineVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.outlineVariant,
                                 width: 1,
                               ),
                             ),

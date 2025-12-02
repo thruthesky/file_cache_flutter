@@ -9,8 +9,11 @@ import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/app.state.dart';
+import 'package:philgo/state/navigation.state.dart';
+import 'package:philgo/screens/home/home.globals.dart';
 import 'package:provider/provider.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo/widgets/post/post.card.dart';
 
 class ForumHome extends StatefulWidget {
   const ForumHome({super.key});
@@ -130,25 +133,44 @@ class _ForumHomeState extends State<ForumHome> {
                           }
                           return false;
                         },
-                        child: PostListView(
-                          controller: controller,
-                          postCategory: homePostCategory,
-                          // 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
-                          onTap: (post) async {
-                            // PostViewScreen에서 수정된 post를 반환받음
-                            await PostViewScreen.push(context, post);
+                        child: Selector<NavigationState, bool>(
+                          selector: (context, state) =>
+                              state.homeNav == HomeNavigationItem.forum,
+                          builder: (context, isInForum, _) {
+                            return PostListView(
+                              controller: controller,
+                              postCategory: homePostCategory,
+                              enableHeroTransition: isInForum,
+                              /// Use PostCard with 2-column masonry grid for main Buy & Sell category only
+                              /// Subcategories (hotel, 렌트카) use default list layout
+                              /// Masonry layout is automatically used when gridColumns > 1
+                              gridColumns: homePostCategory.postId == 'buyandsell' &&
+                                      homePostCategory.category == null
+                                  ? 2
+                                  : null,
+                              tileBuilder: homePostCategory.postId == 'buyandsell' &&
+                                      homePostCategory.category == null
+                                  ? (post, onTap) => PostCard(
+                                        post: post,
+                                        onTap: onTap,
+                                      )
+                                  : null,
+                              // 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
+                              onTap: (post) async {
+                                // PostViewScreen에서 수정된 post를 반환받음
+                                await PostViewScreen.push(context, post);
 
-                            // 수정된 post가 있으면 원본 post 객체의 속성 업데이트
-                            // post 객체는 레퍼런스이므로 직접 수정하면 리스트에도 반영됨
+                                // 수정된 post가 있으면 원본 post 객체의 속성 업데이트
+                                // post 객체는 레퍼런스이므로 직접 수정하면 리스트에도 반영됨
 
-                            // 원본 post 객체의 수정 가능한 속성만 업데이트
-                            // setState를 호출하여 UI 업데이트
-                            // PostListView가 다시 빌드되면서 수정된 내용이 화면에 반영됨
-                            if (mounted) {
-                              setState(() {});
-                            }
-                          },
-                          headerBuilder: (context, totalPostCount) {
+                                // 원본 post 객체의 수정 가능한 속성만 업데이트
+                                // setState를 호출하여 UI 업데이트
+                                // PostListView가 다시 빌드되면서 수정된 내용이 화면에 반영됨
+                                if (mounted) {
+                                  setState(() {});
+                                }
+                              },
+                              headerBuilder: (context, totalPostCount) {
                             return Row(
                               children: [
                                 ForumCategoryHeader(
@@ -174,8 +196,10 @@ class _ForumHomeState extends State<ForumHome> {
                               ],
                             );
                           },
-                          noItemsFoundIndicatorBuilder: (context) {
-                            return const Center(child: EmptyPostList());
+                              noItemsFoundIndicatorBuilder: (context) {
+                                return const Center(child: EmptyPostList());
+                              },
+                            );
                           },
                         ),
                       ),
