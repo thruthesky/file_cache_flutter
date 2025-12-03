@@ -8,7 +8,6 @@ class PostSimpleListView extends StatefulWidget {
   const PostSimpleListView({
     super.key,
     required this.postCategory,
-    required this.headerBuilder,
     required this.onTap,
     this.noItemsFoundIndicatorBuilder,
     this.enableHeroTransition = false,
@@ -17,7 +16,6 @@ class PostSimpleListView extends StatefulWidget {
 
   final PostCategoryItem postCategory;
   final void Function(Post post) onTap;
-  final Widget Function(BuildContext context, int? totalPostCount) headerBuilder;
   final WidgetBuilder? noItemsFoundIndicatorBuilder;
   final bool enableHeroTransition;
 
@@ -75,7 +73,7 @@ class PostSimpleListViewState extends State<PostSimpleListView> {
       builder: (context, state, fetchNextPage) {
         return PagedListView.separated(
           // Add spacing between posts
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
 
           padding: const EdgeInsets.all(8.0),
           state: state,
@@ -92,16 +90,6 @@ class PostSimpleListViewState extends State<PostSimpleListView> {
                     enableHeroTransition: widget.enableHeroTransition,
                   );
 
-              if (index == 0) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    widget.headerBuilder(context, _totalPostCount),
-                    SizedBox(height: 8),
-                    tile,
-                  ],
-                );
-              }
               return tile;
             },
             firstPageProgressIndicatorBuilder: (context) =>

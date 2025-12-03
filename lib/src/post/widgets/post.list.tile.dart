@@ -80,6 +80,8 @@ class PostListTileWithImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = post.files.isNotEmpty;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       spacing: 4,
@@ -114,12 +116,8 @@ class PostListTileWithImage extends StatelessWidget {
                     : PostTitleText(post: post),
                 const SizedBox(height: 8),
 
-                /// 사용자 정보 및 날짜 표시
-                PostUserInfoRow(post: post),
-                const SizedBox(height: 12),
-
-                /// 메타 정보: 조회수, 댓글수, 좋아요수
-                PostMetaInfo(post: post),
+                /// Compact info: user, date, comments, likes (single line)
+                PostInfoCompactRow(post: post, showImageIndicator: hasImage),
               ],
             ),
           ),
@@ -163,12 +161,8 @@ class PostListTileWithoutImage extends StatelessWidget {
           if (blocked == false) ...[
             const SizedBox(height: 8),
 
-            /// 사용자 정보 및 날짜 표시
-            PostUserInfoRow(post: post),
-            const SizedBox(height: 12),
-
-            /// 메타 정보
-            PostMetaInfo(post: post),
+            /// Compact info: user, date, comments, likes (single line)
+            PostInfoCompactRow(post: post),
           ],
         ],
       ),
@@ -193,6 +187,7 @@ class PostTitleText extends StatelessWidget {
         fontWeight: FontWeight.w600,
         color: scheme.onSurface,
       ),
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
   }
@@ -252,6 +247,11 @@ class PostUserInfoRow extends StatelessWidget {
       ? LibTr.of(context)!.no_name
       : cut(post.nickname, 8);
 
+  String _dateOnly() {
+    final parts = post.timeString.split(' ');
+    return parts.isNotEmpty ? parts.first : post.timeString;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -287,7 +287,7 @@ class PostUserInfoRow extends StatelessWidget {
         FaIcon(FontAwesomeIcons.lightClock, size: 14, color: scheme.outline),
         const SizedBox(width: 4),
         Text(
-          post.timeString,
+          _dateOnly(),
           style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
         ),
       ],
@@ -331,6 +331,85 @@ class PostMetaInfo extends StatelessWidget {
         /// 좋아요수 (reference: 하트 아이콘)
         FaIcon(FontAwesomeIcons.lightThumbsUp, size: 16, color: scheme.outline),
         const SizedBox(width: 4), // 4 (8의 배수)
+        Text(
+          '${post.good}',
+          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+        ),
+      ],
+    );
+  }
+}
+
+/// Compact info row: user avatar/name, date-only, comments and likes
+class PostInfoCompactRow extends StatelessWidget {
+  const PostInfoCompactRow({
+    super.key,
+    required this.post,
+    this.showImageIndicator = false,
+  });
+
+  final Post post;
+  final bool showImageIndicator;
+
+  String _displayName(BuildContext context) => post.nickname.isEmpty
+      ? LibTr.of(context)!.no_name
+      : cut(post.nickname, 8);
+
+  String _dateOnly() {
+    final parts = post.timeString.split(' ');
+    return parts.isNotEmpty ? parts.first : post.timeString;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Row(
+      children: [
+        /// 사용자 아바타
+        Avatar(photoUrl: post.photo_url, size: 18, radius: 9),
+        const SizedBox(width: 6),
+
+        /// 사용자 이름
+        Flexible(
+          flex: 2,
+          child: Text(
+            _displayName(context),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
+
+        /// 날짜 (date only)
+        FaIcon(FontAwesomeIcons.lightClock, size: 14, color: scheme.outline),
+        const SizedBox(width: 4),
+        Text(
+          _dateOnly(),
+          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+        ),
+        const SizedBox(width: 8),
+
+        /// 댓글수
+        FaIcon(
+          FontAwesomeIcons.lightMessageDots,
+          size: 14,
+          color: scheme.outline,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '${post.no_of_comment}',
+          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+        ),
+        const SizedBox(width: 8),
+
+        /// 좋아요수
+        FaIcon(FontAwesomeIcons.lightThumbsUp, size: 14, color: scheme.outline),
+        const SizedBox(width: 4),
         Text(
           '${post.good}',
           style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),

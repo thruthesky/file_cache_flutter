@@ -8,7 +8,6 @@ class PostGridView extends StatefulWidget {
   const PostGridView({
     super.key,
     required this.postCategory,
-    required this.headerBuilder,
     required this.onTap,
     this.noItemsFoundIndicatorBuilder,
     this.enableHeroTransition = false,
@@ -18,7 +17,6 @@ class PostGridView extends StatefulWidget {
 
   final PostCategoryItem postCategory;
   final void Function(Post post) onTap;
-  final Widget Function(BuildContext context, int? totalPostCount) headerBuilder;
   final WidgetBuilder? noItemsFoundIndicatorBuilder;
   final bool enableHeroTransition;
 
@@ -88,14 +86,6 @@ class PostGridViewState extends State<PostGridView> {
 
         return CustomScrollView(
           slivers: [
-            /// Header section
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                child: widget.headerBuilder(context, _totalPostCount),
-              ),
-            ),
-
             /// Masonry grid for posts
             if (items.isEmpty && state.error == null)
               const SliverToBoxAdapter(

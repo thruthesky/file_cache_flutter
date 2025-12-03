@@ -7,7 +7,6 @@ class PostListView extends StatelessWidget {
   const PostListView({
     super.key,
     required this.postCategory,
-    required this.headerBuilder,
     required this.onTap,
     this.noItemsFoundIndicatorBuilder,
     this.enableHeroTransition = false,
@@ -19,7 +18,6 @@ class PostListView extends StatelessWidget {
 
   final PostCategoryItem postCategory;
   final void Function(Post post) onTap;
-  final Widget Function(BuildContext context, int? totalPostCount) headerBuilder;
   final WidgetBuilder? noItemsFoundIndicatorBuilder;
   final bool enableHeroTransition;
 
@@ -46,7 +44,6 @@ class PostListView extends StatelessWidget {
       return PostGridView(
         key: gridViewKey,
         postCategory: postCategory,
-        headerBuilder: headerBuilder,
         onTap: onTap,
         noItemsFoundIndicatorBuilder: noItemsFoundIndicatorBuilder,
         enableHeroTransition: enableHeroTransition,
@@ -59,7 +56,6 @@ class PostListView extends StatelessWidget {
     return PostSimpleListView(
       key: listViewKey,
       postCategory: postCategory,
-      headerBuilder: headerBuilder,
       onTap: onTap,
       noItemsFoundIndicatorBuilder: noItemsFoundIndicatorBuilder,
       enableHeroTransition: enableHeroTransition,
