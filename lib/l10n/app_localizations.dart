@@ -1415,6 +1415,12 @@ abstract class Lo {
   /// **'Are you sure you want to unpin this chat room?'**
   String get unpin_chat_room_message;
 
+  /// Pin button text
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get pin;
+
   /// Unpin button text
   ///
   /// In en, this message translates to:

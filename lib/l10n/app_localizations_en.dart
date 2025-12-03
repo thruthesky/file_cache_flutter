@@ -712,6 +712,9 @@ class LoEn extends Lo {
       'Are you sure you want to unpin this chat room?';
 
   @override
+  String get pin => 'Pin';
+
+  @override
   String get unpin => 'Unpin';
 
   @override
