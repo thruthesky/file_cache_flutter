@@ -778,7 +778,13 @@ class LoEn extends Lo {
   String get latestPosts => 'Latest Posts';
 
   @override
+  String get latestComments => 'Latest Comments';
+
+  @override
   String get viewAll => 'View All';
+
+  @override
+  String get advertisementSpace => 'Advertisement Space';
 
   @override
   String get lv => 'Lv';

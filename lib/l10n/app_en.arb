@@ -959,9 +959,17 @@
   "@latestPosts": {
     "description": "Title for latest posts section"
   },
+  "latestComments": "Latest Comments",
+  "@latestComments": {
+    "description": "Title for latest comments section"
+  },
   "viewAll": "View All",
   "@viewAll": {
     "description": "Button text to view all items"
+  },
+  "advertisementSpace": "Advertisement Space",
+  "@advertisementSpace": {
+    "description": "Placeholder text for advertisement banner"
   },
   "lv": "Lv",
   "@lv": {

@@ -6,6 +6,7 @@ import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/themes/app.spacing.dart';
 
 class PostCreateScreen extends StatefulWidget {
   static const String routeName = '/post-create';
@@ -35,23 +36,54 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     super.dispose();
   }
 
+  /// Submit post handler - extracted for reuse in AppBar action
+  Future<void> _handleSubmit() async {
+    // Check if upload is in progress
+    if (uploadingCount > 0) {
+      showSafeErrorDialog(
+        'Image upload is in progress, please try again in a moment.',
+      );
+      return;
+    }
+
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      debugLog('업로드된 파일 개수: ${urls.length}');
+      debugLog('파일 URL 목록: $urls');
+
+      final created = await createPost({
+        'post_id': HomePostCategory.postId,
+        'category': HomePostCategory.category,
+        'subject': _titleController.text,
+        'content': _contentController.text,
+        'files': urls,
+      });
+
+      if (mounted) {
+        PostViewScreen.pushReplacement(context, created);
+      }
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final sp = Theme.of(context).extension<AppSpacing>()!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '${T.writeIn} ${HomePostCategory.label}',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
-        ),
         leading: IconButton(
-          icon: const FaIcon(FontAwesomeIcons.lightArrowLeft),
+          icon: const FaIcon(FontAwesomeIcons.lightArrowLeft, size: 18),
           onPressed: () async {
             // Check if there's any content (title, content, or uploaded files)
             final hasContent =
@@ -88,76 +120,57 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             }
           },
         ),
+        actions: [
+          IconButton(
+            icon: isLoading
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  )
+                : const FaIcon(FontAwesomeIcons.lightCheck, size: 18),
+
+            onPressed: isLoading || uploadingCount > 0 ? null : _handleSubmit,
+          ),
+        ],
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Row(
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.lightTag,
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      HomePostCategory.label,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFieldSet(
-                padding: EdgeInsets.zero,
-                controller: _titleController,
-                label: T.title,
-                decoration: InputDecoration(
-                  hintText: T.postTitleHint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return T.titleRequired;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+      body: Column(
+        children: [
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(sp.s16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        T.content,
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
+                    TextFieldSet(
+                      padding: EdgeInsets.zero,
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        hintText: T.postTitleHint,
+                        filled: true,
+                        fillColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.all(sp.s16),
                       ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return T.titleRequired;
+                        }
+                        return null;
+                      },
                     ),
+                    SizedBox(height: sp.s16),
                     TextFormField(
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -166,77 +179,114 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         return null;
                       },
                       controller: _contentController,
-                      maxLines: 8,
-                      minLines: 5,
+                      maxLines: 12,
+                      minLines: 6,
                       textAlignVertical: TextAlignVertical.top,
                       decoration: InputDecoration(
                         hintText: T.postContentHint,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
+                        filled: true,
+                        fillColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.all(sp.s16),
                         alignLabelWithHint: true,
                       ),
                     ),
+                    SizedBox(height: sp.s16),
+
+                    if (urls.isNotEmpty || uploadingCount > 0)
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final imageWidth = (constraints.maxWidth - sp.s8) / 2;
+                          return Wrap(
+                            spacing: sp.s8,
+                            runSpacing: sp.s8,
+                            children: [
+                              ...urls.map(
+                                (url) => UploadPreview(
+                                  url: url,
+                                  width: imageWidth,
+                                  height: imageWidth,
+                                  borderRadius: sp.s8,
+                                  onDelete: () async {
+                                    // 삭제 확인 다이얼로그 표시
+                                    final confirm = await showConfirmDialog(
+                                      message: Lo.of(
+                                        context,
+                                      )!.confirmDeleteImage,
+                                    );
+
+                                    if (confirm != true) return;
+
+                                    try {
+                                      debugLog("삭제 시작: $url");
+                                      await philgoApiFileDelete(url);
+
+                                      urls.remove(url);
+                                      setState(() {});
+                                      debugLog("삭제 완료: $url");
+
+                                      if (context.mounted) {
+                                        showSuccessSnackBar(
+                                          context,
+                                          Lo.of(context)!.imageDeletedSuccess,
+                                        );
+                                      }
+                                    } catch (e) {
+                                      debugLog("파일 삭제 실패: $e");
+                                      showSafeErrorDialog("파일 삭제에 실패했습니다: $e");
+                                    }
+                                  },
+                                ),
+                              ),
+                              ...List.generate(
+                                uploadingCount,
+                                (index) => LoadingBox(
+                                  width: imageWidth,
+                                  height: imageWidth,
+                                  borderRadius: sp.s8,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+
+                    if (urls.isNotEmpty || uploadingCount > 0)
+                      SizedBox(height: sp.s16),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-
-              if (urls.isNotEmpty || uploadingCount > 0)
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ...urls.map(
-                      (url) => UploadPreview(
-                        url: url,
-                        onDelete: () async {
-                          // 삭제 확인 다이얼로그 표시
-                          final confirm = await showConfirmDialog(
-                            message: Lo.of(context)!.confirmDeleteImage,
-                          );
-
-                          if (confirm != true) return;
-
-                          try {
-                            debugLog("삭제 시작: $url");
-                            await philgoApiFileDelete(url);
-
-                            urls.remove(url);
-                            setState(() {});
-                            debugLog("삭제 완료: $url");
-
-                            if (context.mounted) {
-                              showSuccessSnackBar(
-                                context,
-                                Lo.of(context)!.imageDeletedSuccess,
-                              );
-                            }
-                          } catch (e) {
-                            debugLog("파일 삭제 실패: $e");
-                            showSafeErrorDialog("파일 삭제에 실패했습니다: $e");
-                          }
-                        },
-                      ),
-                    ),
-                    ...List.generate(
-                      uploadingCount,
-                      (index) => const LoadingBox(),
-                    ),
-                  ],
+            ),
+          ),
+          // Bottom navigation bar as part of body Column
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  width: 1,
                 ),
-
-              if (urls.isNotEmpty || uploadingCount > 0)
-                const SizedBox(height: 16),
-
-              Row(
+              ),
+            ),
+            padding: EdgeInsets.all(sp.s16),
+            child: SafeArea(
+              child: Row(
                 children: [
                   FileUpload(
                     file: true,
                     video: true,
-                    child: const FaIcon(FontAwesomeIcons.lightCamera),
+                    child: Container(
+                      padding: EdgeInsets.all(sp.s12),
+                      child: const FaIcon(FontAwesomeIcons.lightCamera),
+                    ),
                     onBeforeUpload: () {
-                      // 업로드 시작 시 카운트 증가
                       setState(() {
                         uploadingCount++;
                       });
@@ -244,7 +294,6 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     onUploaded: (url) {
                       debugLog('url: $url');
                       urls.add(url);
-                      // 업로드 완료 시 카운트 감소
                       setState(() {
                         uploadingCount--;
                       });
@@ -254,95 +303,11 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       setState(() {});
                     },
                   ),
-                  const Spacer(),
-                  SubmitButton(
-                    isLoading: isLoading,
-                    onPressed: () async {
-                      // 업로드가 진행 중인지 확인
-                      if (uploadingCount > 0) {
-                        showSafeErrorDialog(
-                          'Image upload is in progress, please try again in a moment.',
-                        );
-                        return;
-                      }
-
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-
-                      setState(() {
-                        isLoading = true;
-                      });
-
-                      try {
-                        // 파일 URL 목록 디버그 로그
-                        debugLog('업로드된 파일 개수: ${urls.length}');
-                        debugLog('파일 URL 목록: $urls');
-
-                        final created = await createPost({
-                          'post_id': HomePostCategory.postId,
-                          'category': HomePostCategory.category,
-                          'subject': _titleController.text,
-                          'content': _contentController.text,
-                          'files': urls,
-                        });
-
-                        if (context.mounted) {
-                          PostViewScreen.pushReplacement(context, created);
-                        }
-                      } finally {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }
-                    },
-                    child: Text(T.submit),
-                  ),
                 ],
               ),
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.lightInfo,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          T.writingGuide,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text('• ${T.postDefamationWarning}'),
-                    const SizedBox(height: 4),
-                    Text('• ${T.postSpamWarning}'),
-                    const SizedBox(height: 4),
-                    Text('• ${T.postPersonalInfoWarning}'),
-                    const SizedBox(height: 4),
-                    Text('• ${T.postCopyrightWarning}'),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

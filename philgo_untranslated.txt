@@ -1,5 +1,7 @@
 {
   "ja": [
+    "latestComments",
+    "advertisementSpace",
     "philgoPhoneLogin",
     "phoneNumberExample"
   ],
@@ -12,6 +14,8 @@
   ],
 
   "zh": [
+    "latestComments",
+    "advertisementSpace",
     "philgoPhoneLogin",
     "phoneNumberExample"
   ]

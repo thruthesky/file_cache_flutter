@@ -280,7 +280,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
 
                                 /// Posts stat
                                 Expanded(
-                                  child: StatContainer(
+                                  child: StatItem(
                                     icon: FontAwesomeIcons.lightFileLines,
                                     value: user?.noOfPost ?? 0,
                                     label: T.posts,
@@ -292,7 +292,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
 
                                 /// Comments stat
                                 Expanded(
-                                  child: StatContainer(
+                                  child: StatItem(
                                     icon: FontAwesomeIcons.lightComments,
                                     value: user?.noOfComment ?? 0,
                                     label: T.comments,

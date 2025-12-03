@@ -751,7 +751,13 @@ class LoKo extends Lo {
   String get latestPosts => '최근 게시글';
 
   @override
+  String get latestComments => '최근 댓글';
+
+  @override
   String get viewAll => '전체 보기';
+
+  @override
+  String get advertisementSpace => '광고 공간';
 
   @override
   String get lv => 'Lv';

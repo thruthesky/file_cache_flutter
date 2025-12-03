@@ -751,7 +751,13 @@ class LoJa extends Lo {
   String get latestPosts => '最新投稿';
 
   @override
+  String get latestComments => 'Latest Comments';
+
+  @override
   String get viewAll => 'すべて表示';
+
+  @override
+  String get advertisementSpace => 'Advertisement Space';
 
   @override
   String get lv => 'Lv';

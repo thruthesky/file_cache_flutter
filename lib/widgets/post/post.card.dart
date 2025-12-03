@@ -28,17 +28,15 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            /// Image Section with dark gradient overlay for text
-            /// Use smaller aspect ratio for posts without images to create staggered layout
-            AspectRatio(
-              aspectRatio: hasImage
-                  ? 1.0
-                  : 1.2, // Square for images, wider/shorter for no-image posts
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  /// Background Image or Placeholder
-                  if (hasImage)
+            /// Image Section with dark gradient overlay for text (when image exists)
+            /// Text-only section for posts without images
+            if (hasImage)
+              AspectRatio(
+                aspectRatio: 1.0,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    /// Background Image
                     CachedNetworkImage(
                       imageUrl: post.files[0],
                       fit: BoxFit.cover,
@@ -61,137 +59,189 @@ class PostCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                    )
-                  else
-                    Container(
-                      color: scheme.surfaceContainerLow,
-                      child: Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.lightImage,
-                          size: 48,
-                          color: scheme.outline,
-                        ),
-                      ),
                     ),
 
-                  /// Dark gradient overlay at bottom for text readability
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withValues(alpha: 0.65),
-                            Colors.black.withValues(alpha: 0.75),
-                            Colors.black.withValues(alpha: 0.85),
-                          ],
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /// Post Title
-                          Text(
-                            post.subject,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withValues(alpha: 0.5),
-                                  offset: const Offset(0, 1),
-                                  blurRadius: 2,
-                                ),
-                              ],
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                    /// Dark gradient overlay at bottom for text readability
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.65),
+                              Colors.black.withValues(alpha: 0.75),
+                              Colors.black.withValues(alpha: 0.85),
+                            ],
                           ),
-                          const SizedBox(height: 6),
-
-                          /// User info and view count
-                          Row(
-                            children: [
-                              Avatar(
-                                photoUrl: post.photo_url,
-                                size: 18,
-                                radius: 9,
-                              ),
-                              const SizedBox(width: 4),
-
-                              // User nickname (flexible to avoid overflow on small screens)
-                              Expanded(
-                                child: Text(
-                                  post.nickname.isEmpty
-                                      ? LibTr.of(context)!.no_name
-                                      : cut(post.nickname, 5),
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                    fontSize: 11,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-
-                              const SizedBox(width: 8),
-
-                              // Date + views cluster kept compact on the right
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.calendar,
-                                    size: 11,
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    formatTimestamp(context, post.stamp * 1000),
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.9,
-                                      ),
-                                      fontSize: 11,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  FaIcon(
-                                    FontAwesomeIcons.lightEye,
-                                    size: 11,
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    formatCompactNumber(post.no_of_view),
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.9,
-                                      ),
-                                      fontSize: 11,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// Post Title
+                            Text(
+                              post.subject,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 2,
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ],
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 6),
+
+                            /// User info and date
+                            Row(
+                              children: [
+                                Avatar(
+                                  photoUrl: post.photo_url,
+                                  size: 18,
+                                  radius: 9,
+                                ),
+                                const SizedBox(width: 4),
+
+                                // User nickname
+                                Expanded(
+                                  child: Text(
+                                    post.nickname.isEmpty
+                                        ? LibTr.of(context)!.no_name
+                                        : cut(post.nickname, 5),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      fontSize: 11,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 8),
+
+                                // Date
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.calendar,
+                                      size: 11,
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      formatTimestamp(
+                                        context,
+                                        post.stamp * 1000,
+                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.9,
+                                            ),
+                                            fontSize: 11,
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              )
+            else
+              /// Text-only section for posts without images
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Post Title
+                    Text(
+                      post.subject,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurface,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                    const SizedBox(height: 8),
+
+                    /// User info and date
+                    Row(
+                      children: [
+                        Avatar(
+                          photoUrl: post.photo_url,
+                          size: 18,
+                          radius: 9,
+                        ),
+                        const SizedBox(width: 4),
+
+                        // User nickname
+                        Expanded(
+                          child: Text(
+                            post.nickname.isEmpty
+                                ? LibTr.of(context)!.no_name
+                                : cut(post.nickname, 5),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                              fontSize: 11,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        // Date
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.calendar,
+                              size: 11,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              formatTimestamp(context, post.stamp * 1000),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                                fontSize: 11,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

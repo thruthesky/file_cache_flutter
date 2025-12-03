@@ -46,25 +46,10 @@ class _ForumHomeState extends State<ForumHome> {
                     // Top SafeArea
                     SafeArea(child: Container()),
 
-                    // Forum Title - hide when scrolling with smooth animation
-                    ClipRect(
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeIn,
-                        height: isHomeChromeVisible ? 56 : 0,
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                          child: Text(
-                            Lo.of(context)!.forum,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Filter Chips (Category Tabs)
+                    // Category header with picker button (no chips)
                     Container(
-                      height: 60,
+                      height: 56,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
@@ -73,48 +58,80 @@ class _ForumHomeState extends State<ForumHome> {
                           ),
                         ),
                       ),
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        itemCount: categories.length,
-                        separatorBuilder: (_, _) => const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          final category = categories[index];
-                          return Row(
-                            children: [
-                              if (index == 0) const SizedBox(width: 16),
-                              FilterChip(
-                                // 현재 선택된 카테고리인지 확인
-                                selected:
-                                    homePostCategory.postId ==
-                                        category.postId &&
-                                    homePostCategory.category ==
-                                        category.category,
-                                label: Text(category.getLabel(context)),
-                                onSelected: (_) => ForumState.of(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              homePostCategory.getLabel(context),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const FaIcon(
+                              FontAwesomeIcons.penToSquare,
+                              size: 18,
+                            ),
+                            onPressed: () async {
+                              final post = await PostCreateScreen.push(context);
+                              debugLog('post: $post');
+                              if (post != null) {
+                                onNewPostCreated(post);
+                              }
+                            },
+                          ),
+                          IconButton(
+                            icon: const FaIcon(
+                              FontAwesomeIcons.chevronDown,
+                              size: 18,
+                            ),
+                            onPressed: () async {
+                              final selected =
+                                  await showModalBottomSheet<PostCategoryItem>(
+                                    context: context,
+                                    showDragHandle: true,
+                                    builder: (context) {
+                                      return ListView.separated(
+                                        itemCount: categories.length,
+                                        separatorBuilder: (_, __) =>
+                                            const Divider(height: 1),
+                                        itemBuilder: (context, index) {
+                                          final category = categories[index];
+                                          final isSelected =
+                                              homePostCategory.postId ==
+                                                  category.postId &&
+                                              homePostCategory.category ==
+                                                  category.category;
+                                          return ListTile(
+                                            title: Text(
+                                              category.getLabel(context),
+                                            ),
+                                            trailing: isSelected
+                                                ? const FaIcon(
+                                                    FontAwesomeIcons.check,
+                                                    size: 16,
+                                                  )
+                                                : null,
+                                            onTap: () {
+                                              Navigator.of(
+                                                context,
+                                              ).pop(category);
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+
+                              if (selected != null && mounted) {
+                                ForumState.of(
                                   context,
-                                ).setHomePostCategory(category),
-                                // Selected chip background color - use primaryContainer for Material 3
-                                selectedColor: Theme.of(
-                                  context,
-                                ).colorScheme.inversePrimary,
-                                // Selected chip checkmark and label color
-                                // Label color when selected
-                                labelStyle: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
-                                ),
-                                // Background color when not selected
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainerLow,
-                              ),
-                              if (index == categories.length - 1)
-                                const SizedBox(width: 16),
-                            ],
-                          );
-                        },
+                                ).setHomePostCategory(selected);
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
 
@@ -173,35 +190,7 @@ class _ForumHomeState extends State<ForumHome> {
                                   setState(() {});
                                 }
                               },
-                              headerBuilder: (context, totalPostCount) {
-                                return Row(
-                                  children: [
-                                    ForumCategoryHeader(
-                                      totalPostCount: totalPostCount,
-                                    ),
-                                    Spacer(),
-                                    TextButton.icon(
-                                      onPressed: () async {
-                                        final post =
-                                            await PostCreateScreen.push(
-                                              context,
-                                            );
-                                        debugLog('post: $post');
-                                        if (post != null) {
-                                          onNewPostCreated(post);
-                                        }
-                                      },
-                                      icon: const FaIcon(
-                                        FontAwesomeIcons.penToSquare,
-                                        size: 18,
-                                      ),
-                                      label: Text(
-                                        LibTr.of(context)!.create_post,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
+
                               noItemsFoundIndicatorBuilder: (context) {
                                 return const Center(child: EmptyPostList());
                               },
