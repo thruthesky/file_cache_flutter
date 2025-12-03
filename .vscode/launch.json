@@ -22,14 +22,11 @@
             ]
         },
         {
-            "name": "🚀 PhilGo - Simulator - dev",
+            "name": "🚀 PhilGo - iPhone 16 Pro Max - Prod",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
-            "args": [
-                "--dart-define=ENV=dev"
-            ]
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
         },
         {
             "name": "PhilGo - JaeHo: iPhone 16 Pro Max: Dev",
