@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.login.screen.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
+import 'package:philgo/widgets/theme/comic_button.dart';
 
 class EntryScreen extends StatelessWidget {
   static const String routeName = '/entry';
@@ -39,10 +39,10 @@ class EntryScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-              // 로그인 버튼 - Strong visual hierarchy
-              ElevatedButton.icon(
-                icon: const FaIcon(FontAwesomeIcons.lightRightToBracket, size: 16),
-                label: Text(Lo.of(context)!.login),
+              // 로그인 버튼 - Comic 스타일 디자인 (important: 강조 스타일)
+              // ComicButton 위젯을 사용하여 재사용 가능한 Comic 스타일 버튼 적용
+              ComicButton(
+                important: true,
                 onPressed: () {
                   showGeneralDialog(
                     context: context,
@@ -80,7 +80,8 @@ class EntryScreen extends StatelessWidget {
                         },
                     );
                   },
-                ),
+                child: Text(Lo.of(context)!.login),
+              ),
             ],
           ),
         ),
