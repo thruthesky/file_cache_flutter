@@ -62,14 +62,26 @@ class _UploadPreviewState extends State<UploadPreview> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // 이미지 프리뷰
-        ClipRRect(
-          borderRadius: BorderRadius.circular(widget.borderRadius),
-          child: Image.network(
-            thumbnail_image_url(widget.url),
-            width: widget.width,
-            height: widget.height,
-            fit: BoxFit.cover,
+        // 이미지 프리뷰 (Comic Design: 2.0px border)
+        Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            // Comic Design: 2.0px border
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2.0,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(widget.borderRadius - 2),
+            child: Image.network(
+              thumbnail_image_url(widget.url),
+              width: widget.width,
+              height: widget.height,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         // 삭제 버튼 (우측 상단)

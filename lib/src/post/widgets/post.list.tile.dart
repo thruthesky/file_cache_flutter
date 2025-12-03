@@ -23,11 +23,16 @@ class PostListTile extends StatelessWidget {
       otherUserUid: post.firebase_uid,
       no: () {
         return Card(
-          elevation: 2, // Subtle shadow for card depth
+          elevation: 0, // Comic Design: no shadow
           margin: EdgeInsets.zero, // No margin (parent controls spacing)
           color: Theme.of(context).colorScheme.surface,
+          // Comic Design: 2.0px border with rounded corners
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2.0,
+            ),
           ),
           child: InkWell(
             onTap: onTap,
@@ -45,11 +50,16 @@ class PostListTile extends StatelessWidget {
       },
       yes: () {
         return Card(
-          elevation: 2, // Subtle shadow for card depth
+          elevation: 0, // Comic Design: no shadow
           margin: EdgeInsets.zero,
           color: Theme.of(context).colorScheme.surface,
+          // Comic Design: 2.0px border with rounded corners
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 2.0,
+            ),
           ),
           child: InkWell(
             onTap: () {
