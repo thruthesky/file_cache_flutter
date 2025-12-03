@@ -323,7 +323,7 @@ class LibTrEn extends LibTr {
   String get search_friends => 'Search Friends';
 
   @override
-  String get search_by_nickname => '닉네임으로 검색';
+  String get search_by_nickname => 'Search by nickname';
 
   @override
   String get no_users_found => 'No users found';

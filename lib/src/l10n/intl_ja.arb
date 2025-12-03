@@ -1,597 +1,126 @@
 {
     "@@locale": "ja",
     "create_room": "ルーム作成",
-    "@create_room": {
-        "description": "The title of the application"
-    },
     "create": "作成",
-    "@create": {
-        "description": "Button to create a new room"
-    },
     "room_name": "ルーム名",
-    "@room_name": {
-        "description": "The name of the chat room"
-    },
     "enter_room_name": "ルーム名を入力してください",
-    "@enter_room_name": {
-        "description": "Prompt to enter the room name"
-    },
     "room_name_required": "ルーム名は必須です",
-    "@room_name_required": {
-        "description": "Error message when room name is not provided"
-    },
     "room_description": "ルームの説明",
-    "@room_description": {
-        "description": "Description of the chat room"
-    },
     "enter_room_description": "ルームの説明を入力してください",
-    "@enter_room_description": {
-        "description": "Prompt to enter the room description"
-    },
     "open_room": "オープンルーム",
-    "@open_room": {
-        "description": "Toggle to open the room for everyone"
-    },
     "open_room_description": "誰でも参加できるようにオープン",
-    "@open_room_description": {
-        "description": "Description of the open room toggle"
-    },
     "block_advertisement": "広告ブロック",
-    "@block_advertisement": {
-        "description": "Toggle to block advertisement messages in this room"
-    },
     "block_advertisement_description": "このルームで広告メッセージをブロック",
-    "@block_advertisement_description": {
-        "description": "Description of the block advertisement toggle"
-    },
     "creating": "作成中...",
-    "@creating": {
-        "description": "Indicates that a room is being created"
-    },
     "failed_to_create_room": "ルーム作成に失敗しました：{error}",
-    "@failed_to_create_room": {
-        "description": "Error message when room creation fails",
-        "placeholders": {
-            "error": {
-                "type": "String",
-                "example": "Failed to create room: {error message}"
-            }
-        }
-    },
     "failed_to_update_room": "ルーム更新に失敗しました：{error}",
-    "@failed_to_update_room": {
-        "description": "Error message when room update fails",
-        "placeholders": {
-            "error": {
-                "type": "String",
-                "example": "Failed to update room: {error message}"
-            }
-        }
-    },
     "report_select_reason": "通報理由を選択してください",
-    "@report_select_reason": {
-        "description": "Prompt to select a reason for reporting"
-    },
     "report_success": "通報が正常に送信されました",
-    "@report_success": {
-        "description": "Message displayed when a report is submitted successfully"
-    },
     "report_failed": "通報の送信に失敗しました",
-    "@report_failed": {
-        "description": "Message displayed when a report submission fails"
-    },
     "report_message_already_reported": "このメッセージは既に通報されています",
-    "@report_message_already_reported": {
-        "description": "Message displayed when a message is already reported"
-    },
     "report_room_already_reported": "このルームは既に通報されています",
-    "@report_room_already_reported": {
-        "description": "Message displayed when a room is already reported"
-    },
     "report_submission_failed": "通報の送信に失敗しました",
-    "@report_submission_failed": {
-        "description": "Message displayed when report submission fails"
-    },
     "report_chat_room": "チャットルームを通報",
-    "@report_chat_room": {
-        "description": "Message displayed when reporting a chat room"
-    },
     "report_chat_message": "チャットメッセージを通報",
-    "@report_chat_message": {
-        "description": "Message displayed when reporting a chat message"
-    },
     "close": "閉じる",
-    "@close": {
-        "description": "Button to close the report dialog"
-    },
     "cancel": "キャンセル",
-    "@cancel": {
-        "description": "Button to cancel the report"
-    },
     "report_submit": "送信",
-    "@report_submit": {
-        "description": "Button to submit the report"
-    },
     "get_report_reason": "{reason, select, spam {スパム} abusive {侮辱的} violence {暴力} hate_speech {ヘイトスピーチ} inappropriate_content {不適切なコンテンツ} other {reason}}",
-    "@get_report_reason": {
-        "description": "Get localized text for report reason",
-        "placeholders": {
-            "reason": {
-                "type": "String",
-                "example": "Spam, Abusive, Violence, Hate Speech, Inappropriate Content, Other"
-            }
-        }
-    },
     "save": "保存",
-    "@save": {
-        "description": "Button to save changes in the chat room"
-    },
     "edit_chat_room_success": "成功",
-    "@edit_chat_room_success": {
-        "description": "Message displayed when editing a chat room is successful"
-    },
     "edit_chat_room": "チャットルームを編集",
-    "@edit_chat_room": {
-        "description": "Title of the edit chat room dialog"
-    },
     "profile_photo_updated": "プロフィール写真が更新されました",
-    "@profile_photo_updated": {
-        "description": "Message displayed when profile photo is updated"
-    },
     "upload_photo_failed": "アップロードに失敗しました：{error}",
-    "@upload_photo_failed": {
-        "description": "Message displayed when upload fails",
-        "placeholders": {
-            "error": {
-                "type": "String",
-                "example": "Upload failed: {error message}"
-            }
-        }
-    },
     "profile_photo_removed": "プロフィール写真が削除されました",
-    "@profile_photo_removed": {
-        "description": "Message displayed when profile photo is removed"
-    },
     "failed_to_remove_profile_photo": "プロフィール写真の削除に失敗しました：{error}",
-    "@failed_to_remove_profile_photo": {
-        "description": "Error message when failing to remove profile photo",
-        "placeholders": {
-            "error": {
-                "type": "String",
-                "example": "Failed to remove profile photo: {error message}"
-            }
-        }
-    },
     "members_count": "{count} 名のメンバー",
-    "@members_count": {
-        "description": "Message displayed to show the number of members in a room",
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5 members"
-            }
-        }
-    },
     "menu": "メニュー",
-    "@menu": {
-        "description": "Label for the menu"
-    },
     "edit": "編集",
-    "@edit": {
-        "description": "Label for the edit action"
-    },
     "delete": "削除",
-    "@delete": {
-        "description": "Label for the delete action"
-    },
     "delete_comment_confirmation": "本当にこのコメントを削除しますか？",
-    "@delete_comment_confirmation": {
-        "description": "Confirmation message displayed when deleting a comment"
-    },
     "successfully_deleted": "コメントが正常に削除されました",
-    "@successfully_deleted": {
-        "description": "Message displayed when a comment is deleted successfully"
-    },
     "enterComment": "コメントを入力してください",
-    "@enterComment": {
-        "description": "Placeholder text for comment input field"
-    },
     "profile": "プロフィール",
-    "@profile": {
-        "description": "Label for the profile action"
-    },
     "recent_post": "最近の投稿",
-    "@recent_post": {
-        "description": "Label for the recent post action"
-    },
     "admin_chat_notice": "これは管理チームとのチャットです。",
-    "@admin_chat_notice": {
-        "description": "Label for the admin chat notice"
-    },
     "report": "通報",
-    "@report": {
-        "description": "Label for the report action"
-    },
     "unblock_user": "ユーザーのブロック解除",
-    "@unblock_user": {
-        "description": "Label for the unblock user action"
-    },
     "block_user": "ユーザーをブロック",
-    "@block_user": {
-        "description": "Label for the block user action"
-    },
     "leave": "退出",
-    "@leave": {
-        "description": "Label for the leave action"
-    },
     "leave_room": "ルームを退出",
-    "@leave_room": {
-        "description": "Label for the leave room action"
-    },
     "leave_room_confirmation": "本当にこのルームを退出しますか？",
-    "@leave_room_confirmation": {
-        "description": "Confirmation message displayed when a user tries to leave a room"
-    },
     "chat_room": "チャットルーム",
-    "@chat_room": {
-        "description": "Label for the chat room"
-    },
     "protocol_create": "ルームが作成されました",
-    "@protocol_create": {
-        "description": "Message displayed when a room is successfully created"
-    },
     "protocol_join": "{name}さんがルームに参加しました",
-    "@protocol_join": {
-        "description": "Message displayed when a user joins the room",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "example": "{username} has joined the room"
-            }
-        }
-    },
     "protocol_invitation_not_sent": "招待が送信されませんでした",
-    "@protocol_invitation_not_sent": {
-        "description": "Message displayed when an invitation is not sent"
-    },
     "protocol_left": "{name}さんがルームを退出しました",
-    "@protocol_left": {
-        "description": "Message displayed when a user leaves the room",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "example": "{username} left the room"
-            }
-        }
-    },
     "protocol_removed": "{name}さんがルームから削除されました",
-    "@protocol_removed": {
-        "description": "Message displayed when a user is removed from the room",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "example": "{username} has been removed from the room"
-            }
-        }
-    },
     "error_with_message": "エラー：{message}",
-    "@error_with_message": {
-        "description": "Message displayed when there is an error",
-        "placeholders": {
-            "message": {
-                "type": "String",
-                "example": "Error: Something went wrong"
-            }
-        }
-    },
     "send_message_to_start_conversation": "メッセージを送信して会話を開始",
-    "@send_message_to_start_conversation": {
-        "description": "Message displayed to prompt the user to send a message"
-    },
     "error": "エラー",
-    "@error": {
-        "description": "Label for the error"
-    },
     "ok": "OK",
-    "@ok": {
-        "description": "Label for the OK button"
-    },
     "want_to_delete": "削除しますか？",
-    "@want_to_delete": {
-        "description": "Confirmation message for deletion"
-    },
     "confirm": "確認",
-    "@confirm": {
-        "description": "Confirm dialog title"
-    },
     "yes": "はい",
-    "@yes": {
-        "description": "Yes button text"
-    },
     "no": "いいえ",
-    "@no": {
-        "description": "No button text"
-    },
     "no_posts_in_category": "このカテゴリに投稿はありません",
-    "@no_posts_in_category": {
-        "description": "Message when no posts exist in a category"
-    },
     "be_first_to_post": "最初の投稿者になりましょう",
-    "@be_first_to_post": {
-        "description": "Encouragement to create the first post"
-    },
     "create_post": "投稿を作成",
-    "@create_post": {
-        "description": "Button text to create a new post"
-    },
     "leftroom_successfully": "ルームを正常に退出しました",
-    "@leftroom_successfully": {
-        "description": "Message displayed when the user leaves the room successfully"
-    },
     "login_required": "ログインが必要です",
-    "@login_required": {
-        "description": "Message displayed when login is required"
-    },
     "please_log_in_to_continue": "続行するにはログインしてください",
-    "@please_log_in_to_continue": {
-        "description": "Message displayed to prompt the user to log in"
-    },
     "message_moderated_by_ai": "このメッセージはAIモデレーションによりブロックされました。",
-    "@message_moderated_by_ai": {
-        "description": "Message displayed when a message is moderated by AI"
-    },
     "message_moderated_as_advertisement": "この広告はブロックされました。",
-    "@message_moderated_as_advertisement": {
-        "description": "Message displayed when a message is moderated as an advertisement"
-    },
     "blocked_message_tap_to_unblock": "ブロックされたユーザーからのメッセージ（タップしてブロック解除）",
-    "@blocked_message_tap_to_unblock": {
-        "description": "Message displayed for a blocked user"
-    },
     "blocked_user_options": "ブロックされたユーザーのオプション",
-    "@blocked_user_options": {
-        "description": "Label for the blocked user options"
-    },
     "blocked_user_subtitle": "このユーザーは現在ブロックされています",
-    "@blocked_user_subtitle": {
-        "description": "Subtitle displayed for a blocked user"
-    },
     "unblock_user_description": "このユーザーが再びメッセージを送信できるようにします",
-    "@unblock_user_description": {
-        "description": "Description displayed for the unblock user option"
-    },
     "block_user_confirmation": "本当にこのユーザーをブロックしますか？",
-    "@block_user_confirmation": {
-        "description": "Confirmation message displayed when blocking a user"
-    },
     "block_user_warning": "このユーザーをブロックすると、メッセージを送信できなくなります。",
-    "@block_user_warning": {
-        "description": "Warning message displayed when blocking a user"
-    },
     "unblock_user_confirmation": "本当にこのユーザーのブロックを解除しますか？",
-    "@unblock_user_confirmation": {
-        "description": "Confirmation message displayed when unblocking a user"
-    },
     "user_unblocked": "ユーザーのブロックが解除されました",
-    "@user_unblocked": {
-        "description": "Message displayed when a user is unblocked"
-    },
     "uploading_images": "画像をアップロード中",
-    "@uploading_images": {
-        "description": "Message displayed when images are being uploaded"
-    },
     "max_files_reached": "最大{max}個のファイルを選択できます。",
-    "@max_files_reached": {
-        "description": "Message displayed when the user reaches the maximum file selection limit",
-        "placeholders": {
-            "max": {
-                "type": "int",
-                "example": "5"
-            }
-        }
-    },
     "failed_to_send_message": "メッセージの送信に失敗しました：{error}",
-    "@failed_to_send_message": {
-        "description": "Message displayed when a message fails to send",
-        "placeholders": {
-            "error": {
-                "type": "String",
-                "example": "Failed to send message: Network error"
-            }
-        }
-    },
     "attach_files": "ファイルを添付",
-    "@attach_files": {
-        "description": "Label for the attach files button"
-    },
     "type_message": "メッセージを入力...",
-    "@type_message": {
-        "description": "Placeholder text for the message input field"
-    },
     "select_files": "ファイルを選択",
-    "@select_files": {
-        "description": "Select files"
-    },
     "camera": "カメラ",
-    "@camera": {
-        "description": "Camera"
-    },
     "gallery": "ギャラリー",
-    "@gallery": {
-        "description": "Gallery"
-    },
     "failed_to_start_chat": "チャットの開始に失敗しました：{error}",
-    "@failed_to_start_chat": {
-        "description": "Message displayed when failing to start a chat",
-        "placeholders": {
-            "error": {
-                "type": "String",
-                "example": "Failed to start chat: User not found"
-            }
-        }
-    },
     "search_friends": "友達を検索",
-    "@search_friends": {
-        "description": "Label for the search friends dialog"
-    },
     "search_by_nickname": "ニックネームで検索",
-    "@search_by_nickname": {
-        "description": "Label for the search by nickname input field"
-    },
     "no_users_found": "ユーザーが見つかりません",
-    "@no_users_found": {
-        "description": "Message displayed when no users are found in the search"
-    },
     "chat": "チャット",
-    "@chat": {
-        "description": "Label for the chat button"
-    },
     "empty_chat_list": "{order, select, order {空のチャットルーム} single_order {空の友達リスト} group_order {空のグループチャット} open_order {空のオープンチャット} other {チャットルームリストが空です}}",
-    "@empty_chat_list": {
-        "description": "Get localized text for empty chat list",
-        "placeholders": {
-            "order": {
-                "type": "String",
-                "example": "open"
-            }
-        }
-    },
     "turn_off_notifications": "通知をオフにする",
-    "@turn_off_notifications": {
-        "description": "Label for the turn off notifications button"
-    },
     "turn_on_notifications": "通知をオンにする",
-    "@turn_on_notifications": {
-        "description": "Label for the turn on notifications button"
-    },
     "you": "あなた",
-    "@you": {
-        "description": "Label for the current user"
-    },
     "no_recent_posts": "最近の投稿はありません",
-    "@no_recent_posts": {
-        "description": "Message displayed when there are no recent posts"
-    },
     "block": "ブロック",
-    "@block": {
-        "description": "Label for the block button"
-    },
     "unblock": "ブロック解除",
-    "@unblock": {
-        "description": "Label for the unblock button"
-    },
     "success_user_blocked": "ユーザーが正常にブロックされました。",
-    "@success_user_blocked": {
-        "description": "Message displayed when a user is successfully blocked"
-    },
     "blocked_message": "ブロックされたユーザーからのメッセージ",
-    "@blocked_message": {
-        "description": "Message displayed when a user sends a message while blocked"
-    },
     "time_days_ago": "{count}日前",
-    "@time_days_ago": {
-        "description": "Time ago format for days",
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5d ago"
-            }
-        }
-    },
     "time_hours_ago": "{count}時間前",
-    "@time_hours_ago": {
-        "description": "Time ago format for hours",
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5h ago"
-            }
-        }
-    },
     "time_minutes_ago": "{count}分前",
-    "@time_minutes_ago": {
-        "description": "Time ago format for minutes",
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5m ago"
-            }
-        }
-    },
     "time_just_now": "たった今",
-    "@time_just_now": {
-        "description": "Time ago format for just now"
-    },
     "today": "今日",
-    "@today": {
-        "description": "Label for today"
-    },
     "yesterday": "昨日",
-    "@yesterday": {
-        "description": "Label for yesterday"
-    },
     "now": "今",
-    "@now": {
-        "description": "Label for now"
-    },
     "member_count_formatted": "{count}名",
-    "@member_count_formatted": {
-        "description": "Format for member count",
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "example": "5 members"
-            }
-        }
-    },
     "take_photo_with_camera": "カメラで写真を撮る",
-    "@take_photo_with_camera": {
-        "description": "Option to take a photo using the camera"
-    },
     "record_video_with_camera": "カメラで動画を録画",
-    "@record_video_with_camera": {
-        "description": "Option to record a video using the camera"
-    },
     "select_from_gallery": "ギャラリーから選択",
-    "@select_from_gallery": {
-        "description": "Option to select media from the gallery"
-    },
     "upload_file": "ファイルアップロード",
-    "@upload_file": {
-        "description": "Option to upload a file from device storage"
-    },
     "select_upload_option": "アップロードオプションを選択",
-    "@select_upload_option": {
-        "description": "Title for the upload option bottom sheet"
-    },
     "reply": "返信",
-    "@reply": {
-        "description": "Button text to reply to a comment"
-    },
     "like": "いいね",
-    "@like": {
-        "description": "Button text for liking a post"
-    },
     "comment": "コメント",
-    "@comment": {
-        "description": "Button text for commenting on a post"
-    },
     "share": "共有",
-    "@share": {
-        "description": "Button text for sharing a post"
-    },
     "beTheFirstToComment": "最初のコメントを投稿しよう",
-    "@beTheFirstToComment": {
-        "description": "Prompt to add the first comment to a post"
-    },
     "update": "更新",
-    "@update": {
-        "description": "Button text for updating a post or comment"
-    },
     "updateComment": "コメントを更新",
-    "@updateComment": {
-        "description": "Title for updating a comment"
-    },
     "join_url": "招待URL",
     "copied_to_clipboard": "クリップボードにコピーされました",
     "receive_share_choose_post_or_chat": "1. `投稿を作成`するか`チャットに送信`するかを選択",

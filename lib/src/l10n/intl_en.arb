@@ -434,7 +434,7 @@
     "@search_friends": {
         "description": "Label for the search friends dialog"
     },
-    "search_by_nickname": "닉네임으로 검색",
+    "search_by_nickname": "Search by nickname",
     "@search_by_nickname": {
         "description": "Label for the search by nickname input field"
     },
@@ -687,10 +687,6 @@
     "add_to_favorites": "Add to Favorites",
     "@add_to_favorites": {
         "description": "Title for add to favorites dialog"
-    },
-    "no_name": "no-name",
-    "@no_name": {
-        "description": "Default name when user has no name"
     },
     "added_to_folder": "Added to {folderName}",
     "@added_to_folder": {

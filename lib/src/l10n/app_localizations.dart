@@ -638,7 +638,7 @@ abstract class LibTr {
   /// Label for the search by nickname input field
   ///
   /// In en, this message translates to:
-  /// **'닉네임으로 검색'**
+  /// **'Search by nickname'**
   String get search_by_nickname;
 
   /// Message displayed when no users are found in the search
