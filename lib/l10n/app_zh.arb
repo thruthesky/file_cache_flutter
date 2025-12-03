@@ -348,5 +348,7 @@
     "loginToSeeProfile": "登录查看您的个人资料",
     "viewPostsCommentsPoints": "查看您的帖子、评论和积分",
     "updateYourNickname": "请更新您的昵称",
-    "points": "积分"
+    "points": "积分",
+    "appName": "PhilGo",
+    "appSlogan": "菲律宾的一切尽在于此"
 }

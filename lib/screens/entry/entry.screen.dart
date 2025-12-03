@@ -23,16 +23,17 @@ class EntryScreen extends StatelessWidget {
                 animated: true,
                 rotating: true,
               ),
-              const SizedBox(height: 16),
-              // App title
+              // 로고와 앱 타이틀 사이 간격
+              const SizedBox(height: 24),
+              // App title - 앱 이름 (다국어 지원)
               Text(
-                "필고(PhilGo)",
+                Lo.of(context)!.appName,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 4),
-              // App description
+              // App description - 앱 슬로건 (다국어 지원)
               Text(
-                "필리핀의 모든 것을 담았습니다",
+                Lo.of(context)!.appSlogan,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),

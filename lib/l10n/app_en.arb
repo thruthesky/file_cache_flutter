@@ -1420,5 +1420,13 @@
   "phoneNumberExample": "e.g.: 09123456789 or 01012345678",
   "@phoneNumberExample": {
     "description": "Example text for phone number input format"
+  },
+  "appName": "PhilGo",
+  "@appName": {
+    "description": "App name displayed on entry screen"
+  },
+  "appSlogan": "Everything about the Philippines",
+  "@appSlogan": {
+    "description": "App slogan displayed on entry screen"
   }
 }
