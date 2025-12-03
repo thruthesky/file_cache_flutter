@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Optimized for grid layouts and visual-first content
+/// Comic Design: 2.0px border, no shadow, rounded corners
 class PostCard extends StatelessWidget {
   const PostCard({super.key, required this.post, this.onTap});
 
@@ -19,10 +20,17 @@ class PostCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 0,
+        elevation: 0, // Comic Design: no shadow
         margin: EdgeInsets.zero,
         color: scheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        // Comic Design: 2.0px border with rounded corners
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: scheme.outline,
+            width: 2.0,
+          ),
+        ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -51,9 +51,7 @@ class PhilGoLogoTriangles extends StatelessWidget {
     // flutter_animate를 사용하여 크기 펄스 애니메이션 적용
     // reverse: true로 설정하여 커졌다 작아졌다 반복
     return triangle
-        .animate(
-          onPlay: (controller) => controller.repeat(reverse: true),
-        )
+        .animate(onPlay: (controller) => controller.repeat(reverse: true))
         .scale(
           begin: const Offset(1.0, 1.0),
           end: Offset(pulseScale, pulseScale),

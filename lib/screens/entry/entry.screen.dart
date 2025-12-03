@@ -86,8 +86,8 @@ class EntryScreen extends StatelessWidget {
                             ),
                           );
                         },
-                    );
-                  },
+                  );
+                },
                 child: Text(Lo.of(context)!.login),
               ),
             ],

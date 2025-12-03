@@ -39,17 +39,19 @@ class _MainHomeState extends State<MainHome> {
             children: [
               /// Background color from top to half screen (화면 상단부터 절반까지 배경색)
               /// Provides visual separation for top section with rounded bottom corners
+              /// Comic Design: No border needed for background, just rounded corners
               Positioned(
                 top: 0,
                 left: 0,
                 right: 0,
-                height: MediaQuery.of(context).size.height * 0.475,
+                height: MediaQuery.of(context).size.height * 0.485,
                 child: Container(
                   decoration: BoxDecoration(
                     color: scheme.primaryContainer,
+                    // Comic Design: Rounded corners (border radius 16)
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(sp.s16),
-                      bottomRight: Radius.circular(sp.s16),
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
                     ),
                   ),
                 ),
@@ -60,11 +62,18 @@ class _MainHomeState extends State<MainHome> {
                 children: [
                   /// AppBar Section (앱바 영역)
                   /// Contains user avatar and settings button
+                  /// Comic Design: 2.0px bottom border
                   SafeArea(
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: sp.s16,
                         vertical: sp.s12,
+                      ),
+                      decoration: BoxDecoration(
+                        // Comic Design: 2.0px bottom border with outline color
+                        border: Border(
+                          bottom: BorderSide(color: scheme.outline, width: 2.0),
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -233,18 +242,18 @@ class _MainHomeState extends State<MainHome> {
 
                               /// Post Items (게시글 목록)
                               /// Display 3 latest posts with title only
+                              /// Comic Design: 2.0px border, no shadow
                               ...List.generate(3, (index) {
                                 return Container(
                                   margin: EdgeInsets.only(bottom: sp.s8),
                                   padding: EdgeInsets.all(sp.s12),
                                   decoration: BoxDecoration(
-                                    color: scheme.surfaceContainerLow,
+                                    color: scheme.surface,
                                     borderRadius: BorderRadius.circular(8),
+                                    // Comic Design: 2.0px border with outline color
                                     border: Border.all(
-                                      color: scheme.primary.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                      width: 1,
+                                      color: scheme.outline,
+                                      width: 2.0,
                                     ),
                                   ),
                                   child: Row(
@@ -299,18 +308,18 @@ class _MainHomeState extends State<MainHome> {
 
                               /// Comment Items (댓글 목록)
                               /// Display 3 latest comments with title only
+                              /// Comic Design: 2.0px border, no shadow
                               ...List.generate(3, (index) {
                                 return Container(
                                   margin: EdgeInsets.only(bottom: sp.s8),
                                   padding: EdgeInsets.all(sp.s12),
                                   decoration: BoxDecoration(
-                                    color: scheme.surfaceContainerLow,
+                                    color: scheme.surface,
                                     borderRadius: BorderRadius.circular(8),
+                                    // Comic Design: 2.0px border with outline color
                                     border: Border.all(
-                                      color: scheme.tertiary.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                      width: 1,
+                                      color: scheme.outline,
+                                      width: 2.0,
                                     ),
                                   ),
                                   child: Row(
@@ -350,6 +359,7 @@ class _MainHomeState extends State<MainHome> {
 
 /// Quick Action Button Widget (빠른 작업 버튼 위젯)
 /// Reusable button component for quick actions on home screen
+/// Comic Design: 2.0px border, no shadow, rounded corners
 class _QuickActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -375,6 +385,8 @@ class _QuickActionButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: scheme.surface,
           borderRadius: BorderRadius.circular(12),
+          // Comic Design: 2.0px border with outline color
+          border: Border.all(color: scheme.outline, width: 2.0),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

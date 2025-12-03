@@ -45,14 +45,16 @@ class _ForumHomeState extends State<ForumHome> {
                     SafeArea(child: Container()),
 
                     // Category header with picker button (no chips)
+                    // Comic Design: 2.0px bottom border
                     Container(
                       height: 56,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                            width: 1,
+                            // Comic Design: 2.0px border with outline color
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 2.0,
                           ),
                         ),
                       ),
@@ -92,8 +94,14 @@ class _ForumHomeState extends State<ForumHome> {
                                     builder: (context) {
                                       return ListView.separated(
                                         itemCount: categories.length,
-                                        separatorBuilder: (_, _) =>
-                                            const Divider(height: 1),
+                                        // Comic Design: 2.0px divider
+                                        separatorBuilder: (_, _) => Divider(
+                                          height: 1,
+                                          thickness: 2.0,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.outline,
+                                        ),
                                         itemBuilder: (context, index) {
                                           final category = categories[index];
                                           final isSelected =

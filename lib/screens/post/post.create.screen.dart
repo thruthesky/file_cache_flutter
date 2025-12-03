@@ -202,20 +202,43 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title Input Field (Comic Design)
                     TextFieldSet(
                       padding: EdgeInsets.zero,
                       controller: _titleController,
                       decoration: InputDecoration(
                         hintText: T.postTitleHint,
                         filled: true,
-                        fillColor: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        focusedErrorBorder: InputBorder.none,
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        // Comic Design: 2.0px border with rounded corners
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
                         contentPadding: EdgeInsets.all(sp.s16),
                       ),
                       validator: (value) {
@@ -226,6 +249,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       },
                     ),
                     SizedBox(height: sp.s16),
+                    // Content Input Field (Comic Design)
                     TextFormField(
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -240,14 +264,36 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       decoration: InputDecoration(
                         hintText: T.postContentHint,
                         filled: true,
-                        fillColor: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        focusedErrorBorder: InputBorder.none,
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        // Comic Design: 2.0px border with rounded corners
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
                         contentPadding: EdgeInsets.all(sp.s16),
                         alignLabelWithHint: true,
                       ),
@@ -320,13 +366,15 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             ),
           ),
           // Bottom navigation bar as part of body Column
+          // Comic Design: 2.0px top border
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               border: Border(
                 top: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                  width: 1,
+                  // Comic Design: 2.0px border with outline color
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2.0,
                 ),
               ),
             ),
