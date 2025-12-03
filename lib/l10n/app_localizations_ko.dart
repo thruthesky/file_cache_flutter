@@ -685,6 +685,9 @@ class LoKo extends Lo {
   String get unpin_chat_room_message => '이 채팅방의 고정을 해제하시겠습니까?';
 
   @override
+  String get pin => '고정';
+
+  @override
   String get unpin => '고정 해제';
 
   @override

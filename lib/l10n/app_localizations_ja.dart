@@ -685,6 +685,9 @@ class LoJa extends Lo {
   String get unpin_chat_room_message => 'このチャットルームの固定を解除してもよろしいですか？';
 
   @override
+  String get pin => 'Pin';
+
+  @override
   String get unpin => '固定解除';
 
   @override
