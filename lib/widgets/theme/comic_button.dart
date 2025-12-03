@@ -109,6 +109,11 @@ class ComicButton extends StatelessWidget {
   /// - small: 작은 텍스트 (bodyMedium)
   final ComicButtonTextSize textSize;
 
+  /// 커스텀 패딩 (기본값: null)
+  /// 이 값이 설정되면 padding enum 대신 이 값을 사용합니다.
+  /// 좌우/상하 패딩을 개별적으로 조정하고 싶을 때 사용합니다.
+  final EdgeInsetsGeometry? customPadding;
+
   const ComicButton({
     super.key,
     required this.onPressed,
@@ -122,10 +127,16 @@ class ComicButton extends StatelessWidget {
     this.rounded = ComicButtonRounded.normal,
     this.padding = ComicButtonPadding.medium,
     this.textSize = ComicButtonTextSize.small,
+    this.customPadding,
   });
 
   /// 패딩 크기 옵션에 따른 EdgeInsets 반환
+  /// customPadding이 설정되어 있으면 customPadding을 우선 사용
   EdgeInsetsGeometry _getPadding() {
+    // customPadding이 있으면 enum 대신 customPadding 사용
+    if (customPadding != null) {
+      return customPadding!;
+    }
     switch (padding) {
       case ComicButtonPadding.large:
         // 큰 패딩: 중요한 액션 버튼 (8의 배수: 32x20)

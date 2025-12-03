@@ -2189,10 +2189,10 @@ abstract class Lo {
   /// **'Points'**
   String get points;
 
-  /// Title for PhilGo phone number login
+  /// Title for phone number login
   ///
   /// In en, this message translates to:
-  /// **'PhilGo Phone Login'**
+  /// **'Phone Login'**
   String get philgoPhoneLogin;
 
   /// Example text for phone number input format

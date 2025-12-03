@@ -1413,9 +1413,9 @@
   "@points": {
     "description": "Label for user points/score"
   },
-  "philgoPhoneLogin": "PhilGo Phone Login",
+  "philgoPhoneLogin": "Phone Login",
   "@philgoPhoneLogin": {
-    "description": "Title for PhilGo phone number login"
+    "description": "Title for phone number login"
   },
   "phoneNumberExample": "e.g.: 09123456789 or 01012345678",
   "@phoneNumberExample": {

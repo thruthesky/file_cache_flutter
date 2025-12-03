@@ -9,6 +9,7 @@ import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/dialogs/policy.dialogs.dart';
+import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class EntryLoginScreen extends StatefulWidget {
@@ -79,82 +80,17 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // App Logo with enhanced animations - left aligned
-                                AnimatedScale(
-                                  duration: const Duration(milliseconds: 600),
-                                  curve: Curves.elasticOut,
-                                  scale: _animateHeader ? 1.0 : 0.8,
-                                  child: AnimatedSlide(
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeOutCubic,
-                                    offset: _animateHeader
-                                        ? Offset.zero
-                                        : const Offset(0, 0.1),
-                                    child: AnimatedOpacity(
-                                      duration: const Duration(
-                                        milliseconds: 400,
-                                      ),
-                                      curve: Curves.easeOut,
-                                      opacity: _animateHeader ? 1 : 0,
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Container(
-                                          padding: EdgeInsets.all(sp.s16),
-                                          decoration: BoxDecoration(
-                                            color: scheme.primary.withValues(
-                                              alpha: 0.05,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              20,
-                                            ),
-                                          ),
-                                          child: const Hero(
-                                            tag: 'appLogo',
-                                            child: Image(
-                                              image: AssetImage(
-                                                'assets/img/logo/philgo_v6_app_logo.png',
-                                              ),
-                                              width: 80,
-                                              height: 80,
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                // PhilGo 로고 - 세 개의 삼각형 조합
+                                // animated: 등장 애니메이션, rotating: 회전, pulsing: 크기 펄스
+                                // 불필요한 래퍼(AnimatedScale, Hero 등) 제거하여 자체 애니메이션 활용
+                                const Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: PhilGoLogoTriangles(
+                                    size: 100,
+                                    animated: true,
+                                    rotating: true,
+                                    pulsing: true,
                                   ),
-                                ),
-                                SizedBox(height: sp.s24),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Hero(
-                                      tag: 'phoneIcon',
-                                      child: Container(
-                                        padding: EdgeInsets.all(sp.s8),
-                                        decoration: BoxDecoration(
-                                          color: scheme.primary.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: FaIcon(
-                                          FontAwesomeIcons.mobileScreen,
-                                          color: scheme.primary,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: sp.s12),
-                                    Text(
-                                      Lo.of(context)!.philgoPhoneLogin,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge,
-                                    ),
-                                  ],
                                 ),
                                 SizedBox(height: sp.s24),
 
@@ -229,11 +165,12 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                                 reviewSmsCode: '123456',
                                                 emailLogin: true,
                                               ),
-                                          labelPhoneNumber: Text(
-                                            Lo.of(context)!.enterPhoneNumber,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.titleMedium,
+                                          labelPhoneNumber: Padding(
+                                            padding: const EdgeInsets.only(bottom: 8.0),
+                                            child: Text(
+                                              Lo.of(context)!.enterPhoneNumber,
+                                              style: TextStyle(color: scheme.secondary)
+                                            ),
                                           ),
                                           labelUnderPhoneNumberTextField: Padding(
                                             padding: const EdgeInsets.only(
