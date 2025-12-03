@@ -495,9 +495,6 @@ class LibTrZh extends LibTr {
   String get add_to_favorites => '添加到收藏夹';
 
   @override
-  String get no_name => '无名称';
-
-  @override
   String added_to_folder(String folderName) {
     return '已添加到 $folderName';
   }
@@ -525,6 +522,9 @@ class LibTrZh extends LibTr {
   String chats_count(int count) {
     return '$count 个聊天';
   }
+
+  @override
+  String get no_name => '无名称';
 
   @override
   String get post_from_blocked_user => '来自被屏蔽用户的帖子';

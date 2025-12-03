@@ -971,12 +971,6 @@ abstract class LibTr {
   /// **'Add to Favorites'**
   String get add_to_favorites;
 
-  /// Default display name when user has no name
-  ///
-  /// In en, this message translates to:
-  /// **'No Name'**
-  String get no_name;
-
   /// Success message when adding to favorites folder
   ///
   /// In en, this message translates to:
@@ -1018,6 +1012,12 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'{count} chats'**
   String chats_count(int count);
+
+  /// Default display name when user has no name
+  ///
+  /// In en, this message translates to:
+  /// **'No Name'**
+  String get no_name;
 
   /// Message shown for posts from blocked users
   ///

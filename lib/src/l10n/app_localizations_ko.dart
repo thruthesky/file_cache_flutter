@@ -497,9 +497,6 @@ class LibTrKo extends LibTr {
   String get add_to_favorites => '즐겨찾기에 추가';
 
   @override
-  String get no_name => '이름 없음';
-
-  @override
   String added_to_folder(String folderName) {
     return '$folderName에 추가되었습니다';
   }
@@ -527,6 +524,9 @@ class LibTrKo extends LibTr {
   String chats_count(int count) {
     return '$count개의 채팅';
   }
+
+  @override
+  String get no_name => '이름 없음';
 
   @override
   String get post_from_blocked_user => '차단된 사용자의 게시물';

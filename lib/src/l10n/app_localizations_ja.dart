@@ -497,9 +497,6 @@ class LibTrJa extends LibTr {
   String get add_to_favorites => 'お気に入りに追加';
 
   @override
-  String get no_name => '名前なし';
-
-  @override
   String added_to_folder(String folderName) {
     return '$folderNameに追加されました';
   }
@@ -527,6 +524,9 @@ class LibTrJa extends LibTr {
   String chats_count(int count) {
     return '$count件のチャット';
   }
+
+  @override
+  String get no_name => '名前なし';
 
   @override
   String get post_from_blocked_user => 'ブロックされたユーザーからの投稿';
