@@ -1529,11 +1529,23 @@ abstract class Lo {
   /// **'Latest Posts'**
   String get latestPosts;
 
+  /// Title for latest comments section
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Comments'**
+  String get latestComments;
+
   /// Button text to view all items
   ///
   /// In en, this message translates to:
   /// **'View All'**
   String get viewAll;
+
+  /// Placeholder text for advertisement banner
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement Space'**
+  String get advertisementSpace;
 
   /// Abbreviation for level
   ///
@@ -2195,10 +2207,10 @@ abstract class Lo {
   /// **'Points'**
   String get points;
 
-  /// Title for PhilGo phone number login
+  /// Title for phone number login
   ///
   /// In en, this message translates to:
-  /// **'PhilGo Phone Login'**
+  /// **'Phone Login'**
   String get philgoPhoneLogin;
 
   /// Example text for phone number input format

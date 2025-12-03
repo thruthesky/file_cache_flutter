@@ -11,7 +11,6 @@ class CompactPostListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: onTap,
       // Add behavior to ensure entire area is tappable
@@ -38,7 +37,6 @@ class CompactPostListTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Left side: Thumbnail image
           if (hasImage) ...[
             SizedBox(
               width: 80,
@@ -82,11 +80,10 @@ class CompactPostListTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Row 1: Title
+                /// Row 1: Title (no Hero to avoid conflicts)
                 Text(
                   post.subject,
                   style: theme.textTheme.titleMedium,
-                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),

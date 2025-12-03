@@ -754,7 +754,13 @@ class LoJa extends Lo {
   String get latestPosts => '最新投稿';
 
   @override
+  String get latestComments => 'Latest Comments';
+
+  @override
   String get viewAll => 'すべて表示';
+
+  @override
+  String get advertisementSpace => 'Advertisement Space';
 
   @override
   String get lv => 'Lv';
@@ -1091,7 +1097,7 @@ class LoJa extends Lo {
   String get points => 'ポイント';
 
   @override
-  String get philgoPhoneLogin => 'PhilGo Phone Login';
+  String get philgoPhoneLogin => 'Phone Login';
 
   @override
   String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';

@@ -749,7 +749,13 @@ class LoZh extends Lo {
   String get latestPosts => '最新帖子';
 
   @override
+  String get latestComments => 'Latest Comments';
+
+  @override
   String get viewAll => '查看全部';
+
+  @override
+  String get advertisementSpace => 'Advertisement Space';
 
   @override
   String get lv => 'Lv';
@@ -1085,7 +1091,7 @@ class LoZh extends Lo {
   String get points => '积分';
 
   @override
-  String get philgoPhoneLogin => 'PhilGo Phone Login';
+  String get philgoPhoneLogin => 'Phone Login';
 
   @override
   String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';

@@ -781,7 +781,13 @@ class LoEn extends Lo {
   String get latestPosts => 'Latest Posts';
 
   @override
+  String get latestComments => 'Latest Comments';
+
+  @override
   String get viewAll => 'View All';
+
+  @override
+  String get advertisementSpace => 'Advertisement Space';
 
   @override
   String get lv => 'Lv';
@@ -1121,7 +1127,7 @@ class LoEn extends Lo {
   String get points => 'Points';
 
   @override
-  String get philgoPhoneLogin => 'PhilGo Phone Login';
+  String get philgoPhoneLogin => 'Phone Login';
 
   @override
   String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';

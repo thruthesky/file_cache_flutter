@@ -69,10 +69,10 @@ class LoKo extends Lo {
   String get loginPhoneSmsNotice => '전화 번호 인증을 위해 SMS를 발송합니다.';
 
   @override
-  String get enterPhoneNumber => '전화 번호를 입력하세요.';
+  String get enterPhoneNumber => '전화번호';
 
   @override
-  String get phoneNumber => '전화 번호';
+  String get phoneNumber => '전화번호';
 
   @override
   String get enterSmsCode => 'SMS 코드를 입력하세요.';
@@ -754,7 +754,13 @@ class LoKo extends Lo {
   String get latestPosts => '최근 게시글';
 
   @override
+  String get latestComments => '최근 댓글';
+
+  @override
   String get viewAll => '전체 보기';
+
+  @override
+  String get advertisementSpace => '광고 공간';
 
   @override
   String get lv => 'Lv';
@@ -1091,7 +1097,7 @@ class LoKo extends Lo {
   String get points => 'Points';
 
   @override
-  String get philgoPhoneLogin => '필고 전화번호 로그인';
+  String get philgoPhoneLogin => '전화번호 로그인';
 
   @override
   String get phoneNumberExample => '예: 09123456789 또는 01012345678';

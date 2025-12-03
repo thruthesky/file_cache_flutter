@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/state/app.state.dart';
+import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
-/// User statistics widget showing posts, comments, and points
+/// Minimalist inline user profile and statistics
+/// Clean design with no containers, just text and numbers
 class UserStats extends StatelessWidget {
   const UserStats({super.key});
 
@@ -13,182 +15,152 @@ class UserStats extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
 
     return Selector<AppState, User?>(
       selector: (_, appState) => appState.user,
       builder: (_, user, child) {
         if (user == null) {
-          /// Show login prompt when user is not logged in
-          return Card(
-            elevation: 0,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Row(
-                children: [
-                  /// Avatar placeholder
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHighest,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.person_outline,
-                      size: 32,
-                      color: scheme.onSurfaceVariant,
-                    ),
+          /// Simple login prompt
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: sp.s16),
+            child: Column(
+              children: [
+                Text(
+                  T.loginToSeeProfile,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: scheme.onSurfaceVariant,
                   ),
-                  const SizedBox(width: 16),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 300.ms);
+        }
 
-                  /// Login prompt text
+        /// Minimalist inline profile
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: sp.s16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Avatar and name row
+              Row(
+                children: [
+                  /// Small avatar
+                  UserAvatar(user: user, size: 48)
+                      .animate()
+                      .fadeIn(duration: 300.ms)
+                      .scale(begin: const Offset(0.8, 0.8), duration: 300.ms),
+
+                  SizedBox(width: sp.s12),
+
+                  /// Name and level
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          T.loginToSeeProfile,
-                          style: theme.textTheme.titleMedium?.copyWith(
+                          user.nickname.isNotEmpty
+                              ? user.nickname
+                              : T.updateYourNickname,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: sp.s4),
                         Text(
-                          T.viewPostsCommentsPoints,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          '${T.lv} ${user.level ?? 0}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
                       ],
-                    ),
+                    )
+                        .animate()
+                        .fadeIn(duration: 300.ms, delay: 100.ms)
+                        .slideX(begin: -0.2, end: 0, duration: 300.ms),
                   ),
                 ],
               ),
-            ),
-          );
-        }
 
-        /// Show user stats when logged in
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            // Flat design - subtle border instead of shadow
-            border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.3),
-              width: 1,
-            ),
+              SizedBox(height: sp.s20),
+
+              /// Simple stats row - just numbers and labels
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  /// Posts
+                  _MinimalStat(
+                    value: user.noOfPost ?? 0,
+                    label: T.posts,
+                  ).animate().fadeIn(duration: 300.ms, delay: 150.ms),
+
+                  /// Comments
+                  _MinimalStat(
+                    value: user.noOfComment ?? 0,
+                    label: T.comments,
+                  ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
+
+                  /// Points
+                  _MinimalStat(
+                    value: user.point ?? 0,
+                    label: T.points,
+                  ).animate().fadeIn(duration: 300.ms, delay: 250.ms),
+                ],
+              ),
+            ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                /// User info row
-                Row(
-                  children: [
-                    /// Enhanced user avatar with border
-                    UserAvatar(user: user, size: 60),
-
-                    const SizedBox(width: 16),
-
-                    /// User info
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /// User name
-                          Text(
-                            user.nickname.isNotEmpty
-                                ? user.nickname
-                                : T.updateYourNickname,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: scheme.onSurface,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                          const SizedBox(height: 6),
-
-                          /// Level indicator with icon
-                          Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.lightCrown,
-                                size: 14,
-                                color: scheme.primary,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                '${T.lv} ${user.level}',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: scheme.primary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                /// Three equal-sized stat boxes with icons
-                Row(
-                  children: [
-                    /// Posts stat
-                    Expanded(
-                      child: StatContainer(
-                        icon: FontAwesomeIcons.lightFileLines,
-                        value: user.noOfPost ?? 0,
-                        label: T.posts,
-                        color: scheme.primary,
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    /// Comments stat
-                    Expanded(
-                      child: StatContainer(
-                        icon: FontAwesomeIcons.lightComments,
-                        value: user.noOfComment ?? 0,
-                        label: T.comments,
-                        color: scheme.secondary,
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    /// Points stat
-                    Expanded(
-                      child: StatContainer(
-                        icon: FontAwesomeIcons.lightStar,
-                        value: user.point ?? 0,
-                        label: T.points,
-                        color: scheme.tertiary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
+        ).animate().fadeIn(duration: 400.ms);
       },
     );
   }
 }
 
-/// Enhanced stat container with icon and color
-/// Uses AspectRatio to maintain square shape while being flexible
-class StatContainer extends StatelessWidget {
-  const StatContainer({
+/// Minimal stat item - just number and label, no decoration
+class _MinimalStat extends StatelessWidget {
+  const _MinimalStat({
+    required this.value,
+    required this.label,
+  });
+
+  final int value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        /// Large number
+        Text(
+          formatCompactNumber(value),
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: scheme.onSurface,
+          ),
+        ),
+
+        /// Small label
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Legacy StatItem for backward compatibility with other screens
+class StatItem extends StatelessWidget {
+  const StatItem({
     super.key,
     required this.icon,
     required this.value,
@@ -205,62 +177,30 @@ class StatContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
 
-    return AspectRatio(
-      /// Maintain 1:1 aspect ratio for square shape
-      aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          /// Gradient background for visual interest
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              color.withValues(alpha: 0.1),
-              color.withValues(alpha: 0.05),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(12),
-          // Flat design - subtle border
-          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              /// Icon at top
-              FaIcon(icon, size: 20, color: color),
-
-              const SizedBox(height: 6),
-
-              /// Stat value with compact formatting
-              Text(
-                formatCompactNumber(value),
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
-                ),
-              ),
-
-              const SizedBox(height: 2),
-
-              /// Stat label
-              Text(
-                label,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: scheme.onSurface.withValues(alpha: 0.6),
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          formatCompactNumber(value),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: scheme.onSurface,
           ),
         ),
-      ),
+        SizedBox(height: sp.s4),
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }

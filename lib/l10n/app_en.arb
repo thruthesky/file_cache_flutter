@@ -963,9 +963,17 @@
   "@latestPosts": {
     "description": "Title for latest posts section"
   },
+  "latestComments": "Latest Comments",
+  "@latestComments": {
+    "description": "Title for latest comments section"
+  },
   "viewAll": "View All",
   "@viewAll": {
     "description": "Button text to view all items"
+  },
+  "advertisementSpace": "Advertisement Space",
+  "@advertisementSpace": {
+    "description": "Placeholder text for advertisement banner"
   },
   "lv": "Lv",
   "@lv": {
@@ -1417,9 +1425,9 @@
   "@points": {
     "description": "Label for user points/score"
   },
-  "philgoPhoneLogin": "PhilGo Phone Login",
+  "philgoPhoneLogin": "Phone Login",
   "@philgoPhoneLogin": {
-    "description": "Title for PhilGo phone number login"
+    "description": "Title for phone number login"
   },
   "phoneNumberExample": "e.g.: 09123456789 or 01012345678",
   "@phoneNumberExample": {

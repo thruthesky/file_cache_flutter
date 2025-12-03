@@ -5,6 +5,7 @@ import 'package:philgo/screens/home/sections/main.home.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:provider/provider.dart';
 import 'sections/chat.home.dart';
 import 'sections/forum.home.dart';
 import 'sections/company.home.dart';
@@ -45,104 +46,124 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final HomeNavigationItem selectedItem = NavigationState.of(context).homeNav;
-    return Scaffold(
-      body: IndexedStack(
-        index: selectedItem.index,
-        children: const [
-          MainHome(), // 홈
-          ChatHome(), // 채팅
-          ForumHome(), // 게시판
-          CompanyHome(), // 업소록
-          MenuHome(), // 메뉴
-        ],
-      ),
-      // BottomNavigationBar with top border/shadow
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          /// Top border (more visible like the reference)
-          border: Border(
-            top: BorderSide(
-              color: Theme.of(context).colorScheme.outlineVariant,
-              width: 1,
+    return Selector<AppState, bool>(
+      selector: (context, state) => state.isHomeChromeVisible,
+      builder: (context, isHomeChromeVisible, _) {
+        return Scaffold(
+          body: IndexedStack(
+            index: selectedItem.index,
+            children: const [
+              MainHome(), // 홈
+              ChatHome(), // 채팅
+              ForumHome(), // 게시판
+              CompanyHome(), // 업소록
+              MenuHome(), // 메뉴
+            ],
+          ),
+          // BottomNavigationBar with smooth height animation
+          bottomNavigationBar: ClipRect(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeIn,
+              height: isHomeChromeVisible ? kBottomNavigationBarHeight + 50 : 0,
+              color: Theme.of(context).colorScheme.surface,
+              child: SafeArea(
+                child: Wrap(
+                  children: [
+                    // Top border divider
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                    // Bottom navigation bar
+                    BottomNavigationBar(
+                      items: <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: FaIcon(
+                            selectedItem == HomeNavigationItem.home
+                                ? FontAwesomeIcons.solidHouse
+                                : FontAwesomeIcons.thinHouse,
+                          ),
+                          label: Lo.of(context)!.home,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 12,
+                                ),
+                                child: FaIcon(
+                                  selectedItem == HomeNavigationItem.chat
+                                      ? FontAwesomeIcons.solidCommentDots
+                                      : FontAwesomeIcons.thinCommentDots,
+                                ),
+                              ),
+                              Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: ValueListenableBuilder<int>(
+                                  valueListenable: UserService
+                                      .instance
+                                      .unreadSingleCountStream,
+                                  builder: (context, unreadSingleCount, child) {
+                                    if (unreadSingleCount == 0) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return Badge(
+                                      label: Text(unreadSingleCount.toString()),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          label: Lo.of(context)!.chat,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: FaIcon(
+                            selectedItem == HomeNavigationItem.forum
+                                ? FontAwesomeIcons.solidNewspaper
+                                : FontAwesomeIcons.thinNewspaper,
+                          ),
+                          label: Lo.of(context)!.forum,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: FaIcon(
+                            selectedItem == HomeNavigationItem.company
+                                ? FontAwesomeIcons.solidBuilding
+                                : FontAwesomeIcons.thinBuilding,
+                          ),
+                          label: Lo.of(context)!.company,
+                        ),
+                        BottomNavigationBarItem(
+                          icon: FaIcon(
+                            selectedItem == HomeNavigationItem.menu
+                                ? FontAwesomeIcons.solidBars
+                                : FontAwesomeIcons.thinBars,
+                          ),
+                          label: Lo.of(context)!.menu,
+                        ),
+                      ],
+                      currentIndex: selectedItem.index,
+                      onTap: (index) {
+                        NavigationState.of(
+                          context,
+                          listen: false,
+                        ).setHomeNavigation(HomeNavigationItem.values[index]);
+                      },
+                      type: BottomNavigationBarType.fixed,
+                      iconSize: 28,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-        child: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: FaIcon(
-                selectedItem == HomeNavigationItem.home
-                    ? FontAwesomeIcons.solidHouse
-                    : FontAwesomeIcons.thinHouse,
-              ),
-              label: Lo.of(context)!.home,
-            ),
-            BottomNavigationBarItem(
-              icon: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12, right: 12),
-                    child: FaIcon(
-                      selectedItem == HomeNavigationItem.chat
-                          ? FontAwesomeIcons.solidCommentDots
-                          : FontAwesomeIcons.thinCommentDots,
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: ValueListenableBuilder<int>(
-                      valueListenable:
-                          UserService.instance.unreadSingleCountStream,
-                      builder: (context, unreadSingleCount, child) {
-                        if (unreadSingleCount == 0) {
-                          return const SizedBox.shrink();
-                        }
-                        return Badge(label: Text(unreadSingleCount.toString()));
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              label: Lo.of(context)!.chat,
-            ),
-            BottomNavigationBarItem(
-              icon: FaIcon(
-                selectedItem == HomeNavigationItem.forum
-                    ? FontAwesomeIcons.solidNewspaper
-                    : FontAwesomeIcons.thinNewspaper,
-              ),
-              label: Lo.of(context)!.forum,
-            ),
-            BottomNavigationBarItem(
-              icon: FaIcon(
-                selectedItem == HomeNavigationItem.company
-                    ? FontAwesomeIcons.solidBuilding
-                    : FontAwesomeIcons.thinBuilding,
-              ),
-              label: Lo.of(context)!.company,
-            ),
-            BottomNavigationBarItem(
-              icon: FaIcon(
-                selectedItem == HomeNavigationItem.menu
-                    ? FontAwesomeIcons.solidBars
-                    : FontAwesomeIcons.thinBars,
-              ),
-              label: Lo.of(context)!.menu,
-            ),
-          ],
-          currentIndex: selectedItem.index,
-          onTap: (index) {
-            NavigationState.of(
-              context,
-              listen: false,
-            ).setHomeNavigation(HomeNavigationItem.values[index]);
-          },
-          type: BottomNavigationBarType.fixed, // 5개 이상의 항목을 사용할 때 필요
-
-          iconSize: 28,
-        ),
-      ),
+        );
+      },
     );
   }
 }

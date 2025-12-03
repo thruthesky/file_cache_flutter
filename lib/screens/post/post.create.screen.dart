@@ -9,6 +9,7 @@ import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/themes/app.spacing.dart';
 
 class PostCreateScreen extends StatefulWidget {
   static const String routeName = '/post-create';
@@ -90,16 +91,54 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     super.dispose();
   }
 
+  /// Submit post handler - extracted for reuse in AppBar action
+  Future<void> _handleSubmit() async {
+    // Check if upload is in progress
+    if (uploadingCount > 0) {
+      showSafeErrorDialog(
+        'Image upload is in progress, please try again in a moment.',
+      );
+      return;
+    }
+
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      debugLog('업로드된 파일 개수: ${urls.length}');
+      debugLog('파일 URL 목록: $urls');
+
+      final created = await createPost({
+        'post_id': HomePostCategory.postId,
+        'category': HomePostCategory.category,
+        'subject': _titleController.text,
+        'content': _contentController.text,
+        'files': urls,
+      });
+
+      if (mounted) {
+        PostViewScreen.pushReplacement(context, created);
+      }
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final sp = Theme.of(context).extension<AppSpacing>()!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '${T.writeIn} ${HomePostCategory.label}',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
         leading: IconButton(
-          icon: const FaIcon(FontAwesomeIcons.lightArrowLeft),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () async {
             // Check if there's any content (title, content, or uploaded files)
             final hasContent =
@@ -136,136 +175,224 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             }
           },
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              icon: isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    )
+                  : const FaIcon(FontAwesomeIcons.lightCheck),
+
+              onPressed: isLoading || uploadingCount > 0 ? null : _handleSubmit,
+            ),
+          ),
+        ],
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
+      body: Column(
+        children: [
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(sp.s16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FaIcon(
-                      FontAwesomeIcons.lightTag,
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                      size: 18,
+                    // Title Input Field (Comic Design)
+                    TextFieldSet(
+                      padding: EdgeInsets.zero,
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        hintText: T.postTitleHint,
+                        filled: true,
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        // Comic Design: 2.0px border with rounded corners
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.all(sp.s16),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return T.titleRequired;
+                        }
+                        return null;
+                      },
                     ),
-                    const SizedBox(width: 12),
-                    Text(
-                      HomePostCategory.label,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSecondaryContainer,
+                    SizedBox(height: sp.s16),
+                    // Content Input Field (Comic Design)
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return T.contentRequired;
+                        }
+                        return null;
+                      },
+                      controller: _contentController,
+                      maxLines: 12,
+                      minLines: 6,
+                      textAlignVertical: TextAlignVertical.top,
+                      decoration: InputDecoration(
+                        hintText: T.postContentHint,
+                        filled: true,
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        // Comic Design: 2.0px border with rounded corners
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.all(sp.s16),
+                        alignLabelWithHint: true,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: T.title,
-                  hintText: T.postTitleHint,
+                    SizedBox(height: sp.s16),
 
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return T.titleRequired;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _contentController,
-                decoration: InputDecoration(
-                  labelText: T.content,
-                  hintText: T.postContentHint,
+                    if (urls.isNotEmpty || uploadingCount > 0)
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final imageWidth = (constraints.maxWidth - sp.s8) / 2;
+                          return Wrap(
+                            spacing: sp.s8,
+                            runSpacing: sp.s8,
+                            children: [
+                              ...urls.map(
+                                (url) => UploadPreview(
+                                  url: url,
+                                  width: imageWidth,
+                                  height: imageWidth,
+                                  borderRadius: sp.s8,
+                                  onDelete: () async {
+                                    // 삭제 확인 다이얼로그 표시
+                                    final confirm = await showConfirmDialog(
+                                      message: Lo.of(
+                                        context,
+                                      )!.confirmDeleteImage,
+                                    );
 
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 8,
-                minLines: 6,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return T.contentRequired;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
+                                    if (confirm != true) return;
 
-              if (urls.isNotEmpty || uploadingCount > 0)
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ...urls.map(
-                      (url) => UploadPreview(
-                        url: url,
-                        onDelete: () async {
-                          // 삭제 확인 다이얼로그 표시
-                          final confirm = await showConfirmDialog(
-                            message: Lo.of(context)!.confirmDeleteImage,
+                                    try {
+                                      debugLog("삭제 시작: $url");
+                                      await philgoApiFileDelete(url);
+
+                                      urls.remove(url);
+                                      setState(() {});
+                                      debugLog("삭제 완료: $url");
+
+                                      if (context.mounted) {
+                                        showSuccessSnackBar(
+                                          context,
+                                          Lo.of(context)!.imageDeletedSuccess,
+                                        );
+                                      }
+                                    } catch (e) {
+                                      debugLog("파일 삭제 실패: $e");
+                                      showSafeErrorDialog("파일 삭제에 실패했습니다: $e");
+                                    }
+                                  },
+                                ),
+                              ),
+                              ...List.generate(
+                                uploadingCount,
+                                (index) => LoadingBox(
+                                  width: imageWidth,
+                                  height: imageWidth,
+                                  borderRadius: sp.s8,
+                                ),
+                              ),
+                            ],
                           );
-
-                          if (confirm != true) return;
-
-                          try {
-                            debugLog("삭제 시작: $url");
-                            await philgoApiFileDelete(url);
-
-                            urls.remove(url);
-                            setState(() {});
-                            debugLog("삭제 완료: $url");
-
-                            if (context.mounted) {
-                              showSuccessSnackBar(
-                                context,
-                                Lo.of(context)!.imageDeletedSuccess,
-                              );
-                            }
-                          } catch (e) {
-                            debugLog("파일 삭제 실패: $e");
-                            showSafeErrorDialog("파일 삭제에 실패했습니다: $e");
-                          }
                         },
                       ),
-                    ),
-                    ...List.generate(
-                      uploadingCount,
-                      (index) => const LoadingBox(),
-                    ),
+
+                    if (urls.isNotEmpty || uploadingCount > 0)
+                      SizedBox(height: sp.s16),
                   ],
                 ),
-
-              if (urls.isNotEmpty || uploadingCount > 0)
-                const SizedBox(height: 16),
-
-              Row(
+              ),
+            ),
+          ),
+          // Bottom navigation bar as part of body Column
+          // Comic Design: 2.0px top border
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border: Border(
+                top: BorderSide(
+                  // Comic Design: 2.0px border with outline color
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2.0,
+                ),
+              ),
+            ),
+            padding: EdgeInsets.all(sp.s16),
+            child: SafeArea(
+              child: Row(
                 children: [
                   FileUpload(
                     file: true,
                     video: true,
-                    child: const FaIcon(FontAwesomeIcons.lightCamera),
+                    child: Container(
+                      padding: EdgeInsets.all(sp.s12),
+                      child: const FaIcon(FontAwesomeIcons.lightCamera),
+                    ),
                     onBeforeUpload: () {
-                      // 업로드 시작 시 카운트 증가
                       setState(() {
                         uploadingCount++;
                       });
@@ -273,7 +400,6 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     onUploaded: (url) {
                       debugLog('url: $url');
                       urls.add(url);
-                      // 업로드 완료 시 카운트 감소
                       setState(() {
                         uploadingCount--;
                       });
@@ -283,95 +409,11 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       setState(() {});
                     },
                   ),
-                  const Spacer(),
-                  SubmitButton(
-                    isLoading: isLoading,
-                    onPressed: () async {
-                      // 업로드가 진행 중인지 확인
-                      if (uploadingCount > 0) {
-                        showSafeErrorDialog(
-                          'Image upload is in progress, please try again in a moment.',
-                        );
-                        return;
-                      }
-
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-
-                      setState(() {
-                        isLoading = true;
-                      });
-
-                      try {
-                        // 파일 URL 목록 디버그 로그
-                        debugLog('업로드된 파일 개수: ${urls.length}');
-                        debugLog('파일 URL 목록: $urls');
-
-                        final created = await createPost({
-                          'post_id': HomePostCategory.postId,
-                          'category': HomePostCategory.category,
-                          'subject': _titleController.text,
-                          'content': _contentController.text,
-                          'files': urls,
-                        });
-
-                        if (context.mounted) {
-                          PostViewScreen.pushReplacement(context, created);
-                        }
-                      } finally {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }
-                    },
-                    child: Text(T.submit),
-                  ),
                 ],
               ),
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.lightInfo,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          T.writingGuide,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text('• ${T.postDefamationWarning}'),
-                    const SizedBox(height: 4),
-                    Text('• ${T.postSpamWarning}'),
-                    const SizedBox(height: 4),
-                    Text('• ${T.postPersonalInfoWarning}'),
-                    const SizedBox(height: 4),
-                    Text('• ${T.postCopyrightWarning}'),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

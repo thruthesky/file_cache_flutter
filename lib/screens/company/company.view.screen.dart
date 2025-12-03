@@ -98,12 +98,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           SliverAppBar(
             expandedHeight: 240,
             pinned: true,
+            // Comic design: No elevation
             elevation: 0,
             foregroundColor: scheme.onPrimaryContainer,
             backgroundColor: scheme.surfaceContainerLow,
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(height: 1, color: scheme.outlineVariant),
+              preferredSize: const Size.fromHeight(2.0),
+              // Comic design: 2.0px border with outline color
+              child: Container(height: 2.0, color: scheme.outline),
             ),
             title: _isCollapsed && company != null
                 ? Text(company!.name, style: theme.textTheme.titleLarge)
@@ -197,10 +199,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                               Container(
                                 padding: EdgeInsets.all(sp.s8),
                                 decoration: BoxDecoration(
-                                  color: scheme.primaryContainer.withValues(
-                                    alpha: 0.5,
-                                  ),
+                                  color: scheme.primaryContainer,
+                                  // Comic design: Border radius 8 for small elements
                                   borderRadius: BorderRadius.circular(8),
+                                  // Comic design: 2.0px border with primary color
+                                  border: Border.all(
+                                    color: scheme.primary,
+                                    width: 2.0,
+                                  ),
                                 ),
                                 child: FaIcon(
                                   FontAwesomeIcons.lightLocationDot,
@@ -319,10 +325,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       Container(
                         padding: EdgeInsets.all(sp.s16),
                         decoration: BoxDecoration(
-                          color: scheme.surfaceContainerHighest.withValues(
-                            alpha: 0.3,
-                          ),
+                          color: scheme.surface,
+                          // Comic design: Border radius 12 for large elements
                           borderRadius: BorderRadius.circular(12),
+                          // Comic design: 2.0px border with outline color
+                          border: Border.all(
+                            color: scheme.outline,
+                            width: 2.0,
+                          ),
                         ),
                         child: Text(
                           company!.description,
@@ -352,32 +362,12 @@ class CompanyHeaderImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (titleImageUrl.isNotEmpty) {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.network(
-            titleImageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return CompanyImagePlaceholder(iconOpacity: 0.5);
-            },
-          ),
-
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer.withValues(alpha: 0.8),
-                ],
-              ),
-            ),
-          ),
-        ],
+      return Image.network(
+        titleImageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return CompanyImagePlaceholder(iconOpacity: 0.5);
+        },
       );
     }
 
@@ -401,7 +391,13 @@ class CompanyLogo extends StatelessWidget {
       margin: EdgeInsets.only(right: sp.s16),
       decoration: BoxDecoration(
         color: scheme.surfaceContainerHighest,
+        // Comic design: Border radius 12 for large elements
         borderRadius: BorderRadius.circular(12),
+        // Comic design: 2.0px border with outline color
+        border: Border.all(
+          color: scheme.outline,
+          width: 2.0,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: Image.network(
