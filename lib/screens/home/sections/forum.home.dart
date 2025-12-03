@@ -48,7 +48,7 @@ class _ForumHomeState extends State<ForumHome> {
                     // Comic Design: 2.0px bottom border
                     Container(
                       height: 56,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.only(right: 4, left: 12),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
@@ -63,16 +63,13 @@ class _ForumHomeState extends State<ForumHome> {
                           Expanded(
                             child: Text(
                               homePostCategory.getLabel(context),
-                              style: Theme.of(context).textTheme.titleMedium
+                              style: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(fontWeight: FontWeight.w600),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           IconButton(
-                            icon: const FaIcon(
-                              FontAwesomeIcons.penToSquare,
-                              size: 18,
-                            ),
+                            icon: const FaIcon(FontAwesomeIcons.penToSquare),
                             onPressed: () async {
                               final post = await PostCreateScreen.push(context);
                               debugLog('post: $post');
@@ -82,10 +79,7 @@ class _ForumHomeState extends State<ForumHome> {
                             },
                           ),
                           IconButton(
-                            icon: const FaIcon(
-                              FontAwesomeIcons.chevronDown,
-                              size: 18,
-                            ),
+                            icon: const FaIcon(FontAwesomeIcons.chevronDown),
                             onPressed: () async {
                               final selected =
                                   await showModalBottomSheet<PostCategoryItem>(

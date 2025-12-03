@@ -138,7 +138,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const FaIcon(FontAwesomeIcons.lightArrowLeft, size: 18),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () async {
             // Check if there's any content (title, content, or uploaded files)
             final hasContent =
@@ -176,19 +176,22 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           },
         ),
         actions: [
-          IconButton(
-            icon: isLoading
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                  )
-                : const FaIcon(FontAwesomeIcons.lightCheck, size: 18),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              icon: isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    )
+                  : const FaIcon(FontAwesomeIcons.lightCheck),
 
-            onPressed: isLoading || uploadingCount > 0 ? null : _handleSubmit,
+              onPressed: isLoading || uploadingCount > 0 ? null : _handleSubmit,
+            ),
           ),
         ],
       ),
