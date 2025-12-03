@@ -53,8 +53,9 @@ class _MenuHomeState extends State<MenuHome> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
+              // Comic design: 2.0px border with outline color
               border: Border(
-                bottom: BorderSide(color: scheme.outlineVariant, width: 1),
+                bottom: BorderSide(color: scheme.outline, width: 2.0),
               ),
             ),
             child: Row(
@@ -71,8 +72,10 @@ class _MenuHomeState extends State<MenuHome> {
         /// Menu content
         Expanded(
           child: SingleChildScrollView(
+            // Comic design: Add horizontal padding for menu sections
+            padding: const EdgeInsets.all(16),
             child: Column(
-              spacing: 24,
+              spacing: 16,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// Account Section

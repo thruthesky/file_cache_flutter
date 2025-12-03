@@ -32,38 +32,54 @@ class MenuSection extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Container(
-      // Comic design: No shadow, rounded corners (12), 2.0px border
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        // Comic design: 2.0px border with outline color
-        border: Border.all(
-          color: scheme.outline,
-          width: 2.0,
-        ),
-        // Comic design: Rounded corners (borderRadius: 12)
-        borderRadius: BorderRadius.circular(12),
-      ),
-      // Comic design: 8-multiples spacing (16px padding)
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Section header - Comic design: Using Theme textTheme
-          Text(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// Section header - Comic design: Simple title with bottom padding
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
             title,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.titleSmall?.copyWith(
               // Comic design: Use Theme color (error for danger, onSurface for normal)
-              color: isDanger ? scheme.error : scheme.onSurface,
+              color: isDanger ? scheme.error : scheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          // Comic design: 8-multiples spacing (16px gap)
-          const SizedBox(height: 16),
+        ),
 
-          /// Menu items
-          ...children,
-        ],
-      ),
+        /// Menu items container - Comic design: Card with border
+        Container(
+          // Comic design: No shadow, rounded corners (12), 2.0px border
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            // Comic design: 2.0px border with outline color
+            border: Border.all(
+              color: scheme.outline,
+              width: 2.0,
+            ),
+            // Comic design: Rounded corners (borderRadius: 12)
+            borderRadius: BorderRadius.circular(12),
+          ),
+          // Comic design: Clip to apply border radius to children
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [
+              // Add dividers between menu items
+              for (int i = 0; i < children.length; i++) ...[
+                children[i],
+                // Comic design: Add divider between items (not after last item)
+                if (i < children.length - 1)
+                  Divider(
+                    height: 1,
+                    thickness: 2.0,
+                    color: scheme.outline,
+                  ),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

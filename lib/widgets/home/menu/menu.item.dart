@@ -4,8 +4,12 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// Menu Item Widget
 ///
-/// A reusable ListTile-based menu item with icon, title, and chevron.
+/// A reusable menu item with icon, title, and chevron.
 /// Supports custom styling for danger items (error color scheme).
+/// Follows Comic design principles:
+/// - No border on individual items (handled by MenuSection dividers)
+/// - Theme-based colors
+/// - 8-multiples spacing (16px padding)
 class MenuItem extends StatelessWidget {
   const MenuItem({
     super.key,
@@ -32,28 +36,47 @@ class MenuItem extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    // Wrap ListTile with Material to enable splash/ripple effect
+    // Comic design: Use InkWell for tap effect without ListTile overhead
     return Material(
       color: Colors.transparent,
-      child: ListTile(
+      child: InkWell(
         onTap: onTap,
-        leading: IconContainer(
-          icon: icon,
-          size: 40,
-          iconSize: 16,
-          backgroundColor: isDanger ? scheme.errorContainer : null,
-          iconColor: isDanger ? scheme.error : null,
-        ),
-        title: Text(
-          title,
-          style: theme.textTheme.labelLarge?.copyWith(
-            color: isDanger ? scheme.error : null,
+        child: Padding(
+          // Comic design: 8-multiples spacing (16px padding)
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              /// Leading icon
+              IconContainer(
+                icon: icon,
+                size: 40,
+                iconSize: 18,
+                borderRadius: 8,
+                backgroundColor: isDanger ? scheme.errorContainer : null,
+                iconColor: isDanger ? scheme.error : null,
+              ),
+              // Comic design: 8-multiples spacing (16px gap)
+              const SizedBox(width: 16),
+
+              /// Title text
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isDanger ? scheme.error : scheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+
+              /// Trailing chevron
+              FaIcon(
+                FontAwesomeIcons.chevronRight,
+                size: 14,
+                color: isDanger ? scheme.error : scheme.onSurfaceVariant,
+              ),
+            ],
           ),
-        ),
-        trailing: Icon(
-          FontAwesomeIcons.chevronRight,
-          size: 16,
-          color: isDanger ? scheme.error : null,
         ),
       ),
     );
