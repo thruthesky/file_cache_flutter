@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Header widget for chat room screen showing room info and options
 class SingleChatRoomHeader extends StatelessWidget {
@@ -28,6 +29,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         icon: const Icon(Icons.arrow_back),
       ),
       title: buildRoomTitle(context),
+      // Comic design: Transparent background, no shadow
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
@@ -48,23 +50,35 @@ class SingleChatRoomHeader extends StatelessWidget {
   void showMenuModal(BuildContext parentContext) {
     showModalBottomSheet(
       context: parentContext,
+      /// Comic design: No elevation, transparent background
+      elevation: 0,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
+        /// Comic design: 2px border, rounded corners, no shadow
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2.0,
+          ),
+        ),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header
+            /// Header
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     LibTr.of(context)!.menu,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    /// Comic design: Use theme text style
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
@@ -74,7 +88,12 @@ class SingleChatRoomHeader extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(),
+            /// Comic design: 2px divider
+            Divider(
+              color: Theme.of(context).colorScheme.outline,
+              thickness: 2.0,
+              height: 24,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -85,34 +104,21 @@ class SingleChatRoomHeader extends StatelessWidget {
                       roomId: join.id,
                       otherUserUid: otherUser.uid,
                     )) ...[
-                      // Admin chat notice with enhanced flat design
+                      /// Admin chat notice with Comic design
                       Container(
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          /// Gradient background for visual interest
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withValues(alpha: 0.1),
-                              Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withValues(alpha: 0.05),
-                            ],
-                          ),
+                          /// Comic design: Use theme primaryContainer for notice background
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primaryContainer
+                              .withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(12),
-                          /// Flat design - subtle border
+                          /// Comic design: 2.0px border with primary color
                           border: Border.all(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: 0.3),
-                            width: 1.5,
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2.0,
                           ),
                         ),
                         child: Row(
@@ -120,19 +126,14 @@ class SingleChatRoomHeader extends StatelessWidget {
                             Icon(
                               Icons.info_outline,
                               color: Theme.of(context).colorScheme.primary,
-                              size: 20,
+                              size: 24,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 LibTr.of(context)!.admin_chat_notice,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.w500,
                                     ),
                               ),
@@ -143,37 +144,40 @@ class SingleChatRoomHeader extends StatelessWidget {
                     ] else ...[
                       Blocked(
                         otherUserUid: otherUser.uid,
-                        yes: () => ListTile(
-                          leading: Icon(Icons.person_add, color: Colors.green),
-                          title: Text(
-                            LibTr.of(context)!.unblock_user,
-                            style: TextStyle(color: Colors.green),
+                        yes: () => _buildComicMenuItem(
+                          context: context,
+                          icon: FaIcon(
+                            FontAwesomeIcons.lightUserPlus,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
+                          title: LibTr.of(context)!.unblock_user,
                           onTap: () {
+                            Navigator.of(context).pop();
                             showUnblockDialog(parentContext);
                           },
                         ),
                         no: () => Column(
                           children: [
-                            ListTile(
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              visualDensity: VisualDensity(
-                                horizontal: -4,
-                                vertical: -2,
-                              ),
-                              leading: Avatar(photoUrl: getPhotoUrl()),
-                              title: Text(LibTr.of(context)!.profile),
+                            /// Profile menu item
+                            _buildComicMenuItem(
+                              context: context,
+                              icon: Avatar(photoUrl: getPhotoUrl()),
+                              title: LibTr.of(context)!.profile,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showProfileDialog(parentContext, otherUser);
                               },
                             ),
                             const SizedBox(height: 8),
-                            ListTile(
-                              leading: const Icon(Icons.post_add),
-                              title: Text(LibTr.of(context)!.recent_post),
+
+                            /// Recent posts menu item
+                            _buildComicMenuItem(
+                              context: context,
+                              icon: FaIcon(
+                                FontAwesomeIcons.lightNewspaper,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                              title: LibTr.of(context)!.recent_post,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showUserRecentPostsDialog(
@@ -183,20 +187,30 @@ class SingleChatRoomHeader extends StatelessWidget {
                               },
                             ),
                             const SizedBox(height: 8),
-                            // Regular chat options (report, block, leave)
-                            // Report option
-                            ListTile(
-                              leading: const Icon(Icons.report),
-                              title: Text(LibTr.of(context)!.report),
+
+                            /// Report menu item
+                            _buildComicMenuItem(
+                              context: context,
+                              icon: FaIcon(
+                                FontAwesomeIcons.lightFlag,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              title: LibTr.of(context)!.report,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 reportRoom(parentContext);
                               },
                             ),
                             const SizedBox(height: 8),
-                            ListTile(
-                              leading: Icon(Icons.block),
-                              title: Text(LibTr.of(context)!.block_user),
+
+                            /// Block user menu item
+                            _buildComicMenuItem(
+                              context: context,
+                              icon: FaIcon(
+                                FontAwesomeIcons.lightBan,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              title: LibTr.of(context)!.block_user,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showBlockDialog(parentContext);
@@ -311,10 +325,10 @@ class SingleChatRoomHeader extends StatelessWidget {
               children: [
                 Text(
                   getRoomName(),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  // Comic design: Use theme text style instead of hardcoded
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -346,6 +360,53 @@ class SingleChatRoomHeader extends StatelessWidget {
       return join.userDisplayName;
     }
     return LibTr.of(Config.globalContext)!.no_name;
+  }
+
+  /// Build a menu item with Comic design
+  /// Comic design: 2px border, rounded corners, no shadow
+  Widget _buildComicMenuItem({
+    required BuildContext context,
+    required Widget icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(8),
+          /// Comic design: 2.0px border with outline color
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            width: 2.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            /// Icon
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: Center(child: icon),
+            ),
+            const SizedBox(width: 12),
+
+            /// Title
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -420,7 +481,8 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
           onPressed: () => _showFavoritesModal(context),
           icon: Icon(
             isFavorited ? Icons.star : Icons.star_border,
-            color: isFavorited ? Colors.amber : null,
+            // Comic design: Use theme primary color instead of hardcoded amber
+            color: isFavorited ? Theme.of(context).colorScheme.primary : null,
           ),
           tooltip: LibTr.of(context)!.add_to_favorites,
         );
@@ -432,6 +494,9 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
   void _showFavoritesModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      /// Comic design: No elevation, transparent background
+      elevation: 0,
+      backgroundColor: Colors.transparent,
       builder: (context) => _FavoritesModal(roomId: widget.roomId),
     );
   }
@@ -560,41 +625,99 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
     await showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(LibTr.of(context)!.create_new_folder),
-        content: TextField(
-          controller: folderNameController,
-          decoration: InputDecoration(
-            labelText: LibTr.of(context)!.folder_name,
-            hintText: LibTr.of(context)!.enter_folder_name,
-            border: OutlineInputBorder(),
+      builder: (dialogContext) => Dialog(
+        /// Comic design: No elevation, transparent background
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          /// Comic design: 2px border, rounded corners, no shadow
+          decoration: BoxDecoration(
+            color: Theme.of(dialogContext).colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Theme.of(dialogContext).colorScheme.outline,
+              width: 2.0,
+            ),
           ),
-          autofocus: true,
-          onSubmitted: (value) {
-            if (value.trim().isNotEmpty) {
-              Navigator.of(dialogContext).pop();
-              addToFavoriteFolder(value.trim());
-            }
-          },
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Title
+              Text(
+                LibTr.of(context)!.create_new_folder,
+                style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: 24),
+
+              /// Text field
+              TextField(
+                controller: folderNameController,
+                decoration: InputDecoration(
+                  labelText: LibTr.of(context)!.folder_name,
+                  hintText: LibTr.of(context)!.enter_folder_name,
+                  /// Comic design: 2px border
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Theme.of(dialogContext).colorScheme.outline,
+                      width: 2.0,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Theme.of(dialogContext).colorScheme.outline,
+                      width: 2.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Theme.of(dialogContext).colorScheme.primary,
+                      width: 2.0,
+                    ),
+                  ),
+                ),
+                autofocus: true,
+                onSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    Navigator.of(dialogContext).pop();
+                    addToFavoriteFolder(value.trim());
+                  }
+                },
+              ),
+              const SizedBox(height: 24),
+
+              /// Action buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: Text(LibTr.of(context)!.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final folderName = folderNameController.text.trim();
+                      if (folderName.isNotEmpty) {
+                        await addToFavoriteFolder(folderName);
+                        if (dialogContext.mounted) {
+                          Navigator.of(dialogContext).pop();
+                        }
+                      }
+                    },
+                    child: Text(LibTr.of(context)!.create),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(LibTr.of(context)!.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final folderName = folderNameController.text.trim();
-              if (folderName.isNotEmpty) {
-                await addToFavoriteFolder(folderName);
-                if (dialogContext.mounted) {
-                  Navigator.of(dialogContext).pop();
-                }
-              }
-            },
-            child: Text(LibTr.of(context)!.create),
-          ),
-        ],
       ),
     );
     // Dispose controller after dialog is fully closed
@@ -603,31 +726,50 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
   @override
   Widget build(BuildContext context) {
+    /// Comic design: 2px border, rounded corners, no shadow
     return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        /// Comic design: 2px border with outline color, no shadow
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2.0,
+        ),
+      ),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// 헤더 - 제목, 폴더 추가 버튼, 닫기 버튼
+          /// Header - Title, Add Folder Button, Close Button
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
+                    /// Comic design: Use theme titleLarge style with font weight
                     Text(
                       LibTr.of(context)!.add_to_favorites,
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
+                    const SizedBox(width: 8),
+                    /// Comic design: Add button with Font Awesome icon
                     IconButton(
                       onPressed: () =>
                           _showCreateFolderDialog(Config.globalContext),
-                      icon: const Icon(Icons.add),
+                      icon: FaIcon(
+                        FontAwesomeIcons.lightCirclePlus,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       tooltip: LibTr.of(context)!.create_new_folder,
                     ),
                   ],
                 ),
+                /// Comic design: Close button
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close),
@@ -636,33 +778,61 @@ class _FavoritesModalState extends State<_FavoritesModal> {
               ],
             ),
           ),
-          const Divider(),
+          /// Comic design: 2px divider with outline color
+          Divider(
+            color: Theme.of(context).colorScheme.outline,
+            thickness: 2.0,
+            height: 24,
+          ),
 
-          /// 즐겨찾기 폴더 목록 - UserService에서 가져온 폴더들 표시
+          /// Folder list section - Shows folders from UserService
           Flexible(
             child: isLoadingInitial
-                ? const Center(
+                ? Center(
                     child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: CircularProgressIndicator(),
+                      padding: const EdgeInsets.all(32.0),
+                      /// Comic design: Loading indicator with theme primary color
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.primary,
+                        strokeWidth: 3.0,
+                      ),
                     ),
                   )
                 : ValueListenableBuilder<List<Map<String, dynamic>>>(
                     valueListenable: UserService.instance.favoriteFoldersStream,
                     builder: (context, folders, child) {
                       if (folders.isEmpty) {
-                        return Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Text(
-                            LibTr.of(context)!.no_bookmarked_folders,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                        /// Comic design: Empty state with 2px border
+                        return Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(24.0),
+                            margin: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(12),
+                              /// Comic design: 2px border, no shadow
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.outline,
+                                width: 2.0,
+                              ),
+                            ),
+                            child: Text(
+                              LibTr.of(context)!.no_bookmarked_folders,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         );
                       }
 
-                      return ListView.builder(
+                      return ListView.separated(
                         shrinkWrap: true,
                         itemCount: folders.length,
+                        /// Comic design: Add spacing between items
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final folder = folders[index];
                           final folderName = folder['folderName'] as String;
@@ -670,34 +840,104 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                             folderName,
                           );
 
-                          /// 현재 폴더의 로딩 상태 확인
+                          /// Track loading state for each folder
                           final isFolderLoading =
                               folderLoadingStates[folderName] ?? false;
 
-                          return ListTile(
-                            leading: isFolderLoading
-                                ? const SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : Checkbox(
-                                    value: isSelected,
-                                    onChanged: (value) =>
-                                        addToFavoriteFolder(folderName),
-                                  ),
-                            title: Text(folderName),
-                            subtitle: Text(
-                              LibTr.of(
-                                context,
-                              )!.chats_count(folder['countFavorites'] as int),
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
+                          /// Comic design: ListTile with 2px border
+                          return InkWell(
                             onTap: isFolderLoading
                                 ? null
                                 : () => addToFavoriteFolder(folderName),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                        .withValues(alpha: 0.3)
+                                    : Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(8),
+                                /// Comic design: 2px border
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.outline,
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  /// Checkbox or loading indicator
+                                  SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: isFolderLoading
+                                        ? CircularProgressIndicator(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            strokeWidth: 2,
+                                          )
+                                        : Checkbox(
+                                            value: isSelected,
+                                            onChanged: (value) =>
+                                                addToFavoriteFolder(folderName),
+                                            fillColor:
+                                                WidgetStateProperty.resolveWith(
+                                              (states) {
+                                                if (states.contains(
+                                                    WidgetState.selected)) {
+                                                  return Theme.of(context)
+                                                      .colorScheme
+                                                      .primary;
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                  ),
+                                  const SizedBox(width: 12),
+
+                                  /// Folder info
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          folderName,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          LibTr.of(context)!.chats_count(
+                                              folder['countFavorites'] as int),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
                         },
                       );

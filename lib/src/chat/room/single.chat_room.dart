@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
+/// Single Chat Room Screen
+/// Displays a 1:1 chat room with another user following Comic design theme
 class SingleChatRoom extends StatefulWidget {
   const SingleChatRoom({
     super.key,
@@ -24,13 +26,21 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
     return SingleChatRoomInit(
       id: widget.id,
       loading: Scaffold(
+        // Comic design: Clean loading screen with theme-based colors
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Container(
           alignment: Alignment.center,
-          child: const CircularProgressIndicator.adaptive(),
+          child: CircularProgressIndicator(
+            // Use theme primary color for loading indicator
+            color: Theme.of(context).colorScheme.primary,
+            strokeWidth: 3.0,
+          ),
         ),
       ),
       onRoomReady: (init) {
         return Scaffold(
+          // Comic design: Use theme background color
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: SingleChatRoomHeader(
@@ -40,7 +50,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                 leaveChatRoom(
                   roomId: init.join.id,
                   success: () {
-                    // Show success message
+                    // Show success message with Comic design theme
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -48,7 +58,18 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                           content: Text(
                             LibTr.of(context)!.leftroom_successfully,
                           ),
-                          backgroundColor: Colors.green,
+                          // Comic design: Use theme primary color for success
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          // Comic design: Rounded corners with borderRadius 12
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            // Comic design: 2.0px border
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                          elevation: 0, // Comic design: No shadow
                         ),
                       );
 
@@ -65,7 +86,18 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                         SnackBar(
                           behavior: SnackBarBehavior.floating,
                           content: Text(LibTr.of(context)!.error),
-                          backgroundColor: Colors.red,
+                          // Comic design: Use theme error color
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                          // Comic design: Rounded corners with borderRadius 12
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            // Comic design: 2.0px border
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                          elevation: 0, // Comic design: No shadow
                         ),
                       );
                     }
