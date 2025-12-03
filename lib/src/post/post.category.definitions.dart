@@ -101,6 +101,7 @@ class PostCategoryItem {
             return 'Buy & Sell';
         }
       case 'hotel':
+      case '호텔': // Legacy support
         switch (languageCode) {
           case 'ko':
             return '호텔';
@@ -125,7 +126,8 @@ class PostCategoryItem {
         }
 
       // 서브 카테고리들
-      case '렌트카':
+      case 'rentacar':
+      case '렌트카': // Legacy support
         switch (languageCode) {
           case 'ko':
             return '렌트카';

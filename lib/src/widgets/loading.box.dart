@@ -47,17 +47,23 @@ class LoadingBox extends StatefulWidget {
 class _LoadingBoxState extends State<LoadingBox> {
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(widget.borderRadius),
-      child: Container(
-        width: widget.width,
-        height: widget.height,
+    // Comic Design: 2.0px border with rounded corners
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      decoration: BoxDecoration(
         color: widget.color ?? Theme.of(context).colorScheme.surfaceContainerHighest,
-        child: Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 3,
-            color: widget.indicatorColor ?? Theme.of(context).colorScheme.primary,
-          ),
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        // Comic Design: 2.0px border
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 2.0,
+        ),
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          strokeWidth: 3,
+          color: widget.indicatorColor ?? Theme.of(context).colorScheme.primary,
         ),
       ),
     );

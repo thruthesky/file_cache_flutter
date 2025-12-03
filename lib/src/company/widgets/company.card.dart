@@ -26,23 +26,23 @@ class CompanyCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
+    // Comic design: Card with border and no elevation
     return Container(
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        // Modern elevation with subtle shadow
-        boxShadow: [
-          BoxShadow(
-            color: scheme.shadow.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        // Comic design: Border radius 12 for large elements
+        borderRadius: BorderRadius.circular(12),
+        // Comic design: 2.0px border with outline color
+        border: Border.all(
+          color: scheme.outline,
+          width: 2.0,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          // Comic design: Border radius 12 for large elements
+          borderRadius: BorderRadius.circular(12),
           onTap: onTap,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -50,7 +50,8 @@ class CompanyCard extends StatelessWidget {
               /// Full-width image with category badge overlay
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+                  // Comic design: Border radius 12 for large elements
+                  top: Radius.circular(12),
                 ),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
@@ -63,19 +64,9 @@ class CompanyCard extends StatelessWidget {
                               imageUrl: imageUrl!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) {
-                                /// Shimmer loading effect
+                                // Comic design: Simple loading color instead of gradient
                                 return Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        scheme.surfaceContainerHighest,
-                                        scheme.surfaceContainer,
-                                        scheme.surfaceContainerHighest,
-                                      ],
-                                    ),
-                                  ),
+                                  color: scheme.surfaceContainerHighest,
                                 );
                               },
                               errorWidget: (context, url, error) {
@@ -87,33 +78,30 @@ class CompanyCard extends StatelessWidget {
                             )
                           : CompanyImagePlaceholder(icon: categoryIcon),
 
-                      /// Category badge overlay (top-right) with vibrant colors
+                      /// Category badge overlay (top-right)
                       Positioned(
-                        top: 10,
-                        right: 10,
+                        top: 8,
+                        right: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 7,
+                            horizontal: 8,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: scheme.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: scheme.shadow.withValues(alpha: 0.15),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            color: scheme.primaryContainer,
+                            // Comic design: Border radius 8 for small elements
+                            borderRadius: BorderRadius.circular(8),
+                            // Comic design: 2.0px border
+                            border: Border.all(
+                              color: scheme.primary,
+                              width: 2.0,
+                            ),
                           ),
                           child: Text(
                             categoryName,
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: scheme.onTertiaryContainer,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 11,
-                              letterSpacing: 0.3,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: scheme.onPrimaryContainer,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -125,13 +113,15 @@ class CompanyCard extends StatelessWidget {
 
               /// Company name section
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 child: Text(
                   name,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: scheme.onSurface,
-                    letterSpacing: -0.2,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

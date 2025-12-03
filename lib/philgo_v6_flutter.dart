@@ -86,6 +86,8 @@ export 'src/post/widgets/comment.detail.dart';
 export 'src/post/widgets/comment.list.view.dart';
 export 'src/post/widgets/post.list.tile.dart';
 export 'src/post/widgets/post.list.view.dart';
+export 'src/post/widgets/post.grid.view.dart';
+export 'src/post/widgets/post.simple.list.view.dart';
 export 'src/post/widgets/post.view.buttons.dart';
 export 'src/post/widgets/comment.detail.list_view.dart';
 export 'src/post/widgets/post.view.content.dart';
