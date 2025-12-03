@@ -20,7 +20,7 @@ class EntryScreen extends StatelessWidget {
               // PhilGo 로고 (세 개의 삼각형)
               // rotating: 회전 애니메이션, pulsing: 크기 펄스 애니메이션
               const PhilGoLogoTriangles(
-                size: 120,
+                size: 180,
                 animated: true,
                 rotating: true,
                 pulsing: true,
@@ -28,15 +28,17 @@ class EntryScreen extends StatelessWidget {
               // 로고와 앱 타이틀 사이 간격
               const SizedBox(height: 24),
               // App title - 앱 이름 (다국어 지원)
+              // headlineMedium 사용하여 1.2배 정도 크기 증가
               Text(
                 Lo.of(context)!.appName,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 4),
               // App description - 앱 슬로건 (다국어 지원)
+              // bodyMedium 사용하여 1.2배 정도 크기 증가
               Text(
                 Lo.of(context)!.appSlogan,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),

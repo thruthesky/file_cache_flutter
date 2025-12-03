@@ -69,10 +69,10 @@ class LoKo extends Lo {
   String get loginPhoneSmsNotice => '전화 번호 인증을 위해 SMS를 발송합니다.';
 
   @override
-  String get enterPhoneNumber => '전화 번호를 입력하세요.';
+  String get enterPhoneNumber => '전화번호';
 
   @override
-  String get phoneNumber => '전화 번호';
+  String get phoneNumber => '전화번호';
 
   @override
   String get enterSmsCode => 'SMS 코드를 입력하세요.';
