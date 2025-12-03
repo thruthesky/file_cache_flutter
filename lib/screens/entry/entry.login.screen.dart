@@ -23,6 +23,10 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
   bool _animateHeader = false;
   bool _animateForm = false;
 
+  /// SMS 코드 입력 단계인지 여부
+  /// true일 때 여백을 줄여서 더 컴팩트한 레이아웃 제공
+  bool _isSmsCodeInputStage = false;
+
   @override
   void initState() {
     super.initState();
@@ -70,9 +74,10 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                         child: Card(
                           clipBehavior: Clip.antiAlias,
                           child: Padding(
+                            // SMS 입력 단계에서는 상단 여백을 줄임 (s40 → s32)
                             padding: EdgeInsets.fromLTRB(
                               sp.s32,
-                              sp.s40,
+                              _isSmsCodeInputStage ? sp.s32 : sp.s40,
                               sp.s32,
                               sp.s32,
                             ),
@@ -86,18 +91,22 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                 const Align(
                                   alignment: Alignment.centerLeft,
                                   child: PhilGoLogoTriangles(
-                                    size: 100,
+                                    size: 120,
                                     animated: true,
                                     rotating: true,
                                     pulsing: true,
                                   ),
                                 ),
-                                SizedBox(height: sp.s24),
+                                // SMS 입력 단계에서는 로고 아래 여백을 줄임 (s24 → s16)
+                                SizedBox(
+                                  height: _isSmsCodeInputStage ? sp.s16 : sp.s24,
+                                ),
 
                                 // PhoneSignIn Widget - full width
+                                // SMS 입력 단계에서는 상단 여백을 줄임 (s16 → s8)
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    vertical: sp.s16,
+                                    vertical: _isSmsCodeInputStage ? sp.s8 : sp.s16,
                                   ),
                                   child: AnimatedSlide(
                                     duration: const Duration(milliseconds: 360),
@@ -156,6 +165,12 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                               },
                                           onSignInSuccess: _onSignInSuccess,
                                           onSignInFailed: _onSignInFailed,
+                                          // SMS 입력 단계 전환 시 여백 조정을 위한 콜백
+                                          onSmsCodeInputChanged: (isSmsStage) {
+                                            setState(() {
+                                              _isSmsCodeInputStage = isSmsStage;
+                                            });
+                                          },
                                           specialAccounts:
                                               const SpecialAccounts(
                                                 reviewEmail: 'review@email.com',
