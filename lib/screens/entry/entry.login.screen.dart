@@ -23,10 +23,6 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
   bool _animateHeader = false;
   bool _animateForm = false;
 
-  /// SMS 코드 입력 단계인지 여부
-  /// true일 때 여백을 줄여서 더 컴팩트한 레이아웃 제공
-  bool _isSmsCodeInputStage = false;
-
   @override
   void initState() {
     super.initState();
@@ -74,10 +70,9 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                         child: Card(
                           clipBehavior: Clip.antiAlias,
                           child: Padding(
-                            // SMS 입력 단계에서는 상단 여백을 줄임 (s40 → s32)
                             padding: EdgeInsets.fromLTRB(
                               sp.s32,
-                              _isSmsCodeInputStage ? sp.s32 : sp.s40,
+                              sp.s40,
                               sp.s32,
                               sp.s32,
                             ),
@@ -91,22 +86,18 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                 const Align(
                                   alignment: Alignment.centerLeft,
                                   child: PhilGoLogoTriangles(
-                                    size: 120,
+                                    size: 100,
                                     animated: true,
                                     rotating: true,
                                     pulsing: true,
                                   ),
                                 ),
-                                // SMS 입력 단계에서는 로고 아래 여백을 줄임 (s24 → s16)
-                                SizedBox(
-                                  height: _isSmsCodeInputStage ? sp.s16 : sp.s24,
-                                ),
+                                SizedBox(height: sp.s24),
 
                                 // PhoneSignIn Widget - full width
-                                // SMS 입력 단계에서는 상단 여백을 줄임 (s16 → s8)
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    vertical: _isSmsCodeInputStage ? sp.s8 : sp.s16,
+                                    vertical: sp.s16,
                                   ),
                                   child: AnimatedSlide(
                                     duration: const Duration(milliseconds: 360),
@@ -165,12 +156,6 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                               },
                                           onSignInSuccess: _onSignInSuccess,
                                           onSignInFailed: _onSignInFailed,
-                                          // SMS 입력 단계 전환 시 여백 조정을 위한 콜백
-                                          onSmsCodeInputChanged: (isSmsStage) {
-                                            setState(() {
-                                              _isSmsCodeInputStage = isSmsStage;
-                                            });
-                                          },
                                           specialAccounts:
                                               const SpecialAccounts(
                                                 reviewEmail: 'review@email.com',
@@ -181,23 +166,30 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                                 emailLogin: true,
                                               ),
                                           labelPhoneNumber: Padding(
-                                            padding: const EdgeInsets.only(bottom: 8.0),
+                                            padding: const EdgeInsets.only(
+                                              bottom: 8.0,
+                                            ),
                                             child: Text(
                                               Lo.of(context)!.enterPhoneNumber,
-                                              style: TextStyle(color: scheme.secondary)
+                                              style: TextStyle(
+                                                color: scheme.secondary,
+                                              ),
                                             ),
                                           ),
-                                          labelUnderPhoneNumberTextField: Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 8.0,
-                                            ),
-                                            child: Text(
-                                              Lo.of(context)!.phoneNumberExample,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodySmall,
-                                            ),
-                                          ),
+                                          labelUnderPhoneNumberTextField:
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 8.0,
+                                                ),
+                                                child: Text(
+                                                  Lo.of(
+                                                    context,
+                                                  )!.phoneNumberExample,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodySmall,
+                                                ),
+                                              ),
                                           labelPhoneNumberSelected: Text(
                                             Lo.of(context)!.phoneNumber,
                                             style: Theme.of(
@@ -246,46 +238,43 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: sp.s24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton.icon(
-                      onPressed: () async {
-                        await showPrivacyPolicy(context);
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: sp.s12,
-                          vertical: sp.s8,
-                        ),
-                      ),
-                      icon: const FaIcon(FontAwesomeIcons.userShield, size: 14),
-                      label: Text(
-                        Lo.of(context)!.privacyPolicy,
-                        style: Theme.of(context).textTheme.bodySmall,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton.icon(
+                    onPressed: () async {
+                      await showPrivacyPolicy(context);
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: sp.s12,
+                        vertical: sp.s8,
                       ),
                     ),
-                    SizedBox(width: sp.s12),
-                    TextButton.icon(
-                      onPressed: () async {
-                        await showTermsAndConditions(context);
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: sp.s12,
-                          vertical: sp.s8,
-                        ),
-                      ),
-                      icon: const FaIcon(FontAwesomeIcons.fileLines, size: 14),
-                      label: Text(
-                        Lo.of(context)!.termsOfService,
-                        style: Theme.of(context).textTheme.bodySmall,
+                    icon: const FaIcon(FontAwesomeIcons.userShield, size: 14),
+                    label: Text(
+                      Lo.of(context)!.privacyPolicy,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  SizedBox(width: sp.s12),
+                  TextButton.icon(
+                    onPressed: () async {
+                      await showTermsAndConditions(context);
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: sp.s12,
+                        vertical: sp.s8,
                       ),
                     ),
-                  ],
-                ),
+                    icon: const FaIcon(FontAwesomeIcons.fileLines, size: 14),
+                    label: Text(
+                      Lo.of(context)!.termsOfService,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
