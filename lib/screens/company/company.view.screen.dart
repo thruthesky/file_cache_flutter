@@ -196,25 +196,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(sp.s8),
-                                decoration: BoxDecoration(
-                                  color: scheme.primaryContainer,
-                                  // Comic design: Border radius 8 for small elements
-                                  borderRadius: BorderRadius.circular(8),
-                                  // Comic design: 2.0px border with primary color
-                                  border: Border.all(
-                                    color: scheme.primary,
-                                    width: 2.0,
-                                  ),
-                                ),
-                                child: FaIcon(
-                                  FontAwesomeIcons.lightLocationDot,
-                                  color: scheme.primary,
-                                  size: 20,
-                                ),
-                              ),
-                              SizedBox(width: sp.s12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,10 +310,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           // Comic design: Border radius 12 for large elements
                           borderRadius: BorderRadius.circular(12),
                           // Comic design: 2.0px border with outline color
-                          border: Border.all(
-                            color: scheme.outline,
-                            width: 2.0,
-                          ),
+                          border: Border.all(color: scheme.outline, width: 2.0),
                         ),
                         child: Text(
                           company!.description,
@@ -394,10 +372,7 @@ class CompanyLogo extends StatelessWidget {
         // Comic design: Border radius 12 for large elements
         borderRadius: BorderRadius.circular(12),
         // Comic design: 2.0px border with outline color
-        border: Border.all(
-          color: scheme.outline,
-          width: 2.0,
-        ),
+        border: Border.all(color: scheme.outline, width: 2.0),
       ),
       clipBehavior: Clip.antiAlias,
       child: Image.network(
