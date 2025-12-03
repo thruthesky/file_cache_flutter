@@ -2201,10 +2201,10 @@ abstract class Lo {
   /// **'Points'**
   String get points;
 
-  /// Title for PhilGo phone number login
+  /// Title for phone number login
   ///
   /// In en, this message translates to:
-  /// **'PhilGo Phone Login'**
+  /// **'Phone Login'**
   String get philgoPhoneLogin;
 
   /// Example text for phone number input format
@@ -2212,6 +2212,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'e.g.: 09123456789 or 01012345678'**
   String get phoneNumberExample;
+
+  /// App name displayed on entry screen
+  ///
+  /// In en, this message translates to:
+  /// **'PhilGo'**
+  String get appName;
+
+  /// App slogan displayed on entry screen
+  ///
+  /// In en, this message translates to:
+  /// **'Everything about the Philippines'**
+  String get appSlogan;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

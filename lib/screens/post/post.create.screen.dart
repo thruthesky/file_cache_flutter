@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
@@ -12,11 +15,20 @@ class PostCreateScreen extends StatefulWidget {
   static const String routeName = '/post-create';
 
   //
-  static Future Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
+  static Future Function(
+    BuildContext ctx, {
+    List<XFile>? xFiles,
+    String? content,
+  })
+  push = (ctx, {List<XFile>? xFiles, String? content}) =>
+      ctx.push(routeName, extra: {'xFiles': xFiles, 'content': content});
   //
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
 
-  const PostCreateScreen({super.key});
+  const PostCreateScreen({super.key, this.xFiles, this.content});
+
+  final List<XFile>? xFiles;
+  final String? content;
 
   @override
   State<PostCreateScreen> createState() => _PostCreateScreenState();
@@ -29,6 +41,49 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   bool isLoading = false;
   int uploadingCount = 0; // Track number of ongoing uploads
   List<String> urls = [];
+
+  @override
+  void initState() {
+    if (widget.content != null) _contentController.text = widget.content!;
+    if (widget.xFiles != null) {
+      /// upload xFiles to philgo server
+      log(
+        widget.xFiles!.map((e) => e.path).toString(),
+        name: 'received xfiles',
+      );
+      for (var file in widget.xFiles!) {
+        setState(() {
+          uploadingCount++;
+        });
+
+        philgoApiFileUpload(file.path)
+            .then((uploadedFile) {
+              log(
+                'Uploaded file URL: ${uploadedFile?.url}',
+                name: 'file upload',
+              );
+              if (uploadedFile != null) {
+                urls.add(uploadedFile.url);
+              }
+            })
+            .catchError((error) {
+              log(
+                'File upload error: $error',
+                name: 'file upload',
+                error: error,
+              );
+              showSafeErrorDialog('File upload failed: $error');
+            })
+            .whenComplete(() {
+              setState(() {
+                uploadingCount--;
+              });
+            });
+      }
+    }
+    super.initState();
+  }
+
   @override
   void dispose() {
     _titleController.dispose();

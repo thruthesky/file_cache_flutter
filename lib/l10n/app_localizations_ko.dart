@@ -1094,8 +1094,14 @@ class LoKo extends Lo {
   String get points => 'Points';
 
   @override
-  String get philgoPhoneLogin => '필고 전화번호 로그인';
+  String get philgoPhoneLogin => '전화번호 로그인';
 
   @override
   String get phoneNumberExample => '예: 09123456789 또는 01012345678';
+
+  @override
+  String get appName => '필고';
+
+  @override
+  String get appSlogan => '필리핀의 모든 것을 담았습니다';
 }

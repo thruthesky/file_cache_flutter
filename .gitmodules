@@ -10,3 +10,6 @@
 [submodule "packages/philgo_v6_flutter"]
 	path = packages/philgo_v6_flutter
 	url = https://github.com/thruthesky/philgo_v6_flutter
+[submodule ".claude/skills/flutter-design-skill"]
+	path = .claude/skills/flutter-design-skill
+	url = https://github.com/thruthesky/flutter-design-skill

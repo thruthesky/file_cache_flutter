@@ -1124,8 +1124,14 @@ class LoEn extends Lo {
   String get points => 'Points';
 
   @override
-  String get philgoPhoneLogin => 'PhilGo Phone Login';
+  String get philgoPhoneLogin => 'Phone Login';
 
   @override
   String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';
+
+  @override
+  String get appName => 'PhilGo';
+
+  @override
+  String get appSlogan => 'Everything about the Philippines';
 }

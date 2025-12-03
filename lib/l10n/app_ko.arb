@@ -347,7 +347,9 @@
   "companyIntroImageGuideline": "회사 소개를 간략하게 나타내는 이미지입니다. 로고 및 주요 서비스 항목을 포함하세요. 텍스트는 약 100자(20단어) 정도로 제한됩니다.",
   "officeInteriorPhoto": "사무실/매장 내부 사진",
   "officeInteriorGuideline": "사무실/매장 내부 전체 사진",
-  "philgoPhoneLogin": "필고 전화번호 로그인",
-  "phoneNumberExample": "예: 09123456789 또는 01012345678"
+  "philgoPhoneLogin": "전화번호 로그인",
+  "phoneNumberExample": "예: 09123456789 또는 01012345678",
+  "appName": "필고",
+  "appSlogan": "필리핀의 모든 것을 담았습니다"
 
 }

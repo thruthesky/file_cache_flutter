@@ -348,5 +348,7 @@
     "loginToSeeProfile": "ログインしてプロフィールを表示",
     "viewPostsCommentsPoints": "投稿、コメント、ポイントを表示",
     "updateYourNickname": "ニックネームを更新してください",
-    "points": "ポイント"
+    "points": "ポイント",
+    "appName": "PhilGo",
+    "appSlogan": "フィリピンのすべてを込めました"
 }

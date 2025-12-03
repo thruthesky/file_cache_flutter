@@ -93,9 +93,12 @@ class _MyAppState extends State<MyApp> {
                 "${category.toString()} || ${data.map((f) => f.toMap()).toString()}",
                 name: 'onCategorySelect',
               );
+
+              ForumState.of(globalContext).setHomePostCategory(category);
+
               if (data.length == 1 && await isSharedMediaPlainText(data[0])) {
                 if (globalContext.mounted) {
-                  PostCreateScreen.push(globalContext);
+                  PostCreateScreen.push(globalContext, content: data[0].path);
                 }
               } else {
                 List<XFile> xFiles = [];
@@ -104,7 +107,7 @@ class _MyAppState extends State<MyApp> {
                 }
 
                 if (globalContext.mounted) {
-                  PostCreateScreen.push(globalContext);
+                  PostCreateScreen.push(globalContext, xFiles: xFiles);
                 }
               }
             },
