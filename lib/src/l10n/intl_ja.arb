@@ -140,6 +140,7 @@
     "no_bookmarked_folders": "ブックマークされたフォルダがありません",
     "bookmarked_chats": "ブックマークされたチャット",
     "no_bookmarked_chats": "このフォルダにブックマークされたチャットがありません",
+    "pin": "固定",
     "unpin_chat_room_title": "チャットルームの固定を解除",
     "unpin_chat_room_message": "このチャットルームの固定を解除してもよろしいですか？",
     "unpin": "固定解除",
