@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/settings/language.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/state/app.state.dart';
+import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -182,7 +185,7 @@ class _MainHomeState extends State<MainHome> {
                                       /// Nickname (닉네임)
                                       Text(
                                         user?.nickname ?? 'Guest',
-                                        style: theme.textTheme.titleMedium
+                                        style: theme.textTheme.titleLarge
                                             ?.copyWith(
                                               color: scheme.onSurface,
                                               fontWeight: FontWeight.w600,
@@ -242,10 +245,22 @@ class _MainHomeState extends State<MainHome> {
                             icon: FontAwesomeIcons.lightPenToSquare,
                             label: 'Create Post',
                             onTap: () {
-                              NavigationState.of(
+                              // Ensure Community (freetalk) is the default category when writing
+                              final categories =
+                                  PhilGoAppConfig.getCategories();
+                              final communityCategory = categories.firstWhere(
+                                (c) =>
+                                    c.postId == 'freetalk' &&
+                                    c.category == null,
+                                orElse: () => categories.first,
+                              );
+                              ForumState.of(
                                 context,
                                 listen: false,
-                              ).setHomeNavigation(HomeNavigationItem.forum);
+                              ).setHomePostCategory(communityCategory);
+
+                              // Navigate directly to post creation screen
+                              PostCreateScreen.push(context);
                             },
                           ),
                         ),
