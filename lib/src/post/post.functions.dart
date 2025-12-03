@@ -388,7 +388,7 @@ Future<List<Comment>> getLatestComments({int page = 1, int limit = 20}) async {
 /// Get comments by user
 /// Returns a list of Comment objects
 Future<List<Comment>> getMyComments({int page = 1, int limit = 20}) async {
-  final res = await func(
+  final res = await func<List<dynamic>>(
     'get_my_comments',
     data: {'page': page, 'limit': limit},
     debug: true,
