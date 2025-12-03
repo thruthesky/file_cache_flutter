@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/screens/settings/language.screen.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
@@ -26,6 +30,81 @@ class MainHome extends StatefulWidget {
 }
 
 class _MainHomeState extends State<MainHome> {
+  List<Post>? latestPosts;
+  List<Comment>? latestComments;
+  bool isLoadingPosts = true;
+  bool isLoadingComments = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadLatestPosts(context);
+      _loadLatestComments();
+    });
+  }
+
+  /// Load latest 3 posts of the current user
+  Future<void> _loadLatestPosts(BuildContext context) async {
+    setState(() {
+      isLoadingPosts = true;
+    });
+
+    try {
+      final appState = Provider.of<AppState>(context, listen: false);
+      final idx = appState.user?.idx;
+
+      // Fetch latest 3 posts of the user (fallback to global latest)
+      List<Post> posts;
+      if (idx != null && idx > 0) {
+        posts = await getLatestByUser(idx_member: idx, limit: 3);
+      } else {
+        final postsResult = await getPosts(limit: 3);
+        posts = postsResult.posts;
+      }
+
+      if (mounted) {
+        setState(() {
+          latestPosts = posts;
+          isLoadingPosts = false;
+        });
+      }
+    } catch (e) {
+      debugLog('Error loading latest posts: $e');
+      if (mounted) {
+        setState(() {
+          isLoadingPosts = false;
+        });
+      }
+    }
+  }
+
+  /// Load latest 3 comments of the current user
+  Future<void> _loadLatestComments() async {
+    setState(() {
+      isLoadingComments = true;
+    });
+
+    try {
+      // Fetch latest 3 comments from the user
+      final commentsResult = await getMyComments(limit: 3);
+
+      if (mounted) {
+        setState(() {
+          latestComments = commentsResult;
+          isLoadingComments = false;
+        });
+      }
+    } catch (e) {
+      debugLog('Error loading latest comments: $e');
+      if (mounted) {
+        setState(() {
+          isLoadingComments = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -65,9 +144,11 @@ class _MainHomeState extends State<MainHome> {
                   /// Comic Design: 2.0px bottom border
                   SafeArea(
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: sp.s16,
-                        vertical: sp.s12,
+                      padding: EdgeInsets.only(
+                        top: sp.s12,
+                        bottom: sp.s12,
+                        left: sp.s16,
+                        right: sp.s8,
                       ),
                       decoration: BoxDecoration(
                         // Comic Design: 2.0px bottom border with outline color
@@ -161,19 +242,10 @@ class _MainHomeState extends State<MainHome> {
                             icon: FontAwesomeIcons.lightPenToSquare,
                             label: 'Create Post',
                             onTap: () {
-                              // TODO: Navigate to create post screen
-                            },
-                          ),
-                        ),
-                        SizedBox(width: sp.s8),
-
-                        /// Create Company Button (회사 생성)
-                        Expanded(
-                          child: _QuickActionButton(
-                            icon: FontAwesomeIcons.lightBuilding,
-                            label: 'Company',
-                            onTap: () {
-                              // TODO: Navigate to create company screen
+                              NavigationState.of(
+                                context,
+                                listen: false,
+                              ).setHomeNavigation(HomeNavigationItem.forum);
                             },
                           ),
                         ),
@@ -183,9 +255,22 @@ class _MainHomeState extends State<MainHome> {
                         Expanded(
                           child: _QuickActionButton(
                             icon: FontAwesomeIcons.lightUser,
-                            label: 'Profile',
+                            label: Lo.of(context)!.editProfile,
+                            onTap: () => ProfileEditScreen.push(context),
+                          ),
+                        ),
+                        SizedBox(width: sp.s8),
+
+                        /// Open Chat Button (채팅 열기)
+                        Expanded(
+                          child: _QuickActionButton(
+                            icon: FontAwesomeIcons.lightCommentDots,
+                            label: Lo.of(context)!.openChatTitle,
                             onTap: () {
-                              // TODO: Navigate to edit profile screen
+                              NavigationState.of(
+                                context,
+                                listen: false,
+                              ).setHomeNavigation(HomeNavigationItem.chat);
                             },
                           ),
                         ),
@@ -194,11 +279,9 @@ class _MainHomeState extends State<MainHome> {
                         /// Language Button (언어 설정)
                         Expanded(
                           child: _QuickActionButton(
-                            icon: FontAwesomeIcons.lightLanguage,
-                            label: 'Language',
-                            onTap: () {
-                              // TODO: Show language selection dialog
-                            },
+                            icon: FontAwesomeIcons.lightGlobe,
+                            label: Lo.of(context)!.languageTitle,
+                            onTap: () => LanguageScreen.push(context),
                           ),
                         ),
                       ],
@@ -220,22 +303,12 @@ class _MainHomeState extends State<MainHome> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               /// Section Header (섹션 헤더)
-                              Row(
-                                children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.lightPenToSquare,
-                                    size: 14,
-                                    color: scheme.primary,
-                                  ),
-                                  SizedBox(width: sp.s8),
-                                  Text(
-                                    'Posts',
-                                    style: theme.textTheme.titleSmall?.copyWith(
-                                      color: scheme.onSurface,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                'Posts',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: scheme.onSurface,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
 
                               SizedBox(height: sp.s8),
@@ -243,37 +316,71 @@ class _MainHomeState extends State<MainHome> {
                               /// Post Items (게시글 목록)
                               /// Display 3 latest posts with title only
                               /// Comic Design: 2.0px border, no shadow
-                              ...List.generate(3, (index) {
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: sp.s8),
-                                  padding: EdgeInsets.all(sp.s12),
+                              if (isLoadingPosts)
+                                Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(sp.s16),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              else if (latestPosts == null ||
+                                  latestPosts!.isEmpty)
+                                Container(
+                                  padding: EdgeInsets.all(sp.s16),
                                   decoration: BoxDecoration(
                                     color: scheme.surface,
                                     borderRadius: BorderRadius.circular(8),
-                                    // Comic Design: 2.0px border with outline color
                                     border: Border.all(
                                       color: scheme.outline,
                                       width: 2.0,
                                     ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      /// Post title (게시글 제목)
-                                      Expanded(
-                                        child: Text(
-                                          'Post title ${index + 1}',
-                                          style: theme.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: scheme.onSurface,
-                                              ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                  child: Text(
+                                    Lo.of(context)!.noPostsYet,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: scheme.onSurfaceVariant,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              else
+                                ...latestPosts!.map((post) {
+                                  return InkWell(
+                                    onTap: () {
+                                      PostViewScreen.push(context, post);
+                                    },
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: sp.s8),
+                                      padding: EdgeInsets.all(sp.s12),
+                                      decoration: BoxDecoration(
+                                        color: scheme.surface,
+                                        borderRadius: BorderRadius.circular(8),
+                                        // Comic Design: 2.0px border with outline color
+                                        border: Border.all(
+                                          color: scheme.outline,
+                                          width: 2.0,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              }),
+                                      child: Row(
+                                        children: [
+                                          /// Post subject (게시글 제목)
+                                          Expanded(
+                                            child: Text(
+                                              post.subject,
+                                              style: theme.textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                    color: scheme.onSurface,
+                                                  ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
                             ],
                           ),
                         ),
@@ -286,60 +393,98 @@ class _MainHomeState extends State<MainHome> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               /// Section Header (섹션 헤더)
-                              Row(
-                                children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.lightMessageDots,
-                                    size: 14,
-                                    color: scheme.tertiary,
-                                  ),
-                                  SizedBox(width: sp.s8),
-                                  Text(
-                                    'Comments',
-                                    style: theme.textTheme.titleSmall?.copyWith(
-                                      color: scheme.onSurface,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                'Comments',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: scheme.onSurface,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
 
                               SizedBox(height: sp.s8),
 
                               /// Comment Items (댓글 목록)
-                              /// Display 3 latest comments with title only
+                              /// Display 3 latest comments with content
                               /// Comic Design: 2.0px border, no shadow
-                              ...List.generate(3, (index) {
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: sp.s8),
-                                  padding: EdgeInsets.all(sp.s12),
+                              if (isLoadingComments)
+                                Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(sp.s16),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              else if (latestComments == null ||
+                                  latestComments!.isEmpty)
+                                Container(
+                                  padding: EdgeInsets.all(sp.s16),
                                   decoration: BoxDecoration(
                                     color: scheme.surface,
                                     borderRadius: BorderRadius.circular(8),
-                                    // Comic Design: 2.0px border with outline color
                                     border: Border.all(
                                       color: scheme.outline,
                                       width: 2.0,
                                     ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      /// Comment text (댓글 내용)
-                                      Expanded(
-                                        child: Text(
-                                          'Comment text ${index + 1}',
-                                          style: theme.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: scheme.onSurface,
-                                              ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                  child: Text(
+                                    'No comments yet',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: scheme.onSurfaceVariant,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              else
+                                ...latestComments!.map((comment) {
+                                  return InkWell(
+                                    onTap: () async {
+                                      try {
+                                        final post = await getPost(
+                                          comment.idx_root,
+                                        );
+                                        if (context.mounted) {
+                                          await PostViewScreen.push(
+                                            context,
+                                            post,
+                                          );
+                                        }
+                                      } catch (e) {
+                                        debugLog(
+                                          'Error navigating from comment to post: $e',
+                                        );
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: sp.s8),
+                                      padding: EdgeInsets.all(sp.s12),
+                                      decoration: BoxDecoration(
+                                        color: scheme.surface,
+                                        borderRadius: BorderRadius.circular(8),
+                                        // Comic Design: 2.0px border with outline color
+                                        border: Border.all(
+                                          color: scheme.outline,
+                                          width: 2.0,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              }),
+                                      child: Row(
+                                        children: [
+                                          /// Comment content (댓글 내용)
+                                          Expanded(
+                                            child: Text(
+                                              comment.content,
+                                              style: theme.textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                    color: scheme.onSurface,
+                                                  ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
                             ],
                           ),
                         ),
