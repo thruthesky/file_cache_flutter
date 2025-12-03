@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/philgo_app.config.dart';
-import 'package:philgo/screens/home/widgets/forum.category_header.dart';
 import 'package:flutter/rendering.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
@@ -94,7 +92,7 @@ class _ForumHomeState extends State<ForumHome> {
                                     builder: (context) {
                                       return ListView.separated(
                                         itemCount: categories.length,
-                                        separatorBuilder: (_, __) =>
+                                        separatorBuilder: (_, _) =>
                                             const Divider(height: 1),
                                         itemBuilder: (context, index) {
                                           final category = categories[index];
@@ -124,7 +122,7 @@ class _ForumHomeState extends State<ForumHome> {
                                     },
                                   );
 
-                              if (selected != null && mounted) {
+                              if (selected != null && context.mounted) {
                                 ForumState.of(
                                   context,
                                 ).setHomePostCategory(selected);
