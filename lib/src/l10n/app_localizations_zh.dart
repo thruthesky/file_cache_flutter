@@ -486,6 +486,9 @@ class LibTrZh extends LibTr {
   String get unpin_chat_room_message => '您确定要取消固定此聊天室吗？';
 
   @override
+  String get pin => '固定';
+
+  @override
   String get unpin => '取消固定';
 
   @override

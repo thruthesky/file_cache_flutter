@@ -488,6 +488,9 @@ class LibTrJa extends LibTr {
   String get unpin_chat_room_message => 'このチャットルームの固定を解除してもよろしいですか？';
 
   @override
+  String get pin => '固定';
+
+  @override
   String get unpin => '固定解除';
 
   @override

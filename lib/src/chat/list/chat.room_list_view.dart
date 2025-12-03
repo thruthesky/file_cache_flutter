@@ -51,13 +51,20 @@ class ChatRoomListView extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Comic design - empty state container with 2.0px border
                   Container(
                     padding: const EdgeInsets.all(24.0),
                     decoration: BoxDecoration(
                       color: colorScheme.primaryContainer.withValues(
-                        alpha: 0.3,
+                        alpha: 0.1,
                       ),
-                      borderRadius: BorderRadius.circular(24),
+                      // Comic design - rounded corners 12 for large elements
+                      borderRadius: BorderRadius.circular(12),
+                      // Comic design - 2.0px outline border
+                      border: Border.all(
+                        color: colorScheme.outline,
+                        width: 2.0,
+                      ),
                     ),
                     child: FaIcon(
                       FontAwesomeIcons.lightComments,
