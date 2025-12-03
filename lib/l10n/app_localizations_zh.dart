@@ -1086,4 +1086,10 @@ class LoZh extends Lo {
 
   @override
   String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';
+
+  @override
+  String get appName => 'PhilGo';
+
+  @override
+  String get appSlogan => '菲律宾的一切尽在于此';
 }

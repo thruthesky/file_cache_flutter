@@ -1092,4 +1092,10 @@ class LoKo extends Lo {
 
   @override
   String get phoneNumberExample => '예: 09123456789 또는 01012345678';
+
+  @override
+  String get appName => '필고';
+
+  @override
+  String get appSlogan => '필리핀의 모든 것을 담았습니다';
 }

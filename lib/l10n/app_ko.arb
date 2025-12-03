@@ -346,6 +346,8 @@
   "officeInteriorPhoto": "사무실/매장 내부 사진",
   "officeInteriorGuideline": "사무실/매장 내부 전체 사진",
   "philgoPhoneLogin": "필고 전화번호 로그인",
-  "phoneNumberExample": "예: 09123456789 또는 01012345678"
+  "phoneNumberExample": "예: 09123456789 또는 01012345678",
+  "appName": "필고",
+  "appSlogan": "필리핀의 모든 것을 담았습니다"
 
 }
