@@ -86,8 +86,9 @@ class PostCard extends StatelessWidget {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
+                            Colors.black.withValues(alpha: 0.65),
                             Colors.black.withValues(alpha: 0.75),
-                            Colors.black.withValues(alpha: 0.95),
+                            Colors.black.withValues(alpha: 0.85),
                           ],
                         ),
                       ),
@@ -148,19 +149,15 @@ class PostCard extends StatelessWidget {
                                   FaIcon(
                                     FontAwesomeIcons.calendar,
                                     size: 11,
-                                    color:
-                                        Colors.white.withValues(alpha: 0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    formatTimestamp(
-                                      context,
-                                      post.stamp * 1000,
-                                    ),
-                                    style:
-                                        theme.textTheme.bodySmall?.copyWith(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.9),
+                                    formatTimestamp(context, post.stamp * 1000),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
                                       fontSize: 11,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -170,16 +167,15 @@ class PostCard extends StatelessWidget {
                                   FaIcon(
                                     FontAwesomeIcons.lightEye,
                                     size: 11,
-                                    color:
-                                        Colors.white.withValues(alpha: 0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     formatCompactNumber(post.no_of_view),
-                                    style:
-                                        theme.textTheme.bodySmall?.copyWith(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.9),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
                                       fontSize: 11,
                                     ),
                                     overflow: TextOverflow.ellipsis,

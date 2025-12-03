@@ -413,105 +413,125 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       child: AnimatedOpacity(
                         duration: const Duration(milliseconds: 200),
                         opacity: showPostInfoBar ? 1.0 : 0.0,
-                        child: Container(
-                          height: 64,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.outlineVariant,
-                                width: 1,
+                        child: GestureDetector(
+                          onTap: () {
+                            /// Scroll to top when info bar is tapped
+                            _scrollController.animateTo(
+                              0,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          child: Container(
+                            height: 64,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.outlineVariant,
+                                  width: 1,
+                                ),
                               ),
                             ),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Row(
-                            children: [
-                              /// Thumbnail image (if available)
-                              if (hasImages)
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    image: DecorationImage(
-                                      image: NetworkImage(files.first),
-                                      fit: BoxFit.cover,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            child: Row(
+                              children: [
+                                /// Thumbnail image (if available)
+                                if (hasImages)
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    margin: const EdgeInsets.only(right: 12),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      image: DecorationImage(
+                                        image: NetworkImage(files.first),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
+                                  ),
+
+                                /// Title, likes, and comments info
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      /// Post title
+                                      Text(
+                                        subject.isNotEmpty
+                                            ? subject
+                                            : content.substring(
+                                                0,
+                                                content.length > 20
+                                                    ? 20
+                                                    : content.length,
+                                              ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 4),
+
+                                      /// Likes and comments count
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.favorite,
+                                            size: 14,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${post?.good ?? widget.post.good}',
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodySmall,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Icon(
+                                            Icons.comment,
+                                            size: 14,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '$noOfComment',
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodySmall,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
 
-                              /// Title, likes, and comments info
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    /// Post title
-                                    Text(
-                                      subject.isNotEmpty
-                                          ? subject
-                                          : content.substring(
-                                              0,
-                                              content.length > 20
-                                                  ? 20
-                                                  : content.length,
-                                            ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-
-                                    /// Likes and comments count
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.favorite,
-                                          size: 14,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '${post?.good ?? widget.post.good}',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodySmall,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Icon(
-                                          Icons.comment,
-                                          size: 14,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '$noOfComment',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodySmall,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                /// Up arrow indicator to show it's clickable
+                                Icon(
+                                  Icons.keyboard_arrow_up,
+                                  size: 24,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.5),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
