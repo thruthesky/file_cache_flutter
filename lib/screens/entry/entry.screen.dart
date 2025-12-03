@@ -39,10 +39,10 @@ class EntryScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-              // 로그인 버튼 - Comic 스타일 디자인 (important: 강조 스타일)
+              // 로그인 버튼 - Comic 스타일 디자인 (large 텍스트 크기)
               // ComicButton 위젯을 사용하여 재사용 가능한 Comic 스타일 버튼 적용
               ComicButton(
-                important: true,
+                textSize: ComicButtonTextSize.large,
                 onPressed: () {
                   showGeneralDialog(
                     context: context,
