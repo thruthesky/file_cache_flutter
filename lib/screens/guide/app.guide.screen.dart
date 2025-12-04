@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
+import 'package:philgo/widgets/theme/comic_card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// App guide screen
@@ -40,7 +41,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
     final sp = theme.extension<AppSpacing>()!;
 
     return Scaffold(
-      // AppBar
+      // Comic Design: AppBar with 2.0px bottom border
       appBar: AppBar(
         leading: BackButton(
           onPressed: () => Navigator.of(context).canPop()
@@ -50,7 +51,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
         title: Text(T.appGuideTitle, style: theme.textTheme.titleLarge),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: scheme.outlineVariant),
+          child: Container(height: 2, color: scheme.outline),
         ),
       ),
       // Body
@@ -165,13 +166,9 @@ class GuideStepWidget extends StatelessWidget {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Container(
+    return ComicListCard(
           margin: EdgeInsets.only(bottom: sp.s12),
           padding: EdgeInsets.all(sp.s16),
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Row(
             children: [
               /// Icon badge
@@ -298,16 +295,11 @@ class FeatureCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Container(
+    return ComicListCard(
           margin: EdgeInsets.only(bottom: sp.s12),
           padding: EdgeInsets.all(sp.s16),
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Row(
             children: [
               IconContainer(
@@ -325,14 +317,13 @@ class FeatureCardWidget extends StatelessWidget {
                       title,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
                     Text(
                       description,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
