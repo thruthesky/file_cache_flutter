@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/image.upload.field.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo/widgets/theme/comic_text_form_field.dart';
 
-/// 회사 연락처 정보 폼 섹션
+/// 회사 연락처 정보 폼 섹션 - Comic Design
 /// Phone numbers, contact method, and messaging IDs
 class FormContactInfo extends StatelessWidget {
   const FormContactInfo({
@@ -39,84 +38,112 @@ class FormContactInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
     final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 유선 전화번호
-        TextFieldSet(
-          controller: landlineController,
-          label: '${T.phoneNumber} *',
-          hintText: T.enterPhoneNumber,
-          prefixFaIconData: FontAwesomeIcons.lightPhone,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-        ),
-
-        SizedBox(height: sp.s8),
-
-        /// 휴대폰 번호
-        TextFieldSet(
-          controller: mobileNumberController,
-          label: '${T.mobileNumber} *',
-          hintText: T.enterMobileNumber,
-          prefixFaIconData: FontAwesomeIcons.lightPhone,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-        ),
-
-        SizedBox(height: sp.s8),
-
-        /// 모바일 연락 방법 선택 (문자/전화)
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                T.mobileContactMethod,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: scheme.onSurface,
-                    ),
+        /// Comic Design: Phone Number Field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${T.phoneNumber} *',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
               ),
-              SizedBox(height: sp.s8),
-              RadioGroup<String>(
-                groupValue: mobileContactMethod,
-                onChanged: (value) {
-                  onMobileContactMethodChanged(value);
-                },
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: Text(T.sendText),
-                        value: 'text',
-                      ),
-                    ),
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: Text(T.makeCall),
-                        value: 'call',
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            SizedBox(height: sp.s8),
+            ComicTextFormField(
+              controller: landlineController,
+              hintText: T.enterPhoneNumber,
+            ),
+          ],
+        ),
+
+        SizedBox(height: sp.s16),
+
+        /// Comic Design: Mobile Number Field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${T.mobileNumber} *',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: sp.s8),
+            ComicTextFormField(
+              controller: mobileNumberController,
+              hintText: T.enterMobileNumber,
+            ),
+          ],
         ),
 
-        SizedBox(height: sp.s8),
+        SizedBox(height: sp.s16),
 
-        /// 카카오톡 ID
-        TextFieldSet(
-          controller: kakaotalkIdController,
-          label: T.kakaoId,
-          hintText: T.enterKakaotalkId,
-          prefixFaIconData: FontAwesomeIcons.message,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+        /// Comic Design: Mobile Contact Method Selection
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              T.mobileContactMethod,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
+              ),
+            ),
+            SizedBox(height: sp.s8),
+            RadioGroup<String>(
+              groupValue: mobileContactMethod,
+              onChanged: (value) {
+                onMobileContactMethodChanged(value);
+              },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: Text(T.sendText),
+                      value: 'text',
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: Text(T.makeCall),
+                      value: 'call',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
 
-        SizedBox(height: sp.s8),
+        SizedBox(height: sp.s16),
+
+        /// Comic Design: KakaoTalk ID Field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              T.kakaoId,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
+              ),
+            ),
+            SizedBox(height: sp.s8),
+            ComicTextFormField(
+              controller: kakaotalkIdController,
+              hintText: T.enterKakaotalkId,
+            ),
+          ],
+        ),
+
+        SizedBox(height: sp.s16),
 
         /// 카카오톡 QR 코드 업로드
         ImageUploadField(
@@ -128,24 +155,46 @@ class FormContactInfo extends StatelessWidget {
           onQrCodeDecoded: onQrCodeDecoded,
         ),
 
-        /// 카카오 채널 URL
-        TextFieldSet(
-          controller: kakaotalkQrCodeController,
-          label: T.kakaoChannelUrl,
-          hintText: T.kakaoChannelUrlPlaceholder,
-          prefixFaIconData: FontAwesomeIcons.message,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+        SizedBox(height: sp.s16),
+
+        /// Comic Design: Kakao Channel URL Field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              T.kakaoChannelUrl,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
+              ),
+            ),
+            SizedBox(height: sp.s8),
+            ComicTextFormField(
+              controller: kakaotalkQrCodeController,
+              hintText: T.kakaoChannelUrlPlaceholder,
+            ),
+          ],
         ),
 
-        SizedBox(height: sp.s8),
+        SizedBox(height: sp.s16),
 
-        /// 텔레그램 ID
-        TextFieldSet(
-          controller: telegramIdController,
-          label: T.telegramId,
-          hintText: T.enterTelegramId,
-          prefixFaIconData: FontAwesomeIcons.message,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+        /// Comic Design: Telegram ID Field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              T.telegramId,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
+              ),
+            ),
+            SizedBox(height: sp.s8),
+            ComicTextFormField(
+              controller: telegramIdController,
+              hintText: T.enterTelegramId,
+            ),
+          ],
         ),
       ],
     );

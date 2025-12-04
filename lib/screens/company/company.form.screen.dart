@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -10,6 +9,8 @@ import 'package:philgo/screens/company/form-sections/form.detailed.info.dart';
 import 'package:philgo/screens/company/form-sections/form.image.upload.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/step.progress.indicator.dart';
+import 'package:philgo/widgets/theme/comic_button.dart';
+import 'package:philgo/widgets/theme/comic_snackbar.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// 회사 정보 입력 폼 화면 - 멀티스텝
@@ -187,48 +188,57 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     switch (_currentStep) {
       case 0: // Basic Info
         if (_nameController.text.trim().isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.companyNameRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.companyNameRequired);
           return false;
         }
         return true;
 
       case 1: // Detailed Info
         if (_titleController.text.trim().isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.companyTitleRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.companyTitleRequired);
           return false;
         }
         if (_selectedCategory == null) {
-          showErrorSnackBar(context, T.pleaseSelectCategory);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, T.pleaseSelectCategory);
           return false;
         }
         if (_locationController.text.trim().isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.locationRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.locationRequired);
           return false;
         }
         if (_addressController.text.trim().isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.addressRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.addressRequired);
           return false;
         }
         if (_descriptionController.text.trim().isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.descriptionRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.descriptionRequired);
           return false;
         }
         return true;
 
       case 2: // Contact Info
         if (_landlineController.text.trim().isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.landlineRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.landlineRequired);
           return false;
         }
         if (_mobileNumberController.text.trim().isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.mobileNumberRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.mobileNumberRequired);
           return false;
         }
         return true;
 
       case 3: // Image Upload
         if (_logoUrl.isEmpty) {
-          showErrorSnackBar(context, Lo.of(context)!.logoRequired);
+          // Comic Design: Use Comic SnackBar for validation errors
+          showComicErrorSnackBar(context, Lo.of(context)!.logoRequired);
           return false;
         }
         return true;
@@ -281,7 +291,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
       if (!mounted) return;
 
-      showSuccessSnackBar(
+      // Comic Design: Use Comic SnackBar for success message
+      showComicSuccessSnackBar(
         context,
         widget.company == null ? T.companyRegistered : T.companyUpdated,
       );
@@ -290,42 +301,13 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       context.pop(updatedCompany);
     } catch (e) {
       if (!mounted) return;
-      showErrorSnackBar(context, 'Error: $e');
+      // Comic Design: Use Comic SnackBar for error message
+      showComicErrorSnackBar(context, 'Error: $e');
     } finally {
       if (mounted) {
         _isSubmitting = false;
         setState(() {});
       }
-    }
-  }
-
-  String _getStepTitle() {
-    switch (_currentStep) {
-      case 0:
-        return T.basicInformation;
-      case 1:
-        return Lo.of(context)!.detailedInformation;
-      case 2:
-        return T.contactInformation;
-      case 3:
-        return Lo.of(context)!.imageUpload;
-      default:
-        return '';
-    }
-  }
-
-  IconData _getStepIcon() {
-    switch (_currentStep) {
-      case 0:
-        return FontAwesomeIcons.lightBuilding;
-      case 1:
-        return FontAwesomeIcons.lightCircleInfo;
-      case 2:
-        return FontAwesomeIcons.lightPhone;
-      case 3:
-        return FontAwesomeIcons.lightImages;
-      default:
-        return FontAwesomeIcons.lightCircleInfo;
     }
   }
 
@@ -336,6 +318,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      // Comic Design: AppBar with 2.0px bottom border
       appBar: AppBar(
         title: Text(
           widget.company == null ? T.registerCompany : T.updateCompany,
@@ -344,7 +327,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         backgroundColor: scheme.surfaceContainerLow,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: scheme.outlineVariant),
+          child: Container(height: 2, color: scheme.outline),
         ),
       ),
       body: Column(
@@ -360,31 +343,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                   height: 8,
                   activeColor: scheme.primary,
                   inactiveColor: scheme.secondary,
-                ),
-                SizedBox(height: sp.s16),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(sp.s8),
-                      decoration: BoxDecoration(
-                        color: scheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: FaIcon(
-                        _getStepIcon(),
-                        size: 20,
-                        color: scheme.primary,
-                      ),
-                    ),
-                    SizedBox(width: sp.s12),
-                    Text(
-                      _getStepTitle(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -449,7 +407,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _kakaoTalkQrCodeUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorDialog(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             'Failed to upload QR code: $e',
                           );
@@ -462,14 +421,16 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'kakaotalk_qr_code_url': ''});
                         setState(() => _kakaoTalkQrCodeUrl = '');
                         if (context.mounted) {
-                          showSuccessSnackBar(
+                          // Comic Design: Use Comic SnackBar for success message
+                          showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.kakaoQrCodeDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorSnackBar(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDelete,
                           );
@@ -497,7 +458,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _logoUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorDialog(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             'Failed to upload photo: $e',
                           );
@@ -510,14 +472,16 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'logo_url': ''});
                         setState(() => _logoUrl = '');
                         if (context.mounted) {
-                          showSuccessSnackBar(
+                          // Comic Design: Use Comic SnackBar for success message
+                          showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.companyLogoDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorSnackBar(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeletePhoto,
                           );
@@ -531,7 +495,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _businessLicenseUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorDialog(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             'Failed to upload license: $e',
                           );
@@ -544,14 +509,16 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'business_license_url': ''});
                         setState(() => _businessLicenseUrl = '');
                         if (context.mounted) {
-                          showSuccessSnackBar(
+                          // Comic Design: Use Comic SnackBar for success message
+                          showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.businessLicenseDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorSnackBar(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeleteLicense,
                           );
@@ -565,7 +532,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _companyIntroImageUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorDialog(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             'Failed to upload image: $e',
                           );
@@ -578,14 +546,16 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'title_image_url': ''});
                         setState(() => _companyIntroImageUrl = '');
                         if (context.mounted) {
-                          showSuccessSnackBar(
+                          // Comic Design: Use Comic SnackBar for success message
+                          showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.companyIntroImageDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorSnackBar(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeleteImage,
                           );
@@ -599,7 +569,8 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _officeInteriorUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorDialog(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             'Failed to upload photo: $e',
                           );
@@ -612,14 +583,16 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'photo_url': ''});
                         setState(() => _officeInteriorUrl = '');
                         if (context.mounted) {
-                          showSuccessSnackBar(
+                          // Comic Design: Use Comic SnackBar for success message
+                          showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.officeInteriorDeleted,
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          showErrorSnackBar(
+                          // Comic Design: Use Comic SnackBar for error message
+                          showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeletePhoto,
                           );
@@ -639,39 +612,58 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
           decoration: BoxDecoration(color: scheme.surfaceContainerLow),
           child: Row(
             children: [
-              /// 뒤로가기 버튼
+              /// Comic Design: Back button with ComicButton
               if (_currentStep > 0)
                 Expanded(
-                  child: OutlinedButton.icon(
+                  child: ComicButton(
                     onPressed: _backStep,
-                    icon: const FaIcon(FontAwesomeIcons.lightChevronLeft),
-                    label: Text(Lo.of(context)!.back),
+                    rounded: ComicButtonRounded.normal,
+                    padding: ComicButtonPadding.medium,
+                    textSize: ComicButtonTextSize.medium,
+                    child: Text(Lo.of(context)!.back),
                   ).animate().fadeIn(duration: 200.ms).slideX(begin: -0.1),
                 ),
 
               if (_currentStep > 0) SizedBox(width: sp.s12),
 
-              /// 다음/제출 버튼
+              /// Comic Design: Next/Submit button with ComicButton
               Expanded(
                 flex: _currentStep == 0 ? 1 : 1,
                 child: _currentStep < _totalSteps - 1
-                    ? ElevatedButton.icon(
+                    ? ComicButton(
                         onPressed: _nextStep,
-                        icon: const FaIcon(FontAwesomeIcons.lightChevronRight),
-                        label: Text(Lo.of(context)!.next),
+                        rounded: ComicButtonRounded.normal,
+                        padding: ComicButtonPadding.medium,
+                        textSize: ComicButtonTextSize.medium,
+                        backgroundColor: scheme.primary,
+                        foregroundColor: scheme.onPrimary,
+                        borderColor: scheme.primary,
+                        child: Text(Lo.of(context)!.next),
                       ).animate().fadeIn(duration: 200.ms).slideX(begin: 0.2)
-                    : ElevatedButton.icon(
+                    : ComicButton(
                             onPressed: _isSubmitting ? null : _handleSubmit,
-                            icon: FaIcon(
-                              widget.company == null
-                                  ? FontAwesomeIcons.lightPlus
-                                  : FontAwesomeIcons.lightFloppyDisk,
-                            ),
-                            label: Text(
-                              widget.company == null
-                                  ? T.registerCompany
-                                  : T.updateCompany,
-                            ),
+                            rounded: ComicButtonRounded.normal,
+                            padding: ComicButtonPadding.medium,
+                            textSize: ComicButtonTextSize.medium,
+                            backgroundColor: scheme.primary,
+                            foregroundColor: scheme.onPrimary,
+                            borderColor: scheme.primary,
+                            child: _isSubmitting
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        scheme.onPrimary,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    widget.company == null
+                                        ? T.registerCompany
+                                        : T.updateCompany,
+                                  ),
                           )
                           .animate()
                           .fadeIn(duration: 200.ms)

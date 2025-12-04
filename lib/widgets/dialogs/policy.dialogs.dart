@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/widgets/theme/comic_card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// 이용약관 바텀시트 모달을 표시하는 함수
@@ -43,6 +44,11 @@ Future<void> showTermsAndConditions(BuildContext context) async {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(20),
                   ),
+                  // Comic theme: add border to bottom sheet
+                  border: Border.all(
+                    color: scheme.outline,
+                    width: 2.0,
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -62,11 +68,18 @@ Future<void> showTermsAndConditions(BuildContext context) async {
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                       child: Row(
                         children: [
+                          FaIcon(
+                            FontAwesomeIcons.fileLines,
+                            size: 20,
+                            color: scheme.primary,
+                          ),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               Lo.of(context)!.termsOfService,
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
+                                color: scheme.primary,
                               ),
                             ),
                           ),
@@ -81,14 +94,28 @@ Future<void> showTermsAndConditions(BuildContext context) async {
                       ),
                     ),
 
+                    /// Divider with comic theme
+                    Container(
+                      height: 2,
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: scheme.outline,
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     /// 내용
                     Expanded(
                       child: SingleChildScrollView(
                         controller: scrollController,
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                        child: Text(
-                          privacyData.replaceAll('\\n', '\n'),
-                          style: theme.textTheme.bodyMedium,
+                        child: ComicCard(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            privacyData.replaceAll('\\n', '\n'),
+                            style: theme.textTheme.bodyMedium,
+                          ),
                         ),
                       ),
                     ),
@@ -153,6 +180,11 @@ Future<void> showPrivacyPolicy(BuildContext context) async {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(20),
                   ),
+                  // Comic theme: add border to bottom sheet
+                  border: Border.all(
+                    color: scheme.outline,
+                    width: 2.0,
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -172,11 +204,18 @@ Future<void> showPrivacyPolicy(BuildContext context) async {
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                       child: Row(
                         children: [
+                          FaIcon(
+                            FontAwesomeIcons.shieldCheck,
+                            size: 20,
+                            color: scheme.primary,
+                          ),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               Lo.of(context)!.privacyPolicy,
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
+                                color: scheme.primary,
                               ),
                             ),
                           ),
@@ -191,14 +230,28 @@ Future<void> showPrivacyPolicy(BuildContext context) async {
                       ),
                     ),
 
+                    /// Divider with comic theme
+                    Container(
+                      height: 2,
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: scheme.outline,
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     /// 내용
                     Expanded(
                       child: SingleChildScrollView(
                         controller: scrollController,
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                        child: Text(
-                          termsData.replaceAll('\\n', '\n'),
-                          style: theme.textTheme.bodyMedium,
+                        child: ComicCard(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            termsData.replaceAll('\\n', '\n'),
+                            style: theme.textTheme.bodyMedium,
+                          ),
                         ),
                       ),
                     ),

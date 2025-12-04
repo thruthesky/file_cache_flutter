@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// ComicTextFormField - Comic 스타일 TextFormField 위젯
 ///
 /// Comic 디자인 원칙을 따르는 재사용 가능한 텍스트 입력 위젯입니다.
-/// - 테두리 (2.0px - Comic 스타일 표준)
+/// - 테두리 (1.0px - Comic 스타일 표준, compact input fields)
 /// - 그림자 없음 (elevation: 0)
 /// - 둥근 모서리 (borderRadius: 12)
 /// - Theme 기반 색상 사용
@@ -76,7 +76,7 @@ class ComicTextFormField extends StatelessWidget {
   /// 에러 시 테두리 색상 (기본값: Theme의 error 색상)
   final Color? errorBorderColor;
 
-  /// 테두리 두께 (기본값: 2.0 - Comic 스타일 표준)
+  /// 테두리 두께 (기본값: 1.0 - Comic 스타일 표준 for compact input fields)
   final double borderWidth;
 
   /// 모서리 둥글기 (기본값: 12 - Comic 스타일 표준)
@@ -107,7 +107,7 @@ class ComicTextFormField extends StatelessWidget {
     this.borderColor,
     this.focusedBorderColor,
     this.errorBorderColor,
-    this.borderWidth = 2.0,
+    this.borderWidth = 1.0,
     this.borderRadius = 12,
     this.contentPadding,
   });
@@ -123,7 +123,7 @@ class ComicTextFormField extends StatelessWidget {
       return OutlineInputBorder(
         // Comic 스타일 둥근 모서리
         borderRadius: BorderRadius.circular(borderRadius),
-        // Comic 스타일 테두리 (2.0px)
+        // Comic 스타일 테두리 (1.0px for compact input fields)
         borderSide: BorderSide(
           color: color,
           width: borderWidth,
@@ -167,7 +167,7 @@ class ComicTextFormField extends StatelessWidget {
         filled: true,
         fillColor: colorScheme.surface,
         // Comic 스타일: 그림자 없음 (elevation: 0)
-        // Comic 스타일: 테두리 (2.0px, outline 색상)
+        // Comic 스타일: 테두리 (1.0px, outline 색상)
         enabledBorder: buildBorder(
           borderColor ?? colorScheme.outline,
         ),
