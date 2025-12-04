@@ -330,35 +330,51 @@ class PostMetaInfo extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
+    final hasViews = post.no_of_view > 0;
+    final hasComments = post.no_of_comment > 0;
+    final hasLikes = post.good > 0;
+
     return Row(
       children: [
-        /// 조회수 (reference: 눈 아이콘)
-        FaIcon(FontAwesomeIcons.lightEye, size: 16, color: scheme.outline),
-        const SizedBox(width: 4), // 4 (8의 배수)
-        Text(
-          '${post.no_of_view}',
-          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
-        ),
-        const SizedBox(width: 16), // 16 (8의 배수)
-        /// 댓글수 (reference: 메시지 아이콘)
-        FaIcon(
-          FontAwesomeIcons.lightMessageDots,
-          size: 16,
-          color: scheme.outline,
-        ),
-        const SizedBox(width: 4), // 4 (8의 배수)
-        Text(
-          '${post.no_of_comment}',
-          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
-        ),
-        const SizedBox(width: 16), // 16 (8의 배수)
-        /// 좋아요수 (reference: 하트 아이콘)
-        FaIcon(FontAwesomeIcons.lightThumbsUp, size: 16, color: scheme.outline),
-        const SizedBox(width: 4), // 4 (8의 배수)
-        Text(
-          '${post.good}',
-          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
-        ),
+        if (hasViews) ...[
+          /// 조회수 (reference: 눈 아이콘)
+          FaIcon(FontAwesomeIcons.lightEye, size: 16, color: scheme.outline),
+          const SizedBox(width: 4), // 4 (8의 배수)
+          Text(
+            '${post.no_of_view}',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+          ),
+        ],
+        if (hasViews && (hasComments || hasLikes)) const SizedBox(width: 16),
+
+        if (hasComments) ...[
+          /// 댓글수 (reference: 메시지 아이콘)
+          FaIcon(
+            FontAwesomeIcons.lightMessageDots,
+            size: 16,
+            color: scheme.outline,
+          ),
+          const SizedBox(width: 4), // 4 (8의 배수)
+          Text(
+            '${post.no_of_comment}',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+          ),
+        ],
+        if (hasComments && hasLikes) const SizedBox(width: 16),
+
+        if (hasLikes) ...[
+          /// 좋아요수 (reference: 하트 아이콘)
+          FaIcon(
+            FontAwesomeIcons.lightThumbsUp,
+            size: 16,
+            color: scheme.outline,
+          ),
+          const SizedBox(width: 4), // 4 (8의 배수)
+          Text(
+            '${post.good}',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+          ),
+        ],
       ],
     );
   }
@@ -389,6 +405,9 @@ class PostInfoCompactRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+
+    final hasComments = post.no_of_comment > 0;
+    final hasLikes = post.good > 0;
 
     return Row(
       children: [
@@ -421,26 +440,34 @@ class PostInfoCompactRow extends StatelessWidget {
         ),
         const SizedBox(width: 8),
 
-        /// 댓글수
-        FaIcon(
-          FontAwesomeIcons.lightMessageDots,
-          size: 14,
-          color: scheme.outline,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          '${post.no_of_comment}',
-          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
-        ),
-        const SizedBox(width: 8),
+        if (hasComments) ...[
+          /// 댓글수
+          FaIcon(
+            FontAwesomeIcons.lightMessageDots,
+            size: 14,
+            color: scheme.outline,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            '${post.no_of_comment}',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+          ),
+        ],
+        if (hasComments && hasLikes) const SizedBox(width: 8),
 
-        /// 좋아요수
-        FaIcon(FontAwesomeIcons.lightThumbsUp, size: 14, color: scheme.outline),
-        const SizedBox(width: 4),
-        Text(
-          '${post.good}',
-          style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
-        ),
+        if (hasLikes) ...[
+          /// 좋아요수
+          FaIcon(
+            FontAwesomeIcons.lightThumbsUp,
+            size: 14,
+            color: scheme.outline,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            '${post.good}',
+            style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+          ),
+        ],
       ],
     );
   }
