@@ -349,6 +349,11 @@
     "viewPostsCommentsPoints": "投稿、コメント、ポイントを表示",
     "updateYourNickname": "ニックネームを更新してください",
     "points": "ポイント",
+    "pin": "固定",
+    "latestComments": "最新コメント",
+    "advertisementSpace": "広告スペース",
+    "philgoPhoneLogin": "電話番号ログイン",
+    "phoneNumberExample": "例: 09123456789 または 01012345678",
     "appName": "PhilGo",
     "appSlogan": "フィリピンのすべてを込めました"
 }

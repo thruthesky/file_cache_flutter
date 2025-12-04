@@ -1085,16 +1085,16 @@ class LoKo extends Lo {
   String get officeInteriorGuideline => '사무실/매장 내부 전체 사진';
 
   @override
-  String get loginToSeeProfile => 'Login to see your profile';
+  String get loginToSeeProfile => '로그인하여 프로필 보기';
 
   @override
-  String get viewPostsCommentsPoints => 'View your posts, comments, and points';
+  String get viewPostsCommentsPoints => '게시글, 댓글, 포인트 확인하기';
 
   @override
-  String get updateYourNickname => 'Update your nickname';
+  String get updateYourNickname => '닉네임을 업데이트하세요';
 
   @override
-  String get points => 'Points';
+  String get points => '포인트';
 
   @override
   String get philgoPhoneLogin => '전화번호 로그인';

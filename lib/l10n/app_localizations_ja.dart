@@ -685,7 +685,7 @@ class LoJa extends Lo {
   String get unpin_chat_room_message => 'このチャットルームの固定を解除してもよろしいですか？';
 
   @override
-  String get pin => 'Pin';
+  String get pin => '固定';
 
   @override
   String get unpin => '固定解除';
@@ -754,13 +754,13 @@ class LoJa extends Lo {
   String get latestPosts => '最新投稿';
 
   @override
-  String get latestComments => 'Latest Comments';
+  String get latestComments => '最新コメント';
 
   @override
   String get viewAll => 'すべて表示';
 
   @override
-  String get advertisementSpace => 'Advertisement Space';
+  String get advertisementSpace => '広告スペース';
 
   @override
   String get lv => 'Lv';
@@ -1097,10 +1097,10 @@ class LoJa extends Lo {
   String get points => 'ポイント';
 
   @override
-  String get philgoPhoneLogin => 'Phone Login';
+  String get philgoPhoneLogin => '電話番号ログイン';
 
   @override
-  String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';
+  String get phoneNumberExample => '例: 09123456789 または 01012345678';
 
   @override
   String get appName => 'PhilGo';
