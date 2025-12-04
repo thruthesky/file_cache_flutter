@@ -142,9 +142,7 @@ class _ChatHomeState extends State<ChatHome> {
                   },
                 ),
                 IconButton(
-                  icon: const FaIcon(
-                    FontAwesomeIcons.sharpLightMagnifyingGlass,
-                  ),
+                  icon: const FaIcon(FontAwesomeIcons.lightUserMagnifyingGlass),
                   onPressed: () async {
                     final uid = await showUserSearchDialog(context);
                     if (uid != null && context.mounted) {

@@ -20,7 +20,7 @@ class EntryLoginScreen extends StatefulWidget {
 }
 
 class _EntryLoginScreenState extends State<EntryLoginScreen> {
-  bool _animateHeader = false;
+  // bool _animateHeader = false;
   bool _animateForm = false;
 
   @override
@@ -29,7 +29,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
     // Staggered entrance animations
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      setState(() => _animateHeader = true);
+      // setState(() => _animateHeader = true);
       await Future<void>.delayed(const Duration(milliseconds: 120));
       if (!mounted) return;
       setState(() => _animateForm = true);

@@ -349,6 +349,11 @@
     "viewPostsCommentsPoints": "查看您的帖子、评论和积分",
     "updateYourNickname": "请更新您的昵称",
     "points": "积分",
+    "pin": "固定",
+    "latestComments": "最新评论",
+    "advertisementSpace": "广告位",
+    "philgoPhoneLogin": "电话号码登录",
+    "phoneNumberExample": "例: 09123456789 或 01012345678",
     "appName": "PhilGo",
     "appSlogan": "菲律宾的一切尽在于此"
 }

@@ -25,10 +25,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
         decoration: BoxDecoration(
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: colorScheme.outline,
-            width: 2.0,
-          ),
+          border: Border.all(color: colorScheme.outline, width: 2.0),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -43,10 +40,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                   topRight: Radius.circular(10),
                 ),
                 border: Border(
-                  bottom: BorderSide(
-                    color: colorScheme.outline,
-                    width: 2.0,
-                  ),
+                  bottom: BorderSide(color: colorScheme.outline, width: 2.0),
                 ),
               ),
               child: Row(
@@ -61,10 +55,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          T.bookmarked_chats,
-                          style: textTheme.titleMedium,
-                        ),
+                        Text(T.bookmarked_chats, style: textTheme.titleMedium),
                         const SizedBox(height: 4),
                         Text(
                           folderName,
@@ -215,9 +206,8 @@ class BookmarkedChatsDialog extends StatelessWidget {
                       shrinkWrap: true,
                       itemCount: chatRoomIds.length,
                       padding: const EdgeInsets.all(16),
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 8,
-                      ),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
                       itemBuilder: (context, index) {
                         final roomId = chatRoomIds[index].toString();
 
@@ -254,8 +244,9 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                         height: 40,
                                         decoration: BoxDecoration(
                                           color: colorScheme.primaryContainer,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                           border: Border.all(
                                             color: colorScheme.primary,
                                             width: 2.0,
@@ -287,6 +278,8 @@ class BookmarkedChatsDialog extends StatelessWidget {
                               final chatJoin = ChatJoin.fromSnapshot(
                                 joinSnapshot.data!.snapshot,
                               );
+                              final otherUserUid =
+                                  getOtherUserUidFromChatRoomId(roomId)!;
 
                               return InkWell(
                                 onTap: () {
@@ -311,30 +304,17 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                         height: 40,
                                         decoration: BoxDecoration(
                                           color: colorScheme.primaryContainer,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                           border: Border.all(
                                             color: colorScheme.primary,
                                             width: 2.0,
                                           ),
-                                          image: chatJoin.userPhotoUrl.isNotEmpty
-                                              ? DecorationImage(
-                                                  image: NetworkImage(
-                                                    chatJoin.userPhotoUrl,
-                                                  ),
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : null,
                                         ),
-                                        child: chatJoin.userPhotoUrl.isEmpty
-                                            ? Center(
-                                                child: FaIcon(
-                                                  FontAwesomeIcons.lightUser,
-                                                  size: 16,
-                                                  color: colorScheme.primary,
-                                                ),
-                                              )
-                                            : null,
+                                        child: Avatar(
+                                          photoUrl: chatJoin.userPhotoUrl,
+                                        ),
                                       ),
                                       const SizedBox(width: 12),
                                       // Chat info
@@ -347,43 +327,45 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                               chatJoin.customName.isNotEmpty
                                                   ? chatJoin.customName
                                                   : chatJoin.roomName.isNotEmpty
-                                                      ? chatJoin.roomName
-                                                      : chatJoin.userDisplayName,
+                                                  ? chatJoin.roomName
+                                                  : chatJoin.userDisplayName,
                                               style: textTheme.bodyLarge,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             const SizedBox(height: 4),
                                             Blocked(
-                                              otherUserUid:
-                                                  getOtherUserUidFromChatRoomId(
-                                                roomId,
-                                              )!,
+                                              otherUserUid: otherUserUid,
                                               yes: () => Text(
-                                                LibTr.of(context)!
-                                                    .blocked_message,
+                                                LibTr.of(
+                                                  context,
+                                                )!.blocked_message,
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: textTheme.bodySmall
                                                     ?.copyWith(
-                                                  color: colorScheme.outline,
-                                                ),
+                                                      color:
+                                                          colorScheme.outline,
+                                                    ),
                                               ),
                                               no: () {
-                                                return chatJoin.lastMessage.text
+                                                return chatJoin
+                                                        .lastMessage
+                                                        .text
                                                         .isNotEmpty
                                                     ? Text(
                                                         chatJoin
-                                                            .lastMessage.text,
+                                                            .lastMessage
+                                                            .text,
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: textTheme
                                                             .bodySmall
                                                             ?.copyWith(
-                                                          color: colorScheme
-                                                              .onSurfaceVariant,
-                                                        ),
+                                                              color: colorScheme
+                                                                  .onSurfaceVariant,
+                                                            ),
                                                       )
                                                     : const SizedBox.shrink();
                                               },
@@ -394,26 +376,30 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                       // Unread badge with Comic style
                                       if (chatJoin.unread > 0) ...[
                                         const SizedBox(width: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: colorScheme.error,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                              color: colorScheme.error,
-                                              width: 2.0,
+                                        Blocked(
+                                          otherUserUid: otherUserUid,
+                                          yes: () => SizedBox.shrink(),
+                                          no: () => Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
                                             ),
-                                          ),
-                                          child: Text(
-                                            chatJoin.unread.toString(),
-                                            style: textTheme.labelSmall
-                                                ?.copyWith(
-                                              color: colorScheme.onError,
-                                              fontWeight: FontWeight.bold,
+                                            decoration: BoxDecoration(
+                                              color: colorScheme.error,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: colorScheme.error,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              chatJoin.unread.toString(),
+                                              style: textTheme.labelSmall
+                                                  ?.copyWith(
+                                                    color: colorScheme.onError,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                             ),
                                           ),
                                         ),
@@ -446,8 +432,9 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                         height: 40,
                                         decoration: BoxDecoration(
                                           color: colorScheme.primaryContainer,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                           border: Border.all(
                                             color: colorScheme.primary,
                                             width: 2.0,
