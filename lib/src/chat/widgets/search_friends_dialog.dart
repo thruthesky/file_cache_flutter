@@ -241,16 +241,8 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     // Loading state - Comic 스타일
     if (_isSearching) {
       return Center(
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: colorScheme.outline, width: 2.0),
-          ),
-          child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
-          ),
+        child: CircularProgressIndicator.adaptive(
+          valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
         ),
       );
     }
@@ -282,18 +274,10 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: colorScheme.outline, width: 2.0),
-              ),
-              child: FaIcon(
-                FontAwesomeIcons.lightMagnifyingGlassChart,
-                size: 48,
-                color: colorScheme.outline,
-              ),
+            FaIcon(
+              FontAwesomeIcons.lightMagnifyingGlassChart,
+              size: 48,
+              color: colorScheme.outline,
             ),
             const SizedBox(height: 16),
             Text(

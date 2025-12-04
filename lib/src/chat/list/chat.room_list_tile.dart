@@ -404,7 +404,8 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               _showUnblockDialog();
             }
           },
-          itemBuilder: (context) => _buildMenuItems(context, theme, colorScheme),
+          itemBuilder: (context) =>
+              _buildMenuItems(context, theme, colorScheme),
         ),
       ],
     );
@@ -465,7 +466,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
       // Use Blocked widget to determine block/unblock menu item
       // Check if user is blocked using UserService
-      final isBlocked = UserService.instance.blockedUsers.contains(otherUserUid);
+      final isBlocked = UserService.instance.blockedUsers.contains(
+        otherUserUid,
+      );
 
       if (isBlocked) {
         menuItems.add(
@@ -558,20 +561,20 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: colorScheme.error,
         // Comic design - rounded corners 32 for small elements
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(50),
         // Comic design - 2.0px border
         border: Border.all(color: colorScheme.error, width: 2.0),
       ),
       child: Text(
         unreadCount > 99 ? '99+' : unreadCount.toString(),
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.bodySmall?.copyWith(
           color: colorScheme.onError,
           fontWeight: FontWeight.w700,
-          fontSize: 11,
+          fontSize: 10,
         ),
       ),
     );

@@ -50,6 +50,7 @@ class SingleChatRoomHeader extends StatelessWidget {
   void showMenuModal(BuildContext parentContext) {
     showModalBottomSheet(
       context: parentContext,
+
       /// Comic design: No elevation, transparent background
       elevation: 0,
       backgroundColor: Colors.transparent,
@@ -75,10 +76,11 @@ class SingleChatRoomHeader extends StatelessWidget {
                 children: [
                   Text(
                     LibTr.of(context)!.menu,
+
                     /// Comic design: Use theme text style
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
@@ -88,6 +90,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                 ],
               ),
             ),
+
             /// Comic design: 2px divider
             Divider(
               color: Theme.of(context).colorScheme.outline,
@@ -110,11 +113,11 @@ class SingleChatRoomHeader extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           /// Comic design: Use theme primaryContainer for notice background
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primaryContainer
-                              .withValues(alpha: 0.3),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(12),
+
                           /// Comic design: 2.0px border with primary color
                           border: Border.all(
                             color: Theme.of(context).colorScheme.primary,
@@ -132,8 +135,11 @@ class SingleChatRoomHeader extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 LibTr.of(context)!.admin_chat_notice,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface,
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                       fontWeight: FontWeight.w500,
                                     ),
                               ),
@@ -327,8 +333,8 @@ class SingleChatRoomHeader extends StatelessWidget {
                   getRoomName(),
                   // Comic design: Use theme text style instead of hardcoded
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -378,6 +384,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
+
           /// Comic design: 2.0px border with outline color
           border: Border.all(
             color: Theme.of(context).colorScheme.outline,
@@ -387,20 +394,16 @@ class SingleChatRoomHeader extends StatelessWidget {
         child: Row(
           children: [
             /// Icon
-            SizedBox(
-              width: 32,
-              height: 32,
-              child: Center(child: icon),
-            ),
+            SizedBox(width: 32, height: 32, child: Center(child: icon)),
             const SizedBox(width: 12),
 
             /// Title
             Expanded(
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
               ),
             ),
           ],
@@ -482,7 +485,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
           icon: Icon(
             isFavorited ? Icons.star : Icons.star_border,
             // Comic design: Use theme primary color instead of hardcoded amber
-            color: isFavorited ? Theme.of(context).colorScheme.primary : null,
+            color: isFavorited ? Colors.amberAccent : null,
           ),
           tooltip: LibTr.of(context)!.add_to_favorites,
         );
@@ -494,6 +497,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
   void _showFavoritesModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
+
       /// Comic design: No elevation, transparent background
       elevation: 0,
       backgroundColor: Colors.transparent,
@@ -647,9 +651,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
               /// Title
               Text(
                 LibTr.of(context)!.create_new_folder,
-                style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  dialogContext,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 24),
 
@@ -659,6 +663,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                 decoration: InputDecoration(
                   labelText: LibTr.of(context)!.folder_name,
                   hintText: LibTr.of(context)!.enter_folder_name,
+
                   /// Comic design: 2px border
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -692,15 +697,50 @@ class _FavoritesModalState extends State<_FavoritesModal> {
               ),
               const SizedBox(height: 24),
 
-              /// Action buttons
+              /// Action buttons - Comic design
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
+                  // Cancel button - Comic design neutral button
+                  ElevatedButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: Theme.of(dialogContext).colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: surface background
+                      backgroundColor: WidgetStateProperty.all(
+                        Theme.of(dialogContext).colorScheme.surface,
+                      ),
+                      // Comic design: onSurface text color
+                      foregroundColor: WidgetStateProperty.all(
+                        Theme.of(dialogContext).colorScheme.onSurface,
+                      ),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        Theme.of(dialogContext).textTheme.bodyMedium,
+                      ),
+                    ),
                     child: Text(LibTr.of(context)!.cancel),
                   ),
                   const SizedBox(width: 8),
+                  // Create button - Comic design primary button
                   ElevatedButton(
                     onPressed: () async {
                       final folderName = folderNameController.text.trim();
@@ -711,6 +751,39 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         }
                       }
                     },
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: Theme.of(dialogContext).colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: primary background
+                      backgroundColor: WidgetStateProperty.all(
+                        Theme.of(dialogContext).colorScheme.primary,
+                      ),
+                      // Comic design: onPrimary text color
+                      foregroundColor: WidgetStateProperty.all(
+                        Theme.of(dialogContext).colorScheme.onPrimary,
+                      ),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        Theme.of(dialogContext).textTheme.bodyMedium,
+                      ),
+                    ),
                     child: Text(LibTr.of(context)!.create),
                   ),
                 ],
@@ -731,6 +804,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+
         /// Comic design: 2px border with outline color, no shadow
         border: Border.all(
           color: Theme.of(context).colorScheme.outline,
@@ -753,10 +827,11 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     Text(
                       LibTr.of(context)!.add_to_favorites,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(width: 8),
+
                     /// Comic design: Add button with Font Awesome icon
                     IconButton(
                       onPressed: () =>
@@ -769,6 +844,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     ),
                   ],
                 ),
+
                 /// Comic design: Close button
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -778,6 +854,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
               ],
             ),
           ),
+
           /// Comic design: 2px divider with outline color
           Divider(
             color: Theme.of(context).colorScheme.outline,
@@ -791,6 +868,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                 ? Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
+
                       /// Comic design: Loading indicator with theme primary color
                       child: CircularProgressIndicator(
                         color: Theme.of(context).colorScheme.primary,
@@ -808,10 +886,11 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                             padding: const EdgeInsets.all(24.0),
                             margin: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(12),
+
                               /// Comic design: 2px border, no shadow
                               border: Border.all(
                                 color: Theme.of(context).colorScheme.outline,
@@ -830,6 +909,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                       return ListView.separated(
                         shrinkWrap: true,
                         itemCount: folders.length,
+
                         /// Comic design: Add spacing between items
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 8),
@@ -858,11 +938,12 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                        .withValues(alpha: 0.3)
+                                          .colorScheme
+                                          .primaryContainer
+                                          .withValues(alpha: 0.3)
                                     : Theme.of(context).colorScheme.surface,
                                 borderRadius: BorderRadius.circular(8),
+
                                 /// Comic design: 2px border
                                 border: Border.all(
                                   color: isSelected
@@ -879,9 +960,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                     height: 24,
                                     child: isFolderLoading
                                         ? CircularProgressIndicator(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
                                             strokeWidth: 2,
                                           )
                                         : Checkbox(
@@ -890,16 +971,17 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                                 addToFavoriteFolder(folderName),
                                             fillColor:
                                                 WidgetStateProperty.resolveWith(
-                                              (states) {
-                                                if (states.contains(
-                                                    WidgetState.selected)) {
-                                                  return Theme.of(context)
-                                                      .colorScheme
-                                                      .primary;
-                                                }
-                                                return null;
-                                              },
-                                            ),
+                                                  (states) {
+                                                    if (states.contains(
+                                                      WidgetState.selected,
+                                                    )) {
+                                                      return Theme.of(
+                                                        context,
+                                                      ).colorScheme.primary;
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
                                           ),
                                   ),
                                   const SizedBox(width: 12),
@@ -922,14 +1004,15 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                         const SizedBox(height: 4),
                                         Text(
                                           LibTr.of(context)!.chats_count(
-                                              folder['countFavorites'] as int),
+                                            folder['countFavorites'] as int,
+                                          ),
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodySmall
                                               ?.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurfaceVariant,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
                                               ),
                                         ),
                                       ],

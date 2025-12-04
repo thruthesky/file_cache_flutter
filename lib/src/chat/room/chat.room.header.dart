@@ -288,24 +288,141 @@ class ChatRoomHeader extends StatelessWidget {
   }
 
   /// Show confirmation dialog for leaving room
+  /// Comic design applied - 2.0px border, rounded corners, no shadow
   void showLeaveConfirmDialog(BuildContext parentContext) async {
+    final theme = Theme.of(parentContext);
+    final colorScheme = theme.colorScheme;
+
     bool confirm = await showDialog(
       context: parentContext,
-      builder: (context) => AlertDialog(
-        title: Text(LibTr.of(context)!.leave_room),
-        content: Text(LibTr.of(context)!.leave_room_confirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(LibTr.of(context)!.cancel),
+      builder: (context) => Dialog(
+        // Comic design: no shadow
+        elevation: 0,
+        // Comic design: rounded corners (borderRadius: 12)
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        // Remove default background to use Container decoration
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            // Comic design: surface background color
+            color: colorScheme.surface,
+            // Comic design: 2.0px outline border with rounded corners
+            border: Border.all(
+              color: colorScheme.outline,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: Text(LibTr.of(context)!.leave),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title section - Comic design spacing (multiples of 8)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                child: Text(
+                  LibTr.of(context)!.leave_room,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              // Content section - Comic design spacing
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Text(
+                  LibTr.of(context)!.leave_room_confirmation,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+
+              // Actions section - Comic design buttons with spacing
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Cancel button - Comic design neutral button
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ButtonStyle(
+                        // Comic design: no shadow
+                        elevation: WidgetStateProperty.all(0),
+                        // Comic design: 2.0px border with rounded corners
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Comic design: surface background
+                        backgroundColor:
+                            WidgetStateProperty.all(colorScheme.surface),
+                        // Comic design: onSurface text color
+                        foregroundColor:
+                            WidgetStateProperty.all(colorScheme.onSurface),
+                        // Comic design: padding in multiples of 8
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        // Comic design: text style from Theme
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(LibTr.of(context)!.cancel),
+                    ),
+                    const SizedBox(width: 8),
+                    // Leave button - Comic design error button (destructive action)
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: ButtonStyle(
+                        // Comic design: no shadow
+                        elevation: WidgetStateProperty.all(0),
+                        // Comic design: 2.0px border with rounded corners
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.error,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Comic design: error background for destructive action
+                        backgroundColor:
+                            WidgetStateProperty.all(colorScheme.error),
+                        // Comic design: onError text color
+                        foregroundColor:
+                            WidgetStateProperty.all(colorScheme.onError),
+                        // Comic design: padding in multiples of 8
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        // Comic design: text style from Theme
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(LibTr.of(context)!.leave),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 

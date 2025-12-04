@@ -59,7 +59,9 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                             LibTr.of(context)!.leftroom_successfully,
                           ),
                           // Comic design: Use theme primary color for success
-                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
                           // Comic design: Rounded corners with borderRadius 12
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -116,6 +118,19 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
           ),
           body: Column(
             children: [
+              Container(
+                decoration: BoxDecoration(
+                  /// Flat design - subtle border instead of shadow
+                  border: Border(
+                    top: BorderSide(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                ),
+              ),
               Expanded(
                 child: SingleChatRoomMessageList(
                   roomId: init.join.id,
