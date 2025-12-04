@@ -33,7 +33,7 @@ class PostListTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
               color: Theme.of(context).colorScheme.outline,
-              width: 2.0,
+              width: 1.0,
             ),
           ),
           child: InkWell(
@@ -64,7 +64,7 @@ class PostListTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
               color: Theme.of(context).colorScheme.outline,
-              width: 2.0,
+              width: 1.0,
             ),
           ),
           child: InkWell(
