@@ -17,10 +17,7 @@ class CompanyCategoryTag extends StatelessWidget {
         // Comic design: Border radius 8 for small elements
         borderRadius: BorderRadius.circular(8),
         // Comic design: 2.0px border with primary color
-        border: Border.all(
-          color: scheme.primary,
-          width: 2.0,
-        ),
+        border: Border.all(color: scheme.primary, width: 1.5),
       ),
       child: Text(
         _getCategoryDisplayName(category),

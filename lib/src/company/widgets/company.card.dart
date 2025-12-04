@@ -33,10 +33,7 @@ class CompanyCard extends StatelessWidget {
         // Comic design: Border radius 12 for large elements
         borderRadius: BorderRadius.circular(12),
         // Comic design: 2.0px border with outline color
-        border: Border.all(
-          color: scheme.outline,
-          width: 2.0,
-        ),
+        border: Border.all(color: scheme.outline, width: 1.5),
       ),
       child: Material(
         color: Colors.transparent,
@@ -94,7 +91,7 @@ class CompanyCard extends StatelessWidget {
                             // Comic design: 2.0px border
                             border: Border.all(
                               color: scheme.primary,
-                              width: 2.0,
+                              width: 1.5,
                             ),
                           ),
                           child: Text(

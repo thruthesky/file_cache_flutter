@@ -106,34 +106,35 @@ class _CategoryDropdownFieldState extends State<CategoryDropdownField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// Label
+        /// Comic Design: Label with Comic styling
         Text(
           widget.label,
-          style: theme.textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: scheme.onSurface,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: scheme.primary,
           ),
         ),
         const SizedBox(height: 8),
 
-        /// Dropdown
+        /// Comic Design: Dropdown with Comic styling
         DropdownButtonFormField<String>(
           initialValue: _selectedCategory,
           decoration: InputDecoration(
             hintText: widget.hintText,
             filled: true,
             fillColor: scheme.surface,
+            // Comic Design: 1.0px border with borderRadius 12
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide(color: scheme.outline),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: scheme.outline, width: 1.0),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide(color: scheme.outline),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: scheme.outline, width: 1.0),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide(color: scheme.primary, width: 2),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: scheme.primary, width: 1.0),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
