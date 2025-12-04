@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -309,36 +308,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         _isSubmitting = false;
         setState(() {});
       }
-    }
-  }
-
-  String _getStepTitle() {
-    switch (_currentStep) {
-      case 0:
-        return T.basicInformation;
-      case 1:
-        return Lo.of(context)!.detailedInformation;
-      case 2:
-        return T.contactInformation;
-      case 3:
-        return Lo.of(context)!.imageUpload;
-      default:
-        return '';
-    }
-  }
-
-  IconData _getStepIcon() {
-    switch (_currentStep) {
-      case 0:
-        return FontAwesomeIcons.lightBuilding;
-      case 1:
-        return FontAwesomeIcons.lightCircleInfo;
-      case 2:
-        return FontAwesomeIcons.lightPhone;
-      case 3:
-        return FontAwesomeIcons.lightImages;
-      default:
-        return FontAwesomeIcons.lightCircleInfo;
     }
   }
 

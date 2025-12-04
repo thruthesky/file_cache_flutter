@@ -4,7 +4,6 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/widgets/theme/comic_card.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class LanguageScreen extends StatefulWidget {
   static const String routeName = '/language';
