@@ -539,9 +539,7 @@ class CompanyCategoryFilterChip extends StatelessWidget {
         ? scheme.onSecondaryContainer
         : scheme.onSurface;
     // Comic design: Border color (primary when selected, outline when not)
-    final borderColor = isSelected
-        ? scheme.primary
-        : scheme.outline;
+    final borderColor = isSelected ? scheme.primary : scheme.outline;
 
     return Padding(
       padding: padding ?? EdgeInsets.zero,
@@ -555,10 +553,7 @@ class CompanyCategoryFilterChip extends StatelessWidget {
             // Comic design: Border radius 8 for small elements
             borderRadius: BorderRadius.circular(8),
             // Comic design: 2.0px border
-            border: Border.all(
-              color: borderColor,
-              width: 2.0,
-            ),
+            border: Border.all(color: borderColor, width: 1.5),
           ),
           width: 80,
           height: 80,
