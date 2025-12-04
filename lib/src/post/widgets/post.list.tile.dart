@@ -9,11 +9,13 @@ class PostListTile extends StatelessWidget {
     required this.post,
     this.onTap,
     this.enableHeroTransition = false,
+    this.showProfile = true,
   });
 
   final Post post;
   final VoidCallback? onTap;
   final bool enableHeroTransition;
+  final bool showProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +45,12 @@ class PostListTile extends StatelessWidget {
                 ? PostListTileWithImage(
                     post: post,
                     enableHeroTransition: enableHeroTransition,
+                    showProfile: showProfile,
                   )
-                : PostListTileWithoutImage(post: post),
+                : PostListTileWithoutImage(
+                    post: post,
+                    showProfile: showProfile,
+                  ),
           ),
         );
       },
@@ -83,10 +89,12 @@ class PostListTileWithImage extends StatelessWidget {
     super.key,
     required this.post,
     required this.enableHeroTransition,
+    this.showProfile = true,
   });
 
   final Post post;
   final bool enableHeroTransition;
+  final bool showProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +135,11 @@ class PostListTileWithImage extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 /// Compact info: user, date, comments, likes (single line)
-                PostInfoCompactRow(post: post, showImageIndicator: hasImage),
+                PostInfoCompactRow(
+                  post: post,
+                  showImageIndicator: hasImage,
+                  showProfile: showProfile,
+                ),
               ],
             ),
           ),
@@ -143,10 +155,12 @@ class PostListTileWithoutImage extends StatelessWidget {
     super.key,
     required this.post,
     this.blocked = false,
+    this.showProfile = true,
   });
 
   final Post post;
   final bool blocked;
+  final bool showProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +186,7 @@ class PostListTileWithoutImage extends StatelessWidget {
             const SizedBox(height: 8),
 
             /// Compact info: user, date, comments, likes (single line)
-            PostInfoCompactRow(post: post),
+            PostInfoCompactRow(post: post, showProfile: showProfile),
           ],
         ],
       ),
@@ -372,11 +386,12 @@ class PostInfoCompactRow extends StatelessWidget {
     super.key,
     required this.post,
     this.showImageIndicator = false,
+    this.showProfile = true,
   });
 
   final Post post;
   final bool showImageIndicator;
-
+  final bool showProfile;
   String _displayName(BuildContext context) => post.nickname.isEmpty
       ? LibTr.of(context)!.no_name
       : cut(post.nickname, 8);
@@ -396,23 +411,25 @@ class PostInfoCompactRow extends StatelessWidget {
 
     return Row(
       children: [
-        /// 사용자 아바타
-        Avatar(photoUrl: post.photo_url, size: 18, radius: 9),
-        const SizedBox(width: 6),
+        if (showProfile) ...[
+          /// 사용자 아바타
+          Avatar(photoUrl: post.photo_url, size: 18, radius: 9),
+          const SizedBox(width: 6),
 
-        /// 사용자 이름
-        Flexible(
-          flex: 2,
-          child: Text(
-            _displayName(context),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
+          /// 사용자 이름
+          Flexible(
+            flex: 2,
+            child: Text(
+              _displayName(context),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        const SizedBox(width: 8),
+          const SizedBox(width: 8),
+        ],
 
         /// 날짜 (date only)
         FaIcon(FontAwesomeIcons.lightClock, size: 14, color: scheme.outline),

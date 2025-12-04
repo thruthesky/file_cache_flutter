@@ -21,39 +21,168 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(LibTr.of(context)!.block_user),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(LibTr.of(context)!.block_user_confirmation),
-          const SizedBox(height: 8),
-          Text(
-            LibTr.of(context)!.block_user_warning,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
-        ],
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Dialog(
+      // Comic design: no shadow
+      elevation: 0,
+      // Comic design: rounded corners (borderRadius: 12)
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: Text(LibTr.of(context)!.cancel),
+      // Remove default background to use Container decoration
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          // Comic design: surface background color
+          color: colorScheme.surface,
+          // Comic design: 2.0px outline border with rounded corners
+          border: Border.all(
+            color: colorScheme.outline,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(12),
         ),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _blockUser,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Text(
-                  LibTr.of(context)!.block,
-                  style: const TextStyle(color: Colors.red),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Title section - Comic design spacing (multiples of 8)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Text(
+                LibTr.of(context)!.block_user,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
+            ),
+
+            // Content section - Comic design spacing
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    LibTr.of(context)!.block_user_confirmation,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    LibTr.of(context)!.block_user_warning,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.outline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Actions section - Comic design buttons with spacing
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Cancel button - Comic design neutral button
+                  ElevatedButton(
+                    onPressed:
+                        _isLoading ? null : () => Navigator.of(context).pop(),
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: surface background
+                      backgroundColor:
+                          WidgetStateProperty.all(colorScheme.surface),
+                      // Comic design: onSurface text color
+                      foregroundColor:
+                          WidgetStateProperty.all(colorScheme.onSurface),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    child: Text(LibTr.of(context)!.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  // Block button - Comic design error button (destructive action)
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _blockUser,
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: _isLoading
+                                ? colorScheme.outline
+                                : colorScheme.error,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: error background for destructive action
+                      backgroundColor: WidgetStateProperty.all(
+                        _isLoading
+                            ? colorScheme.surfaceContainerHighest
+                            : colorScheme.error,
+                      ),
+                      // Comic design: onError text color
+                      foregroundColor: WidgetStateProperty.all(
+                        _isLoading
+                            ? colorScheme.onSurface
+                            : colorScheme.onError,
+                      ),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colorScheme.onSurface,
+                            ),
+                          )
+                        : Text(LibTr.of(context)!.block),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -96,28 +225,155 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(LibTr.of(context)!.unblock_user),
-      content: Text(LibTr.of(context)!.unblock_user_confirmation),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: Text(LibTr.of(context)!.cancel),
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Dialog(
+      // Comic design: no shadow
+      elevation: 0,
+      // Comic design: rounded corners (borderRadius: 12)
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      // Remove default background to use Container decoration
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          // Comic design: surface background color
+          color: colorScheme.surface,
+          // Comic design: 2.0px outline border with rounded corners
+          border: Border.all(
+            color: colorScheme.outline,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(12),
         ),
-        TextButton(
-          onPressed: _isLoading ? null : _unblockUser,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Text(
-                  LibTr.of(context)!.unblock,
-                  style: const TextStyle(color: Colors.blue),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Title section - Comic design spacing (multiples of 8)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Text(
+                LibTr.of(context)!.unblock_user,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
+            ),
+
+            // Content section - Comic design spacing
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Text(
+                LibTr.of(context)!.unblock_user_confirmation,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ),
+
+            // Actions section - Comic design buttons with spacing
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Cancel button - Comic design neutral button
+                  ElevatedButton(
+                    onPressed:
+                        _isLoading ? null : () => Navigator.of(context).pop(),
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: surface background
+                      backgroundColor:
+                          WidgetStateProperty.all(colorScheme.surface),
+                      // Comic design: onSurface text color
+                      foregroundColor:
+                          WidgetStateProperty.all(colorScheme.onSurface),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    child: Text(LibTr.of(context)!.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  // Unblock button - Comic design primary button
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _unblockUser,
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: _isLoading
+                                ? colorScheme.outline
+                                : colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: primary background
+                      backgroundColor: WidgetStateProperty.all(
+                        _isLoading
+                            ? colorScheme.surfaceContainerHighest
+                            : colorScheme.primary,
+                      ),
+                      // Comic design: onPrimary text color
+                      foregroundColor: WidgetStateProperty.all(
+                        _isLoading
+                            ? colorScheme.onSurface
+                            : colorScheme.onPrimary,
+                      ),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colorScheme.onSurface,
+                            ),
+                          )
+                        : Text(LibTr.of(context)!.unblock),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

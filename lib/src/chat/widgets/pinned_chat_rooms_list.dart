@@ -146,22 +146,141 @@ class _PinnedChatRoomItem extends StatelessWidget {
   final VoidCallback onTap;
 
   /// 고정 해제 확인 다이얼로그 표시
+  /// Comic design applied - 2.0px border, rounded corners, no shadow
   Future<void> _showUnpinConfirmDialog(BuildContext context) async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(LibTr.of(context)!.unpin_chat_room_title),
-        content: Text(LibTr.of(context)!.unpin_chat_room_message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(LibTr.of(context)!.cancel),
+      builder: (context) => Dialog(
+        // Comic design: no shadow
+        elevation: 0,
+        // Comic design: rounded corners (borderRadius: 12)
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        // Remove default background to use Container decoration
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            // Comic design: surface background color
+            color: colorScheme.surface,
+            // Comic design: 2.0px outline border with rounded corners
+            border: Border.all(
+              color: colorScheme.outline,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(LibTr.of(context)!.unpin),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title section - Comic design spacing (multiples of 8)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                child: Text(
+                  LibTr.of(context)!.unpin_chat_room_title,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              // Content section - Comic design spacing
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Text(
+                  LibTr.of(context)!.unpin_chat_room_message,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+
+              // Actions section - Comic design buttons with spacing
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Cancel button - Comic design neutral button
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: ButtonStyle(
+                        // Comic design: no shadow
+                        elevation: WidgetStateProperty.all(0),
+                        // Comic design: 2.0px border with rounded corners
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Comic design: surface background
+                        backgroundColor:
+                            WidgetStateProperty.all(colorScheme.surface),
+                        // Comic design: onSurface text color
+                        foregroundColor:
+                            WidgetStateProperty.all(colorScheme.onSurface),
+                        // Comic design: padding in multiples of 8
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        // Comic design: text style from Theme
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(LibTr.of(context)!.cancel),
+                    ),
+                    const SizedBox(width: 8),
+                    // Unpin button - Comic design error button (destructive action)
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: ButtonStyle(
+                        // Comic design: no shadow
+                        elevation: WidgetStateProperty.all(0),
+                        // Comic design: 2.0px border with rounded corners
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.error,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Comic design: error background for destructive action
+                        backgroundColor:
+                            WidgetStateProperty.all(colorScheme.error),
+                        // Comic design: onError text color
+                        foregroundColor:
+                            WidgetStateProperty.all(colorScheme.onError),
+                        // Comic design: padding in multiples of 8
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        // Comic design: text style from Theme
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(LibTr.of(context)!.unpin),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 
