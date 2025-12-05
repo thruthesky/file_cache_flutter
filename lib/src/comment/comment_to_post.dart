@@ -121,13 +121,30 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
               ),
             ),
           ),
-        // Comment input field
+        // Comment input field with Comic Design
         TextField(
           controller: contentController,
           minLines: 1,
           maxLines: 2,
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface,
+            // Comic Design: 2.0px border with rounded corners
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2.0,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+                width: 2.0,
+              ),
+            ),
             prefixIcon: FileUpload(
               file: true,
               video: true,
@@ -164,7 +181,7 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
                 isTextEmpty ? null : onTapCommentToPost();
               },
             ),
-            border: OutlineInputBorder(),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
       ],

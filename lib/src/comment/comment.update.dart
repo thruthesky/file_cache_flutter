@@ -118,11 +118,30 @@ class _CommentUpdateState extends State<CommentUpdate> {
               ),
             ),
           ),
-        // 텍스트 입력 필드
+        // 텍스트 입력 필드 with Comic Design
         TextField(
           controller: contentController,
+          minLines: 1,
+          maxLines: 2,
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface,
+            // Comic Design: 2.0px border with rounded corners
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+                width: 2.0,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+                width: 2.0,
+              ),
+            ),
             hintText: LibTr.of(context)!.updateComment,
             prefixIcon: FileUpload(
               file: true,
@@ -160,7 +179,7 @@ class _CommentUpdateState extends State<CommentUpdate> {
                 await onUpdateComment();
               },
             ),
-            border: const OutlineInputBorder(),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
       ],

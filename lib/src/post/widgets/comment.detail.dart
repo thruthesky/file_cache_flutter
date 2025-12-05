@@ -13,6 +13,8 @@ class CommentDetail extends StatefulWidget {
     required this.onReplied,
     required this.onUpdated,
     required this.onDeleted,
+    required this.onReplyClicked,
+    required this.onEditClicked,
   });
   final Comment comment;
   final bool myComment;
@@ -20,15 +22,14 @@ class CommentDetail extends StatefulWidget {
   final Function(Comment) onReplied;
   final Function(Comment) onUpdated;
   final Function(Comment) onDeleted;
+  final Function(Comment) onReplyClicked;
+  final Function(Comment) onEditClicked;
 
   @override
   State<CommentDetail> createState() => _CommentDetailState();
 }
 
 class _CommentDetailState extends State<CommentDetail> {
-  bool reply = false;
-  bool update = false;
-
   bool _isLiked = false;
 
   double getDepthMargin(int depth) {
@@ -38,6 +39,51 @@ class _CommentDetailState extends State<CommentDetail> {
       3 => 48.0,
       _ => 64.0, // depth >= 4
     };
+  }
+
+  /// Build Comic-styled action button widget with border
+  Widget _buildComicActionButton({
+    required BuildContext context,
+    required IconData icon,
+    String? label, // Make label optional
+    required VoidCallback onPressed,
+    Color? color,
+  }) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: color ?? scheme.outline,
+          width: 2.0, // Comic Design: 2.0 border
+        ),
+        borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
+      ),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 16, color: color ?? scheme.onSurface),
+              if (label != null && label.isNotEmpty) ...[
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: color ?? scheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -148,21 +194,22 @@ class _CommentDetailState extends State<CommentDetail> {
                         postIdx: widget.comment.idx,
                       ),
                     ],
+
+                    const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        /// Like button for comments
-                        TextButton.icon(
-                          style: TextButton.styleFrom(
-                            foregroundColor: _isLiked
-                                ? Theme.of(context).colorScheme.primary
-                                : null,
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity(
-                              horizontal: -4,
-                              vertical: -4,
-                            ),
-                          ),
+                        /// Like button for comments with Comic design (icon only when 0)
+                        _buildComicActionButton(
+                          context: context,
+                          icon: _isLiked
+                              ? Icons.thumb_up
+                              : Icons.thumb_up_outlined,
+                          label: widget.comment.good > 0
+                              ? '${widget.comment.good}'
+                              : null,
+                          color: Theme.of(context).colorScheme.primary,
                           onPressed: () async {
                             try {
                               final updatedGood = await likePost(
@@ -195,58 +242,35 @@ class _CommentDetailState extends State<CommentDetail> {
                               }
                             }
                           },
-                          icon: Icon(
-                            _isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
-                            size: 16,
-                          ),
-                          label: Text(
-                            widget.comment.good > 0
-                                ? "${LibTr.of(context)!.like} ${widget.comment.good}"
-                                : LibTr.of(context)!.like,
-                          ),
                         ),
 
-                        /// 답글 버튼 - 항상 표시
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity(
-                              horizontal: -4,
-                              vertical: -4,
-                            ),
-                          ),
-                          onPressed: () => setState(() {
-                            reply = !reply;
-                            update = false;
-                          }),
-                          child: Text(LibTr.of(context)!.reply),
+                        /// 답글 버튼 - 항상 표시 (Comic design, icon only)
+                        _buildComicActionButton(
+                          context: context,
+                          icon: Icons.reply,
+                          label: null, // Show icon only
+                          onPressed: () {
+                            // Trigger reply mode in parent (PostViewScreen)
+                            widget.onReplyClicked(widget.comment);
+                          },
                         ),
 
-                        /// 수정 버튼 - 내 댓글인 경우에만 표시
+                        /// 수정 버튼 - 내 댓글인 경우에만 표시 (Comic design)
                         if (!widget.hasReplies && widget.myComment) ...[
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              visualDensity: VisualDensity(
-                                horizontal: -4,
-                                vertical: -4,
-                              ),
-                            ),
-                            onPressed: () => setState(() {
-                              update = !update;
-                              reply = false;
-                            }),
-                            child: Text(LibTr.of(context)!.edit),
+                          _buildComicActionButton(
+                            context: context,
+                            icon: Icons.edit,
+                            label: LibTr.of(context)!.edit,
+                            onPressed: () {
+                              // Trigger edit mode in parent (PostViewScreen)
+                              widget.onEditClicked(widget.comment);
+                            },
                           ),
-
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              visualDensity: VisualDensity(
-                                horizontal: -4,
-                                vertical: -4,
-                              ),
-                            ),
+                          _buildComicActionButton(
+                            context: context,
+                            icon: Icons.delete,
+                            label: LibTr.of(context)!.delete,
+                            color: Theme.of(context).colorScheme.error,
                             onPressed: () async {
                               final confirmed = await showConfirmDialog(
                                 message: LibTr.of(
@@ -268,18 +292,13 @@ class _CommentDetailState extends State<CommentDetail> {
                                 }
                               }
                             },
-                            child: Text(LibTr.of(context)!.delete),
                           ),
                         ],
                         if (!widget.myComment) ...[
-                          TextButton.icon(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              visualDensity: VisualDensity(
-                                horizontal: -4,
-                                vertical: -4,
-                              ),
-                            ),
+                          _buildComicActionButton(
+                            context: context,
+                            icon: FontAwesomeIcons.ban,
+                            label: LibTr.of(context)!.block,
                             onPressed: () {
                               showBlockDialog(
                                 context: context,
@@ -287,8 +306,6 @@ class _CommentDetailState extends State<CommentDetail> {
                                 popOnBlocked: false,
                               );
                             },
-                            icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
-                            label: Text(LibTr.of(context)!.block),
                           ),
                           PostReportButton(
                             type: 'comment',
@@ -304,25 +321,6 @@ class _CommentDetailState extends State<CommentDetail> {
             ],
           ),
         ),
-        if (reply)
-          ReplyToComment(
-            parent: widget.comment,
-            onReplied: (c) {
-              widget.onReplied(c);
-
-              reply = false;
-              setState(() {});
-            },
-          ),
-        if (update)
-          CommentUpdate(
-            comment: widget.comment,
-            onUpdated: (c) {
-              widget.onUpdated(c);
-              update = false;
-              setState(() {});
-            },
-          ),
       ],
     );
   }

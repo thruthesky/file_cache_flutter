@@ -114,74 +114,96 @@ class _PostReportButtonState extends State<PostReportButton> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent, // Comic Design: transparent for custom styling
+      elevation: 0, // Comic Design: no shadow
       builder: (BuildContext context) {
         return Container(
           decoration: BoxDecoration(
             color: scheme.surface,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
+              topLeft: Radius.circular(12.0), // Comic Design: rounded top corners
+              topRight: Radius.circular(12.0),
+            ),
+            border: Border(
+              top: BorderSide(
+                color: scheme.outline,
+                width: 2.0, // Comic Design: 2.0 border
+              ),
+              left: BorderSide(
+                color: scheme.outline,
+                width: 2.0,
+              ),
+              right: BorderSide(
+                color: scheme.outline,
+                width: 2.0,
+              ),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 드래그 핸들 바
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-
-              // 헤더: 제목과 닫기 버튼
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      LibTr.of(context)!.report_select_reason,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
-                    ),
-                  ],
-                ),
-              ),
-
-              const Divider(height: 1),
-
-              // 신고 사유 목록
-              ...reasons.map(
-                (reason) => ListTile(
-                  leading: FaIcon(
-                    FontAwesomeIcons.hexagonExclamation,
-                    size: 20,
-                    color: scheme.onSurface,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Comic Design: drag handle indicator
+                const SizedBox(height: 8),
+                Container(
+                  width: 32,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  title: Text(reason),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    handleReport(reason);
-                  },
                 ),
-              ),
+                const SizedBox(height: 8),
 
-              // 하단 여백 (안전 영역 확보)
-              const SizedBox(height: 16),
-            ],
+                // 헤더: 제목과 닫기 버튼
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        LibTr.of(context)!.report_select_reason,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Comic Design: 2.0 border separator
+                Container(
+                  height: 2,
+                  color: scheme.outline,
+                ),
+
+                // 신고 사유 목록
+                ...reasons.map(
+                  (reason) => ListTile(
+                    leading: FaIcon(
+                      FontAwesomeIcons.hexagonExclamation,
+                      size: 20,
+                      color: scheme.onSurface,
+                    ),
+                    title: Text(reason),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      handleReport(reason);
+                    },
+                  ),
+                ),
+
+                // 하단 여백
+                const SizedBox(height: 8),
+              ],
+            ),
           ),
         );
       },
@@ -190,16 +212,41 @@ class _PostReportButtonState extends State<PostReportButton> {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton.icon(
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero,
-        visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: scheme.outline,
+          width: 2.0, // Comic Design: 2.0 border
+        ),
+        borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
       ),
-      // style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 8)),
-      onPressed: _showReportReasonBottomSheet,
-      icon: const FaIcon(FontAwesomeIcons.hexagonExclamation, size: 16),
-      label: Text(
-        "${LibTr.of(context)!.report} ${currentReportCounter > 0 ? currentReportCounter : ''}",
+      child: InkWell(
+        onTap: _showReportReasonBottomSheet,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.flag,
+                size: 16,
+                color: scheme.onSurface,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                "${LibTr.of(context)!.report}${currentReportCounter > 0 ? ' $currentReportCounter' : ''}",
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

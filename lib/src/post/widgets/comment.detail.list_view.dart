@@ -13,6 +13,8 @@ class CommentDetailListView extends StatelessWidget {
     required this.onUpdated,
     required this.onDeleted,
     required this.myComment,
+    required this.onReplyClicked,
+    required this.onEditClicked,
   });
 
   final int noOfComment;
@@ -22,6 +24,8 @@ class CommentDetailListView extends StatelessWidget {
   final Function(Comment, Comment) onUpdated;
   final Function(Comment) onDeleted;
   final bool Function(int idxMember) myComment;
+  final Function(Comment) onReplyClicked;
+  final Function(Comment) onEditClicked;
 
   bool hasReplies(Comment comment) {
     return post!.comments.any(
@@ -44,6 +48,8 @@ class CommentDetailListView extends StatelessWidget {
               onReplied: onReplied,
               onUpdated: (updatecomment) => onUpdated(comment, updatecomment),
               onDeleted: onDeleted,
+              onReplyClicked: onReplyClicked,
+              onEditClicked: onEditClicked,
             ),
           )
         else
