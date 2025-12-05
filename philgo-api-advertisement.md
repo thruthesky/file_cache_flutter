@@ -247,20 +247,26 @@ const AdCacheComponent = {
   "left": [           // 왼쪽 배너 배열
     {
       "idx": 123,
+      "idx_company": 456,
       "url": "https://example.com/left-banner.jpg",
       "link": "https://target.com",
+      "ad_end_date": "20260101",    // 광고 만료일 (항상 리턴됨)
       // ...BannerModel 속성
     }
   ],
   "right": [          // 오른쪽 배너 배열
     {
       "idx": 124,
+      "idx_company": 457,
       "url": "https://example.com/right-banner.jpg",
-      "link": "https://target2.com"
+      "link": "https://target2.com",
+      "ad_end_date": "20251231"     // 광고 만료일 (항상 리턴됨)
     }
   ]
 }
 ```
+
+> **📌 정렬 순서**: 배너는 `ad_end_date DESC` 순서로 정렬됩니다. 즉, 광고 만료일이 가장 늦은(오래 남은) 광고가 먼저 표시되고, 만료일이 임박한 광고가 나중에 표시됩니다.
 
 **JavaScript 사용 예제**:
 
@@ -362,13 +368,27 @@ function TopBannerComponent() {
 ```javascript
 {
   "left": [           // 왼쪽 윙 배너 배열
-    { "idx": 123, "url": "...", "link": "..." }
+    {
+      "idx": 123,
+      "idx_company": 456,
+      "url": "https://example.com/left-wing.jpg",
+      "link": "https://target.com",
+      "ad_end_date": "20260101"    // 광고 만료일 (항상 리턴됨)
+    }
   ],
   "right": [          // 오른쪽 윙 배너 배열
-    { "idx": 124, "url": "...", "link": "..." }
+    {
+      "idx": 124,
+      "idx_company": 457,
+      "url": "https://example.com/right-wing.jpg",
+      "link": "https://target2.com",
+      "ad_end_date": "20251231"    // 광고 만료일 (항상 리턴됨)
+    }
   ]
 }
 ```
+
+> **📌 정렬 순서**: 배너는 `ad_end_date DESC` 순서로 정렬됩니다. 즉, 광고 만료일이 가장 늦은(오래 남은) 광고가 먼저 표시되고, 만료일이 임박한 광고가 나중에 표시됩니다.
 
 **JavaScript 사용 예제**:
 
@@ -427,14 +447,18 @@ await displayWingBanners('job');
 [                     // BannerModel 배열
   {
     "idx": 123,
+    "idx_company": 456,
     "url": "https://example.com/square-banner.jpg",
     "link": "https://target.com",
     "all_page": "n",
-    "categories": ["qna"]
+    "categories": ["qna"],
+    "ad_end_date": "20260101"    // 광고 만료일 (항상 리턴됨)
   },
   // ...
 ]
 ```
+
+> **📌 정렬 순서**: 배너는 `ad_end_date DESC` 순서로 정렬됩니다. 즉, 광고 만료일이 가장 늦은(오래 남은) 광고가 먼저 표시되고, 만료일이 임박한 광고가 나중에 표시됩니다.
 
 **JavaScript 사용 예제**:
 
@@ -524,14 +548,18 @@ function SquareBannerCarousel() {
 [                     // BannerModel 배열
   {
     "idx": 123,
+    "idx_company": 456,
     "url": "https://example.com/small-banner.jpg",
     "link": "https://target.com",
     "text": "광고 텍스트",
-    "all_page": "y"
+    "all_page": "y",
+    "ad_end_date": "20260101"    // 광고 만료일 (항상 리턴됨)
   },
   // ...
 ]
 ```
+
+> **📌 정렬 순서**: 배너는 `ad_end_date DESC` 순서로 정렬됩니다. 즉, 광고 만료일이 가장 늦은(오래 남은) 광고가 먼저 표시되고, 만료일이 임박한 광고가 나중에 표시됩니다.
 
 **JavaScript 사용 예제**:
 
@@ -658,6 +686,10 @@ if (!ads) {
 3. **좌/우 자동 분배**: `top`, `wing` 배너는 자동으로 50:50 비율로 좌/우에 배치됩니다.
 
 4. **기간 체크**: API는 현재 날짜가 광고 기간 내(`advertisement_begin_at` ~ `advertisement_end_at`)인 광고만 반환합니다.
+
+5. **ad_end_date 필드**: 모든 배너 API(`get_top_banners`, `get_wing_banners`, `get_square_banners`, `get_small_banners`)는 항상 `ad_end_date` 필드를 리턴합니다. 이 값은 광고 만료일(YYYYMMDD 형식)을 나타냅니다.
+
+6. **정렬 순서 (ad_end_date DESC)**: 모든 배너는 `ad_end_date DESC` 순서로 정렬되어 반환됩니다. 이는 **광고 만료일이 가장 늦은(오래 남은) 광고가 먼저** 표시되고, **만료일이 임박한 광고가 나중에** 표시됨을 의미합니다. 따라서 광고 기간이 많이 남은 광고가 상단에 위치하고, 곧 만료되는 광고가 하단에 위치합니다.
 
 ---
 
