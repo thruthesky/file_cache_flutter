@@ -3,6 +3,7 @@ name: philgo-api-skill
 description: 본 스킬은 필고 <https://philgo.com> 홈페이지 API 연동 및 개발을 할 때에 반드시 따라야 하는 표준 코딩 가이드를 제공합니다. 필고(Philgo) 홈페이지 및 앱 개발을 위한 백엔드 API 접근 방법, 프로토콜, 로그인, 글/코멘트 생성/수정/삭제, 파일 업로드/삭제, API 함수 목록, EndPoints 등 필고 홈페이지 및 앱을 개발 할 때에 필요한 전반적인 데이터 액세스 및 데이터베이스 접근에 대한 완전하고 상세한 정보를 제공합니다. 홈페이지 개발 및 웹 플러터 앱 개발을 할 때에 API 관련한 모든 코딩은 이 스킬 문서를 따르면 됩니다.
 ---
 
+> **📌 플랫폼 안내**: 필고 백엔드는 PHP로 구현되어 있으며, 클라이언트는 주로 JavaScript/Vue.js 또는 Flutter를 사용합니다. 본 문서의 예제는 JavaScript/Vue.js 위주로 작성되었으며, Flutter 개발 시에도 동일한 API를 활용할 수 있습니다.
 
 본 문서는 필고 웹/앱을 개발할 때 필요한 API 연동 및 데이터베이스 접근에 관한 모든 정보를 담고 있습니다. 데이터베이스, 데이터 접근, API 연동에 관한 내용이라면 반드시 이 문서를 참고해야 합니다.
 
@@ -16,9 +17,10 @@ description: 본 스킬은 필고 <https://philgo.com> 홈페이지 API 연동 �
 ├── SKILL.md                      # 본 문서 (가이드 및 인덱스)
 ├── philgo-api-protocol.md        # API 프로토콜 상세 문서
 ├── philgo-api-endpoints.md       # 허용된 함수 목록 및 전체 API 엔드포인트 상세 문서
+├── philgo-api-advertisement.md   # 광고 API 문서
 ├── file-upload.md                # 파일 업로드 API 문서
 └── scripts/
-    └── function_list.sh          # 허용된 함수 목록 조회 스크립트
+    └── get_functions.sh          # 허용된 함수 목록 조회 스크립트
 ```
 
 ---
@@ -81,7 +83,7 @@ console.log('내 정보:', result);
 **역할**: PhilGo API의 허용된 함수 목록 및 모든 엔드포인트 상세 문서
 
 **주요 내용**:
-- **허용된 함수 목록 (ALLOWED_FUNCTIONS)**: `func.php`를 통해 호출 가능한 8개 함수의 상세 문서
+- **허용된 함수 목록**: `func.php`를 통해 호출 가능한 함수들의 상세 문서 (실시간 목록은 `get_functions` API로 조회)
   - 각 함수의 시그니처 및 파일 위치
   - 입력 파라미터 상세 설명
   - 리턴 값 형식
@@ -108,20 +110,27 @@ console.log('내 정보:', result);
   - 기타 API (Etc)
 
 **허용된 함수 목록**:
-1. `function_list` - 허용된 함수 목록 조회
-2. `get_my_data` - 로그인한 사용자 정보 조회
-3. `update_my_profile` - 사용자 프로필 업데이트
-4. `get_user_lang` - 사용자 언어 설정 조회
-5. `family_site_exists` - 패밀리사이트 도메인 존재 여부 확인
-6. `approve_company` - 업소록 승인 (관리자 전용)
-7. `reject_company` - 업소록 거부 (관리자 전용)
-8. `report` - 글/댓글 신고
+
+⚠️ **중요**: 함수 목록은 자주 변경되므로 하드코딩하지 않습니다. 아래 방법으로 실시간 조회하세요:
+
+```bash
+# 터미널에서 함수 목록 조회
+curl "https://philgo.com/func.php?func=get_functions"
+```
+
+```javascript
+// JavaScript에서 함수 목록 조회
+const functions = await func('get_functions', {});
+console.log('허용된 함수 목록:', functions);
+```
+
+**PHP 소스 위치**: `lib/api/function.class.php`의 `FunctionClass::get_functions()` 메서드에서 허용된 함수 목록을 관리합니다.
 
 **언제 참조하는가**:
 - **특정 API 함수의 사용법을 확인해야 할 때**
 - **함수의 입력 파라미터 및 리턴 값 형식을 확인해야 할 때**
 - **함수 사용 예제가 필요할 때**
-- **새로운 함수를 ALLOWED_FUNCTIONS에 추가한 후 문서화할 때**
+- **새로운 함수를 FunctionClass에 추가한 후 문서화할 때**
 - 특정 기능의 API가 있는지 확인해야 할 때
 - 특정 모듈(User, Post, Company 등)의 모든 API를 확인해야 할 때
 - API 파라미터 및 응답 형식의 전체 목록이 필요할 때
@@ -142,7 +151,7 @@ const result = await func('update_my_profile', {
 ```
 
 **관련 PHP 파일**:
-- `func.php` - ALLOWED_FUNCTIONS 상수 정의
+- `func.php` - API 엔드포인트
 - `lib/user/user.functions.php` - get_my_data, update_my_profile
 - `lib/intl.functions.php` - get_user_lang
 - `lib/family-site/family-site.functions.php` - family_site_exists
@@ -152,11 +161,36 @@ const result = await func('update_my_profile', {
 
 **⚠️ 주의사항**:
 - 이 문서의 모든 엔드포인트는 `/func.php?func=function_name` 형식으로 변경되었습니다
-- **실제 사용 가능한 함수는 `ALLOWED_FUNCTIONS`에 등록된 함수만 가능합니다**
+- **실제 사용 가능한 함수는 `FunctionClass::get_functions()`에 등록된 함수만 가능합니다**
 - 새로운 API 개발 시 레거시 엔드포인트 섹션은 참고용으로만 사용하세요
 - **실제 구현은 이 문서의 "허용된 API 함수 목록" 섹션을 참조하세요**
 
-## 4. file-upload.md
+## 4. philgo-api-advertisement.md
+
+**역할**: PhilGo 광고 API 문서
+
+**주요 내용**:
+- 광고 시스템 개요 (업소 → 광고 → 배너 구조)
+- 데이터베이스 구조 (company, company_meta 테이블)
+- 배너 타입 (top, wing, square, small)
+- 카테고리 기반 배너 표시
+- 5개의 광고 API 함수 상세 설명
+  - `get_all_active_advertisements` - 모든 활성 광고 조회 (앱 캐싱용)
+  - `get_top_banners` - 상단 배너 조회
+  - `get_wing_banners` - 윙 배너 조회
+  - `get_square_banners` - 사각 배너 조회
+  - `get_small_banners` - 작은 배너 조회
+- JavaScript/Vue.js 사용 예제
+
+**언제 참조하는가**:
+- 광고 배너를 화면에 표시할 때
+- 앱에서 광고 데이터를 캐싱할 때
+- 게시판/카테고리별 광고를 구현할 때
+- Flutter 앱에서 광고 API를 호출할 때
+
+---
+
+## 5. file-upload.md
 
 **역할**: PhilGo 파일 업로드 API 문서
 **주요 내용**:
@@ -171,39 +205,42 @@ const result = await func('update_my_profile', {
 
 ## 🛠️ scripts 폴더
 
-### function_list.sh
+### get_functions.sh
 
 **역할**: 허용된 함수 목록을 조회하는 스크립트
 
 **내용**:
 ```bash
-curl "https://local.philgo.com:444/func.php?func=function_list"
+curl "https://philgo.com/func.php?func=get_functions"
 ```
 
 **사용법**:
 ```bash
-cd .claude/skills/philgo-api/scripts
-./function_list.sh
+cd .claude/skills/philgo-api-skill/scripts
+./get_functions.sh
 ```
 
 **출력 예시**:
 ```json
 {
-  "approve_company": "업소록 정보를 승인합니다.",
-  "family_site_exists": "가족 사이트가 존재하는지 확인합니다.",
-  "function_list": "필고 API 에서 사용 가능한(허용된) 함수 목록을 가져옵니다.",
-  "get_user_lang": "사용자의 언어 정보를 가져옵니다.",
+  "get_company_list": "업소록 목록을 가져옵니다.",
+  "get_company": "업소록 상세 정보를 가져옵니다.",
   "get_my_data": "내 정보를 가져옵니다.",
-  "reject_company": "업소록 정보를 거부합니다.",
-  "report": "글 또는 댓글을 신고합니다.",
-  "update_my_profile": "내 프로필을 업데이트합니다."
+  "update_my_profile": "내 프로필을 업데이트합니다.",
+  "create_post": "게시물을 생성합니다.",
+  "update_post": "게시물을 업데이트합니다.",
+  "delete_post": "게시물을 삭제합니다.",
+  "create_comment": "댓글을 생성합니다.",
+  ...
 }
 ```
+
+⚠️ **참고**: 실제 함수 목록은 `FunctionClass::get_functions()` 메서드에서 관리되며 자주 변경됩니다. 항상 API를 통해 최신 목록을 조회하세요.
 
 **언제 사용하는가**:
 - 현재 사용 가능한 API 함수 목록을 빠르게 확인하고 싶을 때
 - API 함수가 제대로 등록되었는지 테스트할 때
-- ALLOWED_FUNCTIONS 업데이트 후 변경사항을 확인할 때
+- `FunctionClass::get_functions()` 업데이트 후 변경사항을 확인할 때
 
 ---
 
@@ -217,16 +254,16 @@ cd .claude/skills/philgo-api/scripts
 
 ### 특정 API 함수를 사용하고 싶은 경우
 
-1. **scripts/function_list.sh** - 허용된 함수 목록 확인
+1. **scripts/get_functions.sh** - 허용된 함수 목록 확인
 2. **philgo-api-endpoints.md** - 해당 함수의 상세 문서 참조 (허용된 API 함수 목록 섹션)
 3. **philgo-api-protocol.md** - 호출 방법 및 인증 확인
 
 ### 새로운 API 함수를 추가하는 경우
 
 1. PHP 함수 작성 (예: `lib/xxx/xxx.functions.php`)
-2. `func.php`의 `ALLOWED_FUNCTIONS`에 함수 추가
+2. `lib/api/function.class.php`의 `FunctionClass::get_functions()`에 함수 추가 및 래핑 메서드 작성
 3. **philgo-api-endpoints.md**에 함수 문서 추가 (허용된 API 함수 목록 섹션)
-4. **scripts/function_list.sh** 실행하여 등록 확인
+4. **scripts/get_functions.sh** 실행하여 등록 확인
 5. 테스트 코드 작성 및 실행
 
 ### API 호출 방법을 확인하고 싶은 경우
@@ -294,7 +331,8 @@ await func('update_my_profile', { token, nickname: '새닉네임' });
 - `philgo-api-endpoints.md` - 기존 함수 구조 참조 (허용된 API 함수 목록 섹션)
 
 **관련 파일**:
-- `func.php` - API 엔드포인트 및 ALLOWED_FUNCTIONS
+- `func.php` - API 엔드포인트
+- `lib/api/function.class.php` - FunctionClass (허용된 함수 목록 및 래핑 메서드)
 - `lib/*/` - 각 모듈별 함수 구현
 
 ### API 테스트
@@ -315,7 +353,7 @@ await func('update_my_profile', { token, nickname: '새닉네임' });
 ./scripts/function_list.sh
 
 # 특정 함수 테스트
-curl "https://local.philgo.com:444/func.php?func=get_user_lang"
+curl "https://philgo.com/func.php?func=get_user_lang"
 ```
 
 ### 문서 업데이트
@@ -327,8 +365,8 @@ curl "https://local.philgo.com:444/func.php?func=get_user_lang"
 
 **업데이트 절차**:
 1. PHP 함수 구현
-2. `func.php`의 `ALLOWED_FUNCTIONS`에 추가
-3. `philgo-api-endpoints.md`에 함수 문서 추가 (허용된 API 함수 목록 섹션)
+2. `lib/api/function.class.php`의 `FunctionClass::get_functions()`에 추가 및 래핑 메서드 작성
+3. `philgo-api-endpoints.md`에 함수 문서 추가
 4. 테스트 실행
 5. Git commit
 
@@ -336,9 +374,9 @@ curl "https://local.philgo.com:444/func.php?func=get_user_lang"
 
 ## 🔐 보안 및 주의사항
 
-### ALLOWED_FUNCTIONS 화이트리스트
+### FunctionClass 화이트리스트
 
-**중요**: API를 통해 호출 가능한 함수는 `func.php`의 `ALLOWED_FUNCTIONS` 상수에 등록된 함수만 가능합니다.
+**중요**: API를 통해 호출 가능한 함수는 `FunctionClass::get_functions()` 메서드에 등록된 함수만 가능합니다.
 
 **이유**:
 - 보안: 임의의 PHP 함수 호출 방지
@@ -346,8 +384,9 @@ curl "https://local.philgo.com:444/func.php?func=get_user_lang"
 - 문서화: 허용된 함수만 문서화
 
 **새 함수 추가 시 필수 작업**:
-1. `func.php`의 `ALLOWED_FUNCTIONS`에 함수명과 설명 추가
-2. `philgo-api-endpoints.md`에 상세 문서 추가 (허용된 API 함수 목록 섹션)
+1. `lib/api/function.class.php`의 `FunctionClass::get_functions()` 메서드에 함수명과 설명 추가
+2. `FunctionClass`에 해당 함수를 래핑하는 static 메서드 추가
+3. `philgo-api-endpoints.md`에 상세 문서 추가
 
 ### Firebase 인증
 
@@ -391,20 +430,30 @@ const result = await func('function_name', { token, ...params });
 
 ### 1. API 목록 확인
 ```bash
-cd .claude/skills/philgo-api/scripts
-./function_list.sh
+# 스크립트 사용
+cd .claude/skills/philgo-api-skill/scripts
+./get_functions.sh
+
+# 또는 직접 curl 호출
+curl "https://philgo.com/func.php?func=get_functions"
 ```
 
 ### 2. 특정 API 사용법 확인
-`philgo-api-endpoints.md` 파일의 "허용된 API 함수 목록" 섹션에서 해당 함수 검색
+- `philgo-api-endpoints.md` 파일에서 해당 함수 검색
+- PHP 소스 코드 확인: `lib/api/function.class.php`
 
 ### 3. API 호출 테스트
 ```bash
-curl "https://local.philgo.com:444/func.php?func=get_user_lang"
+curl "https://philgo.com/func.php?func=get_user_lang"
 ```
 
 ### 4. JavaScript에서 사용
 ```javascript
+// 함수 목록 조회
+const functions = await func('get_functions', {});
+console.log('허용된 함수:', functions);
+
+// 특정 함수 호출
 const result = await func('get_user_lang', {});
 console.log('사용자 언어:', result.data);
 ```
