@@ -58,9 +58,9 @@ test_api() {
     local request_data
 
     if [ -z "$CATEGORY" ]; then
-        request_data="{\"fn\": \"$api_name\"}"
+        request_data="{\"func\": \"$api_name\"}"
     else
-        request_data="{\"fn\": \"$api_name\", \"category\": \"$CATEGORY\"}"
+        request_data="{\"func\": \"$api_name\", \"category\": \"$CATEGORY\"}"
     fi
 
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

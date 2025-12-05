@@ -34,10 +34,10 @@ echo ""
 
 # 요청 데이터 생성
 if [ -z "$CATEGORY" ]; then
-    REQUEST_DATA='{"fn": "get_wing_banners"}'
+    REQUEST_DATA='{"func": "get_wing_banners"}'
     echo -e "${YELLOW}카테고리:${NC} 없음 (전체 배너)"
 else
-    REQUEST_DATA="{\"fn\": \"get_wing_banners\", \"category\": \"$CATEGORY\"}"
+    REQUEST_DATA="{\"func\": \"get_wing_banners\", \"category\": \"$CATEGORY\"}"
     echo -e "${YELLOW}카테고리:${NC} $CATEGORY"
 fi
 
