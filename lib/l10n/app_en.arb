@@ -172,6 +172,14 @@
   "@reply": {
     "description": "Button text to reply to a comment"
   },
+  "replying_to": "Replying to",
+  "@replying_to": {
+    "description": "Label shown when replying to a specific user"
+  },
+  "editing_comment": "Editing comment",
+  "@editing_comment": {
+    "description": "Label shown when editing a comment"
+  },
   "nickname": "Nickname",
   "@nickname": {
     "description": "Label for nickname field"

@@ -26,6 +26,8 @@
     "editProfile": "プロフィールを編集",
     "beTheFirstToComment": "最初にコメントする",
     "reply": "返信",
+    "replying_to": "返信中",
+    "editing_comment": "コメント編集中",
     "nickname": "ニックネーム",
     "nicknameHint": "ニックネームを入力してください",
     "fullName": "名前",

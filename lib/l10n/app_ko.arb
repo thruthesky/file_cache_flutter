@@ -48,6 +48,8 @@
   "enterComment": "댓글을 입력하세요",
   "beTheFirstToComment": "가장 먼저 댓글을 작성해 보세요",
   "reply": "답글",
+  "replying_to": "답글 중",
+  "editing_comment": "댓글 수정 중",
   "nickname": "닉네임",
   "nicknameHint": "닉네임을 입력하세요",
   "fullName": "이름",

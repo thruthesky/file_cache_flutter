@@ -158,6 +158,12 @@ class LoKo extends Lo {
   String get reply => '답글';
 
   @override
+  String get replying_to => '답글 중';
+
+  @override
+  String get editing_comment => '댓글 수정 중';
+
+  @override
   String get nickname => '닉네임';
 
   @override

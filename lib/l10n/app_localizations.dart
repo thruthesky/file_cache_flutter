@@ -395,6 +395,18 @@ abstract class Lo {
   /// **'Reply'**
   String get reply;
 
+  /// Label shown when replying to a specific user
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to'**
+  String get replying_to;
+
+  /// Label shown when editing a comment
+  ///
+  /// In en, this message translates to:
+  /// **'Editing comment'**
+  String get editing_comment;
+
   /// Label for nickname field
   ///
   /// In en, this message translates to:

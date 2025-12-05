@@ -158,6 +158,12 @@ class LoZh extends Lo {
   String get reply => '回复';
 
   @override
+  String get replying_to => '正在回复';
+
+  @override
+  String get editing_comment => '编辑评论中';
+
+  @override
   String get nickname => '昵称';
 
   @override

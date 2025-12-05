@@ -26,6 +26,8 @@
     "editProfile": "编辑个人资料",
     "beTheFirstToComment": "成为第一个发表评论的人",
     "reply": "回复",
+    "replying_to": "正在回复",
+    "editing_comment": "编辑评论中",
     "nickname": "昵称",
     "nicknameHint": "请输入昵称",
     "fullName": "姓名",

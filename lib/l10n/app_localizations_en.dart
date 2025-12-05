@@ -164,6 +164,12 @@ class LoEn extends Lo {
   String get reply => 'Reply';
 
   @override
+  String get replying_to => 'Replying to';
+
+  @override
+  String get editing_comment => 'Editing comment';
+
+  @override
   String get nickname => 'Nickname';
 
   @override

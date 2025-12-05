@@ -158,6 +158,12 @@ class LoJa extends Lo {
   String get reply => '返信';
 
   @override
+  String get replying_to => '返信中';
+
+  @override
+  String get editing_comment => 'コメント編集中';
+
+  @override
   String get nickname => 'ニックネーム';
 
   @override

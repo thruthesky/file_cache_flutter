@@ -45,10 +45,7 @@ Future<void> showTermsAndConditions(BuildContext context) async {
                     top: Radius.circular(20),
                   ),
                   // Comic theme: add border to bottom sheet
-                  border: Border.all(
-                    color: scheme.outline,
-                    width: 2.0,
-                  ),
+                  border: Border.all(color: scheme.outline, width: 2.0),
                 ),
                 child: Column(
                   children: [
@@ -68,12 +65,6 @@ Future<void> showTermsAndConditions(BuildContext context) async {
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                       child: Row(
                         children: [
-                          FaIcon(
-                            FontAwesomeIcons.fileLines,
-                            size: 20,
-                            color: scheme.primary,
-                          ),
-                          const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               Lo.of(context)!.termsOfService,
@@ -94,15 +85,6 @@ Future<void> showTermsAndConditions(BuildContext context) async {
                       ),
                     ),
 
-                    /// Divider with comic theme
-                    Container(
-                      height: 2,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: scheme.outline,
-                        borderRadius: BorderRadius.circular(1),
-                      ),
-                    ),
                     const SizedBox(height: 16),
 
                     /// 내용
@@ -181,10 +163,7 @@ Future<void> showPrivacyPolicy(BuildContext context) async {
                     top: Radius.circular(20),
                   ),
                   // Comic theme: add border to bottom sheet
-                  border: Border.all(
-                    color: scheme.outline,
-                    width: 2.0,
-                  ),
+                  border: Border.all(color: scheme.outline, width: 2.0),
                 ),
                 child: Column(
                   children: [
@@ -204,12 +183,6 @@ Future<void> showPrivacyPolicy(BuildContext context) async {
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                       child: Row(
                         children: [
-                          FaIcon(
-                            FontAwesomeIcons.shieldCheck,
-                            size: 20,
-                            color: scheme.primary,
-                          ),
-                          const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               Lo.of(context)!.privacyPolicy,
@@ -230,15 +203,6 @@ Future<void> showPrivacyPolicy(BuildContext context) async {
                       ),
                     ),
 
-                    /// Divider with comic theme
-                    Container(
-                      height: 2,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: scheme.outline,
-                        borderRadius: BorderRadius.circular(1),
-                      ),
-                    ),
                     const SizedBox(height: 16),
 
                     /// 내용
