@@ -117,398 +117,373 @@ class _MainHomeState extends State<MainHome> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          child: Stack(
+          child: Column(
             children: [
-              /// Background color from top to half screen (화면 상단부터 절반까지 배경색)
-              /// Provides visual separation for top section with rounded bottom corners
-              /// Comic Design: No border needed for background, just rounded corners
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: MediaQuery.of(context).size.height * 0.485,
+              /// AppBar Section (앱바 영역)
+              /// Contains user avatar and settings button
+              /// Comic Design: 2.0px bottom border
+              SafeArea(
                 child: Container(
+                  padding: EdgeInsets.only(
+                    top: sp.s12,
+                    bottom: sp.s12,
+                    left: sp.s16,
+                    right: sp.s8,
+                  ),
                   decoration: BoxDecoration(
-                    color: scheme.primaryContainer,
-                    // Comic Design: Rounded corners (border radius 16)
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
+                    // Comic Design: 2.0px bottom border with outline color
+                    border: Border(
+                      bottom: BorderSide(color: scheme.outline, width: 2.0),
                     ),
+                  ),
+                  child: Row(
+                    children: [
+                      /// User Profile Section (사용자 프로필 영역)
+                      /// Displays avatar, nickname, and level
+                      Selector<AppState, User?>(
+                        selector: (_, appState) => appState.user,
+                        builder: (_, user, _) {
+                          return Row(
+                            children: [
+                              /// User Avatar (사용자 아바타)
+                              Avatar(
+                                photoUrl: user?.photoUrl,
+                                size: 40,
+                                radius: 20,
+                              ),
+                              SizedBox(width: sp.s12),
+          
+                              /// User Info: Nickname + Level (닉네임 + 레벨)
+                              Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  /// Nickname (닉네임)
+                                  Text(
+                                    user?.nickname ?? 'Guest',
+                                    style: theme.textTheme.titleLarge
+                                        ?.copyWith(
+                                          color: scheme.onSurface,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  SizedBox(height: sp.s4),
+          
+                                  /// Level (레벨)
+                                  Text(
+                                    'Level ${user?.level ?? 1}',
+                                    style: theme.textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: scheme.onSurfaceVariant,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      const Spacer(),
+          
+                      /// Settings Button (설정 버튼)
+                      /// Navigates to menu section
+                      IconButton(
+                        icon: FaIcon(
+                          FontAwesomeIcons.lightGear,
+                          color: scheme.onSurface,
+                          size: 24,
+                        ),
+                        onPressed: () {
+                          NavigationState.of(
+                            context,
+                            listen: false,
+                          ).setHomeNavigation(HomeNavigationItem.menu);
+                        },
+                        tooltip: 'Settings',
+                      ),
+                    ],
                   ),
                 ),
               ),
-
-              /// Main content (메인 콘텐츠)
-              Column(
-                children: [
-                  /// AppBar Section (앱바 영역)
-                  /// Contains user avatar and settings button
-                  /// Comic Design: 2.0px bottom border
-                  SafeArea(
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        top: sp.s12,
-                        bottom: sp.s12,
-                        left: sp.s16,
-                        right: sp.s8,
+          
+              SizedBox(height: sp.s20),
+          
+              /// Quick Action Buttons (빠른 작업 버튼)
+              /// Provides shortcuts to frequently used features
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: sp.s16),
+                child: Row(
+                  children: [
+                    /// Create Post Button (게시글 작성)
+                    Expanded(
+                      child: _QuickActionButton(
+                        icon: FontAwesomeIcons.lightPenToSquare,
+                        label: 'Create Post',
+                        onTap: () {
+                          // Ensure Community (freetalk) is the default category when writing
+                          final categories =
+                              PhilGoAppConfig.getCategories();
+                          final communityCategory = categories.firstWhere(
+                            (c) =>
+                                c.postId == 'freetalk' &&
+                                c.category == null,
+                            orElse: () => categories.first,
+                          );
+                          ForumState.of(
+                            context,
+                            listen: false,
+                          ).setHomePostCategory(communityCategory);
+          
+                          // Navigate directly to post creation screen
+                          PostCreateScreen.push(context);
+                        },
                       ),
-                      decoration: BoxDecoration(
-                        // Comic Design: 2.0px bottom border with outline color
-                        border: Border(
-                          bottom: BorderSide(color: scheme.outline, width: 2.0),
-                        ),
+                    ),
+                    SizedBox(width: sp.s8),
+          
+                    /// Edit Profile Button (프로필 수정)
+                    Expanded(
+                      child: _QuickActionButton(
+                        icon: FontAwesomeIcons.lightUser,
+                        label: Lo.of(context)!.editProfile,
+                        onTap: () => ProfileEditScreen.push(context),
                       ),
-                      child: Row(
+                    ),
+                    SizedBox(width: sp.s8),
+          
+                    /// Open Chat Button (채팅 열기)
+                    Expanded(
+                      child: _QuickActionButton(
+                        icon: FontAwesomeIcons.lightCommentDots,
+                        label: Lo.of(context)!.openChatTitle,
+                        onTap: () {
+                          NavigationState.of(
+                            context,
+                            listen: false,
+                          ).setHomeNavigation(HomeNavigationItem.chat);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: sp.s8),
+          
+                    /// Language Button (언어 설정)
+                    Expanded(
+                      child: _QuickActionButton(
+                        icon: FontAwesomeIcons.lightGlobe,
+                        label: Lo.of(context)!.languageTitle,
+                        onTap: () => LanguageScreen.push(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          
+              SizedBox(height: sp.s24),
+          
+              /// Latest Posts & Comments Section (최근 게시글 & 댓글 영역)
+              /// Side-by-side 2-column layout
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: sp.s16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Left Column: Latest Posts (왼쪽: 최근 게시글)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          /// User Profile Section (사용자 프로필 영역)
-                          /// Displays avatar, nickname, and level
-                          Selector<AppState, User?>(
-                            selector: (_, appState) => appState.user,
-                            builder: (_, user, _) {
-                              return Row(
-                                children: [
-                                  /// User Avatar (사용자 아바타)
-                                  Avatar(
-                                    photoUrl: user?.photoUrl,
-                                    size: 40,
-                                    radius: 20,
+                          /// Section Header (섹션 헤더)
+                          Text(
+                            'Posts',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: scheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+          
+                          SizedBox(height: sp.s8),
+          
+                          /// Post Items (게시글 목록)
+                          /// Display 3 latest posts with title only
+                          /// Comic Design: 2.0px border, no shadow
+                          if (isLoadingPosts)
+                            Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(sp.s16),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          else if (latestPosts == null ||
+                              latestPosts!.isEmpty)
+                            Container(
+                              padding: EdgeInsets.all(sp.s16),
+                              decoration: BoxDecoration(
+                                color: scheme.surface,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: scheme.outline,
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: Text(
+                                Lo.of(context)!.noPostsYet,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          else
+                            ...latestPosts!.map((post) {
+                              return InkWell(
+                                onTap: () {
+                                  PostViewScreen.push(context, post);
+                                },
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: sp.s8),
+                                  padding: EdgeInsets.all(sp.s12),
+                                  decoration: BoxDecoration(
+                                    color: scheme.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                    // Comic Design: 2.0px border with outline color
+                                    border: Border.all(
+                                      color: scheme.outline,
+                                      width: 2.0,
+                                    ),
                                   ),
-                                  SizedBox(width: sp.s12),
-
-                                  /// User Info: Nickname + Level (닉네임 + 레벨)
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
+                                  child: Row(
                                     children: [
-                                      /// Nickname (닉네임)
-                                      Text(
-                                        user?.nickname ?? 'Guest',
-                                        style: theme.textTheme.titleLarge
-                                            ?.copyWith(
-                                              color: scheme.onSurface,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                      SizedBox(height: sp.s4),
-
-                                      /// Level (레벨)
-                                      Text(
-                                        'Level ${user?.level ?? 1}',
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color: scheme.onSurfaceVariant,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                      /// Post subject (게시글 제목)
+                                      Expanded(
+                                        child: Text(
+                                          post.subject,
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: scheme.onSurface,
+                                              ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
                               );
-                            },
-                          ),
-                          const Spacer(),
-
-                          /// Settings Button (설정 버튼)
-                          /// Navigates to menu section
-                          IconButton(
-                            icon: FaIcon(
-                              FontAwesomeIcons.lightGear,
-                              color: scheme.onSurface,
-                              size: 24,
-                            ),
-                            onPressed: () {
-                              NavigationState.of(
-                                context,
-                                listen: false,
-                              ).setHomeNavigation(HomeNavigationItem.menu);
-                            },
-                            tooltip: 'Settings',
-                          ),
+                            }),
                         ],
                       ),
                     ),
-                  ),
-
-                  SizedBox(height: sp.s20),
-
-                  /// Quick Action Buttons (빠른 작업 버튼)
-                  /// Provides shortcuts to frequently used features
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: sp.s16),
-                    child: Row(
-                      children: [
-                        /// Create Post Button (게시글 작성)
-                        Expanded(
-                          child: _QuickActionButton(
-                            icon: FontAwesomeIcons.lightPenToSquare,
-                            label: 'Create Post',
-                            onTap: () {
-                              // Ensure Community (freetalk) is the default category when writing
-                              final categories =
-                                  PhilGoAppConfig.getCategories();
-                              final communityCategory = categories.firstWhere(
-                                (c) =>
-                                    c.postId == 'freetalk' &&
-                                    c.category == null,
-                                orElse: () => categories.first,
+          
+                    SizedBox(width: sp.s12),
+          
+                    /// Right Column: Latest Comments (오른쪽: 최근 댓글)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Section Header (섹션 헤더)
+                          Text(
+                            'Comments',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: scheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+          
+                          SizedBox(height: sp.s8),
+          
+                          /// Comment Items (댓글 목록)
+                          /// Display 3 latest comments with content
+                          /// Comic Design: 2.0px border, no shadow
+                          if (isLoadingComments)
+                            Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(sp.s16),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          else if (latestComments == null ||
+                              latestComments!.isEmpty)
+                            Container(
+                              padding: EdgeInsets.all(sp.s16),
+                              decoration: BoxDecoration(
+                                color: scheme.surface,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: scheme.outline,
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: Text(
+                                'No comments yet',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          else
+                            ...latestComments!.map((comment) {
+                              return InkWell(
+                                onTap: () async {
+                                  try {
+                                    final post = await getPost(
+                                      comment.idx_root,
+                                    );
+                                    if (context.mounted) {
+                                      await PostViewScreen.push(
+                                        context,
+                                        post,
+                                      );
+                                    }
+                                  } catch (e) {
+                                    debugLog(
+                                      'Error navigating from comment to post: $e',
+                                    );
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: sp.s8),
+                                  padding: EdgeInsets.all(sp.s12),
+                                  decoration: BoxDecoration(
+                                    color: scheme.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                    // Comic Design: 2.0px border with outline color
+                                    border: Border.all(
+                                      color: scheme.outline,
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      /// Comment content (댓글 내용)
+                                      Expanded(
+                                        child: Text(
+                                          comment.content,
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: scheme.onSurface,
+                                              ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               );
-                              ForumState.of(
-                                context,
-                                listen: false,
-                              ).setHomePostCategory(communityCategory);
-
-                              // Navigate directly to post creation screen
-                              PostCreateScreen.push(context);
-                            },
-                          ),
-                        ),
-                        SizedBox(width: sp.s8),
-
-                        /// Edit Profile Button (프로필 수정)
-                        Expanded(
-                          child: _QuickActionButton(
-                            icon: FontAwesomeIcons.lightUser,
-                            label: Lo.of(context)!.editProfile,
-                            onTap: () => ProfileEditScreen.push(context),
-                          ),
-                        ),
-                        SizedBox(width: sp.s8),
-
-                        /// Open Chat Button (채팅 열기)
-                        Expanded(
-                          child: _QuickActionButton(
-                            icon: FontAwesomeIcons.lightCommentDots,
-                            label: Lo.of(context)!.openChatTitle,
-                            onTap: () {
-                              NavigationState.of(
-                                context,
-                                listen: false,
-                              ).setHomeNavigation(HomeNavigationItem.chat);
-                            },
-                          ),
-                        ),
-                        SizedBox(width: sp.s8),
-
-                        /// Language Button (언어 설정)
-                        Expanded(
-                          child: _QuickActionButton(
-                            icon: FontAwesomeIcons.lightGlobe,
-                            label: Lo.of(context)!.languageTitle,
-                            onTap: () => LanguageScreen.push(context),
-                          ),
-                        ),
-                      ],
+                            }),
+                        ],
+                      ),
                     ),
-                  ),
-
-                  SizedBox(height: sp.s24),
-
-                  /// Latest Posts & Comments Section (최근 게시글 & 댓글 영역)
-                  /// Side-by-side 2-column layout
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: sp.s16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /// Left Column: Latest Posts (왼쪽: 최근 게시글)
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// Section Header (섹션 헤더)
-                              Text(
-                                'Posts',
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  color: scheme.onSurface,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-
-                              SizedBox(height: sp.s8),
-
-                              /// Post Items (게시글 목록)
-                              /// Display 3 latest posts with title only
-                              /// Comic Design: 2.0px border, no shadow
-                              if (isLoadingPosts)
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(sp.s16),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              else if (latestPosts == null ||
-                                  latestPosts!.isEmpty)
-                                Container(
-                                  padding: EdgeInsets.all(sp.s16),
-                                  decoration: BoxDecoration(
-                                    color: scheme.surface,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: scheme.outline,
-                                      width: 2.0,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    Lo.of(context)!.noPostsYet,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: scheme.onSurfaceVariant,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              else
-                                ...latestPosts!.map((post) {
-                                  return InkWell(
-                                    onTap: () {
-                                      PostViewScreen.push(context, post);
-                                    },
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: sp.s8),
-                                      padding: EdgeInsets.all(sp.s12),
-                                      decoration: BoxDecoration(
-                                        color: scheme.surface,
-                                        borderRadius: BorderRadius.circular(8),
-                                        // Comic Design: 2.0px border with outline color
-                                        border: Border.all(
-                                          color: scheme.outline,
-                                          width: 2.0,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          /// Post subject (게시글 제목)
-                                          Expanded(
-                                            child: Text(
-                                              post.subject,
-                                              style: theme.textTheme.bodyMedium
-                                                  ?.copyWith(
-                                                    color: scheme.onSurface,
-                                                  ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(width: sp.s12),
-
-                        /// Right Column: Latest Comments (오른쪽: 최근 댓글)
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// Section Header (섹션 헤더)
-                              Text(
-                                'Comments',
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  color: scheme.onSurface,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-
-                              SizedBox(height: sp.s8),
-
-                              /// Comment Items (댓글 목록)
-                              /// Display 3 latest comments with content
-                              /// Comic Design: 2.0px border, no shadow
-                              if (isLoadingComments)
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(sp.s16),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              else if (latestComments == null ||
-                                  latestComments!.isEmpty)
-                                Container(
-                                  padding: EdgeInsets.all(sp.s16),
-                                  decoration: BoxDecoration(
-                                    color: scheme.surface,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: scheme.outline,
-                                      width: 2.0,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'No comments yet',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: scheme.onSurfaceVariant,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              else
-                                ...latestComments!.map((comment) {
-                                  return InkWell(
-                                    onTap: () async {
-                                      try {
-                                        final post = await getPost(
-                                          comment.idx_root,
-                                        );
-                                        if (context.mounted) {
-                                          await PostViewScreen.push(
-                                            context,
-                                            post,
-                                          );
-                                        }
-                                      } catch (e) {
-                                        debugLog(
-                                          'Error navigating from comment to post: $e',
-                                        );
-                                      }
-                                    },
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: sp.s8),
-                                      padding: EdgeInsets.all(sp.s12),
-                                      decoration: BoxDecoration(
-                                        color: scheme.surface,
-                                        borderRadius: BorderRadius.circular(8),
-                                        // Comic Design: 2.0px border with outline color
-                                        border: Border.all(
-                                          color: scheme.outline,
-                                          width: 2.0,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          /// Comment content (댓글 내용)
-                                          Expanded(
-                                            child: Text(
-                                              comment.content,
-                                              style: theme.textTheme.bodyMedium
-                                                  ?.copyWith(
-                                                    color: scheme.onSurface,
-                                                  ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: sp.s24),
-                ],
+                  ],
+                ),
               ),
+              SizedBox(height: sp.s24),
             ],
           ),
         );
