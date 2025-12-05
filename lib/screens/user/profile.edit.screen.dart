@@ -136,9 +136,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 SizedBox(height: 16),
 
                 /// Nickname Section - Comic Card
-                ComicCard(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.all(16),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
