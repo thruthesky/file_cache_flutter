@@ -9,12 +9,9 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PostViewScreen extends StatefulWidget {
-  // You may add routeName with dynamic parameters if needed like this:
-  // static const String routeName = '/screen-name/:id';
-  // And update the push and go methods accordingly like below.
-  // static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName.replaceFirst(':id'));
   static const String routeName = '/post-view';
 
   static Future<Post?> Function(BuildContext ctx, Post post) push =
@@ -35,7 +32,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
   Post? post;
   bool isLoading = true;
   bool showPostInfoBar = false;
+  bool isLiked = false; // Track if user has liked the post
   final ScrollController _scrollController = ScrollController();
+  Comment? replyingToComment; // Track which comment is being replied to
+  Comment? editingComment; // Track which comment is being edited
 
   @override
   void initState() {
@@ -52,11 +52,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 
   void _onScroll() {
-    // Show post info bar when scrolled past a certain point
-    // This will be triggered when reaching the comment section
     final shouldShow =
-        _scrollController.hasClients &&
-        _scrollController.offset > 150; // Adjust threshold as needed
+        _scrollController.hasClients && _scrollController.offset > 150;
 
     if (shouldShow != showPostInfoBar) {
       setState(() {
@@ -117,9 +114,230 @@ class _PostViewScreenState extends State<PostViewScreen> {
   String? get photoUrl => post?.photo_url ?? widget.post.photo_url;
   String get firebaseUid => post?.firebase_uid ?? widget.post.firebase_uid;
 
+  /// Format date as yyyy-mm-dd
+  String formatPostDate(int timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    final year = date.year.toString();
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    return '$year-$month-$day';
+  }
+
+  /// Enter reply mode - convert bottom field to reply to specific comment
+  void setReplyMode(Comment comment) {
+    setState(() {
+      replyingToComment = comment;
+    });
+    // No auto-scroll - let user see the reply context header appear at bottom
+    // The keyboard will push content up naturally
+  }
+
+  /// Exit reply mode - return to normal comment mode
+  void cancelReplyMode() {
+    setState(() {
+      replyingToComment = null;
+    });
+  }
+
+  /// Enter edit mode - convert bottom field to edit specific comment
+  void setEditMode(Comment comment) {
+    setState(() {
+      editingComment = comment;
+      replyingToComment = null; // Close reply mode if open
+    });
+  }
+
+  /// Exit edit mode - return to normal comment mode
+  void cancelEditMode() {
+    setState(() {
+      editingComment = null;
+    });
+  }
+
+  /// Show Comic-styled bottom sheet with post options
+  void _showPostOptions() {
+    final scheme = Theme.of(context).colorScheme;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12.0),
+              topRight: Radius.circular(12.0),
+            ),
+            border: Border(
+              top: BorderSide(color: scheme.outline, width: 2.0),
+              left: BorderSide(color: scheme.outline, width: 2.0),
+              right: BorderSide(color: scheme.outline, width: 2.0),
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                Container(
+                  width: 32,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                /// If not my post, show block and report
+                if (!isPostMine()) ...[
+                  ListTile(
+                    leading: FaIcon(FontAwesomeIcons.ban, size: 20),
+                    title: Text(LibTr.of(context)!.block),
+                    onTap: () {
+                      Navigator.pop(context);
+                      showBlockDialog(
+                        context: context,
+                        otherUserUid: firebaseUid,
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: FaIcon(FontAwesomeIcons.flag, size: 20),
+                    title: Text(LibTr.of(context)!.report),
+                    onTap: () {
+                      Navigator.pop(context);
+                      // Report action
+                    },
+                  ),
+                ],
+
+                /// If my post, show edit and delete
+                if (isPostMine()) ...[
+                  ListTile(
+                    leading: FaIcon(FontAwesomeIcons.penToSquare, size: 20),
+                    title: Text(LibTr.of(context)!.edit),
+                    onTap: () async {
+                      Navigator.pop(context);
+
+                      if (post!.no_of_comment >= 1) {
+                        showInfoDialog(
+                          context,
+                          Lo.of(context)!.alert,
+                          Lo.of(context)!.postWithCommentsCannotBeEdited,
+                        );
+                        return;
+                      }
+
+                      final updatedPost = await PostUpdateScreen.push(
+                        context,
+                        post: post!,
+                      );
+
+                      if (updatedPost != null) {
+                        widget.post.subject = updatedPost.subject;
+                        widget.post.content = updatedPost.content;
+                      }
+
+                      if (updatedPost != null && mounted) {
+                        setState(() {
+                          post = updatedPost;
+                        });
+                      }
+                    },
+                  ),
+                  ListTile(
+                    leading: FaIcon(FontAwesomeIcons.trash, size: 20, color: scheme.error),
+                    title: Text(
+                      LibTr.of(context)!.delete,
+                      style: TextStyle(color: scheme.error),
+                    ),
+                    onTap: () async {
+                      Navigator.pop(context);
+
+                      if (post!.no_of_comment >= 1) {
+                        showInfoDialog(
+                          context,
+                          Lo.of(context)!.alert,
+                          Lo.of(context)!.postWithCommentsCannotBeDeleted,
+                        );
+                        return;
+                      }
+
+                      final confirm = await showConfirmDialog(
+                        message: Lo.of(context)!.confirmDeletePost,
+                      );
+
+                      if (confirm) {
+                        await deletePost(widget.post.idx);
+                        if (context.mounted) {
+                          context.pop();
+                        }
+                      }
+                    },
+                  ),
+                ],
+
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Build Comic-styled action button widget with border
+  Widget _buildComicActionButton({
+    required IconData icon,
+    String? label, // Make label optional
+    required VoidCallback onPressed,
+    Color? color,
+  }) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: color ?? scheme.outline,
+          width: 2.0, // Comic Design: 2.0 border
+        ),
+        borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
+      ),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FaIcon(icon, size: 16, color: color ?? scheme.onSurface),
+              if (label != null && label.isNotEmpty) ...[
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: color ?? scheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasImages = files.isNotEmpty;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return Scaffold(
       body: isLoading
@@ -129,14 +347,28 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 CustomScrollView(
                   controller: _scrollController,
                   slivers: [
-                    /// Primary colored AppBar
+                    /// Comic AppBar with menu icon
                     SliverAppBar(
                       floating: false,
                       pinned: true,
+                      elevation: 0,
                       leading: BackButton(
                         onPressed: () => Navigator.of(context).canPop()
                             ? Navigator.of(context).pop()
                             : context.go(HomeScreen.routeName),
+                      ),
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: IconButton(
+                            icon: FaIcon(FontAwesomeIcons.bars, size: 20),
+                            onPressed: _showPostOptions,
+                          ),
+                        ),
+                      ],
+                      bottom: PreferredSize(
+                        preferredSize: const Size.fromHeight(1),
+                        child: Container(height: 2, color: scheme.outline),
                       ),
                     ),
 
@@ -166,14 +398,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                     Expanded(
                                       child: Text(
                                         '${LibTr.of(context)!.post_from_blocked_user} $nickname',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
+                                        style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                               fontStyle: FontStyle.italic,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurface
+                                              color: scheme.onSurface
                                                   .withValues(alpha: 0.6),
                                             ),
                                       ),
@@ -186,14 +414,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                PostViewHeader(
-                                  subject: subject,
-                                  nickname: nickname,
-                                  stamp: stamp,
-                                  noOfView: noOfView,
-                                  photoUrl: photoUrl,
-                                  onTapNickname: () {
-                                    /// 닉네임 클릭 시 사용자 프로필 화면으로 이동
+                                /// Post title - larger and more prominent
+                                Text(
+                                  subject,
+                                  style: theme.textTheme.headlineSmall
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 16),
+
+                                /// Avatar, name, and date
+                                GestureDetector(
+                                  onTap: () {
                                     ProfileViewScreen.push(
                                       context,
                                       firebaseUid: firebaseUid,
@@ -201,9 +432,41 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       photoUrl: photoUrl,
                                     );
                                   },
+                                  child: Row(
+                                    children: [
+                                      Avatar(photoUrl: photoUrl, size: 40),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              nickname,
+                                              style: theme.textTheme.bodyLarge
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              formatPostDate(stamp),
+                                              style: theme.textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                    color: scheme.onSurface
+                                                        .withValues(alpha: 0.6),
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                SizedBox(height: 16),
-                                if (hasImages)
+                                const SizedBox(height: 16),
+
+                                /// Images first (if available)
+                                if (hasImages) ...[
                                   Selector<NavigationState, bool>(
                                     selector: (context, state) =>
                                         state.homeNav ==
@@ -216,126 +479,177 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       );
                                     },
                                   ),
-                                SizedBox(height: 16),
+                                  const SizedBox(height: 16),
+                                ],
+
+                                /// Post content
                                 PostViewContent(
                                   isLoading: false,
                                   content: content,
                                 ),
-                                SizedBox(height: 16),
-                                PostViewButtons(
-                                  post: post,
-                                  myPost: isPostMine(),
-                                  onLike: () async {
-                                    /// Call like API and update the like count
-                                    try {
-                                      final updatedGood = await likePost(
-                                        widget.post.idx,
-                                      );
-                                      debugLog(
-                                        'Widget Post idx: ${widget.post.idx}',
-                                      );
-                                      debugLog(
-                                        'Post liked, new good count: $updatedGood',
-                                      );
+                                const SizedBox(height: 24),
 
-                                      // Update the good count in the current post object
-                                      (post ?? widget.post).good = updatedGood;
-                                      if (mounted) {
-                                        setState(() {});
-                                      }
+                                /// Action buttons with Comic design and border
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: scheme.outline,
+                                        width: 2.0, // Comic Design: 2.0 border
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      /// Like button
+                                      _buildComicActionButton(
+                                        icon: isLiked
+                                            ? FontAwesomeIcons.solidThumbsUp
+                                            : FontAwesomeIcons.thumbsUp,
+                                        label:
+                                            post?.good != null && post!.good > 0
+                                            ? '${post!.good}'
+                                            : null, // Hide label when 0
+                                        color: scheme.primary,
+                                        onPressed: () async {
+                                          try {
+                                            final updatedGood = await likePost(
+                                              widget.post.idx,
+                                            );
+                                            (post ?? widget.post).good =
+                                                updatedGood;
+                                            if (mounted) {
+                                              setState(() {
+                                                isLiked = true;
+                                              });
+                                            }
+                                            if (context.mounted) {
+                                              showSuccessSnackBar(
+                                                context,
+                                                'Post liked',
+                                              );
+                                            }
+                                          } catch (e) {
+                                            d('Error liking post: $e');
+                                            if (e.toString().contains(
+                                              'already-liked',
+                                            )) {
+                                              if (context.mounted) {
+                                                showErrorSnackBar(
+                                                  context,
+                                                  'Already liked this post',
+                                                );
+                                              }
+                                            }
+                                          }
+                                        },
+                                      ),
 
-                                      if (context.mounted) {
-                                        showSuccessSnackBar(
-                                          context,
-                                          'Post liked',
-                                        );
-                                      }
-                                    } catch (e) {
-                                      d('Error liking post: $e');
+                                      const Spacer(),
 
-                                      // Handle already-liked error
-                                      if (e.toString().contains(
-                                        'already-liked',
-                                      )) {
-                                        if (context.mounted) {
-                                          showErrorSnackBar(
-                                            context,
-                                            'Already liked this post',
-                                          );
-                                        }
-                                      }
-                                    }
-                                  },
-                                  onTapUpdate: () async {
-                                    /// 댓글이 있는 경우 수정 불가
-                                    if (post!.no_of_comment >= 1) {
-                                      showInfoDialog(
-                                        context,
-                                        Lo.of(context)!.alert,
-                                        Lo.of(
-                                          context,
-                                        )!.postWithCommentsCannotBeEdited,
-                                      );
-                                      return;
-                                    }
+                                      /// If not my post, show block and report
+                                      if (!isPostMine()) ...[
+                                        _buildComicActionButton(
+                                          icon: FontAwesomeIcons.ban,
+                                          label: LibTr.of(context)!.block,
+                                          onPressed: () {
+                                            showBlockDialog(
+                                              context: context,
+                                              otherUserUid: firebaseUid,
+                                            );
+                                          },
+                                        ),
+                                        const SizedBox(width: 8),
+                                        PostReportButton(
+                                          type: 'post',
+                                          idx: widget.post.idx,
+                                          post: widget.post,
+                                        ),
+                                      ],
 
-                                    final updatedPost =
-                                        await PostUpdateScreen.push(
-                                          context,
-                                          post: post!,
-                                        );
-                                    if (updatedPost != null) {
-                                      widget.post.subject = updatedPost.subject;
-                                      widget.post.content = updatedPost.content;
-                                    }
+                                      /// If my post, show only edit and delete
+                                      if (isPostMine()) ...[
+                                        _buildComicActionButton(
+                                          icon: FontAwesomeIcons.penToSquare,
+                                          label: LibTr.of(context)!.edit,
+                                          onPressed: () async {
+                                            if (post!.no_of_comment >= 1) {
+                                              showInfoDialog(
+                                                context,
+                                                Lo.of(context)!.alert,
+                                                Lo.of(
+                                                  context,
+                                                )!.postWithCommentsCannotBeEdited,
+                                              );
+                                              return;
+                                            }
 
-                                    if (updatedPost != null && mounted) {
-                                      setState(() {
-                                        post = updatedPost;
-                                      });
-                                    }
-                                  },
-                                  onTapDelete: () async {
-                                    /// 댓글이 있는 경우 삭제 불가
-                                    if (post!.no_of_comment >= 1) {
-                                      showInfoDialog(
-                                        context,
-                                        Lo.of(context)!.alert,
-                                        Lo.of(
-                                          context,
-                                        )!.postWithCommentsCannotBeDeleted,
-                                      );
-                                      return;
-                                    }
+                                            final updatedPost =
+                                                await PostUpdateScreen.push(
+                                                  context,
+                                                  post: post!,
+                                                );
+                                            if (updatedPost != null) {
+                                              widget.post.subject =
+                                                  updatedPost.subject;
+                                              widget.post.content =
+                                                  updatedPost.content;
+                                            }
 
-                                    debugLog("deleted post");
+                                            if (updatedPost != null &&
+                                                mounted) {
+                                              setState(() {
+                                                post = updatedPost;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        const SizedBox(width: 8),
+                                        _buildComicActionButton(
+                                          icon: FontAwesomeIcons.trash,
+                                          label: LibTr.of(context)!.delete,
+                                          color: scheme.error,
+                                          onPressed: () async {
+                                            if (post!.no_of_comment >= 1) {
+                                              showInfoDialog(
+                                                context,
+                                                Lo.of(context)!.alert,
+                                                Lo.of(
+                                                  context,
+                                                )!.postWithCommentsCannotBeDeleted,
+                                              );
+                                              return;
+                                            }
 
-                                    final confirm = await showConfirmDialog(
-                                      message: Lo.of(
-                                        context,
-                                      )!.confirmDeletePost,
-                                    );
+                                            final confirm =
+                                                await showConfirmDialog(
+                                                  message: Lo.of(
+                                                    context,
+                                                  )!.confirmDeletePost,
+                                                );
 
-                                    if (confirm) {
-                                      await deletePost(widget.post.idx);
-
-                                      if (context.mounted) {
-                                        context.pop();
-                                      }
-                                    }
-                                  },
-                                  onTapBlock: () {
-                                    showBlockDialog(
-                                      context: context,
-                                      otherUserUid: firebaseUid,
-                                    );
-                                  },
+                                            if (confirm) {
+                                              await deletePost(widget.post.idx);
+                                              if (context.mounted) {
+                                                context.pop();
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
 
                           SizedBox(height: 16),
+
+                          /// Comment section
                           CommentDetailListView(
                             myComment: isCommentMine,
                             noOfComment: noOfComment,
@@ -377,19 +691,18 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               }
                             },
                             onDeleted: (deletedComment) {
-                              // Remove the deleted comment from the list
                               post?.comments.removeWhere(
                                 (comment) => comment.idx == deletedComment.idx,
                               );
 
-                              // Decrease comment count
                               post!.no_of_comment -= 1;
 
-                              // Update UI
                               if (mounted) {
                                 setState(() {});
                               }
                             },
+                            onReplyClicked: setReplyMode,
+                            onEditClicked: setEditMode,
                           ),
                         ]),
                       ),
@@ -397,7 +710,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   ],
                 ),
 
-                /// Floating post info bar that appears on scroll
+                /// Floating post info bar
                 Positioned(
                   top: MediaQuery.of(context).padding.top + kToolbarHeight,
                   left: 0,
@@ -415,7 +728,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         opacity: showPostInfoBar ? 1.0 : 0.0,
                         child: GestureDetector(
                           onTap: () {
-                            /// Scroll to top when info bar is tapped
                             _scrollController.animateTo(
                               0,
                               duration: const Duration(milliseconds: 500),
@@ -425,12 +737,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           child: Container(
                             height: 64,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
+                              color: scheme.surface,
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.outlineVariant,
+                                  color: scheme.outlineVariant,
                                   width: 1,
                                 ),
                               ),
@@ -441,7 +751,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             ),
                             child: Row(
                               children: [
-                                /// Thumbnail image (if available)
                                 if (hasImages)
                                   Container(
                                     width: 44,
@@ -455,14 +764,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       ),
                                     ),
                                   ),
-
-                                /// Title, likes, and comments info
                                 Expanded(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      /// Post title
                                       Text(
                                         subject.isNotEmpty
                                             ? subject
@@ -474,61 +781,76 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                               ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
+                                        style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                               fontWeight: FontWeight.w600,
                                             ),
                                       ),
                                       const SizedBox(height: 4),
+                                      Builder(
+                                        builder: (context) {
+                                          final goodCount =
+                                              post?.good ?? widget.post.good;
+                                          final commentCount = noOfComment;
 
-                                      /// Likes and comments count
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.favorite,
-                                            size: 14,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.primary,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            '${post?.good ?? widget.post.good}',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Icon(
-                                            Icons.comment,
-                                            size: 14,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.primary,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            '$noOfComment',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
-                                          ),
-                                        ],
+                                          if ((goodCount) <= 0 &&
+                                              commentCount <= 0) {
+                                            return const SizedBox.shrink();
+                                          }
+
+                                          final children = <Widget>[];
+
+                                          if ((goodCount) > 0) {
+                                            children.addAll([
+                                              Icon(
+                                                Icons.thumb_up,
+                                                size: 14,
+                                                color: scheme.primary,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                '$goodCount',
+                                                style:
+                                                    theme.textTheme.bodySmall,
+                                              ),
+                                            ]);
+                                          }
+
+                                          if ((goodCount) > 0 &&
+                                              commentCount > 0) {
+                                            children.add(
+                                              const SizedBox(width: 12),
+                                            );
+                                          }
+
+                                          if (commentCount > 0) {
+                                            children.addAll([
+                                              Icon(
+                                                Icons.comment,
+                                                size: 14,
+                                                color: scheme.primary,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                '$commentCount',
+                                                style:
+                                                    theme.textTheme.bodySmall,
+                                              ),
+                                            ]);
+                                          }
+
+                                          return Row(children: children);
+                                        },
                                       ),
                                     ],
                                   ),
                                 ),
-
-                                /// Up arrow indicator to show it's clickable
                                 Icon(
                                   Icons.keyboard_arrow_up,
                                   size: 24,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withValues(alpha: 0.5),
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ],
                             ),
@@ -542,19 +864,155 @@ class _PostViewScreenState extends State<PostViewScreen> {
             ),
       bottomNavigationBar: post != null
           ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CommentToPost(
-                  post: post!,
-                  onCreated: (createdComment) {
-                    post?.comments.add(createdComment);
-                    post!.no_of_comment += 1;
-                    if (mounted) {
-                      setState(() {});
-                      showSuccessSnackBar(context, 'Comment has created');
-                    }
-                  },
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Context header (shown when in reply or edit mode)
+                  if (replyingToComment != null || editingComment != null)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: scheme.surface,
+                        border: Border(
+                          top: BorderSide(
+                            color: scheme.outline,
+                            width: 2.0, // Comic Design: 2.0 border
+                          ),
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Icon(
+                              editingComment != null ? Icons.edit : Icons.reply,
+                              size: 16,
+                              color: scheme.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  editingComment != null
+                                      ? Lo.of(context)!.editing_comment
+                                      : '${Lo.of(context)!.replying_to} ${replyingToComment!.nickname}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: scheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                // Comment content preview
+                                Text(
+                                  editingComment != null
+                                      ? editingComment!.content
+                                      : replyingToComment!.content,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: scheme.onSurface.withValues(alpha: 0.6),
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 20),
+                            onPressed: editingComment != null
+                                ? cancelEditMode
+                                : cancelReplyMode,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Input field (switches between CommentToPost, ReplyToComment, and CommentUpdate)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: editingComment != null
+                        ? CommentUpdate(
+                            comment: editingComment!,
+                            onUpdated: (updatedComment) {
+                              // Find and update the comment in the list
+                              final index = post?.comments.indexWhere(
+                                (c) => c.idx == updatedComment.idx,
+                              );
+                              if (index != null && index >= 0) {
+                                post?.comments[index].content =
+                                    updatedComment.content;
+                                post?.comments[index].files = updatedComment.files;
+                              }
+
+                              // Exit edit mode and show success
+                              cancelEditMode();
+
+                              if (mounted) {
+                                setState(() {});
+                                showSuccessSnackBar(
+                                  context,
+                                  'A comment has updated',
+                                );
+                              }
+                            },
+                          )
+                        : replyingToComment != null
+                            ? ReplyToComment(
+                                parent: replyingToComment!,
+                                onReplied: (createdComment) {
+                                  int? where = post?.comments.indexWhere(
+                                    (comment) =>
+                                        comment.idx == createdComment.idx_parent,
+                                  );
+
+                                  if (where != null) {
+                                    post?.comments.insert(
+                                      where + 1,
+                                      createdComment,
+                                    );
+                                  }
+
+                                  post!.no_of_comment += 1;
+
+                                  // Exit reply mode and show success
+                                  cancelReplyMode();
+
+                                  if (mounted) {
+                                    setState(() {});
+                                    showSuccessSnackBar(
+                                      context,
+                                      'A comment has replied',
+                                    );
+                                  }
+                                },
+                              )
+                            : CommentToPost(
+                                post: post!,
+                                onCreated: (createdComment) {
+                                  post?.comments.add(createdComment);
+                                  post!.no_of_comment += 1;
+                                  if (mounted) {
+                                    setState(() {});
+                                    showSuccessSnackBar(
+                                      context,
+                                      'Comment has created',
+                                    );
+                                  }
+                                },
+                              ),
+                  ),
+                ],
               ),
             )
           : null,

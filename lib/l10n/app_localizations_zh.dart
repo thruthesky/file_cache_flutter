@@ -158,6 +158,12 @@ class LoZh extends Lo {
   String get reply => '回复';
 
   @override
+  String get replying_to => '正在回复';
+
+  @override
+  String get editing_comment => '编辑评论中';
+
+  @override
   String get nickname => '昵称';
 
   @override
@@ -680,6 +686,9 @@ class LoZh extends Lo {
   String get unpin_chat_room_message => '您确定要取消固定此聊天室吗？';
 
   @override
+  String get pin => '固定';
+
+  @override
   String get unpin => '取消固定';
 
   @override
@@ -746,13 +755,13 @@ class LoZh extends Lo {
   String get latestPosts => '最新帖子';
 
   @override
-  String get latestComments => 'Latest Comments';
+  String get latestComments => '最新评论';
 
   @override
   String get viewAll => '查看全部';
 
   @override
-  String get advertisementSpace => 'Advertisement Space';
+  String get advertisementSpace => '广告位';
 
   @override
   String get lv => 'Lv';
@@ -1088,10 +1097,10 @@ class LoZh extends Lo {
   String get points => '积分';
 
   @override
-  String get philgoPhoneLogin => 'Phone Login';
+  String get philgoPhoneLogin => '电话号码登录';
 
   @override
-  String get phoneNumberExample => 'e.g.: 09123456789 or 01012345678';
+  String get phoneNumberExample => '例: 09123456789 或 01012345678';
 
   @override
   String get appName => 'PhilGo';

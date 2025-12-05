@@ -158,6 +158,12 @@ class LoKo extends Lo {
   String get reply => '답글';
 
   @override
+  String get replying_to => '답글 중';
+
+  @override
+  String get editing_comment => '댓글 수정 중';
+
+  @override
   String get nickname => '닉네임';
 
   @override
@@ -685,6 +691,9 @@ class LoKo extends Lo {
   String get unpin_chat_room_message => '이 채팅방의 고정을 해제하시겠습니까?';
 
   @override
+  String get pin => '고정';
+
+  @override
   String get unpin => '고정 해제';
 
   @override
@@ -1082,16 +1091,16 @@ class LoKo extends Lo {
   String get officeInteriorGuideline => '사무실/매장 내부 전체 사진';
 
   @override
-  String get loginToSeeProfile => 'Login to see your profile';
+  String get loginToSeeProfile => '로그인하여 프로필 보기';
 
   @override
-  String get viewPostsCommentsPoints => 'View your posts, comments, and points';
+  String get viewPostsCommentsPoints => '게시글, 댓글, 포인트 확인하기';
 
   @override
-  String get updateYourNickname => 'Update your nickname';
+  String get updateYourNickname => '닉네임을 업데이트하세요';
 
   @override
-  String get points => 'Points';
+  String get points => '포인트';
 
   @override
   String get philgoPhoneLogin => '전화번호 로그인';

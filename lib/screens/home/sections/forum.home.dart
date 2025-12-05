@@ -42,103 +42,177 @@ class _ForumHomeState extends State<ForumHome> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Top SafeArea
-                    SafeArea(child: Container()),
-
-                    // Category header with picker button (no chips)
-                    // Comic Design: 2.0px bottom border
-                    Container(
-                      height: 56,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            // Comic Design: 2.0px border with outline color
-                            color: Theme.of(context).colorScheme.outline,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              homePostCategory.getLabel(context),
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600),
-                              overflow: TextOverflow.ellipsis,
+                    SafeArea(
+                      child:
+                          // Category header with picker button (no chips)
+                          // Comic Design: 2.0px bottom border
+                          Container(
+                            height: 56,
+                            padding: const EdgeInsets.only(right: 4, left: 12),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  // Comic Design: 2.0px border with outline color
+                                  color: Theme.of(context).colorScheme.outline,
+                                  width: 2.0,
+                                ),
+                              ),
                             ),
-                          ),
-                          IconButton(
-                            icon: const FaIcon(
-                              FontAwesomeIcons.penToSquare,
-                              size: 18,
-                            ),
-                            onPressed: () async {
-                              final post = await PostCreateScreen.push(context);
-                              debugLog('post: $post');
-                              if (post != null) {
-                                onNewPostCreated(post);
-                              }
-                            },
-                          ),
-                          IconButton(
-                            icon: const FaIcon(
-                              FontAwesomeIcons.chevronDown,
-                              size: 18,
-                            ),
-                            onPressed: () async {
-                              final selected =
-                                  await showModalBottomSheet<PostCategoryItem>(
-                                    context: context,
-                                    showDragHandle: true,
-                                    builder: (context) {
-                                      return ListView.separated(
-                                        itemCount: categories.length,
-                                        // Comic Design: 2.0px divider
-                                        separatorBuilder: (_, _) => Divider(
-                                          height: 1,
-                                          thickness: 2.0,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.outline,
-                                        ),
-                                        itemBuilder: (context, index) {
-                                          final category = categories[index];
-                                          final isSelected =
-                                              homePostCategory.postId ==
-                                                  category.postId &&
-                                              homePostCategory.category ==
-                                                  category.category;
-                                          return ListTile(
-                                            title: Text(
-                                              category.getLabel(context),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    homePostCategory.getLabel(context),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(fontWeight: FontWeight.w600),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const FaIcon(
+                                    FontAwesomeIcons.penToSquare,
+                                  ),
+                                  onPressed: () async {
+                                    final post = await PostCreateScreen.push(
+                                      context,
+                                    );
+                                    debugLog('post: $post');
+                                    if (post != null) {
+                                      onNewPostCreated(post);
+                                    }
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const FaIcon(
+                                    FontAwesomeIcons.chevronDown,
+                                  ),
+                                  onPressed: () async {
+                                    final selected = await showModalBottomSheet<PostCategoryItem>(
+                                      context: context,
+                                      // Comic Design: transparent background for custom styling
+                                      backgroundColor: Colors.transparent,
+                                      // Comic Design: no shadow
+                                      elevation: 0,
+                                      builder: (context) {
+                                        // Comic Design: Container with rounded top corners and selective borders
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            // Comic Design: Theme surface color
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.surface,
+                                            // Comic Design: 24.0 radius on top corners
+                                            borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(
+                                                12.0,
+                                              ), // Comic Design: rounded top corners
+                                              topRight: Radius.circular(12.0),
                                             ),
-                                            trailing: isSelected
-                                                ? const FaIcon(
-                                                    FontAwesomeIcons.check,
-                                                    size: 16,
-                                                  )
-                                                : null,
-                                            onTap: () {
-                                              Navigator.of(
-                                                context,
-                                              ).pop(category);
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
+                                            // Comic Design: 2.0 border on top, left, right (no bottom)
+                                            border: Border(
+                                              top: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.outline,
+                                                width: 2.0,
+                                              ),
+                                              left: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.outline,
+                                                width: 2.0,
+                                              ),
+                                              right: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.outline,
+                                                width: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              // Drag handle indicator
+                                              // Comic Design: 8px spacing from top
+                                              const SizedBox(height: 8),
+                                              Container(
+                                                width: 32,
+                                                height: 4,
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurfaceVariant
+                                                      .withValues(alpha: 0.4),
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              // Category list
+                                              Flexible(
+                                                child: ListView.separated(
+                                                  shrinkWrap: true,
+                                                  itemCount: categories.length,
+                                                  // Comic Design: 2.0px divider
+                                                  separatorBuilder: (_, _) =>
+                                                      Divider(
+                                                        height: 1,
+                                                        thickness: 2.0,
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.outline,
+                                                      ),
+                                                  itemBuilder: (context, index) {
+                                                    final category =
+                                                        categories[index];
+                                                    final isSelected =
+                                                        homePostCategory
+                                                                .postId ==
+                                                            category.postId &&
+                                                        homePostCategory
+                                                                .category ==
+                                                            category.category;
+                                                    return ListTile(
+                                                      title: Text(
+                                                        category.getLabel(
+                                                          context,
+                                                        ),
+                                                      ),
+                                                      trailing: isSelected
+                                                          ? const FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .check,
+                                                              size: 16,
+                                                            )
+                                                          : null,
+                                                      onTap: () {
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop(category);
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
 
-                              if (selected != null && context.mounted) {
-                                ForumState.of(
-                                  context,
-                                ).setHomePostCategory(selected);
-                              }
-                            },
+                                    if (selected != null && context.mounted) {
+                                      ForumState.of(
+                                        context,
+                                      ).setHomePostCategory(selected);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
                     ),
 
                     // Post List

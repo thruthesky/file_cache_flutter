@@ -164,6 +164,12 @@ class LoEn extends Lo {
   String get reply => 'Reply';
 
   @override
+  String get replying_to => 'Replying to';
+
+  @override
+  String get editing_comment => 'Editing comment';
+
+  @override
   String get nickname => 'Nickname';
 
   @override
@@ -710,6 +716,9 @@ class LoEn extends Lo {
   @override
   String get unpin_chat_room_message =>
       'Are you sure you want to unpin this chat room?';
+
+  @override
+  String get pin => 'Pin';
 
   @override
   String get unpin => 'Unpin';

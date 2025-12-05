@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 import 'package:philgo/widgets/information.box.dart';
+import 'package:philgo/widgets/theme/comic_card.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -230,16 +231,11 @@ class DataCategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Container(
+    return ComicListCard(
           margin: EdgeInsets.only(bottom: sp.s12),
           padding: EdgeInsets.all(sp.s16),
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Row(
             children: [
               IconContainer(
@@ -257,14 +253,13 @@ class DataCategoryWidget extends StatelessWidget {
                       title,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
                     Text(
                       description,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -291,15 +286,10 @@ class EmailRequestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Container(
+    return ComicListCard(
           padding: EdgeInsets.all(sp.s16),
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Row(
             children: [
               IconContainer(
@@ -314,7 +304,6 @@ class EmailRequestWidget extends StatelessWidget {
                   T.withdrawalEmailRequest,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: scheme.onSurface,
                   ),
                 ),
               ),
@@ -344,20 +333,13 @@ class ProcessingInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Container(
+    return ComicListCard(
           padding: EdgeInsets.all(sp.s16),
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Text(
             text,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurface,
-            ),
+            style: theme.textTheme.bodyMedium,
           ),
         )
         .animate(target: isAnimated ? 1 : 0)
@@ -386,12 +368,8 @@ class RetentionInfoWidget extends StatelessWidget {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Container(
+    return ComicListCard(
           padding: EdgeInsets.all(sp.s16),
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -405,16 +383,9 @@ class RetentionInfoWidget extends StatelessWidget {
               ),
               SizedBox(width: sp.s16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      text,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  text,
+                  style: theme.textTheme.bodyMedium,
                 ),
               ),
             ],
@@ -443,15 +414,10 @@ class ContactInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Container(
+    return ComicListCard(
           padding: EdgeInsets.all(sp.s16),
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -463,16 +429,9 @@ class ContactInfoWidget extends StatelessWidget {
               ),
               SizedBox(width: sp.s16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      text,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  text,
+                  style: theme.textTheme.bodyMedium,
                 ),
               ),
             ],

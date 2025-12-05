@@ -48,6 +48,8 @@
   "enterComment": "댓글을 입력하세요",
   "beTheFirstToComment": "가장 먼저 댓글을 작성해 보세요",
   "reply": "답글",
+  "replying_to": "답글 중",
+  "editing_comment": "댓글 수정 중",
   "nickname": "닉네임",
   "nicknameHint": "닉네임을 입력하세요",
   "fullName": "이름",
@@ -217,6 +219,7 @@
   "no_bookmarked_folders": "북마크된 폴더가 없습니다",
   "bookmarked_chats": "북마크된 채팅",
   "no_bookmarked_chats": "이 폴더에 북마크된 채팅이 없습니다",
+  "pin": "고정",
   "unpin_chat_room_title": "채팅방 고정 해제",
   "unpin_chat_room_message": "이 채팅방의 고정을 해제하시겠습니까?",
   "unpin": "고정 해제",
@@ -349,6 +352,10 @@
   "officeInteriorGuideline": "사무실/매장 내부 전체 사진",
   "philgoPhoneLogin": "전화번호 로그인",
   "phoneNumberExample": "예: 09123456789 또는 01012345678",
+  "loginToSeeProfile": "로그인하여 프로필 보기",
+  "viewPostsCommentsPoints": "게시글, 댓글, 포인트 확인하기",
+  "updateYourNickname": "닉네임을 업데이트하세요",
+  "points": "포인트",
   "appName": "필고",
   "appSlogan": "필리핀의 모든 것을 담았습니다"
 

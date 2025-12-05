@@ -137,8 +137,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0, // Comic Design: no shadow
         leading: IconButton(
-          icon: const FaIcon(FontAwesomeIcons.lightArrowLeft, size: 18),
+          icon: const FaIcon(FontAwesomeIcons.arrowLeft, size: 20),
           onPressed: () async {
             // Check if there's any content (title, content, or uploaded files)
             final hasContent =
@@ -176,21 +177,30 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           },
         ),
         actions: [
-          IconButton(
-            icon: isLoading
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                  )
-                : const FaIcon(FontAwesomeIcons.lightCheck, size: 18),
-
-            onPressed: isLoading || uploadingCount > 0 ? null : _handleSubmit,
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: IconButton(
+              icon: isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    )
+                  : const FaIcon(FontAwesomeIcons.check, size: 20),
+              onPressed: isLoading || uploadingCount > 0 ? null : _handleSubmit,
+            ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 2,
+            color: Theme.of(context).colorScheme.outline,
+          ), // Comic Design: 2.0 border
+        ),
       ),
       body: Column(
         children: [

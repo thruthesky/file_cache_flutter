@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/information.box.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo/widgets/theme/comic_text_form_field.dart';
 
-/// Company name and optional company domain fields
+/// Company name and optional company domain fields - Comic Design
 class FormBasicInfo extends StatelessWidget {
   const FormBasicInfo({
     super.key,
@@ -28,20 +27,33 @@ class FormBasicInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
     final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextFieldSet(
-          controller: nameController,
-          label: '${T.companyName} *',
-          hintText: T.enterCompanyName,
-          prefixFaIconData: FontAwesomeIcons.lightBuilding,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+        /// Comic Design: Company Name Field
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${T.companyName} *',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
+              ),
+            ),
+            SizedBox(height: sp.s8),
+            ComicTextFormField(
+              controller: nameController,
+              hintText: T.enterCompanyName,
+            ),
+          ],
         ),
 
-        SizedBox(height: sp.s8),
+        SizedBox(height: sp.s16),
 
+        /// Comic Design: Checkbox with proper styling
         Row(
           children: [
             Checkbox(
@@ -50,48 +62,96 @@ class FormBasicInfo extends StatelessWidget {
                 onUseCompanyDomainChanged(value ?? false);
               },
             ),
-            Text(
-              T.useCompanyDomain,
-              style: Theme.of(context).textTheme.bodyMedium,
+            Expanded(
+              child: Text(
+                T.useCompanyDomain,
+                style: theme.textTheme.bodyMedium,
+              ),
             ),
           ],
         ),
 
-        InformationBox(message: T.seoFeaturesMessage),
-
         SizedBox(height: sp.s8),
 
+        InformationBox(message: T.seoFeaturesMessage),
+
+        SizedBox(height: sp.s16),
+
         if (useCompanyDomain) ...[
-          TextFieldSet(
-            controller: familySiteDomainController,
-            label: T.familySiteDomain,
-            hintText: T.companyNameExample,
-            prefixFaIconData: FontAwesomeIcons.lightHeading,
-            decoration: InputDecoration(
-              suffix: Text(
-                '.philgo.com',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
+          /// Comic Design: Family Site Domain Field
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                T.familySiteDomain,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: scheme.primary,
                 ),
               ),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 8),
+              SizedBox(height: sp.s8),
+              ComicTextFormField(
+                controller: familySiteDomainController,
+                hintText: T.companyNameExample,
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    widthFactor: 1.0,
+                    child: Text(
+                      '.philgo.com',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
 
-          TextFieldSet(
-            controller: familySiteNameController,
-            label: T.familySiteName,
-            hintText: T.enterFamilySiteName,
-            prefixFaIconData: FontAwesomeIcons.lightHeading,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+          SizedBox(height: sp.s16),
+
+          /// Comic Design: Family Site Name Field
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                T.familySiteName,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: scheme.primary,
+                ),
+              ),
+              SizedBox(height: sp.s8),
+              ComicTextFormField(
+                controller: familySiteNameController,
+                hintText: T.enterFamilySiteName,
+              ),
+            ],
           ),
 
-          TextFieldSet(
-            controller: familySiteDescriptionController,
-            label: T.familySiteDescription,
-            hintText: T.enterFamilySiteDescription,
-            prefixFaIconData: FontAwesomeIcons.lightHeading,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+          SizedBox(height: sp.s16),
+
+          /// Comic Design: Family Site Description Field
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                T.familySiteDescription,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: scheme.primary,
+                ),
+              ),
+              SizedBox(height: sp.s8),
+              ComicTextFormField(
+                controller: familySiteDescriptionController,
+                hintText: T.enterFamilySiteDescription,
+                maxLines: 3,
+                minLines: 2,
+              ),
+            ],
           ),
         ],
       ],

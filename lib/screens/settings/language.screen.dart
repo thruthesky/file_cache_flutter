@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/state/app.state.dart';
+import 'package:philgo/widgets/theme/comic_card.dart';
+import 'package:philgo/widgets/theme/comic_snackbar.dart';
 
 class LanguageScreen extends StatefulWidget {
   static const String routeName = '/language';
@@ -42,16 +45,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
     if (_selectedLanguage == null) return;
 
     final appState = AppState.of(context);
-    appState.setLocale(Locale(_selectedLanguage!));
+    final newLocale = Locale(_selectedLanguage!);
+    appState.setLocale(newLocale);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(Lo.of(context)!.languageChanged),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    // Use the newly selected locale for the snackbar message
+    final lo = lookupLo(newLocale);
 
-    Navigator.of(context).pop();
+    // Comic Design: Use Comic SnackBar for consistent styling
+    showComicInfoSnackBar(context, lo.languageChanged);
+
+    // Navigator.of(context).pop();
   }
 
   @override
@@ -66,96 +69,111 @@ class _LanguageScreenState extends State<LanguageScreen> {
           Lo.of(context)!.languageSettings,
           style: theme.textTheme.titleLarge,
         ),
+        // Comic Design: AppBar with 2.0px bottom border
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: scheme.outlineVariant),
+          child: Container(height: 2, color: scheme.outline),
         ),
       ),
 
       /// Body
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: scheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: DropdownButton<String>(
-                value: _selectedLanguage,
-                isExpanded: true,
-                underline: const SizedBox(),
-                hint: Text(Lo.of(context)!.selectLanguage),
-                icon: Icon(Icons.arrow_drop_down, color: scheme.onSurface),
-                items: _languages.map((language) {
-                  return DropdownMenuItem<String>(
-                    value: language['code'],
-                    child: Row(
-                      children: [
-                        /// 언어 아이콘
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: scheme.primaryContainer,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              language['code']!.toUpperCase(),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.onPrimaryContainer,
-                                fontWeight: FontWeight.bold,
+            /// Language Selection Section - Comic Card
+            ComicCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Header
+                  Text(
+                    Lo.of(context)!.selectLanguage,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: scheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// Language Options
+                  ..._languages.map((language) {
+                    final isSelected = _selectedLanguage == language['code'];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: ComicListCard(
+                        onTap: () {
+                          setState(() {
+                            _selectedLanguage = language['code'];
+                          });
+                          _saveLanguage();
+                        },
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            /// Language Icon Badge
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? scheme.primaryContainer
+                                    : scheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? scheme.primary
+                                      : scheme.outline,
+                                  width: isSelected ? 2.0 : 1.5,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  language['code']!.toUpperCase(),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: isSelected
+                                        ? scheme.onPrimaryContainer
+                                        : scheme.onSurface,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
+                            const SizedBox(width: 12),
 
-                        /// 언어 이름
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
+                            /// Language Name
+                            Expanded(
+                              child: Text(
                                 language['name']!,
-                                style: theme.textTheme.bodyMedium,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? scheme.primary
+                                      : scheme.onSurface,
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+
+                            /// Selection Indicator
+                            if (isSelected)
+                              FaIcon(
+                                FontAwesomeIcons.circleCheck,
+                                size: 20,
+                                color: scheme.primary,
+                              ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedLanguage = newValue;
-                  });
-                },
+                      ),
+                    );
+                  }),
+                ],
               ),
             ),
           ],
-        ),
-      ),
-
-      /// Bottom Navigation Bar with Save Button
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: scheme.surface),
-          child: FilledButton(
-            onPressed: _selectedLanguage != null ? _saveLanguage : null,
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              minimumSize: const Size(double.infinity, 56),
-            ),
-            child: Text(Lo.of(context)!.saveLanguage),
-          ),
         ),
       ),
     );

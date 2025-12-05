@@ -98,12 +98,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           SliverAppBar(
             expandedHeight: 240,
             pinned: true,
+            // Comic design: No elevation
             elevation: 0,
             foregroundColor: scheme.onPrimaryContainer,
             backgroundColor: scheme.surfaceContainerLow,
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(height: 1, color: scheme.outlineVariant),
+              preferredSize: const Size.fromHeight(2.0),
+              // Comic design: 2.0px border with outline color
+              child: Container(height: 2.0, color: scheme.outline),
             ),
             title: _isCollapsed && company != null
                 ? Text(company!.name, style: theme.textTheme.titleLarge)
@@ -194,21 +196,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(sp.s8),
-                                decoration: BoxDecoration(
-                                  color: scheme.primaryContainer.withValues(
-                                    alpha: 0.5,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: FaIcon(
-                                  FontAwesomeIcons.lightLocationDot,
-                                  color: scheme.primary,
-                                  size: 20,
-                                ),
-                              ),
-                              SizedBox(width: sp.s12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,10 +306,11 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       Container(
                         padding: EdgeInsets.all(sp.s16),
                         decoration: BoxDecoration(
-                          color: scheme.surfaceContainerHighest.withValues(
-                            alpha: 0.3,
-                          ),
+                          color: scheme.surface,
+                          // Comic design: Border radius 12 for large elements
                           borderRadius: BorderRadius.circular(12),
+                          // Comic design: 2.0px border with outline color
+                          border: Border.all(color: scheme.outline, width: 2.0),
                         ),
                         child: Text(
                           company!.description,
@@ -381,7 +369,10 @@ class CompanyLogo extends StatelessWidget {
       margin: EdgeInsets.only(right: sp.s16),
       decoration: BoxDecoration(
         color: scheme.surfaceContainerHighest,
+        // Comic design: Border radius 12 for large elements
         borderRadius: BorderRadius.circular(12),
+        // Comic design: 2.0px border with outline color
+        border: Border.all(color: scheme.outline, width: 2.0),
       ),
       clipBehavior: Clip.antiAlias,
       child: Image.network(

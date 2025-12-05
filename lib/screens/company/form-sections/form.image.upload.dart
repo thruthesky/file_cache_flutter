@@ -4,7 +4,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/image.upload.field.dart';
 import 'package:philgo/widgets/information.box.dart';
 
-/// 이미지 업로드 폼 섹션
+/// 이미지 업로드 폼 섹션 - Comic Design
 /// All company image uploads
 class FormImageUpload extends StatelessWidget {
   const FormImageUpload({

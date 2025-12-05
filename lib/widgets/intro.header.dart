@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/themes/app.spacing.dart';
 
+/// IntroHeader - Comic Design
+///
+/// A header widget that follows Comic design principles with:
+/// - 2.0px border (Comic standard)
+/// - Zero elevation (flat design)
+/// - 12px rounded corners
+/// - Theme-based colors
 class IntroHeader extends StatelessWidget {
   const IntroHeader({
     super.key,
@@ -25,8 +32,12 @@ class IntroHeader extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(sp.s24),
       decoration: BoxDecoration(
+        // Comic Design: Theme surface color for background
         color: scheme.primaryContainer,
-        borderRadius: BorderRadius.circular(16),
+        // Comic Design: 12px rounded corners for large elements
+        borderRadius: BorderRadius.circular(12),
+        // Comic Design: 2.0px border with primary color
+        border: Border.all(color: scheme.primary, width: 2.0),
       ),
       child: Column(
         children: [

@@ -26,6 +26,8 @@
     "editProfile": "编辑个人资料",
     "beTheFirstToComment": "成为第一个发表评论的人",
     "reply": "回复",
+    "replying_to": "正在回复",
+    "editing_comment": "编辑评论中",
     "nickname": "昵称",
     "nicknameHint": "请输入昵称",
     "fullName": "姓名",
@@ -349,6 +351,11 @@
     "viewPostsCommentsPoints": "查看您的帖子、评论和积分",
     "updateYourNickname": "请更新您的昵称",
     "points": "积分",
+    "pin": "固定",
+    "latestComments": "最新评论",
+    "advertisementSpace": "广告位",
+    "philgoPhoneLogin": "电话号码登录",
+    "phoneNumberExample": "例: 09123456789 或 01012345678",
     "appName": "PhilGo",
     "appSlogan": "菲律宾的一切尽在于此"
 }

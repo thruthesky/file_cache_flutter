@@ -295,8 +295,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
+              // Comic design: 2.0px border with outline color
               border: Border(
-                bottom: BorderSide(color: scheme.outlineVariant, width: 1),
+                bottom: BorderSide(color: scheme.outline, width: 2.0),
               ),
             ),
             child: Row(
@@ -527,25 +528,32 @@ class CompanyCategoryFilterChip extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
+    // Comic design: Define colors based on selection state
     final backgroundColor = isSelected
         ? scheme.secondaryContainer
-        : scheme.surfaceContainerHighest;
+        : scheme.surface;
     final iconColor = isSelected
         ? scheme.onSecondaryContainer
         : scheme.onSurfaceVariant;
     final textColor = isSelected
         ? scheme.onSecondaryContainer
         : scheme.onSurface;
+    // Comic design: Border color (primary when selected, outline when not)
+    final borderColor = isSelected ? scheme.primary : scheme.outline;
 
     return Padding(
       padding: padding ?? EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
+        // Comic design: Border radius 8 for small elements
+        borderRadius: BorderRadius.circular(8),
         child: Container(
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(16),
+            // Comic design: Border radius 8 for small elements
+            borderRadius: BorderRadius.circular(8),
+            // Comic design: 2.0px border
+            border: Border.all(color: borderColor, width: 1.5),
           ),
           width: 80,
           height: 80,
@@ -554,13 +562,19 @@ class CompanyCategoryFilterChip extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               FaIcon(icon, size: 20, color: iconColor),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                style: theme.textTheme.labelSmall?.copyWith(color: textColor),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              const SizedBox(height: 4),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: textColor,
+                    fontSize: 10,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

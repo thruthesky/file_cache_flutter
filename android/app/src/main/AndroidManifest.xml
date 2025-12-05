@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-        android:label="philgo"
+        android:label="PhilGo"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
