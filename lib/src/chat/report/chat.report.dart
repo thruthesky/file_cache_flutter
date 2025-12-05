@@ -111,105 +111,239 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Dialog(
+      // Comic design: no shadow
+      elevation: 0,
+      // Comic design: rounded corners (borderRadius: 12)
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // Remove default background to use Container decoration
+      backgroundColor: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.all(24),
         constraints: const BoxConstraints(maxWidth: 400),
+        decoration: BoxDecoration(
+          // Comic design: surface background color
+          color: colorScheme.surface,
+          // Comic design: 2.0px outline border with rounded corners
+          border: Border.all(color: colorScheme.outline, width: 2.0),
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Dialog Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  reportType == ROOM
-                      ? LibTr.of(context)!.report_chat_room
-                      : LibTr.of(context)!.report_chat_message,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                IconButton(
-                  onPressed: widget.onClose,
-                  icon: const Icon(Icons.close),
-                  tooltip: LibTr.of(context)!.close,
-                ),
-              ],
-            ),
-            Divider(),
-            const SizedBox(height: 8),
-
-            // Report Reason Selection
-            Text(
-              LibTr.of(context)!.report_select_reason,
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 8),
-
-            // Report Reason Buttons
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: reportReasons.map((reason) {
-                final isSelected = _reportReason == reason;
-                return InkWell(
-                  onTap: () => setState(() => _reportReason = reason),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.surface,
-                      border: Border.all(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.onSurface,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+            // Dialog Header - Comic design spacing (multiples of 8)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
                     child: Text(
-                      LibTr.of(context)!.get_report_reason(reason),
-                      style: TextStyle(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.surface
-                            : Theme.of(context).colorScheme.onSurface,
-                        fontSize: 13,
-                        fontWeight: isSelected
-                            ? FontWeight.w500
-                            : FontWeight.normal,
+                      reportType == ROOM
+                          ? LibTr.of(context)!.report_chat_room
+                          : LibTr.of(context)!.report_chat_message,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                );
-              }).toList(),
+                  const SizedBox(width: 8),
+                  // Close button - Comic design
+                  InkWell(
+                    onTap: widget.onClose,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: colorScheme.outline,
+                          width: 2.0,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        size: 20,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
 
-            // Action Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: _isSubmitting ? null : widget.onClose,
-                  child: Text(LibTr.of(context)!.cancel),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: _isSubmitting ? null : _handleReportSubmit,
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(LibTr.of(context)!.report_submit),
-                ),
-              ],
+            // Divider - Comic design
+            Container(height: 2, color: colorScheme.outline),
+
+            // Content area - Comic design spacing
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Report Reason Selection label
+                  Text(
+                    LibTr.of(context)!.report_select_reason,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Report Reason Buttons - Comic design
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: reportReasons.map((reason) {
+                      final isSelected = _reportReason == reason;
+                      return InkWell(
+                        onTap: () => setState(() => _reportReason = reason),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            // Comic design: primary color when selected
+                            color: isSelected
+                                ? colorScheme.primary
+                                : colorScheme.surface,
+                            // Comic design: 2.0px border
+                            border: Border.all(
+                              color: isSelected
+                                  ? colorScheme.primary
+                                  : colorScheme.outline,
+                              width: 2.0,
+                            ),
+                            // Comic design: border radius 8 for small elements
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            LibTr.of(context)!.get_report_reason(reason),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: isSelected
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurface,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+
+            // Action Buttons - Comic design
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Cancel button - Comic design neutral button
+                  ElevatedButton(
+                    onPressed: _isSubmitting ? null : widget.onClose,
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: surface background
+                      backgroundColor: WidgetStateProperty.all(
+                        colorScheme.surface,
+                      ),
+                      // Comic design: onSurface text color
+                      foregroundColor: WidgetStateProperty.all(
+                        colorScheme.onSurface,
+                      ),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodySmall,
+                      ),
+                    ),
+                    child: Text(LibTr.of(context)!.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  // Submit button - Comic design primary button
+                  ElevatedButton(
+                    onPressed: _isSubmitting ? null : _handleReportSubmit,
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: _isSubmitting
+                                ? colorScheme.outline
+                                : colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: primary background
+                      backgroundColor: WidgetStateProperty.all(
+                        _isSubmitting
+                            ? colorScheme.surfaceContainerHighest
+                            : colorScheme.primary,
+                      ),
+                      // Comic design: onPrimary text color
+                      foregroundColor: WidgetStateProperty.all(
+                        _isSubmitting
+                            ? colorScheme.onSurface
+                            : colorScheme.onPrimary,
+                      ),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodySmall,
+                      ),
+                    ),
+                    child: _isSubmitting
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colorScheme.onSurface,
+                            ),
+                          )
+                        : Text(LibTr.of(context)!.report_submit),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

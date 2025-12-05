@@ -27,92 +27,111 @@ class PinnedChatRoomsList extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return Container(
-          // 고정된 채팅방 섹션 배경 - primaryContainer로 구분
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                colorScheme.primaryContainer.withValues(alpha: 0.15),
-                colorScheme.surface,
-              ],
-            ),
-            // Flat design - subtle border instead of shadow
-            border: Border(
-              bottom: BorderSide(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-                width: 1,
+        return ValueListenableBuilder<Set<String>>(
+          valueListenable: UserService.instance.blockedUsersStream,
+          builder: (context, blockedUsers, _) {
+            // Filter out blocked users to get the actual display count
+            final filteredCount = pinnedChatRooms.where((roomId) {
+              final otherUserUid = getOtherUserUidFromChatRoomId(roomId);
+              if (otherUserUid == null) return false;
+              return !blockedUsers.contains(otherUserUid);
+            }).length;
+
+            // If all pinned chats are from blocked users, show nothing
+            if (filteredCount == 0) {
+              return const SizedBox.shrink();
+            }
+
+            return Container(
+              // Comic design - solid background color with primaryContainer
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer.withValues(alpha: 0.1),
+                // Comic design - 2.0px outline border at bottom
+                border: Border(
+                  bottom: BorderSide(color: colorScheme.outline, width: 2.0),
+                ),
               ),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 섹션 헤더
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: Row(
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.solidThumbtack,
-                      size: 14,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      LibTr.of(context)!.pinned_chats,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${pinnedChatRooms.length}',
-                        style: theme.textTheme.labelSmall?.copyWith(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 섹션 헤더 - Comic design with Theme-based spacing
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Row(
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.solidThumbtack,
+                          size: 16,
                           color: colorScheme.primary,
-                          fontWeight: FontWeight.w700,
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        Text(
+                          LibTr.of(context)!.pinned_chats,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Comic design - badge with 2.0px border and rounded corners
+                        // Show filtered count (excluding blocked users)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: colorScheme.primary,
+                              width: 2.0,
+                            ),
+                          ),
+                          child: Text(
+                            '$filteredCount',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  // 가로 스크롤 리스트
+                  // Filter out blocked users from the pinned chat rooms list
+                  SizedBox(
+                    height: 108,
+                    child: Builder(
+                      builder: (context) {
+                        final filteredRoomIds = pinnedChatRooms.where((roomId) {
+                          final otherUserUid = getOtherUserUidFromChatRoomId(roomId);
+                          if (otherUserUid == null) return false;
+                          return !blockedUsers.contains(otherUserUid);
+                        }).toList();
+
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          itemCount: filteredRoomIds.length,
+                          itemBuilder: (context, index) {
+                            final roomId = filteredRoomIds[index];
+                            return _PinnedChatRoomItem(
+                              roomId: roomId,
+                              onTap: () => onTap(roomId),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
               ),
-              // 가로 스크롤 리스트
-              SizedBox(
-                height: 108,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  itemCount: pinnedChatRooms.length,
-                  itemBuilder: (context, index) {
-                    final roomId = pinnedChatRooms.elementAt(index);
-                    return Blocked(
-                      otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
-                      yes: () => const SizedBox.shrink(),
-                      no: () => _PinnedChatRoomItem(
-                        roomId: roomId,
-                        onTap: () => onTap(roomId),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -127,22 +146,141 @@ class _PinnedChatRoomItem extends StatelessWidget {
   final VoidCallback onTap;
 
   /// 고정 해제 확인 다이얼로그 표시
+  /// Comic design applied - 2.0px border, rounded corners, no shadow
   Future<void> _showUnpinConfirmDialog(BuildContext context) async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(LibTr.of(context)!.unpin_chat_room_title),
-        content: Text(LibTr.of(context)!.unpin_chat_room_message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(LibTr.of(context)!.cancel),
+      builder: (context) => Dialog(
+        // Comic design: no shadow
+        elevation: 0,
+        // Comic design: rounded corners (borderRadius: 12)
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        // Remove default background to use Container decoration
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            // Comic design: surface background color
+            color: colorScheme.surface,
+            // Comic design: 2.0px outline border with rounded corners
+            border: Border.all(
+              color: colorScheme.outline,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(LibTr.of(context)!.unpin),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title section - Comic design spacing (multiples of 8)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                child: Text(
+                  LibTr.of(context)!.unpin_chat_room_title,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              // Content section - Comic design spacing
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Text(
+                  LibTr.of(context)!.unpin_chat_room_message,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+
+              // Actions section - Comic design buttons with spacing
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Cancel button - Comic design neutral button
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: ButtonStyle(
+                        // Comic design: no shadow
+                        elevation: WidgetStateProperty.all(0),
+                        // Comic design: 2.0px border with rounded corners
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Comic design: surface background
+                        backgroundColor:
+                            WidgetStateProperty.all(colorScheme.surface),
+                        // Comic design: onSurface text color
+                        foregroundColor:
+                            WidgetStateProperty.all(colorScheme.onSurface),
+                        // Comic design: padding in multiples of 8
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        // Comic design: text style from Theme
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(LibTr.of(context)!.cancel),
+                    ),
+                    const SizedBox(width: 8),
+                    // Unpin button - Comic design error button (destructive action)
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: ButtonStyle(
+                        // Comic design: no shadow
+                        elevation: WidgetStateProperty.all(0),
+                        // Comic design: 2.0px border with rounded corners
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.error,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Comic design: error background for destructive action
+                        backgroundColor:
+                            WidgetStateProperty.all(colorScheme.error),
+                        // Comic design: onError text color
+                        foregroundColor:
+                            WidgetStateProperty.all(colorScheme.onError),
+                        // Comic design: padding in multiples of 8
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        // Comic design: text style from Theme
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(LibTr.of(context)!.unpin),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 
@@ -219,23 +357,21 @@ class _PinnedChatRoomItem extends StatelessWidget {
         final unreadCount = join.unread;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               onTap: onTap,
               child: Container(
-                width: 76,
+                width: 80,
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  // Flat design - subtle border for definition
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.2),
-                    width: 1.5,
-                  ),
+                  // Comic design - rounded corners 12 for large elements
+                  borderRadius: BorderRadius.circular(12),
+                  // Comic design - 2.0px outline border
+                  border: Border.all(color: colorScheme.outline, width: 2.0),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -246,7 +382,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                       children: [
                         // 아바타
                         Avatar(photoUrl: photoUrl, size: 56, radius: 28),
-                        // 우측 상단 닫기 버튼
+                        // 우측 상단 닫기 버튼 - Comic design
                         Positioned(
                           right: -4,
                           top: -4,
@@ -258,37 +394,40 @@ class _PinnedChatRoomItem extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: colorScheme.errorContainer,
                                 shape: BoxShape.circle,
+                                // Comic design - 2.0px border
                                 border: Border.all(
-                                  color: colorScheme.surface,
-                                  width: 2,
+                                  color: colorScheme.error,
+                                  width: 2.0,
                                 ),
                               ),
                               child: Center(
                                 child: FaIcon(
                                   FontAwesomeIcons.xmark,
-                                  color: colorScheme.onErrorContainer,
+                                  color: colorScheme.error,
                                   size: 12,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        // 읽지 않은 메시지 배지
+                        // 읽지 않은 메시지 배지 - Comic design
                         if (unreadCount > 0)
                           Positioned(
-                            left: -4,
-                            top: -4,
+                            right: -4,
+                            bottom: -4,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
+                                horizontal: 8,
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
                                 color: colorScheme.error,
-                                borderRadius: BorderRadius.circular(10),
+                                // Comic design - rounded corners 32 for small elements
+                                borderRadius: BorderRadius.circular(32),
+                                // Comic design - 2.0px border
                                 border: Border.all(
                                   color: colorScheme.surface,
-                                  width: 2,
+                                  width: 2.0,
                                 ),
                               ),
                               child: Text(

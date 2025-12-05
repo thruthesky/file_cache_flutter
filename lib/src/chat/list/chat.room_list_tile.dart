@@ -195,190 +195,392 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         ? colorScheme.primaryContainer.withValues(alpha: 0.3)
         : colorScheme.surface;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(16.0),
-        // Flat design - no shadow, use color contrast
-        border: isPinned
-            ? Border.all(
-                color: colorScheme.primary.withValues(alpha: 0.2),
-                width: 1.5,
-              )
-            : null,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16.0),
-          onTap: onTap ?? () => widget.onTap(roomId),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                // Avatar with enhanced styling
-                buildAvatar(),
-                const SizedBox(width: 12),
-                // Content area
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildTitle(),
-                      const SizedBox(height: 4),
-                      subTitleWidget ??
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (subTitle.isNotEmpty)
-                                Text(
-                                  subTitle,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurface.withValues(
-                                      alpha: 0.6,
-                                    ),
-                                  ),
-                                ),
-                              if (lastMessageAt > 0) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  formatTimestamp(context, lastMessageAt),
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: colorScheme.onSurface.withValues(
-                                      alpha: 0.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                    ],
-                  ),
-                ),
-                // Trailing section
-                if (!blocked) ...[const SizedBox(width: 8), buildTrailing()],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// 채팅방 제목 위젯
-  Widget buildTitle() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Row(
+    return Stack(
       children: [
-        Expanded(
-          child: Text(
-            name,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
+        // Main content
+        Container(
+          margin: const EdgeInsets.only(top: 16.0, left: 8, right: 8),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            // Comic design - rounded corners 12 for large elements
+            borderRadius: BorderRadius.circular(12.0),
+            // Comic design - 2.0px outline border
+            border: Border.all(
+              color: isPinned
+                  ? colorScheme.primary
+                  : colorScheme.outline.withValues(alpha: 0.3),
+              width: 2.0,
             ),
-            overflow: TextOverflow.ellipsis,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12.0),
+              onTap: onTap ?? () => widget.onTap(roomId),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  children: [
+                    // Left Column: Avatar + Content
+                    Expanded(
+                      child: Row(
+                        children: [
+                          // Avatar
+                          buildAvatar(),
+                          const SizedBox(width: 12),
+                          // Content: Title and Subtitle with date
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Title
+                                Text(
+                                  name,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                const SizedBox(height: 4),
+                                // Subtitle with date separator - flexible layout
+                                subTitleWidget ??
+                                    (subTitle.isNotEmpty || lastMessageAt > 0
+                                        ? Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            spacing: 4,
+                                            children: [
+                                              if (subTitle.isNotEmpty)
+                                                Flexible(
+                                                  child: Text(
+                                                    subTitle,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: theme
+                                                        .textTheme
+                                                        .bodyMedium
+                                                        ?.copyWith(
+                                                          color: colorScheme
+                                                              .onSurface
+                                                              .withValues(
+                                                                alpha: 0.6,
+                                                              ),
+                                                        ),
+                                                  ),
+                                                ),
+                                              // Date with bullet separator
+                                              if (lastMessageAt > 0) ...[
+                                                if (subTitle.isNotEmpty)
+                                                  Text(
+                                                    '•',
+                                                    style: theme
+                                                        .textTheme
+                                                        .bodyMedium
+                                                        ?.copyWith(
+                                                          color: colorScheme
+                                                              .onSurface
+                                                              .withValues(
+                                                                alpha: 0.4,
+                                                              ),
+                                                        ),
+                                                  ),
+                                                Text(
+                                                  formatTimestamp(
+                                                    context,
+                                                    lastMessageAt,
+                                                  ),
+                                                  style: theme
+                                                      .textTheme
+                                                      .labelSmall
+                                                      ?.copyWith(
+                                                        color: colorScheme
+                                                            .onSurface
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
+                                                      ),
+                                                ),
+                                              ],
+                                            ],
+                                          )
+                                        : const SizedBox.shrink()),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Right Column: Unread badge only
+                    if (!blocked) ...[
+                      const SizedBox(width: 12),
+                      buildTrailing(),
+                    ],
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
+        // Pinned icon - positioned at upper right with tilt
+        if (!blocked) buildPinnedIcon(),
       ],
     );
   }
 
-  /// 채팅방 타일 우측 트레일링 위젯 (읽지 않은 메시지 배지 + 즐겨찾기 아이콘 + 고정 아이콘)
+  /// 고정된 채팅방 표시 - 우측 상단에 핀 아이콘을 기울여서 배치
+  Widget buildPinnedIcon() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return ValueListenableBuilder<Set<String>>(
+      valueListenable: UserService.instance.pinnedChatRoomsStream,
+      builder: (context, pinnedRooms, _) {
+        final isPinnedNow = pinnedRooms.contains(roomId);
+        if (!isPinnedNow) return const SizedBox.shrink();
+
+        return Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () async {
+              await togglePinned();
+              setState(() {});
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                // Round container background for visibility
+                color: colorScheme.primaryContainer,
+                shape: BoxShape.circle,
+                // Comic design - 2.0px border
+                border: Border.all(color: colorScheme.primary, width: 2.0),
+              ),
+              child: Transform.rotate(
+                angle: 0.4, // Tilt angle in radians (~23 degrees)
+                child: FaIcon(
+                  FontAwesomeIcons.solidThumbtack,
+                  color: colorScheme.primary,
+                  size: 16,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// 채팅방 타일 우측 트레일링 위젯 - Unread badge and menu button
   Widget buildTrailing() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 즐겨찾기 아이콘 - 즐겨찾기에 추가된 경우에만 별 표시
-            ValueListenableBuilder<bool>(
-              valueListenable: _isFavoritedNotifier,
-              builder: (context, isFavorited, _) {
-                if (!isFavorited) return const SizedBox.shrink();
-                return Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: FaIcon(
-                    FontAwesomeIcons.solidStar,
-                    color: Colors.amber,
-                    size: 16,
-                  ),
-                );
-              },
-            ),
-            // 고정 아이콘 버튼
-            ValueListenableBuilder<Set<String>>(
-              valueListenable: UserService.instance.pinnedChatRoomsStream,
-              builder: (context, pinnedRooms, _) {
-                final isPinnedNow = pinnedRooms.contains(roomId);
-                return IconButton(
-                  visualDensity: const VisualDensity(
-                    horizontal: -4,
-                    vertical: -4,
-                  ),
-                  icon: FaIcon(
-                    isPinnedNow
-                        ? FontAwesomeIcons.solidThumbtack
-                        : FontAwesomeIcons.lightThumbtack,
-                    color: isPinnedNow
-                        ? colorScheme.primary
-                        : colorScheme.onSurface.withValues(alpha: 0.4),
-                    size: 18,
-                  ),
-                  onPressed: () async {
-                    await togglePinned();
-                    setState(() {});
-                  },
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                );
-              },
-            ),
-          ],
+        // Unread badge
+        if (unread > 0) ...[buildUnreadBadge(unread)],
+        // Vertical 3-dot menu button
+        PopupMenuButton<String>(
+          icon: FaIcon(
+            FontAwesomeIcons.lightEllipsisVertical,
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+            size: 20,
+          ),
+          padding: EdgeInsets.zero,
+          onSelected: (value) async {
+            if (value == 'pin') {
+              await togglePinned();
+              setState(() {});
+            } else if (value == 'report') {
+              _showReportDialog();
+            } else if (value == 'block') {
+              _showBlockDialog();
+            } else if (value == 'unblock') {
+              _showUnblockDialog();
+            }
+          },
+          itemBuilder: (context) =>
+              _buildMenuItems(context, theme, colorScheme),
         ),
-        // 읽지 않은 메시지 배지 - 하단에 배치
-        if (unread > 0) ...[
-          const SizedBox(height: 4),
-          buildUnreadBadge(unread),
-        ],
       ],
     );
   }
 
-  /// 읽지 않은 메시지 배지
+  /// Build menu items for popup menu
+  List<PopupMenuEntry<String>> _buildMenuItems(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
+    final menuItems = <PopupMenuEntry<String>>[
+      // Pin/Unpin option
+      PopupMenuItem<String>(
+        value: 'pin',
+        child: Row(
+          children: [
+            FaIcon(
+              isPinned
+                  ? FontAwesomeIcons.lightThumbtack
+                  : FontAwesomeIcons.solidThumbtack,
+              size: 16,
+              color: colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              isPinned ? LibTr.of(context)!.unpin : LibTr.of(context)!.pin,
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    ];
+
+    // Add Report and Block options only for single chat rooms
+    if (isSingle) {
+      final otherUserUid = getOtherUserUidFromChatRoomId(roomId)!;
+
+      menuItems.add(
+        PopupMenuItem<String>(
+          value: 'report',
+          child: Row(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.lightFlag,
+                size: 16,
+                color: colorScheme.error,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                LibTr.of(context)!.report,
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // Use Blocked widget to determine block/unblock menu item
+      // Check if user is blocked using UserService
+      final isBlocked = UserService.instance.blockedUsers.contains(
+        otherUserUid,
+      );
+
+      if (isBlocked) {
+        menuItems.add(
+          PopupMenuItem<String>(
+            value: 'unblock',
+            child: Row(
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightUserPlus,
+                  size: 16,
+                  color: Colors.green,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  LibTr.of(context)!.unblock_user,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        menuItems.add(
+          PopupMenuItem<String>(
+            value: 'block',
+            child: Row(
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightBan,
+                  size: 16,
+                  color: colorScheme.error,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  LibTr.of(context)!.block_user,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+
+    return menuItems;
+  }
+
+  /// Show report dialog
+  void _showReportDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => ReportChatRoom(
+        roomId: roomId,
+        onClose: () => Navigator.of(context).pop(),
+      ),
+    );
+  }
+
+  /// Show block user dialog
+  void _showBlockDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => BlockUserDialog(
+        otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
+        onBlocked: () {
+          // Optionally show success message
+        },
+      ),
+    );
+  }
+
+  /// Show unblock user dialog
+  void _showUnblockDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => UnblockUserDialog(
+        otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
+        onUnblocked: () {
+          // Optionally show success message
+        },
+      ),
+    );
+  }
+
+  /// 읽지 않은 메시지 배지 - Comic design
   Widget buildUnreadBadge(int unreadCount) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: colorScheme.error,
-        borderRadius: BorderRadius.circular(16),
+        // Comic design - rounded corners 32 for small elements
+        borderRadius: BorderRadius.circular(50),
+        // Comic design - 2.0px border
+        border: Border.all(color: colorScheme.error, width: 2.0),
       ),
       child: Text(
         unreadCount > 99 ? '99+' : unreadCount.toString(),
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.bodySmall?.copyWith(
           color: colorScheme.onError,
           fontWeight: FontWeight.w700,
-          fontSize: 11,
+          fontSize: 10,
         ),
       ),
     );
   }
 
-  /// 아바타 위젯 - 온라인 상태 표시 포함
+  /// 아바타 위젯 - 온라인 상태 표시 포함 - Comic design
   Widget buildAvatar() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -386,17 +588,46 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        // Flat design - subtle color contrast instead of shadow
+        // Comic design - 2.0px outline border
         border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-          width: 2,
+          color: colorScheme.outline.withValues(alpha: 0.3),
+          width: 2.0,
         ),
       ),
       child: Stack(
         children: [
           Avatar(photoUrl: photoUrl),
 
-          // Online status indicator - don't show if user is blocked
+          // Favorite icon - positioned at left bottom (left of online indicator)
+          ValueListenableBuilder<bool>(
+            valueListenable: _isFavoritedNotifier,
+            builder: (context, isFavorited, _) {
+              if (!isFavorited) return const SizedBox.shrink();
+              return Positioned(
+                left: 0,
+                bottom: 0,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    shape: BoxShape.circle,
+                    // Comic design - 2.0px border
+                    border: Border.all(color: Colors.amber, width: 2.0),
+                  ),
+                  child: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.solidStar,
+                      color: Colors.amber,
+                      size: 8,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+
+          // Online status indicator - only show when user is online and not blocked
           if (isSingle)
             Positioned(
               right: 0,
@@ -410,14 +641,17 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                     width: 14,
                     height: 14,
                     decoration: BoxDecoration(
-                      color: colorScheme.tertiary,
+                      color: Colors.green,
+                      // Comic design - 2.0px border
                       border: Border.all(
                         color: colorScheme.surface,
-                        width: 2.5,
+                        width: 2.0,
                       ),
                       borderRadius: BorderRadius.circular(7),
                     ),
                   ),
+                  // Only show when online - no indicator when offline
+                  no: const SizedBox.shrink(),
                 ),
               ),
             ),

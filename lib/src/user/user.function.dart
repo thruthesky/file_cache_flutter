@@ -91,47 +91,154 @@ Future toggleBlockUser(String otherUserUid) async {
 //   await myBlockedUserRef(uid).remove();
 // }
 
+/// Show user profile dialog with Comic design
 void showProfileDialog(BuildContext context, User otherUser) {
+  final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+
   showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Avatar(photoUrl: otherUser.photoUrl, size: 120),
-            SizedBox(height: 16),
-            Text(
-              otherUser.nickname,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      return Dialog(
+        // Comic design: no shadow
+        elevation: 0,
+        // Comic design: rounded corners (borderRadius: 12)
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        // Remove default background to use Container decoration
+        backgroundColor: Colors.transparent,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          decoration: BoxDecoration(
+            // Comic design: surface background color
+            color: colorScheme.surface,
+            // Comic design: 2.0px outline border with rounded corners
+            border: Border.all(
+              color: colorScheme.outline,
+              width: 2.0,
             ),
-            SizedBox(height: 24),
-            Row(
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    UserService.instance.onTapViewProfile != null
-                        ? UserService.instance.onTapViewProfile!.call(
-                            context,
-                            otherUser,
-                          )
-                        : showInfoDialog(
-                            context,
-                            'View profile',
-                            'Use UserService to initialize onTapViewProfile',
-                          );
-                  },
-                  child: Text(LibTr.of(context)!.view_profile),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Content section - Comic design spacing
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // User Avatar
+                    Avatar(photoUrl: otherUser.photoUrl, size: 120),
+                    const SizedBox(height: 16),
+                    // User Nickname
+                    Text(
+                      otherUser.nickname,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-                Spacer(),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(LibTr.of(context)!.close),
+              ),
+
+              // Actions section - Comic design buttons with spacing
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // View Profile button - Comic design primary button
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          UserService.instance.onTapViewProfile != null
+                              ? UserService.instance.onTapViewProfile!.call(
+                                  context,
+                                  otherUser,
+                                )
+                              : showInfoDialog(
+                                  context,
+                                  'View profile',
+                                  'Use UserService to initialize onTapViewProfile',
+                                );
+                        },
+                        style: ButtonStyle(
+                          // Comic design: no shadow
+                          elevation: WidgetStateProperty.all(0),
+                          // Comic design: 2.0px border with rounded corners
+                          shape: WidgetStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                color: colorScheme.primary,
+                                width: 2.0,
+                              ),
+                            ),
+                          ),
+                          // Comic design: primary background
+                          backgroundColor:
+                              WidgetStateProperty.all(colorScheme.primary),
+                          // Comic design: onPrimary text color
+                          foregroundColor:
+                              WidgetStateProperty.all(colorScheme.onPrimary),
+                          // Comic design: padding in multiples of 8
+                          padding: WidgetStateProperty.all(
+                            const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                          ),
+                          // Comic design: text style from Theme
+                          textStyle: WidgetStateProperty.all(
+                            theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                        child: Text(LibTr.of(context)!.view_profile),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Close button - Comic design neutral button
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ButtonStyle(
+                        // Comic design: no shadow
+                        elevation: WidgetStateProperty.all(0),
+                        // Comic design: 2.0px border with rounded corners
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Comic design: surface background
+                        backgroundColor:
+                            WidgetStateProperty.all(colorScheme.surface),
+                        // Comic design: onSurface text color
+                        foregroundColor:
+                            WidgetStateProperty.all(colorScheme.onSurface),
+                        // Comic design: padding in multiples of 8
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        // Comic design: text style from Theme
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(LibTr.of(context)!.close),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       );
     },
@@ -231,6 +338,7 @@ void showUserRecentPostsDialog({
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: PostListTile(
                             post: post,
+                            showProfile: false,
                             onTap: () {
                               UserService.instance.onTapUserRecentPostItem !=
                                       null

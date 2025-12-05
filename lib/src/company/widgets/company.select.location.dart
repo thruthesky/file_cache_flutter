@@ -47,14 +47,58 @@ class _CompanySelectLocationState extends State<CompanySelectLocation> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFieldSet(
-      controller: widget.controller,
-      label: widget.label,
-      hintText: 'Select location',
-      prefixFaIconData: FontAwesomeIcons.lightMapPin,
-      readOnly: true,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      onTap: _openLocationModal,
+    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// Comic Design: Label with Comic styling
+        Text(
+          widget.label,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: scheme.primary,
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        /// Comic Design: TextField with Comic styling
+        TextFormField(
+          controller: widget.controller,
+          readOnly: true,
+          onTap: _openLocationModal,
+          decoration: InputDecoration(
+            hintText: 'Select location',
+            filled: true,
+            fillColor: scheme.surface,
+            // Comic Design: 1.0px border with borderRadius 12
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: scheme.outline, width: 1.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: scheme.outline, width: 1.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: scheme.primary, width: 1.0),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: scheme.outline.withValues(alpha: 0.5),
+                width: 1.0,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -111,27 +155,35 @@ class _LocationSearchModalState extends State<_LocationSearchModal> {
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: BoxDecoration(
         color: scheme.surface,
+        // Comic Design: Rounded top corners with 12px radius
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
+        // Comic Design: 2.0px border on top, left, and right
+        border: Border(
+          top: BorderSide(color: scheme.outline, width: 2.0),
+          left: BorderSide(color: scheme.outline, width: 2.0),
+          right: BorderSide(color: scheme.outline, width: 2.0),
         ),
       ),
       child: Column(
         children: [
-          /// Modal handle bar
+          /// Comic Design: Drag handle indicator
+          const SizedBox(height: 8),
           Container(
-            margin: EdgeInsets.only(top: 12),
-            width: 40,
+            width: 32,
             height: 4,
             decoration: BoxDecoration(
               color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
+          const SizedBox(height: 8),
 
           /// Header
           Padding(
-            padding: EdgeInsets.all(24),
+            padding: EdgeInsets.all(16),
             child: Row(
               children: [
                 Expanded(
@@ -154,22 +206,14 @@ class _LocationSearchModalState extends State<_LocationSearchModal> {
             ),
           ),
 
-          /// Search box
+          /// Comic Design: Search box with Comic styling
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
               controller: _searchController,
               autofocus: true,
               decoration: InputDecoration(
                 hintText: 'Search location...',
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: FaIcon(
-                    FontAwesomeIcons.lightMagnifyingGlass,
-                    size: 20,
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: FaIcon(
@@ -183,10 +227,19 @@ class _LocationSearchModalState extends State<_LocationSearchModal> {
                       )
                     : null,
                 filled: true,
-                fillColor: scheme.surfaceContainerHighest,
+                fillColor: scheme.surface,
+                // Comic Design: 1.0px border with borderRadius 12
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: scheme.outline, width: 1.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: scheme.outline, width: 1.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: scheme.primary, width: 1.0),
                 ),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 16,
@@ -222,45 +275,40 @@ class _LocationSearchModalState extends State<_LocationSearchModal> {
                   )
                 : ListView.builder(
                     itemCount: _filteredLocations.length,
-                    padding: EdgeInsets.only(bottom: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     itemBuilder: (context, index) {
                       final location = _filteredLocations[index];
-                      return InkWell(
-                        onTap: () => widget.onLocationSelected(location),
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 8),
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
+                          // Comic Design: Card with 1.5px border (list item style)
+                          decoration: BoxDecoration(
+                            color: scheme.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: scheme.outline,
+                              width: 1.5,
+                            ),
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: scheme.primaryContainer.withValues(
-                                    alpha: 0.5,
+                          child: InkWell(
+                            onTap: () => widget.onLocationSelected(location),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      location,
+                                      style: theme.textTheme.bodyLarge,
+                                    ),
                                   ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: FaIcon(
-                                  FontAwesomeIcons.lightLocationDot,
-                                  size: 16,
-                                  color: scheme.primary,
-                                ),
+                                ],
                               ),
-                              SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  location,
-                                  style: theme.textTheme.bodyLarge,
-                                ),
-                              ),
-                              FaIcon(
-                                FontAwesomeIcons.lightChevronRight,
-                                size: 16,
-                                color: scheme.onSurfaceVariant,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       );

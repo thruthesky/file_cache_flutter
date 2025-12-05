@@ -128,46 +128,44 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       maxWidth: constraints.maxWidth * 0.8,
                     ),
                     child: Column(
-                  crossAxisAlignment: isCurrentUser
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onLongPress: () => _showMessageOptions(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isCurrentUser
-                              ? Theme.of(
-                                  context,
-                                ).colorScheme.primary.withValues(alpha: 50)
-                              : Theme.of(context).colorScheme.onSecondary,
-                          borderRadius: BorderRadius.circular(18).copyWith(
-                            bottomLeft: Radius.circular(
-                              !isCurrentUser && showSenderInfo ? 4 : 18,
-                            ),
-                            bottomRight: Radius.circular(
-                              isCurrentUser && showSenderInfo ? 4 : 18,
-                            ),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Multiple images or single image
-                            if (message.urls != null &&
-                                message.urls!.isNotEmpty) ...[
-                              _buildMultipleImages(context),
-                              if (message.text?.isNotEmpty == true)
-                                const SizedBox(height: 8),
-                            ],
-
-                            // Text message
-                            if (message.text?.isNotEmpty == true)
-                              SelectableLinkify(
+                      crossAxisAlignment: isCurrentUser
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        if (message.urls != null &&
+                            message.urls!.isNotEmpty) ...[
+                          _buildMultipleImages(context),
+                          if (message.text?.isNotEmpty == true)
+                            const SizedBox(height: 8),
+                        ],
+                        if (message.text?.isNotEmpty == true)
+                          GestureDetector(
+                            onLongPress: () => _showMessageOptions(context),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isCurrentUser
+                                    ? Theme.of(context).colorScheme.primary
+                                          .withValues(alpha: 50)
+                                    : Theme.of(context).colorScheme.onSecondary,
+                                borderRadius: BorderRadius.circular(18)
+                                    .copyWith(
+                                      bottomLeft: Radius.circular(
+                                        !isCurrentUser && showSenderInfo
+                                            ? 4
+                                            : 18,
+                                      ),
+                                      bottomRight: Radius.circular(
+                                        isCurrentUser && showSenderInfo
+                                            ? 4
+                                            : 18,
+                                      ),
+                                    ),
+                              ),
+                              child: SelectableLinkify(
                                 text: message.text!,
                                 style: TextStyle(
                                   color: isCurrentUser
@@ -207,21 +205,22 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                   }
                                 },
                               ),
-                          ],
+                            ),
+                          ),
+
+                        const SizedBox(height: 4),
+
+                        // Timestamp
+                        Text(
+                          formatTimestamp(context, message.sentAt),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[500],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-
-                      const SizedBox(height: 4),
-
-                      // Timestamp
-                      Text(
-                        formatTimestamp(context, message.sentAt),
-                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-                      ),
-                    ],
                   ),
-                ),
                 ],
               );
             },
@@ -444,63 +443,66 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       maxWidth: constraints.maxWidth * 0.8,
                     ),
                     child: Column(
-                  crossAxisAlignment: isCurrentUser
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(18).copyWith(
-                          bottomLeft: Radius.circular(
-                            !isCurrentUser && showSenderInfo ? 4 : 18,
+                      crossAxisAlignment: isCurrentUser
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
                           ),
-                          bottomRight: Radius.circular(
-                            isCurrentUser && showSenderInfo ? 4 : 18,
-                          ),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Blinded content indicator
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.visibility_off,
-                                size: 16,
-                                color: Colors.grey[600],
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(18).copyWith(
+                              bottomLeft: Radius.circular(
+                                !isCurrentUser && showSenderInfo ? 4 : 18,
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                blindReason,
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                  fontStyle: FontStyle.italic,
-                                ),
+                              bottomRight: Radius.circular(
+                                isCurrentUser && showSenderInfo ? 4 : 18,
+                              ),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Blinded content indicator
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.visibility_off,
+                                    size: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    blindReason,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+
+                        const SizedBox(height: 4),
+
+                        // Timestamp
+                        Text(
+                          formatTimestamp(context, message.sentAt),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
                     ),
-
-                      const SizedBox(height: 4),
-
-                      // Timestamp
-                      Text(
-                        formatTimestamp(context, message.sentAt),
-                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-                      ),
-                    ],
                   ),
-                ),
                 ],
               );
             },

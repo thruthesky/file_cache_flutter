@@ -72,10 +72,11 @@ class PostSimpleListViewState extends State<PostSimpleListView> {
       controller: pagingController,
       builder: (context, state, fetchNextPage) {
         return PagedListView.separated(
-          // Add spacing between posts
+          // Comic Design: 16px spacing between posts (8의 배수)
           separatorBuilder: (context, index) => const SizedBox(height: 16),
 
-          padding: const EdgeInsets.all(8.0),
+          // Comic Design: 16px padding on all sides (8의 배수)
+          padding: const EdgeInsets.all(16),
           state: state,
           fetchNextPage: fetchNextPage,
           builderDelegate: PagedChildBuilderDelegate<Post>(

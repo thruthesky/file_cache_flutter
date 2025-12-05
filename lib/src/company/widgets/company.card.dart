@@ -26,16 +26,20 @@ class CompanyCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
-    // Flat card design without elevation or shadows
+    // Comic design: Card with border and no elevation
     return Container(
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        // Comic design: Border radius 12 for large elements
+        borderRadius: BorderRadius.circular(12),
+        // Comic design: 2.0px border with outline color
+        border: Border.all(color: scheme.outline, width: 1.5),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          // Comic design: Border radius 12 for large elements
+          borderRadius: BorderRadius.circular(12),
           onTap: onTap,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -43,7 +47,8 @@ class CompanyCard extends StatelessWidget {
               /// Full-width image with category badge overlay
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
+                  // Comic design: Border radius 12 for large elements
+                  top: Radius.circular(12),
                 ),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
@@ -56,19 +61,9 @@ class CompanyCard extends StatelessWidget {
                               imageUrl: imageUrl!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) {
-                                /// Shimmer loading effect
+                                // Comic design: Simple loading color instead of gradient
                                 return Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        scheme.surfaceContainerHighest,
-                                        scheme.surfaceContainer,
-                                        scheme.surfaceContainerHighest,
-                                      ],
-                                    ),
-                                  ),
+                                  color: scheme.surfaceContainerHighest,
                                 );
                               },
                               errorWidget: (context, url, error) {
@@ -80,23 +75,29 @@ class CompanyCard extends StatelessWidget {
                             )
                           : CompanyImagePlaceholder(icon: categoryIcon),
 
-                      /// Category badge overlay (top-right) with vibrant colors
+                      /// Category badge overlay (top-right)
                       Positioned(
-                        top: 10,
-                        right: 10,
+                        top: 8,
+                        right: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
+                            horizontal: 8,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: scheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(12),
+                            // Comic design: Border radius 8 for small elements
+                            borderRadius: BorderRadius.circular(8),
+                            // Comic design: 2.0px border
+                            border: Border.all(
+                              color: scheme.primary,
+                              width: 1.5,
+                            ),
                           ),
                           child: Text(
                             categoryName,
                             style: theme.textTheme.labelSmall?.copyWith(
-                              color: scheme.onTertiaryContainer,
+                              color: scheme.onPrimaryContainer,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

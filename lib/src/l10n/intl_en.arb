@@ -676,6 +676,10 @@
     "@unpin_chat_room_message": {
         "description": "Message for unpin chat room confirmation dialog"
     },
+    "pin": "Pin",
+    "@pin": {
+        "description": "Pin button text"
+    },
     "unpin": "Unpin",
     "@unpin": {
         "description": "Unpin button text"

@@ -43,115 +43,235 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(LibTr.of(context)!.edit_chat_room),
-      content: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Avatar Section
-              _buildAvatarSection(),
-              const SizedBox(height: 20),
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-              // Room Name Field
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: '${LibTr.of(context)!.room_name} *',
-                        hintText: LibTr.of(context)!.enter_room_name,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.group),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return LibTr.of(context)!.room_name_required;
-                        }
-                        return null;
-                      },
-                      textInputAction: TextInputAction.next,
-                      enabled: !_isLoading,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Room Description Field
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: InputDecoration(
-                        labelText: LibTr.of(context)!.room_description,
-                        hintText: LibTr.of(context)!.enter_room_description,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.description),
-                      ),
-                      maxLines: 3,
-                      textInputAction: TextInputAction.done,
-                      enabled: !_isLoading,
-                    ),
-                    const SizedBox(height: 16), // Open Room Toggle
-                    SwitchListTile(
-                      title: Text(LibTr.of(context)!.open_room),
-                      subtitle: Text(LibTr.of(context)!.open_room_description),
-                      value: _isOpen,
-                      onChanged: _isLoading
-                          ? null
-                          : (value) {
-                              setState(() {
-                                _isOpen = value;
-                              });
-                            },
-                      secondary: Icon(_isOpen ? Icons.public : Icons.lock),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // Block Advertisement Toggle
-                    SwitchListTile(
-                      title: Text(LibTr.of(context)!.block_advertisement),
-                      subtitle: Text(
-                        LibTr.of(context)!.block_advertisement_description,
-                      ),
-                      value: _blockAdvertisement,
-                      onChanged: _isLoading
-                          ? null
-                          : (value) {
-                              setState(() {
-                                _blockAdvertisement = value;
-                              });
-                            },
-                      secondary: Icon(
-                        _blockAdvertisement ? Icons.block : Icons.ads_click,
-                      ),
-                    ),
-                  ],
+    return Dialog(
+      // Comic design: no shadow
+      elevation: 0,
+      // Comic design: rounded corners (borderRadius: 12)
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      // Remove default background to use Container decoration
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
+        decoration: BoxDecoration(
+          // Comic design: surface background color
+          color: colorScheme.surface,
+          // Comic design: 2.0px outline border with rounded corners
+          border: Border.all(
+            color: colorScheme.outline,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Title section - Comic design spacing (multiples of 8)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Text(
+                LibTr.of(context)!.edit_chat_room,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            ],
-          ),
+            ),
+
+            // Content section - Comic design spacing
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Avatar Section
+                      _buildAvatarSection(),
+                      const SizedBox(height: 20),
+
+                      // Room Name Field
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: '${LibTr.of(context)!.room_name} *',
+                          hintText: LibTr.of(context)!.enter_room_name,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.group),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return LibTr.of(context)!.room_name_required;
+                          }
+                          return null;
+                        },
+                        textInputAction: TextInputAction.next,
+                        enabled: !_isLoading,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Room Description Field
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: InputDecoration(
+                          labelText: LibTr.of(context)!.room_description,
+                          hintText: LibTr.of(context)!.enter_room_description,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.description),
+                        ),
+                        maxLines: 3,
+                        textInputAction: TextInputAction.done,
+                        enabled: !_isLoading,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Open Room Toggle
+                      SwitchListTile(
+                        title: Text(LibTr.of(context)!.open_room),
+                        subtitle: Text(LibTr.of(context)!.open_room_description),
+                        value: _isOpen,
+                        onChanged: _isLoading
+                            ? null
+                            : (value) {
+                                setState(() {
+                                  _isOpen = value;
+                                });
+                              },
+                        secondary: Icon(_isOpen ? Icons.public : Icons.lock),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // Block Advertisement Toggle
+                      SwitchListTile(
+                        title: Text(LibTr.of(context)!.block_advertisement),
+                        subtitle: Text(
+                          LibTr.of(context)!.block_advertisement_description,
+                        ),
+                        value: _blockAdvertisement,
+                        onChanged: _isLoading
+                            ? null
+                            : (value) {
+                                setState(() {
+                                  _blockAdvertisement = value;
+                                });
+                              },
+                        secondary: Icon(
+                          _blockAdvertisement ? Icons.block : Icons.ads_click,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Actions section - Comic design buttons with spacing
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Cancel button - Comic design neutral button
+                  ElevatedButton(
+                    onPressed:
+                        _isLoading ? null : () => Navigator.of(context).pop(),
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: colorScheme.outline,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: surface background
+                      backgroundColor:
+                          WidgetStateProperty.all(colorScheme.surface),
+                      // Comic design: onSurface text color
+                      foregroundColor:
+                          WidgetStateProperty.all(colorScheme.onSurface),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    child: Text(LibTr.of(context)!.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  // Save button - Comic design primary button
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _handleSaveRoom,
+                    style: ButtonStyle(
+                      // Comic design: no shadow
+                      elevation: WidgetStateProperty.all(0),
+                      // Comic design: 2.0px border with rounded corners
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: _isLoading
+                                ? colorScheme.outline
+                                : colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      // Comic design: primary background
+                      backgroundColor: WidgetStateProperty.all(
+                        _isLoading
+                            ? colorScheme.surfaceContainerHighest
+                            : colorScheme.primary,
+                      ),
+                      // Comic design: onPrimary text color
+                      foregroundColor: WidgetStateProperty.all(
+                        _isLoading
+                            ? colorScheme.onSurface
+                            : colorScheme.onPrimary,
+                      ),
+                      // Comic design: padding in multiples of 8
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                      ),
+                      // Comic design: text style from Theme
+                      textStyle: WidgetStateProperty.all(
+                        theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colorScheme.onSurface,
+                            ),
+                          )
+                        : Text(LibTr.of(context)!.save),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-      actions: [
-        // Cancel Button
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: Text(LibTr.of(context)!.cancel),
-        ),
-
-        // Save Button
-        ElevatedButton(
-          onPressed: _isLoading ? null : _handleSaveRoom,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Text(LibTr.of(context)!.save),
-        ),
-      ],
     );
   }
 
