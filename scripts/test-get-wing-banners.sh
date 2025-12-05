@@ -21,8 +21,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # API 엔드포인트
-API_URL="https://philgo.com/etc/api.php"
-LOCAL_API_URL="https://local.philgo.com:444/etc/api.php"
+API_URL="https://philgo.com/func.php"
+LOCAL_API_URL="https://local.philgo.com:444/func.php"
 
 # 카테고리 파라미터 (선택)
 CATEGORY="${1:-}"
