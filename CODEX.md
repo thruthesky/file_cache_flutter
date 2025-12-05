@@ -1,1 +1,0 @@
-**Always refer to the documentation [CLAUDE.md](/CLAUDE.md)
