@@ -198,11 +198,14 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                               ).textTheme.bodySmall,
                                             ),
                                           ),
+                                          // SMS 입력 단계에서 전화번호 라벨 (fontWeight: normal)
                                           labelPhoneNumberSelected: Text(
                                             Lo.of(context)!.phoneNumber,
                                             style: Theme.of(
                                               context,
-                                            ).textTheme.titleMedium,
+                                            ).textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.normal,
+                                            ),
                                           ),
                                           labelOnSmsCodeTextField: Text(
                                             Lo.of(context)!.enterSmsCode,
