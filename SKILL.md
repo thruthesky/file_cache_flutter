@@ -3,6 +3,7 @@ name: philgo-api-skill
 description: 본 스킬은 필고 <https://philgo.com> 홈페이지 API 연동 및 개발을 할 때에 반드시 따라야 하는 표준 코딩 가이드를 제공합니다. 필고(Philgo) 홈페이지 및 앱 개발을 위한 백엔드 API 접근 방법, 프로토콜, 로그인, 글/코멘트 생성/수정/삭제, 파일 업로드/삭제, API 함수 목록, EndPoints 등 필고 홈페이지 및 앱을 개발 할 때에 필요한 전반적인 데이터 액세스 및 데이터베이스 접근에 대한 완전하고 상세한 정보를 제공합니다. 홈페이지 개발 및 웹 플러터 앱 개발을 할 때에 API 관련한 모든 코딩은 이 스킬 문서를 따르면 됩니다.
 ---
 
+> **📌 플랫폼 안내**: 필고 백엔드는 PHP로 구현되어 있으며, 클라이언트는 주로 JavaScript/Vue.js 또는 Flutter를 사용합니다. 본 문서의 예제는 JavaScript/Vue.js 위주로 작성되었으며, Flutter 개발 시에도 동일한 API를 활용할 수 있습니다.
 
 본 문서는 필고 웹/앱을 개발할 때 필요한 API 연동 및 데이터베이스 접근에 관한 모든 정보를 담고 있습니다. 데이터베이스, 데이터 접근, API 연동에 관한 내용이라면 반드시 이 문서를 참고해야 합니다.
 
@@ -113,7 +114,7 @@ console.log('내 정보:', result);
 
 ```bash
 # 터미널에서 함수 목록 조회
-curl "https://local.philgo.com:444/func.php?func=get_functions"
+curl "https://philgo.com/func.php?func=get_functions"
 ```
 
 ```javascript
@@ -184,7 +185,7 @@ const result = await func('update_my_profile', {
 
 **내용**:
 ```bash
-curl "https://local.philgo.com:444/func.php?func=get_functions"
+curl "https://philgo.com/func.php?func=get_functions"
 ```
 
 **사용법**:

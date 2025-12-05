@@ -4,6 +4,9 @@ description: PhilGo.Com 홈페이지 API 정보 및 기능 별 상세 설명과 
 ---
 
 # PhilGo API 가이드
+
+> **📌 플랫폼 안내**: 필고 백엔드는 PHP로 구현되어 있으며, 클라이언트는 주로 JavaScript/Vue.js 또는 Flutter를 사용합니다. 본 문서의 예제는 JavaScript/Vue.js 위주로 작성되었으며, Flutter 개발 시에도 동일한 API를 활용할 수 있습니다.
+
 본 문서에서는 PhilGo 웹과 앱 개발에 필요한 API 엔드포인트를 설명합니다.
 
 ## 개요
