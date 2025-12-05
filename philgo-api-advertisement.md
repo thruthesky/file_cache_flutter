@@ -12,14 +12,17 @@
 2. [데이터베이스 구조](#데이터베이스-구조)
 3. [배너 타입](#배너-타입)
 4. [카테고리 기반 배너 표시](#카테고리-기반-배너-표시)
-5. [API 함수 목록](#api-함수-목록)
+5. [배너 정렬 순서](#배너-정렬-순서)
+6. [BannerModel 클래스](#bannermodel-클래스)
+7. [API 함수 목록](#api-함수-목록)
    - [get_all_active_advertisements](#1-get_all_active_advertisements)
    - [get_top_banners](#2-get_top_banners)
    - [get_wing_banners](#3-get_wing_banners)
    - [get_square_banners](#4-get_square_banners)
    - [get_small_banners](#5-get_small_banners)
-6. [사용 예제](#사용-예제)
-7. [관련 PHP 파일](#관련-php-파일)
+8. [사용 예제](#사용-예제)
+9. [API 테스트 방법](#api-테스트-방법)
+10. [관련 PHP 파일](#관련-php-파일)
 
 ---
 
@@ -122,6 +125,142 @@
 const banners = await func('get_top_banners', { category: 'wanted' });
 
 // 결과: 'wanted' 전용 배너 + all_page='y' 배너 모두 포함
+```
+
+---
+
+## 배너 정렬 순서
+
+### 기본 정렬 원칙
+
+모든 배너는 **`ad_end_date DESC`** 순서로 정렬됩니다:
+
+| 순서 | 의미 |
+|------|------|
+| **먼저 표시** | 광고 만료일이 가장 늦은 (오래 남은) 광고 |
+| **나중에 표시** | 광고 만료일이 임박한 광고 |
+
+```
+예시 (오늘 날짜: 2025-12-06):
+├─ [0] 에르넬 피부과 - 만료일: 2026-10-19 (317일 남음) ← 먼저 표시
+├─ [1] 야타이 사우나 - 만료일: 2026-07-04 (210일 남음)
+├─ [2] OK 금융 환전 - 만료일: 2026-01-23 (48일 남음)
+└─ [3] 하이금융 환전 - 만료일: 2025-12-12 (6일 남음) ← 나중에 표시
+```
+
+### filter_banners() 함수 동작 원리
+
+`filter_banners()` 함수는 DB에서 가져온 배너를 카테고리별로 재정렬합니다:
+
+```php
+// lib/advertisement/get_banner.functions.php
+function filter_banners(array $rows, ?string $category = null)
+{
+    // 카테고리가 비어있거나 null인 경우:
+    // SQL의 ad_end_date DESC 정렬 순서 그대로 유지
+    if (empty($category)) {
+        return $rows;
+    }
+
+    // 카테고리가 지정된 경우:
+    // 해당 카테고리 배너를 앞에, all_page 배너를 뒤에 배치
+    $all_page_banners = array_filter($rows, fn($row) =>
+        $row[ALL_PAGE] == 'y' && $row[CATEGORY] != $category);
+    $category_banners = array_filter($rows, fn($row) =>
+        $row[CATEGORY] == $category);
+
+    return [...$category_banners, ...$all_page_banners];
+}
+```
+
+### 카테고리별 정렬 동작
+
+| 상황 | 동작 | 결과 |
+|------|------|------|
+| **카테고리 없음** (`category = ""` 또는 `null`) | SQL 정렬 순서 유지 | `ad_end_date DESC` 순서 |
+| **카테고리 있음** (예: `wanted`) | 카테고리 매칭 배너 우선 | 1. `wanted` 카테고리 배너 (ad_end_date DESC)<br>2. `all_page='y'` 배너 (ad_end_date DESC) |
+
+### 좌/우 배너 분배 알고리즘
+
+`top`, `wing` 배너는 50:50 비율로 좌/우에 자동 분배됩니다:
+
+```php
+// 배열 인덱스 기준 분배
+for ($i = 0; $i < count($all_banners); $i++) {
+    if ($i % 2 == 0) {
+        $banners['left'][] = $all_banners[$i];   // 짝수 인덱스 → 왼쪽
+    } else {
+        $banners['right'][] = $all_banners[$i];  // 홀수 인덱스 → 오른쪽
+    }
+}
+```
+
+```
+예시 (8개 배너):
+원본 순서: [0]317일, [1]210일, [2]172일, [3]48일, [4]15일, [5]13일, [6]12일, [7]6일
+
+왼쪽: [0]317일 → [2]172일 → [4]15일 → [6]12일
+오른쪽: [1]210일 → [3]48일 → [5]13일 → [7]6일
+```
+
+---
+
+## BannerModel 클래스
+
+### 클래스 정의
+
+```php
+// lib/models/banner.model.php
+class BannerModel
+{
+    public $idx_company;    // 업소(광고주) 고유 번호
+    public $idx_banner;     // 배너 고유 번호 (company_meta.idx)
+    public $clickUrl;       // 클릭 시 이동 URL
+    public $imageUrl;       // 배너 이미지 URL
+    public $target;         // 링크 타겟 (_blank, _self 등)
+    public $type;           // 배너 타입 (top, wing, square, small)
+    public $category;       // 표시 카테고리 (게시판 ID)
+    public $primary;        // 주요 텍스트
+    public $secondary;      // 부가 텍스트
+    public $ad_end_date;    // 광고 만료일 (YYYYMMDD 형식)
+}
+```
+
+### 속성 상세 설명
+
+| 속성 | 타입 | 설명 | 예시 |
+|------|------|------|------|
+| `idx_company` | int | 광고주 고유 번호 | `1664` |
+| `idx_banner` | int | 배너 메타 고유 번호 | `2345` |
+| `clickUrl` | string | 클릭 시 이동 URL | `https://example.com` |
+| `imageUrl` | string | 배너 이미지 URL | `https://philgo.com/data/banner.jpg` |
+| `target` | string | 링크 타겟 속성 | `_blank` |
+| `type` | string | 배너 타입 | `wing`, `top`, `square`, `small` |
+| `category` | string | 표시 대상 카테고리 | `wanted`, `travel`, `""` |
+| `primary` | string | 주요 텍스트 (작은 배너용) | `환전 최저가` |
+| `secondary` | string | 부가 텍스트 | `24시간 운영` |
+| `ad_end_date` | string | 광고 만료일 | `20261019` |
+
+### JavaScript에서 사용 예시
+
+```javascript
+const banners = await func('get_wing_banners', {});
+
+banners.left.forEach(banner => {
+    console.log('업소:', banner.idx_company);
+    console.log('이미지:', banner.imageUrl);
+    console.log('만료일:', banner.ad_end_date);
+
+    // 남은 일수 계산
+    const today = new Date();
+    const endDate = new Date(
+        banner.ad_end_date.slice(0,4) + '-' +
+        banner.ad_end_date.slice(4,6) + '-' +
+        banner.ad_end_date.slice(6,8)
+    );
+    const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+    console.log('남은 일수:', daysLeft, '일');
+});
 ```
 
 ---
@@ -666,14 +805,102 @@ if (!ads) {
 
 ---
 
+## API 테스트 방법
+
+### 로컬 테스트 (PHP 스크립트)
+
+로컬 개발 환경에서 배너 API를 테스트하려면:
+
+```bash
+# 날개 배너 정렬 순서 디버그
+php tests/debug-wing-banner-order.php --db-config=etc/db.config.dev.php
+```
+
+### 서버 API 테스트 (curl)
+
+> **⚠️ 주의**: philgo.com은 Cloudflare 보안이 적용되어 있어 curl로 직접 테스트가 어려울 수 있습니다.
+> 브라우저 콘솔에서 테스트하거나, 로컬 PHP 스크립트를 사용하세요.
+
+#### 테스트 스크립트 위치
+
+```
+.claude/skills/philgo-api-skill/scripts/
+├── test-get-wing-banners.sh       # 윙 배너 테스트
+├── test-get-top-banners.sh        # 상단 배너 테스트
+├── test-get-square-banners.sh     # 사각 배너 테스트
+├── test-get-small-banners.sh      # 작은 배너 테스트
+└── test-all-banners.sh            # 전체 배너 테스트
+```
+
+#### 실행 방법
+
+```bash
+# 스크립트 디렉토리로 이동
+cd .claude/skills/philgo-api-skill/scripts/
+
+# 실행 권한 부여
+chmod +x *.sh
+
+# 윙 배너 테스트
+./test-get-wing-banners.sh
+
+# 전체 배너 테스트
+./test-all-banners.sh
+```
+
+### 브라우저 콘솔 테스트
+
+브라우저에서 philgo.com에 접속 후, 개발자 도구(F12) → Console 탭에서:
+
+```javascript
+// 윙 배너 테스트
+func('get_wing_banners', {}).then(r => {
+    console.log('왼쪽 배너:', r.left.length, '개');
+    console.log('오른쪽 배너:', r.right.length, '개');
+    r.left.forEach((b, i) => {
+        console.log(`좌측 ${i+1}: idx=${b.idx_company}, 만료일=${b.ad_end_date}`);
+    });
+});
+
+// 상단 배너 테스트
+func('get_top_banners', { category: 'wanted' }).then(r => {
+    console.log('상단 배너:', r);
+});
+
+// 사각 배너 테스트
+func('get_square_banners', {}).then(r => {
+    console.log('사각 배너:', r.length, '개');
+});
+```
+
+### PHP 유닛 테스트
+
+```bash
+# 배너 정렬 순서 테스트
+php tests/debug-wing-banner-order.php --db-config=etc/db.config.dev.php
+
+# 출력 예시:
+# === 날개 배너 정렬 순서 디버그 ===
+# 오늘 날짜: 20251206
+#
+# 1. DB 쿼리 결과 (ad_end_date DESC 정렬):
+# 순서 | idx    | 광고 제목             | 만료일  | 남은일
+# 1    | 1664   | 에르넬 피부과         | 20261019 | 317일
+# 2    | 1868   | 야타이 사우나         | 20260704 | 210일
+# ...
+```
+
+---
+
 ## 관련 PHP 파일
 
 | 파일 | 설명 |
 |------|------|
 | `lib/api/function.class.php` | FunctionClass - 광고 API 메서드 정의 |
 | `lib/advertisement/advertisement.functions.php` | `get_all_active_advertisements()` 함수 |
-| `lib/advertisement/get_banner.functions.php` | 배너 조회 함수들 |
-| `lib/models/banner.model.php` | BannerModel 클래스 |
+| `lib/advertisement/get_banner.functions.php` | 배너 조회 함수들 (`filter_banners`, `get_top_banners`, `get_wing_banners` 등) |
+| `lib/models/banner.model.php` | BannerModel 클래스 정의 |
+| `tests/debug-wing-banner-order.php` | 배너 정렬 순서 디버그 테스트 |
 
 ---
 
