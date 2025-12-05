@@ -7,6 +7,7 @@ import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -36,6 +37,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
   final ScrollController _scrollController = ScrollController();
   Comment? replyingToComment; // Track which comment is being replied to
   Comment? editingComment; // Track which comment is being edited
+  bool showCommentInput = false; // Track if bottom comment input should be visible
 
   @override
   void initState() {
@@ -123,19 +125,29 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return '$year-$month-$day';
   }
 
+  /// Show comment input for creating new comment on post
+  void showCommentMode() {
+    setState(() {
+      showCommentInput = true;
+      replyingToComment = null;
+      editingComment = null;
+    });
+  }
+
   /// Enter reply mode - convert bottom field to reply to specific comment
   void setReplyMode(Comment comment) {
     setState(() {
       replyingToComment = comment;
+      editingComment = null;
+      showCommentInput = true;
     });
-    // No auto-scroll - let user see the reply context header appear at bottom
-    // The keyboard will push content up naturally
   }
 
-  /// Exit reply mode - return to normal comment mode
+  /// Exit reply mode - return to hidden state
   void cancelReplyMode() {
     setState(() {
       replyingToComment = null;
+      showCommentInput = false;
     });
   }
 
@@ -143,14 +155,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
   void setEditMode(Comment comment) {
     setState(() {
       editingComment = comment;
-      replyingToComment = null; // Close reply mode if open
+      replyingToComment = null;
+      showCommentInput = true;
     });
   }
 
-  /// Exit edit mode - return to normal comment mode
+  /// Exit edit mode - return to hidden state
   void cancelEditMode() {
     setState(() {
       editingComment = null;
+      showCommentInput = false;
     });
   }
 
@@ -358,6 +372,23 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             : context.go(HomeScreen.routeName),
                       ),
                       actions: [
+                        /// Comment button - shows/hides bottom input field
+                        IconButton(
+                          icon: FaIcon(FontAwesomeIcons.comment, size: 20),
+                          onPressed: () {
+                            setState(() {
+                              if (showCommentInput) {
+                                // If already shown, hide it
+                                showCommentInput = false;
+                                replyingToComment = null;
+                                editingComment = null;
+                              } else {
+                                // Show comment input
+                                showCommentMode();
+                              }
+                            });
+                          },
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(right: 4),
                           child: IconButton(
@@ -546,6 +577,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                             }
                                           }
                                         },
+                                      ),
+
+                                      const SizedBox(width: 8),
+
+                                      /// Comment button - opens comment input
+                                      _buildComicActionButton(
+                                        icon: FontAwesomeIcons.comment,
+                                        label: noOfComment > 0 ? '$noOfComment' : null,
+                                        onPressed: showCommentMode,
                                       ),
 
                                       const Spacer(),
@@ -862,7 +902,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ),
               ],
             ),
-      bottomNavigationBar: post != null
+      bottomNavigationBar: post != null && showCommentInput
           ? SafeArea(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1002,6 +1042,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                 onCreated: (createdComment) {
                                   post?.comments.add(createdComment);
                                   post!.no_of_comment += 1;
+
+                                  // Hide comment input after creating
+                                  showCommentInput = false;
+
                                   if (mounted) {
                                     setState(() {});
                                     showSuccessSnackBar(
@@ -1013,7 +1057,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               ),
                   ),
                 ],
-              ),
+              )
+                  .animate()
+                  .slideY(
+                    begin: 1.0, // Start from below (100% down)
+                    end: 0.0, // End at normal position
+                    duration: 300.ms,
+                    curve: Curves.easeOut,
+                  )
+                  .fadeIn(duration: 200.ms),
             )
           : null,
     );
