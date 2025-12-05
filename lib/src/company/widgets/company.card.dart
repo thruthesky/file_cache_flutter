@@ -47,8 +47,8 @@ class CompanyCard extends StatelessWidget {
               /// Full-width image with category badge overlay
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  // Comic design: Border radius 12 for large elements
-                  top: Radius.circular(12),
+                  // Comic design: Border radius 10.5 to account for 1.5px border
+                  top: Radius.circular(10.5),
                 ),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,

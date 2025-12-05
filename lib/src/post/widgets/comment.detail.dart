@@ -259,7 +259,7 @@ class _CommentDetailState extends State<CommentDetail> {
                         if (!widget.hasReplies && widget.myComment) ...[
                           _buildComicActionButton(
                             context: context,
-                            icon: Icons.edit,
+                            icon: FontAwesomeIcons.penToSquare,
                             label: LibTr.of(context)!.edit,
                             onPressed: () {
                               // Trigger edit mode in parent (PostViewScreen)
