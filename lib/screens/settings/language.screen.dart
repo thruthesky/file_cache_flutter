@@ -86,16 +86,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Header
-                Text(
-                  Lo.of(context)!.selectLanguage,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: scheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
                 /// Language Options
                 ..._languages.map((language) {
                   final isSelected = _selectedLanguage == language['code'];
