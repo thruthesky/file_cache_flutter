@@ -1,8 +1,3 @@
----
-name: philgo-api
-description: PhilGo.Com 홈페이지 API 정보 및 기능 별 상세 설명과 예제 코드를 제공하는 스킬. 필고(Philgo) 홈페이지 및 앱 개발을 위한 백엔드 API 엔드포인트, 요청 및 응답 형식, 인증 방법, 오류 처리 등에 대한 상세한 설명과 함께 다양한 기능을 구현하는 예제 코드를 포함하고 있습니다. 웹/앱에서 Philgo API를 사용하려는 경우, PHILGO, API, 백엔드, 정보 저장, DB 정보 읽기 등의 요청에서 본 스킬을 사용합니다.
----
-
 # PhilGo API 가이드
 
 > **📌 플랫폼 안내**: 필고 백엔드는 PHP로 구현되어 있으며, 클라이언트는 주로 JavaScript/Vue.js 또는 Flutter를 사용합니다. 본 문서의 예제는 JavaScript/Vue.js 위주로 작성되었으며, Flutter 개발 시에도 동일한 API를 활용할 수 있습니다.
@@ -117,7 +112,7 @@ Object.entries(functions).forEach(([name, description]) => {
 
 **직접 HTTP 요청**:
 ```bash
-curl https://www.philgo.com/func.php?func=function_list
+curl https://philgo.com/func.php?func=function_list
 ```
 
 #### 에러 처리
@@ -1131,7 +1126,7 @@ try {
 
 **사용 예시**:
 ```bash
-curl "https://local.philgo.com:444/func.php?func=app_version"
+curl "https://philgo.com/func.php?func=app_version"
 ```
 
 ---
@@ -1169,7 +1164,7 @@ curl "https://local.philgo.com:444/func.php?func=app_version"
 **응답 형식**:
 ```json
 {
-  "server_name": "local.philgo.com",
+  "server_name": "philgo.com",
   "php_version": "8.2.0",
   "database_version": "10.6.0-MariaDB",
   "timezone": "Asia/Manila"
@@ -1208,7 +1203,7 @@ curl "https://local.philgo.com:444/func.php?func=app_version"
 
 **사용 예시**:
 ```bash
-curl "https://local.philgo.com:444/func.php?func=app_admins"
+curl "https://philgo.com/func.php?func=app_admins"
 ```
 
 **JavaScript 사용 예시**:
@@ -1948,19 +1943,19 @@ idx, idx_member, post_id, category, subject, subject_private, stamp, stamp_updat
 **사용 예제**:
 ```bash
 # 최신 게시글 10개
-curl "https://local.philgo.com:444/func.php?func=post_latest&limit=10"
+curl "https://philgo.com/func.php?func=post_latest&limit=10"
 
 # 모든 게시판의 최신 댓글 10개
-curl "https://local.philgo.com:444/func.php?func=post_latest&type=comment&limit=10"
+curl "https://philgo.com/func.php?func=post_latest&type=comment&limit=10"
 
 # 특정 게시판의 최신 댓글
-curl "https://local.philgo.com:444/func.php?func=post_latest&post_id=freetalk&type=comment&limit=20"
+curl "https://philgo.com/func.php?func=post_latest&post_id=freetalk&type=comment&limit=20"
 
 # 사용자 정보 포함한 댓글 목록
-curl "https://local.philgo.com:444/func.php?func=post_latest&type=comment&limit=10&user_info=y"
+curl "https://philgo.com/func.php?func=post_latest&type=comment&limit=10&user_info=y"
 
 # 성능 최적화된 댓글 목록
-curl "https://local.philgo.com:444/func.php?func=post_latest&type=comment&limit=10&strip_tags=y&minimal_fields=y"
+curl "https://philgo.com/func.php?func=post_latest&type=comment&limit=10&strip_tags=y&minimal_fields=y"
 ```
 
 ---
@@ -3499,7 +3494,7 @@ curl "https://local.philgo.com:444/func.php?func=post_latest&type=comment&limit=
 **설명**: 서버에 파일을 업로드합니다. 이미지, 문서 등 다양한 파일 형식을 지원합니다.
 
 **엔드포인트**:
-- 로컬: `https://local.philgo.com/v5-files/upload.php`
+- 로컬: `https://philgo.com/v5-files/upload.php`
 - 프로덕션: `https://file.philgo.com/v5-files/upload.php`
 
 **HTTP 메서드**: POST (multipart/form-data)
@@ -3549,7 +3544,7 @@ curl "https://local.philgo.com:444/func.php?func=post_latest&type=comment&limit=
 **설명**: 서버에 업로드된 파일을 삭제합니다.
 
 **엔드포인트**:
-- 로컬: `https://local.philgo.com/v5-files/delete.php`
+- 로컬: `https://philgo.com/v5-files/delete.php`
 - 프로덕션: `https://file.philgo.com/v5-files/delete.php`
 
 **HTTP 메서드**: POST
@@ -3948,13 +3943,13 @@ PhilGo는 파일 업로드를 쉽게 처리할 수 있는 JavaScript 라이브�
 **사용 예시**:
 ```bash
 # 한국어 이용약관 (기본값)
-curl "https://local.philgo.com:444/func.php?func=help_terms_and_conditions"
+curl "https://philgo.com/func.php?func=help_terms_and_conditions"
 
 # 영어 이용약관
-curl "https://local.philgo.com:444/func.php?func=help_terms_and_conditions&lang=en"
+curl "https://philgo.com/func.php?func=help_terms_and_conditions&lang=en"
 
 # 일본어 이용약관
-curl "https://local.philgo.com:444/func.php?func=help_terms_and_conditions&lang=ja"
+curl "https://philgo.com/func.php?func=help_terms_and_conditions&lang=ja"
 ```
 
 **특징**:
@@ -4489,13 +4484,23 @@ php index.php --script=cli/chat/send_a_message.php --no-database
 ```
 
 **사용 예시**:
+
 ```bash
 # idx_member로 조회
-curl "http://localhost/index.php?action=post.latest-by-user&idx_member=100&limit=5"
+curl "https://philgo.com/func.php?func=post_latest_by_user&idx_member=100&limit=5"
 
 # Firebase UID로 조회
-curl "http://localhost/index.php?action=post.latest-by-user&uid=abc123xyz&limit=10"
+curl "https://philgo.com/func.php?func=post_latest_by_user&uid=abc123xyz&limit=10"
 ```
+
+```javascript
+// JavaScript 예시
+const result = await func('post_latest_by_user', {
+  idx_member: 100,
+  limit: 5
+});
+```
+
 
 ### 패밀리 사이트
 

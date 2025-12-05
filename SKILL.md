@@ -17,6 +17,7 @@ description: 본 스킬은 필고 <https://philgo.com> 홈페이지 API 연동 �
 ├── SKILL.md                      # 본 문서 (가이드 및 인덱스)
 ├── philgo-api-protocol.md        # API 프로토콜 상세 문서
 ├── philgo-api-endpoints.md       # 허용된 함수 목록 및 전체 API 엔드포인트 상세 문서
+├── philgo-api-advertisement.md   # 광고 API 문서
 ├── file-upload.md                # 파일 업로드 API 문서
 └── scripts/
     └── get_functions.sh          # 허용된 함수 목록 조회 스크립트
@@ -164,7 +165,32 @@ const result = await func('update_my_profile', {
 - 새로운 API 개발 시 레거시 엔드포인트 섹션은 참고용으로만 사용하세요
 - **실제 구현은 이 문서의 "허용된 API 함수 목록" 섹션을 참조하세요**
 
-## 4. file-upload.md
+## 4. philgo-api-advertisement.md
+
+**역할**: PhilGo 광고 API 문서
+
+**주요 내용**:
+- 광고 시스템 개요 (업소 → 광고 → 배너 구조)
+- 데이터베이스 구조 (company, company_meta 테이블)
+- 배너 타입 (top, wing, square, small)
+- 카테고리 기반 배너 표시
+- 5개의 광고 API 함수 상세 설명
+  - `get_all_active_advertisements` - 모든 활성 광고 조회 (앱 캐싱용)
+  - `get_top_banners` - 상단 배너 조회
+  - `get_wing_banners` - 윙 배너 조회
+  - `get_square_banners` - 사각 배너 조회
+  - `get_small_banners` - 작은 배너 조회
+- JavaScript/Vue.js 사용 예제
+
+**언제 참조하는가**:
+- 광고 배너를 화면에 표시할 때
+- 앱에서 광고 데이터를 캐싱할 때
+- 게시판/카테고리별 광고를 구현할 때
+- Flutter 앱에서 광고 API를 호출할 때
+
+---
+
+## 5. file-upload.md
 
 **역할**: PhilGo 파일 업로드 API 문서
 **주요 내용**:
