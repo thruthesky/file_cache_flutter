@@ -176,31 +176,15 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                               ),
                                             ),
                                           ),
-<<<<<<< HEAD
                                           // SMS 입력 단계에서 전화번호 라벨 (fontWeight: normal)
-=======
-                                          labelUnderPhoneNumberTextField:
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 8.0,
-                                                ),
-                                                child: Text(
-                                                  Lo.of(
-                                                    context,
-                                                  )!.phoneNumberExample,
-                                                  style: Theme.of(
-                                                    context,
-                                                  ).textTheme.bodySmall,
-                                                ),
-                                              ),
->>>>>>> b027e847d3fb94e4d9f244f6fde15b9d5306cb8c
                                           labelPhoneNumberSelected: Text(
                                             Lo.of(context)!.phoneNumber,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.titleMedium?.copyWith(
-                                              fontWeight: FontWeight.normal,
-                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.normal,
+                                                ),
                                           ),
                                           labelOnSmsCodeTextField: Text(
                                             Lo.of(context)!.enterSmsCode,
