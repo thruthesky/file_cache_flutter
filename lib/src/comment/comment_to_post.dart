@@ -164,7 +164,6 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
                 setState(() {});
               },
             ),
-            hintText: LibTr.of(context)!.enterComment,
             suffixIcon: IconButton(
               padding: const EdgeInsets.all(16.0),
               icon: isCreatingReply

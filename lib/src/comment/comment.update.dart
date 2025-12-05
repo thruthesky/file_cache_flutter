@@ -142,7 +142,6 @@ class _CommentUpdateState extends State<CommentUpdate> {
                 width: 2.0,
               ),
             ),
-            hintText: LibTr.of(context)!.updateComment,
             prefixIcon: FileUpload(
               file: true,
               video: true,
