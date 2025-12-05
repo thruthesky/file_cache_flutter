@@ -353,7 +353,7 @@ await func('update_my_profile', { token, nickname: '새닉네임' });
 ./scripts/function_list.sh
 
 # 특정 함수 테스트
-curl "https://local.philgo.com:444/func.php?func=get_user_lang"
+curl "https://philgo.com/func.php?func=get_user_lang"
 ```
 
 ### 문서 업데이트
@@ -435,7 +435,7 @@ cd .claude/skills/philgo-api-skill/scripts
 ./get_functions.sh
 
 # 또는 직접 curl 호출
-curl "https://local.philgo.com:444/func.php?func=get_functions"
+curl "https://philgo.com/func.php?func=get_functions"
 ```
 
 ### 2. 특정 API 사용법 확인
@@ -444,7 +444,7 @@ curl "https://local.philgo.com:444/func.php?func=get_functions"
 
 ### 3. API 호출 테스트
 ```bash
-curl "https://local.philgo.com:444/func.php?func=get_user_lang"
+curl "https://philgo.com/func.php?func=get_user_lang"
 ```
 
 ### 4. JavaScript에서 사용
