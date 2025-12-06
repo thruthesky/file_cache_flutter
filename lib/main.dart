@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
     // 첫 프레임이 렌더링된 후에 실행되도록 보장
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (globalNavigatorKey.currentContext != null) {
-        Config.setGlobalContext(globalNavigatorKey.currentContext!);
+        PhilgoConfig.setGlobalContext(globalNavigatorKey.currentContext!);
       }
       ReceiveShareService.instance.initialize(
         categories: PhilGoAppConfig.getCategories(),

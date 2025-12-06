@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
-import 'package:philgo/screens/settings/language.screen.dart';
-import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/appbar/app_header.dart';
 import 'package:philgo/widgets/logo/logo.dart';
-import 'package:philgo/widgets/logo/philgo.logo.triangle.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -174,58 +168,5 @@ class _MainHomeState extends State<MainHome> {
   }
 }
 
-/// Quick Action Button Widget (빠른 작업 버튼 위젯)
-/// Reusable button component for quick actions on home screen
-/// Comic Design: 2.0px border, no shadow, rounded corners
-class _QuickActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
 
-  const _QuickActionButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final sp = theme.extension<AppSpacing>()!;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: sp.s12, horizontal: sp.s8),
-        decoration: BoxDecoration(
-          color: scheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          // Comic Design: 2.0px border with outline color
-          border: Border.all(color: scheme.outline, width: 2.0),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// Icon (아이콘)
-            FaIcon(icon, size: 24, color: scheme.primary),
-            SizedBox(height: sp.s8),
-
-            /// Label (라벨)
-            Text(
-              label,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: scheme.onSurface,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
