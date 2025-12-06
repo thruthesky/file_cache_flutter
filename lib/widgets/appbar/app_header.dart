@@ -12,11 +12,12 @@ import 'package:provider/provider.dart';
 /// 재사용 가능한 헤더 위젯으로 앱 타이틀, 사용자 아바타, 액션 버튼을 표시합니다.
 /// 여러 화면에서 일관된 앱바 디자인을 위해 사용됩니다.
 ///
-/// Layout: [Title] ───────── [Avatar] [Actions]
-/// 레이아웃: [타이틀] ───────── [아바타] [액션들]
+/// Layout: [Leading] [Title] ───────── [Avatar] [Actions]
+/// 레이아웃: [로고/리딩] [타이틀] ───────── [아바타] [액션들]
 ///
 /// Features:
-/// - App title on the left (default: "필고")
+/// - Leading widget on the left (e.g., logo image)
+/// - App title after leading (default: "필고")
 /// - User avatar with customizable size
 /// - Action buttons on the right (e.g., settings button)
 /// - Comic Design: 2.0px bottom border
@@ -24,6 +25,7 @@ import 'package:provider/provider.dart';
 /// Usage:
 /// ```dart
 /// AppHeader(
+///   leading: Image.asset('assets/logo.png', width: 32, height: 32),
 ///   actions: [
 ///     IconButton(
 ///       icon: FaIcon(FontAwesomeIcons.lightGear),
@@ -33,6 +35,10 @@ import 'package:provider/provider.dart';
 /// )
 /// ```
 class AppHeader extends StatelessWidget {
+  /// Leading widget to display before the title (e.g., logo)
+  /// 타이틀 앞에 표시할 리딩 위젯 (예: 로고 이미지)
+  final Widget? leading;
+
   /// Title text to display on the left side (default: "필고")
   /// 왼쪽에 표시할 타이틀 텍스트 (기본값: "필고")
   final String title;
@@ -59,6 +65,7 @@ class AppHeader extends StatelessWidget {
 
   const AppHeader({
     super.key,
+    this.leading,
     this.title = '필고',
     this.actions,
     this.avatarSize = 40,
@@ -92,12 +99,19 @@ class AppHeader extends StatelessWidget {
           // 코믹 디자인: outline 색상으로 2.0px 하단 테두리
           border: showBottomBorder
               ? Border(
-                  bottom: BorderSide(color: scheme.outline, width: 2.0),
+                  bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
                 )
               : null,
         ),
         child: Row(
           children: [
+            /// Leading Widget (리딩 위젯)
+            /// Displays logo or custom widget before title
+            if (leading != null) ...[
+              leading!,
+              SizedBox(width: sp.s8),
+            ],
+
             /// App Title (앱 타이틀)
             /// Displays app name on the left side
             Text(

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/philgo_app.config.dart';
-import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/settings/language.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/forum.state.dart';
-import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/appbar/app_header.dart';
+import 'package:philgo/widgets/logo/logo.dart';
+import 'package:philgo/widgets/logo/philgo.logo.triangle.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -126,23 +126,36 @@ class _MainHomeState extends State<MainHome> {
         /// 재사용 가능한 AppHeader 위젯 사용
         SliverToBoxAdapter(
           child: AppHeader(
+            /// Leading Widget - PhilGo Logo (리딩 위젯 - 필고 로고)
+            /// Displays PhilGo triangle logo before title
+            /// Size: 48 (smaller than default 64)
+            leading: Logo(size: 48),
+
+            /// Title removed - only logo is displayed (타이틀 삭제 - 로고만 표시)
+            title: '',
+
             /// Action buttons displayed after avatar (아바타 뒤에 표시되는 액션 버튼들)
             actions: [
-              /// Settings Button (설정 버튼)
-              /// Navigates to menu section when tapped
+              /// Create Post Button (글쓰기 버튼)
+              /// Updates ForumState and navigates to PostCreateScreen
+              /// ForumState 업데이트 후 글쓰기 화면으로 이동
               IconButton(
                 icon: FaIcon(
-                  FontAwesomeIcons.lightGear,
+                  FontAwesomeIcons.lightPlus,
                   color: scheme.onSurface,
                   size: 24,
                 ),
                 onPressed: () {
-                  NavigationState.of(
-                    context,
-                    listen: false,
-                  ).setHomeNavigation(HomeNavigationItem.menu);
+                  /// 1. ForumState의 editPostCategory를 현재 homePostCategory로 설정
+                  /// Set editPostCategory to current homePostCategory
+                  final forumState = ForumState.of(context, listen: false);
+                  forumState.setEditCategory(forumState.homePostCategory);
+
+                  /// 2. PostCreateScreen으로 이동
+                  /// Navigate to PostCreateScreen
+                  PostCreateScreen.push(context);
                 },
-                tooltip: 'Settings',
+                tooltip: 'Create Post',
               ),
             ],
           ),
@@ -152,199 +165,7 @@ class _MainHomeState extends State<MainHome> {
         SliverToBoxAdapter(child: SizedBox(height: sp.s20)),
 
 
-        /// Latest Posts & Comments Section (최근 게시글 & 댓글 영역)
-        /// Side-by-side 2-column layout
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: sp.s16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Left Column: Latest Posts (왼쪽: 최근 게시글)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Section Header (섹션 헤더)
-                      Text(
-                        'Posts',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: scheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
 
-                      SizedBox(height: sp.s8),
-
-                      /// Post Items (게시글 목록)
-                      /// Display 3 latest posts with title only
-                      /// Comic Design: 2.0px border, no shadow
-                      if (isLoadingPosts)
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(sp.s16),
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      else if (latestPosts == null || latestPosts!.isEmpty)
-                        Container(
-                          padding: EdgeInsets.all(sp.s16),
-                          decoration: BoxDecoration(
-                            color: scheme.surface,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: scheme.outline,
-                              width: 2.0,
-                            ),
-                          ),
-                          child: Text(
-                            Lo.of(context)!.noPostsYet,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      else
-                        ...latestPosts!.map((post) {
-                          return InkWell(
-                            onTap: () {
-                              PostViewScreen.push(context, post);
-                            },
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: sp.s8),
-                              padding: EdgeInsets.all(sp.s12),
-                              decoration: BoxDecoration(
-                                color: scheme.surface,
-                                borderRadius: BorderRadius.circular(8),
-                                // Comic Design: 2.0px border with outline color
-                                border: Border.all(
-                                  color: scheme.outline,
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  /// Post subject (게시글 제목)
-                                  Expanded(
-                                    child: Text(
-                                      post.subject,
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(color: scheme.onSurface),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                    ],
-                  ),
-                ),
-
-                SizedBox(width: sp.s12),
-
-                /// Right Column: Latest Comments (오른쪽: 최근 댓글)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Section Header (섹션 헤더)
-                      Text(
-                        'Comments',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: scheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-
-                      SizedBox(height: sp.s8),
-
-                      /// Comment Items (댓글 목록)
-                      /// Display 3 latest comments with content
-                      /// Comic Design: 2.0px border, no shadow
-                      if (isLoadingComments)
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(sp.s16),
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      else if (latestComments == null ||
-                          latestComments!.isEmpty)
-                        Container(
-                          padding: EdgeInsets.all(sp.s16),
-                          decoration: BoxDecoration(
-                            color: scheme.surface,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: scheme.outline,
-                              width: 2.0,
-                            ),
-                          ),
-                          child: Text(
-                            'No comments yet',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      else
-                        ...latestComments!.map((comment) {
-                          return InkWell(
-                            onTap: () async {
-                              try {
-                                final post = await getPost(comment.idx_root);
-                                if (context.mounted) {
-                                  await PostViewScreen.push(context, post);
-                                }
-                              } catch (e) {
-                                debugLog(
-                                  'Error navigating from comment to post: $e',
-                                );
-                              }
-                            },
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: sp.s8),
-                              padding: EdgeInsets.all(sp.s12),
-                              decoration: BoxDecoration(
-                                color: scheme.surface,
-                                borderRadius: BorderRadius.circular(8),
-                                // Comic Design: 2.0px border with outline color
-                                border: Border.all(
-                                  color: scheme.outline,
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  /// Comment content (댓글 내용)
-                                  Expanded(
-                                    child: Text(
-                                      comment.content,
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(color: scheme.onSurface),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
 
         /// Bottom spacing (하단 여백)
         SliverToBoxAdapter(child: SizedBox(height: sp.s24)),
