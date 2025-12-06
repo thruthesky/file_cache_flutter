@@ -182,7 +182,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
       open: _isOpen,
-      test: Config.isProduction == true ? true : null,
+      test: PhilgoConfig.isProduction == true ? true : null,
       blockAdvertisement: _blockAdvertisement ? true : null,
       onCreate: (roomId) {
         if (context.mounted && Navigator.of(context).canPop()) {

@@ -54,7 +54,8 @@ export 'src/comment/reply_to_comment.dart';
 export 'src/comment/comment.update.dart';
 
 // config
-export 'src/config.dart';
+export 'src/philgo.config.dart';
+export 'src/philgo.category.dart';
 
 // functions
 export 'src/functions/common.functions.dart';
@@ -93,6 +94,7 @@ export 'src/post/widgets/comment.detail.list_view.dart';
 export 'src/post/widgets/post.view.content.dart';
 export 'src/post/widgets/post.view.header.dart';
 export 'src/post/widgets/post.view.images.dart';
+export 'src/post/widgets/post.create.form.dart';
 
 export 'src/post/widgets/category.list.dart';
 

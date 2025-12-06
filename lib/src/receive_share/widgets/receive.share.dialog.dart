@@ -78,7 +78,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                 spacing: 16,
                 children: [
                   Text(
-                    Config.categories.isNotEmpty
+                    PhilgoConfig.categories.isNotEmpty
                         ? LibTr.of(context)!.receive_share_choose_post_or_chat
                         : LibTr.of(context)!.receive_share_choose_chat,
                   ),
@@ -86,7 +86,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     spacing: 16,
                     children: [
-                      if (Config.categories.isNotEmpty)
+                      if (PhilgoConfig.categories.isNotEmpty)
                         Expanded(
                           child: ShareWhereButton(
                             onTap: () => setState(() => tab = 'post'),
@@ -164,9 +164,9 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                             ? null
                             : () async {
                                 if (status[join.id] == 'sent') {
-                                  if (Config.globalContext.mounted) {
+                                  if (PhilgoConfig.globalContext.mounted) {
                                     ChatRoomScreen.push(
-                                      Config.globalContext,
+                                      PhilgoConfig.globalContext,
                                       join.id,
                                     );
                                   }

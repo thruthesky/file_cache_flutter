@@ -197,7 +197,7 @@ void showSafeErrorDialog(String message, {String? title}) {
   // Navigator가 준비될 때까지 잠시 대기 후 다이얼로그 표시
   WidgetsBinding.instance.addPostFrameCallback((_) {
     try {
-      final context = Config.globalContext;
+      final context = PhilgoConfig.globalContext;
       if (context.mounted) {
         showErrorDialog(context, message, title: title);
       } else {
@@ -235,7 +235,7 @@ int safeParseInt(dynamic value, {int defaultValue = 0}) {
 /// 반환값: 사용자가 "예"를 선택하면 true, "아니오"를 선택하거나 다이얼로그를 닫으면 false
 Future<bool> showConfirmDialog({required String message, String? title}) async {
   // globalContext 사용하여 어디서든 호출 가능
-  final context = Config.globalContext;
+  final context = PhilgoConfig.globalContext;
 
   // context가 유효하지 않으면 false 반환
   if (!context.mounted) {

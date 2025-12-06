@@ -365,7 +365,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     if (join.userDisplayName.isNotEmpty) {
       return join.userDisplayName;
     }
-    return LibTr.of(Config.globalContext)!.no_name;
+    return LibTr.of(PhilgoConfig.globalContext)!.no_name;
   }
 
   /// Build a menu item with Comic design
@@ -835,7 +835,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     /// Comic design: Add button with Font Awesome icon
                     IconButton(
                       onPressed: () =>
-                          _showCreateFolderDialog(Config.globalContext),
+                          _showCreateFolderDialog(PhilgoConfig.globalContext),
                       icon: FaIcon(
                         FontAwesomeIcons.lightCirclePlus,
                         color: Theme.of(context).colorScheme.primary,

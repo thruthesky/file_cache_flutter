@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 List<String?> getEnvironmentalPostId(String? postId, String? category) {
-  if (Config.isDevelopment) {
+  if (PhilgoConfig.isDevelopment) {
     if (category == null || category.isEmpty) {
       return ['temp', ''];
     } else {

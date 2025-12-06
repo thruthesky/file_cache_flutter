@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
-class Config {
-  const Config._();
+class PhilgoConfig {
+  const PhilgoConfig._();
 
   static List<PostCategoryItem> categories = [];
 
@@ -68,10 +68,10 @@ class Config {
   }
 
   static String get fileUploadUrl {
-    return '${Config.fileServerUrl}upload.php';
+    return '${PhilgoConfig.fileServerUrl}upload.php';
   }
 
   static String fileDeleteUrl(String uid, String url) {
-    return '${Config.fileServerUrl}delete.php?uid=$uid&url=$url';
+    return '${PhilgoConfig.fileServerUrl}delete.php?uid=$uid&url=$url';
   }
 }

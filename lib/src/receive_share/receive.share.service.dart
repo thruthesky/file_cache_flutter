@@ -17,7 +17,7 @@ class ReceiveShareService {
 
   void initialize({
     required Function(List<SharedMediaFile> data) onData,
-    // Set category if not yet set in Config.categories
+    // Set category if not yet set in PhilgoConfig.categories
     // Store on different holder if plan to support limited category
     List<PostCategoryItem>? categories,
     // Callback when category is tap from the received category selection
@@ -25,7 +25,7 @@ class ReceiveShareService {
     onCategorySelect,
   }) {
     if (categories != null) {
-      Config.categories = categories;
+      PhilgoConfig.categories = categories;
     }
 
     if (onCategorySelect != null) {

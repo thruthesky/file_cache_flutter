@@ -10,7 +10,7 @@ class CategoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: Config.categories.map((category) {
+      children: PhilgoConfig.categories.map((category) {
         return Card(
           child: ListTile(
             title: Text(category.getLabel(context)),
