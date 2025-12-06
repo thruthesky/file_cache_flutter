@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/state/app.state.dart';
-import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/appbar/app_header.dart';
 import 'package:philgo/widgets/logo/logo.dart';
