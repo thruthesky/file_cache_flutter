@@ -79,10 +79,12 @@ export 'src/philgo/file_upload_response.model.dart';
 export './src/models/common.models.dart';
 export './src/post/models/comment.model.dart';
 
+// cache
+export 'src/cache/post_cache.dart';
+
 // post / forum
 export 'src/post/models/post.list.model.dart';
 export 'src/post/models/post.model.dart';
-export 'src/post/post.category.definitions.dart';
 export 'src/post/post.functions.dart';
 export 'src/post/widgets/comment.detail.dart';
 export 'src/post/widgets/comment.list.view.dart';

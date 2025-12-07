@@ -750,4 +750,7 @@ class PhilgoTrEn extends PhilgoTr {
 
   @override
   String get subCategoryUsedCar => 'Used Car';
+
+  @override
+  String get categoryAll => 'All';
 }

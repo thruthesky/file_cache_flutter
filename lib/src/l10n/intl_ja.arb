@@ -223,5 +223,7 @@
     "subCategoryRealEstate": "不動産",
     "subCategoryHouseRental": "住宅賃貸",
     "subCategoryCarRental": "レンタカー",
-    "subCategoryUsedCar": "中古車"
+    "subCategoryUsedCar": "中古車",
+
+    "categoryAll": "すべて"
 }

@@ -202,8 +202,11 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
               Expanded(
                 child: SingleChildScrollView(
                   child: CategoryList(
-                    onTap: (PostCategoryItem category) {
+                    /// 카테고리 선택 시 콜백 호출
+                    /// Call callback when category is selected
+                    onTap: (String postId, String? category) {
                       ReceiveShareService.instance.onCategorySelect?.call(
+                        postId,
                         category,
                         widget.data,
                       );

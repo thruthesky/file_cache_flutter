@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 class PhilgoConfig {
   const PhilgoConfig._();
 
-  static List<PostCategoryItem> categories = [];
+  /// 카테고리 목록 (Category list)
+  /// 외부 공유 시 사용할 카테고리 postId 목록
+  /// List of category postIds used for external sharing
+  static List<String> categories = [];
 
   static BuildContext? _globalContext;
 

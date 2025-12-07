@@ -34,7 +34,7 @@ Future<PostList> getPosts({
       'page': page,
       'limit': limit,
     },
-    debug: true,
+    // debug: true,
   );
   // debugLog('getPosts: $res');
   return PostList.fromJson(res);
@@ -70,7 +70,7 @@ Future<List<Post>> getLatestByUser({
       'limit': limit,
       'page': page,
     },
-    debug: true,
+    // debug: true,
   );
   debugLog('getPosts: $res');
   return (res).map((e) => Post.fromJson(e as Map<String, dynamic>)).toList();
@@ -373,7 +373,7 @@ Future<List<Comment>> getLatestComments({int page = 1, int limit = 20}) async {
   final res = await func(
     'get_latest_comments',
     data: {'page': page, 'limit': limit},
-    debug: true,
+    // debug: true,
   );
 
   debugLog("GET LATEST COMMENTS ----------------> $res");
@@ -391,7 +391,7 @@ Future<List<Comment>> getMyComments({int page = 1, int limit = 20}) async {
   final res = await func<List<dynamic>>(
     'get_my_comments',
     data: {'page': page, 'limit': limit},
-    debug: true,
+    // debug: true,
   );
 
   debugLog("GET MY COMMENTS ----------------> $res");

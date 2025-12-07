@@ -732,4 +732,7 @@ class PhilgoTrZh extends PhilgoTr {
 
   @override
   String get subCategoryUsedCar => '二手车';
+
+  @override
+  String get categoryAll => '全部';
 }

@@ -53,6 +53,11 @@ String _getTranslation(PhilgoTr tr, String key) {
 Map<String, String> _buildTranslationMap(PhilgoTr tr) {
   return {
     // ========================================
+    // 공통 (Common)
+    // ========================================
+    'all': tr.categoryAll,
+
+    // ========================================
     // 메인 카테고리 (Main Categories) - 25개
     // ========================================
     'freetalk': tr.categoryFreetalk,

@@ -1432,6 +1432,12 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'Used Car'**
   String get subCategoryUsedCar;
+
+  /// No description provided for @categoryAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get categoryAll;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

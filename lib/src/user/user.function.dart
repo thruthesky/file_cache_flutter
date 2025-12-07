@@ -74,7 +74,7 @@ Future toggleBlockUser(String otherUserUid) async {
   final res = await func(
     'toggle_block_member',
     data: {'blockee_firebase_uid': otherUserUid},
-    debug: true,
+    // debug: true,
   );
   log(res.toString(), name: 'toggleBlockUser::');
   return res['blocked'];
@@ -103,9 +103,7 @@ void showProfileDialog(BuildContext context, User otherUser) {
         // Comic design: no shadow
         elevation: 0,
         // Comic design: rounded corners (borderRadius: 12)
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -114,10 +112,7 @@ void showProfileDialog(BuildContext context, User otherUser) {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: 2.0px outline border with rounded corners
-            border: Border.all(
-              color: colorScheme.outline,
-              width: 2.0,
-            ),
+            border: Border.all(color: colorScheme.outline, width: 2.0),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -181,15 +176,19 @@ void showProfileDialog(BuildContext context, User otherUser) {
                             ),
                           ),
                           // Comic design: primary background
-                          backgroundColor:
-                              WidgetStateProperty.all(colorScheme.primary),
+                          backgroundColor: WidgetStateProperty.all(
+                            colorScheme.primary,
+                          ),
                           // Comic design: onPrimary text color
-                          foregroundColor:
-                              WidgetStateProperty.all(colorScheme.onPrimary),
+                          foregroundColor: WidgetStateProperty.all(
+                            colorScheme.onPrimary,
+                          ),
                           // Comic design: padding in multiples of 8
                           padding: WidgetStateProperty.all(
                             const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                           // Comic design: text style from Theme
                           textStyle: WidgetStateProperty.all(
@@ -217,15 +216,19 @@ void showProfileDialog(BuildContext context, User otherUser) {
                           ),
                         ),
                         // Comic design: surface background
-                        backgroundColor:
-                            WidgetStateProperty.all(colorScheme.surface),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
                         // Comic design: onSurface text color
-                        foregroundColor:
-                            WidgetStateProperty.all(colorScheme.onSurface),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(

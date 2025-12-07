@@ -168,18 +168,18 @@
     "report_reason_other": "기타",
 
     "categoryFreetalk": "자유게시판",
-    "categoryQna": "묻고 답하기",
-    "categoryBuyandsell": "사고팔기",
+    "categoryQna": "질문답변",
+    "categoryBuyandsell": "회원장터",
     "categoryBlog": "블로그",
-    "categoryBoardingHouse": "하숙집/기숙사",
-    "categoryCaution": "주의/경고",
+    "categoryBoardingHouse": "하숙집",
+    "categoryCaution": "주의",
     "categoryLookfor": "사람찾기",
-    "categoryFoodDelivery": "음식배달",
+    "categoryFoodDelivery": "배달음식",
     "categoryGreeting": "인사",
     "categoryWanted": "구인구직",
     "categoryBusiness": "비즈니스",
     "categoryMassage": "마사지",
-    "categoryRest": "레스토랑",
+    "categoryRest": "식당",
     "categorySchool": "학교",
     "categoryStudy": "어학연수",
     "categoryTravel": "여행",
@@ -223,5 +223,7 @@
     "subCategoryRealEstate": "부동산",
     "subCategoryHouseRental": "주택임대",
     "subCategoryCarRental": "렌트카",
-    "subCategoryUsedCar": "중고차"
+    "subCategoryUsedCar": "중고차",
+
+    "categoryAll": "전체"
 }

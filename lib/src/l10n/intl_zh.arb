@@ -223,5 +223,7 @@
     "subCategoryRealEstate": "房地产",
     "subCategoryHouseRental": "房屋出租",
     "subCategoryCarRental": "租车",
-    "subCategoryUsedCar": "二手车"
+    "subCategoryUsedCar": "二手车",
+
+    "categoryAll": "全部"
 }

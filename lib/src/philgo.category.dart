@@ -62,7 +62,6 @@ class PhilgoCategory {
 
     // ===== 서브카테고리가 없는 메인 카테고리 =====
 
-
     /// qna (질문과 답변)
     'qna': [],
 
@@ -136,7 +135,7 @@ class PhilgoCategory {
   /// 모든 메인 카테고리(post_id) 목록을 반환합니다.
   ///
   /// 반환값: 26개의 메인 카테고리 문자열 배열
-  /// 
+  ///
   /// 주의: 홈페이지에 표시할 때에는 majorCategories() 메서드를 통해서 메인 카테고리를 표시해야 합니다.
   ///
   /// 예시:
@@ -154,18 +153,18 @@ class PhilgoCategory {
       'freetalk', // 행불 포함
       'qna',
       'buyandsell',
-      'blog',
       'boarding_house',
-      'caution', // 주의사항
-      'food_delivery',
-      'greeting',
-      'business',
-      'wanted', // 구인구직
-      'massage',
-      'rest',
-      'school',
       'travel',
-      'youtube'
+      'wanted', // 구인구직
+      'business',
+      'school',
+      'caution', // 주의사항
+      'greeting',
+      'massage',
+      'food_delivery',
+      'rest',
+      'blog',
+      'youtube',
     ];
   }
 
@@ -235,8 +234,7 @@ class PhilgoCategory {
   /// PhilgoCategory.hasSubCategories('blog'); // false
   /// ```
   static bool hasSubCategories(String postId) {
-    return _categoryMap.containsKey(postId) &&
-        _categoryMap[postId]!.isNotEmpty;
+    return _categoryMap.containsKey(postId) && _categoryMap[postId]!.isNotEmpty;
   }
 
   /// 메인 카테고리가 유효한지 확인합니다.

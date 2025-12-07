@@ -46,7 +46,7 @@ Future<CompanyList> getCompanies({
       if (orderby != null) 'orderby': orderby,
       if (limit != null) 'limit': limit,
     },
-    debug: true,
+    // debug: true,
   );
 
   // API가 List를 직접 반환하는 경우 처리
@@ -68,7 +68,11 @@ Future<CompanyList> getCompanies({
 
 Future<Company> getCompany(int idx) async {
   debugLog('Fetching company id: $idx');
-  final response = await func('get_company', data: {'idx': idx}, debug: true);
+  final response = await func(
+    'get_company',
+    data: {'idx': idx},
+    //  debug: true
+  );
   debugLog('company: $response');
 
   return Company.fromJson(response);
@@ -76,7 +80,10 @@ Future<Company> getCompany(int idx) async {
 
 Future<Company?> getMyCompany() async {
   debugLog('Fetching my company');
-  final response = await func('get_my_company', debug: true);
+  final response = await func(
+    'get_my_company',
+    //  debug: true,
+  );
   // debugLog('My company response: $response');
 
   // If the response has a 'data' key
@@ -92,14 +99,21 @@ Future<Company?> getMyCompany() async {
 
 Future<Company> createCompany() async {
   debugLog('Creating my company');
-  final response = await func('create_my_company', debug: true);
+  final response = await func(
+    'create_my_company',
+    // debug: true,
+  );
   debugLog('Create a compnay $response');
   return Company.fromJson(response);
 }
 
 Future<Company> updateCompany(RecordType data) async {
   debugLog('Updating company with data: $data');
-  final response = await func('update_my_company', data: data, debug: true);
+  final response = await func(
+    'update_my_company',
+    data: data,
+    //  debug: true,
+  );
   debugLog('Update company response: $response');
   return Company.fromJson(response);
 }

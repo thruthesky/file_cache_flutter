@@ -3,6 +3,10 @@ import 'dart:developer';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
+/// 외부 공유 수신 서비스 (Receive Share Service)
+///
+/// 다른 앱에서 공유된 파일/텍스트를 수신하고 처리합니다.
+/// Receives and processes files/text shared from other apps.
 class ReceiveShareService {
   static ReceiveShareService? _instance;
   static ReceiveShareService get instance {
@@ -12,17 +16,24 @@ class ReceiveShareService {
 
   ReceiveShareService._();
 
-  Function(PostCategoryItem category, List<SharedMediaFile> data)?
-  onCategorySelect;
+  /// 카테고리 선택 콜백 (Category selection callback)
+  /// [postId] 메인 카테고리 ID
+  /// [category] 서브 카테고리 (null 가능)
+  /// [data] 공유된 미디어 파일 목록
+  Function(String postId, String? category, List<SharedMediaFile> data)?
+      onCategorySelect;
 
   void initialize({
     required Function(List<SharedMediaFile> data) onData,
-    // Set category if not yet set in PhilgoConfig.categories
-    // Store on different holder if plan to support limited category
-    List<PostCategoryItem>? categories,
-    // Callback when category is tap from the received category selection
-    Function(PostCategoryItem category, List<SharedMediaFile> data)?
-    onCategorySelect,
+
+    /// 카테고리 postId 목록 (PhilgoConfig.categories에 설정되지 않은 경우)
+    /// Category postId list (if not set in PhilgoConfig.categories)
+    List<String>? categories,
+
+    /// 카테고리 선택 시 콜백
+    /// Callback when category is tapped from the received category selection
+    Function(String postId, String? category, List<SharedMediaFile> data)?
+        onCategorySelect,
   }) {
     if (categories != null) {
       PhilgoConfig.categories = categories;

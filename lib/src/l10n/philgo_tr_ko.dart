@@ -571,25 +571,25 @@ class PhilgoTrKo extends PhilgoTr {
   String get categoryFreetalk => '자유게시판';
 
   @override
-  String get categoryQna => '묻고 답하기';
+  String get categoryQna => '질문답변';
 
   @override
-  String get categoryBuyandsell => '사고팔기';
+  String get categoryBuyandsell => '회원장터';
 
   @override
   String get categoryBlog => '블로그';
 
   @override
-  String get categoryBoardingHouse => '하숙집/기숙사';
+  String get categoryBoardingHouse => '하숙집';
 
   @override
-  String get categoryCaution => '주의/경고';
+  String get categoryCaution => '주의';
 
   @override
   String get categoryLookfor => '사람찾기';
 
   @override
-  String get categoryFoodDelivery => '음식배달';
+  String get categoryFoodDelivery => '배달음식';
 
   @override
   String get categoryGreeting => '인사';
@@ -604,7 +604,7 @@ class PhilgoTrKo extends PhilgoTr {
   String get categoryMassage => '마사지';
 
   @override
-  String get categoryRest => '레스토랑';
+  String get categoryRest => '식당';
 
   @override
   String get categorySchool => '학교';
@@ -734,4 +734,7 @@ class PhilgoTrKo extends PhilgoTr {
 
   @override
   String get subCategoryUsedCar => '중고차';
+
+  @override
+  String get categoryAll => '전체';
 }

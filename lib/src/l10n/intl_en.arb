@@ -853,5 +853,7 @@
     "subCategoryRealEstate": "Real Estate",
     "subCategoryHouseRental": "House Rental",
     "subCategoryCarRental": "Car Rental",
-    "subCategoryUsedCar": "Used Car"
+    "subCategoryUsedCar": "Used Car",
+
+    "categoryAll": "All"
 }
