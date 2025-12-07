@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/functions/ui.functions.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/headers/app_header.dart';
+import 'package:philgo/widgets/home/home_post_section.dart';
+import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/logo/logo.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
-import 'package:philgo/widgets/layout/content_container.dart';
 
 /// 메인 홈 화면 (Main Home Screen)
 ///
@@ -111,6 +113,53 @@ class _MainHomeState extends State<MainHome> {
           /// Top banners - display all page banners
           SliverToBoxAdapter(child: const TopBanners()),
 
+          /// [게시판 섹션 - 2단 레이아웃]
+          /// Forum Sections - 2-column layout
+          /// 왼쪽: 자유게시판, 오른쪽: 질문과 답변
+          /// Left: Freetalk, Right: QnA
+          SliverToBoxAdapter(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// [자유게시판 섹션] - 최근 글 4개 표시 (왼쪽)
+                /// Freetalk Section - Display latest 4 posts (left)
+                Expanded(
+                  child: HomePostSection(
+                    postId: 'freetalk',
+                    limit: 4,
+                    onMoreTap: () {
+                      /// TODO: ForumHome으로 이동하면서 freetalk 선택
+                      /// TODO: Navigate to ForumHome with freetalk selected
+                    },
+                    onPostTap: (post) {
+                      /// PostViewScreen으로 이동
+                      /// Navigate to PostViewScreen
+                      PostViewScreen.push(context, post);
+                    },
+                  ),
+                ),
+
+                /// [질문과 답변 섹션] - 최근 글 4개 표시 (오른쪽)
+                /// QnA Section - Display latest 4 posts (right)
+                Expanded(
+                  child: HomePostSection(
+                    postId: 'qna',
+                    limit: 4,
+                    onMoreTap: () {
+                      /// TODO: ForumHome으로 이동하면서 qna 선택
+                      /// TODO: Navigate to ForumHome with qna selected
+                    },
+                    onPostTap: (post) {
+                      /// PostViewScreen으로 이동
+                      /// Navigate to PostViewScreen
+                      PostViewScreen.push(context, post);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           /// [Square Banners]
           /// 사각 배너 - 1줄에 4개씩 그리드로 표시
           /// Square banners - display 4 per row in grid
@@ -121,8 +170,8 @@ class _MainHomeState extends State<MainHome> {
             ),
           ),
 
-          /// Spacing after AppBar (앱바 하단 여백)
-          SliverToBoxAdapter(child: SizedBox(height: sp.s20)),
+          /// Spacing after banners (배너 하단 여백)
+          SliverToBoxAdapter(child: SizedBox(height: sp.s8)),
 
           /// Bottom spacing (하단 여백)
           SliverToBoxAdapter(child: SizedBox(height: sp.s24)),
