@@ -25,9 +25,9 @@ class _HomeSquareBannerState extends State<HomeSquareBanner> {
   Future<void> loadBanners() async {
     // Note: We use getWingBanners API but display them as "Square" banners in the main feed.
     final result = await BannerApi.getWingBanners(category: widget.category);
-    log(
-      'Square(Wing) Banners Loaded: ${result['left']?.length} left, ${result['right']?.length} right',
-    );
+    // log(
+    //   'Square(Wing) Banners Loaded: ${result['left']?.length} left, ${result['right']?.length} right',
+    // );
 
     if (mounted) {
       setState(() {

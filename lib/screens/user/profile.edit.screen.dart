@@ -62,7 +62,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           _nameController.text = user.name;
           gender = user.gender;
           birthDate = user.birthDate;
-          log('date: $birthDate');
+          // log('date: $birthDate');
           setState(() {});
         },
         builder: (context, user) {

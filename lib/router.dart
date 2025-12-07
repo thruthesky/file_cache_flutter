@@ -102,10 +102,10 @@ final router = GoRouter(
     );
   },
   redirect: (context, state) {
-    developer.log(
-      '🔍 Go_ROUTE: Redirect 체크: path=${state.fullPath}, name=${state.name} matchedLocation=${state.matchedLocation} uri=${state.uri} uri.path=${state.uri.path} uri.query=${state.uri.query}',
-      name: 'Router',
-    );
+    // developer.log(
+    //   '🔍 Go_ROUTE: Redirect 체크: path=${state.fullPath}, name=${state.name} matchedLocation=${state.matchedLocation} uri=${state.uri} uri.path=${state.uri.path} uri.query=${state.uri.query}',
+    //   name: 'Router',
+    // );
 
     Map<String, String> queryParameters = state.uri.queryParameters;
 
@@ -143,7 +143,7 @@ final router = GoRouter(
       Globals.screenId = state.pathParameters['id'] ?? '';
     }
 
-    developer.log('Globals: ${Globals.screenName}, ${Globals.screenId}');
+    // developer.log('Globals: ${Globals.screenName}, ${Globals.screenId}');
 
     ///
     if (state.fullPath == EntryScreen.routeName) {

@@ -43,7 +43,7 @@ class BannerApi {
       }
       return {'left': [], 'right': []};
     } catch (e) {
-      log('Error getting top banners: $e', name: 'BannerApi');
+      // log('Error getting top banners: $e', name: 'BannerApi');
       return {'left': [], 'right': []};
     }
   }
@@ -80,7 +80,7 @@ class BannerApi {
       }
       return {'left': [], 'right': []};
     } catch (e) {
-      log('Error getting wing banners: $e', name: 'BannerApi');
+      // log('Error getting wing banners: $e', name: 'BannerApi');
       return {'left': [], 'right': []};
     }
   }
@@ -92,9 +92,7 @@ class BannerApi {
   /// - null인 경우: 전체 페이지 배너 표시 (all_page='y')
   /// - 지정된 경우: 해당 카테고리 배너 + 전체 페이지 배너 표시
   /// Returns: BannerModel 리스트
-  static Future<List<BannerModel>> getSquareBanners({
-    String? category,
-  }) async {
+  static Future<List<BannerModel>> getSquareBanners({String? category}) async {
     try {
       final Map<String, dynamic> data = {};
       if (category != null) {
@@ -110,7 +108,7 @@ class BannerApi {
       }
       return [];
     } catch (e) {
-      log('Error getting square banners: $e', name: 'BannerApi');
+      // log('Error getting square banners: $e', name: 'BannerApi');
       return [];
     }
   }
@@ -124,9 +122,10 @@ class BannerApi {
     required String category,
   }) async {
     try {
-      final response = await func('get_small_banners', data: {
-        'category': category,
-      });
+      final response = await func(
+        'get_small_banners',
+        data: {'category': category},
+      );
 
       if (response is List) {
         return response
@@ -135,7 +134,7 @@ class BannerApi {
       }
       return [];
     } catch (e) {
-      log('Error getting small banners: $e', name: 'BannerApi');
+      // log('Error getting small banners: $e', name: 'BannerApi');
       return [];
     }
   }

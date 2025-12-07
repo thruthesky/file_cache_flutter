@@ -75,7 +75,7 @@ class _UserActivityScreenState extends State<UserActivityScreen>
         });
       }
     } catch (e) {
-      debugPrint('Error loading user: $e');
+      // debugPrint('Error loading user: $e');
     } finally {
       if (mounted) {
         setState(() {

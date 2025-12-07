@@ -82,6 +82,7 @@ class _MyAppState extends State<MyApp> {
       if (globalNavigatorKey.currentContext != null) {
         PhilgoConfig.setGlobalContext(globalNavigatorKey.currentContext!);
       }
+
       /// 외부 공유 수신 서비스 초기화
       /// Initialize receive share service
       ReceiveShareService.instance.initialize(
@@ -89,11 +90,15 @@ class _MyAppState extends State<MyApp> {
         /// Set category list using PhilgoCategory.majorCategories()
         categories: PhilgoCategory.majorCategories(),
         onCategorySelect:
-            (String postId, String? category, List<SharedMediaFile> data) async {
-              log(
-                "postId: $postId, category: $category || ${data.map((f) => f.toMap()).toString()}",
-                name: 'onCategorySelect',
-              );
+            (
+              String postId,
+              String? category,
+              List<SharedMediaFile> data,
+            ) async {
+              // log(
+              //   "postId: $postId, category: $category || ${data.map((f) => f.toMap()).toString()}",
+              //   name: 'onCategorySelect',
+              // );
 
               /// postId와 category를 직접 전달하여 글쓰기 화면 표시
               /// Pass postId and category directly to post create screen
@@ -123,7 +128,7 @@ class _MyAppState extends State<MyApp> {
               }
             },
         onData: (data) async {
-          log(data.map((f) => f.toMap()).toString(), name: 'onValue');
+          // log(data.map((f) => f.toMap()).toString(), name: 'onValue');
           // Handle the received files and text as needed
           if (data.isEmpty) return;
           showReceiveShareDialog(globalContext, data);
@@ -208,14 +213,14 @@ class _MyAppState extends State<MyApp> {
 
     try {
       await channel.invokeMethod('createNotificationChannel', channelMap1);
-      log('Finished creating channel1', name: 'NotificationChannel Success');
+      // log('Finished creating channel1', name: 'NotificationChannel Success');
       // await channel.invokeMethod('createNotificationChannel', channelMap2);
       // log('Finished creating channel2');
     } on PlatformException catch (e) {
-      log(
-        'Error while creating channel: ${e.message}',
-        name: 'NotificationChannel registration Error',
-      );
+      // log(
+      //   'Error while creating channel: ${e.message}',
+      //   name: 'NotificationChannel registration Error',
+      // );
     }
   }
 

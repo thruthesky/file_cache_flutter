@@ -31,14 +31,14 @@ class PostCreateScreen extends StatefulWidget {
     List<XFile>? xFiles,
     String? content,
   })
-  push = (
-    ctx, {
-    required String postId,
-    String? category,
-    List<XFile>? xFiles,
-    String? content,
-  }) =>
-      ctx.push(
+  push =
+      (
+        ctx, {
+        required String postId,
+        String? category,
+        List<XFile>? xFiles,
+        String? content,
+      }) => ctx.push(
         routeName,
         extra: {
           'postId': postId,
@@ -50,11 +50,7 @@ class PostCreateScreen extends StatefulWidget {
 
   /// 글쓰기 화면으로 이동 (현재 화면 교체)
   /// Navigate to post create screen (replace current screen)
-  static Function(
-    BuildContext ctx, {
-    required String postId,
-    String? category,
-  })
+  static Function(BuildContext ctx, {required String postId, String? category})
   go = (ctx, {required String postId, String? category}) => ctx.go(routeName);
 
   const PostCreateScreen({
@@ -98,10 +94,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     if (widget.content != null) _contentController.text = widget.content!;
     if (widget.xFiles != null) {
       /// upload xFiles to philgo server
-      log(
-        widget.xFiles!.map((e) => e.path).toString(),
-        name: 'received xfiles',
-      );
+      // log(
+      //   widget.xFiles!.map((e) => e.path).toString(),
+      //   name: 'received xfiles',
+      // );
       for (var file in widget.xFiles!) {
         setState(() {
           uploadingCount++;
@@ -109,20 +105,20 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
         philgoApiFileUpload(file.path)
             .then((uploadedFile) {
-              log(
-                'Uploaded file URL: ${uploadedFile?.url}',
-                name: 'file upload',
-              );
+              // log(
+              //   'Uploaded file URL: ${uploadedFile?.url}',
+              //   name: 'file upload',
+              // );
               if (uploadedFile != null) {
                 urls.add(uploadedFile.url);
               }
             })
             .catchError((error) {
-              log(
-                'File upload error: $error',
-                name: 'file upload',
-                error: error,
-              );
+              // log(
+              //   'File upload error: $error',
+              //   name: 'file upload',
+              //   error: error,
+              // );
               showSafeErrorDialog('File upload failed: $error');
             })
             .whenComplete(() {
@@ -476,4 +472,3 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     );
   }
 }
-
