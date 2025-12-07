@@ -86,7 +86,8 @@
       "Bash(git submodule:*)",
       "Bash(npx tailwindcss:*)",
       "Bash(npx shadcn-svelte@latest init)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Skill(philgo-api-skill)"
     ]
   },
   "enableAllProjectMcpServers": true,

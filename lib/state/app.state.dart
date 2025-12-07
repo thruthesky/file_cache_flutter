@@ -21,19 +21,6 @@ class AppState extends ChangeNotifier {
   User? user;
   int idx = 0;
 
-  // Home chrome (app bar / bottom nav) visibility
-  bool _isHomeChromeVisible = true;
-
-  bool get isHomeChromeVisible => _isHomeChromeVisible;
-
-  void setHomeChromeVisible(bool visible) {
-    if (_isHomeChromeVisible == visible) {
-      return;
-    }
-    _isHomeChromeVisible = visible;
-    notifyListeners();
-  }
-
   // Locale (언어 설정)
   Locale? _locale;
 

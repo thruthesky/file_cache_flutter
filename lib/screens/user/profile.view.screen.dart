@@ -62,7 +62,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
       final userData = await func(
         'get_user_public_profile',
         data: {'firebase_uid': widget.firebaseUid},
-        debug: true,
+        // debug: true,
       );
       setState(() {
         user = User.fromJson(userData);
@@ -192,7 +192,10 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                       child: InkWell(
                                         borderRadius: BorderRadius.circular(12),
                                         onTap: () {
-                                          ChatRoomScreen.push(context, user!.uid);
+                                          ChatRoomScreen.push(
+                                            context,
+                                            user!.uid,
+                                          );
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -211,7 +214,10 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                                     .withValues(alpha: 0.05),
                                               ],
                                             ),
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+
                                             /// Flat design - subtle border
                                             border: Border.all(
                                               color: Theme.of(context)
@@ -224,18 +230,21 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(8),
                                             child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 /// Chat icon at top
                                                 FaIcon(
-                                                  FontAwesomeIcons.lightCommentDots,
+                                                  FontAwesomeIcons
+                                                      .lightCommentDots,
                                                   size: 20,
                                                   color: Theme.of(
                                                     context,
                                                   ).colorScheme.primary,
                                                 ),
                                                 const SizedBox(height: 6),
+
                                                 /// Large emphasis text
                                                 Text(
                                                   '1:1',
@@ -243,13 +252,15 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                                       .textTheme
                                                       .titleLarge
                                                       ?.copyWith(
-                                                        fontWeight: FontWeight.w700,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onSurface,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.onSurface,
                                                       ),
                                                 ),
                                                 const SizedBox(height: 2),
+
                                                 /// Label text
                                                 Text(
                                                   T.chat,
@@ -260,12 +271,16 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                                         color: Theme.of(context)
                                                             .colorScheme
                                                             .onSurface
-                                                            .withValues(alpha: 0.6),
-                                                        fontWeight: FontWeight.w500,
+                                                            .withValues(
+                                                              alpha: 0.6,
+                                                            ),
+                                                        fontWeight:
+                                                            FontWeight.w500,
                                                       ),
                                                   textAlign: TextAlign.center,
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ],
                                             ),
@@ -284,7 +299,9 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                     icon: FontAwesomeIcons.lightFileLines,
                                     value: user?.noOfPost ?? 0,
                                     label: T.posts,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ),
 
@@ -296,7 +313,9 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                     icon: FontAwesomeIcons.lightComments,
                                     value: user?.noOfComment ?? 0,
                                     label: T.comments,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
                                   ),
                                 ),
                               ],

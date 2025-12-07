@@ -2,8 +2,8 @@ import 'dart:developer' as developer;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
@@ -21,7 +21,6 @@ import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
-import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
@@ -79,7 +78,7 @@ final router = GoRouter(
   navigatorKey: globalNavigatorKey,
   observers: [RouteLoggingObserver()],
   errorBuilder: (context, state) {
-    developer.log('❗ Go_ROUTE: Error: ${state.error}', name: 'Router');
+    // developer.log('❗ Go_ROUTE: Error: ${state.error}', name: 'Router');
     return Scaffold(
       appBar: AppBar(title: const Text('Page Not Found')),
       body: Center(
@@ -110,31 +109,17 @@ final router = GoRouter(
 
     Map<String, String> queryParameters = state.uri.queryParameters;
 
+    /// Forum page (post list) is not supported for DeepLink.
     if (state.matchedLocation.contains('/post/list.php')) {
       NavigationState.of(
         context,
         listen: false,
       ).setHomeNavigation(HomeNavigationItem.forum);
 
-      if (queryParameters.containsKey('post_id') &&
-          queryParameters['post_id']!.isNotEmpty) {
-        String postId = queryParameters['post_id']!;
-        String? category = queryParameters['category'];
-        final postCategory = PhilGoAppConfig.getCategories().firstWhere(
-          (cat) => cat.postId == postId && cat.category == category,
-          orElse: () => PostCategoryItem(postId: '', category: null),
-        );
-        if (postCategory.postId.isNotEmpty) {
-          ForumState.of(
-            context,
-            listen: false,
-          ).setHomePostCategory(postCategory);
-        }
-      }
-
       return HomeScreen.routeName;
     }
 
+    /// Post view DeepLink
     if (state.matchedLocation.contains('/post/view.php') &&
         queryParameters.containsKey('idx') &&
         queryParameters['idx']!.isNotEmpty) {
@@ -143,6 +128,8 @@ final router = GoRouter(
       return PostViewScreen.routeName;
     }
 
+    /// Chat room DeepLink
+    /// TODO What if the user didn't login?
     if (state.matchedLocation.contains('/chat/rooms.php')) {
       return ChatRoomScreen.routeName.replaceFirst(
         ':id',
@@ -150,6 +137,7 @@ final router = GoRouter(
       );
     }
 
+    ///
     if (state.fullPath == ChatRoomScreen.routeName) {
       Globals.screenName = 'ChatRoomScreen';
       Globals.screenId = state.pathParameters['id'] ?? '';
@@ -157,6 +145,7 @@ final router = GoRouter(
 
     developer.log('Globals: ${Globals.screenName}, ${Globals.screenId}');
 
+    ///
     if (state.fullPath == EntryScreen.routeName) {
       return null;
     } else {
@@ -173,7 +162,7 @@ final router = GoRouter(
       path: HomeScreen.routeName,
       name: HomeScreen.routeName,
       builder: (context, state) {
-        developer.log('🔍 Go_ROUTE: HomeScreen');
+        // developer.log('🔍 Go_ROUTE: HomeScreen');
         return const HomeScreen();
       },
     ),
@@ -248,13 +237,16 @@ final router = GoRouter(
     GoRoute(
       path: PostCreateScreen.routeName,
       name: PostCreateScreen.routeName,
-      // builder: (context, state) => const PostCreateScreen(),
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
 
+        /// postId와 category를 extra에서 추출하여 PostCreateScreen에 전달
+        /// Extract postId and category from extra and pass to PostCreateScreen
         return PostCreateScreen(
-          xFiles: extra['xFiles'],
-          content: extra['content'],
+          postId: extra['postId'] as String,
+          category: extra['category'] as String?,
+          xFiles: extra['xFiles'] as List<XFile>?,
+          content: extra['content'] as String?,
         );
       },
     ),

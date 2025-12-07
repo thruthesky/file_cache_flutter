@@ -7,21 +7,25 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 ///
 /// 주요 카테고리를 가로 스크롤 가능한 TextButton 목록으로 표시
 /// Displays major categories as horizontally scrollable TextButton list
-class ForumHeader extends StatefulWidget {
+class ForumHeader extends StatelessWidget {
   /// 카테고리 선택 콜백
   /// Callback when category is selected
   final void Function(String postId) onCategorySelected;
 
-  const ForumHeader({super.key, required this.onCategorySelected});
+  /// 글쓰기 버튼 클릭 콜백
+  /// Callback when create post button is pressed
+  final VoidCallback? onCreatePost;
 
-  @override
-  State<ForumHeader> createState() => _ForumHeaderState();
-}
+  /// 외부에서 전달된 선택된 카테고리 ID (UI 동기화용)
+  /// Selected category ID passed from parent (for UI sync)
+  final String? selectedPostId;
 
-class _ForumHeaderState extends State<ForumHeader> {
-  /// 현재 선택된 카테고리 ID
-  /// Currently selected category ID
-  String? _selectedCategory;
+  const ForumHeader({
+    super.key,
+    required this.onCategorySelected,
+    this.onCreatePost,
+    this.selectedPostId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +48,15 @@ class _ForumHeaderState extends State<ForumHeader> {
                   /// Get localized category name (using philgoTr)
                   final localizedName = philgoTr(context, postId);
 
-                  /// 현재 선택된 카테고리 여부
-                  /// Whether this category is currently selected
-                  final isSelected = _selectedCategory == postId;
+                  /// 현재 선택된 카테고리 여부 (외부에서 전달된 값 사용)
+                  /// Whether this category is currently selected (use value from parent)
+                  final isSelected = selectedPostId == postId;
 
                   return Padding(
                     padding: EdgeInsets.only(right: sp.s4),
                     child: TextButton(
                       onPressed: () {
-                        setState(() {
-                          _selectedCategory = postId;
-                        });
-                        widget.onCategorySelected.call(postId);
+                        onCategorySelected.call(postId);
                       },
                       style: TextButton.styleFrom(
                         /// 선택된 카테고리는 primary 색상 배경 적용
@@ -103,10 +104,7 @@ class _ForumHeaderState extends State<ForumHeader> {
               color: scheme.onSurface,
               size: 20,
             ),
-            onPressed: () {
-              // TODO: 글쓰기 기능 구현
-              // TODO: Implement post creation
-            },
+            onPressed: onCreatePost,
           ),
         ],
       ),

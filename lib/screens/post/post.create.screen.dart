@@ -6,28 +6,79 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/state/forum.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/themes/app.spacing.dart';
 
+/// 글쓰기 화면 (Post Create Screen)
+///
+/// 외부 앱에서 파일 공유 시 사용됩니다.
+/// Used when files are shared from external apps.
+///
+/// [postId] 메인 카테고리 ID (예: 'freetalk', 'buyandsell')
+/// [category] 서브 카테고리 (선택적, 없으면 null)
+/// [xFiles] 외부에서 공유된 파일 목록
+/// [content] 외부에서 공유된 텍스트 컨텐츠
 class PostCreateScreen extends StatefulWidget {
   static const String routeName = '/post-create';
 
-  //
+  /// 글쓰기 화면으로 이동
+  /// Navigate to post create screen with postId and category
   static Future Function(
     BuildContext ctx, {
+    required String postId,
+    String? category,
     List<XFile>? xFiles,
     String? content,
   })
-  push = (ctx, {List<XFile>? xFiles, String? content}) =>
-      ctx.push(routeName, extra: {'xFiles': xFiles, 'content': content});
-  //
-  static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
+  push = (
+    ctx, {
+    required String postId,
+    String? category,
+    List<XFile>? xFiles,
+    String? content,
+  }) =>
+      ctx.push(
+        routeName,
+        extra: {
+          'postId': postId,
+          'category': category,
+          'xFiles': xFiles,
+          'content': content,
+        },
+      );
 
-  const PostCreateScreen({super.key, this.xFiles, this.content});
+  /// 글쓰기 화면으로 이동 (현재 화면 교체)
+  /// Navigate to post create screen (replace current screen)
+  static Function(
+    BuildContext ctx, {
+    required String postId,
+    String? category,
+  })
+  go = (ctx, {required String postId, String? category}) => ctx.go(routeName);
 
+  const PostCreateScreen({
+    super.key,
+    required this.postId,
+    this.category,
+    this.xFiles,
+    this.content,
+  });
+
+  /// 메인 카테고리 ID (필수)
+  /// Main category ID (required)
+  final String postId;
+
+  /// 서브 카테고리 (선택적)
+  /// Sub-category (optional)
+  final String? category;
+
+  /// 외부에서 공유된 파일 목록
+  /// Files shared from external apps
   final List<XFile>? xFiles;
+
+  /// 외부에서 공유된 텍스트 컨텐츠
+  /// Text content shared from external apps
   final String? content;
 
   @override
@@ -114,8 +165,8 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       debugLog('파일 URL 목록: $urls');
 
       final created = await createPost({
-        'post_id': HomePostCategory.postId,
-        'category': HomePostCategory.category,
+        'post_id': widget.postId,
+        'category': widget.category,
         'subject': _titleController.text,
         'content': _contentController.text,
         'files': urls,

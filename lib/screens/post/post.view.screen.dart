@@ -1,10 +1,8 @@
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
-import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
-import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -497,18 +495,13 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                 const SizedBox(height: 16),
 
                                 /// Images first (if available)
+                                /// Hero 트랜지션 항상 활성화
+                                /// Forum 탭에서만 PostListTile 사용되므로 충돌 없음
                                 if (hasImages) ...[
-                                  Selector<NavigationState, bool>(
-                                    selector: (context, state) =>
-                                        state.homeNav ==
-                                        HomeNavigationItem.forum,
-                                    builder: (context, isInForum, _) {
-                                      return PostViewImages(
-                                        files: files,
-                                        postIdx: widget.post.idx,
-                                        enableHeroTransition: isInForum,
-                                      );
-                                    },
+                                  PostViewImages(
+                                    files: files,
+                                    postIdx: widget.post.idx,
+                                    enableHeroTransition: true,
                                   ),
                                   const SizedBox(height: 16),
                                 ],
