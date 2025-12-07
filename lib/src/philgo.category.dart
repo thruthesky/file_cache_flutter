@@ -93,10 +93,7 @@ class PhilgoCategory {
     /// greeting (인사)
     'greeting': [],
 
-    /// jobs (구인/헬퍼)
-    'jobs': [],
-
-    /// lookfor (찾습니다)
+    /// lookfor (행방)
     'lookfor': [],
 
     /// massage (마사지)
@@ -142,6 +139,8 @@ class PhilgoCategory {
   /// 모든 메인 카테고리(post_id) 목록을 반환합니다.
   ///
   /// 반환값: 26개의 메인 카테고리 문자열 배열
+  /// 
+  /// 주의: 홈페이지에 표시할 때에는 majorCategories() 메서드를 통해서 메인 카테고리를 표시해야 합니다.
   ///
   /// 예시:
   /// ```dart
@@ -150,6 +149,28 @@ class PhilgoCategory {
   /// ```
   static List<String> mainCategories() {
     return _categoryMap.keys.toList();
+  }
+
+  /// 사용자 또는 앱의 메뉴에 표시할 주요 메인 카테고리(post_id) 목록을 반환합니다.
+  static List<String> majorCategories() {
+    return [
+      'freetalk', // 행불 포함
+      'qna',
+      'buyandsell',
+      'blog',
+      'boarding_house',
+      'caution', // 주의사항
+      'food_delivery',
+      'greeting',
+      'wanted',
+      'business',
+      'wanted', // 구인구직
+      'massage',
+      'rest',
+      'school',
+      'travel',
+      'youtube'
+    ];
   }
 
   /// 모든 메인 카테고리와 해당 서브카테고리를 맵으로 반환합니다.
