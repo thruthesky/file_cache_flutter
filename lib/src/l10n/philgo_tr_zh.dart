@@ -1,12 +1,12 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-import 'app_localizations.dart';
+import 'philgo_tr.dart';
 
 // ignore_for_file: type=lint
 
 /// The translations for Chinese (`zh`).
-class LibTrZh extends LibTr {
-  LibTrZh([String locale = 'zh']) : super(locale);
+class PhilgoTrZh extends PhilgoTr {
+  PhilgoTrZh([String locale = 'zh']) : super(locale);
 
   @override
   String get create_room => '创建房间';
@@ -564,4 +564,172 @@ class LibTrZh extends LibTr {
 
   @override
   String get report_reason_other => '其他';
+
+  @override
+  String get categoryFreetalk => '自由论坛';
+
+  @override
+  String get categoryQna => '问答';
+
+  @override
+  String get categoryBuyandsell => '买卖';
+
+  @override
+  String get categoryBlog => '博客';
+
+  @override
+  String get categoryBoardingHouse => '寄宿舍';
+
+  @override
+  String get categoryCaution => '注意/警告';
+
+  @override
+  String get categoryLookfor => '寻人';
+
+  @override
+  String get categoryFoodDelivery => '外卖';
+
+  @override
+  String get categoryGreeting => '问候';
+
+  @override
+  String get categoryWanted => '招聘求职';
+
+  @override
+  String get categoryBusiness => '商务';
+
+  @override
+  String get categoryMassage => '按摩';
+
+  @override
+  String get categoryRest => '餐厅';
+
+  @override
+  String get categorySchool => '学校';
+
+  @override
+  String get categoryStudy => '语言研修';
+
+  @override
+  String get categoryTravel => '旅行';
+
+  @override
+  String get categoryYoutube => 'YouTube';
+
+  @override
+  String get categoryMomcafe => '妈妈咖啡';
+
+  @override
+  String get categoryNews => '新闻';
+
+  @override
+  String get categoryNewcomer => '新人';
+
+  @override
+  String get categoryNature => '自然';
+
+  @override
+  String get categoryCompanyInfo => '公司信息';
+
+  @override
+  String get categoryEnglishBiz => '英语商务';
+
+  @override
+  String get categoryTemp => '临时';
+
+  @override
+  String get categoryTravelGood => '推荐旅游地';
+
+  @override
+  String get subCategoryDiscussion => '讨论';
+
+  @override
+  String get subCategoryEncyclopedia => '百科';
+
+  @override
+  String get subCategoryHobby => '爱好';
+
+  @override
+  String get subCategoryInfo => '信息';
+
+  @override
+  String get subCategoryKoPhCouple => '韩菲情侣';
+
+  @override
+  String get subCategoryKopino => 'Kopino';
+
+  @override
+  String get subCategoryImmigration => '移民';
+
+  @override
+  String get subCategoryPhoto => '照片';
+
+  @override
+  String get subCategoryLifeTips => '生活小贴士';
+
+  @override
+  String get subCategoryMissing => '失踪';
+
+  @override
+  String get subCategoryIntlMarriage => '国际婚姻';
+
+  @override
+  String get subCategoryMeeting => '聚会';
+
+  @override
+  String get subCategoryColumn => '专栏';
+
+  @override
+  String get subCategoryMukbang => '吃播';
+
+  @override
+  String get subCategoryNotice => '公告';
+
+  @override
+  String get subCategoryExperience => '经验分享';
+
+  @override
+  String get subCategoryStudyLearn => '学习';
+
+  @override
+  String get subCategoryTyphoon => '台风';
+
+  @override
+  String get subCategoryBusinessPartner => '商业伙伴';
+
+  @override
+  String get subCategoryComputer => '电脑/网络';
+
+  @override
+  String get subCategoryExchange => '比索兑换';
+
+  @override
+  String get subCategoryPhone => '手机';
+
+  @override
+  String get subCategoryHotel => '酒店';
+
+  @override
+  String get subCategoryAppliances => '家电/生活用品';
+
+  @override
+  String get subCategoryGolf => '高尔夫';
+
+  @override
+  String get subCategoryPromotion => '促销';
+
+  @override
+  String get subCategoryPersonalMarket => '个人交易';
+
+  @override
+  String get subCategoryRealEstate => '房地产';
+
+  @override
+  String get subCategoryHouseRental => '房屋出租';
+
+  @override
+  String get subCategoryCarRental => '租车';
+
+  @override
+  String get subCategoryUsedCar => '二手车';
 }

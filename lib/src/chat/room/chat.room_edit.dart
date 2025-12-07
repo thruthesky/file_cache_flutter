@@ -75,7 +75,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Text(
-                LibTr.of(context)!.edit_chat_room,
+                PhilgoTr.of(context)!.edit_chat_room,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -100,14 +100,14 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: '${LibTr.of(context)!.room_name} *',
-                          hintText: LibTr.of(context)!.enter_room_name,
+                          labelText: '${PhilgoTr.of(context)!.room_name} *',
+                          hintText: PhilgoTr.of(context)!.enter_room_name,
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.group),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return LibTr.of(context)!.room_name_required;
+                            return PhilgoTr.of(context)!.room_name_required;
                           }
                           return null;
                         },
@@ -120,8 +120,8 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                       TextFormField(
                         controller: _descriptionController,
                         decoration: InputDecoration(
-                          labelText: LibTr.of(context)!.room_description,
-                          hintText: LibTr.of(context)!.enter_room_description,
+                          labelText: PhilgoTr.of(context)!.room_description,
+                          hintText: PhilgoTr.of(context)!.enter_room_description,
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.description),
                         ),
@@ -133,8 +133,8 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
 
                       // Open Room Toggle
                       SwitchListTile(
-                        title: Text(LibTr.of(context)!.open_room),
-                        subtitle: Text(LibTr.of(context)!.open_room_description),
+                        title: Text(PhilgoTr.of(context)!.open_room),
+                        subtitle: Text(PhilgoTr.of(context)!.open_room_description),
                         value: _isOpen,
                         onChanged: _isLoading
                             ? null
@@ -150,9 +150,9 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
 
                       // Block Advertisement Toggle
                       SwitchListTile(
-                        title: Text(LibTr.of(context)!.block_advertisement),
+                        title: Text(PhilgoTr.of(context)!.block_advertisement),
                         subtitle: Text(
-                          LibTr.of(context)!.block_advertisement_description,
+                          PhilgoTr.of(context)!.block_advertisement_description,
                         ),
                         value: _blockAdvertisement,
                         onChanged: _isLoading
@@ -212,7 +212,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                         theme.textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text(LibTr.of(context)!.cancel),
+                    child: Text(PhilgoTr.of(context)!.cancel),
                   ),
                   const SizedBox(width: 8),
                   // Save button - Comic design primary button
@@ -264,7 +264,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text(LibTr.of(context)!.save),
+                        : Text(PhilgoTr.of(context)!.save),
                   ),
                 ],
               ),
@@ -294,7 +294,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
           // Show success message
           showSuccessSnackBar(
             context,
-            LibTr.of(context)!.edit_chat_room_success,
+            PhilgoTr.of(context)!.edit_chat_room_success,
           );
 
           // Call callback and close dialog
@@ -309,7 +309,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
         if (mounted) {
           showErrorSnackBar(
             context,
-            LibTr.of(context)!.failed_to_update_room(e),
+            PhilgoTr.of(context)!.failed_to_update_room(e),
           );
         }
       },
@@ -461,7 +461,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
         if (mounted) {
           showSuccessSnackBar(
             context,
-            LibTr.of(context)!.profile_photo_updated,
+            PhilgoTr.of(context)!.profile_photo_updated,
           );
           // Call callback to refresh the UI
           widget.onRoomUpdated?.call();
@@ -475,7 +475,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
         if (mounted) {
           showErrorSnackBar(
             context,
-            '${LibTr.of(context)!.upload_photo_failed}: $error',
+            '${PhilgoTr.of(context)!.upload_photo_failed}: $error',
           );
         }
       },
@@ -508,7 +508,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
       });
 
       if (mounted) {
-        showSuccessSnackBar(context, LibTr.of(context)!.profile_photo_removed);
+        showSuccessSnackBar(context, PhilgoTr.of(context)!.profile_photo_removed);
         // Call callback to refresh the UI
         widget.onRoomUpdated?.call();
       }
@@ -520,7 +520,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          LibTr.of(context)!.failed_to_remove_profile_photo(e.toString()),
+          PhilgoTr.of(context)!.failed_to_remove_profile_photo(e.toString()),
         );
       }
     }

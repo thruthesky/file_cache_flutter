@@ -70,7 +70,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
   /// Handle report submission
   Future<void> _handleReportSubmit() async {
     if (_reportReason.isEmpty) {
-      showErrorSnackBar(context, LibTr.of(context)!.report_select_reason);
+      showErrorSnackBar(context, PhilgoTr.of(context)!.report_select_reason);
       return;
     }
 
@@ -82,7 +82,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
       reportee: widget.reportee,
       success: () {
         if (mounted) {
-          showSuccessSnackBar(context, LibTr.of(context)!.report_success);
+          showSuccessSnackBar(context, PhilgoTr.of(context)!.report_success);
           widget.onClose();
           setState(() => _isSubmitting = false);
         }
@@ -94,14 +94,14 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
             showErrorSnackBar(
               context,
               reportType == MESSAGE
-                  ? LibTr.of(context)!.report_message_already_reported
-                  : LibTr.of(context)!.report_room_already_reported,
+                  ? PhilgoTr.of(context)!.report_message_already_reported
+                  : PhilgoTr.of(context)!.report_room_already_reported,
             );
             widget.onClose();
           } else {
             showErrorSnackBar(
               context,
-              LibTr.of(context)!.report_submission_failed,
+              PhilgoTr.of(context)!.report_submission_failed,
             );
           }
         }
@@ -143,8 +143,8 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                   Expanded(
                     child: Text(
                       reportType == ROOM
-                          ? LibTr.of(context)!.report_chat_room
-                          : LibTr.of(context)!.report_chat_message,
+                          ? PhilgoTr.of(context)!.report_chat_room
+                          : PhilgoTr.of(context)!.report_chat_message,
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
@@ -188,7 +188,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                 children: [
                   // Report Reason Selection label
                   Text(
-                    LibTr.of(context)!.report_select_reason,
+                    PhilgoTr.of(context)!.report_select_reason,
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
@@ -226,7 +226,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            LibTr.of(context)!.get_report_reason(reason),
+                            PhilgoTr.of(context)!.get_report_reason(reason),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isSelected
                                   ? colorScheme.onPrimary
@@ -286,7 +286,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                         theme.textTheme.bodySmall,
                       ),
                     ),
-                    child: Text(LibTr.of(context)!.cancel),
+                    child: Text(PhilgoTr.of(context)!.cancel),
                   ),
                   const SizedBox(width: 8),
                   // Submit button - Comic design primary button
@@ -340,7 +340,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text(LibTr.of(context)!.report_submit),
+                        : Text(PhilgoTr.of(context)!.report_submit),
                   ),
                 ],
               ),

@@ -263,8 +263,10 @@ class PostCreateFormState extends State<PostCreateForm> {
     _setLoading(true);
 
     try {
-      log('글 작성 시작 - postId: $_selectedPostId, category: $_selectedCategory',
-          name: 'PostCreateForm');
+      log(
+        '글 작성 시작 - postId: $_selectedPostId, category: $_selectedCategory',
+        name: 'PostCreateForm',
+      );
       log('업로드된 파일 개수: ${_urls.length}', name: 'PostCreateForm');
 
       // API 호출하여 글 작성
@@ -335,9 +337,6 @@ class PostCreateFormState extends State<PostCreateForm> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -406,10 +405,7 @@ class PostCreateFormState extends State<PostCreateForm> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               borderRadius: BorderRadius.circular(12),
               items: PhilgoCategory.mainCategories().map((postId) {
-                return DropdownMenuItem(
-                  value: postId,
-                  child: Text(postId),
-                );
+                return DropdownMenuItem(value: postId, child: Text(postId));
               }).toList(),
               onChanged: (value) {
                 if (value != null) {
@@ -492,31 +488,19 @@ class PostCreateFormState extends State<PostCreateForm> {
         // Comic Design: 2.0px 테두리
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.outline,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.outline, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.primary,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.error,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.error, width: 2.0),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.error,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.error, width: 2.0),
         ),
         contentPadding: const EdgeInsets.all(16),
       ),
@@ -546,31 +530,19 @@ class PostCreateFormState extends State<PostCreateForm> {
         // Comic Design: 2.0px 테두리
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.outline,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.outline, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.primary,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.error,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.error, width: 2.0),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.error,
-            width: 2.0,
-          ),
+          borderSide: BorderSide(color: colorScheme.error, width: 2.0),
         ),
         contentPadding: const EdgeInsets.all(16),
         alignLabelWithHint: true,
@@ -596,22 +568,24 @@ class PostCreateFormState extends State<PostCreateForm> {
           runSpacing: 8,
           children: [
             // 업로드 완료된 이미지들
-            ..._urls.map((url) => UploadPreview(
-                  url: url,
-                  width: imageWidth,
-                  height: imageWidth,
-                  borderRadius: 8,
-                  onDelete: () async {
-                    // 삭제 확인 다이얼로그 표시
-                    final confirm = await showConfirmDialog(
-                      message: '이 이미지를 삭제하시겠습니까?',
-                    );
+            ..._urls.map(
+              (url) => UploadPreview(
+                url: url,
+                width: imageWidth,
+                height: imageWidth,
+                borderRadius: 8,
+                onDelete: () async {
+                  // 삭제 확인 다이얼로그 표시
+                  final confirm = await showConfirmDialog(
+                    message: '이 이미지를 삭제하시겠습니까?',
+                  );
 
-                    if (confirm == true) {
-                      await deleteUploadedFile(url);
-                    }
-                  },
-                )),
+                  if (confirm == true) {
+                    await deleteUploadedFile(url);
+                  }
+                },
+              ),
+            ),
             // 업로드 중인 플레이스홀더들
             ...List.generate(
               _uploadingCount,
@@ -648,13 +622,6 @@ class PostCreateFormState extends State<PostCreateForm> {
           FileUpload(
             file: true,
             video: true,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              child: FaIcon(
-                FontAwesomeIcons.lightCamera,
-                color: colorScheme.onSurface,
-              ),
-            ),
             onBeforeUpload: _incrementUploadingCount,
             onUploaded: (url) {
               log('파일 업로드 완료: $url', name: 'PostCreateForm');
@@ -664,6 +631,13 @@ class PostCreateFormState extends State<PostCreateForm> {
               _decrementUploadingCount();
             },
             onCancelled: _decrementUploadingCount,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              child: FaIcon(
+                FontAwesomeIcons.lightCamera,
+                color: colorScheme.onSurface,
+              ),
+            ),
           ),
 
           const Spacer(),
@@ -684,13 +658,16 @@ class PostCreateFormState extends State<PostCreateForm> {
                   : FaIcon(
                       FontAwesomeIcons.paperPlane,
                       size: 16,
-                      color:
-                          (_isLoading || _uploadingCount > 0) ? colorScheme.outline : colorScheme.primary,
+                      color: (_isLoading || _uploadingCount > 0)
+                          ? colorScheme.outline
+                          : colorScheme.primary,
                     ),
               label: Text(
                 '등록',
                 style: theme.textTheme.labelLarge?.copyWith(
-                  color: (_isLoading || _uploadingCount > 0) ? colorScheme.outline : colorScheme.primary,
+                  color: (_isLoading || _uploadingCount > 0)
+                      ? colorScheme.outline
+                      : colorScheme.primary,
                 ),
               ),
             ),

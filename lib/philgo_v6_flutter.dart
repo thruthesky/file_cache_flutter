@@ -63,7 +63,8 @@ export 'src/functions/functions.dart';
 export 'src/functions/url.functions.dart';
 
 // l10n
-export 'src/l10n/app_localizations.dart';
+export 'src/l10n/philgo_tr.dart';
+export 'src/l10n/philgo_tr_helper.dart';
 
 // messaging
 export 'src/messaging/messaging.defines.dart';

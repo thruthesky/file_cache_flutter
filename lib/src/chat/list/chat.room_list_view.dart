@@ -36,7 +36,7 @@ class ChatRoomListView extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              LibTr.of(context)!.error_with_message(snapshot.error.toString()),
+              PhilgoTr.of(context)!.error_with_message(snapshot.error.toString()),
             ),
           );
         }
@@ -74,7 +74,7 @@ class ChatRoomListView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    LibTr.of(context)!.empty_chat_list(order),
+                    PhilgoTr.of(context)!.empty_chat_list(order),
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),

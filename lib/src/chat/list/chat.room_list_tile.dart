@@ -158,7 +158,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         return chatRoomTile(
           blocked: true,
           subTitleWidget: Text(
-            LibTr.of(context)!.blocked_message,
+            PhilgoTr.of(context)!.blocked_message,
             style: TextStyle(
               color: Colors.grey[500],
               fontStyle: FontStyle.italic,
@@ -432,7 +432,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             ),
             const SizedBox(width: 12),
             Text(
-              isPinned ? LibTr.of(context)!.unpin : LibTr.of(context)!.pin,
+              isPinned ? PhilgoTr.of(context)!.unpin : PhilgoTr.of(context)!.pin,
               style: theme.textTheme.bodyMedium,
             ),
           ],
@@ -456,7 +456,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               const SizedBox(width: 12),
               Text(
-                LibTr.of(context)!.report,
+                PhilgoTr.of(context)!.report,
                 style: theme.textTheme.bodyMedium,
               ),
             ],
@@ -483,7 +483,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  LibTr.of(context)!.unblock_user,
+                  PhilgoTr.of(context)!.unblock_user,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.green,
                   ),
@@ -505,7 +505,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  LibTr.of(context)!.block_user,
+                  PhilgoTr.of(context)!.block_user,
                   style: theme.textTheme.bodyMedium,
                 ),
               ],

@@ -58,7 +58,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             Row(
               children: [
                 Text(
-                  LibTr.of(context)!.receive_share,
+                  PhilgoTr.of(context)!.receive_share,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -79,8 +79,8 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                 children: [
                   Text(
                     PhilgoConfig.categories.isNotEmpty
-                        ? LibTr.of(context)!.receive_share_choose_post_or_chat
-                        : LibTr.of(context)!.receive_share_choose_chat,
+                        ? PhilgoTr.of(context)!.receive_share_choose_post_or_chat
+                        : PhilgoTr.of(context)!.receive_share_choose_chat,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -90,7 +90,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                         Expanded(
                           child: ShareWhereButton(
                             onTap: () => setState(() => tab = 'post'),
-                            text: LibTr.of(context)!.receive_share_create_post,
+                            text: PhilgoTr.of(context)!.receive_share_create_post,
                             color: Colors.blue,
                             icon: FaIcon(
                               FontAwesomeIcons.thinSquarePlus,
@@ -112,13 +112,13 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                                 } else {
                                   showErrorDialog(
                                     context,
-                                    LibTr.of(
+                                    PhilgoTr.of(
                                       context,
                                     )!.receive_share_image_and_text_chat,
                                   );
                                 }
                               },
-                              text: LibTr.of(context)!.receive_share_send_chat,
+                              text: PhilgoTr.of(context)!.receive_share_send_chat,
                               color: sharable
                                   ? Colors.orange
                                   : Colors.grey[300]!,
@@ -142,7 +142,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             if (tab == 'chat') ...[
               Row(
                 children: [
-                  Text(LibTr.of(context)!.receive_share_choose_friend),
+                  Text(PhilgoTr.of(context)!.receive_share_choose_friend),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),
                     icon: const Icon(Icons.close),
@@ -181,8 +181,8 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                                 child: CircularProgressIndicator.adaptive(),
                               )
                             : status[join.id] == 'sent'
-                            ? Text(LibTr.of(context)!.receive_share_open)
-                            : Text(LibTr.of(context)!.receive_share_send),
+                            ? Text(PhilgoTr.of(context)!.receive_share_open)
+                            : Text(PhilgoTr.of(context)!.receive_share_send),
                       ),
                     ),
                   ),
@@ -192,7 +192,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             if (tab == 'post') ...[
               Row(
                 children: [
-                  Text(LibTr.of(context)!.receive_share_select_category),
+                  Text(PhilgoTr.of(context)!.receive_share_select_category),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),
                     icon: const Icon(Icons.close),

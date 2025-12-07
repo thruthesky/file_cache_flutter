@@ -38,7 +38,7 @@ class Login extends StatelessWidget {
 
         if (snapshot.hasError) {
           return Center(
-            child: Text(LibTr.of(context)!.something_went_wrong),
+            child: Text(PhilgoTr.of(context)!.something_went_wrong),
           );
         }
 

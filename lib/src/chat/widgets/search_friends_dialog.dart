@@ -108,7 +108,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          LibTr.of(context)!.failed_to_start_chat(e.toString()),
+          PhilgoTr.of(context)!.failed_to_start_chat(e.toString()),
         );
       }
     }
@@ -154,7 +154,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    LibTr.of(context)!.search_friends,
+                    PhilgoTr.of(context)!.search_friends,
                     style: textTheme.titleMedium,
                   ),
                   const Spacer(),
@@ -200,7 +200,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                         onChanged: _onSearchChanged,
                         style: textTheme.bodyLarge,
                         decoration: InputDecoration(
-                          hintText: LibTr.of(context)!.search_by_nickname,
+                          hintText: PhilgoTr.of(context)!.search_by_nickname,
                           hintStyle: textTheme.bodyLarge?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -260,7 +260,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              LibTr.of(context)!.search_by_nickname,
+              PhilgoTr.of(context)!.search_by_nickname,
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
           ],
@@ -281,7 +281,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              LibTr.of(context)!.no_users_found,
+              PhilgoTr.of(context)!.no_users_found,
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
           ],
@@ -343,7 +343,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     border: Border.all(color: colorScheme.primary, width: 2.0),
                   ),
                   child: Text(
-                    LibTr.of(context)!.chat,
+                    PhilgoTr.of(context)!.chat,
                     style: textTheme.labelLarge?.copyWith(
                       color: colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,

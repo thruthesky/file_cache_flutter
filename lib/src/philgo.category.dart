@@ -26,7 +26,6 @@ class PhilgoCategory {
     /// freetalk (자유게시판) - 19개 서브카테고리
     'freetalk': [
       'discussion', // 토론
-      '백과', // 백과사전
       '취미', // 취미
       'info', // 정보
       '코필커플', // 한국-필리핀 커플
@@ -34,13 +33,11 @@ class PhilgoCategory {
       '이민', // 이민
       '사진', // 라이프샷
       '생활의팁', // 생활 팁
-      '행방불명', // 실종
       '국제결혼', // 국제결혼
       '모임', // 모임
       'column', // 칼럼
       '먹방', // 먹방
       '뉴스', // 뉴스
-      '공지사항', // 공지사항
       '경험담', // 경험담
       '공부', // 공부/학습
       '태풍', // 날씨/태풍
@@ -162,7 +159,6 @@ class PhilgoCategory {
       'caution', // 주의사항
       'food_delivery',
       'greeting',
-      'wanted',
       'business',
       'wanted', // 구인구직
       'massage',

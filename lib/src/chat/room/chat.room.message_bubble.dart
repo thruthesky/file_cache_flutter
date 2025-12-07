@@ -101,7 +101,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      LibTr.of(context)!.you,
+                      PhilgoTr.of(context)!.you,
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(context).colorScheme.primary,
@@ -263,15 +263,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
     switch (message.protocol) {
       case ChatProtocol.create:
-        return LibTr.of(context)!.protocol_create;
+        return PhilgoTr.of(context)!.protocol_create;
       case ChatProtocol.join:
-        return LibTr.of(context)!.protocol_join(senderName);
+        return PhilgoTr.of(context)!.protocol_join(senderName);
       case ChatProtocol.invitationNotSent:
-        return LibTr.of(context)!.protocol_invitation_not_sent;
+        return PhilgoTr.of(context)!.protocol_invitation_not_sent;
       case ChatProtocol.left:
-        return LibTr.of(context)!.protocol_left(senderName);
+        return PhilgoTr.of(context)!.protocol_left(senderName);
       case ChatProtocol.removed:
-        return LibTr.of(context)!.protocol_removed(senderName);
+        return PhilgoTr.of(context)!.protocol_removed(senderName);
       default:
         // Fallback to the message text if protocol is not recognized
         return message.text ?? '';
@@ -373,9 +373,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
   Widget _buildBlindedMessage(BuildContext context) {
     String blindReason = '';
     if (message.moderated == 'M') {
-      blindReason = LibTr.of(context)!.message_moderated_by_ai;
+      blindReason = PhilgoTr.of(context)!.message_moderated_by_ai;
     } else if (message.moderated == 'A') {
-      blindReason = LibTr.of(context)!.message_moderated_as_advertisement;
+      blindReason = PhilgoTr.of(context)!.message_moderated_as_advertisement;
     }
 
     return Padding(
@@ -416,7 +416,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      LibTr.of(context)!.you,
+                      PhilgoTr.of(context)!.you,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -532,7 +532,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  LibTr.of(context)!.blocked_message_tap_to_unblock,
+                  PhilgoTr.of(context)!.blocked_message_tap_to_unblock,
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 14,
@@ -568,7 +568,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    LibTr.of(context)!.menu,
+                    PhilgoTr.of(context)!.menu,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -577,7 +577,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: LibTr.of(context)!.close,
+                    tooltip: PhilgoTr.of(context)!.close,
                   ),
                 ],
               ),
@@ -587,7 +587,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               contentPadding: EdgeInsets.symmetric(horizontal: 8),
               visualDensity: VisualDensity(horizontal: -4),
               leading: userAvatar(),
-              title: Text(LibTr.of(context)!.profile),
+              title: Text(PhilgoTr.of(context)!.profile),
               onTap: () {
                 Navigator.of(context).pop();
                 showProfileDialog(parentContext, sender!);
@@ -596,7 +596,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             const SizedBox(height: 8),
             ListTile(
               leading: const Icon(Icons.post_add),
-              title: Text(LibTr.of(context)!.recent_post),
+              title: Text(PhilgoTr.of(context)!.recent_post),
               onTap: () {
                 Navigator.of(context).pop();
                 showUserRecentPostsDialog(
@@ -610,7 +610,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.report, color: Colors.red),
               title: Text(
-                LibTr.of(context)!.report,
+                PhilgoTr.of(context)!.report,
                 style: const TextStyle(color: Colors.red),
               ),
               onTap: () {
@@ -631,7 +631,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 yes: () => ListTile(
                   leading: Icon(Icons.person_add, color: Colors.green),
                   title: Text(
-                    LibTr.of(context)!.unblock_user,
+                    PhilgoTr.of(context)!.unblock_user,
                     style: TextStyle(color: Colors.green),
                   ),
                   onTap: () {
@@ -642,7 +642,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 no: () => ListTile(
                   leading: Icon(Icons.block, color: Colors.orange),
                   title: Text(
-                    LibTr.of(context)!.block_user,
+                    PhilgoTr.of(context)!.block_user,
                     style: TextStyle(color: Colors.orange),
                   ),
                   onTap: () {
@@ -707,7 +707,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    LibTr.of(context)!.blocked_user_options,
+                    PhilgoTr.of(context)!.blocked_user_options,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -716,7 +716,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: LibTr.of(context)!.close,
+                    tooltip: PhilgoTr.of(context)!.close,
                   ),
                 ],
               ),
@@ -730,7 +730,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 userDisplayName(),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text(LibTr.of(context)!.blocked_user_subtitle),
+              subtitle: Text(PhilgoTr.of(context)!.blocked_user_subtitle),
             ),
             const SizedBox(height: 8),
 
@@ -738,10 +738,10 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.person_add, color: Colors.green),
               title: Text(
-                LibTr.of(context)!.unblock_user,
+                PhilgoTr.of(context)!.unblock_user,
                 style: const TextStyle(color: Colors.green),
               ),
-              subtitle: Text(LibTr.of(context)!.unblock_user_description),
+              subtitle: Text(PhilgoTr.of(context)!.unblock_user_description),
               onTap: () {
                 Navigator.of(context).pop();
                 _performUnblock(context);

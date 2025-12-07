@@ -113,7 +113,7 @@ class _CommentDetailState extends State<CommentDetail> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                '${LibTr.of(context)!.comment_blocked_message} ${widget.comment.nickname}',
+                '${PhilgoTr.of(context)!.comment_blocked_message} ${widget.comment.nickname}',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontStyle: FontStyle.italic,
                   color: Theme.of(
@@ -260,7 +260,7 @@ class _CommentDetailState extends State<CommentDetail> {
                           _buildComicActionButton(
                             context: context,
                             icon: FontAwesomeIcons.penToSquare,
-                            label: LibTr.of(context)!.edit,
+                            label: PhilgoTr.of(context)!.edit,
                             onPressed: () {
                               // Trigger edit mode in parent (PostViewScreen)
                               widget.onEditClicked(widget.comment);
@@ -269,11 +269,11 @@ class _CommentDetailState extends State<CommentDetail> {
                           _buildComicActionButton(
                             context: context,
                             icon: Icons.delete,
-                            label: LibTr.of(context)!.delete,
+                            label: PhilgoTr.of(context)!.delete,
                             color: Theme.of(context).colorScheme.error,
                             onPressed: () async {
                               final confirmed = await showConfirmDialog(
-                                message: LibTr.of(
+                                message: PhilgoTr.of(
                                   context,
                                 )!.delete_comment_confirmation,
                               );
@@ -285,7 +285,7 @@ class _CommentDetailState extends State<CommentDetail> {
                                 if (mounted) {
                                   showSuccessSnackBar(
                                     context,
-                                    LibTr.of(context)!.successfully_deleted,
+                                    PhilgoTr.of(context)!.successfully_deleted,
                                   );
                                   // Notify parent widget to remove this comment from the list
                                   widget.onDeleted(widget.comment);
@@ -298,7 +298,7 @@ class _CommentDetailState extends State<CommentDetail> {
                           _buildComicActionButton(
                             context: context,
                             icon: FontAwesomeIcons.ban,
-                            label: LibTr.of(context)!.block,
+                            label: PhilgoTr.of(context)!.block,
                             onPressed: () {
                               showBlockDialog(
                                 context: context,

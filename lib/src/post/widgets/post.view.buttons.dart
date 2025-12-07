@@ -69,7 +69,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
               ),
               onPressed: widget.onTapBlock,
               icon: const FaIcon(FontAwesomeIcons.ban, size: 16),
-              label: Text(LibTr.of(context)!.block),
+              label: Text(PhilgoTr.of(context)!.block),
             ),
           PostReportButton(
             type: 'post',
@@ -87,7 +87,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
             ),
             onPressed: widget.onTapUpdate,
             icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
-            label: Text(LibTr.of(context)!.edit),
+            label: Text(PhilgoTr.of(context)!.edit),
           ),
           // Delete button - Flat design with TextButton.icon
           TextButton.icon(
@@ -99,7 +99,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
 
             onPressed: widget.onTapDelete,
             icon: const FaIcon(FontAwesomeIcons.trash, size: 16),
-            label: Text(LibTr.of(context)!.delete),
+            label: Text(PhilgoTr.of(context)!.delete),
           ),
         ],
       ],

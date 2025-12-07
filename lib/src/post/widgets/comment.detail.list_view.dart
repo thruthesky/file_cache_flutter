@@ -53,7 +53,7 @@ class CommentDetailListView extends StatelessWidget {
             ),
           )
         else
-          Text(LibTr.of(context)!.beTheFirstToComment),
+          Text(PhilgoTr.of(context)!.beTheFirstToComment),
       ],
     );
   }

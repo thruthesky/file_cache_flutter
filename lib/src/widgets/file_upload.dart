@@ -69,7 +69,7 @@ class _FileUploadState extends State<FileUpload> {
   /// Bottom Sheet를 표시하여 업로드 옵션을 선택하게 함
   void _showUploadOptions() {
     // 번역 텍스트를 위한 localizations 인스턴스
-    final lo = LibTr.of(context)!;
+    final lo = PhilgoTr.of(context)!;
 
     showModalBottomSheet(
       context: context,

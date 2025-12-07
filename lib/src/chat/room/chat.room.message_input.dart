@@ -117,7 +117,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text(LibTr.of(context)!.max_files_reached(widget.maxFiles)),
+          content: Text(PhilgoTr.of(context)!.max_files_reached(widget.maxFiles)),
           backgroundColor: Colors.orange,
         ),
       );
@@ -143,7 +143,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        LibTr.of(context)!.select_files,
+                        PhilgoTr.of(context)!.select_files,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       IconButton(
@@ -165,7 +165,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListTile(
                   leading: const Icon(Icons.camera_alt),
-                  title: Text(LibTr.of(context)!.camera),
+                  title: Text(PhilgoTr.of(context)!.camera),
                   onTap: () async {
                     Navigator.pop(context);
                     await _pickAndUploadImages(
@@ -181,7 +181,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
               padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
               child: ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: Text(LibTr.of(context)!.gallery),
+                title: Text(PhilgoTr.of(context)!.gallery),
                 onTap: () async {
                   Navigator.pop(context);
                   await _pickAndUploadImages(
@@ -231,7 +231,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
               SnackBar(
                 behavior: SnackBarBehavior.floating,
                 content: Text(
-                  LibTr.of(context)!.max_files_reached(widget.maxFiles),
+                  PhilgoTr.of(context)!.max_files_reached(widget.maxFiles),
                 ),
                 backgroundColor: Colors.orange,
               ),
@@ -295,7 +295,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           if (mounted) {
             showErrorSnackBar(
               context,
-              LibTr.of(context)!.upload_photo_failed(e.toString()),
+              PhilgoTr.of(context)!.upload_photo_failed(e.toString()),
             );
           }
         }
@@ -304,7 +304,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          LibTr.of(context)!.upload_photo_failed(e.toString()),
+          PhilgoTr.of(context)!.upload_photo_failed(e.toString()),
         );
       }
     }
@@ -358,7 +358,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          LibTr.of(context)!.failed_to_send_message(e.toString()),
+          PhilgoTr.of(context)!.failed_to_send_message(e.toString()),
         );
       }
     } finally {
@@ -524,7 +524,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           ),
           const SizedBox(width: 12),
           Text(
-            '${LibTr.of(context)!.uploading_images} ($_completedUploads/${_selectedFiles.length})',
+            '${PhilgoTr.of(context)!.uploading_images} ($_completedUploads/${_selectedFiles.length})',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -597,7 +597,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             ),
                         ],
                       ),
-                      tooltip: LibTr.of(context)!.attach_files,
+                      tooltip: PhilgoTr.of(context)!.attach_files,
                     ),
 
                     // Message Input Field - 80% minimum width
@@ -613,7 +613,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                           keyboardType: TextInputType.multiline,
                           textInputAction: kIsWeb ? TextInputAction.none : null,
                           decoration: InputDecoration(
-                            hintText: LibTr.of(context)!.type_message,
+                            hintText: PhilgoTr.of(context)!.type_message,
                             hintStyle: theme.textTheme.bodyMedium?.copyWith(
                               color: colorScheme.onSurface.withValues(alpha: 0.4),
                             ),

@@ -50,7 +50,7 @@ class ChatRoomHeader extends StatelessWidget {
         IconButton(
           onPressed: () => showMenuModal(context),
           icon: const Icon(Icons.settings),
-          tooltip: LibTr.of(context)!.menu,
+          tooltip: PhilgoTr.of(context)!.menu,
         ),
       ],
     );
@@ -72,7 +72,7 @@ class ChatRoomHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    LibTr.of(context)!.menu,
+                    PhilgoTr.of(context)!.menu,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class ChatRoomHeader extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: LibTr.of(context)!.close,
+                    tooltip: PhilgoTr.of(context)!.close,
                   ),
                 ],
               ),
@@ -114,7 +114,7 @@ class ChatRoomHeader extends StatelessWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                LibTr.of(context)!.admin_chat_notice,
+                                PhilgoTr.of(context)!.admin_chat_notice,
                                 style: TextStyle(
                                   color: Colors.blue[700],
                                   fontSize: 14,
@@ -129,7 +129,7 @@ class ChatRoomHeader extends StatelessWidget {
                       if (shouldShowEditOption()) ...[
                         ListTile(
                           leading: const Icon(Icons.edit),
-                          title: Text(LibTr.of(context)!.edit),
+                          title: Text(PhilgoTr.of(context)!.edit),
                           onTap: () {
                             Navigator.of(context).pop();
                             if (onEditTap != null) onEditTap!();
@@ -147,7 +147,7 @@ class ChatRoomHeader extends StatelessWidget {
                             vertical: -2,
                           ),
                           leading: Avatar(photoUrl: getPhotoUrl()),
-                          title: Text(LibTr.of(context)!.profile),
+                          title: Text(PhilgoTr.of(context)!.profile),
                           onTap: () {
                             Navigator.of(context).pop();
                             showProfileDialog(parentContext, otherUser!);
@@ -156,7 +156,7 @@ class ChatRoomHeader extends StatelessWidget {
                         const SizedBox(height: 8),
                         ListTile(
                           leading: const Icon(Icons.post_add),
-                          title: Text(LibTr.of(context)!.recent_post),
+                          title: Text(PhilgoTr.of(context)!.recent_post),
                           onTap: () {
                             Navigator.of(context).pop();
                             showUserRecentPostsDialog(
@@ -172,7 +172,7 @@ class ChatRoomHeader extends StatelessWidget {
                       if (!isSingleChat) ...[
                         ListTile(
                           leading: const Icon(Icons.link),
-                          title: Text(LibTr.of(context)!.join_url),
+                          title: Text(PhilgoTr.of(context)!.join_url),
                           onTap: () {
                             Navigator.of(context).pop();
                             copyRoomIdToClipboard(context);
@@ -185,7 +185,7 @@ class ChatRoomHeader extends StatelessWidget {
                       // Report option
                       ListTile(
                         leading: const Icon(Icons.report),
-                        title: Text(LibTr.of(context)!.report),
+                        title: Text(PhilgoTr.of(context)!.report),
                         onTap: () {
                           Navigator.of(context).pop();
                           reportRoom(parentContext);
@@ -203,7 +203,7 @@ class ChatRoomHeader extends StatelessWidget {
                               color: Colors.green,
                             ),
                             title: Text(
-                              LibTr.of(context)!.unblock_user,
+                              PhilgoTr.of(context)!.unblock_user,
                               style: TextStyle(color: Colors.green),
                             ),
                             onTap: () {
@@ -215,7 +215,7 @@ class ChatRoomHeader extends StatelessWidget {
                           ),
                           no: () => ListTile(
                             leading: Icon(Icons.block),
-                            title: Text(LibTr.of(context)!.block_user),
+                            title: Text(PhilgoTr.of(context)!.block_user),
                             onTap: () {
                               Navigator.of(context).pop();
                               showBlockDialog(
@@ -231,7 +231,7 @@ class ChatRoomHeader extends StatelessWidget {
                       // Leave option
                       ListTile(
                         leading: const Icon(Icons.exit_to_app),
-                        title: Text(LibTr.of(context)!.leave),
+                        title: Text(PhilgoTr.of(context)!.leave),
                         onTap: () {
                           Navigator.of(context).pop();
                           showLeaveConfirmDialog(parentContext);
@@ -273,7 +273,7 @@ class ChatRoomHeader extends StatelessWidget {
       url = Uri.base.resolve('/chat/rooms.php?id=$roomId').toString();
     }
     Clipboard.setData(ClipboardData(text: url));
-    showSuccessSnackBar(context, LibTr.of(context)!.copied_to_clipboard);
+    showSuccessSnackBar(context, PhilgoTr.of(context)!.copied_to_clipboard);
   }
 
   /// Report room - show report dialog
@@ -323,7 +323,7 @@ class ChatRoomHeader extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                 child: Text(
-                  LibTr.of(context)!.leave_room,
+                  PhilgoTr.of(context)!.leave_room,
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -335,7 +335,7 @@ class ChatRoomHeader extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Text(
-                  LibTr.of(context)!.leave_room_confirmation,
+                  PhilgoTr.of(context)!.leave_room_confirmation,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -380,7 +380,7 @@ class ChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(LibTr.of(context)!.cancel),
+                      child: Text(PhilgoTr.of(context)!.cancel),
                     ),
                     const SizedBox(width: 8),
                     // Leave button - Comic design error button (destructive action)
@@ -415,7 +415,7 @@ class ChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(LibTr.of(context)!.leave),
+                      child: Text(PhilgoTr.of(context)!.leave),
                     ),
                   ],
                 ),
@@ -459,7 +459,7 @@ class ChatRoomHeader extends StatelessWidget {
 
                 if (room != null && !isSingleChat && room!.users.isNotEmpty)
                   Text(
-                    LibTr.of(context)!.members_count(room!.users.length),
+                    PhilgoTr.of(context)!.members_count(room!.users.length),
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
               ],
@@ -549,7 +549,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
       return IconButton(
         onPressed: () => _showFavoritesModal(context),
         icon: const Icon(Icons.star_border),
-        tooltip: LibTr.of(context)!.add_to_favorites,
+        tooltip: PhilgoTr.of(context)!.add_to_favorites,
       );
     }
 
@@ -562,7 +562,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
             isFavorited ? Icons.star : Icons.star_border,
             color: isFavorited ? Colors.amber : null,
           ),
-          tooltip: LibTr.of(context)!.add_to_favorites,
+          tooltip: PhilgoTr.of(context)!.add_to_favorites,
         );
       },
     );
@@ -709,7 +709,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close),
-                  tooltip: LibTr.of(context)!.close,
+                  tooltip: PhilgoTr.of(context)!.close,
                 ),
               ],
             ),
@@ -732,7 +732,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         return Padding(
                           padding: const EdgeInsets.all(32.0),
                           child: Text(
-                            LibTr.of(context)!.no_bookmarked_folders,
+                            PhilgoTr.of(context)!.no_bookmarked_folders,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         );

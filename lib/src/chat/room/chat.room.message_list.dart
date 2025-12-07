@@ -78,7 +78,7 @@ class ChatRoomMessageListState extends State<ChatRoomMessageList> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  LibTr.of(context)!.send_message_to_start_conversation,
+                  PhilgoTr.of(context)!.send_message_to_start_conversation,
                   style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),

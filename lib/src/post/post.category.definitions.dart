@@ -27,12 +27,12 @@ class PostCategoryItem {
   /// 동적 키를 switch문으로 매핑하는 헬퍼 함수
   ///
   /// 각 카테고리 키에 대해 적절한 번역을 반환합니다.
-  /// 현재는 LibTr에 카테고리 관련 번역이 없으므로,
+  /// 현재는 PhilgoTr에 카테고리 관련 번역이 없으므로,
   /// 기본적으로 키를 사람이 읽을 수 있는 형태로 변환합니다.
   String _getTranslation(BuildContext context, String key) {
-    final lo = LibTr.of(context);
+    final lo = PhilgoTr.of(context);
 
-    // LibTr이 null인 경우 원본 키 반환
+    // PhilgoTr이 null인 경우 원본 키 반환
     if (lo == null) return _formatKey(key);
 
     // 현재 언어 코드 확인

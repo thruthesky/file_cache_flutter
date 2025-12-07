@@ -196,7 +196,7 @@ void showProfileDialog(BuildContext context, User otherUser) {
                             theme.textTheme.bodyMedium,
                           ),
                         ),
-                        child: Text(LibTr.of(context)!.view_profile),
+                        child: Text(PhilgoTr.of(context)!.view_profile),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -232,7 +232,7 @@ void showProfileDialog(BuildContext context, User otherUser) {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(LibTr.of(context)!.close),
+                      child: Text(PhilgoTr.of(context)!.close),
                     ),
                   ],
                 ),
@@ -284,7 +284,7 @@ void showUserRecentPostsDialog({
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      LibTr.of(context)!.recent_post,
+                      PhilgoTr.of(context)!.recent_post,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -292,7 +292,7 @@ void showUserRecentPostsDialog({
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close),
-                      tooltip: LibTr.of(context)!.close,
+                      tooltip: PhilgoTr.of(context)!.close,
                     ),
                   ],
                 ),
@@ -321,7 +321,7 @@ void showUserRecentPostsDialog({
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text(LibTr.of(context)!.no_recent_posts),
+                          child: Text(PhilgoTr.of(context)!.no_recent_posts),
                         ),
                       );
                     }

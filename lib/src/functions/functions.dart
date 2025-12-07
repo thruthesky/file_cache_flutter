@@ -24,13 +24,13 @@ String formatTimestamp(BuildContext context, int timestamp) {
   final difference = now.difference(date);
 
   if (difference.inDays > 0) {
-    return LibTr.of(context)!.time_days_ago(difference.inDays);
+    return PhilgoTr.of(context)!.time_days_ago(difference.inDays);
   } else if (difference.inHours > 0) {
-    return LibTr.of(context)!.time_hours_ago(difference.inHours);
+    return PhilgoTr.of(context)!.time_hours_ago(difference.inHours);
   } else if (difference.inMinutes > 0) {
-    return LibTr.of(context)!.time_minutes_ago(difference.inMinutes);
+    return PhilgoTr.of(context)!.time_minutes_ago(difference.inMinutes);
   } else {
-    return LibTr.of(context)!.time_just_now;
+    return PhilgoTr.of(context)!.time_just_now;
   }
 }
 
@@ -89,9 +89,9 @@ String formatDate(BuildContext context, DateTime date) {
   final targetDate = DateTime(date.year, date.month, date.day);
 
   if (targetDate == today) {
-    return LibTr.of(context)!.today;
+    return PhilgoTr.of(context)!.today;
   } else if (targetDate == yesterday) {
-    return LibTr.of(context)!.yesterday;
+    return PhilgoTr.of(context)!.yesterday;
   } else {
     // For other dates, use a basic format
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
@@ -100,7 +100,7 @@ String formatDate(BuildContext context, DateTime date) {
 
 /// Formats member count with proper localization
 String formatMemberCount(BuildContext context, int count) {
-  return LibTr.of(context)!.member_count_formatted(count);
+  return PhilgoTr.of(context)!.member_count_formatted(count);
 }
 
 /// Formats unread message count with proper localization
@@ -170,7 +170,7 @@ void showInfoDialog(BuildContext context, String title, String message) {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(LibTr.of(context)!.ok),
+          child: Text(PhilgoTr.of(context)!.ok),
         ),
       ],
     ),
@@ -181,12 +181,12 @@ void showErrorDialog(BuildContext context, String message, {String? title}) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(title ?? LibTr.of(context)!.error),
+      title: Text(title ?? PhilgoTr.of(context)!.error),
       content: Text(message),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(LibTr.of(context)!.ok),
+          child: Text(PhilgoTr.of(context)!.ok),
         ),
       ],
     ),
@@ -248,8 +248,8 @@ Future<bool> showConfirmDialog({required String message, String? title}) async {
     context: context,
     barrierDismissible: false, // 다이얼로그 밖을 터치해도 닫히지 않음
     builder: (BuildContext dialogContext) {
-      // 번역을 위한 LibTr 인스턴스 가져오기
-      final tr = LibTr.of(dialogContext)!;
+      // 번역을 위한 PhilgoTr 인스턴스 가져오기
+      final tr = PhilgoTr.of(dialogContext)!;
 
       return AlertDialog(
         // 제목 (제공되지 않으면 l10n의 "확인" 사용)
