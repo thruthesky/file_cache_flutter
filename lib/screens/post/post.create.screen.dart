@@ -155,7 +155,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
             // Show confirmation dialog if there's content
             final confirm = await showConfirmDialog(
-              message: LibTr.of(context)!.confirmDiscard,
+              message: PhilgoTr.of(context)!.confirmDiscard,
             );
 
             // User cancelled - don't exit

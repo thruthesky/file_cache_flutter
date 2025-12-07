@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/headers/app_header.dart';
@@ -185,152 +184,6 @@ class _MainHomeState extends State<MainHome> {
     );
   }
 
-  /// 메인 카테고리의 다국어 이름 반환
-  /// Returns localized name for main category (postId)
-  ///
-  /// [l10n] Lo instance for localization
-  /// [postId] Main category ID (e.g., 'freetalk', 'buyandsell')
-  ///
-  /// 지원하지 않는 카테고리는 원본 postId를 반환
-  /// Returns original postId for unsupported categories
-  String _getLocalizedMainCategory(Lo l10n, String postId) {
-    switch (postId) {
-      case 'freetalk':
-        return l10n.categoryFreetalk;
-      case 'qna':
-        return l10n.categoryQna;
-      case 'buyandsell':
-        return l10n.categoryBuyandsell;
-      case 'blog':
-        return l10n.categoryBlog;
-      case 'boarding_house':
-        return l10n.categoryBoardingHouse;
-      case 'caution':
-        return l10n.categoryCaution;
-      case 'lookfor':
-        return l10n.categoryLookfor;
-      case 'food_delivery':
-        return l10n.categoryFoodDelivery;
-      case 'greeting':
-        return l10n.categoryGreeting;
-      case 'wanted':
-        return l10n.categoryWanted;
-      case 'business':
-        return l10n.categoryBusiness;
-      case 'massage':
-        return l10n.categoryMassage;
-      case 'rest':
-        return l10n.categoryRest;
-      case 'school':
-        return l10n.categorySchool;
-      case 'study':
-        return l10n.categoryStudy;
-      case 'travel':
-        return l10n.categoryTravel;
-      case 'youtube':
-        return l10n.categoryYoutube;
-      case 'momcafe':
-        return l10n.categoryMomcafe;
-      case 'news':
-        return l10n.categoryNews;
-      case 'newcomer':
-        return l10n.categoryNewcomer;
-      case 'nature':
-        return l10n.categoryNature;
-      case 'company_info':
-        return l10n.categoryCompanyInfo;
-      case 'english_biz':
-        return l10n.categoryEnglishBiz;
-      case 'temp':
-        return l10n.categoryTemp;
-      case 'travel_good':
-        return l10n.categoryTravelGood;
-      default:
-        return postId;
-    }
-  }
-
-  /// 서브 카테고리의 다국어 이름 반환
-  /// Returns localized name for sub-category
-  ///
-  /// [l10n] Lo instance for localization
-  /// [category] Sub-category name (e.g., 'discussion', '백과')
-  ///
-  /// 지원하지 않는 서브카테고리는 원본 category를 반환
-  /// Returns original category for unsupported sub-categories
-  String _getLocalizedSubCategory(Lo l10n, String category) {
-    switch (category) {
-      // freetalk 서브카테고리
-      case 'discussion':
-        return l10n.subCategoryDiscussion;
-      case '백과':
-        return l10n.subCategoryEncyclopedia;
-      case '취미':
-        return l10n.subCategoryHobby;
-      case 'info':
-        return l10n.subCategoryInfo;
-      case '코필커플':
-        return l10n.subCategoryKoPhCouple;
-      case '코피노':
-        return l10n.subCategoryKopino;
-      case '이민':
-        return l10n.subCategoryImmigration;
-      case '사진':
-        return l10n.subCategoryPhoto;
-      case '생활의팁':
-        return l10n.subCategoryLifeTips;
-      case '행방불명':
-        return l10n.subCategoryMissing;
-      case '국제결혼':
-        return l10n.subCategoryIntlMarriage;
-      case '모임':
-        return l10n.subCategoryMeeting;
-      case 'column':
-        return l10n.subCategoryColumn;
-      case '먹방':
-        return l10n.subCategoryMukbang;
-      case '뉴스':
-        return l10n.subCategoryNotice;
-      case '공지사항':
-        return l10n.subCategoryNotice;
-      case '경험담':
-        return l10n.subCategoryExperience;
-      case '공부':
-        return l10n.subCategoryStudyLearn;
-      case '태풍':
-        return l10n.subCategoryTyphoon;
-      // buyandsell 서브카테고리
-      case '사업/동업구함':
-        return l10n.subCategoryBusinessPartner;
-      case '컴퓨터/인터넷':
-        return l10n.subCategoryComputer;
-      case '페소환전':
-        return l10n.subCategoryExchange;
-      case '핸드폰':
-        return l10n.subCategoryPhone;
-      case '호텔':
-        return l10n.subCategoryHotel;
-      case '가전/생활용품':
-        return l10n.subCategoryAppliances;
-      case '골프':
-        return l10n.subCategoryGolf;
-      case 'promotion':
-        return l10n.subCategoryPromotion;
-      case '개인장터':
-        return l10n.subCategoryPersonalMarket;
-      case 'real_estate':
-        return l10n.subCategoryRealEstate;
-      case '주택임대':
-        return l10n.subCategoryHouseRental;
-      case '렌트카':
-        return l10n.subCategoryCarRental;
-      case '중고차':
-        return l10n.subCategoryUsedCar;
-      default:
-        return category;
-    }
-  }
-
   /// 카테고리 메뉴 아이템 빌더
   /// Builds menu items for 2-level category dropdown
   ///
@@ -342,16 +195,12 @@ class _MainHomeState extends State<MainHome> {
   /// - Main category with sub-categories: SubmenuButton (expandable)
   /// - Main category without sub-categories: MenuItemButton (direct selection)
   List<Widget> _buildCategoryMenuItems(BuildContext context) {
-    /// Lo를 통해 다국어 지원
-    /// Multi-language support via Lo (AppLocalizations)
-    final l10n = Lo.of(context)!;
-
     /// majorCategories()를 사용하여 주요 메인 카테고리만 표시
     /// Use majorCategories() to show only major main categories
     return PhilgoCategory.majorCategories().map((postId) {
-      /// 메인 카테고리의 다국어 이름 가져오기
-      /// Get localized main category name
-      final localizedMainCategory = _getLocalizedMainCategory(l10n, postId);
+      /// 메인 카테고리의 다국어 이름 가져오기 (philgoTr 사용)
+      /// Get localized main category name (using philgoTr)
+      final localizedMainCategory = philgoTr(context, postId);
 
       /// 서브 카테고리가 있는 경우: SubmenuButton 사용
       /// If sub-categories exist: use SubmenuButton
@@ -360,12 +209,9 @@ class _MainHomeState extends State<MainHome> {
           /// 서브 카테고리 목록을 MenuItemButton으로 표시
           /// Display sub-categories as MenuItemButton list
           menuChildren: PhilgoCategory.subCategories(postId).map((category) {
-            /// 서브 카테고리의 다국어 이름 가져오기
-            /// Get localized sub-category name
-            final localizedSubCategory = _getLocalizedSubCategory(
-              l10n,
-              category,
-            );
+            /// 서브 카테고리의 다국어 이름 가져오기 (philgoTr 사용)
+            /// Get localized sub-category name (using philgoTr)
+            final localizedSubCategory = philgoTr(context, category);
             return MenuItemButton(
               onPressed: () {
                 /// 서브 카테고리 선택 시 글쓰기 다이얼로그 표시
@@ -407,15 +253,11 @@ class _MainHomeState extends State<MainHome> {
     /// Access form state externally via GlobalKey
     final formKey = GlobalKey<PostCreateFormState>();
 
-    /// 다국어 지원을 위해 Lo 인스턴스 가져오기
-    /// Get Lo instance for localization
-    final l10n = Lo.of(context)!;
-
-    /// 메인 카테고리 및 서브 카테고리의 다국어 이름 가져오기
-    /// Get localized names for main and sub categories
-    final localizedMainCategory = _getLocalizedMainCategory(l10n, postId);
+    /// 메인 카테고리 및 서브 카테고리의 다국어 이름 가져오기 (philgoTr 사용)
+    /// Get localized names for main and sub categories (using philgoTr)
+    final localizedMainCategory = philgoTr(context, postId);
     final localizedSubCategory = category != null
-        ? _getLocalizedSubCategory(l10n, category)
+        ? philgoTr(context, category)
         : null;
 
     showGeneralDialog(

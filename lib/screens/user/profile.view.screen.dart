@@ -94,7 +94,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
           IconButton(
             onPressed: () => showMenuModal(context),
             icon: const Icon(Icons.settings),
-            tooltip: LibTr.of(context)!.menu,
+            tooltip: PhilgoTr.of(context)!.menu,
           ),
         ],
       ),
@@ -345,7 +345,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: LibTr.of(context)!.close,
+                    tooltip: PhilgoTr.of(context)!.close,
                   ),
                 ],
               ),
@@ -361,7 +361,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                       otherUserUid: user!.uid,
                       no: () => ListTile(
                         leading: Icon(Icons.message),
-                        title: Text(LibTr.of(context)!.chat),
+                        title: Text(PhilgoTr.of(context)!.chat),
                         onTap: () {
                           Navigator.of(context).pop();
                           ChatRoomScreen.push(context, user!.uid);
@@ -375,7 +375,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                       yes: () => ListTile(
                         leading: Icon(Icons.person_add, color: Colors.green),
                         title: Text(
-                          LibTr.of(context)!.unblock_user,
+                          PhilgoTr.of(context)!.unblock_user,
                           style: TextStyle(color: Colors.green),
                         ),
                         onTap: () {
@@ -392,7 +392,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                       ),
                       no: () => ListTile(
                         leading: Icon(Icons.block),
-                        title: Text(LibTr.of(context)!.block_user),
+                        title: Text(PhilgoTr.of(context)!.block_user),
                         onTap: () {
                           Navigator.of(context).pop();
                           showDialog(

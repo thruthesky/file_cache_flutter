@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/philgo_app.config.dart';
 import 'package:flutter/rendering.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
-import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/app.state.dart';
@@ -42,7 +40,7 @@ class _ForumHomeState extends State<ForumHome> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ForumHeader(),
+                    ForumHeader(onCategorySelected: (String postId) => {}),
 
                     // Post List
                     Expanded(

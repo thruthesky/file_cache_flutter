@@ -252,12 +252,15 @@ class _MyAppState extends State<MyApp> {
           locale: locale, // AppState의 locale 사용
           localizationsDelegates: [
             Lo.delegate,
-            LibTr.delegate,
+            PhilgoTr.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
           ],
-          supportedLocales: [...Lo.supportedLocales, ...LibTr.supportedLocales],
+          supportedLocales: [
+            ...Lo.supportedLocales,
+            ...PhilgoTr.supportedLocales,
+          ],
         );
       },
     );

@@ -29,6 +29,8 @@ This checklist must be completed whenever the user request a work:
     - (2) Prepare independent solutions for each sub-problem.
     - (3) Integrate the solutions of each sub-problem to derive the final solution.
 
+- [ ] Run `flutter analyze` on every work and fix errors.
+
 ## Top Priority Rules
 
 ### 1. Never Modify main.dart Theme Without Explicit Request

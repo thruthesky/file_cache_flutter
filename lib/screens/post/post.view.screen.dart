@@ -209,7 +209,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 if (!isPostMine()) ...[
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.ban, size: 20),
-                    title: Text(LibTr.of(context)!.block),
+                    title: Text(PhilgoTr.of(context)!.block),
                     onTap: () {
                       Navigator.pop(context);
                       showBlockDialog(
@@ -220,7 +220,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   ),
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.flag, size: 20),
-                    title: Text(LibTr.of(context)!.report),
+                    title: Text(PhilgoTr.of(context)!.report),
                     onTap: () {
                       Navigator.pop(context);
                       // Report action
@@ -232,7 +232,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 if (isPostMine()) ...[
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.penToSquare, size: 20),
-                    title: Text(LibTr.of(context)!.edit),
+                    title: Text(PhilgoTr.of(context)!.edit),
                     onTap: () async {
                       Navigator.pop(context);
 
@@ -265,7 +265,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.trash, size: 20, color: scheme.error),
                     title: Text(
-                      LibTr.of(context)!.delete,
+                      PhilgoTr.of(context)!.delete,
                       style: TextStyle(color: scheme.error),
                     ),
                     onTap: () async {
@@ -428,7 +428,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
-                                        '${LibTr.of(context)!.post_from_blocked_user} $nickname',
+                                        '${PhilgoTr.of(context)!.post_from_blocked_user} $nickname',
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                               fontStyle: FontStyle.italic,
@@ -594,7 +594,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       if (!isPostMine()) ...[
                                         _buildComicActionButton(
                                           icon: FontAwesomeIcons.ban,
-                                          label: LibTr.of(context)!.block,
+                                          label: PhilgoTr.of(context)!.block,
                                           onPressed: () {
                                             showBlockDialog(
                                               context: context,
@@ -614,7 +614,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       if (isPostMine()) ...[
                                         _buildComicActionButton(
                                           icon: FontAwesomeIcons.penToSquare,
-                                          label: LibTr.of(context)!.edit,
+                                          label: PhilgoTr.of(context)!.edit,
                                           onPressed: () async {
                                             if (post!.no_of_comment >= 1) {
                                               showInfoDialog(
@@ -650,7 +650,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                         const SizedBox(width: 8),
                                         _buildComicActionButton(
                                           icon: FontAwesomeIcons.trash,
-                                          label: LibTr.of(context)!.delete,
+                                          label: PhilgoTr.of(context)!.delete,
                                           color: scheme.error,
                                           onPressed: () async {
                                             if (post!.no_of_comment >= 1) {
