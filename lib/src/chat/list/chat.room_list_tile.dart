@@ -65,7 +65,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
   int get unread {
     String j = join.toString();
-    debugPrint(j);
+    // debugPrint(j);
     if (join != null) return join!.unread;
     return 0;
   }
@@ -432,7 +432,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             ),
             const SizedBox(width: 12),
             Text(
-              isPinned ? PhilgoTr.of(context)!.unpin : PhilgoTr.of(context)!.pin,
+              isPinned
+                  ? PhilgoTr.of(context)!.unpin
+                  : PhilgoTr.of(context)!.pin,
               style: theme.textTheme.bodyMedium,
             ),
           ],

@@ -21,7 +21,7 @@ class ReceiveShareService {
   /// [category] 서브 카테고리 (null 가능)
   /// [data] 공유된 미디어 파일 목록
   Function(String postId, String? category, List<SharedMediaFile> data)?
-      onCategorySelect;
+  onCategorySelect;
 
   void initialize({
     required Function(List<SharedMediaFile> data) onData,
@@ -33,7 +33,7 @@ class ReceiveShareService {
     /// 카테고리 선택 시 콜백
     /// Callback when category is tapped from the received category selection
     Function(String postId, String? category, List<SharedMediaFile> data)?
-        onCategorySelect,
+    onCategorySelect,
   }) {
     if (categories != null) {
       PhilgoConfig.categories = categories;
@@ -68,10 +68,10 @@ class ReceiveShareService {
     ReceiveSharingIntent.instance.getInitialMedia().then((
       List<SharedMediaFile> data,
     ) {
-      log(
-        data.map((f) => f.toMap()).toString(),
-        name: 'ReceiveSharingIntent:InitialMedia:App closed',
-      );
+      // log(
+      //   data.map((f) => f.toMap()).toString(),
+      //   name: 'ReceiveSharingIntent:InitialMedia:App closed',
+      // );
       onData(data);
 
       // Tell the library that we are done processing the intent.

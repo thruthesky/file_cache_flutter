@@ -517,7 +517,7 @@ Future<String> philgoApiGetAdminUserUid() async {
   final response = await func('get_admins');
 
   final chatAdmin = response['chat_admin'] as String?;
-  log('Admin user uid: $chatAdmin', name: 'Got admin user uid from philgo API');
+  // log('Admin user uid: $chatAdmin', name: 'Got admin user uid from philgo API');
 
   // 성공적으로 사용자 정보 반환
   return chatAdmin ?? '';
