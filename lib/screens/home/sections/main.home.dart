@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/appbar/app_header.dart';
@@ -129,25 +130,44 @@ class _MainHomeState extends State<MainHome> {
             /// Action buttons displayed after avatar (아바타 뒤에 표시되는 액션 버튼들)
             actions: [
               /// Create Post Button (글쓰기 버튼)
-              /// Updates ForumState and navigates to PostCreateScreen
-              /// ForumState 업데이트 후 글쓰기 화면으로 이동
-              IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.lightPlus,
-                  color: scheme.onSurface,
-                  size: 24,
+              /// MenuAnchor 기반 2단계 드롭다운 메뉴
+              /// - 1단계: 메인 카테고리 목록 표시
+              /// - 2단계: 서브 카테고리가 있으면 SubmenuButton으로 확장 표시
+              /// Two-level dropdown menu using MenuAnchor
+              /// - Level 1: Main category list
+              /// - Level 2: SubmenuButton for categories with sub-categories
+              MenuAnchor(
+                /// 메뉴 스타일 (elevation 0, flat design)
+                /// Menu style (elevation 0, flat design)
+                style: MenuStyle(
+                  elevation: WidgetStatePropertyAll(0),
+                  backgroundColor:
+                      WidgetStatePropertyAll(scheme.surfaceContainerHighest),
                 ),
-                onPressed: () {
-                  /// 1. ForumState의 editPostCategory를 현재 homePostCategory로 설정
-                  /// Set editPostCategory to current homePostCategory
-                  final forumState = ForumState.of(context, listen: false);
-                  forumState.setEditCategory(forumState.homePostCategory);
-
-                  /// 2. PostCreateScreen으로 이동
-                  /// Navigate to PostCreateScreen
-                  PostCreateScreen.push(context);
+                /// 메뉴 아이템 빌더
+                /// Menu items builder
+                menuChildren: _buildCategoryMenuItems(context),
+                /// 메뉴 버튼 빌더
+                /// Menu button builder
+                builder: (context, controller, child) {
+                  return IconButton(
+                    icon: FaIcon(
+                      FontAwesomeIcons.lightPlus,
+                      color: scheme.onSurface,
+                      size: 24,
+                    ),
+                    tooltip: 'Create Post',
+                    onPressed: () {
+                      /// 메뉴 열기/닫기 토글
+                      /// Toggle menu open/close
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                  );
                 },
-                tooltip: 'Create Post',
               ),
             ],
           ),
@@ -162,6 +182,313 @@ class _MainHomeState extends State<MainHome> {
         /// Bottom spacing (하단 여백)
         SliverToBoxAdapter(child: SizedBox(height: sp.s24)),
       ],
+    );
+  }
+
+  /// 메인 카테고리의 다국어 이름 반환
+  /// Returns localized name for main category (postId)
+  ///
+  /// [l10n] Lo instance for localization
+  /// [postId] Main category ID (e.g., 'freetalk', 'buyandsell')
+  ///
+  /// 지원하지 않는 카테고리는 원본 postId를 반환
+  /// Returns original postId for unsupported categories
+  String _getLocalizedMainCategory(Lo l10n, String postId) {
+    switch (postId) {
+      case 'freetalk':
+        return l10n.categoryFreetalk;
+      case 'qna':
+        return l10n.categoryQna;
+      case 'buyandsell':
+        return l10n.categoryBuyandsell;
+      case 'blog':
+        return l10n.categoryBlog;
+      case 'boarding_house':
+        return l10n.categoryBoardingHouse;
+      case 'caution':
+        return l10n.categoryCaution;
+      case 'lookfor':
+        return l10n.categoryLookfor;
+      case 'food_delivery':
+        return l10n.categoryFoodDelivery;
+      case 'greeting':
+        return l10n.categoryGreeting;
+      case 'wanted':
+        return l10n.categoryWanted;
+      case 'business':
+        return l10n.categoryBusiness;
+      case 'massage':
+        return l10n.categoryMassage;
+      case 'rest':
+        return l10n.categoryRest;
+      case 'school':
+        return l10n.categorySchool;
+      case 'study':
+        return l10n.categoryStudy;
+      case 'travel':
+        return l10n.categoryTravel;
+      case 'youtube':
+        return l10n.categoryYoutube;
+      case 'momcafe':
+        return l10n.categoryMomcafe;
+      case 'news':
+        return l10n.categoryNews;
+      case 'newcomer':
+        return l10n.categoryNewcomer;
+      case 'nature':
+        return l10n.categoryNature;
+      case 'company_info':
+        return l10n.categoryCompanyInfo;
+      case 'english_biz':
+        return l10n.categoryEnglishBiz;
+      case 'temp':
+        return l10n.categoryTemp;
+      case 'travel_good':
+        return l10n.categoryTravelGood;
+      default:
+        return postId;
+    }
+  }
+
+  /// 서브 카테고리의 다국어 이름 반환
+  /// Returns localized name for sub-category
+  ///
+  /// [l10n] Lo instance for localization
+  /// [category] Sub-category name (e.g., 'discussion', '백과')
+  ///
+  /// 지원하지 않는 서브카테고리는 원본 category를 반환
+  /// Returns original category for unsupported sub-categories
+  String _getLocalizedSubCategory(Lo l10n, String category) {
+    switch (category) {
+      // freetalk 서브카테고리
+      case 'discussion':
+        return l10n.subCategoryDiscussion;
+      case '백과':
+        return l10n.subCategoryEncyclopedia;
+      case '취미':
+        return l10n.subCategoryHobby;
+      case 'info':
+        return l10n.subCategoryInfo;
+      case '코필커플':
+        return l10n.subCategoryKoPhCouple;
+      case '코피노':
+        return l10n.subCategoryKopino;
+      case '이민':
+        return l10n.subCategoryImmigration;
+      case '사진':
+        return l10n.subCategoryPhoto;
+      case '생활의팁':
+        return l10n.subCategoryLifeTips;
+      case '행방불명':
+        return l10n.subCategoryMissing;
+      case '국제결혼':
+        return l10n.subCategoryIntlMarriage;
+      case '모임':
+        return l10n.subCategoryMeeting;
+      case 'column':
+        return l10n.subCategoryColumn;
+      case '먹방':
+        return l10n.subCategoryMukbang;
+      case '뉴스':
+        return l10n.subCategoryNotice;
+      case '공지사항':
+        return l10n.subCategoryNotice;
+      case '경험담':
+        return l10n.subCategoryExperience;
+      case '공부':
+        return l10n.subCategoryStudyLearn;
+      case '태풍':
+        return l10n.subCategoryTyphoon;
+      // buyandsell 서브카테고리
+      case '사업/동업구함':
+        return l10n.subCategoryBusinessPartner;
+      case '컴퓨터/인터넷':
+        return l10n.subCategoryComputer;
+      case '페소환전':
+        return l10n.subCategoryExchange;
+      case '핸드폰':
+        return l10n.subCategoryPhone;
+      case '호텔':
+        return l10n.subCategoryHotel;
+      case '가전/생활용품':
+        return l10n.subCategoryAppliances;
+      case '골프':
+        return l10n.subCategoryGolf;
+      case 'promotion':
+        return l10n.subCategoryPromotion;
+      case '개인장터':
+        return l10n.subCategoryPersonalMarket;
+      case 'real_estate':
+        return l10n.subCategoryRealEstate;
+      case '주택임대':
+        return l10n.subCategoryHouseRental;
+      case '렌트카':
+        return l10n.subCategoryCarRental;
+      case '중고차':
+        return l10n.subCategoryUsedCar;
+      default:
+        return category;
+    }
+  }
+
+  /// 카테고리 메뉴 아이템 빌더
+  /// Builds menu items for 2-level category dropdown
+  ///
+  /// 구조:
+  /// - 서브 카테고리가 있는 메인 카테고리: SubmenuButton (확장 가능)
+  /// - 서브 카테고리가 없는 메인 카테고리: MenuItemButton (즉시 선택)
+  ///
+  /// Structure:
+  /// - Main category with sub-categories: SubmenuButton (expandable)
+  /// - Main category without sub-categories: MenuItemButton (direct selection)
+  List<Widget> _buildCategoryMenuItems(BuildContext context) {
+    /// Lo를 통해 다국어 지원
+    /// Multi-language support via Lo (AppLocalizations)
+    final l10n = Lo.of(context)!;
+
+    /// majorCategories()를 사용하여 주요 메인 카테고리만 표시
+    /// Use majorCategories() to show only major main categories
+    return PhilgoCategory.majorCategories().map((postId) {
+      /// 메인 카테고리의 다국어 이름 가져오기
+      /// Get localized main category name
+      final localizedMainCategory = _getLocalizedMainCategory(l10n, postId);
+
+      /// 서브 카테고리가 있는 경우: SubmenuButton 사용
+      /// If sub-categories exist: use SubmenuButton
+      if (PhilgoCategory.hasSubCategories(postId)) {
+        return SubmenuButton(
+          /// 서브 카테고리 목록을 MenuItemButton으로 표시
+          /// Display sub-categories as MenuItemButton list
+          menuChildren: PhilgoCategory.subCategories(postId).map((category) {
+            /// 서브 카테고리의 다국어 이름 가져오기
+            /// Get localized sub-category name
+            final localizedSubCategory = _getLocalizedSubCategory(l10n, category);
+            return MenuItemButton(
+              onPressed: () {
+                /// 서브 카테고리 선택 시 글쓰기 다이얼로그 표시
+                /// Show post create dialog when sub-category selected
+                _showPostCreateDialog(context, postId, category);
+              },
+              child: Text(localizedSubCategory),
+            );
+          }).toList(),
+          child: Text(localizedMainCategory),
+        );
+      } else {
+        /// 서브 카테고리가 없는 경우: MenuItemButton 사용
+        /// If no sub-categories: use MenuItemButton
+        return MenuItemButton(
+          onPressed: () {
+            /// 메인 카테고리만 선택하여 글쓰기 다이얼로그 표시
+            /// Show post create dialog with main category only
+            _showPostCreateDialog(context, postId, null);
+          },
+          child: Text(localizedMainCategory),
+        );
+      }
+    }).toList();
+  }
+
+  /// 글쓰기 다이얼로그 표시
+  /// Shows PostCreateForm dialog using showGeneralDialog
+  ///
+  /// [context] BuildContext for dialog
+  /// [postId] Main category ID (e.g., 'freetalk', 'buyandsell')
+  /// [category] Sub-category (optional, null if no sub-category)
+  void _showPostCreateDialog(
+      BuildContext context, String postId, String? category) {
+    /// GlobalKey로 외부에서 폼 상태 접근
+    /// Access form state externally via GlobalKey
+    final formKey = GlobalKey<PostCreateFormState>();
+
+    /// 다국어 지원을 위해 Lo 인스턴스 가져오기
+    /// Get Lo instance for localization
+    final l10n = Lo.of(context)!;
+
+    /// 메인 카테고리 및 서브 카테고리의 다국어 이름 가져오기
+    /// Get localized names for main and sub categories
+    final localizedMainCategory = _getLocalizedMainCategory(l10n, postId);
+    final localizedSubCategory =
+        category != null ? _getLocalizedSubCategory(l10n, category) : null;
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'PostCreate',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        final theme = Theme.of(dialogContext);
+        final scheme = theme.colorScheme;
+
+        return SafeArea(
+          child: Scaffold(
+            /// AppBar - Comic Design 스타일 적용 (elevation 0)
+            /// AppBar with Comic Design style (elevation 0)
+            appBar: AppBar(
+              elevation: 0,
+              title: Text(
+                /// 다국어 카테고리 표시: "localizedMainCategory > localizedSubCategory" 또는 "localizedMainCategory"
+                /// Display localized category: "localizedMainCategory > localizedSubCategory" or "localizedMainCategory"
+                localizedSubCategory != null
+                    ? '$localizedMainCategory > $localizedSubCategory'
+                    : localizedMainCategory,
+              ),
+              /// 닫기 버튼
+              /// Close button
+              leading: IconButton(
+                icon: FaIcon(
+                  FontAwesomeIcons.lightXmark,
+                  color: scheme.onSurface,
+                ),
+                onPressed: () => Navigator.pop(dialogContext),
+              ),
+              actions: [
+                /// 제출 버튼 - GlobalKey를 통해 폼의 submit() 호출
+                /// Submit button - calls form's submit() via GlobalKey
+                IconButton(
+                  icon: FaIcon(
+                    FontAwesomeIcons.lightCheck,
+                    color: scheme.primary,
+                  ),
+                  onPressed: () => formKey.currentState?.submit(),
+                ),
+              ],
+            ),
+            /// PostCreateForm - 재사용 가능한 글쓰기 폼
+            /// PostCreateForm - reusable post creation form
+            body: PostCreateForm(
+              key: formKey,
+              postId: postId,
+              category: category,
+              /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+              /// Hide form's internal submit button (handled by AppBar)
+              showSubmitButton: false,
+              /// 제출 성공 시 다이얼로그 닫기
+              /// Close dialog on successful submission
+              onSubmitted: (post) {
+                Navigator.pop(dialogContext);
+                /// 선택적: 생성된 글 보기 화면으로 이동
+                /// Optional: Navigate to post view screen
+              },
+            ),
+          ),
+        );
+      },
+      /// 슬라이드 애니메이션 (하단에서 위로)
+      /// Slide animation (from bottom to top)
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          )),
+          child: child,
+        );
+      },
     );
   }
 }

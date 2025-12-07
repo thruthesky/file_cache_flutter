@@ -1113,4 +1113,172 @@ class LoKo extends Lo {
 
   @override
   String get appSlogan => '필리핀의 모든 것을 담았습니다';
+
+  @override
+  String get categoryFreetalk => '자유게시판';
+
+  @override
+  String get categoryQna => '묻고 답하기';
+
+  @override
+  String get categoryBuyandsell => '사고팔기';
+
+  @override
+  String get categoryBlog => '블로그';
+
+  @override
+  String get categoryBoardingHouse => '하숙집/기숙사';
+
+  @override
+  String get categoryCaution => '주의/경고';
+
+  @override
+  String get categoryLookfor => '사람찾기';
+
+  @override
+  String get categoryFoodDelivery => '음식배달';
+
+  @override
+  String get categoryGreeting => '인사';
+
+  @override
+  String get categoryWanted => '구인구직';
+
+  @override
+  String get categoryBusiness => '비즈니스';
+
+  @override
+  String get categoryMassage => '마사지';
+
+  @override
+  String get categoryRest => '레스토랑';
+
+  @override
+  String get categorySchool => '학교';
+
+  @override
+  String get categoryStudy => '어학연수';
+
+  @override
+  String get categoryTravel => '여행';
+
+  @override
+  String get categoryYoutube => '유튜브';
+
+  @override
+  String get categoryMomcafe => '맘카페';
+
+  @override
+  String get categoryNews => '뉴스';
+
+  @override
+  String get categoryNewcomer => '새내기';
+
+  @override
+  String get categoryNature => '자연';
+
+  @override
+  String get categoryCompanyInfo => '회사정보';
+
+  @override
+  String get categoryEnglishBiz => '영어비즈니스';
+
+  @override
+  String get categoryTemp => '임시';
+
+  @override
+  String get categoryTravelGood => '추천여행지';
+
+  @override
+  String get subCategoryDiscussion => '토론';
+
+  @override
+  String get subCategoryEncyclopedia => '백과';
+
+  @override
+  String get subCategoryHobby => '취미';
+
+  @override
+  String get subCategoryInfo => '정보';
+
+  @override
+  String get subCategoryKoPhCouple => '코필커플';
+
+  @override
+  String get subCategoryKopino => '코피노';
+
+  @override
+  String get subCategoryImmigration => '이민';
+
+  @override
+  String get subCategoryPhoto => '사진';
+
+  @override
+  String get subCategoryLifeTips => '생활의팁';
+
+  @override
+  String get subCategoryMissing => '행방불명';
+
+  @override
+  String get subCategoryIntlMarriage => '국제결혼';
+
+  @override
+  String get subCategoryMeeting => '모임';
+
+  @override
+  String get subCategoryColumn => '칼럼';
+
+  @override
+  String get subCategoryMukbang => '먹방';
+
+  @override
+  String get subCategoryNotice => '공지사항';
+
+  @override
+  String get subCategoryExperience => '경험담';
+
+  @override
+  String get subCategoryStudyLearn => '공부';
+
+  @override
+  String get subCategoryTyphoon => '태풍';
+
+  @override
+  String get subCategoryBusinessPartner => '사업/동업구함';
+
+  @override
+  String get subCategoryComputer => '컴퓨터/인터넷';
+
+  @override
+  String get subCategoryExchange => '페소환전';
+
+  @override
+  String get subCategoryPhone => '핸드폰';
+
+  @override
+  String get subCategoryHotel => '호텔';
+
+  @override
+  String get subCategoryAppliances => '가전/생활용품';
+
+  @override
+  String get subCategoryGolf => '골프';
+
+  @override
+  String get subCategoryPromotion => '프로모션';
+
+  @override
+  String get subCategoryPersonalMarket => '개인장터';
+
+  @override
+  String get subCategoryRealEstate => '부동산';
+
+  @override
+  String get subCategoryHouseRental => '주택임대';
+
+  @override
+  String get subCategoryCarRental => '렌트카';
+
+  @override
+  String get subCategoryUsedCar => '중고차';
 }

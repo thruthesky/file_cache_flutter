@@ -16,7 +16,6 @@ This document outlines the mandatory rules to follow when collaborating with AI 
 
 This checklist must be completed whenever the user request a work:
 
-- [ ] Always use the dart_mcp MCP and DTD to hot reload after code changes.
 - [ ] Strictly follow the COT (Chain-of-Thought) approach. Clearly explain the flow of reasoning in all tasks.
   - When the developer requests "cot", think step by step and approach problem-solving in stages.
     - (1) First, understand the core of the problem in more detail.
@@ -168,30 +167,7 @@ Text(
 
 ## Development Workflow
 
-### 1. Hot reload changes after code modifications
-
-**🔄 CRITICAL RULE: Always perform hot reload after making code changes**
-
-- ✅ **MUST** execute hot reload after every code modification
-- ✅ Use `mcp__dart__hot_reload` tool immediately after editing files
-- ✅ Verify changes are applied before proceeding to next task
-- ❌ NEVER skip hot reload - changes won't be visible without it
-
-**When to hot reload:**
-
-- After editing UI/design code
-- After modifying widgets
-- After changing Theme or styles
-- After fixing bugs
-- After ANY code change
-
-**How to hot reload:**
-
-```
-Use mcp__dart__hot_reload tool with clearRuntimeErrors: true
-```
-
-### 2. Pre-Work Checklist
+### 1. Pre-Work Checklist
 
 **Required Order**:
 
@@ -201,7 +177,7 @@ Use mcp__dart__hot_reload tool with clearRuntimeErrors: true
 4. ✅ Present TODO List
 5. Start actual work
 
-### 3. When Analysis/Explanation is Requested
+### 2. When Analysis/Explanation is Requested
 
 When keywords like "analyze", "explain", "review" are included:
 
@@ -209,7 +185,7 @@ When keywords like "analyze", "explain", "review" are included:
 - ❌ NEVER modify source code
 - ❌ NEVER edit files
 
-### 4. When Naming is Requested
+### 3. When Naming is Requested
 
 When developer requests "naming" only:
 
@@ -232,7 +208,7 @@ class CommentHeader extends StatelessWidget {
 }
 ```
 
-### 5. When Design is Requested
+### 4. When Design is Requested
 
 When developer makes UI/design-related requests:
 

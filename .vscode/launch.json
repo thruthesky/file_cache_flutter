@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "🚀 PhilGo - iPhone 16 Pro Max - Prod",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
+        },
+        {
             "name": "🚀 PhilGo - iPhone16 - Prod",
             "request": "launch",
             "type": "dart",
@@ -20,13 +27,6 @@
             "args": [
                 "--dart-define=ENV=jaeho"
             ]
-        },
-        {
-            "name": "🚀 PhilGo - iPhone 16 Pro Max - Prod",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
         },
         {
             "name": "PhilGo - JaeHo: iPhone 16 Pro Max: Dev",
@@ -87,6 +87,25 @@
             "deviceId": "ABA5775C-DE54-414D-97B4-1F8382B7F684",
             "args": [
                 "--dart-define=ENV=dev",
+            ]
+        },
+        {
+            "name": "🧪 E2E - iPhone 16 Pro Max (Driver Extension)",
+            "request": "launch",
+            "type": "dart",
+            "program": "test_driver/app.dart",
+            "flutterMode": "debug",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
+        },
+        {
+            "name": "🧪 E2E - iPhone 16 Pro Max (jaeho)",
+            "request": "launch",
+            "type": "dart",
+            "program": "test_driver/app.dart",
+            "flutterMode": "debug",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
+            "args": [
+                "--dart-define=ENV=jaeho"
             ]
         }
     ]

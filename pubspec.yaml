@@ -45,6 +45,11 @@ dependency_overrides:
 
 dev_dependencies:
   flutter_launcher_icons: "^0.14.4"
+  flutter_driver:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  test: any
   flutter_test:
     sdk: flutter
 
