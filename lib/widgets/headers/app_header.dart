@@ -4,6 +4,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
 
+
 /// AppHeader Widget (앱 헤더 위젯)
 ///
 /// A reusable header widget that displays app title, user avatar, and action buttons.

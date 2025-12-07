@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo/widgets/appbar/app_header.dart';
+import 'package:philgo/widgets/headers/app_header.dart';
 import 'package:philgo/widgets/logo/logo.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:provider/provider.dart';
@@ -141,18 +141,21 @@ class _MainHomeState extends State<MainHome> {
                 /// Menu style (elevation 0, flat design)
                 style: MenuStyle(
                   elevation: WidgetStatePropertyAll(0),
-                  backgroundColor:
-                      WidgetStatePropertyAll(scheme.surfaceContainerHighest),
+                  backgroundColor: WidgetStatePropertyAll(
+                    scheme.surfaceContainerHighest,
+                  ),
                 ),
+
                 /// 메뉴 아이템 빌더
                 /// Menu items builder
                 menuChildren: _buildCategoryMenuItems(context),
+
                 /// 메뉴 버튼 빌더
                 /// Menu button builder
                 builder: (context, controller, child) {
                   return IconButton(
                     icon: FaIcon(
-                      FontAwesomeIcons.lightPlus,
+                      FontAwesomeIcons.lightPlusLarge,
                       color: scheme.onSurface,
                       size: 24,
                     ),
@@ -175,9 +178,6 @@ class _MainHomeState extends State<MainHome> {
 
         /// Spacing after AppBar (앱바 하단 여백)
         SliverToBoxAdapter(child: SizedBox(height: sp.s20)),
-
-
-
 
         /// Bottom spacing (하단 여백)
         SliverToBoxAdapter(child: SizedBox(height: sp.s24)),
@@ -362,7 +362,10 @@ class _MainHomeState extends State<MainHome> {
           menuChildren: PhilgoCategory.subCategories(postId).map((category) {
             /// 서브 카테고리의 다국어 이름 가져오기
             /// Get localized sub-category name
-            final localizedSubCategory = _getLocalizedSubCategory(l10n, category);
+            final localizedSubCategory = _getLocalizedSubCategory(
+              l10n,
+              category,
+            );
             return MenuItemButton(
               onPressed: () {
                 /// 서브 카테고리 선택 시 글쓰기 다이얼로그 표시
@@ -396,7 +399,10 @@ class _MainHomeState extends State<MainHome> {
   /// [postId] Main category ID (e.g., 'freetalk', 'buyandsell')
   /// [category] Sub-category (optional, null if no sub-category)
   void _showPostCreateDialog(
-      BuildContext context, String postId, String? category) {
+    BuildContext context,
+    String postId,
+    String? category,
+  ) {
     /// GlobalKey로 외부에서 폼 상태 접근
     /// Access form state externally via GlobalKey
     final formKey = GlobalKey<PostCreateFormState>();
@@ -408,8 +414,9 @@ class _MainHomeState extends State<MainHome> {
     /// 메인 카테고리 및 서브 카테고리의 다국어 이름 가져오기
     /// Get localized names for main and sub categories
     final localizedMainCategory = _getLocalizedMainCategory(l10n, postId);
-    final localizedSubCategory =
-        category != null ? _getLocalizedSubCategory(l10n, category) : null;
+    final localizedSubCategory = category != null
+        ? _getLocalizedSubCategory(l10n, category)
+        : null;
 
     showGeneralDialog(
       context: context,
@@ -434,6 +441,7 @@ class _MainHomeState extends State<MainHome> {
                     ? '$localizedMainCategory > $localizedSubCategory'
                     : localizedMainCategory,
               ),
+
               /// 닫기 버튼
               /// Close button
               leading: IconButton(
@@ -455,19 +463,23 @@ class _MainHomeState extends State<MainHome> {
                 ),
               ],
             ),
+
             /// PostCreateForm - 재사용 가능한 글쓰기 폼
             /// PostCreateForm - reusable post creation form
             body: PostCreateForm(
               key: formKey,
               postId: postId,
               category: category,
+
               /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
               /// Hide form's internal submit button (handled by AppBar)
               showSubmitButton: false,
+
               /// 제출 성공 시 다이얼로그 닫기
               /// Close dialog on successful submission
               onSubmitted: (post) {
                 Navigator.pop(dialogContext);
+
                 /// 선택적: 생성된 글 보기 화면으로 이동
                 /// Optional: Navigate to post view screen
               },
@@ -475,23 +487,18 @@ class _MainHomeState extends State<MainHome> {
           ),
         );
       },
+
       /// 슬라이드 애니메이션 (하단에서 위로)
       /// Slide animation (from bottom to top)
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, 1),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          )),
+          position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+              .animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
           child: child,
         );
       },
     );
   }
 }
-
-
-
