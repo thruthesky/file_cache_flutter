@@ -5,8 +5,6 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/headers/app_header.dart';
 import 'package:philgo/widgets/logo/logo.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
-import 'package:philgo/widgets/banners/top_banners.dart';
-import 'package:philgo/widgets/banners/square_banners.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 
 /// 메인 홈 화면 (Main Home Screen)
@@ -118,11 +116,8 @@ class _MainHomeState extends State<MainHome> {
           /// Square banners - display 4 per row in grid
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: sp.s16,
-                vertical: sp.s8,
-              ),
-              child: const SquareBanners(),
+              padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s8),
+              child: const WingBanners(),
             ),
           ),
 
