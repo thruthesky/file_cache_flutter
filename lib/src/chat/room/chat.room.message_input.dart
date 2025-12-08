@@ -347,8 +347,6 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   @override
   void dispose() {
     _messageController.dispose();
-
-    // _titleController.dispose();
     super.dispose();
   }
 
@@ -642,64 +640,69 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
 
                     const SizedBox(width: 8),
 
-                    ElevatedButton(onPressed: _handleSend, child: Text('Send')),
+                    // Send Button with enhanced flat design
+                    GestureDetector(
+                      // Use onTapDown to trigger send before focus changes
+                      onTapDown: (isLoading || _isUploading)
+                          ? null
+                          : (_) {
+                              _handleSend();
+                            },
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            /// Gradient background for visual interest
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: (isLoading || _isUploading)
+                                  ? [
+                                      colorScheme.secondary.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                      colorScheme.secondary.withValues(
+                                        alpha: 0.5,
+                                      ),
+                                    ]
+                                  : [
+                                      colorScheme.primary,
+                                      colorScheme.primary.withValues(
+                                        alpha: 0.8,
+                                      ),
+                                    ],
+                            ),
+                            shape: BoxShape.circle,
 
-                    // // Send Button - GestureDetector를 사용하여 TextField 포커스 유지
-                    // // Material/InkWell은 터치 시 포커스를 빼앗아 키보드가 닫히므로
-                    // // GestureDetector를 사용하여 포커스 손실 없이 메시지 전송
-                    // GestureDetector(
-                    //   behavior: HitTestBehavior.opaque,
-                    //   onTap: (isLoading || _isUploading) ? null : _handleSend,
-                    //   child: Container(
-                    //     width: 48,
-                    //     height: 48,
-                    //     decoration: BoxDecoration(
-                    //       /// Gradient background for visual interest
-                    //       gradient: LinearGradient(
-                    //         begin: Alignment.topLeft,
-                    //         end: Alignment.bottomRight,
-                    //         colors: (isLoading || _isUploading)
-                    //             ? [
-                    //                 colorScheme.secondary.withValues(
-                    //                   alpha: 0.7,
-                    //                 ),
-                    //                 colorScheme.secondary.withValues(
-                    //                   alpha: 0.5,
-                    //                 ),
-                    //               ]
-                    //             : [
-                    //                 colorScheme.primary,
-                    //                 colorScheme.primary.withValues(alpha: 0.8),
-                    //               ],
-                    //       ),
-                    //       shape: BoxShape.circle,
-
-                    //       /// Flat design - subtle border
-                    //       border: Border.all(
-                    //         color: (isLoading || _isUploading)
-                    //             ? colorScheme.secondary.withValues(alpha: 0.3)
-                    //             : colorScheme.primary.withValues(alpha: 0.3),
-                    //         width: 1,
-                    //       ),
-                    //     ),
-                    //     child: Center(
-                    //       child: (isLoading || _isUploading)
-                    //           ? SizedBox(
-                    //               width: 20,
-                    //               height: 20,
-                    //               child: CircularProgressIndicator(
-                    //                 strokeWidth: 2,
-                    //                 color: colorScheme.onPrimary,
-                    //               ),
-                    //             )
-                    //           : Icon(
-                    //               Icons.send,
-                    //               color: colorScheme.onPrimary,
-                    //               size: 20,
-                    //             ),
-                    //     ),
-                    //   ),
-                    // ),
+                            /// Flat design - subtle border
+                            border: Border.all(
+                              color: (isLoading || _isUploading)
+                                  ? colorScheme.secondary.withValues(alpha: 0.3)
+                                  : colorScheme.primary.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Center(
+                            child: (isLoading || _isUploading)
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: colorScheme.onPrimary,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.send,
+                                    color: colorScheme.onPrimary,
+                                    size: 20,
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 );
               },
