@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/themes/app.spacing.dart';
@@ -43,7 +44,9 @@ class ForumHeader extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: sp.s8),
               child: Row(
-                children: PhilgoCategory.majorCategories().map((postId) {
+                children: PhilgoCategory.majorCategories(includeTemp: kDebugMode).map((
+                  postId,
+                ) {
                   /// 카테고리 다국어 이름 가져오기 (philgoTr 사용)
                   /// Get localized category name (using philgoTr)
                   final localizedName = philgoTr(context, postId);

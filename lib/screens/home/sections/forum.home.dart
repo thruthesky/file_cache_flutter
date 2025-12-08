@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
@@ -46,7 +47,9 @@ class _ForumHomeState extends State<ForumHome> {
 
     /// 기본값: 첫 번째 메인 카테고리
     /// Default: first major category
-    _selectedPostId = PhilgoCategory.majorCategories().first;
+    _selectedPostId = PhilgoCategory.majorCategories(
+      includeTemp: kDebugMode,
+    ).first;
     _selectedCategory = null;
   }
 
