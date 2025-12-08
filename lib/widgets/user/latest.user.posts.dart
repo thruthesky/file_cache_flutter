@@ -59,7 +59,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
         firebase_uid: widget.firebase_uid,
         limit: widget.limit,
       );
-      log(posts.toString(), name: "_loadPosts::");
+      // log(posts.toString(), name: "_loadPosts::");
 
       _posts = posts;
     } catch (e) {
@@ -188,6 +188,7 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
 
         return Container(
               margin: const EdgeInsets.only(bottom: 12),
+
               /// Flat 2.0 - 미묘한 그림자 추가 (4% 투명도)
               decoration: BoxDecoration(
                 color: scheme.surface,

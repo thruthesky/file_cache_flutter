@@ -124,7 +124,7 @@ class PostCard extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     post.nickname.isEmpty
-                                        ? LibTr.of(context)!.no_name
+                                        ? PhilgoTr.of(context)!.no_name
                                         : cut(post.nickname, 5),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: Colors.white.withValues(
@@ -211,7 +211,7 @@ class PostCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             post.nickname.isEmpty
-                                ? LibTr.of(context)!.no_name
+                                ? PhilgoTr.of(context)!.no_name
                                 : cut(post.nickname, 5),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: scheme.onSurfaceVariant,

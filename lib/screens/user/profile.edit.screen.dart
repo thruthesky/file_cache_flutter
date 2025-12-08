@@ -7,7 +7,6 @@ import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo/widgets/user/user_ready.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/widgets/theme/comic_card.dart';
 import 'package:philgo/widgets/theme/comic_text_form_field.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
 
@@ -63,7 +62,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           _nameController.text = user.name;
           gender = user.gender;
           birthDate = user.birthDate;
-          log('date: $birthDate');
+          // log('date: $birthDate');
           setState(() {});
         },
         builder: (context, user) {

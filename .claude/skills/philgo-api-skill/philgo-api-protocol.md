@@ -1,5 +1,7 @@
 # PhilGo API 프로토콜
 
+> **📌 플랫폼 안내**: 필고 백엔드는 PHP로 구현되어 있으며, 클라이언트는 주로 JavaScript/Vue.js 또는 Flutter를 사용합니다. 본 문서의 예제는 JavaScript/Vue.js 위주로 작성되었으며, Flutter 개발 시에도 동일한 API를 활용할 수 있습니다.
+
 이 문서는 PhilGo API의 접근 방법, 입출력 형식, 인증 등을 설명하는 문서입니다.
 
 ## 목차
@@ -43,12 +45,7 @@ PhilGo API는 **PHP 함수를 직접 호출하는 방식**으로 동작합니다
 모든 API 요청은 `/func.php`를 통해 이루어집니다.
 
 ```
-https://local.philgo.com:444/func.php
-```
-
-**실제 운영 환경**:
-```
-https://www.philgo.com/func.php
+https://philgo.com/func.php
 ```
 
 ### 요청 방식

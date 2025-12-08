@@ -10,13 +10,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/philgo_app.config.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
-import 'package:philgo/state/forum.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +33,6 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AppState()),
         ChangeNotifierProvider(create: (_) => NavigationState()),
-        ChangeNotifierProvider(create: (_) => ForumState()),
       ],
       child: const MyApp(),
     ),
@@ -83,22 +80,36 @@ class _MyAppState extends State<MyApp> {
     // 첫 프레임이 렌더링된 후에 실행되도록 보장
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (globalNavigatorKey.currentContext != null) {
-        Config.setGlobalContext(globalNavigatorKey.currentContext!);
+        PhilgoConfig.setGlobalContext(globalNavigatorKey.currentContext!);
       }
+
+      /// 외부 공유 수신 서비스 초기화
+      /// Initialize receive share service
       ReceiveShareService.instance.initialize(
-        categories: PhilGoAppConfig.getCategories(),
+        /// PhilgoCategory.majorCategories()를 사용하여 카테고리 목록 설정
+        /// Set category list using PhilgoCategory.majorCategories()
+        categories: PhilgoCategory.majorCategories(),
         onCategorySelect:
-            (PostCategoryItem category, List<SharedMediaFile> data) async {
-              log(
-                "${category.toString()} || ${data.map((f) => f.toMap()).toString()}",
-                name: 'onCategorySelect',
-              );
+            (
+              String postId,
+              String? category,
+              List<SharedMediaFile> data,
+            ) async {
+              // log(
+              //   "postId: $postId, category: $category || ${data.map((f) => f.toMap()).toString()}",
+              //   name: 'onCategorySelect',
+              // );
 
-              ForumState.of(globalContext).setHomePostCategory(category);
-
+              /// postId와 category를 직접 전달하여 글쓰기 화면 표시
+              /// Pass postId and category directly to post create screen
               if (data.length == 1 && await isSharedMediaPlainText(data[0])) {
                 if (globalContext.mounted) {
-                  PostCreateScreen.push(globalContext, content: data[0].path);
+                  PostCreateScreen.push(
+                    globalContext,
+                    postId: postId,
+                    category: category,
+                    content: data[0].path,
+                  );
                 }
               } else {
                 List<XFile> xFiles = [];
@@ -107,38 +118,22 @@ class _MyAppState extends State<MyApp> {
                 }
 
                 if (globalContext.mounted) {
-                  PostCreateScreen.push(globalContext, xFiles: xFiles);
+                  PostCreateScreen.push(
+                    globalContext,
+                    postId: postId,
+                    category: category,
+                    xFiles: xFiles,
+                  );
                 }
               }
             },
         onData: (data) async {
-          log(data.map((f) => f.toMap()).toString(), name: 'onValue');
+          // log(data.map((f) => f.toMap()).toString(), name: 'onValue');
           // Handle the received files and text as needed
           if (data.isEmpty) return;
           showReceiveShareDialog(globalContext, data);
         },
       );
-
-      // showReceiveShareDialog(globalContext, [
-      //   // SharedMediaFile.fromMap({
-      //   //   "path":
-      //   //       "/data/user/0/com.withcenter.philgo/cache/Screenshot 2025-08-07 022558.png",
-      //   //   "thumbnail": null,
-      //   //   "duration": null,
-      //   //   "type": "image",
-      //   //   "mimeType": "image/png",
-      //   //   "message": null,
-      //   // }),
-      //   // SharedMediaFile.fromMap({
-      //   //   "path":
-      //   //       "/data/user/0/com.withcenter.philgo/cache/to share text file.txt",
-      //   //   "thumbnail": null,
-      //   //   "duration": null,
-      //   //   "type": "text",
-      //   //   "mimeType": "text/plain",
-      //   //   "message": null,
-      //   // }),
-      // ]);
     });
   }
 
@@ -153,17 +148,6 @@ class _MyAppState extends State<MyApp> {
       domain: 'philgo_v6_app',
       onForegroundMessage: (message) {
         debugPrint('Foreground message received: ${message.messageId}');
-        // You can show a notification or update UI here
-        // MessagingService.instance.handleForegroundMessage(
-        //   context: globalContext,
-        //   message: message,
-        //   onPressed: (msg) {
-        //     debugPrint('Notification tapped: ${msg.toString()}');
-        //     WidgetsBinding.instance.addPostFrameCallback((_) {
-        //       onMessageOpen(message);
-        //     });
-        //   },
-        // );
       },
       onMessageOpenedFromBackground: (message) {
         // Handle messages opened from background state
@@ -229,14 +213,14 @@ class _MyAppState extends State<MyApp> {
 
     try {
       await channel.invokeMethod('createNotificationChannel', channelMap1);
-      log('Finished creating channel1', name: 'NotificationChannel Success');
+      // log('Finished creating channel1', name: 'NotificationChannel Success');
       // await channel.invokeMethod('createNotificationChannel', channelMap2);
       // log('Finished creating channel2');
     } on PlatformException catch (e) {
-      log(
-        'Error while creating channel: ${e.message}',
-        name: 'NotificationChannel registration Error',
-      );
+      // log(
+      //   'Error while creating channel: ${e.message}',
+      //   name: 'NotificationChannel registration Error',
+      // );
     }
   }
 
@@ -252,23 +236,17 @@ class _MyAppState extends State<MyApp> {
           locale: locale, // AppState의 locale 사용
           localizationsDelegates: [
             Lo.delegate,
-            LibTr.delegate,
+            PhilgoTr.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
           ],
-          supportedLocales: [...Lo.supportedLocales, ...LibTr.supportedLocales],
+          supportedLocales: [
+            ...Lo.supportedLocales,
+            ...PhilgoTr.supportedLocales,
+          ],
         );
       },
     );
   }
 }
-
-/// Top-level function for handling background messages
-// @pragma('vm:entry-point')
-// Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   // Ensure Firebase is initialized for background messages
-//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-//   debugPrint('Handling background message: ${message.messageId}');
-//   // Handle background message logic here if needed
-// }

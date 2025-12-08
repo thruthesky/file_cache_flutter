@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: "none"
 
-version: 2.0.0+34
+version: 2.0.2+35
 
 environment:
   sdk: ^3.8.1
@@ -45,6 +45,11 @@ dependency_overrides:
 
 dev_dependencies:
   flutter_launcher_icons: "^0.14.4"
+  flutter_driver:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  test: any
   flutter_test:
     sdk: flutter
 
