@@ -1,12 +1,12 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-import 'app_localizations.dart';
+import 'philgo_tr.dart';
 
 // ignore_for_file: type=lint
 
 /// The translations for Japanese (`ja`).
-class LibTrJa extends LibTr {
-  LibTrJa([String locale = 'ja']) : super(locale);
+class PhilgoTrJa extends PhilgoTr {
+  PhilgoTrJa([String locale = 'ja']) : super(locale);
 
   @override
   String get create_room => 'ルーム作成';
@@ -566,4 +566,175 @@ class LibTrJa extends LibTr {
 
   @override
   String get report_reason_other => 'その他';
+
+  @override
+  String get categoryFreetalk => '自由掲示板';
+
+  @override
+  String get categoryQna => '質問と回答';
+
+  @override
+  String get categoryBuyandsell => '売買';
+
+  @override
+  String get categoryBlog => 'ブログ';
+
+  @override
+  String get categoryBoardingHouse => '下宿/寮';
+
+  @override
+  String get categoryCaution => '注意/警告';
+
+  @override
+  String get categoryLookfor => '人探し';
+
+  @override
+  String get categoryFoodDelivery => 'フードデリバリー';
+
+  @override
+  String get categoryGreeting => '挨拶';
+
+  @override
+  String get categoryWanted => '求人求職';
+
+  @override
+  String get categoryBusiness => 'ビジネス';
+
+  @override
+  String get categoryMassage => 'マッサージ';
+
+  @override
+  String get categoryRest => 'レストラン';
+
+  @override
+  String get categorySchool => '学校';
+
+  @override
+  String get categoryStudy => '語学研修';
+
+  @override
+  String get categoryTravel => '旅行';
+
+  @override
+  String get categoryYoutube => 'YouTube';
+
+  @override
+  String get categoryMomcafe => 'ママカフェ';
+
+  @override
+  String get categoryNews => 'ニュース';
+
+  @override
+  String get categoryNewcomer => '新人';
+
+  @override
+  String get categoryNature => '自然';
+
+  @override
+  String get categoryCompanyInfo => '会社情報';
+
+  @override
+  String get categoryEnglishBiz => '英語ビジネス';
+
+  @override
+  String get categoryTemp => '一時';
+
+  @override
+  String get categoryTravelGood => 'おすすめ旅行先';
+
+  @override
+  String get subCategoryDiscussion => 'ディスカッション';
+
+  @override
+  String get subCategoryEncyclopedia => '百科';
+
+  @override
+  String get subCategoryHobby => '趣味';
+
+  @override
+  String get subCategoryInfo => '情報';
+
+  @override
+  String get subCategoryKoPhCouple => '韓比カップル';
+
+  @override
+  String get subCategoryKopino => 'コピノ';
+
+  @override
+  String get subCategoryImmigration => '移民';
+
+  @override
+  String get subCategoryPhoto => '写真';
+
+  @override
+  String get subCategoryLifeTips => '生活のコツ';
+
+  @override
+  String get subCategoryMissing => '行方不明';
+
+  @override
+  String get subCategoryIntlMarriage => '国際結婚';
+
+  @override
+  String get subCategoryMeeting => '集まり';
+
+  @override
+  String get subCategoryColumn => 'コラム';
+
+  @override
+  String get subCategoryMukbang => 'モッパン';
+
+  @override
+  String get subCategoryNotice => 'お知らせ';
+
+  @override
+  String get subCategoryExperience => '経験談';
+
+  @override
+  String get subCategoryStudyLearn => '勉強';
+
+  @override
+  String get subCategoryTyphoon => '台風';
+
+  @override
+  String get subCategoryBusinessPartner => 'ビジネスパートナー';
+
+  @override
+  String get subCategoryComputer => 'パソコン/インターネット';
+
+  @override
+  String get subCategoryExchange => 'ペソ両替';
+
+  @override
+  String get subCategoryPhone => '携帯電話';
+
+  @override
+  String get subCategoryHotel => 'ホテル';
+
+  @override
+  String get subCategoryAppliances => '家電/生活用品';
+
+  @override
+  String get subCategoryGolf => 'ゴルフ';
+
+  @override
+  String get subCategoryPromotion => 'プロモーション';
+
+  @override
+  String get subCategoryPersonalMarket => '個人売買';
+
+  @override
+  String get subCategoryRealEstate => '不動産';
+
+  @override
+  String get subCategoryHouseRental => '住宅賃貸';
+
+  @override
+  String get subCategoryCarRental => 'レンタカー';
+
+  @override
+  String get subCategoryUsedCar => '中古車';
+
+  @override
+  String get categoryAll => 'すべて';
 }

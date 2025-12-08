@@ -36,7 +36,7 @@ Future<CompanyList> getCompanies({
   String? orderby,
   int? limit,
 }) async {
-  debugLog('Fetching company list');
+  // debugLog('Fetching company list');
 
   final response = await func(
     'get_company_list',
@@ -46,12 +46,12 @@ Future<CompanyList> getCompanies({
       if (orderby != null) 'orderby': orderby,
       if (limit != null) 'limit': limit,
     },
-    debug: true,
+    // debug: true,
   );
 
   // API가 List를 직접 반환하는 경우 처리
   if (response is List) {
-    debugLog('API returned List, converting to CompanyList structure');
+    // debugLog('API returned List, converting to CompanyList structure');
     final companiesData = {
       'page': 1,
       'company_count': response.length,
@@ -67,22 +67,29 @@ Future<CompanyList> getCompanies({
 }
 
 Future<Company> getCompany(int idx) async {
-  debugLog('Fetching company id: $idx');
-  final response = await func('get_company', data: {'idx': idx}, debug: true);
-  debugLog('company: $response');
+  // debugLog('Fetching company id: $idx');
+  final response = await func(
+    'get_company',
+    data: {'idx': idx},
+    //  debug: true
+  );
+  // debugLog('company: $response');
 
   return Company.fromJson(response);
 }
 
 Future<Company?> getMyCompany() async {
-  debugLog('Fetching my company');
-  final response = await func('get_my_company', debug: true);
+  // debugLog('Fetching my company');
+  final response = await func(
+    'get_my_company',
+    //  debug: true,
+  );
   // debugLog('My company response: $response');
 
   // If the response has a 'data' key
   if (response.containsKey('data')) {
     if (response['data'] == null) {
-      debugLog('No company found for current user');
+      // debugLog('No company found for current user');
       return null;
     }
   }
@@ -91,15 +98,22 @@ Future<Company?> getMyCompany() async {
 }
 
 Future<Company> createCompany() async {
-  debugLog('Creating my company');
-  final response = await func('create_my_company', debug: true);
-  debugLog('Create a compnay $response');
+  // debugLog('Creating my company');
+  final response = await func(
+    'create_my_company',
+    // debug: true,
+  );
+  // debugLog('Create a compnay $response');
   return Company.fromJson(response);
 }
 
 Future<Company> updateCompany(RecordType data) async {
-  debugLog('Updating company with data: $data');
-  final response = await func('update_my_company', data: data, debug: true);
-  debugLog('Update company response: $response');
+  // debugLog('Updating company with data: $data');
+  final response = await func(
+    'update_my_company',
+    data: data,
+    //  debug: true,
+  );
+  // debugLog('Update company response: $response');
   return Company.fromJson(response);
 }

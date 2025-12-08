@@ -45,7 +45,7 @@ class UserAvatarWithUploadIcon extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () async {
                     bool re = await showConfirmDialog(
-                      message: LibTr.of(context)!.want_to_delete,
+                      message: PhilgoTr.of(context)!.want_to_delete,
                     );
                     if (re) {
                       onTapDelete?.call();

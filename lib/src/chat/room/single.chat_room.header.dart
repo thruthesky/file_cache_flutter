@@ -40,7 +40,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         IconButton(
           onPressed: () => showMenuModal(context),
           icon: const Icon(Icons.settings),
-          tooltip: LibTr.of(context)!.menu,
+          tooltip: PhilgoTr.of(context)!.menu,
         ),
       ],
     );
@@ -75,7 +75,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    LibTr.of(context)!.menu,
+                    PhilgoTr.of(context)!.menu,
 
                     /// Comic design: Use theme text style
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -85,7 +85,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: LibTr.of(context)!.close,
+                    tooltip: PhilgoTr.of(context)!.close,
                   ),
                 ],
               ),
@@ -134,7 +134,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                LibTr.of(context)!.admin_chat_notice,
+                                PhilgoTr.of(context)!.admin_chat_notice,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: Theme.of(
@@ -156,7 +156,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             FontAwesomeIcons.lightUserPlus,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                          title: LibTr.of(context)!.unblock_user,
+                          title: PhilgoTr.of(context)!.unblock_user,
                           onTap: () {
                             Navigator.of(context).pop();
                             showUnblockDialog(parentContext);
@@ -168,7 +168,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             _buildComicMenuItem(
                               context: context,
                               icon: Avatar(photoUrl: getPhotoUrl()),
-                              title: LibTr.of(context)!.profile,
+                              title: PhilgoTr.of(context)!.profile,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showProfileDialog(parentContext, otherUser);
@@ -183,7 +183,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightNewspaper,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
-                              title: LibTr.of(context)!.recent_post,
+                              title: PhilgoTr.of(context)!.recent_post,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showUserRecentPostsDialog(
@@ -201,7 +201,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightFlag,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: LibTr.of(context)!.report,
+                              title: PhilgoTr.of(context)!.report,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 reportRoom(parentContext);
@@ -216,7 +216,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightBan,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: LibTr.of(context)!.block_user,
+                              title: PhilgoTr.of(context)!.block_user,
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showBlockDialog(parentContext);
@@ -230,7 +230,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                       // Leave option
                       // ListTile(
                       //   leading: const Icon(Icons.exit_to_app),
-                      //   title: Text(LibTr.of(context)!.leave),
+                      //   title: Text(PhilgoTr.of(context)!.leave),
                       //   onTap: () {
                       //     Navigator.of(context).pop();
                       //     showLeaveConfirmDialog(parentContext);
@@ -264,18 +264,18 @@ class SingleChatRoomHeader extends StatelessWidget {
     bool confirm = await showDialog(
       context: parentContext,
       builder: (context) => AlertDialog(
-        title: Text(LibTr.of(context)!.leave_room),
-        content: Text(LibTr.of(context)!.leave_room_confirmation),
+        title: Text(PhilgoTr.of(context)!.leave_room),
+        content: Text(PhilgoTr.of(context)!.leave_room_confirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(LibTr.of(context)!.cancel),
+            child: Text(PhilgoTr.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop(true);
             },
-            child: Text(LibTr.of(context)!.leave),
+            child: Text(PhilgoTr.of(context)!.leave),
           ),
         ],
       ),
@@ -365,7 +365,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     if (join.userDisplayName.isNotEmpty) {
       return join.userDisplayName;
     }
-    return LibTr.of(Config.globalContext)!.no_name;
+    return PhilgoTr.of(PhilgoConfig.globalContext)!.no_name;
   }
 
   /// Build a menu item with Comic design
@@ -473,7 +473,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
       return IconButton(
         onPressed: () => _showFavoritesModal(context),
         icon: const Icon(Icons.star_border),
-        tooltip: LibTr.of(context)!.add_to_favorites,
+        tooltip: PhilgoTr.of(context)!.add_to_favorites,
       );
     }
 
@@ -487,7 +487,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
             // Comic design: Use theme primary color instead of hardcoded amber
             color: isFavorited ? Colors.amberAccent : null,
           ),
-          tooltip: LibTr.of(context)!.add_to_favorites,
+          tooltip: PhilgoTr.of(context)!.add_to_favorites,
         );
       },
     );
@@ -604,8 +604,8 @@ class _FavoritesModalState extends State<_FavoritesModal> {
           showSuccessSnackBar(
             context,
             selectedFolders.contains(folderName)
-                ? LibTr.of(context)!.added_to_folder(folderName)
-                : LibTr.of(context)!.removed_from_folder(folderName),
+                ? PhilgoTr.of(context)!.added_to_folder(folderName)
+                : PhilgoTr.of(context)!.removed_from_folder(folderName),
           );
         }
       }
@@ -613,7 +613,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          LibTr.of(context)!.failed_to_update_favorite(e.toString()),
+          PhilgoTr.of(context)!.failed_to_update_favorite(e.toString()),
         );
       }
     } finally {
@@ -650,7 +650,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
             children: [
               /// Title
               Text(
-                LibTr.of(context)!.create_new_folder,
+                PhilgoTr.of(context)!.create_new_folder,
                 style: Theme.of(
                   dialogContext,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
@@ -661,8 +661,8 @@ class _FavoritesModalState extends State<_FavoritesModal> {
               TextField(
                 controller: folderNameController,
                 decoration: InputDecoration(
-                  labelText: LibTr.of(context)!.folder_name,
-                  hintText: LibTr.of(context)!.enter_folder_name,
+                  labelText: PhilgoTr.of(context)!.folder_name,
+                  hintText: PhilgoTr.of(context)!.enter_folder_name,
 
                   /// Comic design: 2px border
                   border: OutlineInputBorder(
@@ -737,7 +737,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         Theme.of(dialogContext).textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text(LibTr.of(context)!.cancel),
+                    child: Text(PhilgoTr.of(context)!.cancel),
                   ),
                   const SizedBox(width: 8),
                   // Create button - Comic design primary button
@@ -784,7 +784,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         Theme.of(dialogContext).textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text(LibTr.of(context)!.create),
+                    child: Text(PhilgoTr.of(context)!.create),
                   ),
                 ],
               ),
@@ -825,7 +825,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                   children: [
                     /// Comic design: Use theme titleLarge style with font weight
                     Text(
-                      LibTr.of(context)!.add_to_favorites,
+                      PhilgoTr.of(context)!.add_to_favorites,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -835,12 +835,12 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     /// Comic design: Add button with Font Awesome icon
                     IconButton(
                       onPressed: () =>
-                          _showCreateFolderDialog(Config.globalContext),
+                          _showCreateFolderDialog(PhilgoConfig.globalContext),
                       icon: FaIcon(
                         FontAwesomeIcons.lightCirclePlus,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      tooltip: LibTr.of(context)!.create_new_folder,
+                      tooltip: PhilgoTr.of(context)!.create_new_folder,
                     ),
                   ],
                 ),
@@ -849,7 +849,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close),
-                  tooltip: LibTr.of(context)!.close,
+                  tooltip: PhilgoTr.of(context)!.close,
                 ),
               ],
             ),
@@ -898,7 +898,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                               ),
                             ),
                             child: Text(
-                              LibTr.of(context)!.no_bookmarked_folders,
+                              PhilgoTr.of(context)!.no_bookmarked_folders,
                               style: Theme.of(context).textTheme.bodyMedium,
                               textAlign: TextAlign.center,
                             ),
@@ -1003,7 +1003,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          LibTr.of(context)!.chats_count(
+                                          PhilgoTr.of(context)!.chats_count(
                                             folder['countFavorites'] as int,
                                           ),
                                           style: Theme.of(context)

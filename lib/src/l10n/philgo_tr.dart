@@ -5,26 +5,26 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations_en.dart';
-import 'app_localizations_ja.dart';
-import 'app_localizations_ko.dart';
-import 'app_localizations_zh.dart';
+import 'philgo_tr_en.dart';
+import 'philgo_tr_ja.dart';
+import 'philgo_tr_ko.dart';
+import 'philgo_tr_zh.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of LibTr
-/// returned by `LibTr.of(context)`.
+/// Callers can lookup localized strings with an instance of PhilgoTr
+/// returned by `PhilgoTr.of(context)`.
 ///
-/// Applications need to include `LibTr.delegate()` in their app's
+/// Applications need to include `PhilgoTr.delegate()` in their app's
 /// `localizationDelegates` list, and the locales they support in the app's
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'l10n/app_localizations.dart';
+/// import 'l10n/philgo_tr.dart';
 ///
 /// return MaterialApp(
-///   localizationsDelegates: LibTr.localizationsDelegates,
-///   supportedLocales: LibTr.supportedLocales,
+///   localizationsDelegates: PhilgoTr.localizationsDelegates,
+///   supportedLocales: PhilgoTr.supportedLocales,
 ///   home: MyApplicationHome(),
 /// );
 /// ```
@@ -61,19 +61,19 @@ import 'app_localizations_zh.dart';
 /// Select and expand the newly-created Localizations item then, for each
 /// locale your application supports, add a new item and select the locale
 /// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the LibTr.supportedLocales
+/// be consistent with the languages listed in the PhilgoTr.supportedLocales
 /// property.
-abstract class LibTr {
-  LibTr(String locale)
+abstract class PhilgoTr {
+  PhilgoTr(String locale)
     : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static LibTr? of(BuildContext context) {
-    return Localizations.of<LibTr>(context, LibTr);
+  static PhilgoTr? of(BuildContext context) {
+    return Localizations.of<PhilgoTr>(context, PhilgoTr);
   }
 
-  static const LocalizationsDelegate<LibTr> delegate = _LibTrDelegate();
+  static const LocalizationsDelegate<PhilgoTr> delegate = _PhilgoTrDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -1096,14 +1096,356 @@ abstract class LibTr {
   /// In en, this message translates to:
   /// **'Other'**
   String get report_reason_other;
+
+  /// No description provided for @categoryFreetalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Talk'**
+  String get categoryFreetalk;
+
+  /// No description provided for @categoryQna.
+  ///
+  /// In en, this message translates to:
+  /// **'Q&A'**
+  String get categoryQna;
+
+  /// No description provided for @categoryBuyandsell.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy & Sell'**
+  String get categoryBuyandsell;
+
+  /// No description provided for @categoryBlog.
+  ///
+  /// In en, this message translates to:
+  /// **'Blog'**
+  String get categoryBlog;
+
+  /// No description provided for @categoryBoardingHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Boarding House'**
+  String get categoryBoardingHouse;
+
+  /// No description provided for @categoryCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution'**
+  String get categoryCaution;
+
+  /// No description provided for @categoryLookfor.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking For'**
+  String get categoryLookfor;
+
+  /// No description provided for @categoryFoodDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Food Delivery'**
+  String get categoryFoodDelivery;
+
+  /// No description provided for @categoryGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Greetings'**
+  String get categoryGreeting;
+
+  /// No description provided for @categoryWanted.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get categoryWanted;
+
+  /// No description provided for @categoryBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get categoryBusiness;
+
+  /// No description provided for @categoryMassage.
+  ///
+  /// In en, this message translates to:
+  /// **'Massage'**
+  String get categoryMassage;
+
+  /// No description provided for @categoryRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurant'**
+  String get categoryRest;
+
+  /// No description provided for @categorySchool.
+  ///
+  /// In en, this message translates to:
+  /// **'School'**
+  String get categorySchool;
+
+  /// No description provided for @categoryStudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Study'**
+  String get categoryStudy;
+
+  /// No description provided for @categoryTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get categoryTravel;
+
+  /// No description provided for @categoryYoutube.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube'**
+  String get categoryYoutube;
+
+  /// No description provided for @categoryMomcafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Mom Cafe'**
+  String get categoryMomcafe;
+
+  /// No description provided for @categoryNews.
+  ///
+  /// In en, this message translates to:
+  /// **'News'**
+  String get categoryNews;
+
+  /// No description provided for @categoryNewcomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Newcomer'**
+  String get categoryNewcomer;
+
+  /// No description provided for @categoryNature.
+  ///
+  /// In en, this message translates to:
+  /// **'Nature'**
+  String get categoryNature;
+
+  /// No description provided for @categoryCompanyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Company Info'**
+  String get categoryCompanyInfo;
+
+  /// No description provided for @categoryEnglishBiz.
+  ///
+  /// In en, this message translates to:
+  /// **'English Business'**
+  String get categoryEnglishBiz;
+
+  /// No description provided for @categoryTemp.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary'**
+  String get categoryTemp;
+
+  /// No description provided for @categoryTravelGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Recommendations'**
+  String get categoryTravelGood;
+
+  /// No description provided for @subCategoryDiscussion.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion'**
+  String get subCategoryDiscussion;
+
+  /// No description provided for @subCategoryEncyclopedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Encyclopedia'**
+  String get subCategoryEncyclopedia;
+
+  /// No description provided for @subCategoryHobby.
+  ///
+  /// In en, this message translates to:
+  /// **'Hobby'**
+  String get subCategoryHobby;
+
+  /// No description provided for @subCategoryInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get subCategoryInfo;
+
+  /// No description provided for @subCategoryKoPhCouple.
+  ///
+  /// In en, this message translates to:
+  /// **'Korean-Filipino Couple'**
+  String get subCategoryKoPhCouple;
+
+  /// No description provided for @subCategoryKopino.
+  ///
+  /// In en, this message translates to:
+  /// **'Kopino'**
+  String get subCategoryKopino;
+
+  /// No description provided for @subCategoryImmigration.
+  ///
+  /// In en, this message translates to:
+  /// **'Immigration'**
+  String get subCategoryImmigration;
+
+  /// No description provided for @subCategoryPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get subCategoryPhoto;
+
+  /// No description provided for @subCategoryLifeTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Tips'**
+  String get subCategoryLifeTips;
+
+  /// No description provided for @subCategoryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get subCategoryMissing;
+
+  /// No description provided for @subCategoryIntlMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'International Marriage'**
+  String get subCategoryIntlMarriage;
+
+  /// No description provided for @subCategoryMeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Meetup'**
+  String get subCategoryMeeting;
+
+  /// No description provided for @subCategoryColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Column'**
+  String get subCategoryColumn;
+
+  /// No description provided for @subCategoryMukbang.
+  ///
+  /// In en, this message translates to:
+  /// **'Mukbang'**
+  String get subCategoryMukbang;
+
+  /// No description provided for @subCategoryNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get subCategoryNotice;
+
+  /// No description provided for @subCategoryExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get subCategoryExperience;
+
+  /// No description provided for @subCategoryStudyLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'Study'**
+  String get subCategoryStudyLearn;
+
+  /// No description provided for @subCategoryTyphoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Typhoon'**
+  String get subCategoryTyphoon;
+
+  /// No description provided for @subCategoryBusinessPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Partner'**
+  String get subCategoryBusinessPartner;
+
+  /// No description provided for @subCategoryComputer.
+  ///
+  /// In en, this message translates to:
+  /// **'Computer/Internet'**
+  String get subCategoryComputer;
+
+  /// No description provided for @subCategoryExchange.
+  ///
+  /// In en, this message translates to:
+  /// **'Peso Exchange'**
+  String get subCategoryExchange;
+
+  /// No description provided for @subCategoryPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Phone'**
+  String get subCategoryPhone;
+
+  /// No description provided for @subCategoryHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get subCategoryHotel;
+
+  /// No description provided for @subCategoryAppliances.
+  ///
+  /// In en, this message translates to:
+  /// **'Appliances'**
+  String get subCategoryAppliances;
+
+  /// No description provided for @subCategoryGolf.
+  ///
+  /// In en, this message translates to:
+  /// **'Golf'**
+  String get subCategoryGolf;
+
+  /// No description provided for @subCategoryPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion'**
+  String get subCategoryPromotion;
+
+  /// No description provided for @subCategoryPersonalMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Market'**
+  String get subCategoryPersonalMarket;
+
+  /// No description provided for @subCategoryRealEstate.
+  ///
+  /// In en, this message translates to:
+  /// **'Real Estate'**
+  String get subCategoryRealEstate;
+
+  /// No description provided for @subCategoryHouseRental.
+  ///
+  /// In en, this message translates to:
+  /// **'House Rental'**
+  String get subCategoryHouseRental;
+
+  /// No description provided for @subCategoryCarRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Car Rental'**
+  String get subCategoryCarRental;
+
+  /// No description provided for @subCategoryUsedCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Used Car'**
+  String get subCategoryUsedCar;
+
+  /// No description provided for @categoryAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get categoryAll;
 }
 
-class _LibTrDelegate extends LocalizationsDelegate<LibTr> {
-  const _LibTrDelegate();
+class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {
+  const _PhilgoTrDelegate();
 
   @override
-  Future<LibTr> load(Locale locale) {
-    return SynchronousFuture<LibTr>(lookupLibTr(locale));
+  Future<PhilgoTr> load(Locale locale) {
+    return SynchronousFuture<PhilgoTr>(lookupPhilgoTr(locale));
   }
 
   @override
@@ -1111,24 +1453,24 @@ class _LibTrDelegate extends LocalizationsDelegate<LibTr> {
       <String>['en', 'ja', 'ko', 'zh'].contains(locale.languageCode);
 
   @override
-  bool shouldReload(_LibTrDelegate old) => false;
+  bool shouldReload(_PhilgoTrDelegate old) => false;
 }
 
-LibTr lookupLibTr(Locale locale) {
+PhilgoTr lookupPhilgoTr(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en':
-      return LibTrEn();
+      return PhilgoTrEn();
     case 'ja':
-      return LibTrJa();
+      return PhilgoTrJa();
     case 'ko':
-      return LibTrKo();
+      return PhilgoTrKo();
     case 'zh':
-      return LibTrZh();
+      return PhilgoTrZh();
   }
 
   throw FlutterError(
-    'LibTr.delegate failed to load unsupported locale "$locale". This is likely '
+    'PhilgoTr.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
     'that was used.',

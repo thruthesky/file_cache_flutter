@@ -47,7 +47,7 @@ class _PostReportButtonState extends State<PostReportButton> {
   /// - 'comment': 댓글 신고 사유 (시비/욕설, 스팸, 기타)
   /// - 기타: 기본 사유 (기타)
   List<String> getReportReason(BuildContext context, String type) {
-    final tr = LibTr.of(context)!;
+    final tr = PhilgoTr.of(context)!;
     if (type == 'post') {
       return [
         tr.report_reason_category_error,
@@ -76,14 +76,14 @@ class _PostReportButtonState extends State<PostReportButton> {
         return;
       }
       if (mounted && res['message'] != null && res['message']!.isNotEmpty) {
-        showSuccessSnackBar(context, LibTr.of(context)!.report_success);
+        showSuccessSnackBar(context, PhilgoTr.of(context)!.report_success);
         increaseCounter();
         return;
       }
     } catch (e) {
       log('신고 처리 중 에러 발생: $e', name: 'PostReportButton::handleReport');
       if (mounted) {
-        showErrorSnackBar(context, LibTr.of(context)!.report_failed);
+        showErrorSnackBar(context, PhilgoTr.of(context)!.report_failed);
       }
     }
   }
@@ -165,7 +165,7 @@ class _PostReportButtonState extends State<PostReportButton> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        LibTr.of(context)!.report_select_reason,
+                        PhilgoTr.of(context)!.report_select_reason,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -238,7 +238,7 @@ class _PostReportButtonState extends State<PostReportButton> {
               ),
               const SizedBox(width: 6),
               Text(
-                "${LibTr.of(context)!.report}${currentReportCounter > 0 ? ' $currentReportCounter' : ''}",
+                "${PhilgoTr.of(context)!.report}${currentReportCounter > 0 ? ' $currentReportCounter' : ''}",
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: scheme.onSurface,
                   fontWeight: FontWeight.w500,

@@ -70,7 +70,7 @@ class UserService {
   void initAuthStateChanges() {
     auth.authStateChanges().listen((fa.User? user) {
       // User is signed in
-      log('User signed in: ${user?.uid}');
+      // log('User signed in: ${user?.uid}');
       initPinnedChatRooms(user);
       initFavoriteFolders(user);
       initBlockedUsers(user);
@@ -168,7 +168,7 @@ class UserService {
     final unreadCountRef = userChatUnreadCountRef(user.uid);
     unreadCountSubscription = unreadCountRef.onValue.listen(
       (event) {
-        log(event.snapshot.value.toString(), name: "event.snapshot.value::");
+        // log(event.snapshot.value.toString(), name: "event.snapshot.value::");
         if (event.snapshot.exists && event.snapshot.value != null) {
           final count = event.snapshot.value as int;
           unreadCountStream.value = count;
@@ -194,14 +194,14 @@ class UserService {
 
           if (event.snapshot.exists && event.snapshot.value != null) {
             final data = event.snapshot.value as Map<dynamic, dynamic>;
-            debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
+            // debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
             data.forEach((key, value) {
               if (value == true) {
                 pinnedChatRooms.add(key.toString());
               }
             });
           }
-          debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
+          // debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
           pinnedChatRoomsStream.value = {...pinnedChatRooms};
         },
         onError: (error) {
@@ -224,7 +224,7 @@ class UserService {
 
           if (event.snapshot.exists && event.snapshot.value != null) {
             final data = event.snapshot.value as Map<dynamic, dynamic>;
-            debugPrint('favoriteFoldersRef::data: ${data.toString()}');
+            // debugPrint('favoriteFoldersRef::data: ${data.toString()}');
 
             data.forEach((key, value) {
               favoriteFolders.add({
@@ -236,9 +236,9 @@ class UserService {
           if (favoriteFolders.isEmpty) {
             favoriteFolders.add({'folderName': 'default', 'countFavorites': 0});
           }
-          debugPrint(
-            'favoriteFoldersRef::favoriteFolders: ${favoriteFolders.toString()}',
-          );
+          // debugPrint(
+          //   'favoriteFoldersRef::favoriteFolders: ${favoriteFolders.toString()}',
+          // );
           favoriteFoldersStream.value = [...favoriteFolders];
         },
         onError: (error) {

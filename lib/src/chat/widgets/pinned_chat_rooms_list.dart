@@ -67,7 +67,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          LibTr.of(context)!.pinned_chats,
+                          PhilgoTr.of(context)!.pinned_chats,
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.w600,
@@ -181,7 +181,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                 child: Text(
-                  LibTr.of(context)!.unpin_chat_room_title,
+                  PhilgoTr.of(context)!.unpin_chat_room_title,
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -193,7 +193,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Text(
-                  LibTr.of(context)!.unpin_chat_room_message,
+                  PhilgoTr.of(context)!.unpin_chat_room_message,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -238,7 +238,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(LibTr.of(context)!.cancel),
+                      child: Text(PhilgoTr.of(context)!.cancel),
                     ),
                     const SizedBox(width: 8),
                     // Unpin button - Comic design error button (destructive action)
@@ -273,7 +273,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(LibTr.of(context)!.unpin),
+                      child: Text(PhilgoTr.of(context)!.unpin),
                     ),
                   ],
                 ),
@@ -305,7 +305,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 성공 메시지 표시 (선택적)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(LibTr.of(context)!.chat_room_unpinned),
+            content: Text(PhilgoTr.of(context)!.chat_room_unpinned),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -315,7 +315,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 에러 메시지 표시
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(LibTr.of(context)!.error_with_message(e.toString())),
+            content: Text(PhilgoTr.of(context)!.error_with_message(e.toString())),
             duration: const Duration(seconds: 3),
           ),
         );

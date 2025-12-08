@@ -56,7 +56,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                         SnackBar(
                           behavior: SnackBarBehavior.floating,
                           content: Text(
-                            LibTr.of(context)!.leftroom_successfully,
+                            PhilgoTr.of(context)!.leftroom_successfully,
                           ),
                           // Comic design: Use theme primary color for success
                           backgroundColor: Theme.of(
@@ -87,7 +87,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           behavior: SnackBarBehavior.floating,
-                          content: Text(LibTr.of(context)!.error),
+                          content: Text(PhilgoTr.of(context)!.error),
                           // Comic design: Use theme error color
                           backgroundColor: Theme.of(context).colorScheme.error,
                           // Comic design: Rounded corners with borderRadius 12

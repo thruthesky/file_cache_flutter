@@ -52,7 +52,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Text(
-                LibTr.of(context)!.block_user,
+                PhilgoTr.of(context)!.block_user,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -68,14 +68,14 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    LibTr.of(context)!.block_user_confirmation,
+                    PhilgoTr.of(context)!.block_user_confirmation,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    LibTr.of(context)!.block_user_warning,
+                    PhilgoTr.of(context)!.block_user_warning,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.outline,
                     ),
@@ -123,7 +123,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                         theme.textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text(LibTr.of(context)!.cancel),
+                    child: Text(PhilgoTr.of(context)!.cancel),
                   ),
                   const SizedBox(width: 8),
                   // Block button - Comic design error button (destructive action)
@@ -175,7 +175,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text(LibTr.of(context)!.block),
+                        : Text(PhilgoTr.of(context)!.block),
                   ),
                 ],
               ),
@@ -195,7 +195,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
         Navigator.of(context).pop();
         widget.onBlocked?.call();
         setState(() => _isLoading = false);
-        showSuccessSnackBar(context, LibTr.of(context)!.success_user_blocked);
+        showSuccessSnackBar(context, PhilgoTr.of(context)!.success_user_blocked);
       }
     } catch (e) {
       if (mounted) {
@@ -256,7 +256,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Text(
-                LibTr.of(context)!.unblock_user,
+                PhilgoTr.of(context)!.unblock_user,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -268,7 +268,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Text(
-                LibTr.of(context)!.unblock_user_confirmation,
+                PhilgoTr.of(context)!.unblock_user_confirmation,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: colorScheme.onSurface,
                 ),
@@ -314,7 +314,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
                         theme.textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text(LibTr.of(context)!.cancel),
+                    child: Text(PhilgoTr.of(context)!.cancel),
                   ),
                   const SizedBox(width: 8),
                   // Unblock button - Comic design primary button
@@ -366,7 +366,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text(LibTr.of(context)!.unblock),
+                        : Text(PhilgoTr.of(context)!.unblock),
                   ),
                 ],
               ),
@@ -386,7 +386,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
         Navigator.of(context).pop();
         widget.onUnblocked?.call();
         setState(() => _isLoading = false);
-        showSuccessSnackBar(context, LibTr.of(context)!.user_unblocked);
+        showSuccessSnackBar(context, PhilgoTr.of(context)!.user_unblocked);
       }
     } catch (e) {
       if (mounted) {

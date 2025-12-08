@@ -74,7 +74,7 @@ Future toggleBlockUser(String otherUserUid) async {
   final res = await func(
     'toggle_block_member',
     data: {'blockee_firebase_uid': otherUserUid},
-    debug: true,
+    // debug: true,
   );
   log(res.toString(), name: 'toggleBlockUser::');
   return res['blocked'];
@@ -103,9 +103,7 @@ void showProfileDialog(BuildContext context, User otherUser) {
         // Comic design: no shadow
         elevation: 0,
         // Comic design: rounded corners (borderRadius: 12)
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -114,10 +112,7 @@ void showProfileDialog(BuildContext context, User otherUser) {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: 2.0px outline border with rounded corners
-            border: Border.all(
-              color: colorScheme.outline,
-              width: 2.0,
-            ),
+            border: Border.all(color: colorScheme.outline, width: 2.0),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -181,22 +176,26 @@ void showProfileDialog(BuildContext context, User otherUser) {
                             ),
                           ),
                           // Comic design: primary background
-                          backgroundColor:
-                              WidgetStateProperty.all(colorScheme.primary),
+                          backgroundColor: WidgetStateProperty.all(
+                            colorScheme.primary,
+                          ),
                           // Comic design: onPrimary text color
-                          foregroundColor:
-                              WidgetStateProperty.all(colorScheme.onPrimary),
+                          foregroundColor: WidgetStateProperty.all(
+                            colorScheme.onPrimary,
+                          ),
                           // Comic design: padding in multiples of 8
                           padding: WidgetStateProperty.all(
                             const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                           // Comic design: text style from Theme
                           textStyle: WidgetStateProperty.all(
                             theme.textTheme.bodyMedium,
                           ),
                         ),
-                        child: Text(LibTr.of(context)!.view_profile),
+                        child: Text(PhilgoTr.of(context)!.view_profile),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -217,22 +216,26 @@ void showProfileDialog(BuildContext context, User otherUser) {
                           ),
                         ),
                         // Comic design: surface background
-                        backgroundColor:
-                            WidgetStateProperty.all(colorScheme.surface),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
                         // Comic design: onSurface text color
-                        foregroundColor:
-                            WidgetStateProperty.all(colorScheme.onSurface),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(LibTr.of(context)!.close),
+                      child: Text(PhilgoTr.of(context)!.close),
                     ),
                   ],
                 ),
@@ -284,7 +287,7 @@ void showUserRecentPostsDialog({
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      LibTr.of(context)!.recent_post,
+                      PhilgoTr.of(context)!.recent_post,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -292,7 +295,7 @@ void showUserRecentPostsDialog({
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close),
-                      tooltip: LibTr.of(context)!.close,
+                      tooltip: PhilgoTr.of(context)!.close,
                     ),
                   ],
                 ),
@@ -321,7 +324,7 @@ void showUserRecentPostsDialog({
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text(LibTr.of(context)!.no_recent_posts),
+                          child: Text(PhilgoTr.of(context)!.no_recent_posts),
                         ),
                       );
                     }

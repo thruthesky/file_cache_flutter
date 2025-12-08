@@ -12,7 +12,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
       builder: (uid) => buildChatRoomList(uid),
       notLoggedIn: Center(
         child: Text(
-          LibTr.of(context)!.login_required,
+          PhilgoTr.of(context)!.login_required,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
@@ -32,7 +32,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              LibTr.of(context)!.error_with_message(snapshot.error.toString()),
+              PhilgoTr.of(context)!.error_with_message(snapshot.error.toString()),
             ),
           );
         }
@@ -49,7 +49,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  LibTr.of(context)!.empty_chat_list(RoomOrder.order),
+                  PhilgoTr.of(context)!.empty_chat_list(RoomOrder.order),
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),

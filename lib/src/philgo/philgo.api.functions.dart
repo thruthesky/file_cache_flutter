@@ -26,7 +26,7 @@ Future<T> func<T>(
   data = data ?? <String, dynamic>{};
   data['func'] = functionName;
 
-  final url = Config.phpApiUrl;
+  final url = PhilgoConfig.phpApiUrl;
 
   try {
     // Firebase ID Token 추가
@@ -337,7 +337,7 @@ Future<FileUploadResponse?> philgoApiFileUpload(
     });
 
     // 파일 서버 URL
-    final uploadUrl = Config.fileUploadUrl;
+    final uploadUrl = PhilgoConfig.fileUploadUrl;
 
     // 파일 업로드 요청
     final response = await dio.post(
@@ -421,8 +421,8 @@ Future<void> philgoApiFileDelete(String? fileUrl) async {
       throw Exception('인증되지 않은 사용자입니다. 로그인이 필요합니다.');
     }
 
-    // Config.fileDeleteUrl 사용 - URL 파라미터 방식
-    final deleteUrl = Config.fileDeleteUrl(uid, fileUrl);
+    // PhilgoConfig.fileDeleteUrl 사용 - URL 파라미터 방식
+    final deleteUrl = PhilgoConfig.fileDeleteUrl(uid, fileUrl);
 
     // 디버깅용 요청 정보 로깅
     debugLog('파일 삭제 요청:');
@@ -517,7 +517,7 @@ Future<String> philgoApiGetAdminUserUid() async {
   final response = await func('get_admins');
 
   final chatAdmin = response['chat_admin'] as String?;
-  log('Admin user uid: $chatAdmin', name: 'Got admin user uid from philgo API');
+  // log('Admin user uid: $chatAdmin', name: 'Got admin user uid from philgo API');
 
   // 성공적으로 사용자 정보 반환
   return chatAdmin ?? '';

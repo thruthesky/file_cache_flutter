@@ -52,7 +52,7 @@ Future<void> showBlockedUserListDialog(BuildContext context) async {
                 children: [
                   Expanded(
                     child: Text(
-                      LibTr.of(context)!.blocked_user_options,
+                      PhilgoTr.of(context)!.blocked_user_options,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -61,7 +61,7 @@ Future<void> showBlockedUserListDialog(BuildContext context) async {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
-                    tooltip: LibTr.of(context)!.close,
+                    tooltip: PhilgoTr.of(context)!.close,
                   ),
                 ],
               ),
@@ -86,7 +86,7 @@ class BlockedUserList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Login(
       builder: (uid) => _buildBlockedUserList(context, uid),
-      notLoggedIn: Center(child: Text(LibTr.of(context)!.login_required)),
+      notLoggedIn: Center(child: Text(PhilgoTr.of(context)!.login_required)),
     );
   }
 
@@ -104,7 +104,7 @@ class BlockedUserList extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              LibTr.of(context)!.error_with_message(snapshot.error.toString()),
+              PhilgoTr.of(context)!.error_with_message(snapshot.error.toString()),
             ),
           );
         }
@@ -256,7 +256,7 @@ class BlockedUserTile extends StatelessWidget {
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      LibTr.of(context)!.blocked_user_subtitle,
+                      PhilgoTr.of(context)!.blocked_user_subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.error,
                       ),
@@ -276,7 +276,7 @@ class BlockedUserTile extends StatelessWidget {
                   size: 20,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                tooltip: LibTr.of(context)!.unblock_user,
+                tooltip: PhilgoTr.of(context)!.unblock_user,
               ),
 
               /// 타일 전체 클릭 시 차단 해제 다이얼로그 표시

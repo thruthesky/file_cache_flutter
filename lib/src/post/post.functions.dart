@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 List<String?> getEnvironmentalPostId(String? postId, String? category) {
-  if (Config.isDevelopment) {
+  if (PhilgoConfig.isDevelopment) {
     if (category == null || category.isEmpty) {
       return ['temp', ''];
     } else {
@@ -17,6 +17,75 @@ String? getEnvironmentalCategory(String? category) {
   return category;
 }
 
+/// 게시글 목록을 조회하는 함수
+///
+/// PhilGo v6 API의 'post_list' 엔드포인트를 호출하여
+/// 게시글 목록을 가져옵니다.
+///
+/// ## 매개변수
+///
+/// - [postId]: 게시판 ID (예: 'freetalk', 'qna', 'notice' 등)
+///   - null인 경우 전체 게시판에서 조회
+///   - 특정 게시판의 글만 조회하려면 해당 게시판 ID 지정
+///
+/// - [category]: 카테고리 필터
+///   - 게시판 내 세부 카테고리로 필터링할 때 사용
+///   - null인 경우 카테고리 필터 없이 전체 조회
+///
+/// - [has_image]: 이미지 포함 여부 필터
+///   - true: 이미지가 포함된 게시글만 조회 (API에 'has_image': 'y' 전달)
+///   - false (기본값): 이미지 유무와 관계없이 전체 조회
+///   - 갤러리, 포토 게시판 등에서 유용
+///
+/// - [page]: 페이지 번호 (1부터 시작, 기본값: 1)
+///   - 페이지네이션에 사용
+///   - 무한 스크롤 구현 시 페이지 값을 증가시켜 호출
+///
+/// - [limit]: 페이지당 게시글 수 (기본값: 20)
+///   - 한 번에 가져올 게시글 개수
+///   - 서버 부하와 UX를 고려하여 적절한 값 설정 권장
+///
+/// ## 반환값
+///
+/// [PostList] 객체를 반환합니다.
+/// - PostList.posts: 게시글 목록 (`List<Post>`)
+/// - PostList.page: 현재 페이지 번호
+/// - PostList.limit: 페이지당 게시글 수
+/// - PostList.noMorePosts: 더 이상 게시글이 없는지 여부
+///
+/// ## 사용 예시
+///
+/// ```dart
+/// // 전체 게시판에서 첫 페이지 조회
+/// final posts = await getPosts();
+///
+/// // 특정 게시판에서 조회
+/// final freeTalkPosts = await getPosts(postId: 'freetalk');
+///
+/// // 이미지가 있는 글만 조회 (갤러리용)
+/// final galleryPosts = await getPosts(postId: 'gallery', has_image: true);
+///
+/// // 페이지네이션 (두 번째 페이지, 한 페이지에 30개)
+/// final nextPage = await getPosts(postId: 'notice', page: 2, limit: 30);
+///
+/// // 카테고리 필터링
+/// final filteredPosts = await getPosts(postId: 'qna', category: 'flutter');
+/// ```
+///
+/// ## API 요청 형식
+///
+/// POST 요청으로 다음 데이터를 전송:
+/// - post_id: 게시판 ID (선택)
+/// - category: 카테고리 (선택)
+/// - has_image: 'y' (이미지 필터 적용 시)
+/// - page: 페이지 번호
+/// - limit: 페이지당 개수
+///
+/// ## 주의사항
+///
+/// - 개발 환경([PhilgoConfig.isDevelopment])에서는 [getEnvironmentalPostId]를
+///   통해 테스트용 게시판 ID로 대체될 수 있음 (현재 주석 처리됨)
+/// - 네트워크 오류 시 예외가 발생할 수 있으므로 try-catch로 감싸서 사용 권장
 Future<PostList> getPosts({
   String? postId,
   String? category,
@@ -24,18 +93,27 @@ Future<PostList> getPosts({
   int page = 1,
   int limit = 20,
 }) async {
+  // 개발 환경에서 테스트용 게시판 ID로 대체하는 로직 (현재 비활성화)
   // [postId, category] = getEnvironmentalPostId(postId, category);
+
+  // PhilGo v6 API의 'post_list' 엔드포인트 호출
   final res = await func(
     'post_list',
     data: {
+      // postId가 null이 아닌 경우에만 요청 데이터에 포함
       if (postId != null) 'post_id': postId,
+      // category가 null이 아닌 경우에만 요청 데이터에 포함
       if (category != null) 'category': category,
+      // 이미지 필터가 활성화된 경우 'y' 값으로 전달
       if (has_image) 'has_image': 'y',
+      // 페이지네이션 파라미터
       'page': page,
       'limit': limit,
     },
-    debug: true,
+    // debug: true, // 디버그 모드 활성화 시 요청/응답 로깅
   );
+
+  // API 응답을 PostList 객체로 변환하여 반환
   // debugLog('getPosts: $res');
   return PostList.fromJson(res);
 }
@@ -70,7 +148,7 @@ Future<List<Post>> getLatestByUser({
       'limit': limit,
       'page': page,
     },
-    debug: true,
+    // debug: true,
   );
   debugLog('getPosts: $res');
   return (res).map((e) => Post.fromJson(e as Map<String, dynamic>)).toList();
@@ -373,7 +451,7 @@ Future<List<Comment>> getLatestComments({int page = 1, int limit = 20}) async {
   final res = await func(
     'get_latest_comments',
     data: {'page': page, 'limit': limit},
-    debug: true,
+    // debug: true,
   );
 
   debugLog("GET LATEST COMMENTS ----------------> $res");
@@ -391,7 +469,7 @@ Future<List<Comment>> getMyComments({int page = 1, int limit = 20}) async {
   final res = await func<List<dynamic>>(
     'get_my_comments',
     data: {'page': page, 'limit': limit},
-    debug: true,
+    // debug: true,
   );
 
   debugLog("GET MY COMMENTS ----------------> $res");

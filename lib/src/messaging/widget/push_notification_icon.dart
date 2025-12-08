@@ -59,7 +59,7 @@ class _PushNotificationIconState extends State<PushNotificationIcon> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          LibTr.of(context)!.error_with_message(e.toString()),
+          PhilgoTr.of(context)!.error_with_message(e.toString()),
         );
       }
     }
@@ -108,8 +108,8 @@ class _PushNotificationIconState extends State<PushNotificationIcon> {
             onPressed: () => toggleNotification(isSubscribed),
             icon: isSubscribed ? OnIcon() : OffIconIcon(),
             tooltip: isSubscribed
-                ? LibTr.of(context)!.turn_off_notifications
-                : LibTr.of(context)!.turn_on_notifications,
+                ? PhilgoTr.of(context)!.turn_off_notifications
+                : PhilgoTr.of(context)!.turn_on_notifications,
           );
         },
       ),

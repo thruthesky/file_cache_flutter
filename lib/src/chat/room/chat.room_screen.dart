@@ -67,7 +67,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             SnackBar(
                               behavior: SnackBarBehavior.floating,
                               content: Text(
-                                LibTr.of(context)!.leftroom_successfully,
+                                PhilgoTr.of(context)!.leftroom_successfully,
                               ),
                               backgroundColor: Colors.green,
                             ),
@@ -85,7 +85,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               behavior: SnackBarBehavior.floating,
-                              content: Text(LibTr.of(context)!.error),
+                              content: Text(PhilgoTr.of(context)!.error),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -127,8 +127,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // Loading of the Login of the user
       loading: loading(),
       notLoggedIn: Scaffold(
-        appBar: AppBar(title: Text(LibTr.of(context)!.login_required)),
-        body: Center(child: Text(LibTr.of(context)!.please_log_in_to_continue)),
+        appBar: AppBar(title: Text(PhilgoTr.of(context)!.login_required)),
+        body: Center(child: Text(PhilgoTr.of(context)!.please_log_in_to_continue)),
       ),
     );
 

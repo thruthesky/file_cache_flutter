@@ -2,11 +2,13 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 
 /// Post List View - Wrapper widget that delegates to either grid or list view
+/// 게시글 리스트 뷰 - gridColumns 파라미터에 따라 그리드 또는 리스트 뷰로 위임
 /// This widget determines the layout based on gridColumns parameter
 class PostListView extends StatelessWidget {
   const PostListView({
     super.key,
-    required this.postCategory,
+    required this.postId,
+    this.category,
     required this.onTap,
     this.noItemsFoundIndicatorBuilder,
     this.enableHeroTransition = false,
@@ -16,7 +18,14 @@ class PostListView extends StatelessWidget {
     this.gridViewKey,
   });
 
-  final PostCategoryItem postCategory;
+  /// 메인 카테고리 ID (Main category ID)
+  /// 예: 'freetalk', 'buyandsell', 'qna'
+  final String postId;
+
+  /// 서브 카테고리 (Sub category, optional)
+  /// 예: 'discussion', '호텔', '렌트카'
+  final String? category;
+
   final void Function(Post post) onTap;
   final WidgetBuilder? noItemsFoundIndicatorBuilder;
   final bool enableHeroTransition;
@@ -39,11 +48,13 @@ class PostListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isGridLayout = gridColumns != null && gridColumns! > 1;
 
+    /// Masonry 그리드 레이아웃으로 렌더링
     /// Render as Masonry Grid Layout
     if (isGridLayout) {
       return PostGridView(
         key: gridViewKey,
-        postCategory: postCategory,
+        postId: postId,
+        category: category,
         onTap: onTap,
         noItemsFoundIndicatorBuilder: noItemsFoundIndicatorBuilder,
         enableHeroTransition: enableHeroTransition,
@@ -52,10 +63,12 @@ class PostListView extends StatelessWidget {
       );
     }
 
+    /// 리스트 레이아웃으로 렌더링 (기본값)
     /// Render as List Layout (default)
     return PostSimpleListView(
       key: listViewKey,
-      postCategory: postCategory,
+      postId: postId,
+      category: category,
       onTap: onTap,
       noItemsFoundIndicatorBuilder: noItemsFoundIndicatorBuilder,
       enableHeroTransition: enableHeroTransition,

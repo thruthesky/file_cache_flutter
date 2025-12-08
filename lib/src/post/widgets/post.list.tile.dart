@@ -175,7 +175,7 @@ class PostListTileWithoutImage extends StatelessWidget {
           /// Post title with conditional Hero transition for non-blocked posts
           blocked
               ? Text(
-                  "${LibTr.of(context)!.post_from_blocked_user} ${cut(post.nickname.isEmpty ? LibTr.of(context)!.no_name : post.nickname, 8)}",
+                  "${PhilgoTr.of(context)!.post_from_blocked_user} ${cut(post.nickname.isEmpty ? PhilgoTr.of(context)!.no_name : post.nickname, 8)}",
                   style: theme.textTheme.titleMedium!.copyWith(
                     color: scheme.outline,
                   ),
@@ -268,7 +268,7 @@ class PostUserInfoRow extends StatelessWidget {
   final Post post;
 
   String _displayName(BuildContext context) => post.nickname.isEmpty
-      ? LibTr.of(context)!.no_name
+      ? PhilgoTr.of(context)!.no_name
       : cut(post.nickname, 8);
 
   String _dateOnly() {
@@ -393,7 +393,7 @@ class PostInfoCompactRow extends StatelessWidget {
   final bool showImageIndicator;
   final bool showProfile;
   String _displayName(BuildContext context) => post.nickname.isEmpty
-      ? LibTr.of(context)!.no_name
+      ? PhilgoTr.of(context)!.no_name
       : cut(post.nickname, 8);
 
   String _dateOnly() {
