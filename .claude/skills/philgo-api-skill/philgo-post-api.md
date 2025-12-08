@@ -147,6 +147,65 @@ const posts = await func('get_posts', {
 });
 ```
 
+#### 🔥 인기글 조회 (최근 N일 이내 댓글 많은 순)
+
+**인기글**이란 최근 N일 이내에 작성된 글 중에서 댓글이 많은 순서로 정렬된 글 목록을 의미한다. `extra_conditions`의 `within_days` 옵션과 `order_by`를 조합하여 인기글을 조회할 수 있다.
+
+**PHP 예제**:
+```php
+// 최근 30일 이내 인기글 20개 조회 (댓글 많은 순)
+$popular_posts = get_posts(
+    page: 1,
+    limit: 20,                    // 최대 20개
+    post_id: null,                // 모든 게시판
+    category: null,
+    fields: null,
+    user_info: false,
+    type: 'post',
+    strip_tags: true,
+    idx_member: null,
+    extra_conditions: [
+        'within_days' => 30,      // 최근 30일 이내
+        'minimal_fields' => 'y'   // 최소 필드만 조회 (성능 최적화)
+    ],
+    order_by: 'no_of_comment DESC, stamp DESC'  // 댓글 많은 순, 동일 시 최신순
+);
+```
+
+**JavaScript API 호출 예제**:
+```javascript
+// 최근 30일 이내 인기글 20개 조회
+const popularPosts = await func('get_posts', {
+    page: 1,
+    limit: 20,
+    type: 'post',
+    strip_tags: true,
+    extra_conditions: {
+        within_days: 30,
+        minimal_fields: 'y'
+    },
+    order_by: 'no_of_comment DESC, stamp DESC'
+});
+
+// 특정 게시판의 최근 7일 이내 인기글
+const boardPopularPosts = await func('get_posts', {
+    post_id: 'freetalk',
+    limit: 10,
+    extra_conditions: {
+        within_days: 7,
+        minimal_fields: 'y'
+    },
+    order_by: 'no_of_comment DESC, stamp DESC'
+});
+```
+
+**주요 옵션 설명**:
+| 옵션 | 값 | 설명 |
+|-----|---|------|
+| `within_days` | 30 | 최근 30일 이내에 작성된 글만 조회 |
+| `minimal_fields` | 'y' | 불필요한 필드 제외하여 성능 최적화 |
+| `order_by` | 'no_of_comment DESC, stamp DESC' | 댓글 많은 순 → 최신순 정렬 |
+
 ### 응답 형식
 
 ```json
