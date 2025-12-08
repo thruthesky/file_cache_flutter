@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
@@ -32,10 +34,48 @@ class _WingBannersState extends State<WingBanners> {
   /// Loading state
   bool isLoading = true;
 
+  /// 카로셀 컨트롤러
+  /// Carousel controller for auto-scroll
+  CarouselController? _carouselController;
+
+  /// 자동 회전 타이머
+  /// Timer for auto-rotation
+  Timer? _autoScrollTimer;
+
+  /// 현재 아이템 인덱스
+  /// Current item index
+  int _currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
     _loadBanners();
+  }
+
+  @override
+  void dispose() {
+    /// 타이머 취소
+    /// Cancel timer
+    _autoScrollTimer?.cancel();
+
+    /// 컨트롤러 해제
+    /// Dispose controller
+    _carouselController?.dispose();
+    super.dispose();
+  }
+
+  /// 자동 회전 타이머 시작
+  /// Start auto-scroll timer
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (banners.isEmpty || _carouselController == null) return;
+
+      /// 다음 인덱스로 이동 (마지막이면 처음으로)
+      /// Move to next index (loop to first if at end)
+      _currentIndex = (_currentIndex + 1) % banners.length;
+      _carouselController!.animateToItem(_currentIndex);
+    });
   }
 
   /// 배너 로드
@@ -51,6 +91,13 @@ class _WingBannersState extends State<WingBanners> {
         /// Combine left and right banners for vertical display
         banners = [...result['left']!, ...result['right']!];
         isLoading = false;
+
+        /// 컨트롤러 초기화 및 자동 회전 시작
+        /// Initialize controller and start auto-scroll
+        if (banners.isNotEmpty) {
+          _carouselController = CarouselController();
+          _startAutoScroll();
+        }
       });
     }
   }
@@ -80,6 +127,10 @@ class _WingBannersState extends State<WingBanners> {
       /// Set height for square items
       height: itemExtent,
       child: CarouselView.weighted(
+        /// 카로셀 컨트롤러 (자동 회전용)
+        /// Carousel controller for auto-scroll
+        controller: _carouselController,
+
         /// 가중치 배열: 가장자리(3) < 중앙(4)
         /// Weight array: edge(3) < center(4)
         flexWeights: const <int>[4, 4, 4, 3],

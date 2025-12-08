@@ -5,6 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart' hide User;
 
+// import 'dart:developer';
+
 /// Firebase Cloud Messaging service for push notifications
 class MessagingService {
   static MessagingService? _instance;
@@ -99,6 +101,7 @@ class MessagingService {
   /// Get FCM token and save to database
   Future<void> saveToken() async {
     final token = await FirebaseMessaging.instance.getToken();
+    // log("$token", name: 'FCM TOKEN::');
     if (token == null || token.isEmpty) {
       debugPrint('FCM token is null or empty');
       return;
