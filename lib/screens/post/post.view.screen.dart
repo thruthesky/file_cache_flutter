@@ -869,182 +869,162 @@ class _PostViewScreenState extends State<PostViewScreen> {
             ),
       bottomNavigationBar: post != null
           ? SafeArea(
-              child:
-                  Container(
-                        decoration: BoxDecoration(
-                          color: scheme.surface,
-                          border: Border(
-                            top: BorderSide(
-                              color: scheme.outlineVariant,
-                              width: 1.0,
-                            ),
-                          ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  border: Border(
+                    top: BorderSide(color: scheme.outlineVariant, width: 1.0),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Context header (shown when in reply or edit mode)
+                    if (replyingToComment != null || editingComment != null)
+                      Container(
+                        decoration: BoxDecoration(color: scheme.surface),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Context header (shown when in reply or edit mode)
-                            if (replyingToComment != null ||
-                                editingComment != null)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: scheme.surface,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 2),
-                                      child: Icon(
-                                        editingComment != null
-                                            ? Icons.edit
-                                            : Icons.reply,
-                                        size: 16,
-                                        color: scheme.primary,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            editingComment != null
-                                                ? Lo.of(
-                                                    context,
-                                                  )!.editing_comment
-                                                : '${Lo.of(context)!.replying_to} ${replyingToComment!.nickname}',
-                                            style: theme.textTheme.bodySmall
-                                                ?.copyWith(
-                                                  color: scheme.primary,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          // Comment content preview
-                                          Text(
-                                            editingComment != null
-                                                ? editingComment!.content
-                                                : replyingToComment!.content,
-                                            style: theme.textTheme.bodySmall
-                                                ?.copyWith(
-                                                  color: scheme.onSurface
-                                                      .withValues(alpha: 0.6),
-                                                ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    IconButton(
-                                      icon: const Icon(Icons.close, size: 20),
-                                      onPressed: editingComment != null
-                                          ? cancelEditMode
-                                          : cancelReplyMode,
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      visualDensity: VisualDensity.compact,
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                            // Input field (switches between CommentToPost, ReplyToComment, and CommentUpdate)
                             Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: editingComment != null
-                                  ? CommentUpdate(
-                                      comment: editingComment!,
-                                      onUpdated: (updatedComment) {
-                                        // Find and update the comment in the list
-                                        final index = post?.comments.indexWhere(
-                                          (c) => c.idx == updatedComment.idx,
-                                        );
-                                        if (index != null && index >= 0) {
-                                          post?.comments[index].content =
-                                              updatedComment.content;
-                                          post?.comments[index].files =
-                                              updatedComment.files;
-                                        }
-
-                                        // Exit edit mode and show success
-                                        cancelEditMode();
-
-                                        if (mounted) {
-                                          setState(() {});
-                                          showSuccessSnackBar(
-                                            context,
-                                            'A comment has updated',
-                                          );
-                                        }
-                                      },
-                                    )
-                                  : replyingToComment != null
-                                  ? ReplyToComment(
-                                      parent: replyingToComment!,
-                                      onReplied: (createdComment) {
-                                        int? where = post?.comments.indexWhere(
-                                          (comment) =>
-                                              comment.idx ==
-                                              createdComment.idx_parent,
-                                        );
-
-                                        if (where != null) {
-                                          post?.comments.insert(
-                                            where + 1,
-                                            createdComment,
-                                          );
-                                        }
-
-                                        post!.no_of_comment += 1;
-
-                                        // Exit reply mode and show success
-                                        cancelReplyMode();
-
-                                        if (mounted) {
-                                          setState(() {});
-                                          showSuccessSnackBar(
-                                            context,
-                                            'A comment has replied',
-                                          );
-                                        }
-                                      },
-                                    )
-                                  : CommentToPost(
-                                      post: post!,
-                                      onCreated: (createdComment) {
-                                        post?.comments.add(createdComment);
-                                        post!.no_of_comment += 1;
-
-                                        if (mounted) {
-                                          setState(() {});
-                                          showSuccessSnackBar(
-                                            context,
-                                            'Comment has created',
-                                          );
-                                        }
-                                      },
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Icon(
+                                editingComment != null
+                                    ? Icons.edit
+                                    : Icons.reply,
+                                size: 16,
+                                color: scheme.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    editingComment != null
+                                        ? Lo.of(context)!.editing_comment
+                                        : '${Lo.of(context)!.replying_to} ${replyingToComment!.nickname}',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: scheme.primary,
+                                      fontWeight: FontWeight.w600,
                                     ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  // Comment content preview
+                                  Text(
+                                    editingComment != null
+                                        ? editingComment!.content
+                                        : replyingToComment!.content,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: scheme.onSurface.withValues(
+                                        alpha: 0.6,
+                                      ),
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.close, size: 20),
+                              onPressed: editingComment != null
+                                  ? cancelEditMode
+                                  : cancelReplyMode,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              visualDensity: VisualDensity.compact,
                             ),
                           ],
                         ),
-                      )
-                      .animate()
-                      .slideY(
-                        begin: 1.0, // Start from below (100% down)
-                        end: 0.0, // End at normal position
-                        duration: 300.ms,
-                        curve: Curves.easeOut,
-                      )
-                      .fadeIn(duration: 200.ms),
+                      ),
+
+                    // Input field (switches between CommentToPost, ReplyToComment, and CommentUpdate)
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: editingComment != null
+                          ? CommentUpdate(
+                              comment: editingComment!,
+                              onUpdated: (updatedComment) {
+                                // Find and update the comment in the list
+                                final index = post?.comments.indexWhere(
+                                  (c) => c.idx == updatedComment.idx,
+                                );
+                                if (index != null && index >= 0) {
+                                  post?.comments[index].content =
+                                      updatedComment.content;
+                                  post?.comments[index].files =
+                                      updatedComment.files;
+                                }
+
+                                // Exit edit mode and show success
+                                cancelEditMode();
+
+                                if (mounted) {
+                                  setState(() {});
+                                  showSuccessSnackBar(
+                                    context,
+                                    'A comment has updated',
+                                  );
+                                }
+                              },
+                            )
+                          : replyingToComment != null
+                          ? ReplyToComment(
+                              parent: replyingToComment!,
+                              onReplied: (createdComment) {
+                                int? where = post?.comments.indexWhere(
+                                  (comment) =>
+                                      comment.idx == createdComment.idx_parent,
+                                );
+
+                                if (where != null) {
+                                  post?.comments.insert(
+                                    where + 1,
+                                    createdComment,
+                                  );
+                                }
+
+                                post!.no_of_comment += 1;
+
+                                // Exit reply mode and show success
+                                cancelReplyMode();
+
+                                if (mounted) {
+                                  setState(() {});
+                                  showSuccessSnackBar(
+                                    context,
+                                    'A comment has replied',
+                                  );
+                                }
+                              },
+                            )
+                          : CommentToPost(
+                              post: post!,
+                              onCreated: (createdComment) {
+                                post?.comments.add(createdComment);
+                                post!.no_of_comment += 1;
+
+                                if (mounted) {
+                                  setState(() {});
+                                  showSuccessSnackBar(
+                                    context,
+                                    'Comment has created',
+                                  );
+                                }
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
             )
           : null,
     );
