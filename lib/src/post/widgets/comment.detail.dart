@@ -195,9 +195,9 @@ class _CommentDetailState extends State<CommentDetail> {
                       ),
                     ],
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Wrap(
-                      spacing: 8,
+                      spacing: 12,
                       runSpacing: 8,
                       children: [
                         /// Like button for comments with Comic design (icon only when 0)
