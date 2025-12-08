@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// 글쓰기 다이얼로그 표시
@@ -257,10 +258,15 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
         /// Hide form's internal submit button (handled by AppBar)
         showSubmitButton: true,
 
-        /// 제출 성공 시 화면 닫고 콜백 호출
-        /// Close screen on successful submission and invoke callback
+        /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+        /// Close screen on successful submission and navigate to PostViewScreen
         onSubmitted: (post) {
           Navigator.pop(context);
+
+          // Navigate to PostViewScreen to show the created post
+          PostViewScreen.push(context, post);
+
+          // Call external callback if provided
           widget.onSubmitted?.call(post);
         },
       ),
