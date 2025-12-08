@@ -1,10 +1,8 @@
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
-import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
-import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -209,7 +207,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 if (!isPostMine()) ...[
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.ban, size: 20),
-                    title: Text(LibTr.of(context)!.block),
+                    title: Text(PhilgoTr.of(context)!.block),
                     onTap: () {
                       Navigator.pop(context);
                       showBlockDialog(
@@ -220,7 +218,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   ),
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.flag, size: 20),
-                    title: Text(LibTr.of(context)!.report),
+                    title: Text(PhilgoTr.of(context)!.report),
                     onTap: () {
                       Navigator.pop(context);
                       // Report action
@@ -232,7 +230,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 if (isPostMine()) ...[
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.penToSquare, size: 20),
-                    title: Text(LibTr.of(context)!.edit),
+                    title: Text(PhilgoTr.of(context)!.edit),
                     onTap: () async {
                       Navigator.pop(context);
 
@@ -265,7 +263,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.trash, size: 20, color: scheme.error),
                     title: Text(
-                      LibTr.of(context)!.delete,
+                      PhilgoTr.of(context)!.delete,
                       style: TextStyle(color: scheme.error),
                     ),
                     onTap: () async {
@@ -428,7 +426,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
-                                        '${LibTr.of(context)!.post_from_blocked_user} $nickname',
+                                        '${PhilgoTr.of(context)!.post_from_blocked_user} $nickname',
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                               fontStyle: FontStyle.italic,
@@ -497,18 +495,13 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                 const SizedBox(height: 16),
 
                                 /// Images first (if available)
+                                /// Hero 트랜지션 항상 활성화
+                                /// Forum 탭에서만 PostListTile 사용되므로 충돌 없음
                                 if (hasImages) ...[
-                                  Selector<NavigationState, bool>(
-                                    selector: (context, state) =>
-                                        state.homeNav ==
-                                        HomeNavigationItem.forum,
-                                    builder: (context, isInForum, _) {
-                                      return PostViewImages(
-                                        files: files,
-                                        postIdx: widget.post.idx,
-                                        enableHeroTransition: isInForum,
-                                      );
-                                    },
+                                  PostViewImages(
+                                    files: files,
+                                    postIdx: widget.post.idx,
+                                    enableHeroTransition: true,
                                   ),
                                   const SizedBox(height: 16),
                                 ],
@@ -594,7 +587,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       if (!isPostMine()) ...[
                                         _buildComicActionButton(
                                           icon: FontAwesomeIcons.ban,
-                                          label: LibTr.of(context)!.block,
+                                          label: PhilgoTr.of(context)!.block,
                                           onPressed: () {
                                             showBlockDialog(
                                               context: context,
@@ -614,7 +607,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       if (isPostMine()) ...[
                                         _buildComicActionButton(
                                           icon: FontAwesomeIcons.penToSquare,
-                                          label: LibTr.of(context)!.edit,
+                                          label: PhilgoTr.of(context)!.edit,
                                           onPressed: () async {
                                             if (post!.no_of_comment >= 1) {
                                               showInfoDialog(
@@ -650,7 +643,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                         const SizedBox(width: 8),
                                         _buildComicActionButton(
                                           icon: FontAwesomeIcons.trash,
-                                          label: LibTr.of(context)!.delete,
+                                          label: PhilgoTr.of(context)!.delete,
                                           color: scheme.error,
                                           onPressed: () async {
                                             if (post!.no_of_comment >= 1) {

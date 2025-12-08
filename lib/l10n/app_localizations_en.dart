@@ -1143,4 +1143,172 @@ class LoEn extends Lo {
 
   @override
   String get appSlogan => 'Everything about the Philippines';
+
+  @override
+  String get categoryFreetalk => 'Free Talk';
+
+  @override
+  String get categoryQna => 'Q&A';
+
+  @override
+  String get categoryBuyandsell => 'Buy & Sell';
+
+  @override
+  String get categoryBlog => 'Blog';
+
+  @override
+  String get categoryBoardingHouse => 'Boarding House';
+
+  @override
+  String get categoryCaution => 'Caution';
+
+  @override
+  String get categoryLookfor => 'Looking For';
+
+  @override
+  String get categoryFoodDelivery => 'Food Delivery';
+
+  @override
+  String get categoryGreeting => 'Greetings';
+
+  @override
+  String get categoryWanted => 'Jobs';
+
+  @override
+  String get categoryBusiness => 'Business';
+
+  @override
+  String get categoryMassage => 'Massage';
+
+  @override
+  String get categoryRest => 'Restaurant';
+
+  @override
+  String get categorySchool => 'School';
+
+  @override
+  String get categoryStudy => 'Study';
+
+  @override
+  String get categoryTravel => 'Travel';
+
+  @override
+  String get categoryYoutube => 'YouTube';
+
+  @override
+  String get categoryMomcafe => 'Mom Cafe';
+
+  @override
+  String get categoryNews => 'News';
+
+  @override
+  String get categoryNewcomer => 'Newcomer';
+
+  @override
+  String get categoryNature => 'Nature';
+
+  @override
+  String get categoryCompanyInfo => 'Company Info';
+
+  @override
+  String get categoryEnglishBiz => 'English Business';
+
+  @override
+  String get categoryTemp => 'Temporary';
+
+  @override
+  String get categoryTravelGood => 'Travel Recommendations';
+
+  @override
+  String get subCategoryDiscussion => 'Discussion';
+
+  @override
+  String get subCategoryEncyclopedia => 'Encyclopedia';
+
+  @override
+  String get subCategoryHobby => 'Hobby';
+
+  @override
+  String get subCategoryInfo => 'Info';
+
+  @override
+  String get subCategoryKoPhCouple => 'Korean-Filipino Couple';
+
+  @override
+  String get subCategoryKopino => 'Kopino';
+
+  @override
+  String get subCategoryImmigration => 'Immigration';
+
+  @override
+  String get subCategoryPhoto => 'Photo';
+
+  @override
+  String get subCategoryLifeTips => 'Life Tips';
+
+  @override
+  String get subCategoryMissing => 'Missing';
+
+  @override
+  String get subCategoryIntlMarriage => 'International Marriage';
+
+  @override
+  String get subCategoryMeeting => 'Meetup';
+
+  @override
+  String get subCategoryColumn => 'Column';
+
+  @override
+  String get subCategoryMukbang => 'Mukbang';
+
+  @override
+  String get subCategoryNotice => 'Notice';
+
+  @override
+  String get subCategoryExperience => 'Experience';
+
+  @override
+  String get subCategoryStudyLearn => 'Study';
+
+  @override
+  String get subCategoryTyphoon => 'Typhoon';
+
+  @override
+  String get subCategoryBusinessPartner => 'Business Partner';
+
+  @override
+  String get subCategoryComputer => 'Computer/Internet';
+
+  @override
+  String get subCategoryExchange => 'Peso Exchange';
+
+  @override
+  String get subCategoryPhone => 'Mobile Phone';
+
+  @override
+  String get subCategoryHotel => 'Hotel';
+
+  @override
+  String get subCategoryAppliances => 'Appliances';
+
+  @override
+  String get subCategoryGolf => 'Golf';
+
+  @override
+  String get subCategoryPromotion => 'Promotion';
+
+  @override
+  String get subCategoryPersonalMarket => 'Personal Market';
+
+  @override
+  String get subCategoryRealEstate => 'Real Estate';
+
+  @override
+  String get subCategoryHouseRental => 'House Rental';
+
+  @override
+  String get subCategoryCarRental => 'Car Rental';
+
+  @override
+  String get subCategoryUsedCar => 'Used Car';
 }

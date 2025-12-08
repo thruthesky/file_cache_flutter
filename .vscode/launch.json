@@ -5,6 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "🚀 iPhone 16 Pro Max - Prod",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
+        },
+        {
+            "name": "🚀 Attach Simulator - iPhone 16 Pro Max - Prod",
+            "request": "attach",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
+        },
+        {
+            // flutter run 실행 후 attach할 때 사용
+            // 콘솔에 출력된 VM Service URI를 입력하세요
+            "name": "🔗 Attach with URI (flutter run 후 사용)",
+            "request": "attach",
+            "type": "dart",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
+            "vmServiceUri": "http://127.0.0.1:65094/aScwzl_ajaA=/"
+        },
+        {
             "name": "🚀 PhilGo - iPhone16 - Prod",
             "request": "launch",
             "type": "dart",
@@ -20,13 +43,6 @@
             "args": [
                 "--dart-define=ENV=jaeho"
             ]
-        },
-        {
-            "name": "🚀 PhilGo - iPhone 16 Pro Max - Prod",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
         },
         {
             "name": "PhilGo - JaeHo: iPhone 16 Pro Max: Dev",
@@ -59,6 +75,29 @@
                 "--dart-define=ENV=dev",
             ]
         },
+        
+        {
+            "name": "Philgo - charles: Iphone 16 Pro MAX",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "E2A8425E-ED75-48AF-83A9-DF82B972BF89",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        },
+        {
+            "name": "Philgo - charles: Iphone",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "00008030-000D445A11A3802E",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        },
+
+
         {
             "name": "Philgo - Fred: Iphone 16 Pro MAX",
             "request": "launch",
@@ -88,6 +127,33 @@
             "args": [
                 "--dart-define=ENV=dev",
             ]
+        },
+        {
+            "name": "🧪 E2E - iPhone 16 Pro Max (Driver Extension)",
+            "request": "launch",
+            "type": "dart",
+            "program": "test_driver/app.dart",
+            "flutterMode": "debug",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
+        },
+        {
+            "name": "🧪 E2E - iPhone 16 Pro Max (jaeho)",
+            "request": "launch",
+            "type": "dart",
+            "program": "test_driver/app.dart",
+            "flutterMode": "debug",
+            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
+            "args": [
+                "--dart-define=ENV=jaeho"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "vmServiceUri",
+            "type": "promptString",
+            "description": "VM Service URI를 입력하세요 (예: http://127.0.0.1:56610/xxx=/)",
+            "default": "http://127.0.0.1:"
         }
     ]
 }

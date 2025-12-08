@@ -145,7 +145,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            LibTr.of(
+                            PhilgoTr.of(
                               context,
                             )!.error_with_message(snapshot.error.toString()),
                             style: textTheme.bodyLarge?.copyWith(
@@ -337,7 +337,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                             Blocked(
                                               otherUserUid: otherUserUid,
                                               yes: () => Text(
-                                                LibTr.of(
+                                                PhilgoTr.of(
                                                   context,
                                                 )!.blocked_message,
                                                 maxLines: 1,
@@ -489,7 +489,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      LibTr.of(context)!.login_required,
+                      PhilgoTr.of(context)!.login_required,
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.outline,
                       ),

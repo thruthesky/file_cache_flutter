@@ -111,7 +111,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
 
             // Show confirmation dialog if there are changes
             final confirm = await showConfirmDialog(
-              message: LibTr.of(context)!.confirmDiscard,
+              message: PhilgoTr.of(context)!.confirmDiscard,
             );
 
             // User cancelled - don't exit

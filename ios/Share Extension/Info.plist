@@ -4,8 +4,12 @@
   <dict>
     <key>AppGroupId</key>
     <string>$(CUSTOM_GROUP_ID)</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+    <key>CFBundleDisplayName</key>
+    <string>필고</string>
+    <key>CFBundleName</key>
+    <string>Share Extension</string>
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
@@ -37,8 +41,9 @@
 				<integer>1</integer>
             </dict>
         </dict>
-		<key>NSExtensionMainStoryboard</key>
-		<string>MainInterface</string>
+        <!-- 변경: Storyboard 대신 Principal Class 사용 -->
+        <key>NSExtensionPrincipalClass</key>
+        <string>$(PRODUCT_MODULE_NAME).ShareViewController</string>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.share-services</string>
 	</dict>

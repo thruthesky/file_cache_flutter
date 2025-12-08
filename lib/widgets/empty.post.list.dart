@@ -27,7 +27,7 @@ class EmptyPostList extends StatelessWidget {
 
             // 메인 메시지 - 게시글이 없습니다
             Text(
-              LibTr.of(context)!.no_posts_in_category,
+              PhilgoTr.of(context)!.no_posts_in_category,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(
                   context,
@@ -39,7 +39,7 @@ class EmptyPostList extends StatelessWidget {
 
             // 서브 메시지 - 첫 게시글을 작성해보세요
             Text(
-              LibTr.of(context)!.be_first_to_post,
+              PhilgoTr.of(context)!.be_first_to_post,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(
                   context,

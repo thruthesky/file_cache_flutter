@@ -1,18 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/philgo_app.config.dart';
-import 'package:flutter/rendering.dart';
+import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
-import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/state/forum.state.dart';
-import 'package:philgo/state/app.state.dart';
-import 'package:philgo/state/navigation.state.dart';
-import 'package:philgo/screens/home/home.globals.dart';
-import 'package:provider/provider.dart';
+import 'package:philgo/widgets/headers/forum_header.dart';
+import 'package:philgo/widgets/headers/sub_category_list.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/widgets/post/post.card.dart';
 
+/// 게시판 홈 화면 (Forum Home Screen)
+///
+/// 로컬 상태로 현재 선택된 카테고리를 관리합니다.
+/// Manages currently selected category with local state.
+///
+/// 딥링크 처리:
+/// - NavigationState.data에 'initialPostId' 키로 postId가 전달되면
+/// - 해당 카테고리로 초기화됩니다.
 class ForumHome extends StatefulWidget {
   const ForumHome({super.key});
 
@@ -21,271 +24,137 @@ class ForumHome extends StatefulWidget {
 }
 
 class _ForumHomeState extends State<ForumHome> {
-  List<PostCategoryItem> get categories => PhilGoAppConfig.getCategories();
+  /// 현재 선택된 메인 카테고리 ID (로컬 상태)
+  /// Currently selected main category ID (local state)
+  late String _selectedPostId;
+
+  /// 현재 선택된 서브 카테고리 (로컬 상태)
+  /// Currently selected sub category (local state)
+  String? _selectedCategory;
 
   final GlobalKey<PostSimpleListViewState> listViewKey = GlobalKey();
   final GlobalKey<PostGridViewState> gridViewKey = GlobalKey();
 
   @override
+  void initState() {
+    super.initState();
+
+    /// 기본값: 첫 번째 메인 카테고리
+    /// Default: first major category
+    _selectedPostId = PhilgoCategory.majorCategories(
+      includeTemp: kDebugMode,
+    ).first;
+    _selectedCategory = null;
+  }
+
+  /// 딥링크로 전달된 카테고리 확인 및 적용
+  /// 카테고리 변경 핸들러
+  /// Category change handler
+  void _onCategoryChanged(String postId, String? category) {
+    if (_selectedPostId == postId && _selectedCategory == category) {
+      return;
+    }
+
+    setState(() {
+      _selectedPostId = postId;
+      _selectedCategory = category;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Selector 사용 - homePostCategory가 변경될 때만 이 부분이 리빌드됨
-    // ForumState의 다른 변수(editPostCategory 등)가 변경되어도 리빌드되지 않음
-    return Selector<ForumState, PostCategoryItem>(
-      selector: (context, state) => state.homePostCategory,
-      builder: (context, homePostCategory, _) {
-        return Selector<AppState, bool>(
-          selector: (context, state) => state.isHomeChromeVisible,
-          builder: (context, isHomeChromeVisible, _) {
-            return Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Top SafeArea
-                    SafeArea(
-                      child:
-                          // Category header with picker button (no chips)
-                          // Comic Design: 2.0px bottom border
-                          Container(
-                            height: 56,
-                            padding: const EdgeInsets.only(right: 4, left: 12),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  // Comic Design: 2.0px border with outline color
-                                  color: Theme.of(context).colorScheme.outline,
-                                  width: 2.0,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    homePostCategory.getLabel(context),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontWeight: FontWeight.w600),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.penToSquare,
-                                  ),
-                                  onPressed: () async {
-                                    final post = await PostCreateScreen.push(
-                                      context,
-                                    );
-                                    debugLog('post: $post');
-                                    if (post != null) {
-                                      onNewPostCreated(post);
-                                    }
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.chevronDown,
-                                  ),
-                                  onPressed: () async {
-                                    final selected = await showModalBottomSheet<PostCategoryItem>(
-                                      context: context,
-                                      // Comic Design: transparent background for custom styling
-                                      backgroundColor: Colors.transparent,
-                                      // Comic Design: no shadow
-                                      elevation: 0,
-                                      builder: (context) {
-                                        // Comic Design: Container with rounded top corners and selective borders
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            // Comic Design: Theme surface color
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.surface,
-                                            // Comic Design: 24.0 radius on top corners
-                                            borderRadius: const BorderRadius.only(
-                                              topLeft: Radius.circular(
-                                                12.0,
-                                              ), // Comic Design: rounded top corners
-                                              topRight: Radius.circular(12.0),
-                                            ),
-                                            // Comic Design: 2.0 border on top, left, right (no bottom)
-                                            border: Border(
-                                              top: BorderSide(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.outline,
-                                                width: 2.0,
-                                              ),
-                                              left: BorderSide(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.outline,
-                                                width: 2.0,
-                                              ),
-                                              right: BorderSide(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.outline,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              // Drag handle indicator
-                                              // Comic Design: 8px spacing from top
-                                              const SizedBox(height: 8),
-                                              Container(
-                                                width: 32,
-                                                height: 4,
-                                                decoration: BoxDecoration(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurfaceVariant
-                                                      .withValues(alpha: 0.4),
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              // Category list
-                                              Flexible(
-                                                child: ListView.separated(
-                                                  shrinkWrap: true,
-                                                  itemCount: categories.length,
-                                                  // Comic Design: 2.0px divider
-                                                  separatorBuilder: (_, _) =>
-                                                      Divider(
-                                                        height: 1,
-                                                        thickness: 2.0,
-                                                        color: Theme.of(
-                                                          context,
-                                                        ).colorScheme.outline,
-                                                      ),
-                                                  itemBuilder: (context, index) {
-                                                    final category =
-                                                        categories[index];
-                                                    final isSelected =
-                                                        homePostCategory
-                                                                .postId ==
-                                                            category.postId &&
-                                                        homePostCategory
-                                                                .category ==
-                                                            category.category;
-                                                    return ListTile(
-                                                      title: Text(
-                                                        category.getLabel(
-                                                          context,
-                                                        ),
-                                                      ),
-                                                      trailing: isSelected
-                                                          ? const FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .check,
-                                                              size: 16,
-                                                            )
-                                                          : null,
-                                                      onTap: () {
-                                                        Navigator.of(
-                                                          context,
-                                                        ).pop(category);
-                                                      },
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ForumHeader(
+          /// 현재 선택된 카테고리 전달 (UI 동기화)
+          /// Pass currently selected category (UI sync)
+          selectedPostId: _selectedPostId,
 
-                                    if (selected != null && context.mounted) {
-                                      ForumState.of(
-                                        context,
-                                      ).setHomePostCategory(selected);
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                    ),
+          /// 카테고리 선택 시 로컬 상태 업데이트
+          /// Update local state when category selected
+          onCategorySelected: (String postId) {
+            /// 메인 카테고리만 선택 (서브 카테고리는 null)
+            /// Select main category only (sub-category is null)
+            _onCategoryChanged(postId, null);
+          },
 
-                    // Post List
-                    Expanded(
-                      child: NotificationListener<UserScrollNotification>(
-                        onNotification: (notification) {
-                          if (notification.metrics.axis != Axis.vertical) {
-                            return false;
-                          }
-                          final direction = notification.direction;
-                          final appState = AppState.of(context, listen: false);
-                          if (direction == ScrollDirection.reverse) {
-                            appState.setHomeChromeVisible(false);
-                          } else if (direction == ScrollDirection.forward) {
-                            appState.setHomeChromeVisible(true);
-                          }
-                          return false;
-                        },
-                        child: Selector<NavigationState, bool>(
-                          selector: (context, state) =>
-                              state.homeNav == HomeNavigationItem.forum,
-                          builder: (context, isInForum, _) {
-                            final isGridLayout =
-                                homePostCategory.postId == 'buyandsell';
-                            return PostListView(
-                              listViewKey: isGridLayout ? null : listViewKey,
-                              gridViewKey: isGridLayout ? gridViewKey : null,
-                              postCategory: homePostCategory,
-                              enableHeroTransition: isInForum,
-
-                              /// Use PostCard with 2-column masonry grid for all Buy & Sell categories
-                              /// Including main category and subcategories (hotel, 렌트카)
-                              /// Masonry layout is automatically used when gridColumns > 1
-                              gridColumns:
-                                  homePostCategory.postId == 'buyandsell'
-                                  ? 2
-                                  : null,
-                              tileBuilder:
-                                  homePostCategory.postId == 'buyandsell'
-                                  ? (post, onTap) =>
-                                        PostCard(post: post, onTap: onTap)
-                                  : null,
-                              // 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
-                              onTap: (post) async {
-                                // PostViewScreen에서 수정된 post를 반환받음
-                                await PostViewScreen.push(context, post);
-
-                                // 수정된 post가 있으면 원본 post 객체의 속성 업데이트
-                                // post 객체는 레퍼런스이므로 직접 수정하면 리스트에도 반영됨
-
-                                // 원본 post 객체의 수정 가능한 속성만 업데이트
-                                // setState를 호출하여 UI 업데이트
-                                // PostListView가 다시 빌드되면서 수정된 내용이 화면에 반영됨
-                                if (mounted) {
-                                  setState(() {});
-                                }
-                              },
-
-                              noItemsFoundIndicatorBuilder: (context) {
-                                return const Center(child: EmptyPostList());
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          /// 글쓰기 버튼 클릭 시 현재 선택된 카테고리로 글쓰기 다이얼로그 표시
+          /// Show post create dialog with currently selected category
+          onCreatePost: () {
+            showPostCreateDialog(
+              context,
+              postId: _selectedPostId,
+              category: _selectedCategory,
+              onSubmitted: (post) {
+                /// 글 생성 후 목록 새로고침
+                /// Refresh list after post creation
+                listViewKey.currentState?.pagingController.refresh();
+                gridViewKey.currentState?.pagingController.refresh();
+              },
             );
           },
-        );
-      },
+        ),
+
+        /// 서브 카테고리 목록 (Sub Category List)
+        /// 선택된 메인 카테고리에 서브 카테고리가 있을 때만 표시
+        /// Only show when selected main category has subcategories
+        if (PhilgoCategory.hasSubCategories(_selectedPostId))
+          Padding(
+            padding: const EdgeInsets.only(top: 4, bottom: 8),
+            child: SubCategoryList(
+              postId: _selectedPostId,
+              selectedCategory: _selectedCategory,
+              onCategorySelected: (category) {
+                /// 서브 카테고리 선택 시 로컬 상태 업데이트
+                /// Update local state when subcategory selected
+                _onCategoryChanged(_selectedPostId, category);
+              },
+            ),
+          ),
+
+        // Post List
+        Expanded(
+          child: PostListView(
+            /// buyandsell 카테고리는 그리드 레이아웃 사용
+            /// Use grid layout for buyandsell category
+            listViewKey: _selectedPostId != 'buyandsell' ? listViewKey : null,
+            gridViewKey: _selectedPostId == 'buyandsell' ? gridViewKey : null,
+            postId: _selectedPostId,
+            category: _selectedCategory,
+
+            /// Hero 트랜지션 항상 활성화
+            /// Forum 탭에서만 PostListTile 사용되므로 충돌 없음
+            /// Always enable Hero transition
+            /// No conflict since PostListTile is only used in Forum tab
+            enableHeroTransition: true,
+
+            /// Use PostCard with 2-column masonry grid for all Buy & Sell categories
+            /// Including main category and subcategories (hotel, 렌트카)
+            /// Masonry layout is automatically used when gridColumns > 1
+            gridColumns: _selectedPostId == 'buyandsell' ? 2 : null,
+            tileBuilder: _selectedPostId == 'buyandsell'
+                ? (post, onTap) => PostCard(post: post, onTap: onTap)
+                : null,
+
+            /// 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
+            /// Navigate to PostViewScreen when post is tapped
+            onTap: (post) async {
+              await PostViewScreen.push(context, post);
+
+              /// setState를 호출하여 UI 업데이트
+              /// PostListView가 다시 빌드되면서 수정된 내용이 화면에 반영됨
+              if (mounted) {
+                setState(() {});
+              }
+            },
+
+            noItemsFoundIndicatorBuilder: (context) {
+              return const Center(child: EmptyPostList());
+            },
+          ),
+        ),
+      ],
     );
   }
 
