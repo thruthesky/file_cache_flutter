@@ -177,6 +177,20 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                                             ),
                                           ),
                                           // SMS 입력 단계에서 전화번호 라벨 (fontWeight: normal)
+                                          labelUnderPhoneNumberTextField:
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 8.0,
+                                                ),
+                                                child: Text(
+                                                  Lo.of(
+                                                    context,
+                                                  )!.phoneNumberExample,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodySmall,
+                                                ),
+                                              ),
                                           labelPhoneNumberSelected: Text(
                                             Lo.of(context)!.phoneNumber,
                                             style: Theme.of(context)

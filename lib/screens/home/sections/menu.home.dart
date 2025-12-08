@@ -53,9 +53,9 @@ class _MenuHomeState extends State<MenuHome> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              // Comic design: 2.0px border with outline color
+              // Comic design: 1.0px border with outlineVariant color (matches bottom nav)
               border: Border(
-                bottom: BorderSide(color: scheme.outline, width: 2.0),
+                bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
               ),
             ),
             child: Row(

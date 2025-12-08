@@ -41,7 +41,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
     final sp = theme.extension<AppSpacing>()!;
 
     return Scaffold(
-      // Comic Design: AppBar with 2.0px bottom border
+      // Comic Design: AppBar with 1.0px bottom border (matches bottom nav)
       appBar: AppBar(
         leading: BackButton(
           onPressed: () => Navigator.of(context).canPop()
@@ -51,7 +51,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
         title: Text(T.appGuideTitle, style: theme.textTheme.titleLarge),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 2, color: scheme.outline),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
       ),
       // Body
