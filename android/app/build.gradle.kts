@@ -34,7 +34,7 @@ val flutterMinSdkVersion = localProperties.getProperty("flutter.minSdkVersion")?
 val flutterTargetSdkVersion = localProperties.getProperty("flutter.targetSdkVersion")?.toInt() ?: 36
 val flutterCompileSdkVersion =
         localProperties.getProperty("flutter.compileSdkVersion")?.toInt() ?: 36
-val flutterNdkVersion = localProperties.getProperty("flutter.ndkVersion") ?: "27.0.12077973"
+val flutterNdkVersion = localProperties.getProperty("flutter.ndkVersion") ?: "28.2.13676358"
 
 android {
     namespace = "com.withcenter.philgo"
