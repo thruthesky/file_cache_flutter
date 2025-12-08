@@ -108,16 +108,13 @@ class SubCategoryList extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: sp.s12,
-          vertical: sp.s4,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: sp.s12, vertical: sp.s4),
         decoration: BoxDecoration(
           /// 선택된 카테고리는 primary 색상 배경
           /// Selected category has primary color background
           color: isSelected
-              ? scheme.primary.withValues(alpha: 0.15)
-              : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              ? scheme.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
 
           /// 둥근 모서리
           /// Rounded corners

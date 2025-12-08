@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/functions/ui.functions.dart';
+import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/widgets/headers/forum_header.dart';
@@ -68,31 +69,37 @@ class _ForumHomeState extends State<ForumHome> {
 
   @override
   Widget build(BuildContext context) {
+    /// Selector를 사용하여 NavigationState.data 변경사항을 감지
+    /// Use Selector to listen to NavigationState.data changes
+    /// This is crucial for IndexedStack where widgets are always mounted
     return Selector<NavigationState, Object?>(
       selector: (context, state) => state.data,
       builder: (context, data, child) {
-        /// 딥링크로 전달된 카테고리 확인 및 적용
-        /// Check and apply category from deeplink/navigation data
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final navData = data as Map<String, dynamic>?;
-          final initialPostId = navData?['initialPostId'] as String?;
+        /// initialPostId 처리 - 빌더 내에서 동기적으로 처리
+        /// Process initialPostId synchronously within builder
+        /// This ensures the correct category is shown from the first frame
+        final navData = data as Map<String, dynamic>?;
+        final initialPostId = navData?['initialPostId'] as String?;
 
-          // Only process if we have new data and haven't processed it yet
-          if (initialPostId != null &&
-              initialPostId != _lastProcessedInitialPostId) {
-            debugLog('ForumHome: Processing initialPostId = $initialPostId');
-            _lastProcessedInitialPostId = initialPostId;
+        /// 새로운 initialPostId가 있고 아직 처리하지 않은 경우
+        /// Only process if we have new initialPostId that hasn't been processed yet
+        if (initialPostId != null &&
+            initialPostId != _lastProcessedInitialPostId) {
+          debugLog('ForumHome: Processing initialPostId = $initialPostId');
+          _lastProcessedInitialPostId = initialPostId;
 
-            setState(() {
-              _selectedPostId = initialPostId;
-              _selectedCategory = null;
-            });
+          /// 로컬 상태 변수를 직접 업데이트 (빌드 중이므로 setState 사용 안 함)
+          /// Update local state variables directly (can't use setState during build)
+          _selectedPostId = initialPostId;
+          _selectedCategory = null;
 
-            /// 데이터 사용 후 제거하여 다음 진입 시 영향 없도록 함
-            /// Clear data after use to avoid affecting next entry
+          /// 데이터 사용 후 제거 (다음 네비게이션에 영향 없도록)
+          /// Clear data after use to avoid affecting next navigation
+          /// Schedule this for after build to avoid modifying state during build
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             NavigationState.of(context, listen: false).data = null;
-          }
-        });
+          });
+        }
 
         return _buildContent(context);
       },
@@ -100,55 +107,72 @@ class _ForumHomeState extends State<ForumHome> {
   }
 
   Widget _buildContent(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ForumHeader(
-          /// 현재 선택된 카테고리 전달 (UI 동기화)
-          /// Pass currently selected category (UI sync)
-          selectedPostId: _selectedPostId,
-
-          /// 카테고리 선택 시 로컬 상태 업데이트
-          /// Update local state when category selected
-          onCategorySelected: (String postId) {
-            /// 메인 카테고리만 선택 (서브 카테고리는 null)
-            /// Select main category only (sub-category is null)
-            _onCategoryChanged(postId, null);
-          },
-
-          /// 글쓰기 버튼 클릭 시 현재 선택된 카테고리로 글쓰기 다이얼로그 표시
-          /// Show post create dialog with currently selected category
-          onCreatePost: () {
-            showPostCreateDialog(
-              context,
-              postId: _selectedPostId,
-              category: _selectedCategory,
-              onSubmitted: (post) {
-                /// 글 생성 후 목록 새로고침
-                /// Refresh list after post creation
-                listViewKey.currentState?.pagingController.refresh();
-                gridViewKey.currentState?.pagingController.refresh();
-              },
-            );
-          },
-        ),
-
-        /// 서브 카테고리 목록 (Sub Category List)
-        /// 선택된 메인 카테고리에 서브 카테고리가 있을 때만 표시
-        /// Only show when selected main category has subcategories
-        if (PhilgoCategory.hasSubCategories(_selectedPostId))
-          Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 8),
-            child: SubCategoryList(
-              postId: _selectedPostId,
-              selectedCategory: _selectedCategory,
-              onCategorySelected: (category) {
-                /// 서브 카테고리 선택 시 로컬 상태 업데이트
-                /// Update local state when subcategory selected
-                _onCategoryChanged(_selectedPostId, category);
-              },
+        /// Bordered header section containing ForumHeader + SubCategoryList
+        /// Comic design: 1.0px border with outlineVariant color (matches bottom navigation bar)
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
             ),
           ),
+          child: Column(
+            children: [
+              ForumHeader(
+                /// 현재 선택된 카테고리 전달 (UI 동기화)
+                /// Pass currently selected category (UI sync)
+                selectedPostId: _selectedPostId,
+
+                /// 카테고리 선택 시 로컬 상태 업데이트
+                /// Update local state when category selected
+                onCategorySelected: (String postId) {
+                  /// 메인 카테고리만 선택 (서브 카테고리는 null)
+                  /// Select main category only (sub-category is null)
+                  _onCategoryChanged(postId, null);
+                },
+
+                /// 글쓰기 버튼 클릭 시 현재 선택된 카테고리로 글쓰기 다이얼로그 표시
+                /// Show post create dialog with currently selected category
+                onCreatePost: () {
+                  showPostCreateDialog(
+                    context,
+                    postId: _selectedPostId,
+                    category: _selectedCategory,
+                    onSubmitted: (post) {
+                      /// 글 생성 후 목록 새로고침
+                      /// Refresh list after post creation
+                      listViewKey.currentState?.pagingController.refresh();
+                      gridViewKey.currentState?.pagingController.refresh();
+                    },
+                  );
+                },
+              ),
+
+              /// 서브 카테고리 목록 (Sub Category List)
+              /// 선택된 메인 카테고리에 서브 카테고리가 있을 때만 표시
+              /// Only show when selected main category has subcategories
+              if (PhilgoCategory.hasSubCategories(_selectedPostId))
+                Padding(
+                  padding: EdgeInsets.only(top: sp.s4, bottom: sp.s8),
+                  child: SubCategoryList(
+                    postId: _selectedPostId,
+                    selectedCategory: _selectedCategory,
+                    onCategorySelected: (category) {
+                      /// 서브 카테고리 선택 시 로컬 상태 업데이트
+                      /// Update local state when subcategory selected
+                      _onCategoryChanged(_selectedPostId, category);
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
 
         // Post List
         Expanded(
