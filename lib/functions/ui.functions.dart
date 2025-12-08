@@ -142,82 +142,91 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
                 ),
               ),
 
-              /// 서브 카테고리 선택 드롭다운 (강조 표시)
-              /// Sub-category selection dropdown (highlighted)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-
-                /// 배경색과 테두리로 강조 - primary 색상 적용
-                /// Highlight with background and border - primary color applied
-                decoration: BoxDecoration(
-                  color: scheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-
-                  /// 1px 테두리 추가로 시각적 강조
-                  /// Add 1px border for visual emphasis
-                  border: Border.all(color: scheme.primary, width: 1),
-                ),
-                child: DropdownButton<String?>(
-                  value: _selectedCategory,
-
-                  /// 드롭다운 스타일 - Flat design (underline 제거)
-                  /// Dropdown style - Flat design (remove underline)
-                  underline: const SizedBox.shrink(),
-                  isDense: true,
-                  icon: Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: FaIcon(
-                      FontAwesomeIcons.lightChevronDown,
-                      size: 12,
-                      color: scheme.primary,
-                    ),
+              /// 서브 카테고리 선택 드롭다운 (강조 표시) - Flexible로 감싸서 overflow 방지
+              /// Sub-category selection dropdown (highlighted) - Wrapped in Flexible to prevent overflow
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
                   ),
 
-                  /// 선택된 값 스타일 - primary 색상과 bold로 강조
-                  /// Selected value style - highlighted with primary color and bold
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: scheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  /// 배경색과 테두리로 강조 - primary 색상 적용
+                  /// Highlight with background and border - primary color applied
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
 
-                  /// 드롭다운 아이템: null(전체) + 서브카테고리 목록
-                  /// Dropdown items: null(All) + sub-category list
-                  items: [
-                    /// "전체" 옵션 (category = null)
-                    /// "All" option (category = null)
-                    DropdownMenuItem<String?>(
-                      value: null,
-                      child: Text(
-                        philgoTr(context, 'all'),
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(color: scheme.onSurface),
+                    /// 1px 테두리 추가로 시각적 강조
+                    /// Add 1px border for visual emphasis
+                    border: Border.all(color: scheme.primary, width: 1),
+                  ),
+                  child: DropdownButton<String?>(
+                    value: _selectedCategory,
+
+                    /// 드롭다운 스타일 - Flat design (underline 제거)
+                    /// Dropdown style - Flat design (remove underline)
+                    underline: const SizedBox.shrink(),
+                    isDense: true,
+
+                    /// isExpanded로 부모 제약을 따르며 텍스트 오버플로우 처리
+                    /// isExpanded to follow parent constraints and handle text overflow
+                    isExpanded: true,
+
+                    icon: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: FaIcon(
+                        FontAwesomeIcons.lightChevronDown,
+                        size: 12,
+                        color: scheme.primary,
                       ),
                     ),
 
-                    /// 서브 카테고리 목록
-                    /// Sub-category list
-                    ...subCategories.map(
-                      (cat) => DropdownMenuItem<String?>(
-                        value: cat,
+                    /// 선택된 값 스타일 - primary 색상과 bold로 강조
+                    /// Selected value style - highlighted with primary color and bold
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+
+                    /// 드롭다운 아이템: null(전체) + 서브카테고리 목록
+                    /// Dropdown items: null(All) + sub-category list
+                    items: [
+                      /// "전체" 옵션 (category = null)
+                      /// "All" option (category = null)
+                      DropdownMenuItem<String?>(
+                        value: null,
                         child: Text(
-                          philgoTr(context, cat),
+                          philgoTr(context, 'all'),
+                          overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(color: scheme.onSurface),
                         ),
                       ),
-                    ),
-                  ],
 
-                  /// 카테고리 선택 시 상태 업데이트
-                  /// Update state when category is selected
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedCategory = value;
-                    });
-                  },
+                      /// 서브 카테고리 목록
+                      /// Sub-category list
+                      ...subCategories.map(
+                        (cat) => DropdownMenuItem<String?>(
+                          value: cat,
+                          child: Text(
+                            philgoTr(context, cat),
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(color: scheme.onSurface),
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    /// 카테고리 선택 시 상태 업데이트
+                    /// Update state when category is selected
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                  ),
                 ),
               ),
             ],
