@@ -76,6 +76,17 @@
             ]
         },
         {
+            "name": "Philgo ASUS X00TDB dev",
+            "request": "launch",
+            "type": "dart",
+            // "cwd": "apps/philgo",
+            "program": "lib/main.dart",
+            "deviceId": "J8AXB761J32888A",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        },
+        {
             "name": "Philgo - Fred: Iphone 16 Pro MAX",
             "request": "launch",
             "type": "dart",
