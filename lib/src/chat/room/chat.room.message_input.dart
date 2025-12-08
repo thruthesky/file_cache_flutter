@@ -348,10 +348,6 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
 
       _messageController.clear();
       debugPrint('Message sent successfully');
-      // Request focus after clearing to ensure text field remains focused
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _messageFocusNode.requestFocus();
-      });
       widget.onSend.call();
     } catch (e) {
       debugPrint('Error sending message: $e');
@@ -660,7 +656,10 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                       color: Colors.transparent,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(24),
-                        onTap: (isLoading || _isUploading) ? null : _handleSend,
+                        // Prevent focus loss by using onTapDown instead of onTap
+                        onTapDown: (isLoading || _isUploading)
+                            ? null
+                            : (_) => _handleSend(),
                         child: Container(
                           width: 48,
                           height: 48,

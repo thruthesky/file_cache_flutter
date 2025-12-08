@@ -1,4 +1,3 @@
-///
 /// Screen이나 Dialog에서 재사용 가능한 글 쓰기 폼입니다.
 /// 제목, 내용, 파일 업로드, 카테고리 선택 기능을 제공합니다.
 ///
@@ -24,6 +23,7 @@
 ///   ),
 /// )
 /// ```
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -645,6 +645,11 @@ class PostCreateFormState extends State<PostCreateForm> {
           // 제출 버튼 (showSubmitButton이 true일 때만)
           if (widget.showSubmitButton)
             TextButton.icon(
+              style: ButtonStyle(
+                padding: WidgetStateProperty.all(
+                  const EdgeInsets.only(left: 0, right: 8, top: 8, bottom: 8),
+                ),
+              ),
               onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
               icon: _isLoading
                   ? SizedBox(

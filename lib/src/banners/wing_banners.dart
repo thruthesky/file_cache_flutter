@@ -65,29 +65,37 @@ class _WingBannersState extends State<WingBanners> {
     /// Return empty widget if no banners
     if (banners.isEmpty) return const SizedBox.shrink();
 
-    /// 4열 그리드로 배너 표시 (1줄에 4개씩)
-    /// Display banners in 4-column grid (4 per row)
-    return GridView.builder(
-      padding: EdgeInsets.zero,
+    /// 화면 너비를 기준으로 아이템 크기 계산
+    /// Calculate item size based on screen width
+    final screenWidth = MediaQuery.sizeOf(context).width;
 
-      /// 스크롤 비활성화 (부모 스크롤뷰 사용)
-      /// Disable scroll (uses parent scroll view)
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    /// 4개 아이템이 보이도록 itemExtent 계산 (간격 포함)
+    /// Calculate itemExtent for 4 visible items (including spacing)
+    final itemExtent = screenWidth / 4;
 
-      /// 그리드 레이아웃 설정
-      /// Grid layout configuration
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
+    /// CarouselView.weighted로 배너 표시 (가장자리 아이템 작게)
+    /// Display banners with CarouselView.weighted (smaller edge items)
+    return SizedBox(
+      /// 정사각형 아이템 높이 설정
+      /// Set height for square items
+      height: itemExtent,
+      child: CarouselView.weighted(
+        /// 가중치 배열: 가장자리(3) < 중앙(4)
+        /// Weight array: edge(3) < center(4)
+        flexWeights: const <int>[4, 4, 4, 3],
 
-        /// Wing 배너 비율: 1:1 (정사각형)
-        /// Wing banner aspect ratio: 1:1 (square)
-        childAspectRatio: 1.0,
+        /// 아이템 모서리 없음 (직사각형)
+        /// No rounded corners (rectangle)
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+
+        /// 아이템 간 간격
+        /// Spacing between items
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+
+        /// 배너 아이템 목록
+        /// Banner item list
+        children: banners.map((banner) => _buildBannerItem(banner)).toList(),
       ),
-      itemCount: banners.length,
-      itemBuilder: (context, index) => _buildBannerItem(banners[index]),
     );
   }
 
@@ -106,19 +114,17 @@ class _WingBannersState extends State<WingBanners> {
         }
       },
       child: ClipRRect(
-        /// 모서리 둥글게 (flat design)
-        /// Rounded corners (flat design)
+        /// 이미지 모서리 둥글게 (8px)
+        /// Rounded corners for image (8px)
         borderRadius: BorderRadius.circular(8),
-
-        /// CachedNetworkImage: 이미지 캐싱으로 성능 향상
-        /// CachedNetworkImage: Improved performance with image caching
         child: CachedNetworkImage(
           imageUrl: banner.url,
           width: double.infinity,
+          height: double.infinity,
 
-          /// Wing 배너는 다양한 aspect ratio 대응을 위해 contain 사용
-          /// Use contain for wing banners to handle various aspect ratios
-          fit: BoxFit.contain,
+          /// 이미지가 컨테이너를 꽉 채우도록 cover 사용 (ClipRRect 효과 적용)
+          /// Use cover to fill container (enables ClipRRect effect)
+          fit: BoxFit.cover,
 
           /// 이미지 로드 실패 시 빈 위젯
           /// Return empty widget on image load error
