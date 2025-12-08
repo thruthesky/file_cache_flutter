@@ -6,6 +6,8 @@ import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/headers/app_header.dart';
+import 'package:philgo/widgets/home/home_photo_grid_section.dart';
+import 'package:philgo/widgets/home/home_popular_post_section.dart';
 import 'package:philgo/widgets/home/home_post_section.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/logo/logo.dart';
@@ -171,6 +173,54 @@ class _MainHomeState extends State<MainHome> {
                   ),
                 ),
               ],
+            ),
+          ),
+
+          /// [인기글 섹션] - 최근 7일간 댓글 많은 글 5개 표시
+          /// Popular Posts Section - Display top 5 posts with most comments in last 7 days
+          SliverToBoxAdapter(
+            child: HomePopularPostSection(
+              limit: 5,
+              withinDays: 7,
+              onMoreTap: () {
+                /// ForumHome으로 이동 (인기글은 전체 게시판 대상)
+                /// Navigate to ForumHome (popular posts from all boards)
+                final navState = NavigationState.of(
+                  context,
+                  listen: false,
+                );
+                navState.setHomeNavigation(HomeNavigationItem.forum);
+              },
+              onPostTap: (post) {
+                /// PostViewScreen으로 이동
+                /// Navigate to PostViewScreen
+                PostViewScreen.push(context, post);
+              },
+            ),
+          ),
+
+          /// [최근 사진 섹션] - 장터 게시판에서 사진 16개 (4x4 그리드)
+          /// Recent Photos Section - 16 photos from buyandsell board (4x4 grid)
+          SliverToBoxAdapter(
+            child: HomePhotoGridSection(
+              postId: 'buyandsell',
+              limit: 16,
+              crossAxisCount: 4,
+              onMoreTap: () {
+                /// ForumHome으로 이동하면서 buyandsell 선택
+                /// Navigate to ForumHome with buyandsell selected
+                final navState = NavigationState.of(
+                  context,
+                  listen: false,
+                );
+                navState.data = {'initialPostId': 'buyandsell'};
+                navState.setHomeNavigation(HomeNavigationItem.forum);
+              },
+              onPhotoTap: (post) {
+                /// PostViewScreen으로 이동
+                /// Navigate to PostViewScreen
+                PostViewScreen.push(context, post);
+              },
             ),
           ),
 
