@@ -339,35 +339,25 @@ class PostCreateFormState extends State<PostCreateForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: SingleChildScrollView(
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: widget.padding ?? const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 카테고리 선택 UI (옵션)
-            if (widget.showCategorySelector) ...[
-              _buildCategorySelector(context),
-              const SizedBox(height: 16),
-            ],
-
-            // 제목 입력 필드
-            _buildTitleField(context),
+        shrinkWrap: true,
+        children: [
+          if (widget.showCategorySelector) ...[
+            _buildCategorySelector(context),
             const SizedBox(height: 16),
-
-            // 내용 입력 필드
-            _buildContentField(context),
-            const SizedBox(height: 16),
-
-            // 업로드 미리보기
-            if (_urls.isNotEmpty || _uploadingCount > 0) ...[
-              _buildUploadPreview(context),
-              const SizedBox(height: 16),
-            ],
-
-            // 하단 액션 바 (파일 업로드 + 제출 버튼)
-            _buildActionBar(context),
           ],
-        ),
+          _buildTitleField(context),
+          const SizedBox(height: 16),
+          _buildContentField(context),
+          const SizedBox(height: 16),
+          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
+            _buildUploadPreview(context),
+            const SizedBox(height: 16),
+          ],
+          _buildActionBar(context),
+        ],
       ),
     );
   }
@@ -520,8 +510,8 @@ class PostCreateFormState extends State<PostCreateForm> {
 
     return TextFormField(
       controller: _contentController,
-      maxLines: 12,
-      minLines: 6,
+      maxLines: 32,
+      minLines: 16,
       textAlignVertical: TextAlignVertical.top,
       decoration: InputDecoration(
         hintText: '내용을 입력하세요',
