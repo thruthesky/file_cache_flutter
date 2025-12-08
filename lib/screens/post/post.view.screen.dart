@@ -373,7 +373,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       ],
                       bottom: PreferredSize(
                         preferredSize: const Size.fromHeight(1),
-                        child: Container(height: 2, color: scheme.outline),
+                        child: Container(
+                          height: 1,
+                          color: scheme.outlineVariant,
+                        ),
                       ),
                     ),
 
@@ -871,7 +874,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         decoration: BoxDecoration(
                           color: scheme.surface,
                           border: Border(
-                            top: BorderSide(color: scheme.outline, width: 1.0),
+                            top: BorderSide(
+                              color: scheme.outlineVariant,
+                              width: 1.0,
+                            ),
                           ),
                         ),
                         child: Column(
