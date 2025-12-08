@@ -26,10 +26,7 @@ class PostCard extends StatelessWidget {
         // Comic Design: 2.0px border with rounded corners
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: scheme.outline,
-            width: 2.0,
-          ),
+          side: BorderSide(color: scheme.outline, width: 1.0),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -200,11 +197,7 @@ class PostCard extends StatelessWidget {
                     /// User info and date
                     Row(
                       children: [
-                        Avatar(
-                          photoUrl: post.photo_url,
-                          size: 18,
-                          radius: 9,
-                        ),
+                        Avatar(photoUrl: post.photo_url, size: 18, radius: 9),
                         const SizedBox(width: 4),
 
                         // User nickname

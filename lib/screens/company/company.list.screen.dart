@@ -553,7 +553,7 @@ class CompanyCategoryFilterChip extends StatelessWidget {
             // Comic design: Border radius 8 for small elements
             borderRadius: BorderRadius.circular(8),
             // Comic design: 2.0px border
-            border: Border.all(color: borderColor, width: 1.5),
+            border: Border.all(color: borderColor, width: 1.0),
           ),
           width: 80,
           height: 80,
