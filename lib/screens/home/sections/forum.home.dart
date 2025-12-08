@@ -6,6 +6,8 @@ import 'package:philgo/widgets/headers/forum_header.dart';
 import 'package:philgo/widgets/headers/sub_category_list.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:philgo/widgets/post/post.card.dart';
+import 'package:philgo/state/navigation.state.dart';
+import 'package:provider/provider.dart';
 
 /// 게시판 홈 화면 (Forum Home Screen)
 ///
@@ -31,6 +33,10 @@ class _ForumHomeState extends State<ForumHome> {
   /// Currently selected sub category (local state)
   String? _selectedCategory;
 
+  /// 마지막으로 처리한 initialPostId를 추적
+  /// Track last processed initialPostId to avoid duplicate processing
+  String? _lastProcessedInitialPostId;
+
   final GlobalKey<PostSimpleListViewState> listViewKey = GlobalKey();
   final GlobalKey<PostGridViewState> gridViewKey = GlobalKey();
 
@@ -44,7 +50,6 @@ class _ForumHomeState extends State<ForumHome> {
     _selectedCategory = null;
   }
 
-  /// 딥링크로 전달된 카테고리 확인 및 적용
   /// 카테고리 변경 핸들러
   /// Category change handler
   void _onCategoryChanged(String postId, String? category) {
@@ -60,6 +65,38 @@ class _ForumHomeState extends State<ForumHome> {
 
   @override
   Widget build(BuildContext context) {
+    return Selector<NavigationState, Object?>(
+      selector: (context, state) => state.data,
+      builder: (context, data, child) {
+        /// 딥링크로 전달된 카테고리 확인 및 적용
+        /// Check and apply category from deeplink/navigation data
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final navData = data as Map<String, dynamic>?;
+          final initialPostId = navData?['initialPostId'] as String?;
+
+          // Only process if we have new data and haven't processed it yet
+          if (initialPostId != null &&
+              initialPostId != _lastProcessedInitialPostId) {
+            debugLog('ForumHome: Processing initialPostId = $initialPostId');
+            _lastProcessedInitialPostId = initialPostId;
+
+            setState(() {
+              _selectedPostId = initialPostId;
+              _selectedCategory = null;
+            });
+
+            /// 데이터 사용 후 제거하여 다음 진입 시 영향 없도록 함
+            /// Clear data after use to avoid affecting next entry
+            NavigationState.of(context, listen: false).data = null;
+          }
+        });
+
+        return _buildContent(context);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

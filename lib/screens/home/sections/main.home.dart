@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/functions/ui.functions.dart';
+import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/headers/app_header.dart';
 import 'package:philgo/widgets/home/home_post_section.dart';
@@ -128,8 +130,14 @@ class _MainHomeState extends State<MainHome> {
                     postId: 'freetalk',
                     limit: 4,
                     onMoreTap: () {
-                      /// TODO: ForumHome으로 이동하면서 freetalk 선택
-                      /// TODO: Navigate to ForumHome with freetalk selected
+                      /// ForumHome으로 이동하면서 freetalk 선택
+                      /// Navigate to ForumHome with freetalk selected
+                      final navState = NavigationState.of(
+                        context,
+                        listen: false,
+                      );
+                      navState.data = {'initialPostId': 'freetalk'};
+                      navState.setHomeNavigation(HomeNavigationItem.forum);
                     },
                     onPostTap: (post) {
                       /// PostViewScreen으로 이동
@@ -146,8 +154,14 @@ class _MainHomeState extends State<MainHome> {
                     postId: 'qna',
                     limit: 4,
                     onMoreTap: () {
-                      /// TODO: ForumHome으로 이동하면서 qna 선택
-                      /// TODO: Navigate to ForumHome with qna selected
+                      /// ForumHome으로 이동하면서 qna 선택
+                      /// Navigate to ForumHome with qna selected
+                      final navState = NavigationState.of(
+                        context,
+                        listen: false,
+                      );
+                      navState.data = {'initialPostId': 'qna'};
+                      navState.setHomeNavigation(HomeNavigationItem.forum);
                     },
                     onPostTap: (post) {
                       /// PostViewScreen으로 이동
