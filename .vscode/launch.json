@@ -75,6 +75,29 @@
                 "--dart-define=ENV=dev",
             ]
         },
+        
+        {
+            "name": "Philgo - charles: Iphone 16 Pro MAX",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "E2A8425E-ED75-48AF-83A9-DF82B972BF89",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        },
+        {
+            "name": "Philgo - charles: Iphone",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "00008030-000D445A11A3802E",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        },
+
+
         {
             "name": "Philgo - Fred: Iphone 16 Pro MAX",
             "request": "launch",
