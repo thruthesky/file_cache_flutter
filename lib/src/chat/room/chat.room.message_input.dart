@@ -27,32 +27,7 @@ class ChatRoomMessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<ChatRoomMessageInput> {
   final TextEditingController _messageController = TextEditingController();
-  late final FocusNode _messageFocusNode = FocusNode(
-    onKeyEvent: (FocusNode node, KeyEvent event) {
-      if (event is KeyDownEvent) {
-        final isShiftPressed =
-            HardwareKeyboard.instance.isLogicalKeyPressed(
-              LogicalKeyboardKey.shiftLeft,
-            ) ||
-            HardwareKeyboard.instance.isLogicalKeyPressed(
-              LogicalKeyboardKey.shiftRight,
-            );
 
-        if (event.logicalKey == LogicalKeyboardKey.enter) {
-          if (isShiftPressed) {
-            // Shift + Enter: Allow default behavior (new line)
-            _messageController.text += '\n';
-            return KeyEventResult.ignored;
-          } else {
-            // Enter alone: Send message
-            _handleSend();
-            return KeyEventResult.handled;
-          }
-        }
-      }
-      return KeyEventResult.ignored;
-    },
-  );
   final List<XFile> _selectedFiles = [];
   final List<String> _uploadedUrls = [];
   bool _isUploading = false;
@@ -73,15 +48,17 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     _sendMessage(text, _uploadedUrls.isNotEmpty ? _uploadedUrls : null);
 
     _clearFiles();
+    // GestureDetector를 사용하므로 포커스가 유지되어 키보드가 사라지지 않음
   }
 
   void _clearFiles() {
-    setState(() {
-      _selectedFiles.clear();
-      _uploadedUrls.clear();
-      _uploadProgress.clear();
-      _completedUploads = 0;
-    });
+    // TEST
+    // setState(() {
+    //   _selectedFiles.clear();
+    //   _uploadedUrls.clear();
+    //   _uploadProgress.clear();
+    //   _completedUploads = 0;
+    // });
   }
 
   void _removeFileAt(int index) {
@@ -117,7 +94,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text(PhilgoTr.of(context)!.max_files_reached(widget.maxFiles)),
+          content: Text(
+            PhilgoTr.of(context)!.max_files_reached(widget.maxFiles),
+          ),
           backgroundColor: Colors.orange,
         ),
       );
@@ -315,7 +294,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     //   return '';
     // }
 
-    setState(() => isLoading = true);
+    // TODO: TEST
+    // setState(() => isLoading = true);
     String messageId = '';
     try {
       debugPrint('Sending message: text="$text", urls=$urls');
@@ -358,7 +338,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
         );
       }
     } finally {
-      setState(() => isLoading = false);
+      // TODO: TEST
+      // setState(() => isLoading = false);
     }
     return messageId;
   }
@@ -366,6 +347,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   @override
   void dispose() {
     _messageController.dispose();
+
     // _titleController.dispose();
     super.dispose();
   }
@@ -392,6 +374,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
+
               /// Flat design - subtle border
               border: Border.all(
                 color: colorScheme.outlineVariant.withValues(alpha: 0.3),
@@ -537,6 +520,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: colorScheme.surface,
+
         /// Flat design - subtle border instead of shadow
         border: Border(
           top: BorderSide(
@@ -559,7 +543,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                 final availableWidth = constraints.maxWidth;
                 final iconButtonWidth = 48.0; // Attachment button width
                 final sendButtonWidth = 56.0; // Send button width + spacing
-                final minTextFieldWidth = availableWidth * 0.8 - iconButtonWidth - sendButtonWidth;
+                final minTextFieldWidth =
+                    availableWidth * 0.8 - iconButtonWidth - sendButtonWidth;
 
                 return Row(
                   children: [
@@ -603,36 +588,41 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                           minWidth: minTextFieldWidth,
                         ),
                         child: TextField(
-                          autofocus: true,
+                          autofocus: false,
                           controller: _messageController,
-                          focusNode: _messageFocusNode,
-                          keyboardType: TextInputType.multiline,
-                          textInputAction: kIsWeb ? TextInputAction.none : null,
                           decoration: InputDecoration(
                             hintText: PhilgoTr.of(context)!.type_message,
                             hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurface.withValues(alpha: 0.4),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.4,
+                              ),
                             ),
                             filled: true,
                             fillColor: colorScheme.surfaceContainerHighest,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide(
-                                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                color: colorScheme.outlineVariant.withValues(
+                                  alpha: 0.3,
+                                ),
                                 width: 1,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide(
-                                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                color: colorScheme.outlineVariant.withValues(
+                                  alpha: 0.3,
+                                ),
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide(
-                                color: colorScheme.primary.withValues(alpha: 0.5),
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.5,
+                                ),
                                 width: 1.5,
                               ),
                             ),
@@ -645,67 +635,71 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                           maxLines: 4,
                           textCapitalization: TextCapitalization.sentences,
                           enabled: !isLoading && !_isUploading,
+                          onSubmitted: (_) => _handleSend(),
                         ),
                       ),
                     ),
 
                     const SizedBox(width: 8),
 
-                    // Send Button with enhanced flat design
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        // Prevent focus loss by using onTapDown instead of onTap
-                        onTapDown: (isLoading || _isUploading)
-                            ? null
-                            : (_) => _handleSend(),
-                        child: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            /// Gradient background for visual interest
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: (isLoading || _isUploading)
-                                  ? [
-                                      colorScheme.secondary.withValues(alpha: 0.7),
-                                      colorScheme.secondary.withValues(alpha: 0.5),
-                                    ]
-                                  : [
-                                      colorScheme.primary,
-                                      colorScheme.primary.withValues(alpha: 0.8),
-                                    ],
-                            ),
-                            shape: BoxShape.circle,
-                            /// Flat design - subtle border
-                            border: Border.all(
-                              color: (isLoading || _isUploading)
-                                  ? colorScheme.secondary.withValues(alpha: 0.3)
-                                  : colorScheme.primary.withValues(alpha: 0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Center(
-                            child: (isLoading || _isUploading)
-                                ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: colorScheme.onPrimary,
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.send,
-                                    color: colorScheme.onPrimary,
-                                    size: 20,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    ElevatedButton(onPressed: _handleSend, child: Text('Send')),
+
+                    // // Send Button - GestureDetector를 사용하여 TextField 포커스 유지
+                    // // Material/InkWell은 터치 시 포커스를 빼앗아 키보드가 닫히므로
+                    // // GestureDetector를 사용하여 포커스 손실 없이 메시지 전송
+                    // GestureDetector(
+                    //   behavior: HitTestBehavior.opaque,
+                    //   onTap: (isLoading || _isUploading) ? null : _handleSend,
+                    //   child: Container(
+                    //     width: 48,
+                    //     height: 48,
+                    //     decoration: BoxDecoration(
+                    //       /// Gradient background for visual interest
+                    //       gradient: LinearGradient(
+                    //         begin: Alignment.topLeft,
+                    //         end: Alignment.bottomRight,
+                    //         colors: (isLoading || _isUploading)
+                    //             ? [
+                    //                 colorScheme.secondary.withValues(
+                    //                   alpha: 0.7,
+                    //                 ),
+                    //                 colorScheme.secondary.withValues(
+                    //                   alpha: 0.5,
+                    //                 ),
+                    //               ]
+                    //             : [
+                    //                 colorScheme.primary,
+                    //                 colorScheme.primary.withValues(alpha: 0.8),
+                    //               ],
+                    //       ),
+                    //       shape: BoxShape.circle,
+
+                    //       /// Flat design - subtle border
+                    //       border: Border.all(
+                    //         color: (isLoading || _isUploading)
+                    //             ? colorScheme.secondary.withValues(alpha: 0.3)
+                    //             : colorScheme.primary.withValues(alpha: 0.3),
+                    //         width: 1,
+                    //       ),
+                    //     ),
+                    //     child: Center(
+                    //       child: (isLoading || _isUploading)
+                    //           ? SizedBox(
+                    //               width: 20,
+                    //               height: 20,
+                    //               child: CircularProgressIndicator(
+                    //                 strokeWidth: 2,
+                    //                 color: colorScheme.onPrimary,
+                    //               ),
+                    //             )
+                    //           : Icon(
+                    //               Icons.send,
+                    //               color: colorScheme.onPrimary,
+                    //               size: 20,
+                    //             ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 );
               },

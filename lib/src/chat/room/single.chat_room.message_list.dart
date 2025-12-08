@@ -58,6 +58,7 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
           .orderByChild('sentAt'),
       reverseQuery: true,
       pageSize: 10,
+
       builder: (context, snapshot, _) {
         if (snapshot.isFetching && snapshot.docs.isEmpty) {
           return const Center(child: CircularProgressIndicator());
@@ -93,6 +94,7 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
           controller: scrollController,
           reverse: true,
           itemCount: snapshot.docs.length + (snapshot.hasMore ? 1 : 0),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemBuilder: (context, index) {
             // Show loading indicator at the bottom when fetching more
             if (index >= snapshot.docs.length) {

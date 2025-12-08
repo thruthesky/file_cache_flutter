@@ -45,6 +45,17 @@ String? getEnvironmentalCategory(String? category) {
 ///   - 한 번에 가져올 게시글 개수
 ///   - 서버 부하와 UX를 고려하여 적절한 값 설정 권장
 ///
+/// - [orderBy]: 정렬 기준 (선택)
+///   - 'stamp DESC': 최신순 (기본값)
+///   - 'no_of_comment DESC': 댓글 많은 순
+///   - 'no_of_view DESC': 조회수 높은 순
+///   - 'good DESC': 추천 많은 순
+///   - 'no_of_comment DESC, stamp DESC': 댓글 많은 순 → 최신순 (인기글용)
+///
+/// - [extraConditions]: 추가 조건 (선택)
+///   - 'within_days': 최근 N일 이내의 글만 조회 (인기글 조회 시 사용)
+///   - 'minimal_fields': 'y' 설정 시 최소 필드만 조회 (성능 최적화)
+///
 /// ## 반환값
 ///
 /// [PostList] 객체를 반환합니다.
@@ -70,6 +81,13 @@ String? getEnvironmentalCategory(String? category) {
 ///
 /// // 카테고리 필터링
 /// final filteredPosts = await getPosts(postId: 'qna', category: 'flutter');
+///
+/// // 인기글 조회 (최근 7일간 댓글 많은 순)
+/// final popularPosts = await getPosts(
+///   limit: 5,
+///   orderBy: 'no_of_comment DESC, stamp DESC',
+///   extraConditions: {'within_days': 7, 'minimal_fields': 'y'},
+/// );
 /// ```
 ///
 /// ## API 요청 형식
@@ -80,6 +98,8 @@ String? getEnvironmentalCategory(String? category) {
 /// - has_image: 'y' (이미지 필터 적용 시)
 /// - page: 페이지 번호
 /// - limit: 페이지당 개수
+/// - order_by: 정렬 기준 (선택)
+/// - extra_conditions: 추가 조건 (선택)
 ///
 /// ## 주의사항
 ///
@@ -92,6 +112,8 @@ Future<PostList> getPosts({
   bool has_image = false,
   int page = 1,
   int limit = 20,
+  String? orderBy,
+  Map<String, dynamic>? extraConditions,
 }) async {
   // 개발 환경에서 테스트용 게시판 ID로 대체하는 로직 (현재 비활성화)
   // [postId, category] = getEnvironmentalPostId(postId, category);
@@ -106,6 +128,10 @@ Future<PostList> getPosts({
       if (category != null) 'category': category,
       // 이미지 필터가 활성화된 경우 'y' 값으로 전달
       if (has_image) 'has_image': 'y',
+      // 정렬 기준이 지정된 경우 전달
+      if (orderBy != null) 'order_by': orderBy,
+      // 추가 조건이 지정된 경우 전달 (within_days, minimal_fields 등)
+      if (extraConditions != null) 'extra_conditions': extraConditions,
       // 페이지네이션 파라미터
       'page': page,
       'limit': limit,
