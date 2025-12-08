@@ -148,8 +148,9 @@ class PhilgoCategory {
   }
 
   /// 사용자 또는 앱의 메뉴에 표시할 주요 메인 카테고리(post_id) 목록을 반환합니다.
-  static List<String> majorCategories() {
+  static List<String> majorCategories({bool includeTemp = false}) {
     return [
+      if (includeTemp) 'temp', // 임시, Test forum.
       'freetalk', // 행불 포함
       'qna',
       'buyandsell',
