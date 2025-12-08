@@ -69,10 +69,10 @@ class _LanguageScreenState extends State<LanguageScreen> {
           Lo.of(context)!.languageSettings,
           style: theme.textTheme.titleLarge,
         ),
-        // Comic Design: AppBar with 2.0px bottom border
+        // Comic Design: AppBar with 1.0px bottom border (matches bottom nav)
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 2, color: scheme.outline),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
       ),
 

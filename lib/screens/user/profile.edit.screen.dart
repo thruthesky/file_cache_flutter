@@ -53,7 +53,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         title: Text(T.editProfile, style: theme.textTheme.titleLarge),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 2, color: scheme.outline),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
       ),
       body: UserReady(

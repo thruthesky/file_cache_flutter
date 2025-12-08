@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// 글쓰기 다이얼로그 표시
@@ -144,7 +145,10 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
               /// 서브 카테고리 선택 드롭다운 (강조 표시)
               /// Sub-category selection dropdown (highlighted)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
 
                 /// 배경색과 테두리로 강조 - primary 색상 적용
                 /// Highlight with background and border - primary color applied
@@ -154,10 +158,7 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
 
                   /// 1px 테두리 추가로 시각적 강조
                   /// Add 1px border for visual emphasis
-                  border: Border.all(
-                    color: scheme.primary,
-                    width: 1,
-                  ),
+                  border: Border.all(color: scheme.primary, width: 1),
                 ),
                 child: DropdownButton<String?>(
                   value: _selectedCategory,
@@ -178,9 +179,9 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
                   /// 선택된 값 스타일 - primary 색상과 bold로 강조
                   /// Selected value style - highlighted with primary color and bold
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: scheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
 
                   /// 드롭다운 아이템: null(전체) + 서브카테고리 목록
                   /// Dropdown items: null(All) + sub-category list
@@ -191,9 +192,8 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
                       value: null,
                       child: Text(
                         philgoTr(context, 'all'),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: scheme.onSurface,
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(color: scheme.onSurface),
                       ),
                     ),
 
@@ -204,9 +204,8 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
                         value: cat,
                         child: Text(
                           philgoTr(context, cat),
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: scheme.onSurface,
-                              ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(color: scheme.onSurface),
                         ),
                       ),
                     ),
@@ -234,9 +233,13 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
         actions: [
           /// 제출 버튼 - GlobalKey를 통해 폼의 submit() 호출
           /// Submit button - calls form's submit() via GlobalKey
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
-            onPressed: () => formKey.currentState?.submit(),
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: IconButton(
+              constraints: const BoxConstraints(),
+              icon: FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
+              onPressed: () => formKey.currentState?.submit(),
+            ),
           ),
         ],
       ),
@@ -253,12 +256,17 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
 
         /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
         /// Hide form's internal submit button (handled by AppBar)
-        showSubmitButton: false,
+        showSubmitButton: true,
 
-        /// 제출 성공 시 화면 닫고 콜백 호출
-        /// Close screen on successful submission and invoke callback
+        /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+        /// Close screen on successful submission and navigate to PostViewScreen
         onSubmitted: (post) {
           Navigator.pop(context);
+
+          // Navigate to PostViewScreen to show the created post
+          PostViewScreen.push(context, post);
+
+          // Call external callback if provided
           widget.onSubmitted?.call(post);
         },
       ),
