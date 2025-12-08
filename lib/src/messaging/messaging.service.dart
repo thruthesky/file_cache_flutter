@@ -118,7 +118,7 @@ class MessagingService {
       tokenCache = token + user.uid;
     }
 
-    debugPrint('FCM token saved to database: $token');
+    // debugPrint('FCM token saved to database: $token');
 
     // If token is the same as last saved, skip API call
     if (tokenCache == lastSavedToken) {
