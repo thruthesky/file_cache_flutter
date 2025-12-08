@@ -348,10 +348,6 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
 
       _messageController.clear();
       debugPrint('Message sent successfully');
-      // Request focus after clearing to ensure text field remains focused
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _messageFocusNode.requestFocus();
-      });
       widget.onSend.call();
     } catch (e) {
       debugPrint('Error sending message: $e');
@@ -370,7 +366,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   @override
   void dispose() {
     _messageController.dispose();
-    // _titleController.dispose();
+    _messageFocusNode.dispose();
     super.dispose();
   }
 
@@ -656,11 +652,15 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     const SizedBox(width: 8),
 
                     // Send Button with enhanced flat design
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: (isLoading || _isUploading) ? null : _handleSend,
+                    GestureDetector(
+                      // Use onTapDown to trigger send before focus changes
+                      onTapDown: (isLoading || _isUploading)
+                          ? null
+                          : (_) {
+                              _handleSend();
+                            },
+                      child: Material(
+                        color: Colors.transparent,
                         child: Container(
                           width: 48,
                           height: 48,
