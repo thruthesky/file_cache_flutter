@@ -7,7 +7,6 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PostViewScreen extends StatefulWidget {
@@ -35,7 +34,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
   final ScrollController _scrollController = ScrollController();
   Comment? replyingToComment; // Track which comment is being replied to
   Comment? editingComment; // Track which comment is being edited
-  bool showCommentInput = false; // Track if bottom comment input should be visible
+  // bool showCommentInput = false; // Track if bottom comment input should be visible
 
   @override
   void initState() {
@@ -124,20 +123,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 
   /// Show comment input for creating new comment on post
-  void showCommentMode() {
-    setState(() {
-      showCommentInput = true;
-      replyingToComment = null;
-      editingComment = null;
-    });
-  }
 
   /// Enter reply mode - convert bottom field to reply to specific comment
   void setReplyMode(Comment comment) {
     setState(() {
       replyingToComment = comment;
       editingComment = null;
-      showCommentInput = true;
     });
   }
 
@@ -145,7 +136,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
   void cancelReplyMode() {
     setState(() {
       replyingToComment = null;
-      showCommentInput = false;
     });
   }
 
@@ -154,7 +144,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     setState(() {
       editingComment = comment;
       replyingToComment = null;
-      showCommentInput = true;
     });
   }
 
@@ -162,7 +151,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
   void cancelEditMode() {
     setState(() {
       editingComment = null;
-      showCommentInput = false;
     });
   }
 
@@ -261,7 +249,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     },
                   ),
                   ListTile(
-                    leading: FaIcon(FontAwesomeIcons.trash, size: 20, color: scheme.error),
+                    leading: FaIcon(
+                      FontAwesomeIcons.trash,
+                      size: 20,
+                      color: scheme.error,
+                    ),
                     title: Text(
                       PhilgoTr.of(context)!.delete,
                       style: TextStyle(color: scheme.error),
@@ -371,22 +363,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       ),
                       actions: [
                         /// Comment button - shows/hides bottom input field
-                        IconButton(
-                          icon: FaIcon(FontAwesomeIcons.comment, size: 20),
-                          onPressed: () {
-                            setState(() {
-                              if (showCommentInput) {
-                                // If already shown, hide it
-                                showCommentInput = false;
-                                replyingToComment = null;
-                                editingComment = null;
-                              } else {
-                                // Show comment input
-                                showCommentMode();
-                              }
-                            });
-                          },
-                        ),
                         Padding(
                           padding: const EdgeInsets.only(right: 4),
                           child: IconButton(
@@ -397,7 +373,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       ],
                       bottom: PreferredSize(
                         preferredSize: const Size.fromHeight(1),
-                        child: Container(height: 2, color: scheme.outline),
+                        child: Container(
+                          height: 1,
+                          color: scheme.outlineVariant,
+                        ),
                       ),
                     ),
 
@@ -573,13 +552,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       ),
 
                                       const SizedBox(width: 8),
-
-                                      /// Comment button - opens comment input
-                                      _buildComicActionButton(
-                                        icon: FontAwesomeIcons.comment,
-                                        label: noOfComment > 0 ? '$noOfComment' : null,
-                                        onPressed: showCommentMode,
-                                      ),
 
                                       const Spacer(),
 
@@ -895,170 +867,184 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ),
               ],
             ),
-      bottomNavigationBar: post != null && showCommentInput
+      bottomNavigationBar: post != null
           ? SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Context header (shown when in reply or edit mode)
-                  if (replyingToComment != null || editingComment != null)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: scheme.surface,
-                        border: Border(
-                          top: BorderSide(
-                            color: scheme.outline,
-                            width: 2.0, // Comic Design: 2.0 border
+              child:
+                  Container(
+                        decoration: BoxDecoration(
+                          color: scheme.surface,
+                          border: Border(
+                            top: BorderSide(
+                              color: scheme.outlineVariant,
+                              width: 1.0,
+                            ),
                           ),
                         ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Icon(
-                              editingComment != null ? Icons.edit : Icons.reply,
-                              size: 16,
-                              color: scheme.primary,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  editingComment != null
-                                      ? Lo.of(context)!.editing_comment
-                                      : '${Lo.of(context)!.replying_to} ${replyingToComment!.nickname}',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: scheme.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Context header (shown when in reply or edit mode)
+                            if (replyingToComment != null ||
+                                editingComment != null)
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: scheme.surface,
                                 ),
-                                const SizedBox(height: 4),
-                                // Comment content preview
-                                Text(
-                                  editingComment != null
-                                      ? editingComment!.content
-                                      : replyingToComment!.content,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: scheme.onSurface.withValues(alpha: 0.6),
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.close, size: 20),
-                            onPressed: editingComment != null
-                                ? cancelEditMode
-                                : cancelReplyMode,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  // Input field (switches between CommentToPost, ReplyToComment, and CommentUpdate)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: editingComment != null
-                        ? CommentUpdate(
-                            comment: editingComment!,
-                            onUpdated: (updatedComment) {
-                              // Find and update the comment in the list
-                              final index = post?.comments.indexWhere(
-                                (c) => c.idx == updatedComment.idx,
-                              );
-                              if (index != null && index >= 0) {
-                                post?.comments[index].content =
-                                    updatedComment.content;
-                                post?.comments[index].files = updatedComment.files;
-                              }
-
-                              // Exit edit mode and show success
-                              cancelEditMode();
-
-                              if (mounted) {
-                                setState(() {});
-                                showSuccessSnackBar(
-                                  context,
-                                  'A comment has updated',
-                                );
-                              }
-                            },
-                          )
-                        : replyingToComment != null
-                            ? ReplyToComment(
-                                parent: replyingToComment!,
-                                onReplied: (createdComment) {
-                                  int? where = post?.comments.indexWhere(
-                                    (comment) =>
-                                        comment.idx == createdComment.idx_parent,
-                                  );
-
-                                  if (where != null) {
-                                    post?.comments.insert(
-                                      where + 1,
-                                      createdComment,
-                                    );
-                                  }
-
-                                  post!.no_of_comment += 1;
-
-                                  // Exit reply mode and show success
-                                  cancelReplyMode();
-
-                                  if (mounted) {
-                                    setState(() {});
-                                    showSuccessSnackBar(
-                                      context,
-                                      'A comment has replied',
-                                    );
-                                  }
-                                },
-                              )
-                            : CommentToPost(
-                                post: post!,
-                                onCreated: (createdComment) {
-                                  post?.comments.add(createdComment);
-                                  post!.no_of_comment += 1;
-
-                                  // Hide comment input after creating
-                                  showCommentInput = false;
-
-                                  if (mounted) {
-                                    setState(() {});
-                                    showSuccessSnackBar(
-                                      context,
-                                      'Comment has created',
-                                    );
-                                  }
-                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: Icon(
+                                        editingComment != null
+                                            ? Icons.edit
+                                            : Icons.reply,
+                                        size: 16,
+                                        color: scheme.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            editingComment != null
+                                                ? Lo.of(
+                                                    context,
+                                                  )!.editing_comment
+                                                : '${Lo.of(context)!.replying_to} ${replyingToComment!.nickname}',
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color: scheme.primary,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          // Comment content preview
+                                          Text(
+                                            editingComment != null
+                                                ? editingComment!.content
+                                                : replyingToComment!.content,
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color: scheme.onSurface
+                                                      .withValues(alpha: 0.6),
+                                                ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    IconButton(
+                                      icon: const Icon(Icons.close, size: 20),
+                                      onPressed: editingComment != null
+                                          ? cancelEditMode
+                                          : cancelReplyMode,
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                  ],
+                                ),
                               ),
-                  ),
-                ],
-              )
-                  .animate()
-                  .slideY(
-                    begin: 1.0, // Start from below (100% down)
-                    end: 0.0, // End at normal position
-                    duration: 300.ms,
-                    curve: Curves.easeOut,
-                  )
-                  .fadeIn(duration: 200.ms),
+
+                            // Input field (switches between CommentToPost, ReplyToComment, and CommentUpdate)
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: editingComment != null
+                                  ? CommentUpdate(
+                                      comment: editingComment!,
+                                      onUpdated: (updatedComment) {
+                                        // Find and update the comment in the list
+                                        final index = post?.comments.indexWhere(
+                                          (c) => c.idx == updatedComment.idx,
+                                        );
+                                        if (index != null && index >= 0) {
+                                          post?.comments[index].content =
+                                              updatedComment.content;
+                                          post?.comments[index].files =
+                                              updatedComment.files;
+                                        }
+
+                                        // Exit edit mode and show success
+                                        cancelEditMode();
+
+                                        if (mounted) {
+                                          setState(() {});
+                                          showSuccessSnackBar(
+                                            context,
+                                            'A comment has updated',
+                                          );
+                                        }
+                                      },
+                                    )
+                                  : replyingToComment != null
+                                  ? ReplyToComment(
+                                      parent: replyingToComment!,
+                                      onReplied: (createdComment) {
+                                        int? where = post?.comments.indexWhere(
+                                          (comment) =>
+                                              comment.idx ==
+                                              createdComment.idx_parent,
+                                        );
+
+                                        if (where != null) {
+                                          post?.comments.insert(
+                                            where + 1,
+                                            createdComment,
+                                          );
+                                        }
+
+                                        post!.no_of_comment += 1;
+
+                                        // Exit reply mode and show success
+                                        cancelReplyMode();
+
+                                        if (mounted) {
+                                          setState(() {});
+                                          showSuccessSnackBar(
+                                            context,
+                                            'A comment has replied',
+                                          );
+                                        }
+                                      },
+                                    )
+                                  : CommentToPost(
+                                      post: post!,
+                                      onCreated: (createdComment) {
+                                        post?.comments.add(createdComment);
+                                        post!.no_of_comment += 1;
+
+                                        if (mounted) {
+                                          setState(() {});
+                                          showSuccessSnackBar(
+                                            context,
+                                            'Comment has created',
+                                          );
+                                        }
+                                      },
+                                    ),
+                            ),
+                          ],
+                        ),
+                      )
+                      .animate()
+                      .slideY(
+                        begin: 1.0, // Start from below (100% down)
+                        end: 0.0, // End at normal position
+                        duration: 300.ms,
+                        curve: Curves.easeOut,
+                      )
+                      .fadeIn(duration: 200.ms),
             )
           : null,
     );

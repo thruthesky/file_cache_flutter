@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/themes/app.spacing.dart';
 
 /// 홈 화면 섹션 헤더 위젯 (Home Section Header Widget)
 ///
@@ -21,20 +20,18 @@ class HomeSectionHeader extends StatelessWidget {
   /// "More" button tap callback
   final VoidCallback? onMoreTap;
 
-  const HomeSectionHeader({
-    super.key,
-    required this.title,
-    this.onMoreTap,
-  });
+  const HomeSectionHeader({super.key, required this.title, this.onMoreTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final sp = theme.extension<AppSpacing>()!;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: sp.s8),
+    /// 전체 Row를 GestureDetector로 감싸서 어디를 탭해도 게시판으로 이동
+    /// Wrap the entire Row with GestureDetector so tapping anywhere navigates to the forum
+    return GestureDetector(
+      onTap: onMoreTap,
+      behavior: HitTestBehavior.opaque,
       child: Row(
         children: [
           /// 섹션 타이틀
@@ -47,48 +44,33 @@ class HomeSectionHeader extends StatelessWidget {
             ),
           ),
 
-          /// 중간 여백
-          /// Spacer
+          /// 중간 여백 (타이틀과 "더보기" 텍스트 사이)
+          /// Spacer between title and "More" text
           const Spacer(),
 
-          /// "더보기" 버튼 (TextButton + 아이콘)
-          /// "More" button (TextButton + icon)
+          /// "더보기" 텍스트 + 아이콘
+          /// "More" text + icon
           if (onMoreTap != null)
-            TextButton(
-              onPressed: onMoreTap,
-              style: TextButton.styleFrom(
-                /// 패딩 최소화
-                /// Minimize padding
-                padding: EdgeInsets.symmetric(
-                  horizontal: sp.s8,
-                  vertical: sp.s4,
-                ),
-
-                /// Flat Design (elevation 0)
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  /// "더보기" 텍스트
-                  /// "More" text
-                  Text(
-                    '더보기',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.primary,
-                    ),
-                  ),
-                  SizedBox(width: sp.s4),
-
-                  /// 오른쪽 화살표 아이콘 (Font Awesome Light)
-                  /// Right chevron icon (Font Awesome Light)
-                  FaIcon(
-                    FontAwesomeIcons.lightChevronRight,
-                    size: 12,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// "더보기" 텍스트
+                /// "More" text
+                Text(
+                  '더보기',
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.primary,
                   ),
-                ],
-              ),
+                ),
+
+                /// 오른쪽 화살표 아이콘 (Font Awesome Light)
+                /// Right chevron icon (Font Awesome Light)
+                FaIcon(
+                  FontAwesomeIcons.lightChevronRight,
+                  size: 12,
+                  color: scheme.primary,
+                ),
+              ],
             ),
         ],
       ),

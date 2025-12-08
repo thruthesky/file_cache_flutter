@@ -318,7 +318,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      // Comic Design: AppBar with 2.0px bottom border
+      // Comic Design: AppBar with 1.0px bottom border (matches bottom nav)
       appBar: AppBar(
         title: Text(
           widget.company == null ? T.registerCompany : T.updateCompany,
@@ -327,7 +327,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         backgroundColor: scheme.surfaceContainerLow,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 2, color: scheme.outline),
+          child: Container(height: 1, color: scheme.outlineVariant),
         ),
       ),
       body: Column(

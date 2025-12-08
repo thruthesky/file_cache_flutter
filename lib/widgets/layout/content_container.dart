@@ -28,11 +28,7 @@ class ContentContainer extends StatelessWidget {
   /// Default: 800
   final double maxWidth;
 
-  const ContentContainer({
-    super.key,
-    required this.child,
-    this.maxWidth = 800,
-  });
+  const ContentContainer({super.key, required this.child, this.maxWidth = 800});
 
   @override
   Widget build(BuildContext context) {
