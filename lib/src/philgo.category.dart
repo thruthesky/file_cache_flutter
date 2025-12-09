@@ -154,9 +154,9 @@ class PhilgoCategory {
       'freetalk', // 행불 포함
       'qna',
       'buyandsell',
-      'boarding_house',
       'wanted', // 구인구직
       'massage',
+      'boarding_house',
       'travel',
       'business',
       'school',
@@ -166,6 +166,39 @@ class PhilgoCategory {
       'rest',
       'blog',
       'youtube',
+    ];
+  }
+
+  /// 메뉴에 표시 할 메인 카테고리(post_id)와 해당 서브카테고리(category) 쌍의 목록을 반환합니다.
+  /// 참고로, 서브카테고리가 없는 경우, category는 null로 표시됩니다.
+  /// 예:
+  /// ```dart
+  /// final menuCats = PhilgoCategory.menuCategories();
+  /// ```
+  static List<(String, String?)> menuCategories() {
+    return [
+      ('freetalk', null),
+      ('freetalk', '정보'),
+      ('freetalk', '코필커플'),
+      ('freetalk', '코피노'),
+      ('freetalk', '이민'),
+      ('freetalk', '국제결혼'),
+      ('freetalk', '먹방'),
+      ('freetalk', '뉴스'),
+      ('freetalk', '경험담'),
+      ('qna', null),
+      ('buyandsell', null),
+      ('wanted', null),
+      ('massage', null),
+      ('boarding_house', null),
+      ('travel', null),
+      ('business', null),
+      ('school', null),
+      ('caution', null),
+      ('greeting', null),
+      ('food_delivery', null),
+      ('rest', null),
+      ('youtube', null),
     ];
   }
 
