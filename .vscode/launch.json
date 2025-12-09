@@ -121,6 +121,16 @@
             ]
         },
         {
+            "name": "Philgo - Fred: Samsung Galaxy A12",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "RR8R90795VZ",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        },
+        {
             "name": "🧪 E2E - iPhone 16 Pro Max (Driver Extension)",
             "request": "launch",
             "type": "dart",

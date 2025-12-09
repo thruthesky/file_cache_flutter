@@ -1,5 +1,6 @@
 /// UI/UX 관련 함수
 /// UI/UX related functions
+library;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,7 +22,7 @@ import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 ///   postId: 'freetalk',
 ///   category: null,
 ///   onSubmitted: (post) {
-///     // 글 생성 후 목록 새로고침
+///     // 글 생성 후 목록
 ///     pagingController.refresh();
 ///   },
 /// );
@@ -251,6 +252,10 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
             ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outline),
+        ),
       ),
 
       /// PostCreateForm - 재사용 가능한 글쓰기 폼
@@ -277,6 +282,243 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
 
           // Call external callback if provided
           widget.onSubmitted?.call(post);
+        },
+      ),
+    );
+  }
+}
+
+/// 글 수정 다이얼로그 표시
+/// Shows PostUpdateScreen using Navigator.push
+///
+/// [context] BuildContext for navigation
+/// [post] The post to update
+/// [onUpdated] Callback when post is successfully updated (optional)
+///
+/// 사용 예시 / Usage example:
+/// ```dart
+/// showPostUpdateDialog(
+///   context,
+///   post: myPost,
+///   onUpdated: (updatedPost) {
+///     // 글 수정 후 처리
+///   },
+/// );
+/// ```
+Future<Post?> showPostUpdateDialog(
+  BuildContext context, {
+  required Post post,
+  void Function(Post post)? onUpdated,
+}) async {
+  /// Navigator.push를 사용하여 전체 화면으로 표시
+  /// Use Navigator.push for full-screen display
+  final result = await Navigator.of(context).push<Post>(
+    PageRouteBuilder(
+      /// 전체 화면 라우트 설정
+      /// Full-screen route configuration
+      pageBuilder: (routeContext, animation, secondaryAnimation) {
+        return _PostUpdateScreen(post: post, onUpdated: onUpdated);
+      },
+
+      /// 슬라이드 애니메이션 (하단에서 위로)
+      /// Slide animation (from bottom to top)
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+              .animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+    ),
+  );
+
+  return result;
+}
+
+/// 글 수정 전체 화면 위젯
+/// Full-screen post update widget
+class _PostUpdateScreen extends StatefulWidget {
+  final Post post;
+  final void Function(Post post)? onUpdated;
+
+  const _PostUpdateScreen({required this.post, this.onUpdated});
+
+  @override
+  State<_PostUpdateScreen> createState() => _PostUpdateScreenState();
+}
+
+class _PostUpdateScreenState extends State<_PostUpdateScreen> {
+  /// GlobalKey로 외부에서 폼 상태 접근
+  /// Access form state externally via GlobalKey
+  final formKey = GlobalKey<PostUpdateFormState>();
+
+  /// 업로드 중 여부 추적
+  /// Track upload progress
+  bool isUploading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    /// 메인 카테고리의 다국어 이름 가져오기
+    /// Get localized name for main category
+    final localizedMainCategory = philgoTr(context, widget.post.post_id);
+
+    /// 서브 카테고리 존재 여부 확인
+    /// Check if the post has a sub-category
+    final category = widget.post.category;
+    final hasSubCategory = category.isNotEmpty;
+
+    return Scaffold(
+      /// AppBar - Comic Design 스타일 적용 (elevation 0)
+      /// AppBar with Comic Design style (elevation 0)
+      appBar: AppBar(
+        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 메인 카테고리 표시
+            /// Display main category
+            Text(localizedMainCategory),
+
+            /// 서브 카테고리가 있는 경우 표시
+            /// Show sub-category if exists
+            if (hasSubCategory) ...[
+              /// 메인카테고리와 서브카테고리 사이 구분 아이콘
+              /// Separator icon between main and sub category
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: FaIcon(
+                  FontAwesomeIcons.lightChevronRight,
+                  size: 14,
+                  color: scheme.onSurface.withValues(alpha: 0.5),
+                ),
+              ),
+
+              /// 서브 카테고리 표시 (강조 표시) - Flexible로 감싸서 overflow 방지
+              /// Sub-category display (highlighted) - Wrapped in Flexible to prevent overflow
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+
+                  /// 배경색과 테두리로 강조 - primary 색상 적용
+                  /// Highlight with background and border - primary color applied
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: scheme.primary, width: 1),
+                  ),
+                  child: Text(
+                    philgoTr(context, category),
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+
+        /// 닫기 버튼
+        /// Close button
+        leading: IconButton(
+          icon: FaIcon(FontAwesomeIcons.lightXmark, color: scheme.onSurface),
+          onPressed: () async {
+            /// 변경 사항이 있는지 확인
+            /// Check if there are changes
+            final hasChanges = formKey.currentState?.hasChanges() ?? false;
+
+            if (!hasChanges) {
+              Navigator.pop(context);
+              return;
+            }
+
+            /// 변경 사항이 있으면 확인 다이얼로그 표시
+            /// Show confirmation dialog if there are changes
+            final confirm = await showConfirmDialog(
+              message: PhilgoTr.of(context)!.confirmDiscard,
+            );
+
+            if (confirm != true) {
+              return;
+            }
+
+            /// 새로 업로드된 파일 삭제
+            /// Delete newly uploaded files
+            await formKey.currentState?.deleteNewFiles();
+
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
+        ),
+        actions: [
+          /// 제출 버튼 - GlobalKey를 통해 폼의 submit() 호출
+          /// Submit button - calls form's submit() via GlobalKey
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: IconButton(
+              constraints: const BoxConstraints(),
+              icon: isUploading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: scheme.primary,
+                      ),
+                    )
+                  : FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
+              onPressed: isUploading
+                  ? null
+                  : () => formKey.currentState?.submit(),
+            ),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outline),
+        ),
+      ),
+
+      /// PostUpdateForm - 재사용 가능한 글 수정 폼
+      /// PostUpdateForm - reusable post update form
+      body: PostUpdateForm(
+        key: formKey,
+        post: widget.post,
+
+        /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+        /// Hide form's internal submit button (handled by AppBar)
+        showSubmitButton: true,
+
+        /// 업로드 상태 변경 콜백
+        /// Upload status change callback
+        onUploadingChanged: (uploading) {
+          setState(() {
+            isUploading = uploading;
+          });
+        },
+
+        /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+        /// Close screen on successful submission and navigate to PostViewScreen
+        onUpdated: (post) {
+          Navigator.pop(context, post);
+
+          // Navigate to PostViewScreen to show the updated post
+          PostViewScreen.pushReplacement(context, post);
+
+          // Call external callback if provided
+          widget.onUpdated?.call(post);
         },
       ),
     );
