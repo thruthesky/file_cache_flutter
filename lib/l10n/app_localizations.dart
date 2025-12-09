@@ -2578,6 +2578,36 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Used Car'**
   String get subCategoryUsedCar;
+
+  /// Success message when user likes a post
+  ///
+  /// In en, this message translates to:
+  /// **'Post liked'**
+  String get postLiked;
+
+  /// Error message when user tries to like an already liked post
+  ///
+  /// In en, this message translates to:
+  /// **'You have already liked this post'**
+  String get alreadyLikedPost;
+
+  /// Success message when comment reply is created
+  ///
+  /// In en, this message translates to:
+  /// **'Reply added successfully'**
+  String get commentReplied;
+
+  /// Success message when comment is updated
+  ///
+  /// In en, this message translates to:
+  /// **'Comment updated successfully'**
+  String get commentUpdated;
+
+  /// Success message when comment is created
+  ///
+  /// In en, this message translates to:
+  /// **'Comment added successfully'**
+  String get commentCreated;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

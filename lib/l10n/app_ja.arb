@@ -416,5 +416,11 @@
     "subCategoryRealEstate": "不動産",
     "subCategoryHouseRental": "住宅賃貸",
     "subCategoryCarRental": "レンタカー",
-    "subCategoryUsedCar": "中古車"
+    "subCategoryUsedCar": "中古車",
+
+    "postLiked": "投稿にいいねしました",
+    "alreadyLikedPost": "すでにいいね済みの投稿です",
+    "commentReplied": "返信が追加されました",
+    "commentUpdated": "コメントが更新されました",
+    "commentCreated": "コメントが追加されました"
 }

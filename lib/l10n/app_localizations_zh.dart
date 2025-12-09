@@ -1275,4 +1275,19 @@ class LoZh extends Lo {
 
   @override
   String get subCategoryUsedCar => '二手车';
+
+  @override
+  String get postLiked => '已点赞帖子';
+
+  @override
+  String get alreadyLikedPost => '您已点赞过此帖子';
+
+  @override
+  String get commentReplied => '回复已添加';
+
+  @override
+  String get commentUpdated => '评论已更新';
+
+  @override
+  String get commentCreated => '评论已添加';
 }

@@ -1281,4 +1281,19 @@ class LoKo extends Lo {
 
   @override
   String get subCategoryUsedCar => '중고차';
+
+  @override
+  String get postLiked => '게시글을 좋아합니다';
+
+  @override
+  String get alreadyLikedPost => '이미 좋아요한 게시글입니다';
+
+  @override
+  String get commentReplied => '답글이 추가되었습니다';
+
+  @override
+  String get commentUpdated => '댓글이 수정되었습니다';
+
+  @override
+  String get commentCreated => '댓글이 추가되었습니다';
 }

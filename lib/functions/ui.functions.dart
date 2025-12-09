@@ -89,6 +89,11 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
   /// Selected sub-category (changeable via dropdown)
   String? _selectedCategory;
 
+  /// 로딩 및 업로드 상태 추적
+  /// Track loading and upload progress
+  bool isLoading = false;
+  bool isUploading = false;
+
   @override
   void initState() {
     super.initState();
@@ -247,8 +252,19 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
             padding: const EdgeInsets.only(right: 6),
             child: IconButton(
               constraints: const BoxConstraints(),
-              icon: FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
-              onPressed: () => formKey.currentState?.submit(),
+              icon: isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: scheme.primary,
+                      ),
+                    )
+                  : FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
+              onPressed: isLoading || isUploading
+                  ? null
+                  : () => formKey.currentState?.submit(),
             ),
           ),
         ],
@@ -271,6 +287,22 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
         /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
         /// Hide form's internal submit button (handled by AppBar)
         showSubmitButton: true,
+
+        /// 로딩 상태 변경 콜백
+        /// Loading status change callback
+        onLoadingChanged: (loading) {
+          setState(() {
+            isLoading = loading;
+          });
+        },
+
+        /// 업로드 상태 변경 콜백
+        /// Upload status change callback
+        onUploadingChanged: (uploading) {
+          setState(() {
+            isUploading = uploading;
+          });
+        },
 
         /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
         /// Close screen on successful submission and navigate to PostViewScreen
@@ -355,8 +387,9 @@ class _PostUpdateScreenState extends State<_PostUpdateScreen> {
   /// Access form state externally via GlobalKey
   final formKey = GlobalKey<PostUpdateFormState>();
 
-  /// 업로드 중 여부 추적
-  /// Track upload progress
+  /// 로딩 및 업로드 상태 추적
+  /// Track loading and upload progress
+  bool isLoading = false;
   bool isUploading = false;
 
   @override
@@ -469,7 +502,7 @@ class _PostUpdateScreenState extends State<_PostUpdateScreen> {
             padding: const EdgeInsets.only(right: 6),
             child: IconButton(
               constraints: const BoxConstraints(),
-              icon: isUploading
+              icon: isLoading
                   ? SizedBox(
                       width: 16,
                       height: 16,
@@ -479,7 +512,7 @@ class _PostUpdateScreenState extends State<_PostUpdateScreen> {
                       ),
                     )
                   : FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
-              onPressed: isUploading
+              onPressed: isLoading || isUploading
                   ? null
                   : () => formKey.currentState?.submit(),
             ),
@@ -500,6 +533,14 @@ class _PostUpdateScreenState extends State<_PostUpdateScreen> {
         /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
         /// Hide form's internal submit button (handled by AppBar)
         showSubmitButton: true,
+
+        /// 로딩 상태 변경 콜백
+        /// Loading status change callback
+        onLoadingChanged: (loading) {
+          setState(() {
+            isLoading = loading;
+          });
+        },
 
         /// 업로드 상태 변경 콜백
         /// Upload status change callback

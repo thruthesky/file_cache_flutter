@@ -1507,5 +1507,26 @@
   "subCategoryRealEstate": "Real Estate",
   "subCategoryHouseRental": "House Rental",
   "subCategoryCarRental": "Car Rental",
-  "subCategoryUsedCar": "Used Car"
+  "subCategoryUsedCar": "Used Car",
+
+  "postLiked": "Post liked",
+  "@postLiked": {
+    "description": "Success message when user likes a post"
+  },
+  "alreadyLikedPost": "You have already liked this post",
+  "@alreadyLikedPost": {
+    "description": "Error message when user tries to like an already liked post"
+  },
+  "commentReplied": "Reply added successfully",
+  "@commentReplied": {
+    "description": "Success message when comment reply is created"
+  },
+  "commentUpdated": "Comment updated successfully",
+  "@commentUpdated": {
+    "description": "Success message when comment is updated"
+  },
+  "commentCreated": "Comment added successfully",
+  "@commentCreated": {
+    "description": "Success message when comment is created"
+  }
 }

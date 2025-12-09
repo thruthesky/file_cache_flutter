@@ -1281,4 +1281,19 @@ class LoJa extends Lo {
 
   @override
   String get subCategoryUsedCar => '中古車';
+
+  @override
+  String get postLiked => '投稿にいいねしました';
+
+  @override
+  String get alreadyLikedPost => 'すでにいいね済みの投稿です';
+
+  @override
+  String get commentReplied => '返信が追加されました';
+
+  @override
+  String get commentUpdated => 'コメントが更新されました';
+
+  @override
+  String get commentCreated => 'コメントが追加されました';
 }
