@@ -61,7 +61,7 @@ class PostGridViewState extends State<PostGridView> {
     fetchPage: (pagekey) async {
       /// API 호출로 게시글 목록 가져오기
       /// Fetch posts from API
-      final res = await getPosts(
+      final res = await postList(
         limit: 20,
         page: pagekey,
         postId: widget.postId,
@@ -136,7 +136,7 @@ class PostGridViewState extends State<PostGridView> {
   /// 이전에 캐시되었더라도 사용자가 항상 최신 게시글을 볼 수 있도록 합니다.
   Future<void> _fetchAndUpdateFirstPage() async {
     try {
-      final res = await getPosts(
+      final res = await postList(
         limit: 20,
         page: 1,
         postId: widget.postId,

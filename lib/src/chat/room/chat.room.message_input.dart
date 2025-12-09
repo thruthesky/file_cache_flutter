@@ -32,7 +32,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   final List<String> _uploadedUrls = [];
   bool _isUploading = false;
 
-  bool isLoading = false;
+  final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
   Map<int, double> _uploadProgress = {}; // Track progress for each file
   int _completedUploads = 0;
 
@@ -40,7 +40,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     final text = _messageController.text.trim();
 
     // Handle regular message
-    if ((text.isEmpty && _uploadedUrls.isEmpty) || isLoading || _isUploading) {
+    if ((text.isEmpty && _uploadedUrls.isEmpty) ||
+        isLoading.value ||
+        _isUploading) {
       return;
     }
 
@@ -53,12 +55,12 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
 
   void _clearFiles() {
     // TEST
-    // setState(() {
-    //   _selectedFiles.clear();
-    //   _uploadedUrls.clear();
-    //   _uploadProgress.clear();
-    //   _completedUploads = 0;
-    // });
+    setState(() {
+      _selectedFiles.clear();
+      _uploadedUrls.clear();
+      _uploadProgress.clear();
+      _completedUploads = 0;
+    });
   }
 
   void _removeFileAt(int index) {
@@ -294,8 +296,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     //   return '';
     // }
 
-    // TODO: TEST
-    // setState(() => isLoading = true);
+    isLoading.value = true;
     String messageId = '';
     try {
       debugPrint('Sending message: text="$text", urls=$urls');
@@ -338,8 +339,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
         );
       }
     } finally {
-      // TODO: TEST
-      // setState(() => isLoading = false);
+      isLoading.value = false;
     }
     return messageId;
   }
@@ -548,7 +548,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                   children: [
                     // Attachment Button
                     IconButton(
-                      onPressed: (isLoading || _isUploading)
+                      onPressed: (isLoading.value || _isUploading)
                           ? null
                           : _showFilePicker,
                       icon: Stack(
@@ -632,7 +632,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                           minLines: 1,
                           maxLines: 4,
                           textCapitalization: TextCapitalization.sentences,
-                          enabled: !isLoading && !_isUploading,
+                          // enabled: !isLoading.value && !_isUploading,
                           onSubmitted: (_) => _handleSend(),
                         ),
                       ),
@@ -643,7 +643,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     // Send Button with enhanced flat design
                     GestureDetector(
                       // Use onTapDown to trigger send before focus changes
-                      onTapDown: (isLoading || _isUploading)
+                      onTapDown: (isLoading.value || _isUploading)
                           ? null
                           : (_) {
                               _handleSend();
@@ -658,7 +658,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: (isLoading || _isUploading)
+                              colors: (isLoading.value || _isUploading)
                                   ? [
                                       colorScheme.secondary.withValues(
                                         alpha: 0.7,
@@ -678,14 +678,14 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
 
                             /// Flat design - subtle border
                             border: Border.all(
-                              color: (isLoading || _isUploading)
+                              color: (isLoading.value || _isUploading)
                                   ? colorScheme.secondary.withValues(alpha: 0.3)
                                   : colorScheme.primary.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
                           child: Center(
-                            child: (isLoading || _isUploading)
+                            child: (isLoading.value || _isUploading)
                                 ? SizedBox(
                                     width: 20,
                                     height: 20,
