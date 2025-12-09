@@ -4,6 +4,7 @@ export 'src/banners/small_banners.dart';
 export 'src/banners/top_banners.dart';
 export 'src/banners/square_banners.dart';
 export 'src/banners/wing_banners.dart';
+export 'src/banners/carousel_wing_banners.dart';
 
 // company
 export 'src/company/models/company.model.dart';
