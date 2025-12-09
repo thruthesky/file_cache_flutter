@@ -339,24 +339,41 @@ class PostCreateFormState extends State<PostCreateForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: ListView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: widget.padding ?? const EdgeInsets.all(16),
-        shrinkWrap: true,
+      child: Column(
         children: [
-          if (widget.showCategorySelector) ...[
-            _buildCategorySelector(context),
-            const SizedBox(height: 16),
-          ],
-          _buildTitleField(context),
-          const SizedBox(height: 16),
-          _buildContentField(context),
-          const SizedBox(height: 16),
-          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
-            _buildUploadPreview(context),
-            const SizedBox(height: 16),
-          ],
-          _buildActionBar(context),
+          Expanded(
+            child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: widget.padding ?? const EdgeInsets.all(16),
+              shrinkWrap: true,
+              children: [
+                if (widget.showCategorySelector) ...[
+                  _buildCategorySelector(context),
+                  const SizedBox(height: 16),
+                ],
+                _buildTitleField(context),
+                const SizedBox(height: 16),
+                if (_urls.isNotEmpty || _uploadingCount > 0) ...[
+                  _buildUploadPreview(context),
+                  const SizedBox(height: 16),
+                ],
+                _buildContentField(context),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1.0,
+                ),
+              ),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: SafeArea(top: false, child: _buildActionBar(context)),
+          ),
         ],
       ),
     );
