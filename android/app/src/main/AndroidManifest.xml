@@ -52,7 +52,6 @@
                 <data android:scheme="https" />
                 <data android:host="philgo.com" />
                 <data android:host="www.philgo.com" />
-                <data android:host="new.philgo.com" />
             </intent-filter>
 
             <!-- Intent filter for receive_sharing_intent -->
