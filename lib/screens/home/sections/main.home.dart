@@ -179,18 +179,13 @@ class _MainHomeState extends State<MainHome> {
           /// [Square Banners]
           /// 사각 배너 - 1줄에 4개씩 그리드로 표시
           /// Square banners - display 4 per row in grid
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s8),
-              child: const WingBanners(),
-            ),
-          ),
+          SliverToBoxAdapter(child: const WingBanners()),
 
           /// [인기글 섹션] - 최근 7일간 댓글 많은 글 5개 표시
           /// Popular Posts Section - Display top 5 posts with most comments in last 7 days
           SliverToBoxAdapter(
             child: HomePopularPostSection(
-              limit: 5,
+              limit: 3,
               withinDays: 7,
               onMoreTap: () {
                 /// ForumHome으로 이동 (인기글은 전체 게시판 대상)
