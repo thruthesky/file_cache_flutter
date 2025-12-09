@@ -5,27 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "🚀 iPhone 16 Pro Max - Prod",
+            "name": "🚀 Simulator - Prod",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
             "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
-        },
-        {
-            "name": "🚀 Attach Simulator - iPhone 16 Pro Max - Prod",
-            "request": "attach",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
-        },
-        {
-            // flutter run 실행 후 attach할 때 사용
-            // 콘솔에 출력된 VM Service URI를 입력하세요
-            "name": "🔗 Attach with URI (flutter run 후 사용)",
-            "request": "attach",
-            "type": "dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
-            "vmServiceUri": "http://127.0.0.1:65094/aScwzl_ajaA=/"
         },
         {
             "name": "🚀 PhilGo - iPhone16 - Prod",
@@ -75,7 +59,6 @@
                 "--dart-define=ENV=dev",
             ]
         },
-        
         {
             "name": "Philgo - charles: Iphone 16 Pro MAX",
             "request": "launch",
@@ -96,8 +79,6 @@
                 "--dart-define=ENV=dev",
             ]
         },
-
-
         {
             "name": "Philgo ASUS X00TDB dev",
             "request": "launch",
