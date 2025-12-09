@@ -15,7 +15,6 @@ import 'package:philgo/screens/theme/theme.preview.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
-import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
@@ -248,14 +247,6 @@ final router = GoRouter(
           xFiles: extra['xFiles'] as List<XFile>?,
           content: extra['content'] as String?,
         );
-      },
-    ),
-    GoRoute(
-      path: PostUpdateScreen.routeName,
-      name: PostUpdateScreen.routeName,
-      builder: (context, state) {
-        Post? post = (state.extra as Map<String, dynamic>)['post'] as Post?;
-        return PostUpdateScreen(post: post!);
       },
     ),
     GoRoute(

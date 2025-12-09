@@ -92,6 +92,6 @@
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "dart"
+    "dart_mcp"
   ]
 }
