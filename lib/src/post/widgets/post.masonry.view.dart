@@ -13,8 +13,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 ///    (최신 데이터를 가져오기 위해 항상 서버 요청 수행)
 /// 3. Server data replaces cached data and updates the cache
 ///    (서버 데이터가 캐시 데이터를 대체하고 캐시를 업데이트)
-class PostGridView extends StatefulWidget {
-  const PostGridView({
+class PostMasonryView extends StatefulWidget {
+  const PostMasonryView({
     super.key,
     required this.postId,
     this.category,
@@ -45,10 +45,10 @@ class PostGridView extends StatefulWidget {
   final int gridColumns;
 
   @override
-  State<PostGridView> createState() => PostGridViewState();
+  State<PostMasonryView> createState() => PostMasonryViewState();
 }
 
-class PostGridViewState extends State<PostGridView> {
+class PostMasonryViewState extends State<PostMasonryView> {
   int? _totalPostCount;
 
   /// Flag to track if cache has been loaded
@@ -167,7 +167,7 @@ class PostGridViewState extends State<PostGridView> {
   }
 
   @override
-  void didUpdateWidget(covariant PostGridView oldWidget) {
+  void didUpdateWidget(covariant PostMasonryView oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     /// 카테고리 변경 시 목록 새로고침 및 캐시 다시 로드

@@ -42,7 +42,7 @@ class PostListView extends StatelessWidget {
   final GlobalKey<PostSimpleListViewState>? listViewKey;
 
   /// Optional key for grid view (used when gridColumns is 2 or more)
-  final GlobalKey<PostGridViewState>? gridViewKey;
+  final GlobalKey<PostMasonryViewState>? gridViewKey;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class PostListView extends StatelessWidget {
     /// Masonry 그리드 레이아웃으로 렌더링
     /// Render as Masonry Grid Layout
     if (isGridLayout) {
-      return PostGridView(
+      return PostMasonryView(
         key: gridViewKey,
         postId: postId,
         category: category,
