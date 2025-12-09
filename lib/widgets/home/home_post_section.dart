@@ -73,9 +73,9 @@ class _HomePostSectionState extends State<HomePostSection> {
   /// Load posts from API
   Future<void> _loadPosts() async {
     try {
-      /// getPosts API 호출 (postId, limit 파라미터 사용)
-      /// Call getPosts API (using postId, limit parameters)
-      final result = await getPosts(
+      /// postList API 호출 (postId, limit 파라미터 사용)
+      /// Call postList API (using postId, limit parameters)
+      final result = await postList(
         postId: widget.postId,
         category: widget.category,
         limit: widget.limit,
@@ -116,10 +116,7 @@ class _HomePostSectionState extends State<HomePostSection> {
         children: [
           /// 섹션 헤더 (타이틀 + 더보기)
           /// Section header (title + more button)
-          HomeSectionHeader(
-            title: sectionTitle,
-            onMoreTap: widget.onMoreTap,
-          ),
+          HomeSectionHeader(title: sectionTitle, onMoreTap: widget.onMoreTap),
 
           /// 로딩 상태: Shimmer 효과
           /// Loading state: Shimmer effect
@@ -161,11 +158,7 @@ class _HomePostSectionState extends State<HomePostSection> {
 
   /// 에러 상태 UI
   /// Error state UI
-  Widget _buildErrorState(
-    ThemeData theme,
-    ColorScheme scheme,
-    AppSpacing sp,
-  ) {
+  Widget _buildErrorState(ThemeData theme, ColorScheme scheme, AppSpacing sp) {
     return Container(
       padding: EdgeInsets.all(sp.s16),
       decoration: BoxDecoration(
@@ -176,9 +169,7 @@ class _HomePostSectionState extends State<HomePostSection> {
         children: [
           Text(
             '게시글을 불러올 수 없습니다.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.error,
-            ),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.error),
           ),
           SizedBox(height: sp.s8),
           TextButton(
@@ -210,9 +201,7 @@ class _HomePostSectionState extends State<HomePostSection> {
         child: Center(
           child: Text(
             '게시글이 없습니다.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.outline,
-            ),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.outline),
           ),
         ),
       );
@@ -226,10 +215,7 @@ class _HomePostSectionState extends State<HomePostSection> {
           onTap: () => widget.onPostTap?.call(post),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: sp.s8,
-              horizontal: sp.s4,
-            ),
+            padding: EdgeInsets.symmetric(vertical: sp.s8, horizontal: sp.s4),
             child: Row(
               children: [
                 /// 글머리 기호 (bullet point)

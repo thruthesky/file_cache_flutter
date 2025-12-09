@@ -176,6 +176,16 @@ class _MainHomeState extends State<MainHome> {
             ),
           ),
 
+          /// [Square Banners]
+          /// 사각 배너 - 1줄에 4개씩 그리드로 표시
+          /// Square banners - display 4 per row in grid
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s8),
+              child: const WingBanners(),
+            ),
+          ),
+
           /// [인기글 섹션] - 최근 7일간 댓글 많은 글 5개 표시
           /// Popular Posts Section - Display top 5 posts with most comments in last 7 days
           SliverToBoxAdapter(
@@ -185,10 +195,7 @@ class _MainHomeState extends State<MainHome> {
               onMoreTap: () {
                 /// ForumHome으로 이동 (인기글은 전체 게시판 대상)
                 /// Navigate to ForumHome (popular posts from all boards)
-                final navState = NavigationState.of(
-                  context,
-                  listen: false,
-                );
+                final navState = NavigationState.of(context, listen: false);
                 navState.setHomeNavigation(HomeNavigationItem.forum);
               },
               onPostTap: (post) {
@@ -209,10 +216,7 @@ class _MainHomeState extends State<MainHome> {
               onMoreTap: () {
                 /// ForumHome으로 이동하면서 buyandsell 선택
                 /// Navigate to ForumHome with buyandsell selected
-                final navState = NavigationState.of(
-                  context,
-                  listen: false,
-                );
+                final navState = NavigationState.of(context, listen: false);
                 navState.data = {'initialPostId': 'buyandsell'};
                 navState.setHomeNavigation(HomeNavigationItem.forum);
               },
@@ -223,19 +227,6 @@ class _MainHomeState extends State<MainHome> {
               },
             ),
           ),
-
-          /// [Square Banners]
-          /// 사각 배너 - 1줄에 4개씩 그리드로 표시
-          /// Square banners - display 4 per row in grid
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s8),
-              child: const WingBanners(),
-            ),
-          ),
-
-          /// Spacing after banners (배너 하단 여백)
-          SliverToBoxAdapter(child: SizedBox(height: sp.s8)),
 
           /// Bottom spacing (하단 여백)
           SliverToBoxAdapter(child: SizedBox(height: sp.s24)),

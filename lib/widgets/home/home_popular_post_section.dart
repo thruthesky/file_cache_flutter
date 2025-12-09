@@ -67,11 +67,11 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
   /// Load popular posts (sorted by comment count within last 7 days)
   Future<void> _loadPosts() async {
     try {
-      /// getPosts API 호출 (인기글 조회)
+      /// postList API 호출 (인기글 조회)
       /// - orderBy: 댓글 많은 순 → 최신순
       /// - extraConditions: 최근 7일 이내, 최소 필드만 조회
       ///
-      /// Call getPosts API (popular posts query)
+      /// Call postList API (popular posts query)
       /// - orderBy: Most comments → Most recent
       /// - extraConditions: Within 7 days, minimal fields for performance
       final result = await getPosts(
@@ -82,11 +82,12 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
           'within_days': widget.withinDays,
           'minimal_fields': 'y',
         },
+        type: 'post',
       );
 
       if (mounted) {
         setState(() {
-          _posts = result.posts;
+          _posts = result;
           _isLoading = false;
           _error = null;
         });
@@ -118,10 +119,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
         children: [
           /// 섹션 헤더 (타이틀 + 더보기)
           /// Section header (title + more button)
-          HomeSectionHeader(
-            title: sectionTitle,
-            onMoreTap: widget.onMoreTap,
-          ),
+          HomeSectionHeader(title: sectionTitle, onMoreTap: widget.onMoreTap),
 
           /// 로딩 상태: Shimmer 효과
           /// Loading state: Shimmer effect
@@ -163,11 +161,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
 
   /// 에러 상태 UI
   /// Error state UI
-  Widget _buildErrorState(
-    ThemeData theme,
-    ColorScheme scheme,
-    AppSpacing sp,
-  ) {
+  Widget _buildErrorState(ThemeData theme, ColorScheme scheme, AppSpacing sp) {
     return Container(
       padding: EdgeInsets.all(sp.s16),
       decoration: BoxDecoration(
@@ -178,9 +172,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
         children: [
           Text(
             '인기글을 불러올 수 없습니다.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.error,
-            ),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.error),
           ),
           SizedBox(height: sp.s8),
           TextButton(
@@ -212,9 +204,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
         child: Center(
           child: Text(
             '인기글이 없습니다.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.outline,
-            ),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.outline),
           ),
         ),
       );
@@ -228,10 +218,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
           onTap: () => widget.onPostTap?.call(post),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: sp.s8,
-              horizontal: sp.s4,
-            ),
+            padding: EdgeInsets.symmetric(vertical: sp.s8, horizontal: sp.s4),
             child: Row(
               children: [
                 /// 글머리 기호 (bullet point)

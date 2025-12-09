@@ -74,14 +74,14 @@ class _HomePhotoGridSectionState extends State<HomePhotoGridSection> {
   /// Load posts with photos
   Future<void> _loadPosts() async {
     try {
-      /// getPosts API 호출 (사진이 있는 글만 조회)
+      /// postList API 호출 (사진이 있는 글만 조회)
       /// - postId: 장터 게시판
       /// - has_image: true (사진이 있는 글만)
       ///
-      /// Call getPosts API (posts with photos only)
+      /// Call postList API (posts with photos only)
       /// - postId: buyandsell board
       /// - has_image: true (filter posts with photos)
-      final result = await getPosts(
+      final result = await postList(
         postId: widget.postId,
         has_image: true,
         limit: widget.limit,
@@ -133,10 +133,7 @@ class _HomePhotoGridSectionState extends State<HomePhotoGridSection> {
         children: [
           /// 섹션 헤더 (타이틀 + 더보기)
           /// Section header (title + more button)
-          HomeSectionHeader(
-            title: sectionTitle,
-            onMoreTap: widget.onMoreTap,
-          ),
+          HomeSectionHeader(title: sectionTitle, onMoreTap: widget.onMoreTap),
 
           SizedBox(height: sp.s8),
 
@@ -185,11 +182,7 @@ class _HomePhotoGridSectionState extends State<HomePhotoGridSection> {
 
   /// 에러 상태 UI
   /// Error state UI
-  Widget _buildErrorState(
-    ThemeData theme,
-    ColorScheme scheme,
-    AppSpacing sp,
-  ) {
+  Widget _buildErrorState(ThemeData theme, ColorScheme scheme, AppSpacing sp) {
     return Container(
       padding: EdgeInsets.all(sp.s16),
       decoration: BoxDecoration(
@@ -200,9 +193,7 @@ class _HomePhotoGridSectionState extends State<HomePhotoGridSection> {
         children: [
           Text(
             '사진을 불러올 수 없습니다.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.error,
-            ),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.error),
           ),
           SizedBox(height: sp.s8),
           TextButton(
@@ -233,9 +224,7 @@ class _HomePhotoGridSectionState extends State<HomePhotoGridSection> {
         child: Center(
           child: Text(
             '사진이 없습니다.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.outline,
-            ),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.outline),
           ),
         ),
       );
@@ -311,7 +300,6 @@ class _HomePhotoGridSectionState extends State<HomePhotoGridSection> {
                   ),
                 ),
               )
-
             /// 이미지 URL이 없는 경우
             /// If no image URL
             : Container(
