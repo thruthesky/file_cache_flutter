@@ -164,26 +164,31 @@ class _ForumHomeState extends State<ForumHome> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// AnimatedSlide + AnimatedOpacity로 헤더 숨기기/표시 애니메이션
-          /// Header hide/show animation with AnimatedSlide + AnimatedOpacity
-          AnimatedSlide(
-            /// 숨김 시 위로 이동 (-1 = 완전히 위로)
-            /// Move up when hidden (-1 = completely up)
-            offset: _showHeader ? Offset.zero : const Offset(0, -1),
+          /// ClipRect + AnimatedAlign으로 헤더 숨기기/표시 애니메이션
+          /// Header hide/show animation with ClipRect + AnimatedAlign
+          ///
+          /// ClipRect: 헤더가 위로 올라갈 때 넘치는 부분 잘라냄
+          /// ClipRect: clips overflow when header moves up
+          ///
+          /// AnimatedAlign(heightFactor): 높이를 0~1 사이로 애니메이션
+          /// AnimatedAlign(heightFactor): animates height between 0~1
+          ClipRect(
+            child: AnimatedAlign(
+              /// 상단 정렬 (헤더가 위에서부터 사라짐)
+              /// Top alignment (header disappears from top)
+              alignment: Alignment.topCenter,
 
-            /// 부드러운 애니메이션 (200ms)
-            /// Smooth animation (200ms)
-            duration: const Duration(milliseconds: 200),
+              /// 숨김 시 높이를 0으로, 표시 시 원래 높이로
+              /// Height 0 when hidden, original height when shown
+              heightFactor: _showHeader ? 1.0 : 0.0,
 
-            /// 자연스러운 커브
-            /// Natural curve
-            curve: Curves.easeInOut,
+              /// 부드러운 애니메이션 (200ms)
+              /// Smooth animation (200ms)
+              duration: const Duration(milliseconds: 200),
 
-            child: AnimatedOpacity(
-              /// 숨김 시 투명하게
-              /// Transparent when hidden
-              opacity: _showHeader ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 150),
+              /// 자연스러운 커브
+              /// Natural curve
+              curve: Curves.easeInOut,
 
               child: Container(
                 /// 하단 테두리 (Comic design)
