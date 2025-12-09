@@ -188,17 +188,22 @@ class PostSimpleListViewState extends State<PostSimpleListView> {
       controller: pagingController,
       builder: (context, state, fetchNextPage) {
         return PagedListView.separated(
-          // Comic Design: 16px spacing between posts (8의 배수)
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-
           // Comic Design: 16px padding on all sides (8의 배수)
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.only(top: 0),
+          // Comic Design: 16px spacing between posts (8의 배수)
+          separatorBuilder: (context, index) => Divider(
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.4),
+          ),
+
           state: state,
           fetchNextPage: fetchNextPage,
           builderDelegate: PagedChildBuilderDelegate<Post>(
             noItemsFoundIndicatorBuilder: widget.noItemsFoundIndicatorBuilder,
             itemBuilder: (context, post, index) {
               /// Build post tile using custom builder or default PostListTile
+              /// 커스텀 빌더가 있으면 사용하고, 없으면 기본 PostListTile 사용
               final tile =
                   widget.tileBuilder?.call(post, () => widget.onTap(post)) ??
                   PostListTile(
@@ -206,6 +211,20 @@ class PostSimpleListViewState extends State<PostSimpleListView> {
                     onTap: () => widget.onTap(post),
                     enableHeroTransition: widget.enableHeroTransition,
                   );
+
+              /// 첫 번째 아이템에만 "Hello World" 텍스트를 상단에 표시
+              /// Display "Hello World" text only on the first item
+              if (index == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SquareBanners(
+                      postIdOrCategory: widget.category ?? widget.postId,
+                    ),
+                    tile,
+                  ],
+                );
+              }
 
               return tile;
             },

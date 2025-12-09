@@ -155,13 +155,13 @@ class PhilgoCategory {
       'qna',
       'buyandsell',
       'boarding_house',
-      'travel',
       'wanted', // 구인구직
+      'massage',
+      'travel',
       'business',
       'school',
       'caution', // 주의사항
       'greeting',
-      'massage',
       'food_delivery',
       'rest',
       'blog',

@@ -24,34 +24,18 @@ class PostListTile extends StatelessWidget {
     return Blocked(
       otherUserUid: post.firebase_uid,
       no: () {
-        return Card(
-          elevation: 0, // Comic Design: no shadow
-          margin: EdgeInsets.zero, // No margin (parent controls spacing)
-          color: Theme.of(context).colorScheme.surface,
-          // Comic Design: 2.0px border with rounded corners
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-              width: 1.0,
-            ),
-          ),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(
-              12,
-            ), // Match card radius for ripple
-            child: hasImage
-                ? PostListTileWithImage(
-                    post: post,
-                    enableHeroTransition: enableHeroTransition,
-                    showProfile: showProfile,
-                  )
-                : PostListTileWithoutImage(
-                    post: post,
-                    showProfile: showProfile,
-                  ),
-          ),
+        return InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(
+            12,
+          ), // Match card radius for ripple
+          child: hasImage
+              ? PostListTileWithImage(
+                  post: post,
+                  enableHeroTransition: enableHeroTransition,
+                  showProfile: showProfile,
+                )
+              : PostListTileWithoutImage(post: post, showProfile: showProfile),
         );
       },
       yes: () {
@@ -168,7 +152,7 @@ class PostListTileWithoutImage extends StatelessWidget {
     final scheme = theme.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
