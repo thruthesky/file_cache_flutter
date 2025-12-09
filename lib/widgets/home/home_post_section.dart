@@ -110,7 +110,12 @@ class _HomePostSectionState extends State<HomePostSection> {
     final sectionTitle = philgoTr(context, widget.postId);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s8),
+      padding: EdgeInsets.only(
+        left: sp.s16,
+        right: sp.s16,
+        top: sp.s16,
+        bottom: sp.s8,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

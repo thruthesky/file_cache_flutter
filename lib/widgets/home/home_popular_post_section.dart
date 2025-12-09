@@ -34,7 +34,7 @@ class HomePopularPostSection extends StatefulWidget {
 
   const HomePopularPostSection({
     super.key,
-    this.limit = 5,
+    this.limit = 3,
     this.withinDays = 7,
     this.onMoreTap,
     this.onPostTap,
@@ -113,7 +113,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
     const sectionTitle = '인기글';
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s8),
+      padding: EdgeInsets.only(left: sp.s16, right: sp.s16, top: sp.s16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
