@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
@@ -32,7 +31,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   final List<String> _uploadedUrls = [];
   bool _isUploading = false;
 
-  final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
+  bool isLoading = false;
   Map<int, double> _uploadProgress = {}; // Track progress for each file
   int _completedUploads = 0;
 
@@ -40,9 +39,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     final text = _messageController.text.trim();
 
     // Handle regular message
-    if ((text.isEmpty && _uploadedUrls.isEmpty) ||
-        isLoading.value ||
-        _isUploading) {
+    if ((text.isEmpty && _uploadedUrls.isEmpty) || isLoading || _isUploading) {
       return;
     }
 
@@ -295,8 +292,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     // if ((text.isEmpty && (urls == null || urls.isEmpty)) || isLoading) {
     //   return '';
     // }
-
-    isLoading.value = true;
+    isLoading = true;
+    setState(() {});
     String messageId = '';
     try {
       debugPrint('Sending message: text="$text", urls=$urls');
@@ -339,7 +336,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
         );
       }
     } finally {
-      isLoading.value = false;
+      isLoading = false;
+      setState(() {});
     }
     return messageId;
   }
@@ -356,7 +354,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8.0),
+      margin: const EdgeInsets.only(top: 16),
       height: 120,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -367,8 +365,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           final colorScheme = Theme.of(context).colorScheme;
 
           return Container(
-            margin: const EdgeInsets.only(right: 8.0),
-            width: 120,
+            margin: EdgeInsets.only(right: 8.0, left: index == 0 ? 8 : 0),
+            width: 100,
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
@@ -515,11 +513,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-
-        /// Flat design - subtle border instead of shadow
         border: Border(
           top: BorderSide(
             color: colorScheme.outlineVariant.withValues(alpha: 0.3),
@@ -544,166 +539,178 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                 final minTextFieldWidth =
                     availableWidth * 0.8 - iconButtonWidth - sendButtonWidth;
 
-                return Row(
-                  children: [
-                    // Attachment Button
-                    IconButton(
-                      onPressed: (isLoading.value || _isUploading)
-                          ? null
-                          : _showFilePicker,
-                      icon: Stack(
-                        children: [
-                          const Icon(Icons.add),
-                          if (_selectedFiles.isNotEmpty)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Text(
-                                  '${_selectedFiles.length}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                    top: 16.0,
+                    bottom: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      // Attachment Button
+                      IconButton(
+                        onPressed: (isLoading || _isUploading)
+                            ? null
+                            : _showFilePicker,
+                        icon: Stack(
+                          children: [
+                            const Icon(Icons.add),
+                            if (_selectedFiles.isNotEmpty)
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
                                   ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      tooltip: PhilgoTr.of(context)!.attach_files,
-                    ),
-
-                    // Message Input Field - 80% minimum width
-                    Expanded(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: minTextFieldWidth,
-                        ),
-                        child: TextField(
-                          autofocus: false,
-                          controller: _messageController,
-                          decoration: InputDecoration(
-                            hintText: PhilgoTr.of(context)!.type_message,
-                            hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.4,
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: colorScheme.surfaceContainerHighest,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide(
-                                color: colorScheme.outlineVariant.withValues(
-                                  alpha: 0.3,
-                                ),
-                                width: 1,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide(
-                                color: colorScheme.outlineVariant.withValues(
-                                  alpha: 0.3,
-                                ),
-                                width: 1,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide(
-                                color: colorScheme.primary.withValues(
-                                  alpha: 0.5,
-                                ),
-                                width: 1.5,
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                          minLines: 1,
-                          maxLines: 4,
-                          textCapitalization: TextCapitalization.sentences,
-                          // enabled: !isLoading.value && !_isUploading,
-                          onSubmitted: (_) => _handleSend(),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 8),
-
-                    // Send Button with enhanced flat design
-                    GestureDetector(
-                      // Use onTapDown to trigger send before focus changes
-                      onTapDown: (isLoading.value || _isUploading)
-                          ? null
-                          : (_) {
-                              _handleSend();
-                            },
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            /// Gradient background for visual interest
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: (isLoading.value || _isUploading)
-                                  ? [
-                                      colorScheme.secondary.withValues(
-                                        alpha: 0.7,
-                                      ),
-                                      colorScheme.secondary.withValues(
-                                        alpha: 0.5,
-                                      ),
-                                    ]
-                                  : [
-                                      colorScheme.primary,
-                                      colorScheme.primary.withValues(
-                                        alpha: 0.8,
-                                      ),
-                                    ],
-                            ),
-                            shape: BoxShape.circle,
-
-                            /// Flat design - subtle border
-                            border: Border.all(
-                              color: (isLoading.value || _isUploading)
-                                  ? colorScheme.secondary.withValues(alpha: 0.3)
-                                  : colorScheme.primary.withValues(alpha: 0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Center(
-                            child: (isLoading.value || _isUploading)
-                                ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: colorScheme.onPrimary,
+                                  child: Text(
+                                    '${_selectedFiles.length}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  )
-                                : Icon(
-                                    Icons.send,
-                                    color: colorScheme.onPrimary,
-                                    size: 20,
                                   ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        tooltip: PhilgoTr.of(context)!.attach_files,
+                      ),
+
+                      // Message Input Field - 80% minimum width
+                      Expanded(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: minTextFieldWidth,
+                          ),
+                          child: TextField(
+                            autofocus: false,
+                            controller: _messageController,
+                            decoration: InputDecoration(
+                              hintText: PhilgoTr.of(context)!.type_message,
+                              hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.4,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: colorScheme.surfaceContainerHighest,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(24),
+                                borderSide: BorderSide(
+                                  color: colorScheme.outlineVariant.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  width: 1,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(24),
+                                borderSide: BorderSide(
+                                  color: colorScheme.outlineVariant.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(24),
+                                borderSide: BorderSide(
+                                  color: colorScheme.primary.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                  width: 1.5,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                            minLines: 1,
+                            maxLines: 4,
+                            textCapitalization: TextCapitalization.sentences,
+                            // enabled: !isLoading && !_isUploading,
+                            onSubmitted: (_) => _handleSend(),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(width: 8),
+
+                      // Send Button with enhanced flat design
+                      GestureDetector(
+                        // Use onTapDown to trigger send before focus changes
+                        onTapDown: (isLoading || _isUploading)
+                            ? null
+                            : (_) {
+                                _handleSend();
+                              },
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              /// Gradient background for visual interest
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: (isLoading || _isUploading)
+                                    ? [
+                                        colorScheme.secondary.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                        colorScheme.secondary.withValues(
+                                          alpha: 0.5,
+                                        ),
+                                      ]
+                                    : [
+                                        colorScheme.primary,
+                                        colorScheme.primary.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ],
+                              ),
+                              shape: BoxShape.circle,
+
+                              /// Flat design - subtle border
+                              border: Border.all(
+                                color: (isLoading || _isUploading)
+                                    ? colorScheme.secondary.withValues(
+                                        alpha: 0.3,
+                                      )
+                                    : colorScheme.primary.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                width: 1,
+                              ),
+                            ),
+                            child: Center(
+                              child: (isLoading || _isUploading)
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: colorScheme.onPrimary,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.send,
+                                      color: colorScheme.onPrimary,
+                                      size: 20,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
