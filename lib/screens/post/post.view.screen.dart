@@ -1,14 +1,18 @@
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.screen.dart';
-import 'package:philgo/screens/post/post.update.screen.dart';
+import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// Post View Screen
+///
+/// Displays a post with its content, images, comments, and action buttons.
+/// The layout is designed to work like a chat application where the comment
+/// input field stays at the bottom and becomes visible when keyboard appears.
 class PostViewScreen extends StatefulWidget {
   static const String routeName = '/post-view';
 
@@ -29,38 +33,22 @@ class PostViewScreen extends StatefulWidget {
 class _PostViewScreenState extends State<PostViewScreen> {
   Post? post;
   bool isLoading = true;
-  bool showPostInfoBar = false;
-  bool isLiked = false; // Track if user has liked the post
-  final ScrollController _scrollController = ScrollController();
-  Comment? replyingToComment; // Track which comment is being replied to
-  Comment? editingComment; // Track which comment is being edited
-  // bool showCommentInput = false; // Track if bottom comment input should be visible
+  bool isLiked = false;
+  Comment? replyingToComment;
+  Comment? editingComment;
 
   @override
   void initState() {
     super.initState();
     loadPost();
-    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
     super.dispose();
   }
 
-  void _onScroll() {
-    final shouldShow =
-        _scrollController.hasClients && _scrollController.offset > 150;
-
-    if (shouldShow != showPostInfoBar) {
-      setState(() {
-        showPostInfoBar = shouldShow;
-      });
-    }
-  }
-
+  /// Load post details from server
   Future<void> loadPost() async {
     try {
       final details = await getPost(widget.post.idx);
@@ -84,18 +72,21 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
+  /// Check if the current post belongs to the logged-in user
   bool isPostMine() {
     final myIdx = AppState.of(context).user?.idx;
     if (myIdx == null) return false;
     return myIdx == widget.post.idx_member;
   }
 
+  /// Check if a comment belongs to the logged-in user
   bool isCommentMine(int idxMember) {
     final myIdx = AppState.of(context).user?.idx;
     if (myIdx == null) return false;
     return myIdx == idxMember;
   }
 
+  // Getters for post data with fallback to widget.post
   List<String> get files => post != null ? post!.files : widget.post.files;
   String get content => post != null ? post!.content : widget.post.content;
   String get subject => post != null ? post!.subject : widget.post.subject;
@@ -122,8 +113,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return '$year-$month-$day';
   }
 
-  /// Show comment input for creating new comment on post
-
   /// Enter reply mode - convert bottom field to reply to specific comment
   void setReplyMode(Comment comment) {
     setState(() {
@@ -132,7 +121,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     });
   }
 
-  /// Exit reply mode - return to hidden state
+  /// Exit reply mode - return to normal state
   void cancelReplyMode() {
     setState(() {
       replyingToComment = null;
@@ -147,7 +136,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     });
   }
 
-  /// Exit edit mode - return to hidden state
+  /// Exit edit mode - return to normal state
   void cancelEditMode() {
     setState(() {
       editingComment = null;
@@ -231,21 +220,20 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         return;
                       }
 
-                      final updatedPost = await PostUpdateScreen.push(
+                      await showPostUpdateDialog(
                         context,
                         post: post!,
+                        onUpdated: (updated) {
+                          widget.post.subject = updated.subject;
+                          widget.post.content = updated.content;
+
+                          if (mounted) {
+                            setState(() {
+                              post = updated;
+                            });
+                          }
+                        },
                       );
-
-                      if (updatedPost != null) {
-                        widget.post.subject = updatedPost.subject;
-                        widget.post.content = updatedPost.content;
-                      }
-
-                      if (updatedPost != null && mounted) {
-                        setState(() {
-                          post = updatedPost;
-                        });
-                      }
                     },
                   ),
                   ListTile(
@@ -296,7 +284,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
   /// Build Comic-styled action button widget with border
   Widget _buildComicActionButton({
     required IconData icon,
-    String? label, // Make label optional
+    String? label,
     required VoidCallback onPressed,
     Color? color,
   }) {
@@ -305,11 +293,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(
-          color: color ?? scheme.outline,
-          width: 2.0, // Comic Design: 2.0 border
-        ),
-        borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
+        border: Border.all(color: color ?? scheme.outline, width: 2.0),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
         onTap: onPressed,
@@ -344,538 +329,370 @@ class _PostViewScreenState extends State<PostViewScreen> {
     final scheme = theme.colorScheme;
 
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        leading: BackButton(
+          onPressed: () => Navigator.of(context).canPop()
+              ? Navigator.of(context).pop()
+              : context.go(HomeScreen.routeName),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: IconButton(
+              icon: FaIcon(FontAwesomeIcons.bars, size: 20),
+              onPressed: _showPostOptions,
+            ),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
+      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    /// Comic AppBar with menu icon
-                    SliverAppBar(
-                      floating: false,
-                      pinned: true,
-                      elevation: 0,
-                      leading: BackButton(
-                        onPressed: () => Navigator.of(context).canPop()
-                            ? Navigator.of(context).pop()
-                            : context.go(HomeScreen.routeName),
-                      ),
-                      actions: [
-                        /// Comment button - shows/hides bottom input field
-                        Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: IconButton(
-                            icon: FaIcon(FontAwesomeIcons.bars, size: 20),
-                            onPressed: _showPostOptions,
-                          ),
-                        ),
-                      ],
-                      bottom: PreferredSize(
-                        preferredSize: const Size.fromHeight(1),
-                        child: Container(
-                          height: 1,
-                          color: scheme.outlineVariant,
-                        ),
-                      ),
-                    ),
-
-                    /// Main content
-                    SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverList(
-                        delegate: SliverChildListDelegate([
-                          Blocked(
-                            otherUserUid: firebaseUid,
-                            yes: () => GestureDetector(
-                              onTap: () {
-                                showUnblockDialog(
-                                  context: context,
-                                  otherUserUid: firebaseUid,
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Avatar(photoUrl: photoUrl),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        '${PhilgoTr.of(context)!.post_from_blocked_user} $nickname',
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                              fontStyle: FontStyle.italic,
-                                              color: scheme.onSurface
-                                                  .withValues(alpha: 0.6),
-                                            ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            no: () => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                /// Post title - larger and more prominent
-                                Text(
-                                  subject,
-                                  style: theme.textTheme.headlineSmall
-                                      ?.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 16),
-
-                                /// Avatar, name, and date
-                                GestureDetector(
-                                  onTap: () {
-                                    ProfileViewScreen.push(
-                                      context,
-                                      firebaseUid: firebaseUid,
-                                      nickname: nickname,
-                                      photoUrl: photoUrl,
-                                    );
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Avatar(photoUrl: photoUrl, size: 40),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              nickname,
-                                              style: theme.textTheme.bodyLarge
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              formatPostDate(stamp),
-                                              style: theme.textTheme.bodyMedium
-                                                  ?.copyWith(
-                                                    color: scheme.onSurface
-                                                        .withValues(alpha: 0.6),
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-
-                                /// Images first (if available)
-                                /// Hero 트랜지션 항상 활성화
-                                /// Forum 탭에서만 PostListTile 사용되므로 충돌 없음
-                                if (hasImages) ...[
-                                  PostViewImages(
-                                    files: files,
-                                    postIdx: widget.post.idx,
-                                    enableHeroTransition: true,
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-
-                                /// Post content
-                                PostViewContent(
-                                  isLoading: false,
-                                  content: content,
-                                ),
-                                const SizedBox(height: 24),
-
-                                /// Action buttons with Comic design and border
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: scheme.outline,
-                                        width: 2.0, // Comic Design: 2.0 border
-                                      ),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      /// Like button
-                                      _buildComicActionButton(
-                                        icon: isLiked
-                                            ? FontAwesomeIcons.solidThumbsUp
-                                            : FontAwesomeIcons.thumbsUp,
-                                        label:
-                                            post?.good != null && post!.good > 0
-                                            ? '${post!.good}'
-                                            : null, // Hide label when 0
-                                        color: scheme.primary,
-                                        onPressed: () async {
-                                          try {
-                                            final updatedGood = await likePost(
-                                              widget.post.idx,
-                                            );
-                                            (post ?? widget.post).good =
-                                                updatedGood;
-                                            if (mounted) {
-                                              setState(() {
-                                                isLiked = true;
-                                              });
-                                            }
-                                            if (context.mounted) {
-                                              showSuccessSnackBar(
-                                                context,
-                                                'Post liked',
-                                              );
-                                            }
-                                          } catch (e) {
-                                            d('Error liking post: $e');
-                                            if (e.toString().contains(
-                                              'already-liked',
-                                            )) {
-                                              if (context.mounted) {
-                                                showErrorSnackBar(
-                                                  context,
-                                                  'Already liked this post',
-                                                );
-                                              }
-                                            }
-                                          }
-                                        },
-                                      ),
-
-                                      const SizedBox(width: 8),
-
-                                      const Spacer(),
-
-                                      /// If not my post, show block and report
-                                      if (!isPostMine()) ...[
-                                        _buildComicActionButton(
-                                          icon: FontAwesomeIcons.ban,
-                                          label: PhilgoTr.of(context)!.block,
-                                          onPressed: () {
-                                            showBlockDialog(
-                                              context: context,
-                                              otherUserUid: firebaseUid,
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(width: 8),
-                                        PostReportButton(
-                                          type: 'post',
-                                          idx: widget.post.idx,
-                                          post: widget.post,
-                                        ),
-                                      ],
-
-                                      /// If my post, show only edit and delete
-                                      if (isPostMine()) ...[
-                                        _buildComicActionButton(
-                                          icon: FontAwesomeIcons.penToSquare,
-                                          label: PhilgoTr.of(context)!.edit,
-                                          onPressed: () async {
-                                            if (post!.no_of_comment >= 1) {
-                                              showInfoDialog(
-                                                context,
-                                                Lo.of(context)!.alert,
-                                                Lo.of(
-                                                  context,
-                                                )!.postWithCommentsCannotBeEdited,
-                                              );
-                                              return;
-                                            }
-
-                                            final updatedPost =
-                                                await PostUpdateScreen.push(
-                                                  context,
-                                                  post: post!,
-                                                );
-                                            if (updatedPost != null) {
-                                              widget.post.subject =
-                                                  updatedPost.subject;
-                                              widget.post.content =
-                                                  updatedPost.content;
-                                            }
-
-                                            if (updatedPost != null &&
-                                                mounted) {
-                                              setState(() {
-                                                post = updatedPost;
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        const SizedBox(width: 8),
-                                        _buildComicActionButton(
-                                          icon: FontAwesomeIcons.trash,
-                                          label: PhilgoTr.of(context)!.delete,
-                                          color: scheme.error,
-                                          onPressed: () async {
-                                            if (post!.no_of_comment >= 1) {
-                                              showInfoDialog(
-                                                context,
-                                                Lo.of(context)!.alert,
-                                                Lo.of(
-                                                  context,
-                                                )!.postWithCommentsCannotBeDeleted,
-                                              );
-                                              return;
-                                            }
-
-                                            final confirm =
-                                                await showConfirmDialog(
-                                                  message: Lo.of(
-                                                    context,
-                                                  )!.confirmDeletePost,
-                                                );
-
-                                            if (confirm) {
-                                              await deletePost(widget.post.idx);
-                                              if (context.mounted) {
-                                                context.pop();
-                                              }
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(height: 16),
-
-                          /// Comment section
-                          CommentDetailListView(
-                            myComment: isCommentMine,
-                            noOfComment: noOfComment,
-                            isLoading: false,
-                            post: post,
-                            onReplied: (createdComment) {
-                              int? where = post?.comments.indexWhere(
-                                (comment) =>
-                                    comment.idx == createdComment.idx_parent,
-                              );
-
-                              if (where != null) {
-                                post?.comments.insert(
-                                  where + 1,
-                                  createdComment,
-                                );
-                              }
-
-                              post!.no_of_comment += 1;
-
-                              if (mounted) {
-                                setState(() {});
-                                showSuccessSnackBar(
-                                  context,
-                                  'A comment has replied',
-                                );
-                              }
-                            },
-                            onUpdated: (oldComment, updatedComment) {
-                              oldComment.content = updatedComment.content;
-                              oldComment.files = updatedComment.files;
-
-                              if (mounted) {
-                                setState(() {});
-                                showSuccessSnackBar(
-                                  context,
-                                  'A comment has updated',
-                                );
-                              }
-                            },
-                            onDeleted: (deletedComment) {
-                              post?.comments.removeWhere(
-                                (comment) => comment.idx == deletedComment.idx,
-                              );
-
-                              post!.no_of_comment -= 1;
-
-                              if (mounted) {
-                                setState(() {});
-                              }
-                            },
-                            onReplyClicked: setReplyMode,
-                            onEditClicked: setEditMode,
-                          ),
-                        ]),
-                      ),
-                    ),
-                  ],
-                ),
-
-                /// Floating post info bar
-                Positioned(
-                  top: MediaQuery.of(context).padding.top + kToolbarHeight,
-                  left: 0,
-                  right: 0,
-                  child: IgnorePointer(
-                    ignoring: !showPostInfoBar,
-                    child: AnimatedSlide(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeIn,
-                      offset: showPostInfoBar
-                          ? Offset.zero
-                          : const Offset(0, -1),
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: showPostInfoBar ? 1.0 : 0.0,
-                        child: GestureDetector(
+          : CustomScrollView(
+              slivers: [
+                /// Main content
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Blocked(
+                        otherUserUid: firebaseUid,
+                        yes: () => GestureDetector(
                           onTap: () {
-                            _scrollController.animateTo(
-                              0,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut,
+                            showUnblockDialog(
+                              context: context,
+                              otherUserUid: firebaseUid,
                             );
                           },
                           child: Container(
-                            height: 64,
-                            decoration: BoxDecoration(
-                              color: scheme.surface,
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: scheme.outlineVariant,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                if (hasImages)
-                                  Container(
-                                    width: 44,
-                                    height: 44,
-                                    margin: const EdgeInsets.only(right: 12),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      image: DecorationImage(
-                                        image: NetworkImage(files.first),
-                                        fit: BoxFit.cover,
+                                Avatar(photoUrl: photoUrl),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    '${PhilgoTr.of(context)!.post_from_blocked_user} $nickname',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontStyle: FontStyle.italic,
+                                      color: scheme.onSurface.withValues(
+                                        alpha: 0.6,
                                       ),
                                     ),
-                                  ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        subject.isNotEmpty
-                                            ? subject
-                                            : content.substring(
-                                                0,
-                                                content.length > 20
-                                                    ? 20
-                                                    : content.length,
-                                              ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Builder(
-                                        builder: (context) {
-                                          final goodCount =
-                                              post?.good ?? widget.post.good;
-                                          final commentCount = noOfComment;
-
-                                          if ((goodCount) <= 0 &&
-                                              commentCount <= 0) {
-                                            return const SizedBox.shrink();
-                                          }
-
-                                          final children = <Widget>[];
-
-                                          if ((goodCount) > 0) {
-                                            children.addAll([
-                                              Icon(
-                                                Icons.thumb_up,
-                                                size: 14,
-                                                color: scheme.primary,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                '$goodCount',
-                                                style:
-                                                    theme.textTheme.bodySmall,
-                                              ),
-                                            ]);
-                                          }
-
-                                          if ((goodCount) > 0 &&
-                                              commentCount > 0) {
-                                            children.add(
-                                              const SizedBox(width: 12),
-                                            );
-                                          }
-
-                                          if (commentCount > 0) {
-                                            children.addAll([
-                                              Icon(
-                                                Icons.comment,
-                                                size: 14,
-                                                color: scheme.primary,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                '$commentCount',
-                                                style:
-                                                    theme.textTheme.bodySmall,
-                                              ),
-                                            ]);
-                                          }
-
-                                          return Row(children: children);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.keyboard_arrow_up,
-                                  size: 24,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.5,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
+                        no: () => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            /// Post title - larger and more prominent
+                            Text(
+                              subject,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            /// Avatar, name, and date
+                            GestureDetector(
+                              onTap: () {
+                                ProfileViewScreen.push(
+                                  context,
+                                  firebaseUid: firebaseUid,
+                                  nickname: nickname,
+                                  photoUrl: photoUrl,
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Avatar(photoUrl: photoUrl, size: 40),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          nickname,
+                                          style: theme.textTheme.bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          formatPostDate(stamp),
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: scheme.onSurface
+                                                    .withValues(alpha: 0.6),
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            /// Images first (if available)
+                            if (hasImages) ...[
+                              PostViewImages(
+                                files: files,
+                                postIdx: widget.post.idx,
+                                enableHeroTransition: true,
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+
+                            /// Post content
+                            PostViewContent(isLoading: false, content: content),
+                            const SizedBox(height: 24),
+
+                            /// Action buttons with Comic design and border
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: scheme.outline,
+                                    width: 2.0,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  /// Like button
+                                  _buildComicActionButton(
+                                    icon: isLiked
+                                        ? FontAwesomeIcons.solidThumbsUp
+                                        : FontAwesomeIcons.thumbsUp,
+                                    label: post?.good != null && post!.good > 0
+                                        ? '${post!.good}'
+                                        : null,
+                                    color: scheme.primary,
+                                    onPressed: () async {
+                                      try {
+                                        final updatedGood = await likePost(
+                                          widget.post.idx,
+                                        );
+                                        (post ?? widget.post).good =
+                                            updatedGood;
+                                        if (mounted) {
+                                          setState(() {
+                                            isLiked = true;
+                                          });
+                                        }
+                                        if (context.mounted) {
+                                          showSuccessSnackBar(
+                                            context,
+                                            'Post liked',
+                                          );
+                                        }
+                                      } catch (e) {
+                                        d('Error liking post: $e');
+                                        if (e.toString().contains(
+                                          'already-liked',
+                                        )) {
+                                          if (context.mounted) {
+                                            showErrorSnackBar(
+                                              context,
+                                              'Already liked this post',
+                                            );
+                                          }
+                                        }
+                                      }
+                                    },
+                                  ),
+
+                                  const SizedBox(width: 8),
+
+                                  const Spacer(),
+
+                                  /// If not my post, show block and report
+                                  if (!isPostMine()) ...[
+                                    _buildComicActionButton(
+                                      icon: FontAwesomeIcons.ban,
+                                      label: PhilgoTr.of(context)!.block,
+                                      onPressed: () {
+                                        showBlockDialog(
+                                          context: context,
+                                          otherUserUid: firebaseUid,
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                    PostReportButton(
+                                      type: 'post',
+                                      idx: widget.post.idx,
+                                      post: widget.post,
+                                    ),
+                                  ],
+
+                                  /// If my post, show only edit and delete
+                                  if (isPostMine()) ...[
+                                    _buildComicActionButton(
+                                      icon: FontAwesomeIcons.penToSquare,
+                                      label: PhilgoTr.of(context)!.edit,
+                                      onPressed: () async {
+                                        if (post!.no_of_comment >= 1) {
+                                          showInfoDialog(
+                                            context,
+                                            Lo.of(context)!.alert,
+                                            Lo.of(
+                                              context,
+                                            )!.postWithCommentsCannotBeEdited,
+                                          );
+                                          return;
+                                        }
+
+                                        await showPostUpdateDialog(
+                                          context,
+                                          post: post!,
+                                          onUpdated: (updated) {
+                                            widget.post.subject =
+                                                updated.subject;
+                                            widget.post.content =
+                                                updated.content;
+
+                                            if (mounted) {
+                                              setState(() {
+                                                post = updated;
+                                              });
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildComicActionButton(
+                                      icon: FontAwesomeIcons.trash,
+                                      label: PhilgoTr.of(context)!.delete,
+                                      color: scheme.error,
+                                      onPressed: () async {
+                                        if (post!.no_of_comment >= 1) {
+                                          showInfoDialog(
+                                            context,
+                                            Lo.of(context)!.alert,
+                                            Lo.of(
+                                              context,
+                                            )!.postWithCommentsCannotBeDeleted,
+                                          );
+                                          return;
+                                        }
+
+                                        final confirm = await showConfirmDialog(
+                                          message: Lo.of(
+                                            context,
+                                          )!.confirmDeletePost,
+                                        );
+
+                                        if (confirm) {
+                                          await deletePost(widget.post.idx);
+                                          if (context.mounted) {
+                                            context.pop();
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+
+                      const SizedBox(height: 16),
+
+                      /// Comment section
+                      CommentDetailListView(
+                        myComment: isCommentMine,
+                        noOfComment: noOfComment,
+                        isLoading: false,
+                        post: post,
+                        onReplied: (createdComment) {
+                          int? where = post?.comments.indexWhere(
+                            (comment) =>
+                                comment.idx == createdComment.idx_parent,
+                          );
+
+                          if (where != null) {
+                            post?.comments.insert(where + 1, createdComment);
+                          }
+
+                          post!.no_of_comment += 1;
+
+                          if (mounted) {
+                            setState(() {});
+                            showSuccessSnackBar(
+                              context,
+                              'A comment has replied',
+                            );
+                          }
+                        },
+                        onUpdated: (oldComment, updatedComment) {
+                          oldComment.content = updatedComment.content;
+                          oldComment.files = updatedComment.files;
+
+                          if (mounted) {
+                            setState(() {});
+                            showSuccessSnackBar(
+                              context,
+                              'A comment has updated',
+                            );
+                          }
+                        },
+                        onDeleted: (deletedComment) {
+                          post?.comments.removeWhere(
+                            (comment) => comment.idx == deletedComment.idx,
+                          );
+
+                          post!.no_of_comment -= 1;
+
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        },
+                        onReplyClicked: setReplyMode,
+                        onEditClicked: setEditMode,
+                      ),
+                    ]),
+                  ),
+                ),
+
+                /// Bottom spacing to prevent content from being hidden behind the sticky comment input
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).viewInsets.bottom > 0
+                        ? 0
+                        : 100,
                   ),
                 ),
               ],
             ),
-      bottomNavigationBar: post != null
-          ? SafeArea(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: scheme.surface,
-                  border: Border(
-                    top: BorderSide(color: scheme.outlineVariant, width: 1.0),
-                  ),
+
+      /// Sticky comment input at the bottom (like chat apps)
+      bottomSheet: post != null
+          ? Container(
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                border: Border(
+                  top: BorderSide(color: scheme.outlineVariant, width: 1.0),
                 ),
+              ),
+              child: SafeArea(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
