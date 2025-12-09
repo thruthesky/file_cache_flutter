@@ -53,64 +53,64 @@ class _MainHomeState extends State<MainHome> {
           /// Uses reusable AppHeader widget for consistent header design
           /// Layout: [필고] ─── [Avatar] [Settings]
           /// 재사용 가능한 AppHeader 위젯 사용
-          SliverToBoxAdapter(
-            child: AppHeader(
-              /// Leading Widget - PhilGo Logo (리딩 위젯 - 필고 로고)
-              /// Displays PhilGo triangle logo before title
-              /// Size: 48 (smaller than default 64)
-              leading: Logo(size: 48),
+          // SliverToBoxAdapter(
+          //   child: AppHeader(
+          //     /// Leading Widget - PhilGo Logo (리딩 위젯 - 필고 로고)
+          //     /// Displays PhilGo triangle logo before title
+          //     /// Size: 48 (smaller than default 64)
+          //     leading: Logo(size: 48),
 
-              /// Title removed - only logo is displayed (타이틀 삭제 - 로고만 표시)
-              title: '',
+          //     /// Title removed - only logo is displayed (타이틀 삭제 - 로고만 표시)
+          //     title: '',
 
-              /// Action buttons displayed after avatar (아바타 뒤에 표시되는 액션 버튼들)
-              actions: [
-                /// Create Post Button (글쓰기 버튼)
-                /// MenuAnchor 기반 2단계 드롭다운 메뉴
-                /// - 1단계: 메인 카테고리 목록 표시
-                /// - 2단계: 서브 카테고리가 있으면 SubmenuButton으로 확장 표시
-                /// Two-level dropdown menu using MenuAnchor
-                /// - Level 1: Main category list
-                /// - Level 2: SubmenuButton for categories with sub-categories
-                MenuAnchor(
-                  /// 메뉴 스타일 (elevation 0, flat design)
-                  /// Menu style (elevation 0, flat design)
-                  style: MenuStyle(
-                    elevation: WidgetStatePropertyAll(0),
-                    backgroundColor: WidgetStatePropertyAll(
-                      scheme.surfaceContainerHighest,
-                    ),
-                  ),
+          //     /// Action buttons displayed after avatar (아바타 뒤에 표시되는 액션 버튼들)
+          //     actions: [
+          //       /// Create Post Button (글쓰기 버튼)
+          //       /// MenuAnchor 기반 2단계 드롭다운 메뉴
+          //       /// - 1단계: 메인 카테고리 목록 표시
+          //       /// - 2단계: 서브 카테고리가 있으면 SubmenuButton으로 확장 표시
+          //       /// Two-level dropdown menu using MenuAnchor
+          //       /// - Level 1: Main category list
+          //       /// - Level 2: SubmenuButton for categories with sub-categories
+          //       MenuAnchor(
+          //         /// 메뉴 스타일 (elevation 0, flat design)
+          //         /// Menu style (elevation 0, flat design)
+          //         style: MenuStyle(
+          //           elevation: WidgetStatePropertyAll(0),
+          //           backgroundColor: WidgetStatePropertyAll(
+          //             scheme.surfaceContainerHighest,
+          //           ),
+          //         ),
 
-                  /// 메뉴 아이템 빌더
-                  /// Menu items builder
-                  menuChildren: _buildCategoryMenuItems(context),
+          //         /// 메뉴 아이템 빌더
+          //         /// Menu items builder
+          //         menuChildren: _buildCategoryMenuItems(context),
 
-                  /// 메뉴 버튼 빌더
-                  /// Menu button builder
-                  builder: (context, controller, child) {
-                    return IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.lightPlusLarge,
-                        color: scheme.onSurface,
-                        size: 24,
-                      ),
-                      tooltip: 'Create Post',
-                      onPressed: () {
-                        /// 메뉴 열기/닫기 토글
-                        /// Toggle menu open/close
-                        if (controller.isOpen) {
-                          controller.close();
-                        } else {
-                          controller.open();
-                        }
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
+          //         /// 메뉴 버튼 빌더
+          //         /// Menu button builder
+          //         builder: (context, controller, child) {
+          //           return IconButton(
+          //             icon: FaIcon(
+          //               FontAwesomeIcons.lightPlusLarge,
+          //               color: scheme.onSurface,
+          //               size: 24,
+          //             ),
+          //             tooltip: 'Create Post',
+          //             onPressed: () {
+          //               /// 메뉴 열기/닫기 토글
+          //               /// Toggle menu open/close
+          //               if (controller.isOpen) {
+          //                 controller.close();
+          //               } else {
+          //                 controller.open();
+          //               }
+          //             },
+          //           );
+          //         },
+          //       ),
+          //     ],
+          //   ),
+          // ),
 
           /// [Top Banners]
           /// 상단 배너 - 전체 페이지 배너 표시
@@ -130,7 +130,7 @@ class _MainHomeState extends State<MainHome> {
                 Expanded(
                   child: HomePostSection(
                     postId: 'freetalk',
-                    limit: 4,
+                    limit: 3,
                     onMoreTap: () {
                       /// ForumHome으로 이동하면서 freetalk 선택
                       /// Navigate to ForumHome with freetalk selected
@@ -154,7 +154,7 @@ class _MainHomeState extends State<MainHome> {
                 Expanded(
                   child: HomePostSection(
                     postId: 'qna',
-                    limit: 4,
+                    limit: 3,
                     onMoreTap: () {
                       /// ForumHome으로 이동하면서 qna 선택
                       /// Navigate to ForumHome with qna selected
