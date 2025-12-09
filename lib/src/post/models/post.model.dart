@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// 기존 필고 DB 에서는 글과 코멘트를 하나의 테이블로 쓰고 있다. 그래서 Post 와 Comment 를 같이 쓴다.
 class Post {

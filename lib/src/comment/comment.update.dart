@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 class CommentUpdate extends StatefulWidget {
   const CommentUpdate({
@@ -178,7 +178,10 @@ class _CommentUpdateState extends State<CommentUpdate> {
                 await onUpdateComment();
               },
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
           ),
         ),
       ],

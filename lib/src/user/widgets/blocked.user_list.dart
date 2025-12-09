@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// 차단된 사용자 목록 바텀시트 - Comic Design
 /// Shows bottom sheet with list of blocked users
@@ -104,7 +104,9 @@ class BlockedUserList extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              PhilgoTr.of(context)!.error_with_message(snapshot.error.toString()),
+              PhilgoTr.of(
+                context,
+              )!.error_with_message(snapshot.error.toString()),
             ),
           );
         }

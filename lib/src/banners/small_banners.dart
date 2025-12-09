@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './banner.model.dart';
 
@@ -107,6 +107,7 @@ class _SmallBannersState extends State<SmallBanners> {
                   topLeft: Radius.circular(8),
                   bottomLeft: Radius.circular(8),
                 ),
+
                 /// CachedNetworkImage: 이미지 캐싱으로 성능 향상
                 /// CachedNetworkImage: Improved performance with image caching
                 child: CachedNetworkImage(

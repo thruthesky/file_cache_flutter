@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// 게시물 및 댓글 신고 버튼 위젯
 ///
@@ -53,10 +53,14 @@ class _PostReportButtonState extends State<PostReportButton> {
         tr.report_reason_category_error,
         tr.report_reason_abuse,
         tr.report_reason_spam,
-        tr.report_reason_other
+        tr.report_reason_other,
       ];
     } else if (type == 'comment') {
-      return [tr.report_reason_abuse, tr.report_reason_spam, tr.report_reason_other];
+      return [
+        tr.report_reason_abuse,
+        tr.report_reason_spam,
+        tr.report_reason_other,
+      ];
     }
     return [tr.report_reason_other];
   }
@@ -114,14 +118,17 @@ class _PostReportButtonState extends State<PostReportButton> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent, // Comic Design: transparent for custom styling
+      backgroundColor:
+          Colors.transparent, // Comic Design: transparent for custom styling
       elevation: 0, // Comic Design: no shadow
       builder: (BuildContext context) {
         return Container(
           decoration: BoxDecoration(
             color: scheme.surface,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12.0), // Comic Design: rounded top corners
+              topLeft: Radius.circular(
+                12.0,
+              ), // Comic Design: rounded top corners
               topRight: Radius.circular(12.0),
             ),
             border: Border(
@@ -129,14 +136,8 @@ class _PostReportButtonState extends State<PostReportButton> {
                 color: scheme.outline,
                 width: 2.0, // Comic Design: 2.0 border
               ),
-              left: BorderSide(
-                color: scheme.outline,
-                width: 2.0,
-              ),
-              right: BorderSide(
-                color: scheme.outline,
-                width: 2.0,
-              ),
+              left: BorderSide(color: scheme.outline, width: 2.0),
+              right: BorderSide(color: scheme.outline, width: 2.0),
             ),
           ),
           child: SafeArea(
@@ -179,10 +180,7 @@ class _PostReportButtonState extends State<PostReportButton> {
                 ),
 
                 // Comic Design: 2.0 border separator
-                Container(
-                  height: 2,
-                  color: scheme.outline,
-                ),
+                Container(height: 2, color: scheme.outline),
 
                 // 신고 사유 목록
                 ...reasons.map(
@@ -231,11 +229,7 @@ class _PostReportButtonState extends State<PostReportButton> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                FontAwesomeIcons.flag,
-                size: 16,
-                color: scheme.onSurface,
-              ),
+              Icon(FontAwesomeIcons.flag, size: 16, color: scheme.onSurface),
               const SizedBox(width: 6),
               Text(
                 "${PhilgoTr.of(context)!.report}${currentReportCounter > 0 ? ' $currentReportCounter' : ''}",

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 class ReceiveShareDialog extends StatefulWidget {
   const ReceiveShareDialog({super.key, required this.data});
@@ -79,7 +79,9 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                 children: [
                   Text(
                     PhilgoConfig.categories.isNotEmpty
-                        ? PhilgoTr.of(context)!.receive_share_choose_post_or_chat
+                        ? PhilgoTr.of(
+                            context,
+                          )!.receive_share_choose_post_or_chat
                         : PhilgoTr.of(context)!.receive_share_choose_chat,
                   ),
                   Row(
@@ -90,7 +92,9 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                         Expanded(
                           child: ShareWhereButton(
                             onTap: () => setState(() => tab = 'post'),
-                            text: PhilgoTr.of(context)!.receive_share_create_post,
+                            text: PhilgoTr.of(
+                              context,
+                            )!.receive_share_create_post,
                             color: Colors.blue,
                             icon: FaIcon(
                               FontAwesomeIcons.thinSquarePlus,
@@ -118,7 +122,9 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                                   );
                                 }
                               },
-                              text: PhilgoTr.of(context)!.receive_share_send_chat,
+                              text: PhilgoTr.of(
+                                context,
+                              )!.receive_share_send_chat,
                               color: sharable
                                   ? Colors.orange
                                   : Colors.grey[300]!,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// Dialog for confirming user block action
 class BlockUserDialog extends StatefulWidget {
@@ -28,9 +28,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
       // Comic design: no shadow
       elevation: 0,
       // Comic design: rounded corners (borderRadius: 12)
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       // Remove default background to use Container decoration
       backgroundColor: Colors.transparent,
       child: Container(
@@ -38,10 +36,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
           // Comic design: surface background color
           color: colorScheme.surface,
           // Comic design: 2.0px outline border with rounded corners
-          border: Border.all(
-            color: colorScheme.outline,
-            width: 2.0,
-          ),
+          border: Border.all(color: colorScheme.outline, width: 2.0),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -92,8 +87,9 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                 children: [
                   // Cancel button - Comic design neutral button
                   ElevatedButton(
-                    onPressed:
-                        _isLoading ? null : () => Navigator.of(context).pop(),
+                    onPressed: _isLoading
+                        ? null
+                        : () => Navigator.of(context).pop(),
                     style: ButtonStyle(
                       // Comic design: no shadow
                       elevation: WidgetStateProperty.all(0),
@@ -108,15 +104,19 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                         ),
                       ),
                       // Comic design: surface background
-                      backgroundColor:
-                          WidgetStateProperty.all(colorScheme.surface),
+                      backgroundColor: WidgetStateProperty.all(
+                        colorScheme.surface,
+                      ),
                       // Comic design: onSurface text color
-                      foregroundColor:
-                          WidgetStateProperty.all(colorScheme.onSurface),
+                      foregroundColor: WidgetStateProperty.all(
+                        colorScheme.onSurface,
+                      ),
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -159,7 +159,9 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -195,7 +197,10 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
         Navigator.of(context).pop();
         widget.onBlocked?.call();
         setState(() => _isLoading = false);
-        showSuccessSnackBar(context, PhilgoTr.of(context)!.success_user_blocked);
+        showSuccessSnackBar(
+          context,
+          PhilgoTr.of(context)!.success_user_blocked,
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -232,9 +237,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
       // Comic design: no shadow
       elevation: 0,
       // Comic design: rounded corners (borderRadius: 12)
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       // Remove default background to use Container decoration
       backgroundColor: Colors.transparent,
       child: Container(
@@ -242,10 +245,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
           // Comic design: surface background color
           color: colorScheme.surface,
           // Comic design: 2.0px outline border with rounded corners
-          border: Border.all(
-            color: colorScheme.outline,
-            width: 2.0,
-          ),
+          border: Border.all(color: colorScheme.outline, width: 2.0),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -283,8 +283,9 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
                 children: [
                   // Cancel button - Comic design neutral button
                   ElevatedButton(
-                    onPressed:
-                        _isLoading ? null : () => Navigator.of(context).pop(),
+                    onPressed: _isLoading
+                        ? null
+                        : () => Navigator.of(context).pop(),
                     style: ButtonStyle(
                       // Comic design: no shadow
                       elevation: WidgetStateProperty.all(0),
@@ -299,15 +300,19 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
                         ),
                       ),
                       // Comic design: surface background
-                      backgroundColor:
-                          WidgetStateProperty.all(colorScheme.surface),
+                      backgroundColor: WidgetStateProperty.all(
+                        colorScheme.surface,
+                      ),
                       // Comic design: onSurface text color
-                      foregroundColor:
-                          WidgetStateProperty.all(colorScheme.onSurface),
+                      foregroundColor: WidgetStateProperty.all(
+                        colorScheme.onSurface,
+                      ),
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -350,7 +355,9 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(

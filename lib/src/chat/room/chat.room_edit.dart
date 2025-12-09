@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 class ChatRoomEdit extends StatefulWidget {
   final ChatRoom room;
@@ -50,9 +50,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
       // Comic design: no shadow
       elevation: 0,
       // Comic design: rounded corners (borderRadius: 12)
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       // Remove default background to use Container decoration
       backgroundColor: Colors.transparent,
       child: Container(
@@ -61,10 +59,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
           // Comic design: surface background color
           color: colorScheme.surface,
           // Comic design: 2.0px outline border with rounded corners
-          border: Border.all(
-            color: colorScheme.outline,
-            width: 2.0,
-          ),
+          border: Border.all(color: colorScheme.outline, width: 2.0),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -121,7 +116,9 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                         controller: _descriptionController,
                         decoration: InputDecoration(
                           labelText: PhilgoTr.of(context)!.room_description,
-                          hintText: PhilgoTr.of(context)!.enter_room_description,
+                          hintText: PhilgoTr.of(
+                            context,
+                          )!.enter_room_description,
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.description),
                         ),
@@ -134,7 +131,9 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                       // Open Room Toggle
                       SwitchListTile(
                         title: Text(PhilgoTr.of(context)!.open_room),
-                        subtitle: Text(PhilgoTr.of(context)!.open_room_description),
+                        subtitle: Text(
+                          PhilgoTr.of(context)!.open_room_description,
+                        ),
                         value: _isOpen,
                         onChanged: _isLoading
                             ? null
@@ -181,8 +180,9 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                 children: [
                   // Cancel button - Comic design neutral button
                   ElevatedButton(
-                    onPressed:
-                        _isLoading ? null : () => Navigator.of(context).pop(),
+                    onPressed: _isLoading
+                        ? null
+                        : () => Navigator.of(context).pop(),
                     style: ButtonStyle(
                       // Comic design: no shadow
                       elevation: WidgetStateProperty.all(0),
@@ -197,15 +197,19 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                         ),
                       ),
                       // Comic design: surface background
-                      backgroundColor:
-                          WidgetStateProperty.all(colorScheme.surface),
+                      backgroundColor: WidgetStateProperty.all(
+                        colorScheme.surface,
+                      ),
                       // Comic design: onSurface text color
-                      foregroundColor:
-                          WidgetStateProperty.all(colorScheme.onSurface),
+                      foregroundColor: WidgetStateProperty.all(
+                        colorScheme.onSurface,
+                      ),
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -248,7 +252,9 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -508,7 +514,10 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
       });
 
       if (mounted) {
-        showSuccessSnackBar(context, PhilgoTr.of(context)!.profile_photo_removed);
+        showSuccessSnackBar(
+          context,
+          PhilgoTr.of(context)!.profile_photo_removed,
+        );
         // Call callback to refresh the UI
         widget.onRoomUpdated?.call();
       }

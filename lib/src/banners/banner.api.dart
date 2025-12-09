@@ -1,4 +1,4 @@
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 import 'dart:developer';
 
 /// 필고 광고 배너 API 클래스

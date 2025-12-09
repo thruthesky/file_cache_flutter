@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// 고정된 채팅방 목록 위젯
 ///
@@ -107,7 +107,9 @@ class PinnedChatRoomsList extends StatelessWidget {
                     child: Builder(
                       builder: (context) {
                         final filteredRoomIds = pinnedChatRooms.where((roomId) {
-                          final otherUserUid = getOtherUserUidFromChatRoomId(roomId);
+                          final otherUserUid = getOtherUserUidFromChatRoomId(
+                            roomId,
+                          );
                           if (otherUserUid == null) return false;
                           return !blockedUsers.contains(otherUserUid);
                         }).toList();
@@ -157,9 +159,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // Comic design: no shadow
         elevation: 0,
         // Comic design: rounded corners (borderRadius: 12)
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -167,10 +167,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: 2.0px outline border with rounded corners
-            border: Border.all(
-              color: colorScheme.outline,
-              width: 2.0,
-            ),
+            border: Border.all(color: colorScheme.outline, width: 2.0),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -191,7 +188,10 @@ class _PinnedChatRoomItem extends StatelessWidget {
 
               // Content section - Comic design spacing
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
                 child: Text(
                   PhilgoTr.of(context)!.unpin_chat_room_message,
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -223,15 +223,19 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           ),
                         ),
                         // Comic design: surface background
-                        backgroundColor:
-                            WidgetStateProperty.all(colorScheme.surface),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
                         // Comic design: onSurface text color
-                        foregroundColor:
-                            WidgetStateProperty.all(colorScheme.onSurface),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
@@ -258,15 +262,19 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           ),
                         ),
                         // Comic design: error background for destructive action
-                        backgroundColor:
-                            WidgetStateProperty.all(colorScheme.error),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.error,
+                        ),
                         // Comic design: onError text color
-                        foregroundColor:
-                            WidgetStateProperty.all(colorScheme.onError),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onError,
+                        ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
@@ -315,7 +323,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 에러 메시지 표시
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(PhilgoTr.of(context)!.error_with_message(e.toString())),
+            content: Text(
+              PhilgoTr.of(context)!.error_with_message(e.toString()),
+            ),
             duration: const Duration(seconds: 3),
           ),
         );

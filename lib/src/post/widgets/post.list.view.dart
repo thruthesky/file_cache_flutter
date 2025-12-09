@@ -1,4 +1,4 @@
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 import 'package:flutter/material.dart';
 
 /// Post List View - Wrapper widget that delegates to either grid or list view

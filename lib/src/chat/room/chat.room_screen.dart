@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -128,7 +128,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       loading: loading(),
       notLoggedIn: Scaffold(
         appBar: AppBar(title: Text(PhilgoTr.of(context)!.login_required)),
-        body: Center(child: Text(PhilgoTr.of(context)!.please_log_in_to_continue)),
+        body: Center(
+          child: Text(PhilgoTr.of(context)!.please_log_in_to_continue),
+        ),
       ),
     );
 

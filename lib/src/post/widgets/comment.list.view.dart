@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// 댓글 목록 뷰
 /// 게시글의 댓글 입력란, 댓글 헤더, 댓글 목록을 표시하는 위젯
@@ -37,6 +37,7 @@ class _CommentListViewState extends State<CommentListView> {
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               hintText: PhilgoTr.of(context)!.enter_your_comment,
+
               /// 전송 버튼 아이콘
               suffixIcon: Padding(
                 padding: const EdgeInsets.all(8.0),

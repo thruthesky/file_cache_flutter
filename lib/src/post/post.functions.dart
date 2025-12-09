@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 List<String?> getEnvironmentalPostId(String? postId, String? category) {
   if (PhilgoConfig.isDevelopment) {

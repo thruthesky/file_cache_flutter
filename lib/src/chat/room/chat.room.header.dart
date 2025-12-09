@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -299,9 +299,7 @@ class ChatRoomHeader extends StatelessWidget {
         // Comic design: no shadow
         elevation: 0,
         // Comic design: rounded corners (borderRadius: 12)
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -309,10 +307,7 @@ class ChatRoomHeader extends StatelessWidget {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: 2.0px outline border with rounded corners
-            border: Border.all(
-              color: colorScheme.outline,
-              width: 2.0,
-            ),
+            border: Border.all(color: colorScheme.outline, width: 2.0),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -333,7 +328,10 @@ class ChatRoomHeader extends StatelessWidget {
 
               // Content section - Comic design spacing
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
                 child: Text(
                   PhilgoTr.of(context)!.leave_room_confirmation,
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -365,15 +363,19 @@ class ChatRoomHeader extends StatelessWidget {
                           ),
                         ),
                         // Comic design: surface background
-                        backgroundColor:
-                            WidgetStateProperty.all(colorScheme.surface),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
                         // Comic design: onSurface text color
-                        foregroundColor:
-                            WidgetStateProperty.all(colorScheme.onSurface),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
@@ -400,15 +402,19 @@ class ChatRoomHeader extends StatelessWidget {
                           ),
                         ),
                         // Comic design: error background for destructive action
-                        backgroundColor:
-                            WidgetStateProperty.all(colorScheme.error),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.error,
+                        ),
                         // Comic design: onError text color
-                        foregroundColor:
-                            WidgetStateProperty.all(colorScheme.onError),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onError,
+                        ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
                           const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(

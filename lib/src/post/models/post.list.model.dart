@@ -1,4 +1,4 @@
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 class PostList {
   int page = 1; // 현재 페이지 번호

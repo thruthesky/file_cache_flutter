@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 class ChatRoomJoinListBuilder extends StatelessWidget {
   const ChatRoomJoinListBuilder({super.key, required this.builder});
@@ -32,7 +32,9 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(
             child: Text(
-              PhilgoTr.of(context)!.error_with_message(snapshot.error.toString()),
+              PhilgoTr.of(
+                context,
+              )!.error_with_message(snapshot.error.toString()),
             ),
           );
         }

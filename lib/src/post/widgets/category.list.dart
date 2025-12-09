@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// 카테고리 목록 위젯 (Category List Widget)
 ///

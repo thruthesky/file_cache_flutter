@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_v6_flutter.dart';
 
 /// Opinionated comment detail list view for post view screen.
 /// It does things as much as it can for the comment listing
@@ -28,9 +28,7 @@ class CommentDetailListView extends StatelessWidget {
   final Function(Comment) onEditClicked;
 
   bool hasReplies(Comment comment) {
-    return post!.comments.any(
-      (c) => c.idx_parent == comment.idx,
-    );
+    return post!.comments.any((c) => c.idx_parent == comment.idx);
   }
 
   @override
