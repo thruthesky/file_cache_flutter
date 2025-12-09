@@ -9,6 +9,7 @@ import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
 import 'package:philgo/widgets/home/home_post_section.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
+import 'package:philgo/widgets/theme/comic_fab.dart';
 import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
 
 /// 메인 홈 화면 (Main Home Screen)
@@ -33,7 +34,6 @@ class _MainHomeState extends State<MainHome> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
     /// CustomScrollView + Sliver 조합 사용
@@ -51,18 +51,20 @@ class _MainHomeState extends State<MainHome> {
 
       /// 글쓰기 FAB (Floating Action Button)
       /// Create Post FAB (Floating Action Button)
-      floatingActionButton: FloatingActionButton(
-        /// FAB 배경색
-        /// FAB background color
-        backgroundColor: scheme.primary,
-
-        /// FAB 아이콘
-        /// FAB icon
-        child: FaIcon(FontAwesomeIcons.plus, color: scheme.onPrimary),
-
+      /// Comic Design: 흰색 배경, 검정 아이콘, 2.0px 테두리, borderRadius 24
+      /// Comic Design: white background, black icon, 2.0px border, borderRadius 24
+      floatingActionButton: ComicFab(
         /// FAB 클릭 시 카테고리 선택 다이얼로그 표시
         /// Show category selection dialog on FAB tap
         onPressed: () => _showCategoryDialog(context),
+
+        /// FAB 툴팁
+        /// FAB tooltip
+        tooltip: '글쓰기',
+
+        /// FAB 아이콘
+        /// FAB icon
+        child: const FaIcon(FontAwesomeIcons.plus),
       ),
       body: ContentContainer(
         child: CustomScrollView(
