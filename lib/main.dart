@@ -13,7 +13,7 @@ import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
 import 'package:provider/provider.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

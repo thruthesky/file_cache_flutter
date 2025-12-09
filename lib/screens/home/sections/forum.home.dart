@@ -6,7 +6,7 @@ import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/widgets/headers/forum_header.dart';
 import 'package:philgo/widgets/headers/sub_category_list.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:philgo/widgets/post/post.card.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:provider/provider.dart';
@@ -39,8 +39,11 @@ class _ForumHomeState extends State<ForumHome> {
   /// Track last processed initialPostId to avoid duplicate processing
   String? _lastProcessedInitialPostId;
 
+  /// TODO: Very bad. Use controller pattern instead of global keys.
   final GlobalKey<PostSimpleListViewState> listViewKey = GlobalKey();
-  final GlobalKey<PostGridViewState> gridViewKey = GlobalKey();
+
+  /// TODO: Very bad. Use controller pattern instead of global keys.
+  final GlobalKey<PostMasonryViewState> gridViewKey = GlobalKey();
 
   /// 헤더 표시 여부 (스크롤에 따라 변경)
   /// Whether to show header (changes based on scroll)
@@ -133,7 +136,6 @@ class _ForumHomeState extends State<ForumHome> {
           setState(() => _showHeader = false);
         }
       }
-
       /// 스크롤 다운 (아래로 스와이프, 컨텐츠가 위로 이동) - 헤더 표시
       /// Scroll down (swipe down, content moves up) - show header
       else if (delta < 0) {
@@ -196,7 +198,10 @@ class _ForumHomeState extends State<ForumHome> {
                 decoration: BoxDecoration(
                   color: scheme.surface,
                   border: Border(
-                    bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
+                    bottom: BorderSide(
+                      color: scheme.outlineVariant,
+                      width: 1.0,
+                    ),
                   ),
                 ),
 

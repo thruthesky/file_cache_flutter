@@ -10,7 +10,7 @@ import 'package:philgo/widgets/home/home_popular_post_section.dart';
 import 'package:philgo/widgets/home/home_post_section.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 메인 홈 화면 (Main Home Screen)
 ///

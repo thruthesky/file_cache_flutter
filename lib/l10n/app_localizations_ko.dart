@@ -436,9 +436,6 @@ class LoKo extends Lo {
   String get enterCompanyName => '업체명을 입력하세요';
 
   @override
-  String get companyNameRequired => '회사명을 입력해주세요';
-
-  @override
   String get companyTitle => '업체 타이틀';
 
   @override
@@ -794,6 +791,9 @@ class LoKo extends Lo {
 
   @override
   String get logoutConfirmMessage => '로그아웃 하시겠습니까?';
+
+  @override
+  String get companyNameRequired => '회사명을 입력해주세요';
 
   @override
   String get companyTitleRequired => '회사 타이틀을 입력해주세요';
@@ -1281,4 +1281,19 @@ class LoKo extends Lo {
 
   @override
   String get subCategoryUsedCar => '중고차';
+
+  @override
+  String get postLiked => '게시글을 좋아합니다';
+
+  @override
+  String get alreadyLikedPost => '이미 좋아요한 게시글입니다';
+
+  @override
+  String get commentReplied => '답글이 추가되었습니다';
+
+  @override
+  String get commentUpdated => '댓글이 수정되었습니다';
+
+  @override
+  String get commentCreated => '댓글이 추가되었습니다';
 }

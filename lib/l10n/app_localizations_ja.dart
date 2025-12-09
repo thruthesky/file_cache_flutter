@@ -436,9 +436,6 @@ class LoJa extends Lo {
   String get enterCompanyName => '業者名を入力してください';
 
   @override
-  String get companyNameRequired => '会社名を入力してください';
-
-  @override
   String get companyTitle => '業者タイトル';
 
   @override
@@ -794,6 +791,9 @@ class LoJa extends Lo {
 
   @override
   String get logoutConfirmMessage => 'ログアウトしますか？';
+
+  @override
+  String get companyNameRequired => '会社名を入力してください';
 
   @override
   String get companyTitleRequired => '会社タイトルを入力してください';
@@ -1281,4 +1281,19 @@ class LoJa extends Lo {
 
   @override
   String get subCategoryUsedCar => '中古車';
+
+  @override
+  String get postLiked => '投稿にいいねしました';
+
+  @override
+  String get alreadyLikedPost => 'すでにいいね済みの投稿です';
+
+  @override
+  String get commentReplied => '返信が追加されました';
+
+  @override
+  String get commentUpdated => 'コメントが更新されました';
+
+  @override
+  String get commentCreated => 'コメントが追加されました';
 }

@@ -138,7 +138,7 @@
   "basicInformation": "기본 정보",
   "companyName": "업체명",
   "enterCompanyName": "업체명을 입력하세요",
-  "companyNameRequired": "업체명은 필수 항목입니다",
+  "companyNameRequired": "회사명을 입력해주세요",
   "companyTitle": "업체 타이틀",
   "enterCompanyTitle": "업체 타이틀 또는 슬로건을 입력하세요",
   "category": "카테고리",
@@ -252,7 +252,6 @@
   "languageTitle": "언어",
   "languageSubtitle": "앱 언어 설정 변경",
   "logoutConfirmMessage": "로그아웃 하시겠습니까?",
-  "companyNameRequired": "회사명을 입력해주세요",
   "companyTitleRequired": "회사 타이틀을 입력해주세요",
   "locationRequired": "위치를 선택해주세요",
   "addressRequired": "주소를 입력해주세요",
@@ -358,64 +357,1366 @@
   "points": "포인트",
   "appName": "필고",
   "appSlogan": "필리핀의 모든 것을 담았습니다",
-
   "categoryFreetalk": "자유게시판",
+  "@categoryFreetalk": {
+    "description": "자유게시판 카테고리명"
+  },
   "categoryQna": "묻고 답하기",
+  "@categoryQna": {
+    "description": "묻고 답하기 카테고리명"
+  },
   "categoryBuyandsell": "사고팔기",
+  "@categoryBuyandsell": {
+    "description": "사고팔기 카테고리명"
+  },
   "categoryBlog": "블로그",
+  "@categoryBlog": {
+    "description": "블로그 카테고리명"
+  },
   "categoryBoardingHouse": "하숙집/기숙사",
+  "@categoryBoardingHouse": {
+    "description": "하숙집/기숙사 카테고리명"
+  },
   "categoryCaution": "주의/경고",
+  "@categoryCaution": {
+    "description": "주의/경고 카테고리명"
+  },
   "categoryLookfor": "사람찾기",
+  "@categoryLookfor": {
+    "description": "사람찾기 카테고리명"
+  },
   "categoryFoodDelivery": "음식배달",
+  "@categoryFoodDelivery": {
+    "description": "음식배달 카테고리명"
+  },
   "categoryGreeting": "인사",
+  "@categoryGreeting": {
+    "description": "인사 카테고리명"
+  },
   "categoryWanted": "구인구직",
+  "@categoryWanted": {
+    "description": "구인구직 카테고리명"
+  },
   "categoryBusiness": "비즈니스",
+  "@categoryBusiness": {
+    "description": "비즈니스 카테고리명"
+  },
   "categoryMassage": "마사지",
+  "@categoryMassage": {
+    "description": "마사지 카테고리명"
+  },
   "categoryRest": "레스토랑",
+  "@categoryRest": {
+    "description": "레스토랑 카테고리명"
+  },
   "categorySchool": "학교",
+  "@categorySchool": {
+    "description": "학교 카테고리명"
+  },
   "categoryStudy": "어학연수",
+  "@categoryStudy": {
+    "description": "어학연수 카테고리명"
+  },
   "categoryTravel": "여행",
+  "@categoryTravel": {
+    "description": "여행 카테고리명"
+  },
   "categoryYoutube": "유튜브",
+  "@categoryYoutube": {
+    "description": "유튜브 카테고리명"
+  },
   "categoryMomcafe": "맘카페",
+  "@categoryMomcafe": {
+    "description": "맘카페 카테고리명"
+  },
   "categoryNews": "뉴스",
+  "@categoryNews": {
+    "description": "뉴스 카테고리명"
+  },
   "categoryNewcomer": "새내기",
+  "@categoryNewcomer": {
+    "description": "새내기 카테고리명"
+  },
   "categoryNature": "자연",
+  "@categoryNature": {
+    "description": "자연 카테고리명"
+  },
   "categoryCompanyInfo": "회사정보",
+  "@categoryCompanyInfo": {
+    "description": "회사정보 카테고리명"
+  },
   "categoryEnglishBiz": "영어비즈니스",
+  "@categoryEnglishBiz": {
+    "description": "영어비즈니스 카테고리명"
+  },
   "categoryTemp": "임시",
+  "@categoryTemp": {
+    "description": "임시 카테고리명"
+  },
   "categoryTravelGood": "추천여행지",
-
+  "@categoryTravelGood": {
+    "description": "추천여행지 카테고리명"
+  },
   "subCategoryDiscussion": "토론",
+  "@subCategoryDiscussion": {
+    "description": "토론 서브카테고리명"
+  },
   "subCategoryEncyclopedia": "백과",
+  "@subCategoryEncyclopedia": {
+    "description": "백과 서브카테고리명"
+  },
   "subCategoryHobby": "취미",
+  "@subCategoryHobby": {
+    "description": "취미 서브카테고리명"
+  },
   "subCategoryInfo": "정보",
+  "@subCategoryInfo": {
+    "description": "정보 서브카테고리명"
+  },
   "subCategoryKoPhCouple": "코필커플",
+  "@subCategoryKoPhCouple": {
+    "description": "코필커플 서브카테고리명"
+  },
   "subCategoryKopino": "코피노",
+  "@subCategoryKopino": {
+    "description": "코피노 서브카테고리명"
+  },
   "subCategoryImmigration": "이민",
+  "@subCategoryImmigration": {
+    "description": "이민 서브카테고리명"
+  },
   "subCategoryPhoto": "사진",
+  "@subCategoryPhoto": {
+    "description": "사진 서브카테고리명"
+  },
   "subCategoryLifeTips": "생활의팁",
+  "@subCategoryLifeTips": {
+    "description": "생활의팁 서브카테고리명"
+  },
   "subCategoryMissing": "행방불명",
+  "@subCategoryMissing": {
+    "description": "행방불명 서브카테고리명"
+  },
   "subCategoryIntlMarriage": "국제결혼",
+  "@subCategoryIntlMarriage": {
+    "description": "국제결혼 서브카테고리명"
+  },
   "subCategoryMeeting": "모임",
+  "@subCategoryMeeting": {
+    "description": "모임 서브카테고리명"
+  },
   "subCategoryColumn": "칼럼",
+  "@subCategoryColumn": {
+    "description": "칼럼 서브카테고리명"
+  },
   "subCategoryMukbang": "먹방",
+  "@subCategoryMukbang": {
+    "description": "먹방 서브카테고리명"
+  },
   "subCategoryNotice": "공지사항",
+  "@subCategoryNotice": {
+    "description": "공지사항 서브카테고리명"
+  },
   "subCategoryExperience": "경험담",
+  "@subCategoryExperience": {
+    "description": "경험담 서브카테고리명"
+  },
   "subCategoryStudyLearn": "공부",
+  "@subCategoryStudyLearn": {
+    "description": "공부 서브카테고리명"
+  },
   "subCategoryTyphoon": "태풍",
-
+  "@subCategoryTyphoon": {
+    "description": "태풍 서브카테고리명"
+  },
   "subCategoryBusinessPartner": "사업/동업구함",
+  "@subCategoryBusinessPartner": {
+    "description": "사업/동업구함 서브카테고리명"
+  },
   "subCategoryComputer": "컴퓨터/인터넷",
+  "@subCategoryComputer": {
+    "description": "컴퓨터/인터넷 서브카테고리명"
+  },
   "subCategoryExchange": "페소환전",
+  "@subCategoryExchange": {
+    "description": "페소환전 서브카테고리명"
+  },
   "subCategoryPhone": "핸드폰",
+  "@subCategoryPhone": {
+    "description": "핸드폰 서브카테고리명"
+  },
   "subCategoryHotel": "호텔",
+  "@subCategoryHotel": {
+    "description": "호텔 서브카테고리명"
+  },
   "subCategoryAppliances": "가전/생활용품",
+  "@subCategoryAppliances": {
+    "description": "가전/생활용품 서브카테고리명"
+  },
   "subCategoryGolf": "골프",
+  "@subCategoryGolf": {
+    "description": "골프 서브카테고리명"
+  },
   "subCategoryPromotion": "프로모션",
+  "@subCategoryPromotion": {
+    "description": "프로모션 서브카테고리명"
+  },
   "subCategoryPersonalMarket": "개인장터",
+  "@subCategoryPersonalMarket": {
+    "description": "개인장터 서브카테고리명"
+  },
   "subCategoryRealEstate": "부동산",
+  "@subCategoryRealEstate": {
+    "description": "부동산 서브카테고리명"
+  },
   "subCategoryHouseRental": "주택임대",
+  "@subCategoryHouseRental": {
+    "description": "주택임대 서브카테고리명"
+  },
   "subCategoryCarRental": "렌트카",
-  "subCategoryUsedCar": "중고차"
-
+  "@subCategoryCarRental": {
+    "description": "렌트카 서브카테고리명"
+  },
+  "subCategoryUsedCar": "중고차",
+  "@subCategoryUsedCar": {
+    "description": "중고차 서브카테고리명"
+  },
+  "postLiked": "게시글을 좋아합니다",
+  "alreadyLikedPost": "이미 좋아요한 게시글입니다",
+  "commentReplied": "답글이 추가되었습니다",
+  "commentUpdated": "댓글이 수정되었습니다",
+  "commentCreated": "댓글이 추가되었습니다",
+  "@login": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "@name": {
+    "description": "A field label for entering a name"
+  },
+  "@philgoCommunityTitle": {
+    "description": "Title for PhilGo Korean community carousel item"
+  },
+  "@philgoCommunitySubtitle": {
+    "description": "Subtitle for PhilGo Korean community carousel item"
+  },
+  "@realTimeInfoTitle": {
+    "description": "Title for real-time information sharing carousel item"
+  },
+  "@realTimeInfoSubtitle": {
+    "description": "Subtitle for real-time information sharing carousel item"
+  },
+  "@businessNetworkingTitle": {
+    "description": "Title for business networking carousel item"
+  },
+  "@businessNetworkingSubtitle": {
+    "description": "Subtitle for business networking carousel item"
+  },
+  "@safeCommunityTitle": {
+    "description": "Title for safe community carousel item"
+  },
+  "@safeCommunitySubtitle": {
+    "description": "Subtitle for safe community carousel item"
+  },
+  "@home": {
+    "description": "Home screen title"
+  },
+  "@chat": {
+    "description": "Chat navigation item label"
+  },
+  "@forum": {
+    "description": "Forum navigation item label"
+  },
+  "@create": {
+    "description": "Create/Write navigation item label"
+  },
+  "@company": {
+    "description": "Company/Business directory navigation item label"
+  },
+  "@menu": {
+    "description": "Menu navigation item label"
+  },
+  "@my": {
+    "description": "My page navigation item label"
+  },
+  "@loginWithPhoneTitle": {
+    "description": "AppBar title for phone login"
+  },
+  "@loginWithPhoneHeader": {
+    "description": "Header text above phone sign-in"
+  },
+  "@loginPhoneSmsNotice": {
+    "description": "Notice about SMS verification"
+  },
+  "@enterPhoneNumber": {
+    "description": "Label/hint for phone number field"
+  },
+  "@phoneNumber": {
+    "description": "Short label for phone number"
+  },
+  "@enterSmsCode": {
+    "description": "Label/hint for SMS code field"
+  },
+  "@resendSms": {
+    "description": "Resend SMS button label"
+  },
+  "@verifySmsCode": {
+    "description": "Verify SMS code button label"
+  },
+  "@verifyPhoneNumber": {
+    "description": "Verify phone number button label"
+  },
+  "@sendSmsCode": {
+    "description": "Button label to send an SMS verification code"
+  },
+  "@termsOfService": {
+    "description": "Terms link label and dialog title"
+  },
+  "@termsContent": {
+    "description": "Terms content placeholder"
+  },
+  "@privacyPolicy": {
+    "description": "Privacy policy link label and dialog title"
+  },
+  "@close": {
+    "description": "Close button label"
+  },
+  "@phoneAuthFailed": {
+    "description": "Verification failed"
+  },
+  "@community": {
+    "description": "Community category label"
+  },
+  "@qna": {
+    "description": "Questions and Answers category label"
+  },
+  "@discussion": {
+    "description": "Discussion category label"
+  },
+  "@business": {
+    "description": "Business category label"
+  },
+  "@buyAndSell": {
+    "description": "Buy and Sell category label"
+  },
+  "@hotel": {
+    "description": "Hotel category label"
+  },
+  "@jobs": {
+    "description": "Jobs category label"
+  },
+  "@noOfPosts": {
+    "description": "Number of posts in a category",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "@writePost": {
+    "description": "Button label to write a new post"
+  },
+  "@like": {
+    "description": "Like button label for posts"
+  },
+  "@comment": {
+    "description": "Comment button label for posts"
+  },
+  "@share": {
+    "description": "Share button label for posts"
+  },
+  "@editProfile": {
+    "description": "Edit Profile app bar label"
+  },
+  "@enterComment": {
+    "description": "Comments text field hint"
+  },
+  "@comments": {
+    "description": "Comments section header label"
+  },
+  "@beTheFirstToComment": {
+    "description": "Label posts with no comments under it"
+  },
+  "@reply": {
+    "description": "Button text to reply to a comment"
+  },
+  "@replying_to": {
+    "description": "Label shown when replying to a specific user"
+  },
+  "@editing_comment": {
+    "description": "Label shown when editing a comment"
+  },
+  "@nickname": {
+    "description": "Label for nickname field"
+  },
+  "@nicknameHint": {
+    "description": "Hint text for nickname field"
+  },
+  "@fullName": {
+    "description": "Label for full name field"
+  },
+  "@fullNameHint": {
+    "description": "Hint text for full name field"
+  },
+  "@birthDate": {
+    "description": "Label for birth date field"
+  },
+  "@gender": {
+    "description": "Label for gender field"
+  },
+  "@male": {
+    "description": "Label for male gender option"
+  },
+  "@female": {
+    "description": "Label for female gender option"
+  },
+  "@save": {
+    "description": "Save button text"
+  },
+  "@nicknameRequired": {
+    "description": "Error message when nickname is empty"
+  },
+  "@profileUpdateSuccess": {
+    "description": "Success message after profile update"
+  },
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "@title": {
+    "description": "Post title field label"
+  },
+  "@postTitleHint": {
+    "description": "Hint text for post title field"
+  },
+  "@content": {
+    "description": "Post content field label"
+  },
+  "@postContentHint": {
+    "description": "Hint text for post content field"
+  },
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "@titleRequired": {
+    "description": "Error message when title is empty"
+  },
+  "@contentRequired": {
+    "description": "Error message when content is empty"
+  },
+  "@writeIn": {
+    "description": "Text for write in category title (e.g., 'Write in Community')"
+  },
+  "@tapPhotoChange": {
+    "description": "Text instruction for changing profile photo"
+  },
+  "@nicknameDisplayHint": {
+    "description": "Hint text explaining nickname visibility"
+  },
+  "@enterRealNameHint": {
+    "description": "Hint text for entering real name"
+  },
+  "@selectBirthDateHint": {
+    "description": "Hint text for selecting birth date"
+  },
+  "@profileRequiredFieldsNotice": {
+    "description": "Notice explaining why name, gender, and birth date are required for identity verification"
+  },
+  "@menuTitle": {
+    "description": "Main menu section title"
+  },
+  "@menuSubtitle": {
+    "description": "Main menu section subtitle"
+  },
+  "@editProfileTitle": {
+    "description": "Edit profile menu item title"
+  },
+  "@editProfileSubtitle": {
+    "description": "Edit profile menu item subtitle"
+  },
+  "@openChatTitle": {
+    "description": "Open chat menu item title"
+  },
+  "@openChatSubtitle": {
+    "description": "Open chat menu item subtitle"
+  },
+  "@bannerAdTitle": {
+    "description": "Banner ad menu item title"
+  },
+  "@bannerAdSubtitle": {
+    "description": "Banner ad menu item subtitle"
+  },
+  "@pointAdTitle": {
+    "description": "Point ad menu item title"
+  },
+  "@pointAdSubtitle": {
+    "description": "Point ad menu item subtitle"
+  },
+  "@businessDirectoryTitle": {
+    "description": "Business directory menu item title"
+  },
+  "@businessDirectorySubtitle": {
+    "description": "Business directory menu item subtitle"
+  },
+  "@familySiteTitle": {
+    "description": "Family site menu item title"
+  },
+  "@familySiteSubtitle": {
+    "description": "Family site menu item subtitle"
+  },
+  "@appGuideTitle": {
+    "description": "App guide menu item title"
+  },
+  "@appGuideSubtitle": {
+    "description": "App guide menu item subtitle"
+  },
+  "@termsOfServiceTitle": {
+    "description": "Terms of service menu item title"
+  },
+  "@termsOfServiceSubtitle": {
+    "description": "Terms of service menu item subtitle"
+  },
+  "@privacyPolicyTitle": {
+    "description": "Privacy policy menu item title"
+  },
+  "@privacyPolicySubtitle": {
+    "description": "Privacy policy menu item subtitle"
+  },
+  "@withdrawTitle": {
+    "description": "Account withdrawal menu item title"
+  },
+  "@withdrawSubtitle": {
+    "description": "Account withdrawal menu item subtitle"
+  },
+  "@logoutTitle": {
+    "description": "Logout menu item title"
+  },
+  "@logoutSubtitle": {
+    "description": "Logout menu item subtitle"
+  },
+  "@year": {
+    "description": "Year label for date selector"
+  },
+  "@month": {
+    "description": "Month label for date selector"
+  },
+  "@day": {
+    "description": "Day label for date selector"
+  },
+  "@yearUnit": {
+    "description": "Year unit suffix (empty for English)"
+  },
+  "@monthUnit": {
+    "description": "Month unit suffix (empty for English)"
+  },
+  "@dayUnit": {
+    "description": "Day unit suffix (empty for English)"
+  },
+  "@selectYearAndMonthFirst": {
+    "description": "Error message when trying to select day without year and month"
+  },
+  "@selectYearFirst": {
+    "description": "Error message when trying to select day without year"
+  },
+  "@selectMonthFirst": {
+    "description": "Error message when trying to select day without month"
+  },
+  "@preferNotToSay": {
+    "description": "Gender option for users who prefer not to disclose their gender"
+  },
+  "@userProfile": {
+    "description": "Title for user profile screen"
+  },
+  "@unknownUser": {
+    "description": "Default text when user nickname is not available"
+  },
+  "@profileInformation": {
+    "description": "Section title for user profile information"
+  },
+  "@additionalInfoNotAvailable": {
+    "description": "Message shown when no additional user information is available"
+  },
+  "@confirmDeletePost": {
+    "description": "Confirmation message for deleting a post"
+  },
+  "@postDeletedSuccess": {
+    "description": "Success message after deleting a post"
+  },
+  "@confirmDeleteImage": {
+    "description": "Confirmation message for deleting an image"
+  },
+  "@imageDeletedSuccess": {
+    "description": "Success message after deleting an image"
+  },
+  "@alert": {
+    "description": "Alert dialog title"
+  },
+  "@postWithCommentsCannotBeDeleted": {
+    "description": "Error message when trying to delete a post that has comments"
+  },
+  "@postWithCommentsCannotBeEdited": {
+    "description": "Error message when trying to edit a post that has comments"
+  },
+  "@companyDirectoryTitle": {
+    "description": "Title for company directory screen"
+  },
+  "@addCompany": {
+    "description": "Button text for adding a new company"
+  },
+  "@companyDirectoryDescription": {
+    "description": "Description text for company directory"
+  },
+  "@registerCompany": {
+    "description": "Button text for registering a company"
+  },
+  "@updateCompany": {
+    "description": "Button text for updating a company"
+  },
+  "@companiesRegistered": {
+    "description": "Text showing number of companies registered",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@viewMore": {
+    "description": "Button text to view more items"
+  },
+  "@noRegisteredCompanies": {
+    "description": "Empty state message when no companies are registered"
+  },
+  "@registerCompanyPrompt": {
+    "description": "Prompt text encouraging users to register a company"
+  },
+  "@location": {
+    "description": "Label for location information"
+  },
+  "@contactInformation": {
+    "description": "Section title for contact information"
+  },
+  "@mobileNumber": {
+    "description": "Label for mobile number"
+  },
+  "@description": {
+    "description": "Label for description section"
+  },
+  "@familySite": {
+    "description": "Label for family site section"
+  },
+  "@basicInformation": {
+    "description": "Section title for basic information"
+  },
+  "@companyName": {
+    "description": "Label for company name field"
+  },
+  "@enterCompanyName": {
+    "description": "Hint text for company name field"
+  },
+  "@companyTitle": {
+    "description": "Label for company title field"
+  },
+  "@enterCompanyTitle": {
+    "description": "Hint text for company title field"
+  },
+  "@category": {
+    "description": "Label for category field"
+  },
+  "@selectCategory": {
+    "description": "Hint text for category dropdown"
+  },
+  "@pleaseSelectCategory": {
+    "description": "Error message for category selection"
+  },
+  "@enterDescription": {
+    "description": "Hint text for description field"
+  },
+  "@locationInformation": {
+    "description": "Section title for location information"
+  },
+  "@enterLocation": {
+    "description": "Hint text for location field"
+  },
+  "@address": {
+    "description": "Label for address field"
+  },
+  "@enterAddress": {
+    "description": "Hint text for address field"
+  },
+  "@enterMobileNumber": {
+    "description": "Hint text for mobile number field"
+  },
+  "@images": {
+    "description": "Section title for images"
+  },
+  "@logoImage": {
+    "description": "Label for logo image field"
+  },
+  "@titleImage": {
+    "description": "Label for title image field"
+  },
+  "@businessLicense": {
+    "description": "Label for business license field"
+  },
+  "@tapToUploadImage": {
+    "description": "Hint text for image upload"
+  },
+  "@companyRegistered": {
+    "description": "Success message for company registration"
+  },
+  "@companyUpdated": {
+    "description": "Success message for company update"
+  },
+  "@mobileContactMethod": {
+    "description": "Label for mobile contact method selection"
+  },
+  "@sendText": {
+    "description": "Option for text message contact method"
+  },
+  "@makeCall": {
+    "description": "Option for phone call contact method"
+  },
+  "@guideWelcomeTitle": {
+    "description": "Welcome title in app guide"
+  },
+  "@guideWelcomeSubtitle": {
+    "description": "Welcome subtitle in app guide"
+  },
+  "@guideFeaturesTitle": {
+    "description": "Features section title in app guide"
+  },
+  "@guideFeatureCommunityTitle": {
+    "description": "Community feature title"
+  },
+  "@guideFeatureCommunityDesc": {
+    "description": "Community feature description"
+  },
+  "@guideFeatureChatTitle": {
+    "description": "Chat feature title"
+  },
+  "@guideFeatureChatDesc": {
+    "description": "Chat feature description"
+  },
+  "@guideFeatureDirectoryTitle": {
+    "description": "Business directory feature title"
+  },
+  "@guideFeatureDirectoryDesc": {
+    "description": "Business directory feature description"
+  },
+  "@guideFeatureWriteTitle": {
+    "description": "Write feature title"
+  },
+  "@guideFeatureWriteDesc": {
+    "description": "Write feature description"
+  },
+  "@guideTipsTitle": {
+    "description": "Tips section title in app guide"
+  },
+  "@guideTip1": {
+    "description": "First tip in app guide"
+  },
+  "@guideTip2": {
+    "description": "Second tip in app guide"
+  },
+  "@guideTip3": {
+    "description": "Third tip in app guide"
+  },
+  "@guideTip4": {
+    "description": "Fourth tip in app guide"
+  },
+  "@guideFaqTitle": {
+    "description": "FAQ section title in app guide"
+  },
+  "@guideFaqQ1": {
+    "description": "First FAQ question"
+  },
+  "@guideFaqA1": {
+    "description": "First FAQ answer"
+  },
+  "@guideFaqQ2": {
+    "description": "Second FAQ question"
+  },
+  "@guideFaqA2": {
+    "description": "Second FAQ answer"
+  },
+  "@guideFaqQ3": {
+    "description": "Third FAQ question"
+  },
+  "@guideFaqA3": {
+    "description": "Third FAQ answer"
+  },
+  "@guideFaqQ4": {
+    "description": "Fourth FAQ question"
+  },
+  "@guideFaqA4": {
+    "description": "Fourth FAQ answer"
+  },
+  "@accountWithdrawalTitle": {
+    "description": "Account withdrawal screen title"
+  },
+  "@withdrawalIntroTitle": {
+    "description": "Withdrawal intro section title"
+  },
+  "@withdrawalIntroSubtitle": {
+    "description": "Withdrawal intro section subtitle"
+  },
+  "@withdrawalStep1Title": {
+    "description": "Step 1 title for data deletion"
+  },
+  "@withdrawalAccountInfoTitle": {
+    "description": "Account information section title"
+  },
+  "@withdrawalAccountInfoDesc": {
+    "description": "Account information description"
+  },
+  "@withdrawalUsageHistoryTitle": {
+    "description": "Usage history section title"
+  },
+  "@withdrawalUsageHistoryDesc": {
+    "description": "Usage history description"
+  },
+  "@withdrawalAdditionalDataTitle": {
+    "description": "Additional data section title"
+  },
+  "@withdrawalAdditionalDataDesc": {
+    "description": "Additional data description"
+  },
+  "@withdrawalPaymentNote": {
+    "description": "Note about payment data retention"
+  },
+  "@withdrawalStep2Title": {
+    "description": "Step 2 title for deletion method"
+  },
+  "@withdrawalEmailRequest": {
+    "description": "Email request method"
+  },
+  "@withdrawalStep3Title": {
+    "description": "Step 3 title for processing timeline"
+  },
+  "@withdrawalProcessingDesc": {
+    "description": "Processing timeline description"
+  },
+  "@withdrawalIrreversibleNote": {
+    "description": "Warning about irreversible deletion"
+  },
+  "@withdrawalStep4Title": {
+    "description": "Step 4 title for data retention exceptions"
+  },
+  "@withdrawalRetentionDesc": {
+    "description": "Data retention exception description"
+  },
+  "@withdrawalStep5Title": {
+    "description": "Step 5 title for contact information"
+  },
+  "@withdrawalContactDesc": {
+    "description": "Contact information description"
+  },
+  "@requestWithdrawal": {
+    "description": "Button text to request account withdrawal"
+  },
+  "@guideGettingStartedTitle": {
+    "description": "Getting started section title"
+  },
+  "@guideStep1Title": {
+    "description": "Step 1 title"
+  },
+  "@guideStep1Desc": {
+    "description": "Step 1 description"
+  },
+  "@guideStep2Title": {
+    "description": "Step 2 title"
+  },
+  "@guideStep2Desc": {
+    "description": "Step 2 description"
+  },
+  "@guideStep3Title": {
+    "description": "Step 3 title"
+  },
+  "@guideStep3Desc": {
+    "description": "Step 3 description"
+  },
+  "@guideStep4Title": {
+    "description": "Step 4 title"
+  },
+  "@guideStep4Desc": {
+    "description": "Step 4 description"
+  },
+  "@bookmarked_folders": {
+    "description": "Title for bookmarked folders dialog"
+  },
+  "@no_bookmarked_folders": {
+    "description": "Message when there are no bookmarked folders"
+  },
+  "@bookmarked_chats": {
+    "description": "Title for bookmarked chats dialog"
+  },
+  "@no_bookmarked_chats": {
+    "description": "Message when there are no bookmarked chats in a folder"
+  },
+  "@unpin_chat_room_title": {
+    "description": "Title for unpin chat room confirmation dialog"
+  },
+  "@unpin_chat_room_message": {
+    "description": "Message for unpin chat room confirmation dialog"
+  },
+  "@pin": {
+    "description": "Pin button text"
+  },
+  "@unpin": {
+    "description": "Unpin button text"
+  },
+  "@chat_room_unpinned": {
+    "description": "Success message after unpinning chat room"
+  },
+  "@myActivity": {
+    "description": "Title for my activity screen"
+  },
+  "@myPosts": {
+    "description": "Tab label for my posts"
+  },
+  "@myComments": {
+    "description": "Tab label for my comments"
+  },
+  "@posts": {
+    "description": "Label for posts"
+  },
+  "@noPostsYet": {
+    "description": "Empty state message when user has no posts"
+  },
+  "@noCommentsYet": {
+    "description": "Empty state message when user has no comments"
+  },
+  "@views": {
+    "description": "Label for view count"
+  },
+  "@ago": {
+    "description": "Suffix for time ago"
+  },
+  "@justNow": {
+    "description": "Text for very recent time"
+  },
+  "@minutesAgo": {
+    "description": "Minutes ago format",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAgo": {
+    "description": "Hours ago format",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@daysAgo": {
+    "description": "Days ago format",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeksAgo": {
+    "description": "Weeks ago format",
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "@monthsAgo": {
+    "description": "Months ago format",
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "@yearsAgo": {
+    "description": "Years ago format",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@latestPosts": {
+    "description": "Title for latest posts section"
+  },
+  "@latestComments": {
+    "description": "Title for latest comments section"
+  },
+  "@viewAll": {
+    "description": "Button text to view all items"
+  },
+  "@advertisementSpace": {
+    "description": "Placeholder text for advertisement banner"
+  },
+  "@lv": {
+    "description": "Abbreviation for level"
+  },
+  "@settings": {
+    "description": "Settings button tooltip and menu label"
+  },
+  "@languageSettings": {
+    "description": "Language settings screen title"
+  },
+  "@selectLanguage": {
+    "description": "Language dropdown hint text"
+  },
+  "@saveLanguage": {
+    "description": "Save language button text"
+  },
+  "@languageChanged": {
+    "description": "Success message after changing language"
+  },
+  "@languageTitle": {
+    "description": "Language menu item title"
+  },
+  "@languageSubtitle": {
+    "description": "Language menu item subtitle"
+  },
+  "@logoutConfirmMessage": {
+    "description": "Logout confirmation message"
+  },
+  "@companyNameRequired": {
+    "description": "Error message when company name is empty"
+  },
+  "@companyTitleRequired": {
+    "description": "Error message when company title is empty"
+  },
+  "@locationRequired": {
+    "description": "Error message when location is empty"
+  },
+  "@addressRequired": {
+    "description": "Error message when address is empty"
+  },
+  "@descriptionRequired": {
+    "description": "Error message when description is empty"
+  },
+  "@landlineRequired": {
+    "description": "Error message when landline is empty"
+  },
+  "@mobileNumberRequired": {
+    "description": "Error message when mobile number is empty"
+  },
+  "@logoRequired": {
+    "description": "Error message when logo is not uploaded"
+  },
+  "@detailedInformation": {
+    "description": "Step title for detailed information"
+  },
+  "@imageUpload": {
+    "description": "Step title for image upload"
+  },
+  "@kakaoQrCodeDeleted": {
+    "description": "Success message after deleting Kakao QR code"
+  },
+  "@failedToDelete": {
+    "description": "Error message when deletion fails"
+  },
+  "@companyLogoDeleted": {
+    "description": "Success message after deleting company logo"
+  },
+  "@failedToDeletePhoto": {
+    "description": "Error message when photo deletion fails"
+  },
+  "@businessLicenseDeleted": {
+    "description": "Success message after deleting business license"
+  },
+  "@failedToDeleteLicense": {
+    "description": "Error message when license deletion fails"
+  },
+  "@companyIntroImageDeleted": {
+    "description": "Success message after deleting company intro image"
+  },
+  "@failedToDeleteImage": {
+    "description": "Error message when image deletion fails"
+  },
+  "@officeInteriorDeleted": {
+    "description": "Success message after deleting office interior photo"
+  },
+  "@back": {
+    "description": "Back button label"
+  },
+  "@next": {
+    "description": "Next button label"
+  },
+  "@failedToLoadCompanies": {
+    "description": "Error message when companies fail to load"
+  },
+  "@retry": {
+    "description": "Retry button label"
+  },
+  "@noCompaniesFound": {
+    "description": "Empty state title when no companies are found"
+  },
+  "@noCompaniesInCategory": {
+    "description": "Empty state message for companies in a specific category",
+    "placeholders": {
+      "categoryName": {
+        "type": "String",
+        "example": "Restaurant"
+      }
+    }
+  },
+  "@editMyCompany": {
+    "description": "Tooltip for edit company button"
+  },
+  "@addMyCompany": {
+    "description": "Tooltip for add company button"
+  },
+  "@allCategories": {
+    "description": "Filter chip label to show all categories"
+  },
+  "@publicOffice": {
+    "description": "Public office category name"
+  },
+  "@publicOfficeDesc": {
+    "description": "Public office category description"
+  },
+  "@education": {
+    "description": "Education category name"
+  },
+  "@educationDesc": {
+    "description": "Education category description"
+  },
+  "@foodAndDrink": {
+    "description": "Food and drink category name"
+  },
+  "@foodAndDrinkDesc": {
+    "description": "Food and drink category description"
+  },
+  "@transportation": {
+    "description": "Transportation category name"
+  },
+  "@transportationDesc": {
+    "description": "Transportation category description"
+  },
+  "@healthAndHospitals": {
+    "description": "Health category name"
+  },
+  "@healthAndHospitalsDesc": {
+    "description": "Health category description"
+  },
+  "@shoppingAndMarts": {
+    "description": "Shopping category name"
+  },
+  "@shoppingAndMartsDesc": {
+    "description": "Shopping category description"
+  },
+  "@bankingAndFinance": {
+    "description": "Banking category name"
+  },
+  "@bankingAndFinanceDesc": {
+    "description": "Banking category description"
+  },
+  "@gadgets": {
+    "description": "Gadgets category name"
+  },
+  "@gadgetsDesc": {
+    "description": "Gadgets category description"
+  },
+  "@travelAndTourism": {
+    "description": "Travel category name"
+  },
+  "@travelAndTourismDesc": {
+    "description": "Travel category description"
+  },
+  "@hotels": {
+    "description": "Hotels category name"
+  },
+  "@hotelsDesc": {
+    "description": "Hotels category description"
+  },
+  "@carRental": {
+    "description": "Car rental category name"
+  },
+  "@carRentalDesc": {
+    "description": "Car rental category description"
+  },
+  "@beautyAndWellness": {
+    "description": "Beauty category name"
+  },
+  "@beautyAndWellnessDesc": {
+    "description": "Beauty category description"
+  },
+  "@realEstate": {
+    "description": "Real estate category name"
+  },
+  "@realEstateDesc": {
+    "description": "Real estate category description"
+  },
+  "@entertainment": {
+    "description": "Entertainment category name"
+  },
+  "@entertainmentDesc": {
+    "description": "Entertainment category description"
+  },
+  "@spaAndRelaxation": {
+    "description": "Spa category name"
+  },
+  "@spaAndRelaxationDesc": {
+    "description": "Spa category description"
+  },
+  "@otherServices": {
+    "description": "Other services category name"
+  },
+  "@otherServicesDesc": {
+    "description": "Other services category description"
+  },
+  "@account": {
+    "description": "Account section title in menu"
+  },
+  "@advertising": {
+    "description": "Advertising section title in menu"
+  },
+  "@support": {
+    "description": "Support section title in menu"
+  },
+  "@accountActions": {
+    "description": "Account actions section title in menu"
+  },
+  "@blockedUsers": {
+    "description": "Blocked users menu item"
+  },
+  "@writingGuide": {
+    "description": "Writing guide section title"
+  },
+  "@postDefamationWarning": {
+    "description": "Warning about defamation in posts"
+  },
+  "@postSpamWarning": {
+    "description": "Warning about spam in posts"
+  },
+  "@postPersonalInfoWarning": {
+    "description": "Warning about personal information in posts"
+  },
+  "@postCopyrightWarning": {
+    "description": "Warning about copyright in posts"
+  },
+  "@updatePrefix": {
+    "description": "Prefix for update screen title"
+  },
+  "@uploadInProgress": {
+    "description": "Error message when trying to submit while upload is in progress"
+  },
+  "@about": {
+    "description": "About screen title"
+  },
+  "@welcomeToAboutScreen": {
+    "description": "Welcome message on about screen"
+  },
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+  "@enterKakaotalkId": {
+    "description": "Hint text for KakaoTalk ID field"
+  },
+  "@kakaoChannelUrlPlaceholder": {
+    "description": "Placeholder for Kakao channel URL field"
+  },
+  "@enterTelegramId": {
+    "description": "Hint text for Telegram ID field"
+  },
+  "@companyNameExample": {
+    "description": "Example text for company name field"
+  },
+  "@enterFamilySiteName": {
+    "description": "Hint text for family site name field"
+  },
+  "@enterFamilySiteDescription": {
+    "description": "Hint text for family site description field"
+  },
+  "@couldNotLaunchEmailApp": {
+    "description": "Error message when email app cannot be launched"
+  },
+  "@error": {
+    "description": "Generic error label"
+  },
+  "@useCompanyDomain": {
+    "description": "Checkbox label for using company domain"
+  },
+  "@seoFeaturesMessage": {
+    "description": "Information about SEO features"
+  },
+  "@familySiteDomain": {
+    "description": "Label for family site domain field"
+  },
+  "@familySiteName": {
+    "description": "Label for family site name field"
+  },
+  "@familySiteDescription": {
+    "description": "Label for family site description field"
+  },
+  "@kakaoId": {
+    "description": "Label for KakaoTalk ID field"
+  },
+  "@uploadKakaoQrCode": {
+    "description": "Label for Kakao QR code upload"
+  },
+  "@kakaoChannelUrl": {
+    "description": "Label for Kakao channel URL field"
+  },
+  "@telegramId": {
+    "description": "Label for Telegram ID field"
+  },
+  "@businessType": {
+    "description": "Label for business type field"
+  },
+  "@companyLogo": {
+    "description": "Label for company logo upload"
+  },
+  "@companyIntroImage": {
+    "description": "Label for company introduction image upload"
+  },
+  "@companyIntroImageGuideline": {
+    "description": "Guideline text for company introduction image"
+  },
+  "@officeInteriorPhoto": {
+    "description": "Label for office/store interior photo upload"
+  },
+  "@officeInteriorGuideline": {
+    "description": "Guideline text for office interior photo"
+  },
+  "@loginToSeeProfile": {
+    "description": "Text prompting user to login to view their profile"
+  },
+  "@viewPostsCommentsPoints": {
+    "description": "Description of what user can see after logging in"
+  },
+  "@updateYourNickname": {
+    "description": "Placeholder text when user has no nickname"
+  },
+  "@points": {
+    "description": "Label for user points/score"
+  },
+  "@philgoPhoneLogin": {
+    "description": "Title for phone number login"
+  },
+  "@phoneNumberExample": {
+    "description": "Example text for phone number input format"
+  },
+  "@appName": {
+    "description": "App name displayed on entry screen"
+  },
+  "@appSlogan": {
+    "description": "App slogan displayed on entry screen"
+  },
+  "@postLiked": {
+    "description": "Success message when user likes a post"
+  },
+  "@alreadyLikedPost": {
+    "description": "Error message when user tries to like an already liked post"
+  },
+  "@commentReplied": {
+    "description": "Success message when comment reply is created"
+  },
+  "@commentUpdated": {
+    "description": "Success message when comment is updated"
+  },
+  "@commentCreated": {
+    "description": "Success message when comment is created"
+  }
 }

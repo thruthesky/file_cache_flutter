@@ -1002,7 +1002,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
-  philgo_v6_flutter:
+  philgo_api:
     dependency: "direct main"
     description:
       path: "packages/philgo_v6_flutter"

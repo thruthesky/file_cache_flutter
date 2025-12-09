@@ -5,7 +5,7 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/widgets/favorite_folders_dialog.dart';
 import 'package:philgo/widgets/bookmarked_chats_dialog.dart';
 import 'package:provider/provider.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 class ChatHome extends StatefulWidget {
   const ChatHome({super.key});

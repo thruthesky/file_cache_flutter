@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_section_header.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 홈 화면 인기글 섹션 위젯 (Home Popular Post Section Widget)
 ///

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -97,58 +97,6 @@ class _PostCardState extends State<PostCard> {
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                  ),
-                  const SizedBox(height: 6),
-
-                  /// User info and date
-                  Row(
-                    children: [
-                      Avatar(
-                        photoUrl: widget.post.photo_url,
-                        size: 18,
-                        radius: 9,
-                      ),
-                      const SizedBox(width: 4),
-
-                      // User nickname
-                      Expanded(
-                        child: Text(
-                          widget.post.nickname.isEmpty
-                              ? PhilgoTr.of(context)!.no_name
-                              : cut(widget.post.nickname, 5),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 11,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-
-                      const SizedBox(width: 8),
-
-                      // Date
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.calendar,
-                            size: 11,
-                            color: Colors.white.withValues(alpha: 0.9),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            formatTimestamp(context, widget.post.stamp * 1000),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 11,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ],
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -290,61 +238,6 @@ class _PostCardState extends State<PostCard> {
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                    ),
-                    const SizedBox(height: 8),
-
-                    /// User info and date
-                    Row(
-                      children: [
-                        Avatar(
-                          photoUrl: widget.post.photo_url,
-                          size: 18,
-                          radius: 9,
-                        ),
-                        const SizedBox(width: 4),
-
-                        // User nickname
-                        Expanded(
-                          child: Text(
-                            widget.post.nickname.isEmpty
-                                ? PhilgoTr.of(context)!.no_name
-                                : cut(widget.post.nickname, 5),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                              fontSize: 11,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ),
-
-                        const SizedBox(width: 8),
-
-                        // Date
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.calendar,
-                              size: 11,
-                              color: scheme.onSurfaceVariant,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              formatTimestamp(
-                                context,
-                                widget.post.stamp * 1000,
-                              ),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                                fontSize: 11,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
                   ],
                 ),

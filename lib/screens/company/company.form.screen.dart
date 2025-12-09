@@ -11,7 +11,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/step.progress.indicator.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 회사 정보 입력 폼 화면 - 멀티스텝
 /// Multi-step company form screen with transitions

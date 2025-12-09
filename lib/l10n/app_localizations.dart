@@ -929,12 +929,6 @@ abstract class Lo {
   /// **'Enter company name'**
   String get enterCompanyName;
 
-  /// Error message when company name is empty
-  ///
-  /// In en, this message translates to:
-  /// **'Company name is required'**
-  String get companyNameRequired;
-
   /// Label for company title field
   ///
   /// In en, this message translates to:
@@ -1613,6 +1607,12 @@ abstract class Lo {
   /// **'Are you sure you want to logout?'**
   String get logoutConfirmMessage;
 
+  /// Error message when company name is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Company name is required'**
+  String get companyNameRequired;
+
   /// Error message when company title is empty
   ///
   /// In en, this message translates to:
@@ -2243,341 +2243,371 @@ abstract class Lo {
   /// **'Everything about the Philippines'**
   String get appSlogan;
 
-  /// No description provided for @categoryFreetalk.
+  /// Free talk category name
   ///
   /// In en, this message translates to:
   /// **'Free Talk'**
   String get categoryFreetalk;
 
-  /// No description provided for @categoryQna.
+  /// Q&A category name
   ///
   /// In en, this message translates to:
   /// **'Q&A'**
   String get categoryQna;
 
-  /// No description provided for @categoryBuyandsell.
+  /// Buy and sell category name
   ///
   /// In en, this message translates to:
   /// **'Buy & Sell'**
   String get categoryBuyandsell;
 
-  /// No description provided for @categoryBlog.
+  /// Blog category name
   ///
   /// In en, this message translates to:
   /// **'Blog'**
   String get categoryBlog;
 
-  /// No description provided for @categoryBoardingHouse.
+  /// Boarding house category name
   ///
   /// In en, this message translates to:
   /// **'Boarding House'**
   String get categoryBoardingHouse;
 
-  /// No description provided for @categoryCaution.
+  /// Caution category name
   ///
   /// In en, this message translates to:
   /// **'Caution'**
   String get categoryCaution;
 
-  /// No description provided for @categoryLookfor.
+  /// Looking for category name
   ///
   /// In en, this message translates to:
   /// **'Looking For'**
   String get categoryLookfor;
 
-  /// No description provided for @categoryFoodDelivery.
+  /// Food delivery category name
   ///
   /// In en, this message translates to:
   /// **'Food Delivery'**
   String get categoryFoodDelivery;
 
-  /// No description provided for @categoryGreeting.
+  /// Greetings category name
   ///
   /// In en, this message translates to:
   /// **'Greetings'**
   String get categoryGreeting;
 
-  /// No description provided for @categoryWanted.
+  /// Jobs/wanted category name
   ///
   /// In en, this message translates to:
   /// **'Jobs'**
   String get categoryWanted;
 
-  /// No description provided for @categoryBusiness.
+  /// Business category name
   ///
   /// In en, this message translates to:
   /// **'Business'**
   String get categoryBusiness;
 
-  /// No description provided for @categoryMassage.
+  /// Massage category name
   ///
   /// In en, this message translates to:
   /// **'Massage'**
   String get categoryMassage;
 
-  /// No description provided for @categoryRest.
+  /// Restaurant category name
   ///
   /// In en, this message translates to:
   /// **'Restaurant'**
   String get categoryRest;
 
-  /// No description provided for @categorySchool.
+  /// School category name
   ///
   /// In en, this message translates to:
   /// **'School'**
   String get categorySchool;
 
-  /// No description provided for @categoryStudy.
+  /// Study category name
   ///
   /// In en, this message translates to:
   /// **'Study'**
   String get categoryStudy;
 
-  /// No description provided for @categoryTravel.
+  /// Travel category name
   ///
   /// In en, this message translates to:
   /// **'Travel'**
   String get categoryTravel;
 
-  /// No description provided for @categoryYoutube.
+  /// YouTube category name
   ///
   /// In en, this message translates to:
   /// **'YouTube'**
   String get categoryYoutube;
 
-  /// No description provided for @categoryMomcafe.
+  /// Mom cafe category name
   ///
   /// In en, this message translates to:
   /// **'Mom Cafe'**
   String get categoryMomcafe;
 
-  /// No description provided for @categoryNews.
+  /// News category name
   ///
   /// In en, this message translates to:
   /// **'News'**
   String get categoryNews;
 
-  /// No description provided for @categoryNewcomer.
+  /// Newcomer category name
   ///
   /// In en, this message translates to:
   /// **'Newcomer'**
   String get categoryNewcomer;
 
-  /// No description provided for @categoryNature.
+  /// Nature category name
   ///
   /// In en, this message translates to:
   /// **'Nature'**
   String get categoryNature;
 
-  /// No description provided for @categoryCompanyInfo.
+  /// Company info category name
   ///
   /// In en, this message translates to:
   /// **'Company Info'**
   String get categoryCompanyInfo;
 
-  /// No description provided for @categoryEnglishBiz.
+  /// English business category name
   ///
   /// In en, this message translates to:
   /// **'English Business'**
   String get categoryEnglishBiz;
 
-  /// No description provided for @categoryTemp.
+  /// Temporary category name
   ///
   /// In en, this message translates to:
   /// **'Temporary'**
   String get categoryTemp;
 
-  /// No description provided for @categoryTravelGood.
+  /// Travel recommendations category name
   ///
   /// In en, this message translates to:
   /// **'Travel Recommendations'**
   String get categoryTravelGood;
 
-  /// No description provided for @subCategoryDiscussion.
+  /// Discussion subcategory name
   ///
   /// In en, this message translates to:
   /// **'Discussion'**
   String get subCategoryDiscussion;
 
-  /// No description provided for @subCategoryEncyclopedia.
+  /// Encyclopedia subcategory name
   ///
   /// In en, this message translates to:
   /// **'Encyclopedia'**
   String get subCategoryEncyclopedia;
 
-  /// No description provided for @subCategoryHobby.
+  /// Hobby subcategory name
   ///
   /// In en, this message translates to:
   /// **'Hobby'**
   String get subCategoryHobby;
 
-  /// No description provided for @subCategoryInfo.
+  /// Info subcategory name
   ///
   /// In en, this message translates to:
   /// **'Info'**
   String get subCategoryInfo;
 
-  /// No description provided for @subCategoryKoPhCouple.
+  /// Korean-Filipino couple subcategory name
   ///
   /// In en, this message translates to:
   /// **'Korean-Filipino Couple'**
   String get subCategoryKoPhCouple;
 
-  /// No description provided for @subCategoryKopino.
+  /// Kopino subcategory name
   ///
   /// In en, this message translates to:
   /// **'Kopino'**
   String get subCategoryKopino;
 
-  /// No description provided for @subCategoryImmigration.
+  /// Immigration subcategory name
   ///
   /// In en, this message translates to:
   /// **'Immigration'**
   String get subCategoryImmigration;
 
-  /// No description provided for @subCategoryPhoto.
+  /// Photo subcategory name
   ///
   /// In en, this message translates to:
   /// **'Photo'**
   String get subCategoryPhoto;
 
-  /// No description provided for @subCategoryLifeTips.
+  /// Life tips subcategory name
   ///
   /// In en, this message translates to:
   /// **'Life Tips'**
   String get subCategoryLifeTips;
 
-  /// No description provided for @subCategoryMissing.
+  /// Missing subcategory name
   ///
   /// In en, this message translates to:
   /// **'Missing'**
   String get subCategoryMissing;
 
-  /// No description provided for @subCategoryIntlMarriage.
+  /// International marriage subcategory name
   ///
   /// In en, this message translates to:
   /// **'International Marriage'**
   String get subCategoryIntlMarriage;
 
-  /// No description provided for @subCategoryMeeting.
+  /// Meetup subcategory name
   ///
   /// In en, this message translates to:
   /// **'Meetup'**
   String get subCategoryMeeting;
 
-  /// No description provided for @subCategoryColumn.
+  /// Column subcategory name
   ///
   /// In en, this message translates to:
   /// **'Column'**
   String get subCategoryColumn;
 
-  /// No description provided for @subCategoryMukbang.
+  /// Mukbang subcategory name
   ///
   /// In en, this message translates to:
   /// **'Mukbang'**
   String get subCategoryMukbang;
 
-  /// No description provided for @subCategoryNotice.
+  /// Notice subcategory name
   ///
   /// In en, this message translates to:
   /// **'Notice'**
   String get subCategoryNotice;
 
-  /// No description provided for @subCategoryExperience.
+  /// Experience subcategory name
   ///
   /// In en, this message translates to:
   /// **'Experience'**
   String get subCategoryExperience;
 
-  /// No description provided for @subCategoryStudyLearn.
+  /// Study/learn subcategory name
   ///
   /// In en, this message translates to:
   /// **'Study'**
   String get subCategoryStudyLearn;
 
-  /// No description provided for @subCategoryTyphoon.
+  /// Typhoon subcategory name
   ///
   /// In en, this message translates to:
   /// **'Typhoon'**
   String get subCategoryTyphoon;
 
-  /// No description provided for @subCategoryBusinessPartner.
+  /// Business partner subcategory name
   ///
   /// In en, this message translates to:
   /// **'Business Partner'**
   String get subCategoryBusinessPartner;
 
-  /// No description provided for @subCategoryComputer.
+  /// Computer/internet subcategory name
   ///
   /// In en, this message translates to:
   /// **'Computer/Internet'**
   String get subCategoryComputer;
 
-  /// No description provided for @subCategoryExchange.
+  /// Peso exchange subcategory name
   ///
   /// In en, this message translates to:
   /// **'Peso Exchange'**
   String get subCategoryExchange;
 
-  /// No description provided for @subCategoryPhone.
+  /// Mobile phone subcategory name
   ///
   /// In en, this message translates to:
   /// **'Mobile Phone'**
   String get subCategoryPhone;
 
-  /// No description provided for @subCategoryHotel.
+  /// Hotel subcategory name
   ///
   /// In en, this message translates to:
   /// **'Hotel'**
   String get subCategoryHotel;
 
-  /// No description provided for @subCategoryAppliances.
+  /// Appliances subcategory name
   ///
   /// In en, this message translates to:
   /// **'Appliances'**
   String get subCategoryAppliances;
 
-  /// No description provided for @subCategoryGolf.
+  /// Golf subcategory name
   ///
   /// In en, this message translates to:
   /// **'Golf'**
   String get subCategoryGolf;
 
-  /// No description provided for @subCategoryPromotion.
+  /// Promotion subcategory name
   ///
   /// In en, this message translates to:
   /// **'Promotion'**
   String get subCategoryPromotion;
 
-  /// No description provided for @subCategoryPersonalMarket.
+  /// Personal market subcategory name
   ///
   /// In en, this message translates to:
   /// **'Personal Market'**
   String get subCategoryPersonalMarket;
 
-  /// No description provided for @subCategoryRealEstate.
+  /// Real estate subcategory name
   ///
   /// In en, this message translates to:
   /// **'Real Estate'**
   String get subCategoryRealEstate;
 
-  /// No description provided for @subCategoryHouseRental.
+  /// House rental subcategory name
   ///
   /// In en, this message translates to:
   /// **'House Rental'**
   String get subCategoryHouseRental;
 
-  /// No description provided for @subCategoryCarRental.
+  /// Car rental subcategory name
   ///
   /// In en, this message translates to:
   /// **'Car Rental'**
   String get subCategoryCarRental;
 
-  /// No description provided for @subCategoryUsedCar.
+  /// Used car subcategory name
   ///
   /// In en, this message translates to:
   /// **'Used Car'**
   String get subCategoryUsedCar;
+
+  /// Success message when user likes a post
+  ///
+  /// In en, this message translates to:
+  /// **'Post liked'**
+  String get postLiked;
+
+  /// Error message when user tries to like an already liked post
+  ///
+  /// In en, this message translates to:
+  /// **'You have already liked this post'**
+  String get alreadyLikedPost;
+
+  /// Success message when comment reply is created
+  ///
+  /// In en, this message translates to:
+  /// **'Reply added successfully'**
+  String get commentReplied;
+
+  /// Success message when comment is updated
+  ///
+  /// In en, this message translates to:
+  /// **'Comment updated successfully'**
+  String get commentUpdated;
+
+  /// Success message when comment is created
+  ///
+  /// In en, this message translates to:
+  /// **'Comment added successfully'**
+  String get commentCreated;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

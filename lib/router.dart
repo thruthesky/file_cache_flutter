@@ -11,7 +11,6 @@ import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/settings/language.screen.dart';
-import 'package:philgo/screens/theme/theme.preview.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
@@ -21,7 +20,7 @@ import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -310,11 +309,6 @@ final router = GoRouter(
       path: AccountWithdrawalScreen.routeName,
       name: AccountWithdrawalScreen.routeName,
       builder: (context, state) => const AccountWithdrawalScreen(),
-    ),
-    GoRoute(
-      path: ThemePreviewScreen.routeName,
-      name: ThemePreviewScreen.routeName,
-      builder: (context, state) => const ThemePreviewScreen(),
     ),
     GoRoute(
       path: LanguageScreen.routeName,

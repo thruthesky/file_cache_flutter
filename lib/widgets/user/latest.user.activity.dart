@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// Grid layout for user's latest posts and comments
 /// Clean minimal design with 2-column grid

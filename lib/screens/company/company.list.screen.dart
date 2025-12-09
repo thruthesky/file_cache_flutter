@@ -6,7 +6,7 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// Category Model
 /// Represents a company category with id, name, description, and icon

@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
 
 /// Minimalist inline user profile and statistics
@@ -56,31 +56,32 @@ class UserStats extends StatelessWidget {
 
                   /// Name and level
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user.nickname.isNotEmpty
-                              ? user.nickname
-                              : T.updateYourNickname,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: scheme.onSurface,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: sp.s4),
-                        Text(
-                          '${T.lv} ${user.level ?? 0}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    )
-                        .animate()
-                        .fadeIn(duration: 300.ms, delay: 100.ms)
-                        .slideX(begin: -0.2, end: 0, duration: 300.ms),
+                    child:
+                        Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.nickname.isNotEmpty
+                                      ? user.nickname
+                                      : T.updateYourNickname,
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: scheme.onSurface,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: sp.s4),
+                                Text(
+                                  '${T.lv} ${user.level ?? 0}',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: scheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            )
+                            .animate()
+                            .fadeIn(duration: 300.ms, delay: 100.ms)
+                            .slideX(begin: -0.2, end: 0, duration: 300.ms),
                   ),
                 ],
               ),
@@ -120,10 +121,7 @@ class UserStats extends StatelessWidget {
 
 /// Minimal stat item - just number and label, no decoration
 class _MinimalStat extends StatelessWidget {
-  const _MinimalStat({
-    required this.value,
-    required this.label,
-  });
+  const _MinimalStat({required this.value, required this.label});
 
   final int value;
   final String label;

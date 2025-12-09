@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 서브 카테고리 목록 위젯 (Sub Category List Widget)
 ///

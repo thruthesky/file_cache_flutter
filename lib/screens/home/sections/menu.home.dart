@@ -15,7 +15,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/dialogs/policy.dialogs.dart';
 import 'package:philgo/widgets/home/menu/menu.item.dart';
 import 'package:philgo/widgets/home/menu/menu.section.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 class MenuHome extends StatefulWidget {
   const MenuHome({super.key});

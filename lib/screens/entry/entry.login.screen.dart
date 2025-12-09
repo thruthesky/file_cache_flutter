@@ -10,7 +10,7 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/dialogs/policy.dialogs.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 class EntryLoginScreen extends StatefulWidget {
   const EntryLoginScreen({super.key});

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';

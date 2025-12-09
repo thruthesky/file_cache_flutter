@@ -5,7 +5,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/state/app.state.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
 
 import 'sections/user.posts.dart';

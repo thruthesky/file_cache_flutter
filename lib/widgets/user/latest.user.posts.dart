@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,7 +6,7 @@ import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/widgets/post/compact.post.list.tile.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
 
 /// 사용자 최근 게시글 위젯 - 최근 3개의 게시글을 표시

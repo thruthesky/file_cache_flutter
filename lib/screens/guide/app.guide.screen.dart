@@ -8,7 +8,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_card.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// App guide screen
 /// A screen that guides users through the main features and usage of the PhilGo app.

@@ -4,7 +4,7 @@ import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/sections/main.home.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'sections/chat.home.dart';
 import 'sections/forum.home.dart';
 import 'sections/company.home.dart';

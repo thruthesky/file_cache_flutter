@@ -8,7 +8,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/intro.header.dart';
 import 'package:philgo/widgets/information.box.dart';
 import 'package:philgo/widgets/theme/comic_card.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Account withdrawal screen
@@ -337,10 +337,7 @@ class ProcessingInfoWidget extends StatelessWidget {
 
     return ComicListCard(
           padding: EdgeInsets.all(sp.s16),
-          child: Text(
-            text,
-            style: theme.textTheme.bodyMedium,
-          ),
+          child: Text(text, style: theme.textTheme.bodyMedium),
         )
         .animate(target: isAnimated ? 1 : 0)
         .fadeIn(duration: 600.ms, delay: 800.ms)
@@ -382,12 +379,7 @@ class RetentionInfoWidget extends StatelessWidget {
                 iconColor: scheme.tertiary,
               ),
               SizedBox(width: sp.s16),
-              Expanded(
-                child: Text(
-                  text,
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
+              Expanded(child: Text(text, style: theme.textTheme.bodyMedium)),
             ],
           ),
         )
@@ -428,12 +420,7 @@ class ContactInfoWidget extends StatelessWidget {
                 borderRadius: 12,
               ),
               SizedBox(width: sp.s16),
-              Expanded(
-                child: Text(
-                  text,
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
+              Expanded(child: Text(text, style: theme.textTheme.bodyMedium)),
             ],
           ),
         )
@@ -464,9 +451,9 @@ class RequestWithdrawalButtonWidget extends StatelessWidget {
         await launchUrl(emailUri);
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(T.couldNotLaunchEmailApp)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(T.couldNotLaunchEmailApp)));
         }
       }
     } catch (e) {

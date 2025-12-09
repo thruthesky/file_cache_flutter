@@ -3,7 +3,7 @@ import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -497,7 +497,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                         if (context.mounted) {
                                           showSuccessSnackBar(
                                             context,
-                                            'Post liked',
+                                            Lo.of(context)!.postLiked,
                                           );
                                         }
                                       } catch (e) {
@@ -508,7 +508,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           if (context.mounted) {
                                             showErrorSnackBar(
                                               context,
-                                              'Already liked this post',
+                                              Lo.of(context)!.alreadyLikedPost,
                                             );
                                           }
                                         }
@@ -638,7 +638,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             setState(() {});
                             showSuccessSnackBar(
                               context,
-                              'A comment has replied',
+                              Lo.of(context)!.commentReplied,
                             );
                           }
                         },
@@ -650,7 +650,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             setState(() {});
                             showSuccessSnackBar(
                               context,
-                              'A comment has updated',
+                              Lo.of(context)!.commentUpdated,
                             );
                           }
                         },
@@ -673,11 +673,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ),
 
                 /// Bottom spacing to prevent content from being hidden behind the sticky comment input
+                /// On iOS, we need more space to account for the bottomSheet height
                 SliverToBoxAdapter(
                   child: SizedBox(
                     height: MediaQuery.of(context).viewInsets.bottom > 0
-                        ? 0
-                        : 100,
+                        ? MediaQuery.of(context).viewInsets.bottom
+                        : 200,
                   ),
                 ),
               ],
@@ -765,7 +766,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                     // Input field (switches between CommentToPost, ReplyToComment, and CommentUpdate)
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.only(
+                        top: 16,
+                        bottom: 32,
+                        left: 16,
+                        right: 16,
+                      ),
                       child: editingComment != null
                           ? CommentUpdate(
                               comment: editingComment!,
@@ -788,7 +794,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                   setState(() {});
                                   showSuccessSnackBar(
                                     context,
-                                    'A comment has updated',
+                                    Lo.of(context)!.commentUpdated,
                                   );
                                 }
                               },
@@ -818,7 +824,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                   setState(() {});
                                   showSuccessSnackBar(
                                     context,
-                                    'A comment has replied',
+                                    Lo.of(context)!.commentReplied,
                                   );
                                 }
                               },
@@ -833,7 +839,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                   setState(() {});
                                   showSuccessSnackBar(
                                     context,
-                                    'Comment has created',
+                                    Lo.of(context)!.commentCreated,
                                   );
                                 }
                               },

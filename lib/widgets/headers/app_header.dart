@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
-
 
 /// AppHeader Widget (앱 헤더 위젯)
 ///
@@ -83,7 +82,8 @@ class AppHeader extends StatelessWidget {
 
     /// Default padding if not provided
     /// 패딩이 제공되지 않은 경우 기본 패딩 사용
-    final effectivePadding = padding ??
+    final effectivePadding =
+        padding ??
         EdgeInsets.only(
           top: sp.s12,
           bottom: sp.s12,
@@ -108,10 +108,7 @@ class AppHeader extends StatelessWidget {
           children: [
             /// Leading Widget (리딩 위젯)
             /// Displays logo or custom widget before title
-            if (leading != null) ...[
-              leading!,
-              SizedBox(width: sp.s8),
-            ],
+            if (leading != null) ...[leading!, SizedBox(width: sp.s8)],
 
             /// App Title (앱 타이틀)
             /// Displays app name on the left side

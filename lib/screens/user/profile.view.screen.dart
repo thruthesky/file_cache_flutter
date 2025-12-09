@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/widgets/home/main/user.stats.dart';
 import 'package:philgo/widgets/user/latest.user.posts.dart';
-import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
-// import 'package:philgo_v6_flutter/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
+// import 'package:philgo_api/philgo_api.dart';
 
 class ProfileViewScreen extends StatefulWidget {
   static const String routeName = '/user-profile';
