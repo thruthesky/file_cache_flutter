@@ -1,426 +1,1722 @@
 {
-    "@@locale": "zh",
-    "login": "登录",
-    "name": "名字",
-    "philgoCommunityTitle": "菲律宾最大的韩国人社区",
-    "philgoCommunitySubtitle": "在PhilGo上找到所有关于菲律宾生活的信息",
-    "realTimeInfoTitle": "实时信息共享",
-    "realTimeInfoSubtitle": "实时查看菲律宾当地新闻和生活信息",
-    "businessNetworkingTitle": "商业网络",
-    "businessNetworkingSubtitle": "与在菲律宾做生意的韩国人建立联系",
-    "safeCommunityTitle": "安全社区",
-    "safeCommunitySubtitle": "经过验证的会员的可信赖社区",
-    "home": "主页",
-    "chat": "聊天",
-    "forum": "论坛",
-    "create": "发布",
-    "company": "商家",
-    "menu": "菜单",
-    "my": "我的",
-    "sendSmsCode": "发送短信验证码",
-    "noOfPosts": "{count}篇文章",
-    "writePost": "写文章",
-    "like": "点赞",
-    "comment": "评论",
-    "share": "分享",
-    "editProfile": "编辑个人资料",
-    "beTheFirstToComment": "成为第一个发表评论的人",
-    "reply": "回复",
-    "replying_to": "正在回复",
-    "editing_comment": "编辑评论中",
-    "nickname": "昵称",
-    "nicknameHint": "请输入昵称",
-    "fullName": "姓名",
-    "fullNameHint": "请输入姓名",
-    "birthDate": "出生日期",
-    "gender": "性别",
-    "male": "男性",
-    "female": "女性",
-    "save": "保存",
-    "nicknameRequired": "请输入昵称",
-    "profileUpdateSuccess": "个人资料更新成功",
-    "cancel": "取消",
-    "title": "标题",
-    "postTitleHint": "请输入帖子标题",
-    "content": "内容",
-    "postContentHint": "请在此处输入帖子内容...",
-    "submit": "提交",
-    "titleRequired": "请输入标题",
-    "contentRequired": "请输入帖子内容",
-    "writeIn": "在以下写文章",
-    "preferNotToSay": "不愿透露",
-    "loginWithPhoneTitle": "手机号码登录",
-    "loginWithPhoneHeader": "使用手机号码登录。",
-    "loginPhoneSmsNotice": "为了验证手机号码，将发送短信。",
-    "enterPhoneNumber": "请输入手机号码。",
-    "phoneNumber": "手机号码",
-    "enterSmsCode": "请输入短信验证码。",
-    "resendSms": "重新发送短信",
-    "verifySmsCode": "验证短信验证码",
-    "verifyPhoneNumber": "验证手机号码",
-    "termsOfService": "服务条款",
-    "termsContent": "服务条款内容",
-    "privacyPolicy": "隐私政策",
-    "close": "关闭",
-    "phoneAuthFailed": "手机号码验证失败",
-    "community": "社区",
-    "qna": "问答",
-    "discussion": "讨论",
-    "business": "商务",
-    "buyAndSell": "买卖",
-    "hotel": "酒店",
-    "jobs": "招聘",
-    "enterComment": "请输入评论",
-    "comments": "评论",
-    "tapPhotoChange": "点击照片进行更改",
-    "nicknameDisplayHint": "此名称将显示给其他用户",
-    "enterRealNameHint": "请输入真实姓名",
-    "selectBirthDateHint": "请选择出生日期",
-    "profileRequiredFieldsNotice": "如果无法登录，姓名、出生日期、性别是\n身份验证所必需的。",
-    "menuTitle": "菜单",
-    "menuSubtitle": "查看PhilGo全部服务",
-    "editProfileTitle": "编辑个人资料",
-    "editProfileSubtitle": "个人信息管理",
-    "openChatTitle": "开放聊天室",
-    "openChatSubtitle": "与人们交流",
-    "bannerAdTitle": "横幅广告",
-    "bannerAdSubtitle": "主页广告",
-    "pointAdTitle": "积分广告",
-    "pointAdSubtitle": "积分获取和使用方法",
-    "businessDirectoryTitle": "商家目录",
-    "businessDirectorySubtitle": "商务信息",
-    "familySiteTitle": "家族网站",
-    "familySiteSubtitle": "关联服务",
-    "appGuideTitle": "应用使用指南",
-    "appGuideSubtitle": "帮助",
-    "termsOfServiceTitle": "服务条款",
-    "termsOfServiceSubtitle": "服务协议",
-    "privacyPolicyTitle": "隐私政策",
-    "privacyPolicySubtitle": "个人信息保护",
-    "withdrawTitle": "会员退出",
-    "withdrawSubtitle": "删除账户",
-    "logoutTitle": "登出",
-    "logoutSubtitle": "安全退出",
-    "year": "年",
-    "month": "月",
-    "day": "日",
-    "yearUnit": "年",
-    "monthUnit": "月",
-    "dayUnit": "日",
-    "selectYearAndMonthFirst": "请先选择年份和月份",
-    "selectYearFirst": "请先选择年份",
-    "selectMonthFirst": "请先选择月份",
-    "confirmDeletePost": "您确定要删除此帖子吗？",
-    "postDeletedSuccess": "帖子删除成功",
-    "confirmDeleteImage": "您确定要删除此图片吗？",
-    "imageDeletedSuccess": "图片删除成功",
-    "location": "位置",
-    "contactInformation": "联系方式",
-    "mobileNumber": "手机号码",
-    "description": "说明",
-    "familySite": "家族网站",
-    "registerCompany": "注册",
-    "updateCompany": "修改商家",
-    "basicInformation": "基本信息",
-    "companyName": "商家名称",
-    "enterCompanyName": "请输入商家名称",
-    "companyNameRequired": "商家名称为必填项",
-    "companyTitle": "商家标题",
-    "enterCompanyTitle": "请输入商家标题或口号",
-    "category": "类别",
-    "selectCategory": "选择类别",
-    "pleaseSelectCategory": "请选择类别",
-    "enterDescription": "请输入商家说明",
-    "locationInformation": "位置信息",
-    "enterLocation": "请输入地区（例如：马尼拉、宿务）",
-    "address": "地址",
-    "enterAddress": "请输入详细地址",
-    "enterMobileNumber": "请输入手机号码",
-    "images": "图片",
-    "logoImage": "标志图片",
-    "titleImage": "标题图片",
-    "businessLicense": "营业执照",
-    "tapToUploadImage": "点击上传图片",
-    "companyRegistered": "商家注册成功",
-    "companyUpdated": "商家信息更新成功",
-    "unpin_chat_room_title": "取消固定聊天室",
-    "unpin_chat_room_message": "您确定要取消固定此聊天室吗？",
-    "unpin": "取消固定",
-    "chat_room_unpinned": "聊天室已取消固定",
-    "bookmarked_folders": "书签文件夹",
-    "no_bookmarked_folders": "没有书签文件夹",
-    "bookmarked_chats": "书签聊天",
-    "no_bookmarked_chats": "此文件夹中没有书签聊天",
-    "lv": "Lv",
-    "settings": "设置",
-    "languageSettings": "语言设置",
-    "selectLanguage": "选择语言",
-    "saveLanguage": "保存语言",
-    "languageChanged": "语言已更改",
-    "languageTitle": "语言",
-    "languageSubtitle": "更改应用语言偏好",
-    "logoutConfirmMessage": "您确定要退出吗？",
-    "companyNameRequired": "请输入公司名称",
-    "companyTitleRequired": "请输入公司标题",
-    "locationRequired": "请选择位置",
-    "addressRequired": "请输入地址",
-    "descriptionRequired": "请输入公司说明",
-    "landlineRequired": "请输入固定电话号码",
-    "mobileNumberRequired": "请输入手机号码",
-    "logoRequired": "请上传公司标志",
-    "detailedInformation": "详细信息",
-    "imageUpload": "图片上传",
-    "kakaoQrCodeDeleted": "Kakao二维码已删除",
-    "failedToDelete": "删除失败",
-    "companyLogoDeleted": "公司标志已删除",
-    "failedToDeletePhoto": "照片删除失败",
-    "businessLicenseDeleted": "营业执照已删除",
-    "failedToDeleteLicense": "执照删除失败",
-    "companyIntroImageDeleted": "公司介绍图片已删除",
-    "failedToDeleteImage": "图片删除失败",
-    "officeInteriorDeleted": "办公室内部照片已删除",
-    "back": "返回",
-    "next": "下一步",
-    "failedToLoadCompanies": "加载商家失败",
-    "retry": "重试",
-    "noCompaniesFound": "未找到商家",
-    "noCompaniesInCategory": "{categoryName}类别中尚未注册商家。",
-    "editMyCompany": "编辑我的商家",
-    "addMyCompany": "添加我的商家",
-    "allCategories": "全部",
-    "publicOffice": "公共机构",
-    "publicOfficeDesc": "政府服务",
-    "education": "教育",
-    "educationDesc": "学校和学习",
-    "foodAndDrink": "餐饮",
-    "foodAndDrinkDesc": "餐厅和咖啡馆",
-    "transportation": "交通",
-    "transportationDesc": "公共和私人交通",
-    "healthAndHospitals": "医疗·医院",
-    "healthAndHospitalsDesc": "诊所和护理",
-    "shoppingAndMarts": "购物·商场",
-    "shoppingAndMartsDesc": "零售和杂货",
-    "bankingAndFinance": "银行·金融",
-    "bankingAndFinanceDesc": "金融机构",
-    "gadgets": "电子产品",
-    "gadgetsDesc": "技术和设备",
-    "travelAndTourism": "旅行·旅游",
-    "travelAndTourismDesc": "目的地和预订",
-    "hotels": "酒店",
-    "hotelsDesc": "住宿设施",
-    "carRental": "租车",
-    "carRentalDesc": "车辆租赁服务",
-    "beautyAndWellness": "美容·保健",
-    "beautyAndWellnessDesc": "美容院和自我护理",
-    "realEstate": "房地产",
-    "realEstateDesc": "房产和住房",
-    "entertainment": "娱乐",
-    "entertainmentDesc": "卡拉OK和娱乐",
-    "spaAndRelaxation": "水疗·休闲",
-    "spaAndRelaxationDesc": "按摩和休养",
-    "otherServices": "其他服务",
-    "otherServicesDesc": "其他服务",
-    "account": "账户",
-    "advertising": "广告",
-    "support": "支持",
-    "accountActions": "账户操作",
-    "blockedUsers": "已屏蔽用户",
-    "writingGuide": "写作指南",
-    "postDefamationWarning": "诽谤他人的帖子可能会被删除",
-    "postSpamWarning": "广告和垃圾邮件将立即删除",
-    "postPersonalInfoWarning": "请勿包含个人信息",
-    "postCopyrightWarning": "侵犯版权的内容无法发布",
-    "updatePrefix": "更新:",
-    "uploadInProgress": "图片上传正在进行中，请稍后再试。",
-    "alert": "警告",
-    "postWithCommentsCannotBeDeleted": "有评论的帖子无法删除",
-    "postWithCommentsCannotBeEdited": "有评论的帖子无法编辑",
-    "userProfile": "用户资料",
-    "unknownUser": "未知用户",
-    "profileInformation": "个人资料",
-    "additionalInfoNotAvailable": "没有其他信息",
-    "about": "关于",
-    "welcomeToAboutScreen": "欢迎来到关于界面",
-    "loading": "加载中...",
-    "enterKakaotalkId": "请输入 KakaoTalk ID",
-    "kakaoChannelUrlPlaceholder": "https://pf.kakao.com/...",
-    "enterTelegramId": "请输入 Telegram ID",
-    "companyNameExample": "例如) mycompany",
-    "enterFamilySiteName": "请输入家族网站名称",
-    "enterFamilySiteDescription": "请输入家族网站描述",
-    "couldNotLaunchEmailApp": "无法启动邮件应用",
-    "error": "错误",
-    "useCompanyDomain": "使用公司域名",
-    "seoFeaturesMessage": "SEO功能有助于在Google、Naver和其他搜索引擎上更多地展示您的目录列表。",
-    "familySiteDomain": "家族网站域名",
-    "familySiteName": "家族网站名称",
-    "familySiteDescription": "家族网站描述",
-    "kakaoId": "KakaoID",
-    "uploadKakaoQrCode": "上传Kakao二维码",
-    "kakaoChannelUrl": "Kakao频道URL",
-    "telegramId": "Telegram ID",
-    "businessType": "业务类型",
-    "companyLogo": "公司标志",
-    "companyIntroImage": "公司介绍图片",
-    "companyIntroImageGuideline": "简要代表公司介绍的图片。包括标志和主要服务项目。文本限制在约100个字符（20个单词）左右。",
-    "officeInteriorPhoto": "办公室/商店内部照片",
-    "officeInteriorGuideline": "办公室/商店内部全景照片",
-    "companyDirectoryTitle": "商家目录",
-    "addCompany": "添加商家",
-    "companyDirectoryDescription": "注册商家后，它将显示在导航栏和其他位置，让更多用户看到。",
-    "companiesRegistered": "{count, plural, =0{共注册0家商家。} =1{共注册1家商家。} other{共注册{count}家商家。}}",
-    "viewMore": "查看更多",
-    "noRegisteredCompanies": "没有注册的商家。",
-    "registerCompanyPrompt": "成为第一个在此类别中注册商家的人！",
-    "mobileContactMethod": "手机联系方式",
-    "sendText": "发送短信",
-    "makeCall": "拨打电话",
-    "guideWelcomeTitle": "欢迎来到PhilGo！",
-    "guideWelcomeSubtitle": "在菲律宾最大的韩国人社区\n分享和交流各种信息",
-    "guideFeaturesTitle": "应用功能",
-    "guideFeatureCommunityTitle": "社区",
-    "guideFeatureCommunityDesc": "在各种论坛上分享和交流信息",
-    "guideFeatureChatTitle": "聊天",
-    "guideFeatureChatDesc": "通过实时聊天快速连接",
-    "guideFeatureDirectoryTitle": "商家目录",
-    "guideFeatureDirectoryDesc": "查找菲律宾韩国人的商业信息",
-    "guideFeatureWriteTitle": "发布",
-    "guideFeatureWriteDesc": "自由撰写和分享您的帖子",
-    "guideTipsTitle": "使用提示",
-    "guideTip1": "完善您的个人资料以与更多人建立联系",
-    "guideTip2": "启用通知以免错过重要新闻",
-    "guideTip3": "为您喜欢的帖子点赞",
-    "guideTip4": "您可以为经常访问的论坛添加书签",
-    "guideFaqTitle": "常见问题",
-    "guideFaqQ1": "如何撰写帖子？",
-    "guideFaqA1": "点击底部的「发布」选项卡，选择论坛，然后撰写您的帖子。",
-    "guideFaqQ2": "如何创建聊天室？",
-    "guideFaqA2": "在「聊天」选项卡中，点击+按钮创建新的聊天室。",
-    "guideFaqQ3": "如何注册商家？",
-    "guideFaqA3": "在「商家目录」选项卡中，点击「添加商家」按钮注册商家信息。",
-    "guideFaqQ4": "在哪里可以编辑我的个人资料？",
-    "guideFaqA4": "转到「菜单」选项卡并选择「编辑个人资料」以更改您的信息。",
-    "accountWithdrawalTitle": "账户退出",
-    "withdrawalIntroTitle": "数据删除请求",
-    "withdrawalIntroSubtitle": "PhilGo Network为您提供随时永久删除与您账户相关的所有个人信息的权利。",
-    "withdrawalStep1Title": "将被删除的数据",
-    "withdrawalAccountInfoTitle": "账户身份信息",
-    "withdrawalAccountInfoDesc": "电子邮件、昵称、个人资料图片",
-    "withdrawalUsageHistoryTitle": "应用使用历史",
-    "withdrawalUsageHistoryDesc": "聊天、帖子、活动日志、通知令牌",
-    "withdrawalAdditionalDataTitle": "连接的其他数据",
-    "withdrawalAdditionalDataDesc": "云备份、用户设置等",
-    "withdrawalPaymentNote": "支付和税务文档将根据相关法律单独保留最多5年，然后销毁。",
-    "withdrawalStep2Title": "删除方法",
-    "withdrawalEmailRequest": "电子邮件请求",
-    "withdrawalStep3Title": "处理和时间表",
-    "withdrawalProcessingDesc": "确认您的请求后，所有数据将在7个工作日内完全删除，并且您将收到完成通知电子邮件。",
-    "withdrawalIrreversibleNote": "删除完成后无法恢复，所有剩余积分和订阅将被没收。",
-    "withdrawalStep4Title": "数据保留例外",
-    "withdrawalRetentionDesc": "只有防止欺诈、会计审计和法律合规所需的信息将以最小化的形式保留相关法律规定的期间，然后立即销毁。",
-    "withdrawalStep5Title": "联系方式",
-    "withdrawalContactDesc": "如有其他疑问，请随时通过philgohelp@gmail.com与我们联系。",
-    "requestWithdrawal": "请求退出",
-    "guideGettingStartedTitle": "开始使用",
-    "guideStep1Title": "创建您的账户",
-    "guideStep1Desc": "使用电子邮件或社交账户注册以开始使用。",
-    "guideStep2Title": "探索社区",
-    "guideStep2Desc": "浏览帖子和商家，与菲律宾的韩国人社区建立联系。",
-    "guideStep3Title": "分享您的故事",
-    "guideStep3Desc": "撰写帖子，分享经验，为社区做出贡献。",
-    "guideStep4Title": "与他人联系",
-    "guideStep4Desc": "与成员聊天，参与讨论，建立您的网络。",
-    "myActivity": "我的活动",
-    "myPosts": "我的帖子",
-    "myComments": "我的评论",
-    "posts": "帖子",
-    "noPostsYet": "还没有帖子",
-    "noCommentsYet": "还没有评论",
-    "views": "浏览量",
-    "ago": "前",
-    "justNow": "刚刚",
-    "minutesAgo": "{minutes}分钟前",
-    "hoursAgo": "{hours}小时前",
-    "daysAgo": "{days}天前",
-    "weeksAgo": "{weeks}周前",
-    "monthsAgo": "{months}个月前",
-    "yearsAgo": "{years}年前",
-    "latestPosts": "最新帖子",
-    "viewAll": "查看全部",
-    "loginToSeeProfile": "登录查看您的个人资料",
-    "viewPostsCommentsPoints": "查看您的帖子、评论和积分",
-    "updateYourNickname": "请更新您的昵称",
-    "points": "积分",
-    "pin": "固定",
-    "latestComments": "最新评论",
-    "advertisementSpace": "广告位",
-    "philgoPhoneLogin": "电话号码登录",
-    "phoneNumberExample": "例: 09123456789 或 01012345678",
-    "appName": "PhilGo",
-    "appSlogan": "菲律宾的一切尽在于此",
-
-    "categoryFreetalk": "自由论坛",
-    "categoryQna": "问答",
-    "categoryBuyandsell": "买卖",
-    "categoryBlog": "博客",
-    "categoryBoardingHouse": "寄宿舍",
-    "categoryCaution": "注意/警告",
-    "categoryLookfor": "寻人",
-    "categoryFoodDelivery": "外卖",
-    "categoryGreeting": "问候",
-    "categoryWanted": "招聘求职",
-    "categoryBusiness": "商务",
-    "categoryMassage": "按摩",
-    "categoryRest": "餐厅",
-    "categorySchool": "学校",
-    "categoryStudy": "语言研修",
-    "categoryTravel": "旅行",
-    "categoryYoutube": "YouTube",
-    "categoryMomcafe": "妈妈咖啡",
-    "categoryNews": "新闻",
-    "categoryNewcomer": "新人",
-    "categoryNature": "自然",
-    "categoryCompanyInfo": "公司信息",
-    "categoryEnglishBiz": "英语商务",
-    "categoryTemp": "临时",
-    "categoryTravelGood": "推荐旅游地",
-
-    "subCategoryDiscussion": "讨论",
-    "subCategoryEncyclopedia": "百科",
-    "subCategoryHobby": "爱好",
-    "subCategoryInfo": "信息",
-    "subCategoryKoPhCouple": "韩菲情侣",
-    "subCategoryKopino": "Kopino",
-    "subCategoryImmigration": "移民",
-    "subCategoryPhoto": "照片",
-    "subCategoryLifeTips": "生活小贴士",
-    "subCategoryMissing": "失踪",
-    "subCategoryIntlMarriage": "国际婚姻",
-    "subCategoryMeeting": "聚会",
-    "subCategoryColumn": "专栏",
-    "subCategoryMukbang": "吃播",
-    "subCategoryNotice": "公告",
-    "subCategoryExperience": "经验分享",
-    "subCategoryStudyLearn": "学习",
-    "subCategoryTyphoon": "台风",
-
-    "subCategoryBusinessPartner": "商业伙伴",
-    "subCategoryComputer": "电脑/网络",
-    "subCategoryExchange": "比索兑换",
-    "subCategoryPhone": "手机",
-    "subCategoryHotel": "酒店",
-    "subCategoryAppliances": "家电/生活用品",
-    "subCategoryGolf": "高尔夫",
-    "subCategoryPromotion": "促销",
-    "subCategoryPersonalMarket": "个人交易",
-    "subCategoryRealEstate": "房地产",
-    "subCategoryHouseRental": "房屋出租",
-    "subCategoryCarRental": "租车",
-    "subCategoryUsedCar": "二手车",
-
-    "postLiked": "已点赞帖子",
-    "alreadyLikedPost": "您已点赞过此帖子",
-    "commentReplied": "回复已添加",
-    "commentUpdated": "评论已更新",
-    "commentCreated": "评论已添加"
+  "@@locale": "zh",
+  "login": "登录",
+  "name": "名字",
+  "philgoCommunityTitle": "菲律宾最大的韩国人社区",
+  "philgoCommunitySubtitle": "在PhilGo上找到所有关于菲律宾生活的信息",
+  "realTimeInfoTitle": "实时信息共享",
+  "realTimeInfoSubtitle": "实时查看菲律宾当地新闻和生活信息",
+  "businessNetworkingTitle": "商业网络",
+  "businessNetworkingSubtitle": "与在菲律宾做生意的韩国人建立联系",
+  "safeCommunityTitle": "安全社区",
+  "safeCommunitySubtitle": "经过验证的会员的可信赖社区",
+  "home": "主页",
+  "chat": "聊天",
+  "forum": "论坛",
+  "create": "发布",
+  "company": "商家",
+  "menu": "菜单",
+  "my": "我的",
+  "sendSmsCode": "发送短信验证码",
+  "noOfPosts": "{count}篇文章",
+  "writePost": "写文章",
+  "like": "点赞",
+  "comment": "评论",
+  "share": "分享",
+  "editProfile": "编辑个人资料",
+  "beTheFirstToComment": "成为第一个发表评论的人",
+  "reply": "回复",
+  "replying_to": "正在回复",
+  "editing_comment": "编辑评论中",
+  "nickname": "昵称",
+  "nicknameHint": "请输入昵称",
+  "fullName": "姓名",
+  "fullNameHint": "请输入姓名",
+  "birthDate": "出生日期",
+  "gender": "性别",
+  "male": "男性",
+  "female": "女性",
+  "save": "保存",
+  "nicknameRequired": "请输入昵称",
+  "profileUpdateSuccess": "个人资料更新成功",
+  "cancel": "取消",
+  "title": "标题",
+  "postTitleHint": "请输入帖子标题",
+  "content": "内容",
+  "postContentHint": "请在此处输入帖子内容...",
+  "submit": "提交",
+  "titleRequired": "请输入标题",
+  "contentRequired": "请输入帖子内容",
+  "writeIn": "在以下写文章",
+  "preferNotToSay": "不愿透露",
+  "loginWithPhoneTitle": "手机号码登录",
+  "loginWithPhoneHeader": "使用手机号码登录。",
+  "loginPhoneSmsNotice": "为了验证手机号码，将发送短信。",
+  "enterPhoneNumber": "请输入手机号码。",
+  "phoneNumber": "手机号码",
+  "enterSmsCode": "请输入短信验证码。",
+  "resendSms": "重新发送短信",
+  "verifySmsCode": "验证短信验证码",
+  "verifyPhoneNumber": "验证手机号码",
+  "termsOfService": "服务条款",
+  "termsContent": "服务条款内容",
+  "privacyPolicy": "隐私政策",
+  "close": "关闭",
+  "phoneAuthFailed": "手机号码验证失败",
+  "community": "社区",
+  "qna": "问答",
+  "discussion": "讨论",
+  "business": "商务",
+  "buyAndSell": "买卖",
+  "hotel": "酒店",
+  "jobs": "招聘",
+  "enterComment": "请输入评论",
+  "comments": "评论",
+  "tapPhotoChange": "点击照片进行更改",
+  "nicknameDisplayHint": "此名称将显示给其他用户",
+  "enterRealNameHint": "请输入真实姓名",
+  "selectBirthDateHint": "请选择出生日期",
+  "profileRequiredFieldsNotice": "如果无法登录，姓名、出生日期、性别是\n身份验证所必需的。",
+  "menuTitle": "菜单",
+  "menuSubtitle": "查看PhilGo全部服务",
+  "editProfileTitle": "编辑个人资料",
+  "editProfileSubtitle": "个人信息管理",
+  "openChatTitle": "开放聊天室",
+  "openChatSubtitle": "与人们交流",
+  "bannerAdTitle": "横幅广告",
+  "bannerAdSubtitle": "主页广告",
+  "pointAdTitle": "积分广告",
+  "pointAdSubtitle": "积分获取和使用方法",
+  "businessDirectoryTitle": "商家目录",
+  "businessDirectorySubtitle": "商务信息",
+  "familySiteTitle": "家族网站",
+  "familySiteSubtitle": "关联服务",
+  "appGuideTitle": "应用使用指南",
+  "appGuideSubtitle": "帮助",
+  "termsOfServiceTitle": "服务条款",
+  "termsOfServiceSubtitle": "服务协议",
+  "privacyPolicyTitle": "隐私政策",
+  "privacyPolicySubtitle": "个人信息保护",
+  "withdrawTitle": "会员退出",
+  "withdrawSubtitle": "删除账户",
+  "logoutTitle": "登出",
+  "logoutSubtitle": "安全退出",
+  "year": "年",
+  "month": "月",
+  "day": "日",
+  "yearUnit": "年",
+  "monthUnit": "月",
+  "dayUnit": "日",
+  "selectYearAndMonthFirst": "请先选择年份和月份",
+  "selectYearFirst": "请先选择年份",
+  "selectMonthFirst": "请先选择月份",
+  "confirmDeletePost": "您确定要删除此帖子吗？",
+  "postDeletedSuccess": "帖子删除成功",
+  "confirmDeleteImage": "您确定要删除此图片吗？",
+  "imageDeletedSuccess": "图片删除成功",
+  "location": "位置",
+  "contactInformation": "联系方式",
+  "mobileNumber": "手机号码",
+  "description": "说明",
+  "familySite": "家族网站",
+  "registerCompany": "注册",
+  "updateCompany": "修改商家",
+  "basicInformation": "基本信息",
+  "companyName": "商家名称",
+  "enterCompanyName": "请输入商家名称",
+  "companyNameRequired": "请输入公司名称",
+  "companyTitle": "商家标题",
+  "enterCompanyTitle": "请输入商家标题或口号",
+  "category": "类别",
+  "selectCategory": "选择类别",
+  "pleaseSelectCategory": "请选择类别",
+  "enterDescription": "请输入商家说明",
+  "locationInformation": "位置信息",
+  "enterLocation": "请输入地区（例如：马尼拉、宿务）",
+  "address": "地址",
+  "enterAddress": "请输入详细地址",
+  "enterMobileNumber": "请输入手机号码",
+  "images": "图片",
+  "logoImage": "标志图片",
+  "titleImage": "标题图片",
+  "businessLicense": "营业执照",
+  "tapToUploadImage": "点击上传图片",
+  "companyRegistered": "商家注册成功",
+  "companyUpdated": "商家信息更新成功",
+  "unpin_chat_room_title": "取消固定聊天室",
+  "unpin_chat_room_message": "您确定要取消固定此聊天室吗？",
+  "unpin": "取消固定",
+  "chat_room_unpinned": "聊天室已取消固定",
+  "bookmarked_folders": "书签文件夹",
+  "no_bookmarked_folders": "没有书签文件夹",
+  "bookmarked_chats": "书签聊天",
+  "no_bookmarked_chats": "此文件夹中没有书签聊天",
+  "lv": "Lv",
+  "settings": "设置",
+  "languageSettings": "语言设置",
+  "selectLanguage": "选择语言",
+  "saveLanguage": "保存语言",
+  "languageChanged": "语言已更改",
+  "languageTitle": "语言",
+  "languageSubtitle": "更改应用语言偏好",
+  "logoutConfirmMessage": "您确定要退出吗？",
+  "companyTitleRequired": "请输入公司标题",
+  "locationRequired": "请选择位置",
+  "addressRequired": "请输入地址",
+  "descriptionRequired": "请输入公司说明",
+  "landlineRequired": "请输入固定电话号码",
+  "mobileNumberRequired": "请输入手机号码",
+  "logoRequired": "请上传公司标志",
+  "detailedInformation": "详细信息",
+  "imageUpload": "图片上传",
+  "kakaoQrCodeDeleted": "Kakao二维码已删除",
+  "failedToDelete": "删除失败",
+  "companyLogoDeleted": "公司标志已删除",
+  "failedToDeletePhoto": "照片删除失败",
+  "businessLicenseDeleted": "营业执照已删除",
+  "failedToDeleteLicense": "执照删除失败",
+  "companyIntroImageDeleted": "公司介绍图片已删除",
+  "failedToDeleteImage": "图片删除失败",
+  "officeInteriorDeleted": "办公室内部照片已删除",
+  "back": "返回",
+  "next": "下一步",
+  "failedToLoadCompanies": "加载商家失败",
+  "retry": "重试",
+  "noCompaniesFound": "未找到商家",
+  "noCompaniesInCategory": "{categoryName}类别中尚未注册商家。",
+  "editMyCompany": "编辑我的商家",
+  "addMyCompany": "添加我的商家",
+  "allCategories": "全部",
+  "publicOffice": "公共机构",
+  "publicOfficeDesc": "政府服务",
+  "education": "教育",
+  "educationDesc": "学校和学习",
+  "foodAndDrink": "餐饮",
+  "foodAndDrinkDesc": "餐厅和咖啡馆",
+  "transportation": "交通",
+  "transportationDesc": "公共和私人交通",
+  "healthAndHospitals": "医疗·医院",
+  "healthAndHospitalsDesc": "诊所和护理",
+  "shoppingAndMarts": "购物·商场",
+  "shoppingAndMartsDesc": "零售和杂货",
+  "bankingAndFinance": "银行·金融",
+  "bankingAndFinanceDesc": "金融机构",
+  "gadgets": "电子产品",
+  "gadgetsDesc": "技术和设备",
+  "travelAndTourism": "旅行·旅游",
+  "travelAndTourismDesc": "目的地和预订",
+  "hotels": "酒店",
+  "hotelsDesc": "住宿设施",
+  "carRental": "租车",
+  "carRentalDesc": "车辆租赁服务",
+  "beautyAndWellness": "美容·保健",
+  "beautyAndWellnessDesc": "美容院和自我护理",
+  "realEstate": "房地产",
+  "realEstateDesc": "房产和住房",
+  "entertainment": "娱乐",
+  "entertainmentDesc": "卡拉OK和娱乐",
+  "spaAndRelaxation": "水疗·休闲",
+  "spaAndRelaxationDesc": "按摩和休养",
+  "otherServices": "其他服务",
+  "otherServicesDesc": "其他服务",
+  "account": "账户",
+  "advertising": "广告",
+  "support": "支持",
+  "accountActions": "账户操作",
+  "blockedUsers": "已屏蔽用户",
+  "writingGuide": "写作指南",
+  "postDefamationWarning": "诽谤他人的帖子可能会被删除",
+  "postSpamWarning": "广告和垃圾邮件将立即删除",
+  "postPersonalInfoWarning": "请勿包含个人信息",
+  "postCopyrightWarning": "侵犯版权的内容无法发布",
+  "updatePrefix": "更新:",
+  "uploadInProgress": "图片上传正在进行中，请稍后再试。",
+  "alert": "警告",
+  "postWithCommentsCannotBeDeleted": "有评论的帖子无法删除",
+  "postWithCommentsCannotBeEdited": "有评论的帖子无法编辑",
+  "userProfile": "用户资料",
+  "unknownUser": "未知用户",
+  "profileInformation": "个人资料",
+  "additionalInfoNotAvailable": "没有其他信息",
+  "about": "关于",
+  "welcomeToAboutScreen": "欢迎来到关于界面",
+  "loading": "加载中...",
+  "enterKakaotalkId": "请输入 KakaoTalk ID",
+  "kakaoChannelUrlPlaceholder": "https://pf.kakao.com/...",
+  "enterTelegramId": "请输入 Telegram ID",
+  "companyNameExample": "例如) mycompany",
+  "enterFamilySiteName": "请输入家族网站名称",
+  "enterFamilySiteDescription": "请输入家族网站描述",
+  "couldNotLaunchEmailApp": "无法启动邮件应用",
+  "error": "错误",
+  "useCompanyDomain": "使用公司域名",
+  "seoFeaturesMessage": "SEO功能有助于在Google、Naver和其他搜索引擎上更多地展示您的目录列表。",
+  "familySiteDomain": "家族网站域名",
+  "familySiteName": "家族网站名称",
+  "familySiteDescription": "家族网站描述",
+  "kakaoId": "KakaoID",
+  "uploadKakaoQrCode": "上传Kakao二维码",
+  "kakaoChannelUrl": "Kakao频道URL",
+  "telegramId": "Telegram ID",
+  "businessType": "业务类型",
+  "companyLogo": "公司标志",
+  "companyIntroImage": "公司介绍图片",
+  "companyIntroImageGuideline": "简要代表公司介绍的图片。包括标志和主要服务项目。文本限制在约100个字符（20个单词）左右。",
+  "officeInteriorPhoto": "办公室/商店内部照片",
+  "officeInteriorGuideline": "办公室/商店内部全景照片",
+  "companyDirectoryTitle": "商家目录",
+  "addCompany": "添加商家",
+  "companyDirectoryDescription": "注册商家后，它将显示在导航栏和其他位置，让更多用户看到。",
+  "companiesRegistered": "{count, plural, =0{共注册0家商家。} =1{共注册1家商家。} other{共注册{count}家商家。}}",
+  "viewMore": "查看更多",
+  "noRegisteredCompanies": "没有注册的商家。",
+  "registerCompanyPrompt": "成为第一个在此类别中注册商家的人！",
+  "mobileContactMethod": "手机联系方式",
+  "sendText": "发送短信",
+  "makeCall": "拨打电话",
+  "guideWelcomeTitle": "欢迎来到PhilGo！",
+  "guideWelcomeSubtitle": "在菲律宾最大的韩国人社区\n分享和交流各种信息",
+  "guideFeaturesTitle": "应用功能",
+  "guideFeatureCommunityTitle": "社区",
+  "guideFeatureCommunityDesc": "在各种论坛上分享和交流信息",
+  "guideFeatureChatTitle": "聊天",
+  "guideFeatureChatDesc": "通过实时聊天快速连接",
+  "guideFeatureDirectoryTitle": "商家目录",
+  "guideFeatureDirectoryDesc": "查找菲律宾韩国人的商业信息",
+  "guideFeatureWriteTitle": "发布",
+  "guideFeatureWriteDesc": "自由撰写和分享您的帖子",
+  "guideTipsTitle": "使用提示",
+  "guideTip1": "完善您的个人资料以与更多人建立联系",
+  "guideTip2": "启用通知以免错过重要新闻",
+  "guideTip3": "为您喜欢的帖子点赞",
+  "guideTip4": "您可以为经常访问的论坛添加书签",
+  "guideFaqTitle": "常见问题",
+  "guideFaqQ1": "如何撰写帖子？",
+  "guideFaqA1": "点击底部的「发布」选项卡，选择论坛，然后撰写您的帖子。",
+  "guideFaqQ2": "如何创建聊天室？",
+  "guideFaqA2": "在「聊天」选项卡中，点击+按钮创建新的聊天室。",
+  "guideFaqQ3": "如何注册商家？",
+  "guideFaqA3": "在「商家目录」选项卡中，点击「添加商家」按钮注册商家信息。",
+  "guideFaqQ4": "在哪里可以编辑我的个人资料？",
+  "guideFaqA4": "转到「菜单」选项卡并选择「编辑个人资料」以更改您的信息。",
+  "accountWithdrawalTitle": "账户退出",
+  "withdrawalIntroTitle": "数据删除请求",
+  "withdrawalIntroSubtitle": "PhilGo Network为您提供随时永久删除与您账户相关的所有个人信息的权利。",
+  "withdrawalStep1Title": "将被删除的数据",
+  "withdrawalAccountInfoTitle": "账户身份信息",
+  "withdrawalAccountInfoDesc": "电子邮件、昵称、个人资料图片",
+  "withdrawalUsageHistoryTitle": "应用使用历史",
+  "withdrawalUsageHistoryDesc": "聊天、帖子、活动日志、通知令牌",
+  "withdrawalAdditionalDataTitle": "连接的其他数据",
+  "withdrawalAdditionalDataDesc": "云备份、用户设置等",
+  "withdrawalPaymentNote": "支付和税务文档将根据相关法律单独保留最多5年，然后销毁。",
+  "withdrawalStep2Title": "删除方法",
+  "withdrawalEmailRequest": "电子邮件请求",
+  "withdrawalStep3Title": "处理和时间表",
+  "withdrawalProcessingDesc": "确认您的请求后，所有数据将在7个工作日内完全删除，并且您将收到完成通知电子邮件。",
+  "withdrawalIrreversibleNote": "删除完成后无法恢复，所有剩余积分和订阅将被没收。",
+  "withdrawalStep4Title": "数据保留例外",
+  "withdrawalRetentionDesc": "只有防止欺诈、会计审计和法律合规所需的信息将以最小化的形式保留相关法律规定的期间，然后立即销毁。",
+  "withdrawalStep5Title": "联系方式",
+  "withdrawalContactDesc": "如有其他疑问，请随时通过philgohelp@gmail.com与我们联系。",
+  "requestWithdrawal": "请求退出",
+  "guideGettingStartedTitle": "开始使用",
+  "guideStep1Title": "创建您的账户",
+  "guideStep1Desc": "使用电子邮件或社交账户注册以开始使用。",
+  "guideStep2Title": "探索社区",
+  "guideStep2Desc": "浏览帖子和商家，与菲律宾的韩国人社区建立联系。",
+  "guideStep3Title": "分享您的故事",
+  "guideStep3Desc": "撰写帖子，分享经验，为社区做出贡献。",
+  "guideStep4Title": "与他人联系",
+  "guideStep4Desc": "与成员聊天，参与讨论，建立您的网络。",
+  "myActivity": "我的活动",
+  "myPosts": "我的帖子",
+  "myComments": "我的评论",
+  "posts": "帖子",
+  "noPostsYet": "还没有帖子",
+  "noCommentsYet": "还没有评论",
+  "views": "浏览量",
+  "ago": "前",
+  "justNow": "刚刚",
+  "minutesAgo": "{minutes}分钟前",
+  "hoursAgo": "{hours}小时前",
+  "daysAgo": "{days}天前",
+  "weeksAgo": "{weeks}周前",
+  "monthsAgo": "{months}个月前",
+  "yearsAgo": "{years}年前",
+  "latestPosts": "最新帖子",
+  "viewAll": "查看全部",
+  "loginToSeeProfile": "登录查看您的个人资料",
+  "viewPostsCommentsPoints": "查看您的帖子、评论和积分",
+  "updateYourNickname": "请更新您的昵称",
+  "points": "积分",
+  "pin": "固定",
+  "latestComments": "最新评论",
+  "advertisementSpace": "广告位",
+  "philgoPhoneLogin": "电话号码登录",
+  "phoneNumberExample": "例: 09123456789 或 01012345678",
+  "appName": "PhilGo",
+  "appSlogan": "菲律宾的一切尽在于此",
+  "categoryFreetalk": "自由论坛",
+  "categoryQna": "问答",
+  "categoryBuyandsell": "买卖",
+  "categoryBlog": "博客",
+  "categoryBoardingHouse": "寄宿舍",
+  "categoryCaution": "注意/警告",
+  "categoryLookfor": "寻人",
+  "categoryFoodDelivery": "外卖",
+  "categoryGreeting": "问候",
+  "categoryWanted": "招聘求职",
+  "categoryBusiness": "商务",
+  "categoryMassage": "按摩",
+  "categoryRest": "餐厅",
+  "categorySchool": "学校",
+  "categoryStudy": "语言研修",
+  "categoryTravel": "旅行",
+  "categoryYoutube": "YouTube",
+  "categoryMomcafe": "妈妈咖啡",
+  "categoryNews": "新闻",
+  "categoryNewcomer": "新人",
+  "categoryNature": "自然",
+  "categoryCompanyInfo": "公司信息",
+  "categoryEnglishBiz": "英语商务",
+  "categoryTemp": "临时",
+  "categoryTravelGood": "推荐旅游地",
+  "subCategoryDiscussion": "讨论",
+  "subCategoryEncyclopedia": "百科",
+  "subCategoryHobby": "爱好",
+  "subCategoryInfo": "信息",
+  "subCategoryKoPhCouple": "韩菲情侣",
+  "subCategoryKopino": "Kopino",
+  "subCategoryImmigration": "移民",
+  "subCategoryPhoto": "照片",
+  "subCategoryLifeTips": "生活小贴士",
+  "subCategoryMissing": "失踪",
+  "subCategoryIntlMarriage": "国际婚姻",
+  "subCategoryMeeting": "聚会",
+  "subCategoryColumn": "专栏",
+  "subCategoryMukbang": "吃播",
+  "subCategoryNotice": "公告",
+  "subCategoryExperience": "经验分享",
+  "subCategoryStudyLearn": "学习",
+  "subCategoryTyphoon": "台风",
+  "subCategoryBusinessPartner": "商业伙伴",
+  "subCategoryComputer": "电脑/网络",
+  "subCategoryExchange": "比索兑换",
+  "subCategoryPhone": "手机",
+  "subCategoryHotel": "酒店",
+  "subCategoryAppliances": "家电/生活用品",
+  "subCategoryGolf": "高尔夫",
+  "subCategoryPromotion": "促销",
+  "subCategoryPersonalMarket": "个人交易",
+  "subCategoryRealEstate": "房地产",
+  "subCategoryHouseRental": "房屋出租",
+  "subCategoryCarRental": "租车",
+  "subCategoryUsedCar": "二手车",
+  "postLiked": "已点赞帖子",
+  "alreadyLikedPost": "您已点赞过此帖子",
+  "commentReplied": "回复已添加",
+  "commentUpdated": "评论已更新",
+  "commentCreated": "评论已添加",
+  "@login": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "@name": {
+    "description": "A field label for entering a name"
+  },
+  "@philgoCommunityTitle": {
+    "description": "Title for PhilGo Korean community carousel item"
+  },
+  "@philgoCommunitySubtitle": {
+    "description": "Subtitle for PhilGo Korean community carousel item"
+  },
+  "@realTimeInfoTitle": {
+    "description": "Title for real-time information sharing carousel item"
+  },
+  "@realTimeInfoSubtitle": {
+    "description": "Subtitle for real-time information sharing carousel item"
+  },
+  "@businessNetworkingTitle": {
+    "description": "Title for business networking carousel item"
+  },
+  "@businessNetworkingSubtitle": {
+    "description": "Subtitle for business networking carousel item"
+  },
+  "@safeCommunityTitle": {
+    "description": "Title for safe community carousel item"
+  },
+  "@safeCommunitySubtitle": {
+    "description": "Subtitle for safe community carousel item"
+  },
+  "@home": {
+    "description": "Home screen title"
+  },
+  "@chat": {
+    "description": "Chat navigation item label"
+  },
+  "@forum": {
+    "description": "Forum navigation item label"
+  },
+  "@create": {
+    "description": "Create/Write navigation item label"
+  },
+  "@company": {
+    "description": "Company/Business directory navigation item label"
+  },
+  "@menu": {
+    "description": "Menu navigation item label"
+  },
+  "@my": {
+    "description": "My page navigation item label"
+  },
+  "@loginWithPhoneTitle": {
+    "description": "AppBar title for phone login"
+  },
+  "@loginWithPhoneHeader": {
+    "description": "Header text above phone sign-in"
+  },
+  "@loginPhoneSmsNotice": {
+    "description": "Notice about SMS verification"
+  },
+  "@enterPhoneNumber": {
+    "description": "Label/hint for phone number field"
+  },
+  "@phoneNumber": {
+    "description": "Short label for phone number"
+  },
+  "@enterSmsCode": {
+    "description": "Label/hint for SMS code field"
+  },
+  "@resendSms": {
+    "description": "Resend SMS button label"
+  },
+  "@verifySmsCode": {
+    "description": "Verify SMS code button label"
+  },
+  "@verifyPhoneNumber": {
+    "description": "Verify phone number button label"
+  },
+  "@sendSmsCode": {
+    "description": "Button label to send an SMS verification code"
+  },
+  "@termsOfService": {
+    "description": "Terms link label and dialog title"
+  },
+  "@termsContent": {
+    "description": "Terms content placeholder"
+  },
+  "@privacyPolicy": {
+    "description": "Privacy policy link label and dialog title"
+  },
+  "@close": {
+    "description": "Close button label"
+  },
+  "@phoneAuthFailed": {
+    "description": "Verification failed"
+  },
+  "@community": {
+    "description": "Community category label"
+  },
+  "@qna": {
+    "description": "Questions and Answers category label"
+  },
+  "@discussion": {
+    "description": "Discussion category label"
+  },
+  "@business": {
+    "description": "Business category label"
+  },
+  "@buyAndSell": {
+    "description": "Buy and Sell category label"
+  },
+  "@hotel": {
+    "description": "Hotel category label"
+  },
+  "@jobs": {
+    "description": "Jobs category label"
+  },
+  "@noOfPosts": {
+    "description": "Number of posts in a category",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "@writePost": {
+    "description": "Button label to write a new post"
+  },
+  "@like": {
+    "description": "Like button label for posts"
+  },
+  "@comment": {
+    "description": "Comment button label for posts"
+  },
+  "@share": {
+    "description": "Share button label for posts"
+  },
+  "@editProfile": {
+    "description": "Edit Profile app bar label"
+  },
+  "@enterComment": {
+    "description": "Comments text field hint"
+  },
+  "@comments": {
+    "description": "Comments section header label"
+  },
+  "@beTheFirstToComment": {
+    "description": "Label posts with no comments under it"
+  },
+  "@reply": {
+    "description": "Button text to reply to a comment"
+  },
+  "@replying_to": {
+    "description": "Label shown when replying to a specific user"
+  },
+  "@editing_comment": {
+    "description": "Label shown when editing a comment"
+  },
+  "@nickname": {
+    "description": "Label for nickname field"
+  },
+  "@nicknameHint": {
+    "description": "Hint text for nickname field"
+  },
+  "@fullName": {
+    "description": "Label for full name field"
+  },
+  "@fullNameHint": {
+    "description": "Hint text for full name field"
+  },
+  "@birthDate": {
+    "description": "Label for birth date field"
+  },
+  "@gender": {
+    "description": "Label for gender field"
+  },
+  "@male": {
+    "description": "Label for male gender option"
+  },
+  "@female": {
+    "description": "Label for female gender option"
+  },
+  "@save": {
+    "description": "Save button text"
+  },
+  "@nicknameRequired": {
+    "description": "Error message when nickname is empty"
+  },
+  "@profileUpdateSuccess": {
+    "description": "Success message after profile update"
+  },
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "@title": {
+    "description": "Post title field label"
+  },
+  "@postTitleHint": {
+    "description": "Hint text for post title field"
+  },
+  "@content": {
+    "description": "Post content field label"
+  },
+  "@postContentHint": {
+    "description": "Hint text for post content field"
+  },
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "@titleRequired": {
+    "description": "Error message when title is empty"
+  },
+  "@contentRequired": {
+    "description": "Error message when content is empty"
+  },
+  "@writeIn": {
+    "description": "Text for write in category title (e.g., 'Write in Community')"
+  },
+  "@tapPhotoChange": {
+    "description": "Text instruction for changing profile photo"
+  },
+  "@nicknameDisplayHint": {
+    "description": "Hint text explaining nickname visibility"
+  },
+  "@enterRealNameHint": {
+    "description": "Hint text for entering real name"
+  },
+  "@selectBirthDateHint": {
+    "description": "Hint text for selecting birth date"
+  },
+  "@profileRequiredFieldsNotice": {
+    "description": "Notice explaining why name, gender, and birth date are required for identity verification"
+  },
+  "@menuTitle": {
+    "description": "Main menu section title"
+  },
+  "@menuSubtitle": {
+    "description": "Main menu section subtitle"
+  },
+  "@editProfileTitle": {
+    "description": "Edit profile menu item title"
+  },
+  "@editProfileSubtitle": {
+    "description": "Edit profile menu item subtitle"
+  },
+  "@openChatTitle": {
+    "description": "Open chat menu item title"
+  },
+  "@openChatSubtitle": {
+    "description": "Open chat menu item subtitle"
+  },
+  "@bannerAdTitle": {
+    "description": "Banner ad menu item title"
+  },
+  "@bannerAdSubtitle": {
+    "description": "Banner ad menu item subtitle"
+  },
+  "@pointAdTitle": {
+    "description": "Point ad menu item title"
+  },
+  "@pointAdSubtitle": {
+    "description": "Point ad menu item subtitle"
+  },
+  "@businessDirectoryTitle": {
+    "description": "Business directory menu item title"
+  },
+  "@businessDirectorySubtitle": {
+    "description": "Business directory menu item subtitle"
+  },
+  "@familySiteTitle": {
+    "description": "Family site menu item title"
+  },
+  "@familySiteSubtitle": {
+    "description": "Family site menu item subtitle"
+  },
+  "@appGuideTitle": {
+    "description": "App guide menu item title"
+  },
+  "@appGuideSubtitle": {
+    "description": "App guide menu item subtitle"
+  },
+  "@termsOfServiceTitle": {
+    "description": "Terms of service menu item title"
+  },
+  "@termsOfServiceSubtitle": {
+    "description": "Terms of service menu item subtitle"
+  },
+  "@privacyPolicyTitle": {
+    "description": "Privacy policy menu item title"
+  },
+  "@privacyPolicySubtitle": {
+    "description": "Privacy policy menu item subtitle"
+  },
+  "@withdrawTitle": {
+    "description": "Account withdrawal menu item title"
+  },
+  "@withdrawSubtitle": {
+    "description": "Account withdrawal menu item subtitle"
+  },
+  "@logoutTitle": {
+    "description": "Logout menu item title"
+  },
+  "@logoutSubtitle": {
+    "description": "Logout menu item subtitle"
+  },
+  "@year": {
+    "description": "Year label for date selector"
+  },
+  "@month": {
+    "description": "Month label for date selector"
+  },
+  "@day": {
+    "description": "Day label for date selector"
+  },
+  "@yearUnit": {
+    "description": "Year unit suffix (empty for English)"
+  },
+  "@monthUnit": {
+    "description": "Month unit suffix (empty for English)"
+  },
+  "@dayUnit": {
+    "description": "Day unit suffix (empty for English)"
+  },
+  "@selectYearAndMonthFirst": {
+    "description": "Error message when trying to select day without year and month"
+  },
+  "@selectYearFirst": {
+    "description": "Error message when trying to select day without year"
+  },
+  "@selectMonthFirst": {
+    "description": "Error message when trying to select day without month"
+  },
+  "@preferNotToSay": {
+    "description": "Gender option for users who prefer not to disclose their gender"
+  },
+  "@userProfile": {
+    "description": "Title for user profile screen"
+  },
+  "@unknownUser": {
+    "description": "Default text when user nickname is not available"
+  },
+  "@profileInformation": {
+    "description": "Section title for user profile information"
+  },
+  "@additionalInfoNotAvailable": {
+    "description": "Message shown when no additional user information is available"
+  },
+  "@confirmDeletePost": {
+    "description": "Confirmation message for deleting a post"
+  },
+  "@postDeletedSuccess": {
+    "description": "Success message after deleting a post"
+  },
+  "@confirmDeleteImage": {
+    "description": "Confirmation message for deleting an image"
+  },
+  "@imageDeletedSuccess": {
+    "description": "Success message after deleting an image"
+  },
+  "@alert": {
+    "description": "Alert dialog title"
+  },
+  "@postWithCommentsCannotBeDeleted": {
+    "description": "Error message when trying to delete a post that has comments"
+  },
+  "@postWithCommentsCannotBeEdited": {
+    "description": "Error message when trying to edit a post that has comments"
+  },
+  "@companyDirectoryTitle": {
+    "description": "Title for company directory screen"
+  },
+  "@addCompany": {
+    "description": "Button text for adding a new company"
+  },
+  "@companyDirectoryDescription": {
+    "description": "Description text for company directory"
+  },
+  "@registerCompany": {
+    "description": "Button text for registering a company"
+  },
+  "@updateCompany": {
+    "description": "Button text for updating a company"
+  },
+  "@companiesRegistered": {
+    "description": "Text showing number of companies registered",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@viewMore": {
+    "description": "Button text to view more items"
+  },
+  "@noRegisteredCompanies": {
+    "description": "Empty state message when no companies are registered"
+  },
+  "@registerCompanyPrompt": {
+    "description": "Prompt text encouraging users to register a company"
+  },
+  "@location": {
+    "description": "Label for location information"
+  },
+  "@contactInformation": {
+    "description": "Section title for contact information"
+  },
+  "@mobileNumber": {
+    "description": "Label for mobile number"
+  },
+  "@description": {
+    "description": "Label for description section"
+  },
+  "@familySite": {
+    "description": "Label for family site section"
+  },
+  "@basicInformation": {
+    "description": "Section title for basic information"
+  },
+  "@companyName": {
+    "description": "Label for company name field"
+  },
+  "@enterCompanyName": {
+    "description": "Hint text for company name field"
+  },
+  "@companyTitle": {
+    "description": "Label for company title field"
+  },
+  "@enterCompanyTitle": {
+    "description": "Hint text for company title field"
+  },
+  "@category": {
+    "description": "Label for category field"
+  },
+  "@selectCategory": {
+    "description": "Hint text for category dropdown"
+  },
+  "@pleaseSelectCategory": {
+    "description": "Error message for category selection"
+  },
+  "@enterDescription": {
+    "description": "Hint text for description field"
+  },
+  "@locationInformation": {
+    "description": "Section title for location information"
+  },
+  "@enterLocation": {
+    "description": "Hint text for location field"
+  },
+  "@address": {
+    "description": "Label for address field"
+  },
+  "@enterAddress": {
+    "description": "Hint text for address field"
+  },
+  "@enterMobileNumber": {
+    "description": "Hint text for mobile number field"
+  },
+  "@images": {
+    "description": "Section title for images"
+  },
+  "@logoImage": {
+    "description": "Label for logo image field"
+  },
+  "@titleImage": {
+    "description": "Label for title image field"
+  },
+  "@businessLicense": {
+    "description": "Label for business license field"
+  },
+  "@tapToUploadImage": {
+    "description": "Hint text for image upload"
+  },
+  "@companyRegistered": {
+    "description": "Success message for company registration"
+  },
+  "@companyUpdated": {
+    "description": "Success message for company update"
+  },
+  "@mobileContactMethod": {
+    "description": "Label for mobile contact method selection"
+  },
+  "@sendText": {
+    "description": "Option for text message contact method"
+  },
+  "@makeCall": {
+    "description": "Option for phone call contact method"
+  },
+  "@guideWelcomeTitle": {
+    "description": "Welcome title in app guide"
+  },
+  "@guideWelcomeSubtitle": {
+    "description": "Welcome subtitle in app guide"
+  },
+  "@guideFeaturesTitle": {
+    "description": "Features section title in app guide"
+  },
+  "@guideFeatureCommunityTitle": {
+    "description": "Community feature title"
+  },
+  "@guideFeatureCommunityDesc": {
+    "description": "Community feature description"
+  },
+  "@guideFeatureChatTitle": {
+    "description": "Chat feature title"
+  },
+  "@guideFeatureChatDesc": {
+    "description": "Chat feature description"
+  },
+  "@guideFeatureDirectoryTitle": {
+    "description": "Business directory feature title"
+  },
+  "@guideFeatureDirectoryDesc": {
+    "description": "Business directory feature description"
+  },
+  "@guideFeatureWriteTitle": {
+    "description": "Write feature title"
+  },
+  "@guideFeatureWriteDesc": {
+    "description": "Write feature description"
+  },
+  "@guideTipsTitle": {
+    "description": "Tips section title in app guide"
+  },
+  "@guideTip1": {
+    "description": "First tip in app guide"
+  },
+  "@guideTip2": {
+    "description": "Second tip in app guide"
+  },
+  "@guideTip3": {
+    "description": "Third tip in app guide"
+  },
+  "@guideTip4": {
+    "description": "Fourth tip in app guide"
+  },
+  "@guideFaqTitle": {
+    "description": "FAQ section title in app guide"
+  },
+  "@guideFaqQ1": {
+    "description": "First FAQ question"
+  },
+  "@guideFaqA1": {
+    "description": "First FAQ answer"
+  },
+  "@guideFaqQ2": {
+    "description": "Second FAQ question"
+  },
+  "@guideFaqA2": {
+    "description": "Second FAQ answer"
+  },
+  "@guideFaqQ3": {
+    "description": "Third FAQ question"
+  },
+  "@guideFaqA3": {
+    "description": "Third FAQ answer"
+  },
+  "@guideFaqQ4": {
+    "description": "Fourth FAQ question"
+  },
+  "@guideFaqA4": {
+    "description": "Fourth FAQ answer"
+  },
+  "@accountWithdrawalTitle": {
+    "description": "Account withdrawal screen title"
+  },
+  "@withdrawalIntroTitle": {
+    "description": "Withdrawal intro section title"
+  },
+  "@withdrawalIntroSubtitle": {
+    "description": "Withdrawal intro section subtitle"
+  },
+  "@withdrawalStep1Title": {
+    "description": "Step 1 title for data deletion"
+  },
+  "@withdrawalAccountInfoTitle": {
+    "description": "Account information section title"
+  },
+  "@withdrawalAccountInfoDesc": {
+    "description": "Account information description"
+  },
+  "@withdrawalUsageHistoryTitle": {
+    "description": "Usage history section title"
+  },
+  "@withdrawalUsageHistoryDesc": {
+    "description": "Usage history description"
+  },
+  "@withdrawalAdditionalDataTitle": {
+    "description": "Additional data section title"
+  },
+  "@withdrawalAdditionalDataDesc": {
+    "description": "Additional data description"
+  },
+  "@withdrawalPaymentNote": {
+    "description": "Note about payment data retention"
+  },
+  "@withdrawalStep2Title": {
+    "description": "Step 2 title for deletion method"
+  },
+  "@withdrawalEmailRequest": {
+    "description": "Email request method"
+  },
+  "@withdrawalStep3Title": {
+    "description": "Step 3 title for processing timeline"
+  },
+  "@withdrawalProcessingDesc": {
+    "description": "Processing timeline description"
+  },
+  "@withdrawalIrreversibleNote": {
+    "description": "Warning about irreversible deletion"
+  },
+  "@withdrawalStep4Title": {
+    "description": "Step 4 title for data retention exceptions"
+  },
+  "@withdrawalRetentionDesc": {
+    "description": "Data retention exception description"
+  },
+  "@withdrawalStep5Title": {
+    "description": "Step 5 title for contact information"
+  },
+  "@withdrawalContactDesc": {
+    "description": "Contact information description"
+  },
+  "@requestWithdrawal": {
+    "description": "Button text to request account withdrawal"
+  },
+  "@guideGettingStartedTitle": {
+    "description": "Getting started section title"
+  },
+  "@guideStep1Title": {
+    "description": "Step 1 title"
+  },
+  "@guideStep1Desc": {
+    "description": "Step 1 description"
+  },
+  "@guideStep2Title": {
+    "description": "Step 2 title"
+  },
+  "@guideStep2Desc": {
+    "description": "Step 2 description"
+  },
+  "@guideStep3Title": {
+    "description": "Step 3 title"
+  },
+  "@guideStep3Desc": {
+    "description": "Step 3 description"
+  },
+  "@guideStep4Title": {
+    "description": "Step 4 title"
+  },
+  "@guideStep4Desc": {
+    "description": "Step 4 description"
+  },
+  "@bookmarked_folders": {
+    "description": "Title for bookmarked folders dialog"
+  },
+  "@no_bookmarked_folders": {
+    "description": "Message when there are no bookmarked folders"
+  },
+  "@bookmarked_chats": {
+    "description": "Title for bookmarked chats dialog"
+  },
+  "@no_bookmarked_chats": {
+    "description": "Message when there are no bookmarked chats in a folder"
+  },
+  "@unpin_chat_room_title": {
+    "description": "Title for unpin chat room confirmation dialog"
+  },
+  "@unpin_chat_room_message": {
+    "description": "Message for unpin chat room confirmation dialog"
+  },
+  "@pin": {
+    "description": "Pin button text"
+  },
+  "@unpin": {
+    "description": "Unpin button text"
+  },
+  "@chat_room_unpinned": {
+    "description": "Success message after unpinning chat room"
+  },
+  "@myActivity": {
+    "description": "Title for my activity screen"
+  },
+  "@myPosts": {
+    "description": "Tab label for my posts"
+  },
+  "@myComments": {
+    "description": "Tab label for my comments"
+  },
+  "@posts": {
+    "description": "Label for posts"
+  },
+  "@noPostsYet": {
+    "description": "Empty state message when user has no posts"
+  },
+  "@noCommentsYet": {
+    "description": "Empty state message when user has no comments"
+  },
+  "@views": {
+    "description": "Label for view count"
+  },
+  "@ago": {
+    "description": "Suffix for time ago"
+  },
+  "@justNow": {
+    "description": "Text for very recent time"
+  },
+  "@minutesAgo": {
+    "description": "Minutes ago format",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAgo": {
+    "description": "Hours ago format",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@daysAgo": {
+    "description": "Days ago format",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeksAgo": {
+    "description": "Weeks ago format",
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "@monthsAgo": {
+    "description": "Months ago format",
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "@yearsAgo": {
+    "description": "Years ago format",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@latestPosts": {
+    "description": "Title for latest posts section"
+  },
+  "@latestComments": {
+    "description": "Title for latest comments section"
+  },
+  "@viewAll": {
+    "description": "Button text to view all items"
+  },
+  "@advertisementSpace": {
+    "description": "Placeholder text for advertisement banner"
+  },
+  "@lv": {
+    "description": "Abbreviation for level"
+  },
+  "@settings": {
+    "description": "Settings button tooltip and menu label"
+  },
+  "@languageSettings": {
+    "description": "Language settings screen title"
+  },
+  "@selectLanguage": {
+    "description": "Language dropdown hint text"
+  },
+  "@saveLanguage": {
+    "description": "Save language button text"
+  },
+  "@languageChanged": {
+    "description": "Success message after changing language"
+  },
+  "@languageTitle": {
+    "description": "Language menu item title"
+  },
+  "@languageSubtitle": {
+    "description": "Language menu item subtitle"
+  },
+  "@logoutConfirmMessage": {
+    "description": "Logout confirmation message"
+  },
+  "@companyNameRequired": {
+    "description": "Error message when company name is empty"
+  },
+  "@companyTitleRequired": {
+    "description": "Error message when company title is empty"
+  },
+  "@locationRequired": {
+    "description": "Error message when location is empty"
+  },
+  "@addressRequired": {
+    "description": "Error message when address is empty"
+  },
+  "@descriptionRequired": {
+    "description": "Error message when description is empty"
+  },
+  "@landlineRequired": {
+    "description": "Error message when landline is empty"
+  },
+  "@mobileNumberRequired": {
+    "description": "Error message when mobile number is empty"
+  },
+  "@logoRequired": {
+    "description": "Error message when logo is not uploaded"
+  },
+  "@detailedInformation": {
+    "description": "Step title for detailed information"
+  },
+  "@imageUpload": {
+    "description": "Step title for image upload"
+  },
+  "@kakaoQrCodeDeleted": {
+    "description": "Success message after deleting Kakao QR code"
+  },
+  "@failedToDelete": {
+    "description": "Error message when deletion fails"
+  },
+  "@companyLogoDeleted": {
+    "description": "Success message after deleting company logo"
+  },
+  "@failedToDeletePhoto": {
+    "description": "Error message when photo deletion fails"
+  },
+  "@businessLicenseDeleted": {
+    "description": "Success message after deleting business license"
+  },
+  "@failedToDeleteLicense": {
+    "description": "Error message when license deletion fails"
+  },
+  "@companyIntroImageDeleted": {
+    "description": "Success message after deleting company intro image"
+  },
+  "@failedToDeleteImage": {
+    "description": "Error message when image deletion fails"
+  },
+  "@officeInteriorDeleted": {
+    "description": "Success message after deleting office interior photo"
+  },
+  "@back": {
+    "description": "Back button label"
+  },
+  "@next": {
+    "description": "Next button label"
+  },
+  "@failedToLoadCompanies": {
+    "description": "Error message when companies fail to load"
+  },
+  "@retry": {
+    "description": "Retry button label"
+  },
+  "@noCompaniesFound": {
+    "description": "Empty state title when no companies are found"
+  },
+  "@noCompaniesInCategory": {
+    "description": "Empty state message for companies in a specific category",
+    "placeholders": {
+      "categoryName": {
+        "type": "String",
+        "example": "Restaurant"
+      }
+    }
+  },
+  "@editMyCompany": {
+    "description": "Tooltip for edit company button"
+  },
+  "@addMyCompany": {
+    "description": "Tooltip for add company button"
+  },
+  "@allCategories": {
+    "description": "Filter chip label to show all categories"
+  },
+  "@publicOffice": {
+    "description": "Public office category name"
+  },
+  "@publicOfficeDesc": {
+    "description": "Public office category description"
+  },
+  "@education": {
+    "description": "Education category name"
+  },
+  "@educationDesc": {
+    "description": "Education category description"
+  },
+  "@foodAndDrink": {
+    "description": "Food and drink category name"
+  },
+  "@foodAndDrinkDesc": {
+    "description": "Food and drink category description"
+  },
+  "@transportation": {
+    "description": "Transportation category name"
+  },
+  "@transportationDesc": {
+    "description": "Transportation category description"
+  },
+  "@healthAndHospitals": {
+    "description": "Health category name"
+  },
+  "@healthAndHospitalsDesc": {
+    "description": "Health category description"
+  },
+  "@shoppingAndMarts": {
+    "description": "Shopping category name"
+  },
+  "@shoppingAndMartsDesc": {
+    "description": "Shopping category description"
+  },
+  "@bankingAndFinance": {
+    "description": "Banking category name"
+  },
+  "@bankingAndFinanceDesc": {
+    "description": "Banking category description"
+  },
+  "@gadgets": {
+    "description": "Gadgets category name"
+  },
+  "@gadgetsDesc": {
+    "description": "Gadgets category description"
+  },
+  "@travelAndTourism": {
+    "description": "Travel category name"
+  },
+  "@travelAndTourismDesc": {
+    "description": "Travel category description"
+  },
+  "@hotels": {
+    "description": "Hotels category name"
+  },
+  "@hotelsDesc": {
+    "description": "Hotels category description"
+  },
+  "@carRental": {
+    "description": "Car rental category name"
+  },
+  "@carRentalDesc": {
+    "description": "Car rental category description"
+  },
+  "@beautyAndWellness": {
+    "description": "Beauty category name"
+  },
+  "@beautyAndWellnessDesc": {
+    "description": "Beauty category description"
+  },
+  "@realEstate": {
+    "description": "Real estate category name"
+  },
+  "@realEstateDesc": {
+    "description": "Real estate category description"
+  },
+  "@entertainment": {
+    "description": "Entertainment category name"
+  },
+  "@entertainmentDesc": {
+    "description": "Entertainment category description"
+  },
+  "@spaAndRelaxation": {
+    "description": "Spa category name"
+  },
+  "@spaAndRelaxationDesc": {
+    "description": "Spa category description"
+  },
+  "@otherServices": {
+    "description": "Other services category name"
+  },
+  "@otherServicesDesc": {
+    "description": "Other services category description"
+  },
+  "@account": {
+    "description": "Account section title in menu"
+  },
+  "@advertising": {
+    "description": "Advertising section title in menu"
+  },
+  "@support": {
+    "description": "Support section title in menu"
+  },
+  "@accountActions": {
+    "description": "Account actions section title in menu"
+  },
+  "@blockedUsers": {
+    "description": "Blocked users menu item"
+  },
+  "@writingGuide": {
+    "description": "Writing guide section title"
+  },
+  "@postDefamationWarning": {
+    "description": "Warning about defamation in posts"
+  },
+  "@postSpamWarning": {
+    "description": "Warning about spam in posts"
+  },
+  "@postPersonalInfoWarning": {
+    "description": "Warning about personal information in posts"
+  },
+  "@postCopyrightWarning": {
+    "description": "Warning about copyright in posts"
+  },
+  "@updatePrefix": {
+    "description": "Prefix for update screen title"
+  },
+  "@uploadInProgress": {
+    "description": "Error message when trying to submit while upload is in progress"
+  },
+  "@about": {
+    "description": "About screen title"
+  },
+  "@welcomeToAboutScreen": {
+    "description": "Welcome message on about screen"
+  },
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+  "@enterKakaotalkId": {
+    "description": "Hint text for KakaoTalk ID field"
+  },
+  "@kakaoChannelUrlPlaceholder": {
+    "description": "Placeholder for Kakao channel URL field"
+  },
+  "@enterTelegramId": {
+    "description": "Hint text for Telegram ID field"
+  },
+  "@companyNameExample": {
+    "description": "Example text for company name field"
+  },
+  "@enterFamilySiteName": {
+    "description": "Hint text for family site name field"
+  },
+  "@enterFamilySiteDescription": {
+    "description": "Hint text for family site description field"
+  },
+  "@couldNotLaunchEmailApp": {
+    "description": "Error message when email app cannot be launched"
+  },
+  "@error": {
+    "description": "Generic error label"
+  },
+  "@useCompanyDomain": {
+    "description": "Checkbox label for using company domain"
+  },
+  "@seoFeaturesMessage": {
+    "description": "Information about SEO features"
+  },
+  "@familySiteDomain": {
+    "description": "Label for family site domain field"
+  },
+  "@familySiteName": {
+    "description": "Label for family site name field"
+  },
+  "@familySiteDescription": {
+    "description": "Label for family site description field"
+  },
+  "@kakaoId": {
+    "description": "Label for KakaoTalk ID field"
+  },
+  "@uploadKakaoQrCode": {
+    "description": "Label for Kakao QR code upload"
+  },
+  "@kakaoChannelUrl": {
+    "description": "Label for Kakao channel URL field"
+  },
+  "@telegramId": {
+    "description": "Label for Telegram ID field"
+  },
+  "@businessType": {
+    "description": "Label for business type field"
+  },
+  "@companyLogo": {
+    "description": "Label for company logo upload"
+  },
+  "@companyIntroImage": {
+    "description": "Label for company introduction image upload"
+  },
+  "@companyIntroImageGuideline": {
+    "description": "Guideline text for company introduction image"
+  },
+  "@officeInteriorPhoto": {
+    "description": "Label for office/store interior photo upload"
+  },
+  "@officeInteriorGuideline": {
+    "description": "Guideline text for office interior photo"
+  },
+  "@loginToSeeProfile": {
+    "description": "Text prompting user to login to view their profile"
+  },
+  "@viewPostsCommentsPoints": {
+    "description": "Description of what user can see after logging in"
+  },
+  "@updateYourNickname": {
+    "description": "Placeholder text when user has no nickname"
+  },
+  "@points": {
+    "description": "Label for user points/score"
+  },
+  "@philgoPhoneLogin": {
+    "description": "Title for phone number login"
+  },
+  "@phoneNumberExample": {
+    "description": "Example text for phone number input format"
+  },
+  "@appName": {
+    "description": "App name displayed on entry screen"
+  },
+  "@appSlogan": {
+    "description": "App slogan displayed on entry screen"
+  },
+  "@categoryFreetalk": {
+    "description": "Free talk category name"
+  },
+  "@categoryQna": {
+    "description": "Q&A category name"
+  },
+  "@categoryBuyandsell": {
+    "description": "Buy and sell category name"
+  },
+  "@categoryBlog": {
+    "description": "Blog category name"
+  },
+  "@categoryBoardingHouse": {
+    "description": "Boarding house category name"
+  },
+  "@categoryCaution": {
+    "description": "Caution category name"
+  },
+  "@categoryLookfor": {
+    "description": "Looking for category name"
+  },
+  "@categoryFoodDelivery": {
+    "description": "Food delivery category name"
+  },
+  "@categoryGreeting": {
+    "description": "Greetings category name"
+  },
+  "@categoryWanted": {
+    "description": "Jobs/wanted category name"
+  },
+  "@categoryBusiness": {
+    "description": "Business category name"
+  },
+  "@categoryMassage": {
+    "description": "Massage category name"
+  },
+  "@categoryRest": {
+    "description": "Restaurant category name"
+  },
+  "@categorySchool": {
+    "description": "School category name"
+  },
+  "@categoryStudy": {
+    "description": "Study category name"
+  },
+  "@categoryTravel": {
+    "description": "Travel category name"
+  },
+  "@categoryYoutube": {
+    "description": "YouTube category name"
+  },
+  "@categoryMomcafe": {
+    "description": "Mom cafe category name"
+  },
+  "@categoryNews": {
+    "description": "News category name"
+  },
+  "@categoryNewcomer": {
+    "description": "Newcomer category name"
+  },
+  "@categoryNature": {
+    "description": "Nature category name"
+  },
+  "@categoryCompanyInfo": {
+    "description": "Company info category name"
+  },
+  "@categoryEnglishBiz": {
+    "description": "English business category name"
+  },
+  "@categoryTemp": {
+    "description": "Temporary category name"
+  },
+  "@categoryTravelGood": {
+    "description": "Travel recommendations category name"
+  },
+  "@subCategoryDiscussion": {
+    "description": "Discussion subcategory name"
+  },
+  "@subCategoryEncyclopedia": {
+    "description": "Encyclopedia subcategory name"
+  },
+  "@subCategoryHobby": {
+    "description": "Hobby subcategory name"
+  },
+  "@subCategoryInfo": {
+    "description": "Info subcategory name"
+  },
+  "@subCategoryKoPhCouple": {
+    "description": "Korean-Filipino couple subcategory name"
+  },
+  "@subCategoryKopino": {
+    "description": "Kopino subcategory name"
+  },
+  "@subCategoryImmigration": {
+    "description": "Immigration subcategory name"
+  },
+  "@subCategoryPhoto": {
+    "description": "Photo subcategory name"
+  },
+  "@subCategoryLifeTips": {
+    "description": "Life tips subcategory name"
+  },
+  "@subCategoryMissing": {
+    "description": "Missing subcategory name"
+  },
+  "@subCategoryIntlMarriage": {
+    "description": "International marriage subcategory name"
+  },
+  "@subCategoryMeeting": {
+    "description": "Meetup subcategory name"
+  },
+  "@subCategoryColumn": {
+    "description": "Column subcategory name"
+  },
+  "@subCategoryMukbang": {
+    "description": "Mukbang subcategory name"
+  },
+  "@subCategoryNotice": {
+    "description": "Notice subcategory name"
+  },
+  "@subCategoryExperience": {
+    "description": "Experience subcategory name"
+  },
+  "@subCategoryStudyLearn": {
+    "description": "Study/learn subcategory name"
+  },
+  "@subCategoryTyphoon": {
+    "description": "Typhoon subcategory name"
+  },
+  "@subCategoryBusinessPartner": {
+    "description": "Business partner subcategory name"
+  },
+  "@subCategoryComputer": {
+    "description": "Computer/internet subcategory name"
+  },
+  "@subCategoryExchange": {
+    "description": "Peso exchange subcategory name"
+  },
+  "@subCategoryPhone": {
+    "description": "Mobile phone subcategory name"
+  },
+  "@subCategoryHotel": {
+    "description": "Hotel subcategory name"
+  },
+  "@subCategoryAppliances": {
+    "description": "Appliances subcategory name"
+  },
+  "@subCategoryGolf": {
+    "description": "Golf subcategory name"
+  },
+  "@subCategoryPromotion": {
+    "description": "Promotion subcategory name"
+  },
+  "@subCategoryPersonalMarket": {
+    "description": "Personal market subcategory name"
+  },
+  "@subCategoryRealEstate": {
+    "description": "Real estate subcategory name"
+  },
+  "@subCategoryHouseRental": {
+    "description": "House rental subcategory name"
+  },
+  "@subCategoryCarRental": {
+    "description": "Car rental subcategory name"
+  },
+  "@subCategoryUsedCar": {
+    "description": "Used car subcategory name"
+  },
+  "@postLiked": {
+    "description": "Success message when user likes a post"
+  },
+  "@alreadyLikedPost": {
+    "description": "Error message when user tries to like an already liked post"
+  },
+  "@commentReplied": {
+    "description": "Success message when comment reply is created"
+  },
+  "@commentUpdated": {
+    "description": "Success message when comment is updated"
+  },
+  "@commentCreated": {
+    "description": "Success message when comment is created"
+  }
 }

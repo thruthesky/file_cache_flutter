@@ -436,9 +436,6 @@ class LoJa extends Lo {
   String get enterCompanyName => '業者名を入力してください';
 
   @override
-  String get companyNameRequired => '会社名を入力してください';
-
-  @override
   String get companyTitle => '業者タイトル';
 
   @override
@@ -794,6 +791,9 @@ class LoJa extends Lo {
 
   @override
   String get logoutConfirmMessage => 'ログアウトしますか？';
+
+  @override
+  String get companyNameRequired => '会社名を入力してください';
 
   @override
   String get companyTitleRequired => '会社タイトルを入力してください';

@@ -448,9 +448,6 @@ class LoEn extends Lo {
   String get enterCompanyName => 'Enter company name';
 
   @override
-  String get companyNameRequired => 'Company name is required';
-
-  @override
   String get companyTitle => 'Company Title';
 
   @override
@@ -821,6 +818,9 @@ class LoEn extends Lo {
 
   @override
   String get logoutConfirmMessage => 'Are you sure you want to logout?';
+
+  @override
+  String get companyNameRequired => 'Company name is required';
 
   @override
   String get companyTitleRequired => 'Company title is required';

@@ -677,7 +677,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 SliverToBoxAdapter(
                   child: SizedBox(
                     height: MediaQuery.of(context).viewInsets.bottom > 0
-                        ? 0
+                        ? MediaQuery.of(context).viewInsets.bottom
                         : 200,
                   ),
                 ),

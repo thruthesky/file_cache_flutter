@@ -434,9 +434,6 @@ class LoZh extends Lo {
   String get enterCompanyName => '请输入商家名称';
 
   @override
-  String get companyNameRequired => '请输入公司名称';
-
-  @override
   String get companyTitle => '商家标题';
 
   @override
@@ -789,6 +786,9 @@ class LoZh extends Lo {
 
   @override
   String get logoutConfirmMessage => '您确定要退出吗？';
+
+  @override
+  String get companyNameRequired => '请输入公司名称';
 
   @override
   String get companyTitleRequired => '请输入公司标题';

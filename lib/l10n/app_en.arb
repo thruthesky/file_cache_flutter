@@ -1,103 +1,133 @@
 {
-    "@@locale": "en",
-    "login": "Login",
-    "@login": {
-        "description": "The conventional newborn programmer greeting"
-    },
-    "name": "Name",
-    "@name": {
-        "description": "A field label for entering a name"
-    },
-    "philgoCommunityTitle": "The Largest Korean Community in the Philippines",
-    "@philgoCommunityTitle": {
-        "description": "Title for PhilGo Korean community carousel item"
-    },
-    "philgoCommunitySubtitle": "Find all the information about life in the Philippines on PhilGo",
-    "@philgoCommunitySubtitle": {
-        "description": "Subtitle for PhilGo Korean community carousel item"
-    },
-    "realTimeInfoTitle": "Real-time Information Sharing",
-    "@realTimeInfoTitle": {
-        "description": "Title for real-time information sharing carousel item"
-    },
-    "realTimeInfoSubtitle": "Check local news and living information in the Philippines in real-time",
-    "@realTimeInfoSubtitle": {
-        "description": "Subtitle for real-time information sharing carousel item"
-    },
-    "businessNetworkingTitle": "Business Networking",
-    "@businessNetworkingTitle": {
-        "description": "Title for business networking carousel item"
-    },
-    "businessNetworkingSubtitle": "Network with Koreans doing business in the Philippines",
-    "@businessNetworkingSubtitle": {
-        "description": "Subtitle for business networking carousel item"
-    },
-    "safeCommunityTitle": "Safe Community",
-    "@safeCommunityTitle": {
-        "description": "Title for safe community carousel item"
-    },
-    "safeCommunitySubtitle": "A trusted community with verified members",
-    "@safeCommunitySubtitle": {
-        "description": "Subtitle for safe community carousel item"
-    },
-    "home": "Home",
-    "@home": {
-        "description": "Home screen title"
-    },
-    "chat": "Chat",
-    "@chat": {
-        "description": "Chat navigation item label"
-    },
-    "forum": "Forum",
-    "@forum": {
-        "description": "Forum navigation item label"
-    },
-    "create": "Create",
-    "@create": {
-        "description": "Create/Write navigation item label"
-    },
-    "company": "Directory",
-    "@company": {
-        "description": "Company/Business directory navigation item label"
-    },
-    "menu": "Menu",
-    "@menu": {
-        "description": "Menu navigation item label"
-    },
-    "my": "My",
-    "@my": {
-        "description": "My page navigation item label"
-    },
+  "@@locale": "en",
+  "login": "Login",
+  "@login": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "A field label for entering a name"
+  },
+  "philgoCommunityTitle": "The Largest Korean Community in the Philippines",
+  "@philgoCommunityTitle": {
+    "description": "Title for PhilGo Korean community carousel item"
+  },
+  "philgoCommunitySubtitle": "Find all the information about life in the Philippines on PhilGo",
+  "@philgoCommunitySubtitle": {
+    "description": "Subtitle for PhilGo Korean community carousel item"
+  },
+  "realTimeInfoTitle": "Real-time Information Sharing",
+  "@realTimeInfoTitle": {
+    "description": "Title for real-time information sharing carousel item"
+  },
+  "realTimeInfoSubtitle": "Check local news and living information in the Philippines in real-time",
+  "@realTimeInfoSubtitle": {
+    "description": "Subtitle for real-time information sharing carousel item"
+  },
+  "businessNetworkingTitle": "Business Networking",
+  "@businessNetworkingTitle": {
+    "description": "Title for business networking carousel item"
+  },
+  "businessNetworkingSubtitle": "Network with Koreans doing business in the Philippines",
+  "@businessNetworkingSubtitle": {
+    "description": "Subtitle for business networking carousel item"
+  },
+  "safeCommunityTitle": "Safe Community",
+  "@safeCommunityTitle": {
+    "description": "Title for safe community carousel item"
+  },
+  "safeCommunitySubtitle": "A trusted community with verified members",
+  "@safeCommunitySubtitle": {
+    "description": "Subtitle for safe community carousel item"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home screen title"
+  },
+  "chat": "Chat",
+  "@chat": {
+    "description": "Chat navigation item label"
+  },
+  "forum": "Forum",
+  "@forum": {
+    "description": "Forum navigation item label"
+  },
+  "create": "Create",
+  "@create": {
+    "description": "Create/Write navigation item label"
+  },
+  "company": "Directory",
+  "@company": {
+    "description": "Company/Business directory navigation item label"
+  },
+  "menu": "Menu",
+  "@menu": {
+    "description": "Menu navigation item label"
+  },
+  "my": "My",
+  "@my": {
+    "description": "My page navigation item label"
+  },
   "loginWithPhoneTitle": "Login with Phone",
-  "@loginWithPhoneTitle": {"description": "AppBar title for phone login"},
+  "@loginWithPhoneTitle": {
+    "description": "AppBar title for phone login"
+  },
   "loginWithPhoneHeader": "Sign in using your phone number.",
-  "@loginWithPhoneHeader": {"description": "Header text above phone sign-in"},
+  "@loginWithPhoneHeader": {
+    "description": "Header text above phone sign-in"
+  },
   "loginPhoneSmsNotice": "We will send an SMS to verify your phone number.",
-  "@loginPhoneSmsNotice": {"description": "Notice about SMS verification"},
+  "@loginPhoneSmsNotice": {
+    "description": "Notice about SMS verification"
+  },
   "enterPhoneNumber": "Enter your phone number",
-  "@enterPhoneNumber": {"description": "Label/hint for phone number field"},
+  "@enterPhoneNumber": {
+    "description": "Label/hint for phone number field"
+  },
   "phoneNumber": "Phone number",
-  "@phoneNumber": {"description": "Short label for phone number"},
+  "@phoneNumber": {
+    "description": "Short label for phone number"
+  },
   "enterSmsCode": "Enter SMS code",
-  "@enterSmsCode": {"description": "Label/hint for SMS code field"},
+  "@enterSmsCode": {
+    "description": "Label/hint for SMS code field"
+  },
   "resendSms": "Resend SMS",
-  "@resendSms": {"description": "Resend SMS button label"},
+  "@resendSms": {
+    "description": "Resend SMS button label"
+  },
   "verifySmsCode": "Verify SMS code",
-  "@verifySmsCode": {"description": "Verify SMS code button label"},
+  "@verifySmsCode": {
+    "description": "Verify SMS code button label"
+  },
   "verifyPhoneNumber": "Verify phone number",
-  "@verifyPhoneNumber": {"description": "Verify phone number button label"},
+  "@verifyPhoneNumber": {
+    "description": "Verify phone number button label"
+  },
   "sendSmsCode": "Send SMS code",
-  "@sendSmsCode": {"description": "Button label to send an SMS verification code"},
+  "@sendSmsCode": {
+    "description": "Button label to send an SMS verification code"
+  },
   "termsOfService": "Terms of Service",
-  "@termsOfService": {"description": "Terms link label and dialog title"},
+  "@termsOfService": {
+    "description": "Terms link label and dialog title"
+  },
   "termsContent": "Terms of Service content",
-  "@termsContent": {"description": "Terms content placeholder"},
+  "@termsContent": {
+    "description": "Terms content placeholder"
+  },
   "privacyPolicy": "Privacy Policy",
-  "@privacyPolicy": {"description": "Privacy policy link label and dialog title"},
+  "@privacyPolicy": {
+    "description": "Privacy policy link label and dialog title"
+  },
   "close": "Close",
-  "@close": {"description": "Close button label"},
+  "@close": {
+    "description": "Close button label"
+  },
   "phoneAuthFailed": "Phone number verification failed",
-  "@phoneAuthFailed": {"description": "Verification failed"},
+  "@phoneAuthFailed": {
+    "description": "Verification failed"
+  },
   "community": "Community",
   "@community": {
     "description": "Community category label"
@@ -532,10 +562,6 @@
   "enterCompanyName": "Enter company name",
   "@enterCompanyName": {
     "description": "Hint text for company name field"
-  },
-  "companyNameRequired": "Company name is required",
-  "@companyNameRequired": {
-    "description": "Validation message for company name"
   },
   "companyTitle": "Company Title",
   "@companyTitle": {
@@ -1449,66 +1475,230 @@
   "@appSlogan": {
     "description": "App slogan displayed on entry screen"
   },
-
   "categoryFreetalk": "Free Talk",
+  "@categoryFreetalk": {
+    "description": "Free talk category name"
+  },
   "categoryQna": "Q&A",
+  "@categoryQna": {
+    "description": "Q&A category name"
+  },
   "categoryBuyandsell": "Buy & Sell",
+  "@categoryBuyandsell": {
+    "description": "Buy and sell category name"
+  },
   "categoryBlog": "Blog",
+  "@categoryBlog": {
+    "description": "Blog category name"
+  },
   "categoryBoardingHouse": "Boarding House",
+  "@categoryBoardingHouse": {
+    "description": "Boarding house category name"
+  },
   "categoryCaution": "Caution",
+  "@categoryCaution": {
+    "description": "Caution category name"
+  },
   "categoryLookfor": "Looking For",
+  "@categoryLookfor": {
+    "description": "Looking for category name"
+  },
   "categoryFoodDelivery": "Food Delivery",
+  "@categoryFoodDelivery": {
+    "description": "Food delivery category name"
+  },
   "categoryGreeting": "Greetings",
+  "@categoryGreeting": {
+    "description": "Greetings category name"
+  },
   "categoryWanted": "Jobs",
+  "@categoryWanted": {
+    "description": "Jobs/wanted category name"
+  },
   "categoryBusiness": "Business",
+  "@categoryBusiness": {
+    "description": "Business category name"
+  },
   "categoryMassage": "Massage",
+  "@categoryMassage": {
+    "description": "Massage category name"
+  },
   "categoryRest": "Restaurant",
+  "@categoryRest": {
+    "description": "Restaurant category name"
+  },
   "categorySchool": "School",
+  "@categorySchool": {
+    "description": "School category name"
+  },
   "categoryStudy": "Study",
+  "@categoryStudy": {
+    "description": "Study category name"
+  },
   "categoryTravel": "Travel",
+  "@categoryTravel": {
+    "description": "Travel category name"
+  },
   "categoryYoutube": "YouTube",
+  "@categoryYoutube": {
+    "description": "YouTube category name"
+  },
   "categoryMomcafe": "Mom Cafe",
+  "@categoryMomcafe": {
+    "description": "Mom cafe category name"
+  },
   "categoryNews": "News",
+  "@categoryNews": {
+    "description": "News category name"
+  },
   "categoryNewcomer": "Newcomer",
+  "@categoryNewcomer": {
+    "description": "Newcomer category name"
+  },
   "categoryNature": "Nature",
+  "@categoryNature": {
+    "description": "Nature category name"
+  },
   "categoryCompanyInfo": "Company Info",
+  "@categoryCompanyInfo": {
+    "description": "Company info category name"
+  },
   "categoryEnglishBiz": "English Business",
+  "@categoryEnglishBiz": {
+    "description": "English business category name"
+  },
   "categoryTemp": "Temporary",
+  "@categoryTemp": {
+    "description": "Temporary category name"
+  },
   "categoryTravelGood": "Travel Recommendations",
-
+  "@categoryTravelGood": {
+    "description": "Travel recommendations category name"
+  },
   "subCategoryDiscussion": "Discussion",
+  "@subCategoryDiscussion": {
+    "description": "Discussion subcategory name"
+  },
   "subCategoryEncyclopedia": "Encyclopedia",
+  "@subCategoryEncyclopedia": {
+    "description": "Encyclopedia subcategory name"
+  },
   "subCategoryHobby": "Hobby",
+  "@subCategoryHobby": {
+    "description": "Hobby subcategory name"
+  },
   "subCategoryInfo": "Info",
+  "@subCategoryInfo": {
+    "description": "Info subcategory name"
+  },
   "subCategoryKoPhCouple": "Korean-Filipino Couple",
+  "@subCategoryKoPhCouple": {
+    "description": "Korean-Filipino couple subcategory name"
+  },
   "subCategoryKopino": "Kopino",
+  "@subCategoryKopino": {
+    "description": "Kopino subcategory name"
+  },
   "subCategoryImmigration": "Immigration",
+  "@subCategoryImmigration": {
+    "description": "Immigration subcategory name"
+  },
   "subCategoryPhoto": "Photo",
+  "@subCategoryPhoto": {
+    "description": "Photo subcategory name"
+  },
   "subCategoryLifeTips": "Life Tips",
+  "@subCategoryLifeTips": {
+    "description": "Life tips subcategory name"
+  },
   "subCategoryMissing": "Missing",
+  "@subCategoryMissing": {
+    "description": "Missing subcategory name"
+  },
   "subCategoryIntlMarriage": "International Marriage",
+  "@subCategoryIntlMarriage": {
+    "description": "International marriage subcategory name"
+  },
   "subCategoryMeeting": "Meetup",
+  "@subCategoryMeeting": {
+    "description": "Meetup subcategory name"
+  },
   "subCategoryColumn": "Column",
+  "@subCategoryColumn": {
+    "description": "Column subcategory name"
+  },
   "subCategoryMukbang": "Mukbang",
+  "@subCategoryMukbang": {
+    "description": "Mukbang subcategory name"
+  },
   "subCategoryNotice": "Notice",
+  "@subCategoryNotice": {
+    "description": "Notice subcategory name"
+  },
   "subCategoryExperience": "Experience",
+  "@subCategoryExperience": {
+    "description": "Experience subcategory name"
+  },
   "subCategoryStudyLearn": "Study",
+  "@subCategoryStudyLearn": {
+    "description": "Study/learn subcategory name"
+  },
   "subCategoryTyphoon": "Typhoon",
-
+  "@subCategoryTyphoon": {
+    "description": "Typhoon subcategory name"
+  },
   "subCategoryBusinessPartner": "Business Partner",
+  "@subCategoryBusinessPartner": {
+    "description": "Business partner subcategory name"
+  },
   "subCategoryComputer": "Computer/Internet",
+  "@subCategoryComputer": {
+    "description": "Computer/internet subcategory name"
+  },
   "subCategoryExchange": "Peso Exchange",
+  "@subCategoryExchange": {
+    "description": "Peso exchange subcategory name"
+  },
   "subCategoryPhone": "Mobile Phone",
+  "@subCategoryPhone": {
+    "description": "Mobile phone subcategory name"
+  },
   "subCategoryHotel": "Hotel",
+  "@subCategoryHotel": {
+    "description": "Hotel subcategory name"
+  },
   "subCategoryAppliances": "Appliances",
+  "@subCategoryAppliances": {
+    "description": "Appliances subcategory name"
+  },
   "subCategoryGolf": "Golf",
+  "@subCategoryGolf": {
+    "description": "Golf subcategory name"
+  },
   "subCategoryPromotion": "Promotion",
+  "@subCategoryPromotion": {
+    "description": "Promotion subcategory name"
+  },
   "subCategoryPersonalMarket": "Personal Market",
+  "@subCategoryPersonalMarket": {
+    "description": "Personal market subcategory name"
+  },
   "subCategoryRealEstate": "Real Estate",
+  "@subCategoryRealEstate": {
+    "description": "Real estate subcategory name"
+  },
   "subCategoryHouseRental": "House Rental",
+  "@subCategoryHouseRental": {
+    "description": "House rental subcategory name"
+  },
   "subCategoryCarRental": "Car Rental",
+  "@subCategoryCarRental": {
+    "description": "Car rental subcategory name"
+  },
   "subCategoryUsedCar": "Used Car",
-
+  "@subCategoryUsedCar": {
+    "description": "Used car subcategory name"
+  },
   "postLiked": "Post liked",
   "@postLiked": {
     "description": "Success message when user likes a post"

@@ -11,7 +11,6 @@ import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/settings/language.screen.dart';
-import 'package:philgo/screens/theme/theme.preview.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
@@ -310,11 +309,6 @@ final router = GoRouter(
       path: AccountWithdrawalScreen.routeName,
       name: AccountWithdrawalScreen.routeName,
       builder: (context, state) => const AccountWithdrawalScreen(),
-    ),
-    GoRoute(
-      path: ThemePreviewScreen.routeName,
-      name: ThemePreviewScreen.routeName,
-      builder: (context, state) => const ThemePreviewScreen(),
     ),
     GoRoute(
       path: LanguageScreen.routeName,
