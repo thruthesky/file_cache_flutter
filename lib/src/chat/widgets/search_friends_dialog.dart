@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 친구 검색 다이얼로그
 /// Comic 스타일 적용: 2.0 테두리, 그림자 없음, 둥근 모서리

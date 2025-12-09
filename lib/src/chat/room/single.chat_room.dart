@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// Single Chat Room Screen
 /// Displays a 1:1 chat room with another user following Comic design theme

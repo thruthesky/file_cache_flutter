@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 외부 공유 수신 서비스 (Receive Share Service)
 ///

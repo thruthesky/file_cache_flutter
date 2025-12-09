@@ -29,7 +29,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 글 쓰기 폼 위젯
 ///

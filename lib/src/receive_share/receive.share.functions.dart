@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 Future<String?> showReceiveShareDialog(
   BuildContext context,

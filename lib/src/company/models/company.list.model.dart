@@ -1,4 +1,4 @@
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// Company List Model
 ///

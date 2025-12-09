@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// Opinionated comment detail list view for post view screen.
 /// It does things as much as it can for the comment listing

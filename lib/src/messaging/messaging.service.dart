@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart' hide User;
+import 'package:philgo_api/philgo_api.dart' hide User;
 
 // import 'dart:developer';
 

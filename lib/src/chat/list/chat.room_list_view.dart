@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 class ChatRoomListView extends StatelessWidget {
   // singleOrder - returns a list of single chat rooms for the user

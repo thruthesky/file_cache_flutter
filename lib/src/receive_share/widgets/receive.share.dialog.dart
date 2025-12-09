@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 class ReceiveShareDialog extends StatefulWidget {
   const ReceiveShareDialog({super.key, required this.data});

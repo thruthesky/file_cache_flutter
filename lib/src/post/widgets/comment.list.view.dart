@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 댓글 목록 뷰
 /// 게시글의 댓글 입력란, 댓글 헤더, 댓글 목록을 표시하는 위젯

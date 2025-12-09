@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
-import 'package:philgo_api/philgo_v6_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 class ChatRoomJoinListBuilder extends StatelessWidget {
   const ChatRoomJoinListBuilder({super.key, required this.builder});

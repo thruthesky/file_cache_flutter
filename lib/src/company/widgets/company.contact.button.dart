@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../philgo_v6_flutter.dart';
+import '../../../philgo_api.dart';
 
 class CompanyContactButton extends StatelessWidget {
   final IconData icon;
@@ -34,10 +34,7 @@ class CompanyContactButton extends StatelessWidget {
             // Comic design: Border radius 12 for large elements
             borderRadius: BorderRadius.circular(12),
             // Comic design: 2.0px border with outline color
-            border: Border.all(
-              color: scheme.outline,
-              width: 2.0,
-            ),
+            border: Border.all(color: scheme.outline, width: 2.0),
           ),
           child: Row(
             children: [
