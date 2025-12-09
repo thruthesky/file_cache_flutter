@@ -42,6 +42,14 @@ class _ForumHomeState extends State<ForumHome> {
   final GlobalKey<PostSimpleListViewState> listViewKey = GlobalKey();
   final GlobalKey<PostGridViewState> gridViewKey = GlobalKey();
 
+  /// 헤더 표시 여부 (스크롤에 따라 변경)
+  /// Whether to show header (changes based on scroll)
+  bool _showHeader = true;
+
+  /// 마지막 스크롤 위치 (스크롤 방향 감지용)
+  /// Last scroll position (for detecting scroll direction)
+  double _lastScrollOffset = 0;
+
   @override
   void initState() {
     super.initState();
@@ -106,116 +114,166 @@ class _ForumHomeState extends State<ForumHome> {
     );
   }
 
+  /// 스크롤 알림 처리 - 스크롤 방향에 따라 헤더 표시/숨김
+  /// Handle scroll notification - show/hide header based on scroll direction
+  bool _handleScrollNotification(ScrollNotification notification) {
+    /// ScrollUpdateNotification만 처리 (실제 스크롤 이벤트)
+    /// Only handle ScrollUpdateNotification (actual scroll events)
+    if (notification is ScrollUpdateNotification) {
+      final currentOffset = notification.metrics.pixels;
+
+      /// 스크롤 델타값으로 방향 판단 (더 정확함)
+      /// Determine direction by scroll delta (more accurate)
+      final delta = notification.scrollDelta ?? 0;
+
+      /// 스크롤 업 (위로 스와이프, 컨텐츠가 아래로 이동) - 헤더 숨기기
+      /// Scroll up (swipe up, content moves down) - hide header
+      if (delta > 0 && currentOffset > 50) {
+        if (_showHeader) {
+          setState(() => _showHeader = false);
+        }
+      }
+
+      /// 스크롤 다운 (아래로 스와이프, 컨텐츠가 위로 이동) - 헤더 표시
+      /// Scroll down (swipe down, content moves up) - show header
+      else if (delta < 0) {
+        if (!_showHeader) {
+          setState(() => _showHeader = true);
+        }
+      }
+
+      _lastScrollOffset = currentOffset;
+    }
+
+    /// false 반환: 알림을 계속 전파
+    /// Return false: continue propagating notification
+    return false;
+  }
+
   Widget _buildContent(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final sp = theme.extension<AppSpacing>()!;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /// Bordered header section containing ForumHeader + SubCategoryList
-        /// Comic design: 1.0px border with outlineVariant color (matches bottom navigation bar)
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
-            ),
-          ),
-          child: Column(
-            children: [
-              ForumHeader(
-                /// 현재 선택된 카테고리 전달 (UI 동기화)
-                /// Pass currently selected category (UI sync)
-                selectedPostId: _selectedPostId,
+    /// NotificationListener로 스크롤 이벤트 감지
+    /// Detect scroll events with NotificationListener
+    ///
+    /// 스크롤 업 (위로 스와이프): 헤더가 스르륵 위로 숨겨짐
+    /// 스크롤 다운 (아래로 스와이프): 헤더가 즉시 스르륵 나타남
+    return NotificationListener<ScrollNotification>(
+      onNotification: _handleScrollNotification,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// AnimatedSlide + AnimatedOpacity로 헤더 숨기기/표시 애니메이션
+          /// Header hide/show animation with AnimatedSlide + AnimatedOpacity
+          AnimatedSlide(
+            /// 숨김 시 위로 이동 (-1 = 완전히 위로)
+            /// Move up when hidden (-1 = completely up)
+            offset: _showHeader ? Offset.zero : const Offset(0, -1),
 
-                /// 카테고리 선택 시 로컬 상태 업데이트
-                /// Update local state when category selected
-                onCategorySelected: (String postId) {
-                  /// 메인 카테고리만 선택 (서브 카테고리는 null)
-                  /// Select main category only (sub-category is null)
-                  _onCategoryChanged(postId, null);
-                },
+            /// 부드러운 애니메이션 (200ms)
+            /// Smooth animation (200ms)
+            duration: const Duration(milliseconds: 200),
 
-                /// 글쓰기 버튼 클릭 시 현재 선택된 카테고리로 글쓰기 다이얼로그 표시
-                /// Show post create dialog with currently selected category
-                onCreatePost: () {
-                  showPostCreateDialog(
-                    context,
-                    postId: _selectedPostId,
-                    category: _selectedCategory,
-                    onSubmitted: (post) {
-                      /// 글 생성 후 목록 새로고침
-                      /// Refresh list after post creation
-                      listViewKey.currentState?.pagingController.refresh();
-                      gridViewKey.currentState?.pagingController.refresh();
-                    },
-                  );
-                },
-              ),
+            /// 자연스러운 커브
+            /// Natural curve
+            curve: Curves.easeInOut,
 
-              /// 서브 카테고리 목록 (Sub Category List)
-              /// 선택된 메인 카테고리에 서브 카테고리가 있을 때만 표시
-              /// Only show when selected main category has subcategories
-              if (PhilgoCategory.hasSubCategories(_selectedPostId))
-                Padding(
-                  padding: EdgeInsets.only(top: sp.s4, bottom: sp.s8),
-                  child: SubCategoryList(
-                    postId: _selectedPostId,
-                    selectedCategory: _selectedCategory,
-                    onCategorySelected: (category) {
-                      /// 서브 카테고리 선택 시 로컬 상태 업데이트
-                      /// Update local state when subcategory selected
-                      _onCategoryChanged(_selectedPostId, category);
-                    },
+            child: AnimatedOpacity(
+              /// 숨김 시 투명하게
+              /// Transparent when hidden
+              opacity: _showHeader ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 150),
+
+              child: Container(
+                /// 하단 테두리 (Comic design)
+                /// Bottom border (Comic design)
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  border: Border(
+                    bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
                   ),
                 ),
-            ],
+
+                child: ForumHeader(
+                  /// 현재 선택된 메인 카테고리 전달 (UI 동기화)
+                  /// Pass currently selected main category (UI sync)
+                  selectedPostId: _selectedPostId,
+
+                  /// 현재 선택된 서브 카테고리 전달 (UI 동기화)
+                  /// Pass currently selected subcategory (UI sync)
+                  selectedCategory: _selectedCategory,
+
+                  /// 카테고리 선택 시 로컬 상태 업데이트 (메인 + 서브 카테고리)
+                  /// Update local state when category selected (main + subcategory)
+                  onCategorySelected: (String postId, String? category) {
+                    _onCategoryChanged(postId, category);
+                  },
+
+                  /// 글쓰기 버튼 클릭 시 현재 선택된 카테고리로 글쓰기 다이얼로그 표시
+                  /// Show post create dialog with currently selected category
+                  onCreatePost: () {
+                    showPostCreateDialog(
+                      context,
+                      postId: _selectedPostId,
+                      category: _selectedCategory,
+                      onSubmitted: (post) {
+                        /// 글 생성 후 목록 새로고침
+                        /// Refresh list after post creation
+                        listViewKey.currentState?.pagingController.refresh();
+                        gridViewKey.currentState?.pagingController.refresh();
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
-        ),
 
-        // Post List
-        Expanded(
-          child: PostListView(
-            /// buyandsell 카테고리는 그리드 레이아웃 사용
-            /// Use grid layout for buyandsell category
-            listViewKey: _selectedPostId != 'buyandsell' ? listViewKey : null,
-            gridViewKey: _selectedPostId == 'buyandsell' ? gridViewKey : null,
-            postId: _selectedPostId,
-            category: _selectedCategory,
+          /// 본문: PostListView (게시글 목록)
+          /// Body: PostListView (post list)
+          Expanded(
+            child: PostListView(
+              /// buyandsell 카테고리는 그리드 레이아웃 사용
+              /// Use grid layout for buyandsell category
+              listViewKey: _selectedPostId != 'buyandsell' ? listViewKey : null,
+              gridViewKey: _selectedPostId == 'buyandsell' ? gridViewKey : null,
+              postId: _selectedPostId,
+              category: _selectedCategory,
 
-            /// Hero 트랜지션 항상 활성화
-            /// Forum 탭에서만 PostListTile 사용되므로 충돌 없음
-            /// Always enable Hero transition
-            /// No conflict since PostListTile is only used in Forum tab
-            enableHeroTransition: true,
+              /// Hero 트랜지션 항상 활성화
+              /// Forum 탭에서만 PostListTile 사용되므로 충돌 없음
+              /// Always enable Hero transition
+              /// No conflict since PostListTile is only used in Forum tab
+              enableHeroTransition: true,
 
-            /// Use PostCard with 2-column masonry grid for all Buy & Sell categories
-            /// Including main category and subcategories (hotel, 렌트카)
-            /// Masonry layout is automatically used when gridColumns > 1
-            gridColumns: _selectedPostId == 'buyandsell' ? 2 : null,
-            tileBuilder: _selectedPostId == 'buyandsell'
-                ? (post, onTap) => PostCard(post: post, onTap: onTap)
-                : null,
+              /// Use PostCard with 2-column masonry grid for all Buy & Sell categories
+              /// Including main category and subcategories (hotel, 렌트카)
+              /// Masonry layout is automatically used when gridColumns > 1
+              gridColumns: _selectedPostId == 'buyandsell' ? 2 : null,
+              tileBuilder: _selectedPostId == 'buyandsell'
+                  ? (post, onTap) => PostCard(post: post, onTap: onTap)
+                  : null,
 
-            /// 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
-            /// Navigate to PostViewScreen when post is tapped
-            onTap: (post) async {
-              await PostViewScreen.push(context, post);
+              /// 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
+              /// Navigate to PostViewScreen when post is tapped
+              onTap: (post) async {
+                await PostViewScreen.push(context, post);
 
-              /// setState를 호출하여 UI 업데이트
-              /// PostListView가 다시 빌드되면서 수정된 내용이 화면에 반영됨
-              if (mounted) {
-                setState(() {});
-              }
-            },
+                /// setState를 호출하여 UI 업데이트
+                /// PostListView가 다시 빌드되면서 수정된 내용이 화면에 반영됨
+                if (mounted) {
+                  setState(() {});
+                }
+              },
 
-            noItemsFoundIndicatorBuilder: (context) {
-              return const Center(child: EmptyPostList());
-            },
+              noItemsFoundIndicatorBuilder: (context) {
+                return const Center(child: EmptyPostList());
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
