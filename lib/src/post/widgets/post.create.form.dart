@@ -232,10 +232,12 @@ class PostCreateFormState extends State<PostCreateForm> {
 
   /// 로딩 상태 설정 (콜백 호출)
   void _setLoading(bool value) {
-    setState(() {
-      _isLoading = value;
-    });
-    widget.onLoadingChanged?.call(value);
+    if (mounted) {
+      setState(() {
+        _isLoading = value;
+      });
+      widget.onLoadingChanged?.call(value);
+    }
   }
 
   /// 폼 제출
