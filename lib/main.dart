@@ -43,6 +43,10 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    bool isRunningInE2EEnvironment = WidgetsBinding.instance.runtimeType
+        .toString()
+        .contains('Test');
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AppState.of(context).initializeLocaleFromDevice();
     });
@@ -62,10 +66,13 @@ class _MyAppState extends State<MyApp> {
         PostViewScreen.push(context, post),
       },
     );
-    initMessagingService();
-    if (Platform.isAndroid) {
-      // Android-specific initialization
-      initNotificationChannel();
+
+    if (isRunningInE2EEnvironment == false) {
+      initMessagingService();
+      if (Platform.isAndroid) {
+        // Android-specific initialization
+        initNotificationChannel();
+      }
     }
 
     // Navigator가 완전히 준비된 후 globalContext 설정

@@ -131,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: Lo.of(context)!.company,
               ),
               BottomNavigationBarItem(
+                key: ValueKey('menuButton'),
                 icon: FaIcon(
                   selectedItem == HomeNavigationItem.menu
                       ? FontAwesomeIcons.solidBars
