@@ -17,6 +17,7 @@ class CommentUpdate extends StatefulWidget {
 
 class _CommentUpdateState extends State<CommentUpdate> {
   final contentController = TextEditingController();
+  final focusNode = FocusNode();
   bool submitting = false;
   bool isTextEmpty = false;
 
@@ -34,9 +35,10 @@ class _CommentUpdateState extends State<CommentUpdate> {
 
   @override
   void dispose() {
-    super.dispose();
     contentController.removeListener(onTextChanged);
     contentController.dispose();
+    focusNode.dispose();
+    super.dispose();
   }
 
   void onTextChanged() {
@@ -50,6 +52,8 @@ class _CommentUpdateState extends State<CommentUpdate> {
   }
 
   Future<void> onUpdateComment() async {
+    focusNode.unfocus();
+
     if (uploadingCount > 0) {
       showSafeErrorDialog(
         'Image upload is in progress, please try again in a moment.',
@@ -66,6 +70,8 @@ class _CommentUpdateState extends State<CommentUpdate> {
         'files': imageUrls.join(','),
       });
       debugLog('updatedComment: $updatedComment');
+
+
       widget.onUpdated(updatedComment);
     } catch (e) {
       debugLog('댓글 업데이트 실패: $e');
@@ -121,6 +127,7 @@ class _CommentUpdateState extends State<CommentUpdate> {
         // 텍스트 입력 필드 with Comic Design
         TextField(
           controller: contentController,
+          focusNode: focusNode,
           minLines: 1,
           maxLines: 2,
           keyboardType: TextInputType.text,

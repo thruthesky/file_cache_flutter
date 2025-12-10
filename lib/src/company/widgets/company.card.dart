@@ -30,8 +30,9 @@ class CompanyCard extends StatefulWidget {
 }
 
 class _CompanyCardState extends State<CompanyCard> {
-  double? get _cachedHeight =>
-      widget.imageUrl != null ? CompanyCard._heightCache[widget.imageUrl!] : null;
+  double? get _cachedHeight => widget.imageUrl != null
+      ? CompanyCard._heightCache[widget.imageUrl!]
+      : null;
 
   void _setCachedHeight(double height) {
     if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) {
@@ -56,20 +57,29 @@ class _CompanyCardState extends State<CompanyCard> {
           side: BorderSide(color: scheme.outline, width: 1.5),
         ),
         clipBehavior: Clip.antiAlias,
-        child: hasImage ? _buildImageContent(theme, scheme) : _buildFallback(theme, scheme),
+        child: hasImage
+            ? _buildImageContent(theme, scheme)
+            : _buildFallback(theme),
       ),
     );
   }
 
-  Widget _buildFallback(ThemeData theme, ColorScheme scheme) {
+  Widget _buildFallback(ThemeData theme) {
     return SizedBox(
-      height: CompanyCard.minImageHeight,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          CompanyImagePlaceholder(icon: widget.categoryIcon),
-          _buildOverlay(theme),
-        ],
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
+          child: Text(
+            widget.name,
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.w700,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ),
     );
   }
@@ -80,7 +90,12 @@ class _CompanyCardState extends State<CompanyCard> {
       fit: BoxFit.cover,
       imageBuilder: (context, imageProvider) {
         if (_cachedHeight != null) {
-          return _buildImageContainer(imageProvider, _cachedHeight!, theme, scheme);
+          return _buildImageContainer(
+            imageProvider,
+            _cachedHeight!,
+            theme,
+            scheme,
+          );
         }
 
         return Image(
@@ -89,21 +104,24 @@ class _CompanyCardState extends State<CompanyCard> {
           frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
             if (frame != null && _cachedHeight == null) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                imageProvider.resolve(const ImageConfiguration()).addListener(
-                  ImageStreamListener((info, _) {
-                    if (!mounted || _cachedHeight != null) return;
-                    final aspectRatio = info.image.width / info.image.height;
-                    final screenWidth = MediaQuery.of(context).size.width;
-                    final cardWidth = (screenWidth - 24) / 2;
-                    final calculatedHeight =
-                        (cardWidth / aspectRatio).clamp(
-                          CompanyCard.minImageHeight,
-                          CompanyCard.maxImageHeight,
-                        );
-                    _setCachedHeight(calculatedHeight);
-                    if (mounted) setState(() {});
-                  }),
-                );
+                imageProvider
+                    .resolve(const ImageConfiguration())
+                    .addListener(
+                      ImageStreamListener((info, _) {
+                        if (!mounted || _cachedHeight != null) return;
+                        final aspectRatio =
+                            info.image.width / info.image.height;
+                        final screenWidth = MediaQuery.of(context).size.width;
+                        final cardWidth = (screenWidth - 24) / 2;
+                        final calculatedHeight = (cardWidth / aspectRatio)
+                            .clamp(
+                              CompanyCard.minImageHeight,
+                              CompanyCard.maxImageHeight,
+                            );
+                        _setCachedHeight(calculatedHeight);
+                        if (mounted) setState(() {});
+                      }),
+                    );
               });
             }
 

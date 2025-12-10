@@ -18,6 +18,7 @@ class ReplyToComment extends StatefulWidget {
 
 class _ReplyToPostFormState extends State<ReplyToComment> {
   final contentController = TextEditingController();
+  final focusNode = FocusNode();
 
   bool isCreatingReply = false;
   bool isTextEmpty = true;
@@ -33,9 +34,10 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
 
   @override
   void dispose() {
-    super.dispose();
     contentController.removeListener(onTextChanged);
     contentController.dispose();
+    focusNode.dispose();
+    super.dispose();
   }
 
   void onTextChanged() {
@@ -67,6 +69,9 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
         'content': contentController.text,
         'files': imageUrls.join(','),
       });
+
+      // Dismiss keyboard immediately after successful reply creation
+      focusNode.unfocus();
 
       widget.onReplied(createdComment);
 
@@ -129,6 +134,7 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
         // Comment input field with Comic Design
         TextField(
           controller: contentController,
+          focusNode: focusNode,
           minLines: 1,
           maxLines: 2,
           keyboardType: TextInputType.text,

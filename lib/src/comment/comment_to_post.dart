@@ -14,6 +14,7 @@ class CommentToPost extends StatefulWidget {
 
 class _ReplyToCommentFormState extends State<CommentToPost> {
   final contentController = TextEditingController();
+  final focusNode = FocusNode();
 
   bool isCreatingReply = false;
   bool isTextEmpty = true;
@@ -29,9 +30,10 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
 
   @override
   void dispose() {
-    super.dispose();
     contentController.removeListener(onTextChanged);
     contentController.dispose();
+    focusNode.dispose();
+    super.dispose();
   }
 
   void onTextChanged() {
@@ -45,6 +47,8 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
   }
 
   void onTapCommentToPost() async {
+    focusNode.unfocus();
+
     try {
       if (uploadingCount > 0) {
         showSafeErrorDialog(
@@ -124,6 +128,7 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
         // Comment input field with Comic Design
         TextField(
           controller: contentController,
+          focusNode: focusNode,
           minLines: 1,
           maxLines: 2,
           keyboardType: TextInputType.text,
