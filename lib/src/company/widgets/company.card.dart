@@ -3,129 +3,188 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'company.image.placeholder.dart';
 
 /// Company Card Widget
-/// Displays a company card with full-width image (or category-based placeholder),
-/// category badge overlay, and company name
-class CompanyCard extends StatelessWidget {
+/// Visually aligned with PostCard for masonry layouts:
+/// - Dynamic height based on image aspect ratio
+/// - Gradient overlay with company name
+/// - Comic design border + rounded corners
+class CompanyCard extends StatefulWidget {
   const CompanyCard({
     super.key,
     required this.name,
-    required this.categoryName,
     required this.categoryIcon,
     this.imageUrl,
     this.onTap,
   });
 
   final String name;
-  final String categoryName;
   final IconData categoryIcon;
   final String? imageUrl;
   final VoidCallback? onTap;
 
+  static const double minImageHeight = 140.0;
+  static const double maxImageHeight = 300.0;
+  static final Map<String, double> _heightCache = {};
+
+  @override
+  State<CompanyCard> createState() => _CompanyCardState();
+}
+
+class _CompanyCardState extends State<CompanyCard> {
+  double? get _cachedHeight =>
+      widget.imageUrl != null ? CompanyCard._heightCache[widget.imageUrl!] : null;
+
+  void _setCachedHeight(double height) {
+    if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) {
+      CompanyCard._heightCache[widget.imageUrl!] = height;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final hasImage = widget.imageUrl != null && widget.imageUrl!.isNotEmpty;
 
-    // Comic design: Card with border and no elevation
-    return Container(
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Card(
+        elevation: 0,
+        margin: EdgeInsets.zero,
         color: scheme.surface,
-        // Comic design: Border radius 12 for large elements
-        borderRadius: BorderRadius.circular(12),
-        // Comic design: 2.0px border with outline color
-        border: Border.all(color: scheme.outline, width: 1.0),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          // Comic design: Border radius 12 for large elements
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              /// Full-width image with category badge overlay
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  // Comic design: Border radius 10.5 to account for 1.5px border
-                  top: Radius.circular(10.5),
-                ),
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      /// Cached network image or placeholder
-                      imageUrl != null && imageUrl!.isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: imageUrl!,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) {
-                                // Comic design: Simple loading color instead of gradient
-                                return Container(
-                                  color: scheme.surfaceContainerHighest,
-                                );
-                              },
-                              errorWidget: (context, url, error) {
-                                /// Show placeholder if image fails to load
-                                return CompanyImagePlaceholder(
-                                  icon: categoryIcon,
-                                );
-                              },
-                            )
-                          : CompanyImagePlaceholder(icon: categoryIcon),
+          side: BorderSide(color: scheme.outline, width: 1.5),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: hasImage ? _buildImageContent(theme, scheme) : _buildFallback(theme, scheme),
+      ),
+    );
+  }
 
-                      /// Category badge overlay (top-right)
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: scheme.primaryContainer,
-                            // Comic design: Border radius 8 for small elements
-                            borderRadius: BorderRadius.circular(8),
-                            // Comic design: 2.0px border
-                            border: Border.all(
-                              color: scheme.primary,
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Text(
-                            categoryName,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: scheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+  Widget _buildFallback(ThemeData theme, ColorScheme scheme) {
+    return SizedBox(
+      height: CompanyCard.minImageHeight,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CompanyImagePlaceholder(icon: widget.categoryIcon),
+          _buildOverlay(theme),
+        ],
+      ),
+    );
+  }
 
-              /// Company name section
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                child: Text(
-                  name,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: scheme.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+  Widget _buildImageContent(ThemeData theme, ColorScheme scheme) {
+    return CachedNetworkImage(
+      imageUrl: widget.imageUrl!,
+      fit: BoxFit.cover,
+      imageBuilder: (context, imageProvider) {
+        if (_cachedHeight != null) {
+          return _buildImageContainer(imageProvider, _cachedHeight!, theme, scheme);
+        }
+
+        return Image(
+          image: imageProvider,
+          fit: BoxFit.cover,
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            if (frame != null && _cachedHeight == null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                imageProvider.resolve(const ImageConfiguration()).addListener(
+                  ImageStreamListener((info, _) {
+                    if (!mounted || _cachedHeight != null) return;
+                    final aspectRatio = info.image.width / info.image.height;
+                    final screenWidth = MediaQuery.of(context).size.width;
+                    final cardWidth = (screenWidth - 24) / 2;
+                    final calculatedHeight =
+                        (cardWidth / aspectRatio).clamp(
+                          CompanyCard.minImageHeight,
+                          CompanyCard.maxImageHeight,
+                        );
+                    _setCachedHeight(calculatedHeight);
+                    if (mounted) setState(() {});
+                  }),
+                );
+              });
+            }
+
+            return SizedBox(
+              height: _cachedHeight ?? CompanyCard.minImageHeight,
+              width: double.infinity,
+              child: child,
+            );
+          },
+        );
+      },
+      placeholder: (context, url) => SizedBox(
+        height: _cachedHeight ?? CompanyCard.minImageHeight,
+        child: Container(
+          color: scheme.surfaceContainerHighest,
+          alignment: Alignment.center,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: scheme.primary,
+          ),
+        ),
+      ),
+      errorWidget: (context, url, error) => SizedBox(
+        height: _cachedHeight ?? CompanyCard.minImageHeight,
+        child: CompanyImagePlaceholder(icon: widget.categoryIcon),
+      ),
+    );
+  }
+
+  Widget _buildImageContainer(
+    ImageProvider imageProvider,
+    double height,
+    ThemeData theme,
+    ColorScheme scheme,
+  ) {
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image(image: imageProvider, fit: BoxFit.cover),
+          _buildOverlay(theme),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverlay(ThemeData theme) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 16, 12, 14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.transparent,
+              Colors.black.withValues(alpha: 0.65),
+              Colors.black.withValues(alpha: 0.85),
+            ],
+          ),
+        ),
+        child: Text(
+          widget.name,
+          style: theme.textTheme.titleSmall?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            shadows: [
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                offset: const Offset(0, 1),
+                blurRadius: 2,
               ),
             ],
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
