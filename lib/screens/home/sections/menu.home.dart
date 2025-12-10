@@ -15,6 +15,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/dialogs/policy.dialogs.dart';
 import 'package:philgo/widgets/home/menu/menu.item.dart';
 import 'package:philgo/widgets/home/menu/menu.section.dart';
+import 'package:philgo/widgets/logo/logo.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 class MenuHome extends StatefulWidget {
@@ -61,6 +62,7 @@ class _MenuHomeState extends State<MenuHome> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const Logo(size: 48),
                 Text(Lo.of(context)!.menu, style: theme.textTheme.titleLarge),
                 const Spacer(),
                 SizedBox(width: 48, height: 48),

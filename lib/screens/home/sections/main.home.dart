@@ -69,73 +69,20 @@ class _MainHomeState extends State<MainHome> {
       body: ContentContainer(
         child: CustomScrollView(
           slivers: [
-            /// AppBar Section (앱바 영역)
-            /// Uses reusable AppHeader widget for consistent header design
-            /// Layout: [필고] ─── [Avatar] [Settings]
-            /// 재사용 가능한 AppHeader 위젯 사용
-            // SliverToBoxAdapter(
-            //   child: AppHeader(
-            //     /// Leading Widget - PhilGo Logo (리딩 위젯 - 필고 로고)
-            //     /// Displays PhilGo triangle logo before title
-            //     /// Size: 48 (smaller than default 64)
-            //     leading: Logo(size: 48),
-
-            //     /// Title removed - only logo is displayed (타이틀 삭제 - 로고만 표시)
-            //     title: '',
-
-            //     /// Action buttons displayed after avatar (아바타 뒤에 표시되는 액션 버튼들)
-            //     actions: [
-            //       /// Create Post Button (글쓰기 버튼)
-            //       /// MenuAnchor 기반 2단계 드롭다운 메뉴
-            //       /// - 1단계: 메인 카테고리 목록 표시
-            //       /// - 2단계: 서브 카테고리가 있으면 SubmenuButton으로 확장 표시
-            //       /// Two-level dropdown menu using MenuAnchor
-            //       /// - Level 1: Main category list
-            //       /// - Level 2: SubmenuButton for categories with sub-categories
-            //       MenuAnchor(
-            //         /// 메뉴 스타일 (elevation 0, flat design)
-            //         /// Menu style (elevation 0, flat design)
-            //         style: MenuStyle(
-            //           elevation: WidgetStatePropertyAll(0),
-            //           backgroundColor: WidgetStatePropertyAll(
-            //             scheme.surfaceContainerHighest,
-            //           ),
-            //         ),
-
-            //         /// 메뉴 아이템 빌더
-            //         /// Menu items builder
-            //         menuChildren: _buildCategoryMenuItems(context),
-
-            //         /// 메뉴 버튼 빌더
-            //         /// Menu button builder
-            //         builder: (context, controller, child) {
-            //           return IconButton(
-            //             icon: FaIcon(
-            //               FontAwesomeIcons.lightPlusLarge,
-            //               color: scheme.onSurface,
-            //               size: 24,
-            //             ),
-            //             tooltip: 'Create Post',
-            //             onPressed: () {
-            //               /// 메뉴 열기/닫기 토글
-            //               /// Toggle menu open/close
-            //               if (controller.isOpen) {
-            //                 controller.close();
-            //               } else {
-            //                 controller.open();
-            //               }
-            //             },
-            //           );
-            //         },
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            /// [메뉴 섹션] - 홈 메뉴 카테고리 표시
+            /// Home Menu Section - Display home menu categories
+            /// PhilgoCategory.homeMenuCategories() 를 반복하여 메뉴 아이템 생성
+            SliverToBoxAdapter(
+              child: SafeArea(
+                bottom: false,
+                child: _buildHomeMenuCategories(context),
+              ),
+            ),
 
             /// [Top Banners]
             /// 상단 배너 - 전체 페이지 배너 표시
             /// Top banners - display all page banners
-            SliverToBoxAdapter(child: SafeArea(child: const TopBanners())),
+            SliverToBoxAdapter(child: const TopBanners()),
 
             /// [게시판 섹션 - 2단 레이아웃]
             /// Forum Sections - 2-column layout
@@ -248,6 +195,80 @@ class _MainHomeState extends State<MainHome> {
             SliverToBoxAdapter(child: SizedBox(height: sp.s24)),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 홈 메뉴 카테고리 빌드
+  /// Build home menu categories
+  ///
+  /// PhilgoCategory.homeMenuCategories()를 Wrap으로 표시
+  /// Display PhilgoCategory.homeMenuCategories() using Wrap
+  Widget _buildHomeMenuCategories(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
+      child: Wrap(
+        /// 버튼 간 가로 간격 (최소화)
+        /// Horizontal spacing between buttons (minimized)
+        spacing: 2,
+
+        /// 줄 간 세로 간격 (최소화)
+        /// Vertical spacing between rows (minimized)
+        runSpacing: 2,
+
+        /// 왼쪽 정렬
+        /// Align to start
+        alignment: WrapAlignment.start,
+
+        /// 세로 정렬 (중앙)
+        /// Vertical alignment (center)
+        crossAxisAlignment: WrapCrossAlignment.center,
+
+        children: PhilgoCategory.homeMenuCategories().map((menuItem) {
+          /// 튜플에서 postId와 subcategory 추출
+          /// Extract postId and subcategory from tuple
+          final (postId, subcategory) = menuItem;
+
+          /// 표시할 이름: 서브카테고리가 있으면 서브카테고리, 없으면 postId 번역
+          /// Display name: subcategory if exists, otherwise translated postId
+          final localizedName = subcategory ?? philgoTr(context, postId);
+
+          /// InkWell + Text로 완전히 콤팩트한 버튼 구현
+          /// Fully compact button using InkWell + Text (no padding/margin)
+          return InkWell(
+            onTap: () {
+              /// ForumHome으로 이동하면서 해당 카테고리 선택
+              /// Navigate to ForumHome with selected category
+              final navState = NavigationState.of(context, listen: false);
+              navState.data = {
+                'initialPostId': postId,
+                if (subcategory != null) 'initialCategory': subcategory,
+              };
+              navState.setHomeNavigation(HomeNavigationItem.forum);
+            },
+
+            /// 터치 피드백 영역을 텍스트에 맞춤
+            /// Fit touch feedback area to text
+            borderRadius: BorderRadius.circular(4),
+
+            child: Container(
+              /// 최소한의 패딩 (터치 영역 확보)
+              /// Minimal padding (for touch area)
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+
+              child: Text(
+                localizedName,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurface,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

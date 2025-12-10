@@ -43,19 +43,23 @@ class ForumHeader extends StatelessWidget {
 
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: sp.s8),
+        padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
         child: Wrap(
-          /// 버튼 간 가로 간격
-          /// Horizontal spacing between buttons
-          spacing: sp.s4,
+          /// 버튼 간 가로 간격 (최소화)
+          /// Horizontal spacing between buttons (minimized)
+          spacing: 2,
 
-          /// 줄 간 세로 간격
-          /// Vertical spacing between rows
-          runSpacing: sp.s4,
+          /// 줄 간 세로 간격 (최소화)
+          /// Vertical spacing between rows (minimized)
+          runSpacing: 2,
 
           /// 왼쪽 정렬
           /// Align to start
           alignment: WrapAlignment.start,
+
+          /// 세로 정렬 (중앙)
+          /// Vertical alignment (center)
+          crossAxisAlignment: WrapCrossAlignment.center,
 
           children: [
             /// 메뉴 카테고리 버튼 목록 (여러 줄로 표시, 서브카테고리 포함)
@@ -74,41 +78,46 @@ class ForumHeader extends StatelessWidget {
               final isSelected =
                   selectedPostId == postId && selectedCategory == subcategory;
 
-              return TextButton(
-                onPressed: () {
+              /// InkWell + Text로 완전히 콤팩트한 버튼 구현
+              /// Fully compact button using InkWell + Text (no padding/margin)
+              return InkWell(
+                onTap: () {
                   onCategorySelected.call(postId, subcategory);
                 },
-                style: TextButton.styleFrom(
+
+                /// 터치 피드백 영역을 텍스트에 맞춤
+                /// Fit touch feedback area to text
+                borderRadius: BorderRadius.circular(4),
+
+                child: Container(
                   /// 선택된 카테고리는 primary 색상 배경 적용
                   /// Apply primary background for selected category
-                  backgroundColor: isSelected
-                      ? scheme.primary.withValues(alpha: 0.1)
-                      : Colors.transparent,
-
-                  /// 패딩 최소화
-                  /// Minimize padding
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sp.s12,
-                    vertical: sp.s8,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? scheme.primary.withValues(alpha: 0.1)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(4),
                   ),
 
-                  /// elevation 0 (Flat Design)
-                  elevation: 0,
-                  visualDensity: VisualDensity.compact,
-                ),
+                  /// 최소한의 패딩 (터치 영역 확보)
+                  /// Minimal padding (for touch area)
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
 
-                child: Text(
-                  localizedName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    /// 선택된 카테고리는 primary 색상, 아니면 기본 색상
-                    /// Selected category uses primary color, otherwise default
-                    color: isSelected ? scheme.primary : scheme.onSurface,
+                  child: Text(
+                    localizedName,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      /// 선택된 카테고리는 primary 색상, 아니면 기본 색상
+                      /// Selected category uses primary color, otherwise default
+                      color: isSelected ? scheme.primary : scheme.onSurface,
 
-                    /// 선택된 카테고리는 bold
-                    /// Selected category is bold
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
+                      /// 선택된 카테고리는 bold
+                      /// Selected category is bold
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
                   ),
                 ),
               );
@@ -127,15 +136,19 @@ class ForumHeader extends StatelessWidget {
             //   },
             // ),
 
-            /// 글쓰기 버튼 (Wrap 맨 마지막에 배치)
-            /// Create post button (placed at the end of Wrap)
-            IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.lightPlusLarge,
-                color: scheme.onSurface,
-                size: 20,
+            /// 글쓰기 버튼 (Wrap 맨 마지막에 배치, 콤팩트)
+            /// Create post button (placed at the end of Wrap, compact)
+            InkWell(
+              onTap: onCreatePost,
+              borderRadius: BorderRadius.circular(4),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: FaIcon(
+                  FontAwesomeIcons.lightPlusLarge,
+                  color: scheme.onSurface,
+                  size: 18,
+                ),
               ),
-              onPressed: onCreatePost,
             ),
           ],
         ),

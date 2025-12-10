@@ -1,11 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/functions/ui.functions.dart';
-import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/widgets/headers/forum_header.dart';
-import 'package:philgo/widgets/headers/sub_category_list.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:philgo/widgets/post/post.card.dart';
 import 'package:philgo/state/navigation.state.dart';
