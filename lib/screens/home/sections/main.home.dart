@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/extensions/nav.context.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
@@ -74,10 +75,7 @@ class _MainHomeState extends State<MainHome> {
             /// Home Menu Section - Display home menu categories
             /// PhilgoCategory.homeMenuCategories() 를 반복하여 메뉴 아이템 생성
             SliverToBoxAdapter(
-              child: SafeArea(
-                bottom: false,
-                child: const HomeMenuCategories(),
-              ),
+              child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
 
             /// [Top Banners]
@@ -100,14 +98,7 @@ class _MainHomeState extends State<MainHome> {
                       postId: 'freetalk',
                       limit: 4,
                       onMoreTap: () {
-                        /// ForumHome으로 이동하면서 freetalk 선택
-                        /// Navigate to ForumHome with freetalk selected
-                        final navState = NavigationState.of(
-                          context,
-                          listen: false,
-                        );
-                        navState.data = {'initialPostId': 'freetalk'};
-                        navState.setHomeNavigation(HomeNavigationItem.forum);
+                        context.openForum('freetalk');
                       },
                       onPostTap: (post) {
                         /// PostViewScreen으로 이동
@@ -124,14 +115,7 @@ class _MainHomeState extends State<MainHome> {
                       postId: 'qna',
                       limit: 4,
                       onMoreTap: () {
-                        /// ForumHome으로 이동하면서 qna 선택
-                        /// Navigate to ForumHome with qna selected
-                        final navState = NavigationState.of(
-                          context,
-                          listen: false,
-                        );
-                        navState.data = {'initialPostId': 'qna'};
-                        navState.setHomeNavigation(HomeNavigationItem.forum);
+                        context.openForum('qna');
                       },
                       onPostTap: (post) {
                         /// PostViewScreen으로 이동
@@ -178,11 +162,7 @@ class _MainHomeState extends State<MainHome> {
                 limit: 16,
                 crossAxisCount: 4,
                 onMoreTap: () {
-                  /// ForumHome으로 이동하면서 buyandsell 선택
-                  /// Navigate to ForumHome with buyandsell selected
-                  final navState = NavigationState.of(context, listen: false);
-                  navState.data = {'initialPostId': 'buyandsell'};
-                  navState.setHomeNavigation(HomeNavigationItem.forum);
+                  context.openForum('buyandsell');
                 },
                 onPhotoTap: (post) {
                   /// PostViewScreen으로 이동

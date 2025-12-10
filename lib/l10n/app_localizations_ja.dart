@@ -406,6 +406,9 @@ class LoJa extends Lo {
   String get viewMore => 'もっと見る';
 
   @override
+  String get showLess => '非表示';
+
+  @override
   String get noRegisteredCompanies => '登録された業者はありません。';
 
   @override

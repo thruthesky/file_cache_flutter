@@ -15,11 +15,9 @@ import 'package:provider/provider.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 class NavigationState extends ChangeNotifier {
-  Object? data;
-  void setData(Object? obj) {
-    data = obj;
-    notifyListeners();
-  }
+  Post? post;
+  String? initialPostId;
+  String? initialCategory;
 
   /// Get the current instance of NavigationState
   static NavigationState of(BuildContext context, {bool listen = true}) {

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -10,7 +11,10 @@ import 'package:philgo_api/philgo_api.dart';
 ///
 /// 메뉴 카테고리를 Wrap으로 여러 줄 표시 (서브카테고리 포함)
 /// Displays menu categories in multiple rows using Wrap (including subcategories)
-class ForumHeader extends StatelessWidget {
+///
+/// 더보기/숨기기 토글 기능 포함
+/// Includes show more/hide toggle functionality
+class ForumHeader extends StatefulWidget {
   /// 카테고리 선택 콜백 (postId와 subcategory를 함께 전달)
   /// Callback when category is selected (passes postId and subcategory)
   final void Function(String postId, String? category) onCategorySelected;
@@ -36,10 +40,29 @@ class ForumHeader extends StatelessWidget {
   });
 
   @override
+  State<ForumHeader> createState() => _ForumHeaderState();
+}
+
+class _ForumHeaderState extends State<ForumHeader> {
+  /// 카테고리 목록 확장 상태 (false: 12개만 표시, true: 전체 표시)
+  /// Category list expansion state (false: show 12 only, true: show all)
+  bool _isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
+    final lo = Lo.of(context)!;
+
+    /// 전체 카테고리 목록 가져오기
+    /// Get all categories list
+    final allCategories = PhilgoCategory.menuCategories();
+
+    /// 확장 상태에 따라 표시할 카테고리 결정 (축소: 12개, 확장: 전체)
+    /// Determine categories to show based on expansion state (collapsed: 12, expanded: all)
+    final categoriesToShow =
+        _isExpanded ? allCategories : allCategories.take(12);
 
     return SafeArea(
       child: Padding(
@@ -64,7 +87,7 @@ class ForumHeader extends StatelessWidget {
           children: [
             /// 메뉴 카테고리 버튼 목록 (여러 줄로 표시, 서브카테고리 포함)
             /// Menu category button list (displayed in multiple rows, including subcategories)
-            ...PhilgoCategory.menuCategories().map((menuItem) {
+            ...categoriesToShow.map((menuItem) {
               /// 튜플에서 postId와 subcategory 추출
               /// Extract postId and subcategory from tuple
               final (postId, subcategory) = menuItem;
@@ -75,14 +98,14 @@ class ForumHeader extends StatelessWidget {
 
               /// 현재 선택된 카테고리 여부 (postId와 subcategory 모두 일치해야 함)
               /// Whether this category is currently selected (both postId and subcategory must match)
-              final isSelected =
-                  selectedPostId == postId && selectedCategory == subcategory;
+              final isSelected = widget.selectedPostId == postId &&
+                  widget.selectedCategory == subcategory;
 
               /// InkWell + Text로 완전히 콤팩트한 버튼 구현
               /// Fully compact button using InkWell + Text (no padding/margin)
               return InkWell(
                 onTap: () {
-                  onCategorySelected.call(postId, subcategory);
+                  widget.onCategorySelected.call(postId, subcategory);
                 },
 
                 /// 터치 피드백 영역을 텍스트에 맞춤
@@ -123,30 +146,43 @@ class ForumHeader extends StatelessWidget {
               );
             }),
 
-            /// 알림 카테고리 필터 버튼
-            /// Notification category filter button
-            // IconButton(
-            //   icon: FaIcon(
-            //     FontAwesomeIcons.lightBell,
-            //     color: scheme.onSurface,
-            //     size: 20,
-            //   ),
-            //   onPressed: () {
-            //     _showCategoryFilterDialog(context);
-            //   },
-            // ),
+            /// 더보기/숨기기 토글 버튼
+            /// Show more/Hide toggle button
+            ///
+            /// 클릭 시 카테고리 목록 확장/축소 상태 토글
+            /// Toggle category list expansion/collapse state on click
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              borderRadius: BorderRadius.circular(4),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Text(
+                  /// 확장 상태에 따라 텍스트 변경 (확장: 숨기기, 축소: 더보기)
+                  /// Change text based on expansion state (expanded: hide, collapsed: show more)
+                  _isExpanded ? lo.showLess : lo.viewMore,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.primary,
+                  ),
+                ),
+              ),
+            ),
 
             /// 글쓰기 버튼 (Wrap 맨 마지막에 배치, 콤팩트)
             /// Create post button (placed at the end of Wrap, compact)
             InkWell(
-              onTap: onCreatePost,
+              onTap: widget.onCreatePost,
               borderRadius: BorderRadius.circular(4),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                child: FaIcon(
-                  FontAwesomeIcons.lightPlusLarge,
-                  color: scheme.onSurface,
-                  size: 18,
+                child: Text(
+                  lo.writePost,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface,
+                  ),
                 ),
               ),
             ),

@@ -269,6 +269,7 @@
   "companyDirectoryDescription": "業者を登録すると、ナビゲーションバーなどに表示され、より多くのユーザーに見られます。",
   "companiesRegistered": "{count, plural, =0{合計0社登録済み。} =1{合計1社登録済み。} other{合計{count}社登録済み。}}",
   "viewMore": "もっと見る",
+  "showLess": "非表示",
   "noRegisteredCompanies": "登録された業者はありません。",
   "registerCompanyPrompt": "このカテゴリーで最初に業者を登録しましょう！",
   "mobileContactMethod": "携帯連絡方法",

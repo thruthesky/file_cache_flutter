@@ -523,6 +523,10 @@
   "@viewMore": {
     "description": "Button text to view more items"
   },
+  "showLess": "Hide",
+  "@showLess": {
+    "description": "Button text to hide/collapse items"
+  },
   "noRegisteredCompanies": "No registered companies.",
   "@noRegisteredCompanies": {
     "description": "Empty state message when no companies are registered"

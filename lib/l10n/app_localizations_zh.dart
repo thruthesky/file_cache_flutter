@@ -404,6 +404,9 @@ class LoZh extends Lo {
   String get viewMore => '查看更多';
 
   @override
+  String get showLess => '收起';
+
+  @override
   String get noRegisteredCompanies => '没有注册的商家。';
 
   @override

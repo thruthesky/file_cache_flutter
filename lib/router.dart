@@ -123,7 +123,7 @@ final router = GoRouter(
         queryParameters.containsKey('idx') &&
         queryParameters['idx']!.isNotEmpty) {
       final post = Post.fromJson({'idx': int.parse(queryParameters['idx']!)});
-      NavigationState.of(context, listen: false).setData({'post': post});
+      NavigationState.of(context, listen: false).post = post;
       return PostViewScreen.routeName;
     }
 

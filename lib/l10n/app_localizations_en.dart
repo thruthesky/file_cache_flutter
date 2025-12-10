@@ -417,6 +417,9 @@ class LoEn extends Lo {
   String get viewMore => 'View More';
 
   @override
+  String get showLess => 'Hide';
+
+  @override
   String get noRegisteredCompanies => 'No registered companies.';
 
   @override
