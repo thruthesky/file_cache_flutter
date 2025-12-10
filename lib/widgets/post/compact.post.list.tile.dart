@@ -81,9 +81,10 @@ class CompactPostListTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// Row 1: Title (no Hero to avoid conflicts)
-                Text(
+              /// 제목 스타일: titleLarge (한 단계 더 큰 크기로 강조)
+              Text(
                   post.subject,
-                  style: theme.textTheme.titleMedium,
+                  style: theme.textTheme.titleLarge,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
