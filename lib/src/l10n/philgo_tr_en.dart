@@ -740,7 +740,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryPersonalMarket => 'Personal Market';
 
   @override
-  String get subCategoryRealEstate => 'Real Estate';
+  String get subCategoryRealEstate => 'Realty';
 
   @override
   String get subCategoryHouseRental => 'House Rental';

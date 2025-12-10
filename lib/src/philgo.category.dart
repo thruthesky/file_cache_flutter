@@ -175,7 +175,7 @@ class PhilgoCategory {
   /// ```dart
   /// final menuCats = PhilgoCategory.menuCategories();
   /// ```
-  static List<(String, String?)> menuCategories() {
+  static List<(String, String?)> menuCategories({bool includeTemp = false}) {
     return [
       ('freetalk', null),
       ('qna', null),
@@ -183,12 +183,12 @@ class PhilgoCategory {
       ('wanted', null),
       ('travel', null),
       ('massage', null),
+      ('buyandsell', 'real_estate'),
       ('freetalk', '뉴스'),
 
       //
       ('buyandsell', '골프'),
       ('buyandsell', '렌트카'),
-      ('buyandsell', 'real_estate'),
 
       //
       ('freetalk', 'info'),
@@ -220,6 +220,9 @@ class PhilgoCategory {
       ('rest', null),
       ('youtube', null),
       ('blog', null),
+
+      //
+      if (includeTemp) ('temp', null),
     ];
   }
 
@@ -230,15 +233,7 @@ class PhilgoCategory {
   /// final menuCats = PhilgoCategory.menuCategories();
   /// ```
   static List<(String, String?)> homeMenuCategories() {
-    return [
-      ('freetalk', null),
-      ('qna', null),
-      ('buyandsell', null),
-      ('wanted', null),
-      ('travel', null),
-      ('massage', null),
-      ('freetalk', '뉴스'),
-    ];
+    return menuCategories().take(10).toList();
   }
 
   /// 모든 메인 카테고리와 해당 서브카테고리를 맵으로 반환합니다.

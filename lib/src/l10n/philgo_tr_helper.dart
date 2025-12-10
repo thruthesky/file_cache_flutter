@@ -109,7 +109,7 @@ Map<String, String> _buildTranslationMap(PhilgoTr tr) {
     // 콘텐츠 관련 (Content related)
     'column': tr.subCategoryColumn,
     '먹방': tr.subCategoryMukbang,
-    '뉴스': tr.subCategoryNotice,
+    '뉴스': tr.categoryNews,
     '공지사항': tr.subCategoryNotice,
     '경험담': tr.subCategoryExperience,
     '공부': tr.subCategoryStudyLearn,
