@@ -9,7 +9,7 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
-import 'package:philgo/widgets/logo/philgo.logo.triangle.dart';
+
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -592,8 +592,10 @@ void showShorebirdUpdateDialog() {
             crossAxisAlignment: CrossAxisAlignment.center,
 
             children: [
+              /// [로고 섹션] - PhilGo 로고 (한 단계 작게: 180 → 140)
+              /// Logo Section - PhilGo logo (one step smaller: 180 → 140)
               const PhilGoLogoTriangles(
-                size: 180,
+                size: 140,
                 animated: true,
                 rotating: true,
                 pulsing: true,
@@ -690,12 +692,26 @@ void showShorebirdUpdateDialog() {
                           horizontal: sp.s24,
                         ),
                       ),
-                      child: Text(
-                        lo.confirm,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: scheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          /// 다운로드 아이콘 추가 (Font Awesome Light 스타일)
+                          /// Download icon added (Font Awesome Light style)
+                          FaIcon(
+                            FontAwesomeIcons.lightDownload,
+                            size: 16,
+                            color: scheme.onPrimary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            lo.confirm,
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: scheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   )

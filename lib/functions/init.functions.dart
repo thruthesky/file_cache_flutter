@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -95,10 +96,10 @@ void initNotificationChannel() async {
     // await channel.invokeMethod('createNotificationChannel', channelMap2);
     // log('Finished creating channel2');
   } on PlatformException catch (e) {
-    // log(
-    //   'Error while creating channel: ${e.message}',
-    //   name: 'NotificationChannel registration Error',
-    // );
+    log(
+      'Error while creating channel: ${e.message}',
+      name: 'NotificationChannel registration Error',
+    );
   }
 }
 

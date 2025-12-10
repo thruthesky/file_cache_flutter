@@ -49,10 +49,6 @@ class _ForumHomeState extends State<ForumHome> {
   /// Whether to show header (changes based on scroll)
   bool _showHeader = true;
 
-  /// 마지막 스크롤 위치 (스크롤 방향 감지용)
-  /// Last scroll position (for detecting scroll direction)
-  double _lastScrollOffset = 0;
-
   @override
   void initState() {
     super.initState();
@@ -143,8 +139,6 @@ class _ForumHomeState extends State<ForumHome> {
           setState(() => _showHeader = true);
         }
       }
-
-      _lastScrollOffset = currentOffset;
     }
 
     /// false 반환: 알림을 계속 전파
@@ -246,10 +240,12 @@ class _ForumHomeState extends State<ForumHome> {
             child: PostListView(
               /// buyandsell 카테고리는 그리드 레이아웃 사용
               /// Use grid layout for buyandsell category
-              listViewController:
-                  _selectedPostId != 'buyandsell' ? _listViewController : null,
-              gridViewController:
-                  _selectedPostId == 'buyandsell' ? _gridViewController : null,
+              listViewController: _selectedPostId != 'buyandsell'
+                  ? _listViewController
+                  : null,
+              gridViewController: _selectedPostId == 'buyandsell'
+                  ? _gridViewController
+                  : null,
               postId: _selectedPostId,
               category: _selectedCategory,
 
