@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/functions/ui.functions.dart';
+import 'package:philgo/models/forum_selection.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/widgets/headers/forum_header.dart';
@@ -15,8 +16,8 @@ import 'package:provider/provider.dart';
 /// Manages currently selected category with local state.
 ///
 /// 딥링크 처리:
-/// - NavigationState.data에 'initialPostId' 키로 postId가 전달되면
-/// - 해당 카테고리로 초기화됩니다.
+/// - NavigationState.initialPostId와 initialCategory가 설정되면
+/// - 해당 카테고리로 자동 이동합니다.
 class ForumHome extends StatefulWidget {
   const ForumHome({super.key});
 
@@ -25,24 +26,20 @@ class ForumHome extends StatefulWidget {
 }
 
 class _ForumHomeState extends State<ForumHome> {
-  /// 현재 선택된 메인 카테고리 ID (로컬 상태)
-  /// Currently selected main category ID (local state)
-  late String _selectedPostId;
+  /// 현재 선택된 카테고리 상태 (메인 + 서브 카테고리)
+  /// Currently selected category state (main + subcategory)
+  late ForumSelection _currentSelection;
 
-  /// 현재 선택된 서브 카테고리 (로컬 상태)
-  /// Currently selected sub category (local state)
-  String? _selectedCategory;
+  /// 마지막으로 처리한 딥링크 선택 상태 (중복 처리 방지)
+  /// Last processed deep link selection (prevent duplicate processing)
+  ForumSelection? _lastProcessedDeepLink;
 
-  /// 마지막으로 처리한 initialPostId를 추적
-  /// Track last processed initialPostId to avoid duplicate processing
-  String? _lastProcessedInitialPostId;
-
-  /// Controller for list view (used for non-grid layouts)
   /// 리스트 뷰용 컨트롤러 (비그리드 레이아웃에 사용)
+  /// Controller for list view (used for non-grid layouts)
   final PostListController _listViewController = PostListController();
 
-  /// Controller for grid view (used for grid layouts like buyandsell)
   /// 그리드 뷰용 컨트롤러 (buyandsell 같은 그리드 레이아웃에 사용)
+  /// Controller for grid view (used for grid layouts like buyandsell)
   final PostListController _gridViewController = PostListController();
 
   /// 헤더 표시 여부 (스크롤에 따라 변경)
@@ -53,87 +50,205 @@ class _ForumHomeState extends State<ForumHome> {
   void initState() {
     super.initState();
 
-    /// 기본값: 첫 번째 메인 카테고리
-    /// Default: first major category
-    _selectedPostId = PhilgoCategory.majorCategories(
-      includeTemp: kDebugMode,
-    ).first;
-    _selectedCategory = null;
+    /// 기본값: 첫 번째 메인 카테고리 (서브 카테고리 없음)
+    /// Default: first major category (no subcategory)
+    _currentSelection = ForumSelection(
+      postId: PhilgoCategory.majorCategories(includeTemp: kDebugMode).first,
+    );
   }
 
-  /// 카테고리 변경 핸들러
-  /// Category change handler
+  /// 카테고리 변경 핸들러 (ForumHeader에서 콜백으로 사용)
+  /// Category change handler (used as callback from ForumHeader)
   void _onCategoryChanged(String postId, String? category) {
-    if (_selectedPostId == postId && _selectedCategory == category) {
+    final newSelection = ForumSelection(postId: postId, category: category);
+
+    if (_currentSelection == newSelection) {
       return;
     }
 
     setState(() {
-      _selectedPostId = postId;
-      _selectedCategory = category;
+      _currentSelection = newSelection;
     });
+  }
+
+  /// 딥링크 데이터 처리 (NavigationState에서 전달된 카테고리로 이동)
+  /// Process deep link data (navigate to category from NavigationState)
+  ///
+  /// 빌드 중에 호출되므로 setState 대신 직접 상태 변수를 업데이트합니다.
+  /// Called during build, so update state variables directly instead of setState.
+  void _processDeepLinkIfNeeded(NavigationState navState) {
+    /// 딥링크 데이터가 없으면 무시
+    /// Ignore if no deep link data
+    if (navState.initialPostId == null) {
+      return;
+    }
+
+    /// 딥링크로 전달된 선택 상태 생성
+    /// Create selection from deep link data
+    final deepLinkSelection = ForumSelection(
+      postId: navState.initialPostId!,
+      category: navState.initialCategory,
+    );
+
+    /// 이미 처리한 딥링크면 무시 (중복 처리 방지)
+    /// Ignore if already processed (prevent duplicate processing)
+    if (deepLinkSelection == _lastProcessedDeepLink) {
+      return;
+    }
+
+    debugLog('ForumHome: 딥링크 처리 - $deepLinkSelection');
+    _lastProcessedDeepLink = deepLinkSelection;
+
+    /// 현재 선택 상태 업데이트 (빌드 중이므로 직접 업데이트)
+    /// Update current selection (direct update since we're in build)
+    _currentSelection = deepLinkSelection;
+
+    /// 딥링크 데이터 클리어 (다음 네비게이션에 영향 없도록)
+    /// Clear deep link data (to avoid affecting next navigation)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _clearDeepLinkData();
+    });
+  }
+
+  /// NavigationState의 딥링크 데이터 클리어
+  /// Clear deep link data from NavigationState
+  void _clearDeepLinkData() {
+    final navState = NavigationState.of(context, listen: false);
+    navState.initialPostId = null;
+    navState.initialCategory = null;
   }
 
   @override
   Widget build(BuildContext context) {
-    /// Selector를 사용하여 NavigationState.data 변경사항을 감지
-    /// Use Selector to listen to NavigationState.data changes
-    /// This is crucial for IndexedStack where widgets are always mounted
-    return Selector<NavigationState, Object?>(
-      selector: (context, state) => state.data,
-      builder: (context, data, child) {
-        /// initialPostId 처리 - 빌더 내에서 동기적으로 처리
-        /// Process initialPostId synchronously within builder
-        /// This ensures the correct category is shown from the first frame
-        final navData = data as Map<String, dynamic>?;
-        final initialPostId = navData?['initialPostId'] as String?;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
-        /// 새로운 initialPostId가 있고 아직 처리하지 않은 경우
-        /// Only process if we have new initialPostId that hasn't been processed yet
-        if (initialPostId != null &&
-            initialPostId != _lastProcessedInitialPostId) {
-          debugLog('ForumHome: Processing initialPostId = $initialPostId');
-          _lastProcessedInitialPostId = initialPostId;
+    /// Selector를 사용하여 딥링크 데이터 변경 감지
+    /// Use Selector to detect deep link data changes
+    ///
+    /// (initialPostId, initialCategory) 튜플을 감시하여
+    /// 둘 중 하나라도 변경되면 리빌드됩니다.
+    return Selector<NavigationState, (String?, String?)>(
+      selector: (context, state) => (state.initialPostId, state.initialCategory),
+      builder: (context, deepLinkData, child) {
+        /// 딥링크 처리: NavigationState에서 카테고리 데이터가 있으면 적용
+        /// Process deep link: apply category data from NavigationState if present
+        final navState = NavigationState.of(context, listen: false);
+        _processDeepLinkIfNeeded(navState);
 
-          /// 로컬 상태 변수를 직접 업데이트 (빌드 중이므로 setState 사용 안 함)
-          /// Update local state variables directly (can't use setState during build)
-          _selectedPostId = initialPostId;
-          _selectedCategory = null;
+        return NotificationListener<ScrollNotification>(
+          onNotification: _handleScrollNotification,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 헤더 영역 (스크롤 시 숨김/표시 애니메이션)
+              /// Header area (hide/show animation on scroll)
+              _buildAnimatedHeader(scheme),
 
-          /// 데이터 사용 후 제거 (다음 네비게이션에 영향 없도록)
-          /// Clear data after use to avoid affecting next navigation
-          /// Schedule this for after build to avoid modifying state during build
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            NavigationState.of(context, listen: false).data = null;
-          });
-        }
-
-        return _buildContent(context);
+              /// 본문: 게시글 목록
+              /// Body: post list
+              _buildPostList(),
+            ],
+          ),
+        );
       },
     );
+  }
+
+  /// 애니메이션 헤더 빌드 (스크롤 시 숨김/표시)
+  /// Build animated header (hide/show on scroll)
+  Widget _buildAnimatedHeader(ColorScheme scheme) {
+    return ClipRect(
+      child: AnimatedAlign(
+        alignment: Alignment.topCenter,
+        heightFactor: _showHeader ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        child: Container(
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            border: Border(
+              bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
+            ),
+          ),
+          child: ForumHeader(
+            selectedPostId: _currentSelection.postId,
+            selectedCategory: _currentSelection.category,
+            onCategorySelected: _onCategoryChanged,
+            onCreatePost: _showPostCreateDialog,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 게시글 목록 빌드
+  /// Build post list
+  Widget _buildPostList() {
+    final isBuyAndSell = _currentSelection.postId == 'buyandsell';
+
+    return Expanded(
+      child: PostListView(
+        listViewController: isBuyAndSell ? null : _listViewController,
+        gridViewController: isBuyAndSell ? _gridViewController : null,
+        postId: _currentSelection.postId,
+        category: _currentSelection.category,
+        enableHeroTransition: true,
+        gridColumns: isBuyAndSell ? 2 : null,
+        tileBuilder: isBuyAndSell
+            ? (post, onTap) => PostCard(post: post, onTap: onTap)
+            : null,
+        onTap: _onPostTapped,
+        noItemsFoundIndicatorBuilder: (context) {
+          return const Center(child: EmptyPostList());
+        },
+      ),
+    );
+  }
+
+  /// 글쓰기 다이얼로그 표시
+  /// Show post create dialog
+  void _showPostCreateDialog() {
+    showPostCreateDialog(
+      context,
+      postId: _currentSelection.postId,
+      category: _currentSelection.category,
+      onSubmitted: (post) {
+        _listViewController.refresh();
+        _gridViewController.refresh();
+      },
+    );
+  }
+
+  /// 게시물 탭 시 상세 화면으로 이동
+  /// Navigate to post detail screen when tapped
+  Future<void> _onPostTapped(Post post) async {
+    await PostViewScreen.push(context, post);
+
+    /// 돌아왔을 때 UI 업데이트 (수정된 내용 반영)
+    /// Update UI when returned (reflect edited content)
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   /// 스크롤 알림 처리 - 스크롤 방향에 따라 헤더 표시/숨김
   /// Handle scroll notification - show/hide header based on scroll direction
   bool _handleScrollNotification(ScrollNotification notification) {
-    /// ScrollUpdateNotification만 처리 (실제 스크롤 이벤트)
-    /// Only handle ScrollUpdateNotification (actual scroll events)
     if (notification is ScrollUpdateNotification) {
       final currentOffset = notification.metrics.pixels;
-
-      /// 스크롤 델타값으로 방향 판단 (더 정확함)
-      /// Determine direction by scroll delta (more accurate)
       final delta = notification.scrollDelta ?? 0;
 
-      /// 스크롤 업 (위로 스와이프, 컨텐츠가 아래로 이동) - 헤더 숨기기
-      /// Scroll up (swipe up, content moves down) - hide header
+      /// 스크롤 업 (위로 스와이프) - 헤더 숨기기
+      /// Scroll up (swipe up) - hide header
       if (delta > 0 && currentOffset > 50) {
         if (_showHeader) {
           setState(() => _showHeader = false);
         }
       }
-      /// 스크롤 다운 (아래로 스와이프, 컨텐츠가 위로 이동) - 헤더 표시
-      /// Scroll down (swipe down, content moves up) - show header
+
+      /// 스크롤 다운 (아래로 스와이프) - 헤더 표시
+      /// Scroll down (swipe down) - show header
       else if (delta < 0) {
         if (!_showHeader) {
           setState(() => _showHeader = true);
@@ -141,153 +256,12 @@ class _ForumHomeState extends State<ForumHome> {
       }
     }
 
-    /// false 반환: 알림을 계속 전파
-    /// Return false: continue propagating notification
     return false;
   }
 
-  Widget _buildContent(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
-    /// NotificationListener로 스크롤 이벤트 감지
-    /// Detect scroll events with NotificationListener
-    ///
-    /// 스크롤 업 (위로 스와이프): 헤더가 스르륵 위로 숨겨짐
-    /// 스크롤 다운 (아래로 스와이프): 헤더가 즉시 스르륵 나타남
-    return NotificationListener<ScrollNotification>(
-      onNotification: _handleScrollNotification,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// ClipRect + AnimatedAlign으로 헤더 숨기기/표시 애니메이션
-          /// Header hide/show animation with ClipRect + AnimatedAlign
-          ///
-          /// ClipRect: 헤더가 위로 올라갈 때 넘치는 부분 잘라냄
-          /// ClipRect: clips overflow when header moves up
-          ///
-          /// AnimatedAlign(heightFactor): 높이를 0~1 사이로 애니메이션
-          /// AnimatedAlign(heightFactor): animates height between 0~1
-          ClipRect(
-            child: AnimatedAlign(
-              /// 상단 정렬 (헤더가 위에서부터 사라짐)
-              /// Top alignment (header disappears from top)
-              alignment: Alignment.topCenter,
-
-              /// 숨김 시 높이를 0으로, 표시 시 원래 높이로
-              /// Height 0 when hidden, original height when shown
-              heightFactor: _showHeader ? 1.0 : 0.0,
-
-              /// 부드러운 애니메이션 (200ms)
-              /// Smooth animation (200ms)
-              duration: const Duration(milliseconds: 200),
-
-              /// 자연스러운 커브
-              /// Natural curve
-              curve: Curves.easeInOut,
-
-              child: Container(
-                /// 하단 테두리 (Comic design)
-                /// Bottom border (Comic design)
-                decoration: BoxDecoration(
-                  color: scheme.surface,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: scheme.outlineVariant,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-
-                child: ForumHeader(
-                  /// 현재 선택된 메인 카테고리 전달 (UI 동기화)
-                  /// Pass currently selected main category (UI sync)
-                  selectedPostId: _selectedPostId,
-
-                  /// 현재 선택된 서브 카테고리 전달 (UI 동기화)
-                  /// Pass currently selected subcategory (UI sync)
-                  selectedCategory: _selectedCategory,
-
-                  /// 카테고리 선택 시 로컬 상태 업데이트 (메인 + 서브 카테고리)
-                  /// Update local state when category selected (main + subcategory)
-                  onCategorySelected: (String postId, String? category) {
-                    _onCategoryChanged(postId, category);
-                  },
-
-                  /// 글쓰기 버튼 클릭 시 현재 선택된 카테고리로 글쓰기 다이얼로그 표시
-                  /// Show post create dialog with currently selected category
-                  onCreatePost: () {
-                    showPostCreateDialog(
-                      context,
-                      postId: _selectedPostId,
-                      category: _selectedCategory,
-                      onSubmitted: (post) {
-                        /// 글 생성 후 목록 새로고침
-                        /// Refresh list after post creation
-                        _listViewController.refresh();
-                        _gridViewController.refresh();
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-
-          /// 본문: PostListView (게시글 목록)
-          /// Body: PostListView (post list)
-          Expanded(
-            child: PostListView(
-              /// buyandsell 카테고리는 그리드 레이아웃 사용
-              /// Use grid layout for buyandsell category
-              listViewController: _selectedPostId != 'buyandsell'
-                  ? _listViewController
-                  : null,
-              gridViewController: _selectedPostId == 'buyandsell'
-                  ? _gridViewController
-                  : null,
-              postId: _selectedPostId,
-              category: _selectedCategory,
-
-              /// Hero 트랜지션 항상 활성화
-              /// Forum 탭에서만 PostListTile 사용되므로 충돌 없음
-              /// Always enable Hero transition
-              /// No conflict since PostListTile is only used in Forum tab
-              enableHeroTransition: true,
-
-              /// Use PostCard with 2-column masonry grid for all Buy & Sell categories
-              /// Including main category and subcategories (hotel, 렌트카)
-              /// Masonry layout is automatically used when gridColumns > 1
-              gridColumns: _selectedPostId == 'buyandsell' ? 2 : null,
-              tileBuilder: _selectedPostId == 'buyandsell'
-                  ? (post, onTap) => PostCard(post: post, onTap: onTap)
-                  : null,
-
-              /// 게시물 탭 시 PostViewScreen으로 네비게이션하는 콜백 함수 제공
-              /// Navigate to PostViewScreen when post is tapped
-              onTap: (post) async {
-                await PostViewScreen.push(context, post);
-
-                /// setState를 호출하여 UI 업데이트
-                /// PostListView가 다시 빌드되면서 수정된 내용이 화면에 반영됨
-                if (mounted) {
-                  setState(() {});
-                }
-              },
-
-              noItemsFoundIndicatorBuilder: (context) {
-                return const Center(child: EmptyPostList());
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  /// 새 글 생성 후 목록 새로고침 (외부에서 호출용)
+  /// Refresh list after new post created (for external call)
   void onNewPostCreated(Post newPost) {
-    /// Refresh the appropriate view (list or grid) based on which one is currently active
-    /// 현재 활성화된 뷰(리스트 또는 그리드)에 따라 적절한 뷰를 새로고침
     _listViewController.refresh();
     _gridViewController.refresh();
   }

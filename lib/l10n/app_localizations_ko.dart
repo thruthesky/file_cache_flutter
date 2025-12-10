@@ -406,6 +406,9 @@ class LoKo extends Lo {
   String get viewMore => '더보기';
 
   @override
+  String get showLess => '숨기기';
+
+  @override
   String get noRegisteredCompanies => '등록된 업체가 없습니다.';
 
   @override

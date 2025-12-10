@@ -93,10 +93,6 @@ class _MyAppState extends State<MyApp> {
       /// Shorebird 코드 푸시 초기화 (180초 주기 업데이트 확인)
       /// Initialize Shorebird Code Push (check for updates every 180 seconds)
       initShorebirdCodePush();
-
-      Timer(Duration(seconds: 3), () {
-        showShorebirdUpdateDialog();
-      });
     });
   }
 

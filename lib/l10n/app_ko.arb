@@ -128,6 +128,7 @@
   "updateCompany": "업체 수정",
   "companiesRegistered": "{count, plural, =0{총 0개의 업체가 등록되어 있습니다.} =1{총 1개의 업체가 등록되어 있습니다.} other{총 {count}개의 업체가 등록되어 있습니다.}}",
   "viewMore": "더보기",
+  "showLess": "숨기기",
   "noRegisteredCompanies": "등록된 업체가 없습니다.",
   "registerCompanyPrompt": "이 카테고리에서 처음으로 업체를 등록하세요!",
   "location": "위치",

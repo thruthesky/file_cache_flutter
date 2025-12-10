@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/extensions/nav.context.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
@@ -63,12 +64,11 @@ class HomeMenuCategories extends StatelessWidget {
               onTap: () {
                 /// ForumHome으로 이동하면서 해당 카테고리 선택
                 /// Navigate to ForumHome with selected category
-                final navState = NavigationState.of(context, listen: false);
-                navState.data = {
-                  'initialPostId': postId,
-                  if (subcategory != null) 'initialCategory': subcategory,
-                };
-                navState.setHomeNavigation(HomeNavigationItem.forum);
+                context.setHomeIndex(
+                  HomeNavigationItem.forum,
+                  initialPostId: postId,
+                  initialCategory: subcategory,
+                );
               },
 
               /// 터치 피드백 영역을 텍스트에 맞춤

@@ -869,6 +869,12 @@ abstract class Lo {
   /// **'View More'**
   String get viewMore;
 
+  /// Button text to hide/collapse items
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get showLess;
+
   /// Empty state message when no companies are registered
   ///
   /// In en, this message translates to:
