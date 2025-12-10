@@ -221,6 +221,9 @@ class PostSimpleListViewState extends State<PostSimpleListView> {
                     SquareBanners(
                       postIdOrCategory: widget.category ?? widget.postId,
                     ),
+                    SmallBanners(
+                      postIdOrCategory: widget.category ?? widget.postId,
+                    ),
                     tile,
                   ],
                 );
