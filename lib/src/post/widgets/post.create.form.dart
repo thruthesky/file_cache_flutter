@@ -343,41 +343,25 @@ class PostCreateFormState extends State<PostCreateForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: widget.padding ?? const EdgeInsets.all(16),
+        shrinkWrap: true,
         children: [
-          Expanded(
-            child: ListView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: widget.padding ?? const EdgeInsets.all(16),
-              shrinkWrap: true,
-              children: [
-                if (widget.showCategorySelector) ...[
-                  _buildCategorySelector(context),
-                  const SizedBox(height: 16),
-                ],
-                _buildTitleField(context),
-                const SizedBox(height: 16),
-                if (_urls.isNotEmpty || _uploadingCount > 0) ...[
-                  _buildUploadPreview(context),
-                  const SizedBox(height: 16),
-                ],
-                _buildContentField(context),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 1.0,
-                ),
-              ),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: SafeArea(top: false, child: _buildActionBar(context)),
-          ),
+          if (widget.showCategorySelector) ...[
+            _buildCategorySelector(context),
+            const SizedBox(height: 16),
+          ],
+          _buildTitleField(context),
+          const SizedBox(height: 16),
+          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
+            _buildUploadPreview(context),
+            const SizedBox(height: 16),
+          ],
+          _buildContentField(context),
+          const SizedBox(height: 16),
+
+          _buildActionBar(context),
         ],
       ),
     );
@@ -617,65 +601,54 @@ class PostCreateFormState extends State<PostCreateForm> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: colorScheme.outline,
-          width: 2.0, // Comic Design: 2.0px 테두리
-        ),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        children: [
-          // 파일 업로드 버튼
-          FileUpload(
-            file: true,
-            video: true,
-            onBeforeUpload: _incrementUploadingCount,
-            onUploaded: (url) {
-              log('파일 업로드 완료: $url', name: 'PostCreateForm');
-              setState(() {
-                _urls.add(url);
-              });
-              _decrementUploadingCount();
-            },
-            onCancelled: _decrementUploadingCount,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              child: FaIcon(
-                FontAwesomeIcons.lightCamera,
-                color: colorScheme.onSurface,
-              ),
+    return Row(
+      children: [
+        // 파일 업로드 버튼
+        FileUpload(
+          file: true,
+          video: true,
+          onBeforeUpload: _incrementUploadingCount,
+          onUploaded: (url) {
+            log('파일 업로드 완료: $url', name: 'PostCreateForm');
+            setState(() {
+              _urls.add(url);
+            });
+            _decrementUploadingCount();
+          },
+          onCancelled: _decrementUploadingCount,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            child: FaIcon(
+              FontAwesomeIcons.lightCamera,
+              color: colorScheme.onSurface,
             ),
           ),
+        ),
 
-          const Spacer(),
+        const Spacer(),
 
-          // 제출 버튼 (showSubmitButton이 true일 때만)
-          if (widget.showSubmitButton)
-            IconButton(
-              onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
-              icon: _isLoading
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: colorScheme.primary,
-                      ),
-                    )
-                  : FaIcon(
-                      FontAwesomeIcons.paperPlane,
-                      size: 24,
-                      color: Theme.of(
-                        context,
-                      ).iconTheme.color!.withValues(alpha: 0.35),
+        // 제출 버튼 (showSubmitButton이 true일 때만)
+        if (widget.showSubmitButton)
+          IconButton(
+            onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
+            icon: _isLoading
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colorScheme.primary,
                     ),
-            ),
-        ],
-      ),
+                  )
+                : FaIcon(
+                    FontAwesomeIcons.paperPlane,
+                    size: 24,
+                    color: Theme.of(
+                      context,
+                    ).iconTheme.color!.withValues(alpha: 0.35),
+                  ),
+          ),
+      ],
     );
   }
 }
