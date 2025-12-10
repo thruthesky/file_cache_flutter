@@ -187,14 +187,10 @@ class PostTitleText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
 
     return Text(
       post.subject,
-      style: theme.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: scheme.onSurface,
-      ),
+      style: theme.textTheme.titleLarge,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
