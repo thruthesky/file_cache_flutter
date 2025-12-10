@@ -69,9 +69,9 @@ class ForumHeader extends StatelessWidget {
               /// Extract postId and subcategory from tuple
               final (postId, subcategory) = menuItem;
 
-              /// 표시할 이름: 서브카테고리가 있으면 서브카테고리, 없으면 postId 번역
-              /// Display name: subcategory if exists, otherwise translated postId
-              final localizedName = subcategory ?? philgoTr(context, postId);
+              /// 표시할 이름: 서브카테고리가 있으면 서브카테고리 번역, 없으면 postId 번역
+              /// Display name: translated subcategory if exists, otherwise translated postId
+              final localizedName = philgoTr(context, subcategory ?? postId);
 
               /// 현재 선택된 카테고리 여부 (postId와 subcategory 모두 일치해야 함)
               /// Whether this category is currently selected (both postId and subcategory must match)

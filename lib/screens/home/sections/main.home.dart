@@ -8,6 +8,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
 import 'package:philgo/widgets/home/home_post_section.dart';
+import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -75,7 +76,7 @@ class _MainHomeState extends State<MainHome> {
             SliverToBoxAdapter(
               child: SafeArea(
                 bottom: false,
-                child: _buildHomeMenuCategories(context),
+                child: const HomeMenuCategories(),
               ),
             ),
 
@@ -195,80 +196,6 @@ class _MainHomeState extends State<MainHome> {
             SliverToBoxAdapter(child: SizedBox(height: sp.s24)),
           ],
         ),
-      ),
-    );
-  }
-
-  /// 홈 메뉴 카테고리 빌드
-  /// Build home menu categories
-  ///
-  /// PhilgoCategory.homeMenuCategories()를 Wrap으로 표시
-  /// Display PhilgoCategory.homeMenuCategories() using Wrap
-  Widget _buildHomeMenuCategories(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final sp = theme.extension<AppSpacing>()!;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
-      child: Wrap(
-        /// 버튼 간 가로 간격 (최소화)
-        /// Horizontal spacing between buttons (minimized)
-        spacing: 2,
-
-        /// 줄 간 세로 간격 (최소화)
-        /// Vertical spacing between rows (minimized)
-        runSpacing: 2,
-
-        /// 왼쪽 정렬
-        /// Align to start
-        alignment: WrapAlignment.start,
-
-        /// 세로 정렬 (중앙)
-        /// Vertical alignment (center)
-        crossAxisAlignment: WrapCrossAlignment.center,
-
-        children: PhilgoCategory.homeMenuCategories().map((menuItem) {
-          /// 튜플에서 postId와 subcategory 추출
-          /// Extract postId and subcategory from tuple
-          final (postId, subcategory) = menuItem;
-
-          /// 표시할 이름: 서브카테고리가 있으면 서브카테고리, 없으면 postId 번역
-          /// Display name: subcategory if exists, otherwise translated postId
-          final localizedName = subcategory ?? philgoTr(context, postId);
-
-          /// InkWell + Text로 완전히 콤팩트한 버튼 구현
-          /// Fully compact button using InkWell + Text (no padding/margin)
-          return InkWell(
-            onTap: () {
-              /// ForumHome으로 이동하면서 해당 카테고리 선택
-              /// Navigate to ForumHome with selected category
-              final navState = NavigationState.of(context, listen: false);
-              navState.data = {
-                'initialPostId': postId,
-                if (subcategory != null) 'initialCategory': subcategory,
-              };
-              navState.setHomeNavigation(HomeNavigationItem.forum);
-            },
-
-            /// 터치 피드백 영역을 텍스트에 맞춤
-            /// Fit touch feedback area to text
-            borderRadius: BorderRadius.circular(4),
-
-            child: Container(
-              /// 최소한의 패딩 (터치 영역 확보)
-              /// Minimal padding (for touch area)
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-
-              child: Text(
-                localizedName,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurface,
-                ),
-              ),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

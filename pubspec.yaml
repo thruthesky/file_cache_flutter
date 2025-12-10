@@ -39,6 +39,7 @@ dependencies:
   philgo_api:
     path: packages/philgo_v6_flutter
   flutter_staggered_grid_view: ^0.7.0
+  shorebird_code_push: ^2.0.5
 
 dependency_overrides:
   font_awesome_flutter:

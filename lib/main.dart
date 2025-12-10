@@ -77,12 +77,20 @@ class _MyAppState extends State<MyApp> {
 
     // Navigator가 완전히 준비된 후 globalContext 설정
     // 첫 프레임이 렌더링된 후에 실행되도록 보장
+    // Set globalContext after Navigator is fully prepared
+    // Ensure execution after first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (globalNavigatorKey.currentContext != null) {
         PhilgoConfig.setGlobalContext(globalNavigatorKey.currentContext!);
       }
 
+      /// 외부 공유 수신 서비스 초기화
+      /// Initialize receive share service
       initializeReceiveShareService();
+
+      /// Shorebird 코드 푸시 초기화 (180초 주기 업데이트 확인)
+      /// Initialize Shorebird Code Push (check for updates every 180 seconds)
+      initShorebirdCodePush();
     });
   }
 
