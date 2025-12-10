@@ -181,8 +181,9 @@ class PhilgoCategory {
       ('qna', null),
       ('buyandsell', null),
       ('wanted', null),
-      ('massage', null),
       ('travel', null),
+      ('massage', null),
+      ('freetalk', '뉴스'),
 
       //
       ('buyandsell', '골프'),
@@ -196,7 +197,6 @@ class PhilgoCategory {
       ('freetalk', '이민'),
       ('freetalk', '국제결혼'),
       ('freetalk', '먹방'),
-      ('freetalk', '뉴스'),
       ('freetalk', '경험담'),
       ('freetalk', '마닐라'),
       ('freetalk', '세부'),
@@ -235,8 +235,9 @@ class PhilgoCategory {
       ('qna', null),
       ('buyandsell', null),
       ('wanted', null),
-      ('massage', null),
       ('travel', null),
+      ('massage', null),
+      ('freetalk', '뉴스'),
     ];
   }
 

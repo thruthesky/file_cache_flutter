@@ -1,3 +1,5 @@
+export 'src/philgo.functions.dart';
+
 export 'src/banners/banner.model.dart';
 export 'src/banners/banner.api.dart';
 export 'src/banners/small_banners.dart';
