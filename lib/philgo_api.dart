@@ -59,7 +59,7 @@ export 'src/chat/widgets/chat.room.builder.dart';
 export 'src/chat/report/chat.report.dart';
 
 // comment
-export 'src/comment/comment_to_post.dart';
+export 'src/comment/comment.create.form.dart';
 export 'src/comment/reply_to_comment.dart';
 export 'src/comment/comment.update.dart';
 

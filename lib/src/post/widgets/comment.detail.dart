@@ -177,7 +177,7 @@ class _CommentDetailState extends State<CommentDetail> {
                         }
                       },
                       text: widget.comment.content,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyLarge,
                       linkStyle: Theme.of(context).textTheme.bodyLarge
                           ?.copyWith(
                             height: 1.6,

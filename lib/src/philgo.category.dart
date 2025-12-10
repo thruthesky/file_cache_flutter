@@ -23,7 +23,9 @@ class PhilgoCategory {
   static const Map<String, List<String>> _categoryMap = {
     // ===== 서브카테고리가 있는 메인 카테고리 =====
 
-    /// freetalk (자유게시판) - 19개 서브카테고리
+    /// freetalk (자유게시판) - 20개 서브카테고리
+    /// menuCategories()에서 사용하는 모든 서브카테고리가 포함되어야 합니다.
+    /// All subcategories used in menuCategories() must be included here.
     'freetalk': [
       'discussion', // 토론
       '취미', // 취미
@@ -41,6 +43,10 @@ class PhilgoCategory {
       '경험담', // 경험담
       '공부', // 공부/학습
       '태풍', // 날씨/태풍
+      '마닐라', // 마닐라 지역 (menuCategories에서 사용)
+      '세부', // 세부 지역 (menuCategories에서 사용)
+      '앙헬레스', // 앙헬레스 지역 (menuCategories에서 사용)
+      '행방불명', // 행방불명 (menuCategories에서 사용)
     ],
 
     /// buyandsell (사고팔기) - 13개 서브카테고리

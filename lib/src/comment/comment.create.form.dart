@@ -2,17 +2,21 @@ import 'package:philgo_api/philgo_api.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class CommentToPost extends StatefulWidget {
-  const CommentToPost({super.key, required this.post, required this.onCreated});
+class CommentCreateForm extends StatefulWidget {
+  const CommentCreateForm({
+    super.key,
+    required this.post,
+    required this.onCreated,
+  });
 
   final Post post;
   final Function(Comment) onCreated;
 
   @override
-  State<CommentToPost> createState() => _ReplyToCommentFormState();
+  State<CommentCreateForm> createState() => _CommentCreateFormState();
 }
 
-class _ReplyToCommentFormState extends State<CommentToPost> {
+class _CommentCreateFormState extends State<CommentCreateForm> {
   final contentController = TextEditingController();
   final focusNode = FocusNode();
 
@@ -126,12 +130,14 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
             ),
           ),
         // Comment input field with Comic Design
+        // 포커스 시 minLines를 4로 확장하여 더 넓은 입력 영역 제공
+        // multiline 키보드 타입으로 엔터키가 줄바꿈으로 동작
         TextField(
           controller: contentController,
           focusNode: focusNode,
-          minLines: 1,
-          maxLines: 2,
-          keyboardType: TextInputType.text,
+          minLines: 1, //
+          maxLines: 6,
+          keyboardType: TextInputType.multiline, // 엔터키로 줄바꿈 가능
           decoration: InputDecoration(
             filled: true,
             fillColor: Theme.of(context).colorScheme.surface,
