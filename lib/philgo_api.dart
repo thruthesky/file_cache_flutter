@@ -94,6 +94,7 @@ export 'src/cache/post_cache.dart';
 export 'src/post/models/post.list.model.dart';
 export 'src/post/models/post.model.dart';
 export 'src/post/post.functions.dart';
+export 'src/post/controllers/post.list.controller.dart';
 export 'src/post/widgets/comment.detail.dart';
 export 'src/post/widgets/comment.list.view.dart';
 export 'src/post/widgets/post.list.tile.dart';

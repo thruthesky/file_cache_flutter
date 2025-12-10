@@ -23,6 +23,7 @@ class PostMasonryView extends StatefulWidget {
     this.enableHeroTransition = false,
     this.tileBuilder,
     required this.gridColumns,
+    this.controller,
   });
 
   /// 메인 카테고리 ID (Main category ID)
@@ -43,6 +44,10 @@ class PostMasonryView extends StatefulWidget {
 
   /// Number of columns for grid layout
   final int gridColumns;
+
+  /// Optional controller for external access to refresh and other operations
+  /// GlobalKey를 사용하지 않고 외부에서 새로고침 등의 작업을 수행하기 위한 컨트롤러
+  final PostListController? controller;
 
   @override
   State<PostMasonryView> createState() => PostMasonryViewState();
@@ -88,6 +93,11 @@ class PostMasonryViewState extends State<PostMasonryView> {
   @override
   void initState() {
     super.initState();
+
+    /// Attach controller if provided
+    /// 컨트롤러가 제공된 경우 연결
+    widget.controller?.attach(pagingController);
+
     _loadCachedFirstPage();
   }
 
@@ -182,6 +192,10 @@ class PostMasonryViewState extends State<PostMasonryView> {
 
   @override
   void dispose() {
+    /// Detach controller before disposing
+    /// dispose 전에 컨트롤러 연결 해제
+    widget.controller?.detach();
+
     pagingController.dispose();
     super.dispose();
   }
