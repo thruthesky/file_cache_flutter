@@ -1290,4 +1290,163 @@ class LoZh extends Lo {
 
   @override
   String get commentCreated => '评论已添加';
+
+  @override
+  String get shorebirdUpdateTitle => '更新完成';
+
+  @override
+  String get shorebirdUpdateMessage => 'PhilGo应用已更新。\n请退出后重新启动。';
+
+  @override
+  String get confirm => '确认';
+
+  @override
+  String get appInfoTitle => '应用信息';
+
+  @override
+  String get versionTitle => '版本信息';
+
+  @override
+  String get packageName => '包名';
+
+  @override
+  String get version => '版本';
+
+  @override
+  String get buildNumber => '构建号';
+
+  @override
+  String get deviceBasicInfo => '基本信息';
+
+  @override
+  String get deviceName => '设备名称';
+
+  @override
+  String get deviceModel => '型号';
+
+  @override
+  String get deviceBrand => '品牌';
+
+  @override
+  String get deviceManufacturer => '制造商';
+
+  @override
+  String get deviceProduct => '产品名';
+
+  @override
+  String get deviceDevice => '设备';
+
+  @override
+  String get deviceHardware => '硬件';
+
+  @override
+  String get deviceBoard => '主板';
+
+  @override
+  String get isPhysicalDevice => '真实设备';
+
+  @override
+  String get yes => '是';
+
+  @override
+  String get no => '否';
+
+  @override
+  String get systemInfo => '系统信息';
+
+  @override
+  String get androidVersion => 'Android版本';
+
+  @override
+  String get sdkInt => 'SDK版本';
+
+  @override
+  String get securityPatch => '安全补丁';
+
+  @override
+  String get deviceDisplay => '显示';
+
+  @override
+  String get deviceId => '设备ID';
+
+  @override
+  String get deviceFingerprint => '指纹';
+
+  @override
+  String get deviceHost => '主机';
+
+  @override
+  String get deviceBootloader => '引导程序';
+
+  @override
+  String get deviceType => '类型';
+
+  @override
+  String get deviceTags => '标签';
+
+  @override
+  String get memoryAndStorage => '内存和存储';
+
+  @override
+  String get physicalRam => '物理内存';
+
+  @override
+  String get availableRam => '可用内存';
+
+  @override
+  String get isLowRamDevice => '低内存设备';
+
+  @override
+  String get totalDisk => '总存储';
+
+  @override
+  String get freeDisk => '可用存储';
+
+  @override
+  String get supportedAbis => '支持的ABI';
+
+  @override
+  String get supported32BitAbis => '32位ABI';
+
+  @override
+  String get supported64BitAbis => '64位ABI';
+
+  @override
+  String get systemFeatures => '系统功能';
+
+  @override
+  String get modelName => '型号名称';
+
+  @override
+  String get localizedModel => '本地化型号';
+
+  @override
+  String get isiOSAppOnMac => '在Mac上运行';
+
+  @override
+  String get systemName => '系统名称';
+
+  @override
+  String get systemVersion => '系统版本';
+
+  @override
+  String get identifierForVendor => '供应商ID';
+
+  @override
+  String get utsnameInfo => 'UTSNAME信息';
+
+  @override
+  String get sysname => '系统名';
+
+  @override
+  String get nodename => '节点名';
+
+  @override
+  String get release => '发布版本';
+
+  @override
+  String get utsnameVersion => '版本';
+
+  @override
+  String get machine => '机器';
 }

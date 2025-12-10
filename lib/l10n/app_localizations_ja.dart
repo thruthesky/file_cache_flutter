@@ -1296,4 +1296,163 @@ class LoJa extends Lo {
 
   @override
   String get commentCreated => 'コメントが追加されました';
+
+  @override
+  String get shorebirdUpdateTitle => 'アップデート完了';
+
+  @override
+  String get shorebirdUpdateMessage => 'PhilGoアプリが更新されました。\n終了してから再起動してください。';
+
+  @override
+  String get confirm => '確認';
+
+  @override
+  String get appInfoTitle => 'アプリ情報';
+
+  @override
+  String get versionTitle => 'バージョン情報';
+
+  @override
+  String get packageName => 'パッケージ名';
+
+  @override
+  String get version => 'バージョン';
+
+  @override
+  String get buildNumber => 'ビルド番号';
+
+  @override
+  String get deviceBasicInfo => '基本情報';
+
+  @override
+  String get deviceName => 'デバイス名';
+
+  @override
+  String get deviceModel => 'モデル';
+
+  @override
+  String get deviceBrand => 'ブランド';
+
+  @override
+  String get deviceManufacturer => 'メーカー';
+
+  @override
+  String get deviceProduct => '製品名';
+
+  @override
+  String get deviceDevice => 'デバイス';
+
+  @override
+  String get deviceHardware => 'ハードウェア';
+
+  @override
+  String get deviceBoard => 'ボード';
+
+  @override
+  String get isPhysicalDevice => '実機';
+
+  @override
+  String get yes => 'はい';
+
+  @override
+  String get no => 'いいえ';
+
+  @override
+  String get systemInfo => 'システム情報';
+
+  @override
+  String get androidVersion => 'Androidバージョン';
+
+  @override
+  String get sdkInt => 'SDKバージョン';
+
+  @override
+  String get securityPatch => 'セキュリティパッチ';
+
+  @override
+  String get deviceDisplay => 'ディスプレイ';
+
+  @override
+  String get deviceId => 'デバイスID';
+
+  @override
+  String get deviceFingerprint => 'フィンガープリント';
+
+  @override
+  String get deviceHost => 'ホスト';
+
+  @override
+  String get deviceBootloader => 'ブートローダー';
+
+  @override
+  String get deviceType => 'タイプ';
+
+  @override
+  String get deviceTags => 'タグ';
+
+  @override
+  String get memoryAndStorage => 'メモリとストレージ';
+
+  @override
+  String get physicalRam => '物理RAM';
+
+  @override
+  String get availableRam => '使用可能RAM';
+
+  @override
+  String get isLowRamDevice => '低RAMデバイス';
+
+  @override
+  String get totalDisk => '総ストレージ';
+
+  @override
+  String get freeDisk => '空きストレージ';
+
+  @override
+  String get supportedAbis => '対応ABI';
+
+  @override
+  String get supported32BitAbis => '32ビットABI';
+
+  @override
+  String get supported64BitAbis => '64ビットABI';
+
+  @override
+  String get systemFeatures => 'システム機能';
+
+  @override
+  String get modelName => 'モデル名';
+
+  @override
+  String get localizedModel => 'ローカライズモデル';
+
+  @override
+  String get isiOSAppOnMac => 'Macで実行中';
+
+  @override
+  String get systemName => 'システム名';
+
+  @override
+  String get systemVersion => 'システムバージョン';
+
+  @override
+  String get identifierForVendor => 'ベンダーID';
+
+  @override
+  String get utsnameInfo => 'UTSNAME情報';
+
+  @override
+  String get sysname => 'システム名';
+
+  @override
+  String get nodename => 'ノード名';
+
+  @override
+  String get release => 'リリース';
+
+  @override
+  String get utsnameVersion => 'バージョン';
+
+  @override
+  String get machine => 'マシン';
 }

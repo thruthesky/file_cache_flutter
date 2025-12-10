@@ -2608,6 +2608,324 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Comment added successfully'**
   String get commentCreated;
+
+  /// Shorebird update dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Update Complete'**
+  String get shorebirdUpdateTitle;
+
+  /// Shorebird update dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'PhilGo app has been updated.\nPlease restart the app.'**
+  String get shorebirdUpdateMessage;
+
+  /// Confirm button text
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get confirm;
+
+  /// No description provided for @appInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Info'**
+  String get appInfoTitle;
+
+  /// No description provided for @versionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Version Info'**
+  String get versionTitle;
+
+  /// No description provided for @packageName.
+  ///
+  /// In en, this message translates to:
+  /// **'Package Name'**
+  String get packageName;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @buildNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Build Number'**
+  String get buildNumber;
+
+  /// No description provided for @deviceBasicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Info'**
+  String get deviceBasicInfo;
+
+  /// No description provided for @deviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Name'**
+  String get deviceName;
+
+  /// No description provided for @deviceModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Model'**
+  String get deviceModel;
+
+  /// No description provided for @deviceBrand.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand'**
+  String get deviceBrand;
+
+  /// No description provided for @deviceManufacturer.
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer'**
+  String get deviceManufacturer;
+
+  /// No description provided for @deviceProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get deviceProduct;
+
+  /// No description provided for @deviceDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get deviceDevice;
+
+  /// No description provided for @deviceHardware.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware'**
+  String get deviceHardware;
+
+  /// No description provided for @deviceBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board'**
+  String get deviceBoard;
+
+  /// No description provided for @isPhysicalDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Device'**
+  String get isPhysicalDevice;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @systemInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'System Info'**
+  String get systemInfo;
+
+  /// No description provided for @androidVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Version'**
+  String get androidVersion;
+
+  /// No description provided for @sdkInt.
+  ///
+  /// In en, this message translates to:
+  /// **'SDK Version'**
+  String get sdkInt;
+
+  /// No description provided for @securityPatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Patch'**
+  String get securityPatch;
+
+  /// No description provided for @deviceDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Display'**
+  String get deviceDisplay;
+
+  /// No description provided for @deviceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID'**
+  String get deviceId;
+
+  /// No description provided for @deviceFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get deviceFingerprint;
+
+  /// No description provided for @deviceHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Host'**
+  String get deviceHost;
+
+  /// No description provided for @deviceBootloader.
+  ///
+  /// In en, this message translates to:
+  /// **'Bootloader'**
+  String get deviceBootloader;
+
+  /// No description provided for @deviceType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get deviceType;
+
+  /// No description provided for @deviceTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get deviceTags;
+
+  /// No description provided for @memoryAndStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory & Storage'**
+  String get memoryAndStorage;
+
+  /// No description provided for @physicalRam.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical RAM'**
+  String get physicalRam;
+
+  /// No description provided for @availableRam.
+  ///
+  /// In en, this message translates to:
+  /// **'Available RAM'**
+  String get availableRam;
+
+  /// No description provided for @isLowRamDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Low RAM Device'**
+  String get isLowRamDevice;
+
+  /// No description provided for @totalDisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Storage'**
+  String get totalDisk;
+
+  /// No description provided for @freeDisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Storage'**
+  String get freeDisk;
+
+  /// No description provided for @supportedAbis.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported ABIs'**
+  String get supportedAbis;
+
+  /// No description provided for @supported32BitAbis.
+  ///
+  /// In en, this message translates to:
+  /// **'32-bit ABIs'**
+  String get supported32BitAbis;
+
+  /// No description provided for @supported64BitAbis.
+  ///
+  /// In en, this message translates to:
+  /// **'64-bit ABIs'**
+  String get supported64BitAbis;
+
+  /// No description provided for @systemFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'System Features'**
+  String get systemFeatures;
+
+  /// No description provided for @modelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Model Name'**
+  String get modelName;
+
+  /// No description provided for @localizedModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Localized Model'**
+  String get localizedModel;
+
+  /// No description provided for @isiOSAppOnMac.
+  ///
+  /// In en, this message translates to:
+  /// **'Running on Mac'**
+  String get isiOSAppOnMac;
+
+  /// No description provided for @systemName.
+  ///
+  /// In en, this message translates to:
+  /// **'System Name'**
+  String get systemName;
+
+  /// No description provided for @systemVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'System Version'**
+  String get systemVersion;
+
+  /// No description provided for @identifierForVendor.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor ID'**
+  String get identifierForVendor;
+
+  /// No description provided for @utsnameInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'UTSNAME Info'**
+  String get utsnameInfo;
+
+  /// No description provided for @sysname.
+  ///
+  /// In en, this message translates to:
+  /// **'Sysname'**
+  String get sysname;
+
+  /// No description provided for @nodename.
+  ///
+  /// In en, this message translates to:
+  /// **'Nodename'**
+  String get nodename;
+
+  /// No description provided for @release.
+  ///
+  /// In en, this message translates to:
+  /// **'Release'**
+  String get release;
+
+  /// No description provided for @utsnameVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get utsnameVersion;
+
+  /// No description provided for @machine.
+  ///
+  /// In en, this message translates to:
+  /// **'Machine'**
+  String get machine;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

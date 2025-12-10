@@ -1326,4 +1326,164 @@ class LoEn extends Lo {
 
   @override
   String get commentCreated => 'Comment added successfully';
+
+  @override
+  String get shorebirdUpdateTitle => 'Update Complete';
+
+  @override
+  String get shorebirdUpdateMessage =>
+      'PhilGo app has been updated.\nPlease restart the app.';
+
+  @override
+  String get confirm => 'OK';
+
+  @override
+  String get appInfoTitle => 'App Info';
+
+  @override
+  String get versionTitle => 'Version Info';
+
+  @override
+  String get packageName => 'Package Name';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get buildNumber => 'Build Number';
+
+  @override
+  String get deviceBasicInfo => 'Basic Info';
+
+  @override
+  String get deviceName => 'Device Name';
+
+  @override
+  String get deviceModel => 'Model';
+
+  @override
+  String get deviceBrand => 'Brand';
+
+  @override
+  String get deviceManufacturer => 'Manufacturer';
+
+  @override
+  String get deviceProduct => 'Product';
+
+  @override
+  String get deviceDevice => 'Device';
+
+  @override
+  String get deviceHardware => 'Hardware';
+
+  @override
+  String get deviceBoard => 'Board';
+
+  @override
+  String get isPhysicalDevice => 'Physical Device';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get systemInfo => 'System Info';
+
+  @override
+  String get androidVersion => 'Android Version';
+
+  @override
+  String get sdkInt => 'SDK Version';
+
+  @override
+  String get securityPatch => 'Security Patch';
+
+  @override
+  String get deviceDisplay => 'Display';
+
+  @override
+  String get deviceId => 'Device ID';
+
+  @override
+  String get deviceFingerprint => 'Fingerprint';
+
+  @override
+  String get deviceHost => 'Host';
+
+  @override
+  String get deviceBootloader => 'Bootloader';
+
+  @override
+  String get deviceType => 'Type';
+
+  @override
+  String get deviceTags => 'Tags';
+
+  @override
+  String get memoryAndStorage => 'Memory & Storage';
+
+  @override
+  String get physicalRam => 'Physical RAM';
+
+  @override
+  String get availableRam => 'Available RAM';
+
+  @override
+  String get isLowRamDevice => 'Low RAM Device';
+
+  @override
+  String get totalDisk => 'Total Storage';
+
+  @override
+  String get freeDisk => 'Free Storage';
+
+  @override
+  String get supportedAbis => 'Supported ABIs';
+
+  @override
+  String get supported32BitAbis => '32-bit ABIs';
+
+  @override
+  String get supported64BitAbis => '64-bit ABIs';
+
+  @override
+  String get systemFeatures => 'System Features';
+
+  @override
+  String get modelName => 'Model Name';
+
+  @override
+  String get localizedModel => 'Localized Model';
+
+  @override
+  String get isiOSAppOnMac => 'Running on Mac';
+
+  @override
+  String get systemName => 'System Name';
+
+  @override
+  String get systemVersion => 'System Version';
+
+  @override
+  String get identifierForVendor => 'Vendor ID';
+
+  @override
+  String get utsnameInfo => 'UTSNAME Info';
+
+  @override
+  String get sysname => 'Sysname';
+
+  @override
+  String get nodename => 'Nodename';
+
+  @override
+  String get release => 'Release';
+
+  @override
+  String get utsnameVersion => 'Version';
+
+  @override
+  String get machine => 'Machine';
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
@@ -187,11 +188,14 @@ Timer? _shorebirdTimer;
 /// Shorebird 코드 푸시 초기화 및 주기적 업데이트 확인
 /// Initialize Shorebird Code Push and check for updates periodically
 ///
-/// Timer를 사용하여 180초(3분)마다 업데이트를 확인합니다.
-/// Uses Timer to check for updates every 180 seconds (3 minutes).
+/// ## 업데이트 확인 타이밍 (Update Check Timing)
+/// - 최초 실행: 30초 후 1회 확인
+/// - 이후: 180초(3분)마다 주기적 확인
 ///
-/// 업데이트가 있으면 자동으로 다운로드하고 다이얼로그를 표시합니다.
-/// If an update is available, it automatically downloads and shows a dialog.
+/// ## 동작 흐름 (Flow)
+/// 1. 앱 시작 → 30초 후 첫 번째 업데이트 확인
+/// 2. 업데이트 있음 → 다운로드 → 다이얼로그 표시 → 타이머 종료
+/// 3. 업데이트 없음 → 180초 주기 타이머 시작
 ///
 /// 중요: kReleaseMode에서만 동작합니다 (디버그 모드에서는 에러 발생)
 /// Important: Only works in kReleaseMode (errors occur in debug mode)
@@ -208,108 +212,74 @@ void initShorebirdCodePush() async {
     /// Create ShorebirdUpdater instance (Recommended API)
     final updater = ShorebirdUpdater();
 
-    /// 180초(3분)마다 업데이트 확인
-    /// Check for updates every 180 seconds (3 minutes)
-    _shorebirdTimer = Timer.periodic(
-      const Duration(seconds: 180),
-      (_) async {
-        try {
-          /// 새 패치 버전이 다운로드 가능한지 확인
-          /// Check if a new patch version is available for download
-          final status = await updater.checkForUpdate();
+    debugPrint('[Shorebird] 코드 푸시 초기화 완료 (30초 후 첫 확인, 이후 180초 주기)');
 
-          debugPrint('[Shorebird] 업데이트 상태: $status');
+    /// [1단계] 최초 30초 후 첫 번째 업데이트 확인
+    /// [Step 1] First update check after 30 seconds
+    _shorebirdTimer = Timer(const Duration(seconds: 30), () async {
+      final hasUpdate = await _checkAndDownloadUpdate(updater);
 
-          if (status == UpdateStatus.outdated) {
-            /// 타이머 중지 (중복 다운로드 방지)
-            /// Stop timer (prevent duplicate downloads)
-            _shorebirdTimer?.cancel();
-
-            debugPrint('[Shorebird] 업데이트 다운로드 시작...');
-
-            /// 업데이트 다운로드
-            /// Download update
-            await updater.update();
-
-            debugPrint('[Shorebird] 업데이트 다운로드 완료');
-
-            /// 다이얼로그 표시 (globalContext가 유효한 경우)
-            /// Show dialog (if globalContext is valid)
-            if (globalContext.mounted) {
-              _showShorebirdUpdateDialog();
-            }
-          }
-        } catch (e) {
-          debugPrint('[Shorebird] 업데이트 확인 오류: $e');
-        }
-      },
-    );
-
-    debugPrint('[Shorebird] 코드 푸시 초기화 완료 (180초 주기 업데이트 확인)');
+      /// [2단계] 업데이트가 없으면 180초 주기 타이머 시작
+      /// [Step 2] If no update, start periodic timer (180 seconds)
+      if (!hasUpdate) {
+        _startPeriodicUpdateCheck(updater);
+      }
+    });
   } catch (e) {
     debugPrint('[Shorebird] 초기화 오류: $e');
   }
 }
 
-/// Shorebird 업데이트 완료 다이얼로그 표시
-/// Show Shorebird update complete dialog
+/// 180초 주기 업데이트 확인 타이머 시작
+/// Start periodic update check timer (180 seconds)
+void _startPeriodicUpdateCheck(ShorebirdUpdater updater) {
+  debugPrint('[Shorebird] 180초 주기 업데이트 확인 시작');
+
+  _shorebirdTimer = Timer.periodic(const Duration(seconds: 180), (_) async {
+    final hasUpdate = await _checkAndDownloadUpdate(updater);
+
+    /// 업데이트 다운로드 완료 시 타이머 중지
+    /// Stop timer when update download is complete
+    if (hasUpdate) {
+      _shorebirdTimer?.cancel();
+    }
+  });
+}
+
+/// 업데이트 확인 및 다운로드 실행
+/// Check for update and download if available
 ///
-/// 업데이트 다운로드 완료 후 사용자에게 앱 재시작을 안내하는 다이얼로그를 표시합니다.
-/// Shows a dialog to inform the user to restart the app after update download is complete.
-void _showShorebirdUpdateDialog() {
-  final theme = Theme.of(globalContext);
-  final scheme = theme.colorScheme;
+/// 반환값: 업데이트가 있어서 다운로드했으면 true, 없으면 false
+/// Returns: true if update was downloaded, false otherwise
+Future<bool> _checkAndDownloadUpdate(ShorebirdUpdater updater) async {
+  try {
+    /// 새 패치 버전이 다운로드 가능한지 확인
+    /// Check if a new patch version is available for download
+    final status = await updater.checkForUpdate();
 
-  showDialog(
-    context: globalContext,
+    debugPrint('[Shorebird] 업데이트 상태: $status');
 
-    /// 다이얼로그 외부 클릭으로 닫기 비활성화 (중요한 알림)
-    /// Disable closing by tapping outside (important notification)
-    barrierDismissible: false,
-    builder: (context) {
-      return AlertDialog(
-        /// Comic 스타일: elevation 0
-        /// Comic style: elevation 0
-        elevation: 0,
+    if (status == UpdateStatus.outdated) {
+      debugPrint('[Shorebird] 업데이트 다운로드 시작...');
 
-        /// Comic 스타일: 테두리 적용
-        /// Comic style: apply border
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: scheme.outline, width: 2.0),
-        ),
+      /// 업데이트 다운로드
+      /// Download update
+      await updater.update();
 
-        /// 다이얼로그 제목
-        /// Dialog title
-        title: Text(
-          '업데이트 완료',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      debugPrint('[Shorebird] 업데이트 다운로드 완료');
 
-        /// 다이얼로그 내용
-        /// Dialog content
-        content: Text(
-          '필고 앱이 업데이트 되었습니다.\n종료 후 다시 실행해주세요.',
-          style: theme.textTheme.bodyMedium,
-        ),
+      /// 다이얼로그 표시 (globalContext가 유효한 경우)
+      /// Show dialog (if globalContext is valid)
+      if (globalContext.mounted) {
+        showShorebirdUpdateDialog();
+      }
 
-        /// 확인 버튼
-        /// Confirm button
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              '확인',
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: scheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    debugPrint('[Shorebird] 업데이트 확인 오류: $e');
+    return false;
+  }
 }

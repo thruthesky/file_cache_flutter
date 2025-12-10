@@ -11,6 +11,7 @@ import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/settings/language.screen.dart';
+import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
@@ -314,6 +315,11 @@ final router = GoRouter(
       path: LanguageScreen.routeName,
       name: LanguageScreen.routeName,
       builder: (context, state) => const LanguageScreen(),
+    ),
+    GoRoute(
+      path: VersionScreen.routeName,
+      name: VersionScreen.routeName,
+      builder: (context, state) => const VersionScreen(),
     ),
   ],
 );

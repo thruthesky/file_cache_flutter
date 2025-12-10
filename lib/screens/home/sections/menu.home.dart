@@ -9,6 +9,7 @@ import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/settings/language.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
+import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
@@ -177,6 +178,20 @@ class _MenuHomeState extends State<MenuHome> {
                       icon: FontAwesomeIcons.shieldHalved,
                       title: Lo.of(context)!.privacyPolicyTitle,
                       onTap: () => showPrivacyPolicy(context),
+                    ),
+                  ],
+                ),
+
+                /// [앱 정보 섹션] - App Information Section
+                /// 앱 버전 및 디바이스 정보를 확인할 수 있는 메뉴
+                /// Menu for checking app version and device information
+                MenuSection(
+                  title: Lo.of(context)!.appInfoTitle,
+                  children: [
+                    MenuItem(
+                      icon: FontAwesomeIcons.circleInfo,
+                      title: Lo.of(context)!.versionTitle,
+                      onTap: () => VersionScreen.push(context),
                     ),
                   ],
                 ),
