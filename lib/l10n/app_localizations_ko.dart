@@ -1296,4 +1296,163 @@ class LoKo extends Lo {
 
   @override
   String get commentCreated => '댓글이 추가되었습니다';
+
+  @override
+  String get shorebirdUpdateTitle => '업데이트 완료';
+
+  @override
+  String get shorebirdUpdateMessage => '필고 앱이 업데이트 되었습니다.\n종료 후 다시 실행해주세요.';
+
+  @override
+  String get confirm => '확인';
+
+  @override
+  String get appInfoTitle => '앱 정보';
+
+  @override
+  String get versionTitle => '버전 정보';
+
+  @override
+  String get packageName => '패키지 이름';
+
+  @override
+  String get version => '버전';
+
+  @override
+  String get buildNumber => '빌드 번호';
+
+  @override
+  String get deviceBasicInfo => '기본 정보';
+
+  @override
+  String get deviceName => '디바이스 이름';
+
+  @override
+  String get deviceModel => '모델';
+
+  @override
+  String get deviceBrand => '브랜드';
+
+  @override
+  String get deviceManufacturer => '제조사';
+
+  @override
+  String get deviceProduct => '제품명';
+
+  @override
+  String get deviceDevice => '디바이스';
+
+  @override
+  String get deviceHardware => '하드웨어';
+
+  @override
+  String get deviceBoard => '보드';
+
+  @override
+  String get isPhysicalDevice => '실제 기기';
+
+  @override
+  String get yes => '예';
+
+  @override
+  String get no => '아니오';
+
+  @override
+  String get systemInfo => '시스템 정보';
+
+  @override
+  String get androidVersion => 'Android 버전';
+
+  @override
+  String get sdkInt => 'SDK 버전';
+
+  @override
+  String get securityPatch => '보안 패치';
+
+  @override
+  String get deviceDisplay => '디스플레이';
+
+  @override
+  String get deviceId => '디바이스 ID';
+
+  @override
+  String get deviceFingerprint => '핑거프린트';
+
+  @override
+  String get deviceHost => '호스트';
+
+  @override
+  String get deviceBootloader => '부트로더';
+
+  @override
+  String get deviceType => '타입';
+
+  @override
+  String get deviceTags => '태그';
+
+  @override
+  String get memoryAndStorage => '메모리 및 저장소';
+
+  @override
+  String get physicalRam => '물리 RAM';
+
+  @override
+  String get availableRam => '사용 가능 RAM';
+
+  @override
+  String get isLowRamDevice => '저사양 기기';
+
+  @override
+  String get totalDisk => '전체 저장소';
+
+  @override
+  String get freeDisk => '사용 가능 저장소';
+
+  @override
+  String get supportedAbis => '지원 ABI';
+
+  @override
+  String get supported32BitAbis => '32비트 ABI';
+
+  @override
+  String get supported64BitAbis => '64비트 ABI';
+
+  @override
+  String get systemFeatures => '시스템 기능';
+
+  @override
+  String get modelName => '모델명';
+
+  @override
+  String get localizedModel => '현지화 모델';
+
+  @override
+  String get isiOSAppOnMac => 'Mac에서 실행';
+
+  @override
+  String get systemName => '시스템 이름';
+
+  @override
+  String get systemVersion => '시스템 버전';
+
+  @override
+  String get identifierForVendor => '벤더 식별자';
+
+  @override
+  String get utsnameInfo => 'UTSNAME 정보';
+
+  @override
+  String get sysname => '시스템명';
+
+  @override
+  String get nodename => '노드명';
+
+  @override
+  String get release => '릴리즈';
+
+  @override
+  String get utsnameVersion => '버전';
+
+  @override
+  String get machine => '머신';
 }

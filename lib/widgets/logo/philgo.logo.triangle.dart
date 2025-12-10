@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 /// PhilGo 로고 위젯
 /// 단일 둥근 삼각형(물방울 형태) 로고
+/// 삼각형이 한개 !! 만 표시된다.
 class PhilGoLogoTriangle extends StatelessWidget {
   final double size;
   final bool animated;
@@ -25,11 +26,7 @@ class PhilGoLogoTriangle extends StatelessWidget {
     Widget triangle = SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: PhilGoLogoTrianglePainter(
-          color: color,
-        ),
-      ),
+      child: CustomPaint(painter: PhilGoLogoTrianglePainter(color: color)),
     );
 
     // 애니메이션이 비활성화되면 그대로 반환
@@ -49,9 +46,7 @@ class PhilGoLogoTriangle extends StatelessWidget {
     // 회전 애니메이션 (옵션)
     if (rotating) {
       triangle = triangle
-          .animate(
-            onPlay: (controller) => controller.repeat(),
-          )
+          .animate(onPlay: (controller) => controller.repeat())
           .rotate(
             begin: 0,
             end: 1, // 360도
@@ -63,9 +58,7 @@ class PhilGoLogoTriangle extends StatelessWidget {
     // 펄스 애니메이션 추가 (선택적)
     if (animated && !rotating) {
       triangle = triangle
-          .animate(
-            onPlay: (controller) => controller.repeat(reverse: true),
-          )
+          .animate(onPlay: (controller) => controller.repeat(reverse: true))
           .scale(
             begin: const Offset(1.0, 1.0),
             end: const Offset(1.05, 1.05),
@@ -83,9 +76,7 @@ class PhilGoLogoTriangle extends StatelessWidget {
 class PhilGoLogoTrianglePainter extends CustomPainter {
   final Color color;
 
-  PhilGoLogoTrianglePainter({
-    required this.color,
-  });
+  PhilGoLogoTrianglePainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {

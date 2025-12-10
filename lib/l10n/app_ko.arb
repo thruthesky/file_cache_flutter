@@ -586,6 +586,18 @@
   "commentReplied": "답글이 추가되었습니다",
   "commentUpdated": "댓글이 수정되었습니다",
   "commentCreated": "댓글이 추가되었습니다",
+  "shorebirdUpdateTitle": "업데이트 완료",
+  "@shorebirdUpdateTitle": {
+    "description": "Shorebird update dialog title"
+  },
+  "shorebirdUpdateMessage": "필고 앱이 업데이트 되었습니다.\n종료 후 다시 실행해주세요.",
+  "@shorebirdUpdateMessage": {
+    "description": "Shorebird update dialog message"
+  },
+  "confirm": "확인",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
   "@login": {
     "description": "The conventional newborn programmer greeting"
   },
@@ -1718,5 +1730,205 @@
   },
   "@commentCreated": {
     "description": "Success message when comment is created"
+  },
+  "appInfoTitle": "앱 정보",
+  "@appInfoTitle": {
+    "description": "App information section title in menu"
+  },
+  "versionTitle": "버전 정보",
+  "@versionTitle": {
+    "description": "Version information menu item title"
+  },
+  "packageName": "패키지 이름",
+  "@packageName": {
+    "description": "Package name label"
+  },
+  "version": "버전",
+  "@version": {
+    "description": "Version label"
+  },
+  "buildNumber": "빌드 번호",
+  "@buildNumber": {
+    "description": "Build number label"
+  },
+  "deviceBasicInfo": "기본 정보",
+  "@deviceBasicInfo": {
+    "description": "Device basic information section title"
+  },
+  "deviceName": "디바이스 이름",
+  "@deviceName": {
+    "description": "Device name label"
+  },
+  "deviceModel": "모델",
+  "@deviceModel": {
+    "description": "Device model label"
+  },
+  "deviceBrand": "브랜드",
+  "@deviceBrand": {
+    "description": "Device brand label"
+  },
+  "deviceManufacturer": "제조사",
+  "@deviceManufacturer": {
+    "description": "Device manufacturer label"
+  },
+  "deviceProduct": "제품명",
+  "@deviceProduct": {
+    "description": "Device product label"
+  },
+  "deviceDevice": "디바이스",
+  "@deviceDevice": {
+    "description": "Device device label"
+  },
+  "deviceHardware": "하드웨어",
+  "@deviceHardware": {
+    "description": "Device hardware label"
+  },
+  "deviceBoard": "보드",
+  "@deviceBoard": {
+    "description": "Device board label"
+  },
+  "isPhysicalDevice": "실제 기기",
+  "@isPhysicalDevice": {
+    "description": "Is physical device label"
+  },
+  "yes": "예",
+  "@yes": {
+    "description": "Yes label"
+  },
+  "no": "아니오",
+  "@no": {
+    "description": "No label"
+  },
+  "systemInfo": "시스템 정보",
+  "@systemInfo": {
+    "description": "System information section title"
+  },
+  "androidVersion": "Android 버전",
+  "@androidVersion": {
+    "description": "Android version label"
+  },
+  "sdkInt": "SDK 버전",
+  "@sdkInt": {
+    "description": "SDK version label"
+  },
+  "securityPatch": "보안 패치",
+  "@securityPatch": {
+    "description": "Security patch label"
+  },
+  "deviceDisplay": "디스플레이",
+  "@deviceDisplay": {
+    "description": "Device display label"
+  },
+  "deviceId": "디바이스 ID",
+  "@deviceId": {
+    "description": "Device ID label"
+  },
+  "deviceFingerprint": "핑거프린트",
+  "@deviceFingerprint": {
+    "description": "Device fingerprint label"
+  },
+  "deviceHost": "호스트",
+  "@deviceHost": {
+    "description": "Device host label"
+  },
+  "deviceBootloader": "부트로더",
+  "@deviceBootloader": {
+    "description": "Device bootloader label"
+  },
+  "deviceType": "타입",
+  "@deviceType": {
+    "description": "Device type label"
+  },
+  "deviceTags": "태그",
+  "@deviceTags": {
+    "description": "Device tags label"
+  },
+  "memoryAndStorage": "메모리 및 저장소",
+  "@memoryAndStorage": {
+    "description": "Memory and storage section title"
+  },
+  "physicalRam": "물리 RAM",
+  "@physicalRam": {
+    "description": "Physical RAM label"
+  },
+  "availableRam": "사용 가능 RAM",
+  "@availableRam": {
+    "description": "Available RAM label"
+  },
+  "isLowRamDevice": "저사양 기기",
+  "@isLowRamDevice": {
+    "description": "Is low RAM device label"
+  },
+  "totalDisk": "전체 저장소",
+  "@totalDisk": {
+    "description": "Total disk label"
+  },
+  "freeDisk": "사용 가능 저장소",
+  "@freeDisk": {
+    "description": "Free disk label"
+  },
+  "supportedAbis": "지원 ABI",
+  "@supportedAbis": {
+    "description": "Supported ABIs label"
+  },
+  "supported32BitAbis": "32비트 ABI",
+  "@supported32BitAbis": {
+    "description": "Supported 32-bit ABIs label"
+  },
+  "supported64BitAbis": "64비트 ABI",
+  "@supported64BitAbis": {
+    "description": "Supported 64-bit ABIs label"
+  },
+  "systemFeatures": "시스템 기능",
+  "@systemFeatures": {
+    "description": "System features label"
+  },
+  "modelName": "모델명",
+  "@modelName": {
+    "description": "Model name label for iOS"
+  },
+  "localizedModel": "현지화 모델",
+  "@localizedModel": {
+    "description": "Localized model label for iOS"
+  },
+  "isiOSAppOnMac": "Mac에서 실행",
+  "@isiOSAppOnMac": {
+    "description": "Is iOS app on Mac label"
+  },
+  "systemName": "시스템 이름",
+  "@systemName": {
+    "description": "System name label for iOS"
+  },
+  "systemVersion": "시스템 버전",
+  "@systemVersion": {
+    "description": "System version label for iOS"
+  },
+  "identifierForVendor": "벤더 식별자",
+  "@identifierForVendor": {
+    "description": "Identifier for vendor label for iOS"
+  },
+  "utsnameInfo": "UTSNAME 정보",
+  "@utsnameInfo": {
+    "description": "UTSNAME information section title for iOS"
+  },
+  "sysname": "시스템명",
+  "@sysname": {
+    "description": "Sysname label"
+  },
+  "nodename": "노드명",
+  "@nodename": {
+    "description": "Nodename label"
+  },
+  "release": "릴리즈",
+  "@release": {
+    "description": "Release label"
+  },
+  "utsnameVersion": "버전",
+  "@utsnameVersion": {
+    "description": "UTSNAME version label"
+  },
+  "machine": "머신",
+  "@machine": {
+    "description": "Machine label"
   }
 }
