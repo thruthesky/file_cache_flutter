@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/company/form-sections/form_field_label.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/theme/comic_text_form_field.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -29,29 +30,16 @@ class FormDetailedInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
-    final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// Comic Design: Company Title Field
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${T.companyTitle} *',
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: titleController,
-              hintText: T.enterCompanyTitle,
-            ),
-          ],
+        FormFieldLabel(label: T.companyTitle, isRequired: true),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: titleController,
+          hintText: T.enterCompanyTitle,
         ),
 
         SizedBox(height: sp.s16),
@@ -75,45 +63,23 @@ class FormDetailedInfo extends StatelessWidget {
         SizedBox(height: sp.s16),
 
         /// Comic Design: Address Field
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${T.address} *',
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: addressController,
-              hintText: T.enterAddress,
-            ),
-          ],
+        FormFieldLabel(label: T.address, isRequired: true),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: addressController,
+          hintText: T.enterAddress,
         ),
 
         SizedBox(height: sp.s16),
 
         /// Comic Design: Description Field (multi-line)
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${T.description} *',
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: descriptionController,
-              hintText: T.enterDescription,
-              maxLines: 8,
-              minLines: 5,
-            ),
-          ],
+        FormFieldLabel(label: T.description, isRequired: true),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: descriptionController,
+          hintText: T.enterDescription,
+          maxLines: 8,
+          minLines: 5,
         ),
       ],
     );

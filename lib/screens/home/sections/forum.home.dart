@@ -129,7 +129,8 @@ class _ForumHomeState extends State<ForumHome> {
     /// (initialPostId, initialCategory) 튜플을 감시하여
     /// 둘 중 하나라도 변경되면 리빌드됩니다.
     return Selector<NavigationState, (String?, String?)>(
-      selector: (context, state) => (state.initialPostId, state.initialCategory),
+      selector: (context, state) =>
+          (state.initialPostId, state.initialCategory),
       builder: (context, deepLinkData, child) {
         /// 딥링크 처리: NavigationState에서 카테고리 데이터가 있으면 적용
         /// Process deep link: apply category data from NavigationState if present
@@ -246,7 +247,6 @@ class _ForumHomeState extends State<ForumHome> {
           setState(() => _showHeader = false);
         }
       }
-
       /// 스크롤 다운 (아래로 스와이프) - 헤더 표시
       /// Scroll down (swipe down) - show header
       else if (delta < 0) {

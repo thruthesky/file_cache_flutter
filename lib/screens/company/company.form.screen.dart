@@ -677,12 +677,15 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   }
 
   Widget _buildStepContent(Widget content) {
-    return SingleChildScrollView(
+    return ListView(
       padding: const EdgeInsets.all(16),
-      child: content
-          .animate()
-          .fadeIn(duration: 400.ms, delay: 100.ms)
-          .slideX(begin: 0.1, end: 0),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      children: [
+        content
+            .animate()
+            .fadeIn(duration: 400.ms, delay: 100.ms)
+            .slideX(begin: 0.1, end: 0),
+      ],
     );
   }
 }
