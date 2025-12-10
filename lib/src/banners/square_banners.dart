@@ -66,6 +66,8 @@ class _SquareBannersState extends State<SquareBanners> {
     /// 4열 그리드로 배너 표시 (1줄에 4개씩)
     /// Display banners in 4-column grid (4 per row)
     return GridView.builder(
+      padding: EdgeInsets.zero,
+
       /// 스크롤 비활성화 (부모 스크롤뷰 사용)
       /// Disable scroll (uses parent scroll view)
       shrinkWrap: true,
@@ -75,8 +77,8 @@ class _SquareBannersState extends State<SquareBanners> {
       /// Grid layout configuration
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
+        // crossAxisSpacing: 8.0,
+        // mainAxisSpacing: 8.0,
 
         /// 사각 배너 비율: 1:1
         /// Square banner aspect ratio: 1:1
@@ -104,7 +106,7 @@ class _SquareBannersState extends State<SquareBanners> {
       child: ClipRRect(
         /// 모서리 둥글게 (flat design)
         /// Rounded corners (flat design)
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(0),
         child: AspectRatio(
           /// 사각 배너는 1:1 비율 권장
           /// Square banners use 1:1 aspect ratio
