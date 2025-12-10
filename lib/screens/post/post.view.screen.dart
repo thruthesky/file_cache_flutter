@@ -708,17 +708,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 2),
-                              child: Icon(
-                                editingComment != null
-                                    ? Icons.edit
-                                    : Icons.reply,
-                                size: 16,
-                                color: scheme.primary,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -734,7 +723,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  // Comment content preview
+                                  /// Comment content preview
+                                  /// 댓글 내용 미리보기
                                   Text(
                                     editingComment != null
                                         ? editingComment!.content
