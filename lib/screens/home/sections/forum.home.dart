@@ -37,11 +37,13 @@ class _ForumHomeState extends State<ForumHome> {
   /// Track last processed initialPostId to avoid duplicate processing
   String? _lastProcessedInitialPostId;
 
-  /// TODO: Very bad. Use controller pattern instead of global keys.
-  final GlobalKey<PostSimpleListViewState> listViewKey = GlobalKey();
+  /// Controller for list view (used for non-grid layouts)
+  /// 리스트 뷰용 컨트롤러 (비그리드 레이아웃에 사용)
+  final PostListController _listViewController = PostListController();
 
-  /// TODO: Very bad. Use controller pattern instead of global keys.
-  final GlobalKey<PostMasonryViewState> gridViewKey = GlobalKey();
+  /// Controller for grid view (used for grid layouts like buyandsell)
+  /// 그리드 뷰용 컨트롤러 (buyandsell 같은 그리드 레이아웃에 사용)
+  final PostListController _gridViewController = PostListController();
 
   /// 헤더 표시 여부 (스크롤에 따라 변경)
   /// Whether to show header (changes based on scroll)
@@ -228,8 +230,8 @@ class _ForumHomeState extends State<ForumHome> {
                       onSubmitted: (post) {
                         /// 글 생성 후 목록 새로고침
                         /// Refresh list after post creation
-                        listViewKey.currentState?.pagingController.refresh();
-                        gridViewKey.currentState?.pagingController.refresh();
+                        _listViewController.refresh();
+                        _gridViewController.refresh();
                       },
                     );
                   },
@@ -244,8 +246,10 @@ class _ForumHomeState extends State<ForumHome> {
             child: PostListView(
               /// buyandsell 카테고리는 그리드 레이아웃 사용
               /// Use grid layout for buyandsell category
-              listViewKey: _selectedPostId != 'buyandsell' ? listViewKey : null,
-              gridViewKey: _selectedPostId == 'buyandsell' ? gridViewKey : null,
+              listViewController:
+                  _selectedPostId != 'buyandsell' ? _listViewController : null,
+              gridViewController:
+                  _selectedPostId == 'buyandsell' ? _gridViewController : null,
               postId: _selectedPostId,
               category: _selectedCategory,
 
@@ -286,8 +290,9 @@ class _ForumHomeState extends State<ForumHome> {
   }
 
   void onNewPostCreated(Post newPost) {
-    // Refresh the appropriate view (list or grid) based on which one is currently active
-    listViewKey.currentState?.pagingController.refresh();
-    gridViewKey.currentState?.pagingController.refresh();
+    /// Refresh the appropriate view (list or grid) based on which one is currently active
+    /// 현재 활성화된 뷰(리스트 또는 그리드)에 따라 적절한 뷰를 새로고침
+    _listViewController.refresh();
+    _gridViewController.refresh();
   }
 }

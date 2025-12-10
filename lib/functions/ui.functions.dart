@@ -245,29 +245,6 @@ class _PostCreateScreenState extends State<_PostCreateScreen> {
           icon: FaIcon(FontAwesomeIcons.lightXmark, color: scheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          /// 제출 버튼 - GlobalKey를 통해 폼의 submit() 호출
-          /// Submit button - calls form's submit() via GlobalKey
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: IconButton(
-              constraints: const BoxConstraints(),
-              icon: isLoading
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: scheme.primary,
-                      ),
-                    )
-                  : FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
-              onPressed: isLoading || isUploading
-                  ? null
-                  : () => formKey.currentState?.submit(),
-            ),
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: scheme.outline),
@@ -495,29 +472,6 @@ class _PostUpdateScreenState extends State<_PostUpdateScreen> {
             }
           },
         ),
-        actions: [
-          /// 제출 버튼 - GlobalKey를 통해 폼의 submit() 호출
-          /// Submit button - calls form's submit() via GlobalKey
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: IconButton(
-              constraints: const BoxConstraints(),
-              icon: isLoading
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: scheme.primary,
-                      ),
-                    )
-                  : FaIcon(FontAwesomeIcons.lightCheck, color: scheme.primary),
-              onPressed: isLoading || isUploading
-                  ? null
-                  : () => formKey.currentState?.submit(),
-            ),
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: scheme.outline),
