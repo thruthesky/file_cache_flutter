@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
@@ -22,46 +23,6 @@ class CompanyCategory {
     required this.description,
     required this.icon,
   });
-}
-
-/// Get icon for company category
-/// Returns appropriate FontAwesome icon based on category ID
-IconData _getCategoryIcon(String category) {
-  switch (category) {
-    case 'public-office':
-      return FontAwesomeIcons.lightBuilding;
-    case 'education':
-      return FontAwesomeIcons.lightGraduationCap;
-    case 'food':
-      return FontAwesomeIcons.lightUtensils;
-    case 'transport':
-      return FontAwesomeIcons.lightBus;
-    case 'hospital':
-      return FontAwesomeIcons.lightHospital;
-    case 'mart':
-      return FontAwesomeIcons.lightCartShopping;
-    case 'bank':
-      return FontAwesomeIcons.lightBuildingColumns;
-    case 'gadget':
-      return FontAwesomeIcons.lightMobileScreen;
-    case 'travel-agency':
-      return FontAwesomeIcons.lightPlaneDeparture;
-    case 'hotel':
-      return FontAwesomeIcons.lightHotel;
-    case 'rentcar':
-      return FontAwesomeIcons.lightCar;
-    case 'beauty':
-      return FontAwesomeIcons.lightScissors;
-    case 'real-estate':
-      return FontAwesomeIcons.lightHouseChimney;
-    case 'ktv':
-      return FontAwesomeIcons.lightMicrophone;
-    case 'spa':
-      return FontAwesomeIcons.lightSpa;
-    case 'etc':
-    default:
-      return FontAwesomeIcons.lightEllipsis;
-  }
 }
 
 /// Company List Screen with Category Filters
@@ -89,6 +50,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   /// Currently selected category filter
   /// null means "All" categories
   String? selectedCategoryId;
+  bool _showHeader = true;
 
   /// Get list of all available categories with localized names
   List<CompanyCategory> _getCategories(BuildContext context) {
@@ -281,6 +243,20 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     CompanyViewScreen.push(context, company.idx);
   }
 
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification) {
+      final delta = notification.scrollDelta ?? 0;
+      final currentOffset = notification.metrics.pixels;
+
+      if (delta > 0 && currentOffset > 48) {
+        if (_showHeader) setState(() => _showHeader = false);
+      } else if (delta < 0) {
+        if (!_showHeader) setState(() => _showHeader = true);
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -288,212 +264,212 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     final sp = theme.extension<AppSpacing>()!;
     final categories = _getCategories(context);
 
-    return Column(
-      children: [
-        /// Header with title and action button
-        SafeArea(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              // Comic design: 1.0px border with outlineVariant color (matches bottom nav)
-              border: Border(
-                bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
+    final headerColor = theme.colorScheme.surface;
+
+    return Scaffold(
+      backgroundColor: headerColor,
+      body: SafeArea(
+        child: Container(
+          color: headerColor,
+          child: Column(
+            children: [
+              ClipRect(
+                child: AnimatedAlign(
+                  alignment: Alignment.topCenter,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  heightFactor: _showHeader ? 1.0 : 0.0,
+                  child: _buildHeader(theme, sp, categories),
+                ),
               ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  Lo.of(context)!.companyDirectoryTitle,
-                  style: theme.textTheme.titleLarge,
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: FaIcon(
-                    myCompany != null
-                        ? FontAwesomeIcons.penToSquare
-                        : FontAwesomeIcons.circlePlus,
-                    color: scheme.onPrimaryContainer,
-                    size: 24,
-                  ),
-                  onPressed: _handleCreateOrUpdateButton,
-                  tooltip: myCompany != null
-                      ? Lo.of(context)!.editMyCompany
-                      : Lo.of(context)!.addMyCompany,
-                ),
-              ],
-            ),
+              Expanded(child: _buildBodyContent(theme, scheme, sp, categories)),
+            ],
           ),
         ),
-
-        /// Category filter chips
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s8),
-
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                /// "All" filter chip
-                CompanyCategoryFilterChip(
-                  isSelected: selectedCategoryId == null,
-                  label: Lo.of(context)!.allCategories,
-                  icon: FontAwesomeIcons.lightLayerGroup,
-                  onTap: () => _handleCategoryFilterTap(null),
-                  padding: EdgeInsets.symmetric(horizontal: sp.s4),
-                ),
-
-                /// Category filter chips
-                ...categories.map((category) {
-                  final isSelected = selectedCategoryId == category.id;
-                  return CompanyCategoryFilterChip(
-                    isSelected: isSelected,
-                    label: category.name,
-                    icon: category.icon,
-                    onTap: () => _handleCategoryFilterTap(category.id),
-                    padding: EdgeInsets.symmetric(horizontal: sp.s4),
-                  );
-                }),
-              ],
-            ),
-          ),
-        ),
-
-        /// Company list
-        Expanded(child: _buildBody(scheme, theme, sp)),
-      ],
+      ),
     );
   }
 
-  /// Build body content based on loading state
-  Widget _buildBody(ColorScheme scheme, ThemeData theme, AppSpacing sp) {
-    // Loading state
-    if (isLoading) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Center(child: CircularProgressIndicator())],
-      );
-    }
+  Widget _buildHeader(
+    ThemeData theme,
+    AppSpacing sp,
+    List<CompanyCategory> categories,
+  ) {
+    final title = Lo.of(context)!.companyDirectoryTitle;
+    final buttonLabel = myCompany != null
+        ? Lo.of(context)!.editMyCompany
+        : Lo.of(context)!.addMyCompany;
+    final buttonIcon = myCompany != null
+        ? FontAwesomeIcons.penToSquare
+        : FontAwesomeIcons.circlePlus;
 
-    // Error state
-    if (errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(sp.s24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.lightTriangleExclamation,
-                size: 48,
-                color: scheme.error,
-              ),
-              SizedBox(height: sp.s16),
-              Text(
-                errorMessage!,
-                style: theme.textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: sp.s16),
-              FilledButton.icon(
-                onPressed: _loadCompanies,
-                icon: const FaIcon(
-                  FontAwesomeIcons.lightArrowRotateRight,
-                  size: 16,
-                ),
-                label: Text(T.retry),
-              ),
-            ],
-          ),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: 1),
+        ),
+      ),
+      padding: EdgeInsets.fromLTRB(sp.s16, sp.s16, sp.s16, sp.s8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Row(
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   children: [
+          //     Expanded(child: Text(title, style: theme.textTheme.titleLarge)),
+          //     FilledButton.icon(
+          //       onPressed: _handleCreateOrUpdateButton,
+          //       icon: FaIcon(buttonIcon, size: 16),
+          //       label: Text(buttonLabel),
+          //     ),
+          //   ],
+          // ),
+          SizedBox(height: sp.s12),
+          _buildScrollableFilters(categories, sp),
+        ],
+      ),
+    );
+  }
+
+  double _filterGridHeight(AppSpacing sp) => (_filterChipSize * 2) + sp.s8;
+
+  Widget _buildScrollableFilters(
+    List<CompanyCategory> categories,
+    AppSpacing sp,
+  ) {
+    final items = [
+      CompanyCategory(
+        id: 'all',
+        name: Lo.of(context)!.allCategories,
+        description: '',
+        icon: FontAwesomeIcons.lightLayerGroup,
+      ),
+      ...categories,
+    ];
+
+    final totalHeight = _filterGridHeight(sp);
+
+    return SizedBox(
+      height: totalHeight,
+      child: GridView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.only(bottom: sp.s4),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: sp.s8,
+          crossAxisSpacing: sp.s8,
+          childAspectRatio: 1,
+        ),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final category = items[index];
+          final isAll = category.id == 'all';
+          final isSelected = isAll
+              ? selectedCategoryId == null
+              : selectedCategoryId == category.id;
+          return Align(
+            alignment: Alignment.centerLeft,
+            child: CompanyCategoryFilterChip(
+              isSelected: isSelected,
+              label: category.name,
+              icon: category.icon,
+              onTap: () => _handleCategoryFilterTap(isAll ? null : category.id),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBodyContent(
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp,
+    List<CompanyCategory> categories,
+  ) {
+    if (isLoading) {
+      return _wrapScrollable(
+        ListView(
+          physics: const ClampingScrollPhysics(),
+          padding: EdgeInsets.symmetric(vertical: sp.s32),
+          children: [
+            Center(child: CircularProgressIndicator(color: scheme.primary)),
+          ],
         ),
       );
     }
 
-    // Empty state
+    if (errorMessage != null) {
+      return _wrapScrollable(
+        ListView(
+          physics: const ClampingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: sp.s24, vertical: sp.s24),
+          children: [
+            _buildStateMessage(
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+              icon: FontAwesomeIcons.lightTriangleExclamation,
+              iconColor: scheme.error,
+              title: errorMessage!,
+              subtitle: T.failedToLoadCompanies,
+              action: _StateAction(
+                label: T.retry,
+                icon: FontAwesomeIcons.lightArrowRotateRight,
+                onPressed: _loadCompanies,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     if (companyList == null || companyList!.companies.isEmpty) {
       final categoryName = selectedCategoryId == null
           ? Lo.of(context)!.allCategories
-          : _getCategories(
-              context,
-            ).firstWhere((c) => c.id == selectedCategoryId).name;
+          : categories.firstWhere((c) => c.id == selectedCategoryId).name;
 
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(sp.s24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.lightBuildingCircleXmark,
-                size: 48,
-                color: scheme.onSurfaceVariant,
-              ),
-              SizedBox(height: sp.s16),
-              Text(T.noCompaniesFound, style: theme.textTheme.titleMedium),
-              SizedBox(height: sp.s8),
-              Text(
-                selectedCategoryId == null
-                    ? T.noRegisteredCompanies
-                    : T.noCompaniesInCategory(categoryName),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      return _wrapScrollable(
+        ListView(
+          physics: const ClampingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: sp.s24, vertical: sp.s24),
+          children: [
+            _buildStateMessage(
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+              icon: FontAwesomeIcons.lightBuildingCircleXmark,
+              iconColor: scheme.onSurfaceVariant,
+              title: T.noCompaniesFound,
+              subtitle: selectedCategoryId == null
+                  ? T.noRegisteredCompanies
+                  : T.noCompaniesInCategory(categoryName),
+            ),
+          ],
         ),
       );
     }
 
-    // Company grid with responsive aspect ratio
-    // Calculate appropriate aspect ratio based on screen width
-    final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount = 2;
-    final horizontalPadding = sp.s16 * 2; // Left and right padding
-    final crossAxisSpacing = sp.s16;
-
-    // Calculate available width per card
-    final availableWidth = screenWidth - horizontalPadding - crossAxisSpacing;
-    final cardWidth = availableWidth / crossAxisCount;
-
-    // Card height calculation:
-    // - Image with 16:9 aspect ratio: cardWidth * (9/16)
-    // - Text section with padding: 12 (top) + 12 (bottom) + text height (~20)
-    final imageHeight = cardWidth * (9 / 16);
-    final textSectionHeight = 44.0; // 12 + 20 + 12
-    final cardHeight = imageHeight + textSectionHeight;
-
-    // Calculate childAspectRatio: width / height
-    final childAspectRatio = cardWidth / cardHeight;
-
-    return RefreshIndicator(
-      onRefresh: _loadCompanies,
-      child: GridView.builder(
-        padding: EdgeInsets.all(sp.s16),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: sp.s16,
-          mainAxisSpacing: sp.s16,
-          childAspectRatio: childAspectRatio,
-        ),
+    return _wrapScrollable(
+      MasonryGridView.count(
+        padding: EdgeInsets.fromLTRB(sp.s16, sp.s16, sp.s16, sp.s24),
+        physics: const ClampingScrollPhysics(),
+        crossAxisCount: 2,
+        mainAxisSpacing: sp.s12,
+        crossAxisSpacing: sp.s12,
         itemCount: companyList!.companies.length,
         itemBuilder: (context, index) {
           final company = companyList!.companies[index];
-
-          /// Get category name by matching category ID
-          final categoryName = _getCategories(context)
-              .firstWhere(
-                (c) => c.id == company.category,
-                orElse: () => _getCategories(context).last,
-              )
-              .name;
+          final resolvedCategory = _resolveCategory(
+            categories,
+            company.category,
+          );
 
           return CompanyCard(
             name: company.name,
-            categoryName: categoryName,
-            categoryIcon: _getCategoryIcon(company.category),
+            categoryIcon: resolvedCategory.icon,
             imageUrl: company.title_image_url.isNotEmpty
                 ? company.title_image_url
                 : company.logo_url,
@@ -501,6 +477,66 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           );
         },
       ),
+    );
+  }
+
+  CompanyCategory _resolveCategory(
+    List<CompanyCategory> categories,
+    String id,
+  ) {
+    return categories.firstWhere(
+      (c) => c.id == id,
+      orElse: () => categories.last,
+    );
+  }
+
+  Widget _buildStateMessage({
+    required ColorScheme scheme,
+    required ThemeData theme,
+    required AppSpacing sp,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    _StateAction? action,
+  }) {
+    return Padding(
+      padding: EdgeInsets.all(sp.s24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FaIcon(icon, size: 48, color: iconColor),
+          SizedBox(height: sp.s16),
+          Text(
+            title,
+            style: theme.textTheme.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: sp.s8),
+          Text(
+            subtitle,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          if (action != null) ...[
+            SizedBox(height: sp.s16),
+            FilledButton.icon(
+              onPressed: action.onPressed,
+              icon: FaIcon(action.icon, size: 16),
+              label: Text(action.label),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _wrapScrollable(Widget child) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: _handleScrollNotification,
+      child: child,
     );
   }
 }
@@ -528,48 +564,35 @@ class CompanyCategoryFilterChip extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    // Comic design: Define colors based on selection state
-    final backgroundColor = isSelected
-        ? scheme.secondaryContainer
-        : scheme.surface;
-    final iconColor = isSelected
-        ? scheme.onSecondaryContainer
-        : scheme.onSurfaceVariant;
-    final textColor = isSelected
-        ? scheme.onSecondaryContainer
-        : scheme.onSurface;
-    // Comic design: Border color (primary when selected, outline when not)
-    final borderColor = isSelected ? scheme.primary : scheme.outline;
+    final backgroundColor = isSelected ? scheme.primary : scheme.surface;
+    final iconColor = isSelected ? scheme.onPrimary : scheme.onSurfaceVariant;
+    final textColor = isSelected ? scheme.onPrimary : scheme.onSurface;
 
     return Padding(
       padding: padding ?? EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
-        // Comic design: Border radius 8 for small elements
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
             color: backgroundColor,
-            // Comic design: Border radius 8 for small elements
-            borderRadius: BorderRadius.circular(8),
-            // Comic design: 2.0px border
-            border: Border.all(color: borderColor, width: 1.0),
+            borderRadius: BorderRadius.circular(12),
           ),
-          width: 80,
-          height: 80,
+          width: _filterChipSize,
+          height: _filterChipSize,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              FaIcon(icon, size: 20, color: iconColor),
+              FaIcon(icon, size: 18, color: iconColor),
               const SizedBox(height: 4),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Text(
                   label,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: textColor,
-                    fontSize: 10,
+                    fontSize: 11,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
@@ -583,3 +606,17 @@ class CompanyCategoryFilterChip extends StatelessWidget {
     );
   }
 }
+
+class _StateAction {
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _StateAction({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+}
+
+const double _filterChipSize = 68.0;
