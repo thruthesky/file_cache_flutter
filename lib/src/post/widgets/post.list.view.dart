@@ -14,8 +14,8 @@ class PostListView extends StatelessWidget {
     this.enableHeroTransition = false,
     this.tileBuilder,
     this.gridColumns,
-    this.listViewKey,
-    this.gridViewKey,
+    this.listViewController,
+    this.gridViewController,
   });
 
   /// 메인 카테고리 ID (Main category ID)
@@ -38,11 +38,13 @@ class PostListView extends StatelessWidget {
   /// If null or 1, displays as a list. If 2 or more, displays as a grid
   final int? gridColumns;
 
-  /// Optional key for list view (used when gridColumns is null or 1)
-  final GlobalKey<PostSimpleListViewState>? listViewKey;
+  /// Optional controller for list view (used when gridColumns is null or 1)
+  /// 리스트 뷰용 컨트롤러 (gridColumns이 null 또는 1일 때 사용)
+  final PostListController? listViewController;
 
-  /// Optional key for grid view (used when gridColumns is 2 or more)
-  final GlobalKey<PostMasonryViewState>? gridViewKey;
+  /// Optional controller for grid view (used when gridColumns is 2 or more)
+  /// 그리드 뷰용 컨트롤러 (gridColumns이 2 이상일 때 사용)
+  final PostListController? gridViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class PostListView extends StatelessWidget {
     /// Render as Masonry Grid Layout
     if (isGridLayout) {
       return PostMasonryView(
-        key: gridViewKey,
+        controller: gridViewController,
         postId: postId,
         category: category,
         onTap: onTap,
@@ -66,7 +68,7 @@ class PostListView extends StatelessWidget {
     /// 리스트 레이아웃으로 렌더링 (기본값)
     /// Render as List Layout (default)
     return PostSimpleListView(
-      key: listViewKey,
+      controller: listViewController,
       postId: postId,
       category: category,
       onTap: onTap,

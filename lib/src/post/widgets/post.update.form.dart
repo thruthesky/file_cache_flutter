@@ -418,7 +418,7 @@ class PostUpdateFormState extends State<PostUpdateForm> {
           width: 2.0, // Comic Design: 2.0px 테두리
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         children: [
           // 파일 업로드 버튼
@@ -447,12 +447,7 @@ class PostUpdateFormState extends State<PostUpdateForm> {
 
           // 제출 버튼 (showSubmitButton이 true일 때만)
           if (widget.showSubmitButton)
-            TextButton.icon(
-              style: ButtonStyle(
-                padding: WidgetStateProperty.all(
-                  const EdgeInsets.only(left: 0, right: 8, top: 8, bottom: 8),
-                ),
-              ),
+            IconButton(
               onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
               icon: _isLoading
                   ? SizedBox(
@@ -466,18 +461,10 @@ class PostUpdateFormState extends State<PostUpdateForm> {
                   : FaIcon(
                       FontAwesomeIcons.paperPlane,
                       size: 16,
-                      color: (_isLoading || _uploadingCount > 0)
-                          ? colorScheme.outline
-                          : colorScheme.primary,
+                      color: Theme.of(
+                        context,
+                      ).iconTheme.color!.withValues(alpha: 0.35),
                     ),
-              label: Text(
-                '수정',
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: (_isLoading || _uploadingCount > 0)
-                      ? colorScheme.outline
-                      : colorScheme.primary,
-                ),
-              ),
             ),
         ],
       ),
