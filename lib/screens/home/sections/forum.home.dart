@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo/extensions/text_theme.extension.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/models/forum_selection.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
@@ -189,20 +190,23 @@ class _ForumHomeState extends State<ForumHome> {
     final isBuyAndSell = _currentSelection.postId == 'buyandsell';
 
     return Expanded(
-      child: PostListView(
-        listViewController: isBuyAndSell ? null : _listViewController,
-        gridViewController: isBuyAndSell ? _gridViewController : null,
-        postId: _currentSelection.postId,
-        category: _currentSelection.category,
-        enableHeroTransition: true,
-        gridColumns: isBuyAndSell ? 2 : null,
-        tileBuilder: isBuyAndSell
-            ? (post, onTap) => PostCard(post: post, onTap: onTap)
-            : null,
-        onTap: _onPostTapped,
-        noItemsFoundIndicatorBuilder: (context) {
-          return const Center(child: EmptyPostList());
-        },
+      child: Theme(
+        data: context.postTitleTheme,
+        child: PostListView(
+          listViewController: isBuyAndSell ? null : _listViewController,
+          gridViewController: isBuyAndSell ? _gridViewController : null,
+          postId: _currentSelection.postId,
+          category: _currentSelection.category,
+          enableHeroTransition: true,
+          gridColumns: isBuyAndSell ? 2 : null,
+          tileBuilder: isBuyAndSell
+              ? (post, onTap) => PostCard(post: post, onTap: onTap)
+              : null,
+          onTap: _onPostTapped,
+          noItemsFoundIndicatorBuilder: (context) {
+            return const Center(child: EmptyPostList());
+          },
+        ),
       ),
     );
   }
