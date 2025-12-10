@@ -377,6 +377,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           ? const Center(child: CircularProgressIndicator())
           : CustomScrollView(
               controller: _scrollController,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               slivers: [
                 /// Main content
                 SliverPadding(

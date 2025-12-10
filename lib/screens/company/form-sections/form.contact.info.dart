@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/company/form-sections/form_field_label.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/image.upload.field.dart';
 import 'package:philgo/widgets/theme/comic_text_form_field.dart';
@@ -37,110 +38,64 @@ class FormContactInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
-    final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// Comic Design: Phone Number Field
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${T.phoneNumber} *',
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: landlineController,
-              hintText: T.enterPhoneNumber,
-            ),
-          ],
+        FormFieldLabel(label: T.phoneNumber, isRequired: true),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: landlineController,
+          hintText: T.enterPhoneNumber,
         ),
 
         SizedBox(height: sp.s16),
 
         /// Comic Design: Mobile Number Field
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${T.mobileNumber} *',
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: mobileNumberController,
-              hintText: T.enterMobileNumber,
-            ),
-          ],
+        FormFieldLabel(label: T.mobileNumber, isRequired: true),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: mobileNumberController,
+          hintText: T.enterMobileNumber,
         ),
 
         SizedBox(height: sp.s16),
 
         /// Comic Design: Mobile Contact Method Selection
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              T.mobileContactMethod,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
+        FormFieldLabel(label: T.mobileContactMethod),
+        SizedBox(height: sp.s8),
+        RadioGroup<String>(
+          groupValue: mobileContactMethod,
+          onChanged: (value) {
+            onMobileContactMethodChanged(value);
+          },
+          child: Row(
+            children: [
+              Expanded(
+                child: RadioListTile<String>(
+                  title: Text(T.sendText),
+                  value: 'text',
+                ),
               ),
-            ),
-            SizedBox(height: sp.s8),
-            RadioGroup<String>(
-              groupValue: mobileContactMethod,
-              onChanged: (value) {
-                onMobileContactMethodChanged(value);
-              },
-              child: Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: Text(T.sendText),
-                      value: 'text',
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: Text(T.makeCall),
-                      value: 'call',
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: RadioListTile<String>(
+                  title: Text(T.makeCall),
+                  value: 'call',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
 
         SizedBox(height: sp.s16),
 
         /// Comic Design: KakaoTalk ID Field
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              T.kakaoId,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: kakaotalkIdController,
-              hintText: T.enterKakaotalkId,
-            ),
-          ],
+        FormFieldLabel(label: T.kakaoId),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: kakaotalkIdController,
+          hintText: T.enterKakaotalkId,
         ),
 
         SizedBox(height: sp.s16),
@@ -158,43 +113,21 @@ class FormContactInfo extends StatelessWidget {
         SizedBox(height: sp.s16),
 
         /// Comic Design: Kakao Channel URL Field
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              T.kakaoChannelUrl,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: kakaotalkQrCodeController,
-              hintText: T.kakaoChannelUrlPlaceholder,
-            ),
-          ],
+        FormFieldLabel(label: T.kakaoChannelUrl),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: kakaotalkQrCodeController,
+          hintText: T.kakaoChannelUrlPlaceholder,
         ),
 
         SizedBox(height: sp.s16),
 
         /// Comic Design: Telegram ID Field
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              T.telegramId,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: scheme.primary,
-              ),
-            ),
-            SizedBox(height: sp.s8),
-            ComicTextFormField(
-              controller: telegramIdController,
-              hintText: T.enterTelegramId,
-            ),
-          ],
+        FormFieldLabel(label: T.telegramId),
+        SizedBox(height: sp.s8),
+        ComicTextFormField(
+          controller: telegramIdController,
+          hintText: T.enterTelegramId,
         ),
       ],
     );
