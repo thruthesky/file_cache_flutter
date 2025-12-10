@@ -51,6 +51,8 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
   }
 
   void onTapReplyToComment() async {
+    // Dismiss keyboard immediately after successful reply creation
+    focusNode.unfocus();
     try {
       if (uploadingCount > 0) {
         showSafeErrorDialog(
@@ -69,9 +71,6 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
         'content': contentController.text,
         'files': imageUrls.join(','),
       });
-
-      // Dismiss keyboard immediately after successful reply creation
-      focusNode.unfocus();
 
       widget.onReplied(createdComment);
 
