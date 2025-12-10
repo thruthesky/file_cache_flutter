@@ -12,7 +12,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: cs,
       // Pretendard 폰트 패밀리 적용
-      fontFamily: 'Pretendard',
+      // fontFamily: 'Pretendard',
       // Flat 2.0 Design - 회색 배경색 (surface container)
       scaffoldBackgroundColor: cs.surfaceContainerLow,
       textTheme: const TextTheme(

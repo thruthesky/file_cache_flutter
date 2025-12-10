@@ -784,7 +784,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         ),
                       ),
 
-                    // Input field (switches between CommentToPost, ReplyToComment, and CommentUpdate)
+                    // Input field (switches between CommentCreateForm, ReplyToComment, and CommentUpdate)
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 16,
@@ -849,7 +849,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                 }
                               },
                             )
-                          : CommentToPost(
+                          : CommentCreateForm(
                               post: post!,
                               onCreated: (createdComment) {
                                 post?.comments.add(createdComment);

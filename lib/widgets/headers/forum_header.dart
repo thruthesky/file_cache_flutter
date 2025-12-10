@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -52,7 +53,9 @@ class _ForumHeaderState extends State<ForumHeader> {
 
     /// 전체 카테고리 목록 가져오기
     /// Get all categories list
-    final allCategories = PhilgoCategory.menuCategories();
+    final allCategories = PhilgoCategory.menuCategories(
+      includeTemp: kDebugMode,
+    );
 
     /// 확장 상태에 따라 표시할 카테고리 결정 (축소: 12개, 확장: 전체)
     /// Determine categories to show based on expansion state (collapsed: 12, expanded: all)
@@ -154,37 +157,37 @@ class _ForumHeaderState extends State<ForumHeader> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               child: RichText(
-              text: TextSpan(
-                /// 기본 스타일: primary 색상 + bold 강조
-                /// Base style: primary color + bold emphasis
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-                children: [
-                  /// 텍스트: 확장 시 "숨기기", 축소 시 "더보기"
-                  /// Text: "Hide" when expanded, "View More" when collapsed
-                  TextSpan(text: _isExpanded ? lo.showLess : lo.viewMore),
-
-                  /// 공백 추가 (아이콘 앞 여백)
-                  /// Add space (margin before icon)
-                  const TextSpan(text: ' '),
-
-                  /// 화살표 아이콘: 확장 시 "<<", 축소 시 ">>"
-                  /// Arrow icon: "<<" when expanded, ">>" when collapsed
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: FaIcon(
-                      _isExpanded
-                          ? FontAwesomeIcons.anglesLeft
-                          : FontAwesomeIcons.anglesRight,
-                      size: 12,
-                      color: scheme.primary,
-                    ),
+                text: TextSpan(
+                  /// 기본 스타일: primary 색상 + bold 강조
+                  /// Base style: primary color + bold emphasis
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.primary,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
+                  children: [
+                    /// 텍스트: 확장 시 "숨기기", 축소 시 "더보기"
+                    /// Text: "Hide" when expanded, "View More" when collapsed
+                    TextSpan(text: _isExpanded ? lo.showLess : lo.viewMore),
+
+                    /// 공백 추가 (아이콘 앞 여백)
+                    /// Add space (margin before icon)
+                    const TextSpan(text: ' '),
+
+                    /// 화살표 아이콘: 확장 시 "<<", 축소 시 ">>"
+                    /// Arrow icon: "<<" when expanded, ">>" when collapsed
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: FaIcon(
+                        _isExpanded
+                            ? FontAwesomeIcons.anglesLeft
+                            : FontAwesomeIcons.anglesRight,
+                        size: 12,
+                        color: scheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
             ),
           ),
 

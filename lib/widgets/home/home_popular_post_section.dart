@@ -218,7 +218,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
           onTap: () => widget.onPostTap?.call(post),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: sp.s8, horizontal: sp.s4),
+            padding: EdgeInsets.symmetric(vertical: 2, horizontal: sp.s4),
             child: Row(
               children: [
                 /// 글머리 기호 (bullet point)
@@ -238,9 +238,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
                 Expanded(
                   child: Text(
                     post.subject,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: scheme.onSurface,
-                    ),
+                    style: theme.textTheme.bodyLarge,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
