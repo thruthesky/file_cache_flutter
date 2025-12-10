@@ -7,6 +7,7 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
+import 'package:philgo/widgets/theme/comic_fab.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// Category Model
@@ -261,13 +262,24 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
-    final sp = theme.extension<AppSpacing>()!;
+    final sp = theme.extension<AppSpacing>();
     final categories = _getCategories(context);
 
     final headerColor = theme.colorScheme.surface;
 
     return Scaffold(
       backgroundColor: headerColor,
+      floatingActionButton: ComicPrimaryFab(
+        onPressed: _handleCreateOrUpdateButton,
+        tooltip: myCompany != null
+            ? Lo.of(context)!.editMyCompany
+            : Lo.of(context)!.addMyCompany,
+        child: FaIcon(
+          myCompany != null
+              ? FontAwesomeIcons.penToSquare
+              : FontAwesomeIcons.circlePlus,
+        ),
+      ),
       body: SafeArea(
         child: Container(
           color: headerColor,
@@ -279,7 +291,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut,
                   heightFactor: _showHeader ? 1.0 : 0.0,
-                  child: _buildHeader(theme, sp, categories),
+                  child: _buildHeader(theme, sp!, categories),
                 ),
               ),
               Expanded(child: _buildBodyContent(theme, scheme, sp, categories)),
@@ -295,14 +307,6 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     AppSpacing sp,
     List<CompanyCategory> categories,
   ) {
-    final title = Lo.of(context)!.companyDirectoryTitle;
-    final buttonLabel = myCompany != null
-        ? Lo.of(context)!.editMyCompany
-        : Lo.of(context)!.addMyCompany;
-    final buttonIcon = myCompany != null
-        ? FontAwesomeIcons.penToSquare
-        : FontAwesomeIcons.circlePlus;
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -311,34 +315,13 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: 1),
         ),
       ),
-      padding: EdgeInsets.fromLTRB(sp.s16, sp.s16, sp.s16, sp.s8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Row(
-          //   crossAxisAlignment: CrossAxisAlignment.center,
-          //   children: [
-          //     Expanded(child: Text(title, style: theme.textTheme.titleLarge)),
-          //     FilledButton.icon(
-          //       onPressed: _handleCreateOrUpdateButton,
-          //       icon: FaIcon(buttonIcon, size: 16),
-          //       label: Text(buttonLabel),
-          //     ),
-          //   ],
-          // ),
-          SizedBox(height: sp.s12),
-          _buildScrollableFilters(categories, sp),
-        ],
-      ),
+      padding: EdgeInsets.fromLTRB(sp.s16, sp.s16, sp.s16, sp.s12),
+      child: _buildWrappedFilters(categories, sp),
     );
   }
 
-  double _filterGridHeight(AppSpacing sp) => (_filterChipSize * 2) + sp.s8;
-
-  Widget _buildScrollableFilters(
-    List<CompanyCategory> categories,
-    AppSpacing sp,
-  ) {
+  /// Build wrapped filter chips that display all categories without scrolling
+  Widget _buildWrappedFilters(List<CompanyCategory> categories, AppSpacing sp) {
     final items = [
       CompanyCategory(
         id: 'all',
@@ -349,37 +332,51 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       ...categories,
     ];
 
-    final totalHeight = _filterGridHeight(sp);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate optimal chip size based on available width
+        // Account for spacing between chips
+        final availableWidth = constraints.maxWidth;
+        final spacing = sp.s8;
 
-    return SizedBox(
-      height: totalHeight,
-      child: GridView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.only(bottom: sp.s4),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: sp.s8,
-          crossAxisSpacing: sp.s8,
-          childAspectRatio: 1,
-        ),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final category = items[index];
-          final isAll = category.id == 'all';
-          final isSelected = isAll
-              ? selectedCategoryId == null
-              : selectedCategoryId == category.id;
-          return Align(
-            alignment: Alignment.centerLeft,
-            child: CompanyCategoryFilterChip(
+        // Try to fit 6 chips per row (reduced size)
+        int chipsPerRow = 6;
+        double chipSize =
+            (availableWidth - (spacing * (chipsPerRow - 1))) / chipsPerRow;
+
+        // If chip size is too small, reduce to 5 per row
+        if (chipSize < 52) {
+          chipsPerRow = 5;
+          chipSize =
+              (availableWidth - (spacing * (chipsPerRow - 1))) / chipsPerRow;
+        }
+
+        // If chip size is still too small, reduce to 4 per row
+        if (chipSize < 52) {
+          chipsPerRow = 4;
+          chipSize =
+              (availableWidth - (spacing * (chipsPerRow - 1))) / chipsPerRow;
+        }
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: sp.s4,
+          children: items.map((category) {
+            final isAll = category.id == 'all';
+            final isSelected = isAll
+                ? selectedCategoryId == null
+                : selectedCategoryId == category.id;
+
+            return CompanyCategoryFilterChip(
               isSelected: isSelected,
               label: category.name,
               icon: category.icon,
+              chipSize: chipSize,
               onTap: () => _handleCategoryFilterTap(isAll ? null : category.id),
-            ),
-          );
-        },
-      ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -432,11 +429,11 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           : categories.firstWhere((c) => c.id == selectedCategoryId).name;
 
       return _wrapScrollable(
-        ListView(
-          physics: const ClampingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: sp.s24, vertical: sp.s24),
-          children: [
-            _buildStateMessage(
+        Center(
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: sp.s24, vertical: sp.s24),
+            child: _buildStateMessage(
               scheme: scheme,
               theme: theme,
               sp: sp,
@@ -447,7 +444,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                   ? T.noRegisteredCompanies
                   : T.noCompaniesInCategory(categoryName),
             ),
-          ],
+          ),
         ),
       );
     }
@@ -548,6 +545,7 @@ class CompanyCategoryFilterChip extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback onTap;
+  final double chipSize;
   final EdgeInsetsGeometry? padding;
 
   const CompanyCategoryFilterChip({
@@ -556,6 +554,7 @@ class CompanyCategoryFilterChip extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.onTap,
+    required this.chipSize,
     this.padding,
   });
 
@@ -579,12 +578,12 @@ class CompanyCategoryFilterChip extends StatelessWidget {
             color: backgroundColor,
             borderRadius: BorderRadius.circular(12),
           ),
-          width: _filterChipSize,
-          height: _filterChipSize,
+          width: chipSize,
+          height: chipSize,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(icon, size: 18, color: iconColor),
+              FaIcon(icon, size: 16, color: iconColor),
               const SizedBox(height: 4),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -618,5 +617,3 @@ class _StateAction {
     required this.onPressed,
   });
 }
-
-const double _filterChipSize = 68.0;

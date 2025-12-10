@@ -37,14 +37,19 @@ class _PostViewScreenState extends State<PostViewScreen> {
   Comment? replyingToComment;
   Comment? editingComment;
 
+  /// ScrollController for programmatic scrolling to newly created comments
+  late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     loadPost();
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -140,6 +145,24 @@ class _PostViewScreenState extends State<PostViewScreen> {
   void cancelEditMode() {
     setState(() {
       editingComment = null;
+    });
+  }
+
+  /// Scroll to bottom of the list to show newly created comment
+  /// Adds a small delay to ensure the new comment is rendered before scrolling
+  void scrollToBottom() {
+    // Dismiss keyboard immediately
+    FocusScope.of(context).unfocus();
+
+    // Wait for the widget tree to rebuild with the new comment
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients && mounted) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -353,6 +376,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 /// Main content
                 SliverPadding(
@@ -640,6 +664,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               context,
                               Lo.of(context)!.commentReplied,
                             );
+                            // Scroll to bottom to show the new reply
+                            scrollToBottom();
                           }
                         },
                         onUpdated: (oldComment, updatedComment) {
@@ -652,6 +678,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               context,
                               Lo.of(context)!.commentUpdated,
                             );
+                            // Scroll to bottom to show the updated comment
+                            scrollToBottom();
                           }
                         },
                         onDeleted: (deletedComment) {
@@ -723,6 +751,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
+
                                   /// Comment content preview
                                   /// 댓글 내용 미리보기
                                   Text(
@@ -831,6 +860,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                     context,
                                     Lo.of(context)!.commentCreated,
                                   );
+                                  // Scroll to bottom to show the new comment
+                                  scrollToBottom();
                                 }
                               },
                             ),
