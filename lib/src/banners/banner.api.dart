@@ -1,5 +1,4 @@
 import 'package:philgo_api/philgo_api.dart';
-import 'dart:developer';
 
 /// 필고 광고 배너 API 클래스
 /// PhilGo Advertisement Banner API Class

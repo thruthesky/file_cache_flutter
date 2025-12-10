@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:url_launcher/url_launcher.dart';
-import './banner.model.dart';
 
 /// Small 배너 위젯 (작은 배너)
 /// Small Banners Widget

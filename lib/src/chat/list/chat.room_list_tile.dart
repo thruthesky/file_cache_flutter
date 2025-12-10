@@ -64,7 +64,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   }
 
   int get unread {
-    String j = join.toString();
     // debugPrint(j);
     if (join != null) return join!.unread;
     return 0;
