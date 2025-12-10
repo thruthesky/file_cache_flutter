@@ -11,10 +11,11 @@ Future<void> main() async {
       Map<String, Object?>? args,
     ]) async {
       final Directory outputDir =
-          Directory('screenshots')..createSync(recursive: true);
+          Directory('tmp/screenshots')..createSync(recursive: true);
       final File file = File('${outputDir.path}/$screenshotName.png');
       file.writeAsBytesSync(screenshotBytes);
       return true;
     },
   );
 }
+ 
