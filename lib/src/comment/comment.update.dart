@@ -164,7 +164,14 @@ class _CommentUpdateState extends State<CommentUpdate> {
             suffixIcon: IconButton(
               padding: const EdgeInsets.all(16.0),
               icon: submitting
-                  ? CircularProgressIndicator.adaptive()
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    )
                   : isTextEmpty
                   ? FaIcon(
                       FontAwesomeIcons.lightPaperPlane,

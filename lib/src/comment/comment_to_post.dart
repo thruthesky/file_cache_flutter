@@ -167,7 +167,14 @@ class _ReplyToCommentFormState extends State<CommentToPost> {
             suffixIcon: IconButton(
               padding: const EdgeInsets.all(16.0),
               icon: isCreatingReply
-                  ? CircularProgressIndicator.adaptive()
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    )
                   : isTextEmpty
                   ? FaIcon(
                       FontAwesomeIcons.lightPaperPlane,
