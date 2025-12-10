@@ -50,9 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
         index: selectedItem.index,
         children: const [
           MainHome(), // 홈
-          ChatHome(), // 채팅
           ForumHome(), // 게시판
           CompanyHome(), // 업소록
+          ChatHome(), // 채팅
           MenuHome(), // 메뉴
         ],
       ),
@@ -82,6 +82,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       : FontAwesomeIcons.thinHouse,
                 ),
                 label: Lo.of(context)!.home,
+              ),
+
+              BottomNavigationBarItem(
+                icon: FaIcon(
+                  selectedItem == HomeNavigationItem.forum
+                      ? FontAwesomeIcons.solidNewspaper
+                      : FontAwesomeIcons.thinNewspaper,
+                ),
+                label: Lo.of(context)!.forum,
+              ),
+              BottomNavigationBarItem(
+                icon: FaIcon(
+                  selectedItem == HomeNavigationItem.company
+                      ? FontAwesomeIcons.solidBuilding
+                      : FontAwesomeIcons.thinBuilding,
+                ),
+                label: Lo.of(context)!.company,
               ),
               BottomNavigationBarItem(
                 icon: Stack(
@@ -113,22 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 label: Lo.of(context)!.chat,
-              ),
-              BottomNavigationBarItem(
-                icon: FaIcon(
-                  selectedItem == HomeNavigationItem.forum
-                      ? FontAwesomeIcons.solidNewspaper
-                      : FontAwesomeIcons.thinNewspaper,
-                ),
-                label: Lo.of(context)!.forum,
-              ),
-              BottomNavigationBarItem(
-                icon: FaIcon(
-                  selectedItem == HomeNavigationItem.company
-                      ? FontAwesomeIcons.solidBuilding
-                      : FontAwesomeIcons.thinBuilding,
-                ),
-                label: Lo.of(context)!.company,
               ),
               BottomNavigationBarItem(
                 key: ValueKey('menuButton'),
