@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/main.dart' as app;
 import 'package:philgo/widgets/home/menu/menu.item.dart';
+import 'package:philgo_api/src/company/widgets/company.card.dart';
 
 Finder findFaIcon(IconData data) {
   return find.byWidgetPredicate(
@@ -111,7 +112,7 @@ void main() {
       }
     });
 
-    testWidgets('navigating the company pages ', (tester) async {
+    testWidgets('navigating the company pages', (tester) async {
       // Start app for this test
       app.main();
       await tester.pumpAndSettle();
@@ -126,7 +127,7 @@ void main() {
       }
 
       // Try to find and tap the first company card
-      final Finder companyCards = find.byType(InkWell);
+      final Finder companyCards = find.byType(CompanyCard);
       if (companyCards.evaluate().isNotEmpty) {
         await tester.tap(companyCards.first);
         await tester.pumpAndSettle();
@@ -243,14 +244,14 @@ void main() {
       // Business directory (switches to company tab)
       await tapMenuItemIconSafe(FontAwesomeIcons.building);
       await tester.pump();
-      await tester.pump(const Duration(seconds: 2));
-      await binding.takeScreenshot('menu_business_directory');
+      await tester.pump(const Duration(seconds: 3));
+      // await binding.takeScreenshot('menu_business_directory');
       await goToMenuTab();
 
       // Open chat (switches to chat tab)
       await tapMenuItemIconSafe(FontAwesomeIcons.comments);
       await tester.pumpAndSettle();
-      await binding.takeScreenshot('menu_open_chat');
+      // await binding.takeScreenshot('menu_open_chat');
       await goToMenuTab();
 
       // Blocked users dialog
@@ -267,7 +268,9 @@ void main() {
         await tester.ensureVisible(bannerAdIcon.first);
         await tester.tap(bannerAdIcon.first);
         await tester.pump(); // Initial render
-        await tester.pump(const Duration(seconds: 2)); // Brief wait for webview to start
+        await tester.pump(
+          const Duration(seconds: 2),
+        ); // Brief wait for webview to start
         await binding.takeScreenshot('menu_banner_ad');
         // Go back immediately
         final backBtn = find.byType(BackButton);
@@ -284,7 +287,9 @@ void main() {
         await tester.ensureVisible(pointAdIcon.first);
         await tester.tap(pointAdIcon.first);
         await tester.pump(); // Initial render
-        await tester.pump(const Duration(seconds: 2)); // Brief wait for webview to start
+        await tester.pump(
+          const Duration(seconds: 2),
+        ); // Brief wait for webview to start
         await binding.takeScreenshot('menu_point_ad');
         // Go back immediately
         final backBtn = find.byType(BackButton);
@@ -298,8 +303,10 @@ void main() {
       // App guide screen - has animations with postFrameCallback
       await tapMenuItemIconSafe(FontAwesomeIcons.circleQuestion);
       await tester.pump(); // Initial render
-      await tester.pump(const Duration(milliseconds: 500)); // Wait for postFrameCallback
-      await tester.pump(const Duration(milliseconds: 500)); // Wait for animations
+      await tester.pump(
+        const Duration(milliseconds: 500),
+      ); // Wait for postFrameCallback
+      await tester.pump(const Duration(seconds: 5)); // Wait for animations
       await binding.takeScreenshot('menu_app_guide');
 
       // Go back to menu
@@ -343,8 +350,10 @@ void main() {
       // Account withdrawal screen - has animations with postFrameCallback
       await tapMenuItemIconSafe(FontAwesomeIcons.userMinus);
       await tester.pump(); // Initial render
-      await tester.pump(const Duration(milliseconds: 500)); // Wait for postFrameCallback
-      await tester.pump(const Duration(milliseconds: 500)); // Wait for animations
+      await tester.pump(
+        const Duration(milliseconds: 500),
+      ); // Wait for postFrameCallback
+      await tester.pump(const Duration(seconds: 5)); // Wait for animations
       await binding.takeScreenshot('menu_account_withdrawal');
 
       // Go back to menu
