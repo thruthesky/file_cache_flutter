@@ -362,23 +362,34 @@ class PostCreateFormState extends State<PostCreateForm> {
       key: _formKey,
       child: ListView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: widget.padding ?? const EdgeInsets.all(16),
-        shrinkWrap: true,
         children: [
           if (widget.showCategorySelector) ...[
-            _buildCategorySelector(context),
+            Padding(
+              padding: widget.padding ?? const EdgeInsets.all(16),
+              child: _buildCategorySelector(context),
+            ),
             const SizedBox(height: 16),
           ],
-          _buildTitleField(context),
-          const SizedBox(height: 16),
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildTitleField(context),
+          ),
           if (_urls.isNotEmpty || _uploadingCount > 0) ...[
-            _buildUploadPreview(context),
+            Padding(
+              padding: widget.padding ?? const EdgeInsets.all(16),
+              child: _buildUploadPreview(context),
+            ),
             const SizedBox(height: 16),
           ],
-          _buildContentField(context),
-          const SizedBox(height: 16),
-
-          _buildActionBar(context),
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildContentField(context),
+          ),
+          Padding(
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),
+            child: _buildActionBar(context),
+          ),
         ],
       ),
     );
@@ -614,6 +625,8 @@ class PostCreateFormState extends State<PostCreateForm> {
   }
 
   /// 하단 액션 바 빌드
+  ///
+  /// ListView 외부에 고정되어 항상 하단에 표시
   Widget _buildActionBar(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -634,12 +647,7 @@ class PostCreateFormState extends State<PostCreateForm> {
           },
           onCancelled: _decrementUploadingCount,
           child: Container(
-            padding: const EdgeInsets.only(
-              left: 0,
-              right: 12,
-              bottom: 12,
-              top: 12,
-            ),
+            padding: const EdgeInsets.all(12),
             child: FaIcon(
               FontAwesomeIcons.lightCamera,
               color: colorScheme.onSurface,
@@ -652,10 +660,6 @@ class PostCreateFormState extends State<PostCreateForm> {
         // 제출 버튼 (showSubmitButton이 true일 때만)
         if (widget.showSubmitButton)
           IconButton(
-            style: IconButton.styleFrom(
-              padding: const EdgeInsets.only(left: 8), // keep left, drop right
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
             onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
             icon: _isLoading
                 ? SizedBox(
@@ -666,11 +670,7 @@ class PostCreateFormState extends State<PostCreateForm> {
                       color: colorScheme.primary,
                     ),
                   )
-                : FaIcon(
-                    FontAwesomeIcons.paperPlane,
-                    size: 24,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
+                : FaIcon(FontAwesomeIcons.solidPaperPlane, size: 24),
           ),
       ],
     );

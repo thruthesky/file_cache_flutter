@@ -249,18 +249,27 @@ class PostUpdateFormState extends State<PostUpdateForm> {
       key: _formKey,
       child: ListView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: widget.padding ?? const EdgeInsets.all(16),
-        shrinkWrap: true,
         children: [
-          _buildTitleField(context),
-          const SizedBox(height: 16),
-          _buildContentField(context),
-          const SizedBox(height: 16),
-          if (_urls.isNotEmpty || _uploadingCount > 0)
-            _buildFilePreview(context),
-          if (_urls.isNotEmpty || _uploadingCount > 0)
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildTitleField(context),
+          ),
+          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
+            Padding(
+              padding: widget.padding ?? const EdgeInsets.all(16),
+              child: _buildFilePreview(context),
+            ),
             const SizedBox(height: 16),
-          _buildActionBar(context),
+          ],
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildContentField(context),
+          ),
+          Padding(
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),
+            child: _buildActionBar(context),
+          ),
         ],
       ),
     );
@@ -421,12 +430,7 @@ class PostUpdateFormState extends State<PostUpdateForm> {
           },
           onCancelled: _decrementUploadingCount,
           child: Container(
-            padding: const EdgeInsets.only(
-              left: 0,
-              right: 12,
-              bottom: 12,
-              top: 12,
-            ),
+            padding: const EdgeInsets.all(12),
             child: FaIcon(
               FontAwesomeIcons.lightCamera,
               color: colorScheme.onSurface,
@@ -450,13 +454,7 @@ class PostUpdateFormState extends State<PostUpdateForm> {
                       color: colorScheme.primary,
                     ),
                   )
-                : FaIcon(
-                    FontAwesomeIcons.paperPlane,
-                    size: 24,
-                    color: Theme.of(
-                      context,
-                    ).iconTheme.color!.withValues(alpha: 0.55),
-                  ),
+                : FaIcon(FontAwesomeIcons.solidPaperPlane, size: 24),
           ),
       ],
     );
