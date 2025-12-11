@@ -866,7 +866,7 @@ abstract class Lo {
   /// Button text to view more items
   ///
   /// In en, this message translates to:
-  /// **'View More'**
+  /// **'More'**
   String get viewMore;
 
   /// Button text to hide/collapse items

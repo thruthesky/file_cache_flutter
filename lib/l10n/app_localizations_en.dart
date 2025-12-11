@@ -414,7 +414,7 @@ class LoEn extends Lo {
   }
 
   @override
-  String get viewMore => 'View More';
+  String get viewMore => 'More';
 
   @override
   String get showLess => 'Hide';

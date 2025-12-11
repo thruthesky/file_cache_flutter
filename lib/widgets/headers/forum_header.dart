@@ -65,6 +65,11 @@ class _ForumHeaderState extends State<ForumHeader> {
         : allCategories.take(12);
 
     return SafeArea(
+      /// 좌/우/하단 safe area 여백 비활성화 (가장자리에 붙이기 위함)
+      /// Disable left/right/bottom safe area padding (to stick to edges)
+      left: false,
+      right: false,
+      bottom: false,
       child: Wrap(
         /// 버튼 간 가로 간격 (최소화)
         /// Horizontal spacing between buttons (minimized)

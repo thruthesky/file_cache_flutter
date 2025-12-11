@@ -167,6 +167,9 @@ class _ForumHomeState extends State<ForumHome> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         child: Container(
+          /// 전체 너비를 강제로 차지 (AnimatedAlign의 중앙 정렬로 인한 좌/우 여백 방지)
+          /// Force full width (prevent left/right margins from AnimatedAlign's center alignment)
+          width: double.infinity,
           decoration: BoxDecoration(
             color: scheme.surface,
             border: Border(

@@ -519,7 +519,7 @@
       }
     }
   },
-  "viewMore": "View More",
+  "viewMore": "More",
   "@viewMore": {
     "description": "Button text to view more items"
   },
