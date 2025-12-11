@@ -7,7 +7,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/functions/init.functions.dart';
 import 'package:philgo/functions/init/build_number_check.dart';
-import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
@@ -49,10 +48,6 @@ class _MyAppState extends State<MyApp> {
     bool isRunningInE2EEnvironment = WidgetsBinding.instance.runtimeType
         .toString()
         .contains('Test');
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AppState.of(context).initializeLocaleFromDevice();
-    });
 
     // ChatService.instance.initialize();
     UserService.instance.initialize(
@@ -98,7 +93,7 @@ class _MyAppState extends State<MyApp> {
       initMinimalBuildNumberCheck();
 
       // Timer(Duration(seconds: 1), showUpgradeDialog);
-      Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
+      // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
     });
   }
 
@@ -109,27 +104,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<AppState, Locale?>(
-      selector: (context, appState) => appState.locale,
-      builder: (context, locale, child) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          routerConfig: router,
-          locale: locale, // AppState의 locale 사용
-          localizationsDelegates: [
-            Lo.delegate,
-            PhilgoTr.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          supportedLocales: [
-            ...Lo.supportedLocales,
-            ...PhilgoTr.supportedLocales,
-          ],
-        );
-      },
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      routerConfig: router,
+      localizationsDelegates: [
+        Lo.delegate,
+        PhilgoTr.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [...Lo.supportedLocales, ...PhilgoTr.supportedLocales],
     );
   }
 }

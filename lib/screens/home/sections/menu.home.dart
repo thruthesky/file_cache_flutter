@@ -7,7 +7,6 @@ import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
-import 'package:philgo/screens/settings/language.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
@@ -90,11 +89,11 @@ class _MenuHomeState extends State<MenuHome> {
                       title: Lo.of(context)!.editProfile,
                       onTap: () => ProfileEditScreen.push(context),
                     ),
-                    MenuItem(
-                      icon: FontAwesomeIcons.globe,
-                      title: Lo.of(context)!.languageTitle,
-                      onTap: () => LanguageScreen.push(context),
-                    ),
+                    // MenuItem(
+                    //   icon: FontAwesomeIcons.globe,
+                    //   title: Lo.of(context)!.languageTitle,
+                    //   onTap: () => LanguageScreen.push(context),
+                    // ),
                     MenuItem(
                       icon: FontAwesomeIcons.building,
                       title: Lo.of(context)!.businessDirectoryTitle,

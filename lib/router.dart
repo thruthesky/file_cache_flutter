@@ -10,7 +10,6 @@ import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
-import 'package:philgo/screens/settings/language.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -310,11 +309,6 @@ final router = GoRouter(
       path: AccountWithdrawalScreen.routeName,
       name: AccountWithdrawalScreen.routeName,
       builder: (context, state) => const AccountWithdrawalScreen(),
-    ),
-    GoRoute(
-      path: LanguageScreen.routeName,
-      name: LanguageScreen.routeName,
-      builder: (context, state) => const LanguageScreen(),
     ),
     GoRoute(
       path: VersionScreen.routeName,
