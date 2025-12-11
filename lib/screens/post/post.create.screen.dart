@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo_api/philgo_api.dart';
-import 'package:philgo/globals.dart';
-import 'package:philgo/themes/app.spacing.dart';
 
-/// 글쓰기 화면 (Post Create Screen)
+/// 글쓰기 전체 화면 위젯
+/// Full-screen post creation widget
 ///
 /// 외부 앱에서 파일 공유 시 사용됩니다.
 /// Used when files are shared from external apps.
@@ -45,16 +43,11 @@ class PostCreateScreen extends StatefulWidget {
           'content': content,
         },
       );
-
-  /// 글쓰기 화면으로 이동 (현재 화면 교체)
-  /// Navigate to post create screen (replace current screen)
-  static Function(BuildContext ctx, {required String postId, String? category})
-  go = (ctx, {required String postId, String? category}) => ctx.go(routeName);
-
   const PostCreateScreen({
     super.key,
     required this.postId,
     this.category,
+    this.onSubmitted,
     this.xFiles,
     this.content,
   });
@@ -66,6 +59,8 @@ class PostCreateScreen extends StatefulWidget {
   /// 서브 카테고리 (선택적)
   /// Sub-category (optional)
   final String? category;
+
+  final void Function(Post post)? onSubmitted;
 
   /// 외부에서 공유된 파일 목록
   /// Files shared from external apps
@@ -80,392 +75,220 @@ class PostCreateScreen extends StatefulWidget {
 }
 
 class _PostCreateScreenState extends State<PostCreateScreen> {
-  final _titleController = TextEditingController();
-  final _contentController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  /// GlobalKey로 외부에서 폼 상태 접근
+  /// Access form state externally via GlobalKey
+  final formKey = GlobalKey<PostCreateFormState>();
+
+  /// 선택된 서브 카테고리 (드롭다운에서 변경 가능)
+  /// Selected sub-category (changeable via dropdown)
+  String? _selectedCategory;
+
+  /// 로딩 및 업로드 상태 추적
+  /// Track loading and upload progress
   bool isLoading = false;
-  int uploadingCount = 0; // Track number of ongoing uploads
-  List<String> urls = [];
+  bool isUploading = false;
 
   @override
   void initState() {
-    if (widget.content != null) _contentController.text = widget.content!;
-    if (widget.xFiles != null) {
-      /// upload xFiles to philgo server
-      // log(
-      //   widget.xFiles!.map((e) => e.path).toString(),
-      //   name: 'received xfiles',
-      // );
-      for (var file in widget.xFiles!) {
-        setState(() {
-          uploadingCount++;
-        });
-
-        philgoApiFileUpload(file.path)
-            .then((uploadedFile) {
-              // log(
-              //   'Uploaded file URL: ${uploadedFile?.url}',
-              //   name: 'file upload',
-              // );
-              if (uploadedFile != null) {
-                urls.add(uploadedFile.url);
-              }
-            })
-            .catchError((error) {
-              // log(
-              //   'File upload error: $error',
-              //   name: 'file upload',
-              //   error: error,
-              // );
-              showSafeErrorDialog('File upload failed: $error');
-            })
-            .whenComplete(() {
-              setState(() {
-                uploadingCount--;
-              });
-            });
-      }
-    }
     super.initState();
-  }
 
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _contentController.dispose();
-    super.dispose();
-  }
-
-  /// Submit post handler - extracted for reuse in AppBar action
-  Future<void> _handleSubmit() async {
-    // Check if upload is in progress
-    if (uploadingCount > 0) {
-      showSafeErrorDialog(
-        'Image upload is in progress, please try again in a moment.',
-      );
-      return;
-    }
-
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      debugLog('업로드된 파일 개수: ${urls.length}');
-      debugLog('파일 URL 목록: $urls');
-
-      final created = await createPost({
-        'post_id': widget.postId,
-        'category': widget.category,
-        'subject': _titleController.text,
-        'content': _contentController.text,
-        'files': urls,
-      });
-
-      if (mounted) {
-        PostViewScreen.pushReplacement(context, created);
-      }
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
+    /// 전달된 category 값으로 초기화
+    /// Initialize with the passed category value
+    _selectedCategory = widget.category;
   }
 
   @override
   Widget build(BuildContext context) {
-    final sp = Theme.of(context).extension<AppSpacing>()!;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    /// 메인 카테고리의 다국어 이름 가져오기 (philgoTr 사용)
+    /// Get localized name for main category (using philgoTr)
+    final localizedMainCategory = philgoTr(context, widget.postId);
+
+    /// 서브 카테고리 존재 여부 확인
+    /// Check if sub-categories exist
+    final hasSubCategories = PhilgoCategory.hasSubCategories(widget.postId);
+
+    /// 서브 카테고리 목록 가져오기
+    /// Get sub-category list
+    final subCategories = hasSubCategories
+        ? PhilgoCategory.subCategories(widget.postId)
+        : <String>[];
 
     return Scaffold(
+      /// AppBar - Comic Design 스타일 적용 (elevation 0)
+      /// AppBar with Comic Design style (elevation 0)
       appBar: AppBar(
-        elevation: 0, // Comic Design: no shadow
-        leading: IconButton(
-          icon: const FaIcon(FontAwesomeIcons.arrowLeft, size: 20),
-          onPressed: () async {
-            // Check if there's any content (title, content, or uploaded files)
-            final hasContent =
-                _titleController.text.trim().isNotEmpty ||
-                _contentController.text.trim().isNotEmpty ||
-                urls.isNotEmpty;
+        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 메인 카테고리 표시
+            /// Display main category
+            Text(localizedMainCategory),
 
-            // If no content, just exit
-            if (!hasContent) {
-              context.pop();
-              return;
-            }
-
-            // Show confirmation dialog if there's content
-            final confirm = await showConfirmDialog(
-              message: PhilgoTr.of(context)!.confirmDiscard,
-            );
-
-            // User cancelled - don't exit
-            if (confirm != true) {
-              return;
-            }
-
-            // Delete uploaded files from server if any
-            if (urls.isNotEmpty) {
-              // Delete all files in parallel for better performance
-              await Future.wait(urls.map((url) => philgoApiFileDelete(url)));
-              debugLog('All file deletions completed');
-            }
-
-            // Exit the screen
-            if (context.mounted) {
-              context.pop();
-            }
-          },
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: IconButton(
-              icon: isLoading
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    )
-                  : const FaIcon(FontAwesomeIcons.check, size: 20),
-              onPressed: isLoading || uploadingCount > 0 ? null : _handleSubmit,
-            ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 2,
-            color: Theme.of(context).colorScheme.outline,
-          ), // Comic Design: 2.0 border
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(sp.s16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title Input Field (Comic Design)
-                    TextFieldSet(
-                      padding: EdgeInsets.zero,
-                      controller: _titleController,
-                      decoration: InputDecoration(
-                        hintText: T.postTitleHint,
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surface,
-                        // Comic Design: 2.0px border with rounded corners
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.outline,
-                            width: 2.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 2.0,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.error,
-                            width: 2.0,
-                          ),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.error,
-                            width: 2.0,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.all(sp.s16),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return T.titleRequired;
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: sp.s16),
-                    // Content Input Field (Comic Design)
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return T.contentRequired;
-                        }
-                        return null;
-                      },
-                      controller: _contentController,
-                      maxLines: 12,
-                      minLines: 6,
-                      textAlignVertical: TextAlignVertical.top,
-                      decoration: InputDecoration(
-                        hintText: T.postContentHint,
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surface,
-                        // Comic Design: 2.0px border with rounded corners
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.outline,
-                            width: 2.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 2.0,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.error,
-                            width: 2.0,
-                          ),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.error,
-                            width: 2.0,
-                          ),
-                        ),
-                        contentPadding: EdgeInsets.all(sp.s16),
-                        alignLabelWithHint: true,
-                      ),
-                    ),
-                    SizedBox(height: sp.s16),
-
-                    if (urls.isNotEmpty || uploadingCount > 0)
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final imageWidth = (constraints.maxWidth - sp.s8) / 2;
-                          return Wrap(
-                            spacing: sp.s8,
-                            runSpacing: sp.s8,
-                            children: [
-                              ...urls.map(
-                                (url) => UploadPreview(
-                                  url: url,
-                                  width: imageWidth,
-                                  height: imageWidth,
-                                  borderRadius: sp.s8,
-                                  onDelete: () async {
-                                    // 삭제 확인 다이얼로그 표시
-                                    final confirm = await showConfirmDialog(
-                                      message: Lo.of(
-                                        context,
-                                      )!.confirmDeleteImage,
-                                    );
-
-                                    if (confirm != true) return;
-
-                                    try {
-                                      debugLog("삭제 시작: $url");
-                                      await philgoApiFileDelete(url);
-
-                                      urls.remove(url);
-                                      setState(() {});
-                                      debugLog("삭제 완료: $url");
-
-                                      if (context.mounted) {
-                                        showSuccessSnackBar(
-                                          context,
-                                          Lo.of(context)!.imageDeletedSuccess,
-                                        );
-                                      }
-                                    } catch (e) {
-                                      debugLog("파일 삭제 실패: $e");
-                                      showSafeErrorDialog("파일 삭제에 실패했습니다: $e");
-                                    }
-                                  },
-                                ),
-                              ),
-                              ...List.generate(
-                                uploadingCount,
-                                (index) => LoadingBox(
-                                  width: imageWidth,
-                                  height: imageWidth,
-                                  borderRadius: sp.s8,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-
-                    if (urls.isNotEmpty || uploadingCount > 0)
-                      SizedBox(height: sp.s16),
-                  ],
+            /// 서브 카테고리가 있는 경우 드롭다운 표시
+            /// Show dropdown if sub-categories exist
+            if (hasSubCategories) ...[
+              /// 메인카테고리와 서브카테고리 사이 구분 아이콘
+              /// Separator icon between main and sub category
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: FaIcon(
+                  FontAwesomeIcons.lightChevronRight,
+                  size: 14,
+                  color: scheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
-            ),
-          ),
-          // Bottom navigation bar as part of body Column
-          // Comic Design: 2.0px top border
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border(
-                top: BorderSide(
-                  // Comic Design: 2.0px border with outline color
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 2.0,
-                ),
-              ),
-            ),
-            padding: EdgeInsets.all(sp.s16),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  FileUpload(
-                    file: true,
-                    video: true,
-                    child: Container(
-                      padding: EdgeInsets.all(sp.s12),
-                      child: const FaIcon(FontAwesomeIcons.lightCamera),
+
+              /// 서브 카테고리 선택 드롭다운 (강조 표시) - Flexible로 감싸서 overflow 방지
+              /// Sub-category selection dropdown (highlighted) - Wrapped in Flexible to prevent overflow
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+
+                  /// 배경색과 테두리로 강조 - primary 색상 적용
+                  /// Highlight with background and border - primary color applied
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+
+                    /// 1px 테두리 추가로 시각적 강조
+                    /// Add 1px border for visual emphasis
+                    border: Border.all(color: scheme.primary, width: 1),
+                  ),
+                  child: DropdownButton<String?>(
+                    value: _selectedCategory,
+
+                    /// 드롭다운 스타일 - Flat design (underline 제거)
+                    /// Dropdown style - Flat design (remove underline)
+                    underline: const SizedBox.shrink(),
+                    isDense: true,
+
+                    /// isExpanded로 부모 제약을 따르며 텍스트 오버플로우 처리
+                    /// isExpanded to follow parent constraints and handle text overflow
+                    isExpanded: true,
+
+                    icon: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: FaIcon(
+                        FontAwesomeIcons.lightChevronDown,
+                        size: 12,
+                        color: scheme.primary,
+                      ),
                     ),
-                    onBeforeUpload: () {
+
+                    /// 선택된 값 스타일 - primary 색상과 bold로 강조
+                    /// Selected value style - highlighted with primary color and bold
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+
+                    /// 드롭다운 아이템: null(전체) + 서브카테고리 목록
+                    /// Dropdown items: null(All) + sub-category list
+                    items: [
+                      /// "전체" 옵션 (category = null)
+                      /// "All" option (category = null)
+                      DropdownMenuItem<String?>(
+                        value: null,
+                        child: Text(
+                          philgoTr(context, 'all'),
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(color: scheme.onSurface),
+                        ),
+                      ),
+
+                      /// 서브 카테고리 목록
+                      /// Sub-category list
+                      ...subCategories.map(
+                        (cat) => DropdownMenuItem<String?>(
+                          value: cat,
+                          child: Text(
+                            philgoTr(context, cat),
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(color: scheme.onSurface),
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    /// 카테고리 선택 시 상태 업데이트
+                    /// Update state when category is selected
+                    onChanged: (value) {
                       setState(() {
-                        uploadingCount++;
+                        _selectedCategory = value;
                       });
-                    },
-                    onUploaded: (url) {
-                      debugLog('url: $url');
-                      urls.add(url);
-                      setState(() {
-                        uploadingCount--;
-                      });
-                    },
-                    onCancelled: () {
-                      uploadingCount--;
-                      setState(() {});
                     },
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          ],
+        ),
+
+        /// 닫기 버튼
+        /// Close button
+        leading: IconButton(
+          icon: FaIcon(FontAwesomeIcons.lightXmark, color: scheme.onSurface),
+          onPressed: () => Navigator.pop(context),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outline),
+        ),
+      ),
+
+      /// PostCreateForm - 재사용 가능한 글쓰기 폼
+      /// PostCreateForm - reusable post creation form
+      body: PostCreateForm(
+        key: formKey,
+        postId: widget.postId,
+
+        /// 드롭다운에서 선택된 서브 카테고리 전달
+        /// Pass the selected sub-category from dropdown
+        category: _selectedCategory,
+
+        initialContent: widget.content,
+        initialFiles: widget.xFiles,
+
+        /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+        /// Hide form's internal submit button (handled by AppBar)
+        showSubmitButton: true,
+
+        /// 로딩 상태 변경 콜백
+        /// Loading status change callback
+        onLoadingChanged: (loading) {
+          setState(() {
+            isLoading = loading;
+          });
+        },
+
+        /// 업로드 상태 변경 콜백
+        /// Upload status change callback
+        onUploadingChanged: (uploading) {
+          setState(() {
+            isUploading = uploading;
+          });
+        },
+
+        /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+        /// Close screen on successful submission and navigate to PostViewScreen
+        onSubmitted: (post) {
+          Navigator.pop(context);
+
+          // Navigate to PostViewScreen to show the created post
+          PostViewScreen.push(context, post);
+
+          // Call external callback if provided
+          widget.onSubmitted?.call(post);
+        },
       ),
     );
   }

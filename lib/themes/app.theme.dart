@@ -15,6 +15,7 @@ class AppTheme {
       // fontFamily: 'Pretendard',
       // Flat 2.0 Design - 회색 배경색 (surface container)
       scaffoldBackgroundColor: cs.surfaceContainerLow,
+
       textTheme: const TextTheme(
         displayLarge: TextStyle(fontSize: 52),
         displayMedium: TextStyle(fontSize: 42),
