@@ -239,6 +239,70 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           icon: FaIcon(FontAwesomeIcons.lightXmark, color: scheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          /// 파일 업로드 버튼 (camera icon)
+          /// File upload button (camera icon)
+          /// Note: FileUpload widget is also in the bottom action bar
+          /// Both buttons provide the same functionality for user convenience
+          FileUpload(
+            file: true,
+            video: true,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              child: const FaIcon(FontAwesomeIcons.lightCamera, size: 24),
+            ),
+            onBeforeUpload: () {
+              // Set uploading state to disable submit button
+              setState(() {
+                isUploading = true;
+              });
+            },
+            onUploaded: (url) {
+              // Add uploaded file URL to form
+              formKey.currentState?.addUploadedFile(url);
+
+              // Upload completed, reset uploading state
+              setState(() {
+                isUploading = false;
+              });
+            },
+            onCancelled: () {
+              // Upload cancelled, reset uploading state
+              setState(() {
+                isUploading = false;
+              });
+            },
+          ),
+
+          /// 제출 버튼 (send icon)
+          /// Submit button (send icon)
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: IconButton(
+              icon: isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: scheme.primary,
+                      ),
+                    )
+                  : FaIcon(
+                      FontAwesomeIcons.paperPlane,
+                      size: 24,
+                      color: scheme.onSurface.withValues(alpha: 0.55),
+                    ),
+              onPressed: (isLoading || isUploading)
+                  ? null
+                  : () async {
+                      /// 폼 제출 실행
+                      /// Execute form submission
+                      await formKey.currentState?.submit();
+                    },
+            ),
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: scheme.outline),
