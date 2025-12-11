@@ -344,6 +344,18 @@ class PostCreateFormState extends State<PostCreateForm> {
     widget.onCancelled?.call();
   }
 
+  /// 외부에서 파일 업로드 완료 후 URL 추가
+  ///
+  /// AppBar의 FileUpload 버튼에서 사용됨
+  void addUploadedFile(String url) {
+    if (mounted) {
+      setState(() {
+        _urls.add(url);
+      });
+      log('파일 추가됨: $url', name: 'PostCreateForm');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -622,7 +634,12 @@ class PostCreateFormState extends State<PostCreateForm> {
           },
           onCancelled: _decrementUploadingCount,
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.only(
+              left: 0,
+              right: 12,
+              bottom: 12,
+              top: 12,
+            ),
             child: FaIcon(
               FontAwesomeIcons.lightCamera,
               color: colorScheme.onSurface,
@@ -635,6 +652,10 @@ class PostCreateFormState extends State<PostCreateForm> {
         // 제출 버튼 (showSubmitButton이 true일 때만)
         if (widget.showSubmitButton)
           IconButton(
+            style: IconButton.styleFrom(
+              padding: const EdgeInsets.only(left: 8), // keep left, drop right
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
             icon: _isLoading
                 ? SizedBox(
@@ -648,9 +669,7 @@ class PostCreateFormState extends State<PostCreateForm> {
                 : FaIcon(
                     FontAwesomeIcons.paperPlane,
                     size: 24,
-                    color: Theme.of(
-                      context,
-                    ).iconTheme.color!.withValues(alpha: 0.35),
+                    color: Theme.of(context).colorScheme.outline,
                   ),
           ),
       ],
