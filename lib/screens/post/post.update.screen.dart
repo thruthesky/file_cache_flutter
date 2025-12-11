@@ -138,7 +138,7 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
             video: true,
             child: Container(
               padding: const EdgeInsets.all(12),
-              child: const FaIcon(FontAwesomeIcons.lightCamera, size: 20),
+              child: const FaIcon(FontAwesomeIcons.lightCamera, size: 24),
             ),
             onBeforeUpload: () {
               // Set uploading state to disable submit button
@@ -177,11 +177,7 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
                         color: scheme.primary,
                       ),
                     )
-                  : FaIcon(
-                      FontAwesomeIcons.paperPlane,
-                      size: 24,
-                      color: scheme.onSurface.withValues(alpha: 0.35),
-                    ),
+                  : FaIcon(FontAwesomeIcons.solidPaperPlane),
               onPressed: (isLoading || isUploading)
                   ? null
                   : () async {

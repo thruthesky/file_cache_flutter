@@ -288,11 +288,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         color: scheme.primary,
                       ),
                     )
-                  : FaIcon(
-                      FontAwesomeIcons.paperPlane,
-                      size: 24,
-                      color: scheme.onSurface.withValues(alpha: 0.55),
-                    ),
+                  : FaIcon(FontAwesomeIcons.solidPaperPlane),
               onPressed: (isLoading || isUploading)
                   ? null
                   : () async {
