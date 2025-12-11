@@ -217,7 +217,7 @@ class _PostReportButtonState extends State<PostReportButton> {
       decoration: BoxDecoration(
         border: Border.all(
           color: scheme.outline,
-          width: 2.0, // Comic Design: 2.0 border
+          width: 1.0, // Comic Design: 2.0 border
         ),
         borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
       ),
