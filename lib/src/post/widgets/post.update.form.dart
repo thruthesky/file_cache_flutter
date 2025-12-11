@@ -250,21 +250,31 @@ class PostUpdateFormState extends State<PostUpdateForm> {
       child: ListView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
+          const SizedBox(height: 16),
           Padding(
-            padding: widget.padding ?? const EdgeInsets.all(16),
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
             child: _buildTitleField(context),
           ),
+
+          const SizedBox(height: 16),
           if (_urls.isNotEmpty || _uploadingCount > 0) ...[
             Padding(
-              padding: widget.padding ?? const EdgeInsets.all(16),
+              padding:
+                  widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
               child: _buildFilePreview(context),
             ),
+
             const SizedBox(height: 16),
           ],
+
           Padding(
-            padding: widget.padding ?? const EdgeInsets.all(16),
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
             child: _buildContentField(context),
           ),
+
+          const SizedBox(height: 16),
           Padding(
             padding:
                 widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),

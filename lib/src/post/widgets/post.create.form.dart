@@ -364,27 +364,38 @@ class PostCreateFormState extends State<PostCreateForm> {
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           if (widget.showCategorySelector) ...[
+            const SizedBox(height: 16),
             Padding(
-              padding: widget.padding ?? const EdgeInsets.all(16),
+              padding:
+                  widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
               child: _buildCategorySelector(context),
             ),
-            const SizedBox(height: 16),
           ],
+
+          const SizedBox(height: 16),
           Padding(
-            padding: widget.padding ?? const EdgeInsets.all(16),
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
             child: _buildTitleField(context),
           ),
+
+          const SizedBox(height: 16),
           if (_urls.isNotEmpty || _uploadingCount > 0) ...[
             Padding(
-              padding: widget.padding ?? const EdgeInsets.all(16),
+              padding:
+                  widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
               child: _buildUploadPreview(context),
             ),
             const SizedBox(height: 16),
           ],
+
           Padding(
-            padding: widget.padding ?? const EdgeInsets.all(16),
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
             child: _buildContentField(context),
           ),
+
+          const SizedBox(height: 16),
           Padding(
             padding:
                 widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),
