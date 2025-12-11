@@ -351,527 +351,546 @@ class _PostViewScreenState extends State<PostViewScreen> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: BackButton(
-          onPressed: () => Navigator.of(context).canPop()
-              ? Navigator.of(context).pop()
-              : context.go(HomeScreen.routeName),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: IconButton(
-              icon: FaIcon(FontAwesomeIcons.bars, size: 20),
-              onPressed: _showPostOptions,
-            ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          leading: BackButton(
+            onPressed: () => Navigator.of(context).canPop()
+                ? Navigator.of(context).pop()
+                : context.go(HomeScreen.routeName),
           ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: scheme.outlineVariant),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: IconButton(
+                icon: FaIcon(FontAwesomeIcons.bars, size: 20),
+                onPressed: _showPostOptions,
+              ),
+            ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(height: 1, color: scheme.outlineVariant),
+          ),
         ),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : CustomScrollView(
-              controller: _scrollController,
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              slivers: [
-                /// Main content
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Blocked(
-                        otherUserUid: firebaseUid,
-                        yes: () => GestureDetector(
-                          onTap: () {
-                            showUnblockDialog(
-                              context: context,
-                              otherUserUid: firebaseUid,
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Avatar(photoUrl: photoUrl),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    '${PhilgoTr.of(context)!.post_from_blocked_user} $nickname',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontStyle: FontStyle.italic,
-                                      color: scheme.onSurface.withValues(
-                                        alpha: 0.6,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        no: () => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            /// Post title - larger and more prominent
-                            Text(
-                              subject,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            /// Avatar, name, and date
-                            GestureDetector(
-                              onTap: () {
-                                ProfileViewScreen.push(
-                                  context,
-                                  firebaseUid: firebaseUid,
-                                  nickname: nickname,
-                                  photoUrl: photoUrl,
-                                );
-                              },
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : CustomScrollView(
+                controller: _scrollController,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                slivers: [
+                  /// Main content
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        Blocked(
+                          otherUserUid: firebaseUid,
+                          yes: () => GestureDetector(
+                            onTap: () {
+                              showUnblockDialog(
+                                context: context,
+                                otherUserUid: firebaseUid,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Avatar(photoUrl: photoUrl, size: 40),
+                                  Avatar(photoUrl: photoUrl),
                                   const SizedBox(width: 12),
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          nickname,
-                                          style: theme.textTheme.bodyLarge
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          formatPostDate(stamp),
-                                          style: theme.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: scheme.onSurface
-                                                    .withValues(alpha: 0.6),
-                                              ),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      '${PhilgoTr.of(context)!.post_from_blocked_user} $nickname',
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            fontStyle: FontStyle.italic,
+                                            color: scheme.onSurface.withValues(
+                                              alpha: 0.6,
+                                            ),
+                                          ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 16),
-
-                            /// Images first (if available)
-                            if (hasImages) ...[
-                              PostViewImages(
-                                files: files,
-                                postIdx: widget.post.idx,
-                                enableHeroTransition: true,
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-
-                            /// Post content
-                            PostViewContent(isLoading: false, content: content),
-                            const SizedBox(height: 24),
-
-                            /// Action buttons with Comic design and border
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: scheme.outline,
-                                    width: 2.0,
-                                  ),
+                          ),
+                          no: () => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              /// Post title - larger and more prominent
+                              Text(
+                                subject,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              child: Row(
-                                children: [
-                                  /// Like button
-                                  _buildComicActionButton(
-                                    icon: isLiked
-                                        ? FontAwesomeIcons.solidThumbsUp
-                                        : FontAwesomeIcons.thumbsUp,
-                                    label: post?.good != null && post!.good > 0
-                                        ? '${post!.good}'
-                                        : null,
-                                    color: scheme.primary,
-                                    onPressed: () async {
-                                      try {
-                                        final updatedGood = await likePost(
-                                          widget.post.idx,
-                                        );
-                                        (post ?? widget.post).good =
-                                            updatedGood;
-                                        if (mounted) {
-                                          setState(() {
-                                            isLiked = true;
-                                          });
-                                        }
-                                        if (context.mounted) {
-                                          showSuccessSnackBar(
-                                            context,
-                                            Lo.of(context)!.postLiked,
-                                          );
-                                        }
-                                      } catch (e) {
-                                        d('Error liking post: $e');
-                                        if (e.toString().contains(
-                                          'already-liked',
-                                        )) {
-                                          if (context.mounted) {
-                                            showErrorSnackBar(
-                                              context,
-                                              Lo.of(context)!.alreadyLikedPost,
-                                            );
-                                          }
-                                        }
-                                      }
-                                    },
-                                  ),
+                              const SizedBox(height: 16),
 
-                                  const SizedBox(width: 8),
-
-                                  const Spacer(),
-
-                                  /// If not my post, show block and report
-                                  if (!isPostMine()) ...[
-                                    _buildComicActionButton(
-                                      icon: FontAwesomeIcons.ban,
-                                      label: PhilgoTr.of(context)!.block,
-                                      onPressed: () {
-                                        showBlockDialog(
-                                          context: context,
-                                          otherUserUid: firebaseUid,
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    PostReportButton(
-                                      type: 'post',
-                                      idx: widget.post.idx,
-                                      post: widget.post,
-                                    ),
-                                  ],
-
-                                  /// If my post, show only edit and delete
-                                  if (isPostMine()) ...[
-                                    _buildComicActionButton(
-                                      icon: FontAwesomeIcons.penToSquare,
-                                      label: PhilgoTr.of(context)!.edit,
-                                      onPressed: () async {
-                                        if (post!.no_of_comment >= 1) {
-                                          showInfoDialog(
-                                            context,
-                                            Lo.of(context)!.alert,
-                                            Lo.of(
-                                              context,
-                                            )!.postWithCommentsCannotBeEdited,
-                                          );
-                                          return;
-                                        }
-
-                                        await showPostUpdateDialog(
-                                          context,
-                                          post: post!,
-                                          onUpdated: (updated) {
-                                            widget.post.subject =
-                                                updated.subject;
-                                            widget.post.content =
-                                                updated.content;
-
-                                            if (mounted) {
-                                              setState(() {
-                                                post = updated;
-                                              });
-                                            }
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildComicActionButton(
-                                      icon: FontAwesomeIcons.trash,
-                                      label: PhilgoTr.of(context)!.delete,
-                                      color: scheme.error,
-                                      onPressed: () async {
-                                        if (post!.no_of_comment >= 1) {
-                                          showInfoDialog(
-                                            context,
-                                            Lo.of(context)!.alert,
-                                            Lo.of(
-                                              context,
-                                            )!.postWithCommentsCannotBeDeleted,
-                                          );
-                                          return;
-                                        }
-
-                                        final confirm = await showConfirmDialog(
-                                          message: Lo.of(
-                                            context,
-                                          )!.confirmDeletePost,
-                                        );
-
-                                        if (confirm) {
-                                          await deletePost(widget.post.idx);
-                                          if (context.mounted) {
-                                            context.pop();
-                                          }
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      /// Comment section
-                      CommentDetailListView(
-                        myComment: isCommentMine,
-                        noOfComment: noOfComment,
-                        isLoading: false,
-                        post: post,
-                        onReplied: (createdComment) {
-                          int? where = post?.comments.indexWhere(
-                            (comment) =>
-                                comment.idx == createdComment.idx_parent,
-                          );
-
-                          if (where != null) {
-                            post?.comments.insert(where + 1, createdComment);
-                          }
-
-                          post!.no_of_comment += 1;
-
-                          if (mounted) {
-                            setState(() {});
-                            showSuccessSnackBar(
-                              context,
-                              Lo.of(context)!.commentReplied,
-                            );
-                            // Scroll to bottom to show the new reply
-                            scrollToBottom();
-                          }
-                        },
-                        onUpdated: (oldComment, updatedComment) {
-                          oldComment.content = updatedComment.content;
-                          oldComment.files = updatedComment.files;
-
-                          if (mounted) {
-                            setState(() {});
-                            showSuccessSnackBar(
-                              context,
-                              Lo.of(context)!.commentUpdated,
-                            );
-                            // Scroll to bottom to show the updated comment
-                            scrollToBottom();
-                          }
-                        },
-                        onDeleted: (deletedComment) {
-                          post?.comments.removeWhere(
-                            (comment) => comment.idx == deletedComment.idx,
-                          );
-
-                          post!.no_of_comment -= 1;
-
-                          if (mounted) {
-                            setState(() {});
-                          }
-                        },
-                        onReplyClicked: setReplyMode,
-                        onEditClicked: setEditMode,
-                      ),
-                    ]),
-                  ),
-                ),
-
-                /// Bottom spacing to prevent content from being hidden behind the sticky comment input
-                /// On iOS, we need more space to account for the bottomSheet height
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).viewInsets.bottom > 0
-                        ? MediaQuery.of(context).viewInsets.bottom
-                        : 200,
-                  ),
-                ),
-              ],
-            ),
-
-      /// Sticky comment input at the bottom (like chat apps)
-      bottomSheet: post != null
-          ? Container(
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                border: Border(
-                  top: BorderSide(color: scheme.outlineVariant, width: 1.0),
-                ),
-              ),
-              child: SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Context header (shown when in reply or edit mode)
-                    if (replyingToComment != null || editingComment != null)
-                      Container(
-                        decoration: BoxDecoration(color: scheme.surface),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    editingComment != null
-                                        ? Lo.of(context)!.editing_comment
-                                        : '${Lo.of(context)!.replying_to} ${replyingToComment!.nickname}',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: scheme.primary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-
-                                  /// Comment content preview
-                                  /// 댓글 내용 미리보기
-                                  Text(
-                                    editingComment != null
-                                        ? editingComment!.content
-                                        : replyingToComment!.content,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: scheme.onSurface.withValues(
-                                        alpha: 0.6,
+                              /// Avatar, name, and date
+                              GestureDetector(
+                                onTap: () {
+                                  ProfileViewScreen.push(
+                                    context,
+                                    firebaseUid: firebaseUid,
+                                    nickname: nickname,
+                                    photoUrl: photoUrl,
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Avatar(photoUrl: photoUrl, size: 40),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            nickname,
+                                            style: theme.textTheme.bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            formatPostDate(stamp),
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                                  color: scheme.onSurface
+                                                      .withValues(alpha: 0.6),
+                                                ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              icon: const Icon(Icons.close, size: 20),
-                              onPressed: editingComment != null
-                                  ? cancelEditMode
-                                  : cancelReplyMode,
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              visualDensity: VisualDensity.compact,
-                            ),
-                          ],
+                              const SizedBox(height: 16),
+
+                              /// Images first (if available)
+                              if (hasImages) ...[
+                                PostViewImages(
+                                  files: files,
+                                  postIdx: widget.post.idx,
+                                  enableHeroTransition: true,
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+
+                              /// Post content
+                              PostViewContent(
+                                isLoading: false,
+                                content: content,
+                              ),
+                              const SizedBox(height: 24),
+
+                              /// Action buttons with Comic design and border
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: scheme.outline,
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    /// Like button
+                                    _buildComicActionButton(
+                                      icon: isLiked
+                                          ? FontAwesomeIcons.solidThumbsUp
+                                          : FontAwesomeIcons.thumbsUp,
+                                      label:
+                                          post?.good != null && post!.good > 0
+                                          ? '${post!.good}'
+                                          : null,
+                                      color: scheme.primary,
+                                      onPressed: () async {
+                                        try {
+                                          final updatedGood = await likePost(
+                                            widget.post.idx,
+                                          );
+                                          (post ?? widget.post).good =
+                                              updatedGood;
+                                          if (mounted) {
+                                            setState(() {
+                                              isLiked = true;
+                                            });
+                                          }
+                                          if (context.mounted) {
+                                            showSuccessSnackBar(
+                                              context,
+                                              Lo.of(context)!.postLiked,
+                                            );
+                                          }
+                                        } catch (e) {
+                                          d('Error liking post: $e');
+                                          if (e.toString().contains(
+                                            'already-liked',
+                                          )) {
+                                            if (context.mounted) {
+                                              showErrorSnackBar(
+                                                context,
+                                                Lo.of(
+                                                  context,
+                                                )!.alreadyLikedPost,
+                                              );
+                                            }
+                                          }
+                                        }
+                                      },
+                                    ),
+
+                                    const SizedBox(width: 8),
+
+                                    const Spacer(),
+
+                                    /// If not my post, show block and report
+                                    if (!isPostMine()) ...[
+                                      _buildComicActionButton(
+                                        icon: FontAwesomeIcons.ban,
+                                        label: PhilgoTr.of(context)!.block,
+                                        onPressed: () {
+                                          showBlockDialog(
+                                            context: context,
+                                            otherUserUid: firebaseUid,
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(width: 8),
+                                      PostReportButton(
+                                        type: 'post',
+                                        idx: widget.post.idx,
+                                        post: widget.post,
+                                      ),
+                                    ],
+
+                                    /// If my post, show only edit and delete
+                                    if (isPostMine()) ...[
+                                      _buildComicActionButton(
+                                        icon: FontAwesomeIcons.penToSquare,
+                                        label: PhilgoTr.of(context)!.edit,
+                                        onPressed: () async {
+                                          if (post!.no_of_comment >= 1) {
+                                            showInfoDialog(
+                                              context,
+                                              Lo.of(context)!.alert,
+                                              Lo.of(
+                                                context,
+                                              )!.postWithCommentsCannotBeEdited,
+                                            );
+                                            return;
+                                          }
+
+                                          await showPostUpdateDialog(
+                                            context,
+                                            post: post!,
+                                            onUpdated: (updated) {
+                                              widget.post.subject =
+                                                  updated.subject;
+                                              widget.post.content =
+                                                  updated.content;
+
+                                              if (mounted) {
+                                                setState(() {
+                                                  post = updated;
+                                                });
+                                              }
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _buildComicActionButton(
+                                        icon: FontAwesomeIcons.trash,
+                                        label: PhilgoTr.of(context)!.delete,
+                                        color: scheme.error,
+                                        onPressed: () async {
+                                          if (post!.no_of_comment >= 1) {
+                                            showInfoDialog(
+                                              context,
+                                              Lo.of(context)!.alert,
+                                              Lo.of(
+                                                context,
+                                              )!.postWithCommentsCannotBeDeleted,
+                                            );
+                                            return;
+                                          }
+
+                                          final confirm =
+                                              await showConfirmDialog(
+                                                message: Lo.of(
+                                                  context,
+                                                )!.confirmDeletePost,
+                                              );
+
+                                          if (confirm) {
+                                            await deletePost(widget.post.idx);
+                                            if (context.mounted) {
+                                              context.pop();
+                                            }
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
-                    // Input field (switches between CommentCreateForm, ReplyToComment, and CommentUpdate)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 16,
-                        bottom: 32,
-                        left: 16,
-                        right: 16,
-                      ),
-                      child: editingComment != null
-                          ? CommentUpdate(
-                              comment: editingComment!,
-                              onUpdated: (updatedComment) {
-                                // Find and update the comment in the list
-                                final index = post?.comments.indexWhere(
-                                  (c) => c.idx == updatedComment.idx,
-                                );
-                                if (index != null && index >= 0) {
-                                  post?.comments[index].content =
-                                      updatedComment.content;
-                                  post?.comments[index].files =
-                                      updatedComment.files;
-                                }
+                        const SizedBox(height: 16),
 
-                                // Exit edit mode and show success
-                                cancelEditMode();
+                        /// Comment section
+                        CommentDetailListView(
+                          myComment: isCommentMine,
+                          noOfComment: noOfComment,
+                          isLoading: false,
+                          post: post,
+                          onReplied: (createdComment) {
+                            int? where = post?.comments.indexWhere(
+                              (comment) =>
+                                  comment.idx == createdComment.idx_parent,
+                            );
 
-                                if (mounted) {
-                                  setState(() {});
-                                  showSuccessSnackBar(
-                                    context,
-                                    Lo.of(context)!.commentUpdated,
-                                  );
-                                }
-                              },
-                            )
-                          : replyingToComment != null
-                          ? ReplyToComment(
-                              parent: replyingToComment!,
-                              onReplied: (createdComment) {
-                                int? where = post?.comments.indexWhere(
-                                  (comment) =>
-                                      comment.idx == createdComment.idx_parent,
-                                );
+                            if (where != null) {
+                              post?.comments.insert(where + 1, createdComment);
+                            }
 
-                                if (where != null) {
-                                  post?.comments.insert(
-                                    where + 1,
-                                    createdComment,
-                                  );
-                                }
+                            post!.no_of_comment += 1;
 
-                                post!.no_of_comment += 1;
+                            if (mounted) {
+                              setState(() {});
+                              showSuccessSnackBar(
+                                context,
+                                Lo.of(context)!.commentReplied,
+                              );
+                              // Scroll to bottom to show the new reply
+                              scrollToBottom();
+                            }
+                          },
+                          onUpdated: (oldComment, updatedComment) {
+                            oldComment.content = updatedComment.content;
+                            oldComment.files = updatedComment.files;
 
-                                // Exit reply mode and show success
-                                cancelReplyMode();
+                            if (mounted) {
+                              setState(() {});
+                              showSuccessSnackBar(
+                                context,
+                                Lo.of(context)!.commentUpdated,
+                              );
+                              // Scroll to bottom to show the updated comment
+                              scrollToBottom();
+                            }
+                          },
+                          onDeleted: (deletedComment) {
+                            post?.comments.removeWhere(
+                              (comment) => comment.idx == deletedComment.idx,
+                            );
 
-                                if (mounted) {
-                                  setState(() {});
-                                  showSuccessSnackBar(
-                                    context,
-                                    Lo.of(context)!.commentReplied,
-                                  );
-                                }
-                              },
-                            )
-                          : CommentCreateForm(
-                              post: post!,
-                              onCreated: (createdComment) {
-                                post?.comments.add(createdComment);
-                                post!.no_of_comment += 1;
+                            post!.no_of_comment -= 1;
 
-                                if (mounted) {
-                                  setState(() {});
-                                  showSuccessSnackBar(
-                                    context,
-                                    Lo.of(context)!.commentCreated,
-                                  );
-                                  // Scroll to bottom to show the new comment
-                                  scrollToBottom();
-                                }
-                              },
-                            ),
+                            if (mounted) {
+                              setState(() {});
+                            }
+                          },
+                          onReplyClicked: setReplyMode,
+                          onEditClicked: setEditMode,
+                        ),
+                      ]),
                     ),
-                  ],
-                ),
+                  ),
+
+                  /// Bottom spacing to prevent content from being hidden behind the sticky comment input
+                  /// On iOS, we need more space to account for the bottomSheet height
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).viewInsets.bottom > 0
+                          ? MediaQuery.of(context).viewInsets.bottom
+                          : 200,
+                    ),
+                  ),
+                ],
               ),
-            )
-          : null,
+
+        /// Sticky comment input at the bottom (like chat apps)
+        bottomSheet: post != null
+            ? Container(
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  border: Border(
+                    top: BorderSide(color: scheme.outlineVariant, width: 1.0),
+                  ),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Context header (shown when in reply or edit mode)
+                      if (replyingToComment != null || editingComment != null)
+                        Container(
+                          decoration: BoxDecoration(color: scheme.surface),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      editingComment != null
+                                          ? Lo.of(context)!.editing_comment
+                                          : '${Lo.of(context)!.replying_to} ${replyingToComment!.nickname}',
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: scheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 4),
+
+                                    /// Comment content preview
+                                    /// 댓글 내용 미리보기
+                                    Text(
+                                      editingComment != null
+                                          ? editingComment!.content
+                                          : replyingToComment!.content,
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: scheme.onSurface.withValues(
+                                              alpha: 0.6,
+                                            ),
+                                          ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(Icons.close, size: 20),
+                                onPressed: editingComment != null
+                                    ? cancelEditMode
+                                    : cancelReplyMode,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                visualDensity: VisualDensity.compact,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // Input field (switches between CommentCreateForm, ReplyToComment, and CommentUpdate)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 16,
+                          bottom: 32,
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: editingComment != null
+                            ? CommentUpdate(
+                                comment: editingComment!,
+                                onUpdated: (updatedComment) {
+                                  // Find and update the comment in the list
+                                  final index = post?.comments.indexWhere(
+                                    (c) => c.idx == updatedComment.idx,
+                                  );
+                                  if (index != null && index >= 0) {
+                                    post?.comments[index].content =
+                                        updatedComment.content;
+                                    post?.comments[index].files =
+                                        updatedComment.files;
+                                  }
+
+                                  // Exit edit mode and show success
+                                  cancelEditMode();
+
+                                  if (mounted) {
+                                    setState(() {});
+                                    showSuccessSnackBar(
+                                      context,
+                                      Lo.of(context)!.commentUpdated,
+                                    );
+                                  }
+                                },
+                              )
+                            : replyingToComment != null
+                            ? ReplyToComment(
+                                parent: replyingToComment!,
+                                onReplied: (createdComment) {
+                                  int? where = post?.comments.indexWhere(
+                                    (comment) =>
+                                        comment.idx ==
+                                        createdComment.idx_parent,
+                                  );
+
+                                  if (where != null) {
+                                    post?.comments.insert(
+                                      where + 1,
+                                      createdComment,
+                                    );
+                                  }
+
+                                  post!.no_of_comment += 1;
+
+                                  // Exit reply mode and show success
+                                  cancelReplyMode();
+
+                                  if (mounted) {
+                                    setState(() {});
+                                    showSuccessSnackBar(
+                                      context,
+                                      Lo.of(context)!.commentReplied,
+                                    );
+                                  }
+                                },
+                              )
+                            : CommentCreateForm(
+                                post: post!,
+                                onCreated: (createdComment) {
+                                  post?.comments.add(createdComment);
+                                  post!.no_of_comment += 1;
+
+                                  if (mounted) {
+                                    setState(() {});
+                                    showSuccessSnackBar(
+                                      context,
+                                      Lo.of(context)!.commentCreated,
+                                    );
+                                    // Scroll to bottom to show the new comment
+                                    scrollToBottom();
+                                  }
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : null,
+      ),
     );
   }
 }

@@ -66,9 +66,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           setState(() {});
         },
         builder: (context, user) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          return GestureDetector(
+            // Dismiss keyboard when tapping outside input fields
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            // Allow interactions with child widgets
+            behavior: HitTestBehavior.translucent,
+            child: ListView(
+              // Dismiss keyboard when scrolling/dragging
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.zero,
               children: [
                 SizedBox(height: 24),
 
