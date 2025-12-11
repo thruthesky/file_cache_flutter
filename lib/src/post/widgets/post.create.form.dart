@@ -26,6 +26,7 @@
 /// )
 /// ```
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -219,7 +220,9 @@ class PostCreateFormState extends State<PostCreateForm> {
     setState(() {
       _uploadingCount++;
     });
-    widget.onUploadingChanged?.call(true);
+    scheduleMicrotask(() {
+      widget.onUploadingChanged?.call(true);
+    });
   }
 
   /// 업로드 카운트 감소 (콜백 호출)
@@ -228,7 +231,9 @@ class PostCreateFormState extends State<PostCreateForm> {
       _uploadingCount--;
     });
     if (_uploadingCount == 0) {
-      widget.onUploadingChanged?.call(false);
+      scheduleMicrotask(() {
+        widget.onUploadingChanged?.call(false);
+      });
     }
   }
 
@@ -297,17 +302,17 @@ class PostCreateFormState extends State<PostCreateForm> {
   }
 
   /// 폼 초기화
-  void reset() {
-    _titleController.clear();
-    _contentController.clear();
-    setState(() {
-      _selectedPostId = widget.postId;
-      _selectedCategory = widget.category;
-      _urls.clear();
-      _isLoading = false;
-      _uploadingCount = 0;
-    });
-  }
+  // void reset() {
+  //   _titleController.clear();
+  //   _contentController.clear();
+  //   setState(() {
+  //     _selectedPostId = widget.postId;
+  //     _selectedCategory = widget.category;
+  //     _urls.clear();
+  //     _isLoading = false;
+  //     _uploadingCount = 0;
+  //   });
+  // }
 
   /// 업로드된 파일 삭제 (서버에서도 삭제)
   Future<void> deleteUploadedFile(String url) async {
