@@ -60,18 +60,10 @@ class Avatar extends StatelessWidget {
         // 이미지 빌더: 원형 아바타로 표시
         imageBuilder: (context, imageProvider) =>
             CircleAvatar(backgroundImage: imageProvider),
-        // 로딩 중: 크기에 맞는 작은 로딩 인디케이터 표시
-        placeholder: (context, url) => SizedBox(
-          width: size,
-          height: size,
-          child: Center(
-            child: SizedBox(
-              width: size * 0.5,
-              height: size * 0.5,
-              child: const CircularProgressIndicator(strokeWidth: 2),
-            ),
-          ),
-        ),
+        // 로딩 중: 기본 아이콘 표시 (로딩 인디케이터 대신)
+        // 캐시된 이미지는 즉시 표시되므로 깜빡임 방지
+        placeholder: (context, url) =>
+            CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
         // 에러 발생 시: 기본 아이콘 표시
         errorWidget: (context, url, error) =>
             CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),

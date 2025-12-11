@@ -77,15 +77,21 @@ class _PushNotificationIconState extends State<PushNotificationIcon> {
   Widget build(BuildContext context) {
     return Login(
       builder: (uid) => StreamBuilder(
-        initialData: null,
         stream: FirebaseDatabase.instance
             .ref(
               '${MessagingConfig.subscribePath}/${widget.subscriptionId}/$uid',
             )
             .onValue,
         builder: (context, event) {
-          if (event.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator.adaptive();
+          // Show loading indicator only on initial load (no data yet)
+          // Don't show loading on rebuilds when we already have data
+          if (event.connectionState == ConnectionState.waiting &&
+              !event.hasData) {
+            return const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+            );
           }
 
           if (event.hasError) {
