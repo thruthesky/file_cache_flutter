@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/functions/init.functions.dart';
+import 'package:philgo/functions/init/build_number_check.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
@@ -91,19 +92,9 @@ class _MyAppState extends State<MyApp> {
       /// Shorebird 코드 푸시 초기화 (180초 주기 업데이트 확인)
       /// Initialize Shorebird Code Push (check for updates every 180 seconds)
       initShorebirdCodePush();
-    });
 
-    // Timer(const Duration(seconds: 2), () {
-    //   PostCreateScreen.push(
-    //     globalContext,
-    //     postId: 'temp',
-    //     content: 'Hello from main.dart!',
-    //     xFiles: [
-    //       XFile('/Users/thruthesky/Documents/assets/small/news.jpg'),
-    //       XFile('/Users/thruthesky/Documents/assets/small/tv.jpg'),
-    //     ],
-    //   );
-    // });
+      initMinimalBuildNumberCheck();
+    });
   }
 
   @override

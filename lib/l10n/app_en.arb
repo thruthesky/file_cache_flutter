@@ -1247,7 +1247,7 @@
   "@hotelsDesc": {
     "description": "Hotels category description"
   },
-  "carRental": "Car Rental",
+  "carRental": "Car Rent",
   "@carRental": {
     "description": "Car rental category name"
   },
@@ -1479,7 +1479,7 @@
   "@appSlogan": {
     "description": "App slogan displayed on entry screen"
   },
-  "categoryFreetalk": "Free Talk",
+  "categoryFreetalk": "Discussion",
   "@categoryFreetalk": {
     "description": "Free talk category name"
   },
@@ -1487,7 +1487,7 @@
   "@categoryQna": {
     "description": "Q&A category name"
   },
-  "categoryBuyandsell": "Buy & Sell",
+  "categoryBuyandsell": "Selling",
   "@categoryBuyandsell": {
     "description": "Buy and sell category name"
   },
@@ -1595,7 +1595,7 @@
   "@subCategoryInfo": {
     "description": "Info subcategory name"
   },
-  "subCategoryKoPhCouple": "Korean-Filipino Couple",
+  "subCategoryKoPhCouple": "KoPhil Couple",
   "@subCategoryKoPhCouple": {
     "description": "Korean-Filipino couple subcategory name"
   },
@@ -1619,7 +1619,7 @@
   "@subCategoryMissing": {
     "description": "Missing subcategory name"
   },
-  "subCategoryIntlMarriage": "International Marriage",
+  "subCategoryIntlMarriage": "Marriage",
   "@subCategoryIntlMarriage": {
     "description": "International marriage subcategory name"
   },
@@ -1639,7 +1639,7 @@
   "@subCategoryNotice": {
     "description": "Notice subcategory name"
   },
-  "subCategoryExperience": "Experience",
+  "subCategoryExperience": "Knowhow",
   "@subCategoryExperience": {
     "description": "Experience subcategory name"
   },
@@ -1663,7 +1663,7 @@
   "@subCategoryExchange": {
     "description": "Peso exchange subcategory name"
   },
-  "subCategoryPhone": "Mobile Phone",
+  "subCategoryPhone": "Phone Selling",
   "@subCategoryPhone": {
     "description": "Mobile phone subcategory name"
   },
@@ -1695,7 +1695,7 @@
   "@subCategoryHouseRental": {
     "description": "House rental subcategory name"
   },
-  "subCategoryCarRental": "Car Rental",
+  "subCategoryCarRental": "Car Rent",
   "@subCategoryCarRental": {
     "description": "Car rental subcategory name"
   },
