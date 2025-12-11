@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/extensions/nav.context.dart';
 import 'package:philgo/screens/home/home.globals.dart';
-import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_api/philgo_api.dart';
 
