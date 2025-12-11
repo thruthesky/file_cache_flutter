@@ -736,5 +736,14 @@ class PhilgoTrKo extends PhilgoTr {
   String get subCategoryUsedCar => '중고차';
 
   @override
+  String get subCategoryManila => '마닐라';
+
+  @override
+  String get subCategoryCebu => '세부';
+
+  @override
+  String get subCategoryAngeles => '앙헬레스';
+
+  @override
   String get categoryAll => '전체';
 }

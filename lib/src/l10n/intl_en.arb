@@ -855,5 +855,9 @@
     "subCategoryCarRental": "Car Rent",
     "subCategoryUsedCar": "Used Car",
 
+    "subCategoryManila": "Manila",
+    "subCategoryCebu": "Cebu",
+    "subCategoryAngeles": "Angeles",
+
     "categoryAll": "All"
 }

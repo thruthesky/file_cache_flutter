@@ -225,5 +225,9 @@
     "subCategoryCarRental": "렌트카",
     "subCategoryUsedCar": "중고차",
 
+    "subCategoryManila": "마닐라",
+    "subCategoryCebu": "세부",
+    "subCategoryAngeles": "앙헬레스",
+
     "categoryAll": "전체"
 }

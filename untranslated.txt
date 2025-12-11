@@ -1,1 +1,13 @@
-{}
+{
+  "ja": [
+    "subCategoryManila",
+    "subCategoryCebu",
+    "subCategoryAngeles"
+  ],
+
+  "zh": [
+    "subCategoryManila",
+    "subCategoryCebu",
+    "subCategoryAngeles"
+  ]
+}

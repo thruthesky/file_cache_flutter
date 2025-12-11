@@ -133,5 +133,10 @@ Map<String, String> _buildTranslationMap(PhilgoTr tr) {
     '주택임대': tr.subCategoryHouseRental,
     '렌트카': tr.subCategoryCarRental,
     '중고차': tr.subCategoryUsedCar,
+
+    // 지역 카테고리 (Region categories)
+    '마닐라': tr.subCategoryManila,
+    '세부': tr.subCategoryCebu,
+    '앙헬레스': tr.subCategoryAngeles,
   };
 }

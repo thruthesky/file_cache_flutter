@@ -736,5 +736,14 @@ class PhilgoTrJa extends PhilgoTr {
   String get subCategoryUsedCar => '中古車';
 
   @override
+  String get subCategoryManila => 'Manila';
+
+  @override
+  String get subCategoryCebu => 'Cebu';
+
+  @override
+  String get subCategoryAngeles => 'Angeles';
+
+  @override
   String get categoryAll => 'すべて';
 }

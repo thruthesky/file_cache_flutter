@@ -1100,7 +1100,7 @@ abstract class PhilgoTr {
   /// No description provided for @categoryFreetalk.
   ///
   /// In en, this message translates to:
-  /// **'Free Talk'**
+  /// **'Discussion'**
   String get categoryFreetalk;
 
   /// No description provided for @categoryQna.
@@ -1112,7 +1112,7 @@ abstract class PhilgoTr {
   /// No description provided for @categoryBuyandsell.
   ///
   /// In en, this message translates to:
-  /// **'Buy & Sell'**
+  /// **'Selling'**
   String get categoryBuyandsell;
 
   /// No description provided for @categoryBlog.
@@ -1274,7 +1274,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryKoPhCouple.
   ///
   /// In en, this message translates to:
-  /// **'Korean-Filipino Couple'**
+  /// **'KoPhil Couple'**
   String get subCategoryKoPhCouple;
 
   /// No description provided for @subCategoryKopino.
@@ -1310,7 +1310,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryIntlMarriage.
   ///
   /// In en, this message translates to:
-  /// **'International Marriage'**
+  /// **'Marriage'**
   String get subCategoryIntlMarriage;
 
   /// No description provided for @subCategoryMeeting.
@@ -1340,7 +1340,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryExperience.
   ///
   /// In en, this message translates to:
-  /// **'Experience'**
+  /// **'Knowhow'**
   String get subCategoryExperience;
 
   /// No description provided for @subCategoryStudyLearn.
@@ -1376,7 +1376,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryPhone.
   ///
   /// In en, this message translates to:
-  /// **'Mobile Phone'**
+  /// **'Phone Selling'**
   String get subCategoryPhone;
 
   /// No description provided for @subCategoryHotel.
@@ -1424,7 +1424,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryCarRental.
   ///
   /// In en, this message translates to:
-  /// **'Car Rental'**
+  /// **'Car Rent'**
   String get subCategoryCarRental;
 
   /// No description provided for @subCategoryUsedCar.
@@ -1432,6 +1432,24 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'Used Car'**
   String get subCategoryUsedCar;
+
+  /// No description provided for @subCategoryManila.
+  ///
+  /// In en, this message translates to:
+  /// **'Manila'**
+  String get subCategoryManila;
+
+  /// No description provided for @subCategoryCebu.
+  ///
+  /// In en, this message translates to:
+  /// **'Cebu'**
+  String get subCategoryCebu;
+
+  /// No description provided for @subCategoryAngeles.
+  ///
+  /// In en, this message translates to:
+  /// **'Angeles'**
+  String get subCategoryAngeles;
 
   /// No description provided for @categoryAll.
   ///

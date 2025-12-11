@@ -584,13 +584,13 @@ class PhilgoTrEn extends PhilgoTr {
   String get report_reason_other => 'Other';
 
   @override
-  String get categoryFreetalk => 'Free Talk';
+  String get categoryFreetalk => 'Discussion';
 
   @override
   String get categoryQna => 'Q&A';
 
   @override
-  String get categoryBuyandsell => 'Buy & Sell';
+  String get categoryBuyandsell => 'Selling';
 
   @override
   String get categoryBlog => 'Blog';
@@ -671,7 +671,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryInfo => 'Info';
 
   @override
-  String get subCategoryKoPhCouple => 'Korean-Filipino Couple';
+  String get subCategoryKoPhCouple => 'KoPhil Couple';
 
   @override
   String get subCategoryKopino => 'Kopino';
@@ -689,7 +689,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryMissing => 'Missing';
 
   @override
-  String get subCategoryIntlMarriage => 'International Marriage';
+  String get subCategoryIntlMarriage => 'Marriage';
 
   @override
   String get subCategoryMeeting => 'Meetup';
@@ -704,7 +704,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryNotice => 'Notice';
 
   @override
-  String get subCategoryExperience => 'Experience';
+  String get subCategoryExperience => 'Knowhow';
 
   @override
   String get subCategoryStudyLearn => 'Study';
@@ -722,7 +722,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryExchange => 'Peso Exchange';
 
   @override
-  String get subCategoryPhone => 'Mobile Phone';
+  String get subCategoryPhone => 'Phone Selling';
 
   @override
   String get subCategoryHotel => 'Hotel';
@@ -740,16 +740,25 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryPersonalMarket => 'Personal Market';
 
   @override
-  String get subCategoryRealEstate => 'Realty';
+  String get subCategoryRealEstate => 'Real Estate';
 
   @override
   String get subCategoryHouseRental => 'House Rental';
 
   @override
-  String get subCategoryCarRental => 'Car Rental';
+  String get subCategoryCarRental => 'Car Rent';
 
   @override
   String get subCategoryUsedCar => 'Used Car';
+
+  @override
+  String get subCategoryManila => 'Manila';
+
+  @override
+  String get subCategoryCebu => 'Cebu';
+
+  @override
+  String get subCategoryAngeles => 'Angeles';
 
   @override
   String get categoryAll => 'All';

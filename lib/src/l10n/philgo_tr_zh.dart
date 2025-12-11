@@ -734,5 +734,14 @@ class PhilgoTrZh extends PhilgoTr {
   String get subCategoryUsedCar => '二手车';
 
   @override
+  String get subCategoryManila => 'Manila';
+
+  @override
+  String get subCategoryCebu => 'Cebu';
+
+  @override
+  String get subCategoryAngeles => 'Angeles';
+
+  @override
   String get categoryAll => '全部';
 }
