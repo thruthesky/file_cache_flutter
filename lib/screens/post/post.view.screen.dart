@@ -316,7 +316,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: color ?? scheme.outline, width: 2.0),
+        border: Border.all(color: color ?? scheme.outline, width: 1.0),
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
@@ -502,8 +502,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
-                                      color: scheme.outline,
-                                      width: 2.0,
+                                      color: scheme.outlineVariant,
+                                      width: 1.0,
                                     ),
                                   ),
                                 ),
