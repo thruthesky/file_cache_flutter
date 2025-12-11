@@ -344,29 +344,52 @@ class PostCreateFormState extends State<PostCreateForm> {
     widget.onCancelled?.call();
   }
 
+  /// 외부에서 파일 업로드 완료 후 URL 추가
+  ///
+  /// AppBar의 FileUpload 버튼에서 사용됨
+  void addUploadedFile(String url) {
+    if (mounted) {
+      setState(() {
+        _urls.add(url);
+      });
+      log('파일 추가됨: $url', name: 'PostCreateForm');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: ListView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: widget.padding ?? const EdgeInsets.all(16),
-        shrinkWrap: true,
         children: [
           if (widget.showCategorySelector) ...[
-            _buildCategorySelector(context),
+            Padding(
+              padding: widget.padding ?? const EdgeInsets.all(16),
+              child: _buildCategorySelector(context),
+            ),
             const SizedBox(height: 16),
           ],
-          _buildTitleField(context),
-          const SizedBox(height: 16),
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildTitleField(context),
+          ),
           if (_urls.isNotEmpty || _uploadingCount > 0) ...[
-            _buildUploadPreview(context),
+            Padding(
+              padding: widget.padding ?? const EdgeInsets.all(16),
+              child: _buildUploadPreview(context),
+            ),
             const SizedBox(height: 16),
           ],
-          _buildContentField(context),
-          const SizedBox(height: 16),
-
-          _buildActionBar(context),
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildContentField(context),
+          ),
+          Padding(
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),
+            child: _buildActionBar(context),
+          ),
         ],
       ),
     );
@@ -602,6 +625,8 @@ class PostCreateFormState extends State<PostCreateForm> {
   }
 
   /// 하단 액션 바 빌드
+  ///
+  /// ListView 외부에 고정되어 항상 하단에 표시
   Widget _buildActionBar(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -645,13 +670,7 @@ class PostCreateFormState extends State<PostCreateForm> {
                       color: colorScheme.primary,
                     ),
                   )
-                : FaIcon(
-                    FontAwesomeIcons.paperPlane,
-                    size: 24,
-                    color: Theme.of(
-                      context,
-                    ).iconTheme.color!.withValues(alpha: 0.35),
-                  ),
+                : FaIcon(FontAwesomeIcons.solidPaperPlane, size: 24),
           ),
       ],
     );

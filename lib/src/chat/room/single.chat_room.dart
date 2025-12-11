@@ -132,9 +132,17 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                 ),
               ),
               Expanded(
-                child: SingleChatRoomMessageList(
-                  roomId: init.join.id,
-                  controller: singleMessageListController,
+                child: GestureDetector(
+                  // Dismiss keyboard when tapping on message list area
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  // Allow scrolling and other interactions
+                  behavior: HitTestBehavior.translucent,
+                  child: SingleChatRoomMessageList(
+                    roomId: init.join.id,
+                    controller: singleMessageListController,
+                  ),
                 ),
               ),
               Blocked(

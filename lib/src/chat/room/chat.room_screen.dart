@@ -106,9 +106,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               body: Column(
                 children: [
                   Expanded(
-                    child: ChatRoomMessageList(
-                      room: init.room,
-                      controller: messageListController,
+                    child: GestureDetector(
+                      // Dismiss keyboard when tapping on message list area
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                      },
+                      // Allow scrolling and other interactions
+                      behavior: HitTestBehavior.translucent,
+                      child: ChatRoomMessageList(
+                        room: init.room,
+                        controller: messageListController,
+                      ),
                     ),
                   ),
                   ChatRoomMessageInput(

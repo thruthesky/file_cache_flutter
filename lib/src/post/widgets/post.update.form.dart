@@ -137,6 +137,18 @@ class PostUpdateFormState extends State<PostUpdateForm> {
     }
   }
 
+  /// 외부에서 파일 업로드 완료 후 URL 추가
+  ///
+  /// AppBar의 FileUpload 버튼에서 사용됨
+  void addUploadedFile(String url) {
+    if (mounted) {
+      setState(() {
+        _urls.add(url);
+      });
+      log('파일 추가됨: $url', name: 'PostUpdateForm');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -233,40 +245,33 @@ class PostUpdateFormState extends State<PostUpdateForm> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
-    return Column(
-      children: [
-        Expanded(
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
+    return Form(
+      key: _formKey,
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        children: [
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildTitleField(context),
+          ),
+          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
+            Padding(
               padding: widget.padding ?? const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTitleField(context),
-                  const SizedBox(height: 16),
-                  _buildContentField(context),
-                  const SizedBox(height: 16),
-                  if (_urls.isNotEmpty || _uploadingCount > 0)
-                    _buildFilePreview(context),
-                  if (_urls.isNotEmpty || _uploadingCount > 0)
-                    const SizedBox(height: 16),
-                ],
-              ),
+              child: _buildFilePreview(context),
             ),
+            const SizedBox(height: 16),
+          ],
+          Padding(
+            padding: widget.padding ?? const EdgeInsets.all(16),
+            child: _buildContentField(context),
           ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: scheme.outline, width: 1.0)),
+          Padding(
+            padding:
+                widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),
+            child: _buildActionBar(context),
           ),
-          padding: const EdgeInsets.all(16),
-          child: SafeArea(top: false, child: _buildActionBar(context)),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -409,65 +414,49 @@ class PostUpdateFormState extends State<PostUpdateForm> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: colorScheme.outline,
-          width: 2.0, // Comic Design: 2.0px 테두리
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        children: [
-          // 파일 업로드 버튼
-          FileUpload(
-            file: true,
-            video: true,
-            onBeforeUpload: _incrementUploadingCount,
-            onUploaded: (url) {
-              log('파일 업로드 완료: $url', name: 'PostUpdateForm');
-              setState(() {
-                _urls.add(url);
-              });
-              _decrementUploadingCount();
-            },
-            onCancelled: _decrementUploadingCount,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              child: FaIcon(
-                FontAwesomeIcons.lightCamera,
-                color: colorScheme.onSurface,
-              ),
+    return Row(
+      children: [
+        // 파일 업로드 버튼
+        FileUpload(
+          file: true,
+          video: true,
+          onBeforeUpload: _incrementUploadingCount,
+          onUploaded: (url) {
+            log('파일 업로드 완료: $url', name: 'PostUpdateForm');
+            setState(() {
+              _urls.add(url);
+            });
+            _decrementUploadingCount();
+          },
+          onCancelled: _decrementUploadingCount,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            child: FaIcon(
+              FontAwesomeIcons.lightCamera,
+              color: colorScheme.onSurface,
             ),
           ),
+        ),
 
-          const Spacer(),
+        const Spacer(),
 
-          // 제출 버튼 (showSubmitButton이 true일 때만)
-          if (widget.showSubmitButton)
-            IconButton(
-              onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
-              icon: _isLoading
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: colorScheme.primary,
-                      ),
-                    )
-                  : FaIcon(
-                      FontAwesomeIcons.paperPlane,
-                      size: 16,
-                      color: Theme.of(
-                        context,
-                      ).iconTheme.color!.withValues(alpha: 0.35),
+        // 제출 버튼 (showSubmitButton이 true일 때만)
+        if (widget.showSubmitButton)
+          IconButton(
+            padding: EdgeInsets.zero,
+            onPressed: (_isLoading || _uploadingCount > 0) ? null : submit,
+            icon: _isLoading
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colorScheme.primary,
                     ),
-            ),
-        ],
-      ),
+                  )
+                : FaIcon(FontAwesomeIcons.solidPaperPlane, size: 24),
+          ),
+      ],
     );
   }
 }
