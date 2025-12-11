@@ -56,7 +56,7 @@ class _CommentDetailState extends State<CommentDetail> {
       decoration: BoxDecoration(
         border: Border.all(
           color: color ?? scheme.outline,
-          width: 2.0, // Comic Design: 2.0 border
+          width: 1.0, // Comic Design: 2.0 border
         ),
         borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
       ),
@@ -197,7 +197,7 @@ class _CommentDetailState extends State<CommentDetail> {
 
                     const SizedBox(height: 12),
                     Wrap(
-                      spacing: 12,
+                      spacing: 8,
                       runSpacing: 8,
                       children: [
                         /// Like button for comments with Comic design (icon only when 0)
