@@ -584,7 +584,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get report_reason_other => 'Other';
 
   @override
-  String get categoryFreetalk => 'Discussion';
+  String get categoryFreetalk => 'FreeTalk';
 
   @override
   String get categoryQna => 'Q&A';
@@ -671,7 +671,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryInfo => 'Info';
 
   @override
-  String get subCategoryKoPhCouple => 'KoPhil Couple';
+  String get subCategoryKoPhCouple => 'Couple';
 
   @override
   String get subCategoryKopino => 'Kopino';
@@ -740,13 +740,13 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryPersonalMarket => 'Personal Market';
 
   @override
-  String get subCategoryRealEstate => 'Real Estate';
+  String get subCategoryRealEstate => 'Realty';
 
   @override
   String get subCategoryHouseRental => 'House Rental';
 
   @override
-  String get subCategoryCarRental => 'Car Rent';
+  String get subCategoryCarRental => 'Rent-car';
 
   @override
   String get subCategoryUsedCar => 'Used Car';

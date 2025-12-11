@@ -797,7 +797,7 @@
         "description": "Report reason for other issues"
     },
 
-    "categoryFreetalk": "Discussion",
+    "categoryFreetalk": "FreeTalk",
     "categoryQna": "Q&A",
     "categoryBuyandsell": "Selling",
     "categoryBlog": "Blog",
@@ -827,7 +827,7 @@
     "subCategoryEncyclopedia": "Encyclopedia",
     "subCategoryHobby": "Hobby",
     "subCategoryInfo": "Info",
-    "subCategoryKoPhCouple": "KoPhil Couple",
+    "subCategoryKoPhCouple": "Couple",
     "subCategoryKopino": "Kopino",
     "subCategoryImmigration": "Immigration",
     "subCategoryPhoto": "Photo",
@@ -850,9 +850,9 @@
     "subCategoryGolf": "Golf",
     "subCategoryPromotion": "Promotion",
     "subCategoryPersonalMarket": "Personal Market",
-    "subCategoryRealEstate": "Real Estate",
+    "subCategoryRealEstate": "Realty",
     "subCategoryHouseRental": "House Rental",
-    "subCategoryCarRental": "Car Rent",
+    "subCategoryCarRental": "Rent-car",
     "subCategoryUsedCar": "Used Car",
 
     "subCategoryManila": "Manila",

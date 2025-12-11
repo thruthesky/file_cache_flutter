@@ -1100,7 +1100,7 @@ abstract class PhilgoTr {
   /// No description provided for @categoryFreetalk.
   ///
   /// In en, this message translates to:
-  /// **'Discussion'**
+  /// **'FreeTalk'**
   String get categoryFreetalk;
 
   /// No description provided for @categoryQna.
@@ -1274,7 +1274,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryKoPhCouple.
   ///
   /// In en, this message translates to:
-  /// **'KoPhil Couple'**
+  /// **'Couple'**
   String get subCategoryKoPhCouple;
 
   /// No description provided for @subCategoryKopino.
@@ -1412,7 +1412,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryRealEstate.
   ///
   /// In en, this message translates to:
-  /// **'Real Estate'**
+  /// **'Realty'**
   String get subCategoryRealEstate;
 
   /// No description provided for @subCategoryHouseRental.
@@ -1424,7 +1424,7 @@ abstract class PhilgoTr {
   /// No description provided for @subCategoryCarRental.
   ///
   /// In en, this message translates to:
-  /// **'Car Rent'**
+  /// **'Rent-car'**
   String get subCategoryCarRental;
 
   /// No description provided for @subCategoryUsedCar.
