@@ -1904,7 +1904,7 @@ abstract class Lo {
   /// Car rental category name
   ///
   /// In en, this message translates to:
-  /// **'Car Rental'**
+  /// **'Car Rent'**
   String get carRental;
 
   /// Car rental category description
@@ -2252,7 +2252,7 @@ abstract class Lo {
   /// Free talk category name
   ///
   /// In en, this message translates to:
-  /// **'Free Talk'**
+  /// **'Discussion'**
   String get categoryFreetalk;
 
   /// Q&A category name
@@ -2264,7 +2264,7 @@ abstract class Lo {
   /// Buy and sell category name
   ///
   /// In en, this message translates to:
-  /// **'Buy & Sell'**
+  /// **'Selling'**
   String get categoryBuyandsell;
 
   /// Blog category name
@@ -2426,7 +2426,7 @@ abstract class Lo {
   /// Korean-Filipino couple subcategory name
   ///
   /// In en, this message translates to:
-  /// **'Korean-Filipino Couple'**
+  /// **'KoPhil Couple'**
   String get subCategoryKoPhCouple;
 
   /// Kopino subcategory name
@@ -2462,7 +2462,7 @@ abstract class Lo {
   /// International marriage subcategory name
   ///
   /// In en, this message translates to:
-  /// **'International Marriage'**
+  /// **'Marriage'**
   String get subCategoryIntlMarriage;
 
   /// Meetup subcategory name
@@ -2492,7 +2492,7 @@ abstract class Lo {
   /// Experience subcategory name
   ///
   /// In en, this message translates to:
-  /// **'Experience'**
+  /// **'Knowhow'**
   String get subCategoryExperience;
 
   /// Study/learn subcategory name
@@ -2528,7 +2528,7 @@ abstract class Lo {
   /// Mobile phone subcategory name
   ///
   /// In en, this message translates to:
-  /// **'Mobile Phone'**
+  /// **'Phone Selling'**
   String get subCategoryPhone;
 
   /// Hotel subcategory name
@@ -2576,7 +2576,7 @@ abstract class Lo {
   /// Car rental subcategory name
   ///
   /// In en, this message translates to:
-  /// **'Car Rental'**
+  /// **'Car Rent'**
   String get subCategoryCarRental;
 
   /// Used car subcategory name

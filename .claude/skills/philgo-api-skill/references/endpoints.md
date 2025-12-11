@@ -19,7 +19,7 @@ PhilGo API는 웹과 앱 개발을 위한 함수 기반 API를 제공합니다.
 
 API 접근 방법, 요청/응답 형식, 인증 등 프로토콜 상세 정보는 별도 문서를 참조하세요:
 
-**📚 [PhilGo API 프로토콜 문서](./philgo-api-protocol.md)**
+**📚 [PhilGo API 프로토콜 문서](./protocol.md)**
 
 주요 내용:
 - `/func.php` 를 통한 API 접근

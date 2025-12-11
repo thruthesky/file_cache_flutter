@@ -969,7 +969,7 @@ class LoEn extends Lo {
   String get hotelsDesc => 'Places to stay';
 
   @override
-  String get carRental => 'Car Rental';
+  String get carRental => 'Car Rent';
 
   @override
   String get carRentalDesc => 'Vehicle hire services';
@@ -1148,13 +1148,13 @@ class LoEn extends Lo {
   String get appSlogan => 'Everything about the Philippines';
 
   @override
-  String get categoryFreetalk => 'Free Talk';
+  String get categoryFreetalk => 'Discussion';
 
   @override
   String get categoryQna => 'Q&A';
 
   @override
-  String get categoryBuyandsell => 'Buy & Sell';
+  String get categoryBuyandsell => 'Selling';
 
   @override
   String get categoryBlog => 'Blog';
@@ -1235,7 +1235,7 @@ class LoEn extends Lo {
   String get subCategoryInfo => 'Info';
 
   @override
-  String get subCategoryKoPhCouple => 'Korean-Filipino Couple';
+  String get subCategoryKoPhCouple => 'KoPhil Couple';
 
   @override
   String get subCategoryKopino => 'Kopino';
@@ -1253,7 +1253,7 @@ class LoEn extends Lo {
   String get subCategoryMissing => 'Missing';
 
   @override
-  String get subCategoryIntlMarriage => 'International Marriage';
+  String get subCategoryIntlMarriage => 'Marriage';
 
   @override
   String get subCategoryMeeting => 'Meetup';
@@ -1268,7 +1268,7 @@ class LoEn extends Lo {
   String get subCategoryNotice => 'Notice';
 
   @override
-  String get subCategoryExperience => 'Experience';
+  String get subCategoryExperience => 'Knowhow';
 
   @override
   String get subCategoryStudyLearn => 'Study';
@@ -1286,7 +1286,7 @@ class LoEn extends Lo {
   String get subCategoryExchange => 'Peso Exchange';
 
   @override
-  String get subCategoryPhone => 'Mobile Phone';
+  String get subCategoryPhone => 'Phone Selling';
 
   @override
   String get subCategoryHotel => 'Hotel';
@@ -1310,7 +1310,7 @@ class LoEn extends Lo {
   String get subCategoryHouseRental => 'House Rental';
 
   @override
-  String get subCategoryCarRental => 'Car Rental';
+  String get subCategoryCarRental => 'Car Rent';
 
   @override
   String get subCategoryUsedCar => 'Used Car';
