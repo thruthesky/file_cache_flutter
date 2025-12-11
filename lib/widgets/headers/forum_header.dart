@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -54,7 +55,7 @@ class _ForumHeaderState extends State<ForumHeader> {
     /// 전체 카테고리 목록 가져오기
     /// Get all categories list
     final allCategories = PhilgoCategory.menuCategories(
-      includeTemp: kDebugMode,
+      includeTemp: isDeveloperModeEnabled,
     );
 
     /// 확장 상태에 따라 표시할 카테고리 결정 (축소: 12개, 확장: 전체)

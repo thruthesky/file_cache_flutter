@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/themes/app.spacing.dart';
 
@@ -345,20 +346,29 @@ class _VersionScreenState extends State<VersionScreen> {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: sp.s8),
-      child: Row(
-        children: [
-          FaIcon(icon, size: 18, color: scheme.primary),
-          SizedBox(width: sp.s8),
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: scheme.primary,
+    int count = 0;
+
+    return InkWell(
+      onTap: () {
+        if (++count > 5) {
+          isDeveloperModeEnabled = true;
+        }
+      },
+      child: Padding(
+        padding: EdgeInsets.only(bottom: sp.s8),
+        child: Row(
+          children: [
+            FaIcon(icon, size: 18, color: scheme.primary),
+            SizedBox(width: sp.s8),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.primary,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

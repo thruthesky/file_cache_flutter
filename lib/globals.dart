@@ -10,3 +10,4 @@ class Globals {
 
 Lo get T => Lo.of(globalContext)!;
 
+bool isDeveloperModeEnabled = false;
