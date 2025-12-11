@@ -2,7 +2,10 @@
 /// UI/UX related functions
 library;
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -231,13 +234,64 @@ void showShorebirdUpdateDialog() {
 
               /// [내용 섹션] - 안내 메시지 (bodyLarge - 한단계 크게)
               /// Content Section - Information message (bodyLarge - one step larger)
-              Text(
-                    lo.shorebirdUpdateMessage,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                      height: 1.6,
-                    ),
-                    textAlign: TextAlign.center,
+              Column(
+                    children: [
+                      /// 첫 번째 줄: 앱이 업데이트 되었습니다
+                      /// First line: App has been updated
+                      Text(
+                        lo.shorebirdUpdateMessage,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                          height: 1.6,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: sp.s8),
+
+                      /// 두 번째 줄: 앱을 재시작해주세요 (강조 스타일)
+                      /// Second line: Please restart the app (emphasized style)
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: sp.s12,
+                          vertical: sp.s8,
+                        ),
+                        decoration: BoxDecoration(
+                          // 강조 배경색 (primary 색상의 연한 버전)
+                          // Emphasized background color (lighter version of primary)
+                          color: scheme.primaryContainer.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: scheme.primary.withValues(alpha: 0.3),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // 강조 아이콘 (Font Awesome Pro Light)
+                            // Emphasis icon (Font Awesome Pro Light)
+                            FaIcon(
+                              FontAwesomeIcons.lightRotate,
+                              color: scheme.primary,
+                              size: 16,
+                            ),
+                            SizedBox(width: sp.s8),
+                            Text(
+                              lo.shorebirdRestartMessage,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                // 강조를 위해 primary 색상과 bold 적용
+                                // Apply primary color and bold for emphasis
+                                color: scheme.primary,
+                                fontWeight: FontWeight.bold,
+                                height: 1.4,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   )
                   .animate()
                   /// 페이드인 + 슬라이드 효과 (딜레이 적용)
@@ -253,85 +307,78 @@ void showShorebirdUpdateDialog() {
 
               SizedBox(height: sp.s24),
 
-              /// [버튼 섹션] - Comic 스타일 확인 버튼 (펄스 애니메이션)
-              /// Button Section - Comic style confirm button (pulse animation)
-              SizedBox(
-                    /// 버튼 너비를 100%로 설정
-                    /// Set button width to 100%
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-
-                      /// Comic 스타일 버튼 스타일
-                      /// Comic style button styling
-                      style: OutlinedButton.styleFrom(
-                        /// 배경색
-                        /// Background color
-                        backgroundColor: scheme.primary,
-
-                        /// 테두리
-                        /// Border
-                        side: BorderSide(color: scheme.outline, width: 2.0),
-
-                        /// 둥근 모서리
-                        /// Rounded corners
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-
-                        /// 패딩
-                        /// Padding
-                        padding: EdgeInsets.symmetric(
-                          vertical: sp.s12,
-                          horizontal: sp.s24,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          /// 다운로드 아이콘 추가 (Font Awesome Light 스타일)
-                          /// Download icon added (Font Awesome Light style)
-                          FaIcon(
-                            FontAwesomeIcons.lightDownload,
-                            size: 16,
-                            color: scheme.onPrimary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            lo.confirm,
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: scheme.onPrimary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+              /// [버튼 섹션] - 확인 버튼과 종료하기 버튼
+              /// Button Section - Confirm button and Exit button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  /// 확인 버튼 (회색, 아이콘 없음)
+                  /// Confirm button (gray, no icon)
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      foregroundColor: scheme.onSurface.withValues(alpha: 0.6),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: sp.s16,
+                        vertical: sp.s12,
                       ),
                     ),
-                  )
-                  .animate()
-                  /// 페이드인 + 스케일 효과 (딜레이 적용)
-                  /// Fade in + scale effect (with delay)
-                  .fadeIn(delay: 600.ms, duration: 300.ms)
-                  .scale(
-                    begin: const Offset(0.8, 0.8),
-                    end: const Offset(1.0, 1.0),
-                    delay: 600.ms,
-                    duration: 400.ms,
-                    curve: Curves.elasticOut,
-                  )
-                  /// 부드러운 펄스 효과 (무한 반복) - 버튼 주목 유도
-                  /// Smooth pulse effect (infinite loop) - draw attention to button
-                  .then()
-                  .animate(
-                    onPlay: (controller) => controller.repeat(reverse: true),
-                  )
-                  .scale(
-                    begin: const Offset(1.0, 1.0),
-                    end: const Offset(1.03, 1.03),
-                    duration: 1200.ms,
-                    curve: Curves.easeInOut,
+                    child: Text(
+                      lo.confirm,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: scheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
                   ),
+
+                  SizedBox(width: sp.s12),
+
+                  /// 종료하기 버튼 (빨간색, 아이콘 포함)
+                  /// Exit button (red, with icon)
+                  OutlinedButton(
+                    onPressed: () {
+                      // 앱 강제 종료
+                      // Force exit the app
+                      if (Platform.isAndroid) {
+                        SystemNavigator.pop();
+                      } else if (Platform.isIOS) {
+                        exit(0);
+                      }
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: scheme.error,
+                      side: BorderSide(color: scheme.error, width: 2.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: sp.s16,
+                        vertical: sp.s12,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        /// 종료 아이콘 (Font Awesome Light 스타일)
+                        /// Exit icon (Font Awesome Light style)
+                        FaIcon(
+                          FontAwesomeIcons.lightPowerOff,
+                          size: 16,
+                          color: scheme.error,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          lo.exitApp,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: scheme.error,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

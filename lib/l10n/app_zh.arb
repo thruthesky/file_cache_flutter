@@ -1724,9 +1724,13 @@
   "@shorebirdUpdateTitle": {
     "description": "Shorebird update dialog title"
   },
-  "shorebirdUpdateMessage": "PhilGo应用已更新。\n请退出后重新启动。",
+  "shorebirdUpdateMessage": "PhilGo应用已更新。",
   "@shorebirdUpdateMessage": {
-    "description": "Shorebird update dialog message"
+    "description": "Shorebird update dialog message - first line"
+  },
+  "shorebirdRestartMessage": "请退出后重新启动。",
+  "@shorebirdRestartMessage": {
+    "description": "Shorebird update dialog restart message - emphasized second line"
   },
   "confirm": "确认",
   "@confirm": {
@@ -1781,5 +1785,17 @@
   "nodename": "节点名",
   "release": "发布版本",
   "utsnameVersion": "版本",
-  "machine": "机器"
+  "machine": "机器",
+  "upgradeNewVersion": "新版本已发布。",
+  "@upgradeNewVersion": {
+    "description": "First message in upgrade dialog - new version announcement"
+  },
+  "upgradeForBetterService": "请更新应用以获得更好的服务。",
+  "@upgradeForBetterService": {
+    "description": "Second message in upgrade dialog - update request"
+  },
+  "exitApp": "退出",
+  "@exitApp": {
+    "description": "Exit app button text"
+  }
 }

@@ -1304,7 +1304,10 @@ class LoKo extends Lo {
   String get shorebirdUpdateTitle => '업데이트 완료';
 
   @override
-  String get shorebirdUpdateMessage => '필고 앱이 업데이트 되었습니다.\n종료 후 다시 실행해주세요.';
+  String get shorebirdUpdateMessage => '필고 앱이 업데이트 되었습니다.';
+
+  @override
+  String get shorebirdRestartMessage => '종료 후 다시 실행해주세요.';
 
   @override
   String get confirm => '확인';
@@ -1458,4 +1461,13 @@ class LoKo extends Lo {
 
   @override
   String get machine => '머신';
+
+  @override
+  String get upgradeNewVersion => '새로운 버전이 출시되었습니다.';
+
+  @override
+  String get upgradeForBetterService => '더 나은 서비스를 위해 앱을 업데이트해 주세요.';
+
+  @override
+  String get exitApp => '종료하기';
 }

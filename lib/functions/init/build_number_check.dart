@@ -15,6 +15,7 @@ import 'package:philgo/router.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 
 /// 앱 실행 후 약 20초 후에 빌드 번호를 점검합니다.
 /// API func('version')을 호출하여 서버에서 최소 요구 빌드 번호를 가져옵니다.
@@ -50,7 +51,7 @@ void initMinimalBuildNumberCheck() {
 
       // 4. 현재 빌드 번호가 최소 요구 빌드 번호보다 낮으면 업그레이드 안내 다이얼로그 표시
       if (currentBuildNumber < minBuildNumber) {
-        _showUpgradeDialog();
+        showUpgradeDialog();
       }
     } catch (e) {
       // API 호출 실패 또는 파싱 오류 시 로그만 출력하고 종료
@@ -62,7 +63,7 @@ void initMinimalBuildNumberCheck() {
 
 /// 업그레이드 안내 다이얼로그를 표시합니다.
 /// Comic 스타일 다이얼로그를 사용하며, 플랫폼에 따라 적절한 스토어로 이동합니다.
-void _showUpgradeDialog() {
+void showUpgradeDialog() {
   // globalContext가 마운트되어 있는지 확인
   if (!globalNavigatorKey.currentContext!.mounted) {
     debugPrint('[BuildNumberCheck] Context가 마운트되어 있지 않습니다.');
@@ -114,11 +115,22 @@ void _showUpgradeDialog() {
               ),
               const SizedBox(height: 16),
 
-              // 안내 메시지
+              // 안내 메시지 1: 새 버전 출시 알림 (bodyLarge 스타일)
               Text(
-                '새로운 버전이 출시되었습니다.\n더 나은 서비스를 위해 앱을 업데이트해 주세요.',
+                Lo.of(dialogContext)!.upgradeNewVersion,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: scheme.onSurface,
+                  fontWeight: FontWeight.w600, // 첫 번째 메시지 강조
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+
+              // 안내 메시지 2: 업데이트 요청 (bodyMedium 스타일로 더 작게 표시)
+              Text(
+                Lo.of(dialogContext)!.upgradeForBetterService,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurface.withValues(alpha: 0.8), // 약간 연하게
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -204,10 +216,7 @@ void _showUpgradeDialog() {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          FaIcon(
-                            FontAwesomeIcons.lightDownload,
-                            size: 18,
-                          ),
+                          FaIcon(FontAwesomeIcons.lightDownload, size: 18),
                           const SizedBox(width: 8),
                           const Text('업데이트'),
                         ],

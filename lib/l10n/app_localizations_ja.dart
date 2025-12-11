@@ -1304,7 +1304,10 @@ class LoJa extends Lo {
   String get shorebirdUpdateTitle => 'アップデート完了';
 
   @override
-  String get shorebirdUpdateMessage => 'PhilGoアプリが更新されました。\n終了してから再起動してください。';
+  String get shorebirdUpdateMessage => 'PhilGoアプリが更新されました。';
+
+  @override
+  String get shorebirdRestartMessage => '終了してから再起動してください。';
 
   @override
   String get confirm => '確認';
@@ -1458,4 +1461,13 @@ class LoJa extends Lo {
 
   @override
   String get machine => 'マシン';
+
+  @override
+  String get upgradeNewVersion => '新しいバージョンがリリースされました。';
+
+  @override
+  String get upgradeForBetterService => 'より良いサービスのためにアプリを更新してください。';
+
+  @override
+  String get exitApp => '終了';
 }

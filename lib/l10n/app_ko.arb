@@ -591,9 +591,13 @@
   "@shorebirdUpdateTitle": {
     "description": "Shorebird update dialog title"
   },
-  "shorebirdUpdateMessage": "필고 앱이 업데이트 되었습니다.\n종료 후 다시 실행해주세요.",
+  "shorebirdUpdateMessage": "필고 앱이 업데이트 되었습니다.",
   "@shorebirdUpdateMessage": {
-    "description": "Shorebird update dialog message"
+    "description": "Shorebird update dialog message - first line"
+  },
+  "shorebirdRestartMessage": "종료 후 다시 실행해주세요.",
+  "@shorebirdRestartMessage": {
+    "description": "Shorebird update dialog restart message - emphasized second line"
   },
   "confirm": "확인",
   "@confirm": {
@@ -1931,5 +1935,17 @@
   "machine": "머신",
   "@machine": {
     "description": "Machine label"
+  },
+  "upgradeNewVersion": "새로운 버전이 출시되었습니다.",
+  "@upgradeNewVersion": {
+    "description": "First message in upgrade dialog - new version announcement"
+  },
+  "upgradeForBetterService": "더 나은 서비스를 위해 앱을 업데이트해 주세요.",
+  "@upgradeForBetterService": {
+    "description": "Second message in upgrade dialog - update request"
+  },
+  "exitApp": "종료하기",
+  "@exitApp": {
+    "description": "Exit app button text"
   }
 }

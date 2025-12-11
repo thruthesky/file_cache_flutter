@@ -1334,8 +1334,10 @@ class LoEn extends Lo {
   String get shorebirdUpdateTitle => 'Update Complete';
 
   @override
-  String get shorebirdUpdateMessage =>
-      'PhilGo app has been updated.\nPlease restart the app.';
+  String get shorebirdUpdateMessage => 'PhilGo app has been updated.';
+
+  @override
+  String get shorebirdRestartMessage => 'Please restart the app.';
 
   @override
   String get confirm => 'OK';
@@ -1489,4 +1491,14 @@ class LoEn extends Lo {
 
   @override
   String get machine => 'Machine';
+
+  @override
+  String get upgradeNewVersion => 'A new version has been released.';
+
+  @override
+  String get upgradeForBetterService =>
+      'Please update the app for better service.';
+
+  @override
+  String get exitApp => 'Exit';
 }

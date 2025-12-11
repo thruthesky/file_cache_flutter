@@ -1724,9 +1724,13 @@
   "@shorebirdUpdateTitle": {
     "description": "Shorebird update dialog title"
   },
-  "shorebirdUpdateMessage": "PhilGoアプリが更新されました。\n終了してから再起動してください。",
+  "shorebirdUpdateMessage": "PhilGoアプリが更新されました。",
   "@shorebirdUpdateMessage": {
-    "description": "Shorebird update dialog message"
+    "description": "Shorebird update dialog message - first line"
+  },
+  "shorebirdRestartMessage": "終了してから再起動してください。",
+  "@shorebirdRestartMessage": {
+    "description": "Shorebird update dialog restart message - emphasized second line"
   },
   "confirm": "確認",
   "@confirm": {
@@ -1781,5 +1785,17 @@
   "nodename": "ノード名",
   "release": "リリース",
   "utsnameVersion": "バージョン",
-  "machine": "マシン"
+  "machine": "マシン",
+  "upgradeNewVersion": "新しいバージョンがリリースされました。",
+  "@upgradeNewVersion": {
+    "description": "First message in upgrade dialog - new version announcement"
+  },
+  "upgradeForBetterService": "より良いサービスのためにアプリを更新してください。",
+  "@upgradeForBetterService": {
+    "description": "Second message in upgrade dialog - update request"
+  },
+  "exitApp": "終了",
+  "@exitApp": {
+    "description": "Exit app button text"
+  }
 }

@@ -1727,9 +1727,13 @@
   "@shorebirdUpdateTitle": {
     "description": "Shorebird update dialog title"
   },
-  "shorebirdUpdateMessage": "PhilGo app has been updated.\nPlease restart the app.",
+  "shorebirdUpdateMessage": "PhilGo app has been updated.",
   "@shorebirdUpdateMessage": {
-    "description": "Shorebird update dialog message"
+    "description": "Shorebird update dialog message - first line"
+  },
+  "shorebirdRestartMessage": "Please restart the app.",
+  "@shorebirdRestartMessage": {
+    "description": "Shorebird update dialog restart message - emphasized second line"
   },
   "confirm": "OK",
   "@confirm": {
@@ -1784,5 +1788,17 @@
   "nodename": "Nodename",
   "release": "Release",
   "utsnameVersion": "Version",
-  "machine": "Machine"
+  "machine": "Machine",
+  "upgradeNewVersion": "A new version has been released.",
+  "@upgradeNewVersion": {
+    "description": "First message in upgrade dialog - new version announcement"
+  },
+  "upgradeForBetterService": "Please update the app for better service.",
+  "@upgradeForBetterService": {
+    "description": "Second message in upgrade dialog - update request"
+  },
+  "exitApp": "Exit",
+  "@exitApp": {
+    "description": "Exit app button text"
+  }
 }

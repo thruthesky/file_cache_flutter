@@ -2621,11 +2621,17 @@ abstract class Lo {
   /// **'Update Complete'**
   String get shorebirdUpdateTitle;
 
-  /// Shorebird update dialog message
+  /// Shorebird update dialog message - first line
   ///
   /// In en, this message translates to:
-  /// **'PhilGo app has been updated.\nPlease restart the app.'**
+  /// **'PhilGo app has been updated.'**
   String get shorebirdUpdateMessage;
+
+  /// Shorebird update dialog restart message - emphasized second line
+  ///
+  /// In en, this message translates to:
+  /// **'Please restart the app.'**
+  String get shorebirdRestartMessage;
 
   /// Confirm button text
   ///
@@ -2932,6 +2938,24 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Machine'**
   String get machine;
+
+  /// First message in upgrade dialog - new version announcement
+  ///
+  /// In en, this message translates to:
+  /// **'A new version has been released.'**
+  String get upgradeNewVersion;
+
+  /// Second message in upgrade dialog - update request
+  ///
+  /// In en, this message translates to:
+  /// **'Please update the app for better service.'**
+  String get upgradeForBetterService;
+
+  /// Exit app button text
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exitApp;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

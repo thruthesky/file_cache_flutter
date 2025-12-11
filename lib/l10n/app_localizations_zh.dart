@@ -1298,7 +1298,10 @@ class LoZh extends Lo {
   String get shorebirdUpdateTitle => '更新完成';
 
   @override
-  String get shorebirdUpdateMessage => 'PhilGo应用已更新。\n请退出后重新启动。';
+  String get shorebirdUpdateMessage => 'PhilGo应用已更新。';
+
+  @override
+  String get shorebirdRestartMessage => '请退出后重新启动。';
 
   @override
   String get confirm => '确认';
@@ -1452,4 +1455,13 @@ class LoZh extends Lo {
 
   @override
   String get machine => '机器';
+
+  @override
+  String get upgradeNewVersion => '新版本已发布。';
+
+  @override
+  String get upgradeForBetterService => '请更新应用以获得更好的服务。';
+
+  @override
+  String get exitApp => '退出';
 }
