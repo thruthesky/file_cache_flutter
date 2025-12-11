@@ -13,3 +13,6 @@
 [submodule ".claude/skills/flutter-design-skill"]
 	path = .claude/skills/flutter-design-skill
 	url = https://github.com/thruthesky/flutter-design-skill
+[submodule ".claude/skills/philgo-skill"]
+	path = .claude/skills/philgo-skill
+	url = https://github.com/thruthesky/philgo-skill
