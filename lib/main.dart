@@ -97,17 +97,17 @@ class _MyAppState extends State<MyApp> {
       initShorebirdCodePush();
     });
 
-    Timer(const Duration(seconds: 2), () {
-      PostCreateScreen.push(
-        globalContext,
-        postId: 'temp',
-        content: 'Hello from main.dart!',
-        xFiles: [
-          XFile('/Users/thruthesky/Documents/assets/small/news.jpg'),
-          XFile('/Users/thruthesky/Documents/assets/small/tv.jpg'),
-        ],
-      );
-    });
+    // Timer(const Duration(seconds: 2), () {
+    //   PostCreateScreen.push(
+    //     globalContext,
+    //     postId: 'temp',
+    //     content: 'Hello from main.dart!',
+    //     xFiles: [
+    //       XFile('/Users/thruthesky/Documents/assets/small/news.jpg'),
+    //       XFile('/Users/thruthesky/Documents/assets/small/tv.jpg'),
+    //     ],
+    //   );
+    // });
   }
 
   @override
