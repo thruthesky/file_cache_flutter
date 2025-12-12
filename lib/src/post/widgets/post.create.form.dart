@@ -613,9 +613,9 @@ class PostCreateFormState extends State<PostCreateForm> {
     return LayoutBuilder(
       builder: (context, constraints) {
         const spacing = 8.0;
-        final columns = constraints.maxWidth >= 360 ? 5 : 4;
+        final columns = constraints.maxWidth >= 360 ? 4 : 3;
         final totalSpacing = spacing * (columns - 1);
-        final imageWidth = (constraints.maxWidth - totalSpacing) / columns;
+        final filePreviewSize = (constraints.maxWidth - totalSpacing) / columns;
 
         return Wrap(
           spacing: spacing,
@@ -627,8 +627,8 @@ class PostCreateFormState extends State<PostCreateForm> {
                 ignoring: _isLoading,
                 child: UploadPreview(
                   url: url,
-                  width: imageWidth,
-                  height: imageWidth,
+                  width: filePreviewSize,
+                  height: filePreviewSize,
                   borderRadius: 8,
                   onDelete: () async {
                     if (_isLoading) return;
@@ -649,8 +649,8 @@ class PostCreateFormState extends State<PostCreateForm> {
             ...List.generate(
               _uploadingCount,
               (index) => LoadingBox(
-                width: imageWidth,
-                height: imageWidth,
+                width: filePreviewSize,
+                height: filePreviewSize,
                 borderRadius: 8,
               ),
             ),

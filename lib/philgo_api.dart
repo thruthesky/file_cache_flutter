@@ -69,6 +69,7 @@ export 'src/philgo.category.dart';
 
 // functions
 export 'src/functions/common.functions.dart';
+export 'src/functions/file.functions.dart';
 export 'src/functions/functions.dart';
 export 'src/functions/url.functions.dart';
 
@@ -141,6 +142,7 @@ export 'src/widgets/submit_button.dart';
 export 'src/widgets/text_field_set.dart';
 export 'src/widgets/loading.box.dart';
 export 'src/widgets/upload.preview.dart';
+export 'src/widgets/video.player.dart';
 
 // receive share
 export 'src/receive_share/receive.share.service.dart';
