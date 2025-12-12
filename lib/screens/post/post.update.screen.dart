@@ -171,6 +171,13 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 4),
               child: IconButton(
+                onPressed: (isLoading || isUploading)
+                    ? null
+                    : () async {
+                        /// 폼 제출 실행
+                        /// Execute form submission
+                        await formKey.currentState?.submit();
+                      },
                 icon: isLoading
                     ? SizedBox(
                         width: 16,
@@ -180,14 +187,12 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
                           color: scheme.primary,
                         ),
                       )
-                    : FaIcon(FontAwesomeIcons.solidPaperPlane),
-                onPressed: (isLoading || isUploading)
-                    ? null
-                    : () async {
-                        /// 폼 제출 실행
-                        /// Execute form submission
-                        await formKey.currentState?.submit();
-                      },
+                    : FaIcon(
+                        FontAwesomeIcons.solidPaperPlane,
+                        color: (isLoading || isUploading)
+                            ? scheme.onSurface.withValues(alpha: 0.38)
+                            : scheme.primary,
+                      ),
               ),
             ),
           ],

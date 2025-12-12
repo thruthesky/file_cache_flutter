@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/extensions/text_theme.extension.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/models/forum_selection.dart';
 import 'package:philgo/widgets/empty.post.list.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/widgets/headers/forum_header.dart';
+import 'package:philgo/widgets/theme/comic_fab.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:philgo/widgets/post/post.card.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -138,20 +140,30 @@ class _ForumHomeState extends State<ForumHome> {
         final navState = NavigationState.of(context, listen: false);
         _processDeepLinkIfNeeded(navState);
 
-        return NotificationListener<ScrollNotification>(
-          onNotification: _handleScrollNotification,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// 헤더 영역 (스크롤 시 숨김/표시 애니메이션)
-              /// Header area (hide/show animation on scroll)
-              _buildAnimatedHeader(scheme),
+        return Stack(
+          children: [
+            /// 메인 콘텐츠: 헤더 + 게시글 목록
+            /// Main content: header + post list
+            NotificationListener<ScrollNotification>(
+              onNotification: _handleScrollNotification,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// 헤더 영역 (스크롤 시 숨김/표시 애니메이션)
+                  /// Header area (hide/show animation on scroll)
+                  _buildAnimatedHeader(scheme),
 
-              /// 본문: 게시글 목록
-              /// Body: post list
-              _buildPostList(),
-            ],
-          ),
+                  /// 본문: 게시글 목록
+                  /// Body: post list
+                  _buildPostList(),
+                ],
+              ),
+            ),
+
+            /// 글쓰기 버튼 (우측 하단 고정)
+            /// Create post button (fixed at bottom-right)
+            _buildFloatingActionButton(),
+          ],
         );
       },
     );
@@ -238,6 +250,20 @@ class _ForumHomeState extends State<ForumHome> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  /// 글쓰기 FAB 버튼 빌드 (우측 하단 고정)
+  /// Build create post FAB button (fixed at bottom-right)
+  Widget _buildFloatingActionButton() {
+    return Positioned(
+      right: 16,
+      bottom: 16,
+      child: ComicFab(
+        onPressed: _showPostCreateDialog,
+        tooltip: 'Write Post',
+        child: const FaIcon(FontAwesomeIcons.plus),
+      ),
+    );
   }
 
   /// 스크롤 알림 처리 - 스크롤 방향에 따라 헤더 표시/숨김
