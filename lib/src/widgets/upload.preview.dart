@@ -8,14 +8,13 @@ import 'package:philgo_api/philgo_api.dart';
 /// It automatically applies rounded corners and supports configurable width and height.
 /// It detects the file type from the URL extension and displays appropriate content:
 /// - **Images**: Displays the image with thumbnail optimization
-/// - **Videos**: Displays an interactive video player using [PhilgoVideoPlayer] with play/pause controls and progress indicator
+/// - **Videos**: Displays an interactive video player using [VideoNetwork] with play/pause controls
 /// - **Files**: Displays a file icon with the file extension badge
 ///
-/// ### Video Player Features (via PhilgoVideoPlayer):
+/// ### Video Player Features (via VideoNetwork):
 /// - Tap on video to show/hide controls
 /// - Play/Pause button with visual feedback
-/// - Auto-hide controls after 3 seconds during playback
-/// - Progress indicator at the bottom
+/// - Auto-hide controls during playback
 /// - Automatic video initialization and cleanup
 /// - Reusable video player component
 ///
@@ -88,41 +87,7 @@ class UploadPreview extends StatefulWidget {
   State<UploadPreview> createState() => _UploadPreviewState();
 }
 
-/// File preview type enumeration
-/// Used to determine how to render the preview based on file type
-enum _FileType {
-  /// Image files (jpg, jpeg, png, gif, webp, bmp)
-  image,
-
-  /// Video files (mp4, mov, avi, mkv, webm, flv)
-  video,
-
-  /// Other files (pdf, doc, txt, etc.)
-  file,
-}
-
 class _UploadPreviewState extends State<UploadPreview> {
-  /// Detects the file type based on the URL extension
-  /// Returns [_FileType] to determine the appropriate preview rendering
-  _FileType _detectFileType() {
-    final extension = getFileExtension(widget.url);
-
-    // Image extensions
-    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
-    if (imageExtensions.contains(extension)) {
-      return _FileType.image;
-    }
-
-    // Video extensions
-    const videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'flv'];
-    if (videoExtensions.contains(extension)) {
-      return _FileType.video;
-    }
-
-    // Default to file for everything else
-    return _FileType.file;
-  }
-
   /// Extracts file extension from URL for display on file preview
   /// Returns the extension in uppercase without the dot (e.g., "PDF", "DOC")
   String _getFileExtension() {
@@ -135,10 +100,10 @@ class _UploadPreviewState extends State<UploadPreview> {
   /// - Videos: Network image with play icon overlay
   /// - Files: Generic file icon with extension badge
   Widget _buildPreviewContent() {
-    final fileType = _detectFileType();
+    final fileType = detectUploadFileType(widget.url);
 
     switch (fileType) {
-      case _FileType.image:
+      case UploadFileType.image:
         // Image preview with thumbnail optimization
         return ClipRRect(
           borderRadius: BorderRadius.circular(widget.borderRadius - 2),
@@ -154,16 +119,16 @@ class _UploadPreviewState extends State<UploadPreview> {
           ),
         );
 
-      case _FileType.video:
-        // Video preview using the reusable PhilgoVideoPlayer
-        return PhilgoVideoPlayer(
+      case UploadFileType.video:
+        // Video preview using the reusable VideoNetwork
+        return VideoNetwork(
           url: widget.url,
           width: widget.width,
           height: widget.height,
           borderRadius: widget.borderRadius - 2,
         );
 
-      case _FileType.file:
+      case UploadFileType.file:
         // Generic file preview with file type icon and extension badge
         return _buildFilePlaceholder();
     }

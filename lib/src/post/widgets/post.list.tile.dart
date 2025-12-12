@@ -88,15 +88,15 @@ class PostListTileWithImage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       spacing: 4,
       children: [
-        /// 이미지 (왼쪽) - Flat 2.0 디자인 with conditional Hero transition
+        /// 파일 썸네일 (왼쪽) - Flat 2.0 디자인 with conditional Hero transition
         Padding(
           padding: const EdgeInsets.all(8), // 16 (8의 배수)
           child: enableHeroTransition
               ? Hero(
                   tag: 'post-image-${post.idx}',
-                  child: PostImageWidget(post: post),
+                  child: PostFileWidget(post: post),
                 )
-              : PostImageWidget(post: post),
+              : PostFileWidget(post: post),
         ),
 
         /// 게시글 정보 (오른쪽)
@@ -197,22 +197,36 @@ class PostTitleText extends StatelessWidget {
   }
 }
 
-/// Post image widget
-class PostImageWidget extends StatelessWidget {
-  const PostImageWidget({super.key, required this.post});
+/// Post file thumbnail widget (supports images, videos, and files)
+class PostFileWidget extends StatelessWidget {
+  const PostFileWidget({super.key, required this.post});
 
   final Post post;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final fileType = detectUploadFileType(post.files[0]);
 
     return SizedBox(
       width: 81, // 더 큰 이미지 (reference 참고)
       height: 81,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16), // Flat 2.0 - 16 (8의 배수)
-        child: CachedNetworkImage(
+        child: _buildThumbnail(context, fileType, scheme),
+      ),
+    );
+  }
+
+  Widget _buildThumbnail(
+    BuildContext context,
+    UploadFileType fileType,
+    ColorScheme scheme,
+  ) {
+    switch (fileType) {
+      case UploadFileType.image:
+        // Image thumbnail with caching
+        return CachedNetworkImage(
           imageUrl: post.files[0],
           fit: BoxFit.cover,
           placeholder: (context, url) => Container(
@@ -235,9 +249,57 @@ class PostImageWidget extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
+
+      case UploadFileType.video:
+        // Video player with autoplay enabled
+        return VideoNetwork(
+          url: post.files[0],
+          width: 81,
+          height: 81,
+          borderRadius: 16,
+          autoPlay: true,
+          showPlaceholderOnError: true,
+        );
+
+      case UploadFileType.file:
+        // Generic file thumbnail with icon and extension
+        final extension = getFileExtension(post.files[0]).toUpperCase();
+        final displayExtension = extension.isNotEmpty ? extension : 'FILE';
+
+        return Container(
+          color: scheme.surfaceContainerHighest,
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                FontAwesomeIcons.fileLines,
+                size: 24,
+                color: scheme.primary,
+              ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  displayExtension,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: scheme.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 8,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+    }
   }
 }
 

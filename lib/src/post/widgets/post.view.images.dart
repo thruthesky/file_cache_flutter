@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+/// @deprecated
+/// Use the PostViewFiles instead
 class PostViewImages extends StatelessWidget {
   const PostViewImages({
     super.key,
@@ -77,10 +79,7 @@ class PostViewImages extends StatelessWidget {
 
         /// Wrap first image with Hero for transition from PostListTile (conditional)
         return isFirstImage && enableHeroTransition
-            ? Hero(
-                tag: 'post-image-$postIdx',
-                child: imageWidget,
-              )
+            ? Hero(tag: 'post-image-$postIdx', child: imageWidget)
             : imageWidget;
       }).toList(),
     );

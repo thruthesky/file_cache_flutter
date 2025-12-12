@@ -109,6 +109,7 @@ export 'src/post/widgets/comment.detail.list_view.dart';
 export 'src/post/widgets/post.view.content.dart';
 export 'src/post/widgets/post.view.header.dart';
 export 'src/post/widgets/post.view.images.dart';
+export 'src/post/widgets/post.view.files.dart';
 export 'src/post/widgets/post.create.form.dart';
 export 'src/post/widgets/post.update.form.dart';
 

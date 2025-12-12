@@ -186,10 +186,10 @@ class _CommentDetailState extends State<CommentDetail> {
                           ),
                     ),
 
-                    /// Show files (images) attached to comments
+                    /// Show files (images, videos, and other files) attached to comments
                     if (widget.comment.files.isNotEmpty) ...[
                       const SizedBox(height: 8),
-                      PostViewImages(
+                      PostViewFiles(
                         files: widget.comment.files,
                         postIdx: widget.comment.idx,
                       ),
