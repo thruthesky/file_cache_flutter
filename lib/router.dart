@@ -100,39 +100,35 @@ final router = GoRouter(
     );
   },
   redirect: (context, state) {
-    // developer.log(
-    //   '🔍 Go_ROUTE: Redirect 체크: path=${state.fullPath}, name=${state.name} matchedLocation=${state.matchedLocation} uri=${state.uri} uri.path=${state.uri.path} uri.query=${state.uri.query}',
-    //   name: 'Router',
-    // );
+    developer.log(
+      '🔍 Go_ROUTE: Redirect 체크: path=${state.fullPath}, name=${state.name} matchedLocation=${state.matchedLocation} uri=${state.uri} uri.path=${state.uri.path} uri.query=${state.uri.query}',
+      name: 'Router',
+    );
 
-    Map<String, String> queryParameters = state.uri.queryParameters;
+    final url = parsePhilgoUrl(state.uri.toString());
 
-    /// Forum page (post list) is not supported for DeepLink.
-    if (state.matchedLocation.contains('/post/list.php')) {
+    /// Post view page DeepLink
+    if (url?.isPostView == true) {
+      NavigationState.of(context, listen: false).post = Post.fromJson({
+        'idx': url?.idx,
+      });
+      return PostViewScreen.routeName;
+    }
+
+    /// Forum home. Post list page DeepLink
+    if (url?.isPostList == true) {
       NavigationState.of(
         context,
         listen: false,
       ).setHomeNavigation(HomeNavigationItem.forum);
-
+      NavigationState.of(context, listen: false).initialPostId = url?.postId;
       return HomeScreen.routeName;
     }
 
-    /// Post view DeepLink
-    if (state.matchedLocation.contains('/post/view.php') &&
-        queryParameters.containsKey('idx') &&
-        queryParameters['idx']!.isNotEmpty) {
-      final post = Post.fromJson({'idx': int.parse(queryParameters['idx']!)});
-      NavigationState.of(context, listen: false).post = post;
-      return PostViewScreen.routeName;
-    }
-
     /// Chat room DeepLink
-    /// TODO What if the user didn't login?
-    if (state.matchedLocation.contains('/chat/rooms.php')) {
-      return ChatRoomScreen.routeName.replaceFirst(
-        ':id',
-        state.uri.queryParameters['id'] ?? '',
-      );
+    /// 채팅방 딥링크 처리 (/chat/room.php 또는 /chat/rooms.php)
+    if (url?.isChatRoom == true && url?.chatRoomId != null) {
+      return ChatRoomScreen.routeName.replaceFirst(':id', url!.chatRoomId!);
     }
 
     ///
@@ -141,12 +137,12 @@ final router = GoRouter(
       Globals.screenId = state.pathParameters['id'] ?? '';
     }
 
-    // developer.log('Globals: ${Globals.screenName}, ${Globals.screenId}');
-
-    ///
+    /// Authentication check
     if (state.fullPath == EntryScreen.routeName) {
       return null;
     } else {
+      /// 인증된 사용자인지 확인
+      /// Check if the user is authenticated
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         return EntryScreen.routeName;
@@ -200,7 +196,42 @@ final router = GoRouter(
       path: PostViewScreen.routeName,
       name: PostViewScreen.routeName,
       builder: (context, state) {
-        if (state.extra == null) {
+        Post? post;
+
+        // 1. state.extra에서 Post 가져오기 (일반 네비게이션)
+        // Get Post from state.extra (normal navigation)
+        if (state.extra != null) {
+          if (state.extra is Post) {
+            post = state.extra as Post;
+          } else {
+            final extraMap = state.extra as Map<String, dynamic>;
+            post = Post.fromJson(extraMap);
+          }
+        }
+
+        // 2. NavigationState에서 Post 가져오기 (딥링크에서 redirect로 온 경우)
+        // Get Post from NavigationState (when coming from deeplink redirect)
+        if (post == null) {
+          final navState = NavigationState.of(context, listen: false);
+          if (navState.post != null) {
+            post = navState.post;
+            // 사용 후 초기화하여 다음 네비게이션에 영향 주지 않도록 함
+            // Clear after use to prevent affecting next navigation
+            navState.post = null;
+            developer.log(
+              '📱 Go_ROUTE: PostViewScreen - 딥링크에서 Post 로드: idx=${post?.idx}',
+              name: 'Router',
+            );
+          }
+        }
+
+        // 3. Post가 없으면 홈으로 이동
+        // Navigate to home if no Post available
+        if (post == null) {
+          developer.log(
+            '⚠️ Go_ROUTE: PostViewScreen - Post 없음, 홈으로 이동',
+            name: 'Router',
+          );
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go(HomeScreen.routeName);
           });
@@ -208,13 +239,7 @@ final router = GoRouter(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        Post post;
-        if (state.extra is Post) {
-          post = state.extra as Post;
-        } else {
-          final extraMap = state.extra as Map<String, dynamic>;
-          post = Post.fromJson(extraMap);
-        }
+
         return PostViewScreen(post: post);
       },
     ),

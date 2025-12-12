@@ -152,27 +152,29 @@ void initializeReceiveShareService() {
       // 사용자가 (구글) 검색을 통해서 클릭한 경우, URL 에 정보가 들어온다.
       // When the user clicked through (google) search, it will have a url share.
       if (data[0].type == SharedMediaType.url) {
+        // ! Warning: philgo deeplink handling is disabled since it is handled by Go_Router's redirect.
         if (data[0].path.contains('philgo.com')) {
-          final url = parsePhilgoUrl(data[0].path);
-          if (url != null) {
-            if (url.idx != null) {
-              // 스마트폰(핸드폰)이 매우 느린 경우, 렉걸려서 PostViewScreen 이동이 안되는 경우가 있어, 1초 딜레이를 줌
-              // In very slow smartphones, there are cases where moving to PostViewScreen does not work due to lag, so we give a 1 second delay
-              Timer(Duration(milliseconds: 1000), () {
-                if (globalContext.mounted) {
-                  PostViewScreen.push(
-                    globalContext,
-                    Post.fromJson({'idx': url.idx}),
-                  );
-                }
-              });
-              return;
-            } else {
-              // 클릭(검색)된 경로가 필고 URL 인데, idx 정보가 없는 경우는 홈으로 이동
-              // If the clicked (searched) path is a Philgo URL but has no idx info, go to home
-              return;
-            }
-          }
+          return;
+          // final url = parsePhilgoUrl(data[0].path);
+          // if (url != null) {
+          // if (url.idx != null) {
+          //   // 스마트폰(핸드폰)이 매우 느린 경우, 렉걸려서 PostViewScreen 이동이 안되는 경우가 있어, 1초 딜레이를 줌
+          //   // In very slow smartphones, there are cases where moving to PostViewScreen does not work due to lag, so we give a 1 second delay
+          //   Timer(Duration(milliseconds: 1000), () {
+          //     if (globalContext.mounted) {
+          //       PostViewScreen.push(
+          //         globalContext,
+          //         Post.fromJson({'idx': url.idx}),
+          //       );
+          //     }
+          //   });
+          //   return;
+          // } else {
+          //   // 클릭(검색)된 경로가 필고 URL 인데, idx 정보가 없는 경우는 홈으로 이동
+          //   // If the clicked (searched) path is a Philgo URL but has no idx info, go to home
+          //   return;
+          // }
+          // }
         }
       }
       showReceiveShareDialog(globalContext, data);
