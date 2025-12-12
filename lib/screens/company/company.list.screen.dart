@@ -269,7 +269,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     return Scaffold(
       backgroundColor: headerColor,
-      floatingActionButton: ComicPrimaryFab(
+      floatingActionButton: ComicFab(
         onPressed: _handleCreateOrUpdateButton,
         tooltip: myCompany != null
             ? Lo.of(context)!.editMyCompany

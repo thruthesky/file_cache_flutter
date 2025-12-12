@@ -201,39 +201,39 @@ class _ForumHeaderState extends State<ForumHeader> {
           ///
           /// FaIcon + RichText로 "[+] 글 쓰기" 형태로 표시
           /// Display as "[+] 글 쓰기" format using FaIcon + RichText
-          InkWell(
-            onTap: widget.onCreatePost,
-            borderRadius: BorderRadius.circular(4),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              child: RichText(
-                text: TextSpan(
-                  /// 기본 스타일: onSurface 색상 + bold 강조
-                  /// Base style: onSurface color + bold emphasis
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: [
-                    /// 플러스 아이콘 (FaIcon 사용)
-                    /// Plus icon (using FaIcon)
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: FaIcon(
-                        FontAwesomeIcons.plus,
-                        size: 12,
-                        color: scheme.onSurface,
-                      ),
-                    ),
+          // InkWell(
+          //   onTap: widget.onCreatePost,
+          //   borderRadius: BorderRadius.circular(4),
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          //     child: RichText(
+          //       text: TextSpan(
+          //         /// 기본 스타일: onSurface 색상 + bold 강조
+          //         /// Base style: onSurface color + bold emphasis
+          //         style: theme.textTheme.bodyMedium?.copyWith(
+          //           color: scheme.onSurface,
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //         children: [
+          //           /// 플러스 아이콘 (FaIcon 사용)
+          //           /// Plus icon (using FaIcon)
+          //           WidgetSpan(
+          //             alignment: PlaceholderAlignment.middle,
+          //             child: FaIcon(
+          //               FontAwesomeIcons.plus,
+          //               size: 12,
+          //               color: scheme.onSurface,
+          //             ),
+          //           ),
 
-                    /// 공백 + 텍스트 "글 쓰기"
-                    /// Space + text "글 쓰기"
-                    TextSpan(text: ' ${lo.writePost}'),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          //           /// 공백 + 텍스트 "글 쓰기"
+          //           /// Space + text "글 쓰기"
+          //           TextSpan(text: ' ${lo.writePost}'),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
