@@ -528,9 +528,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                   ),
                                   const SizedBox(height: 16),
 
-                                  /// Images first (if available)
+                                  /// Files (images, videos, and other files) first (if available)
                                   if (hasImages) ...[
-                                    PostViewImages(
+                                    PostViewFiles(
                                       files: files,
                                       postIdx: widget.post.idx,
                                       enableHeroTransition: true,
