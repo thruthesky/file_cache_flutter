@@ -8,10 +8,17 @@
 /// ```dart
 /// final result = parsePhilgoUrl('https://philgo.com/post/view.php?idx=123&post_id=freetalk&category=취미&page=1');
 /// if (result != null) {
-///   print(result.postId);    // 'freetalk' (nullable)
-///   print(result.idx);       // 123 (nullable)
-///   print(result.category);  // '취미' (nullable)
-///   print(result.page);      // 1 (nullable)
+///   print(result.postId);      // 'freetalk' (nullable)
+///   print(result.idx);         // 123 (nullable)
+///   print(result.category);    // '취미' (nullable)
+///   print(result.page);        // 1 (nullable)
+///   print(result.chatRoomId);  // null (nullable, 채팅방 URL에서만 값 있음)
+/// }
+///
+/// // 채팅방 URL 예시
+/// final chatResult = parsePhilgoUrl('https://philgo.com/chat/room.php?id=RaHIcr45pvPzYdcDIv6JoW8DnSH2');
+/// if (chatResult != null && chatResult.isChatRoom) {
+///   print(chatResult.chatRoomId);  // 'RaHIcr45pvPzYdcDIv6JoW8DnSH2'
 /// }
 /// ```
 typedef PhilgoUrlResult = ({
@@ -19,6 +26,11 @@ typedef PhilgoUrlResult = ({
   int? idx,
   String? category,
   int? page,
+  String? chatRoomId,
+  bool isPostView,
+  bool isPostList,
+  bool isHome,
+  bool isChatRoom,
 });
 
 /// PhilGo URL을 파싱하여 idx, post_id, category, page를 추출합니다.
@@ -78,8 +90,7 @@ PhilgoUrlResult? parsePhilgoUrl(String url) {
       /// 일반적인 idx=값 형태
       /// Normal idx=value format
       idx = int.tryParse(idxStr);
-    } else if (uri.query.isNotEmpty &&
-        RegExp(r'^\d+$').hasMatch(uri.query)) {
+    } else if (uri.query.isNotEmpty && RegExp(r'^\d+$').hasMatch(uri.query)) {
       /// 특수 패턴: ?뒤에 숫자만 있는 경우
       /// Special pattern: only digits after ?
       /// 예: https://philgo.com/?1275666415
@@ -97,9 +108,42 @@ PhilgoUrlResult? parsePhilgoUrl(String url) {
     final pageStr = queryParams['page'];
     final page = pageStr != null ? int.tryParse(pageStr) : null;
 
+    /// URL 유형 판별
+    /// Determine URL type
+    /// - 게시글 보기: /post/view.php
+    /// - 게시글 목록: /post/list.php
+    /// - 홈: /
+    /// - 채팅방: /chat/room.php 또는 /chat/rooms.php
+    final path = uri.path;
+    final isPostView = path.contains('/post/view.php');
+    final isPostList = path.contains('/post/list.php');
+    final isHome = path == '/' || path.isEmpty;
+
+    /// 채팅방 URL 패턴 체크
+    /// Check chat room URL patterns
+    /// - /chat/room.php?id=xxx (단수형, 새 패턴)
+    /// - /chat/rooms.php?id=xxx (복수형, 기존 패턴)
+    final isChatRoom =
+        path.contains('/chat/room.php') || path.contains('/chat/rooms.php');
+
+    /// 채팅방 ID 추출 (선택, String?)
+    /// Extract chat room ID (optional, String?)
+    /// 쿼리 파라미터에서 'id' 값을 추출
+    final chatRoomId = queryParams['id'];
+
     /// Named Record로 반환
     /// Return as Named Record
-    return (postId: postId, idx: idx, category: category, page: page);
+    return (
+      postId: postId,
+      idx: idx,
+      category: category,
+      page: page,
+      chatRoomId: chatRoomId,
+      isPostView: isPostView,
+      isPostList: isPostList,
+      isHome: isHome,
+      isChatRoom: isChatRoom,
+    );
   } catch (e) {
     /// URL 파싱 실패 시 null 반환
     /// Return null if URL parsing fails
