@@ -16,3 +16,6 @@
 [submodule ".claude/skills/flutter-skill"]
 	path = .claude/skills/flutter-skill
 	url = https://github.com/thruthesky/flutter-skill
+[submodule "packages/philgo_api"]
+	path = packages/philgo_api
+	url = https://github.com/thruthesky/philgo_api

@@ -3,7 +3,6 @@
 //   1. The state must be changed in multiple paces.
 //   2. The state must be used in multiples places (on the screen)
 // Or it should be globals.dart
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:philgo/router.dart';
 import 'package:provider/provider.dart';

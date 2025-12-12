@@ -37,7 +37,7 @@ dependencies:
   intl: any
   package_info_plus: ^9.0.0
   philgo_api:
-    path: packages/philgo_v6_flutter
+    path: packages/philgo_api
   provider: ^6.1.5+1
   receive_sharing_intent: ^1.8.1
   shorebird_code_push: ^2.0.5
