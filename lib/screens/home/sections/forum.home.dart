@@ -31,23 +31,22 @@ class ForumHome extends StatefulWidget {
 class _ForumHomeState extends State<ForumHome> {
   /// 현재 선택된 카테고리 상태 (메인 + 서브 카테고리)
   /// Currently selected category state (main + subcategory)
-  late ForumSelection _currentSelection;
+  late ForumSelection forumSelection;
 
   /// 마지막으로 처리한 딥링크 선택 상태 (중복 처리 방지)
   /// Last processed deep link selection (prevent duplicate processing)
   ForumSelection? _lastProcessedDeepLink;
 
-  /// 리스트 뷰용 컨트롤러 (비그리드 레이아웃에 사용)
-  /// Controller for list view (used for non-grid layouts)
-  final PostListController _listViewController = PostListController();
-
-  /// 그리드 뷰용 컨트롤러 (buyandsell 같은 그리드 레이아웃에 사용)
-  /// Controller for grid view (used for grid layouts like buyandsell)
-  final PostListController _gridViewController = PostListController();
-
   /// 헤더 표시 여부 (스크롤에 따라 변경)
   /// Whether to show header (changes based on scroll)
   bool _showHeader = true;
+
+  PostListViewController listController = PostListViewController();
+  PostMasonryViewController masonryController = PostMasonryViewController();
+
+  bool get isMasonryForum {
+    return forumSelection.postId == 'buyandsell';
+  }
 
   @override
   void initState() {
@@ -55,7 +54,7 @@ class _ForumHomeState extends State<ForumHome> {
 
     /// 기본값: 첫 번째 메인 카테고리 (서브 카테고리 없음)
     /// Default: first major category (no subcategory)
-    _currentSelection = ForumSelection(
+    forumSelection = ForumSelection(
       postId: PhilgoCategory.majorCategories(includeTemp: kDebugMode).first,
     );
   }
@@ -65,12 +64,12 @@ class _ForumHomeState extends State<ForumHome> {
   void _onCategoryChanged(String postId, String? category) {
     final newSelection = ForumSelection(postId: postId, category: category);
 
-    if (_currentSelection == newSelection) {
+    if (forumSelection == newSelection) {
       return;
     }
 
     setState(() {
-      _currentSelection = newSelection;
+      forumSelection = newSelection;
     });
   }
 
@@ -104,7 +103,7 @@ class _ForumHomeState extends State<ForumHome> {
 
     /// 현재 선택 상태 업데이트 (빌드 중이므로 직접 업데이트)
     /// Update current selection (direct update since we're in build)
-    _currentSelection = deepLinkSelection;
+    forumSelection = deepLinkSelection;
 
     /// 딥링크 데이터 클리어 (다음 네비게이션에 영향 없도록)
     /// Clear deep link data (to avoid affecting next navigation)
@@ -189,8 +188,8 @@ class _ForumHomeState extends State<ForumHome> {
             ),
           ),
           child: ForumHeader(
-            selectedPostId: _currentSelection.postId,
-            selectedCategory: _currentSelection.category,
+            selectedPostId: forumSelection.postId,
+            selectedCategory: forumSelection.category,
             onCategorySelected: _onCategoryChanged,
             onCreatePost: _showPostCreateDialog,
           ),
@@ -202,26 +201,30 @@ class _ForumHomeState extends State<ForumHome> {
   /// 게시글 목록 빌드
   /// Build post list
   Widget _buildPostList() {
-    final isBuyAndSell = _currentSelection.postId == 'buyandsell';
-
     return Expanded(
       child: Theme(
         data: context.postTitleTheme,
-        child: PostListView(
-          listViewController: isBuyAndSell ? null : _listViewController,
-          gridViewController: isBuyAndSell ? _gridViewController : null,
-          postId: _currentSelection.postId,
-          category: _currentSelection.category,
-          enableHeroTransition: true,
-          gridColumns: isBuyAndSell ? 2 : null,
-          tileBuilder: isBuyAndSell
-              ? (post, onTap) => PostCard(post: post, onTap: onTap)
-              : null,
-          onTap: _onPostTapped,
-          noItemsFoundIndicatorBuilder: (context) {
-            return const Center(child: EmptyPostList());
-          },
-        ),
+        child: isMasonryForum
+            ? PostMasonryView(
+                controller: masonryController,
+                postId: forumSelection.postId,
+                category: forumSelection.category,
+                onTap: onPostTapped,
+                noItemsFoundIndicatorBuilder: (context) => EmptyPostList(),
+                enableHeroTransition: true,
+                tileBuilder: (post, onTap) =>
+                    PostCard(post: post, onTap: onTap),
+              )
+            : PostListView(
+                controller: listController,
+                postId: forumSelection.postId,
+                category: forumSelection.category,
+                onTap: onPostTapped,
+                noItemsFoundIndicatorBuilder: (context) => EmptyPostList(),
+                enableHeroTransition: true,
+                tileBuilder: (post, onTap) =>
+                    PostListTile(post: post, onTap: onTap),
+              ),
       ),
     );
   }
@@ -231,18 +234,21 @@ class _ForumHomeState extends State<ForumHome> {
   void _showPostCreateDialog() {
     showPostCreateDialog(
       context,
-      postId: _currentSelection.postId,
-      category: _currentSelection.category,
+      postId: forumSelection.postId,
+      category: forumSelection.category,
       onSubmitted: (post) {
-        _listViewController.refresh();
-        _gridViewController.refresh();
+        if (isMasonryForum) {
+          masonryController.add(post);
+        } else {
+          listController.add(post);
+        }
       },
     );
   }
 
   /// 게시물 탭 시 상세 화면으로 이동
   /// Navigate to post detail screen when tapped
-  Future<void> _onPostTapped(Post post) async {
+  Future<void> onPostTapped(Post post) async {
     await PostViewScreen.push(context, post);
 
     /// 돌아왔을 때 UI 업데이트 (수정된 내용 반영)
@@ -290,12 +296,5 @@ class _ForumHomeState extends State<ForumHome> {
     }
 
     return false;
-  }
-
-  /// 새 글 생성 후 목록 새로고침 (외부에서 호출용)
-  /// Refresh list after new post created (for external call)
-  void onNewPostCreated(Post newPost) {
-    _listViewController.refresh();
-    _gridViewController.refresh();
   }
 }

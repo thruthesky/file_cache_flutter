@@ -269,12 +269,11 @@ void showShorebirdUpdateDialog() {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // 강조 아이콘 (Font Awesome Pro Light)
-                            // Emphasis icon (Font Awesome Pro Light)
-                            FaIcon(
-                              FontAwesomeIcons.lightRotate,
-                              color: scheme.primary,
-                              size: 16,
+                            // 강조 아이콘 (Emoji 스타일)
+                            // Emphasis icon (Emoji style)
+                            Text(
+                              '🔄',
+                              style: TextStyle(fontSize: 16),
                             ),
                             SizedBox(width: sp.s8),
                             Text(
@@ -359,12 +358,14 @@ void showShorebirdUpdateDialog() {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        /// 종료 아이콘 (Font Awesome Light 스타일)
-                        /// Exit icon (Font Awesome Light style)
-                        FaIcon(
-                          FontAwesomeIcons.lightPowerOff,
-                          size: 16,
-                          color: scheme.error,
+                        /// 종료 아이콘 (Emoji 스타일)
+                        /// Exit icon (Emoji style)
+                        Text(
+                          '⏻',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: scheme.error,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Text(
