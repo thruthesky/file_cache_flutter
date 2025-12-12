@@ -7,10 +7,12 @@ class CommentCreateForm extends StatefulWidget {
     super.key,
     required this.post,
     required this.onCreated,
+    this.focusNode,
   });
 
   final Post post;
   final Function(Comment) onCreated;
+  final FocusNode? focusNode;
 
   @override
   State<CommentCreateForm> createState() => _CommentCreateFormState();
@@ -18,7 +20,7 @@ class CommentCreateForm extends StatefulWidget {
 
 class _CommentCreateFormState extends State<CommentCreateForm> {
   final contentController = TextEditingController();
-  final focusNode = FocusNode();
+  late final FocusNode focusNode;
 
   bool isCreatingReply = false;
   bool isTextEmpty = true;
@@ -29,6 +31,8 @@ class _CommentCreateFormState extends State<CommentCreateForm> {
   @override
   void initState() {
     super.initState();
+    // Use provided focusNode or create a new one
+    focusNode = widget.focusNode ?? FocusNode();
     contentController.addListener(onTextChanged);
   }
 
@@ -36,7 +40,10 @@ class _CommentCreateFormState extends State<CommentCreateForm> {
   void dispose() {
     contentController.removeListener(onTextChanged);
     contentController.dispose();
-    focusNode.dispose();
+    // Only dispose focusNode if we created it (not provided externally)
+    if (widget.focusNode == null) {
+      focusNode.dispose();
+    }
     super.dispose();
   }
 
