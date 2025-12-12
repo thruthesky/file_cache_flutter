@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
 
+import 'image.error.placeholder.dart';
+
 /// A widget that displays a **preview thumbnail** for an uploaded file, image, or video.
 ///
 /// `UploadPreview` renders a rectangular thumbnail using the provided [url].
@@ -114,7 +116,10 @@ class _UploadPreviewState extends State<UploadPreview> {
             fit: BoxFit.cover,
             // Error handling for failed image loads
             errorBuilder: (context, error, stackTrace) {
-              return _buildErrorPlaceholder();
+              return ImageErrorPlaceholder(
+                width: widget.width,
+                height: widget.height,
+              );
             },
           ),
         );
@@ -127,22 +132,6 @@ class _UploadPreviewState extends State<UploadPreview> {
         // Generic file preview with file type icon and extension badge
         return _buildFilePlaceholder();
     }
-  }
-
-  /// Builds error placeholder for failed image loads
-  Widget _buildErrorPlaceholder() {
-    return Container(
-      width: widget.width,
-      height: widget.height,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: Center(
-        child: FaIcon(
-          FontAwesomeIcons.imageSlash,
-          size: 32,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
   }
 
   /// Builds placeholder for generic file types

@@ -140,7 +140,7 @@ export 'src/widgets/icon.container.dart';
 export 'src/widgets/submit_button.dart';
 export 'src/widgets/text_field_set.dart';
 export 'src/widgets/loading.box.dart';
-export 'src/widgets/upload.preview.dart';
+export 'src/widgets/upload/upload.preview.dart';
 export 'src/widgets/video.player.dart';
 
 // receive share
