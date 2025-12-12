@@ -258,16 +258,6 @@ class PostUpdateFormState extends State<PostUpdateForm> {
           ),
 
           const SizedBox(height: 16),
-          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
-            Padding(
-              padding:
-                  widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildFilePreview(context),
-            ),
-
-            const SizedBox(height: 16),
-          ],
-
           Padding(
             padding:
                 widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
@@ -280,6 +270,17 @@ class PostUpdateFormState extends State<PostUpdateForm> {
                 widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),
             child: _buildActionBar(context),
           ),
+
+          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
+            const SizedBox(height: 16),
+            Padding(
+              padding:
+                  widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildFilePreview(context),
+            ),
+          ],
+
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -292,6 +293,7 @@ class PostUpdateFormState extends State<PostUpdateForm> {
 
     return TextFormField(
       controller: _titleController,
+      enabled: !_isLoading,
       decoration: InputDecoration(
         hintText: '제목을 입력하세요',
         filled: true,
@@ -312,6 +314,13 @@ class PostUpdateFormState extends State<PostUpdateForm> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: scheme.error, width: 2.0),
         ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: scheme.outline.withValues(alpha: 0.5),
+            width: 2.0,
+          ),
+        ),
         contentPadding: const EdgeInsets.all(16),
       ),
       validator: (value) {
@@ -330,6 +339,7 @@ class PostUpdateFormState extends State<PostUpdateForm> {
 
     return TextFormField(
       controller: _contentController,
+      enabled: !_isLoading,
       maxLines: 32,
       minLines: 16,
       textAlignVertical: TextAlignVertical.top,
@@ -369,40 +379,48 @@ class PostUpdateFormState extends State<PostUpdateForm> {
   Widget _buildFilePreview(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final imageWidth = (constraints.maxWidth - 8) / 2;
+        const spacing = 8.0;
+        final columns = constraints.maxWidth >= 360 ? 5 : 4;
+        final totalSpacing = spacing * (columns - 1);
+        final imageWidth = (constraints.maxWidth - totalSpacing) / columns;
         return Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: spacing,
+          runSpacing: spacing,
           children: [
             ..._urls.map(
-              (url) => UploadPreview(
-                url: url,
-                width: imageWidth,
-                height: imageWidth,
-                borderRadius: 8,
-                onDelete: () async {
-                  final confirm = await showConfirmDialog(
-                    message: '이 이미지를 삭제하시겠습니까?',
-                  );
+              (url) => IgnorePointer(
+                ignoring: _isLoading,
+                child: UploadPreview(
+                  url: url,
+                  width: imageWidth,
+                  height: imageWidth,
+                  borderRadius: 8,
+                  onDelete: () async {
+                    if (_isLoading) return;
 
-                  if (confirm != true) return;
+                    final confirm = await showConfirmDialog(
+                      message: '이 이미지를 삭제하시겠습니까?',
+                    );
 
-                  try {
-                    await philgoApiFileDelete(url);
-                    _urls.remove(url);
-                    setState(() {});
+                    if (confirm != true) return;
 
-                    // 서버에 즉시 반영
-                    await updatePost({'idx': widget.post.idx, 'files': _urls});
+                    try {
+                      await philgoApiFileDelete(url);
+                      _urls.remove(url);
+                      setState(() {});
 
-                    if (context.mounted) {
-                      showSuccessSnackBar(context, '이미지가 삭제되었습니다');
+                      // 서버에 즉시 반영
+                      await updatePost({'idx': widget.post.idx, 'files': _urls});
+
+                      if (context.mounted) {
+                        showSuccessSnackBar(context, '이미지가 삭제되었습니다');
+                      }
+                    } catch (e) {
+                      log('파일 삭제 실패: $e', name: 'PostUpdateForm', error: e);
+                      showSafeErrorDialog('파일 삭제에 실패했습니다.');
                     }
-                  } catch (e) {
-                    log('파일 삭제 실패: $e', name: 'PostUpdateForm', error: e);
-                    showSafeErrorDialog('파일 삭제에 실패했습니다.');
-                  }
-                },
+                  },
+                ),
               ),
             ),
             ...List.generate(
@@ -464,7 +482,13 @@ class PostUpdateFormState extends State<PostUpdateForm> {
                       color: colorScheme.primary,
                     ),
                   )
-                : FaIcon(FontAwesomeIcons.solidPaperPlane, size: 24),
+                : FaIcon(
+                    FontAwesomeIcons.solidPaperPlane,
+                    size: 24,
+                    color: (_isLoading || _uploadingCount > 0)
+                        ? colorScheme.onSurface.withValues(alpha: 0.38)
+                        : colorScheme.primary,
+                  ),
           ),
       ],
     );

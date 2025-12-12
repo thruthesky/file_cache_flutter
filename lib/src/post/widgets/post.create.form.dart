@@ -380,15 +380,6 @@ class PostCreateFormState extends State<PostCreateForm> {
           ),
 
           const SizedBox(height: 16),
-          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
-            Padding(
-              padding:
-                  widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildUploadPreview(context),
-            ),
-            const SizedBox(height: 16),
-          ],
-
           Padding(
             padding:
                 widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
@@ -401,6 +392,17 @@ class PostCreateFormState extends State<PostCreateForm> {
                 widget.padding ?? const EdgeInsets.symmetric(horizontal: 4),
             child: _buildActionBar(context),
           ),
+
+          if (_urls.isNotEmpty || _uploadingCount > 0) ...[
+            const SizedBox(height: 16),
+            Padding(
+              padding:
+                  widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildUploadPreview(context),
+            ),
+          ],
+
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -515,6 +517,7 @@ class PostCreateFormState extends State<PostCreateForm> {
     return TextFieldSet(
       padding: EdgeInsets.zero,
       controller: _titleController,
+      enabled: !_isLoading,
       decoration: InputDecoration(
         hintText: '제목을 입력하세요',
         filled: true,
@@ -536,6 +539,13 @@ class PostCreateFormState extends State<PostCreateForm> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.error, width: 2.0),
         ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.5),
+            width: 2.0,
+          ),
+        ),
         contentPadding: const EdgeInsets.all(16),
       ),
       validator: (value) {
@@ -554,6 +564,7 @@ class PostCreateFormState extends State<PostCreateForm> {
 
     return TextFormField(
       controller: _contentController,
+      enabled: !_isLoading,
       maxLines: 32,
       minLines: 16,
       textAlignVertical: TextAlignVertical.top,
@@ -578,6 +589,13 @@ class PostCreateFormState extends State<PostCreateForm> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.error, width: 2.0),
         ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.5),
+            width: 2.0,
+          ),
+        ),
         contentPadding: const EdgeInsets.all(16),
         alignLabelWithHint: true,
       ),
@@ -594,30 +612,37 @@ class PostCreateFormState extends State<PostCreateForm> {
   Widget _buildUploadPreview(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // 2열 그리드 레이아웃
-        final imageWidth = (constraints.maxWidth - 8) / 2;
+        const spacing = 8.0;
+        final columns = constraints.maxWidth >= 360 ? 5 : 4;
+        final totalSpacing = spacing * (columns - 1);
+        final imageWidth = (constraints.maxWidth - totalSpacing) / columns;
 
         return Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: spacing,
+          runSpacing: spacing,
           children: [
             // 업로드 완료된 이미지들
             ..._urls.map(
-              (url) => UploadPreview(
-                url: url,
-                width: imageWidth,
-                height: imageWidth,
-                borderRadius: 8,
-                onDelete: () async {
-                  // 삭제 확인 다이얼로그 표시
-                  final confirm = await showConfirmDialog(
-                    message: '이 이미지를 삭제하시겠습니까?',
-                  );
+              (url) => IgnorePointer(
+                ignoring: _isLoading,
+                child: UploadPreview(
+                  url: url,
+                  width: imageWidth,
+                  height: imageWidth,
+                  borderRadius: 8,
+                  onDelete: () async {
+                    if (_isLoading) return;
 
-                  if (confirm == true) {
-                    await deleteUploadedFile(url);
-                  }
-                },
+                    // 삭제 확인 다이얼로그 표시
+                    final confirm = await showConfirmDialog(
+                      message: '이 이미지를 삭제하시겠습니까?',
+                    );
+
+                    if (confirm == true) {
+                      await deleteUploadedFile(url);
+                    }
+                  },
+                ),
               ),
             ),
             // 업로드 중인 플레이스홀더들
@@ -681,7 +706,13 @@ class PostCreateFormState extends State<PostCreateForm> {
                       color: colorScheme.primary,
                     ),
                   )
-                : FaIcon(FontAwesomeIcons.solidPaperPlane, size: 24),
+                : FaIcon(
+                    FontAwesomeIcons.solidPaperPlane,
+                    size: 24,
+                    color: (_isLoading || _uploadingCount > 0)
+                        ? colorScheme.onSurface.withValues(alpha: 0.38)
+                        : colorScheme.primary,
+                  ),
           ),
       ],
     );
