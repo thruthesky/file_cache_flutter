@@ -141,6 +141,16 @@
             ]
         },
         {
+            "name": "Fred: Realme",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "0N14426I24109E26",
+            "args": [
+                "--dart-define=ENV=dev",
+            ]
+        },
+        {
             "name": "🧪 E2E - iPhone 16 Pro Max (Driver Extension)",
             "request": "launch",
             "type": "dart",
