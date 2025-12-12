@@ -248,22 +248,18 @@ void showShorebirdUpdateDialog() {
                       ),
                       SizedBox(height: sp.s8),
 
-                      /// 두 번째 줄: 앱을 재시작해주세요 (강조 스타일)
-                      /// Second line: Please restart the app (emphasized style)
+                      /// 두 번째 줄: 앱을 재시작해주세요 (경고 스타일)
+                      /// Second line: Please restart the app (warning style)
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: sp.s12,
                           vertical: sp.s8,
                         ),
                         decoration: BoxDecoration(
-                          // 강조 배경색 (primary 색상의 연한 버전)
-                          // Emphasized background color (lighter version of primary)
-                          color: scheme.primaryContainer.withValues(alpha: 0.5),
+                          // 경고 배경색 (error 색상의 연한 버전, border 없음)
+                          // Warning background color (lighter version of error, no border)
+                          color: scheme.errorContainer.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: scheme.primary.withValues(alpha: 0.3),
-                            width: 1.0,
-                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -271,17 +267,14 @@ void showShorebirdUpdateDialog() {
                           children: [
                             // 강조 아이콘 (Emoji 스타일)
                             // Emphasis icon (Emoji style)
-                            Text(
-                              '🔄',
-                              style: TextStyle(fontSize: 16),
-                            ),
+                            Text('🔄', style: TextStyle(fontSize: 16)),
                             SizedBox(width: sp.s8),
                             Text(
                               lo.shorebirdRestartMessage,
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                // 강조를 위해 primary 색상과 bold 적용
-                                // Apply primary color and bold for emphasis
-                                color: scheme.primary,
+                                // 경고를 위해 error 색상과 bold 적용
+                                // Apply error color and bold for warning
+                                color: scheme.error,
                                 fontWeight: FontWeight.bold,
                                 height: 1.4,
                               ),
@@ -362,17 +355,14 @@ void showShorebirdUpdateDialog() {
                         /// Exit icon (Emoji style)
                         Text(
                           '⏻',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: scheme.error,
-                          ),
+                          style: TextStyle(fontSize: 16, color: scheme.error),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           lo.exitApp,
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: scheme.error,
-                            fontWeight: FontWeight.bold,
+                            // fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],

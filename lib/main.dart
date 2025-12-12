@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/functions/init.functions.dart';
 import 'package:philgo/functions/init/build_number_check.dart';
+import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
