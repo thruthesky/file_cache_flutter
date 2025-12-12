@@ -9,7 +9,7 @@ import 'package:video_player/video_player.dart';
 /// 재생/일시정지, 진행 바, 전체화면 등 풍부한 UI 컨트롤을 제공합니다.
 /// Chewie is built on top of video_player and provides rich UI controls
 /// including play/pause, progress bar, fullscreen, etc.
-class VideoNetwork extends StatefulWidget {
+class UploadedVideoPlayer extends StatefulWidget {
   /// 비디오 URL
   /// Video URL
   final String url;
@@ -30,7 +30,7 @@ class VideoNetwork extends StatefulWidget {
   /// Whether to start muted (default: false)
   final bool startMuted;
 
-  const VideoNetwork({
+  const UploadedVideoPlayer({
     super.key,
     required this.url,
     this.autoPlay = false,
@@ -40,10 +40,10 @@ class VideoNetwork extends StatefulWidget {
   });
 
   @override
-  State<VideoNetwork> createState() => _VideoNetworkState();
+  State<UploadedVideoPlayer> createState() => _UploadedVideoPlayerState();
 }
 
-class _VideoNetworkState extends State<VideoNetwork> {
+class _UploadedVideoPlayerState extends State<UploadedVideoPlayer> {
   /// video_player 컨트롤러
   /// video_player controller
   late VideoPlayerController _videoPlayerController;

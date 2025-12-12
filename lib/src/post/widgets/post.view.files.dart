@@ -16,6 +16,7 @@ import 'package:philgo_api/philgo_api.dart';
 /// - [files] → List of file URLs to display
 /// - [postIdx] → Post index for Hero transition tags
 /// - [enableHeroTransition] → Whether to enable Hero transition for first image. Defaults to `false`
+/// - [padding] → Padding around the widget. Defaults to `EdgeInsets.fromLTRB(16, 16, 16, 0)`
 ///
 /// ### Example:
 /// ```dart
@@ -35,51 +36,63 @@ class PostViewFiles extends StatelessWidget {
     required this.files,
     required this.postIdx,
     this.enableHeroTransition = false,
+    this.padding = const EdgeInsets.fromLTRB(0, 16, 0, 0),
   });
 
+  /// 파일 URL 목록
   final List<String> files;
+
+  /// 게시글 인덱스 (Hero 전환 태그용)
   final int postIdx;
+
+  /// 첫 번째 이미지에 Hero 전환 활성화 여부
   final bool enableHeroTransition;
+
+  /// 패딩 (기본값: EdgeInsets.fromLTRB(16, 16, 16, 0))
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Column(
-      spacing: 16,
-      children: files.asMap().entries.map((entry) {
-        final index = entry.key;
-        final fileUrl = entry.value;
-        final isFirstImage = index == 0;
-        final fileType = detectUploadFileType(fileUrl);
+    return Padding(
+      padding: padding,
+      child: Column(
+        spacing: 16,
+        children: files.asMap().entries.map((entry) {
+          final index = entry.key;
+          final fileUrl = entry.value;
+          final isFirstImage = index == 0;
+          final fileType = detectUploadFileType(fileUrl);
 
-        Widget fileWidget;
+          Widget fileWidget;
 
-        switch (fileType) {
-          case UploadFileType.image:
-            // Image preview with caching and loading states
-            fileWidget = _buildImagePreview(context, fileUrl, scheme);
-            break;
+          switch (fileType) {
+            case UploadFileType.image:
+              // Image preview with caching and loading states
+              fileWidget = _buildImagePreview(context, fileUrl, scheme);
+              break;
 
-          case UploadFileType.video:
-            // Video player widget
-            fileWidget = _buildVideoPreview(context, fileUrl);
-            break;
+            case UploadFileType.video:
+              // Video player widget
+              fileWidget = _buildVideoPreview(context, fileUrl);
+              break;
 
-          case UploadFileType.file:
-            // Generic file preview
-            fileWidget = _buildFilePreview(context, fileUrl, scheme);
-            break;
-        }
+            case UploadFileType.file:
+              // Generic file preview
+              fileWidget = _buildFilePreview(context, fileUrl, scheme);
+              break;
+          }
 
-        /// Wrap first image with Hero for transition from PostListTile (conditional)
-        /// Only apply Hero to images, not videos or files
-        return isFirstImage &&
-                enableHeroTransition &&
-                fileType == UploadFileType.image
-            ? Hero(tag: 'post-image-$postIdx', child: fileWidget)
-            : fileWidget;
-      }).toList(),
+          /// Wrap first image with Hero for transition from PostListTile (conditional)
+          /// Only apply Hero to images, not videos or files
+          return isFirstImage &&
+                  enableHeroTransition &&
+                  fileType == UploadFileType.image
+              ? Hero(tag: 'post-image-$postIdx', child: fileWidget)
+              : fileWidget;
+        }).toList(),
+      ),
     );
   }
 
@@ -89,59 +102,43 @@ class PostViewFiles extends StatelessWidget {
     String imageUrl,
     ColorScheme scheme,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: CachedNetworkImage(
-          imageUrl: imageUrl,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          placeholder: (context, url) => Container(
-            height: 200,
-            color: scheme.surfaceContainerHighest,
-            child: Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: scheme.primary,
-                ),
-              ),
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      placeholder: (context, url) => Container(
+        height: 200,
+        color: scheme.surfaceContainerHighest,
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: scheme.primary,
             ),
           ),
-          errorWidget: (context, url, error) {
-            return Container(
-              height: 200,
-              color: scheme.surfaceContainerHighest,
-              child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.lightImage,
-                  size: 48,
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            );
-          },
         ),
       ),
+      errorWidget: (context, url, error) {
+        return Container(
+          height: 200,
+          color: scheme.surfaceContainerHighest,
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.lightImage,
+              size: 48,
+              color: scheme.onSurfaceVariant,
+            ),
+          ),
+        );
+      },
     );
   }
 
   /// Builds video preview with player controls
   Widget _buildVideoPreview(BuildContext context, String videoUrl) {
-    return VideoNetwork(url: videoUrl);
+    return UploadedVideoPlayer(url: videoUrl);
   }
 
   /// Builds generic file preview with icon and extension

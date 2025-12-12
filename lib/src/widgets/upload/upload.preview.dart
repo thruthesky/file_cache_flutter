@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
 
-import 'image.error.placeholder.dart';
+import 'display.upload.dart';
 
 /// A widget that displays a **preview thumbnail** for an uploaded file, image, or video.
 ///
@@ -10,10 +9,10 @@ import 'image.error.placeholder.dart';
 /// It automatically applies rounded corners and supports configurable width and height.
 /// It detects the file type from the URL extension and displays appropriate content:
 /// - **Images**: Displays the image with thumbnail optimization
-/// - **Videos**: Displays an interactive video player using [VideoNetwork] with play/pause controls
+/// - **Videos**: Displays an interactive video player using [UploadedVideoPlayer] with play/pause controls
 /// - **Files**: Displays a file icon with the file extension badge
 ///
-/// ### Video Player Features (via VideoNetwork):
+/// ### Video Player Features (via UploadedVideoPlayer):
 /// - Tap on video to show/hide controls
 /// - Play/Pause button with visual feedback
 /// - Auto-hide controls during playback
@@ -90,108 +89,16 @@ class UploadPreview extends StatefulWidget {
 }
 
 class _UploadPreviewState extends State<UploadPreview> {
-  /// Extracts file extension from URL for display on file preview
-  /// Returns the extension in uppercase without the dot (e.g., "PDF", "DOC")
-  String _getFileExtension() {
-    final extension = getFileExtension(widget.url);
-    return extension.isNotEmpty ? extension.toUpperCase() : 'FILE';
-  }
-
-  /// Builds the preview content based on file type
-  /// - Images: Network image with thumbnail optimization
-  /// - Videos: Network image with play icon overlay
-  /// - Files: Generic file icon with extension badge
-  Widget _buildPreviewContent() {
-    final fileType = detectUploadFileType(widget.url);
-
-    switch (fileType) {
-      case UploadFileType.image:
-        // Image preview with thumbnail optimization
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(widget.borderRadius - 2),
-          child: Image.network(
-            thumbnail_image_url(widget.url),
-            width: widget.width,
-            height: widget.height,
-            fit: BoxFit.cover,
-            // Error handling for failed image loads
-            errorBuilder: (context, error, stackTrace) {
-              return ImageErrorPlaceholder(
-                width: widget.width,
-                height: widget.height,
-              );
-            },
-          ),
-        );
-
-      case UploadFileType.video:
-        // Video preview using the reusable VideoNetwork
-        return VideoNetwork(url: widget.url);
-
-      case UploadFileType.file:
-        // Generic file preview with file type icon and extension badge
-        return _buildFilePlaceholder();
-    }
-  }
-
-  /// Builds placeholder for generic file types
-  Widget _buildFilePlaceholder() {
-    final extension = _getFileExtension();
-
-    return Container(
-      width: widget.width,
-      height: widget.height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(widget.borderRadius - 2),
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FaIcon(
-              FontAwesomeIcons.fileLines,
-              size: 32,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                extension,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Preview container with Comic Design 2.0px border
-        Container(
+        // 미리보기 박스 - DisplayUpload 위젯 사용
+        DisplayUpload(
+          url: widget.url,
           width: widget.width,
           height: widget.height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            // Comic Design: 2.0px border
-            border: Border.all(
-              color: Theme.of(context).colorScheme.outline,
-              width: 2.0,
-            ),
-          ),
-          child: _buildPreviewContent(),
+          borderRadius: widget.borderRadius,
         ),
         // Delete button (top-right corner)
         Positioned(

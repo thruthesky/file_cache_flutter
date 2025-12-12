@@ -378,6 +378,7 @@ void showBlockDialog({
 }
 
 /// Show block/unblock dialog
+/// TODO: (1) add `onUnblocked` callback (2) rebuild the parent widget to show content
 void showUnblockDialog({
   required BuildContext context,
   required String otherUserUid,
