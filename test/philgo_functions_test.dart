@@ -238,5 +238,81 @@ void main() {
       /// int.tryParse can parse negative numbers
       expect(result!.idx, -12345);
     });
+
+    /// 테스트 18: 채팅방 URL 파싱 (단수형 /chat/room.php)
+    /// Test 18: Parse chat room URL (singular /chat/room.php)
+    test('채팅방 URL 파싱 (단수형)', () {
+      final url =
+          'https://philgo.com/chat/room.php?id=RaHIcr45pvPzYdcDIv6JoW8DnSH2';
+      final result = parsePhilgoUrl(url);
+
+      expect(result, isNotNull);
+      expect(result!.isChatRoom, true);
+      expect(result.chatRoomId, 'RaHIcr45pvPzYdcDIv6JoW8DnSH2');
+      expect(result.isPostView, false);
+      expect(result.isPostList, false);
+      expect(result.isHome, false);
+    });
+
+    /// 테스트 19: 채팅방 URL 파싱 (복수형 /chat/rooms.php)
+    /// Test 19: Parse chat room URL (plural /chat/rooms.php)
+    test('채팅방 URL 파싱 (복수형)', () {
+      final url = 'https://philgo.com/chat/rooms.php?id=abc123xyz';
+      final result = parsePhilgoUrl(url);
+
+      expect(result, isNotNull);
+      expect(result!.isChatRoom, true);
+      expect(result.chatRoomId, 'abc123xyz');
+    });
+
+    /// 테스트 20: 채팅방 URL에 id가 없는 경우
+    /// Test 20: Chat room URL without id parameter
+    test('채팅방 URL에 id가 없는 경우', () {
+      final url = 'https://philgo.com/chat/room.php';
+      final result = parsePhilgoUrl(url);
+
+      expect(result, isNotNull);
+      expect(result!.isChatRoom, true);
+      expect(result.chatRoomId, isNull);
+    });
+
+    /// 테스트 21: URL 유형 판별 - isPostView
+    /// Test 21: URL type detection - isPostView
+    test('URL 유형 판별 - isPostView', () {
+      final url = 'https://philgo.com/post/view.php?idx=123';
+      final result = parsePhilgoUrl(url);
+
+      expect(result, isNotNull);
+      expect(result!.isPostView, true);
+      expect(result.isPostList, false);
+      expect(result.isHome, false);
+      expect(result.isChatRoom, false);
+    });
+
+    /// 테스트 22: URL 유형 판별 - isPostList
+    /// Test 22: URL type detection - isPostList
+    test('URL 유형 판별 - isPostList', () {
+      final url = 'https://philgo.com/post/list.php?post_id=freetalk';
+      final result = parsePhilgoUrl(url);
+
+      expect(result, isNotNull);
+      expect(result!.isPostView, false);
+      expect(result.isPostList, true);
+      expect(result.isHome, false);
+      expect(result.isChatRoom, false);
+    });
+
+    /// 테스트 23: URL 유형 판별 - isHome
+    /// Test 23: URL type detection - isHome
+    test('URL 유형 판별 - isHome', () {
+      final url = 'https://philgo.com/';
+      final result = parsePhilgoUrl(url);
+
+      expect(result, isNotNull);
+      expect(result!.isPostView, false);
+      expect(result.isPostList, false);
+      expect(result.isHome, true);
+      expect(result.isChatRoom, false);
+    });
   });
 }
