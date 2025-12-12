@@ -31,33 +31,33 @@ flutter:
           weight: 400
     - family: FontAwesomeRegular
       fonts:
-        - asset: lib/fonts/Font-Awesome-7-Free-Regular-400.otf
+        - asset: lib/fonts/Font-Awesome-7-Pro-Regular-400.otf
           weight: 400
     - family: FontAwesomeSolid
       fonts:
-        - asset: lib/fonts/Font-Awesome-7-Free-Solid-900.otf
+        - asset: lib/fonts/Font-Awesome-7-Pro-Solid-900.otf
           weight: 900
-#    - family: FontAwesomeLight
-#      fonts:
-#        - asset: lib/fonts/Font-Awesome-7-Pro-Light-300.otf
-#          weight: 300
-#    - family: FontAwesomeThin
-#      fonts:
-#        - asset: lib/fonts/Font-Awesome-7-Pro-Thin-100.otf
-#          weight: 100
-#    - family: FontAwesomeSharpThin
-#      fonts:
-#        - asset: lib/fonts/Font-Awesome-7-Sharp-Thin-100.otf
-#          weight: 100
-#    - family: FontAwesomeSharpLight
-#      fonts:
-#        - asset: lib/fonts/Font-Awesome-7-Sharp-Light-300.otf
-#          weight: 300
-#    - family: FontAwesomeSharpRegular
-#      fonts:
-#        - asset: lib/fonts/Font-Awesome-7-Sharp-Regular-400.otf
-#          weight: 400
-#    - family: FontAwesomeSharpSolid
-#      fonts:
-#        - asset: lib/fonts/Font-Awesome-7-Sharp-Solid-900.otf
-#          weight: 900
+    - family: FontAwesomeLight
+      fonts:
+        - asset: lib/fonts/Font-Awesome-7-Pro-Light-300.otf
+          weight: 300
+    - family: FontAwesomeThin
+      fonts:
+        - asset: lib/fonts/Font-Awesome-7-Pro-Thin-100.otf
+          weight: 100
+    - family: FontAwesomeSharpThin
+      fonts:
+        - asset: lib/fonts/Font-Awesome-7-Sharp-Thin-100.otf
+          weight: 100
+    - family: FontAwesomeSharpLight
+      fonts:
+        - asset: lib/fonts/Font-Awesome-7-Sharp-Light-300.otf
+          weight: 300
+    - family: FontAwesomeSharpRegular
+      fonts:
+        - asset: lib/fonts/Font-Awesome-7-Sharp-Regular-400.otf
+          weight: 400
+    - family: FontAwesomeSharpSolid
+      fonts:
+        - asset: lib/fonts/Font-Awesome-7-Sharp-Solid-900.otf
+          weight: 900
