@@ -40,6 +40,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
   /// ScrollController for programmatic scrolling to newly created comments
   late ScrollController _scrollController;
 
+  /// FocusNode for comment input field
+  final FocusNode _commentFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +53,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _commentFocusNode.dispose();
     super.dispose();
   }
 
@@ -166,6 +170,28 @@ class _PostViewScreenState extends State<PostViewScreen> {
     });
   }
 
+  /// Focus on the reply input field
+  /// Scrolls to bottom and focuses the comment textfield
+  void focusReplyInput() {
+    // First scroll to bottom
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients && mounted) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+
+      // Then focus the comment input
+      Future.delayed(const Duration(milliseconds: 350), () {
+        if (mounted) {
+          _commentFocusNode.requestFocus();
+        }
+      });
+    });
+  }
+
   /// Show Comic-styled bottom sheet with post options
   void _showPostOptions() {
     final scheme = Theme.of(context).colorScheme;
@@ -203,8 +229,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ),
                 const SizedBox(height: 8),
 
-                /// If not my post, show block and report
+                /// If not my post, show reply, block and report
                 if (!isPostMine()) ...[
+                  ListTile(
+                    leading: FaIcon(FontAwesomeIcons.reply, size: 20),
+                    title: Text(PhilgoTr.of(context)!.reply),
+                    onTap: () {
+                      Navigator.pop(context);
+                      focusReplyInput();
+                    },
+                  ),
                   ListTile(
                     leading: FaIcon(FontAwesomeIcons.ban, size: 20),
                     title: Text(PhilgoTr.of(context)!.block),
@@ -557,6 +591,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                                     const SizedBox(width: 8),
 
+                                    /// Reply button
+                                    _buildComicActionButton(
+                                      icon: FontAwesomeIcons.reply,
+                                      onPressed: focusReplyInput,
+                                    ),
+
                                     const Spacer(),
 
                                     /// If not my post, show block and report
@@ -869,6 +909,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               )
                             : CommentCreateForm(
                                 post: post!,
+                                focusNode: _commentFocusNode,
                                 onCreated: (createdComment) {
                                   post?.comments.add(createdComment);
                                   post!.no_of_comment += 1;
