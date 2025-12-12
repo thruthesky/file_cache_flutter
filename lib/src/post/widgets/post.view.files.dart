@@ -141,25 +141,7 @@ class PostViewFiles extends StatelessWidget {
 
   /// Builds video preview with player controls
   Widget _buildVideoPreview(BuildContext context, String videoUrl) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: VideoNetwork(
-        url: videoUrl,
-        width: double.infinity,
-        height: 300,
-        borderRadius: 12,
-      ),
-    );
+    return VideoNetwork(url: videoUrl);
   }
 
   /// Builds generic file preview with icon and extension

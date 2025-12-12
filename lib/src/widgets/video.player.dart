@@ -1,290 +1,218 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
 import 'package:video_player/video_player.dart';
 
-/// A reusable video player widget with simple tap-to-play/pause controls
-///
-/// This widget provides a simple video player with:
-/// - Tap anywhere to play/pause
-/// - Always-visible play/pause icon overlay
-/// - Error handling and loading states
-/// - Customizable dimensions and border radius
-///
-/// ### Parameters:
-/// - [url] → The URL of the video to play
-/// - [width] → The width of the video player. Defaults to `120`
-/// - [height] → The height of the video player. Defaults to `120`
-/// - [borderRadius] → The roundness of the player corners. Defaults to `6`
-/// - [showPlaceholderOnError] → Whether to show placeholder when video fails to load. Defaults to `true`
-/// - [autoPlay] → Whether to automatically start playing the video when loaded. Defaults to `false`
-///
-/// ### Example:
-/// ```dart
-/// VideoNetwork(
-///   url: 'https://example.com/video.mp4',
-///   width: 300,
-///   height: 200,
-///   borderRadius: 12,
-///   autoPlay: true,
-/// )
-/// ```
+/// 네트워크 비디오 플레이어 위젯
+/// Network video player widget with built-in controls
 class VideoNetwork extends StatefulWidget {
+  /// 비디오 URL
+  /// Video URL
   final String url;
-  final double width;
-  final double height;
-  final double borderRadius;
-  final bool showPlaceholderOnError;
-  final bool autoPlay;
 
-  const VideoNetwork({
-    super.key,
-    required this.url,
-    this.width = 120.0,
-    this.height = 120.0,
-    this.borderRadius = 6.0,
-    this.showPlaceholderOnError = true,
-    this.autoPlay = false,
-  });
+  const VideoNetwork({super.key, required this.url});
 
   @override
   State<VideoNetwork> createState() => _VideoNetworkState();
 }
 
 class _VideoNetworkState extends State<VideoNetwork> {
-  /// Video player controller for video playback
-  VideoPlayerController? _videoController;
+  /// 비디오 플레이어 컨트롤러
+  /// Video player controller
+  late VideoPlayerController _controller;
 
-  /// Flag to track if video player initialization failed
-  bool _videoInitFailed = false;
+  /// 컨트롤러 표시 여부
+  /// Whether to show controls overlay
+  bool _showControls = true;
 
   @override
   void initState() {
     super.initState();
-    _initializeVideoPlayer();
+    _initializeVideo();
+  }
+
+  /// 비디오 초기화
+  /// Initialize video
+  void _initializeVideo() {
+    _controller = VideoPlayerController.networkUrl(
+      Uri.parse(widget.url),
+      viewType: VideoViewType.platformView,
+    )..initialize().then((_) {
+        // 비디오 초기화 완료 후 첫 프레임 표시
+        // Show first frame after video is initialized
+        setState(() {});
+      });
+
+    // 비디오 상태 변경 리스너 추가
+    // Add listener for video state changes
+    _controller.addListener(_videoListener);
+  }
+
+  /// 비디오 상태 변경 리스너
+  /// Video state change listener
+  void _videoListener() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
-    // Dispose video controller when widget is disposed
-    _videoController?.dispose();
+    // 리스너 제거 및 컨트롤러 해제
+    // Remove listener and dispose controller
+    _controller.removeListener(_videoListener);
+    _controller.dispose();
     super.dispose();
   }
 
-  @override
-  void didUpdateWidget(VideoNetwork oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Reinitialize video player if URL changes
-    if (oldWidget.url != widget.url) {
-      _videoController?.dispose();
-      _videoInitFailed = false;
-      _initializeVideoPlayer();
-    }
-  }
-
-  /// Initializes the video player controller
-  void _initializeVideoPlayer() {
-    try {
-      _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.url))
-        ..initialize()
-            .then((_) {
-              // Ensure the first frame is shown and update state
-              if (mounted) {
-                setState(() {
-                  _videoInitFailed = false;
-                });
-
-                // Auto-play if enabled
-                if (widget.autoPlay) {
-                  _videoController!.play();
-                }
-              }
-            })
-            .catchError((error) {
-              // Handle video initialization errors
-              debugLog('Video player initialization error: $error');
-              if (mounted) {
-                setState(() {
-                  _videoInitFailed = true;
-                });
-              }
-            });
-    } catch (e) {
-      // Catch any synchronous errors during initialization
-      debugLog('Video player setup error: $e');
-      if (mounted) {
-        setState(() {
-          _videoInitFailed = true;
-        });
-      }
-    }
-  }
-
-  /// Toggles video play/pause
+  /// 재생/일시정지 토글
+  /// Toggle play/pause
   void _togglePlayPause() {
-    if (_videoController == null) return;
-
     setState(() {
-      if (_videoController!.value.isPlaying) {
-        _videoController!.pause();
+      if (_controller.value.isPlaying) {
+        _controller.pause();
       } else {
-        _videoController!.play();
+        _controller.play();
       }
     });
   }
 
-  /// Builds placeholder for video files when player is not ready
-  Widget _buildVideoPlaceholder() {
-    return Container(
-      width: widget.width,
-      height: widget.height,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FaIcon(
-              FontAwesomeIcons.video,
-              size: 32,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'VIDEO',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  /// 컨트롤러 표시/숨김 토글
+  /// Toggle controls visibility
+  void _toggleControls() {
+    setState(() {
+      _showControls = !_showControls;
+    });
+  }
+
+  /// 시간 포맷팅 (mm:ss)
+  /// Format duration (mm:ss)
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 
   @override
   Widget build(BuildContext context) {
-    // Show placeholder if video failed to initialize
-    if (_videoInitFailed && widget.showPlaceholderOnError) {
-      return Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            child: _buildVideoPlaceholder(),
-          ),
-          // Play icon overlay
-          Center(
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.surface.withValues(alpha: 0.9),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 2.0,
-                ),
-              ),
-              child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.play,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-          ),
-          // Error indicator
-          Positioned(
-            bottom: 8,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.errorContainer.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                'Preview only',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onErrorContainer,
-                  fontSize: 10,
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-
-    // Show loading placeholder while video is initializing
-    if (_videoController == null || !_videoController!.value.isInitialized) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
+    // 비디오가 초기화되지 않았을 때 로딩 표시
+    // Show loading indicator when video is not initialized
+    if (!_controller.value.isInitialized) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
         child: Container(
-          width: widget.width,
-          height: widget.height,
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          child: Center(
+          color: Colors.black,
+          child: const Center(
             child: CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.primary,
+              color: Colors.white,
             ),
           ),
         ),
       );
     }
 
-    // Show video player when initialized
-    return GestureDetector(
-      onTap: _togglePlayPause,
-      child: Stack(
-        children: [
-          // Video player
-          ClipRRect(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            child: SizedBox(
-              width: widget.width,
-              height: widget.height,
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: _videoController!.value.size.width,
-                  height: _videoController!.value.size.height,
-                  child: VideoPlayer(_videoController!),
+    return AspectRatio(
+      aspectRatio: _controller.value.aspectRatio,
+      child: GestureDetector(
+        // 탭하면 컨트롤러 표시/숨김
+        // Tap to show/hide controls
+        onTap: _toggleControls,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // 비디오 플레이어
+            // Video player
+            VideoPlayer(_controller),
+
+            // 컨트롤러 오버레이
+            // Controls overlay
+            if (_showControls)
+              Container(
+                // 반투명 배경
+                // Semi-transparent background
+                color: Colors.black.withValues(alpha: 0.3),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // 중앙 재생/일시정지 버튼
+                    // Center play/pause button
+                    Expanded(
+                      child: Center(
+                        child: IconButton(
+                          iconSize: 64,
+                          color: Colors.white,
+                          icon: Icon(
+                            _controller.value.isPlaying
+                                ? Icons.pause_circle_filled
+                                : Icons.play_circle_filled,
+                          ),
+                          onPressed: _togglePlayPause,
+                        ),
+                      ),
+                    ),
+
+                    // 하단 컨트롤 바
+                    // Bottom control bar
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        children: [
+                          // 현재 재생 시간
+                          // Current position
+                          Text(
+                            _formatDuration(_controller.value.position),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+
+                          const SizedBox(width: 8),
+
+                          // 진행 바 (video_player 기본 제공)
+                          // Progress bar (provided by video_player)
+                          Expanded(
+                            child: VideoProgressIndicator(
+                              _controller,
+                              allowScrubbing: true,
+                              colors: VideoProgressColors(
+                                playedColor: Theme.of(context).colorScheme.primary,
+                                bufferedColor: Colors.white.withValues(alpha: 0.5),
+                                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                            ),
+                          ),
+
+                          const SizedBox(width: 8),
+
+                          // 전체 시간
+                          // Total duration
+                          Text(
+                            _formatDuration(_controller.value.duration),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ),
-          // Play/Pause button overlay (always visible)
-          Center(
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.surface.withValues(alpha: 0.9),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 2.0,
+
+            // 버퍼링 표시
+            // Buffering indicator
+            if (_controller.value.isBuffering)
+              const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
                 ),
               ),
-              child: Center(
-                child: FaIcon(
-                  _videoController!.value.isPlaying
-                      ? FontAwesomeIcons.pause
-                      : FontAwesomeIcons.play,
-                  size: 24,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -121,12 +121,7 @@ class _UploadPreviewState extends State<UploadPreview> {
 
       case UploadFileType.video:
         // Video preview using the reusable VideoNetwork
-        return VideoNetwork(
-          url: widget.url,
-          width: widget.width,
-          height: widget.height,
-          borderRadius: widget.borderRadius - 2,
-        );
+        return VideoNetwork(url: widget.url);
 
       case UploadFileType.file:
         // Generic file preview with file type icon and extension badge

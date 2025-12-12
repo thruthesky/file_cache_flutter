@@ -22,6 +22,8 @@ enum UploadFileType {
 /// getFileExtension('https://example.com/video.mp4#t=10') // Returns: 'mp4'
 /// getFileExtension('https://example.com/file') // Returns: ''
 /// ```
+///
+/// TODO: Make it more safe by matching well-known extensions like '.jpg', '.gif', '.pdf'
 String getFileExtension(String url) {
   // Regular expression to match file extension before query string or hash
   // Pattern: \.([^.\/\?#]+)(?:[\?#]|$)

@@ -2,6 +2,11 @@ import 'package:philgo_api/philgo_api.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
+class PostMasonryViewController {
+  late PostMasonryViewState state;
+  add(Post post) {}
+}
+
 /// Grid View for Posts (게시글 그리드 뷰)
 /// Displays posts in a masonry grid layout with pagination
 /// Masonry 그리드 레이아웃으로 게시글을 페이지네이션하여 표시
@@ -22,8 +27,7 @@ class PostMasonryView extends StatefulWidget {
     this.noItemsFoundIndicatorBuilder,
     this.enableHeroTransition = false,
     this.tileBuilder,
-    required this.gridColumns,
-    this.controller,
+    required this.controller,
   });
 
   /// 메인 카테고리 ID (Main category ID)
@@ -42,12 +46,7 @@ class PostMasonryView extends StatefulWidget {
   /// If null, defaults to PostListTile widget
   final Widget Function(Post post, VoidCallback onTap)? tileBuilder;
 
-  /// Number of columns for grid layout
-  final int gridColumns;
-
-  /// Optional controller for external access to refresh and other operations
-  /// GlobalKey를 사용하지 않고 외부에서 새로고침 등의 작업을 수행하기 위한 컨트롤러
-  final PostListController? controller;
+  final PostMasonryViewController controller;
 
   @override
   State<PostMasonryView> createState() => PostMasonryViewState();
@@ -93,11 +92,7 @@ class PostMasonryViewState extends State<PostMasonryView> {
   @override
   void initState() {
     super.initState();
-
-    /// Attach controller if provided
-    /// 컨트롤러가 제공된 경우 연결
-    widget.controller?.attach(pagingController);
-
+    widget.controller.state = this;
     _loadCachedFirstPage();
   }
 
@@ -192,10 +187,6 @@ class PostMasonryViewState extends State<PostMasonryView> {
 
   @override
   void dispose() {
-    /// Detach controller before disposing
-    /// dispose 전에 컨트롤러 연결 해제
-    widget.controller?.detach();
-
     pagingController.dispose();
     super.dispose();
   }
@@ -231,7 +222,7 @@ class PostMasonryViewState extends State<PostMasonryView> {
               SliverPadding(
                 padding: const EdgeInsets.all(8.0),
                 sliver: SliverMasonryGrid.count(
-                  crossAxisCount: widget.gridColumns,
+                  crossAxisCount: 2,
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
                   childCount: items.length,

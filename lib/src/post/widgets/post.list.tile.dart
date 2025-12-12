@@ -253,14 +253,7 @@ class PostFileWidget extends StatelessWidget {
 
       case UploadFileType.video:
         // Video player with autoplay enabled
-        return VideoNetwork(
-          url: post.files[0],
-          width: 81,
-          height: 81,
-          borderRadius: 16,
-          autoPlay: true,
-          showPlaceholderOnError: true,
-        );
+        return VideoNetwork(url: post.files[0]);
 
       case UploadFileType.file:
         // Generic file thumbnail with icon and extension
