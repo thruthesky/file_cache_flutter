@@ -108,5 +108,7 @@
 		<string>게시글, 댓글, 채팅, 프로필에 사진을 업로드하고 공유하기 위해 필고 앱이 비디오 녹화를 위해 마이크에 접근할 수 있도록 허용합니다.</string>
 		<key>LSSupportsOpeningDocumentsInPlace</key>
 		<true/>
+		<key>FlutterDeepLinkingEnabled</key>
+		<true/>
 	</dict>
 </plist>

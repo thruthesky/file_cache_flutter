@@ -9,7 +9,7 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
+            "deviceId": "28104965-ABA9-44AE-9AB0-943752E57A39"
         },
         {
             "name": "🚀 PhilGo - iPhone16 - Prod",
@@ -23,7 +23,7 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
+            "deviceId": "28104965-ABA9-44AE-9AB0-943752E57A39",
             "args": [
                 "--dart-define=ENV=jaeho"
             ]
@@ -33,7 +33,7 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
+            "deviceId": "28104965-ABA9-44AE-9AB0-943752E57A39",
             "args": [
                 "--dart-define=ENV=dev"
             ]
@@ -146,7 +146,7 @@
             "type": "dart",
             "program": "test_driver/app.dart",
             "flutterMode": "debug",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259"
+            "deviceId": "28104965-ABA9-44AE-9AB0-943752E57A39"
         },
         {
             "name": "🧪 E2E - iPhone 16 Pro Max (jaeho)",
@@ -154,7 +154,7 @@
             "type": "dart",
             "program": "test_driver/app.dart",
             "flutterMode": "debug",
-            "deviceId": "AB549A85-49CE-4E6F-A43B-36E573082259",
+            "deviceId": "28104965-ABA9-44AE-9AB0-943752E57A39",
             "args": [
                 "--dart-define=ENV=jaeho"
             ]
