@@ -1501,4 +1501,13 @@ class LoEn extends Lo {
 
   @override
   String get exitApp => 'Exit';
+
+  @override
+  String get homePopularPosts => 'Popular Posts';
+
+  @override
+  String get homeRecentPhotos => 'Recent Photos';
+
+  @override
+  String get homeMore => 'More';
 }

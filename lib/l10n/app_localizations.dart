@@ -2956,6 +2956,24 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Exit'**
   String get exitApp;
+
+  /// Popular posts section title on home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Posts'**
+  String get homePopularPosts;
+
+  /// Recent photos section title on home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Photos'**
+  String get homeRecentPhotos;
+
+  /// More button text on home section headers
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get homeMore;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

@@ -1470,4 +1470,13 @@ class LoKo extends Lo {
 
   @override
   String get exitApp => '종료하기';
+
+  @override
+  String get homePopularPosts => '인기글';
+
+  @override
+  String get homeRecentPhotos => '최근 사진';
+
+  @override
+  String get homeMore => '더보기';
 }

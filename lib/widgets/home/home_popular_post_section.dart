@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_section_header.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -108,9 +109,9 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    /// 섹션 타이틀: "인기글"
-    /// Section title: "Popular Posts"
-    const sectionTitle = '인기글';
+    /// 섹션 타이틀: "인기글" (다국어 지원)
+    /// Section title: "Popular Posts" (i18n supported)
+    final sectionTitle = Lo.of(context)!.homePopularPosts;
 
     return Padding(
       padding: EdgeInsets.only(left: sp.s16, right: sp.s16, top: sp.s16),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 
 /// 홈 화면 섹션 헤더 위젯 (Home Section Header Widget)
 ///
@@ -54,10 +55,10 @@ class HomeSectionHeader extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                /// "더보기" 텍스트
-                /// "More" text
+                /// "더보기" 텍스트 (다국어 지원)
+                /// "More" text (i18n supported)
                 Text(
-                  '더보기',
+                  Lo.of(context)!.homeMore,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.primary,
                   ),

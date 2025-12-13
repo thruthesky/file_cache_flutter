@@ -3,12 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/extensions/nav.context.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/widgets/home/main/latest_posts.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
-import 'package:philgo/widgets/home/home_post_section.dart';
 import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
@@ -87,52 +87,13 @@ class _MainHomeState extends State<MainHome> {
             /// Forum Sections - 2-column layout
             /// 왼쪽: 자유게시판, 오른쪽: 질문과 답변
             /// Left: Freetalk, Right: QnA
-            SliverToBoxAdapter(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// [자유게시판 섹션] - 최근 글 4개 표시 (왼쪽)
-                  /// Freetalk Section - Display latest 4 posts (left)
-                  Expanded(
-                    child: HomePostSection(
-                      postId: 'freetalk',
-                      limit: 4,
-                      onMoreTap: () {
-                        context.openForum('freetalk');
-                      },
-                      onPostTap: (post) {
-                        /// PostViewScreen으로 이동
-                        /// Navigate to PostViewScreen
-                        PostViewScreen.push(context, post);
-                      },
-                    ),
-                  ),
-
-                  /// [질문과 답변 섹션] - 최근 글 4개 표시 (오른쪽)
-                  /// QnA Section - Display latest 4 posts (right)
-                  Expanded(
-                    child: HomePostSection(
-                      postId: 'qna',
-                      limit: 4,
-                      onMoreTap: () {
-                        context.openForum('qna');
-                      },
-                      onPostTap: (post) {
-                        /// PostViewScreen으로 이동
-                        /// Navigate to PostViewScreen
-                        PostViewScreen.push(context, post);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            SliverToBoxAdapter(child: LatestPostsSection(limit: 4)),
 
             /// [Square Banners]
             /// 사각 배너 - 1줄에 4개씩 그리드로 표시
             /// Square banners - display 4 per row in grid
             // SliverToBoxAdapter(child: const WingBanners()),
-            SliverToBoxAdapter(child: const CarouselWingBanners()),
+            SliverToBoxAdapter(child: const WingBanners()),
 
             /// [인기글 섹션] - 최근 7일간 댓글 많은 글 5개 표시
             /// Popular Posts Section - Display top 5 posts with most comments in last 7 days

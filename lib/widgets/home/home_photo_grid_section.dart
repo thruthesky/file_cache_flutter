@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_section_header.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -122,9 +123,9 @@ class _HomePhotoGridSectionState extends State<HomePhotoGridSection> {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    /// 섹션 타이틀: "최근 사진"
-    /// Section title: "Recent Photos"
-    const sectionTitle = '최근 사진';
+    /// 섹션 타이틀: "최근 사진" (다국어 지원)
+    /// Section title: "Recent Photos" (i18n supported)
+    final sectionTitle = Lo.of(context)!.homeRecentPhotos;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s8),

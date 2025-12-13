@@ -52,6 +52,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
   @override
   void initState() {
     super.initState();
+    post = widget.post;
     _scrollController = ScrollController();
 
     // Listen to focus changes to auto-scroll when textfield is focused
@@ -237,21 +238,19 @@ class _PostViewScreenState extends State<PostViewScreen> {
         // 댓글 입력 박스를 하단에 고정
         // bottomNavigationBar는 키보드가 올라올 때 자동으로 위로 이동하고
         // Safe Area도 자동으로 처리됨
-        bottomNavigationBar: isLoading
-            ? null
-            : PostViewCommentBox(
-                post: post,
-                replyingToComment: replyingToComment,
-                editingComment: editingComment,
-                commentFocusNode: _commentFocusNode,
-                onCancelReplyMode: cancelReplyMode,
-                onCancelEditMode: cancelEditMode,
-                onScrollToBottom: scrollToBottom,
-                onStateChanged: () => setState(() {}),
-              ),
+        bottomNavigationBar: PostViewCommentBox(
+          post: post,
+          replyingToComment: replyingToComment,
+          editingComment: editingComment,
+          commentFocusNode: _commentFocusNode,
+          onCancelReplyMode: cancelReplyMode,
+          onCancelEditMode: cancelEditMode,
+          onScrollToBottom: scrollToBottom,
+          onStateChanged: () => setState(() {}),
+        ),
         // CustomScrollView를 사용하여 댓글 목록을 lazy loading
         // SingleChildScrollView + Column 대신 Sliver 기반으로 성능 최적화
-        body: isLoading
+        body: post == null && isLoading
             ? const Center(child: CircularProgressIndicator())
             : CustomScrollView(
                 controller: _scrollController,

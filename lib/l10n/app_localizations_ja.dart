@@ -1470,4 +1470,13 @@ class LoJa extends Lo {
 
   @override
   String get exitApp => '終了';
+
+  @override
+  String get homePopularPosts => 'Popular Posts';
+
+  @override
+  String get homeRecentPhotos => 'Recent Photos';
+
+  @override
+  String get homeMore => 'More';
 }

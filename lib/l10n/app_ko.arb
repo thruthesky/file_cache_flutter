@@ -1947,5 +1947,17 @@
   "exitApp": "종료하기",
   "@exitApp": {
     "description": "Exit app button text"
+  },
+  "homePopularPosts": "인기글",
+  "@homePopularPosts": {
+    "description": "Popular posts section title on home screen"
+  },
+  "homeRecentPhotos": "최근 사진",
+  "@homeRecentPhotos": {
+    "description": "Recent photos section title on home screen"
+  },
+  "homeMore": "더보기",
+  "@homeMore": {
+    "description": "More button text on home section headers"
   }
 }
