@@ -8,11 +8,11 @@ library;
 // =============================================================================
 export 'src/banners/banner.api.dart';
 export 'src/banners/banner.model.dart';
-export 'src/banners/carousel_wing_banners.dart';
+export 'src/banners/wing/carousel_wing_banners.dart';
 export 'src/banners/small_banners.dart';
 export 'src/banners/square_banners.dart';
 export 'src/banners/top_banners.dart';
-export 'src/banners/wing_banners.dart';
+export 'src/banners/wing/wing_banners.dart';
 
 // =============================================================================
 // Cache - 캐시

@@ -63,7 +63,7 @@ class PostViewFiles extends StatelessWidget {
           final index = entry.key;
           final fileUrl = entry.value;
           final isFirstImage = index == 0;
-          final fileType = detectUploadFileType(fileUrl);
+          final fileType = detectFileType(fileUrl);
 
           Widget fileWidget;
 

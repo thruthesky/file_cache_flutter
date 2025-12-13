@@ -69,7 +69,7 @@ class DisplayUpload extends StatelessWidget {
   /// - 비디오: UploadedVideoPlayer로 비디오 재생
   /// - 파일: FilePlaceholder로 파일 아이콘 표시
   Widget _buildPreviewContent(BuildContext context) {
-    final fileType = detectUploadFileType(url);
+    final fileType = detectFileType(url);
 
     switch (fileType) {
       case UploadFileType.image:
