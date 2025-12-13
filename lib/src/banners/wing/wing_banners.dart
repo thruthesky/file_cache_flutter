@@ -17,7 +17,13 @@ class WingBanners extends StatefulWidget {
   /// Post ID or Category (optional)
   final String? postIdOrCategory;
 
-  const WingBanners({super.key, this.postIdOrCategory});
+  final EdgeInsets padding;
+
+  const WingBanners({
+    super.key,
+    this.postIdOrCategory,
+    this.padding = const EdgeInsets.only(top: 16),
+  });
 
   @override
   State<WingBanners> createState() => _WingBannersState();
@@ -87,29 +93,32 @@ class _WingBannersState extends State<WingBanners> {
 
     /// GridView로 배너 표시 (한 줄에 5개씩)
     /// Display banners with GridView (5 per row)
-    return SizedBox(
-      height: gridHeight,
-      child: GridView.builder(
-        padding: EdgeInsets.zero,
+    return Padding(
+      padding: widget.padding,
+      child: SizedBox(
+        height: gridHeight,
+        child: GridView.builder(
+          padding: EdgeInsets.zero,
 
-        /// 스크롤 비활성화 (부모 스크롤에 맡김)
-        /// Disable scroll (let parent handle scrolling)
-        physics: const NeverScrollableScrollPhysics(),
+          /// 스크롤 비활성화 (부모 스크롤에 맡김)
+          /// Disable scroll (let parent handle scrolling)
+          physics: const NeverScrollableScrollPhysics(),
 
-        /// 그리드 설정: 5열, 정사각형 아이템
-        /// Grid configuration: 5 columns, square items
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          childAspectRatio: 1.0,
+          /// 그리드 설정: 5열, 정사각형 아이템
+          /// Grid configuration: 5 columns, square items
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: 1.0,
+          ),
+
+          /// 배너 개수
+          /// Number of banners
+          itemCount: banners.length,
+
+          /// 배너 아이템 빌더
+          /// Banner item builder
+          itemBuilder: (context, index) => _buildBannerItem(banners[index]),
         ),
-
-        /// 배너 개수
-        /// Number of banners
-        itemCount: banners.length,
-
-        /// 배너 아이템 빌더
-        /// Banner item builder
-        itemBuilder: (context, index) => _buildBannerItem(banners[index]),
       ),
     );
   }
