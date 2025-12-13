@@ -16,6 +16,117 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo_api/philgo_api.dart';
 
+/// 슬라이드 방향 열거형 (Slide Direction Enum)
+///
+/// 전체 화면 다이얼로그의 슬라이드 애니메이션 방향을 지정합니다.
+/// Specifies the slide animation direction for full screen dialogs.
+enum SlideDirection {
+  /// 아래에서 위로 슬라이드 (Slide from bottom to top)
+  bottomToTop,
+
+  /// 위에서 아래로 슬라이드 (Slide from top to bottom)
+  topToBottom,
+
+  /// 왼쪽에서 오른쪽으로 슬라이드 (Slide from left to right)
+  leftToRight,
+
+  /// 오른쪽에서 왼쪽으로 슬라이드 (Slide from right to left)
+  rightToLeft,
+}
+
+/// 전체 화면 다이얼로그 표시 (Show Full Screen Dialog)
+///
+/// showGeneralDialog를 사용하여 전체 화면 다이얼로그를 표시합니다.
+/// 슬라이드 + 페이드 애니메이션이 적용됩니다.
+///
+/// Uses showGeneralDialog to display a full screen dialog.
+/// Slide + fade animation is applied.
+///
+/// ### Parameters:
+/// - [context] BuildContext for dialog
+/// - [child] 표시할 위젯 (Widget to display)
+/// - [barrierDismissible] 배경 탭 시 닫기 여부 (기본값: true)
+/// - [barrierLabel] 접근성 레이블 (optional)
+/// - [barrierColor] 배경색 (기본값: Colors.black54)
+/// - [transitionDuration] 애니메이션 시간 (기본값: 300ms)
+/// - [slideDirection] 슬라이드 방향 (기본값: bottomToTop)
+/// - [curve] 애니메이션 커브 (기본값: Curves.easeOutCubic)
+///
+/// ### Example:
+/// ```dart
+/// showFullScreen(
+///   context,
+///   child: const MyScreen(),
+///   barrierDismissible: true,
+///   slideDirection: SlideDirection.bottomToTop,
+/// );
+/// ```
+Future<T?> showFullScreen<T>(
+  BuildContext context, {
+  required Widget child,
+  bool barrierDismissible = true,
+  String? barrierLabel,
+  Color barrierColor = Colors.black54,
+  Duration transitionDuration = const Duration(milliseconds: 300),
+  SlideDirection slideDirection = SlideDirection.bottomToTop,
+  Curve curve = Curves.easeOutCubic,
+}) {
+  return showGeneralDialog<T>(
+    context: context,
+
+    /// 배경 탭 시 다이얼로그 닫기 여부
+    /// Whether to close dialog when tapping background
+    barrierDismissible: barrierDismissible,
+
+    /// 배경 레이블 (접근성)
+    /// Background label (accessibility)
+    barrierLabel: barrierLabel ?? MaterialLocalizations.of(context).modalBarrierDismissLabel,
+
+    /// 배경색
+    /// Background color
+    barrierColor: barrierColor,
+
+    /// 다이얼로그 전환 애니메이션 시간
+    /// Dialog transition animation duration
+    transitionDuration: transitionDuration,
+
+    /// 다이얼로그 빌더
+    /// Dialog builder
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return child;
+    },
+
+    /// 슬라이드 + 페이드 인 애니메이션
+    /// Slide + fade in animation
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
+      final curvedAnimation = CurvedAnimation(
+        parent: animation,
+        curve: curve,
+      );
+
+      /// 슬라이드 방향에 따른 시작 오프셋 계산
+      /// Calculate start offset based on slide direction
+      final beginOffset = switch (slideDirection) {
+        SlideDirection.bottomToTop => const Offset(0, 1),
+        SlideDirection.topToBottom => const Offset(0, -1),
+        SlideDirection.leftToRight => const Offset(-1, 0),
+        SlideDirection.rightToLeft => const Offset(1, 0),
+      };
+
+      return SlideTransition(
+        position: Tween<Offset>(
+          begin: beginOffset,
+          end: Offset.zero,
+        ).animate(curvedAnimation),
+        child: FadeTransition(
+          opacity: curvedAnimation,
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 /// 글쓰기 다이얼로그 표시
 /// Shows PostCreateForm dialog using showGeneralDialog
 ///

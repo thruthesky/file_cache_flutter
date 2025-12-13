@@ -87,7 +87,8 @@
       "Bash(npx tailwindcss:*)",
       "Bash(npx shadcn-svelte@latest init)",
       "Bash(pkill:*)",
-      "Skill(philgo-api-skill)"
+      "Skill(philgo-api-skill)",
+      "Skill(flutter-skill)"
     ]
   },
   "enableAllProjectMcpServers": true,

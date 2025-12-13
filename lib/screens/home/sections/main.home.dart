@@ -9,6 +9,7 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
+import 'package:philgo/widgets/home/main/home_quick_menu_section.dart';
 import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
@@ -78,6 +79,11 @@ class _MainHomeState extends State<MainHome> {
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
 
+            /// [퀵 메뉴 섹션] - 필리핀 생활 필수 정보 바로가기
+            /// Quick Menu Section - Quick access to essential Philippines living info
+            /// 환율, 필수정보, 한달살기, 여행 메뉴 표시
+            SliverToBoxAdapter(child: const HomeQuickMenuSection()),
+
             /// [Top Banners]
             /// 상단 배너 - 전체 페이지 배너 표시
             /// Top banners - display all page banners
@@ -87,7 +93,7 @@ class _MainHomeState extends State<MainHome> {
             /// Forum Sections - 2-column layout
             /// 왼쪽: 자유게시판, 오른쪽: 질문과 답변
             /// Left: Freetalk, Right: QnA
-            SliverToBoxAdapter(child: LatestPostsSection(limit: 4)),
+            SliverToBoxAdapter(child: LatestPostsSection()),
 
             /// [Square Banners]
             /// 사각 배너 - 1줄에 4개씩 그리드로 표시

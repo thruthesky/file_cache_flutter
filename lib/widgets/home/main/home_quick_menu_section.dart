@@ -1,0 +1,297 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/functions/ui.functions.dart';
+import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
+import 'package:philgo/screens/info/essential/essential_info.screen.dart';
+import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
+import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
+import 'package:philgo/screens/info/notice/notice.screen.dart';
+import 'package:philgo/screens/info/travel/travel_info.screen.dart';
+import 'package:philgo/themes/app.spacing.dart';
+
+/// 퀵 메뉴 아이템 데이터 클래스 (Quick Menu Item Data Class)
+///
+/// 각 퀵 메뉴 아이템의 아이콘, 라벨, 탭 콜백 정보를 담습니다.
+/// Contains icon, label, and tap callback for each quick menu item.
+class _QuickMenuItem {
+  /// 메뉴 아이콘 (Menu Icon)
+  final IconData icon;
+
+  /// 메뉴 라벨 (Menu Label)
+  final String label;
+
+  /// 탭 콜백 (Tap Callback)
+  final VoidCallback? onTap;
+
+  const _QuickMenuItem({
+    required this.icon,
+    required this.label,
+    this.onTap,
+  });
+}
+
+/// 홈 화면 퀵 메뉴 섹션 위젯 (Home Quick Menu Section Widget)
+///
+/// 필리핀 생활에 꼭 필요한 필수 정보를 빠르게 접근할 수 있는 메뉴입니다.
+/// Quick access menu for essential information about living in the Philippines.
+///
+/// ### 메뉴 항목 (Menu Items):
+/// - 환율: 페소-원화 환율 정보 (Exchange rate: PHP-KRW)
+/// - 필수정보: 비자, 대사관, 병원 등 (Essential info: Visa, Embassy, Hospital, etc.)
+/// - 한달살기: 장기 체류 정보 (Monthly living: Long-term stay info)
+/// - 여행: 여행지, 관광 정보 (Travel: Destinations, Tourism info)
+///
+/// ### Example:
+/// ```dart
+/// const HomeQuickMenuSection()
+/// ```
+class HomeQuickMenuSection extends StatelessWidget {
+  const HomeQuickMenuSection({super.key});
+
+  /// 공지 메뉴 탭 핸들러 (Notice menu tap handler)
+  ///
+  /// 공지사항 화면을 다이얼로그로 표시합니다.
+  /// Shows notice screen as dialog.
+  void _onNoticeTap(BuildContext context) {
+    showFullScreen(
+      context,
+      child: const NoticeScreen(),
+      barrierLabel: '공지사항 닫기',
+    );
+  }
+
+  /// 환율 메뉴 탭 핸들러 (Exchange rate menu tap handler)
+  ///
+  /// 환율 정보 화면을 다이얼로그로 표시합니다.
+  /// Shows exchange rate information screen as dialog.
+  void _onExchangeRateTap(BuildContext context) {
+    showFullScreen(
+      context,
+      child: const ExchangeRateScreen(),
+      barrierLabel: '환율 정보 닫기',
+    );
+  }
+
+  /// 날씨 메뉴 탭 핸들러 (Weather menu tap handler)
+  ///
+  /// 필리핀 주요 도시의 날씨 정보 화면으로 이동합니다.
+  /// Navigates to weather information screen for major Philippine cities.
+  void _onWeatherTap(BuildContext context) {
+    // TODO: 날씨 화면으로 이동 구현
+    // TODO: Implement navigation to weather screen
+  }
+
+  /// 긴급 연락처 메뉴 탭 핸들러 (Emergency contact menu tap handler)
+  ///
+  /// 대사관, 경찰, 병원 등 긴급 연락처 화면을 다이얼로그로 표시합니다.
+  /// Shows emergency contacts screen (Embassy, Police, Hospital, etc.) as dialog.
+  void _onEmergencyContactTap(BuildContext context) {
+    showFullScreen(
+      context,
+      child: const EmergencyContactScreen(),
+      barrierLabel: '긴급 연락처 닫기',
+    );
+  }
+
+  /// 필수정보 메뉴 탭 핸들러 (Essential info menu tap handler)
+  ///
+  /// 비자, 대사관, 병원 등 필수 정보 화면을 다이얼로그로 표시합니다.
+  /// Shows essential info screen (Visa, Embassy, Hospital, etc.) as dialog.
+  void _onEssentialInfoTap(BuildContext context) {
+    showFullScreen(
+      context,
+      child: const EssentialInfoScreen(),
+      barrierLabel: '필수정보 닫기',
+    );
+  }
+
+  /// 한달살기 메뉴 탭 핸들러 (Monthly living menu tap handler)
+  ///
+  /// 장기 체류 정보 화면을 다이얼로그로 표시합니다.
+  /// Shows monthly living (long-term stay) information screen as dialog.
+  void _onMonthlyLivingTap(BuildContext context) {
+    showFullScreen(
+      context,
+      child: const MonthlyLivingScreen(),
+      barrierLabel: '한달살기 닫기',
+    );
+  }
+
+  /// 여행 메뉴 탭 핸들러 (Travel menu tap handler)
+  ///
+  /// 여행지, 관광 정보 화면을 다이얼로그로 표시합니다.
+  /// Shows travel destinations and tourism information screen as dialog.
+  void _onTravelTap(BuildContext context) {
+    showFullScreen(
+      context,
+      child: const TravelInfoScreen(),
+      barrierLabel: '여행 정보 닫기',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
+
+    /// 퀵 메뉴 아이템 목록 (Quick menu items list)
+    /// FontAwesome 7.1 Pro Light 아이콘 사용
+    final menuItems = [
+      _QuickMenuItem(
+        /// 공지 아이콘: 공지사항/알림을 상징하는 메가폰 아이콘
+        /// Notice icon: Megaphone representing announcements
+        icon: FontAwesomeIcons.lightBullhorn,
+        label: '공지',
+        onTap: () => _onNoticeTap(context),
+      ),
+      _QuickMenuItem(
+        /// 환율 아이콘: 페소-원화 환전을 상징하는 동전 아이콘
+        /// Exchange rate icon: Coins representing PHP-KRW exchange
+        icon: FontAwesomeIcons.lightCoins,
+        label: '환율',
+        onTap: () => _onExchangeRateTap(context),
+      ),
+      _QuickMenuItem(
+        /// 날씨 아이콘: 필리핀 날씨를 상징하는 태양과 구름 아이콘
+        /// Weather icon: Sun and cloud representing Philippine weather
+        icon: FontAwesomeIcons.lightCloudSun,
+        label: '날씨',
+        onTap: () => _onWeatherTap(context),
+      ),
+      _QuickMenuItem(
+        /// 긴급 연락처 아이콘: 긴급 전화를 상징하는 전화 아이콘
+        /// Emergency contact icon: Phone representing emergency calls
+        icon: FontAwesomeIcons.lightPhoneVolume,
+        label: '긴급연락처',
+        onTap: () => _onEmergencyContactTap(context),
+      ),
+      _QuickMenuItem(
+        /// 필수정보 아이콘: 중요 정보를 나타내는 원형 정보 아이콘
+        /// Essential info icon: Circle info representing important information
+        icon: FontAwesomeIcons.lightCircleInfo,
+        label: '필수정보',
+        onTap: () => _onEssentialInfoTap(context),
+      ),
+      _QuickMenuItem(
+        /// 한달살기 아이콘: 장기 체류를 상징하는 달력 아이콘
+        /// Monthly living icon: Calendar representing long-term stay
+        icon: FontAwesomeIcons.lightCalendarDays,
+        label: '한달살기',
+        onTap: () => _onMonthlyLivingTap(context),
+      ),
+      _QuickMenuItem(
+        /// 여행 아이콘: 필리핀 해변 여행을 상징하는 우산 아이콘
+        /// Travel icon: Beach umbrella representing Philippines vacation
+        icon: FontAwesomeIcons.lightUmbrellaBeach,
+        label: '여행',
+        onTap: () => _onTravelTap(context),
+      ),
+    ];
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: sp.s12),
+      child: SingleChildScrollView(
+        /// 가로 스크롤 활성화 (Enable horizontal scrolling)
+        scrollDirection: Axis.horizontal,
+
+        /// 좌우 패딩 추가 (Add horizontal padding)
+        padding: EdgeInsets.symmetric(horizontal: sp.s8),
+
+        child: Row(
+          /// 아이템들을 시작점에 정렬 (Align items to start)
+          mainAxisAlignment: MainAxisAlignment.start,
+
+          children: menuItems.map((item) {
+            return _buildMenuItem(
+              context: context,
+              icon: item.icon,
+              label: item.label,
+              onTap: item.onTap,
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  /// 개별 메뉴 아이템 빌드 (Build individual menu item)
+  ///
+  /// [context] → BuildContext
+  /// [icon] → 메뉴 아이콘 (Menu icon)
+  /// [label] → 메뉴 라벨 (Menu label)
+  /// [onTap] → 탭 콜백 (Tap callback)
+  /// [scheme] → ColorScheme
+  /// [theme] → ThemeData
+  /// [sp] → AppSpacing
+  Widget _buildMenuItem({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback? onTap,
+    required ColorScheme scheme,
+    required ThemeData theme,
+    required AppSpacing sp,
+  }) {
+    /// InkWell 사용: SingleChildScrollView + Row 조합에서는 InkWell 정상 동작
+    /// ripple effect를 제공하여 탭 피드백 표시
+    ///
+    /// Using InkWell: Works correctly with SingleChildScrollView + Row combination
+    /// Provides ripple effect for tap feedback
+    return InkWell(
+      /// 탭 시 콜백 호출 (Call callback on tap)
+      onTap: onTap,
+
+      /// 둥근 모서리 ripple 효과 (Rounded corner ripple effect)
+      borderRadius: BorderRadius.circular(12),
+
+      child: Padding(
+        padding: EdgeInsets.all(sp.s8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 아이콘 컨테이너 (Icon container)
+            /// 배경색 + 둥근 모서리로 강조
+            /// Highlighted with background color + rounded corners
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                /// 배경색: primaryContainer (더 눈에 띄는 색상)
+                /// Background color: primaryContainer (more prominent)
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Center(
+                child: FaIcon(
+                  icon,
+
+                  /// 아이콘 크기 증가: 20 → 24
+                  /// Increased icon size: 20 → 24
+                  size: 24,
+
+                  /// 아이콘 색상: onPrimaryContainer (배경과 대비)
+                  /// Icon color: onPrimaryContainer (contrast with background)
+                  color: scheme.onPrimaryContainer,
+                ),
+              ),
+            ),
+
+            SizedBox(height: sp.s4),
+
+            /// 메뉴 라벨 (Menu label)
+            Text(
+              label,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: scheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

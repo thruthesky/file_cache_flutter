@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/extensions/nav.context.dart';
+import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_section_header.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -14,8 +16,6 @@ import 'package:philgo_api/philgo_api.dart';
 /// [postId]: 게시판 ID (예: 'freetalk', 'qna')
 /// [category]: 서브 카테고리 (옵션)
 /// [limit]: 표시할 게시글 수 (기본값: 4)
-/// [onMoreTap]: "더보기" 버튼 클릭 시 콜백
-/// [onPostTap]: 게시글 클릭 시 콜백
 class HomePostSection extends StatefulWidget {
   /// 게시판 ID (예: 'freetalk', 'qna')
   /// Board ID (e.g., 'freetalk', 'qna')
@@ -29,21 +29,11 @@ class HomePostSection extends StatefulWidget {
   /// Number of posts to display (default: 4)
   final int limit;
 
-  /// "더보기" 버튼 클릭 콜백
-  /// "More" button tap callback
-  final VoidCallback? onMoreTap;
-
-  /// 게시글 클릭 콜백
-  /// Post tap callback
-  final void Function(Post post)? onPostTap;
-
   const HomePostSection({
     super.key,
     required this.postId,
     this.category,
     this.limit = 4,
-    this.onMoreTap,
-    this.onPostTap,
   });
 
   @override
@@ -107,7 +97,7 @@ class _HomePostSectionState extends State<HomePostSection> {
 
     /// 섹션 타이틀 (다국어 지원)
     /// Section title (localized)
-    final sectionTitle = philgoTr(context, widget.postId);
+    final sectionTitle = philgoTr(context, widget.category ?? widget.postId);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -121,7 +111,15 @@ class _HomePostSectionState extends State<HomePostSection> {
         children: [
           /// 섹션 헤더 (타이틀 + 더보기)
           /// Section header (title + more button)
-          HomeSectionHeader(title: sectionTitle, onMoreTap: widget.onMoreTap),
+          HomeSectionHeader(
+            title: sectionTitle,
+
+            /// "더보기" 버튼 클릭 시 해당 게시판으로 이동
+            /// Navigate to board when "More" button is tapped
+            onMoreTap: () {
+              context.openForum(widget.postId, category: widget.category);
+            },
+          ),
 
           /// 로딩 상태: Shimmer 효과
           /// Loading state: Shimmer effect
@@ -143,17 +141,22 @@ class _HomePostSectionState extends State<HomePostSection> {
 
   /// 로딩 상태 UI
   /// Loading state UI
+  ///
+  /// 게시글 제목 크기에 맞춰 높이를 24px로 설정하여
+  /// CarouselView 내에서 overflow가 발생하지 않도록 함
   Widget _buildLoadingState(AppSpacing sp, ColorScheme scheme) {
     return Column(
       children: List.generate(
         widget.limit,
         (index) => Padding(
-          padding: EdgeInsets.only(bottom: sp.s8),
+          padding: EdgeInsets.only(bottom: sp.s4),
           child: Container(
-            height: 80,
+            /// 게시글 제목 높이에 맞춤 (24px)
+            /// Match the height of post title rows (24px)
+            height: 24,
             decoration: BoxDecoration(
               color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
         ),
@@ -217,7 +220,9 @@ class _HomePostSectionState extends State<HomePostSection> {
     return Column(
       children: _posts!.map((post) {
         return InkWell(
-          onTap: () => widget.onPostTap?.call(post),
+          /// 게시글 클릭 시 PostViewScreen으로 이동
+          /// Navigate to PostViewScreen when post is tapped
+          onTap: () => PostViewScreen.push(context, post),
           borderRadius: BorderRadius.circular(8),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 2, horizontal: sp.s4),
