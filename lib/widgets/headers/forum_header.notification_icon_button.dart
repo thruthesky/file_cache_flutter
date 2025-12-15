@@ -59,20 +59,27 @@ class ForumHeaderNotificationIconButton extends StatelessWidget {
                   SizedBox(height: sp.s16),
 
                   /// 카테고리 목록
-                  /// Category list
+                  /// Category list - Using ListView.builder for lazy loading
+                  /// This prevents creating all widgets at once, improving performance
+                  /// and preventing crashes when list items exceed 25
                   Expanded(
-                    child: ListView(
-                      children:
-                          PhilgoCategory.menuCategories(
-                            includeTemp: isDeveloperModeEnabled,
-                          ).map((category) {
-                            final (postId, subCategory) = category;
+                    child: Builder(
+                      builder: (context) {
+                        final categories = PhilgoCategory.menuCategories(
+                          includeTemp: isDeveloperModeEnabled,
+                        );
+                        return ListView.builder(
+                          itemCount: categories.length,
+                          itemBuilder: (context, index) {
+                            final (postId, subCategory) = categories[index];
                             return ForumHeaderNotificationMenuItem(
                               key: ValueKey('$postId${subCategory ?? ''}'),
                               postId: postId,
                               subCategory: subCategory,
                             );
-                          }).toList(),
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
