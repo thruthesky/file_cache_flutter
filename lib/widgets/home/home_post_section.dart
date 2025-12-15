@@ -104,7 +104,7 @@ class _HomePostSectionState extends State<HomePostSection> {
         left: sp.s16,
         right: sp.s16,
         top: sp.s16,
-        bottom: sp.s8,
+        bottom: sp.s4,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
