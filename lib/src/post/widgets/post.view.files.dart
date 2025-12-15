@@ -36,7 +36,7 @@ class PostViewFiles extends StatelessWidget {
     required this.files,
     required this.postIdx,
     this.enableHeroTransition = false,
-    this.padding = const EdgeInsets.fromLTRB(16, 16, 16, 0),
+    this.padding = const EdgeInsets.fromLTRB(16, 0, 16, 0),
   });
 
   /// 파일 URL 목록
