@@ -282,6 +282,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             formattedDate: formatPostDate(stamp),
                           ),
 
+                          SizedBox(height: 16),
+
                           /// Files (images, videos, and other files) first (if available)
                           if (hasImages) ...[
                             PostViewFiles(
