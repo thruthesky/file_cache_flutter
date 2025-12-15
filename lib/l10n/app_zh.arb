@@ -1797,5 +1797,21 @@
   "exitApp": "退出",
   "@exitApp": {
     "description": "Exit app button text"
+  },
+  "homePopularPosts": "热门帖子",
+  "@homePopularPosts": {
+    "description": "Popular posts section title on home screen"
+  },
+  "homeRecentPhotos": "最新照片",
+  "@homeRecentPhotos": {
+    "description": "Recent photos section title on home screen"
+  },
+  "homeMore": "查看更多",
+  "@homeMore": {
+    "description": "More button text on home section headers"
+  },
+  "notification": "通知",
+  "@notification": {
+    "description": "Notification label for notification icon button"
   }
 }

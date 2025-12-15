@@ -1812,5 +1812,37 @@
   "homeMore": "More",
   "@homeMore": {
     "description": "More button text on home section headers"
+  },
+  "notification": "Notification",
+  "@notification": {
+    "description": "Notification label for notification icon button"
+  },
+  "quickMenuNotice": "Notice",
+  "@quickMenuNotice": {
+    "description": "Quick menu notice label"
+  },
+  "quickMenuExchangeRate": "Exchange",
+  "@quickMenuExchangeRate": {
+    "description": "Quick menu exchange rate label"
+  },
+  "quickMenuWeather": "Weather",
+  "@quickMenuWeather": {
+    "description": "Quick menu weather label"
+  },
+  "quickMenuEmergency": "Emergency",
+  "@quickMenuEmergency": {
+    "description": "Quick menu emergency contacts label"
+  },
+  "quickMenuEssentialInfo": "Essential",
+  "@quickMenuEssentialInfo": {
+    "description": "Quick menu essential info label"
+  },
+  "quickMenuMonthlyLiving": "Monthly",
+  "@quickMenuMonthlyLiving": {
+    "description": "Quick menu monthly living label"
+  },
+  "quickMenuTravel": "Travel",
+  "@quickMenuTravel": {
+    "description": "Quick menu travel label"
   }
 }

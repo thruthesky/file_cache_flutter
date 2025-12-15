@@ -2974,6 +2974,54 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'More'**
   String get homeMore;
+
+  /// Notification label for notification icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notification;
+
+  /// Quick menu notice label
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get quickMenuNotice;
+
+  /// Quick menu exchange rate label
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange'**
+  String get quickMenuExchangeRate;
+
+  /// Quick menu weather label
+  ///
+  /// In en, this message translates to:
+  /// **'Weather'**
+  String get quickMenuWeather;
+
+  /// Quick menu emergency contacts label
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get quickMenuEmergency;
+
+  /// Quick menu essential info label
+  ///
+  /// In en, this message translates to:
+  /// **'Essential'**
+  String get quickMenuEssentialInfo;
+
+  /// Quick menu monthly living label
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get quickMenuMonthlyLiving;
+
+  /// Quick menu travel label
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get quickMenuTravel;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {
