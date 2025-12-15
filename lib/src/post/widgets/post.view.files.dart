@@ -36,7 +36,7 @@ class PostViewFiles extends StatelessWidget {
     required this.files,
     required this.postIdx,
     this.enableHeroTransition = false,
-    this.padding = const EdgeInsets.fromLTRB(16, 8, 16, 0),
+    this.padding = const EdgeInsets.fromLTRB(16, 16, 16, 0),
   });
 
   /// 파일 URL 목록
@@ -59,7 +59,7 @@ class PostViewFiles extends StatelessWidget {
     if (files.isEmpty) return const SizedBox.shrink();
 
     return Column(
-      spacing: 8,
+      spacing: 16,
       children: files.asMap().entries.map((entry) {
         final index = entry.key;
         final fileUrl = entry.value;
