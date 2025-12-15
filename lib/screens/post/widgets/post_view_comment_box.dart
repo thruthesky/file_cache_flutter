@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 게시글 하단 댓글 입력 박스 위젯
