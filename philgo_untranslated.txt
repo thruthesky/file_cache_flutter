@@ -1,1 +1,21 @@
-{}
+{
+  "ja": [
+    "quickMenuNotice",
+    "quickMenuExchangeRate",
+    "quickMenuWeather",
+    "quickMenuEmergency",
+    "quickMenuEssentialInfo",
+    "quickMenuMonthlyLiving",
+    "quickMenuTravel"
+  ],
+
+  "zh": [
+    "quickMenuNotice",
+    "quickMenuExchangeRate",
+    "quickMenuWeather",
+    "quickMenuEmergency",
+    "quickMenuEssentialInfo",
+    "quickMenuMonthlyLiving",
+    "quickMenuTravel"
+  ]
+}

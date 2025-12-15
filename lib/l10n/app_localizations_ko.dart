@@ -1482,4 +1482,25 @@ class LoKo extends Lo {
 
   @override
   String get notification => '알림';
+
+  @override
+  String get quickMenuNotice => '공지';
+
+  @override
+  String get quickMenuExchangeRate => '환율';
+
+  @override
+  String get quickMenuWeather => '날씨';
+
+  @override
+  String get quickMenuEmergency => '긴급연락처';
+
+  @override
+  String get quickMenuEssentialInfo => '필수정보';
+
+  @override
+  String get quickMenuMonthlyLiving => '한달살기';
+
+  @override
+  String get quickMenuTravel => '여행';
 }

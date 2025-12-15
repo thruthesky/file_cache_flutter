@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/functions/ui.functions.dart';
+import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/essential/essential_info.screen.dart';
 import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
@@ -135,6 +136,9 @@ class HomeQuickMenuSection extends StatelessWidget {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
+    /// 다국어 지원을 위한 로컬라이제이션 객체 (Localization object for i18n)
+    final l10n = Lo.of(context)!;
+
     /// 퀵 메뉴 아이템 목록 (Quick menu items list)
     /// FontAwesome 7.1 Pro Light 아이콘 사용
     final menuItems = [
@@ -142,49 +146,49 @@ class HomeQuickMenuSection extends StatelessWidget {
         /// 공지 아이콘: 공지사항/알림을 상징하는 메가폰 아이콘
         /// Notice icon: Megaphone representing announcements
         icon: FontAwesomeIcons.lightBullhorn,
-        label: '공지',
+        label: l10n.quickMenuNotice,
         onTap: () => _onNoticeTap(context),
       ),
       _QuickMenuItem(
         /// 환율 아이콘: 페소-원화 환전을 상징하는 동전 아이콘
         /// Exchange rate icon: Coins representing PHP-KRW exchange
         icon: FontAwesomeIcons.lightCoins,
-        label: '환율',
+        label: l10n.quickMenuExchangeRate,
         onTap: () => _onExchangeRateTap(context),
       ),
       _QuickMenuItem(
         /// 날씨 아이콘: 필리핀 날씨를 상징하는 태양과 구름 아이콘
         /// Weather icon: Sun and cloud representing Philippine weather
         icon: FontAwesomeIcons.lightCloudSun,
-        label: '날씨',
+        label: l10n.quickMenuWeather,
         onTap: () => _onWeatherTap(context),
       ),
       _QuickMenuItem(
         /// 긴급 연락처 아이콘: 긴급 전화를 상징하는 전화 아이콘
         /// Emergency contact icon: Phone representing emergency calls
         icon: FontAwesomeIcons.lightPhoneVolume,
-        label: '긴급연락처',
+        label: l10n.quickMenuEmergency,
         onTap: () => _onEmergencyContactTap(context),
       ),
       _QuickMenuItem(
         /// 필수정보 아이콘: 중요 정보를 나타내는 원형 정보 아이콘
         /// Essential info icon: Circle info representing important information
         icon: FontAwesomeIcons.lightCircleInfo,
-        label: '필수정보',
+        label: l10n.quickMenuEssentialInfo,
         onTap: () => _onEssentialInfoTap(context),
       ),
       _QuickMenuItem(
         /// 한달살기 아이콘: 장기 체류를 상징하는 달력 아이콘
         /// Monthly living icon: Calendar representing long-term stay
         icon: FontAwesomeIcons.lightCalendarDays,
-        label: '한달살기',
+        label: l10n.quickMenuMonthlyLiving,
         onTap: () => _onMonthlyLivingTap(context),
       ),
       _QuickMenuItem(
         /// 여행 아이콘: 필리핀 해변 여행을 상징하는 우산 아이콘
         /// Travel icon: Beach umbrella representing Philippines vacation
         icon: FontAwesomeIcons.lightUmbrellaBeach,
-        label: '여행',
+        label: l10n.quickMenuTravel,
         onTap: () => _onTravelTap(context),
       ),
     ];

@@ -1963,5 +1963,33 @@
   "notification": "알림",
   "@notification": {
     "description": "Notification label for notification icon button"
+  },
+  "quickMenuNotice": "공지",
+  "@quickMenuNotice": {
+    "description": "Quick menu notice label"
+  },
+  "quickMenuExchangeRate": "환율",
+  "@quickMenuExchangeRate": {
+    "description": "Quick menu exchange rate label"
+  },
+  "quickMenuWeather": "날씨",
+  "@quickMenuWeather": {
+    "description": "Quick menu weather label"
+  },
+  "quickMenuEmergency": "긴급연락처",
+  "@quickMenuEmergency": {
+    "description": "Quick menu emergency contacts label"
+  },
+  "quickMenuEssentialInfo": "필수정보",
+  "@quickMenuEssentialInfo": {
+    "description": "Quick menu essential info label"
+  },
+  "quickMenuMonthlyLiving": "한달살기",
+  "@quickMenuMonthlyLiving": {
+    "description": "Quick menu monthly living label"
+  },
+  "quickMenuTravel": "여행",
+  "@quickMenuTravel": {
+    "description": "Quick menu travel label"
   }
 }
