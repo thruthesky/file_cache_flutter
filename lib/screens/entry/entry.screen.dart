@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.login.screen.dart';
+import 'package:philgo/services/currency.service.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 
@@ -19,6 +18,9 @@ class EntryScreen extends StatefulWidget {
 }
 
 class _EntryScreenState extends State<EntryScreen> {
+  /// 환율 서비스 인스턴스 (Currency service instance)
+  final _currencyService = CurrencyService.instance;
+
   /// PHP→KRW 환율 (소수점 2자리) (PHP to KRW exchange rate)
   double? _phpToKrwRate;
 
@@ -31,31 +33,20 @@ class _EntryScreenState extends State<EntryScreen> {
     _fetchExchangeRate();
   }
 
-  /// Frankfurter API에서 PHP→KRW 환율 조회 (Fetch PHP to KRW rate from API)
+  /// CurrencyService를 사용하여 PHP→KRW 환율 조회 (Fetch PHP to KRW rate using CurrencyService)
   ///
   /// API 호출 실패 시에도 UI는 정상 표시됩니다 (rate는 null로 표시).
+  /// 서비스의 25분 캐시를 활용하여 불필요한 API 호출을 방지합니다.
   Future<void> _fetchExchangeRate() async {
     try {
-      final url = Uri.parse(
-        'https://api.frankfurter.dev/v1/latest?base=PHP&symbols=KRW',
-      );
-      final response = await http.get(url);
+      final data = await _currencyService.loadExchangeRates();
+      final krwRate = data.phpRates['KRW'];
 
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final rates = json['rates'] as Map<String, dynamic>;
-        final krwRate = (rates['KRW'] as num).toDouble();
-
-        if (mounted) {
-          setState(() {
-            _phpToKrwRate = krwRate;
-            _isLoadingRate = false;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() => _isLoadingRate = false);
-        }
+      if (mounted) {
+        setState(() {
+          _phpToKrwRate = krwRate;
+          _isLoadingRate = false;
+        });
       }
     } catch (e) {
       // API 호출 실패 시 로딩 상태만 해제
