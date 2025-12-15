@@ -188,6 +188,7 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
             /// Carousel height (enough for 4 posts + header)
             height: 164,
             child: CarouselView(
+              enableSplash: false,
               controller: _controller,
 
               /// 각 아이템이 화면 전체 너비 차지 (왼쪽 여백 제거)
