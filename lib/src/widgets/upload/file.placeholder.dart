@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 일반 파일 타입에 대한 플레이스홀더를 표시하는 위젯입니다.
 ///
 /// `FilePlaceholder`는 이미지나 비디오가 아닌 일반 파일(PDF, DOC, ZIP 등)에 대한
-/// 미리보기 플레이스홀더를 렌더링합니다. 파일 아이콘과 확장자 배지를 함께 표시합니다.
+/// 미리보기 플레이스홀더를 렌더링합니다. 파일 타입에 맞는 아이콘과 확장자 배지를 함께 표시합니다.
 ///
 /// ### 매개변수:
 /// - [width] → 플레이스홀더의 너비. 기본값은 `120`.
@@ -44,38 +45,33 @@ class FilePlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         // Theme 기반 배경색 - surfaceContainerHighest 사용
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: scheme.surfaceContainerHighest,
       ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 파일 아이콘 - Font Awesome fileLines 아이콘 사용
+            // 파일 타입에 맞는 아이콘 사용 (FilePreviewHelper 활용)
             FaIcon(
-              FontAwesomeIcons.fileLines,
-              size: 32,
-              color: Theme.of(context).colorScheme.primary,
+              FilePreviewHelper.getFileIcon(extension),
+              size: 24,
+              color: scheme.primary,
             ),
             const SizedBox(height: 8),
             // 확장자 배지 - primaryContainer 배경에 확장자 텍스트 표시
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                extension,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
+            Text(
+              extension,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: scheme.onPrimaryContainer,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

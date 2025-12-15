@@ -150,6 +150,7 @@ export 'src/post/widgets/category.list.dart';
 export 'src/post/widgets/comment.detail.dart';
 export 'src/post/widgets/comment.detail.list_view.dart';
 export 'src/post/widgets/comment.list.view.dart';
+export 'src/widgets/upload/file_preview.dart';
 export 'src/post/widgets/post.create.form.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.item.dart';

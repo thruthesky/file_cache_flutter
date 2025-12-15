@@ -16,7 +16,7 @@ import 'package:philgo_api/philgo_api.dart';
 /// - [files] → List of file URLs to display
 /// - [postIdx] → Post index for Hero transition tags
 /// - [enableHeroTransition] → Whether to enable Hero transition for first image. Defaults to `false`
-/// - [padding] → Padding around the widget. Defaults to `EdgeInsets.fromLTRB(16, 16, 16, 0)`
+/// - [padding] → Padding around file-type items only (not applied to images/videos). Defaults to `EdgeInsets.all(16)`
 ///
 /// ### Example:
 /// ```dart
@@ -36,7 +36,7 @@ class PostViewFiles extends StatelessWidget {
     required this.files,
     required this.postIdx,
     this.enableHeroTransition = false,
-    this.padding = const EdgeInsets.fromLTRB(0, 16, 0, 0),
+    this.padding = const EdgeInsets.fromLTRB(16, 8, 16, 0),
   });
 
   /// 파일 URL 목록
@@ -48,51 +48,54 @@ class PostViewFiles extends StatelessWidget {
   /// 첫 번째 이미지에 Hero 전환 활성화 여부
   final bool enableHeroTransition;
 
-  /// 패딩 (기본값: EdgeInsets.fromLTRB(16, 16, 16, 0))
+  /// 패딩 - 파일 타입에만 적용 (이미지/비디오 제외, 기본값: EdgeInsets.all(16))
   final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: padding,
-      child: Column(
-        spacing: 16,
-        children: files.asMap().entries.map((entry) {
-          final index = entry.key;
-          final fileUrl = entry.value;
-          final isFirstImage = index == 0;
-          final fileType = detectFileType(fileUrl);
+    // Return empty widget if no files
+    if (files.isEmpty) return const SizedBox.shrink();
 
-          Widget fileWidget;
+    return Column(
+      spacing: 8,
+      children: files.asMap().entries.map((entry) {
+        final index = entry.key;
+        final fileUrl = entry.value;
+        final isFirstImage = index == 0;
+        final fileType = detectFileType(fileUrl);
 
-          switch (fileType) {
-            case UploadFileType.image:
-              // Image preview with caching and loading states
-              fileWidget = _buildImagePreview(context, fileUrl, scheme);
-              break;
+        Widget fileWidget;
 
-            case UploadFileType.video:
-              // Video player widget
-              fileWidget = _buildVideoPreview(context, fileUrl);
-              break;
+        switch (fileType) {
+          case UploadFileType.image:
+            // Image preview with caching and loading states (no padding)
+            fileWidget = _buildImagePreview(context, fileUrl, scheme);
+            break;
 
-            case UploadFileType.file:
-              // Generic file preview
-              fileWidget = _buildFilePreview(context, fileUrl, scheme);
-              break;
-          }
+          case UploadFileType.video:
+            // Video player widget (no padding)
+            fileWidget = _buildVideoPreview(context, fileUrl);
+            break;
 
-          /// Wrap first image with Hero for transition from PostListTile (conditional)
-          /// Only apply Hero to images, not videos or files
-          return isFirstImage &&
-                  enableHeroTransition &&
-                  fileType == UploadFileType.image
-              ? Hero(tag: 'post-image-$postIdx', child: fileWidget)
-              : fileWidget;
-        }).toList(),
-      ),
+          case UploadFileType.file:
+            // Generic file preview (with padding)
+            fileWidget = Padding(
+              padding: padding,
+              child: FilePreview(fileUrl: fileUrl),
+            );
+            break;
+        }
+
+        /// Wrap first image with Hero for transition from PostListTile (conditional)
+        /// Only apply Hero to images, not videos or files
+        return isFirstImage &&
+                enableHeroTransition &&
+                fileType == UploadFileType.image
+            ? Hero(tag: 'post-image-$postIdx', child: fileWidget)
+            : fileWidget;
+      }).toList(),
     );
   }
 
@@ -139,81 +142,5 @@ class PostViewFiles extends StatelessWidget {
   /// Builds video preview with player controls
   Widget _buildVideoPreview(BuildContext context, String videoUrl) {
     return UploadedVideoPlayer(url: videoUrl);
-  }
-
-  /// Builds generic file preview with icon and extension
-  Widget _buildFilePreview(
-    BuildContext context,
-    String fileUrl,
-    ColorScheme scheme,
-  ) {
-    final extension = getFileExtension(fileUrl).toUpperCase();
-    final displayExtension = extension.isNotEmpty ? extension : 'FILE';
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: scheme.surfaceContainerHighest,
-        border: Border.all(color: scheme.outline, width: 2.0),
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Row(
-        children: [
-          // File icon
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: scheme.primaryContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: FaIcon(
-                FontAwesomeIcons.fileLines,
-                size: 28,
-                color: scheme.onPrimaryContainer,
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // File info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Extension badge
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: scheme.primary,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    displayExtension,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: scheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // File URL (truncated)
-                Text(
-                  fileUrl.split('/').last,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
