@@ -19,3 +19,9 @@
 [submodule "packages/philgo_api"]
 	path = packages/philgo_api
 	url = https://github.com/thruthesky/philgo_api
+[submodule ".claude/skills/open-mateo-skill"]
+	path = .claude/skills/open-mateo-skill
+	url = https://github.com/thruthesky/open-meteo-skill
+[submodule ".claude/skills/currency-skill"]
+	path = .claude/skills/currency-skill
+	url = https://github.com/thruthesky/currency-skill

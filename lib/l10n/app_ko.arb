@@ -1991,5 +1991,25 @@
   "quickMenuTravel": "여행",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "entryTodayExchangeRate": "오늘 환율",
+  "@entryTodayExchangeRate": {
+    "description": "Today's exchange rate label on entry screen"
+  },
+  "entryTodayWeather": "오늘 날씨",
+  "@entryTodayWeather": {
+    "description": "Today's weather label on entry screen"
+  },
+  "entryMemberCount": "회원 수",
+  "@entryMemberCount": {
+    "description": "Member count label on entry screen"
+  },
+  "entryPostCount": "글 수",
+  "@entryPostCount": {
+    "description": "Post count label on entry screen"
+  },
+  "weatherSunny": "맑음",
+  "@weatherSunny": {
+    "description": "Sunny weather status"
   }
 }

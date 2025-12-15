@@ -6,7 +6,12 @@
     "quickMenuEmergency",
     "quickMenuEssentialInfo",
     "quickMenuMonthlyLiving",
-    "quickMenuTravel"
+    "quickMenuTravel",
+    "entryTodayExchangeRate",
+    "entryTodayWeather",
+    "entryMemberCount",
+    "entryPostCount",
+    "weatherSunny"
   ],
 
   "zh": [
@@ -16,6 +21,11 @@
     "quickMenuEmergency",
     "quickMenuEssentialInfo",
     "quickMenuMonthlyLiving",
-    "quickMenuTravel"
+    "quickMenuTravel",
+    "entryTodayExchangeRate",
+    "entryTodayWeather",
+    "entryMemberCount",
+    "entryPostCount",
+    "weatherSunny"
   ]
 }
