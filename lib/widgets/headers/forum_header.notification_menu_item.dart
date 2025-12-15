@@ -27,9 +27,14 @@ class _ForumHeaderNotificationMenuItemState
   /// Firebase Database instance
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
-  /// 스트림 캐시 (Stream cache to prevent recreation on scroll)
-  /// Cache streams to maintain state when ListView rebuilds items during scroll
-  final Map<String, Stream<bool>> _streamCache = {};
+  /// 로컬 구독 상태 (one-time read를 통해 초기화되며, 탭 시 토글됨)
+  /// Local subscription state (initialized via one-time read, toggled on tap)
+  /// This prevents 25+ continuous stream listeners which cause crashes
+  bool _isSubscribed = false;
+
+  /// 로딩 상태
+  /// Loading state for initial data fetch
+  bool _isLoading = true;
 
   /// 현재 사용자 UID 가져오기
   /// Get current user UID
@@ -50,52 +55,73 @@ class _ForumHeaderNotificationMenuItemState
     return 'fcm-subscriptions/-forum-${widget.postId}';
   }
 
-  /// Firebase에서 구독 상태 토글
-  /// Toggle subscription state in Firebase
-  Future<void> _toggleSubscription() async {
-    if (_currentUserUid == null) return;
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialSubscriptionState();
+  }
+
+  /// Firebase에서 초기 구독 상태를 한 번만 읽어옴
+  /// Load initial subscription state from Firebase once
+  /// This prevents creating continuous listeners for each category
+  Future<void> _loadInitialSubscriptionState() async {
+    if (_currentUserUid == null) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
 
     final path = _getFcmPath();
     final ref = _database.ref('$path/$_currentUserUid');
 
     try {
       final snapshot = await ref.get();
-      final currentValue = snapshot.value as bool?;
-
-      /// 현재 값의 반대로 설정 (true ↔ false)
-      /// Set to opposite of current value (true ↔ false)
-      await ref.set(!(currentValue ?? false));
+      if (mounted) {
+        setState(() {
+          _isSubscribed = snapshot.value as bool? ?? false;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      debugPrint('Error toggling subscription: $e');
+      debugPrint('Error loading subscription state: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  /// Firebase에서 구독 상태 스트림 가져오기
-  /// Get subscription state stream from Firebase
-  /// Returns a cached broadcast stream to maintain state during scrolling
-  Stream<bool> _getSubscriptionStream() {
-    if (_currentUserUid == null) {
-      return Stream.value(false);
-    }
+  /// Firebase에서 구독 상태 토글 (로컬 상태도 즉시 업데이트)
+  /// Toggle subscription state in Firebase (update local state immediately)
+  Future<void> _toggleSubscription() async {
+    if (_currentUserUid == null) return;
 
-    /// Create unique cache key for this category
-    final cacheKey = widget.subCategory != null
-        ? '${widget.postId}-$sanitizedSubCategory'
-        : widget.postId;
-
-    /// Return cached stream if it exists, otherwise create and cache new stream
-    /// This prevents stream recreation when ListView rebuilds items during scroll
-    return _streamCache.putIfAbsent(cacheKey, () {
-      final path = _getFcmPath();
-      final ref = _database.ref('$path/$_currentUserUid');
-
-      /// Convert to broadcast stream to allow multiple listeners
-      /// This prevents "Stream has already been listened to" error
-      return ref.onValue.map((event) {
-        if (!event.snapshot.exists) return false;
-        return event.snapshot.value as bool? ?? false;
-      }).asBroadcastStream();
+    /// 즉시 로컬 상태를 토글하여 UI 반응성 향상
+    /// Immediately toggle local state for better UI responsiveness
+    setState(() {
+      _isSubscribed = !_isSubscribed;
     });
+
+    final path = _getFcmPath();
+    final ref = _database.ref('$path/$_currentUserUid');
+
+    try {
+      /// Firebase에 새로운 값 저장
+      /// Save new value to Firebase
+      await ref.set(_isSubscribed);
+    } catch (e) {
+      debugPrint('Error toggling subscription: $e');
+
+      /// 에러 발생 시 로컬 상태를 원래대로 복원
+      /// Revert local state if error occurs
+      if (mounted) {
+        setState(() {
+          _isSubscribed = !_isSubscribed;
+        });
+      }
+    }
   }
 
   @override
@@ -112,54 +138,46 @@ class _ForumHeaderNotificationMenuItemState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StreamBuilder<bool>(
-          stream: _getSubscriptionStream(),
-          builder: (context, snapshot) {
-            final isSelected = snapshot.data ?? false;
-
-            return InkWell(
-              /// 서브 카테고리가 없으면 토글
-              /// If no subcategories, toggle selection
-              onTap: () => _toggleSubscription(),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: sp.s8,
-                  vertical: sp.s12,
+        InkWell(
+          /// 탭하여 구독 상태 토글
+          /// Tap to toggle subscription state
+          onTap: _isLoading ? null : _toggleSubscription,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: sp.s8,
+              vertical: sp.s12,
+            ),
+            child: Row(
+              children: [
+                /// 체크박스 아이콘
+                /// Checkbox icon
+                FaIcon(
+                  _isSubscribed
+                      ? FontAwesomeIcons.solidBellRing
+                      : FontAwesomeIcons.lightBell,
+                  color: _isSubscribed
+                      ? scheme.primary
+                      : scheme.onSurfaceVariant,
+                  size: 20,
                 ),
-                child: Row(
-                  children: [
-                    /// 체크박스 아이콘
-                    /// Checkbox icon
-                    FaIcon(
-                      isSelected
-                          ? FontAwesomeIcons.solidBellRing
-                          : FontAwesomeIcons.lightBell,
-                      color: isSelected
-                          ? scheme.primary
-                          : scheme.onSurfaceVariant,
-                      size: 20,
-                    ),
 
-                    SizedBox(width: sp.s12),
+                SizedBox(width: sp.s12),
 
-                    /// 카테고리 이름
-                    /// Category name
-                    Expanded(
-                      child: Text(
-                        localizedName,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isSelected ? scheme.primary : scheme.onSurface,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
+                /// 카테고리 이름
+                /// Category name
+                Expanded(
+                  child: Text(
+                    localizedName,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: _isSubscribed ? scheme.primary : scheme.onSurface,
+                      fontWeight:
+                          _isSubscribed ? FontWeight.bold : FontWeight.normal,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            );
-          },
+              ],
+            ),
+          ),
         ),
 
         /// 구분선
