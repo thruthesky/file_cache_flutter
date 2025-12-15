@@ -10,6 +10,7 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
+import 'package:philgo/services/philgo/philgo.service.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
@@ -93,6 +94,8 @@ class _MyAppState extends State<MyApp> {
 
       // Timer(Duration(seconds: 1), showUpgradeDialog);
       // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
+
+      PhilgoService.instance.loadSetting();
     });
   }
 
