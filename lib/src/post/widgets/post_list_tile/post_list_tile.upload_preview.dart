@@ -14,7 +14,7 @@ class PostListTileUploadPreview extends StatelessWidget {
       height: 81,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16), // Flat 2.0 - 16 (8의 배수)
-        child: DisplayUpload(url: post.files[0]),
+        child: DisplayUpload(url: post.files[0], borderRadius: 16),
       ),
     );
   }

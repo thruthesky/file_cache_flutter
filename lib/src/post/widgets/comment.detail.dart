@@ -134,7 +134,7 @@ class _CommentDetailState extends State<CommentDetail> {
       children: [
         Container(
           margin: EdgeInsets.only(left: getDepthMargin(widget.comment.depth)),
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
