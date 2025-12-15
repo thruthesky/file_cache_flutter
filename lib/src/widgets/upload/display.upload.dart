@@ -110,11 +110,14 @@ class DisplayUpload extends StatelessWidget {
 
       case UploadFileType.file:
         // 일반 파일 미리보기 - FilePlaceholder 위젯 사용
+        // Extract filename from URL
+        final fileName = url.split('/').last;
         return FilePlaceholder(
           width: width,
           height: height,
           borderRadius: borderRadius - 2,
           extension: _getFileExtension(),
+          fileName: fileName,
         );
     }
   }

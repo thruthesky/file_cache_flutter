@@ -173,6 +173,12 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
                 uploadingCount--;
                 setState(() {});
               },
+              onCancelled: () {
+                // Decrement upload count when upload fails or is cancelled
+                uploadingCount--;
+                setState(() {});
+                debugLog('File upload cancelled or failed, uploadingCount: $uploadingCount');
+              },
             ),
             suffixIcon: IconButton(
               padding: const EdgeInsets.all(16.0),

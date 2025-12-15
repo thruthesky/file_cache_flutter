@@ -12,6 +12,7 @@ import 'package:philgo_api/philgo_api.dart';
 /// - [height] → 플레이스홀더의 높이. 기본값은 `120`.
 /// - [borderRadius] → 모서리 둥글기. 기본값은 `6`.
 /// - [extension] → 표시할 파일 확장자 (예: "PDF", "DOC"). 기본값은 `FILE`.
+/// - [fileName] → 표시할 파일 이름 (선택사항). 제공되면 확장자 아래에 표시됩니다.
 ///
 /// ### 예시:
 /// ```dart
@@ -20,6 +21,7 @@ import 'package:philgo_api/philgo_api.dart';
 ///   height: 100,
 ///   borderRadius: 8,
 ///   extension: 'PDF',
+///   fileName: 'document.pdf',
 /// )
 /// ```
 class FilePlaceholder extends StatelessWidget {
@@ -35,12 +37,16 @@ class FilePlaceholder extends StatelessWidget {
   /// 표시할 파일 확장자 (대문자 권장, 예: "PDF", "DOC")
   final String extension;
 
+  /// 표시할 파일 이름 (선택사항)
+  final String? fileName;
+
   const FilePlaceholder({
     super.key,
     this.width = 120.0,
     this.height = 120.0,
     this.borderRadius = 6.0,
     this.extension = 'FILE',
+    this.fileName,
   });
 
   @override
@@ -55,17 +61,19 @@ class FilePlaceholder extends StatelessWidget {
         // Theme 기반 배경색 - surfaceContainerHighest 사용
         color: scheme.surfaceContainerHighest,
       ),
-      child: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // 파일 타입에 맞는 아이콘 사용 (FilePreviewHelper 활용)
             FaIcon(
               FilePreviewHelper.getFileIcon(extension),
-              size: 24,
+              size: 20,
               color: scheme.primary,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             // 확장자 배지 - primaryContainer 배경에 확장자 텍스트 표시
             Text(
               extension,
@@ -74,6 +82,19 @@ class FilePlaceholder extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            // 파일 이름 표시 (제공된 경우, 짧게 자른 버전)
+            if (fileName != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                cut(fileName!, 8),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),

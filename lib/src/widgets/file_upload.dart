@@ -310,10 +310,18 @@ class _FileUploadState extends State<FileUpload> {
         return uploadedFile;
       } else {
         debugLog('❌ 파일 업로드 실패');
+        // Show error snackbar when upload fails
+        showSafeErrorSnackBar('파일 업로드에 실패했습니다. 다시 시도해 주세요.');
+        // 업로드 취소 콜백 호출
+        widget.onCancelled?.call();
         return null;
       }
     } catch (e) {
       debugLog('❌ 파일 업로드 오류: $e');
+
+      // Show error snackbar with the actual error message
+      showSafeErrorSnackBar('파일 업로드 실패: $e');
+
       // 업로드 취소 콜백 호출
       widget.onCancelled?.call();
       return null;

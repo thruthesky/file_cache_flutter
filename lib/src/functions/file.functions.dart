@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// File preview type enumeration
@@ -196,4 +198,64 @@ Future<void> openFile(String fileUrl) async {
   }
 
   await launchUrl(uri, mode: LaunchMode.externalApplication);
+}
+
+/// Helper class for file preview utilities
+class FilePreviewHelper {
+  static IconData getFileIcon(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return FontAwesomeIcons.filePdf;
+      case 'doc':
+      case 'docx':
+        return FontAwesomeIcons.fileWord;
+      case 'xls':
+      case 'xlsx':
+        return FontAwesomeIcons.fileExcel;
+      case 'ppt':
+      case 'pptx':
+        return FontAwesomeIcons.filePowerpoint;
+      case 'zip':
+      case 'rar':
+      case '7z':
+        return FontAwesomeIcons.fileZipper;
+      case 'txt':
+        return FontAwesomeIcons.fileLines;
+      default:
+        return FontAwesomeIcons.file;
+    }
+  }
+
+  /// Returns human-readable file type label
+  ///
+  /// Converts file extensions to friendly names for display to users.
+  ///
+  /// Example:
+  /// ```dart
+  /// final label = FilePreviewHelper.getFileTypeLabel('pdf'); // Returns 'PDF'
+  /// final label = FilePreviewHelper.getFileTypeLabel('docx'); // Returns 'Word'
+  /// ```
+  static String getFileTypeLabel(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return 'PDF';
+      case 'doc':
+      case 'docx':
+        return 'Word';
+      case 'xls':
+      case 'xlsx':
+        return 'Excel';
+      case 'ppt':
+      case 'pptx':
+        return 'PowerPoint';
+      case 'zip':
+      case 'rar':
+      case '7z':
+        return 'Archive';
+      case 'txt':
+        return 'Text';
+      default:
+        return 'Document';
+    }
+  }
 }

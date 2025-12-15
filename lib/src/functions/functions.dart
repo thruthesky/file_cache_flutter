@@ -211,6 +211,23 @@ void showSafeErrorDialog(String message, {String? title}) {
   });
 }
 
+/// Shows an error snackbar to the user using global context
+/// This is a less intrusive way to show error messages compared to dialogs
+void showSafeErrorSnackBar(String message) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    try {
+      final context = PhilgoConfig.globalContext;
+      if (context.mounted) {
+        showErrorSnackBar(context, message);
+      } else {
+        debugLog('ERROR SNACKBAR: Context not mounted - $message');
+      }
+    } catch (e) {
+      debugLog('ERROR SNACKBAR: Cannot show snackbar - $message');
+    }
+  });
+}
+
 void d(String message) {
   // Placeholder function to avoid empty file issues
   debugLog('-- d(): $message');
