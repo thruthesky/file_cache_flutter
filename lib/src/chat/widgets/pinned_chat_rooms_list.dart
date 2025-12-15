@@ -462,7 +462,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                     ),
