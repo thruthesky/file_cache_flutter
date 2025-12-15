@@ -1500,4 +1500,19 @@ class LoKo extends Lo {
 
   @override
   String get quickMenuTravel => '여행';
+
+  @override
+  String get entryTodayExchangeRate => '오늘 환율';
+
+  @override
+  String get entryTodayWeather => '오늘 날씨';
+
+  @override
+  String get entryMemberCount => '회원 수';
+
+  @override
+  String get entryPostCount => '글 수';
+
+  @override
+  String get weatherSunny => '맑음';
 }

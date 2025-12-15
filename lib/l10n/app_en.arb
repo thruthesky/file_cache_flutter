@@ -1840,5 +1840,25 @@
   "quickMenuTravel": "Travel",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "entryTodayExchangeRate": "Exchange",
+  "@entryTodayExchangeRate": {
+    "description": "Today's exchange rate label on entry screen"
+  },
+  "entryTodayWeather": "Weather",
+  "@entryTodayWeather": {
+    "description": "Today's weather label on entry screen"
+  },
+  "entryMemberCount": "Members",
+  "@entryMemberCount": {
+    "description": "Member count label on entry screen"
+  },
+  "entryPostCount": "Posts",
+  "@entryPostCount": {
+    "description": "Post count label on entry screen"
+  },
+  "weatherSunny": "Sunny",
+  "@weatherSunny": {
+    "description": "Sunny weather status"
   }
 }

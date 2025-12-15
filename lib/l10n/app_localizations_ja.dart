@@ -1500,4 +1500,19 @@ class LoJa extends Lo {
 
   @override
   String get quickMenuTravel => 'Travel';
+
+  @override
+  String get entryTodayExchangeRate => 'Exchange';
+
+  @override
+  String get entryTodayWeather => 'Weather';
+
+  @override
+  String get entryMemberCount => 'Members';
+
+  @override
+  String get entryPostCount => 'Posts';
+
+  @override
+  String get weatherSunny => 'Sunny';
 }

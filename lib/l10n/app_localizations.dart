@@ -3016,6 +3016,36 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Travel'**
   String get quickMenuTravel;
+
+  /// Today's exchange rate label on entry screen
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange'**
+  String get entryTodayExchangeRate;
+
+  /// Today's weather label on entry screen
+  ///
+  /// In en, this message translates to:
+  /// **'Weather'**
+  String get entryTodayWeather;
+
+  /// Member count label on entry screen
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get entryMemberCount;
+
+  /// Post count label on entry screen
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get entryPostCount;
+
+  /// Sunny weather status
+  ///
+  /// In en, this message translates to:
+  /// **'Sunny'**
+  String get weatherSunny;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {
