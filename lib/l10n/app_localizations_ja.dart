@@ -1472,11 +1472,14 @@ class LoJa extends Lo {
   String get exitApp => '終了';
 
   @override
-  String get homePopularPosts => 'Popular Posts';
+  String get homePopularPosts => '人気投稿';
 
   @override
-  String get homeRecentPhotos => 'Recent Photos';
+  String get homeRecentPhotos => '最近の写真';
 
   @override
-  String get homeMore => 'More';
+  String get homeMore => 'もっと見る';
+
+  @override
+  String get notification => '通知';
 }

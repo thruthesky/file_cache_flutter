@@ -2974,6 +2974,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'More'**
   String get homeMore;
+
+  /// Notification label for notification icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notification;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

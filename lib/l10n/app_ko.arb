@@ -1959,5 +1959,9 @@
   "homeMore": "더보기",
   "@homeMore": {
     "description": "More button text on home section headers"
+  },
+  "notification": "알림",
+  "@notification": {
+    "description": "Notification label for notification icon button"
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/widgets/headers/forum_header.notification_icon_button.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 포럼 헤더 위젯 (Forum Header Widget)
@@ -147,6 +148,8 @@ class _ForumHeaderState extends State<ForumHeader> {
             );
           }),
 
+          ForumHeaderNotificationIconButton(),
+
           /// 더보기/숨기기 토글 버튼
           /// Show more/Hide toggle button
           ///
@@ -238,10 +241,4 @@ class _ForumHeaderState extends State<ForumHeader> {
       ),
     );
   }
-
-  /// 카테고리 필터 다이얼로그 표시
-  /// Show category filter dialog
-  // void _showCategoryFilterDialog(BuildContext context) {
-  //   showDialog(context: context, builder: (context) => _CategoryFilterDialog());
-  // }
 }

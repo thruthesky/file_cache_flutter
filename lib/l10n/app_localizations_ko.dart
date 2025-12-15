@@ -1479,4 +1479,7 @@ class LoKo extends Lo {
 
   @override
   String get homeMore => '더보기';
+
+  @override
+  String get notification => '알림';
 }

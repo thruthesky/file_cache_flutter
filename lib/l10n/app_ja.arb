@@ -1797,5 +1797,21 @@
   "exitApp": "終了",
   "@exitApp": {
     "description": "Exit app button text"
+  },
+  "homePopularPosts": "人気投稿",
+  "@homePopularPosts": {
+    "description": "Popular posts section title on home screen"
+  },
+  "homeRecentPhotos": "最近の写真",
+  "@homeRecentPhotos": {
+    "description": "Recent photos section title on home screen"
+  },
+  "homeMore": "もっと見る",
+  "@homeMore": {
+    "description": "More button text on home section headers"
+  },
+  "notification": "通知",
+  "@notification": {
+    "description": "Notification label for notification icon button"
   }
 }

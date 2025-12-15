@@ -1510,4 +1510,7 @@ class LoEn extends Lo {
 
   @override
   String get homeMore => 'More';
+
+  @override
+  String get notification => 'Notification';
 }

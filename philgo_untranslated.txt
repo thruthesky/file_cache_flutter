@@ -1,13 +1,1 @@
-{
-  "ja": [
-    "homePopularPosts",
-    "homeRecentPhotos",
-    "homeMore"
-  ],
-
-  "zh": [
-    "homePopularPosts",
-    "homeRecentPhotos",
-    "homeMore"
-  ]
-}
+{}
