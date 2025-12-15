@@ -35,24 +35,27 @@ class _ForumHeaderNotificationMenuItemState
   /// Get current user UID
   String? get _currentUserUid => fa.FirebaseAuth.instance.currentUser?.uid;
 
+  String get sanitizedSubCategory => widget.subCategory != null
+      ? widget.subCategory!.replaceAll('/', '-')
+      : '';
+
   /// FCM 구독 경로 가져오기
   /// Get FCM subscription path
-  String _getFcmPath(String majorId, {String? subCategory}) {
-    if (subCategory != null) {
+  String _getFcmPath() {
+    if (widget.subCategory != null) {
       /// '/'를 '-'로 변환 (Firebase 경로에서 '/'는 사용 불가)
       /// Replace '/' with '-' (Firebase path cannot contain '/')
-      final sanitizedSubCategory = subCategory.replaceAll('/', '-');
-      return 'fcm-subscriptions/-forum-$majorId-$sanitizedSubCategory';
+      return 'fcm-subscriptions/-forum-${widget.postId}-$sanitizedSubCategory';
     }
-    return 'fcm-subscriptions/-forum-$majorId';
+    return 'fcm-subscriptions/-forum-${widget.postId}';
   }
 
   /// Firebase에서 구독 상태 토글
   /// Toggle subscription state in Firebase
-  Future<void> _toggleSubscription(String postId, {String? subCategory}) async {
+  Future<void> _toggleSubscription() async {
     if (_currentUserUid == null) return;
 
-    final path = _getFcmPath(postId, subCategory: subCategory);
+    final path = _getFcmPath();
     final ref = _database.ref('$path/$_currentUserUid');
 
     try {
@@ -70,18 +73,20 @@ class _ForumHeaderNotificationMenuItemState
   /// Firebase에서 구독 상태 스트림 가져오기
   /// Get subscription state stream from Firebase
   /// Returns a cached broadcast stream to maintain state during scrolling
-  Stream<bool> _getSubscriptionStream(String postId, {String? subCategory}) {
+  Stream<bool> _getSubscriptionStream() {
     if (_currentUserUid == null) {
       return Stream.value(false);
     }
 
     /// Create unique cache key for this category
-    final cacheKey = subCategory != null ? '$postId-$subCategory' : postId;
+    final cacheKey = widget.subCategory != null
+        ? '${widget.postId}-$sanitizedSubCategory'
+        : widget.postId;
 
     /// Return cached stream if it exists, otherwise create and cache new stream
     /// This prevents stream recreation when ListView rebuilds items during scroll
     return _streamCache.putIfAbsent(cacheKey, () {
-      final path = _getFcmPath(postId, subCategory: subCategory);
+      final path = _getFcmPath();
       final ref = _database.ref('$path/$_currentUserUid');
 
       /// Convert to broadcast stream to allow multiple listeners
@@ -108,20 +113,14 @@ class _ForumHeaderNotificationMenuItemState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         StreamBuilder<bool>(
-          stream: _getSubscriptionStream(
-            widget.postId,
-            subCategory: widget.subCategory,
-          ),
+          stream: _getSubscriptionStream(),
           builder: (context, snapshot) {
             final isSelected = snapshot.data ?? false;
 
             return InkWell(
               /// 서브 카테고리가 없으면 토글
               /// If no subcategories, toggle selection
-              onTap: () => _toggleSubscription(
-                widget.postId,
-                subCategory: widget.subCategory,
-              ),
+              onTap: () => _toggleSubscription(),
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: sp.s8,
