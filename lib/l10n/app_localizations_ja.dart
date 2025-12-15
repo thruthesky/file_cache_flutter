@@ -1479,4 +1479,25 @@ class LoJa extends Lo {
 
   @override
   String get homeMore => 'More';
+
+  @override
+  String get quickMenuNotice => 'Notice';
+
+  @override
+  String get quickMenuExchangeRate => 'Exchange';
+
+  @override
+  String get quickMenuWeather => 'Weather';
+
+  @override
+  String get quickMenuEmergency => 'Emergency';
+
+  @override
+  String get quickMenuEssentialInfo => 'Essential';
+
+  @override
+  String get quickMenuMonthlyLiving => 'Monthly';
+
+  @override
+  String get quickMenuTravel => 'Travel';
 }

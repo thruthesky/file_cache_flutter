@@ -2,12 +2,26 @@
   "ja": [
     "homePopularPosts",
     "homeRecentPhotos",
-    "homeMore"
+    "homeMore",
+    "quickMenuNotice",
+    "quickMenuExchangeRate",
+    "quickMenuWeather",
+    "quickMenuEmergency",
+    "quickMenuEssentialInfo",
+    "quickMenuMonthlyLiving",
+    "quickMenuTravel"
   ],
 
   "zh": [
     "homePopularPosts",
     "homeRecentPhotos",
-    "homeMore"
+    "homeMore",
+    "quickMenuNotice",
+    "quickMenuExchangeRate",
+    "quickMenuWeather",
+    "quickMenuEmergency",
+    "quickMenuEssentialInfo",
+    "quickMenuMonthlyLiving",
+    "quickMenuTravel"
   ]
 }
