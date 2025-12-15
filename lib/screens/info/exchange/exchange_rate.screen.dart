@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/services/currency.service.dart';
+import 'package:philgo/services/currency/currency.service.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/unfocus_on_tap.dart';
 
@@ -40,8 +40,9 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
   String? _errorMessage;
 
   /// 계산기 입력 금액 (Calculator input amount)
-  final TextEditingController _amountController =
-      TextEditingController(text: '1');
+  final TextEditingController _amountController = TextEditingController(
+    text: '1',
+  );
 
   /// 선택된 기준 통화 (Selected base currency)
   /// 기본값: PHP (필리핀 페소) - 필고 앱 사용자에게 가장 유용한 통화
@@ -102,10 +103,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.lightXmark,
-              color: scheme.onSurface,
-            ),
+            icon: FaIcon(FontAwesomeIcons.lightXmark, color: scheme.onSurface),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
@@ -138,8 +136,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
         body: _isLoading
             ? _buildLoadingState(scheme)
             : _errorMessage != null
-                ? _buildErrorState(scheme, theme, sp)
-                : _buildContent(context, theme, scheme, sp),
+            ? _buildErrorState(scheme, theme, sp)
+            : _buildContent(context, theme, scheme, sp),
       ),
     );
   }

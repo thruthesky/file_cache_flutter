@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.login.screen.dart';
-import 'package:philgo/services/currency.service.dart';
+import 'package:philgo/services/currency/currency.service.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 
@@ -118,33 +118,30 @@ class _EntryScreenState extends State<EntryScreen> {
                     ).modalBarrierDismissLabel,
                     barrierColor: scheme.scrim.withValues(alpha: 0.5),
                     transitionDuration: const Duration(milliseconds: 300),
-                    pageBuilder: (
-                      BuildContext buildContext,
-                      Animation animation,
-                      Animation secondaryAnimation,
-                    ) {
-                      return const EntryLoginScreen();
-                    },
-                    transitionBuilder: (
-                      context,
-                      animation,
-                      secondaryAnimation,
-                      child,
-                    ) {
-                      return FadeTransition(
-                        opacity: CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeInOut,
-                        ),
-                        child: ScaleTransition(
-                          scale: CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeOutBack,
-                          ),
-                          child: child,
-                        ),
-                      );
-                    },
+                    pageBuilder:
+                        (
+                          BuildContext buildContext,
+                          Animation animation,
+                          Animation secondaryAnimation,
+                        ) {
+                          return const EntryLoginScreen();
+                        },
+                    transitionBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeInOut,
+                            ),
+                            child: ScaleTransition(
+                              scale: CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeOutBack,
+                              ),
+                              child: child,
+                            ),
+                          );
+                        },
                   );
                 },
                 child: Text(l10n.login),
@@ -171,10 +168,9 @@ class _EntryScreenState extends State<EntryScreen> {
         // 오늘 환율 - PHP→KRW (소수점 2자리)
         _buildInfoColumn(
           label: l10n.entryTodayExchangeRate,
-          value:
-              _isLoadingRate
-                  ? '...'
-                  : (_phpToKrwRate?.toStringAsFixed(2) ?? '-'),
+          value: _isLoadingRate
+              ? '...'
+              : (_phpToKrwRate?.toStringAsFixed(2) ?? '-'),
           theme: theme,
           scheme: scheme,
         ),
