@@ -209,7 +209,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final hasImages = files.isNotEmpty;
+    final hasFiles = files.isNotEmpty;
 
     return UnfocusOnTap(
       child: Scaffold(
@@ -282,8 +282,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             formattedDate: formatPostDate(stamp),
                           ),
 
+                          SizedBox(height: 16),
+
                           /// Files (images, videos, and other files) first (if available)
-                          if (hasImages) ...[
+                          if (hasFiles) ...[
                             PostViewFiles(
                               files: files,
                               postIdx: widget.post.idx,

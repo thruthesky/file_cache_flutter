@@ -1466,13 +1466,16 @@ class LoZh extends Lo {
   String get exitApp => '退出';
 
   @override
-  String get homePopularPosts => 'Popular Posts';
+  String get homePopularPosts => '热门帖子';
 
   @override
-  String get homeRecentPhotos => 'Recent Photos';
+  String get homeRecentPhotos => '最新照片';
 
   @override
-  String get homeMore => 'More';
+  String get homeMore => '查看更多';
+
+  @override
+  String get notification => '通知';
 
   @override
   String get quickMenuNotice => 'Notice';

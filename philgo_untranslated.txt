@@ -1,8 +1,5 @@
 {
   "ja": [
-    "homePopularPosts",
-    "homeRecentPhotos",
-    "homeMore",
     "quickMenuNotice",
     "quickMenuExchangeRate",
     "quickMenuWeather",
@@ -18,9 +15,6 @@
   ],
 
   "zh": [
-    "homePopularPosts",
-    "homeRecentPhotos",
-    "homeMore",
     "quickMenuNotice",
     "quickMenuExchangeRate",
     "quickMenuWeather",

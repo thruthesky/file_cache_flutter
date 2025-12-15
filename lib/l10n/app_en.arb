@@ -1813,6 +1813,10 @@
   "@homeMore": {
     "description": "More button text on home section headers"
   },
+  "notification": "Notification",
+  "@notification": {
+    "description": "Notification label for notification icon button"
+  },
   "quickMenuNotice": "Notice",
   "@quickMenuNotice": {
     "description": "Quick menu notice label"

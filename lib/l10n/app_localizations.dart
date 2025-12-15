@@ -2975,6 +2975,12 @@ abstract class Lo {
   /// **'More'**
   String get homeMore;
 
+  /// Notification label for notification icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notification;
+
   /// Quick menu notice label
   ///
   /// In en, this message translates to:

@@ -1960,6 +1960,10 @@
   "@homeMore": {
     "description": "More button text on home section headers"
   },
+  "notification": "알림",
+  "@notification": {
+    "description": "Notification label for notification icon button"
+  },
   "quickMenuNotice": "공지",
   "@quickMenuNotice": {
     "description": "Quick menu notice label"

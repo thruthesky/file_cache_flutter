@@ -1481,6 +1481,9 @@ class LoKo extends Lo {
   String get homeMore => '더보기';
 
   @override
+  String get notification => '알림';
+
+  @override
   String get quickMenuNotice => '공지';
 
   @override
