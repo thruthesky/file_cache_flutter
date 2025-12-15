@@ -58,6 +58,9 @@ class PostViewFiles extends StatelessWidget {
     // Return empty widget if no files
     if (files.isEmpty) return const SizedBox.shrink();
 
+    // Track if we've already created a video widget 
+    bool firstVideoEncountered = false;
+
     return Column(
       spacing: 16,
       children: files.asMap().entries.map((entry) {
@@ -76,7 +79,10 @@ class PostViewFiles extends StatelessWidget {
 
           case UploadFileType.video:
             // Video player widget (no padding)
-            fileWidget = _buildVideoPreview(context, fileUrl);
+            // Only autoplay the first video encountered
+            final shouldAutoPlay = !firstVideoEncountered;
+            firstVideoEncountered = true;
+            fileWidget = _buildVideoPreview(context, fileUrl, shouldAutoPlay);
             break;
 
           case UploadFileType.file:
@@ -140,7 +146,12 @@ class PostViewFiles extends StatelessWidget {
   }
 
   /// Builds video preview with player controls
-  Widget _buildVideoPreview(BuildContext context, String videoUrl) {
-    return UploadedVideoPlayer(url: videoUrl);
+  /// Only autoplays if [shouldAutoPlay] is true (i.e., first video only)
+  Widget _buildVideoPreview(
+    BuildContext context,
+    String videoUrl,
+    bool shouldAutoPlay,
+  ) {
+    return UploadedVideoPlayer(url: videoUrl, autoPlay: shouldAutoPlay);
   }
 }

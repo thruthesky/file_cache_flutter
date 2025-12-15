@@ -21,11 +21,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// FilePreview(fileUrl: 'https://example.com/document.pdf', compact: true)
 /// ```
 class FilePreview extends StatelessWidget {
-  const FilePreview({
-    super.key,
-    required this.fileUrl,
-    this.compact = false,
-  });
+  const FilePreview({super.key, required this.fileUrl, this.compact = false});
 
   /// URL of the file to preview
   final String fileUrl;
@@ -41,7 +37,7 @@ class FilePreview extends StatelessWidget {
     final fileName = fileUrl.split('/').last;
 
     return GestureDetector(
-      onTap: () => _openFile(fileUrl),
+      onTap: () => openFile(fileUrl),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(compact ? 12 : 16),
@@ -100,10 +96,7 @@ class FilePreview extends StatelessWidget {
             right: -4,
             bottom: -4,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 2,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: scheme.primary,
                 borderRadius: BorderRadius.circular(6),
@@ -111,10 +104,10 @@ class FilePreview extends StatelessWidget {
               child: Text(
                 displayExtension,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: scheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10,
-                    ),
+                  color: scheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
               ),
             ),
           ),
@@ -137,9 +130,9 @@ class FilePreview extends StatelessWidget {
         Text(
           fileName,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: scheme.onSurface,
-                fontWeight: compact ? FontWeight.normal : FontWeight.w500,
-              ),
+            color: scheme.onSurface,
+            fontWeight: compact ? FontWeight.normal : FontWeight.w500,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -148,9 +141,9 @@ class FilePreview extends StatelessWidget {
           // File type label
           Text(
             '${FilePreviewHelper.getFileTypeLabel(extension)} File',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],
       ],
@@ -179,17 +172,6 @@ class FilePreview extends StatelessWidget {
         color: scheme.onPrimaryContainer,
       ),
     );
-  }
-
-  /// Opens file URL with system's default app
-  Future<void> _openFile(String fileUrl) async {
-    final uri = Uri.tryParse(fileUrl);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-    }
   }
 }
 

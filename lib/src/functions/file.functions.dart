@@ -1,3 +1,5 @@
+import 'package:url_launcher/url_launcher.dart';
+
 /// File preview type enumeration
 /// Used to determine how to render the preview based on file type
 enum UploadFileType {
@@ -67,13 +69,7 @@ const List<String> kDocumentExtensions = [
 ];
 
 /// 압축 파일 확장자 목록 (Archive file extensions)
-const List<String> kArchiveExtensions = [
-  'zip',
-  'rar',
-  '7z',
-  'tar',
-  'gz',
-];
+const List<String> kArchiveExtensions = ['zip', 'rar', '7z', 'tar', 'gz'];
 
 /// 웹/데이터 파일 확장자 목록 (Web/Data file extensions)
 const List<String> kWebDataExtensions = [
@@ -189,4 +185,15 @@ bool isOldImageFile(String path) {
   }
 
   return false;
+}
+
+/// Opens file URL
+Future<void> openFile(String fileUrl) async {
+  final uri = Uri.tryParse(fileUrl);
+
+  if (uri == null) {
+    return;
+  }
+
+  await launchUrl(uri, mode: LaunchMode.externalApplication);
 }
