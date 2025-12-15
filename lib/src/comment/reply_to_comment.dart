@@ -198,7 +198,11 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
                         context,
                       ).iconTheme.color!.withValues(alpha: 0.35),
                     )
-                  : FaIcon(FontAwesomeIcons.solidPaperPlane),
+                  : FaIcon(
+                      FontAwesomeIcons.solidPaperPlane,
+                      // Use primary color for active send button
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               onPressed: () {
                 isTextEmpty ? null : onTapReplyToComment();
               },

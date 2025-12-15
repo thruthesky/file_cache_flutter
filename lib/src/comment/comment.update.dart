@@ -192,7 +192,11 @@ class _CommentUpdateState extends State<CommentUpdate> {
                         context,
                       ).iconTheme.color!.withValues(alpha: 0.35),
                     )
-                  : FaIcon(FontAwesomeIcons.solidPaperPlane),
+                  : FaIcon(
+                      FontAwesomeIcons.solidPaperPlane,
+                      // Use primary color for active send button
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               onPressed: () async {
                 if (isTextEmpty) return;
                 await onUpdateComment();

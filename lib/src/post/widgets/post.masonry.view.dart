@@ -4,7 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class PostMasonryViewController {
   late PostMasonryViewState state;
-  add(Post post) {}
+  void add(Post post) {}
 }
 
 /// Grid View for Posts (게시글 그리드 뷰)
