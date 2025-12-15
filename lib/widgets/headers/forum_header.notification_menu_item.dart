@@ -76,10 +76,10 @@ class _ForumHeaderNotificationMenuItemState
     final ref = _database.ref('$path/$_currentUserUid');
 
     try {
-      final snapshot = await ref.get();
+      final event = await ref.once();
       if (mounted) {
         setState(() {
-          _isSubscribed = snapshot.value as bool? ?? false;
+          _isSubscribed = event.snapshot.value as bool? ?? false;
           _isLoading = false;
         });
       }
