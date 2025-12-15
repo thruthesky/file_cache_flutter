@@ -99,6 +99,7 @@ class _UploadPreviewState extends State<UploadPreview> {
           width: widget.width,
           height: widget.height,
           borderRadius: widget.borderRadius,
+          showFileName: true, // Show filename in comment upload previews
         ),
         // Delete button (top-right corner)
         Positioned(

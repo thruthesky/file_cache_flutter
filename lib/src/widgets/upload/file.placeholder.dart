@@ -40,12 +40,15 @@ class FilePlaceholder extends StatelessWidget {
   /// 표시할 파일 이름 (선택사항)
   final String? fileName;
 
+  final bool showFileName;
+
   const FilePlaceholder({
     super.key,
     this.width = 120.0,
     this.height = 120.0,
     this.borderRadius = 6.0,
     this.extension = 'FILE',
+    this.showFileName = false,
     this.fileName,
   });
 
@@ -62,7 +65,7 @@ class FilePlaceholder extends StatelessWidget {
         color: scheme.surfaceContainerHighest,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.all(4.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -70,10 +73,10 @@ class FilePlaceholder extends StatelessWidget {
             // 파일 타입에 맞는 아이콘 사용 (FilePreviewHelper 활용)
             FaIcon(
               FilePreviewHelper.getFileIcon(extension),
-              size: 20,
+              size: 18,
               color: scheme.primary,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             // 확장자 배지 - primaryContainer 배경에 확장자 텍스트 표시
             Text(
               extension,
@@ -82,8 +85,8 @@ class FilePlaceholder extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // 파일 이름 표시 (제공된 경우, 짧게 자른 버전)
-            if (fileName != null) ...[
+            // 파일 이름 표시 (크기가 충분히 큰 경우에만)
+            if (showFileName) ...[
               const SizedBox(height: 2),
               Text(
                 cut(fileName!, 8),

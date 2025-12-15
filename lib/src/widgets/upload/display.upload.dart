@@ -4,8 +4,6 @@ import 'package:philgo_api/philgo_api.dart';
 
 import 'file.placeholder.dart';
 import 'image.error.placeholder.dart';
-import 'video.thumbnail.dart';
-
 /// 업로드된 파일의 미리보기 박스를 표시하는 위젯입니다.
 ///
 /// `DisplayUpload`는 파일 타입(이미지, 비디오, 일반 파일)에 따라
@@ -48,6 +46,9 @@ class DisplayUpload extends StatelessWidget {
   /// 탭 시 실행할 콜백 (비디오 썸네일 모드에서 글 읽기 페이지로 이동 등)
   final VoidCallback? onTap;
 
+  /// 파일명 표시 여부 (파일 미리보기에서만 적용)
+  final bool showFileName;
+
   const DisplayUpload({
     super.key,
     this.width = 120.0,
@@ -55,6 +56,7 @@ class DisplayUpload extends StatelessWidget {
     this.borderRadius = 8.0,
     required this.url,
     this.onTap,
+    this.showFileName = false,
   });
 
   /// URL에서 파일 확장자를 추출하여 대문자로 반환합니다.
@@ -118,6 +120,7 @@ class DisplayUpload extends StatelessWidget {
           borderRadius: borderRadius - 2,
           extension: _getFileExtension(),
           fileName: fileName,
+          showFileName: showFileName,
         );
     }
   }

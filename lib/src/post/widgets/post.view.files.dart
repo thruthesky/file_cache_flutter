@@ -58,7 +58,7 @@ class PostViewFiles extends StatelessWidget {
     // Return empty widget if no files
     if (files.isEmpty) return const SizedBox.shrink();
 
-    // Track if we've already created a video widget 
+    // Track if we've already created a video widget
     bool firstVideoEncountered = false;
 
     return Column(
