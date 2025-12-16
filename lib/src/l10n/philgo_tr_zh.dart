@@ -744,33 +744,4 @@ class PhilgoTrZh extends PhilgoTr {
 
   @override
   String get categoryAll => '全部';
-
-  @override
-  String get pointAdvertisement => '积分广告';
-
-  /// 선택된 일수를 포함한 포인트 광고 텍스트 (예: "积分广告: 3天")
-  @override
-  String pointAdvertisementWithDays(int days) => '积分广告: $days天';
-
-  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "积分广告: +3天")
-  @override
-  String pointAdvertisementAddDays(int days) => '积分广告: +$days天';
-
-  @override
-  String get pointAdvertisementDescription => '将您的帖子推广到列表顶部';
-
-  @override
-  String get days => '天';
-
-  @override
-  String get points => '积分';
-
-  @override
-  String daysAdvertisementCost(int days) => '天广告费用';
-
-  @override
-  String get confirmSelection => '确认选择';
-
-  @override
-  String get selectAdvertisementDays => '选择广告天数';
 }

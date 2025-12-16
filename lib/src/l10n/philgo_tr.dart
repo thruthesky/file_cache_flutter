@@ -1456,33 +1456,6 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'All'**
   String get categoryAll;
-
-  /// 포인트 광고 버튼/제목 텍스트
-  String get pointAdvertisement;
-
-  /// 선택된 일수를 포함한 포인트 광고 텍스트 (예: "포인트 광고: 3일")
-  String pointAdvertisementWithDays(int days);
-
-  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "포인트 광고: +3일")
-  String pointAdvertisementAddDays(int days);
-
-  /// 포인트 광고 설명 텍스트
-  String get pointAdvertisementDescription;
-
-  /// 일(日) 단위 텍스트
-  String get days;
-
-  /// 포인트 단위 텍스트
-  String get points;
-
-  /// n일 광고 비용 텍스트
-  String daysAdvertisementCost(int days);
-
-  /// 선택 확인 버튼 텍스트
-  String get confirmSelection;
-
-  /// 광고 일수 선택 안내 텍스트
-  String get selectAdvertisementDays;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

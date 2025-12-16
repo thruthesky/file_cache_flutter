@@ -746,33 +746,4 @@ class PhilgoTrJa extends PhilgoTr {
 
   @override
   String get categoryAll => 'すべて';
-
-  @override
-  String get pointAdvertisement => 'ポイント広告';
-
-  /// 선택된 일수를 포함한 포인트 광고 텍스트 (예: "ポイント広告: 3日")
-  @override
-  String pointAdvertisementWithDays(int days) => 'ポイント広告: $days日';
-
-  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "ポイント広告: +3日")
-  @override
-  String pointAdvertisementAddDays(int days) => 'ポイント広告: +$days日';
-
-  @override
-  String get pointAdvertisementDescription => '投稿をリストの上部に表示します';
-
-  @override
-  String get days => '日';
-
-  @override
-  String get points => 'ポイント';
-
-  @override
-  String daysAdvertisementCost(int days) => '日間の広告費用';
-
-  @override
-  String get confirmSelection => '選択を確認';
-
-  @override
-  String get selectAdvertisementDays => '広告日数を選択してください';
 }

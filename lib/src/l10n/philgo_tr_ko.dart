@@ -746,33 +746,4 @@ class PhilgoTrKo extends PhilgoTr {
 
   @override
   String get categoryAll => '전체';
-
-  @override
-  String get pointAdvertisement => '포인트 광고';
-
-  /// 선택된 일수를 포함한 포인트 광고 텍스트 (예: "포인트 광고: 3일")
-  @override
-  String pointAdvertisementWithDays(int days) => '포인트 광고: $days일';
-
-  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "포인트 광고: +3일")
-  @override
-  String pointAdvertisementAddDays(int days) => '포인트 광고: +$days일';
-
-  @override
-  String get pointAdvertisementDescription => '게시글을 목록 상단에 노출시키세요';
-
-  @override
-  String get days => '일';
-
-  @override
-  String get points => '포인트';
-
-  @override
-  String daysAdvertisementCost(int days) => '일 광고 비용';
-
-  @override
-  String get confirmSelection => '선택 확인';
-
-  @override
-  String get selectAdvertisementDays => '광고 일수를 선택하세요';
 }
