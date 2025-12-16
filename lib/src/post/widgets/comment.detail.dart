@@ -192,6 +192,7 @@ class _CommentDetailState extends State<CommentDetail> {
                       PostViewFiles(
                         files: widget.comment.files,
                         postIdx: widget.comment.idx,
+                        useCompactVideoPlayer: true, // Use compact mode for comment videos
                       ),
                     ],
 
@@ -247,7 +248,7 @@ class _CommentDetailState extends State<CommentDetail> {
                         /// 답글 버튼 - 항상 표시 (Comic design, icon only)
                         _buildComicActionButton(
                           context: context,
-                          icon: Icons.reply,
+                          icon: FontAwesomeIcons.reply,
                           label: null, // Show icon only
                           onPressed: () {
                             // Trigger reply mode in parent (PostViewScreen)
