@@ -32,6 +32,9 @@ Future<void> sendReceiveShareToChat(
     if (promises.isNotEmpty) {
       await Future.wait(promises);
     }
+    if (data.isNotEmpty && data[0].message!.isNotEmpty) {
+      await sendMessage(roomId: roomId, text: data[0].message!);
+    }
   }
 }
 
