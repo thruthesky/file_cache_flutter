@@ -192,7 +192,6 @@ class _CommentDetailState extends State<CommentDetail> {
                       PostViewFiles(
                         files: widget.comment.files,
                         postIdx: widget.comment.idx,
-                        useCompactVideoPlayer: true, // Use compact mode for comment videos
                       ),
                     ],
 
