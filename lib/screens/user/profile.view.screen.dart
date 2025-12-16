@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/user/widgets/profile_view.state_item.dart';
 import 'package:philgo/widgets/home/main/user.stats.dart';
 import 'package:philgo/widgets/user/latest.user.posts.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -295,7 +296,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
 
                                 /// Posts stat
                                 Expanded(
-                                  child: StatItem(
+                                  child: ProfileViewStatItem(
                                     icon: FontAwesomeIcons.lightFileLines,
                                     value: user?.noOfPost ?? 0,
                                     label: T.posts,
@@ -309,7 +310,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
 
                                 /// Comments stat
                                 Expanded(
-                                  child: StatItem(
+                                  child: ProfileViewStatItem(
                                     icon: FontAwesomeIcons.lightComments,
                                     value: user?.noOfComment ?? 0,
                                     label: T.comments,
