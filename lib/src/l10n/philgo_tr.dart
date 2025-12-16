@@ -1456,6 +1456,60 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'All'**
   String get categoryAll;
+
+  /// Point advertisement button/title text
+  ///
+  /// In en, this message translates to:
+  /// **'Point Advertisement'**
+  String get pointAdvertisement;
+
+  /// Point advertisement text with selected days
+  ///
+  /// In en, this message translates to:
+  /// **'Point Ad: {days} days'**
+  String pointAdvertisementWithDays(int days);
+
+  /// Point advertisement text with added days for update mode
+  ///
+  /// In en, this message translates to:
+  /// **'Point Ad: +{days} days'**
+  String pointAdvertisementAddDays(int days);
+
+  /// Point advertisement description text
+  ///
+  /// In en, this message translates to:
+  /// **'Promote your post to the top of the list'**
+  String get pointAdvertisementDescription;
+
+  /// Days unit text
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// Points unit text
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get points;
+
+  /// N days advertisement cost text
+  ///
+  /// In en, this message translates to:
+  /// **' days advertisement costs'**
+  String daysAdvertisementCost(int days);
+
+  /// Confirm selection button text
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Selection'**
+  String get confirmSelection;
+
+  /// Select advertisement days guide text
+  ///
+  /// In en, this message translates to:
+  /// **'Select advertisement days'**
+  String get selectAdvertisementDays;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

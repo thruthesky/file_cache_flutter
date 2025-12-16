@@ -859,5 +859,60 @@
     "subCategoryCebu": "Cebu",
     "subCategoryAngeles": "Angeles",
 
-    "categoryAll": "All"
+    "categoryAll": "All",
+
+    "pointAdvertisement": "Point Advertisement",
+    "@pointAdvertisement": {
+        "description": "Point advertisement button/title text"
+    },
+    "pointAdvertisementWithDays": "Point Ad: {days} days",
+    "@pointAdvertisementWithDays": {
+        "description": "Point advertisement text with selected days",
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "pointAdvertisementAddDays": "Point Ad: +{days} days",
+    "@pointAdvertisementAddDays": {
+        "description": "Point advertisement text with added days for update mode",
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "pointAdvertisementDescription": "Promote your post to the top of the list",
+    "@pointAdvertisementDescription": {
+        "description": "Point advertisement description text"
+    },
+    "days": "days",
+    "@days": {
+        "description": "Days unit text"
+    },
+    "points": "Points",
+    "@points": {
+        "description": "Points unit text"
+    },
+    "daysAdvertisementCost": " days advertisement costs",
+    "@daysAdvertisementCost": {
+        "description": "N days advertisement cost text",
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "3"
+            }
+        }
+    },
+    "confirmSelection": "Confirm Selection",
+    "@confirmSelection": {
+        "description": "Confirm selection button text"
+    },
+    "selectAdvertisementDays": "Select advertisement days",
+    "@selectAdvertisementDays": {
+        "description": "Select advertisement days guide text"
+    }
 }

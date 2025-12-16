@@ -762,4 +762,38 @@ class PhilgoTrEn extends PhilgoTr {
 
   @override
   String get categoryAll => 'All';
+
+  @override
+  String get pointAdvertisement => 'Point Advertisement';
+
+  @override
+  String pointAdvertisementWithDays(int days) {
+    return 'Point Ad: $days days';
+  }
+
+  @override
+  String pointAdvertisementAddDays(int days) {
+    return 'Point Ad: +$days days';
+  }
+
+  @override
+  String get pointAdvertisementDescription =>
+      'Promote your post to the top of the list';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get points => 'Points';
+
+  @override
+  String daysAdvertisementCost(int days) {
+    return ' days advertisement costs';
+  }
+
+  @override
+  String get confirmSelection => 'Confirm Selection';
+
+  @override
+  String get selectAdvertisementDays => 'Select advertisement days';
 }

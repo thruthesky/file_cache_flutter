@@ -229,5 +229,15 @@
     "subCategoryCebu": "세부",
     "subCategoryAngeles": "앙헬레스",
 
-    "categoryAll": "전체"
+    "categoryAll": "전체",
+
+    "pointAdvertisement": "포인트 광고",
+    "pointAdvertisementWithDays": "포인트 광고: {days}일",
+    "pointAdvertisementAddDays": "포인트 광고: +{days}일",
+    "pointAdvertisementDescription": "게시글을 목록 상단에 노출시키세요",
+    "days": "일",
+    "points": "포인트",
+    "daysAdvertisementCost": "일 광고 비용",
+    "confirmSelection": "선택 확인",
+    "selectAdvertisementDays": "광고 일수를 선택하세요"
 }

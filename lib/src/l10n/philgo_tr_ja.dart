@@ -746,4 +746,37 @@ class PhilgoTrJa extends PhilgoTr {
 
   @override
   String get categoryAll => 'すべて';
+
+  @override
+  String get pointAdvertisement => 'ポイント広告';
+
+  @override
+  String pointAdvertisementWithDays(int days) {
+    return 'ポイント広告: $days日';
+  }
+
+  @override
+  String pointAdvertisementAddDays(int days) {
+    return 'ポイント広告: +$days日';
+  }
+
+  @override
+  String get pointAdvertisementDescription => '投稿をリストの上部に表示';
+
+  @override
+  String get days => '日';
+
+  @override
+  String get points => 'ポイント';
+
+  @override
+  String daysAdvertisementCost(int days) {
+    return '日の広告費用';
+  }
+
+  @override
+  String get confirmSelection => '選択を確認';
+
+  @override
+  String get selectAdvertisementDays => '広告日数を選択してください';
 }

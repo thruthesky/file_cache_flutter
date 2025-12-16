@@ -225,5 +225,15 @@
     "subCategoryCarRental": "レンタカー",
     "subCategoryUsedCar": "中古車",
 
-    "categoryAll": "すべて"
+    "categoryAll": "すべて",
+
+    "pointAdvertisement": "ポイント広告",
+    "pointAdvertisementWithDays": "ポイント広告: {days}日",
+    "pointAdvertisementAddDays": "ポイント広告: +{days}日",
+    "pointAdvertisementDescription": "投稿をリストの上部に表示",
+    "days": "日",
+    "points": "ポイント",
+    "daysAdvertisementCost": "日の広告費用",
+    "confirmSelection": "選択を確認",
+    "selectAdvertisementDays": "広告日数を選択してください"
 }

@@ -225,5 +225,15 @@
     "subCategoryCarRental": "租车",
     "subCategoryUsedCar": "二手车",
 
-    "categoryAll": "全部"
+    "categoryAll": "全部",
+
+    "pointAdvertisement": "积分广告",
+    "pointAdvertisementWithDays": "积分广告: {days}天",
+    "pointAdvertisementAddDays": "积分广告: +{days}天",
+    "pointAdvertisementDescription": "将您的帖子展示在列表顶部",
+    "days": "天",
+    "points": "积分",
+    "daysAdvertisementCost": "天广告费用",
+    "confirmSelection": "确认选择",
+    "selectAdvertisementDays": "选择广告天数"
 }
