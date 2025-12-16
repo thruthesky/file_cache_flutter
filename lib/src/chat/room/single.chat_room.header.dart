@@ -226,16 +226,6 @@ class SingleChatRoomHeader extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-
-                      // Leave option
-                      // ListTile(
-                      //   leading: const Icon(Icons.exit_to_app),
-                      //   title: Text(PhilgoTr.of(context)!.leave),
-                      //   onTap: () {
-                      //     Navigator.of(context).pop();
-                      //     showLeaveConfirmDialog(parentContext);
-                      //   },
-                      // ),
                     ],
                     const SizedBox(height: 8),
                   ],

@@ -363,6 +363,7 @@ void showBlockDialog({
   required BuildContext context,
   required String otherUserUid,
   bool popOnBlocked = true,
+  VoidCallback? onBlocked,
 }) {
   showDialog(
     context: context,
@@ -372,6 +373,7 @@ void showBlockDialog({
         if (popOnBlocked) {
           Navigator.of(context).pop();
         }
+        onBlocked?.call();
       },
     ),
   );
@@ -383,6 +385,7 @@ void showUnblockDialog({
   required BuildContext context,
   required String otherUserUid,
   bool popOnUnblocked = false,
+  VoidCallback? onUnblocked,
 }) {
   showDialog(
     context: context,
@@ -392,6 +395,7 @@ void showUnblockDialog({
         if (popOnUnblocked) {
           Navigator.of(context).pop();
         }
+        onUnblocked?.call();
       },
     ),
   );
