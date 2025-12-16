@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
-import 'package:philgo/state/app.state.dart';
 import 'package:philgo_api/philgo_api.dart';
-import 'package:provider/provider.dart';
 
 import 'sections/user.posts.dart';
 
@@ -24,7 +22,7 @@ class UserActivityScreen extends StatefulWidget {
 
   /// Push this screen for the current logged-in user
   static Future<void> pushMy(BuildContext context) {
-    final currentUser = context.read<AppState>().user;
+    final currentUser = PhilgoState.of(context).user;
     if (currentUser == null) {
       throw Exception('User must be logged in');
     }
@@ -103,7 +101,7 @@ class _UserActivityScreenState extends State<UserActivityScreen>
 
   /// Get the appropriate title based on whether it's current user or another user
   String _getTitle(User? user) {
-    final currentUser = context.read<AppState>().user;
+    final currentUser = PhilgoState.of(context).user;
     final isCurrentUser = currentUser?.uid == widget.uid;
 
     if (isCurrentUser) {

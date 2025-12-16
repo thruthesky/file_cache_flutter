@@ -7,7 +7,6 @@ import 'package:philgo/screens/post/widgets/post_view_app_bar.dart';
 import 'package:philgo/screens/post/widgets/post_view_meta.dart';
 import 'package:philgo/screens/post/widgets/post_view_subject.dart';
 import 'package:philgo/screens/post/widgets/sliver_comment_list.dart';
-import 'package:philgo/state/app.state.dart';
 import 'package:philgo/widgets/unfocus_on_tap.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:flutter/material.dart';
@@ -112,15 +111,13 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   /// Check if the current post belongs to the logged-in user
   bool isPostMine() {
-    final myIdx = AppState.of(context).user?.idx;
-    if (myIdx == null) return false;
+    final myIdx = PhilgoState.of(context).user?.idx;
     return myIdx == widget.post.idx_member;
   }
 
   /// Check if a comment belongs to the logged-in user
   bool isCommentMine(int idxMember) {
-    final myIdx = AppState.of(context).user?.idx;
-    if (myIdx == null) return false;
+    final myIdx = PhilgoState.of(context).user?.idx;
     return myIdx == idxMember;
   }
 
