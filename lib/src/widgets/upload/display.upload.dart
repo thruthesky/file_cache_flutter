@@ -4,6 +4,7 @@ import 'package:philgo_api/philgo_api.dart';
 
 import 'file.placeholder.dart';
 import 'image.error.placeholder.dart';
+
 /// 업로드된 파일의 미리보기 박스를 표시하는 위젯입니다.
 ///
 /// `DisplayUpload`는 파일 타입(이미지, 비디오, 일반 파일)에 따라
@@ -132,10 +133,9 @@ class DisplayUpload extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
-        // Comic Design: 2.0px 테두리
         border: Border.all(
           color: Theme.of(context).colorScheme.outline,
-          width: 2.0,
+          width: 1.0,
         ),
       ),
       child: _buildPreviewContent(context),
