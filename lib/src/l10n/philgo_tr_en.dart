@@ -762,4 +762,30 @@ class PhilgoTrEn extends PhilgoTr {
 
   @override
   String get categoryAll => 'All';
+
+  @override
+  String get pointAdvertisement => 'Point Advertisement';
+
+  /// 선택된 일수를 포함한 포인트 광고 텍스트 (예: "Point Ad: 3 days")
+  @override
+  String pointAdvertisementWithDays(int days) => 'Point Ad: $days days';
+
+  @override
+  String get pointAdvertisementDescription =>
+      'Promote your post to the top of the list';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get points => 'Points';
+
+  @override
+  String daysAdvertisementCost(int days) => ' days advertisement costs';
+
+  @override
+  String get confirmSelection => 'Confirm Selection';
+
+  @override
+  String get selectAdvertisementDays => 'Select advertisement days';
 }

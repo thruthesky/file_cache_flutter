@@ -415,7 +415,7 @@ Future<Post> createPost(RecordType data) async {
     // post.create 엔드포인트 호출
     // auth: true로 Firebase ID Token 자동 포함
     final response = await func<Map<String, dynamic>>(
-      'create_post_func',
+      'create_post',
       data: cleanedData,
       alertOnError: true, // 에러 시 자동으로 다이얼로그 표시
     );
@@ -528,6 +528,10 @@ Future<Post> updatePost(RecordType data) async {
     cleanedData['files'] = data['files'];
   }
 
+  if (data['point_advertisement_days'] != null) {
+    cleanedData['point_advertisement_days'] = data['point_advertisement_days'];
+  }
+
   // ========== 2. 디버깅 정보 로깅 (개발 시 유용) ==========
   debugLog('게시글 수정 시작:');
   debugLog('  - idx: $idx');
@@ -545,7 +549,7 @@ Future<Post> updatePost(RecordType data) async {
     // post.update 엔드포인트 호출
     // auth: true로 Firebase ID Token 자동 포함
     final response = await func<Map<String, dynamic>>(
-      'update_post_func',
+      'update_post',
       data: cleanedData,
       alertOnError: true, // 에러 시 자동으로 다이얼로그 표시
     );

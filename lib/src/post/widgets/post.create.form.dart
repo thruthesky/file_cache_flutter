@@ -158,6 +158,9 @@ class PostCreateFormState extends State<PostCreateForm> {
   /// 업로드된 파일 URL 목록
   List<String> get uploadedUrls => List.unmodifiable(_urls);
 
+  /// 포인트 광고 기간 ( 일 단위 ) Point advertisementDays
+  int? advertisementDays;
+
   @override
   void initState() {
     super.initState();
@@ -285,6 +288,8 @@ class PostCreateFormState extends State<PostCreateForm> {
         'subject': _titleController.text.trim(),
         'content': _contentController.text.trim(),
         'files': _urls,
+        if (advertisementDays != null)
+          'point_advertisement_days': advertisementDays,
       });
 
       log('글 작성 성공 - idx: ${created.idx}', name: 'PostCreateForm');
@@ -693,7 +698,9 @@ class PostCreateFormState extends State<PostCreateForm> {
 
         const Spacer(),
 
-        PointSelectionButton(),
+        PointSelectionButton(
+          onDaysSelected: (days) => setState(() => advertisementDays = days),
+        ),
 
         // 제출 버튼 (showSubmitButton이 true일 때만)
         if (widget.showSubmitButton)

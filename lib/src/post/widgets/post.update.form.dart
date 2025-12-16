@@ -120,6 +120,9 @@ class PostUpdateFormState extends State<PostUpdateForm> {
   /// 업로드된 파일 URL 목록
   List<String> get uploadedUrls => List.unmodifiable(_urls);
 
+  /// 포인트 광고 기간 ( 일 단위 ) Point advertisementDays
+  int? advertisementDays;
+
   /// 변경사항이 있는지 확인
   bool hasChanges() {
     return _titleController.text != widget.post.subject ||
@@ -227,6 +230,8 @@ class PostUpdateFormState extends State<PostUpdateForm> {
         'subject': _titleController.text.trim(),
         'content': _contentController.text.trim(),
         'files': _urls,
+        if (advertisementDays != null)
+          'point_advertisement_days': advertisementDays,
       });
 
       log('글 수정 성공 - idx: ${updated.idx}', name: 'PostUpdateForm');
@@ -410,7 +415,10 @@ class PostUpdateFormState extends State<PostUpdateForm> {
                       setState(() {});
 
                       // 서버에 즉시 반영
-                      await updatePost({'idx': widget.post.idx, 'files': _urls});
+                      await updatePost({
+                        'idx': widget.post.idx,
+                        'files': _urls,
+                      });
 
                       if (context.mounted) {
                         showSuccessSnackBar(context, '이미지가 삭제되었습니다');
@@ -467,6 +475,10 @@ class PostUpdateFormState extends State<PostUpdateForm> {
         ),
 
         const Spacer(),
+
+        PointSelectionButton(
+          onDaysSelected: (days) => setState(() => advertisementDays = days),
+        ),
 
         // 제출 버튼 (showSubmitButton이 true일 때만)
         if (widget.showSubmitButton)
