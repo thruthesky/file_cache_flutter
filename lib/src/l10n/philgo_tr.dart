@@ -1463,6 +1463,9 @@ abstract class PhilgoTr {
   /// 선택된 일수를 포함한 포인트 광고 텍스트 (예: "포인트 광고: 3일")
   String pointAdvertisementWithDays(int days);
 
+  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "포인트 광고: +3일")
+  String pointAdvertisementAddDays(int days);
+
   /// 포인트 광고 설명 텍스트
   String get pointAdvertisementDescription;
 

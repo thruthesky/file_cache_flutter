@@ -29,7 +29,13 @@ class PointSelectionButton extends StatefulWidget {
   /// 광고 일수 선택 시 콜백
   final Function(int days)? onDaysSelected;
 
-  const PointSelectionButton({super.key, this.onDaysSelected});
+  final bool update;
+
+  const PointSelectionButton({
+    super.key,
+    this.update = false,
+    this.onDaysSelected,
+  });
 
   @override
   State<PointSelectionButton> createState() => _PointSelectionButtonState();
@@ -51,11 +57,17 @@ class _PointSelectionButtonState extends State<PointSelectionButton> {
         if (setting == null) {
           return const CircularProgressIndicator.adaptive();
         }
-        // 선택된 일수가 있으면 "포인트 광고: 3일" 형태로 표시
-        // 없으면 기본 "포인트 광고" 텍스트 표시
-        final labelText = advertisementDays != null
-            ? PhilgoTr.of(context)!.pointAdvertisementWithDays(advertisementDays!)
-            : PhilgoTr.of(context)!.pointAdvertisement;
+        // 선택된 일수가 있으면 표시, 없으면 기본 "포인트 광고" 텍스트 표시
+        // - 수정 모드(update=true): "포인트 광고: +3일" (+ 기호 포함)
+        // - 생성 모드(update=false): "포인트 광고: 3일"
+        final String labelText;
+        if (advertisementDays != null) {
+          labelText = widget.update
+              ? PhilgoTr.of(context)!.pointAdvertisementAddDays(advertisementDays!)
+              : PhilgoTr.of(context)!.pointAdvertisementWithDays(advertisementDays!);
+        } else {
+          labelText = PhilgoTr.of(context)!.pointAdvertisement;
+        }
 
         return TextButton.icon(
           onPressed: () => _showPointSelectionBottomSheet(context),

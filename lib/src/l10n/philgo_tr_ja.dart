@@ -754,6 +754,10 @@ class PhilgoTrJa extends PhilgoTr {
   @override
   String pointAdvertisementWithDays(int days) => 'ポイント広告: $days日';
 
+  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "ポイント広告: +3日")
+  @override
+  String pointAdvertisementAddDays(int days) => 'ポイント広告: +$days日';
+
   @override
   String get pointAdvertisementDescription => '投稿をリストの上部に表示します';
 

@@ -752,6 +752,10 @@ class PhilgoTrZh extends PhilgoTr {
   @override
   String pointAdvertisementWithDays(int days) => '积分广告: $days天';
 
+  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "积分广告: +3天")
+  @override
+  String pointAdvertisementAddDays(int days) => '积分广告: +$days天';
+
   @override
   String get pointAdvertisementDescription => '将您的帖子推广到列表顶部';
 

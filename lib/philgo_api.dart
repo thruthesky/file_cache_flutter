@@ -230,3 +230,9 @@ export 'src/widgets/upload/display.upload.dart';
 export 'src/widgets/upload/upload.preview.dart';
 export 'src/widgets/upload/uploaded.video_player.dart';
 export 'src/widgets/upload/video.thumbnail.dart';
+
+export 'src/widgets/user/user_level.dart';
+export 'src/widgets/user/user_nickname.dart';
+export 'src/widgets/user/user_photo.dart';
+export 'src/widgets/user/user_point.dart';
+export 'src/widgets/user/user_ready.dart';

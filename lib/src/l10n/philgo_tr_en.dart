@@ -770,6 +770,10 @@ class PhilgoTrEn extends PhilgoTr {
   @override
   String pointAdvertisementWithDays(int days) => 'Point Ad: $days days';
 
+  /// 수정 모드에서 추가 일수를 포함한 포인트 광고 텍스트 (예: "Point Ad: +3 days")
+  @override
+  String pointAdvertisementAddDays(int days) => 'Point Ad: +$days days';
+
   @override
   String get pointAdvertisementDescription =>
       'Promote your post to the top of the list';

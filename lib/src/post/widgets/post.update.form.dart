@@ -477,6 +477,7 @@ class PostUpdateFormState extends State<PostUpdateForm> {
         const Spacer(),
 
         PointSelectionButton(
+          update: true,
           onDaysSelected: (days) => setState(() => advertisementDays = days),
         ),
 
