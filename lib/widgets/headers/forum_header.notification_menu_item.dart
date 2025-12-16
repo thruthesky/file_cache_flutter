@@ -143,10 +143,7 @@ class _ForumHeaderNotificationMenuItemState
           /// Tap to toggle subscription state
           onTap: _isLoading ? null : _toggleSubscription,
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: sp.s8,
-              vertical: sp.s12,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s12),
             child: Row(
               children: [
                 /// 체크박스 아이콘
@@ -170,8 +167,9 @@ class _ForumHeaderNotificationMenuItemState
                     localizedName,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _isSubscribed ? scheme.primary : scheme.onSurface,
-                      fontWeight:
-                          _isSubscribed ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: _isSubscribed
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
