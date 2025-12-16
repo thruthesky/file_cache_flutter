@@ -10,3 +10,12 @@
 - `% git submodule foreach git checkout main`
 - `% flutter pub get`
 - `% flutter run`
+
+
+
+## Known Issues
+
+- chewie progress bar overflow on Emulator [https://github.com/fluttercommunity/chewie/issues/935]
+
+
+
