@@ -13,11 +13,6 @@ class PhilgoService {
     final json = await apiCall('setting', apiServerUrl: PhilgoConfig.phpApiUrl);
     final setting = PhilgoSetting.fromJson(json);
 
-    print('광고 게시물 카테고리: ${setting?.point.advertisingPostCategories}');
-    print('광고 가능 일수: ${setting?.point.advertisementDays}');
-    print('시간당 광고 비용: ${setting?.point.advCostPerHour}');
-    print('은행 정보: ${setting?.bankInfo.banks.keys}');
-
-    return setting!;
+    return setting;
   }
 }
