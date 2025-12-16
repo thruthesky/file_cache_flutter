@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/state/app.state.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo/widgets/user/user_ready.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -92,7 +91,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     });
                     if (context.mounted) {
                       // Update the global app state
-                      AppState.of(context).setUser(updatedUser);
+                      PhilgoState.of(context).setUser(updatedUser);
                       // Comic Design: Use Comic SnackBar for consistent styling
                       showComicSuccessSnackBar(
                         context,
@@ -116,12 +115,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     alignment: Alignment.center,
                     onTapDelete: () async {
                       try {
-                        await philgoApiFileDelete(login.photoUrl);
+                        await philgoApiFileDelete(
+                          PhilgoState.of(context).user!.photoUrl,
+                        );
                         final updatedUser = await philgoApiUserUpdate({
                           'photo_url': '',
                         });
                         if (context.mounted) {
-                          AppState.of(context).setUser(updatedUser);
+                          PhilgoState.of(context).setUser(updatedUser);
                           // Comic Design: Use Comic SnackBar for consistent styling
                           showComicSuccessSnackBar(
                             context,
@@ -347,7 +348,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       final data = <String, dynamic>{};
 
       // 닉네임: 기존 닉네임이 없을 때만 업데이트 (첫 설정 시에만)
-      if (login.nickname.isEmpty) {
+      if (PhilgoState.of(context).user!.nickname.isEmpty) {
         data['nickname'] = _nicknameController.text.trim();
       }
 
@@ -369,7 +370,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       // user.update API 호출
       final user = await philgoApiUserUpdate(data);
       if (mounted) {
-        AppState.of(context).setUser(user);
+        PhilgoState.of(context).setUser(user);
       }
 
       // 성공 메시지 표시

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:philgo/state/app.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
@@ -124,8 +123,8 @@ class AppHeader extends StatelessWidget {
 
             /// User Avatar Section (사용자 아바타 영역)
             /// Displays user avatar
-            Selector<AppState, User?>(
-              selector: (_, appState) => appState.user,
+            Selector<PhilgoState, User?>(
+              selector: (_, state) => state.user,
               builder: (_, user, _) {
                 return Avatar(
                   photoUrl: user?.photoUrl,

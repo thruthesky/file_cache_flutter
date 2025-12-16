@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
-import 'package:philgo/state/app.state.dart';
 import 'package:philgo/widgets/post/compact.post.list.tile.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
@@ -75,8 +74,8 @@ class _LatestUserPostsState extends State<LatestUserPosts> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Selector<AppState, User?>(
-      selector: (_, appState) => appState.user,
+    return Selector<PhilgoState, User?>(
+      selector: (_, state) => state.user,
       builder: (_, user, _) {
         if (user == null) return const SizedBox.shrink();
 

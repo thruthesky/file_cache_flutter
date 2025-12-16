@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/state/app.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +16,8 @@ class UserStats extends StatelessWidget {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    return Selector<AppState, User?>(
-      selector: (_, appState) => appState.user,
+    return Selector<PhilgoState, User?>(
+      selector: (_, state) => state.user,
       builder: (_, user, child) {
         if (user == null) {
           /// Simple login prompt

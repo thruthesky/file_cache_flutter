@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/sections/main.home.dart';
-import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'sections/chat.home.dart';
@@ -24,24 +23,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Timer(const Duration(milliseconds: 500), () {
-    //   ProfileScreen.push(context);
-    // });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      userLogin();
-    });
-  }
-
-  void userLogin() async {
-    final user = await philgoApiUserVerify();
-    if (mounted == true) {
-      AppState.of(context, listen: false).setUser(user);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final HomeNavigationItem selectedItem = NavigationState.of(context).homeNav;
