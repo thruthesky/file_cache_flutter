@@ -26,6 +26,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AppState()),
         ChangeNotifierProvider(create: (_) => NavigationState()),
+        ChangeNotifierProvider(create: (_) => PhilgoState()),
       ],
       child: const MyApp(),
     ),
@@ -93,8 +94,6 @@ class _MyAppState extends State<MyApp> {
 
       // Timer(Duration(seconds: 1), showUpgradeDialog);
       // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
-
-      PhilgoService.instance.loadSetting();
     });
   }
 

@@ -26,11 +26,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPhilgoLogin(int idx) {
-    idx = idx;
-    notifyListeners();
-  }
-
   void setLogout() {
     uid = '';
     phoneNumber = '';
