@@ -140,6 +140,7 @@ void initializeReceiveShareService() {
                 postId: postId,
                 category: category,
                 xFiles: xFiles,
+                content: data[0].message,
               );
             }
           }
