@@ -693,6 +693,8 @@ class PostCreateFormState extends State<PostCreateForm> {
 
         const Spacer(),
 
+        PointSelectionButton(),
+
         // 제출 버튼 (showSubmitButton이 true일 때만)
         if (widget.showSubmitButton)
           IconButton(

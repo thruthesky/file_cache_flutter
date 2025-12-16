@@ -101,6 +101,7 @@ export 'src/locations.dart';
 // Functions - 유틸리티 함수
 // 공통으로 사용되는 헬퍼 함수들
 // =============================================================================
+export 'src/functions/api.functions.dart';
 export 'src/functions/common.functions.dart';
 export 'src/functions/file.functions.dart';
 export 'src/functions/functions.dart';
@@ -128,6 +129,7 @@ export 'src/messaging/widget/push_notification_icon.dart';
 // 여러 모듈에서 공유하는 데이터 모델
 // =============================================================================
 export 'src/models/common.models.dart';
+export 'src/models/philgo.setting.model.dart';
 
 // =============================================================================
 // PhilGo - PhilGo API
@@ -151,6 +153,7 @@ export 'src/post/widgets/comment.detail.dart';
 export 'src/post/widgets/comment.detail.list_view.dart';
 export 'src/post/widgets/comment.list.view.dart';
 export 'src/widgets/upload/file_preview.dart';
+export 'src/post/widgets/point.selection.button.dart';
 export 'src/post/widgets/post.create.form.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.item.dart';
@@ -175,6 +178,11 @@ export 'src/receive_share/receive.share.functions.dart';
 export 'src/receive_share/receive.share.service.dart';
 export 'src/receive_share/widgets/receive.share.dialog.dart';
 export 'src/receive_share/widgets/share.where.button.dart';
+
+// =============================================================================
+// 서비스
+// =============================================================================
+export 'src/services/philgo.service.dart';
 
 // =============================================================================
 // Storage - 저장소
