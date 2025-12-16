@@ -79,6 +79,17 @@ class _MainHomeState extends State<MainHome> {
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
 
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  UserNickname(),
+                  UserPhoto(),
+                  UserPoint(),
+                  UserLevel(builder: (lv) => Text("This is my Level: $lv")),
+                ],
+              ),
+            ),
+
             /// [퀵 메뉴 섹션] - 필리핀 생활 필수 정보 바로가기
             /// Quick Menu Section - Quick access to essential Philippines living info
             /// 환율, 필수정보, 한달살기, 여행 메뉴 표시

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
-import 'package:philgo/widgets/user/user_ready.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/widgets/theme/comic_text_form_field.dart';
