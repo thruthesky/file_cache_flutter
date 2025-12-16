@@ -17,7 +17,7 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:philgo/functions/api.functions.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// PhilGo API 기본 URL
 const String philgoApiUrl = 'https://philgo.com/func.php';
@@ -29,10 +29,7 @@ void main() {
     /// Test 1: Call setting API and verify response
     test('setting API 호출 성공', () async {
       // Act: API 호출
-      final result = await apiCall(
-        'setting',
-        apiServerUrl: philgoApiUrl,
-      );
+      final result = await apiCall('setting', apiServerUrl: philgoApiUrl);
 
       // Assert: 응답이 Map인지 확인
       expect(result, isA<Map<String, dynamic>>());
