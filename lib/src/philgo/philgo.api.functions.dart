@@ -89,7 +89,15 @@ Future<T> func<T>(
     if (dioError.message?.contains('Handshake') ?? false) {
       final userMessage =
           '서버와 접속이 안됩니다. 인터넷이 연결되었는지, 서버 접속 도메인이 올바른지 확인을 해 주세요';
-      log('Handshake 에러 발생: ${dioError.message}, 원인: ${dioError.error}');
+
+      /// Handshake 에러 발생 시 요청 정보 로깅
+      log('========== Handshake 에러 발생 ==========', name: 'PhilgoAPI:ERROR');
+      log('함수명 (functionName): $functionName', name: 'PhilgoAPI:ERROR');
+      log('요청 데이터 (data): $data', name: 'PhilgoAPI:ERROR');
+      log('요청 URL: $url', name: 'PhilgoAPI:ERROR');
+      log('Handshake 에러 메시지: ${dioError.message}', name: 'PhilgoAPI:ERROR');
+      log('에러 원인: ${dioError.error}', name: 'PhilgoAPI:ERROR');
+      log('==========================================', name: 'PhilgoAPI:ERROR');
 
       // 사용자에게 명확한 메시지 표시
       if (alertOnError) {
@@ -98,8 +106,21 @@ Future<T> func<T>(
       throw Exception(userMessage);
     }
 
-    final data = dioError.response?.data;
-    log('philgoApi() DioException: $data, $dioError');
+    final errorResponseData = dioError.response?.data;
+    log('philgoApi() DioException: $errorResponseData, $dioError');
+
+    /// ===============================================================
+    /// 에러 발생 시 요청 정보 로깅 (디버깅용)
+    /// 어떤 API 함수에서 어떤 파라미터로 에러가 발생했는지 추적
+    /// ===============================================================
+    log('========== API 에러 발생 정보 ==========', name: 'PhilgoAPI:ERROR');
+    log('함수명 (functionName): $functionName', name: 'PhilgoAPI:ERROR');
+    log('요청 데이터 (data): $data', name: 'PhilgoAPI:ERROR');
+    log('요청 URL: $url', name: 'PhilgoAPI:ERROR');
+    log('에러 타입: ${dioError.type}', name: 'PhilgoAPI:ERROR');
+    log('에러 메시지: ${dioError.message}', name: 'PhilgoAPI:ERROR');
+    log('에러 원인: ${dioError.error}', name: 'PhilgoAPI:ERROR');
+    log('==========================================', name: 'PhilgoAPI:ERROR');
 
     // ===============================================================
     // DioException의 error가 FormatException인 경우 source 출력
@@ -157,8 +178,23 @@ Future<T> func<T>(
       // 서버 에러 메시지 파싱 시도
       final responseData = dioError.response?.data;
 
-      if (dioError.response?.statusCode == 403) {
+      /// ===============================================================
+      /// Connection reset by peer 또는 네트워크 연결 에러 처리
+      /// 서버가 응답 없이 연결을 끊은 경우
+      /// ===============================================================
+      if (dioError.error != null &&
+          dioError.error.toString().contains('Connection reset by peer')) {
+        serverMessage =
+            '서버 연결이 끊어졌습니다 (Connection reset by peer).\n'
+            '호출 함수: $functionName';
+      } else if (dioError.response?.statusCode == 403) {
         serverMessage = '403: 접근이 거부되었습니다. 권한이 없을 수 있습니다.';
+      } else if (responseData == null) {
+        /// responseData가 null인 경우 명확한 메시지 표시
+        serverMessage =
+            '서버 응답이 없습니다.\n'
+            '호출 함수: $functionName\n'
+            '에러 타입: ${dioError.type}';
       } else if (responseData is Map<String, dynamic>) {
         if (responseData['message'] != null) {
           serverMessage =
@@ -187,7 +223,7 @@ Future<T> func<T>(
         serverMessage = responseData.toString();
       }
     } catch (e) {
-      serverMessage = 'Failed to read error response body.';
+      serverMessage = 'Failed to read error response body.\n호출 함수: $functionName';
     }
 
     final slimErrorMessage = serverMessage;
@@ -199,12 +235,21 @@ Future<T> func<T>(
         '$errorPrefix ${httpStatusCode(dioError.response?.statusCode ?? 0)} ${dioError.response?.statusMessage ?? ''} $serverMessage';
     throw Exception(errorMessage);
   } catch (e) {
+    /// ===============================================================
+    /// 일반 에러 발생 시 요청 정보 로깅 (디버깅용)
+    /// DioException 이외의 에러를 처리
+    /// ===============================================================
+    log('========== API 일반 에러 발생 ==========', name: 'PhilgoAPI:ERROR');
+    log('함수명 (functionName): $functionName', name: 'PhilgoAPI:ERROR');
+    log('요청 데이터 (data): $data', name: 'PhilgoAPI:ERROR');
+    log('요청 URL: $url', name: 'PhilgoAPI:ERROR');
+    log('에러 내용: $e', name: 'PhilgoAPI:ERROR');
+    log('에러 타입: ${e.runtimeType}', name: 'PhilgoAPI:ERROR');
+    log('==========================================', name: 'PhilgoAPI:ERROR');
+
     debugLog('philgoApi() 에러: catch(e) $e');
     // 요청에서 에러가 발생한 경우
     if (alertOnError) {
-      debugLog('ALERT: url: $url');
-      debugLog('ALERT: data: $data');
-      debugLog('ALERT: error message: ${e.toString()}');
       showSafeErrorDialog('서버와 통신하는 중에 오류가 발생했습니다.\n\n(2) ${e.toString()}');
     }
     rethrow; // re-throw the error to be handled by the caller

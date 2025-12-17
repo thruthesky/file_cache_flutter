@@ -673,3 +673,134 @@ Future reportPost({
   );
   return response;
 }
+
+/// 포인트 광고 등록/연장 API 함수
+///
+/// PhilGo v6 API의 'advertise_post_with_point' 엔드포인트를 호출하여
+/// 게시글에 포인트 광고를 등록하거나 기존 광고를 연장합니다.
+///
+/// ## 매개변수
+///
+/// - [idx]: 광고할 게시글 번호 (필수)
+///   - 본인이 작성한 글이어야 함
+///   - 포인트 광고가 허용된 게시판의 글이어야 함
+///
+/// - [days]: 광고 기간 (일 단위, 필수)
+///   - 권장값: 3, 5, 7, 10, 15, 30, 60, 90, 180, 365
+///   - 서버 설정(POINT_ADVERTISEMENT_DAYS)에 따라 다를 수 있음
+///
+/// ## 반환값
+///
+/// [Post] 객체를 반환합니다. 주요 필드:
+/// - int5: 광고 종료 시간 (Unix timestamp)
+/// - int6: 광고 등록/연장 시간 (Unix timestamp)
+/// - int7: 이번에 등록한 광고 기간 (일)
+/// - int8: 이번에 사용한 포인트
+///
+/// ## 광고 연장 로직
+///
+/// - 기존 광고 없음: 현재 시점부터 새 광고 시작
+/// - 기존 광고 활성: 남은 기간에 추가 연장
+/// - 기존 광고 만료: 현재 시점부터 새 광고 시작
+///
+/// ## 사용 예시
+///
+/// ```dart
+/// try {
+///   final updatedPost = await extendPointAdvertisement(
+///     idx: 12345,
+///     days: 7,
+///   );
+///   print('광고 종료일: ${DateTime.fromMillisecondsSinceEpoch(updatedPost.int5! * 1000)}');
+///   print('사용 포인트: ${updatedPost.int8}');
+/// } catch (e) {
+///   print('광고 등록 실패: $e');
+/// }
+/// ```
+///
+/// ## 에러 코드
+///
+/// - days-required: days 파라미터 누락
+/// - idx-required: idx 파라미터 누락
+/// - login-required: 로그인 필요
+/// - not-authorized: 본인 글이 아님
+/// - invalid-post-id: 포인트 광고 불가 게시판
+/// - insufficient-points: 포인트 부족
+/// - point-deduction-failed: 포인트 차감 실패
+///
+/// ## 참고 문서
+///
+/// - [포인트 광고 API 문서](.claude/skills/philgo-skill/references/api/point-api.md)
+/// - [포인트 광고 상세 문서](.claude/skills/philgo-skill/references/point-advertisement.md)
+Future<Post> extendPointAdvertisement({
+  required int idx,
+  required int days,
+  bool debug = false,
+  bool alertOnError = true,
+}) async {
+  // ========== 1. 유효성 검증 ==========
+
+  // idx 유효성 검사 - 필수 항목
+  if (idx <= 0) {
+    showSafeErrorDialog('유효하지 않은 게시글 번호입니다.');
+    throw Exception('idx가 유효하지 않습니다');
+  }
+
+  // days 유효성 검사 - 필수 항목
+  if (days <= 0) {
+    showSafeErrorDialog('광고 기간을 선택해주세요.');
+    throw Exception('days가 유효하지 않습니다');
+  }
+
+  // ========== 2. 디버깅 정보 로깅 ==========
+  debugLog('포인트 광고 등록/연장 시작:');
+  debugLog('  - idx: $idx');
+  debugLog('  - days: $days');
+
+  // ========== 3. API 호출 ==========
+  try {
+    // advertise_post_with_point 엔드포인트 호출
+    // auth: true로 Firebase ID Token 자동 포함
+    final response = await func<Map<String, dynamic>>(
+      'advertise_post_with_point',
+      data: {
+        'idx': idx,
+        'days': days,
+      },
+      alertOnError: alertOnError,
+      debug: debug,
+    );
+
+    // ========== 4. 응답 처리 ==========
+
+    // API가 에러를 반환한 경우 처리
+    if (response['error'] != null) {
+      final userMessage = response['message'] ?? '포인트 광고 등록에 실패했습니다.';
+      debugLog('포인트 광고 등록 실패: ${response['error']} - $userMessage');
+
+      showSafeErrorDialog(userMessage);
+      throw Exception('포인트 광고 등록 실패: ${response['error']}');
+    }
+
+    // ========== 5. 성공 처리 ==========
+
+    // Post 객체 생성 및 반환
+    final post = Post.fromJson(response);
+
+    debugLog('포인트 광고 등록 성공:');
+    debugLog('  - idx: ${post.idx}');
+    debugLog('  - 광고 종료 시간(int5): ${post.int5}');
+    debugLog('  - 광고 기간(int7): ${post.int7}');
+    debugLog('  - 사용 포인트(int8): ${post.int8}');
+
+    // 성공적으로 등록된 Post 객체 반환
+    return post;
+  } catch (e) {
+    // ========== 6. 예외 처리 ==========
+
+    debugLog('포인트 광고 등록 중 예외 발생: $e');
+
+    // 에러를 상위로 다시 전파
+    rethrow;
+  }
+}
