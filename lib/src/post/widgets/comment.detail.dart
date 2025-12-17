@@ -260,7 +260,6 @@ class _CommentDetailState extends State<CommentDetail> {
                           _buildComicActionButton(
                             context: context,
                             icon: FontAwesomeIcons.penToSquare,
-                            label: PhilgoTr.of(context)!.edit,
                             onPressed: () {
                               // Trigger edit mode in parent (PostViewScreen)
                               widget.onEditClicked(widget.comment);
@@ -269,7 +268,6 @@ class _CommentDetailState extends State<CommentDetail> {
                           _buildComicActionButton(
                             context: context,
                             icon: Icons.delete,
-                            label: PhilgoTr.of(context)!.delete,
                             color: Theme.of(context).colorScheme.error,
                             onPressed: () async {
                               final confirmed = await showConfirmDialog(
