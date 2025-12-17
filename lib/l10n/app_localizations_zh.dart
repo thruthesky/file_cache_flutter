@@ -1499,6 +1499,9 @@ class LoZh extends Lo {
   String get quickMenuTravel => 'Travel';
 
   @override
+  String get philippineLifeInfo => 'Philippine Life Info';
+
+  @override
   String get entryTodayExchangeRate => 'Exchange';
 
   @override

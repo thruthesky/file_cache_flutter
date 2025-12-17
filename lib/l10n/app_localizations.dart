@@ -3023,6 +3023,12 @@ abstract class Lo {
   /// **'Travel'**
   String get quickMenuTravel;
 
+  /// Philippine life information section title in menu
+  ///
+  /// In en, this message translates to:
+  /// **'Philippine Life Info'**
+  String get philippineLifeInfo;
+
   /// Today's exchange rate label on entry screen
   ///
   /// In en, this message translates to:

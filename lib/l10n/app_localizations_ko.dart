@@ -1505,6 +1505,9 @@ class LoKo extends Lo {
   String get quickMenuTravel => '여행';
 
   @override
+  String get philippineLifeInfo => '필리핀 생활 정보';
+
+  @override
   String get entryTodayExchangeRate => '오늘 환율';
 
   @override

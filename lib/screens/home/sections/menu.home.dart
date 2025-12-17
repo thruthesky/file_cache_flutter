@@ -2,11 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
+import 'package:philgo/screens/info/essential/essential_info.screen.dart';
+import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
+import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
+import 'package:philgo/screens/info/notice/notice.screen.dart';
+import 'package:philgo/screens/info/travel/travel_info.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
@@ -80,6 +87,68 @@ class _MenuHomeState extends State<MenuHome> {
               spacing: 16,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Philippine Life Info Section (필리핀 생활 정보 섹션)
+                /// 퀵 메뉴의 페이지들을 메뉴 화면에서도 접근 가능하도록 추가
+                MenuSection(
+                  title: Lo.of(context)!.philippineLifeInfo,
+                  children: [
+                    MenuItem(
+                      icon: FontAwesomeIcons.bullhorn,
+                      title: Lo.of(context)!.quickMenuNotice,
+                      onTap: () => showFullScreen(
+                        context,
+                        child: const NoticeScreen(),
+                        barrierLabel: '공지사항 닫기',
+                      ),
+                    ),
+                    MenuItem(
+                      icon: FontAwesomeIcons.coins,
+                      title: Lo.of(context)!.quickMenuExchangeRate,
+                      onTap: () => showFullScreen(
+                        context,
+                        child: const ExchangeRateScreen(),
+                        barrierLabel: '환율 정보 닫기',
+                      ),
+                    ),
+                    MenuItem(
+                      icon: FontAwesomeIcons.phoneVolume,
+                      title: Lo.of(context)!.quickMenuEmergency,
+                      onTap: () => showFullScreen(
+                        context,
+                        child: const EmergencyContactScreen(),
+                        barrierLabel: '긴급 연락처 닫기',
+                      ),
+                    ),
+                    MenuItem(
+                      icon: FontAwesomeIcons.circleInfo,
+                      title: Lo.of(context)!.quickMenuEssentialInfo,
+                      onTap: () => showFullScreen(
+                        context,
+                        child: const EssentialInfoScreen(),
+                        barrierLabel: '필수정보 닫기',
+                      ),
+                    ),
+                    MenuItem(
+                      icon: FontAwesomeIcons.calendarDays,
+                      title: Lo.of(context)!.quickMenuMonthlyLiving,
+                      onTap: () => showFullScreen(
+                        context,
+                        child: const MonthlyLivingScreen(),
+                        barrierLabel: '한달살기 닫기',
+                      ),
+                    ),
+                    MenuItem(
+                      icon: FontAwesomeIcons.umbrellaBeach,
+                      title: Lo.of(context)!.quickMenuTravel,
+                      onTap: () => showFullScreen(
+                        context,
+                        child: const TravelInfoScreen(),
+                        barrierLabel: '여행 정보 닫기',
+                      ),
+                    ),
+                  ],
+                ),
+
                 /// Account Section
                 MenuSection(
                   title: Lo.of(context)!.account,
