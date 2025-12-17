@@ -300,16 +300,14 @@ class PostOptionsMenu extends StatelessWidget {
   /// Handle report submission
   Future<void> _handleReport(BuildContext context, String reason) async {
     try {
-      final res = await reportPost(
-        type: 'post',
-        idx: post.idx,
-        reason: reason,
-      );
+      final res = await reportPost(type: 'post', idx: post.idx, reason: reason);
       if (context.mounted && res['error'] != null && res['message'] != null) {
         showErrorSnackBar(context, res['message']);
         return;
       }
-      if (context.mounted && res['message'] != null && res['message']!.isNotEmpty) {
+      if (context.mounted &&
+          res['message'] != null &&
+          res['message']!.isNotEmpty) {
         showSuccessSnackBar(context, PhilgoTr.of(context)!.report_success);
         return;
       }
