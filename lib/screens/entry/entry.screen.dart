@@ -176,6 +176,43 @@ class _EntryScreenState extends State<EntryScreen> {
     return NumberFormat('#,###').format(number);
   }
 
+  /// 숫자를 축약 형식으로 포맷팅 (Format number in compact form)
+  ///
+  /// 한글 로케일: "6.9백만", "1.2천"
+  /// 기타 로케일: "6.9M", "1.2K"
+  ///
+  /// - 1,000 미만: 그대로 표시 (예: "999")
+  /// - 1,000 ~ 999,999: 천 단위 (예: "1.2K" / "1.2천")
+  /// - 1,000,000 이상: 백만 단위 (예: "6.9M" / "6.9백만")
+  String _formatCompactNumber(int number, BuildContext context) {
+    // 현재 로케일이 한글인지 확인 (Check if current locale is Korean)
+    final locale = Localizations.localeOf(context);
+    final isKorean = locale.languageCode == 'ko';
+
+    if (number >= 1000000) {
+      // 백만 단위 (Million unit)
+      final value = number / 1000000;
+      final formatted = value.toStringAsFixed(1);
+      // 소수점이 .0이면 제거 (Remove .0 if present)
+      final display = formatted.endsWith('.0')
+          ? formatted.substring(0, formatted.length - 2)
+          : formatted;
+      return isKorean ? '$display백만' : '${display}M';
+    } else if (number >= 1000) {
+      // 천 단위 (Thousand unit)
+      final value = number / 1000;
+      final formatted = value.toStringAsFixed(1);
+      // 소수점이 .0이면 제거 (Remove .0 if present)
+      final display = formatted.endsWith('.0')
+          ? formatted.substring(0, formatted.length - 2)
+          : formatted;
+      return isKorean ? '$display천' : '${display}K';
+    } else {
+      // 1,000 미만은 그대로 표시 (Display as is if less than 1,000)
+      return number.toString();
+    }
+  }
+
   /// 최근 1개월 이내 공지사항 개수 계산 (Count notices within 30 days)
   ///
   /// 최근 30일 이내에 작성된 공지사항 개수를 반환합니다.
@@ -637,13 +674,14 @@ class _EntryScreenState extends State<EntryScreen> {
           theme: theme,
           scheme: scheme,
         ),
-        // 글 수 - API에서 조회 (Post count from API)
+        // 글 수 - API에서 조회, 축약 형식으로 표시 (Post count from API, compact format)
+        // 한글: "6.9백만", 영어: "6.9M"
         _buildInfoColumn(
           label: l10n.entryPostCount,
           value: _isLoadingStats
               ? '...'
               : (_homepageStats != null
-                    ? _formatNumber(_homepageStats!.totalPostCount)
+                    ? _formatCompactNumber(_homepageStats!.totalPostCount, context)
                     : '-'),
           theme: theme,
           scheme: scheme,
