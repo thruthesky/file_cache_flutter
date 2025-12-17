@@ -1457,6 +1457,12 @@ abstract class PhilgoTr {
   /// **'All'**
   String get categoryAll;
 
+  /// Label for displaying user's current point balance
+  ///
+  /// In en, this message translates to:
+  /// **'Current Point Balance'**
+  String get currentPointBalance;
+
   /// Point advertisement button/title text
   ///
   /// In en, this message translates to:

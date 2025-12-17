@@ -236,6 +236,20 @@ class PostUpdateFormState extends State<PostUpdateForm> {
 
       log('글 수정 성공 - idx: ${updated.idx}', name: 'PostUpdateForm');
 
+      // Deduct points if advertisement was used
+      if (advertisementDays != null && mounted) {
+        final setting = PhilgoState.of(context).setting;
+        final pointCost = calculatePointCost(
+          advertisementDays!,
+          setting!.point.advCostPerHour,
+        );
+        final currentPoints = PhilgoState.of(context).user?.point ?? 0;
+        final newPoints = currentPoints - pointCost;
+        PhilgoState.of(context).setUserPoints(newPoints);
+
+        log('포인트 차감: $pointCost (잔액: $newPoints)', name: 'PostUpdateForm');
+      }
+
       // 성공 콜백 호출
       widget.onUpdated?.call(updated);
       return true;

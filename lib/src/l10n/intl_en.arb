@@ -861,6 +861,11 @@
 
     "categoryAll": "All",
 
+    "currentPointBalance": "Current Point Balance",
+    "@currentPointBalance": {
+        "description": "Label for displaying user's current point balance"
+    },
+
     "pointAdvertisement": "Point Advertisement",
     "@pointAdvertisement": {
         "description": "Point advertisement button/title text"

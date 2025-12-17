@@ -748,6 +748,9 @@ class PhilgoTrJa extends PhilgoTr {
   String get categoryAll => 'すべて';
 
   @override
+  String get currentPointBalance => '保有ポイント';
+
+  @override
   String get pointAdvertisement => 'ポイント広告';
 
   @override

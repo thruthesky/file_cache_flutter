@@ -764,6 +764,9 @@ class PhilgoTrEn extends PhilgoTr {
   String get categoryAll => 'All';
 
   @override
+  String get currentPointBalance => 'Current Point Balance';
+
+  @override
   String get pointAdvertisement => 'Point Advertisement';
 
   @override

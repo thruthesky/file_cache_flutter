@@ -227,6 +227,8 @@
 
     "categoryAll": "全部",
 
+    "currentPointBalance": "当前积分余额",
+
     "pointAdvertisement": "积分广告",
     "pointAdvertisementWithDays": "积分广告: {days}天",
     "pointAdvertisementAddDays": "积分广告: +{days}天",

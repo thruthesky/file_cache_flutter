@@ -603,7 +603,7 @@ Future<Post> deletePost(int idx) async {
 
   try {
     final response = await func<Map<String, dynamic>>(
-      'delete_post_func',
+      'delete_post',
       data: {'idx': idx},
       alertOnError: true,
     );
@@ -628,7 +628,7 @@ Future<Post> deletePost(int idx) async {
 Future<Comment> createComment(RecordType data) async {
   /// check if data['idx_root'] exists. if not, show an error.
   final response = await func<Map<String, dynamic>>(
-    'create_comment_func',
+    'create_comment',
     data: data,
   );
 
@@ -637,47 +637,11 @@ Future<Comment> createComment(RecordType data) async {
 
 Future<Comment> updateComment(RecordType data) async {
   final response = await func<Map<String, dynamic>>(
-    'update_comment_func',
+    'update_comment',
     data: data,
   );
 
   return Comment.fromJson(response);
-}
-
-/// Get latest comments from all users
-/// Returns a list of Comment objects
-Future<List<Comment>> getLatestComments({int page = 1, int limit = 20}) async {
-  final res = await func(
-    'get_latest_comments',
-    data: {'page': page, 'limit': limit},
-    // debug: true,
-  );
-
-  debugLog("GET LATEST COMMENTS ----------------> $res");
-
-  final comments = res
-      .map((item) => Comment.fromJson(item as Map<String, dynamic>))
-      .toList();
-  debugLog('getLatestComments: Parsed ${comments.length} comments');
-  return comments;
-}
-
-/// Get comments by user
-/// Returns a list of Comment objects
-Future<List<Comment>> getMyComments({int page = 1, int limit = 20}) async {
-  final res = await func<List<dynamic>>(
-    'get_my_comments',
-    data: {'page': page, 'limit': limit},
-    // debug: true,
-  );
-
-  debugLog("GET MY COMMENTS ----------------> $res");
-
-  final comments = res
-      .map((item) => Comment.fromJson(item as Map<String, dynamic>))
-      .toList();
-  debugLog('getMyComments: Parsed ${comments.length} comments');
-  return comments;
 }
 
 Future<int> likePost(int idx) async {

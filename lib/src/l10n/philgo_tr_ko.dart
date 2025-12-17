@@ -748,6 +748,9 @@ class PhilgoTrKo extends PhilgoTr {
   String get categoryAll => '전체';
 
   @override
+  String get currentPointBalance => '보유 포인트';
+
+  @override
   String get pointAdvertisement => '포인트 광고';
 
   @override

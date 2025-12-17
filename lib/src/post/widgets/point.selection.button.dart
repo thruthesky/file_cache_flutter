@@ -63,8 +63,12 @@ class _PointSelectionButtonState extends State<PointSelectionButton> {
         final String labelText;
         if (advertisementDays != null) {
           labelText = widget.update
-              ? PhilgoTr.of(context)!.pointAdvertisementAddDays(advertisementDays!)
-              : PhilgoTr.of(context)!.pointAdvertisementWithDays(advertisementDays!);
+              ? PhilgoTr.of(
+                  context,
+                )!.pointAdvertisementAddDays(advertisementDays!)
+              : PhilgoTr.of(
+                  context,
+                )!.pointAdvertisementWithDays(advertisementDays!);
         } else {
           labelText = PhilgoTr.of(context)!.pointAdvertisement;
         }
@@ -88,6 +92,9 @@ class _PointSelectionButtonState extends State<PointSelectionButton> {
 
   /// 포인트 광고 선택 바텀 시트 표시
   void _showPointSelectionBottomSheet(BuildContext context) {
+    final user = PhilgoState.of(context).user;
+    final userPoints = user?.point ?? 0;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -95,6 +102,7 @@ class _PointSelectionButtonState extends State<PointSelectionButton> {
       isScrollControlled: true,
       builder: (context) => _PointSelectionBottomSheet(
         pointSetting: setting.point,
+        userPoints: userPoints,
         // 현재 선택된 일수를 바텀 시트에 전달하여 기본 선택되도록 함
         initialSelectedDays: advertisementDays,
         onDaysSelected: (days) {
@@ -118,6 +126,9 @@ class _PointSelectionBottomSheet extends StatefulWidget {
   /// 포인트 설정 (광고 일수 목록, 시간당 비용 등)
   final PhilgoSettingPoint pointSetting;
 
+  /// 사용자의 현재 포인트
+  final int userPoints;
+
   /// 일수 선택 시 콜백
   final Function(int days) onDaysSelected;
 
@@ -126,6 +137,7 @@ class _PointSelectionBottomSheet extends StatefulWidget {
 
   const _PointSelectionBottomSheet({
     required this.pointSetting,
+    required this.userPoints,
     required this.onDaysSelected,
     this.initialSelectedDays,
   });
@@ -151,7 +163,7 @@ class _PointSelectionBottomSheetState
   ///
   /// 공식: 일수 × 시간당비용 × 24시간
   int _calculatePoints(int days) {
-    return days * widget.pointSetting.advCostPerHour * 24;
+    return calculatePointCost(days, widget.pointSetting.advCostPerHour);
   }
 
   /// 포인트 숫자 포맷팅 (천 단위 콤마)
@@ -197,51 +209,63 @@ class _PointSelectionBottomSheetState
             ),
             const SizedBox(height: 16),
 
-            // 헤더: 아이콘 + 제목
+            // User current point balance section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  // 아이콘 배경
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.lightBullhorn,
-                        size: 18,
-                        color: scheme.onPrimaryContainer,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    // Icon container
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: scheme.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.lightCoins,
+                          size: 18,
+                          color: scheme.primary,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
+                    const SizedBox(width: 12),
 
-                  // 제목 + 설명
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          PhilgoTr.of(context)!.pointAdvertisement,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                    // Point balance info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            PhilgoTr.of(context)!.currentPointBalance,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.onPrimaryContainer.withValues(
+                                alpha: 0.8,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          PhilgoTr.of(context)!.pointAdvertisementDescription,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
+                          const SizedBox(height: 2),
+                          UserPoint(
+                            builder: (points) => Text(
+                              _formatPoints(points),
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: scheme.onPrimaryContainer,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.1, end: 0),
             const SizedBox(height: 20),
@@ -267,76 +291,20 @@ class _PointSelectionBottomSheetState
                   final days = advertisementDays[index];
                   final points = _calculatePoints(days);
                   final isSelected = _selectedDays == days;
+                  final isDisabled = widget.userPoints < points;
 
                   return _buildDaysCard(
                     context,
                     days: days,
                     points: points,
                     isSelected: isSelected,
+                    isDisabled: isDisabled,
                     index: index,
                   );
                 },
               ),
             ),
             const SizedBox(height: 20),
-
-            // 선택된 항목 정보 표시
-            if (_selectedDays != null) ...[
-              Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.lightCircleInfo,
-                          size: 18,
-                          color: scheme.primary,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: '$_selectedDays',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: scheme.primary,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: PhilgoTr.of(
-                                    context,
-                                  )!.daysAdvertisementCost(_selectedDays!),
-                                ),
-                                TextSpan(
-                                  text:
-                                      ' ${_formatPoints(_calculatePoints(_selectedDays!))}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: scheme.primary,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ' ${PhilgoTr.of(context)!.points}',
-                                ),
-                              ],
-                            ),
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 200.ms)
-                  .scale(begin: const Offset(0.95, 0.95)),
-              const SizedBox(height: 16),
-            ],
 
             // 확인 버튼
             Padding(
@@ -373,6 +341,7 @@ class _PointSelectionBottomSheetState
     required int days,
     required int points,
     required bool isSelected,
+    required bool isDisabled,
     required int index,
   }) {
     final theme = Theme.of(context);
@@ -380,53 +349,92 @@ class _PointSelectionBottomSheetState
 
     // 카드 위젯을 Widget 타입으로 명시하여 .animate() 확장 메서드 사용 가능
     final Widget cardWidget = GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedDays = days;
-        });
-      },
+      onTap: isDisabled
+          ? null
+          : () {
+              setState(() {
+                _selectedDays = days;
+              });
+            },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          // 선택 상태에 따른 배경색
-          color: isSelected
-              ? scheme.primaryContainer
-              : scheme.surfaceContainerHighest,
+          // 선택 상태와 비활성화 상태에 따른 배경색
+          color: isDisabled
+              ? scheme.surfaceContainerHighest.withValues(alpha: 0.5)
+              : isSelected
+                  ? scheme.primaryContainer
+                  : scheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           // 선택 상태에 따른 테두리
           border: Border.all(
-            color: isSelected ? scheme.primary : Colors.transparent,
+            color: isDisabled
+                ? Colors.transparent
+                : isSelected
+                    ? scheme.primary
+                    : Colors.transparent,
             width: 2,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 일수 표시
-            Text(
-              '$days',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isSelected ? scheme.primary : scheme.onSurface,
-              ),
-            ),
-            Text(
-              PhilgoTr.of(context)!.days,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
-              ),
+            // 포인트 표시 with icon (larger, primary focus)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightCoins,
+                  size: 14,
+                  color: isDisabled
+                      ? scheme.onSurface.withValues(alpha: 0.3)
+                      : isSelected
+                          ? scheme.primary
+                          : scheme.onSurface,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  _formatPoints(points),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDisabled
+                        ? scheme.onSurface.withValues(alpha: 0.3)
+                        : isSelected
+                            ? scheme.primary
+                            : scheme.onSurface,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
 
-            // 포인트 표시
-            Text(
-              _formatPoints(points),
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: isSelected
-                    ? scheme.onPrimaryContainer
-                    : scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-              ),
+            // 일수 표시 (smaller, secondary info)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$days',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: isDisabled
+                        ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
+                        : isSelected
+                            ? scheme.primary
+                            : scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  PhilgoTr.of(context)!.days,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: isDisabled
+                        ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
+                        : isSelected
+                            ? scheme.primary
+                            : scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

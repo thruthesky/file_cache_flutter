@@ -314,3 +314,25 @@ Future<void> launchApp(String url, bool isExternal) async {
     );
   }
 }
+
+/// Calculate point cost for advertisement
+/// 광고에 필요한 포인트 비용 계산
+///
+/// Formula: days × advCostPerHour × 24 hours
+/// 공식: 일수 × 시간당비용 × 24시간
+///
+/// Parameters:
+/// - [days] - Advertisement duration in days (광고 일수)
+/// - [advCostPerHour] - Point cost per hour from settings (시간당 포인트 비용)
+///
+/// Returns: Total point cost (총 포인트 비용)
+///
+/// Example:
+/// ```dart
+/// final setting = PhilgoState.of(context).setting;
+/// final cost = calculatePointCost(3, setting.point.advCostPerHour);
+/// // If advCostPerHour = 10: cost = 3 × 10 × 24 = 720 points
+/// ```
+int calculatePointCost(int days, int advCostPerHour) {
+  return days * advCostPerHour * 24;
+}

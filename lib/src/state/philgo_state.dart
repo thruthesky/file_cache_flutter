@@ -36,6 +36,29 @@ class PhilgoState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update user's point balance
+  void setUserPoints(int newPoints) {
+    if (user == null) return;
+
+    user = User(
+      uid: user!.uid,
+      idx: user!.idx,
+      nickname: user!.nickname,
+      nicknameLowerCase: user!.nicknameLowerCase,
+      photoUrl: user!.photoUrl,
+      level: user!.level,
+      point: newPoints, // Updated point value
+      noOfComment: user!.noOfComment,
+      noOfPost: user!.noOfPost,
+      name: user!.name,
+      gender: user!.gender,
+      birthDay: user!.birthDay,
+      birthMonth: user!.birthMonth,
+      birthYear: user!.birthYear,
+    );
+    notifyListeners();
+  }
+
   //
   static PhilgoState of(BuildContext context, {bool listen = false}) {
     return Provider.of<PhilgoState>(context, listen: listen);

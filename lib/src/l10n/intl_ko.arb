@@ -231,6 +231,8 @@
 
     "categoryAll": "전체",
 
+    "currentPointBalance": "보유 포인트",
+
     "pointAdvertisement": "포인트 광고",
     "pointAdvertisementWithDays": "포인트 광고: {days}일",
     "pointAdvertisementAddDays": "포인트 광고: +{days}일",

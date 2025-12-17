@@ -746,6 +746,9 @@ class PhilgoTrZh extends PhilgoTr {
   String get categoryAll => '全部';
 
   @override
+  String get currentPointBalance => '当前积分余额';
+
+  @override
   String get pointAdvertisement => '积分广告';
 
   @override

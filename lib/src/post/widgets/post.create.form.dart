@@ -294,6 +294,20 @@ class PostCreateFormState extends State<PostCreateForm> {
 
       log('글 작성 성공 - idx: ${created.idx}', name: 'PostCreateForm');
 
+      // Deduct points if advertisement was used
+      if (advertisementDays != null && mounted) {
+        final setting = PhilgoState.of(context).setting;
+        final pointCost = calculatePointCost(
+          advertisementDays!,
+          setting!.point.advCostPerHour,
+        );
+        final currentPoints = PhilgoState.of(context).user?.point ?? 0;
+        final newPoints = currentPoints - pointCost;
+        PhilgoState.of(context).setUserPoints(newPoints);
+
+        log('포인트 차감: $pointCost (잔액: $newPoints)', name: 'PostCreateForm');
+      }
+
       // 성공 콜백 호출
       widget.onSubmitted?.call(created);
       return true;
