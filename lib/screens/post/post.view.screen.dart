@@ -139,6 +139,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
   String? get photoUrl => post?.photo_url ?? widget.post.photo_url;
   String get firebaseUid => post?.firebase_uid ?? widget.post.firebase_uid;
 
+  int? get adExpiryTimestamp {
+    final timestamp = post?.int5 ?? widget.post.int5;
+    if (timestamp == null || timestamp <= 0) {
+      return null;
+    }
+    return timestamp;
+  }
+
   /// Format date as yyyy-mm-dd
   String formatPostDate(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
@@ -207,6 +215,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
   @override
   Widget build(BuildContext context) {
     final hasFiles = files.isNotEmpty;
+    final adExpiry = adExpiryTimestamp;
 
     return UnfocusOnTap(
       child: Scaffold(
@@ -278,6 +287,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             photoUrl: photoUrl,
                             formattedDate: formatPostDate(stamp),
                           ),
+
+                          if (adExpiry != null) ...[
+                            const SizedBox(height: 12),
+                            PostAdInfoBanner(expiryTimestamp: adExpiry),
+                          ],
 
                           SizedBox(height: 16),
 
