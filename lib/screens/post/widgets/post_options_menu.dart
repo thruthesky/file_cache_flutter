@@ -16,7 +16,7 @@ class PostOptionsMenu extends StatelessWidget {
     required this.onReplyTap,
     required this.onEditCompleted,
     required this.onDeleteCompleted,
-    required this.onShowPointAds,
+    // required this.onShowPointAds,
     this.useComicStyle = false,
   });
 
@@ -25,7 +25,7 @@ class PostOptionsMenu extends StatelessWidget {
   final String firebaseUid;
   final VoidCallback onReplyTap;
   final void Function(Post updated) onEditCompleted;
-  final void Function(BuildContext context) onShowPointAds;
+  // final void Function(BuildContext context) onShowPointAds;
   final void Function(BuildContext context) onDeleteCompleted;
   final bool useComicStyle;
 
@@ -40,11 +40,7 @@ class PostOptionsMenu extends StatelessWidget {
       onSelected: (action) => _handleAction(context, action),
       icon: useComicStyle
           ? null
-          : FaIcon(
-              FontAwesomeIcons.bars,
-              size: 20,
-              color: scheme.onSurface,
-            ),
+          : FaIcon(FontAwesomeIcons.bars, size: 20, color: scheme.onSurface),
       child: useComicStyle
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -58,16 +54,18 @@ class PostOptionsMenu extends StatelessWidget {
       itemBuilder: (context) {
         if (isPostMine) {
           return [
-            // PopupMenuItem(
-            //   value: _PostMenuAction.pointads,
-            //   child: Row(
-            //     children: [
-            //       const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
-            //       const SizedBox(width: 12),
-            //       Text('Points'),
-            //     ],
-            //   ),
-            // ),
+            PopupMenuItem(
+              value: _PostMenuAction.pointads,
+              child: Row(
+                children: [
+                  const FaIcon(FontAwesomeIcons.bullhorn, size: 16),
+                  const SizedBox(width: 12),
+                  Text(PhilgoTr.of(context)!.pointAdvertisement),
+                ],
+              ),
+            ),
+            const PopupMenuDivider(),
+
             PopupMenuItem(
               value: _PostMenuAction.edit,
               child: Row(
@@ -151,7 +149,34 @@ class PostOptionsMenu extends StatelessWidget {
   ) async {
     switch (action) {
       case _PostMenuAction.pointads:
-        onShowPointAds(context);
+        final state = PhilgoState.of(context, listen: false);
+        final setting = state.setting;
+
+        if (setting == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(PhilgoTr.of(context)!.pointAdvertisement)),
+          );
+          return;
+        }
+
+        final userPoints = state.user?.point ?? 0;
+
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          isScrollControlled: true,
+          builder: (sheetContext) {
+            return PointSelectionBottomSheet(
+              pointSetting: setting.point,
+              userPoints: userPoints,
+              onDaysSelected: (point) {
+                debugPrint('Selected point $point');
+                Navigator.pop(sheetContext);
+              },
+            );
+          },
+        );
         break;
       case _PostMenuAction.reply:
         onReplyTap();

@@ -50,7 +50,6 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
             onReplyTap: onReplyTap,
             onEditCompleted: onEditCompleted,
             onDeleteCompleted: onDeleteCompleted,
-            onShowPointAds: (context) {},
           ),
         ),
       ],

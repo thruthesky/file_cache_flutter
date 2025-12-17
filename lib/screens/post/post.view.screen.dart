@@ -471,9 +471,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                   onDeleteCompleted: (context) {
                                     context.pop();
                                   },
-                                  onShowPointAds: (context) {
-                                    // Point ads functionality can be added here if needed
-                                  },
                                 ),
                               ],
                             ),
