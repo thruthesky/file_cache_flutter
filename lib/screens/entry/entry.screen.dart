@@ -53,12 +53,19 @@ class _EntryScreenState extends State<EntryScreen> {
   /// 통계 로딩 상태 (Stats loading state)
   bool _isLoadingStats = true;
 
+  /// 공지사항 목록 (Notice list)
+  List<Notice> _notices = [];
+
+  /// 공지사항 로딩 상태 (Notice loading state)
+  bool _isLoadingNotices = true;
+
   @override
   void initState() {
     super.initState();
     _fetchExchangeRate();
     _fetchManilaWeather();
     _fetchHomepageStats();
+    _fetchLatestNotices();
   }
 
   /// CurrencyService를 사용하여 PHP→KRW 환율 조회 (Fetch PHP to KRW rate using CurrencyService)
@@ -106,6 +113,32 @@ class _EntryScreenState extends State<EntryScreen> {
     }
   }
 
+  /// PhilgoService를 사용하여 최신 공지사항 조회 (Fetch latest notices using PhilgoService)
+  ///
+  /// freetalk 게시판의 '공지사항' 카테고리에서 최신 10개를 가져옵니다.
+  /// API 호출 실패 시에도 UI는 정상 표시됩니다 (notices는 빈 배열로 표시).
+  Future<void> _fetchLatestNotices() async {
+    try {
+      debugPrint('[EntryScreen] _fetchLatestNotices 시작');
+      final notices = await _philgoService.loadLatestNotices(limit: 10);
+      debugPrint('[EntryScreen] _fetchLatestNotices 성공: ${notices.length}개');
+
+      if (mounted) {
+        setState(() {
+          _notices = notices;
+          _isLoadingNotices = false;
+        });
+      }
+    } catch (e, stackTrace) {
+      // API 호출 실패 시 로딩 상태만 해제
+      debugPrint('[EntryScreen] _fetchLatestNotices 에러: $e');
+      debugPrint('[EntryScreen] 스택 트레이스: $stackTrace');
+      if (mounted) {
+        setState(() => _isLoadingNotices = false);
+      }
+    }
+  }
+
   /// PhilgoService를 사용하여 홈페이지 통계 조회 (Fetch homepage stats using PhilgoService)
   ///
   /// API 호출 실패 시에도 UI는 정상 표시됩니다 (stats는 null로 표시).
@@ -141,6 +174,310 @@ class _EntryScreenState extends State<EntryScreen> {
   /// 예: 123456 → "123,456"
   String _formatNumber(int number) {
     return NumberFormat('#,###').format(number);
+  }
+
+  /// 최근 1개월 이내 공지사항 개수 계산 (Count notices within 30 days)
+  ///
+  /// 최근 30일 이내에 작성된 공지사항 개수를 반환합니다.
+  /// 만약 1개월 내의 공지 글이 없으면 최소 1개를 표시합니다.
+  int _getRecentNoticeCount() {
+    if (_notices.isEmpty) return 1; // 최소 1개 표시
+
+    // 최근 30일 이내 공지사항 필터링
+    final recentNotices = _notices.where((notice) => notice.isWithinDays(30));
+    final count = recentNotices.length;
+
+    // 1개월 내의 공지가 없으면 최소 1개 표시
+    return count > 0 ? count : 1;
+  }
+
+  /// 공지사항 다이얼로그 표시 (Show notices dialog)
+  ///
+  /// 공지사항 목록을 다이얼로그로 표시합니다.
+  /// 각 공지사항의 제목, 날짜, 내용을 보여줍니다.
+  void _showNoticesDialog(
+    BuildContext context,
+    Lo l10n,
+    ThemeData theme,
+    ColorScheme scheme,
+  ) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: scheme.scrim.withValues(alpha: 0.5),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (
+        BuildContext buildContext,
+        Animation animation,
+        Animation secondaryAnimation,
+      ) {
+        return Center(
+          child: Container(
+            margin: const EdgeInsets.all(24),
+            constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 헤더 - 공지사항 타이틀 (Header - Notice title)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.bullhorn,
+                        size: 20,
+                        color: scheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        l10n.quickMenuNotice,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                      const Spacer(),
+                      // 닫기 버튼 (Close button)
+                      IconButton(
+                        onPressed: () => Navigator.of(buildContext).pop(),
+                        icon: FaIcon(
+                          FontAwesomeIcons.xmark,
+                          size: 20,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 구분선 (Divider)
+                Divider(height: 1, color: scheme.outlineVariant),
+                // 공지사항 목록 (Notice list)
+                Flexible(
+                  child: _notices.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(32),
+                          child: Text(
+                            '공지사항이 없습니다.',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        )
+                      : ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          itemCount: _notices.length,
+                          separatorBuilder: (context, index) => Divider(
+                            height: 1,
+                            indent: 16,
+                            endIndent: 16,
+                            color: scheme.outlineVariant,
+                          ),
+                          itemBuilder: (context, index) {
+                            final notice = _notices[index];
+                            return _buildNoticeItem(
+                              notice,
+                              theme,
+                              scheme,
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+          child: ScaleTransition(
+            scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  /// 공지사항 아이템 빌드 (Build notice item)
+  ///
+  /// 각 공지사항의 제목, 날짜, 내용을 표시합니다.
+  Widget _buildNoticeItem(
+    Notice notice,
+    ThemeData theme,
+    ColorScheme scheme,
+  ) {
+    // 날짜 포맷팅 (Date formatting)
+    final dateFormat = DateFormat('yyyy.MM.dd');
+    final dateString = dateFormat.format(notice.createdAt);
+
+    return InkWell(
+      onTap: () => _showNoticeDetailDialog(notice, theme, scheme),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 제목 (Subject)
+            Text(
+              notice.subject,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            // 날짜 (Date)
+            Text(
+              dateString,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+            // 내용 미리보기 (Content preview)
+            if (notice.content.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                notice.content.replaceAll(RegExp(r'\s+'), ' ').trim(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 공지사항 상세 다이얼로그 표시 (Show notice detail dialog)
+  ///
+  /// 선택한 공지사항의 전체 내용을 다이얼로그로 표시합니다.
+  void _showNoticeDetailDialog(
+    Notice notice,
+    ThemeData theme,
+    ColorScheme scheme,
+  ) {
+    // 날짜 포맷팅 (Date formatting)
+    final dateFormat = DateFormat('yyyy.MM.dd HH:mm');
+    final dateString = dateFormat.format(notice.createdAt);
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: scheme.scrim.withValues(alpha: 0.5),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (
+        BuildContext buildContext,
+        Animation animation,
+        Animation secondaryAnimation,
+      ) {
+        return Center(
+          child: Container(
+            margin: const EdgeInsets.all(24),
+            constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 헤더 - 닫기 버튼 (Header - Close button)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      // 뒤로가기 버튼 (Back button)
+                      IconButton(
+                        onPressed: () => Navigator.of(buildContext).pop(),
+                        icon: FaIcon(
+                          FontAwesomeIcons.arrowLeft,
+                          size: 20,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const Spacer(),
+                      // 닫기 버튼 (Close button)
+                      IconButton(
+                        onPressed: () {
+                          // 모든 다이얼로그 닫기
+                          Navigator.of(buildContext).pop();
+                          Navigator.of(context).pop();
+                        },
+                        icon: FaIcon(
+                          FontAwesomeIcons.xmark,
+                          size: 20,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 제목 (Title)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    notice.subject,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: scheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // 날짜 (Date)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    dateString,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // 구분선 (Divider)
+                Divider(height: 1, color: scheme.outlineVariant),
+                // 내용 (Content)
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      notice.content,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurface,
+                        height: 1.6,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+          child: ScaleTransition(
+            scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -252,13 +589,16 @@ class _EntryScreenState extends State<EntryScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // 공지 - 하드코딩 (3개)
-        // TODO: 실제 공지 개수로 변경 예정
-        _buildInfoColumn(
-          label: l10n.quickMenuNotice,
-          value: '3개',
-          theme: theme,
-          scheme: scheme,
+        // 공지 - 최근 1개월 이내 공지 개수 표시 (Notice count within 30 days)
+        // 클릭 시 공지사항 다이얼로그 표시
+        GestureDetector(
+          onTap: () => _showNoticesDialog(context, l10n, theme, scheme),
+          child: _buildInfoColumn(
+            label: l10n.quickMenuNotice,
+            value: _isLoadingNotices ? '...' : '${_getRecentNoticeCount()}개',
+            theme: theme,
+            scheme: scheme,
+          ),
         ),
         // 오늘 환율 - 클릭 시 환율 정보 화면 열기 (Tap to open exchange rate screen)
         GestureDetector(
@@ -333,10 +673,10 @@ class _EntryScreenState extends State<EntryScreen> {
           ),
         ),
         const SizedBox(height: 4),
-        // 값 - 작은 크기 텍스트, 강조 색상 (titleSmall로 한 단계 축소)
+        // 값 - 중간 크기 텍스트, 강조 색상
         Text(
           value,
-          style: theme.textTheme.titleSmall?.copyWith(color: scheme.primary),
+          style: theme.textTheme.titleMedium?.copyWith(color: scheme.primary),
         ),
       ],
     );
@@ -361,7 +701,7 @@ class _EntryScreenState extends State<EntryScreen> {
           const SizedBox(height: 4),
           Text(
             '...',
-            style: theme.textTheme.titleSmall?.copyWith(color: scheme.primary),
+            style: theme.textTheme.titleMedium?.copyWith(color: scheme.primary),
           ),
         ],
       );
@@ -381,7 +721,7 @@ class _EntryScreenState extends State<EntryScreen> {
           const SizedBox(height: 4),
           Text(
             '-',
-            style: theme.textTheme.titleSmall?.copyWith(color: scheme.primary),
+            style: theme.textTheme.titleMedium?.copyWith(color: scheme.primary),
           ),
         ],
       );
@@ -409,11 +749,11 @@ class _EntryScreenState extends State<EntryScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(icon, size: 16, color: color),
+            FaIcon(icon, size: 18, color: color),
             const SizedBox(width: 4),
             Text(
               description,
-              style: theme.textTheme.titleSmall?.copyWith(
+              style: theme.textTheme.titleMedium?.copyWith(
                 color: scheme.primary,
               ),
             ),
