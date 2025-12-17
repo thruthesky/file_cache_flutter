@@ -97,7 +97,7 @@ class _PointSelectionBottomSheetState extends State<PointSelectionBottomSheet> {
             const SizedBox(height: 16),
 
             PointAdUserInfoCard(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
             ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.1, end: 0),
             const SizedBox(height: 20),
 
@@ -166,8 +166,7 @@ class _PointSelectionBottomSheetState extends State<PointSelectionBottomSheet> {
     );
   }
 
-
-/// 광고 일수 선택 카드 위젯
+  /// 광고 일수 선택 카드 위젯
   Widget _buildDaysCard(
     BuildContext context, {
     required int days,

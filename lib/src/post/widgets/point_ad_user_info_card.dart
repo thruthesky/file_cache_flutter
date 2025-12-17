@@ -14,11 +14,7 @@ class PointAdUserInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildChip(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-  }) {
+  Widget _buildChip(BuildContext context, {required String label}) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
@@ -32,8 +28,6 @@ class PointAdUserInfoCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FaIcon(icon, size: 12, color: scheme.onSurfaceVariant),
-          const SizedBox(width: 6),
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -107,14 +101,12 @@ class PointAdUserInfoCard extends StatelessWidget {
                     UserLevel(
                       builder: (level) => _buildChip(
                         context,
-                        icon: FontAwesomeIcons.crown,
                         label: level.isNotEmpty ? 'Lv. $level' : 'Lv. --',
                       ),
                     ),
                     UserPoint(
                       builder: (points) => _buildChip(
                         context,
-                        icon: FontAwesomeIcons.lightCoins,
                         label:
                             '${_formatPoints(points)} ${PhilgoTr.of(context)!.points}',
                       ),
