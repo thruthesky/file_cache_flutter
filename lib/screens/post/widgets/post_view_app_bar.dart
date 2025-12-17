@@ -83,6 +83,38 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
+  void _showPointAdSelection(BuildContext context) {
+    final state = PhilgoState.of(context, listen: false);
+    final setting = state.setting;
+
+    if (setting == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(PhilgoTr.of(context)!.pointAdvertisement),
+        ),
+      );
+      return;
+    }
+
+    final userPoints = state.user?.point ?? 0;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      isScrollControlled: true,
+      builder: (sheetContext) {
+        return PointSelectionBottomSheet(
+          pointSetting: setting.point,
+          userPoints: userPoints,
+          onDaysSelected: (_) {
+            Navigator.pop(sheetContext);
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -95,6 +127,12 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
             : context.go(HomeScreen.routeName),
       ),
       actions: [
+        if (isPostMine)
+          IconButton(
+            tooltip: PhilgoTr.of(context)!.pointAdvertisement,
+            icon: FaIcon(FontAwesomeIcons.lightBullhorn, size: 20),
+            onPressed: () => _showPointAdSelection(context),
+          ),
         Padding(
           padding: const EdgeInsets.only(right: 4),
           child: IconButton(
