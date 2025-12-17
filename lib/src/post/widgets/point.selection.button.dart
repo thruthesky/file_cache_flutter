@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -363,80 +364,90 @@ class _PointSelectionBottomSheetState
           color: isDisabled
               ? scheme.surfaceContainerHighest.withValues(alpha: 0.5)
               : isSelected
-                  ? scheme.primaryContainer
-                  : scheme.surfaceContainerHighest,
+              ? scheme.primaryContainer
+              : scheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           // 선택 상태에 따른 테두리
           border: Border.all(
             color: isDisabled
                 ? Colors.transparent
                 : isSelected
-                    ? scheme.primary
-                    : Colors.transparent,
+                ? scheme.primary
+                : Colors.transparent,
             width: 2,
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 포인트 표시 with icon (larger, primary focus)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FaIcon(
-                  FontAwesomeIcons.lightCoins,
-                  size: 14,
-                  color: isDisabled
-                      ? scheme.onSurface.withValues(alpha: 0.3)
-                      : isSelected
-                          ? scheme.primary
-                          : scheme.onSurface,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  _formatPoints(points),
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 포인트 표시 with icon (larger, primary focus)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.lightCoins,
+                    size: 14,
                     color: isDisabled
                         ? scheme.onSurface.withValues(alpha: 0.3)
                         : isSelected
+                        ? scheme.primary
+                        : scheme.onSurface,
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: AutoSizeText(
+                      _formatPoints(points),
+                      maxLines: 1,
+                      minFontSize: 10,
+                      stepGranularity: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isDisabled
+                            ? scheme.onSurface.withValues(alpha: 0.3)
+                            : isSelected
                             ? scheme.primary
                             : scheme.onSurface,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
+                ],
+              ),
+              const SizedBox(height: 4),
 
-            // 일수 표시 (smaller, secondary info)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$days',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: isDisabled
-                        ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
-                        : isSelected
-                            ? scheme.primary
-                            : scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+              // 일수 표시 (smaller, secondary info)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$days',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: isDisabled
+                          ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
+                          : isSelected
+                          ? scheme.primary
+                          : scheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  PhilgoTr.of(context)!.days,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: isDisabled
-                        ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
-                        : isSelected
-                            ? scheme.primary
-                            : scheme.onSurfaceVariant,
+                  const SizedBox(width: 4),
+                  Text(
+                    PhilgoTr.of(context)!.days,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: isDisabled
+                          ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
+                          : isSelected
+                          ? scheme.primary
+                          : scheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
