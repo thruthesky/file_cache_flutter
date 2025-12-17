@@ -163,8 +163,7 @@ class PostOptionsMenu extends StatelessWidget {
         final userPoints = state.user?.point ?? 0;
 
         // 2. Show bottom sheet and get selected days
-        int? selectedDays;
-        await showModalBottomSheet<void>(
+        int? selectedDays = await showModalBottomSheet<int?>(
           context: context,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -174,8 +173,7 @@ class PostOptionsMenu extends StatelessWidget {
               pointSetting: setting.point,
               userPoints: userPoints,
               onDaysSelected: (days) {
-                selectedDays = days;
-                Navigator.of(sheetContext).pop(); // Close the bottom sheet
+                Navigator.of(sheetContext).pop(days); // Close the bottom sheet
               },
             );
           },
@@ -183,16 +181,17 @@ class PostOptionsMenu extends StatelessWidget {
 
         if (selectedDays == null || !context.mounted) return; // User cancelled
 
-        // 3. Calculate cost
+        // 3. 포인트 비용 계산 (Calculate point cost)
         final pointCost = calculatePointCost(
-          selectedDays!,
+          selectedDays,
           setting.point.advCostPerHour,
         );
 
+        // 4. 확인 다이얼로그 표시 (Show confirmation dialog)
         final confirm = await showConfirmDialog(
           message: PhilgoTr.of(
             context,
-          )!.pointAdvertisementConfirmMessage(selectedDays!, pointCost),
+          )!.pointAdvertisementConfirmMessage(selectedDays, pointCost),
         );
         if (!confirm || !context.mounted) return;
 
@@ -210,23 +209,24 @@ class PostOptionsMenu extends StatelessWidget {
         );
 
         try {
-          // 6. Update post (only point_advertisement_days)
-          final updatedPost = await updatePost({
-            'idx': post.idx,
-            'point_advertisement_days': selectedDays!,
-          });
+          // 6. extendPointAdvertisement API 호출 (advertise_post_with_point 사용)
+          // 서버에서 포인트 차감 및 광고 등록/연장을 처리함
+          final updatedPost = await extendPointAdvertisement(
+            idx: post.idx,
+            days: selectedDays,
+          );
 
-          // 7. Deduct points from user
+          // 7. 로컬 상태에서 포인트 차감 (서버에서 이미 차감됨, UI 동기화)
           final newPoints = userPoints - pointCost;
           state.setUserPoints(newPoints);
 
-          // 8. Update parent component with new post
+          // 8. 부모 컴포넌트에 업데이트된 게시글 전달
           onEditCompleted(updatedPost);
 
-          // Close loading dialog
+          // 로딩 다이얼로그 닫기
           if (context.mounted) Navigator.of(context).pop();
 
-          // 9. Show success message
+          // 9. 성공 메시지 표시
           if (context.mounted) {
             showSuccessSnackBar(
               context,
@@ -234,10 +234,10 @@ class PostOptionsMenu extends StatelessWidget {
             );
           }
         } catch (e) {
-          // Close loading dialog
+          // 로딩 다이얼로그 닫기
           if (context.mounted) Navigator.of(context).pop();
-          // Error is already shown by updatePost function
-          d('Error updating point advertisement: $e');
+          // extendPointAdvertisement 함수에서 이미 에러 다이얼로그를 표시함
+          d('Error extending point advertisement: $e');
         }
         break;
       case _PostMenuAction.reply:
