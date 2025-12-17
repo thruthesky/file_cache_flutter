@@ -238,5 +238,7 @@
     "points": "积分",
     "daysAdvertisementCost": "天广告费用",
     "confirmSelection": "确认选择",
-    "selectAdvertisementDays": "选择广告天数"
+    "selectAdvertisementDays": "选择广告天数",
+    "pointAdvertisementConfirmMessage": "将推广您的帖子{days}天。需要{points}积分。是否继续？",
+    "pointAdvertisementSuccess": "您的帖子已成功推广！"
 }

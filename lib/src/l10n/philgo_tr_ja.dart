@@ -785,4 +785,12 @@ class PhilgoTrJa extends PhilgoTr {
 
   @override
   String get selectAdvertisementDays => '広告日数を選択してください';
+
+  @override
+  String pointAdvertisementConfirmMessage(int days, int points) {
+    return '$days日間投稿を宣伝します。$pointsポイントが必要です。続行しますか？';
+  }
+
+  @override
+  String get pointAdvertisementSuccess => '投稿が正常に宣伝されました！';
 }

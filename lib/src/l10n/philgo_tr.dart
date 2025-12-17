@@ -1522,6 +1522,18 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'Select advertisement days'**
   String get selectAdvertisementDays;
+
+  /// Confirmation message for point advertisement purchase
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to promote your post for {days} days. This will cost {points} points. Do you want to proceed?'**
+  String pointAdvertisementConfirmMessage(int days, int points);
+
+  /// Success message after point advertisement is applied
+  ///
+  /// In en, this message translates to:
+  /// **'Your post has been promoted successfully!'**
+  String get pointAdvertisementSuccess;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

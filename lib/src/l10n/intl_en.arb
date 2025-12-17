@@ -923,5 +923,23 @@
     "selectAdvertisementDays": "Select advertisement days",
     "@selectAdvertisementDays": {
         "description": "Select advertisement days guide text"
+    },
+    "pointAdvertisementConfirmMessage": "You are about to promote your post for {days} days. This will cost {points} points. Do you want to proceed?",
+    "@pointAdvertisementConfirmMessage": {
+        "description": "Confirmation message for point advertisement purchase",
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "3"
+            },
+            "points": {
+                "type": "int",
+                "example": "100"
+            }
+        }
+    },
+    "pointAdvertisementSuccess": "Your post has been promoted successfully!",
+    "@pointAdvertisementSuccess": {
+        "description": "Success message after point advertisement is applied"
     }
 }
