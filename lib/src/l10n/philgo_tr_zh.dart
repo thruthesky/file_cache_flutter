@@ -796,11 +796,4 @@ class PhilgoTrZh extends PhilgoTr {
   @override
   String get selectAdvertisementDays => '选择广告天数';
 
-  @override
-  String pointAdvertisementConfirmMessage(int days, int points) {
-    return '将推广您的帖子$days天。需要$points积分。是否继续？';
-  }
-
-  @override
-  String get pointAdvertisementSuccess => '您的帖子已成功推广！';
 }

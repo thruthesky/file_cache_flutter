@@ -814,13 +814,4 @@ class PhilgoTrEn extends PhilgoTr {
 
   @override
   String get selectAdvertisementDays => 'Select advertisement days';
-
-  @override
-  String pointAdvertisementConfirmMessage(int days, int points) {
-    return 'You are about to promote your post for $days days. This will cost $points points. Do you want to proceed?';
-  }
-
-  @override
-  String get pointAdvertisementSuccess =>
-      'Your post has been promoted successfully!';
 }
