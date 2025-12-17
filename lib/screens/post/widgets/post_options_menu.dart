@@ -4,7 +4,9 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo_api/philgo_api.dart';
 
-/// Popup menu for post actions (reply, edit, delete, block, report).
+/// 게시글 옵션 메뉴
+/// - useComicStyle = false: AppBar용 (심플한 스타일, 테두리 없음)
+/// - useComicStyle = true: 액션바용 (Comic 스타일, 둥근 모서리 + 테두리)
 class PostOptionsMenu extends StatelessWidget {
   const PostOptionsMenu({
     super.key,
@@ -14,6 +16,8 @@ class PostOptionsMenu extends StatelessWidget {
     required this.onReplyTap,
     required this.onEditCompleted,
     required this.onDeleteCompleted,
+    required this.onShowPointAds,
+    this.useComicStyle = false,
   });
 
   final bool isPostMine;
@@ -21,18 +25,49 @@ class PostOptionsMenu extends StatelessWidget {
   final String firebaseUid;
   final VoidCallback onReplyTap;
   final void Function(Post updated) onEditCompleted;
-  final VoidCallback onDeleteCompleted;
+  final void Function(BuildContext context) onShowPointAds;
+  final void Function(BuildContext context) onDeleteCompleted;
+  final bool useComicStyle;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return PopupMenuButton<_PostMenuAction>(
+    final popupButton = PopupMenuButton<_PostMenuAction>(
       tooltip: '',
+      padding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       onSelected: (action) => _handleAction(context, action),
+      icon: useComicStyle
+          ? null
+          : FaIcon(
+              FontAwesomeIcons.bars,
+              size: 20,
+              color: scheme.onSurface,
+            ),
+      child: useComicStyle
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: FaIcon(
+                FontAwesomeIcons.bars,
+                size: 16,
+                color: scheme.onSurface,
+              ),
+            )
+          : null,
       itemBuilder: (context) {
         if (isPostMine) {
           return [
+            // PopupMenuItem(
+            //   value: _PostMenuAction.pointads,
+            //   child: Row(
+            //     children: [
+            //       const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
+            //       const SizedBox(width: 12),
+            //       Text('Points'),
+            //     ],
+            //   ),
+            // ),
             PopupMenuItem(
               value: _PostMenuAction.edit,
               child: Row(
@@ -92,8 +127,22 @@ class PostOptionsMenu extends StatelessWidget {
           ),
         ];
       },
-      icon: const FaIcon(FontAwesomeIcons.bars, size: 20),
     );
+
+    // Comic 스타일이면 Container로 감싸서 테두리 추가
+    if (useComicStyle) {
+      return Container(
+        // Comic 스타일: 둥근 모서리 + 테두리 (ComicActionButton과 동일한 디자인)
+        decoration: BoxDecoration(
+          border: Border.all(color: scheme.outline, width: 1.0),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: popupButton,
+      );
+    }
+
+    // AppBar용: 일반 스타일 (테두리 없음)
+    return popupButton;
   }
 
   Future<void> _handleAction(
@@ -101,6 +150,9 @@ class PostOptionsMenu extends StatelessWidget {
     _PostMenuAction action,
   ) async {
     switch (action) {
+      case _PostMenuAction.pointads:
+        onShowPointAds(context);
+        break;
       case _PostMenuAction.reply:
         onReplyTap();
         break;
@@ -140,7 +192,7 @@ class PostOptionsMenu extends StatelessWidget {
         if (confirm) {
           await deletePost(post.idx);
           if (context.mounted) {
-            onDeleteCompleted();
+            onDeleteCompleted(context);
           }
         }
         break;
@@ -148,4 +200,4 @@ class PostOptionsMenu extends StatelessWidget {
   }
 }
 
-enum _PostMenuAction { reply, block, report, edit, delete }
+enum _PostMenuAction { pointads, reply, block, report, edit, delete }

@@ -3,6 +3,7 @@ import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/screens/post/widgets/post_blocked_user_info.dart';
 import 'package:philgo/screens/post/widgets/post_view_comment_box.dart';
 import 'package:philgo/screens/post/widgets/comic_action_button.dart';
+import 'package:philgo/screens/post/widgets/post_options_menu.dart';
 import 'package:philgo/screens/post/widgets/post_view_app_bar.dart';
 import 'package:philgo/screens/post/widgets/post_view_meta.dart';
 import 'package:philgo/screens/post/widgets/post_view_subject.dart';
@@ -237,7 +238,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
               });
             }
           },
-          onDeleteCompleted: () {
+          onDeleteCompleted: (context) {
             context.pop();
           },
         ),
@@ -364,7 +365,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                                 const Spacer(),
 
-                                /// 타인 게시글인 경우 차단/신고 버튼 표시
+                                /// 타인 게시글인 경우 옵션 메뉴 표시
                                 if (!isPostMine()) ...[
                                   ComicActionButton(
                                     icon: FontAwesomeIcons.ban,
@@ -447,6 +448,33 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                     },
                                   ),
                                 ],
+
+                                const SizedBox(width: 8),
+
+                                /// 옵션 메뉴 (수정/삭제/차단/신고) - Comic 스타일
+                                PostOptionsMenu(
+                                  useComicStyle: true,
+                                  isPostMine: isPostMine(),
+                                  post: post!,
+                                  firebaseUid: firebaseUid,
+                                  onReplyTap: focusReplyInput,
+                                  onEditCompleted: (updated) {
+                                    widget.post.subject = updated.subject;
+                                    widget.post.content = updated.content;
+
+                                    if (mounted) {
+                                      setState(() {
+                                        post = updated;
+                                      });
+                                    }
+                                  },
+                                  onDeleteCompleted: (context) {
+                                    context.pop();
+                                  },
+                                  onShowPointAds: (context) {
+                                    // Point ads functionality can be added here if needed
+                                  },
+                                ),
                               ],
                             ),
                           ),
