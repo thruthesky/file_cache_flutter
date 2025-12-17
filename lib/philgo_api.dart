@@ -162,6 +162,7 @@ export 'src/post/widgets/post_list_tile/post_list_tile.upload_preview.dart';
 export 'src/post/widgets/post_ad_expiry_badge.dart';
 export 'src/post/widgets/post_ad_info_banner.dart';
 export 'src/post/widgets/point_ad_user_info_card.dart';
+export 'src/post/widgets/point_bottom_sheet.dart';
 export 'src/post/widgets/post.list.view.dart';
 export 'src/post/widgets/post.masonry.view.dart';
 export 'src/post/widgets/post.report.button.dart';
