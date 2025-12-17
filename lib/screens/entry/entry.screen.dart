@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.login.screen.dart';
@@ -10,6 +11,7 @@ import 'package:philgo/services/weather/weather.model.dart';
 import 'package:philgo/services/weather/weather.service.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// Entry 화면 (Entry Screen)
 ///
@@ -30,6 +32,9 @@ class _EntryScreenState extends State<EntryScreen> {
   /// 날씨 서비스 인스턴스 (Weather service instance)
   final _weatherService = WeatherService.instance;
 
+  /// PhilGo 서비스 인스턴스 (PhilGo service instance)
+  final _philgoService = PhilgoService.instance;
+
   /// PHP→KRW 환율 (소수점 2자리) (PHP to KRW exchange rate)
   double? _phpToKrwRate;
 
@@ -42,11 +47,18 @@ class _EntryScreenState extends State<EntryScreen> {
   /// 날씨 로딩 상태 (Weather loading state)
   bool _isLoadingWeather = true;
 
+  /// 홈페이지 통계 데이터 (Homepage stats data)
+  HomepageStats? _homepageStats;
+
+  /// 통계 로딩 상태 (Stats loading state)
+  bool _isLoadingStats = true;
+
   @override
   void initState() {
     super.initState();
     _fetchExchangeRate();
     _fetchManilaWeather();
+    _fetchHomepageStats();
   }
 
   /// CurrencyService를 사용하여 PHP→KRW 환율 조회 (Fetch PHP to KRW rate using CurrencyService)
@@ -94,6 +106,43 @@ class _EntryScreenState extends State<EntryScreen> {
     }
   }
 
+  /// PhilgoService를 사용하여 홈페이지 통계 조회 (Fetch homepage stats using PhilgoService)
+  ///
+  /// API 호출 실패 시에도 UI는 정상 표시됩니다 (stats는 null로 표시).
+  /// 서버에서 1시간 동안 캐시됩니다.
+  Future<void> _fetchHomepageStats() async {
+    try {
+      debugPrint('[EntryScreen] _fetchHomepageStats 시작');
+      final stats = await _philgoService.getHomepageStats();
+      debugPrint(
+        '[EntryScreen] _fetchHomepageStats 성공: '
+        'totalUserCount=${stats.totalUserCount}, '
+        'totalPostCount=${stats.totalPostCount}',
+      );
+
+      if (mounted) {
+        setState(() {
+          _homepageStats = stats;
+          _isLoadingStats = false;
+        });
+      }
+    } catch (e, stackTrace) {
+      // API 호출 실패 시 로딩 상태만 해제
+      debugPrint('[EntryScreen] _fetchHomepageStats 에러: $e');
+      debugPrint('[EntryScreen] 스택 트레이스: $stackTrace');
+      if (mounted) {
+        setState(() => _isLoadingStats = false);
+      }
+    }
+  }
+
+  /// 숫자 포맷팅 (Format number with comma separator)
+  ///
+  /// 예: 123456 → "123,456"
+  String _formatNumber(int number) {
+    return NumberFormat('#,###').format(number);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = Lo.of(context)!;
@@ -135,7 +184,7 @@ class _EntryScreenState extends State<EntryScreen> {
               // 오늘 환율, 오늘 날씨, 회원 수, 글 수를 한 줄로 표시
               _buildInfoSection(context, l10n, theme, scheme),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
 
               // 로그인 버튼 - Comic 스타일 디자인 (large 텍스트, pill 형태)
               // ComicButton 위젯을 사용하여 재사용 가능한 Comic 스타일 버튼 적용
@@ -237,17 +286,25 @@ class _EntryScreenState extends State<EntryScreen> {
           ),
           child: _buildWeatherColumn(l10n, theme, scheme),
         ),
-        // 회원 수 - 하드코딩 (0)
+        // 회원 수 - API에서 조회 (Member count from API)
         _buildInfoColumn(
           label: l10n.entryMemberCount,
-          value: '0',
+          value: _isLoadingStats
+              ? '...'
+              : (_homepageStats != null
+                    ? _formatNumber(_homepageStats!.totalUserCount)
+                    : '-'),
           theme: theme,
           scheme: scheme,
         ),
-        // 글 수 - 하드코딩 (0)
+        // 글 수 - API에서 조회 (Post count from API)
         _buildInfoColumn(
           label: l10n.entryPostCount,
-          value: '0',
+          value: _isLoadingStats
+              ? '...'
+              : (_homepageStats != null
+                    ? _formatNumber(_homepageStats!.totalPostCount)
+                    : '-'),
           theme: theme,
           scheme: scheme,
         ),
@@ -276,10 +333,10 @@ class _EntryScreenState extends State<EntryScreen> {
           ),
         ),
         const SizedBox(height: 4),
-        // 값 - 중간 크기 텍스트, 강조 색상
+        // 값 - 작은 크기 텍스트, 강조 색상 (titleSmall로 한 단계 축소)
         Text(
           value,
-          style: theme.textTheme.titleMedium?.copyWith(color: scheme.primary),
+          style: theme.textTheme.titleSmall?.copyWith(color: scheme.primary),
         ),
       ],
     );
@@ -304,7 +361,7 @@ class _EntryScreenState extends State<EntryScreen> {
           const SizedBox(height: 4),
           Text(
             '...',
-            style: theme.textTheme.titleMedium?.copyWith(color: scheme.primary),
+            style: theme.textTheme.titleSmall?.copyWith(color: scheme.primary),
           ),
         ],
       );
@@ -324,7 +381,7 @@ class _EntryScreenState extends State<EntryScreen> {
           const SizedBox(height: 4),
           Text(
             '-',
-            style: theme.textTheme.titleMedium?.copyWith(color: scheme.primary),
+            style: theme.textTheme.titleSmall?.copyWith(color: scheme.primary),
           ),
         ],
       );
@@ -333,8 +390,9 @@ class _EntryScreenState extends State<EntryScreen> {
     // 날씨 아이콘과 설명 가져오기 (Get weather icon and description)
     final icon = WeatherCodeHelper.getIcon(_manilaWeather!.weatherCode);
     final color = WeatherCodeHelper.getColor(_manilaWeather!.weatherCode);
-    final description =
-        WeatherCodeHelper.getDescription(_manilaWeather!.weatherCode);
+    final description = WeatherCodeHelper.getDescription(
+      _manilaWeather!.weatherCode,
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -355,8 +413,9 @@ class _EntryScreenState extends State<EntryScreen> {
             const SizedBox(width: 4),
             Text(
               description,
-              style:
-                  theme.textTheme.titleMedium?.copyWith(color: scheme.primary),
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: scheme.primary,
+              ),
             ),
           ],
         ),
