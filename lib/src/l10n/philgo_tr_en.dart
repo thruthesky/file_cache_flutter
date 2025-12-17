@@ -787,6 +787,18 @@ class PhilgoTrEn extends PhilgoTr {
   String get adExpiresLabel => 'Ad Expires';
 
   @override
+  String pointAdvertisementConfirmMessage(int days, int cost) {
+    return 'Purchase $days-day advertisement for $cost points?';
+  }
+
+  @override
+  String get pointAdvertisementSuccess =>
+      'Point advertisement updated successfully';
+
+  @override
+  String get insufficientPoints => 'Insufficient points';
+
+  @override
   String get days => 'days';
 
   @override

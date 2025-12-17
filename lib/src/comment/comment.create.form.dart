@@ -88,7 +88,9 @@ class _CommentCreateFormState extends State<CommentCreateForm> {
       showSafeErrorDialog('Failed to post comment: $e');
     } finally {
       isCreatingReply = false;
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

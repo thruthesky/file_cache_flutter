@@ -898,6 +898,28 @@
   "@adExpiresLabel": {
     "description": "Label displayed before advertisement expiration date"
   },
+  "pointAdvertisementConfirmMessage": "Purchase {days}-day advertisement for {cost} points?",
+  "@pointAdvertisementConfirmMessage": {
+    "description": "Confirmation message for purchasing point advertisement",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      },
+      "cost": {
+        "type": "int",
+        "example": "720"
+      }
+    }
+  },
+  "pointAdvertisementSuccess": "Point advertisement updated successfully",
+  "@pointAdvertisementSuccess": {
+    "description": "Success message after point advertisement purchase"
+  },
+  "insufficientPoints": "Insufficient points",
+  "@insufficientPoints": {
+    "description": "Error message when user has insufficient points"
+  },
   "days": "days",
   "@days": {
     "description": "Days unit text"

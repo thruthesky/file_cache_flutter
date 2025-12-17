@@ -770,6 +770,17 @@ class PhilgoTrKo extends PhilgoTr {
   String get adExpiresLabel => '광고 종료';
 
   @override
+  String pointAdvertisementConfirmMessage(int days, int cost) {
+    return '$days일 광고를 $cost 포인트로 구매하시겠습니까?';
+  }
+
+  @override
+  String get pointAdvertisementSuccess => '포인트 광고가 성공적으로 업데이트되었습니다';
+
+  @override
+  String get insufficientPoints => '포인트가 부족합니다';
+
+  @override
   String get days => '일';
 
   @override

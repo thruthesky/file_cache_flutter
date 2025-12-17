@@ -1493,6 +1493,24 @@ abstract class PhilgoTr {
   /// **'Ad Expires'**
   String get adExpiresLabel;
 
+  /// Confirmation message for purchasing point advertisement
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase {days}-day advertisement for {cost} points?'**
+  String pointAdvertisementConfirmMessage(int days, int cost);
+
+  /// Success message after point advertisement purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Point advertisement updated successfully'**
+  String get pointAdvertisementSuccess;
+
+  /// Error message when user has insufficient points
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient points'**
+  String get insufficientPoints;
+
   /// Days unit text
   ///
   /// In en, this message translates to:

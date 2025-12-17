@@ -493,11 +493,6 @@ Future<Post> updatePost(RecordType data) async {
   final hasCategory = data['category'] != null;
   final hasFiles = data['files'] != null && data['files'] is List;
 
-  if (!hasSubject && !hasContent && !hasCategory && !hasFiles) {
-    showSafeErrorDialog('수정할 내용이 없습니다. 제목이나 내용을 입력해주세요.');
-    throw Exception('수정할 내용이 없습니다');
-  }
-
   // 데이터 정제 - 수정할 필드만 포함
   final cleanedData = <String, dynamic>{
     'idx': idx, // idx는 필수
@@ -640,6 +635,12 @@ Future<Comment> updateComment(RecordType data) async {
     'update_comment',
     data: data,
   );
+
+  return Comment.fromJson(response);
+}
+
+Future<Comment> deleteComment(int idx) async {
+  final response = await func('delete_comment', data: {'idx': idx});
 
   return Comment.fromJson(response);
 }

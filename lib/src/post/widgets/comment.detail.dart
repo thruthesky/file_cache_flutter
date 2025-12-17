@@ -276,10 +276,7 @@ class _CommentDetailState extends State<CommentDetail> {
                                 )!.delete_comment_confirmation,
                               );
                               if (confirmed) {
-                                await func(
-                                  'delete_comment_func',
-                                  data: {'idx': widget.comment.idx},
-                                );
+                                await deleteComment(widget.comment.idx);
                                 if (mounted) {
                                   showSuccessSnackBar(
                                     context,
