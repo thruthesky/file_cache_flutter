@@ -18,6 +18,7 @@ import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
+import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -339,6 +340,11 @@ final router = GoRouter(
       path: VersionScreen.routeName,
       name: VersionScreen.routeName,
       builder: (context, state) => const VersionScreen(),
+    ),
+    GoRoute(
+      path: WeatherScreen.routeName,
+      name: WeatherScreen.routeName,
+      builder: (context, state) => const WeatherScreen(),
     ),
   ],
 );

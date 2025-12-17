@@ -149,6 +149,7 @@ class PostOptionsMenu extends StatelessWidget {
   ) async {
     switch (action) {
       case _PostMenuAction.pointads:
+        // 1. Get state and setting
         final state = PhilgoState.of(context, listen: false);
         final setting = state.setting;
 
@@ -161,7 +162,9 @@ class PostOptionsMenu extends StatelessWidget {
 
         final userPoints = state.user?.point ?? 0;
 
-        showModalBottomSheet(
+        // 2. Show bottom sheet and get selected days
+        int? selectedDays;
+        await showModalBottomSheet<void>(
           context: context,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -170,13 +173,72 @@ class PostOptionsMenu extends StatelessWidget {
             return PointSelectionBottomSheet(
               pointSetting: setting.point,
               userPoints: userPoints,
-              onDaysSelected: (point) {
-                debugPrint('Selected point $point');
-                Navigator.pop(sheetContext);
+              onDaysSelected: (days) {
+                selectedDays = days;
+                Navigator.of(sheetContext).pop(); // Close the bottom sheet
               },
             );
           },
         );
+
+        if (selectedDays == null || !context.mounted) return; // User cancelled
+
+        // 3. Calculate cost
+        final pointCost = calculatePointCost(
+          selectedDays!,
+          setting.point.advCostPerHour,
+        );
+
+        final confirm = await showConfirmDialog(
+          message: PhilgoTr.of(
+            context,
+          )!.pointAdvertisementConfirmMessage(selectedDays!, pointCost),
+        );
+        if (!confirm || !context.mounted) return;
+
+        // Show loading dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            );
+          },
+        );
+
+        try {
+          // 6. Update post (only point_advertisement_days)
+          final updatedPost = await updatePost({
+            'idx': post.idx,
+            'point_advertisement_days': selectedDays!,
+          });
+
+          // 7. Deduct points from user
+          final newPoints = userPoints - pointCost;
+          state.setUserPoints(newPoints);
+
+          // 8. Update parent component with new post
+          onEditCompleted(updatedPost);
+
+          // Close loading dialog
+          if (context.mounted) Navigator.of(context).pop();
+
+          // 9. Show success message
+          if (context.mounted) {
+            showSuccessSnackBar(
+              context,
+              PhilgoTr.of(context)!.pointAdvertisementSuccess,
+            );
+          }
+        } catch (e) {
+          // Close loading dialog
+          if (context.mounted) Navigator.of(context).pop();
+          // Error is already shown by updatePost function
+          d('Error updating point advertisement: $e');
+        }
         break;
       case _PostMenuAction.reply:
         onReplyTap();
@@ -185,7 +247,7 @@ class PostOptionsMenu extends StatelessWidget {
         showBlockDialog(context: context, otherUserUid: firebaseUid);
         break;
       case _PostMenuAction.report:
-        // TODO: implement report flow
+        _showReportReasonBottomSheet(context);
         break;
       case _PostMenuAction.edit:
         if (post.no_of_comment >= 1) {
@@ -222,6 +284,132 @@ class PostOptionsMenu extends StatelessWidget {
         }
         break;
     }
+  }
+
+  /// Get report reasons based on type
+  List<String> _getReportReason(BuildContext context) {
+    final tr = PhilgoTr.of(context)!;
+    return [
+      tr.report_reason_category_error,
+      tr.report_reason_abuse,
+      tr.report_reason_spam,
+      tr.report_reason_other,
+    ];
+  }
+
+  /// Handle report submission
+  Future<void> _handleReport(BuildContext context, String reason) async {
+    try {
+      final res = await reportPost(
+        type: 'post',
+        idx: post.idx,
+        reason: reason,
+      );
+      if (context.mounted && res['error'] != null && res['message'] != null) {
+        showErrorSnackBar(context, res['message']);
+        return;
+      }
+      if (context.mounted && res['message'] != null && res['message']!.isNotEmpty) {
+        showSuccessSnackBar(context, PhilgoTr.of(context)!.report_success);
+        return;
+      }
+    } catch (e) {
+      d('Error reporting post: $e');
+      if (context.mounted) {
+        showErrorSnackBar(context, PhilgoTr.of(context)!.report_failed);
+      }
+    }
+  }
+
+  /// Show report reason bottom sheet
+  void _showReportReasonBottomSheet(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final reasons = _getReportReason(context);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      builder: (BuildContext sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12.0),
+              topRight: Radius.circular(12.0),
+            ),
+            border: Border(
+              top: BorderSide(color: scheme.outline, width: 2.0),
+              left: BorderSide(color: scheme.outline, width: 2.0),
+              right: BorderSide(color: scheme.outline, width: 2.0),
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Drag handle indicator
+                const SizedBox(height: 8),
+                Container(
+                  width: 32,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Header: title and close button
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        PhilgoTr.of(context)!.report_select_reason,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Separator
+                Container(height: 2, color: scheme.outline),
+
+                // Report reason list
+                ...reasons.map(
+                  (reason) => ListTile(
+                    leading: FaIcon(
+                      FontAwesomeIcons.hexagonExclamation,
+                      size: 20,
+                      color: scheme.onSurface,
+                    ),
+                    title: Text(reason),
+                    onTap: () {
+                      Navigator.of(sheetContext).pop();
+                      _handleReport(context, reason);
+                    },
+                  ),
+                ),
+
+                // Bottom spacing
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 

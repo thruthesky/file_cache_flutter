@@ -8,6 +8,7 @@ import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
 import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/info/travel/travel_info.screen.dart';
+import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 
 /// 퀵 메뉴 아이템 데이터 클래스 (Quick Menu Item Data Class)
@@ -75,11 +76,14 @@ class HomeQuickMenuSection extends StatelessWidget {
 
   /// 날씨 메뉴 탭 핸들러 (Weather menu tap handler)
   ///
-  /// 필리핀 주요 도시의 날씨 정보 화면으로 이동합니다.
-  /// Navigates to weather information screen for major Philippine cities.
+  /// 필리핀 주요 도시의 날씨 정보 화면을 다이얼로그로 표시합니다.
+  /// Shows weather information screen for major Philippine cities as dialog.
   void _onWeatherTap(BuildContext context) {
-    // TODO: 날씨 화면으로 이동 구현
-    // TODO: Implement navigation to weather screen
+    showFullScreen(
+      context,
+      child: const WeatherScreen(),
+      barrierLabel: '날씨 정보 닫기',
+    );
   }
 
   /// 긴급 연락처 메뉴 탭 핸들러 (Emergency contact menu tap handler)

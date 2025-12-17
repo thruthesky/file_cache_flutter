@@ -1845,6 +1845,10 @@
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
   },
+  "philippineLifeInfo": "Philippine Life Info",
+  "@philippineLifeInfo": {
+    "description": "Philippine life information section title in menu"
+  },
   "entryTodayExchangeRate": "Exchange",
   "@entryTodayExchangeRate": {
     "description": "Today's exchange rate label on entry screen"
