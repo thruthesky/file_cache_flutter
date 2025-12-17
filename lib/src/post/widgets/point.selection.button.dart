@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo_api/src/post/widgets/point_ad_user_info_card.dart';
 import 'package:provider/provider.dart';
 
 /// 포인트 광고 선택 버튼 위젯
@@ -210,64 +211,8 @@ class _PointSelectionBottomSheetState
             ),
             const SizedBox(height: 16),
 
-            // User current point balance section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    // Icon container
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: scheme.primary.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.lightCoins,
-                          size: 18,
-                          color: scheme.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-
-                    // Point balance info
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            PhilgoTr.of(context)!.currentPointBalance,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onPrimaryContainer.withValues(
-                                alpha: 0.8,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          UserPoint(
-                            builder: (points) => Text(
-                              _formatPoints(points),
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: scheme.onPrimaryContainer,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            PointAdUserInfoCard(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
             ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.1, end: 0),
             const SizedBox(height: 20),
 
@@ -347,6 +292,25 @@ class _PointSelectionBottomSheetState
   }) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final disabledBackground = scheme.surfaceContainerHighest.withValues(
+      alpha: 0.45,
+    );
+    final disabledBorder = scheme.outline.withValues(alpha: 0.25);
+    final disabledPrimaryContent = scheme.onSurface.withValues(alpha: 0.35);
+    final disabledSecondaryContent = scheme.onSurfaceVariant.withValues(
+      alpha: 0.35,
+    );
+
+    final primaryContentColor = isDisabled
+        ? disabledPrimaryContent
+        : isSelected
+        ? scheme.primary
+        : scheme.onSurface;
+    final secondaryContentColor = isDisabled
+        ? disabledSecondaryContent
+        : isSelected
+        ? scheme.primary
+        : scheme.onSurfaceVariant;
 
     // 카드 위젯을 Widget 타입으로 명시하여 .animate() 확장 메서드 사용 가능
     final Widget cardWidget = GestureDetector(
@@ -362,7 +326,7 @@ class _PointSelectionBottomSheetState
         decoration: BoxDecoration(
           // 선택 상태와 비활성화 상태에 따른 배경색
           color: isDisabled
-              ? scheme.surfaceContainerHighest.withValues(alpha: 0.5)
+              ? disabledBackground
               : isSelected
               ? scheme.primaryContainer
               : scheme.surfaceContainerHighest,
@@ -370,7 +334,7 @@ class _PointSelectionBottomSheetState
           // 선택 상태에 따른 테두리
           border: Border.all(
             color: isDisabled
-                ? Colors.transparent
+                ? disabledBorder
                 : isSelected
                 ? scheme.primary
                 : Colors.transparent,
@@ -378,7 +342,7 @@ class _PointSelectionBottomSheetState
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -389,11 +353,7 @@ class _PointSelectionBottomSheetState
                   FaIcon(
                     FontAwesomeIcons.lightCoins,
                     size: 14,
-                    color: isDisabled
-                        ? scheme.onSurface.withValues(alpha: 0.3)
-                        : isSelected
-                        ? scheme.primary
-                        : scheme.onSurface,
+                    color: primaryContentColor,
                   ),
                   const SizedBox(width: 6),
                   Flexible(
@@ -406,11 +366,7 @@ class _PointSelectionBottomSheetState
                       textAlign: TextAlign.center,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isDisabled
-                            ? scheme.onSurface.withValues(alpha: 0.3)
-                            : isSelected
-                            ? scheme.primary
-                            : scheme.onSurface,
+                        color: primaryContentColor,
                       ),
                     ),
                   ),
@@ -425,11 +381,7 @@ class _PointSelectionBottomSheetState
                   Text(
                     '$days',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: isDisabled
-                          ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
-                          : isSelected
-                          ? scheme.primary
-                          : scheme.onSurfaceVariant,
+                      color: secondaryContentColor,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -437,11 +389,7 @@ class _PointSelectionBottomSheetState
                   Text(
                     PhilgoTr.of(context)!.days,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: isDisabled
-                          ? scheme.onSurfaceVariant.withValues(alpha: 0.3)
-                          : isSelected
-                          ? scheme.primary
-                          : scheme.onSurfaceVariant,
+                      color: secondaryContentColor,
                     ),
                   ),
                 ],

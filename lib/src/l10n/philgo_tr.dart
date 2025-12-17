@@ -1487,6 +1487,12 @@ abstract class PhilgoTr {
   /// **'Promote your post to the top of the list'**
   String get pointAdvertisementDescription;
 
+  /// Label displayed before advertisement expiration date
+  ///
+  /// In en, this message translates to:
+  /// **'Ad Expires'**
+  String get adExpiresLabel;
+
   /// Days unit text
   ///
   /// In en, this message translates to:

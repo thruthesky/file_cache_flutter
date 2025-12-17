@@ -767,6 +767,9 @@ class PhilgoTrKo extends PhilgoTr {
   String get pointAdvertisementDescription => '게시글을 목록 상단에 노출시키세요';
 
   @override
+  String get adExpiresLabel => '광고 종료';
+
+  @override
   String get days => '일';
 
   @override

@@ -890,14 +890,18 @@
             }
         }
     },
-    "pointAdvertisementDescription": "Promote your post to the top of the list",
-    "@pointAdvertisementDescription": {
-        "description": "Point advertisement description text"
-    },
-    "days": "days",
-    "@days": {
-        "description": "Days unit text"
-    },
+  "pointAdvertisementDescription": "Promote your post to the top of the list",
+  "@pointAdvertisementDescription": {
+    "description": "Point advertisement description text"
+  },
+  "adExpiresLabel": "Ad Expires",
+  "@adExpiresLabel": {
+    "description": "Label displayed before advertisement expiration date"
+  },
+  "days": "days",
+  "@days": {
+    "description": "Days unit text"
+  },
     "points": "Points",
     "@points": {
         "description": "Points unit text"

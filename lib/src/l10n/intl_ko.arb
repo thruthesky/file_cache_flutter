@@ -237,6 +237,7 @@
     "pointAdvertisementWithDays": "포인트 광고: {days}일",
     "pointAdvertisementAddDays": "포인트 광고: +{days}일",
     "pointAdvertisementDescription": "게시글을 목록 상단에 노출시키세요",
+    "adExpiresLabel": "광고 종료",
     "days": "일",
     "points": "포인트",
     "daysAdvertisementCost": "일 광고 비용",

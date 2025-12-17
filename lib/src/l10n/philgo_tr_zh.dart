@@ -765,6 +765,9 @@ class PhilgoTrZh extends PhilgoTr {
   String get pointAdvertisementDescription => '将您的帖子展示在列表顶部';
 
   @override
+  String get adExpiresLabel => '广告结束';
+
+  @override
   String get days => '天';
 
   @override

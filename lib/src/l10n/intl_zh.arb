@@ -233,6 +233,7 @@
     "pointAdvertisementWithDays": "积分广告: {days}天",
     "pointAdvertisementAddDays": "积分广告: +{days}天",
     "pointAdvertisementDescription": "将您的帖子展示在列表顶部",
+    "adExpiresLabel": "广告结束",
     "days": "天",
     "points": "积分",
     "daysAdvertisementCost": "天广告费用",

@@ -767,6 +767,9 @@ class PhilgoTrJa extends PhilgoTr {
   String get pointAdvertisementDescription => '投稿をリストの上部に表示';
 
   @override
+  String get adExpiresLabel => '広告終了';
+
+  @override
   String get days => '日';
 
   @override

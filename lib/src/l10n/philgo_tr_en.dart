@@ -784,6 +784,9 @@ class PhilgoTrEn extends PhilgoTr {
       'Promote your post to the top of the list';
 
   @override
+  String get adExpiresLabel => 'Ad Expires';
+
+  @override
   String get days => 'days';
 
   @override

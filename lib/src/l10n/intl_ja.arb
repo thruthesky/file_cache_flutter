@@ -233,6 +233,7 @@
     "pointAdvertisementWithDays": "ポイント広告: {days}日",
     "pointAdvertisementAddDays": "ポイント広告: +{days}日",
     "pointAdvertisementDescription": "投稿をリストの上部に表示",
+    "adExpiresLabel": "広告終了",
     "days": "日",
     "points": "ポイント",
     "daysAdvertisementCost": "日の広告費用",
