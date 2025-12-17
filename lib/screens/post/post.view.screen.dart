@@ -388,7 +388,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                 if (isPostMine()) ...[
                                   ComicActionButton(
                                     icon: FontAwesomeIcons.penToSquare,
-                                    label: PhilgoTr.of(context)!.edit,
                                     onPressed: () async {
                                       if (post!.no_of_comment >= 1) {
                                         showInfoDialog(
@@ -420,7 +419,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                   const SizedBox(width: 8),
                                   ComicActionButton(
                                     icon: FontAwesomeIcons.trash,
-                                    label: PhilgoTr.of(context)!.delete,
                                     color: Theme.of(context).colorScheme.error,
                                     onPressed: () async {
                                       if (post!.no_of_comment >= 1) {

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/screens/home/home.screen.dart';
-import 'package:philgo/screens/post/widgets/post_options_bottom_sheet.dart';
+import 'package:philgo/screens/post/widgets/post_options_menu.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 게시글 상세 화면 AppBar 위젯
 ///
 /// 게시글 상세 화면에서 사용되는 AppBar입니다.
 /// 뒤로가기 버튼과 더보기 메뉴 버튼을 포함합니다.
-/// 더보기 메뉴 버튼 클릭 시 PostOptionsBottomSheet를 표시합니다.
+/// 더보기 메뉴 버튼은 PostOptionsMenu 팝업을 사용합니다.
 ///
 /// ### 매개변수:
 /// - [isPostMine] → 본인 게시글인지 여부
@@ -62,36 +62,13 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1);
 
-  /// 게시글 옵션 바텀 시트 표시
-  ///
-  /// PostOptionsBottomSheet 위젯을 사용하여 게시글 옵션 바텀 시트를 표시합니다.
-  void _showPostOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      builder: (sheetContext) {
-        return PostOptionsBottomSheet(
-          isPostMine: isPostMine,
-          post: post,
-          firebaseUid: firebaseUid,
-          onReplyTap: onReplyTap,
-          onEditCompleted: onEditCompleted,
-          onDeleteCompleted: onDeleteCompleted,
-        );
-      },
-    );
-  }
-
   void _showPointAdSelection(BuildContext context) {
     final state = PhilgoState.of(context, listen: false);
     final setting = state.setting;
 
     if (setting == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(PhilgoTr.of(context)!.pointAdvertisement),
-        ),
+        SnackBar(content: Text(PhilgoTr.of(context)!.pointAdvertisement)),
       );
       return;
     }
@@ -135,9 +112,13 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         Padding(
           padding: const EdgeInsets.only(right: 4),
-          child: IconButton(
-            icon: FaIcon(FontAwesomeIcons.bars, size: 20),
-            onPressed: () => _showPostOptions(context),
+          child: PostOptionsMenu(
+            isPostMine: isPostMine,
+            post: post,
+            firebaseUid: firebaseUid,
+            onReplyTap: onReplyTap,
+            onEditCompleted: onEditCompleted,
+            onDeleteCompleted: onDeleteCompleted,
           ),
         ),
       ],
