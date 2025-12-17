@@ -224,6 +224,7 @@ class _ForumHomeState extends State<ForumHome> {
                 enableHeroTransition: true,
                 tileBuilder: (post, onTap) =>
                     PostListTile(post: post, onTap: onTap),
+                onTapBanner: (url) => openBannerUrl(context, url),
               ),
       ),
     );
