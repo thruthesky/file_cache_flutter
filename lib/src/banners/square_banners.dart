@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo_api/philgo_api.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// Square 배너 위젯 (사각 배너)
 /// Square Banners Widget
@@ -12,12 +11,34 @@ import 'package:url_launcher/url_launcher.dart';
 /// [postIdOrCategory]: 게시판/카테고리 ID (옵션)
 /// - null인 경우: 전체 페이지 배너 표시 (all_page='y')
 /// - 지정된 경우: 해당 카테고리 배너 + 전체 페이지 배너 표시
+///
+/// [onTap]: 배너 클릭 시 호출되는 콜백 (필수)
+/// - 배너의 링크 URL을 파라미터로 전달받습니다.
+/// - 외부 링크 열기, 내부 라우팅 등을 처리할 수 있습니다.
+///
+/// ### 사용법 (Usage):
+/// ```dart
+/// SquareBanners(
+///   postIdOrCategory: 'freetalk',
+///   onTap: (link) => openBannerUrl(context, link),
+/// )
+/// ```
 class SquareBanners extends StatefulWidget {
   /// 게시판/카테고리 ID (옵션)
   /// Post ID or Category (optional)
   final String? postIdOrCategory;
 
-  const SquareBanners({super.key, this.postIdOrCategory});
+  /// 배너 클릭 시 호출되는 콜백 (Banner tap callback)
+  ///
+  /// 배너의 링크 URL을 파라미터로 전달받습니다.
+  /// Receives banner link URL as parameter.
+  final void Function(String link) onTap;
+
+  const SquareBanners({
+    super.key,
+    this.postIdOrCategory,
+    required this.onTap,
+  });
 
   @override
   State<SquareBanners> createState() => _SquareBannersState();
@@ -93,16 +114,9 @@ class _SquareBannersState extends State<SquareBanners> {
   /// Build individual banner item
   Widget _buildBannerItem(BannerModel banner) {
     return InkWell(
-      /// 배너 클릭 시 외부 링크 열기
-      /// Open external link on banner tap
-      onTap: () async {
-        if (banner.link.isNotEmpty) {
-          final uri = Uri.tryParse(banner.link);
-          if (uri != null) {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
-        }
-      },
+      /// 배너 클릭 시 콜백 호출
+      /// Call callback on banner tap
+      onTap: () => widget.onTap(banner.link),
       child: ClipRRect(
         /// 모서리 둥글게 (flat design)
         /// Rounded corners (flat design)

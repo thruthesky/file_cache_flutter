@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo_api/philgo_api.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// Small 배너 위젯 (작은 배너)
 /// Small Banners Widget
@@ -11,12 +10,34 @@ import 'package:url_launcher/url_launcher.dart';
 ///
 /// [postIdOrCategory]: 게시판/카테고리 ID (필수)
 /// - 해당 카테고리의 작은 배너 + 전체 페이지 배너를 표시
+///
+/// [onTap]: 배너 클릭 시 호출되는 콜백 (필수)
+/// - 배너의 링크 URL을 파라미터로 전달받습니다.
+/// - 외부 링크 열기, 내부 라우팅 등을 처리할 수 있습니다.
+///
+/// ### 사용법 (Usage):
+/// ```dart
+/// SmallBanners(
+///   postIdOrCategory: 'freetalk',
+///   onTap: (link) => openBannerUrl(context, link),
+/// )
+/// ```
 class SmallBanners extends StatefulWidget {
   /// 게시판/카테고리 ID (필수)
   /// Post ID or Category (required)
   final String postIdOrCategory;
 
-  const SmallBanners({super.key, required this.postIdOrCategory});
+  /// 배너 클릭 시 호출되는 콜백 (Banner tap callback)
+  ///
+  /// 배너의 링크 URL을 파라미터로 전달받습니다.
+  /// Receives banner link URL as parameter.
+  final void Function(String link) onTap;
+
+  const SmallBanners({
+    super.key,
+    required this.postIdOrCategory,
+    required this.onTap,
+  });
 
   @override
   State<SmallBanners> createState() => _SmallBannersState();
@@ -79,16 +100,9 @@ class _SmallBannersState extends State<SmallBanners> {
     final scheme = theme.colorScheme;
 
     return InkWell(
-      /// 배너 클릭 시 외부 링크 열기
-      /// Open external link on banner tap
-      onTap: () async {
-        if (banner.link.isNotEmpty) {
-          final uri = Uri.tryParse(banner.link);
-          if (uri != null) {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
-        }
-      },
+      /// 배너 클릭 시 콜백 호출
+      /// Call callback on banner tap
+      onTap: () => widget.onTap(banner.link),
       child: Container(
         /// flat design: elevation 0, 배경색만으로 구분
         /// Flat design: no elevation, distinguish by background color

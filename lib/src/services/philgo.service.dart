@@ -264,4 +264,61 @@ class PhilgoService {
       client.close();
     }
   }
+
+  /// 글 하나 가져오기 (Get single post)
+  ///
+  /// `get_post` API를 사용하여 특정 글의 상세 정보를 가져옵니다.
+  /// 댓글, 게시판 목록 등을 포함하지 않아 빠르고 효율적입니다.
+  ///
+  /// Uses `get_post` API to fetch detailed information of a specific post.
+  /// Does not include comments or board list, making it fast and efficient.
+  ///
+  /// ### 파라미터 (Parameters):
+  /// - [idx]: 글 고유 번호 (Post unique ID)
+  ///
+  /// ### 사용법 (Usage):
+  /// ```dart
+  /// final post = await PhilgoService.instance.getPost(idx: 12345);
+  /// print('제목: ${post.subject}');
+  /// print('내용: ${post.content}');
+  /// ```
+  Future<Notice> getPost({required int idx}) async {
+    print('[PhilgoService] getPost 호출, idx: $idx');
+
+    final url = '${PhilgoConfig.phpApiUrl}?func=get_post&idx=$idx';
+
+    print('[PhilgoService] getPost URL: $url');
+
+    final client = HttpClient();
+    try {
+      final request = await client.getUrl(Uri.parse(url));
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+
+      print('[PhilgoService] getPost 응답: $responseBody');
+
+      // HTTP 상태 코드 검증 (HTTP status code verification)
+      if (response.statusCode != 200) {
+        throw Exception(
+          'HTTP ${response.statusCode}: ${response.reasonPhrase}',
+        );
+      }
+
+      // JSON 파싱 (JSON parsing)
+      final decoded = jsonDecode(responseBody);
+
+      // 에러 응답 확인 (Check error response)
+      if (decoded is Map<String, dynamic>) {
+        if (decoded.containsKey('error')) {
+          throw Exception(decoded['message'] ?? decoded['error']);
+        }
+        // 정상 응답 - Notice로 변환 (Normal response - convert to Notice)
+        return Notice.fromJson(decoded);
+      }
+
+      throw Exception('Invalid response format');
+    } finally {
+      client.close();
+    }
+  }
 }

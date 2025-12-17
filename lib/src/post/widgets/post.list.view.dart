@@ -39,10 +39,7 @@ class PostListViewController {
 
     // 나머지 페이지들은 그대로 유지
     // Keep remaining pages as-is
-    final updatedPages = [
-      updatedFirstPage,
-      ...currentState.pages!.skip(1),
-    ];
+    final updatedPages = [updatedFirstPage, ...currentState.pages!.skip(1)];
 
     // 업데이트된 상태로 컨트롤러 갱신
     // Update controller with new state
@@ -76,6 +73,7 @@ class PostListView extends StatefulWidget {
     this.enableHeroTransition = false,
     this.tileBuilder,
     required this.controller,
+    required this.onTapBanner,
   });
 
   /// 메인 카테고리 ID (Main category ID)
@@ -97,6 +95,8 @@ class PostListView extends StatefulWidget {
   /// Optional controller for external access to refresh and other operations
   /// GlobalKey를 사용하지 않고 외부에서 새로고침 등의 작업을 수행하기 위한 컨트롤러
   final PostListViewController controller;
+
+  final Function(String url) onTapBanner;
 
   @override
   State<PostListView> createState() => PostListViewState();
@@ -283,9 +283,11 @@ class PostListViewState extends State<PostListView> {
                   children: [
                     SquareBanners(
                       postIdOrCategory: widget.category ?? widget.postId,
+                      onTap: (url) => widget.onTapBanner(url),
                     ),
                     SmallBanners(
                       postIdOrCategory: widget.category ?? widget.postId,
+                      onTap: (url) => widget.onTapBanner(url),
                     ),
                     tile,
                   ],
