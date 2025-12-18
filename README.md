@@ -1,40 +1,40 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# file_cache_flutter
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+Flutter 애플리케이션을 위한 파일 캐시 라이브러리입니다. 파일을 쉽게 캐시하여 성능을 향상시키고 네트워크 사용량을 줄일 수 있습니다.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+## 기능
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+- 네트워크에서 다운로드한 파일을 로컬에 캐시
+- 캐시된 파일 자동 관리
+- 간편한 API
 
-## Features
+## 설치
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+`pubspec.yaml` 파일에 다음을 추가하세요:
 
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  file_cache_flutter: ^0.0.1
 ```
 
-## Additional information
+그런 다음 패키지를 설치합니다:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
-# file_cache
+```bash
+flutter pub get
+```
+
+## 사용법
+
+```dart
+import 'package:file_cache_flutter/file_cache.dart';
+
+// 사용 예제는 추후 추가 예정
+```
+
+## 예제
+
+전체 예제는 [example](example/) 폴더를 참조하세요.
+
+## 라이센스
+
+이 프로젝트는 MIT 라이센스를 따릅니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
