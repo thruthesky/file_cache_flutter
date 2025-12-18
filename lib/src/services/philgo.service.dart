@@ -3,6 +3,68 @@ import 'dart:io';
 
 import 'package:philgo_api/philgo_api.dart';
 
+/// PhilGo 서비스 클래스 (PhilGo Service Class)
+///
+/// ## 용도 및 개념 (Purpose and Concept)
+///
+/// PhilgoService는 PhilGo API를 보다 쉽고 효율적으로 사용하기 위한
+/// **서비스 레이어**입니다. 싱글톤 패턴으로 구현되어 앱 전체에서
+/// 동일한 인스턴스를 사용합니다.
+///
+/// ### 사용 목적 (Use Cases):
+///
+/// 1. **API 호출 추상화 (API Call Abstraction)**
+///    - `func()` 또는 `apiCall()` 함수를 직접 호출하지 않고
+///    - 의미 있는 메서드명으로 래핑하여 가독성 향상
+///    - 추가적인 캐시 로직이나 비즈니스 로직 적용 가능
+///
+/// 2. **상태 유지 및 재활용 (State Persistence and Reuse)**
+///    - 서비스 클래스 내부에 **메모리 변수**로 데이터 유지
+///    - 앱 전체에서 동일한 데이터에 접근 가능
+///    - 불필요한 API 재호출 방지
+///
+/// ### 예시 (Examples):
+///
+/// ```dart
+/// // 싱글톤 인스턴스 사용
+/// final service = PhilgoService.instance;
+///
+/// // 설정 로드 (내부적으로 캐싱 가능)
+/// final setting = await service.loadSetting();
+///
+/// // 통계 조회
+/// final stats = await service.getHomepageStats();
+/// print('회원 수: ${stats.totalUserCount}');
+///
+/// // 공지사항 조회
+/// final notices = await service.loadLatestNotices(limit: 5);
+/// ```
+///
+/// ### func() vs PhilgoService 비교 (Comparison):
+///
+/// ```dart
+/// // func() 직접 호출 - 단순한 일회성 호출에 적합
+/// final post = await func('post_view', data: {'idx': 123});
+///
+/// // PhilgoService 사용 - 캐싱, 상태 유지, 추가 로직 필요 시
+/// final stats = await PhilgoService.instance.getHomepageStats();
+/// // 내부적으로 캐시 처리, 에러 핸들링, 로깅 등 포함
+/// ```
+///
+/// ### 언제 PhilgoService에 메서드를 추가할까? (When to Add Methods):
+///
+/// - 여러 화면에서 동일한 API를 호출하고 결과를 공유해야 할 때
+/// - API 호출에 추가적인 캐싱 로직이 필요할 때
+/// - API 응답을 앱 전체에서 메모리에 유지해야 할 때
+/// - 복잡한 비즈니스 로직을 API 호출과 함께 처리해야 할 때
+///
+/// ### 파일 위치 (File Location):
+/// `packages/philgo_api/lib/src/services/philgo.service.dart`
+
+// ============================================================
+// 데이터 모델 (Data Models)
+// ============================================================
+
 /// 공지사항 데이터 모델 (Notice Data Model)
 ///
 /// get_posts API 응답에서 공지사항 데이터를 담는 모델입니다.

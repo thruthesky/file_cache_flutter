@@ -177,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  file_cache_flutter:
+    dependency: "direct main"
+    description:
+      name: file_cache_flutter
+      sha256: e40ce1790d1de574c806c4b2397cfbe481710f9ba3872d7812cd67277a325d79
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   file_picker:
     dependency: "direct main"
     description:

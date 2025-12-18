@@ -794,9 +794,12 @@ class PhilgoTrZh extends PhilgoTr {
 
   @override
   String get pointAdvertisementSuccess => '您的帖子已成功推广！';
+<<<<<<< HEAD
+=======
 
   @override
   String pointAdvertisementExtendMessage(int days, int points) {
     return '将延长您的帖子推广期$days天。需要$points积分。是否继续？';
   }
+>>>>>>> 1986d12f058ff9be1af053ba6427d0c0e428968b
 }
