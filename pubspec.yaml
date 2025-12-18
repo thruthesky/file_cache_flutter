@@ -15,6 +15,7 @@ dependencies:
   device_info_plus: ^12.3.0
   easy_phone_sign_in:
     path: packages/easy_phone_sign_in
+  file_cache_flutter: ^0.0.1
   file_picker: ^10.3.3
   firebase_auth: ^5.6.1
   firebase_core: ^3.15.1
