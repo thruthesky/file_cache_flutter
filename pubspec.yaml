@@ -1,6 +1,6 @@
 name: file_cache_flutter
 description: "A generic file cache library for Flutter applications with memory + file dual caching, TTL support, and key-value storage."
-version: 0.0.1
+version: 0.0.3
 homepage: https://github.com/thruthesky/file_cache_flutter
 
 environment:
