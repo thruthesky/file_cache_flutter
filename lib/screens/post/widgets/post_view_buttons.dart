@@ -66,12 +66,12 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           icon: widget.isLiked
               ? FontAwesomeIcons.solidThumbsUp
               : FontAwesomeIcons.thumbsUp,
-          label: post?.good != null && post.good > 0 ? '${post.good}' : null,
+          label: post.good > 0 ? '${post.good}' : null,
           color: Theme.of(context).colorScheme.primary,
           onPressed: () async {
             try {
               final updatedGood = await likePost(widget.post.idx);
-              (post ?? widget.post).good = updatedGood;
+              (widget.post).good = updatedGood;
               if (mounted) {
                 setState(() {
                   isLiked = true;
@@ -147,7 +147,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
 
                     await showPostUpdateDialog(
                       context,
-                      post: post!,
+                      post: post,
                       onUpdated: (updated) {
                         widget.post.subject = updated.subject;
                         widget.post.content = updated.content;
@@ -159,6 +159,9 @@ class _PostViewButtonsState extends State<PostViewButtons> {
                         }
                       },
                     );
+                    if (context.mounted) {
+                      FocusScope.of(context).unfocus();
+                    }
                   },
                 ),
                 const SizedBox(width: 8),
@@ -197,7 +200,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
         /// 옵션 메뉴 (수정/삭제/차단/신고) - Comic 스타일
         PostViewOptionMenu(
           useComicStyle: true,
-          post: post!,
+          post: post,
           firebaseUid: post.firebase_uid,
           onTapReply: widget.onTapReply,
           onEditCompleted: (updated) {

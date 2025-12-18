@@ -12,7 +12,6 @@ import 'package:philgo/router.dart';
 import 'package:philgo/screens/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
-import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 

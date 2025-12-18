@@ -223,7 +223,7 @@ class _ForumHomeState extends State<ForumHome> {
                 noItemsFoundIndicatorBuilder: (context) => EmptyPostList(),
                 enableHeroTransition: true,
                 tileBuilder: (post, onTap) =>
-                    PostListTile(post: post, onTap: onTap),
+                    PostListTileItem(post: post, onTap: onTap),
                 onTapBanner: (url) => openBannerUrl(context, url),
               ),
       ),
