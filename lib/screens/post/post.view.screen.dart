@@ -224,9 +224,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
         // 키보드가 올라올 때 bottomNavigationBar가 키보드 위로 이동하도록 설정
         resizeToAvoidBottomInset: true,
         appBar: PostViewAppBar(
-          isPostMine: isPostMine(),
           post: post!,
-          firebaseUid: firebaseUid,
           onTapReply: onTapReply,
           onEditCompleted: (updated) {
             // 원본 위젯의 게시글 데이터도 업데이트

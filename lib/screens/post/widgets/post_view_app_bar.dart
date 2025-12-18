@@ -5,25 +5,35 @@ import 'package:philgo/screens/post/widgets/post_view_option_menu.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 게시글 상세 화면 AppBar 위젯
+/// Post view screen AppBar widget
 ///
 /// 게시글 상세 화면에서 사용되는 AppBar입니다.
 /// 뒤로가기 버튼과 더보기 메뉴 버튼을 포함합니다.
+///
+/// Provides back button and option menu for post view screen.
 class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   const PostViewAppBar({
     super.key,
-    required this.isPostMine,
     required this.post,
-    required this.firebaseUid,
     required this.onTapReply,
     required this.onEditCompleted,
     required this.onDeleteCompleted,
   });
 
-  final bool isPostMine;
+  /// 게시글 객체
+  /// Post object
   final Post post;
-  final String firebaseUid;
+
+  /// 답글 버튼 탭 시 호출되는 콜백
+  /// Callback when reply button is tapped
   final VoidCallback onTapReply;
+
+  /// 수정 완료 시 호출되는 콜백
+  /// Callback when edit is completed
   final void Function(Post updated) onEditCompleted;
+
+  /// 삭제 완료 시 호출되는 콜백
+  /// Callback when delete is completed
   final void Function(BuildContext context) onDeleteCompleted;
 
   @override
@@ -45,7 +55,7 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.only(right: 4),
           child: PostViewOptionMenu(
             post: post,
-            firebaseUid: firebaseUid,
+            firebaseUid: post.firebase_uid,
             onTapReply: onTapReply,
             onEditCompleted: onEditCompleted,
             onDeleteCompleted: onDeleteCompleted,
