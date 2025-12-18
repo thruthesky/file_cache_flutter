@@ -12,9 +12,10 @@ import 'package:philgo_api/philgo_api.dart';
 /// - 이 위젯은 사용자 정보가 업데이트 될 때 마다 builder() 를 rebuild 한다.
 /// - 그래서, 이 위젯 하위에서 Selector< PhilgoState, User? >(...) 와 같이 할 필요가 없이, 이 함수의 콜백이 전달하는 user 를 사용하면 된다.
 class UserReady extends StatefulWidget {
-  const UserReady({super.key, required this.builder, this.init});
+  const UserReady({super.key, required this.login, this.logout, this.init});
 
-  final Widget Function(BuildContext context, User) builder;
+  final Widget Function(BuildContext context, User) login;
+  final Widget Function(BuildContext context)? logout;
   final Future<void> Function(BuildContext context, User)? init;
 
   @override
@@ -25,11 +26,18 @@ class _UserReadyState extends State<UserReady> {
   bool _initialized = false;
   @override
   Widget build(BuildContext context) {
-    return Selector<PhilgoState, User?>(
-      selector: (_, state) => state.user,
-      builder: (_, user, _) {
-        if (user == null) {
+    return Selector<PhilgoState, (User?, bool)>(
+      selector: (_, state) => (state.user, state.loading),
+      builder: (_, userLoading, _) {
+        final user = userLoading.$1;
+        final loading = userLoading.$2;
+        if (loading) {
           return Center(child: CircularProgressIndicator.adaptive());
+        }
+        if (user == null) {
+          return widget.logout != null
+              ? widget.logout!(context)
+              : SizedBox.shrink();
         }
         if (!_initialized && widget.init != null) {
           _initialized = true;
@@ -37,7 +45,7 @@ class _UserReadyState extends State<UserReady> {
             await widget.init!(context, user);
           });
         }
-        return widget.builder(context, user);
+        return widget.login(context, user);
       },
     );
   }

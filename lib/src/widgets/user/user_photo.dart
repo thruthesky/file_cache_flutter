@@ -9,7 +9,7 @@ class UserPhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UserReady(
-      builder: (context, user) {
+      login: (context, user) {
         if (builder != null) {
           return builder!(context, user);
         }

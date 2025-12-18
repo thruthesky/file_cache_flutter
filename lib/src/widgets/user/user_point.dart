@@ -9,7 +9,7 @@ class UserPoint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UserReady(
-      builder: (context, user) {
+      login: (context, user) {
         final points = user.point ?? 0;
         if (builder != null) {
           return builder!(points);

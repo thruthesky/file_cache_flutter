@@ -9,7 +9,7 @@ class UserNickname extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UserReady(
-      builder: (context, user) {
+      login: (context, user) {
         final nickname = user.nickname;
         if (builder != null) {
           return builder!(context, nickname);

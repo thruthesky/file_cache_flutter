@@ -1,4 +1,4 @@
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:philgo_api/philgo_api.dart';
 
@@ -305,9 +305,9 @@ Future<List<Post>> getPosts({
   );
 
   // 디버그 로깅
-  if (debug) {
-    debugLog('getPosts 응답: ${res.length}개 항목');
-  }
+  // if (debug) {
+  //   debugLog('getPosts 응답: ${res.length}개 항목');
+  // }
 
   // API 응답을 List<Post>로 변환하여 반환
   return res.map((e) => Post.fromJson(e as Map<String, dynamic>)).toList();
@@ -319,9 +319,9 @@ Future<Post> getPost(int id) async {
 
   final post = Post.fromJson(res);
 
-  log('=== GET POST API RESPONSE ===');
-  log('$post');
-  log('============================');
+  // log('=== GET POST API RESPONSE ===');
+  // log('$post');
+  // log('============================');
 
   return post;
 }
@@ -345,7 +345,7 @@ Future<List<Post>> getLatestByUser({
     },
     // debug: true,
   );
-  debugLog('postList: $res');
+  // debugLog('postList: $res');
   return (res).map((e) => Post.fromJson(e as Map<String, dynamic>)).toList();
 }
 
@@ -401,14 +401,14 @@ Future<Post> createPost(RecordType data) async {
   }
 
   // ========== 2. 디버깅 정보 로깅 (개발 시 유용) ==========
-  debugLog('게시글 작성 시작:');
-  debugLog('  - post_id: ${cleanedData['post_id']}'); // post_id 로깅
-  debugLog('  - 제목: ${cleanedData['subject']}'); // subject 필드 사용
-  debugLog('  - 카테고리: ${cleanedData['category'] ?? '(미지정)'}'); // 카테고리는 옵션
-  debugLog('  - 내용 길이: ${cleanedData['content'].toString().length}자');
-  debugLog(
-    '  - 파일 개수: ${data['files'] is List ? (data['files'] as List).length : 0}개',
-  );
+  //  debugLog('게시글 작성 시작:');
+  //  debugLog('  - post_id: ${cleanedData['post_id']}'); // post_id 로깅
+  //  debugLog('  - 제목: ${cleanedData['subject']}'); // subject 필드 사용
+  //  debugLog('  - 카테고리: ${cleanedData['category'] ?? '(미지정)'}'); // 카테고리는 옵션
+  //  debugLog('  - 내용 길이: ${cleanedData['content'].toString().length}자');
+  //  debugLog(
+  // '  - 파일 개수: ${data['files'] is List ? (data['files'] as List).length : 0}개',
+  // );
 
   // ========== 3. API 호출 ==========
   try {
@@ -425,7 +425,7 @@ Future<Post> createPost(RecordType data) async {
     // API가 에러를 반환한 경우 처리
     if (response['error'] != null) {
       final userMessage = response['message'] ?? '게시글 작성에 실패했습니다.';
-      debugLog('게시글 작성 실패: ${response['error']} - $userMessage');
+      //      debugLog('게시글 작성 실패: ${response['error']} - $userMessage');
 
       showSafeErrorDialog(userMessage);
       throw Exception('게시글 작성 실패: ${response['error']}');
@@ -440,10 +440,10 @@ Future<Post> createPost(RecordType data) async {
     // Post 객체 생성 및 반환
     final post = Post.fromJson(postData);
 
-    debugLog('게시글 작성 성공:');
-    debugLog('  - idx: ${post.idx}');
-    debugLog('  - 제목: ${post.subject}');
-    debugLog('  - 작성시간: ${post.timeString}');
+    //    debugLog('게시글 작성 성공:');
+    //    debugLog('  - idx: ${post.idx}');
+    //    debugLog('  - 제목: ${post.subject}');
+    //    debugLog('  - 작성시간: ${post.timeString}');
 
     // 성공적으로 생성된 Post 객체 반환
     return post;
@@ -452,7 +452,7 @@ Future<Post> createPost(RecordType data) async {
 
     // philgoApi에서 이미 에러 다이얼로그를 표시하지만,
     // 추가적인 로깅이나 처리가 필요한 경우
-    debugLog('게시글 작성 중 예외 발생: $e');
+    //    debugLog('게시글 작성 중 예외 발생: $e');
 
     // 에러를 상위로 다시 전파
     // 호출하는 쪽에서 추가 처리 가능
@@ -528,15 +528,15 @@ Future<Post> updatePost(RecordType data) async {
   }
 
   // ========== 2. 디버깅 정보 로깅 (개발 시 유용) ==========
-  debugLog('게시글 수정 시작:');
-  debugLog('  - idx: $idx');
+  //  debugLog('게시글 수정 시작:');
+  //  debugLog('  - idx: $idx');
   if (hasSubject) debugLog('  - 제목: ${cleanedData['subject']}');
   if (hasContent) {
-    debugLog('  - 내용 길이: ${cleanedData['content'].toString().length}자');
+    //    debugLog('  - 내용 길이: ${cleanedData['content'].toString().length}자');
   }
   if (hasCategory) debugLog('  - 카테고리: ${cleanedData['category'] ?? '(제거)'}');
   if (hasFiles) {
-    debugLog('  - 파일 개수: ${(cleanedData['files'] as List).length}개');
+    //    debugLog('  - 파일 개수: ${(cleanedData['files'] as List).length}개');
   }
 
   // ========== 3. API 호출 ==========
@@ -554,7 +554,7 @@ Future<Post> updatePost(RecordType data) async {
     // API가 에러를 반환한 경우 처리
     if (response['error'] != null) {
       final userMessage = response['message'] ?? '게시글 수정에 실패했습니다.';
-      debugLog('게시글 수정 실패: ${response['error']} - $userMessage');
+      //      debugLog('게시글 수정 실패: ${response['error']} - $userMessage');
 
       showSafeErrorDialog(userMessage);
       throw Exception('게시글 수정 실패: ${response['error']}');
@@ -569,10 +569,10 @@ Future<Post> updatePost(RecordType data) async {
     // Post 객체 생성 및 반환
     final post = Post.fromJson(postData);
 
-    debugLog('게시글 수정 성공:');
-    debugLog('  - idx: ${post.idx}');
-    debugLog('  - 제목: ${post.subject}');
-    debugLog('  - 수정시간: ${post.timeString}');
+    //    debugLog('게시글 수정 성공:');
+    //    debugLog('  - idx: ${post.idx}');
+    //    debugLog('  - 제목: ${post.subject}');
+    //    debugLog('  - 수정시간: ${post.timeString}');
 
     // 성공적으로 수정된 Post 객체 반환
     return post;
@@ -581,7 +581,7 @@ Future<Post> updatePost(RecordType data) async {
 
     // philgoApi에서 이미 에러 다이얼로그를 표시하지만,
     // 추가적인 로깅이나 처리가 필요한 경우
-    debugLog('게시글 수정 중 예외 발생: $e');
+    //    debugLog('게시글 수정 중 예외 발생: $e');
 
     // 에러를 상위로 다시 전파
     // 호출하는 쪽에서 추가 처리 가능
@@ -593,8 +593,8 @@ Future<Post> updatePost(RecordType data) async {
 ///
 /// It validates and display error dialog if validation fails.
 Future<Post> deletePost(int idx) async {
-  debugLog('게시글 삭제 시작:');
-  debugLog('  - idx: $idx');
+  //  debugLog('게시글 삭제 시작:');
+  //  debugLog('  - idx: $idx');
 
   try {
     final response = await func<Map<String, dynamic>>(
@@ -606,7 +606,7 @@ Future<Post> deletePost(int idx) async {
     // API가 에러를 반환한 경우 처리
     if (response['error'] != null) {
       final userMessage = response['message'] ?? '게시글 삭제에 실패했습니다.';
-      debugLog('게시글 삭제 실패: ${response['error']} - $userMessage');
+      //      debugLog('게시글 삭제 실패: ${response['error']} - $userMessage');
 
       showSafeErrorDialog(userMessage);
       throw Exception('게시글 삭제 실패: ${response['error']}');
@@ -614,7 +614,7 @@ Future<Post> deletePost(int idx) async {
 
     return Post.fromJson(response);
   } catch (e) {
-    debugLog('게시글 삭제 중 예외 발생: $e');
+    //    debugLog('게시글 삭제 중 예외 발생: $e');
     rethrow;
   }
 }
@@ -652,7 +652,7 @@ Future<int> likePost(int idx) async {
     alertOnError: false,
   );
 
-  debugLog("response from like_func: $response");
+  //  debugLog("response from like_func: $response");
 
   // Return the updated good count from the response
   return response['good'] ?? 0;
@@ -753,9 +753,9 @@ Future<Post> extendPointAdvertisement({
   }
 
   // ========== 2. 디버깅 정보 로깅 ==========
-  debugLog('포인트 광고 등록/연장 시작:');
-  debugLog('  - idx: $idx');
-  debugLog('  - days: $days');
+  //  debugLog('포인트 광고 등록/연장 시작:');
+  //  debugLog('  - idx: $idx');
+  //  debugLog('  - days: $days');
 
   // ========== 3. API 호출 ==========
   try {
@@ -763,10 +763,7 @@ Future<Post> extendPointAdvertisement({
     // auth: true로 Firebase ID Token 자동 포함
     final response = await func<Map<String, dynamic>>(
       'advertise_post_with_point',
-      data: {
-        'idx': idx,
-        'days': days,
-      },
+      data: {'idx': idx, 'days': days},
       alertOnError: alertOnError,
       debug: debug,
     );
@@ -776,7 +773,7 @@ Future<Post> extendPointAdvertisement({
     // API가 에러를 반환한 경우 처리
     if (response['error'] != null) {
       final userMessage = response['message'] ?? '포인트 광고 등록에 실패했습니다.';
-      debugLog('포인트 광고 등록 실패: ${response['error']} - $userMessage');
+      //      debugLog('포인트 광고 등록 실패: ${response['error']} - $userMessage');
 
       showSafeErrorDialog(userMessage);
       throw Exception('포인트 광고 등록 실패: ${response['error']}');
@@ -787,18 +784,18 @@ Future<Post> extendPointAdvertisement({
     // Post 객체 생성 및 반환
     final post = Post.fromJson(response);
 
-    debugLog('포인트 광고 등록 성공:');
-    debugLog('  - idx: ${post.idx}');
-    debugLog('  - 광고 종료 시간(int5): ${post.int5}');
-    debugLog('  - 광고 기간(int7): ${post.int7}');
-    debugLog('  - 사용 포인트(int8): ${post.int8}');
+    //    debugLog('포인트 광고 등록 성공:');
+    //    debugLog('  - idx: ${post.idx}');
+    //    debugLog('  - 광고 종료 시간(int5): ${post.int5}');
+    //    debugLog('  - 광고 기간(int7): ${post.int7}');
+    //    debugLog('  - 사용 포인트(int8): ${post.int8}');
 
     // 성공적으로 등록된 Post 객체 반환
     return post;
   } catch (e) {
     // ========== 6. 예외 처리 ==========
 
-    debugLog('포인트 광고 등록 중 예외 발생: $e');
+    //    debugLog('포인트 광고 등록 중 예외 발생: $e');
 
     // 에러를 상위로 다시 전파
     rethrow;

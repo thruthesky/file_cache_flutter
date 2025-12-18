@@ -9,7 +9,7 @@ class UserLevel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UserReady(
-      builder: (context, user) => builder(user.level?.toString() ?? ''),
+      login: (context, user) => builder(user.level?.toString() ?? ''),
     );
   }
 }

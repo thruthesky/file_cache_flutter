@@ -11,23 +11,26 @@ import 'package:philgo_api/philgo_api.dart';
 class PhilgoState extends ChangeNotifier {
   PhilgoSetting? setting;
   User? user;
+  bool loading = true;
 
   PhilgoState() {
     _init();
   }
 
   void _init() async {
-    setting = await PhilgoService.instance.loadSetting();
-    notifyListeners();
-
     FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
       if (firebaseUser != null) {
         user = await philgoApiUserVerify();
-        notifyListeners();
       } else {
         user = null;
-        notifyListeners();
       }
+      loading = false;
+      notifyListeners();
+    });
+
+    PhilgoService.instance.loadSetting().then((loadedSetting) {
+      setting = loadedSetting;
+      notifyListeners();
     });
   }
 
