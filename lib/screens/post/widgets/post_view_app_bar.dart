@@ -44,7 +44,6 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 4),
           child: PostViewOptionMenu(
-            isPostMine: isPostMine,
             post: post,
             firebaseUid: firebaseUid,
             onTapReply: onTapReply,

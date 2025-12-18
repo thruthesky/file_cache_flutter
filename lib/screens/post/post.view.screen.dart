@@ -88,7 +88,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     try {
       final details = await getPost(widget.post.idx);
 
-      debugLog('------> LOADED POST: $details');
+      // debugLog('------> LOADED POST: $details');
 
       if (mounted) {
         setState(() {
@@ -314,7 +314,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                             child: PostViewButtons(
                               post: post!,
-                              isPostMine: isPostMine(),
                               isLiked: isLiked,
                               onLikeToggled: (liked) {
                                 setState(() {

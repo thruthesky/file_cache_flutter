@@ -15,9 +15,6 @@ class PostViewButtons extends StatefulWidget {
   /// 게시글 객체 (필수)
   final Post post;
 
-  /// 본인 게시글 여부 (필수)
-  final bool isPostMine;
-
   /// 좋아요 여부 (필수)
   final bool isLiked;
 
@@ -38,7 +35,6 @@ class PostViewButtons extends StatefulWidget {
   const PostViewButtons({
     super.key,
     required this.post,
-    required this.isPostMine,
     required this.isLiked,
     this.onLikeToggled,
     required this.onTapReply,
@@ -52,7 +48,7 @@ class PostViewButtons extends StatefulWidget {
 }
 
 class _PostViewButtonsState extends State<PostViewButtons> {
-  Post? get post => widget.post;
+  Post get post => widget.post;
   late bool isLiked;
 
   @override
@@ -70,7 +66,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           icon: widget.isLiked
               ? FontAwesomeIcons.solidThumbsUp
               : FontAwesomeIcons.thumbsUp,
-          label: post?.good != null && post!.good > 0 ? '${post!.good}' : null,
+          label: post?.good != null && post.good > 0 ? '${post.good}' : null,
           color: Theme.of(context).colorScheme.primary,
           onPressed: () async {
             try {
@@ -105,97 +101,108 @@ class _PostViewButtonsState extends State<PostViewButtons> {
 
         const Spacer(),
 
-        /// 타인 게시글인 경우 옵션 메뉴 표시
-        if (!widget.isPostMine) ...[
-          ComicActionButton(
-            icon: FontAwesomeIcons.ban,
-            label: PhilgoTr.of(context)!.block,
-            onPressed: () {
-              showBlockDialog(
-                context: context,
-                otherUserUid: post!.firebase_uid,
+        /// 본인/타인 게시글에 따라 다른 버튼 표시
+        UserReady(
+          login: (context, user) {
+            /// 타인 게시글인 경우: 차단, 신고 버튼
+            if (!post.isMine(context)) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ComicActionButton(
+                    icon: FontAwesomeIcons.ban,
+                    label: PhilgoTr.of(context)!.block,
+                    onPressed: () {
+                      showBlockDialog(
+                        context: context,
+                        otherUserUid: post.firebase_uid,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  PostReportButton(
+                    type: 'post',
+                    idx: widget.post.idx,
+                    post: widget.post,
+                  ),
+                ],
               );
-            },
-          ),
-          const SizedBox(width: 8),
-          PostReportButton(
-            type: 'post',
-            idx: widget.post.idx,
-            post: widget.post,
-          ),
-        ],
+            }
 
-        /// 본인 게시글인 경우 수정/삭제 버튼 표시
-        if (widget.isPostMine) ...[
-          ComicActionButton(
-            icon: FontAwesomeIcons.penToSquare,
-            onPressed: () async {
-              if (post!.no_of_comment >= 1) {
-                showInfoDialog(
-                  context,
-                  Lo.of(context)!.alert,
-                  Lo.of(context)!.postWithCommentsCannotBeEdited,
-                );
-                return;
-              }
+            /// 본인 게시글인 경우: 수정, 삭제 버튼
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ComicActionButton(
+                  icon: FontAwesomeIcons.penToSquare,
+                  onPressed: () async {
+                    if (post.no_of_comment >= 1) {
+                      showInfoDialog(
+                        context,
+                        Lo.of(context)!.alert,
+                        Lo.of(context)!.postWithCommentsCannotBeEdited,
+                      );
+                      return;
+                    }
 
-              await showPostUpdateDialog(
-                context,
-                post: post!,
-                onUpdated: (updated) {
-                  widget.post.subject = updated.subject;
-                  widget.post.content = updated.content;
+                    await showPostUpdateDialog(
+                      context,
+                      post: post!,
+                      onUpdated: (updated) {
+                        widget.post.subject = updated.subject;
+                        widget.post.content = updated.content;
 
-                  if (mounted) {
-                    setState(() {
-                      widget.onUpdated(updated);
-                    });
-                  }
-                },
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-          ComicActionButton(
-            icon: FontAwesomeIcons.trash,
-            color: Theme.of(context).colorScheme.error,
-            onPressed: () async {
-              if (post!.no_of_comment >= 1) {
-                showInfoDialog(
-                  context,
-                  Lo.of(context)!.alert,
-                  Lo.of(context)!.postWithCommentsCannotBeDeleted,
-                );
-                return;
-              }
+                        if (mounted) {
+                          setState(() {
+                            widget.onUpdated(updated);
+                          });
+                        }
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(width: 8),
+                ComicActionButton(
+                  icon: FontAwesomeIcons.trash,
+                  color: Theme.of(context).colorScheme.error,
+                  onPressed: () async {
+                    if (post.no_of_comment >= 1) {
+                      showInfoDialog(
+                        context,
+                        Lo.of(context)!.alert,
+                        Lo.of(context)!.postWithCommentsCannotBeDeleted,
+                      );
+                      return;
+                    }
 
-              final confirm = await showConfirmDialog(
-                message: Lo.of(context)!.confirmDeletePost,
-              );
+                    final confirm = await showConfirmDialog(
+                      message: Lo.of(context)!.confirmDeletePost,
+                    );
 
-              if (confirm) {
-                await deletePost(widget.post.idx);
-                if (context.mounted) {
-                  context.pop();
-                }
-              }
-            },
-          ),
-        ],
+                    if (confirm) {
+                      await deletePost(widget.post.idx);
+                      if (context.mounted) {
+                        context.pop();
+                      }
+                    }
+                  },
+                ),
+              ],
+            );
+          },
+        ),
 
         const SizedBox(width: 8),
 
         /// 옵션 메뉴 (수정/삭제/차단/신고) - Comic 스타일
         PostViewOptionMenu(
           useComicStyle: true,
-          isPostMine: widget.isPostMine,
           post: post!,
-          firebaseUid: post!.firebase_uid,
+          firebaseUid: post.firebase_uid,
           onTapReply: widget.onTapReply,
           onEditCompleted: (updated) {
             widget.post.subject = updated.subject;
             widget.post.content = updated.content;
-
             if (mounted) {
               widget.onUpdated(updated);
             }

@@ -10,7 +10,6 @@ import 'package:philgo_api/philgo_api.dart';
 class PostViewOptionMenu extends StatelessWidget {
   const PostViewOptionMenu({
     super.key,
-    required this.isPostMine,
     required this.post,
     required this.firebaseUid,
     required this.onTapReply,
@@ -20,7 +19,6 @@ class PostViewOptionMenu extends StatelessWidget {
     this.useComicStyle = false,
   });
 
-  final bool isPostMine;
   final Post post;
   final String firebaseUid;
   final VoidCallback onTapReply;
@@ -52,7 +50,7 @@ class PostViewOptionMenu extends StatelessWidget {
             )
           : null,
       itemBuilder: (context) {
-        if (isPostMine) {
+        if (post.isMine(context)) {
           return [
             PopupMenuItem(
               value: _PostMenuAction.pointads,

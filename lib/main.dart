@@ -26,7 +26,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AppState()),
         ChangeNotifierProvider(create: (_) => NavigationState()),
-        ChangeNotifierProvider(create: (_) => PhilgoState()),
+        ChangeNotifierProvider(create: (_) => PhilgoState(), lazy: false),
       ],
       child: const MyApp(),
     ),
