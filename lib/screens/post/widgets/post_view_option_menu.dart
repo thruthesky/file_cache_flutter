@@ -7,13 +7,13 @@ import 'package:philgo_api/philgo_api.dart';
 /// 게시글 옵션 메뉴
 /// - useComicStyle = false: AppBar용 (심플한 스타일, 테두리 없음)
 /// - useComicStyle = true: 액션바용 (Comic 스타일, 둥근 모서리 + 테두리)
-class PostOptionsMenu extends StatelessWidget {
-  const PostOptionsMenu({
+class PostViewOptionMenu extends StatelessWidget {
+  const PostViewOptionMenu({
     super.key,
     required this.isPostMine,
     required this.post,
     required this.firebaseUid,
-    required this.onReplyTap,
+    required this.onTapReply,
     required this.onEditCompleted,
     required this.onDeleteCompleted,
     // required this.onShowPointAds,
@@ -23,7 +23,7 @@ class PostOptionsMenu extends StatelessWidget {
   final bool isPostMine;
   final Post post;
   final String firebaseUid;
-  final VoidCallback onReplyTap;
+  final VoidCallback onTapReply;
   final void Function(Post updated) onEditCompleted;
   // final void Function(BuildContext context) onShowPointAds;
   final void Function(BuildContext context) onDeleteCompleted;
@@ -188,13 +188,18 @@ class PostOptionsMenu extends StatelessWidget {
         );
 
         // 4. Check if post has existing active advertisement
-        final hasActiveAd = post.int5 != null &&
-                            post.int5! > DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        final hasActiveAd =
+            post.int5 != null &&
+            post.int5! > DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
         // 5. Use different message for extending vs new ad
         final confirmationMessage = hasActiveAd
-            ? PhilgoTr.of(context)!.pointAdvertisementExtendMessage(selectedDays, pointCost)
-            : PhilgoTr.of(context)!.pointAdvertisementConfirmMessage(selectedDays, pointCost);
+            ? PhilgoTr.of(
+                context,
+              )!.pointAdvertisementExtendMessage(selectedDays, pointCost)
+            : PhilgoTr.of(
+                context,
+              )!.pointAdvertisementConfirmMessage(selectedDays, pointCost);
 
         final updatedPost = await showAdvertisementConfirmDialog(
           context: context,
@@ -221,7 +226,7 @@ class PostOptionsMenu extends StatelessWidget {
         }
         break;
       case _PostMenuAction.reply:
-        onReplyTap();
+        onTapReply();
         break;
       case _PostMenuAction.block:
         showBlockDialog(context: context, otherUserUid: firebaseUid);

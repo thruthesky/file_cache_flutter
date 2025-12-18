@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/screens/home/home.screen.dart';
-import 'package:philgo/screens/post/widgets/post_options_menu.dart';
+import 'package:philgo/screens/post/widgets/post_view_option_menu.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 게시글 상세 화면 AppBar 위젯
@@ -14,7 +14,7 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.isPostMine,
     required this.post,
     required this.firebaseUid,
-    required this.onReplyTap,
+    required this.onTapReply,
     required this.onEditCompleted,
     required this.onDeleteCompleted,
   });
@@ -22,7 +22,7 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isPostMine;
   final Post post;
   final String firebaseUid;
-  final VoidCallback onReplyTap;
+  final VoidCallback onTapReply;
   final void Function(Post updated) onEditCompleted;
   final void Function(BuildContext context) onDeleteCompleted;
 
@@ -43,11 +43,11 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 4),
-          child: PostOptionsMenu(
+          child: PostViewOptionMenu(
             isPostMine: isPostMine,
             post: post,
             firebaseUid: firebaseUid,
-            onReplyTap: onReplyTap,
+            onTapReply: onTapReply,
             onEditCompleted: onEditCompleted,
             onDeleteCompleted: onDeleteCompleted,
           ),

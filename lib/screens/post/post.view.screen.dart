@@ -1,9 +1,7 @@
 import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/screens/post/widgets/post_blocked_user_info.dart';
+import 'package:philgo/screens/post/widgets/post_view_buttons.dart';
 import 'package:philgo/screens/post/widgets/post_view_comment_box.dart';
-import 'package:philgo/screens/post/widgets/comic_action_button.dart';
-import 'package:philgo/screens/post/widgets/post_options_menu.dart';
 import 'package:philgo/screens/post/widgets/post_view_app_bar.dart';
 import 'package:philgo/screens/post/widgets/post_view_meta.dart';
 import 'package:philgo/screens/post/widgets/post_view_subject.dart';
@@ -12,7 +10,6 @@ import 'package:philgo/widgets/unfocus_on_tap.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Post View Screen
 ///
@@ -111,12 +108,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 
   /// Check if the current post belongs to the logged-in user
+  ///
+  @Deprecated('use post?.isMine instead')
   bool isPostMine() {
     final myIdx = PhilgoState.of(context).user?.idx;
     return myIdx == widget.post.idx_member;
   }
 
   /// Check if a comment belongs to the logged-in user
+  ///
+  @Deprecated('use comment.isMine instead')
   bool isCommentMine(int idxMember) {
     final myIdx = PhilgoState.of(context).user?.idx;
     return myIdx == idxMember;
@@ -207,7 +208,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   /// Focus on the reply input field
   /// The _onFocusChange listener will handle scrolling automatically
-  void focusReplyInput() {
+  void onTapReply() {
     if (mounted) {
       _commentFocusNode.requestFocus();
     }
@@ -226,7 +227,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           isPostMine: isPostMine(),
           post: post!,
           firebaseUid: firebaseUid,
-          onReplyTap: focusReplyInput,
+          onTapReply: onTapReply,
           onEditCompleted: (updated) {
             // 원본 위젯의 게시글 데이터도 업데이트
             widget.post.subject = updated.subject;
@@ -311,168 +312,32 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           /// 액션 버튼 (좋아요, 답글, 차단, 신고, 수정, 삭제)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                            child: Row(
-                              children: [
-                                /// 좋아요 버튼
-                                ComicActionButton(
-                                  icon: isLiked
-                                      ? FontAwesomeIcons.solidThumbsUp
-                                      : FontAwesomeIcons.thumbsUp,
-                                  label: post?.good != null && post!.good > 0
-                                      ? '${post!.good}'
-                                      : null,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  onPressed: () async {
-                                    try {
-                                      final updatedGood = await likePost(
-                                        widget.post.idx,
-                                      );
-                                      (post ?? widget.post).good = updatedGood;
-                                      if (mounted) {
-                                        setState(() {
-                                          isLiked = true;
-                                        });
-                                      }
-                                      if (context.mounted) {
-                                        showSuccessSnackBar(
-                                          context,
-                                          Lo.of(context)!.postLiked,
-                                        );
-                                      }
-                                    } catch (e) {
-                                      d('Error liking post: $e');
-                                      if (e.toString().contains(
-                                        'already-liked',
-                                      )) {
-                                        if (context.mounted) {
-                                          showErrorSnackBar(
-                                            context,
-                                            Lo.of(context)!.alreadyLikedPost,
-                                          );
-                                        }
-                                      }
-                                    }
-                                  },
-                                ),
+                            child: PostViewButtons(
+                              post: post!,
+                              isPostMine: isPostMine(),
+                              isLiked: isLiked,
+                              onLikeToggled: (liked) {
+                                setState(() {
+                                  isLiked = liked;
+                                });
+                              },
+                              onTapReply: onTapReply,
+                              onEditCompleted: (updatedPost) {
+                                // 원본 위젯의 게시글 데이터도 업데이트
+                                widget.post.subject = updatedPost.subject;
+                                widget.post.content = updatedPost.content;
 
-                                const SizedBox(width: 8),
-
-                                /// 답글 버튼
-                                ComicActionButton(
-                                  icon: FontAwesomeIcons.reply,
-                                  onPressed: focusReplyInput,
-                                ),
-
-                                const Spacer(),
-
-                                /// 타인 게시글인 경우 옵션 메뉴 표시
-                                if (!isPostMine()) ...[
-                                  ComicActionButton(
-                                    icon: FontAwesomeIcons.ban,
-                                    label: PhilgoTr.of(context)!.block,
-                                    onPressed: () {
-                                      showBlockDialog(
-                                        context: context,
-                                        otherUserUid: firebaseUid,
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 8),
-                                  PostReportButton(
-                                    type: 'post',
-                                    idx: widget.post.idx,
-                                    post: widget.post,
-                                  ),
-                                ],
-
-                                /// 본인 게시글인 경우 수정/삭제 버튼 표시
-                                if (isPostMine()) ...[
-                                  ComicActionButton(
-                                    icon: FontAwesomeIcons.penToSquare,
-                                    onPressed: () async {
-                                      if (post!.no_of_comment >= 1) {
-                                        showInfoDialog(
-                                          context,
-                                          Lo.of(context)!.alert,
-                                          Lo.of(
-                                            context,
-                                          )!.postWithCommentsCannotBeEdited,
-                                        );
-                                        return;
-                                      }
-
-                                      await showPostUpdateDialog(
-                                        context,
-                                        post: post!,
-                                        onUpdated: (updated) {
-                                          widget.post.subject = updated.subject;
-                                          widget.post.content = updated.content;
-
-                                          if (mounted) {
-                                            setState(() {
-                                              post = updated;
-                                            });
-                                          }
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 8),
-                                  ComicActionButton(
-                                    icon: FontAwesomeIcons.trash,
-                                    color: Theme.of(context).colorScheme.error,
-                                    onPressed: () async {
-                                      if (post!.no_of_comment >= 1) {
-                                        showInfoDialog(
-                                          context,
-                                          Lo.of(context)!.alert,
-                                          Lo.of(
-                                            context,
-                                          )!.postWithCommentsCannotBeDeleted,
-                                        );
-                                        return;
-                                      }
-
-                                      final confirm = await showConfirmDialog(
-                                        message: Lo.of(
-                                          context,
-                                        )!.confirmDeletePost,
-                                      );
-
-                                      if (confirm) {
-                                        await deletePost(widget.post.idx);
-                                        if (context.mounted) {
-                                          context.pop();
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ],
-
-                                const SizedBox(width: 8),
-
-                                /// 옵션 메뉴 (수정/삭제/차단/신고) - Comic 스타일
-                                PostOptionsMenu(
-                                  useComicStyle: true,
-                                  isPostMine: isPostMine(),
-                                  post: post!,
-                                  firebaseUid: firebaseUid,
-                                  onReplyTap: focusReplyInput,
-                                  onEditCompleted: (updated) {
-                                    widget.post.subject = updated.subject;
-                                    widget.post.content = updated.content;
-
-                                    if (mounted) {
-                                      setState(() {
-                                        post = updated;
-                                      });
-                                    }
-                                  },
-                                  onDeleteCompleted: (context) {
-                                    context.pop();
-                                  },
-                                ),
-                              ],
+                                if (mounted) {
+                                  setState(() {
+                                    post = updatedPost;
+                                  });
+                                }
+                              },
+                              onDeleteCompleted: (context) {
+                                context.pop();
+                              },
+                              onUpdated: (updated) =>
+                                  setState(() => post = updated),
                             ),
                           ),
                         ],
