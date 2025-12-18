@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import '../cache/cache.dart';
+import 'package:file_cache_flutter/file_cache_flutter.dart';
 import 'weather.model.dart';
 
 /// 날씨 서비스 (Weather Service)

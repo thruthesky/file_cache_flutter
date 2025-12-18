@@ -49,7 +49,7 @@ dependencies:
 
 dependency_overrides:
   file_cache_flutter:
-    path: packages/file_cache_manager
+    path: packages/file_cache_flutter
   font_awesome_flutter:
     path: packages/font_awesome_flutter
 

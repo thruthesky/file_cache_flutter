@@ -339,10 +339,9 @@ packages:
   file_cache_flutter:
     dependency: "direct main"
     description:
-      name: file_cache_flutter
-      sha256: "205bfce09aac1fba794daead3f90bd55e0126e60ec94fae321a0a5f4adc1601a"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/file_cache_flutter"
+      relative: true
+    source: path
     version: "0.0.1"
   file_picker:
     dependency: "direct main"
@@ -1663,5 +1662,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.10.3 <4.0.0"
+  dart: ">=3.9.0 <4.0.0"
   flutter: ">=3.35.0"

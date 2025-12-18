@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:philgo/config/app.config.dart';
-import 'package:philgo/services/cache/cache.dart';
+import 'package:file_cache_flutter/file_cache_flutter.dart';
 
 import 'mofa_notice.model.dart';
 

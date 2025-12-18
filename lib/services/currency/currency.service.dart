@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import '../cache/cache.dart';
+import 'package:file_cache_flutter/file_cache_flutter.dart';
 
 /// 환율 데이터 모델 (Exchange Rate Data Model)
 ///
