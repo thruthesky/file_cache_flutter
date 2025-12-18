@@ -271,67 +271,67 @@ class PostListViewState extends State<PostListView> {
     return PagingListener<int, Post>(
       controller: pagingController,
       builder: (context, state, fetchNextPage) {
-        return PagedListView.separated(
-          // Comic Design: 16px padding on all sides (8의 배수)
-          padding: const EdgeInsets.only(top: 0),
-          // Comic Design: 16px spacing between posts (8의 배수)
-          separatorBuilder: (context, index) => Divider(
-            color: Theme.of(
-              context,
-            ).colorScheme.outlineVariant.withValues(alpha: 0.4),
-          ),
+        return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: SquareBanners(
+                postIdOrCategory: widget.category ?? widget.postId,
+                onTap: (url) => widget.onTapBanner(url),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child:
+                  /// 작은 배너 (Small Banners)
+                  SmallBanners(
+                    postIdOrCategory: widget.category ?? widget.postId,
+                    onTap: (url) => widget.onTapBanner(url),
+                  ),
+            ),
+            SliverToBoxAdapter(
+              child:
+                  /// 포인트 광고 (Point Advertisements)
+                  /// 포인트를 사용하여 상단 노출된 게시글
+                  PointAdvertisements(
+                    advertisements: _pointAdvertisements,
+                    onTap: (url) => widget.onTapBanner(url),
+                  ),
+            ),
+            PagedSliverList.separated(
+              // Comic Design: 16px spacing between posts (8의 배수)
+              separatorBuilder: (context, index) => Divider(
+                color: Theme.of(
+                  context,
+                ).colorScheme.outlineVariant.withValues(alpha: 0.4),
+              ),
 
-          state: state,
-          fetchNextPage: fetchNextPage,
-          builderDelegate: PagedChildBuilderDelegate<Post>(
-            noItemsFoundIndicatorBuilder: widget.noItemsFoundIndicatorBuilder,
-            itemBuilder: (context, post, index) {
-              /// Build post tile using custom builder or default PostListTile
-              /// 커스텀 빌더가 있으면 사용하고, 없으면 기본 PostListTile 사용
-              final tile =
-                  widget.tileBuilder?.call(post, () => widget.onTap(post)) ??
-                  PostListTileItem(
-                    post: post,
-                    onTap: () => widget.onTap(post),
-                    enableHeroTransition: widget.enableHeroTransition,
-                  );
+              state: state,
+              fetchNextPage: fetchNextPage,
+              builderDelegate: PagedChildBuilderDelegate<Post>(
+                noItemsFoundIndicatorBuilder:
+                    widget.noItemsFoundIndicatorBuilder,
+                itemBuilder: (context, post, index) {
+                  /// Build post tile using custom builder or default PostListTile
+                  /// 커스텀 빌더가 있으면 사용하고, 없으면 기본 PostListTile 사용
+                  final tile =
+                      widget.tileBuilder?.call(
+                        post,
+                        () => widget.onTap(post),
+                      ) ??
+                      PostListTileItem(
+                        post: post,
+                        onTap: () => widget.onTap(post),
+                        enableHeroTransition: widget.enableHeroTransition,
+                      );
 
-              /// 첫 번째 아이템에 배너 및 포인트 광고 표시
-              /// Display banners and point advertisements on first item
-              if (index == 0) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// 사각 배너 (Square Banners)
-                    SquareBanners(
-                      postIdOrCategory: widget.category ?? widget.postId,
-                      onTap: (url) => widget.onTapBanner(url),
-                    ),
-
-                    /// 작은 배너 (Small Banners)
-                    SmallBanners(
-                      postIdOrCategory: widget.category ?? widget.postId,
-                      onTap: (url) => widget.onTapBanner(url),
-                    ),
-
-                    /// 포인트 광고 (Point Advertisements)
-                    /// 포인트를 사용하여 상단 노출된 게시글
-                    PointAdvertisements(
-                      advertisements: _pointAdvertisements,
-                      onTap: (url) => widget.onTapBanner(url),
-                    ),
-                    tile,
-                  ],
-                );
-              }
-
-              return tile;
-            },
-            firstPageProgressIndicatorBuilder: (context) =>
-                const Center(child: CircularProgressIndicator.adaptive()),
-            newPageProgressIndicatorBuilder: (context) =>
-                const Center(child: CircularProgressIndicator.adaptive()),
-          ),
+                  return tile;
+                },
+                firstPageProgressIndicatorBuilder: (context) =>
+                    const Center(child: CircularProgressIndicator.adaptive()),
+                newPageProgressIndicatorBuilder: (context) =>
+                    const Center(child: CircularProgressIndicator.adaptive()),
+              ),
+            ),
+          ],
         );
       },
     );

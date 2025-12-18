@@ -58,7 +58,7 @@ class PointAdvertisements extends StatelessWidget {
     return Column(
       children: advertisements.map((ad) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
           child: _buildAdItem(context, ad),
         );
       }).toList(),

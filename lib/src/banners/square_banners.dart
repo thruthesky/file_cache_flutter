@@ -34,10 +34,15 @@ class SquareBanners extends StatefulWidget {
   /// Receives banner link URL as parameter.
   final void Function(String link) onTap;
 
+  /// 배너 주변 패딩 (Banner padding)
+  /// Optional padding around the banners
+  final EdgeInsetsGeometry padding;
+
   const SquareBanners({
     super.key,
     this.postIdOrCategory,
     required this.onTap,
+    this.padding = const EdgeInsets.fromLTRB(0, 8, 0, 0),
   });
 
   @override
@@ -87,7 +92,7 @@ class _SquareBannersState extends State<SquareBanners> {
     /// 4열 그리드로 배너 표시 (1줄에 4개씩)
     /// Display banners in 4-column grid (4 per row)
     return GridView.builder(
-      padding: EdgeInsets.zero,
+      padding: widget.padding,
 
       /// 스크롤 비활성화 (부모 스크롤뷰 사용)
       /// Disable scroll (uses parent scroll view)

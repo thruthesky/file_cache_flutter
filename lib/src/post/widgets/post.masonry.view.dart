@@ -28,6 +28,7 @@ class PostMasonryView extends StatefulWidget {
     this.enableHeroTransition = false,
     this.tileBuilder,
     required this.controller,
+    required this.onTapBanner,
   });
 
   /// 메인 카테고리 ID (Main category ID)
@@ -47,6 +48,8 @@ class PostMasonryView extends StatefulWidget {
   final Widget Function(Post post, VoidCallback onTap)? tileBuilder;
 
   final PostMasonryViewController controller;
+
+  final void Function(String url) onTapBanner;
 
   @override
   State<PostMasonryView> createState() => PostMasonryViewState();
@@ -78,6 +81,14 @@ class PostMasonryViewState extends State<PostMasonryView> {
         });
       }
 
+      /// 첫 페이지에서 포인트 광고 저장
+      /// Save point advertisements from first page
+      if (pagekey == 1 && mounted) {
+        setState(() {
+          _pointAdvertisements = res.pointAdvertisements;
+        });
+      }
+
       /// Save first page to cache (첫 페이지만 캐시에 저장)
       /// This enables fast loading on next visit
       /// 다음 방문 시 빠른 로딩을 위해 저장
@@ -88,6 +99,13 @@ class PostMasonryViewState extends State<PostMasonryView> {
       return res.posts;
     },
   );
+
+  /// 포인트 광고 목록
+  /// Point advertisements list
+  ///
+  /// 첫 페이지 로드 시 API 응답에서 파싱되어 저장됩니다.
+  /// 게시글 목록 상단 (SmallBanners 아래)에 표시됩니다.
+  List<PointAdvertisement> _pointAdvertisements = [];
 
   @override
   void initState() {
@@ -205,52 +223,73 @@ class PostMasonryViewState extends State<PostMasonryView> {
           });
         }
 
+        if (items.isEmpty && state.error == null) {
+          return Center(child: CircularProgressIndicator.adaptive());
+        }
+
+        if (items.isEmpty && state.error != null) {
+          return widget.noItemsFoundIndicatorBuilder?.call(context) ??
+              const SizedBox.shrink();
+        }
         return CustomScrollView(
           slivers: [
-            /// Masonry grid for posts
-            if (items.isEmpty && state.error == null)
-              const SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              )
-            else if (items.isEmpty && state.error != null)
-              SliverToBoxAdapter(
-                child:
-                    widget.noItemsFoundIndicatorBuilder?.call(context) ??
-                    const SizedBox.shrink(),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.all(8.0),
-                sliver: SliverMasonryGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childCount: items.length,
-                  itemBuilder: (context, index) {
-                    final post = items[index];
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// 사각 배너 (Square Banners)
+                  SquareBanners(
+                    postIdOrCategory: widget.category ?? widget.postId,
+                    onTap: (url) => widget.onTapBanner(url),
+                  ),
 
-                    /// Trigger pagination when near the end (after frame to avoid setState during build)
-                    if (index >= items.length - 3 && !state.isLoading) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (!state.isLoading) {
-                          fetchNextPage();
-                        }
-                      });
-                    }
+                  /// 작은 배너 (Small Banners)
+                  SmallBanners(
+                    postIdOrCategory: widget.category ?? widget.postId,
+                    onTap: (url) => widget.onTapBanner(url),
+                  ),
 
-                    /// Build post tile
-                    return widget.tileBuilder?.call(
-                          post,
-                          () => widget.onTap(post),
-                        ) ??
-                        PostListTileItem(
-                          post: post,
-                          onTap: () => widget.onTap(post),
-                          enableHeroTransition: widget.enableHeroTransition,
-                        );
-                  },
-                ),
+                  /// 포인트 광고 (Point Advertisements)
+                  /// 포인트를 사용하여 상단 노출된 게시글
+                  PointAdvertisements(
+                    advertisements: _pointAdvertisements,
+                    onTap: (url) => widget.onTapBanner(url),
+                  ),
+                ],
               ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(8.0),
+              sliver: SliverMasonryGrid.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childCount: items.length,
+                itemBuilder: (context, index) {
+                  final post = items[index];
+
+                  /// Trigger pagination when near the end (after frame to avoid setState during build)
+                  if (index >= items.length - 3 && !state.isLoading) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!state.isLoading) {
+                        fetchNextPage();
+                      }
+                    });
+                  }
+
+                  /// Build post tile
+                  return widget.tileBuilder?.call(
+                        post,
+                        () => widget.onTap(post),
+                      ) ??
+                      PostListTileItem(
+                        post: post,
+                        onTap: () => widget.onTap(post),
+                        enableHeroTransition: widget.enableHeroTransition,
+                      );
+                },
+              ),
+            ),
 
             /// Loading indicator for next page
             if (state.isLoading && items.isNotEmpty)
