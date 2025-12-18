@@ -51,11 +51,7 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.chevron_left,
-                  color: scheme.onSurface,
-                  size: 28,
-                ),
+                Icon(Icons.chevron_left, color: scheme.onSurface, size: 28),
                 Text(
                   '돌아가기',
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -158,10 +154,12 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
                 ],
 
                 // 본문 내용 섹션
-                PostViewContent(
-                  isLoading: false,
-                  content: post.content,
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                SafeArea(
+                  child: PostViewContent(
+                    isLoading: false,
+                    post: post,
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                  ),
                 ),
               ],
             ),
