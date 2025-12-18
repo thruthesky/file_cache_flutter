@@ -225,6 +225,10 @@
     "subCategoryCarRental": "レンタカー",
     "subCategoryUsedCar": "中古車",
 
+    "subCategoryManila": "マニラ",
+    "subCategoryCebu": "セブ",
+    "subCategoryAngeles": "アンヘレス",
+
     "categoryAll": "すべて",
 
     "currentPointBalance": "保有ポイント",
@@ -238,7 +242,9 @@
     "points": "ポイント",
     "daysAdvertisementCost": "日の広告費用",
     "confirmSelection": "選択を確認",
+    "removeSelection": "選択を解除",
     "selectAdvertisementDays": "広告日数を選択してください",
     "pointAdvertisementConfirmMessage": "{days}日間投稿を宣伝します。{points}ポイントが必要です。続行しますか？",
-    "pointAdvertisementSuccess": "投稿が正常に宣伝されました！"
+    "pointAdvertisementSuccess": "投稿が正常に宣伝されました！",
+    "pointAdvertisementExtendMessage": "投稿の宣伝期間を{days}日間延長します。{points}ポイントが必要です。続行しますか？"
 }

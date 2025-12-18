@@ -25,8 +25,8 @@ import 'package:provider/provider.dart';
 /// )
 /// ```
 class PointSelectionButton extends StatefulWidget {
-  /// 광고 일수 선택 시 콜백
-  final Function(int days)? onDaysSelected;
+  /// 광고 일수 선택 시 콜백 (null이면 선택 해제)
+  final Function(int? days)? onDaysSelected;
 
   final bool update;
 

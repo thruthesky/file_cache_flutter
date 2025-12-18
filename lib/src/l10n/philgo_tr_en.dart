@@ -787,18 +787,6 @@ class PhilgoTrEn extends PhilgoTr {
   String get adExpiresLabel => 'Ad Expires';
 
   @override
-  String pointAdvertisementConfirmMessage(int days, int cost) {
-    return 'Purchase $days-day advertisement for $cost points?';
-  }
-
-  @override
-  String get pointAdvertisementSuccess =>
-      'Point advertisement updated successfully';
-
-  @override
-  String get insufficientPoints => 'Insufficient points';
-
-  @override
   String get days => 'days';
 
   @override
@@ -813,5 +801,22 @@ class PhilgoTrEn extends PhilgoTr {
   String get confirmSelection => 'Confirm Selection';
 
   @override
+  String get removeSelection => 'Remove Selection';
+
+  @override
   String get selectAdvertisementDays => 'Select advertisement days';
+
+  @override
+  String pointAdvertisementConfirmMessage(int days, int points) {
+    return 'You are about to promote your post for $days days. This will cost $points points. Do you want to proceed?';
+  }
+
+  @override
+  String get pointAdvertisementSuccess =>
+      'Your post has been promoted successfully!';
+
+  @override
+  String pointAdvertisementExtendMessage(int days, int points) {
+    return 'You are about to extend your post promotion for $days more days. This will cost $points points. Do you want to proceed?';
+  }
 }

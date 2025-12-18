@@ -736,13 +736,13 @@ class PhilgoTrJa extends PhilgoTr {
   String get subCategoryUsedCar => '中古車';
 
   @override
-  String get subCategoryManila => 'Manila';
+  String get subCategoryManila => 'マニラ';
 
   @override
-  String get subCategoryCebu => 'Cebu';
+  String get subCategoryCebu => 'セブ';
 
   @override
-  String get subCategoryAngeles => 'Angeles';
+  String get subCategoryAngeles => 'アンヘレス';
 
   @override
   String get categoryAll => 'すべて';
@@ -770,18 +770,6 @@ class PhilgoTrJa extends PhilgoTr {
   String get adExpiresLabel => '広告終了';
 
   @override
-  String pointAdvertisementConfirmMessage(int days, int cost) {
-    return 'Purchase $days-day advertisement for $cost points?';
-  }
-
-  @override
-  String get pointAdvertisementSuccess =>
-      'Point advertisement updated successfully';
-
-  @override
-  String get insufficientPoints => 'Insufficient points';
-
-  @override
   String get days => '日';
 
   @override
@@ -796,5 +784,21 @@ class PhilgoTrJa extends PhilgoTr {
   String get confirmSelection => '選択を確認';
 
   @override
+  String get removeSelection => '選択を解除';
+
+  @override
   String get selectAdvertisementDays => '広告日数を選択してください';
+
+  @override
+  String pointAdvertisementConfirmMessage(int days, int points) {
+    return '$days日間投稿を宣伝します。$pointsポイントが必要です。続行しますか？';
+  }
+
+  @override
+  String get pointAdvertisementSuccess => '投稿が正常に宣伝されました！';
+
+  @override
+  String pointAdvertisementExtendMessage(int days, int points) {
+    return '投稿の宣伝期間を$days日間延長します。$pointsポイントが必要です。続行しますか？';
+  }
 }

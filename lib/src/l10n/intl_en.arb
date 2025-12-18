@@ -920,6 +920,10 @@
     "@confirmSelection": {
         "description": "Confirm selection button text"
     },
+    "removeSelection": "Remove Selection",
+    "@removeSelection": {
+        "description": "Remove selection button text (when same value is selected again)"
+    },
     "selectAdvertisementDays": "Select advertisement days",
     "@selectAdvertisementDays": {
         "description": "Select advertisement days guide text"
@@ -941,5 +945,19 @@
     "pointAdvertisementSuccess": "Your post has been promoted successfully!",
     "@pointAdvertisementSuccess": {
         "description": "Success message after point advertisement is applied"
+    },
+    "pointAdvertisementExtendMessage": "You are about to extend your post promotion for {days} more days. This will cost {points} points. Do you want to proceed?",
+    "@pointAdvertisementExtendMessage": {
+        "description": "Confirmation message for extending existing point advertisement",
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "3"
+            },
+            "points": {
+                "type": "int",
+                "example": "17280"
+            }
+        }
     }
 }
