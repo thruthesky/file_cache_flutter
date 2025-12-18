@@ -736,13 +736,13 @@ class PhilgoTrJa extends PhilgoTr {
   String get subCategoryUsedCar => '中古車';
 
   @override
-  String get subCategoryManila => 'Manila';
+  String get subCategoryManila => 'マニラ';
 
   @override
-  String get subCategoryCebu => 'Cebu';
+  String get subCategoryCebu => 'セブ';
 
   @override
-  String get subCategoryAngeles => 'Angeles';
+  String get subCategoryAngeles => 'アンヘレス';
 
   @override
   String get categoryAll => 'すべて';
@@ -784,6 +784,9 @@ class PhilgoTrJa extends PhilgoTr {
   String get confirmSelection => '選択を確認';
 
   @override
+  String get removeSelection => '選択を解除';
+
+  @override
   String get selectAdvertisementDays => '広告日数を選択してください';
 
   @override
@@ -793,4 +796,12 @@ class PhilgoTrJa extends PhilgoTr {
 
   @override
   String get pointAdvertisementSuccess => '投稿が正常に宣伝されました！';
+<<<<<<< HEAD
+=======
+
+  @override
+  String pointAdvertisementExtendMessage(int days, int points) {
+    return '投稿の宣伝期間を$days日間延長します。$pointsポイントが必要です。続行しますか？';
+  }
+>>>>>>> 1986d12f058ff9be1af053ba6427d0c0e428968b
 }

@@ -801,6 +801,9 @@ class PhilgoTrEn extends PhilgoTr {
   String get confirmSelection => 'Confirm Selection';
 
   @override
+  String get removeSelection => 'Remove Selection';
+
+  @override
   String get selectAdvertisementDays => 'Select advertisement days';
 
   @override
@@ -811,4 +814,12 @@ class PhilgoTrEn extends PhilgoTr {
   @override
   String get pointAdvertisementSuccess =>
       'Your post has been promoted successfully!';
+<<<<<<< HEAD
+=======
+
+  @override
+  String pointAdvertisementExtendMessage(int days, int points) {
+    return 'You are about to extend your post promotion for $days more days. This will cost $points points. Do you want to proceed?';
+  }
+>>>>>>> 1986d12f058ff9be1af053ba6427d0c0e428968b
 }

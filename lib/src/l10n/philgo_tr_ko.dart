@@ -784,6 +784,9 @@ class PhilgoTrKo extends PhilgoTr {
   String get confirmSelection => '선택 확인';
 
   @override
+  String get removeSelection => '선택 해제';
+
+  @override
   String get selectAdvertisementDays => '광고 일수를 선택하세요';
 
   @override
@@ -793,4 +796,12 @@ class PhilgoTrKo extends PhilgoTr {
 
   @override
   String get pointAdvertisementSuccess => '게시글이 성공적으로 홍보되었습니다!';
+<<<<<<< HEAD
+=======
+
+  @override
+  String pointAdvertisementExtendMessage(int days, int points) {
+    return '게시글 홍보 기간을 $days일 더 연장합니다. $points 포인트가 필요합니다. 진행하시겠습니까?';
+  }
+>>>>>>> 1986d12f058ff9be1af053ba6427d0c0e428968b
 }

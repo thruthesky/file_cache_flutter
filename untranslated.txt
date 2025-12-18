@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "ja": [
     "subCategoryManila",
@@ -11,3 +12,6 @@
     "subCategoryAngeles"
   ]
 }
+=======
+{}
+>>>>>>> 1986d12f058ff9be1af053ba6427d0c0e428968b

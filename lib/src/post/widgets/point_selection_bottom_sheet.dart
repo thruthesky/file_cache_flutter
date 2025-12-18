@@ -16,8 +16,8 @@ class PointSelectionBottomSheet extends StatefulWidget {
   /// 사용자의 현재 포인트
   final int userPoints;
 
-  /// 일수 선택 시 콜백
-  final Function(int days) onDaysSelected;
+  /// 일수 선택 시 콜백 (null이면 선택 해제)
+  final Function(int? days) onDaysSelected;
 
   /// 초기 선택된 일수 (이전에 선택한 값이 있으면 전달)
   final int? initialSelectedDays;
@@ -138,7 +138,15 @@ class _PointSelectionBottomSheetState extends State<PointSelectionBottomSheet> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: FilledButton(
                 onPressed: _selectedDays != null
-                    ? () => widget.onDaysSelected(_selectedDays!)
+                    ? () {
+                        // If user selected the same value as initial, treat as removal
+                        if (widget.initialSelectedDays != null &&
+                            _selectedDays == widget.initialSelectedDays) {
+                          widget.onDaysSelected(null);
+                        } else {
+                          widget.onDaysSelected(_selectedDays);
+                        }
+                      }
                     : null,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 52),
@@ -148,7 +156,10 @@ class _PointSelectionBottomSheetState extends State<PointSelectionBottomSheet> {
                 ),
                 child: Text(
                   _selectedDays != null
-                      ? PhilgoTr.of(context)!.confirmSelection
+                      ? (widget.initialSelectedDays != null &&
+                          _selectedDays == widget.initialSelectedDays
+                          ? PhilgoTr.of(context)!.removeSelection
+                          : PhilgoTr.of(context)!.confirmSelection)
                       : PhilgoTr.of(context)!.selectAdvertisementDays,
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: scheme.onPrimary,
