@@ -305,7 +305,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           ],
 
                           /// Post content
-                          PostViewContent(isLoading: false, content: content),
+                          PostViewContent(isLoading: false, post: post!),
 
                           /// 액션 버튼 (좋아요, 답글, 차단, 신고, 수정, 삭제)
                           Padding(
