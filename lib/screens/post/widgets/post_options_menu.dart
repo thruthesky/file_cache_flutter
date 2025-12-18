@@ -187,57 +187,32 @@ class PostOptionsMenu extends StatelessWidget {
           setting.point.advCostPerHour,
         );
 
-        // 4. 확인 다이얼로그 표시 (Show confirmation dialog)
-        final confirm = await showConfirmDialog(
-          message: PhilgoTr.of(
-            context,
-          )!.pointAdvertisementConfirmMessage(selectedDays, pointCost),
-        );
-        if (!confirm || !context.mounted) return;
+        final confirmationMessage = PhilgoTr.of(
+          context,
+        )!.pointAdvertisementConfirmMessage(selectedDays, pointCost);
 
-        // Show loading dialog
-        showDialog(
+        final updatedPost = await showAdvertisementConfirmDialog(
           context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            );
-          },
+          message: confirmationMessage,
+          idx: post.idx,
+          days: selectedDays,
         );
 
-        try {
-          // 6. extendPointAdvertisement API 호출 (advertise_post_with_point 사용)
-          // 서버에서 포인트 차감 및 광고 등록/연장을 처리함
-          final updatedPost = await extendPointAdvertisement(
-            idx: post.idx,
-            days: selectedDays,
+        if (updatedPost == null || !context.mounted) return;
+
+        // 7. 로컬 상태에서 포인트 차감 (서버에서 이미 차감됨, UI 동기화)
+        final newPoints = userPoints - pointCost;
+        state.setUserPoints(newPoints);
+
+        // 8. 부모 컴포넌트에 업데이트된 게시글 전달
+        onEditCompleted(updatedPost);
+
+        // 9. 성공 메시지 표시
+        if (context.mounted) {
+          showSuccessSnackBar(
+            context,
+            PhilgoTr.of(context)!.pointAdvertisementSuccess,
           );
-
-          // 7. 로컬 상태에서 포인트 차감 (서버에서 이미 차감됨, UI 동기화)
-          final newPoints = userPoints - pointCost;
-          state.setUserPoints(newPoints);
-
-          // 8. 부모 컴포넌트에 업데이트된 게시글 전달
-          onEditCompleted(updatedPost);
-
-          // 로딩 다이얼로그 닫기
-          if (context.mounted) Navigator.of(context).pop();
-
-          // 9. 성공 메시지 표시
-          if (context.mounted) {
-            showSuccessSnackBar(
-              context,
-              PhilgoTr.of(context)!.pointAdvertisementSuccess,
-            );
-          }
-        } catch (e) {
-          // 로딩 다이얼로그 닫기
-          if (context.mounted) Navigator.of(context).pop();
-          // extendPointAdvertisement 함수에서 이미 에러 다이얼로그를 표시함
-          d('Error extending point advertisement: $e');
         }
         break;
       case _PostMenuAction.reply:
@@ -247,7 +222,11 @@ class PostOptionsMenu extends StatelessWidget {
         showBlockDialog(context: context, otherUserUid: firebaseUid);
         break;
       case _PostMenuAction.report:
-        _showReportReasonBottomSheet(context);
+        await showReportReasonBottomSheet(
+          context: context,
+          type: 'post',
+          idx: post.idx,
+        );
         break;
       case _PostMenuAction.edit:
         if (post.no_of_comment >= 1) {
@@ -284,130 +263,6 @@ class PostOptionsMenu extends StatelessWidget {
         }
         break;
     }
-  }
-
-  /// Get report reasons based on type
-  List<String> _getReportReason(BuildContext context) {
-    final tr = PhilgoTr.of(context)!;
-    return [
-      tr.report_reason_category_error,
-      tr.report_reason_abuse,
-      tr.report_reason_spam,
-      tr.report_reason_other,
-    ];
-  }
-
-  /// Handle report submission
-  Future<void> _handleReport(BuildContext context, String reason) async {
-    try {
-      final res = await reportPost(type: 'post', idx: post.idx, reason: reason);
-      if (context.mounted && res['error'] != null && res['message'] != null) {
-        showErrorSnackBar(context, res['message']);
-        return;
-      }
-      if (context.mounted &&
-          res['message'] != null &&
-          res['message']!.isNotEmpty) {
-        showSuccessSnackBar(context, PhilgoTr.of(context)!.report_success);
-        return;
-      }
-    } catch (e) {
-      d('Error reporting post: $e');
-      if (context.mounted) {
-        showErrorSnackBar(context, PhilgoTr.of(context)!.report_failed);
-      }
-    }
-  }
-
-  /// Show report reason bottom sheet
-  void _showReportReasonBottomSheet(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final reasons = _getReportReason(context);
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      builder: (BuildContext sheetContext) {
-        return Container(
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12.0),
-              topRight: Radius.circular(12.0),
-            ),
-            border: Border(
-              top: BorderSide(color: scheme.outline, width: 2.0),
-              left: BorderSide(color: scheme.outline, width: 2.0),
-              right: BorderSide(color: scheme.outline, width: 2.0),
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Drag handle indicator
-                const SizedBox(height: 8),
-                Container(
-                  width: 32,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // Header: title and close button
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        PhilgoTr.of(context)!.report_select_reason,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(sheetContext).pop(),
-                        icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Separator
-                Container(height: 2, color: scheme.outline),
-
-                // Report reason list
-                ...reasons.map(
-                  (reason) => ListTile(
-                    leading: FaIcon(
-                      FontAwesomeIcons.hexagonExclamation,
-                      size: 20,
-                      color: scheme.onSurface,
-                    ),
-                    title: Text(reason),
-                    onTap: () {
-                      Navigator.of(sheetContext).pop();
-                      _handleReport(context, reason);
-                    },
-                  ),
-                ),
-
-                // Bottom spacing
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 }
 

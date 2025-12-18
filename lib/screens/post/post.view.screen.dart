@@ -278,6 +278,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (adExpiry != null) ...[
+                            // const SizedBox(height: 12),
+                            PostAdInfoBanner(expiryTimestamp: adExpiry),
+                          ],
+
                           /// Post title - larger and more prominent
                           PostViewSubject(subject: subject),
 
@@ -288,11 +293,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             photoUrl: photoUrl,
                             formattedDate: formatPostDate(stamp),
                           ),
-
-                          if (adExpiry != null) ...[
-                            const SizedBox(height: 12),
-                            PostAdInfoBanner(expiryTimestamp: adExpiry),
-                          ],
 
                           SizedBox(height: 16),
 
