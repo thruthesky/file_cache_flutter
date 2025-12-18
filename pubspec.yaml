@@ -48,6 +48,8 @@ dependencies:
   webview_flutter: ^4.13.0
 
 dependency_overrides:
+  file_cache_flutter:
+    path: packages/file_cache_manager
   font_awesome_flutter:
     path: packages/font_awesome_flutter
 
