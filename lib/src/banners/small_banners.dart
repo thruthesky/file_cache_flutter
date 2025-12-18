@@ -86,7 +86,7 @@ class _SmallBannersState extends State<SmallBanners> {
     return Column(
       children: banners.map((banner) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
           child: _buildBannerItem(context, banner),
         );
       }).toList(),
@@ -95,6 +95,9 @@ class _SmallBannersState extends State<SmallBanners> {
 
   /// 개별 배너 아이템 빌드
   /// Build individual banner item
+  ///
+  /// 컴팩트한 디자인으로 작은 공간에 효율적으로 배너 표시
+  /// Compact design for efficient banner display in small spaces
   Widget _buildBannerItem(BuildContext context, BannerModel banner) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -104,16 +107,16 @@ class _SmallBannersState extends State<SmallBanners> {
       /// Call callback on banner tap
       onTap: () => widget.onTap(banner.link),
       child: Container(
-        /// flat design: elevation 0, 배경색만으로 구분
-        /// Flat design: no elevation, distinguish by background color
+        /// flat design: elevation 0, 진한 amber 테두리로 광고 구분
+        /// Flat design: no elevation, dark amber border to distinguish ads
         decoration: BoxDecoration(
-          color: scheme.surfaceContainerHighest,
+          border: Border.all(color: Colors.black38, width: 0.8),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
-            /// 이미지가 있으면 왼쪽에 표시
-            /// Show image on the left if available
+            /// 이미지가 있으면 왼쪽에 표시 (컴팩트 사이즈)
+            /// Show image on the left if available (compact size)
             if (banner.url.isNotEmpty)
               ClipRRect(
                 borderRadius: const BorderRadius.only(
@@ -125,23 +128,24 @@ class _SmallBannersState extends State<SmallBanners> {
                 /// CachedNetworkImage: Improved performance with image caching
                 child: CachedNetworkImage(
                   imageUrl: banner.url,
-                  width: 80,
-                  height: 80,
+                  width: 96,
+                  height: 48,
                   fit: BoxFit.cover,
 
                   /// 이미지 로드 실패 시 동일 크기의 빈 위젯 반환
                   /// Return empty widget with same size on image load error
                   errorWidget: (context, url, error) =>
-                      const SizedBox(width: 80, height: 80),
+                      const SizedBox(width: 96, height: 48),
                 ),
               ),
 
-            /// 텍스트 영역 (primary, secondary)
-            /// Text area (primary, secondary)
+            /// 텍스트 영역 (primary, secondary) - 컴팩트 패딩
+            /// Text area (primary, secondary) - compact padding
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// Primary 텍스트 (주요 텍스트)
@@ -149,26 +153,24 @@ class _SmallBannersState extends State<SmallBanners> {
                     if (banner.primary.isNotEmpty)
                       Text(
                         banner.primary,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                    /// Secondary 텍스트 (부가 텍스트)
-                    /// Secondary text
-                    if (banner.secondary.isNotEmpty) ...[
-                      const SizedBox(height: 4),
+                    /// Secondary 텍스트 (부가 텍스트) - 1줄 제한, ellipsis 처리
+                    /// Secondary text - limited to 1 line with ellipsis
+                    if (banner.secondary.isNotEmpty)
                       Text(
                         banner.secondary,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ],
                   ],
                 ),
               ),
