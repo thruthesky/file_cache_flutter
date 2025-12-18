@@ -51,15 +51,13 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
             : context.go(HomeScreen.routeName),
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 4),
-          child: PostViewOptionMenu(
-            post: post,
-            firebaseUid: post.firebase_uid,
-            onTapReply: onTapReply,
-            onEditCompleted: onEditCompleted,
-            onDeleteCompleted: onDeleteCompleted,
-          ),
+        PostViewOptionMenu(
+          padding: EdgeInsets.only(right: 16),
+          post: post,
+          firebaseUid: post.firebase_uid,
+          onTapReply: onTapReply,
+          onEditCompleted: onEditCompleted,
+          onDeleteCompleted: onDeleteCompleted,
         ),
       ],
       bottom: PreferredSize(

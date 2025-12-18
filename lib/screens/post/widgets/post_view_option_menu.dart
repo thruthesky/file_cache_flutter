@@ -16,7 +16,7 @@ class PostViewOptionMenu extends StatelessWidget {
     required this.onEditCompleted,
     required this.onDeleteCompleted,
     // required this.onShowPointAds,
-    this.useComicStyle = false,
+    this.padding,
   });
 
   final Post post;
@@ -25,7 +25,7 @@ class PostViewOptionMenu extends StatelessWidget {
   final void Function(Post updated) onEditCompleted;
   // final void Function(BuildContext context) onShowPointAds;
   final void Function(BuildContext context) onDeleteCompleted;
-  final bool useComicStyle;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -34,21 +34,23 @@ class PostViewOptionMenu extends StatelessWidget {
     final popupButton = PopupMenuButton<_PostMenuAction>(
       tooltip: '',
       padding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       onSelected: (action) => _handleAction(context, action),
-      icon: useComicStyle
-          ? null
-          : FaIcon(FontAwesomeIcons.bars, size: 20, color: scheme.onSurface),
-      child: useComicStyle
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: FaIcon(
-                FontAwesomeIcons.bars,
-                size: 16,
-                color: scheme.onSurface,
-              ),
-            )
-          : null,
+
+      /// icon과 child는 동시에 사용할 수 없음 - child만 사용
+      /// Cannot use both icon and child - using child only
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        margin: padding,
+        decoration: BoxDecoration(
+          border: Border.all(color: scheme.outline, width: 1.0),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: FaIcon(
+          FontAwesomeIcons.ellipsisVertical,
+          size: 16,
+          color: scheme.onSurface,
+        ),
+      ),
       itemBuilder: (context) {
         if (post.isMine(context)) {
           return [
@@ -124,18 +126,6 @@ class PostViewOptionMenu extends StatelessWidget {
         ];
       },
     );
-
-    // Comic 스타일이면 Container로 감싸서 테두리 추가
-    if (useComicStyle) {
-      return Container(
-        // Comic 스타일: 둥근 모서리 + 테두리 (ComicActionButton과 동일한 디자인)
-        decoration: BoxDecoration(
-          border: Border.all(color: scheme.outline, width: 1.0),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: popupButton,
-      );
-    }
 
     // AppBar용: 일반 스타일 (테두리 없음)
     return popupButton;

@@ -199,7 +199,6 @@ class _PostViewButtonsState extends State<PostViewButtons> {
 
         /// 옵션 메뉴 (수정/삭제/차단/신고) - Comic 스타일
         PostViewOptionMenu(
-          useComicStyle: true,
           post: post,
           firebaseUid: post.firebase_uid,
           onTapReply: widget.onTapReply,

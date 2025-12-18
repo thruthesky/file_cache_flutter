@@ -214,6 +214,7 @@ class _ForumHomeState extends State<ForumHome> {
                 enableHeroTransition: true,
                 tileBuilder: (post, onTap) =>
                     PostCard(post: post, onTap: onTap),
+                onTapBanner: (url) => openBannerUrl(context, url),
               )
             : PostListView(
                 controller: listController,
