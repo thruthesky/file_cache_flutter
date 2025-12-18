@@ -171,7 +171,6 @@ export 'src/post/widgets/post.masonry.view.dart';
 export 'src/post/widgets/post.report.button.dart';
 export 'src/post/widgets/post.subject.dart';
 export 'src/post/widgets/post.update.form.dart';
-export 'src/post/widgets/post.view.buttons.dart';
 export 'src/post/widgets/post.view.content.dart';
 export 'src/post/widgets/post.view.files.dart';
 export 'src/post/widgets/post.view.header.dart';
