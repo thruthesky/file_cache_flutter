@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
+import 'package:philgo/screens/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
@@ -542,14 +543,11 @@ void openBannerUrl(BuildContext context, String url) async {
     }
   }
 
-  /// 4. idx가 유효하면 PostViewScreen 열기
-  /// If idx is valid, open PostViewScreen
+  /// 4. idx가 유효하면 AdvertisementViewScreen 열기
+  /// If idx is valid, open AdvertisementViewScreen
   if (idx != null && idx > 0) {
-    debugPrint('[openBannerUrl] PostViewScreen 열기, idx: $idx');
-    showFullScreen(
-      context,
-      child: PostViewScreen(post: Post.fromJson({'idx': idx})),
-    );
+    debugPrint('[openBannerUrl] AdvertisementViewScreen 열기, idx: $idx');
+    showFullScreen(context, child: AdvertisementViewScreen(idx: idx));
   } else {
     debugPrint('[openBannerUrl] 처리할 수 없는 URL: $url');
   }
