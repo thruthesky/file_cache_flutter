@@ -277,7 +277,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         child: FaIcon(
           myCompany != null
               ? FontAwesomeIcons.penToSquare
-              : FontAwesomeIcons.circlePlus,
+              : FontAwesomeIcons.plus,
         ),
       ),
       body: SafeArea(

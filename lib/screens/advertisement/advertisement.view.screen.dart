@@ -143,15 +143,15 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 첨부 파일 (이미지/비디오) 섹션
-                if (post.files.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  PostViewFiles(
-                    files: post.files,
-                    postIdx: post.idx,
-                    enableHeroTransition: false,
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                // if (post.files.isNotEmpty) ...[
+                //   const SizedBox(height: 8),
+                //   PostViewFiles(
+                //     files: post.files,
+                //     postIdx: post.idx,
+                //     enableHeroTransition: false,
+                //   ),
+                //   const SizedBox(height: 16),
+                // ],
 
                 // 본문 내용 섹션
                 SafeArea(
