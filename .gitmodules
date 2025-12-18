@@ -28,3 +28,6 @@
 [submodule ".claude/skills/data-skill"]
 	path = .claude/skills/data-skill
 	url = https://github.com/thruthesky/data-skill
+[submodule "packages/file_cache_flutter"]
+	path = packages/file_cache_flutter
+	url = https://github.com/thruthesky/file_cache_flutter
