@@ -40,7 +40,33 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(''),
+        // "< 돌아가기" - leading 커스터마이즈하여 터치 영역 확대
+        automaticallyImplyLeading: false,
+        leadingWidth: 120,
+        leading: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => Navigator.of(context).pop(),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.chevron_left,
+                  color: scheme.onSurface,
+                  size: 28,
+                ),
+                Text(
+                  '돌아가기',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        title: const SizedBox.shrink(),
         elevation: 0,
         // 오른쪽 액션 버튼 - 연한 원형 닫기 버튼
         actions: [
@@ -49,16 +75,16 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
             child: IconButton(
               onPressed: () => Navigator.of(context).pop(),
               icon: Container(
-                width: 28,
-                height: 28,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest,
+                  color: scheme.surfaceDim,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
                   child: FaIcon(
                     FontAwesomeIcons.xmark,
-                    color: scheme.onSurfaceVariant,
+                    color: scheme.scrim,
                     size: 14,
                   ),
                 ),

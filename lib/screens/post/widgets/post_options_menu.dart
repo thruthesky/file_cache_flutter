@@ -187,9 +187,14 @@ class PostOptionsMenu extends StatelessWidget {
           setting.point.advCostPerHour,
         );
 
-        final confirmationMessage = PhilgoTr.of(
-          context,
-        )!.pointAdvertisementConfirmMessage(selectedDays, pointCost);
+        // 4. Check if post has existing active advertisement
+        final hasActiveAd = post.int5 != null &&
+                            post.int5! > DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+        // 5. Use different message for extending vs new ad
+        final confirmationMessage = hasActiveAd
+            ? PhilgoTr.of(context)!.pointAdvertisementExtendMessage(selectedDays, pointCost)
+            : PhilgoTr.of(context)!.pointAdvertisementConfirmMessage(selectedDays, pointCost);
 
         final updatedPost = await showAdvertisementConfirmDialog(
           context: context,
