@@ -1540,15 +1540,12 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'Your post has been promoted successfully!'**
   String get pointAdvertisementSuccess;
-<<<<<<< HEAD
-=======
 
   /// Confirmation message for extending existing point advertisement
   ///
   /// In en, this message translates to:
   /// **'You are about to extend your post promotion for {days} more days. This will cost {points} points. Do you want to proceed?'**
   String pointAdvertisementExtendMessage(int days, int points);
->>>>>>> 1986d12f058ff9be1af053ba6427d0c0e428968b
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

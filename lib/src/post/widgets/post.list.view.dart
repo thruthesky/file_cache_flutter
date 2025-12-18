@@ -109,6 +109,13 @@ class PostListViewState extends State<PostListView> {
   /// 캐시 로드 완료 여부를 추적하는 플래그
   bool _cacheLoaded = false;
 
+  /// 포인트 광고 목록
+  /// Point advertisements list
+  ///
+  /// 첫 페이지 로드 시 API 응답에서 파싱되어 저장됩니다.
+  /// 게시글 목록 상단 (SmallBanners 아래)에 표시됩니다.
+  List<PointAdvertisement> _pointAdvertisements = [];
+
   late final pagingController = PagingController<int, Post>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
@@ -125,6 +132,14 @@ class PostListViewState extends State<PostListView> {
       if (_totalPostCount != res.post_count) {
         setState(() {
           _totalPostCount = res.post_count;
+        });
+      }
+
+      /// 첫 페이지에서 포인트 광고 저장
+      /// Save point advertisements from first page
+      if (pagekey == 1 && mounted) {
+        setState(() {
+          _pointAdvertisements = res.pointAdvertisements;
         });
       }
 
@@ -212,6 +227,12 @@ class PostListViewState extends State<PostListView> {
           isLoading: false,
         );
 
+        /// 포인트 광고 업데이트
+        /// Update point advertisements
+        setState(() {
+          _pointAdvertisements = res.pointAdvertisements;
+        });
+
         if (_totalPostCount != res.post_count) {
           setState(() => _totalPostCount = res.post_count);
         }
@@ -275,18 +296,28 @@ class PostListViewState extends State<PostListView> {
                     enableHeroTransition: widget.enableHeroTransition,
                   );
 
-              /// 첫 번째 아이템에만 "Hello World" 텍스트를 상단에 표시
-              /// Display "Hello World" text only on the first item
+              /// 첫 번째 아이템에 배너 및 포인트 광고 표시
+              /// Display banners and point advertisements on first item
               if (index == 0) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 사각 배너 (Square Banners)
                     SquareBanners(
                       postIdOrCategory: widget.category ?? widget.postId,
                       onTap: (url) => widget.onTapBanner(url),
                     ),
+
+                    /// 작은 배너 (Small Banners)
                     SmallBanners(
                       postIdOrCategory: widget.category ?? widget.postId,
+                      onTap: (url) => widget.onTapBanner(url),
+                    ),
+
+                    /// 포인트 광고 (Point Advertisements)
+                    /// 포인트를 사용하여 상단 노출된 게시글
+                    PointAdvertisements(
+                      advertisements: _pointAdvertisements,
                       onTap: (url) => widget.onTapBanner(url),
                     ),
                     tile,

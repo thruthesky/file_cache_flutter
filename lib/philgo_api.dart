@@ -144,6 +144,7 @@ export 'src/philgo/philgo.api.functions.dart';
 // =============================================================================
 // Post - Models (게시글 데이터 모델)
 export 'src/post/models/comment.model.dart';
+export 'src/post/models/point_advertisement.model.dart';
 export 'src/post/models/post.list.model.dart';
 export 'src/post/models/post.model.dart';
 export 'src/post/post.functions.dart';
@@ -155,6 +156,7 @@ export 'src/post/widgets/comment.detail.list_view.dart';
 export 'src/post/widgets/comment.list.view.dart';
 export 'src/widgets/upload/file_preview.dart';
 export 'src/post/widgets/point.selection.button.dart';
+export 'src/post/widgets/point_advertisements.dart';
 export 'src/post/widgets/post.create.form.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.item.dart';
