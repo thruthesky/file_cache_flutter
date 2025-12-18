@@ -58,6 +58,18 @@ class _SmallBannersState extends State<SmallBanners> {
     _loadBanners();
   }
 
+  @override
+  void didUpdateWidget(covariant SmallBanners oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.postIdOrCategory != widget.postIdOrCategory) {
+      setState(() {
+        isLoading = true;
+        banners = [];
+      });
+      _loadBanners();
+    }
+  }
+
   /// 배너 로드
   /// Load banners from API
   Future<void> _loadBanners() async {

@@ -1,6 +1,34 @@
 import 'package:file_cache_flutter/file_cache_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
 
+/// 동기 메모리 캐시 (Synchronous Memory Cache)
+///
+/// 위젯 initState에서 비동기 await 없이 즉시 데이터를 가져올 수 있도록 함
+/// 문제: getPostsFromCache()가 async라서 await 하는 동안 빈 광고가 표시됨
+/// 해결: 메모리 캐시에서 동기적으로 데이터 반환
+final Map<String, PostList> _syncMemoryCache = {};
+
+/// 동기 메모리 캐시에서 게시글 목록 로드 (즉시 반환)
+/// Synchronously load posts from memory cache (returns immediately)
+///
+/// 위젯 initState에서 사용하여 첫 빌드 시 캐시된 광고를 바로 표시
+/// Used in widget initState to immediately display cached ads on first build
+PostList? getPostsFromCacheSync(String? postId, String? category) {
+  final cacheKey = _getCacheKey(postId, category);
+  final cached = _syncMemoryCache[cacheKey];
+  d('[PostCache] getPostsFromCacheSync - key: $cacheKey, found: ${cached != null}');
+  if (cached != null) {
+    d('[PostCache] 동기 캐시 발견 - posts: ${cached.posts.length}, pointAds: ${cached.pointAdvertisements.length}');
+  }
+  return cached;
+}
+
+/// 동기 메모리 캐시에 게시글 목록 저장
+/// Save posts to synchronous memory cache
+void _saveToSyncCache(String cacheKey, PostList data) {
+  _syncMemoryCache[cacheKey] = data;
+}
+
 /// Post Cache Utility (게시글 캐시 유틸리티)
 ///
 /// This utility provides file-based caching for the first page of posts.
@@ -60,7 +88,17 @@ String _getCacheKey(String? postId, String? category) {
 /// 캐시가 없거나 유효하지 않으면 null 반환
 Future<PostList?> getPostsFromCache(String? postId, String? category) async {
   final cacheKey = _getCacheKey(postId, category);
-  return await _postCache.get(cacheKey);
+  d('[PostCache] getPostsFromCache - key: $cacheKey');
+
+  final result = await _postCache.get(cacheKey);
+
+  if (result != null) {
+    d('[PostCache] 캐시 발견 - posts: ${result.posts.length}, pointAds: ${result.pointAdvertisements.length}');
+  } else {
+    d('[PostCache] 캐시 없음 - key: $cacheKey');
+  }
+
+  return result;
 }
 
 /// Save first page posts to cache
@@ -68,13 +106,26 @@ Future<PostList?> getPostsFromCache(String? postId, String? category) async {
 ///
 /// This is called after fetching data from server to update the cache.
 /// 서버에서 데이터를 가져온 후 캐시를 업데이트하기 위해 호출됩니다.
+///
+/// 동기 메모리 캐시와 파일 캐시 모두에 저장합니다.
+/// Saves to both synchronous memory cache and file cache.
 Future<void> savePostsToCache(
   String? postId,
   String? category,
   PostList data,
 ) async {
   final cacheKey = _getCacheKey(postId, category);
+  d('[PostCache] savePostsToCache - key: $cacheKey, posts: ${data.posts.length}, pointAds: ${data.pointAdvertisements.length}');
+
+  /// 동기 메모리 캐시에 저장 (즉시 접근 가능)
+  /// Save to sync memory cache (for immediate access)
+  _saveToSyncCache(cacheKey, data);
+
+  /// 파일 캐시에 저장 (영구 보관)
+  /// Save to file cache (for persistent storage)
   await _postCache.set(cacheKey, data);
+
+  d('[PostCache] 캐시 저장 완료 - key: $cacheKey');
 }
 
 /// Clear all post caches

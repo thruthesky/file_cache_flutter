@@ -64,12 +64,28 @@ class _SquareBannersState extends State<SquareBanners> {
     _loadBanners();
   }
 
+  @override
+  void didUpdateWidget(covariant SquareBanners oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.postIdOrCategory != widget.postIdOrCategory) {
+      // 카테고리 변경 시 배너 다시 로드
+      // Reload banners on category change
+      setState(() {
+        isLoading = true;
+        banners = [];
+      });
+      _loadBanners();
+    }
+  }
+
   /// 배너 로드
   /// Load banners from API
   Future<void> _loadBanners() async {
     final result = await BannerApi.getSquareBanners(
       category: widget.postIdOrCategory,
     );
+
+    debugLog('[SquareBanners] 배너 로드 완료: ${result.length}개');
 
     if (mounted) {
       setState(() {

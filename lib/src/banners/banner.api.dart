@@ -97,7 +97,11 @@ class BannerApi {
         data['category'] = category;
       }
 
-      final response = await func('get_square_banners', data: data);
+      final response = await func(
+        'get_square_banners',
+        data: data,
+        debug: true,
+      );
 
       if (response is List) {
         return response

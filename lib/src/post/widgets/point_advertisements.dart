@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:philgo_api/src/post/models/point_advertisement.model.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 포인트 광고 목록 위젯
 /// Point Advertisements Widget
@@ -51,22 +51,35 @@ class PointAdvertisements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// 디버그: 광고 위젯 빌드 확인
+    // d('[PointAdvertisements] build - 광고 개수: ${advertisements.length}');
+
     /// 광고가 없으면 빈 위젯 반환
     /// Return empty widget if no advertisements
-    if (advertisements.isEmpty) return const SizedBox.shrink();
+    if (advertisements.isEmpty) {
+      // d('[PointAdvertisements] 광고 없음 - SizedBox.shrink 반환');
+      return const SizedBox.shrink();
+    }
+
+    // d('[PointAdvertisements] 광고 표시 중...');
+    // for (var ad in advertisements) {
+    //   d('[PointAdvertisements] 광고: idx=${ad.idx}, subject=${ad.subject}');
+    // }
 
     return Column(
       children: advertisements.map((ad) {
         return Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+          /// 컴팩트한 패딩 (8의 배수)
+          /// Compact padding (multiple of 8)
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
           child: _buildAdItem(context, ad),
         );
       }).toList(),
     );
   }
 
-  /// 개별 광고 아이템 빌드
-  /// Build individual advertisement item
+  /// 개별 광고 아이템 빌드 (컴팩트 디자인)
+  /// Build individual advertisement item (compact design)
   Widget _buildAdItem(BuildContext context, PointAdvertisement ad) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -75,112 +88,94 @@ class PointAdvertisements extends StatelessWidget {
       /// 광고 클릭 시 콜백 호출
       /// Call callback on advertisement tap
       onTap: () => onTap(ad.clickUrl),
-      child: Container(
-        /// Flat design: elevation 0, 배경색만으로 구분
-        /// Flat design: no elevation, distinguish by background color
-        decoration: BoxDecoration(
-          color: scheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            /// 이미지가 있으면 왼쪽에 표시
-            /// Show image on the left if available
-            if (ad.firstImageUrl != null)
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  bottomLeft: Radius.circular(8),
-                ),
 
-                /// CachedNetworkImage: 이미지 캐싱으로 성능 향상
-                /// CachedNetworkImage: Improved performance with image caching
-                child: CachedNetworkImage(
-                  imageUrl: ad.firstImageUrl!,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
+      /// 배경색 없이 Row만 사용 (컴팩트 디자인)
+      /// No background color, just Row (compact design)
+      child: Row(
+        children: [
+          /// 이미지가 있으면 왼쪽에 표시
+          /// Show image on the left if available
+          if (ad.firstImageUrl != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
 
-                  /// 이미지 로드 실패 시 동일 크기의 빈 위젯 반환
-                  /// Return empty widget with same size on image load error
-                  errorWidget: (context, url, error) =>
-                      const SizedBox(width: 160, height: 80),
-                ),
+              /// CachedNetworkImage: 이미지 캐싱으로 성능 향상
+              /// CachedNetworkImage: Improved performance with image caching
+              child: CachedNetworkImage(
+                imageUrl: ad.firstImageUrl!,
+                width: 72,
+                height: 72,
+                fit: BoxFit.cover,
+
+                /// 이미지 로드 실패 시 동일 크기의 빈 위젯 반환
+                /// Return empty widget with same size on image load error
+                errorWidget: (context, url, error) =>
+                    const SizedBox(width: 72, height: 72),
               ),
+            ),
 
-            /// 텍스트 영역 (제목, 조회수, D-day)
-            /// Text area (subject, views, D-day)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(width: 8),
+
+          /// 텍스트 영역 (제목, 조회수, D-day)
+          /// Text area (subject, views, D-day)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// 제목 (최대 1줄)
+                /// Subject (max 1 line)
+                Text(
+                  ad.subject,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+                const SizedBox(height: 2),
+
+                /// 조회수 · D-day 영역
+                /// Views · D-day area
+                Row(
                   children: [
-                    /// 제목 (최대 1줄)
-                    /// Subject (max 1 line)
+                    /// 조회수 텍스트
+                    /// Views text
                     Text(
-                      ad.subject,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      '조회 ${_formatNumber(ad.noOfView)}',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
 
-                    const SizedBox(height: 4),
-
-                    /// 조회수 · D-day 영역
-                    /// Views · D-day area
-                    Row(
-                      children: [
-                        /// 조회수 텍스트
-                        /// Views text
-                        Text(
-                          '조회 ${_formatNumber(ad.noOfView)}',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
+                    /// 구분자
+                    /// Separator
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        '·',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
                         ),
+                      ),
+                    ),
 
-                        /// 구분자
-                        /// Separator
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Text(
-                            '·',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-
-                        /// D-day 뱃지
-                        /// D-day badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: scheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            'D-${ad.remainingDays}',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: scheme.onPrimaryContainer,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
+                    /// D-day 텍스트 (뱃지 대신 간단한 텍스트)
+                    /// D-day text (simple text instead of badge)
+                    Text(
+                      'D-${ad.remainingDays}',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

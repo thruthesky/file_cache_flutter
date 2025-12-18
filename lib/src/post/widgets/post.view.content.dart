@@ -76,8 +76,11 @@ class _PostViewContentState extends State<PostViewContent> {
             color: Theme.of(context).colorScheme.primary,
             textDecoration: TextDecoration.underline,
           ),
-          // 이미지 스타일 설정
-          "img": Style(width: Width(100, Unit.percent)),
+          // 중요: 이미지 스타일 설정 (너비 100%)
+          // 반드시 아래와 같이 MediaQuery를 사용해야 100% 이미지 너비가 적용된다!!
+          "img": Style(
+            width: Width(MediaQuery.of(context).size.width, Unit.auto),
+          ),
           // 단락 스타일 설정
           "p": Style(margin: Margins.only(bottom: 8)),
         },
