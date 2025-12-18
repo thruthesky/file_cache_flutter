@@ -158,7 +158,6 @@ export 'src/widgets/upload/file_preview.dart';
 export 'src/post/widgets/point.selection.button.dart';
 export 'src/post/widgets/point_advertisements.dart';
 export 'src/post/widgets/post.create.form.dart';
-export 'src/post/widgets/post_list_tile/post_list_tile.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.item.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.meta.dart';
 export 'src/post/widgets/post_list_tile/post_list_tile.upload_preview.dart';

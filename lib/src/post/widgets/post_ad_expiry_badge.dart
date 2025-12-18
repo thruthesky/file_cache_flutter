@@ -23,10 +23,11 @@ class PostAdExpiryBadge extends StatelessWidget {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         FaIcon(
           FontAwesomeIcons.calendarDays,
-          size: 14,
+          size: 16,
           color: scheme.onSurfaceVariant,
         ),
         const SizedBox(width: 8),

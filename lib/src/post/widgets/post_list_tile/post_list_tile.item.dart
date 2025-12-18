@@ -29,6 +29,7 @@ class PostListTileItem extends StatelessWidget {
     required this.post,
     this.enableHeroTransition = false,
     this.showProfile = true,
+    required this.onTap 
   });
 
   /// 표시할 게시글 데이터
@@ -39,17 +40,23 @@ class PostListTileItem extends StatelessWidget {
 
   /// 작성자 프로필(아바타, 닉네임) 표시 여부
   final bool showProfile;
+  
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     // Blocked 위젯을 사용하여 차단된 사용자 처리
     return Blocked(
       otherUserUid: post.firebase_uid,
-      // 차단되지 않은 경우: 일반 게시글 레이아웃
-      no: () => _buildContent(context, blocked: false),
+      // 차단되지 않은 경우: 일반 게시글 레이아웃 (onTap 사용)
+      no: () {
+        return InkWell(
+          onTap: onTap,
+          child: _buildContent(context, blocked: false),
+        );
+      },
       // 차단된 경우: 차단 메시지 레이아웃 + 탭하여 차단 해제
-      yes: () => GestureDetector(
-        /// TODO: when login-user unblock this user, show content.
+      yes: () => InkWell(
         onTap: () => showUnblockDialog(
           context: context,
           otherUserUid: post.firebase_uid,

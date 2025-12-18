@@ -243,7 +243,7 @@ class PostMasonryViewState extends State<PostMasonryView> {
                           post,
                           () => widget.onTap(post),
                         ) ??
-                        PostListTile(
+                        PostListTileItem(
                           post: post,
                           onTap: () => widget.onTap(post),
                           enableHeroTransition: widget.enableHeroTransition,

@@ -194,7 +194,10 @@ Future<void> showReportReasonBottomSheet({
                       ),
                     ),
                     IconButton(
-                      onPressed: () => Navigator.of(sheetContext).pop(),
+                      onPressed: () {
+                        Navigator.of(sheetContext).pop();
+                        FocusScope.of(sheetContext).unfocus();
+                      },
                       icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
                     ),
                   ],

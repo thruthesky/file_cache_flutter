@@ -339,7 +339,7 @@ void showUserRecentPostsDialog({
                         final post = posts[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: PostListTile(
+                          child: PostListTileItem(
                             post: post,
                             showProfile: false,
                             onTap: () {

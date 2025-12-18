@@ -290,7 +290,7 @@ class PostListViewState extends State<PostListView> {
               /// 커스텀 빌더가 있으면 사용하고, 없으면 기본 PostListTile 사용
               final tile =
                   widget.tileBuilder?.call(post, () => widget.onTap(post)) ??
-                  PostListTile(
+                  PostListTileItem(
                     post: post,
                     onTap: () => widget.onTap(post),
                     enableHeroTransition: widget.enableHeroTransition,
