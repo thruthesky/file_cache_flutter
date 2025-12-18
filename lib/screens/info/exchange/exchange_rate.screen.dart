@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:philgo/services/currency/currency.service.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/unfocus_on_tap.dart';
