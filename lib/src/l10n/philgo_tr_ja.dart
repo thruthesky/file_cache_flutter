@@ -770,18 +770,6 @@ class PhilgoTrJa extends PhilgoTr {
   String get adExpiresLabel => '広告終了';
 
   @override
-  String pointAdvertisementConfirmMessage(int days, int cost) {
-    return 'Purchase $days-day advertisement for $cost points?';
-  }
-
-  @override
-  String get pointAdvertisementSuccess =>
-      'Point advertisement updated successfully';
-
-  @override
-  String get insufficientPoints => 'Insufficient points';
-
-  @override
   String get days => '日';
 
   @override
@@ -797,4 +785,12 @@ class PhilgoTrJa extends PhilgoTr {
 
   @override
   String get selectAdvertisementDays => '広告日数を選択してください';
+
+  @override
+  String pointAdvertisementConfirmMessage(int days, int points) {
+    return '$days日間投稿を宣伝します。$pointsポイントが必要です。続行しますか？';
+  }
+
+  @override
+  String get pointAdvertisementSuccess => '投稿が正常に宣伝されました！';
 }

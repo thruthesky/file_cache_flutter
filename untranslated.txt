@@ -2,18 +2,12 @@
   "ja": [
     "subCategoryManila",
     "subCategoryCebu",
-    "subCategoryAngeles",
-    "pointAdvertisementConfirmMessage",
-    "pointAdvertisementSuccess",
-    "insufficientPoints"
+    "subCategoryAngeles"
   ],
 
   "zh": [
     "subCategoryManila",
     "subCategoryCebu",
-    "subCategoryAngeles",
-    "pointAdvertisementConfirmMessage",
-    "pointAdvertisementSuccess",
-    "insufficientPoints"
+    "subCategoryAngeles"
   ]
 }
