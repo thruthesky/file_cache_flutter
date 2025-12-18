@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -40,63 +38,13 @@ class _PostReportButtonState extends State<PostReportButton> {
     currentReportCounter = getReportCounter();
   }
 
-  /// 타입에 따른 신고 사유 목록을 반환하는 메서드
-  ///
-  /// [type] 신고 대상 타입
-  /// - 'post': 게시물 신고 사유 (카테고리 오류, 시비/욕설, 스팸, 기타)
-  /// - 'comment': 댓글 신고 사유 (시비/욕설, 스팸, 기타)
-  /// - 기타: 기본 사유 (기타)
-  List<String> getReportReason(BuildContext context, String type) {
-    final tr = PhilgoTr.of(context)!;
-    if (type == 'post') {
-      return [
-        tr.report_reason_category_error,
-        tr.report_reason_abuse,
-        tr.report_reason_spam,
-        tr.report_reason_other,
-      ];
-    } else if (type == 'comment') {
-      return [
-        tr.report_reason_abuse,
-        tr.report_reason_spam,
-        tr.report_reason_other,
-      ];
-    }
-    return [tr.report_reason_other];
-  }
-
-  /// 신고를 처리하는 메서드
-  /// [reason] 신고 사유
-  /// 성공 시 성공 메시지를 표시하고, 에러는 reportPost 함수에서 자동으로 처리됨
-  Future<void> handleReport(String reason) async {
-    try {
-      final res = await reportPost(
-        type: widget.type,
-        idx: widget.idx,
-        reason: reason,
-      );
-      if (mounted && res['error'] != null && res['message'] != null) {
-        showErrorSnackBar(context, res['message']);
-        return;
-      }
-      if (mounted && res['message'] != null && res['message']!.isNotEmpty) {
-        showSuccessSnackBar(context, PhilgoTr.of(context)!.report_success);
-        increaseCounter();
-        return;
-      }
-    } catch (e) {
-      log('신고 처리 중 에러 발생: $e', name: 'PostReportButton::handleReport');
-      if (mounted) {
-        showErrorSnackBar(context, PhilgoTr.of(context)!.report_failed);
-      }
-    }
-  }
-
+  /// Increase the report counter and update UI
   void increaseCounter() {
     currentReportCounter++;
     setState(() {});
   }
 
+  /// Get the current report counter based on type
   int getReportCounter() {
     if (widget.type == 'post' && widget.post != null) {
       return widget.post!.reportCounter;
@@ -104,108 +52,6 @@ class _PostReportButtonState extends State<PostReportButton> {
       return widget.comment!.reportCounter;
     }
     return 0;
-  }
-
-  /// 신고 사유 선택 바텀 시트 모달을 표시하는 메서드
-  ///
-  /// 하단에서 올라오는 모달 창을 표시하여 사용자가 신고 사유를 선택할 수 있도록 함
-  /// - 게시물 타입(post/comment)에 따라 다른 신고 사유 목록 표시
-  /// - 사유 선택 시 handleReport() 호출 후 모달 자동 닫힘
-  /// - Theme 기반 스타일링으로 다크모드/라이트모드 자동 대응
-  void _showReportReasonBottomSheet() {
-    final scheme = Theme.of(context).colorScheme;
-    final reasons = getReportReason(context, widget.type);
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor:
-          Colors.transparent, // Comic Design: transparent for custom styling
-      elevation: 0, // Comic Design: no shadow
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(
-                12.0,
-              ), // Comic Design: rounded top corners
-              topRight: Radius.circular(12.0),
-            ),
-            border: Border(
-              top: BorderSide(
-                color: scheme.outline,
-                width: 2.0, // Comic Design: 2.0 border
-              ),
-              left: BorderSide(color: scheme.outline, width: 2.0),
-              right: BorderSide(color: scheme.outline, width: 2.0),
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Comic Design: drag handle indicator
-                const SizedBox(height: 8),
-                Container(
-                  width: 32,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // 헤더: 제목과 닫기 버튼
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        PhilgoTr.of(context)!.report_select_reason,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const FaIcon(FontAwesomeIcons.xmark, size: 20),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Comic Design: 2.0 border separator
-                Container(height: 2, color: scheme.outline),
-
-                // 신고 사유 목록
-                ...reasons.map(
-                  (reason) => ListTile(
-                    leading: FaIcon(
-                      FontAwesomeIcons.hexagonExclamation,
-                      size: 20,
-                      color: scheme.onSurface,
-                    ),
-                    title: Text(reason),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      handleReport(reason);
-                    },
-                  ),
-                ),
-
-                // 하단 여백
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -222,7 +68,12 @@ class _PostReportButtonState extends State<PostReportButton> {
         borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
       ),
       child: InkWell(
-        onTap: _showReportReasonBottomSheet,
+        onTap: () => showReportReasonBottomSheet(
+          context: context,
+          type: widget.type,
+          idx: widget.idx,
+          onReportSuccess: increaseCounter,
+        ),
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

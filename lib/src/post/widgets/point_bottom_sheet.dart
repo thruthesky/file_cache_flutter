@@ -46,13 +46,6 @@ class _PointSelectionBottomSheetState extends State<PointSelectionBottomSheet> {
     _selectedDays = widget.initialSelectedDays;
   }
 
-  /// 포인트 비용 계산
-  ///
-  /// 공식: 일수 × 시간당비용 × 24시간
-  int _calculatePoints(int days) {
-    return calculatePointCost(days, widget.pointSetting.advCostPerHour);
-  }
-
   /// 포인트 숫자 포맷팅 (천 단위 콤마)
   String _formatPoints(int points) {
     return points.toString().replaceAllMapped(
@@ -120,7 +113,10 @@ class _PointSelectionBottomSheetState extends State<PointSelectionBottomSheet> {
                 itemCount: advertisementDays.length,
                 itemBuilder: (context, index) {
                   final days = advertisementDays[index];
-                  final points = _calculatePoints(days);
+                  final points = calculatePointCost(
+                    days,
+                    widget.pointSetting.advCostPerHour,
+                  );
                   final isSelected = _selectedDays == days;
                   final isDisabled = widget.userPoints < points;
 

@@ -147,6 +147,7 @@ export 'src/post/models/comment.model.dart';
 export 'src/post/models/post.list.model.dart';
 export 'src/post/models/post.model.dart';
 export 'src/post/post.functions.dart';
+export 'src/post/post.ui.functions.dart';
 // Post - Widgets (게시글 UI 컴포넌트)
 export 'src/post/widgets/category.list.dart';
 export 'src/post/widgets/comment.detail.dart';

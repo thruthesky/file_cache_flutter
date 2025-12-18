@@ -32,10 +32,7 @@ class PostAdExpiryBadge extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           '${PhilgoTr.of(context)!.adExpiresLabel}: ${_formatTimestamp()}',
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: scheme.onSurface,
-          ),
+          style: theme.textTheme.bodySmall,
         ),
       ],
     );

@@ -224,15 +224,30 @@ class PostUpdateFormState extends State<PostUpdateForm> {
       log('글 수정 시작 - idx: ${widget.post.idx}', name: 'PostUpdateForm');
       log('업로드된 파일 개수: ${_urls.length}', name: 'PostUpdateForm');
 
-      // API 호출하여 글 수정
-      final updated = await updatePost({
-        'idx': widget.post.idx,
-        'subject': _titleController.text.trim(),
-        'content': _contentController.text.trim(),
-        'files': _urls,
-        if (advertisementDays != null)
-          'point_advertisement_days': advertisementDays,
-      });
+      final hasContentChanges = hasChanges();
+      Post updated;
+
+      if (!hasContentChanges && advertisementDays != null) {
+        log('내용 변경 없음 - 광고 연장 호출', name: 'PostUpdateForm');
+        updated = await extendPointAdvertisement(
+          idx: widget.post.idx,
+          days: advertisementDays!,
+        );
+
+        debugPrint('Called the extendPointAdvertisement function()');
+      } else {
+        // API 호출하여 글 수정
+        updated = await updatePost({
+          'idx': widget.post.idx,
+          'subject': _titleController.text.trim(),
+          'content': _contentController.text.trim(),
+          'files': _urls,
+          if (advertisementDays != null)
+            'point_advertisement_days': advertisementDays,
+        });
+
+        debugPrint('Called the updatePost function()');
+      }
 
       log('글 수정 성공 - idx: ${updated.idx}', name: 'PostUpdateForm');
 
