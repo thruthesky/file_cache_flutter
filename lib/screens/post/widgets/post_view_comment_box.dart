@@ -59,6 +59,9 @@ class PostViewCommentBox extends StatefulWidget {
 }
 
 class _PostViewCommentBoxState extends State<PostViewCommentBox> {
+  bool _isCommentUpdateBusy = false;
+  bool _isReplyBusy = false;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -120,10 +123,18 @@ class _PostViewCommentBoxState extends State<PostViewCommentBox> {
                   const SizedBox(width: 8),
                   // 취소 버튼
                   IconButton(
-                    icon: const Icon(Icons.close, size: 20),
-                    onPressed: widget.editingComment != null
-                        ? widget.onCancelEditMode
-                        : widget.onCancelReplyMode,
+                    icon: Icon(
+                      Icons.close,
+                      size: 20,
+                      color: (_isCommentUpdateBusy || _isReplyBusy)
+                          ? scheme.onSurface.withValues(alpha: 0.3)
+                          : null,
+                    ),
+                    onPressed: (_isCommentUpdateBusy || _isReplyBusy)
+                        ? null
+                        : (widget.editingComment != null
+                              ? widget.onCancelEditMode
+                              : widget.onCancelReplyMode),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     visualDensity: VisualDensity.compact,
@@ -139,6 +150,41 @@ class _PostViewCommentBoxState extends State<PostViewCommentBox> {
                 // 수정 모드: CommentUpdate 폼
                 ? CommentUpdate(
                     comment: widget.editingComment!,
+                    onBusyStateChanged: (isBusy) {
+                      setState(() {
+                        _isCommentUpdateBusy = isBusy;
+                      });
+                    },
+                    onFileDeleted: (updatedComment) {
+                      // 댓글 목록에서 해당 댓글 찾아 파일 목록만 업데이트 (수정 모드 유지)
+                      final index = widget.post?.comments.indexWhere(
+                        (c) => c.idx == updatedComment.idx,
+                      );
+                      if (index != null && index >= 0) {
+                        widget.post?.comments[index].files =
+                            updatedComment.files;
+                      }
+
+                      // 화면 갱신 (수정 모드는 유지)
+                      if (mounted) {
+                        widget.onStateChanged();
+                      }
+                    },
+                    onFileUpdated: (updatedComment) {
+                      // 댓글 목록에서 해당 댓글 찾아 파일 목록만 업데이트 (수정 모드 유지)
+                      final index = widget.post?.comments.indexWhere(
+                        (c) => c.idx == updatedComment.idx,
+                      );
+                      if (index != null && index >= 0) {
+                        widget.post?.comments[index].files =
+                            updatedComment.files;
+                      }
+
+                      // 화면 갱신 (수정 모드는 유지)
+                      if (mounted) {
+                        widget.onStateChanged();
+                      }
+                    },
                     onUpdated: (updatedComment) {
                       // 댓글 목록에서 해당 댓글 찾아 업데이트
                       final index = widget.post?.comments.indexWhere(
@@ -167,6 +213,11 @@ class _PostViewCommentBoxState extends State<PostViewCommentBox> {
                 // 답글 모드: ReplyToComment 폼
                 ? ReplyToComment(
                     parent: widget.replyingToComment!,
+                    onBusyStateChanged: (isBusy) {
+                      setState(() {
+                        _isReplyBusy = isBusy;
+                      });
+                    },
                     onReplied: (createdComment) {
                       // 부모 댓글 바로 아래에 답글 삽입
                       int? where = widget.post?.comments.indexWhere(
