@@ -228,9 +228,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
           onTapReply: onTapReply,
           onEditCompleted: (updated) {
             // 원본 위젯의 게시글 데이터도 업데이트
-            widget.post.subject = updated.subject;
-            widget.post.content = updated.content;
-
             if (mounted) {
               setState(() {
                 post = updated;
