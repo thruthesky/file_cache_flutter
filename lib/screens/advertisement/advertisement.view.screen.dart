@@ -161,6 +161,13 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                   ),
                 ),
+
+                Text(
+                  '연락처: ${post.varchar15}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           );

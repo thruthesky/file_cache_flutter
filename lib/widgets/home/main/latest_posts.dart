@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:philgo/widgets/home/home_post_section_shimmer.dart';
 import 'package:philgo/widgets/home/main/carousel_dot_indicator.dart';
 import 'package:philgo/widgets/home/home_post_section.dart';
+import 'package:philgo_api/philgo_api.dart';
 
 /// 게시판 설정 데이터 클래스 (Post Section Configuration)
 ///
@@ -18,6 +20,13 @@ class _PostSectionConfig {
   final String? category;
 
   const _PostSectionConfig({required this.postId, this.category});
+
+  /// API 호출용 카테고리 키 생성 (API category key generator)
+  ///
+  /// get_latest_posts API의 카테고리 형식에 맞게 키를 생성합니다.
+  /// - postId만 있는 경우: 'postId' (예: 'freetalk')
+  /// - category가 있는 경우: 'postId/category' (예: 'buyandsell/골프')
+  String get categoryKey => category != null ? '$postId/$category' : postId;
 }
 
 /// 홈 화면 최근 게시글 섹션 위젯 (Home Latest Posts Section Widget)
@@ -61,6 +70,13 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
   /// 자동 슬라이딩 간격 (Auto-slide interval)
   static const Duration _autoSlideDuration = Duration(seconds: 5);
 
+  /// 모든 카테고리의 게시글 데이터 (All categories post data)
+  ///
+  /// get_latest_posts API로 한 번에 fetch한 데이터를 저장합니다.
+  /// 키: 카테고리 키 (예: 'freetalk', 'buyandsell/골프')
+  /// 값: 해당 카테고리의 Post 목록
+  Map<String, List<Post>>? _postsData;
+
   /// 게시판 목록 (2개씩 쌍으로 구성) (Board pairs configuration)
   ///
   /// 각 카로셀 아이템에 표시될 게시판 쌍을 정의합니다.
@@ -103,6 +119,43 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
 
     /// 자동 슬라이딩 타이머 시작 (Start auto-slide timer)
     _startAutoSlideTimer();
+
+    /// 모든 카테고리의 게시글 데이터를 한 번에 로드 (Load all categories posts at once)
+    _loadAllPosts();
+  }
+
+  /// 모든 카테고리의 게시글 데이터를 한 번에 로드 (Load all categories posts at once)
+  ///
+  /// get_latest_posts API를 사용하여 모든 게시판/카테고리의 최신 글을
+  /// 한 번의 API 호출로 가져옵니다.
+  ///
+  /// 기존 방식: 각 HomePostSection에서 개별 API 호출 (8회)
+  /// 개선 방식: 부모에서 한 번만 API 호출 (1회) → 자식에게 데이터 전달
+  Future<void> _loadAllPosts() async {
+    try {
+      /// 모든 카테고리 키 수집 (Collect all category keys)
+      /// _sectionPairs에서 모든 config의 categoryKey를 추출
+      final categories = _sectionPairs
+          .expand((pair) => pair.map((config) => config.categoryKey))
+          .toList();
+
+      /// get_latest_posts API 호출 (한 번의 호출로 모든 데이터 fetch)
+      /// API returns: {'freetalk': [...], 'qna': [...], 'buyandsell/골프': [...], ...}
+      final result = await getLatestPosts(
+        categories: categories,
+        limit: 4,
+      );
+
+      if (mounted) {
+        setState(() {
+          _postsData = result;
+        });
+      }
+    } catch (e) {
+      /// 에러 발생 시 _postsData는 null로 유지 (Keep _postsData null on error)
+      /// HomePostSection이 자체적으로 데이터를 로드하도록 fallback
+      debugLog('LatestPostsSection._loadAllPosts 에러: $e');
+    }
   }
 
   @override
@@ -252,14 +305,34 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
   ///
   /// [configs] → 표시할 게시판 설정 목록 (1개 또는 2개)
   ///             List of board configurations to display (1 or 2)
+  ///
+  /// 부모에서 fetch한 데이터(_postsData)가 있으면 HomePostSection에 전달하여
+  /// 개별 API 호출을 방지합니다. (Prevent individual API calls by passing pre-fetched data)
+  ///
+  /// posts가 null인 경우 shimmer 로딩 효과를 표시합니다.
   Widget _buildCarouselItem(List<_PostSectionConfig> configs) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: configs.map((config) {
+        /// 해당 카테고리의 게시글 데이터 추출 (Extract posts for this category)
+        final posts = _postsData?[config.categoryKey];
+
+        /// posts가 null이면 shimmer 로딩 효과 표시 (Show shimmer loading when posts is null)
+        /// HomePostSectionShimmer 공용 위젯 사용
+        if (posts == null) {
+          return Expanded(
+            child: HomePostSectionShimmer(
+              postId: config.postId,
+              category: config.category,
+            ),
+          );
+        }
+
         return Expanded(
           child: HomePostSection(
             postId: config.postId,
             category: config.category,
+            posts: posts,
           ),
         );
       }).toList(),
