@@ -17,7 +17,7 @@ class PostAdInfoBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.surface,
         border: Border(
-          top: BorderSide(color: scheme.outlineVariant),
+          // top: BorderSide(color: scheme.outlineVariant),
           bottom: BorderSide(color: scheme.outlineVariant),
         ),
       ),

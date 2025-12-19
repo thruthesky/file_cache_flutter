@@ -148,7 +148,7 @@ class _CommentDetailState extends State<CommentDetail> {
                   children: [
                     Row(
                       children: [
-                        GestureDetector(
+                        InkWell(
                           onTap: widget.onTapProfile,
                           child: Text(
                             widget.comment.nickname.isEmpty
