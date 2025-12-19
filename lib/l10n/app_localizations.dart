@@ -224,7 +224,7 @@ abstract class Lo {
   /// Label/hint for phone number field
   ///
   /// In en, this message translates to:
-  /// **'Enter your phone number'**
+  /// **'Input your phone number'**
   String get enterPhoneNumber;
 
   /// Short label for phone number

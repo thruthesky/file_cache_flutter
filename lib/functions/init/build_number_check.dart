@@ -1,4 +1,6 @@
-/// 앱 실행 시, 약 20초 후, 빌드 번호를 점검하는 초기화 함수입니다.
+/// 앱 실행 시 빌드 번호를 점검하는 초기화 함수입니다.
+/// - 최초: 앱 실행 5초 후 1회 체크
+/// - 이후: 백그라운드에서 5분마다 주기적으로 체크
 /// API에서 최소 요구 빌드 번호를 가져와서 현재 앱의 빌드 번호와 비교합니다.
 /// 빌드 번호가 최소 요구 빌드 번호보다 낮으면 업그레이드 안내 다이얼로그를 표시합니다.
 /// 참고: .claude/skills/philgo-app/SKILL.md 와 .claude/skills/philgo-app/references/upgrade.md 를 참고합니다.
@@ -17,48 +19,71 @@ import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 
-/// 앱 실행 후 약 20초 후에 빌드 번호를 점검합니다.
+/// 주기적 빌드 번호 체크를 위한 타이머 (취소 가능하도록 보관)
+Timer? _periodicBuildCheckTimer;
+
+/// 앱 실행 후 빌드 번호를 점검합니다.
+/// - 최초: 5초 후 1회 체크
+/// - 이후: 백그라운드에서 5분마다 주기적으로 체크
 /// API func('version')을 호출하여 서버에서 최소 요구 빌드 번호를 가져옵니다.
 /// 현재 앱의 빌드 번호가 서버의 최소 요구 빌드 번호보다 낮으면
 /// 사용자에게 업그레이드를 안내하는 다이얼로그를 표시합니다.
 void initMinimalBuildNumberCheck() {
-  // 5초 후에 빌드 번호 체크 실행
+  // 최초 5초 후에 첫 번째 빌드 번호 체크 실행
   Timer(const Duration(seconds: 5), () async {
-    try {
-      // 1. 현재 앱의 빌드 번호 조회
-      final packageInfo = await PackageInfo.fromPlatform();
-      final currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
+    debugPrint('[BuildNumberCheck] 최초 빌드 번호 체크 시작');
+    await _checkBuildNumber();
 
-      // 2. API에서 버전 정보 가져오기
-      // API 응답 형식:
-      // {"version":"2025-12-11-14-41-07","app":{"android":{"version":"2.0.3","build_number":36},"ios":{"version":"2.0.3","build_number":36}}}
-      final versionInfo = await func('version');
-
-      // 3. 플랫폼별 최소 요구 빌드 번호 추출
-      int minBuildNumber = 0;
-      if (Platform.isAndroid) {
-        // Android 플랫폼: app.android.build_number 값 사용
-        minBuildNumber = versionInfo['app']?['android']?['build_number'] ?? 0;
-      } else if (Platform.isIOS) {
-        // iOS 플랫폼: app.ios.build_number 값 사용
-        minBuildNumber = versionInfo['app']?['ios']?['build_number'] ?? 0;
-      }
-
-      debugPrint(
-        '[BuildNumberCheck] 현재 빌드 번호: $currentBuildNumber, '
-        'API 최소 요구 빌드 번호: $minBuildNumber',
-      );
-
-      // 4. 현재 빌드 번호가 최소 요구 빌드 번호보다 낮으면 업그레이드 안내 다이얼로그 표시
-      if (currentBuildNumber < minBuildNumber) {
-        showUpgradeDialog();
-      }
-    } catch (e) {
-      // API 호출 실패 또는 파싱 오류 시 로그만 출력하고 종료
-      // 네트워크 오류 등으로 인해 사용자 경험을 방해하지 않음
-      debugPrint('[BuildNumberCheck] 빌드 번호 체크 중 오류 발생: $e');
-    }
+    // 첫 번째 체크 완료 후, 5분마다 주기적으로 체크 시작
+    _periodicBuildCheckTimer?.cancel(); // 기존 타이머가 있으면 취소
+    _periodicBuildCheckTimer = Timer.periodic(
+      const Duration(minutes: 5),
+      (timer) async {
+        debugPrint('[BuildNumberCheck] 주기적 빌드 번호 체크 (${timer.tick}회차)');
+        await _checkBuildNumber();
+      },
+    );
+    debugPrint('[BuildNumberCheck] 5분 주기 백그라운드 체크 시작됨');
   });
+}
+
+/// 빌드 번호 체크 로직 (공통 함수)
+/// 현재 앱의 빌드 번호와 서버의 최소 요구 빌드 번호를 비교합니다.
+Future<void> _checkBuildNumber() async {
+  try {
+    // 1. 현재 앱의 빌드 번호 조회
+    final packageInfo = await PackageInfo.fromPlatform();
+    final currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
+
+    // 2. API에서 버전 정보 가져오기
+    // API 응답 형식:
+    // {"version":"2025-12-11-14-41-07","app":{"android":{"version":"2.0.3","build_number":36},"ios":{"version":"2.0.3","build_number":36}}}
+    final versionInfo = await func('version');
+
+    // 3. 플랫폼별 최소 요구 빌드 번호 추출
+    int minBuildNumber = 0;
+    if (Platform.isAndroid) {
+      // Android 플랫폼: app.android.build_number 값 사용
+      minBuildNumber = versionInfo['app']?['android']?['build_number'] ?? 0;
+    } else if (Platform.isIOS) {
+      // iOS 플랫폼: app.ios.build_number 값 사용
+      minBuildNumber = versionInfo['app']?['ios']?['build_number'] ?? 0;
+    }
+
+    debugPrint(
+      '[BuildNumberCheck] 현재 빌드 번호: $currentBuildNumber, '
+      'API 최소 요구 빌드 번호: $minBuildNumber',
+    );
+
+    // 4. 현재 빌드 번호가 최소 요구 빌드 번호보다 낮으면 업그레이드 안내 다이얼로그 표시
+    if (currentBuildNumber < minBuildNumber) {
+      showUpgradeDialog();
+    }
+  } catch (e) {
+    // API 호출 실패 또는 파싱 오류 시 로그만 출력하고 종료
+    // 네트워크 오류 등으로 인해 사용자 경험을 방해하지 않음
+    debugPrint('[BuildNumberCheck] 빌드 번호 체크 중 오류 발생: $e');
+  }
 }
 
 /// 업그레이드 안내 다이얼로그를 표시합니다.
