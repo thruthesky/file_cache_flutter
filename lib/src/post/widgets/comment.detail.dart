@@ -33,6 +33,7 @@ class CommentDetail extends StatefulWidget {
 
 class _CommentDetailState extends State<CommentDetail> {
   bool _isLiked = false;
+  bool _isDeleting = false;
 
   double getDepthMargin(int depth) {
     return switch (depth) {
@@ -48,40 +49,45 @@ class _CommentDetailState extends State<CommentDetail> {
     required BuildContext context,
     required IconData icon,
     String? label, // Make label optional
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     Color? color,
   }) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: color ?? scheme.outline,
-          width: 1.0, // Comic Design: 2.0 border
+    return Opacity(
+      opacity: onPressed == null ? 0.5 : 1.0,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: color ?? scheme.outline,
+            width: 1.0, // Comic Design: 2.0 border
+          ),
+          borderRadius: BorderRadius.circular(
+            8,
+          ), // Comic Design: rounded corners
         ),
-        borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
-      ),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 16, color: color ?? scheme.onSurface),
-              if (label != null && label.isNotEmpty) ...[
-                const SizedBox(width: 6),
-                Text(
-                  label,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: color ?? scheme.onSurface,
-                    fontWeight: FontWeight.w500,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 16, color: color ?? scheme.onSurface),
+                if (label != null && label.isNotEmpty) ...[
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: color ?? scheme.onSurface,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -230,18 +236,21 @@ class _CommentDetailState extends State<CommentDetail> {
                               _isLiked = !_isLiked;
                               setState(() {});
 
-                              if (mounted) {
-                                showSuccessSnackBar(context, 'Comment liked');
+                              if (context.mounted) {
+                                showSuccessSnackBar(
+                                  context,
+                                  PhilgoTr.of(context)!.commentLiked,
+                                );
                               }
                             } catch (e) {
                               d('Error liking comment: $e');
 
                               // Handle already-liked error
                               if (e.toString().contains('already-liked')) {
-                                if (mounted) {
+                                if (context.mounted) {
                                   showErrorSnackBar(
                                     context,
-                                    'Already liked this comment',
+                                    PhilgoTr.of(context)!.alreadyLikedComment,
                                   );
                                 }
                               }
@@ -272,26 +281,45 @@ class _CommentDetailState extends State<CommentDetail> {
                           ),
                           _buildComicActionButton(
                             context: context,
-                            icon: FontAwesomeIcons.trash,
+                            icon: _isDeleting
+                                ? FontAwesomeIcons.spinner
+                                : FontAwesomeIcons.trash,
                             color: Theme.of(context).colorScheme.error,
-                            onPressed: () async {
-                              final confirmed = await showConfirmDialog(
-                                message: PhilgoTr.of(
-                                  context,
-                                )!.delete_comment_confirmation,
-                              );
-                              if (confirmed) {
-                                await deleteComment(widget.comment.idx);
-                                if (mounted) {
-                                  showSuccessSnackBar(
-                                    context,
-                                    PhilgoTr.of(context)!.successfully_deleted,
-                                  );
-                                  // Notify parent widget to remove this comment from the list
-                                  widget.onDeleted(widget.comment);
-                                }
-                              }
-                            },
+                            onPressed: _isDeleting
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      _isDeleting = true;
+                                    });
+
+                                    try {
+                                      await deleteComment(widget.comment.idx);
+                                      if (context.mounted) {
+                                        showSuccessSnackBar(
+                                          context,
+                                          PhilgoTr.of(
+                                            context,
+                                          )!.successfully_deleted,
+                                        );
+                                        // Notify parent widget to remove this comment from the list
+                                        widget.onDeleted(widget.comment);
+                                      }
+                                    } catch (e) {
+                                      if (mounted) {
+                                        setState(() {
+                                          _isDeleting = false;
+                                        });
+                                        if (context.mounted) {
+                                          showSafeErrorDialog(
+                                            PhilgoTr.of(context)!.failedToDeleteComment(
+                                              e.toString(),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    }
+                                  },
+                            // },
                           ),
                         ],
                         if (!widget.myComment) ...[

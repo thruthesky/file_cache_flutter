@@ -801,4 +801,46 @@ class PhilgoTrJa extends PhilgoTr {
   String pointAdvertisementExtendMessage(int days, int points) {
     return '投稿の宣伝期間を$days日間延長します。$pointsポイントが必要です。続行しますか？';
   }
+
+  @override
+  String get uploadInProgress =>
+      'Image upload is in progress, please try again in a moment.';
+
+  @override
+  String get deleteFileConfirmation =>
+      'Are you sure you want to delete this file?';
+
+  @override
+  String failedToDeleteFile(String error) {
+    return 'Failed to delete file: $error';
+  }
+
+  @override
+  String failedToUpdateComment(String error) {
+    return 'Failed to update comment: $error';
+  }
+
+  @override
+  String failedToPostReply(String error) {
+    return 'Failed to post reply: $error';
+  }
+
+  @override
+  String get fileDeleted => 'File deleted';
+
+  @override
+  String get commentLiked => 'Comment liked';
+
+  @override
+  String get alreadyLikedComment => 'Already liked this comment';
+
+  @override
+  String failedToDeleteComment(String error) {
+    return 'Failed to delete comment: $error';
+  }
+
+  @override
+  String deleteNewFilesConfirmation(int count) {
+    return 'You have $count newly uploaded file(s). Do you want to delete them?';
+  }
 }

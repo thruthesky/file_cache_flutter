@@ -7,10 +7,12 @@ class ReplyToComment extends StatefulWidget {
     super.key,
     required this.parent,
     required this.onReplied,
+    this.onBusyStateChanged,
   });
 
   final Comment parent;
   final Function(Comment) onReplied;
+  final Function(bool isBusy)? onBusyStateChanged;
 
   @override
   State<ReplyToComment> createState() => _ReplyToPostFormState();
@@ -25,6 +27,7 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
 
   List<String> imageUrls = [];
   int uploadingCount = 0; // Track number of ongoing uploads
+  String? deletingFileUrl; // Track which file is being deleted
 
   @override
   void initState() {
@@ -50,20 +53,20 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
     }
   }
 
+  /// Notify parent if widget is busy (uploading, deleting, or submitting)
+  void notifyBusyState() {
+    final isBusy =
+        uploadingCount > 0 || deletingFileUrl != null || isCreatingReply;
+    widget.onBusyStateChanged?.call(isBusy);
+  }
+
   void onTapReplyToComment() async {
     // Dismiss keyboard immediately after successful reply creation
     focusNode.unfocus();
     try {
-      if (uploadingCount > 0) {
-        showSafeErrorDialog(
-          'Image upload is in progress, please try again in a moment.',
-        );
-        return;
-      }
-
       isCreatingReply = true;
-
       setState(() {});
+      notifyBusyState();
 
       final createdComment = await createComment({
         'idx_root': widget.parent.idx_root,
@@ -79,10 +82,17 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
       uploadingCount = 0;
     } catch (e) {
       debugLog('Failed to post reply: $e');
-      showSafeErrorDialog('Failed to post reply: $e');
+      if (mounted) {
+        showSafeErrorDialog(
+          PhilgoTr.of(context)!.failedToPostReply(e.toString()),
+        );
+      }
     } finally {
-      isCreatingReply = false;
-      setState(() {});
+      if (mounted) {
+        isCreatingReply = false;
+        setState(() {});
+        notifyBusyState();
+      }
     }
   }
 
@@ -103,22 +113,54 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
                 children: [
                   // Display uploaded images with delete button
                   ...imageUrls.map(
-                    (url) => UploadPreview(
-                      url: url,
-                      width: 80,
-                      height: 80,
-                      borderRadius: 8,
-                      onDelete: () async {
-                        try {
-                          await philgoApiFileDelete(url);
-                          debugLog("File deleted: $url");
-                          imageUrls.remove(url);
-                          setState(() {});
-                        } catch (e) {
-                          debugLog("Failed to delete file: $e");
-                          showSafeErrorDialog("Failed to delete file: $e");
-                        }
-                      },
+                    (url) => IgnorePointer(
+                      // Disable interaction when any file is being deleted
+                      ignoring:
+                          deletingFileUrl != null && deletingFileUrl != url,
+                      child: Opacity(
+                        // Dim other files when one is being deleted
+                        opacity:
+                            deletingFileUrl != null && deletingFileUrl != url
+                            ? 0.5
+                            : 1.0,
+                        child: UploadPreview(
+                          url: url,
+                          width: 80,
+                          height: 80,
+                          borderRadius: 8,
+                          isDeleting: deletingFileUrl == url,
+                          onDelete: () async {
+                            // Mark this file as being deleted
+                            setState(() {
+                              deletingFileUrl = url;
+                            });
+                            notifyBusyState();
+
+                            try {
+                              await philgoApiFileDelete(url);
+                              debugLog("File deleted: $url");
+                              imageUrls.remove(url);
+                            } catch (e) {
+                              debugLog("Failed to delete file: $e");
+                              if (mounted && context.mounted) {
+                                showSafeErrorDialog(
+                                  PhilgoTr.of(
+                                    context,
+                                  )!.failedToDeleteFile(e.toString()),
+                                );
+                              }
+                            } finally {
+                              // Clear deleting state
+                              if (mounted) {
+                                setState(() {
+                                  deletingFileUrl = null;
+                                });
+                                notifyBusyState();
+                              }
+                            }
+                          },
+                        ),
+                      ),
                     ),
                   ),
                   // Display loading boxes for uploading images
@@ -155,34 +197,52 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
                 width: 2.0,
               ),
             ),
-            prefixIcon: FileUpload(
-              file: true,
-              video: true,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: FaIcon(FontAwesomeIcons.lightCamera),
-              ),
-              onBeforeUpload: () {
-                setState(() {
-                  uploadingCount++;
-                });
-              },
-              onUploaded: (url) {
-                debugLog('url: $url');
-                imageUrls.add(url);
-                uploadingCount--;
-                setState(() {});
-              },
-              onCancelled: () {
-                // Decrement upload count when upload fails or is cancelled
-                uploadingCount--;
-                setState(() {});
-                debugLog('File upload cancelled or failed, uploadingCount: $uploadingCount');
-              },
-            ),
+            prefixIcon: deletingFileUrl != null
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: FaIcon(
+                      FontAwesomeIcons.lightCamera,
+                      color: Theme.of(
+                        context,
+                      ).iconTheme.color!.withValues(alpha: 0.3),
+                    ),
+                  )
+                : FileUpload(
+                    file: true,
+                    video: true,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FaIcon(FontAwesomeIcons.lightCamera),
+                    ),
+                    onBeforeUpload: () {
+                      if (!mounted) false;
+                      setState(() {
+                        uploadingCount++;
+                      });
+                      notifyBusyState();
+                    },
+                    onUploaded: (url) {
+                      if (!mounted) false;
+                      debugLog('url: $url');
+                      imageUrls.add(url);
+                      uploadingCount--;
+                      setState(() {});
+                      notifyBusyState();
+                    },
+                    onCancelled: () {
+                      if (!mounted) false;
+                      // Decrement upload count when upload fails or is cancelled
+                      uploadingCount--;
+                      setState(() {});
+                      notifyBusyState();
+                      debugLog(
+                        'File upload cancelled or failed, uploadingCount: $uploadingCount',
+                      );
+                    },
+                  ),
             suffixIcon: IconButton(
               padding: const EdgeInsets.all(16.0),
-              icon: isCreatingReply
+              icon: isCreatingReply || deletingFileUrl != null
                   ? SizedBox(
                       width: 16,
                       height: 16,
@@ -204,7 +264,11 @@ class _ReplyToPostFormState extends State<ReplyToComment> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
               onPressed: () {
-                isTextEmpty ? null : onTapReplyToComment();
+                // Disable if empty, submitting, or deleting a file
+                if (isTextEmpty || isCreatingReply || deletingFileUrl != null) {
+                  return;
+                }
+                onTapReplyToComment();
               },
             ),
             contentPadding: const EdgeInsets.symmetric(

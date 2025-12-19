@@ -74,6 +74,7 @@ class UploadPreview extends StatefulWidget {
   final double borderRadius;
   final String url;
   final Future<void> Function() onDelete;
+  final bool isDeleting;
 
   const UploadPreview({
     super.key,
@@ -82,6 +83,7 @@ class UploadPreview extends StatefulWidget {
     this.borderRadius = 8.0,
     required this.url,
     required this.onDelete,
+    this.isDeleting = false,
   });
 
   @override
@@ -101,29 +103,46 @@ class _UploadPreviewState extends State<UploadPreview> {
           borderRadius: widget.borderRadius,
           showFileName: true, // Show filename in comment upload previews
         ),
-        // Delete button (top-right corner)
-        Positioned(
-          top: 4,
-          right: 4,
-          child: GestureDetector(
-            onTap: widget.onDelete,
+        // Loading overlay when deleting
+        if (widget.isDeleting)
+          Positioned.fill(
             child: Container(
-              width: 24,
-              height: 24,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.errorContainer,
-                shape: BoxShape.circle,
+                color: Colors.black.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(widget.borderRadius),
               ),
               child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.solidXmark,
-                  size: 14,
-                  color: Theme.of(context).colorScheme.onErrorContainer,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ),
           ),
-        ),
+        // Delete button (top-right corner) - hide when deleting
+        if (!widget.isDeleting)
+          Positioned(
+            top: 4,
+            right: 4,
+            child: GestureDetector(
+              onTap: widget.onDelete,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.solidXmark,
+                    size: 14,
+                    color: Theme.of(context).colorScheme.onErrorContainer,
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

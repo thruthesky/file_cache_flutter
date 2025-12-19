@@ -801,4 +801,44 @@ class PhilgoTrKo extends PhilgoTr {
   String pointAdvertisementExtendMessage(int days, int points) {
     return '게시글 홍보 기간을 $days일 더 연장합니다. $points 포인트가 필요합니다. 진행하시겠습니까?';
   }
+
+  @override
+  String get uploadInProgress => '이미지 업로드가 진행 중입니다. 잠시 후 다시 시도해주세요.';
+
+  @override
+  String get deleteFileConfirmation => '이 파일을 삭제하시겠습니까?';
+
+  @override
+  String failedToDeleteFile(String error) {
+    return '파일 삭제 실패: $error';
+  }
+
+  @override
+  String failedToUpdateComment(String error) {
+    return '댓글 수정 실패: $error';
+  }
+
+  @override
+  String failedToPostReply(String error) {
+    return '답글 작성 실패: $error';
+  }
+
+  @override
+  String get fileDeleted => '파일이 삭제되었습니다';
+
+  @override
+  String get commentLiked => '댓글에 좋아요를 눌렀습니다';
+
+  @override
+  String get alreadyLikedComment => '이미 좋아요를 누른 댓글입니다';
+
+  @override
+  String failedToDeleteComment(String error) {
+    return '댓글 삭제 실패: $error';
+  }
+
+  @override
+  String deleteNewFilesConfirmation(int count) {
+    return '$count개의 새로 업로드된 파일이 있습니다. 삭제하시겠습니까?';
+  }
 }

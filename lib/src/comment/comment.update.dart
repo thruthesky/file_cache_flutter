@@ -7,9 +7,15 @@ class CommentUpdate extends StatefulWidget {
     super.key,
     required this.comment,
     required this.onUpdated,
+    this.onBusyStateChanged,
+    this.onFileDeleted,
+    this.onFileUpdated,
   });
   final Comment comment;
   final Function(Comment) onUpdated;
+  final Function(bool isBusy)? onBusyStateChanged;
+  final Function(Comment)? onFileDeleted;
+  final Function(Comment)? onFileUpdated;
 
   @override
   State<CommentUpdate> createState() => _CommentUpdateState();
@@ -23,6 +29,7 @@ class _CommentUpdateState extends State<CommentUpdate> {
 
   List<String> imageUrls = [];
   int uploadingCount = 0;
+  String? deletingFileUrl;
 
   @override
   void initState() {
@@ -51,18 +58,19 @@ class _CommentUpdateState extends State<CommentUpdate> {
     }
   }
 
+  /// Notify parent if widget is busy (uploading, deleting, or submitting)
+  void notifyBusyState() {
+    final isBusy = uploadingCount > 0 || deletingFileUrl != null || submitting;
+    widget.onBusyStateChanged?.call(isBusy);
+  }
+
   Future<void> onUpdateComment() async {
     focusNode.unfocus();
 
-    if (uploadingCount > 0) {
-      showSafeErrorDialog(
-        'Image upload is in progress, please try again in a moment.',
-      );
-      return;
-    }
     setState(() {
       submitting = true;
     });
+    notifyBusyState();
     try {
       final updatedComment = await updateComment({
         'idx': widget.comment.idx,
@@ -71,15 +79,21 @@ class _CommentUpdateState extends State<CommentUpdate> {
       });
       debugLog('updatedComment: $updatedComment');
 
-
       widget.onUpdated(updatedComment);
     } catch (e) {
       debugLog('댓글 업데이트 실패: $e');
-      showSafeErrorDialog('댓글 업데이트에 실패했습니다: $e');
+      if (mounted) {
+        showSafeErrorDialog(
+          PhilgoTr.of(context)!.failedToUpdateComment(e.toString()),
+        );
+      }
     } finally {
-      setState(() {
-        submitting = false;
-      });
+      if (mounted) {
+        setState(() {
+          submitting = false;
+        });
+        notifyBusyState();
+      }
     }
   }
 
@@ -98,20 +112,100 @@ class _CommentUpdateState extends State<CommentUpdate> {
                 spacing: 8,
                 children: [
                   ...imageUrls.map(
-                    (url) => UploadPreview(
-                      url: url,
-                      width: 80,
-                      height: 80,
-                      borderRadius: 8,
-                      onDelete: () async {
-                        try {
-                          await philgoApiFileDelete(url);
-                          imageUrls.remove(url);
-                          setState(() {});
-                        } catch (e) {
-                          showSafeErrorDialog("Failed to delete file: $e");
-                        }
-                      },
+                    (url) => IgnorePointer(
+                      // Disable interaction when any file is being deleted
+                      ignoring:
+                          deletingFileUrl != null && deletingFileUrl != url,
+                      child: Opacity(
+                        // Dim other files when one is being deleted
+                        opacity:
+                            deletingFileUrl != null && deletingFileUrl != url
+                            ? 0.5
+                            : 1.0,
+                        child: UploadPreview(
+                          url: url,
+                          width: 80,
+                          height: 80,
+                          borderRadius: 8,
+                          isDeleting: deletingFileUrl == url,
+                          onDelete: () async {
+                            // Ask user for confirmation before deleting
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(PhilgoTr.of(context)!.delete),
+                                content: Text(
+                                  PhilgoTr.of(context)!.deleteFileConfirmation,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: Text(PhilgoTr.of(context)!.cancel),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                    child: Text(PhilgoTr.of(context)!.delete),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            // If user cancelled, return early
+                            if (confirmed != true) return;
+
+                            // Mark this file as being deleted
+                            setState(() {
+                              deletingFileUrl = url;
+                            });
+                            notifyBusyState();
+
+                            try {
+                              // Delete file from storage
+                              await philgoApiFileDelete(url);
+
+                              // Remove from local list
+                              imageUrls.remove(url);
+
+                              // Update comment on server immediately
+                              final updatedComment = await updateComment({
+                                'idx': widget.comment.idx,
+                                'content': contentController.text,
+                                'files': imageUrls.join(','),
+                              });
+
+                              debugPrint(
+                                'Updated comment -----> $updatedComment',
+                              );
+
+                              // Notify parent to update comment data without exiting edit mode
+                              widget.onFileDeleted?.call(updatedComment);
+                            } catch (e) {
+                              if (mounted && context.mounted) {
+                                showSafeErrorDialog(
+                                  PhilgoTr.of(context)!.failedToDeleteFile(
+                                    e.toString(),
+                                  ),
+                                );
+                              }
+                            } finally {
+                              // Clear deleting state and stay in edit mode
+                              if (mounted) {
+                                setState(() {
+                                  deletingFileUrl = null;
+                                });
+                                notifyBusyState();
+                              }
+                            }
+                          },
+                        ),
+                      ),
                     ),
                   ),
                   // 업로드 중인 이미지 로딩 박스
@@ -149,34 +243,79 @@ class _CommentUpdateState extends State<CommentUpdate> {
                 width: 2.0,
               ),
             ),
-            prefixIcon: FileUpload(
-              file: true,
-              video: true,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: FaIcon(FontAwesomeIcons.lightCamera),
-              ),
-              onBeforeUpload: () {
-                setState(() {
-                  uploadingCount++;
-                });
-              },
-              onUploaded: (url) {
-                debugLog('새 이미지 업로드 완료: $url');
-                imageUrls.add(url);
-                uploadingCount--;
-                setState(() {});
-              },
-              onCancelled: () {
-                // Decrement upload count when upload fails or is cancelled
-                uploadingCount--;
-                setState(() {});
-                debugLog('File upload cancelled or failed, uploadingCount: $uploadingCount');
-              },
-            ),
+            prefixIcon: deletingFileUrl != null
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: FaIcon(
+                      FontAwesomeIcons.lightCamera,
+                      color: Theme.of(
+                        context,
+                      ).iconTheme.color!.withValues(alpha: 0.3),
+                    ),
+                  )
+                : FileUpload(
+                    file: true,
+                    video: true,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FaIcon(FontAwesomeIcons.lightCamera),
+                    ),
+                    onBeforeUpload: () {
+                      if (!mounted) return;
+                      setState(() {
+                        uploadingCount++;
+                      });
+                      notifyBusyState();
+                    },
+                    onUploaded: (url) async {
+                      if (!mounted) return;
+                      debugLog('새 이미지 업로드 완료: $url');
+                      imageUrls.add(url);
+                      uploadingCount--;
+                      setState(() {});
+                      notifyBusyState();
+
+                      // Update comment on server immediately after file upload
+                      try {
+                        final updatedComment = await updateComment({
+                          'idx': widget.comment.idx,
+                          'content': contentController.text,
+                          'files': imageUrls.join(','),
+                        });
+
+                        debugPrint(
+                          'Updated comment after file upload -----> $updatedComment',
+                        );
+
+                        // Notify parent to update comment data without exiting edit mode
+                        widget.onFileUpdated?.call(updatedComment);
+                      } catch (e) {
+                        debugLog(
+                          'Failed to update comment after file upload: $e',
+                        );
+                        if (context.mounted) {
+                          showSafeErrorDialog(
+                            PhilgoTr.of(context)!.failedToUpdateComment(
+                              e.toString(),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    onCancelled: () {
+                      if (!mounted) return;
+                      // Decrement upload count when upload fails or is cancelled
+                      uploadingCount--;
+                      setState(() {});
+                      notifyBusyState();
+                      debugLog(
+                        'File upload cancelled or failed, uploadingCount: $uploadingCount',
+                      );
+                    },
+                  ),
             suffixIcon: IconButton(
               padding: const EdgeInsets.all(16.0),
-              icon: submitting
+              icon: submitting || deletingFileUrl != null
                   ? SizedBox(
                       width: 16,
                       height: 16,
@@ -198,7 +337,10 @@ class _CommentUpdateState extends State<CommentUpdate> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
               onPressed: () async {
-                if (isTextEmpty) return;
+                // Disable if empty, submitting, or deleting a file
+                if (isTextEmpty || submitting || deletingFileUrl != null) {
+                  return;
+                }
                 await onUpdateComment();
               },
             ),

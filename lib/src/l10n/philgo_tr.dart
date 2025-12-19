@@ -1546,6 +1546,66 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'You are about to extend your post promotion for {days} more days. This will cost {points} points. Do you want to proceed?'**
   String pointAdvertisementExtendMessage(int days, int points);
+
+  /// Message shown when user tries to submit while upload is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Image upload is in progress, please try again in a moment.'**
+  String get uploadInProgress;
+
+  /// Confirmation message before deleting a file
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this file?'**
+  String get deleteFileConfirmation;
+
+  /// Error message when file deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete file: {error}'**
+  String failedToDeleteFile(String error);
+
+  /// Error message when comment update fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update comment: {error}'**
+  String failedToUpdateComment(String error);
+
+  /// Error message when reply posting fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to post reply: {error}'**
+  String failedToPostReply(String error);
+
+  /// Success message when file is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'File deleted'**
+  String get fileDeleted;
+
+  /// Success message when comment is liked
+  ///
+  /// In en, this message translates to:
+  /// **'Comment liked'**
+  String get commentLiked;
+
+  /// Error message when comment was already liked
+  ///
+  /// In en, this message translates to:
+  /// **'Already liked this comment'**
+  String get alreadyLikedComment;
+
+  /// Error message when comment deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete comment: {error}'**
+  String failedToDeleteComment(String error);
+
+  /// Confirmation message for deleting newly uploaded files
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} newly uploaded file(s). Do you want to delete them?'**
+  String deleteNewFilesConfirmation(int count);
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

@@ -959,5 +959,75 @@
                 "example": "17280"
             }
         }
+    },
+    "uploadInProgress": "Image upload is in progress, please try again in a moment.",
+    "@uploadInProgress": {
+        "description": "Message shown when user tries to submit while upload is in progress"
+    },
+    "deleteFileConfirmation": "Are you sure you want to delete this file?",
+    "@deleteFileConfirmation": {
+        "description": "Confirmation message before deleting a file"
+    },
+    "failedToDeleteFile": "Failed to delete file: {error}",
+    "@failedToDeleteFile": {
+        "description": "Error message when file deletion fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "network error"
+            }
+        }
+    },
+    "failedToUpdateComment": "Failed to update comment: {error}",
+    "@failedToUpdateComment": {
+        "description": "Error message when comment update fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "network error"
+            }
+        }
+    },
+    "failedToPostReply": "Failed to post reply: {error}",
+    "@failedToPostReply": {
+        "description": "Error message when reply posting fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "network error"
+            }
+        }
+    },
+    "fileDeleted": "File deleted",
+    "@fileDeleted": {
+        "description": "Success message when file is deleted"
+    },
+    "commentLiked": "Comment liked",
+    "@commentLiked": {
+        "description": "Success message when comment is liked"
+    },
+    "alreadyLikedComment": "Already liked this comment",
+    "@alreadyLikedComment": {
+        "description": "Error message when comment was already liked"
+    },
+    "failedToDeleteComment": "Failed to delete comment: {error}",
+    "@failedToDeleteComment": {
+        "description": "Error message when comment deletion fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "network error"
+            }
+        }
+    },
+    "deleteNewFilesConfirmation": "You have {count} newly uploaded file(s). Do you want to delete them?",
+    "@deleteNewFilesConfirmation": {
+        "description": "Confirmation message for deleting newly uploaded files",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3"
+            }
+        }
     }
 }
