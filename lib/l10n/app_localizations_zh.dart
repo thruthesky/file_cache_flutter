@@ -69,7 +69,7 @@ class LoZh extends Lo {
   String get loginPhoneSmsNotice => '为了验证手机号码，将发送短信。';
 
   @override
-  String get enterPhoneNumber => '请输入手机号码。';
+  String get enterPhoneNumber => '请输入您的电话号码';
 
   @override
   String get phoneNumber => '手机号码';

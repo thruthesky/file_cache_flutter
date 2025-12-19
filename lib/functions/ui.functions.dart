@@ -459,10 +459,10 @@ void showShorebirdUpdateDialog() {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        /// 종료 아이콘 (Emoji 스타일)
-                        /// Exit icon (Emoji style)
+                        /// 종료 아이콘 - 호환성 좋은 Emoji 사용
+                        /// Exit icon - Using widely supported emoji
                         Text(
-                          '⏻',
+                          '❌',
                           style: TextStyle(fontSize: 16, color: scheme.error),
                         ),
                         const SizedBox(width: 8),

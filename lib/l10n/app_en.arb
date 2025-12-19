@@ -80,7 +80,7 @@
   "@loginPhoneSmsNotice": {
     "description": "Notice about SMS verification"
   },
-  "enterPhoneNumber": "Enter your phone number",
+  "enterPhoneNumber": "Input your phone number",
   "@enterPhoneNumber": {
     "description": "Label/hint for phone number field"
   },

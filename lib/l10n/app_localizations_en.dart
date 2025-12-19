@@ -75,7 +75,7 @@ class LoEn extends Lo {
       'We will send an SMS to verify your phone number.';
 
   @override
-  String get enterPhoneNumber => 'Enter your phone number';
+  String get enterPhoneNumber => 'Input your phone number';
 
   @override
   String get phoneNumber => 'Phone number';

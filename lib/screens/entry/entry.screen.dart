@@ -11,6 +11,7 @@ import 'package:philgo/services/weather/weather.model.dart';
 import 'package:philgo/services/weather/weather.service.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
+import 'package:philgo/widgets/unfocus_on_tap.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// Entry 화면 (Entry Screen)
@@ -245,138 +246,149 @@ class _EntryScreenState extends State<EntryScreen> {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: scheme.scrim.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation animation,
-        Animation secondaryAnimation,
-      ) {
-        return Center(
-          // Material 위젯으로 감싸서 InkWell의 ripple 효과 지원
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              margin: const EdgeInsets.all(24),
-              constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // 헤더 - 공지사항 타이틀 (Header - Notice title)
-                  // 그라데이션 배경과 함께 표시
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer.withValues(alpha: 0.3),
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        // 아이콘 컨테이너 (Icon container)
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: scheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: FaIcon(
-                            FontAwesomeIcons.bullhorn,
-                            size: 18,
-                            color: scheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // 타이틀과 공지 개수 (Title and notice count)
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.quickMenuNotice,
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  color: scheme.onSurface,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '총 ${_notices.length}개의 공지사항',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // 닫기 버튼 (Close button)
-                        IconButton(
-                          onPressed: () => Navigator.of(buildContext).pop(),
-                          style: IconButton.styleFrom(
-                            backgroundColor:
-                                scheme.onSurface.withValues(alpha: 0.05),
-                          ),
-                          icon: FaIcon(
-                            FontAwesomeIcons.xmark,
-                            size: 18,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
+      pageBuilder:
+          (
+            BuildContext buildContext,
+            Animation animation,
+            Animation secondaryAnimation,
+          ) {
+            return Center(
+              // Material 위젯으로 감싸서 InkWell의 ripple 효과 지원
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  margin: const EdgeInsets.all(24),
+                  constraints: const BoxConstraints(
+                    maxWidth: 500,
+                    maxHeight: 600,
                   ),
-                  // 공지사항 목록 (Notice list)
-                  Flexible(
-                    child: _notices.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(48),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.folderOpen,
-                                  size: 48,
-                                  color: scheme.outlineVariant,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  '공지사항이 없습니다.',
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: scheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
+                  decoration: BoxDecoration(
+                    color: scheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 헤더 - 공지사항 타이틀 (Header - Notice title)
+                      // 그라데이션 배경과 함께 표시
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: scheme.primaryContainer.withValues(alpha: 0.3),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            // 아이콘 컨테이너 (Icon container)
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: scheme.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: FaIcon(
+                                FontAwesomeIcons.bullhorn,
+                                size: 18,
+                                color: scheme.primary,
+                              ),
                             ),
-                          )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            itemCount: _notices.length,
-                            itemBuilder: (context, index) {
-                              final notice = _notices[index];
-                              return _buildNoticeItem(
-                                notice,
-                                theme,
-                                scheme,
-                                isLast: index == _notices.length - 1,
-                              );
-                            },
-                          ),
+                            const SizedBox(width: 12),
+                            // 타이틀과 공지 개수 (Title and notice count)
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.quickMenuNotice,
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      color: scheme.onSurface,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '총 ${_notices.length}개의 공지사항',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: scheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // 닫기 버튼 (Close button)
+                            IconButton(
+                              onPressed: () => Navigator.of(buildContext).pop(),
+                              style: IconButton.styleFrom(
+                                backgroundColor: scheme.onSurface.withValues(
+                                  alpha: 0.05,
+                                ),
+                              ),
+                              icon: FaIcon(
+                                FontAwesomeIcons.xmark,
+                                size: 18,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // 공지사항 목록 (Notice list)
+                      Flexible(
+                        child: _notices.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(48),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.folderOpen,
+                                      size: 48,
+                                      color: scheme.outlineVariant,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      '공지사항이 없습니다.',
+                                      style: theme.textTheme.bodyLarge
+                                          ?.copyWith(
+                                            color: scheme.onSurfaceVariant,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                                itemCount: _notices.length,
+                                itemBuilder: (context, index) {
+                                  final notice = _notices[index];
+                                  return _buildNoticeItem(
+                                    notice,
+                                    theme,
+                                    scheme,
+                                    isLast: index == _notices.length - 1,
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: ScaleTransition(
-            scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            scale: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutBack,
+            ),
             child: child,
           ),
         );
@@ -578,197 +590,212 @@ class _EntryScreenState extends State<EntryScreen> {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: scheme.scrim.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation animation,
-        Animation secondaryAnimation,
-      ) {
-        return Center(
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              margin: const EdgeInsets.all(24),
-              constraints: const BoxConstraints(maxWidth: 400),
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // 헤더 - primaryContainer 배경으로 강조 (Header with background)
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer.withValues(alpha: 0.3),
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        // 아이콘 컨테이너 (Icon container)
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: scheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: FaIcon(
-                            FontAwesomeIcons.users,
-                            size: 18,
-                            color: scheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // 제목과 서브타이틀 (Title and subtitle)
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '필고 회원 수',
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  color: scheme.onSurface,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                dateString,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // 닫기 버튼 (Close button)
-                        IconButton(
-                          onPressed: () => Navigator.of(buildContext).pop(),
-                          style: IconButton.styleFrom(
-                            backgroundColor:
-                                scheme.onSurface.withValues(alpha: 0.05),
-                          ),
-                          icon: FaIcon(
-                            FontAwesomeIcons.xmark,
-                            size: 18,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
+      pageBuilder:
+          (
+            BuildContext buildContext,
+            Animation animation,
+            Animation secondaryAnimation,
+          ) {
+            return Center(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  margin: const EdgeInsets.all(24),
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  decoration: BoxDecoration(
+                    color: scheme.surface,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  // 내용 (Content)
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        // 회원 수 영역 - 강조된 배경 (Member count area with emphasis)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 20,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 헤더 - primaryContainer 배경으로 강조 (Header with background)
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: scheme.primaryContainer.withValues(alpha: 0.3),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16),
                           ),
-                          decoration: BoxDecoration(
-                            color: scheme.primaryContainer.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            children: [
-                              // 회원 수 숫자 (Member count number)
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                        ),
+                        child: Row(
+                          children: [
+                            // 아이콘 컨테이너 (Icon container)
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: scheme.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: FaIcon(
+                                FontAwesomeIcons.users,
+                                size: 18,
+                                color: scheme.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // 제목과 서브타이틀 (Title and subtitle)
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _formatNumber(memberCount),
-                                    style: theme.textTheme.displaySmall?.copyWith(
-                                      color: scheme.primary,
-                                      fontWeight: FontWeight.bold,
+                                    '필고 회원 수',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      color: scheme.onSurface,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 4,
-                                      bottom: 6,
-                                    ),
-                                    child: Text(
-                                      '명',
-                                      style: theme.textTheme.titleMedium?.copyWith(
-                                        color: scheme.primary,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    dateString,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: scheme.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // 설명 영역 - 아이콘과 함께 (Description with icon)
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              // 트로피 아이콘 (Trophy icon)
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: scheme.tertiary.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: FaIcon(
-                                  FontAwesomeIcons.trophy,
-                                  size: 16,
-                                  color: scheme.tertiary,
+                            ),
+                            // 닫기 버튼 (Close button)
+                            IconButton(
+                              onPressed: () => Navigator.of(buildContext).pop(),
+                              style: IconButton.styleFrom(
+                                backgroundColor: scheme.onSurface.withValues(
+                                  alpha: 0.05,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              // 설명 텍스트 (Description text)
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '2008년에 시작된',
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: scheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                    Text(
-                                      'No. 1 필리핀 한인 커뮤니티',
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: scheme.onSurface,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              icon: FaIcon(
+                                FontAwesomeIcons.xmark,
+                                size: 18,
+                                color: scheme.onSurfaceVariant,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      // 내용 (Content)
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          children: [
+                            // 회원 수 영역 - 강조된 배경 (Member count area with emphasis)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: scheme.primaryContainer.withValues(
+                                  alpha: 0.2,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  // 회원 수 숫자 (Member count number)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        _formatNumber(memberCount),
+                                        style: theme.textTheme.displaySmall
+                                            ?.copyWith(
+                                              color: scheme.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 4,
+                                          bottom: 6,
+                                        ),
+                                        child: Text(
+                                          '명',
+                                          style: theme.textTheme.titleMedium
+                                              ?.copyWith(
+                                                color: scheme.primary,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // 설명 영역 - 아이콘과 함께 (Description with icon)
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: scheme.surfaceContainerHighest
+                                    .withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  // 트로피 아이콘 (Trophy icon)
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: scheme.tertiary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.trophy,
+                                      size: 16,
+                                      color: scheme.tertiary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // 설명 텍스트 (Description text)
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '2008년에 시작된',
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(
+                                                color: scheme.onSurfaceVariant,
+                                              ),
+                                        ),
+                                        Text(
+                                          'No. 1 필리핀 한인 커뮤니티',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: scheme.onSurface,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: ScaleTransition(
-            scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            scale: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutBack,
+            ),
             child: child,
           ),
         );
@@ -798,186 +825,199 @@ class _EntryScreenState extends State<EntryScreen> {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: scheme.scrim.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation animation,
-        Animation secondaryAnimation,
-      ) {
-        return Center(
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              margin: const EdgeInsets.all(24),
-              constraints: const BoxConstraints(maxWidth: 400),
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // 헤더 - primaryContainer 배경으로 강조 (Header with background)
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer.withValues(alpha: 0.3),
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        // 아이콘 컨테이너 (Icon container)
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: scheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: FaIcon(
-                            FontAwesomeIcons.fileLines,
-                            size: 18,
-                            color: scheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // 제목과 서브타이틀 (Title and subtitle)
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '필고 글 & 댓글 수',
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  color: scheme.onSurface,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                dateString,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // 닫기 버튼 (Close button)
-                        IconButton(
-                          onPressed: () => Navigator.of(buildContext).pop(),
-                          style: IconButton.styleFrom(
-                            backgroundColor:
-                                scheme.onSurface.withValues(alpha: 0.05),
-                          ),
-                          icon: FaIcon(
-                            FontAwesomeIcons.xmark,
-                            size: 18,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
+      pageBuilder:
+          (
+            BuildContext buildContext,
+            Animation animation,
+            Animation secondaryAnimation,
+          ) {
+            return Center(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  margin: const EdgeInsets.all(24),
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  decoration: BoxDecoration(
+                    color: scheme.surface,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  // 내용 (Content)
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        // 글 수 영역 - 강조된 배경 (Post count area with emphasis)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 20,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 헤더 - primaryContainer 배경으로 강조 (Header with background)
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: scheme.primaryContainer.withValues(alpha: 0.3),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16),
                           ),
-                          decoration: BoxDecoration(
-                            color: scheme.primaryContainer.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            children: [
-                              // 글 수 숫자 (Post count number)
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                        ),
+                        child: Row(
+                          children: [
+                            // 아이콘 컨테이너 (Icon container)
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: scheme.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: FaIcon(
+                                FontAwesomeIcons.fileLines,
+                                size: 18,
+                                color: scheme.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // 제목과 서브타이틀 (Title and subtitle)
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _formatNumber(postCount),
-                                    style: theme.textTheme.displaySmall?.copyWith(
-                                      color: scheme.primary,
-                                      fontWeight: FontWeight.bold,
+                                    '필고 글 & 댓글 수',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      color: scheme.onSurface,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 4,
-                                      bottom: 6,
-                                    ),
-                                    child: Text(
-                                      '개',
-                                      style: theme.textTheme.titleMedium?.copyWith(
-                                        color: scheme.primary,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    dateString,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: scheme.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // 설명 영역 - 아이콘과 함께 (Description with icon)
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              // 지구 아이콘 (Globe icon)
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: scheme.secondary.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: FaIcon(
-                                  FontAwesomeIcons.earthAsia,
-                                  size: 16,
-                                  color: scheme.secondary,
+                            ),
+                            // 닫기 버튼 (Close button)
+                            IconButton(
+                              onPressed: () => Navigator.of(buildContext).pop(),
+                              style: IconButton.styleFrom(
+                                backgroundColor: scheme.onSurface.withValues(
+                                  alpha: 0.05,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              // 설명 텍스트 (Description text)
-                              Expanded(
-                                child: Text(
-                                  '필리핀의 모든 것을 담았습니다.',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: scheme.onSurface,
-                                    fontWeight: FontWeight.w500,
+                              icon: FaIcon(
+                                FontAwesomeIcons.xmark,
+                                size: 18,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // 내용 (Content)
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          children: [
+                            // 글 수 영역 - 강조된 배경 (Post count area with emphasis)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: scheme.primaryContainer.withValues(
+                                  alpha: 0.2,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  // 글 수 숫자 (Post count number)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        _formatNumber(postCount),
+                                        style: theme.textTheme.displaySmall
+                                            ?.copyWith(
+                                              color: scheme.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 4,
+                                          bottom: 6,
+                                        ),
+                                        child: Text(
+                                          '개',
+                                          style: theme.textTheme.titleMedium
+                                              ?.copyWith(
+                                                color: scheme.primary,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 20),
+                            // 설명 영역 - 아이콘과 함께 (Description with icon)
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: scheme.surfaceContainerHighest
+                                    .withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  // 지구 아이콘 (Globe icon)
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: scheme.secondary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.earthAsia,
+                                      size: 16,
+                                      color: scheme.secondary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // 설명 텍스트 (Description text)
+                                  Expanded(
+                                    child: Text(
+                                      '필리핀의 모든 것을 담았습니다.',
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: scheme.onSurface,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: ScaleTransition(
-            scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            scale: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutBack,
+            ),
             child: child,
           ),
         );
@@ -1003,98 +1043,105 @@ class _EntryScreenState extends State<EntryScreen> {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: scheme.scrim.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation animation,
-        Animation secondaryAnimation,
-      ) {
-        return Center(
-          child: Container(
-            margin: const EdgeInsets.all(24),
-            constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
-            decoration: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 헤더 - 닫기 버튼 (Header - Close button)
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      // 뒤로가기 버튼 (Back button)
-                      IconButton(
-                        onPressed: () => Navigator.of(buildContext).pop(),
-                        icon: FaIcon(
-                          FontAwesomeIcons.arrowLeft,
-                          size: 20,
+      pageBuilder:
+          (
+            BuildContext buildContext,
+            Animation animation,
+            Animation secondaryAnimation,
+          ) {
+            return Center(
+              child: Container(
+                margin: const EdgeInsets.all(24),
+                constraints: const BoxConstraints(
+                  maxWidth: 500,
+                  maxHeight: 600,
+                ),
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 헤더 - 닫기 버튼 (Header - Close button)
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          // 뒤로가기 버튼 (Back button)
+                          IconButton(
+                            onPressed: () => Navigator.of(buildContext).pop(),
+                            icon: FaIcon(
+                              FontAwesomeIcons.arrowLeft,
+                              size: 20,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const Spacer(),
+                          // 닫기 버튼 - 자식 다이얼로그만 닫기 (Close button - close only this dialog)
+                          IconButton(
+                            onPressed: () => Navigator.of(buildContext).pop(),
+                            icon: FaIcon(
+                              FontAwesomeIcons.xmark,
+                              size: 20,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 제목 (Title)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        notice.subject,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: scheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // 날짜 (Date)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        dateString,
+                        style: theme.textTheme.bodySmall?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
-                      const Spacer(),
-                      // 닫기 버튼 - 자식 다이얼로그만 닫기 (Close button - close only this dialog)
-                      IconButton(
-                        onPressed: () => Navigator.of(buildContext).pop(),
-                        icon: FaIcon(
-                          FontAwesomeIcons.xmark,
-                          size: 20,
-                          color: scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 16),
+                    // 구분선 (Divider)
+                    Divider(height: 1, color: scheme.outlineVariant),
+                    // 내용 (Content)
+                    Flexible(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          notice.content,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurface,
+                            height: 1.6,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                // 제목 (Title)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    notice.subject,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: scheme.onSurface,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                // 날짜 (Date)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    dateString,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // 구분선 (Divider)
-                Divider(height: 1, color: scheme.outlineVariant),
-                // 내용 (Content)
-                Flexible(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      notice.content,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurface,
-                        height: 1.6,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+              ),
+            );
+          },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
           child: ScaleTransition(
-            scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            scale: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutBack,
+            ),
             child: child,
           ),
         );
@@ -1280,7 +1327,10 @@ class _EntryScreenState extends State<EntryScreen> {
             value: _isLoadingStats
                 ? '...'
                 : (_homepageStats != null
-                      ? _formatCompactNumber(_homepageStats!.totalPostCount, context)
+                      ? _formatCompactNumber(
+                          _homepageStats!.totalPostCount,
+                          context,
+                        )
                       : '-'),
             theme: theme,
             scheme: scheme,

@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "🚀 A17",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "RRGYB01TE2F"
+        },
+        {
             "name": "🚀 Simulator - Prod",
             "request": "launch",
             "type": "dart",
