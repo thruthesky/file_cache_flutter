@@ -181,7 +181,11 @@ class PostUpdateFormState extends State<PostUpdateForm> {
   /// 업로드 카운트 감소 (콜백 호출)
   void _decrementUploadingCount() {
     setState(() {
-      _uploadingCount--;
+      // Prevent negative count - safety check for cases where
+      // decrement is called without corresponding increment
+      if (_uploadingCount > 0) {
+        _uploadingCount--;
+      }
     });
     if (_uploadingCount == 0) {
       widget.onUploadingChanged?.call(false);
@@ -374,9 +378,10 @@ class PostUpdateFormState extends State<PostUpdateForm> {
     return TextFormField(
       controller: _contentController,
       enabled: !_isLoading,
-      maxLines: 32,
+      maxLines: 20,
       minLines: 16,
       textAlignVertical: TextAlignVertical.top,
+      keyboardType: TextInputType.multiline,
       decoration: InputDecoration(
         hintText: '내용을 입력하세요',
         filled: true,
