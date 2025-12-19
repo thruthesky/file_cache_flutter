@@ -59,48 +59,47 @@ class PostViewMeta extends StatelessWidget {
 
     return Padding(
       padding: padding,
-      child: GestureDetector(
-        onTap: () {
-          // 탭하면 작성자 프로필 화면으로 이동
-          ProfileViewScreen.push(
-            context,
-            idxMember: idxMember,
-            nickname: nickname,
-            photoUrl: photoUrl,
-          );
-        },
-        child: Row(
-          children: [
-            // 작성자 아바타
-            Avatar(photoUrl: photoUrl, size: avatarSize),
-            const SizedBox(width: 12),
+      child: Row(
+        children: [
+          // 작성자 아바타
+          Avatar(photoUrl: photoUrl, size: avatarSize),
+          const SizedBox(width: 12),
 
-            // 작성자 이름 및 작성 날짜
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 닉네임
-                  Text(
+          // 작성자 이름 및 작성 날짜
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 닉네임
+                InkWell(
+                  onTap: () {
+                    ProfileViewScreen.push(
+                      context,
+                      idxMember: idxMember,
+                      nickname: nickname,
+                      photoUrl: photoUrl,
+                    );
+                  },
+                  child: Text(
                     nickname,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                ),
+                const SizedBox(height: 4),
 
-                  // 작성 날짜
-                  Text(
-                    formattedDate,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: scheme.onSurface.withValues(alpha: 0.6),
-                    ),
+                // 작성 날짜
+                Text(
+                  formattedDate,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.6),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
