@@ -732,6 +732,168 @@ Future reportPost({
 ///
 /// - [포인트 광고 API 문서](.claude/skills/philgo-skill/references/api/point-api.md)
 /// - [포인트 광고 상세 문서](.claude/skills/philgo-skill/references/point-advertisement.md)
+
+/// 여러 게시판/카테고리의 최신 글을 한 번에 조회하는 함수 (get_latest_posts API)
+///
+/// PhilGo v6 API의 'get_latest_posts' 엔드포인트를 호출하여
+/// 여러 게시판/카테고리의 최신 글을 한 번의 API 호출로 가져옵니다.
+///
+/// ## 핵심 특징
+///
+/// - **한 번의 API 호출로 여러 게시판 조회**: 네트워크 요청 횟수를 줄여 성능 최적화
+/// - **카테고리별 분리 반환**: 각 카테고리별로 글 목록이 분리되어 반환됨
+///
+/// ## 매개변수
+///
+/// - [categories]: 조회할 게시판/카테고리 배열 (필수)
+///   - 형식 1: 'postId' (예: 'freetalk', 'qna')
+///   - 형식 2: 'postId/category' (예: 'buyandsell/골프', 'freetalk/discussion')
+///
+/// - [limit]: 각 카테고리당 가져올 글 개수 (기본값: 4)
+///   - 주의: 전체 개수가 아닌 **각 카테고리당** 개수
+///
+/// - [shortContents]: 짧은 내용 포함 여부 (기본값: false)
+///   - true: HTML 태그 제거된 짧은 내용 포함
+///
+/// - [userInfo]: 작성자 정보 포함 여부 (기본값: false)
+///   - true: nickname, photo_url 포함
+///
+/// ## 반환값
+///
+/// `Map<String, List<Post>>` 형태로 반환
+/// - 키: 카테고리 문자열 (입력한 형식 그대로)
+/// - 값: 해당 카테고리의 Post 목록
+///
+/// ## 사용 예시
+///
+/// ```dart
+/// // 여러 게시판의 최신글 각 4개씩 조회
+/// final result = await getLatestPosts(
+///   categories: ['freetalk', 'qna', 'buyandsell/골프'],
+///   limit: 4,
+/// );
+///
+/// // 각 카테고리별 접근
+/// final freetalkPosts = result['freetalk'] ?? [];
+/// final qnaPosts = result['qna'] ?? [];
+/// final golfPosts = result['buyandsell/골프'] ?? [];
+/// ```
+///
+/// ## 카테고리 키 형식
+///
+/// 입력한 카테고리 형식 그대로 키로 사용됩니다:
+/// - 입력: ['freetalk'] → 키: 'freetalk'
+/// - 입력: ['buyandsell/골프'] → 키: 'buyandsell/골프'
+///
+/// ## 참고 문서
+///
+/// - [get_latest_posts API 문서](.claude/skills/philgo-skill/references/api/get-latest-posts.md)
+Future<Map<String, List<Post>>> getLatestPosts({
+  required List<String> categories,
+  int limit = 4,
+  bool shortContents = false,
+  bool userInfo = false,
+  bool debug = false,
+}) async {
+  // 빈 카테고리 배열 처리
+  if (categories.isEmpty) {
+    return {};
+  }
+
+  // PhilGo v6 API의 'get_latest_posts' 엔드포인트 호출
+  final res = await func<Map<String, dynamic>>(
+    'get_latest_posts',
+    data: {
+      'categories': categories,
+      'limit': limit,
+      if (shortContents) 'short_contents': true,
+      if (userInfo) 'user_info': true,
+    },
+    debug: debug,
+  );
+
+  // API가 에러를 반환한 경우 처리
+  if (res['error'] != null) {
+    debugLog('getLatestPosts 에러: ${res['error']} - ${res['message']}');
+    return {};
+  }
+
+  // 응답 데이터를 Map<String, List<Post>>로 변환
+  final Map<String, List<Post>> result = {};
+
+  for (final category in categories) {
+    final postsData = res[category];
+    if (postsData != null && postsData is List) {
+      result[category] = postsData
+          .map((e) => Post.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } else {
+      // 해당 카테고리에 데이터가 없으면 빈 배열
+      result[category] = [];
+    }
+  }
+
+  return result;
+}
+
+/// 포인트 광고 등록/연장 API 함수
+///
+/// PhilGo v6 API의 'advertise_post_with_point' 엔드포인트를 호출하여
+/// 게시글에 포인트 광고를 등록하거나 기존 광고를 연장합니다.
+///
+/// ## 매개변수
+///
+/// - [idx]: 광고할 게시글 번호 (필수)
+///   - 본인이 작성한 글이어야 함
+///   - 포인트 광고가 허용된 게시판의 글이어야 함
+///
+/// - [days]: 광고 기간 (일 단위, 필수)
+///   - 권장값: 3, 5, 7, 10, 15, 30, 60, 90, 180, 365
+///   - 서버 설정(POINT_ADVERTISEMENT_DAYS)에 따라 다를 수 있음
+///
+/// ## 반환값
+///
+/// [Post] 객체를 반환합니다. 주요 필드:
+/// - int5: 광고 종료 시간 (Unix timestamp)
+/// - int6: 광고 등록/연장 시간 (Unix timestamp)
+/// - int7: 이번에 등록한 광고 기간 (일)
+/// - int8: 이번에 사용한 포인트
+///
+/// ## 광고 연장 로직
+///
+/// - 기존 광고 없음: 현재 시점부터 새 광고 시작
+/// - 기존 광고 활성: 남은 기간에 추가 연장
+/// - 기존 광고 만료: 현재 시점부터 새 광고 시작
+///
+/// ## 사용 예시
+///
+/// ```dart
+/// try {
+///   final updatedPost = await extendPointAdvertisement(
+///     idx: 12345,
+///     days: 7,
+///   );
+///   print('광고 종료일: ${DateTime.fromMillisecondsSinceEpoch(updatedPost.int5! * 1000)}');
+///   print('사용 포인트: ${updatedPost.int8}');
+/// } catch (e) {
+///   print('광고 등록 실패: $e');
+/// }
+/// ```
+///
+/// ## 에러 코드
+///
+/// - days-required: days 파라미터 누락
+/// - idx-required: idx 파라미터 누락
+/// - login-required: 로그인 필요
+/// - not-authorized: 본인 글이 아님
+/// - invalid-post-id: 포인트 광고 불가 게시판
+/// - insufficient-points: 포인트 부족
+/// - point-deduction-failed: 포인트 차감 실패
+///
+/// ## 참고 문서
+///
+/// - [포인트 광고 API 문서](.claude/skills/philgo-skill/references/api/point-api.md)
+/// - [포인트 광고 상세 문서](.claude/skills/philgo-skill/references/point-advertisement.md)
 Future<Post> extendPointAdvertisement({
   required int idx,
   required int days,
