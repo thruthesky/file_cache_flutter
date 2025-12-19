@@ -152,7 +152,6 @@ export 'src/post/post.ui.functions.dart';
 // Post - Widgets (게시글 UI 컴포넌트)
 export 'src/post/widgets/category.list.dart';
 export 'src/post/widgets/comment.detail.dart';
-export 'src/post/widgets/comment.detail.list_view.dart';
 export 'src/post/widgets/comment.list.view.dart';
 export 'src/widgets/upload/file_preview.dart';
 export 'src/post/widgets/point.selection.button.dart';

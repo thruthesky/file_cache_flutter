@@ -15,6 +15,7 @@ class CommentDetail extends StatefulWidget {
     required this.onDeleted,
     required this.onReplyClicked,
     required this.onEditClicked,
+    required this.onTapProfile,
   });
   final Comment comment;
   final bool myComment;
@@ -24,6 +25,7 @@ class CommentDetail extends StatefulWidget {
   final Function(Comment) onDeleted;
   final Function(Comment) onReplyClicked;
   final Function(Comment) onEditClicked;
+  final VoidCallback onTapProfile;
 
   @override
   State<CommentDetail> createState() => _CommentDetailState();
@@ -91,7 +93,7 @@ class _CommentDetailState extends State<CommentDetail> {
     return Blocked(
       otherUserUid: widget.comment.firebase_uid,
       yes: () => buildBlockComment(),
-      no: () => buildComment(),
+      no: () => buildComment(context),
     );
   }
 
@@ -128,7 +130,7 @@ class _CommentDetailState extends State<CommentDetail> {
     );
   }
 
-  Widget buildComment() {
+  Widget buildComment(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -146,12 +148,15 @@ class _CommentDetailState extends State<CommentDetail> {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          widget.comment.nickname.isEmpty
-                              ? 'No Name'
-                              : cut(widget.comment.nickname, 15),
-                          style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                        GestureDetector(
+                          onTap: widget.onTapProfile,
+                          child: Text(
+                            widget.comment.nickname.isEmpty
+                                ? 'No Name'
+                                : cut(widget.comment.nickname, 15),
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Text(
