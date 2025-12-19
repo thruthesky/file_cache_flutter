@@ -198,14 +198,17 @@ class PostViewOptionMenu extends StatelessWidget {
 
         if (updatedPost == null || !context.mounted) return;
 
-        // 7. 로컬 상태에서 포인트 차감 (서버에서 이미 차감됨, UI 동기화)
+        // 7. Merge the updated int5 field with existing post to preserve comments
+        final mergedPost = post.copyWith(int5: updatedPost.int5);
+
+        // 8. 로컬 상태에서 포인트 차감 (서버에서 이미 차감됨, UI 동기화)
         final newPoints = userPoints - pointCost;
         state.setUserPoints(newPoints);
 
-        // 8. 부모 컴포넌트에 업데이트된 게시글 전달
-        onEditCompleted(updatedPost);
+        // 9. 부모 컴포넌트에 업데이트된 게시글 전달 (comments preserved)
+        onEditCompleted(mergedPost);
 
-        // 9. 성공 메시지 표시
+        // 10. 성공 메시지 표시
         if (context.mounted) {
           showSuccessSnackBar(
             context,

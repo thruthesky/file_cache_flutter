@@ -132,6 +132,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return name.isEmpty ? 'No Name' : name;
   }
 
+  int get idxMember => post != null ? post!.idx_member : widget.post.idx_member;
+
   int get stamp => post?.stamp ?? widget.post.stamp;
   String get noOfView => post != null
       ? post!.no_of_view.toString()
@@ -228,9 +230,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
           onTapReply: onTapReply,
           onEditCompleted: (updated) {
             // 원본 위젯의 게시글 데이터도 업데이트
-            widget.post.subject = updated.subject;
-            widget.post.content = updated.content;
-
             if (mounted) {
               setState(() {
                 post = updated;
@@ -287,7 +286,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                           /// Avatar, name, and date
                           PostViewMeta(
-                            firebaseUid: firebaseUid,
+                            idxMember: idxMember,
                             nickname: nickname,
                             photoUrl: photoUrl,
                             formattedDate: formatPostDate(stamp),
