@@ -19,15 +19,13 @@ import 'package:philgo_api/philgo_api.dart';
 /// ### 예시:
 /// ```dart
 /// PostViewMeta(
-///   firebaseUid: 'abc123',
 ///   nickname: '홍길동',
 ///   photoUrl: 'https://example.com/photo.jpg',
 ///   formattedDate: '2024-01-15',
 /// )
 /// ```
 class PostViewMeta extends StatelessWidget {
-  /// 작성자의 Firebase UID (프로필 이동에 필요)
-  final String firebaseUid;
+  final int idxMember;
 
   /// 작성자 닉네임
   final String nickname;
@@ -46,7 +44,7 @@ class PostViewMeta extends StatelessWidget {
 
   const PostViewMeta({
     super.key,
-    required this.firebaseUid,
+    required this.idxMember,
     required this.nickname,
     this.photoUrl,
     required this.formattedDate,
@@ -66,7 +64,7 @@ class PostViewMeta extends StatelessWidget {
           // 탭하면 작성자 프로필 화면으로 이동
           ProfileViewScreen.push(
             context,
-            firebaseUid: firebaseUid,
+            idxMember: idxMember,
             nickname: nickname,
             photoUrl: photoUrl,
           );

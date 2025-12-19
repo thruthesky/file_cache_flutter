@@ -132,6 +132,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
     return name.isEmpty ? 'No Name' : name;
   }
 
+  int get idxMember => post != null ? post!.idx_member : widget.post.idx_member;
+
   int get stamp => post?.stamp ?? widget.post.stamp;
   String get noOfView => post != null
       ? post!.no_of_view.toString()
@@ -284,7 +286,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                           /// Avatar, name, and date
                           PostViewMeta(
-                            firebaseUid: firebaseUid,
+                            idxMember: idxMember,
                             nickname: nickname,
                             photoUrl: photoUrl,
                             formattedDate: formatPostDate(stamp),

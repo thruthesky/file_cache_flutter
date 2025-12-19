@@ -285,7 +285,8 @@ final router = GoRouter(
       builder: (context, state) {
         final extraMap = state.extra as Map<String, dynamic>;
         return ProfileViewScreen(
-          firebaseUid: extraMap['firebaseUid'] as String,
+          userIdx: extraMap['idxMember'] as int?,
+          firebaseUid: extraMap['firebaseUid'] as String?,
           nickname: extraMap['nickname'] as String?,
           photoUrl: extraMap['photoUrl'] as String?,
         );
