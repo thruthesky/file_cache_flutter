@@ -267,7 +267,7 @@ class _CommentDetailState extends State<CommentDetail> {
                           ),
                           _buildComicActionButton(
                             context: context,
-                            icon: Icons.delete,
+                            icon: FontAwesomeIcons.trash,
                             color: Theme.of(context).colorScheme.error,
                             onPressed: () async {
                               final confirmed = await showConfirmDialog(

@@ -220,6 +220,9 @@ class PostCreateFormState extends State<PostCreateForm> {
 
   /// 업로드 카운트 증가 (콜백 호출)
   void _incrementUploadingCount() {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _uploadingCount++;
     });
@@ -230,6 +233,9 @@ class PostCreateFormState extends State<PostCreateForm> {
 
   /// 업로드 카운트 감소 (콜백 호출)
   void _decrementUploadingCount() {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _uploadingCount--;
     });
@@ -695,9 +701,13 @@ class PostCreateFormState extends State<PostCreateForm> {
           onBeforeUpload: _incrementUploadingCount,
           onUploaded: (url) {
             log('파일 업로드 완료: $url', name: 'PostCreateForm');
-            setState(() {
-              _urls.add(url);
-            });
+
+            _urls.add(url);
+            if (!mounted) {
+              return;
+            }
+            setState(() {});
+
             _decrementUploadingCount();
           },
           onCancelled: _decrementUploadingCount,
