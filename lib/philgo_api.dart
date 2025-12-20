@@ -106,6 +106,7 @@ export 'src/functions/common.functions.dart';
 export 'src/functions/file.functions.dart';
 export 'src/functions/functions.dart';
 export 'src/functions/url.functions.dart';
+export 'src/functions/youtube.functions.dart';
 export 'src/philgo.functions.dart';
 
 // =============================================================================
