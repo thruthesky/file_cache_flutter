@@ -12,21 +12,21 @@
             "deviceId": "RRGYB01TE2F"
         },
         {
-            "name": "🚀 Simulator - Prod",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "deviceId": "DED2D464-68D0-46DC-893C-686999660183"
-        },
-        {
-            "name": "🚀 PhilGo - iPhone16 - Prod",
+            "name": "🚀 iPhone16",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
             "deviceId": "00008140-001C24C93E93001C",
         },
         {
-            "name": "🚀 PhilGo - Simulator - jaeho - local db",
+            "name": "🚀 Simulator",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "DED2D464-68D0-46DC-893C-686999660183"
+        },
+        {
+            "name": "🚀 Simulator - Local DB",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",

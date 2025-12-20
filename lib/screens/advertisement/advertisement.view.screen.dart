@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
+
+import '../../widgets/contact/advertisement_contact_list.dart';
 
 /// 광고 상세 화면 (Advertisement View Screen)
 ///
@@ -143,31 +147,30 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 첨부 파일 (이미지/비디오) 섹션
-                // if (post.files.isNotEmpty) ...[
-                //   const SizedBox(height: 8),
-                //   PostViewFiles(
-                //     files: post.files,
-                //     postIdx: post.idx,
-                //     enableHeroTransition: false,
-                //   ),
-                //   const SizedBox(height: 16),
-                // ],
+                if (post.isHtml == false &&
+                    post.isMarkdown == false &&
+                    post.files.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  PostViewFiles(
+                    files: post.files,
+                    postIdx: post.idx,
+                    enableHeroTransition: false,
+                  ),
+                  const SizedBox(height: 16),
+                ],
 
                 // 본문 내용 섹션
-                SafeArea(
-                  child: PostViewContent(
-                    isLoading: false,
-                    post: post,
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                  ),
+                PostViewContent(
+                  isLoading: false,
+                  post: post,
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 ),
 
-                Text(
-                  '연락처: ${post.varchar15}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // 연락처 목록 섹션
+                // 카카오톡, 텔레그램, 전화번호, 위챗, 라인, 메신저 등
+                // 값이 있는 연락처만 카드 형태로 표시
+                AdvertisementContactList(post: post),
+                SafeArea(child: const SizedBox(height: 24)),
               ],
             ),
           );
