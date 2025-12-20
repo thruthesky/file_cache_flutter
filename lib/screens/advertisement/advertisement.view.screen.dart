@@ -166,6 +166,8 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 ),
 
+                PostViewYoutubes(post: post),
+
                 // 연락처 목록 섹션
                 // 카카오톡, 텔레그램, 전화번호, 위챗, 라인, 메신저 등
                 // 값이 있는 연락처만 카드 형태로 표시
