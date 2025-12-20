@@ -303,6 +303,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             ),
                           ],
 
+                          PostViewYoutubes(post: post!),
+
                           /// Post content
                           PostViewContent(isLoading: false, post: post!),
 
