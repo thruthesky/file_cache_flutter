@@ -173,6 +173,7 @@ export 'src/post/widgets/post.view.content.dart';
 export 'src/post/widgets/post.view.files.dart';
 export 'src/post/widgets/post.view.header.dart';
 export 'src/post/widgets/post.view.images.dart';
+export 'src/post/widgets/post.view.youtubes.dart';
 
 // =============================================================================
 // Receive Share - 공유 받기
