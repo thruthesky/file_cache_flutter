@@ -111,6 +111,11 @@ class Post {
   final String? char9;
   final String? char10;
 
+  // text 필드들 (광고 연락처 정보 등에 사용)
+  final String? text2; // 위챗 QR 이미지 URL
+  final String? text3; // 라인 ID
+  final String? text6; // 라인 QR 이미지 URL
+
   // 검열 결과
   final String? text9;
 
@@ -191,6 +196,9 @@ class Post {
     this.char8,
     this.char9,
     this.char10,
+    this.text2,
+    this.text3,
+    this.text6,
     this.text9,
     this.text10,
   });
@@ -280,6 +288,9 @@ class Post {
       char8: json['char_8'] as String?,
       char9: json['char_9'] as String?,
       char10: json['char_10'] as String?,
+      text2: json['text_2'] as String?,
+      text3: json['text_3'] as String?,
+      text6: json['text_6'] as String?,
       text9: json['text_9'] as String?,
       text10: json['text_10'] as String?,
     );
@@ -362,6 +373,9 @@ class Post {
       if (char8 != null) 'char_8': char8,
       if (char9 != null) 'char_9': char9,
       if (char10 != null) 'char_10': char10,
+      if (text2 != null) 'text_2': text2,
+      if (text3 != null) 'text_3': text3,
+      if (text6 != null) 'text_6': text6,
       if (text9 != null) 'text_9': text9,
       if (text10 != null) 'text_10': text10,
     };
@@ -442,6 +456,9 @@ class Post {
     String? char8,
     String? char9,
     String? char10,
+    String? text2,
+    String? text3,
+    String? text6,
     String? text9,
     String? text10,
   }) {
@@ -519,6 +536,9 @@ class Post {
       char8: char8 ?? this.char8,
       char9: char9 ?? this.char9,
       char10: char10 ?? this.char10,
+      text2: text2 ?? this.text2,
+      text3: text3 ?? this.text3,
+      text6: text6 ?? this.text6,
       text9: text9 ?? this.text9,
       text10: text10 ?? this.text10,
     );
