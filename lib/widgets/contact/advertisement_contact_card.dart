@@ -217,19 +217,17 @@ class AdvertisementContactCard extends StatelessWidget {
       // print('[DEBUG] uri.queryParameters: ${uri.queryParameters}');
 
       // canLaunchUrl 체크도 로그로 확인
-      final canLaunch = await canLaunchUrl(uri);
+      // final canLaunch = await canLaunchUrl(uri);
       // print('[DEBUG] canLaunchUrl 결과: $canLaunch');
 
       // 외부 브라우저에서 URL 열기
       // link.philgo.com 서브도메인을 사용하여 앱 deep link 문제 피함
       // print('[DEBUG] launchUrl 시도 (LaunchMode.externalApplication)');
       try {
-        final result = await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
+        // final result =
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
         // print('[DEBUG] launchUrl 결과: $result');
-      } catch (e, stackTrace) {
+      } catch (e) {
         // print('[ERROR] launchUrl 에러: $e');
         // print('[ERROR] stackTrace: $stackTrace');
       }

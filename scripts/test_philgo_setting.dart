@@ -41,7 +41,7 @@ class PhilgoSetting {
 /// 테스트 결과 출력 헬퍼 함수
 /// Helper function to print test results
 void printResult(String testName, bool passed, [String? details]) {
-  final status = passed ? '✅ PASS' : '❌ FAIL';
+  // final status = passed ? '✅ PASS' : '❌ FAIL';
   // print('$status: $testName');
   if (details != null) {
     // print('   $details');
@@ -220,7 +220,7 @@ Future<void> main() async {
       // print('⚠️ 일부 테스트 실패');
       exit(1);
     }
-  } catch (e, stackTrace) {
+  } catch (e) {
     // print('');
     // print('❌ 테스트 중 예외 발생:');
     // print('   에러: $e');
