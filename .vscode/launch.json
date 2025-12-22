@@ -26,6 +26,13 @@
             "deviceId": "DED2D464-68D0-46DC-893C-686999660183"
         },
         {
+            "name": "🚀 iPad Mini",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "FD5C227E-FE1B-4675-A785-43F5F24C7469"
+        },
+        {
             "name": "🚀 Simulator - Local DB",
             "request": "launch",
             "type": "dart",

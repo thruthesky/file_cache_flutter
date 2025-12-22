@@ -1173,7 +1173,12 @@ class _EntryScreenState extends State<EntryScreen> {
               const SizedBox(height: 24),
               // App title - 앱 이름 (다국어 지원)
               // headlineMedium 사용하여 1.2배 정도 크기 증가
-              Text(l10n.appName, style: theme.textTheme.headlineMedium),
+              Text(
+                l10n.appName,
+                style: theme.textTheme.headlineMedium!.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               const SizedBox(height: 4),
               // App description - 앱 슬로건 (다국어 지원)
               // bodyMedium 사용하여 1.2배 정도 크기 증가
@@ -1183,7 +1188,7 @@ class _EntryScreenState extends State<EntryScreen> {
                   color: scheme.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
 
               // === 4열 정보 섹션 (4-Column Info Section) ===
               // 오늘 환율, 오늘 날씨, 회원 수, 글 수를 한 줄로 표시
