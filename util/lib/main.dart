@@ -101,7 +101,7 @@ void main(List<String> rawArgs) async {
   final hasCustomIconsJson = iconsJson.existsSync();
 
   if (!hasCustomIconsJson) {
-    print(blue('No icons.json found, updating free icons'));
+    // print(blue('No icons.json found, updating free icons'));
     const repositoryName = 'FortAwesome/Font-Awesome';
     final defaultBranch = await getRepositoryDefaultBranch(repositoryName);
     print(
@@ -126,7 +126,7 @@ void main(List<String> rawArgs) async {
       File('lib/fonts/Font-Awesome-7-Free-Solid-900.otf'),
     );
   } else {
-    print(blue('Custom icons.json found, generating files'));
+    // print(blue('Custom icons.json found, generating files'));
   }
 
   // A list of all versions mentioned in the metadata
@@ -155,13 +155,13 @@ void main(List<String> rawArgs) async {
 
   final highestVersion = calculateFontAwesomeVersion(versions);
 
-  print(blue('\nGenerating icon definitions'));
+  // print(blue('\nGenerating icon definitions'));
   writeCodeToFile(
     () => generateIconDefinitionClass(metadata, highestVersion),
     'lib/font_awesome_flutter.dart',
   );
 
-  print(blue('\nGenerating example code'));
+  // print(blue('\nGenerating example code'));
   writeCodeToFile(
     () => generateExamplesListClass(metadata),
     'example/lib/icons.dart',
@@ -247,17 +247,17 @@ void adjustPubspecFontIncludes(Set<String> styles) {
 
   pubspecFile.writeAsStringSync(pubspec.join('\n'));
 
-  print(blue('\nFound and enabled the following icon styles:'));
+  // print(blue('\nFound and enabled the following icon styles:'));
   enabledStyles.isEmpty
       ? print(red("None"))
       : print(blue(enabledStyles.join(', ')));
 
-  print(blue('\nRunning "flutter pub get"'));
+  // print(blue('\nRunning "flutter pub get"'));
   final result = Process.runSync('flutter', ['pub', 'get'], runInShell: true);
   stdout.write(result.stdout);
   stderr.write(red(result.stderr));
 
-  print(blue('\nDone'));
+  // print(blue('\nDone'));
 }
 
 String replaceYamlLineByFontAwesomeType(String line, String type) {
@@ -313,7 +313,7 @@ to complete successfully.
 '''),
   );
 
-  print(blue('Generating name to icon mapping'));
+  // print(blue('Generating name to icon mapping'));
 
   List<String> output = [
     "import 'package:flutter/widgets.dart';",
@@ -506,7 +506,7 @@ Future<String> getRepositoryDefaultBranch(String repositoryName) async {
     Map<String, dynamic> githubMetadata = json.decode(rawGithubMetadata);
     return githubMetadata["default_branch"];
   } catch (_) {
-    print(red('Error while getting font awesome\'s default branch. Aborting.'));
+    // print(red('Error while getting font awesome\'s default branch. Aborting.'));
   } finally {
     tmpFile.delete();
   }
@@ -521,7 +521,7 @@ Future printVersionNotice(String repositoryName) async {
   try {
     final packageVersion = pub.Version.parse(getPackageVersion());
 
-    print(blue('Using font_awesome_flutter version $packageVersion'));
+    // print(blue('Using font_awesome_flutter version $packageVersion'));
 
     await download(
       'https://api.github.com/repos/$repositoryName/releases',
@@ -578,7 +578,7 @@ Future printVersionNotice(String repositoryName) async {
     tmpFile.delete();
   }
   // do not exit
-  print('');
+  // print('');
 }
 
 /// Reads the [iconsJson] metadata and picks out relevant data
@@ -688,7 +688,7 @@ Version calculateFontAwesomeVersion(List<String> versions) {
 
 /// Downloads the content from [url] and saves it to [target]
 Future download(String url, File target) async {
-  print('Downloading $url');
+  // print('Downloading $url');
   final request = await HttpClient().getUrl(Uri.parse(url));
   final response = await request.close();
   return response.pipe(target.openWrite());
@@ -752,5 +752,5 @@ Usage:
 configurator.$fileType [options]
 
 Options:''');
-  print(argParser.usage);
+  // print(argParser.usage);
 }
