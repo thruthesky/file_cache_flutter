@@ -140,7 +140,7 @@ class _PostViewContentState extends State<PostViewContent> {
         linkStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
         style: TextStyle(
           fontSize: 16,
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       );
     }
