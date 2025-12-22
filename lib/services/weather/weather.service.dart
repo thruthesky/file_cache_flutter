@@ -12,7 +12,7 @@ import 'weather.model.dart';
 /// 싱글톤 패턴으로 앱 전체에서 동일한 인스턴스를 사용합니다.
 ///
 /// ### 캐시 관리 (Cache Management):
-/// FileCache<WeatherData>를 사용하여 캐시를 관리합니다.
+/// FileCache<>를 사용하여 캐시를 관리합니다.
 /// - TTL: 20분
 /// - 메모리 + 파일 이중 캐싱
 ///
@@ -130,10 +130,7 @@ class WeatherService {
         );
       }
 
-      return CityWeatherData(
-        cityId: city.id,
-        hourlyData: hourlyData,
-      );
+      return CityWeatherData(cityId: city.id, hourlyData: hourlyData);
     } else {
       throw Exception('날씨 데이터를 가져오는데 실패했습니다: ${city.nameKo}');
     }
@@ -157,10 +154,7 @@ class WeatherService {
 
     debugPrint('WeatherService: API 호출 완료 - ${cities.length}개 도시');
 
-    return WeatherData(
-      cities: cities,
-      fetchedAt: DateTime.now(),
-    );
+    return WeatherData(cities: cities, fetchedAt: DateTime.now());
   }
 
   /// 날씨 데이터 로드 (Load weather data)

@@ -11,7 +11,6 @@ import 'package:philgo/services/weather/weather.model.dart';
 import 'package:philgo/services/weather/weather.service.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
-import 'package:philgo/widgets/unfocus_on_tap.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// Entry 화면 (Entry Screen)

@@ -140,17 +140,17 @@ class AdvertisementContactCard extends StatelessWidget {
 
   /// 카드 클릭 시 동작 처리
   Future<void> _handleTap(BuildContext context) async {
-    print('=== [AdvertisementContactCard] _handleTap 시작 ===');
-    print('[DEBUG] type: $type');
-    print('[DEBUG] id: $id');
-    print('[DEBUG] url: $url');
-    print('[DEBUG] qrImage: $qrImage');
+    // print('=== [AdvertisementContactCard] _handleTap 시작 ===');
+    // print('[DEBUG] type: $type');
+    // print('[DEBUG] id: $id');
+    // print('[DEBUG] url: $url');
+    // print('[DEBUG] qrImage: $qrImage');
 
     String? targetUrl;
 
     switch (type) {
       case ContactType.kakaotalk:
-        print('[DEBUG] 카카오톡 처리 시작');
+        // print('[DEBUG] 카카오톡 처리 시작');
         // 카카오톡: 직접 launchUrl()로 열지 않고, 웹 브라우저를 통해 중간 페이지를 열어서
         // 사용자가 클릭하여 카카오톡 앱을 열도록 함 (앱에서 직접 열기가 불안정하기 때문)
         // link.philgo.com 서브도메인 사용 - philgo.com은 앱 deep link로 처리되므로 피함
@@ -160,23 +160,23 @@ class AdvertisementContactCard extends StatelessWidget {
         }
         break;
       case ContactType.telegram:
-        print('[DEBUG] 텔레그램 처리 시작');
+        // print('[DEBUG] 텔레그램 처리 시작');
         // 텔레그램: https://t.me/{id} 형식으로 열기
         final telegramId = id.replaceAll('@', '');
         targetUrl = url ?? 'https://t.me/$telegramId';
-        print('[DEBUG] 텔레그램 targetUrl: $targetUrl');
+        // print('[DEBUG] 텔레그램 targetUrl: $targetUrl');
         break;
       case ContactType.phone:
-        print('[DEBUG] 전화 처리 시작');
+        // print('[DEBUG] 전화 처리 시작');
         // 전화번호: SMS 앱 열기
         targetUrl = 'sms:$id';
-        print('[DEBUG] 전화 targetUrl: $targetUrl');
+        // print('[DEBUG] 전화 targetUrl: $targetUrl');
         break;
       case ContactType.wechat:
-        print('[DEBUG] 위챗 처리 시작');
+        // print('[DEBUG] 위챗 처리 시작');
         // 위챗: QR 이미지가 있으면 클릭 무시 (이미지만 표시)
         if (qrImage == null || qrImage!.isEmpty) {
-          print('[DEBUG] 위챗 QR 이미지 없음 - 스낵바 표시');
+          // print('[DEBUG] 위챗 QR 이미지 없음 - 스낵바 표시');
           // QR 이미지가 없으면 스낵바로 안내
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -187,57 +187,57 @@ class AdvertisementContactCard extends StatelessWidget {
             );
           }
         } else {
-          print('[DEBUG] 위챗 QR 이미지 있음 - 클릭 무시');
+          // print('[DEBUG] 위챗 QR 이미지 있음 - 클릭 무시');
         }
-        print('[DEBUG] 위챗 처리 종료 (return)');
+        // print('[DEBUG] 위챗 처리 종료 (return)');
         return;
       case ContactType.line:
-        print('[DEBUG] 라인 처리 시작');
+        // print('[DEBUG] 라인 처리 시작');
         // 라인: QR URL이 있으면 해당 URL 열기, 없으면 기본 형식
         targetUrl = url ?? 'https://line.me/ti/p/~$id';
-        print('[DEBUG] 라인 targetUrl: $targetUrl');
+        // print('[DEBUG] 라인 targetUrl: $targetUrl');
         break;
       case ContactType.messenger:
-        print('[DEBUG] 메신저 처리 시작');
+        // print('[DEBUG] 메신저 처리 시작');
         // 페이스북 메신저: URL 열기
         targetUrl = url;
-        print('[DEBUG] 메신저 targetUrl: $targetUrl');
+        // print('[DEBUG] 메신저 targetUrl: $targetUrl');
         break;
     }
 
-    print('[DEBUG] switch 완료, targetUrl: $targetUrl');
+    // print('[DEBUG] switch 완료, targetUrl: $targetUrl');
 
     if (targetUrl != null && targetUrl.isNotEmpty) {
-      print('[DEBUG] targetUrl이 유효함, Uri.parse 시도');
+      // print('[DEBUG] targetUrl이 유효함, Uri.parse 시도');
       final uri = Uri.parse(targetUrl);
-      print('[DEBUG] Uri.parse 완료: $uri');
-      print('[DEBUG] uri.scheme: ${uri.scheme}');
-      print('[DEBUG] uri.host: ${uri.host}');
-      print('[DEBUG] uri.path: ${uri.path}');
-      print('[DEBUG] uri.queryParameters: ${uri.queryParameters}');
+      // print('[DEBUG] Uri.parse 완료: $uri');
+      // print('[DEBUG] uri.scheme: ${uri.scheme}');
+      // print('[DEBUG] uri.host: ${uri.host}');
+      // print('[DEBUG] uri.path: ${uri.path}');
+      // print('[DEBUG] uri.queryParameters: ${uri.queryParameters}');
 
       // canLaunchUrl 체크도 로그로 확인
       final canLaunch = await canLaunchUrl(uri);
-      print('[DEBUG] canLaunchUrl 결과: $canLaunch');
+      // print('[DEBUG] canLaunchUrl 결과: $canLaunch');
 
       // 외부 브라우저에서 URL 열기
       // link.philgo.com 서브도메인을 사용하여 앱 deep link 문제 피함
-      print('[DEBUG] launchUrl 시도 (LaunchMode.externalApplication)');
+      // print('[DEBUG] launchUrl 시도 (LaunchMode.externalApplication)');
       try {
         final result = await launchUrl(
           uri,
           mode: LaunchMode.externalApplication,
         );
-        print('[DEBUG] launchUrl 결과: $result');
+        // print('[DEBUG] launchUrl 결과: $result');
       } catch (e, stackTrace) {
-        print('[ERROR] launchUrl 에러: $e');
-        print('[ERROR] stackTrace: $stackTrace');
+        // print('[ERROR] launchUrl 에러: $e');
+        // print('[ERROR] stackTrace: $stackTrace');
       }
     } else {
-      print('[DEBUG] targetUrl이 null이거나 비어있음');
+      // print('[DEBUG] targetUrl이 null이거나 비어있음');
     }
 
-    print('=== [AdvertisementContactCard] _handleTap 종료 ===');
+    // print('=== [AdvertisementContactCard] _handleTap 종료 ===');
   }
 
   /// 배경색 반환

@@ -60,7 +60,7 @@ class ExchangeRateData {
 /// 싱글톤 패턴으로 앱 전체에서 동일한 인스턴스를 사용합니다.
 ///
 /// ### 캐시 관리 (Cache Management):
-/// FileCache<ExchangeRateData>를 사용하여 캐시를 관리합니다.
+/// FileCache<>를 사용하여 캐시를 관리합니다.
 /// - TTL: 25분
 /// - 메모리 + 파일 이중 캐싱
 ///
@@ -149,9 +149,7 @@ class CurrencyService {
         (key, value) => MapEntry(key, (value as num).toDouble()),
       );
     } else {
-      throw Exception(
-        '환율 데이터를 가져오는데 실패했습니다. (Failed to fetch exchange rates)',
-      );
+      throw Exception('환율 데이터를 가져오는데 실패했습니다. (Failed to fetch exchange rates)');
     }
   }
 

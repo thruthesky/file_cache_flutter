@@ -81,7 +81,6 @@ class _HomePostSectionState extends State<HomePostSection> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
     /// 섹션 타이틀 (다국어 지원)
