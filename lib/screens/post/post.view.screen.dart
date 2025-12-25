@@ -1,3 +1,4 @@
+import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/widgets/post_blocked_user_info.dart';
 import 'package:philgo/screens/post/widgets/post_view_buttons.dart';
@@ -262,6 +263,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 slivers: [
+                  /// [Top Banners]
+                  /// 상단 배너 - 전체 페이지 배너 표시
+                  /// Top banners - display all page banners
+                  SliverToBoxAdapter(
+                    child: TopBanners(
+                      onTap: (url) => openBannerUrl(context, url),
+                    ),
+                  ),
+
                   // 게시글 내용 (Blocked 위젯으로 차단 여부에 따라 다른 UI 표시)
                   SliverToBoxAdapter(
                     child: Blocked(
