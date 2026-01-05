@@ -85,12 +85,11 @@ class _MenuHomeState extends State<MenuHome> {
 
   /// 운영자 문의 처리 핸들러 (Admin Contact Handler)
   ///
-  /// 채팅 탭으로 이동하여 운영자에게 문의할 수 있도록 안내합니다.
-  /// Navigates to chat tab where user can contact admin.
+  /// 운영자와 1:1 채팅방으로 직접 입장합니다.
+  /// Directly enters 1:1 chat room with admin.
   void _handleAdminContact() {
-    // 채팅 탭으로 이동 (Navigate to chat tab)
-    NavigationState.of(context, listen: false)
-        .setHomeNavigation(HomeNavigationItem.chat);
+    // 운영자와 1:1 채팅방 입장 (Enter 1:1 chat room with admin)
+    ChatRoomScreen.push(context, UserService.instance.adminUserUid);
   }
 
   /// 사용자 검색 다이얼로그 핸들러 (User Search Dialog Handler)
