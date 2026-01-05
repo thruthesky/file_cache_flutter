@@ -20,58 +20,44 @@ class PostYoutubeShortsPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Center(
-        child: ConstrainedBox(
-          // Shorts maximum size constraints (60% of screen width/height)
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.6,
-            maxHeight: MediaQuery.of(context).size.height * 0.6,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: YoutubePlayer(
+          controller: controller,
+          aspectRatio: 9 / 16,
+          showVideoProgressIndicator: false,
+          progressIndicatorColor: Theme.of(context).colorScheme.primary,
+          progressColors: ProgressBarColors(
+            playedColor: Theme.of(context).colorScheme.primary,
+            handleColor: Theme.of(context).colorScheme.primary,
+            bufferedColor: Theme.of(context).colorScheme.primary.withAlpha(77),
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
           ),
-          child: AspectRatio(
-            // 9:16 aspect ratio (vertical video)
-            aspectRatio: 9 / 16,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: YoutubePlayer(
-                controller: controller,
-                showVideoProgressIndicator: true,
-                progressIndicatorColor: Theme.of(context).colorScheme.primary,
-                progressColors: ProgressBarColors(
-                  playedColor: Theme.of(context).colorScheme.primary,
-                  handleColor: Theme.of(context).colorScheme.primary,
-                  bufferedColor: Theme.of(
-                    context,
-                  ).colorScheme.primary.withAlpha(77),
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
-                topActions: const [],
-                // Bottom action buttons (without fullscreen button)
-                bottomActions: [
-                  const SizedBox(width: 8),
-                  CurrentPosition(),
-                  const SizedBox(width: 4),
-                  ProgressBar(
-                    isExpanded: true,
-                    colors: ProgressBarColors(
-                      playedColor: Theme.of(context).colorScheme.primary,
-                      handleColor: Theme.of(context).colorScheme.primary,
-                      bufferedColor: Theme.of(
-                        context,
-                      ).colorScheme.primary.withAlpha(77),
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  RemainingDuration(),
-                  const SizedBox(width: 8),
-                ],
+          topActions: const [],
+          // Bottom action buttons (without fullscreen button)
+          bottomActions: [
+            const SizedBox(width: 8),
+            CurrentPosition(),
+            const SizedBox(width: 4),
+            ProgressBar(
+              isExpanded: true,
+              colors: ProgressBarColors(
+                playedColor: Theme.of(context).colorScheme.primary,
+                handleColor: Theme.of(context).colorScheme.primary,
+                bufferedColor: Theme.of(
+                  context,
+                ).colorScheme.primary.withAlpha(77),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest,
               ),
             ),
-          ),
+            const SizedBox(width: 4),
+            RemainingDuration(),
+            const SizedBox(width: 8),
+          ],
         ),
       ),
     );

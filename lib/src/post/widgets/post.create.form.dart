@@ -700,27 +700,34 @@ class PostCreateFormState extends State<PostCreateForm> {
     return Row(
       children: [
         // 파일 업로드 버튼
-        FileUpload(
-          file: true,
-          video: true,
-          onBeforeUpload: _incrementUploadingCount,
-          onUploaded: (url) {
-            log('파일 업로드 완료: $url', name: 'PostCreateForm');
+        // Disabled during loading/uploading to prevent multiple operations
+        IgnorePointer(
+          ignoring: _isLoading || _uploadingCount > 0,
+          child: Opacity(
+            opacity: (_isLoading || _uploadingCount > 0) ? 0.38 : 1.0,
+            child: FileUpload(
+              file: true,
+              video: true,
+              onBeforeUpload: _incrementUploadingCount,
+              onUploaded: (url) {
+                log('파일 업로드 완료: $url', name: 'PostCreateForm');
 
-            _urls.add(url);
-            if (!mounted) {
-              return;
-            }
-            setState(() {});
+                _urls.add(url);
+                if (!mounted) {
+                  return;
+                }
+                setState(() {});
 
-            _decrementUploadingCount();
-          },
-          onCancelled: _decrementUploadingCount,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            child: FaIcon(
-              FontAwesomeIcons.lightCamera,
-              color: colorScheme.onSurface,
+                _decrementUploadingCount();
+              },
+              onCancelled: _decrementUploadingCount,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: FaIcon(
+                  FontAwesomeIcons.lightCamera,
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ),
           ),
         ),
@@ -729,6 +736,7 @@ class PostCreateFormState extends State<PostCreateForm> {
 
         PointSelectionButton(
           onDaysSelected: (days) => setState(() => advertisementDays = days),
+          disabled: _isLoading || _uploadingCount > 0,
         ),
 
         // 제출 버튼 (showSubmitButton이 true일 때만)

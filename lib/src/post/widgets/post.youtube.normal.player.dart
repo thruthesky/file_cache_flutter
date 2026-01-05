@@ -20,7 +20,7 @@ class PostYoutubeNormalPlayer extends StatelessWidget {
         child: YoutubePlayer(
           controller: controller,
           // Show video progress indicator
-          showVideoProgressIndicator: true,
+          showVideoProgressIndicator: false,
           // Progress indicator color (Theme-based)
           progressIndicatorColor: Theme.of(context).colorScheme.primary,
           // Buffering progress colors

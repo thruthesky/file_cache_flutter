@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 ///   onDaysSelected: (days) {
 ///     setState(() => selectedDays = days);
 ///   },
+///   disabled: isLoading || isUploading,
 /// )
 /// ```
 class PointSelectionButton extends StatefulWidget {
@@ -30,10 +31,14 @@ class PointSelectionButton extends StatefulWidget {
 
   final bool update;
 
+  /// Disable button during loading/uploading to prevent interaction
+  final bool disabled;
+
   const PointSelectionButton({
     super.key,
     this.update = false,
     this.onDaysSelected,
+    this.disabled = false,
   });
 
   @override
@@ -72,16 +77,24 @@ class _PointSelectionButtonState extends State<PointSelectionButton> {
           labelText = PhilgoTr.of(context)!.pointAdvertisement;
         }
 
-        return TextButton.icon(
-          onPressed: () => _showPointSelectionBottomSheet(context),
-          icon: FaIcon(
-            FontAwesomeIcons.lightBullhorn,
-            size: 16,
-            color: scheme.primary,
-          ),
-          label: Text(
-            labelText,
-            style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
+        return IgnorePointer(
+          ignoring: widget.disabled,
+          child: Opacity(
+            opacity: widget.disabled ? 0.38 : 1.0,
+            child: TextButton.icon(
+              onPressed: () => _showPointSelectionBottomSheet(context),
+              icon: FaIcon(
+                FontAwesomeIcons.lightBullhorn,
+                size: 16,
+                color: scheme.primary,
+              ),
+              label: Text(
+                labelText,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: scheme.primary,
+                ),
+              ),
+            ),
           ),
         );
       },

@@ -42,18 +42,59 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
   void initState() {
     super.initState();
     _initializeYoutubeVideos();
+    _lastProcessedContent = widget.post.content;
   }
 
   @override
   void didUpdateWidget(covariant PostViewYoutubes oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.post.content != _lastProcessedContent && _controllers.isEmpty) {
-      // Only initialize if we don't have controllers yet
-      // (e.g., when post content is loaded for the first time)
-      _initializeYoutubeVideos();
+    // Check if content changed
+    if (widget.post.content != _lastProcessedContent) {
+      // Content changed - need to re-extract YouTube URLs
+      final newYoutubeInfos = widget.post.getAllYoutubeUrlInfos();
+
+      // Only reinitialize if the actual videos changed
+      if (_controllers.isEmpty || _youtubeInfosChanged(newYoutubeInfos)) {
+        // Dispose old controllers if they exist
+        // Store old controllers to dispose later (after frame)
+        final oldControllers = List<YoutubePlayerController>.from(_controllers);
+        _controllers.clear();
+
+        // Re-initialize with new content
+        _initializeYoutubeVideos();
+
+        // Dispose old controllers after the frame completes
+        // This prevents "used after disposed" errors during gestures
+        if (oldControllers.isNotEmpty && mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            for (final controller in oldControllers) {
+              controller.dispose();
+            }
+          });
+        }
+
+        // Trigger rebuild
+        if (mounted) {
+          setState(() {});
+        }
+      }
+
       _lastProcessedContent = widget.post.content;
     }
+  }
+
+  /// Check if YouTube video list has changed
+  bool _youtubeInfosChanged(List<YoutubeUrlInfo> newInfos) {
+    if (_youtubeInfos.length != newInfos.length) return true;
+
+    for (int i = 0; i < _youtubeInfos.length; i++) {
+      if (_youtubeInfos[i].videoId != newInfos[i].videoId) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /// YouTube URL 추출 및 컨트롤러 초기화
@@ -67,6 +108,7 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
       final controller = YoutubePlayerController(
         initialVideoId: info.videoId,
         flags: YoutubePlayerFlags(
+          disableDragSeek: true,
           // 자동 재생 비활성화 (사용자가 직접 재생 버튼 클릭)
           autoPlay: false,
           // 음소거 비활성화
@@ -80,7 +122,7 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
           // 반복 재생 비활성화
           loop: false,
           // 제어 버튼 숨김 타이머 비활성화
-          controlsVisibleAtStart: true,
+          controlsVisibleAtStart: false,
           // 자막 비활성화
           enableCaption: true,
           // ForceHD
