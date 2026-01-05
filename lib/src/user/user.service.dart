@@ -37,7 +37,7 @@ class UserService {
   final List<Map<String, dynamic>> favoriteFolders = [];
   final favoriteFoldersStream = ValueNotifier<List<Map<String, dynamic>>>([]);
 
-  String adminUserUid = 'RaHIcr45pvPzYdcDIv6JoW8DnSH2';
+  String adminUserUid = PhilgoConfig.chatAdminUid;
 
   /// Callback when a user taps on user recent post item
   Function(BuildContext context, Post post)? onTapUserRecentPostItem;
