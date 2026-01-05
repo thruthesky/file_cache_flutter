@@ -10,10 +10,16 @@ class PostSubject extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
+    /// Theme titleMedium + w600 for cleaner, more modern list appearance
+    /// Using onSurface color for better contrast and readability
     return Text(
       post.subject,
-      style: theme.textTheme.titleLarge,
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.normal,
+        color: scheme.onSurface,
+      ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );

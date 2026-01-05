@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 게시글 목록 아이템 위젯
@@ -84,21 +85,40 @@ class PostListTileItem extends StatelessWidget {
     final hasThumbnail = hasFiles || hasYoutubeVideos;
 
     // 제목 위젯 빌드 (차단 여부에 따라 다름)
-    final titleWidget = blocked
-        ? Text(
-            "${PhilgoTr.of(context)!.post_from_blocked_user} ${cut(post.nickname.isEmpty ? PhilgoTr.of(context)!.no_name : post.nickname, 8)}",
-            style: theme.textTheme.titleMedium!.copyWith(color: scheme.outline),
-            overflow: TextOverflow.ellipsis,
-          )
-        : enableHeroTransition
-        ? Hero(
-            tag: 'post-title-${post.idx}',
-            child: Material(
-              type: MaterialType.transparency,
-              child: PostSubject(post: post),
+    final Widget titleWidget;
+    if (blocked) {
+      /// 차단된 사용자: 아이콘 + 메시지 (부드러운 onSurfaceVariant 색상)
+      titleWidget = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightBan,
+            size: 16,
+            color: scheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              "${PhilgoTr.of(context)!.post_from_blocked_user} ${cut(post.nickname.isEmpty ? PhilgoTr.of(context)!.no_name : post.nickname, 8)}",
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
-          )
-        : PostSubject(post: post);
+          ),
+        ],
+      );
+    } else if (enableHeroTransition) {
+      titleWidget = Hero(
+        tag: 'post-title-${post.idx}',
+        child: Material(
+          type: MaterialType.transparency,
+          child: PostSubject(post: post),
+        ),
+      );
+    } else {
+      titleWidget = PostSubject(post: post);
+    }
 
     // 제목 + 메타 정보 Column (공통)
     final infoColumn = Column(
@@ -143,16 +163,19 @@ class PostListTileItem extends StatelessWidget {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 썸네일 (왼쪽)
+          /// 썸네일 (왼쪽) - 8의 배수 패딩 적용
           Padding(
-            padding: const EdgeInsets.all(8), // 8의 배수
+            padding: const EdgeInsets.fromLTRB(12, 12, 0, 12),
             child: thumbnailWidget,
           ),
-          const SizedBox(width: 4),
-          // 게시글 정보 (오른쪽)
+
+          /// 8의 배수 간격
+          const SizedBox(width: 8),
+
+          /// 게시글 정보 (오른쪽) - 균일한 패딩
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 16, right: 16),
+              padding: const EdgeInsets.fromLTRB(0, 12, 16, 12),
               child: infoColumn,
             ),
           ),
@@ -160,10 +183,37 @@ class PostListTileItem extends StatelessWidget {
       );
     }
 
-    // 썸네일이 없는 경우: 정보만 표시
+    // 썸네일이 없는 경우: 제목 길이에 따라 레이아웃 결정
+    // 차단된 경우에는 메타 정보 없이 제목만 표시
+    if (blocked) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        child: titleWidget,
+      );
+    }
+
+    // 제목이 30글자 이상: 세로 레이아웃 (제목 위, 메타 정보 아래)
+    if (post.subject.length >= 24) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        child: infoColumn,
+      );
+    }
+
+    // 제목이 30글자 미만: 가로 레이아웃 (제목 왼쪽, 메타 정보 오른쪽 두 줄)
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      child: infoColumn,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          /// 제목 (왼쪽, 확장)
+          Expanded(child: titleWidget),
+          const SizedBox(width: 8),
+
+          /// 메타 정보 (오른쪽, 두 줄: 이름 위, 날짜/댓글/좋아요 아래)
+          PostListTileMetaVertical(post: post),
+        ],
+      ),
     );
   }
 }

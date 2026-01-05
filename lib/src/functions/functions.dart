@@ -336,3 +336,41 @@ Future<void> launchApp(String url, bool isExternal) async {
 int calculatePointCost(int days, int advCostPerHour) {
   return days * advCostPerHour * 24;
 }
+
+/// Formats a Unix timestamp (seconds) to a smart date display format
+///
+/// Display rules:
+/// - Today: Time in 12-hour format (e.g., "11:22am", "4:56pm")
+/// - This year but not today: Month/Day format (e.g., "1/5", "12/25")
+/// - Not this year: Year-Month-Day format (e.g., "2024-12-25")
+///
+/// [timestamp] Unix timestamp in seconds (not milliseconds)
+///
+/// Example usage:
+/// ```dart
+/// final dateStr = formatSmartDate(post.stamp);
+/// ```
+String formatSmartDate(int timestamp) {
+  // Convert seconds to milliseconds for DateTime
+  final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final targetDate = DateTime(date.year, date.month, date.day);
+
+  if (targetDate == today) {
+    // Today: Show time in 12-hour format (e.g., "11:22am", "4:56pm")
+    final hour = date.hour;
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'pm' : 'am';
+    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+    return '$displayHour:$minute$period';
+  } else if (date.year == now.year) {
+    // This year but not today: Show month/day (e.g., "1/5", "12/25")
+    return '${date.month}/${date.day}';
+  } else {
+    // Not this year: Show year-month-day (e.g., "2024-12-25")
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    return '${date.year}-$month-$day';
+  }
+}

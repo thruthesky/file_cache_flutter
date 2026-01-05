@@ -18,11 +18,6 @@ class PostListTileMeta extends StatelessWidget {
       ? PhilgoTr.of(context)!.no_name
       : cut(post.nickname, 8);
 
-  String _dateOnly() {
-    final parts = post.timeString.split(' ');
-    return parts.isNotEmpty ? parts.first : post.timeString;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -53,11 +48,11 @@ class PostListTileMeta extends StatelessWidget {
           const SizedBox(width: 8),
         ],
 
-        /// 날짜 (date only)
+        /// 날짜 (smart format: today=time, this year=M/D, other=Y-M-D)
         FaIcon(FontAwesomeIcons.lightClock, size: 14, color: scheme.outline),
         const SizedBox(width: 4),
         Text(
-          _dateOnly(),
+          formatSmartDate(post.stamp),
           style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
         ),
         const SizedBox(width: 8),
@@ -90,6 +85,104 @@ class PostListTileMeta extends StatelessWidget {
             style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
           ),
         ],
+      ],
+    );
+  }
+}
+
+/// Vertical (two-line) meta info widget for posts without thumbnails
+///
+/// Layout (right-aligned):
+/// - Line 1: Avatar + Name
+/// - Line 2: Date + Comments + Likes
+///
+/// Used when post has no thumbnail/attachment for a more balanced layout
+class PostListTileMetaVertical extends StatelessWidget {
+  const PostListTileMetaVertical({
+    super.key,
+    required this.post,
+  });
+
+  final Post post;
+
+  String _displayName(BuildContext context) => post.nickname.isEmpty
+      ? PhilgoTr.of(context)!.no_name
+      : cut(post.nickname, 8);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    final hasComments = post.no_of_comment > 0;
+    final hasLikes = post.good > 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        /// Line 1: Avatar + Name (right-aligned)
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Avatar(photoUrl: post.photo_url, size: 18, radius: 9),
+            const SizedBox(width: 6),
+            Text(
+              _displayName(context),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+
+        /// Line 2: Date + Comments + Likes (right-aligned)
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// Date (smart format)
+            Text(
+              formatSmartDate(post.stamp),
+              style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+            ),
+
+            if (hasComments) ...[
+              const SizedBox(width: 8),
+
+              /// Comments count
+              FaIcon(
+                FontAwesomeIcons.lightMessageDots,
+                size: 14,
+                color: scheme.outline,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${post.no_of_comment}',
+                style:
+                    theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+              ),
+            ],
+
+            if (hasLikes) ...[
+              const SizedBox(width: 8),
+
+              /// Likes count
+              FaIcon(
+                FontAwesomeIcons.lightThumbsUp,
+                size: 14,
+                color: scheme.outline,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${post.good}',
+                style:
+                    theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+              ),
+            ],
+          ],
+        ),
       ],
     );
   }
