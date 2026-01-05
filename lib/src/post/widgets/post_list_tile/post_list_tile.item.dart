@@ -3,11 +3,13 @@ import 'package:philgo_api/philgo_api.dart';
 
 /// 게시글 목록 아이템 위젯
 ///
-/// 게시글의 첨부파일 유무와 차단 상태에 따라 다른 레이아웃을 표시합니다:
+/// 게시글의 첨부파일/YouTube 영상 유무와 차단 상태에 따라 다른 레이아웃을 표시합니다:
 /// - **첨부파일 있음**: 왼쪽에 이미지/비디오/파일 썸네일, 오른쪽에 제목과 메타 정보
+/// - **YouTube 영상 있음**: 왼쪽에 YouTube 썸네일, 오른쪽에 제목과 메타 정보
 /// - **첨부파일 없음**: 제목과 메타 정보만 표시
 /// - **차단된 사용자**: 차단 메시지와 함께 간소화된 레이아웃
 ///
+/// 우선순위: 첨부파일 > YouTube 썸네일
 /// 내부적으로 `Blocked` 위젯을 사용하여 차단된 사용자의 게시글을 자동으로 처리합니다.
 ///
 /// ### 매개변수:
@@ -29,7 +31,7 @@ class PostListTileItem extends StatelessWidget {
     required this.post,
     this.enableHeroTransition = false,
     this.showProfile = true,
-    required this.onTap 
+    required this.onTap,
   });
 
   /// 표시할 게시글 데이터
@@ -40,7 +42,7 @@ class PostListTileItem extends StatelessWidget {
 
   /// 작성자 프로필(아바타, 닉네임) 표시 여부
   final bool showProfile;
-  
+
   final VoidCallback? onTap;
 
   @override
@@ -69,11 +71,17 @@ class PostListTileItem extends StatelessWidget {
   /// 게시글 콘텐츠 빌드 (통합 함수)
   ///
   /// [blocked]가 true이면 차단된 게시글 레이아웃 표시
-  /// 첨부파일 유무에 따라 이미지 썸네일 표시 여부 결정
+  /// 첨부파일 또는 YouTube 썸네일 유무에 따라 썸네일 표시 여부 결정
+  /// 우선순위: 첨부파일 > YouTube 썸네일
   Widget _buildContent(BuildContext context, {required bool blocked}) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final hasFiles = post.files.isNotEmpty && !blocked;
+    final hasYoutubeVideos =
+        post.getAllYoutubeUrlInfos().isNotEmpty && !blocked;
+
+    // 썸네일 표시 여부: 첨부파일이 있거나 YouTube 영상이 있는 경우
+    final hasThumbnail = hasFiles || hasYoutubeVideos;
 
     // 제목 위젯 빌드 (차단 여부에 따라 다름)
     final titleWidget = blocked
@@ -103,29 +111,42 @@ class PostListTileItem extends StatelessWidget {
           const SizedBox(height: 8),
           PostListTileMeta(
             post: post,
-            showImageIndicator: hasFiles,
+            showImageIndicator: hasThumbnail,
             showProfile: showProfile,
           ),
         ],
       ],
     );
 
-    // 첨부파일이 있는 경우: 이미지 + 정보 Row 레이아웃
-    if (hasFiles) {
-      final imageWidget = enableHeroTransition
-          ? Hero(
-              tag: 'post-image-${post.idx}',
-              child: PostListTileUploadPreview(post: post),
-            )
-          : PostListTileUploadPreview(post: post);
+    // 썸네일이 있는 경우: 썸네일 + 정보 Row 레이아웃
+    if (hasThumbnail) {
+      // 썸네일 위젯 결정: 첨부파일 우선, 없으면 YouTube 썸네일
+      final Widget thumbnailWidget;
+      if (hasFiles) {
+        // 첨부파일 썸네일 (우선순위 1)
+        thumbnailWidget = enableHeroTransition
+            ? Hero(
+                tag: 'post-image-${post.idx}',
+                child: PostListTileUploadPreview(post: post),
+              )
+            : PostListTileUploadPreview(post: post);
+      } else {
+        // YouTube 썸네일 (우선순위 2)
+        thumbnailWidget = enableHeroTransition
+            ? Hero(
+                tag: 'post-youtube-${post.idx}',
+                child: PostListTileYoutubePreview(post: post),
+              )
+            : PostListTileYoutubePreview(post: post);
+      }
 
       return Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 파일 썸네일 (왼쪽)
+          // 썸네일 (왼쪽)
           Padding(
             padding: const EdgeInsets.all(8), // 8의 배수
-            child: imageWidget,
+            child: thumbnailWidget,
           ),
           const SizedBox(width: 4),
           // 게시글 정보 (오른쪽)
@@ -139,7 +160,7 @@ class PostListTileItem extends StatelessWidget {
       );
     }
 
-    // 첨부파일이 없는 경우: 정보만 표시
+    // 썸네일이 없는 경우: 정보만 표시
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: infoColumn,

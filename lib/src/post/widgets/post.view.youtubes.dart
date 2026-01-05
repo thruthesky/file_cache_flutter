@@ -48,30 +48,16 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
   void didUpdateWidget(covariant PostViewYoutubes oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // post.content가 변경되었는지 확인
-    // (처음에는 빈 content로 시작하고, loadPost() 후 채워짐)
-    if (widget.post.content != _lastProcessedContent) {
-      // 기존 컨트롤러 해제
-      for (final controller in _controllers) {
-        controller.dispose();
-      }
-      _controllers.clear();
-
-      // 새로운 content로 재초기화
+    if (widget.post.content != _lastProcessedContent && _controllers.isEmpty) {
+      // Only initialize if we don't have controllers yet
+      // (e.g., when post content is loaded for the first time)
       _initializeYoutubeVideos();
-
-      // setState 호출하여 UI 갱신
-      setState(() {});
+      _lastProcessedContent = widget.post.content;
     }
   }
 
   /// YouTube URL 추출 및 컨트롤러 초기화
   void _initializeYoutubeVideos() {
-    // 현재 content를 저장 (변경 감지용)
-    // Note: We track content changes, but getAllYoutubeUrlInfos()
-    // also checks varchar19 which typically doesn't change after initial load
-    _lastProcessedContent = widget.post.content;
-
     // Get all YouTube URLs from post (varchar19 + content, deduplicated)
     // varchar19 URL is prioritized and displayed first
     _youtubeInfos = widget.post.getAllYoutubeUrlInfos();
@@ -138,134 +124,23 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
   Widget _buildYoutubePlayer(int index, YoutubeUrlInfo info) {
     final controller = _controllers[index];
 
-    // Shorts 여부에 따른 비율 결정
-    // - 일반 비디오: 16:9 (aspectRatio = 16/9 ≈ 1.78)
-    // - Shorts: 9:16 (aspectRatio = 9/16 ≈ 0.5625)
-    // 단, Shorts는 화면 너비 전체를 사용하면 너무 길어지므로
-    // maxHeight를 제한하고 중앙 정렬
+    // Shorts 여부에 따라 적절한 플레이어 위젯 반환
+    // - 일반 비디오: 16:9 aspect ratio (PostYoutubeNormalPlayer)
+    // - Shorts: 9:16 aspect ratio (PostYoutubeShortsPlayer)
+    //
+    // IMPORTANT: Use ValueKey to ensure proper widget lifecycle
+    // When controllers are recreated, the key changes and Flutter
+    // properly disposes old widget tree before creating new one
     if (info.isShorts) {
-      return _buildShortsPlayer(controller, info);
+      return PostYoutubeShortsPlayer(
+        key: ValueKey('shorts_${info.videoId}_${controller.hashCode}'),
+        controller: controller,
+      );
     } else {
-      return _buildNormalPlayer(controller, info);
+      return PostYoutubeNormalPlayer(
+        key: ValueKey('normal_${info.videoId}_${controller.hashCode}'),
+        controller: controller,
+      );
     }
-  }
-
-  /// 일반 YouTube 비디오 플레이어 (16:9 비율)
-  Widget _buildNormalPlayer(
-    YoutubePlayerController controller,
-    YoutubeUrlInfo info,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(0),
-        child: YoutubePlayer(
-          controller: controller,
-          // 비디오 진행 표시줄 표시
-          showVideoProgressIndicator: true,
-          // 진행 표시줄 색상 (Theme 기반)
-          progressIndicatorColor: Theme.of(context).colorScheme.primary,
-          // 버퍼링 진행 색상
-          progressColors: ProgressBarColors(
-            playedColor: Theme.of(context).colorScheme.primary,
-            handleColor: Theme.of(context).colorScheme.primary,
-            bufferedColor: Theme.of(context).colorScheme.primary.withAlpha(77),
-            backgroundColor: Theme.of(
-              context,
-            ).colorScheme.surfaceContainerHighest,
-          ),
-          // 상단 액션 버튼 (비활성화)
-          topActions: const [],
-          // 하단 액션 버튼 (기본 컨트롤 사용)
-          bottomActions: [
-            const SizedBox(width: 14),
-            CurrentPosition(),
-            const SizedBox(width: 8),
-            ProgressBar(
-              isExpanded: true,
-              colors: ProgressBarColors(
-                playedColor: Theme.of(context).colorScheme.primary,
-                handleColor: Theme.of(context).colorScheme.primary,
-                bufferedColor: Theme.of(
-                  context,
-                ).colorScheme.primary.withAlpha(77),
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.surfaceContainerHighest,
-              ),
-            ),
-            const SizedBox(width: 8),
-            RemainingDuration(),
-            const SizedBox(width: 14),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// YouTube Shorts 플레이어 (9:16 비율)
-  ///
-  /// Shorts는 세로 형식이므로 화면 너비의 일부만 사용하고
-  /// 중앙에 배치하여 적절한 크기로 표시
-  Widget _buildShortsPlayer(
-    YoutubePlayerController controller,
-    YoutubeUrlInfo info,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Center(
-        child: ConstrainedBox(
-          // Shorts 최대 너비 제한 (화면 너비의 60% 또는 300px 중 작은 값)
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.6,
-            maxHeight: MediaQuery.of(context).size.height * 0.6,
-          ),
-          child: AspectRatio(
-            // 9:16 비율 (세로 영상)
-            aspectRatio: 9 / 16,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: YoutubePlayer(
-                controller: controller,
-                showVideoProgressIndicator: true,
-                progressIndicatorColor: Theme.of(context).colorScheme.primary,
-                progressColors: ProgressBarColors(
-                  playedColor: Theme.of(context).colorScheme.primary,
-                  handleColor: Theme.of(context).colorScheme.primary,
-                  bufferedColor: Theme.of(
-                    context,
-                  ).colorScheme.primary.withAlpha(77),
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
-                topActions: const [],
-                bottomActions: [
-                  const SizedBox(width: 8),
-                  CurrentPosition(),
-                  const SizedBox(width: 4),
-                  ProgressBar(
-                    isExpanded: true,
-                    colors: ProgressBarColors(
-                      playedColor: Theme.of(context).colorScheme.primary,
-                      handleColor: Theme.of(context).colorScheme.primary,
-                      bufferedColor: Theme.of(
-                        context,
-                      ).colorScheme.primary.withAlpha(77),
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  RemainingDuration(),
-                  const SizedBox(width: 8),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

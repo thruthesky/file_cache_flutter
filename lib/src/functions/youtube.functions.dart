@@ -44,6 +44,20 @@ class YoutubeUrlInfo {
     return url;
   }
 
+  /// YouTube 썸네일 이미지 URL을 반환
+  ///
+  /// 썸네일 품질 우선순위:
+  /// 1. maxresdefault (1920x1080) - 최고 품질
+  /// 2. sddefault (640x480) - 표준 품질
+  /// 3. hqdefault (480x360) - 고품질
+  /// 4. mqdefault (320x180) - 중간 품질
+  /// 5. default (120x90) - 기본 품질
+  ///
+  /// 대부분의 비디오는 maxresdefault를 지원하지만, 없는 경우 hqdefault 사용 권장
+  String getThumbnailUrl({String quality = 'hqdefault'}) {
+    return 'https://img.youtube.com/vi/$videoId/$quality.jpg';
+  }
+
   @override
   String toString() =>
       'YoutubeUrlInfo(videoId: $videoId, isShorts: $isShorts, startTime: $startTime)';
