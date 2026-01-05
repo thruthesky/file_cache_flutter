@@ -79,17 +79,6 @@ class _MainHomeState extends State<MainHome> {
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
 
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  UserNickname(),
-                  UserPhoto(),
-                  UserPoint(),
-                  UserLevel(builder: (lv) => Text("This is my Level: $lv")),
-                ],
-              ),
-            ),
-
             /// [퀵 메뉴 섹션] - 필리핀 생활 필수 정보 바로가기
             /// Quick Menu Section - Quick access to essential Philippines living info
             /// 환율, 필수정보, 한달살기, 여행 메뉴 표시
@@ -98,7 +87,9 @@ class _MainHomeState extends State<MainHome> {
             /// [Top Banners]
             /// 상단 배너 - 전체 페이지 배너 표시
             /// Top banners - display all page banners
-            SliverToBoxAdapter(child: const TopBanners()),
+            SliverToBoxAdapter(
+              child: TopBanners(onTap: (url) => openBannerUrl(context, url)),
+            ),
 
             /// [게시판 섹션 - 2단 레이아웃]
             /// Forum Sections - 2-column layout
@@ -110,7 +101,9 @@ class _MainHomeState extends State<MainHome> {
             /// 사각 배너 - 1줄에 4개씩 그리드로 표시
             /// Square banners - display 4 per row in grid
             // SliverToBoxAdapter(child: const WingBanners()),
-            SliverToBoxAdapter(child: const WingBanners()),
+            SliverToBoxAdapter(
+              child: WingBanners(onTap: (url) => openBannerUrl(context, url)),
+            ),
 
             /// [인기글 섹션] - 최근 7일간 댓글 많은 글 5개 표시
             /// Popular Posts Section - Display top 5 posts with most comments in last 7 days

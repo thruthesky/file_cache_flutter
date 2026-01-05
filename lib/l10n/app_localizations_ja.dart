@@ -69,7 +69,7 @@ class LoJa extends Lo {
   String get loginPhoneSmsNotice => '電話番号認証のためSMSを送信します。';
 
   @override
-  String get enterPhoneNumber => '電話番号を入力してください。';
+  String get enterPhoneNumber => '電話番号を入力してください';
 
   @override
   String get phoneNumber => '電話番号';
@@ -1503,6 +1503,9 @@ class LoJa extends Lo {
 
   @override
   String get quickMenuTravel => 'Travel';
+
+  @override
+  String get philippineLifeInfo => 'Philippine Life Info';
 
   @override
   String get entryTodayExchangeRate => 'Exchange';

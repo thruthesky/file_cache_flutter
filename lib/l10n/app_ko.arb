@@ -20,7 +20,7 @@
   "loginWithPhoneTitle": "전화 번호 로그인",
   "loginWithPhoneHeader": "전화 번호로 로그인을 합니다.",
   "loginPhoneSmsNotice": "전화 번호 인증을 위해 SMS를 발송합니다.",
-  "enterPhoneNumber": "전화번호",
+  "enterPhoneNumber": "전화번호를 입력하세요",
   "phoneNumber": "전화번호",
   "enterSmsCode": "SMS 코드를 입력하세요.",
   "resendSms": "SMS 재전송",
@@ -1991,6 +1991,10 @@
   "quickMenuTravel": "여행",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "philippineLifeInfo": "필리핀 생활 정보",
+  "@philippineLifeInfo": {
+    "description": "Philippine life information section title in menu"
   },
   "entryTodayExchangeRate": "오늘 환율",
   "@entryTodayExchangeRate": {

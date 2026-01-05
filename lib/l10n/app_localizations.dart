@@ -224,7 +224,7 @@ abstract class Lo {
   /// Label/hint for phone number field
   ///
   /// In en, this message translates to:
-  /// **'Enter your phone number'**
+  /// **'Input your phone number'**
   String get enterPhoneNumber;
 
   /// Short label for phone number
@@ -3022,6 +3022,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Travel'**
   String get quickMenuTravel;
+
+  /// Philippine life information section title in menu
+  ///
+  /// In en, this message translates to:
+  /// **'Philippine Life Info'**
+  String get philippineLifeInfo;
 
   /// Today's exchange rate label on entry screen
   ///

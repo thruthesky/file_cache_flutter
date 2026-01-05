@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/widgets/unfocus_on_tap.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 글 수정 전체 화면 위젯
@@ -39,9 +40,7 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
     final category = widget.post.category;
     final hasSubCategory = category.isNotEmpty;
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-
+    return UnfocusOnTap(
       child: Scaffold(
         /// AppBar - Comic Design 스타일 적용 (elevation 0)
         /// AppBar with Comic Design style (elevation 0)

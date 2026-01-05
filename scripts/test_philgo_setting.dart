@@ -41,20 +41,20 @@ class PhilgoSetting {
 /// 테스트 결과 출력 헬퍼 함수
 /// Helper function to print test results
 void printResult(String testName, bool passed, [String? details]) {
-  final status = passed ? '✅ PASS' : '❌ FAIL';
-  print('$status: $testName');
+  // final status = passed ? '✅ PASS' : '❌ FAIL';
+  // print('$status: $testName');
   if (details != null) {
-    print('   $details');
+    // print('   $details');
   }
 }
 
 /// 메인 테스트 함수
 /// Main test function
 Future<void> main() async {
-  print('=' * 60);
-  print('PhilgoService.loadSetting() API 테스트');
-  print('=' * 60);
-  print('');
+  // print('=' * 60);
+  // print('PhilgoService.loadSetting() API 테스트');
+  // print('=' * 60);
+  // print('');
 
   int passCount = 0;
   int failCount = 0;
@@ -62,7 +62,7 @@ Future<void> main() async {
   try {
     // API 호출
     // Call API
-    print('🔄 API 호출 중... (https://philgo.com/func.php)');
+    // print('🔄 API 호출 중... (https://philgo.com/func.php)');
 
     final client = HttpClient();
     final request = await client.postUrl(
@@ -83,7 +83,7 @@ Future<void> main() async {
     final response = await request.close();
     final responseBody = await response.transform(utf8.decoder).join();
 
-    print('');
+    // print('');
 
     // 테스트 1: HTTP 응답 상태 코드 확인
     // Test 1: Verify HTTP response status code
@@ -96,8 +96,8 @@ Future<void> main() async {
     test1Passed ? passCount++ : failCount++;
 
     if (!test1Passed) {
-      print('\n❌ API 호출 실패. 테스트 중단.');
-      print('응답 본문: $responseBody');
+      // print('\n❌ API 호출 실패. 테스트 중단.');
+      // print('응답 본문: $responseBody');
       exit(1);
     }
 
@@ -116,8 +116,8 @@ Future<void> main() async {
     test2Passed ? passCount++ : failCount++;
 
     if (!test2Passed) {
-      print('\n❌ JSON 구조가 예상과 다릅니다. 테스트 중단.');
-      print('응답 JSON: $json');
+      // print('\n❌ JSON 구조가 예상과 다릅니다. 테스트 중단.');
+      // print('응답 JSON: $json');
       exit(1);
     }
 
@@ -142,13 +142,14 @@ Future<void> main() async {
     test3Passed ? passCount++ : failCount++;
 
     if (!test3Passed || setting == null) {
-      print('\n❌ 모델 파싱 실패. 테스트 중단.');
+      // print('\n❌ 모델 파싱 실패. 테스트 중단.');
       exit(1);
     }
 
     // 테스트 4: PhilgoSettingPoint 타입 확인
     // Test 4: Verify PhilgoSettingPoint type
-    final test4Passed = setting.point.runtimeType.toString() == 'PhilgoSettingPoint';
+    final test4Passed =
+        setting.point.runtimeType.toString() == 'PhilgoSettingPoint';
     printResult(
       'PhilgoSettingPoint 타입 확인',
       test4Passed,
@@ -159,7 +160,9 @@ Future<void> main() async {
     // 테스트 5: advertising_post_categories가 List<String>인지 확인
     // Test 5: Verify advertising_post_categories is List<String>
     final categories = setting.point.advertising_post_categories;
-    final test5Passed = categories.runtimeType.toString().contains('List<String>');
+    final test5Passed = categories.runtimeType.toString().contains(
+      'List<String>',
+    );
     printResult(
       'advertising_post_categories 타입 확인',
       test5Passed,
@@ -187,45 +190,41 @@ Future<void> main() async {
         break;
       }
     }
-    printResult(
-      '각 카테고리 항목이 비어있지 않은 String인지 확인',
-      test7Passed,
-      '모든 항목 검증 완료',
-    );
+    printResult('각 카테고리 항목이 비어있지 않은 String인지 확인', test7Passed, '모든 항목 검증 완료');
     test7Passed ? passCount++ : failCount++;
 
     // 결과 출력
     // Print results
-    print('');
-    print('-' * 60);
-    print('📋 advertising_post_categories 내용:');
+    // print('');
+    // print('-' * 60);
+    // print('📋 advertising_post_categories 내용:');
     for (int i = 0; i < categories.length; i++) {
-      print('   [$i] ${categories[i]}');
+      // print('   [$i] ${categories[i]}');
     }
 
-    print('');
-    print('=' * 60);
-    print('📊 테스트 결과 요약');
-    print('=' * 60);
-    print('✅ 통과: $passCount');
-    print('❌ 실패: $failCount');
-    print('📈 총계: ${passCount + failCount}');
-    print('');
+    // print('');
+    // print('=' * 60);
+    // print('📊 테스트 결과 요약');
+    // print('=' * 60);
+    // print('✅ 통과: $passCount');
+    // print('❌ 실패: $failCount');
+    // print('📈 총계: ${passCount + failCount}');
+    // print('');
 
     client.close();
 
     if (failCount == 0) {
-      print('🎉 모든 테스트 통과!');
+      // print('🎉 모든 테스트 통과!');
       exit(0);
     } else {
-      print('⚠️ 일부 테스트 실패');
+      // print('⚠️ 일부 테스트 실패');
       exit(1);
     }
-  } catch (e, stackTrace) {
-    print('');
-    print('❌ 테스트 중 예외 발생:');
-    print('   에러: $e');
-    print('   스택트레이스: $stackTrace');
+  } catch (e) {
+    // print('');
+    // print('❌ 테스트 중 예외 발생:');
+    // print('   에러: $e');
+    // print('   스택트레이스: $stackTrace');
     exit(1);
   }
 }

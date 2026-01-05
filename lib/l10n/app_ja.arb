@@ -52,7 +52,7 @@
   "loginWithPhoneTitle": "電話番号でログイン",
   "loginWithPhoneHeader": "電話番号でログインします。",
   "loginPhoneSmsNotice": "電話番号認証のためSMSを送信します。",
-  "enterPhoneNumber": "電話番号を入力してください。",
+  "enterPhoneNumber": "電話番号を入力してください",
   "phoneNumber": "電話番号",
   "enterSmsCode": "SMSコードを入力してください。",
   "resendSms": "SMS再送信",

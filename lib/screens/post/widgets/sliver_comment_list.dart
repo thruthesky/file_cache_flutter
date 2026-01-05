@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// Sliver 기반 댓글 목록 위젯
@@ -97,6 +98,14 @@ class SliverCommentList extends StatelessWidget {
       itemBuilder: (context, index) {
         final comment = comments[index];
         return CommentDetail(
+          onTapProfile: () {
+            ProfileViewScreen.push(
+              context,
+              idxMember: comment.idx_member,
+              nickname: comment.nickname,
+              photoUrl: comment.photo_url,
+            );
+          },
           myComment: myComment(comment.idx_member),
           hasReplies: _hasReplies(comment),
           comment: comment,

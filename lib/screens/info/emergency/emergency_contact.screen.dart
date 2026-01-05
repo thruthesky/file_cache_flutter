@@ -117,8 +117,14 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
       icon: FontAwesomeIcons.lightLandmarkFlag,
       name: '주필리핀 대한민국 대사관',
       phones: ['+63-2-8856-9210', '+63-917-817-5703'],
-      description: '대표전화 (근무시간)\n긴급당직 (근무시간 외)',
-      address: '122 Upper McKinley Road, McKinley Town Center,\nFort Bonifacio, Taguig City 1634',
+      /// 대표전화: +63-2-8856-9210
+      /// 긴급당직번호: +63-917-817-5703
+      /// FAX: +63-2-8856-9008, 9019
+      /// 경찰 긴급전화: 117, 166(세부, 보라카이, 바기오 등)
+      /// 업무시간: 08:00~17:00 (월-금)
+      /// 영사과 민원업무시간: 여권/공증(오전 09:00-12:00 오후 13:30-16:00)
+      description: '대표전화 (근무시간)\n긴급당직번호: +63-917-817-5703\nFAX: +63-2-8856-9008, 9019\n경찰 긴급전화: 117, 166(세부, 보라카이, 바기오 등)',
+      address: '122 Upper McKinley Road, McKinley Town Center,\nFort Bonifacio, Taguig City 1634, Philippines',
       email: 'philippines@mofa.go.kr',
       website: 'http://overseas.mofa.go.kr/ph-ko/index.do',
     ),
@@ -762,7 +768,8 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
             ],
           ),
           SizedBox(height: sp.s12),
-          _buildHoursRow(context, '일반 업무', '08:30 ~ 17:00 (월-금)'),
+          /// 업무시간: 08:00~17:00 (월-금)
+          _buildHoursRow(context, '일반 업무', '08:00 ~ 17:00 (월-금)'),
           SizedBox(height: sp.s8),
           _buildHoursRow(context, '여권/공증', '09:00-12:00, 13:30-16:00'),
           SizedBox(height: sp.s8),

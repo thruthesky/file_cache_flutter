@@ -63,7 +63,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           // log('date: $birthDate');
           setState(() {});
         },
-        builder: (context, user) {
+        login: (context, user) {
           return GestureDetector(
             // Dismiss keyboard when tapping outside input fields
             onTap: () {

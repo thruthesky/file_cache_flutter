@@ -9,8 +9,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
+import 'package:philgo/screens/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.update.screen.dart';
+import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
@@ -80,7 +82,9 @@ Future<T?> showFullScreen<T>(
 
     /// 배경 레이블 (접근성)
     /// Background label (accessibility)
-    barrierLabel: barrierLabel ?? MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    barrierLabel:
+        barrierLabel ??
+        MaterialLocalizations.of(context).modalBarrierDismissLabel,
 
     /// 배경색
     /// Background color
@@ -99,10 +103,7 @@ Future<T?> showFullScreen<T>(
     /// 슬라이드 + 페이드 인 애니메이션
     /// Slide + fade in animation
     transitionBuilder: (context, animation, secondaryAnimation, child) {
-      final curvedAnimation = CurvedAnimation(
-        parent: animation,
-        curve: curve,
-      );
+      final curvedAnimation = CurvedAnimation(parent: animation, curve: curve);
 
       /// 슬라이드 방향에 따른 시작 오프셋 계산
       /// Calculate start offset based on slide direction
@@ -118,10 +119,7 @@ Future<T?> showFullScreen<T>(
           begin: beginOffset,
           end: Offset.zero,
         ).animate(curvedAnimation),
-        child: FadeTransition(
-          opacity: curvedAnimation,
-          child: child,
-        ),
+        child: FadeTransition(opacity: curvedAnimation, child: child),
       );
     },
   );
@@ -461,10 +459,10 @@ void showShorebirdUpdateDialog() {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        /// 종료 아이콘 (Emoji 스타일)
-                        /// Exit icon (Emoji style)
+                        /// 종료 아이콘 - 호환성 좋은 Emoji 사용
+                        /// Exit icon - Using widely supported emoji
                         Text(
-                          '⏻',
+                          '❌',
                           style: TextStyle(fontSize: 16, color: scheme.error),
                         ),
                         const SizedBox(width: 8),
@@ -486,4 +484,70 @@ void showShorebirdUpdateDialog() {
       );
     },
   );
+}
+
+/// 광고 배너 URL 열기 (Open banner URL)
+///
+/// 배너 클릭 시 URL을 처리하는 함수입니다.
+/// Handles banner click URL processing.
+///
+/// ### URL 처리 로직 (URL Processing Logic):
+/// 1. `http`로 시작하면 → WebView로 열기
+/// 2. 숫자만 있으면 → 해당 idx의 글 보기 화면 열기
+/// 3. `idx=xxx` 패턴이면 → xxx 숫자 추출하여 글 보기 화면 열기
+///
+/// ### Parameters:
+/// - [context] BuildContext for navigation
+/// - [url] 배너 링크 URL (Banner link URL)
+///
+/// ### Usage:
+/// ```dart
+/// openBannerUrl(context, 'https://example.com'); // WebView로 열기
+/// openBannerUrl(context, '12345'); // idx=12345 글 보기
+/// openBannerUrl(context, 'idx=12345'); // idx=12345 글 보기
+/// ```
+void openBannerUrl(BuildContext context, String url) async {
+  debugPrint('[openBannerUrl] banner url: $url');
+
+  /// 1. HTTP URL인 경우 → WebView로 열기
+  /// If HTTP URL → Open in WebView
+  if (url.startsWith('http')) {
+    final uri = Uri.tryParse(url);
+    if (uri != null) {
+      showFullScreen(
+        context,
+        child: WebViewScreen(url: url, title: ''),
+      );
+    }
+    return;
+  }
+
+  /// 2-3. 내부 글 보기 처리 (Internal post view handling)
+  int? idx;
+
+  /// 2. URL이 숫자만으로 구성된 경우 → idx로 변환
+  /// If URL consists only of numbers → Convert to idx
+  if (RegExp(r'^\d+$').hasMatch(url)) {
+    idx = int.tryParse(url);
+    debugPrint('[openBannerUrl] 숫자 URL 감지, idx: $idx');
+  }
+
+  /// 3. idx=xxx 패턴인 경우 → 숫자 추출
+  /// If idx=xxx pattern → Extract number
+  if (idx == null) {
+    final match = RegExp(r'idx=(\d+)').firstMatch(url);
+    if (match != null) {
+      idx = int.tryParse(match.group(1) ?? '');
+      debugPrint('[openBannerUrl] idx=xxx 패턴 감지, idx: $idx');
+    }
+  }
+
+  /// 4. idx가 유효하면 AdvertisementViewScreen 열기
+  /// If idx is valid, open AdvertisementViewScreen
+  if (idx != null && idx > 0) {
+    debugPrint('[openBannerUrl] AdvertisementViewScreen 열기, idx: $idx');
+    showFullScreen(context, child: AdvertisementViewScreen(idx: idx));
+  } else {
+    debugPrint('[openBannerUrl] 처리할 수 없는 URL: $url');
+  }
 }

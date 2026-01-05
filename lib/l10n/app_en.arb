@@ -80,7 +80,7 @@
   "@loginPhoneSmsNotice": {
     "description": "Notice about SMS verification"
   },
-  "enterPhoneNumber": "Enter your phone number",
+  "enterPhoneNumber": "Input your phone number",
   "@enterPhoneNumber": {
     "description": "Label/hint for phone number field"
   },
@@ -1844,6 +1844,10 @@
   "quickMenuTravel": "Travel",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "philippineLifeInfo": "Philippine Life Info",
+  "@philippineLifeInfo": {
+    "description": "Philippine life information section title in menu"
   },
   "entryTodayExchangeRate": "Exchange",
   "@entryTodayExchangeRate": {

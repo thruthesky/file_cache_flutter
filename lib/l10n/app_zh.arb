@@ -52,7 +52,7 @@
   "loginWithPhoneTitle": "手机号码登录",
   "loginWithPhoneHeader": "使用手机号码登录。",
   "loginPhoneSmsNotice": "为了验证手机号码，将发送短信。",
-  "enterPhoneNumber": "请输入手机号码。",
+  "enterPhoneNumber": "请输入您的电话号码",
   "phoneNumber": "手机号码",
   "enterSmsCode": "请输入短信验证码。",
   "resendSms": "重新发送短信",

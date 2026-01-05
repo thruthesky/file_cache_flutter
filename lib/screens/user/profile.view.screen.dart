@@ -12,13 +12,15 @@ class ProfileViewScreen extends StatefulWidget {
 
   static Future<void> push(
     BuildContext context, {
-    required String firebaseUid,
+    int? idxMember,
+    String? firebaseUid,
     String? nickname,
     String? photoUrl,
   }) {
     return context.push(
       routeName,
       extra: {
+        'idxMember': idxMember,
         'firebaseUid': firebaseUid,
         'nickname': nickname,
         'photoUrl': photoUrl,
@@ -28,12 +30,19 @@ class ProfileViewScreen extends StatefulWidget {
 
   const ProfileViewScreen({
     super.key,
-    required this.firebaseUid,
+    this.firebaseUid,
+    this.userIdx,
     this.nickname,
     this.photoUrl,
-  });
+  }) : assert(
+         (firebaseUid != null && userIdx == null) ||
+             (firebaseUid == null && userIdx != null),
+         'Either firebaseUid or userIdx must be provided, but not both',
+       );
 
-  final String firebaseUid;
+  final int? userIdx;
+
+  final String? firebaseUid;
 
   final String? nickname;
 
@@ -61,9 +70,14 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
     try {
       final userData = await func(
         'get_user_public_profile',
-        data: {'firebase_uid': widget.firebaseUid},
-        // debug: true,
+        data: {
+          if (widget.firebaseUid != null) 'firebase_uid': widget.firebaseUid,
+          if (widget.userIdx != null) 'idx': widget.userIdx,
+        },
+        debug: true,
       );
+
+      debugLog('USER DATA -----> $userData');
       setState(() {
         user = User.fromJson(userData);
         isLoading = false;
@@ -171,7 +185,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                   const SizedBox(height: 16),
 
                   Blocked(
-                    otherUserUid: widget.firebaseUid,
+                    otherUserUid: user?.uid ?? widget.firebaseUid ?? '',
                     yes: () => SizedBox.shrink(),
                     no: () {
                       return Column(
@@ -322,10 +336,15 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                             ),
                           ),
 
-                          SizedBox(height: 16),
-                          LatestUserPosts(firebase_uid: widget.firebaseUid),
+                          const SizedBox(height: 16),
 
-                          SizedBox(height: 40),
+                          // Show latest posts using either Firebase UID or idx
+                          LatestUserPosts(
+                            firebase_uid: user?.uid,
+                            idx_member: user?.idx,
+                          ),
+
+                          const SizedBox(height: 40),
                         ],
                       );
                     },
@@ -377,7 +396,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Blocked(
-                      otherUserUid: user!.uid,
+                      otherUserUid: user?.uid ?? '',
                       no: () => ListTile(
                         leading: Icon(Icons.message),
                         title: Text(PhilgoTr.of(context)!.chat),
@@ -390,7 +409,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                     ),
 
                     Blocked(
-                      otherUserUid: user!.uid,
+                      otherUserUid: user?.uid ?? '',
                       yes: () => ListTile(
                         leading: Icon(Icons.person_add, color: Colors.green),
                         title: Text(

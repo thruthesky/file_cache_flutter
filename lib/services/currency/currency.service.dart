@@ -1,15 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
+
+import 'package:file_cache_flutter/file_cache_flutter.dart';
 
 /// 환율 데이터 모델 (Exchange Rate Data Model)
 ///
 /// Frankfurter API에서 가져온 환율 데이터를 저장합니다.
 /// Stores exchange rate data fetched from Frankfurter API.
+///
+/// 참고: 캐시 만료 시간은 FileCache의 CacheEntry가 관리합니다.
+/// Note: Cache expiry time is managed by FileCache's CacheEntry.
 class ExchangeRateData {
   /// USD 기준 환율 (USD base rates)
   final Map<String, double> usdRates;
@@ -23,15 +26,11 @@ class ExchangeRateData {
   /// 데이터 조회 날짜 (Data fetch date)
   final String date;
 
-  /// 캐시 만료 시간 (Cache expiry time)
-  final DateTime expiresAt;
-
   const ExchangeRateData({
     required this.usdRates,
     required this.phpRates,
     required this.krwRates,
     required this.date,
-    required this.expiresAt,
   });
 
   /// JSON에서 ExchangeRateData 객체 생성 (Create from JSON)
@@ -41,7 +40,6 @@ class ExchangeRateData {
       phpRates: Map<String, double>.from(json['phpRates']),
       krwRates: Map<String, double>.from(json['krwRates']),
       date: json['date'] as String,
-      expiresAt: DateTime.parse(json['expiresAt'] as String),
     );
   }
 
@@ -52,18 +50,19 @@ class ExchangeRateData {
       'phpRates': phpRates,
       'krwRates': krwRates,
       'date': date,
-      'expiresAt': expiresAt.toIso8601String(),
     };
   }
-
-  /// 캐시가 만료되었는지 확인 (Check if cache is expired)
-  bool get isExpired => DateTime.now().isAfter(expiresAt);
 }
 
 /// 환율 서비스 (Currency Exchange Service)
 ///
 /// Frankfurter API를 사용하여 환율 데이터를 가져오고 캐시합니다.
 /// 싱글톤 패턴으로 앱 전체에서 동일한 인스턴스를 사용합니다.
+///
+/// ### 캐시 관리 (Cache Management):
+/// FileCache<>를 사용하여 캐시를 관리합니다.
+/// - TTL: 25분
+/// - 메모리 + 파일 이중 캐싱
 ///
 /// ### 사용법 (Usage):
 /// ```dart
@@ -103,58 +102,34 @@ class CurrencyService {
     'KRW': '한국 원',
   };
 
-  /// 캐시 파일명 (Cache filename)
-  static const String _cacheFileName = 'exchange_rate_cache.json';
-
   /// 캐시 TTL (25분) (Cache TTL - 25 minutes)
   static const Duration cacheTtl = Duration(minutes: 25);
 
+  /// 캐시 키 (환율은 단일 키 사용) (Cache key - single key for exchange rates)
+  static const String _cacheKey = 'latest_rates';
+
   /// Frankfurter API 기본 URL (Frankfurter API base URL)
   static const String _apiBaseUrl = 'https://api.frankfurter.dev/v1';
+
+  /// 환율 데이터 전용 캐시 (File cache for exchange rate data)
+  ///
+  /// FileCache를 사용하여 환율 데이터를 캐싱합니다.
+  /// - cacheName: 캐시 디렉토리명
+  /// - defaultTtl: 25분
+  /// - fromJson/toJson: 직렬화 함수
+  late final FileCache<ExchangeRateData> _cache = FileCache<ExchangeRateData>(
+    cacheName: 'exchange_rate',
+    defaultTtl: cacheTtl,
+    fromJson: ExchangeRateData.fromJson,
+    toJson: (data) => data.toJson(),
+    useMemoryCache: true,
+  );
 
   /// 현재 환율 데이터 (Current exchange rate data)
   ExchangeRateData? _exchangeData;
 
   /// 환율 데이터 접근자 (Exchange data accessor)
   ExchangeRateData? get exchangeData => _exchangeData;
-
-  /// 캐시 파일 경로 가져오기 (Get cache file path)
-  Future<File> _getCacheFile() async {
-    final directory = await getTemporaryDirectory();
-    return File('${directory.path}/$_cacheFileName');
-  }
-
-  /// 캐시에서 환율 데이터 로드 (Load exchange rate data from cache)
-  Future<ExchangeRateData?> _loadFromCache() async {
-    try {
-      final file = await _getCacheFile();
-      if (await file.exists()) {
-        final contents = await file.readAsString();
-        final json = jsonDecode(contents) as Map<String, dynamic>;
-        final data = ExchangeRateData.fromJson(json);
-
-        /// 캐시가 만료되지 않았으면 반환 (Return if cache is not expired)
-        if (!data.isExpired) {
-          return data;
-        }
-      }
-    } catch (e) {
-      /// 캐시 로드 실패 시 무시 (Ignore cache load failure)
-      debugPrint('CurrencyService: 캐시 로드 실패 - $e');
-    }
-    return null;
-  }
-
-  /// 캐시에 환율 데이터 저장 (Save exchange rate data to cache)
-  Future<void> _saveToCache(ExchangeRateData data) async {
-    try {
-      final file = await _getCacheFile();
-      await file.writeAsString(jsonEncode(data.toJson()));
-    } catch (e) {
-      /// 캐시 저장 실패 시 무시 (Ignore cache save failure)
-      debugPrint('CurrencyService: 캐시 저장 실패 - $e');
-    }
-  }
 
   /// Frankfurter API에서 환율 데이터 가져오기 (Fetch exchange rates from Frankfurter API)
   ///
@@ -174,10 +149,26 @@ class CurrencyService {
         (key, value) => MapEntry(key, (value as num).toDouble()),
       );
     } else {
-      throw Exception(
-        '환율 데이터를 가져오는데 실패했습니다. (Failed to fetch exchange rates)',
-      );
+      throw Exception('환율 데이터를 가져오는데 실패했습니다. (Failed to fetch exchange rates)');
     }
+  }
+
+  /// API에서 모든 환율 데이터 가져오기 (Fetch all exchange rates from API)
+  ///
+  /// USD, PHP, KRW 각각에 대한 환율을 조회합니다.
+  Future<ExchangeRateData> _fetchFromApi() async {
+    debugPrint('CurrencyService: API에서 환율 데이터 가져오는 중...');
+
+    final usdRates = await _fetchRatesFromApi('USD', 'KRW,PHP');
+    final phpRates = await _fetchRatesFromApi('PHP', 'KRW,USD');
+    final krwRates = await _fetchRatesFromApi('KRW', 'PHP,USD');
+
+    return ExchangeRateData(
+      usdRates: usdRates,
+      phpRates: phpRates,
+      krwRates: krwRates,
+      date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    );
   }
 
   /// 환율 데이터 로드 (Load exchange rates)
@@ -190,27 +181,18 @@ class CurrencyService {
   /// Throws [Exception] if API call fails and no cached data available
   Future<ExchangeRateData> loadExchangeRates() async {
     /// 1. 캐시에서 먼저 로드 시도 (Try loading from cache first)
-    final cachedData = await _loadFromCache();
+    final cachedData = await _cache.get(_cacheKey);
     if (cachedData != null) {
+      debugPrint('CurrencyService: 캐시에서 환율 데이터 로드 완료');
       _exchangeData = cachedData;
       return cachedData;
     }
 
     /// 2. 캐시가 없거나 만료되면 API 호출 (Call API if cache is missing or expired)
-    final usdRates = await _fetchRatesFromApi('USD', 'KRW,PHP');
-    final phpRates = await _fetchRatesFromApi('PHP', 'KRW,USD');
-    final krwRates = await _fetchRatesFromApi('KRW', 'PHP,USD');
-
-    final data = ExchangeRateData(
-      usdRates: usdRates,
-      phpRates: phpRates,
-      krwRates: krwRates,
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-      expiresAt: DateTime.now().add(cacheTtl),
-    );
+    final data = await _fetchFromApi();
 
     /// 3. 캐시에 저장 (Save to cache)
-    await _saveToCache(data);
+    await _cache.set(_cacheKey, data);
 
     _exchangeData = data;
     return data;
@@ -271,14 +253,13 @@ class CurrencyService {
   ///
   /// 테스트 또는 강제 새로고침 시 사용
   Future<void> clearCache() async {
-    try {
-      final file = await _getCacheFile();
-      if (await file.exists()) {
-        await file.delete();
-      }
-      _exchangeData = null;
-    } catch (e) {
-      debugPrint('CurrencyService: 캐시 삭제 실패 - $e');
-    }
+    await _cache.clear();
+    _exchangeData = null;
+    debugPrint('CurrencyService: 캐시 삭제 완료');
   }
+
+  /// 캐시 남은 시간 조회 (Get remaining cache time)
+  ///
+  /// 캐시가 없으면 null 반환
+  Duration? get cacheRemainingTime => _cache.getRemainingTime(_cacheKey);
 }
