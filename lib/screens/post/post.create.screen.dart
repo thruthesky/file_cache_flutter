@@ -237,43 +237,60 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
           /// 닫기 버튼
           /// Close button
-          leading: IconButton(
-            icon: FaIcon(FontAwesomeIcons.lightXmark, color: scheme.onSurface),
-            onPressed: () => Navigator.pop(context),
+          /// Disabled during loading/uploading to prevent accidental closure
+          leading: IgnorePointer(
+            ignoring: isLoading || isUploading,
+            child: Opacity(
+              opacity: (isLoading || isUploading) ? 0.38 : 1.0,
+              child: IconButton(
+                icon: FaIcon(
+                  FontAwesomeIcons.lightXmark,
+                  color: scheme.onSurface,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
           ),
           actions: [
             /// 파일 업로드 버튼 (camera icon)
             /// File upload button (camera icon)
             /// Note: FileUpload widget is also in the bottom action bar
             /// Both buttons provide the same functionality for user convenience
-            FileUpload(
-              file: true,
-              video: true,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                child: const FaIcon(FontAwesomeIcons.lightCamera, size: 24),
-              ),
-              onBeforeUpload: () {
-                // Set uploading state to disable submit button
-                setState(() {
-                  isUploading = true;
-                });
-              },
-              onUploaded: (url) {
-                // Add uploaded file URL to form
-                formKey.currentState?.addUploadedFile(url);
+            /// Disabled during loading/uploading to prevent multiple operations
+            IgnorePointer(
+              ignoring: isLoading || isUploading,
+              child: Opacity(
+                opacity: (isLoading || isUploading) ? 0.38 : 1.0,
+                child: FileUpload(
+                  file: true,
+                  video: true,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    child: const FaIcon(FontAwesomeIcons.lightCamera, size: 24),
+                  ),
+                  onBeforeUpload: () {
+                    // Set uploading state to disable submit button
+                    setState(() {
+                      isUploading = true;
+                    });
+                  },
+                  onUploaded: (url) {
+                    // Add uploaded file URL to form
+                    formKey.currentState?.addUploadedFile(url);
 
-                // Upload completed, reset uploading state
-                setState(() {
-                  isUploading = false;
-                });
-              },
-              onCancelled: () {
-                // Upload cancelled, reset uploading state
-                setState(() {
-                  isUploading = false;
-                });
-              },
+                    // Upload completed, reset uploading state
+                    setState(() {
+                      isUploading = false;
+                    });
+                  },
+                  onCancelled: () {
+                    // Upload cancelled, reset uploading state
+                    setState(() {
+                      isUploading = false;
+                    });
+                  },
+                ),
+              ),
             ),
 
             /// 제출 버튼 (send icon)
