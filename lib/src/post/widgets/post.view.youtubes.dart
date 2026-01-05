@@ -68,10 +68,13 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
   /// YouTube URL 추출 및 컨트롤러 초기화
   void _initializeYoutubeVideos() {
     // 현재 content를 저장 (변경 감지용)
+    // Note: We track content changes, but getAllYoutubeUrlInfos()
+    // also checks varchar19 which typically doesn't change after initial load
     _lastProcessedContent = widget.post.content;
 
-    // 게시글 내용에서 YouTube URL 추출
-    _youtubeInfos = extractYoutubeUrlInfos(widget.post.content);
+    // Get all YouTube URLs from post (varchar19 + content, deduplicated)
+    // varchar19 URL is prioritized and displayed first
+    _youtubeInfos = widget.post.getAllYoutubeUrlInfos();
 
     // 각 비디오에 대한 컨트롤러 생성
     for (final info in _youtubeInfos) {

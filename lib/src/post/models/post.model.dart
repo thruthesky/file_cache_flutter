@@ -593,4 +593,53 @@ class Post {
   bool isMine(BuildContext context) {
     return PhilgoState.of(context).user?.idx == idx_member;
   }
+
+  /// Primary YouTube URL stored in varchar19 field
+  /// Returns the YouTube URL from varchar19 if it exists and is not empty
+  ///
+  /// The varchar19 field is used by the API to store a primary/featured YouTube URL
+  /// that takes precedence over URLs found in content
+  String? get youtubeUrl {
+    if (varchar19 != null && varchar19!.isNotEmpty) {
+      return varchar19;
+    }
+    return null;
+  }
+
+  /// Get all YouTube URL information from this post
+  ///
+  /// Combines YouTube URLs from:
+  /// 1. varchar19 field (primary YouTube URL - displayed first)
+  /// 2. content field (URLs found within the post content)
+  ///
+  /// Duplicate URLs are removed based on videoId, with varchar19 URL taking precedence
+  ///
+  /// Returns: List of [YoutubeUrlInfo] with unique videos, varchar19 URL first
+  List<YoutubeUrlInfo> getAllYoutubeUrlInfos() {
+    final List<YoutubeUrlInfo> result = [];
+    final Set<String> seenVideoIds = {};
+
+    // 1. Add YouTube URL from varchar19 (primary URL - displayed first)
+    if (youtubeUrl != null) {
+      final varchar19Infos = extractYoutubeUrlInfos(youtubeUrl!);
+      for (final info in varchar19Infos) {
+        if (!seenVideoIds.contains(info.videoId)) {
+          seenVideoIds.add(info.videoId);
+          result.add(info);
+        }
+      }
+    }
+
+    // 2. Add YouTube URLs from content
+    final contentInfos = extractYoutubeUrlInfos(content);
+    for (final info in contentInfos) {
+      // Skip if this video ID was already added from varchar19
+      if (!seenVideoIds.contains(info.videoId)) {
+        seenVideoIds.add(info.videoId);
+        result.add(info);
+      }
+    }
+
+    return result;
+  }
 }
