@@ -10,6 +10,8 @@ class PhilgoConfig {
 
   static BuildContext? _globalContext;
 
+  static const String chatAdminUid = 'RaHIcr45pvPzYdcDIv6JoW8DnSH2';
+
   static void setGlobalContext(BuildContext context) {
     _globalContext = context;
   }

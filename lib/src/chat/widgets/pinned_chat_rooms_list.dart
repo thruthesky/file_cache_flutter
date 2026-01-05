@@ -100,10 +100,10 @@ class PinnedChatRoomsList extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // 가로 스크롤 리스트
+                  // 가로 스크롤 리스트 (높이 축소: 108 → 80)
                   // Filter out blocked users from the pinned chat rooms list
                   SizedBox(
-                    height: 108,
+                    height: 80,
                     child: Builder(
                       builder: (context) {
                         final filteredRoomIds = pinnedChatRooms.where((roomId) {
@@ -367,22 +367,19 @@ class _PinnedChatRoomItem extends StatelessWidget {
         final unreadCount = join.unread;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          // 좌우 간격 축소 (8 → 4)
+          padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               onTap: onTap,
               child: Container(
-                width: 80,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  // Comic design - rounded corners 12 for large elements
-                  borderRadius: BorderRadius.circular(12),
-                  // Comic design - 2.0px outline border
-                  border: Border.all(color: colorScheme.outline, width: 2.0),
-                ),
+                // 너비 축소 (80 → 64)
+                width: 64,
+                // 패딩 축소 (8 → 4)
+                padding: const EdgeInsets.all(4),
+                // 보더 없는 미니멀 디자인
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -390,54 +387,56 @@ class _PinnedChatRoomItem extends StatelessWidget {
                     Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        // 아바타
-                        Avatar(photoUrl: photoUrl, size: 56, radius: 28),
-                        // 우측 상단 닫기 버튼 - Comic design
+                        // 아바타 크기 축소 (56 → 44)
+                        Avatar(photoUrl: photoUrl, size: 44, radius: 22),
+                        // 우측 상단 닫기 버튼 - 축소된 크기
                         Positioned(
-                          right: -4,
-                          top: -4,
+                          right: -2,
+                          top: -2,
                           child: GestureDetector(
                             onTap: () => _showUnpinConfirmDialog(context),
                             child: Container(
-                              width: 24,
-                              height: 24,
+                              // 크기 축소 (24 → 18)
+                              width: 18,
+                              height: 18,
                               decoration: BoxDecoration(
                                 color: colorScheme.errorContainer,
                                 shape: BoxShape.circle,
-                                // Comic design - 2.0px border
+                                // 테두리 두께 축소 (2.0 → 1.5)
                                 border: Border.all(
                                   color: colorScheme.error,
-                                  width: 2.0,
+                                  width: 1.5,
                                 ),
                               ),
                               child: Center(
                                 child: FaIcon(
                                   FontAwesomeIcons.xmark,
                                   color: colorScheme.error,
-                                  size: 12,
+                                  // 아이콘 크기 축소 (12 → 9)
+                                  size: 9,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        // 읽지 않은 메시지 배지 - Comic design
+                        // 읽지 않은 메시지 배지 - 축소된 크기
                         if (unreadCount > 0)
                           Positioned(
-                            right: -4,
-                            bottom: -4,
+                            right: -2,
+                            bottom: -2,
                             child: Container(
+                              // 패딩 축소 (horizontal: 8 → 5, vertical: 2 → 1)
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
+                                horizontal: 5,
+                                vertical: 1,
                               ),
                               decoration: BoxDecoration(
                                 color: colorScheme.error,
-                                // Comic design - rounded corners 32 for small elements
                                 borderRadius: BorderRadius.circular(32),
-                                // Comic design - 2.0px border
+                                // 테두리 두께 축소 (2.0 → 1.5)
                                 border: Border.all(
                                   color: colorScheme.surface,
-                                  width: 2.0,
+                                  width: 1.5,
                                 ),
                               ),
                               child: Text(
@@ -447,7 +446,8 @@ class _PinnedChatRoomItem extends StatelessWidget {
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: colorScheme.onError,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 10,
+                                  // 폰트 크기 축소 (10 → 8)
+                                  fontSize: 8,
                                 ),
                               ),
                             ),
