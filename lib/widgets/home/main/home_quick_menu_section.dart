@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/functions/ui.functions.dart';
@@ -8,8 +9,13 @@ import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
 import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/info/travel/travel_info.screen.dart';
+import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/weather/weather.screen.dart';
+import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
+import 'package:philgo_api/philgo_api.dart';
+import 'package:provider/provider.dart';
 
 /// 퀵 메뉴 아이템 데이터 클래스 (Quick Menu Item Data Class)
 ///
@@ -134,6 +140,25 @@ class HomeQuickMenuSection extends StatelessWidget {
     );
   }
 
+  /// 내 정보 메뉴 탭 핸들러 (My info menu tap handler)
+  ///
+  /// 회원 정보 수정 화면으로 이동합니다.
+  /// Hero 애니메이션을 위해 Navigator.push 방식 사용
+  /// Navigates to profile edit screen.
+  /// Uses Navigator.push for Hero animation support
+  void _onMyInfoTap(BuildContext context) {
+    ProfileEditScreen.push(context);
+  }
+
+  /// 전체 메뉴 탭 핸들러 (All menu tap handler)
+  ///
+  /// 메뉴 탭으로 이동합니다.
+  /// Navigates to Menu tab.
+  void _onAllMenuTap(BuildContext context) {
+    NavigationState.of(context, listen: false)
+        .setHomeNavigation(HomeNavigationItem.menu);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -210,17 +235,43 @@ class HomeQuickMenuSection extends StatelessWidget {
           /// 아이템들을 시작점에 정렬 (Align items to start)
           mainAxisAlignment: MainAxisAlignment.start,
 
-          children: menuItems.map((item) {
-            return _buildMenuItem(
+          children: [
+            /// 내 정보 아바타 메뉴 (맨 처음 위치)
+            /// My info avatar menu (first position)
+            _buildAvatarMenuItem(
               context: context,
-              icon: item.icon,
-              label: item.label,
-              onTap: item.onTap,
+              label: l10n.quickMenuMyInfo,
+              onTap: () => _onMyInfoTap(context),
               scheme: scheme,
               theme: theme,
               sp: sp,
-            );
-          }).toList(),
+            ),
+
+            /// 전체 메뉴 (내 정보 다음 위치)
+            /// All menu (after my info)
+            _buildMenuItem(
+              context: context,
+              icon: FontAwesomeIcons.lightBars,
+              label: l10n.quickMenuAllMenu,
+              onTap: () => _onAllMenuTap(context),
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+            ),
+
+            /// 기존 메뉴 아이템들 (Other menu items)
+            ...menuItems.map((item) {
+              return _buildMenuItem(
+                context: context,
+                icon: item.icon,
+                label: item.label,
+                onTap: item.onTap,
+                scheme: scheme,
+                theme: theme,
+                sp: sp,
+              );
+            }),
+          ],
         ),
       ),
     );
@@ -257,29 +308,29 @@ class HomeQuickMenuSection extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
 
       child: Padding(
-        padding: EdgeInsets.all(sp.s8),
+        padding: EdgeInsets.all(sp.s4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             /// 아이콘 컨테이너 (Icon container)
-            /// 배경색 + 둥근 모서리로 강조
-            /// Highlighted with background color + rounded corners
+            /// 배경색 + 둥근 모서리로 강조 (한 단계 작은 크기: 48x48)
+            /// Highlighted with background color + rounded corners (smaller size: 48x48)
             Container(
-              width: 56,
-              height: 56,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 /// 배경색: primaryContainer (더 눈에 띄는 색상)
                 /// Background color: primaryContainer (more prominent)
                 color: scheme.primaryContainer,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: FaIcon(
                   icon,
 
-                  /// 아이콘 크기 증가: 20 → 24
-                  /// Increased icon size: 20 → 24
-                  size: 24,
+                  /// 아이콘 크기: 20 (컨테이너 축소에 맞춤)
+                  /// Icon size: 20 (adjusted for smaller container)
+                  size: 20,
 
                   /// 아이콘 색상: onPrimaryContainer (배경과 대비)
                   /// Icon color: onPrimaryContainer (contrast with background)
@@ -293,7 +344,121 @@ class HomeQuickMenuSection extends StatelessWidget {
             /// 메뉴 라벨 (Menu label)
             Text(
               label,
-              style: theme.textTheme.labelMedium?.copyWith(
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: scheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 아바타 메뉴 아이템 빌드 (Build avatar menu item)
+  ///
+  /// 사용자 아바타를 표시하는 메뉴 아이템입니다.
+  /// 아바타 이미지가 있으면 이미지를 표시하고, 없으면 기본 사용자 아이콘을 표시합니다.
+  ///
+  /// Menu item displaying user avatar.
+  /// Shows avatar image if available, otherwise shows default user icon.
+  ///
+  /// [context] → BuildContext
+  /// [label] → 메뉴 라벨 (Menu label)
+  /// [onTap] → 탭 콜백 (Tap callback)
+  /// [scheme] → ColorScheme
+  /// [theme] → ThemeData
+  /// [sp] → AppSpacing
+  Widget _buildAvatarMenuItem({
+    required BuildContext context,
+    required String label,
+    required VoidCallback? onTap,
+    required ColorScheme scheme,
+    required ThemeData theme,
+    required AppSpacing sp,
+  }) {
+    return InkWell(
+      /// 탭 시 콜백 호출 (Call callback on tap)
+      onTap: onTap,
+
+      /// 둥근 모서리 ripple 효과 (Rounded corner ripple effect)
+      borderRadius: BorderRadius.circular(12),
+
+      child: Padding(
+        padding: EdgeInsets.all(sp.s4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 아바타 컨테이너 (Avatar container)
+            /// Selector를 사용하여 사용자 photoUrl만 구독 (한 단계 작은 크기: 48x48)
+            /// Use Selector to subscribe only to user photoUrl (smaller size: 48x48)
+            /// Hero 애니메이션: 프로필 수정 화면과 연결
+            /// Hero animation: Connected with profile edit screen
+            Selector<PhilgoState, String?>(
+              selector: (_, state) => state.user?.photoUrl,
+              builder: (_, photoUrl, _) {
+                return Hero(
+                  /// Hero 태그: 프로필 사진 전환 애니메이션용
+                  /// Hero tag: For profile photo transition animation
+                  tag: 'profile-photo-hero',
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      /// 배경색: primaryContainer
+                      /// Background color: primaryContainer
+                      color: scheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: photoUrl != null && photoUrl.isNotEmpty
+                        /// 아바타 이미지가 있으면 CachedNetworkImage로 표시
+                        /// If avatar image exists, display with CachedNetworkImage
+                        ? CachedNetworkImage(
+                            imageUrl: photoUrl,
+                            fit: BoxFit.cover,
+                            width: 48,
+                            height: 48,
+
+                            /// 로딩 중: 기본 아이콘 표시
+                            /// Loading: Show default icon
+                            placeholder: (_, _) => Center(
+                              child: FaIcon(
+                                FontAwesomeIcons.lightUser,
+                                size: 20,
+                                color: scheme.onPrimaryContainer,
+                              ),
+                            ),
+
+                            /// 에러 시: 기본 아이콘 표시
+                            /// On error: Show default icon
+                            errorWidget: (context, url, error) => Center(
+                              child: FaIcon(
+                                FontAwesomeIcons.lightUser,
+                                size: 20,
+                                color: scheme.onPrimaryContainer,
+                              ),
+                            ),
+                          )
+                        /// 아바타 이미지가 없으면 기본 사용자 아이콘 표시
+                        /// If no avatar image, show default user icon
+                        : Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.lightUser,
+                              size: 20,
+                              color: scheme.onPrimaryContainer,
+                            ),
+                          ),
+                  ),
+                );
+              },
+            ),
+
+            SizedBox(height: sp.s4),
+
+            /// 메뉴 라벨 (Menu label)
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
                 color: scheme.onSurface,
               ),
             ),

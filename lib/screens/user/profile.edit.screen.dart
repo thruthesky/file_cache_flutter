@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -8,11 +10,21 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/widgets/theme/comic_text_form_field.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
 
+/// Profile Edit Screen (프로필 수정 화면)
+///
+/// Allows users to edit their profile information including:
+/// - Profile photo
+/// - Nickname
+/// - Full name
+/// - Birth date
+/// - Gender
+///
+/// Design follows menu.home.dart style:
+/// - Section indicator bar + title header
+/// - surfaceContainerLowest background
+/// - outlineVariant border
+/// - 28px spacing between sections
 class ProfileEditScreen extends StatefulWidget {
-  // You may add routeName with dynamic parameters if needed like this:
-  // static const String routeName = '/screen-name/:id';
-  // And update the push and go methods accordingly like below.
-  // static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName.replaceFirst(':id'));
   static const String routeName = '/edit-profile';
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
@@ -28,7 +40,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   int birthDate = 0;
   String? gender = "M";
-  bool isLoading = false; // 로딩 상태 관리
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -46,6 +58,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(T.editProfile, style: theme.textTheme.titleLarge),
@@ -60,239 +73,214 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           _nameController.text = user.name;
           gender = user.gender;
           birthDate = user.birthDate;
-          // log('date: $birthDate');
           setState(() {});
         },
         login: (context, user) {
           return GestureDetector(
-            // Dismiss keyboard when tapping outside input fields
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            // Allow interactions with child widgets
+            onTap: () => FocusScope.of(context).unfocus(),
             behavior: HitTestBehavior.translucent,
-            child: ListView(
-              // Dismiss keyboard when scrolling/dragging
+            child: SingleChildScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: EdgeInsets.zero,
-              children: [
-                SizedBox(height: 24),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                spacing: 28,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
 
-                /// Profile Photo Section
-                FileUpload(
-                  deleteFile: user.photoUrl,
-                  file: true,
-                  video: true,
-                  onUploaded: (url) async {
-                    log('uploaded file url: $url');
-                    final updatedUser = await philgoApiUserUpdate({
-                      'photo_url': url,
-                    });
-                    if (context.mounted) {
-                      // Update the global app state
-                      PhilgoState.of(context).setUser(updatedUser);
-                      // Comic Design: Use Comic SnackBar for consistent styling
-                      showComicSuccessSnackBar(
-                        context,
-                        'Profile photo updated successfully',
-                      );
-                    }
-                  },
-                  onBeforeUpload: () {
-                    log('before upload');
-                  },
-                  onCancelled: () {
-                    log('upload cancelled');
-                  },
-                  child: UserAvatarWithUploadIcon(
-                    size: 125,
-                    user: user,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16.0,
-                    ),
-                    alignment: Alignment.center,
-                    onTapDelete: () async {
-                      try {
-                        await philgoApiFileDelete(
-                          PhilgoState.of(context).user!.photoUrl,
-                        );
-                        final updatedUser = await philgoApiUserUpdate({
-                          'photo_url': '',
-                        });
-                        if (context.mounted) {
-                          PhilgoState.of(context).setUser(updatedUser);
-                          // Comic Design: Use Comic SnackBar for consistent styling
-                          showComicSuccessSnackBar(
-                            context,
-                            'Profile photo deleted',
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for consistent styling
-                          showComicErrorSnackBar(
-                            context,
-                            'Failed to delete photo: $e',
-                          );
-                        }
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                /// Nickname Section - Comic Card
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Comic Design: Use ComicTextFormField for consistent styling
-                      Text(
-                        T.nickname,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: scheme.primary,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      ComicTextFormField(
-                        controller: _nicknameController,
-                        enabled: user.nickname.isEmpty,
-                        hintText: T.nicknameHint,
-                      ),
-                      SizedBox(height: 16),
-
-                      // Comic Design: Use ComicTextFormField for consistent styling
-                      Text(
-                        T.fullName,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: scheme.primary,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      ComicTextFormField(
-                        controller: _nameController,
-                        hintText: T.fullNameHint,
-                      ),
-
-                      SizedBox(height: 24),
-
-                      /// Birth Date Field
-                      Text(
-                        T.birthDate,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: scheme.primary,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      DateSelector(
-                        date: birthDate,
-                        padding: EdgeInsets.zero,
-                        label: null,
-                        yearHint: T.year,
-                        monthHint: T.month,
-                        dayHint: T.day,
-                        yearUnit: T.yearUnit,
-                        monthUnit: T.monthUnit,
-                        dayUnit: T.dayUnit,
-                        selectYearAndMonthFirstMessage:
-                            T.selectYearAndMonthFirst,
-                        selectYearFirstMessage: T.selectYearFirst,
-                        selectMonthFirstMessage: T.selectMonthFirst,
-                        onChange: (date) {
-                          birthDate = date;
-                        },
-                      ),
-                      SizedBox(height: 24),
-
-                      /// Gender Selection
-                      Text(
-                        T.gender,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: scheme.primary,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      RadioGroup<String>(
-                        groupValue: gender,
-                        onChanged: (String? value) {
-                          setState(() {
-                            gender = value;
+                  /// [1. Profile Photo Section] - 프로필 사진 섹션
+                  /// Hero 애니메이션: 퀵 메뉴의 아바타와 연결
+                  /// Hero animation: Connected with quick menu avatar
+                  _buildSection(
+                    title: T.profilePhoto,
+                    icon: FontAwesomeIcons.camera,
+                    child: Center(
+                      child: FileUpload(
+                        deleteFile: user.photoUrl,
+                        file: true,
+                        video: true,
+                        onUploaded: (url) async {
+                          log('uploaded file url: $url');
+                          final updatedUser = await philgoApiUserUpdate({
+                            'photo_url': url,
                           });
+                          if (context.mounted) {
+                            PhilgoState.of(context).setUser(updatedUser);
+                            showComicSuccessSnackBar(
+                              context,
+                              T.profilePhotoUpdated,
+                            );
+                          }
                         },
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: Radio<String>(value: "M"),
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  T.male,
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: scheme.onSurface,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: Radio<String>(value: "F"),
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  T.female,
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: scheme.onSurface,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: Radio<String>(value: "N"),
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  T.preferNotToSay,
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: scheme.onSurface,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        onBeforeUpload: () => log('before upload'),
+                        onCancelled: () => log('upload cancelled'),
+                        child: Hero(
+                          /// Hero 태그: 퀵 메뉴 아바타와 동일한 태그
+                          /// Hero tag: Same tag as quick menu avatar
+                          tag: 'profile-photo-hero',
+                          child: UserAvatarWithUploadIcon(
+                            size: 120,
+                            user: user,
+                            padding: EdgeInsets.zero,
+                            alignment: Alignment.center,
+                            onTapDelete: () async {
+                              try {
+                                await philgoApiFileDelete(
+                                  PhilgoState.of(context).user!.photoUrl,
+                                );
+                                final updatedUser = await philgoApiUserUpdate({
+                                  'photo_url': '',
+                                });
+                                if (context.mounted) {
+                                  PhilgoState.of(context).setUser(updatedUser);
+                                  showComicSuccessSnackBar(
+                                    context,
+                                    T.profilePhotoDeleted,
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  showComicErrorSnackBar(
+                                    context,
+                                    '${T.failedToDeletePhoto}: $e',
+                                  );
+                                }
+                              }
+                            },
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 16),
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 400.ms)
+                      .slideY(begin: 0.1, end: 0),
 
-                /// Save Button - Comic Design: Use ComicButton for custom styling
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: SizedBox(
+                  /// [2. Basic Info Section] - 기본 정보 섹션
+                  _buildSection(
+                    title: T.basicInfo,
+                    icon: FontAwesomeIcons.user,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Nickname field
+                        _buildFieldLabel(
+                          context,
+                          T.nickname,
+                          FontAwesomeIcons.at,
+                        ),
+                        const SizedBox(height: 8),
+                        ComicTextFormField(
+                          controller: _nicknameController,
+                          enabled: user.nickname.isEmpty,
+                          hintText: T.nicknameHint,
+                        ),
+                        const SizedBox(height: 20),
+
+                        /// Full name field
+                        _buildFieldLabel(
+                          context,
+                          T.fullName,
+                          FontAwesomeIcons.idCard,
+                        ),
+                        const SizedBox(height: 8),
+                        ComicTextFormField(
+                          controller: _nameController,
+                          hintText: T.fullNameHint,
+                        ),
+                      ],
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 100.ms)
+                      .slideY(begin: 0.1, end: 0),
+
+                  /// [3. Personal Info Section] - 개인 정보 섹션
+                  _buildSection(
+                    title: T.personalInfo,
+                    icon: FontAwesomeIcons.addressCard,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Birth Date Field
+                        _buildFieldLabel(
+                          context,
+                          T.birthDate,
+                          FontAwesomeIcons.cakeCandles,
+                        ),
+                        const SizedBox(height: 8),
+                        DateSelector(
+                          date: birthDate,
+                          padding: EdgeInsets.zero,
+                          label: null,
+                          yearHint: T.year,
+                          monthHint: T.month,
+                          dayHint: T.day,
+                          yearUnit: T.yearUnit,
+                          monthUnit: T.monthUnit,
+                          dayUnit: T.dayUnit,
+                          selectYearAndMonthFirstMessage:
+                              T.selectYearAndMonthFirst,
+                          selectYearFirstMessage: T.selectYearFirst,
+                          selectMonthFirstMessage: T.selectMonthFirst,
+                          onChange: (date) {
+                            birthDate = date;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+
+                        /// Gender Selection
+                        _buildFieldLabel(
+                          context,
+                          T.gender,
+                          FontAwesomeIcons.venusMars,
+                        ),
+                        const SizedBox(height: 12),
+                        RadioGroup<String>(
+                          groupValue: gender,
+                          onChanged: (String? value) {
+                            setState(() {
+                              gender = value;
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              _buildGenderOption(
+                                context,
+                                value: "M",
+                                label: T.male,
+                                icon: FontAwesomeIcons.mars,
+                              ),
+                              const SizedBox(width: 12),
+                              _buildGenderOption(
+                                context,
+                                value: "F",
+                                label: T.female,
+                                icon: FontAwesomeIcons.venus,
+                              ),
+                              const SizedBox(width: 12),
+                              _buildGenderOption(
+                                context,
+                                value: "N",
+                                label: T.preferNotToSay,
+                                icon: FontAwesomeIcons.genderless,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 200.ms)
+                      .slideY(begin: 0.1, end: 0),
+
+                  /// [4. Save Button] - 저장 버튼
+                  SizedBox(
                     width: double.infinity,
-                    child: ComicButton(
+                    child: ComicPrimaryButton(
                       onPressed: isLoading ? null : onProfileSubmit,
-                      rounded: ComicButtonRounded.normal,
+                      rounded: ComicButtonRounded.full,
                       padding: ComicButtonPadding.large,
                       textSize: ComicButtonTextSize.large,
                       child: isLoading
@@ -302,25 +290,37 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Theme.of(context).colorScheme.onSurface,
+                                  scheme.onPrimary,
                                 ),
                               ),
                             )
                           : Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                SizedBox(width: 8),
+                                FaIcon(
+                                  FontAwesomeIcons.floppyDisk,
+                                  size: 18,
+                                  color: scheme.onPrimary,
+                                ),
+                                const SizedBox(width: 8),
                                 Text(
                                   T.save,
-                                  style: TextStyle(color: scheme.primary),
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: scheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 24),
-              ],
+                  )
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 300.ms)
+                      .slideY(begin: 0.1, end: 0),
+
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           );
         },
@@ -328,57 +328,201 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  /// 사용자 프로필 정보를 업데이트하는 메서드
-  /// user.update API를 호출하여 닉네임, 이름, 생년월일, 성별을 업데이트
+  /// Builds a section container with header (menu.home.dart style)
+  ///
+  /// Uses indicator bar + title header and surfaceContainerLowest background
+  /// with outlineVariant border (matching MenuGridSection design)
+  Widget _buildSection({
+    required String title,
+    required IconData icon,
+    required Widget child,
+  }) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// Section header - Indicator bar + title (menu.home.dart style)
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              /// Section indicator bar
+              Container(
+                width: 3,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+
+              /// Section icon
+              FaIcon(
+                icon,
+                size: 14,
+                color: scheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+
+              /// Section title
+              Text(
+                title,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        /// Section content container (menu.home.dart style)
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerLowest,
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.5),
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          clipBehavior: Clip.antiAlias,
+          padding: const EdgeInsets.all(20),
+          child: child,
+        ),
+      ],
+    );
+  }
+
+  /// Builds a field label widget with an icon
+  Widget _buildFieldLabel(
+    BuildContext context,
+    String label,
+    IconData icon,
+  ) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Row(
+      children: [
+        FaIcon(
+          icon,
+          size: 14,
+          color: scheme.onSurfaceVariant,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds a gender option widget for the radio group
+  Widget _buildGenderOption(
+    BuildContext context, {
+    required String value,
+    required String label,
+    required IconData icon,
+  }) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isSelected = gender == value;
+
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? scheme.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? scheme.primary
+                : scheme.outlineVariant.withValues(alpha: 0.5),
+            width: isSelected ? 1.5 : 1.0,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: Radio<String>(value: value),
+            ),
+            const SizedBox(width: 4),
+            FaIcon(
+              icon,
+              size: 14,
+              color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                label,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: isSelected ? scheme.primary : scheme.onSurface,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Updates user profile information via API
   Future<void> onProfileSubmit() async {
-    // 입력값 검증
     if (_nicknameController.text.trim().isEmpty) {
-      // Comic Design: Use Comic SnackBar for consistent styling
       showComicErrorSnackBar(context, T.nicknameRequired);
       return;
     }
 
-    // 로딩 시작
     setState(() {
       isLoading = true;
     });
+
     try {
-      // API 호출을 위한 데이터 준비
       final data = <String, dynamic>{};
 
-      // 닉네임: 기존 닉네임이 없을 때만 업데이트 (첫 설정 시에만)
       if (PhilgoState.of(context).user!.nickname.isEmpty) {
         data['nickname'] = _nicknameController.text.trim();
       }
 
-      // 이름이 입력되었으면 추가
       data['name'] = _nameController.text.trim();
 
-      // 성별 정보 추가
       if (gender != null) {
         data['gender'] = gender;
       }
 
-      // 생년월일 정보 추가
       if (birthDate != 0) {
         data['birth_year'] = birthDate ~/ 10000;
         data['birth_month'] = (birthDate ~/ 100) % 100;
         data['birth_day'] = birthDate % 100;
       }
 
-      // user.update API 호출
       final user = await philgoApiUserUpdate(data);
       if (mounted) {
         PhilgoState.of(context).setUser(user);
       }
 
-      // 성공 메시지 표시
       if (mounted) {
-        // Comic Design: Use Comic SnackBar for consistent styling
         showComicSuccessSnackBar(context, T.profileUpdateSuccess);
       }
     } finally {
-      // 로딩 종료
       if (mounted) {
         setState(() {
           isLoading = false;

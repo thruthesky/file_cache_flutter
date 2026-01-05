@@ -1505,6 +1505,12 @@ class LoKo extends Lo {
   String get quickMenuTravel => '여행';
 
   @override
+  String get quickMenuMyInfo => '내 정보';
+
+  @override
+  String get quickMenuAllMenu => '전체 메뉴';
+
+  @override
   String get philippineLifeInfo => '필리핀 생활 정보';
 
   @override
@@ -1521,4 +1527,31 @@ class LoKo extends Lo {
 
   @override
   String get weatherSunny => '맑음';
+
+  @override
+  String get profilePhoto => '프로필 사진';
+
+  @override
+  String get profilePhotoUpdated => '프로필 사진이 업데이트되었습니다';
+
+  @override
+  String get profilePhotoDeleted => '프로필 사진이 삭제되었습니다';
+
+  @override
+  String get basicInfo => '기본 정보';
+
+  @override
+  String get personalInfo => '개인 정보';
+
+  @override
+  String get contactAdmin => '운영자 문의';
+
+  @override
+  String get forumCommunity => '커뮤니티';
+
+  @override
+  String get forumMarket => '회원장터';
+
+  @override
+  String get forumOther => '기타';
 }

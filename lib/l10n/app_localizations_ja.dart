@@ -1505,6 +1505,12 @@ class LoJa extends Lo {
   String get quickMenuTravel => 'Travel';
 
   @override
+  String get quickMenuMyInfo => 'My Info';
+
+  @override
+  String get quickMenuAllMenu => 'All Menu';
+
+  @override
   String get philippineLifeInfo => 'Philippine Life Info';
 
   @override
@@ -1521,4 +1527,31 @@ class LoJa extends Lo {
 
   @override
   String get weatherSunny => 'Sunny';
+
+  @override
+  String get profilePhoto => 'Profile Photo';
+
+  @override
+  String get profilePhotoUpdated => 'Profile photo updated successfully';
+
+  @override
+  String get profilePhotoDeleted => 'Profile photo deleted';
+
+  @override
+  String get basicInfo => 'Basic Information';
+
+  @override
+  String get personalInfo => 'Personal Information';
+
+  @override
+  String get contactAdmin => 'Contact Admin';
+
+  @override
+  String get forumCommunity => 'Community';
+
+  @override
+  String get forumMarket => 'Market';
+
+  @override
+  String get forumOther => 'Other';
 }

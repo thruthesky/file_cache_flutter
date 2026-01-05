@@ -3023,6 +3023,18 @@ abstract class Lo {
   /// **'Travel'**
   String get quickMenuTravel;
 
+  /// Quick menu my info label
+  ///
+  /// In en, this message translates to:
+  /// **'My Info'**
+  String get quickMenuMyInfo;
+
+  /// Quick menu all menu label
+  ///
+  /// In en, this message translates to:
+  /// **'All Menu'**
+  String get quickMenuAllMenu;
+
   /// Philippine life information section title in menu
   ///
   /// In en, this message translates to:
@@ -3058,6 +3070,60 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Sunny'**
   String get weatherSunny;
+
+  /// Label for profile photo section in edit profile
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Photo'**
+  String get profilePhoto;
+
+  /// Success message when profile photo is updated
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo updated successfully'**
+  String get profilePhotoUpdated;
+
+  /// Success message when profile photo is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo deleted'**
+  String get profilePhotoDeleted;
+
+  /// Section title for basic user information
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basicInfo;
+
+  /// Section title for personal user information
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInfo;
+
+  /// Contact admin menu item title
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Admin'**
+  String get contactAdmin;
+
+  /// Forum community subcategory title
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get forumCommunity;
+
+  /// Forum member market subcategory title
+  ///
+  /// In en, this message translates to:
+  /// **'Market'**
+  String get forumMarket;
+
+  /// Forum other subcategory title
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get forumOther;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

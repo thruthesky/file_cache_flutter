@@ -1845,6 +1845,14 @@
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
   },
+  "quickMenuMyInfo": "My Info",
+  "@quickMenuMyInfo": {
+    "description": "Quick menu my info label"
+  },
+  "quickMenuAllMenu": "All Menu",
+  "@quickMenuAllMenu": {
+    "description": "Quick menu all menu label"
+  },
   "philippineLifeInfo": "Philippine Life Info",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
@@ -1868,5 +1876,41 @@
   "weatherSunny": "Sunny",
   "@weatherSunny": {
     "description": "Sunny weather status"
+  },
+  "profilePhoto": "Profile Photo",
+  "@profilePhoto": {
+    "description": "Label for profile photo section in edit profile"
+  },
+  "profilePhotoUpdated": "Profile photo updated successfully",
+  "@profilePhotoUpdated": {
+    "description": "Success message when profile photo is updated"
+  },
+  "profilePhotoDeleted": "Profile photo deleted",
+  "@profilePhotoDeleted": {
+    "description": "Success message when profile photo is deleted"
+  },
+  "basicInfo": "Basic Information",
+  "@basicInfo": {
+    "description": "Section title for basic user information"
+  },
+  "personalInfo": "Personal Information",
+  "@personalInfo": {
+    "description": "Section title for personal user information"
+  },
+  "contactAdmin": "Contact Admin",
+  "@contactAdmin": {
+    "description": "Contact admin menu item title"
+  },
+  "forumCommunity": "Community",
+  "@forumCommunity": {
+    "description": "Forum community subcategory title"
+  },
+  "forumMarket": "Market",
+  "@forumMarket": {
+    "description": "Forum member market subcategory title"
+  },
+  "forumOther": "Other",
+  "@forumOther": {
+    "description": "Forum other subcategory title"
   }
 }
