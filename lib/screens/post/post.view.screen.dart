@@ -305,7 +305,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                           SizedBox(height: 16),
 
-                          PostViewYoutubes(post: post!),
+                          // PostViewYoutubes(post: post!),
+                          PostViewDisplayYouTubes(post: post!),
 
                           /// Files (images, videos, and other files) first (if available)
                           if (hasFiles) ...[
