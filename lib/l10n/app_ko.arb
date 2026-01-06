@@ -1992,6 +1992,14 @@
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
   },
+  "quickMenuMyInfo": "내 정보",
+  "@quickMenuMyInfo": {
+    "description": "Quick menu my info label"
+  },
+  "quickMenuAllMenu": "전체 메뉴",
+  "@quickMenuAllMenu": {
+    "description": "Quick menu all menu label"
+  },
   "philippineLifeInfo": "필리핀 생활 정보",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
@@ -2015,5 +2023,41 @@
   "weatherSunny": "맑음",
   "@weatherSunny": {
     "description": "Sunny weather status"
+  },
+  "profilePhoto": "프로필 사진",
+  "@profilePhoto": {
+    "description": "Label for profile photo section in edit profile"
+  },
+  "profilePhotoUpdated": "프로필 사진이 업데이트되었습니다",
+  "@profilePhotoUpdated": {
+    "description": "Success message when profile photo is updated"
+  },
+  "profilePhotoDeleted": "프로필 사진이 삭제되었습니다",
+  "@profilePhotoDeleted": {
+    "description": "Success message when profile photo is deleted"
+  },
+  "basicInfo": "기본 정보",
+  "@basicInfo": {
+    "description": "Section title for basic user information"
+  },
+  "personalInfo": "개인 정보",
+  "@personalInfo": {
+    "description": "Section title for personal user information"
+  },
+  "contactAdmin": "운영자 문의",
+  "@contactAdmin": {
+    "description": "Contact admin menu item title"
+  },
+  "forumCommunity": "커뮤니티",
+  "@forumCommunity": {
+    "description": "Forum community subcategory title"
+  },
+  "forumMarket": "회원장터",
+  "@forumMarket": {
+    "description": "Forum member market subcategory title"
+  },
+  "forumOther": "기타",
+  "@forumOther": {
+    "description": "Forum other subcategory title"
   }
 }

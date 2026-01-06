@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/widgets/post_blocked_user_info.dart';
@@ -50,9 +51,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     post = widget.post;
     _scrollController = ScrollController();
-
     // Listen to focus changes to auto-scroll when textfield is focused
     _commentFocusNode.addListener(_onFocusChange);
 
@@ -304,6 +305,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                           SizedBox(height: 16),
 
+                          PostViewYoutubes(post: post!),
+
                           /// Files (images, videos, and other files) first (if available)
                           if (hasFiles) ...[
                             PostViewFiles(
@@ -312,8 +315,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               enableHeroTransition: true,
                             ),
                           ],
-
-                          PostViewYoutubes(post: post!),
 
                           /// Post content
                           PostViewContent(isLoading: false, post: post!),
