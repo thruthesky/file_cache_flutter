@@ -1,5 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 /// 네트워크 비디오 플레이어 위젯 (Chewie 사용)
@@ -94,6 +95,18 @@ class _UploadedVideoPlayerState extends State<UploadedVideoPlayer> {
         // 전체화면 허용 설정
         // Fullscreen setting
         allowFullScreen: widget.allowFullScreen,
+        // 전체화면 진입 시 화면 방향 설정 (가로 모드 허용)
+        // Device orientations during fullscreen (allow landscape)
+        deviceOrientationsOnEnterFullScreen: [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.portraitUp,
+        ],
+        // 전체화면 종료 후 화면 방향 설정 (세로 모드로 고정)
+        // Device orientations after exiting fullscreen (lock to portrait)
+        deviceOrientationsAfterFullScreen: [
+          DeviceOrientation.portraitUp,
+        ],
         // 컨트롤 표시 시간 (3초 후 자동 숨김)
         // Controls hide delay (auto-hide after 3 seconds)
         hideControlsTimer: const Duration(seconds: 3),

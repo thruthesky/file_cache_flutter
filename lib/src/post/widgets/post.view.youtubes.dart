@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:philgo_api/philgo_api.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// YouTube 동영상 목록 표시 위젯
 ///
@@ -69,7 +69,7 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
         if (oldControllers.isNotEmpty && mounted) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             for (final controller in oldControllers) {
-              controller.dispose();
+              controller.close();
             }
           });
         }
@@ -105,28 +105,28 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
 
     // 각 비디오에 대한 컨트롤러 생성
     for (final info in _youtubeInfos) {
-      final controller = YoutubePlayerController(
-        initialVideoId: info.videoId,
-        flags: YoutubePlayerFlags(
-          disableDragSeek: true,
-          // 자동 재생 비활성화 (사용자가 직접 재생 버튼 클릭)
-          autoPlay: false,
+      final controller = YoutubePlayerController.fromVideoId(
+        videoId: info.videoId,
+        // 자동 재생 비활성화 (사용자가 직접 재생 버튼 클릭)
+        autoPlay: false,
+        // 시작 시간 설정 (URL에 t= 파라미터가 있는 경우)
+        startSeconds: info.startTime?.toDouble() ?? 0,
+        params: const YoutubePlayerParams(
+          origin: 'https://www.youtube-nocookie.com',
           // 음소거 비활성화
           mute: false,
-          // 관련 영상 표시 비활성화
-          showLiveFullscreenButton: true,
-          // 시작 시간 설정 (URL에 t= 파라미터가 있는 경우)
-          startAt: info.startTime ?? 0,
-          // 전체 화면 버튼 숨김 (앱 내에서 처리)
-          hideControls: false,
+          // 제어 버튼 표시
+          showControls: true,
+          // 전체 화면 버튼 표시
+          showFullscreenButton: true,
           // 반복 재생 비활성화
           loop: false,
-          // 제어 버튼 숨김 타이머 비활성화
-          controlsVisibleAtStart: false,
-          // 자막 비활성화
+          // 자막 활성화
           enableCaption: true,
-          // ForceHD
-          forceHD: false,
+          // 관련 영상 표시 비활성화
+          enableJavaScript: true,
+          // 재생 품질은 자동으로 조정
+          strictRelatedVideos: true,
         ),
       );
       _controllers.add(controller);
@@ -137,7 +137,7 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
   void dispose() {
     // 모든 컨트롤러 해제
     for (final controller in _controllers) {
-      controller.dispose();
+      controller.close();
     }
     super.dispose();
   }
