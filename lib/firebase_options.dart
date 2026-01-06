@@ -53,6 +53,7 @@ class DefaultFirebaseOptions {
     projectId: 'philgo-64b1a',
     databaseURL: 'https://philgo-64b1a.firebaseio.com',
     storageBucket: 'philgo-64b1a.firebasestorage.app',
+    measurementId: 'G-2NSLM1JWQL',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -62,18 +63,20 @@ class DefaultFirebaseOptions {
     projectId: 'philgo-64b1a',
     databaseURL: 'https://philgo-64b1a.firebaseio.com',
     storageBucket: 'philgo-64b1a.firebasestorage.app',
-    androidClientId: '675064809117-ke7i2g667qe1jjkunhh5ttoce37ohqu5.apps.googleusercontent.com',
+    androidClientId: '675064809117-7t1bv88t7h9qjkt6tft9aqt392sq6d54.apps.googleusercontent.com',
     iosClientId: '675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com',
     iosBundleId: 'com.philgo.philgo',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAJBDbkflPiAS3Yvwq4X7tyqHtitb5uopY',
-    appId: '1:675064809117:web:f2fc8f76e27edec652f674',
+    apiKey: 'AIzaSyB7Ee4S1Hd71I9NuO1-Y80zhsBOPaCJj9U',
+    appId: '1:675064809117:web:f77f8569bc608a5c52f674',
     messagingSenderId: '675064809117',
     projectId: 'philgo-64b1a',
     authDomain: 'philgo-64b1a.firebaseapp.com',
     databaseURL: 'https://philgo-64b1a.firebaseio.com',
     storageBucket: 'philgo-64b1a.firebasestorage.app',
+    measurementId: 'G-2NSLM1JWQL',
   );
+
 }

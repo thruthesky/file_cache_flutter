@@ -123,6 +123,26 @@ class _VersionScreenState extends State<VersionScreen> {
                   ] else if (Platform.isIOS && _iosInfo != null) ...[
                     _buildIosInfo(context, lo, sp),
                   ],
+
+                  if (isDeveloperModeEnabled) ...[
+                    _buildSectionHeader(
+                      context,
+                      icon: FontAwesomeIcons.bug,
+                      title: 'Test',
+                    ),
+                    _buildInfoCard(
+                      context,
+                      children: [
+                        _buildWidgetInfoRow(
+                          'Crash Test',
+                          ElevatedButton(
+                            onPressed: () => throw Exception(),
+                            child: const Text("Throw Test Exception"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -350,8 +370,9 @@ class _VersionScreenState extends State<VersionScreen> {
 
     return InkWell(
       onTap: () {
-        if (++count > 5) {
+        if (++count > 5 && !isDeveloperModeEnabled) {
           isDeveloperModeEnabled = true;
+          setState(() {});
         }
       },
       child: Padding(
@@ -459,6 +480,32 @@ class _VersionScreenState extends State<VersionScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildWidgetInfoRow(String label, Widget widget) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: sp.s4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          widget,
+        ],
+      ),
     );
   }
 

@@ -10,6 +10,8 @@ import 'sections/company.home.dart';
 import 'sections/menu.home.dart';
 import '../../l10n/app_localizations.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 // 홈 스크린
 // 사용자가 로그인 후, 보이게되는 첫번째 스크린. 사실 로그인 사용자의 메인 스크린, 첫 스크린, 홈 스크린이다.
 // 여기서 필요한 초기화를 한다.
@@ -124,6 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
             currentIndex: selectedItem.index,
             onTap: (index) {
+              FirebaseAnalytics.instance.logScreenView(
+                screenName: HomeNavigationItem.values[index].name,
+              );
               NavigationState.of(
                 context,
                 listen: false,
