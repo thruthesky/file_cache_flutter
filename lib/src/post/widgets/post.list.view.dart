@@ -120,7 +120,7 @@ class PostListViewState extends State<PostListView> {
         category: widget.category,
       );
 
-      if (_totalPostCount != res.post_count) {
+      if (_totalPostCount != res.post_count && mounted) {
         setState(() {
           _totalPostCount = res.post_count;
         });
