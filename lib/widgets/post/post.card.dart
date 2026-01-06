@@ -18,9 +18,10 @@ class PostCard extends StatefulWidget {
   final VoidCallback? onTap;
 
   /// Calculate dynamic image height based on aspect ratio
-  /// Constrained between 130px (minimum) and 300px (maximum)
-  static const double minImageHeight = 130.0;
-  static const double maxImageHeight = 300.0;
+  /// Constrained between 140px (minimum) and 320px (maximum)
+  /// Wider range creates more dramatic masonry effect
+  static const double minImageHeight = 140.0;
+  static const double maxImageHeight = 320.0;
 
   /// Global cache for image heights (persists across widget rebuilds)
   /// Key: image URL, Value: calculated height
@@ -31,13 +32,74 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
-  /// Get cached height for current image URL
-  double? get _cachedHeight =>
-      PostCard._heightCache[widget.post.files.firstOrNull];
+  /// Extract YouTube URL info from post
+  /// Returns the first YouTube video found, or null if none exists
+  /// Uses Post.getAllYoutubeUrlInfos() which checks varchar19 and content fields
+  YoutubeUrlInfo? get _youtubeInfo {
+    final infos = widget.post.getAllYoutubeUrlInfos();
+    return infos.isNotEmpty ? infos.first : null;
+  }
 
-  /// Set cached height for current image URL
+  /// Get preview image URL - prioritizes YouTube thumbnail over regular files
+  /// Returns YouTube thumbnail if video exists, otherwise first file URL
+  String? get _previewImageUrl {
+    final youtube = _youtubeInfo;
+    if (youtube != null) {
+      // YouTube thumbnail has priority
+      return youtube.getThumbnailUrl();
+    }
+    // Fallback to regular image files
+    return widget.post.files.firstOrNull;
+  }
+
+  /// Calculate height for YouTube video based on aspect ratio
+  /// Creates varied heights for masonry effect with more dramatic variation:
+  /// - Shorts (vertical 9:16): varies between 240-300px - tall
+  /// - Regular videos (horizontal 16:9): varies between 150-250px - medium to tall
+  /// - This creates strong visual variety in the masonry grid
+  double _calculateYoutubeHeight(BuildContext context) {
+    final youtube = _youtubeInfo;
+    if (youtube == null) return PostCard.minImageHeight;
+
+    // Use videoId hash to generate consistent but varied heights
+    final hash = youtube.videoId.hashCode.abs();
+
+    if (youtube.isShorts) {
+      // Shorts are vertical - vary between 240-300px (tall cards)
+      final heightVariation = 240.0 + (hash % 61); // Range: 240-300
+      return heightVariation.clamp(
+        PostCard.maxImageHeight - 60,
+        PostCard.maxImageHeight,
+      );
+    } else {
+      // Regular videos - vary between 150-250px (medium to tall cards)
+      // Creates more dramatic height differences for better masonry effect
+      final heightVariation = 150.0 + (hash % 101); // Range: 150-250
+      return heightVariation.clamp(
+        PostCard.minImageHeight + 20,
+        PostCard.maxImageHeight - 50,
+      );
+    }
+  }
+
+  /// Get cached height for current preview image URL
+  /// For YouTube videos, uses calculated height based on aspect ratio
+  double? get _cachedHeight {
+    final youtube = _youtubeInfo;
+    if (youtube != null) {
+      // For YouTube, check if we have a cached height
+      final cached = PostCard._heightCache[_previewImageUrl];
+      if (cached != null) return cached;
+      // If not cached, we'll calculate it during build
+      return null;
+    }
+    // For regular images, use the cached height
+    return PostCard._heightCache[_previewImageUrl];
+  }
+
+  /// Set cached height for current preview image URL
   void _setCachedHeight(double height) {
-    final imageUrl = widget.post.files.firstOrNull;
+    final imageUrl = _previewImageUrl;
     if (imageUrl != null) {
       PostCard._heightCache[imageUrl] = height;
     }
@@ -49,14 +111,34 @@ class _PostCardState extends State<PostCard> {
     double height,
     ThemeData theme,
   ) {
+    final isYoutube = _youtubeInfo != null;
+
     return SizedBox(
       height: height,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          /// Background Image
+          /// Background Image (YouTube thumbnail or regular file)
           Image(image: imageProvider, fit: BoxFit.cover),
+
+          /// YouTube play icon overlay (centered)
+          if (isYoutube)
+            Center(
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.9),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              ),
+            ),
 
           /// Dark gradient overlay at bottom for text readability
           Positioned(
@@ -111,7 +193,7 @@ class _PostCardState extends State<PostCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final hasImage = widget.post.files.isNotEmpty;
+    final hasImage = _previewImageUrl != null;
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -131,16 +213,38 @@ class _PostCardState extends State<PostCard> {
           children: [
             /// Image Section with dark gradient overlay for text (when image exists)
             /// Dynamic height based on image aspect ratio (130-300px)
+            /// Prioritizes YouTube thumbnail over regular files
             /// Text-only section for posts without images
             if (hasImage)
               CachedNetworkImage(
-                imageUrl: widget.post.files[0],
+                imageUrl: _previewImageUrl!,
                 fit: BoxFit.cover,
 
                 /// Calculate dynamic height based on actual image dimensions
+                /// For YouTube: uses aspect ratio (Shorts 9:16, Regular 16:9)
+                /// For regular images: uses actual image dimensions
                 /// Height is cached to prevent recalculation during scrolling
                 imageBuilder: (context, imageProvider) {
-                  /// Use cached height if available
+                  final youtube = _youtubeInfo;
+
+                  /// For YouTube videos, use calculated height based on video type
+                  if (youtube != null) {
+                    final height =
+                        _cachedHeight ?? _calculateYoutubeHeight(context);
+
+                    // Cache the calculated height
+                    if (_cachedHeight == null) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          _setCachedHeight(height);
+                        }
+                      });
+                    }
+
+                    return _buildImageContainer(imageProvider, height, theme);
+                  }
+
+                  /// For regular images, use cached height if available
                   if (_cachedHeight != null) {
                     return _buildImageContainer(
                       imageProvider,
@@ -149,7 +253,7 @@ class _PostCardState extends State<PostCard> {
                     );
                   }
 
-                  /// Calculate height only once and cache it
+                  /// Calculate height from actual image dimensions (first time only)
                   return Image(
                     image: imageProvider,
                     fit: BoxFit.cover,
@@ -195,31 +299,61 @@ class _PostCardState extends State<PostCard> {
                         },
                   );
                 },
-                placeholder: (context, url) => SizedBox(
-                  height: _cachedHeight ?? PostCard.minImageHeight,
-                  child: Container(
-                    color: scheme.surfaceContainerHighest,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: scheme.primary,
+                placeholder: (context, url) {
+                  final youtube = _youtubeInfo;
+                  final height = youtube != null
+                      ? (_cachedHeight ?? _calculateYoutubeHeight(context))
+                      : (_cachedHeight ?? PostCard.minImageHeight);
+
+                  return SizedBox(
+                    height: height,
+                    child: Container(
+                      color: scheme.surfaceContainerHighest,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: scheme.primary,
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                errorWidget: (context, url, error) => SizedBox(
-                  height: _cachedHeight ?? PostCard.minImageHeight,
-                  child: Container(
-                    color: scheme.surfaceContainerHighest,
-                    child: Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.lightImage,
-                        size: 48,
-                        color: scheme.outline,
+                  );
+                },
+                errorWidget: (context, url, error) {
+                  final youtube = _youtubeInfo;
+                  final height = youtube != null
+                      ? (_cachedHeight ?? _calculateYoutubeHeight(context))
+                      : (_cachedHeight ?? PostCard.minImageHeight);
+
+                  return SizedBox(
+                    height: height,
+                    child: Container(
+                      color: scheme.surfaceContainerHighest,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FaIcon(
+                              youtube != null
+                                  ? FontAwesomeIcons.lightCircleExclamation
+                                  : FontAwesomeIcons.lightImage,
+                              size: 48,
+                              color: scheme.outline,
+                            ),
+                            if (youtube != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                'Video unavailable',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               )
             else
               /// Text-only section for posts without images

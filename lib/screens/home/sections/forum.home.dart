@@ -45,7 +45,8 @@ class _ForumHomeState extends State<ForumHome> {
   PostMasonryViewController masonryController = PostMasonryViewController();
 
   bool get isMasonryForum {
-    return forumSelection.postId == 'buyandsell';
+    return forumSelection.postId == 'buyandsell' ||
+        forumSelection.postId == 'youtube';
   }
 
   @override

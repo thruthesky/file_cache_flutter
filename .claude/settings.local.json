@@ -88,7 +88,8 @@
       "Bash(npx shadcn-svelte@latest init)",
       "Bash(pkill:*)",
       "Skill(philgo-api-skill)",
-      "Skill(flutter-skill)"
+      "Skill(flutter-skill)",
+      "WebFetch(domain:pub.dev)"
     ]
   },
   "enableAllProjectMcpServers": true,
