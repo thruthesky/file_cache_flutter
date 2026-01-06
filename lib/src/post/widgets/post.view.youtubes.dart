@@ -127,6 +127,7 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
           enableJavaScript: true,
           // 재생 품질은 자동으로 조정
           strictRelatedVideos: true,
+          showVideoAnnotations: false,
         ),
       );
       _controllers.add(controller);
@@ -153,8 +154,11 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // 각 YouTube 비디오를 순서대로 표시
-        for (int i = 0; i < _youtubeInfos.length; i++)
+        // 비디오 사이 및 마지막 비디오 다음에 16px 간격 추가 (8의 배수)
+        for (int i = 0; i < _youtubeInfos.length; i++) ...[
           _buildYoutubePlayer(i, _youtubeInfos[i]),
+          const SizedBox(height: 16),
+        ],
       ],
     );
   }

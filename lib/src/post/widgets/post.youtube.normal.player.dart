@@ -17,12 +17,9 @@ class PostYoutubeNormalPlayer extends StatelessWidget {
     return YoutubePlayerScaffold(
       // Disable auto fullscreen on device rotation
       // User must use the fullscreen button explicitly
-      autoFullScreen: false,
       enableFullScreenOnVerticalDrag: false,
       controller: controller,
       aspectRatio: 16 / 9,
-      // Allow all orientations when not in fullscreen
-      defaultOrientations: DeviceOrientation.values,
       // Landscape orientation during fullscreen for 16:9 videos
       fullscreenOrientations: const [
         DeviceOrientation.landscapeLeft,
