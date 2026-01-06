@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// YouTube Shorts player widget (9:16 aspect ratio)
@@ -16,19 +15,10 @@ class PostYoutubeShortsPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return YoutubePlayerScaffold(
+    return YoutubePlayer(
       enableFullScreenOnVerticalDrag: false,
       controller: controller,
       aspectRatio: 9 / 16,
-      // Force portrait orientation after exiting fullscreen
-      defaultOrientations: const [DeviceOrientation.portraitUp],
-      // Only portraitUp during fullscreen for Shorts (prevents upside-down video)
-      fullscreenOrientations: const [DeviceOrientation.portraitUp],
-      // Lock to portrait when not in fullscreen
-      lockedOrientations: const [DeviceOrientation.portraitUp],
-      builder: (context, player) {
-        return player;
-      },
     );
   }
 }

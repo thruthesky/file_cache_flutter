@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -128,8 +129,6 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
           // 재생 품질은 자동으로 조정
           strictRelatedVideos: true,
           showVideoAnnotations: false,
-          
-
         ),
       );
       _controllers.add(controller);
@@ -142,6 +141,8 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
     for (final controller in _controllers) {
       controller.close();
     }
+    // Reset orientation to portrait after all controllers are disposed
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
   }
 

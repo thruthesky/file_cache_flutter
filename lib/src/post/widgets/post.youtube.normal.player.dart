@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// Normal YouTube video player widget (16:9 aspect ratio)
@@ -18,31 +17,12 @@ class PostYoutubeNormalPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return YoutubePlayerScaffold(
+    return YoutubePlayer(
       // Disable auto fullscreen on device rotation
-      // User must use the fullscreen button explicitly
-      autoFullScreen: false,
+      // User must use the fullscreen button to enter fullscreen mode
       enableFullScreenOnVerticalDrag: false,
       controller: controller,
       aspectRatio: 16 / 9,
-      // Keep portrait when not in fullscreen (respects parent screen)
-      defaultOrientations: const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ],
-      // Landscape orientations when in fullscreen
-      fullscreenOrientations: const [
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ],
-      // Lock to portrait when not in fullscreen
-      lockedOrientations: const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ],
-      builder: (context, player) {
-        return player;
-      },
     );
   }
 }
