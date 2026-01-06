@@ -99,6 +99,7 @@ class _PostViewDisplayYouTubesState extends State<PostViewDisplayYouTubes> {
     const callbacks = VideoPlayerCallbacks();
 
     // For Shorts, use a constrained height with 9:16 aspect ratio
+    // No border radius, no padding - edge to edge display
     if (info.isShorts) {
       return Center(
         child: ConstrainedBox(
@@ -107,12 +108,9 @@ class _PostViewDisplayYouTubesState extends State<PostViewDisplayYouTubes> {
           ),
           child: AspectRatio(
             aspectRatio: 9 / 16,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: OmniVideoPlayer(
-                configuration: playerConfig,
-                callbacks: callbacks,
-              ),
+            child: OmniVideoPlayer(
+              configuration: playerConfig,
+              callbacks: callbacks,
             ),
           ),
         ),
@@ -120,14 +118,12 @@ class _PostViewDisplayYouTubesState extends State<PostViewDisplayYouTubes> {
     }
 
     // For normal videos, use 16:9 aspect ratio
+    // No border radius, no padding - edge to edge display
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: OmniVideoPlayer(
-          configuration: playerConfig,
-          callbacks: callbacks,
-        ),
+      child: OmniVideoPlayer(
+        configuration: playerConfig,
+        callbacks: callbacks,
       ),
     );
   }
