@@ -81,47 +81,50 @@ class CompactPostListTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// Row 1: Title (no Hero to avoid conflicts)
-              /// 제목 스타일: titleLarge (한 단계 더 큰 크기로 강조)
-              Text(
+                /// 제목 스타일: 진한 검정색 + normal 폰트
+                Text(
                   post.subject,
-                  style: theme.textTheme.titleLarge,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.normal,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
 
-                /// Row 2: Date
+                /// Row 2: Date - onSurfaceVariant로 가독성 향상
                 Row(
                   children: [
                     FaIcon(
                       FontAwesomeIcons.lightClock,
                       size: 12,
-                      color: scheme.outline,
+                      color: scheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       post.timeString.split(" ").first,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.outline,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
 
-                /// Row 3: Stats (views, comments, likes)
+                /// Row 3: Stats (views, comments, likes) - onSurfaceVariant로 일관성
                 Row(
                   children: [
                     /// Views
                     FaIcon(
                       FontAwesomeIcons.lightEye,
                       size: 12,
-                      color: scheme.outline,
+                      color: scheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '${post.no_of_view}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.outline,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -130,13 +133,13 @@ class CompactPostListTile extends StatelessWidget {
                     FaIcon(
                       FontAwesomeIcons.lightMessageDots,
                       size: 12,
-                      color: scheme.outline,
+                      color: scheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '${post.no_of_comment}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.outline,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -145,13 +148,13 @@ class CompactPostListTile extends StatelessWidget {
                     FaIcon(
                       FontAwesomeIcons.lightThumbsUp,
                       size: 12,
-                      color: scheme.outline,
+                      color: scheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '${post.good}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.outline,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                   ],

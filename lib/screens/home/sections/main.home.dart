@@ -168,7 +168,7 @@ class _MainHomeState extends State<MainHome> {
         return AlertDialog(
           /// 다이얼로그 제목
           /// Dialog title
-          title: Text('게시판 선택', style: theme.textTheme.titleLarge),
+          title: Text('글 쓰기 게시판 선택', style: theme.textTheme.titleLarge),
 
           /// 다이얼로그 내용: Major 카테고리 목록
           /// Dialog content: Major category list
@@ -195,6 +195,13 @@ class _MainHomeState extends State<MainHome> {
                 final localizedName = philgoTr(context, postId);
 
                 return ListTile(
+                  /// 카테고리 이모지
+                  /// Category emoji
+                  leading: Text(
+                    PhilgoCategory.emoji(postId),
+                    style: const TextStyle(fontSize: 24),
+                  ),
+
                   /// 카테고리 이름
                   /// Category name
                   title: Text(localizedName),
@@ -260,9 +267,37 @@ class _MainHomeState extends State<MainHome> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          /// 다이얼로그 제목: Major 카테고리 이름
-          /// Dialog title: Major category name
-          title: Text(localizedMainCategory, style: theme.textTheme.titleLarge),
+          /// 다이얼로그 제목: 백버튼 + Major 카테고리 이름
+          /// Dialog title: Back button + Major category name
+          title: Row(
+            children: [
+              /// 백버튼 아이콘 - Major 카테고리 다이얼로그로 돌아가기
+              /// Back button icon - Return to major category dialog
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showCategoryDialog(context);
+                },
+                icon: FaIcon(
+                  FontAwesomeIcons.arrowLeft,
+                  size: 18,
+                  color: theme.colorScheme.onSurface,
+                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              const SizedBox(width: 8),
+
+              /// 1차 카테고리 이름
+              /// Major category name
+              Expanded(
+                child: Text(
+                  localizedMainCategory,
+                  style: theme.textTheme.titleLarge,
+                ),
+              ),
+            ],
+          ),
 
           /// 다이얼로그 내용: 서브 카테고리 목록
           /// Dialog content: Sub-category list
@@ -279,6 +314,12 @@ class _MainHomeState extends State<MainHome> {
                 final localizedSubCategory = philgoTr(context, category);
 
                 return ListTile(
+                  /// 서브 카테고리 이모지
+                  /// Sub-category emoji
+                  leading: Text(
+                    PhilgoCategory.emoji(category),
+                    style: const TextStyle(fontSize: 24),
+                  ),
                   title: Text(localizedSubCategory),
                   onTap: () {
                     /// 다이얼로그 닫기
