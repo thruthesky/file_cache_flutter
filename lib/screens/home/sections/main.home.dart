@@ -10,6 +10,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
 import 'package:philgo/widgets/home/main/home_quick_menu_section.dart';
+import 'package:philgo/widgets/home/main/home_quick_post_box.dart';
 import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
@@ -78,6 +79,12 @@ class _MainHomeState extends State<MainHome> {
             SliverToBoxAdapter(
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
+
+            /// [빠른 글쓰기 박스] - 클릭 시 글쓰기 화면으로 이동
+            /// Quick Post Box - Navigate to post creation screen on tap
+            /// 가짜 입력 박스로 사용자의 글쓰기 참여를 유도합니다.
+            /// Fake input box to encourage user participation in posting.
+            const SliverToBoxAdapter(child: HomeQuickPostBox()),
 
             /// [퀵 메뉴 섹션] - 필리핀 생활 필수 정보 바로가기
             /// Quick Menu Section - Quick access to essential Philippines living info
