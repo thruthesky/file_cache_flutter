@@ -21,20 +21,11 @@ class PostYoutubeShortsPlayer extends StatelessWidget {
       controller: controller,
       aspectRatio: 9 / 16,
       // Force portrait orientation after exiting fullscreen
-      defaultOrientations: const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ],
-      // Portrait orientation during fullscreen for Shorts
-      fullscreenOrientations: const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ],
+      defaultOrientations: const [DeviceOrientation.portraitUp],
+      // Only portraitUp during fullscreen for Shorts (prevents upside-down video)
+      fullscreenOrientations: const [DeviceOrientation.portraitUp],
       // Lock to portrait when not in fullscreen
-      lockedOrientations: const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ],
+      lockedOrientations: const [DeviceOrientation.portraitUp],
       builder: (context, player) {
         return player;
       },

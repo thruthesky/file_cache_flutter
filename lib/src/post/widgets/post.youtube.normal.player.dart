@@ -6,6 +6,10 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 ///
 /// Displays standard YouTube videos with fullscreen support.
 /// Uses YoutubePlayerScaffold for proper fullscreen functionality.
+///
+/// Orientation behavior:
+/// - Normal mode: Portrait only (respects parent screen lock)
+/// - Fullscreen mode: Landscape (both left and right)
 class PostYoutubeNormalPlayer extends StatelessWidget {
   const PostYoutubeNormalPlayer({super.key, required this.controller});
 
@@ -17,15 +21,21 @@ class PostYoutubeNormalPlayer extends StatelessWidget {
     return YoutubePlayerScaffold(
       // Disable auto fullscreen on device rotation
       // User must use the fullscreen button explicitly
+      autoFullScreen: false,
       enableFullScreenOnVerticalDrag: false,
       controller: controller,
       aspectRatio: 16 / 9,
-      // Landscape orientation during fullscreen for 16:9 videos
+      // Keep portrait when not in fullscreen (respects parent screen)
+      defaultOrientations: const [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ],
+      // Landscape orientations when in fullscreen
       fullscreenOrientations: const [
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ],
-      // Lock to portrait after exiting fullscreen
+      // Lock to portrait when not in fullscreen
       lockedOrientations: const [
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,

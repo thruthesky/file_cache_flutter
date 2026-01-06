@@ -128,6 +128,8 @@ class _PostViewYoutubesState extends State<PostViewYoutubes> {
           // 재생 품질은 자동으로 조정
           strictRelatedVideos: true,
           showVideoAnnotations: false,
+          
+
         ),
       );
       _controllers.add(controller);
