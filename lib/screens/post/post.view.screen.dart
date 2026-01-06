@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/widgets/post_blocked_user_info.dart';
@@ -50,9 +51,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     post = widget.post;
     _scrollController = ScrollController();
-
     // Listen to focus changes to auto-scroll when textfield is focused
     _commentFocusNode.addListener(_onFocusChange);
 

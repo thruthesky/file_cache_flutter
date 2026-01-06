@@ -232,40 +232,52 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
         /// 카로셀 뷰 (Carousel View)
         /// Listener로 감싸서 사용자 터치(스와이프) 감지
         /// Wrapped with Listener to detect user touch (swipe)
+        /// LayoutBuilder ensures CarouselView gets valid constraints during orientation changes
         Listener(
           /// 사용자가 터치를 시작하면 자동 슬라이딩 중지
           /// Stop auto-slide when user starts touching
           onPointerDown: (_) => _stopAutoSlideTimer(),
-          child: SizedBox(
-            /// 카로셀 높이 설정 (게시글 4개 + 헤더 표시 가능한 높이)
-            /// Carousel height (enough for 4 posts + header)
-            height: 164,
-            child: CarouselView(
-              enableSplash: false,
-              controller: _controller,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              /// Use the smaller of screenWidth or available width to handle orientation changes
+              /// This prevents layout errors when switching to fullscreen
+              final availableWidth = constraints.maxWidth.isFinite
+                  ? constraints.maxWidth
+                  : screenWidth;
+              final safeWidth = availableWidth > 0 ? availableWidth : screenWidth;
 
-              /// 각 아이템이 화면 전체 너비 차지 (왼쪽 여백 제거)
-              /// Each item takes full screen width (removes left margin)
-              itemExtent: screenWidth,
+              return SizedBox(
+                /// 카로셀 높이 설정 (게시글 4개 + 헤더 표시 가능한 높이)
+                /// Carousel height (enough for 4 posts + header)
+                height: 164,
+                child: CarouselView(
+                  enableSplash: false,
+                  controller: _controller,
 
-              /// edge 아이템의 최소 크기 (85%)
-              /// Minimum size for edge items (85%)
-              shrinkExtent: screenWidth * 0.85,
+                  /// 각 아이템이 화면 전체 너비 차지 (왼쪽 여백 제거)
+                  /// Each item takes full screen width (removes left margin)
+                  itemExtent: safeWidth,
 
-              /// 스냅 효과 활성화 (아이템에 딱 맞게 정렬)
-              /// Enable snap effect (align to item boundaries)
-              itemSnapping: true,
+                  /// edge 아이템의 최소 크기 (85%)
+                  /// Minimum size for edge items (85%)
+                  shrinkExtent: safeWidth * 0.85,
 
-              /// 패딩 제거 (왼쪽 가장자리에 붙이기 위해)
-              /// Remove padding (to align to left edge)
-              padding: EdgeInsets.zero,
+                  /// 스냅 효과 활성화 (아이템에 딱 맞게 정렬)
+                  /// Enable snap effect (align to item boundaries)
+                  itemSnapping: true,
 
-              /// 카로셀 아이템 생성
-              /// Generate carousel items
-              children: _sectionPairs.map((pair) {
-                return _buildCarouselItem(pair);
-              }).toList(),
-            ),
+                  /// 패딩 제거 (왼쪽 가장자리에 붙이기 위해)
+                  /// Remove padding (to align to left edge)
+                  padding: EdgeInsets.zero,
+
+                  /// 카로셀 아이템 생성
+                  /// Generate carousel items
+                  children: _sectionPairs.map((pair) {
+                    return _buildCarouselItem(pair);
+                  }).toList(),
+                ),
+              );
+            },
           ),
         ),
 
