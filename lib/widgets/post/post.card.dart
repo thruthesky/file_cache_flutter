@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 
 /// Optimized for grid layouts and visual-first content
 /// Comic Design: 2.0px border, no shadow, rounded corners
@@ -342,7 +343,7 @@ class _PostCardState extends State<PostCard> {
                             if (youtube != null) ...[
                               const SizedBox(height: 8),
                               Text(
-                                'Video unavailable',
+                                Lo.of(context)!.videoUnavailable,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: scheme.onSurfaceVariant,
                                 ),

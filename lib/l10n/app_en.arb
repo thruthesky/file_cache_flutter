@@ -1912,5 +1912,9 @@
   "forumOther": "Other",
   "@forumOther": {
     "description": "Forum other subcategory title"
+  },
+  "videoUnavailable": "Video unavailable",
+  "@videoUnavailable": {
+    "description": "Error message when YouTube video cannot be loaded"
   }
 }

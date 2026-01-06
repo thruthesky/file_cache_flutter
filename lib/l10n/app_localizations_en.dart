@@ -1585,4 +1585,7 @@ class LoEn extends Lo {
 
   @override
   String get forumOther => 'Other';
+
+  @override
+  String get videoUnavailable => 'Video unavailable';
 }
