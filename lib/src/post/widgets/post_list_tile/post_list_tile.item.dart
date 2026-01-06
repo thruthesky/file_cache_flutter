@@ -109,6 +109,7 @@ class PostListTileItem extends StatelessWidget {
         ],
       );
     } else if (enableHeroTransition) {
+      // Hero 전환
       titleWidget = Hero(
         tag: 'post-title-${post.idx}',
         child: Material(
@@ -117,6 +118,7 @@ class PostListTileItem extends StatelessWidget {
         ),
       );
     } else {
+      // 일반 제목
       titleWidget = PostSubject(post: post);
     }
 

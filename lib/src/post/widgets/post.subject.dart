@@ -12,8 +12,8 @@ class PostSubject extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    /// Theme titleMedium + w600 for cleaner, more modern list appearance
-    /// Using onSurface color for better contrast and readability
+    /// 제목을 진한 검정색으로 표시
+    /// normal 폰트 무게로 깔끔한 느낌
     return Text(
       post.subject,
       style: theme.textTheme.titleLarge?.copyWith(
