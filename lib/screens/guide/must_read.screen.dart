@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/data/emergency_menu.data.dart';
 import 'package:philgo/data/philippine_life_info.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
@@ -54,6 +55,23 @@ class _MustReadScreenState extends State<MustReadScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// 긴급 연락처 섹션 (Emergency Contacts Section)
+            /// EmergencyMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.emergencyContactsSection,
+              children: EmergencyMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => context.push(item.routeName),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
             /// 필리핀 생활 정보 섹션 (Philippine Life Info Section)
             /// PhilippineLifeInfoData를 사용하여 메뉴 아이템 생성
             MenuGridSection(

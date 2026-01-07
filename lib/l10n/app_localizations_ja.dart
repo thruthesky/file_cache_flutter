@@ -1560,4 +1560,16 @@ class LoJa extends Lo {
 
   @override
   String get videoUnavailable => '動画を利用できません';
+
+  @override
+  String get quickMenuEmbassy => '大使館';
+
+  @override
+  String get quickMenuPoliceStation => '警察';
+
+  @override
+  String get quickMenuHospital => '病院';
+
+  @override
+  String get emergencyContactsSection => '緊急連絡先';
 }

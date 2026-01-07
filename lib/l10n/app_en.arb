@@ -1920,5 +1920,21 @@
   "videoUnavailable": "Video unavailable",
   "@videoUnavailable": {
     "description": "Error message when YouTube video cannot be loaded"
+  },
+  "quickMenuEmbassy": "Embassy",
+  "@quickMenuEmbassy": {
+    "description": "Quick menu embassy label"
+  },
+  "quickMenuPoliceStation": "Police",
+  "@quickMenuPoliceStation": {
+    "description": "Quick menu police station label"
+  },
+  "quickMenuHospital": "Hospital",
+  "@quickMenuHospital": {
+    "description": "Quick menu hospital label"
+  },
+  "emergencyContactsSection": "Emergency",
+  "@emergencyContactsSection": {
+    "description": "Emergency contacts section title"
   }
 }

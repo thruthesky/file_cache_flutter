@@ -1591,4 +1591,16 @@ class LoEn extends Lo {
 
   @override
   String get videoUnavailable => 'Video unavailable';
+
+  @override
+  String get quickMenuEmbassy => 'Embassy';
+
+  @override
+  String get quickMenuPoliceStation => 'Police';
+
+  @override
+  String get quickMenuHospital => 'Hospital';
+
+  @override
+  String get emergencyContactsSection => 'Emergency';
 }

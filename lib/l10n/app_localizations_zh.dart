@@ -1554,4 +1554,16 @@ class LoZh extends Lo {
 
   @override
   String get videoUnavailable => '视频不可用';
+
+  @override
+  String get quickMenuEmbassy => '大使馆';
+
+  @override
+  String get quickMenuPoliceStation => '警察局';
+
+  @override
+  String get quickMenuHospital => '医院';
+
+  @override
+  String get emergencyContactsSection => '紧急联系';
 }

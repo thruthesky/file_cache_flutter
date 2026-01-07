@@ -3136,6 +3136,30 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Video unavailable'**
   String get videoUnavailable;
+
+  /// Quick menu embassy label
+  ///
+  /// In en, this message translates to:
+  /// **'Embassy'**
+  String get quickMenuEmbassy;
+
+  /// Quick menu police station label
+  ///
+  /// In en, this message translates to:
+  /// **'Police'**
+  String get quickMenuPoliceStation;
+
+  /// Quick menu hospital label
+  ///
+  /// In en, this message translates to:
+  /// **'Hospital'**
+  String get quickMenuHospital;
+
+  /// Emergency contacts section title
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get emergencyContactsSection;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

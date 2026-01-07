@@ -1821,5 +1821,21 @@
   "quickMenuMustReadInfo": "必読",
   "@quickMenuMustReadInfo": {
     "description": "Quick menu must-read information label"
+  },
+  "quickMenuEmbassy": "大使館",
+  "@quickMenuEmbassy": {
+    "description": "Quick menu embassy label"
+  },
+  "quickMenuPoliceStation": "警察",
+  "@quickMenuPoliceStation": {
+    "description": "Quick menu police station label"
+  },
+  "quickMenuHospital": "病院",
+  "@quickMenuHospital": {
+    "description": "Quick menu hospital label"
+  },
+  "emergencyContactsSection": "緊急連絡先",
+  "@emergencyContactsSection": {
+    "description": "Emergency contacts section title"
   }
 }

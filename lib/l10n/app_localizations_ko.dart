@@ -1560,4 +1560,16 @@ class LoKo extends Lo {
 
   @override
   String get videoUnavailable => '동영상을 사용할 수 없습니다';
+
+  @override
+  String get quickMenuEmbassy => '대사관';
+
+  @override
+  String get quickMenuPoliceStation => '경찰서';
+
+  @override
+  String get quickMenuHospital => '병원';
+
+  @override
+  String get emergencyContactsSection => '긴급 연락처';
 }

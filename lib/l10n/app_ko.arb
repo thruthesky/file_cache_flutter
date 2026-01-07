@@ -2067,5 +2067,21 @@
   "videoUnavailable": "동영상을 사용할 수 없습니다",
   "@videoUnavailable": {
     "description": "Error message when YouTube video cannot be loaded"
+  },
+  "quickMenuEmbassy": "대사관",
+  "@quickMenuEmbassy": {
+    "description": "Quick menu embassy label"
+  },
+  "quickMenuPoliceStation": "경찰서",
+  "@quickMenuPoliceStation": {
+    "description": "Quick menu police station label"
+  },
+  "quickMenuHospital": "병원",
+  "@quickMenuHospital": {
+    "description": "Quick menu hospital label"
+  },
+  "emergencyContactsSection": "긴급 연락처",
+  "@emergencyContactsSection": {
+    "description": "Emergency contacts section title"
   }
 }

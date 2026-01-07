@@ -2,49 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/data/emergency_contacts.data.dart';
+import 'package:philgo/data/models/contact_item.model.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-/// 연락처 아이템 데이터 클래스 (Contact Item Data Class)
-///
-/// 각 연락처의 아이콘, 이름, 전화번호, 설명을 담습니다.
-/// Contains icon, name, phone number, and description for each contact.
-class _ContactItem {
-  /// 아이콘 (Icon)
-  final IconData icon;
-
-  /// 이름 (Name)
-  final String name;
-
-  /// 전화번호 목록 (Phone numbers)
-  final List<String> phones;
-
-  /// 부가 설명 (Description - optional)
-  final String? description;
-
-  /// 주소 (Address - optional)
-  final String? address;
-
-  /// 이메일 (Email - optional)
-  final String? email;
-
-  /// 홈페이지 (Website - optional)
-  final String? website;
-
-  /// 긴급 여부 (Is emergency)
-  final bool isEmergency;
-
-  const _ContactItem({
-    required this.icon,
-    required this.name,
-    required this.phones,
-    this.description,
-    this.address,
-    this.email,
-    this.website,
-    this.isEmergency = false,
-  });
-}
 
 /// 필리핀 긴급 연락처 화면 (Philippines Emergency Contact Screen)
 ///
@@ -62,276 +23,6 @@ class EmergencyContactScreen extends StatefulWidget {
 }
 
 class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
-  /// 필리핀 긴급 번호 (Philippine Emergency Numbers)
-  static const List<_ContactItem> _emergencyNumbers = [
-    _ContactItem(
-      icon: FontAwesomeIcons.lightPhoneVolume,
-      name: '긴급 핫라인 (National Emergency)',
-      phones: ['911'],
-      description: '경찰, 소방, 앰뷸런스 통합',
-      isEmergency: true,
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShieldHalved,
-      name: '필리핀 국립경찰 (PNP)',
-      phones: ['117', '(02) 8722-0650', '0917-847-5757'],
-      description: 'Text hotline: 0917-847-5757',
-      isEmergency: true,
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightFireExtinguisher,
-      name: '필리핀 소방청 (BFP)',
-      phones: ['116', '(02) 8426-0219', '(02) 8426-0246'],
-      isEmergency: true,
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightTruckMedical,
-      name: '앰뷸런스',
-      phones: ['911', '112'],
-      isEmergency: true,
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightKitMedical,
-      name: '필리핀 적십자 (Red Cross)',
-      phones: ['143'],
-      isEmergency: true,
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightTrafficLight,
-      name: '메트로마닐라개발청 (MMDA)',
-      phones: ['136'],
-      description: '교통사고, 도로 긴급상황',
-    ),
-  ];
-
-  /// 대한민국 공관 (Korean Embassy/Consulate)
-  static const List<_ContactItem> _koreanEmbassy = [
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHeadset,
-      name: '외교부 영사 콜센터 (24시간)',
-      phones: ['00800-2100-0404', '+82-2-3210-0404'],
-      description: '해외에서: 00800-2100-0404 (무료)\n유료: +82-2-3210-0404',
-      isEmergency: true,
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightLandmarkFlag,
-      name: '주필리핀 대한민국 대사관',
-      phones: ['+63-2-8856-9210', '+63-917-817-5703'],
-      /// 대표전화: +63-2-8856-9210
-      /// 긴급당직번호: +63-917-817-5703
-      /// FAX: +63-2-8856-9008, 9019
-      /// 경찰 긴급전화: 117, 166(세부, 보라카이, 바기오 등)
-      /// 업무시간: 08:00~17:00 (월-금)
-      /// 영사과 민원업무시간: 여권/공증(오전 09:00-12:00 오후 13:30-16:00)
-      description: '대표전화 (근무시간)\n긴급당직번호: +63-917-817-5703\nFAX: +63-2-8856-9008, 9019\n경찰 긴급전화: 117, 166(세부, 보라카이, 바기오 등)',
-      address: '122 Upper McKinley Road, McKinley Town Center,\nFort Bonifacio, Taguig City 1634, Philippines',
-      email: 'philippines@mofa.go.kr',
-      website: 'http://overseas.mofa.go.kr/ph-ko/index.do',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightBuilding,
-      name: '주세부 대한민국 분관',
-      phones: ['+63-32-231-1516', '+63-917-808-3907'],
-      description: '대표전화 (근무시간)\n긴급당직 (근무시간 외)',
-      address: '12th Floor Chinabank Corporate Center,\nCebu Business Park, Mabolo, Cebu City',
-      email: 'phi_cebu2015@mofa.go.kr',
-      website: 'http://overseas.mofa.go.kr/ph-cebu-ko/index.do',
-    ),
-  ];
-
-  /// 한인회 연락처 (Korean Association)
-  static const List<_ContactItem> _koreanAssociation = [
-    _ContactItem(
-      icon: FontAwesomeIcons.lightPeopleGroup,
-      name: '필리핀 한인총연합회 (마닐라)',
-      phones: ['+63-2-8886-4848', '+63-917-886-4848'],
-      description: '사건사고 긴급: +63-917-886-4848',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightUsers,
-      name: '세부 한인회',
-      phones: ['+63-32-505-5761'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightUsers,
-      name: '중부루손한인회 (클락/앙헬레스)',
-      phones: ['+63-45-598-0571', '0917-893-1355'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightUsers,
-      name: '남부(알라방) 한인회',
-      phones: ['+63-2-7945-0221'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightUsers,
-      name: '바기오 한인회',
-      phones: ['+63-74-423-2099'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightUsers,
-      name: '다바오 한인회',
-      phones: ['0906-310-0409'],
-      description: '카카오톡: pf.kakao.com/_xexczrM',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShieldCheck,
-      name: '한인파출소',
-      phones: ['0915-242-3926'],
-    ),
-  ];
-
-  /// 경찰서 (Police Stations)
-  static const List<_ContactItem> _policeStations = [
-    _ContactItem(
-      icon: FontAwesomeIcons.lightBuildingShield,
-      name: '메트로마닐라 수도경찰청',
-      phones: ['+63-2-8838-0251'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Manila City 경찰청',
-      phones: ['+63-2-8523-5611'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Makati City 경찰서',
-      phones: ['+63-2-8843-7971', '+63-2-8887-6642'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Quezon City 경찰청',
-      phones: ['+63-2-8925-8417'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Pasay City 경찰서',
-      phones: ['+63-2-8831-1359'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Cebu City 경찰서',
-      phones: ['+63-32-256-0116'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Davao City 경찰서',
-      phones: ['+63-82-224-1313'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Angeles City 경찰서',
-      phones: ['+63-908-377-0144'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightShield,
-      name: 'Baguio City 경찰서',
-      phones: ['+63-74-442-7944'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHandcuffs,
-      name: '납치전담 (Anti-Kidnapping)',
-      phones: ['+63-2-8724-7378'],
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightCarBurst,
-      name: '차량강도 (Highway Patrol)',
-      phones: ['+63-2-8723-0401'],
-      description: '내선 5379',
-    ),
-  ];
-
-  /// 병원 (Hospitals)
-  static const List<_ContactItem> _hospitals = [
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: 'Makati Medical Center',
-      phones: ['+63-2-8888-8999'],
-      address: 'Makati City',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: "St. Luke's Global Hospital",
-      phones: ['+63-2-8789-7700'],
-      address: 'Fort Bonifacio, Taguig',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: 'Manila Doctors Hospital',
-      phones: ['+63-2-8558-0888'],
-      address: 'Manila',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: 'Asian Hospital',
-      phones: ['+63-2-8771-9000'],
-      address: 'Alabang',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: 'Phil. Korean Friendship Hospital',
-      phones: ['+63-46-419-1465', '+63-46-419-1714'],
-      address: 'Cavite',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: 'Chong Hwa Hospital',
-      phones: ['+63-32-253-9409'],
-      address: 'Cebu',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: "Davao Doctor's Hospital",
-      phones: ['+63-82-222-8000'],
-      address: 'Davao',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: 'Baguio General Hospital',
-      phones: ['+63-74-442-6230'],
-      address: 'Baguio',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHospital,
-      name: 'Angeles Medical Center',
-      phones: ['+63-45-887-3139'],
-      address: 'Angeles City',
-    ),
-  ];
-
-  /// 기타 기관 (Other Agencies)
-  static const List<_ContactItem> _otherAgencies = [
-    _ContactItem(
-      icon: FontAwesomeIcons.lightPassport,
-      name: '필리핀 이민국 (BI)',
-      phones: ['(02) 8524-3769', '(02) 8465-2400'],
-      description: '비자 연장, 출입국 관련',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightCloudSunRain,
-      name: '필리핀 기상청 (PAGASA)',
-      phones: ['(02) 8284-0800'],
-      description: '태풍, 날씨 정보',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightVolcano,
-      name: '화산지진연구소 (PHILVOCS)',
-      phones: ['(02) 8426-1468'],
-      description: '지진, 화산 정보',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightHouseFloodWater,
-      name: '재해위기관리위원회 (NDRRMC)',
-      phones: ['(02) 8421-1918', '(02) 8913-2786'],
-      description: '자연재해, 재난 대응',
-    ),
-    _ContactItem(
-      icon: FontAwesomeIcons.lightCarSide,
-      name: '필리핀 교통부 (DOTr)',
-      phones: ['7890', '(02) 8790-8300'],
-      description: '교통 관련 문의',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -344,7 +35,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(FontAwesomeIcons.lightPhoneVolume, size: 20, color: scheme.error),
+            FaIcon(
+              FontAwesomeIcons.lightPhoneVolume,
+              size: 20,
+              color: scheme.error,
+            ),
             SizedBox(width: sp.s8),
             const Text('🇵🇭 긴급 연락처'),
           ],
@@ -366,44 +61,72 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
             SizedBox(height: sp.s24),
 
             /// [필리핀 긴급 번호 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightSiren, title: '필리핀 긴급 번호', isEmergency: true),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightSiren,
+              title: '필리핀 긴급 번호',
+              isEmergency: true,
+            ),
             SizedBox(height: sp.s12),
-            _buildContactCards(context, _emergencyNumbers),
+            _buildContactCards(context, EmergencyContactsData.emergencyNumbers),
 
             SizedBox(height: sp.s24),
 
             /// [대한민국 공관 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightLandmarkFlag, title: '대한민국 공관'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightLandmarkFlag,
+              title: '대한민국 공관',
+            ),
             SizedBox(height: sp.s12),
-            _buildContactCards(context, _koreanEmbassy),
+            _buildContactCards(context, EmergencyContactsData.koreanEmbassy),
 
             SizedBox(height: sp.s24),
 
             /// [한인회 연락처 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightPeopleGroup, title: '한인회 연락처'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightPeopleGroup,
+              title: '한인회 연락처',
+            ),
             SizedBox(height: sp.s12),
-            _buildContactCards(context, _koreanAssociation),
+            _buildContactCards(
+              context,
+              EmergencyContactsData.koreanAssociation,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [경찰서 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightBuildingShield, title: '경찰서'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightBuildingShield,
+              title: '경찰서',
+            ),
             SizedBox(height: sp.s12),
-            _buildContactCards(context, _policeStations),
+            _buildContactCards(context, EmergencyContactsData.policeStations),
 
             SizedBox(height: sp.s24),
 
             /// [병원 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightHospital, title: '병원'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightHospital,
+              title: '병원',
+            ),
             SizedBox(height: sp.s12),
-            _buildContactCards(context, _hospitals),
+            _buildContactCards(context, EmergencyContactsData.hospitals),
 
             SizedBox(height: sp.s24),
 
             /// [기타 기관 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightBuildings, title: '기타 기관'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightBuildings,
+              title: '기타 기관',
+            ),
             SizedBox(height: sp.s12),
-            _buildContactCards(context, _otherAgencies),
+            _buildContactCards(context, EmergencyContactsData.otherAgencies),
 
             SizedBox(height: sp.s24),
 
@@ -427,10 +150,7 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
       padding: EdgeInsets.all(sp.s16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            scheme.error,
-            scheme.error.withValues(alpha: 0.8),
-          ],
+          colors: [scheme.error, scheme.error.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -441,7 +161,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(FontAwesomeIcons.lightTriangleExclamation, size: 24, color: scheme.onError),
+              FaIcon(
+                FontAwesomeIcons.lightTriangleExclamation,
+                size: 24,
+                color: scheme.onError,
+              ),
               SizedBox(width: sp.s12),
               Text(
                 '긴급 상황 시',
@@ -467,7 +191,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
   }
 
   /// 빠른 전화 버튼 빌드
-  Widget _buildQuickDialButton(BuildContext context, String number, String label) {
+  Widget _buildQuickDialButton(
+    BuildContext context,
+    String number,
+    String label,
+  ) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -513,8 +241,12 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
 
-    final bgColor = isEmergency ? scheme.errorContainer : scheme.primaryContainer;
-    final iconColor = isEmergency ? scheme.onErrorContainer : scheme.onPrimaryContainer;
+    final bgColor = isEmergency
+        ? scheme.errorContainer
+        : scheme.primaryContainer;
+    final iconColor = isEmergency
+        ? scheme.onErrorContainer
+        : scheme.onPrimaryContainer;
 
     return Row(
       children: [
@@ -539,7 +271,7 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
   }
 
   /// 연락처 카드 빌드
-  Widget _buildContactCards(BuildContext context, List<_ContactItem> contacts) {
+  Widget _buildContactCards(BuildContext context, List<ContactItem> contacts) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -549,8 +281,12 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
         final bgColor = contact.isEmergency
             ? scheme.errorContainer.withValues(alpha: 0.3)
             : scheme.surfaceContainerLow;
-        final iconBgColor = contact.isEmergency ? scheme.error : scheme.primaryContainer;
-        final iconColor = contact.isEmergency ? scheme.onError : scheme.onPrimaryContainer;
+        final iconBgColor = contact.isEmergency
+            ? scheme.error
+            : scheme.primaryContainer;
+        final iconColor = contact.isEmergency
+            ? scheme.onError
+            : scheme.onPrimaryContainer;
 
         return Container(
           margin: EdgeInsets.only(bottom: sp.s8),
@@ -573,7 +309,9 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                       color: iconBgColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Center(child: FaIcon(contact.icon, size: 18, color: iconColor)),
+                    child: Center(
+                      child: FaIcon(contact.icon, size: 18, color: iconColor),
+                    ),
                   ),
                   SizedBox(width: sp.s12),
 
@@ -604,7 +342,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              FaIcon(FontAwesomeIcons.lightLocationDot, size: 12, color: scheme.outline),
+                              FaIcon(
+                                FontAwesomeIcons.lightLocationDot,
+                                size: 12,
+                                color: scheme.outline,
+                              ),
                               SizedBox(width: sp.s4),
                               Expanded(
                                 child: Text(
@@ -665,7 +407,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
   }
 
   /// 전화번호 버튼 빌드
-  Widget _buildPhoneButton(BuildContext context, String phone, bool isEmergency) {
+  Widget _buildPhoneButton(
+    BuildContext context,
+    String phone,
+    bool isEmergency,
+  ) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -756,7 +502,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
         children: [
           Row(
             children: [
-              FaIcon(FontAwesomeIcons.lightClock, size: 18, color: scheme.onTertiaryContainer),
+              FaIcon(
+                FontAwesomeIcons.lightClock,
+                size: 18,
+                color: scheme.onTertiaryContainer,
+              ),
               SizedBox(width: sp.s8),
               Text(
                 '대사관 업무시간',
@@ -768,6 +518,7 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
             ],
           ),
           SizedBox(height: sp.s12),
+
           /// 업무시간: 08:00~17:00 (월-금)
           _buildHoursRow(context, '일반 업무', '08:00 ~ 17:00 (월-금)'),
           SizedBox(height: sp.s8),
@@ -785,7 +536,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
             ),
             child: Row(
               children: [
-                FaIcon(FontAwesomeIcons.lightCircleExclamation, size: 14, color: scheme.error),
+                FaIcon(
+                  FontAwesomeIcons.lightCircleExclamation,
+                  size: 14,
+                  color: scheme.error,
+                ),
                 SizedBox(width: sp.s8),
                 Expanded(
                   child: Text(
