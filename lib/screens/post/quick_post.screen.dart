@@ -233,31 +233,24 @@ class _QuickPostScreenState extends State<QuickPostScreen> {
 
   /// 카테고리 선택 UI 빌드
   /// Build category selection UI
+  ///
+  /// mainCategories()를 사용하여 26개 전체 1차 카테고리를 표시합니다.
+  /// 각 1차 카테고리의 2차 카테고리는 subCategories(postId)를 통해 가져옵니다.
+  /// Uses mainCategories() to display all 26 main categories.
+  /// Sub-categories for each main category are fetched via subCategories(postId).
   Widget _buildCategorySelection(BuildContext context) {
     final theme = Theme.of(context);
     final sp = theme.extension<AppSpacing>()!;
 
-    /// 메뉴 카테고리 가져오기 (개발자 모드 포함 여부)
-    /// Get menu categories (include temp based on developer mode)
-    final allCategories = PhilgoCategory.menuCategories(
-      includeTemp: isDeveloperModeEnabled,
-    );
+    /// 전체 1차 카테고리 가져오기
+    /// Get all main categories (post_id)
+    final mainCategories = PhilgoCategory.mainCategories();
 
-    /// 카테고리를 그룹별로 정리
-    /// Group categories by postId
-    final Map<String, List<String?>> groupedCategories = {};
-    final List<String> groupOrder = [];
-
-    for (final (postId, subcategory) in allCategories) {
-      if (!groupedCategories.containsKey(postId)) {
-        groupedCategories[postId] = [];
-        groupOrder.add(postId);
-      }
-      if (subcategory != null &&
-          !groupedCategories[postId]!.contains(subcategory)) {
-        groupedCategories[postId]!.add(subcategory);
-      }
-    }
+    /// 개발자 모드가 아니면 temp 카테고리 제외
+    /// Exclude temp category if not in developer mode
+    final filteredCategories = isDeveloperModeEnabled
+        ? mainCategories
+        : mainCategories.where((id) => id != 'temp').toList();
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(sp.s16),
@@ -276,10 +269,12 @@ class _QuickPostScreenState extends State<QuickPostScreen> {
             ),
           ),
 
-          /// 카테고리 그룹 목록
-          /// Category group list
-          ...groupOrder.map((postId) {
-            final subCategories = groupedCategories[postId] ?? [];
+          /// 1차 카테고리(메인 카테고리) 목록
+          /// Main category list (post_id)
+          ...filteredCategories.map((postId) {
+            /// 해당 1차 카테고리의 2차 카테고리 가져오기
+            /// Get sub-categories for this main category
+            final subCategories = PhilgoCategory.subCategories(postId);
             final hasSubCategories = subCategories.isNotEmpty;
             final isExpanded = _expandedGroups.contains(postId);
 
@@ -298,10 +293,15 @@ class _QuickPostScreenState extends State<QuickPostScreen> {
 
   /// 카테고리 그룹 위젯 빌드
   /// Build category group widget
+  ///
+  /// [postId]: 1차 카테고리 ID (메인 카테고리)
+  /// [subCategories]: 2차 카테고리 목록 (PhilgoCategory.subCategories()에서 가져옴)
+  /// [hasSubCategories]: 2차 카테고리 존재 여부
+  /// [isExpanded]: 펼쳐진 상태 여부
   Widget _buildCategoryGroup(
     BuildContext context, {
     required String postId,
-    required List<String?> subCategories,
+    required List<String> subCategories,
     required bool hasSubCategories,
     required bool isExpanded,
   }) {
@@ -397,7 +397,9 @@ class _QuickPostScreenState extends State<QuickPostScreen> {
               spacing: sp.s8,
               runSpacing: sp.s8,
               children: subCategories.map((subcategory) {
-                final subName = philgoTr(context, subcategory ?? postId);
+                /// 2차 카테고리 이름 (다국어 지원)
+                /// Sub-category name with i18n support
+                final subName = philgoTr(context, subcategory);
 
                 return InkWell(
                   onTap: () => _selectCategory(postId, subcategory),
