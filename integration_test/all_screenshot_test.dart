@@ -478,10 +478,10 @@ void main() {
 
       // === PHILIPPINE LIFE INFO SECTION ===
 
-      // 24. NOTICE - Click Notice menu item
-      final noticeItem = find.text('Notice');
-      if (noticeItem.evaluate().isNotEmpty) {
-        await tester.tap(noticeItem);
+      // 24. NOTICE - Click Notice menu item by icon
+      final noticeIcon = findFaIcon(FontAwesomeIcons.bullhorn);
+      if (noticeIcon.evaluate().isNotEmpty) {
+        await tester.tap(noticeIcon);
         await tester.pumpAndSettle();
         await tester.pump(const Duration(seconds: 1));
         await binding.takeScreenshot('24_menu_notice_screen');
@@ -494,10 +494,10 @@ void main() {
         }
       }
 
-      // 25. EXCHANGE RATE - Click Exchange menu item (wait 15 seconds)
-      final exchangeItem = find.text('Exchange');
-      if (exchangeItem.evaluate().isNotEmpty) {
-        await tester.tap(exchangeItem);
+      // 25. EXCHANGE RATE - Click Exchange menu item by icon (wait 15 seconds)
+      final exchangeIcon = findFaIcon(FontAwesomeIcons.coins);
+      if (exchangeIcon.evaluate().isNotEmpty) {
+        await tester.tap(exchangeIcon);
         await tester.pumpAndSettle();
 
         // Wait 15 seconds for exchange rate data to load
@@ -511,12 +511,14 @@ void main() {
         }
       }
 
-      // 26. WEATHER - Click Weather menu item
-      final weatherItem = find.text('Weather');
-      if (weatherItem.evaluate().isNotEmpty) {
-        await tester.tap(weatherItem);
+      // 26. WEATHER - Click Weather menu item by icon (API loading)
+      final weatherIcon = findFaIcon(FontAwesomeIcons.cloudSun);
+      if (weatherIcon.evaluate().isNotEmpty) {
+        await tester.tap(weatherIcon);
         await tester.pumpAndSettle();
-        await tester.pump(const Duration(seconds: 1));
+
+        // Wait longer for weather API to load (5 cities)
+        await tester.pump(const Duration(seconds: 5));
         await binding.takeScreenshot('26_menu_weather_screen');
 
         final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
@@ -526,12 +528,12 @@ void main() {
         }
       }
 
-      // 27. EMERGENCY - Click Emergency menu item
-      final emergencyItem = find.text('Emergency');
-      if (emergencyItem.evaluate().isNotEmpty) {
-        await tester.tap(emergencyItem);
+      // 27. EMERGENCY - Click Emergency menu item by icon
+      final emergencyIcon = findFaIcon(FontAwesomeIcons.phoneVolume);
+      if (emergencyIcon.evaluate().isNotEmpty) {
+        await tester.tap(emergencyIcon);
         await tester.pumpAndSettle();
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump(const Duration(seconds: 2));
         await binding.takeScreenshot('27_menu_emergency_screen');
 
         final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
@@ -541,12 +543,13 @@ void main() {
         }
       }
 
-      // 28. ESSENTIAL INFO - Click Essential menu item
-      final essentialItem = find.text('Essential');
-      if (essentialItem.evaluate().isNotEmpty) {
-        await tester.tap(essentialItem);
+      // 28. ESSENTIAL INFO - Click Essential menu item by icon (first circleInfo)
+      final essentialIcons = findFaIcon(FontAwesomeIcons.circleInfo);
+      if (essentialIcons.evaluate().isNotEmpty) {
+        // Tap the first circleInfo icon (Essential Info)
+        await tester.tap(essentialIcons.first);
         await tester.pumpAndSettle();
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump(const Duration(seconds: 2));
         await binding.takeScreenshot('28_menu_essential_info_screen');
 
         final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
@@ -556,10 +559,10 @@ void main() {
         }
       }
 
-      // 29. MONTHLY LIVING - Click Monthly menu item
-      final monthlyItem = find.text('Monthly');
-      if (monthlyItem.evaluate().isNotEmpty) {
-        await tester.tap(monthlyItem);
+      // 29. MONTHLY LIVING - Click Monthly menu item by icon
+      final monthlyIcon = findFaIcon(FontAwesomeIcons.calendarDays);
+      if (monthlyIcon.evaluate().isNotEmpty) {
+        await tester.tap(monthlyIcon);
         await tester.pumpAndSettle();
         await tester.pump(const Duration(seconds: 1));
         await binding.takeScreenshot('29_menu_monthly_living_screen');
@@ -571,10 +574,10 @@ void main() {
         }
       }
 
-      // 30. TRAVEL INFO - Click Travel menu item
-      final travelItem = find.text('Travel');
-      if (travelItem.evaluate().isNotEmpty) {
-        await tester.tap(travelItem);
+      // 30. TRAVEL INFO - Click Travel menu item by icon (umbrellaBeach)
+      final travelIcon = findFaIcon(FontAwesomeIcons.umbrellaBeach);
+      if (travelIcon.evaluate().isNotEmpty) {
+        await tester.tap(travelIcon);
         await tester.pumpAndSettle();
         await tester.pump(const Duration(seconds: 1));
         await binding.takeScreenshot('30_menu_travel_info_screen');
@@ -587,11 +590,15 @@ void main() {
       }
 
       // === MY ACTIVITY SECTION ===
+      // Scroll down to reveal My Activity section items
 
-      // 31. EDIT PROFILE - Click Edit Profile (wait for animations)
-      final editProfileItem = find.text('Edit Profile');
-      if (editProfileItem.evaluate().isNotEmpty) {
-        await tester.tap(editProfileItem);
+      // 31. EDIT PROFILE - Scroll to and click Edit Profile by icon (wait for animations)
+      final editProfileIcon = findFaIcon(FontAwesomeIcons.user);
+      await tester.ensureVisible(editProfileIcon);
+      await tester.pumpAndSettle();
+
+      if (editProfileIcon.evaluate().isNotEmpty) {
+        await tester.tap(editProfileIcon);
         await tester.pumpAndSettle();
 
         // Wait for animations to complete
@@ -605,10 +612,13 @@ void main() {
         }
       }
 
-      // 32. MY POSTS - Click My Posts (wait for animations)
-      final myPostsItem = find.text('My Posts');
-      if (myPostsItem.evaluate().isNotEmpty) {
-        await tester.tap(myPostsItem);
+      // 32. MY POSTS - Scroll to and click My Posts by icon (wait for animations)
+      final myPostsIcon = findFaIcon(FontAwesomeIcons.clockRotateLeft);
+      await tester.ensureVisible(myPostsIcon);
+      await tester.pumpAndSettle();
+
+      if (myPostsIcon.evaluate().isNotEmpty) {
+        await tester.tap(myPostsIcon);
         await tester.pumpAndSettle();
 
         // Wait for animations to complete
@@ -622,44 +632,50 @@ void main() {
         }
       }
 
-      // 33. SEARCH FRIENDS - Click Search Friends
-      final searchFriendsItem = find.text('Search Friends');
-      if (searchFriendsItem.evaluate().isNotEmpty) {
-        await tester.tap(searchFriendsItem);
+      // 33. SEARCH FRIENDS - Scroll to and click Search Friends by icon
+      final searchFriendsIcon = findFaIcon(FontAwesomeIcons.magnifyingGlass);
+      await tester.ensureVisible(searchFriendsIcon);
+      await tester.pumpAndSettle();
+
+      if (searchFriendsIcon.evaluate().isNotEmpty) {
+        await tester.tap(searchFriendsIcon);
         await tester.pumpAndSettle();
         await tester.pump(const Duration(seconds: 1));
         await binding.takeScreenshot('33_menu_search_friends_dialog');
 
-        // Close dialog
-        final closeButton = findFaIcon(FontAwesomeIcons.xmark);
+        // Close dialog using lightXmark icon
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
         if (closeButton.evaluate().isNotEmpty) {
           await tester.tap(closeButton);
           await tester.pumpAndSettle();
         }
       }
 
-      // 34. BLOCKED USERS - Click Blocked Users
-      final blockedUsersItem = find.text('Blocked Users');
-      if (blockedUsersItem.evaluate().isNotEmpty) {
-        await tester.tap(blockedUsersItem);
+      // 34. BLOCKED USERS - Scroll to and click Blocked Users by icon
+      final blockedUsersIcon = findFaIcon(FontAwesomeIcons.usersSlash);
+      await tester.ensureVisible(blockedUsersIcon);
+      await tester.pumpAndSettle();
+
+      if (blockedUsersIcon.evaluate().isNotEmpty) {
+        await tester.tap(blockedUsersIcon);
         await tester.pumpAndSettle();
         await tester.pump(const Duration(seconds: 1));
         await binding.takeScreenshot('34_menu_blocked_users_dialog');
 
-        // Close dialog
-        final closeButton = findFaIcon(FontAwesomeIcons.xmark);
-        if (closeButton.evaluate().isNotEmpty) {
-          await tester.tap(closeButton);
-          await tester.pumpAndSettle();
-        }
+        // Close dialog - No close button in blocked users list, tap outside or use barrier
+        await tester.tapAt(const Offset(10, 10));
+        await tester.pumpAndSettle();
       }
 
       // === SUPPORT SECTION ===
 
-      // 35. APP GUIDE - Click App Guide (wait for animations)
-      final appGuideItem = find.text('App Guide');
-      if (appGuideItem.evaluate().isNotEmpty) {
-        await tester.tap(appGuideItem);
+      // 35. APP GUIDE - Scroll to and click App Guide by icon (wait for animations)
+      final appGuideIcon = findFaIcon(FontAwesomeIcons.circleQuestion);
+      await tester.ensureVisible(appGuideIcon);
+      await tester.pumpAndSettle();
+
+      if (appGuideIcon.evaluate().isNotEmpty) {
+        await tester.tap(appGuideIcon);
         await tester.pumpAndSettle();
 
         // Wait for animations to complete
@@ -673,32 +689,38 @@ void main() {
         }
       }
 
-      // 36. TERMS OF SERVICE - Click Terms of Service
-      final termsItem = find.text('Terms of Service');
-      if (termsItem.evaluate().isNotEmpty) {
-        await tester.tap(termsItem);
+      // 36. TERMS OF SERVICE - Scroll to and click Terms of Service by icon
+      final termsIcon = findFaIcon(FontAwesomeIcons.fileLines);
+      await tester.ensureVisible(termsIcon);
+      await tester.pumpAndSettle();
+
+      if (termsIcon.evaluate().isNotEmpty) {
+        await tester.tap(termsIcon);
         await tester.pumpAndSettle();
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump(const Duration(seconds: 5));
         await binding.takeScreenshot('36_menu_terms_of_service_dialog');
 
         // Close dialog
-        final closeButton = findFaIcon(FontAwesomeIcons.xmark);
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
         if (closeButton.evaluate().isNotEmpty) {
           await tester.tap(closeButton);
           await tester.pumpAndSettle();
         }
       }
 
-      // 37. PRIVACY POLICY - Click Privacy Policy
-      final privacyItem = find.text('Privacy Policy');
-      if (privacyItem.evaluate().isNotEmpty) {
-        await tester.tap(privacyItem);
+      // 37. PRIVACY POLICY - Scroll to and click Privacy Policy by icon
+      final privacyIcon = findFaIcon(FontAwesomeIcons.shieldHalved);
+      await tester.ensureVisible(privacyIcon);
+      await tester.pumpAndSettle();
+
+      if (privacyIcon.evaluate().isNotEmpty) {
+        await tester.tap(privacyIcon);
         await tester.pumpAndSettle();
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump(const Duration(seconds: 5));
         await binding.takeScreenshot('37_menu_privacy_policy_dialog');
 
         // Close dialog
-        final closeButton = findFaIcon(FontAwesomeIcons.xmark);
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
         if (closeButton.evaluate().isNotEmpty) {
           await tester.tap(closeButton);
           await tester.pumpAndSettle();
@@ -707,10 +729,16 @@ void main() {
 
       // === APP INFO SECTION ===
 
-      // 38. VERSION INFO - Click Version
-      final versionItem = find.text('Version');
-      if (versionItem.evaluate().isNotEmpty) {
-        await tester.tap(versionItem);
+      // 38. VERSION INFO - Scroll to and click Version by icon
+      // Note: Uses same circleInfo icon as Essential Info, need to find the second one
+      final versionIcons = findFaIcon(FontAwesomeIcons.circleInfo);
+      if (versionIcons.evaluate().length > 1) {
+        // Ensure the last circleInfo icon (Version) is visible
+        await tester.ensureVisible(versionIcons.last);
+        await tester.pumpAndSettle();
+
+        // Tap the last circleInfo icon (Version)
+        await tester.tap(versionIcons.last);
         await tester.pumpAndSettle();
         await tester.pump(const Duration(seconds: 1));
         await binding.takeScreenshot('38_menu_version_info_screen');
@@ -724,10 +752,13 @@ void main() {
 
       // === ACCOUNT ACTIONS SECTION ===
 
-      // 39. ACCOUNT WITHDRAWAL - Click Withdraw
-      final withdrawItem = find.text('Withdraw');
-      if (withdrawItem.evaluate().isNotEmpty) {
-        await tester.tap(withdrawItem);
+      // 39. ACCOUNT WITHDRAWAL - Scroll to and click Withdraw by icon
+      final withdrawIcon = findFaIcon(FontAwesomeIcons.userMinus);
+      await tester.ensureVisible(withdrawIcon);
+      await tester.pumpAndSettle();
+
+      if (withdrawIcon.evaluate().isNotEmpty) {
+        await tester.tap(withdrawIcon);
         await tester.pumpAndSettle();
         await tester.pump(const Duration(seconds: 1));
         await binding.takeScreenshot('39_menu_account_withdrawal_screen');
