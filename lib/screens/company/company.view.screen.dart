@@ -113,6 +113,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             elevation: 0,
             foregroundColor: scheme.onPrimaryContainer,
             backgroundColor: scheme.surfaceContainerLow,
+
             /// Best Practice: 1px 하단 테두리 (outlineVariant 색상)
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(1.0),
@@ -180,10 +181,10 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
                       /// [1. 기업 기본 정보 섹션] - Company Basic Info Section
                       _buildSection(
-                        title: T.businessDirectoryTitle,
-                        icon: FontAwesomeIcons.building,
-                        child: _buildCompanyInfoContent(),
-                      )
+                            title: T.businessDirectoryTitle,
+                            icon: FontAwesomeIcons.building,
+                            child: _buildCompanyInfoContent(),
+                          )
                           .animate()
                           .fadeIn(duration: 400.ms)
                           .slideY(begin: 0.1, end: 0),
@@ -191,10 +192,10 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       /// [2. 연락처 섹션] - Contact Information Section
                       if (_hasContactInfo())
                         _buildSection(
-                          title: T.contactInformation,
-                          icon: FontAwesomeIcons.addressBook,
-                          child: _buildContactContent(),
-                        )
+                              title: T.contactInformation,
+                              icon: FontAwesomeIcons.addressBook,
+                              child: _buildContactContent(),
+                            )
                             .animate()
                             .fadeIn(duration: 400.ms, delay: 100.ms)
                             .slideY(begin: 0.1, end: 0),
@@ -202,10 +203,10 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       /// [3. 설명 섹션] - Description Section
                       if (description.isNotEmpty)
                         _buildSection(
-                          title: T.description,
-                          icon: FontAwesomeIcons.alignLeft,
-                          child: _buildDescriptionContent(),
-                        )
+                              title: T.description,
+                              icon: FontAwesomeIcons.alignLeft,
+                              child: _buildDescriptionContent(),
+                            )
                             .animate()
                             .fadeIn(duration: 400.ms, delay: 200.ms)
                             .slideY(begin: 0.1, end: 0),
@@ -253,11 +254,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               const SizedBox(width: 8),
 
               /// 섹션 아이콘 (Section icon)
-              FaIcon(
-                icon,
-                size: 14,
-                color: scheme.onSurfaceVariant,
-              ),
+              FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
               const SizedBox(width: 6),
 
               /// 섹션 타이틀 (Section title)
@@ -415,10 +412,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             icon: FontAwesomeIcons.telegram,
             label: 'Telegram',
             value: company!.telegram_id,
-            onTap: () => launchApp(
-              'https://t.me/${company!.telegram_id}',
-              true,
-            ),
+            onTap: () =>
+                launchApp('https://t.me/${company!.telegram_id}', true),
             isLast: true,
           ),
       ],
@@ -456,11 +451,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: FaIcon(
-                      icon,
-                      size: 18,
-                      color: scheme.primary,
-                    ),
+                    child: FaIcon(icon, size: 18, color: scheme.primary),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -537,11 +528,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FaIcon(
-          icon,
-          size: 14,
-          color: scheme.onSurfaceVariant,
-        ),
+        FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -554,10 +541,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                value,
-                style: theme.textTheme.bodyMedium,
-              ),
+              Text(value, style: theme.textTheme.bodyMedium),
             ],
           ),
         ),
