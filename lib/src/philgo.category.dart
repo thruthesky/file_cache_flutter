@@ -147,10 +147,41 @@ class PhilgoCategory {
   /// 예시:
   /// ```dart
   /// final categories = PhilgoCategory.mainCategories();
-  /// // ['freetalk', 'qna', 'buyandsell', 'blog', ...]
+  /// ['freetalk', 'qna', 'buyandsell', 'blog', ...]
   /// ```
   static List<String> mainCategories() {
     return _categoryMap.keys.toList();
+  }
+
+  /// 특정 메인 카테고리(post_id)의 서브카테고리 목록을 반환합니다.
+  ///
+  /// [postId]: 메인 카테고리 ID (예: 'freetalk', 'buyandsell', 'qna')
+  ///
+  /// 반환값: 해당 메인 카테고리의 서브카테고리 배열
+  /// - 서브카테고리가 있는 경우: 서브카테고리 문자열 배열
+  /// - 서브카테고리가 없거나 존재하지 않는 postId인 경우: 빈 배열
+  ///
+  /// 예시:
+  /// ```dart
+  /// final freetalkSubs = PhilgoCategory.subCategories('freetalk');
+  /// ['discussion', '백과', '취미', 'info', ...]
+  ///
+  /// final qnaSubs = PhilgoCategory.subCategories('qna');
+  /// ['여권/비자']
+  ///
+  /// final blogSubs = PhilgoCategory.subCategories('blog');
+  /// [] (빈 배열)
+  ///
+  /// final invalidSubs = PhilgoCategory.subCategories('invalid');
+  /// [] (빈 배열)
+  /// ```
+  static List<String> subCategories(String postId) {
+    // 존재하지 않는 postId인 경우 빈 배열 반환
+    if (!_categoryMap.containsKey(postId)) {
+      return [];
+    }
+    // 불변 리스트의 복사본을 반환하여 외부에서 수정 방지
+    return List<String>.from(_categoryMap[postId]!);
   }
 
   /// 사용자 또는 앱의 메뉴에 표시할 주요 메인 카테고리(post_id) 목록을 반환합니다.
@@ -263,37 +294,6 @@ class PhilgoCategory {
     return Map<String, List<String>>.from(
       _categoryMap.map((key, value) => MapEntry(key, List<String>.from(value))),
     );
-  }
-
-  /// 특정 메인 카테고리(post_id)의 서브카테고리 목록을 반환합니다.
-  ///
-  /// [postId]: 메인 카테고리 ID (예: 'freetalk', 'buyandsell', 'qna')
-  ///
-  /// 반환값: 해당 메인 카테고리의 서브카테고리 배열
-  /// - 서브카테고리가 있는 경우: 서브카테고리 문자열 배열
-  /// - 서브카테고리가 없거나 존재하지 않는 postId인 경우: 빈 배열
-  ///
-  /// 예시:
-  /// ```dart
-  /// final freetalkSubs = PhilgoCategory.subCategories('freetalk');
-  /// // ['discussion', '백과', '취미', 'info', ...]
-  ///
-  /// final qnaSubs = PhilgoCategory.subCategories('qna');
-  /// // ['여권/비자']
-  ///
-  /// final blogSubs = PhilgoCategory.subCategories('blog');
-  /// // [] (빈 배열)
-  ///
-  /// final invalidSubs = PhilgoCategory.subCategories('invalid');
-  /// // [] (빈 배열)
-  /// ```
-  static List<String> subCategories(String postId) {
-    // 존재하지 않는 postId인 경우 빈 배열 반환
-    if (!_categoryMap.containsKey(postId)) {
-      return [];
-    }
-    // 불변 리스트의 복사본을 반환하여 외부에서 수정 방지
-    return List<String>.from(_categoryMap[postId]!);
   }
 
   /// 특정 메인 카테고리에 서브카테고리가 있는지 확인합니다.

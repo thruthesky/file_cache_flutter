@@ -592,7 +592,7 @@ class PhilgoTrKo extends PhilgoTr {
   String get categoryFoodDelivery => '배달음식';
 
   @override
-  String get categoryGreeting => '인사';
+  String get categoryGreeting => '가입인사';
 
   @override
   String get categoryWanted => '구인구직';
@@ -625,7 +625,7 @@ class PhilgoTrKo extends PhilgoTr {
   String get categoryNews => '뉴스';
 
   @override
-  String get categoryNewcomer => '새내기';
+  String get categoryNewcomer => '필리핀 초보 안내';
 
   @override
   String get categoryNature => '자연';
