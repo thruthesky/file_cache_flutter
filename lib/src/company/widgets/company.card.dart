@@ -109,14 +109,15 @@ class _CompanyCardState extends State<CompanyCard> {
       ),
       child: Stack(
         children: [
-          /// 배경 카테고리 아이콘 (반투명, 큰 사이즈)
-          Positioned(
-            top: 16,
-            right: 12,
-            child: FaIcon(
-              widget.categoryIcon,
-              size: 48,
-              color: scheme.primary.withValues(alpha: 0.15),
+          /// 중앙의 큰 카테고리 아이콘
+          Padding(
+            padding: const EdgeInsets.only(bottom: 48.0),
+            child: Center(
+              child: FaIcon(
+                widget.categoryIcon,
+                size: 48,
+                color: scheme.primary.withValues(alpha: 0.15),
+              ),
             ),
           ),
 
