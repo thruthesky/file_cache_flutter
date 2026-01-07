@@ -145,7 +145,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
                       return;
                     }
 
-                    await showPostUpdateDialog(
+                    await showPostUpdateScreen(
                       context,
                       post: post,
                       onUpdated: (updated) {

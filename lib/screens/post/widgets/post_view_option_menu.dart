@@ -238,7 +238,7 @@ class PostViewOptionMenu extends StatelessWidget {
           );
           return;
         }
-        await showPostUpdateDialog(
+        await showPostUpdateScreen(
           context,
           post: post,
           onUpdated: (updated) => onEditCompleted(updated),

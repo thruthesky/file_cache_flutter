@@ -1542,6 +1542,9 @@ class LoEn extends Lo {
   String get quickMenuAllMenu => 'All Menu';
 
   @override
+  String get quickMenuMustReadInfo => 'Importants';
+
+  @override
   String get philippineLifeInfo => 'Philippine Life Info';
 
   @override

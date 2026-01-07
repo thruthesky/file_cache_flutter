@@ -2000,6 +2000,10 @@
   "@quickMenuAllMenu": {
     "description": "Quick menu all menu label"
   },
+  "quickMenuMustReadInfo": "필독 안내",
+  "@quickMenuMustReadInfo": {
+    "description": "Quick menu must-read information label"
+  },
   "philippineLifeInfo": "필리핀 생활 정보",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"

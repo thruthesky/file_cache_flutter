@@ -1511,6 +1511,9 @@ class LoJa extends Lo {
   String get quickMenuAllMenu => 'All Menu';
 
   @override
+  String get quickMenuMustReadInfo => '必読';
+
+  @override
   String get philippineLifeInfo => 'Philippine Life Info';
 
   @override

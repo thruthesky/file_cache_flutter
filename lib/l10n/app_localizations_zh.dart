@@ -1505,6 +1505,9 @@ class LoZh extends Lo {
   String get quickMenuAllMenu => 'All Menu';
 
   @override
+  String get quickMenuMustReadInfo => '必读';
+
+  @override
   String get philippineLifeInfo => 'Philippine Life Info';
 
   @override

@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
+import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/essential/essential_info.screen.dart';
 import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
@@ -31,11 +33,7 @@ class _QuickMenuItem {
   /// 탭 콜백 (Tap Callback)
   final VoidCallback? onTap;
 
-  const _QuickMenuItem({
-    required this.icon,
-    required this.label,
-    this.onTap,
-  });
+  const _QuickMenuItem({required this.icon, required this.label, this.onTap});
 }
 
 /// 홈 화면 퀵 메뉴 섹션 위젯 (Home Quick Menu Section Widget)
@@ -155,8 +153,10 @@ class HomeQuickMenuSection extends StatelessWidget {
   /// 메뉴 탭으로 이동합니다.
   /// Navigates to Menu tab.
   void _onAllMenuTap(BuildContext context) {
-    NavigationState.of(context, listen: false)
-        .setHomeNavigation(HomeNavigationItem.menu);
+    NavigationState.of(
+      context,
+      listen: false,
+    ).setHomeNavigation(HomeNavigationItem.menu);
   }
 
   @override
@@ -247,16 +247,21 @@ class HomeQuickMenuSection extends StatelessWidget {
               sp: sp,
             ),
 
-            /// 전체 메뉴 (내 정보 다음 위치)
-            /// All menu (after my info)
+            /// 필독 정보 (내 정보 다음 위치)
+            /// Must-Read Information (after my info)
             _buildMenuItem(
               context: context,
-              icon: FontAwesomeIcons.lightBars,
-              label: l10n.quickMenuAllMenu,
-              onTap: () => _onAllMenuTap(context),
+              icon: FontAwesomeIcons.starShooting,
+              label: l10n.quickMenuMustReadInfo,
+              onTap: () => context.push(MustReadScreen.routeName),
               scheme: scheme,
               theme: theme,
               sp: sp,
+
+              /// 강조 표시: tertiaryContainer 색상 사용
+              /// Highlight: Use tertiaryContainer colors
+              backgroundColor: scheme.tertiaryContainer,
+              iconColor: scheme.onTertiaryContainer,
             ),
 
             /// 기존 메뉴 아이템들 (Other menu items)
@@ -271,6 +276,18 @@ class HomeQuickMenuSection extends StatelessWidget {
                 sp: sp,
               );
             }),
+
+            /// 전체 메뉴 (내 정보 다음 위치)
+            /// All menu (after my info)
+            _buildMenuItem(
+              context: context,
+              icon: FontAwesomeIcons.lightBars,
+              label: l10n.quickMenuAllMenu,
+              onTap: () => _onAllMenuTap(context),
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+            ),
           ],
         ),
       ),
@@ -286,6 +303,8 @@ class HomeQuickMenuSection extends StatelessWidget {
   /// [scheme] → ColorScheme
   /// [theme] → ThemeData
   /// [sp] → AppSpacing
+  /// [backgroundColor] → 아이콘 배경색 (Icon background color), 기본값: primaryContainer
+  /// [iconColor] → 아이콘 색상 (Icon color), 기본값: onPrimaryContainer
   Widget _buildMenuItem({
     required BuildContext context,
     required IconData icon,
@@ -294,6 +313,8 @@ class HomeQuickMenuSection extends StatelessWidget {
     required ColorScheme scheme,
     required ThemeData theme,
     required AppSpacing sp,
+    Color? backgroundColor,
+    Color? iconColor,
   }) {
     /// InkWell 사용: SingleChildScrollView + Row 조합에서는 InkWell 정상 동작
     /// ripple effect를 제공하여 탭 피드백 표시
@@ -319,9 +340,9 @@ class HomeQuickMenuSection extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                /// 배경색: primaryContainer (더 눈에 띄는 색상)
-                /// Background color: primaryContainer (more prominent)
-                color: scheme.primaryContainer,
+                /// 배경색: backgroundColor 또는 기본값 primaryContainer
+                /// Background color: backgroundColor or default primaryContainer
+                color: backgroundColor ?? scheme.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -332,9 +353,9 @@ class HomeQuickMenuSection extends StatelessWidget {
                   /// Icon size: 20 (adjusted for smaller container)
                   size: 20,
 
-                  /// 아이콘 색상: onPrimaryContainer (배경과 대비)
-                  /// Icon color: onPrimaryContainer (contrast with background)
-                  color: scheme.onPrimaryContainer,
+                  /// 아이콘 색상: iconColor 또는 기본값 onPrimaryContainer
+                  /// Icon color: iconColor or default onPrimaryContainer
+                  color: iconColor ?? scheme.onPrimaryContainer,
                 ),
               ),
             ),

@@ -23,6 +23,7 @@ import 'package:philgo/widgets/unfocus_on_tap.dart';
 /// );
 /// ```
 class ExchangeRateScreen extends StatefulWidget {
+  static const String routeName = '/ExchangeRate';
   const ExchangeRateScreen({super.key});
 
   @override

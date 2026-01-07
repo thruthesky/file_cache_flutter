@@ -1511,6 +1511,9 @@ class LoKo extends Lo {
   String get quickMenuAllMenu => '전체 메뉴';
 
   @override
+  String get quickMenuMustReadInfo => '필독 안내';
+
+  @override
   String get philippineLifeInfo => '필리핀 생활 정보';
 
   @override

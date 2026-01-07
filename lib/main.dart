@@ -9,6 +9,7 @@ import 'package:philgo/functions/init.functions.dart';
 import 'package:philgo/functions/init/build_number_check.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/router.dart';
+import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/state/app.state.dart';
@@ -97,15 +98,40 @@ class _MyAppState extends State<MyApp> {
       initShorebirdCodePush();
 
       initMinimalBuildNumberCheck();
-
-      // Timer(Duration(seconds: 1), showUpgradeDialog);
-      // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
     });
+
+    /// 테스트 할 때에만 사용. 테스트가 끝나면 주석 처리
+    // _debugTestRun();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  ///
+  // ignore: unused_element
+  void _debugTestRun() {
+    // Timer(Duration(seconds: 1), showUpgradeDialog);
+    // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
+    /// 디버깅용: 0.5초 후 메뉴 탭으로 이동 (확인 후 제거)
+    /// For debugging: Navigate to menu tab after 0.5s (remove after verification)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _debugNavigateToMenu(context);
+    });
+  }
+
+  /// 앱 시작 후 메뉴 탭으로 이동 (디버깅용 - 확인 후 제거)
+  /// Navigate to menu tab after app start (for debugging - remove after verification)
+  void _debugNavigateToMenu(BuildContext context) {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (context.mounted) {
+        NavigationState.of(
+          context,
+          listen: false,
+        ).setHomeNavigation(HomeNavigationItem.menu);
+      }
+    });
   }
 
   @override

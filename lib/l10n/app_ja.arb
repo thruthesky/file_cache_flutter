@@ -1817,5 +1817,9 @@
   "videoUnavailable": "動画を利用できません",
   "@videoUnavailable": {
     "description": "Error message when YouTube video cannot be loaded"
+  },
+  "quickMenuMustReadInfo": "必読",
+  "@quickMenuMustReadInfo": {
+    "description": "Quick menu must-read information label"
   }
 }
