@@ -1554,4 +1554,7 @@ class LoJa extends Lo {
 
   @override
   String get forumOther => 'Other';
+
+  @override
+  String get videoUnavailable => '動画を利用できません';
 }

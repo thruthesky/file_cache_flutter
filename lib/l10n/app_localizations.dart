@@ -3124,6 +3124,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Other'**
   String get forumOther;
+
+  /// Error message when YouTube video cannot be loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Video unavailable'**
+  String get videoUnavailable;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

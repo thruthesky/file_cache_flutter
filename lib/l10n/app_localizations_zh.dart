@@ -1548,4 +1548,7 @@ class LoZh extends Lo {
 
   @override
   String get forumOther => 'Other';
+
+  @override
+  String get videoUnavailable => '视频不可用';
 }
