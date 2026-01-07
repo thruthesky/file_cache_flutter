@@ -16,6 +16,9 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
 import 'package:provider/provider.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:omni_video_player/omni_video_player.dart';
 
 void main() async {
@@ -26,6 +29,15 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   OmniVideoPlayer.ensureInitialized();
+
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
   runApp(
     MultiProvider(
@@ -69,6 +81,14 @@ class _MyAppState extends State<MyApp> {
       onTapUserRecentPostItem: (context, post) => {
         PostViewScreen.push(context, post),
       },
+      onStateChange: (user) {
+        if (user != null) {
+          FirebaseCrashlytics.instance.setUserIdentifier(user.uid);
+          FirebaseAnalytics.instance.logLogin(parameters: {'uid': user.uid});
+        } else {
+          FirebaseCrashlytics.instance.setUserIdentifier('');
+        }
+      },
     );
 
     if (isRunningInE2EEnvironment == false) {
@@ -101,6 +121,8 @@ class _MyAppState extends State<MyApp> {
       // Timer(Duration(seconds: 1), showUpgradeDialog);
       // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
     });
+
+    FirebaseAnalytics.instance.logAppOpen();
   }
 
   @override
