@@ -10,6 +10,8 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
 import 'package:philgo_api/philgo_api.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 /// Category Model
 /// Represents a company category with id, name, description, and icon
 class CompanyCategory {
@@ -232,7 +234,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   /// Reload companies when category changes
   void _handleCategoryFilterTap(String? categoryId) {
     if (selectedCategoryId == categoryId) return;
-
+    FirebaseAnalytics.instance.logScreenView(screenName: categoryId);
     setState(() {
       selectedCategoryId = categoryId;
     });

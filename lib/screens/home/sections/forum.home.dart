@@ -13,6 +13,8 @@ import 'package:philgo/widgets/post/post.card.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:provider/provider.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 /// 게시판 홈 화면 (Forum Home Screen)
 ///
 /// 로컬 상태로 현재 선택된 카테고리를 관리합니다.
@@ -68,6 +70,10 @@ class _ForumHomeState extends State<ForumHome> {
     if (forumSelection == newSelection) {
       return;
     }
+
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: 'forum/$postId${category != null ? '/$category' : ''}',
+    );
 
     setState(() {
       forumSelection = newSelection;

@@ -147,6 +147,14 @@
           }
         },
         {
+          "client_id": "675064809117-m0f2qcho7pfnv62209g8p56qu35a0ah0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.withcenter.philgo",
+            "certificate_hash": "aae5a76505fb1c862cb84f4130d65227623186b5"
+          }
+        },
+        {
           "client_id": "675064809117-a97j1atq6uo4g4dujqkrbe4vm7re60lq.apps.googleusercontent.com",
           "client_type": 3
         }

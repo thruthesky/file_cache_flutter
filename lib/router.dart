@@ -25,6 +25,8 @@ import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_api/philgo_api.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
 
@@ -107,14 +109,29 @@ final router = GoRouter(
       '🔍 Go_ROUTE: Redirect 체크: path=${state.fullPath}, name=${state.name} matchedLocation=${state.matchedLocation} uri=${state.uri} uri.path=${state.uri.path} uri.query=${state.uri.query}',
       name: 'Router',
     );
+    final uri = state.uri.toString();
+    final url = parsePhilgoUrl(uri);
 
-    final url = parsePhilgoUrl(state.uri.toString());
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
     /// Post view page DeepLink
     if (url?.isPostView == true) {
       NavigationState.of(context, listen: false).post = Post.fromJson({
         'idx': url?.idx,
       });
+
+      analytics.logScreenView(
+        screenName: '$uri/${(url?.idx.toString() ?? '')}',
+      );
+      return PostViewScreen.routeName;
+    }
+
+    if (state.fullPath == PostViewScreen.routeName) {
+      analytics.logScreenView(
+        screenName: state.extra != null
+            ? '$uri/${(state.extra as Post).idx}'
+            : '$uri/unknown',
+      );
       return PostViewScreen.routeName;
     }
 
@@ -125,19 +142,32 @@ final router = GoRouter(
         listen: false,
       ).setHomeNavigation(HomeNavigationItem.forum);
       NavigationState.of(context, listen: false).initialPostId = url?.postId;
+      analytics.logScreenView(screenName: 'forum/${(url?.postId ?? '')}');
       return HomeScreen.routeName;
     }
 
     /// Chat room DeepLink
     /// 채팅방 딥링크 처리 (/chat/room.php 또는 /chat/rooms.php)
     if (url?.isChatRoom == true && url?.chatRoomId != null) {
-      return ChatRoomScreen.routeName.replaceFirst(':id', url!.chatRoomId!);
+      final routeName = ChatRoomScreen.routeName.replaceFirst(
+        ':id',
+        url!.chatRoomId!,
+      );
+      analytics.logScreenView(screenName: routeName);
+      return routeName;
     }
 
     ///
     if (state.fullPath == ChatRoomScreen.routeName) {
       Globals.screenName = 'ChatRoomScreen';
       Globals.screenId = state.pathParameters['id'] ?? '';
+
+      analytics.logScreenView(
+        screenName: ChatRoomScreen.routeName.replaceFirst(
+          ':id',
+          Globals.screenId,
+        ),
+      );
     }
 
     /// Authentication check
