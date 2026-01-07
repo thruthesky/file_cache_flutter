@@ -179,7 +179,7 @@ export 'src/post/widgets/post.view.images.dart';
 // export 'src/post/widgets/post.view.youtubes.dart';
 // export 'src/post/widgets/post.youtube.normal.player.dart';
 // export 'src/post/widgets/post.youtube.shorts.player.dart';
-export 'src/post/widgets/post.view.disaply_youtubes.dart';
+export 'src/post/widgets/post.view.display_youtubes.dart';
 
 // =============================================================================
 // Receive Share - 공유 받기
