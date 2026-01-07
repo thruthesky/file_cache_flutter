@@ -21,6 +21,8 @@ class MenuGridItem extends StatelessWidget {
     required this.onTap,
     this.isDanger = false,
     this.width,
+    this.backgroundColor,
+    this.iconColor,
   });
 
   /// 아이콘 (Icon to display)
@@ -38,6 +40,14 @@ class MenuGridItem extends StatelessWidget {
   /// 아이템 너비 - null이면 자동 계산 (Item width - auto-calculated if null)
   final double? width;
 
+  /// 아이콘 배경색 (Icon background color)
+  /// 기본값: primaryContainer
+  final Color? backgroundColor;
+
+  /// 아이콘 색상 (Icon color)
+  /// 기본값: onPrimaryContainer
+  final Color? iconColor;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -46,9 +56,13 @@ class MenuGridItem extends StatelessWidget {
     // 아이템 너비: 화면 너비에 따라 4등분 (패딩 고려)
     // Item width: divided into 4 columns based on screen width
     final screenWidth = MediaQuery.of(context).size.width;
-    final itemWidth = width ?? ((screenWidth - 32 - 16) / 4); // 32: 양쪽 패딩, 16: 섹션 패딩
+    final itemWidth =
+        width ?? ((screenWidth - 32 - 16) / 4); // 32: 양쪽 패딩, 16: 섹션 패딩
 
     // 그라데이션 색상 설정 (Gradient color setup)
+    // backgroundColor가 지정되면 gradient 사용 안 함
+    // Don't use gradient if backgroundColor is specified
+    final useGradient = backgroundColor == null;
     final gradientColors = isDanger
         ? [
             scheme.error.withValues(alpha: 0.15),
@@ -77,17 +91,22 @@ class MenuGridItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               /// 아이콘 컨테이너 (Icon container)
-              /// 현대적 디자인: 그라데이션 배경, 큰 둥근 모서리
+              /// 현대적 디자인: 그라데이션 배경 또는 커스텀 배경색
+              /// backgroundColor가 지정되면 gradient 대신 해당 색상 사용
               Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  // 부드러운 그라데이션 배경
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: gradientColors,
-                  ),
+                  // backgroundColor가 지정되면 해당 색상 사용, 아니면 null (gradient 사용)
+                  color: backgroundColor,
+                  // backgroundColor가 없을 때만 gradient 적용
+                  gradient: useGradient
+                      ? LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: gradientColors,
+                        )
+                      : null,
                   // 둥근 원형에 가까운 모서리
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -95,7 +114,9 @@ class MenuGridItem extends StatelessWidget {
                   child: FaIcon(
                     icon,
                     size: 20,
-                    color: isDanger ? scheme.error : scheme.primary,
+                    color:
+                        iconColor ??
+                        (isDanger ? scheme.error : scheme.onPrimaryContainer),
                   ),
                 ),
               ),

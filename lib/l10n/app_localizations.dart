@@ -3035,6 +3035,12 @@ abstract class Lo {
   /// **'All Menu'**
   String get quickMenuAllMenu;
 
+  /// Quick menu must-read information label
+  ///
+  /// In en, this message translates to:
+  /// **'Importants'**
+  String get quickMenuMustReadInfo;
+
   /// Philippine life information section title in menu
   ///
   /// In en, this message translates to:

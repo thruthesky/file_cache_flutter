@@ -8,6 +8,7 @@ import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
+import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/essential/essential_info.screen.dart';
@@ -151,6 +152,15 @@ class _MenuHomeState extends State<MenuHome> {
                   title: l10n.philippineLifeInfo,
                   children: [
                     MenuGridItem(
+                      icon: FontAwesomeIcons.starShooting,
+                      title: l10n.quickMenuMustReadInfo,
+                      onTap: () => context.push(MustReadScreen.routeName),
+
+                      /// 강조 표시: tertiaryContainer 색상 사용
+                      backgroundColor: scheme.tertiaryContainer,
+                      iconColor: scheme.onTertiaryContainer,
+                    ),
+                    MenuGridItem(
                       icon: FontAwesomeIcons.bullhorn,
                       title: l10n.quickMenuNotice,
                       onTap: () => showFullScreen(
@@ -234,12 +244,14 @@ class _MenuHomeState extends State<MenuHome> {
                     MenuGridItem(
                       icon: FontAwesomeIcons.clockRotateLeft,
                       title: l10n.myPosts,
-                      onTap: () => UserActivityScreen.push(context, uid: myUid()),
+                      onTap: () =>
+                          UserActivityScreen.push(context, uid: myUid()),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.penToSquare,
                       title: l10n.writePost,
-                      onTap: () => showPostCreateDialog(context, postId: 'freetalk'),
+                      onTap: () =>
+                          showPostCreateScreen(context, postId: 'freetalk'),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.magnifyingGlass,

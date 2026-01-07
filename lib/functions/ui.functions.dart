@@ -63,6 +63,7 @@ enum SlideDirection {
 ///   slideDirection: SlideDirection.bottomToTop,
 /// );
 /// ```
+@Deprecated('Dialog 로 보여주니 문제가 많다. GoRouter 패키지의 context.push() 로 보여주도록 변경한다.')
 Future<T?> showFullScreen<T>(
   BuildContext context, {
   required Widget child,
@@ -125,7 +126,7 @@ Future<T?> showFullScreen<T>(
   );
 }
 
-/// 글쓰기 다이얼로그 표시
+/// 글쓰기 페이지(전체 화면) 표시
 /// Shows PostCreateForm dialog using showGeneralDialog
 ///
 /// [context] BuildContext for dialog
@@ -135,7 +136,7 @@ Future<T?> showFullScreen<T>(
 ///
 /// 사용 예시 / Usage example:
 /// ```dart
-/// showPostCreateDialog(
+/// showPostCreateScreen(
 ///   context,
 ///   postId: 'freetalk',
 ///   category: null,
@@ -145,7 +146,7 @@ Future<T?> showFullScreen<T>(
 ///   },
 /// );
 /// ```
-void showPostCreateDialog(
+void showPostCreateScreen(
   BuildContext context, {
   required String postId,
   String? category,
@@ -181,7 +182,7 @@ void showPostCreateDialog(
   );
 }
 
-/// 글 수정 다이얼로그 표시
+/// 글 수정 화면(페이지) 표시
 /// Shows PostUpdateScreen using Navigator.push
 ///
 /// [context] BuildContext for navigation
@@ -190,7 +191,7 @@ void showPostCreateDialog(
 ///
 /// 사용 예시 / Usage example:
 /// ```dart
-/// showPostUpdateDialog(
+/// showPostUpdateScreen(
 ///   context,
 ///   post: myPost,
 ///   onUpdated: (updatedPost) {
@@ -198,7 +199,7 @@ void showPostCreateDialog(
 ///   },
 /// );
 /// ```
-Future<Post?> showPostUpdateDialog(
+Future<Post?> showPostUpdateScreen(
   BuildContext context, {
   required Post post,
   void Function(Post post)? onUpdated,

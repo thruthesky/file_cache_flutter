@@ -1853,6 +1853,10 @@
   "@quickMenuAllMenu": {
     "description": "Quick menu all menu label"
   },
+  "quickMenuMustReadInfo": "Importants",
+  "@quickMenuMustReadInfo": {
+    "description": "Quick menu must-read information label"
+  },
   "philippineLifeInfo": "Philippine Life Info",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"

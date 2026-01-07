@@ -10,6 +10,7 @@ import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
+import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -386,6 +387,11 @@ final router = GoRouter(
       path: WeatherScreen.routeName,
       name: WeatherScreen.routeName,
       builder: (context, state) => const WeatherScreen(),
+    ),
+    GoRoute(
+      path: MustReadScreen.routeName,
+      name: MustReadScreen.routeName,
+      builder: (context, state) => const MustReadScreen(),
     ),
   ],
 );

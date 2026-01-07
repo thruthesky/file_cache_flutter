@@ -198,7 +198,7 @@ class _ForumHomeState extends State<ForumHome> {
             selectedPostId: forumSelection.postId,
             selectedCategory: forumSelection.category,
             onCategorySelected: _onCategoryChanged,
-            onCreatePost: _showPostCreateDialog,
+            onCreatePost: _showPostCreateScreen,
           ),
         ),
       ),
@@ -240,8 +240,8 @@ class _ForumHomeState extends State<ForumHome> {
 
   /// 글쓰기 다이얼로그 표시
   /// Show post create dialog
-  void _showPostCreateDialog() {
-    showPostCreateDialog(
+  void _showPostCreateScreen() {
+    showPostCreateScreen(
       context,
       postId: forumSelection.postId,
       category: forumSelection.category,
@@ -274,7 +274,7 @@ class _ForumHomeState extends State<ForumHome> {
       right: 16,
       bottom: 16,
       child: ComicFab(
-        onPressed: _showPostCreateDialog,
+        onPressed: _showPostCreateScreen,
         tooltip: 'Write Post',
         child: const FaIcon(FontAwesomeIcons.plus),
       ),

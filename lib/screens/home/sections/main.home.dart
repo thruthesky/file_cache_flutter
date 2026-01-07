@@ -237,7 +237,7 @@ class _MainHomeState extends State<MainHome> {
                     } else {
                       /// 서브 카테고리가 없으면 바로 글쓰기 다이얼로그 표시
                       /// If no sub-categories, show post create dialog directly
-                      showPostCreateDialog(context, postId: postId);
+                      showPostCreateScreen(context, postId: postId);
                     }
                   },
                 );
@@ -335,7 +335,7 @@ class _MainHomeState extends State<MainHome> {
 
                     /// 글쓰기 다이얼로그 표시
                     /// Show post create dialog
-                    showPostCreateDialog(
+                    showPostCreateScreen(
                       context,
                       postId: postId,
                       category: category,

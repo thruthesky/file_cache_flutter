@@ -1817,5 +1817,9 @@
   "videoUnavailable": "视频不可用",
   "@videoUnavailable": {
     "description": "Error message when YouTube video cannot be loaded"
+  },
+  "quickMenuMustReadInfo": "必读",
+  "@quickMenuMustReadInfo": {
+    "description": "Quick menu must-read information label"
   }
 }
