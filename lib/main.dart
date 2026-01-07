@@ -118,6 +118,8 @@ class _MyAppState extends State<MyApp> {
       // Timer(Duration(seconds: 1), showUpgradeDialog);
       // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
     });
+
+    FirebaseAnalytics.instance.logAppOpen();
   }
 
   @override
