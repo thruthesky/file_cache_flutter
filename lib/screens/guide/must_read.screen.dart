@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/functions/ui.functions.dart';
+import 'package:philgo/data/philippine_life_info.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
-import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
-import 'package:philgo/screens/info/essential/essential_info.screen.dart';
-import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
-import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
-import 'package:philgo/screens/info/notice/notice.screen.dart';
-import 'package:philgo/screens/info/travel/travel_info.screen.dart';
-import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/widgets/home/menu/menu.grid_item.dart';
 import 'package:philgo/widgets/home/menu/menu.grid_section.dart';
@@ -43,7 +36,6 @@ class _MustReadScreenState extends State<MustReadScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = Lo.of(context)!;
-    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -63,45 +55,18 @@ class _MustReadScreenState extends State<MustReadScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// 필리핀 생활 정보 섹션 (Philippine Life Info Section)
+            /// PhilippineLifeInfoData를 사용하여 메뉴 아이템 생성
             MenuGridSection(
               title: l10n.philippineLifeInfo,
-              children: [
-                MenuGridItem(
-                  icon: FontAwesomeIcons.bullhorn,
-                  title: l10n.quickMenuNotice,
-                  onTap: () => context.push(NoticeScreen.routeName),
-                ),
-                MenuGridItem(
-                  icon: FontAwesomeIcons.coins,
-                  title: l10n.quickMenuExchangeRate,
-                  onTap: () => context.push(ExchangeRateScreen.routeName),
-                ),
-                MenuGridItem(
-                  icon: FontAwesomeIcons.cloudSun,
-                  title: l10n.quickMenuWeather,
-                  onTap: () => context.push(WeatherScreen.routeName),
-                ),
-                MenuGridItem(
-                  icon: FontAwesomeIcons.phoneVolume,
-                  title: l10n.quickMenuEmergency,
-                  onTap: () => context.push(EmergencyContactScreen.routeName),
-                ),
-                MenuGridItem(
-                  icon: FontAwesomeIcons.circleInfo,
-                  title: l10n.quickMenuEssentialInfo,
-                  onTap: () => context.push(EssentialInfoScreen.routeName),
-                ),
-                MenuGridItem(
-                  icon: FontAwesomeIcons.calendarDays,
-                  title: l10n.quickMenuMonthlyLiving,
-                  onTap: () => context.push(MonthlyLivingScreen.routeName),
-                ),
-                MenuGridItem(
-                  icon: FontAwesomeIcons.umbrellaBeach,
-                  title: l10n.quickMenuTravel,
-                  onTap: () => context.push(TravelInfoScreen.routeName),
-                ),
-              ],
+              children: PhilippineLifeInfoData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => context.push(item.routeName),
+                    ),
+                  )
+                  .toList(),
             ),
           ],
         ),
