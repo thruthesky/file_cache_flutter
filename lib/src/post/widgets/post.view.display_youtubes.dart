@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:omni_video_player/omni_video_player.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -40,6 +41,12 @@ class _PostViewDisplayYouTubesState extends State<PostViewDisplayYouTubes> {
         oldWidget.post.varchar19 != widget.post.varchar19) {
       _extractYoutubeUrls();
     }
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
+    super.dispose();
   }
 
   /// Extract YouTube URLs from post content and varchar19 field
@@ -95,24 +102,25 @@ class _PostViewDisplayYouTubesState extends State<PostViewDisplayYouTubes> {
       videoSourceConfiguration: videoSourceConfig,
     );
 
-    // Create empty callbacks (required parameter)
-    const callbacks = VideoPlayerCallbacks();
+    final callbacks = VideoPlayerCallbacks(
+      onFullScreenToggled: (isGoingFullScreen) async {
+        if (!isGoingFullScreen) {
+          await Future.delayed(const Duration(milliseconds: 400));
+          await SystemChrome.setPreferredOrientations([
+            DeviceOrientation.portraitUp,
+          ]);
+        }
+      },
+    );
 
     // For Shorts, use a constrained height with 9:16 aspect ratio
     // No border radius, no padding - edge to edge display
     if (info.isShorts) {
-      return Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.7,
-          ),
-          child: AspectRatio(
-            aspectRatio: 9 / 16,
-            child: OmniVideoPlayer(
-              configuration: playerConfig,
-              callbacks: callbacks,
-            ),
-          ),
+      return AspectRatio(
+        aspectRatio: 9 / 16,
+        child: OmniVideoPlayer(
+          configuration: playerConfig,
+          callbacks: callbacks,
         ),
       );
     }
@@ -121,10 +129,7 @@ class _PostViewDisplayYouTubesState extends State<PostViewDisplayYouTubes> {
     // No border radius, no padding - edge to edge display
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: OmniVideoPlayer(
-        configuration: playerConfig,
-        callbacks: callbacks,
-      ),
+      child: OmniVideoPlayer(configuration: playerConfig, callbacks: callbacks),
     );
   }
 }
