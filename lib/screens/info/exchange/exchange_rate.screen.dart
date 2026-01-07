@@ -433,30 +433,34 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                       ),
 
                       /// 환율 값 (Rate value)
-                      /// 고정 너비로 세로 정렬 (Fixed width for vertical alignment)
-                      SizedBox(
-                        width: 70,
+                      /// 폭을 유연하게 처리해 오버플로우 방지 (Flexible width to avoid overflow)
+                      Flexible(
+                        flex: 3,
                         child: Text(
                           _currencyService.formatAmount(rate, targetCurrency),
-                          style: theme.textTheme.titleMedium?.copyWith(
+                          style: theme.textTheme.titleSmall?.copyWith(
                             color: accentColor,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.right,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
 
                       SizedBox(width: sp.s8),
 
                       /// 통화명 (Currency name)
-                      /// 고정 너비로 세로 정렬 (Fixed width for vertical alignment)
-                      SizedBox(
-                        width: 56,
+                      /// 한 줄 표시 (Single line)
+                      Flexible(
+                        flex: 3,
                         child: Text(
                           targetName,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

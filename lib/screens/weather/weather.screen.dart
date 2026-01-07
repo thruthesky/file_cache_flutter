@@ -88,8 +88,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
       body: _isLoading
           ? _buildLoadingState(scheme)
           : _errorMessage != null
-              ? _buildErrorState(scheme, theme, sp)
-              : _buildContent(context, theme, scheme, sp),
+          ? _buildErrorState(scheme, theme, sp)
+          : _buildContent(context, theme, scheme, sp),
     );
   }
 
@@ -100,7 +100,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        icon: FaIcon(FontAwesomeIcons.lightChevronLeft, color: scheme.onSurface),
+        icon: FaIcon(FontAwesomeIcons.lightXmark, color: scheme.onSurface),
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: Text(
@@ -217,10 +217,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ],
         ),
       ),
-    )
-        .animate()
-        .fadeIn(duration: 300.ms)
-        .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
   /// 헤더 행 빌드 (Build header row)
@@ -417,11 +414,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           /// 날씨 아이콘 (Weather icon)
-          FaIcon(
-            icon,
-            size: 18,
-            color: color,
-          ),
+          FaIcon(icon, size: 18, color: color),
           SizedBox(height: sp.s4),
 
           /// 온도 (Temperature)
