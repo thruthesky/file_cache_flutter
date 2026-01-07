@@ -1813,5 +1813,9 @@
   "notification": "通知",
   "@notification": {
     "description": "Notification label for notification icon button"
+  },
+  "videoUnavailable": "動画を利用できません",
+  "@videoUnavailable": {
+    "description": "Error message when YouTube video cannot be loaded"
   }
 }

@@ -10,6 +10,7 @@ import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
 import 'package:philgo/widgets/home/main/home_quick_menu_section.dart';
+import 'package:philgo/widgets/home/main/home_quick_post_box.dart';
 import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
@@ -78,6 +79,12 @@ class _MainHomeState extends State<MainHome> {
             SliverToBoxAdapter(
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
+
+            /// [빠른 글쓰기 박스] - 클릭 시 글쓰기 화면으로 이동
+            /// Quick Post Box - Navigate to post creation screen on tap
+            /// 가짜 입력 박스로 사용자의 글쓰기 참여를 유도합니다.
+            /// Fake input box to encourage user participation in posting.
+            const SliverToBoxAdapter(child: HomeQuickPostBox()),
 
             /// [퀵 메뉴 섹션] - 필리핀 생활 필수 정보 바로가기
             /// Quick Menu Section - Quick access to essential Philippines living info
@@ -168,7 +175,7 @@ class _MainHomeState extends State<MainHome> {
         return AlertDialog(
           /// 다이얼로그 제목
           /// Dialog title
-          title: Text('게시판 선택', style: theme.textTheme.titleLarge),
+          title: Text('글 쓰기 게시판 선택', style: theme.textTheme.titleLarge),
 
           /// 다이얼로그 내용: Major 카테고리 목록
           /// Dialog content: Major category list
@@ -195,6 +202,13 @@ class _MainHomeState extends State<MainHome> {
                 final localizedName = philgoTr(context, postId);
 
                 return ListTile(
+                  /// 카테고리 이모지
+                  /// Category emoji
+                  leading: Text(
+                    PhilgoCategory.emoji(postId),
+                    style: const TextStyle(fontSize: 24),
+                  ),
+
                   /// 카테고리 이름
                   /// Category name
                   title: Text(localizedName),
@@ -260,9 +274,37 @@ class _MainHomeState extends State<MainHome> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          /// 다이얼로그 제목: Major 카테고리 이름
-          /// Dialog title: Major category name
-          title: Text(localizedMainCategory, style: theme.textTheme.titleLarge),
+          /// 다이얼로그 제목: 백버튼 + Major 카테고리 이름
+          /// Dialog title: Back button + Major category name
+          title: Row(
+            children: [
+              /// 백버튼 아이콘 - Major 카테고리 다이얼로그로 돌아가기
+              /// Back button icon - Return to major category dialog
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showCategoryDialog(context);
+                },
+                icon: FaIcon(
+                  FontAwesomeIcons.arrowLeft,
+                  size: 18,
+                  color: theme.colorScheme.onSurface,
+                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              const SizedBox(width: 8),
+
+              /// 1차 카테고리 이름
+              /// Major category name
+              Expanded(
+                child: Text(
+                  localizedMainCategory,
+                  style: theme.textTheme.titleLarge,
+                ),
+              ),
+            ],
+          ),
 
           /// 다이얼로그 내용: 서브 카테고리 목록
           /// Dialog content: Sub-category list
@@ -279,6 +321,12 @@ class _MainHomeState extends State<MainHome> {
                 final localizedSubCategory = philgoTr(context, category);
 
                 return ListTile(
+                  /// 서브 카테고리 이모지
+                  /// Sub-category emoji
+                  leading: Text(
+                    PhilgoCategory.emoji(category),
+                    style: const TextStyle(fontSize: 24),
+                  ),
                   title: Text(localizedSubCategory),
                   onTap: () {
                     /// 다이얼로그 닫기

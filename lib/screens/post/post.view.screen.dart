@@ -1,17 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/widgets/post_blocked_user_info.dart';
+import 'package:philgo/screens/post/widgets/post_view_app_bar.dart';
 import 'package:philgo/screens/post/widgets/post_view_buttons.dart';
 import 'package:philgo/screens/post/widgets/post_view_comment_box.dart';
-import 'package:philgo/screens/post/widgets/post_view_app_bar.dart';
 import 'package:philgo/screens/post/widgets/post_view_meta.dart';
 import 'package:philgo/screens/post/widgets/post_view_subject.dart';
 import 'package:philgo/screens/post/widgets/sliver_comment_list.dart';
 import 'package:philgo/widgets/unfocus_on_tap.dart';
 import 'package:philgo_api/philgo_api.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 /// Post View Screen
 ///
@@ -51,12 +51,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     post = widget.post;
     _scrollController = ScrollController();
     // Listen to focus changes to auto-scroll when textfield is focused
     _commentFocusNode.addListener(_onFocusChange);
-
+    SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
     loadPost();
   }
 
@@ -82,6 +81,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     _commentFocusNode.removeListener(_onFocusChange);
     _scrollController.dispose();
     _commentFocusNode.dispose();
+    SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
     super.dispose();
   }
 
@@ -89,8 +89,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
   Future<void> loadPost() async {
     try {
       final details = await getPost(widget.post.idx);
-
-      // debugLog('------> LOADED POST: $details');
 
       if (mounted) {
         setState(() {
@@ -305,7 +303,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                           SizedBox(height: 16),
 
-                          PostViewYoutubes(post: post!),
+                          PostViewDisplayYouTubes(post: post!),
 
                           /// Files (images, videos, and other files) first (if available)
                           if (hasFiles) ...[

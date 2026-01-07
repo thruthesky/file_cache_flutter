@@ -1554,4 +1554,7 @@ class LoKo extends Lo {
 
   @override
   String get forumOther => '기타';
+
+  @override
+  String get videoUnavailable => '동영상을 사용할 수 없습니다';
 }
