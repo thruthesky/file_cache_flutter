@@ -41,9 +41,8 @@ import 'dart:io';
 ///
 /// [data] 요청 데이터 맵
 /// 반환값: 토큰이 추가된 요청 데이터 맵
-typedef TokenPatcher = Future<Map<String, dynamic>> Function(
-  Map<String, dynamic> data,
-);
+typedef TokenPatcher =
+    Future<Map<String, dynamic>> Function(Map<String, dynamic> data);
 
 /// PhilGo PHP API 서버에 최소 의존성으로 접속하여 데이터를 송/수신하는 함수
 ///
@@ -163,10 +162,7 @@ Future<Map<String, dynamic>> apiCall(
       final errorMessage =
           'HTTP ${response.statusCode}: ${response.reasonPhrase}\n'
           '응답: $responseBody';
-      log(
-        'apiCall() 에러: $errorMessage',
-        name: 'apiCall::$functionName',
-      );
+      log('apiCall() 에러: $errorMessage', name: 'apiCall::$functionName');
       throw Exception(errorMessage);
     }
 
@@ -184,10 +180,7 @@ Future<Map<String, dynamic>> apiCall(
 
     // 9. 디버그 모드일 때 응답 로깅
     if (debug) {
-      log(
-        'apiCall() 응답: $json',
-        name: 'apiCall::$functionName',
-      );
+      log('apiCall() 응답: $json', name: 'apiCall::$functionName');
     }
 
     // 10. API 소프트 에러 처리
@@ -203,10 +196,15 @@ Future<Map<String, dynamic>> apiCall(
     return json;
   } catch (e) {
     // 네트워크 에러, 타임아웃 등 예외 처리
+    // GET URL 형태로 로깅하여 브라우저에서 직접 테스트 가능하도록 함
+    final stringParams = finalData.map(
+      (key, value) => MapEntry(key, value?.toString() ?? ''),
+    );
     log(
-      'apiCall() 예외: $e',
+      'apiCall() GET URL: $url?${Uri(queryParameters: stringParams).query}',
       name: 'apiCall::$functionName',
     );
+    log('apiCall() 예외: $e', name: 'apiCall::$functionName');
     rethrow;
   } finally {
     // HttpClient 리소스 해제

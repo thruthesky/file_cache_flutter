@@ -1,6 +1,58 @@
 // import 'dart:developer';
 
+import 'package:file_cache_flutter/file_cache_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
+
+/// 인기글 목록 캐시용 래퍼 클래스 (Popular posts cache wrapper class)
+///
+/// FileCache가 단일 객체의 fromJson/toJson을 요구하므로
+/// List<Post>를 감싸는 래퍼 클래스가 필요합니다.
+class PopularPostsCache {
+  final List<Post> posts;
+  final DateTime fetchedAt;
+
+  PopularPostsCache({required this.posts, required this.fetchedAt});
+
+  factory PopularPostsCache.fromJson(Map<String, dynamic> json) {
+    return PopularPostsCache(
+      posts: (json['posts'] as List<dynamic>)
+          .map((e) => Post.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      fetchedAt: DateTime.parse(json['fetchedAt'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'posts': posts.map((e) => e.toJson()).toList(),
+    'fetchedAt': fetchedAt.toIso8601String(),
+  };
+}
+
+/// 인기글 캐시 인스턴스 (Popular posts cache instance)
+///
+/// - cacheName: 'popular_posts'
+/// - TTL: 24시간 (24 hours)
+/// - 메모리 캐시 사용: 빠른 접근을 위해 활성화
+final _popularPostsCache = FileCache<PopularPostsCache>(
+  cacheName: 'popular_posts',
+  fromJson: PopularPostsCache.fromJson,
+  toJson: (data) => data.toJson(),
+  defaultTtl: Duration(hours: 24),
+  useMemoryCache: true,
+  cacheRootName: 'philgo_cache',
+);
+
+/// 인기글 캐시 키 생성 (Generate popular posts cache key)
+String _getPopularPostsCacheKey({
+  int limit = 5,
+  int withinDays = 7,
+  String? postId,
+  String? category,
+}) {
+  final safePostId = postId ?? 'all';
+  final safeCategory = category ?? 'all';
+  return 'popular_${safePostId}_${safeCategory}_${limit}_$withinDays';
+}
 
 List<String?> getEnvironmentalPostId(String? postId, String? category) {
   if (PhilgoConfig.isDevelopment) {
@@ -962,4 +1014,97 @@ Future<Post> extendPointAdvertisement({
     // 에러를 상위로 다시 전파
     rethrow;
   }
+}
+
+/// 인기글 조회 함수 (Popular Posts)
+///
+/// 최근 N일간 댓글이 많은 순으로 인기글을 조회합니다.
+/// 홈 화면, 인기글 섹션 등에서 재사용 가능합니다.
+///
+/// Fetches popular posts sorted by comment count within last N days.
+/// Reusable for home screen, popular posts section, etc.
+///
+/// ## 매개변수
+///
+/// - [limit]: 가져올 게시글 수 (기본값: 5)
+///   - Number of posts to fetch (default: 5)
+///
+/// - [withinDays]: 최근 N일 이내의 글 (기본값: 7)
+///   - Posts within N days (default: 7)
+///
+/// - [postId]: 특정 게시판만 조회 (옵션)
+///   - Filter by specific board (optional)
+///
+/// - [category]: 특정 카테고리만 조회 (옵션)
+///   - Filter by specific category (optional)
+///
+/// - [debug]: 디버그 모드 (기본값: false)
+///   - Debug mode (default: false)
+///
+/// ## 반환값
+///
+/// `List<Post>` - 댓글 많은 순 → 최신순으로 정렬된 게시글 목록
+///
+/// ## 사용 예시
+///
+/// ```dart
+/// // 최근 7일간 인기글 5개 조회
+/// final popularPosts = await getPopularPosts();
+///
+/// // 최근 30일간 인기글 10개 조회
+/// final popularPosts = await getPopularPosts(limit: 10, withinDays: 30);
+///
+/// // 특정 게시판의 인기글 조회
+/// final popularPosts = await getPopularPosts(postId: 'freetalk');
+///
+/// // 캐시 무시하고 서버에서 새로 가져오기
+/// final popularPosts = await getPopularPosts(ignoreCache: true);
+/// ```
+Future<List<Post>> getPopularPosts({
+  int limit = 5,
+  int withinDays = 7,
+  String? postId,
+  String? category,
+  bool debug = false,
+  bool ignoreCache = false,
+}) async {
+  final cacheKey = _getPopularPostsCacheKey(
+    limit: limit,
+    withinDays: withinDays,
+    postId: postId,
+    category: category,
+  );
+
+  // 캐시 확인 (Check cache first)
+  if (!ignoreCache) {
+    final cached = await _popularPostsCache.get(cacheKey);
+    if (cached != null) {
+      d('[PopularPosts] 캐시 히트 - key: $cacheKey, posts: ${cached.posts.length}');
+      return cached.posts;
+    }
+    d('[PopularPosts] 캐시 미스 - key: $cacheKey');
+  }
+
+  // 서버에서 인기글 조회 (Fetch from server)
+  final posts = await getPosts(
+    postId: postId,
+    category: category,
+    limit: limit,
+    page: 1,
+    orderBy: 'no_of_comment DESC, stamp DESC',
+    extraConditions: {'within_days': withinDays, 'minimal_fields': 'y'},
+    type: 'post',
+    userInfo: false,
+    stripTags: true,
+    debug: debug,
+  );
+
+  // 캐시에 저장 (Save to cache)
+  await _popularPostsCache.set(
+    cacheKey,
+    PopularPostsCache(posts: posts, fetchedAt: DateTime.now()),
+  );
+  d('[PopularPosts] 캐시 저장 완료 - key: $cacheKey, posts: ${posts.length}');
+
+  return posts;
 }
