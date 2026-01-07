@@ -64,6 +64,20 @@ class _ForumHeaderState extends State<ForumHeader> {
         ? allCategories
         : allCategories.take(12);
 
+    /// 확장 상태에 따른 조건부 스타일 변수 (컴팩트 + 현대적)
+    /// Conditional style variables based on expansion state (compact + modern)
+    ///
+    /// 확장 시: 미세한 증가만 + 배경색 레이어링으로 현대적 chip 스타일
+    /// When expanded: Minimal increase + background layering for modern chip style
+    ///
+    /// 축소 시: 완전히 컴팩트한 디자인 유지
+    /// When collapsed: Keep fully compact design
+    final buttonSpacing = _isExpanded ? 3.0 : 2.0; // 1만 증가
+    final buttonPadding = _isExpanded
+        ? const EdgeInsets.symmetric(horizontal: 8, vertical: 3) // 미세한 증가
+        : const EdgeInsets.symmetric(horizontal: 6, vertical: 2);
+    final buttonRadius = _isExpanded ? 8.0 : 4.0; // 더 현대적인 모서리
+
     return SafeArea(
       /// 좌/우/하단 safe area 여백 비활성화 (가장자리에 붙이기 위함)
       /// Disable left/right/bottom safe area padding (to stick to edges)
@@ -71,13 +85,13 @@ class _ForumHeaderState extends State<ForumHeader> {
       right: false,
       bottom: false,
       child: Wrap(
-        /// 버튼 간 가로 간격 (최소화)
-        /// Horizontal spacing between buttons (minimized)
-        spacing: 2,
+        /// 버튼 간 가로 간격 (확장 시: 3, 축소 시: 2)
+        /// Horizontal spacing between buttons (expanded: 3, collapsed: 2)
+        spacing: buttonSpacing,
 
-        /// 줄 간 세로 간격 (최소화)
-        /// Vertical spacing between rows (minimized)
-        runSpacing: 2,
+        /// 줄 간 세로 간격 (확장 시: 3, 축소 시: 2)
+        /// Vertical spacing between rows (expanded: 3, collapsed: 2)
+        runSpacing: buttonSpacing,
 
         /// 왼쪽 정렬
         /// Align to start
@@ -105,30 +119,46 @@ class _ForumHeaderState extends State<ForumHeader> {
                 widget.selectedPostId == postId &&
                 widget.selectedCategory == subcategory;
 
-            /// InkWell + Text로 완전히 콤팩트한 버튼 구현
-            /// Fully compact button using InkWell + Text (no padding/margin)
+            /// InkWell + Container로 컴팩트하면서 현대적인 버튼 구현
+            /// Compact yet modern button using InkWell + Container
+            ///
+            /// 확장 시: 모든 항목에 배경색 적용 (chip 스타일)
+            /// When expanded: Apply background to all items (chip style)
             return InkWell(
               onTap: () {
                 widget.onCategorySelected.call(postId, subcategory);
               },
 
-              /// 터치 피드백 영역을 텍스트에 맞춤
-              /// Fit touch feedback area to text
-              borderRadius: BorderRadius.circular(4),
+              /// 터치 피드백 영역을 Container와 동일한 borderRadius로 맞춤
+              /// Match touch feedback area to Container's borderRadius
+              borderRadius: BorderRadius.circular(buttonRadius),
 
               child: Container(
-                /// 선택된 카테고리는 primary 색상 배경 적용
-                /// Apply primary background for selected category
+                /// 배경색 로직 (핵심!)
+                /// Background color logic (core!)
+                ///
+                /// 확장 시: 모든 항목에 배경 적용 (선택 시 진한 primary, 비선택 시 미세한 배경)
+                /// When expanded: Apply background to all (selected: darker primary, unselected: subtle bg)
+                ///
+                /// 축소 시: 선택된 항목만 배경 적용
+                /// When collapsed: Apply background only to selected items
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? scheme.primary.withValues(alpha: 0.1)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(4),
+                  color: _isExpanded
+                      ? (isSelected
+                          ? scheme.primary
+                              .withValues(alpha: 0.12) // 확장 시 선택: 약간 더 진하게
+                          : scheme
+                              .surfaceContainerLowest) // 확장 시 비선택: 미세한 배경
+                      : (isSelected
+                          ? scheme.primary
+                              .withValues(alpha: 0.1) // 축소 시 선택: 현재 그대로
+                          : Colors.transparent), // 축소 시 비선택: 투명
+                  borderRadius: BorderRadius.circular(buttonRadius),
                 ),
 
-                /// 최소한의 패딩 (터치 영역 확보)
-                /// Minimal padding (for touch area)
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                /// 확장 상태에 따른 패딩 (확장 시: 미세하게 증가)
+                /// Padding based on expansion state (expanded: slightly increased)
+                padding: buttonPadding,
 
                 child: Text(
                   localizedName,

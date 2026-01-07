@@ -239,8 +239,39 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
                   ),
                 ),
 
-                /// 댓글 수 표시
-                /// Comment count
+                /// 좋아요 수 표시 (10개 이상이면 숫자만 붉은색)
+                /// Like count (red text if 10 or more)
+                if (post.good > 0) ...[
+                  SizedBox(width: sp.s8),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: sp.s8,
+                      vertical: sp.s4,
+                    ),
+                    decoration: BoxDecoration(
+                      /// 좋아요 수가 10개 이상이면 회색 배경
+                      /// Gray background if like count >= 10
+                      color: post.good >= 10
+                          ? scheme.surfaceContainerHighest
+                          : scheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '❤️ ${post.good}',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        /// 좋아요 수가 10개 이상이면 붉은색 텍스트
+                        /// Red text if like count >= 10
+                        color: post.good >= 10
+                            ? Colors.red.shade700
+                            : scheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+
+                /// 댓글 수 표시 (20개 이상이면 숫자만 붉은색)
+                /// Comment count (red text if 20 or more)
                 if (post.no_of_comment > 0) ...[
                   SizedBox(width: sp.s8),
                   Container(
@@ -249,13 +280,21 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
                       vertical: sp.s4,
                     ),
                     decoration: BoxDecoration(
-                      color: scheme.primaryContainer,
+                      /// 댓글 수가 20개 이상이면 회색 배경
+                      /// Gray background if comment count >= 20
+                      color: post.no_of_comment >= 20
+                          ? scheme.surfaceContainerHighest
+                          : scheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       '${post.no_of_comment}',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: scheme.onPrimaryContainer,
+                        /// 댓글 수가 20개 이상이면 붉은색 텍스트
+                        /// Red text if comment count >= 20
+                        color: post.no_of_comment >= 20
+                            ? Colors.red.shade700
+                            : scheme.onPrimaryContainer,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
