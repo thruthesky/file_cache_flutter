@@ -16,6 +16,7 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
 import 'package:provider/provider.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:omni_video_player/omni_video_player.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,8 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  OmniVideoPlayer.ensureInitialized();
 
   runApp(
     MultiProvider(

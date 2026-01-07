@@ -164,7 +164,7 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 ),
 
-                PostViewYoutubes(post: post),
+                PostViewDisplayYouTubes(post: post),
 
                 // 연락처 목록 섹션
                 // 카카오톡, 텔레그램, 전화번호, 위챗, 라인, 메신저 등

@@ -58,7 +58,9 @@ Future<void> _checkBuildNumber() async {
     // 2. API에서 버전 정보 가져오기
     // API 응답 형식:
     // {"version":"2025-12-11-14-41-07","app":{"android":{"version":"2.0.3","build_number":36},"ios":{"version":"2.0.3","build_number":36}}}
-    final versionInfo = await func('version');
+    // alertOnError: false - 네트워크 에러 발생 시 다이얼로그를 표시하지 않음
+    // 버전 체크는 백그라운드 작업이므로 에러 시 로그만 출력하고 사용자 경험을 방해하지 않음
+    final versionInfo = await func('version', alertOnError: false);
 
     // 3. 플랫폼별 최소 요구 빌드 번호 추출
     int minBuildNumber = 0;

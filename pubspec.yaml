@@ -37,6 +37,7 @@ dependencies:
   image_picker: ^1.2.0
   infinite_scroll_pagination: ^5.1.1
   intl: any
+  omni_video_player: ^4.0.0-beta
   package_info_plus: ^9.0.0
   path_provider: ^2.1.5
   philgo_api:
