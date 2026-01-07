@@ -75,15 +75,9 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
       /// Call postList API (popular posts query)
       /// - orderBy: Most comments → Most recent
       /// - extraConditions: Within 7 days, minimal fields for performance
-      final result = await getPosts(
+      final result = await getPopularPosts(
         limit: widget.limit,
-        page: 1,
-        orderBy: 'no_of_comment DESC, stamp DESC',
-        extraConditions: {
-          'within_days': widget.withinDays,
-          'minimal_fields': 'y',
-        },
-        type: 'post',
+        withinDays: widget.withinDays,
       );
 
       if (mounted) {
