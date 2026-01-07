@@ -345,5 +345,327 @@ void main() {
         }
       }
     });
+
+    testWidgets('Capture chat room interactions', (tester) async {
+      // Start the app
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Go to Chat tab
+      final chatIcon = findFaIcon(FontAwesomeIcons.thinCommentDots);
+      if (chatIcon.evaluate().isNotEmpty) {
+        await tester.tap(chatIcon);
+        await tester.pumpAndSettle();
+      }
+
+      // Favorite folders dialog
+      final favoriteFoldersButton = findFaIcon(FontAwesomeIcons.sharpSolidStar);
+      if (favoriteFoldersButton.evaluate().isNotEmpty) {
+        await tester.tap(favoriteFoldersButton);
+        await tester.pumpAndSettle();
+        await binding.takeScreenshot('19_chat_favorite_folders_dialog');
+        await tester.pump(const Duration(seconds: 1));
+
+        final closeButtons = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButtons.evaluate().isNotEmpty) {
+          await tester.tap(closeButtons.first);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // User search dialog
+      final userSearchButton = findFaIcon(
+        FontAwesomeIcons.lightUserMagnifyingGlass,
+      );
+      if (userSearchButton.evaluate().isNotEmpty) {
+        await tester.tap(userSearchButton);
+        await tester.pumpAndSettle();
+        await binding.takeScreenshot('20_chat_user_search_dialog');
+        await tester.pump(const Duration(seconds: 1));
+
+        final closeButtons = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButtons.evaluate().isNotEmpty) {
+          await tester.tap(closeButtons.first);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // Open a chat room (prefer Fred/Selrahc, fallback to first tile)
+      Finder? chatTarget;
+      final fredText = find.text('Fred');
+      final selrahcText = find.text('Selrahc');
+      final selrachcText = find.text('Selrachc');
+
+      if (fredText.evaluate().isNotEmpty) {
+        chatTarget = fredText;
+      } else if (selrahcText.evaluate().isNotEmpty) {
+        chatTarget = selrahcText;
+      } else if (selrachcText.evaluate().isNotEmpty) {
+        chatTarget = selrachcText;
+      }
+
+      if (chatTarget != null) {
+        await tester.tap(chatTarget);
+        await tester.pumpAndSettle();
+      } else {
+        final chatTiles = find.byType(ChatRoomListTile);
+        if (chatTiles.evaluate().isNotEmpty) {
+          await tester.tap(chatTiles.first);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // Wait for chat room to finish loading
+      await tester.pump(const Duration(seconds: 10));
+      await tester.pumpAndSettle();
+      await binding.takeScreenshot('21_chat_room_screen');
+      await tester.pump(const Duration(seconds: 1));
+
+      // Favorite icon button -> screenshot modal
+      Finder favoriteButton = find.byIcon(Icons.star);
+      if (favoriteButton.evaluate().isEmpty) {
+        favoriteButton = find.byIcon(Icons.star_border);
+      }
+      if (favoriteButton.evaluate().isNotEmpty) {
+        await tester.tap(favoriteButton);
+        await tester.pumpAndSettle();
+        await binding.takeScreenshot('22_chat_favorite_modal');
+        await tester.pump(const Duration(seconds: 1));
+
+        final closeButtons = find.byIcon(Icons.close);
+        if (closeButtons.evaluate().isNotEmpty) {
+          await tester.tap(closeButtons.first);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // Gear menu button -> screenshot modal
+      final settingsButton = find.byIcon(Icons.settings);
+      if (settingsButton.evaluate().isNotEmpty) {
+        await tester.tap(settingsButton);
+        await tester.pumpAndSettle();
+        await binding.takeScreenshot('23_chat_settings_menu');
+        await tester.pump(const Duration(seconds: 1));
+
+        // Close settings menu
+        final closeButtons = find.byIcon(Icons.close);
+        if (closeButtons.evaluate().isNotEmpty) {
+          await tester.tap(closeButtons.first);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // Go back to home from chat room (uses IconButton with arrow_back icon)
+      final backButton = find.byIcon(Icons.arrow_back);
+      if (backButton.evaluate().isNotEmpty) {
+        await tester.tap(backButton);
+        await tester.pumpAndSettle();
+      }
+    });
+
+    testWidgets('Capture menu screen sections', (tester) async {
+      // Start the app
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Go to Menu tab using the bottom navigation bar
+      final menuButton = find.byKey(const ValueKey('menuButton'));
+      if (menuButton.evaluate().isNotEmpty) {
+        await tester.tap(menuButton);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+      }
+
+      // === PHILIPPINE LIFE INFO SECTION ===
+
+      // 24. NOTICE - Click Notice menu item by icon
+      final noticeIcon = findFaIcon(FontAwesomeIcons.bullhorn);
+      if (noticeIcon.evaluate().isNotEmpty) {
+        await tester.tap(noticeIcon);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+        await binding.takeScreenshot('24_menu_notice_screen');
+
+        // Close using X button (FontAwesomeIcons.lightXmark)
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 25. EXCHANGE RATE - Click Exchange menu item by icon (wait 15 seconds)
+      final exchangeIcon = findFaIcon(FontAwesomeIcons.coins);
+      if (exchangeIcon.evaluate().isNotEmpty) {
+        await tester.tap(exchangeIcon);
+        await tester.pumpAndSettle();
+
+        // Wait 15 seconds for exchange rate data to load
+        await tester.pump(const Duration(seconds: 15));
+        await binding.takeScreenshot('25_menu_exchange_rate_screen');
+
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 26. WEATHER - Click Weather menu item by icon (API loading)
+      final weatherIcon = findFaIcon(FontAwesomeIcons.cloudSun);
+      if (weatherIcon.evaluate().isNotEmpty) {
+        await tester.tap(weatherIcon);
+        await tester.pumpAndSettle();
+
+        // Wait longer for weather API to load (5 cities)
+        await tester.pump(const Duration(seconds: 5));
+        await binding.takeScreenshot('26_menu_weather_screen');
+
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 27. EMERGENCY - Click Emergency menu item by icon
+      final emergencyIcon = findFaIcon(FontAwesomeIcons.phoneVolume);
+      if (emergencyIcon.evaluate().isNotEmpty) {
+        await tester.tap(emergencyIcon);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 2));
+        await binding.takeScreenshot('27_menu_emergency_screen');
+
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 28. ESSENTIAL INFO - Click Essential menu item by icon (first circleInfo)
+      final essentialIcons = findFaIcon(FontAwesomeIcons.circleInfo);
+      if (essentialIcons.evaluate().isNotEmpty) {
+        // Tap the first circleInfo icon (Essential Info)
+        await tester.tap(essentialIcons.first);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 2));
+        await binding.takeScreenshot('28_menu_essential_info_screen');
+
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 29. MONTHLY LIVING - Click Monthly menu item by icon
+      final monthlyIcon = findFaIcon(FontAwesomeIcons.calendarDays);
+      if (monthlyIcon.evaluate().isNotEmpty) {
+        await tester.tap(monthlyIcon);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+        await binding.takeScreenshot('29_menu_monthly_living_screen');
+
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 30. TRAVEL INFO - Click Travel menu item by icon (umbrellaBeach)
+      final travelIcon = findFaIcon(FontAwesomeIcons.umbrellaBeach);
+      if (travelIcon.evaluate().isNotEmpty) {
+        await tester.tap(travelIcon);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+        await binding.takeScreenshot('30_menu_travel_info_screen');
+
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // === MY ACTIVITY SECTION ===
+      // Scroll down to reveal My Activity section items
+
+      // 31. EDIT PROFILE - Scroll to and click Edit Profile by icon (wait for animations)
+      final editProfileIcon = findFaIcon(FontAwesomeIcons.user);
+      await tester.ensureVisible(editProfileIcon);
+      await tester.pumpAndSettle();
+
+      if (editProfileIcon.evaluate().isNotEmpty) {
+        await tester.tap(editProfileIcon);
+        await tester.pumpAndSettle();
+
+        // Wait for animations to complete
+        await tester.pump(const Duration(seconds: 2));
+        await binding.takeScreenshot('31_menu_edit_profile_screen');
+
+        final backButton = find.byType(BackButton);
+        if (backButton.evaluate().isNotEmpty) {
+          await tester.tap(backButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 32. MY POSTS - Scroll to and click My Posts by icon (wait for animations)
+      final myPostsIcon = findFaIcon(FontAwesomeIcons.clockRotateLeft);
+      await tester.ensureVisible(myPostsIcon);
+      await tester.pumpAndSettle();
+
+      if (myPostsIcon.evaluate().isNotEmpty) {
+        await tester.tap(myPostsIcon);
+        await tester.pumpAndSettle();
+
+        // Wait for animations to complete
+        await tester.pump(const Duration(seconds: 2));
+        await binding.takeScreenshot('32_menu_my_posts_screen');
+
+        final backButton = find.byType(BackButton);
+        if (backButton.evaluate().isNotEmpty) {
+          await tester.tap(backButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 33. SEARCH FRIENDS - Scroll to and click Search Friends by icon
+      final searchFriendsIcon = findFaIcon(FontAwesomeIcons.magnifyingGlass);
+      await tester.ensureVisible(searchFriendsIcon);
+      await tester.pumpAndSettle();
+
+      if (searchFriendsIcon.evaluate().isNotEmpty) {
+        await tester.tap(searchFriendsIcon);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+        await binding.takeScreenshot('33_menu_search_friends_dialog');
+
+        // Close dialog using lightXmark icon
+        final closeButton = findFaIcon(FontAwesomeIcons.lightXmark);
+        if (closeButton.evaluate().isNotEmpty) {
+          await tester.tap(closeButton);
+          await tester.pumpAndSettle();
+        }
+      }
+
+      // 34. BLOCKED USERS - Scroll to and click Blocked Users by icon
+      final blockedUsersIcon = findFaIcon(FontAwesomeIcons.usersSlash);
+      await tester.ensureVisible(blockedUsersIcon);
+      await tester.pumpAndSettle();
+
+      if (blockedUsersIcon.evaluate().isNotEmpty) {
+        await tester.tap(blockedUsersIcon);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
+        await binding.takeScreenshot('34_menu_blocked_users_dialog');
+
+        // Close dialog - No close button in blocked users list, tap outside or use barrier
+        await tester.tapAt(const Offset(10, 10));
+        await tester.pumpAndSettle();
+      }
+    });
   });
 }
