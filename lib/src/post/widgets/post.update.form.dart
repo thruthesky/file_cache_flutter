@@ -518,6 +518,8 @@ class PostUpdateFormState extends State<PostUpdateForm> {
         const Spacer(),
 
         PointSelectionButton(
+          postId: widget.post.post_id,
+          category: widget.post.category,
           update: true,
           onDaysSelected: (days) => setState(() => advertisementDays = days),
           disabled: _isLoading || _uploadingCount > 0,

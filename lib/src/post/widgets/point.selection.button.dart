@@ -26,6 +26,9 @@ import 'package:provider/provider.dart';
 /// )
 /// ```
 class PointSelectionButton extends StatefulWidget {
+  final String postId;
+  final String? category;
+
   /// 광고 일수 선택 시 콜백 (null이면 선택 해제)
   final Function(int? days)? onDaysSelected;
 
@@ -36,6 +39,8 @@ class PointSelectionButton extends StatefulWidget {
 
   const PointSelectionButton({
     super.key,
+    required this.postId,
+    required this.category,
     this.update = false,
     this.onDaysSelected,
     this.disabled = false,
@@ -55,6 +60,14 @@ class _PointSelectionButtonState extends State<PointSelectionButton> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+
+    if (!isPointAdvertisementAllowed(
+      context: context,
+      postId: widget.postId,
+      category: widget.category,
+    )) {
+      return const SizedBox.shrink();
+    }
 
     return Selector<PhilgoState, PhilgoSetting?>(
       builder: (context, setting, _) {

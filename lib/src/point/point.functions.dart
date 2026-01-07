@@ -1,4 +1,5 @@
 import 'package:file_cache_flutter/file_cache_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 포인트 이벤트 정보 캐시 (Point Event Info Cache)
@@ -77,4 +78,26 @@ Future<PointEventInfo> getPointEventInfo() async {
 /// 캐시를 수동으로 갱신해야 할 때 호출합니다.
 Future<void> clearPointEventCache() async {
   await _pointEventCache.clear();
+}
+
+/// 포인트 광고 가능 게시판인지 확인하는 헬퍼 함수
+bool isPointAdvertisementAllowed({
+  required BuildContext context,
+  String? postId,
+  String? category,
+}) {
+  final setting = PhilgoState.of(context).setting;
+
+  // 설정이 로드되지 않았으면 false (안전한 기본값)
+  if (setting == null) return false;
+
+  // 목록이 비어있으면 false
+  final allowedCategories = setting.point.advertisingPostCategories;
+  if (allowedCategories.isEmpty) return false;
+
+  // 우선순위: category가 있으면 category, 없으면 postId
+  final target = category?.isNotEmpty == true ? category : postId;
+  if (target == null) return false;
+
+  return allowedCategories.contains(target);
 }

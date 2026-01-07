@@ -735,6 +735,8 @@ class PostCreateFormState extends State<PostCreateForm> {
         const Spacer(),
 
         PointSelectionButton(
+          postId: _selectedPostId,
+          category: _selectedCategory,
           onDaysSelected: (days) => setState(() => advertisementDays = days),
           disabled: _isLoading || _uploadingCount > 0,
         ),
