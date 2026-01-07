@@ -19,7 +19,7 @@ Future<T> func<T>(
   String functionName, {
   RecordType? data,
   bool debug = false,
-  bool alertOnError = true,
+  bool alertOnError = false,
   Map<String, String>? headers,
 }) async {
   // 기본 옵션 설정
@@ -97,7 +97,10 @@ Future<T> func<T>(
       log('요청 URL: $url', name: 'PhilgoAPI:ERROR');
       log('Handshake 에러 메시지: ${dioError.message}', name: 'PhilgoAPI:ERROR');
       log('에러 원인: ${dioError.error}', name: 'PhilgoAPI:ERROR');
-      log('==========================================', name: 'PhilgoAPI:ERROR');
+      log(
+        '==========================================',
+        name: 'PhilgoAPI:ERROR',
+      );
 
       // 사용자에게 명확한 메시지 표시
       if (alertOnError) {
@@ -223,7 +226,8 @@ Future<T> func<T>(
         serverMessage = responseData.toString();
       }
     } catch (e) {
-      serverMessage = 'Failed to read error response body.\n호출 함수: $functionName';
+      serverMessage =
+          'Failed to read error response body.\n호출 함수: $functionName';
     }
 
     final slimErrorMessage = serverMessage;
