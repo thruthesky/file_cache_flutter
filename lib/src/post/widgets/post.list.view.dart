@@ -1,5 +1,6 @@
 import 'package:philgo_api/philgo_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 /// 게시글 리스트 뷰 컨트롤러
@@ -120,7 +121,7 @@ class PostListViewState extends State<PostListView> {
         category: widget.category,
       );
 
-      if (_totalPostCount != res.post_count) {
+      if (_totalPostCount != res.post_count && mounted) {
         setState(() {
           _totalPostCount = res.post_count;
         });
@@ -204,6 +205,12 @@ class PostListViewState extends State<PostListView> {
                     onTap: (url) => widget.onTapBanner(url),
                   ),
             ),
+
+            /// 게시글 목록 상단 여백 (8의 배수)
+            /// 배너/광고와 게시글 목록 사이 시각적 구분
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 16),
+            ),
             PagedSliverList.separated(
               // Comic Design: 16px spacing between posts (8의 배수)
               separatorBuilder: (context, index) => Divider(
@@ -231,7 +238,20 @@ class PostListViewState extends State<PostListView> {
                         enableHeroTransition: widget.enableHeroTransition,
                       );
 
-                  return tile;
+                  /// 부드러운 등장 애니메이션 적용
+                  /// fadeIn(200ms) + slideX(0.02) 효과
+                  /// 최대 10개 아이템까지만 delay 적용 (500ms 제한)
+                  final delayMs = (index.clamp(0, 10) * 50).ms;
+                  return tile
+                      .animate()
+                      .fadeIn(duration: 200.ms, delay: delayMs)
+                      .slideX(
+                        begin: 0.02,
+                        end: 0,
+                        curve: Curves.easeOut,
+                        duration: 200.ms,
+                        delay: delayMs,
+                      );
                 },
                 firstPageProgressIndicatorBuilder: (context) =>
                     const Center(child: CircularProgressIndicator.adaptive()),

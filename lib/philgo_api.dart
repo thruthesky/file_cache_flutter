@@ -168,6 +168,7 @@ export 'src/post/widgets/point_ad_user_info_card.dart';
 export 'src/post/widgets/point_selection_bottom_sheet.dart';
 export 'src/post/widgets/post.list.view.dart';
 export 'src/post/widgets/post.masonry.view.dart';
+export 'src/post/widgets/post.badge.dart';
 export 'src/post/widgets/post.report.button.dart';
 export 'src/post/widgets/post.subject.dart';
 export 'src/post/widgets/post.update.form.dart';
@@ -175,9 +176,10 @@ export 'src/post/widgets/post.view.content.dart';
 export 'src/post/widgets/post.view.files.dart';
 export 'src/post/widgets/post.view.header.dart';
 export 'src/post/widgets/post.view.images.dart';
-export 'src/post/widgets/post.view.youtubes.dart';
-export 'src/post/widgets/post.youtube.normal.player.dart';
-export 'src/post/widgets/post.youtube.shorts.player.dart';
+// export 'src/post/widgets/post.view.youtubes.dart';
+// export 'src/post/widgets/post.youtube.normal.player.dart';
+// export 'src/post/widgets/post.youtube.shorts.player.dart';
+export 'src/post/widgets/post.view.disaply_youtubes.dart';
 
 // =============================================================================
 // Receive Share - 공유 받기

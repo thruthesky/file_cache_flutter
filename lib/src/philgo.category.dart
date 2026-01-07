@@ -345,4 +345,208 @@ class PhilgoCategory {
     }
     return _categoryMap[postId]!.contains(category);
   }
+
+  /// 카테고리별 이모지 매핑
+  /// Emoji mapping for each category
+  ///
+  /// 1차 카테고리(postId)와 2차 카테고리(category) 모두에 대해 이모지를 반환합니다.
+  /// Returns emoji for both major categories (postId) and sub-categories.
+  ///
+  /// [categoryId]: 카테고리 ID (postId 또는 서브카테고리)
+  ///
+  /// 반환값: 해당 카테고리의 이모지 문자열
+  ///
+  /// 예시:
+  /// ```dart
+  /// PhilgoCategory.emoji('freetalk'); // '💬'
+  /// PhilgoCategory.emoji('qna'); // '❓'
+  /// PhilgoCategory.emoji('discussion'); // '🗣️'
+  /// ```
+  static String emoji(String categoryId) {
+    return _emojiMap[categoryId] ?? '📝';
+  }
+
+  /// 카테고리 이모지 매핑 데이터
+  /// Category emoji mapping data
+  static const Map<String, String> _emojiMap = {
+    // ===== 1차 카테고리 (Major Categories) =====
+
+    /// 자유게시판 - Free talk
+    'freetalk': '💬',
+
+    /// 질문과 답변 - Q&A
+    'qna': '❓',
+
+    /// 사고팔기 - Buy and Sell
+    'buyandsell': '🛒',
+
+    /// 구인구직 - Jobs/Wanted
+    'wanted': '💼',
+
+    /// 마사지 - Massage
+    'massage': '💆',
+
+    /// 하숙집/기숙사 - Boarding house
+    'boarding_house': '🏠',
+
+    /// 여행 - Travel
+    'travel': '✈️',
+
+    /// 비즈니스 - Business
+    'business': '🏢',
+
+    /// 학교 - School
+    'school': '🎓',
+
+    /// 주의/경고 - Caution
+    'caution': '⚠️',
+
+    /// 인사 - Greeting
+    'greeting': '👋',
+
+    /// 음식 배달 - Food delivery
+    'food_delivery': '🍔',
+
+    /// 레스토랑 - Restaurant
+    'rest': '🍽️',
+
+    /// 블로그 - Blog
+    'blog': '📖',
+
+    /// 유튜브 - YouTube
+    'youtube': '🎬',
+
+    /// 임시 - Temp
+    'temp': '📋',
+
+    /// 새내기 - Newcomer
+    'newcomer': '🌱',
+
+    /// 뉴스/속보 - News
+    'news': '📰',
+
+    /// 맘카페 - Mom cafe
+    'momcafe': '👩‍👧',
+
+    /// 자연/리포트 - Nature
+    'nature': '🌿',
+
+    /// 스터디/어학연수 - Study
+    'study': '📚',
+
+    /// 추천 여행지 - Recommended travel
+    'travel_good': '🌴',
+
+    /// 회사 정보 - Company info
+    'company_info': '🏭',
+
+    /// 영어 비즈니스 - English business
+    'english_biz': '🇺🇸',
+
+    /// 행방 - Lookfor
+    'lookfor': '🔍',
+
+    // ===== 2차 카테고리 (Sub Categories) - freetalk =====
+
+    /// 토론 - Discussion
+    'discussion': '🗣️',
+
+    /// 취미 - Hobby
+    '취미': '🎨',
+
+    /// 정보 - Info
+    'info': '💡',
+
+    /// 한국-필리핀 커플 - Korean-Filipino couple
+    '코필커플': '💑',
+
+    /// 코피노 - Kopino
+    '코피노': '👶',
+
+    /// 이민 - Immigration
+    '이민': '🛫',
+
+    /// 사진/라이프샷 - Photo/Life shot
+    '사진': '📷',
+
+    /// 생활의 팁 - Life tips
+    '생활의팁': '💡',
+
+    /// 국제결혼 - International marriage
+    '국제결혼': '💒',
+
+    /// 모임 - Gathering
+    '모임': '🤝',
+
+    /// 칼럼 - Column
+    'column': '✍️',
+
+    /// 먹방 - Mukbang/Food
+    '먹방': '🍜',
+
+    /// 뉴스 - News
+    '뉴스': '📰',
+
+    /// 경험담 - Experience
+    '경험담': '📝',
+
+    /// 공부/학습 - Study
+    '공부': '📖',
+
+    /// 날씨/태풍 - Weather/Typhoon
+    '태풍': '🌀',
+
+    /// 마닐라 지역 - Manila area
+    '마닐라': '🏙️',
+
+    /// 세부 지역 - Cebu area
+    '세부': '🏝️',
+
+    /// 앙헬레스 지역 - Angeles area
+    '앙헬레스': '🌆',
+
+    /// 행방불명 - Missing person
+    '행방불명': '🔍',
+
+    // ===== 2차 카테고리 (Sub Categories) - buyandsell =====
+
+    /// 사업 파트너 - Business partner
+    '사업/동업구함': '🤝',
+
+    /// 컴퓨터/인터넷 - Computer/Internet
+    '컴퓨터/인터넷': '💻',
+
+    /// 환전 - Currency exchange
+    '페소환전': '💱',
+
+    /// 핸드폰 - Mobile phone
+    '핸드폰': '📱',
+
+    /// 호텔 - Hotel
+    '호텔': '🏨',
+
+    /// 가전제품/생활용품 - Electronics/Living goods
+    '가전/생활용품': '🔌',
+
+    /// 골프 - Golf
+    '골프': '⛳',
+
+    /// 프로모션 - Promotion
+    'promotion': '🎁',
+
+    /// 개인 거래 - Personal trade
+    '개인장터': '🏪',
+
+    /// 부동산 - Real estate
+    'real_estate': '🏗️',
+
+    /// 주택 임대 - House rental
+    '주택임대': '🏡',
+
+    /// 렌트카 - Rent car
+    '렌트카': '🚗',
+
+    /// 중고차 - Used car
+    '중고차': '🚙',
+  };
 }

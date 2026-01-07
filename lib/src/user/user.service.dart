@@ -43,6 +43,8 @@ class UserService {
   Function(BuildContext context, Post post)? onTapUserRecentPostItem;
   Function(BuildContext context, User user)? onTapViewProfile;
 
+  Function(fa.User? user)? onStateChange;
+
   UserService._();
   bool initialized = false;
 
@@ -52,11 +54,13 @@ class UserService {
     bool useUserPresence = false,
     Function(BuildContext context, Post post)? onTapUserRecentPostItem,
     Function(BuildContext context, User user)? onTapViewProfile,
+    Function(fa.User? user)? onStateChange,
   }) async {
     if (initialized) return;
     initialized = true;
     this.onTapUserRecentPostItem = onTapUserRecentPostItem;
     this.onTapViewProfile = onTapViewProfile;
+    this.onStateChange = onStateChange;
 
     if (useUserPresence) {
       initUserPresence();
@@ -75,6 +79,7 @@ class UserService {
       initFavoriteFolders(user);
       initBlockedUsers(user);
       initCountUnreadMessage(user);
+      onStateChange?.call(user);
     });
   }
 
