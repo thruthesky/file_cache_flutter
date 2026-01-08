@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: "none"
 
-version: 2.0.13+43
+version: 2.0.14+44
 
 environment:
   sdk: ^3.8.1
@@ -23,7 +23,6 @@ dependencies:
   firebase_crashlytics: ^4.3.10
   firebase_database: ^11.3.10
   firebase_messaging: ^15.2.8
-  firebase_remote_config: ^5.5.0
   flutter:
     sdk: flutter
   flutter_animate: ^4.5.2
