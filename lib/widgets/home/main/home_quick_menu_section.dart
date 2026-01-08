@@ -56,14 +56,8 @@ class HomeQuickMenuSection extends StatelessWidget {
 
   /// 공지 메뉴 탭 핸들러 (Notice menu tap handler)
   ///
-  /// 공지사항 화면을 다이얼로그로 표시합니다.
-  /// Shows notice screen as dialog.
   void _onNoticeTap(BuildContext context) {
-    showFullScreen(
-      context,
-      child: const NoticeScreen(),
-      barrierLabel: '공지사항 닫기',
-    );
+    NoticeScreen.push(context);
   }
 
   /// 환율 메뉴 탭 핸들러 (Exchange rate menu tap handler)

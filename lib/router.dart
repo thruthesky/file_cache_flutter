@@ -14,6 +14,7 @@ import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/info/emergency/embassy.screen.dart';
 import 'package:philgo/screens/info/emergency/hospital.screen.dart';
 import 'package:philgo/screens/info/emergency/police_station.screen.dart';
+import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -410,6 +411,11 @@ final router = GoRouter(
       path: HospitalScreen.routeName,
       name: HospitalScreen.routeName,
       builder: (context, state) => const HospitalScreen(),
+    ),
+    GoRoute(
+      path: NoticeScreen.routeName,
+      name: NoticeScreen.routeName,
+      builder: (context, state) => const NoticeScreen(),
     ),
   ],
 );

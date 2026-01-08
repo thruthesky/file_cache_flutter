@@ -81,7 +81,7 @@ class _MustReadScreenState extends State<MustReadScreen> {
                     (item) => MenuGridItem(
                       icon: item.icon,
                       title: item.getLabel(l10n),
-                      onTap: () => context.push(item.routeName),
+                      onTap: () => item.push(context),
                     ),
                   )
                   .toList(),

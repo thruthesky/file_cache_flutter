@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo/services/currency/currency.service.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/unfocus_on_tap.dart';
@@ -24,6 +25,8 @@ import 'package:philgo/widgets/unfocus_on_tap.dart';
 /// ```
 class ExchangeRateScreen extends StatefulWidget {
   static const String routeName = '/ExchangeRate';
+  static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
+  static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
   const ExchangeRateScreen({super.key});
 
   @override
