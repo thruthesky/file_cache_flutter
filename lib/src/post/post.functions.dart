@@ -378,6 +378,40 @@ Future<Post> getPost(int id) async {
   return post;
 }
 
+/// 게시글 조회수를 1 증가시키는 함수
+///
+/// PhilGo v6 API의 'increase_post_no_of_view' 엔드포인트를 호출하여
+/// 게시글의 조회수(no_of_view)를 1 증가시킵니다.
+///
+/// - SPA/Flutter 앱용으로 설계된 API
+/// - 웹 브라우저에서는 쿠키 기반으로 1시간 내 중복 조회 방지
+/// - Flutter 앱에서는 매 호출마다 조회수 증가
+///
+/// ## 매개변수
+/// - [idx]: 조회수를 증가시킬 게시글 번호 (필수)
+///
+/// ## 반환값
+/// - 성공: true
+/// - 실패: false
+///
+/// ## 사용 예시
+/// ```dart
+/// await increasePostView(12345);
+/// ```
+Future<bool> increasePostView(int idx) async {
+  try {
+    await func<Map<String, dynamic>>(
+      'increase_post_no_of_view',
+      data: {'idx': idx},
+    );
+    return true;
+  } catch (e) {
+    // 조회수 증가 실패는 무시 (게시글 로드에 영향 없음)
+    debugLog('increasePostView 실패: $e');
+    return false;
+  }
+}
+
 Future<List<Post>> getLatestByUser({
   int? idx_member,
   String? firebase_uid,
