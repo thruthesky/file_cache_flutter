@@ -1505,10 +1505,61 @@ class LoZh extends Lo {
   String get quickMenuAllMenu => 'All Menu';
 
   @override
-  String get quickMenuMustReadInfo => '必读';
+  String get quickMenuMustReadInfo => '必备信息';
 
   @override
-  String get philippineLifeInfo => 'Philippine Life Info';
+  String get philippineLifeInfo => '菲律宾生活信息';
+
+  @override
+  String get immigrationSection => '出入境 & 签证';
+
+  @override
+  String get immigrationETravel => '电子旅行';
+
+  @override
+  String get immigrationTravelVisa => '旅游签证';
+
+  @override
+  String get immigrationWorkingVisa => '工作签证';
+
+  @override
+  String get immigrationRetirementVisa => '退休签证';
+
+  @override
+  String get transportationSection => '交通方式';
+
+  @override
+  String get transportationGrabTaxi => 'Grab出租车';
+
+  @override
+  String get transportationRegularTaxi => '普通出租车';
+
+  @override
+  String get transportationExpressBus => '高速巴士';
+
+  @override
+  String get housingSection => '住房租赁';
+
+  @override
+  String get housingMonthlyRent => '月租';
+
+  @override
+  String get housingAirbnb => 'Airbnb';
+
+  @override
+  String get housingHotel => '酒店';
+
+  @override
+  String get carSection => '汽车';
+
+  @override
+  String get carPurchase => '购买';
+
+  @override
+  String get carInsurance => '保险';
+
+  @override
+  String get carOrRenewal => 'OR更新';
 
   @override
   String get entryTodayExchangeRate => 'Exchange';
@@ -1566,4 +1617,46 @@ class LoZh extends Lo {
 
   @override
   String get emergencyContactsSection => '紧急联系';
+
+  @override
+  String get residenceSection => '推荐居住区';
+
+  @override
+  String get residenceBgc => 'BGC';
+
+  @override
+  String get residenceOrtigas => 'Ortigas';
+
+  @override
+  String get residenceAlabang => 'Alabang';
+
+  @override
+  String get calendarSection => '日历/节假日';
+
+  @override
+  String get calendarRegularHoliday => '法定假日';
+
+  @override
+  String get calendarSpecialWorkingDay => '特别非工作日';
+
+  @override
+  String get travelDestinationSection => '推荐旅游地';
+
+  @override
+  String get travelDestinationManila => '马尼拉';
+
+  @override
+  String get travelDestinationCebu => '宿务';
+
+  @override
+  String get travelDestinationSubic => '苏比克';
+
+  @override
+  String get travelDestinationBohol => '薄荷岛';
+
+  @override
+  String get travelDestinationBoracay => '长滩岛';
+
+  @override
+  String get travelDestinationPalawan => '巴拉望';
 }

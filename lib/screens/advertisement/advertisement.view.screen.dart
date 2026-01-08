@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 import '../../widgets/contact/advertisement_contact_list.dart';
@@ -11,9 +12,15 @@ import '../../widgets/contact/advertisement_contact_list.dart';
 ///
 /// ### 사용법:
 /// ```dart
-/// AdvertisementViewScreen(idx: 12345);
+/// AdvertisementViewScreen.push(context, idx: 12345);
 /// ```
 class AdvertisementViewScreen extends StatefulWidget {
+  static const String routeName = '/advertisement-view';
+
+  /// AdvertisementViewScreen으로 네비게이션 (Navigate to AdvertisementViewScreen)
+  static Function(BuildContext ctx, {required int idx}) push =
+      (ctx, {required idx}) => ctx.push(routeName, extra: idx);
+
   /// 조회할 게시글 번호
   final int idx;
 

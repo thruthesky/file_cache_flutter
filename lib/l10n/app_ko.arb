@@ -2000,13 +2000,81 @@
   "@quickMenuAllMenu": {
     "description": "Quick menu all menu label"
   },
-  "quickMenuMustReadInfo": "필독 안내",
+  "quickMenuMustReadInfo": "필수 정보",
   "@quickMenuMustReadInfo": {
-    "description": "Quick menu must-read information label"
+    "description": "Quick menu essential information label"
   },
   "philippineLifeInfo": "필리핀 생활 정보",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
+  },
+  "immigrationSection": "출입국 & 비자 여권",
+  "@immigrationSection": {
+    "description": "Immigration and visa passport section title"
+  },
+  "immigrationETravel": "e트래블",
+  "@immigrationETravel": {
+    "description": "E-Travel registration menu item"
+  },
+  "immigrationTravelVisa": "여행비자",
+  "@immigrationTravelVisa": {
+    "description": "Travel/Tourist visa menu item"
+  },
+  "immigrationWorkingVisa": "워킹비자",
+  "@immigrationWorkingVisa": {
+    "description": "Working visa menu item"
+  },
+  "immigrationRetirementVisa": "은퇴비자",
+  "@immigrationRetirementVisa": {
+    "description": "Retirement visa (SRRV) menu item"
+  },
+  "transportationSection": "교통 수단",
+  "@transportationSection": {
+    "description": "Transportation section title"
+  },
+  "transportationGrabTaxi": "그랩 택시",
+  "@transportationGrabTaxi": {
+    "description": "Grab taxi menu item"
+  },
+  "transportationRegularTaxi": "일반 택시",
+  "@transportationRegularTaxi": {
+    "description": "Regular taxi menu item"
+  },
+  "transportationExpressBus": "고속 버스",
+  "@transportationExpressBus": {
+    "description": "Express bus menu item"
+  },
+  "housingSection": "콘도/주택 임대",
+  "@housingSection": {
+    "description": "Housing rental section title"
+  },
+  "housingMonthlyRent": "월세",
+  "@housingMonthlyRent": {
+    "description": "Monthly rent menu item"
+  },
+  "housingAirbnb": "에어비앤비",
+  "@housingAirbnb": {
+    "description": "Airbnb menu item"
+  },
+  "housingHotel": "호텔",
+  "@housingHotel": {
+    "description": "Hotel menu item"
+  },
+  "carSection": "자동차",
+  "@carSection": {
+    "description": "Car section title"
+  },
+  "carPurchase": "구매",
+  "@carPurchase": {
+    "description": "Car purchase menu item"
+  },
+  "carInsurance": "보험",
+  "@carInsurance": {
+    "description": "Car insurance menu item"
+  },
+  "carOrRenewal": "OR 리뉴얼",
+  "@carOrRenewal": {
+    "description": "OR renewal menu item"
   },
   "entryTodayExchangeRate": "오늘 환율",
   "@entryTodayExchangeRate": {
@@ -2083,5 +2151,61 @@
   "emergencyContactsSection": "긴급 연락처",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"
+  },
+  "residenceSection": "추천 거주 지역",
+  "@residenceSection": {
+    "description": "Recommended residence area section title"
+  },
+  "residenceBgc": "BGC",
+  "@residenceBgc": {
+    "description": "BGC (Bonifacio Global City) menu item"
+  },
+  "residenceOrtigas": "올티가스",
+  "@residenceOrtigas": {
+    "description": "Ortigas menu item"
+  },
+  "residenceAlabang": "알라방",
+  "@residenceAlabang": {
+    "description": "Alabang menu item"
+  },
+  "calendarSection": "달력/휴일",
+  "@calendarSection": {
+    "description": "Calendar/Holiday section title"
+  },
+  "calendarRegularHoliday": "정규 휴일",
+  "@calendarRegularHoliday": {
+    "description": "Regular holiday menu item"
+  },
+  "calendarSpecialWorkingDay": "근무휴일",
+  "@calendarSpecialWorkingDay": {
+    "description": "Special working day menu item"
+  },
+  "travelDestinationSection": "필리핀 추천 여행지",
+  "@travelDestinationSection": {
+    "description": "Philippine travel destination section title"
+  },
+  "travelDestinationManila": "마닐라",
+  "@travelDestinationManila": {
+    "description": "Manila travel destination menu item"
+  },
+  "travelDestinationCebu": "세부",
+  "@travelDestinationCebu": {
+    "description": "Cebu travel destination menu item"
+  },
+  "travelDestinationSubic": "수빅",
+  "@travelDestinationSubic": {
+    "description": "Subic travel destination menu item"
+  },
+  "travelDestinationBohol": "보홀",
+  "@travelDestinationBohol": {
+    "description": "Bohol travel destination menu item"
+  },
+  "travelDestinationBoracay": "보라카이",
+  "@travelDestinationBoracay": {
+    "description": "Boracay travel destination menu item"
+  },
+  "travelDestinationPalawan": "팔라완",
+  "@travelDestinationPalawan": {
+    "description": "Palawan travel destination menu item"
   }
 }

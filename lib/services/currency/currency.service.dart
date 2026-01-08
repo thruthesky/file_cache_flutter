@@ -221,13 +221,11 @@ class CurrencyService {
   ///
   /// [amount] 포맷할 금액
   /// [currency] 통화 코드
-  /// Returns 천단위 구분자가 적용된 문자열 (KRW는 소수점 없이 표시)
+  /// Returns 천단위 구분자가 적용된 문자열 (소수점 2자리 표시)
   String formatAmount(double amount, String currency) {
+    /// 모든 통화를 소수점 2자리로 표시하여 환율 정보의 정확성 보장
+    /// Display all currencies with 2 decimal places for exchange rate accuracy
     final formatter = NumberFormat('#,##0.00');
-    if (currency == 'KRW') {
-      /// KRW는 소수점 없이 표시 (KRW displays without decimals)
-      return NumberFormat('#,##0').format(amount);
-    }
     return formatter.format(amount);
   }
 

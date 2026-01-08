@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     /// 테스트 할 때에만 사용. 테스트가 끝나면 주석 처리
-    // _debugTestRun();
+    _debugTestRun();
 
     ///
     FirebaseAnalytics.instance.logAppOpen();
@@ -140,12 +140,15 @@ class _MyAppState extends State<MyApp> {
     /// 디버깅용: 0.5초 후 메뉴 탭으로 이동 (확인 후 제거)
     /// For debugging: Navigate to menu tab after 0.5s (remove after verification)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _debugNavigateToMenu(context);
+      // _debugNavigateToMenu(context);
+
+      //
     });
   }
 
   /// 앱 시작 후 메뉴 탭으로 이동 (디버깅용 - 확인 후 제거)
   /// Navigate to menu tab after app start (for debugging - remove after verification)
+  // ignore: unused_element
   void _debugNavigateToMenu(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 500), () {
       if (context.mounted) {

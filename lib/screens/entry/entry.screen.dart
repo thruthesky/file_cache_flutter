@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/entry/entry.login.screen.dart';
 import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
@@ -1279,11 +1278,7 @@ class _EntryScreenState extends State<EntryScreen> {
         // behavior: opaque로 설정하여 자식 위젯 사이의 빈 공간도 터치 감지
         GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => showFullScreen(
-            context,
-            child: const ExchangeRateScreen(),
-            barrierLabel: '환율 정보 닫기',
-          ),
+          onTap: () => ExchangeRateScreen.push(context),
           child: _buildInfoColumn(
             label: l10n.entryTodayExchangeRate,
             value: _isLoadingRate
@@ -1298,11 +1293,7 @@ class _EntryScreenState extends State<EntryScreen> {
         // behavior: opaque로 설정하여 자식 위젯 사이의 빈 공간도 터치 감지
         GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => showFullScreen(
-            context,
-            child: const WeatherScreen(),
-            barrierLabel: '날씨 정보 닫기',
-          ),
+          onTap: () => WeatherScreen.push(context),
           child: _buildWeatherColumn(l10n, theme, scheme),
         ),
         // 회원 수 - API에서 조회, 클릭 시 다이얼로그 (Member count from API, tap for dialog)

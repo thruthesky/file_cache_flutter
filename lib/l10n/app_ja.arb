@@ -1818,9 +1818,81 @@
   "@videoUnavailable": {
     "description": "Error message when YouTube video cannot be loaded"
   },
-  "quickMenuMustReadInfo": "必読",
+  "quickMenuMustReadInfo": "必須情報",
   "@quickMenuMustReadInfo": {
-    "description": "Quick menu must-read information label"
+    "description": "Quick menu essential information label"
+  },
+  "philippineLifeInfo": "フィリピン生活情報",
+  "@philippineLifeInfo": {
+    "description": "Philippine life information section title in menu"
+  },
+  "immigrationSection": "出入国 & ビザ",
+  "@immigrationSection": {
+    "description": "Immigration and visa passport section title"
+  },
+  "immigrationETravel": "eトラベル",
+  "@immigrationETravel": {
+    "description": "E-Travel registration menu item"
+  },
+  "immigrationTravelVisa": "観光ビザ",
+  "@immigrationTravelVisa": {
+    "description": "Travel/Tourist visa menu item"
+  },
+  "immigrationWorkingVisa": "就労ビザ",
+  "@immigrationWorkingVisa": {
+    "description": "Working visa menu item"
+  },
+  "immigrationRetirementVisa": "退職ビザ",
+  "@immigrationRetirementVisa": {
+    "description": "Retirement visa (SRRV) menu item"
+  },
+  "transportationSection": "交通手段",
+  "@transportationSection": {
+    "description": "Transportation section title"
+  },
+  "transportationGrabTaxi": "グラブタクシー",
+  "@transportationGrabTaxi": {
+    "description": "Grab taxi menu item"
+  },
+  "transportationRegularTaxi": "一般タクシー",
+  "@transportationRegularTaxi": {
+    "description": "Regular taxi menu item"
+  },
+  "transportationExpressBus": "高速バス",
+  "@transportationExpressBus": {
+    "description": "Express bus menu item"
+  },
+  "housingSection": "住宅賃貸",
+  "@housingSection": {
+    "description": "Housing rental section title"
+  },
+  "housingMonthlyRent": "月額賃貸",
+  "@housingMonthlyRent": {
+    "description": "Monthly rent menu item"
+  },
+  "housingAirbnb": "Airbnb",
+  "@housingAirbnb": {
+    "description": "Airbnb menu item"
+  },
+  "housingHotel": "ホテル",
+  "@housingHotel": {
+    "description": "Hotel menu item"
+  },
+  "carSection": "車",
+  "@carSection": {
+    "description": "Car section title"
+  },
+  "carPurchase": "購入",
+  "@carPurchase": {
+    "description": "Car purchase menu item"
+  },
+  "carInsurance": "保険",
+  "@carInsurance": {
+    "description": "Car insurance menu item"
+  },
+  "carOrRenewal": "OR更新",
+  "@carOrRenewal": {
+    "description": "OR renewal menu item"
   },
   "quickMenuEmbassy": "大使館",
   "@quickMenuEmbassy": {
@@ -1837,5 +1909,61 @@
   "emergencyContactsSection": "緊急連絡先",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"
+  },
+  "residenceSection": "おすすめ居住地域",
+  "@residenceSection": {
+    "description": "Recommended residence area section title"
+  },
+  "residenceBgc": "BGC",
+  "@residenceBgc": {
+    "description": "BGC (Bonifacio Global City) menu item"
+  },
+  "residenceOrtigas": "オルティガス",
+  "@residenceOrtigas": {
+    "description": "Ortigas menu item"
+  },
+  "residenceAlabang": "アラバン",
+  "@residenceAlabang": {
+    "description": "Alabang menu item"
+  },
+  "calendarSection": "カレンダー/祝日",
+  "@calendarSection": {
+    "description": "Calendar/Holiday section title"
+  },
+  "calendarRegularHoliday": "正規祝日",
+  "@calendarRegularHoliday": {
+    "description": "Regular holiday menu item"
+  },
+  "calendarSpecialWorkingDay": "特別非稼働日",
+  "@calendarSpecialWorkingDay": {
+    "description": "Special working day menu item"
+  },
+  "travelDestinationSection": "おすすめ旅行先",
+  "@travelDestinationSection": {
+    "description": "Philippine travel destination section title"
+  },
+  "travelDestinationManila": "マニラ",
+  "@travelDestinationManila": {
+    "description": "Manila travel destination menu item"
+  },
+  "travelDestinationCebu": "セブ",
+  "@travelDestinationCebu": {
+    "description": "Cebu travel destination menu item"
+  },
+  "travelDestinationSubic": "スービック",
+  "@travelDestinationSubic": {
+    "description": "Subic travel destination menu item"
+  },
+  "travelDestinationBohol": "ボホール",
+  "@travelDestinationBohol": {
+    "description": "Bohol travel destination menu item"
+  },
+  "travelDestinationBoracay": "ボラカイ",
+  "@travelDestinationBoracay": {
+    "description": "Boracay travel destination menu item"
+  },
+  "travelDestinationPalawan": "パラワン",
+  "@travelDestinationPalawan": {
+    "description": "Palawan travel destination menu item"
   }
 }

@@ -1542,10 +1542,61 @@ class LoEn extends Lo {
   String get quickMenuAllMenu => 'All Menu';
 
   @override
-  String get quickMenuMustReadInfo => 'Importants';
+  String get quickMenuMustReadInfo => 'Essential Info';
 
   @override
   String get philippineLifeInfo => 'Philippine Life Info';
+
+  @override
+  String get immigrationSection => 'Immigration & Visa';
+
+  @override
+  String get immigrationETravel => 'e-Travel';
+
+  @override
+  String get immigrationTravelVisa => 'Travel Visa';
+
+  @override
+  String get immigrationWorkingVisa => 'Working Visa';
+
+  @override
+  String get immigrationRetirementVisa => 'Retirement Visa';
+
+  @override
+  String get transportationSection => 'Transportation';
+
+  @override
+  String get transportationGrabTaxi => 'Grab Taxi';
+
+  @override
+  String get transportationRegularTaxi => 'Regular Taxi';
+
+  @override
+  String get transportationExpressBus => 'Express Bus';
+
+  @override
+  String get housingSection => 'Housing Rental';
+
+  @override
+  String get housingMonthlyRent => 'Monthly Rent';
+
+  @override
+  String get housingAirbnb => 'Airbnb';
+
+  @override
+  String get housingHotel => 'Hotel';
+
+  @override
+  String get carSection => 'Car';
+
+  @override
+  String get carPurchase => 'Purchase';
+
+  @override
+  String get carInsurance => 'Insurance';
+
+  @override
+  String get carOrRenewal => 'OR Renewal';
 
   @override
   String get entryTodayExchangeRate => 'Exchange';
@@ -1603,4 +1654,46 @@ class LoEn extends Lo {
 
   @override
   String get emergencyContactsSection => 'Emergency';
+
+  @override
+  String get residenceSection => 'Recommended Areas';
+
+  @override
+  String get residenceBgc => 'BGC';
+
+  @override
+  String get residenceOrtigas => 'Ortigas';
+
+  @override
+  String get residenceAlabang => 'Alabang';
+
+  @override
+  String get calendarSection => 'Calendar/Holidays';
+
+  @override
+  String get calendarRegularHoliday => 'Regular Holiday';
+
+  @override
+  String get calendarSpecialWorkingDay => 'Special Working Day';
+
+  @override
+  String get travelDestinationSection => 'Travel Destinations';
+
+  @override
+  String get travelDestinationManila => 'Manila';
+
+  @override
+  String get travelDestinationCebu => 'Cebu';
+
+  @override
+  String get travelDestinationSubic => 'Subic';
+
+  @override
+  String get travelDestinationBohol => 'Bohol';
+
+  @override
+  String get travelDestinationBoracay => 'Boracay';
+
+  @override
+  String get travelDestinationPalawan => 'Palawan';
 }

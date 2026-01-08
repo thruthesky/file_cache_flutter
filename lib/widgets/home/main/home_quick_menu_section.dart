@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
@@ -14,6 +13,9 @@ import 'package:philgo/screens/info/travel/travel_info.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/weather/weather.screen.dart';
+import 'package:philgo/services/currency/currency.service.dart';
+import 'package:philgo/services/weather/weather.model.dart';
+import 'package:philgo/services/weather/weather.service.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -94,26 +96,18 @@ class HomeQuickMenuSection extends StatelessWidget {
 
   /// 한달살기 메뉴 탭 핸들러 (Monthly living menu tap handler)
   ///
-  /// 장기 체류 정보 화면을 다이얼로그로 표시합니다.
-  /// Shows monthly living (long-term stay) information screen as dialog.
+  /// 장기 체류 정보 화면으로 이동합니다.
+  /// Navigates to monthly living (long-term stay) information screen.
   void _onMonthlyLivingTap(BuildContext context) {
-    showFullScreen(
-      context,
-      child: const MonthlyLivingScreen(),
-      barrierLabel: '한달살기 닫기',
-    );
+    MonthlyLivingScreen.push(context);
   }
 
   /// 여행 메뉴 탭 핸들러 (Travel menu tap handler)
   ///
-  /// 여행지, 관광 정보 화면을 다이얼로그로 표시합니다.
-  /// Shows travel destinations and tourism information screen as dialog.
+  /// 여행지, 관광 정보 화면으로 이동합니다.
+  /// Navigates to travel destinations and tourism information screen.
   void _onTravelTap(BuildContext context) {
-    showFullScreen(
-      context,
-      child: const TravelInfoScreen(),
-      barrierLabel: '여행 정보 닫기',
-    );
+    TravelInfoScreen.push(context);
   }
 
   /// 내 정보 메뉴 탭 핸들러 (My info menu tap handler)
@@ -148,6 +142,7 @@ class HomeQuickMenuSection extends StatelessWidget {
 
     /// 퀵 메뉴 아이템 목록 (Quick menu items list)
     /// FontAwesome 7.1 Pro Light 아이콘 사용
+    /// 환율 아이템은 별도 처리 (실제 환율 값 표시)
     final menuItems = [
       _QuickMenuItem(
         /// 공지 아이콘: 공지사항/알림을 상징하는 메가폰 아이콘
@@ -155,20 +150,6 @@ class HomeQuickMenuSection extends StatelessWidget {
         icon: FontAwesomeIcons.lightBullhorn,
         label: l10n.quickMenuNotice,
         onTap: () => _onNoticeTap(context),
-      ),
-      _QuickMenuItem(
-        /// 환율 아이콘: 페소-원화 환전을 상징하는 동전 아이콘
-        /// Exchange rate icon: Coins representing PHP-KRW exchange
-        icon: FontAwesomeIcons.lightCoins,
-        label: l10n.quickMenuExchangeRate,
-        onTap: () => _onExchangeRateTap(context),
-      ),
-      _QuickMenuItem(
-        /// 날씨 아이콘: 필리핀 날씨를 상징하는 태양과 구름 아이콘
-        /// Weather icon: Sun and cloud representing Philippine weather
-        icon: FontAwesomeIcons.lightCloudSun,
-        label: l10n.quickMenuWeather,
-        onTap: () => _onWeatherTap(context),
       ),
       _QuickMenuItem(
         /// 긴급 연락처 아이콘: 긴급 전화를 상징하는 전화 아이콘
@@ -240,6 +221,30 @@ class HomeQuickMenuSection extends StatelessWidget {
               /// Highlight: Use tertiaryContainer colors
               backgroundColor: scheme.tertiaryContainer,
               iconColor: scheme.onTertiaryContainer,
+            ),
+
+            /// 환율 메뉴 아이템 (Exchange rate menu item)
+            /// 아이콘 대신 실제 1PHP당 KRW 환율을 소수점 1자리로 표시
+            /// Shows actual PHP to KRW rate with 1 decimal place instead of icon
+            _buildExchangeRateMenuItem(
+              context: context,
+              label: l10n.quickMenuExchangeRate,
+              onTap: () => _onExchangeRateTap(context),
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+            ),
+
+            /// 날씨 메뉴 아이템 (Weather menu item)
+            /// 실제 마닐라 현재 날씨 상태에 따른 동적 아이콘 표시
+            /// Shows dynamic icon based on current Manila weather
+            _buildWeatherMenuItem(
+              context: context,
+              label: l10n.quickMenuWeather,
+              onTap: () => _onWeatherTap(context),
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
             ),
 
             /// 기존 메뉴 아이템들 (Other menu items)
@@ -464,6 +469,165 @@ class HomeQuickMenuSection extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  /// 환율 메뉴 아이템 빌드 (Build exchange rate menu item)
+  ///
+  /// 아이콘 대신 실제 1PHP당 KRW 환율 값을 표시합니다.
+  /// 소수점 1자리로 표시 (예: 23.5)
+  ///
+  /// Displays actual PHP to KRW exchange rate instead of icon.
+  /// Shows with 1 decimal place (e.g., 23.5)
+  ///
+  /// [context] → BuildContext
+  /// [label] → 메뉴 라벨 (Menu label)
+  /// [onTap] → 탭 콜백 (Tap callback)
+  /// [scheme] → ColorScheme
+  /// [theme] → ThemeData
+  /// [sp] → AppSpacing
+  Widget _buildExchangeRateMenuItem({
+    required BuildContext context,
+    required String label,
+    required VoidCallback? onTap,
+    required ColorScheme scheme,
+    required ThemeData theme,
+    required AppSpacing sp,
+  }) {
+    return InkWell(
+      /// 탭 시 콜백 호출 (Call callback on tap)
+      onTap: onTap,
+
+      /// 둥근 모서리 ripple 효과 (Rounded corner ripple effect)
+      borderRadius: BorderRadius.circular(12),
+
+      child: Padding(
+        padding: EdgeInsets.all(sp.s4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 환율 값 컨테이너 (Exchange rate value container)
+            /// 아이콘 대신 실제 환율 값(텍스트)을 표시
+            /// Shows actual exchange rate value instead of icon
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                /// 배경색: primaryContainer
+                /// Background color: primaryContainer
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                /// FutureBuilder로 환율 데이터 비동기 로드
+                /// Async load exchange rate data with FutureBuilder
+                child: FutureBuilder<ExchangeRateData>(
+                  future: CurrencyService.instance.loadExchangeRates(),
+                  builder: (context, snapshot) {
+                    /// 로딩 중 또는 에러 시 기본 아이콘 표시
+                    /// Show default icon while loading or on error
+                    if (!snapshot.hasData) {
+                      return FaIcon(
+                        FontAwesomeIcons.lightCoins,
+                        size: 20,
+                        color: scheme.onPrimaryContainer,
+                      );
+                    }
+
+                    /// 1PHP당 KRW 환율 조회 (Get PHP to KRW rate)
+                    final phpToKrw = snapshot.data!.phpRates['KRW'] ?? 0;
+
+                    /// 소수점 1자리로 포맷 (Format to 1 decimal place)
+                    final rateText = phpToKrw.toStringAsFixed(1);
+
+                    return Text(
+                      rateText,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: scheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            SizedBox(height: sp.s4),
+
+            /// 메뉴 라벨 (Menu label)
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: scheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 날씨 메뉴 아이템 빌드 (Build weather menu item)
+  ///
+  /// 실시간 날씨 데이터를 가져와 현재 날씨 상태에 맞는 아이콘을 표시합니다.
+  /// FutureBuilder를 사용하여 비동기로 날씨 데이터를 로드합니다.
+  ///
+  /// Fetches real-time weather data and displays an icon matching the current weather.
+  /// Uses FutureBuilder to load weather data asynchronously.
+  ///
+  /// [context] → BuildContext
+  /// [label] → 메뉴 라벨 (Menu label)
+  /// [onTap] → 탭 콜백 (Tap callback)
+  /// [scheme] → ColorScheme
+  /// [theme] → ThemeData
+  /// [sp] → AppSpacing
+  Widget _buildWeatherMenuItem({
+    required BuildContext context,
+    required String label,
+    required VoidCallback? onTap,
+    required ColorScheme scheme,
+    required ThemeData theme,
+    required AppSpacing sp,
+  }) {
+    return FutureBuilder<HourlyWeather>(
+      /// WeatherService 싱글톤을 통해 마닐라 현재 날씨 로드
+      /// Load Manila current weather through WeatherService singleton
+      future: WeatherService.instance.loadManilaCurrentWeather(),
+      builder: (context, snapshot) {
+        /// 기본 아이콘: 로딩 중이거나 에러 시 구름+태양 아이콘 사용
+        /// Default icon: Use cloud+sun icon while loading or on error
+        IconData icon = FontAwesomeIcons.lightCloudSun;
+
+        /// 아이콘 색상: 날씨 데이터가 있으면 WeatherCodeHelper에서 가져옴
+        /// Icon color: Get from WeatherCodeHelper if weather data is available
+        Color? iconColor;
+
+        if (snapshot.hasData) {
+          final weather = snapshot.data!;
+
+          /// WMO 날씨 코드에 해당하는 아이콘 가져오기
+          /// Get icon corresponding to WMO weather code
+          icon = WeatherCodeHelper.getIcon(weather.weatherCode);
+
+          /// WMO 날씨 코드에 해당하는 색상 가져오기
+          /// Get color corresponding to WMO weather code
+          iconColor = WeatherCodeHelper.getColor(weather.weatherCode);
+        }
+
+        return _buildMenuItem(
+          context: context,
+          icon: icon,
+          label: label,
+          onTap: onTap,
+          scheme: scheme,
+          theme: theme,
+          sp: sp,
+
+          /// 날씨 데이터가 있으면 해당 날씨 색상 적용
+          /// Apply weather color if weather data is available
+          iconColor: iconColor,
+        );
+      },
     );
   }
 }

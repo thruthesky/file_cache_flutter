@@ -163,65 +163,37 @@ class _MenuHomeState extends State<MenuHome> {
                     MenuGridItem(
                       icon: FontAwesomeIcons.bullhorn,
                       title: l10n.quickMenuNotice,
-                      onTap: () => showFullScreen(
-                        context,
-                        child: const NoticeScreen(),
-                        barrierLabel: '공지사항 닫기',
-                      ),
+                      onTap: () => NoticeScreen.push(context),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.coins,
                       title: l10n.quickMenuExchangeRate,
-                      onTap: () => showFullScreen(
-                        context,
-                        child: const ExchangeRateScreen(),
-                        barrierLabel: '환율 정보 닫기',
-                      ),
+                      onTap: () => ExchangeRateScreen.push(context),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.cloudSun,
                       title: l10n.quickMenuWeather,
-                      onTap: () => showFullScreen(
-                        context,
-                        child: const WeatherScreen(),
-                        barrierLabel: '날씨 정보 닫기',
-                      ),
+                      onTap: () => WeatherScreen.push(context),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.phoneVolume,
                       title: l10n.quickMenuEmergency,
-                      onTap: () => showFullScreen(
-                        context,
-                        child: const EmergencyContactScreen(),
-                        barrierLabel: '긴급 연락처 닫기',
-                      ),
+                      onTap: () => EmergencyContactScreen.push(context),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.circleInfo,
                       title: l10n.quickMenuEssentialInfo,
-                      onTap: () => showFullScreen(
-                        context,
-                        child: const EssentialInfoScreen(),
-                        barrierLabel: '필수정보 닫기',
-                      ),
+                      onTap: () => EssentialInfoScreen.push(context),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.calendarDays,
                       title: l10n.quickMenuMonthlyLiving,
-                      onTap: () => showFullScreen(
-                        context,
-                        child: const MonthlyLivingScreen(),
-                        barrierLabel: '한달살기 닫기',
-                      ),
+                      onTap: () => MonthlyLivingScreen.push(context),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.umbrellaBeach,
                       title: l10n.quickMenuTravel,
-                      onTap: () => showFullScreen(
-                        context,
-                        child: const TravelInfoScreen(),
-                        barrierLabel: '여행 정보 닫기',
-                      ),
+                      onTap: () => TravelInfoScreen.push(context),
                     ),
                   ],
                 ),

@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/data/emergency_menu.data.dart';
+import 'package:philgo/data/immigration_menu.data.dart';
 import 'package:philgo/data/philippine_life_info.data.dart';
+import 'package:philgo/data/transportation_menu.data.dart';
+import 'package:philgo/data/housing_menu.data.dart';
+import 'package:philgo/data/car_menu.data.dart';
+import 'package:philgo/data/residence_menu.data.dart';
+import 'package:philgo/data/calendar_menu.data.dart';
+import 'package:philgo/data/travel_destination_menu.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -65,6 +72,125 @@ class _MustReadScreenState extends State<MustReadScreen> {
                       icon: item.icon,
                       title: item.getLabel(l10n),
                       onTap: () => context.push(item.routeName),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 출입국 & 비자 여권 섹션 (Immigration & Visa Section)
+            /// ImmigrationMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.immigrationSection,
+              children: ImmigrationMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 교통 수단 섹션 (Transportation Section)
+            /// TransportationMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.transportationSection,
+              children: TransportationMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 콘도/주택 임대 섹션 (Housing Rental Section)
+            /// HousingMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.housingSection,
+              children: HousingMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 자동차 섹션 (Car Section)
+            /// CarMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.carSection,
+              children: CarMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 추천 거주 지역 섹션 (Recommended Residence Area Section)
+            /// ResidenceMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.residenceSection,
+              children: ResidenceMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 달력/휴일 섹션 (Calendar/Holiday Section)
+            /// CalendarMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.calendarSection,
+              children: CalendarMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 필리핀 추천 여행지 섹션 (Philippine Travel Destination Section)
+            /// TravelDestinationMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.travelDestinationSection,
+              children: TravelDestinationMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
                     ),
                   )
                   .toList(),

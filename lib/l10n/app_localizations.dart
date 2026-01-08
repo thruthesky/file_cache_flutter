@@ -3035,10 +3035,10 @@ abstract class Lo {
   /// **'All Menu'**
   String get quickMenuAllMenu;
 
-  /// Quick menu must-read information label
+  /// Quick menu essential information label
   ///
   /// In en, this message translates to:
-  /// **'Importants'**
+  /// **'Essential Info'**
   String get quickMenuMustReadInfo;
 
   /// Philippine life information section title in menu
@@ -3046,6 +3046,108 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Philippine Life Info'**
   String get philippineLifeInfo;
+
+  /// Immigration and visa passport section title
+  ///
+  /// In en, this message translates to:
+  /// **'Immigration & Visa'**
+  String get immigrationSection;
+
+  /// E-Travel registration menu item
+  ///
+  /// In en, this message translates to:
+  /// **'e-Travel'**
+  String get immigrationETravel;
+
+  /// Travel/Tourist visa menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Visa'**
+  String get immigrationTravelVisa;
+
+  /// Working visa menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Working Visa'**
+  String get immigrationWorkingVisa;
+
+  /// Retirement visa (SRRV) menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Retirement Visa'**
+  String get immigrationRetirementVisa;
+
+  /// Transportation section title
+  ///
+  /// In en, this message translates to:
+  /// **'Transportation'**
+  String get transportationSection;
+
+  /// Grab taxi menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Grab Taxi'**
+  String get transportationGrabTaxi;
+
+  /// Regular taxi menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Regular Taxi'**
+  String get transportationRegularTaxi;
+
+  /// Express bus menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Express Bus'**
+  String get transportationExpressBus;
+
+  /// Housing rental section title
+  ///
+  /// In en, this message translates to:
+  /// **'Housing Rental'**
+  String get housingSection;
+
+  /// Monthly rent menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Rent'**
+  String get housingMonthlyRent;
+
+  /// Airbnb menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Airbnb'**
+  String get housingAirbnb;
+
+  /// Hotel menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get housingHotel;
+
+  /// Car section title
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get carSection;
+
+  /// Car purchase menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get carPurchase;
+
+  /// Car insurance menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get carInsurance;
+
+  /// OR renewal menu item
+  ///
+  /// In en, this message translates to:
+  /// **'OR Renewal'**
+  String get carOrRenewal;
 
   /// Today's exchange rate label on entry screen
   ///
@@ -3160,6 +3262,90 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Emergency'**
   String get emergencyContactsSection;
+
+  /// Recommended residence area section title
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Areas'**
+  String get residenceSection;
+
+  /// BGC (Bonifacio Global City) menu item
+  ///
+  /// In en, this message translates to:
+  /// **'BGC'**
+  String get residenceBgc;
+
+  /// Ortigas menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Ortigas'**
+  String get residenceOrtigas;
+
+  /// Alabang menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Alabang'**
+  String get residenceAlabang;
+
+  /// Calendar/Holiday section title
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar/Holidays'**
+  String get calendarSection;
+
+  /// Regular holiday menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Regular Holiday'**
+  String get calendarRegularHoliday;
+
+  /// Special working day menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Special Working Day'**
+  String get calendarSpecialWorkingDay;
+
+  /// Philippine travel destination section title
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Destinations'**
+  String get travelDestinationSection;
+
+  /// Manila travel destination menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Manila'**
+  String get travelDestinationManila;
+
+  /// Cebu travel destination menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Cebu'**
+  String get travelDestinationCebu;
+
+  /// Subic travel destination menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Subic'**
+  String get travelDestinationSubic;
+
+  /// Bohol travel destination menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Bohol'**
+  String get travelDestinationBohol;
+
+  /// Boracay travel destination menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Boracay'**
+  String get travelDestinationBoracay;
+
+  /// Palawan travel destination menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Palawan'**
+  String get travelDestinationPalawan;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

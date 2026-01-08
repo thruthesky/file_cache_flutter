@@ -86,8 +86,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 
   /// Load post details from server
+  ///
+  /// 게시글 상세 정보를 서버에서 가져오고 조회수를 1 증가시킵니다.
   Future<void> loadPost() async {
     try {
+      // 조회수 증가 (fire-and-forget 방식)
+      // 실패해도 게시글 로드에 영향 없음
+      increasePostView(widget.post.idx);
+
       final details = await getPost(widget.post.idx);
 
       if (mounted) {

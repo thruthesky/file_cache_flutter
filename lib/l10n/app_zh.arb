@@ -1818,9 +1818,81 @@
   "@videoUnavailable": {
     "description": "Error message when YouTube video cannot be loaded"
   },
-  "quickMenuMustReadInfo": "必读",
+  "quickMenuMustReadInfo": "必备信息",
   "@quickMenuMustReadInfo": {
-    "description": "Quick menu must-read information label"
+    "description": "Quick menu essential information label"
+  },
+  "philippineLifeInfo": "菲律宾生活信息",
+  "@philippineLifeInfo": {
+    "description": "Philippine life information section title in menu"
+  },
+  "immigrationSection": "出入境 & 签证",
+  "@immigrationSection": {
+    "description": "Immigration and visa passport section title"
+  },
+  "immigrationETravel": "电子旅行",
+  "@immigrationETravel": {
+    "description": "E-Travel registration menu item"
+  },
+  "immigrationTravelVisa": "旅游签证",
+  "@immigrationTravelVisa": {
+    "description": "Travel/Tourist visa menu item"
+  },
+  "immigrationWorkingVisa": "工作签证",
+  "@immigrationWorkingVisa": {
+    "description": "Working visa menu item"
+  },
+  "immigrationRetirementVisa": "退休签证",
+  "@immigrationRetirementVisa": {
+    "description": "Retirement visa (SRRV) menu item"
+  },
+  "transportationSection": "交通方式",
+  "@transportationSection": {
+    "description": "Transportation section title"
+  },
+  "transportationGrabTaxi": "Grab出租车",
+  "@transportationGrabTaxi": {
+    "description": "Grab taxi menu item"
+  },
+  "transportationRegularTaxi": "普通出租车",
+  "@transportationRegularTaxi": {
+    "description": "Regular taxi menu item"
+  },
+  "transportationExpressBus": "高速巴士",
+  "@transportationExpressBus": {
+    "description": "Express bus menu item"
+  },
+  "housingSection": "住房租赁",
+  "@housingSection": {
+    "description": "Housing rental section title"
+  },
+  "housingMonthlyRent": "月租",
+  "@housingMonthlyRent": {
+    "description": "Monthly rent menu item"
+  },
+  "housingAirbnb": "Airbnb",
+  "@housingAirbnb": {
+    "description": "Airbnb menu item"
+  },
+  "housingHotel": "酒店",
+  "@housingHotel": {
+    "description": "Hotel menu item"
+  },
+  "carSection": "汽车",
+  "@carSection": {
+    "description": "Car section title"
+  },
+  "carPurchase": "购买",
+  "@carPurchase": {
+    "description": "Car purchase menu item"
+  },
+  "carInsurance": "保险",
+  "@carInsurance": {
+    "description": "Car insurance menu item"
+  },
+  "carOrRenewal": "OR更新",
+  "@carOrRenewal": {
+    "description": "OR renewal menu item"
   },
   "quickMenuEmbassy": "大使馆",
   "@quickMenuEmbassy": {
@@ -1837,5 +1909,61 @@
   "emergencyContactsSection": "紧急联系",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"
+  },
+  "residenceSection": "推荐居住区",
+  "@residenceSection": {
+    "description": "Recommended residence area section title"
+  },
+  "residenceBgc": "BGC",
+  "@residenceBgc": {
+    "description": "BGC (Bonifacio Global City) menu item"
+  },
+  "residenceOrtigas": "Ortigas",
+  "@residenceOrtigas": {
+    "description": "Ortigas menu item"
+  },
+  "residenceAlabang": "Alabang",
+  "@residenceAlabang": {
+    "description": "Alabang menu item"
+  },
+  "calendarSection": "日历/节假日",
+  "@calendarSection": {
+    "description": "Calendar/Holiday section title"
+  },
+  "calendarRegularHoliday": "法定假日",
+  "@calendarRegularHoliday": {
+    "description": "Regular holiday menu item"
+  },
+  "calendarSpecialWorkingDay": "特别非工作日",
+  "@calendarSpecialWorkingDay": {
+    "description": "Special working day menu item"
+  },
+  "travelDestinationSection": "推荐旅游地",
+  "@travelDestinationSection": {
+    "description": "Philippine travel destination section title"
+  },
+  "travelDestinationManila": "马尼拉",
+  "@travelDestinationManila": {
+    "description": "Manila travel destination menu item"
+  },
+  "travelDestinationCebu": "宿务",
+  "@travelDestinationCebu": {
+    "description": "Cebu travel destination menu item"
+  },
+  "travelDestinationSubic": "苏比克",
+  "@travelDestinationSubic": {
+    "description": "Subic travel destination menu item"
+  },
+  "travelDestinationBohol": "薄荷岛",
+  "@travelDestinationBohol": {
+    "description": "Bohol travel destination menu item"
+  },
+  "travelDestinationBoracay": "长滩岛",
+  "@travelDestinationBoracay": {
+    "description": "Boracay travel destination menu item"
+  },
+  "travelDestinationPalawan": "巴拉望",
+  "@travelDestinationPalawan": {
+    "description": "Palawan travel destination menu item"
   }
 }

@@ -1853,13 +1853,81 @@
   "@quickMenuAllMenu": {
     "description": "Quick menu all menu label"
   },
-  "quickMenuMustReadInfo": "Importants",
+  "quickMenuMustReadInfo": "Essential Info",
   "@quickMenuMustReadInfo": {
-    "description": "Quick menu must-read information label"
+    "description": "Quick menu essential information label"
   },
   "philippineLifeInfo": "Philippine Life Info",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
+  },
+  "immigrationSection": "Immigration & Visa",
+  "@immigrationSection": {
+    "description": "Immigration and visa passport section title"
+  },
+  "immigrationETravel": "e-Travel",
+  "@immigrationETravel": {
+    "description": "E-Travel registration menu item"
+  },
+  "immigrationTravelVisa": "Travel Visa",
+  "@immigrationTravelVisa": {
+    "description": "Travel/Tourist visa menu item"
+  },
+  "immigrationWorkingVisa": "Working Visa",
+  "@immigrationWorkingVisa": {
+    "description": "Working visa menu item"
+  },
+  "immigrationRetirementVisa": "Retirement Visa",
+  "@immigrationRetirementVisa": {
+    "description": "Retirement visa (SRRV) menu item"
+  },
+  "transportationSection": "Transportation",
+  "@transportationSection": {
+    "description": "Transportation section title"
+  },
+  "transportationGrabTaxi": "Grab Taxi",
+  "@transportationGrabTaxi": {
+    "description": "Grab taxi menu item"
+  },
+  "transportationRegularTaxi": "Regular Taxi",
+  "@transportationRegularTaxi": {
+    "description": "Regular taxi menu item"
+  },
+  "transportationExpressBus": "Express Bus",
+  "@transportationExpressBus": {
+    "description": "Express bus menu item"
+  },
+  "housingSection": "Housing Rental",
+  "@housingSection": {
+    "description": "Housing rental section title"
+  },
+  "housingMonthlyRent": "Monthly Rent",
+  "@housingMonthlyRent": {
+    "description": "Monthly rent menu item"
+  },
+  "housingAirbnb": "Airbnb",
+  "@housingAirbnb": {
+    "description": "Airbnb menu item"
+  },
+  "housingHotel": "Hotel",
+  "@housingHotel": {
+    "description": "Hotel menu item"
+  },
+  "carSection": "Car",
+  "@carSection": {
+    "description": "Car section title"
+  },
+  "carPurchase": "Purchase",
+  "@carPurchase": {
+    "description": "Car purchase menu item"
+  },
+  "carInsurance": "Insurance",
+  "@carInsurance": {
+    "description": "Car insurance menu item"
+  },
+  "carOrRenewal": "OR Renewal",
+  "@carOrRenewal": {
+    "description": "OR renewal menu item"
   },
   "entryTodayExchangeRate": "Exchange",
   "@entryTodayExchangeRate": {
@@ -1936,5 +2004,61 @@
   "emergencyContactsSection": "Emergency",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"
+  },
+  "residenceSection": "Recommended Areas",
+  "@residenceSection": {
+    "description": "Recommended residence area section title"
+  },
+  "residenceBgc": "BGC",
+  "@residenceBgc": {
+    "description": "BGC (Bonifacio Global City) menu item"
+  },
+  "residenceOrtigas": "Ortigas",
+  "@residenceOrtigas": {
+    "description": "Ortigas menu item"
+  },
+  "residenceAlabang": "Alabang",
+  "@residenceAlabang": {
+    "description": "Alabang menu item"
+  },
+  "calendarSection": "Calendar/Holidays",
+  "@calendarSection": {
+    "description": "Calendar/Holiday section title"
+  },
+  "calendarRegularHoliday": "Regular Holiday",
+  "@calendarRegularHoliday": {
+    "description": "Regular holiday menu item"
+  },
+  "calendarSpecialWorkingDay": "Special Working Day",
+  "@calendarSpecialWorkingDay": {
+    "description": "Special working day menu item"
+  },
+  "travelDestinationSection": "Travel Destinations",
+  "@travelDestinationSection": {
+    "description": "Philippine travel destination section title"
+  },
+  "travelDestinationManila": "Manila",
+  "@travelDestinationManila": {
+    "description": "Manila travel destination menu item"
+  },
+  "travelDestinationCebu": "Cebu",
+  "@travelDestinationCebu": {
+    "description": "Cebu travel destination menu item"
+  },
+  "travelDestinationSubic": "Subic",
+  "@travelDestinationSubic": {
+    "description": "Subic travel destination menu item"
+  },
+  "travelDestinationBohol": "Bohol",
+  "@travelDestinationBohol": {
+    "description": "Bohol travel destination menu item"
+  },
+  "travelDestinationBoracay": "Boracay",
+  "@travelDestinationBoracay": {
+    "description": "Boracay travel destination menu item"
+  },
+  "travelDestinationPalawan": "Palawan",
+  "@travelDestinationPalawan": {
+    "description": "Palawan travel destination menu item"
   }
 }

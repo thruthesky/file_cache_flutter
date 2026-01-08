@@ -20,6 +20,31 @@ import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
 import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/info/travel/travel_info.screen.dart';
+import 'package:philgo/screens/info/immigration/e_travel.screen.dart';
+import 'package:philgo/screens/info/immigration/travel_visa.screen.dart';
+import 'package:philgo/screens/info/immigration/working_visa.screen.dart';
+import 'package:philgo/screens/info/immigration/retirement_visa.screen.dart';
+import 'package:philgo/screens/info/transportation/grab_taxi.screen.dart';
+import 'package:philgo/screens/info/transportation/regular_taxi.screen.dart';
+import 'package:philgo/screens/info/transportation/express_bus.screen.dart';
+import 'package:philgo/screens/info/housing/monthly_rent.screen.dart';
+import 'package:philgo/screens/info/housing/airbnb.screen.dart';
+import 'package:philgo/screens/info/housing/hotel.screen.dart';
+import 'package:philgo/screens/info/car/car_purchase.screen.dart';
+import 'package:philgo/screens/info/car/car_insurance.screen.dart';
+import 'package:philgo/screens/info/car/or_renewal.screen.dart';
+import 'package:philgo/screens/info/residence/bgc.screen.dart';
+import 'package:philgo/screens/info/residence/ortigas.screen.dart';
+import 'package:philgo/screens/info/residence/alabang.screen.dart';
+import 'package:philgo/screens/info/calendar/regular_holiday.screen.dart';
+import 'package:philgo/screens/info/calendar/special_working_day.screen.dart';
+import 'package:philgo/screens/info/travel_destination/manila.screen.dart';
+import 'package:philgo/screens/info/travel_destination/cebu.screen.dart';
+import 'package:philgo/screens/info/travel_destination/subic.screen.dart';
+import 'package:philgo/screens/info/travel_destination/bohol.screen.dart';
+import 'package:philgo/screens/info/travel_destination/boracay.screen.dart';
+import 'package:philgo/screens/info/travel_destination/palawan.screen.dart';
+import 'package:philgo/screens/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -179,8 +204,30 @@ final router = GoRouter(
       );
     }
 
-    /// Authentication check
-    if (state.fullPath == EntryScreen.routeName) {
+    /// Authentication check (인증 체크)
+    ///
+    /// 로그인 없이도 접근 가능한 화면들 (Screens accessible without login):
+    /// - EntryScreen: 시작 화면
+    /// - ExchangeRateScreen: 환율 정보 (정보성 화면)
+    /// - WeatherScreen: 날씨 정보 (정보성 화면)
+    /// - EmergencyContactScreen: 긴급 연락처 (정보성 화면)
+    /// - EssentialInfoScreen: 필수 정보 (정보성 화면)
+    /// - MonthlyLivingScreen: 한달살기 정보 (정보성 화면)
+    /// - TravelInfoScreen: 여행 정보 (정보성 화면)
+    ///
+    /// 이 화면들은 EntryScreen에서 로그인 전에도 접근할 수 있어야 합니다.
+    /// These screens should be accessible from EntryScreen before login.
+    final publicRoutes = <String>{
+      EntryScreen.routeName,
+      ExchangeRateScreen.routeName,
+      WeatherScreen.routeName,
+      EmergencyContactScreen.routeName,
+      EssentialInfoScreen.routeName,
+      MonthlyLivingScreen.routeName,
+      TravelInfoScreen.routeName,
+    };
+
+    if (publicRoutes.contains(state.fullPath)) {
       return null;
     } else {
       /// 인증된 사용자인지 확인
@@ -456,6 +503,184 @@ final router = GoRouter(
       path: TravelInfoScreen.routeName,
       name: TravelInfoScreen.routeName,
       builder: (context, state) => const TravelInfoScreen(),
+    ),
+
+    /// e트래블 화면 (E-Travel Screen)
+    GoRoute(
+      path: ETravelScreen.routeName,
+      name: ETravelScreen.routeName,
+      builder: (context, state) => const ETravelScreen(),
+    ),
+
+    /// 여행비자 화면 (Travel Visa Screen)
+    GoRoute(
+      path: TravelVisaScreen.routeName,
+      name: TravelVisaScreen.routeName,
+      builder: (context, state) => const TravelVisaScreen(),
+    ),
+
+    /// 워킹비자 화면 (Working Visa Screen)
+    GoRoute(
+      path: WorkingVisaScreen.routeName,
+      name: WorkingVisaScreen.routeName,
+      builder: (context, state) => const WorkingVisaScreen(),
+    ),
+
+    /// 은퇴비자 화면 (Retirement Visa Screen)
+    GoRoute(
+      path: RetirementVisaScreen.routeName,
+      name: RetirementVisaScreen.routeName,
+      builder: (context, state) => const RetirementVisaScreen(),
+    ),
+
+    /// 그랩 택시 화면 (Grab Taxi Screen)
+    GoRoute(
+      path: GrabTaxiScreen.routeName,
+      name: GrabTaxiScreen.routeName,
+      builder: (context, state) => const GrabTaxiScreen(),
+    ),
+
+    /// 일반 택시 화면 (Regular Taxi Screen)
+    GoRoute(
+      path: RegularTaxiScreen.routeName,
+      name: RegularTaxiScreen.routeName,
+      builder: (context, state) => const RegularTaxiScreen(),
+    ),
+
+    /// 고속 버스 화면 (Express Bus Screen)
+    GoRoute(
+      path: ExpressBusScreen.routeName,
+      name: ExpressBusScreen.routeName,
+      builder: (context, state) => const ExpressBusScreen(),
+    ),
+
+    /// 월세 화면 (Monthly Rent Screen)
+    GoRoute(
+      path: MonthlyRentScreen.routeName,
+      name: MonthlyRentScreen.routeName,
+      builder: (context, state) => const MonthlyRentScreen(),
+    ),
+
+    /// 에어비앤비 화면 (Airbnb Screen)
+    GoRoute(
+      path: AirbnbScreen.routeName,
+      name: AirbnbScreen.routeName,
+      builder: (context, state) => const AirbnbScreen(),
+    ),
+
+    /// 호텔 화면 (Hotel Screen)
+    GoRoute(
+      path: HotelScreen.routeName,
+      name: HotelScreen.routeName,
+      builder: (context, state) => const HotelScreen(),
+    ),
+
+    /// 자동차 구매 화면 (Car Purchase Screen)
+    GoRoute(
+      path: CarPurchaseScreen.routeName,
+      name: CarPurchaseScreen.routeName,
+      builder: (context, state) => const CarPurchaseScreen(),
+    ),
+
+    /// 자동차 보험 화면 (Car Insurance Screen)
+    GoRoute(
+      path: CarInsuranceScreen.routeName,
+      name: CarInsuranceScreen.routeName,
+      builder: (context, state) => const CarInsuranceScreen(),
+    ),
+
+    /// OR 리뉴얼 화면 (OR Renewal Screen)
+    GoRoute(
+      path: OrRenewalScreen.routeName,
+      name: OrRenewalScreen.routeName,
+      builder: (context, state) => const OrRenewalScreen(),
+    ),
+
+    /// BGC 화면 (BGC Screen)
+    GoRoute(
+      path: BgcScreen.routeName,
+      name: BgcScreen.routeName,
+      builder: (context, state) => const BgcScreen(),
+    ),
+
+    /// 올티가스 화면 (Ortigas Screen)
+    GoRoute(
+      path: OrtigasScreen.routeName,
+      name: OrtigasScreen.routeName,
+      builder: (context, state) => const OrtigasScreen(),
+    ),
+
+    /// 알라방 화면 (Alabang Screen)
+    GoRoute(
+      path: AlabangScreen.routeName,
+      name: AlabangScreen.routeName,
+      builder: (context, state) => const AlabangScreen(),
+    ),
+
+    /// 정규 휴일 화면 (Regular Holiday Screen)
+    GoRoute(
+      path: RegularHolidayScreen.routeName,
+      name: RegularHolidayScreen.routeName,
+      builder: (context, state) => const RegularHolidayScreen(),
+    ),
+
+    /// 근무휴일 화면 (Special Working Day Screen)
+    GoRoute(
+      path: SpecialWorkingDayScreen.routeName,
+      name: SpecialWorkingDayScreen.routeName,
+      builder: (context, state) => const SpecialWorkingDayScreen(),
+    ),
+
+    /// 마닐라 화면 (Manila Screen)
+    GoRoute(
+      path: ManilaScreen.routeName,
+      name: ManilaScreen.routeName,
+      builder: (context, state) => const ManilaScreen(),
+    ),
+
+    /// 세부 화면 (Cebu Screen)
+    GoRoute(
+      path: CebuScreen.routeName,
+      name: CebuScreen.routeName,
+      builder: (context, state) => const CebuScreen(),
+    ),
+
+    /// 수빅 화면 (Subic Screen)
+    GoRoute(
+      path: SubicScreen.routeName,
+      name: SubicScreen.routeName,
+      builder: (context, state) => const SubicScreen(),
+    ),
+
+    /// 보홀 화면 (Bohol Screen)
+    GoRoute(
+      path: BoholScreen.routeName,
+      name: BoholScreen.routeName,
+      builder: (context, state) => const BoholScreen(),
+    ),
+
+    /// 보라카이 화면 (Boracay Screen)
+    GoRoute(
+      path: BoracayScreen.routeName,
+      name: BoracayScreen.routeName,
+      builder: (context, state) => const BoracayScreen(),
+    ),
+
+    /// 팔라완 화면 (Palawan Screen)
+    GoRoute(
+      path: PalawanScreen.routeName,
+      name: PalawanScreen.routeName,
+      builder: (context, state) => const PalawanScreen(),
+    ),
+
+    /// 광고 상세 화면 (Advertisement View Screen)
+    GoRoute(
+      path: AdvertisementViewScreen.routeName,
+      name: AdvertisementViewScreen.routeName,
+      builder: (context, state) {
+        final idx = state.extra as int;
+        return AdvertisementViewScreen(idx: idx);
+      },
     ),
   ],
 );
