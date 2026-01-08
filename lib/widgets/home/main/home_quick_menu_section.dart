@@ -62,50 +62,34 @@ class HomeQuickMenuSection extends StatelessWidget {
 
   /// 환율 메뉴 탭 핸들러 (Exchange rate menu tap handler)
   ///
-  /// 환율 정보 화면을 다이얼로그로 표시합니다.
-  /// Shows exchange rate information screen as dialog.
+  /// 환율 정보 화면으로 이동합니다.
+  /// Navigates to exchange rate information screen.
   void _onExchangeRateTap(BuildContext context) {
-    showFullScreen(
-      context,
-      child: const ExchangeRateScreen(),
-      barrierLabel: '환율 정보 닫기',
-    );
+    ExchangeRateScreen.push(context);
   }
 
   /// 날씨 메뉴 탭 핸들러 (Weather menu tap handler)
   ///
-  /// 필리핀 주요 도시의 날씨 정보 화면을 다이얼로그로 표시합니다.
-  /// Shows weather information screen for major Philippine cities as dialog.
+  /// 필리핀 주요 도시의 날씨 정보 화면으로 이동합니다.
+  /// Navigates to weather information screen for major Philippine cities.
   void _onWeatherTap(BuildContext context) {
-    showFullScreen(
-      context,
-      child: const WeatherScreen(),
-      barrierLabel: '날씨 정보 닫기',
-    );
+    WeatherScreen.push(context);
   }
 
   /// 긴급 연락처 메뉴 탭 핸들러 (Emergency contact menu tap handler)
   ///
-  /// 대사관, 경찰, 병원 등 긴급 연락처 화면을 다이얼로그로 표시합니다.
-  /// Shows emergency contacts screen (Embassy, Police, Hospital, etc.) as dialog.
+  /// 대사관, 경찰, 병원 등 긴급 연락처 화면으로 이동합니다.
+  /// Navigates to emergency contacts screen (Embassy, Police, Hospital, etc.).
   void _onEmergencyContactTap(BuildContext context) {
-    showFullScreen(
-      context,
-      child: const EmergencyContactScreen(),
-      barrierLabel: '긴급 연락처 닫기',
-    );
+    EmergencyContactScreen.push(context);
   }
 
   /// 필수정보 메뉴 탭 핸들러 (Essential info menu tap handler)
   ///
-  /// 비자, 대사관, 병원 등 필수 정보 화면을 다이얼로그로 표시합니다.
-  /// Shows essential info screen (Visa, Embassy, Hospital, etc.) as dialog.
+  /// 비자, 대사관, 병원 등 필수 정보 화면으로 이동합니다.
+  /// Navigates to essential info screen (Visa, Embassy, Hospital, etc.).
   void _onEssentialInfoTap(BuildContext context) {
-    showFullScreen(
-      context,
-      child: const EssentialInfoScreen(),
-      barrierLabel: '필수정보 닫기',
-    );
+    EssentialInfoScreen.push(context);
   }
 
   /// 한달살기 메뉴 탭 핸들러 (Monthly living menu tap handler)

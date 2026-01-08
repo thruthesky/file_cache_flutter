@@ -17,11 +17,7 @@ import 'package:philgo/widgets/unfocus_on_tap.dart';
 ///
 /// ### 사용법 (Usage):
 /// ```dart
-/// showFullScreen(
-///   context,
-///   child: const ExchangeRateScreen(),
-///   barrierLabel: '환율 정보 닫기',
-/// );
+/// ExchangeRateScreen.push(context);
 /// ```
 class ExchangeRateScreen extends StatefulWidget {
   static const String routeName = '/ExchangeRate';

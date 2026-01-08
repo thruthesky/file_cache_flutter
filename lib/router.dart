@@ -14,7 +14,12 @@ import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/info/emergency/embassy.screen.dart';
 import 'package:philgo/screens/info/emergency/hospital.screen.dart';
 import 'package:philgo/screens/info/emergency/police_station.screen.dart';
+import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
+import 'package:philgo/screens/info/essential/essential_info.screen.dart';
+import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
+import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
+import 'package:philgo/screens/info/travel/travel_info.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
@@ -416,6 +421,41 @@ final router = GoRouter(
       path: NoticeScreen.routeName,
       name: NoticeScreen.routeName,
       builder: (context, state) => const NoticeScreen(),
+    ),
+
+    /// 환율 정보 화면 (Exchange Rate Screen)
+    GoRoute(
+      path: ExchangeRateScreen.routeName,
+      name: ExchangeRateScreen.routeName,
+      builder: (context, state) => const ExchangeRateScreen(),
+    ),
+
+    /// 긴급 연락처 화면 (Emergency Contact Screen)
+    GoRoute(
+      path: EmergencyContactScreen.routeName,
+      name: EmergencyContactScreen.routeName,
+      builder: (context, state) => const EmergencyContactScreen(),
+    ),
+
+    /// 필수 정보 화면 (Essential Info Screen)
+    GoRoute(
+      path: EssentialInfoScreen.routeName,
+      name: EssentialInfoScreen.routeName,
+      builder: (context, state) => const EssentialInfoScreen(),
+    ),
+
+    /// 한달살기 정보 화면 (Monthly Living Screen)
+    GoRoute(
+      path: MonthlyLivingScreen.routeName,
+      name: MonthlyLivingScreen.routeName,
+      builder: (context, state) => const MonthlyLivingScreen(),
+    ),
+
+    /// 여행 정보 화면 (Travel Info Screen)
+    GoRoute(
+      path: TravelInfoScreen.routeName,
+      name: TravelInfoScreen.routeName,
+      builder: (context, state) => const TravelInfoScreen(),
     ),
   ],
 );
