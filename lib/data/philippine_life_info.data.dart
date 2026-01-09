@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/screens/info/delivery/food_delivery.screen.dart';
+import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/essential/essential_info.screen.dart';
 import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
@@ -90,6 +92,20 @@ class PhilippineLifeInfoData {
       getLabel: (l10n) => l10n.quickMenuTravel,
       routeName: TravelInfoScreen.routeName,
       push: TravelInfoScreen.push,
+    ),
+    // 음식 배달 (Food Delivery) - Grab 앱을 이용한 음식 배달 정보
+    PhilippineLifeInfoItem(
+      icon: FontAwesomeIcons.lightMotorcycle,
+      getLabel: (l10n) => l10n.quickMenuFoodDelivery,
+      routeName: FoodDeliveryScreen.routeName,
+      push: FoodDeliveryScreen.push,
+    ),
+    // 배달K (Baedal K) - 한국 음식 전문 배달 앱
+    PhilippineLifeInfoItem(
+      icon: FontAwesomeIcons.lightBowlRice,
+      getLabel: (l10n) => l10n.quickMenuBaedalK,
+      routeName: BaedalKScreen.routeName,
+      push: BaedalKScreen.push,
     ),
   ];
 }

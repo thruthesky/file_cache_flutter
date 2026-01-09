@@ -1965,5 +1965,9 @@
   "travelDestinationPalawan": "パラワン",
   "@travelDestinationPalawan": {
     "description": "Palawan travel destination menu item"
+  },
+  "quickMenuEssentialInfo": "初心者必読",
+  "@quickMenuEssentialInfo": {
+    "description": "Quick menu essential info label"
   }
 }

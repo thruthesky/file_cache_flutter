@@ -3008,7 +3008,7 @@ abstract class Lo {
   /// Quick menu essential info label
   ///
   /// In en, this message translates to:
-  /// **'Essential'**
+  /// **'Must Read'**
   String get quickMenuEssentialInfo;
 
   /// Quick menu monthly living label
@@ -3022,6 +3022,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Travel'**
   String get quickMenuTravel;
+
+  /// Quick menu food delivery label
+  ///
+  /// In en, this message translates to:
+  /// **'Food Delivery'**
+  String get quickMenuFoodDelivery;
+
+  /// Quick menu Baedal K (Korean food delivery) label
+  ///
+  /// In en, this message translates to:
+  /// **'Baedal K'**
+  String get quickMenuBaedalK;
 
   /// Quick menu my info label
   ///

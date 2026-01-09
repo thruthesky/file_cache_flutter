@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/data/post_content_mapping.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/widgets/post_content/post_content_viewer.dart';
 
-/// 워킹비자 정보 화면 (Working Visa Screen)
+/// 자동차 렌트 정보 화면 (Car Rental Screen)
 ///
-/// 필리핀 워킹비자(취업비자) 정보를 제공합니다.
-/// Provides information about Philippine working visa.
+/// 필리핀 자동차 렌트 정보를 제공합니다.
+/// Provides information about car rental in the Philippines.
 ///
 /// ### 사용법 (Usage):
 /// ```dart
-/// WorkingVisaScreen.push(context);
+/// CarRentalScreen.push(context);
 /// ```
-class WorkingVisaScreen extends StatefulWidget {
+class CarRentalScreen extends StatefulWidget {
   /// 라우트 이름 (Route name)
-  static const String routeName = '/WorkingVisa';
+  static const String routeName = '/CarRental';
 
   /// push 네비게이션 함수 (Push navigation function)
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
@@ -23,13 +21,13 @@ class WorkingVisaScreen extends StatefulWidget {
   /// go 네비게이션 함수 (Go navigation function)
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
 
-  const WorkingVisaScreen({super.key});
+  const CarRentalScreen({super.key});
 
   @override
-  State<WorkingVisaScreen> createState() => _WorkingVisaScreenState();
+  State<CarRentalScreen> createState() => _CarRentalScreenState();
 }
 
-class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
+class _CarRentalScreenState extends State<CarRentalScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = Lo.of(context)!;
@@ -43,7 +41,7 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          l10n.immigrationWorkingVisa,
+          l10n.carRental,
           style: theme.textTheme.titleLarge?.copyWith(
             color: scheme.onSurface,
             fontWeight: FontWeight.w600,
@@ -51,12 +49,7 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
         ),
         centerTitle: true,
       ),
-      /// PostContentViewer를 사용하여 필고 게시글 내용 표시
-      /// Display PhilGo forum post content using PostContentViewer
-      body: const PostContentViewer(
-        postId: PostContentMapping.workingVisa,
-        showImages: true,
-      ),
+      body: const SizedBox.shrink(),
     );
   }
 }

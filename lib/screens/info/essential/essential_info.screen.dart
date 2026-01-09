@@ -118,7 +118,8 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
     _EssentialInfoItem(
       icon: FontAwesomeIcons.lightCalendarPlus,
       title: '관광비자 연장',
-      description: '현지에서 연장 가능!\n이민국(BI) 방문\n30일 → +29일 → 이후 1~2개월 단위\n최대 36개월 가능',
+      description:
+          '현지에서 연장 가능!\n이민국(BI) 방문\n30일 → +29일 → 이후 1~2개월 단위\n최대 36개월 가능',
     ),
     _EssentialInfoItem(
       icon: FontAwesomeIcons.lightBuilding,
@@ -156,7 +157,8 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
     _EssentialInfoItem(
       icon: FontAwesomeIcons.lightBuildingUser,
       title: '장기 숙소 (콘도)',
-      description: '수영장, 헬스장, 24시간 경비\n단점: 전기요금 비쌈 (에어컨 폭탄)\n처음엔 1~2주 단기 → 현지 보고 계약',
+      description:
+          '수영장, 헬스장, 24시간 경비\n단점: 전기요금 비쌈 (에어컨 폭탄)\n처음엔 1~2주 단기 → 현지 보고 계약',
     ),
   ];
 
@@ -224,21 +226,9 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
       title: 'eTravel 미등록',
       description: '체크인 불가, 입국 지연 발생',
     ),
-    _MistakeItem(
-      rank: 3,
-      title: '택시 바가지',
-      description: 'Grab 사용으로 예방 가능',
-    ),
-    _MistakeItem(
-      rank: 4,
-      title: '전기요금 폭탄',
-      description: '에어컨 사용량 주의!',
-    ),
-    _MistakeItem(
-      rank: 5,
-      title: '"필리핀은 싸다" 착각',
-      description: '외국인에게는 비쌈',
-    ),
+    _MistakeItem(rank: 3, title: '택시 바가지', description: 'Grab 사용으로 예방 가능'),
+    _MistakeItem(rank: 4, title: '전기요금 폭탄', description: '에어컨 사용량 주의!'),
+    _MistakeItem(rank: 5, title: '"필리핀은 싸다" 착각', description: '외국인에게는 비쌈'),
   ];
 
   @override
@@ -253,9 +243,13 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(FontAwesomeIcons.lightCircleInfo, size: 20, color: scheme.primary),
+            FaIcon(
+              FontAwesomeIcons.lightCircleInfo,
+              size: 20,
+              color: scheme.primary,
+            ),
             SizedBox(width: sp.s8),
-            const Text('🇵🇭 필리핀 필수정보'),
+            const Text('🇵🇭 필리핀 초간단: 초보 필독 정보'),
           ],
         ),
         centerTitle: true,
@@ -270,63 +264,129 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// [출국 전 준비 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightClipboardCheck, title: '출국 전 준비'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightClipboardCheck,
+              title: '출국 전 준비',
+            ),
             SizedBox(height: sp.s12),
             _buildChecklistCards(context, _preDeparture),
 
             SizedBox(height: sp.s24),
 
             /// [입국 심사 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightPassport, title: '입국 심사'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightPassport,
+              title: '입국 심사',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _immigration, scheme.secondaryContainer, scheme.onSecondaryContainer),
+            _buildInfoCards(
+              context,
+              _immigration,
+              scheme.secondaryContainer,
+              scheme.onSecondaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [비자 제도 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightIdCard, title: '비자 제도'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightIdCard,
+              title: '비자 제도',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _visa, scheme.tertiaryContainer, scheme.onTertiaryContainer),
+            _buildInfoCards(
+              context,
+              _visa,
+              scheme.tertiaryContainer,
+              scheme.onTertiaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [교통 정보 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightCar, title: '교통'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightCar,
+              title: '교통',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _transportation, scheme.primaryContainer, scheme.onPrimaryContainer),
+            _buildInfoCards(
+              context,
+              _transportation,
+              scheme.primaryContainer,
+              scheme.onPrimaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [숙소 정보 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightHouse, title: '숙소'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightHouse,
+              title: '숙소',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _accommodation, scheme.surfaceContainerHighest, scheme.onSurface),
+            _buildInfoCards(
+              context,
+              _accommodation,
+              scheme.surfaceContainerHighest,
+              scheme.onSurface,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [생활 필수 정보 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightHouseUser, title: '생활 필수'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightHouseUser,
+              title: '생활 필수',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _dailyLife, scheme.secondaryContainer, scheme.onSecondaryContainer),
+            _buildInfoCards(
+              context,
+              _dailyLife,
+              scheme.secondaryContainer,
+              scheme.onSecondaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [돈 관리 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightWallet, title: '돈 관리'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightWallet,
+              title: '돈 관리',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _money, scheme.tertiaryContainer, scheme.onTertiaryContainer),
+            _buildInfoCards(
+              context,
+              _money,
+              scheme.tertiaryContainer,
+              scheme.onTertiaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [문화 포인트 섹션]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightHeart, title: '문화 포인트'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightHeart,
+              title: '문화 포인트',
+            ),
             SizedBox(height: sp.s12),
             _buildCultureCards(context),
 
             SizedBox(height: sp.s24),
 
             /// [초보자 실수 TOP 5]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightTriangleExclamation, title: '초보자 실수 TOP 5'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightTriangleExclamation,
+              title: '초보자 실수 TOP 5',
+            ),
             SizedBox(height: sp.s12),
             _buildMistakesSection(context),
 
@@ -343,7 +403,11 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
   }
 
   /// 섹션 헤더 빌드
-  Widget _buildSectionHeader(BuildContext context, {required IconData icon, required String title}) {
+  Widget _buildSectionHeader(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+  }) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -371,7 +435,10 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
   }
 
   /// 체크리스트 카드 빌드
-  Widget _buildChecklistCards(BuildContext context, List<_ChecklistItem> items) {
+  Widget _buildChecklistCards(
+    BuildContext context,
+    List<_ChecklistItem> items,
+  ) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -379,9 +446,15 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
     return Column(
       children: items.map((item) {
         /// 경고 아이템은 다른 색상 사용
-        final bgColor = item.isWarning ? scheme.errorContainer : scheme.surfaceContainerLow;
-        final iconBgColor = item.isWarning ? scheme.error : scheme.primaryContainer;
-        final iconColor = item.isWarning ? scheme.onError : scheme.onPrimaryContainer;
+        final bgColor = item.isWarning
+            ? scheme.errorContainer
+            : scheme.surfaceContainerLow;
+        final iconBgColor = item.isWarning
+            ? scheme.error
+            : scheme.primaryContainer;
+        final iconColor = item.isWarning
+            ? scheme.onError
+            : scheme.onPrimaryContainer;
 
         return Container(
           margin: EdgeInsets.only(bottom: sp.s8),
@@ -400,7 +473,9 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                   color: iconBgColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Center(child: FaIcon(item.icon, size: 18, color: iconColor)),
+                child: Center(
+                  child: FaIcon(item.icon, size: 18, color: iconColor),
+                ),
               ),
               SizedBox(width: sp.s12),
               Expanded(
@@ -413,13 +488,18 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                           item.title,
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: item.isWarning ? scheme.onErrorContainer : scheme.onSurface,
+                            color: item.isWarning
+                                ? scheme.onErrorContainer
+                                : scheme.onSurface,
                           ),
                         ),
                         if (item.isWarning) ...[
                           SizedBox(width: sp.s4),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: sp.s4, vertical: 2),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: sp.s4,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: scheme.error,
                               borderRadius: BorderRadius.circular(4),
@@ -440,7 +520,9 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                     Text(
                       item.description,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: item.isWarning ? scheme.onErrorContainer : scheme.onSurfaceVariant,
+                        color: item.isWarning
+                            ? scheme.onErrorContainer
+                            : scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
                     ),
@@ -484,7 +566,9 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                   color: iconBgColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Center(child: FaIcon(item.icon, size: 18, color: iconColor)),
+                child: Center(
+                  child: FaIcon(item.icon, size: 18, color: iconColor),
+                ),
               ),
               SizedBox(width: sp.s12),
               Expanded(
@@ -542,7 +626,9 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                     Expanded(
                       child: Text(
                         item.title,
-                        style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -663,7 +749,11 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
         children: [
           Row(
             children: [
-              FaIcon(FontAwesomeIcons.lightLightbulb, size: 18, color: scheme.onPrimaryContainer),
+              FaIcon(
+                FontAwesomeIcons.lightLightbulb,
+                size: 18,
+                color: scheme.onPrimaryContainer,
+              ),
               SizedBox(width: sp.s8),
               Text(
                 '마무리 요약',

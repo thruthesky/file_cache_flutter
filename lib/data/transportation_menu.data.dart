@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/screens/info/car/car_rental.screen.dart';
 import 'package:philgo/screens/info/transportation/express_bus.screen.dart';
 import 'package:philgo/screens/info/transportation/grab_taxi.screen.dart';
 import 'package:philgo/screens/info/transportation/regular_taxi.screen.dart';
@@ -69,6 +70,15 @@ class TransportationMenuData {
       getLabel: (l10n) => l10n.transportationExpressBus,
       routeName: ExpressBusScreen.routeName,
       push: ExpressBusScreen.push,
+    ),
+
+    /// 렌터카 (Car Rental)
+    /// 필리핀 렌터카 서비스 정보
+    TransportationMenuItem(
+      icon: FontAwesomeIcons.car,
+      getLabel: (l10n) => l10n.carRental,
+      routeName: CarRentalScreen.routeName,
+      push: CarRentalScreen.push,
     ),
   ];
 }

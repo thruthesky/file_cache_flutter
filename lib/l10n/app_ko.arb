@@ -1980,7 +1980,7 @@
   "@quickMenuEmergency": {
     "description": "Quick menu emergency contacts label"
   },
-  "quickMenuEssentialInfo": "필수정보",
+  "quickMenuEssentialInfo": "초보 필독",
   "@quickMenuEssentialInfo": {
     "description": "Quick menu essential info label"
   },
@@ -1991,6 +1991,14 @@
   "quickMenuTravel": "여행",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "quickMenuFoodDelivery": "음식 배달",
+  "@quickMenuFoodDelivery": {
+    "description": "Quick menu food delivery label"
+  },
+  "quickMenuBaedalK": "배달K",
+  "@quickMenuBaedalK": {
+    "description": "Quick menu Baedal K (Korean food delivery) label"
   },
   "quickMenuMyInfo": "내 정보",
   "@quickMenuMyInfo": {

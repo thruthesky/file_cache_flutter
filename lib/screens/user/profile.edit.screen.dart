@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -101,15 +102,45 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         video: true,
                         onUploaded: (url) async {
                           log('uploaded file url: $url');
+
+                          // Get the old photo URL before updating
+                          // 이전 사진 URL을 업데이트 전에 가져옴
+                          final oldPhotoUrl =
+                              PhilgoState.of(context).user?.photoUrl;
+
                           final updatedUser = await philgoApiUserUpdate({
                             'photo_url': url,
                           });
+
                           if (context.mounted) {
-                            PhilgoState.of(context).setUser(updatedUser);
-                            showComicSuccessSnackBar(
-                              context,
-                              T.profilePhotoUpdated,
-                            );
+                            // Store PhilgoState reference before async operations
+                            // async 작업 전에 PhilgoState 참조 저장
+                            final philgoState = PhilgoState.of(context);
+
+                            // Evict old image from cache to ensure new image is displayed
+                            // 새 이미지가 표시되도록 이전 이미지 캐시 삭제
+                            if (oldPhotoUrl != null &&
+                                oldPhotoUrl.isNotEmpty &&
+                                oldPhotoUrl != url) {
+                              await CachedNetworkImage.evictFromCache(
+                                oldPhotoUrl,
+                              );
+                            }
+
+                            // Also evict new URL cache in case same URL is reused
+                            // 동일 URL이 재사용되는 경우를 대비해 새 URL 캐시도 삭제
+                            await CachedNetworkImage.evictFromCache(url);
+
+                            // Update user state (PhilgoState reference captured before async)
+                            // 사용자 상태 업데이트 (async 전에 캡처한 PhilgoState 참조 사용)
+                            philgoState.setUser(updatedUser);
+
+                            if (context.mounted) {
+                              showComicSuccessSnackBar(
+                                context,
+                                T.profilePhotoUpdated,
+                              );
+                            }
                           }
                         },
                         onBeforeUpload: () => log('before upload'),
@@ -125,12 +156,26 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                             alignment: Alignment.center,
                             onTapDelete: () async {
                               try {
-                                await philgoApiFileDelete(
-                                  PhilgoState.of(context).user!.photoUrl,
-                                );
+                                // Store photo URL before deletion for cache eviction
+                                // 캐시 삭제를 위해 삭제 전에 사진 URL 저장
+                                final oldPhotoUrl =
+                                    PhilgoState.of(context).user!.photoUrl;
+
+                                await philgoApiFileDelete(oldPhotoUrl);
+
                                 final updatedUser = await philgoApiUserUpdate({
                                   'photo_url': '',
                                 });
+
+                                // Evict old photo from cache after deletion
+                                // 삭제 후 이전 사진 캐시 제거
+                                if (oldPhotoUrl != null &&
+                                    oldPhotoUrl.isNotEmpty) {
+                                  await CachedNetworkImage.evictFromCache(
+                                    oldPhotoUrl,
+                                  );
+                                }
+
                                 if (context.mounted) {
                                   PhilgoState.of(context).setUser(updatedUser);
                                   showComicSuccessSnackBar(

@@ -16,6 +16,8 @@ import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
 import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/info/travel/travel_info.screen.dart';
+import 'package:philgo/screens/info/delivery/food_delivery.screen.dart';
+import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
@@ -194,6 +196,18 @@ class _MenuHomeState extends State<MenuHome> {
                       icon: FontAwesomeIcons.umbrellaBeach,
                       title: l10n.quickMenuTravel,
                       onTap: () => TravelInfoScreen.push(context),
+                    ),
+                    // 음식 배달 (Food Delivery) - Grab 앱을 이용한 음식 배달 정보
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.lightMotorcycle,
+                      title: l10n.quickMenuFoodDelivery,
+                      onTap: () => FoodDeliveryScreen.push(context),
+                    ),
+                    // 배달K (Baedal K) - 한국 음식 전문 배달 앱
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.lightBowlRice,
+                      title: l10n.quickMenuBaedalK,
+                      onTap: () => BaedalKScreen.push(context),
                     ),
                   ],
                 ),

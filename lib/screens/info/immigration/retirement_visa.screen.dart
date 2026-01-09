@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/data/post_content_mapping.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/widgets/post_content/post_content_viewer.dart';
 
 /// 은퇴비자 정보 화면 (Retirement Visa Screen)
 ///
@@ -49,7 +51,12 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
         ),
         centerTitle: true,
       ),
-      body: const SizedBox.shrink(),
+      /// PostContentViewer를 사용하여 필고 게시글 내용 표시
+      /// Display PhilGo forum post content using PostContentViewer
+      body: const PostContentViewer(
+        postId: PostContentMapping.retirementVisa,
+        showImages: true,
+      ),
     );
   }
 }

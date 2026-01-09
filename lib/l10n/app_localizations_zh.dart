@@ -1490,13 +1490,19 @@ class LoZh extends Lo {
   String get quickMenuEmergency => 'Emergency';
 
   @override
-  String get quickMenuEssentialInfo => 'Essential';
+  String get quickMenuEssentialInfo => '新手必读';
 
   @override
   String get quickMenuMonthlyLiving => 'Monthly';
 
   @override
   String get quickMenuTravel => 'Travel';
+
+  @override
+  String get quickMenuFoodDelivery => 'Food Delivery';
+
+  @override
+  String get quickMenuBaedalK => 'Baedal K';
 
   @override
   String get quickMenuMyInfo => 'My Info';

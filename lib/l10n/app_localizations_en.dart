@@ -1527,13 +1527,19 @@ class LoEn extends Lo {
   String get quickMenuEmergency => 'Emergency';
 
   @override
-  String get quickMenuEssentialInfo => 'Essential';
+  String get quickMenuEssentialInfo => 'Must Read';
 
   @override
   String get quickMenuMonthlyLiving => 'Monthly';
 
   @override
   String get quickMenuTravel => 'Travel';
+
+  @override
+  String get quickMenuFoodDelivery => 'Food Delivery';
+
+  @override
+  String get quickMenuBaedalK => 'Baedal K';
 
   @override
   String get quickMenuMyInfo => 'My Info';

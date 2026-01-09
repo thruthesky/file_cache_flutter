@@ -51,16 +51,19 @@ class PostContentMapping {
   static const int eTravel = 1275694710;
 
   /// 출입국 - 여행비자 정보 글 번호 (Immigration - Travel Visa Info Post ID)
-  /// TODO: 글 번호 설정 필요
-  static const int travelVisa = 0;
+  ///
+  /// 필리핀 여행비자(관광비자) 관련 정보
+  static const int travelVisa = 1275694730;
 
   /// 출입국 - 워킹비자 정보 글 번호 (Immigration - Working Visa Info Post ID)
-  /// TODO: 글 번호 설정 필요
-  static const int workingVisa = 0;
+  ///
+  /// 필리핀 워킹비자(취업비자) 관련 정보
+  static const int workingVisa = 1275694745;
 
   /// 출입국 - 은퇴비자 정보 글 번호 (Immigration - Retirement Visa Info Post ID)
-  /// TODO: 글 번호 설정 필요
-  static const int retirementVisa = 0;
+  ///
+  /// 필리핀 은퇴비자(SRRV) 관련 정보
+  static const int retirementVisa = 1275694747;
 
   // ============================================================
   // 교통 수단 관련 (Transportation Related)
@@ -70,9 +73,10 @@ class PostContentMapping {
   /// TODO: 글 번호 설정 필요
   static const int taxi = 0;
 
-  /// 교통 - 그랩 정보 글 번호 (Transportation - Grab Info Post ID)
-  /// TODO: 글 번호 설정 필요
-  static const int grab = 0;
+  /// 교통 - 그랩 택시 정보 글 번호 (Transportation - Grab Taxi Info Post ID)
+  ///
+  /// 필리핀 그랩 택시 이용 관련 정보
+  static const int grabTaxi = 1275694754;
 
   /// 교통 - 지프니 정보 글 번호 (Transportation - Jeepney Info Post ID)
   /// TODO: 글 번호 설정 필요

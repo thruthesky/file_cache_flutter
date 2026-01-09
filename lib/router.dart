@@ -20,6 +20,8 @@ import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
 import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/info/travel/travel_info.screen.dart';
+import 'package:philgo/screens/info/delivery/food_delivery.screen.dart';
+import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
 import 'package:philgo/screens/info/immigration/e_travel.screen.dart';
 import 'package:philgo/screens/info/immigration/travel_visa.screen.dart';
 import 'package:philgo/screens/info/immigration/working_visa.screen.dart';
@@ -32,6 +34,7 @@ import 'package:philgo/screens/info/housing/airbnb.screen.dart';
 import 'package:philgo/screens/info/housing/hotel.screen.dart';
 import 'package:philgo/screens/info/car/car_purchase.screen.dart';
 import 'package:philgo/screens/info/car/car_insurance.screen.dart';
+import 'package:philgo/screens/info/car/car_rental.screen.dart';
 import 'package:philgo/screens/info/car/or_renewal.screen.dart';
 import 'package:philgo/screens/info/residence/bgc.screen.dart';
 import 'package:philgo/screens/info/residence/ortigas.screen.dart';
@@ -225,6 +228,8 @@ final router = GoRouter(
       EssentialInfoScreen.routeName,
       MonthlyLivingScreen.routeName,
       TravelInfoScreen.routeName,
+      FoodDeliveryScreen.routeName,
+      BaedalKScreen.routeName,
     };
 
     if (publicRoutes.contains(state.fullPath)) {
@@ -505,6 +510,20 @@ final router = GoRouter(
       builder: (context, state) => const TravelInfoScreen(),
     ),
 
+    /// 음식 배달 화면 (Food Delivery Screen)
+    GoRoute(
+      path: FoodDeliveryScreen.routeName,
+      name: FoodDeliveryScreen.routeName,
+      builder: (context, state) => const FoodDeliveryScreen(),
+    ),
+
+    /// 배달K 화면 (Baedal K Screen) - 한국 음식 전문 배달 앱
+    GoRoute(
+      path: BaedalKScreen.routeName,
+      name: BaedalKScreen.routeName,
+      builder: (context, state) => const BaedalKScreen(),
+    ),
+
     /// e트래블 화면 (E-Travel Screen)
     GoRoute(
       path: ETravelScreen.routeName,
@@ -594,6 +613,13 @@ final router = GoRouter(
       path: OrRenewalScreen.routeName,
       name: OrRenewalScreen.routeName,
       builder: (context, state) => const OrRenewalScreen(),
+    ),
+
+    /// 자동차 렌트 화면 (Car Rental Screen)
+    GoRoute(
+      path: CarRentalScreen.routeName,
+      name: CarRentalScreen.routeName,
+      builder: (context, state) => const CarRentalScreen(),
     ),
 
     /// BGC 화면 (BGC Screen)

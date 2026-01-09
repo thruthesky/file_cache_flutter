@@ -1833,7 +1833,7 @@
   "@quickMenuEmergency": {
     "description": "Quick menu emergency contacts label"
   },
-  "quickMenuEssentialInfo": "Essential",
+  "quickMenuEssentialInfo": "Must Read",
   "@quickMenuEssentialInfo": {
     "description": "Quick menu essential info label"
   },
@@ -1844,6 +1844,14 @@
   "quickMenuTravel": "Travel",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "quickMenuFoodDelivery": "Food Delivery",
+  "@quickMenuFoodDelivery": {
+    "description": "Quick menu food delivery label"
+  },
+  "quickMenuBaedalK": "Baedal K",
+  "@quickMenuBaedalK": {
+    "description": "Quick menu Baedal K (Korean food delivery) label"
   },
   "quickMenuMyInfo": "My Info",
   "@quickMenuMyInfo": {

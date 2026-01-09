@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/data/post_content_mapping.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/widgets/post_content/post_content_viewer.dart';
 
 /// 여행비자 정보 화면 (Travel Visa Screen)
 ///
@@ -49,7 +51,12 @@ class _TravelVisaScreenState extends State<TravelVisaScreen> {
         ),
         centerTitle: true,
       ),
-      body: const SizedBox.shrink(),
+      /// PostContentViewer를 사용하여 필고 게시글 내용 표시
+      /// Display PhilGo forum post content using PostContentViewer
+      body: const PostContentViewer(
+        postId: PostContentMapping.travelVisa,
+        showImages: true,
+      ),
     );
   }
 }

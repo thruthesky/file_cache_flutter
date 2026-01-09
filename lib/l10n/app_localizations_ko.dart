@@ -1496,13 +1496,19 @@ class LoKo extends Lo {
   String get quickMenuEmergency => '긴급연락처';
 
   @override
-  String get quickMenuEssentialInfo => '필수정보';
+  String get quickMenuEssentialInfo => '초보 필독';
 
   @override
   String get quickMenuMonthlyLiving => '한달살기';
 
   @override
   String get quickMenuTravel => '여행';
+
+  @override
+  String get quickMenuFoodDelivery => '음식 배달';
+
+  @override
+  String get quickMenuBaedalK => '배달K';
 
   @override
   String get quickMenuMyInfo => '내 정보';
