@@ -123,16 +123,14 @@ class PostContentMapping {
   static const int residenceAlabang = 0;
 
   // ============================================================
-  // 달력/휴일 관련 (Calendar/Holiday Related)
+  // 휴일 관련 (Holiday Related)
   // ============================================================
 
-  /// 달력 - 정규 휴일 정보 글 번호 (Calendar - Regular Holiday Info Post ID)
+  /// 휴일 - 필리핀 휴일 정보 글 번호 (Holiday - Philippine Holiday Info Post ID)
+  ///
+  /// 필리핀의 정규 휴일 및 특별 휴일 정보
   /// TODO: 글 번호 설정 필요
-  static const int regularHoliday = 0;
-
-  /// 달력 - 특별 비근무일 정보 글 번호 (Calendar - Special Non-Working Day Info Post ID)
-  /// TODO: 글 번호 설정 필요
-  static const int specialWorkingDay = 0;
+  static const int holiday = 0;
 
   // ============================================================
   // 필리핀 추천 여행지 관련 (Philippine Travel Destination Related)

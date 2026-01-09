@@ -2987,6 +2987,12 @@ abstract class Lo {
   /// **'Notice'**
   String get quickMenuNotice;
 
+  /// Major forums section title on home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Major Forums'**
+  String get majorForums;
+
   /// Quick menu exchange rate label
   ///
   /// In en, this message translates to:
@@ -3022,6 +3028,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Travel'**
   String get quickMenuTravel;
+
+  /// Quick menu holiday label
+  ///
+  /// In en, this message translates to:
+  /// **'Holiday'**
+  String get quickMenuHoliday;
 
   /// Quick menu food delivery label
   ///
@@ -3269,6 +3281,12 @@ abstract class Lo {
   /// **'Hospital'**
   String get quickMenuHospital;
 
+  /// Quick menu Korean association label
+  ///
+  /// In en, this message translates to:
+  /// **'Korean Association'**
+  String get quickMenuKoreanAssociation;
+
   /// Emergency contacts section title
   ///
   /// In en, this message translates to:
@@ -3358,6 +3376,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Palawan'**
   String get travelDestinationPalawan;
+
+  /// 1:1 chat navigation item label in chat-specific bottom navigation bar
+  ///
+  /// In en, this message translates to:
+  /// **'1:1 Chat'**
+  String get singleChat;
+
+  /// Admin chat navigation item label in chat-specific bottom navigation bar
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Chat'**
+  String get adminChat;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

@@ -13,6 +13,7 @@ import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/info/emergency/embassy.screen.dart';
 import 'package:philgo/screens/info/emergency/hospital.screen.dart';
+import 'package:philgo/screens/info/emergency/korean_association.screen.dart';
 import 'package:philgo/screens/info/emergency/police_station.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/essential/essential_info.screen.dart';
@@ -39,8 +40,7 @@ import 'package:philgo/screens/info/car/or_renewal.screen.dart';
 import 'package:philgo/screens/info/residence/bgc.screen.dart';
 import 'package:philgo/screens/info/residence/ortigas.screen.dart';
 import 'package:philgo/screens/info/residence/alabang.screen.dart';
-import 'package:philgo/screens/info/calendar/regular_holiday.screen.dart';
-import 'package:philgo/screens/info/calendar/special_working_day.screen.dart';
+import 'package:philgo/screens/info/holiday/holiday.screen.dart';
 import 'package:philgo/screens/info/travel_destination/manila.screen.dart';
 import 'package:philgo/screens/info/travel_destination/cebu.screen.dart';
 import 'package:philgo/screens/info/travel_destination/subic.screen.dart';
@@ -469,6 +469,13 @@ final router = GoRouter(
       name: HospitalScreen.routeName,
       builder: (context, state) => const HospitalScreen(),
     ),
+
+    /// 한인회 화면 (Korean Association Screen)
+    GoRoute(
+      path: KoreanAssociationScreen.routeName,
+      name: KoreanAssociationScreen.routeName,
+      builder: (context, state) => const KoreanAssociationScreen(),
+    ),
     GoRoute(
       path: NoticeScreen.routeName,
       name: NoticeScreen.routeName,
@@ -643,18 +650,11 @@ final router = GoRouter(
       builder: (context, state) => const AlabangScreen(),
     ),
 
-    /// 정규 휴일 화면 (Regular Holiday Screen)
+    /// 휴일 화면 (Holiday Screen)
     GoRoute(
-      path: RegularHolidayScreen.routeName,
-      name: RegularHolidayScreen.routeName,
-      builder: (context, state) => const RegularHolidayScreen(),
-    ),
-
-    /// 근무휴일 화면 (Special Working Day Screen)
-    GoRoute(
-      path: SpecialWorkingDayScreen.routeName,
-      name: SpecialWorkingDayScreen.routeName,
-      builder: (context, state) => const SpecialWorkingDayScreen(),
+      path: HolidayScreen.routeName,
+      name: HolidayScreen.routeName,
+      builder: (context, state) => const HolidayScreen(),
     ),
 
     /// 마닐라 화면 (Manila Screen)

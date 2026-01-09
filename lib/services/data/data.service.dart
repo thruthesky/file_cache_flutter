@@ -18,7 +18,7 @@ import 'mofa_notice.model.dart';
 ///
 /// ### 캐시 관리 (Cache Management):
 /// FileCache를 사용하여 캐시를 관리합니다.
-/// - 외교부 공지사항 TTL: 1시간
+/// - 외교부 공지사항 TTL: 48시간
 /// - 메모리 + 파일 이중 캐싱
 ///
 /// ### 사용법 (Usage):
@@ -75,8 +75,8 @@ class DataService {
   static const String _mofaApiBaseUrl =
       'http://apis.data.go.kr/1262000/NoticeService2/getNoticeList2';
 
-  /// 외교부 공지사항 캐시 TTL (1시간) (MOFA Notice cache TTL - 1 hour)
-  static const Duration _mofaCacheTtl = Duration(hours: 1);
+  /// 외교부 공지사항 캐시 TTL (48시간) (MOFA Notice cache TTL - 48 hours)
+  static const Duration _mofaCacheTtl = Duration(hours: 48);
 
   /// 외교부 공지사항 캐시 키 (MOFA Notice cache key)
   static const String _mofaCacheKey = 'mofa_notices_2';

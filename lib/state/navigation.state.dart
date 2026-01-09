@@ -30,6 +30,11 @@ class NavigationState extends ChangeNotifier {
   // Chat room order: single or group
   String roomOrder = RoomOrder.singleOrder;
 
+  /// Chat screen navigation state
+  /// Tracks which item is selected in the chat-specific bottom navigation bar
+  /// 채팅 화면 전용 네비게이션 상태
+  ChatNavigationItem chatNav = ChatNavigationItem.singleChat;
+
   void setHomeNavigation(HomeNavigationItem item) {
     homeNav = item;
     notifyListeners();
@@ -37,6 +42,14 @@ class NavigationState extends ChangeNotifier {
 
   void setRoomOrder(String order) {
     roomOrder = order;
+    notifyListeners();
+  }
+
+  /// Set chat navigation item
+  /// Changes the selected item in the chat-specific bottom navigation bar
+  /// 채팅 화면 전용 네비게이션 아이템 변경
+  void setChatNavigation(ChatNavigationItem item) {
+    chatNav = item;
     notifyListeners();
   }
 

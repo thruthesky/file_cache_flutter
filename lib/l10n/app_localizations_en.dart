@@ -1518,6 +1518,9 @@ class LoEn extends Lo {
   String get quickMenuNotice => 'Notice';
 
   @override
+  String get majorForums => 'Major Forums';
+
+  @override
   String get quickMenuExchangeRate => 'Exchange';
 
   @override
@@ -1534,6 +1537,9 @@ class LoEn extends Lo {
 
   @override
   String get quickMenuTravel => 'Travel';
+
+  @override
+  String get quickMenuHoliday => 'Holiday';
 
   @override
   String get quickMenuFoodDelivery => 'Food Delivery';
@@ -1659,6 +1665,9 @@ class LoEn extends Lo {
   String get quickMenuHospital => 'Hospital';
 
   @override
+  String get quickMenuKoreanAssociation => 'Korean Association';
+
+  @override
   String get emergencyContactsSection => 'Emergency';
 
   @override
@@ -1702,4 +1711,10 @@ class LoEn extends Lo {
 
   @override
   String get travelDestinationPalawan => 'Palawan';
+
+  @override
+  String get singleChat => '1:1 Chat';
+
+  @override
+  String get adminChat => 'Admin Chat';
 }

@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/info/emergency/embassy.screen.dart';
 import 'package:philgo/screens/info/emergency/hospital.screen.dart';
+import 'package:philgo/screens/info/emergency/korean_association.screen.dart';
 import 'package:philgo/screens/info/emergency/police_station.screen.dart';
 
 /// 긴급 연락처 메뉴 아이템 데이터 클래스
@@ -42,6 +43,11 @@ class EmergencyMenuData {
       icon: FontAwesomeIcons.landmarkFlag,
       getLabel: (l10n) => l10n.quickMenuEmbassy,
       routeName: EmbassyScreen.routeName,
+    ),
+    EmergencyMenuItem(
+      icon: FontAwesomeIcons.peopleGroup,
+      getLabel: (l10n) => l10n.quickMenuKoreanAssociation,
+      routeName: KoreanAssociationScreen.routeName,
     ),
     EmergencyMenuItem(
       icon: FontAwesomeIcons.buildingShield,

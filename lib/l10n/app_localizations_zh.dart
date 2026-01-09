@@ -1481,6 +1481,9 @@ class LoZh extends Lo {
   String get quickMenuNotice => 'Notice';
 
   @override
+  String get majorForums => 'Major Forums';
+
+  @override
   String get quickMenuExchangeRate => 'Exchange';
 
   @override
@@ -1497,6 +1500,9 @@ class LoZh extends Lo {
 
   @override
   String get quickMenuTravel => 'Travel';
+
+  @override
+  String get quickMenuHoliday => 'Holiday';
 
   @override
   String get quickMenuFoodDelivery => 'Food Delivery';
@@ -1622,6 +1628,9 @@ class LoZh extends Lo {
   String get quickMenuHospital => '医院';
 
   @override
+  String get quickMenuKoreanAssociation => 'Korean Association';
+
+  @override
   String get emergencyContactsSection => '紧急联系';
 
   @override
@@ -1665,4 +1674,10 @@ class LoZh extends Lo {
 
   @override
   String get travelDestinationPalawan => '巴拉望';
+
+  @override
+  String get singleChat => '1:1 Chat';
+
+  @override
+  String get adminChat => 'Admin Chat';
 }

@@ -3,10 +3,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/extensions/nav.context.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/widgets/home/main/latest_posts.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
+import 'package:philgo/widgets/home/home_major_forum_section.dart';
+import 'package:philgo/widgets/home/home_notice_section.dart';
 import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
 import 'package:philgo/widgets/home/main/home_quick_menu_section.dart';
@@ -146,6 +149,49 @@ class _MainHomeState extends State<MainHome> {
                   /// PostViewScreen으로 이동
                   /// Navigate to PostViewScreen
                   PostViewScreen.push(context, post);
+                },
+              ),
+            ),
+
+            /// [공지사항 섹션] - 최근 공지사항 3개 표시
+            /// Notice Section - Display 3 recent notices
+            SliverToBoxAdapter(
+              child: HomeNoticeSection(
+                limit: 3,
+                onMoreTap: () {
+                  /// NoticeScreen으로 이동 (공지사항 전체 목록)
+                  /// Navigate to NoticeScreen (full notice list)
+                  NoticeScreen.push(context);
+                },
+                onNoticeTap: (notice) async {
+                  /// PostViewScreen으로 이동 (공지사항 상세 보기)
+                  /// Navigate to PostViewScreen (notice detail view)
+                  /// Notice.idx로 Post를 가져온 후 이동
+                  /// Fetch Post by Notice.idx and navigate
+                  try {
+                    final post = await getPost(notice.idx);
+                    if (context.mounted) {
+                      PostViewScreen.push(context, post);
+                    }
+                  } catch (e) {
+                    debugPrint('공지사항 로드 실패: $e');
+                  }
+                },
+              ),
+            ),
+
+            /// [주요 게시판 섹션] - 주요 게시판 목록을 Wrap 형태로 표시
+            /// Major Forum Section - Display major forums in Wrap layout
+            SliverToBoxAdapter(
+              child: HomeMajorForumSection(
+                onForumTap: (postId, category) {
+                  /// 해당 게시판으로 이동
+                  /// Navigate to the corresponding forum
+                  if (category != null) {
+                    context.openForum(postId, category: category);
+                  } else {
+                    context.openForum(postId);
+                  }
                 },
               ),
             ),

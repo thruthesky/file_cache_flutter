@@ -1821,6 +1821,10 @@
   "@quickMenuNotice": {
     "description": "Quick menu notice label"
   },
+  "majorForums": "Major Forums",
+  "@majorForums": {
+    "description": "Major forums section title on home screen"
+  },
   "quickMenuExchangeRate": "Exchange",
   "@quickMenuExchangeRate": {
     "description": "Quick menu exchange rate label"
@@ -1844,6 +1848,10 @@
   "quickMenuTravel": "Travel",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "quickMenuHoliday": "Holiday",
+  "@quickMenuHoliday": {
+    "description": "Quick menu holiday label"
   },
   "quickMenuFoodDelivery": "Food Delivery",
   "@quickMenuFoodDelivery": {
@@ -2009,6 +2017,10 @@
   "@quickMenuHospital": {
     "description": "Quick menu hospital label"
   },
+  "quickMenuKoreanAssociation": "Korean Association",
+  "@quickMenuKoreanAssociation": {
+    "description": "Quick menu Korean association label"
+  },
   "emergencyContactsSection": "Emergency",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"
@@ -2068,5 +2080,13 @@
   "travelDestinationPalawan": "Palawan",
   "@travelDestinationPalawan": {
     "description": "Palawan travel destination menu item"
+  },
+  "singleChat": "1:1 Chat",
+  "@singleChat": {
+    "description": "1:1 chat navigation item label in chat-specific bottom navigation bar"
+  },
+  "adminChat": "Admin Chat",
+  "@adminChat": {
+    "description": "Admin chat navigation item label in chat-specific bottom navigation bar"
   }
 }

@@ -1487,6 +1487,9 @@ class LoJa extends Lo {
   String get quickMenuNotice => 'Notice';
 
   @override
+  String get majorForums => 'Major Forums';
+
+  @override
   String get quickMenuExchangeRate => 'Exchange';
 
   @override
@@ -1503,6 +1506,9 @@ class LoJa extends Lo {
 
   @override
   String get quickMenuTravel => 'Travel';
+
+  @override
+  String get quickMenuHoliday => 'Holiday';
 
   @override
   String get quickMenuFoodDelivery => 'Food Delivery';
@@ -1628,6 +1634,9 @@ class LoJa extends Lo {
   String get quickMenuHospital => '病院';
 
   @override
+  String get quickMenuKoreanAssociation => 'Korean Association';
+
+  @override
   String get emergencyContactsSection => '緊急連絡先';
 
   @override
@@ -1671,4 +1680,10 @@ class LoJa extends Lo {
 
   @override
   String get travelDestinationPalawan => 'パラワン';
+
+  @override
+  String get singleChat => '1:1 Chat';
+
+  @override
+  String get adminChat => 'Admin Chat';
 }

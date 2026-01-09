@@ -8,16 +8,16 @@ import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// 대사관 연락처 화면 (Embassy Contact Screen)
+/// 한인회 연락처 화면 (Korean Association Contact Screen)
 ///
-/// 대한민국 대사관 및 영사관 연락처 정보를 제공합니다.
-/// Provides Korean Embassy and Consulate contact information.
-class EmbassyScreen extends StatelessWidget {
-  static const String routeName = '/Embassy';
+/// 필리핀 지역별 한인회 연락처 정보를 제공합니다.
+/// Provides Korean Association contact information by region in the Philippines.
+class KoreanAssociationScreen extends StatelessWidget {
+  static const String routeName = '/KoreanAssociation';
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
 
-  const EmbassyScreen({super.key});
+  const KoreanAssociationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +33,12 @@ class EmbassyScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             FaIcon(
-              FontAwesomeIcons.landmarkFlag,
+              FontAwesomeIcons.peopleGroup,
               size: 20,
               color: scheme.primary,
             ),
             SizedBox(width: sp.s8),
-            Text(l10n.quickMenuEmbassy),
+            Text(l10n.quickMenuKoreanAssociation),
           ],
         ),
         centerTitle: true,
@@ -48,24 +48,27 @@ class EmbassyScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// [외교부 영사 콜센터 배너]
-            _buildEmergencyBanner(context),
+            /// [한인총연합회 배너]
+            _buildAssociationBanner(context),
 
             SizedBox(height: sp.s24),
 
-            /// [대한민국 공관 섹션]
+            /// [지역별 한인회 섹션]
             _buildSectionHeader(
               context,
-              icon: FontAwesomeIcons.landmarkFlag,
-              title: '대한민국 공관',
+              icon: FontAwesomeIcons.peopleGroup,
+              title: '지역별 한인회',
             ),
             SizedBox(height: sp.s12),
-            _buildContactCards(context, EmergencyContactsData.koreanEmbassy),
+            _buildContactCards(
+              context,
+              EmergencyContactsData.koreanAssociation,
+            ),
 
             SizedBox(height: sp.s24),
 
-            /// [대사관 업무시간 안내]
-            _buildEmbassyHoursSection(context),
+            /// [한인회 안내 섹션]
+            _buildAssociationInfoSection(context),
 
             SizedBox(height: sp.s32),
           ],
@@ -74,8 +77,8 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 긴급 배너 빌드
-  Widget _buildEmergencyBanner(BuildContext context) {
+  /// 한인총연합회 배너 빌드 (Build Korean Association Banner)
+  Widget _buildAssociationBanner(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -96,13 +99,13 @@ class EmbassyScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FaIcon(
-                FontAwesomeIcons.headset,
+                FontAwesomeIcons.peopleGroup,
                 size: 24,
                 color: scheme.onPrimary,
               ),
               SizedBox(width: sp.s12),
               Text(
-                '외교부 영사 콜센터 (24시간)',
+                '필리핀 한인총연합회',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onPrimary,
@@ -110,12 +113,19 @@ class EmbassyScreen extends StatelessWidget {
               ),
             ],
           ),
+          SizedBox(height: sp.s8),
+          Text(
+            '필리핀 거주 한인을 위한 각종 지원 및 교류',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onPrimary.withValues(alpha: 0.9),
+            ),
+          ),
           SizedBox(height: sp.s12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildQuickDialButton(context, '00800-2100-0404', '무료'),
-              _buildQuickDialButton(context, '+82-2-3210-0404', '유료'),
+              _buildQuickDialButton(context, '+63-2-8886-4848', '대표'),
+              _buildQuickDialButton(context, '+63-917-886-4848', '긴급'),
             ],
           ),
         ],
@@ -123,7 +133,7 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 빠른 전화 버튼 빌드
+  /// 빠른 전화 버튼 빌드 (Build Quick Dial Button)
   Widget _buildQuickDialButton(
     BuildContext context,
     String number,
@@ -163,7 +173,7 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 섹션 헤더 빌드
+  /// 섹션 헤더 빌드 (Build Section Header)
   Widget _buildSectionHeader(
     BuildContext context, {
     required IconData icon,
@@ -195,7 +205,7 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 연락처 카드 빌드
+  /// 연락처 카드 빌드 (Build Contact Cards)
   Widget _buildContactCards(BuildContext context, List<ContactItem> contacts) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -331,7 +341,7 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 전화번호 버튼 빌드
+  /// 전화번호 버튼 빌드 (Build Phone Button)
   Widget _buildPhoneButton(
     BuildContext context,
     String phone,
@@ -374,7 +384,7 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 링크 버튼 빌드
+  /// 링크 버튼 빌드 (Build Link Button)
   Widget _buildLinkButton(
     BuildContext context, {
     required IconData icon,
@@ -412,8 +422,8 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 대사관 업무시간 섹션 빌드
-  Widget _buildEmbassyHoursSection(BuildContext context) {
+  /// 한인회 안내 섹션 빌드 (Build Association Info Section)
+  Widget _buildAssociationInfoSection(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -430,10 +440,14 @@ class EmbassyScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              FaIcon(FontAwesomeIcons.clock, size: 16, color: scheme.primary),
+              FaIcon(
+                FontAwesomeIcons.circleInfo,
+                size: 16,
+                color: scheme.primary,
+              ),
               SizedBox(width: sp.s8),
               Text(
-                '대사관 업무시간',
+                '한인회 안내',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onSurface,
@@ -442,14 +456,14 @@ class EmbassyScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: sp.s12),
-          _buildHoursRow(context, '영사과', '월~금 09:00-12:00, 13:30-17:00'),
+          _buildInfoRow(context, '주요 활동', '교민 지원, 문화 행사, 네트워킹'),
           SizedBox(height: sp.s8),
-          _buildHoursRow(context, '점심시간', '12:00-13:30'),
+          _buildInfoRow(context, '긴급 지원', '사건사고 발생 시 24시간 긴급 연락'),
           SizedBox(height: sp.s8),
-          _buildHoursRow(context, '휴무일', '토, 일, 필리핀/한국 공휴일'),
+          _buildInfoRow(context, '가입 문의', '각 지역 한인회로 직접 연락'),
           SizedBox(height: sp.s12),
           Text(
-            '※ 긴급 상황 시 긴급당직번호로 연락해 주세요.',
+            '※ 긴급 상황 시 가까운 지역 한인회로 연락해 주세요.',
             style: theme.textTheme.labelSmall?.copyWith(
               color: scheme.error,
               fontStyle: FontStyle.italic,
@@ -460,8 +474,8 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 업무시간 행 빌드
-  Widget _buildHoursRow(BuildContext context, String label, String hours) {
+  /// 정보 행 빌드 (Build Info Row)
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
@@ -480,7 +494,7 @@ class EmbassyScreen extends StatelessWidget {
         ),
         Expanded(
           child: Text(
-            hours,
+            value,
             style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurface),
           ),
         ),
@@ -488,7 +502,7 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 전화 걸기
+  /// 전화 걸기 (Make Phone Call)
   Future<void> _makePhoneCall(String phoneNumber) async {
     final cleanNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
     final Uri phoneUri = Uri(scheme: 'tel', path: cleanNumber);
@@ -497,7 +511,7 @@ class EmbassyScreen extends StatelessWidget {
     }
   }
 
-  /// 이메일 보내기
+  /// 이메일 보내기 (Send Email)
   Future<void> _sendEmail(String email) async {
     final Uri emailUri = Uri(scheme: 'mailto', path: email);
     if (await canLaunchUrl(emailUri)) {
@@ -505,7 +519,7 @@ class EmbassyScreen extends StatelessWidget {
     }
   }
 
-  /// 웹사이트 열기
+  /// 웹사이트 열기 (Open Website)
   Future<void> _openWebsite(String url) async {
     final Uri websiteUri = Uri.parse(url);
     if (await canLaunchUrl(websiteUri)) {
@@ -513,7 +527,7 @@ class EmbassyScreen extends StatelessWidget {
     }
   }
 
-  /// 클립보드에 복사
+  /// 클립보드에 복사 (Copy to Clipboard)
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
@@ -222,10 +224,96 @@ class _MenuHomeState extends State<MenuHome> {
                 MenuGridSection(
                   title: l10n.myActivity,
                   children: [
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.user,
-                      title: l10n.editProfile,
-                      onTap: () => ProfileEditScreen.push(context),
+                    /// 프로필 수정 아이템 (Edit Profile Item)
+                    /// 사용자 프로필 사진이 있으면 사진 표시, 없으면 기본 아이콘 표시
+                    /// Selector를 사용하여 photoUrl 변경 시에만 리빌드
+                    Selector<PhilgoState, String?>(
+                      selector: (_, state) => state.user?.photoUrl,
+                      builder: (context, photoUrl, _) {
+                        // 프로필 사진이 있는지 확인
+                        final hasPhoto =
+                            photoUrl != null && photoUrl.isNotEmpty;
+
+                        return MenuGridItem(
+                          icon: hasPhoto ? null : FontAwesomeIcons.user,
+                          iconWidget: hasPhoto
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: CachedNetworkImage(
+                                    imageUrl: photoUrl,
+                                    width: 48,
+                                    height: 48,
+                                    fit: BoxFit.cover,
+                                    // 로딩 중에는 기본 아이콘 표시
+                                    placeholder: (context, url) => Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withValues(alpha: 0.12),
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withValues(alpha: 0.04),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      child: Center(
+                                        child: FaIcon(
+                                          FontAwesomeIcons.user,
+                                          size: 20,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
+                                      ),
+                                    ),
+                                    // 에러 시 기본 아이콘 표시
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withValues(alpha: 0.12),
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withValues(alpha: 0.04),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      child: Center(
+                                        child: FaIcon(
+                                          FontAwesomeIcons.user,
+                                          size: 20,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : null,
+                          title: l10n.editProfile,
+                          onTap: () => ProfileEditScreen.push(context),
+                        );
+                      },
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.clockRotateLeft,

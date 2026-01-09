@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/widgets/post_view_option_menu.dart';
@@ -51,13 +52,36 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
             : context.go(HomeScreen.routeName),
       ),
       actions: [
+        /// 점세개 옵션 메뉴 버튼
+        /// Three-dot option menu button
         PostViewOptionMenu(
-          padding: EdgeInsets.only(right: 16),
+          padding: EdgeInsets.zero,
           post: post,
           firebaseUid: post.firebase_uid,
           onTapReply: onTapReply,
           onEditCompleted: onEditCompleted,
           onDeleteCompleted: onDeleteCompleted,
+        ),
+        const SizedBox(width: 8),
+
+        /// 닫기 버튼 - 이전 화면으로 돌아가기
+        /// Close button - navigate back to previous screen
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => Navigator.of(context).canPop()
+                ? Navigator.of(context).pop()
+                : context.go(HomeScreen.routeName),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: FaIcon(
+                FontAwesomeIcons.xmark,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ),
         ),
       ],
       bottom: PreferredSize(

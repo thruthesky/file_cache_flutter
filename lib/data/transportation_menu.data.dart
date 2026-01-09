@@ -72,8 +72,8 @@ class TransportationMenuData {
       push: ExpressBusScreen.push,
     ),
 
-    /// 렌터카 (Car Rental)
-    /// 필리핀 렌터카 서비스 정보
+    /// 렌트카 (Car Rental)
+    /// 필리핀 렌트카 서비스 정보
     TransportationMenuItem(
       icon: FontAwesomeIcons.car,
       getLabel: (l10n) => l10n.carRental,

@@ -1,11 +1,13 @@
 {
   "ja": [
     "quickMenuNotice",
+    "majorForums",
     "quickMenuExchangeRate",
     "quickMenuWeather",
     "quickMenuEmergency",
     "quickMenuMonthlyLiving",
     "quickMenuTravel",
+    "quickMenuHoliday",
     "quickMenuFoodDelivery",
     "quickMenuBaedalK",
     "quickMenuMyInfo",
@@ -23,16 +25,21 @@
     "contactAdmin",
     "forumCommunity",
     "forumMarket",
-    "forumOther"
+    "forumOther",
+    "quickMenuKoreanAssociation",
+    "singleChat",
+    "adminChat"
   ],
 
   "zh": [
     "quickMenuNotice",
+    "majorForums",
     "quickMenuExchangeRate",
     "quickMenuWeather",
     "quickMenuEmergency",
     "quickMenuMonthlyLiving",
     "quickMenuTravel",
+    "quickMenuHoliday",
     "quickMenuFoodDelivery",
     "quickMenuBaedalK",
     "quickMenuMyInfo",
@@ -50,6 +57,9 @@
     "contactAdmin",
     "forumCommunity",
     "forumMarket",
-    "forumOther"
+    "forumOther",
+    "quickMenuKoreanAssociation",
+    "singleChat",
+    "adminChat"
   ]
 }

@@ -942,7 +942,7 @@ class LoKo extends Lo {
   String get hotelsDesc => '숙박 시설';
 
   @override
-  String get carRental => '렌터카';
+  String get carRental => '렌트카';
 
   @override
   String get carRentalDesc => '차량 대여 서비스';
@@ -1487,6 +1487,9 @@ class LoKo extends Lo {
   String get quickMenuNotice => '공지';
 
   @override
+  String get majorForums => '주요 게시판';
+
+  @override
   String get quickMenuExchangeRate => '환율';
 
   @override
@@ -1503,6 +1506,9 @@ class LoKo extends Lo {
 
   @override
   String get quickMenuTravel => '여행';
+
+  @override
+  String get quickMenuHoliday => '휴일';
 
   @override
   String get quickMenuFoodDelivery => '음식 배달';
@@ -1628,6 +1634,9 @@ class LoKo extends Lo {
   String get quickMenuHospital => '병원';
 
   @override
+  String get quickMenuKoreanAssociation => '한인회';
+
+  @override
   String get emergencyContactsSection => '긴급 연락처';
 
   @override
@@ -1671,4 +1680,10 @@ class LoKo extends Lo {
 
   @override
   String get travelDestinationPalawan => '팔라완';
+
+  @override
+  String get singleChat => '1:1채팅';
+
+  @override
+  String get adminChat => '운영자채팅';
 }

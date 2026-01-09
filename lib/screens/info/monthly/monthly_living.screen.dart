@@ -135,7 +135,8 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
     _MonthlyLivingItem(
       icon: FontAwesomeIcons.lightBed,
       title: '콘도미니엄 (추천)',
-      description: '월 40,000~100,000페소\n풀퍼니시드, 수영장/헬스장 포함\nAirbnb, Facebook 마켓플레이스 활용',
+      description:
+          '월 40,000~100,000페소\n풀퍼니시드, 수영장/헬스장 포함\nAirbnb, Facebook 마켓플레이스 활용',
     ),
     _MonthlyLivingItem(
       icon: FontAwesomeIcons.lightHotel,
@@ -265,7 +266,8 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
     _MonthlyLivingItem(
       icon: FontAwesomeIcons.lightBuildingColumns,
       title: '은행 계좌',
-      description: '장기 체류 시 개설 권장\nBDO, BPI, Metrobank\nACR-I Card 필요 (59일 이상 체류)',
+      description:
+          '장기 체류 시 개설 권장\nBDO, BPI, Metrobank\nACR-I Card 필요 (59일 이상 체류)',
     ),
     _MonthlyLivingItem(
       icon: FontAwesomeIcons.lightMobileScreen,
@@ -322,7 +324,11 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(FontAwesomeIcons.lightCalendarDays, size: 20, color: scheme.primary),
+            FaIcon(
+              FontAwesomeIcons.lightCalendarDays,
+              size: 20,
+              color: scheme.primary,
+            ),
             SizedBox(width: sp.s8),
             const Text('🇵🇭 마닐라 한달살기'),
           ],
@@ -339,70 +345,145 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// [한달살기 개요]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightCity, title: '마닐라 한달살기'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightCity,
+              title: '마닐라 한달살기',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _overview, scheme.primaryContainer, scheme.onPrimaryContainer),
+            _buildInfoCards(
+              context,
+              _overview,
+              scheme.primaryContainer,
+              scheme.onPrimaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [예상 생활비]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightMoneyBills, title: '예상 생활비 (월)'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightMoneyBills,
+              title: '예상 생활비 (월)',
+            ),
             SizedBox(height: sp.s12),
             _buildCostTable(context),
 
             SizedBox(height: sp.s24),
 
             /// [추천 거주 지역]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightLocationDot, title: '추천 거주 지역'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightLocationDot,
+              title: '추천 거주 지역',
+            ),
             SizedBox(height: sp.s12),
             _buildAreasGrid(context),
 
             SizedBox(height: sp.s24),
 
             /// [숙소]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightBed, title: '숙소 유형'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightBed,
+              title: '숙소 유형',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _accommodation, scheme.secondaryContainer, scheme.onSecondaryContainer),
+            _buildInfoCards(
+              context,
+              _accommodation,
+              scheme.secondaryContainer,
+              scheme.onSecondaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [편의시설]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightStore, title: '편의시설 & 생활'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightStore,
+              title: '편의시설 & 생활',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _amenities, scheme.tertiaryContainer, scheme.onTertiaryContainer),
+            _buildInfoCards(
+              context,
+              _amenities,
+              scheme.tertiaryContainer,
+              scheme.onTertiaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [교통]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightCar, title: '교통 수단'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightCar,
+              title: '교통 수단',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _transportation, scheme.primaryContainer, scheme.onPrimaryContainer),
+            _buildInfoCards(
+              context,
+              _transportation,
+              scheme.primaryContainer,
+              scheme.onPrimaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [통신 & 인터넷]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightWifi, title: '통신 & 인터넷'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightWifi,
+              title: '통신 & 인터넷',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _communication, scheme.secondaryContainer, scheme.onSecondaryContainer),
+            _buildInfoCards(
+              context,
+              _communication,
+              scheme.secondaryContainer,
+              scheme.onSecondaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [은행 & 환전]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightCreditCard, title: '은행 & 환전'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightCreditCard,
+              title: '은행 & 환전',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _banking, scheme.tertiaryContainer, scheme.onTertiaryContainer),
+            _buildInfoCards(
+              context,
+              _banking,
+              scheme.tertiaryContainer,
+              scheme.onTertiaryContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [안전 & 주의사항]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightShieldHalved, title: '안전 & 주의사항'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightShieldHalved,
+              title: '안전 & 주의사항',
+            ),
             SizedBox(height: sp.s12),
-            _buildInfoCards(context, _safety, scheme.errorContainer, scheme.onErrorContainer),
+            _buildInfoCards(
+              context,
+              _safety,
+              scheme.errorContainer,
+              scheme.onErrorContainer,
+            ),
 
             SizedBox(height: sp.s24),
 
             /// [출발 전 체크리스트]
-            _buildSectionHeader(context, icon: FontAwesomeIcons.lightListCheck, title: '출발 전 체크리스트'),
+            _buildSectionHeader(
+              context,
+              icon: FontAwesomeIcons.lightListCheck,
+              title: '출발 전 체크리스트',
+            ),
             SizedBox(height: sp.s12),
             _buildChecklist(context),
 
@@ -414,7 +495,11 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
   }
 
   /// 섹션 헤더 빌드 (Build section header)
-  Widget _buildSectionHeader(BuildContext context, {required IconData icon, required String title}) {
+  Widget _buildSectionHeader(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+  }) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -493,10 +578,7 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
           SizedBox(height: sp.s8),
 
           /// 구분선
-          Container(
-            height: 1,
-            color: scheme.outlineVariant,
-          ),
+          Container(height: 1, color: scheme.outlineVariant),
 
           SizedBox(height: sp.s12),
 
@@ -533,7 +615,11 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
             ),
             child: Row(
               children: [
-                FaIcon(FontAwesomeIcons.lightCoins, size: 14, color: scheme.primary),
+                FaIcon(
+                  FontAwesomeIcons.lightCoins,
+                  size: 14,
+                  color: scheme.primary,
+                ),
                 SizedBox(width: sp.s8),
                 Text(
                   '약 180만원 ~ 400만원 (환율에 따라 변동)',
@@ -575,7 +661,11 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
-                  child: FaIcon(area.icon, size: 20, color: scheme.onPrimaryContainer),
+                  child: FaIcon(
+                    area.icon,
+                    size: 20,
+                    color: scheme.onPrimaryContainer,
+                  ),
                 ),
               ),
               SizedBox(width: sp.s12),
@@ -603,7 +693,10 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
                       runSpacing: sp.s4,
                       children: area.features.map((feature) {
                         return Container(
-                          padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: sp.s8,
+                            vertical: sp.s4,
+                          ),
                           decoration: BoxDecoration(
                             color: scheme.secondaryContainer,
                             borderRadius: BorderRadius.circular(12),
@@ -657,7 +750,9 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
                   color: iconBgColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Center(child: FaIcon(item.icon, size: 18, color: iconColor)),
+                child: Center(
+                  child: FaIcon(item.icon, size: 18, color: iconColor),
+                ),
               ),
               SizedBox(width: sp.s12),
               Expanded(

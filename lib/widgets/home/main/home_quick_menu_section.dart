@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -225,26 +227,22 @@ class HomeQuickMenuSection extends StatelessWidget {
 
             /// 환율 메뉴 아이템 (Exchange rate menu item)
             /// 아이콘 대신 실제 1PHP당 KRW 환율을 소수점 1자리로 표시
+            /// 20분마다 자동으로 환율을 새로고침하여 값 업데이트
             /// Shows actual PHP to KRW rate with 1 decimal place instead of icon
-            _buildExchangeRateMenuItem(
-              context: context,
+            /// Auto-refreshes exchange rate every 20 minutes to update value
+            _ExchangeRateMenuItem(
               label: l10n.quickMenuExchangeRate,
               onTap: () => _onExchangeRateTap(context),
-              scheme: scheme,
-              theme: theme,
-              sp: sp,
             ),
 
             /// 날씨 메뉴 아이템 (Weather menu item)
             /// 실제 마닐라 현재 날씨 상태에 따른 동적 아이콘 표시
+            /// 20분마다 자동으로 날씨를 새로고침하여 아이콘 업데이트
             /// Shows dynamic icon based on current Manila weather
-            _buildWeatherMenuItem(
-              context: context,
+            /// Auto-refreshes weather every 20 minutes to update icon
+            _WeatherMenuItem(
               label: l10n.quickMenuWeather,
               onTap: () => _onWeatherTap(context),
-              scheme: scheme,
-              theme: theme,
-              sp: sp,
             ),
 
             /// 기존 메뉴 아이템들 (Other menu items)
@@ -472,31 +470,136 @@ class HomeQuickMenuSection extends StatelessWidget {
     );
   }
 
-  /// 환율 메뉴 아이템 빌드 (Build exchange rate menu item)
+}
+
+/// 환율 메뉴 아이템 위젯 (Exchange Rate Menu Item Widget)
+///
+/// 20분마다 자동으로 환율을 새로고침하여 값을 업데이트합니다.
+/// StatefulWidget으로 구현하여 Timer를 통해 주기적으로 환율 데이터를 갱신합니다.
+///
+/// Auto-refreshes exchange rate every 20 minutes to update the value.
+/// Implemented as StatefulWidget to periodically refresh exchange rate data via Timer.
+///
+/// ### 주요 기능 (Key Features):
+/// - 초기 로드: 위젯 생성 시 즉시 환율 데이터 로드
+/// - 주기적 업데이트: 20분마다 자동으로 환율 새로고침
+/// - 캐시 무효화: 새로고침 시 캐시를 삭제하여 최신 데이터 보장
+///
+/// - Initial load: Immediately loads exchange rate data when widget is created
+/// - Periodic update: Auto-refreshes exchange rate every 20 minutes
+/// - Cache invalidation: Clears cache on refresh to ensure fresh data
+class _ExchangeRateMenuItem extends StatefulWidget {
+  /// 메뉴 라벨 (Menu label)
+  final String label;
+
+  /// 탭 콜백 (Tap callback)
+  final VoidCallback? onTap;
+
+  const _ExchangeRateMenuItem({
+    required this.label,
+    this.onTap,
+  });
+
+  @override
+  State<_ExchangeRateMenuItem> createState() => _ExchangeRateMenuItemState();
+}
+
+class _ExchangeRateMenuItemState extends State<_ExchangeRateMenuItem> {
+  /// 현재 환율 데이터 (Current exchange rate data)
+  ExchangeRateData? _exchangeRateData;
+
+  /// 주기적 업데이트 타이머 (Periodic update timer)
+  Timer? _refreshTimer;
+
+  /// 새로고침 주기: 20분 (Refresh interval: 20 minutes)
+  static const Duration _refreshInterval = Duration(minutes: 20);
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// 초기 환율 데이터 로드 (Load initial exchange rate data)
+    _loadExchangeRate();
+
+    /// 20분마다 환율 새로고침 타이머 시작 (Start 20-minute refresh timer)
+    _refreshTimer = Timer.periodic(_refreshInterval, (_) {
+      _refreshExchangeRate();
+    });
+  }
+
+  @override
+  void dispose() {
+    /// 타이머 정리 (Clean up timer)
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  /// 환율 데이터 로드 (Load exchange rate data)
   ///
-  /// 아이콘 대신 실제 1PHP당 KRW 환율 값을 표시합니다.
-  /// 소수점 1자리로 표시 (예: 23.5)
+  /// CurrencyService를 통해 환율 데이터를 가져옵니다.
+  /// 캐시된 데이터가 있으면 캐시에서 로드하고, 없으면 API 호출합니다.
   ///
-  /// Displays actual PHP to KRW exchange rate instead of icon.
-  /// Shows with 1 decimal place (e.g., 23.5)
+  /// Fetches exchange rate data through CurrencyService.
+  /// Loads from cache if available, otherwise calls API.
+  Future<void> _loadExchangeRate() async {
+    try {
+      final data = await CurrencyService.instance.loadExchangeRates();
+
+      /// 위젯이 마운트되어 있을 때만 setState 호출 (Only call setState if mounted)
+      if (mounted) {
+        setState(() {
+          _exchangeRateData = data;
+        });
+      }
+    } catch (e) {
+      /// 에러 발생 시 기본 아이콘 유지 (Keep default icon on error)
+      debugPrint('ExchangeRateMenuItem: 환율 로드 실패 - $e');
+    }
+  }
+
+  /// 환율 데이터 새로고침 (Refresh exchange rate data)
   ///
-  /// [context] → BuildContext
-  /// [label] → 메뉴 라벨 (Menu label)
-  /// [onTap] → 탭 콜백 (Tap callback)
-  /// [scheme] → ColorScheme
-  /// [theme] → ThemeData
-  /// [sp] → AppSpacing
-  Widget _buildExchangeRateMenuItem({
-    required BuildContext context,
-    required String label,
-    required VoidCallback? onTap,
-    required ColorScheme scheme,
-    required ThemeData theme,
-    required AppSpacing sp,
-  }) {
+  /// 캐시를 삭제하고 새로운 환율 데이터를 API에서 가져옵니다.
+  /// 20분마다 Timer에 의해 호출됩니다.
+  ///
+  /// Clears cache and fetches fresh exchange rate data from API.
+  /// Called by Timer every 20 minutes.
+  Future<void> _refreshExchangeRate() async {
+    try {
+      /// 캐시 삭제하여 새 데이터 강제 로드 (Clear cache to force fresh data)
+      await CurrencyService.instance.clearCache();
+
+      final data = await CurrencyService.instance.loadExchangeRates();
+
+      /// 위젯이 마운트되어 있을 때만 setState 호출 (Only call setState if mounted)
+      if (mounted) {
+        setState(() {
+          _exchangeRateData = data;
+        });
+      }
+
+      final phpToKrw = data.phpRates['KRW'] ?? 0;
+      debugPrint('ExchangeRateMenuItem: 환율 새로고침 완료 - $phpToKrw');
+    } catch (e) {
+      /// 에러 발생 시 기존 데이터 유지 (Keep existing data on error)
+      debugPrint('ExchangeRateMenuItem: 환율 새로고침 실패 - $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
+
+    /// InkWell 사용: SingleChildScrollView + Row 조합에서는 InkWell 정상 동작
+    /// ripple effect를 제공하여 탭 피드백 표시
+    ///
+    /// Using InkWell: Works correctly with SingleChildScrollView + Row combination
+    /// Provides ripple effect for tap feedback
     return InkWell(
       /// 탭 시 콜백 호출 (Call callback on tap)
-      onTap: onTap,
+      onTap: widget.onTap,
 
       /// 둥근 모서리 ripple 효과 (Rounded corner ripple effect)
       borderRadius: BorderRadius.circular(12),
@@ -519,36 +622,24 @@ class HomeQuickMenuSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
-                /// FutureBuilder로 환율 데이터 비동기 로드
-                /// Async load exchange rate data with FutureBuilder
-                child: FutureBuilder<ExchangeRateData>(
-                  future: CurrencyService.instance.loadExchangeRates(),
-                  builder: (context, snapshot) {
-                    /// 로딩 중 또는 에러 시 기본 아이콘 표시
-                    /// Show default icon while loading or on error
-                    if (!snapshot.hasData) {
-                      return FaIcon(
+                child: _exchangeRateData != null
+                    ? Text(
+                        /// 1PHP당 KRW 환율을 소수점 1자리로 표시
+                        /// Display PHP to KRW rate with 1 decimal place
+                        (_exchangeRateData!.phpRates['KRW'] ?? 0)
+                            .toStringAsFixed(1),
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: scheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : FaIcon(
+                        /// 로딩 중: 기본 코인 아이콘 표시
+                        /// Loading: Show default coin icon
                         FontAwesomeIcons.lightCoins,
                         size: 20,
                         color: scheme.onPrimaryContainer,
-                      );
-                    }
-
-                    /// 1PHP당 KRW 환율 조회 (Get PHP to KRW rate)
-                    final phpToKrw = snapshot.data!.phpRates['KRW'] ?? 0;
-
-                    /// 소수점 1자리로 포맷 (Format to 1 decimal place)
-                    final rateText = phpToKrw.toStringAsFixed(1);
-
-                    return Text(
-                      rateText,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: scheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                ),
               ),
             ),
 
@@ -556,7 +647,7 @@ class HomeQuickMenuSection extends StatelessWidget {
 
             /// 메뉴 라벨 (Menu label)
             Text(
-              label,
+              widget.label,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: scheme.onSurface,
               ),
@@ -566,68 +657,201 @@ class HomeQuickMenuSection extends StatelessWidget {
       ),
     );
   }
+}
 
-  /// 날씨 메뉴 아이템 빌드 (Build weather menu item)
+/// 날씨 메뉴 아이템 위젯 (Weather Menu Item Widget)
+///
+/// 20분마다 자동으로 날씨를 새로고침하여 아이콘을 업데이트합니다.
+/// StatefulWidget으로 구현하여 Timer를 통해 주기적으로 날씨 데이터를 갱신합니다.
+///
+/// Auto-refreshes weather every 20 minutes to update the icon.
+/// Implemented as StatefulWidget to periodically refresh weather data via Timer.
+///
+/// ### 주요 기능 (Key Features):
+/// - 초기 로드: 위젯 생성 시 즉시 날씨 데이터 로드
+/// - 주기적 업데이트: 20분마다 자동으로 날씨 새로고침
+/// - 캐시 무효화: 새로고침 시 캐시를 삭제하여 최신 데이터 보장
+///
+/// - Initial load: Immediately loads weather data when widget is created
+/// - Periodic update: Auto-refreshes weather every 20 minutes
+/// - Cache invalidation: Clears cache on refresh to ensure fresh data
+class _WeatherMenuItem extends StatefulWidget {
+  /// 메뉴 라벨 (Menu label)
+  final String label;
+
+  /// 탭 콜백 (Tap callback)
+  final VoidCallback? onTap;
+
+  const _WeatherMenuItem({
+    required this.label,
+    this.onTap,
+  });
+
+  @override
+  State<_WeatherMenuItem> createState() => _WeatherMenuItemState();
+}
+
+class _WeatherMenuItemState extends State<_WeatherMenuItem> {
+  /// 현재 날씨 데이터 (Current weather data)
+  HourlyWeather? _weather;
+
+  /// 주기적 업데이트 타이머 (Periodic update timer)
+  Timer? _refreshTimer;
+
+  /// 새로고침 주기: 20분 (Refresh interval: 20 minutes)
+  static const Duration _refreshInterval = Duration(minutes: 20);
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// 초기 날씨 데이터 로드 (Load initial weather data)
+    _loadWeather();
+
+    /// 20분마다 날씨 새로고침 타이머 시작 (Start 20-minute refresh timer)
+    _refreshTimer = Timer.periodic(_refreshInterval, (_) {
+      _refreshWeather();
+    });
+  }
+
+  @override
+  void dispose() {
+    /// 타이머 정리 (Clean up timer)
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  /// 날씨 데이터 로드 (Load weather data)
   ///
-  /// 실시간 날씨 데이터를 가져와 현재 날씨 상태에 맞는 아이콘을 표시합니다.
-  /// FutureBuilder를 사용하여 비동기로 날씨 데이터를 로드합니다.
+  /// WeatherService를 통해 마닐라 현재 날씨를 가져옵니다.
+  /// 캐시된 데이터가 있으면 캐시에서 로드하고, 없으면 API 호출합니다.
   ///
-  /// Fetches real-time weather data and displays an icon matching the current weather.
-  /// Uses FutureBuilder to load weather data asynchronously.
+  /// Fetches Manila current weather through WeatherService.
+  /// Loads from cache if available, otherwise calls API.
+  Future<void> _loadWeather() async {
+    try {
+      final weather = await WeatherService.instance.loadManilaCurrentWeather();
+
+      /// 위젯이 마운트되어 있을 때만 setState 호출 (Only call setState if mounted)
+      if (mounted) {
+        setState(() {
+          _weather = weather;
+        });
+      }
+    } catch (e) {
+      /// 에러 발생 시 기본 아이콘 유지 (Keep default icon on error)
+      debugPrint('WeatherMenuItem: 날씨 로드 실패 - $e');
+    }
+  }
+
+  /// 날씨 데이터 새로고침 (Refresh weather data)
   ///
-  /// [context] → BuildContext
-  /// [label] → 메뉴 라벨 (Menu label)
-  /// [onTap] → 탭 콜백 (Tap callback)
-  /// [scheme] → ColorScheme
-  /// [theme] → ThemeData
-  /// [sp] → AppSpacing
-  Widget _buildWeatherMenuItem({
-    required BuildContext context,
-    required String label,
-    required VoidCallback? onTap,
-    required ColorScheme scheme,
-    required ThemeData theme,
-    required AppSpacing sp,
-  }) {
-    return FutureBuilder<HourlyWeather>(
-      /// WeatherService 싱글톤을 통해 마닐라 현재 날씨 로드
-      /// Load Manila current weather through WeatherService singleton
-      future: WeatherService.instance.loadManilaCurrentWeather(),
-      builder: (context, snapshot) {
-        /// 기본 아이콘: 로딩 중이거나 에러 시 구름+태양 아이콘 사용
-        /// Default icon: Use cloud+sun icon while loading or on error
-        IconData icon = FontAwesomeIcons.lightCloudSun;
+  /// 캐시를 삭제하고 새로운 날씨 데이터를 API에서 가져옵니다.
+  /// 20분마다 Timer에 의해 호출됩니다.
+  ///
+  /// Clears cache and fetches fresh weather data from API.
+  /// Called by Timer every 20 minutes.
+  Future<void> _refreshWeather() async {
+    try {
+      /// 캐시 삭제하여 새 데이터 강제 로드 (Clear cache to force fresh data)
+      await WeatherService.instance.clearCache();
 
-        /// 아이콘 색상: 날씨 데이터가 있으면 WeatherCodeHelper에서 가져옴
-        /// Icon color: Get from WeatherCodeHelper if weather data is available
-        Color? iconColor;
+      final weather = await WeatherService.instance.loadManilaCurrentWeather();
 
-        if (snapshot.hasData) {
-          final weather = snapshot.data!;
+      /// 위젯이 마운트되어 있을 때만 setState 호출 (Only call setState if mounted)
+      if (mounted) {
+        setState(() {
+          _weather = weather;
+        });
+      }
 
-          /// WMO 날씨 코드에 해당하는 아이콘 가져오기
-          /// Get icon corresponding to WMO weather code
-          icon = WeatherCodeHelper.getIcon(weather.weatherCode);
+      debugPrint('WeatherMenuItem: 날씨 새로고침 완료 - ${weather.weatherCode}');
+    } catch (e) {
+      /// 에러 발생 시 기존 데이터 유지 (Keep existing data on error)
+      debugPrint('WeatherMenuItem: 날씨 새로고침 실패 - $e');
+    }
+  }
 
-          /// WMO 날씨 코드에 해당하는 색상 가져오기
-          /// Get color corresponding to WMO weather code
-          iconColor = WeatherCodeHelper.getColor(weather.weatherCode);
-        }
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final sp = theme.extension<AppSpacing>()!;
 
-        return _buildMenuItem(
-          context: context,
-          icon: icon,
-          label: label,
-          onTap: onTap,
-          scheme: scheme,
-          theme: theme,
-          sp: sp,
+    /// 기본 아이콘: 로딩 중이거나 에러 시 구름+태양 아이콘 사용
+    /// Default icon: Use cloud+sun icon while loading or on error
+    IconData icon = FontAwesomeIcons.lightCloudSun;
 
-          /// 날씨 데이터가 있으면 해당 날씨 색상 적용
-          /// Apply weather color if weather data is available
-          iconColor: iconColor,
-        );
-      },
+    /// 아이콘 색상: 날씨 데이터가 있으면 WeatherCodeHelper에서 가져옴
+    /// Icon color: Get from WeatherCodeHelper if weather data is available
+    Color? iconColor;
+
+    if (_weather != null) {
+      /// WMO 날씨 코드에 해당하는 아이콘 가져오기
+      /// Get icon corresponding to WMO weather code
+      icon = WeatherCodeHelper.getIcon(_weather!.weatherCode);
+
+      /// WMO 날씨 코드에 해당하는 색상 가져오기
+      /// Get color corresponding to WMO weather code
+      iconColor = WeatherCodeHelper.getColor(_weather!.weatherCode);
+    }
+
+    /// InkWell 사용: SingleChildScrollView + Row 조합에서는 InkWell 정상 동작
+    /// ripple effect를 제공하여 탭 피드백 표시
+    ///
+    /// Using InkWell: Works correctly with SingleChildScrollView + Row combination
+    /// Provides ripple effect for tap feedback
+    return InkWell(
+      /// 탭 시 콜백 호출 (Call callback on tap)
+      onTap: widget.onTap,
+
+      /// 둥근 모서리 ripple 효과 (Rounded corner ripple effect)
+      borderRadius: BorderRadius.circular(12),
+
+      child: Padding(
+        padding: EdgeInsets.all(sp.s4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 아이콘 컨테이너 (Icon container)
+            /// 배경색 + 둥근 모서리로 강조 (한 단계 작은 크기: 48x48)
+            /// Highlighted with background color + rounded corners (smaller size: 48x48)
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                /// 배경색: primaryContainer
+                /// Background color: primaryContainer
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: FaIcon(
+                  icon,
+
+                  /// 아이콘 크기: 20 (컨테이너 축소에 맞춤)
+                  /// Icon size: 20 (adjusted for smaller container)
+                  size: 20,
+
+                  /// 아이콘 색상: iconColor 또는 기본값 onPrimaryContainer
+                  /// Icon color: iconColor or default onPrimaryContainer
+                  color: iconColor ?? scheme.onPrimaryContainer,
+                ),
+              ),
+            ),
+
+            SizedBox(height: sp.s4),
+
+            /// 메뉴 라벨 (Menu label)
+            Text(
+              widget.label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: scheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

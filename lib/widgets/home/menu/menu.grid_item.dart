@@ -13,20 +13,29 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /// - 미니멀한 스타일
 /// - 터치 피드백 애니메이션
 /// - 테마 기반 색상
+///
+/// ### iconWidget 사용:
+/// - iconWidget이 제공되면 icon 대신 iconWidget을 표시
+/// - 프로필 사진 등 커스텀 위젯 표시에 사용
 class MenuGridItem extends StatelessWidget {
   const MenuGridItem({
     super.key,
-    required this.icon,
+    this.icon,
     required this.title,
     required this.onTap,
     this.isDanger = false,
     this.width,
     this.backgroundColor,
     this.iconColor,
-  });
+    this.iconWidget,
+  }) : assert(
+         icon != null || iconWidget != null,
+         'icon 또는 iconWidget 중 하나는 필수입니다',
+       );
 
   /// 아이콘 (Icon to display)
-  final IconData icon;
+  /// iconWidget이 제공되면 무시됨
+  final IconData? icon;
 
   /// 타이틀 텍스트 (Title text to display)
   final String title;
@@ -47,6 +56,11 @@ class MenuGridItem extends StatelessWidget {
   /// 아이콘 색상 (Icon color)
   /// 기본값: onPrimaryContainer
   final Color? iconColor;
+
+  /// 커스텀 아이콘 위젯 (Custom icon widget)
+  /// 제공되면 icon 대신 이 위젯을 표시
+  /// 프로필 사진 등 커스텀 위젯 표시에 사용
+  final Widget? iconWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -91,35 +105,40 @@ class MenuGridItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               /// 아이콘 컨테이너 (Icon container)
+              /// iconWidget이 있으면 iconWidget 사용, 없으면 기본 아이콘 사용
               /// 현대적 디자인: 그라데이션 배경 또는 커스텀 배경색
               /// backgroundColor가 지정되면 gradient 대신 해당 색상 사용
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  // backgroundColor가 지정되면 해당 색상 사용, 아니면 null (gradient 사용)
-                  color: backgroundColor,
-                  // backgroundColor가 없을 때만 gradient 적용
-                  gradient: useGradient
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: gradientColors,
-                        )
-                      : null,
-                  // 둥근 원형에 가까운 모서리
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Center(
-                  child: FaIcon(
-                    icon,
-                    size: 20,
-                    color:
-                        iconColor ??
-                        (isDanger ? scheme.error : scheme.onPrimaryContainer),
+              if (iconWidget != null)
+                // 커스텀 아이콘 위젯 사용 (프로필 사진 등)
+                SizedBox(width: 48, height: 48, child: iconWidget)
+              else
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    // backgroundColor가 지정되면 해당 색상 사용, 아니면 null (gradient 사용)
+                    color: backgroundColor,
+                    // backgroundColor가 없을 때만 gradient 적용
+                    gradient: useGradient
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: gradientColors,
+                          )
+                        : null,
+                    // 둥근 원형에 가까운 모서리
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Center(
+                    child: FaIcon(
+                      icon!,
+                      size: 20,
+                      color:
+                          iconColor ??
+                          (isDanger ? scheme.error : scheme.onPrimaryContainer),
+                    ),
                   ),
                 ),
-              ),
 
               const SizedBox(height: 8),
 

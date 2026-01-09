@@ -300,7 +300,7 @@
   "travelAndTourismDesc": "여행지 및 예약",
   "hotels": "호텔",
   "hotelsDesc": "숙박 시설",
-  "carRental": "렌터카",
+  "carRental": "렌트카",
   "carRentalDesc": "차량 대여 서비스",
   "beautyAndWellness": "미용 & 웰빙",
   "beautyAndWellnessDesc": "미용실 및 자기 관리",
@@ -1968,6 +1968,10 @@
   "@quickMenuNotice": {
     "description": "Quick menu notice label"
   },
+  "majorForums": "주요 게시판",
+  "@majorForums": {
+    "description": "Major forums section title on home screen"
+  },
   "quickMenuExchangeRate": "환율",
   "@quickMenuExchangeRate": {
     "description": "Quick menu exchange rate label"
@@ -1991,6 +1995,10 @@
   "quickMenuTravel": "여행",
   "@quickMenuTravel": {
     "description": "Quick menu travel label"
+  },
+  "quickMenuHoliday": "휴일",
+  "@quickMenuHoliday": {
+    "description": "Quick menu holiday label"
   },
   "quickMenuFoodDelivery": "음식 배달",
   "@quickMenuFoodDelivery": {
@@ -2156,6 +2164,10 @@
   "@quickMenuHospital": {
     "description": "Quick menu hospital label"
   },
+  "quickMenuKoreanAssociation": "한인회",
+  "@quickMenuKoreanAssociation": {
+    "description": "Quick menu Korean association label"
+  },
   "emergencyContactsSection": "긴급 연락처",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"
@@ -2215,5 +2227,13 @@
   "travelDestinationPalawan": "팔라완",
   "@travelDestinationPalawan": {
     "description": "Palawan travel destination menu item"
+  },
+  "singleChat": "1:1채팅",
+  "@singleChat": {
+    "description": "1:1 chat navigation item label in chat-specific bottom navigation bar"
+  },
+  "adminChat": "운영자채팅",
+  "@adminChat": {
+    "description": "Admin chat navigation item label in chat-specific bottom navigation bar"
   }
 }

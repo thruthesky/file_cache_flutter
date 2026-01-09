@@ -6,6 +6,7 @@ import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/essential/essential_info.screen.dart';
 import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
+import 'package:philgo/screens/info/holiday/holiday.screen.dart';
 import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/info/travel/travel_info.screen.dart';
@@ -92,6 +93,13 @@ class PhilippineLifeInfoData {
       getLabel: (l10n) => l10n.quickMenuTravel,
       routeName: TravelInfoScreen.routeName,
       push: TravelInfoScreen.push,
+    ),
+    // 휴일 (Holiday) - 필리핀 정규 휴일 및 특별 휴일 정보
+    PhilippineLifeInfoItem(
+      icon: FontAwesomeIcons.calendarCheck,
+      getLabel: (l10n) => l10n.quickMenuHoliday,
+      routeName: HolidayScreen.routeName,
+      push: HolidayScreen.push,
     ),
     // 음식 배달 (Food Delivery) - Grab 앱을 이용한 음식 배달 정보
     PhilippineLifeInfoItem(
