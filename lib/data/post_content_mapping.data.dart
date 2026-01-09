@@ -46,8 +46,9 @@ class PostContentMapping {
   // ============================================================
 
   /// 출입국 - e트래블 정보 글 번호 (Immigration - eTravel Info Post ID)
-  /// TODO: 글 번호 설정 필요
-  static const int eTravel = 0;
+  ///
+  /// 필리핀 전자여행허가(e-Travel) 등록 관련 정보
+  static const int eTravel = 1275694710;
 
   /// 출입국 - 여행비자 정보 글 번호 (Immigration - Travel Visa Info Post ID)
   /// TODO: 글 번호 설정 필요

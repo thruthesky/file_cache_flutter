@@ -9,7 +9,7 @@ import 'package:philgo_api/philgo_api.dart';
 ///
 /// ### 캐시 관리 (Cache Management):
 /// FileCache를 사용하여 게시글 데이터를 캐싱합니다.
-/// - TTL: 1시간 (자주 변경되지 않는 정보성 글에 적합)
+/// - TTL: 48시간 (정보성 글은 자주 변경되지 않음)
 /// - 메모리 + 파일 이중 캐싱
 ///
 /// ### 사용법 (Usage):
@@ -34,16 +34,16 @@ class PostContentService {
   /// 비공개 생성자 (Private constructor)
   PostContentService._();
 
-  /// 캐시 TTL (1시간) (Cache TTL - 1 hour)
+  /// 캐시 TTL (48시간) (Cache TTL - 48 hours)
   ///
-  /// 정보성 글은 자주 변경되지 않으므로 1시간 캐시가 적절합니다.
-  static const Duration cacheTtl = Duration(hours: 1);
+  /// 정보성 글은 자주 변경되지 않으므로 48시간 캐시가 적절합니다.
+  static const Duration cacheTtl = Duration(hours: 48);
 
   /// 게시글 데이터 전용 캐시 (File cache for post data)
   ///
   /// FileCache를 사용하여 게시글 데이터를 캐싱합니다.
   /// - cacheName: 캐시 디렉토리명
-  /// - defaultTtl: 1시간
+  /// - defaultTtl: 48시간
   /// - fromJson/toJson: 직렬화 함수
   late final FileCache<Post> _cache = FileCache<Post>(
     cacheName: 'post_content',
