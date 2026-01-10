@@ -74,74 +74,74 @@ class TutorScreen extends StatelessWidget {
                 .animate()
                 .fadeIn(duration: 400.ms)
                 .slideY(begin: -0.1, end: 0),
-            SizedBox(height: sp.s24),
+            SizedBox(height: sp.s32),
 
             /// 주의사항 섹션 (Disclaimer Section)
             _buildDisclaimerSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 100.ms)
                 .slideX(begin: -0.05, end: 0),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 1) 적용 범위와 고용 형태 구분 섹션
             _buildEmploymentTypeSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 150.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 2) 카삼바하이 제도 핵심 섹션
             _buildKasambahaySection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 200.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 3) 채용 절차 섹션
             _buildHiringProcessSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 250.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 4) 계약서 필수 항목 섹션
             _buildContractItemsSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 300.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 5) 사회보험 등록 섹션
             _buildSocialInsuranceSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 350.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 6) 월별 운영 관리 섹션
             _buildMonthlyManagementSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 400.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 7) 운전기사 고용 권장 섹션
             _buildDriverRecommendationSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 450.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 8) 외국인 튜터 고용 섹션
             _buildForeignTutorSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 500.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 9) 분쟁 처리 섹션
             _buildDisputeResolutionSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 550.ms),
-            SizedBox(height: sp.s16),
+            SizedBox(height: sp.s24),
 
             /// 참고 URL 섹션
             _buildReferencesSection(context, theme, scheme, sp)
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 600.ms),
-            SizedBox(height: sp.s32),
+            SizedBox(height: sp.s48),
           ],
         ),
       ),
@@ -276,6 +276,8 @@ class TutorScreen extends StatelessWidget {
   }
 
   /// 섹션 타이틀 위젯 빌더 (Section Title Widget Builder)
+  /// - 아이콘 박스 크기 증가 (36 → 44)
+  /// - 타이틀 스타일 강화 (titleMedium → titleLarge)
   Widget _buildSectionTitle(
     ThemeData theme,
     ColorScheme scheme,
@@ -288,34 +290,35 @@ class TutorScreen extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                (iconColor ?? scheme.primary).withValues(alpha: 0.2),
+                (iconColor ?? scheme.primary).withValues(alpha: 0.25),
                 (iconColor ?? scheme.primary).withValues(alpha: 0.1),
               ],
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Center(
             child: FaIcon(
               icon,
-              size: 15,
+              size: 18,
               color: iconColor ?? scheme.primary,
             ),
           ),
         ),
-        SizedBox(width: sp.s12),
+        SizedBox(width: sp.s16),
         Expanded(
           child: Text(
             number.isNotEmpty ? '$number $title' : title,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: scheme.onSurface,
+              fontSize: 18,
             ),
           ),
         ),
@@ -324,6 +327,8 @@ class TutorScreen extends StatelessWidget {
   }
 
   /// 정보 카드 빌더 (Info Card Builder)
+  /// - 패딩을 sp.s20으로 증가하여 내부 여백 확보
+  /// - borderRadius를 20으로 증가하여 더 부드러운 느낌
   Widget _buildInfoCard(
     ThemeData theme,
     ColorScheme scheme,
@@ -334,10 +339,10 @@ class TutorScreen extends StatelessWidget {
   }) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(sp.s16),
+      padding: EdgeInsets.all(sp.s20),
       decoration: BoxDecoration(
         color: backgroundColor ?? scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         border: borderColor != null
             ? Border.all(color: borderColor, width: 1)
             : null,
@@ -347,6 +352,8 @@ class TutorScreen extends StatelessWidget {
   }
 
   /// 테이블 행 빌더 (Table Row Builder)
+  /// - 패딩을 증가하여 가독성 향상
+  /// - 헤더와 본문 스타일 차이를 명확히
   Widget _buildTableRow(
     ThemeData theme,
     ColorScheme scheme,
@@ -359,14 +366,14 @@ class TutorScreen extends StatelessWidget {
     final flex = flexValues ?? defaultFlex;
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: sp.s12, horizontal: sp.s12),
+      padding: EdgeInsets.symmetric(vertical: sp.s16, horizontal: sp.s16),
       decoration: BoxDecoration(
         color: isHeader
-            ? scheme.primaryContainer.withValues(alpha: 0.3)
+            ? scheme.primaryContainer.withValues(alpha: 0.4)
             : Colors.transparent,
         border: Border(
           bottom: BorderSide(
-            color: scheme.outline.withValues(alpha: 0.2),
+            color: scheme.outline.withValues(alpha: 0.15),
           ),
         ),
       ),
@@ -377,13 +384,13 @@ class TutorScreen extends StatelessWidget {
             child: Text(
               cells[index],
               style: isHeader
-                  ? theme.textTheme.labelMedium?.copyWith(
+                  ? theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.primary,
                     )
-                  : theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurface,
-                      height: 1.4,
+                  : theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.9),
+                      height: 1.5,
                     ),
             ),
           );
@@ -393,6 +400,8 @@ class TutorScreen extends StatelessWidget {
   }
 
   /// 체크 아이템 빌더 (Check Item Builder)
+  /// - 아이콘 크기 증가 (20 → 24)
+  /// - 텍스트 스타일 개선 (bodySmall → bodyMedium)
   Widget _buildCheckItem(
     ThemeData theme,
     ColorScheme scheme,
@@ -402,22 +411,22 @@ class TutorScreen extends StatelessWidget {
     IconData? icon,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: sp.s8),
+      padding: EdgeInsets.only(bottom: sp.s12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 20,
-            height: 20,
+            width: 24,
+            height: 24,
             margin: EdgeInsets.only(top: 2),
             decoration: BoxDecoration(
-              color: scheme.primaryContainer.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(4),
+              color: scheme.primaryContainer.withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Center(
               child: FaIcon(
                 icon ?? FontAwesomeIcons.lightCheck,
-                size: 10,
+                size: 12,
                 color: scheme.primary,
               ),
             ),
@@ -429,10 +438,10 @@ class TutorScreen extends StatelessWidget {
               children: [
                 Text(
                   text,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface,
                     fontWeight: FontWeight.w500,
-                    height: 1.4,
+                    height: 1.5,
                   ),
                 ),
                 if (subText != null) ...[
@@ -441,7 +450,7 @@ class TutorScreen extends StatelessWidget {
                     subText,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurface.withValues(alpha: 0.7),
-                      fontSize: 11,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -475,17 +484,17 @@ class TutorScreen extends StatelessWidget {
             number: '1)',
             title: '적용 범위와 고용 형태 구분',
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             "필리핀에서 '가정 교사(튜터)'는 고용 구조에 따라 크게 세 가지로 나뉩니다. "
             '고용 형태에 따라 의무 가입(SSS·PhilHealth·Pag-IBIG), 계약서 필수 항목, '
             '분쟁 처리 절차가 달라질 수 있으므로 최초에 형태를 명확히 구분해야 합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s16),
+          SizedBox(height: sp.s20),
 
           /// 고용 형태 3가지 카드 (Three Employment Type Cards)
           Column(
@@ -636,16 +645,16 @@ class TutorScreen extends StatelessWidget {
             number: '2)',
             title: "필리핀 '가사근로자(카삼바하이)' 제도 핵심",
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             '가정 내에서 상시·반복적으로 근무하는 형태(돌봄/가사 겸임 등)는 카삼바하이 제도 기준을 '
             '관리 표준으로 삼는 것이 일반적으로 안전합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s16),
+          SizedBox(height: sp.s20),
 
           /// 제도 핵심 항목 테이블 (Core Items Table)
           Container(
@@ -769,16 +778,16 @@ class TutorScreen extends StatelessWidget {
             number: '3)',
             title: '자녀 영어 홈 튜터 채용 절차',
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             "홈 튜터는 통상 '교육 서비스' 성격이 강하지만, 실제 운영에서는 가정 내 출입·아동 접촉·현금 지급·일정 통제가 "
             '결합되므로 최소한 아래 수준의 검증·문서화를 권장합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s16),
+          SizedBox(height: sp.s20),
 
           /// 채용 절차 단계별 카드 (Hiring Process Steps)
           _buildProcessStep(theme, scheme, sp, '1', '채용경로', '개인/기관/소개 구분', '소개자 정보'),
@@ -824,6 +833,8 @@ class TutorScreen extends StatelessWidget {
   }
 
   /// 채용 절차 단계 빌더 (Process Step Builder)
+  /// - 스텝 번호 크기 증가 (28 → 32)
+  /// - 패딩 및 텍스트 스타일 개선
   Widget _buildProcessStep(
     ThemeData theme,
     ColorScheme scheme,
@@ -834,35 +845,35 @@ class TutorScreen extends StatelessWidget {
     String document,
   ) {
     return Container(
-      margin: EdgeInsets.only(bottom: sp.s8),
-      padding: EdgeInsets.all(sp.s12),
+      margin: EdgeInsets.only(bottom: sp.s12),
+      padding: EdgeInsets.all(sp.s16),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: scheme.outline.withValues(alpha: 0.2),
+          color: scheme.outline.withValues(alpha: 0.15),
         ),
       ),
       child: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               color: scheme.primary,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
               child: Text(
                 step,
-                style: theme.textTheme.labelMedium?.copyWith(
+                style: theme.textTheme.labelLarge?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
-          SizedBox(width: sp.s12),
+          SizedBox(width: sp.s16),
           Expanded(
             flex: 2,
             child: Column(
@@ -870,33 +881,34 @@ class TutorScreen extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.labelMedium?.copyWith(
+                  style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: scheme.onSurface,
                   ),
                 ),
+                SizedBox(height: sp.s4),
                 Text(
                   check,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.7),
-                    fontSize: 11,
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
+            padding: EdgeInsets.symmetric(horizontal: sp.s12, vertical: sp.s8),
             decoration: BoxDecoration(
-              color: scheme.secondaryContainer.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(4),
+              color: scheme.secondaryContainer.withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               document,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: scheme.secondary,
-                fontWeight: FontWeight.w500,
-                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
               ),
             ),
           ),
@@ -927,15 +939,15 @@ class TutorScreen extends StatelessWidget {
             number: '4)',
             title: '튜터 계약서에 반드시 넣어야 할 항목',
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             '계약서는 길게 쓰기보다 분쟁 가능성이 큰 항목을 짧고 명확하게 두는 것이 효과적입니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s16),
+          SizedBox(height: sp.s20),
 
           /// 계약서 필수 항목 목록
           _buildContractItem(theme, scheme, sp, '업무', '영어 회화/독해/작문, 숙제 지도 범위'),
@@ -984,6 +996,7 @@ class TutorScreen extends StatelessWidget {
   }
 
   /// 계약서 항목 빌더 (Contract Item Builder)
+  /// - 패딩 및 스타일 개선
   Widget _buildContractItem(
     ThemeData theme,
     ColorScheme scheme,
@@ -992,40 +1005,40 @@ class TutorScreen extends StatelessWidget {
     String description,
   ) {
     return Container(
-      margin: EdgeInsets.only(bottom: sp.s8),
-      padding: EdgeInsets.symmetric(horizontal: sp.s12, vertical: sp.s12),
+      margin: EdgeInsets.only(bottom: sp.s12),
+      padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s16),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: scheme.outline.withValues(alpha: 0.2),
+          color: scheme.outline.withValues(alpha: 0.15),
         ),
       ),
       child: Row(
         children: [
           Container(
-            width: 48,
-            padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
+            width: 56,
+            padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s8),
             decoration: BoxDecoration(
-              color: scheme.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4),
+              color: scheme.primary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               title,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(width: sp.s12),
+          SizedBox(width: sp.s16),
           Expanded(
             child: Text(
               description,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: scheme.onSurface,
-                height: 1.4,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurface.withValues(alpha: 0.9),
+                height: 1.5,
               ),
             ),
           ),
@@ -1056,17 +1069,17 @@ class TutorScreen extends StatelessWidget {
             number: '5)',
             title: '사회보험(SSS·PhilHealth·Pag-IBIG) 등록·납부',
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             "튜터가 가정에 상시적으로 고정 일정으로 출근하고, 가정이 업무 방식·시간을 실질적으로 "
             "지휘·감독하는 구조라면, 실무상 '고용 관계'로 판단될 여지가 커집니다. "
             '이 경우 카삼바하이 제도 기준에 따라 사회보험 등록·납부를 검토해야 합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s16),
+          SizedBox(height: sp.s20),
 
           /// KURS 안내
           Container(
@@ -1180,16 +1193,16 @@ class TutorScreen extends StatelessWidget {
             number: '6)',
             title: '월별 운영 관리 (분쟁 예방용)',
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             "가정 내 인력은 '관계'로 운영되기 쉬우나, 분쟁은 대부분 급여·시간·업무범위에서 발생합니다. "
             '최소한 아래 기록을 유지해야 합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s16),
+          SizedBox(height: sp.s20),
 
           /// 관리 항목 테이블
           Container(
@@ -1401,16 +1414,16 @@ class TutorScreen extends StatelessWidget {
             number: '8)',
             title: '외국인(비필리핀 국적) 튜터 고용 시',
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             '외국인이 필리핀에서 임금·보수를 받고 근무하는 경우, 통상 이민국(예: 9G 취업비자 등) 및 '
             '노동부(DOLE) 취업허가(AEP 등) 체계를 검토해야 합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Container(
             padding: EdgeInsets.all(sp.s12),
             decoration: BoxDecoration(
@@ -1466,16 +1479,16 @@ class TutorScreen extends StatelessWidget {
             number: '9)',
             title: '분쟁 발생 시 처리 (기본 흐름)',
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Text(
             '가사근로자 관련 분쟁은 DOLE 관할 사무소를 통한 조정·중재 절차가 규정되어 있으며, '
             '범죄(폭행·절도 등)는 별도로 사법기관 절차가 적용됩니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.85),
+              height: 1.6,
             ),
           ),
-          SizedBox(height: sp.s12),
+          SizedBox(height: sp.s16),
           Container(
             padding: EdgeInsets.all(sp.s12),
             decoration: BoxDecoration(
@@ -1584,6 +1597,8 @@ class TutorScreen extends StatelessWidget {
   }
 
   /// 참고 URL 항목 빌더 (Reference Item Builder)
+  /// - 패딩 및 아이콘 크기 증가
+  /// - 텍스트 스타일 개선
   Widget _buildReferenceItem(
     ThemeData theme,
     ColorScheme scheme,
@@ -1593,44 +1608,44 @@ class TutorScreen extends StatelessWidget {
     required String url,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: sp.s8),
+      margin: EdgeInsets.only(bottom: sp.s12),
       child: InkWell(
         onTap: () => _launchUrl(url),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: EdgeInsets.all(sp.s12),
+          padding: EdgeInsets.all(sp.s16),
           decoration: BoxDecoration(
             color: scheme.surface,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: scheme.outline.withValues(alpha: 0.2),
+              color: scheme.outline.withValues(alpha: 0.15),
             ),
           ),
           child: Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: scheme.primaryContainer.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(8),
+                  color: scheme.primaryContainer.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
                   child: FaIcon(
                     FontAwesomeIcons.lightArrowUpRightFromSquare,
-                    size: 14,
+                    size: 16,
                     color: scheme.primary,
                   ),
                 ),
               ),
-              SizedBox(width: sp.s12),
+              SizedBox(width: sp.s16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: theme.textTheme.labelMedium?.copyWith(
+                      style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: scheme.primary,
                       ),
@@ -1640,7 +1655,7 @@ class TutorScreen extends StatelessWidget {
                       description,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: scheme.onSurface.withValues(alpha: 0.7),
-                        fontSize: 11,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -1648,7 +1663,7 @@ class TutorScreen extends StatelessWidget {
               ),
               FaIcon(
                 FontAwesomeIcons.lightChevronRight,
-                size: 12,
+                size: 14,
                 color: scheme.onSurface.withValues(alpha: 0.4),
               ),
             ],

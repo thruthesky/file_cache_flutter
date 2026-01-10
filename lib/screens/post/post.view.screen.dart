@@ -395,6 +395,71 @@ class _PostViewScreenState extends State<PostViewScreen> {
     print('=========================================================');
     // ========== 디버그 로그 끝 ==========
 
+    /// 만료된 구인/구직 글인지 확인 (90일 규칙)
+    /// Check if this is an expired job post (90-day rule)
+    final isExpiredJob = post?.isExpiredJobPost ?? false;
+
+    /// 만료된 구인글 경고 박스 위젯
+    /// Expired job post warning box widget
+    Widget buildExpiredJobWarningBox() {
+      return Container(
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: scheme.tertiaryContainer.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: scheme.tertiary.withValues(alpha: 0.5),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 만료 경고 아이콘 및 제목
+            /// Expired warning icon and title
+            Row(
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightClock,
+                  color: scheme.tertiary,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    PhilgoTr.of(context)?.expiredJobPost ?? '오래된 구인/구직 글입니다',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: scheme.tertiary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            /// 만료 설명 표시
+            /// Display expiration description
+            Text(
+              PhilgoTr.of(context)?.expiredJobPostDescription ??
+                  '잘못된 정보를 방지하기 위해, 90일 이상된 구인/구직 글은 내용을 표시하지 않습니다.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onTertiaryContainer,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    /// 만료된 구인글인 경우: 경고 박스만 표시
+    /// For expired job post: show only warning box
+    if (isExpiredJob) {
+      return buildExpiredJobWarningBox();
+    }
+
     /// 블라인드 경고 박스 위젯
     /// Blinded warning box widget
     Widget buildWarningBox() {
