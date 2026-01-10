@@ -853,4 +853,13 @@ class PhilgoTrZh extends PhilgoTr {
   String deleteNewFilesConfirmation(int count) {
     return 'You have $count newly uploaded file(s). Do you want to delete them?';
   }
+
+  @override
+  String get blindedPost => '此帖子已被屏蔽';
+
+  @override
+  String get blindedPostDescription => '此帖子因违反社区准则而被AI审核屏蔽。';
+
+  @override
+  String get blindReason => '原因';
 }

@@ -855,4 +855,14 @@ class PhilgoTrJa extends PhilgoTr {
   String deleteNewFilesConfirmation(int count) {
     return 'You have $count newly uploaded file(s). Do you want to delete them?';
   }
+
+  @override
+  String get blindedPost => 'ブラインド処理された投稿です';
+
+  @override
+  String get blindedPostDescription =>
+      'この投稿はコミュニティガイドライン違反のため、AIモデレーションによりブラインド処理されました。';
+
+  @override
+  String get blindReason => '理由';
 }

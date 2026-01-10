@@ -367,13 +367,19 @@ Future<List<Post>> getPosts({
 
 Future<Post> getPost(int id) async {
   final res = await func('post_view', data: {'idx': id});
-  // debugLog('getPost: $res');
+
+  // ========== 디버그 로그: 서버 응답 원본 확인 ==========
+  print('========== [getPost] 서버 응답 원본 JSON ==========');
+  print('[DEBUG] res.keys: ${res.keys.toList()}');
+  print('[DEBUG] res["blind"]: ${res["blind"]}');
+  print('[DEBUG] res["blind"] 타입: ${res["blind"].runtimeType}');
+  print('[DEBUG] res["moderation_reason"]: ${res["moderation_reason"]}');
+  print('[DEBUG] res["content"]: ${res["content"]?.toString().substring(0, (res["content"]?.toString().length ?? 0) > 100 ? 100 : (res["content"]?.toString().length ?? 0))}...');
+  print('[DEBUG] res["content_private"]: ${res["content_private"]}');
+  print('===================================================');
+  // ========== 디버그 로그 끝 ==========
 
   final post = Post.fromJson(res);
-
-  // log('=== GET POST API RESPONSE ===');
-  // log('$post');
-  // log('============================');
 
   return post;
 }

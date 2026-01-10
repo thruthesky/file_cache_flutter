@@ -1630,6 +1630,24 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'You have {count} newly uploaded file(s). Do you want to delete them?'**
   String deleteNewFilesConfirmation(int count);
+
+  /// Title shown when a post is blinded by moderation
+  ///
+  /// In en, this message translates to:
+  /// **'This post has been blinded'**
+  String get blindedPost;
+
+  /// Description shown when a post is blinded by moderation
+  ///
+  /// In en, this message translates to:
+  /// **'This post has been blinded by AI moderation for violating community guidelines.'**
+  String get blindedPostDescription;
+
+  /// Label for blind reason display
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get blindReason;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

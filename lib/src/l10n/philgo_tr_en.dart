@@ -873,4 +873,14 @@ class PhilgoTrEn extends PhilgoTr {
   String deleteNewFilesConfirmation(int count) {
     return 'You have $count newly uploaded file(s). Do you want to delete them?';
   }
+
+  @override
+  String get blindedPost => 'This post has been blinded';
+
+  @override
+  String get blindedPostDescription =>
+      'This post has been blinded by AI moderation for violating community guidelines.';
+
+  @override
+  String get blindReason => 'Reason';
 }

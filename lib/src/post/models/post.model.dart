@@ -121,6 +121,10 @@ class Post {
 
   final String? text10;
 
+  // 검열 사유 (블라인드 처리 시 표시)
+  // Moderation reason (shown when post is blinded)
+  final String? moderationReason;
+
   // 생성자
   Post({
     required this.idx,
@@ -201,6 +205,7 @@ class Post {
     this.text6,
     this.text9,
     this.text10,
+    this.moderationReason,
   });
 
   // JSON 직렬화를 위한 factory 생성자
@@ -293,6 +298,7 @@ class Post {
       text6: json['text_6'] as String?,
       text9: json['text_9'] as String?,
       text10: json['text_10'] as String?,
+      moderationReason: json['moderation_reason'] as String?,
     );
   }
 
@@ -378,6 +384,7 @@ class Post {
       if (text6 != null) 'text_6': text6,
       if (text9 != null) 'text_9': text9,
       if (text10 != null) 'text_10': text10,
+      if (moderationReason != null) 'moderation_reason': moderationReason,
     };
   }
 
@@ -461,6 +468,7 @@ class Post {
     String? text6,
     String? text9,
     String? text10,
+    String? moderationReason,
   }) {
     return Post(
       idx: idx ?? this.idx,
@@ -541,6 +549,7 @@ class Post {
       text6: text6 ?? this.text6,
       text9: text9 ?? this.text9,
       text10: text10 ?? this.text10,
+      moderationReason: moderationReason ?? this.moderationReason,
     );
   }
 
@@ -593,6 +602,31 @@ class Post {
   bool isMine(BuildContext context) {
     return PhilgoState.of(context).user?.idx == idx_member;
   }
+
+  /// 블라인드 처리된 글인지 확인
+  ///
+  /// 서버에서 AI 검열을 통해 블라인드 처리된 글의 경우 blind 필드가 설정됩니다.
+  /// 블라인드 사유:
+  /// - 'Y': 일반 블라인드 처리 (레거시 호환)
+  /// - 'b': 구인기준 미통과, 도박, 스팸 등 경미한 위반 (블라인드)
+  /// - 'f': 욕설, 성적표현 등 심각한 위반 (차단)
+  ///
+  /// Returns true if the post is blinded by moderation (blind == 'Y', 'b', or 'f')
+  bool get isBlinded => blind == 'Y' || blind == 'b' || blind == 'f';
+
+  /// 차단된 글인지 확인 (심각한 위반)
+  ///
+  /// 욕설, 성적표현 등 심각한 커뮤니티 가이드라인 위반으로 차단된 글입니다.
+  /// 차단된 글은 본인도 내용을 볼 수 없습니다.
+  ///
+  /// Returns true if the post is blocked (severe violation, blind == 'f')
+  bool get isBlocked => blind == 'f';
+
+  /// 삭제된 글인지 확인
+  ///
+  /// deleted 필드에 값이 있으면 삭제된 글입니다.
+  /// Returns true if the post is deleted
+  bool get isDeleted => deleted != null && deleted.toString().isNotEmpty;
 
   /// Primary YouTube URL stored in varchar19 field
   /// Returns the YouTube URL from varchar19 if it exists and is not empty

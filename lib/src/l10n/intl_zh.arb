@@ -251,5 +251,8 @@
     "selectAdvertisementDays": "选择广告天数",
     "pointAdvertisementConfirmMessage": "将推广您的帖子{days}天。需要{points}积分。是否继续？",
     "pointAdvertisementSuccess": "您的帖子已成功推广！",
-    "pointAdvertisementExtendMessage": "将延长您的帖子推广期{days}天。需要{points}积分。是否继续？"
+    "pointAdvertisementExtendMessage": "将延长您的帖子推广期{days}天。需要{points}积分。是否继续？",
+    "blindedPost": "此帖子已被屏蔽",
+    "blindedPostDescription": "此帖子因违反社区准则而被AI审核屏蔽。",
+    "blindReason": "原因"
 }

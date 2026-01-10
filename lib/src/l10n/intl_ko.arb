@@ -262,5 +262,8 @@
     "commentLiked": "댓글에 좋아요를 눌렀습니다",
     "alreadyLikedComment": "이미 좋아요를 누른 댓글입니다",
     "failedToDeleteComment": "댓글 삭제 실패: {error}",
-    "deleteNewFilesConfirmation": "{count}개의 새로 업로드된 파일이 있습니다. 삭제하시겠습니까?"
+    "deleteNewFilesConfirmation": "{count}개의 새로 업로드된 파일이 있습니다. 삭제하시겠습니까?",
+    "blindedPost": "블라인드 처리된 글입니다",
+    "blindedPostDescription": "이 글은 커뮤니티 가이드라인 위반으로 AI 검열에 의해 블라인드 처리되었습니다.",
+    "blindReason": "사유"
 }

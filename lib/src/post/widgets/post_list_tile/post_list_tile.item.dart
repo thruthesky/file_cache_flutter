@@ -72,19 +72,25 @@ class PostListTileItem extends StatelessWidget {
   /// 게시글 콘텐츠 빌드 (통합 함수)
   ///
   /// [blocked]가 true이면 차단된 게시글 레이아웃 표시
+  /// 블라인드 처리된 글이면 블라인드 메시지 표시
   /// 첨부파일 또는 YouTube 썸네일 유무에 따라 썸네일 표시 여부 결정
   /// 우선순위: 첨부파일 > YouTube 썸네일
   Widget _buildContent(BuildContext context, {required bool blocked}) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final hasFiles = post.files.isNotEmpty && !blocked;
+
+    // 블라인드 처리 여부 확인
+    // Check if the post is blinded
+    final isBlinded = post.isBlinded;
+
+    final hasFiles = post.files.isNotEmpty && !blocked && !isBlinded;
     final hasYoutubeVideos =
-        post.getAllYoutubeUrlInfos().isNotEmpty && !blocked;
+        post.getAllYoutubeUrlInfos().isNotEmpty && !blocked && !isBlinded;
 
     // 썸네일 표시 여부: 첨부파일이 있거나 YouTube 영상이 있는 경우
     final hasThumbnail = hasFiles || hasYoutubeVideos;
 
-    // 제목 위젯 빌드 (차단 여부에 따라 다름)
+    // 제목 위젯 빌드 (차단/블라인드 여부에 따라 다름)
     final Widget titleWidget;
     if (blocked) {
       /// 차단된 사용자: 아이콘 + 메시지 (부드러운 onSurfaceVariant 색상)
@@ -102,6 +108,29 @@ class PostListTileItem extends StatelessWidget {
               "${PhilgoTr.of(context)!.post_from_blocked_user} ${cut(post.nickname.isEmpty ? PhilgoTr.of(context)!.no_name : post.nickname, 8)}",
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      );
+    } else if (isBlinded) {
+      /// 블라인드 처리된 글: 경고 아이콘 + 메시지 (error 색상)
+      /// Blinded post: warning icon + message (error color)
+      titleWidget = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightTriangleExclamation,
+            size: 16,
+            color: scheme.error,
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              PhilgoTr.of(context)?.blindedPost ?? '블라인드 처리된 글입니다',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.error,
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -128,8 +157,9 @@ class PostListTileItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         titleWidget,
-        // 차단되지 않은 경우에만 메타 정보 표시
-        if (!blocked) ...[
+        // 차단되지 않고 블라인드도 아닌 경우에만 메타 정보 표시
+        // Only show meta info when not blocked and not blinded
+        if (!blocked && !isBlinded) ...[
           const SizedBox(height: 8),
           PostListTileMeta(
             post: post,
@@ -186,8 +216,9 @@ class PostListTileItem extends StatelessWidget {
     }
 
     // 썸네일이 없는 경우: 제목 길이에 따라 레이아웃 결정
-    // 차단된 경우에는 메타 정보 없이 제목만 표시
-    if (blocked) {
+    // 차단되거나 블라인드된 경우에는 메타 정보 없이 제목만 표시
+    // For blocked or blinded posts, only show title without meta info
+    if (blocked || isBlinded) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
         child: titleWidget,

@@ -1034,5 +1034,17 @@
                 "example": "3"
             }
         }
+    },
+    "blindedPost": "This post has been blinded",
+    "@blindedPost": {
+        "description": "Title shown when a post is blinded by moderation"
+    },
+    "blindedPostDescription": "This post has been blinded by AI moderation for violating community guidelines.",
+    "@blindedPostDescription": {
+        "description": "Description shown when a post is blinded by moderation"
+    },
+    "blindReason": "Reason",
+    "@blindReason": {
+        "description": "Label for blind reason display"
     }
 }

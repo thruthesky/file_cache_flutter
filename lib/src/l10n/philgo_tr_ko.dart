@@ -853,4 +853,14 @@ class PhilgoTrKo extends PhilgoTr {
   String deleteNewFilesConfirmation(int count) {
     return '$count개의 새로 업로드된 파일이 있습니다. 삭제하시겠습니까?';
   }
+
+  @override
+  String get blindedPost => '블라인드 처리된 글입니다';
+
+  @override
+  String get blindedPostDescription =>
+      '이 글은 커뮤니티 가이드라인 위반으로 AI 검열에 의해 블라인드 처리되었습니다.';
+
+  @override
+  String get blindReason => '사유';
 }
