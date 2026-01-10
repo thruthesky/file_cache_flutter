@@ -1451,6 +1451,30 @@ abstract class PhilgoTr {
   /// **'Angeles'**
   String get subCategoryAngeles;
 
+  /// No description provided for @subCategoryHiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Hiring'**
+  String get subCategoryHiring;
+
+  /// No description provided for @subCategoryLooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for Job'**
+  String get subCategoryLooking;
+
+  /// No description provided for @selectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Category'**
+  String get selectCategory;
+
+  /// No description provided for @selectHiringOrLooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select Hiring or Looking for Job'**
+  String get selectHiringOrLooking;
+
   /// No description provided for @categoryAll.
   ///
   /// In en, this message translates to:

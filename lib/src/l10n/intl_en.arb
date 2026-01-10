@@ -859,6 +859,11 @@
     "subCategoryCebu": "Cebu",
     "subCategoryAngeles": "Angeles",
 
+    "subCategoryHiring": "Hiring",
+    "subCategoryLooking": "Looking for Job",
+    "selectCategory": "Select Category",
+    "selectHiringOrLooking": "Please select Hiring or Looking for Job",
+
     "categoryAll": "All",
 
     "currentPointBalance": "Current Point Balance",

@@ -745,6 +745,18 @@ class PhilgoTrKo extends PhilgoTr {
   String get subCategoryAngeles => '앙헬레스';
 
   @override
+  String get subCategoryHiring => '구인';
+
+  @override
+  String get subCategoryLooking => '구직';
+
+  @override
+  String get selectCategory => '카테고리 선택';
+
+  @override
+  String get selectHiringOrLooking => '구인 또는 구직을 선택해주세요';
+
+  @override
   String get categoryAll => '전체';
 
   @override

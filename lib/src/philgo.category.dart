@@ -131,8 +131,8 @@ class PhilgoCategory {
     /// travel_good (추천 여행지)
     'travel_good': [],
 
-    /// wanted (구직)
-    'wanted': [],
+    /// wanted (구인구직) - hiring: 구인, looking: 구직
+    'wanted': ['hiring', 'looking'],
 
     /// youtube (유튜브)
     'youtube': [],
@@ -548,5 +548,13 @@ class PhilgoCategory {
 
     /// 중고차 - Used car
     '중고차': '🚙',
+
+    // ===== 2차 카테고리 (Sub Categories) - wanted =====
+
+    /// 구인 - Hiring
+    'hiring': '🏢',
+
+    /// 구직 - Looking for job
+    'looking': '🔍',
   };
 }

@@ -229,6 +229,11 @@
     "subCategoryCebu": "宿务",
     "subCategoryAngeles": "安赫莱斯",
 
+    "subCategoryHiring": "招聘",
+    "subCategoryLooking": "求职",
+    "selectCategory": "选择类别",
+    "selectHiringOrLooking": "请选择招聘或求职",
+
     "categoryAll": "全部",
 
     "currentPointBalance": "当前积分余额",

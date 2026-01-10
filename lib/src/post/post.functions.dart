@@ -456,7 +456,12 @@ Future<Post> createPost(RecordType data) async {
   }
 
   // 내용 유효성 검사 - 필수 항목
-  if (data['content'] == null || data['content'].toString().trim().isEmpty) {
+  // 단, wanted 게시판의 hiring 카테고리는 전용 폼을 사용하므로 content 검증 제외
+  // Hiring form uses specialized fields (company info, etc.) instead of content
+  final isHiringForm =
+      data['post_id'] == 'wanted' && data['category'] == 'hiring';
+  if (!isHiringForm &&
+      (data['content'] == null || data['content'].toString().trim().isEmpty)) {
     // 사용자에게 명확한 에러 메시지 표시
     showSafeErrorDialog('게시글 내용을 입력해주세요.');
     throw Exception('내용이 비어있습니다');
@@ -473,7 +478,10 @@ Future<Post> createPost(RecordType data) async {
   final cleanedData = Map<String, dynamic>.from(data);
   cleanedData['post_id'] = data['post_id'].toString().trim(); // post_id 필수
   cleanedData['subject'] = subject; // subject 필드 사용
-  cleanedData['content'] = data['content'].toString().trim();
+  // content 처리: hiring form은 빈 값 허용, 그 외는 trim 처리
+  // Hiring form allows empty content, others are trimmed
+  cleanedData['content'] =
+      (data['content'] ?? '').toString().trim();
 
   // category는 옵션 - 값이 있을 경우에만 포함
   if (data['category'] != null &&
@@ -611,6 +619,50 @@ Future<Post> updatePost(RecordType data) async {
 
   if (data['point_advertisement_days'] != null) {
     cleanedData['point_advertisement_days'] = data['point_advertisement_days'];
+  }
+
+  // ========== 구인(hiring) 폼 전용 필드 처리 ==========
+  // 구인 글 수정 시 필요한 추가 필드들
+  // Additional fields for hiring post update
+
+  // varchar_4: 회사 이름 (Company name)
+  if (data.containsKey('varchar_4')) {
+    cleanedData['varchar_4'] = data['varchar_4']?.toString().trim() ?? '';
+  }
+
+  // text_1: 회사 소개 (Company introduction)
+  if (data.containsKey('text_1')) {
+    cleanedData['text_1'] = data['text_1']?.toString().trim() ?? '';
+  }
+
+  // varchar_9: 업무 범위 (Work range)
+  if (data.containsKey('varchar_9')) {
+    cleanedData['varchar_9'] = data['varchar_9']?.toString().trim() ?? '';
+  }
+
+  // varchar_5: 주소 (Address)
+  if (data.containsKey('varchar_5')) {
+    cleanedData['varchar_5'] = data['varchar_5']?.toString().trim() ?? '';
+  }
+
+  // varchar_6: 전화번호 (Phone number)
+  if (data.containsKey('varchar_6')) {
+    cleanedData['varchar_6'] = data['varchar_6']?.toString().trim() ?? '';
+  }
+
+  // varchar_8: 이메일 (Email)
+  if (data.containsKey('varchar_8')) {
+    cleanedData['varchar_8'] = data['varchar_8']?.toString().trim() ?? '';
+  }
+
+  // int_1: 급여 (Salary)
+  if (data.containsKey('int_1')) {
+    cleanedData['int_1'] = data['int_1'];
+  }
+
+  // varchar_7: 근무제 (Work type)
+  if (data.containsKey('varchar_7')) {
+    cleanedData['varchar_7'] = data['varchar_7']?.toString().trim() ?? '';
   }
 
   // ========== 2. 디버깅 정보 로깅 (개발 시 유용) ==========

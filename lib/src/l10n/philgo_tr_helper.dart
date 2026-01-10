@@ -138,5 +138,13 @@ Map<String, String> _buildTranslationMap(PhilgoTr tr) {
     '마닐라': tr.subCategoryManila,
     '세부': tr.subCategoryCebu,
     '앙헬레스': tr.subCategoryAngeles,
+
+    // 구인구직 카테고리 (Wanted categories)
+    'hiring': tr.subCategoryHiring,
+    'looking': tr.subCategoryLooking,
+
+    // 카테고리 선택 안내 (Category selection prompt)
+    'selectCategory': tr.selectCategory,
+    'selectHiringOrLooking': tr.selectHiringOrLooking,
   };
 }

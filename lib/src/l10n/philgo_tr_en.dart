@@ -761,6 +761,18 @@ class PhilgoTrEn extends PhilgoTr {
   String get subCategoryAngeles => 'Angeles';
 
   @override
+  String get subCategoryHiring => 'Hiring';
+
+  @override
+  String get subCategoryLooking => 'Looking for Job';
+
+  @override
+  String get selectCategory => 'Select Category';
+
+  @override
+  String get selectHiringOrLooking => 'Please select Hiring or Looking for Job';
+
+  @override
   String get categoryAll => 'All';
 
   @override

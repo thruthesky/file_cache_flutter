@@ -229,6 +229,11 @@
     "subCategoryCebu": "세부",
     "subCategoryAngeles": "앙헬레스",
 
+    "subCategoryHiring": "구인",
+    "subCategoryLooking": "구직",
+    "selectCategory": "카테고리 선택",
+    "selectHiringOrLooking": "구인 또는 구직을 선택해주세요",
+
     "categoryAll": "전체",
 
     "currentPointBalance": "보유 포인트",

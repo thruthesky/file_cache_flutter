@@ -743,6 +743,18 @@ class PhilgoTrZh extends PhilgoTr {
   String get subCategoryAngeles => '安赫莱斯';
 
   @override
+  String get subCategoryHiring => '招聘';
+
+  @override
+  String get subCategoryLooking => '求职';
+
+  @override
+  String get selectCategory => '选择类别';
+
+  @override
+  String get selectHiringOrLooking => '请选择招聘或求职';
+
+  @override
   String get categoryAll => '全部';
 
   @override

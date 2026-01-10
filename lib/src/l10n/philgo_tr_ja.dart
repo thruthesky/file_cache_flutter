@@ -745,6 +745,18 @@ class PhilgoTrJa extends PhilgoTr {
   String get subCategoryAngeles => 'アンヘレス';
 
   @override
+  String get subCategoryHiring => '求人';
+
+  @override
+  String get subCategoryLooking => '求職';
+
+  @override
+  String get selectCategory => 'カテゴリー選択';
+
+  @override
+  String get selectHiringOrLooking => '求人または求職を選択してください';
+
+  @override
   String get categoryAll => 'すべて';
 
   @override

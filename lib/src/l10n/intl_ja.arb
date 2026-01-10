@@ -229,6 +229,11 @@
     "subCategoryCebu": "セブ",
     "subCategoryAngeles": "アンヘレス",
 
+    "subCategoryHiring": "求人",
+    "subCategoryLooking": "求職",
+    "selectCategory": "カテゴリー選択",
+    "selectHiringOrLooking": "求人または求職を選択してください",
+
     "categoryAll": "すべて",
 
     "currentPointBalance": "保有ポイント",
