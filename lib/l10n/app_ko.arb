@@ -2243,5 +2243,25 @@
   "phoneNumberCannotBeChanged": "전화번호 수정 불가",
   "@phoneNumberCannotBeChanged": {
     "description": "Text indicating that phone number cannot be changed"
+  },
+  "helperSection": "도우미 & 가정교사",
+  "@helperSection": {
+    "description": "Helper and tutor section title"
+  },
+  "helperHouseHelper": "하우스헬퍼",
+  "@helperHouseHelper": {
+    "description": "House helper menu item"
+  },
+  "helperDriver": "운전기사",
+  "@helperDriver": {
+    "description": "Driver menu item"
+  },
+  "helperTutor": "가정교사",
+  "@helperTutor": {
+    "description": "Tutor menu item"
+  },
+  "comingSoon": "준비 중입니다",
+  "@comingSoon": {
+    "description": "Coming soon message for empty screens"
   }
 }

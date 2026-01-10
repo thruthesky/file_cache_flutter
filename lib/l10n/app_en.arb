@@ -2096,5 +2096,25 @@
   "phoneNumberCannotBeChanged": "Cannot be changed",
   "@phoneNumberCannotBeChanged": {
     "description": "Text indicating that phone number cannot be changed"
+  },
+  "helperSection": "Helper & Tutor",
+  "@helperSection": {
+    "description": "Helper and tutor section title"
+  },
+  "helperHouseHelper": "House Helper",
+  "@helperHouseHelper": {
+    "description": "House helper menu item"
+  },
+  "helperDriver": "Driver",
+  "@helperDriver": {
+    "description": "Driver menu item"
+  },
+  "helperTutor": "Tutor",
+  "@helperTutor": {
+    "description": "Tutor menu item"
+  },
+  "comingSoon": "Coming Soon",
+  "@comingSoon": {
+    "description": "Coming soon message for empty screens"
   }
 }

@@ -1723,4 +1723,19 @@ class LoEn extends Lo {
 
   @override
   String get phoneNumberCannotBeChanged => 'Cannot be changed';
+
+  @override
+  String get helperSection => 'Helper & Tutor';
+
+  @override
+  String get helperHouseHelper => 'House Helper';
+
+  @override
+  String get helperDriver => 'Driver';
+
+  @override
+  String get helperTutor => 'Tutor';
+
+  @override
+  String get comingSoon => 'Coming Soon';
 }

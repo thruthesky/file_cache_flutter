@@ -1686,4 +1686,19 @@ class LoZh extends Lo {
 
   @override
   String get phoneNumberCannotBeChanged => '无法更改';
+
+  @override
+  String get helperSection => '帮手 & 家教';
+
+  @override
+  String get helperHouseHelper => '家政帮手';
+
+  @override
+  String get helperDriver => '司机';
+
+  @override
+  String get helperTutor => '家教';
+
+  @override
+  String get comingSoon => '即将推出';
 }

@@ -1971,5 +1971,10 @@
     "description": "Quick menu essential info label"
   },
   "notRegistered": "未注册",
-  "phoneNumberCannotBeChanged": "无法更改"
+  "phoneNumberCannotBeChanged": "无法更改",
+  "helperSection": "帮手 & 家教",
+  "helperHouseHelper": "家政帮手",
+  "helperDriver": "司机",
+  "helperTutor": "家教",
+  "comingSoon": "即将推出"
 }

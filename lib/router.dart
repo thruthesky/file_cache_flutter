@@ -47,6 +47,9 @@ import 'package:philgo/screens/info/travel_destination/subic.screen.dart';
 import 'package:philgo/screens/info/travel_destination/bohol.screen.dart';
 import 'package:philgo/screens/info/travel_destination/boracay.screen.dart';
 import 'package:philgo/screens/info/travel_destination/palawan.screen.dart';
+import 'package:philgo/screens/info/helper/house_helper.screen.dart';
+import 'package:philgo/screens/info/helper/driver.screen.dart';
+import 'package:philgo/screens/info/helper/tutor.screen.dart';
 import 'package:philgo/screens/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
@@ -697,6 +700,27 @@ final router = GoRouter(
       path: PalawanScreen.routeName,
       name: PalawanScreen.routeName,
       builder: (context, state) => const PalawanScreen(),
+    ),
+
+    /// 하우스헬퍼 화면 (House Helper Screen)
+    GoRoute(
+      path: HouseHelperScreen.routeName,
+      name: HouseHelperScreen.routeName,
+      builder: (context, state) => const HouseHelperScreen(),
+    ),
+
+    /// 운전기사 화면 (Driver Screen)
+    GoRoute(
+      path: DriverScreen.routeName,
+      name: DriverScreen.routeName,
+      builder: (context, state) => const DriverScreen(),
+    ),
+
+    /// 가정교사 화면 (Tutor Screen)
+    GoRoute(
+      path: TutorScreen.routeName,
+      name: TutorScreen.routeName,
+      builder: (context, state) => const TutorScreen(),
     ),
 
     /// 광고 상세 화면 (Advertisement View Screen)

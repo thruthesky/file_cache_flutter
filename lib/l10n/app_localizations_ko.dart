@@ -1692,4 +1692,19 @@ class LoKo extends Lo {
 
   @override
   String get phoneNumberCannotBeChanged => '전화번호 수정 불가';
+
+  @override
+  String get helperSection => '도우미 & 가정교사';
+
+  @override
+  String get helperHouseHelper => '하우스헬퍼';
+
+  @override
+  String get helperDriver => '운전기사';
+
+  @override
+  String get helperTutor => '가정교사';
+
+  @override
+  String get comingSoon => '준비 중입니다';
 }

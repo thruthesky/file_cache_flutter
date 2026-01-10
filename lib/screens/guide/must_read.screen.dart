@@ -8,6 +8,7 @@ import 'package:philgo/data/transportation_menu.data.dart';
 import 'package:philgo/data/housing_menu.data.dart';
 import 'package:philgo/data/car_menu.data.dart';
 import 'package:philgo/data/residence_menu.data.dart';
+import 'package:philgo/data/helper_menu.data.dart';
 import 'package:philgo/data/travel_destination_menu.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
@@ -151,6 +152,23 @@ class _MustReadScreenState extends State<MustReadScreen> {
             MenuGridSection(
               title: l10n.residenceSection,
               children: ResidenceMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 도우미 & 가정교사 섹션 (Helper & Tutor Section)
+            /// HelperMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.helperSection,
+              children: HelperMenuData.items
                   .map(
                     (item) => MenuGridItem(
                       icon: item.icon,

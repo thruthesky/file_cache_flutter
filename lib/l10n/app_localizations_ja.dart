@@ -1692,4 +1692,19 @@ class LoJa extends Lo {
 
   @override
   String get phoneNumberCannotBeChanged => '変更不可';
+
+  @override
+  String get helperSection => 'ヘルパー & 家庭教師';
+
+  @override
+  String get helperHouseHelper => 'ハウスヘルパー';
+
+  @override
+  String get helperDriver => 'ドライバー';
+
+  @override
+  String get helperTutor => '家庭教師';
+
+  @override
+  String get comingSoon => '準備中';
 }

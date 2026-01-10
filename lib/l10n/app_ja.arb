@@ -1971,5 +1971,10 @@
     "description": "Quick menu essential info label"
   },
   "notRegistered": "未登録",
-  "phoneNumberCannotBeChanged": "変更不可"
+  "phoneNumberCannotBeChanged": "変更不可",
+  "helperSection": "ヘルパー & 家庭教師",
+  "helperHouseHelper": "ハウスヘルパー",
+  "helperDriver": "ドライバー",
+  "helperTutor": "家庭教師",
+  "comingSoon": "準備中"
 }

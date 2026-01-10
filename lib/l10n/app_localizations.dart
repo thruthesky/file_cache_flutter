@@ -3400,6 +3400,36 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Cannot be changed'**
   String get phoneNumberCannotBeChanged;
+
+  /// Helper and tutor section title
+  ///
+  /// In en, this message translates to:
+  /// **'Helper & Tutor'**
+  String get helperSection;
+
+  /// House helper menu item
+  ///
+  /// In en, this message translates to:
+  /// **'House Helper'**
+  String get helperHouseHelper;
+
+  /// Driver menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Driver'**
+  String get helperDriver;
+
+  /// Tutor menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor'**
+  String get helperTutor;
+
+  /// Coming soon message for empty screens
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoon;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

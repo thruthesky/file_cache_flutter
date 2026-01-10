@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/screens/post/widgets/wanted_hiring_form.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 글쓰기 전체 화면 위젯
@@ -75,13 +76,22 @@ class PostCreateScreen extends StatefulWidget {
 }
 
 class _PostCreateScreenState extends State<PostCreateScreen> {
-  /// GlobalKey로 외부에서 폼 상태 접근
-  /// Access form state externally via GlobalKey
+  /// GlobalKey로 외부에서 폼 상태 접근 (일반 폼)
+  /// Access form state externally via GlobalKey (general form)
   final formKey = GlobalKey<PostCreateFormState>();
+
+  /// GlobalKey로 외부에서 구인 폼 상태 접근
+  /// Access hiring form state externally via GlobalKey
+  final hiringFormKey = GlobalKey<WantedHiringFormState>();
 
   /// 선택된 서브 카테고리 (드롭다운에서 변경 가능)
   /// Selected sub-category (changeable via dropdown)
   String? _selectedCategory;
+
+  /// 구인 폼인지 확인 (wanted 게시판 + hiring 카테고리)
+  /// Check if it's a hiring form (wanted board + hiring category)
+  bool get _isHiringForm =>
+      widget.postId == 'wanted' && _selectedCategory == 'hiring';
 
   /// 로딩 및 업로드 상태 추적
   /// Track loading and upload progress
@@ -301,9 +311,13 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 onPressed: (isLoading || isUploading)
                     ? null
                     : () async {
-                        /// 폼 제출 실행
-                        /// Execute form submission
-                        await formKey.currentState?.submit();
+                        /// 폼 제출 실행 (구인 폼 또는 일반 폼)
+                        /// Execute form submission (hiring form or general form)
+                        if (_isHiringForm) {
+                          await hiringFormKey.currentState?.submit();
+                        } else {
+                          await formKey.currentState?.submit();
+                        }
                       },
                 icon: isLoading
                     ? SizedBox(
@@ -329,51 +343,87 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           ),
         ),
 
-        /// PostCreateForm - 재사용 가능한 글쓰기 폼
-        /// PostCreateForm - reusable post creation form
-        body: PostCreateForm(
-          key: formKey,
-          postId: widget.postId,
+        /// 구인 폼 또는 일반 폼 분기 처리
+        /// Branching between hiring form and general form
+        body: _isHiringForm
+            ? WantedHiringForm(
+                key: hiringFormKey,
 
-          /// 드롭다운에서 선택된 서브 카테고리 전달
-          /// Pass the selected sub-category from dropdown
-          category: _selectedCategory,
+                /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+                /// Hide form's internal submit button (handled by AppBar)
+                showSubmitButton: true,
 
-          initialContent: widget.content,
-          initialFiles: widget.xFiles,
+                /// 로딩 상태 변경 콜백
+                /// Loading status change callback
+                onLoadingChanged: (loading) {
+                  setState(() {
+                    isLoading = loading;
+                  });
+                },
 
-          /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
-          /// Hide form's internal submit button (handled by AppBar)
-          showSubmitButton: true,
+                /// 업로드 상태 변경 콜백
+                /// Upload status change callback
+                onUploadingChanged: (uploading) {
+                  setState(() {
+                    isUploading = uploading;
+                  });
+                },
 
-          /// 로딩 상태 변경 콜백
-          /// Loading status change callback
-          onLoadingChanged: (loading) {
-            setState(() {
-              isLoading = loading;
-            });
-          },
+                /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+                /// Close screen on successful submission and navigate to PostViewScreen
+                onSubmitted: (post) {
+                  Navigator.pop(context);
 
-          /// 업로드 상태 변경 콜백
-          /// Upload status change callback
-          onUploadingChanged: (uploading) {
-            setState(() {
-              isUploading = uploading;
-            });
-          },
+                  // Navigate to PostViewScreen to show the created post
+                  PostViewScreen.push(context, post);
 
-          /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
-          /// Close screen on successful submission and navigate to PostViewScreen
-          onSubmitted: (post) {
-            Navigator.pop(context);
+                  // Call external callback if provided
+                  widget.onSubmitted?.call(post);
+                },
+              )
+            : PostCreateForm(
+                key: formKey,
+                postId: widget.postId,
 
-            // Navigate to PostViewScreen to show the created post
-            PostViewScreen.push(context, post);
+                /// 드롭다운에서 선택된 서브 카테고리 전달
+                /// Pass the selected sub-category from dropdown
+                category: _selectedCategory,
 
-            // Call external callback if provided
-            widget.onSubmitted?.call(post);
-          },
-        ),
+                initialContent: widget.content,
+                initialFiles: widget.xFiles,
+
+                /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+                /// Hide form's internal submit button (handled by AppBar)
+                showSubmitButton: true,
+
+                /// 로딩 상태 변경 콜백
+                /// Loading status change callback
+                onLoadingChanged: (loading) {
+                  setState(() {
+                    isLoading = loading;
+                  });
+                },
+
+                /// 업로드 상태 변경 콜백
+                /// Upload status change callback
+                onUploadingChanged: (uploading) {
+                  setState(() {
+                    isUploading = uploading;
+                  });
+                },
+
+                /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+                /// Close screen on successful submission and navigate to PostViewScreen
+                onSubmitted: (post) {
+                  Navigator.pop(context);
+
+                  // Navigate to PostViewScreen to show the created post
+                  PostViewScreen.push(context, post);
+
+                  // Call external callback if provided
+                  widget.onSubmitted?.call(post);
+                },
+              ),
       ),
     );
   }
