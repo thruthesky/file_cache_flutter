@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -287,73 +288,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         nickname: nickname,
                         firebaseUid: firebaseUid,
                       ),
-                      no: () => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (adExpiry != null) ...[
-                            // const SizedBox(height: 12),
-                            PostAdInfoBanner(expiryTimestamp: adExpiry),
-                          ],
-
-                          /// Post title - larger and more prominent
-                          PostViewSubject(subject: subject),
-
-                          /// Avatar, name, and date
-                          PostViewMeta(
-                            idxMember: idxMember,
-                            nickname: nickname,
-                            photoUrl: photoUrl,
-                            formattedDate: formatPostDate(stamp),
-                          ),
-
-                          SizedBox(height: 16),
-
-                          PostViewDisplayYouTubes(post: post!),
-
-                          /// Files (images, videos, and other files) first (if available)
-                          if (hasFiles) ...[
-                            PostViewFiles(
-                              files: files,
-                              postIdx: widget.post.idx,
-                              enableHeroTransition: true,
-                            ),
-                          ],
-
-                          /// Post content
-                          PostViewContent(isLoading: false, post: post!),
-
-                          /// 액션 버튼 (좋아요, 답글, 차단, 신고, 수정, 삭제)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                            child: PostViewButtons(
-                              post: post!,
-                              isLiked: isLiked,
-                              onLikeToggled: (liked) {
-                                setState(() {
-                                  isLiked = liked;
-                                });
-                              },
-                              onTapReply: onTapReply,
-                              onEditCompleted: (updatedPost) {
-                                // 원본 위젯의 게시글 데이터도 업데이트
-                                widget.post.subject = updatedPost.subject;
-                                widget.post.content = updatedPost.content;
-
-                                if (mounted) {
-                                  setState(() {
-                                    post = updatedPost;
-                                  });
-                                }
-                              },
-                              onDeleteCompleted: (context) {
-                                context.pop();
-                              },
-                              onUpdated: (updated) =>
-                                  setState(() => post = updated),
-                            ),
-                          ),
-                        ],
+                      no: () => _buildPostContent(
+                        context: context,
+                        adExpiry: adExpiry,
+                        hasFiles: hasFiles,
                       ),
                     ),
                   ),
@@ -417,6 +355,186 @@ class _PostViewScreenState extends State<PostViewScreen> {
                 ],
               ),
       ),
+    );
+  }
+
+  /// 게시글 본문 영역 빌드
+  ///
+  /// 블라인드 처리된 글인 경우:
+  /// - 본인 글: 경고 박스 + 사유 + 전체 내용 표시
+  /// - 타인 글: 경고 박스만 표시 (제목, 이미지 등 숨김)
+  ///
+  /// Build post content area
+  /// For blinded posts:
+  /// - Owner's post: warning box + reason + full content
+  /// - Other's post: warning box only (hide title, images, etc.)
+  Widget _buildPostContent({
+    required BuildContext context,
+    required int? adExpiry,
+    required bool hasFiles,
+  }) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    /// 블라인드 처리된 글인지 확인
+    /// Check if the post is blinded
+    final isBlinded = post?.isBlinded ?? false;
+    final isMine = post?.isMine(context) ?? false;
+
+    // ========== 디버그 로그 시작 ==========
+    // DEBUG: 블라인드 처리 관련 값 확인
+    print('========== [PostViewScreen] 블라인드 체크 디버그 ==========');
+    print('[DEBUG] post?.idx: ${post?.idx}');
+    print('[DEBUG] post?.post_id: ${post?.post_id}');
+    print('[DEBUG] post?.category: ${post?.category}');
+    print('[DEBUG] post?.blind 원본값: "${post?.blind}"');
+    print('[DEBUG] post?.blind 타입: ${post?.blind.runtimeType}');
+    print('[DEBUG] isBlinded (계산값): $isBlinded');
+    print('[DEBUG] isMine: $isMine');
+    print('[DEBUG] post?.moderationReason: ${post?.moderationReason}');
+    print('=========================================================');
+    // ========== 디버그 로그 끝 ==========
+
+    /// 블라인드 경고 박스 위젯
+    /// Blinded warning box widget
+    Widget buildWarningBox() {
+      return Container(
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: scheme.errorContainer.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: scheme.error.withValues(alpha: 0.5),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 블라인드 경고 아이콘 및 제목
+            /// Blind warning icon and title
+            Row(
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightTriangleExclamation,
+                  color: scheme.error,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    PhilgoTr.of(context)?.blindedPost ?? '블라인드 처리된 글입니다',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: scheme.error,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            /// 본인 글인 경우에만 사유 표시
+            /// Show reason only for owner's post
+            if (isMine) ...[
+              const SizedBox(height: 12),
+
+              /// 블라인드 사유 표시
+              /// Display blinding reason
+              Text(
+                '${PhilgoTr.of(context)?.blindReason ?? '사유'}: ${post?.moderationReason ?? (PhilgoTr.of(context)?.blindedPostDescription ?? '커뮤니티 가이드라인 위반')}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onErrorContainer,
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    /// 블라인드된 글이고 본인 글이 아닌 경우: 경고 박스만 표시
+    /// For blinded post that is not mine: show only warning box
+    if (isBlinded && !isMine) {
+      return buildWarningBox();
+    }
+
+    /// 일반 게시글 또는 본인의 블라인드 글: 전체 내용 표시
+    /// Normal post or owner's blinded post: show full content
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        /// 블라인드된 본인 글인 경우 경고 박스 먼저 표시
+        /// Show warning box first for owner's blinded post
+        if (isBlinded && isMine) ...[
+          buildWarningBox(),
+          const SizedBox(height: 16),
+        ],
+
+        if (adExpiry != null) ...[
+          PostAdInfoBanner(expiryTimestamp: adExpiry),
+        ],
+
+        /// Post title - larger and more prominent
+        PostViewSubject(subject: subject),
+
+        /// Avatar, name, and date
+        PostViewMeta(
+          idxMember: idxMember,
+          nickname: nickname,
+          photoUrl: photoUrl,
+          formattedDate: formatPostDate(stamp),
+        ),
+
+        const SizedBox(height: 16),
+
+        PostViewDisplayYouTubes(post: post!),
+
+        /// Files (images, videos, and other files) first (if available)
+        if (hasFiles) ...[
+          PostViewFiles(
+            files: files,
+            postIdx: widget.post.idx,
+            enableHeroTransition: true,
+          ),
+        ],
+
+        /// Post content (블라인드 글의 경우 contentPrivate 사용)
+        /// Post content (use contentPrivate for blinded posts)
+        PostViewContent(isLoading: false, post: post!),
+
+        /// 액션 버튼 (좋아요, 답글, 차단, 신고, 수정, 삭제)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: PostViewButtons(
+            post: post!,
+            isLiked: isLiked,
+            onLikeToggled: (liked) {
+              setState(() {
+                isLiked = liked;
+              });
+            },
+            onTapReply: onTapReply,
+            onEditCompleted: (updatedPost) {
+              // 원본 위젯의 게시글 데이터도 업데이트
+              widget.post.subject = updatedPost.subject;
+              widget.post.content = updatedPost.content;
+
+              if (mounted) {
+                setState(() {
+                  post = updatedPost;
+                });
+              }
+            },
+            onDeleteCompleted: (context) {
+              context.pop();
+            },
+            onUpdated: (updated) => setState(() => post = updated),
+          ),
+        ),
+      ],
     );
   }
 }
