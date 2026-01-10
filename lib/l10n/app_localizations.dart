@@ -3287,6 +3287,12 @@ abstract class Lo {
   /// **'Korean Association'**
   String get quickMenuKoreanAssociation;
 
+  /// Helper menu section title in home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Menu'**
+  String get helperMenuTitle;
+
   /// Emergency contacts section title
   ///
   /// In en, this message translates to:
@@ -3430,6 +3436,168 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Coming Soon'**
   String get comingSoon;
+
+  /// Hiring subcategory name
+  ///
+  /// In en, this message translates to:
+  /// **'Hiring'**
+  String get subCategoryHiring;
+
+  /// Looking for job subcategory name
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for Job'**
+  String get subCategoryLooking;
+
+  /// Hiring form title hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter job posting title'**
+  String get wantedHiringTitle;
+
+  /// Company name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get wantedCompanyName;
+
+  /// Company name hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the company name'**
+  String get wantedCompanyNameHint;
+
+  /// Company name required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the company name'**
+  String get wantedCompanyNameRequired;
+
+  /// Company introduction field label
+  ///
+  /// In en, this message translates to:
+  /// **'Company Introduction'**
+  String get wantedCompanyIntro;
+
+  /// Company introduction hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company introduction (excluding job info)'**
+  String get wantedCompanyIntroHint;
+
+  /// Company introduction required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the company introduction'**
+  String get wantedCompanyIntroRequired;
+
+  /// Work range field label
+  ///
+  /// In en, this message translates to:
+  /// **'Work Range'**
+  String get wantedWorkRange;
+
+  /// Work range hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., IT, Marketing, Sales'**
+  String get wantedWorkRangeHint;
+
+  /// Work range required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the work range'**
+  String get wantedWorkRangeRequired;
+
+  /// Address field label
+  ///
+  /// In en, this message translates to:
+  /// **'Full Address in Philippines'**
+  String get wantedAddress;
+
+  /// Address hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 123 Sample St., Makati City, Philippines'**
+  String get wantedAddressHint;
+
+  /// Address required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the address'**
+  String get wantedAddressRequired;
+
+  /// Phone field label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get wantedPhone;
+
+  /// Phone hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 09171234567'**
+  String get wantedPhoneHint;
+
+  /// Phone required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the phone number'**
+  String get wantedPhoneRequired;
+
+  /// Email field label
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get wantedEmail;
+
+  /// Email hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., hr@company.com'**
+  String get wantedEmailHint;
+
+  /// Email required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the email address'**
+  String get wantedEmailRequired;
+
+  /// Salary field label
+  ///
+  /// In en, this message translates to:
+  /// **'Salary (Peso)'**
+  String get wantedSalary;
+
+  /// Salary hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 50000'**
+  String get wantedSalaryHint;
+
+  /// Salary required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the salary'**
+  String get wantedSalaryRequired;
+
+  /// Work type field label
+  ///
+  /// In en, this message translates to:
+  /// **'Work Type'**
+  String get wantedWorkType;
+
+  /// Work type hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 5 days a week, Mon-Fri'**
+  String get wantedWorkTypeHint;
+
+  /// Work type required validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the work type'**
+  String get wantedWorkTypeRequired;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

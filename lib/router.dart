@@ -56,7 +56,6 @@ import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/post.create.screen.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
-import 'package:philgo/screens/post/quick_post.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
@@ -371,14 +370,6 @@ final router = GoRouter(
       },
     ),
 
-    /// 빠른 글쓰기 화면 (Quick Post Screen)
-    /// 홈 화면의 가짜 입력 박스를 클릭하면 이 화면으로 이동합니다.
-    /// Navigate to this screen when the fake input box on home is tapped.
-    GoRoute(
-      path: QuickPostScreen.routeName,
-      name: QuickPostScreen.routeName,
-      builder: (context, state) => const QuickPostScreen(),
-    ),
     GoRoute(
       path: ProfileEditScreen.routeName,
       name: ProfileEditScreen.routeName,

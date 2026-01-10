@@ -1637,6 +1637,9 @@ class LoKo extends Lo {
   String get quickMenuKoreanAssociation => '한인회';
 
   @override
+  String get helperMenuTitle => '퀵메뉴';
+
+  @override
   String get emergencyContactsSection => '긴급 연락처';
 
   @override
@@ -1707,4 +1710,85 @@ class LoKo extends Lo {
 
   @override
   String get comingSoon => '준비 중입니다';
+
+  @override
+  String get subCategoryHiring => '구인';
+
+  @override
+  String get subCategoryLooking => '구직';
+
+  @override
+  String get wantedHiringTitle => '구인 글 제목을 입력하세요';
+
+  @override
+  String get wantedCompanyName => '회사 이름';
+
+  @override
+  String get wantedCompanyNameHint => '채용 회사명을 입력하세요';
+
+  @override
+  String get wantedCompanyNameRequired => '회사 이름을 입력해주세요';
+
+  @override
+  String get wantedCompanyIntro => '회사 소개';
+
+  @override
+  String get wantedCompanyIntroHint => '회사 소개를 입력하세요 (구인 정보 제외)';
+
+  @override
+  String get wantedCompanyIntroRequired => '회사 소개를 입력해주세요';
+
+  @override
+  String get wantedWorkRange => '업무 범위';
+
+  @override
+  String get wantedWorkRangeHint => '예: IT, 마케팅, 영업';
+
+  @override
+  String get wantedWorkRangeRequired => '업무 범위를 입력해주세요';
+
+  @override
+  String get wantedAddress => '필리핀 전체 주소';
+
+  @override
+  String get wantedAddressHint => '예: 123 Sample St., Makati City, Philippines';
+
+  @override
+  String get wantedAddressRequired => '주소를 입력해주세요';
+
+  @override
+  String get wantedPhone => '필리핀 전화번호';
+
+  @override
+  String get wantedPhoneHint => '예: 09171234567';
+
+  @override
+  String get wantedPhoneRequired => '전화번호를 입력해주세요';
+
+  @override
+  String get wantedEmail => '이메일 주소';
+
+  @override
+  String get wantedEmailHint => '예: hr@company.com';
+
+  @override
+  String get wantedEmailRequired => '이메일을 입력해주세요';
+
+  @override
+  String get wantedSalary => '급여 (페소)';
+
+  @override
+  String get wantedSalaryHint => '예: 50000';
+
+  @override
+  String get wantedSalaryRequired => '급여를 입력해주세요';
+
+  @override
+  String get wantedWorkType => '근무제';
+
+  @override
+  String get wantedWorkTypeHint => '예: 주 5일, 월-금';
+
+  @override
+  String get wantedWorkTypeRequired => '근무제를 입력해주세요';
 }

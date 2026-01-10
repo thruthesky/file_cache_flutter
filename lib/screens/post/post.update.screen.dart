@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
+import 'package:philgo/screens/post/widgets/wanted_hiring_form.dart';
 import 'package:philgo/widgets/unfocus_on_tap.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -17,14 +18,23 @@ class PostUpdateScreen extends StatefulWidget {
 }
 
 class PostUpdateScreenState extends State<PostUpdateScreen> {
-  /// GlobalKey로 외부에서 폼 상태 접근
+  /// GlobalKey로 외부에서 일반 폼 상태 접근
   /// Access form state externally via GlobalKey
   final formKey = GlobalKey<PostUpdateFormState>();
+
+  /// GlobalKey로 외부에서 구인 폼 상태 접근
+  /// Access hiring form state externally via GlobalKey
+  final hiringFormKey = GlobalKey<WantedHiringFormState>();
 
   /// 로딩 및 업로드 상태 추적
   /// Track loading and upload progress
   bool isLoading = false;
   bool isUploading = false;
+
+  /// 구인 폼 여부 확인 (wanted 게시판 + hiring 카테고리)
+  /// Check if this is a hiring form (wanted board + hiring category)
+  bool get _isHiringForm =>
+      widget.post.post_id == 'wanted' && widget.post.category == 'hiring';
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +120,11 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
                   color: scheme.onSurface,
                 ),
                 onPressed: () async {
-                  /// 변경 사항이 있는지 확인
-                  /// Check if there are changes
-                  final hasChanges =
-                      formKey.currentState?.hasChanges() ?? false;
+                  /// 변경 사항이 있는지 확인 (구인 폼에는 hasChanges가 없으므로 항상 확인)
+                  /// Check if there are changes (hiring form doesn't have hasChanges, so always confirm)
+                  final hasChanges = _isHiringForm
+                      ? true // 구인 폼은 항상 확인 다이얼로그 표시
+                      : (formKey.currentState?.hasChanges() ?? false);
 
                   if (!hasChanges) {
                     Navigator.pop(context);
@@ -130,9 +141,11 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
                     return;
                   }
 
-                  /// 새로 업로드된 파일 삭제
-                  /// Delete newly uploaded files
-                  await formKey.currentState?.deleteNewFiles();
+                  /// 새로 업로드된 파일 삭제 (일반 폼만 해당)
+                  /// Delete newly uploaded files (only for regular form)
+                  if (!_isHiringForm) {
+                    await formKey.currentState?.deleteNewFiles();
+                  }
 
                   if (context.mounted) {
                     Navigator.pop(context);
@@ -165,8 +178,13 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
                     });
                   },
                   onUploaded: (url) {
-                    // Add uploaded file URL to form
-                    formKey.currentState?.addUploadedFile(url);
+                    // Add uploaded file URL to appropriate form
+                    // 구인 폼 또는 일반 폼에 파일 URL 추가
+                    if (_isHiringForm) {
+                      hiringFormKey.currentState?.addUploadedFile(url);
+                    } else {
+                      formKey.currentState?.addUploadedFile(url);
+                    }
 
                     // Upload completed, reset uploading state
                     setState(() {
@@ -191,9 +209,13 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
                 onPressed: (isLoading || isUploading)
                     ? null
                     : () async {
-                        /// 폼 제출 실행
-                        /// Execute form submission
-                        await formKey.currentState?.submit();
+                        /// 폼 제출 실행 (구인 폼 또는 일반 폼)
+                        /// Execute form submission (hiring form or regular form)
+                        if (_isHiringForm) {
+                          await hiringFormKey.currentState?.submit();
+                        } else {
+                          await formKey.currentState?.submit();
+                        }
                       },
                 icon: isLoading
                     ? SizedBox(
@@ -219,44 +241,78 @@ class PostUpdateScreenState extends State<PostUpdateScreen> {
           ),
         ),
 
-        /// PostUpdateForm - 재사용 가능한 글 수정 폼
-        /// PostUpdateForm - reusable post update form
-        body: PostUpdateForm(
-          key: formKey,
-          post: widget.post,
+        /// 구인 폼 또는 일반 폼 표시
+        /// Show hiring form or regular form
+        body: _isHiringForm
+            ? WantedHiringForm(
+                key: hiringFormKey,
+                post: widget.post,
+                showSubmitButton: true,
 
-          /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
-          /// Hide form's internal submit button (handled by AppBar)
-          showSubmitButton: true,
+                /// 로딩 상태 변경 콜백
+                /// Loading status change callback
+                onLoadingChanged: (loading) {
+                  setState(() {
+                    isLoading = loading;
+                  });
+                },
 
-          /// 로딩 상태 변경 콜백
-          /// Loading status change callback
-          onLoadingChanged: (loading) {
-            setState(() {
-              isLoading = loading;
-            });
-          },
+                /// 업로드 상태 변경 콜백
+                /// Upload status change callback
+                onUploadingChanged: (uploading) {
+                  setState(() {
+                    isUploading = uploading;
+                  });
+                },
 
-          /// 업로드 상태 변경 콜백
-          /// Upload status change callback
-          onUploadingChanged: (uploading) {
-            setState(() {
-              isUploading = uploading;
-            });
-          },
+                /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+                /// Close screen on successful submission and navigate to PostViewScreen
+                onSubmitted: (post) {
+                  Navigator.pop(context, post);
 
-          /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
-          /// Close screen on successful submission and navigate to PostViewScreen
-          onUpdated: (post) {
-            Navigator.pop(context, post);
+                  // Navigate to PostViewScreen to show the updated post
+                  PostViewScreen.pushReplacement(context, post);
 
-            // Navigate to PostViewScreen to show the updated post
-            PostViewScreen.pushReplacement(context, post);
+                  // Call external callback if provided
+                  widget.onUpdated?.call(post);
+                },
+              )
+            : PostUpdateForm(
+                key: formKey,
+                post: widget.post,
 
-            // Call external callback if provided
-            widget.onUpdated?.call(post);
-          },
-        ),
+                /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+                /// Hide form's internal submit button (handled by AppBar)
+                showSubmitButton: true,
+
+                /// 로딩 상태 변경 콜백
+                /// Loading status change callback
+                onLoadingChanged: (loading) {
+                  setState(() {
+                    isLoading = loading;
+                  });
+                },
+
+                /// 업로드 상태 변경 콜백
+                /// Upload status change callback
+                onUploadingChanged: (uploading) {
+                  setState(() {
+                    isUploading = uploading;
+                  });
+                },
+
+                /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+                /// Close screen on successful submission and navigate to PostViewScreen
+                onUpdated: (post) {
+                  Navigator.pop(context, post);
+
+                  // Navigate to PostViewScreen to show the updated post
+                  PostViewScreen.pushReplacement(context, post);
+
+                  // Call external callback if provided
+                  widget.onUpdated?.call(post);
+                },
+              ),
       ),
     );
   }

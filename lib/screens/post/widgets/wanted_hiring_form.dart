@@ -20,19 +20,33 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo_api/philgo_api.dart';
 
-/// 구인(hiring) 카테고리 전용 글쓰기 폼 위젯
+/// 구인(hiring) 카테고리 전용 글쓰기/수정 폼 위젯
+///
+/// 생성 모드와 수정 모드를 모두 지원합니다.
+/// - 생성 모드: post 파라미터가 null일 때
+/// - 수정 모드: post 파라미터가 제공될 때
 class WantedHiringForm extends StatefulWidget {
   const WantedHiringForm({
     super.key,
+    this.post,
     this.onSubmitted,
     this.onLoadingChanged,
     this.onUploadingChanged,
     this.showSubmitButton = true,
     this.padding,
   });
+
+  /// 수정할 글 (null이면 생성 모드)
+  /// Post to edit (null means create mode)
+  final Post? post;
+
+  /// 수정 모드인지 확인
+  /// Check if in edit mode
+  bool get isEditMode => post != null;
 
   /// 제출 성공 시 콜백
   final void Function(Post createdPost)? onSubmitted;
@@ -92,6 +106,32 @@ class WantedHiringFormState extends State<WantedHiringForm> {
   bool get isUploading => _uploadingCount > 0;
 
   @override
+  void initState() {
+    super.initState();
+
+    // 수정 모드일 때 기존 데이터로 필드 초기화
+    // Initialize fields with existing data in edit mode
+    if (widget.post != null) {
+      final post = widget.post!;
+      _subjectController.text = post.subject;
+      _companyNameController.text = post.varchar4 ?? '';
+      // text1 필드는 Post 모델에 없으므로 content에서 추출하거나 비워둠
+      // text1 field is not in Post model, extract from content or leave empty
+      _companyIntroController.text = '';
+      _workRangeController.text = post.varchar9 ?? '';
+      _addressController.text = post.varchar5 ?? '';
+      _phoneController.text = post.varchar6 ?? '';
+      _emailController.text = post.varchar8 ?? '';
+      _salaryController.text = (post.int1 ?? 0).toString();
+      _workTypeController.text = post.varchar7 ?? '';
+
+      // 기존 파일 목록 복사
+      // Copy existing file list
+      _urls.addAll(post.files);
+    }
+  }
+
+  @override
   void dispose() {
     _subjectController.dispose();
     _companyNameController.dispose();
@@ -141,6 +181,23 @@ class WantedHiringFormState extends State<WantedHiringForm> {
     }
   }
 
+  /// 디버그용 기본값 입력
+  ///
+  /// 개발자 모드에서 테스트를 위해 모든 필드에 기본값 채우기
+  /// Fill all fields with default values for testing in developer mode
+  void _fillWithDebugData() {
+    _subjectController.text = '[테스트] IT 개발자 채용합니다';
+    _companyNameController.text = '테스트 회사';
+    _companyIntroController.text =
+        '저희 회사는 IT 솔루션을 제공하는 기업입니다. 2020년 설립되어 필리핀 마닐라에 본사를 두고 있습니다.';
+    _workRangeController.text = 'IT, 웹 개발, 모바일 앱 개발';
+    _addressController.text = '123 Test Street, Makati City, Philippines';
+    _phoneController.text = '09171234567';
+    _emailController.text = 'hr@testcompany.com';
+    _salaryController.text = '50000';
+    _workTypeController.text = '주 5일, 월-금 09:00-18:00';
+  }
+
   /// 외부에서 파일 업로드 완료 후 URL 추가
   ///
   /// AppBar의 FileUpload 버튼에서 사용됨
@@ -171,12 +228,14 @@ class WantedHiringFormState extends State<WantedHiringForm> {
     }
   }
 
-  /// 폼 제출
+  /// 폼 제출 (생성 또는 수정)
   ///
   /// 외부에서 GlobalKey를 통해 호출 가능:
   /// ```dart
   /// formKey.currentState?.submit();
   /// ```
+  ///
+  /// widget.post가 있으면 수정 모드, 없으면 생성 모드
   Future<bool> submit() async {
     // 업로드 진행 중이면 차단
     if (_uploadingCount > 0) {
@@ -192,35 +251,66 @@ class WantedHiringFormState extends State<WantedHiringForm> {
     _setLoading(true);
 
     try {
-      log('구인 글 작성 시작', name: 'WantedHiringForm');
-
       // 급여를 int로 변환
       final salary = int.tryParse(_salaryController.text.trim()) ?? 0;
 
-      // API 호출하여 글 작성
-      final created = await createPost({
-        'post_id': 'wanted',
-        'category': 'hiring',
-        'subject': _subjectController.text.trim(),
-        // 구인 필드들 (모두 필수)
-        'varchar_4': _companyNameController.text.trim(), // 회사 이름
-        'text_1': _companyIntroController.text.trim(), // 회사 소개
-        'varchar_9': _workRangeController.text.trim(), // 업무 범위
-        'varchar_5': _addressController.text.trim(), // 주소
-        'varchar_6': _phoneController.text.trim(), // 전화번호
-        'varchar_8': _emailController.text.trim(), // 이메일
-        'int_1': salary, // 급여
-        'varchar_7': _workTypeController.text.trim(), // 근무제
-        'files': _urls,
-      });
+      // 수정 모드 또는 생성 모드 분기
+      // Branch for edit mode or create mode
+      if (widget.post != null) {
+        // 수정 모드 (Edit mode)
+        log('구인 글 수정 시작 - idx: ${widget.post!.idx}', name: 'WantedHiringForm');
 
-      log('구인 글 작성 성공 - idx: ${created.idx}', name: 'WantedHiringForm');
+        final updated = await updatePost({
+          'idx': widget.post!.idx,
+          'subject': _subjectController.text.trim(),
+          'content': '', // 구인 폼에서는 content 불필요
+          // 구인 필드들
+          'varchar_4': _companyNameController.text.trim(), // 회사 이름
+          'text_1': _companyIntroController.text.trim(), // 회사 소개
+          'varchar_9': _workRangeController.text.trim(), // 업무 범위
+          'varchar_5': _addressController.text.trim(), // 주소
+          'varchar_6': _phoneController.text.trim(), // 전화번호
+          'varchar_8': _emailController.text.trim(), // 이메일
+          'int_1': salary, // 급여
+          'varchar_7': _workTypeController.text.trim(), // 근무제
+          'files': _urls,
+        });
 
-      // 성공 콜백 호출
-      widget.onSubmitted?.call(created);
+        log('구인 글 수정 성공 - idx: ${updated.idx}', name: 'WantedHiringForm');
+
+        // 성공 콜백 호출
+        widget.onSubmitted?.call(updated);
+      } else {
+        // 생성 모드 (Create mode)
+        log('구인 글 작성 시작', name: 'WantedHiringForm');
+
+        final created = await createPost({
+          'post_id': 'wanted',
+          'category': 'hiring',
+          'subject': _subjectController.text.trim(),
+          'content': '', // 구인 폼에서는 content 불필요 (API 필수 필드)
+          // 구인 필드들 (모두 필수)
+          'varchar_4': _companyNameController.text.trim(), // 회사 이름
+          'text_1': _companyIntroController.text.trim(), // 회사 소개
+          'varchar_9': _workRangeController.text.trim(), // 업무 범위
+          'varchar_5': _addressController.text.trim(), // 주소
+          'varchar_6': _phoneController.text.trim(), // 전화번호
+          'varchar_8': _emailController.text.trim(), // 이메일
+          'int_1': salary, // 급여
+          'varchar_7': _workTypeController.text.trim(), // 근무제
+          'files': _urls,
+        });
+
+        log('구인 글 작성 성공 - idx: ${created.idx}', name: 'WantedHiringForm');
+
+        // 성공 콜백 호출
+        widget.onSubmitted?.call(created);
+      }
+
       return true;
     } catch (e) {
-      log('구인 글 작성 실패: $e', name: 'WantedHiringForm', error: e);
+      final action = widget.post != null ? '수정' : '작성';
+      log('구인 글 $action 실패: $e', name: 'WantedHiringForm', error: e);
       return false;
     } finally {
       _setLoading(false);
@@ -432,6 +522,8 @@ class WantedHiringFormState extends State<WantedHiringForm> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final padding = widget.padding ?? const EdgeInsets.symmetric(horizontal: 16);
 
     return Form(
@@ -440,6 +532,26 @@ class WantedHiringFormState extends State<WantedHiringForm> {
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           const SizedBox(height: 16),
+
+          /// 디버그 모드일 때만 기본값 입력 버튼 표시
+          /// Show debug fill button only in developer mode
+          if (kDebugMode)
+            Padding(
+              padding: padding,
+              child: OutlinedButton.icon(
+                onPressed: _fillWithDebugData,
+                icon: const FaIcon(FontAwesomeIcons.bug, size: 16),
+                label: const Text('디버그: 기본값 입력'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: colorScheme.tertiary,
+                  side: BorderSide(color: colorScheme.tertiary),
+                ),
+              ),
+            ),
+
+          /// 디버그 버튼과 제목 필드 사이 간격
+          /// Spacing between debug button and title field
+          if (kDebugMode) const SizedBox(height: 16),
 
           // 1. 제목
           Padding(

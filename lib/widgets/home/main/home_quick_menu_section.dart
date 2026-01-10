@@ -184,7 +184,9 @@ class HomeQuickMenuSection extends StatelessWidget {
     ];
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: sp.s12),
+      /// 상단 여백 추가: 퀵메뉴 위에 더 넓은 공간 확보
+      /// Added top padding: More space above quick menu section
+      padding: EdgeInsets.only(top: sp.s12, bottom: sp.s12),
       child: SingleChildScrollView(
         /// 가로 스크롤 활성화 (Enable horizontal scrolling)
         scrollDirection: Axis.horizontal,
@@ -469,7 +471,6 @@ class HomeQuickMenuSection extends StatelessWidget {
       ),
     );
   }
-
 }
 
 /// 환율 메뉴 아이템 위젯 (Exchange Rate Menu Item Widget)
@@ -495,10 +496,7 @@ class _ExchangeRateMenuItem extends StatefulWidget {
   /// 탭 콜백 (Tap callback)
   final VoidCallback? onTap;
 
-  const _ExchangeRateMenuItem({
-    required this.label,
-    this.onTap,
-  });
+  const _ExchangeRateMenuItem({required this.label, this.onTap});
 
   @override
   State<_ExchangeRateMenuItem> createState() => _ExchangeRateMenuItemState();
@@ -682,10 +680,7 @@ class _WeatherMenuItem extends StatefulWidget {
   /// 탭 콜백 (Tap callback)
   final VoidCallback? onTap;
 
-  const _WeatherMenuItem({
-    required this.label,
-    this.onTap,
-  });
+  const _WeatherMenuItem({required this.label, this.onTap});
 
   @override
   State<_WeatherMenuItem> createState() => _WeatherMenuItemState();

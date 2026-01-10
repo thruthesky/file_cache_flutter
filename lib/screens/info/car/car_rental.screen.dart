@@ -680,7 +680,7 @@ class _CarRentalScreenState extends State<CarRentalScreen> {
                     ),
                     SizedBox(height: sp.s4),
                     Text(
-                      '약 3,000페소 (기사 포함)',
+                      '약 4,000~5,000페소 (기사 포함)',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: scheme.primary,

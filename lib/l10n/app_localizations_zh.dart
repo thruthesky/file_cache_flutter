@@ -1631,6 +1631,9 @@ class LoZh extends Lo {
   String get quickMenuKoreanAssociation => 'Korean Association';
 
   @override
+  String get helperMenuTitle => '快捷菜单';
+
+  @override
   String get emergencyContactsSection => '紧急联系';
 
   @override
@@ -1701,4 +1704,88 @@ class LoZh extends Lo {
 
   @override
   String get comingSoon => '即将推出';
+
+  @override
+  String get subCategoryHiring => 'Hiring';
+
+  @override
+  String get subCategoryLooking => 'Looking for Job';
+
+  @override
+  String get wantedHiringTitle => 'Enter job posting title';
+
+  @override
+  String get wantedCompanyName => 'Company Name';
+
+  @override
+  String get wantedCompanyNameHint => 'Enter the company name';
+
+  @override
+  String get wantedCompanyNameRequired => 'Please enter the company name';
+
+  @override
+  String get wantedCompanyIntro => 'Company Introduction';
+
+  @override
+  String get wantedCompanyIntroHint =>
+      'Enter company introduction (excluding job info)';
+
+  @override
+  String get wantedCompanyIntroRequired =>
+      'Please enter the company introduction';
+
+  @override
+  String get wantedWorkRange => 'Work Range';
+
+  @override
+  String get wantedWorkRangeHint => 'e.g., IT, Marketing, Sales';
+
+  @override
+  String get wantedWorkRangeRequired => 'Please enter the work range';
+
+  @override
+  String get wantedAddress => 'Full Address in Philippines';
+
+  @override
+  String get wantedAddressHint =>
+      'e.g., 123 Sample St., Makati City, Philippines';
+
+  @override
+  String get wantedAddressRequired => 'Please enter the address';
+
+  @override
+  String get wantedPhone => 'Phone Number';
+
+  @override
+  String get wantedPhoneHint => 'e.g., 09171234567';
+
+  @override
+  String get wantedPhoneRequired => 'Please enter the phone number';
+
+  @override
+  String get wantedEmail => 'Email Address';
+
+  @override
+  String get wantedEmailHint => 'e.g., hr@company.com';
+
+  @override
+  String get wantedEmailRequired => 'Please enter the email address';
+
+  @override
+  String get wantedSalary => 'Salary (Peso)';
+
+  @override
+  String get wantedSalaryHint => 'e.g., 50000';
+
+  @override
+  String get wantedSalaryRequired => 'Please enter the salary';
+
+  @override
+  String get wantedWorkType => 'Work Type';
+
+  @override
+  String get wantedWorkTypeHint => 'e.g., 5 days a week, Mon-Fri';
+
+  @override
+  String get wantedWorkTypeRequired => 'Please enter the work type';
 }

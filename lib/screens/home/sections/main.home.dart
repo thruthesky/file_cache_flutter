@@ -12,6 +12,7 @@ import 'package:philgo/widgets/home/home_major_forum_section.dart';
 import 'package:philgo/widgets/home/home_notice_section.dart';
 import 'package:philgo/widgets/home/home_photo_grid_section.dart';
 import 'package:philgo/widgets/home/home_popular_post_section.dart';
+import 'package:philgo/widgets/home/main/home_helper_menu_section.dart';
 import 'package:philgo/widgets/home/main/home_quick_menu_section.dart';
 import 'package:philgo/widgets/home/main/home_quick_post_box.dart';
 import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
@@ -63,7 +64,7 @@ class _MainHomeState extends State<MainHome> {
       floatingActionButton: ComicFab(
         /// FAB 클릭 시 카테고리 선택 다이얼로그 표시
         /// Show category selection dialog on FAB tap
-        onPressed: () => _showCategoryDialog(context),
+        onPressed: () => showPostCategoryDialog(context),
 
         /// FAB 툴팁
         /// FAB tooltip
@@ -196,6 +197,11 @@ class _MainHomeState extends State<MainHome> {
               ),
             ),
 
+            /// [퀵메뉴 섹션] - 필리핀 생활 필수 바로가기 메뉴 (Wrap 형식)
+            /// Quick Helper Menu Section - Essential shortcuts for Philippine life (Wrap layout)
+            /// 대사관, 한인회, 경찰서, e트래블, 여행비자, 그랩 택시, 에어비앤비, 환율, 날씨, 긴급연락처, 초보필독
+            const SliverToBoxAdapter(child: HomeHelperMenuSection()),
+
             /// Bottom spacing (하단 여백)
             SliverToBoxAdapter(child: SizedBox(height: sp.s24)),
           ],
@@ -204,214 +210,4 @@ class _MainHomeState extends State<MainHome> {
     );
   }
 
-  /// Major 카테고리 선택 다이얼로그 표시
-  /// Show major category selection dialog
-  ///
-  /// Major 카테고리 목록을 팝업 다이얼로그로 표시하고,
-  /// 카테고리 선택 시 글쓰기 다이얼로그를 엽니다.
-  /// Display major categories in a popup dialog,
-  /// and open post create dialog when category is selected.
-  void _showCategoryDialog(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          /// 다이얼로그 제목
-          /// Dialog title
-          title: Text('글 쓰기 게시판 선택', style: theme.textTheme.titleLarge),
-
-          /// 다이얼로그 내용: Major 카테고리 목록
-          /// Dialog content: Major category list
-          content: SizedBox(
-            /// 다이얼로그 너비 설정
-            /// Set dialog width
-            width: double.maxFinite,
-            child: ListView.builder(
-              /// 내용 크기에 맞게 축소
-              /// Shrink to fit content
-              shrinkWrap: true,
-
-              /// Major 카테고리 개수
-              /// Number of major categories
-              itemCount: PhilgoCategory.majorCategories().length,
-
-              /// 카테고리 아이템 빌더
-              /// Category item builder
-              itemBuilder: (context, index) {
-                final postId = PhilgoCategory.majorCategories()[index];
-
-                /// 카테고리 다국어 이름
-                /// Localized category name
-                final localizedName = philgoTr(context, postId);
-
-                return ListTile(
-                  /// 카테고리 이모지
-                  /// Category emoji
-                  leading: Text(
-                    PhilgoCategory.emoji(postId),
-                    style: const TextStyle(fontSize: 24),
-                  ),
-
-                  /// 카테고리 이름
-                  /// Category name
-                  title: Text(localizedName),
-
-                  /// 서브 카테고리 존재 여부 표시
-                  /// Show if sub-categories exist
-                  trailing: PhilgoCategory.hasSubCategories(postId)
-                      ? FaIcon(
-                          FontAwesomeIcons.chevronRight,
-                          size: 16,
-                          color: scheme.onSurfaceVariant,
-                        )
-                      : null,
-
-                  /// 카테고리 선택 시
-                  /// On category tap
-                  onTap: () {
-                    /// 다이얼로그 닫기
-                    /// Close dialog
-                    Navigator.pop(context);
-
-                    /// 서브 카테고리가 있으면 서브 카테고리 다이얼로그 표시
-                    /// If sub-categories exist, show sub-category dialog
-                    if (PhilgoCategory.hasSubCategories(postId)) {
-                      _showSubCategoryDialog(context, postId);
-                    } else {
-                      /// 서브 카테고리가 없으면 바로 글쓰기 다이얼로그 표시
-                      /// If no sub-categories, show post create dialog directly
-                      showPostCreateScreen(context, postId: postId);
-                    }
-                  },
-                );
-              },
-            ),
-          ),
-
-          /// 취소 버튼
-          /// Cancel button
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('취소'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// 서브 카테고리 선택 다이얼로그 표시
-  /// Show sub-category selection dialog
-  ///
-  /// 선택한 Major 카테고리의 서브 카테고리 목록을 표시합니다.
-  /// Display sub-categories of the selected major category.
-  void _showSubCategoryDialog(BuildContext context, String postId) {
-    final theme = Theme.of(context);
-
-    /// Major 카테고리 다국어 이름
-    /// Localized major category name
-    final localizedMainCategory = philgoTr(context, postId);
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          /// 다이얼로그 제목: 백버튼 + Major 카테고리 이름
-          /// Dialog title: Back button + Major category name
-          title: Row(
-            children: [
-              /// 백버튼 아이콘 - Major 카테고리 다이얼로그로 돌아가기
-              /// Back button icon - Return to major category dialog
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showCategoryDialog(context);
-                },
-                icon: FaIcon(
-                  FontAwesomeIcons.arrowLeft,
-                  size: 18,
-                  color: theme.colorScheme.onSurface,
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-              const SizedBox(width: 8),
-
-              /// 1차 카테고리 이름
-              /// Major category name
-              Expanded(
-                child: Text(
-                  localizedMainCategory,
-                  style: theme.textTheme.titleLarge,
-                ),
-              ),
-            ],
-          ),
-
-          /// 다이얼로그 내용: 서브 카테고리 목록
-          /// Dialog content: Sub-category list
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: PhilgoCategory.subCategories(postId).length,
-              itemBuilder: (context, index) {
-                final category = PhilgoCategory.subCategories(postId)[index];
-
-                /// 서브 카테고리 다국어 이름
-                /// Localized sub-category name
-                final localizedSubCategory = philgoTr(context, category);
-
-                return ListTile(
-                  /// 서브 카테고리 이모지
-                  /// Sub-category emoji
-                  leading: Text(
-                    PhilgoCategory.emoji(category),
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                  title: Text(localizedSubCategory),
-                  onTap: () {
-                    /// 다이얼로그 닫기
-                    /// Close dialog
-                    Navigator.pop(context);
-
-                    /// 글쓰기 다이얼로그 표시
-                    /// Show post create dialog
-                    showPostCreateScreen(
-                      context,
-                      postId: postId,
-                      category: category,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-
-          /// 뒤로가기 버튼
-          /// Back button
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-
-                /// Major 카테고리 다이얼로그로 돌아가기
-                /// Go back to major category dialog
-                _showCategoryDialog(context);
-              },
-              child: const Text('뒤로'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('취소'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }

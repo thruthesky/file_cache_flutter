@@ -203,18 +203,21 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
                       /// 드롭다운 아이템: null(전체) + 서브카테고리 목록
                       /// Dropdown items: null(All) + sub-category list
+                      /// wanted 게시판에서는 "전체" 옵션 제외 (카테고리 필수 선택)
+                      /// Exclude "All" option for wanted board (category selection required)
                       items: [
-                        /// "전체" 옵션 (category = null)
-                        /// "All" option (category = null)
-                        DropdownMenuItem<String?>(
-                          value: null,
-                          child: Text(
-                            philgoTr(context, 'all'),
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(color: scheme.onSurface),
+                        /// "전체" 옵션 (category = null) - wanted 게시판 제외
+                        /// "All" option (category = null) - excluded for wanted board
+                        if (widget.postId != 'wanted')
+                          DropdownMenuItem<String?>(
+                            value: null,
+                            child: Text(
+                              philgoTr(context, 'all'),
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(color: scheme.onSurface),
+                            ),
                           ),
-                        ),
 
                         /// 서브 카테고리 목록
                         /// Sub-category list
@@ -285,8 +288,12 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     });
                   },
                   onUploaded: (url) {
-                    // Add uploaded file URL to form
-                    formKey.currentState?.addUploadedFile(url);
+                    // Add uploaded file URL to form (구인 폼 또는 일반 폼)
+                    if (_isHiringForm) {
+                      hiringFormKey.currentState?.addUploadedFile(url);
+                    } else {
+                      formKey.currentState?.addUploadedFile(url);
+                    }
 
                     // Upload completed, reset uploading state
                     setState(() {
@@ -343,87 +350,235 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           ),
         ),
 
-        /// 구인 폼 또는 일반 폼 분기 처리
-        /// Branching between hiring form and general form
-        body: _isHiringForm
-            ? WantedHiringForm(
-                key: hiringFormKey,
+        /// 구인 폼, 일반 폼, 또는 카테고리 선택 안내 UI 분기 처리
+        /// Branching between hiring form, general form, or category selection prompt
+        body: _buildBody(),
+      ),
+    );
+  }
 
-                /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
-                /// Hide form's internal submit button (handled by AppBar)
-                showSubmitButton: true,
+  /// Body 위젯 빌드 메서드
+  /// Build method for body widget
+  /// wanted 게시판에서 카테고리 미선택 시 선택 안내 UI 표시
+  /// Show category selection prompt when no category is selected for wanted board
+  Widget _buildBody() {
+    /// wanted 게시판에서 카테고리가 선택되지 않은 경우 안내 UI 표시
+    /// Show selection prompt when category is not selected for wanted board
+    if (widget.postId == 'wanted' && _selectedCategory == null) {
+      return _buildCategorySelectionPrompt();
+    }
 
-                /// 로딩 상태 변경 콜백
-                /// Loading status change callback
-                onLoadingChanged: (loading) {
-                  setState(() {
-                    isLoading = loading;
-                  });
-                },
+    /// 구인 폼 (wanted + hiring)
+    /// Hiring form (wanted + hiring)
+    if (_isHiringForm) {
+      return WantedHiringForm(
+        key: hiringFormKey,
 
-                /// 업로드 상태 변경 콜백
-                /// Upload status change callback
-                onUploadingChanged: (uploading) {
-                  setState(() {
-                    isUploading = uploading;
-                  });
-                },
+        /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+        /// Hide form's internal submit button (handled by AppBar)
+        showSubmitButton: true,
 
-                /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
-                /// Close screen on successful submission and navigate to PostViewScreen
-                onSubmitted: (post) {
-                  Navigator.pop(context);
+        /// 로딩 상태 변경 콜백
+        /// Loading status change callback
+        onLoadingChanged: (loading) {
+          setState(() {
+            isLoading = loading;
+          });
+        },
 
-                  // Navigate to PostViewScreen to show the created post
-                  PostViewScreen.push(context, post);
+        /// 업로드 상태 변경 콜백
+        /// Upload status change callback
+        onUploadingChanged: (uploading) {
+          setState(() {
+            isUploading = uploading;
+          });
+        },
 
-                  // Call external callback if provided
-                  widget.onSubmitted?.call(post);
-                },
-              )
-            : PostCreateForm(
-                key: formKey,
-                postId: widget.postId,
+        /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+        /// Close screen on successful submission and navigate to PostViewScreen
+        onSubmitted: (post) {
+          Navigator.pop(context);
 
-                /// 드롭다운에서 선택된 서브 카테고리 전달
-                /// Pass the selected sub-category from dropdown
-                category: _selectedCategory,
+          // Navigate to PostViewScreen to show the created post
+          PostViewScreen.push(context, post);
 
-                initialContent: widget.content,
-                initialFiles: widget.xFiles,
+          // Call external callback if provided
+          widget.onSubmitted?.call(post);
+        },
+      );
+    }
 
-                /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
-                /// Hide form's internal submit button (handled by AppBar)
-                showSubmitButton: true,
+    /// 일반 폼 (구인 외 모든 경우)
+    /// General form (all cases except hiring)
+    return PostCreateForm(
+      key: formKey,
+      postId: widget.postId,
 
-                /// 로딩 상태 변경 콜백
-                /// Loading status change callback
-                onLoadingChanged: (loading) {
-                  setState(() {
-                    isLoading = loading;
-                  });
-                },
+      /// 드롭다운에서 선택된 서브 카테고리 전달
+      /// Pass the selected sub-category from dropdown
+      category: _selectedCategory,
 
-                /// 업로드 상태 변경 콜백
-                /// Upload status change callback
-                onUploadingChanged: (uploading) {
-                  setState(() {
-                    isUploading = uploading;
-                  });
-                },
+      initialContent: widget.content,
+      initialFiles: widget.xFiles,
 
-                /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
-                /// Close screen on successful submission and navigate to PostViewScreen
-                onSubmitted: (post) {
-                  Navigator.pop(context);
+      /// AppBar에서 제출 버튼을 처리하므로 폼 내부 버튼 숨김
+      /// Hide form's internal submit button (handled by AppBar)
+      showSubmitButton: true,
 
-                  // Navigate to PostViewScreen to show the created post
-                  PostViewScreen.push(context, post);
+      /// 로딩 상태 변경 콜백
+      /// Loading status change callback
+      onLoadingChanged: (loading) {
+        setState(() {
+          isLoading = loading;
+        });
+      },
 
-                  // Call external callback if provided
-                  widget.onSubmitted?.call(post);
-                },
+      /// 업로드 상태 변경 콜백
+      /// Upload status change callback
+      onUploadingChanged: (uploading) {
+        setState(() {
+          isUploading = uploading;
+        });
+      },
+
+      /// 제출 성공 시 화면 닫고 PostViewScreen으로 이동
+      /// Close screen on successful submission and navigate to PostViewScreen
+      onSubmitted: (post) {
+        Navigator.pop(context);
+
+        // Navigate to PostViewScreen to show the created post
+        PostViewScreen.push(context, post);
+
+        // Call external callback if provided
+        widget.onSubmitted?.call(post);
+      },
+    );
+  }
+
+  /// 카테고리 선택 안내 UI 빌드 메서드
+  /// Build method for category selection prompt UI
+  /// wanted 게시판에서 구인/구직 선택을 유도하는 화면
+  /// Screen prompting user to select hiring/looking for wanted board
+  Widget _buildCategorySelectionPrompt() {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /// 안내 아이콘
+            /// Prompt icon
+            FaIcon(
+              FontAwesomeIcons.lightClipboardQuestion,
+              size: 64,
+              color: scheme.primary.withValues(alpha: 0.6),
+            ),
+            const SizedBox(height: 24),
+
+            /// 안내 텍스트
+            /// Prompt text
+            Text(
+              philgoTr(context, 'selectCategory'),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
               ),
+            ),
+            const SizedBox(height: 8),
+
+            /// 설명 텍스트
+            /// Description text
+            Text(
+              philgoTr(context, 'selectHiringOrLooking'),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurface.withValues(alpha: 0.6),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+
+            /// 구인/구직 선택 버튼
+            /// Hiring/Looking selection buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                /// 구인 버튼
+                /// Hiring button
+                _buildCategoryButton(
+                  category: 'hiring',
+                  icon: FontAwesomeIcons.lightBuilding,
+                  label: philgoTr(context, 'hiring'),
+                  scheme: scheme,
+                ),
+                const SizedBox(width: 16),
+
+                /// 구직 버튼
+                /// Looking button
+                _buildCategoryButton(
+                  category: 'looking',
+                  icon: FontAwesomeIcons.lightMagnifyingGlass,
+                  label: philgoTr(context, 'looking'),
+                  scheme: scheme,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 카테고리 선택 버튼 빌드 메서드
+  /// Build method for category selection button
+  Widget _buildCategoryButton({
+    required String category,
+    required IconData icon,
+    required String label,
+    required ColorScheme scheme,
+  }) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _selectedCategory = category;
+        });
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 120,
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        decoration: BoxDecoration(
+          color: scheme.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: scheme.primary.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 아이콘
+            /// Icon
+            FaIcon(
+              icon,
+              size: 32,
+              color: scheme.primary,
+            ),
+            const SizedBox(height: 12),
+
+            /// 라벨
+            /// Label
+            Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: scheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }

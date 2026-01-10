@@ -2168,6 +2168,10 @@
   "@quickMenuKoreanAssociation": {
     "description": "Quick menu Korean association label"
   },
+  "helperMenuTitle": "퀵메뉴",
+  "@helperMenuTitle": {
+    "description": "Helper menu section title in home screen"
+  },
   "emergencyContactsSection": "긴급 연락처",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"
@@ -2263,5 +2267,113 @@
   "comingSoon": "준비 중입니다",
   "@comingSoon": {
     "description": "Coming soon message for empty screens"
+  },
+  "subCategoryHiring": "구인",
+  "@subCategoryHiring": {
+    "description": "Hiring subcategory name"
+  },
+  "subCategoryLooking": "구직",
+  "@subCategoryLooking": {
+    "description": "Looking for job subcategory name"
+  },
+  "wantedHiringTitle": "구인 글 제목을 입력하세요",
+  "@wantedHiringTitle": {
+    "description": "Hiring form title hint"
+  },
+  "wantedCompanyName": "회사 이름",
+  "@wantedCompanyName": {
+    "description": "Company name field label"
+  },
+  "wantedCompanyNameHint": "채용 회사명을 입력하세요",
+  "@wantedCompanyNameHint": {
+    "description": "Company name hint text"
+  },
+  "wantedCompanyNameRequired": "회사 이름을 입력해주세요",
+  "@wantedCompanyNameRequired": {
+    "description": "Company name required validation message"
+  },
+  "wantedCompanyIntro": "회사 소개",
+  "@wantedCompanyIntro": {
+    "description": "Company introduction field label"
+  },
+  "wantedCompanyIntroHint": "회사 소개를 입력하세요 (구인 정보 제외)",
+  "@wantedCompanyIntroHint": {
+    "description": "Company introduction hint text"
+  },
+  "wantedCompanyIntroRequired": "회사 소개를 입력해주세요",
+  "@wantedCompanyIntroRequired": {
+    "description": "Company introduction required validation message"
+  },
+  "wantedWorkRange": "업무 범위",
+  "@wantedWorkRange": {
+    "description": "Work range field label"
+  },
+  "wantedWorkRangeHint": "예: IT, 마케팅, 영업",
+  "@wantedWorkRangeHint": {
+    "description": "Work range hint text"
+  },
+  "wantedWorkRangeRequired": "업무 범위를 입력해주세요",
+  "@wantedWorkRangeRequired": {
+    "description": "Work range required validation message"
+  },
+  "wantedAddress": "필리핀 전체 주소",
+  "@wantedAddress": {
+    "description": "Address field label"
+  },
+  "wantedAddressHint": "예: 123 Sample St., Makati City, Philippines",
+  "@wantedAddressHint": {
+    "description": "Address hint text"
+  },
+  "wantedAddressRequired": "주소를 입력해주세요",
+  "@wantedAddressRequired": {
+    "description": "Address required validation message"
+  },
+  "wantedPhone": "필리핀 전화번호",
+  "@wantedPhone": {
+    "description": "Phone field label"
+  },
+  "wantedPhoneHint": "예: 09171234567",
+  "@wantedPhoneHint": {
+    "description": "Phone hint text"
+  },
+  "wantedPhoneRequired": "전화번호를 입력해주세요",
+  "@wantedPhoneRequired": {
+    "description": "Phone required validation message"
+  },
+  "wantedEmail": "이메일 주소",
+  "@wantedEmail": {
+    "description": "Email field label"
+  },
+  "wantedEmailHint": "예: hr@company.com",
+  "@wantedEmailHint": {
+    "description": "Email hint text"
+  },
+  "wantedEmailRequired": "이메일을 입력해주세요",
+  "@wantedEmailRequired": {
+    "description": "Email required validation message"
+  },
+  "wantedSalary": "급여 (페소)",
+  "@wantedSalary": {
+    "description": "Salary field label"
+  },
+  "wantedSalaryHint": "예: 50000",
+  "@wantedSalaryHint": {
+    "description": "Salary hint text"
+  },
+  "wantedSalaryRequired": "급여를 입력해주세요",
+  "@wantedSalaryRequired": {
+    "description": "Salary required validation message"
+  },
+  "wantedWorkType": "근무제",
+  "@wantedWorkType": {
+    "description": "Work type field label"
+  },
+  "wantedWorkTypeHint": "예: 주 5일, 월-금",
+  "@wantedWorkTypeHint": {
+    "description": "Work type hint text"
+  },
+  "wantedWorkTypeRequired": "근무제를 입력해주세요",
+  "@wantedWorkTypeRequired": {
+    "description": "Work type required validation message"
   }
 }

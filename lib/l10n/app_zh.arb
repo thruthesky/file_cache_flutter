@@ -1906,6 +1906,10 @@
   "@quickMenuHospital": {
     "description": "Quick menu hospital label"
   },
+  "helperMenuTitle": "快捷菜单",
+  "@helperMenuTitle": {
+    "description": "Helper menu section title in home screen"
+  },
   "emergencyContactsSection": "紧急联系",
   "@emergencyContactsSection": {
     "description": "Emergency contacts section title"

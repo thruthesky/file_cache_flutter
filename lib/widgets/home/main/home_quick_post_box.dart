@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
-import 'package:philgo/screens/post/quick_post.screen.dart';
+import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -62,24 +61,21 @@ class HomeQuickPostBox extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
 
       child: InkWell(
-        /// 클릭 시 QuickPostScreen으로 이동
-        /// Navigate to QuickPostScreen on tap
-        onTap: () => context.push(QuickPostScreen.routeName),
+        /// 클릭 시 카테고리 선택 다이얼로그 표시
+        /// Show category selection dialog on tap
+        onTap: () => showPostCategoryDialog(context),
 
         /// 둥근 모서리 터치 피드백
         /// Rounded corner touch feedback
         borderRadius: BorderRadius.circular(24),
 
         child: Container(
-          /// 입력 박스 스타일 (둥근 모서리, 테두리)
+          /// 가짜 입력 박스 스타일 (둥근 모서리, 테두리)
           /// Input box style (rounded corners, border)
           decoration: BoxDecoration(
             /// 테두리 색상
             /// Border color
-            border: Border.all(
-              color: scheme.outlineVariant,
-              width: 1.5,
-            ),
+            border: Border.all(color: scheme.outlineVariant, width: 1.5),
 
             /// 둥근 모서리 (24px)
             /// Rounded corners (24px)
@@ -92,10 +88,7 @@ class HomeQuickPostBox extends StatelessWidget {
 
           /// 내부 패딩
           /// Internal padding
-          padding: EdgeInsets.symmetric(
-            horizontal: sp.s12,
-            vertical: sp.s8,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: sp.s12, vertical: sp.s8),
 
           child: Row(
             children: [
