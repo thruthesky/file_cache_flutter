@@ -254,5 +254,7 @@
     "pointAdvertisementExtendMessage": "投稿の宣伝期間を{days}日間延長します。{points}ポイントが必要です。続行しますか？",
     "blindedPost": "ブラインド処理された投稿です",
     "blindedPostDescription": "この投稿はコミュニティガイドライン違反のため、AIモデレーションによりブラインド処理されました。",
-    "blindReason": "理由"
+    "blindReason": "理由",
+    "expiredJobPost": "古い求人/求職投稿です",
+    "expiredJobPostDescription": "古い情報の表示を防ぐため、90日以上経過した求人/求職投稿の内容は表示されません。"
 }

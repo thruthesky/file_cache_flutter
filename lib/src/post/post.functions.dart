@@ -371,11 +371,13 @@ Future<Post> getPost(int id) async {
   // ========== 디버그 로그: 서버 응답 원본 확인 ==========
   print('========== [getPost] 서버 응답 원본 JSON ==========');
   print('[DEBUG] res.keys: ${res.keys.toList()}');
-  print('[DEBUG] res["blind"]: ${res["blind"]}');
-  print('[DEBUG] res["blind"] 타입: ${res["blind"].runtimeType}');
+  print('[DEBUG] res["blind"]: ${res["blind"]} (타입: ${res["blind"].runtimeType})');
+  print('[DEBUG] res["blinded"]: ${res["blinded"]} (타입: ${res["blinded"].runtimeType})');
+  print('[DEBUG] res["blocked"]: ${res["blocked"]} (타입: ${res["blocked"].runtimeType})');
+  print('[DEBUG] res["flagged"]: ${res["flagged"]} (타입: ${res["flagged"].runtimeType})');
+  print('[DEBUG] res["char_5"]: ${res["char_5"]} (타입: ${res["char_5"].runtimeType})');
+  print('[DEBUG] res["text_8"]: ${res["text_8"]}');
   print('[DEBUG] res["moderation_reason"]: ${res["moderation_reason"]}');
-  print('[DEBUG] res["content"]: ${res["content"]?.toString().substring(0, (res["content"]?.toString().length ?? 0) > 100 ? 100 : (res["content"]?.toString().length ?? 0))}...');
-  print('[DEBUG] res["content_private"]: ${res["content_private"]}');
   print('===================================================');
   // ========== 디버그 로그 끝 ==========
 

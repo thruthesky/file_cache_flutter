@@ -883,4 +883,11 @@ class PhilgoTrEn extends PhilgoTr {
 
   @override
   String get blindReason => 'Reason';
+
+  @override
+  String get expiredJobPost => 'This is an old job post';
+
+  @override
+  String get expiredJobPostDescription =>
+      'To prevent outdated information, job posts older than 90 days are not displayed.';
 }

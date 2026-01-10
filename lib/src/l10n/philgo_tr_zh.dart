@@ -862,4 +862,11 @@ class PhilgoTrZh extends PhilgoTr {
 
   @override
   String get blindReason => '原因';
+
+  @override
+  String get expiredJobPost => '这是一个过期的招聘帖子';
+
+  @override
+  String get expiredJobPostDescription =>
+      '为防止信息过时，超过90天的招聘帖子将不显示内容。';
 }

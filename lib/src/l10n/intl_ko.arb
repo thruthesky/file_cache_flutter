@@ -265,5 +265,7 @@
     "deleteNewFilesConfirmation": "{count}개의 새로 업로드된 파일이 있습니다. 삭제하시겠습니까?",
     "blindedPost": "블라인드 처리된 글입니다",
     "blindedPostDescription": "이 글은 커뮤니티 가이드라인 위반으로 AI 검열에 의해 블라인드 처리되었습니다.",
-    "blindReason": "사유"
+    "blindReason": "사유",
+    "expiredJobPost": "오래된 구인/구직 글입니다",
+    "expiredJobPostDescription": "잘못된 정보를 방지하기 위해, 90일 이상된 구인/구직 글은 내용을 표시하지 않습니다."
 }

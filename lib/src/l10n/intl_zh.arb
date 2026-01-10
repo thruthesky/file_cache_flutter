@@ -254,5 +254,7 @@
     "pointAdvertisementExtendMessage": "将延长您的帖子推广期{days}天。需要{points}积分。是否继续？",
     "blindedPost": "此帖子已被屏蔽",
     "blindedPostDescription": "此帖子因违反社区准则而被AI审核屏蔽。",
-    "blindReason": "原因"
+    "blindReason": "原因",
+    "expiredJobPost": "这是一个过期的招聘帖子",
+    "expiredJobPostDescription": "为防止信息过时，超过90天的招聘帖子将不显示内容。"
 }

@@ -1046,5 +1046,13 @@
     "blindReason": "Reason",
     "@blindReason": {
         "description": "Label for blind reason display"
+    },
+    "expiredJobPost": "This is an old job post",
+    "@expiredJobPost": {
+        "description": "Title shown when a job post is older than 90 days"
+    },
+    "expiredJobPostDescription": "To prevent outdated information, job posts older than 90 days are not displayed.",
+    "@expiredJobPostDescription": {
+        "description": "Description shown when a job post is older than 90 days"
     }
 }

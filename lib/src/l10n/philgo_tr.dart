@@ -1648,6 +1648,18 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'Reason'**
   String get blindReason;
+
+  /// Title shown when a job post is older than 90 days
+  ///
+  /// In en, this message translates to:
+  /// **'This is an old job post'**
+  String get expiredJobPost;
+
+  /// Description shown when a job post is older than 90 days
+  ///
+  /// In en, this message translates to:
+  /// **'To prevent outdated information, job posts older than 90 days are not displayed.'**
+  String get expiredJobPostDescription;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

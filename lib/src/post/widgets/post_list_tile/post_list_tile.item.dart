@@ -83,9 +83,16 @@ class PostListTileItem extends StatelessWidget {
     // Check if the post is blinded
     final isBlinded = post.isBlinded;
 
-    final hasFiles = post.files.isNotEmpty && !blocked && !isBlinded;
-    final hasYoutubeVideos =
-        post.getAllYoutubeUrlInfos().isNotEmpty && !blocked && !isBlinded;
+    // 만료된 구인/구직 글 여부 확인 (90일 규칙)
+    // Check if this is an expired job post (90-day rule)
+    final isExpiredJob = post.isExpiredJobPost;
+
+    final hasFiles =
+        post.files.isNotEmpty && !blocked && !isBlinded && !isExpiredJob;
+    final hasYoutubeVideos = post.getAllYoutubeUrlInfos().isNotEmpty &&
+        !blocked &&
+        !isBlinded &&
+        !isExpiredJob;
 
     // 썸네일 표시 여부: 첨부파일이 있거나 YouTube 영상이 있는 경우
     final hasThumbnail = hasFiles || hasYoutubeVideos;
@@ -137,6 +144,29 @@ class PostListTileItem extends StatelessWidget {
           ),
         ],
       );
+    } else if (isExpiredJob) {
+      /// 만료된 구인/구직 글: 시계 아이콘 + 메시지 (tertiary 색상)
+      /// Expired job post: clock icon + message (tertiary color)
+      titleWidget = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightClock,
+            size: 16,
+            color: scheme.tertiary,
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              PhilgoTr.of(context)?.expiredJobPost ?? '오래된 구인/구직 글입니다',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.tertiary,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      );
     } else if (enableHeroTransition) {
       // Hero 전환
       titleWidget = Hero(
@@ -157,9 +187,9 @@ class PostListTileItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         titleWidget,
-        // 차단되지 않고 블라인드도 아닌 경우에만 메타 정보 표시
-        // Only show meta info when not blocked and not blinded
-        if (!blocked && !isBlinded) ...[
+        // 차단, 블라인드, 만료된 구인글이 아닌 경우에만 메타 정보 표시
+        // Only show meta info when not blocked, not blinded, and not expired job
+        if (!blocked && !isBlinded && !isExpiredJob) ...[
           const SizedBox(height: 8),
           PostListTileMeta(
             post: post,
@@ -216,9 +246,9 @@ class PostListTileItem extends StatelessWidget {
     }
 
     // 썸네일이 없는 경우: 제목 길이에 따라 레이아웃 결정
-    // 차단되거나 블라인드된 경우에는 메타 정보 없이 제목만 표시
-    // For blocked or blinded posts, only show title without meta info
-    if (blocked || isBlinded) {
+    // 차단, 블라인드, 만료된 구인글인 경우에는 메타 정보 없이 제목만 표시
+    // For blocked, blinded, or expired job posts, only show title without meta info
+    if (blocked || isBlinded || isExpiredJob) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
         child: titleWidget,

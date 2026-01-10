@@ -863,4 +863,11 @@ class PhilgoTrKo extends PhilgoTr {
 
   @override
   String get blindReason => '사유';
+
+  @override
+  String get expiredJobPost => '오래된 구인/구직 글입니다';
+
+  @override
+  String get expiredJobPostDescription =>
+      '잘못된 정보를 방지하기 위해, 90일 이상된 구인/구직 글은 내용을 표시하지 않습니다.';
 }

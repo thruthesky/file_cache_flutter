@@ -123,7 +123,18 @@ class Post {
 
   // 검열 사유 (블라인드 처리 시 표시)
   // Moderation reason (shown when post is blinded)
+  // 서버에서 text_8 필드에 검열 사유를 보냄
   final String? moderationReason;
+
+  // 서버에서 보내는 블라인드 상태 (boolean)
+  // Server sends blinded status as boolean field
+  // true: 블라인드 처리된 글 (char_5가 'b' 또는 'f'인 경우)
+  final bool blinded;
+
+  // 서버에서 보내는 차단 상태 (boolean)
+  // Server sends blocked status as boolean field
+  // true: 차단된 글 (char_5가 'f'인 경우, 심각한 위반)
+  final bool blocked;
 
   // 생성자
   Post({
@@ -206,6 +217,8 @@ class Post {
     this.text9,
     this.text10,
     this.moderationReason,
+    this.blinded = false,
+    this.blocked = false,
   });
 
   // JSON 직렬화를 위한 factory 생성자
@@ -298,7 +311,14 @@ class Post {
       text6: json['text_6'] as String?,
       text9: json['text_9'] as String?,
       text10: json['text_10'] as String?,
-      moderationReason: json['moderation_reason'] as String?,
+      // 검열 사유: text_8 필드 우선, 없으면 moderation_reason 필드 사용
+      // Moderation reason: prefer text_8 field, fallback to moderation_reason
+      moderationReason:
+          (json['text_8'] as String?) ?? (json['moderation_reason'] as String?),
+      // 서버에서 보내는 블라인드/차단 상태 (boolean)
+      // Server sends blinded/blocked status as boolean fields
+      blinded: json['blinded'] == true,
+      blocked: json['blocked'] == true,
     );
   }
 
@@ -385,6 +405,9 @@ class Post {
       if (text9 != null) 'text_9': text9,
       if (text10 != null) 'text_10': text10,
       if (moderationReason != null) 'moderation_reason': moderationReason,
+      if (moderationReason != null) 'text_8': moderationReason,
+      'blinded': blinded,
+      'blocked': blocked,
     };
   }
 
@@ -469,6 +492,8 @@ class Post {
     String? text9,
     String? text10,
     String? moderationReason,
+    bool? blinded,
+    bool? blocked,
   }) {
     return Post(
       idx: idx ?? this.idx,
@@ -550,6 +575,8 @@ class Post {
       text9: text9 ?? this.text9,
       text10: text10 ?? this.text10,
       moderationReason: moderationReason ?? this.moderationReason,
+      blinded: blinded ?? this.blinded,
+      blocked: blocked ?? this.blocked,
     );
   }
 
@@ -605,28 +632,54 @@ class Post {
 
   /// 블라인드 처리된 글인지 확인
   ///
-  /// 서버에서 AI 검열을 통해 블라인드 처리된 글의 경우 blind 필드가 설정됩니다.
-  /// 블라인드 사유:
-  /// - 'Y': 일반 블라인드 처리 (레거시 호환)
+  /// 서버에서 AI 검열을 통해 블라인드 처리된 글의 경우 blinded 필드가 true입니다.
+  /// 서버 API 응답의 blinded boolean 필드를 직접 사용합니다.
+  ///
+  /// 블라인드 사유 (char_5/MODERATION_STATUS):
   /// - 'b': 구인기준 미통과, 도박, 스팸 등 경미한 위반 (블라인드)
   /// - 'f': 욕설, 성적표현 등 심각한 위반 (차단)
   ///
-  /// Returns true if the post is blinded by moderation (blind == 'Y', 'b', or 'f')
-  bool get isBlinded => blind == 'Y' || blind == 'b' || blind == 'f';
+  /// 레거시 호환 (blind 필드):
+  /// - 'Y': 일반 블라인드 처리
+  ///
+  /// Returns true if the post is blinded by moderation
+  bool get isBlinded => blinded || blind == 'Y' || blind == 'b' || blind == 'f';
 
   /// 차단된 글인지 확인 (심각한 위반)
   ///
   /// 욕설, 성적표현 등 심각한 커뮤니티 가이드라인 위반으로 차단된 글입니다.
   /// 차단된 글은 본인도 내용을 볼 수 없습니다.
+  /// 서버 API 응답의 blocked boolean 필드를 직접 사용합니다.
   ///
-  /// Returns true if the post is blocked (severe violation, blind == 'f')
-  bool get isBlocked => blind == 'f';
+  /// Returns true if the post is blocked (severe violation)
+  bool get isBlocked => blocked || blind == 'f';
 
   /// 삭제된 글인지 확인
   ///
   /// deleted 필드에 값이 있으면 삭제된 글입니다.
   /// Returns true if the post is deleted
   bool get isDeleted => deleted != null && deleted.toString().isNotEmpty;
+
+  /// 만료된 구인/구직 글인지 확인 (90일 규칙)
+  ///
+  /// 구인/구직 게시판(wanted)의 글이 작성 후 90일이 지나면 만료된 것으로 처리됩니다.
+  /// 잘못된 정보(만료된 채용 공고 등)가 표시되는 것을 방지하기 위한 정책입니다.
+  ///
+  /// 서버에서 이미 subject/content를 대체 텍스트로 교체하여 보내지만,
+  /// 클라이언트에서도 만료 여부를 확인하여 특별한 UI를 표시할 수 있습니다.
+  ///
+  /// Returns true if this is a job post older than 90 days
+  bool get isExpiredJobPost {
+    // 구인구직 게시판인지 확인
+    if (post_id != 'wanted' && post_id != 'job') return false;
+
+    // 90일 = 86400초 × 90 = 7,776,000초
+    const int ninetyDaysInSeconds = 86400 * 90;
+    final int currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    // stamp가 현재 시간 - 90일보다 이전이면 만료
+    return stamp < (currentTimestamp - ninetyDaysInSeconds);
+  }
 
   /// Primary YouTube URL stored in varchar19 field
   /// Returns the YouTube URL from varchar19 if it exists and is not empty
