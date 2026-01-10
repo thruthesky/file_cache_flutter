@@ -2088,5 +2088,13 @@
   "adminChat": "Admin Chat",
   "@adminChat": {
     "description": "Admin chat navigation item label in chat-specific bottom navigation bar"
+  },
+  "notRegistered": "Not registered",
+  "@notRegistered": {
+    "description": "Text shown when a field value is not registered"
+  },
+  "phoneNumberCannotBeChanged": "Cannot be changed",
+  "@phoneNumberCannotBeChanged": {
+    "description": "Text indicating that phone number cannot be changed"
   }
 }

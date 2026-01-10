@@ -119,15 +119,19 @@ class ComicTextFormField extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     // Comic 스타일 테두리 생성 함수
+    // borderWidth가 0이면 테두리 없음 (BorderSide.none)
     OutlineInputBorder buildBorder(Color color) {
       return OutlineInputBorder(
         // Comic 스타일 둥근 모서리
         borderRadius: BorderRadius.circular(borderRadius),
         // Comic 스타일 테두리 (1.0px for compact input fields)
-        borderSide: BorderSide(
-          color: color,
-          width: borderWidth,
-        ),
+        // borderWidth가 0이면 테두리 없음
+        borderSide: borderWidth == 0
+            ? BorderSide.none
+            : BorderSide(
+                color: color,
+                width: borderWidth,
+              ),
       );
     }
 

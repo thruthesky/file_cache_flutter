@@ -1969,5 +1969,7 @@
   "quickMenuEssentialInfo": "新手必读",
   "@quickMenuEssentialInfo": {
     "description": "Quick menu essential info label"
-  }
+  },
+  "notRegistered": "未注册",
+  "phoneNumberCannotBeChanged": "无法更改"
 }

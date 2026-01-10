@@ -108,7 +108,7 @@
   "selectYearAndMonthFirst": "먼저 연도와 월을 선택해주세요",
   "selectYearFirst": "먼저 연도를 선택해주세요",
   "selectMonthFirst": "먼저 월을 선택해주세요",
-  "preferNotToSay": "응답하지 않음",
+  "preferNotToSay": "응답 안 함",
   "comments": "댓글",
   "userProfile": "사용자 프로필",
   "unknownUser": "알 수 없는 사용자",
@@ -2235,5 +2235,13 @@
   "adminChat": "운영자채팅",
   "@adminChat": {
     "description": "Admin chat navigation item label in chat-specific bottom navigation bar"
+  },
+  "notRegistered": "미등록",
+  "@notRegistered": {
+    "description": "Text shown when a field value is not registered"
+  },
+  "phoneNumberCannotBeChanged": "전화번호 수정 불가",
+  "@phoneNumberCannotBeChanged": {
+    "description": "Text indicating that phone number cannot be changed"
   }
 }

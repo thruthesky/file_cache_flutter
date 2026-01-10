@@ -339,7 +339,7 @@ class LoKo extends Lo {
   String get selectMonthFirst => '먼저 월을 선택해주세요';
 
   @override
-  String get preferNotToSay => '응답하지 않음';
+  String get preferNotToSay => '응답 안 함';
 
   @override
   String get userProfile => '사용자 프로필';
@@ -1686,4 +1686,10 @@ class LoKo extends Lo {
 
   @override
   String get adminChat => '운영자채팅';
+
+  @override
+  String get notRegistered => '미등록';
+
+  @override
+  String get phoneNumberCannotBeChanged => '전화번호 수정 불가';
 }

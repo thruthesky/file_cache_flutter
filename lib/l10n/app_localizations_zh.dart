@@ -1680,4 +1680,10 @@ class LoZh extends Lo {
 
   @override
   String get adminChat => 'Admin Chat';
+
+  @override
+  String get notRegistered => '未注册';
+
+  @override
+  String get phoneNumberCannotBeChanged => '无法更改';
 }

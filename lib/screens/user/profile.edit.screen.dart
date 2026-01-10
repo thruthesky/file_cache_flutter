@@ -10,6 +10,7 @@ import 'package:philgo_api/philgo_api.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/widgets/theme/comic_text_form_field.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// Profile Edit Screen (프로필 수정 화면)
 ///
@@ -105,8 +106,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
                           // Get the old photo URL before updating
                           // 이전 사진 URL을 업데이트 전에 가져옴
-                          final oldPhotoUrl =
-                              PhilgoState.of(context).user?.photoUrl;
+                          final oldPhotoUrl = PhilgoState.of(
+                            context,
+                          ).user?.photoUrl;
 
                           final updatedUser = await philgoApiUserUpdate({
                             'photo_url': url,
@@ -158,8 +160,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                               try {
                                 // Store photo URL before deletion for cache eviction
                                 // 캐시 삭제를 위해 삭제 전에 사진 URL 저장
-                                final oldPhotoUrl =
-                                    PhilgoState.of(context).user!.photoUrl;
+                                final oldPhotoUrl = PhilgoState.of(
+                                  context,
+                                ).user!.photoUrl;
 
                                 await philgoApiFileDelete(oldPhotoUrl);
 
@@ -196,169 +199,199 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         ),
                       ),
                     ),
-                  )
-                      .animate()
-                      .fadeIn(duration: 400.ms)
-                      .slideY(begin: 0.1, end: 0),
+                  ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
 
                   /// [2. Basic Info Section] - 기본 정보 섹션
                   _buildSection(
-                    title: T.basicInfo,
-                    icon: FontAwesomeIcons.user,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /// Nickname field
-                        _buildFieldLabel(
-                          context,
-                          T.nickname,
-                          FontAwesomeIcons.at,
-                        ),
-                        const SizedBox(height: 8),
-                        ComicTextFormField(
-                          controller: _nicknameController,
-                          enabled: user.nickname.isEmpty,
-                          hintText: T.nicknameHint,
-                        ),
-                        const SizedBox(height: 20),
+                        title: T.basicInfo,
+                        icon: FontAwesomeIcons.user,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// Phone number field - 전화번호 읽기 전용 표시
+                            /// Firebase Auth에서 전화번호를 가져와 표시
+                            /// 전화번호가 없는 경우 "미등록" 표시
+                            _buildFieldLabelWithSuffix(
+                              context,
+                              T.phoneNumber,
+                              FontAwesomeIcons.lightPhone,
+                              suffix: '(${T.phoneNumberCannotBeChanged})',
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              FirebaseAuth
+                                          .instance
+                                          .currentUser
+                                          ?.phoneNumber
+                                          ?.isNotEmpty ==
+                                      true
+                                  ? FirebaseAuth
+                                        .instance
+                                        .currentUser!
+                                        .phoneNumber!
+                                  : T.notRegistered,
+                              style: Theme.of(context).textTheme.titleLarge!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                            ),
+                            const SizedBox(height: 20),
 
-                        /// Full name field
-                        _buildFieldLabel(
-                          context,
-                          T.fullName,
-                          FontAwesomeIcons.idCard,
+                            /// Nickname field
+                            _buildFieldLabel(
+                              context,
+                              T.nickname,
+                              FontAwesomeIcons.at,
+                            ),
+                            const SizedBox(height: 8),
+                            ComicTextFormField(
+                              controller: _nicknameController,
+                              enabled: user.nickname.isEmpty,
+                              hintText: T.nicknameHint,
+                            ),
+                            const SizedBox(height: 20),
+
+                            /// Full name field
+                            _buildFieldLabel(
+                              context,
+                              T.fullName,
+                              FontAwesomeIcons.idCard,
+                            ),
+                            const SizedBox(height: 8),
+                            ComicTextFormField(
+                              controller: _nameController,
+                              hintText: T.fullNameHint,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 8),
-                        ComicTextFormField(
-                          controller: _nameController,
-                          hintText: T.fullNameHint,
-                        ),
-                      ],
-                    ),
-                  )
+                      )
                       .animate()
                       .fadeIn(duration: 400.ms, delay: 100.ms)
                       .slideY(begin: 0.1, end: 0),
 
                   /// [3. Personal Info Section] - 개인 정보 섹션
                   _buildSection(
-                    title: T.personalInfo,
-                    icon: FontAwesomeIcons.addressCard,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /// Birth Date Field
-                        _buildFieldLabel(
-                          context,
-                          T.birthDate,
-                          FontAwesomeIcons.cakeCandles,
-                        ),
-                        const SizedBox(height: 8),
-                        DateSelector(
-                          date: birthDate,
-                          padding: EdgeInsets.zero,
-                          label: null,
-                          yearHint: T.year,
-                          monthHint: T.month,
-                          dayHint: T.day,
-                          yearUnit: T.yearUnit,
-                          monthUnit: T.monthUnit,
-                          dayUnit: T.dayUnit,
-                          selectYearAndMonthFirstMessage:
-                              T.selectYearAndMonthFirst,
-                          selectYearFirstMessage: T.selectYearFirst,
-                          selectMonthFirstMessage: T.selectMonthFirst,
-                          onChange: (date) {
-                            birthDate = date;
-                          },
-                        ),
-                        const SizedBox(height: 24),
+                        title: T.personalInfo,
+                        icon: FontAwesomeIcons.addressCard,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// Birth Date Field
+                            _buildFieldLabel(
+                              context,
+                              T.birthDate,
+                              FontAwesomeIcons.cakeCandles,
+                            ),
+                            const SizedBox(height: 8),
+                            DateSelector(
+                              date: birthDate,
+                              padding: EdgeInsets.zero,
+                              label: null,
+                              yearHint: T.year,
+                              monthHint: T.month,
+                              dayHint: T.day,
+                              yearUnit: T.yearUnit,
+                              monthUnit: T.monthUnit,
+                              dayUnit: T.dayUnit,
+                              selectYearAndMonthFirstMessage:
+                                  T.selectYearAndMonthFirst,
+                              selectYearFirstMessage: T.selectYearFirst,
+                              selectMonthFirstMessage: T.selectMonthFirst,
+                              onChange: (date) {
+                                birthDate = date;
+                              },
+                            ),
+                            const SizedBox(height: 24),
 
-                        /// Gender Selection
-                        _buildFieldLabel(
-                          context,
-                          T.gender,
-                          FontAwesomeIcons.venusMars,
+                            /// Gender Selection
+                            _buildFieldLabel(
+                              context,
+                              T.gender,
+                              FontAwesomeIcons.venusMars,
+                            ),
+                            const SizedBox(height: 12),
+                            RadioGroup<String>(
+                              groupValue: gender,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  gender = value;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  _buildGenderOption(
+                                    context,
+                                    value: "M",
+                                    label: T.male,
+                                    icon: FontAwesomeIcons.mars,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _buildGenderOption(
+                                    context,
+                                    value: "F",
+                                    label: T.female,
+                                    icon: FontAwesomeIcons.venus,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _buildGenderOption(
+                                    context,
+                                    value: "N",
+                                    label: T.preferNotToSay,
+                                    icon: FontAwesomeIcons.genderless,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 12),
-                        RadioGroup<String>(
-                          groupValue: gender,
-                          onChanged: (String? value) {
-                            setState(() {
-                              gender = value;
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              _buildGenderOption(
-                                context,
-                                value: "M",
-                                label: T.male,
-                                icon: FontAwesomeIcons.mars,
-                              ),
-                              const SizedBox(width: 12),
-                              _buildGenderOption(
-                                context,
-                                value: "F",
-                                label: T.female,
-                                icon: FontAwesomeIcons.venus,
-                              ),
-                              const SizedBox(width: 12),
-                              _buildGenderOption(
-                                context,
-                                value: "N",
-                                label: T.preferNotToSay,
-                                icon: FontAwesomeIcons.genderless,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                      )
                       .animate()
                       .fadeIn(duration: 400.ms, delay: 200.ms)
                       .slideY(begin: 0.1, end: 0),
 
                   /// [4. Save Button] - 저장 버튼
                   SizedBox(
-                    width: double.infinity,
-                    child: ComicPrimaryButton(
-                      onPressed: isLoading ? null : onProfileSubmit,
-                      rounded: ComicButtonRounded.full,
-                      padding: ComicButtonPadding.large,
-                      textSize: ComicButtonTextSize.large,
-                      child: isLoading
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  scheme.onPrimary,
-                                ),
-                              ),
-                            )
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.floppyDisk,
-                                  size: 18,
-                                  color: scheme.onPrimary,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  T.save,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    color: scheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
+                        width: double.infinity,
+                        child: ComicPrimaryButton(
+                          onPressed: isLoading ? null : onProfileSubmit,
+                          rounded: ComicButtonRounded.full,
+                          padding: ComicButtonPadding.large,
+                          textSize: ComicButtonTextSize.large,
+                          child: isLoading
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      scheme.onPrimary,
+                                    ),
                                   ),
+                                )
+                              : Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.floppyDisk,
+                                      size: 18,
+                                      color: scheme.onPrimary,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      T.save,
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            color: scheme.onPrimary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                    ),
-                  )
+                        ),
+                      )
                       .animate()
                       .fadeIn(duration: 400.ms, delay: 300.ms)
                       .slideY(begin: 0.1, end: 0),
@@ -405,11 +438,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               const SizedBox(width: 8),
 
               /// Section icon
-              FaIcon(
-                icon,
-                size: 14,
-                color: scheme.onSurfaceVariant,
-              ),
+              FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
               const SizedBox(width: 6),
 
               /// Section title
@@ -445,21 +474,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   /// Builds a field label widget with an icon
-  Widget _buildFieldLabel(
-    BuildContext context,
-    String label,
-    IconData icon,
-  ) {
+  Widget _buildFieldLabel(BuildContext context, String label, IconData icon) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
     return Row(
       children: [
-        FaIcon(
-          icon,
-          size: 14,
-          color: scheme.onSurfaceVariant,
-        ),
+        FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
         const SizedBox(width: 8),
         Text(
           label,
@@ -468,6 +489,41 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             color: scheme.onSurfaceVariant,
           ),
         ),
+      ],
+    );
+  }
+
+  /// Builds a field label widget with an icon and suffix text
+  /// suffix는 레이블 옆에 추가 설명을 표시 (예: "(수정 불가)")
+  Widget _buildFieldLabelWithSuffix(
+    BuildContext context,
+    String label,
+    IconData icon, {
+    String? suffix,
+  }) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Row(
+      children: [
+        FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+        if (suffix != null) ...[
+          const SizedBox(width: 6),
+          Text(
+            suffix,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -501,11 +557,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: Radio<String>(value: value),
-            ),
+            SizedBox(width: 20, height: 20, child: Radio<String>(value: value)),
             const SizedBox(width: 4),
             FaIcon(
               icon,

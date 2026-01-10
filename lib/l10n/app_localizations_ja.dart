@@ -1686,4 +1686,10 @@ class LoJa extends Lo {
 
   @override
   String get adminChat => 'Admin Chat';
+
+  @override
+  String get notRegistered => '未登録';
+
+  @override
+  String get phoneNumberCannotBeChanged => '変更不可';
 }

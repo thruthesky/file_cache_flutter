@@ -3388,6 +3388,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Admin Chat'**
   String get adminChat;
+
+  /// Text shown when a field value is not registered
+  ///
+  /// In en, this message translates to:
+  /// **'Not registered'**
+  String get notRegistered;
+
+  /// Text indicating that phone number cannot be changed
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot be changed'**
+  String get phoneNumberCannotBeChanged;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

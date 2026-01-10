@@ -1717,4 +1717,10 @@ class LoEn extends Lo {
 
   @override
   String get adminChat => 'Admin Chat';
+
+  @override
+  String get notRegistered => 'Not registered';
+
+  @override
+  String get phoneNumberCannotBeChanged => 'Cannot be changed';
 }
