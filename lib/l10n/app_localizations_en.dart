@@ -1825,4 +1825,34 @@ class LoEn extends Lo {
 
   @override
   String get wantedWorkTypeRequired => 'Please enter the work type';
+
+  @override
+  String get entertainmentSection => 'Food, Fun & Sights';
+
+  @override
+  String get entertainmentGolf => 'Golf';
+
+  @override
+  String get entertainmentMassage => 'Massage';
+
+  @override
+  String get entertainmentNightlife => 'Nightlife';
+
+  @override
+  String get entertainmentMarketTour => 'Market Tour';
+
+  @override
+  String get entertainmentSeafood => 'Seafood';
+
+  @override
+  String get entertainmentRestaurant => 'Restaurants';
+
+  @override
+  String get entertainmentWaterSports => 'Water Sports';
+
+  @override
+  String get entertainmentIslandTour => 'Island Tour';
+
+  @override
+  String get entertainmentFestival => 'Festival';
 }

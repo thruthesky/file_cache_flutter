@@ -1794,4 +1794,34 @@ class LoJa extends Lo {
 
   @override
   String get wantedWorkTypeRequired => 'Please enter the work type';
+
+  @override
+  String get entertainmentSection => 'グルメ・遊び・観光';
+
+  @override
+  String get entertainmentGolf => 'ゴルフ';
+
+  @override
+  String get entertainmentMassage => 'マッサージ';
+
+  @override
+  String get entertainmentNightlife => 'ナイトライフ';
+
+  @override
+  String get entertainmentMarketTour => '市場ツアー';
+
+  @override
+  String get entertainmentSeafood => 'シーフード';
+
+  @override
+  String get entertainmentRestaurant => 'グルメ';
+
+  @override
+  String get entertainmentWaterSports => 'マリンスポーツ';
+
+  @override
+  String get entertainmentIslandTour => 'アイランドツアー';
+
+  @override
+  String get entertainmentFestival => 'フェスティバル';
 }

@@ -10,6 +10,7 @@ import 'package:philgo/data/car_menu.data.dart';
 import 'package:philgo/data/residence_menu.data.dart';
 import 'package:philgo/data/helper_menu.data.dart';
 import 'package:philgo/data/travel_destination_menu.data.dart';
+import 'package:philgo/data/entertainment_menu.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -186,6 +187,23 @@ class _MustReadScreenState extends State<MustReadScreen> {
             MenuGridSection(
               title: l10n.travelDestinationSection,
               children: TravelDestinationMenuData.items
+                  .map(
+                    (item) => MenuGridItem(
+                      icon: item.icon,
+                      title: item.getLabel(l10n),
+                      onTap: () => item.push(context),
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 먹거리, 놀거리, 볼거리 섹션 (Entertainment Section)
+            /// EntertainmentMenuData를 사용하여 메뉴 아이템 생성
+            MenuGridSection(
+              title: l10n.entertainmentSection,
+              children: EntertainmentMenuData.items
                   .map(
                     (item) => MenuGridItem(
                       icon: item.icon,

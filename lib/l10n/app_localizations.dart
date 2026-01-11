@@ -3598,6 +3598,66 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Please enter the work type'**
   String get wantedWorkTypeRequired;
+
+  /// Entertainment section title for food, play, and sightseeing
+  ///
+  /// In en, this message translates to:
+  /// **'Food, Fun & Sights'**
+  String get entertainmentSection;
+
+  /// Golf menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Golf'**
+  String get entertainmentGolf;
+
+  /// Massage menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Massage'**
+  String get entertainmentMassage;
+
+  /// Nightlife menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Nightlife'**
+  String get entertainmentNightlife;
+
+  /// Market tour menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Market Tour'**
+  String get entertainmentMarketTour;
+
+  /// Seafood menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Seafood'**
+  String get entertainmentSeafood;
+
+  /// Restaurant menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurants'**
+  String get entertainmentRestaurant;
+
+  /// Water sports menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Water Sports'**
+  String get entertainmentWaterSports;
+
+  /// Island tour menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Island Tour'**
+  String get entertainmentIslandTour;
+
+  /// Festival menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Festival'**
+  String get entertainmentFestival;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

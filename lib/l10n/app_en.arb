@@ -2228,5 +2228,45 @@
   "wantedWorkTypeRequired": "Please enter the work type",
   "@wantedWorkTypeRequired": {
     "description": "Work type required validation message"
+  },
+  "entertainmentSection": "Food, Fun & Sights",
+  "@entertainmentSection": {
+    "description": "Entertainment section title for food, play, and sightseeing"
+  },
+  "entertainmentGolf": "Golf",
+  "@entertainmentGolf": {
+    "description": "Golf menu item"
+  },
+  "entertainmentMassage": "Massage",
+  "@entertainmentMassage": {
+    "description": "Massage menu item"
+  },
+  "entertainmentNightlife": "Nightlife",
+  "@entertainmentNightlife": {
+    "description": "Nightlife menu item"
+  },
+  "entertainmentMarketTour": "Market Tour",
+  "@entertainmentMarketTour": {
+    "description": "Market tour menu item"
+  },
+  "entertainmentSeafood": "Seafood",
+  "@entertainmentSeafood": {
+    "description": "Seafood menu item"
+  },
+  "entertainmentRestaurant": "Restaurants",
+  "@entertainmentRestaurant": {
+    "description": "Restaurant menu item"
+  },
+  "entertainmentWaterSports": "Water Sports",
+  "@entertainmentWaterSports": {
+    "description": "Water sports menu item"
+  },
+  "entertainmentIslandTour": "Island Tour",
+  "@entertainmentIslandTour": {
+    "description": "Island tour menu item"
+  },
+  "entertainmentFestival": "Festival",
+  "@entertainmentFestival": {
+    "description": "Festival menu item"
   }
 }

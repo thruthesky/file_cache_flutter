@@ -1980,5 +1980,15 @@
   "helperHouseHelper": "家政帮手",
   "helperDriver": "司机",
   "helperTutor": "家教",
-  "comingSoon": "即将推出"
+  "comingSoon": "即将推出",
+  "entertainmentSection": "美食·娱乐·观光",
+  "entertainmentGolf": "高尔夫",
+  "entertainmentMassage": "按摩",
+  "entertainmentNightlife": "夜生活",
+  "entertainmentMarketTour": "市场游",
+  "entertainmentSeafood": "海鲜",
+  "entertainmentRestaurant": "美食",
+  "entertainmentWaterSports": "水上运动",
+  "entertainmentIslandTour": "跳岛游",
+  "entertainmentFestival": "节日"
 }

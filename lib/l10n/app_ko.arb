@@ -2375,5 +2375,45 @@
   "wantedWorkTypeRequired": "근무제를 입력해주세요",
   "@wantedWorkTypeRequired": {
     "description": "Work type required validation message"
+  },
+  "entertainmentSection": "먹거리, 놀거리, 볼거리",
+  "@entertainmentSection": {
+    "description": "Entertainment section title for food, play, and sightseeing"
+  },
+  "entertainmentGolf": "골프",
+  "@entertainmentGolf": {
+    "description": "Golf menu item"
+  },
+  "entertainmentMassage": "마사지",
+  "@entertainmentMassage": {
+    "description": "Massage menu item"
+  },
+  "entertainmentNightlife": "밤문화",
+  "@entertainmentNightlife": {
+    "description": "Nightlife menu item"
+  },
+  "entertainmentMarketTour": "시장 투어",
+  "@entertainmentMarketTour": {
+    "description": "Market tour menu item"
+  },
+  "entertainmentSeafood": "해산물",
+  "@entertainmentSeafood": {
+    "description": "Seafood menu item"
+  },
+  "entertainmentRestaurant": "맛집",
+  "@entertainmentRestaurant": {
+    "description": "Restaurant menu item"
+  },
+  "entertainmentWaterSports": "수상스포츠",
+  "@entertainmentWaterSports": {
+    "description": "Water sports menu item"
+  },
+  "entertainmentIslandTour": "섬투어",
+  "@entertainmentIslandTour": {
+    "description": "Island tour menu item"
+  },
+  "entertainmentFestival": "축제",
+  "@entertainmentFestival": {
+    "description": "Festival menu item"
   }
 }

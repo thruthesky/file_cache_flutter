@@ -50,6 +50,15 @@ import 'package:philgo/screens/info/travel_destination/palawan.screen.dart';
 import 'package:philgo/screens/info/helper/house_helper.screen.dart';
 import 'package:philgo/screens/info/helper/driver.screen.dart';
 import 'package:philgo/screens/info/helper/tutor.screen.dart';
+import 'package:philgo/screens/info/entertainment/golf.screen.dart';
+import 'package:philgo/screens/info/entertainment/massage.screen.dart';
+import 'package:philgo/screens/info/entertainment/nightlife.screen.dart';
+import 'package:philgo/screens/info/entertainment/market_tour.screen.dart';
+import 'package:philgo/screens/info/entertainment/seafood.screen.dart';
+import 'package:philgo/screens/info/entertainment/restaurant.screen.dart';
+import 'package:philgo/screens/info/entertainment/water_sports.screen.dart';
+import 'package:philgo/screens/info/entertainment/island_tour.screen.dart';
+import 'package:philgo/screens/info/entertainment/festival.screen.dart';
 import 'package:philgo/screens/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
@@ -712,6 +721,69 @@ final router = GoRouter(
       path: TutorScreen.routeName,
       name: TutorScreen.routeName,
       builder: (context, state) => const TutorScreen(),
+    ),
+
+    /// 골프 화면 (Golf Screen)
+    GoRoute(
+      path: GolfScreen.routeName,
+      name: GolfScreen.routeName,
+      builder: (context, state) => const GolfScreen(),
+    ),
+
+    /// 마사지 화면 (Massage Screen)
+    GoRoute(
+      path: MassageScreen.routeName,
+      name: MassageScreen.routeName,
+      builder: (context, state) => const MassageScreen(),
+    ),
+
+    /// 밤문화 화면 (Nightlife Screen)
+    GoRoute(
+      path: NightlifeScreen.routeName,
+      name: NightlifeScreen.routeName,
+      builder: (context, state) => const NightlifeScreen(),
+    ),
+
+    /// 시장 투어 화면 (Market Tour Screen)
+    GoRoute(
+      path: MarketTourScreen.routeName,
+      name: MarketTourScreen.routeName,
+      builder: (context, state) => const MarketTourScreen(),
+    ),
+
+    /// 해산물 화면 (Seafood Screen)
+    GoRoute(
+      path: SeafoodScreen.routeName,
+      name: SeafoodScreen.routeName,
+      builder: (context, state) => const SeafoodScreen(),
+    ),
+
+    /// 맛집 화면 (Restaurant Screen)
+    GoRoute(
+      path: RestaurantScreen.routeName,
+      name: RestaurantScreen.routeName,
+      builder: (context, state) => const RestaurantScreen(),
+    ),
+
+    /// 수상스포츠 화면 (Water Sports Screen)
+    GoRoute(
+      path: WaterSportsScreen.routeName,
+      name: WaterSportsScreen.routeName,
+      builder: (context, state) => const WaterSportsScreen(),
+    ),
+
+    /// 섬투어 화면 (Island Tour Screen)
+    GoRoute(
+      path: IslandTourScreen.routeName,
+      name: IslandTourScreen.routeName,
+      builder: (context, state) => const IslandTourScreen(),
+    ),
+
+    /// 축제 화면 (Festival Screen)
+    GoRoute(
+      path: FestivalScreen.routeName,
+      name: FestivalScreen.routeName,
+      builder: (context, state) => const FestivalScreen(),
     ),
 
     /// 광고 상세 화면 (Advertisement View Screen)

@@ -1788,4 +1788,34 @@ class LoZh extends Lo {
 
   @override
   String get wantedWorkTypeRequired => 'Please enter the work type';
+
+  @override
+  String get entertainmentSection => '美食·娱乐·观光';
+
+  @override
+  String get entertainmentGolf => '高尔夫';
+
+  @override
+  String get entertainmentMassage => '按摩';
+
+  @override
+  String get entertainmentNightlife => '夜生活';
+
+  @override
+  String get entertainmentMarketTour => '市场游';
+
+  @override
+  String get entertainmentSeafood => '海鲜';
+
+  @override
+  String get entertainmentRestaurant => '美食';
+
+  @override
+  String get entertainmentWaterSports => '水上运动';
+
+  @override
+  String get entertainmentIslandTour => '跳岛游';
+
+  @override
+  String get entertainmentFestival => '节日';
 }

@@ -1791,4 +1791,34 @@ class LoKo extends Lo {
 
   @override
   String get wantedWorkTypeRequired => '근무제를 입력해주세요';
+
+  @override
+  String get entertainmentSection => '먹거리, 놀거리, 볼거리';
+
+  @override
+  String get entertainmentGolf => '골프';
+
+  @override
+  String get entertainmentMassage => '마사지';
+
+  @override
+  String get entertainmentNightlife => '밤문화';
+
+  @override
+  String get entertainmentMarketTour => '시장 투어';
+
+  @override
+  String get entertainmentSeafood => '해산물';
+
+  @override
+  String get entertainmentRestaurant => '맛집';
+
+  @override
+  String get entertainmentWaterSports => '수상스포츠';
+
+  @override
+  String get entertainmentIslandTour => '섬투어';
+
+  @override
+  String get entertainmentFestival => '축제';
 }

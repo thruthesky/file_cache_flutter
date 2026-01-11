@@ -1980,5 +1980,15 @@
   "helperHouseHelper": "ハウスヘルパー",
   "helperDriver": "ドライバー",
   "helperTutor": "家庭教師",
-  "comingSoon": "準備中"
+  "comingSoon": "準備中",
+  "entertainmentSection": "グルメ・遊び・観光",
+  "entertainmentGolf": "ゴルフ",
+  "entertainmentMassage": "マッサージ",
+  "entertainmentNightlife": "ナイトライフ",
+  "entertainmentMarketTour": "市場ツアー",
+  "entertainmentSeafood": "シーフード",
+  "entertainmentRestaurant": "グルメ",
+  "entertainmentWaterSports": "マリンスポーツ",
+  "entertainmentIslandTour": "アイランドツアー",
+  "entertainmentFestival": "フェスティバル"
 }
