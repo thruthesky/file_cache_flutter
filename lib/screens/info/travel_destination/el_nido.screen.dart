@@ -508,22 +508,31 @@ class _ElNidoScreenState extends State<ElNidoScreen> {
   ///
   /// 엘니도 라군 관련 이미지들입니다.
   /// Images related to El Nido lagoons.
+  ///
+  /// 이미지 URL은 PhilGo 파일 서버(https://file.philgo.com/philgo_files/)를 사용합니다.
+  /// Image URLs use PhilGo file server (https://file.philgo.com/philgo_files/).
+  /// 참고: lib/philgo_files/info.yaml
   static const List<_GalleryImage> _galleryImages = [
     _GalleryImage(
+      /// 엘니도 지역 지도 이미지 (El Nido map image)
+      url: 'https://file.philgo.com/philgo_files/map/el_nido.jpg',
+      description: '엘니도(El Nido) 지역 지도 이미지',
+    ),
+    _GalleryImage(
       /// 엘니도 빅 라군 이미지 (Big Lagoon image)
-      url: 'https://philgo.com/res/travel/big-lagoon-in-el-nido.jpg',
+      url: 'https://file.philgo.com/philgo_files/travel/big-lagoon-in-el-nido.jpg',
       description:
           '엘니도(El Nido): 라군 전체가 사진에 들어 오는 장면. 바쿠이트 군도 석회암 절벽과 에메랄드 라군(카약/호핑투어)로 가장 유명합니다.',
     ),
     _GalleryImage(
       /// 엘니도 스몰 라군 이미지 1 (Small Lagoon image 1)
-      url: 'https://philgo.com/res/travel/small-lagoon-in-el-nido.jpg',
+      url: 'https://file.philgo.com/philgo_files/travel/small-lagoon-in-el-nido.jpg',
       description:
           'Small Lagoon (스몰 라군): 카약을 타는 장면. 입구가 비교적 좁고 안쪽이 아늑해서 카약 체험 만족도가 높은 편으로 많이 알려져 있습니다.',
     ),
     _GalleryImage(
       /// 엘니도 스몰 라군 이미지 2 (Small Lagoon image 2)
-      url: 'https://philgo.com/res/travel/small-lagoon-in-el-nido-2.jpg',
+      url: 'https://file.philgo.com/philgo_files/travel/small-lagoon-in-el-nido-2.jpg',
       description:
           'Small Lagoon (스몰 라군): 작은 보트가 바위 틈을 지나는 장면. 바위 틈을 지나 안쪽으로 들어가면 고요한 물과 아름다운 자연 경관이 펼쳐집니다.',
     ),

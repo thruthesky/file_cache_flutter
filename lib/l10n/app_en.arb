@@ -1877,7 +1877,7 @@
   "@quickMenuTravelSpots": {
     "description": "Quick menu travel spots label"
   },
-  "travelSpotsScreenTitle": "Popular Philippine Travel Spots",
+  "travelSpotsScreenTitle": "Philippine Travel Spots",
   "@travelSpotsScreenTitle": {
     "description": "Travel spots screen title"
   },
@@ -2336,5 +2336,153 @@
   "searchResults": "Search Results",
   "@searchResults": {
     "description": "Section title for search results"
+  },
+  "travelSpotsSectionAlphabetical": "Philippine Travel Spots (A-Z)",
+  "@travelSpotsSectionAlphabetical": {
+    "description": "Section title for Philippine travel spots sorted alphabetically"
+  },
+  "travelSpotIntramuros": "Intramuros",
+  "@travelSpotIntramuros": {
+    "description": "Intramuros travel spot"
+  },
+  "travelSpotOceanPark": "Ocean Park",
+  "@travelSpotOceanPark": {
+    "description": "Ocean Park Manila travel spot"
+  },
+  "travelSpotManilaBay": "Manila Bay",
+  "@travelSpotManilaBay": {
+    "description": "Manila Bay travel spot"
+  },
+  "travelSpotMallOfAsia": "Mall of Asia",
+  "@travelSpotMallOfAsia": {
+    "description": "Mall of Asia travel spot"
+  },
+  "travelSpotPagsanjanFalls": "Pagsanjan Falls",
+  "@travelSpotPagsanjanFalls": {
+    "description": "Pagsanjan Falls travel spot"
+  },
+  "travelSpotBanaue": "Banaue",
+  "@travelSpotBanaue": {
+    "description": "Banaue Rice Terraces travel spot"
+  },
+  "travelSpotVigan": "Vigan",
+  "@travelSpotVigan": {
+    "description": "Vigan historic city travel spot"
+  },
+  "travelSpotMayonVolcano": "Mayon Volcano",
+  "@travelSpotMayonVolcano": {
+    "description": "Mayon Volcano travel spot"
+  },
+  "travelSpotCoron": "Coron",
+  "@travelSpotCoron": {
+    "description": "Coron travel spot"
+  },
+  "travelSpotPuertoPrincesa": "Puerto Princesa",
+  "@travelSpotPuertoPrincesa": {
+    "description": "Puerto Princesa travel spot"
+  },
+  "travelSpotTubbataha": "Tubbataha",
+  "@travelSpotTubbataha": {
+    "description": "Tubbataha Reef travel spot"
+  },
+  "travelSpotKawasanFalls": "Kawasan Falls",
+  "@travelSpotKawasanFalls": {
+    "description": "Kawasan Falls travel spot"
+  },
+  "travelSpotChocolateHills": "Chocolate Hills",
+  "@travelSpotChocolateHills": {
+    "description": "Chocolate Hills travel spot"
+  },
+  "travelSpotElNido": "El Nido",
+  "@travelSpotElNido": {
+    "description": "El Nido travel spot"
+  },
+  "travelSpotWhiteBeach": "White Beach",
+  "@travelSpotWhiteBeach": {
+    "description": "White Beach travel spot"
+  },
+  "travelSpotPukaShellBeach": "Puka Shell",
+  "@travelSpotPukaShellBeach": {
+    "description": "Puka Shell Beach travel spot"
+  },
+  "travelSpotNacpanBeach": "Nacpan Beach",
+  "@travelSpotNacpanBeach": {
+    "description": "Nacpan Beach travel spot"
+  },
+  "travelSpotEntalulaBeach": "Entalula",
+  "@travelSpotEntalulaBeach": {
+    "description": "Entalula Beach travel spot"
+  },
+  "travelSpotAlonaBeach": "Alona Beach",
+  "@travelSpotAlonaBeach": {
+    "description": "Alona Beach travel spot"
+  },
+  "travelSpotSevenCommandos": "7 Commandos",
+  "@travelSpotSevenCommandos": {
+    "description": "Seven Commandos Beach travel spot"
+  },
+  "travelSpotBigLagoon": "Big Lagoon",
+  "@travelSpotBigLagoon": {
+    "description": "Big Lagoon travel spot"
+  },
+  "travelSpotSmallLagoon": "Small Lagoon",
+  "@travelSpotSmallLagoon": {
+    "description": "Small Lagoon travel spot"
+  },
+  "travelSpotSecretLagoon": "Secret Lagoon",
+  "@travelSpotSecretLagoon": {
+    "description": "Secret Lagoon travel spot"
+  },
+  "travelSpotKayanganLake": "Kayangan Lake",
+  "@travelSpotKayanganLake": {
+    "description": "Kayangan Lake travel spot"
+  },
+  "travelSpotTwinLagoon": "Twin Lagoon",
+  "@travelSpotTwinLagoon": {
+    "description": "Twin Lagoon travel spot"
+  },
+  "travelSpotBarracudaLake": "Barracuda Lake",
+  "@travelSpotBarracudaLake": {
+    "description": "Barracuda Lake travel spot"
+  },
+  "travelSpotMoalboalSardine": "Moalboal Sardine",
+  "@travelSpotMoalboalSardine": {
+    "description": "Moalboal Sardine Run travel spot"
+  },
+  "travelSpotPanagsamaBeach": "Panagsama",
+  "@travelSpotPanagsamaBeach": {
+    "description": "Panagsama Beach travel spot"
+  },
+  "travelSpotCloudNine": "Cloud 9",
+  "@travelSpotCloudNine": {
+    "description": "Cloud 9 travel spot"
+  },
+  "travelSpotRiceTerraces": "Rice Terraces",
+  "@travelSpotRiceTerraces": {
+    "description": "Rice Terraces of the Philippine Cordilleras travel spot"
+  },
+  "travelSpotSubterraneanRiver": "Underground River",
+  "@travelSpotSubterraneanRiver": {
+    "description": "Puerto-Princesa Subterranean River National Park travel spot"
+  },
+  "travelSpotSanAgustin": "San Agustin",
+  "@travelSpotSanAgustin": {
+    "description": "San Agustin Church travel spot"
+  },
+  "travelSpotPaoayChurch": "Paoay Church",
+  "@travelSpotPaoayChurch": {
+    "description": "Paoay Church travel spot"
+  },
+  "travelSpotSantaMaria": "Santa Maria",
+  "@travelSpotSantaMaria": {
+    "description": "Santa Maria Church travel spot"
+  },
+  "travelSpotMiagaoChurch": "Miagao Church",
+  "@travelSpotMiagaoChurch": {
+    "description": "Miagao Church travel spot"
+  },
+  "travelSpotFortSantiago": "Fort Santiago",
+  "@travelSpotFortSantiago": {
+    "description": "Fort Santiago travel spot"
   }
 }

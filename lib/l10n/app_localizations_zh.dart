@@ -1523,7 +1523,7 @@ class LoZh extends Lo {
   String get quickMenuTravelSpots => '旅游景点';
 
   @override
-  String get travelSpotsScreenTitle => '菲律宾热门旅游景点';
+  String get travelSpotsScreenTitle => '菲律宾旅游景点';
 
   @override
   String get philippineLifeInfo => '菲律宾生活信息';
@@ -1869,4 +1869,115 @@ class LoZh extends Lo {
 
   @override
   String get searchResults => '搜索结果';
+
+  @override
+  String get travelSpotsSectionAlphabetical => '菲律宾旅游景点 (字母顺序)';
+
+  @override
+  String get travelSpotIntramuros => '王城区';
+
+  @override
+  String get travelSpotOceanPark => '海洋公园';
+
+  @override
+  String get travelSpotManilaBay => '马尼拉湾';
+
+  @override
+  String get travelSpotMallOfAsia => '亚洲商城';
+
+  @override
+  String get travelSpotPagsanjanFalls => '百胜滩瀑布';
+
+  @override
+  String get travelSpotBanaue => '巴纳威';
+
+  @override
+  String get travelSpotVigan => '美岸';
+
+  @override
+  String get travelSpotMayonVolcano => '马荣火山';
+
+  @override
+  String get travelSpotCoron => '科隆';
+
+  @override
+  String get travelSpotPuertoPrincesa => '公主港';
+
+  @override
+  String get travelSpotTubbataha => '图巴塔哈';
+
+  @override
+  String get travelSpotKawasanFalls => '卡瓦山瀑布';
+
+  @override
+  String get travelSpotChocolateHills => '巧克力山';
+
+  @override
+  String get travelSpotElNido => '爱妮岛';
+
+  @override
+  String get travelSpotWhiteBeach => '白沙滩';
+
+  @override
+  String get travelSpotPukaShellBeach => '普卡贝壳海滩';
+
+  @override
+  String get travelSpotNacpanBeach => '纳克潘海滩';
+
+  @override
+  String get travelSpotEntalulaBeach => '恩塔鲁拉海滩';
+
+  @override
+  String get travelSpotAlonaBeach => '阿罗娜海滩';
+
+  @override
+  String get travelSpotSevenCommandos => '七突击队海滩';
+
+  @override
+  String get travelSpotBigLagoon => '大泻湖';
+
+  @override
+  String get travelSpotSmallLagoon => '小泻湖';
+
+  @override
+  String get travelSpotSecretLagoon => '秘密泻湖';
+
+  @override
+  String get travelSpotKayanganLake => '凯央根湖';
+
+  @override
+  String get travelSpotTwinLagoon => '双子泻湖';
+
+  @override
+  String get travelSpotBarracudaLake => '梭鱼湖';
+
+  @override
+  String get travelSpotMoalboalSardine => '莫阿尔博阿沙丁鱼';
+
+  @override
+  String get travelSpotPanagsamaBeach => '帕纳格萨马海滩';
+
+  @override
+  String get travelSpotCloudNine => '云9';
+
+  @override
+  String get travelSpotRiceTerraces => '科迪勒拉梯田';
+
+  @override
+  String get travelSpotSubterraneanRiver => '地下河公园';
+
+  @override
+  String get travelSpotSanAgustin => '圣奥古斯丁';
+
+  @override
+  String get travelSpotPaoayChurch => '抱威教堂';
+
+  @override
+  String get travelSpotSantaMaria => '圣玛丽亚';
+
+  @override
+  String get travelSpotMiagaoChurch => '米阿高教堂';
+
+  @override
+  String get travelSpotFortSantiago => '圣地亚哥堡';
 }

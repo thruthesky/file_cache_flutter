@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/guide/must_read.screen.dart';
+import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/emergency/embassy.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/emergency/korean_association.screen.dart';
@@ -139,6 +140,13 @@ class HomeHelperMenuSection extends StatelessWidget {
         icon: FontAwesomeIcons.lightBroom,
         label: l10n.helperHouseHelper,
         routeName: HouseHelperScreen.routeName,
+      ),
+      _HelperMenuItem(
+        /// 여행 명소: 우산 해변 아이콘 (Travel Spots: Umbrella beach icon)
+        /// 필리핀 여행 명소 정보
+        icon: FontAwesomeIcons.lightUmbrellaBeach,
+        label: l10n.quickMenuTravelSpots,
+        routeName: TravelSpotsScreen.routeName,
       ),
       _HelperMenuItem(
         /// 초보필독: 별 아이콘 (Must Read: Star icon)

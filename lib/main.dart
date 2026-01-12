@@ -149,12 +149,12 @@ class _MyAppState extends State<MyApp> {
       /// 디버깅: ElNidoScreen 열기 (Debug: Open ElNidoScreen)
       /// 0.5초 후 엘니도 여행 정보 화면으로 이동합니다.
       /// Navigates to El Nido travel info screen after 0.5 seconds.
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (context.mounted) {
-          debugPrint('[DEBUG] _debugTestRun: ElNidoScreen으로 이동합니다.');
-          ElNidoScreen.push(context);
-        }
-      });
+      // Future.delayed(const Duration(milliseconds: 500), () {
+      //   if (context.mounted) {
+      //     debugPrint('[DEBUG] _debugTestRun: ElNidoScreen으로 이동합니다.');
+      //     ElNidoScreen.push(context);
+      //   }
+      // });
     });
   }
 

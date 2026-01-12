@@ -84,43 +84,85 @@ class EmergencyContactsData {
   ];
 
   /// 한인회 연락처 (Korean Association)
+  ///
+  /// 필리핀한인총연합회(UKCA)는 전국 단위 연합회로
+  /// 각 지역 한인회·교민 단체를 아우르는 역할을 합니다.
+  /// UKCA (United Korean Community Association) is a nationwide federation
+  /// that encompasses regional Korean associations and expatriate organizations.
   static const List<ContactItem> koreanAssociation = [
+    /// 필리핀한인총연합회 (UKCA - United Korean Community Association)
+    /// 전국 단위 연합회로 교민 공지, 커뮤니티 정보 제공, 각종 공공사업/행사 지원
     ContactItem(
       icon: FontAwesomeIcons.lightPeopleGroup,
-      name: '필리핀 한인총연합회 (마닐라)',
+      name: '필리핀한인총연합회 (UKCA)',
       phones: ['+63-2-8886-4848', '+63-917-886-4848'],
-      description: '사건사고 긴급: +63-917-886-4848',
+      description:
+          '필리핀 내 여러 지역 한인회·교민 단체를 아우르는 전국 단위 연합회\n'
+          '교민 공지, 커뮤니티 정보 제공, 각종 공공사업/행사 등 지원\n'
+          '긴급연락: +63-917-886-4848',
+      address:
+          'Suite 1104 Antel 2000 Corporate Center,\n121 Valero St., Salcedo Village, Makati City',
+      email: 'ukca@korea.com.ph',
+      isEmergency: true,
     ),
+
+    /// 세부 한인회 (Cebu Korean Association - CKA)
+    /// 코로나 시기 귀국 지원, 세부 지역 경제·투자 관련 대외 협력 등 활동
     ContactItem(
       icon: FontAwesomeIcons.lightUsers,
-      name: '세부 한인회',
+      name: '세부 한인회 (CKA)',
       phones: ['+63-32-505-5761'],
+      description: '세부 지역 한인 커뮤니티 지원\n귀국 지원, 경제·투자 관련 대외 협력 등',
+      address: '2/F, AMON Building, Salinas Drive,\nLahug, Cebu City 6000',
+      email: 'cebukoreanassociation@gmail.com',
     ),
+
+    /// 중부루손한인회 (Korean Community Association of Central Luzon - KCACL)
+    /// 한비(Hanbi) 문화행사, 앙헬레스 Korean Help Desk 설치(치안·신고·안전가이드 지원)
     ContactItem(
       icon: FontAwesomeIcons.lightUsers,
-      name: '중부루손한인회 (클락/앙헬레스)',
+      name: '중부루손한인회 (KCACL)',
       phones: ['+63-45-598-0571', '0917-893-1355'],
+      description: '클락·앙헬레스·팜팡가 지역\n'
+          '한비(Hanbi) 문화행사 및 한인 커뮤니티 결집\n'
+          'Korean Help Desk 운영 (치안·신고·안전가이드 지원)',
     ),
+
+    /// 남부(알라방) 한인회
     ContactItem(
       icon: FontAwesomeIcons.lightUsers,
       name: '남부(알라방) 한인회',
       phones: ['+63-2-7945-0221'],
+      description: '알라방·문틴루파 지역 한인 커뮤니티 지원',
     ),
+
+    /// 바기오 한인회 (북부 루손)
+    /// 바기오 경찰(BCPO)과 한인 안전·복지 협력(MOA) 체결
     ContactItem(
       icon: FontAwesomeIcons.lightUsers,
       name: '바기오 한인회',
       phones: ['+63-74-423-2099'],
+      description: '북부 루손(바기오) 지역\n'
+          '바기오 경찰(BCPO)과 한인 안전·복지 협력(MOA) 체결',
     ),
+
+    /// 다바오 한인회 (Davao Korean Association)
+    /// Facebook 기반 소식/공지 운영
     ContactItem(
       icon: FontAwesomeIcons.lightUsers,
       name: '다바오 한인회',
-      phones: ['0906-310-0409'],
-      description: '카카오톡: pf.kakao.com/_xexczrM',
+      phones: ['+63-82-295-6006', '0906-310-0409'],
+      description: 'Facebook 기반 소식/공지 운영\n카카오톡: pf.kakao.com/_xexczrM',
+      address:
+          '2nd Floor ABC Bldg., Door 1 Acacia St.\n(Fronting STI College) J.P. Laurel Ave.,\nDavao City 8000',
     ),
+
+    /// 한인파출소
     ContactItem(
       icon: FontAwesomeIcons.lightShieldCheck,
       name: '한인파출소',
       phones: ['0915-242-3926'],
+      description: '한인 치안 지원',
     ),
   ];
 

@@ -1529,7 +1529,7 @@ class LoJa extends Lo {
   String get quickMenuTravelSpots => '旅行名所';
 
   @override
-  String get travelSpotsScreenTitle => 'フィリピン旅行名所人気順';
+  String get travelSpotsScreenTitle => 'フィリピン旅行名所';
 
   @override
   String get philippineLifeInfo => 'フィリピン生活情報';
@@ -1875,4 +1875,115 @@ class LoJa extends Lo {
 
   @override
   String get searchResults => '検索結果';
+
+  @override
+  String get travelSpotsSectionAlphabetical => 'フィリピン旅行スポット (五十音順)';
+
+  @override
+  String get travelSpotIntramuros => 'イントラムロス';
+
+  @override
+  String get travelSpotOceanPark => 'オーシャンパーク';
+
+  @override
+  String get travelSpotManilaBay => 'マニラ湾';
+
+  @override
+  String get travelSpotMallOfAsia => 'モール・オブ・アジア';
+
+  @override
+  String get travelSpotPagsanjanFalls => 'パグサンハン滝';
+
+  @override
+  String get travelSpotBanaue => 'バナウェ';
+
+  @override
+  String get travelSpotVigan => 'ビガン';
+
+  @override
+  String get travelSpotMayonVolcano => 'マヨン火山';
+
+  @override
+  String get travelSpotCoron => 'コロン';
+
+  @override
+  String get travelSpotPuertoPrincesa => 'プエルトプリンセサ';
+
+  @override
+  String get travelSpotTubbataha => 'トゥバタハ';
+
+  @override
+  String get travelSpotKawasanFalls => 'カワサン滝';
+
+  @override
+  String get travelSpotChocolateHills => 'チョコレート・ヒルズ';
+
+  @override
+  String get travelSpotElNido => 'エルニド';
+
+  @override
+  String get travelSpotWhiteBeach => 'ホワイトビーチ';
+
+  @override
+  String get travelSpotPukaShellBeach => 'プカシェルビーチ';
+
+  @override
+  String get travelSpotNacpanBeach => 'ナクパンビーチ';
+
+  @override
+  String get travelSpotEntalulaBeach => 'エンタルラビーチ';
+
+  @override
+  String get travelSpotAlonaBeach => 'アロナビーチ';
+
+  @override
+  String get travelSpotSevenCommandos => 'セブンコマンド';
+
+  @override
+  String get travelSpotBigLagoon => 'ビッグラグーン';
+
+  @override
+  String get travelSpotSmallLagoon => 'スモールラグーン';
+
+  @override
+  String get travelSpotSecretLagoon => 'シークレットラグーン';
+
+  @override
+  String get travelSpotKayanganLake => 'カヤンガン湖';
+
+  @override
+  String get travelSpotTwinLagoon => 'ツインラグーン';
+
+  @override
+  String get travelSpotBarracudaLake => 'バラクーダ湖';
+
+  @override
+  String get travelSpotMoalboalSardine => 'モアルボアルサーディン';
+
+  @override
+  String get travelSpotPanagsamaBeach => 'パナグサマビーチ';
+
+  @override
+  String get travelSpotCloudNine => 'クラウドナイン';
+
+  @override
+  String get travelSpotRiceTerraces => 'コルディリェラ棚田';
+
+  @override
+  String get travelSpotSubterraneanRiver => '地下川公園';
+
+  @override
+  String get travelSpotSanAgustin => 'サンアグスティン';
+
+  @override
+  String get travelSpotPaoayChurch => 'パオアイ教会';
+
+  @override
+  String get travelSpotSantaMaria => 'サンタマリア';
+
+  @override
+  String get travelSpotMiagaoChurch => 'ミアガオ教会';
+
+  @override
+  String get travelSpotFortSantiago => 'サンティアゴ要塞';
 }

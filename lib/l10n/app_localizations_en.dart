@@ -1560,7 +1560,7 @@ class LoEn extends Lo {
   String get quickMenuTravelSpots => 'Travel Spots';
 
   @override
-  String get travelSpotsScreenTitle => 'Popular Philippine Travel Spots';
+  String get travelSpotsScreenTitle => 'Philippine Travel Spots';
 
   @override
   String get philippineLifeInfo => 'Philippine Life Info';
@@ -1909,4 +1909,115 @@ class LoEn extends Lo {
 
   @override
   String get searchResults => 'Search Results';
+
+  @override
+  String get travelSpotsSectionAlphabetical => 'Philippine Travel Spots (A-Z)';
+
+  @override
+  String get travelSpotIntramuros => 'Intramuros';
+
+  @override
+  String get travelSpotOceanPark => 'Ocean Park';
+
+  @override
+  String get travelSpotManilaBay => 'Manila Bay';
+
+  @override
+  String get travelSpotMallOfAsia => 'Mall of Asia';
+
+  @override
+  String get travelSpotPagsanjanFalls => 'Pagsanjan Falls';
+
+  @override
+  String get travelSpotBanaue => 'Banaue';
+
+  @override
+  String get travelSpotVigan => 'Vigan';
+
+  @override
+  String get travelSpotMayonVolcano => 'Mayon Volcano';
+
+  @override
+  String get travelSpotCoron => 'Coron';
+
+  @override
+  String get travelSpotPuertoPrincesa => 'Puerto Princesa';
+
+  @override
+  String get travelSpotTubbataha => 'Tubbataha';
+
+  @override
+  String get travelSpotKawasanFalls => 'Kawasan Falls';
+
+  @override
+  String get travelSpotChocolateHills => 'Chocolate Hills';
+
+  @override
+  String get travelSpotElNido => 'El Nido';
+
+  @override
+  String get travelSpotWhiteBeach => 'White Beach';
+
+  @override
+  String get travelSpotPukaShellBeach => 'Puka Shell';
+
+  @override
+  String get travelSpotNacpanBeach => 'Nacpan Beach';
+
+  @override
+  String get travelSpotEntalulaBeach => 'Entalula';
+
+  @override
+  String get travelSpotAlonaBeach => 'Alona Beach';
+
+  @override
+  String get travelSpotSevenCommandos => '7 Commandos';
+
+  @override
+  String get travelSpotBigLagoon => 'Big Lagoon';
+
+  @override
+  String get travelSpotSmallLagoon => 'Small Lagoon';
+
+  @override
+  String get travelSpotSecretLagoon => 'Secret Lagoon';
+
+  @override
+  String get travelSpotKayanganLake => 'Kayangan Lake';
+
+  @override
+  String get travelSpotTwinLagoon => 'Twin Lagoon';
+
+  @override
+  String get travelSpotBarracudaLake => 'Barracuda Lake';
+
+  @override
+  String get travelSpotMoalboalSardine => 'Moalboal Sardine';
+
+  @override
+  String get travelSpotPanagsamaBeach => 'Panagsama';
+
+  @override
+  String get travelSpotCloudNine => 'Cloud 9';
+
+  @override
+  String get travelSpotRiceTerraces => 'Rice Terraces';
+
+  @override
+  String get travelSpotSubterraneanRiver => 'Underground River';
+
+  @override
+  String get travelSpotSanAgustin => 'San Agustin';
+
+  @override
+  String get travelSpotPaoayChurch => 'Paoay Church';
+
+  @override
+  String get travelSpotSantaMaria => 'Santa Maria';
+
+  @override
+  String get travelSpotMiagaoChurch => 'Miagao Church';
+
+  @override
+  String get travelSpotFortSantiago => 'Fort Santiago';
 }

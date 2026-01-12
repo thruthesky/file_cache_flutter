@@ -12,6 +12,7 @@ import 'package:philgo/data/helper_menu.data.dart';
 import 'package:philgo/data/travel_destination_menu.data.dart';
 import 'package:philgo/data/entertainment_menu.data.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/widgets/home/menu/menu.grid_item.dart';
@@ -201,17 +202,27 @@ class _MustReadScreenState extends State<MustReadScreen> {
 
             /// 먹거리, 놀거리, 볼거리 섹션 (Entertainment Section)
             /// EntertainmentMenuData를 사용하여 메뉴 아이템 생성
+            /// 여행 명소를 강조 표시하여 맨 앞에 추가
             MenuGridSection(
               title: l10n.entertainmentSection,
-              children: EntertainmentMenuData.items
-                  .map(
-                    (item) => MenuGridItem(
-                      icon: item.icon,
-                      title: item.getLabel(l10n),
-                      onTap: () => item.push(context),
-                    ),
-                  )
-                  .toList(),
+              children: [
+                /// 여행 명소 (Travel Spots) - 강조 표시
+                /// 다른 메뉴와 구별되도록 tertiaryContainer 배경색 사용
+                MenuGridItem(
+                  icon: FontAwesomeIcons.lightMapLocationDot,
+                  title: l10n.quickMenuTravelSpots,
+                  onTap: () => TravelSpotsScreen.push(context),
+                  backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+                  iconColor: Theme.of(context).colorScheme.onTertiaryContainer,
+                ),
+                ...EntertainmentMenuData.items.map(
+                  (item) => MenuGridItem(
+                    icon: item.icon,
+                    title: item.getLabel(l10n),
+                    onTap: () => item.push(context),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),

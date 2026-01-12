@@ -78,6 +78,8 @@ class KoreanAssociationScreen extends StatelessWidget {
   }
 
   /// 한인총연합회 배너 빌드 (Build Korean Association Banner)
+  /// UKCA (United Korean Community Association) 정보를 표시합니다.
+  /// 전국 단위 연합회로 각 지역 한인회·교민 단체를 아우르는 역할을 합니다.
   Widget _buildAssociationBanner(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -95,6 +97,7 @@ class KoreanAssociationScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
+          /// 배너 헤더 (Banner Header)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -105,7 +108,7 @@ class KoreanAssociationScreen extends StatelessWidget {
               ),
               SizedBox(width: sp.s12),
               Text(
-                '필리핀 한인총연합회',
+                '필리핀한인총연합회 (UKCA)',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onPrimary,
@@ -114,21 +117,97 @@ class KoreanAssociationScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: sp.s8),
+
           /// 배너 설명 텍스트 (Banner Description Text)
-          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+          /// 전국 단위 연합회의 역할 설명
           Text(
-            '필리핀 거주 한인을 위한 각종 지원 및 교류',
+            '필리핀 내 여러 지역 한인회·교민 단체를 아우르는 전국 단위 연합회',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimary.withValues(alpha: 0.9),
             ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: sp.s4),
+
+          /// 주요 활동 요약 (Key Activities Summary)
+          Text(
+            '교민 공지 • 커뮤니티 정보 • 공공사업/행사 지원',
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: scheme.onPrimary.withValues(alpha: 0.8),
+            ),
+            textAlign: TextAlign.center,
           ),
           SizedBox(height: sp.s12),
+
+          /// 주소 정보 (Address Information)
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: sp.s12, vertical: sp.s8),
+            decoration: BoxDecoration(
+              color: scheme.onPrimary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.locationDot,
+                  size: 14,
+                  color: scheme.onPrimary.withValues(alpha: 0.9),
+                ),
+                SizedBox(width: sp.s8),
+                Flexible(
+                  child: Text(
+                    'Suite 1104 Antel 2000 Corporate Center,\n121 Valero St., Salcedo Village, Makati City',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: scheme.onPrimary.withValues(alpha: 0.9),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: sp.s12),
+
+          /// 전화번호 버튼들 (Phone Number Buttons)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildQuickDialButton(context, '+63-2-8886-4848', '대표'),
               _buildQuickDialButton(context, '+63-917-886-4848', '긴급'),
             ],
+          ),
+          SizedBox(height: sp.s8),
+
+          /// 이메일 버튼 (Email Button)
+          InkWell(
+            onTap: () => _sendEmail('ukca@korea.com.ph'),
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: sp.s12, vertical: sp.s8),
+              decoration: BoxDecoration(
+                color: scheme.onPrimary.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.envelope,
+                    size: 14,
+                    color: scheme.onPrimary,
+                  ),
+                  SizedBox(width: sp.s8),
+                  Text(
+                    'ukca@korea.com.ph',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: scheme.onPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

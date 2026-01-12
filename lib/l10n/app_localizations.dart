@@ -3074,7 +3074,7 @@ abstract class Lo {
   /// Travel spots screen title
   ///
   /// In en, this message translates to:
-  /// **'Popular Philippine Travel Spots'**
+  /// **'Philippine Travel Spots'**
   String get travelSpotsScreenTitle;
 
   /// Philippine life information section title in menu
@@ -3760,6 +3760,228 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Search Results'**
   String get searchResults;
+
+  /// Section title for Philippine travel spots sorted alphabetically
+  ///
+  /// In en, this message translates to:
+  /// **'Philippine Travel Spots (A-Z)'**
+  String get travelSpotsSectionAlphabetical;
+
+  /// Intramuros travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Intramuros'**
+  String get travelSpotIntramuros;
+
+  /// Ocean Park Manila travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Ocean Park'**
+  String get travelSpotOceanPark;
+
+  /// Manila Bay travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Manila Bay'**
+  String get travelSpotManilaBay;
+
+  /// Mall of Asia travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Mall of Asia'**
+  String get travelSpotMallOfAsia;
+
+  /// Pagsanjan Falls travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Pagsanjan Falls'**
+  String get travelSpotPagsanjanFalls;
+
+  /// Banaue Rice Terraces travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Banaue'**
+  String get travelSpotBanaue;
+
+  /// Vigan historic city travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Vigan'**
+  String get travelSpotVigan;
+
+  /// Mayon Volcano travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Mayon Volcano'**
+  String get travelSpotMayonVolcano;
+
+  /// Coron travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Coron'**
+  String get travelSpotCoron;
+
+  /// Puerto Princesa travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Puerto Princesa'**
+  String get travelSpotPuertoPrincesa;
+
+  /// Tubbataha Reef travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Tubbataha'**
+  String get travelSpotTubbataha;
+
+  /// Kawasan Falls travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Kawasan Falls'**
+  String get travelSpotKawasanFalls;
+
+  /// Chocolate Hills travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Chocolate Hills'**
+  String get travelSpotChocolateHills;
+
+  /// El Nido travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'El Nido'**
+  String get travelSpotElNido;
+
+  /// White Beach travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'White Beach'**
+  String get travelSpotWhiteBeach;
+
+  /// Puka Shell Beach travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Puka Shell'**
+  String get travelSpotPukaShellBeach;
+
+  /// Nacpan Beach travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Nacpan Beach'**
+  String get travelSpotNacpanBeach;
+
+  /// Entalula Beach travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Entalula'**
+  String get travelSpotEntalulaBeach;
+
+  /// Alona Beach travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Alona Beach'**
+  String get travelSpotAlonaBeach;
+
+  /// Seven Commandos Beach travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'7 Commandos'**
+  String get travelSpotSevenCommandos;
+
+  /// Big Lagoon travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Big Lagoon'**
+  String get travelSpotBigLagoon;
+
+  /// Small Lagoon travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Small Lagoon'**
+  String get travelSpotSmallLagoon;
+
+  /// Secret Lagoon travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Secret Lagoon'**
+  String get travelSpotSecretLagoon;
+
+  /// Kayangan Lake travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Kayangan Lake'**
+  String get travelSpotKayanganLake;
+
+  /// Twin Lagoon travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Twin Lagoon'**
+  String get travelSpotTwinLagoon;
+
+  /// Barracuda Lake travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Barracuda Lake'**
+  String get travelSpotBarracudaLake;
+
+  /// Moalboal Sardine Run travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Moalboal Sardine'**
+  String get travelSpotMoalboalSardine;
+
+  /// Panagsama Beach travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Panagsama'**
+  String get travelSpotPanagsamaBeach;
+
+  /// Cloud 9 travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud 9'**
+  String get travelSpotCloudNine;
+
+  /// Rice Terraces of the Philippine Cordilleras travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Rice Terraces'**
+  String get travelSpotRiceTerraces;
+
+  /// Puerto-Princesa Subterranean River National Park travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Underground River'**
+  String get travelSpotSubterraneanRiver;
+
+  /// San Agustin Church travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'San Agustin'**
+  String get travelSpotSanAgustin;
+
+  /// Paoay Church travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Paoay Church'**
+  String get travelSpotPaoayChurch;
+
+  /// Santa Maria Church travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Santa Maria'**
+  String get travelSpotSantaMaria;
+
+  /// Miagao Church travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Miagao Church'**
+  String get travelSpotMiagaoChurch;
+
+  /// Fort Santiago travel spot
+  ///
+  /// In en, this message translates to:
+  /// **'Fort Santiago'**
+  String get travelSpotFortSantiago;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

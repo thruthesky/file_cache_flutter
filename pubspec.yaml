@@ -77,6 +77,7 @@ flutter:
     - assets/img/logo/philgo_wide_logo_icon.png
     - assets/img/logo/philgo_wide_logo.png
     - shorebird.yaml
+    - lib/philgo_files/travel/travel_spots.json
 
 # 명령어: dart run flutter_native_splash:create
 flutter_native_splash:

@@ -2024,7 +2024,7 @@
   "@quickMenuTravelSpots": {
     "description": "Quick menu travel spots label"
   },
-  "travelSpotsScreenTitle": "필리핀 여행 명소 인기순",
+  "travelSpotsScreenTitle": "필리핀 여행 명소",
   "@travelSpotsScreenTitle": {
     "description": "Travel spots screen title"
   },
@@ -2483,5 +2483,153 @@
   "searchResults": "검색 결과",
   "@searchResults": {
     "description": "Section title for search results"
+  },
+  "travelSpotsSectionAlphabetical": "필리핀 여행 명소 (가나다 순)",
+  "@travelSpotsSectionAlphabetical": {
+    "description": "Section title for Philippine travel spots sorted alphabetically in Korean"
+  },
+  "travelSpotIntramuros": "인트라무로스",
+  "@travelSpotIntramuros": {
+    "description": "Intramuros travel spot"
+  },
+  "travelSpotOceanPark": "오션파크",
+  "@travelSpotOceanPark": {
+    "description": "Ocean Park Manila travel spot"
+  },
+  "travelSpotManilaBay": "마닐라베이",
+  "@travelSpotManilaBay": {
+    "description": "Manila Bay travel spot"
+  },
+  "travelSpotMallOfAsia": "몰오브아시아",
+  "@travelSpotMallOfAsia": {
+    "description": "Mall of Asia travel spot"
+  },
+  "travelSpotPagsanjanFalls": "팍상한폭포",
+  "@travelSpotPagsanjanFalls": {
+    "description": "Pagsanjan Falls travel spot"
+  },
+  "travelSpotBanaue": "바나우에",
+  "@travelSpotBanaue": {
+    "description": "Banaue Rice Terraces travel spot"
+  },
+  "travelSpotVigan": "비간",
+  "@travelSpotVigan": {
+    "description": "Vigan historic city travel spot"
+  },
+  "travelSpotMayonVolcano": "마욘 화산",
+  "@travelSpotMayonVolcano": {
+    "description": "Mayon Volcano travel spot"
+  },
+  "travelSpotCoron": "코론",
+  "@travelSpotCoron": {
+    "description": "Coron travel spot"
+  },
+  "travelSpotPuertoPrincesa": "푸에르토",
+  "@travelSpotPuertoPrincesa": {
+    "description": "Puerto Princesa travel spot"
+  },
+  "travelSpotTubbataha": "투바타하",
+  "@travelSpotTubbataha": {
+    "description": "Tubbataha Reef travel spot"
+  },
+  "travelSpotKawasanFalls": "카와산 폭포",
+  "@travelSpotKawasanFalls": {
+    "description": "Kawasan Falls travel spot"
+  },
+  "travelSpotChocolateHills": "초콜릿 힐",
+  "@travelSpotChocolateHills": {
+    "description": "Chocolate Hills travel spot"
+  },
+  "travelSpotElNido": "엘니도",
+  "@travelSpotElNido": {
+    "description": "El Nido travel spot"
+  },
+  "travelSpotWhiteBeach": "화이트비치",
+  "@travelSpotWhiteBeach": {
+    "description": "White Beach travel spot"
+  },
+  "travelSpotPukaShellBeach": "푸카셸비치",
+  "@travelSpotPukaShellBeach": {
+    "description": "Puka Shell Beach travel spot"
+  },
+  "travelSpotNacpanBeach": "나크판비치",
+  "@travelSpotNacpanBeach": {
+    "description": "Nacpan Beach travel spot"
+  },
+  "travelSpotEntalulaBeach": "엔탈룰라비치",
+  "@travelSpotEntalulaBeach": {
+    "description": "Entalula Beach travel spot"
+  },
+  "travelSpotAlonaBeach": "알로나비치",
+  "@travelSpotAlonaBeach": {
+    "description": "Alona Beach travel spot"
+  },
+  "travelSpotSevenCommandos": "세븐코만도스",
+  "@travelSpotSevenCommandos": {
+    "description": "Seven Commandos Beach travel spot"
+  },
+  "travelSpotBigLagoon": "빅라군",
+  "@travelSpotBigLagoon": {
+    "description": "Big Lagoon travel spot"
+  },
+  "travelSpotSmallLagoon": "스몰라군",
+  "@travelSpotSmallLagoon": {
+    "description": "Small Lagoon travel spot"
+  },
+  "travelSpotSecretLagoon": "시크릿라군",
+  "@travelSpotSecretLagoon": {
+    "description": "Secret Lagoon travel spot"
+  },
+  "travelSpotKayanganLake": "카양안호수",
+  "@travelSpotKayanganLake": {
+    "description": "Kayangan Lake travel spot"
+  },
+  "travelSpotTwinLagoon": "트윈라군",
+  "@travelSpotTwinLagoon": {
+    "description": "Twin Lagoon travel spot"
+  },
+  "travelSpotBarracudaLake": "바라쿠다호수",
+  "@travelSpotBarracudaLake": {
+    "description": "Barracuda Lake travel spot"
+  },
+  "travelSpotMoalboalSardine": "모알보알사딘",
+  "@travelSpotMoalboalSardine": {
+    "description": "Moalboal Sardine Run travel spot"
+  },
+  "travelSpotPanagsamaBeach": "파낙사마비치",
+  "@travelSpotPanagsamaBeach": {
+    "description": "Panagsama Beach travel spot"
+  },
+  "travelSpotCloudNine": "클라우드나인",
+  "@travelSpotCloudNine": {
+    "description": "Cloud 9 travel spot"
+  },
+  "travelSpotRiceTerraces": "코르디예라",
+  "@travelSpotRiceTerraces": {
+    "description": "Rice Terraces of the Philippine Cordilleras travel spot"
+  },
+  "travelSpotSubterraneanRiver": "지하강공원",
+  "@travelSpotSubterraneanRiver": {
+    "description": "Puerto-Princesa Subterranean River National Park travel spot"
+  },
+  "travelSpotSanAgustin": "산아구스틴",
+  "@travelSpotSanAgustin": {
+    "description": "San Agustin Church travel spot"
+  },
+  "travelSpotPaoayChurch": "파오아이교회",
+  "@travelSpotPaoayChurch": {
+    "description": "Paoay Church travel spot"
+  },
+  "travelSpotSantaMaria": "산타마리아",
+  "@travelSpotSantaMaria": {
+    "description": "Santa Maria Church travel spot"
+  },
+  "travelSpotMiagaoChurch": "미아가오교회",
+  "@travelSpotMiagaoChurch": {
+    "description": "Miagao Church travel spot"
+  },
+  "travelSpotFortSantiago": "산티아고요새",
+  "@travelSpotFortSantiago": {
+    "description": "Fort Santiago travel spot"
   }
 }
