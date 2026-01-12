@@ -269,7 +269,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                 ),
                 child: Text(
                   exchangeData.date,
-                  style: theme.textTheme.labelSmall?.copyWith(
+                  style: theme.textTheme.labelMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
@@ -380,7 +380,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                       ),
                       Text(
                         baseCurrencyName,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
@@ -456,7 +456,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                         flex: 3,
                         child: Text(
                           targetName,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                           maxLines: 1,
@@ -642,7 +642,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                         ),
                         Text(
                           name,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -673,7 +673,7 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
     return Center(
       child: Text(
         '데이터 출처: Frankfurter API (유럽중앙은행)',
-        style: theme.textTheme.bodySmall?.copyWith(
+        style: theme.textTheme.bodyMedium?.copyWith(
           color: scheme.onSurfaceVariant,
         ),
       ),

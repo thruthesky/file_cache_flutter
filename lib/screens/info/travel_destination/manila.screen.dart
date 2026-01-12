@@ -663,7 +663,7 @@ class _ManilaScreenState extends State<ManilaScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -737,7 +737,7 @@ class _ManilaScreenState extends State<ManilaScreen> {
               /// 설명 (Description)
               Text(
                 attraction.description,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -753,7 +753,7 @@ class _ManilaScreenState extends State<ManilaScreen> {
                     children: [
                       Text(
                         '•',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -762,7 +762,7 @@ class _ManilaScreenState extends State<ManilaScreen> {
                       Expanded(
                         child: Text(
                           feature,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -795,7 +795,7 @@ class _ManilaScreenState extends State<ManilaScreen> {
                       Expanded(
                         child: Text(
                           attraction.transportInfo!,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSecondaryContainer,
                             fontWeight: FontWeight.w500,
                           ),
@@ -928,7 +928,7 @@ class _ManilaScreenState extends State<ManilaScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         note.description,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onErrorContainer.withValues(alpha: 0.8),
                           height: 1.4,
                         ),

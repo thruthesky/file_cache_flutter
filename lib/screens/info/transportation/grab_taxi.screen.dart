@@ -257,7 +257,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -381,7 +381,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                   Expanded(
                     child: Text(
                       point,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -468,7 +468,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                 Expanded(
                   child: Text(
                     '주의: GrabTaxi는 기사가 미터기를 켜지 않으려 하거나 흥정을 시도할 수 있어, 초행길 여행자에게는 GrabCar를 강력 추천합니다!',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onErrorContainer,
                       fontWeight: FontWeight.w500,
                     ),
@@ -535,7 +535,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                             ),
                             child: Text(
                               tag,
-                              style: theme.textTheme.labelSmall?.copyWith(
+                              style: theme.textTheme.labelMedium?.copyWith(
                                 color: scheme.onPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -552,7 +552,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
           const SizedBox(height: 12),
           Text(
             description,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
             ),
           ),
@@ -565,7 +565,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
             ),
             child: Text(
               '💰 $fare',
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onSecondaryContainer,
                 fontWeight: FontWeight.w500,
               ),
@@ -596,7 +596,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
             ),
             child: Text(
               '필리핀의 교통 체증은 상상을 초월합니다. 출퇴근 시간(7am~9am, 5pm~8pm)이나 비가 올 때는 요금이 1.5배~2배까지 오를 수 있습니다. (Surge Pricing)',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
               ),
             ),
@@ -660,7 +660,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                 const SizedBox(height: 8),
                 Text(
                   "'Skyway'나 'NAIAX' 등 고속도로를 이용하면 통행료는 승객 부담입니다. (기사에게 현금으로 주거나, 기사가 낸 뒤 하차 시 청구함)",
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -695,7 +695,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
             flex: 2,
             child: Text(
               route,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurface,
               ),
             ),
@@ -703,7 +703,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
           Expanded(
             child: Text(
               price,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: FontWeight.w600,
               ),
@@ -714,7 +714,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
             const SizedBox(width: 8),
             Text(
               krw,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
             ),
@@ -813,7 +813,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                   ),
                   child: Text(
                     tag,
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       color: scheme.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -828,13 +828,13 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
             children: [
               Text(
                 '✅',
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   pros,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -847,13 +847,13 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
             children: [
               Text(
                 '⚠️',
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   cons,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -970,7 +970,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
                 children: [
@@ -1073,7 +1073,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -1107,7 +1107,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
               children: [
                 Text(
                   '마닐라 공항(NAIA)은 터미널마다 그랩 부스(Green Booth) 위치가 다릅니다. 기둥 번호(Pillar Number)를 기사에게 메시지로 보내주면 빨리 만날 수 있어요.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -1120,7 +1120,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                   ),
                   child: Text(
                     '예: "I am at Bay 8, Pillar 12"',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSecondaryContainer,
                       fontWeight: FontWeight.w600,
                       fontStyle: FontStyle.italic,
@@ -1141,7 +1141,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
               children: [
                 Text(
                   '차가 많이 막히거나 거리가 멀면 기사가 채팅으로 "팁이나 추가 요금(50~100페소)을 더 달라"고 요구할 때가 있습니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -1154,7 +1154,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                   ),
                   child: Text(
                     'GrabCar는 확정 요금이 원칙입니다. 거절하고 취소해도 되지만, 차가 너무 안 잡히는 급한 상황이라면... 판단은 여행자의 몫입니다. (공식적으로는 불법입니다.)',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                     ),
                   ),
@@ -1173,7 +1173,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
               children: [
                 Text(
                   '기사가 오지 않고 "손님이 취소해달라"고 요청하는 경우, 내가 취소하면 수수료가 부과될 수 있습니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -1186,7 +1186,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                   ),
                   child: Text(
                     '이럴 땐 취소 사유를 "Driver asked to cancel (기사가 취소 요청함)"로 선택해야 수수료를 물지 않습니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onPrimaryContainer,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1203,7 +1203,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
             title: '매너 팁',
             content: Text(
               '필수는 아니지만, 짐을 들어주거나 친절했다면 20~50페소 정도 팁을 주는 것이 관례입니다. 앱 내에서 결제 후 팁 추가도 가능합니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
             ),
@@ -1326,7 +1326,7 @@ class _GrabTaxiScreenState extends State<GrabTaxiScreen> {
                   if (subtitle != null)
                     Text(
                       subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w500,
                       ),

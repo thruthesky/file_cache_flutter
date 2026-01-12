@@ -339,17 +339,22 @@ class _HolidayScreenState extends State<HolidayScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// 공지 카드 타이틀 (Notice Card Title)
+                /// titleSmall → titleMedium으로 변경하여 가독성 향상
                 Text(
                   '공식 발표 기준',
-                  style: theme.textTheme.titleSmall?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: scheme.primary,
                   ),
                 ),
                 SizedBox(height: sp.s4),
+
+                /// 공지 카드 설명 (Notice Card Description)
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '필리핀 정부가 2025년 9월 3일 Proclamation No. 1006을 통해 발표한 2026년 공식 공휴일 목록을 기반으로 작성되었습니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                     height: 1.4,
                   ),
@@ -472,11 +477,13 @@ class _HolidayScreenState extends State<HolidayScreen> {
               ),
               child: Row(
                 children: [
+                  /// 휴일 날짜 (Holiday Date)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   SizedBox(
                     width: 70,
                     child: Text(
                       holiday.date,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
@@ -491,9 +498,11 @@ class _HolidayScreenState extends State<HolidayScreen> {
                         color: _getDayColor(holiday.day),
                         borderRadius: BorderRadius.circular(4),
                       ),
+                      /// 휴일 요일 (Holiday Day of Week)
+                      /// labelSmall → labelMedium으로 변경하여 가독성 향상
                       child: Text(
                         holiday.day,
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        style: theme.textTheme.labelMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -501,10 +510,13 @@ class _HolidayScreenState extends State<HolidayScreen> {
                     ),
                   ),
                   SizedBox(width: sp.s8),
+
+                  /// 휴일 명칭 (Holiday Name)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   Expanded(
                     child: Text(
                       holiday.name,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -548,9 +560,11 @@ class _HolidayScreenState extends State<HolidayScreen> {
           FaIcon(FontAwesomeIcons.lightMosque, size: 16, color: Colors.amber.shade700),
           SizedBox(width: sp.s8),
           Expanded(
+            /// 이슬람 휴일 안내 (Islamic Holiday Note)
+            /// labelSmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               '이슬람력에 따라 변동하는 Eid ul-Fitr 및 Eid ul-Adha는 추후 정부 발표 예정입니다.',
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
             ),
@@ -597,17 +611,22 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 정보 카드 타이틀 (Info Card Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       item.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
+
+                    /// 정보 카드 설명 (Info Card Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -644,9 +663,12 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 children: [
                   FaIcon(FontAwesomeIcons.lightChurch, size: 16, color: scheme.tertiary),
                   SizedBox(width: sp.s8),
+
+                  /// 종교 관련 휴일 타이틀 (Religious Holidays Title)
+                  /// titleSmall → titleMedium으로 변경하여 가독성 향상
                   Text(
                     '종교 관련 휴일',
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurface,
                     ),
@@ -654,9 +676,12 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 ],
               ),
               SizedBox(height: sp.s8),
+
+              /// 종교 관련 휴일 설명 (Religious Holidays Description)
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               Text(
                 '• 가톨릭 기반 공휴일(Holy Week, 성사월 축일)은 전국적으로 중요성을 지닙니다.\n• 이슬람 공휴일(Eid ul-Fitr, Eid ul-Adha)의 2026년 정확한 날짜는 이슬람력 기준 발표 예정입니다.',
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -680,9 +705,12 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 children: [
                   FaIcon(FontAwesomeIcons.lightMapLocationDot, size: 16, color: scheme.tertiary),
                   SizedBox(width: sp.s8),
+
+                  /// 지역별 휴일 타이틀 (Regional Holidays Title)
+                  /// titleSmall → titleMedium으로 변경하여 가독성 향상
                   Text(
                     '지역별 휴일',
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurface,
                     ),
@@ -690,9 +718,12 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 ],
               ),
               SizedBox(height: sp.s8),
+
+              /// 지역별 휴일 설명 (Regional Holidays Description)
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               Text(
                 '일부 지역 단위 공휴일(도시/성립 기념일)은 해당 지역 주민에게만 유효합니다.',
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
               ),
@@ -715,6 +746,8 @@ class _HolidayScreenState extends State<HolidayScreen> {
 
     return Row(
       children: [
+        /// 지역 도시명 배지 (Regional City Badge)
+        /// labelSmall → labelMedium으로 변경하여 가독성 향상
         Container(
           padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
           decoration: BoxDecoration(
@@ -723,16 +756,19 @@ class _HolidayScreenState extends State<HolidayScreen> {
           ),
           child: Text(
             city,
-            style: theme.textTheme.labelSmall?.copyWith(
+            style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: scheme.onSecondaryContainer,
             ),
           ),
         ),
         SizedBox(width: sp.s8),
+
+        /// 지역 휴일 날짜 (Regional Holiday Date)
+        /// labelSmall → bodyMedium으로 변경하여 가독성 향상
         Text(
           '$name - $date (추정)',
-          style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant),
+          style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
         ),
       ],
     );
@@ -769,17 +805,22 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 행사 타이틀 (Event Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       event.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
+
+                    /// 행사 설명 (Event Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       event.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),

@@ -329,9 +329,10 @@ class _ETravelScreenState extends State<ETravelScreen> {
             ),
           ),
           SizedBox(height: sp.s16),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             'QR 코드 한 장으로 입국 심사와 검사가 간소화됩니다',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimary.withValues(alpha: 0.85),
               fontStyle: FontStyle.italic,
             ),
@@ -435,9 +436,10 @@ class _ETravelScreenState extends State<ETravelScreen> {
                           color: scheme.primary,
                         ),
                         SizedBox(width: sp.s8),
+                        /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                         Text(
                           '등록은 무료이며, 공식 사이트에서만 가능합니다:',
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurface,
                             fontWeight: FontWeight.w500,
                           ),
@@ -474,9 +476,10 @@ class _ETravelScreenState extends State<ETravelScreen> {
                     Text('‼️', style: theme.textTheme.bodyMedium),
                     SizedBox(width: sp.s8),
                     Expanded(
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       child: Text(
                         '결제 또는 수수료 요구 사이트는 사기입니다. 절대 입력하지 마세요.',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.error,
                           fontWeight: FontWeight.w600,
                         ),
@@ -539,9 +542,10 @@ class _ETravelScreenState extends State<ETravelScreen> {
               _buildCheckItem(context, '한국인 포함 외국인'),
               _buildCheckItem(context, '영유아, 아동 포함 전원 등록 필요'),
               SizedBox(height: sp.s12),
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               Text(
                 '※ 외교관, 일부 공식 비자 소지자는 예외일 수 있으나, 대부분의 여행객은 반드시 등록해야 합니다.',
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
                 ),
@@ -693,9 +697,10 @@ class _ETravelScreenState extends State<ETravelScreen> {
                 ),
               ),
               SizedBox(height: sp.s12),
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               Text(
                 '(인터넷 연결 필요)',
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
               ),
@@ -882,9 +887,10 @@ class _ETravelScreenState extends State<ETravelScreen> {
                 ),
               ),
               SizedBox(height: sp.s8),
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               Text(
                 '👉 빨간 QR이라도 입국 자체가 거부되는 것은 아닙니다.',
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
                 ),
@@ -964,9 +970,10 @@ class _ETravelScreenState extends State<ETravelScreen> {
                     Text('💡', style: theme.textTheme.bodyMedium),
                     SizedBox(width: sp.s8),
                     Expanded(
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       child: Text(
                         '오프라인 상태에서도 제시할 수 있도록 스크린샷 저장 권장.',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface,
                           fontWeight: FontWeight.w500,
                         ),

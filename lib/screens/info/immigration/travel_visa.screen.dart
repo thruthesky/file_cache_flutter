@@ -456,9 +456,10 @@ class _TravelVisaScreenState extends State<TravelVisaScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -720,10 +721,11 @@ class _TravelVisaScreenState extends State<TravelVisaScreen> {
               color: scheme.secondaryContainer,
               shape: BoxShape.circle,
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             child: Center(
               child: Text(
                 '$number',
-                style: theme.textTheme.labelSmall?.copyWith(
+                style: theme.textTheme.labelMedium?.copyWith(
                   color: scheme.onSecondaryContainer,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1130,9 +1132,10 @@ class _TravelVisaScreenState extends State<TravelVisaScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),

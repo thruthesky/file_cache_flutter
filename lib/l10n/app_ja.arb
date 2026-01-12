@@ -1980,6 +1980,14 @@
   "helperHouseHelper": "ハウスヘルパー",
   "helperDriver": "ドライバー",
   "helperTutor": "家庭教師",
+  "helperFindManpower": "人材派遣会社の探し方",
+  "helperDoleVerify": "DOLE登録確認",
+  "helperWebSearch": "Web検索",
+  "helperOnlinePlatform": "オンラインプラットフォーム",
+  "helperFacebookGroup": "Facebookグループ",
+  "helperJobSite": "求人サイト",
+  "helperAgencyContact": "主要会社連絡先",
+  "helperChecklistTitle": "会社選定チェックリスト",
   "comingSoon": "準備中",
   "entertainmentSection": "グルメ・遊び・観光",
   "entertainmentGolf": "ゴルフ",
@@ -1990,5 +1998,7 @@
   "entertainmentRestaurant": "グルメ",
   "entertainmentWaterSports": "マリンスポーツ",
   "entertainmentIslandTour": "アイランドツアー",
-  "entertainmentFestival": "フェスティバル"
+  "entertainmentFestival": "フェスティバル",
+  "quickPostEventMessage": "ポイントイベント！投稿してランダムポイントをゲット~",
+  "quickPostDefaultMessage": "今日のフィリピン生活はいかがですか？"
 }

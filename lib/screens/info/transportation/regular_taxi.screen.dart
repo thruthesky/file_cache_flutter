@@ -541,7 +541,7 @@ class _RegularTaxiScreenState extends State<RegularTaxiScreen> {
                             ),
                             child: Text(
                               '중요',
-                              style: theme.textTheme.labelSmall?.copyWith(
+                              style: theme.textTheme.labelMedium?.copyWith(
                                 color: scheme.onError,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
@@ -554,7 +554,7 @@ class _RegularTaxiScreenState extends State<RegularTaxiScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -690,7 +690,7 @@ class _RegularTaxiScreenState extends State<RegularTaxiScreen> {
                           ),
                           child: Text(
                             statusText,
-                            style: theme.textTheme.labelSmall?.copyWith(
+                            style: theme.textTheme.labelMedium?.copyWith(
                               color: statusColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -701,7 +701,7 @@ class _RegularTaxiScreenState extends State<RegularTaxiScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       region.note,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -765,7 +765,7 @@ class _RegularTaxiScreenState extends State<RegularTaxiScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         tip.description,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onTertiaryContainer.withValues(
                             alpha: 0.8,
                           ),

@@ -83,6 +83,13 @@ class HouseHelperScreen extends StatelessWidget {
                 .slideX(begin: -0.05, end: 0),
             SizedBox(height: sp.s16),
 
+            /// 맨파워 업체 찾는 방법 섹션 (Find Manpower Section)
+            _buildFindManpowerSection(context, theme, scheme, sp)
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 120.ms)
+                .slideX(begin: -0.05, end: 0),
+            SizedBox(height: sp.s16),
+
             /// 1) 적용 범위 섹션 (Scope Section)
             _buildScopeSection(context, theme, scheme, sp)
                 .animate()
@@ -237,11 +244,11 @@ class HouseHelperScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Flexible(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     'Republic Act No. 10361 (Batas Kasambahay)',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 11,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -312,9 +319,10 @@ class HouseHelperScreen extends StatelessWidget {
                         color: scheme.tertiary,
                       ),
                     ),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       '맨파워 업체를 통한 서비스 이용',
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
@@ -415,9 +423,10 @@ class HouseHelperScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '직접 고용 시 3대 보험 미가입으로 인한 형사책임 등 법적 문제가 발생할 수 있습니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onErrorContainer,
                       height: 1.4,
                     ),
@@ -458,9 +467,450 @@ class HouseHelperScreen extends StatelessWidget {
         ),
         SizedBox(width: sp.s8),
         Expanded(
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           child: Text(
             text,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 맨파워 업체 찾는 방법 섹션 빌더 (Find Manpower Section Builder)
+  ///
+  /// 맨파워 업체를 찾는 4가지 방법과 주요 업체 연락처, 체크리스트를 제공합니다.
+  /// Provides 4 methods to find manpower agencies, major agency contacts, and checklist.
+  Widget _buildFindManpowerSection(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp,
+  ) {
+    return _buildInfoCard(
+      theme,
+      scheme,
+      sp,
+      borderColor: scheme.tertiary.withValues(alpha: 0.3),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// 섹션 타이틀 (Section Title)
+          _buildSectionTitle(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightMagnifyingGlass,
+            number: '',
+            title: '맨파워 업체 찾는 방법',
+            iconColor: scheme.tertiary,
+          ),
+          SizedBox(height: sp.s16),
+
+          /// DOLE 등록 확인 안내 (DOLE Verification Notice)
+          Container(
+            padding: EdgeInsets.all(sp.s12),
+            decoration: BoxDecoration(
+              color: scheme.tertiaryContainer.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightPhoneVolume,
+                  size: 16,
+                  color: scheme.tertiary,
+                ),
+                SizedBox(width: sp.s12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DOLE 라이센스 확인',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: scheme.tertiary,
+                        ),
+                      ),
+                      SizedBox(height: sp.s4),
+                      Text(
+                        '전화: (02) 8527-8000',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                      Text(
+                        '라이센스 없이 운영하는 업체는 불법입니다.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.error,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: sp.s16),
+
+          /// 4가지 검색 방법 (4 Search Methods)
+          Text(
+            '업체 검색 방법',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: scheme.onSurface,
+            ),
+          ),
+          SizedBox(height: sp.s12),
+
+          /// (1) 웹 검색 (Web Search)
+          _buildSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightGlobe,
+            title: '웹 검색',
+            content: 'Google에서 "maid agency Philippines", "kasambahay agency Metro Manila" 등으로 검색 후 DOLE 등록 여부 확인',
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (2) 온라인 플랫폼 (Online Platforms)
+          _buildSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightDesktop,
+            title: '온라인 플랫폼',
+            content: 'MaidProvider.ph, MyKasambahay.com, MaidsPlus.ph 등 DOLE 등록 업체 웹사이트 직접 방문',
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (3) Facebook 그룹 (Facebook Groups)
+          _buildSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.facebook,
+            title: 'Facebook 그룹',
+            content: '"Kasambahay hiring Philippines" 검색. 단, 개인거래는 리스크가 높으므로 DOLE 등록 업체 우선 이용 권장',
+            isWarning: true,
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (4) 구인 사이트 (Job Sites)
+          _buildSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightBriefcase,
+            title: '구인 사이트',
+            content: 'Jobstreet (ph.jobstreet.com), Indeed Philippines (ph.indeed.com)에서 "Kasambahay" 검색',
+          ),
+          SizedBox(height: sp.s20),
+
+          /// 주요 업체 연락처 (Major Agency Contacts)
+          Text(
+            '주요 DOLE 등록 업체',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: scheme.onSurface,
+            ),
+          ),
+          SizedBox(height: sp.s12),
+
+          /// 업체 카드들 (Agency Cards)
+          _buildAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'MaidProvider.ph',
+            license: 'DOLE M-24-04-034',
+            feature: '16년 경력, 심리검사 포함',
+            contact: 'Pasay City, 월-토 8:30-18:30',
+            url: 'https://www.maidprovider.ph/',
+          ),
+          SizedBox(height: sp.s8),
+          _buildAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'Charmonde',
+            license: 'DOLE IVA-RPO-15-03-001',
+            feature: 'SEC 등록 법인',
+            contact: '전화: (02) 212-9459',
+            url: 'http://charmondecanemanpower.com/',
+          ),
+          SizedBox(height: sp.s8),
+          _buildAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'MyKasambahay',
+            license: 'SEC 등록, DOLE 라이센스',
+            feature: 'Luzon 지역 중심',
+            contact: '웹사이트 문의',
+            url: 'https://mykasambahay.com/',
+          ),
+          SizedBox(height: sp.s20),
+
+          /// 업체 선정 체크리스트 (Agency Selection Checklist)
+          Container(
+            padding: EdgeInsets.all(sp.s16),
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.lightClipboardCheck,
+                      size: 16,
+                      color: scheme.primary,
+                    ),
+                    SizedBox(width: sp.s8),
+                    Text(
+                      '업체 선정 체크리스트',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: scheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: sp.s12),
+                _buildChecklistItem(theme, scheme, sp, 'DOLE 라이센스 보유 여부 확인'),
+                SizedBox(height: sp.s4),
+                _buildChecklistItem(theme, scheme, sp, 'SEC 등록 여부 확인'),
+                SizedBox(height: sp.s4),
+                _buildChecklistItem(theme, scheme, sp, '사무실 실제 존재 여부'),
+                SizedBox(height: sp.s4),
+                _buildChecklistItem(theme, scheme, sp, '온라인 리뷰 확인 (Google, Facebook)'),
+                SizedBox(height: sp.s4),
+                _buildChecklistItem(theme, scheme, sp, '계약서 DOLE 규정 준수 여부'),
+                SizedBox(height: sp.s4),
+                _buildChecklistItem(theme, scheme, sp, '교체/환급 정책 확인'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 검색 방법 카드 빌더 (Search Method Card Builder)
+  Widget _buildSearchMethodCard(
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp, {
+    required IconData icon,
+    required String title,
+    required String content,
+    bool isWarning = false,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(sp.s12),
+      decoration: BoxDecoration(
+        color: isWarning
+            ? scheme.errorContainer.withValues(alpha: 0.15)
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
+        border: isWarning
+            ? Border.all(color: scheme.error.withValues(alpha: 0.3))
+            : null,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: isWarning
+                  ? scheme.error.withValues(alpha: 0.15)
+                  : scheme.tertiary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: FaIcon(
+                icon,
+                size: 14,
+                color: isWarning ? scheme.error : scheme.tertiary,
+              ),
+            ),
+          ),
+          SizedBox(width: sp.s12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isWarning ? scheme.error : scheme.onSurface,
+                  ),
+                ),
+                SizedBox(height: sp.s4),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                Text(
+                  content,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.8),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 업체 카드 빌더 (Agency Card Builder)
+  Widget _buildAgencyCard(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp, {
+    required String name,
+    required String license,
+    required String feature,
+    required String contact,
+    required String url,
+  }) {
+    return InkWell(
+      onTap: () => _launchUrl(url),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: EdgeInsets.all(sp.s12),
+        decoration: BoxDecoration(
+          color: scheme.primary.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: scheme.primary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.lightBuilding,
+                  size: 18,
+                  color: scheme.primary,
+                ),
+              ),
+            ),
+            SizedBox(width: sp.s12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: scheme.primary,
+                          ),
+                        ),
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.lightArrowUpRightFromSquare,
+                        size: 12,
+                        color: scheme.primary,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: sp.s4),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: sp.s8,
+                      vertical: sp.s4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: scheme.tertiary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    /// labelSmall → labelMedium으로 변경하여 가독성 향상
+                    child: Text(
+                      license,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: scheme.tertiary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: sp.s4),
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                  Text(
+                    '$feature · $contact',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 체크리스트 아이템 빌더 (Checklist Item Builder)
+  Widget _buildChecklistItem(
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp,
+    String text,
+  ) {
+    return Row(
+      children: [
+        Container(
+          width: 18,
+          height: 18,
+          decoration: BoxDecoration(
+            color: scheme.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.lightCheck,
+              size: 10,
+              color: scheme.primary,
+            ),
+          ),
+        ),
+        SizedBox(width: sp.s8),
+        Expanded(
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+          child: Text(
+            text,
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
@@ -603,10 +1053,11 @@ class HouseHelperScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s12),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '고용주는 가정 내에서 가사근로자의 업무를 고용·통제하고 '
                     '고용계약의 당사자가 되는 자를 의미합니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                       height: 1.5,
                     ),
@@ -633,9 +1084,10 @@ class HouseHelperScreen extends StatelessWidget {
         color: scheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
+      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
       child: Text(
         label,
-        style: theme.textTheme.bodySmall?.copyWith(
+        style: theme.textTheme.bodyMedium?.copyWith(
           color: scheme.primary,
           fontWeight: FontWeight.w500,
         ),
@@ -698,10 +1150,10 @@ class HouseHelperScreen extends StatelessWidget {
                       ),
                       SizedBox(height: sp.s4),
                       Text(
+                        /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                         '리스크 집중',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onErrorContainer,
-                          fontSize: 11,
                         ),
                       ),
                     ],
@@ -760,11 +1212,11 @@ class HouseHelperScreen extends StatelessWidget {
                       ),
                       SizedBox(height: sp.s4),
                       Text(
+                        /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                         '권장 ✓',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onTertiaryContainer,
                           fontWeight: FontWeight.w600,
-                          fontSize: 11,
                         ),
                       ),
                     ],
@@ -806,12 +1258,12 @@ class HouseHelperScreen extends StatelessWidget {
                         color: scheme.tertiary,
                         borderRadius: BorderRadius.circular(4),
                       ),
+                      /// labelSmall → labelMedium으로 변경하여 가독성 향상
                       child: Text(
                         'POINT',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 10,
                         ),
                       ),
                     ),
@@ -826,10 +1278,11 @@ class HouseHelperScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: sp.s12),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   'PEA(Private Employment Agency)가 임금·법정급여·월 보험료(SSS/PhilHealth/Pag-IBIG) 납부에 대해 '
                   '고용주와 연대책임(joint and solidary liability)을 부담하므로 법적 리스크가 분산됩니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface,
                     height: 1.5,
                   ),
@@ -925,9 +1378,10 @@ class HouseHelperScreen extends StatelessWidget {
                   final isLastCell = cellIndex == row.length - 1;
                   return Expanded(
                     flex: cellIndex == 0 ? 1 : 2,
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       cell,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: isLastCell
                             ? scheme.tertiary
                             : scheme.onSurface,
@@ -989,9 +1443,10 @@ class HouseHelperScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '근속 1개월 이상 시 SSS, PhilHealth, Pag-IBIG 의무 가입',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.error,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1103,9 +1558,10 @@ class HouseHelperScreen extends StatelessWidget {
           SizedBox(height: sp.s8),
           Padding(
             padding: EdgeInsets.only(left: sp.s4),
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               content,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurface.withValues(alpha: 0.8),
                 height: 1.5,
               ),
@@ -1164,9 +1620,10 @@ class HouseHelperScreen extends StatelessWidget {
                 SizedBox(width: sp.s8),
                 Expanded(
                   flex: 1,
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     row['label'] as String,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: scheme.error,
                     ),
@@ -1174,9 +1631,10 @@ class HouseHelperScreen extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 2,
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     row['value'] as String,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onErrorContainer,
                     ),
                     textAlign: TextAlign.end,
@@ -1346,9 +1804,10 @@ class HouseHelperScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         content,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
@@ -1395,9 +1854,10 @@ class HouseHelperScreen extends StatelessWidget {
                 color: scheme.primary,
               ),
               SizedBox(width: sp.s8),
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               Text(
                 doc,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurface,
                 ),
               ),
@@ -1483,12 +1943,12 @@ class HouseHelperScreen extends StatelessWidget {
                           color: scheme.tertiary,
                           borderRadius: BorderRadius.circular(4),
                         ),
+                        /// labelSmall → labelMedium으로 변경하여 가독성 향상
                         child: Text(
                           'NCR (메트로 마닐라)',
-                          style: theme.textTheme.labelSmall?.copyWith(
+                          style: theme.textTheme.labelMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 10,
                           ),
                         ),
                       ),
@@ -1501,9 +1961,10 @@ class HouseHelperScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         '2025-01-04 시행',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
@@ -1531,9 +1992,10 @@ class HouseHelperScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s12),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '기타 지역은 RTWPB(지역 임금위원회) 고시를 확인하세요.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurface,
                     ),
                   ),
@@ -1656,9 +2118,10 @@ class HouseHelperScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: sp.s4),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       doc['desc'] as String,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
@@ -1970,9 +2433,10 @@ class HouseHelperScreen extends StatelessWidget {
             ),
             SizedBox(width: sp.s12),
             Expanded(
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               child: Text(
                 title,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.primary,
                   decoration: TextDecoration.underline,
                   decorationColor: scheme.primary.withValues(alpha: 0.5),

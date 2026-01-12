@@ -284,9 +284,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
               color: scheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+          child: Text(
               '※ 이민청은 외국인이 현지 근로자로 대체할 수 없는 직무일 경우 9G 비자 승인 가능성이 높아진다고 보고 있습니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
             ),
@@ -409,9 +410,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -595,9 +597,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
               color: scheme.secondaryContainer,
               borderRadius: BorderRadius.circular(8),
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             child: Text(
               category,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onSecondaryContainer,
                 fontWeight: FontWeight.w600,
               ),
@@ -685,9 +688,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
               color: scheme.tertiaryContainer,
               borderRadius: BorderRadius.circular(12),
             ),
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               '※ 위 금액은 참고용이며, 실제 BI/DOLE에서 공시하는 최신 수수료가 최종 기준입니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
                 fontWeight: FontWeight.w500,
               ),
@@ -867,9 +871,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
               color: scheme.secondaryContainer,
               borderRadius: BorderRadius.circular(8),
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             child: Text(
               situation,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onSecondaryContainer,
                 fontWeight: FontWeight.w600,
               ),
@@ -955,9 +960,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
               color: scheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               '※ 단기 체류용 SWP나 관광비자와 달리 장기·안정적 체류가 가능합니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
             ),
@@ -1004,9 +1010,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
                     ),
                   ),
                   const SizedBox(height: 2),
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   Text(
                     description,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
@@ -1184,9 +1191,10 @@ class _WorkingVisaScreenState extends State<WorkingVisaScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),

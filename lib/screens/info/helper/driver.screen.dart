@@ -101,6 +101,13 @@ class DriverScreen extends StatelessWidget {
                 .fadeIn(duration: 400.ms, delay: 250.ms),
             SizedBox(height: sp.s16),
 
+            /// 맨파워 업체 찾는 방법 섹션 (Find Manpower Section)
+            _buildFindManpowerSection(context, theme, scheme, sp)
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 275.ms)
+                .slideX(begin: -0.05, end: 0),
+            SizedBox(height: sp.s16),
+
             /// 4) 채용 전 필수 서류 섹션 (Required Documents Section)
             _buildRequiredDocumentsSection(context, theme, scheme, sp)
                 .animate()
@@ -309,7 +316,8 @@ class DriverScreen extends StatelessWidget {
                       ),
                       child: Text(
                         '필수 권고',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        /// labelSmall → labelMedium으로 변경하여 가독성 향상
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 10,
@@ -350,9 +358,10 @@ class DriverScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: sp.s12),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '고용과 동시에 계약·검증·사회보장 등록·기록관리가 따라야 하며, 맨파워 업체는 이 체계를 표준화해 누락을 줄이는 데 유리합니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
@@ -459,10 +468,11 @@ class DriverScreen extends StatelessWidget {
             title: '고용 형태 먼저 분류하기',
           ),
           SizedBox(height: sp.s12),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '운전 기사라도 "가정 전속"인지 "업무 수행"인지에 따라 관리 기준이 달라질 수 있습니다. '
             '계약서에 분류를 명확히 적는 것이 필요합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -496,11 +506,11 @@ class DriverScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         '가족 이동, 자녀 픽업 등',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onPrimaryContainer,
-                          fontSize: 11,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -514,12 +524,12 @@ class DriverScreen extends StatelessWidget {
                           color: scheme.primary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
+                        /// labelSmall → labelMedium으로 변경하여 가독성 향상
                         child: Text(
                           'Kasambahay 체계',
-                          style: theme.textTheme.labelSmall?.copyWith(
+                          style: theme.textTheme.labelMedium?.copyWith(
                             color: scheme.primary,
                             fontWeight: FontWeight.w500,
-                            fontSize: 10,
                           ),
                         ),
                       ),
@@ -553,11 +563,11 @@ class DriverScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         '회사 업무/영업/물류',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onTertiaryContainer,
-                          fontSize: 11,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -571,12 +581,12 @@ class DriverScreen extends StatelessWidget {
                           color: scheme.tertiary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
+                        /// labelSmall → labelMedium으로 변경하여 가독성 향상
                         child: Text(
                           '사업장 규정 중심',
-                          style: theme.textTheme.labelSmall?.copyWith(
+                          style: theme.textTheme.labelMedium?.copyWith(
                             color: scheme.tertiary,
                             fontWeight: FontWeight.w500,
-                            fontSize: 10,
                           ),
                         ),
                       ),
@@ -605,9 +615,10 @@ class DriverScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '실무에서는 가정 전속 기사를 가사근로자 기준으로 계약·등록하는 방식이 가장 정합적입니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                       height: 1.4,
                     ),
@@ -675,11 +686,11 @@ class DriverScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         '△ 조건부 권장',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onErrorContainer,
-                          fontSize: 11,
                         ),
                       ),
                     ],
@@ -737,12 +748,12 @@ class DriverScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         '◎ 적극 권장',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onTertiaryContainer,
                           fontWeight: FontWeight.w600,
-                          fontSize: 11,
                         ),
                       ),
                     ],
@@ -788,12 +799,12 @@ class DriverScreen extends StatelessWidget {
                         color: scheme.tertiary,
                         borderRadius: BorderRadius.circular(4),
                       ),
+                      /// labelSmall → labelMedium으로 변경하여 가독성 향상
                       child: Text(
                         '맨파워 이용 실무 사유',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 10,
                         ),
                       ),
                     ),
@@ -924,9 +935,10 @@ class DriverScreen extends StatelessWidget {
                   final isLastCell = cellIndex == row.length - 1;
                   return Expanded(
                     flex: cellIndex == 0 ? 1 : 2,
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       cell,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: isLastCell ? scheme.tertiary : scheme.onSurface,
                         fontWeight:
                             cellIndex == 0 || isLastCell ? FontWeight.w600 : FontWeight.normal,
@@ -972,9 +984,10 @@ class DriverScreen extends StatelessWidget {
         ),
         SizedBox(width: sp.s8),
         Expanded(
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           child: Text(
             text,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.4,
             ),
@@ -1025,10 +1038,11 @@ class DriverScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '"맨파워"라는 상호만으로는 안전이 보장되지 않습니다. '
                     'DOLE(주로 BLE) 라이선스 확인이 필수입니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.error,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1083,18 +1097,20 @@ class DriverScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: sp.s8),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   'DOLE(BLE) 공개 "Licensed Private Employment Agencies" 목록(PDF)에서 '
                   '① 업체명 ② 지역 ③ 본사/지점 ④ 리크루터 정보를 대조합니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onPrimaryContainer,
                     height: 1.5,
                   ),
                 ),
                 SizedBox(height: sp.s8),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '목록에 없거나 라이선스·리크루터 권한을 제시하지 못하면 이용하지 않는 것이 원칙입니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.error,
                     fontWeight: FontWeight.w500,
                     height: 1.5,
@@ -1141,18 +1157,19 @@ class DriverScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   title,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface,
                   ),
                 ),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.6),
-                    fontSize: 11,
                   ),
                 ),
               ],
@@ -1186,9 +1203,10 @@ class DriverScreen extends StatelessWidget {
             title: '채용 전 필수 서류 (권장 최소 세트)',
           ),
           SizedBox(height: sp.s12),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '운전 기사는 "운전 자격"과 "신원 확인"을 분리해 검증해야 합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -1264,10 +1282,11 @@ class DriverScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '위 서류는 개인정보에 해당할 수 있으므로 수집 목적·보관 기간·접근 권한을 '
                     '서면으로 고지·동의받는 체계가 필요합니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                       height: 1.4,
                     ),
@@ -1328,9 +1347,10 @@ class DriverScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: sp.s4),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
@@ -1366,9 +1386,10 @@ class DriverScreen extends StatelessWidget {
             iconColor: scheme.tertiary,
           ),
           SizedBox(height: sp.s12),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '가사근로자/가정 전속 기사로 운영하는 경우에도 지역별 최저임금(가사근로자 임금) 준수가 중요합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -1425,12 +1446,12 @@ class DriverScreen extends StatelessWidget {
                           color: scheme.tertiary,
                           borderRadius: BorderRadius.circular(4),
                         ),
+                        /// labelSmall → labelMedium으로 변경하여 가독성 향상
                         child: Text(
                           'NCR (메트로 마닐라)',
-                          style: theme.textTheme.labelSmall?.copyWith(
+                          style: theme.textTheme.labelMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 10,
                           ),
                         ),
                       ),
@@ -1443,9 +1464,10 @@ class DriverScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         '2025-01-04 시행',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
@@ -1485,19 +1507,21 @@ class DriverScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: sp.s8),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '지역별 임금명령(Wage Order)로 상이합니다. '
                   '거주 지역(또는 근무 지역)의 RTWPB/NWPC 공지를 기준으로 임금표를 최신화하세요.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 ),
                 SizedBox(height: sp.s8),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '임금 분쟁은 통상 "최저임금 미달(underpayment)"로 발생하므로, '
                   '계약서·급여대장에 근거를 남기세요.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.error,
                     fontWeight: FontWeight.w500,
                     height: 1.4,
@@ -1536,9 +1560,10 @@ class DriverScreen extends StatelessWidget {
             iconColor: scheme.error,
           ),
           SizedBox(height: sp.s12),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '가사근로자 체계(가정 전속)로 운영하는 경우, 고용주는 사회보장 가입·납부 의무를 부담할 수 있습니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -1591,10 +1616,11 @@ class DriverScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '납부 누락은 분쟁 시 고용주 책임으로 확장될 수 있으므로, '
                     '맨파워 업체를 통한 등록·납부 캘린더 운영을 권장합니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.error,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
@@ -1656,18 +1682,19 @@ class DriverScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: sp.s4),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 SizedBox(height: sp.s4),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   note,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.tertiary,
-                    fontSize: 11,
                   ),
                 ),
               ],
@@ -1701,9 +1728,10 @@ class DriverScreen extends StatelessWidget {
             title: '운전기사 전용 근로계약 필수 조항',
           ),
           SizedBox(height: sp.s12),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '운전 기사는 업무 범위가 쉽게 확장됩니다. 아래 항목을 계약 본문에 직접 기재해야 합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -1825,9 +1853,10 @@ class DriverScreen extends StatelessWidget {
                   : scheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             child: Text(
               title,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: isWarning ? scheme.error : scheme.primary,
               ),
@@ -1836,9 +1865,10 @@ class DriverScreen extends StatelessWidget {
           ),
           SizedBox(width: sp.s12),
           Expanded(
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               content,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: isWarning ? scheme.error : scheme.onSurface,
                 height: 1.4,
               ),
@@ -1874,9 +1904,10 @@ class DriverScreen extends StatelessWidget {
             iconColor: scheme.error,
           ),
           SizedBox(height: sp.s12),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '운전기사 고용에서 가장 큰 리스크는 "사고"입니다. 보험은 최소·추가를 구분해 설계해야 합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -1996,9 +2027,10 @@ class DriverScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: sp.s4),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
@@ -2014,9 +2046,10 @@ class DriverScreen extends StatelessWidget {
               color: tagColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(4),
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             child: Text(
               tag,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: tagColor,
               ),
@@ -2049,9 +2082,10 @@ class DriverScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Center(
+              /// labelSmall → labelMedium으로 변경하여 가독성 향상
               child: Text(
                 '$step',
-                style: theme.textTheme.labelSmall?.copyWith(
+                style: theme.textTheme.labelMedium?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -2060,9 +2094,10 @@ class DriverScreen extends StatelessWidget {
           ),
           SizedBox(width: sp.s8),
           Expanded(
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               content,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onErrorContainer,
                 height: 1.4,
               ),
@@ -2213,9 +2248,10 @@ class DriverScreen extends StatelessWidget {
                     color: scheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
+                  /// labelSmall → labelMedium으로 변경하여 가독성 향상
                   child: Text(
                     item['항목']!,
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.primary,
                     ),
@@ -2224,9 +2260,10 @@ class DriverScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s12),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     item['내용']!,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurface.withValues(alpha: 0.8),
                     ),
                   ),
@@ -2279,9 +2316,10 @@ class DriverScreen extends StatelessWidget {
             ),
           ),
           Expanded(
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               content,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: isWarning ? scheme.error : scheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
@@ -2314,9 +2352,10 @@ class DriverScreen extends StatelessWidget {
             title: '개인정보(데이터프라이버시) 준수',
           ),
           SizedBox(height: sp.s12),
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '운전기사 채용 시 수집하는 신원조회·건강정보 등은 개인정보(일부는 민감정보)가 될 수 있습니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -2379,10 +2418,11 @@ class DriverScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '블랙박스·GPS 등은 목적과 범위를 명확히 하여 '
                     '정책(내규)+동의서로 관리하는 편이 안전합니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                       height: 1.4,
                     ),
@@ -2424,9 +2464,10 @@ class DriverScreen extends StatelessWidget {
               color: scheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             child: Text(
               title,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: scheme.primary,
               ),
@@ -2435,9 +2476,10 @@ class DriverScreen extends StatelessWidget {
           ),
           SizedBox(width: sp.s12),
           Expanded(
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               content,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
@@ -2530,10 +2572,11 @@ class DriverScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '직접고용은 위 문서 체계를 고용주가 직접 구축해야 합니다. '
                     '따라서 DOLE 인가 맨파워 업체를 통한 고용을 다시 한 번 강하게 권장합니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.error,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
@@ -2625,9 +2668,11 @@ class DriverScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: sp.s4),
+
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         content,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
@@ -2826,16 +2871,18 @@ class DriverScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
+            /// 아이콘 크기 12 → 14로 변경하여 가독성 향상
             FaIcon(
               FontAwesomeIcons.lightArrowUpRightFromSquare,
-              size: 12,
+              size: 14,
               color: scheme.primary,
             ),
             SizedBox(width: sp.s12),
             Expanded(
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               child: Text(
                 title,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.primary,
                   decoration: TextDecoration.underline,
                   decorationColor: scheme.primary.withValues(alpha: 0.5),
@@ -2854,5 +2901,457 @@ class DriverScreen extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+
+  /// 맨파워 업체 찾는 방법 섹션 빌더 (Find Manpower Section Builder)
+  ///
+  /// 운전기사 맨파워 업체를 찾는 4가지 방법과 주요 업체 연락처, 체크리스트를 제공합니다.
+  /// Provides 4 methods to find driver manpower agencies, major agency contacts, and checklist.
+  Widget _buildFindManpowerSection(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp,
+  ) {
+    return _buildInfoCard(
+      theme,
+      scheme,
+      sp,
+      borderColor: scheme.tertiary.withValues(alpha: 0.3),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// 섹션 타이틀 (Section Title)
+          _buildSectionTitle(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightMagnifyingGlass,
+            number: '',
+            title: '맨파워 업체 찾는 방법',
+            iconColor: scheme.tertiary,
+          ),
+          SizedBox(height: sp.s16),
+
+          /// DOLE 등록 확인 안내 (DOLE Verification Notice)
+          Container(
+            padding: EdgeInsets.all(sp.s12),
+            decoration: BoxDecoration(
+              color: scheme.tertiaryContainer.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightPhoneVolume,
+                  size: 16,
+                  color: scheme.tertiary,
+                ),
+                SizedBox(width: sp.s12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DOLE 라이센스 확인',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: scheme.tertiary,
+                        ),
+                      ),
+                      SizedBox(height: sp.s4),
+                      Text(
+                        'DOLE 핫라인: 1349 (24시간)',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: sp.s4),
+
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                      Text(
+                        'POEA 불법채용 신고: 722-1144 / 722-1155',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurface.withValues(alpha: 0.8),
+                        ),
+                      ),
+                      SizedBox(height: sp.s4),
+
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                      Text(
+                        '라이센스 없이 운영하는 업체는 불법입니다.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.error,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: sp.s16),
+
+          /// 4가지 검색 방법 (4 Search Methods)
+          Text(
+            '업체 검색 방법',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: scheme.onSurface,
+            ),
+          ),
+          SizedBox(height: sp.s12),
+
+          /// (1) 웹 검색 (Web Search)
+          _buildDriverSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightGlobe,
+            title: '웹 검색',
+            content:
+                'Google에서 "private driver agency Philippines", "family driver Metro Manila" 등으로 검색 후 DOLE 등록 여부 확인',
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (2) 구인 사이트 (Job Sites)
+          _buildDriverSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightBriefcase,
+            title: '구인 사이트',
+            content:
+                'Jobstreet (ph.jobstreet.com), Indeed (ph.indeed.com), Jooble에서 "family driver", "personal driver" 검색',
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (3) Facebook 그룹 (Facebook Groups)
+          _buildDriverSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.facebook,
+            title: 'Facebook 그룹',
+            content:
+                '"Driver hiring Philippines", "Family driver Metro Manila" 검색. 단, 개인거래는 리스크가 높으므로 DOLE 등록 업체 우선 이용 권장',
+            isWarning: true,
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (4) 전문 에이전시 (Specialized Agencies)
+          _buildDriverSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightBuilding,
+            title: '전문 에이전시',
+            content:
+                'Luxury Philippines D.S. Agency (lpds.agency), Personal Drivers For Hire (personaldriversforhire.com) 등 운전기사 전문 에이전시 직접 문의',
+          ),
+          SizedBox(height: sp.s20),
+
+          /// 주요 구인 플랫폼 (Major Job Platforms)
+          Text(
+            '주요 구인 플랫폼',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: scheme.onSurface,
+            ),
+          ),
+          SizedBox(height: sp.s12),
+
+          /// 플랫폼 카드들 (Platform Cards)
+          _buildDriverAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'Jobstreet Philippines',
+            feature: '필리핀 최대 구인 플랫폼',
+            description: '"Family Driver", "Personal Driver" 검색',
+            url: 'https://ph.jobstreet.com/driver-jobs',
+          ),
+          SizedBox(height: sp.s8),
+          _buildDriverAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'Indeed Philippines',
+            feature: '글로벌 구인 플랫폼',
+            description: '경력 2년 이상 운전기사 다수 등록',
+            url: 'https://ph.indeed.com/q-family-driver-jobs.html',
+          ),
+          SizedBox(height: sp.s8),
+          _buildDriverAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'Luxury Philippines D.S.',
+            feature: '운전기사 전문 에이전시',
+            description: '가정/기업용 프라이빗 드라이버 서비스',
+            url: 'https://lpds.agency/philippine-private-driver/',
+          ),
+          SizedBox(height: sp.s20),
+
+          /// 업체 선정 체크리스트 (Agency Selection Checklist)
+          Container(
+            padding: EdgeInsets.all(sp.s16),
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.lightClipboardCheck,
+                      size: 16,
+                      color: scheme.primary,
+                    ),
+                    SizedBox(width: sp.s8),
+                    Text(
+                      '운전기사 선정 체크리스트',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: scheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: sp.s12),
+                _buildDriverChecklistItem(
+                    theme, scheme, sp, 'Professional Driver\'s License 유효기간 확인'),
+                SizedBox(height: sp.s4),
+                _buildDriverChecklistItem(
+                    theme, scheme, sp, 'NBI Clearance (무범죄 증명) 확인'),
+                SizedBox(height: sp.s4),
+                _buildDriverChecklistItem(
+                    theme, scheme, sp, '운전 경력 최소 2-5년 이상 확인'),
+                SizedBox(height: sp.s4),
+                _buildDriverChecklistItem(
+                    theme, scheme, sp, 'Metro Manila 및 인근 지역 숙지 여부'),
+                SizedBox(height: sp.s4),
+                _buildDriverChecklistItem(
+                    theme, scheme, sp, '이전 고용주 레퍼런스 체크'),
+                SizedBox(height: sp.s4),
+                _buildDriverChecklistItem(
+                    theme, scheme, sp, '건강검진서 (의료 적합성) 확인'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 운전기사 검색 방법 카드 빌더 (Driver Search Method Card Builder)
+  Widget _buildDriverSearchMethodCard(
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp, {
+    required IconData icon,
+    required String title,
+    required String content,
+    bool isWarning = false,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(sp.s12),
+      decoration: BoxDecoration(
+        color: isWarning
+            ? scheme.errorContainer.withValues(alpha: 0.15)
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
+        border: isWarning
+            ? Border.all(color: scheme.error.withValues(alpha: 0.3))
+            : null,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: isWarning
+                  ? scheme.error.withValues(alpha: 0.15)
+                  : scheme.tertiary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: FaIcon(
+                icon,
+                size: 14,
+                color: isWarning ? scheme.error : scheme.tertiary,
+              ),
+            ),
+          ),
+          SizedBox(width: sp.s12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isWarning ? scheme.error : scheme.onSurface,
+                  ),
+                ),
+                SizedBox(height: sp.s4),
+
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                Text(
+                  content,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.8),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 운전기사 에이전시 카드 빌더 (Driver Agency Card Builder)
+  Widget _buildDriverAgencyCard(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp, {
+    required String name,
+    required String feature,
+    required String description,
+    required String url,
+  }) {
+    return InkWell(
+      onTap: () => _launchUrl(url),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: EdgeInsets.all(sp.s12),
+        decoration: BoxDecoration(
+          color: scheme.primaryContainer.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: scheme.primary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.lightCarSide,
+                  size: 16,
+                  color: scheme.primary,
+                ),
+              ),
+            ),
+            SizedBox(width: sp.s12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.lightArrowUpRightFromSquare,
+                        size: 12,
+                        color: scheme.primary,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: sp.s4),
+
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                  Text(
+                    feature,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                  Text(
+                    description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 운전기사 체크리스트 항목 빌더 (Driver Checklist Item Builder)
+  Widget _buildDriverChecklistItem(
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp,
+    String text,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 18,
+          height: 18,
+          margin: EdgeInsets.only(top: 2),
+          decoration: BoxDecoration(
+            color: scheme.primary.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          /// 아이콘 크기 10 → 12로 변경하여 가독성 향상
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.lightCheck,
+              size: 12,
+              color: scheme.primary,
+            ),
+          ),
+        ),
+        SizedBox(width: sp.s8),
+        Expanded(
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+          child: Text(
+            text,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.8),
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

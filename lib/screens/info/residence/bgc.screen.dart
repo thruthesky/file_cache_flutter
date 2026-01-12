@@ -586,7 +586,7 @@ class _BgcScreenState extends State<BgcScreen> {
                         flex: 3,
                         child: Text(
                           item.type,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
@@ -596,7 +596,7 @@ class _BgcScreenState extends State<BgcScreen> {
                         flex: 3,
                         child: Text(
                           item.rentPhp,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.primary,
                             fontWeight: FontWeight.w600,
                           ),
@@ -607,7 +607,7 @@ class _BgcScreenState extends State<BgcScreen> {
                         flex: 3,
                         child: Text(
                           item.rentKrw,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
@@ -618,7 +618,7 @@ class _BgcScreenState extends State<BgcScreen> {
                   SizedBox(height: sp.s4),
                   Text(
                     item.features,
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
@@ -649,7 +649,7 @@ class _BgcScreenState extends State<BgcScreen> {
                   child: Text(
                     '상기 금액은 가구 완비(Fully-furnished) 기준의 평균 임대료 범위이며, '
                     '계약 조건에 따라 관리비 포함 여부가 다를 수 있습니다.',
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
@@ -711,7 +711,7 @@ class _BgcScreenState extends State<BgcScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -781,7 +781,7 @@ class _BgcScreenState extends State<BgcScreen> {
               padding: EdgeInsets.only(bottom: sp.s8),
               child: Text(
                 point,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSecondaryContainer,
                   height: 1.4,
                 ),
@@ -798,7 +798,7 @@ class _BgcScreenState extends State<BgcScreen> {
             child: Text(
               'BGC는 필리핀에서 가장 선진화된 도시 환경을 경험할 수 있는 곳으로, '
               '처음 필리핀에 정착하는 한국인에게 추천되는 지역입니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSecondaryContainer,
                 fontWeight: FontWeight.w500,
               ),

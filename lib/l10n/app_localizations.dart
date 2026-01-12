@@ -3431,6 +3431,54 @@ abstract class Lo {
   /// **'Tutor'**
   String get helperTutor;
 
+  /// How to find manpower agency section title
+  ///
+  /// In en, this message translates to:
+  /// **'How to Find Manpower Agency'**
+  String get helperFindManpower;
+
+  /// DOLE registration verification
+  ///
+  /// In en, this message translates to:
+  /// **'DOLE Registration Verification'**
+  String get helperDoleVerify;
+
+  /// Web search method
+  ///
+  /// In en, this message translates to:
+  /// **'Web Search'**
+  String get helperWebSearch;
+
+  /// Online platform method
+  ///
+  /// In en, this message translates to:
+  /// **'Online Platform'**
+  String get helperOnlinePlatform;
+
+  /// Facebook group method
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook Group'**
+  String get helperFacebookGroup;
+
+  /// Job site method
+  ///
+  /// In en, this message translates to:
+  /// **'Job Site'**
+  String get helperJobSite;
+
+  /// Major agency contact information
+  ///
+  /// In en, this message translates to:
+  /// **'Major Agency Contacts'**
+  String get helperAgencyContact;
+
+  /// Agency selection checklist title
+  ///
+  /// In en, this message translates to:
+  /// **'Agency Selection Checklist'**
+  String get helperChecklistTitle;
+
   /// Coming soon message for empty screens
   ///
   /// In en, this message translates to:
@@ -3658,6 +3706,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Festival'**
   String get entertainmentFestival;
+
+  /// Message shown in quick post box during point event period
+  ///
+  /// In en, this message translates to:
+  /// **'Point Event! Write posts and get random points~'**
+  String get quickPostEventMessage;
+
+  /// Default message shown in quick post box when not in event period
+  ///
+  /// In en, this message translates to:
+  /// **'How is your life in the Philippines today?'**
+  String get quickPostDefaultMessage;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

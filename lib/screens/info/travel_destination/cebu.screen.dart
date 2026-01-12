@@ -632,7 +632,7 @@ class _CebuScreenState extends State<CebuScreen> {
               /// [설명 - Description]
               Text(
                 spot.description,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.6,
                 ),
@@ -648,7 +648,7 @@ class _CebuScreenState extends State<CebuScreen> {
                     children: [
                       Text(
                         '•',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -657,7 +657,7 @@ class _CebuScreenState extends State<CebuScreen> {
                       Expanded(
                         child: Text(
                           feature,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -686,7 +686,7 @@ class _CebuScreenState extends State<CebuScreen> {
                     Expanded(
                       child: Text(
                         spot.transport,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface,
                           fontWeight: FontWeight.w500,
                         ),
@@ -767,7 +767,7 @@ class _CebuScreenState extends State<CebuScreen> {
           SizedBox(height: sp.s12),
           Text(
             _traditionalMarketInfo.description,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
               height: 1.5,
             ),
@@ -786,7 +786,7 @@ class _CebuScreenState extends State<CebuScreen> {
               Expanded(
                 child: Text(
                   _traditionalMarketInfo.transport!,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
@@ -830,7 +830,7 @@ class _CebuScreenState extends State<CebuScreen> {
                   flex: 3,
                   child: Text(
                     '관광지',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurface,
                     ),
@@ -840,7 +840,7 @@ class _CebuScreenState extends State<CebuScreen> {
                   flex: 2,
                   child: Text(
                     '거리',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurface,
                     ),
@@ -851,7 +851,7 @@ class _CebuScreenState extends State<CebuScreen> {
                   flex: 2,
                   child: Text(
                     '소요 시간',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurface,
                     ),
@@ -883,7 +883,7 @@ class _CebuScreenState extends State<CebuScreen> {
                     flex: 3,
                     child: Text(
                       info['name']!,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurface,
                       ),
                     ),
@@ -892,7 +892,7 @@ class _CebuScreenState extends State<CebuScreen> {
                     flex: 2,
                     child: Text(
                       info['distance']!,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
@@ -902,7 +902,7 @@ class _CebuScreenState extends State<CebuScreen> {
                     flex: 2,
                     child: Text(
                       info['time']!,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -934,7 +934,7 @@ class _CebuScreenState extends State<CebuScreen> {
                 Expanded(
                   child: Text(
                     '택시/그랩 이용이 편리하며 서울 대비 저렴합니다. 장거리는 전용차량 투어나 에어컨 버스를 권장합니다. 출퇴근 시간대 정체에 유의하세요.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurface,
                       height: 1.5,
                     ),

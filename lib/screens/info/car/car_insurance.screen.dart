@@ -529,9 +529,11 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
         color: scheme.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(12),
       ),
+      /// 배너 칩 텍스트 (Banner Chip Text)
+      /// labelSmall → labelMedium으로 변경하여 가독성 향상
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelMedium?.copyWith(
           color: scheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
@@ -656,9 +658,11 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
                   ),
                   Expanded(
                     flex: 3,
+                    /// 비교 테이블 CTPL 값 (Comparison Table CTPL Value)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item.ctplValue,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -667,9 +671,11 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
                   ),
                   Expanded(
                     flex: 3,
+                    /// 비교 테이블 종합보험 값 (Comparison Table Comprehensive Value)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item.comprehensiveValue,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -727,17 +733,21 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 정보 카드 제목 (Info Card Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       item.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
+                    /// 정보 카드 설명 (Info Card Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -767,9 +777,11 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// 보험사 목록 헤더 (Insurance Companies Header)
+          /// titleSmall → titleMedium으로 변경하여 가독성 향상
           Text(
             '🌟 필리핀 주요 자동차보험사',
-            style: theme.textTheme.titleSmall?.copyWith(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: scheme.onSurface,
             ),
@@ -797,9 +809,11 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
                     SizedBox(width: sp.s8),
                     Expanded(
                       flex: 3,
+                      /// 보험사 특징 설명 (Insurance Company Features)
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       child: Text(
                         company.features,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                           height: 1.4,
                         ),
@@ -830,9 +844,11 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
                 Text('💡', style: theme.textTheme.bodyMedium),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// 보험사 선정 팁 (Insurance Company Selection Tip)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '보험사 선정 시 보장 범위, 보험료 수준, 고객 지원(사고 시 핫라인, 한국어 가능 직원 여부 등)을 함께 고려하세요.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                       height: 1.4,
                     ),
@@ -889,17 +905,21 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 단계별 가이드 제목 (Step Guide Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       step.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
+                    /// 단계별 가이드 설명 (Step Guide Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       step.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -1034,9 +1054,11 @@ class _CarInsuranceScreenState extends State<CarInsuranceScreen> {
                 Text('💡', style: theme.textTheme.bodyLarge),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// 요약 섹션 팁 (Summary Section Tip)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '필리핀에서 자동차 보험은 안전한 운전 생활의 기본입니다. 믿을 수 있는 보험사를 통해 충분한 보장을 확보하여 만약의 사태에 대비하세요!',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurface,
                       height: 1.5,
                       fontWeight: FontWeight.w500,

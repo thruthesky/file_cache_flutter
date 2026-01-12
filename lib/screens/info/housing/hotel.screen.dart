@@ -457,7 +457,7 @@ class _HotelScreenState extends State<HotelScreen> {
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelMedium?.copyWith(
           color: scheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
@@ -547,7 +547,7 @@ class _HotelScreenState extends State<HotelScreen> {
                         SizedBox(height: sp.s4),
                         Text(
                           type.location,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -584,7 +584,7 @@ class _HotelScreenState extends State<HotelScreen> {
               SizedBox(height: sp.s12),
               Text(
                 type.features,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -645,7 +645,7 @@ class _HotelScreenState extends State<HotelScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -734,7 +734,7 @@ class _HotelScreenState extends State<HotelScreen> {
           Text(
             '필리핀 한인 커뮤니티 필고에서는 회원 한정으로 인기 호텔의 최저가 예약 서비스를 지원합니다. '
             '현지 정보와 실제 이용 후기를 참고하여 더 나은 숙소 선택이 가능합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onTertiaryContainer.withValues(alpha: 0.9),
               height: 1.5,
             ),

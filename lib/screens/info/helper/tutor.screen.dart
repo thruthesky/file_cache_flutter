@@ -125,6 +125,13 @@ class TutorScreen extends StatelessWidget {
                 .fadeIn(duration: 400.ms, delay: 450.ms),
             SizedBox(height: sp.s24),
 
+            /// 튜터/맨파워 업체 찾는 방법 섹션 (Find Tutor/Manpower Section)
+            _buildFindTutorSection(context, theme, scheme, sp)
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 475.ms)
+                .slideX(begin: -0.05, end: 0),
+            SizedBox(height: sp.s24),
+
             /// 8) 외국인 튜터 고용 섹션
             _buildForeignTutorSection(context, theme, scheme, sp)
                 .animate()
@@ -262,9 +269,11 @@ class TutorScreen extends StatelessWidget {
           ),
           SizedBox(width: sp.s12),
           Expanded(
+            /// 주의사항 텍스트 (Disclaimer Text)
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               '본 문서는 공적 자료를 기반으로 한 정보 정리이며, 개별 사례(사고·분쟁·세무·비자)는 관할기관/전문가 확인이 필요합니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
                 height: 1.5,
               ),
@@ -446,11 +455,13 @@ class TutorScreen extends StatelessWidget {
                 ),
                 if (subText != null) ...[
                   SizedBox(height: sp.s4),
+
+                  /// 체크 항목 부가 설명 (Check Item Sub Text)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   Text(
                     subText,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurface.withValues(alpha: 0.7),
-                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -593,16 +604,20 @@ class TutorScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: sp.s4),
+
+                /// 고용 형태 설명 (Employment Type Description)
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '$subtitle · $control',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.7),
-                    fontSize: 11,
                   ),
                 ),
               ],
             ),
           ),
+          /// 핵심 포인트 배지 (Key Point Badge)
+          /// labelSmall → labelMedium으로 변경하여 가독성 향상
           Container(
             padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
             decoration: BoxDecoration(
@@ -611,10 +626,9 @@ class TutorScreen extends StatelessWidget {
             ),
             child: Text(
               keyPoint,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: color,
                 fontWeight: FontWeight.w500,
-                fontSize: 10,
               ),
             ),
           ),
@@ -668,19 +682,22 @@ class TutorScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: Column(
                 children: [
+                  /// 테이블 헤더 - flexValues [1, 2, 2]로 항목:요지:메모 비율 조정
+                  /// "항목"은 짧은 텍스트이므로 20%, "요지"와 "메모"는 각각 40%
                   _buildTableRow(
                     theme,
                     scheme,
                     sp,
                     ['항목', '요지', '메모'],
                     isHeader: true,
+                    flexValues: [1, 2, 2],
                   ),
-                  _buildTableRow(theme, scheme, sp, ['계약', '서면 고용계약 권장', '업무·시간·급여 명시']),
-                  _buildTableRow(theme, scheme, sp, ['휴식', '일일·주간 휴식', '휴무일 합의']),
-                  _buildTableRow(theme, scheme, sp, ['휴가', '유급 휴가(조건 충족 시)', '누적/현금화 제한']),
-                  _buildTableRow(theme, scheme, sp, ['13월 급여', '13th month pay', '지급 시점 규정']),
-                  _buildTableRow(theme, scheme, sp, ['사회보험', 'SSS·PhilHealth·Pag-IBIG', '등록·납부 의무']),
-                  _buildTableRow(theme, scheme, sp, ['등록', '바랑가이 등록(지역별)', '현지 절차 상이']),
+                  _buildTableRow(theme, scheme, sp, ['계약', '서면 고용계약 권장', '업무·시간·급여 명시'], flexValues: [1, 2, 2]),
+                  _buildTableRow(theme, scheme, sp, ['휴식', '일일·주간 휴식', '휴무일 합의'], flexValues: [1, 2, 2]),
+                  _buildTableRow(theme, scheme, sp, ['휴가', '유급 휴가(조건 충족 시)', '누적/현금화 제한'], flexValues: [1, 2, 2]),
+                  _buildTableRow(theme, scheme, sp, ['13월 급여', '13th month pay', '지급 시점 규정'], flexValues: [1, 2, 2]),
+                  _buildTableRow(theme, scheme, sp, ['사회보험', 'SSS·PhilHealth·Pag-IBIG', '등록·납부 의무'], flexValues: [1, 2, 2]),
+                  _buildTableRow(theme, scheme, sp, ['등록', '바랑가이 등록(지역별)', '현지 절차 상이'], flexValues: [1, 2, 2]),
                 ],
               ),
             ),
@@ -718,12 +735,13 @@ class TutorScreen extends StatelessWidget {
                         color: scheme.error,
                         borderRadius: BorderRadius.circular(4),
                       ),
+                      /// 중요 배지 텍스트 (Important Badge Text)
+                      /// labelSmall → labelMedium으로 변경하여 가독성 향상
                       child: Text(
                         '중요',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 10,
                         ),
                       ),
                     ),
@@ -740,10 +758,13 @@ class TutorScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: sp.s8),
+
+                /// 최저임금 안내 텍스트 (Minimum Wage Info Text)
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '가사근로자 최저임금은 전국 단일이 아니라 지역별 임금위원회(RTWPB) 임금명령으로 조정됩니다. '
                   '따라서 거주 지역의 최신 임금명령을 확인한 뒤 계약서에 반영해야 합니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
@@ -816,9 +837,11 @@ class TutorScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// NBI Clearance 안내 텍스트 (NBI Clearance Info Text)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     'NBI Clearance는 취업 목적 등으로 발급되는 공식 증명서이므로, 가정 출입 인력 검증 서류로 실무상 활용도가 높습니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onPrimaryContainer,
                       height: 1.4,
                     ),
@@ -887,16 +910,20 @@ class TutorScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: sp.s4),
+
+                /// 채용 절차 확인 사항 (Process Step Check Item)
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   check,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.7),
-                    fontSize: 12,
                   ),
                 ),
               ],
             ),
           ),
+          /// 필요 서류 배지 (Document Badge)
+          /// labelSmall → labelMedium으로 변경하여 가독성 향상
           Container(
             padding: EdgeInsets.symmetric(horizontal: sp.s12, vertical: sp.s8),
             decoration: BoxDecoration(
@@ -905,10 +932,9 @@ class TutorScreen extends StatelessWidget {
             ),
             child: Text(
               document,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.secondary,
                 fontWeight: FontWeight.w600,
-                fontSize: 11,
               ),
             ),
           ),
@@ -978,10 +1004,12 @@ class TutorScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// 아동 대상 수업 안내 (Child Lesson Info)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '아동 대상 수업은 수업 장소(거실 등 개방 공간), 보호자 동선, 촬영·녹음 정책을 '
                     '계약서 또는 가정 규칙으로 문서화하는 방식이 관리에 유리합니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                       height: 1.4,
                     ),
@@ -1109,9 +1137,12 @@ class TutorScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: sp.s8),
+
+                /// KURS 안내 텍스트 (KURS Info Text)
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '가사근로자 및 고용주 등록은 Kasambahay Unified Registration System(KURS) 체계가 운영됩니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onPrimaryContainer,
                     height: 1.4,
                   ),
@@ -1142,8 +1173,10 @@ class TutorScreen extends StatelessWidget {
       padding: EdgeInsets.only(bottom: sp.s8),
       child: Row(
         children: [
+          /// 양식 코드 배지 (Form Code Badge)
+          /// labelSmall → labelMedium으로 변경하여 가독성 향상
           Container(
-            width: 80,
+            width: 90,
             padding: EdgeInsets.symmetric(horizontal: sp.s8, vertical: sp.s4),
             decoration: BoxDecoration(
               color: scheme.primary.withValues(alpha: 0.15),
@@ -1151,18 +1184,20 @@ class TutorScreen extends StatelessWidget {
             ),
             child: Text(
               code,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: FontWeight.bold,
-                fontSize: 10,
               ),
               textAlign: TextAlign.center,
             ),
           ),
           SizedBox(width: sp.s8),
+
+          /// 양식 설명 텍스트 (Form Description Text)
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             description,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
@@ -1297,19 +1332,22 @@ class TutorScreen extends StatelessWidget {
                         color: scheme.error,
                         borderRadius: BorderRadius.circular(4),
                       ),
+                      /// 강조 배지 텍스트 (Emphasis Badge Text)
+                      /// labelSmall → labelMedium으로 변경하여 가독성 향상
                       child: Text(
                         '강조',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 10,
                         ),
                       ),
                     ),
                     SizedBox(height: sp.s4),
+                    /// 운전기사 섹션 타이틀 (Driver Section Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       '7) 운전기사 고용은 맨파워 업체 경유 권장',
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: scheme.error,
                       ),
@@ -1340,10 +1378,13 @@ class TutorScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: sp.s12),
+
+                /// 가정 운전기사 안내 (Family Driver Info)
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   '필리핀에서 가정 운전기사(family driver)는 법 적용이 단순하지 않으며, 임금·책임·분쟁 리스크가 '
                   '상대적으로 큽니다. 또한 교통사고는 민사·형사·보험 문제가 동시에 발생할 수 있습니다.',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
@@ -1440,10 +1481,12 @@ class TutorScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// 외국인 튜터 안내 (Foreign Tutor Info)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     "가정이 개인이라 하더라도, 실제로 '고용'이 성립하면 위 요건이 문제될 수 있습니다. "
                     '따라서 외국인 튜터는 신분(체류자격)과 취업 가능 범위를 서류로 확인한 뒤 계약해야 합니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                       height: 1.4,
                     ),
@@ -1505,9 +1548,11 @@ class TutorScreen extends StatelessWidget {
                 ),
                 SizedBox(width: sp.s8),
                 Expanded(
+                  /// 분쟁 처리 팁 (Dispute Resolution Tip)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   child: Text(
                     '실무에서는 기록(근무·급여·합의) 유무가 분쟁 결과에 큰 영향을 줍니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onPrimaryContainer,
                       fontWeight: FontWeight.w600,
                       height: 1.4,
@@ -1651,11 +1696,13 @@ class TutorScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: sp.s4),
+
+                    /// 참고 URL 설명 (Reference URL Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurface.withValues(alpha: 0.7),
-                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -1679,5 +1726,461 @@ class TutorScreen extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+
+  /// 튜터/맨파워 업체 찾는 방법 섹션 빌더 (Find Tutor Section Builder)
+  ///
+  /// 튜터를 찾는 4가지 방법과 주요 플랫폼 연락처, 체크리스트를 제공합니다.
+  /// Provides 4 methods to find tutors, major platform contacts, and checklist.
+  Widget _buildFindTutorSection(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp,
+  ) {
+    return _buildInfoCard(
+      theme,
+      scheme,
+      sp,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// 섹션 타이틀 (Section Title)
+          _buildSectionTitle(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightMagnifyingGlass,
+            number: '',
+            title: '튜터/맨파워 업체 찾는 방법',
+            iconColor: scheme.tertiary,
+          ),
+          SizedBox(height: sp.s16),
+
+          /// 맨파워 업체 권장 안내 (Manpower Agency Recommendation)
+          Container(
+            padding: EdgeInsets.all(sp.s12),
+            decoration: BoxDecoration(
+              color: scheme.tertiaryContainer.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightPhoneVolume,
+                  size: 16,
+                  color: scheme.tertiary,
+                ),
+                SizedBox(width: sp.s12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DOLE 인가 맨파워 업체 권장',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: scheme.tertiary,
+                        ),
+                      ),
+                      SizedBox(height: sp.s4),
+                      Text(
+                        'DOLE 핫라인: 1349 (24시간)',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: sp.s4),
+
+                      /// DOLE 안내 텍스트 (DOLE Info Text)
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                      Text(
+                        '튜터 채용도 Kasambahay Law 적용 시 DOLE 등록 업체 이용이 안전합니다.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurface.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: sp.s16),
+
+          /// 4가지 검색 방법 (4 Search Methods)
+          Text(
+            '튜터 검색 방법',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: scheme.onSurface,
+            ),
+          ),
+          SizedBox(height: sp.s12),
+
+          /// (1) 튜터 전문 플랫폼 (Tutor Platforms)
+          _buildTutorSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightDesktop,
+            title: '튜터 전문 플랫폼',
+            content:
+                'MyPrivateTutor.com.ph, TUTOROO, TutorHunt.ph 등 튜터 전문 플랫폼에서 과목별, 지역별 튜터 검색',
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (2) 구인 사이트 (Job Sites)
+          _buildTutorSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightBriefcase,
+            title: '구인 사이트',
+            content:
+                'Jobstreet, Indeed, Jooble에서 "private tutor", "home tutor" 검색. 요구 자격 및 경력 확인 필수',
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (3) Facebook 그룹 (Facebook Groups)
+          _buildTutorSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.facebook,
+            title: 'Facebook 그룹',
+            content:
+                '"Tutor hiring Philippines", "Home tutor Metro Manila" 검색. 개인거래는 신원 확인이 어려우므로 주의 필요',
+            isWarning: true,
+          ),
+          SizedBox(height: sp.s8),
+
+          /// (4) 맨파워 에이전시 (Manpower Agencies)
+          _buildTutorSearchMethodCard(
+            theme,
+            scheme,
+            sp,
+            icon: FontAwesomeIcons.lightBuilding,
+            title: '맨파워 에이전시',
+            content:
+                'DOLE 인가 맨파워 업체(MaidProvider.ph 등)에서 가정교사 포함 서비스 제공. 계약/보험 등 법적 지원 가능',
+          ),
+          SizedBox(height: sp.s20),
+
+          /// 주요 튜터 플랫폼 (Major Tutor Platforms)
+          Text(
+            '주요 튜터 플랫폼',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: scheme.onSurface,
+            ),
+          ),
+          SizedBox(height: sp.s12),
+
+          /// 플랫폼 카드들 (Platform Cards)
+          _buildTutorAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'MyPrivateTutor.com.ph',
+            feature: '필리핀 최대 튜터 플랫폼',
+            description: '5만명+ 학생 이용, 48시간 내 튜터 매칭',
+            url: 'https://www.myprivatetutor.com.ph/',
+          ),
+          SizedBox(height: sp.s8),
+          _buildTutorAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'TUTOROO',
+            feature: '네이티브 튜터 전문',
+            description: '시간당 ₱500부터, 영어/한국어/일본어 등',
+            url: 'https://www.tutoroo.co/english-tutor-manila',
+          ),
+          SizedBox(height: sp.s8),
+          _buildTutorAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'Tutor Hunt Philippines',
+            feature: 'DBS 인증 튜터',
+            description: '157명+ 마닐라 기반 튜터, 시간당 PHP17부터',
+            url: 'https://www.tutorhunt.ph/locations/manila/',
+          ),
+          SizedBox(height: sp.s8),
+          _buildTutorAgencyCard(
+            context,
+            theme,
+            scheme,
+            sp,
+            name: 'Apprentus',
+            feature: '글로벌 튜터 플랫폼',
+            description: '언어, 음악, 학과목 등 다양한 분야',
+            url: 'https://www.apprentus.com/en/private-lessons/Manila-Philippines',
+          ),
+          SizedBox(height: sp.s20),
+
+          /// 튜터 선정 체크리스트 (Tutor Selection Checklist)
+          Container(
+            padding: EdgeInsets.all(sp.s16),
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.lightClipboardCheck,
+                      size: 16,
+                      color: scheme.primary,
+                    ),
+                    SizedBox(width: sp.s8),
+                    Text(
+                      '튜터 선정 체크리스트',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: scheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: sp.s12),
+                _buildTutorChecklistItem(
+                    theme, scheme, sp, '학력 및 전공 확인 (교육학, 해당 과목 전공)'),
+                SizedBox(height: sp.s4),
+                _buildTutorChecklistItem(
+                    theme, scheme, sp, 'NBI Clearance (무범죄 증명) 확인'),
+                SizedBox(height: sp.s4),
+                _buildTutorChecklistItem(
+                    theme, scheme, sp, '교육 경력 및 레퍼런스 확인'),
+                SizedBox(height: sp.s4),
+                _buildTutorChecklistItem(
+                    theme, scheme, sp, '과목별 수업 샘플/데모 요청'),
+                SizedBox(height: sp.s4),
+                _buildTutorChecklistItem(
+                    theme, scheme, sp, '플랫폼 리뷰 및 평점 확인'),
+                SizedBox(height: sp.s4),
+                _buildTutorChecklistItem(
+                    theme, scheme, sp, '수업 방식(대면/온라인) 및 시간당 요금 협의'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 튜터 검색 방법 카드 빌더 (Tutor Search Method Card Builder)
+  Widget _buildTutorSearchMethodCard(
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp, {
+    required IconData icon,
+    required String title,
+    required String content,
+    bool isWarning = false,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(sp.s12),
+      decoration: BoxDecoration(
+        color: isWarning
+            ? scheme.errorContainer.withValues(alpha: 0.15)
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
+        border: isWarning
+            ? Border.all(color: scheme.error.withValues(alpha: 0.3))
+            : null,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: isWarning
+                  ? scheme.error.withValues(alpha: 0.15)
+                  : scheme.tertiary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: FaIcon(
+                icon,
+                size: 14,
+                color: isWarning ? scheme.error : scheme.tertiary,
+              ),
+            ),
+          ),
+          SizedBox(width: sp.s12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isWarning ? scheme.error : scheme.onSurface,
+                  ),
+                ),
+                SizedBox(height: sp.s4),
+
+                /// 튜터 검색 방법 내용 (Tutor Search Method Content)
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                Text(
+                  content,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.8),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 튜터 플랫폼 카드 빌더 (Tutor Agency Card Builder)
+  Widget _buildTutorAgencyCard(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp, {
+    required String name,
+    required String feature,
+    required String description,
+    required String url,
+  }) {
+    return InkWell(
+      onTap: () => _launchUrl(url),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: EdgeInsets.all(sp.s12),
+        decoration: BoxDecoration(
+          color: scheme.primaryContainer.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: scheme.primary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.lightChalkboardUser,
+                  size: 16,
+                  color: scheme.primary,
+                ),
+              ),
+            ),
+            SizedBox(width: sp.s12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.lightArrowUpRightFromSquare,
+                        size: 12,
+                        color: scheme.primary,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: sp.s4),
+
+                  /// 튜터 플랫폼 특징 (Tutor Platform Feature)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                  Text(
+                    feature,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  /// 튜터 플랫폼 설명 (Tutor Platform Description)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                  Text(
+                    description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 튜터 체크리스트 항목 빌더 (Tutor Checklist Item Builder)
+  Widget _buildTutorChecklistItem(
+    ThemeData theme,
+    ColorScheme scheme,
+    AppSpacing sp,
+    String text,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 18,
+          height: 18,
+          margin: EdgeInsets.only(top: 2),
+          decoration: BoxDecoration(
+            color: scheme.primary.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.lightCheck,
+              size: 10,
+              color: scheme.primary,
+            ),
+          ),
+        ),
+        SizedBox(width: sp.s8),
+        Expanded(
+          /// 체크리스트 항목 텍스트 (Checklist Item Text)
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+          child: Text(
+            text,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.8),
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

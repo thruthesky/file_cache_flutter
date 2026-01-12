@@ -1980,6 +1980,14 @@
   "helperHouseHelper": "家政帮手",
   "helperDriver": "司机",
   "helperTutor": "家教",
+  "helperFindManpower": "如何寻找人力公司",
+  "helperDoleVerify": "DOLE注册验证",
+  "helperWebSearch": "网络搜索",
+  "helperOnlinePlatform": "在线平台",
+  "helperFacebookGroup": "Facebook群组",
+  "helperJobSite": "招聘网站",
+  "helperAgencyContact": "主要公司联系方式",
+  "helperChecklistTitle": "公司选择清单",
   "comingSoon": "即将推出",
   "entertainmentSection": "美食·娱乐·观光",
   "entertainmentGolf": "高尔夫",
@@ -1990,5 +1998,7 @@
   "entertainmentRestaurant": "美食",
   "entertainmentWaterSports": "水上运动",
   "entertainmentIslandTour": "跳岛游",
-  "entertainmentFestival": "节日"
+  "entertainmentFestival": "节日",
+  "quickPostEventMessage": "积分活动！发帖获得随机积分~",
+  "quickPostDefaultMessage": "今天您在菲律宾的生活如何？"
 }

@@ -1703,6 +1703,30 @@ class LoZh extends Lo {
   String get helperTutor => '家教';
 
   @override
+  String get helperFindManpower => '如何寻找人力公司';
+
+  @override
+  String get helperDoleVerify => 'DOLE注册验证';
+
+  @override
+  String get helperWebSearch => '网络搜索';
+
+  @override
+  String get helperOnlinePlatform => '在线平台';
+
+  @override
+  String get helperFacebookGroup => 'Facebook群组';
+
+  @override
+  String get helperJobSite => '招聘网站';
+
+  @override
+  String get helperAgencyContact => '主要公司联系方式';
+
+  @override
+  String get helperChecklistTitle => '公司选择清单';
+
+  @override
   String get comingSoon => '即将推出';
 
   @override
@@ -1818,4 +1842,10 @@ class LoZh extends Lo {
 
   @override
   String get entertainmentFestival => '节日';
+
+  @override
+  String get quickPostEventMessage => '积分活动！发帖获得随机积分~';
+
+  @override
+  String get quickPostDefaultMessage => '今天您在菲律宾的生活如何？';
 }

@@ -683,7 +683,7 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       area.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -703,7 +703,7 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
                           ),
                           child: Text(
                             feature,
-                            style: theme.textTheme.labelSmall?.copyWith(
+                            style: theme.textTheme.labelMedium?.copyWith(
                               color: scheme.onSecondaryContainer,
                             ),
                           ),
@@ -769,7 +769,7 @@ class _MonthlyLivingScreenState extends State<MonthlyLivingScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),

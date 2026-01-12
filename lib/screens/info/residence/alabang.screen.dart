@@ -623,7 +623,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -708,7 +708,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                     flex: 2,
                     child: Text(
                       cost.type,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
@@ -718,7 +718,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                     flex: 2,
                     child: Text(
                       cost.rentRange,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -729,7 +729,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                     flex: 2,
                     child: Text(
                       cost.features,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.end,
@@ -834,7 +834,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                     flex: 2,
                     child: Text(
                       item.category,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
@@ -850,7 +850,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                       ),
                       child: Text(
                         item.alabang,
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: scheme.onSurface,
                           height: 1.3,
                         ),
@@ -863,7 +863,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                     flex: 3,
                     child: Text(
                       item.makati,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.3,
                       ),
@@ -875,7 +875,7 @@ class _AlabangScreenState extends State<AlabangScreen> {
                     flex: 3,
                     child: Text(
                       item.bgc,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.3,
                       ),

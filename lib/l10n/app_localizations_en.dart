@@ -1740,6 +1740,30 @@ class LoEn extends Lo {
   String get helperTutor => 'Tutor';
 
   @override
+  String get helperFindManpower => 'How to Find Manpower Agency';
+
+  @override
+  String get helperDoleVerify => 'DOLE Registration Verification';
+
+  @override
+  String get helperWebSearch => 'Web Search';
+
+  @override
+  String get helperOnlinePlatform => 'Online Platform';
+
+  @override
+  String get helperFacebookGroup => 'Facebook Group';
+
+  @override
+  String get helperJobSite => 'Job Site';
+
+  @override
+  String get helperAgencyContact => 'Major Agency Contacts';
+
+  @override
+  String get helperChecklistTitle => 'Agency Selection Checklist';
+
+  @override
   String get comingSoon => 'Coming Soon';
 
   @override
@@ -1855,4 +1879,12 @@ class LoEn extends Lo {
 
   @override
   String get entertainmentFestival => 'Festival';
+
+  @override
+  String get quickPostEventMessage =>
+      'Point Event! Write posts and get random points~';
+
+  @override
+  String get quickPostDefaultMessage =>
+      'How is your life in the Philippines today?';
 }

@@ -1709,6 +1709,30 @@ class LoJa extends Lo {
   String get helperTutor => '家庭教師';
 
   @override
+  String get helperFindManpower => '人材派遣会社の探し方';
+
+  @override
+  String get helperDoleVerify => 'DOLE登録確認';
+
+  @override
+  String get helperWebSearch => 'Web検索';
+
+  @override
+  String get helperOnlinePlatform => 'オンラインプラットフォーム';
+
+  @override
+  String get helperFacebookGroup => 'Facebookグループ';
+
+  @override
+  String get helperJobSite => '求人サイト';
+
+  @override
+  String get helperAgencyContact => '主要会社連絡先';
+
+  @override
+  String get helperChecklistTitle => '会社選定チェックリスト';
+
+  @override
   String get comingSoon => '準備中';
 
   @override
@@ -1824,4 +1848,10 @@ class LoJa extends Lo {
 
   @override
   String get entertainmentFestival => 'フェスティバル';
+
+  @override
+  String get quickPostEventMessage => 'ポイントイベント！投稿してランダムポイントをゲット~';
+
+  @override
+  String get quickPostDefaultMessage => '今日のフィリピン生活はいかがですか？';
 }

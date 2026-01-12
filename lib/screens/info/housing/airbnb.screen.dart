@@ -538,7 +538,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelMedium?.copyWith(
           color: scheme.onPrimary,
           fontWeight: FontWeight.w600,
         ),
@@ -625,7 +625,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -694,7 +694,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
                 Expanded(
                   child: Text(
                     row.content,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurface,
                       height: 1.5,
                     ),
@@ -756,7 +756,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
           SizedBox(height: sp.s8),
           Text(
             '필리핀에서는 예약 완료 후 현장에 도착했을 때 "에어비앤비 손님을 받을 수 없다"는 이유로 입실이 거부된 사례가 실제로 발생했다. 콘도미니엄 관리 규약으로 단기 임대를 금지하거나, 호스트가 내부 사정으로 운영을 중단했음에도 정보를 업데이트하지 않는 경우다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onErrorContainer.withValues(alpha: 0.9),
               height: 1.5,
             ),
@@ -780,7 +780,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
                 Expanded(
                   child: Text(
                     '반드시 사전에 호스트와 메시지를 주고받으며 확인 절차를 거쳐야 한다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: scheme.onErrorContainer,
                     ),
@@ -818,7 +818,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
           Expanded(
             child: Text(
               tip,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSecondaryContainer,
                 height: 1.5,
               ),
@@ -873,7 +873,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
               SizedBox(height: sp.s12),
               Text(
                 note.notes,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -920,7 +920,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
           SizedBox(height: sp.s12),
           Text(
             '에어비앤비 플랫폼을 이용할 때는 모든 결제와 연락을 반드시 에어비앤비 시스템 내에서 처리해야 안전하다. 플랫폼을 거치지 않고 직접 돈을 주고받는 행위는 사기 피해 발생 시 보상이 어려우므로 주의가 필요하다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimaryContainer,
               height: 1.5,
             ),
@@ -928,7 +928,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
           SizedBox(height: sp.s8),
           Text(
             '다행히 에어비앤비는 24시간 글로벌 고객지원을 운영하고 있어, 문제가 생기면 한국어 상담을 포함한 도움을 받을 수 있다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimaryContainer.withValues(alpha: 0.8),
               height: 1.5,
             ),
@@ -1009,7 +1009,7 @@ class _AirbnbScreenState extends State<AirbnbScreen> {
           SizedBox(height: sp.s8),
           Text(
             '규정을 준수하며 신중하게 예약한다면 필리핀에서의 에어비앤비 체험은 호텔과는 또 다른 만족감을 제공할 것이다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimaryContainer.withValues(alpha: 0.8),
               fontStyle: FontStyle.italic,
               height: 1.5,

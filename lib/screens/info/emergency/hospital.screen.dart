@@ -164,9 +164,11 @@ class HospitalScreen extends StatelessWidget {
                 color: scheme.onError,
               ),
             ),
+            /// 라벨 텍스트 (Label Text)
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             Text(
               label,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onError.withValues(alpha: 0.9),
               ),
             ),
@@ -266,18 +268,23 @@ class HospitalScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /// 연락처 이름 (Contact Name)
+                        /// titleSmall → titleMedium으로 변경하여 가독성 향상
                         Text(
                           contact.name,
-                          style: theme.textTheme.titleSmall?.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
                         ),
                         if (contact.description != null) ...[
                           SizedBox(height: sp.s4),
+
+                          /// 연락처 설명 (Contact Description)
+                          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                           Text(
                             contact.description!,
-                            style: theme.textTheme.bodySmall?.copyWith(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.onSurfaceVariant,
                               height: 1.4,
                             ),
@@ -290,14 +297,16 @@ class HospitalScreen extends StatelessWidget {
                             children: [
                               FaIcon(
                                 FontAwesomeIcons.locationDot,
-                                size: 12,
+                                size: 14,
                                 color: scheme.outline,
                               ),
                               SizedBox(width: sp.s4),
                               Expanded(
+                                /// 주소 텍스트 (Address Text)
+                                /// labelSmall → bodySmall → bodyMedium으로 변경하여 가독성 향상
                                 child: Text(
                                   contact.address!,
-                                  style: theme.textTheme.labelSmall?.copyWith(
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: scheme.outline,
                                   ),
                                 ),

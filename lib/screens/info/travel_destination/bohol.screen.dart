@@ -743,7 +743,7 @@ class _BoholScreenState extends State<BoholScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -814,7 +814,7 @@ class _BoholScreenState extends State<BoholScreen> {
               /// 설명 (Description)
               Text(
                 attraction.description,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -830,7 +830,7 @@ class _BoholScreenState extends State<BoholScreen> {
                     children: [
                       Text(
                         '•',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -839,7 +839,7 @@ class _BoholScreenState extends State<BoholScreen> {
                       Expanded(
                         child: Text(
                           feature,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -872,7 +872,7 @@ class _BoholScreenState extends State<BoholScreen> {
                       Expanded(
                         child: Text(
                           attraction.transportInfo!,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSecondaryContainer,
                             fontWeight: FontWeight.w500,
                           ),
@@ -906,7 +906,7 @@ class _BoholScreenState extends State<BoholScreen> {
                       Expanded(
                         child: Text(
                           attraction.admissionInfo!,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onTertiaryContainer,
                             fontWeight: FontWeight.w500,
                           ),
@@ -1059,7 +1059,7 @@ class _BoholScreenState extends State<BoholScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         item.activity,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                           height: 1.4,
                         ),
@@ -1115,7 +1115,7 @@ class _BoholScreenState extends State<BoholScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         note.description,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onErrorContainer.withValues(alpha: 0.8),
                           height: 1.4,
                         ),
@@ -1218,7 +1218,7 @@ class _BoholScreenState extends State<BoholScreen> {
             ),
             child: Text(
               '세부와 또 다른 매력을 지닌 보홀은 당일치기로 다녀와도 좋지만 여유가 된다면 1~2일 더 머무르길 추천합니다. 맑은 바다와 풍요로운 자연 속에서 힐링할 수 있는 보홀에서의 하루 여행이 알차고 뜻깊은 추억이 되길 바랍니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onPrimaryContainer,
                 fontStyle: FontStyle.italic,
                 height: 1.5,

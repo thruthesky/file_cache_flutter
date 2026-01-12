@@ -1709,6 +1709,30 @@ class LoKo extends Lo {
   String get helperTutor => '가정교사';
 
   @override
+  String get helperFindManpower => '맨파워 업체 찾는 방법';
+
+  @override
+  String get helperDoleVerify => 'DOLE 등록 확인';
+
+  @override
+  String get helperWebSearch => '웹 검색';
+
+  @override
+  String get helperOnlinePlatform => '온라인 플랫폼';
+
+  @override
+  String get helperFacebookGroup => 'Facebook 그룹';
+
+  @override
+  String get helperJobSite => '구인 사이트';
+
+  @override
+  String get helperAgencyContact => '주요 업체 연락처';
+
+  @override
+  String get helperChecklistTitle => '업체 선정 체크리스트';
+
+  @override
   String get comingSoon => '준비 중입니다';
 
   @override
@@ -1821,4 +1845,10 @@ class LoKo extends Lo {
 
   @override
   String get entertainmentFestival => '축제';
+
+  @override
+  String get quickPostEventMessage => '포인트 이벤트! 글 쓰고 랜덤포인트가 가득~';
+
+  @override
+  String get quickPostDefaultMessage => '오늘, 당신의 필리핀 생활은 어떠한가요?';
 }

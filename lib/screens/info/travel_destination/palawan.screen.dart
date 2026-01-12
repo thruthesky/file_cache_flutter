@@ -571,7 +571,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
           SizedBox(height: sp.s4),
           Text(
             '환경정책 · 방문팁 · 시즌 추천 · 내부 이동',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimary.withValues(alpha: 0.8),
             ),
           ),
@@ -693,7 +693,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -837,7 +837,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
               /// [설명 - Description]
               Text(
                 spot.description,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.6,
                 ),
@@ -853,7 +853,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                     children: [
                       Text(
                         '•',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -862,7 +862,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                       Expanded(
                         child: Text(
                           feature,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -910,7 +910,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                             children: [
                               Text(
                                 '✓',
-                                style: theme.textTheme.bodySmall?.copyWith(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   color: scheme.tertiary,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -919,7 +919,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                               Expanded(
                                 child: Text(
                                   tip,
-                                  style: theme.textTheme.bodySmall?.copyWith(
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: scheme.onTertiaryContainer,
                                   ),
                                 ),
@@ -989,7 +989,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                         ),
                         Text(
                           tour.character,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.primary,
                             fontWeight: FontWeight.w500,
                           ),
@@ -1016,7 +1016,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                     ),
                     child: Text(
                       '장점',
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onPrimaryContainer,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1026,7 +1026,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                   Expanded(
                     child: Text(
                       tour.pros,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -1050,7 +1050,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                     ),
                     child: Text(
                       '주의',
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onErrorContainer,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1060,7 +1060,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
                   Expanded(
                     child: Text(
                       tour.cons,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -1097,7 +1097,7 @@ class _PalawanScreenState extends State<PalawanScreen> {
           Expanded(
             child: Text(
               '주의: 우기에는 해상(페리·호핑) 일정이 기상 변수에 민감합니다. 예비일 확보를 권장합니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onErrorContainer,
                 height: 1.4,
               ),

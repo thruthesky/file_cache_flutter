@@ -243,7 +243,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                             SizedBox(width: sp.s4),
                             Text(
                               fullNotice.timeString ?? _formatDate(fullNotice.createdAt),
-                              style: theme.textTheme.bodySmall?.copyWith(
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 color: scheme.onSurfaceVariant,
                               ),
                             ),
@@ -394,7 +394,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                           SizedBox(width: sp.s4),
                           Text(
                             notice.writtenDate,
-                            style: theme.textTheme.bodySmall?.copyWith(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.onSurfaceVariant,
                             ),
                           ),
@@ -431,7 +431,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                             Expanded(
                               child: Text(
                                 '첨부파일이 있습니다',
-                                style: theme.textTheme.bodySmall?.copyWith(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   color: scheme.primary,
                                 ),
                               ),
@@ -560,7 +560,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
             SizedBox(height: sp.s12),
             Text(
               '공지사항을 불러오는 중...',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onPrimaryContainer,
               ),
             ),
@@ -602,7 +602,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
             SizedBox(height: sp.s4),
             Text(
               '새로고침 버튼을 눌러 다시 시도해주세요',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onErrorContainer.withValues(alpha: 0.7),
               ),
             ),
@@ -712,7 +712,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   /// 작성일 (Written date)
                   Text(
                     notice.writtenDate,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
@@ -857,7 +857,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
             SizedBox(height: sp.s12),
             Text(
               '공지사항을 불러오는 중...',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
               ),
             ),
@@ -962,7 +962,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   /// 작성일 (Written date)
                   Text(
                     notice.timeString ?? _formatDate(notice.createdAt),
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
@@ -1036,7 +1036,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
           /// 설명 (Description)
           Text(
             description,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: foregroundColor.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,

@@ -506,7 +506,7 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                             ),
                             child: Text(
                               '필수',
-                              style: theme.textTheme.labelSmall?.copyWith(
+                              style: theme.textTheme.labelMedium?.copyWith(
                                 color: scheme.onError,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
@@ -519,7 +519,7 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: item.isWarning
                             ? scheme.onErrorContainer
                             : scheme.onSurfaceVariant,
@@ -585,7 +585,7 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -636,7 +636,7 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                 SizedBox(height: sp.s8),
                 Text(
                   item.description,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                     height: 1.4,
                   ),
@@ -703,7 +703,7 @@ class _EssentialInfoScreenState extends State<EssentialInfoScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         mistake.description,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onErrorContainer.withValues(alpha: 0.8),
                         ),
                       ),

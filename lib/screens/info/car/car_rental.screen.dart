@@ -622,7 +622,7 @@ class _CarRentalScreenState extends State<CarRentalScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -689,7 +689,7 @@ class _CarRentalScreenState extends State<CarRentalScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       '※ 연료비, 톨비, 주차비, 기사 식사비는 별도',
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -760,7 +760,7 @@ class _CarRentalScreenState extends State<CarRentalScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       step.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -837,13 +837,13 @@ class _CarRentalScreenState extends State<CarRentalScreen> {
                   children: [
                     Text(
                       fee.note,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
                     Text(
                       fee.krw,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -881,7 +881,7 @@ class _CarRentalScreenState extends State<CarRentalScreen> {
           Expanded(
             child: Text(
               '위 요금에는 운전기사 인건비와 차량 비용, 연료와 통행료 등이 포함된 경우가 많지만, 기사 팁, 식사비, 주차비 등은 별도입니다. 예약 전에 포함/불포함 항목을 확인하세요.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
                 height: 1.5,
               ),

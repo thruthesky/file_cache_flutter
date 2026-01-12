@@ -144,16 +144,21 @@ class EmbassyScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
+            /// 전화번호 텍스트 (Phone Number Text)
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             Text(
               number,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: scheme.onPrimary,
               ),
             ),
+
+            /// 라벨 텍스트 (Label Text)
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             Text(
               label,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onPrimary.withValues(alpha: 0.9),
               ),
             ),
@@ -245,18 +250,23 @@ class EmbassyScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /// 연락처 이름 (Contact Name)
+                        /// titleSmall → titleMedium으로 변경하여 가독성 향상
                         Text(
                           contact.name,
-                          style: theme.textTheme.titleSmall?.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
                         ),
                         if (contact.description != null) ...[
                           SizedBox(height: sp.s4),
+
+                          /// 연락처 설명 (Contact Description)
+                          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                           Text(
                             contact.description!,
-                            style: theme.textTheme.bodySmall?.copyWith(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.onSurfaceVariant,
                               height: 1.4,
                             ),
@@ -269,14 +279,16 @@ class EmbassyScreen extends StatelessWidget {
                             children: [
                               FaIcon(
                                 FontAwesomeIcons.locationDot,
-                                size: 12,
+                                size: 14,
                                 color: scheme.outline,
                               ),
                               SizedBox(width: sp.s4),
                               Expanded(
+                                /// 주소 텍스트 (Address Text)
+                                /// labelSmall → bodySmall → bodyMedium으로 변경하여 가독성 향상
                                 child: Text(
                                   contact.address!,
-                                  style: theme.textTheme.labelSmall?.copyWith(
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: scheme.outline,
                                   ),
                                 ),
@@ -430,11 +442,14 @@ class EmbassyScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              FaIcon(FontAwesomeIcons.clock, size: 16, color: scheme.primary),
+              FaIcon(FontAwesomeIcons.clock, size: 18, color: scheme.primary),
               SizedBox(width: sp.s8),
+
+              /// 업무시간 섹션 제목 (Business Hours Section Title)
+              /// titleSmall → titleMedium으로 변경하여 가독성 향상
               Text(
                 '대사관 업무시간',
-                style: theme.textTheme.titleSmall?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onSurface,
                 ),
@@ -448,9 +463,12 @@ class EmbassyScreen extends StatelessWidget {
           SizedBox(height: sp.s8),
           _buildHoursRow(context, '휴무일', '토, 일, 필리핀/한국 공휴일'),
           SizedBox(height: sp.s12),
+
+          /// 긴급 안내 텍스트 (Emergency Notice Text)
+          /// labelSmall → bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '※ 긴급 상황 시 긴급당직번호로 연락해 주세요.',
-            style: theme.textTheme.labelSmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.error,
               fontStyle: FontStyle.italic,
             ),
@@ -460,7 +478,8 @@ class EmbassyScreen extends StatelessWidget {
     );
   }
 
-  /// 업무시간 행 빌드
+  /// 업무시간 행 빌드 (Build Business Hours Row)
+  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
   Widget _buildHoursRow(BuildContext context, String label, String hours) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -470,18 +489,21 @@ class EmbassyScreen extends StatelessWidget {
       children: [
         SizedBox(
           width: 80,
+
+          /// 라벨 텍스트 (Label Text)
           child: Text(
             label,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
         Expanded(
+          /// 시간 텍스트 (Hours Text)
           child: Text(
             hours,
-            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
           ),
         ),
       ],

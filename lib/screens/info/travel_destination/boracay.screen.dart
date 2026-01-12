@@ -1496,7 +1496,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -1630,7 +1630,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
               SizedBox(height: sp.s12),
               Text(
                 beach.description,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -1644,7 +1644,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     children: [
                       Text(
                         '•',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1653,7 +1653,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                       Expanded(
                         child: Text(
                           feature,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -1724,7 +1724,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
               SizedBox(height: sp.s4),
               Text(
                 activity.location,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
                 maxLines: 1,
@@ -1732,7 +1732,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
               ),
               Text(
                 activity.note,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.primary,
                   fontSize: 11,
                 ),
@@ -1786,7 +1786,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         note.description,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onErrorContainer.withValues(alpha: 0.8),
                           height: 1.4,
                         ),
@@ -1868,7 +1868,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                             ),
                             child: Text(
                               restaurant.price!,
-                              style: theme.textTheme.labelSmall?.copyWith(
+                              style: theme.textTheme.labelMedium?.copyWith(
                                 color: scheme.onTertiaryContainer,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1879,7 +1879,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       restaurant.location,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -1887,7 +1887,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       restaurant.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -1954,7 +1954,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                         SizedBox(height: sp.s4),
                         Text(
                           spa.location,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.primary,
                             fontWeight: FontWeight.w500,
                           ),
@@ -1985,7 +1985,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
               SizedBox(height: sp.s12),
               Text(
                 spa.description,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -1999,7 +1999,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     children: [
                       Text(
                         '✓',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -2008,7 +2008,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                       Expanded(
                         child: Text(
                           feature,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -2084,7 +2084,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                           SizedBox(width: sp.s4),
                           Text(
                             contact.phone,
-                            style: theme.textTheme.bodySmall?.copyWith(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.primary,
                               fontWeight: FontWeight.w600,
                             ),
@@ -2094,7 +2094,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         '${contact.location} · ${contact.note}',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                           height: 1.4,
                         ),
@@ -2219,12 +2219,12 @@ class _BoracayScreenState extends State<BoracayScreen> {
                       children: [
                         Text(
                           weather.isDrySeason ? '☀️' : '🌧️',
-                          style: theme.textTheme.bodySmall,
+                          style: theme.textTheme.bodyMedium,
                         ),
                         SizedBox(width: sp.s4),
                         Text(
                           weather.month,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurface,
                             fontWeight: FontWeight.w500,
                           ),
@@ -2236,7 +2236,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     flex: 3,
                     child: Text(
                       weather.temperature,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -2245,7 +2245,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     flex: 2,
                     child: Text(
                       weather.rainfall,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -2254,7 +2254,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     flex: 3,
                     child: Text(
                       weather.characteristics,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         fontSize: 11,
                       ),
@@ -2325,7 +2325,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                           ),
                           child: Text(
                             facility.type,
-                            style: theme.textTheme.labelSmall?.copyWith(
+                            style: theme.textTheme.labelMedium?.copyWith(
                               color: scheme.onPrimaryContainer,
                               fontWeight: FontWeight.w600,
                             ),
@@ -2346,7 +2346,7 @@ class _BoracayScreenState extends State<BoracayScreen> {
                     SizedBox(height: sp.s8),
                     Text(
                       facility.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -2364,13 +2364,13 @@ class _BoracayScreenState extends State<BoracayScreen> {
                           children: [
                             Text(
                               '💡',
-                              style: theme.textTheme.bodySmall,
+                              style: theme.textTheme.bodyMedium,
                             ),
                             SizedBox(width: sp.s8),
                             Expanded(
                               child: Text(
                                 facility.tip!,
-                                style: theme.textTheme.bodySmall?.copyWith(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   color: scheme.onTertiaryContainer,
                                   height: 1.4,
                                 ),

@@ -577,7 +577,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelMedium?.copyWith(
           color: scheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
@@ -647,7 +647,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
           SizedBox(height: sp.s12),
           Text(
             '필리핀에서는 일본차 위주의 시장이 형성되어 있습니다. 특히 토요타는 시장 점유율 40% 이상으로 1위를 차지하며, Vios, Innova, Hilux, Fortuner 등이 인기 모델입니다.\n\n이런 인기 모델들은 부품 수급과 정비가 용이하여 중고차로도 선호됩니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
               height: 1.5,
             ),
@@ -707,7 +707,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         car.type,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
@@ -756,7 +756,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
           Expanded(
             child: Text(
               '위 가격대는 5~10년 내외의 중고차를 기준으로 한 평균적인 범위입니다. 연식이 오래되거나 주행거리가 많으면 더욱 저렴해질 수 있고, 신차급 중고차나 인기 SUV/픽업 트럭은 100만 페소를 넘기도 합니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
                 height: 1.5,
               ),
@@ -819,7 +819,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -889,7 +889,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
                         SizedBox(height: sp.s4),
                         Text(
                           item.description,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                             height: 1.4,
                           ),
@@ -941,7 +941,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
           SizedBox(height: sp.s12),
           Text(
             '외국인이라도 관광비자 등 비이민 비자 상태에서 차량 구입이 가능합니다. 필리핀 법은 차량 소유에 국적 제한을 두지 않습니다.\n\n현금 구매의 경우 여권과 현지 연락처만으로도 구매 및 등록이 가능합니다. 다만 할부 금융을 이용하려면 일정 기간 체류 기록이나 신용이 요구되어 어려울 수 있습니다.\n\n차량 구매 시 필리핀 운전면허증이 반드시 필요한 것은 아니지만, 향후 보험 가입과 차량 운행을 위해서는 국제면허나 현지 면허를 조속히 취득하는 것이 바람직합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSecondaryContainer,
               height: 1.5,
             ),
@@ -986,7 +986,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
           SizedBox(height: sp.s12),
           Text(
             '법적으로 중고 차량 매매 후 20일 이내에 이전 등록을 신청하도록 규정하고 있습니다. 명의 이전을 하지 않으면 사고 발생 시 법적 책임이나 과태료 등이 여전히 이전 소유주에게 남아 문제가 됩니다.\n\n명의 이전 절차는 구매자(신규 소유주)가 직접 진행하는 것이 원칙입니다. 판매자는 필요한 서류를 제공하는 것으로 역할이 끝납니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onErrorContainer,
               height: 1.5,
             ),
@@ -1049,7 +1049,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       step.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -1163,7 +1163,7 @@ class _CarPurchaseScreenState extends State<CarPurchaseScreen> {
           SizedBox(height: sp.s12),
           Text(
             '필리핀 한인 커뮤니티 필고에서는 중고차 매물 정보와 구매 대행 서비스 정보가 공유됩니다. 현지 정보와 실제 이용 후기를 참고하여 더 안전한 중고차 거래가 가능합니다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onTertiaryContainer.withValues(alpha: 0.9),
               height: 1.5,
             ),

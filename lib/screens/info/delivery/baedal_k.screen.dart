@@ -534,9 +534,11 @@ class _BaedalKScreenState extends State<BaedalKScreen> {
         color: scheme.onPrimary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
       ),
+      /// 배지 텍스트 (Badge Text)
+      /// labelSmall → labelMedium으로 변경하여 가독성 향상
       child: Text(
         text,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelMedium?.copyWith(
           color: scheme.onPrimary,
           fontWeight: FontWeight.w600,
         ),
@@ -615,17 +617,22 @@ class _BaedalKScreenState extends State<BaedalKScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 정보 카드 타이틀 (Info Card Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       item.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
+
+                    /// 정보 카드 설명 (Info Card Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -683,17 +690,22 @@ class _BaedalKScreenState extends State<BaedalKScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 단계별 가이드 타이틀 (Step Guide Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       step.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
+
+                    /// 단계별 가이드 설명 (Step Guide Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       step.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -785,32 +797,40 @@ class _BaedalKScreenState extends State<BaedalKScreen> {
               ),
               child: Row(
                 children: [
+                  /// 비교 항목명 (Comparison Item Name)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   Expanded(
                     flex: 2,
                     child: Text(
                       item.item,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurface,
                       ),
                     ),
                   ),
+
+                  /// 배달K 값 (Baedal K Value)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   Expanded(
                     flex: 2,
                     child: Text(
                       item.baedalK,
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
+
+                  /// 글로벌 앱 값 (Global App Value)
+                  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                   Expanded(
                     flex: 2,
                     child: Text(
                       item.globalApp,
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -861,9 +881,11 @@ class _BaedalKScreenState extends State<BaedalKScreen> {
                     ),
                     SizedBox(width: sp.s12),
                     Expanded(
+                      /// 공식 링크 타이틀 (Official Link Title)
+                      /// titleSmall → titleMedium으로 변경하여 가독성 향상
                       child: Text(
                         link['title']!,
-                        style: theme.textTheme.titleSmall?.copyWith(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: scheme.primary,
                           decoration: TextDecoration.underline,

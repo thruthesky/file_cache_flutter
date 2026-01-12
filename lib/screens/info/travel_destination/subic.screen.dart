@@ -883,7 +883,7 @@ class _SubicScreenState extends State<SubicScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -951,7 +951,7 @@ class _SubicScreenState extends State<SubicScreen> {
               SizedBox(height: sp.s12),
               Text(
                 site.description,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   height: 1.5,
                 ),
@@ -965,7 +965,7 @@ class _SubicScreenState extends State<SubicScreen> {
                     children: [
                       Text(
                         '•',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -974,7 +974,7 @@ class _SubicScreenState extends State<SubicScreen> {
                       Expanded(
                         child: Text(
                           feature,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -1005,7 +1005,7 @@ class _SubicScreenState extends State<SubicScreen> {
                     Flexible(
                       child: Text(
                         site.transportInfo,
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: scheme.onSecondaryContainer,
                         ),
                       ),
@@ -1148,7 +1148,7 @@ class _SubicScreenState extends State<SubicScreen> {
               SizedBox(height: sp.s4),
               Text(
                 activity.location,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
                 maxLines: 1,
@@ -1156,7 +1156,7 @@ class _SubicScreenState extends State<SubicScreen> {
               ),
               Text(
                 activity.note,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.primary,
                   fontSize: 11,
                 ),
@@ -1212,7 +1212,7 @@ class _SubicScreenState extends State<SubicScreen> {
                       SizedBox(height: sp.s4),
                       Text(
                         note.description,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onErrorContainer.withValues(alpha: 0.8),
                           height: 1.4,
                         ),

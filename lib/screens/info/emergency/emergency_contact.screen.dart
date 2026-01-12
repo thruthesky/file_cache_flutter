@@ -218,9 +218,10 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                 color: scheme.onError,
               ),
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             Text(
               label,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onError.withValues(alpha: 0.9),
               ),
             ),
@@ -329,9 +330,10 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                         ),
                         if (contact.description != null) ...[
                           SizedBox(height: sp.s4),
+                          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                           Text(
                             contact.description!,
-                            style: theme.textTheme.bodySmall?.copyWith(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.onSurfaceVariant,
                               height: 1.4,
                             ),
@@ -348,10 +350,11 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                                 color: scheme.outline,
                               ),
                               SizedBox(width: sp.s4),
+                              /// labelSmall → labelMedium으로 변경하여 가독성 향상
                               Expanded(
                                 child: Text(
                                   contact.address!,
-                                  style: theme.textTheme.labelSmall?.copyWith(
+                                  style: theme.textTheme.labelMedium?.copyWith(
                                     color: scheme.outline,
                                   ),
                                 ),
@@ -545,7 +548,7 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                 Expanded(
                   child: Text(
                     '근무시간 외 긴급상황: 긴급당직번호 이용',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.error,
                       fontWeight: FontWeight.w500,
                     ),
@@ -570,14 +573,14 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
           width: 80,
           child: Text(
             label,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onTertiaryContainer.withValues(alpha: 0.7),
             ),
           ),
         ),
         Text(
           hours,
-          style: theme.textTheme.bodySmall?.copyWith(
+          style: theme.textTheme.bodyMedium?.copyWith(
             color: scheme.onTertiaryContainer,
             fontWeight: FontWeight.w500,
           ),

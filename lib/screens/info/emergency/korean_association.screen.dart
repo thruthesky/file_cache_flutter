@@ -114,9 +114,11 @@ class KoreanAssociationScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: sp.s8),
+          /// 배너 설명 텍스트 (Banner Description Text)
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             '필리핀 거주 한인을 위한 각종 지원 및 교류',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimary.withValues(alpha: 0.9),
             ),
           ),
@@ -154,16 +156,21 @@ class KoreanAssociationScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
+            /// 전화번호 텍스트 (Phone Number Text)
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             Text(
               number,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: scheme.onPrimary,
               ),
             ),
+
+            /// 라벨 텍스트 (Label Text)
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             Text(
               label,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onPrimary.withValues(alpha: 0.9),
               ),
             ),
@@ -255,18 +262,23 @@ class KoreanAssociationScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /// 연락처 이름 (Contact Name)
+                        /// titleSmall → titleMedium으로 변경하여 가독성 향상
                         Text(
                           contact.name,
-                          style: theme.textTheme.titleSmall?.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
                         ),
                         if (contact.description != null) ...[
                           SizedBox(height: sp.s4),
+
+                          /// 연락처 설명 (Contact Description)
+                          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                           Text(
                             contact.description!,
-                            style: theme.textTheme.bodySmall?.copyWith(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: scheme.onSurfaceVariant,
                               height: 1.4,
                             ),
@@ -279,14 +291,16 @@ class KoreanAssociationScreen extends StatelessWidget {
                             children: [
                               FaIcon(
                                 FontAwesomeIcons.locationDot,
-                                size: 12,
+                                size: 14,
                                 color: scheme.outline,
                               ),
                               SizedBox(width: sp.s4),
                               Expanded(
+                                /// 주소 텍스트 (Address Text)
+                                /// labelSmall → bodySmall으로 변경하여 가독성 향상
                                 child: Text(
                                   contact.address!,
-                                  style: theme.textTheme.labelSmall?.copyWith(
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: scheme.outline,
                                   ),
                                 ),
@@ -442,13 +456,16 @@ class KoreanAssociationScreen extends StatelessWidget {
             children: [
               FaIcon(
                 FontAwesomeIcons.circleInfo,
-                size: 16,
+                size: 18,
                 color: scheme.primary,
               ),
               SizedBox(width: sp.s8),
+
+              /// 안내 섹션 제목 (Info Section Title)
+              /// titleSmall → titleMedium으로 변경하여 가독성 향상
               Text(
                 '한인회 안내',
-                style: theme.textTheme.titleSmall?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onSurface,
                 ),
@@ -462,9 +479,12 @@ class KoreanAssociationScreen extends StatelessWidget {
           SizedBox(height: sp.s8),
           _buildInfoRow(context, '가입 문의', '각 지역 한인회로 직접 연락'),
           SizedBox(height: sp.s12),
+
+          /// 긴급 안내 텍스트 (Emergency Notice Text)
+          /// labelSmall → bodySmall으로 변경하여 가독성 향상
           Text(
             '※ 긴급 상황 시 가까운 지역 한인회로 연락해 주세요.',
-            style: theme.textTheme.labelSmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.error,
               fontStyle: FontStyle.italic,
             ),
@@ -475,6 +495,7 @@ class KoreanAssociationScreen extends StatelessWidget {
   }
 
   /// 정보 행 빌드 (Build Info Row)
+  /// bodySmall → bodyMedium으로 변경하여 가독성 향상
   Widget _buildInfoRow(BuildContext context, String label, String value) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -484,18 +505,21 @@ class KoreanAssociationScreen extends StatelessWidget {
       children: [
         SizedBox(
           width: 80,
+
+          /// 라벨 텍스트 (Label Text)
           child: Text(
             label,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
         Expanded(
+          /// 값 텍스트 (Value Text)
           child: Text(
             value,
-            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurface),
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
           ),
         ),
       ],

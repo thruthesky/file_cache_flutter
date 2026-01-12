@@ -526,17 +526,21 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    /// 정보 카드 제목 (Info Card Title)
+                    /// titleSmall → titleMedium으로 변경하여 가독성 향상
                     Text(
                       item.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
                     ),
                     SizedBox(height: sp.s4),
+                    /// 정보 카드 설명 (Info Card Description)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -568,15 +572,19 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
         children: [
           Row(
             children: [
+              /// 아이콘 크기 증가 (Icon size increased)
+              /// 16 → 18으로 변경하여 가독성 향상
               FaIcon(
                 FontAwesomeIcons.lightClipboardList,
-                size: 16,
+                size: 18,
                 color: scheme.primary,
               ),
               SizedBox(width: sp.s8),
+              /// 계약 요약 헤더 (Contract Summary Header)
+              /// titleSmall → titleMedium으로 변경하여 가독성 향상
               Text(
                 '필리핀 임대 계약 요약 (마닐라 기준)',
-                style: theme.textTheme.titleSmall?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onSurface,
                 ),
@@ -592,18 +600,22 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
                 children: [
                   SizedBox(
                     width: 80,
+                    /// 계약 요약 라벨 (Contract Summary Label)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item.label,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                   Expanded(
+                    /// 계약 요약 값 (Contract Summary Value)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item.value,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -714,9 +726,11 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
                 children: [
                   Expanded(
                     flex: 2,
+                    /// 비교 테이블 카테고리 (Comparison Table Category)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item.category,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
@@ -724,9 +738,11 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
                   ),
                   Expanded(
                     flex: 3,
+                    /// 비교 테이블 콘도 값 (Comparison Table Condo Value)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item.condo,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -734,9 +750,11 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
                   ),
                   Expanded(
                     flex: 3,
+                    /// 비교 테이블 주택 값 (Comparison Table House Value)
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item.house,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -759,15 +777,19 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
             ),
             child: Row(
               children: [
+                /// 아이콘 크기 증가 (Icon size increased)
+                /// 12 → 14으로 변경하여 가독성 향상
                 FaIcon(
                   FontAwesomeIcons.lightCircleInfo,
-                  size: 12,
+                  size: 14,
                   color: scheme.onSurfaceVariant,
                 ),
                 SizedBox(width: sp.s8),
+                /// 단위 설명 텍스트 (Unit Description Text)
+                /// labelSmall → labelMedium으로 변경하여 가독성 향상
                 Text(
                   '단위: ₱=필리핀 페소, 1페소≈24원 기준',
-                  style: theme.textTheme.labelSmall?.copyWith(
+                  style: theme.textTheme.labelMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -801,11 +823,15 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
         children: [
           Row(
             children: [
-              FaIcon(icon, size: 16, color: scheme.onTertiaryContainer),
+              /// 아이콘 크기 증가 (Icon size increased)
+              /// 16 → 18으로 변경하여 가독성 향상
+              FaIcon(icon, size: 18, color: scheme.onTertiaryContainer),
               SizedBox(width: sp.s8),
+              /// 팁 박스 제목 (Tip Box Title)
+              /// titleSmall → titleMedium으로 변경하여 가독성 향상
               Text(
                 title,
-                style: theme.textTheme.titleSmall?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onTertiaryContainer,
                 ),
@@ -813,9 +839,11 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
             ],
           ),
           SizedBox(height: sp.s8),
+          /// 팁 박스 내용 (Tip Box Content)
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Text(
             content,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onTertiaryContainer.withValues(alpha: 0.9),
               height: 1.5,
             ),
@@ -857,15 +885,19 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
         children: [
           Row(
             children: [
+              /// 아이콘 크기 증가 (Icon size increased)
+              /// 16 → 18으로 변경하여 가독성 향상
               FaIcon(
                 FontAwesomeIcons.lightStar,
-                size: 16,
+                size: 18,
                 color: scheme.onSecondaryContainer,
               ),
               SizedBox(width: sp.s8),
+              /// 핵심 포인트 헤더 (Key Points Header)
+              /// titleSmall → titleMedium으로 변경하여 가독성 향상
               Text(
                 '핵심 포인트 요약',
-                style: theme.textTheme.titleSmall?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: scheme.onSecondaryContainer,
                 ),
@@ -876,9 +908,11 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
           ...keyPoints.map((point) {
             return Padding(
               padding: EdgeInsets.only(bottom: sp.s8),
+              /// 핵심 포인트 항목 (Key Point Item)
+              /// bodySmall → bodyMedium으로 변경하여 가독성 향상
               child: Text(
                 point,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSecondaryContainer,
                   height: 1.4,
                 ),
@@ -892,9 +926,11 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
               color: scheme.surface.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(8),
             ),
+            /// 핵심 포인트 하단 박스 (Key Points Bottom Box)
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               '철저한 사전조사와 꼼꼼한 계약으로 쾌적한 필리핀 거주 생활을 시작하세요!',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSecondaryContainer,
                 fontWeight: FontWeight.w500,
               ),
@@ -922,9 +958,11 @@ class _MonthlyRentScreenState extends State<MonthlyRentScreen> {
         children: _references.map((ref) {
           return Padding(
             padding: EdgeInsets.only(bottom: sp.s8),
+            /// 참고 자료 항목 (Reference Item)
+            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
             child: Text(
               ref,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
             ),

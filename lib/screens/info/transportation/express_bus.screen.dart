@@ -536,7 +536,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelMedium?.copyWith(
           color: scheme.onPrimary,
           fontWeight: FontWeight.w600,
         ),
@@ -626,7 +626,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -676,7 +676,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
           SizedBox(height: sp.s8),
           Text(
             '필리핀 고속버스의 요금은 노선 거리와 버스 등급에 따라 결정된다. 비슷한 거리라도 직행(익스프레스) 여부나 차량 등급(좌석 편의, 시설)에 따라 차등 요금을 책정한다. 에어컨이 없는 구형 버스가 저렴하고, 화장실·리클라이닝 좌석 등의 편의시설을 갖춘 고급 버스일수록 요금이 높다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onSecondaryContainer.withValues(alpha: 0.9),
               height: 1.5,
             ),
@@ -772,7 +772,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
                         flex: 3,
                         child: Text(
                           fare.route,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
                           ),
@@ -782,7 +782,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
                         flex: 2,
                         child: Text(
                           fare.duration,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
@@ -792,7 +792,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
                         flex: 2,
                         child: Text(
                           fare.fare,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: scheme.primary,
                           ),
@@ -813,7 +813,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
                     ),
                     child: Text(
                       fare.features,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onTertiaryContainer,
                       ),
                     ),
@@ -850,7 +850,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
           Expanded(
             child: Text(
               '공식 고속버스는 정부 인가를 받은 합법 운송수단으로 비교적 안전하게 이용할 수 있다. 차량 점검과 운전자 자격 등이 관리되므로, 등록된 대형 버스회사 이용 자체는 안전도 면에서 큰 걱정이 없다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurface,
                 height: 1.5,
               ),
@@ -942,7 +942,7 @@ class _ExpressBusScreenState extends State<ExpressBusScreen> {
           SizedBox(height: sp.s8),
           Text(
             '필리핀 고속버스를 통해 경제적이고 색다른 현지 이동 경험을 할 수 있다. 현지 교통 시스템의 특성을 이해하고 대비하여 안전하고 쾌적한 여행이 되길 바란다.',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: scheme.onPrimaryContainer.withValues(alpha: 0.8),
               fontStyle: FontStyle.italic,
               height: 1.5,

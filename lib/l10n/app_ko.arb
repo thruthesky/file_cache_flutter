@@ -2264,6 +2264,38 @@
   "@helperTutor": {
     "description": "Tutor menu item"
   },
+  "helperFindManpower": "맨파워 업체 찾는 방법",
+  "@helperFindManpower": {
+    "description": "How to find manpower agency section title"
+  },
+  "helperDoleVerify": "DOLE 등록 확인",
+  "@helperDoleVerify": {
+    "description": "DOLE registration verification"
+  },
+  "helperWebSearch": "웹 검색",
+  "@helperWebSearch": {
+    "description": "Web search method"
+  },
+  "helperOnlinePlatform": "온라인 플랫폼",
+  "@helperOnlinePlatform": {
+    "description": "Online platform method"
+  },
+  "helperFacebookGroup": "Facebook 그룹",
+  "@helperFacebookGroup": {
+    "description": "Facebook group method"
+  },
+  "helperJobSite": "구인 사이트",
+  "@helperJobSite": {
+    "description": "Job site method"
+  },
+  "helperAgencyContact": "주요 업체 연락처",
+  "@helperAgencyContact": {
+    "description": "Major agency contact information"
+  },
+  "helperChecklistTitle": "업체 선정 체크리스트",
+  "@helperChecklistTitle": {
+    "description": "Agency selection checklist title"
+  },
   "comingSoon": "준비 중입니다",
   "@comingSoon": {
     "description": "Coming soon message for empty screens"
@@ -2415,5 +2447,13 @@
   "entertainmentFestival": "축제",
   "@entertainmentFestival": {
     "description": "Festival menu item"
+  },
+  "quickPostEventMessage": "포인트 이벤트! 글 쓰고 랜덤포인트가 가득~",
+  "@quickPostEventMessage": {
+    "description": "Message shown in quick post box during point event period"
+  },
+  "quickPostDefaultMessage": "오늘, 당신의 필리핀 생활은 어떠한가요?",
+  "@quickPostDefaultMessage": {
+    "description": "Default message shown in quick post box when not in event period"
   }
 }

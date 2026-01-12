@@ -8,6 +8,7 @@ import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/emergency/korean_association.screen.dart';
 import 'package:philgo/screens/info/emergency/police_station.screen.dart';
 import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
+import 'package:philgo/screens/info/helper/house_helper.screen.dart';
 import 'package:philgo/screens/info/housing/airbnb.screen.dart';
 import 'package:philgo/screens/info/immigration/e_travel.screen.dart';
 import 'package:philgo/screens/info/immigration/travel_visa.screen.dart';
@@ -131,6 +132,13 @@ class HomeHelperMenuSection extends StatelessWidget {
         icon: FontAwesomeIcons.lightPhoneVolume,
         label: l10n.quickMenuEmergency,
         routeName: EmergencyContactScreen.routeName,
+      ),
+      _HelperMenuItem(
+        /// 하우스헬퍼: 빗자루 아이콘 (House Helper: Broom icon)
+        /// 가사도우미 고용 관련 정보
+        icon: FontAwesomeIcons.lightBroom,
+        label: l10n.helperHouseHelper,
+        routeName: HouseHelperScreen.routeName,
       ),
       _HelperMenuItem(
         /// 초보필독: 별 아이콘 (Must Read: Star icon)

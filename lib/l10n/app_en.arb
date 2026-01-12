@@ -2117,6 +2117,38 @@
   "@helperTutor": {
     "description": "Tutor menu item"
   },
+  "helperFindManpower": "How to Find Manpower Agency",
+  "@helperFindManpower": {
+    "description": "How to find manpower agency section title"
+  },
+  "helperDoleVerify": "DOLE Registration Verification",
+  "@helperDoleVerify": {
+    "description": "DOLE registration verification"
+  },
+  "helperWebSearch": "Web Search",
+  "@helperWebSearch": {
+    "description": "Web search method"
+  },
+  "helperOnlinePlatform": "Online Platform",
+  "@helperOnlinePlatform": {
+    "description": "Online platform method"
+  },
+  "helperFacebookGroup": "Facebook Group",
+  "@helperFacebookGroup": {
+    "description": "Facebook group method"
+  },
+  "helperJobSite": "Job Site",
+  "@helperJobSite": {
+    "description": "Job site method"
+  },
+  "helperAgencyContact": "Major Agency Contacts",
+  "@helperAgencyContact": {
+    "description": "Major agency contact information"
+  },
+  "helperChecklistTitle": "Agency Selection Checklist",
+  "@helperChecklistTitle": {
+    "description": "Agency selection checklist title"
+  },
   "comingSoon": "Coming Soon",
   "@comingSoon": {
     "description": "Coming soon message for empty screens"
@@ -2268,5 +2300,13 @@
   "entertainmentFestival": "Festival",
   "@entertainmentFestival": {
     "description": "Festival menu item"
+  },
+  "quickPostEventMessage": "Point Event! Write posts and get random points~",
+  "@quickPostEventMessage": {
+    "description": "Message shown in quick post box during point event period"
+  },
+  "quickPostDefaultMessage": "How is your life in the Philippines today?",
+  "@quickPostDefaultMessage": {
+    "description": "Default message shown in quick post box when not in event period"
   }
 }

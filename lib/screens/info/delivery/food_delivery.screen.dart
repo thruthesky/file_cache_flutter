@@ -522,7 +522,7 @@ class _FoodDeliveryScreenState extends State<FoodDeliveryScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -590,7 +590,7 @@ class _FoodDeliveryScreenState extends State<FoodDeliveryScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       step.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.5,
                       ),
@@ -661,7 +661,7 @@ class _FoodDeliveryScreenState extends State<FoodDeliveryScreen> {
                   flex: 3,
                   child: Text(
                     fee.content,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                       height: 1.5,
                     ),
@@ -733,7 +733,7 @@ class _FoodDeliveryScreenState extends State<FoodDeliveryScreen> {
                         SizedBox(height: sp.s4),
                         Text(
                           tip.description,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSecondaryContainer
                                 .withValues(alpha: 0.8),
                             height: 1.4,
@@ -859,7 +859,7 @@ class _FoodDeliveryScreenState extends State<FoodDeliveryScreen> {
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
                 height: 1.4,
               ),

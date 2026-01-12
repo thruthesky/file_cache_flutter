@@ -415,9 +415,11 @@ class _TravelInfoScreenState extends State<TravelInfoScreen> {
                   ],
                 ),
                 SizedBox(height: sp.s8),
-                Text('11월 ~ 4월', style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                Text('11월 ~ 4월', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
                 SizedBox(height: sp.s4),
-                Text('☀️ 최적 여행 시기\n맑고 쾌적한 날씨', style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant)),
+                /// labelSmall → labelMedium으로 변경하여 가독성 향상
+                Text('☀️ 최적 여행 시기\n맑고 쾌적한 날씨', style: theme.textTheme.labelMedium?.copyWith(color: scheme.onSurfaceVariant)),
               ],
             ),
           ),
@@ -443,9 +445,11 @@ class _TravelInfoScreenState extends State<TravelInfoScreen> {
                   ],
                 ),
                 SizedBox(height: sp.s8),
-                Text('7월 ~ 10월', style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                Text('7월 ~ 10월', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
                 SizedBox(height: sp.s4),
-                Text('⚠️ 태풍 주의\n날씨 체크 필수', style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant)),
+                /// labelSmall → labelMedium으로 변경하여 가독성 향상
+                Text('⚠️ 태풍 주의\n날씨 체크 필수', style: theme.textTheme.labelMedium?.copyWith(color: scheme.onSurfaceVariant)),
               ],
             ),
           ),
@@ -493,9 +497,10 @@ class _TravelInfoScreenState extends State<TravelInfoScreen> {
                       style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: scheme.onSurface),
                     ),
                     SizedBox(height: sp.s4),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Text(
                       destination.description,
-                      style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                      style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
                     ),
                     SizedBox(height: sp.s8),
                     Wrap(
@@ -508,9 +513,10 @@ class _TravelInfoScreenState extends State<TravelInfoScreen> {
                             color: scheme.secondaryContainer,
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          /// labelSmall → labelMedium으로 변경하여 가독성 향상
                           child: Text(
                             feature,
-                            style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSecondaryContainer),
+                            style: theme.textTheme.labelMedium?.copyWith(color: scheme.onSecondaryContainer),
                           ),
                         );
                       }).toList(),
@@ -593,7 +599,8 @@ class _TravelInfoScreenState extends State<TravelInfoScreen> {
                   children: [
                     Text(item.title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: scheme.onSurface)),
                     SizedBox(height: sp.s4),
-                    Text(item.description, style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant, height: 1.4)),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                    Text(item.description, style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant, height: 1.4)),
                   ],
                 ),
               ),
@@ -661,7 +668,8 @@ class _TravelInfoScreenState extends State<TravelInfoScreen> {
                     children: [
                       Text(item.title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: scheme.primary)),
                       SizedBox(height: sp.s4),
-                      Text(item.description, style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant, height: 1.4)),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
+                      Text(item.description, style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant, height: 1.4)),
                     ],
                   ),
                 ),

@@ -702,7 +702,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     SizedBox(height: sp.s4),
                     Text(
                       item.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -771,7 +771,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                   flex: 2,
                   child: Text(
                     '면적',
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -781,7 +781,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                   flex: 3,
                   child: Text(
                     '월세(페소)',
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -791,7 +791,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                   flex: 2,
                   child: Text(
                     '한화',
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -801,7 +801,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                   flex: 3,
                   child: Text(
                     '유형',
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: scheme.onSurfaceVariant,
                     ),
@@ -834,7 +834,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 2,
                     child: Text(
                       item.area,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
@@ -844,7 +844,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 3,
                     child: Text(
                       item.rentPhp,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -854,7 +854,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 2,
                     child: Text(
                       item.rentKrw,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -863,7 +863,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 3,
                     child: Text(
                       item.type,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
@@ -894,7 +894,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                 Expanded(
                   child: Text(
                     '월 기준 금액 / 6~12개월 장기 임대 계약 전제',
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: theme.textTheme.labelMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
@@ -1003,7 +1003,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 2,
                     child: Text(
                       item.category,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: scheme.onSurface,
                       ),
@@ -1013,7 +1013,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 3,
                     child: Text(
                       item.ortigas,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.primary,
                         height: 1.4,
                       ),
@@ -1024,7 +1024,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 3,
                     child: Text(
                       item.makati,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -1035,7 +1035,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                     flex: 3,
                     child: Text(
                       item.bgc,
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
@@ -1113,7 +1113,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
                   Expanded(
                     child: Text(
                       point,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSecondaryContainer,
                         height: 1.4,
                       ),
@@ -1134,7 +1134,7 @@ class _OrtigasScreenState extends State<OrtigasScreen> {
               'BGC처럼 최신 개발지의 세련됨이나 마카티의 전통적인 상징성에서는 다소 떨어지지만, '
               '균형 잡힌 생활환경과 한국인에게 친숙한 커뮤니티가 형성되어 있다는 점에서 '
               '올티가스만의 매력이 있습니다.',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSecondaryContainer,
                 fontWeight: FontWeight.w500,
                 height: 1.5,

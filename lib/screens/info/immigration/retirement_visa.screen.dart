@@ -183,10 +183,11 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                   color: scheme.tertiary,
                 ),
                 const SizedBox(width: 8),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Flexible(
                   child: Text(
                     '실제 비자는 필리핀 이민국(BI)에서 발급됩니다.',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onTertiaryContainer,
                     ),
                   ),
@@ -427,9 +428,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                       ),
                       if (cost['note']!.isNotEmpty) ...[
                         const SizedBox(height: 2),
+                        /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                         Text(
                           cost['note']!,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
@@ -449,9 +451,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       Text(
                         cost['timing']!,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
@@ -539,9 +542,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
               color: scheme.primaryContainer,
               borderRadius: BorderRadius.circular(4),
             ),
+            /// labelSmall → labelMedium으로 변경하여 가독성 향상
             child: Text(
               category,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onPrimaryContainer,
                 fontWeight: FontWeight.w600,
               ),
@@ -559,9 +563,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Text(
                   note,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
@@ -818,10 +823,11 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                       ),
                     ),
                     const SizedBox(height: 2),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     Flexible(
                       child: Text(
                         benefit['desc']!,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
                         maxLines: 2,
@@ -1085,9 +1091,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                 children: [
                   Expanded(
                     flex: 2,
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item['category']!,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1104,9 +1111,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                         color: scheme.primaryContainer.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(6),
                       ),
+                      /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                       child: Text(
                         item['srrv']!,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1116,9 +1124,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                   ),
                   Expanded(
                     flex: 2,
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item['tourist']!,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
@@ -1126,9 +1135,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                   ),
                   Expanded(
                     flex: 2,
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     child: Text(
                       item['work']!,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
@@ -1215,10 +1225,11 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                   color: scheme.secondary,
                 ),
                 const SizedBox(width: 8),
+                /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                 Expanded(
                   child: Text(
                     tip,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSecondaryContainer,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1395,9 +1406,10 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
+                            /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                             Text(
                               ref['url']!,
-                              style: theme.textTheme.bodySmall?.copyWith(
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 color: scheme.primary,
                               ),
                             ),
@@ -1459,10 +1471,11 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    /// bodySmall → bodyMedium으로 변경하여 가독성 향상
                     if (subtitle != null)
                       Text(
                         subtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
@@ -1564,10 +1577,11 @@ class _RetirementVisaScreenState extends State<RetirementVisaScreen> {
             ),
             const SizedBox(width: 8),
           ],
+          /// bodySmall → bodyMedium으로 변경하여 가독성 향상
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
                 height: 1.5,
               ),
