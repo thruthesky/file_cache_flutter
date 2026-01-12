@@ -31,3 +31,6 @@
 [submodule "packages/file_cache_flutter"]
 	path = packages/file_cache_flutter
 	url = https://github.com/thruthesky/file_cache_flutter
+[submodule "lib/philgo_files"]
+	path = lib/philgo_files
+	url = https://github.com/thruthesky/philgo_files
