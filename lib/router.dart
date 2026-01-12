@@ -11,6 +11,7 @@ import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/guide/must_read.screen.dart';
+import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/emergency/embassy.screen.dart';
 import 'package:philgo/screens/info/emergency/hospital.screen.dart';
 import 'package:philgo/screens/info/emergency/korean_association.screen.dart';
@@ -47,6 +48,7 @@ import 'package:philgo/screens/info/travel_destination/subic.screen.dart';
 import 'package:philgo/screens/info/travel_destination/bohol.screen.dart';
 import 'package:philgo/screens/info/travel_destination/boracay.screen.dart';
 import 'package:philgo/screens/info/travel_destination/palawan.screen.dart';
+import 'package:philgo/screens/info/travel_destination/el_nido.screen.dart';
 import 'package:philgo/screens/info/helper/house_helper.screen.dart';
 import 'package:philgo/screens/info/helper/driver.screen.dart';
 import 'package:philgo/screens/info/helper/tutor.screen.dart';
@@ -458,6 +460,11 @@ final router = GoRouter(
       builder: (context, state) => const MustReadScreen(),
     ),
     GoRoute(
+      path: TravelSpotsScreen.routeName,
+      name: TravelSpotsScreen.routeName,
+      builder: (context, state) => const TravelSpotsScreen(),
+    ),
+    GoRoute(
       path: EmbassyScreen.routeName,
       name: EmbassyScreen.routeName,
       builder: (context, state) => const EmbassyScreen(),
@@ -700,6 +707,13 @@ final router = GoRouter(
       path: PalawanScreen.routeName,
       name: PalawanScreen.routeName,
       builder: (context, state) => const PalawanScreen(),
+    ),
+
+    /// 엘니도 화면 (El Nido Screen)
+    GoRoute(
+      path: ElNidoScreen.routeName,
+      name: ElNidoScreen.routeName,
+      builder: (context, state) => const ElNidoScreen(),
     ),
 
     /// 하우스헬퍼 화면 (House Helper Screen)

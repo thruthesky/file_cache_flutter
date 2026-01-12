@@ -1526,6 +1526,12 @@ class LoKo extends Lo {
   String get quickMenuMustReadInfo => '필수 정보';
 
   @override
+  String get quickMenuTravelSpots => '여행 명소';
+
+  @override
+  String get travelSpotsScreenTitle => '필리핀 여행 명소 인기순';
+
+  @override
   String get philippineLifeInfo => '필리핀 생활 정보';
 
   @override
@@ -1664,7 +1670,7 @@ class LoKo extends Lo {
   String get calendarSpecialWorkingDay => '근무휴일';
 
   @override
-  String get travelDestinationSection => '필리핀 추천 여행지';
+  String get travelDestinationSection => '필리핀 지역별 추천 여행지';
 
   @override
   String get travelDestinationManila => '마닐라';
@@ -1683,6 +1689,12 @@ class LoKo extends Lo {
 
   @override
   String get travelDestinationPalawan => '팔라완';
+
+  @override
+  String get travelDestinationElNido => '엘니도';
+
+  @override
+  String get travelDestinationElNidoDescription => '라군과 카르스트 절벽으로 유명한 팔라완의 보석';
 
   @override
   String get singleChat => '1:1채팅';
@@ -1851,4 +1863,13 @@ class LoKo extends Lo {
 
   @override
   String get quickPostDefaultMessage => '오늘, 당신의 필리핀 생활은 어떠한가요?';
+
+  @override
+  String get searchHint => '검색';
+
+  @override
+  String get searchNoResults => '검색 결과가 없습니다';
+
+  @override
+  String get searchResults => '검색 결과';
 }

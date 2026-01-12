@@ -1557,6 +1557,12 @@ class LoEn extends Lo {
   String get quickMenuMustReadInfo => 'Essential Info';
 
   @override
+  String get quickMenuTravelSpots => 'Travel Spots';
+
+  @override
+  String get travelSpotsScreenTitle => 'Popular Philippine Travel Spots';
+
+  @override
   String get philippineLifeInfo => 'Philippine Life Info';
 
   @override
@@ -1714,6 +1720,13 @@ class LoEn extends Lo {
 
   @override
   String get travelDestinationPalawan => 'Palawan';
+
+  @override
+  String get travelDestinationElNido => 'El Nido';
+
+  @override
+  String get travelDestinationElNidoDescription =>
+      'Palawan\'s gem famous for lagoons and karst cliffs';
 
   @override
   String get singleChat => '1:1 Chat';
@@ -1887,4 +1900,13 @@ class LoEn extends Lo {
   @override
   String get quickPostDefaultMessage =>
       'How is your life in the Philippines today?';
+
+  @override
+  String get searchHint => 'Search';
+
+  @override
+  String get searchNoResults => 'No results found';
+
+  @override
+  String get searchResults => 'Search Results';
 }

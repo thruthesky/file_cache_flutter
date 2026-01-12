@@ -1822,6 +1822,14 @@
   "@quickMenuMustReadInfo": {
     "description": "Quick menu essential information label"
   },
+  "quickMenuTravelSpots": "旅行名所",
+  "@quickMenuTravelSpots": {
+    "description": "Quick menu travel spots label"
+  },
+  "travelSpotsScreenTitle": "フィリピン旅行名所人気順",
+  "@travelSpotsScreenTitle": {
+    "description": "Travel spots screen title"
+  },
   "philippineLifeInfo": "フィリピン生活情報",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
@@ -1970,6 +1978,14 @@
   "@travelDestinationPalawan": {
     "description": "Palawan travel destination menu item"
   },
+  "travelDestinationElNido": "エルニド",
+  "@travelDestinationElNido": {
+    "description": "El Nido travel destination menu item"
+  },
+  "travelDestinationElNidoDescription": "ラグーンとカルスト崖で有名なパラワンの宝石",
+  "@travelDestinationElNidoDescription": {
+    "description": "El Nido travel destination description for featured card"
+  },
   "quickMenuEssentialInfo": "初心者必読",
   "@quickMenuEssentialInfo": {
     "description": "Quick menu essential info label"
@@ -2000,5 +2016,8 @@
   "entertainmentIslandTour": "アイランドツアー",
   "entertainmentFestival": "フェスティバル",
   "quickPostEventMessage": "ポイントイベント！投稿してランダムポイントをゲット~",
-  "quickPostDefaultMessage": "今日のフィリピン生活はいかがですか？"
+  "quickPostDefaultMessage": "今日のフィリピン生活はいかがですか？",
+  "searchHint": "検索",
+  "searchNoResults": "検索結果がありません",
+  "searchResults": "検索結果"
 }

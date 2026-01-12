@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/screens/guide/must_read.screen.dart';
+import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
 import 'package:philgo/screens/info/essential/essential_info.screen.dart';
 import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
@@ -245,6 +246,18 @@ class HomeQuickMenuSection extends StatelessWidget {
             _WeatherMenuItem(
               label: l10n.quickMenuWeather,
               onTap: () => _onWeatherTap(context),
+            ),
+
+            /// 여행 명소 (필독 정보 다음 위치)
+            /// Travel Spots (after must-read info)
+            _buildMenuItem(
+              context: context,
+              icon: FontAwesomeIcons.lightMapLocationDot,
+              label: l10n.quickMenuTravelSpots,
+              onTap: () => context.push(TravelSpotsScreen.routeName),
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
             ),
 
             /// 기존 메뉴 아이템들 (Other menu items)

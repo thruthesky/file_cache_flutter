@@ -2020,6 +2020,14 @@
   "@quickMenuMustReadInfo": {
     "description": "Quick menu essential information label"
   },
+  "quickMenuTravelSpots": "여행 명소",
+  "@quickMenuTravelSpots": {
+    "description": "Quick menu travel spots label"
+  },
+  "travelSpotsScreenTitle": "필리핀 여행 명소 인기순",
+  "@travelSpotsScreenTitle": {
+    "description": "Travel spots screen title"
+  },
   "philippineLifeInfo": "필리핀 생활 정보",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
@@ -2204,7 +2212,7 @@
   "@calendarSpecialWorkingDay": {
     "description": "Special working day menu item"
   },
-  "travelDestinationSection": "필리핀 추천 여행지",
+  "travelDestinationSection": "필리핀 지역별 추천 여행지",
   "@travelDestinationSection": {
     "description": "Philippine travel destination section title"
   },
@@ -2231,6 +2239,14 @@
   "travelDestinationPalawan": "팔라완",
   "@travelDestinationPalawan": {
     "description": "Palawan travel destination menu item"
+  },
+  "travelDestinationElNido": "엘니도",
+  "@travelDestinationElNido": {
+    "description": "El Nido travel destination menu item"
+  },
+  "travelDestinationElNidoDescription": "라군과 카르스트 절벽으로 유명한 팔라완의 보석",
+  "@travelDestinationElNidoDescription": {
+    "description": "El Nido travel destination description for featured card"
   },
   "singleChat": "1:1채팅",
   "@singleChat": {
@@ -2455,5 +2471,17 @@
   "quickPostDefaultMessage": "오늘, 당신의 필리핀 생활은 어떠한가요?",
   "@quickPostDefaultMessage": {
     "description": "Default message shown in quick post box when not in event period"
+  },
+  "searchHint": "검색",
+  "@searchHint": {
+    "description": "Search input field hint text"
+  },
+  "searchNoResults": "검색 결과가 없습니다",
+  "@searchNoResults": {
+    "description": "Message shown when search returns no results"
+  },
+  "searchResults": "검색 결과",
+  "@searchResults": {
+    "description": "Section title for search results"
   }
 }

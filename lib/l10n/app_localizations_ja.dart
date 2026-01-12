@@ -1526,6 +1526,12 @@ class LoJa extends Lo {
   String get quickMenuMustReadInfo => '必須情報';
 
   @override
+  String get quickMenuTravelSpots => '旅行名所';
+
+  @override
+  String get travelSpotsScreenTitle => 'フィリピン旅行名所人気順';
+
+  @override
   String get philippineLifeInfo => 'フィリピン生活情報';
 
   @override
@@ -1683,6 +1689,12 @@ class LoJa extends Lo {
 
   @override
   String get travelDestinationPalawan => 'パラワン';
+
+  @override
+  String get travelDestinationElNido => 'エルニド';
+
+  @override
+  String get travelDestinationElNidoDescription => 'ラグーンとカルスト崖で有名なパラワンの宝石';
 
   @override
   String get singleChat => '1:1 Chat';
@@ -1854,4 +1866,13 @@ class LoJa extends Lo {
 
   @override
   String get quickPostDefaultMessage => '今日のフィリピン生活はいかがですか？';
+
+  @override
+  String get searchHint => '検索';
+
+  @override
+  String get searchNoResults => '検索結果がありません';
+
+  @override
+  String get searchResults => '検索結果';
 }

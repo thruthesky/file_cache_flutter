@@ -1873,6 +1873,14 @@
   "@quickMenuMustReadInfo": {
     "description": "Quick menu essential information label"
   },
+  "quickMenuTravelSpots": "Travel Spots",
+  "@quickMenuTravelSpots": {
+    "description": "Quick menu travel spots label"
+  },
+  "travelSpotsScreenTitle": "Popular Philippine Travel Spots",
+  "@travelSpotsScreenTitle": {
+    "description": "Travel spots screen title"
+  },
   "philippineLifeInfo": "Philippine Life Info",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
@@ -2084,6 +2092,14 @@
   "travelDestinationPalawan": "Palawan",
   "@travelDestinationPalawan": {
     "description": "Palawan travel destination menu item"
+  },
+  "travelDestinationElNido": "El Nido",
+  "@travelDestinationElNido": {
+    "description": "El Nido travel destination menu item"
+  },
+  "travelDestinationElNidoDescription": "Palawan's gem famous for lagoons and karst cliffs",
+  "@travelDestinationElNidoDescription": {
+    "description": "El Nido travel destination description for featured card"
   },
   "singleChat": "1:1 Chat",
   "@singleChat": {
@@ -2308,5 +2324,17 @@
   "quickPostDefaultMessage": "How is your life in the Philippines today?",
   "@quickPostDefaultMessage": {
     "description": "Default message shown in quick post box when not in event period"
+  },
+  "searchHint": "Search",
+  "@searchHint": {
+    "description": "Search input field hint text"
+  },
+  "searchNoResults": "No results found",
+  "@searchNoResults": {
+    "description": "Message shown when search returns no results"
+  },
+  "searchResults": "Search Results",
+  "@searchResults": {
+    "description": "Section title for search results"
   }
 }

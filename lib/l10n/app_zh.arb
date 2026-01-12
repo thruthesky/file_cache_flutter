@@ -1822,6 +1822,14 @@
   "@quickMenuMustReadInfo": {
     "description": "Quick menu essential information label"
   },
+  "quickMenuTravelSpots": "旅游景点",
+  "@quickMenuTravelSpots": {
+    "description": "Quick menu travel spots label"
+  },
+  "travelSpotsScreenTitle": "菲律宾热门旅游景点",
+  "@travelSpotsScreenTitle": {
+    "description": "Travel spots screen title"
+  },
   "philippineLifeInfo": "菲律宾生活信息",
   "@philippineLifeInfo": {
     "description": "Philippine life information section title in menu"
@@ -1970,6 +1978,14 @@
   "@travelDestinationPalawan": {
     "description": "Palawan travel destination menu item"
   },
+  "travelDestinationElNido": "爱妮岛",
+  "@travelDestinationElNido": {
+    "description": "El Nido travel destination menu item"
+  },
+  "travelDestinationElNidoDescription": "以泻湖和喀斯特悬崖闻名的巴拉望宝石",
+  "@travelDestinationElNidoDescription": {
+    "description": "El Nido travel destination description for featured card"
+  },
   "quickMenuEssentialInfo": "新手必读",
   "@quickMenuEssentialInfo": {
     "description": "Quick menu essential info label"
@@ -2000,5 +2016,8 @@
   "entertainmentIslandTour": "跳岛游",
   "entertainmentFestival": "节日",
   "quickPostEventMessage": "积分活动！发帖获得随机积分~",
-  "quickPostDefaultMessage": "今天您在菲律宾的生活如何？"
+  "quickPostDefaultMessage": "今天您在菲律宾的生活如何？",
+  "searchHint": "搜索",
+  "searchNoResults": "没有搜索结果",
+  "searchResults": "搜索结果"
 }

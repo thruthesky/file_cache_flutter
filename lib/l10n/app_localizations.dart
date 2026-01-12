@@ -3065,6 +3065,18 @@ abstract class Lo {
   /// **'Essential Info'**
   String get quickMenuMustReadInfo;
 
+  /// Quick menu travel spots label
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Spots'**
+  String get quickMenuTravelSpots;
+
+  /// Travel spots screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Philippine Travel Spots'**
+  String get travelSpotsScreenTitle;
+
   /// Philippine life information section title in menu
   ///
   /// In en, this message translates to:
@@ -3382,6 +3394,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Palawan'**
   String get travelDestinationPalawan;
+
+  /// El Nido travel destination menu item
+  ///
+  /// In en, this message translates to:
+  /// **'El Nido'**
+  String get travelDestinationElNido;
+
+  /// El Nido travel destination description for featured card
+  ///
+  /// In en, this message translates to:
+  /// **'Palawan\'s gem famous for lagoons and karst cliffs'**
+  String get travelDestinationElNidoDescription;
 
   /// 1:1 chat navigation item label in chat-specific bottom navigation bar
   ///
@@ -3718,6 +3742,24 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'How is your life in the Philippines today?'**
   String get quickPostDefaultMessage;
+
+  /// Search input field hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchHint;
+
+  /// Message shown when search returns no results
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get searchNoResults;
+
+  /// Section title for search results
+  ///
+  /// In en, this message translates to:
+  /// **'Search Results'**
+  String get searchResults;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

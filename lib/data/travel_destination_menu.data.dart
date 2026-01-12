@@ -7,6 +7,7 @@ import 'package:philgo/screens/info/travel_destination/subic.screen.dart';
 import 'package:philgo/screens/info/travel_destination/bohol.screen.dart';
 import 'package:philgo/screens/info/travel_destination/boracay.screen.dart';
 import 'package:philgo/screens/info/travel_destination/palawan.screen.dart';
+import 'package:philgo/screens/info/travel_destination/el_nido.screen.dart';
 
 /// 필리핀 추천 여행지 메뉴 아이템 데이터 클래스
 /// Philippine Travel Destination Menu Item Data Class
@@ -99,6 +100,15 @@ class TravelDestinationMenuData {
       getLabel: (l10n) => l10n.travelDestinationPalawan,
       routeName: PalawanScreen.routeName,
       push: PalawanScreen.push,
+    ),
+
+    /// 엘니도 (El Nido)
+    /// 필리핀 팔라완 엘니도 여행 정보 - 라군과 카르스트 지형으로 유명
+    TravelDestinationMenuItem(
+      icon: FontAwesomeIcons.lightIslandTropical,
+      getLabel: (l10n) => l10n.travelDestinationElNido,
+      routeName: ElNidoScreen.routeName,
+      push: ElNidoScreen.push,
     ),
   ];
 }

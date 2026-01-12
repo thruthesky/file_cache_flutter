@@ -12,6 +12,7 @@ import 'package:philgo/router.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
+import 'package:philgo/screens/info/travel_destination/el_nido.screen.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
@@ -132,7 +133,10 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  /// 디버깅용 테스트 실행 함수 (Debug test run function)
   ///
+  /// 앱 시작 시 특정 화면으로 이동하여 테스트합니다.
+  /// Navigates to a specific screen for testing when app starts.
   // ignore: unused_element
   void _debugTestRun() {
     // Timer(Duration(seconds: 1), showUpgradeDialog);
@@ -142,7 +146,15 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // _debugNavigateToMenu(context);
 
-      //
+      /// 디버깅: ElNidoScreen 열기 (Debug: Open ElNidoScreen)
+      /// 0.5초 후 엘니도 여행 정보 화면으로 이동합니다.
+      /// Navigates to El Nido travel info screen after 0.5 seconds.
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (context.mounted) {
+          debugPrint('[DEBUG] _debugTestRun: ElNidoScreen으로 이동합니다.');
+          ElNidoScreen.push(context);
+        }
+      });
     });
   }
 

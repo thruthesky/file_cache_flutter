@@ -1520,6 +1520,12 @@ class LoZh extends Lo {
   String get quickMenuMustReadInfo => '必备信息';
 
   @override
+  String get quickMenuTravelSpots => '旅游景点';
+
+  @override
+  String get travelSpotsScreenTitle => '菲律宾热门旅游景点';
+
+  @override
   String get philippineLifeInfo => '菲律宾生活信息';
 
   @override
@@ -1677,6 +1683,12 @@ class LoZh extends Lo {
 
   @override
   String get travelDestinationPalawan => '巴拉望';
+
+  @override
+  String get travelDestinationElNido => '爱妮岛';
+
+  @override
+  String get travelDestinationElNidoDescription => '以泻湖和喀斯特悬崖闻名的巴拉望宝石';
 
   @override
   String get singleChat => '1:1 Chat';
@@ -1848,4 +1860,13 @@ class LoZh extends Lo {
 
   @override
   String get quickPostDefaultMessage => '今天您在菲律宾的生活如何？';
+
+  @override
+  String get searchHint => '搜索';
+
+  @override
+  String get searchNoResults => '没有搜索结果';
+
+  @override
+  String get searchResults => '搜索结果';
 }
