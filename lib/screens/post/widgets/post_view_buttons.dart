@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
-import 'package:philgo/screens/post/widgets/comic_action_button.dart';
 import 'package:philgo/screens/post/widgets/post_view_option_menu.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -99,6 +98,24 @@ class _PostViewButtonsState extends State<PostViewButtons> {
           onPressed: widget.onTapReply,
         ),
 
+        const SizedBox(width: 8),
+
+        /// 1:1 채팅 버튼 - 타인 게시글인 경우에만 표시
+        UserReady(
+          login: (context, user) {
+            if (!post.isMine(context)) {
+              return ComicActionButton(
+                icon: FontAwesomeIcons.comment,
+                onPressed: () {
+                  // 게시글 작성자와 1:1 채팅방 열기
+                  ChatRoomScreen.push(context, post.firebase_uid);
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+
         const Spacer(),
 
         /// 본인/타인 게시글에 따라 다른 버튼 표시
@@ -110,8 +127,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ComicActionButton(
-                    icon: FontAwesomeIcons.ban,
-                    label: PhilgoTr.of(context)!.block,
+                    icon: FontAwesomeIcons.userSlash,
                     onPressed: () {
                       showBlockDialog(
                         context: context,
