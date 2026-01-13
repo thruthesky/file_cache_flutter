@@ -62,7 +62,7 @@ class _PostReportButtonState extends State<PostReportButton> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: scheme.outline,
+          color: scheme.outline.withValues(alpha: 0.2),
           width: 1.0, // Comic Design: 2.0 border
         ),
         borderRadius: BorderRadius.circular(8), // Comic Design: rounded corners
@@ -80,15 +80,18 @@ class _PostReportButtonState extends State<PostReportButton> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(FontAwesomeIcons.flag, size: 16, color: scheme.onSurface),
-              const SizedBox(width: 6),
-              Text(
-                "${PhilgoTr.of(context)!.report}${currentReportCounter > 0 ? ' $currentReportCounter' : ''}",
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.w500,
+              Icon(FontAwesomeIcons.hexagonExclamation, size: 16, color: scheme.onSurface),
+              // 신고 횟수가 있는 경우에만 숫자 표시
+              if (currentReportCounter > 0) ...[
+                const SizedBox(width: 6),
+                Text(
+                  '$currentReportCounter',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

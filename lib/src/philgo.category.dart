@@ -251,6 +251,7 @@ class PhilgoCategory {
       ('boarding_house', null),
       ('business', null),
       ('school', null),
+      ('study', null),
       ('caution', null),
       ('greeting', null),
       ('food_delivery', null),

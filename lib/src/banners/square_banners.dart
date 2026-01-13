@@ -105,29 +105,45 @@ class _SquareBannersState extends State<SquareBanners> {
     /// Return empty widget if no banners
     if (banners.isEmpty) return const SizedBox.shrink();
 
-    /// 4열 그리드로 배너 표시 (1줄에 4개씩)
-    /// Display banners in 4-column grid (4 per row)
-    return GridView.builder(
-      padding: widget.padding,
+    /// 4열 그리드로 배너 표시 (1줄에 4개씩) + 하단 구분선
+    /// Display banners in 4-column grid (4 per row) + bottom divider
+    return Column(
+      children: [
+        /// 배너 그리드
+        /// Banner grid
+        GridView.builder(
+          padding: widget.padding,
 
-      /// 스크롤 비활성화 (부모 스크롤뷰 사용)
-      /// Disable scroll (uses parent scroll view)
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+          /// 스크롤 비활성화 (부모 스크롤뷰 사용)
+          /// Disable scroll (uses parent scroll view)
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
 
-      /// 그리드 레이아웃 설정
-      /// Grid layout configuration
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        // crossAxisSpacing: 8.0,
-        // mainAxisSpacing: 8.0,
+          /// 그리드 레이아웃 설정
+          /// Grid layout configuration
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            // crossAxisSpacing: 8.0,
+            // mainAxisSpacing: 8.0,
 
-        /// 사각 배너 비율: 1:1
-        /// Square banner aspect ratio: 1:1
-        childAspectRatio: 1.0,
-      ),
-      itemCount: banners.length,
-      itemBuilder: (context, index) => _buildBannerItem(banners[index]),
+            /// 사각 배너 비율: 1:1
+            /// Square banner aspect ratio: 1:1
+            childAspectRatio: 1.0,
+          ),
+          itemCount: banners.length,
+          itemBuilder: (context, index) => _buildBannerItem(banners[index]),
+        ),
+
+        /// 배너 영역 하단 구분선
+        /// Divider at the bottom of banner area
+        Divider(
+          height: 16,
+          thickness: 1,
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(
+            alpha: 0.3,
+          ),
+        ),
+      ],
     );
   }
 

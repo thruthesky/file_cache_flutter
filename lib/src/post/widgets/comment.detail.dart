@@ -44,56 +44,6 @@ class _CommentDetailState extends State<CommentDetail> {
     };
   }
 
-  /// Build Comic-styled action button widget with border
-  Widget _buildComicActionButton({
-    required BuildContext context,
-    required IconData icon,
-    String? label, // Make label optional
-    required VoidCallback? onPressed,
-    Color? color,
-  }) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
-    return Opacity(
-      opacity: onPressed == null ? 0.5 : 1.0,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: color ?? scheme.outline,
-            width: 1.0, // Comic Design: 2.0 border
-          ),
-          borderRadius: BorderRadius.circular(
-            8,
-          ), // Comic Design: rounded corners
-        ),
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 16, color: color ?? scheme.onSurface),
-                if (label != null && label.isNotEmpty) ...[
-                  const SizedBox(width: 6),
-                  Text(
-                    label,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: color ?? scheme.onSurface,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Blocked(
@@ -212,11 +162,10 @@ class _CommentDetailState extends State<CommentDetail> {
                       runSpacing: 8,
                       children: [
                         /// Like button for comments with Comic design (icon only when 0)
-                        _buildComicActionButton(
-                          context: context,
+                        ComicActionButton(
                           icon: _isLiked
-                              ? Icons.thumb_up
-                              : Icons.thumb_up_outlined,
+                              ? FontAwesomeIcons.solidThumbsUp
+                              : FontAwesomeIcons.thumbsUp,
                           label: widget.comment.good > 0
                               ? '${widget.comment.good}'
                               : null,
@@ -259,28 +208,37 @@ class _CommentDetailState extends State<CommentDetail> {
                         ),
 
                         /// 답글 버튼 - 항상 표시 (Comic design, icon only)
-                        _buildComicActionButton(
-                          context: context,
+                        ComicActionButton(
                           icon: FontAwesomeIcons.reply,
-                          label: null, // Show icon only
                           onPressed: () {
                             // Trigger reply mode in parent (PostViewScreen)
                             widget.onReplyClicked(widget.comment);
                           },
                         ),
 
+                        /// 1:1 채팅 버튼 - 타인 댓글인 경우에만 표시
+                        if (!widget.myComment)
+                          ComicActionButton(
+                            icon: FontAwesomeIcons.comment,
+                            onPressed: () {
+                              // 댓글 작성자와 1:1 채팅방 열기
+                              ChatRoomScreen.push(
+                                context,
+                                widget.comment.firebase_uid,
+                              );
+                            },
+                          ),
+
                         /// 수정 버튼 - 내 댓글인 경우에만 표시 (Comic design)
                         if (!widget.hasReplies && widget.myComment) ...[
-                          _buildComicActionButton(
-                            context: context,
+                          ComicActionButton(
                             icon: FontAwesomeIcons.penToSquare,
                             onPressed: () {
                               // Trigger edit mode in parent (PostViewScreen)
                               widget.onEditClicked(widget.comment);
                             },
                           ),
-                          _buildComicActionButton(
-                            context: context,
+                          ComicActionButton(
                             icon: _isDeleting
                                 ? FontAwesomeIcons.spinner
                                 : FontAwesomeIcons.trash,
@@ -311,7 +269,9 @@ class _CommentDetailState extends State<CommentDetail> {
                                         });
                                         if (context.mounted) {
                                           showSafeErrorDialog(
-                                            PhilgoTr.of(context)!.failedToDeleteComment(
+                                            PhilgoTr.of(
+                                              context,
+                                            )!.failedToDeleteComment(
                                               e.toString(),
                                             ),
                                           );
@@ -323,10 +283,8 @@ class _CommentDetailState extends State<CommentDetail> {
                           ),
                         ],
                         if (!widget.myComment) ...[
-                          _buildComicActionButton(
-                            context: context,
-                            icon: FontAwesomeIcons.ban,
-                            label: PhilgoTr.of(context)!.block,
+                          ComicActionButton(
+                            icon: FontAwesomeIcons.userSlash,
                             onPressed: () {
                               showBlockDialog(
                                 context: context,
