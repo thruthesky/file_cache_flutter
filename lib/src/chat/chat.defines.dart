@@ -84,3 +84,23 @@ const String REPORT_CREATED_AT = 'created_at';
 const String POST = 'post';
 const String COMMENT = 'comment';
 const String DEFAULT = 'default';
+
+/// Chat configuration for global callbacks
+/// 채팅 관련 전역 콜백 설정 클래스
+///
+/// Usage - 사용법:
+/// ```dart
+/// // Set callback in main app initialization
+/// // 메인 앱 초기화 시 콜백 설정
+/// ChatConfig.onMessageSent = () {
+///   ChatSoundService.instance.playSendSound();
+/// };
+/// ```
+class ChatConfig {
+  /// Callback to be called when a message is successfully sent
+  /// 메시지 전송 성공 시 호출될 콜백
+  ///
+  /// This is called after the message is saved to Firebase.
+  /// Firebase에 메시지가 저장된 후 호출됩니다.
+  static void Function()? onMessageSent;
+}

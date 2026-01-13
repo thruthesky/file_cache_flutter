@@ -313,6 +313,15 @@ Future<void> resetChatJoin(String otherUserUid) async {
 }
 
 /// Sends a message to a chat room
+/// 채팅방에 메시지를 전송하는 함수
+///
+/// [roomId] - 채팅방 ID
+/// [text] - 메시지 내용 (최대 2048자)
+/// [urls] - 첨부 파일 URL 목록 (선택)
+/// [protocol] - 프로토콜 메시지 타입 (선택)
+///
+/// Returns the message ID after successful send.
+/// 전송 성공 시 메시지 ID를 반환합니다.
 Future<String> sendMessage({
   required String roomId,
   required String text,
@@ -331,11 +340,17 @@ Future<String> sendMessage({
   };
 
   // Add urls array if provided and not empty
+  // URL 배열이 제공되고 비어있지 않으면 추가
   if (urls != null && urls.isNotEmpty) {
     messageData['urls'] = urls;
   }
 
   await messageRef.set(messageData);
+
+  // Call onMessageSent callback if set (e.g., for playing send sound)
+  // 콜백이 설정되어 있으면 호출 (예: 전송음 재생)
+  ChatConfig.onMessageSent?.call();
+
   return messageRef.key!; // Return the message ID
 }
 
