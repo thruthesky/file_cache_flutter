@@ -4,6 +4,8 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/widgets/headers/forum_header.notification_icon_button.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/screens/search/search.screen.dart';
+import 'package:philgo/widgets/dialogs/search_dialog.dart';
 
 /// 포럼 헤더 위젯 (Forum Header Widget)
 ///
@@ -102,6 +104,46 @@ class _ForumHeaderState extends State<ForumHeader> {
         crossAxisAlignment: WrapCrossAlignment.center,
 
         children: [
+          /// 검색 항목 (Search item)
+          /// 카테고리 목록 맨 앞에 배치
+          /// 클릭 시 검색 다이얼로그 오픈 → 검색어 입력 → 검색 화면 이동
+          InkWell(
+            onTap: () async {
+              final searchTerm = await SearchDialog.show(context);
+              if (searchTerm != null && searchTerm.isNotEmpty && context.mounted) {
+                SearchScreen.push(context, searchTerm);
+              }
+            },
+            borderRadius: BorderRadius.circular(buttonRadius),
+            child: Container(
+              decoration: BoxDecoration(
+                color: _isExpanded
+                    ? scheme.surfaceContainerLowest
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(buttonRadius),
+              ),
+              padding: buttonPadding,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.lightMagnifyingGlass,
+                    size: 12,
+                    color: scheme.primary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    lo.searchHint,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           /// 메뉴 카테고리 버튼 목록 (여러 줄로 표시, 서브카테고리 포함)
           /// Menu category button list (displayed in multiple rows, including subcategories)
           ...categoriesToShow.map((menuItem) {

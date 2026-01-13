@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/extensions/nav.context.dart';
+import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/screens/search/search.screen.dart';
+import 'package:philgo/widgets/dialogs/search_dialog.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -24,6 +28,7 @@ class HomeMenuCategories extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
+    final lo = Lo.of(context)!;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: sp.s4),
@@ -48,7 +53,44 @@ class HomeMenuCategories extends StatelessWidget {
           /// Center align vertically
           crossAxisAlignment: CrossAxisAlignment.center,
 
-          children: PhilgoCategory.homeMenuCategories().map((menuItem) {
+          children: [
+            /// 검색 항목 (Search item)
+            /// 카테고리 목록 맨 앞에 배치
+            /// 클릭 시 검색 다이얼로그 오픈 → 검색어 입력 → 검색 화면 이동
+            InkWell(
+              onTap: () async {
+                final searchTerm = await SearchDialog.show(context);
+                if (searchTerm != null && searchTerm.isNotEmpty && context.mounted) {
+                  SearchScreen.push(context, searchTerm);
+                }
+              },
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.lightMagnifyingGlass,
+                      size: 12,
+                      color: scheme.primary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      lo.searchHint,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            /// 메뉴 카테고리 버튼 목록
+            /// Menu category button list
+            ...PhilgoCategory.homeMenuCategories().map((menuItem) {
             /// 튜플에서 postId와 subcategory 추출
             /// Extract postId and subcategory from tuple
             final (postId, subcategory) = menuItem;
@@ -87,7 +129,8 @@ class HomeMenuCategories extends StatelessWidget {
                 ),
               ),
             );
-          }).toList(),
+          }),
+          ],
         ),
       ),
     );

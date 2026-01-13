@@ -72,6 +72,7 @@ import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
+import 'package:philgo/screens/search/search.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -807,6 +808,17 @@ final router = GoRouter(
       builder: (context, state) {
         final idx = state.extra as int;
         return AdvertisementViewScreen(idx: idx);
+      },
+    ),
+
+    /// 검색 화면 (Search Screen)
+    /// Google CSE를 WebView로 표시 (검색어 파라미터 필수)
+    GoRoute(
+      path: SearchScreen.routeName,
+      name: SearchScreen.routeName,
+      builder: (context, state) {
+        final searchTerm = state.extra as String? ?? '';
+        return SearchScreen(searchTerm: searchTerm);
       },
     ),
   ],
