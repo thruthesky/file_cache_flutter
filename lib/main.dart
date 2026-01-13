@@ -12,7 +12,7 @@ import 'package:philgo/router.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/post/post.view.screen.dart';
 import 'package:philgo/screens/user/profile.view.screen.dart';
-import 'package:philgo/screens/info/travel_destination/el_nido.screen.dart';
+import 'package:philgo/services/chat_sound/chat_sound.service.dart';
 import 'package:philgo/state/app.state.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
@@ -91,7 +91,23 @@ class _MyAppState extends State<MyApp> {
           FirebaseCrashlytics.instance.setUserIdentifier('');
         }
       },
+      onNewMessageArrived: () {
+        // Play notification sound when new message arrives
+        // 새 메시지가 도착하면 알림음 재생
+        ChatSoundService.instance.playReceiveSound();
+      },
     );
+
+    // Initialize ChatSoundService - ChatSoundService 초기화
+    // Must be called after UserService initialization
+    // UserService 초기화 후에 호출해야 함
+    ChatSoundService.instance.initialize();
+
+    // Set callback for playing send sound when message is sent
+    // 메시지 전송 시 전송음 재생을 위한 콜백 설정
+    ChatConfig.onMessageSent = () {
+      ChatSoundService.instance.playSendSound();
+    };
 
     if (isRunningInE2EEnvironment == false) {
       initMessagingService();
@@ -141,6 +157,7 @@ class _MyAppState extends State<MyApp> {
   void _debugTestRun() {
     // Timer(Duration(seconds: 1), showUpgradeDialog);
     // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
+
     /// 디버깅용: 0.5초 후 메뉴 탭으로 이동 (확인 후 제거)
     /// For debugging: Navigate to menu tab after 0.5s (remove after verification)
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -155,6 +172,7 @@ class _MyAppState extends State<MyApp> {
       //     ElNidoScreen.push(context);
       //   }
       // });
+
     });
   }
 

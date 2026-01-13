@@ -66,8 +66,17 @@ class _PostViewCommentBoxState extends State<PostViewCommentBox> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+
     // 키보드 높이 가져오기 (키보드가 올라올 때 패딩 추가용)
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    // 시스템 네비게이션 바(하단 버튼) 높이 가져오기
+    // 일부 안드로이드 기기(갤럭시 A17 등)에서 시스템 네비게이션 바에 가려지는 문제 해결
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+
+    // 키보드가 올라오지 않을 때: 시스템 네비게이션 바 높이만큼 패딩 추가
+    // 키보드가 올라올 때: 키보드 높이가 네비게이션 바를 덮으므로 viewInsets만 사용
+    final effectiveBottomPadding = bottomInset > 0 ? bottomInset : bottomPadding;
 
     return Container(
       decoration: BoxDecoration(
@@ -76,8 +85,8 @@ class _PostViewCommentBoxState extends State<PostViewCommentBox> {
           top: BorderSide(color: scheme.outlineVariant, width: 1.0),
         ),
       ),
-      // 키보드가 올라올 때 하단 패딩 추가하여 입력 박스가 키보드 위에 표시되도록 함
-      padding: EdgeInsets.only(bottom: bottomInset),
+      // 시스템 네비게이션 바 또는 키보드 높이만큼 하단 패딩 추가
+      padding: EdgeInsets.only(bottom: effectiveBottomPadding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

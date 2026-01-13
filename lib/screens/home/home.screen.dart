@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/screens/home/sections/main.home.dart';
+import 'package:philgo/services/chat_sound/chat_sound.service.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'sections/chat.home.dart';
@@ -12,10 +13,10 @@ import '../../l10n/app_localizations.dart';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 
-// 홈 스크린
-// 사용자가 로그인 후, 보이게되는 첫번째 스크린. 사실 로그인 사용자의 메인 스크린, 첫 스크린, 홈 스크린이다.
-// 여기서 필요한 초기화를 한다.
-// - 로그인 사용자의 정보를 가져온다.
+/// HomeScreen - 홈 스크린
+///
+/// 사용자가 로그인 후 보이는 메인 스크린입니다.
+/// 하단 네비게이션 바를 통해 홈, 게시판, 업소록, 채팅, 메뉴 화면을 전환합니다.
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/';
   const HomeScreen({super.key});
@@ -119,9 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (unreadSingleCount == 0) {
                           return const SizedBox.shrink();
                         }
-                        return Badge(
-                          label: Text(unreadSingleCount.toString()),
-                        );
+                        return Badge(label: Text(unreadSingleCount.toString()));
                       },
                     ),
                   ),
@@ -141,13 +140,27 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
           currentIndex: selectedItem.index,
           onTap: (index) {
+            // Firebase Analytics 화면 조회 로깅
             FirebaseAnalytics.instance.logScreenView(
               screenName: HomeNavigationItem.values[index].name,
             );
+
+            final tappedItem = HomeNavigationItem.values[index];
+
+            // 디버그: unreadSingleCount 값 확인
+            debugPrint('[HomeScreen] 🔵 onTap: unreadSingleCount = ${UserService.instance.unreadSingleCount}');
+
+            // 읽지 않은 메시지가 있으면 알림음 재생
+            // Play notification sound when there are unread messages
+            if (UserService.instance.unreadSingleCount > 0) {
+              debugPrint('[HomeScreen] 🔊 Playing receive sound!');
+              ChatSoundService.instance.playReceiveSound();
+            }
+
             NavigationState.of(
               context,
               listen: false,
-            ).setHomeNavigation(HomeNavigationItem.values[index]);
+            ).setHomeNavigation(tappedItem);
           },
           type: BottomNavigationBarType.fixed,
           iconSize: 28,
@@ -239,9 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (unreadSingleCount == 0) {
                           return const SizedBox.shrink();
                         }
-                        return Badge(
-                          label: Text(unreadSingleCount.toString()),
-                        );
+                        return Badge(label: Text(unreadSingleCount.toString()));
                       },
                     ),
                   ),
@@ -323,6 +334,13 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         // 1:1 Chat - Show single chat list (stay on chat screen)
         // 1:1채팅 - 1:1 채팅 목록 표시 (채팅 화면 유지)
+
+        // Play notification sound when there are unread messages
+        // 읽지 않은 메시지가 있으면 알림음 재생
+        if (UserService.instance.unreadSingleCount > 0) {
+          ChatSoundService.instance.playReceiveSound();
+        }
+
         navState.setChatNavigation(ChatNavigationItem.singleChat);
         navState.setRoomOrder(RoomOrder.singleOrder);
         break;
