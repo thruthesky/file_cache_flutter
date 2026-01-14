@@ -1,89 +1,409 @@
 {
-  "generated_at": "2026-01-14T11:27:22.522105",
+  "generated_at": "2026-01-14T15:24:54.585655",
   "total_items": 487,
-  "total_complete": 70,
-  "total_incomplete": 417,
+  "total_complete": 225,
+  "total_incomplete": 262,
   "filter": {
     "province": null,
     "category": null,
-    "limit": 5
+    "limit": 25
   },
   "items": [
     {
-      "index": 70,
-      "name": "카그사와 유적지",
-      "english_name": "Cagsawa Ruins",
-      "title": "마용 화산을 배경으로 한 유적",
-      "description": "1814년 화산 폭발로 매몰된 교회의 종탑만 남은 유적지입니다. 뒤로 보이는 완벽한 원뿔형의 마용 화산과 어우러져 대표적인 포토존이 되었습니다.",
-      "city": "다라가",
-      "province": "알바이",
-      "category": "역사 유적",
-      "icon": "🏚️",
-      "search_query": "Cagsawa Ruins 다라가 Philippines travel",
+      "index": 225,
+      "name": "Mariveles 산",
+      "english_name": "Mount Mariveles",
+      "title": "Bataan의 산/화산 명소",
+      "description": "Bataan Mariveles에 위치한 산/화산 여행지입니다.",
+      "city": "Mariveles",
+      "province": "Bataan",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Mariveles Mariveles Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 71,
-      "name": "카라모안 섬",
-      "english_name": "Caramoan Islands",
-      "title": "숨겨진 비경의 섬들",
-      "description": "TV 쇼 '서바이버'의 촬영지로 유명하며, 때 묻지 않은 자연과 석회암 절벽, 백사장이 어우러진 섬 호핑 투어의 명소입니다.",
-      "city": "카라모안",
-      "province": "카마리네스 수르",
+      "index": 226,
+      "name": "Samat 산",
+      "english_name": "Mount Samat",
+      "title": "Bataan의 산/화산 명소",
+      "description": "Bataan Pilar에 위치한 산/화산 여행지입니다.",
+      "city": "Pilar",
+      "province": "Bataan",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Samat Pilar Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 227,
+      "name": "Pagsanjan 폭포",
+      "english_name": "Pagsanjan Falls",
+      "title": "Laguna의 폭포 명소",
+      "description": "Laguna Cavinti에 위치한 폭포 여행지입니다.",
+      "city": "Cavinti",
+      "province": "Laguna",
+      "category": "폭포",
+      "icon": "💧",
+      "search_query": "Pagsanjan Falls Cavinti Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 228,
+      "name": "Pagudpud coastline",
+      "english_name": "Pagudpud coastline",
+      "title": "Ilocos Norte의 역사 유적 명소",
+      "description": "Ilocos Norte Pagudpud에 위치한 역사 유적 여행지입니다. Boracay of the North.",
+      "city": "Pagudpud",
+      "province": "Ilocos Norte",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Pagudpud coastline Pagudpud Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 229,
+      "name": "Panglao 섬",
+      "english_name": "Panglao Island",
+      "title": "Bohol의 해변/섬 명소",
+      "description": "Bohol Panglao에 위치한 해변/섬 여행지입니다.",
+      "city": "Panglao",
+      "province": "Bohol",
       "category": "해변/섬",
       "icon": "🏝️",
-      "search_query": "Caramoan Islands 카라모안 Philippines travel",
+      "search_query": "Panglao Island Panglao Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 72,
-      "name": "카양안 호수",
-      "english_name": "Kayangan Lake",
-      "title": "코론의 맑은 호수",
-      "description": "아시아에서 가장 깨끗한 호수 중 하나로 꼽힙니다. 70%의 민물과 30%의 바닷물이 섞여 있으며, 투명한 물과 수중 암석 경관이 환상적입니다.",
-      "city": "코론",
-      "province": "팔라완",
+      "index": 230,
+      "name": "Puerto Galera",
+      "english_name": "Puerto Galera",
+      "title": "Oriental Mindoro의 역사 유적 명소",
+      "description": "Oriental Mindoro Puerto에 위치한 역사 유적 여행지입니다. One of the most beautiful bays in the world .",
+      "city": "Puerto",
+      "province": "Oriental Mindoro",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Puerto Galera Puerto Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 231,
+      "name": "Puerto Princesa Subterranean 강 국립공원",
+      "english_name": "Puerto Princesa Subterranean River National Park",
+      "title": "Palawan의 호수/강 명소",
+      "description": "Palawan Puerto에 위치한 호수/강 여행지입니다. One of the New7Wonders of Nature .",
+      "city": "Puerto",
+      "province": "Palawan",
       "category": "호수/강",
-      "icon": "💎",
-      "search_query": "Kayangan Lake 코론 Philippines travel",
+      "icon": "🌊",
+      "search_query": "Puerto Princesa Subterranean River National Park Puerto Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 73,
-      "name": "카푸르푸라완 암석 형성지",
-      "english_name": "Kapurpurawan Rock Formation",
-      "title": "일로코스의 하얀 바위",
-      "description": "바람과 파도의 침식 작용으로 만들어진 크림색의 거대한 석회암 바위 지형입니다. 이국적이고 웅장한 풍경을 자랑합니다.",
-      "city": "부르고스",
-      "province": "일로코스 노르테",
-      "category": "전망대",
-      "icon": "🪨",
-      "search_query": "Kapurpurawan Rock Formation 부르고스 Philippines travel",
+      "index": 232,
+      "name": "Pujada Bay",
+      "english_name": "Pujada Bay",
+      "title": "Davao Oriental의 역사 유적 명소",
+      "description": "Davao Oriental Mati에 위치한 역사 유적 여행지입니다. One of the most beautiful bays in the world .",
+      "city": "Mati",
+      "province": "Davao Oriental",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Pujada Bay Mati Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 74,
-      "name": "칼라구아스 섬",
-      "english_name": "Calaguas Island (Mahabang Buhangin)",
-      "title": "최고의 백사장 캠핑",
-      "description": "고운 파우더 같은 모래사장과 수정처럼 맑은 물이 있는 오지 섬입니다. 전기가 제한적인 곳에서 디지털 디톡스와 캠핑을 즐기기 좋습니다.",
-      "city": "빈조스",
-      "province": "카마리네스 노르테",
+      "index": 233,
+      "name": "Punta Fuego",
+      "english_name": "Punta Fuego",
+      "title": "Batangas의 역사 유적 명소",
+      "description": "Batangas Nasugbu에 위치한 역사 유적 여행지입니다.",
+      "city": "Nasugbu",
+      "province": "Batangas",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Punta Fuego Nasugbu Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 234,
+      "name": "Rice Terraces of the Philippine Cordilleras",
+      "english_name": "Rice Terraces of the Philippine Cordilleras",
+      "title": "Ifugao의 역사 유적 명소",
+      "description": "Ifugao Banaue에 위치한 역사 유적 여행지입니다. The first-ever property to be included in the cultural landscape category of the UNESCO World Heritage Site List .",
+      "city": "Banaue",
+      "province": "Ifugao",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Rice Terraces of the Philippine Cordilleras Banaue Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 235,
+      "name": "Rio Grande de Cagayan",
+      "english_name": "Rio Grande de Cagayan",
+      "title": "Cagayan Isabela Nueva Vizcaya Quirino의 역사 유적 명소",
+      "description": "Cagayan Isabela Nueva Vizcaya Quirino Aparri에 위치한 역사 유적 여행지입니다.",
+      "city": "Aparri",
+      "province": "Cagayan Isabela Nueva Vizcaya Quirino",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Rio Grande de Cagayan Aparri Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 236,
+      "name": "Samal 섬",
+      "english_name": "Samal Island",
+      "title": "Davao del Norte의 해변/섬 명소",
+      "description": "Davao del Norte Samal에 위치한 해변/섬 여행지입니다.",
+      "city": "Samal",
+      "province": "Davao del Norte",
       "category": "해변/섬",
-      "icon": "🏕️",
-      "search_query": "Calaguas Island (Mahabang Buhangin) 빈조스 Philippines travel",
+      "icon": "🏝️",
+      "search_query": "Samal Island Samal Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 237,
+      "name": "Siargao 섬",
+      "english_name": "Siargao Island",
+      "title": "Surigao del Norte의 해변/섬 명소",
+      "description": "Surigao del Norte Burgos에 위치한 해변/섬 여행지입니다.",
+      "city": "Burgos",
+      "province": "Surigao del Norte",
+      "category": "해변/섬",
+      "icon": "🏝️",
+      "search_query": "Siargao Island Burgos Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 238,
+      "name": "Sierra Madre",
+      "english_name": "Sierra Madre",
+      "title": "Cagayan Valley Calabarzon Central Luzon의 역사 유적 명소",
+      "description": "Cagayan Valley Calabarzon Central Luzon Aurora에 위치한 역사 유적 여행지입니다.",
+      "city": "Aurora",
+      "province": "Cagayan Valley Calabarzon Central Luzon",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Sierra Madre Aurora Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 239,
+      "name": "Tubbataha 리프",
+      "english_name": "Tubbataha Reef",
+      "title": "Palawan의 다이빙/스노클링 명소",
+      "description": "Palawan Puerto에 위치한 다이빙/스노클링 여행지입니다.",
+      "city": "Puerto",
+      "province": "Palawan",
+      "category": "다이빙/스노클링",
+      "icon": "🤿",
+      "search_query": "Tubbataha Reef Puerto Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 240,
+      "name": "Verde 섬",
+      "english_name": "Verde Island",
+      "title": "Batangas의 해변/섬 명소",
+      "description": "Batangas Batangas에 위치한 해변/섬 여행지입니다.",
+      "city": "Batangas",
+      "province": "Batangas",
+      "category": "해변/섬",
+      "icon": "🏝️",
+      "search_query": "Verde Island Batangas Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 241,
+      "name": "Araneta Coliseum",
+      "english_name": "Araneta Coliseum",
+      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
+      "description": "Metro Manila (National Capital Region) Cubao,에 위치한 역사 유적 여행지입니다.",
+      "city": "Cubao,",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Araneta Coliseum Cubao, Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 242,
+      "name": "Asilo de San Vicente de Paul",
+      "english_name": "Asilo de San Vicente de Paul",
+      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
+      "description": "Metro Manila (National Capital Region) United에 위치한 역사 유적 여행지입니다.",
+      "city": "United",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Asilo de San Vicente de Paul United Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 243,
+      "name": "Ayala Center",
+      "english_name": "Ayala Center",
+      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
+      "description": "Metro Manila (National Capital Region) Makati에 위치한 역사 유적 여행지입니다.",
+      "city": "Makati",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Ayala Center Makati Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 244,
+      "name": "Ayala 박물관",
+      "english_name": "Ayala Museum",
+      "title": "Metro Manila (National Capital Region)의 박물관/미술관 명소",
+      "description": "Metro Manila (National Capital Region) Makati에 위치한 박물관/미술관 여행지입니다.",
+      "city": "Makati",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "박물관/미술관",
+      "icon": "🎨",
+      "search_query": "Ayala Museum Makati Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 245,
+      "name": "Bangui Wind Farm",
+      "english_name": "Bangui Wind Farm",
+      "title": "Ilocos Norte의 농장 명소",
+      "description": "Ilocos Norte Bangui에 위치한 농장 여행지입니다. 1st Wind Farm in the Philippines.",
+      "city": "Bangui",
+      "province": "Ilocos Norte",
+      "category": "농장",
+      "icon": "🌾",
+      "search_query": "Bangui Wind Farm Bangui Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 246,
+      "name": "Bonifacio Global City",
+      "english_name": "Bonifacio Global City",
+      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
+      "description": "Metro Manila (National Capital Region) Taguig에 위치한 역사 유적 여행지입니다.",
+      "city": "Taguig",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Bonifacio Global City Taguig Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 247,
+      "name": "Camp Crame",
+      "english_name": "Camp Crame",
+      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
+      "description": "Metro Manila (National Capital Region) EDSA에 위치한 역사 유적 여행지입니다.",
+      "city": "EDSA",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Camp Crame EDSA Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 248,
+      "name": "Cultural Center of the Philippines",
+      "english_name": "Cultural Center of the Philippines",
+      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
+      "description": "Metro Manila (National Capital Region) Pasay에 위치한 역사 유적 여행지입니다.",
+      "city": "Pasay",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Cultural Center of the Philippines Pasay Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 249,
+      "name": "Eastwood City",
+      "english_name": "Eastwood City",
+      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
+      "description": "Metro Manila (National Capital Region) Quezon에 위치한 역사 유적 여행지입니다.",
+      "city": "Quezon",
+      "province": "Metro Manila (National Capital Region)",
+      "category": "역사 유적",
+      "icon": "🏛️",
+      "search_query": "Eastwood City Quezon Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"

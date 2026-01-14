@@ -68,7 +68,7 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
   Timer? _autoSlideTimer;
 
   /// 자동 슬라이딩 간격 (Auto-slide interval)
-  static const Duration _autoSlideDuration = Duration(seconds: 5);
+  static const Duration _autoSlideDuration = Duration(seconds: 7);
 
   /// 모든 카테고리의 게시글 데이터 (All categories post data)
   ///
@@ -141,10 +141,7 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
 
       /// get_latest_posts API 호출 (한 번의 호출로 모든 데이터 fetch)
       /// API returns: {'freetalk': [...], 'qna': [...], 'buyandsell/골프': [...], ...}
-      final result = await getLatestPosts(
-        categories: categories,
-        limit: 4,
-      );
+      final result = await getLatestPosts(categories: categories, limit: 4);
 
       if (mounted) {
         setState(() {
@@ -244,7 +241,9 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
               final availableWidth = constraints.maxWidth.isFinite
                   ? constraints.maxWidth
                   : screenWidth;
-              final safeWidth = availableWidth > 0 ? availableWidth : screenWidth;
+              final safeWidth = availableWidth > 0
+                  ? availableWidth
+                  : screenWidth;
 
               return SizedBox(
                 /// 카로셀 높이 설정 (게시글 4개 + 헤더 표시 가능한 높이)

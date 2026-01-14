@@ -240,7 +240,30 @@ class _ForumHomeState extends State<ForumHome> {
 
   /// 글쓰기 다이얼로그 표시
   /// Show post create dialog
+  ///
+  /// 관리자(운영자)인 경우 글쓰기가 제한되며 알림창이 표시됩니다.
+  /// Admin users are restricted from creating posts and will see an alert.
   void _showPostCreateScreen() {
+    // 관리자 체크 - 운영자는 글을 작성할 수 없음
+    // Admin check - operators cannot create posts
+    final philgoState = PhilgoState.of(context);
+    if (philgoState.isAdmin) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('알림'),
+          content: const Text('운영자는 글을 작성할 수 없습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     showPostCreateScreen(
       context,
       postId: forumSelection.postId,

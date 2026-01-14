@@ -4,7 +4,7 @@
 /// 실제 PhilGo API를 호출하여 데이터가 올바르게 파싱되는지 확인합니다.
 ///
 /// 테스트 항목:
-/// 1. 기본 API 호출 테스트 (setting API)
+/// 1. 기본 API 호출 테스트 (get_app_settings API)
 /// 2. tokenId 파라미터 테스트
 /// 3. tokenPatcher 동작 테스트
 /// 4. Mock 토큰 패처 테스트
@@ -25,11 +25,11 @@ const String philgoApiUrl = 'https://philgo.com/func.php';
 void main() {
   /// apiCall() 함수 테스트 그룹
   group('apiCall() 테스트', () {
-    /// 테스트 1: setting API 호출 및 응답 검증
-    /// Test 1: Call setting API and verify response
-    test('setting API 호출 성공', () async {
+    /// 테스트 1: get_app_settings API 호출 및 응답 검증
+    /// Test 1: Call get_app_settings API and verify response
+    test('get_app_settings API 호출 성공', () async {
       // Act: API 호출
-      final result = await apiCall('setting', apiServerUrl: philgoApiUrl);
+      final result = await apiCall('get_app_settings', apiServerUrl: philgoApiUrl);
 
       // Assert: 응답이 Map인지 확인
       expect(result, isA<Map<String, dynamic>>());
@@ -43,7 +43,7 @@ void main() {
     test('tokenId 파라미터로 직접 토큰 전달', () async {
       // Act: tokenId 파라미터와 함께 API 호출
       final result = await apiCall(
-        'setting',
+        'get_app_settings',
         apiServerUrl: philgoApiUrl,
         tokenId: 'test_token_123',
       );
@@ -62,7 +62,7 @@ void main() {
 
       // Act: 토큰 패처와 함께 API 호출
       final result = await apiCall(
-        'setting',
+        'get_app_settings',
         apiServerUrl: philgoApiUrl,
         tokenPatcher: (data) async {
           tokenPatcherCalled = true;
@@ -85,7 +85,7 @@ void main() {
     test('createMockTokenPatcher() 헬퍼 함수 동작', () async {
       // Act: createMockTokenPatcher로 생성한 패처 사용
       final result = await apiCall(
-        'setting',
+        'get_app_settings',
         apiServerUrl: philgoApiUrl,
         tokenPatcher: createMockTokenPatcher('my_custom_token'),
       );
@@ -100,7 +100,7 @@ void main() {
     test('디버그 모드 활성화 시 로그 출력', () async {
       // Act: 디버그 모드로 API 호출
       final result = await apiCall(
-        'setting',
+        'get_app_settings',
         apiServerUrl: philgoApiUrl,
         debug: true,
       );
@@ -115,7 +115,7 @@ void main() {
     test('추가 데이터와 함께 API 호출', () async {
       // Act: 추가 데이터와 함께 API 호출
       final result = await apiCall(
-        'setting',
+        'get_app_settings',
         apiServerUrl: philgoApiUrl,
         data: {'extra_param': 'test_value'},
       );
@@ -155,7 +155,7 @@ void main() {
 
       // Act: 비동기 토큰 패처와 함께 API 호출
       final result = await apiCall(
-        'setting',
+        'get_app_settings',
         apiServerUrl: philgoApiUrl,
         tokenPatcher: asyncTokenPatcher,
       );
