@@ -33,6 +33,9 @@ description: |
 5. **다국어 요청 시**: [i18n 문서](./i18n.md) 참조
    - 키워드: 다국어, 번역, localization, i18n, arb
 
+6. **푸시 알림/FCM 요청 시**: [Firebase FCM 문서](./firebase-fcm.md) 참조
+   - 키워드: 푸시 알림, FCM, Firebase Messaging, 알림, notification, 토큰, 구독
+
 ## Core Principles
 
 ### 필수 규칙
@@ -83,6 +86,7 @@ elevation: 0                                   // 플랫 디자인
 | [provider.md](./provider.md) | Provider 상태관리, Selector, ChangeNotifier |
 | [go_route.md](./go_route.md) | GoRouter 라우팅, 파라미터 전달, redirect |
 | [i18n.md](./i18n.md) | 다국어 지원, ARB 파일 관리 |
+| [firebase-fcm.md](./firebase-fcm.md) | FCM 푸시 알림, 토큰 관리, 메시지 핸들링 |
 
 ## 필수 pub.dev 패키지
 
