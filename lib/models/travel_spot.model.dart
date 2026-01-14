@@ -1,3 +1,38 @@
+/// 여행 명소 리스트를 감싸는 래퍼 클래스 (Wrapper class for TravelSpot list)
+///
+/// FileCache가 단일 객체를 캐싱하도록 설계되어 있어,
+/// 리스트를 캐싱하려면 래퍼 클래스가 필요합니다.
+/// FileCache is designed for single object caching,
+/// so a wrapper class is needed to cache a list.
+class TravelSpotsData {
+  /// 여행 명소 리스트 (Travel spots list)
+  final List<TravelSpot> spots;
+
+  /// 데이터 조회 시간 (Data fetch time)
+  final DateTime fetchedAt;
+
+  const TravelSpotsData({
+    required this.spots,
+    required this.fetchedAt,
+  });
+
+  /// JSON에서 생성 (Create from JSON)
+  factory TravelSpotsData.fromJson(Map<String, dynamic> json) {
+    return TravelSpotsData(
+      spots: (json['spots'] as List<dynamic>)
+          .map((e) => TravelSpot.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      fetchedAt: DateTime.parse(json['fetchedAt'] as String),
+    );
+  }
+
+  /// JSON으로 변환 (Convert to JSON)
+  Map<String, dynamic> toJson() => {
+        'spots': spots.map((e) => e.toJson()).toList(),
+        'fetchedAt': fetchedAt.toIso8601String(),
+      };
+}
+
 /// 여행 명소 데이터 모델 (Travel Spot Data Model)
 ///
 /// travel_spots.json 파일의 여행 명소 정보를 담는 모델입니다.

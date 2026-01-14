@@ -1,14 +1,12 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/models/travel_spot.model.dart';
 import 'package:philgo/screens/guide/travel_spot.view.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/services/travel/travel_spot.service.dart';
 import 'package:philgo/state/navigation.state.dart';
 
 /// 필리핀 여행 명소 화면 (Philippine Travel Spots Screen)
@@ -90,14 +88,26 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
     _loadTravelSpots();
   }
 
-  /// JSON 파일에서 여행 명소 데이터 로드 (Load travel spots data from JSON file)
+  /// 여행 명소 데이터 로드 (Load travel spots data)
+  ///
+  /// TravelSpotService를 사용하여 데이터를 로드합니다.
+  /// 1. 캐시 확인 → 유효한 캐시 사용
+  /// 2. 캐시 없음 → 번들 파일 먼저 사용
+  /// 3. 백그라운드에서 원격 다운로드
+  /// 4. 다운로드 완료 시 화면 업데이트
+  ///
+  /// Uses TravelSpotService to load data.
+  /// 1. Check cache → use if valid
+  /// 2. No cache → use bundle first
+  /// 3. Background remote download
+  /// 4. Update UI on download completion
   Future<void> _loadTravelSpots() async {
     try {
-      final jsonString = await rootBundle.loadString(
-        'lib/philgo_files/travel/travel_spots.json',
+      final spots = await TravelSpotService.instance.loadTravelSpots(
+        /// 원격 데이터 다운로드 완료 시 화면 업데이트
+        /// (Update UI when remote data download is complete)
+        onRemoteDataUpdated: _onRemoteDataUpdated,
       );
-      final List<dynamic> jsonList = json.decode(jsonString);
-      final spots = jsonList.map((json) => TravelSpot.fromJson(json)).toList();
 
       /// 가나다순 정렬 (Sort alphabetically)
       spots.sort((a, b) => a.name.compareTo(b.name));
@@ -112,6 +122,23 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  /// 원격 데이터 업데이트 콜백 (Remote data update callback)
+  ///
+  /// 백그라운드에서 원격 데이터 다운로드 완료 시 호출됩니다.
+  /// 위젯이 마운트된 상태에서만 setState를 호출합니다.
+  /// Called when remote data download is complete in background.
+  /// Only calls setState if widget is still mounted.
+  void _onRemoteDataUpdated(List<TravelSpot> spots) {
+    if (!mounted) return;
+
+    /// 가나다순 정렬 (Sort alphabetically)
+    spots.sort((a, b) => a.name.compareTo(b.name));
+
+    setState(() {
+      _allSpots = spots;
+    });
   }
 
   /// 메뉴 화면으로 이동 (Navigate to Menu Screen)
