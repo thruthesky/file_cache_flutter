@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-01-14T16:49:42.030699",
+  "generated_at": "2026-01-14T17:30:37.483764",
   "total_items": 487,
-  "total_complete": 275,
-  "total_incomplete": 212,
+  "total_complete": 300,
+  "total_incomplete": 187,
   "filter": {
     "province": null,
     "category": null,
@@ -10,400 +10,400 @@
   },
   "items": [
     {
-      "index": 275,
-      "name": "Alto Peak (Mount Aminduen)",
-      "english_name": "Alto Peak (Mount Aminduen)",
-      "title": "Leyte의 산/화산 명소",
-      "description": "Leyte에 위치한 산/화산 여행지입니다. 해발 약 1,325m. Highest in Leyte Island .",
+      "index": 300,
+      "name": "Bagsak 산",
+      "english_name": "Mount Bagsak",
+      "title": "Sulu의 산/화산 명소",
+      "description": "Sulu에 위치한 산/화산 여행지입니다. 해발 약 1,142m. Inactive volcano",
       "city": "",
-      "province": "Leyte",
+      "province": "Sulu",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Alto Peak (Mount Aminduen)  Philippines travel",
+      "search_query": "Mount Bagsak  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 276,
-      "name": "Amanayao 산",
-      "english_name": "Mount Amanayao",
-      "title": "Benguet의 산/화산 명소",
-      "description": "Benguet에 위치한 산/화산 여행지입니다.",
+      "index": 301,
+      "name": "Bahaoan 산",
+      "english_name": "Mount Bahaoan",
+      "title": "Agusan del Sur의 산/화산 명소",
+      "description": "Agusan del Sur에 위치한 산/화산 여행지입니다.",
       "city": "",
-      "province": "Benguet",
+      "province": "Agusan del Sur",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Amanayao  Philippines travel",
+      "search_query": "Mount Bahaoan  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 277,
-      "name": "Mount",
-      "english_name": "Mount",
-      "title": "Mountain Province의 산/화산 명소",
-      "description": "Mountain Province에 위치한 산/화산 여행지입니다. 해발 약 1,714m.",
+      "index": 302,
+      "name": "Balait 산",
+      "english_name": "Mount Balait",
+      "title": "Apayao의 산/화산 명소",
+      "description": "Apayao에 위치한 산/화산 여행지입니다. 해발 약 2,200m. Located near the Apayao - Abra border.",
       "city": "",
-      "province": "Mountain Province",
+      "province": "Apayao",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount  Philippines travel",
+      "search_query": "Mount Balait  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 278,
-      "name": "Amuyao 산",
-      "english_name": "Mount Amuyao",
-      "title": "Mountain Province의 산/화산 명소",
-      "description": "Mountain Province에 위치한 산/화산 여행지입니다. 해발 약 2,701m. Highest point in Mountain Province .",
+      "index": 303,
+      "name": "Balikabok (Mount Balakibok) 산",
+      "english_name": "Mount Balikabok (Mount Balakibok)",
+      "title": "Zambales의 산/화산 명소",
+      "description": "Zambales에 위치한 산/화산 여행지입니다. 해발 약 849m. Inactive volcano",
       "city": "",
-      "province": "Mountain Province",
+      "province": "Zambales",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Amuyao  Philippines travel",
+      "search_query": "Mount Balikabok (Mount Balakibok)  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 279,
-      "name": "Ambalatungan 산",
-      "english_name": "Mount Ambalatungan",
-      "title": "Kalinga의 산/화산 명소",
-      "description": "Kalinga에 위치한 산/화산 여행지입니다. 해발 약 2,329m. Inactive volcano. (May refer to Mount Binuluan ) .",
+      "index": 304,
+      "name": "Balatubat 산",
+      "english_name": "Mount Balatubat",
+      "title": "Batanes의 산/화산 명소",
+      "description": "Batanes에 위치한 산/화산 여행지입니다. 해발 약 828m. Inactive volcano",
       "city": "",
-      "province": "Kalinga",
+      "province": "Batanes",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Ambalatungan  Philippines travel",
+      "search_query": "Mount Balatubat  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 280,
-      "name": "Amicay 산",
-      "english_name": "Mount Amicay",
-      "title": "Bohol의 산/화산 명소",
-      "description": "Bohol에 위치한 산/화산 여행지입니다.",
+      "index": 305,
+      "name": "Balatukan (Balatucan) 산",
+      "english_name": "Mount Balatukan (Balatucan)",
+      "title": "Misamis Oriental의 산/화산 명소",
+      "description": "Misamis Oriental에 위치한 산/화산 여행지입니다. 해발 약 2,450m. Inactive compound volcano",
       "city": "",
-      "province": "Bohol",
+      "province": "Misamis Oriental",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Amicay  Philippines travel",
+      "search_query": "Mount Balatukan (Balatucan)  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 281,
-      "name": "Amorong 산",
-      "english_name": "Mount Amorong",
-      "title": "Pangasinan의 산/화산 명소",
-      "description": "Pangasinan에 위치한 산/화산 여행지입니다. 해발 약 376m. Inactive volcano ( lava dome )",
+      "index": 306,
+      "name": "Balik Sampan 산",
+      "english_name": "Mount Balik Sampan",
+      "title": "Tawi-Tawi의 산/화산 명소",
+      "description": "Tawi-Tawi에 위치한 산/화산 여행지입니다.",
       "city": "",
-      "province": "Pangasinan",
+      "province": "Tawi-Tawi",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Amorong  Philippines travel",
+      "search_query": "Mount Balik Sampan  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 282,
-      "name": "Ampalauag 산",
-      "english_name": "Mount Ampalauag",
-      "title": "Ifugao의 산/화산 명소",
-      "description": "Ifugao에 위치한 산/화산 여행지입니다. 해발 약 1,714m.",
+      "index": 307,
+      "name": "Balingkilat (Pointed Peak) 산",
+      "english_name": "Mount Balingkilat (Pointed Peak)",
+      "title": "Zambales의 산/화산 명소",
+      "description": "Zambales에 위치한 산/화산 여행지입니다. 해발 약 1,071m.",
       "city": "",
-      "province": "Ifugao",
+      "province": "Zambales",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Ampalauag  Philippines travel",
+      "search_query": "Mount Balingkilat (Pointed Peak)  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 283,
-      "name": "Ampaoid 산",
-      "english_name": "Mount Ampaoid",
-      "title": "Zamboanga del Norte의 산/화산 명소",
-      "description": "Zamboanga del Norte에 위치한 산/화산 여행지입니다. 해발 약 1,066m. Inactive volcano",
-      "city": "",
-      "province": "Zamboanga del Norte",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Ampaoid  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 284,
-      "name": "Ampiro 산",
-      "english_name": "Mount Ampiro",
-      "title": "Misamis Occidental의 산/화산 명소",
-      "description": "Misamis Occidental에 위치한 산/화산 여행지입니다. 해발 약 1,532m. Inactive volcano",
-      "city": "",
-      "province": "Misamis Occidental",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Ampiro  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 285,
-      "name": "Anacuao 산",
-      "english_name": "Mount Anacuao",
-      "title": "Aurora의 산/화산 명소",
-      "description": "Aurora에 위치한 산/화산 여행지입니다. 해발 약 1,852m.",
-      "city": "",
-      "province": "Aurora",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Anacuao  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 286,
-      "name": "Angelo Mountains",
-      "english_name": "Angelo Mountains",
-      "title": "Laguna의 산/화산 명소",
-      "description": "Laguna에 위치한 산/화산 여행지입니다. 해발 약 1,316m.",
-      "city": "",
-      "province": "Laguna",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Angelo Mountains  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 287,
-      "name": "Annaguan 산",
-      "english_name": "Mount Annaguan",
-      "title": "Cagayan의 산/화산 명소",
-      "description": "Cagayan Rizal에 위치한 산/화산 여행지입니다. 해발 약 1,400m. Located in Rizal, Cagayan",
-      "city": "Rizal",
-      "province": "Cagayan",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Annaguan Rizal Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 288,
-      "name": "Apanderang 산",
-      "english_name": "Mount Apanderang",
-      "title": "Benguet의 산/화산 명소",
-      "description": "Benguet에 위치한 산/화산 여행지입니다.",
-      "city": "",
-      "province": "Benguet",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Apanderang  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 289,
-      "name": "Aquiting 산",
-      "english_name": "Mount Aquiting",
-      "title": "Leyte의 산/화산 명소",
-      "description": "Leyte에 위치한 산/화산 여행지입니다. 해발 약 523m. Inactive volcano",
-      "city": "",
-      "province": "Leyte",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Aquiting  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 290,
-      "name": "Arayat 산",
-      "english_name": "Mount Arayat",
-      "title": "Pampanga의 산/화산 명소",
-      "description": "Pampanga에 위치한 산/화산 여행지입니다. 해발 약 1,026m.",
-      "city": "",
-      "province": "Pampanga",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Arayat  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 291,
-      "name": "Ascuero 산",
-      "english_name": "Mount Ascuero",
-      "title": "Leyte의 산/화산 명소",
-      "description": "Leyte에 위치한 산/화산 여행지입니다. 해발 약 1,266m. Inactive volcano",
-      "city": "",
-      "province": "Leyte",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Ascuero  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 292,
-      "name": "Atimbia (Atimba) 산",
-      "english_name": "Mount Atimbia (Atimba)",
-      "title": "Laguna의 산/화산 명소",
-      "description": "Laguna에 위치한 산/화산 여행지입니다. 해발 약 654m. Inactive volcano",
-      "city": "",
-      "province": "Laguna",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Atimbia (Atimba)  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 293,
-      "name": "Atok 산",
-      "english_name": "Mount Atok",
-      "title": "Benguet의 산/화산 명소",
-      "description": "Benguet에 위치한 산/화산 여행지입니다. 해발 약 1,770m.",
-      "city": "",
-      "province": "Benguet",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Atok  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 294,
-      "name": "Awapanniki 산",
-      "english_name": "Mount Awapanniki",
-      "title": "Nueva Vizcaya의 산/화산 명소",
-      "description": "Nueva Vizcaya에 위치한 산/화산 여행지입니다.",
-      "city": "",
-      "province": "Nueva Vizcaya",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Awapanniki  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 295,
-      "name": "Babuyan Claro 화산 (Mount Pangasun)",
-      "english_name": "Babuyan Claro Volcano (Mount Pangasun)",
-      "title": "의 산/화산 명소",
-      "description": "산/화산 여행지입니다. Active stratovolcano , last erupted 1917",
-      "city": "",
-      "province": "",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Babuyan Claro Volcano (Mount Pangasun)  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 296,
-      "name": "Baca 산",
-      "english_name": "Mount Baca",
+      "index": 308,
+      "name": "Balintingon 산",
+      "english_name": "Mount Balintingon",
       "title": "Nueva Ecija의 산/화산 명소",
-      "description": "Nueva Ecija에 위치한 산/화산 여행지입니다. 해발 약 752m.",
+      "description": "Nueva Ecija에 위치한 산/화산 여행지입니다. 해발 약 838m.",
       "city": "",
       "province": "Nueva Ecija",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Baca  Philippines travel",
+      "search_query": "Mount Balintingon  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 297,
-      "name": "Bacauan 산",
-      "english_name": "Mount Bacauan",
-      "title": "Zamboanga del Sur의 산/화산 명소",
-      "description": "Zamboanga del Sur에 위치한 산/화산 여행지입니다. 해발 약 1,824m. Inactive volcano",
+      "index": 309,
+      "name": "Balo Dome",
+      "english_name": "Balo Dome",
+      "title": "South Cotabato의 산/화산 명소",
+      "description": "South Cotabato에 위치한 산/화산 여행지입니다. 해발 약 873m. Inactive volcano",
       "city": "",
-      "province": "Zamboanga del Sur",
+      "province": "South Cotabato",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Bacauan  Philippines travel",
+      "search_query": "Balo Dome  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 298,
-      "name": "Baco 산",
-      "english_name": "Mount Baco",
-      "title": "Occidental Mindoro의 산/화산 명소",
-      "description": "Occidental Mindoro에 위치한 산/화산 여행지입니다. 해발 약 2,489m.",
+      "index": 310,
+      "name": "Balokon Mountain",
+      "english_name": "Balokon Mountain",
+      "title": "Davao의 산/화산 명소",
+      "description": "Davao에 위치한 산/화산 여행지입니다.",
       "city": "",
-      "province": "Occidental Mindoro",
+      "province": "Davao",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Baco  Philippines travel",
+      "search_query": "Balokon Mountain  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 299,
-      "name": "Bagacay 산",
-      "english_name": "Mount Bagacay",
-      "title": "Camarines Norte의 산/화산 명소",
-      "description": "Camarines Norte에 위치한 산/화산 여행지입니다. 해발 약 775m. Inactive volcano",
+      "index": 311,
+      "name": "Baloy (Baloy‑Daku) 산",
+      "english_name": "Mount Baloy (Baloy‑Daku)",
+      "title": "Antique의 산/화산 명소",
+      "description": "Antique에 위치한 산/화산 여행지입니다. 해발 약 1,728m.",
       "city": "",
-      "province": "Camarines Norte",
+      "province": "Antique",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Bagacay  Philippines travel",
+      "search_query": "Mount Baloy (Baloy‑Daku)  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 312,
+      "name": "Balungao 산",
+      "english_name": "Mount Balungao",
+      "title": "Pangasinan의 산/화산 명소",
+      "description": "Pangasinan에 위치한 산/화산 여행지입니다. 해발 약 382m. Inactive volcano",
+      "city": "",
+      "province": "Pangasinan",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Balungao  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 313,
+      "name": "Balut 화산",
+      "english_name": "Balut Volcano",
+      "title": "의 산/화산 명소",
+      "description": "산/화산 여행지입니다. Potentially active stratovolcano",
+      "city": "",
+      "province": "",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Balut Volcano  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 314,
+      "name": "Banahao de Lucban",
+      "english_name": "Banahao de Lucban",
+      "title": "Quezon의 산/화산 명소",
+      "description": "Quezon에 위치한 산/화산 여행지입니다. 해발 약 1,875m. Inactive volcano",
+      "city": "",
+      "province": "Quezon",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Banahao de Lucban  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 315,
+      "name": "Banahaw (Banahao) 산",
+      "english_name": "Mount Banahaw (Banahao)",
+      "title": "1의 산/화산 명소",
+      "description": "1에 위치한 산/화산 여행지입니다. Active complex stratovolcano , last erupted 1843. Located near the Laguna - Quezon border.",
+      "city": "",
+      "province": "1",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Banahaw (Banahao)  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 316,
+      "name": "Banoy 산",
+      "english_name": "Mount Banoy",
+      "title": "Batangas의 산/화산 명소",
+      "description": "Batangas에 위치한 산/화산 여행지입니다. 해발 약 987m.",
+      "city": "",
+      "province": "Batangas",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Banoy  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 317,
+      "name": "Bangbang 산",
+      "english_name": "Mount Bangbang",
+      "title": "Apayao의 산/화산 명소",
+      "description": "Apayao에 위치한 산/화산 여행지입니다. 해발 약 1,533m.",
+      "city": "",
+      "province": "Apayao",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Bangbang  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 318,
+      "name": null,
+      "english_name": "Mount Balbalasang",
+      "title": "Abra의 산/화산 명소",
+      "description": "Abra에 위치한 산/화산 여행지입니다. 해발 약 2,454m.",
+      "city": "",
+      "province": "Abra",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Balbalasang  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 319,
+      "name": "Bangcay 산",
+      "english_name": "Mount Bangcay",
+      "title": "Nueva Ecija의 산/화산 명소",
+      "description": "Nueva Ecija에 위치한 산/화산 여행지입니다. 해발 약 406m. Inactive volcano",
+      "city": "",
+      "province": "Nueva Ecija",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Bangcay  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 320,
+      "name": "Banti 산",
+      "english_name": "Mount Banti",
+      "title": "Abra의 산/화산 명소",
+      "description": "Abra에 위치한 산/화산 여행지입니다.",
+      "city": "",
+      "province": "Abra",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Banti  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 321,
+      "name": "Banton (also known as Mount Amponggo) 산",
+      "english_name": "Mount Banton (also known as Mount Amponggo)",
+      "title": "Romblon의 산/화산 명소",
+      "description": "Romblon에 위치한 산/화산 여행지입니다. 해발 약 596m. Inactive volcano",
+      "city": "",
+      "province": "Romblon",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Banton (also known as Mount Amponggo)  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 322,
+      "name": "Baonao 산",
+      "english_name": "Mount Baonao",
+      "title": "Leyte의 산/화산 명소",
+      "description": "Leyte에 위치한 산/화산 여행지입니다. 해발 약 485m. Inactive volcano",
+      "city": "",
+      "province": "Leyte",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Baonao  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 323,
+      "name": "Base Peak",
+      "english_name": "Base Peak",
+      "title": "South Cotabato의 산/화산 명소",
+      "description": "South Cotabato에 위치한 산/화산 여행지입니다. 해발 약 598m. Inactive volcano",
+      "city": "",
+      "province": "South Cotabato",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Base Peak  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 324,
+      "name": "Basilan 산",
+      "english_name": "Mount Basilan",
+      "title": "Basilan의 산/화산 명소",
+      "description": "Basilan에 위치한 산/화산 여행지입니다. 해발 약 971m. Inactive volcano",
+      "city": "",
+      "province": "Basilan",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Basilan  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
