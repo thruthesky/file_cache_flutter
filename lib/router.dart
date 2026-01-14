@@ -11,6 +11,8 @@ import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/guide/must_read.screen.dart';
+import 'package:philgo/models/travel_spot.model.dart';
+import 'package:philgo/screens/guide/travel_spot.view.screen.dart';
 import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/emergency/embassy.screen.dart';
 import 'package:philgo/screens/info/emergency/hospital.screen.dart';
@@ -464,6 +466,14 @@ final router = GoRouter(
       path: TravelSpotsScreen.routeName,
       name: TravelSpotsScreen.routeName,
       builder: (context, state) => const TravelSpotsScreen(),
+    ),
+    GoRoute(
+      path: TravelSpotViewScreen.routeName,
+      name: TravelSpotViewScreen.routeName,
+      builder: (context, state) {
+        final spot = state.extra as TravelSpot;
+        return TravelSpotViewScreen(spot: spot);
+      },
     ),
     GoRoute(
       path: EmbassyScreen.routeName,

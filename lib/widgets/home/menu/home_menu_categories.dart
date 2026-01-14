@@ -70,17 +70,21 @@ class HomeMenuCategories extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    /// 검색 아이콘 (카테고리와 동일한 스타일)
+                    /// Search icon (same style as categories)
                     FaIcon(
                       FontAwesomeIcons.lightMagnifyingGlass,
                       size: 12,
-                      color: scheme.primary,
+                      color: scheme.onSurface,
                     ),
                     const SizedBox(width: 4),
+
+                    /// 검색 텍스트 (카테고리와 동일한 스타일)
+                    /// Search text (same style as categories)
                     Text(
                       lo.searchHint,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: FontWeight.bold,
+                        color: scheme.onSurface,
                       ),
                     ),
                   ],

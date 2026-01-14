@@ -27,6 +27,13 @@ class TravelSpot {
   /// 카테고리 (Category)
   final String category;
 
+  /// CDN 이미지 URL (옵션, Option)
+  final String? imageUrl;
+
+  /// 마크다운 형식의 상세 텍스트 배열 (옵션, Option)
+  /// Markdown formatted detail text array (optional)
+  final List<String>? texts;
+
   const TravelSpot({
     required this.name,
     required this.englishName,
@@ -36,7 +43,15 @@ class TravelSpot {
     required this.province,
     required this.icon,
     required this.category,
+    this.imageUrl,
+    this.texts,
   });
+
+  /// 이미지 URL이 있는지 확인 (Check if image URL exists)
+  bool get hasImage => imageUrl != null && imageUrl!.isNotEmpty;
+
+  /// 상세 텍스트가 있는지 확인 (Check if detail texts exist)
+  bool get hasTexts => texts != null && texts!.isNotEmpty;
 
   /// JSON에서 TravelSpot 객체 생성 (Create TravelSpot from JSON)
   factory TravelSpot.fromJson(Map<String, dynamic> json) {
@@ -49,6 +64,8 @@ class TravelSpot {
       province: json['province'] as String? ?? '',
       icon: json['icon'] as String? ?? '📍',
       category: json['category'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String?,
+      texts: (json['texts'] as List<dynamic>?)?.cast<String>(),
     );
   }
 
@@ -63,6 +80,8 @@ class TravelSpot {
       'province': province,
       'icon': icon,
       'category': category,
+      if (imageUrl != null) 'imageUrl': imageUrl,
+      if (texts != null) 'texts': texts,
     };
   }
 

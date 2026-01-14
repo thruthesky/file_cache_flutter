@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/models/travel_spot.model.dart';
+import 'package:philgo/screens/guide/travel_spot.view.screen.dart';
 import 'package:philgo/screens/home/home.globals.dart';
 import 'package:philgo/state/navigation.state.dart';
 
@@ -407,10 +409,71 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
     return slivers;
   }
 
+  /// 명소 썸네일 빌드 (Build spot thumbnail)
+  /// 이미지가 있으면 이미지를, 없으면 아이콘을 표시합니다.
+  Widget _buildSpotThumbnail(TravelSpot spot, ColorScheme scheme) {
+    if (spot.hasImage) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: CachedNetworkImage(
+          imageUrl: spot.imageUrl!,
+          width: 40,
+          height: 40,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: scheme.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Center(
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: scheme.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(spot.icon, style: const TextStyle(fontSize: 20)),
+            ),
+          ),
+        ),
+      );
+    }
+
+    /// 이미지가 없으면 아이콘 표시 (Show icon if no image)
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: Text(spot.icon, style: const TextStyle(fontSize: 20)),
+      ),
+    );
+  }
+
   /// 명소 카드 빌드 (Build spot card)
   Widget _buildSpotCard(TravelSpot spot, ThemeData theme, ColorScheme scheme) {
     /// 매칭된 필드 가져오기 (Get matched fields)
     final matchedFields = spot.getMatchedFields(_searchQuery);
+
+    /// Hero 태그 생성 (Generate Hero tag)
+    final heroTag =
+        spot.hasImage
+            ? 'travel-spot-${spot.name}-image'
+            : 'travel-spot-${spot.name}-icon';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -423,27 +486,18 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            /// TODO: 명소 상세 화면으로 이동
+            /// 명소 상세 화면으로 이동 (Navigate to spot detail screen)
+            TravelSpotViewScreen.push(context, spot);
           },
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// 아이콘 (Icon)
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: scheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      spot.icon,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                  ),
+                /// 썸네일 이미지 또는 아이콘 with Hero (Thumbnail image or icon with Hero)
+                Hero(
+                  tag: heroTag,
+                  child: _buildSpotThumbnail(spot, scheme),
                 ),
 
                 const SizedBox(width: 12),
@@ -675,21 +729,18 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             final spot = spots[index];
+
+            /// Hero 태그 생성 (Generate Hero tag)
+            final heroTag =
+                spot.hasImage
+                    ? 'travel-spot-${spot.name}-image'
+                    : 'travel-spot-${spot.name}-icon';
+
             return ListTile(
-              /// 아이콘 (Icon/Emoji)
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    spot.icon,
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ),
+              /// 썸네일 이미지 또는 아이콘 with Hero (Thumbnail image or icon with Hero)
+              leading: Hero(
+                tag: heroTag,
+                child: _buildSpotThumbnail(spot, scheme),
               ),
 
               /// 제목: 명소 이름 (Title: Spot name)
@@ -725,10 +776,16 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
                 ],
               ),
 
-              /// 탭 시 검색어로 설정 (Set as search query on tap)
+              /// 오른쪽 화살표 아이콘 (Trailing arrow icon)
+              trailing: FaIcon(
+                FontAwesomeIcons.lightChevronRight,
+                size: 14,
+                color: scheme.onSurfaceVariant,
+              ),
+
+              /// 탭 시 상세 화면으로 이동 (Navigate to detail screen on tap)
               onTap: () {
-                _searchController.text = spot.name;
-                _onSearchChanged(spot.name);
+                TravelSpotViewScreen.push(context, spot);
               },
 
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
