@@ -115,7 +115,26 @@ PhilgoUrlResult? parsePhilgoUrl(String url) {
     /// - 홈: /
     /// - 채팅방: /chat/room.php 또는 /chat/rooms.php
     final path = uri.path;
-    final isPostView = path.contains('/post/view.php');
+
+    /// 게시글 보기 URL 판별 (v6 및 v4 호환)
+    /// Determine if URL is a post view URL (v6 and v4 compatible)
+    ///
+    /// v6 패턴: /post/view.php?idx=123&post_id=freetalk
+    /// v4 패턴들:
+    ///   - /?1275637807 (숫자만 있는 경우)
+    ///   - /?module=post&action=view&post_id=travel&idx=1275657361
+    ///   - /?action=view&module=post&post_id=freetalk&category=한인총연합회&idx=1275655295
+    ///   - /?page_no=853&action=view&module=post&post_id=buyandsell&idx=1275377734
+    final isPostView = path.contains('/post/view.php') ||
+        // v4 패턴: ?뒤에 숫자만 있는 경우 (idx만 있으면 게시글 보기로 간주)
+        // v4 pattern: only digits after ? (treat as post view if only idx exists)
+        (uri.query.isNotEmpty && RegExp(r'^\d+$').hasMatch(uri.query)) ||
+        // v4 패턴: module=post && action=view && idx 존재
+        // v4 pattern: module=post && action=view && idx exists
+        (queryParams['module'] == 'post' &&
+            queryParams['action'] == 'view' &&
+            idx != null);
+
     final isPostList = path.contains('/post/list.php');
     final isHome = path == '/' || path.isEmpty;
 
