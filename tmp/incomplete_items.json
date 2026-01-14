@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-01-14T09:36:20.002298",
+  "total_items": 487,
+  "total_complete": 0,
+  "total_incomplete": 487,
+  "filter": {
+    "province": null,
+    "category": null,
+    "limit": 5
+  },
+  "items": [
+    {
+      "index": 0,
+      "name": "10,000 로지스 카페",
+      "english_name": "10,000 Roses Cafe",
+      "title": "세부의 LED 장미 정원",
+      "description": "1만 송이의 LED 장미가 불을 밝히는 바닷가 카페입니다. 특히 해 질 녘과 밤에 낭만적인 분위기를 자아내 사진 촬영 명소로 유명합니다.",
+      "city": "코르도바",
+      "province": "세부",
+      "category": "꽃 정원",
+      "icon": "🌹",
+      "search_query": "10,000 Roses Cafe 코르도바 Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 1,
+      "name": "가와산 폭포",
+      "english_name": "Kawasan Falls",
+      "title": "세부의 캐녀닝 명소",
+      "description": "맑고 신비로운 옥색 물빛을 자랑하는 3단 폭포입니다. 계곡을 따라 점프하고 수영하며 내려오는 캐녀닝 액티비티의 성지로 유명합니다.",
+      "city": "바디안",
+      "province": "세부",
+      "category": "폭포",
+      "icon": "💧",
+      "search_query": "Kawasan Falls 바디안 Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 2,
+      "name": "그레이트 산타 크루즈 섬",
+      "english_name": "Great Santa Cruz Island",
+      "title": "잠보앙가의 핑크 비치",
+      "description": "붉은 산호 가루가 섞여 모래사장이 분홍빛을 띠는 세계적으로 희귀한 '핑크 비치'입니다. 내셔널 지오그래픽이 선정한 세계 최고의 해변 중 하나입니다.",
+      "city": "잠보앙가 시티",
+      "province": "잠보앙가 델 수르",
+      "category": "해변/섬",
+      "icon": "🩷",
+      "search_query": "Great Santa Cruz Island 잠보앙가 시티 Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 3,
+      "name": "국립 박물관",
+      "english_name": "National Museum of the Philippines",
+      "title": "마닐라의 국립 미술관 및 박물관",
+      "description": "필리핀의 역사, 예술, 자연사를 한눈에 볼 수 있는 복합 문화 공간입니다. 후안 루나의 '스폴리아리움' 등 국보급 예술품이 전시되어 있습니다.",
+      "city": "마닐라",
+      "province": "메트로 마닐라",
+      "category": "박물관/미술관",
+      "icon": "🏛️",
+      "search_query": "National Museum of the Philippines 마닐라 Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 4,
+      "name": "낙판 비치",
+      "english_name": "Nacpan Beach",
+      "title": "엘니도의 한적한 해변",
+      "description": "엘니도 타운에서 북쪽으로 떨어진 곳에 위치한 4km 길이의 황금빛 해변입니다. 투어 인파가 적어 조용하고 평화로운 분위기를 즐길 수 있습니다.",
+      "city": "엘니도",
+      "province": "팔라완",
+      "category": "해변/섬",
+      "icon": "🏖️",
+      "search_query": "Nacpan Beach 엘니도 Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    }
+  ]
+}

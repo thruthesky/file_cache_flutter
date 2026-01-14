@@ -358,6 +358,107 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
+  /// 제목 skeleton 위젯 빌드
+  /// 로딩 중이고 파라미터로 제목이 넘어오지 않았을 때 표시
+  ///
+  /// Build subject skeleton widget
+  /// Displayed when loading and subject was not passed as parameter
+  Widget _buildSubjectSkeleton(ColorScheme scheme) {
+    return Container(
+      height: 28,
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
+  }
+
+  /// 내용 skeleton 위젯 빌드
+  /// 로딩 중이고 파라미터로 내용이 넘어오지 않았을 때 표시
+  /// 여러 줄의 skeleton으로 자연스러운 로딩 효과 제공
+  ///
+  /// Build content skeleton widget
+  /// Displayed when loading and content was not passed as parameter
+  /// Multiple lines for natural loading effect
+  Widget _buildContentSkeleton(ColorScheme scheme) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// 첫 번째 줄 (전체 너비)
+          /// First line (full width)
+          Container(
+            height: 16,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          /// 두 번째 줄 (80% 너비)
+          /// Second line (80% width)
+          FractionallySizedBox(
+            widthFactor: 0.8,
+            child: Container(
+              height: 16,
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          /// 세 번째 줄 (60% 너비)
+          /// Third line (60% width)
+          FractionallySizedBox(
+            widthFactor: 0.6,
+            child: Container(
+              height: 16,
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          /// 네 번째 줄 (90% 너비)
+          /// Fourth line (90% width)
+          FractionallySizedBox(
+            widthFactor: 0.9,
+            child: Container(
+              height: 16,
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          /// 다섯 번째 줄 (40% 너비)
+          /// Fifth line (40% width)
+          FractionallySizedBox(
+            widthFactor: 0.4,
+            child: Container(
+              height: 16,
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// 게시글 본문 영역 빌드
   ///
   /// 블라인드 처리된 글인 경우:
@@ -375,6 +476,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+
+    /// skeleton 표시 조건
+    /// 로딩 중이고 파라미터로 해당 값이 넘어오지 않았을 때만 skeleton 표시
+    ///
+    /// Skeleton display conditions
+    /// Show skeleton only when loading and the value was not passed as parameter
+    final showSubjectSkeleton = isLoading && widget.post.subject.isEmpty;
+    final showContentSkeleton = isLoading && widget.post.content.isEmpty;
 
     /// 블라인드 처리된 글인지 확인
     /// Check if the post is blinded
@@ -543,7 +652,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
         ],
 
         /// Post title - larger and more prominent
-        PostViewSubject(subject: subject),
+        /// 제목 skeleton 또는 실제 제목 표시
+        /// Show subject skeleton or actual subject
+        if (showSubjectSkeleton)
+          _buildSubjectSkeleton(scheme)
+        else
+          PostViewSubject(subject: subject),
 
         /// Avatar, name, and date
         PostViewMeta(
@@ -568,7 +682,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
         /// Post content (블라인드 글의 경우 contentPrivate 사용)
         /// Post content (use contentPrivate for blinded posts)
-        PostViewContent(isLoading: false, post: post!),
+        /// 내용 skeleton 또는 실제 내용 표시
+        /// Show content skeleton or actual content
+        if (showContentSkeleton)
+          _buildContentSkeleton(scheme)
+        else
+          PostViewContent(isLoading: false, post: post!),
 
         /// 액션 버튼 (좋아요, 답글, 차단, 신고, 수정, 삭제)
         Padding(
