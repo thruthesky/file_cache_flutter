@@ -66,22 +66,29 @@ void main(List<String> args) {
     }
   }
 
-  // 필수 인자 확인
-  if (city == null || name == null) {
-    print('오류: --city와 --name은 필수입니다.');
+  // 필수 인자 확인: name은 필수, city는 선택 (빈 문자열 기본값)
+  if (name == null) {
+    print('오류: --name은 필수입니다.');
     printUsage();
     exit(1);
   }
+  city ??= '';
 
-  if (imageUrl == null && textsFile == null && textsJson == null && englishName == null) {
-    print('오류: --imageUrl, --texts-file, --texts, --english-name 중 하나 이상이 필요합니다.');
+  if (imageUrl == null &&
+      textsFile == null &&
+      textsJson == null &&
+      englishName == null) {
+    print(
+      '오류: --imageUrl, --texts-file, --texts, --english-name 중 하나 이상이 필요합니다.',
+    );
     printUsage();
     exit(1);
   }
 
   // JSON 파일 경로
   final jsonPath = 'lib/philgo_files/travel/travel_spots.json';
-  final backupPath = 'tmp/backups/travel_spots_${DateTime.now().millisecondsSinceEpoch}.json';
+  final backupPath =
+      'tmp/backups/travel_spots_${DateTime.now().millisecondsSinceEpoch}.json';
 
   // JSON 파일 읽기
   final file = File(jsonPath);

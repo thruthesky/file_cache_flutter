@@ -4,10 +4,19 @@
 // 사용법:
 //   dart run tmp/scripts/extract_incomplete.dart
 //   dart run tmp/scripts/extract_incomplete.dart --limit 10
+//   dart run tmp/scripts/extract_incomplete.dart --offset 5 --limit 5
 //   dart run tmp/scripts/extract_incomplete.dart --province "세부"
 //   dart run tmp/scripts/extract_incomplete.dart --category "해변/섬"
 //
-// 출력: tmp/incomplete_items.json
+// 병렬 처리 예시 (6개 동시 실행, 각 5개씩):
+//   dart run tmp/scripts/extract_incomplete.dart --offset 0 --limit 5 --output tmp/batch_0.json
+//   dart run tmp/scripts/extract_incomplete.dart --offset 5 --limit 5 --output tmp/batch_1.json
+//   dart run tmp/scripts/extract_incomplete.dart --offset 10 --limit 5 --output tmp/batch_2.json
+//   dart run tmp/scripts/extract_incomplete.dart --offset 15 --limit 5 --output tmp/batch_3.json
+//   dart run tmp/scripts/extract_incomplete.dart --offset 20 --limit 5 --output tmp/batch_4.json
+//   dart run tmp/scripts/extract_incomplete.dart --offset 25 --limit 5 --output tmp/batch_5.json
+//
+// 출력: tmp/incomplete_items.json (또는 --output으로 지정한 경로)
 
 import 'dart:convert';
 import 'dart:io';
@@ -15,22 +24,28 @@ import 'dart:io';
 void main(List<String> args) {
   // 명령줄 인자 파싱
   int? limit;
+  int offset = 0; // 시작 오프셋 (병렬 처리용)
   String? filterProvince;
   String? filterCategory;
+  String? outputPath; // 출력 파일 경로 (병렬 처리 시 각각 다른 파일로 출력)
 
   for (int i = 0; i < args.length; i++) {
     if (args[i] == '--limit' && i + 1 < args.length) {
       limit = int.tryParse(args[i + 1]);
+    } else if (args[i] == '--offset' && i + 1 < args.length) {
+      offset = int.tryParse(args[i + 1]) ?? 0;
     } else if (args[i] == '--province' && i + 1 < args.length) {
       filterProvince = args[i + 1];
     } else if (args[i] == '--category' && i + 1 < args.length) {
       filterCategory = args[i + 1];
+    } else if (args[i] == '--output' && i + 1 < args.length) {
+      outputPath = args[i + 1];
     }
   }
 
   // JSON 파일 경로
   final jsonPath = 'lib/philgo_files/travel/travel_spots.json';
-  final outputPath = 'tmp/incomplete_items.json';
+  final finalOutputPath = outputPath ?? 'tmp/incomplete_items.json';
 
   // JSON 파일 읽기
   final file = File(jsonPath);
@@ -147,8 +162,10 @@ void main(List<String> args) {
   }
   print('');
 
-  // 출력 파일 생성
-  final outputItems = limit != null ? incompleteItems.take(limit).toList() : incompleteItems;
+  // 출력 파일 생성 (offset과 limit 적용)
+  // offset: 시작 위치, limit: 가져올 개수
+  final skippedItems = incompleteItems.skip(offset).toList();
+  final outputItems = limit != null ? skippedItems.take(limit).toList() : skippedItems;
 
   final output = {
     'generated_at': DateTime.now().toIso8601String(),
@@ -158,18 +175,19 @@ void main(List<String> args) {
     'filter': {
       'province': filterProvince,
       'category': filterCategory,
+      'offset': offset,
       'limit': limit,
     },
     'items': outputItems,
   };
 
-  final outputFile = File(outputPath);
+  final outputFile = File(finalOutputPath);
   outputFile.writeAsStringSync(
     const JsonEncoder.withIndent('  ').convert(output),
   );
 
   print('========================================');
-  print('출력 파일: $outputPath');
-  print('추출된 항목 수: ${outputItems.length}개');
+  print('출력 파일: $finalOutputPath');
+  print('오프셋: $offset, 추출된 항목 수: ${outputItems.length}개');
   print('========================================');
 }

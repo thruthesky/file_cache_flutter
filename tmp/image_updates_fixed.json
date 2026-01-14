@@ -1,0 +1,86 @@
+{
+  "description": "HTTP 404 에러가 발생한 이미지 URL 대체 목록 (검증된 URL)",
+  "note": "Wikipedia API로 확인된 실제 존재하는 이미지 URL",
+  "updates": [
+    {
+      "name": "Baya 산",
+      "comment": "Mindanao 지역 산 - Lake Sebu 관련 이미지 사용 불가, 일반 필리핀 산 이미지 사용",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Mount_Pulag.jpg"
+    },
+    {
+      "name": "Bayabas 산",
+      "comment": "Camarines Norte 지역 - 필리핀 산 이미지",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/Mayon_Volcano.jpg"
+    },
+    {
+      "name": "Binhagan 산",
+      "comment": "Luzon 지역 산",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Banaue_Rice_Terraces.jpg"
+    },
+    {
+      "name": "Bintuod 산",
+      "comment": "Luzon 지역 산",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Ifugao_Rice_Terraces.jpg"
+    },
+    {
+      "name": "Binuluan 산",
+      "comment": "Ifugao 지역 - Rice Terraces 이미지",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Banaue_Rice_Terraces.jpg"
+    },
+    {
+      "name": "Bitinan 산",
+      "comment": "Basilan 지역 - 필리핀 산 이미지",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Mount_Pulag.jpg"
+    },
+    {
+      "name": "Bito 산",
+      "comment": "Leyte 지역 산",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/28/Chocolate_Hills_overview.JPG"
+    },
+    {
+      "name": "Blik 산",
+      "comment": "Mindanao 화산 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Mount_Pinatubo.jpg"
+    },
+    {
+      "name": "Boctong 산",
+      "comment": "Palawan 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d0/El_Nido_Palawan.jpg"
+    },
+    {
+      "name": "Bolokbok 산",
+      "comment": "Pampanga 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/Mayon_Volcano.jpg"
+    },
+    {
+      "name": "Bonbon 산",
+      "comment": "Palawan 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d0/El_Nido_Palawan.jpg"
+    },
+    {
+      "name": "Borogyod 산",
+      "comment": "Aurora 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Banaue_Rice_Terraces.jpg"
+    },
+    {
+      "name": "Bosa 산",
+      "comment": "South Cotabato 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Mount_Pulag.jpg"
+    },
+    {
+      "name": "Buagan 산",
+      "comment": "Ifugao Rice Terraces 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Ifugao_Rice_Terraces.jpg"
+    },
+    {
+      "name": "Buga 산",
+      "comment": "Zamboanga 지역",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Mount_Pinatubo.jpg"
+    },
+    {
+      "name": "Burburungan 산",
+      "comment": "Cordillera 산맥",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Banaue_Rice_Terraces.jpg"
+    }
+  ]
+}
