@@ -1,6 +1,3 @@
-[submodule "docs"]
-	path = docs
-	url = https://github.com/thruthesky/docs
 [submodule "packages/easy_phone_sign_in"]
 	path = packages/easy_phone_sign_in
 	url = https://github.com/thruthesky/easy_phone_sign_in
