@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-01-14T16:04:21.371518",
+  "generated_at": "2026-01-14T16:49:42.030699",
   "total_items": 487,
-  "total_complete": 250,
-  "total_incomplete": 237,
+  "total_complete": 275,
+  "total_incomplete": 212,
   "filter": {
     "province": null,
     "category": null,
@@ -10,400 +10,400 @@
   },
   "items": [
     {
-      "index": 250,
-      "name": "Entertainment City",
-      "english_name": "Entertainment City",
-      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
-      "description": "Metro Manila (National Capital Region) Parañaque에 위치한 역사 유적 여행지입니다.",
-      "city": "Parañaque",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "Entertainment City Parañaque Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 251,
-      "name": "Mactan–Cebu International Airport",
-      "english_name": "Mactan–Cebu International Airport",
-      "title": "Cebu의 역사 유적 명소",
-      "description": "Cebu Lapu-Lapu에 위치한 역사 유적 여행지입니다.",
-      "city": "Lapu-Lapu",
-      "province": "Cebu",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "Mactan–Cebu International Airport Lapu-Lapu Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 252,
-      "name": "Mall of Asia Arena",
-      "english_name": "Mall of Asia Arena",
-      "title": "Metro Manila (National Capital Region)의 쇼핑몰 명소",
-      "description": "Metro Manila (National Capital Region) Bay에 위치한 쇼핑몰 여행지입니다.",
-      "city": "Bay",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "쇼핑몰",
-      "icon": "🛍️",
-      "search_query": "Mall of Asia Arena Bay Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 253,
-      "name": "National Library of the Philippines",
-      "english_name": "National Library of the Philippines",
-      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
-      "description": "Metro Manila (National Capital Region) Ermita,에 위치한 역사 유적 여행지입니다.",
-      "city": "Ermita,",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "National Library of the Philippines Ermita, Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 254,
-      "name": "Resorts World Manila",
-      "english_name": "Resorts World Manila",
-      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
-      "description": "Metro Manila (National Capital Region) Pasay에 위치한 역사 유적 여행지입니다.",
-      "city": "Pasay",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "Resorts World Manila Pasay Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 255,
-      "name": "Robinsons Galleria",
-      "english_name": "Robinsons Galleria",
-      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
-      "description": "Metro Manila (National Capital Region) Quezon에 위치한 역사 유적 여행지입니다.",
-      "city": "Quezon",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "Robinsons Galleria Quezon Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 256,
-      "name": "Robinsons Place Manila",
-      "english_name": "Robinsons Place Manila",
-      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
-      "description": "Metro Manila (National Capital Region) Manila에 위치한 역사 유적 여행지입니다.",
-      "city": "Manila",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "Robinsons Place Manila Manila Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 257,
-      "name": "Shangri-la Plaza",
-      "english_name": "Shangri-la Plaza",
-      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
-      "description": "Metro Manila (National Capital Region) Mandaluyong에 위치한 역사 유적 여행지입니다.",
-      "city": "Mandaluyong",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "Shangri-la Plaza Mandaluyong Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 258,
-      "name": "SM City Bacolod",
-      "english_name": "SM City Bacolod",
-      "title": "Negros Occidental의 역사 유적 명소",
-      "description": "Negros Occidental Bacolod에 위치한 역사 유적 여행지입니다. 10th largest SM mall by land area and the 3rd in Visayas.",
-      "city": "Bacolod",
-      "province": "Negros Occidental",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "SM City Bacolod Bacolod Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 259,
-      "name": "SM City Cebu",
-      "english_name": "SM City Cebu",
-      "title": "Cebu의 역사 유적 명소",
-      "description": "Cebu Cebu에 위치한 역사 유적 여행지입니다. 4th largest mall in the Philippines and the 1st SM mall in Visayas.",
-      "city": "Cebu",
-      "province": "Cebu",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "SM City Cebu Cebu Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 260,
-      "name": "SM City North EDSA",
-      "english_name": "SM City North EDSA",
-      "title": "Metro Manila (National Capital Region)의 역사 유적 명소",
-      "description": "Metro Manila (National Capital Region) Quezon에 위치한 역사 유적 여행지입니다.",
-      "city": "Quezon",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "SM City North EDSA Quezon Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 261,
-      "name": "SM Lanang Premier",
-      "english_name": "SM Lanang Premier",
-      "title": "Davao del Sur의 역사 유적 명소",
-      "description": "Davao del Sur Davao에 위치한 역사 유적 여행지입니다. Largest mall in Mindanao.",
-      "city": "Davao",
-      "province": "Davao del Sur",
-      "category": "역사 유적",
-      "icon": "🏛️",
-      "search_query": "SM Lanang Premier Davao Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 262,
-      "name": "SM Mall of Asia",
-      "english_name": "SM Mall of Asia",
-      "title": "Metro Manila (National Capital Region)의 쇼핑몰 명소",
-      "description": "Metro Manila (National Capital Region) Pasay에 위치한 쇼핑몰 여행지입니다.",
-      "city": "Pasay",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "쇼핑몰",
-      "icon": "🛍️",
-      "search_query": "SM Mall of Asia Pasay Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 263,
-      "name": "SM Megamall",
-      "english_name": "SM Megamall",
-      "title": "Metro Manila (National Capital Region)의 쇼핑몰 명소",
-      "description": "Metro Manila (National Capital Region) Mandaluyong에 위치한 쇼핑몰 여행지입니다.",
-      "city": "Mandaluyong",
-      "province": "Metro Manila (National Capital Region)",
-      "category": "쇼핑몰",
-      "icon": "🛍️",
-      "search_query": "SM Megamall Mandaluyong Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 264,
-      "name": "Abao 산",
-      "english_name": "Mount Abao",
-      "title": "Ifugao의 산/화산 명소",
-      "description": "Ifugao에 위치한 산/화산 여행지입니다. 해발 약 2,662m.",
+      "index": 275,
+      "name": "Alto Peak (Mount Aminduen)",
+      "english_name": "Alto Peak (Mount Aminduen)",
+      "title": "Leyte의 산/화산 명소",
+      "description": "Leyte에 위치한 산/화산 여행지입니다. 해발 약 1,325m. Highest in Leyte Island .",
       "city": "",
-      "province": "Ifugao",
+      "province": "Leyte",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Abao  Philippines travel",
+      "search_query": "Alto Peak (Mount Aminduen)  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 265,
-      "name": "Abunug 산",
-      "english_name": "Mount Abunug",
-      "title": "Southern Leyte의 산/화산 명소",
-      "description": "Southern Leyte에 위치한 산/화산 여행지입니다. 해발 약 600m. Inactive volcano",
-      "city": "",
-      "province": "Southern Leyte",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Abunug  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 266,
-      "name": "Agad-Agad 산",
-      "english_name": "Mount Agad-Agad",
-      "title": "Lanao del Norte의 산/화산 명소",
-      "description": "Lanao del Norte Iligan에 위치한 산/화산 여행지입니다. Located in Iligan City",
-      "city": "Iligan",
-      "province": "Lanao del Norte",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Agad-Agad Iligan Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 267,
-      "name": "Agamomata 산",
-      "english_name": "Mount Agamomata",
-      "title": "Apayao의 산/화산 명소",
-      "description": "Apayao에 위치한 산/화산 여행지입니다. 해발 약 1,554m.",
-      "city": "",
-      "province": "Apayao",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Agamomata  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 268,
-      "name": "Aganmala 산",
-      "english_name": "Mount Aganmala",
-      "title": "Ilocos Norte의 산/화산 명소",
-      "description": "Ilocos Norte에 위치한 산/화산 여행지입니다. 해발 약 1,786m.",
-      "city": "",
-      "province": "Ilocos Norte",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Aganmala  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 269,
-      "name": "Agtuuganon 산",
-      "english_name": "Mount Agtuuganon",
-      "title": "Davao Oriental의 산/화산 명소",
-      "description": "Davao Oriental에 위치한 산/화산 여행지입니다. 해발 약 1,652m.",
-      "city": "",
-      "province": "Davao Oriental",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Agtuuganon  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 270,
-      "name": "Agustin 산",
-      "english_name": "Mount Agustin",
-      "title": "Camarines Sur의 산/화산 명소",
-      "description": "Camarines Sur에 위치한 산/화산 여행지입니다. 해발 약 334m.",
-      "city": "",
-      "province": "Camarines Sur",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Agustin  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 271,
-      "name": "Aja 산",
-      "english_name": "Mount Aja",
-      "title": "Nueva Ecija의 산/화산 명소",
-      "description": "Nueva Ecija에 위치한 산/화산 여행지입니다. 해발 약 463m.",
-      "city": "",
-      "province": "Nueva Ecija",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Mount Aja  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 272,
-      "name": "Akir-akir 화산",
-      "english_name": "Akir-akir Volcano",
-      "title": "Maguindanao del Norte의 산/화산 명소",
-      "description": "Maguindanao del Norte에 위치한 산/화산 여행지입니다. 해발 약 526m. Inactive volcano",
-      "city": "",
-      "province": "Maguindanao del Norte",
-      "category": "산/화산",
-      "icon": "⛰️",
-      "search_query": "Akir-akir Volcano  Philippines travel",
-      "missing_fields": [
-        "imageUrl",
-        "texts"
-      ]
-    },
-    {
-      "index": 273,
-      "name": "Al-al 산",
-      "english_name": "Mount Al-al",
+      "index": 276,
+      "name": "Amanayao 산",
+      "english_name": "Mount Amanayao",
       "title": "Benguet의 산/화산 명소",
-      "description": "Benguet에 위치한 산/화산 여행지입니다. 해발 약 2,663m.",
+      "description": "Benguet에 위치한 산/화산 여행지입니다.",
       "city": "",
       "province": "Benguet",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Al-al  Philippines travel",
+      "search_query": "Mount Amanayao  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
       ]
     },
     {
-      "index": 274,
-      "name": "Alchanon 산",
-      "english_name": "Mount Alchanon",
+      "index": 277,
+      "name": "Mount",
+      "english_name": "Mount",
+      "title": "Mountain Province의 산/화산 명소",
+      "description": "Mountain Province에 위치한 산/화산 여행지입니다. 해발 약 1,714m.",
+      "city": "",
+      "province": "Mountain Province",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 278,
+      "name": "Amuyao 산",
+      "english_name": "Mount Amuyao",
+      "title": "Mountain Province의 산/화산 명소",
+      "description": "Mountain Province에 위치한 산/화산 여행지입니다. 해발 약 2,701m. Highest point in Mountain Province .",
+      "city": "",
+      "province": "Mountain Province",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Amuyao  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 279,
+      "name": "Ambalatungan 산",
+      "english_name": "Mount Ambalatungan",
       "title": "Kalinga의 산/화산 명소",
-      "description": "Kalinga에 위치한 산/화산 여행지입니다. 해발 약 2,617m.",
+      "description": "Kalinga에 위치한 산/화산 여행지입니다. 해발 약 2,329m. Inactive volcano. (May refer to Mount Binuluan ) .",
       "city": "",
       "province": "Kalinga",
       "category": "산/화산",
       "icon": "⛰️",
-      "search_query": "Mount Alchanon  Philippines travel",
+      "search_query": "Mount Ambalatungan  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 280,
+      "name": "Amicay 산",
+      "english_name": "Mount Amicay",
+      "title": "Bohol의 산/화산 명소",
+      "description": "Bohol에 위치한 산/화산 여행지입니다.",
+      "city": "",
+      "province": "Bohol",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Amicay  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 281,
+      "name": "Amorong 산",
+      "english_name": "Mount Amorong",
+      "title": "Pangasinan의 산/화산 명소",
+      "description": "Pangasinan에 위치한 산/화산 여행지입니다. 해발 약 376m. Inactive volcano ( lava dome )",
+      "city": "",
+      "province": "Pangasinan",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Amorong  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 282,
+      "name": "Ampalauag 산",
+      "english_name": "Mount Ampalauag",
+      "title": "Ifugao의 산/화산 명소",
+      "description": "Ifugao에 위치한 산/화산 여행지입니다. 해발 약 1,714m.",
+      "city": "",
+      "province": "Ifugao",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Ampalauag  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 283,
+      "name": "Ampaoid 산",
+      "english_name": "Mount Ampaoid",
+      "title": "Zamboanga del Norte의 산/화산 명소",
+      "description": "Zamboanga del Norte에 위치한 산/화산 여행지입니다. 해발 약 1,066m. Inactive volcano",
+      "city": "",
+      "province": "Zamboanga del Norte",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Ampaoid  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 284,
+      "name": "Ampiro 산",
+      "english_name": "Mount Ampiro",
+      "title": "Misamis Occidental의 산/화산 명소",
+      "description": "Misamis Occidental에 위치한 산/화산 여행지입니다. 해발 약 1,532m. Inactive volcano",
+      "city": "",
+      "province": "Misamis Occidental",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Ampiro  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 285,
+      "name": "Anacuao 산",
+      "english_name": "Mount Anacuao",
+      "title": "Aurora의 산/화산 명소",
+      "description": "Aurora에 위치한 산/화산 여행지입니다. 해발 약 1,852m.",
+      "city": "",
+      "province": "Aurora",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Anacuao  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 286,
+      "name": "Angelo Mountains",
+      "english_name": "Angelo Mountains",
+      "title": "Laguna의 산/화산 명소",
+      "description": "Laguna에 위치한 산/화산 여행지입니다. 해발 약 1,316m.",
+      "city": "",
+      "province": "Laguna",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Angelo Mountains  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 287,
+      "name": "Annaguan 산",
+      "english_name": "Mount Annaguan",
+      "title": "Cagayan의 산/화산 명소",
+      "description": "Cagayan Rizal에 위치한 산/화산 여행지입니다. 해발 약 1,400m. Located in Rizal, Cagayan",
+      "city": "Rizal",
+      "province": "Cagayan",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Annaguan Rizal Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 288,
+      "name": "Apanderang 산",
+      "english_name": "Mount Apanderang",
+      "title": "Benguet의 산/화산 명소",
+      "description": "Benguet에 위치한 산/화산 여행지입니다.",
+      "city": "",
+      "province": "Benguet",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Apanderang  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 289,
+      "name": "Aquiting 산",
+      "english_name": "Mount Aquiting",
+      "title": "Leyte의 산/화산 명소",
+      "description": "Leyte에 위치한 산/화산 여행지입니다. 해발 약 523m. Inactive volcano",
+      "city": "",
+      "province": "Leyte",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Aquiting  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 290,
+      "name": "Arayat 산",
+      "english_name": "Mount Arayat",
+      "title": "Pampanga의 산/화산 명소",
+      "description": "Pampanga에 위치한 산/화산 여행지입니다. 해발 약 1,026m.",
+      "city": "",
+      "province": "Pampanga",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Arayat  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 291,
+      "name": "Ascuero 산",
+      "english_name": "Mount Ascuero",
+      "title": "Leyte의 산/화산 명소",
+      "description": "Leyte에 위치한 산/화산 여행지입니다. 해발 약 1,266m. Inactive volcano",
+      "city": "",
+      "province": "Leyte",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Ascuero  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 292,
+      "name": "Atimbia (Atimba) 산",
+      "english_name": "Mount Atimbia (Atimba)",
+      "title": "Laguna의 산/화산 명소",
+      "description": "Laguna에 위치한 산/화산 여행지입니다. 해발 약 654m. Inactive volcano",
+      "city": "",
+      "province": "Laguna",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Atimbia (Atimba)  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 293,
+      "name": "Atok 산",
+      "english_name": "Mount Atok",
+      "title": "Benguet의 산/화산 명소",
+      "description": "Benguet에 위치한 산/화산 여행지입니다. 해발 약 1,770m.",
+      "city": "",
+      "province": "Benguet",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Atok  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 294,
+      "name": "Awapanniki 산",
+      "english_name": "Mount Awapanniki",
+      "title": "Nueva Vizcaya의 산/화산 명소",
+      "description": "Nueva Vizcaya에 위치한 산/화산 여행지입니다.",
+      "city": "",
+      "province": "Nueva Vizcaya",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Awapanniki  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 295,
+      "name": "Babuyan Claro 화산 (Mount Pangasun)",
+      "english_name": "Babuyan Claro Volcano (Mount Pangasun)",
+      "title": "의 산/화산 명소",
+      "description": "산/화산 여행지입니다. Active stratovolcano , last erupted 1917",
+      "city": "",
+      "province": "",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Babuyan Claro Volcano (Mount Pangasun)  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 296,
+      "name": "Baca 산",
+      "english_name": "Mount Baca",
+      "title": "Nueva Ecija의 산/화산 명소",
+      "description": "Nueva Ecija에 위치한 산/화산 여행지입니다. 해발 약 752m.",
+      "city": "",
+      "province": "Nueva Ecija",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Baca  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 297,
+      "name": "Bacauan 산",
+      "english_name": "Mount Bacauan",
+      "title": "Zamboanga del Sur의 산/화산 명소",
+      "description": "Zamboanga del Sur에 위치한 산/화산 여행지입니다. 해발 약 1,824m. Inactive volcano",
+      "city": "",
+      "province": "Zamboanga del Sur",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Bacauan  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 298,
+      "name": "Baco 산",
+      "english_name": "Mount Baco",
+      "title": "Occidental Mindoro의 산/화산 명소",
+      "description": "Occidental Mindoro에 위치한 산/화산 여행지입니다. 해발 약 2,489m.",
+      "city": "",
+      "province": "Occidental Mindoro",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Baco  Philippines travel",
+      "missing_fields": [
+        "imageUrl",
+        "texts"
+      ]
+    },
+    {
+      "index": 299,
+      "name": "Bagacay 산",
+      "english_name": "Mount Bagacay",
+      "title": "Camarines Norte의 산/화산 명소",
+      "description": "Camarines Norte에 위치한 산/화산 여행지입니다. 해발 약 775m. Inactive volcano",
+      "city": "",
+      "province": "Camarines Norte",
+      "category": "산/화산",
+      "icon": "⛰️",
+      "search_query": "Mount Bagacay  Philippines travel",
       "missing_fields": [
         "imageUrl",
         "texts"
