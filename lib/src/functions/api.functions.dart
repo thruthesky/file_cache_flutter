@@ -17,7 +17,7 @@
 /// ```dart
 /// // 기본 사용 (토큰 없이)
 /// final result = await apiCall(
-///   'setting',
+///   'get_app_settings',
 ///   apiServerUrl: 'https://philgo.com/func.php',
 /// );
 ///
@@ -52,7 +52,7 @@ typedef TokenPatcher =
 /// - PhilgoConfig 의존성을 필수 파라미터 [apiServerUrl]로 대체
 /// - UI 관련 코드 제거 (alertOnError 옵션 제거)
 ///
-/// [functionName] 호출할 PhilGo API 함수 이름 (예: 'setting', 'user.my')
+/// [functionName] 호출할 PhilGo API 함수 이름 (예: 'get_app_settings', 'user.my')
 /// [apiServerUrl] API 서버 URL (필수) - 예: 'https://philgo.com/func.php'
 /// [data] 전송할 데이터 맵 (옵션)
 /// [tokenId] 인증 토큰 (옵션) - Firebase ID Token 또는 다른 인증 토큰

@@ -223,11 +223,15 @@ class PhilgoService {
 
   PhilgoService._();
 
-  /// PhilGo 설정 정보 로드
+  /// PhilGo 설정 정보 로드 (Load PhilGo app settings)
   ///
-  /// API에서 설정 정보를 가져와 PhilgoSetting 모델로 파싱하여 저장
+  /// API에서 설정 정보를 가져와 PhilgoSetting 모델로 파싱하여 반환
+  /// `get_app_settings` API를 호출하여 은행 정보, 포인트 설정 등을 가져옴
   Future<PhilgoSetting> loadSetting() async {
-    final json = await apiCall('setting', apiServerUrl: PhilgoConfig.phpApiUrl);
+    final json = await apiCall(
+      'get_app_settings',
+      apiServerUrl: PhilgoConfig.phpApiUrl,
+    );
     final setting = PhilgoSetting.fromJson(json);
 
     return setting;

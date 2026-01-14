@@ -62,8 +62,17 @@ class PhilgoState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 현재 로그인 사용자가 관리자인지 확인 (Check if current user is admin)
+  ///
+  /// 관리자(운영자)는 글쓰기와 댓글 작성이 제한됨
+  /// setting.adminUids 목록에 현재 사용자의 UID가 포함되어 있으면 관리자
+  bool get isAdmin {
+    if (user == null || setting == null) return false;
+    return setting!.adminUids.contains(user!.uid);
+  }
+
   //
   static PhilgoState of(BuildContext context, {bool listen = false}) {
-    return Provider.of<PhilgoState>(context, listen: listen);
+    return Provider.of<PhilgoState>(context, listen: false);
   }
 }

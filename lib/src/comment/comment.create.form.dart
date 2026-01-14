@@ -57,7 +57,32 @@ class _CommentCreateFormState extends State<CommentCreateForm> {
     }
   }
 
+  /// 댓글 작성 처리
+  /// Handle comment creation
+  ///
+  /// 관리자(운영자)인 경우 댓글 작성이 제한되며 알림창이 표시됩니다.
+  /// Admin users are restricted from creating comments and will see an alert.
   void onTapCommentToPost() async {
+    // 관리자 체크 - 운영자는 댓글을 작성할 수 없음
+    // Admin check - operators cannot create comments
+    final philgoState = PhilgoState.of(context);
+    if (philgoState.isAdmin) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('알림'),
+          content: const Text('운영자는 댓글을 작성할 수 없습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     focusNode.unfocus();
 
     try {

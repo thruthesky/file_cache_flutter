@@ -129,7 +129,7 @@ class PhilgoSettingPoint {
 
 /// PhilGo 설정 메인 모델
 ///
-/// API의 설정 응답을 파싱하여 은행 정보와 포인트 설정을 관리
+/// API의 설정 응답을 파싱하여 은행 정보, 포인트 설정, 관리자 목록을 관리
 class PhilgoSetting {
   /// 은행 정보 (kb, bdo 등 은행별 계좌 정보)
   final PhilgoSettingBankInfo bankInfo;
@@ -137,9 +137,14 @@ class PhilgoSetting {
   /// 포인트 설정 (광고 카테고리, 광고 일수, 시간당 비용 등)
   final PhilgoSettingPoint point;
 
+  /// 관리자 UID 목록 (Admin user UIDs)
+  /// 이 목록에 포함된 사용자는 관리자로 간주되어 글쓰기/댓글 작성이 제한됨
+  final List<String> adminUids;
+
   PhilgoSetting({
     required this.bankInfo,
     required this.point,
+    required this.adminUids,
   });
 
   /// JSON Map으로부터 PhilgoSetting 객체 생성
@@ -151,6 +156,7 @@ class PhilgoSetting {
       point: PhilgoSettingPoint.fromJson(
         json['point'] ?? {},
       ),
+      adminUids: List<String>.from(json['admin_uids'] ?? []),
     );
   }
 
@@ -158,6 +164,7 @@ class PhilgoSetting {
     return {
       'bank_info': bankInfo.toJson(),
       'point': point.toJson(),
+      'admin_uids': adminUids,
     };
   }
 
