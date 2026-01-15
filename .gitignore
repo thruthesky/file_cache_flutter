@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# 여행지(travel_spots) 업데이트 스크립트 출력물
+tmp/travel_spots_update_state.json
+tmp/travel_spots_update_log.ndjson
+tmp/travel_spots_cleanup_state.json
+tmp/travel_spots_cleanup_log.ndjson
