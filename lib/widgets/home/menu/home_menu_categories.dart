@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/extensions/nav.context.dart';
@@ -60,7 +62,9 @@ class HomeMenuCategories extends StatelessWidget {
             InkWell(
               onTap: () async {
                 final searchTerm = await SearchDialog.show(context);
-                if (searchTerm != null && searchTerm.isNotEmpty && context.mounted) {
+                if (searchTerm != null &&
+                    searchTerm.isNotEmpty &&
+                    context.mounted) {
                   SearchScreen.push(context, searchTerm);
                 }
               },
@@ -81,9 +85,14 @@ class HomeMenuCategories extends StatelessWidget {
 
                     /// 검색 텍스트 (카테고리와 동일한 스타일)
                     /// Search text (same style as categories)
+                    /// Android에서는 글씨 크기를 한 단계 작게 표시 (bodySmall)
+                    /// On Android, display text one size smaller (bodySmall)
                     Text(
                       lo.searchHint,
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      style: (Platform.isAndroid
+                              ? theme.textTheme.bodySmall
+                              : theme.textTheme.bodyMedium)
+                          ?.copyWith(
                         color: scheme.onSurface,
                       ),
                     ),
@@ -95,45 +104,53 @@ class HomeMenuCategories extends StatelessWidget {
             /// 메뉴 카테고리 버튼 목록
             /// Menu category button list
             ...PhilgoCategory.homeMenuCategories().map((menuItem) {
-            /// 튜플에서 postId와 subcategory 추출
-            /// Extract postId and subcategory from tuple
-            final (postId, subcategory) = menuItem;
+              /// 튜플에서 postId와 subcategory 추출
+              /// Extract postId and subcategory from tuple
+              final (postId, subcategory) = menuItem;
 
-            /// 표시할 이름: 서브카테고리가 있으면 서브카테고리 번역, 없으면 postId 번역
-            /// Display name: translated subcategory if exists, otherwise translated postId
-            final localizedName = philgoTr(context, subcategory ?? postId);
+              /// 표시할 이름: 서브카테고리가 있으면 서브카테고리 번역, 없으면 postId 번역
+              /// Display name: translated subcategory if exists, otherwise translated postId
+              final localizedName = philgoTr(context, subcategory ?? postId);
 
-            /// InkWell + Text로 완전히 콤팩트한 버튼 구현
-            /// Fully compact button using InkWell + Text (no padding/margin)
-            return InkWell(
-              onTap: () {
-                /// ForumHome으로 이동하면서 해당 카테고리 선택
-                /// Navigate to ForumHome with selected category
-                context.setHomeIndex(
-                  HomeNavigationItem.forum,
-                  initialPostId: postId,
-                  initialCategory: subcategory,
-                );
-              },
+              /// InkWell + Text로 완전히 콤팩트한 버튼 구현
+              /// Fully compact button using InkWell + Text (no padding/margin)
+              return InkWell(
+                onTap: () {
+                  /// ForumHome으로 이동하면서 해당 카테고리 선택
+                  /// Navigate to ForumHome with selected category
+                  context.setHomeIndex(
+                    HomeNavigationItem.forum,
+                    initialPostId: postId,
+                    initialCategory: subcategory,
+                  );
+                },
 
-              /// 터치 피드백 영역을 텍스트에 맞춤
-              /// Fit touch feedback area to text
-              borderRadius: BorderRadius.circular(4),
+                /// 터치 피드백 영역을 텍스트에 맞춤
+                /// Fit touch feedback area to text
+                borderRadius: BorderRadius.circular(4),
 
-              child: Container(
-                /// 최소한의 패딩 (터치 영역 확보)
-                /// Minimal padding (for touch area)
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Container(
+                  /// 최소한의 패딩 (터치 영역 확보)
+                  /// Minimal padding (for touch area)
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
 
-                child: Text(
-                  localizedName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: scheme.onSurface,
+                  /// Android에서는 글씨 크기를 한 단계 작게 표시 (bodySmall)
+                  /// On Android, display text one size smaller (bodySmall)
+                  child: Text(
+                    localizedName,
+                    style: (Platform.isAndroid
+                            ? theme.textTheme.bodySmall
+                            : theme.textTheme.bodyMedium)
+                        ?.copyWith(
+                      color: scheme.onSurface,
+                    ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
           ],
         ),
       ),
