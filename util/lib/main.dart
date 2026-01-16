@@ -79,13 +79,13 @@ final AnsiPen yellow = AnsiPen()..xterm(011);
 /// 5. format all generated files
 /// 6. if icons.json was downloaded by this tool, remove icons.json
 void main(List<String> rawArgs) async {
-  print(
-    blue('''
-####  #   #####################################################################
-###  ###  ############ Font Awesome Flutter Configurator ######################
-#   #   # #####################################################################
-  '''),
-  );
+  // print(
+  //   blue('''
+  // ####  #   #####################################################################
+  // ###  ###  ############ Font Awesome Flutter Configurator ######################
+  // #   #   # #####################################################################
+  //   '''),
+  // );
 
   final argParser = setUpArgParser();
   final args = argParser.parse(rawArgs);
@@ -104,11 +104,11 @@ void main(List<String> rawArgs) async {
     // print(blue('No icons.json found, updating free icons'));
     const repositoryName = 'FortAwesome/Font-Awesome';
     final defaultBranch = await getRepositoryDefaultBranch(repositoryName);
-    print(
-      blue(
-        'Choosing branch "$defaultBranch" of repository https://github.com/$repositoryName',
-      ),
-    );
+    // print(
+    //   blue(
+    //     'Choosing branch "$defaultBranch" of repository https://github.com/$repositoryName',
+    //   ),
+    // );
     await download(
       'https://raw.githubusercontent.com/FortAwesome/Font-Awesome/$defaultBranch/metadata/icons.json',
       File('lib/fonts/icons.json'),
@@ -145,11 +145,11 @@ void main(List<String> rawArgs) async {
   if (hasDuotoneIcons) {
     // Duotone are no longer supported - temporarily added notice to avoid
     // confusion
-    print(
-      red(
-        'Duotone icons are no longer supported. Automatically disabled them.',
-      ),
-    );
+    // print(
+    //   red(
+    //     'Duotone icons are no longer supported. Automatically disabled them.',
+    //   ),
+    // );
   }
   hasDuotoneIcons = false;
 
@@ -248,9 +248,9 @@ void adjustPubspecFontIncludes(Set<String> styles) {
   pubspecFile.writeAsStringSync(pubspec.join('\n'));
 
   // print(blue('\nFound and enabled the following icon styles:'));
-  enabledStyles.isEmpty
-      ? print(red("None"))
-      : print(blue(enabledStyles.join(', ')));
+  // enabledStyles.isEmpty
+  //     ? print(red("None"))
+  //     : print(blue(enabledStyles.join(', ')));
 
   // print(blue('\nRunning "flutter pub get"'));
   final result = Process.runSync('flutter', ['pub', 'get'], runInShell: true);
@@ -299,19 +299,19 @@ void writeCodeToFile(List<String> Function() generator, String filePath) {
 /// And then either use faIconNameMapping directly to look up specific icons,
 /// or use the getIconFromCss helper function.
 List<String> generateIconNameMap(List<IconMetadata> icons) {
-  print(
-    yellow('''
-
-------------------------------- IMPORTANT NOTICE -------------------------------
-Dynamic icon retrieval by name disables icon tree shaking. This means unused
-icons will not be automatically removed and thus make the overall app size
-larger. It is highly recommended to use this option only in combination with
-the "exclude" option, to remove styles which are not needed.
-You may need to pass --no-tree-shake-icons to the flutter build command for it
-to complete successfully.
---------------------------------------------------------------------------------
-'''),
-  );
+  // print(
+  //   yellow('''
+  //
+  // ------------------------------- IMPORTANT NOTICE -------------------------------
+  // Dynamic icon retrieval by name disables icon tree shaking. This means unused
+  // icons will not be automatically removed and thus make the overall app size
+  // larger. It is highly recommended to use this option only in combination with
+  // the "exclude" option, to remove styles which are not needed.
+  // You may need to pass --no-tree-shake-icons to the flutter build command for it
+  // to complete successfully.
+  // --------------------------------------------------------------------------------
+  // '''),
+  // );
 
   // print(blue('Generating name to icon mapping'));
 
@@ -554,26 +554,26 @@ Future printVersionNotice(String repositoryName) async {
     final primaryPreRelease = pub.Version.primary(preReleases);
 
     if (primaryRelease > packageVersion) {
-      print(
-        red(
-          'A new version ($primaryRelease) of font_awesome_flutter is available. Please update before reporting any errors. You can update via `git pull` or by downloading the source code from github. (https://github.com/$repositoryName)',
-        ),
-      );
+      // print(
+      //   red(
+      //     'A new version ($primaryRelease) of font_awesome_flutter is available. Please update before reporting any errors. You can update via `git pull` or by downloading the source code from github. (https://github.com/$repositoryName)',
+      //   ),
+      // );
     }
     if (primaryPreRelease > packageVersion &&
         primaryPreRelease > primaryRelease) {
-      print(
-        yellow(
-          'A pre-release version ($primaryPreRelease) of font_awesome_flutter is available. Should you encounter any problems, have a look if it fixes them.',
-        ),
-      );
+      // print(
+      //   yellow(
+      //     'A pre-release version ($primaryPreRelease) of font_awesome_flutter is available. Should you encounter any problems, have a look if it fixes them.',
+      //   ),
+      // );
     }
   } catch (_) {
-    print(
-      red(
-        'Error while getting font awesome flutter\'s version information. Could not determine whether you are using the latest version.',
-      ),
-    );
+    // print(
+    //   red(
+    //     'Error while getting font awesome flutter\'s version information. Could not determine whether you are using the latest version.',
+    //   ),
+    // );
   } finally {
     tmpFile.delete();
   }
@@ -603,9 +603,9 @@ bool readAndPickMetadata(
     final content = iconsJson.readAsStringSync();
     rawMetadata = json.decode(content);
   } catch (_) {
-    print(
-      'Error: Invalid icons.json. Please make sure you copied the correct file.',
-    );
+    // print(
+    //   'Error: Invalid icons.json. Please make sure you copied the correct file.',
+    // );
     exit(1);
   }
 
@@ -735,22 +735,22 @@ ArgParser setUpArgParser() {
 
 /// Displays the program help page. Accessible via the --help command line arg
 void displayHelp(ArgParser argParser) {
-  var fileType = Platform.isWindows ? 'bat' : 'sh';
-  print('''
-This script helps you to customize the font awesome flutter package to fit your
-individual needs. Please follow the "customizing font awesome flutter" guide on
-github.
-
-By default, this tool acts as an updater. It retrieves the newest version of
-free font awesome icons from the web and generates all necessary files.
-If an icons.json exists within the lib/fonts folder, no update is performed and
-files in this folder are used for generation instead.
-To exclude styles from generation, pass the "exclude" option with a comma
-separated list of styles to ignore.
-
-Usage:
-configurator.$fileType [options]
-
-Options:''');
+  // var fileType = Platform.isWindows ? 'bat' : 'sh';
+  // print('''
+  // This script helps you to customize the font awesome flutter package to fit your
+  // individual needs. Please follow the "customizing font awesome flutter" guide on
+  // github.
+  //
+  // By default, this tool acts as an updater. It retrieves the newest version of
+  // free font awesome icons from the web and generates all necessary files.
+  // If an icons.json exists within the lib/fonts folder, no update is performed and
+  // files in this folder are used for generation instead.
+  // To exclude styles from generation, pass the "exclude" option with a comma
+  // separated list of styles to ignore.
+  //
+  // Usage:
+  // configurator.$fileType [options]
+  //
+  // Options:''');
   // print(argParser.usage);
 }
