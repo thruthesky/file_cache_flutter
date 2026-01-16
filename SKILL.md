@@ -36,6 +36,9 @@ description: |
 6. **푸시 알림/FCM 요청 시**: [Firebase FCM 문서](./firebase-fcm.md) 참조
    - 키워드: 푸시 알림, FCM, Firebase Messaging, 알림, notification, 토큰, 구독
 
+7. **Firebase 인증 요청 시**: [Firebase Auth 문서](./firebase/firebase-auth.md) 참조
+   - 키워드: Firebase Auth, 로그인, 회원가입, 인증, 에러 처리, invalid-credential, user-not-found, wrong-password, Email enumeration protection
+
 ## Core Principles
 
 ### 필수 규칙
@@ -87,6 +90,7 @@ elevation: 0                                   // 플랫 디자인
 | [go_route.md](./go_route.md) | GoRouter 라우팅, 파라미터 전달, redirect |
 | [i18n.md](./i18n.md) | 다국어 지원, ARB 파일 관리 |
 | [firebase-fcm.md](./firebase-fcm.md) | FCM 푸시 알림, 토큰 관리, 메시지 핸들링 |
+| [firebase/firebase-auth.md](./firebase/firebase-auth.md) | Firebase 인증, Email enumeration protection, 에러 코드 처리 (`invalid-credential`, `user-not-found`, `wrong-password` 등) |
 
 ## 필수 pub.dev 패키지
 
