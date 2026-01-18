@@ -18,6 +18,7 @@ import 'package:philgo/screens/info/exchange/exchange_rate.screen.dart';
 import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
 import 'package:philgo/screens/info/notice/notice.screen.dart';
 import 'package:philgo/screens/info/travel/travel_info.screen.dart';
+import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/delivery/food_delivery.screen.dart';
 import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
@@ -198,6 +199,12 @@ class _MenuHomeState extends State<MenuHome> {
                       icon: FontAwesomeIcons.umbrellaBeach,
                       title: l10n.quickMenuTravel,
                       onTap: () => TravelInfoScreen.push(context),
+                    ),
+                    // 여행 명소 (Travel Spots) - 필리핀 여행 명소 목록
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.mapLocationDot,
+                      title: l10n.quickMenuTravelSpots,
+                      onTap: () => TravelSpotsScreen.push(context),
                     ),
                     // 음식 배달 (Food Delivery) - Grab 앱을 이용한 음식 배달 정보
                     MenuGridItem(

@@ -629,6 +629,155 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
     );
   }
 
+  /// 카테고리별 이모지 반환 (Return emoji for category)
+  ///
+  /// 각 카테고리에 맞는 이모지를 반환합니다.
+  /// contains를 사용하여 복합 카테고리도 매칭합니다.
+  /// 매칭되지 않는 카테고리는 기본 이모지(📍)를 반환합니다.
+  String _getCategoryEmoji(String category) {
+    final lowerCategory = category.toLowerCase();
+
+    /// 해변/섬 관련 (Beach/Island related)
+    if (lowerCategory.contains('해변') || lowerCategory.contains('섬')) {
+      return '🏝️';
+    }
+
+    /// 호수/강 관련 (Lake/River related)
+    if (lowerCategory.contains('호수') || lowerCategory.contains('강')) {
+      return '💧';
+    }
+
+    /// 산/화산 관련 (Mountain/Volcano related)
+    if (lowerCategory.contains('산') || lowerCategory.contains('화산')) {
+      return '🏔️';
+    }
+
+    /// 폭포 관련 (Waterfall related)
+    if (lowerCategory.contains('폭포')) {
+      return '💦';
+    }
+
+    /// 동굴 관련 (Cave related)
+    if (lowerCategory.contains('동굴')) {
+      return '🕳️';
+    }
+
+    /// 다이빙/스노클링 관련 (Diving/Snorkeling related)
+    if (lowerCategory.contains('다이빙') || lowerCategory.contains('스노클링')) {
+      return '🤿';
+    }
+
+    /// 서핑 관련 (Surfing related)
+    if (lowerCategory.contains('서핑')) {
+      return '🏄';
+    }
+
+    /// 동물원/사파리 관련 (Zoo/Safari related)
+    if (lowerCategory.contains('동물원') || lowerCategory.contains('사파리')) {
+      return '🦁';
+    }
+
+    /// 박물관/미술관 관련 (Museum/Art gallery related)
+    if (lowerCategory.contains('박물관') || lowerCategory.contains('미술관')) {
+      return '🖼️';
+    }
+
+    /// 역사 유적 관련 (Historical site related)
+    if (lowerCategory.contains('역사') || lowerCategory.contains('유적')) {
+      return '🏛️';
+    }
+
+    /// 교회/성당 관련 (Church/Cathedral related)
+    if (lowerCategory.contains('교회') || lowerCategory.contains('성당')) {
+      return '⛪';
+    }
+
+    /// 사원/절 관련 (Temple related)
+    if (lowerCategory.contains('사원') || lowerCategory.contains('절')) {
+      return '🛕';
+    }
+
+    /// 테마파크/놀이공원 관련 (Theme park related)
+    if (lowerCategory.contains('테마파크') || lowerCategory.contains('놀이공원')) {
+      return '🎢';
+    }
+
+    /// 쇼핑몰/쇼핑 관련 (Shopping mall related)
+    if (lowerCategory.contains('쇼핑')) {
+      return '🛍️';
+    }
+
+    /// 꽃 정원 관련 (Flower garden related)
+    if (lowerCategory.contains('꽃') || lowerCategory.contains('정원')) {
+      return '🌺';
+    }
+
+    /// 공원 관련 (Park related)
+    if (lowerCategory.contains('공원')) {
+      return '🌳';
+    }
+
+    /// 농장 관련 (Farm related)
+    if (lowerCategory.contains('농장')) {
+      return '🌾';
+    }
+
+    /// 온천/스파 관련 (Hot spring/Spa related)
+    if (lowerCategory.contains('온천') || lowerCategory.contains('스파')) {
+      return '♨️';
+    }
+
+    /// 전망대/뷰포인트 관련 (Viewpoint related)
+    if (lowerCategory.contains('전망대') || lowerCategory.contains('뷰포인트')) {
+      return '🔭';
+    }
+
+    /// 리조트/숙소 관련 (Resort/Accommodation related)
+    if (lowerCategory.contains('리조트') || lowerCategory.contains('호텔')) {
+      return '🏨';
+    }
+
+    /// 음식/맛집 관련 (Food related)
+    if (lowerCategory.contains('음식') || lowerCategory.contains('맛집')) {
+      return '🍽️';
+    }
+
+    /// 나이트라이프/바/클럽 관련 (Nightlife related)
+    if (lowerCategory.contains('나이트') ||
+        lowerCategory.contains('바') ||
+        lowerCategory.contains('클럽')) {
+      return '🌃';
+    }
+
+    /// 골프 관련 (Golf related)
+    if (lowerCategory.contains('골프')) {
+      return '⛳';
+    }
+
+    /// 카지노 관련 (Casino related)
+    if (lowerCategory.contains('카지노')) {
+      return '🎰';
+    }
+
+    /// 마사지 관련 (Massage related)
+    if (lowerCategory.contains('마사지')) {
+      return '💆';
+    }
+
+    /// 크루즈/보트 관련 (Cruise/Boat related)
+    if (lowerCategory.contains('크루즈') || lowerCategory.contains('보트')) {
+      return '🚢';
+    }
+
+    /// 자연/생태 관련 (Nature/Ecology related)
+    if (lowerCategory.contains('자연') || lowerCategory.contains('생태')) {
+      return '🌿';
+    }
+
+    /// 기본 이모지 (Default emoji)
+    return '📍';
+  }
+
   /// 필드 이름을 한글로 변환 (Convert field name to Korean)
   String _getFieldDisplayName(String field) {
     switch (field) {
@@ -704,7 +853,7 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
 
                   /// 분류(Category) 필터 (Category filter)
                   _buildFilterDropdown(
-                    label: '분류(Category)',
+                    label: '분류',
                     value: _selectedCategory,
                     items: _allCategories,
                     onChanged: (value) {
@@ -714,6 +863,7 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
                     },
                     theme: theme,
                     scheme: scheme,
+                    emojiGetter: _getCategoryEmoji,
                   ),
 
                   /// 필터 초기화 버튼 (Clear filters button)
@@ -825,6 +975,9 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
   }
 
   /// 필터 드롭다운 위젯 빌드 (Build filter dropdown widget)
+  ///
+  /// [emojiGetter] 파라미터가 제공되면 각 아이템 앞에 이모지를 표시합니다.
+  /// If [emojiGetter] is provided, displays emoji before each item.
   Widget _buildFilterDropdown({
     required String label,
     required String? value,
@@ -832,7 +985,39 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
     required ValueChanged<String?> onChanged,
     required ThemeData theme,
     required ColorScheme scheme,
+    String Function(String)? emojiGetter,
   }) {
+    /// 이모지 크기 (Emoji size)
+    const double emojiSize = 18;
+
+    /// 이모지가 포함된 텍스트 위젯 생성 (Build text widget with emoji)
+    Widget buildItemWithEmoji(String item, Color textColor) {
+      if (emojiGetter != null) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              emojiGetter(item),
+              style: const TextStyle(fontSize: emojiSize),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              item,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: textColor,
+              ),
+            ),
+          ],
+        );
+      }
+      return Text(
+        item,
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: textColor,
+        ),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
@@ -850,6 +1035,27 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
               color: scheme.onSurfaceVariant,
             ),
           ),
+          /// 선택된 값 표시 (Display selected value)
+          selectedItemBuilder: emojiGetter != null
+              ? (context) {
+                  return [
+                    /// 전체 옵션 (All option)
+                    Text(
+                      '$label 전체',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: scheme.onPrimaryContainer,
+                      ),
+                    ),
+                    /// 각 아이템 (Each item)
+                    ...items.map(
+                      (item) => buildItemWithEmoji(
+                        item,
+                        scheme.onPrimaryContainer,
+                      ),
+                    ),
+                  ];
+                }
+              : null,
           icon: FaIcon(
             FontAwesomeIcons.lightChevronDown,
             size: 12,
@@ -880,12 +1086,7 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
             ...items.map(
               (item) => DropdownMenuItem<String>(
                 value: item,
-                child: Text(
-                  item,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: scheme.onSurface,
-                  ),
-                ),
+                child: buildItemWithEmoji(item, scheme.onSurface),
               ),
             ),
           ],
