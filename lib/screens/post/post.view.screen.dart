@@ -672,7 +672,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
         PostViewDisplayYouTubes(post: post!),
 
         /// Files (images, videos, and other files) first (if available)
-        if (hasFiles) ...[
+        /// Do not display files for HTML content (already embedded in HTML)
+        if (hasFiles && !(post?.isHtml ?? false)) ...[
           PostViewFiles(
             files: files,
             postIdx: widget.post.idx,

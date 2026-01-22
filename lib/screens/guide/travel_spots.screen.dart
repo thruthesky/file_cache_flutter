@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/models/travel_spot.model.dart';
 import 'package:philgo/screens/guide/travel_spot.view.screen.dart';
@@ -270,7 +271,7 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: Text(
-                '${_filteredSpots.length}개 결과',
+                '${NumberFormat('#,###').format(_filteredSpots.length)}개 결과',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -891,7 +892,7 @@ class _TravelSpotsScreenState extends State<TravelSpotsScreen> {
 
               /// 명소 개수 표시 (Show spot count)
               Text(
-                '총 ${spots.length}개의 여행 명소',
+                '총 ${NumberFormat('#,###').format(spots.length)}개의 여행 명소',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
