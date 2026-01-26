@@ -38,6 +38,9 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
   @override
   void initState() {
     super.initState();
+    // 조회수 증가 (fire-and-forget 방식)
+    // 실패해도 게시글 로드에 영향 없음
+    increasePostView(widget.idx);
     // post_view API로 게시글 가져오기
     _postFuture = getPost(widget.idx);
   }
