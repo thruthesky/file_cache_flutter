@@ -398,7 +398,7 @@ packages:
       path: "packages/file_cache_flutter"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "0.0.3"
   file_picker:
     dependency: "direct main"
     description:
