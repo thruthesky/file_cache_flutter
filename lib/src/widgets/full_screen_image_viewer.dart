@@ -46,17 +46,26 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
         ),
         elevation: 0,
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        itemCount: widget.imageUrls.length,
-        itemBuilder: (context, index) {
-          return _buildImagePage(widget.imageUrls[index]);
-        },
+      body: Column(
+        children: [
+          /// Main image viewer with zoom capability
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              itemCount: widget.imageUrls.length,
+              itemBuilder: (context, index) {
+                return _buildImagePage(widget.imageUrls[index]);
+              },
+            ),
+          ),
+          /// Bottom thumbnail navigation bar
+          _buildThumbnailBar(),
+        ],
       ),
     );
   }
@@ -96,6 +105,72 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
           imageBuilder: (context, imageProvider) => Container(
             decoration: BoxDecoration(
               image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the bottom thumbnail navigation bar
+  Widget _buildThumbnailBar() {
+    return Container(
+      height: 80,
+      color: Colors.black87,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: widget.imageUrls.length,
+        itemBuilder: (context, index) {
+          return _buildThumbnailItem(index);
+        },
+      ),
+    );
+  }
+
+  /// Builds individual thumbnail item with selection indicator
+  Widget _buildThumbnailItem(int index) {
+    final isSelected = index == _currentIndex;
+
+    return GestureDetector(
+      onTap: () {
+        // Navigate to selected image
+        _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Container(
+        width: 80,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? Colors.white : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: CachedNetworkImage(
+          imageUrl: widget.imageUrls[index],
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            color: Colors.grey[800],
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            color: Colors.grey[800],
+            child: const Icon(
+              Icons.error_outline,
+              color: Colors.white,
+              size: 24,
             ),
           ),
         ),

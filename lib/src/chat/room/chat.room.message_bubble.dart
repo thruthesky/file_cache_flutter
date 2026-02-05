@@ -16,6 +16,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
   roomBlocksAdvertisement; // Add room advertisement blocking setting
   final String? roomId; // Add roomId for reporting functionality
   final bool isSingleChat; // Add flag to identify single chat rooms
+  final Function(String url)? onImageTap;
 
   const ChatRoomMessageBubble({
     super.key,
@@ -26,6 +27,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     this.roomBlocksAdvertisement,
     this.roomId,
     this.isSingleChat = false,
+    this.onImageTap,
   });
   @override
   Widget build(BuildContext context) {
@@ -311,7 +313,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
       children: [
         for (int i = 0; i < urls.length; i++) ...[
           GestureDetector(
-            onTap: () => _showFullScreenImage(context, urls, i),
+            onTap: () => onImageTap != null
+                ? onImageTap!(urls[i])
+                : _showFullScreenImage(context, urls, i),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: CachedNetworkImage(

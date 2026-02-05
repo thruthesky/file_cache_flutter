@@ -36,6 +36,7 @@ class SingleChatRoomMessageList extends StatefulWidget {
 
 class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
   final ScrollController scrollController = ScrollController();
+  final List<String> loadedMessageIds = [];
 
   @override
   void initState() {
@@ -112,6 +113,13 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
             final messageDoc = snapshot.docs[index];
 
             final message = ChatMessage.fromDataSnapshot(messageDoc);
+            if (message.urls != null) {
+              for (final url in message.urls!) {
+                if (!loadedMessageIds.contains(url)) {
+                  loadedMessageIds.add(url);
+                }
+              }
+            }
 
             final isCurrentUser = message.senderUid == myUid();
 
@@ -146,6 +154,17 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
                   roomBlocksAdvertisement: false, // room.blockAdvertisement,
                   roomId: widget.roomId,
                   isSingleChat: true,
+                  onImageTap: (String url) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FullScreenImageViewer(
+                          imageUrls: loadedMessageIds,
+                          initialIndex: loadedMessageIds.indexOf(url),
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             );
