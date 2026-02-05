@@ -31,3 +31,6 @@
 [submodule "lib/philgo_files"]
 	path = lib/philgo_files
 	url = https://github.com/thruthesky/philgo_files
+[submodule "docs"]
+	path = docs
+	url = https://github.com/thruthesky/docs
