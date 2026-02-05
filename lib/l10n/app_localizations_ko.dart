@@ -1983,4 +1983,7 @@ class LoKo extends Lo {
 
   @override
   String get travelSpotFortSantiago => '산티아고요새';
+
+  @override
+  String get error_loading_chatroom => '채팅방을 불러오는 중 오류가 발생했습니다';
 }

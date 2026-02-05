@@ -3982,6 +3982,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Fort Santiago'**
   String get travelSpotFortSantiago;
+
+  /// Error message when chat room fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading chat room'**
+  String get error_loading_chatroom;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

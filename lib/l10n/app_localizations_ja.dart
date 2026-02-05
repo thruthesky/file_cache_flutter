@@ -1986,4 +1986,7 @@ class LoJa extends Lo {
 
   @override
   String get travelSpotFortSantiago => 'サンティアゴ要塞';
+
+  @override
+  String get error_loading_chatroom => 'チャットルームの読み込み中にエラーが発生しました';
 }

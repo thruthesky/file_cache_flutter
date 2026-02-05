@@ -2631,5 +2631,9 @@
   "travelSpotFortSantiago": "산티아고요새",
   "@travelSpotFortSantiago": {
     "description": "Fort Santiago travel spot"
+  },
+  "error_loading_chatroom": "채팅방을 불러오는 중 오류가 발생했습니다",
+  "@error_loading_chatroom": {
+    "description": "Error message when chat room fails to load"
   }
 }

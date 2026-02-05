@@ -2020,4 +2020,7 @@ class LoEn extends Lo {
 
   @override
   String get travelSpotFortSantiago => 'Fort Santiago';
+
+  @override
+  String get error_loading_chatroom => 'Error loading chat room';
 }

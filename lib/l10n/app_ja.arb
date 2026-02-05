@@ -2056,5 +2056,6 @@
   "travelSpotPaoayChurch": "パオアイ教会",
   "travelSpotSantaMaria": "サンタマリア",
   "travelSpotMiagaoChurch": "ミアガオ教会",
-  "travelSpotFortSantiago": "サンティアゴ要塞"
+  "travelSpotFortSantiago": "サンティアゴ要塞",
+  "error_loading_chatroom": "チャットルームの読み込み中にエラーが発生しました"
 }

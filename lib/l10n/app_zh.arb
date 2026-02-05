@@ -2056,5 +2056,6 @@
   "travelSpotPaoayChurch": "抱威教堂",
   "travelSpotSantaMaria": "圣玛丽亚",
   "travelSpotMiagaoChurch": "米阿高教堂",
-  "travelSpotFortSantiago": "圣地亚哥堡"
+  "travelSpotFortSantiago": "圣地亚哥堡",
+  "error_loading_chatroom": "加载聊天室时出错"
 }

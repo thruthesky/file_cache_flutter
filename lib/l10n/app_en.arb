@@ -2484,5 +2484,9 @@
   "travelSpotFortSantiago": "Fort Santiago",
   "@travelSpotFortSantiago": {
     "description": "Fort Santiago travel spot"
+  },
+  "error_loading_chatroom": "Error loading chat room",
+  "@error_loading_chatroom": {
+    "description": "Error message when chat room fails to load"
   }
 }

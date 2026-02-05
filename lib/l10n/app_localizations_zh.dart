@@ -1980,4 +1980,7 @@ class LoZh extends Lo {
 
   @override
   String get travelSpotFortSantiago => '圣地亚哥堡';
+
+  @override
+  String get error_loading_chatroom => '加载聊天室时出错';
 }
