@@ -1660,6 +1660,12 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'To prevent outdated information, job posts older than 90 days are not displayed.'**
   String get expiredJobPostDescription;
+
+  /// Error message when chat room fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading chat room'**
+  String get error_loading_chatroom;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

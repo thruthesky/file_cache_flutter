@@ -890,4 +890,7 @@ class PhilgoTrEn extends PhilgoTr {
   @override
   String get expiredJobPostDescription =>
       'To prevent outdated information, job posts older than 90 days are not displayed.';
+
+  @override
+  String get error_loading_chatroom => 'Error loading chat room';
 }

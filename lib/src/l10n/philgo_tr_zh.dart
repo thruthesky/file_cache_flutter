@@ -867,6 +867,8 @@ class PhilgoTrZh extends PhilgoTr {
   String get expiredJobPost => '这是一个过期的招聘帖子';
 
   @override
-  String get expiredJobPostDescription =>
-      '为防止信息过时，超过90天的招聘帖子将不显示内容。';
+  String get expiredJobPostDescription => '为防止信息过时，超过90天的招聘帖子将不显示内容。';
+
+  @override
+  String get error_loading_chatroom => '加载聊天室时出错';
 }

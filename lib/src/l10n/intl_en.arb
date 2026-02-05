@@ -1054,5 +1054,9 @@
     "expiredJobPostDescription": "To prevent outdated information, job posts older than 90 days are not displayed.",
     "@expiredJobPostDescription": {
         "description": "Description shown when a job post is older than 90 days"
+    },
+    "error_loading_chatroom": "Error loading chat room",
+    "@error_loading_chatroom": {
+        "description": "Error message when chat room fails to load"
     }
 }

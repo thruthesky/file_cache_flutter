@@ -872,4 +872,7 @@ class PhilgoTrJa extends PhilgoTr {
   @override
   String get expiredJobPostDescription =>
       '古い情報の表示を防ぐため、90日以上経過した求人/求職投稿の内容は表示されません。';
+
+  @override
+  String get error_loading_chatroom => 'チャットルームの読み込み中にエラーが発生しました';
 }

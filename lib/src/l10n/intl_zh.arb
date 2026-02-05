@@ -256,5 +256,6 @@
     "blindedPostDescription": "此帖子因违反社区准则而被AI审核屏蔽。",
     "blindReason": "原因",
     "expiredJobPost": "这是一个过期的招聘帖子",
-    "expiredJobPostDescription": "为防止信息过时，超过90天的招聘帖子将不显示内容。"
+    "expiredJobPostDescription": "为防止信息过时，超过90天的招聘帖子将不显示内容。",
+    "error_loading_chatroom": "加载聊天室时出错"
 }

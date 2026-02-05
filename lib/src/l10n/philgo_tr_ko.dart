@@ -870,4 +870,7 @@ class PhilgoTrKo extends PhilgoTr {
   @override
   String get expiredJobPostDescription =>
       '잘못된 정보를 방지하기 위해, 90일 이상된 구인/구직 글은 내용을 표시하지 않습니다.';
+
+  @override
+  String get error_loading_chatroom => '채팅방을 불러오는 중 오류가 발생했습니다';
 }
