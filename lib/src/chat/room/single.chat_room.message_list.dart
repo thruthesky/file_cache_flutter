@@ -114,7 +114,7 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
 
             final message = ChatMessage.fromDataSnapshot(messageDoc);
             if (message.urls != null) {
-              for (final url in message.urls!) {
+              for (final url in message.urls!.reversed) {
                 if (!loadedMessageIds.contains(url)) {
                   loadedMessageIds.add(url);
                 }
