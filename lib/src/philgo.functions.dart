@@ -125,7 +125,8 @@ PhilgoUrlResult? parsePhilgoUrl(String url) {
     ///   - /?module=post&action=view&post_id=travel&idx=1275657361
     ///   - /?action=view&module=post&post_id=freetalk&category=한인총연합회&idx=1275655295
     ///   - /?page_no=853&action=view&module=post&post_id=buyandsell&idx=1275377734
-    final isPostView = path.contains('/post/view.php') ||
+    final isPostView =
+        path.contains('/post/view.php') ||
         // v4 패턴: ?뒤에 숫자만 있는 경우 (idx만 있으면 게시글 보기로 간주)
         // v4 pattern: only digits after ? (treat as post view if only idx exists)
         (uri.query.isNotEmpty && RegExp(r'^\d+$').hasMatch(uri.query)) ||
@@ -143,7 +144,7 @@ PhilgoUrlResult? parsePhilgoUrl(String url) {
     /// - /chat/room.php?id=xxx (단수형, 새 패턴)
     /// - /chat/rooms.php?id=xxx (복수형, 기존 패턴)
     final isChatRoom =
-        path.contains('/chat/room.php') || path.contains('/chat/rooms.php');
+        path.contains('/chat/index.php') || path.contains('/chat/index.php');
 
     /// 채팅방 ID 추출 (선택, String?)
     /// Extract chat room ID (optional, String?)
