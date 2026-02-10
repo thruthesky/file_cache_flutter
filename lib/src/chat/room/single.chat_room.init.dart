@@ -73,14 +73,14 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
     } catch (e, stack) {
       debugPrint('Error initializing chat room: $e');
       debugPrintStack(stackTrace: stack);
-      if (mounted) {
+      if (PhilgoConfig.globalContext.mounted) {
         showErrorSnackBar(
-          context,
-          PhilgoTr.of(context)!.error_loading_chatroom,
+          PhilgoConfig.globalContext,
+          PhilgoTr.of(PhilgoConfig.globalContext)!.error_loading_chatroom,
         );
         setState(() => isChatRoomLoading = false);
-        if (Navigator.canPop(context)) {
-          Navigator.of(context).pop();
+        if (Navigator.canPop(PhilgoConfig.globalContext)) {
+          Navigator.of(PhilgoConfig.globalContext).pop();
         }
       }
     }
