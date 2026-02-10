@@ -257,5 +257,8 @@
     "blindReason": "理由",
     "expiredJobPost": "古い求人/求職投稿です",
     "expiredJobPostDescription": "古い情報の表示を防ぐため、90日以上経過した求人/求職投稿の内容は表示されません。",
-    "error_loading_chatroom": "チャットルームの読み込み中にエラーが発生しました"
+    "error_loading_chatroom": "チャットルームの読み込み中にエラーが発生しました",
+    "invalid_chat_room_id": "無効なチャットルームID",
+    "invalid_chat_room_id_message": "チャットルームIDが無効または存在しません。",
+    "go_back_to_home": "ホームに戻る"
 }

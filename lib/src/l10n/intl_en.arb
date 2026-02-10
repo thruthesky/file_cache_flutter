@@ -1058,5 +1058,17 @@
     "error_loading_chatroom": "Error loading chat room",
     "@error_loading_chatroom": {
         "description": "Error message when chat room fails to load"
+    },
+    "invalid_chat_room_id": "Invalid Chat Room ID",
+    "@invalid_chat_room_id": {
+        "description": "Title displayed when chat room ID is invalid"
+    },
+    "invalid_chat_room_id_message": "The chat room ID is invalid or does not exist.",
+    "@invalid_chat_room_id_message": {
+        "description": "Message displayed when chat room ID is invalid"
+    },
+    "go_back_to_home": "Go Back to Home",
+    "@go_back_to_home": {
+        "description": "Button text to return to home screen"
     }
 }

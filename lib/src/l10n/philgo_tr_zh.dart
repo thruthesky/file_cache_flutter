@@ -871,4 +871,13 @@ class PhilgoTrZh extends PhilgoTr {
 
   @override
   String get error_loading_chatroom => '加载聊天室时出错';
+
+  @override
+  String get invalid_chat_room_id => '无效的聊天室ID';
+
+  @override
+  String get invalid_chat_room_id_message => '聊天室ID无效或不存在。';
+
+  @override
+  String get go_back_to_home => '返回首页';
 }

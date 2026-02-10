@@ -893,4 +893,14 @@ class PhilgoTrEn extends PhilgoTr {
 
   @override
   String get error_loading_chatroom => 'Error loading chat room';
+
+  @override
+  String get invalid_chat_room_id => 'Invalid Chat Room ID';
+
+  @override
+  String get invalid_chat_room_id_message =>
+      'The chat room ID is invalid or does not exist.';
+
+  @override
+  String get go_back_to_home => 'Go Back to Home';
 }

@@ -38,94 +38,26 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           );
         }
 
-        return ChatRoomInit(
-          id: widget.id,
-          loading: loading(),
-          onRoomReady: (init) {
-            return Scaffold(
-              appBar: PreferredSize(
-                preferredSize: Size.fromHeight(kToolbarHeight),
-                child: ChatRoomHeader(
-                  room: init.room,
-                  otherUser: init.otherUser,
-                  roomId: init.room.id,
-                  isSingleChat: init.isSingleChat,
-                  onEditTap: () => showDialog<bool>(
-                    context: context,
-                    builder: (context) => ChatRoomEdit(room: init.room),
-                  ),
-                  onLeave: () {
-                    leaveChatRoom(
-                      roomId: init.room.id,
-                      success: () {
-                        // Show success message
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              behavior: SnackBarBehavior.floating,
-                              content: Text(
-                                PhilgoTr.of(context)!.leftroom_successfully,
-                              ),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-
-                          if (Navigator.canPop(context)) {
-                            Navigator.of(context).pop();
-                          }
-                        }
-                      },
-                      error: (e) {
-                        debugPrint('Error leaving room: $e');
-
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              behavior: SnackBarBehavior.floating,
-                              content: Text(PhilgoTr.of(context)!.error),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      },
-                    );
-                    init.newMessageSubscription?.cancel();
-                  },
-                  onBackPressed: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.of(context).pop();
-                    } else {
-                      context.go(widget.homeRouteName);
-                    }
-                  },
-                ),
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(PhilgoTr.of(context)!.invalid_chat_room_id),
+          ),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 16,
+            children: [
+              Center(
+                child: Text(PhilgoTr.of(context)!.invalid_chat_room_id_message),
               ),
-              body: Column(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      // Dismiss keyboard when tapping on message list area
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-                      },
-                      // Allow scrolling and other interactions
-                      behavior: HitTestBehavior.translucent,
-                      child: ChatRoomMessageList(
-                        room: init.room,
-                        controller: messageListController,
-                      ),
-                    ),
-                  ),
-                  ChatRoomMessageInput(
-                    roomId: init.room.id,
-                    onSend: () {
-                      messageListController.scrollToBottom();
-                    },
-                  ),
-                ],
+              ElevatedButton(
+                onPressed: () {
+                  context.go(widget.homeRouteName);
+                },
+                child: Text(PhilgoTr.of(context)!.go_back_to_home),
               ),
-            );
-          },
+            ],
+          ),
         );
       },
 

@@ -1666,6 +1666,24 @@ abstract class PhilgoTr {
   /// In en, this message translates to:
   /// **'Error loading chat room'**
   String get error_loading_chatroom;
+
+  /// Title displayed when chat room ID is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Chat Room ID'**
+  String get invalid_chat_room_id;
+
+  /// Message displayed when chat room ID is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'The chat room ID is invalid or does not exist.'**
+  String get invalid_chat_room_id_message;
+
+  /// Button text to return to home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back to Home'**
+  String get go_back_to_home;
 }
 
 class _PhilgoTrDelegate extends LocalizationsDelegate<PhilgoTr> {

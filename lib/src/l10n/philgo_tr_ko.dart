@@ -873,4 +873,13 @@ class PhilgoTrKo extends PhilgoTr {
 
   @override
   String get error_loading_chatroom => '채팅방을 불러오는 중 오류가 발생했습니다';
+
+  @override
+  String get invalid_chat_room_id => '유효하지 않은 채팅방 ID';
+
+  @override
+  String get invalid_chat_room_id_message => '채팅방 ID가 유효하지 않거나 존재하지 않습니다.';
+
+  @override
+  String get go_back_to_home => '홈으로 돌아가기';
 }

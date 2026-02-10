@@ -875,4 +875,13 @@ class PhilgoTrJa extends PhilgoTr {
 
   @override
   String get error_loading_chatroom => 'チャットルームの読み込み中にエラーが発生しました';
+
+  @override
+  String get invalid_chat_room_id => '無効なチャットルームID';
+
+  @override
+  String get invalid_chat_room_id_message => 'チャットルームIDが無効または存在しません。';
+
+  @override
+  String get go_back_to_home => 'ホームに戻る';
 }
