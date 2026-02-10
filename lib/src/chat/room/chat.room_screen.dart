@@ -29,10 +29,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       ChatRoomMessageListController();
   @override
   Widget build(BuildContext context) {
-    return
-    //  Scaffold(
-    //   body:
-    Login(
+    return Login(
       builder: (uid) {
         if (isSingleChatRoom(widget.id) || isFirebaseUid(widget.id)) {
           return SingleChatRoom(
@@ -141,8 +138,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         ),
       ),
     );
-
-    // );
   }
 
   Widget loading() {

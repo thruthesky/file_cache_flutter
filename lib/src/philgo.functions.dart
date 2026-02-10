@@ -141,8 +141,8 @@ PhilgoUrlResult? parsePhilgoUrl(String url) {
 
     /// 채팅방 URL 패턴 체크
     /// Check chat room URL patterns
-    /// - /chat/room.php?id=xxx (단수형, 새 패턴)
-    /// - /chat/rooms.php?id=xxx (복수형, 기존 패턴)
+    /// - /chat/index.php?id=xxx (단수형, 새 패턴)
+    /// - /chat/index.php?id=xxx (복수형, 기존 패턴)
     final isChatRoom =
         path.contains('/chat/index.php') || path.contains('/chat/index.php');
 
