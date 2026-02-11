@@ -497,6 +497,9 @@ class PhilgoTrJa extends PhilgoTr {
   String get chat_room_unpinned => 'チャットルームの固定が解除されました';
 
   @override
+  String get chat_room_pinned => 'チャットルームが固定されました';
+
+  @override
   String get add_to_favorites => 'お気に入りに追加';
 
   @override

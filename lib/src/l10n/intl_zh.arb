@@ -145,6 +145,7 @@
     "unpin_chat_room_message": "您确定要取消固定此聊天室吗？",
     "unpin": "取消固定",
     "chat_room_unpinned": "聊天室已取消固定",
+    "chat_room_pinned": "聊天室已固定",
     "add_to_favorites": "添加到收藏夹",
     "no_name": "无名称",
     "added_to_folder": "已添加到 {folderName}",

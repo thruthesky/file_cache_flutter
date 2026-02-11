@@ -688,6 +688,10 @@
     "@chat_room_unpinned": {
         "description": "Success message after unpinning chat room"
     },
+    "chat_room_pinned": "Chat room pinned successfully",
+    "@chat_room_pinned": {
+        "description": "Success message after pinning chat room"
+    },
     "add_to_favorites": "Add to Favorites",
     "@add_to_favorites": {
         "description": "Title for add to favorites dialog"

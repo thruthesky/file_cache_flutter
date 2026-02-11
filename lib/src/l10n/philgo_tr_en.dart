@@ -512,6 +512,9 @@ class PhilgoTrEn extends PhilgoTr {
   String get chat_room_unpinned => 'Chat room unpinned successfully';
 
   @override
+  String get chat_room_pinned => 'Chat room pinned successfully';
+
+  @override
   String get add_to_favorites => 'Add to Favorites';
 
   @override

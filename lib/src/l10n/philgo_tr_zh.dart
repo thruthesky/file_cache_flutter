@@ -495,6 +495,9 @@ class PhilgoTrZh extends PhilgoTr {
   String get chat_room_unpinned => '聊天室已取消固定';
 
   @override
+  String get chat_room_pinned => '聊天室已固定';
+
+  @override
   String get add_to_favorites => '添加到收藏夹';
 
   @override

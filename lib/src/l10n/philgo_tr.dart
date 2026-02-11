@@ -971,6 +971,12 @@ abstract class PhilgoTr {
   /// **'Chat room unpinned successfully'**
   String get chat_room_unpinned;
 
+  /// Success message after pinning chat room
+  ///
+  /// In en, this message translates to:
+  /// **'Chat room pinned successfully'**
+  String get chat_room_pinned;
+
   /// Title for add to favorites dialog
   ///
   /// In en, this message translates to:

@@ -145,6 +145,7 @@
     "unpin_chat_room_message": "このチャットルームの固定を解除してもよろしいですか？",
     "unpin": "固定解除",
     "chat_room_unpinned": "チャットルームの固定が解除されました",
+    "chat_room_pinned": "チャットルームが固定されました",
     "add_to_favorites": "お気に入りに追加",
     "no_name": "名前なし",
     "added_to_folder": "{folderName}に追加されました",

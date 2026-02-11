@@ -497,6 +497,9 @@ class PhilgoTrKo extends PhilgoTr {
   String get chat_room_unpinned => '채팅방 고정이 해제되었습니다';
 
   @override
+  String get chat_room_pinned => '채팅방이 고정되었습니다';
+
+  @override
   String get add_to_favorites => '즐겨찾기에 추가';
 
   @override

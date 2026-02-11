@@ -164,6 +164,32 @@ class SingleChatRoomHeader extends StatelessWidget {
                         ),
                         no: () => Column(
                           children: [
+                            /// Pin/Unpin menu item - Real-time pin status
+                            ValueListenableBuilder<Set<String>>(
+                              valueListenable:
+                                  UserService.instance.pinnedChatRoomsStream,
+                              builder: (context, pinnedRooms, _) {
+                                final isPinned = pinnedRooms.contains(join.id);
+                                return _buildComicMenuItem(
+                                  context: context,
+                                  icon: FaIcon(
+                                    isPinned
+                                        ? FontAwesomeIcons.lightThumbtack
+                                        : FontAwesomeIcons.solidThumbtack,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  title: isPinned
+                                      ? PhilgoTr.of(context)!.unpin
+                                      : PhilgoTr.of(context)!.pin,
+                                  onTap: () async {
+                                    Navigator.of(context).pop();
+                                    await togglePinned(parentContext);
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 8),
+
                             /// Profile menu item
                             _buildComicMenuItem(
                               context: context,
@@ -301,6 +327,51 @@ class SingleChatRoomHeader extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// Toggle pin/unpin status for the chat room
+  /// Pin: Add to Firebase users/{uid}/pinnedChatRooms/{roomId}
+  /// Unpin: Remove from Firebase
+  Future<void> togglePinned(BuildContext context) async {
+    if (loginUid() == null) return;
+
+    try {
+      final ref = FirebaseDatabase.instance.ref(
+        'users/${myUid()}/pinnedChatRooms/${join.id}',
+      );
+
+      // Check current pin status
+      final isPinned = UserService.instance.pinnedChatRooms.contains(join.id);
+
+      if (isPinned) {
+        // Unpin: Remove from Firebase
+        await ref.remove();
+
+        if (context.mounted) {
+          showSuccessSnackBar(
+            context,
+            PhilgoTr.of(context)!.chat_room_unpinned,
+          );
+        }
+      } else {
+        // Pin: Set value to true in Firebase
+        await ref.set(true);
+
+        if (context.mounted) {
+          showSuccessSnackBar(
+            context,
+            PhilgoTr.of(context)!.chat_room_pinned,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showErrorSnackBar(
+          context,
+          PhilgoTr.of(context)!.error_with_message(e.toString()),
+        );
+      }
+    }
   }
 
   Widget buildRoomTitle(BuildContext context) {

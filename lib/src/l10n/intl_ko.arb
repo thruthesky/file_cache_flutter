@@ -145,6 +145,7 @@
     "unpin_chat_room_message": "이 채팅방의 고정을 해제하시겠습니까?",
     "unpin": "고정 해제",
     "chat_room_unpinned": "채팅방 고정이 해제되었습니다",
+    "chat_room_pinned": "채팅방이 고정되었습니다",
     "add_to_favorites": "즐겨찾기에 추가",
     "no_name": "이름 없음",
     "added_to_folder": "{folderName}에 추가되었습니다",
