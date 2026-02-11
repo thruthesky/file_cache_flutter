@@ -5,6 +5,28 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 class PostMasonryViewController {
   late PostMasonryViewState state;
   void add(Post post) {}
+
+  /// Remove a deleted post from the masonry grid immediately
+  ///
+  /// PagingController의 모든 페이지를 순회하며 해당 게시글을 제거합니다.
+  /// 서버 재요청 없이 클라이언트 캐시에서만 제거하므로 즉각적인 UI 반영이 가능합니다.
+  void remove(Post post) {
+    final controller = state.pagingController;
+    final currentState = controller.value;
+
+    if (currentState.pages == null || currentState.pages!.isEmpty) return;
+
+    final updatedPages = currentState.pages!.map((page) {
+      return page.where((p) => p.idx != post.idx).toList();
+    }).toList();
+
+    controller.value = PagingState<int, Post>(
+      pages: updatedPages,
+      keys: currentState.keys,
+      hasNextPage: currentState.hasNextPage,
+      isLoading: false,
+    );
+  }
 }
 
 /// Grid View for Posts (게시글 그리드 뷰)
@@ -64,9 +86,6 @@ class PostMasonryViewState extends State<PostMasonryView> {
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
     fetchPage: (pagekey) async {
-      /// 디버그: fetchPage 콜백 호출 확인
-      d('[PostMasonryView] fetchPage 호출 - page: $pagekey, postId: ${widget.postId}');
-
       /// API 호출로 게시글 목록 가져오기
       /// Fetch posts from API
       final res = await postList(
@@ -75,9 +94,6 @@ class PostMasonryViewState extends State<PostMasonryView> {
         postId: widget.postId,
         category: widget.category,
       );
-
-      /// 디버그: fetchPage 응답 확인
-      d('[PostMasonryView] fetchPage 응답 - page: $pagekey, posts: ${res.posts.length}, pointAds: ${res.pointAdvertisements.length}');
 
       if (_totalPostCount != res.post_count) {
         setState(() {
@@ -88,7 +104,6 @@ class PostMasonryViewState extends State<PostMasonryView> {
       /// 첫 페이지에서 포인트 광고 저장
       /// Save point advertisements from first page
       if (pagekey == 1 && mounted) {
-        d('[PostMasonryView] fetchPage에서 포인트 광고 업데이트 - ${res.pointAdvertisements.length}개');
         setState(() {
           _pointAdvertisements = res.pointAdvertisements;
         });
@@ -101,8 +116,6 @@ class PostMasonryViewState extends State<PostMasonryView> {
   @override
   void initState() {
     super.initState();
-
-    d('[PostMasonryView] initState - postId: ${widget.postId}, category: ${widget.category}');
 
     /// Attach controller if provided
     /// 컨트롤러가 제공된 경우 연결
@@ -120,8 +133,6 @@ class PostMasonryViewState extends State<PostMasonryView> {
     /// Refresh list when category changes
     if (oldWidget.postId != widget.postId ||
         oldWidget.category != widget.category) {
-      d('[PostMasonryView] didUpdateWidget - postId 변경: ${oldWidget.postId} -> ${widget.postId}, category 변경: ${oldWidget.category} -> ${widget.category}');
-
       /// 광고 목록 초기화 후 새로고침
       /// Clear ads and refresh
       setState(() {

@@ -51,6 +51,30 @@ class PostListViewController {
       isLoading: false,
     );
   }
+
+  /// Remove a deleted post from the cached pages immediately
+  ///
+  /// PagingController의 모든 페이지를 순회하며 해당 게시글을 제거합니다.
+  /// 서버 재요청 없이 클라이언트 캐시에서만 제거하므로 즉각적인 UI 반영이 가능합니다.
+  void remove(Post post) {
+    final controller = state.pagingController;
+    final currentState = controller.value;
+
+    // 캐시된 페이지가 없으면 무시
+    if (currentState.pages == null || currentState.pages!.isEmpty) return;
+
+    // 모든 페이지에서 해당 idx의 게시글 필터링 제거
+    final updatedPages = currentState.pages!.map((page) {
+      return page.where((p) => p.idx != post.idx).toList();
+    }).toList();
+
+    controller.value = PagingState<int, Post>(
+      pages: updatedPages,
+      keys: currentState.keys,
+      hasNextPage: currentState.hasNextPage,
+      isLoading: false,
+    );
+  }
 }
 
 /// Simple List View for Posts (간단한 게시글 리스트 뷰)
