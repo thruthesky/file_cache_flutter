@@ -313,21 +313,25 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         // Home - Navigate to main home screen and restore default navigation bar
         // 홈 - 메인 홈 화면으로 이동하고 기본 네비게이션 바 복원
-        navState.setHomeNavigation(HomeNavigationItem.home);
-        navState.setChatNavigation(ChatNavigationItem.singleChat);
+        navState.update(
+          homeNav: HomeNavigationItem.home,
+          chatNav: ChatNavigationItem.singleChat,
+        );
         break;
 
       case 1:
         // Forum - Navigate to forum screen and restore default navigation bar
         // 게시판 - 게시판 화면으로 이동하고 기본 네비게이션 바 복원
-        navState.setHomeNavigation(HomeNavigationItem.forum);
-        navState.setChatNavigation(ChatNavigationItem.singleChat);
+        navState.update(
+          homeNav: HomeNavigationItem.forum,
+          chatNav: ChatNavigationItem.singleChat,
+        );
         break;
 
       case 2:
         // Admin Chat - Enter admin's 1:1 chat room directly
         // 운영자채팅 - 운영자와 1:1 채팅방 바로 입장
-        navState.setChatNavigation(ChatNavigationItem.adminChat);
+        navState.update(chatNav: ChatNavigationItem.adminChat);
         ChatRoomScreen.push(context, UserService.instance.adminUserUid);
         break;
 
@@ -341,15 +345,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ChatSoundService.instance.playReceiveSound();
         }
 
-        navState.setChatNavigation(ChatNavigationItem.singleChat);
-        navState.setRoomOrder(RoomOrder.singleOrder);
+        navState.update(
+          chatNav: ChatNavigationItem.singleChat,
+          roomOrder: RoomOrder.singleOrder,
+        );
         break;
 
       case 4:
         // Menu - Navigate to menu screen and restore default navigation bar
         // 메뉴 - 메뉴 화면으로 이동하고 기본 네비게이션 바 복원
-        navState.setHomeNavigation(HomeNavigationItem.menu);
-        navState.setChatNavigation(ChatNavigationItem.singleChat);
+        navState.update(
+          homeNav: HomeNavigationItem.menu,
+          chatNav: ChatNavigationItem.singleChat,
+        );
         break;
     }
   }

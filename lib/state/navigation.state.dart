@@ -53,6 +53,19 @@ class NavigationState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Batch update multiple navigation properties with a single notifyListeners call
+  /// 여러 네비게이션 속성을 한 번의 notifyListeners 호출로 일괄 변경
+  void update({
+    HomeNavigationItem? homeNav,
+    ChatNavigationItem? chatNav,
+    String? roomOrder,
+  }) {
+    if (homeNav != null) this.homeNav = homeNav;
+    if (chatNav != null) this.chatNav = chatNav;
+    if (roomOrder != null) this.roomOrder = roomOrder;
+    notifyListeners();
+  }
+
   void openOpenChat() {
     homeNav = HomeNavigationItem.chat;
     roomOrder = RoomOrder.openOrder;
