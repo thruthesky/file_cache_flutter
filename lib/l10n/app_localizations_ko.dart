@@ -1985,5 +1985,6 @@ class LoKo extends Lo {
   String get travelSpotFortSantiago => '산티아고요새';
 
   @override
-  String get error_loading_chatroom => '채팅방을 불러오는 중 오류가 발생했습니다';
+  String get error_loading_chatroom =>
+      '채팅방을 정보를 가져오는 중 오류가 발생했습니다. 인터넷 연결이 되어져 있는지 확인을 해 주세요.';
 }

@@ -2632,7 +2632,7 @@
   "@travelSpotFortSantiago": {
     "description": "Fort Santiago travel spot"
   },
-  "error_loading_chatroom": "채팅방을 불러오는 중 오류가 발생했습니다",
+  "error_loading_chatroom": "채팅방을 정보를 가져오는 중 오류가 발생했습니다. 인터넷 연결이 되어져 있는지 확인을 해 주세요.",
   "@error_loading_chatroom": {
     "description": "Error message when chat room fails to load"
   }
