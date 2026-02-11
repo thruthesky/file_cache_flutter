@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -157,8 +156,6 @@ class CurrencyService {
   ///
   /// USD, PHP, KRW 각각에 대한 환율을 조회합니다.
   Future<ExchangeRateData> _fetchFromApi() async {
-    debugPrint('CurrencyService: API에서 환율 데이터 가져오는 중...');
-
     final usdRates = await _fetchRatesFromApi('USD', 'KRW,PHP');
     final phpRates = await _fetchRatesFromApi('PHP', 'KRW,USD');
     final krwRates = await _fetchRatesFromApi('KRW', 'PHP,USD');
@@ -183,7 +180,6 @@ class CurrencyService {
     /// 1. 캐시에서 먼저 로드 시도 (Try loading from cache first)
     final cachedData = await _cache.get(_cacheKey);
     if (cachedData != null) {
-      debugPrint('CurrencyService: 캐시에서 환율 데이터 로드 완료');
       _exchangeData = cachedData;
       return cachedData;
     }
@@ -253,7 +249,6 @@ class CurrencyService {
   Future<void> clearCache() async {
     await _cache.clear();
     _exchangeData = null;
-    debugPrint('CurrencyService: 캐시 삭제 완료');
   }
 
   /// 캐시 남은 시간 조회 (Get remaining cache time)

@@ -3988,6 +3988,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Error loading chat room'**
   String get error_loading_chatroom;
+
+  /// Login guide message on entry screen
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to use the PhilGo app.'**
+  String get entryLoginGuide;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

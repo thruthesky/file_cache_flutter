@@ -1983,4 +1983,7 @@ class LoZh extends Lo {
 
   @override
   String get error_loading_chatroom => '加载聊天室时出错';
+
+  @override
+  String get entryLoginGuide => '请登录以使用PhilGo应用。';
 }

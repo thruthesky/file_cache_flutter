@@ -22,8 +22,27 @@ import 'package:philgo_api/philgo_api.dart';
 class PostViewScreen extends StatefulWidget {
   static const String routeName = '/post-view';
 
+  /// 게시글 삭제 시 호출되는 글로벌 콜백
+  /// Global callback fired when a post is deleted from PostViewScreen
+  ///
+  /// PostViewScreen.push가 어디에서 호출되든 (ForumHome, PostCreateScreen 등)
+  /// 삭제된 게시글을 자동으로 캐시에서 제거할 수 있도록 함
+  /// 목록 화면(ForumHome)에서 initState에 설정하고 dispose에서 해제
+  static void Function(Post deletedPost)? onPostDeleted;
+
+  /// PostViewScreen으로 이동 (삭제 결과 자동 처리 포함)
+  /// Navigate to PostViewScreen with automatic delete result handling
+  ///
+  /// pop 결과가 Post 객체이면 삭제된 게시글이므로
+  /// onPostDeleted 콜백을 자동 호출하여 캐시에서 제거
   static Future<Post?> Function(BuildContext ctx, Post post) push =
-      (ctx, post) => ctx.push(routeName, extra: post);
+      (ctx, post) async {
+    final result = await ctx.push<Post?>(routeName, extra: post);
+    if (result != null) {
+      onPostDeleted?.call(result);
+    }
+    return result;
+  };
 
   static void Function(BuildContext ctx, Post post) pushReplacement =
       (ctx, post) => ctx.pushReplacement(routeName, extra: post);
@@ -244,7 +263,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
             }
           },
           onDeleteCompleted: (context) {
-            context.pop();
+            /// 삭제된 게시글을 pop 결과로 반환하여
+            /// 목록 화면에서 PagingController 캐시에서 제거할 수 있도록 함
+            context.pop(widget.post);
           },
         ),
         // 댓글 입력 박스를 하단에 고정
@@ -490,20 +511,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     final isBlinded = post?.isBlinded ?? false;
     final isMine = post?.isMine(context) ?? false;
 
-    // ========== 디버그 로그 시작 ==========
-    // DEBUG: 블라인드 처리 관련 값 확인
-    print('========== [PostViewScreen] 블라인드 체크 디버그 ==========');
-    print('[DEBUG] post?.idx: ${post?.idx}');
-    print('[DEBUG] post?.post_id: ${post?.post_id}');
-    print('[DEBUG] post?.category: ${post?.category}');
-    print('[DEBUG] post?.blind 원본값: "${post?.blind}"');
-    print('[DEBUG] post?.blind 타입: ${post?.blind.runtimeType}');
-    print('[DEBUG] isBlinded (계산값): $isBlinded');
-    print('[DEBUG] isMine: $isMine');
-    print('[DEBUG] post?.moderationReason: ${post?.moderationReason}');
-    print('=========================================================');
-    // ========== 디버그 로그 끝 ==========
-
     /// 만료된 구인/구직 글인지 확인 (90일 규칙)
     /// Check if this is an expired job post (90-day rule)
     final isExpiredJob = post?.isExpiredJobPost ?? false;
@@ -714,7 +721,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
               }
             },
             onDeleteCompleted: (context) {
-              context.pop();
+              /// 삭제된 게시글을 pop 결과로 반환하여
+              /// 목록 화면에서 PagingController 캐시에서 제거할 수 있도록 함
+              context.pop(widget.post);
             },
             onUpdated: (updated) => setState(() => post = updated),
           ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/widgets/post_view_option_menu.dart';
@@ -201,7 +200,10 @@ class _PostViewButtonsState extends State<PostViewButtons> {
                     if (confirm) {
                       await deletePost(widget.post.idx);
                       if (context.mounted) {
-                        context.pop();
+                        /// onDeleteCompleted 콜백을 통해 삭제 결과 전달
+                        /// context.pop() 직접 호출 대신 콜백 위임하여
+                        /// 목록 화면에서 캐시 제거 처리 가능하도록 함
+                        widget.onDeleteCompleted?.call(context);
                       }
                     }
                   },
@@ -226,7 +228,10 @@ class _PostViewButtonsState extends State<PostViewButtons> {
             }
           },
           onDeleteCompleted: (context) {
-            context.pop();
+            /// onDeleteCompleted 콜백을 통해 삭제 결과 전달
+            /// context.pop() 직접 호출 대신 콜백 위임하여
+            /// 목록 화면에서 캐시 제거 처리 가능하도록 함
+            widget.onDeleteCompleted?.call(context);
           },
         ),
       ],

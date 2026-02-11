@@ -1989,4 +1989,7 @@ class LoJa extends Lo {
 
   @override
   String get error_loading_chatroom => 'チャットルームの読み込み中にエラーが発生しました';
+
+  @override
+  String get entryLoginGuide => 'PhilGoアプリをご利用いただくにはログインしてください。';
 }

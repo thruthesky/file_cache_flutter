@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -97,17 +96,6 @@ class RouteLoggingObserver extends NavigatorObserver {
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    super.didPop(route, previousRoute);
-    if (previousRoute?.settings.name != null) {
-      developer.log(
-        '↩️ Go_ROUTE: Pop: ${previousRoute?.settings.name} BACK TO',
-        name: 'Router',
-      );
-    }
-  }
-
-  @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
     if (newRoute?.settings.name != null) {
@@ -158,10 +146,6 @@ final router = GoRouter(
     );
   },
   redirect: (context, state) {
-    developer.log(
-      '🔍 Go_ROUTE: Redirect 체크: path=${state.fullPath}, name=${state.name} matchedLocation=${state.matchedLocation} uri=${state.uri} uri.path=${state.uri.path} uri.query=${state.uri.query}',
-      name: 'Router',
-    );
     final uri = state.uri.toString();
     final url = parsePhilgoUrl(uri);
 
@@ -246,6 +230,13 @@ final router = GoRouter(
       TravelInfoScreen.routeName,
       FoodDeliveryScreen.routeName,
       BaedalKScreen.routeName,
+      // Entry 화면 퀵 메뉴 캐러셀에서 접근 가능한 정보성 화면
+      MustReadScreen.routeName,
+      TravelSpotsScreen.routeName,
+      ETravelScreen.routeName,
+      TravelVisaScreen.routeName,
+      GrabTaxiScreen.routeName,
+      MonthlyRentScreen.routeName,
     };
 
     if (publicRoutes.contains(state.fullPath)) {
@@ -328,20 +319,12 @@ final router = GoRouter(
             // 사용 후 초기화하여 다음 네비게이션에 영향 주지 않도록 함
             // Clear after use to prevent affecting next navigation
             navState.post = null;
-            developer.log(
-              '📱 Go_ROUTE: PostViewScreen - 딥링크에서 Post 로드: idx=${post?.idx}',
-              name: 'Router',
-            );
           }
         }
 
         // 3. Post가 없으면 홈으로 이동
         // Navigate to home if no Post available
         if (post == null) {
-          developer.log(
-            '⚠️ Go_ROUTE: PostViewScreen - Post 없음, 홈으로 이동',
-            name: 'Router',
-          );
           WidgetsBinding.instance.addPostFrameCallback((_) {
             context.go(HomeScreen.routeName);
           });
