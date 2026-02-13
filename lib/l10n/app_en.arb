@@ -2488,5 +2488,9 @@
   "error_loading_chatroom": "Error loading chat room",
   "@error_loading_chatroom": {
     "description": "Error message when chat room fails to load"
+  },
+  "entryLoginGuide": "Please log in to use the PhilGo app.",
+  "@entryLoginGuide": {
+    "description": "Login guide message on entry screen"
   }
 }

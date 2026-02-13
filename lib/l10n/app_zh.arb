@@ -2057,5 +2057,6 @@
   "travelSpotSantaMaria": "圣玛丽亚",
   "travelSpotMiagaoChurch": "米阿高教堂",
   "travelSpotFortSantiago": "圣地亚哥堡",
-  "error_loading_chatroom": "加载聊天室时出错"
+  "error_loading_chatroom": "加载聊天室时出错",
+  "entryLoginGuide": "请登录以使用PhilGo应用。"
 }

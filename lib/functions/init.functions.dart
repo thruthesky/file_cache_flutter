@@ -207,7 +207,6 @@ void initShorebirdCodePush() async {
   /// 릴리즈 모드에서만 동작 (디버그 모드에서 Shorebird 에러 발생 방지)
   /// Only works in release mode (prevents Shorebird errors in debug mode)
   if (!kReleaseMode) {
-    debugPrint('[Shorebird] 디버그 모드에서는 업데이트 확인을 건너뜁니다.');
     return;
   }
 
@@ -215,8 +214,6 @@ void initShorebirdCodePush() async {
     /// ShorebirdUpdater 인스턴스 생성 (Recommended API)
     /// Create ShorebirdUpdater instance (Recommended API)
     final updater = ShorebirdUpdater();
-
-    debugPrint('[Shorebird] 코드 푸시 초기화 완료 (30초 후 첫 확인, 이후 180초 주기)');
 
     /// [1단계] 최초 30초 후 첫 번째 업데이트 확인
     /// [Step 1] First update check after 30 seconds
@@ -230,15 +227,13 @@ void initShorebirdCodePush() async {
       }
     });
   } catch (e) {
-    debugPrint('[Shorebird] 초기화 오류: $e');
+    // Shorebird 초기화 오류 무시
   }
 }
 
 /// 180초 주기 업데이트 확인 타이머 시작
 /// Start periodic update check timer (180 seconds)
 void _startPeriodicUpdateCheck(ShorebirdUpdater updater) {
-  debugPrint('[Shorebird] 180초 주기 업데이트 확인 시작');
-
   _shorebirdTimer = Timer.periodic(const Duration(seconds: 180), (_) async {
     final hasUpdate = await _checkAndDownloadUpdate(updater);
 
@@ -261,16 +256,11 @@ Future<bool> _checkAndDownloadUpdate(ShorebirdUpdater updater) async {
     /// Check if a new patch version is available for download
     final status = await updater.checkForUpdate();
 
-    debugPrint('[Shorebird] 업데이트 상태: $status');
-
     if (status == UpdateStatus.outdated) {
-      debugPrint('[Shorebird] 업데이트 다운로드 시작...');
 
       /// 업데이트 다운로드
       /// Download update
       await updater.update();
-
-      debugPrint('[Shorebird] 업데이트 다운로드 완료');
 
       /// 다이얼로그 표시 (globalContext가 유효한 경우)
       /// Show dialog (if globalContext is valid)
@@ -283,7 +273,7 @@ Future<bool> _checkAndDownloadUpdate(ShorebirdUpdater updater) async {
 
     return false;
   } catch (e) {
-    debugPrint('[Shorebird] 업데이트 확인 오류: $e');
+    // Shorebird 업데이트 확인 오류 무시
     return false;
   }
 }

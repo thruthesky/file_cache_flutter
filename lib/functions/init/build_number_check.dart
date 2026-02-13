@@ -31,7 +31,6 @@ Timer? _periodicBuildCheckTimer;
 void initMinimalBuildNumberCheck() {
   // 최초 5초 후에 첫 번째 빌드 번호 체크 실행
   Timer(const Duration(seconds: 5), () async {
-    debugPrint('[BuildNumberCheck] 최초 빌드 번호 체크 시작');
     await _checkBuildNumber();
 
     // 첫 번째 체크 완료 후, 5분마다 주기적으로 체크 시작
@@ -39,11 +38,9 @@ void initMinimalBuildNumberCheck() {
     _periodicBuildCheckTimer = Timer.periodic(
       const Duration(minutes: 5),
       (timer) async {
-        debugPrint('[BuildNumberCheck] 주기적 빌드 번호 체크 (${timer.tick}회차)');
         await _checkBuildNumber();
       },
     );
-    debugPrint('[BuildNumberCheck] 5분 주기 백그라운드 체크 시작됨');
   });
 }
 
@@ -72,11 +69,6 @@ Future<void> _checkBuildNumber() async {
       minBuildNumber = versionInfo['app']?['ios']?['build_number'] ?? 0;
     }
 
-    debugPrint(
-      '[BuildNumberCheck] 현재 빌드 번호: $currentBuildNumber, '
-      'API 최소 요구 빌드 번호: $minBuildNumber',
-    );
-
     // 4. 현재 빌드 번호가 최소 요구 빌드 번호보다 낮으면 업그레이드 안내 다이얼로그 표시
     if (currentBuildNumber < minBuildNumber) {
       showUpgradeDialog();
@@ -84,7 +76,7 @@ Future<void> _checkBuildNumber() async {
   } catch (e) {
     // API 호출 실패 또는 파싱 오류 시 로그만 출력하고 종료
     // 네트워크 오류 등으로 인해 사용자 경험을 방해하지 않음
-    debugPrint('[BuildNumberCheck] 빌드 번호 체크 중 오류 발생: $e');
+    // 빌드 번호 체크 중 오류 발생 시 무시
   }
 }
 
@@ -93,7 +85,6 @@ Future<void> _checkBuildNumber() async {
 void showUpgradeDialog() {
   // globalContext가 마운트되어 있는지 확인
   if (!globalNavigatorKey.currentContext!.mounted) {
-    debugPrint('[BuildNumberCheck] Context가 마운트되어 있지 않습니다.');
     return;
   }
 
@@ -270,10 +261,8 @@ void _openStore() {
   } else if (Platform.isIOS) {
     storeUrl = AppConfig.appstoreUrl;
   } else {
-    debugPrint('[BuildNumberCheck] 지원하지 않는 플랫폼입니다.');
     return;
   }
 
-  debugPrint('[BuildNumberCheck] 스토어 열기: $storeUrl');
   launchApp(storeUrl, true);
 }

@@ -8,6 +8,16 @@ import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/services/currency/currency.service.dart';
 import 'package:philgo/services/weather/weather.model.dart';
 import 'package:philgo/services/weather/weather.service.dart';
+import 'package:philgo/screens/guide/must_read.screen.dart';
+import 'package:philgo/screens/guide/travel_spots.screen.dart';
+import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
+import 'package:philgo/screens/info/essential/essential_info.screen.dart';
+import 'package:philgo/screens/info/housing/monthly_rent.screen.dart';
+import 'package:philgo/screens/info/immigration/e_travel.screen.dart';
+import 'package:philgo/screens/info/immigration/travel_visa.screen.dart';
+import 'package:philgo/screens/info/monthly/monthly_living.screen.dart';
+import 'package:philgo/screens/info/transportation/grab_taxi.screen.dart';
+import 'package:philgo/screens/info/travel/travel_info.screen.dart';
 import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -118,9 +128,7 @@ class _EntryScreenState extends State<EntryScreen> {
   /// API 호출 실패 시에도 UI는 정상 표시됩니다 (notices는 빈 배열로 표시).
   Future<void> _fetchLatestNotices() async {
     try {
-      debugPrint('[EntryScreen] _fetchLatestNotices 시작');
       final notices = await _philgoService.loadLatestNotices(limit: 10);
-      debugPrint('[EntryScreen] _fetchLatestNotices 성공: ${notices.length}개');
 
       if (mounted) {
         setState(() {
@@ -128,10 +136,8 @@ class _EntryScreenState extends State<EntryScreen> {
           _isLoadingNotices = false;
         });
       }
-    } catch (e, stackTrace) {
+    } catch (_) {
       // API 호출 실패 시 로딩 상태만 해제
-      debugPrint('[EntryScreen] _fetchLatestNotices 에러: $e');
-      debugPrint('[EntryScreen] 스택 트레이스: $stackTrace');
       if (mounted) {
         setState(() => _isLoadingNotices = false);
       }
@@ -144,13 +150,7 @@ class _EntryScreenState extends State<EntryScreen> {
   /// 서버에서 1시간 동안 캐시됩니다.
   Future<void> _fetchHomepageStats() async {
     try {
-      debugPrint('[EntryScreen] _fetchHomepageStats 시작');
       final stats = await _philgoService.getHomepageStats();
-      debugPrint(
-        '[EntryScreen] _fetchHomepageStats 성공: '
-        'totalUserCount=${stats.totalUserCount}, '
-        'totalPostCount=${stats.totalPostCount}',
-      );
 
       if (mounted) {
         setState(() {
@@ -158,10 +158,8 @@ class _EntryScreenState extends State<EntryScreen> {
           _isLoadingStats = false;
         });
       }
-    } catch (e, stackTrace) {
+    } catch (_) {
       // API 호출 실패 시 로딩 상태만 해제
-      debugPrint('[EntryScreen] _fetchHomepageStats 에러: $e');
-      debugPrint('[EntryScreen] 스택 트레이스: $stackTrace');
       if (mounted) {
         setState(() => _isLoadingStats = false);
       }
@@ -1147,6 +1145,36 @@ class _EntryScreenState extends State<EntryScreen> {
     );
   }
 
+  /// 로그인 다이얼로그 표시 (Show login dialog)
+  ///
+  /// 로그인 버튼과 안내 텍스트에서 공통으로 사용합니다.
+  void _showLoginDialog(BuildContext context, ColorScheme scheme) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel:
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: scheme.scrim.withValues(alpha: 0.5),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, _, _) => const EntryLoginScreen(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          ),
+          child: ScaleTransition(
+            scale: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutBack,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = Lo.of(context)!;
@@ -1193,57 +1221,195 @@ class _EntryScreenState extends State<EntryScreen> {
               // 오늘 환율, 오늘 날씨, 회원 수, 글 수를 한 줄로 표시
               _buildInfoSection(context, l10n, theme, scheme),
 
-              const SizedBox(height: 48),
+              const SizedBox(height: 24),
 
-              // 로그인 버튼 - Comic 스타일 디자인 (large 텍스트, pill 형태)
-              // ComicButton 위젯을 사용하여 재사용 가능한 Comic 스타일 버튼 적용
-              // customPadding: 좌우 패딩을 더 넓게 (48), 상하는 large 기준 유지 (20)
+              // === 퀵 메뉴 캐러셀 (Quick Menu Carousel) ===
+              // 로그인 없이 각종 정보 화면에 접근할 수 있는 가로 스크롤 메뉴
+              _buildQuickMenuCarousel(context, l10n, theme, scheme),
+
+              const SizedBox(height: 24),
+
+              // 로그인 버튼 - Comic 스타일 Primary 디자인 (large 텍스트, pill 형태)
+              // primary 배경색으로 강조하여 시각적 구분 향상
               ComicButton(
                 rounded: ComicButtonRounded.full,
                 textSize: ComicButtonTextSize.large,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
+                borderColor: scheme.primary,
                 customPadding: const EdgeInsets.symmetric(
                   horizontal: 48,
                   vertical: 20,
                 ),
-                onPressed: () {
-                  showGeneralDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    barrierLabel: MaterialLocalizations.of(
-                      context,
-                    ).modalBarrierDismissLabel,
-                    barrierColor: scheme.scrim.withValues(alpha: 0.5),
-                    transitionDuration: const Duration(milliseconds: 300),
-                    pageBuilder:
-                        (
-                          BuildContext buildContext,
-                          Animation animation,
-                          Animation secondaryAnimation,
-                        ) {
-                          return const EntryLoginScreen();
-                        },
-                    transitionBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeInOut,
-                            ),
-                            child: ScaleTransition(
-                              scale: CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeOutBack,
-                              ),
-                              child: child,
-                            ),
-                          );
-                        },
-                  );
-                },
-                child: Text(l10n.login),
+                onPressed: () => _showLoginDialog(context, scheme),
+                // titleMedium 스타일로 한 단계 크게 표시
+                child: Text(
+                  l10n.login,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: scheme.onPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // 로그인 안내 텍스트 - 탭 시 로그인 다이얼로그 표시
+              GestureDetector(
+                onTap: () => _showLoginDialog(context, scheme),
+                child: Text(
+                  l10n.entryLoginGuide,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Entry 화면 퀵 메뉴 캐러셀 빌드 (Build entry screen quick menu carousel)
+  ///
+  /// 로그인하지 않고도 각종 정보 화면에 접근할 수 있는 가로 스크롤 메뉴입니다.
+  /// 10개의 아이콘+라벨 항목을 가로 스크롤하여 볼 수 있습니다.
+  Widget _buildQuickMenuCarousel(
+    BuildContext context,
+    Lo l10n,
+    ThemeData theme,
+    ColorScheme scheme,
+  ) {
+    /// 퀵 메뉴 아이템 목록 정의 (Quick menu item list)
+    /// 각 항목: (아이콘, 라벨, 탭 콜백)
+    final items = [
+      (
+        icon: FontAwesomeIcons.starShooting,
+        label: l10n.quickMenuMustReadInfo,
+        onTap: () => MustReadScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.lightMapLocationDot,
+        label: l10n.quickMenuTravelSpots,
+        onTap: () => TravelSpotsScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.lightPhoneVolume,
+        label: l10n.quickMenuEmergency,
+        onTap: () => EmergencyContactScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.mobileScreenButton,
+        label: l10n.immigrationETravel,
+        onTap: () => ETravelScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.lightCircleInfo,
+        label: l10n.quickMenuEssentialInfo,
+        onTap: () => EssentialInfoScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.planeDeparture,
+        label: l10n.immigrationTravelVisa,
+        onTap: () => TravelVisaScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.mobileScreen,
+        label: l10n.transportationGrabTaxi,
+        onTap: () => GrabTaxiScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.lightCalendarDays,
+        label: l10n.quickMenuMonthlyLiving,
+        onTap: () => MonthlyLivingScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.lightUmbrellaBeach,
+        label: l10n.quickMenuTravel,
+        onTap: () => TravelInfoScreen.push(context),
+      ),
+      (
+        icon: FontAwesomeIcons.key,
+        label: l10n.housingMonthlyRent,
+        onTap: () => MonthlyRentScreen.push(context),
+      ),
+    ];
+
+    return SingleChildScrollView(
+      /// 가로 스크롤 활성화 (Enable horizontal scrolling)
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: items.indexed
+            .map(
+              (entry) => _buildCarouselItem(
+                icon: entry.$2.icon,
+                label: entry.$2.label,
+                onTap: entry.$2.onTap,
+                theme: theme,
+                scheme: scheme,
+                // 첫 번째 아이템(필수 정보)에 tertiaryContainer 강조색 적용
+                // 홈 퀵 메뉴와 동일한 강조 패턴 사용
+                backgroundColor: entry.$1 == 0
+                    ? scheme.tertiaryContainer
+                    : null,
+                iconColor: entry.$1 == 0 ? scheme.onTertiaryContainer : null,
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  /// 캐러셀 개별 아이템 빌드 (Build individual carousel item)
+  ///
+  /// 48x48 아이콘 컨테이너 + 라벨 텍스트로 구성됩니다.
+  /// 홈 화면 퀵 메뉴와 동일한 디자인 패턴을 사용합니다.
+  Widget _buildCarouselItem({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required ThemeData theme,
+    required ColorScheme scheme,
+    Color? backgroundColor,
+    Color? iconColor,
+  }) {
+    return InkWell(
+      /// 탭 시 해당 정보 화면으로 이동 (Navigate to info screen on tap)
+      onTap: onTap,
+
+      /// 둥근 모서리 ripple 효과 (Rounded corner ripple effect)
+      borderRadius: BorderRadius.circular(12),
+
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 아이콘 컨테이너 - 48x48, primaryContainer 배경 (Icon container)
+            /// backgroundColor가 지정되면 강조 색상 사용
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: backgroundColor ?? scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: FaIcon(
+                  icon,
+                  size: 20,
+                  color: iconColor ?? scheme.onPrimaryContainer,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            /// 메뉴 라벨 (Menu label)
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: scheme.onSurface,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:file_cache_flutter/file_cache_flutter.dart';
@@ -104,8 +103,6 @@ class WeatherService {
       'forecast_days=6',
     );
 
-    debugPrint('WeatherService: API 호출 - ${city.nameKo}');
-
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -140,8 +137,6 @@ class WeatherService {
   ///
   /// 5개 도시 데이터를 병렬로 조회하여 성능을 최적화합니다.
   Future<WeatherData> _fetchFromApi() async {
-    debugPrint('WeatherService: API에서 날씨 데이터 가져오는 중...');
-
     /// 병렬로 모든 도시 데이터 조회 (Fetch all cities in parallel)
     final futures = PhilippineCity.cities.map(_fetchCityWeather);
     final results = await Future.wait(futures);
@@ -151,8 +146,6 @@ class WeatherService {
     for (final cityData in results) {
       cities[cityData.cityId] = cityData;
     }
-
-    debugPrint('WeatherService: API 호출 완료 - ${cities.length}개 도시');
 
     return WeatherData(cities: cities, fetchedAt: DateTime.now());
   }
@@ -169,7 +162,6 @@ class WeatherService {
     /// 1. 캐시에서 먼저 로드 시도 (Try loading from cache first)
     final cachedData = await _cache.get(_cacheKey);
     if (cachedData != null) {
-      debugPrint('WeatherService: 캐시에서 날씨 데이터 로드 완료');
       _weatherData = cachedData;
       return cachedData;
     }
@@ -264,7 +256,6 @@ class WeatherService {
   Future<void> clearCache() async {
     await _cache.clear();
     _weatherData = null;
-    debugPrint('WeatherService: 캐시 삭제 완료');
   }
 
   /// 캐시 남은 시간 조회 (Get remaining cache time)
@@ -288,14 +279,11 @@ class WeatherService {
     /// 1. 캐시에서 먼저 로드 시도 (Try loading from cache first)
     final cachedData = await _manilaCache.get(_manilaCacheKey);
     if (cachedData != null) {
-      debugPrint('WeatherService: 캐시에서 마닐라 현재 날씨 로드 완료');
       _manilaCurrentWeather = cachedData;
       return cachedData;
     }
 
     /// 2. 캐시가 없거나 만료되면 API 호출 (Call API if cache miss)
-    debugPrint('WeatherService: API에서 마닐라 현재 날씨 가져오는 중...');
-
     /// 마닐라 좌표 (Manila coordinates)
     const manila = PhilippineCity(
       id: 'manila',
@@ -336,10 +324,6 @@ class WeatherService {
       await _manilaCache.set(_manilaCacheKey, weather);
 
       _manilaCurrentWeather = weather;
-      debugPrint(
-        'WeatherService: 마닐라 현재 날씨 - ${temperature.round()}°C, '
-        '${WeatherCodeHelper.getDescription(weatherCode)}',
-      );
 
       return weather;
     } else {

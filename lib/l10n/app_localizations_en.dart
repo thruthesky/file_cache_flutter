@@ -2023,4 +2023,7 @@ class LoEn extends Lo {
 
   @override
   String get error_loading_chatroom => 'Error loading chat room';
+
+  @override
+  String get entryLoginGuide => 'Please log in to use the PhilGo app.';
 }

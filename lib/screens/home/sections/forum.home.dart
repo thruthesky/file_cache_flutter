@@ -60,6 +60,31 @@ class _ForumHomeState extends State<ForumHome> {
     forumSelection = ForumSelection(
       postId: PhilgoCategory.majorCategories(includeTemp: kDebugMode).first,
     );
+
+    /// 글로벌 삭제 콜백 설정
+    /// PostViewScreen.push가 어디에서 호출되든 (PostCreateScreen, 딥링크 등)
+    /// 삭제된 게시글을 PagingController 캐시에서 즉시 제거
+    PostViewScreen.onPostDeleted = _handlePostDeleted;
+  }
+
+  @override
+  void dispose() {
+    /// 글로벌 삭제 콜백 해제
+    PostViewScreen.onPostDeleted = null;
+    super.dispose();
+  }
+
+  /// 게시글 삭제 시 PagingController 캐시에서 제거
+  /// Remove deleted post from PagingController cache
+  void _handlePostDeleted(Post deletedPost) {
+    if (isMasonryForum) {
+      masonryController.remove(deletedPost);
+    } else {
+      listController.remove(deletedPost);
+    }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   /// 카테고리 변경 핸들러 (ForumHeader에서 콜백으로 사용)
@@ -280,6 +305,9 @@ class _ForumHomeState extends State<ForumHome> {
 
   /// 게시물 탭 시 상세 화면으로 이동
   /// Navigate to post detail screen when tapped
+  ///
+  /// 삭제 처리는 PostViewScreen.push 내부의 글로벌 콜백(onPostDeleted)이
+  /// 자동으로 _handlePostDeleted를 호출하여 캐시에서 제거함
   Future<void> onPostTapped(Post post) async {
     await PostViewScreen.push(context, post);
 

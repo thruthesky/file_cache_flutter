@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:philgo/widgets/home/home_post_section_shimmer.dart';
 import 'package:philgo/widgets/home/main/carousel_dot_indicator.dart';
 import 'package:philgo/widgets/home/home_post_section.dart';
+import 'package:philgo/screens/home/home.globals.dart';
+import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 게시판 설정 데이터 클래스 (Post Section Configuration)
@@ -77,6 +79,19 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
   /// 값: 해당 카테고리의 Post 목록
   Map<String, List<Post>>? _postsData;
 
+  /// NavigationState 참조 (Provider reference)
+  /// didChangeDependencies에서 한 번만 등록하고, dispose에서 제거합니다.
+  NavigationState? _navigationState;
+
+  /// NavigationState 변화 감지 리스너 (Navigation change listener)
+  /// 다른 탭에서 홈으로 돌아올 때 _loadAllPosts()를 호출합니다.
+  VoidCallback? _navigationListener;
+
+  /// 이전 homeNav 값 추적 (Previous homeNav value tracking)
+  /// 다른 탭에서 홈으로 전환된 것인지 판별하는데 사용합니다.
+  /// 이미 홈인 상태에서 홈 탭을 다시 클릭하면 새로고침하지 않습니다.
+  HomeNavigationItem? _lastKnownHomeNav;
+
   /// 게시판 목록 (2개씩 쌍으로 구성) (Board pairs configuration)
   ///
   /// 각 카로셀 아이템에 표시될 게시판 쌍을 정의합니다.
@@ -124,6 +139,35 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
     _loadAllPosts();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    /// 첫 호출 시에만 NavigationState에 listener 등록 (Register listener only on first call)
+    /// IndexedStack 구조에서 위젯이 dispose되지 않으므로,
+    /// NavigationState의 homeNav 변화를 감지하여 다른 탭에서 홈으로 돌아올 때
+    /// _loadAllPosts()를 재호출합니다.
+    if (_navigationState == null) {
+      _navigationState = NavigationState.of(context, listen: false);
+      _lastKnownHomeNav = _navigationState!.homeNav;
+
+      _navigationListener = () {
+        final currentHomeNav = _navigationState!.homeNav;
+
+        /// homeNav가 다른 값에서 home으로 변경된 경우에만 데이터 새로고침
+        /// Only refresh when homeNav changes from another tab to home
+        if (currentHomeNav == HomeNavigationItem.home &&
+            _lastKnownHomeNav != HomeNavigationItem.home &&
+            mounted) {
+          _loadAllPosts();
+        }
+        _lastKnownHomeNav = currentHomeNav;
+      };
+
+      _navigationState!.addListener(_navigationListener!);
+    }
+  }
+
   /// 모든 카테고리의 게시글 데이터를 한 번에 로드 (Load all categories posts at once)
   ///
   /// get_latest_posts API를 사용하여 모든 게시판/카테고리의 최신 글을
@@ -157,6 +201,11 @@ class _LatestPostsSectionState extends State<LatestPostsSection> {
 
   @override
   void dispose() {
+    /// NavigationState 리스너 제거 (Remove NavigationState listener)
+    if (_navigationListener != null) {
+      _navigationState?.removeListener(_navigationListener!);
+    }
+
     /// 자동 슬라이딩 타이머 취소 (Cancel auto-slide timer)
     _autoSlideTimer?.cancel();
 
