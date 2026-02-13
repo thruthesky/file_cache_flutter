@@ -33,6 +33,28 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
     super.dispose();
   }
 
+  /// Navigate to previous image
+  void _goToPreviousImage() {
+    if (_currentIndex > 0) {
+      _pageController.animateToPage(
+        _currentIndex - 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  /// Navigate to next image
+  void _goToNextImage() {
+    if (_currentIndex < widget.imageUrls.length - 1) {
+      _pageController.animateToPage(
+        _currentIndex + 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,19 +70,50 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
       ),
       body: Column(
         children: [
-          /// Main image viewer with zoom capability
+          /// Main image viewer with zoom capability and navigation buttons
           Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              itemCount: widget.imageUrls.length,
-              itemBuilder: (context, index) {
-                return _buildImagePage(widget.imageUrls[index]);
-              },
+            child: Stack(
+              children: [
+                // PageView for swiping between images
+                PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  itemCount: widget.imageUrls.length,
+                  itemBuilder: (context, index) {
+                    return _buildImagePage(widget.imageUrls[index]);
+                  },
+                ),
+                // Left navigation button
+                if (_currentIndex > 0)
+                  Positioned(
+                    left: 16,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: _buildNavigationButton(
+                        icon: Icons.chevron_left,
+                        onPressed: _goToPreviousImage,
+                      ),
+                    ),
+                  ),
+                // Right navigation button
+                if (_currentIndex < widget.imageUrls.length - 1)
+                  Positioned(
+                    right: 16,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: _buildNavigationButton(
+                        icon: Icons.chevron_right,
+                        onPressed: _goToNextImage,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
           /// Bottom thumbnail navigation bar
@@ -124,6 +177,28 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
         itemBuilder: (context, index) {
           return _buildThumbnailItem(index);
         },
+      ),
+    );
+  }
+
+  /// Builds navigation button for left/right navigation
+  Widget _buildNavigationButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 150),
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white, size: 32),
+        onPressed: onPressed,
+        padding: const EdgeInsets.all(12),
+        constraints: const BoxConstraints(
+          minWidth: 56,
+          minHeight: 56,
+        ),
       ),
     );
   }

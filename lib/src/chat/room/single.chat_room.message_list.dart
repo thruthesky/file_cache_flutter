@@ -36,7 +36,6 @@ class SingleChatRoomMessageList extends StatefulWidget {
 
 class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
   final ScrollController scrollController = ScrollController();
-  final List<String> loadedMessageIds = [];
 
   @override
   void initState() {
@@ -48,6 +47,30 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
   void dispose() {
     scrollController.dispose();
     super.dispose();
+  }
+
+  /// Extract all image URLs from the current messages
+  /// Returns a map with unique keys to preserve duplicate URLs
+  /// Key format: 'messageId_imageIndex' to ensure uniqueness
+  Map<String, String> _extractAllImageUrls(List<DataSnapshot> messageDocs) {
+    final Map<String, String> allImageUrls = {};
+
+    // Iterate through messages as they are (newest first from ListView)
+    for (final messageDoc in messageDocs) {
+      final message = ChatMessage.fromDataSnapshot(messageDoc);
+      if (message.urls != null && message.urls!.isNotEmpty) {
+        // Add all URLs from this message in reverse order
+        // This preserves duplicates by using message ID and index
+        for (int i = 0; i < message.urls!.length; i++) {
+          // Access URLs in reverse order to maintain proper display order
+          final url = message.urls![message.urls!.length - 1 - i];
+          final key = '${message.id}_$i';
+          allImageUrls[key] = url;
+        }
+      }
+    }
+
+    return allImageUrls;
   }
 
   @override
@@ -113,13 +136,6 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
             final messageDoc = snapshot.docs[index];
 
             final message = ChatMessage.fromDataSnapshot(messageDoc);
-            if (message.urls != null) {
-              for (final url in message.urls!.reversed) {
-                if (!loadedMessageIds.contains(url)) {
-                  loadedMessageIds.add(url);
-                }
-              }
-            }
 
             final isCurrentUser = message.senderUid == myUid();
 
@@ -154,14 +170,26 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
                   roomBlocksAdvertisement: false, // room.blockAdvertisement,
                   roomId: widget.roomId,
                   isSingleChat: true,
-                  onImageTap: (String url) {
-                    Navigator.push(
+                  onImageTap: (String url) async {
+                    // Extract all image URLs from current messages as a map
+                    final allImageUrlsMap = _extractAllImageUrls(snapshot.docs);
+
+                    // Convert map values to list to preserve order including duplicates
+                    final imageUrlsList = allImageUrlsMap.values.toList();
+
+                    // Find the index of the tapped image in the list
+                    final initialIndex = imageUrlsList.indexOf(url);
+
+                    // Use await to prevent widget rebuild on navigation back
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => FullScreenImageViewer(
-                          imageUrls: loadedMessageIds,
-                          initialIndex: loadedMessageIds.indexOf(url),
+                          imageUrls: imageUrlsList,
+                          initialIndex: initialIndex >= 0 ? initialIndex : 0,
                         ),
+                        // Maintain the route state to avoid rebuilding previous screen
+                        maintainState: true,
                       ),
                     );
                   },

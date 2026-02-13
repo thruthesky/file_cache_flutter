@@ -349,11 +349,14 @@ class ChatRoomMessageBubble extends StatelessWidget {
     BuildContext context,
     List<String> urls,
     int initialIndex,
-  ) {
-    Navigator.of(context).push(
+  ) async {
+    // Use await to prevent widget rebuild on navigation back
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
             FullScreenImageViewer(imageUrls: urls, initialIndex: initialIndex),
+        // Maintain the route state to avoid rebuilding previous screen
+        maintainState: true,
       ),
     );
   }
