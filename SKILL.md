@@ -57,6 +57,9 @@ description: "본 스킬은 Flutter 프레임워크로 앱을 개발하는 데 �
 13. **카카오톡 연동 요청 시**: [KakaoTalk 문서](./references/kakaotalk-friend-add.md) 참조
     - 키워드: 카카오톡, KakaoTalk, 오픈채팅, 1:1 채팅 링크
 
+14. **공유 기능 요청 시**: [Share Plus 문서](./references/share-plus.md) 참조
+    - 키워드: 공유, share, 공유 버튼, share_plus, SharePlus, 외부 앱 공유, Share Sheet
+
 ## Core Principles
 
 ### 필수 규칙
@@ -138,6 +141,7 @@ elevation: 0                                   // 플랫 디자인
 |------|------|
 | [concurrency-and-isolates.md](./references/concurrency-and-isolates.md) | Dart Isolate, UI Jank 방지, 비동기 처리 |
 | [kakaotalk-friend-add.md](./references/kakaotalk-friend-add.md) | 카카오톡 오픈채팅 연동, 1:1 채팅 링크 처리 |
+| [share-plus.md](./references/share-plus.md) | share_plus 패키지, 텍스트/파일/URI 공유, iPad 호환, 게시글 공유 패턴 |
 
 ## 필수 pub.dev 패키지
 
