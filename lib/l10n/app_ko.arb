@@ -125,7 +125,7 @@
   "addCompany": "업체 추가",
   "companyDirectoryDescription": "업체를 등록하면 구글, 네이버 등에 검색되어 더 많은 고객에게 노출됩니다.",
   "registerCompany": "등록",
-  "updateCompany": "업체 수정",
+  "updateCompany": "업체 정보 저장",
   "companiesRegistered": "{count, plural, =0{총 0개의 업체가 등록되어 있습니다.} =1{총 1개의 업체가 등록되어 있습니다.} other{총 {count}개의 업체가 등록되어 있습니다.}}",
   "viewMore": "더보기",
   "showLess": "숨기기",
@@ -279,39 +279,40 @@
   "noCompaniesInCategory": "{categoryName} 카테고리에 등록된 업체가 아직 없습니다.",
   "editMyCompany": "내 업체 수정",
   "addMyCompany": "내 업체 추가",
+  "viewMyCompany": "내 업소 보기",
   "allCategories": "전체",
   "publicOffice": "공공기관",
   "publicOfficeDesc": "정부 서비스",
   "education": "교육",
   "educationDesc": "학교 및 학습",
-  "foodAndDrink": "음식 & 음료",
+  "foodAndDrink": "음식",
   "foodAndDrinkDesc": "레스토랑 및 카페",
   "transportation": "교통",
   "transportationDesc": "대중교통 및 개인 교통",
-  "healthAndHospitals": "의료 & 병원",
+  "healthAndHospitals": "병원",
   "healthAndHospitalsDesc": "클리닉 및 진료",
-  "shoppingAndMarts": "쇼핑 & 마트",
+  "shoppingAndMarts": "마트",
   "shoppingAndMartsDesc": "소매 및 식료품",
-  "bankingAndFinance": "은행 & 금융",
+  "bankingAndFinance": "은행환전",
   "bankingAndFinanceDesc": "금융 기관",
   "gadgets": "가전제품",
   "gadgetsDesc": "기술 및 기기",
-  "travelAndTourism": "여행 & 관광",
+  "travelAndTourism": "여행",
   "travelAndTourismDesc": "여행지 및 예약",
   "hotels": "호텔",
   "hotelsDesc": "숙박 시설",
   "carRental": "렌트카",
   "carRentalDesc": "차량 대여 서비스",
-  "beautyAndWellness": "미용 & 웰빙",
+  "beautyAndWellness": "미용",
   "beautyAndWellnessDesc": "미용실 및 자기 관리",
   "realEstate": "부동산",
   "realEstateDesc": "부동산 및 주택",
-  "entertainment": "엔터테인먼트",
+  "entertainment": "유흥",
   "entertainmentDesc": "노래방 및 오락",
-  "spaAndRelaxation": "스파 & 휴식",
+  "spaAndRelaxation": "스파",
   "spaAndRelaxationDesc": "마사지 및 휴양",
-  "otherServices": "기타 서비스",
-  "otherServicesDesc": "기타 서비스",
+  "otherServices": "기타",
+  "otherServicesDesc": "기타",
   "account": "계정",
   "advertising": "광고",
   "support": "지원",
@@ -2639,5 +2640,53 @@
   "entryLoginGuide": "필고 앱을 이용하기 위해서는 로그인 해 주세요.",
   "@entryLoginGuide": {
     "description": "Login guide message on entry screen"
-  }
+  },
+  "companyCreatedSuccess": "업체가 등록되었습니다.",
+  "@companyCreatedSuccess": {
+    "description": "Success message when company is created for the first time"
+  },
+  "failedToUploadQrCode": "QR 코드 업로드에 실패했습니다.",
+  "@failedToUploadQrCode": {
+    "description": "Error message when QR code upload fails"
+  },
+  "failedToUploadPhoto": "사진 업로드에 실패했습니다.",
+  "@failedToUploadPhoto": {
+    "description": "Error message when photo upload fails"
+  },
+  "failedToUploadLicense": "사업자 등록증 업로드에 실패했습니다.",
+  "@failedToUploadLicense": {
+    "description": "Error message when license upload fails"
+  },
+  "failedToUploadImage": "이미지 업로드에 실패했습니다.",
+  "@failedToUploadImage": {
+    "description": "Error message when image upload fails"
+  },
+  "errorWithMessage": "오류: {message}",
+  "@errorWithMessage": {
+    "description": "Generic error message with details",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "familySiteDomainSuffix": ".philgo.com",
+  "@familySiteDomainSuffix": {
+    "description": "Domain suffix shown after family site domain input field"
+  },
+  "selectLocation": "위치 선택",
+  "searchLocation": "위치 검색...",
+  "noLocationsFound": "검색 결과가 없습니다",
+  "registerCompanyNow": "지금 업체를 등록하세요",
+  "optional": "선택",
+  "stepBasicInfo": "기본 정보",
+  "stepDetailedInfo": "상세 정보",
+  "stepContactInfo": "연락처",
+  "stepImageUpload": "이미지",
+  "stepBasicInfoDesc": "업체의 기본 정보를 입력하세요",
+  "stepDetailedInfoDesc": "업체의 상세 정보를 입력하세요",
+  "stepContactInfoDesc": "연락처 정보를 입력하세요",
+  "stepImageUploadDesc": "업체 이미지를 업로드하세요",
+  "uploading": "업로드 중...",
+  "viewDetails": "상세보기"
 }

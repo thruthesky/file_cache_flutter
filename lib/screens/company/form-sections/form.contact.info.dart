@@ -38,11 +38,13 @@ class FormContactInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
+    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// Comic Design: Phone Number Field
+        /// 전화번호 필드 (필수)
         FormFieldLabel(label: T.phoneNumber, isRequired: true),
         SizedBox(height: sp.s8),
         ComicTextFormField(
@@ -52,7 +54,7 @@ class FormContactInfo extends StatelessWidget {
 
         SizedBox(height: sp.s16),
 
-        /// Comic Design: Mobile Number Field
+        /// 휴대전화 번호 필드 (필수)
         FormFieldLabel(label: T.mobileNumber, isRequired: true),
         SizedBox(height: sp.s8),
         ComicTextFormField(
@@ -62,36 +64,57 @@ class FormContactInfo extends StatelessWidget {
 
         SizedBox(height: sp.s16),
 
-        /// Comic Design: Mobile Contact Method Selection
-        FormFieldLabel(label: T.mobileContactMethod),
+        /// 모바일 연락 방법 선택 (문자/전화)
+        FormFieldLabel(label: T.mobileContactMethod, isOptional: true),
         SizedBox(height: sp.s8),
-        RadioGroup<String>(
-          groupValue: mobileContactMethod,
-          onChanged: (value) {
-            onMobileContactMethodChanged(value);
-          },
-          child: Row(
-            children: [
-              Expanded(
-                child: RadioListTile<String>(
-                  title: Text(T.sendText),
-                  value: 'text',
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: scheme.surfaceContainerLow,
+          ),
+          child: RadioGroup<String>(
+            groupValue: mobileContactMethod,
+            onChanged: (value) {
+              onMobileContactMethodChanged(value);
+            },
+            child: Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<String>(
+                    title: Text(
+                      T.sendText,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    value: 'text',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                    visualDensity: VisualDensity.compact,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: RadioListTile<String>(
-                  title: Text(T.makeCall),
-                  value: 'call',
+                Expanded(
+                  child: RadioListTile<String>(
+                    title: Text(
+                      T.makeCall,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    value: 'call',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                    visualDensity: VisualDensity.compact,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
 
+        SizedBox(height: sp.s24),
+
+        /// 구분선: 선택 입력 영역
+        _buildOptionalSectionDivider(theme, scheme),
+
         SizedBox(height: sp.s16),
 
-        /// Comic Design: KakaoTalk ID Field
-        FormFieldLabel(label: T.kakaoId),
+        /// 카카오톡 ID 필드 (선택)
+        FormFieldLabel(label: T.kakaoId, isOptional: true),
         SizedBox(height: sp.s8),
         ComicTextFormField(
           controller: kakaotalkIdController,
@@ -100,9 +123,9 @@ class FormContactInfo extends StatelessWidget {
 
         SizedBox(height: sp.s16),
 
-        /// 카카오톡 QR 코드 업로드
+        /// 카카오톡 QR 코드 업로드 (선택)
         ImageUploadField(
-          label: T.uploadKakaoQrCode,
+          label: '${T.uploadKakaoQrCode} (${T.optional})',
           imageUrl: kakaoTalkQrCodeUrl,
           isDecodeQr: true,
           onImageSelected: onKakaoQrCodeSelected,
@@ -112,8 +135,8 @@ class FormContactInfo extends StatelessWidget {
 
         SizedBox(height: sp.s16),
 
-        /// Comic Design: Kakao Channel URL Field
-        FormFieldLabel(label: T.kakaoChannelUrl),
+        /// 카카오 채널 URL 필드 (선택)
+        FormFieldLabel(label: T.kakaoChannelUrl, isOptional: true),
         SizedBox(height: sp.s8),
         ComicTextFormField(
           controller: kakaotalkQrCodeController,
@@ -122,13 +145,32 @@ class FormContactInfo extends StatelessWidget {
 
         SizedBox(height: sp.s16),
 
-        /// Comic Design: Telegram ID Field
-        FormFieldLabel(label: T.telegramId),
+        /// 텔레그램 ID 필드 (선택)
+        FormFieldLabel(label: T.telegramId, isOptional: true),
         SizedBox(height: sp.s8),
         ComicTextFormField(
           controller: telegramIdController,
           hintText: T.enterTelegramId,
         ),
+      ],
+    );
+  }
+
+  /// 선택 입력 영역 구분선
+  Widget _buildOptionalSectionDivider(ThemeData theme, ColorScheme scheme) {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: scheme.outlineVariant)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            T.optional,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        Expanded(child: Divider(color: scheme.outlineVariant)),
       ],
     );
   }

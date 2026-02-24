@@ -8,6 +8,7 @@ import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
+import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/guide/must_read.screen.dart';
@@ -56,6 +57,28 @@ class MenuHome extends StatefulWidget {
 }
 
 class _MenuHomeState extends State<MenuHome> {
+  /// 내 업소 데이터 (My company data)
+  /// null이면 업소가 없거나 아직 로딩 중
+  Company? _myCompany;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMyCompany();
+  }
+
+  /// 내 업소 데이터 로드 (Load my company data)
+  Future<void> _loadMyCompany() async {
+    try {
+      final company = await getMyCompany();
+      if (mounted) {
+        setState(() => _myCompany = company);
+      }
+    } catch (e) {
+      debugLog('Error loading my company in menu: $e');
+    }
+  }
+
   /// 로그아웃 처리 핸들러 (Logout Handler)
   ///
   /// 사용자에게 확인 다이얼로그를 표시하고, 확인 시 Firebase에서 로그아웃합니다.
@@ -365,10 +388,31 @@ class _MenuHomeState extends State<MenuHome> {
                         }
                       },
                     ),
+                    // Show "View my company" icon only when user has a registered company
+                    if (_myCompany != null)
+                      MenuGridItem(
+                        icon: FontAwesomeIcons.eye,
+                        title: l10n.viewMyCompany,
+                        onTap: () {
+                          CompanyViewScreen.push(context, _myCompany!.idx);
+                        },
+                      ),
                     MenuGridItem(
-                      icon: FontAwesomeIcons.circlePlus,
-                      title: l10n.addMyCompany,
-                      onTap: () => CompanyFormScreen.push(context),
+                      icon: _myCompany != null
+                          ? FontAwesomeIcons.penToSquare
+                          : FontAwesomeIcons.circlePlus,
+                      title: _myCompany != null
+                          ? l10n.editMyCompany
+                          : l10n.addMyCompany,
+                      onTap: () async {
+                        final result = await CompanyFormScreen.push(
+                          context,
+                          company: _myCompany,
+                        );
+                        if (result is Company && mounted) {
+                          setState(() => _myCompany = result);
+                        }
+                      },
                     ),
                   ],
                 ),

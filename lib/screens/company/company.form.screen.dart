@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/l10n/app_localizations.dart';
@@ -8,6 +9,7 @@ import 'package:philgo/screens/company/form-sections/form.contact.info.dart';
 import 'package:philgo/screens/company/form-sections/form.detailed.info.dart';
 import 'package:philgo/screens/company/form-sections/form.image.upload.dart';
 import 'package:philgo/themes/app.spacing.dart';
+import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/widgets/step.progress.indicator.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
@@ -41,15 +43,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   late TextEditingController _kakaotalkIdController;
   late TextEditingController _kakaotalkQrCodeController;
   late TextEditingController _telegramIdController;
-  late TextEditingController _familySiteDomainController;
-  late TextEditingController _familySiteNameController;
-  late TextEditingController _familySiteDescriptionController;
 
   // 카테고리 및 비즈니스 타입 선택
   String? _selectedCategory;
-
-  // 체크박스 상태
-  bool _useCompanyDomain = false;
 
   // 모바일 연락 방법 (문자/전화)
   String? _mobileContactMethod;
@@ -67,6 +63,14 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
   late PageController _pageController;
 
   bool _isSubmitting = false;
+
+  /// 각 스텝의 아이콘 목록
+  static const List<IconData> _stepIcons = [
+    FontAwesomeIcons.lightBuilding,
+    FontAwesomeIcons.lightClipboardList,
+    FontAwesomeIcons.lightAddressBook,
+    FontAwesomeIcons.lightImage,
+  ];
 
   @override
   void initState() {
@@ -101,18 +105,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
     _telegramIdController = TextEditingController(
       text: widget.company?.telegram_id ?? '',
-    );
-
-    _familySiteDomainController = TextEditingController(
-      text: widget.company?.family_site_domain ?? '',
-    );
-
-    _familySiteNameController = TextEditingController(
-      text: widget.company?.family_site_name ?? '',
-    );
-
-    _familySiteDescriptionController = TextEditingController(
-      text: widget.company?.family_site_description ?? '',
     );
 
     // 카테고리 설정
@@ -150,11 +142,24 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _kakaotalkIdController.dispose();
     _kakaotalkQrCodeController.dispose();
     _telegramIdController.dispose();
-    _familySiteDescriptionController.dispose();
-    _familySiteDomainController.dispose();
-    _familySiteNameController.dispose();
     super.dispose();
   }
+
+  /// 각 스텝의 라벨 리스트 (i18n)
+  List<String> _getStepLabels() => [
+    T.stepBasicInfo,
+    T.stepDetailedInfo,
+    T.stepContactInfo,
+    T.stepImageUpload,
+  ];
+
+  /// 각 스텝의 설명 리스트 (i18n)
+  List<String> _getStepDescriptions() => [
+    T.stepBasicInfoDesc,
+    T.stepDetailedInfoDesc,
+    T.stepContactInfoDesc,
+    T.stepImageUploadDesc,
+  ];
 
   /// 다음 스텝으로 이동
   void _nextStep() {
@@ -188,7 +193,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     switch (_currentStep) {
       case 0: // Basic Info
         if (_nameController.text.trim().isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.companyNameRequired);
           return false;
         }
@@ -196,27 +200,22 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
       case 1: // Detailed Info
         if (_titleController.text.trim().isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.companyTitleRequired);
           return false;
         }
         if (_selectedCategory == null) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, T.pleaseSelectCategory);
           return false;
         }
         if (_locationController.text.trim().isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.locationRequired);
           return false;
         }
         if (_addressController.text.trim().isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.addressRequired);
           return false;
         }
         if (_descriptionController.text.trim().isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.descriptionRequired);
           return false;
         }
@@ -224,12 +223,10 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
       case 2: // Contact Info
         if (_landlineController.text.trim().isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.landlineRequired);
           return false;
         }
         if (_mobileNumberController.text.trim().isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.mobileNumberRequired);
           return false;
         }
@@ -237,7 +234,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
       case 3: // Image Upload
         if (_logoUrl.isEmpty) {
-          // Comic Design: Use Comic SnackBar for validation errors
           showComicErrorSnackBar(context, Lo.of(context)!.logoRequired);
           return false;
         }
@@ -271,9 +267,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         'kakaotalk_qr_code': _kakaotalkQrCodeController.text.trim(),
         'telegram_id': _telegramIdController.text.trim(),
         'logo_url': _logoUrl,
-        'family_site_domain': _familySiteDomainController.text.trim(),
-        'family_site_name': _familySiteNameController.text.trim(),
-        'family_site_description': _familySiteDescriptionController.text.trim(),
       };
 
       if (_mobileContactMethod != null) {
@@ -291,18 +284,20 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
       if (!mounted) return;
 
-      // Comic Design: Use Comic SnackBar for success message
       showComicSuccessSnackBar(
         context,
         widget.company == null ? T.companyRegistered : T.companyUpdated,
       );
 
       if (!mounted) return;
-      context.pop(updatedCompany);
+
+      /// 저장 완료 후 업체 정보 보기 페이지로 이동 (form 화면 교체)
+      context.pop();
+      if (!mounted) return;
+      CompanyViewScreen.push(context, updatedCompany.idx);
     } catch (e) {
       if (!mounted) return;
-      // Comic Design: Use Comic SnackBar for error message
-      showComicErrorSnackBar(context, 'Error: $e');
+      showComicErrorSnackBar(context, T.errorWithMessage(e.toString()));
     } finally {
       if (mounted) {
         _isSubmitting = false;
@@ -316,15 +311,18 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     final sp = Theme.of(context).extension<AppSpacing>()!;
     final scheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
+    final stepLabels = _getStepLabels();
+    final stepDescriptions = _getStepDescriptions();
 
     return Scaffold(
-      // Comic Design: AppBar with 1.0px bottom border (matches bottom nav)
+      /// AppBar: Comic Design 스타일 (1px 하단 테두리)
       appBar: AppBar(
         title: Text(
           widget.company == null ? T.registerCompany : T.updateCompany,
           style: theme.textTheme.titleLarge,
         ),
-        backgroundColor: scheme.surfaceContainerLow,
+        backgroundColor: scheme.surface,
+        elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: scheme.outlineVariant),
@@ -332,17 +330,64 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       ),
       body: Column(
         children: [
+          /// 스텝 헤더 영역: 프로그레스 인디케이터 + 스텝 설명
           Container(
-            padding: EdgeInsets.all(sp.s16),
-            color: scheme.surfaceContainerLow,
+            padding: EdgeInsets.fromLTRB(sp.s24, sp.s16, sp.s24, sp.s16),
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: scheme.outlineVariant.withValues(alpha: 0.5),
+                ),
+              ),
+            ),
             child: Column(
               children: [
+                /// 스텝 프로그레스 인디케이터 (번호 원 + 라벨 + 연결선)
                 StepProgressIndicator(
                   totalSteps: _totalSteps,
                   currentStep: _currentStep,
-                  height: 8,
-                  activeColor: scheme.primary,
-                  inactiveColor: scheme.secondary,
+                  stepLabels: stepLabels,
+                ),
+
+                SizedBox(height: sp.s16),
+
+                /// 현재 스텝 설명 카드
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    key: ValueKey(_currentStep),
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        /// 스텝 아이콘
+                        FaIcon(
+                          _stepIcons[_currentStep],
+                          size: 18,
+                          color: scheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+
+                        /// 스텝 설명 텍스트
+                        Expanded(
+                          child: Text(
+                            stepDescriptions[_currentStep],
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: scheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -361,14 +406,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 _buildStepContent(
                   FormBasicInfo(
                     nameController: _nameController,
-                    useCompanyDomain: _useCompanyDomain,
-                    onUseCompanyDomainChanged: (value) {
-                      setState(() => _useCompanyDomain = value);
-                    },
-                    familySiteDomainController: _familySiteDomainController,
-                    familySiteNameController: _familySiteNameController,
-                    familySiteDescriptionController:
-                        _familySiteDescriptionController,
                   ),
                 ),
 
@@ -407,10 +444,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _kakaoTalkQrCodeUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
-                            'Failed to upload QR code: $e',
+                            T.failedToUploadQrCode,
                           );
                         }
                       }
@@ -421,7 +457,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'kakaotalk_qr_code_url': ''});
                         setState(() => _kakaoTalkQrCodeUrl = '');
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for success message
                           showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.kakaoQrCodeDeleted,
@@ -429,7 +464,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDelete,
@@ -458,10 +492,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _logoUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
-                            'Failed to upload photo: $e',
+                            T.failedToUploadPhoto,
                           );
                         }
                       }
@@ -472,7 +505,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'logo_url': ''});
                         setState(() => _logoUrl = '');
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for success message
                           showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.companyLogoDeleted,
@@ -480,7 +512,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeletePhoto,
@@ -495,10 +526,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _businessLicenseUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
-                            'Failed to upload license: $e',
+                            T.failedToUploadLicense,
                           );
                         }
                       }
@@ -509,7 +539,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'business_license_url': ''});
                         setState(() => _businessLicenseUrl = '');
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for success message
                           showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.businessLicenseDeleted,
@@ -517,7 +546,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeleteLicense,
@@ -532,10 +560,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _companyIntroImageUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
-                            'Failed to upload image: $e',
+                            T.failedToUploadImage,
                           );
                         }
                       }
@@ -546,7 +573,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'title_image_url': ''});
                         setState(() => _companyIntroImageUrl = '');
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for success message
                           showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.companyIntroImageDeleted,
@@ -554,7 +580,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeleteImage,
@@ -569,10 +594,9 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         setState(() => _officeInteriorUrl = url);
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
-                            'Failed to upload photo: $e',
+                            T.failedToUploadPhoto,
                           );
                         }
                       }
@@ -583,7 +607,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         await updateCompany({'photo_url': ''});
                         setState(() => _officeInteriorUrl = '');
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for success message
                           showComicSuccessSnackBar(
                             context,
                             Lo.of(context)!.officeInteriorDeleted,
@@ -591,7 +614,6 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          // Comic Design: Use Comic SnackBar for error message
                           showComicErrorSnackBar(
                             context,
                             Lo.of(context)!.failedToDeletePhoto,
@@ -606,13 +628,20 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
           ),
         ],
       ),
+
+      /// 하단 네비게이션바: 뒤로가기 + 다음/제출 버튼
       bottomNavigationBar: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s16),
-          decoration: BoxDecoration(color: scheme.surfaceContainerLow),
+          padding: EdgeInsets.symmetric(horizontal: sp.s16, vertical: sp.s12),
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            border: Border(
+              top: BorderSide(color: scheme.outlineVariant),
+            ),
+          ),
           child: Row(
             children: [
-              /// Comic Design: Back button with ComicButton
+              /// 뒤로가기 버튼 (첫 번째 스텝에서는 숨김)
               if (_currentStep > 0)
                 Expanded(
                   child: ComicButton(
@@ -620,15 +649,24 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     rounded: ComicButtonRounded.normal,
                     padding: ComicButtonPadding.medium,
                     textSize: ComicButtonTextSize.medium,
-                    child: Text(Lo.of(context)!.back),
-                  ).animate().fadeIn(duration: 200.ms).slideX(begin: -0.1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.lightChevronLeft,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(Lo.of(context)!.back),
+                      ],
+                    ),
+                  ).animate().fadeIn(duration: 200.ms),
                 ),
 
               if (_currentStep > 0) SizedBox(width: sp.s12),
 
-              /// Comic Design: Next/Submit button with ComicButton
+              /// 다음/제출 버튼
               Expanded(
-                flex: _currentStep == 0 ? 1 : 1,
                 child: _currentStep < _totalSteps - 1
                     ? ComicButton(
                         onPressed: _nextStep,
@@ -638,8 +676,19 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                         backgroundColor: scheme.primary,
                         foregroundColor: scheme.onPrimary,
                         borderColor: scheme.primary,
-                        child: Text(Lo.of(context)!.next),
-                      ).animate().fadeIn(duration: 200.ms).slideX(begin: 0.2)
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(Lo.of(context)!.next),
+                            const SizedBox(width: 8),
+                            FaIcon(
+                              FontAwesomeIcons.lightChevronRight,
+                              size: 14,
+                              color: scheme.onPrimary,
+                            ),
+                          ],
+                        ),
+                      ).animate().fadeIn(duration: 200.ms)
                     : ComicButton(
                             onPressed: _isSubmitting ? null : _handleSubmit,
                             rounded: ComicButtonRounded.normal,
@@ -659,10 +708,21 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                                       ),
                                     ),
                                   )
-                                : Text(
-                                    widget.company == null
-                                        ? T.registerCompany
-                                        : T.updateCompany,
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      FaIcon(
+                                        FontAwesomeIcons.lightCheck,
+                                        size: 14,
+                                        color: scheme.onPrimary,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        widget.company == null
+                                            ? T.registerCompany
+                                            : T.updateCompany,
+                                      ),
+                                    ],
                                   ),
                           )
                           .animate()
@@ -676,6 +736,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     );
   }
 
+  /// 각 스텝의 컨텐츠를 스크롤 가능한 ListView로 감싸는 빌더
   Widget _buildStepContent(Widget content) {
     return GestureDetector(
       onTap: () {

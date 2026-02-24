@@ -6,6 +6,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
+import 'package:philgo/screens/company/company.qr_code_scanned.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
@@ -242,8 +243,8 @@ final router = GoRouter(
     if (publicRoutes.contains(state.fullPath)) {
       return null;
     } else {
-      /// 인증된 사용자인지 확인
-      /// Check if the user is authenticated
+      /// 인증된 사용자인지 확인 -> 로그인한 사용자만 페이지(화면)을 보여준다.
+      /// 즉, 로그인을 하지 않았으면, 위의 화면은 보여주고, 그 외의 화면은 로그인을 해야지만 볼 수 있다.
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         return EntryScreen.routeName;
@@ -812,6 +813,23 @@ final router = GoRouter(
       builder: (context, state) {
         final searchTerm = state.extra as String? ?? '';
         return SearchScreen(searchTerm: searchTerm);
+      },
+    ),
+    /// QR 코드 스캔 결과 화면 (QR Code Scanned Screen)
+    /// 쿼리 파라미터로 idx(업체 번호)와 verification_id(인증 ID)를 전달받습니다.
+    GoRoute(
+      path: CompanyQrCodeScannedScreen.routeName,
+      builder: (context, state) {
+        final idx = int.tryParse(
+              state.uri.queryParameters['idx'] ?? '',
+            ) ??
+            0;
+        final verificationId =
+            state.uri.queryParameters['verification_id'] ?? '';
+        return CompanyQrCodeScannedScreen(
+          idx: idx,
+          verificationId: verificationId,
+        );
       },
     ),
   ],

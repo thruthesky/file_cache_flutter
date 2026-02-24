@@ -386,7 +386,7 @@ class LoZh extends Lo {
   String get registerCompany => '注册';
 
   @override
-  String get updateCompany => '修改商家';
+  String get updateCompany => '保存商家信息';
 
   @override
   String companiesRegistered(int count) {
@@ -872,6 +872,9 @@ class LoZh extends Lo {
 
   @override
   String get addMyCompany => '添加我的商家';
+
+  @override
+  String get viewMyCompany => '查看我的商家';
 
   @override
   String get allCategories => '全部';
@@ -1986,4 +1989,72 @@ class LoZh extends Lo {
 
   @override
   String get entryLoginGuide => '请登录以使用PhilGo应用。';
+
+  @override
+  String get companyCreatedSuccess => '企业已注册。';
+
+  @override
+  String get failedToUploadQrCode => 'QR码上传失败。';
+
+  @override
+  String get failedToUploadPhoto => '照片上传失败。';
+
+  @override
+  String get failedToUploadLicense => '营业执照上传失败。';
+
+  @override
+  String get failedToUploadImage => '图片上传失败。';
+
+  @override
+  String errorWithMessage(String message) {
+    return '错误: $message';
+  }
+
+  @override
+  String get familySiteDomainSuffix => '.philgo.com';
+
+  @override
+  String get selectLocation => '选择位置';
+
+  @override
+  String get searchLocation => '搜索位置...';
+
+  @override
+  String get noLocationsFound => '未找到位置';
+
+  @override
+  String get registerCompanyNow => '立即注册您的企业';
+
+  @override
+  String get optional => '可选';
+
+  @override
+  String get stepBasicInfo => '基本信息';
+
+  @override
+  String get stepDetailedInfo => '详细信息';
+
+  @override
+  String get stepContactInfo => '联系方式';
+
+  @override
+  String get stepImageUpload => '图片';
+
+  @override
+  String get stepBasicInfoDesc => '请输入企业的基本信息';
+
+  @override
+  String get stepDetailedInfoDesc => '请输入企业的详细信息';
+
+  @override
+  String get stepContactInfoDesc => '请输入联系方式';
+
+  @override
+  String get stepImageUploadDesc => '请上传企业图片';
+
+  @override
+  String get uploading => '上传中...';
+
+  @override
+  String get viewDetails => '查看详情';
 }

@@ -506,7 +506,7 @@
   "@registerCompany": {
     "description": "Button text for registering a company"
   },
-  "updateCompany": "Update Company",
+  "updateCompany": "Save Company Info",
   "@updateCompany": {
     "description": "Button text for updating a company"
   },
@@ -1162,6 +1162,10 @@
   "addMyCompany": "Add my company",
   "@addMyCompany": {
     "description": "Tooltip for add company button"
+  },
+  "viewMyCompany": "View my company",
+  "@viewMyCompany": {
+    "description": "Menu item to view my registered company"
   },
   "allCategories": "All",
   "@allCategories": {
@@ -2492,5 +2496,68 @@
   "entryLoginGuide": "Please log in to use the PhilGo app.",
   "@entryLoginGuide": {
     "description": "Login guide message on entry screen"
+  },
+  "companyCreatedSuccess": "Your company has been created.",
+  "@companyCreatedSuccess": {
+    "description": "Success message when company is created for the first time"
+  },
+  "failedToUploadQrCode": "Failed to upload QR code.",
+  "@failedToUploadQrCode": {
+    "description": "Error message when QR code upload fails"
+  },
+  "failedToUploadPhoto": "Failed to upload photo.",
+  "@failedToUploadPhoto": {
+    "description": "Error message when photo upload fails"
+  },
+  "failedToUploadLicense": "Failed to upload license.",
+  "@failedToUploadLicense": {
+    "description": "Error message when license upload fails"
+  },
+  "failedToUploadImage": "Failed to upload image.",
+  "@failedToUploadImage": {
+    "description": "Error message when image upload fails"
+  },
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "description": "Generic error message with details",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "familySiteDomainSuffix": ".philgo.com",
+  "@familySiteDomainSuffix": {
+    "description": "Domain suffix shown after family site domain input field"
+  },
+  "selectLocation": "Select Location",
+  "@selectLocation": {
+    "description": "Title for location selection modal"
+  },
+  "searchLocation": "Search location...",
+  "@searchLocation": {
+    "description": "Hint text for location search input"
+  },
+  "noLocationsFound": "No locations found",
+  "@noLocationsFound": {
+    "description": "Message when no locations match search query"
+  },
+  "registerCompanyNow": "Register your company now",
+  "@registerCompanyNow": {
+    "description": "Subtitle for empty company list encouraging registration"
+  },
+  "optional": "Optional",
+  "stepBasicInfo": "Basic Info",
+  "stepDetailedInfo": "Details",
+  "stepContactInfo": "Contact",
+  "stepImageUpload": "Images",
+  "stepBasicInfoDesc": "Enter your company's basic information",
+  "stepDetailedInfoDesc": "Enter your company's detailed information",
+  "stepContactInfoDesc": "Enter your contact information",
+  "stepImageUploadDesc": "Upload your company images",
+  "uploading": "Uploading...",
+  "viewDetails": "View Details",
+  "@viewDetails": {
+    "description": "Button label to navigate to full detail view"
   }
 }

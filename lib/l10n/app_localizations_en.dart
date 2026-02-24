@@ -399,7 +399,7 @@ class LoEn extends Lo {
   String get registerCompany => 'Register';
 
   @override
-  String get updateCompany => 'Update Company';
+  String get updateCompany => 'Save Company Info';
 
   @override
   String companiesRegistered(int count) {
@@ -904,6 +904,9 @@ class LoEn extends Lo {
 
   @override
   String get addMyCompany => 'Add my company';
+
+  @override
+  String get viewMyCompany => 'View my company';
 
   @override
   String get allCategories => 'All';
@@ -2026,4 +2029,73 @@ class LoEn extends Lo {
 
   @override
   String get entryLoginGuide => 'Please log in to use the PhilGo app.';
+
+  @override
+  String get companyCreatedSuccess => 'Your company has been created.';
+
+  @override
+  String get failedToUploadQrCode => 'Failed to upload QR code.';
+
+  @override
+  String get failedToUploadPhoto => 'Failed to upload photo.';
+
+  @override
+  String get failedToUploadLicense => 'Failed to upload license.';
+
+  @override
+  String get failedToUploadImage => 'Failed to upload image.';
+
+  @override
+  String errorWithMessage(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get familySiteDomainSuffix => '.philgo.com';
+
+  @override
+  String get selectLocation => 'Select Location';
+
+  @override
+  String get searchLocation => 'Search location...';
+
+  @override
+  String get noLocationsFound => 'No locations found';
+
+  @override
+  String get registerCompanyNow => 'Register your company now';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get stepBasicInfo => 'Basic Info';
+
+  @override
+  String get stepDetailedInfo => 'Details';
+
+  @override
+  String get stepContactInfo => 'Contact';
+
+  @override
+  String get stepImageUpload => 'Images';
+
+  @override
+  String get stepBasicInfoDesc => 'Enter your company\'s basic information';
+
+  @override
+  String get stepDetailedInfoDesc =>
+      'Enter your company\'s detailed information';
+
+  @override
+  String get stepContactInfoDesc => 'Enter your contact information';
+
+  @override
+  String get stepImageUploadDesc => 'Upload your company images';
+
+  @override
+  String get uploading => 'Uploading...';
+
+  @override
+  String get viewDetails => 'View Details';
 }

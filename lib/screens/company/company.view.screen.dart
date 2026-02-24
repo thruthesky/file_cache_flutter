@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 업체 상세 보기 화면 (Company View Screen)
@@ -49,21 +50,24 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     super.dispose();
   }
 
+  /// Error message when company loading fails
+  String? errorMessage;
+
   /// 업체 정보 로드 (Load company information)
   Future<void> loadCompany() async {
     try {
       final details = await getCompany(widget.companyIdx);
 
-      debugLog('------> LOADED COMPANY: $details');
-
+      if (!mounted) return;
       setState(() {
         company = details;
         isLoading = false;
       });
     } catch (e) {
-      d('Error fetching company details: $e');
-    } finally {
+      debugLog('Error fetching company details: $e');
+      if (!mounted) return;
       setState(() {
+        errorMessage = e.toString();
         isLoading = false;
       });
     }
@@ -83,6 +87,20 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     }
   }
 
+  /// 업소록 수정 화면으로 이동 (Navigate to company edit form)
+  Future<void> _navigateToEdit() async {
+    if (company == null) return;
+    final result = await CompanyFormScreen.push(context, company: company);
+    if (result is Company && mounted) {
+      setState(() {
+        company = result;
+      });
+    } else if (mounted) {
+      /// 수정 화면에서 저장 후 돌아왔을 때 데이터를 다시 로드
+      loadCompany();
+    }
+  }
+
   /// 안전한 데이터 접근을 위한 getter들 (Getters for safe data access)
   String get titleImageUrl => company?.title_image_url ?? '';
   String get logoUrl => company?.logo_url ?? '';
@@ -96,6 +114,13 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   String get kakaotalkId => company?.kakaotalk_id ?? '';
   String get telegramId => company?.telegram_id ?? '';
   String get description => company?.description ?? '';
+
+  /// 나의 업소록인지 확인 (Check if this company belongs to the current user)
+  bool get _isMyCompany {
+    final user = PhilgoState.of(context).user;
+    if (user == null || company == null) return false;
+    return company!.idx_member == user.idx;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +144,33 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               preferredSize: const Size.fromHeight(1.0),
               child: Container(height: 1.0, color: scheme.outlineVariant),
             ),
+            /// 나의 업소록이면 수정 버튼 표시
+            actions: [
+              if (_isMyCompany)
+                _isCollapsed
+                    ? IconButton(
+                        icon: const FaIcon(
+                          FontAwesomeIcons.lightPenToSquare,
+                          size: 20,
+                        ),
+                        onPressed: () => _navigateToEdit(),
+                      )
+                    : IconButton(
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        onPressed: () => _navigateToEdit(),
+                      ),
+            ],
             title: _isCollapsed && company != null
                 ? Text(company!.name, style: theme.textTheme.titleLarge)
                 : null,
@@ -164,6 +216,46 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       ),
                     ),
                   ],
+                ),
+              ),
+            )
+          else if (errorMessage != null)
+            /// Error state display when company loading fails
+            SliverFillRemaining(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.triangleExclamation,
+                        size: 48,
+                        color: scheme.error,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        T.failedToLoadCompanies,
+                        style: theme.textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            isLoading = true;
+                            errorMessage = null;
+                          });
+                          loadCompany();
+                        },
+                        icon: const FaIcon(
+                          FontAwesomeIcons.arrowRotateRight,
+                          size: 16,
+                        ),
+                        label: Text(T.retry),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             )
@@ -332,8 +424,11 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
                   const SizedBox(height: 12),
 
-                  /// 카테고리 태그 (Category tag)
-                  CompanyCategoryTag(category: company!.category),
+                  /// 카테고리 태그 (Category tag) - localized display name
+                  CompanyCategoryTag(
+                    category: company!.category,
+                    displayName: _getCategoryDisplayName(company!.category),
+                  ),
                 ],
               ),
             ),
@@ -398,7 +493,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (company!.kakaotalk_id.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.comment,
-            label: 'KakaoTalk',
+            label: T.kakaoId,
             value: company!.kakaotalk_id,
             onTap: () => launchApp(
               'https://open.kakao.com/o/${company!.kakaotalk_id}',
@@ -410,7 +505,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (company!.telegram_id.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.telegram,
-            label: 'Telegram',
+            label: T.telegramId,
             value: company!.telegram_id,
             onTap: () =>
                 launchApp('https://t.me/${company!.telegram_id}', true),
@@ -498,6 +593,31 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           ),
       ],
     );
+  }
+
+  /// Maps a category ID to a localized display name using i18n.
+  /// Returns the raw category ID if no matching translation is found.
+  String _getCategoryDisplayName(String categoryId) {
+    final categoryMap = {
+      'public-office': T.publicOffice,
+      'education': T.education,
+      'food': T.foodAndDrink,
+      'transport': T.transportation,
+      'hospital': T.healthAndHospitals,
+      'mart': T.shoppingAndMarts,
+      'bank': T.bankingAndFinance,
+      'gadget': T.gadgets,
+      'travel-agency': T.travelAndTourism,
+      'hotel': T.hotels,
+      'rentcar': T.carRental,
+      'beauty': T.beautyAndWellness,
+      'real-estate': T.realEstate,
+      'ktv': T.entertainment,
+      'spa': T.spaAndRelaxation,
+      'etc': T.otherServices,
+    };
+
+    return categoryMap[categoryId.toLowerCase()] ?? categoryId;
   }
 
   /// 설명 콘텐츠 빌드 (Build description content)

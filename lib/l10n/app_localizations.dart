@@ -854,7 +854,7 @@ abstract class Lo {
   /// Button text for updating a company
   ///
   /// In en, this message translates to:
-  /// **'Update Company'**
+  /// **'Save Company Info'**
   String get updateCompany;
 
   /// Text showing number of companies registered
@@ -1774,6 +1774,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Add my company'**
   String get addMyCompany;
+
+  /// Menu item to view my registered company
+  ///
+  /// In en, this message translates to:
+  /// **'View my company'**
+  String get viewMyCompany;
 
   /// Filter chip label to show all categories
   ///
@@ -3994,6 +4000,138 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Please log in to use the PhilGo app.'**
   String get entryLoginGuide;
+
+  /// Success message when company is created for the first time
+  ///
+  /// In en, this message translates to:
+  /// **'Your company has been created.'**
+  String get companyCreatedSuccess;
+
+  /// Error message when QR code upload fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload QR code.'**
+  String get failedToUploadQrCode;
+
+  /// Error message when photo upload fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload photo.'**
+  String get failedToUploadPhoto;
+
+  /// Error message when license upload fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload license.'**
+  String get failedToUploadLicense;
+
+  /// Error message when image upload fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload image.'**
+  String get failedToUploadImage;
+
+  /// Generic error message with details
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {message}'**
+  String errorWithMessage(String message);
+
+  /// Domain suffix shown after family site domain input field
+  ///
+  /// In en, this message translates to:
+  /// **'.philgo.com'**
+  String get familySiteDomainSuffix;
+
+  /// Title for location selection modal
+  ///
+  /// In en, this message translates to:
+  /// **'Select Location'**
+  String get selectLocation;
+
+  /// Hint text for location search input
+  ///
+  /// In en, this message translates to:
+  /// **'Search location...'**
+  String get searchLocation;
+
+  /// Message when no locations match search query
+  ///
+  /// In en, this message translates to:
+  /// **'No locations found'**
+  String get noLocationsFound;
+
+  /// Subtitle for empty company list encouraging registration
+  ///
+  /// In en, this message translates to:
+  /// **'Register your company now'**
+  String get registerCompanyNow;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @stepBasicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Info'**
+  String get stepBasicInfo;
+
+  /// No description provided for @stepDetailedInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get stepDetailedInfo;
+
+  /// No description provided for @stepContactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get stepContactInfo;
+
+  /// No description provided for @stepImageUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get stepImageUpload;
+
+  /// No description provided for @stepBasicInfoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your company\'s basic information'**
+  String get stepBasicInfoDesc;
+
+  /// No description provided for @stepDetailedInfoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your company\'s detailed information'**
+  String get stepDetailedInfoDesc;
+
+  /// No description provided for @stepContactInfoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your contact information'**
+  String get stepContactInfoDesc;
+
+  /// No description provided for @stepImageUploadDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your company images'**
+  String get stepImageUploadDesc;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploading;
+
+  /// Button label to navigate to full detail view
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

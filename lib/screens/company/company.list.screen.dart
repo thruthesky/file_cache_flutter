@@ -191,12 +191,18 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       return;
     }
 
-    // Create new company
+    // Create new company, then navigate to edit form
     setState(() => isLoadingMyCompany = true);
     try {
       myCompany = await createCompany();
+      if (mounted && myCompany != null) {
+        final result = await CompanyFormScreen.push(context, company: myCompany);
+        if (result != null) setState(() => myCompany = result);
+      }
+    } catch (e) {
+      debugLog('Error creating company: $e');
       if (mounted) {
-        showSuccessSnackBar(context, "Your company is already created");
+        showSuccessSnackBar(context, T.errorWithMessage(e.toString()));
       }
     } finally {
       if (mounted) setState(() => isLoadingMyCompany = false);
@@ -246,12 +252,15 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     CompanyViewScreen.push(context, company.idx);
   }
 
+  /// Scroll offset threshold to hide header when scrolling down
+  static const double _headerHideThreshold = 48.0;
+
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
       final delta = notification.scrollDelta ?? 0;
       final currentOffset = notification.metrics.pixels;
 
-      if (delta > 0 && currentOffset > 48) {
+      if (delta > 0 && currentOffset > _headerHideThreshold) {
         if (_showHeader) setState(() => _showHeader = false);
       } else if (delta < 0) {
         if (!_showHeader) setState(() => _showHeader = true);
@@ -346,15 +355,18 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         double chipSize =
             (availableWidth - (spacing * (chipsPerRow - 1))) / chipsPerRow;
 
+        // Minimum chip size before reducing chips per row
+        const minChipSize = 52.0;
+
         // If chip size is too small, reduce to 5 per row
-        if (chipSize < 52) {
+        if (chipSize < minChipSize) {
           chipsPerRow = 5;
           chipSize =
               (availableWidth - (spacing * (chipsPerRow - 1))) / chipsPerRow;
         }
 
         // If chip size is still too small, reduce to 4 per row
-        if (chipSize < 52) {
+        if (chipSize < minChipSize) {
           chipsPerRow = 4;
           chipSize =
               (availableWidth - (spacing * (chipsPerRow - 1))) / chipsPerRow;

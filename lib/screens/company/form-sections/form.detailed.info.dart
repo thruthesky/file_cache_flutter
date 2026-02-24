@@ -27,6 +27,28 @@ class FormDetailedInfo extends StatelessWidget {
   final TextEditingController addressController;
   final TextEditingController descriptionController;
 
+  /// Build localized category name map for the dropdown
+  Map<String, String> _buildCategoryNames() {
+    return {
+      'public-office': T.publicOffice,
+      'education': T.education,
+      'food': T.foodAndDrink,
+      'transport': T.transportation,
+      'hospital': T.healthAndHospitals,
+      'mart': T.shoppingAndMarts,
+      'bank': T.bankingAndFinance,
+      'gadget': T.gadgets,
+      'travel-agency': T.travelAndTourism,
+      'hotel': T.hotels,
+      'rentcar': T.carRental,
+      'beauty': T.beautyAndWellness,
+      'real-estate': T.realEstate,
+      'ktv': T.entertainment,
+      'spa': T.spaAndRelaxation,
+      'etc': T.otherServices,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final sp = Theme.of(context).extension<AppSpacing>()!;
@@ -44,20 +66,26 @@ class FormDetailedInfo extends StatelessWidget {
 
         SizedBox(height: sp.s16),
 
-        /// Comic Design: Category Dropdown (using existing widget)
+        /// Comic Design: Category Dropdown with i18n category names
         CategoryDropdownField(
           label: '${T.businessType} *',
           initialValue: selectedCategory,
           onChanged: onCategoryChanged,
+          hintText: T.selectCategory,
+          categoryNames: _buildCategoryNames(),
         ),
 
         SizedBox(height: sp.s16),
 
-        /// Comic Design: Location Selector (using existing widget)
+        /// Comic Design: Location Selector with i18n texts
         CompanySelectLocation(
           label: '${T.location} *',
           controller: locationController,
           onLocationSelected: onLocationSelected,
+          hintText: T.selectLocation,
+          modalTitle: T.selectLocation,
+          searchHintText: T.searchLocation,
+          noResultsText: T.noLocationsFound,
         ),
 
         SizedBox(height: sp.s16),

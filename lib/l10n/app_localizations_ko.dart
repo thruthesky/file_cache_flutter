@@ -388,7 +388,7 @@ class LoKo extends Lo {
   String get registerCompany => '등록';
 
   @override
-  String get updateCompany => '업체 수정';
+  String get updateCompany => '업체 정보 저장';
 
   @override
   String companiesRegistered(int count) {
@@ -879,6 +879,9 @@ class LoKo extends Lo {
   String get addMyCompany => '내 업체 추가';
 
   @override
+  String get viewMyCompany => '내 업소 보기';
+
+  @override
   String get allCategories => '전체';
 
   @override
@@ -894,7 +897,7 @@ class LoKo extends Lo {
   String get educationDesc => '학교 및 학습';
 
   @override
-  String get foodAndDrink => '음식 & 음료';
+  String get foodAndDrink => '음식';
 
   @override
   String get foodAndDrinkDesc => '레스토랑 및 카페';
@@ -906,19 +909,19 @@ class LoKo extends Lo {
   String get transportationDesc => '대중교통 및 개인 교통';
 
   @override
-  String get healthAndHospitals => '의료 & 병원';
+  String get healthAndHospitals => '병원';
 
   @override
   String get healthAndHospitalsDesc => '클리닉 및 진료';
 
   @override
-  String get shoppingAndMarts => '쇼핑 & 마트';
+  String get shoppingAndMarts => '마트';
 
   @override
   String get shoppingAndMartsDesc => '소매 및 식료품';
 
   @override
-  String get bankingAndFinance => '은행 & 금융';
+  String get bankingAndFinance => '은행환전';
 
   @override
   String get bankingAndFinanceDesc => '금융 기관';
@@ -930,7 +933,7 @@ class LoKo extends Lo {
   String get gadgetsDesc => '기술 및 기기';
 
   @override
-  String get travelAndTourism => '여행 & 관광';
+  String get travelAndTourism => '여행';
 
   @override
   String get travelAndTourismDesc => '여행지 및 예약';
@@ -948,7 +951,7 @@ class LoKo extends Lo {
   String get carRentalDesc => '차량 대여 서비스';
 
   @override
-  String get beautyAndWellness => '미용 & 웰빙';
+  String get beautyAndWellness => '미용';
 
   @override
   String get beautyAndWellnessDesc => '미용실 및 자기 관리';
@@ -960,22 +963,22 @@ class LoKo extends Lo {
   String get realEstateDesc => '부동산 및 주택';
 
   @override
-  String get entertainment => '엔터테인먼트';
+  String get entertainment => '유흥';
 
   @override
   String get entertainmentDesc => '노래방 및 오락';
 
   @override
-  String get spaAndRelaxation => '스파 & 휴식';
+  String get spaAndRelaxation => '스파';
 
   @override
   String get spaAndRelaxationDesc => '마사지 및 휴양';
 
   @override
-  String get otherServices => '기타 서비스';
+  String get otherServices => '기타';
 
   @override
-  String get otherServicesDesc => '기타 서비스';
+  String get otherServicesDesc => '기타';
 
   @override
   String get account => '계정';
@@ -1990,4 +1993,72 @@ class LoKo extends Lo {
 
   @override
   String get entryLoginGuide => '필고 앱을 이용하기 위해서는 로그인 해 주세요.';
+
+  @override
+  String get companyCreatedSuccess => '업체가 등록되었습니다.';
+
+  @override
+  String get failedToUploadQrCode => 'QR 코드 업로드에 실패했습니다.';
+
+  @override
+  String get failedToUploadPhoto => '사진 업로드에 실패했습니다.';
+
+  @override
+  String get failedToUploadLicense => '사업자 등록증 업로드에 실패했습니다.';
+
+  @override
+  String get failedToUploadImage => '이미지 업로드에 실패했습니다.';
+
+  @override
+  String errorWithMessage(String message) {
+    return '오류: $message';
+  }
+
+  @override
+  String get familySiteDomainSuffix => '.philgo.com';
+
+  @override
+  String get selectLocation => '위치 선택';
+
+  @override
+  String get searchLocation => '위치 검색...';
+
+  @override
+  String get noLocationsFound => '검색 결과가 없습니다';
+
+  @override
+  String get registerCompanyNow => '지금 업체를 등록하세요';
+
+  @override
+  String get optional => '선택';
+
+  @override
+  String get stepBasicInfo => '기본 정보';
+
+  @override
+  String get stepDetailedInfo => '상세 정보';
+
+  @override
+  String get stepContactInfo => '연락처';
+
+  @override
+  String get stepImageUpload => '이미지';
+
+  @override
+  String get stepBasicInfoDesc => '업체의 기본 정보를 입력하세요';
+
+  @override
+  String get stepDetailedInfoDesc => '업체의 상세 정보를 입력하세요';
+
+  @override
+  String get stepContactInfoDesc => '연락처 정보를 입력하세요';
+
+  @override
+  String get stepImageUploadDesc => '업체 이미지를 업로드하세요';
+
+  @override
+  String get uploading => '업로드 중...';
+
+  @override
+  String get viewDetails => '상세보기';
 }

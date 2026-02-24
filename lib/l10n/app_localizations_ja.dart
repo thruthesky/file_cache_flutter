@@ -388,7 +388,7 @@ class LoJa extends Lo {
   String get registerCompany => '登録';
 
   @override
-  String get updateCompany => '業者を修正';
+  String get updateCompany => '業者情報を保存';
 
   @override
   String companiesRegistered(int count) {
@@ -877,6 +877,9 @@ class LoJa extends Lo {
 
   @override
   String get addMyCompany => '私の業者を追加';
+
+  @override
+  String get viewMyCompany => '私の業者を見る';
 
   @override
   String get allCategories => 'すべて';
@@ -1992,4 +1995,72 @@ class LoJa extends Lo {
 
   @override
   String get entryLoginGuide => 'PhilGoアプリをご利用いただくにはログインしてください。';
+
+  @override
+  String get companyCreatedSuccess => '企業が登録されました。';
+
+  @override
+  String get failedToUploadQrCode => 'QRコードのアップロードに失敗しました。';
+
+  @override
+  String get failedToUploadPhoto => '写真のアップロードに失敗しました。';
+
+  @override
+  String get failedToUploadLicense => '事業者登録証のアップロードに失敗しました。';
+
+  @override
+  String get failedToUploadImage => '画像のアップロードに失敗しました。';
+
+  @override
+  String errorWithMessage(String message) {
+    return 'エラー: $message';
+  }
+
+  @override
+  String get familySiteDomainSuffix => '.philgo.com';
+
+  @override
+  String get selectLocation => '場所を選択';
+
+  @override
+  String get searchLocation => '場所を検索...';
+
+  @override
+  String get noLocationsFound => '場所が見つかりません';
+
+  @override
+  String get registerCompanyNow => '今すぐ企業を登録しましょう';
+
+  @override
+  String get optional => '任意';
+
+  @override
+  String get stepBasicInfo => '基本情報';
+
+  @override
+  String get stepDetailedInfo => '詳細情報';
+
+  @override
+  String get stepContactInfo => '連絡先';
+
+  @override
+  String get stepImageUpload => '画像';
+
+  @override
+  String get stepBasicInfoDesc => '企業の基本情報を入力してください';
+
+  @override
+  String get stepDetailedInfoDesc => '企業の詳細情報を入力してください';
+
+  @override
+  String get stepContactInfoDesc => '連絡先情報を入力してください';
+
+  @override
+  String get stepImageUploadDesc => '企業の画像をアップロードしてください';
+
+  @override
+  String get uploading => 'アップロード中...';
+
+  @override
+  String get viewDetails => '詳細を見る';
 }
