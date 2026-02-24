@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// Empty state widget for company category list
+///
+/// All display text is received as required parameters for i18n support.
 class CompanyCategoryEmpty extends StatelessWidget {
   const CompanyCategoryEmpty({
     super.key,
-    this.title = 'No Registered Companies',
-    this.subtitle = 'Register your company now',
+    required this.title,
+    required this.subtitle,
   });
 
   final String title;

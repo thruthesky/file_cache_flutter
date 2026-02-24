@@ -5,18 +5,35 @@ import 'package:philgo_api/philgo_api.dart';
 /// Company Location Selection Widget
 ///
 /// A button-style field that opens a searchable modal bottom sheet
-/// to select a location from a predefined list
+/// to select a location from a predefined list.
+/// All display text is received via parameters for i18n support.
 class CompanySelectLocation extends StatefulWidget {
   const CompanySelectLocation({
     super.key,
     required this.label,
     this.controller,
     this.onLocationSelected,
+    this.hintText,
+    this.modalTitle,
+    this.searchHintText,
+    this.noResultsText,
   });
 
   final String label;
   final TextEditingController? controller;
   final void Function(String)? onLocationSelected;
+
+  /// Hint text for the text field (i18n)
+  final String? hintText;
+
+  /// Modal title text (i18n)
+  final String? modalTitle;
+
+  /// Search input hint text (i18n)
+  final String? searchHintText;
+
+  /// No results message text (i18n)
+  final String? noResultsText;
 
   @override
   State<CompanySelectLocation> createState() => _CompanySelectLocationState();
@@ -31,6 +48,9 @@ class _CompanySelectLocationState extends State<CompanySelectLocation> {
       builder: (BuildContext context) {
         return _LocationSearchModal(
           locations: locations,
+          modalTitle: widget.modalTitle,
+          searchHintText: widget.searchHintText,
+          noResultsText: widget.noResultsText,
           onLocationSelected: (location) {
             if (widget.controller != null) {
               widget.controller!.text = location;
@@ -69,7 +89,7 @@ class _CompanySelectLocationState extends State<CompanySelectLocation> {
           readOnly: true,
           onTap: _openLocationModal,
           decoration: InputDecoration(
-            hintText: 'Select location',
+            hintText: widget.hintText,
             filled: true,
             fillColor: scheme.surface,
             // Comic Design: 1.0px border with borderRadius 12
@@ -108,10 +128,16 @@ class _LocationSearchModal extends StatefulWidget {
   const _LocationSearchModal({
     required this.locations,
     required this.onLocationSelected,
+    this.modalTitle,
+    this.searchHintText,
+    this.noResultsText,
   });
 
   final List<String> locations;
   final void Function(String) onLocationSelected;
+  final String? modalTitle;
+  final String? searchHintText;
+  final String? noResultsText;
 
   @override
   State<_LocationSearchModal> createState() => _LocationSearchModalState();
@@ -188,7 +214,7 @@ class _LocationSearchModalState extends State<_LocationSearchModal> {
               children: [
                 Expanded(
                   child: Text(
-                    'Select Location',
+                    widget.modalTitle ?? 'Select Location',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -213,7 +239,7 @@ class _LocationSearchModalState extends State<_LocationSearchModal> {
               controller: _searchController,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: 'Search location...',
+                hintText: widget.searchHintText ?? 'Search location...',
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: FaIcon(
@@ -265,7 +291,7 @@ class _LocationSearchModalState extends State<_LocationSearchModal> {
                         ),
                         SizedBox(height: 16),
                         Text(
-                          'No locations found',
+                          widget.noResultsText ?? 'No locations found',
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),

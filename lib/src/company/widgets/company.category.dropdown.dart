@@ -11,7 +11,8 @@ class CategoryDropdownField extends StatefulWidget {
     required this.initialValue,
     required this.onChanged,
     this.validator,
-    this.hintText = 'Select Category',
+    this.hintText,
+    this.categoryNames,
   });
 
   /// Initial category value (can be predefined or custom)
@@ -24,7 +25,13 @@ class CategoryDropdownField extends StatefulWidget {
   final String? Function(String?)? validator;
 
   final String label;
-  final String hintText;
+
+  /// Hint text for the dropdown (i18n)
+  final String? hintText;
+
+  /// Localized category names map (id -> displayName) for i18n support.
+  /// If not provided, falls back to default English names.
+  final Map<String, String>? categoryNames;
 
   @override
   State<CategoryDropdownField> createState() => _CategoryDropdownFieldState();
@@ -37,25 +44,30 @@ class _CategoryDropdownFieldState extends State<CategoryDropdownField> {
   String? _selectedCategory;
   bool _isCustomCategory = false;
 
-  /// Available predefined categories
-  final List<Map<String, dynamic>> categories = [
-    {'id': 'public-office', 'name': 'Public Office'},
-    {'id': 'education', 'name': 'Education'},
-    {'id': 'food', 'name': 'Food'},
-    {'id': 'transport', 'name': 'Transport'},
-    {'id': 'hospital', 'name': 'Hospital'},
-    {'id': 'mart', 'name': 'Mart'},
-    {'id': 'bank', 'name': 'Bank'},
-    {'id': 'gadget', 'name': 'Gadget'},
-    {'id': 'travel-agency', 'name': 'Travel Agency'},
-    {'id': 'hotel', 'name': 'Hotel'},
-    {'id': 'rentcar', 'name': 'Rent Car'},
-    {'id': 'beauty', 'name': 'Beauty'},
-    {'id': 'real-estate', 'name': 'Real Estate'},
-    {'id': 'ktv', 'name': 'KTV'},
-    {'id': 'spa', 'name': 'Spa'},
-    {'id': 'etc', 'name': 'ETC'},
+  /// Available predefined category IDs
+  static const List<String> _categoryIds = [
+    'public-office', 'education', 'food', 'transport',
+    'hospital', 'mart', 'bank', 'gadget',
+    'travel-agency', 'hotel', 'rentcar', 'beauty',
+    'real-estate', 'ktv', 'spa', 'etc',
   ];
+
+  /// Default English category names (fallback when categoryNames is null)
+  static const Map<String, String> _defaultNames = {
+    'public-office': 'Public Office', 'education': 'Education',
+    'food': 'Food', 'transport': 'Transport',
+    'hospital': 'Hospital', 'mart': 'Mart',
+    'bank': 'Bank', 'gadget': 'Gadget',
+    'travel-agency': 'Travel Agency', 'hotel': 'Hotel',
+    'rentcar': 'Rent Car', 'beauty': 'Beauty',
+    'real-estate': 'Real Estate', 'ktv': 'KTV',
+    'spa': 'Spa', 'etc': 'ETC',
+  };
+
+  /// Get display name for a category ID, using i18n names if available
+  String _getDisplayName(String id) {
+    return widget.categoryNames?[id] ?? _defaultNames[id] ?? id;
+  }
 
   @override
   void initState() {
@@ -64,12 +76,8 @@ class _CategoryDropdownFieldState extends State<CategoryDropdownField> {
     // Initialize with the provided value
     final initialValue = widget.initialValue;
 
-    final predefinedCategories = categories
-        .map((cat) => cat['id'] as String)
-        .toList();
-
     if (initialValue != null && initialValue.isNotEmpty) {
-      if (predefinedCategories.contains(initialValue)) {
+      if (_categoryIds.contains(initialValue)) {
         // Predefined category
         _selectedCategory = initialValue;
         _isCustomCategory = false;
@@ -141,10 +149,10 @@ class _CategoryDropdownFieldState extends State<CategoryDropdownField> {
               vertical: 16,
             ),
           ),
-          items: categories.map((category) {
+          items: _categoryIds.map((id) {
             return DropdownMenuItem<String>(
-              value: category['id'] as String,
-              child: Text(category['name'] as String),
+              value: id,
+              child: Text(_getDisplayName(id)),
             );
           }).toList(),
           onChanged: (value) {

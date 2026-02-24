@@ -277,13 +277,14 @@ class _CompanyCardState extends State<CompanyCard> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(12, 20, 12, 14),
         decoration: BoxDecoration(
+          /// Theme-based gradient overlay for image readability
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               Colors.transparent,
-              Colors.black.withValues(alpha: 0.5),
-              Colors.black.withValues(alpha: 0.75),
+              scheme.scrim.withValues(alpha: 0.5),
+              scheme.scrim.withValues(alpha: 0.75),
             ],
           ),
         ),
@@ -294,14 +295,14 @@ class _CompanyCardState extends State<CompanyCard> {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: scheme.surface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Center(
                 child: FaIcon(
                   widget.categoryIcon,
                   size: 14,
-                  color: Colors.white,
+                  color: scheme.surface,
                 ),
               ),
             ),
@@ -312,11 +313,11 @@ class _CompanyCardState extends State<CompanyCard> {
               child: Text(
                 widget.name,
                 style: theme.textTheme.titleSmall?.copyWith(
-                  color: Colors.white,
+                  color: scheme.surface,
                   fontWeight: FontWeight.w600,
                   shadows: [
                     Shadow(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: scheme.scrim.withValues(alpha: 0.5),
                       offset: const Offset(0, 1),
                       blurRadius: 2,
                     ),

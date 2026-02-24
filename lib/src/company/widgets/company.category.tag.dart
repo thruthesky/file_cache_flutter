@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 
+/// Company category tag widget
+///
+/// Displays the company category as a styled tag chip.
+/// Accepts an optional [displayName] for localized category names.
+/// Falls back to the raw [category] id if [displayName] is not provided.
 class CompanyCategoryTag extends StatelessWidget {
   final String category;
 
-  const CompanyCategoryTag({super.key, required this.category});
+  /// Optional localized display name for the category.
+  /// If not provided, falls back to a default English mapping.
+  final String? displayName;
+
+  const CompanyCategoryTag({
+    super.key,
+    required this.category,
+    this.displayName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +26,13 @@ class CompanyCategoryTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
+        /// Flat Design: primaryContainer background for color contrast
+        /// No border (Flat Design rule: distinguish by color only)
         color: scheme.primaryContainer,
-        // Comic design: Border radius 8 for small elements
         borderRadius: BorderRadius.circular(8),
-        // Comic design: 2.0px border with primary color
-        border: Border.all(color: scheme.primary, width: 1.5),
       ),
       child: Text(
-        _getCategoryDisplayName(category),
+        displayName ?? _getCategoryDisplayName(category),
         style: theme.textTheme.labelSmall?.copyWith(
           color: scheme.onPrimaryContainer,
         ),
@@ -28,6 +40,8 @@ class CompanyCategoryTag extends StatelessWidget {
     );
   }
 
+  /// Fallback English category name mapping
+  /// Used only when [displayName] is not provided
   String _getCategoryDisplayName(String category) {
     final categoryMap = {
       'public-office': 'Public Office',
