@@ -1,7 +1,6 @@
 ---
 name: flutter-skill
-description: |
-  본 스킬은 Flutter 프레임워크로 앱을 개발하는 데 반드시 따라야 하는 UI/UX 디자인, 상태관리, 네트워킹, API 연동에 관한 가이드라인 제공합니다. 본 스킬은 선택적인 정보를 제공하는 것이 아니라 Flutter 앱 개발에 필수적인 지침을 제공하며 반드시 준수해야 할 사항들을 제공합니다. 개발자가 디자인, UI, UX, 디자인 효과, 상태관리, 라우팅, 네트워킹, API 연동에 관한 요청, 코믹디자인, Comic 관련 요청, 채팅, FCM, 푸시 알림, 메시지, 알림에 관한 요청이 있을 때 반드시 본 스킬을 사용해서 본 스킬이 제공하는 대로 작업을 수행해야 합니다. 각 스킬 문서에의 상단에는 반드시 따라야 할 Workflow 가 있습니다. 반드시 그 Workflow 를 따라야 합니다. (project)
+description: "본 스킬은 Flutter 프레임워크로 앱을 개발하는 데 반드시 따라야 하는 UI/UX 디자인, 상태관리, 네트워킹, API 연동에 관한 가이드라인 제공합니다. 본 스킬은 선택적인 정보를 제공하는 것이 아니라 Flutter 앱 개발에 필수적인 지침을 제공하며 반드시 준수해야 할 사항들을 제공합니다. 개발자가 디자인, UI, UX, 디자인 효과, 상태관리, 라우팅, 네트워킹, API 연동에 관한 요청, 코믹디자인, Comic 관련 요청, 채팅, FCM, 푸시 알림, 메시지, 알림에 관한 요청이 있을 때 반드시 본 스킬을 사용해서 본 스킬이 제공하는 대로 작업을 수행해야 합니다. 각 스킬 문서에의 상단에는 반드시 따라야 할 Workflow 가 있습니다. 반드시 그 Workflow 를 따라야 합니다. 추가 트리거 키워드 - 딥링크, deep link, 캐싱, cache, 아이콘, FontAwesome, Isolate, 동시성, concurrency, 카카오톡, KakaoTalk, Crashlytics, 크래시 리포팅 (project)"
 ---
 
 # Flutter Skill
@@ -13,31 +12,50 @@ description: |
 - [Workflow](#workflow)
 - [Core Principles](#core-principles)
 - [Reference Documents](#reference-documents)
+- [Quick Reference](#quick-reference)
 
 ## Workflow
 
 개발자 요청에 따라 아래 워크플로우를 따릅니다:
 
-1. **디자인/UI/UX 요청 시**: [Comic Design 문서](./comic-design.md) 참조
+1. **디자인/UI/UX 요청 시**: [Comic Design 문서](./references/comic-design.md) 참조
    - 키워드: 디자인, UI, UX, 버튼, 카드, 레이아웃, 애니메이션, Comic, 코믹
 
-2. **레이아웃 요청 시**: [Flutter Layout 문서](./flutter-layout.md) 참조
+2. **레이아웃 요청 시**: [Flutter Layout 문서](./references/flutter-layout.md) 참조
    - 키워드: 레이아웃, 스크롤, CustomScrollView, ListView, 위젯 배치
 
-3. **상태관리 요청 시**: [Provider 문서](./provider.md) 참조
+3. **상태관리 요청 시**: [Provider 문서](./references/provider.md) 참조
    - 키워드: 상태관리, Provider, Selector, ChangeNotifier
 
-4. **라우팅 요청 시**: [Go Route 문서](./go_route.md) 참조
+4. **라우팅 요청 시**: [Go Route 문서](./references/go_route.md) 참조
    - 키워드: 라우팅, 네비게이션, GoRouter, 페이지 이동
 
-5. **다국어 요청 시**: [i18n 문서](./i18n.md) 참조
+5. **다국어 요청 시**: [i18n 문서](./references/i18n.md) 참조
    - 키워드: 다국어, 번역, localization, i18n, arb
 
-6. **푸시 알림/FCM 요청 시**: [Firebase FCM 문서](./firebase-fcm.md) 참조
+6. **푸시 알림/FCM 요청 시**: [Firebase FCM 문서](./references/firebase/firebase-fcm.md) 참조
    - 키워드: 푸시 알림, FCM, Firebase Messaging, 알림, notification, 토큰, 구독
 
-7. **Firebase 인증 요청 시**: [Firebase Auth 문서](./firebase/firebase-auth.md) 참조
+7. **Firebase 인증 요청 시**: [Firebase Auth 문서](./references/firebase/firebase-auth.md) 참조
    - 키워드: Firebase Auth, 로그인, 회원가입, 인증, 에러 처리, invalid-credential, user-not-found, wrong-password, Email enumeration protection
+
+8. **크래시 리포팅 요청 시**: [Firebase Crashlytics 문서](./references/firebase/firebase-crashlytics.md) 참조
+   - 키워드: Crashlytics, 크래시 리포팅, 에러 추적, 사용자 식별
+
+9. **딥링크 요청 시**: [Deeplink 문서](./references/deeplink.md) 참조
+   - 키워드: 딥링크, deep link, Universal Links, App Links
+
+10. **캐싱 요청 시**: [File Cache 문서](./references/file-cache.md) 또는 [Memory Cache 문서](./references/memory-cache.md) 참조
+    - 키워드: 캐싱, cache, TTL, 파일 캐시, 메모리 캐시, LRU
+
+11. **아이콘 요청 시**: [Font Awesome 문서](./references/fontawesome.md) 참조
+    - 키워드: 아이콘, FontAwesome, FaIcon
+
+12. **동시성/Isolate 요청 시**: [Concurrency 문서](./references/concurrency-and-isolates.md) 참조
+    - 키워드: Isolate, 동시성, concurrency, UI Jank, compute
+
+13. **카카오톡 연동 요청 시**: [KakaoTalk 문서](./references/kakaotalk-friend-add.md) 참조
+    - 키워드: 카카오톡, KakaoTalk, 오픈채팅, 1:1 채팅 링크
 
 ## Core Principles
 
@@ -82,15 +100,44 @@ elevation: 0                                   // 플랫 디자인
 
 각 문서는 해당 주제에 대한 상세한 가이드라인과 코드 예제를 제공합니다:
 
+### 디자인 & UI
+
 | 문서 | 내용 |
 |------|------|
-| [comic-design.md](./comic-design.md) | Comic UI 디자인 시스템, 버튼, 카드, 폼, SnackBar 등 |
-| [flutter-layout.md](./flutter-layout.md) | 스크롤 화면, CustomScrollView, ListView 패턴 |
-| [provider.md](./provider.md) | Provider 상태관리, Selector, ChangeNotifier |
-| [go_route.md](./go_route.md) | GoRouter 라우팅, 파라미터 전달, redirect |
-| [i18n.md](./i18n.md) | 다국어 지원, ARB 파일 관리 |
-| [firebase-fcm.md](./firebase-fcm.md) | FCM 푸시 알림, 토큰 관리, 메시지 핸들링 |
-| [firebase/firebase-auth.md](./firebase/firebase-auth.md) | Firebase 인증, Email enumeration protection, 에러 코드 처리 (`invalid-credential`, `user-not-found`, `wrong-password` 등) |
+| [comic-design.md](./references/comic-design.md) | Comic UI 디자인 시스템, 버튼, 카드, 폼, SnackBar 등 |
+| [flutter-layout.md](./references/flutter-layout.md) | 스크롤 화면, CustomScrollView, ListView 패턴 |
+| [fontawesome.md](./references/fontawesome.md) | Font Awesome Pro 아이콘 사용법, 라이센스 정보 |
+
+### 상태관리 & 라우팅
+
+| 문서 | 내용 |
+|------|------|
+| [provider.md](./references/provider.md) | Provider 상태관리, Selector, ChangeNotifier |
+| [go_route.md](./references/go_route.md) | GoRouter 라우팅, 파라미터 전달, redirect |
+| [deeplink.md](./references/deeplink.md) | 딥링크 구현, Universal Links, App Links 설정 |
+
+### 다국어 & 캐싱
+
+| 문서 | 내용 |
+|------|------|
+| [i18n.md](./references/i18n.md) | 다국어 지원, ARB 파일 관리 |
+| [file-cache.md](./references/file-cache.md) | file_cache_flutter 패키지, 메모리+파일 이중 캐싱, TTL |
+| [memory-cache.md](./references/memory-cache.md) | LRU 메모리 캐시 서비스 (MemoryCache 클래스) |
+
+### Firebase
+
+| 문서 | 내용 |
+|------|------|
+| [firebase-fcm.md](./references/firebase/firebase-fcm.md) | FCM 푸시 알림, 토큰 관리, 메시지 핸들링 |
+| [firebase-auth.md](./references/firebase/firebase-auth.md) | Firebase 인증, Email enumeration protection, 에러 코드 처리 (`invalid-credential`, `user-not-found`, `wrong-password` 등) |
+| [firebase-crashlytics.md](./references/firebase/firebase-crashlytics.md) | Crashlytics 설정, 크래시 리포팅, 사용자 추적 |
+
+### 기타
+
+| 문서 | 내용 |
+|------|------|
+| [concurrency-and-isolates.md](./references/concurrency-and-isolates.md) | Dart Isolate, UI Jank 방지, 비동기 처리 |
+| [kakaotalk-friend-add.md](./references/kakaotalk-friend-add.md) | 카카오톡 오픈채팅 연동, 1:1 채팅 링크 처리 |
 
 ## 필수 pub.dev 패키지
 
@@ -99,6 +146,7 @@ elevation: 0                                   // 플랫 디자인
 Flutter 애플리케이션용 파일 캐시 라이브러리로, 메모리 + 파일 이중 캐싱과 TTL(Time-To-Live) 기반 자동 만료를 지원합니다.
 
 - **pub.dev**: [file_cache_flutter](https://pub.dev/packages/file_cache_flutter)
+- **상세 문서**: [file-cache.md](./references/file-cache.md)
 
 #### 주요 기능
 
