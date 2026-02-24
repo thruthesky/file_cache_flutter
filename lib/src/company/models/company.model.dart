@@ -32,6 +32,11 @@ class Company {
   final int ad_end_date;
   final String ad_click_url;
 
+  /// Whether the QR code is enabled/approved by admin for this company.
+  /// Returned by the get_company API as `qr_code_enabled`.
+  /// When true, the QR code button is visible to all users on the company view screen.
+  final bool qr_code_enabled;
+
   Company({
     required this.idx,
     required this.idx_member,
@@ -65,6 +70,7 @@ class Company {
     required this.ad_begin_date,
     required this.ad_end_date,
     required this.ad_click_url,
+    required this.qr_code_enabled,
   });
 
   /// Create Company instance from JSON map
@@ -103,6 +109,7 @@ class Company {
       ad_begin_date: json['ad_begin_date'] as int? ?? 0,
       ad_end_date: json['ad_end_date'] as int? ?? 0,
       ad_click_url: json['ad_click_url'] as String? ?? '',
+      qr_code_enabled: json['qr_code_enabled'] == true,
     );
   }
 
@@ -141,6 +148,7 @@ class Company {
       'ad_begin_date': ad_begin_date,
       'ad_end_date': ad_end_date,
       'ad_click_url': ad_click_url,
+      'qr_code_enabled': qr_code_enabled,
     };
   }
 
@@ -178,6 +186,7 @@ class Company {
     int? ad_begin_date,
     int? ad_end_date,
     String? ad_click_url,
+    bool? qr_code_enabled,
   }) {
     return Company(
       idx: idx ?? this.idx,
@@ -216,11 +225,12 @@ class Company {
       ad_begin_date: ad_begin_date ?? this.ad_begin_date,
       ad_end_date: ad_end_date ?? this.ad_end_date,
       ad_click_url: ad_click_url ?? this.ad_click_url,
+      qr_code_enabled: qr_code_enabled ?? this.qr_code_enabled,
     );
   }
 
   @override
   String toString() {
-    return 'Company(idx: $idx, name: $name, title: $title, category: $category, status: $status)';
+    return 'Company(idx: $idx, name: $name, title: $title, category: $category, status: $status, qr_code_enabled: $qr_code_enabled)';
   }
 }
