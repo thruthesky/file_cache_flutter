@@ -2688,5 +2688,13 @@
   "stepContactInfoDesc": "연락처 정보를 입력하세요",
   "stepImageUploadDesc": "업체 이미지를 업로드하세요",
   "uploading": "업로드 중...",
-  "viewDetails": "상세보기"
+  "viewDetails": "상세보기",
+  "viewQrCode": "QR 코드 보기",
+  "downloadQrCode": "다운로드",
+  "viewCompany": "업소보기",
+  "qrCodeScanGuide": "이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.",
+  "qrCodeSavedToGallery": "QR 코드가 갤러리에 저장되었습니다.",
+  "qrCodeSaveFailed": "QR 코드 저장에 실패했습니다.",
+  "eventParticipation": "이벤트 참여",
+  "qrCodeNotApproved": "이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요."
 }

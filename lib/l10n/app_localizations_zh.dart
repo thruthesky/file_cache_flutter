@@ -2057,4 +2057,28 @@ class LoZh extends Lo {
 
   @override
   String get viewDetails => '查看详情';
+
+  @override
+  String get viewQrCode => '查看二维码';
+
+  @override
+  String get downloadQrCode => '下载';
+
+  @override
+  String get viewCompany => '查看商家';
+
+  @override
+  String get qrCodeScanGuide => '扫描此二维码参加PhilGo商家活动。';
+
+  @override
+  String get qrCodeSavedToGallery => '二维码已保存到相册。';
+
+  @override
+  String get qrCodeSaveFailed => '二维码保存失败。';
+
+  @override
+  String get eventParticipation => '参加活动';
+
+  @override
+  String get qrCodeNotApproved => '该商家的二维码尚未可用。\n请等待管理员审核。';
 }

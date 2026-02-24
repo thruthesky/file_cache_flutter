@@ -4132,6 +4132,54 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'View Details'**
   String get viewDetails;
+
+  /// No description provided for @viewQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'View QR Code'**
+  String get viewQrCode;
+
+  /// No description provided for @downloadQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get downloadQrCode;
+
+  /// No description provided for @viewCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'View Company'**
+  String get viewCompany;
+
+  /// No description provided for @qrCodeScanGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this QR code to participate in the PhilGo company event.'**
+  String get qrCodeScanGuide;
+
+  /// No description provided for @qrCodeSavedToGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code has been saved to gallery.'**
+  String get qrCodeSavedToGallery;
+
+  /// No description provided for @qrCodeSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save QR code.'**
+  String get qrCodeSaveFailed;
+
+  /// No description provided for @eventParticipation.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Event'**
+  String get eventParticipation;
+
+  /// Message shown when company QR code is not approved by admin
+  ///
+  /// In en, this message translates to:
+  /// **'This company\'s QR code is not yet available.\nPlease wait for admin approval.'**
+  String get qrCodeNotApproved;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

@@ -2081,5 +2081,13 @@
   "stepContactInfoDesc": "連絡先情報を入力してください",
   "stepImageUploadDesc": "企業の画像をアップロードしてください",
   "uploading": "アップロード中...",
-  "viewDetails": "詳細を見る"
+  "viewDetails": "詳細を見る",
+  "viewQrCode": "QRコード表示",
+  "downloadQrCode": "ダウンロード",
+  "viewCompany": "店舗を見る",
+  "qrCodeScanGuide": "このQRコードをスキャンして、PhilGoの店舗イベントに参加してください。",
+  "qrCodeSavedToGallery": "QRコードがギャラリーに保存されました。",
+  "qrCodeSaveFailed": "QRコードの保存に失敗しました。",
+  "eventParticipation": "イベント参加",
+  "qrCodeNotApproved": "この店舗のQRコードはまだ利用できません。\n管理者の承認をお待ちください。"
 }

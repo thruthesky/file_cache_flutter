@@ -2081,5 +2081,13 @@
   "stepContactInfoDesc": "请输入联系方式",
   "stepImageUploadDesc": "请上传企业图片",
   "uploading": "上传中...",
-  "viewDetails": "查看详情"
+  "viewDetails": "查看详情",
+  "viewQrCode": "查看二维码",
+  "downloadQrCode": "下载",
+  "viewCompany": "查看商家",
+  "qrCodeScanGuide": "扫描此二维码参加PhilGo商家活动。",
+  "qrCodeSavedToGallery": "二维码已保存到相册。",
+  "qrCodeSaveFailed": "二维码保存失败。",
+  "eventParticipation": "参加活动",
+  "qrCodeNotApproved": "该商家的二维码尚未可用。\n请等待管理员审核。"
 }

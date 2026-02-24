@@ -6,6 +6,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/screens/account/account.withdrawal.screen.dart';
 import 'package:philgo/screens/company/company.list.screen.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
+import 'package:philgo/screens/company/company.qr_code.screen.dart';
 import 'package:philgo/screens/company/company.qr_code_scanned.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
@@ -349,6 +350,19 @@ final router = GoRouter(
         debugLog('🔍 CompanyViewScreen: Received companyIdx=$companyIdx');
 
         return CompanyViewScreen(companyIdx: companyIdx);
+      },
+    ),
+
+    /// Company QR Code Screen - 업소록 QR 코드 화면
+    GoRoute(
+      path: CompanyQrCodeScreen.routeName,
+      name: CompanyQrCodeScreen.routeName,
+      builder: (context, state) {
+        int companyIdx = 0;
+        if (state.extra is int) {
+          companyIdx = state.extra as int;
+        }
+        return CompanyQrCodeScreen(companyIdx: companyIdx);
       },
     ),
     GoRoute(

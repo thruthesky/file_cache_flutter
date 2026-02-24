@@ -2063,4 +2063,28 @@ class LoJa extends Lo {
 
   @override
   String get viewDetails => '詳細を見る';
+
+  @override
+  String get viewQrCode => 'QRコード表示';
+
+  @override
+  String get downloadQrCode => 'ダウンロード';
+
+  @override
+  String get viewCompany => '店舗を見る';
+
+  @override
+  String get qrCodeScanGuide => 'このQRコードをスキャンして、PhilGoの店舗イベントに参加してください。';
+
+  @override
+  String get qrCodeSavedToGallery => 'QRコードがギャラリーに保存されました。';
+
+  @override
+  String get qrCodeSaveFailed => 'QRコードの保存に失敗しました。';
+
+  @override
+  String get eventParticipation => 'イベント参加';
+
+  @override
+  String get qrCodeNotApproved => 'この店舗のQRコードはまだ利用できません。\n管理者の承認をお待ちください。';
 }

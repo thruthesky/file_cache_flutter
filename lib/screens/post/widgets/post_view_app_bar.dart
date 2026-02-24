@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/screens/home/home.screen.dart';
 import 'package:philgo/screens/post/widgets/post_view_option_menu.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// 게시글 상세 화면 AppBar 위젯
 /// Post view screen AppBar widget
@@ -40,6 +41,32 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1);
 
+  /// Share the post URL via OS native share sheet
+  /// 게시글의 필고 URL을 OS 네이티브 공유 시트로 공유합니다.
+  ///
+  /// URL format: https://philgo.com/post/view.php?idx={idx}&post_id={post_id}
+  /// iPad에서는 sharePositionOrigin을 설정하여 팝오버 위치를 지정합니다.
+  Future<void> _sharePost(BuildContext context) async {
+    try {
+      final postUrl =
+          'https://philgo.com/post/view.php?idx=${post.idx}&post_id=${post.post_id}';
+
+      final box = context.findRenderObject() as RenderBox?;
+      final origin =
+          box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: '${post.subject}\n$postUrl',
+          subject: post.subject,
+          sharePositionOrigin: origin,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error sharing post: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -52,6 +79,25 @@ class PostViewAppBar extends StatelessWidget implements PreferredSizeWidget {
             : context.go(HomeScreen.routeName),
       ),
       actions: [
+        /// Share button - share the post URL via OS native share sheet
+        /// 공유 버튼 - OS 네이티브 공유 시트를 통해 게시글 URL 공유
+        Padding(
+          padding: const EdgeInsets.only(right: 4),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => _sharePost(context),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: FaIcon(
+                FontAwesomeIcons.shareNodes,
+                size: 16,
+                color: scheme.onSurface,
+              ),
+            ),
+          ),
+        ),
+
         /// 점세개 옵션 메뉴 버튼
         /// Three-dot option menu button
         PostViewOptionMenu(

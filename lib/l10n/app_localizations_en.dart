@@ -2098,4 +2098,30 @@ class LoEn extends Lo {
 
   @override
   String get viewDetails => 'View Details';
+
+  @override
+  String get viewQrCode => 'View QR Code';
+
+  @override
+  String get downloadQrCode => 'Download';
+
+  @override
+  String get viewCompany => 'View Company';
+
+  @override
+  String get qrCodeScanGuide =>
+      'Scan this QR code to participate in the PhilGo company event.';
+
+  @override
+  String get qrCodeSavedToGallery => 'QR code has been saved to gallery.';
+
+  @override
+  String get qrCodeSaveFailed => 'Failed to save QR code.';
+
+  @override
+  String get eventParticipation => 'Join Event';
+
+  @override
+  String get qrCodeNotApproved =>
+      'This company\'s QR code is not yet available.\nPlease wait for admin approval.';
 }

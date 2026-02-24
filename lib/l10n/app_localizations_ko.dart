@@ -2061,4 +2061,29 @@ class LoKo extends Lo {
 
   @override
   String get viewDetails => '상세보기';
+
+  @override
+  String get viewQrCode => 'QR 코드 보기';
+
+  @override
+  String get downloadQrCode => '다운로드';
+
+  @override
+  String get viewCompany => '업소보기';
+
+  @override
+  String get qrCodeScanGuide => '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.';
+
+  @override
+  String get qrCodeSavedToGallery => 'QR 코드가 갤러리에 저장되었습니다.';
+
+  @override
+  String get qrCodeSaveFailed => 'QR 코드 저장에 실패했습니다.';
+
+  @override
+  String get eventParticipation => '이벤트 참여';
+
+  @override
+  String get qrCodeNotApproved =>
+      '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.';
 }

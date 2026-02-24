@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
+import 'package:philgo/screens/company/company.qr_code.screen.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 업체 상세 보기 화면 (Company View Screen)
@@ -122,6 +123,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     return company!.idx_member == user.idx;
   }
 
+  /// Check if the QR code is enabled/approved by admin for this company.
+  /// The `qr_code_enabled` field is returned by the get_company API.
+  /// When true, the QR code button is visible to all users on the company view screen.
+  bool get _isQrCodeEnabled {
+    if (company == null) return false;
+    return company!.qr_code_enabled;
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -144,9 +153,40 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               preferredSize: const Size.fromHeight(1.0),
               child: Container(height: 1.0, color: scheme.outlineVariant),
             ),
-            /// 나의 업소록이면 수정 버튼 표시
+            /// QR code button: visible to all users, but only when qr_code_enabled is true (admin-approved)
+            /// Edit button: only visible to the company owner (_isMyCompany)
             actions: [
-              if (_isMyCompany)
+              /// QR code view button - accessible to all users when qr_code_enabled is true
+              if (_isQrCodeEnabled) ...[
+                _isCollapsed
+                    ? IconButton(
+                        icon: const FaIcon(
+                          FontAwesomeIcons.lightQrcode,
+                          size: 20,
+                        ),
+                        onPressed: () =>
+                            CompanyQrCodeScreen.push(context, widget.companyIdx),
+                      )
+                    : IconButton(
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const FaIcon(
+                            FontAwesomeIcons.lightQrcode,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        onPressed: () =>
+                            CompanyQrCodeScreen.push(context, widget.companyIdx),
+                      ),
+              ],
+
+              /// Edit button - only visible to the company owner
+              if (_isMyCompany) ...[
                 _isCollapsed
                     ? IconButton(
                         icon: const FaIcon(
@@ -170,6 +210,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                         ),
                         onPressed: () => _navigateToEdit(),
                       ),
+              ],
             ],
             title: _isCollapsed && company != null
                 ? Text(company!.name, style: theme.textTheme.titleLarge)

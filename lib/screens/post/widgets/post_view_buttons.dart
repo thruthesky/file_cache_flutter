@@ -4,6 +4,7 @@ import 'package:philgo/functions/ui.functions.dart';
 import 'package:philgo/l10n/app_localizations.dart';
 import 'package:philgo/screens/post/widgets/post_view_option_menu.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// 게시글 보기 화면의 버튼 모음 위젯
 /// Post view screen buttons widget
@@ -55,6 +56,37 @@ class _PostViewButtonsState extends State<PostViewButtons> {
     isLiked = widget.isLiked;
   }
 
+  /// Share the post URL via OS native share sheet
+  /// 게시글의 필고 URL을 OS 네이티브 공유 시트로 공유합니다.
+  ///
+  /// URL format: https://philgo.com/post/view.php?idx={idx}&post_id={post_id}
+  /// iPad에서는 sharePositionOrigin을 설정하여 팝오버 위치를 지정합니다.
+  Future<void> _sharePost(BuildContext context) async {
+    try {
+      // Build the PhilGo post URL with idx and post_id
+      final postUrl =
+          'https://philgo.com/post/view.php?idx=${post.idx}&post_id=${post.post_id}';
+
+      // Calculate share position origin for iPad popover support
+      final box = context.findRenderObject() as RenderBox?;
+      final origin =
+          box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: '${post.subject}\n$postUrl',
+          subject: post.subject,
+          sharePositionOrigin: origin,
+        ),
+      );
+    } catch (e) {
+      d('Error sharing post: $e');
+      if (context.mounted) {
+        showErrorSnackBar(context, Lo.of(context)!.share);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -95,6 +127,15 @@ class _PostViewButtonsState extends State<PostViewButtons> {
         ComicActionButton(
           icon: FontAwesomeIcons.reply,
           onPressed: widget.onTapReply,
+        ),
+
+        const SizedBox(width: 8),
+
+        /// Share button - share the post URL via OS native share sheet
+        /// 공유 버튼 - OS 네이티브 공유 시트를 통해 게시글 URL 공유
+        ComicActionButton(
+          icon: FontAwesomeIcons.shareNodes,
+          onPressed: () => _sharePost(context),
         ),
 
         const SizedBox(width: 8),

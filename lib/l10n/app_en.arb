@@ -2559,5 +2559,16 @@
   "viewDetails": "View Details",
   "@viewDetails": {
     "description": "Button label to navigate to full detail view"
+  },
+  "viewQrCode": "View QR Code",
+  "downloadQrCode": "Download",
+  "viewCompany": "View Company",
+  "qrCodeScanGuide": "Scan this QR code to participate in the PhilGo company event.",
+  "qrCodeSavedToGallery": "QR code has been saved to gallery.",
+  "qrCodeSaveFailed": "Failed to save QR code.",
+  "eventParticipation": "Join Event",
+  "qrCodeNotApproved": "This company's QR code is not yet available.\nPlease wait for admin approval.",
+  "@qrCodeNotApproved": {
+    "description": "Message shown when company QR code is not approved by admin"
   }
 }
