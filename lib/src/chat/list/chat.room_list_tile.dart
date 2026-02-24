@@ -530,12 +530,13 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     );
   }
 
-  /// Show block user dialog
+  /// Show block user dialog with the other user's display name
   void _showBlockDialog() {
     showDialog(
       context: context,
       builder: (context) => BlockUserDialog(
         otherUserUid: getOtherUserUidFromChatRoomId(roomId)!,
+        displayName: name,
         onBlocked: () {
           // Optionally show success message
         },

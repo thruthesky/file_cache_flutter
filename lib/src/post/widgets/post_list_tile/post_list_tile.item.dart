@@ -100,7 +100,11 @@ class PostListTileItem extends StatelessWidget {
     // 제목 위젯 빌드 (차단/블라인드 여부에 따라 다름)
     final Widget titleWidget;
     if (blocked) {
-      /// 차단된 사용자: 아이콘 + 메시지 (부드러운 onSurfaceVariant 색상)
+      /// 차단한 사용자: 아이콘 + 메시지 (부드러운 onSurfaceVariant 색상)
+      /// "차단한 사용자의 글입니다. (닉네임)" 형태로 표시
+      final blockedNickname = post.nickname.isEmpty
+          ? PhilgoTr.of(context)!.no_name
+          : cut(post.nickname, 8);
       titleWidget = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -112,7 +116,7 @@ class PostListTileItem extends StatelessWidget {
           const SizedBox(width: 8),
           Flexible(
             child: Text(
-              "${PhilgoTr.of(context)!.post_from_blocked_user} ${cut(post.nickname.isEmpty ? PhilgoTr.of(context)!.no_name : post.nickname, 8)}",
+              "${PhilgoTr.of(context)!.post_from_blocked_user} ($blockedNickname)",
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),

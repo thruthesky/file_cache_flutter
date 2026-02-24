@@ -752,7 +752,7 @@
     "@no_name": {
         "description": "Default display name when user has no name"
     },
-    "post_from_blocked_user": "Post from blocked User",
+    "post_from_blocked_user": "Post from a user you blocked.",
     "@post_from_blocked_user": {
         "description": "Message shown for posts from blocked users"
     },
@@ -776,9 +776,17 @@
     "@be_the_first_to_comment": {
         "description": "Encouragement message when post has no comments"
     },
-    "comment_blocked_message": "Comment from blocked user",
+    "comment_blocked_message": "Comment from a user you blocked.",
     "@comment_blocked_message": {
         "description": "Message displayed for comments from blocked users"
+    },
+    "no_blocked_users": "No blocked users",
+    "@no_blocked_users": {
+        "description": "Message displayed when the blocked users list is empty"
+    },
+    "blocked_users_appear_here": "Users you block will appear here",
+    "@blocked_users_appear_here": {
+        "description": "Subtitle message displayed when blocked users list is empty"
     },
     "pinned_chats": "Pinned Chats",
     "@pinned_chats": {

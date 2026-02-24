@@ -374,9 +374,11 @@ Future<void> leaveChatRoom({
 }
 
 /// Show block/unblock dialog
+/// [displayName] - the target user's display name to show in the dialog
 void showBlockDialog({
   required BuildContext context,
   required String otherUserUid,
+  String? displayName,
   bool popOnBlocked = true,
   VoidCallback? onBlocked,
 }) {
@@ -384,6 +386,7 @@ void showBlockDialog({
     context: context,
     builder: (ctx) => BlockUserDialog(
       otherUserUid: otherUserUid,
+      displayName: displayName,
       onBlocked: () {
         if (popOnBlocked) {
           Navigator.of(context).pop();

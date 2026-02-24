@@ -124,8 +124,10 @@ class BlockedUserList extends StatelessWidget {
                   color: Theme.of(context).colorScheme.outlineVariant,
                 ),
                 const SizedBox(height: 24),
+                /// 차단한 사용자가 없을 때 표시되는 메시지
+                /// Message displayed when there are no blocked users
                 Text(
-                  'No blocked users',
+                  PhilgoTr.of(context)!.no_blocked_users,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
@@ -134,7 +136,7 @@ class BlockedUserList extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Users you block will appear here',
+                  PhilgoTr.of(context)!.blocked_users_appear_here,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),

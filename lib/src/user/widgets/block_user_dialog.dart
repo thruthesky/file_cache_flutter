@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// Dialog for confirming user block action
+/// Displays the target user's display name when provided
 class BlockUserDialog extends StatefulWidget {
   final String otherUserUid;
+
+  /// Display name of the user to block (shown in the confirmation message)
+  final String? displayName;
   final VoidCallback? onBlocked;
 
   const BlockUserDialog({
     super.key,
     required this.otherUserUid,
+    this.displayName,
     this.onBlocked,
   });
 
@@ -62,6 +67,19 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Display the target user's name if provided
+                  if (widget.displayName != null &&
+                      widget.displayName!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        widget.displayName!,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   Text(
                     PhilgoTr.of(context)!.block_user_confirmation,
                     style: theme.textTheme.bodyLarge?.copyWith(

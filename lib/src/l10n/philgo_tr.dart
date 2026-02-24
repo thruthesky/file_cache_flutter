@@ -1034,7 +1034,7 @@ abstract class PhilgoTr {
   /// Message shown for posts from blocked users
   ///
   /// In en, this message translates to:
-  /// **'Post from blocked User'**
+  /// **'Post from a user you blocked.'**
   String get post_from_blocked_user;
 
   /// Generic error message
@@ -1070,8 +1070,20 @@ abstract class PhilgoTr {
   /// Message displayed for comments from blocked users
   ///
   /// In en, this message translates to:
-  /// **'Comment from blocked user'**
+  /// **'Comment from a user you blocked.'**
   String get comment_blocked_message;
+
+  /// Message displayed when the blocked users list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No blocked users'**
+  String get no_blocked_users;
+
+  /// Subtitle message displayed when blocked users list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Users you block will appear here'**
+  String get blocked_users_appear_here;
 
   /// Title for pinned chat rooms section
   ///

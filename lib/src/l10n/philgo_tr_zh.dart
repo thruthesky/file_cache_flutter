@@ -533,7 +533,7 @@ class PhilgoTrZh extends PhilgoTr {
   String get no_name => '无名称';
 
   @override
-  String get post_from_blocked_user => '来自被屏蔽用户的帖子';
+  String get post_from_blocked_user => '您屏蔽的用户的帖子。';
 
   @override
   String get something_went_wrong => '出了点问题';
@@ -551,7 +551,13 @@ class PhilgoTrZh extends PhilgoTr {
   String get be_the_first_to_comment => '成为第一个评论的人！';
 
   @override
-  String get comment_blocked_message => '来自被屏蔽用户的评论';
+  String get comment_blocked_message => '您屏蔽的用户的评论。';
+
+  @override
+  String get no_blocked_users => '没有已屏蔽的用户';
+
+  @override
+  String get blocked_users_appear_here => '您屏蔽的用户将显示在这里';
 
   @override
   String get pinned_chats => '固定的聊天';

@@ -221,6 +221,7 @@ class ChatRoomHeader extends StatelessWidget {
                               showBlockDialog(
                                 context: parentContext,
                                 otherUserUid: otherUser!.uid,
+                                displayName: otherUser!.nickname,
                               );
                             },
                           ),

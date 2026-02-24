@@ -303,12 +303,13 @@ class SingleChatRoomHeader extends StatelessWidget {
     }
   }
 
-  /// Show block/unblock dialog
+  /// Show block/unblock dialog with the other user's nickname
   void showBlockDialog(BuildContext parentContext) {
     showDialog(
       context: parentContext,
       builder: (context) => BlockUserDialog(
         otherUserUid: otherUser.uid,
+        displayName: otherUser.nickname,
         onBlocked: () {
           Navigator.of(parentContext).pop(); // Close chat message.
         },

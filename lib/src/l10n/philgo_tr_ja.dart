@@ -535,7 +535,7 @@ class PhilgoTrJa extends PhilgoTr {
   String get no_name => '名前なし';
 
   @override
-  String get post_from_blocked_user => 'ブロックされたユーザーからの投稿';
+  String get post_from_blocked_user => 'ブロックしたユーザーの投稿です。';
 
   @override
   String get something_went_wrong => '問題が発生しました';
@@ -553,7 +553,13 @@ class PhilgoTrJa extends PhilgoTr {
   String get be_the_first_to_comment => '最初のコメントを投稿しよう！';
 
   @override
-  String get comment_blocked_message => 'ブロックされたユーザーのコメント';
+  String get comment_blocked_message => 'ブロックしたユーザーのコメントです。';
+
+  @override
+  String get no_blocked_users => 'ブロックしたユーザーはいません';
+
+  @override
+  String get blocked_users_appear_here => 'ブロックしたユーザーがここに表示されます';
 
   @override
   String get pinned_chats => '固定されたチャット';

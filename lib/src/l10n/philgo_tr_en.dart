@@ -550,7 +550,7 @@ class PhilgoTrEn extends PhilgoTr {
   String get no_name => 'No Name';
 
   @override
-  String get post_from_blocked_user => 'Post from blocked User';
+  String get post_from_blocked_user => 'Post from a user you blocked.';
 
   @override
   String get something_went_wrong => 'Something went wrong';
@@ -568,7 +568,13 @@ class PhilgoTrEn extends PhilgoTr {
   String get be_the_first_to_comment => 'Be the first to comment!';
 
   @override
-  String get comment_blocked_message => 'Comment from blocked user';
+  String get comment_blocked_message => 'Comment from a user you blocked.';
+
+  @override
+  String get no_blocked_users => 'No blocked users';
+
+  @override
+  String get blocked_users_appear_here => 'Users you block will appear here';
 
   @override
   String get pinned_chats => 'Pinned Chats';

@@ -535,7 +535,7 @@ class PhilgoTrKo extends PhilgoTr {
   String get no_name => '이름 없음';
 
   @override
-  String get post_from_blocked_user => '차단된 사용자의 게시물';
+  String get post_from_blocked_user => '차단한 사용자의 글입니다.';
 
   @override
   String get something_went_wrong => '문제가 발생했습니다';
@@ -553,7 +553,13 @@ class PhilgoTrKo extends PhilgoTr {
   String get be_the_first_to_comment => '첫 댓글을 남겨보세요!';
 
   @override
-  String get comment_blocked_message => '차단된 사용자의 댓글';
+  String get comment_blocked_message => '차단한 사용자의 코멘트입니다.';
+
+  @override
+  String get no_blocked_users => '차단한 사용자가 없습니다';
+
+  @override
+  String get blocked_users_appear_here => '차단한 사용자가 여기에 표시됩니다';
 
   @override
   String get pinned_chats => '고정된 채팅';

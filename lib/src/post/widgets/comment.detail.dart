@@ -71,7 +71,7 @@ class _CommentDetailState extends State<CommentDetail> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                '${PhilgoTr.of(context)!.comment_blocked_message} ${widget.comment.nickname}',
+                '${PhilgoTr.of(context)!.comment_blocked_message} (${widget.comment.nickname})',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontStyle: FontStyle.italic,
                   color: Theme.of(
@@ -289,6 +289,7 @@ class _CommentDetailState extends State<CommentDetail> {
                               showBlockDialog(
                                 context: context,
                                 otherUserUid: widget.comment.firebase_uid,
+                                displayName: widget.comment.nickname,
                                 popOnBlocked: false,
                               );
                             },

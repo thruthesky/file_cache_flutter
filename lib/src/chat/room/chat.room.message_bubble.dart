@@ -681,6 +681,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
         ),
         no: () => BlockUserDialog(
           otherUserUid: sender!.uid,
+          displayName: sender!.nickname,
           onBlocked: () {
             // Optionally refresh or show success message
             if (isSingleChat) {
