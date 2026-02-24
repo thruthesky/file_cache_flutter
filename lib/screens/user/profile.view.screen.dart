@@ -437,6 +437,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                             context: parentContext,
                             builder: (context) => BlockUserDialog(
                               otherUserUid: user!.uid,
+                              displayName: user!.nickname,
                               onBlocked: () {
                                 Navigator.of(parentContext).pop();
                                 // Close chat message.

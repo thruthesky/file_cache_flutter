@@ -220,7 +220,11 @@ class PostViewOptionMenu extends StatelessWidget {
         onTapReply();
         break;
       case _PostMenuAction.block:
-        showBlockDialog(context: context, otherUserUid: firebaseUid);
+        showBlockDialog(
+          context: context,
+          otherUserUid: firebaseUid,
+          displayName: post.nickname,
+        );
         break;
       case _PostMenuAction.report:
         await showReportReasonBottomSheet(

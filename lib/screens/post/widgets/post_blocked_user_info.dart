@@ -58,7 +58,7 @@ class PostBlockedUserInfo extends StatelessWidget {
             // 차단된 사용자 메시지
             Expanded(
               child: Text(
-                '${PhilgoTr.of(context)!.post_from_blocked_user} $nickname',
+                '${PhilgoTr.of(context)!.post_from_blocked_user} ($nickname)',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontStyle: FontStyle.italic,
                   color: scheme.onSurface.withValues(alpha: 0.6),

@@ -131,6 +131,7 @@ class _PostViewButtonsState extends State<PostViewButtons> {
                       showBlockDialog(
                         context: context,
                         otherUserUid: post.firebase_uid,
+                        displayName: post.nickname,
                       );
                     },
                   ),
