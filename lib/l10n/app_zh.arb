@@ -2089,5 +2089,7 @@
   "qrCodeSavedToGallery": "二维码已保存到相册。",
   "qrCodeSaveFailed": "二维码保存失败。",
   "eventParticipation": "参加活动",
-  "qrCodeNotApproved": "该商家的二维码尚未可用。\n请等待管理员审核。"
+  "qrCodeNotApproved": "该商家的二维码尚未可用。\n请等待管理员审核。",
+  "uploadReceiptForPointEvent": "积分活动收据上传",
+  "pointEvent": "积分活动"
 }

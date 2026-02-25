@@ -2087,4 +2087,10 @@ class LoJa extends Lo {
 
   @override
   String get qrCodeNotApproved => 'この店舗のQRコードはまだ利用できません。\n管理者の承認をお待ちください。';
+
+  @override
+  String get uploadReceiptForPointEvent => 'ポイントイベント領収書アップロード';
+
+  @override
+  String get pointEvent => 'ポイントイベント';
 }

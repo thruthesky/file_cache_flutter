@@ -2081,4 +2081,10 @@ class LoZh extends Lo {
 
   @override
   String get qrCodeNotApproved => '该商家的二维码尚未可用。\n请等待管理员审核。';
+
+  @override
+  String get uploadReceiptForPointEvent => '积分活动收据上传';
+
+  @override
+  String get pointEvent => '积分活动';
 }

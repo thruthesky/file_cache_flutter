@@ -19,13 +19,28 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 /// 하단 네비게이션 바를 통해 홈, 게시판, 업소록, 채팅, 메뉴 화면을 전환합니다.
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/';
-  const HomeScreen({super.key});
+  final Widget? redirect;
+  const HomeScreen({super.key, this.redirect});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.redirect != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => widget.redirect!),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final HomeNavigationItem selectedItem = NavigationState.of(context).homeNav;
@@ -148,7 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
             final tappedItem = HomeNavigationItem.values[index];
 
             // 디버그: unreadSingleCount 값 확인
-            debugPrint('[HomeScreen] 🔵 onTap: unreadSingleCount = ${UserService.instance.unreadSingleCount}');
+            debugPrint(
+              '[HomeScreen] 🔵 onTap: unreadSingleCount = ${UserService.instance.unreadSingleCount}',
+            );
 
             // 읽지 않은 메시지가 있으면 알림음 재생
             // Play notification sound when there are unread messages

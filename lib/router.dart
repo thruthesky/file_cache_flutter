@@ -338,15 +338,24 @@ final router = GoRouter(
         return PostViewScreen(post: post);
       },
     ),
+
+    /// 업소록 보기 페이지
+    /// 중요: Deeplink 에 들어오는 값을 지원한다.
     GoRoute(
       path: CompanyViewScreen.routeName,
       name: CompanyViewScreen.routeName,
       builder: (context, state) {
+        /// Deeplink 로 값이 들어왔나?
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        if (idx > 0) {
+          return HomeScreen(redirect: CompanyViewScreen(companyIdx: idx));
+        }
+
+        /// 앱 내에서 페이지 전환인가?
         int companyIdx = 0;
         if (state.extra is int) {
           companyIdx = state.extra as int;
         }
-
         debugLog('🔍 CompanyViewScreen: Received companyIdx=$companyIdx');
 
         return CompanyViewScreen(companyIdx: companyIdx);
@@ -829,21 +838,21 @@ final router = GoRouter(
         return SearchScreen(searchTerm: searchTerm);
       },
     ),
+
     /// QR 코드 스캔 결과 화면 (QR Code Scanned Screen)
     /// 쿼리 파라미터로 idx(업체 번호)와 verification_id(인증 ID)를 전달받습니다.
     GoRoute(
       path: CompanyQrCodeScannedScreen.routeName,
       builder: (context, state) {
-        final idx = int.tryParse(
-              state.uri.queryParameters['idx'] ?? '',
-            ) ??
-            0;
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         final verificationId =
             state.uri.queryParameters['verification_id'] ?? '';
-        return CompanyQrCodeScannedScreen(
+        final screen = CompanyQrCodeScannedScreen(
           idx: idx,
           verificationId: verificationId,
         );
+
+        return HomeScreen(redirect: screen);
       },
     ),
   ],

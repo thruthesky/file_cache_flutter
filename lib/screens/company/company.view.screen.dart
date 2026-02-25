@@ -18,7 +18,7 @@ import 'package:philgo_api/philgo_api.dart';
 /// - flutter_animate를 사용한 순차적 애니메이션
 /// - 28px 섹션 간 간격
 class CompanyViewScreen extends StatefulWidget {
-  static const String routeName = '/company-view';
+  static const String routeName = '/company/view.php';
 
   static Future<Company?> Function(BuildContext ctx, int companyIdx) push =
       (ctx, companyIdx) => ctx.push(routeName, extra: companyIdx);
@@ -153,6 +153,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               preferredSize: const Size.fromHeight(1.0),
               child: Container(height: 1.0, color: scheme.outlineVariant),
             ),
+
             /// QR code button: visible to all users, but only when qr_code_enabled is true (admin-approved)
             /// Edit button: only visible to the company owner (_isMyCompany)
             actions: [
@@ -164,8 +165,10 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           FontAwesomeIcons.lightQrcode,
                           size: 20,
                         ),
-                        onPressed: () =>
-                            CompanyQrCodeScreen.push(context, widget.companyIdx),
+                        onPressed: () => CompanyQrCodeScreen.push(
+                          context,
+                          widget.companyIdx,
+                        ),
                       )
                     : IconButton(
                         icon: Container(
@@ -180,8 +183,10 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                             size: 20,
                           ),
                         ),
-                        onPressed: () =>
-                            CompanyQrCodeScreen.push(context, widget.companyIdx),
+                        onPressed: () => CompanyQrCodeScreen.push(
+                          context,
+                          widget.companyIdx,
+                        ),
                       ),
               ],
 
@@ -477,7 +482,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         ),
 
         /// 위치 정보 (Location info)
-        if (company!.location.isNotEmpty || company!.address.isNotEmpty) ...[
+        /// URL 형태의 값은 실제 주소가 아니므로 필터링하여 표시하지 않음
+        if (_hasValidLocation()) ...[
           const SizedBox(height: 20),
 
           /// 구분선 (Divider)
@@ -491,13 +497,33 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           _buildInfoRow(
             icon: FontAwesomeIcons.locationDot,
             label: T.location,
-            value: company!.location.isNotEmpty
-                ? company!.location
-                : company!.address,
+            value: _getValidLocation(),
           ),
         ],
       ],
     );
+  }
+
+  /// Check if a string value is a URL (not a real address/location)
+  bool _isUrl(String value) {
+    return value.startsWith('http://') || value.startsWith('https://');
+  }
+
+  /// Check if the company has a valid (non-URL) location or address
+  bool _hasValidLocation() {
+    final loc = company!.location;
+    final addr = company!.address;
+    return (loc.isNotEmpty && !_isUrl(loc)) ||
+        (addr.isNotEmpty && !_isUrl(addr));
+  }
+
+  /// Get the first valid (non-URL) location or address string
+  String _getValidLocation() {
+    final loc = company!.location;
+    final addr = company!.address;
+    if (loc.isNotEmpty && !_isUrl(loc)) return loc;
+    if (addr.isNotEmpty && !_isUrl(addr)) return addr;
+    return '';
   }
 
   /// 연락처 정보가 있는지 확인 (Check if contact info exists)

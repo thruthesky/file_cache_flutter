@@ -2086,4 +2086,10 @@ class LoKo extends Lo {
   @override
   String get qrCodeNotApproved =>
       '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.';
+
+  @override
+  String get uploadReceiptForPointEvent => '포인트 이벤트 영수증 업로드';
+
+  @override
+  String get pointEvent => '포인트 이벤트';
 }

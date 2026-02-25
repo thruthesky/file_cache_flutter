@@ -4180,6 +4180,18 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'This company\'s QR code is not yet available.\nPlease wait for admin approval.'**
   String get qrCodeNotApproved;
+
+  /// No description provided for @uploadReceiptForPointEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Receipt for Point Event'**
+  String get uploadReceiptForPointEvent;
+
+  /// No description provided for @pointEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Point Event'**
+  String get pointEvent;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

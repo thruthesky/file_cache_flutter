@@ -2570,5 +2570,7 @@
   "qrCodeNotApproved": "This company's QR code is not yet available.\nPlease wait for admin approval.",
   "@qrCodeNotApproved": {
     "description": "Message shown when company QR code is not approved by admin"
-  }
+  },
+  "uploadReceiptForPointEvent": "Upload Receipt for Point Event",
+  "pointEvent": "Point Event"
 }
