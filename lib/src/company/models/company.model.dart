@@ -109,7 +109,8 @@ class Company {
       ad_begin_date: json['ad_begin_date'] as int? ?? 0,
       ad_end_date: json['ad_end_date'] as int? ?? 0,
       ad_click_url: json['ad_click_url'] as String? ?? '',
-      qr_code_enabled: json['qr_code_enabled'] == true,
+      /// API returns `show_qr_code` as int (1 = enabled, 0 = disabled)
+      qr_code_enabled: json['show_qr_code'] == 1 || json['show_qr_code'] == true,
     );
   }
 
