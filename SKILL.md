@@ -86,6 +86,16 @@ PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2
 (`https://local.philgo.com`, `https://banana.philgo.com`), Docker 운영 명령어,
 Windows 환경 설정 차이점을 포함합니다.
 
+### Flutter 앱 API 연동 → [app/flutter-api.md](references/app/flutter-api.md)
+
+Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.
+`v7api()` 함수 시그니처, 매개변수, 반환값, 에러 처리 패턴,
+기존 `func()`과의 비교, 핵심 헬퍼 함수(`createDio()`, `patchToken()`),
+`PhilgoConfig.v7ApiEndpoint` 설정, 위젯에서의 3상태 관리 패턴
+(로딩/에러/성공), Firebase ID Token 인증 흐름, 실전 코드 예제,
+**v7apiFileUpload() 파일 업로드 함수**, **V7FileUpload 재활용 위젯**,
+v7 위젯 목록을 포함합니다.
+
 ### 모듈별 API 문서 → [references/api/](references/api/)
 
 | 모듈 | 문서 | 상태 |
@@ -106,6 +116,22 @@ Windows 환경 설정 차이점을 포함합니다.
 | **파일 위치** | 동일 폴더에 `<module>-<섹션>.md` 형태로 저장 (예: `upload-curl-guide.md`, `upload-test.md`) |
 | **본문 참조** | 분리된 파일은 원본 문서에서 링크로 참조: `→ [상세 가이드](upload-curl-guide.md)` |
 | **목차 유지** | 원본 문서의 목차에는 분리된 섹션도 링크 포함 |
+
+---
+
+## Flutter v7 위젯/함수 재활용 원칙
+
+> **⚠️⚠️⚠️ 재활용 필수 ⚠️⚠️⚠️**
+> v7 시스템용 Flutter 위젯과 함수는 **반드시 기존 것을 재활용**해야 한다.
+> 새로운 업로드 위젯, API 호출 함수 등을 중복 생성하지 말 것.
+
+| 함수/위젯 | 위치 | 용도 | 재활용 |
+|-----------|------|------|--------|
+| `v7api()` | `lib/v7_api/v7_api.dart` | v7 일반 API 호출 (JSON POST) | ✅ 필수 |
+| `v7apiFileUpload()` | `lib/v7_api/v7_api.dart` | v7 파일 업로드 (multipart/form-data) | ✅ 필수 |
+| `V7FileUpload` | `lib/widgets/upload/v7_file_upload.dart` | 파일 업로드 위젯 (카메라/갤러리/파일) | ✅ **필수** |
+
+상세 사용법: → [app/flutter-api.md](references/app/flutter-api.md) 11~13장 참조
 
 ---
 
