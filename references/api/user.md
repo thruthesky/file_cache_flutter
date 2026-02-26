@@ -5,8 +5,11 @@
 - [1. 개요](#1-개요)
 - [2. 아키텍처](#2-아키텍처)
 - [3. API 엔드포인트](#3-api-엔드포인트)
+  - [3.1 user.count](#31-usercount---총-사용자-수-조회)
+  - [3.2 user.me](#32-userme---현재-로그인-사용자-정보-조회)
 - [4. 파일 구조](#4-파일-구조)
-- [5. 테스트](#5-테스트)
+- [5. 인증 시스템 (AuthService)](#5-인증-시스템-authservice)
+- [6. 테스트](#6-테스트)
 
 ---
 
@@ -18,14 +21,16 @@
 - **DB 테이블**: `sf_member`
 - **Controller**: `Philgo\User\UserController` (`lib/user/UserController.php`)
 - **Service**: `Philgo\User\UserService` (`lib/user/UserService.php`)
+- **인증 유틸**: `Philgo\Utils\AuthService` (`lib/utils/AuthService.php`)
 - **API 접두사**: `user.*`
-- **네임스페이스**: `Philgo\User`
+- **네임스페이스**: `Philgo\User`, `Philgo\Utils`
 
 ---
 
 ## 2. 아키텍처
 
 ```
+[user.count 흐름]
 JavaScript: func('user.count')
     │
     ▼ POST /api.php (body: {method: "user.count"})
@@ -43,6 +48,29 @@ JavaScript: func('user.count')
     │  └─ Db::pdo() → SELECT COUNT(*) FROM sf_member
     │
     ▼ JSON 응답: {"count": 188186}
+
+
+[user.me 흐름]
+JavaScript: func('user.me')
+    │
+    ▼ POST /api.php (body: {method: "user.me"})
+    │
+    ▼ api.php (PSR-4 Autoloading)
+    │  └─ new UserController() → me($input)
+    │
+    ▼ Philgo\User\UserController::me()
+    │  └─ UserService::getMe()
+    │
+    ▼ Philgo\User\UserService::getMe()
+    │  ├─ AuthService::getLoginUser()  ← 쿠키/파라미터에서 session_id 읽기
+    │  │  ├─ 세션 ID 파싱: "{MD5해시}-{idx}" → idx 추출
+    │  │  ├─ Db::pdo() → SELECT * FROM sf_member WHERE idx = ?
+    │  │  └─ 해시 검증: md5(salt + idx + firebase_uid + phone_number)
+    │  ├─ null이면 → throw RuntimeException('로그인이 필요합니다.')
+    │  └─ password 필드 제거 후 리턴
+    │
+    ▼ JSON 응답 (성공): {"idx": 123, "id": "user@test.com", ...}
+    ▼ JSON 응답 (비로그인): {"success": false, "message": "로그인이 필요합니다."}
 ```
 
 핵심 원칙:
@@ -89,6 +117,68 @@ console.log(res.count);  // 188186
 }
 ```
 
+### 3.2 user.me - 현재 로그인 사용자 정보 조회
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `user.me` |
+| **HTTP** | `GET /api.php?method=user.me` 또는 `POST /api.php` (body: `{method: "user.me"}`) |
+| **인증** | 필수 — 쿠키 `session_id` 또는 HTTP 파라미터 `session_id` |
+| **파라미터** | `session_id` (선택적, 쿠키 없을 때 사용) |
+| **성공 응답** | 사용자 정보 배열 (password 제외) |
+| **에러 응답** | `{"success": false, "message": "로그인이 필요합니다."}` |
+
+**인증 처리 흐름**:
+1. `AuthService::getLoginUser()` → 쿠키/파라미터에서 `session_id` 추출
+2. 세션 ID 형식 검증: `"{MD5해시}-{사용자idx}"` → `idx` 추출
+3. DB에서 사용자 조회: `SELECT * FROM sf_member WHERE idx = ?`
+4. 해시 검증: `md5(salt + idx + firebase_uid + phone_number) + '-' + idx` 비교
+5. 모든 검증 통과 시 사용자 레코드 리턴 (password 필드 제거)
+
+**curl 예시**:
+```bash
+# 비로그인 상태 → 에러
+curl -s "https://local.philgo.com:443/api.php?method=user.me"
+# → {"success":false,"message":"로그인이 필요합니다."}
+
+# session_id 파라미터로 인증
+curl -s "https://local.philgo.com:443/api.php?method=user.me&session_id={세션ID}"
+
+# 쿠키로 인증
+curl -s -b "session_id={세션ID}" "https://local.philgo.com:443/api.php?method=user.me"
+```
+
+**JavaScript 호출 예시**:
+```javascript
+// 로그인 상태에서 호출 (쿠키에 session_id 자동 포함)
+const res = await func('user.me');
+console.log(res.idx);    // 123
+console.log(res.id);     // "user@test.com"
+console.log(res.name);   // "홍길동"
+// ※ password 필드는 응답에 포함되지 않음
+```
+
+**성공 응답 형식** (sf_member 테이블 전체 컬럼, password 제외):
+```json
+{
+    "idx": 123,
+    "id": "user@test.com",
+    "name": "홍길동",
+    "nickname": "닉네임",
+    "phone_number": "+821012345678",
+    "firebase_uid": "abc123...",
+    "stamp": 1700000000
+}
+```
+
+**에러 응답 형식**:
+```json
+{
+    "success": false,
+    "message": "로그인이 필요합니다."
+}
+```
+
 ---
 
 ## 4. 파일 구조
@@ -102,6 +192,11 @@ lib/user/
 ├── user.block.php                # ⚠️ 레거시
 ├── user.resign.functions.php     # ⚠️ 레거시
 └── member-block.functions.php    # ⚠️ 레거시
+
+lib/utils/
+├── AuthService.php               # ★ Philgo\Utils\AuthService (세션 인증)
+├── Db.php                        # ★ Philgo\Utils\Db (DB 연결)
+└── RequestUtils.php              # ★ Philgo\Utils\RequestUtils (입력 처리)
 ```
 
 ### 4.1 UserController
@@ -117,12 +212,29 @@ class UserController
      * API: method=user.count
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=user.count
+     *   https://local.philgo.com:443/api.php?method=user.count
      */
     public function count(array $input): array
     {
         $count = UserService::getTotalCount();
         return ['count' => $count];
+    }
+
+    /**
+     * 현재 로그인한 회원 정보 조회
+     * API: method=user.me
+     *
+     * GET 호출 예시:
+     *   https://local.philgo.com:443/api.php?method=user.me
+     *   https://local.philgo.com:443/api.php?method=user.me&session_id={세션ID}
+     *
+     * @param array $input 입력 파라미터 (session_id: 선택적)
+     * @return array 사용자 정보 배열 (password 제외)
+     * @throws \RuntimeException 비로그인 시
+     */
+    public function me(array $input): array
+    {
+        return UserService::getMe();
     }
 }
 ```
