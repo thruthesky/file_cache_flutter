@@ -24,7 +24,7 @@ import 'package:flutter/material.dart';
 ///   date: 19900315,  // 1990년 3월 15일
 ///   label: '생년월일',
 ///   onChange: (value) {
-///     print('선택된 날짜: $value');  // 예: 19900315
+/////     print('선택된 날짜: $value');  // 예: 19900315
 ///   },
 /// )
 /// ```

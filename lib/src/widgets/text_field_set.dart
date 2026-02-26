@@ -286,7 +286,7 @@ class TextFieldSet extends StatelessWidget {
   /// to the [focusNode]:
   ///
   /// ```dart
-  /// myFocusNode.addListener(() { print(myFocusNode.hasFocus); });
+  /// myFocusNode.addListener(() {// print(myFocusNode.hasFocus); });
   /// ```
   ///
   /// If null, this widget will create its own [FocusNode].

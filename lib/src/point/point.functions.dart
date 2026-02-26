@@ -36,7 +36,7 @@ const _pointEventCacheKey = 'event_info';
 /// final eventInfo = await getPointEventInfo();
 /// if (eventInfo.inEvent) {
 ///   // 포인트 이벤트 진행 중
-///   print('현재 포인트 이벤트 진행 중입니다!');
+/////   print('현재 포인트 이벤트 진행 중입니다!');
 /// }
 /// ```
 ///
