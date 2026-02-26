@@ -56,6 +56,7 @@ PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
 - **네임스페이스**: `Philgo\{Module}\` (예: `Philgo\User\UserController`)
 - **DB 접근**: `Philgo\Utils\Db::pdo()` (레거시 `pdo()` 사용 금지)
 - **입력 처리**: `Philgo\Utils\RequestUtils::all()` (레거시 `in()` 사용 금지)
+- **인증 처리**: `Philgo\Utils\AuthService::getLoginUser()` (레거시 `login()` 사용 금지)
 - **에러 처리**: `throw new RuntimeException()` → api.php에서 catch → `{success: false}`
 - **테스트**: PEST v4 Unit Test (`tests/Unit/`)
 

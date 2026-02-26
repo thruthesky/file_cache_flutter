@@ -96,10 +96,10 @@ JavaScript: func('user.me')
 **curl 예시**:
 ```bash
 # GET 방식
-curl -s "https://local.philgo.com:444/api.php?method=user.count"
+curl -s "https://local.philgo.com:443/api.php?method=user.count"
 
 # POST 방식 (JSON)
-curl -s -X POST "https://local.philgo.com:444/api.php" \
+curl -s -X POST "https://local.philgo.com:443/api.php" \
   -H "Content-Type: application/json" \
   -d '{"method": "user.count"}'
 ```
@@ -294,6 +294,7 @@ class UserService
 {
     "autoload": {
         "psr-4": {
+            "Philgo\\Utils\\": "lib/utils/",
             "Philgo\\User\\": "lib/user/"
         }
     }
@@ -302,9 +303,136 @@ class UserService
 
 ---
 
-## 5. 테스트
+## 5. 인증 시스템 (AuthService)
 
-### 5.1 PEST Unit Test
+### 5.1 개요
+
+v7 `api.php`는 `boot.php`를 포함하지 않으므로 레거시 `login()` 함수를 사용할 수 없다.
+`AuthService`는 레거시 세션 검증 로직(`user.login.functions.php`)을 v7 시스템에서 독립적으로 처리한다.
+
+**파일**: `lib/utils/AuthService.php` | **네임스페이스**: `Philgo\Utils\AuthService`
+
+### 5.2 세션 ID 구조
+
+```
+세션 ID 형식: "{MD5해시}-{사용자idx}"
+해시 생성: md5(SALT + idx + firebase_uid + phone_number) + '-' + idx
+
+SALT: "---secret_salt: withcenter philgo v6 server key: WA113A,*lvptB--- (update)"
+```
+
+- 레거시 `generate_session_id()` 함수와 **동일한 로직**을 사용
+- 쿠키명: `session_id` (레거시 `SESSION_ID` 상수와 동일)
+
+### 5.3 인증 흐름
+
+```
+1. 세션 ID 획득: $_COOKIE['session_id'] → 없으면 RequestUtils::get('session_id')
+2. 형식 검증: explode('-', $sessionId) → [해시, idx]
+3. DB 조회: SELECT * FROM sf_member WHERE idx = ?
+4. firebase_uid 존재 확인 (없으면 로그인 불가)
+5. 해시 검증: generateSessionId($user) === $sessionId
+6. 모든 검증 통과 → 사용자 배열 리턴 (static 캐싱)
+```
+
+### 5.4 핵심 소스코드
+
+```php
+// lib/utils/AuthService.php
+namespace Philgo\Utils;
+
+use PDO;
+
+class AuthService
+{
+    private const SALT = "---secret_salt: withcenter philgo v6 server key: WA113A,*lvptB--- (update)";
+    private const SESSION_KEY = 'session_id';
+    private static ?array $cachedUser = null;
+    private static bool $checked = false;
+
+    /**
+     * 현재 로그인한 사용자 정보를 리턴한다.
+     * 동일 요청 내에서 여러 번 호출해도 DB 조회는 1회만 수행 (static 캐싱).
+     *
+     * @return array|null sf_member 전체 컬럼, 비로그인 시 null
+     */
+    public static function getLoginUser(): ?array
+    {
+        if (self::$checked) return self::$cachedUser;
+        self::$checked = true;
+
+        $sessionId = $_COOKIE[self::SESSION_KEY] ?? RequestUtils::get(self::SESSION_KEY);
+        if (empty($sessionId)) return null;
+
+        // 세션 ID 형식: "{MD5해시}-{idx}"
+        $parts = explode('-', $sessionId);
+        if (count($parts) !== 2) return null;
+
+        $idx = (int) $parts[1];
+        if ($idx <= 0) return null;
+
+        $stmt = Db::pdo()->prepare("SELECT * FROM sf_member WHERE idx = ?");
+        $stmt->execute([$idx]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user === false || empty($user)) return null;
+        if (empty($user['firebase_uid'])) return null;
+
+        // 세션 ID 해시 검증
+        if (self::generateSessionId($user) !== $sessionId) return null;
+
+        self::$cachedUser = $user;
+        return self::$cachedUser;
+    }
+
+    /**
+     * 세션 ID 생성 (레거시 generate_session_id()와 동일)
+     */
+    private static function generateSessionId(array $user): string
+    {
+        $hash = md5(self::SALT . $user['idx'] . $user['firebase_uid'] . ($user['phone_number'] ?? ''));
+        return $hash . '-' . $user['idx'];
+    }
+
+    /** 캐시 초기화 (테스트용) */
+    public static function reset(): void
+    {
+        self::$cachedUser = null;
+        self::$checked = false;
+    }
+}
+```
+
+### 5.5 사용 패턴
+
+```php
+use Philgo\Utils\AuthService;
+
+// 로그인 사용자 조회
+$user = AuthService::getLoginUser();
+if ($user === null) {
+    throw new RuntimeException('로그인이 필요합니다.');
+}
+echo $user['name'];  // 사용자 이름
+
+// 테스트 시 캐시 초기화
+AuthService::reset();
+```
+
+### 5.6 레거시 함수와의 관계
+
+| v7 시스템 (AuthService) | 레거시 함수 | 파일 |
+|-------------------------|------------|------|
+| `AuthService::getLoginUser()` | `login()`, `get_user_from_session_id()` | `user.login.functions.php` |
+| `AuthService::generateSessionId()` | `generate_session_id()` | `user.login.functions.php:296-304` |
+| `AuthService::SALT` | `$salt` 변수 | `user.login.functions.php:301` |
+| `AuthService::SESSION_KEY` | `SESSION_ID` 상수 | `constants.php` |
+
+---
+
+## 6. 테스트
+
+### 6.1 PEST Unit Test
 
 **파일**: `tests/Unit/UserControllerTest.php`
 
@@ -313,7 +441,7 @@ class UserService
 ./vendor/bin/pest tests/Unit/UserControllerTest.php
 ```
 
-**테스트 항목**:
+**테스트 항목 (총 9개)**:
 
 | 테스트 | 설명 |
 |--------|------|
@@ -323,6 +451,9 @@ class UserService
 | `UserController → count() - count 값이 0 이상이다` | count 값의 범위 확인 |
 | `UserService → getTotalCount() - 정수를 반환한다` | Service 직접 호출 검증 |
 | `UserService → getTotalCount() - 0 이상의 값을 반환한다` | Service 값 범위 검증 |
+| `UserService → getMe() - 비로그인 시 RuntimeException 발생` | 비로그인 예외 처리 검증 |
+| `UserController::me() → 비로그인 시 RuntimeException 발생` | Controller 예외 전파 검증 |
+| `AuthService → getLoginUser() - 비로그인 시 null 반환` | 인증 서비스 기본 동작 검증 |
 
 **테스트 코드 핵심**:
 ```php
@@ -337,14 +468,22 @@ beforeAll(function () {
 });
 ```
 
-### 5.2 curl 테스트
+### 6.2 curl 테스트
 
 ```bash
 # 파라미터 없이 호출 → 에러
-curl -s "https://local.philgo.com:444/api.php"
+curl -s "https://local.philgo.com:443/api.php"
 # → {"success":false,"message":"method 파라미터가 필요합니다."}
 
 # user.count 호출 → 성공
-curl -s "https://local.philgo.com:444/api.php?method=user.count"
+curl -s "https://local.philgo.com:443/api.php?method=user.count"
 # → {"count":188186}
+
+# user.me 호출 (비로그인) → 에러
+curl -s "https://local.philgo.com:443/api.php?method=user.me"
+# → {"success":false,"message":"로그인이 필요합니다."}
+
+# user.me 호출 (세션ID 파라미터) → 성공
+curl -s "https://local.philgo.com:443/api.php?method=user.me&session_id={세션ID}"
+# → {"idx":123,"id":"user@test.com","name":"홍길동",...}
 ```

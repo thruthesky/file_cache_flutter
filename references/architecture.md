@@ -1297,6 +1297,7 @@ ready(() => {
 |-------------|------|------------------|------|
 | `Philgo\Utils\RequestUtils` | `lib/utils/RequestUtils.php` | `in()`, `http_param()`, `http_params()` | 클라이언트 요청 입력 처리 |
 | `Philgo\Utils\Db` | `lib/utils/Db.php` | `pdo()`, `db_select()`, `db_insert()` 등 | PDO 데이터베이스 연결 |
+| `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | `login()`, `get_user_from_session_id()` | 세션 기반 로그인 사용자 인증 |
 
 ### 14.2 RequestUtils 클래스
 
@@ -1380,7 +1381,49 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
 Db::setConfigPath(__DIR__ . '/etc/db.config.test.php');
 ```
 
-### 14.4 새 Utils 클래스 작성 규칙
+### 14.4 AuthService 클래스
+
+**파일**: `lib/utils/AuthService.php` | **네임스페이스**: `Philgo\Utils\AuthService`
+
+v7 `api.php`는 `boot.php`를 포함하지 않으므로 레거시 `login()` 함수를 사용할 수 없다.
+`AuthService`는 레거시 세션 검증 로직을 v7 시스템에서 독립적으로 처리한다.
+
+```php
+namespace Philgo\Utils;
+
+class AuthService
+{
+    /**
+     * 현재 로그인한 사용자 정보를 리턴한다.
+     * 쿠키/파라미터의 session_id 검증 후 DB 조회.
+     * 동일 요청 내 중복 조회 방지 (static 캐싱).
+     *
+     * @return array|null sf_member 전체 컬럼, 비로그인 시 null
+     */
+    public static function getLoginUser(): ?array { ... }
+
+    /** 캐시 초기화 (테스트용) */
+    public static function reset(): void { ... }
+}
+```
+
+**사용 예시**:
+```php
+use Philgo\Utils\AuthService;
+
+$user = AuthService::getLoginUser();
+if ($user === null) {
+    throw new RuntimeException('로그인이 필요합니다.');
+}
+echo $user['name'];
+
+// 테스트 시 캐시 초기화
+AuthService::reset();
+```
+
+> 상세 인증 흐름, 세션 ID 구조, 핵심 소스코드는 → [api/user.md 섹션 5](api/user.md#5-인증-시스템-authservice) 참조
+
+### 14.5 새 Utils 클래스 작성 규칙
 
 1. **파일 위치**: `lib/utils/<Module>Utils.php` (PascalCase 파일명)
 2. **네임스페이스**: `namespace Philgo\Utils;`
@@ -1411,6 +1454,7 @@ v7 시스템의 모든 클래스는 **PSR-4 Autoloading**을 사용하여 네임
 |---------------------|-----------|------|
 | `Philgo\Utils\RequestUtils` | `lib/utils/RequestUtils.php` | 요청 입력 처리 |
 | `Philgo\Utils\Db` | `lib/utils/Db.php` | PDO 데이터베이스 연결 |
+| `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | 세션 인증 서비스 |
 | `Philgo\User\UserController` | `lib/user/UserController.php` | 사용자 Controller |
 | `Philgo\User\UserService` | `lib/user/UserService.php` | 사용자 Service |
 
