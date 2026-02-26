@@ -40,7 +40,7 @@ JavaScript: func('user.count')
     │  └─ UserService::getTotalCount()
     │
     ▼ Philgo\User\UserService::getTotalCount()
-    │  └─ DbUtils::pdo() → SELECT COUNT(*) FROM sf_member
+    │  └─ Db::pdo() → SELECT COUNT(*) FROM sf_member
     │
     ▼ JSON 응답: {"count": 188186}
 ```
@@ -133,7 +133,7 @@ class UserController
 // lib/user/UserService.php
 namespace Philgo\User;
 
-use Philgo\Utils\DbUtils;
+use Philgo\Utils\Db;
 use PDO;
 use RuntimeException;
 
@@ -144,7 +144,7 @@ class UserService
      */
     public static function getTotalCount(): int
     {
-        $stmt = DbUtils::pdo()->prepare("SELECT COUNT(*) as cnt FROM sf_member");
+        $stmt = Db::pdo()->prepare("SELECT COUNT(*) as cnt FROM sf_member");
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row === false) {

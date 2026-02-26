@@ -83,7 +83,7 @@ v7 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택�
 │  Controller (Philgo\<Module>\<Module>Controller)     │
 │  - namespace Philgo\<Module>                        │
 │  - Service 호출 (비즈니스 로직)                      │
-│  - DbUtils를 통한 DB 쿼리                           │
+│  - Db를 통한 DB 쿼리                           │
 │  - PDO prepared statement로 DB 쿼리                  │
 └──────────────┬──────────────────────────────────────┘
                │ PDO prepared statement
@@ -102,7 +102,7 @@ v7 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택�
 5. **통일된 입출력**: 모든 Controller 멤버 함수는 `array $input` 입력, 배열/Entity 출력 (Controller는 반드시 객체를 리턴)
 6. **PDO 필수**: 모든 DB 쿼리는 `pdo()->prepare()` + `execute()` 방식 사용
 7. **⚠️ 기존 함수 사용 금지**: v7 시스템에서는 가능한 기존 함수(`*.functions.php`)를 사용하지 않는다. 필요한 유틸리티는 `lib/utils/<Module>Utils.php` 클래스로 작성하여 PSR-4 autoloading으로 로드한다.
-8. **Utils 클래스**: 공통 유틸리티는 `lib/utils/` 폴더에 `<Module>Utils.php` 형식으로 작성 (예: `RequestUtils.php`, `DbUtils.php`). 네임스페이스: `Philgo\Utils\`
+8. **Utils 클래스**: 공통 유틸리티는 `lib/utils/` 폴더에 `<Module>Utils.php` 형식으로 작성 (예: `RequestUtils.php`, `Db.php`). 네임스페이스: `Philgo\Utils\`
 9. **boot.php 미포함**: `api.php`는 기존 `boot.php`를 로드하지 않는다. RequestUtils 등 Utils 클래스를 통해 독립적으로 동작한다.
 10. **에러 처리**: try/catch로 예외를 캐치하여 `{success: false, message: "에러 메시지"}` 형식으로 응답. 성공 시 `{success: true}` 추가 없이 Controller 리턴값 그대로 출력.
 11. **⚠️ API 테스트 필수**: 모든 API endpoint는 반드시 **PEST Unit Test**로 테스트한다.
@@ -129,7 +129,7 @@ www/                          # 프로젝트 루트 (ROOT_DIR)
 │   ├── entities/             #   Entity 클래스 (데이터 구조체)
 │   ├── utils/                #   ★ Utils 클래스 (PSR-4, 기존 함수 대체)
 │   │   ├── RequestUtils.php   # ★  Philgo\Utils\RequestUtils (클라이언트 입력 처리)
-│   │   ├── DbUtils.php        # ★  Philgo\Utils\DbUtils (PDO DB 연결)
+│   │   ├── Db.php        # ★  Philgo\Utils\Db (PDO DB 연결)
 │   │   └── ...               #     기타 유틸리티 클래스
 │   ├── types/                #   타입/필드 정의
 │   ├── firebase/             #   Firebase 연동 (인증, FCM)
@@ -224,7 +224,7 @@ lib/upload/
 |------|------|------|
 | `*Controller.php` | ★ Controller 클래스 (PSR-4, API 엔드포인트) | `PostController.php`, `UserController.php` |
 | `*Service.php` | ★ Service 클래스 (PSR-4, 비즈니스 로직) | `UserService.php` |
-| `*Utils.php` | ★ Utils 클래스 (PSR-4, 유틸리티) | `RequestUtils.php`, `DbUtils.php` |
+| `*Utils.php` | ★ Utils 클래스 (PSR-4, 유틸리티) | `RequestUtils.php`, `Db.php` |
 | `*.functions.php` | ⚠️ 기존 함수 (레거시, 새 코드에서 사용 금지) | `post.functions.php` |
 | `*.fields.php` | 필드/타입 정의 | `post.fields.php` |
 | `process_*.php` | 데이터 전/후처리 | `process_before_save.php` |
@@ -320,7 +320,7 @@ require_once __DIR__ . '/etc/boot.php';
 
 > **참고**: 기존 시스템에서는 `func.php`를 API 엔트리포인트로 사용했으나, v7 시스템에서는 `api.php`를 사용한다. `api.php`의 필수 파라미터는 `method`이며, `<module>.<action>` 형식으로 호출할 Controller와 멤버 함수를 지정한다. (예: `method=post.create` → `PostController->create()`)
 >
-> ⚠️ **v7 시스템 원칙**: `api.php`는 `boot.php`를 포함하지 않으며, 기존 함수(`in()`, `http_param()`, `error()` 등)에 의존하지 않는다. 대신 `RequestUtils`, `DbUtils` 등의 Utils 클래스를 사용한다.
+> ⚠️ **v7 시스템 원칙**: `api.php`는 `boot.php`를 포함하지 않으며, 기존 함수(`in()`, `http_param()`, `error()` 등)에 의존하지 않는다. 대신 `RequestUtils`, `Db` 등의 Utils 클래스를 사용한다.
 
 ---
 
@@ -511,7 +511,7 @@ await func('post.like', { idx: 123, alertOnError: false });
 
 namespace Philgo\Post;
 
-use Philgo\Utils\DbUtils;
+use Philgo\Utils\Db;
 
 class PostController
 {
@@ -544,8 +544,8 @@ class PostController
     public function get(array $input): PostEntity {
         $idx = $input['idx'] ?? 0;
         if (empty($idx)) throw new RuntimeException('idx 파라미터가 필요합니다.');
-        // ⚠️ 기존 함수 사용 금지! DbUtils를 통해 DB 쿼리
-        $stmt = DbUtils::pdo()->prepare("SELECT * FROM posts WHERE idx = :idx");
+        // ⚠️ 기존 함수 사용 금지! Db를 통해 DB 쿼리
+        $stmt = Db::pdo()->prepare("SELECT * FROM posts WHERE idx = :idx");
         $stmt->execute(['idx' => $idx]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) throw new RuntimeException('글을 찾을 수 없습니다.');
@@ -649,7 +649,7 @@ JavaScript: func('user.count')
     → $ctrl = new Philgo\User\UserController()
     → $res = $ctrl->count($input)
       → UserService::getTotalCount()
-      → DbUtils::pdo()->prepare("SELECT COUNT(*)...")
+      → Db::pdo()->prepare("SELECT COUNT(*)...")
       → return ['count' => 188186]
   → JSON 응답: {"count": 188186}
 ```
@@ -894,7 +894,7 @@ class PostController
         // ⚠️ error() 함수 대신 throw 사용
         if (empty($idx)) throw new RuntimeException('idx 파라미터가 필요합니다.');
 
-        $stmt = DbUtils::pdo()->prepare("SELECT * FROM posts WHERE idx = :idx");
+        $stmt = Db::pdo()->prepare("SELECT * FROM posts WHERE idx = :idx");
         $stmt->execute(['idx' => $idx]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) throw new RuntimeException('글을 찾을 수 없습니다.');
@@ -1209,9 +1209,9 @@ function getTestUser(int $idx): ?array {
 | Phase 3 | Entity 클래스 정의 | ✅ 완료 |
 | Phase 4 | AllowedFunctions API 게이트웨이 | ✅ 완료 |
 | Phase 5 | Controller 클래스 도입 (api.php + method 디스패치) | ✅ 완료 |
-| Phase 5.1 | Utils 클래스 도입 (RequestUtils, DbUtils) | ✅ 완료 |
+| Phase 5.1 | Utils 클래스 도입 (RequestUtils, Db) | ✅ 완료 |
 | Phase 5.2 | api.php에서 boot.php 제거, Utils 클래스로 독립 | ✅ 완료 |
-| Phase 6 | PDO prepared statement 전환 (DbUtils 사용) | 🔄 진행 중 |
+| Phase 6 | PDO prepared statement 전환 (Db 사용) | 🔄 진행 중 |
 | Phase 7 | 테스트 커버리지 100% 달성 (PEST Unit Test 필수) | 🔄 진행 중 |
 | Phase 8 | PSR-4 Autoloading 도입 (Utils, User 완료) | ✅ 완료 |
 | Phase 9 | Vue.js CDN MPA 전면 적용 | 📋 계획 |
@@ -1296,7 +1296,7 @@ ready(() => {
 | Utils 클래스 (FQCN) | 파일 | 대체 대상 (레거시) | 설명 |
 |-------------|------|------------------|------|
 | `Philgo\Utils\RequestUtils` | `lib/utils/RequestUtils.php` | `in()`, `http_param()`, `http_params()` | 클라이언트 요청 입력 처리 |
-| `Philgo\Utils\DbUtils` | `lib/utils/DbUtils.php` | `pdo()`, `db_select()`, `db_insert()` 등 | PDO 데이터베이스 연결 |
+| `Philgo\Utils\Db` | `lib/utils/Db.php` | `pdo()`, `db_select()`, `db_insert()` 등 | PDO 데이터베이스 연결 |
 
 ### 14.2 RequestUtils 클래스
 
@@ -1341,14 +1341,14 @@ $method = RequestUtils::get('method');
 [$module, $action] = RequestUtils::parseMethod();
 ```
 
-### 14.3 DbUtils 클래스
+### 14.3 Db 클래스
 
-**파일**: `lib/utils/DbUtils.php` | **네임스페이스**: `Philgo\Utils\DbUtils`
+**파일**: `lib/utils/Db.php` | **네임스페이스**: `Philgo\Utils\Db`
 
 ```php
 namespace Philgo\Utils;
 
-class DbUtils
+class Db
 {
     /**
      * PDO 인스턴스 반환 (싱글톤)
@@ -1366,18 +1366,18 @@ class DbUtils
 
 **사용 예시**:
 ```php
-use Philgo\Utils\DbUtils;
+use Philgo\Utils\Db;
 
 // PDO 인스턴스 가져오기
-$pdo = DbUtils::pdo();
+$pdo = Db::pdo();
 
 // prepared statement 사용
-$stmt = DbUtils::pdo()->prepare("SELECT * FROM posts WHERE idx = :idx");
+$stmt = Db::pdo()->prepare("SELECT * FROM posts WHERE idx = :idx");
 $stmt->execute(['idx' => 123]);
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // 테스트 환경에서 다른 DB 설정 사용
-DbUtils::setConfigPath(__DIR__ . '/etc/db.config.test.php');
+Db::setConfigPath(__DIR__ . '/etc/db.config.test.php');
 ```
 
 ### 14.4 새 Utils 클래스 작성 규칙
@@ -1410,7 +1410,7 @@ v7 시스템의 모든 클래스는 **PSR-4 Autoloading**을 사용하여 네임
 | 네임스페이스 (FQCN) | 파일 경로 | 설명 |
 |---------------------|-----------|------|
 | `Philgo\Utils\RequestUtils` | `lib/utils/RequestUtils.php` | 요청 입력 처리 |
-| `Philgo\Utils\DbUtils` | `lib/utils/DbUtils.php` | PDO 데이터베이스 연결 |
+| `Philgo\Utils\Db` | `lib/utils/Db.php` | PDO 데이터베이스 연결 |
 | `Philgo\User\UserController` | `lib/user/UserController.php` | 사용자 Controller |
 | `Philgo\User\UserService` | `lib/user/UserService.php` | 사용자 Service |
 
@@ -1441,7 +1441,7 @@ composer dump-autoload
 
 ```
 폴더명: lowercase (기존 폴더 유지 — lib/user/, lib/utils/ 등)
-파일명: PascalCase (클래스명과 동일 — UserController.php, DbUtils.php 등)
+파일명: PascalCase (클래스명과 동일 — UserController.php, Db.php 등)
 ```
 
 **규칙**:
@@ -1517,7 +1517,7 @@ describe('UserController', function () {
    - `namespace Philgo\<Module>;` 선언
 3. **Service 파일 생성**: `lib/<module>/<Module>Service.php`
    - `namespace Philgo\<Module>;` 선언
-   - `use Philgo\Utils\DbUtils;` 등 필요한 클래스 임포트
+   - `use Philgo\Utils\Db;` 등 필요한 클래스 임포트
 4. **composer.json에 매핑 추가**:
    ```json
    "Philgo\\<Module>\\": "lib/<module>/"
@@ -1613,8 +1613,8 @@ include_once '../page.footer.php';
 ### 17.4 주의사항
 
 - `page.header.php`를 먼저 include한 후 `vendor/autoload.php`를 require한다. (`ROOT_DIR` 상수가 `boot.php`에서 정의되기 때문)
-- 기존 레거시 함수(`pdo()`, `login()`, `in()` 등)와 v7 시스템 클래스(`UserService`, `DbUtils` 등)를 **동일 페이지에서 함께** 사용할 수 있다.
-- v7 시스템의 `DbUtils::pdo()`와 기존 `pdo()` 함수는 **별도의 PDO 커넥션**이므로, 하나의 페이지에서는 가능하면 한쪽만 사용하는 것을 권장한다.
+- 기존 레거시 함수(`pdo()`, `login()`, `in()` 등)와 v7 시스템 클래스(`UserService`, `Db` 등)를 **동일 페이지에서 함께** 사용할 수 있다.
+- v7 시스템의 `Db::pdo()`와 기존 `pdo()` 함수는 **별도의 PDO 커넥션**이므로, 하나의 페이지에서는 가능하면 한쪽만 사용하는 것을 권장한다.
 
 ---
 

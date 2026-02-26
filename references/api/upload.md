@@ -68,7 +68,7 @@ UploadService
     ↓ 파일 저장 로직 + 비즈니스 규칙
 UploadRepository
     ↓ DB CRUD (uploads 테이블)
-DbUtils::pdo()
+Db::pdo()
     ↓
 MariaDB (uploads 테이블)
 
@@ -231,7 +231,7 @@ JavaScript: func('upload.upload', FormData)
     │  └─ UploadRepository::create($data)
     │
     ▼ Philgo\Upload\UploadRepository::create()
-    │  └─ DbUtils::pdo() → INSERT INTO uploads ...
+    │  └─ Db::pdo() → INSERT INTO uploads ...
     │
     ▼ JSON 응답: {"idx": 1, "url": "/uploads/123/abc.jpg", ...}
 ```
@@ -367,14 +367,14 @@ class UploadEntity
  * @brief 업로드 파일 DB CRUD Repository
  *
  * uploads 테이블에 대한 모든 DB 쿼리를 담당한다.
- * Service 계층에서 호출하며, DbUtils::pdo()를 사용한다.
+ * Service 계층에서 호출하며, Db::pdo()를 사용한다.
  *
  * PSR-4: Philgo\Upload\UploadRepository
  */
 
 namespace Philgo\Upload;
 
-use Philgo\Utils\DbUtils;
+use Philgo\Utils\Db;
 use PDO;
 use RuntimeException;
 
@@ -391,7 +391,7 @@ class UploadRepository
     {
         $sql = "INSERT INTO uploads (idx_member, created_at, updated_at, name, size, type, module, code, url, attached)
                 VALUES (:idx_member, :created_at, :updated_at, :name, :size, :type, :module, :code, :url, :attached)";
-        $stmt = DbUtils::pdo()->prepare($sql);
+        $stmt = Db::pdo()->prepare($sql);
         $stmt->execute([
             'idx_member' => $data['idx_member'],
             'created_at' => $data['created_at'],
@@ -404,7 +404,7 @@ class UploadRepository
             'url' => $data['url'],
             'attached' => $data['attached'] ?? 0,
         ]);
-        $idx = (int)DbUtils::pdo()->lastInsertId();
+        $idx = (int)Db::pdo()->lastInsertId();
         if ($idx === 0) {
             throw new RuntimeException('업로드 레코드 생성에 실패했습니다.');
         }
@@ -419,7 +419,7 @@ class UploadRepository
      */
     public static function findByIdx(int $idx): ?UploadEntity
     {
-        $stmt = DbUtils::pdo()->prepare("SELECT * FROM uploads WHERE idx = :idx");
+        $stmt = Db::pdo()->prepare("SELECT * FROM uploads WHERE idx = :idx");
         $stmt->execute(['idx' => $idx]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row === false) {
@@ -438,7 +438,7 @@ class UploadRepository
      */
     public static function findByMember(int $idxMember, int $limit = 100, int $offset = 0): array
     {
-        $stmt = DbUtils::pdo()->prepare(
+        $stmt = Db::pdo()->prepare(
             "SELECT * FROM uploads WHERE idx_member = :idx_member ORDER BY idx DESC LIMIT :limit OFFSET :offset"
         );
         $stmt->bindValue('idx_member', $idxMember, PDO::PARAM_INT);
@@ -466,7 +466,7 @@ class UploadRepository
             $params['code'] = $code;
         }
         $sql .= " ORDER BY idx DESC LIMIT {$limit}";
-        $stmt = DbUtils::pdo()->prepare($sql);
+        $stmt = Db::pdo()->prepare($sql);
         $stmt->execute($params);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map(fn($row) => UploadEntity::fromArray($row), $rows);
@@ -481,7 +481,7 @@ class UploadRepository
      */
     public static function updateAttached(int $idx, int $attached): bool
     {
-        $stmt = DbUtils::pdo()->prepare(
+        $stmt = Db::pdo()->prepare(
             "UPDATE uploads SET attached = :attached, updated_at = :updated_at WHERE idx = :idx"
         );
         return $stmt->execute([
@@ -499,7 +499,7 @@ class UploadRepository
      */
     public static function deleteByIdx(int $idx): bool
     {
-        $stmt = DbUtils::pdo()->prepare("DELETE FROM uploads WHERE idx = :idx");
+        $stmt = Db::pdo()->prepare("DELETE FROM uploads WHERE idx = :idx");
         return $stmt->execute(['idx' => $idx]);
     }
 
@@ -513,7 +513,7 @@ class UploadRepository
      */
     public static function findUnattachedBefore(int $beforeTimestamp, int $limit = 100): array
     {
-        $stmt = DbUtils::pdo()->prepare(
+        $stmt = Db::pdo()->prepare(
             "SELECT * FROM uploads WHERE attached = 0 AND created_at < :before ORDER BY idx ASC LIMIT :limit"
         );
         $stmt->bindValue('before', $beforeTimestamp, PDO::PARAM_INT);

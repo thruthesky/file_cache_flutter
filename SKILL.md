@@ -19,7 +19,7 @@ PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
 |------|------|
 | **기존 코드 유지** | 기존 `boot.php`, `lib/*.functions.php`, `widget/` 등 레거시 코드는 **절대 수정하거나 삭제하지 않는다** |
 | **동일 폴더 공존** | v7 파일(`UserController.php`)과 레거시 파일(`user.functions.php`)이 **같은 `lib/user/` 폴더에 공존**한다 |
-| **동일 페이지 혼용** | 하나의 PHP 페이지에서 기존 코드(`page.header.php`, `pdo()`, `login()`)와 v7 시스템(`UserService`, `DbUtils`)을 **함께 사용**할 수 있다 |
+| **동일 페이지 혼용** | 하나의 PHP 페이지에서 기존 코드(`page.header.php`, `pdo()`, `login()`)와 v7 시스템(`UserService`, `Db`)을 **함께 사용**할 수 있다 |
 | **점진적 마이그레이션** | 기존 기능을 깨뜨리지 않으면서 **새 기능만 v7 시스템으로** 추가한다 |
 | **기존 DB/테이블 공유** | v7 시스템은 기존과 **동일한 MariaDB 데이터베이스와 테이블**을 사용한다 |
 | **기존 프론트엔드 호환** | 기존 `func()` JavaScript 함수로 v7 시스템 API도 호출 가능하다 |
@@ -54,7 +54,7 @@ PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
 
 - **엔트리포인트**: `api.php` (boot.php 미포함)
 - **네임스페이스**: `Philgo\{Module}\` (예: `Philgo\User\UserController`)
-- **DB 접근**: `Philgo\Utils\DbUtils::pdo()` (레거시 `pdo()` 사용 금지)
+- **DB 접근**: `Philgo\Utils\Db::pdo()` (레거시 `pdo()` 사용 금지)
 - **입력 처리**: `Philgo\Utils\RequestUtils::all()` (레거시 `in()` 사용 금지)
 - **에러 처리**: `throw new RuntimeException()` → api.php에서 catch → `{success: false}`
 - **테스트**: PEST v4 Unit Test (`tests/Unit/`)
