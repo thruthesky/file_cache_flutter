@@ -191,25 +191,25 @@ Future<ImageCheckResult> checkImageUrl({
 void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 Travel Spots 이미지 URL 검증 도구');
-  print('======================================\n');
-  print('검증 항목:');
-  print('  1. HTTP 상태 코드 (200-399)');
-  print('  2. Content-Type이 이미지 타입인지 확인');
-  print('  3. HTTP 429 에러는 별도 처리 (Rate Limited)');
-  print('');
+  //  print('======================================');
+  //  print('📋 Travel Spots 이미지 URL 검증 도구');
+  //  print('======================================\n');
+  //  print('검증 항목:');
+  //  print('  1. HTTP 상태 코드 (200-399)');
+  //  print('  2. Content-Type이 이미지 타입인지 확인');
+  //  print('  3. HTTP 429 에러는 별도 처리 (Rate Limited)');
+  //  print('');
 
   final file = File(jsonFilePath);
   if (!file.existsSync()) {
-    print('❌ 오류: $jsonFilePath 파일을 찾을 수 없습니다.');
+    //    print('❌ 오류: $jsonFilePath 파일을 찾을 수 없습니다.');
     exit(1);
   }
 
   final jsonString = file.readAsStringSync();
   final List<dynamic> travelSpots = jsonDecode(jsonString);
 
-  print('📊 총 ${travelSpots.length}개의 여행지를 확인합니다.\n');
+  //  print('📊 총 ${travelSpots.length}개의 여행지를 확인합니다.\n');
 
   final List<ImageCheckResult> successUrls = [];
   final List<ImageCheckResult> failedUrls = [];
@@ -239,13 +239,13 @@ void main() async {
       );
       successUrls.add(result);
     } else if (result.isRateLimited) {
-      print('⏳ [${i + 1}/${travelSpots.length}] $name: RATE LIMITED (재시도 예정)');
+      //      print('⏳ [${i + 1}/${travelSpots.length}] $name: RATE LIMITED (재시도 예정)');
       rateLimitedUrls.add(result);
     } else if (result.imageUrl.isEmpty) {
-      print('⚠️  [${i + 1}/${travelSpots.length}] $name: 이미지 URL 없음');
+      //      print('⚠️  [${i + 1}/${travelSpots.length}] $name: 이미지 URL 없음');
       failedUrls.add(result);
     } else {
-      print('❌ [${i + 1}/${travelSpots.length}] $name: ${result.error}');
+      //      print('❌ [${i + 1}/${travelSpots.length}] $name: ${result.error}');
       failedUrls.add(result);
     }
 
@@ -255,10 +255,10 @@ void main() async {
 
   // 두 번째 패스: 429 에러난 URL 재시도 (딜레이 2초)
   if (rateLimitedUrls.isNotEmpty) {
-    print('\n======================================');
-    print('🔄 429 에러 URL 재시도 (${rateLimitedUrls.length}개)');
-    print('   딜레이: 2초');
-    print('======================================\n');
+    //    print('\n======================================');
+    //    print('🔄 429 에러 URL 재시도 (${rateLimitedUrls.length}개)');
+    //    print('   딜레이: 2초');
+    //    print('======================================\n');
 
     for (int i = 0; i < rateLimitedUrls.length; i++) {
       final item = rateLimitedUrls[i];
@@ -295,11 +295,11 @@ void main() async {
   httpClient.close();
 
   // 결과 출력
-  print('\n======================================');
-  print('📊 검증 결과 요약');
-  print('======================================');
-  print('✅ 성공 (유효한 이미지): ${successUrls.length}개');
-  print('❌ 실패: ${failedUrls.length}개');
+  //  print('\n======================================');
+  //  print('📊 검증 결과 요약');
+  //  print('======================================');
+  //  print('✅ 성공 (유효한 이미지): ${successUrls.length}개');
+  //  print('❌ 실패: ${failedUrls.length}개');
 
   // 실패 원인별 분류
   final emptyUrls = failedUrls.where((r) => r.imageUrl.isEmpty).length;
@@ -317,31 +317,31 @@ void main() async {
       rateLimited -
       contentTypeErrors;
 
-  print('   └─ URL 없음: $emptyUrls개');
-  print('   └─ HTTP 에러: $httpErrors개');
-  print('   └─ Rate Limited (429): $rateLimited개');
-  print('   └─ Content-Type 에러: $contentTypeErrors개');
-  print('   └─ 기타 에러: $otherErrors개');
-  print('');
+  //  print('   └─ URL 없음: $emptyUrls개');
+  //  print('   └─ HTTP 에러: $httpErrors개');
+  //  print('   └─ Rate Limited (429): $rateLimited개');
+  //  print('   └─ Content-Type 에러: $contentTypeErrors개');
+  //  print('   └─ 기타 에러: $otherErrors개');
+  //  print('');
 
   if (failedUrls.isNotEmpty) {
     // 실제로 문제가 있는 URL만 필터링 (429 제외)
     final realFailedUrls = failedUrls.where((r) => !r.isRateLimited).toList();
 
     if (realFailedUrls.isNotEmpty) {
-      print('======================================');
-      print('❌ 실패한 이미지 URL 목록 (429 제외)');
-      print('======================================\n');
+      //      print('======================================');
+      //      print('❌ 실패한 이미지 URL 목록 (429 제외)');
+      //      print('======================================\n');
 
       for (final item in realFailedUrls) {
-        print('📍 [${item.index}] ${item.name}');
-        print('   영문명: ${item.englishName}');
-        print('   URL: ${item.imageUrl}');
-        print('   에러: ${item.error}');
+        //        print('📍 [${item.index}] ${item.name}');
+        //        print('   영문명: ${item.englishName}');
+        //        print('   URL: ${item.imageUrl}');
+        //        print('   에러: ${item.error}');
         if (item.contentType.isNotEmpty) {
-          print('   Content-Type: ${item.contentType}');
+          //          print('   Content-Type: ${item.contentType}');
         }
-        print('   ─────────────────────────────────────');
+        //        print('   ─────────────────────────────────────');
       }
     }
 
@@ -352,7 +352,7 @@ void main() async {
         '  ',
       ).convert(failedUrls.map((r) => r.toJson()).toList()),
     );
-    print('\n📁 실패한 URL 목록이 tmp/scripts/failed_image_urls.json에 저장되었습니다.');
+    //    print('\n📁 실패한 URL 목록이 tmp/scripts/failed_image_urls.json에 저장되었습니다.');
 
     // 429 제외한 실제 실패 URL만 별도 저장
     if (realFailedUrls.isNotEmpty) {
@@ -369,6 +369,6 @@ void main() async {
       );
     }
   } else {
-    print('🎉 모든 이미지 URL이 정상적으로 접근 가능하고 유효한 이미지입니다!');
+    //    print('🎉 모든 이미지 URL이 정상적으로 접근 가능하고 유효한 이미지입니다!');
   }
 }

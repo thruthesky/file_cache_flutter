@@ -22,7 +22,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏝️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 카들라오 섬\n\n## 개요\n엘니도 타운 앞에 우뚝 솟은 가장 큰 섬입니다.\n\n## 특징\n- 카들라오 라군\n- 파라다이스 비치\n- 하이킹 트레일"]
+    "texts": [
+      "# 카들라오 섬\n\n## 개요\n엘니도 타운 앞에 우뚝 솟은 가장 큰 섬입니다.\n\n## 특징\n- 카들라오 라군\n- 파라다이스 비치\n- 하이킹 트레일",
+    ],
   },
   {
     "name": "딜루마카드 섬",
@@ -34,7 +36,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🚁",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 딜루마카드 섬\n\n## 개요\n헬리콥터 모양으로 유명한 엘니도의 인기 섬입니다.\n\n## 특징\n- 독특한 섬 모양\n- 스노클링 포인트\n- 화이트 비치"]
+    "texts": [
+      "# 딜루마카드 섬\n\n## 개요\n헬리콥터 모양으로 유명한 엘니도의 인기 섬입니다.\n\n## 특징\n- 독특한 섬 모양\n- 스노클링 포인트\n- 화이트 비치",
+    ],
   },
   {
     "name": "피나그부유탄 섬",
@@ -46,7 +50,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏖️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 피나그부유탄 섬\n\n## 개요\n엘니도 투어 C의 하이라이트 섬입니다.\n\n## 특징\n- 긴 백사장\n- 피크닉 장소\n- 수영 및 스노클링"]
+    "texts": [
+      "# 피나그부유탄 섬\n\n## 개요\n엘니도 투어 C의 하이라이트 섬입니다.\n\n## 특징\n- 긴 백사장\n- 피크닉 장소\n- 수영 및 스노클링",
+    ],
   },
   {
     "name": "미닐록 섬",
@@ -58,7 +64,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏝️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 미닐록 섬\n\n## 개요\n엘니도 투어 A의 중심 섬입니다.\n\n## 특징\n- 빅 라군 입구\n- 스몰 라군 입구\n- 럭셔리 리조트"]
+    "texts": [
+      "# 미닐록 섬\n\n## 개요\n엘니도 투어 A의 중심 섬입니다.\n\n## 특징\n- 빅 라군 입구\n- 스몰 라군 입구\n- 럭셔리 리조트",
+    ],
   },
   {
     "name": "팡울라시안 섬",
@@ -70,7 +78,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌴",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 팡울라시안 섬\n\n## 개요\n엘니도 리조트가 운영하는 럭셔리 섬입니다.\n\n## 특징\n- 프라이빗 비치\n- 고급 리조트\n- 선라이즈 명소"]
+    "texts": [
+      "# 팡울라시안 섬\n\n## 개요\n엘니도 리조트가 운영하는 럭셔리 섬입니다.\n\n## 특징\n- 프라이빗 비치\n- 고급 리조트\n- 선라이즈 명소",
+    ],
   },
   {
     "name": "파파야 비치",
@@ -82,7 +92,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏖️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 파파야 비치\n\n## 개요\n엘니도의 숨겨진 보석 같은 해변입니다.\n\n## 특징\n- 한적한 분위기\n- 스노클링\n- 피크닉 장소"]
+    "texts": [
+      "# 파파야 비치\n\n## 개요\n엘니도의 숨겨진 보석 같은 해변입니다.\n\n## 특징\n- 한적한 분위기\n- 스노클링\n- 피크닉 장소",
+    ],
   },
   {
     "name": "히든 비치",
@@ -94,7 +106,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🔮",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 히든 비치\n\n## 개요\n마틴록 섬에 위치한 숨겨진 해변입니다.\n\n## 특징\n- 동굴 입구\n- 비밀스러운 분위기\n- 수영 가능"]
+    "texts": [
+      "# 히든 비치\n\n## 개요\n마틴록 섬에 위치한 숨겨진 해변입니다.\n\n## 특징\n- 동굴 입구\n- 비밀스러운 분위기\n- 수영 가능",
+    ],
   },
   {
     "name": "스타 비치",
@@ -106,7 +120,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "⭐",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 스타 비치\n\n## 개요\n불가사리로 유명한 엘니도의 해변입니다.\n\n## 특징\n- 다양한 불가사리\n- 얕은 바다\n- 가족 친화적"]
+    "texts": [
+      "# 스타 비치\n\n## 개요\n불가사리로 유명한 엘니도의 해변입니다.\n\n## 특징\n- 다양한 불가사리\n- 얕은 바다\n- 가족 친화적",
+    ],
   },
   {
     "name": "탈리사이 비치",
@@ -118,7 +134,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌊",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 탈리사이 비치\n\n## 개요\n엘니도 타운에서 가까운 로컬 해변입니다.\n\n## 특징\n- 현지 분위기\n- 조용한 환경\n- 일몰 감상"]
+    "texts": [
+      "# 탈리사이 비치\n\n## 개요\n엘니도 타운에서 가까운 로컬 해변입니다.\n\n## 특징\n- 현지 분위기\n- 조용한 환경\n- 일몰 감상",
+    ],
   },
   {
     "name": "데펠데트 섬",
@@ -130,7 +148,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏝️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 데펠데트 섬\n\n## 개요\n엘니도의 작은 프라이빗 섬입니다.\n\n## 특징\n- 소규모 섬\n- 프라이빗 느낌\n- 스노클링"]
+    "texts": [
+      "# 데펠데트 섬\n\n## 개요\n엘니도의 작은 프라이빗 섬입니다.\n\n## 특징\n- 소규모 섬\n- 프라이빗 느낌\n- 스노클링",
+    ],
   },
   {
     "name": "스네이크 아일랜드",
@@ -142,7 +162,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🐍",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 스네이크 아일랜드\n\n## 개요\n비간 아일랜드라고도 불리는 모래톱 섬입니다.\n\n## 특징\n- S자 모래톱\n- 썰물 시 도보 가능\n- 사진 명소"]
+    "texts": [
+      "# 스네이크 아일랜드\n\n## 개요\n비간 아일랜드라고도 불리는 모래톱 섬입니다.\n\n## 특징\n- S자 모래톱\n- 썰물 시 도보 가능\n- 사진 명소",
+    ],
   },
   {
     "name": "엔탈루라 아일랜드",
@@ -154,7 +176,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌴",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 엔탈루라 아일랜드\n\n## 개요\n엘니도 투어의 인기 정차지입니다.\n\n## 특징\n- 넓은 백사장\n- 야자수 숲\n- 비치 피크닉"]
+    "texts": [
+      "# 엔탈루라 아일랜드\n\n## 개요\n엘니도 투어의 인기 정차지입니다.\n\n## 특징\n- 넓은 백사장\n- 야자수 숲\n- 비치 피크닉",
+    ],
   },
   {
     "name": "쿠두그논 동굴",
@@ -166,7 +190,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🦇",
     "category": "nature",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 쿠두그논 동굴\n\n## 개요\n엘니도의 역사적인 동굴입니다.\n\n## 특징\n- 신석기 유물 발견지\n- 동굴 탐험\n- 투어 C 포함"]
+    "texts": [
+      "# 쿠두그논 동굴\n\n## 개요\n엘니도의 역사적인 동굴입니다.\n\n## 특징\n- 신석기 유물 발견지\n- 동굴 탐험\n- 투어 C 포함",
+    ],
   },
   {
     "name": "시미즈 다이빙 사이트",
@@ -178,7 +204,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🤿",
     "category": "diving",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 시미즈 다이빙 사이트\n\n## 개요\n시미즈 아일랜드 근처의 다이빙 포인트입니다.\n\n## 특징\n- 다양한 산호\n- 열대어 관찰\n- 초보자 적합"]
+    "texts": [
+      "# 시미즈 다이빙 사이트\n\n## 개요\n시미즈 아일랜드 근처의 다이빙 포인트입니다.\n\n## 특징\n- 다양한 산호\n- 열대어 관찰\n- 초보자 적합",
+    ],
   },
   {
     "name": "사우스 미닐록 다이빙 사이트",
@@ -190,7 +218,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🐠",
     "category": "diving",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 사우스 미닐록 다이빙 사이트\n\n## 개요\n미닐록 섬 남쪽의 다이빙 명소입니다.\n\n## 특징\n- 다양한 수심\n- 해양 생물 풍부\n- 경험자 추천"]
+    "texts": [
+      "# 사우스 미닐록 다이빙 사이트\n\n## 개요\n미닐록 섬 남쪽의 다이빙 명소입니다.\n\n## 특징\n- 다양한 수심\n- 해양 생물 풍부\n- 경험자 추천",
+    ],
   },
   {
     "name": "딜럼파냐 섬",
@@ -202,7 +232,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏝️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 딜럼파냐 섬\n\n## 개요\n엘니도 투어 B의 정차지입니다.\n\n## 특징\n- 작은 섬\n- 스노클링\n- 한적한 분위기"]
+    "texts": [
+      "# 딜럼파냐 섬\n\n## 개요\n엘니도 투어 B의 정차지입니다.\n\n## 특징\n- 작은 섬\n- 스노클링\n- 한적한 분위기",
+    ],
   },
   {
     "name": "마탁인 섬",
@@ -214,7 +246,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "⛪",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 마탁인 섬\n\n## 개요\n마틴록 신사로 유명한 섬입니다.\n\n## 특징\n- 버려진 성당\n- 시크릿 비치\n- 투어 C 포함"]
+    "texts": [
+      "# 마탁인 섬\n\n## 개요\n마틴록 신사로 유명한 섬입니다.\n\n## 특징\n- 버려진 성당\n- 시크릿 비치\n- 투어 C 포함",
+    ],
   },
   {
     "name": "타피탄 스트레이트",
@@ -226,7 +260,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🛶",
     "category": "water-sports",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 타피탄 스트레이트\n\n## 개요\n엘니도의 카약킹 명소입니다.\n\n## 특징\n- 카약 투어\n- 석회암 절벽\n- 조용한 물길"]
+    "texts": [
+      "# 타피탄 스트레이트\n\n## 개요\n엘니도의 카약킹 명소입니다.\n\n## 특징\n- 카약 투어\n- 석회암 절벽\n- 조용한 물길",
+    ],
   },
   {
     "name": "이필 비치",
@@ -238,7 +274,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌅",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 이필 비치\n\n## 개요\n엘니도의 일몰 명소입니다.\n\n## 특징\n- 일몰 감상\n- 타운 근처\n- 로맨틱 분위기"]
+    "texts": [
+      "# 이필 비치\n\n## 개요\n엘니도의 일몰 명소입니다.\n\n## 특징\n- 일몰 감상\n- 타운 근처\n- 로맨틱 분위기",
+    ],
   },
   {
     "name": "마리마바자 섬",
@@ -250,7 +288,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🧺",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 마리마바자 섬\n\n## 개요\n엘니도의 소규모 피크닉 섬입니다.\n\n## 특징\n- 프라이빗 분위기\n- 피크닉 장소\n- 스노클링"]
+    "texts": [
+      "# 마리마바자 섬\n\n## 개요\n엘니도의 소규모 피크닉 섬입니다.\n\n## 특징\n- 프라이빗 분위기\n- 피크닉 장소\n- 스노클링",
+    ],
   },
   {
     "name": "나긋-나긋 해변",
@@ -262,7 +302,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "📷",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 나긋-나긋 해변\n\n## 개요\n엘니도 근교의 독특한 해변입니다.\n\n## 특징\n- 바위 지형\n- 사진 명소\n- 일몰 감상"]
+    "texts": [
+      "# 나긋-나긋 해변\n\n## 개요\n엘니도 근교의 독특한 해변입니다.\n\n## 특징\n- 바위 지형\n- 사진 명소\n- 일몰 감상",
+    ],
   },
   {
     "name": "코랄리 비치",
@@ -274,7 +316,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🪸",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 코랄리 비치\n\n## 개요\n산호로 유명한 엘니도의 해변입니다.\n\n## 특징\n- 풍부한 산호\n- 스노클링\n- 한적한 분위기"]
+    "texts": [
+      "# 코랄리 비치\n\n## 개요\n산호로 유명한 엘니도의 해변입니다.\n\n## 특징\n- 풍부한 산호\n- 스노클링\n- 한적한 분위기",
+    ],
   },
   {
     "name": "헬레나 가든",
@@ -286,7 +330,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌺",
     "category": "diving",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 헬레나 가든\n\n## 개요\n엘니도의 스노클링 명소입니다.\n\n## 특징\n- 산호 정원\n- 열대어 관찰\n- 스노클링 추천"]
+    "texts": [
+      "# 헬레나 가든\n\n## 개요\n엘니도의 스노클링 명소입니다.\n\n## 특징\n- 산호 정원\n- 열대어 관찰\n- 스노클링 추천",
+    ],
   },
   {
     "name": "파사디타 코브",
@@ -298,7 +344,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🛶",
     "category": "nature",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 파사디타 코브\n\n## 개요\n빅 라군 근처의 작은 석호입니다.\n\n## 특징\n- 카약 탐험\n- 석회암 절벽\n- 조용한 분위기"]
+    "texts": [
+      "# 파사디타 코브\n\n## 개요\n빅 라군 근처의 작은 석호입니다.\n\n## 특징\n- 카약 탐험\n- 석회암 절벽\n- 조용한 분위기",
+    ],
   },
   {
     "name": "리오 비치",
@@ -310,7 +358,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏨",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 리오 비치\n\n## 개요\n엘니도의 개발된 리조트 해변입니다.\n\n## 특징\n- 럭셔리 리조트\n- 레스토랑 거리\n- 해변 클럽"]
+    "texts": [
+      "# 리오 비치\n\n## 개요\n엘니도의 개발된 리조트 해변입니다.\n\n## 특징\n- 럭셔리 리조트\n- 레스토랑 거리\n- 해변 클럽",
+    ],
   },
   {
     "name": "다퀘트 비치",
@@ -322,7 +372,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏖️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 다퀘트 비치\n\n## 개요\n엘니도의 숨겨진 로컬 해변입니다.\n\n## 특징\n- 현지인 추천\n- 조용한 분위기\n- 수영 가능"]
+    "texts": [
+      "# 다퀘트 비치\n\n## 개요\n엘니도의 숨겨진 로컬 해변입니다.\n\n## 특징\n- 현지인 추천\n- 조용한 분위기\n- 수영 가능",
+    ],
   },
   {
     "name": "팡알랍 폭포",
@@ -334,7 +386,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "💦",
     "category": "waterfalls",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 팡알랍 폭포\n\n## 개요\n엘니도 정글 속의 폭포입니다.\n\n## 특징\n- 트레킹 필요\n- 수영 가능\n- 자연 경관"]
+    "texts": [
+      "# 팡알랍 폭포\n\n## 개요\n엘니도 정글 속의 폭포입니다.\n\n## 특징\n- 트레킹 필요\n- 수영 가능\n- 자연 경관",
+    ],
   },
   {
     "name": "나그카릿카릿 폭포",
@@ -346,7 +400,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌊",
     "category": "waterfalls",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 나그카릿카릿 폭포\n\n## 개요\n엘니도의 쌍둥이 폭포입니다.\n\n## 특징\n- 두 갈래 폭포\n- 트레킹\n- 수영 가능"]
+    "texts": [
+      "# 나그카릿카릿 폭포\n\n## 개요\n엘니도의 쌍둥이 폭포입니다.\n\n## 특징\n- 두 갈래 폭포\n- 트레킹\n- 수영 가능",
+    ],
   },
   {
     "name": "마구에이 섬",
@@ -358,7 +414,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🍽️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 마구에이 섬\n\n## 개요\n엘니도의 피크닉 섬입니다.\n\n## 특징\n- 프라이빗 투어\n- 점심 피크닉\n- 스노클링"]
+    "texts": [
+      "# 마구에이 섬\n\n## 개요\n엘니도의 피크닉 섬입니다.\n\n## 특징\n- 프라이빗 투어\n- 점심 피크닉\n- 스노클링",
+    ],
   },
   {
     "name": "라겐 섬",
@@ -370,7 +428,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌿",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 라겐 섬\n\n## 개요\n엘니도 리조트의 에코 리조트 섬입니다.\n\n## 특징\n- 에코 리조트\n- 프라이빗 비치\n- 카약킹"]
+    "texts": [
+      "# 라겐 섬\n\n## 개요\n엘니도 리조트의 에코 리조트 섬입니다.\n\n## 특징\n- 에코 리조트\n- 프라이빗 비치\n- 카약킹",
+    ],
   },
   {
     "name": "아브이트 섬",
@@ -382,7 +442,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🌴",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 아브이트 섬\n\n## 개요\n엘니도의 작은 열대 섬입니다.\n\n## 특징\n- 야자수 해변\n- 백사장\n- 스노클링"]
+    "texts": [
+      "# 아브이트 섬\n\n## 개요\n엘니도의 작은 열대 섬입니다.\n\n## 특징\n- 야자수 해변\n- 백사장\n- 스노클링",
+    ],
   },
   {
     "name": "쿄와 섬",
@@ -394,7 +456,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🏝️",
     "category": "beaches-islands",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 쿄와 섬\n\n## 개요\n엘니도의 조용한 무인도입니다.\n\n## 특징\n- 무인도 체험\n- 평화로운 분위기\n- 스노클링"]
+    "texts": [
+      "# 쿄와 섬\n\n## 개요\n엘니도의 조용한 무인도입니다.\n\n## 특징\n- 무인도 체험\n- 평화로운 분위기\n- 스노클링",
+    ],
   },
   {
     "name": "엘니도 씨푸드 마켓",
@@ -406,7 +470,9 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🦐",
     "category": "food",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 엘니도 씨푸드 마켓\n\n## 개요\n엘니도의 해산물 시장입니다.\n\n## 특징\n- 신선한 해산물\n- 현지 요리\n- 저렴한 가격"]
+    "texts": [
+      "# 엘니도 씨푸드 마켓\n\n## 개요\n엘니도의 해산물 시장입니다.\n\n## 특징\n- 신선한 해산물\n- 현지 요리\n- 저렴한 가격",
+    ],
   },
   {
     "name": "카누엔 섬",
@@ -418,23 +484,25 @@ final List<Map<String, dynamic>> batch1ElNido = [
     "icon": "🤿",
     "category": "diving",
     "searchTerm": "El_Nido,_Palawan",
-    "texts": ["# 카누엔 섬\n\n## 개요\n엘니도의 다이빙 명소입니다.\n\n## 특징\n- 산호 보존 양호\n- 다이빙 포인트\n- 해양 생물 다양"]
-  }
+    "texts": [
+      "# 카누엔 섬\n\n## 개요\n엘니도의 다이빙 명소입니다.\n\n## 특징\n- 산호 보존 양호\n- 다이빙 포인트\n- 해양 생물 다양",
+    ],
+  },
 ];
 
 void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 여행 정보 배치 추가 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 여행 정보 배치 추가 도구');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
   final jsonString = file.readAsStringSync();
   final List<dynamic> travelSpots = jsonDecode(jsonString);
 
-  print('현재 여행지 수: ${travelSpots.length}개');
+  //  print('현재 여행지 수: ${travelSpots.length}개');
 
   final httpClient = HttpClient();
   httpClient.connectionTimeout = const Duration(seconds: 15);
@@ -444,14 +512,16 @@ void main() async {
   final existingEnglishNames = <String>{};
   for (final spot in travelSpots) {
     existingNames.add(spot['name']?.toString().toLowerCase() ?? '');
-    existingEnglishNames.add(spot['english name']?.toString().toLowerCase() ?? '');
+    existingEnglishNames.add(
+      spot['english name']?.toString().toLowerCase() ?? '',
+    );
   }
 
   int added = 0;
   int skipped = 0;
 
   // 배치 1: 엘니도 지역 추가
-  print('\n📍 배치 1: 팔라완 엘니도 지역 추가 중...\n');
+  //  print('\n📍 배치 1: 팔라완 엘니도 지역 추가 중...\n');
 
   for (final spot in batch1ElNido) {
     final name = spot['name'] as String;
@@ -460,7 +530,7 @@ void main() async {
     // 중복 체크
     if (existingNames.contains(name.toLowerCase()) ||
         existingEnglishNames.contains(englishName.toLowerCase())) {
-      print('⏭️  $name: 이미 존재 (건너뜀)');
+      //      print('⏭️  $name: 이미 존재 (건너뜀)');
       skipped++;
       continue;
     }
@@ -470,7 +540,8 @@ void main() async {
     String? imageUrl;
 
     try {
-      final apiUrl = 'https://en.wikipedia.org/w/api.php?action=query&titles=$searchTerm&prop=pageimages&format=json&pithumbsize=800';
+      final apiUrl =
+          'https://en.wikipedia.org/w/api.php?action=query&titles=$searchTerm&prop=pageimages&format=json&pithumbsize=800';
       final uri = Uri.parse(apiUrl);
       final request = await httpClient.getUrl(uri);
       request.headers.add('User-Agent', 'Mozilla/5.0');
@@ -490,11 +561,12 @@ void main() async {
         }
       }
     } catch (e) {
-      print('   ⚠️  이미지 가져오기 실패: $e');
+      //      print('   ⚠️  이미지 가져오기 실패: $e');
     }
 
     // 이미지 URL이 없으면 El Nido 기본 이미지 사용
-    imageUrl ??= 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/El_Nido_Bay_December_2018.jpg/960px-El_Nido_Bay_December_2018.jpg';
+    imageUrl ??=
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/El_Nido_Bay_December_2018.jpg/960px-El_Nido_Bay_December_2018.jpg';
 
     // 새 항목 생성
     final newSpot = {
@@ -515,7 +587,7 @@ void main() async {
     existingEnglishNames.add(englishName.toLowerCase());
     added++;
 
-    print('✅ $name 추가됨');
+    //    print('✅ $name 추가됨');
 
     // Rate limiting 방지
     await Future.delayed(const Duration(milliseconds: 300));
@@ -528,11 +600,11 @@ void main() async {
   final updatedJsonString = encoder.convert(travelSpots);
   file.writeAsStringSync(updatedJsonString);
 
-  print('\n======================================');
-  print('📊 배치 1 결과 요약');
-  print('======================================');
-  print('✅ 추가됨: $added개');
-  print('⏭️  건너뜀: $skipped개');
-  print('📊 현재 총 개수: ${travelSpots.length}개');
-  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
+  //  print('\n======================================');
+  //  print('📊 배치 1 결과 요약');
+  //  print('======================================');
+  //  print('✅ 추가됨: $added개');
+  //  print('⏭️  건너뜀: $skipped개');
+  //  print('📊 현재 총 개수: ${travelSpots.length}개');
+  //  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
 }

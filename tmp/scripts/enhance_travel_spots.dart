@@ -24,10 +24,10 @@ void main() async {
   }
 
   // 1. 파일 읽기
-  print('파일을 읽는 중...');
+  //  print('파일을 읽는 중...');
   final content = await file.readAsString();
   final List<dynamic> spots = json.decode(content);
-  print('총 ${spots.length}개의 여행 항목을 찾았습니다.');
+  //  print('총 ${spots.length}개의 여행 항목을 찾았습니다.');
 
   // 2. 작업 시작 (배치 처리)
   int updatedCount = 0;
@@ -50,18 +50,18 @@ void main() async {
 
     // 배치가 다 찼거나 마지막 항목이면 실행
     if (futures.length >= batchSize || i == spots.length - 1) {
-      print('>>> 배치 처리 시작 (항목 $i 까지)...');
+      //      print('>>> 배치 처리 시작 (항목 $i 까지)...');
       await Future.wait(futures);
       futures.clear();
 
       // 배치 처리 후 파일 저장 (데이터 안전을 위해 주기적으로 저장)
       await _saveFile(file, spots);
       updatedCount += batchSize;
-      print('>>> 현재까지 약 $updatedCount 개 항목 처리 완료 및 저장.');
+      //      print('>>> 현재까지 약 $updatedCount 개 항목 처리 완료 및 저장.');
     }
   }
 
-  print('모든 작업이 완료되었습니다.');
+  //  print('모든 작업이 완료되었습니다.');
 }
 
 // ==========================================
@@ -73,7 +73,7 @@ Future<void> _processSpot(Map<String, dynamic> spot, int index) async {
   final String city = spot['city'] ?? '';
   final String province = spot['province'] ?? '';
 
-  print('[$index] 처리 중: $name ($englishName) - $city, $province...');
+  //  print('[$index] 처리 중: $name ($englishName) - $city, $province...');
 
   try {
     // API 호출하여 정보 가져오기
@@ -87,12 +87,12 @@ Future<void> _processSpot(Map<String, dynamic> spot, int index) async {
       // 필요한 경우 title, city, province 등도 업데이트 가능
       if (enhancedData['title'] != null) spot['title'] = enhancedData['title'];
 
-      print('[$index] 업데이트 완료: $name');
+      //      print('[$index] 업데이트 완료: $name');
     } else {
-      print('[$index] 데이터 가져오기 실패: $name');
+      //      print('[$index] 데이터 가져오기 실패: $name');
     }
   } catch (e) {
-    print('[$index] 오류 발생 ($name): $e');
+    //    print('[$index] 오류 발생 ($name): $e');
   }
 }
 
@@ -113,7 +113,7 @@ Future<Map<String, dynamic>?> _fetchEnhancedInfo(
   if (apiKey == 'YOUR_GEMINI_API_KEY_HERE') {
     // API 키가 없을 경우 가짜 데이터 반환 또는 오류 (실제 실행 시 사용자에게 알림)
     // 여기서는 시뮬레이션을 위해 주석 처리하거나, 실제 사용 시에는 return null;
-    print('경고: API 키가 설정되지 않았습니다.');
+    //    print('경고: API 키가 설정되지 않았습니다.');
     return null;
   }
 
@@ -186,10 +186,10 @@ Future<Map<String, dynamic>?> _fetchEnhancedInfo(
         }
       }
     } else {
-      print('API Error: ${response.statusCode}');
+      //      print('API Error: ${response.statusCode}');
     }
   } catch (e) {
-    print('Exception during API call: $e');
+    //    print('Exception during API call: $e');
   }
 
   return null;

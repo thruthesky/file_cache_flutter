@@ -14,19 +14,19 @@ import 'dart:io';
 void main(List<String> args) async {
   final isDryRun = args.contains('--dry-run');
 
-  print('=' * 60);
-  print('Wikipedia Thumbnail URL 수정');
-  print('=' * 60);
+  //  print('=' * 60);
+  //  print('Wikipedia Thumbnail URL 수정');
+  //  print('=' * 60);
 
   if (isDryRun) {
-    print('🔍 DRY RUN 모드 - 실제 파일 수정 없음');
+    //    print('🔍 DRY RUN 모드 - 실제 파일 수정 없음');
   }
-  print('');
+  //  print('');
 
   // JSON 파일 읽기
   final jsonFile = File('lib/philgo_files/travel/travel_spots.json');
   if (!await jsonFile.exists()) {
-    print('❌ 파일을 찾을 수 없습니다: ${jsonFile.path}');
+    //    print('❌ 파일을 찾을 수 없습니다: ${jsonFile.path}');
     exit(1);
   }
 
@@ -77,29 +77,29 @@ void main(List<String> args) async {
 
         // 처음 10개만 출력
         if (fixedCount <= 10) {
-          print('✅ [$i] ${spot['name']}');
-          print('   이전: ${_truncate(imageUrl, 70)}');
-          print('   새로: ${_truncate(newUrl, 70)}');
+          //          print('✅ [$i] ${spot['name']}');
+          //          print('   이전: ${_truncate(imageUrl, 70)}');
+          //          print('   새로: ${_truncate(newUrl, 70)}');
         } else if (fixedCount == 11) {
-          print('   ... (더 많은 항목)');
+          //          print('   ... (더 많은 항목)');
         }
       }
     }
   }
 
-  print('');
-  print('=' * 60);
-  print('수정 대상: $fixedCount개');
-  print('=' * 60);
+  //  print('');
+  //  print('=' * 60);
+  //  print('수정 대상: $fixedCount개');
+  //  print('=' * 60);
 
   if (fixedCount == 0) {
-    print('수정할 항목이 없습니다.');
+    //    print('수정할 항목이 없습니다.');
     return;
   }
 
   if (isDryRun) {
-    print('');
-    print('DRY RUN 완료. 실제 수정하려면 --dry-run 옵션을 제거하세요.');
+    //    print('');
+    //    print('DRY RUN 완료. 실제 수정하려면 --dry-run 옵션을 제거하세요.');
     return;
   }
 
@@ -114,23 +114,23 @@ void main(List<String> args) async {
     '${backupDir.path}/travel_spots_thumb_fix_$timestamp.json',
   );
   await backupFile.writeAsString(jsonString);
-  print('백업 생성: ${backupFile.path}');
+  //  print('백업 생성: ${backupFile.path}');
 
   // 수정된 JSON 저장
   final encoder = JsonEncoder.withIndent('  ');
   final newJsonString = encoder.convert(spots);
   await jsonFile.writeAsString(newJsonString);
-  print('수정된 파일: ${jsonFile.path}');
+  //  print('수정된 파일: ${jsonFile.path}');
 
   // JSON 유효성 검증
   try {
     jsonDecode(await jsonFile.readAsString());
-    print('JSON 유효성 검증: 통과');
+    //    print('JSON 유효성 검증: 통과');
   } catch (e) {
-    print('❌ JSON 유효성 검증 실패: $e');
+    //    print('❌ JSON 유효성 검증 실패: $e');
     // 백업에서 복원
     await jsonFile.writeAsString(jsonString);
-    print('백업에서 복원됨');
+    //    print('백업에서 복원됨');
     exit(1);
   }
 
@@ -143,7 +143,7 @@ void main(List<String> args) async {
       'items': fixedItems,
     }),
   );
-  print('수정 내역: ${logFile.path}');
+  //  print('수정 내역: ${logFile.path}');
 }
 
 String _truncate(String s, int maxLen) {

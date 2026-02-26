@@ -14,9 +14,9 @@ void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
   final failedUrlsPath = 'lib/philgo_files/scripts/real_failed_image_urls.json';
 
-  print('======================================');
-  print('📋 HTTP 404 오류 이미지 URL 교체 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 HTTP 404 오류 이미지 URL 교체 도구');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
@@ -34,7 +34,7 @@ void main() async {
     return statusCode == 404;
   }).toList();
 
-  print('📊 HTTP 404 오류 URL 개수: ${http404Errors.length}개\n');
+  //  print('📊 HTTP 404 오류 URL 개수: ${http404Errors.length}개\n');
 
   final httpClient = HttpClient();
   httpClient.connectionTimeout = const Duration(seconds: 15);
@@ -48,7 +48,7 @@ void main() async {
     final englishName = item['englishName']?.toString() ?? '';
     final name = item['name']?.toString() ?? '';
 
-    print('🔍 [${i + 1}/${http404Errors.length}] $name ($englishName)');
+    //    print('🔍 [${i + 1}/${http404Errors.length}] $name ($englishName)');
 
     // 영문명에서 괄호 안의 내용 제거하고 기본 이름만 사용
     String searchName = englishName;
@@ -105,7 +105,7 @@ void main() async {
                   final newImageUrl = altThumbnail['source'] as String;
                   if (await _validateImageUrl(httpClient, newImageUrl)) {
                     travelSpots[index]['imageUrl'] = newImageUrl;
-                    print('   ✅ 업데이트 (대체 검색): $newImageUrl');
+                    //                    print('   ✅ 업데이트 (대체 검색): $newImageUrl');
                     updated++;
                     await Future.delayed(const Duration(milliseconds: 500));
                     continue;
@@ -114,7 +114,7 @@ void main() async {
               }
             }
 
-            print('   ⚠️  Wikipedia에 이미지 없음');
+            //            print('   ⚠️  Wikipedia에 이미지 없음');
             failed++;
             await Future.delayed(const Duration(milliseconds: 500));
             continue;
@@ -128,26 +128,26 @@ void main() async {
             // URL 유효성 확인
             if (await _validateImageUrl(httpClient, newImageUrl)) {
               travelSpots[index]['imageUrl'] = newImageUrl;
-              print('   ✅ 업데이트: $newImageUrl');
+              //              print('   ✅ 업데이트: $newImageUrl');
               updated++;
             } else {
-              print('   ❌ 이미지 접근 불가');
+              //              print('   ❌ 이미지 접근 불가');
               failed++;
             }
           } else {
-            print('   ⚠️  Wikipedia에 이미지 없음');
+            //            print('   ⚠️  Wikipedia에 이미지 없음');
             failed++;
           }
         } else {
-          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
+          //          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
           failed++;
         }
       } else {
-        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
+        //        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
         failed++;
       }
     } catch (e) {
-      print('   ❌ 오류: $e');
+      //      print('   ❌ 오류: $e');
       failed++;
     }
 
@@ -162,12 +162,12 @@ void main() async {
   final updatedJsonString = encoder.convert(travelSpots);
   file.writeAsStringSync(updatedJsonString);
 
-  print('\n======================================');
-  print('📊 결과 요약');
-  print('======================================');
-  print('✅ 업데이트 성공: $updated개');
-  print('❌ 업데이트 실패: $failed개');
-  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
+  //  print('\n======================================');
+  //  print('📊 결과 요약');
+  //  print('======================================');
+  //  print('✅ 업데이트 성공: $updated개');
+  //  print('❌ 업데이트 실패: $failed개');
+  //  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
 }
 
 /// 이미지 URL 유효성 검증

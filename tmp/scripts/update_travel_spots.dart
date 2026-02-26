@@ -6,7 +6,7 @@ void main() async {
       '/Users/thruthesky/apps/flutter/philgo_app/lib/philgo_files/travel/travel_spots.json';
   final file = File(filePath);
   if (!await file.exists()) {
-    print('File not found');
+    //    print('File not found');
     return;
   }
 
@@ -37,10 +37,10 @@ void main() async {
           newName.isEmpty ||
           englishRegex.hasMatch(newName)) {
         // Here we could add more logic, but for now let's see which ones are like this
-        print('Could not find Korean name for: $name');
+        //        print('Could not find Korean name for: $name');
       } else {
         if (name != newName) {
-          print('Updating: "$name" -> "$newName"');
+          //          print('Updating: "$name" -> "$newName"');
           item['name'] = newName;
           modifiedCount++;
         }
@@ -51,8 +51,8 @@ void main() async {
   if (modifiedCount > 0) {
     const encoder = JsonEncoder.withIndent('    ');
     await file.writeAsString(encoder.convert(data));
-    print('Updated $modifiedCount items.');
+    //    print('Updated $modifiedCount items.');
   } else {
-    print('No items updated.');
+    //    print('No items updated.');
   }
 }

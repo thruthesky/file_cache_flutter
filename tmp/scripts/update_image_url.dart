@@ -52,17 +52,17 @@ void main(List<String> args) async {
   // travel_spots.json 파일 경로
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 Travel Spots 이미지 URL 업데이트 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 Travel Spots 이미지 URL 업데이트 도구');
+  //  print('======================================\n');
 
   // 인자 확인
   if (args.length < 2) {
     print(
       '사용법: dart run tmp/scripts/update_image_url.dart <인덱스 또는 이름> <새로운 이미지 URL>',
     );
-    print('');
-    print('예시:');
+    //    print('');
+    //    print('예시:');
     print(
       '  dart run tmp/scripts/update_image_url.dart 0 "https://example.com/new-image.jpg"',
     );
@@ -78,8 +78,8 @@ void main(List<String> args) async {
   // JSON 파일 읽기
   final file = File(jsonFilePath);
   if (!file.existsSync()) {
-    print('❌ 오류: $jsonFilePath 파일을 찾을 수 없습니다.');
-    print('스크립트를 프로젝트 루트 디렉토리에서 실행해주세요.');
+    //    print('❌ 오류: $jsonFilePath 파일을 찾을 수 없습니다.');
+    //    print('스크립트를 프로젝트 루트 디렉토리에서 실행해주세요.');
     exit(1);
   }
 
@@ -114,7 +114,7 @@ void main(List<String> args) async {
     }
 
     if (targetIndex == null) {
-      print('❌ 오류: "$identifier" 이름의 여행지를 찾을 수 없습니다.');
+      //      print('❌ 오류: "$identifier" 이름의 여행지를 찾을 수 없습니다.');
       exit(1);
     }
   }
@@ -125,16 +125,16 @@ void main(List<String> args) async {
   final String englishName = targetSpot['english name'] ?? '';
   final String oldImageUrl = targetSpot['imageUrl'] ?? '';
 
-  print('📍 대상 여행지 정보:');
-  print('   인덱스: $targetIndex');
-  print('   이름: $name');
-  print('   영문명: $englishName');
-  print('   기존 URL: $oldImageUrl');
-  print('   새 URL: $newImageUrl');
-  print('');
+  //  print('📍 대상 여행지 정보:');
+  //  print('   인덱스: $targetIndex');
+  //  print('   이름: $name');
+  //  print('   영문명: $englishName');
+  //  print('   기존 URL: $oldImageUrl');
+  //  print('   새 URL: $newImageUrl');
+  //  print('');
 
   // 새 이미지 URL 유효성 검증
-  print('🔍 새 이미지 URL 접근 가능 여부 및 이미지 타입 확인 중...');
+  //  print('🔍 새 이미지 URL 접근 가능 여부 및 이미지 타입 확인 중...');
 
   final httpClient = HttpClient();
   httpClient.connectionTimeout = const Duration(seconds: 10);
@@ -166,33 +166,33 @@ void main(List<String> args) async {
         print(
           '⚠️  경고: Content-Type이 이미지가 아닙니다. (HTTP ${response.statusCode}, Content-Type: $contentType)',
         );
-        print('계속 진행하시겠습니까? (y/n)');
+        //        print('계속 진행하시겠습니까? (y/n)');
 
         final input = stdin.readLineSync();
         if (input?.toLowerCase() != 'y') {
-          print('❌ 업데이트가 취소되었습니다.');
+          //          print('❌ 업데이트가 취소되었습니다.');
           httpClient.close();
           exit(0);
         }
       }
     } else {
-      print('⚠️  경고: 새 이미지 URL에 접근할 수 없습니다. (HTTP ${response.statusCode})');
-      print('계속 진행하시겠습니까? (y/n)');
+      //      print('⚠️  경고: 새 이미지 URL에 접근할 수 없습니다. (HTTP ${response.statusCode})');
+      //      print('계속 진행하시겠습니까? (y/n)');
 
       final input = stdin.readLineSync();
       if (input?.toLowerCase() != 'y') {
-        print('❌ 업데이트가 취소되었습니다.');
+        //        print('❌ 업데이트가 취소되었습니다.');
         httpClient.close();
         exit(0);
       }
     }
   } catch (e) {
-    print('⚠️  경고: 새 이미지 URL 확인 중 오류 발생: $e');
-    print('계속 진행하시겠습니까? (y/n)');
+    //    print('⚠️  경고: 새 이미지 URL 확인 중 오류 발생: $e');
+    //    print('계속 진행하시겠습니까? (y/n)');
 
     final input = stdin.readLineSync();
     if (input?.toLowerCase() != 'y') {
-      print('❌ 업데이트가 취소되었습니다.');
+      //      print('❌ 업데이트가 취소되었습니다.');
       httpClient.close();
       exit(0);
     }
@@ -208,7 +208,7 @@ void main(List<String> args) async {
   final updatedJsonString = encoder.convert(travelSpots);
   file.writeAsStringSync(updatedJsonString);
 
-  print('');
-  print('✅ 이미지 URL이 성공적으로 업데이트되었습니다!');
-  print('   $jsonFilePath 파일이 수정되었습니다.');
+  //  print('');
+  //  print('✅ 이미지 URL이 성공적으로 업데이트되었습니다!');
+  //  print('   $jsonFilePath 파일이 수정되었습니다.');
 }

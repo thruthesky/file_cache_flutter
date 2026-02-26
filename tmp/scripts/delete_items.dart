@@ -23,23 +23,23 @@ void main() {
   // JSON 파일 읽기
   final file = File(jsonPath);
   if (!file.existsSync()) {
-    print('오류: $jsonPath 파일을 찾을 수 없습니다.');
+    //    print('오류: $jsonPath 파일을 찾을 수 없습니다.');
     exit(1);
   }
 
   final jsonString = file.readAsStringSync();
   final List<dynamic> items = jsonDecode(jsonString);
 
-  print('========================================');
-  print('Travel Spots 항목 삭제');
-  print('========================================');
-  print('삭제 대상: ${itemsToDelete.length}개');
-  print('');
+  //  print('========================================');
+  //  print('Travel Spots 항목 삭제');
+  //  print('========================================');
+  //  print('삭제 대상: ${itemsToDelete.length}개');
+  //  print('');
 
   // 삭제 전 항목 수
   final beforeCount = items.length;
-  print('삭제 전 총 항목 수: $beforeCount');
-  print('');
+  //  print('삭제 전 총 항목 수: $beforeCount');
+  //  print('');
 
   // 삭제할 항목 찾기 및 정보 출력
   final indicesToDelete = <int>[];
@@ -48,19 +48,19 @@ void main() {
       final item = items[i] as Map<String, dynamic>;
       if (item['name'] == nameToDelete) {
         indicesToDelete.add(i);
-        print('찾음: ${item["name"]} (${item["province"]}) - 인덱스: $i');
+        //        print('찾음: ${item["name"]} (${item["province"]}) - 인덱스: $i');
         break;
       }
     }
   }
 
   if (indicesToDelete.isEmpty) {
-    print('삭제할 항목을 찾지 못했습니다.');
+    //    print('삭제할 항목을 찾지 못했습니다.');
     exit(0);
   }
 
-  print('');
-  print('삭제할 항목 수: ${indicesToDelete.length}');
+  //  print('');
+  //  print('삭제할 항목 수: ${indicesToDelete.length}');
 
   // 백업 생성
   final backupDir = Directory('tmp/backups');
@@ -68,45 +68,45 @@ void main() {
     backupDir.createSync(recursive: true);
   }
   File(backupPath).writeAsStringSync(jsonString);
-  print('백업 생성: $backupPath');
-  print('');
+  //  print('백업 생성: $backupPath');
+  //  print('');
 
   // 역순으로 정렬하여 삭제 (인덱스 변동 방지)
   indicesToDelete.sort((a, b) => b.compareTo(a));
 
   for (final index in indicesToDelete) {
     final item = items[index] as Map<String, dynamic>;
-    print('삭제 중: ${item["name"]} (인덱스: $index)');
+    //    print('삭제 중: ${item["name"]} (인덱스: $index)');
     items.removeAt(index);
   }
 
   // 삭제 후 항목 수
   final afterCount = items.length;
-  print('');
-  print('삭제 후 총 항목 수: $afterCount');
-  print('삭제된 항목 수: ${beforeCount - afterCount}');
+  //  print('');
+  //  print('삭제 후 총 항목 수: $afterCount');
+  //  print('삭제된 항목 수: ${beforeCount - afterCount}');
 
   // JSON 파일 저장
   final encoder = JsonEncoder.withIndent('    ');
   final updatedJsonString = encoder.convert(items);
   file.writeAsStringSync(updatedJsonString);
 
-  print('');
-  print('========================================');
-  print('삭제 완료!');
-  print('========================================');
-  print('수정된 파일: $jsonPath');
-  print('백업 파일: $backupPath');
-  print('');
+  //  print('');
+  //  print('========================================');
+  //  print('삭제 완료!');
+  //  print('========================================');
+  //  print('수정된 파일: $jsonPath');
+  //  print('백업 파일: $backupPath');
+  //  print('');
 
   // 업데이트 후 검증
   final verifyFile = File(jsonPath);
   try {
     jsonDecode(verifyFile.readAsStringSync());
-    print('JSON 유효성 검증: 통과');
+    //    print('JSON 유효성 검증: 통과');
   } catch (e) {
-    print('경고: JSON 유효성 검증 실패!');
-    print('백업 파일에서 복원하세요: $backupPath');
+    //    print('경고: JSON 유효성 검증 실패!');
+    //    print('백업 파일에서 복원하세요: $backupPath');
     exit(1);
   }
 }

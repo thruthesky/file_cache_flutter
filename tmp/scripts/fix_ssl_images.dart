@@ -14,9 +14,9 @@ void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
   final failedUrlsPath = 'lib/philgo_files/scripts/real_failed_image_urls.json';
 
-  print('======================================');
-  print('📋 SSL 오류 이미지 URL 교체 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 SSL 오류 이미지 URL 교체 도구');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
@@ -31,10 +31,11 @@ void main() async {
   // SSL 오류 URL만 필터링
   final sslErrors = failedUrls.where((item) {
     final error = item['error']?.toString() ?? '';
-    return error.contains('HandshakeException') || error.contains('CERTIFICATE_VERIFY_FAILED');
+    return error.contains('HandshakeException') ||
+        error.contains('CERTIFICATE_VERIFY_FAILED');
   }).toList();
 
-  print('📊 SSL 오류 URL 개수: ${sslErrors.length}개\n');
+  //  print('📊 SSL 오류 URL 개수: ${sslErrors.length}개\n');
 
   final httpClient = HttpClient();
   httpClient.connectionTimeout = const Duration(seconds: 10);
@@ -47,11 +48,12 @@ void main() async {
     final englishName = item['englishName']?.toString() ?? '';
     final name = item['name']?.toString() ?? '';
 
-    print('🔍 [$index] $name ($englishName)');
+    //    print('🔍 [$index] $name ($englishName)');
 
     // Wikipedia API로 이미지 URL 가져오기
     final wikiTitle = englishName.replaceAll(' ', '_');
-    final apiUrl = 'https://en.wikipedia.org/w/api.php?action=query&titles=$wikiTitle&prop=pageimages&format=json&pithumbsize=800';
+    final apiUrl =
+        'https://en.wikipedia.org/w/api.php?action=query&titles=$wikiTitle&prop=pageimages&format=json&pithumbsize=800';
 
     try {
       final uri = Uri.parse(apiUrl);
@@ -72,34 +74,37 @@ void main() async {
             final newImageUrl = thumbnail['source'] as String;
 
             // URL 유효성 확인
-            final checkRequest = await httpClient.headUrl(Uri.parse(newImageUrl));
+            final checkRequest = await httpClient.headUrl(
+              Uri.parse(newImageUrl),
+            );
             checkRequest.headers.add('User-Agent', 'Mozilla/5.0');
             final checkResponse = await checkRequest.close();
             await checkResponse.drain();
 
-            if (checkResponse.statusCode >= 200 && checkResponse.statusCode < 400) {
+            if (checkResponse.statusCode >= 200 &&
+                checkResponse.statusCode < 400) {
               // 업데이트
               travelSpots[index]['imageUrl'] = newImageUrl;
-              print('   ✅ 업데이트: $newImageUrl');
+              //              print('   ✅ 업데이트: $newImageUrl');
               updated++;
             } else {
-              print('   ❌ 이미지 접근 불가: HTTP ${checkResponse.statusCode}');
+              //              print('   ❌ 이미지 접근 불가: HTTP ${checkResponse.statusCode}');
               failed++;
             }
           } else {
-            print('   ⚠️  Wikipedia에 이미지 없음');
+            //            print('   ⚠️  Wikipedia에 이미지 없음');
             failed++;
           }
         } else {
-          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
+          //          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
           failed++;
         }
       } else {
-        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
+        //        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
         failed++;
       }
     } catch (e) {
-      print('   ❌ 오류: $e');
+      //      print('   ❌ 오류: $e');
       failed++;
     }
 
@@ -114,10 +119,10 @@ void main() async {
   final updatedJsonString = encoder.convert(travelSpots);
   file.writeAsStringSync(updatedJsonString);
 
-  print('\n======================================');
-  print('📊 결과 요약');
-  print('======================================');
-  print('✅ 업데이트 성공: $updated개');
-  print('❌ 업데이트 실패: $failed개');
-  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
+  //  print('\n======================================');
+  //  print('📊 결과 요약');
+  //  print('======================================');
+  //  print('✅ 업데이트 성공: $updated개');
+  //  print('❌ 업데이트 실패: $failed개');
+  //  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
 }

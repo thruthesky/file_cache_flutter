@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /// ### 사용 예시 (Usage Example):
 /// ```dart
 /// for (final city in PhilippineCity.cities) {
-///   print('${city.nameKo}: ${city.latitude}, ${city.longitude}');
+/////   print('${city.nameKo}: ${city.latitude}, ${city.longitude}');
 /// }
 /// ```
 class PhilippineCity {
@@ -108,7 +108,7 @@ class PhilippineCity {
 ///   temperature: 28.5,
 ///   weatherCode: 0,  // 맑음
 /// );
-/// print('${weather.temperature}°C - ${WeatherCodeHelper.getDescription(weather.weatherCode)}');
+///// print('${weather.temperature}°C - ${WeatherCodeHelper.getDescription(weather.weatherCode)}');
 /// ```
 class HourlyWeather {
   /// 시간 (Time)
@@ -167,10 +167,7 @@ class CityWeatherData {
   final List<HourlyWeather> hourlyData;
 
   /// 생성자 (Constructor)
-  const CityWeatherData({
-    required this.cityId,
-    required this.hourlyData,
-  });
+  const CityWeatherData({required this.cityId, required this.hourlyData});
 
   /// JSON에서 CityWeatherData 생성 (Create from JSON)
   factory CityWeatherData.fromJson(Map<String, dynamic> json) {
@@ -207,10 +204,7 @@ class WeatherData {
   final DateTime fetchedAt;
 
   /// 생성자 (Constructor)
-  const WeatherData({
-    required this.cities,
-    required this.fetchedAt,
-  });
+  const WeatherData({required this.cities, required this.fetchedAt});
 
   /// JSON에서 WeatherData 생성 (Create from JSON)
   factory WeatherData.fromJson(Map<String, dynamic> json) {
@@ -218,8 +212,9 @@ class WeatherData {
     final citiesJson = json['cities'] as Map<String, dynamic>;
 
     for (final entry in citiesJson.entries) {
-      citiesMap[entry.key] =
-          CityWeatherData.fromJson(entry.value as Map<String, dynamic>);
+      citiesMap[entry.key] = CityWeatherData.fromJson(
+        entry.value as Map<String, dynamic>,
+      );
     }
 
     return WeatherData(
@@ -235,10 +230,7 @@ class WeatherData {
       citiesJson[entry.key] = entry.value.toJson();
     }
 
-    return {
-      'cities': citiesJson,
-      'fetchedAt': fetchedAt.toIso8601String(),
-    };
+    return {'cities': citiesJson, 'fetchedAt': fetchedAt.toIso8601String()};
   }
 }
 
@@ -265,7 +257,7 @@ class WeatherData {
 /// ### 사용 예시 (Usage Example):
 /// ```dart
 /// final code = 61;  // 약한 비
-/// print(WeatherCodeHelper.getDescription(code));  // '비'
+///// print(WeatherCodeHelper.getDescription(code));  // '비'
 /// final icon = WeatherCodeHelper.getIcon(code);    // 비 아이콘
 /// ```
 class WeatherCodeHelper {

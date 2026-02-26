@@ -65,7 +65,7 @@ void main(List<String> args) {
         break;
       case '--help':
       case '-h':
-        printUsage();
+        //        printUsage();
         exit(0);
     }
   }
@@ -78,7 +78,7 @@ void main(List<String> args) {
   // JSON 파일 읽기
   final file = File(jsonPath);
   if (!file.existsSync()) {
-    print('오류: $jsonPath 파일을 찾을 수 없습니다.');
+    //    print('오류: $jsonPath 파일을 찾을 수 없습니다.');
     exit(1);
   }
 
@@ -105,20 +105,20 @@ void main(List<String> args) {
 
   // 단일 업데이트 모드
   if (imageUrl == null) {
-    print('오류: --imageUrl은 필수입니다.');
-    printUsage();
+    //    print('오류: --imageUrl은 필수입니다.');
+    //    printUsage();
     exit(1);
   }
 
   if (name == null && index == null) {
-    print('오류: --name 또는 --index 중 하나는 필수입니다.');
-    printUsage();
+    //    print('오류: --name 또는 --index 중 하나는 필수입니다.');
+    //    printUsage();
     exit(1);
   }
 
-  print('=' * 60);
-  print('Travel Spots 이미지 URL 업데이트');
-  print('=' * 60);
+  //  print('=' * 60);
+  //  print('Travel Spots 이미지 URL 업데이트');
+  //  print('=' * 60);
 
   // 항목 찾기
   int? targetIndex;
@@ -127,7 +127,7 @@ void main(List<String> args) {
   if (index != null) {
     // 인덱스로 찾기
     if (index < 0 || index >= items.length) {
-      print('오류: 인덱스 $index가 범위를 벗어났습니다. (0-${items.length - 1})');
+      //      print('오류: 인덱스 $index가 범위를 벗어났습니다. (0-${items.length - 1})');
       exit(1);
     }
     targetIndex = index;
@@ -152,40 +152,40 @@ void main(List<String> args) {
   }
 
   if (targetIndex == null || targetItem == null) {
-    print('오류: 해당 조건에 맞는 항목을 찾을 수 없습니다.');
-    print('');
+    //    print('오류: 해당 조건에 맞는 항목을 찾을 수 없습니다.');
+    //    print('');
 
     // 유사한 항목 제안
     if (name != null) {
-      print('[유사한 항목 검색]');
+      //      print('[유사한 항목 검색]');
       for (int i = 0; i < items.length; i++) {
         final item = items[i] as Map<String, dynamic>;
         final itemName = item['name'] as String? ?? '';
         if (itemName.toLowerCase().contains(name.toLowerCase())) {
-          print('  [$i] ${item['name']} (${item['city']})');
+          //          print('  [$i] ${item['name']} (${item['city']})');
         }
       }
     }
     exit(1);
   }
 
-  print('찾은 항목:');
-  print('  - 인덱스: $targetIndex');
-  print('  - 이름: ${targetItem['name']}');
-  print('  - 도시: ${targetItem['city']}');
-  print('  - 지역: ${targetItem['province']}');
-  print('');
+  //  print('찾은 항목:');
+  //  print('  - 인덱스: $targetIndex');
+  //  print('  - 이름: ${targetItem['name']}');
+  //  print('  - 도시: ${targetItem['city']}');
+  //  print('  - 지역: ${targetItem['province']}');
+  //  print('');
 
   final oldImageUrl = targetItem['imageUrl'] as String? ?? '';
-  print('[업데이트 내용]');
-  print('  - 이전 URL: ${oldImageUrl.isEmpty ? "(없음)" : oldImageUrl}');
-  print('  - 새 URL: $imageUrl');
-  print('');
+  //  print('[업데이트 내용]');
+  //  print('  - 이전 URL: ${oldImageUrl.isEmpty ? "(없음)" : oldImageUrl}');
+  //  print('  - 새 URL: $imageUrl');
+  //  print('');
 
   if (dryRun) {
-    print('========================================');
-    print('DRY RUN 모드: 실제 파일은 수정되지 않았습니다.');
-    print('========================================');
+    //    print('========================================');
+    //    print('DRY RUN 모드: 실제 파일은 수정되지 않았습니다.');
+    //    print('========================================');
     exit(0);
   }
 
@@ -195,7 +195,7 @@ void main(List<String> args) {
     backupDir.createSync(recursive: true);
   }
   File(backupPath).writeAsStringSync(jsonString);
-  print('백업 생성: $backupPath');
+  //  print('백업 생성: $backupPath');
 
   // 항목 업데이트
   targetItem['imageUrl'] = imageUrl;
@@ -206,30 +206,30 @@ void main(List<String> args) {
   final updatedJsonString = encoder.convert(items);
   file.writeAsStringSync(updatedJsonString);
 
-  print('');
-  print('========================================');
-  print('업데이트 완료!');
-  print('========================================');
-  print('수정된 파일: $jsonPath');
-  print('백업 파일: $backupPath');
+  //  print('');
+  //  print('========================================');
+  //  print('업데이트 완료!');
+  //  print('========================================');
+  //  print('수정된 파일: $jsonPath');
+  //  print('백업 파일: $backupPath');
 
   // JSON 유효성 검증
   try {
     jsonDecode(File(jsonPath).readAsStringSync());
-    print('JSON 유효성 검증: 통과');
+    //    print('JSON 유효성 검증: 통과');
   } catch (e) {
-    print('경고: JSON 유효성 검증 실패!');
-    print('백업 파일에서 복원하세요: $backupPath');
+    //    print('경고: JSON 유효성 검증 실패!');
+    //    print('백업 파일에서 복원하세요: $backupPath');
     exit(1);
   }
 }
 
 /// 빈 URL 목록 표시
 void _listEmptyUrls(List<dynamic> items) {
-  print('=' * 60);
-  print('빈 imageUrl 항목 목록');
-  print('=' * 60);
-  print('');
+  //  print('=' * 60);
+  //  print('빈 imageUrl 항목 목록');
+  //  print('=' * 60);
+  //  print('');
 
   int count = 0;
   for (int i = 0; i < items.length; i++) {
@@ -238,50 +238,50 @@ void _listEmptyUrls(List<dynamic> items) {
 
     if (imageUrl.isEmpty) {
       count++;
-      print('[$i] ${item['name']}');
-      print('    도시: ${item['city'] ?? "없음"}');
-      print('    지역: ${item['province'] ?? "없음"}');
-      print('    영문명: ${item['english name'] ?? "없음"}');
-      print('');
+      //      print('[$i] ${item['name']}');
+      //      print('    도시: ${item['city'] ?? "없음"}');
+      //      print('    지역: ${item['province'] ?? "없음"}');
+      //      print('    영문명: ${item['english name'] ?? "없음"}');
+      //      print('');
     }
   }
 
-  print('=' * 60);
-  print('총 ${count}개의 빈 imageUrl 항목');
-  print('=' * 60);
+  //  print('=' * 60);
+  //  print('총 ${count}개의 빈 imageUrl 항목');
+  //  print('=' * 60);
 }
 
 /// 404 에러 목록 표시 (검증 결과 파일에서)
 void _list404Errors() {
   final resultFile = File('tmp/image_check_results.json');
   if (!resultFile.existsSync()) {
-    print('오류: tmp/image_check_results.json 파일을 찾을 수 없습니다.');
-    print('먼저 check_images.dart를 실행하세요.');
+    //    print('오류: tmp/image_check_results.json 파일을 찾을 수 없습니다.');
+    //    print('먼저 check_images.dart를 실행하세요.');
     exit(1);
   }
 
   final resultJson = jsonDecode(resultFile.readAsStringSync());
   final failedItems = resultJson['failedItems'] as List<dynamic>;
 
-  print('=' * 60);
-  print('HTTP 404 에러 항목 목록');
-  print('=' * 60);
-  print('');
+  //  print('=' * 60);
+  //  print('HTTP 404 에러 항목 목록');
+  //  print('=' * 60);
+  //  print('');
 
   int count = 0;
   for (final item in failedItems) {
     final statusCode = item['statusCode'] as int;
     if (statusCode == 404) {
       count++;
-      print('[${count}] ${item['name']} (${item['city']})');
-      print('    URL: ${item['imageUrl']}');
-      print('');
+      //      print('[${count}] ${item['name']} (${item['city']})');
+      //      print('    URL: ${item['imageUrl']}');
+      //      print('');
     }
   }
 
-  print('=' * 60);
-  print('총 ${count}개의 HTTP 404 에러 항목');
-  print('=' * 60);
+  //  print('=' * 60);
+  //  print('총 ${count}개의 HTTP 404 에러 항목');
+  //  print('=' * 60);
 }
 
 /// 일괄 업데이트
@@ -294,19 +294,19 @@ void _batchUpdate(
 ) {
   final batchFileObj = File(batchFile);
   if (!batchFileObj.existsSync()) {
-    print('오류: $batchFile 파일을 찾을 수 없습니다.');
+    //    print('오류: $batchFile 파일을 찾을 수 없습니다.');
     exit(1);
   }
 
   final batchData = jsonDecode(batchFileObj.readAsStringSync());
   final updates = batchData['updates'] as List<dynamic>;
 
-  print('=' * 60);
-  print('Travel Spots 이미지 URL 일괄 업데이트');
-  print('=' * 60);
-  print('배치 파일: $batchFile');
-  print('업데이트 항목 수: ${updates.length}');
-  print('');
+  //  print('=' * 60);
+  //  print('Travel Spots 이미지 URL 일괄 업데이트');
+  //  print('=' * 60);
+  //  print('배치 파일: $batchFile');
+  //  print('업데이트 항목 수: ${updates.length}');
+  //  print('');
 
   int successCount = 0;
   int failCount = 0;
@@ -343,9 +343,9 @@ void _batchUpdate(
       final item = items[targetIndex] as Map<String, dynamic>;
       final oldUrl = item['imageUrl'] as String? ?? '';
 
-      print('✅ [$targetIndex] ${item['name']}');
-      print('   이전: ${oldUrl.isEmpty ? "(없음)" : _truncateUrl(oldUrl)}');
-      print('   새로: ${_truncateUrl(newImageUrl)}');
+      //      print('✅ [$targetIndex] ${item['name']}');
+      //      print('   이전: ${oldUrl.isEmpty ? "(없음)" : _truncateUrl(oldUrl)}');
+      //      print('   새로: ${_truncateUrl(newImageUrl)}');
 
       if (!dryRun) {
         item['imageUrl'] = newImageUrl;
@@ -353,19 +353,19 @@ void _batchUpdate(
       }
       successCount++;
     } else {
-      print('❌ 찾을 수 없음: ${updateName ?? "index=$updateIndex"}');
+      //      print('❌ 찾을 수 없음: ${updateName ?? "index=$updateIndex"}');
       failCount++;
     }
   }
 
-  print('');
-  print('=' * 60);
-  print('결과: 성공 $successCount, 실패 $failCount');
-  print('=' * 60);
+  //  print('');
+  //  print('=' * 60);
+  //  print('결과: 성공 $successCount, 실패 $failCount');
+  //  print('=' * 60);
 
   if (dryRun) {
-    print('');
-    print('DRY RUN 모드: 실제 파일은 수정되지 않았습니다.');
+    //    print('');
+    //    print('DRY RUN 모드: 실제 파일은 수정되지 않았습니다.');
     exit(0);
   }
 
@@ -377,22 +377,22 @@ void _batchUpdate(
     }
     final originalJson = File(jsonPath).readAsStringSync();
     File(backupPath).writeAsStringSync(originalJson);
-    print('백업 생성: $backupPath');
+    //    print('백업 생성: $backupPath');
 
     // JSON 파일 저장
     final encoder = JsonEncoder.withIndent('    ');
     final updatedJsonString = encoder.convert(items);
     File(jsonPath).writeAsStringSync(updatedJsonString);
 
-    print('수정된 파일: $jsonPath');
+    //    print('수정된 파일: $jsonPath');
 
     // JSON 유효성 검증
     try {
       jsonDecode(File(jsonPath).readAsStringSync());
-      print('JSON 유효성 검증: 통과');
+      //      print('JSON 유효성 검증: 통과');
     } catch (e) {
-      print('경고: JSON 유효성 검증 실패!');
-      print('백업 파일에서 복원하세요: $backupPath');
+      //      print('경고: JSON 유효성 검증 실패!');
+      //      print('백업 파일에서 복원하세요: $backupPath');
       exit(1);
     }
   }

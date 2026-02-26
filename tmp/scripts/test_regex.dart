@@ -6,8 +6,8 @@ void main() {
   final nameInTextsRegex = RegExp(r'^#\s*([^(]+)');
   final match = nameInTextsRegex.firstMatch(firstText);
   if (match != null) {
-    print('Match: "${match.group(1)?.trim()}"');
+    //    print('Match: "${match.group(1)?.trim()}"');
   } else {
-    print('No match');
+    //    print('No match');
   }
 }

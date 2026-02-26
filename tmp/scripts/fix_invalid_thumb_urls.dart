@@ -79,9 +79,9 @@ final Map<int, String> searchTerms = {
 void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 잘못된 thumb 경로 URL 수정 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 잘못된 thumb 경로 URL 수정 도구');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
@@ -102,18 +102,18 @@ void main() async {
     final searchTerm = entry.value;
     final name = travelSpots[index]['name']?.toString() ?? '';
 
-    print('🔍 [$index] $name → $searchTerm');
+    //    print('🔍 [$index] $name → $searchTerm');
 
     // 캐시 확인
     if (imageCache.containsKey(searchTerm)) {
       final cachedUrl = imageCache[searchTerm];
       if (cachedUrl != null) {
         travelSpots[index]['imageUrl'] = cachedUrl;
-        print('   ✅ 캐시 사용');
+        //        print('   ✅ 캐시 사용');
         updated++;
         continue;
       } else {
-        print('   ⚠️  캐시됨 (이미지 없음)');
+        //        print('   ⚠️  캐시됨 (이미지 없음)');
         failed++;
         continue;
       }
@@ -142,24 +142,24 @@ void main() async {
             final newImageUrl = thumbnail['source'] as String;
             imageCache[searchTerm] = newImageUrl;
             travelSpots[index]['imageUrl'] = newImageUrl;
-            print('   ✅ 업데이트: ${newImageUrl.substring(0, 60)}...');
+            //            print('   ✅ 업데이트: ${newImageUrl.substring(0, 60)}...');
             updated++;
           } else {
             imageCache[searchTerm] = null;
-            print('   ⚠️  Wikipedia에 이미지 없음');
+            //            print('   ⚠️  Wikipedia에 이미지 없음');
             failed++;
           }
         } else {
           imageCache[searchTerm] = null;
-          print('   ⚠️  Wikipedia 페이지 없음');
+          //          print('   ⚠️  Wikipedia 페이지 없음');
           failed++;
         }
       } else {
-        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
+        //        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
         failed++;
       }
     } catch (e) {
-      print('   ❌ 오류: $e');
+      //      print('   ❌ 오류: $e');
       failed++;
     }
 
@@ -174,10 +174,10 @@ void main() async {
   final updatedJsonString = encoder.convert(travelSpots);
   file.writeAsStringSync(updatedJsonString);
 
-  print('\n======================================');
-  print('📊 결과 요약');
-  print('======================================');
-  print('✅ 업데이트 성공: $updated개');
-  print('❌ 업데이트 실패: $failed개');
-  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
+  //  print('\n======================================');
+  //  print('📊 결과 요약');
+  //  print('======================================');
+  //  print('✅ 업데이트 성공: $updated개');
+  //  print('❌ 업데이트 실패: $failed개');
+  //  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
 }

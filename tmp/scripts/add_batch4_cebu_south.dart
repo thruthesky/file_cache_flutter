@@ -390,16 +390,16 @@ final List<Map<String, dynamic>> batch4Spots = [
 void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 배치 4: 세부 남부 지역 여행지 추가');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 배치 4: 세부 남부 지역 여행지 추가');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
   final jsonString = file.readAsStringSync();
   final List<dynamic> travelSpots = jsonDecode(jsonString);
 
-  print('📊 현재 여행지 개수: ${travelSpots.length}개\n');
+  //  print('📊 현재 여행지 개수: ${travelSpots.length}개\n');
 
   // 기존 이름 목록 (중복 체크용)
   final existingNames = travelSpots
@@ -417,7 +417,7 @@ void main() async {
 
     // 중복 체크
     if (existingNames.contains(name.toLowerCase())) {
-      print('⏭️  건너뜀 (중복): $name');
+      //      print('⏭️  건너뜀 (중복): $name');
       skipped++;
       continue;
     }
@@ -428,7 +428,8 @@ void main() async {
 
     try {
       final apiUrl = Uri.parse(
-          'https://en.wikipedia.org/w/api.php?action=query&titles=$searchTerm&prop=pageimages&format=json&pithumbsize=800');
+        'https://en.wikipedia.org/w/api.php?action=query&titles=$searchTerm&prop=pageimages&format=json&pithumbsize=800',
+      );
       final request = await httpClient.getUrl(apiUrl);
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
@@ -442,12 +443,13 @@ void main() async {
         }
       }
     } catch (e) {
-      print('⚠️  이미지 검색 실패: $name - $e');
+      //      print('⚠️  이미지 검색 실패: $name - $e');
     }
 
     // 이미지가 없으면 기본 세부 이미지 사용
     if (imageUrl.isEmpty) {
-      imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Oslob_whale_sharks.jpg/800px-Oslob_whale_sharks.jpg';
+      imageUrl =
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Oslob_whale_sharks.jpg/800px-Oslob_whale_sharks.jpg';
     }
 
     // 새 여행지 추가
@@ -467,7 +469,7 @@ void main() async {
     travelSpots.add(newSpot);
     existingNames.add(name.toLowerCase());
     added++;
-    print('✅ 추가됨: $name');
+    //    print('✅ 추가됨: $name');
 
     // Rate limiting
     await Future.delayed(const Duration(milliseconds: 300));
@@ -480,10 +482,10 @@ void main() async {
 
   httpClient.close();
 
-  print('\n======================================');
-  print('📊 배치 4 결과 요약');
-  print('======================================');
-  print('✅ 추가됨: $added개');
-  print('⏭️  건너뜀: $skipped개');
-  print('📊 현재 총 개수: ${travelSpots.length}개');
+  //  print('\n======================================');
+  //  print('📊 배치 4 결과 요약');
+  //  print('======================================');
+  //  print('✅ 추가됨: $added개');
+  //  print('⏭️  건너뜀: $skipped개');
+  //  print('📊 현재 총 개수: ${travelSpots.length}개');
 }

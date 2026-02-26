@@ -102,9 +102,9 @@ void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
   final failedUrlsPath = 'lib/philgo_files/scripts/real_failed_image_urls.json';
 
-  print('======================================');
-  print('📋 남은 실패 이미지 URL 수정 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 남은 실패 이미지 URL 수정 도구');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
@@ -139,7 +139,7 @@ void main() async {
       // 현재 URL 유효성 검사
       final isValid = await _validateImageUrl(httpClient, currentUrl);
       if (isValid) {
-        print('⏭️  [$index] $name: 이미 유효한 URL');
+        //        print('⏭️  [$index] $name: 이미 유효한 URL');
         processedIndices.add(index);
         continue;
       }
@@ -155,12 +155,12 @@ void main() async {
     }
 
     if (searchTerm == null) {
-      print('⏭️  [$index] $name: 대체 검색어 없음');
+      //      print('⏭️  [$index] $name: 대체 검색어 없음');
       failed++;
       continue;
     }
 
-    print('🔍 [$index] $name → $searchTerm');
+    //    print('🔍 [$index] $name → $searchTerm');
 
     // Wikipedia API로 이미지 URL 가져오기
     final apiUrl =
@@ -186,26 +186,26 @@ void main() async {
 
             if (await _validateImageUrl(httpClient, newImageUrl)) {
               travelSpots[index]['imageUrl'] = newImageUrl;
-              print('   ✅ 업데이트: $newImageUrl');
+              //              print('   ✅ 업데이트: $newImageUrl');
               updated++;
             } else {
-              print('   ❌ 이미지 접근 불가');
+              //              print('   ❌ 이미지 접근 불가');
               failed++;
             }
           } else {
-            print('   ⚠️  Wikipedia에 이미지 없음');
+            //            print('   ⚠️  Wikipedia에 이미지 없음');
             failed++;
           }
         } else {
-          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
+          //          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
           failed++;
         }
       } else {
-        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
+        //        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
         failed++;
       }
     } catch (e) {
-      print('   ❌ 오류: $e');
+      //      print('   ❌ 오류: $e');
       failed++;
     }
 
@@ -220,12 +220,12 @@ void main() async {
   final updatedJsonString = encoder.convert(travelSpots);
   file.writeAsStringSync(updatedJsonString);
 
-  print('\n======================================');
-  print('📊 결과 요약');
-  print('======================================');
-  print('✅ 업데이트 성공: $updated개');
-  print('❌ 업데이트 실패: $failed개');
-  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
+  //  print('\n======================================');
+  //  print('📊 결과 요약');
+  //  print('======================================');
+  //  print('✅ 업데이트 성공: $updated개');
+  //  print('❌ 업데이트 실패: $failed개');
+  //  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
 }
 
 /// 이미지 URL 유효성 검증

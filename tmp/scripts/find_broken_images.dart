@@ -6,7 +6,7 @@ void main() async {
     '/Users/thruthesky/apps/flutter/philgo_app/lib/philgo_files/travel/travel_spots.json',
   );
   if (!await file.exists()) {
-    print('File not found');
+    //    print('File not found');
     return;
   }
 
@@ -18,7 +18,7 @@ void main() async {
 
   final List<Map<String, dynamic>> failed = [];
 
-  print('Checking ${data.length} items...');
+  //  print('Checking ${data.length} items...');
 
   for (int i = 0; i < data.length; i++) {
     final item = data[i];
@@ -54,7 +54,7 @@ void main() async {
           'imageUrl': imageUrl,
           'error': 'HTTP ${response.statusCode}',
         });
-        print('FAILED: $name ($englishName) - HTTP ${response.statusCode}');
+        //        print('FAILED: $name ($englishName) - HTTP ${response.statusCode}');
       }
     } catch (e) {
       failed.add({
@@ -64,11 +64,11 @@ void main() async {
         'imageUrl': imageUrl,
         'error': e.toString(),
       });
-      print('FAILED: $name ($englishName) - $e');
+      //      print('FAILED: $name ($englishName) - $e');
     }
 
     if (i % 50 == 0) {
-      print('Progress: $i/${data.length}');
+      //      print('Progress: $i/${data.length}');
     }
   }
 

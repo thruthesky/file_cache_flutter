@@ -13,9 +13,9 @@ import 'dart:io';
 void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 전체 이미지 URL 검증 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 전체 이미지 URL 검증 도구');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
@@ -52,10 +52,10 @@ void main() async {
         success++;
         // 진행 상황 표시 (50개마다)
         if (checked % 50 == 0) {
-          print('✅ 진행: $checked/${travelSpots.length} (성공: $success, 실패: ${failedUrls.length})');
+          //          print('✅ 진행: $checked/${travelSpots.length} (성공: $success, 실패: ${failedUrls.length})');
         }
       } else {
-        print('❌ [$i] $name: HTTP ${response.statusCode}');
+        //        print('❌ [$i] $name: HTTP ${response.statusCode}');
         failedUrls.add({
           'index': i,
           'name': name,
@@ -75,7 +75,7 @@ void main() async {
         errorType = 'Timeout';
       }
 
-      print('❌ [$i] $name: $errorType 오류');
+      //      print('❌ [$i] $name: $errorType 오류');
       failedUrls.add({
         'index': i,
         'name': name,
@@ -98,14 +98,14 @@ void main() async {
     failedFile.writeAsStringSync(encoder.convert(failedUrls));
   }
 
-  print('\n======================================');
-  print('📊 결과 요약');
-  print('======================================');
-  print('✅ 검증 성공: $success개');
-  print('❌ 검증 실패: ${failedUrls.length}개');
-  print('📊 총 검증: $checked개');
+  //  print('\n======================================');
+  //  print('📊 결과 요약');
+  //  print('======================================');
+  //  print('✅ 검증 성공: $success개');
+  //  print('❌ 검증 실패: ${failedUrls.length}개');
+  //  print('📊 총 검증: $checked개');
 
   if (failedUrls.isNotEmpty) {
-    print('\n📁 실패 URL 목록이 tmp/scripts/failed_urls_final.json에 저장되었습니다.');
+    //    print('\n📁 실패 URL 목록이 tmp/scripts/failed_urls_final.json에 저장되었습니다.');
   }
 }

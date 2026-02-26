@@ -13,9 +13,9 @@ import 'dart:io';
 void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 전체 이미지 URL 검증 도구 v2');
-  print('======================================\n');
+//  print('======================================');
+//  print('📋 전체 이미지 URL 검증 도구 v2');
+//  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
@@ -43,7 +43,7 @@ void main() async {
 
     // 진행 상황 표시
     if (checked % 20 == 0) {
-      print('⏳ 진행: $checked/${travelSpots.length}...');
+//      print('⏳ 진행: $checked/${travelSpots.length}...');
     }
 
     // 최대 3번 재시도
@@ -84,7 +84,7 @@ void main() async {
     }
 
     if (!isSuccess) {
-      print('❌ [$i] $name: ${lastStatusCode > 0 ? "HTTP $lastStatusCode" : lastError.split(":").first}');
+//      print('❌ [$i] $name: ${lastStatusCode > 0 ? "HTTP $lastStatusCode" : lastError.split(":").first}');
       failedUrls.add({
         'index': i,
         'name': name,
@@ -108,15 +108,15 @@ void main() async {
     failedFile.writeAsStringSync(encoder.convert(failedUrls));
   }
 
-  print('\n======================================');
-  print('📊 결과 요약');
-  print('======================================');
-  print('✅ 검증 성공: $success개');
-  print('❌ 검증 실패: ${failedUrls.length}개');
-  print('📊 총 검증: $checked개');
+//  print('\n======================================');
+//  print('📊 결과 요약');
+//  print('======================================');
+//  print('✅ 검증 성공: $success개');
+//  print('❌ 검증 실패: ${failedUrls.length}개');
+//  print('📊 총 검증: $checked개');
 
   if (failedUrls.isNotEmpty) {
-    print('\n📁 실패 URL 목록이 tmp/scripts/failed_urls_v2.json에 저장되었습니다.');
+//    print('\n📁 실패 URL 목록이 tmp/scripts/failed_urls_v2.json에 저장되었습니다.');
 
     // 오류 유형별 분류
     final http404 = failedUrls.where((e) => e['statusCode'] == 404).length;
@@ -125,11 +125,11 @@ void main() async {
     final sslErrors = failedUrls.where((e) => (e['error'] as String).contains('Handshake')).length;
     final others = failedUrls.length - http404 - http429 - http403 - sslErrors;
 
-    print('\n📊 오류 유형별 분류:');
-    if (http404 > 0) print('   HTTP 404: $http404개');
-    if (http429 > 0) print('   HTTP 429 (Rate Limit): $http429개');
-    if (http403 > 0) print('   HTTP 403: $http403개');
-    if (sslErrors > 0) print('   SSL 오류: $sslErrors개');
-    if (others > 0) print('   기타: $others개');
+//    print('\n📊 오류 유형별 분류:');
+    if (http404 > 0)// print('   HTTP 404: $http404개');
+    if (http429 > 0)// print('   HTTP 429 (Rate Limit): $http429개');
+    if (http403 > 0)// print('   HTTP 403: $http403개');
+    if (sslErrors > 0)// print('   SSL 오류: $sslErrors개');
+    if (others > 0)// print('   기타: $others개');
   }
 }

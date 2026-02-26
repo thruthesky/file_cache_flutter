@@ -50,17 +50,17 @@ void main(List<String> args) {
   // JSON 파일 읽기
   final file = File(jsonPath);
   if (!file.existsSync()) {
-    print('오류: $jsonPath 파일을 찾을 수 없습니다.');
+    //    print('오류: $jsonPath 파일을 찾을 수 없습니다.');
     exit(1);
   }
 
   final jsonString = file.readAsStringSync();
   final List<dynamic> items = jsonDecode(jsonString);
 
-  print('========================================');
-  print('Travel Spots 미완료 항목 추출');
-  print('========================================');
-  print('총 항목 수: ${items.length}개\n');
+  //  print('========================================');
+  //  print('Travel Spots 미완료 항목 추출');
+  //  print('========================================');
+  //  print('총 항목 수: ${items.length}개\n');
 
   // 완료/미완료 분류
   final List<Map<String, dynamic>> completeItems = [];
@@ -114,58 +114,58 @@ void main(List<String> args) {
 
   // 통계 출력
   final total = completeItems.length + incompleteItems.length;
-  final completePercent =
-      total > 0 ? (completeItems.length / total * 100).toStringAsFixed(1) : '0';
-  final incompletePercent =
-      total > 0
-          ? (incompleteItems.length / total * 100).toStringAsFixed(1)
-          : '0';
+  final completePercent = total > 0
+      ? (completeItems.length / total * 100).toStringAsFixed(1)
+      : '0';
+  final incompletePercent = total > 0
+      ? (incompleteItems.length / total * 100).toStringAsFixed(1)
+      : '0';
 
-  print('필터 조건:');
-  if (filterProvince != null) print('  - 지역: $filterProvince');
-  if (filterCategory != null) print('  - 카테고리: $filterCategory');
-  if (filterProvince == null && filterCategory == null) print('  - 없음 (전체)');
-  print('');
-
-  print('분석 결과:');
-  print('  - 완료된 항목: ${completeItems.length}개 ($completePercent%)');
-  print('  - 미완료 항목: ${incompleteItems.length}개 ($incompletePercent%)');
-  print('');
-
-  // 미완료 항목 출력 (상위 N개)
-  final displayLimit = limit ?? 20;
+  //  print('필터 조건:');
+  if (filterProvince != null) // print('  - 지역: $filterProvince');
+    if (filterCategory != null) // print('  - 카테고리: $filterCategory');
+      if (filterProvince == null &&
+          filterCategory == null) // print('  - 없음 (전체)');
+        //  print('');
+        //  print('분석 결과:');
+        //  print('  - 완료된 항목: ${completeItems.length}개 ($completePercent%)');
+        //  print('  - 미완료 항목: ${incompleteItems.length}개 ($incompletePercent%)');
+        //  print('');
+        // 미완료 항목 출력 (상위 N개)
+        final displayLimit = limit ?? 20;
   final displayItems = incompleteItems.take(displayLimit).toList();
 
-  print('[미완료 항목 목록 - 상위 $displayLimit개]');
+  //  print('[미완료 항목 목록 - 상위 $displayLimit개]');
   for (final item in displayItems) {
     final missing = (item['missing_fields'] as List).join(', ');
-    print('  ❌ ${item['name']} (${item['city']}) - 누락: $missing');
+    //    print('  ❌ ${item['name']} (${item['city']}) - 누락: $missing');
   }
 
   if (incompleteItems.length > displayLimit) {
-    print('  ... 외 ${incompleteItems.length - displayLimit}개');
+    //    print('  ... 외 ${incompleteItems.length - displayLimit}개');
   }
-  print('');
+  //  print('');
 
   // 지역별 통계
-  print('[지역별 미완료 항목 수]');
+  //  print('[지역별 미완료 항목 수]');
   final provinceStats = <String, int>{};
   for (final item in incompleteItems) {
     final province = item['province'] as String? ?? '알 수 없음';
     provinceStats[province] = (provinceStats[province] ?? 0) + 1;
   }
-  final sortedProvinces =
-      provinceStats.entries.toList()
-        ..sort((a, b) => b.value.compareTo(a.value));
+  final sortedProvinces = provinceStats.entries.toList()
+    ..sort((a, b) => b.value.compareTo(a.value));
   for (final entry in sortedProvinces.take(10)) {
-    print('  - ${entry.key}: ${entry.value}개');
+    //    print('  - ${entry.key}: ${entry.value}개');
   }
-  print('');
+  //  print('');
 
   // 출력 파일 생성 (offset과 limit 적용)
   // offset: 시작 위치, limit: 가져올 개수
   final skippedItems = incompleteItems.skip(offset).toList();
-  final outputItems = limit != null ? skippedItems.take(limit).toList() : skippedItems;
+  final outputItems = limit != null
+      ? skippedItems.take(limit).toList()
+      : skippedItems;
 
   final output = {
     'generated_at': DateTime.now().toIso8601String(),
@@ -186,8 +186,8 @@ void main(List<String> args) {
     const JsonEncoder.withIndent('  ').convert(output),
   );
 
-  print('========================================');
-  print('출력 파일: $finalOutputPath');
-  print('오프셋: $offset, 추출된 항목 수: ${outputItems.length}개');
-  print('========================================');
+  //  print('========================================');
+  //  print('출력 파일: $finalOutputPath');
+  //  print('오프셋: $offset, 추출된 항목 수: ${outputItems.length}개');
+  //  print('========================================');
 }

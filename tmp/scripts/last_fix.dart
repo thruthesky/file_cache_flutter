@@ -6,7 +6,7 @@ void main() async {
       '/Users/thruthesky/apps/flutter/philgo_app/lib/philgo_files/travel/travel_spots.json';
   final file = File(filePath);
   if (!await file.exists()) {
-    print('File not found');
+    //    print('File not found');
     return;
   }
 
@@ -40,7 +40,7 @@ void main() async {
     newName = newName.replaceAll(RegExp(r'\s+'), ' ').trim();
 
     if (currentNameRaw != newName) {
-      print('Last fix: "$currentNameRaw" -> "$newName"');
+      //      print('Last fix: "$currentNameRaw" -> "$newName"');
       item['name'] = newName;
       modifiedCount++;
     }
@@ -49,8 +49,8 @@ void main() async {
   if (modifiedCount > 0) {
     const encoder = JsonEncoder.withIndent('    ');
     await file.writeAsString(encoder.convert(data));
-    print('Updated $modifiedCount items.');
+    //    print('Updated $modifiedCount items.');
   } else {
-    print('No items updated.');
+    //    print('No items updated.');
   }
 }

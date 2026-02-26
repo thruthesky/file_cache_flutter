@@ -58,9 +58,9 @@ final Map<String, String> regionMappings = {
 void main() async {
   final jsonFilePath = 'lib/philgo_files/travel/travel_spots.json';
 
-  print('======================================');
-  print('📋 HTTP 404 URL 지역 이미지 업데이트 도구');
-  print('======================================\n');
+  //  print('======================================');
+  //  print('📋 HTTP 404 URL 지역 이미지 업데이트 도구');
+  //  print('======================================\n');
 
   // JSON 파일 읽기
   final file = File(jsonFilePath);
@@ -86,18 +86,18 @@ void main() async {
       continue;
     }
 
-    print('🔍 [$i] $name → $region');
+    //    print('🔍 [$i] $name → $region');
 
     // 캐시에서 이미지 URL 확인
     if (imageCache.containsKey(region)) {
       final cachedUrl = imageCache[region];
       if (cachedUrl != null) {
         travelSpots[i]['imageUrl'] = cachedUrl;
-        print('   ✅ 캐시 사용: $cachedUrl');
+        //        print('   ✅ 캐시 사용: $cachedUrl');
         updated++;
         continue;
       } else {
-        print('   ⚠️  캐시됨 (이미지 없음)');
+        //        print('   ⚠️  캐시됨 (이미지 없음)');
         failed++;
         continue;
       }
@@ -129,29 +129,29 @@ void main() async {
             if (await _validateImageUrl(httpClient, newImageUrl)) {
               imageCache[region] = newImageUrl;
               travelSpots[i]['imageUrl'] = newImageUrl;
-              print('   ✅ 업데이트: $newImageUrl');
+              //              print('   ✅ 업데이트: $newImageUrl');
               updated++;
             } else {
               imageCache[region] = null;
-              print('   ❌ 이미지 접근 불가');
+              //              print('   ❌ 이미지 접근 불가');
               failed++;
             }
           } else {
             imageCache[region] = null;
-            print('   ⚠️  Wikipedia에 이미지 없음');
+            //            print('   ⚠️  Wikipedia에 이미지 없음');
             failed++;
           }
         } else {
           imageCache[region] = null;
-          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
+          //          print('   ⚠️  Wikipedia 페이지를 찾을 수 없음');
           failed++;
         }
       } else {
-        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
+        //        print('   ❌ API 호출 실패: HTTP ${response.statusCode}');
         failed++;
       }
     } catch (e) {
-      print('   ❌ 오류: $e');
+      //      print('   ❌ 오류: $e');
       failed++;
     }
 
@@ -166,12 +166,12 @@ void main() async {
   final updatedJsonString = encoder.convert(travelSpots);
   file.writeAsStringSync(updatedJsonString);
 
-  print('\n======================================');
-  print('📊 결과 요약');
-  print('======================================');
-  print('✅ 업데이트 성공: $updated개');
-  print('❌ 업데이트 실패: $failed개');
-  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
+  //  print('\n======================================');
+  //  print('📊 결과 요약');
+  //  print('======================================');
+  //  print('✅ 업데이트 성공: $updated개');
+  //  print('❌ 업데이트 실패: $failed개');
+  //  print('\n📁 $jsonFilePath 파일이 수정되었습니다.');
 }
 
 /// 이미지 URL 유효성 검증
