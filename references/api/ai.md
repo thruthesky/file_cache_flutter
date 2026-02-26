@@ -557,6 +557,18 @@ public static function analyzeReceipt(array $input): ReceiptEntity
 }
 ```
 
+### 영수증 진위 판별 시스템 프롬프트 설계 원칙
+
+`getReceiptAnalysisSystemPrompt()`의 핵심 설계 원칙:
+
+1. **기본 태도: "의심"** — 모든 영수증은 가짜로 간주하고 시작. 진짜임을 증명하는 근거를 찾는 방식.
+2. **6가지 검증 카테고리**: 물리적 특성(A), 폰트/레이아웃(B), 금액/수치(C), 이미지 조작(D), 형식/내용 일관성(E), 디지털 생성 패턴(F)
+3. **confidence_score 기준**: 90-100(확실 진짜), 70-89(진짜 가능성 높음), 50-69(불명확→가짜 판정), 30-49(가짜 가능성 높음), 0-29(명백한 위조)
+4. **is_authentic 판정**: confidence_score >= 70 AND 6가지 검증 모두 통과 시에만 true
+5. **suspicious_reasons 필수**: is_authentic=false일 때 반드시 1개 이상 구체적 이유 기재
+
+> 프롬프트 전문은 `lib/ai/AiService.php`의 `getReceiptAnalysisSystemPrompt()` 메서드를 참조한다.
+
 ### GeminiClient 핵심 코드
 
 ```php
