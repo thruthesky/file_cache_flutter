@@ -73,6 +73,17 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 네임스페이스 매핑(`Philgo\User\` → `lib/user/`, `Philgo\Utils\` → `lib/utils/`)을
 정확히 따라야 합니다.
 
+### Docker 인프라 설정 → [docker.md](references/docker.md)
+
+필고 프로젝트의 Docker Compose 이중 구조(신규 v7 + 기존 v6)를 상세히 다룹니다.
+하나의 compose.yaml에서 5개 서비스(nginx, php, old_philgo_nginx, old_philgo_php, mariadb)를
+관리하며, 신규 필고는 포트 80/443(PHP 8.3.6), 기존 필고는 포트 81/444(PHP 7.4.1)에서
+서비스됩니다. Nginx 설정(SSL/TLS, HTTP→HTTPS 리다이렉트, Sitemap/Google 확인 rewrite 규칙),
+PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2 접속 정보,
+볼륨 매핑(소스코드·로그·DB 데이터 영구 저장), 개발 환경 접속 URL
+(`https://local.philgo.com`, `https://banana.philgo.com`), Docker 운영 명령어,
+Windows 환경 설정 차이점을 포함합니다.
+
 ### 모듈별 API 문서 → [references/api/](references/api/)
 
 | 모듈 | 문서 | 상태 |
