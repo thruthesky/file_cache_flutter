@@ -20,6 +20,7 @@
 - [14. PEST Unit Test](#14-pest-unit-test)
 - [15. curl 파일 업로드 가이드](#15-curl-파일-업로드-가이드)
 - [16. 기존 시스템과의 차이점](#16-기존-시스템과의-차이점)
+- [17. 이미지 처리 (썸네일/WebP 변환)](#17-이미지-처리-썸네일webp-변환)
 
 ---
 
@@ -770,6 +771,22 @@ class UploadService
 
 ## 10. Controller 클래스
 
+### 10.1 인증 구조
+
+> **⚠️ 필수**: 모든 v7 API 호출 시 클라이언트는 반드시 `session_id` 또는 `id_token`(Firebase ID Token)을
+> 파라미터로 전달해야 한다. Controller는 `AuthService::getLoginUser()`로 인증 후 사용자의 `idx`를
+> `idx_member`로 자동 설정한다. **클라이언트가 `idx_member`를 직접 보내도 무시한다.**
+
+| 메서드 | 인증 필수 | 설명 |
+|--------|-----------|------|
+| `upload()` | **필수** | 인증된 사용자의 idx가 idx_member로 설정됨 |
+| `delete()` | **필수** | 인증된 사용자의 idx로 소유자 검증 |
+| `get()` | 불필요 | 공개 조회 (idx만으로 조회) |
+| `list()` | **필수** | 인증된 사용자의 파일만 조회 |
+| `updateAttached()` | **필수** | 인증된 사용자의 idx로 소유자 검증 |
+
+### 10.2 코드
+
 ```php
 <?php
 /**
@@ -777,58 +794,60 @@ class UploadService
  * @brief 업로드 Controller 클래스 - API 엔드포인트
  *
  * API method 접두사: "upload.*"
- * 예: upload.upload, upload.delete, upload.get, upload.list, upload.updateAttached
+ * 인증 필수: upload, delete, list, updateAttached (get은 공개 조회)
+ * 인증 방식: Firebase ID Token(id_token) 또는 session_id 파라미터
  *
  * PSR-4: Philgo\Upload\UploadController
  */
 
 namespace Philgo\Upload;
 
+use Philgo\Utils\AuthService;
+use RuntimeException;
+
 class UploadController
 {
     /**
-     * 파일 업로드
+     * 인증된 사용자의 회원번호(idx)를 반환한다.
+     * Firebase ID Token 또는 session_id로 인증.
+     * 클라이언트가 idx_member를 직접 보내도 무시하고, 인증된 사용자의 idx를 사용한다.
+     */
+    private function getAuthenticatedMemberIdx(): int
+    {
+        $user = AuthService::getLoginUser();
+        if ($user === null) {
+            throw new RuntimeException('로그인이 필요합니다.');
+        }
+        return (int)$user['idx'];
+    }
+
+    /**
+     * 파일 업로드 (인증 필수)
      * API: method=upload.upload
      *
-     * GET 호출 예시 (테스트용, 실제로는 POST multipart/form-data):
-     *   https://local.philgo.com:444/api.php?method=upload.upload
-     *
-     * @param array $input 입력 파라미터 (idx_member 필수, module/code/attached 선택)
-     * @return array UploadEntity 배열
-     * @throws \RuntimeException 업로드 실패 시
+     * POST 호출 예시 (multipart/form-data):
+     *   https://local.philgo.com:444/api.php?method=upload.upload&session_id=xxx
      */
     public function upload(array $input): array
     {
+        $input['idx_member'] = $this->getAuthenticatedMemberIdx();
         $entity = UploadService::store($input);
         return $entity->toArray();
     }
 
     /**
-     * 파일 삭제
+     * 파일 삭제 (인증 필수)
      * API: method=upload.delete
-     *
-     * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=upload.delete&idx=1&idx_member=123
-     *
-     * @param array $input 입력 파라미터 (idx, idx_member 필수)
-     * @return bool 삭제 성공 여부
-     * @throws \RuntimeException 삭제 실패 시
      */
     public function delete(array $input): bool
     {
+        $input['idx_member'] = $this->getAuthenticatedMemberIdx();
         return UploadService::remove($input);
     }
 
     /**
-     * 파일 정보 조회
+     * 파일 정보 조회 (인증 불필요)
      * API: method=upload.get
-     *
-     * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=upload.get&idx=1
-     *
-     * @param array $input 입력 파라미터 (idx 필수)
-     * @return array UploadEntity 배열
-     * @throws \RuntimeException 조회 실패 시
      */
     public function get(array $input): array
     {
@@ -837,34 +856,22 @@ class UploadController
     }
 
     /**
-     * 회원별 파일 목록 조회
+     * 회원별 파일 목록 조회 (인증 필수)
      * API: method=upload.list
-     *
-     * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=upload.list&idx_member=123&limit=20
-     *
-     * @param array $input 입력 파라미터 (idx_member 필수, limit/offset 선택)
-     * @return array ['items' => [...]]
-     * @throws \RuntimeException 조회 실패 시
      */
     public function list(array $input): array
     {
+        $input['idx_member'] = $this->getAuthenticatedMemberIdx();
         return UploadService::listByMember($input);
     }
 
     /**
-     * attached 상태 변경
+     * attached 상태 변경 (인증 필수)
      * API: method=upload.updateAttached
-     *
-     * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=upload.updateAttached&idx=1&idx_member=123&attached=1
-     *
-     * @param array $input 입력 파라미터 (idx, idx_member, attached 필수)
-     * @return bool 성공 여부
-     * @throws \RuntimeException 실패 시
      */
     public function updateAttached(array $input): bool
     {
+        $input['idx_member'] = $this->getAuthenticatedMemberIdx();
         return UploadService::updateAttached($input);
     }
 }
@@ -880,14 +887,17 @@ class UploadController
 |------|-----|
 | **method** | `upload.upload` |
 | **HTTP** | `POST /api.php` (multipart/form-data) |
-| **파라미터** | `idx_member` (필수), `file` (필수, $_FILES), `module`, `code`, `attached` (선택) |
-| **응답** | `{"idx": 1, "url": "/uploads/123/abc.jpg", ...}` |
+| **인증** | **필수** — `session_id` 또는 `id_token` 파라미터 |
+| **파라미터** | `file` (필수, $_FILES), `session_id` 또는 `id_token` (필수), `module`, `code`, `attached` (선택) |
+| **응답** | `{"idx": 1, "url": "/uploads/123/abc.webp", ...}` |
+
+> `idx_member`는 인증된 사용자의 idx로 자동 설정된다. 클라이언트가 `idx_member`를 보내도 무시.
 
 **curl 예시:**
 ```bash
 curl -s -X POST "https://local.philgo.com:444/api.php" \
   -F "method=upload.upload" \
-  -F "idx_member=123" \
+  -F "session_id=abc123def-456" \
   -F "module=post" \
   -F "code=content" \
   -F "file=@/path/to/photo.jpg"
@@ -897,13 +907,13 @@ curl -s -X POST "https://local.philgo.com:444/api.php" \
 ```javascript
 const formData = new FormData();
 formData.append('method', 'upload.upload');
-formData.append('idx_member', 123);
+formData.append('session_id', getSessionId()); // 또는 id_token
 formData.append('module', 'post');
 formData.append('code', 'content');
 formData.append('file', fileInput.files[0]);
 
 const res = await axios.post('/api.php', formData);
-console.log(res.data.url); // /uploads/123/67a1b2c3_1709876543.jpg
+console.log(res.data.url); // /uploads/123/67a1b2c3_1709876543.webp
 ```
 
 ### 11.2 upload.delete - 파일 삭제
@@ -911,36 +921,46 @@ console.log(res.data.url); // /uploads/123/67a1b2c3_1709876543.jpg
 | 항목 | 값 |
 |------|-----|
 | **method** | `upload.delete` |
-| **HTTP** | `GET /api.php?method=upload.delete&idx=1&idx_member=123` 또는 POST |
-| **파라미터** | `idx` (필수), `idx_member` (필수) |
+| **인증** | **필수** — `session_id` 또는 `id_token` 파라미터 |
+| **HTTP** | `GET /api.php?method=upload.delete&idx=1&session_id=xxx` 또는 POST |
+| **파라미터** | `idx` (필수), `session_id` 또는 `id_token` (필수) |
 | **응답** | `{"data": true}` |
+
+> 인증된 사용자가 파일 소유자인지 자동 검증. 불일치 시 "파일 삭제 권한이 없습니다." 에러.
 
 ### 11.3 upload.get - 파일 정보 조회
 
 | 항목 | 값 |
 |------|-----|
 | **method** | `upload.get` |
+| **인증** | 불필요 (공개 조회) |
 | **HTTP** | `GET /api.php?method=upload.get&idx=1` |
 | **파라미터** | `idx` (필수) |
-| **응답** | `{"idx": 1, "url": "/uploads/123/abc.jpg", "name": "photo.jpg", ...}` |
+| **응답** | `{"idx": 1, "url": "/uploads/123/abc.webp", "name": "photo.jpg", ...}` |
 
 ### 11.4 upload.list - 회원별 목록 조회
 
 | 항목 | 값 |
 |------|-----|
 | **method** | `upload.list` |
-| **HTTP** | `GET /api.php?method=upload.list&idx_member=123&limit=20` |
-| **파라미터** | `idx_member` (필수), `limit`, `offset` (선택) |
+| **인증** | **필수** — `session_id` 또는 `id_token` 파라미터 |
+| **HTTP** | `GET /api.php?method=upload.list&session_id=xxx&limit=20` |
+| **파라미터** | `session_id` 또는 `id_token` (필수), `limit`, `offset` (선택) |
 | **응답** | `{"items": [{...}, {...}]}` |
+
+> 인증된 사용자 본인의 파일만 조회 가능. `idx_member`는 자동 설정됨.
 
 ### 11.5 upload.updateAttached - 사용 상태 변경
 
 | 항목 | 값 |
 |------|-----|
 | **method** | `upload.updateAttached` |
+| **인증** | **필수** — `session_id` 또는 `id_token` 파라미터 |
 | **HTTP** | `POST /api.php` |
-| **파라미터** | `idx` (필수), `idx_member` (필수), `attached` (필수, 0 또는 1) |
+| **파라미터** | `idx` (필수), `attached` (필수, 0 또는 1), `session_id` 또는 `id_token` (필수) |
 | **응답** | `{"data": true}` |
+
+> 인증된 사용자가 파일 소유자인지 자동 검증.
 
 ---
 
@@ -976,7 +996,37 @@ composer dump-autoload
 
 ## 13. 보안 및 검증
 
-### 13.1 파일 검증 규칙
+### 13.1 인증 (Authentication)
+
+> **⚠️ 핵심 원칙**: v7 시스템의 모든 API 호출은 반드시 `session_id` 또는 `id_token`(Firebase ID Token)을
+> 파라미터로 전달하여 사용자 인증을 거쳐야 한다.
+
+| 항목 | 설명 |
+|------|------|
+| **인증 방식 1** | `session_id` — 쿠키 또는 HTTP 파라미터 (SSR/브라우저용) |
+| **인증 방식 2** | `id_token` — Firebase ID Token (모바일 앱/API용) |
+| **인증 처리** | `AuthService::getLoginUser()` → 사용자 레코드 배열 반환, 미인증 시 null |
+| **Controller 적용** | `getAuthenticatedMemberIdx()` → 인증 실패 시 RuntimeException('로그인이 필요합니다.') |
+| **idx_member 설정** | 클라이언트가 `idx_member`를 보내도 **무시**, 인증된 사용자의 `idx`로 자동 설정 |
+
+```
+인증 흐름:
+클라이언트 → session_id/id_token 전달
+    ↓
+Controller → getAuthenticatedMemberIdx()
+    ↓
+AuthService::getLoginUser()
+    ↓ (경로 1: session_id)     ↓ (경로 2: id_token)
+    세션 해시 검증              Firebase 토큰 검증
+    ↓                          ↓
+    사용자 레코드 반환           사용자 레코드 반환
+    ↓
+$input['idx_member'] = 인증된 사용자 idx
+    ↓
+Service 로직 실행
+```
+
+### 13.2 파일 검증 규칙
 
 | 항목 | 규칙 |
 |------|------|
@@ -985,16 +1035,17 @@ composer dump-autoload
 | **확장자** | 허용/차단 목록 없이 모든 확장자 허용 (추후 화이트리스트 추가 가능) |
 | **MIME 타입** | 확장자 기반 판별 후 DB 저장 |
 
-### 13.2 소유자 검증
+### 13.3 소유자 검증
 
 ```
 모든 수정/삭제 요청 시:
-1. DB에서 해당 레코드의 idx_member 조회
-2. 요청자의 idx_member와 비교
-3. 불일치 시 RuntimeException("권한이 없습니다.") throw
+1. AuthService::getLoginUser()로 인증된 사용자 확인
+2. 인증된 사용자의 idx를 idx_member로 설정
+3. DB에서 해당 레코드의 idx_member와 비교
+4. 불일치 시 RuntimeException("권한이 없습니다.") throw
 ```
 
-### 13.3 파일명 보안
+### 13.4 파일명 보안
 
 ```
 원본: "../../etc/passwd" 또는 "<script>.jpg"
@@ -1859,6 +1910,112 @@ if (res.data.idx) {
 | **메타데이터** | 글/코멘트의 `files` 컬럼 (JSON 문자열) | `uploads` 테이블 (정규화) |
 | **API** | 외부 서버 API (`upload.php`, `delete.php`) | `api.php?method=upload.*` |
 | **소유권** | Firebase UID 비교 | idx_member 비교 (폴더 기반) |
-| **썸네일** | 외부 서버 `thumbnail.php` | 추후 구현 (v7 확장) |
+| **썸네일** | 외부 서버 `thumbnail.php` | 로컬 GD 라이브러리 (`ImageService`) |
 | **아키텍처** | 함수 기반 (`file.functions.php`) | Controller/Service/Repository (PSR-4) |
 | **공존** | 기존 시스템 유지 | 기존 시스템과 100% 공존 |
+
+---
+
+## 17. 이미지 처리 (썸네일/WebP 변환)
+
+### 17.1 개요
+
+업로드되는 이미지 파일을 자동으로 WebP 형식으로 변환하고, 최대 1600px 너비로 리사이즈한다.
+추가로 400x400, 800x800 정사각형 center-crop 썸네일을 자동 생성한다.
+
+### 17.2 ImageService 클래스
+
+**파일 경로**: `lib/upload/ImageService.php`
+**네임스페이스**: `Philgo\Upload\ImageService`
+
+| 메서드 | 설명 |
+|--------|------|
+| `isAvailable(): bool` | GD 확장 로드 여부 + WebP 지원 확인 |
+| `isConvertible(string $ext): bool` | 변환 대상 확장자인지 확인 (GIF 제외) |
+| `convertAndResize(string $src, string $dest, string $ext): bool` | WebP 변환 + 최대 1600px 비율 유지 리사이즈 |
+| `createSquareThumbnail(string $src, string $dest, int $size): bool` | 정사각형 center-crop 썸네일 생성 |
+| `generateSquareThumbnails(string $src, string $dir, string $baseName): void` | 400x400 + 800x800 두 개 생성 |
+| `createResizedThumbnail(string $src, string $dest, int $maxWidth): bool` | 비율 유지 리사이즈 썸네일 생성 |
+| `generateResizedThumbnails(string $src, string $dir, string $baseName): void` | 1000px 비율 유지 썸네일 생성 |
+
+### 17.3 처리 흐름
+
+```
+파일 업로드 (UploadService::store)
+  ↓
+move_uploaded_file() → 원본 저장
+  ↓
+이미지인가? (GIF 제외, PNG/JPG/JPEG/WEBP/AVIF)
+  ├─ YES → WebP 변환 + 최대 1600px 비율 유지 리사이즈
+  │        ├─ 성공 → 원본 삭제, WebP 사용
+  │        └─ 실패 → 원본 그대로 유지
+  │        ↓
+  │        400x400 정사각형 center-crop 썸네일 생성
+  │        800x800 정사각형 center-crop 썸네일 생성
+  │        (실패 시 원본 복사로 에러 방지)
+  │
+  └─ NO → 원본 그대로 저장 (GIF, PDF, 비이미지 등)
+```
+
+### 17.4 파일 경로 규칙
+
+```
+uploads/{idx_member}/
+├── abc123_1709876543.webp          ← 원본 (WebP 변환, 최대 1600px, 비율 유지)
+├── 400x400-abc123_1709876543.webp  ← 400x400 정사각형 center-crop
+├── 800x800-abc123_1709876543.webp  ← 800x800 정사각형 center-crop
+├── 1000-abc123_1709876543.webp     ← 최대 1000px 비율 유지 리사이즈
+└── def456_1709876600.gif           ← GIF는 원본 그대로 (썸네일 없음)
+```
+
+### 17.5 변환 스펙
+
+| 항목 | 값 |
+|------|-----|
+| 출력 형식 | WebP |
+| 품질 (quality) | 80% |
+| 원본 최대 너비 | 1600px (비율 유지 리사이즈) |
+| 정사각형 썸네일 | 400x400, 800x800 (center-crop) |
+| 비율 유지 썸네일 | 1000px 너비 (가로/세로 비율 유지) |
+| 변환 대상 | PNG, JPG/JPEG, WEBP, AVIF |
+| 변환 제외 | GIF (애니메이션 보존) |
+
+### 17.6 API 응답 변경
+
+`toArray()` 응답에 썸네일 URL 필드가 추가되었다:
+
+```json
+{
+  "idx": 32,
+  "idx_member": 123,
+  "name": "photo.jpg",
+  "size": 45678,
+  "type": "image/webp",
+  "url": "/uploads/123/abc123_1709876543.webp",
+  "thumbnail_url_400": "/uploads/123/400x400-abc123_1709876543.webp",
+  "thumbnail_url_800": "/uploads/123/800x800-abc123_1709876543.webp",
+  "thumbnail_url_1000": "/uploads/123/1000-abc123_1709876543.webp"
+}
+```
+
+GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800`, `thumbnail_url_1000`이 `null`이다.
+
+### 17.7 에러 처리
+
+| 시나리오 | 처리 |
+|---------|------|
+| GD 미설치 | 원본 그대로 저장, 썸네일 미생성 |
+| WebP 변환 실패 | 원본 파일 유지 (확장자 그대로) |
+| 정사각형 썸네일 실패 | 원본을 해당 경로에 copy() |
+| AVIF 미지원 환경 | `function_exists()` 확인 후 원본 유지 |
+| 메모리 부족 | try-catch로 원본 유지 |
+
+### 17.8 파일 삭제 시 썸네일 연동
+
+`UploadService::remove()`에서 원본 삭제 시 400x400, 800x800 정사각형 썸네일과 1000px 비율 유지 썸네일도 자동 삭제한다.
+
+### 17.9 PEST Unit Test
+
+**파일**: `tests/Unit/ImageServiceTest.php`
+**실행**: `./vendor/bin/pest tests/Unit/ImageServiceTest.php`
+**테스트 수**: 25개
