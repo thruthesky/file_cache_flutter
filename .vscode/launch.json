@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "🤑 JaeHo: iPhone 16 Pro Max: Dev",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "DED2D464-68D0-46DC-893C-686999660183",
+            "args": [
+                "--dart-define=ENV=dev",
+                "--dart-define=API_ENDPOINT=https://local.philgo.com",
+            ]
+        },
+        {
             "name": "🚀 A17",
             "request": "launch",
             "type": "dart",
@@ -40,16 +51,6 @@
             "deviceId": "DED2D464-68D0-46DC-893C-686999660183",
             "args": [
                 "--dart-define=ENV=jaeho"
-            ]
-        },
-        {
-            "name": "PhilGo - JaeHo: iPhone 16 Pro Max: Dev",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "deviceId": "DED2D464-68D0-46DC-893C-686999660183",
-            "args": [
-                "--dart-define=ENV=dev"
             ]
         },
         {

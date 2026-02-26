@@ -8,9 +8,9 @@ void main() async {
   // 가장 부실한 항목 확인 (인덱스 739, 733, 724, 738, 712)
   for (var idx in [739, 733, 724, 738, 712, 725, 662, 530, 531, 532]) {
     final spot = spots[idx];
-    print('[$idx] ${spot['name']} (${spot['english name']})');
-    print('   province: ${spot['province']}');
-    print('   texts: ${spot['texts']}');
-    print('');
+    //    print('[$idx] ${spot['name']} (${spot['english name']})');
+    //    print('   province: ${spot['province']}');
+    //    print('   texts: ${spot['texts']}');
+    //    print('');
   }
 }

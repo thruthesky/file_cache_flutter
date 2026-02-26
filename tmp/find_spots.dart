@@ -7,7 +7,13 @@ void main() {
   final List<dynamic> spots = jsonDecode(jsonFile.readAsStringSync());
 
   // 특정 이름으로 검색
-  final searchTerms = ['Ogtong', 'Kalanggaman', 'Siquijor', 'Virgin Island', 'Cambugahay'];
+  final searchTerms = [
+    'Ogtong',
+    'Kalanggaman',
+    'Siquijor',
+    'Virgin Island',
+    'Cambugahay',
+  ];
 
   for (int i = 0; i < spots.length; i++) {
     final spot = spots[i];
@@ -18,7 +24,7 @@ void main() {
     for (final term in searchTerms) {
       if (name.toLowerCase().contains(term.toLowerCase()) ||
           englishName.toLowerCase().contains(term.toLowerCase())) {
-        print('[$i] $name ($englishName) - texts: ${texts.length}개');
+        //        print('[$i] $name ($englishName) - texts: ${texts.length}개');
       }
     }
   }
