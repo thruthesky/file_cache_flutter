@@ -1,3 +1,5 @@
+library;
+
 /// Flutter Driver 테스트용 엔트리포인트
 /// Flutter Driver test entrypoint
 ///

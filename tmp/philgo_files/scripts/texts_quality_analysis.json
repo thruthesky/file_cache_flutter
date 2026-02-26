@@ -1,0 +1,5420 @@
+{
+    "generated_at": "2026-01-19T10:08:19.299885",
+    "total_spots": 1045,
+    "empty_texts": [],
+    "few_texts": [
+        {
+            "index": 453,
+            "name": "화산 지대 정보",
+            "englishName": "Mount Gadungan",
+            "province": "Lanao",
+            "textsCount": 3
+        },
+        {
+            "index": 542,
+            "name": "스켈레톤 렉",
+            "englishName": "Skeleton Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 543,
+            "name": "이라오 이라오 렉",
+            "englishName": "Irako Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 547,
+            "name": "부스앙가 섬",
+            "englishName": "Busuanga Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 548,
+            "name": "칼라위트 사파리 파크",
+            "englishName": "Calauit Safari Park",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 549,
+            "name": "푸에르토 프린세사 지하강",
+            "englishName": "Puerto Princesa Underground River",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 550,
+            "name": "혼다 베이",
+            "englishName": "Honda Bay",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 551,
+            "name": "스타피쉬 아일랜드",
+            "englishName": "Starfish Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 552,
+            "name": "루리 아일랜드",
+            "englishName": "Luli Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 553,
+            "name": "판단 아일랜드",
+            "englishName": "Pandan Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 554,
+            "name": "카우리 아일랜드",
+            "englishName": "Cowrie Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 555,
+            "name": "사방 비치",
+            "englishName": "Sabang Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 556,
+            "name": "나그타본 비치",
+            "englishName": "Nagtabon Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 557,
+            "name": "베이커스 힐",
+            "englishName": "Baker's Hill",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 558,
+            "name": "팔라완 야생동물 보호센터",
+            "englishName": "Palawan Wildlife Rescue and Conservation Center",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 559,
+            "name": "포트 바튼",
+            "englishName": "Port Barton",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 560,
+            "name": "리오 툭바탄가 폭포",
+            "englishName": "Rio Tukbatanga Falls",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 561,
+            "name": "산 비센테 롱 비치",
+            "englishName": "San Vicente Long Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 562,
+            "name": "타본 동굴",
+            "englishName": "Tabon Caves",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 563,
+            "name": "비간 역사 도시",
+            "englishName": "Vigan Heritage Village",
+            "province": "Ilocos Sur",
+            "textsCount": 1
+        },
+        {
+            "index": 564,
+            "name": "라와그 파오아이 교회",
+            "englishName": "Paoay Church",
+            "province": "Ilocos Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 565,
+            "name": "파가드푸란 모래 언덕",
+            "englishName": "Paoay Sand Dunes",
+            "province": "Ilocos Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 566,
+            "name": "방가이 폭포",
+            "englishName": "Bangui Windmills",
+            "province": "Ilocos Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 567,
+            "name": "카블레토그 폭포",
+            "englishName": "Kabletog Falls",
+            "province": "Kalinga",
+            "textsCount": 1
+        },
+        {
+            "index": 568,
+            "name": "바타드 라이스 테라스",
+            "englishName": "Batad Rice Terraces",
+            "province": "Ifugao",
+            "textsCount": 1
+        },
+        {
+            "index": 569,
+            "name": "바나우에 라이스 테라스",
+            "englishName": "Banaue Rice Terraces",
+            "province": "Ifugao",
+            "textsCount": 1
+        },
+        {
+            "index": 570,
+            "name": "사그나 캐년",
+            "englishName": "Sagada Caves",
+            "province": "Mountain Province",
+            "textsCount": 1
+        },
+        {
+            "index": 571,
+            "name": "수메깅 동굴",
+            "englishName": "Sumaguing Cave",
+            "province": "Mountain Province",
+            "textsCount": 1
+        },
+        {
+            "index": 572,
+            "name": "키나코 폭포",
+            "englishName": "Kiltepan Viewpoint",
+            "province": "Mountain Province",
+            "textsCount": 1
+        },
+        {
+            "index": 573,
+            "name": "하우드레드 아일랜드",
+            "englishName": "Hundred Islands",
+            "province": "Pangasinan",
+            "textsCount": 1
+        },
+        {
+            "index": 574,
+            "name": "수빅 베이",
+            "englishName": "Subic Bay",
+            "province": "Zambales",
+            "textsCount": 1
+        },
+        {
+            "index": 575,
+            "name": "안나왕 코브",
+            "englishName": "Anawangin Cove",
+            "province": "Zambales",
+            "textsCount": 1
+        },
+        {
+            "index": 576,
+            "name": "카푸네스 섬",
+            "englishName": "Capones Island",
+            "province": "Zambales",
+            "textsCount": 1
+        },
+        {
+            "index": 577,
+            "name": "크리스탈 코브",
+            "englishName": "Crystal Beach",
+            "province": "Zambales",
+            "textsCount": 1
+        },
+        {
+            "index": 578,
+            "name": "타가이타이",
+            "englishName": "Tagaytay",
+            "province": "Cavite",
+            "textsCount": 1
+        },
+        {
+            "index": 579,
+            "name": "타알 화산",
+            "englishName": "Taal Volcano",
+            "province": "Batangas",
+            "textsCount": 1
+        },
+        {
+            "index": 580,
+            "name": "라구나 핫 스프링스",
+            "englishName": "Laguna Hot Springs",
+            "province": "Laguna",
+            "textsCount": 1
+        },
+        {
+            "index": 581,
+            "name": "파그산한 폭포",
+            "englishName": "Pagsanjan Falls",
+            "province": "Laguna",
+            "textsCount": 1
+        },
+        {
+            "index": 582,
+            "name": "히든 밸리 스프링스",
+            "englishName": "Hidden Valley Springs",
+            "province": "Laguna",
+            "textsCount": 1
+        },
+        {
+            "index": 583,
+            "name": "마요혼 폭포",
+            "englishName": "Mag-aso Falls",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 584,
+            "name": "바탕가스 비치",
+            "englishName": "Batangas Beaches",
+            "province": "Batangas",
+            "textsCount": 1
+        },
+        {
+            "index": 585,
+            "name": "아니라오",
+            "englishName": "Anilao",
+            "province": "Batangas",
+            "textsCount": 1
+        },
+        {
+            "index": 586,
+            "name": "포르투나 섬",
+            "englishName": "Fortune Island",
+            "province": "Batangas",
+            "textsCount": 1
+        },
+        {
+            "index": 587,
+            "name": "코레히도르 섬",
+            "englishName": "Corregidor Island",
+            "province": "Cavite",
+            "textsCount": 1
+        },
+        {
+            "index": 588,
+            "name": "인트라무로스",
+            "englishName": "Intramuros",
+            "province": "Metro Manila",
+            "textsCount": 1
+        },
+        {
+            "index": 589,
+            "name": "산티아고 요새",
+            "englishName": "Fort Santiago",
+            "province": "Metro Manila",
+            "textsCount": 1
+        },
+        {
+            "index": 590,
+            "name": "리잘 공원",
+            "englishName": "Rizal Park",
+            "province": "Metro Manila",
+            "textsCount": 1
+        },
+        {
+            "index": 591,
+            "name": "마닐라 오션파크",
+            "englishName": "Manila Ocean Park",
+            "province": "Metro Manila",
+            "textsCount": 1
+        },
+        {
+            "index": 592,
+            "name": "산 아구스틴 성당",
+            "englishName": "San Agustin Church",
+            "province": "Metro Manila",
+            "textsCount": 1
+        },
+        {
+            "index": 593,
+            "name": "마욘 화산",
+            "englishName": "Mayon Volcano",
+            "province": "Albay",
+            "textsCount": 1
+        },
+        {
+            "index": 594,
+            "name": "카그사와 유적",
+            "englishName": "Cagsawa Ruins",
+            "province": "Albay",
+            "textsCount": 1
+        },
+        {
+            "index": 595,
+            "name": "도솔 돌고래 투어",
+            "englishName": "Donsol Whale Shark Interaction",
+            "province": "Sorsogon",
+            "textsCount": 1
+        },
+        {
+            "index": 596,
+            "name": "클락 자유무역지구",
+            "englishName": "Clark Freeport Zone",
+            "province": "Pampanga",
+            "textsCount": 1
+        },
+        {
+            "index": 597,
+            "name": "보라카이 화이트 비치",
+            "englishName": "Boracay White Beach",
+            "province": "Aklan",
+            "textsCount": 1
+        },
+        {
+            "index": 598,
+            "name": "보라카이 푸카 비치",
+            "englishName": "Boracay Puka Beach",
+            "province": "Aklan",
+            "textsCount": 1
+        },
+        {
+            "index": 599,
+            "name": "보라카이 아리엘스 포인트",
+            "englishName": "Boracay Ariel's Point",
+            "province": "Aklan",
+            "textsCount": 1
+        },
+        {
+            "index": 600,
+            "name": "보라카이 크로코다일 아일랜드",
+            "englishName": "Boracay Crocodile Island",
+            "province": "Aklan",
+            "textsCount": 1
+        },
+        {
+            "index": 601,
+            "name": "일로일로 미아가오 교회",
+            "englishName": "Miagao Church",
+            "province": "Iloilo",
+            "textsCount": 1
+        },
+        {
+            "index": 602,
+            "name": "기가테스 아일랜드",
+            "englishName": "Gigantes Islands",
+            "province": "Iloilo",
+            "textsCount": 1
+        },
+        {
+            "index": 604,
+            "name": "시키호르 캄부가하이 폭포",
+            "englishName": "Cambugahay Falls",
+            "province": "Siquijor",
+            "textsCount": 1
+        },
+        {
+            "index": 605,
+            "name": "시키호르 사라그둥동 폭포",
+            "englishName": "Salagdoong Beach",
+            "province": "Siquijor",
+            "textsCount": 1
+        },
+        {
+            "index": 606,
+            "name": "시키호르 엔찬티드 바냥 트리",
+            "englishName": "Old Enchanted Balete Tree",
+            "province": "Siquijor",
+            "textsCount": 1
+        },
+        {
+            "index": 607,
+            "name": "네그로스 듀마게테",
+            "englishName": "Dumaguete City",
+            "province": "Negros Oriental",
+            "textsCount": 1
+        },
+        {
+            "index": 608,
+            "name": "아포 아일랜드",
+            "englishName": "Apo Island",
+            "province": "Negros Oriental",
+            "textsCount": 1
+        },
+        {
+            "index": 609,
+            "name": "카사로로 폭포",
+            "englishName": "Casaroro Falls",
+            "province": "Negros Oriental",
+            "textsCount": 1
+        },
+        {
+            "index": 610,
+            "name": "트윈 레이크스",
+            "englishName": "Twin Lakes Negros",
+            "province": "Negros Oriental",
+            "textsCount": 1
+        },
+        {
+            "index": 611,
+            "name": "바콜로드 더 루인스",
+            "englishName": "The Ruins Negros",
+            "province": "Negros Occidental",
+            "textsCount": 1
+        },
+        {
+            "index": 612,
+            "name": "바콜로드 마스카라 축제",
+            "englishName": "Bacolod MassKara Festival",
+            "province": "Negros Occidental",
+            "textsCount": 1
+        },
+        {
+            "index": 613,
+            "name": "시파위 아일랜드",
+            "englishName": "Sipalay Beaches",
+            "province": "Negros Occidental",
+            "textsCount": 1
+        },
+        {
+            "index": 614,
+            "name": "레이테 맥아더 상륙지",
+            "englishName": "MacArthur Landing Memorial",
+            "province": "Leyte",
+            "textsCount": 1
+        },
+        {
+            "index": 615,
+            "name": "레이테 산 후아니코 다리",
+            "englishName": "San Juanico Bridge",
+            "province": "Leyte",
+            "textsCount": 1
+        },
+        {
+            "index": 616,
+            "name": "소호톤 동굴",
+            "englishName": "Sohoton Caves",
+            "province": "Samar",
+            "textsCount": 1
+        },
+        {
+            "index": 617,
+            "name": "칸락론 폭포",
+            "englishName": "Canlaaon Falls",
+            "province": "Negros Oriental",
+            "textsCount": 1
+        },
+        {
+            "index": 618,
+            "name": "모알보알 페스카도르 섬",
+            "englishName": "Pescador Island",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 619,
+            "name": "반타얀 아일랜드",
+            "englishName": "Bantayan Island",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 620,
+            "name": "말라파스쿠아 섬",
+            "englishName": "Malapascua Island",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 621,
+            "name": "카모테스 아일랜드",
+            "englishName": "Camotes Islands",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 622,
+            "name": "알로나 비치",
+            "englishName": "Alona Beach",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 623,
+            "name": "발리카삭 아일랜드",
+            "englishName": "Balicasag Island",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 624,
+            "name": "힌나그다난 동굴",
+            "englishName": "Hinagdanan Cave",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 625,
+            "name": "로복 강 크루즈",
+            "englishName": "Loboc River Cruise",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 626,
+            "name": "안다 비치",
+            "englishName": "Anda Beach",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 627,
+            "name": "버진 아일랜드 샌드바",
+            "englishName": "Virgin Island Sandbar",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 628,
+            "name": "필리핀 독수리 센터",
+            "englishName": "Philippine Eagle Center",
+            "province": "Davao del Sur",
+            "textsCount": 1
+        },
+        {
+            "index": 629,
+            "name": "파밀라칸 아일랜드",
+            "englishName": "Pamilacan Island",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 630,
+            "name": "다나오 어드벤처 파크",
+            "englishName": "Danao Adventure Park",
+            "province": "Bohol",
+            "textsCount": 1
+        },
+        {
+            "index": 631,
+            "name": "라푸라푸 기념비",
+            "englishName": "Lapu-Lapu Shrine",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 632,
+            "name": "오슬롭 투말록 폭포",
+            "englishName": "Tumalog Falls",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 633,
+            "name": "세부 탑스",
+            "englishName": "Tops Lookout",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 634,
+            "name": "시라오 가든",
+            "englishName": "Sirao Garden",
+            "province": "Cebu",
+            "textsCount": 1
+        },
+        {
+            "index": 635,
+            "name": "카라모안 아일랜드",
+            "englishName": "Caramoan Islands",
+            "province": "Camarines Sur",
+            "textsCount": 1
+        },
+        {
+            "index": 636,
+            "name": "시얄가오 서핑",
+            "englishName": "Siargao Surfing",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 637,
+            "name": "수그바 라군",
+            "englishName": "Sugba Lagoon",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 638,
+            "name": "막푸풍코 락풀",
+            "englishName": "Magpupungko Rock Pools",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 639,
+            "name": "네이키드 아일랜드",
+            "englishName": "Naked Island",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 640,
+            "name": "다쿠 아일랜드",
+            "englishName": "Daku Island",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 641,
+            "name": "구욤 아일랜드",
+            "englishName": "Guyam Island",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 642,
+            "name": "타쿠탁 폭포",
+            "englishName": "Taktak Falls",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 643,
+            "name": "소조간 동굴",
+            "englishName": "Sojourn Cave",
+            "province": "Surigao del Norte",
+            "textsCount": 1
+        },
+        {
+            "index": 644,
+            "name": "엔찬티드 리버",
+            "englishName": "Enchanted River",
+            "province": "Surigao del Sur",
+            "textsCount": 1
+        },
+        {
+            "index": 645,
+            "name": "틱탁 폭포",
+            "englishName": "Tinuy-an Falls",
+            "province": "Surigao del Sur",
+            "textsCount": 1
+        },
+        {
+            "index": 646,
+            "name": "라 우니온 서핑",
+            "englishName": "La Union Surfing",
+            "province": "La Union",
+            "textsCount": 1
+        },
+        {
+            "index": 647,
+            "name": "팡가시난 엔찬티드 케이브",
+            "englishName": "Enchanted Cave Pangasinan",
+            "province": "Pangasinan",
+            "textsCount": 1
+        },
+        {
+            "index": 648,
+            "name": "케이프 볼리나오 등대",
+            "englishName": "Cape Bolinao Lighthouse",
+            "province": "Pangasinan",
+            "textsCount": 1
+        },
+        {
+            "index": 649,
+            "name": "푸구 비치",
+            "englishName": "Pugu Beach",
+            "province": "Pangasinan",
+            "textsCount": 1
+        },
+        {
+            "index": 650,
+            "name": "다솔 비치",
+            "englishName": "Dasol Beach",
+            "province": "Pangasinan",
+            "textsCount": 1
+        },
+        {
+            "index": 651,
+            "name": "아파리 폰테 리버",
+            "englishName": "Apa River Cagayan",
+            "province": "Cagayan",
+            "textsCount": 1
+        },
+        {
+            "index": 652,
+            "name": "칼라야오 동굴",
+            "englishName": "Callao Cave",
+            "province": "Cagayan",
+            "textsCount": 1
+        },
+        {
+            "index": 653,
+            "name": "바탄 아일랜드",
+            "englishName": "Batan Island",
+            "province": "Batanes",
+            "textsCount": 1
+        },
+        {
+            "index": 654,
+            "name": "바타네스 롤링 힐스",
+            "englishName": "Batanes Rolling Hills",
+            "province": "Batanes",
+            "textsCount": 1
+        },
+        {
+            "index": 655,
+            "name": "바타네스 마를보로 컨트리",
+            "englishName": "Marlboro Country Batanes",
+            "province": "Batanes",
+            "textsCount": 1
+        },
+        {
+            "index": 656,
+            "name": "바타네스 혼노스비치",
+            "englishName": "Honnosbech Batanes",
+            "province": "Batanes",
+            "textsCount": 1
+        },
+        {
+            "index": 657,
+            "name": "사부탕 아일랜드",
+            "englishName": "Sabtang Island",
+            "province": "Batanes",
+            "textsCount": 1
+        },
+        {
+            "index": 658,
+            "name": "차바탄 마을",
+            "englishName": "Chavayan Village",
+            "province": "Batanes",
+            "textsCount": 1
+        },
+        {
+            "index": 659,
+            "name": "발루아르테 동물원",
+            "englishName": "Baluarte Zoo",
+            "province": "Ilocos Sur",
+            "textsCount": 1
+        },
+        {
+            "index": 660,
+            "name": "카부가오 비치",
+            "englishName": "Cabugao Beach",
+            "province": "Ilocos Sur",
+            "textsCount": 1
+        },
+        {
+            "index": 661,
+            "name": "다마왕 폭포",
+            "englishName": "Damortis Falls",
+            "province": "La Union",
+            "textsCount": 1
+        },
+        {
+            "index": 662,
+            "name": "탕카단 폭포",
+            "englishName": "Tangadan Falls",
+            "province": "La Union",
+            "textsCount": 1
+        },
+        {
+            "index": 663,
+            "name": "마아신 폭포",
+            "englishName": "Maasin Falls",
+            "province": "Siquijor",
+            "textsCount": 1
+        },
+        {
+            "index": 664,
+            "name": "칸라옵 폭포",
+            "englishName": "Cantilaan Falls",
+            "province": "Siquijor",
+            "textsCount": 1
+        },
+        {
+            "index": 665,
+            "name": "라지 교회",
+            "englishName": "Lazi Church and Convent",
+            "province": "Siquijor",
+            "textsCount": 1
+        },
+        {
+            "index": 666,
+            "name": "산 이시드로 수중 공원",
+            "englishName": "San Isidro Underwater Cemetery",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 667,
+            "name": "화이트 아일랜드 카미긴",
+            "englishName": "White Island Camiguin",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 668,
+            "name": "카티바왓 폭포",
+            "englishName": "Katibawasan Falls",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 669,
+            "name": "아르데트 온천",
+            "englishName": "Ardent Hot Springs",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 670,
+            "name": "오르드 동굴",
+            "englishName": "Sto. Niño Cold Spring",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 671,
+            "name": "투멍스 폭포",
+            "englishName": "Tuasan Falls",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 672,
+            "name": "기오 바르도 유적",
+            "englishName": "Gui-ob Church Ruins",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 673,
+            "name": "만타 포인트 카미긴",
+            "englishName": "Mantigue Island",
+            "province": "Camiguin",
+            "textsCount": 1
+        },
+        {
+            "index": 674,
+            "name": "카갈로간 폭포",
+            "englishName": "Cagalogan Falls",
+            "province": "Samar",
+            "textsCount": 1
+        },
+        {
+            "index": 675,
+            "name": "울루간 베이",
+            "englishName": "Ulugan Bay",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 676,
+            "name": "아포 리프",
+            "englishName": "Apo Reef",
+            "province": "Occidental Mindoro",
+            "textsCount": 1
+        },
+        {
+            "index": 677,
+            "name": "카들라오 섬",
+            "englishName": "Cadlao Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 678,
+            "name": "딜루마카드 섬",
+            "englishName": "Dilumacad Island (Helicopter Island)",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 679,
+            "name": "피나그부유탄 섬",
+            "englishName": "Pinagbuyutan Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 680,
+            "name": "미닐록 섬",
+            "englishName": "Miniloc Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 681,
+            "name": "팡울라시안 섬",
+            "englishName": "Pangulasian Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 682,
+            "name": "파파야 비치",
+            "englishName": "Papaya Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 683,
+            "name": "히든 비치",
+            "englishName": "Hidden Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 684,
+            "name": "스타 비치",
+            "englishName": "Star Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 685,
+            "name": "탈리사이 비치",
+            "englishName": "Talisay Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 686,
+            "name": "데펠데트 섬",
+            "englishName": "Depeldet Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 687,
+            "name": "스네이크 아일랜드",
+            "englishName": "Snake Island (Vigan Island)",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 688,
+            "name": "엔탈루라 아일랜드",
+            "englishName": "Entalula Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 689,
+            "name": "쿠두그논 동굴",
+            "englishName": "Cudugnon Cave",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 690,
+            "name": "시미즈 다이빙 사이트",
+            "englishName": "Shimizu Diving Site",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 691,
+            "name": "사우스 미닐록 다이빙 사이트",
+            "englishName": "South Miniloc Diving Site",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 692,
+            "name": "딜럼파냐 섬",
+            "englishName": "Dilumpayna Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 693,
+            "name": "타피탄 스트레이트",
+            "englishName": "Tapuitan Strait",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 694,
+            "name": "이필 비치",
+            "englishName": "Ipil Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 695,
+            "name": "마리마바자 섬",
+            "englishName": "Marimaba Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 696,
+            "name": "나긋-나긋 해변",
+            "englishName": "Nagkalit-kalit Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 697,
+            "name": "코랄리 비치",
+            "englishName": "Corally Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 698,
+            "name": "헬레나 가든",
+            "englishName": "Helena's Garden",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 699,
+            "name": "파사디타 코브",
+            "englishName": "Pasadita Cove",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 700,
+            "name": "리오 비치",
+            "englishName": "Lio Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 701,
+            "name": "다퀘트 비치",
+            "englishName": "Daqueit Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 702,
+            "name": "팡알랍 폭포",
+            "englishName": "Pangalap Falls",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 703,
+            "name": "나그카릿카릿 폭포",
+            "englishName": "Nagkalit-kalit Falls",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 704,
+            "name": "마구에이 섬",
+            "englishName": "Maguey Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 705,
+            "name": "라겐 섬",
+            "englishName": "Lagen Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 706,
+            "name": "아브이트 섬",
+            "englishName": "Abuuet Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 707,
+            "name": "쿄와 섬",
+            "englishName": "Kyowa Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 708,
+            "name": "엘니도 씨푸드 마켓",
+            "englishName": "El Nido Seafood Market",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 709,
+            "name": "카누엔 섬",
+            "englishName": "Canuen Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 710,
+            "name": "시에테 페카도스",
+            "englishName": "Siete Pecados Marine Park",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 711,
+            "name": "아트와얀 비치",
+            "englishName": "Atwayan Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 713,
+            "name": "스미스 비치",
+            "englishName": "Smith Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 714,
+            "name": "CYC 비치",
+            "englishName": "CYC Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 715,
+            "name": "상갓 섬",
+            "englishName": "Sangat Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 716,
+            "name": "쿨리온 섬",
+            "englishName": "Culion Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 717,
+            "name": "루숭 건보트",
+            "englishName": "Lusong Gunboat",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 718,
+            "name": "오키카와 마루",
+            "englishName": "Okikawa Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 719,
+            "name": "이라코 마루",
+            "englishName": "Irako Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 720,
+            "name": "아키츠시마",
+            "englishName": "Akitsushima Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 721,
+            "name": "모라소 마루",
+            "englishName": "Morazan Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 722,
+            "name": "올림피아 마루",
+            "englishName": "Olympia Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 723,
+            "name": "코그마 마루",
+            "englishName": "Kogyo Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 724,
+            "name": "마마미 비치",
+            "englishName": "Mamami Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 725,
+            "name": "디부양앙 섬",
+            "englishName": "Dibuyunan Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 726,
+            "name": "디탈리스 섬",
+            "englishName": "Ditaytayan Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 727,
+            "name": "파스 섬",
+            "englishName": "Pass Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 728,
+            "name": "블랙 아일랜드",
+            "englishName": "Black Island (Malajon Island)",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 729,
+            "name": "칼라미안 제도",
+            "englishName": "Calamianes Islands",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 730,
+            "name": "코론 뷰덱",
+            "englishName": "Coron Viewdeck",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 731,
+            "name": "바락 비치",
+            "englishName": "Barracuda Lake Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 732,
+            "name": "디코롬 섬",
+            "englishName": "Dicorom Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 733,
+            "name": "라하 섬",
+            "englishName": "Laha Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 734,
+            "name": "칼루이트 기린",
+            "englishName": "Calauit Safari Giraffe Encounter",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 735,
+            "name": "부수앙가 만 코랄가든",
+            "englishName": "Busuanga Bay Coral Garden",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 736,
+            "name": "빅 드림 보트맨 아일랜드",
+            "englishName": "Big Dream Boatman Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 737,
+            "name": "코론 베이 선셋",
+            "englishName": "Coron Bay Sunset Cruise",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 738,
+            "name": "디마양앙 섬",
+            "englishName": "Dimanglet Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 739,
+            "name": "카바요 비치",
+            "englishName": "Cabayo Beach",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 740,
+            "name": "카노보 섬",
+            "englishName": "Canobo Island",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 741,
+            "name": "타오 익스피디션",
+            "englishName": "Tao Expedition",
+            "province": "Palawan",
+            "textsCount": 1
+        },
+        {
+            "index": 742,
+            "name": "코론 마켓",
+            "englishName": "Coron Public Market",
+            "province": "Palawan",
+            "textsCount": 1
+        }
+    ],
+    "short_description": [
+        {
+            "index": 739,
+            "name": "카바요 비치",
+            "englishName": "Cabayo Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 56
+        },
+        {
+            "index": 733,
+            "name": "라하 섬",
+            "englishName": "Laha Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 57
+        },
+        {
+            "index": 724,
+            "name": "마마미 비치",
+            "englishName": "Mamami Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 58
+        },
+        {
+            "index": 738,
+            "name": "디마양앙 섬",
+            "englishName": "Dimanglet Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 59
+        },
+        {
+            "index": 725,
+            "name": "디부양앙 섬",
+            "englishName": "Dibuyunan Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 60
+        },
+        {
+            "index": 662,
+            "name": "탕카단 폭포",
+            "englishName": "Tangadan Falls",
+            "province": "La Union",
+            "textsCount": 1,
+            "totalTextsLength": 61
+        },
+        {
+            "index": 706,
+            "name": "아브이트 섬",
+            "englishName": "Abuuet Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 61
+        },
+        {
+            "index": 714,
+            "name": "CYC 비치",
+            "englishName": "CYC Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 62
+        },
+        {
+            "index": 727,
+            "name": "파스 섬",
+            "englishName": "Pass Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 62
+        },
+        {
+            "index": 742,
+            "name": "코론 마켓",
+            "englishName": "Coron Public Market",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 62
+        },
+        {
+            "index": 694,
+            "name": "이필 비치",
+            "englishName": "Ipil Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 62
+        },
+        {
+            "index": 740,
+            "name": "카노보 섬",
+            "englishName": "Canobo Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 63
+        },
+        {
+            "index": 737,
+            "name": "코론 베이 선셋",
+            "englishName": "Coron Bay Sunset Cruise",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 63
+        },
+        {
+            "index": 732,
+            "name": "디코롬 섬",
+            "englishName": "Dicorom Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 63
+        },
+        {
+            "index": 731,
+            "name": "바락 비치",
+            "englishName": "Barracuda Lake Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 63
+        },
+        {
+            "index": 726,
+            "name": "디탈리스 섬",
+            "englishName": "Ditaytayan Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 63
+        },
+        {
+            "index": 704,
+            "name": "마구에이 섬",
+            "englishName": "Maguey Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 63
+        },
+        {
+            "index": 711,
+            "name": "아트와얀 비치",
+            "englishName": "Atwayan Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 63
+        },
+        {
+            "index": 730,
+            "name": "코론 뷰덱",
+            "englishName": "Coron Viewdeck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 64
+        },
+        {
+            "index": 702,
+            "name": "팡알랍 폭포",
+            "englishName": "Pangalap Falls",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 64
+        },
+        {
+            "index": 692,
+            "name": "딜럼파냐 섬",
+            "englishName": "Dilumpayna Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 64
+        },
+        {
+            "index": 707,
+            "name": "쿄와 섬",
+            "englishName": "Kyowa Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 64
+        },
+        {
+            "index": 718,
+            "name": "오키카와 마루",
+            "englishName": "Okikawa Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 65
+        },
+        {
+            "index": 703,
+            "name": "나그카릿카릿 폭포",
+            "englishName": "Nagkalit-kalit Falls",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 65
+        },
+        {
+            "index": 741,
+            "name": "타오 익스피디션",
+            "englishName": "Tao Expedition",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 65
+        },
+        {
+            "index": 728,
+            "name": "블랙 아일랜드",
+            "englishName": "Black Island (Malajon Island)",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 66
+        },
+        {
+            "index": 698,
+            "name": "헬레나 가든",
+            "englishName": "Helena's Garden",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 66
+        },
+        {
+            "index": 722,
+            "name": "올림피아 마루",
+            "englishName": "Olympia Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 66
+        },
+        {
+            "index": 686,
+            "name": "데펠데트 섬",
+            "englishName": "Depeldet Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 66
+        },
+        {
+            "index": 716,
+            "name": "쿨리온 섬",
+            "englishName": "Culion Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 66
+        },
+        {
+            "index": 713,
+            "name": "스미스 비치",
+            "englishName": "Smith Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 66
+        },
+        {
+            "index": 696,
+            "name": "나긋-나긋 해변",
+            "englishName": "Nagkalit-kalit Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 735,
+            "name": "부수앙가 만 코랄가든",
+            "englishName": "Busuanga Bay Coral Garden",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 661,
+            "name": "다마왕 폭포",
+            "englishName": "Damortis Falls",
+            "province": "La Union",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 705,
+            "name": "라겐 섬",
+            "englishName": "Lagen Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 721,
+            "name": "모라소 마루",
+            "englishName": "Morazan Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 649,
+            "name": "푸구 비치",
+            "englishName": "Pugu Beach",
+            "province": "Pangasinan",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 693,
+            "name": "타피탄 스트레이트",
+            "englishName": "Tapuitan Strait",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 663,
+            "name": "마아신 폭포",
+            "englishName": "Maasin Falls",
+            "province": "Siquijor",
+            "textsCount": 1,
+            "totalTextsLength": 67
+        },
+        {
+            "index": 719,
+            "name": "이라코 마루",
+            "englishName": "Irako Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 68
+        },
+        {
+            "index": 697,
+            "name": "코랄리 비치",
+            "englishName": "Corally Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 68
+        },
+        {
+            "index": 701,
+            "name": "다퀘트 비치",
+            "englishName": "Daqueit Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 68
+        },
+        {
+            "index": 671,
+            "name": "투멍스 폭포",
+            "englishName": "Tuasan Falls",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 68
+        },
+        {
+            "index": 715,
+            "name": "상갓 섬",
+            "englishName": "Sangat Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 68
+        },
+        {
+            "index": 708,
+            "name": "엘니도 씨푸드 마켓",
+            "englishName": "El Nido Seafood Market",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 699,
+            "name": "파사디타 코브",
+            "englishName": "Pasadita Cove",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 695,
+            "name": "마리마바자 섬",
+            "englishName": "Marimaba Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 723,
+            "name": "코그마 마루",
+            "englishName": "Kogyo Maru Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 668,
+            "name": "카티바왓 폭포",
+            "englishName": "Katibawasan Falls",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 729,
+            "name": "칼라미안 제도",
+            "englishName": "Calamianes Islands",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 660,
+            "name": "카부가오 비치",
+            "englishName": "Cabugao Beach",
+            "province": "Ilocos Sur",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 654,
+            "name": "바타네스 롤링 힐스",
+            "englishName": "Batanes Rolling Hills",
+            "province": "Batanes",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 645,
+            "name": "틱탁 폭포",
+            "englishName": "Tinuy-an Falls",
+            "province": "Surigao del Sur",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 700,
+            "name": "리오 비치",
+            "englishName": "Lio Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 709,
+            "name": "카누엔 섬",
+            "englishName": "Canuen Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 69
+        },
+        {
+            "index": 682,
+            "name": "파파야 비치",
+            "englishName": "Papaya Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 70
+        },
+        {
+            "index": 688,
+            "name": "엔탈루라 아일랜드",
+            "englishName": "Entalula Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 70
+        },
+        {
+            "index": 658,
+            "name": "차바탄 마을",
+            "englishName": "Chavayan Village",
+            "province": "Batanes",
+            "textsCount": 1,
+            "totalTextsLength": 70
+        },
+        {
+            "index": 626,
+            "name": "안다 비치",
+            "englishName": "Anda Beach",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 70
+        },
+        {
+            "index": 689,
+            "name": "쿠두그논 동굴",
+            "englishName": "Cudugnon Cave",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 71
+        },
+        {
+            "index": 684,
+            "name": "스타 비치",
+            "englishName": "Star Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 71
+        },
+        {
+            "index": 683,
+            "name": "히든 비치",
+            "englishName": "Hidden Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 71
+        },
+        {
+            "index": 680,
+            "name": "미닐록 섬",
+            "englishName": "Miniloc Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 71
+        },
+        {
+            "index": 653,
+            "name": "바탄 아일랜드",
+            "englishName": "Batan Island",
+            "province": "Batanes",
+            "textsCount": 1,
+            "totalTextsLength": 71
+        },
+        {
+            "index": 648,
+            "name": "케이프 볼리나오 등대",
+            "englishName": "Cape Bolinao Lighthouse",
+            "province": "Pangasinan",
+            "textsCount": 1,
+            "totalTextsLength": 71
+        },
+        {
+            "index": 634,
+            "name": "시라오 가든",
+            "englishName": "Sirao Garden",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 71
+        },
+        {
+            "index": 617,
+            "name": "칸락론 폭포",
+            "englishName": "Canlaaon Falls",
+            "province": "Negros Oriental",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 736,
+            "name": "빅 드림 보트맨 아일랜드",
+            "englishName": "Big Dream Boatman Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 622,
+            "name": "알로나 비치",
+            "englishName": "Alona Beach",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 640,
+            "name": "다쿠 아일랜드",
+            "englishName": "Daku Island",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 633,
+            "name": "세부 탑스",
+            "englishName": "Tops Lookout",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 637,
+            "name": "수그바 라군",
+            "englishName": "Sugba Lagoon",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 734,
+            "name": "칼루이트 기린",
+            "englishName": "Calauit Safari Giraffe Encounter",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 643,
+            "name": "소조간 동굴",
+            "englishName": "Sojourn Cave",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 651,
+            "name": "아파리 폰테 리버",
+            "englishName": "Apa River Cagayan",
+            "province": "Cagayan",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 685,
+            "name": "탈리사이 비치",
+            "englishName": "Talisay Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 72
+        },
+        {
+            "index": 659,
+            "name": "발루아르테 동물원",
+            "englishName": "Baluarte Zoo",
+            "province": "Ilocos Sur",
+            "textsCount": 1,
+            "totalTextsLength": 73
+        },
+        {
+            "index": 642,
+            "name": "타쿠탁 폭포",
+            "englishName": "Taktak Falls",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 73
+        },
+        {
+            "index": 673,
+            "name": "만타 포인트 카미긴",
+            "englishName": "Mantigue Island",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 73
+        },
+        {
+            "index": 604,
+            "name": "시키호르 캄부가하이 폭포",
+            "englishName": "Cambugahay Falls",
+            "province": "Siquijor",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 616,
+            "name": "소호톤 동굴",
+            "englishName": "Sohoton Caves",
+            "province": "Samar",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 667,
+            "name": "화이트 아일랜드 카미긴",
+            "englishName": "White Island Camiguin",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 638,
+            "name": "막푸풍코 락풀",
+            "englishName": "Magpupungko Rock Pools",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 650,
+            "name": "다솔 비치",
+            "englishName": "Dasol Beach",
+            "province": "Pangasinan",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 652,
+            "name": "칼라야오 동굴",
+            "englishName": "Callao Cave",
+            "province": "Cagayan",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 656,
+            "name": "바타네스 혼노스비치",
+            "englishName": "Honnosbech Batanes",
+            "province": "Batanes",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 710,
+            "name": "시에테 페카도스",
+            "englishName": "Siete Pecados Marine Park",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 669,
+            "name": "아르데트 온천",
+            "englishName": "Ardent Hot Springs",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 674,
+            "name": "카갈로간 폭포",
+            "englishName": "Cagalogan Falls",
+            "province": "Samar",
+            "textsCount": 1,
+            "totalTextsLength": 74
+        },
+        {
+            "index": 720,
+            "name": "아키츠시마",
+            "englishName": "Akitsushima Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 75
+        },
+        {
+            "index": 625,
+            "name": "로복 강 크루즈",
+            "englishName": "Loboc River Cruise",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 75
+        },
+        {
+            "index": 717,
+            "name": "루숭 건보트",
+            "englishName": "Lusong Gunboat",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 75
+        },
+        {
+            "index": 610,
+            "name": "트윈 레이크스",
+            "englishName": "Twin Lakes Negros",
+            "province": "Negros Oriental",
+            "textsCount": 1,
+            "totalTextsLength": 75
+        },
+        {
+            "index": 647,
+            "name": "팡가시난 엔찬티드 케이브",
+            "englishName": "Enchanted Cave Pangasinan",
+            "province": "Pangasinan",
+            "textsCount": 1,
+            "totalTextsLength": 75
+        },
+        {
+            "index": 591,
+            "name": "마닐라 오션파크",
+            "englishName": "Manila Ocean Park",
+            "province": "Metro Manila",
+            "textsCount": 1,
+            "totalTextsLength": 75
+        },
+        {
+            "index": 679,
+            "name": "피나그부유탄 섬",
+            "englishName": "Pinagbuyutan Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 75
+        },
+        {
+            "index": 636,
+            "name": "시얄가오 서핑",
+            "englishName": "Siargao Surfing",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 76
+        },
+        {
+            "index": 613,
+            "name": "시파위 아일랜드",
+            "englishName": "Sipalay Beaches",
+            "province": "Negros Occidental",
+            "textsCount": 1,
+            "totalTextsLength": 76
+        },
+        {
+            "index": 664,
+            "name": "칸라옵 폭포",
+            "englishName": "Cantilaan Falls",
+            "province": "Siquijor",
+            "textsCount": 1,
+            "totalTextsLength": 76
+        },
+        {
+            "index": 675,
+            "name": "울루간 베이",
+            "englishName": "Ulugan Bay",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 76
+        },
+        {
+            "index": 681,
+            "name": "팡울라시안 섬",
+            "englishName": "Pangulasian Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 76
+        },
+        {
+            "index": 641,
+            "name": "구욤 아일랜드",
+            "englishName": "Guyam Island",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 77
+        },
+        {
+            "index": 624,
+            "name": "힌나그다난 동굴",
+            "englishName": "Hinagdanan Cave",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 77
+        },
+        {
+            "index": 621,
+            "name": "카모테스 아일랜드",
+            "englishName": "Camotes Islands",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 77
+        },
+        {
+            "index": 666,
+            "name": "산 이시드로 수중 공원",
+            "englishName": "San Isidro Underwater Cemetery",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 78
+        },
+        {
+            "index": 670,
+            "name": "오르드 동굴",
+            "englishName": "Sto. Niño Cold Spring",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 78
+        },
+        {
+            "index": 619,
+            "name": "반타얀 아일랜드",
+            "englishName": "Bantayan Island",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 78
+        },
+        {
+            "index": 609,
+            "name": "카사로로 폭포",
+            "englishName": "Casaroro Falls",
+            "province": "Negros Oriental",
+            "textsCount": 1,
+            "totalTextsLength": 79
+        },
+        {
+            "index": 639,
+            "name": "네이키드 아일랜드",
+            "englishName": "Naked Island",
+            "province": "Surigao del Norte",
+            "textsCount": 1,
+            "totalTextsLength": 79
+        },
+        {
+            "index": 690,
+            "name": "시미즈 다이빙 사이트",
+            "englishName": "Shimizu Diving Site",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 79
+        },
+        {
+            "index": 567,
+            "name": "카블레토그 폭포",
+            "englishName": "Kabletog Falls",
+            "province": "Kalinga",
+            "textsCount": 1,
+            "totalTextsLength": 80
+        },
+        {
+            "index": 677,
+            "name": "카들라오 섬",
+            "englishName": "Cadlao Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 80
+        },
+        {
+            "index": 687,
+            "name": "스네이크 아일랜드",
+            "englishName": "Snake Island (Vigan Island)",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 80
+        },
+        {
+            "index": 577,
+            "name": "크리스탈 코브",
+            "englishName": "Crystal Beach",
+            "province": "Zambales",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 657,
+            "name": "사부탕 아일랜드",
+            "englishName": "Sabtang Island",
+            "province": "Batanes",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 676,
+            "name": "아포 리프",
+            "englishName": "Apo Reef",
+            "province": "Occidental Mindoro",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 629,
+            "name": "파밀라칸 아일랜드",
+            "englishName": "Pamilacan Island",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 672,
+            "name": "기오 바르도 유적",
+            "englishName": "Gui-ob Church Ruins",
+            "province": "Camiguin",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 557,
+            "name": "베이커스 힐",
+            "englishName": "Baker's Hill",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 691,
+            "name": "사우스 미닐록 다이빙 사이트",
+            "englishName": "South Miniloc Diving Site",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 576,
+            "name": "카푸네스 섬",
+            "englishName": "Capones Island",
+            "province": "Zambales",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 586,
+            "name": "포르투나 섬",
+            "englishName": "Fortune Island",
+            "province": "Batangas",
+            "textsCount": 1,
+            "totalTextsLength": 81
+        },
+        {
+            "index": 605,
+            "name": "시키호르 사라그둥동 폭포",
+            "englishName": "Salagdoong Beach",
+            "province": "Siquijor",
+            "textsCount": 1,
+            "totalTextsLength": 82
+        },
+        {
+            "index": 578,
+            "name": "타가이타이",
+            "englishName": "Tagaytay",
+            "province": "Cavite",
+            "textsCount": 1,
+            "totalTextsLength": 82
+        },
+        {
+            "index": 596,
+            "name": "클락 자유무역지구",
+            "englishName": "Clark Freeport Zone",
+            "province": "Pampanga",
+            "textsCount": 1,
+            "totalTextsLength": 82
+        },
+        {
+            "index": 565,
+            "name": "파가드푸란 모래 언덕",
+            "englishName": "Paoay Sand Dunes",
+            "province": "Ilocos Norte",
+            "textsCount": 1,
+            "totalTextsLength": 82
+        },
+        {
+            "index": 644,
+            "name": "엔찬티드 리버",
+            "englishName": "Enchanted River",
+            "province": "Surigao del Sur",
+            "textsCount": 1,
+            "totalTextsLength": 82
+        },
+        {
+            "index": 632,
+            "name": "오슬롭 투말록 폭포",
+            "englishName": "Tumalog Falls",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 82
+        },
+        {
+            "index": 678,
+            "name": "딜루마카드 섬",
+            "englishName": "Dilumacad Island (Helicopter Island)",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 82
+        },
+        {
+            "index": 582,
+            "name": "히든 밸리 스프링스",
+            "englishName": "Hidden Valley Springs",
+            "province": "Laguna",
+            "textsCount": 1,
+            "totalTextsLength": 83
+        },
+        {
+            "index": 627,
+            "name": "버진 아일랜드 샌드바",
+            "englishName": "Virgin Island Sandbar",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 83
+        },
+        {
+            "index": 575,
+            "name": "안나왕 코브",
+            "englishName": "Anawangin Cove",
+            "province": "Zambales",
+            "textsCount": 1,
+            "totalTextsLength": 83
+        },
+        {
+            "index": 623,
+            "name": "발리카삭 아일랜드",
+            "englishName": "Balicasag Island",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 83
+        },
+        {
+            "index": 572,
+            "name": "키나코 폭포",
+            "englishName": "Kiltepan Viewpoint",
+            "province": "Mountain Province",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 655,
+            "name": "바타네스 마를보로 컨트리",
+            "englishName": "Marlboro Country Batanes",
+            "province": "Batanes",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 646,
+            "name": "라 우니온 서핑",
+            "englishName": "La Union Surfing",
+            "province": "La Union",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 635,
+            "name": "카라모안 아일랜드",
+            "englishName": "Caramoan Islands",
+            "province": "Camarines Sur",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 630,
+            "name": "다나오 어드벤처 파크",
+            "englishName": "Danao Adventure Park",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 611,
+            "name": "바콜로드 더 루인스",
+            "englishName": "The Ruins Negros",
+            "province": "Negros Occidental",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 583,
+            "name": "마요혼 폭포",
+            "englishName": "Mag-aso Falls",
+            "province": "Bohol",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 606,
+            "name": "시키호르 엔찬티드 바냥 트리",
+            "englishName": "Old Enchanted Balete Tree",
+            "province": "Siquijor",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 590,
+            "name": "리잘 공원",
+            "englishName": "Rizal Park",
+            "province": "Metro Manila",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 560,
+            "name": "리오 툭바탄가 폭포",
+            "englishName": "Rio Tukbatanga Falls",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 84
+        },
+        {
+            "index": 665,
+            "name": "라지 교회",
+            "englishName": "Lazi Church and Convent",
+            "province": "Siquijor",
+            "textsCount": 1,
+            "totalTextsLength": 85
+        },
+        {
+            "index": 598,
+            "name": "보라카이 푸카 비치",
+            "englishName": "Boracay Puka Beach",
+            "province": "Aklan",
+            "textsCount": 1,
+            "totalTextsLength": 85
+        },
+        {
+            "index": 615,
+            "name": "레이테 산 후아니코 다리",
+            "englishName": "San Juanico Bridge",
+            "province": "Leyte",
+            "textsCount": 1,
+            "totalTextsLength": 85
+        },
+        {
+            "index": 579,
+            "name": "타알 화산",
+            "englishName": "Taal Volcano",
+            "province": "Batangas",
+            "textsCount": 1,
+            "totalTextsLength": 85
+        },
+        {
+            "index": 581,
+            "name": "파그산한 폭포",
+            "englishName": "Pagsanjan Falls",
+            "province": "Laguna",
+            "textsCount": 1,
+            "totalTextsLength": 85
+        },
+        {
+            "index": 588,
+            "name": "인트라무로스",
+            "englishName": "Intramuros",
+            "province": "Metro Manila",
+            "textsCount": 1,
+            "totalTextsLength": 85
+        },
+        {
+            "index": 628,
+            "name": "필리핀 독수리 센터",
+            "englishName": "Philippine Eagle Center",
+            "province": "Davao del Sur",
+            "textsCount": 1,
+            "totalTextsLength": 86
+        },
+        {
+            "index": 566,
+            "name": "방가이 폭포",
+            "englishName": "Bangui Windmills",
+            "province": "Ilocos Norte",
+            "textsCount": 1,
+            "totalTextsLength": 86
+        },
+        {
+            "index": 585,
+            "name": "아니라오",
+            "englishName": "Anilao",
+            "province": "Batangas",
+            "textsCount": 1,
+            "totalTextsLength": 86
+        },
+        {
+            "index": 592,
+            "name": "산 아구스틴 성당",
+            "englishName": "San Agustin Church",
+            "province": "Metro Manila",
+            "textsCount": 1,
+            "totalTextsLength": 86
+        },
+        {
+            "index": 589,
+            "name": "산티아고 요새",
+            "englishName": "Fort Santiago",
+            "province": "Metro Manila",
+            "textsCount": 1,
+            "totalTextsLength": 87
+        },
+        {
+            "index": 584,
+            "name": "바탕가스 비치",
+            "englishName": "Batangas Beaches",
+            "province": "Batangas",
+            "textsCount": 1,
+            "totalTextsLength": 87
+        },
+        {
+            "index": 631,
+            "name": "라푸라푸 기념비",
+            "englishName": "Lapu-Lapu Shrine",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 87
+        },
+        {
+            "index": 580,
+            "name": "라구나 핫 스프링스",
+            "englishName": "Laguna Hot Springs",
+            "province": "Laguna",
+            "textsCount": 1,
+            "totalTextsLength": 88
+        },
+        {
+            "index": 602,
+            "name": "기가테스 아일랜드",
+            "englishName": "Gigantes Islands",
+            "province": "Iloilo",
+            "textsCount": 1,
+            "totalTextsLength": 88
+        },
+        {
+            "index": 554,
+            "name": "카우리 아일랜드",
+            "englishName": "Cowrie Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 88
+        },
+        {
+            "index": 569,
+            "name": "바나우에 라이스 테라스",
+            "englishName": "Banaue Rice Terraces",
+            "province": "Ifugao",
+            "textsCount": 1,
+            "totalTextsLength": 88
+        },
+        {
+            "index": 571,
+            "name": "수메깅 동굴",
+            "englishName": "Sumaguing Cave",
+            "province": "Mountain Province",
+            "textsCount": 1,
+            "totalTextsLength": 88
+        },
+        {
+            "index": 618,
+            "name": "모알보알 페스카도르 섬",
+            "englishName": "Pescador Island",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 90
+        },
+        {
+            "index": 594,
+            "name": "카그사와 유적",
+            "englishName": "Cagsawa Ruins",
+            "province": "Albay",
+            "textsCount": 1,
+            "totalTextsLength": 90
+        },
+        {
+            "index": 553,
+            "name": "판단 아일랜드",
+            "englishName": "Pandan Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 90
+        },
+        {
+            "index": 556,
+            "name": "나그타본 비치",
+            "englishName": "Nagtabon Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 90
+        },
+        {
+            "index": 564,
+            "name": "라와그 파오아이 교회",
+            "englishName": "Paoay Church",
+            "province": "Ilocos Norte",
+            "textsCount": 1,
+            "totalTextsLength": 91
+        },
+        {
+            "index": 573,
+            "name": "하우드레드 아일랜드",
+            "englishName": "Hundred Islands",
+            "province": "Pangasinan",
+            "textsCount": 1,
+            "totalTextsLength": 91
+        },
+        {
+            "index": 574,
+            "name": "수빅 베이",
+            "englishName": "Subic Bay",
+            "province": "Zambales",
+            "textsCount": 1,
+            "totalTextsLength": 91
+        },
+        {
+            "index": 620,
+            "name": "말라파스쿠아 섬",
+            "englishName": "Malapascua Island",
+            "province": "Cebu",
+            "textsCount": 1,
+            "totalTextsLength": 91
+        },
+        {
+            "index": 561,
+            "name": "산 비센테 롱 비치",
+            "englishName": "San Vicente Long Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 92
+        },
+        {
+            "index": 570,
+            "name": "사그나 캐년",
+            "englishName": "Sagada Caves",
+            "province": "Mountain Province",
+            "textsCount": 1,
+            "totalTextsLength": 92
+        },
+        {
+            "index": 600,
+            "name": "보라카이 크로코다일 아일랜드",
+            "englishName": "Boracay Crocodile Island",
+            "province": "Aklan",
+            "textsCount": 1,
+            "totalTextsLength": 92
+        },
+        {
+            "index": 550,
+            "name": "혼다 베이",
+            "englishName": "Honda Bay",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 92
+        },
+        {
+            "index": 601,
+            "name": "일로일로 미아가오 교회",
+            "englishName": "Miagao Church",
+            "province": "Iloilo",
+            "textsCount": 1,
+            "totalTextsLength": 92
+        },
+        {
+            "index": 607,
+            "name": "네그로스 듀마게테",
+            "englishName": "Dumaguete City",
+            "province": "Negros Oriental",
+            "textsCount": 1,
+            "totalTextsLength": 93
+        },
+        {
+            "index": 558,
+            "name": "팔라완 야생동물 보호센터",
+            "englishName": "Palawan Wildlife Rescue and Conservation Center",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 93
+        },
+        {
+            "index": 608,
+            "name": "아포 아일랜드",
+            "englishName": "Apo Island",
+            "province": "Negros Oriental",
+            "textsCount": 1,
+            "totalTextsLength": 93
+        },
+        {
+            "index": 547,
+            "name": "부스앙가 섬",
+            "englishName": "Busuanga Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 93
+        },
+        {
+            "index": 593,
+            "name": "마욘 화산",
+            "englishName": "Mayon Volcano",
+            "province": "Albay",
+            "textsCount": 1,
+            "totalTextsLength": 93
+        },
+        {
+            "index": 563,
+            "name": "비간 역사 도시",
+            "englishName": "Vigan Heritage Village",
+            "province": "Ilocos Sur",
+            "textsCount": 1,
+            "totalTextsLength": 93
+        },
+        {
+            "index": 587,
+            "name": "코레히도르 섬",
+            "englishName": "Corregidor Island",
+            "province": "Cavite",
+            "textsCount": 1,
+            "totalTextsLength": 94
+        },
+        {
+            "index": 612,
+            "name": "바콜로드 마스카라 축제",
+            "englishName": "Bacolod MassKara Festival",
+            "province": "Negros Occidental",
+            "textsCount": 1,
+            "totalTextsLength": 94
+        },
+        {
+            "index": 595,
+            "name": "도솔 돌고래 투어",
+            "englishName": "Donsol Whale Shark Interaction",
+            "province": "Sorsogon",
+            "textsCount": 1,
+            "totalTextsLength": 95
+        },
+        {
+            "index": 551,
+            "name": "스타피쉬 아일랜드",
+            "englishName": "Starfish Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 95
+        },
+        {
+            "index": 568,
+            "name": "바타드 라이스 테라스",
+            "englishName": "Batad Rice Terraces",
+            "province": "Ifugao",
+            "textsCount": 1,
+            "totalTextsLength": 96
+        },
+        {
+            "index": 555,
+            "name": "사방 비치",
+            "englishName": "Sabang Beach",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 97
+        },
+        {
+            "index": 614,
+            "name": "레이테 맥아더 상륙지",
+            "englishName": "MacArthur Landing Memorial",
+            "province": "Leyte",
+            "textsCount": 1,
+            "totalTextsLength": 99
+        },
+        {
+            "index": 562,
+            "name": "타본 동굴",
+            "englishName": "Tabon Caves",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 102
+        },
+        {
+            "index": 599,
+            "name": "보라카이 아리엘스 포인트",
+            "englishName": "Boracay Ariel's Point",
+            "province": "Aklan",
+            "textsCount": 1,
+            "totalTextsLength": 103
+        },
+        {
+            "index": 542,
+            "name": "스켈레톤 렉",
+            "englishName": "Skeleton Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 103
+        },
+        {
+            "index": 549,
+            "name": "푸에르토 프린세사 지하강",
+            "englishName": "Puerto Princesa Underground River",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 108
+        },
+        {
+            "index": 559,
+            "name": "포트 바튼",
+            "englishName": "Port Barton",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 112
+        },
+        {
+            "index": 548,
+            "name": "칼라위트 사파리 파크",
+            "englishName": "Calauit Safari Park",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 113
+        },
+        {
+            "index": 552,
+            "name": "루리 아일랜드",
+            "englishName": "Luli Island",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 115
+        },
+        {
+            "index": 543,
+            "name": "이라오 이라오 렉",
+            "englishName": "Irako Wreck",
+            "province": "Palawan",
+            "textsCount": 1,
+            "totalTextsLength": 116
+        },
+        {
+            "index": 597,
+            "name": "보라카이 화이트 비치",
+            "englishName": "Boracay White Beach",
+            "province": "Aklan",
+            "textsCount": 1,
+            "totalTextsLength": 119
+        },
+        {
+            "index": 807,
+            "name": "비킹 비치",
+            "englishName": "Bikini Beach",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 122
+        },
+        {
+            "index": 798,
+            "name": "바이스 샌드바",
+            "englishName": "Bais Sandbar",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 124
+        },
+        {
+            "index": 802,
+            "name": "타르시어 연구센터",
+            "englishName": "Philippine Tarsier Research Center",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 133
+        },
+        {
+            "index": 792,
+            "name": "아르가오 비치",
+            "englishName": "Argao Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 138
+        },
+        {
+            "index": 806,
+            "name": "돌조 비치",
+            "englishName": "Doljo Beach",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 139
+        },
+        {
+            "index": 804,
+            "name": "수플라이드 케이브",
+            "englishName": "SUP Loboc River",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 145
+        },
+        {
+            "index": 803,
+            "name": "로복 에코 파크",
+            "englishName": "Loboc Eco Tourism Park",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 146
+        },
+        {
+            "index": 809,
+            "name": "벌플라이 가든",
+            "englishName": "Bohol Butterfly Garden",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 146
+        },
+        {
+            "index": 794,
+            "name": "만타롱곤 피크",
+            "englishName": "Mantalongon Peak",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 148
+        },
+        {
+            "index": 793,
+            "name": "달라게테 해변",
+            "englishName": "Dalaguete Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 151
+        },
+        {
+            "index": 790,
+            "name": "봉개 폭포",
+            "englishName": "Binalayan Falls",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 151
+        },
+        {
+            "index": 772,
+            "name": "탈리마 해양 보호구역",
+            "englishName": "Talima Marine Sanctuary",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 156
+        },
+        {
+            "index": 810,
+            "name": "돌핀 워칭 보홀",
+            "englishName": "Bohol Dolphin Watching",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 158
+        },
+        {
+            "index": 791,
+            "name": "카르멘 체리 블라썸",
+            "englishName": "Carmen Cebu Cherry Blossoms",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 158
+        },
+        {
+            "index": 786,
+            "name": "릴로안 포트",
+            "englishName": "Liloan Port",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 167
+        },
+        {
+            "index": 796,
+            "name": "바이스 돌핀 워칭",
+            "englishName": "Bais Dolphin Watching",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 167
+        },
+        {
+            "index": 788,
+            "name": "이나보락 폭포",
+            "englishName": "Inambakan Falls",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 167
+        },
+        {
+            "index": 787,
+            "name": "볼존 해양 보호구역",
+            "englishName": "Boljoon Marine Sanctuary",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 169
+        },
+        {
+            "index": 805,
+            "name": "두말룽 비치",
+            "englishName": "Dumaluan Beach",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 170
+        },
+        {
+            "index": 789,
+            "name": "아그와 폭포",
+            "englishName": "Aguinid Falls",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 173
+        },
+        {
+            "index": 797,
+            "name": "만주요드 샌드바",
+            "englishName": "Manjuyod Sandbar",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 176
+        },
+        {
+            "index": 795,
+            "name": "타농 해협",
+            "englishName": "Tanon Strait",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 177
+        },
+        {
+            "index": 771,
+            "name": "콘티키 다이브 사이트",
+            "englishName": "Kontiki Dive Site",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 180
+        },
+        {
+            "index": 783,
+            "name": "바디안 섬",
+            "englishName": "Badian Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 181
+        },
+        {
+            "index": 785,
+            "name": "산탄더 해변",
+            "englishName": "Santander Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 182
+        },
+        {
+            "index": 760,
+            "name": "메데이야 비치",
+            "englishName": "Medellin Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 184
+        },
+        {
+            "index": 784,
+            "name": "람부안 피크",
+            "englishName": "Lambug Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 185
+        },
+        {
+            "index": 759,
+            "name": "보고 시티 비치",
+            "englishName": "Bogo City Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 190
+        },
+        {
+            "index": 801,
+            "name": "타르시어 보호구역",
+            "englishName": "Tarsier Sanctuary",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 193
+        },
+        {
+            "index": 768,
+            "name": "판다논 섬",
+            "englishName": "Pandanon Island",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 199
+        },
+        {
+            "index": 754,
+            "name": "부호 록 풀",
+            "englishName": "Buho Rock Pool",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 199
+        },
+        {
+            "index": 767,
+            "name": "카오하간 섬",
+            "englishName": "Caohagan Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 200
+        },
+        {
+            "index": 758,
+            "name": "하그나야 비치",
+            "englishName": "Hagnaya Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 201
+        },
+        {
+            "index": 780,
+            "name": "터틀 포인트 모알보알",
+            "englishName": "Turtle Point Moalboal",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 202
+        },
+        {
+            "index": 761,
+            "name": "기나틸란 폭포",
+            "englishName": "Ginatilan Falls",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 205
+        },
+        {
+            "index": 777,
+            "name": "파나그사마 비치",
+            "englishName": "Panagsama Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 207
+        },
+        {
+            "index": 1040,
+            "name": "팔라야 폭포",
+            "englishName": "Palayan Falls",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 207
+        },
+        {
+            "index": 765,
+            "name": "힐루퉁안 섬",
+            "englishName": "Hilutungan Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 212
+        },
+        {
+            "index": 915,
+            "name": "톤토난 온천",
+            "englishName": "Tontonan Hot Springs",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 213
+        },
+        {
+            "index": 766,
+            "name": "나루수안 섬",
+            "englishName": "Nalusuan Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 216
+        },
+        {
+            "index": 769,
+            "name": "탑스 전망대",
+            "englishName": "Tops Lookout",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 216
+        },
+        {
+            "index": 907,
+            "name": "마르코스 섬",
+            "englishName": "Marcos Island",
+            "province": "Pangasinan",
+            "textsCount": 4,
+            "totalTextsLength": 217
+        },
+        {
+            "index": 770,
+            "name": "템플 오브 레아",
+            "englishName": "Temple of Leah",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 219
+        },
+        {
+            "index": 922,
+            "name": "아가타스 폭포",
+            "englishName": "Agtas Falls",
+            "province": "Biliran",
+            "textsCount": 4,
+            "totalTextsLength": 219
+        },
+        {
+            "index": 1039,
+            "name": "마리오 폭포",
+            "englishName": "Marian Falls",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 220
+        },
+        {
+            "index": 753,
+            "name": "산티아고 베이",
+            "englishName": "Santiago Bay",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 220
+        },
+        {
+            "index": 764,
+            "name": "올랑고 섬",
+            "englishName": "Olango Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 224
+        },
+        {
+            "index": 901,
+            "name": "이바 비치",
+            "englishName": "Iba Beach",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 225
+        },
+        {
+            "index": 886,
+            "name": "람보안 폭포",
+            "englishName": "Lamboan Falls",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 226
+        },
+        {
+            "index": 906,
+            "name": "거번너스 섬",
+            "englishName": "Governor's Island",
+            "province": "Pangasinan",
+            "textsCount": 4,
+            "totalTextsLength": 229
+        },
+        {
+            "index": 763,
+            "name": "마리바고 비치",
+            "englishName": "Maribago Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 230
+        },
+        {
+            "index": 781,
+            "name": "카와산 폭포",
+            "englishName": "Kawasan Falls",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 231
+        },
+        {
+            "index": 1020,
+            "name": "한나 비치",
+            "englishName": "Hannah Beach",
+            "province": "Ilocos Norte",
+            "textsCount": 4,
+            "totalTextsLength": 231
+        },
+        {
+            "index": 910,
+            "name": "타마라 비치",
+            "englishName": "Tamaraw Beach",
+            "province": "Oriental Mindoro",
+            "textsCount": 4,
+            "totalTextsLength": 233
+        },
+        {
+            "index": 776,
+            "name": "모알보알",
+            "englishName": "Moalboal",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 234
+        },
+        {
+            "index": 1042,
+            "name": "라구나 에코 파크",
+            "englishName": "Laguna Eco Park",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 234
+        },
+        {
+            "index": 755,
+            "name": "레이크 다나오",
+            "englishName": "Lake Danao",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 234
+        },
+        {
+            "index": 756,
+            "name": "티무보 동굴",
+            "englishName": "Timubo Cave",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 235
+        },
+        {
+            "index": 757,
+            "name": "마야 포트",
+            "englishName": "Maya Port",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 238
+        },
+        {
+            "index": 1027,
+            "name": "코론 선셋 크루즈",
+            "englishName": "Coron Sunset Cruise",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 238
+        },
+        {
+            "index": 999,
+            "name": "타판 폭포",
+            "englishName": "Tapaan Falls",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 238
+        },
+        {
+            "index": 1041,
+            "name": "리잘 숨겨진 폭포",
+            "englishName": "Rizal Hidden Falls",
+            "province": "Rizal",
+            "textsCount": 4,
+            "totalTextsLength": 239
+        },
+        {
+            "index": 778,
+            "name": "사딘 런",
+            "englishName": "Sardine Run",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 239
+        },
+        {
+            "index": 904,
+            "name": "바곡 비치",
+            "englishName": "Bacnotan Beach",
+            "province": "La Union",
+            "textsCount": 4,
+            "totalTextsLength": 240
+        },
+        {
+            "index": 762,
+            "name": "막탄 해양 보호구역",
+            "englishName": "Mactan Marine Sanctuary",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 241
+        },
+        {
+            "index": 1031,
+            "name": "엘니도 선셋 크루즈",
+            "englishName": "El Nido Sunset Cruise",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 243
+        },
+        {
+            "index": 897,
+            "name": "카만둥 섬",
+            "englishName": "Camara Island",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 244
+        },
+        {
+            "index": 1029,
+            "name": "엘니도 카약킹",
+            "englishName": "El Nido Kayaking",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 245
+        },
+        {
+            "index": 782,
+            "name": "카와산 캐녀닝",
+            "englishName": "Kawasan Canyoneering",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 246
+        },
+        {
+            "index": 895,
+            "name": "나그사사 코브",
+            "englishName": "Nagsasa Cove",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 246
+        },
+        {
+            "index": 1030,
+            "name": "엘니도 클리프 다이빙",
+            "englishName": "El Nido Cliff Diving",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 247
+        },
+        {
+            "index": 1019,
+            "name": "마라와 비치",
+            "englishName": "Maira-ira Beach",
+            "province": "Ilocos Norte",
+            "textsCount": 4,
+            "totalTextsLength": 247
+        },
+        {
+            "index": 893,
+            "name": "세푸럭 폭포",
+            "englishName": "Sepulok Falls",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 248
+        },
+        {
+            "index": 923,
+            "name": "삼버노안 해변",
+            "englishName": "Sambawan Island",
+            "province": "Biliran",
+            "textsCount": 4,
+            "totalTextsLength": 249
+        },
+        {
+            "index": 899,
+            "name": "산 안토니오 비치",
+            "englishName": "San Antonio Beach",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 249
+        },
+        {
+            "index": 825,
+            "name": "포콕 섬",
+            "englishName": "Pocok Island",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 252
+        },
+        {
+            "index": 1043,
+            "name": "라라이야 리조트",
+            "englishName": "Laiya Resort Area",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 254
+        },
+        {
+            "index": 749,
+            "name": "파라다이스 비치 반타얀",
+            "englishName": "Paradise Beach Bantayan",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 255
+        },
+        {
+            "index": 773,
+            "name": "오슬롭 고래상어 투어",
+            "englishName": "Oslob Whale Shark Watching",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 256
+        },
+        {
+            "index": 919,
+            "name": "빌리란 섬",
+            "englishName": "Biliran Island",
+            "province": "Biliran",
+            "textsCount": 4,
+            "totalTextsLength": 256
+        },
+        {
+            "index": 916,
+            "name": "오르목 시티",
+            "englishName": "Ormoc City",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 257
+        },
+        {
+            "index": 775,
+            "name": "수밀론 블루워터",
+            "englishName": "Sumilon Bluewater",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 258
+        },
+        {
+            "index": 880,
+            "name": "캄팔라스 폭포",
+            "englishName": "Camplas Falls",
+            "province": "Negros Occidental",
+            "textsCount": 4,
+            "totalTextsLength": 259
+        },
+        {
+            "index": 920,
+            "name": "카시빌란 폭포",
+            "englishName": "Kasibilan Falls",
+            "province": "Biliran",
+            "textsCount": 4,
+            "totalTextsLength": 259
+        },
+        {
+            "index": 921,
+            "name": "티나고 폭포 빌리란",
+            "englishName": "Tinago Falls Biliran",
+            "province": "Biliran",
+            "textsCount": 4,
+            "totalTextsLength": 260
+        },
+        {
+            "index": 1012,
+            "name": "보홀 제트스키",
+            "englishName": "Bohol Jet Ski",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 260
+        },
+        {
+            "index": 918,
+            "name": "팔롬폰",
+            "englishName": "Palompon",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 260
+        },
+        {
+            "index": 881,
+            "name": "마그소호트 스프링",
+            "englishName": "Mag-sohot Spring",
+            "province": "Negros Occidental",
+            "textsCount": 4,
+            "totalTextsLength": 260
+        },
+        {
+            "index": 878,
+            "name": "마부카이 고래상어",
+            "englishName": "Mabucay Whale Sharks",
+            "province": "Negros Occidental",
+            "textsCount": 4,
+            "totalTextsLength": 262
+        },
+        {
+            "index": 1025,
+            "name": "시키호르 클리프점프",
+            "englishName": "Siquijor Cliff Jump",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 262
+        },
+        {
+            "index": 908,
+            "name": "다스올 비치",
+            "englishName": "Dasol Beach",
+            "province": "Pangasinan",
+            "textsCount": 4,
+            "totalTextsLength": 263
+        },
+        {
+            "index": 1026,
+            "name": "코론 타운 투어",
+            "englishName": "Coron Town Tour",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 263
+        },
+        {
+            "index": 1036,
+            "name": "세부 스노클링",
+            "englishName": "Cebu Snorkeling",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 263
+        },
+        {
+            "index": 1038,
+            "name": "마닐라 선셋 베이",
+            "englishName": "Manila Bay Sunset",
+            "province": "Metro Manila",
+            "textsCount": 4,
+            "totalTextsLength": 265
+        },
+        {
+            "index": 917,
+            "name": "레이크 다나오 레이테",
+            "englishName": "Lake Danao Leyte",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 266
+        },
+        {
+            "index": 1007,
+            "name": "마림보 비치",
+            "englishName": "Marimbo Beach",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 266
+        },
+        {
+            "index": 1022,
+            "name": "앙헬레스 시티 비치",
+            "englishName": "Angeles City Beach",
+            "province": "Pampanga",
+            "textsCount": 4,
+            "totalTextsLength": 266
+        },
+        {
+            "index": 998,
+            "name": "파가다 폭포",
+            "englishName": "Pagayayan Falls",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 267
+        },
+        {
+            "index": 774,
+            "name": "수밀론 섬",
+            "englishName": "Sumilon Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 267
+        },
+        {
+            "index": 900,
+            "name": "크리스탈 비치 잠발레스",
+            "englishName": "Crystal Beach Zambales",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 268
+        },
+        {
+            "index": 866,
+            "name": "루그나손 폭포",
+            "englishName": "Lugnason Falls",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 268
+        },
+        {
+            "index": 924,
+            "name": "사마르 섬",
+            "englishName": "Samar Island",
+            "province": "Samar",
+            "textsCount": 4,
+            "totalTextsLength": 268
+        },
+        {
+            "index": 1023,
+            "name": "부라칸 폭포",
+            "englishName": "Bulacan Falls",
+            "province": "Bulacan",
+            "textsCount": 4,
+            "totalTextsLength": 268
+        },
+        {
+            "index": 896,
+            "name": "티나글라얀 코브",
+            "englishName": "Talisayan Cove",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 272
+        },
+        {
+            "index": 898,
+            "name": "포톨란 비치",
+            "englishName": "Potipot Island",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 272
+        },
+        {
+            "index": 877,
+            "name": "시파와이 섬",
+            "englishName": "Sipaway Island",
+            "province": "Negros Occidental",
+            "textsCount": 4,
+            "totalTextsLength": 272
+        },
+        {
+            "index": 912,
+            "name": "타클로반 시티",
+            "englishName": "Tacloban City",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 272
+        },
+        {
+            "index": 1011,
+            "name": "보홀 카약킹",
+            "englishName": "Bohol Kayaking",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 273
+        },
+        {
+            "index": 1021,
+            "name": "파오에이 호수",
+            "englishName": "Paoay Lake",
+            "province": "Ilocos Norte",
+            "textsCount": 4,
+            "totalTextsLength": 273
+        },
+        {
+            "index": 748,
+            "name": "슈가 비치 반타얀",
+            "englishName": "Sugar Beach Bantayan",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 274
+        },
+        {
+            "index": 746,
+            "name": "랑곤 비치",
+            "englishName": "Langob Beach",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 275
+        },
+        {
+            "index": 991,
+            "name": "힐리가이논 비치",
+            "englishName": "Hiligaynon Beach",
+            "province": "Iloilo",
+            "textsCount": 4,
+            "totalTextsLength": 275
+        },
+        {
+            "index": 905,
+            "name": "퀘존 섬",
+            "englishName": "Quezon Island",
+            "province": "Pangasinan",
+            "textsCount": 4,
+            "totalTextsLength": 276
+        },
+        {
+            "index": 883,
+            "name": "시키호르 스노클링",
+            "englishName": "Siquijor Snorkeling",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 276
+        },
+        {
+            "index": 891,
+            "name": "나수부 비치",
+            "englishName": "Nasugbu Beach",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 276
+        },
+        {
+            "index": 870,
+            "name": "리자르 블러바드",
+            "englishName": "Rizal Boulevard",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 276
+        },
+        {
+            "index": 1008,
+            "name": "라스 카바나스 비치",
+            "englishName": "Las Cabanas Beach",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 277
+        },
+        {
+            "index": 851,
+            "name": "나바스 비치",
+            "englishName": "Nabaoy Beach",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 277
+        },
+        {
+            "index": 861,
+            "name": "팔리톤 비치",
+            "englishName": "Paliton Beach",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 277
+        },
+        {
+            "index": 909,
+            "name": "화이트 비치 푸에르토",
+            "englishName": "White Beach Puerto Galera",
+            "province": "Oriental Mindoro",
+            "textsCount": 4,
+            "totalTextsLength": 277
+        },
+        {
+            "index": 882,
+            "name": "수밀론 아일랜드 호핑",
+            "englishName": "Siquijor Island Hopping",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 277
+        },
+        {
+            "index": 867,
+            "name": "투블로드 비치",
+            "englishName": "Tubod Beach",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 277
+        },
+        {
+            "index": 1033,
+            "name": "민도로 스노클링",
+            "englishName": "Mindoro Snorkeling",
+            "province": "Oriental Mindoro",
+            "textsCount": 4,
+            "totalTextsLength": 278
+        },
+        {
+            "index": 1028,
+            "name": "코론 딥 다이브",
+            "englishName": "Coron Deep Dive",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 279
+        },
+        {
+            "index": 1035,
+            "name": "삼바완 캠핑",
+            "englishName": "Sambawan Camping",
+            "province": "Biliran",
+            "textsCount": 4,
+            "totalTextsLength": 281
+        },
+        {
+            "index": 885,
+            "name": "네그로스 다이빙",
+            "englishName": "Negros Diving",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 282
+        },
+        {
+            "index": 1010,
+            "name": "세부 플라이보드",
+            "englishName": "Cebu Flyboard",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 283
+        },
+        {
+            "index": 1009,
+            "name": "세부 씨워킹",
+            "englishName": "Cebu Sea Walking",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 283
+        },
+        {
+            "index": 903,
+            "name": "어반스 비치",
+            "englishName": "Urbiztondo Beach",
+            "province": "La Union",
+            "textsCount": 4,
+            "totalTextsLength": 283
+        },
+        {
+            "index": 1037,
+            "name": "모알보알 캐녀닝",
+            "englishName": "Moalboal Canyoneering",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 283
+        },
+        {
+            "index": 862,
+            "name": "산 후안 비치",
+            "englishName": "San Juan Beach",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 284
+        },
+        {
+            "index": 890,
+            "name": "칼라타간 비치",
+            "englishName": "Calatagan Beach",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 285
+        },
+        {
+            "index": 1000,
+            "name": "부수앙가 섬",
+            "englishName": "Busuanga Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 285
+        },
+        {
+            "index": 824,
+            "name": "모파스 록",
+            "englishName": "Mophas Rock",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 285
+        },
+        {
+            "index": 939,
+            "name": "파히나다 비치",
+            "englishName": "Pahinigda Beach",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 287
+        },
+        {
+            "index": 852,
+            "name": "티그아스온 폭포",
+            "englishName": "Tigauson Falls",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 288
+        },
+        {
+            "index": 963,
+            "name": "담밤 폭포",
+            "englishName": "Dambang Falls",
+            "province": "Aurora",
+            "textsCount": 4,
+            "totalTextsLength": 289
+        },
+        {
+            "index": 987,
+            "name": "칼리파요 강",
+            "englishName": "Calipayo River",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 289
+        },
+        {
+            "index": 868,
+            "name": "시키호르 피어",
+            "englishName": "Siquijor Pier",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 291
+        },
+        {
+            "index": 853,
+            "name": "말라파스쿠아 아클란",
+            "englishName": "Antique Beach",
+            "province": "Antique",
+            "textsCount": 4,
+            "totalTextsLength": 292
+        },
+        {
+            "index": 863,
+            "name": "라지 수도원",
+            "englishName": "Lazi Convent",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 292
+        },
+        {
+            "index": 997,
+            "name": "스카이 랜치 타가이타이",
+            "englishName": "Sky Ranch Tagaytay",
+            "province": "Cavite",
+            "textsCount": 4,
+            "totalTextsLength": 292
+        },
+        {
+            "index": 913,
+            "name": "산 후아니코 다리",
+            "englishName": "San Juanico Bridge",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 292
+        },
+        {
+            "index": 902,
+            "name": "산 후안 서프",
+            "englishName": "San Juan Surf Beach",
+            "province": "La Union",
+            "textsCount": 4,
+            "totalTextsLength": 292
+        },
+        {
+            "index": 942,
+            "name": "코타 비치",
+            "englishName": "Cota Beach",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 293
+        },
+        {
+            "index": 889,
+            "name": "라이야 비치",
+            "englishName": "Laiya Beach",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 293
+        },
+        {
+            "index": 1024,
+            "name": "시키호르 다이빙",
+            "englishName": "Siquijor Diving",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 293
+        },
+        {
+            "index": 984,
+            "name": "리리 아일랜드",
+            "englishName": "Liuli Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 293
+        },
+        {
+            "index": 974,
+            "name": "블루 라군 파구드푸드",
+            "englishName": "Blue Lagoon Pagudpud",
+            "province": "Ilocos Norte",
+            "textsCount": 4,
+            "totalTextsLength": 294
+        },
+        {
+            "index": 876,
+            "name": "라카와안 섬",
+            "englishName": "Lakawon Island",
+            "province": "Negros Occidental",
+            "textsCount": 4,
+            "totalTextsLength": 295
+        },
+        {
+            "index": 1032,
+            "name": "베르데 섬 다이빙",
+            "englishName": "Verde Island Diving",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 296
+        },
+        {
+            "index": 873,
+            "name": "풀랑바토 폭포",
+            "englishName": "Pulangbato Falls",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 297
+        },
+        {
+            "index": 1017,
+            "name": "팔라완 짚라인",
+            "englishName": "Palawan Zipline",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 297
+        },
+        {
+            "index": 1044,
+            "name": "모얄란 리조트",
+            "englishName": "Matabungkay Beach",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 298
+        },
+        {
+            "index": 914,
+            "name": "레드비치",
+            "englishName": "Red Beach Leyte",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 298
+        },
+        {
+            "index": 941,
+            "name": "풀랑로파 비치",
+            "englishName": "Pulang Lupa Beach",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 298
+        },
+        {
+            "index": 976,
+            "name": "카요 섬",
+            "englishName": "Cagayan Valley",
+            "province": "Cagayan",
+            "textsCount": 4,
+            "totalTextsLength": 298
+        },
+        {
+            "index": 879,
+            "name": "시라오 섬",
+            "englishName": "Suyac Island",
+            "province": "Negros Occidental",
+            "textsCount": 4,
+            "totalTextsLength": 300
+        },
+        {
+            "index": 964,
+            "name": "딜리앙 비치",
+            "englishName": "Dingalan Beach",
+            "province": "Aurora",
+            "textsCount": 4,
+            "totalTextsLength": 301
+        },
+        {
+            "index": 994,
+            "name": "수빅 사파리",
+            "englishName": "Subic Safari",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 301
+        },
+        {
+            "index": 996,
+            "name": "타가이타이 피플스 파크",
+            "englishName": "Tagaytay Peoples Park",
+            "province": "Cavite",
+            "textsCount": 4,
+            "totalTextsLength": 301
+        },
+        {
+            "index": 1018,
+            "name": "세부 에지 코스터",
+            "englishName": "Crown Regency Sky Experience",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 303
+        },
+        {
+            "index": 826,
+            "name": "보홀 씨바나",
+            "englishName": "Bohol Sea Banana",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 303
+        },
+        {
+            "index": 827,
+            "name": "카아테드랄 동굴",
+            "englishName": "Cathedral Cave",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 305
+        },
+        {
+            "index": 892,
+            "name": "타알 호수",
+            "englishName": "Taal Lake",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 305
+        },
+        {
+            "index": 992,
+            "name": "안티케 해변",
+            "englishName": "Antique Beach",
+            "province": "Antique",
+            "textsCount": 4,
+            "totalTextsLength": 305
+        },
+        {
+            "index": 874,
+            "name": "마사플로드 네이처 파크",
+            "englishName": "Malatapay Market",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 305
+        },
+        {
+            "index": 983,
+            "name": "온욱 섬",
+            "englishName": "Onuk Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 308
+        },
+        {
+            "index": 845,
+            "name": "윌리스 록",
+            "englishName": "Willy's Rock",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 308
+        },
+        {
+            "index": 1002,
+            "name": "침몰한 묘지 카미긴",
+            "englishName": "Sunken Cemetery Camiguin",
+            "province": "Camiguin",
+            "textsCount": 4,
+            "totalTextsLength": 309
+        },
+        {
+            "index": 1005,
+            "name": "리콤비나 섬",
+            "englishName": "Linapacan Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 310
+        },
+        {
+            "index": 995,
+            "name": "인플레터블 아일랜드 수빅",
+            "englishName": "Inflatable Island Subic",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 310
+        },
+        {
+            "index": 969,
+            "name": "라크노이 언덕",
+            "englishName": "Racuh a Payaman",
+            "province": "Batanes",
+            "textsCount": 4,
+            "totalTextsLength": 311
+        },
+        {
+            "index": 846,
+            "name": "마운트 루호 전망대",
+            "englishName": "Mount Luho Viewpoint",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 311
+        },
+        {
+            "index": 986,
+            "name": "보홀 패들보드",
+            "englishName": "Bohol Paddleboard",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 311
+        },
+        {
+            "index": 1006,
+            "name": "누사투포 비치",
+            "englishName": "Nacpan Twin Beach",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 311
+        },
+        {
+            "index": 834,
+            "name": "일리그일리간 비치",
+            "englishName": "Ilig-Iligan Beach",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 312
+        },
+        {
+            "index": 871,
+            "name": "다우인 비치",
+            "englishName": "Dauin Beach",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 314
+        },
+        {
+            "index": 865,
+            "name": "칸팔리안 폭포",
+            "englishName": "Cantabon Cave",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 314
+        },
+        {
+            "index": 979,
+            "name": "엔가노 등대",
+            "englishName": "Cape Engano Lighthouse",
+            "province": "Cagayan",
+            "textsCount": 4,
+            "totalTextsLength": 315
+        },
+        {
+            "index": 961,
+            "name": "세뮬 포인트",
+            "englishName": "Cemento Point",
+            "province": "Aurora",
+            "textsCount": 4,
+            "totalTextsLength": 316
+        },
+        {
+            "index": 894,
+            "name": "아니와야 코브",
+            "englishName": "Anawangin Cove",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 316
+        },
+        {
+            "index": 888,
+            "name": "마스카라 섬",
+            "englishName": "Masasa Beach",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 316
+        },
+        {
+            "index": 970,
+            "name": "푼탄 비치",
+            "englishName": "Fundacion Pacita",
+            "province": "Batanes",
+            "textsCount": 4,
+            "totalTextsLength": 320
+        },
+        {
+            "index": 957,
+            "name": "티나고 폭포 리잘",
+            "englishName": "Tinipak River",
+            "province": "Rizal",
+            "textsCount": 4,
+            "totalTextsLength": 320
+        },
+        {
+            "index": 1001,
+            "name": "카미긴 섬",
+            "englishName": "Camiguin Island",
+            "province": "Camiguin",
+            "textsCount": 4,
+            "totalTextsLength": 321
+        },
+        {
+            "index": 752,
+            "name": "카모테스 제도",
+            "englishName": "Camotes Islands",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 322
+        },
+        {
+            "index": 820,
+            "name": "시파탄 트윈 폭포",
+            "englishName": "Sipatan Twin Falls",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 322
+        },
+        {
+            "index": 1004,
+            "name": "아포 리프 다이빙",
+            "englishName": "Apo Reef Diving",
+            "province": "Occidental Mindoro",
+            "textsCount": 4,
+            "totalTextsLength": 322
+        },
+        {
+            "index": 1003,
+            "name": "투바타하 리프",
+            "englishName": "Tubbataha Reef",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 322
+        },
+        {
+            "index": 816,
+            "name": "라일라 비치",
+            "englishName": "Laila Beach",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 323
+        },
+        {
+            "index": 911,
+            "name": "푸에르토 갈레라 다이빙",
+            "englishName": "Puerto Galera Diving",
+            "province": "Oriental Mindoro",
+            "textsCount": 4,
+            "totalTextsLength": 324
+        },
+        {
+            "index": 993,
+            "name": "수빅 오션 어드벤처",
+            "englishName": "Subic Ocean Adventure",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 324
+        },
+        {
+            "index": 875,
+            "name": "바콜로드 시티",
+            "englishName": "Bacolod City",
+            "province": "Negros Occidental",
+            "textsCount": 4,
+            "totalTextsLength": 325
+        },
+        {
+            "index": 828,
+            "name": "다우이스 교회",
+            "englishName": "Dauis Church",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 325
+        },
+        {
+            "index": 968,
+            "name": "발루가스 베이",
+            "englishName": "Valugan Boulder Beach",
+            "province": "Batanes",
+            "textsCount": 4,
+            "totalTextsLength": 326
+        },
+        {
+            "index": 859,
+            "name": "살라그도옹 비치",
+            "englishName": "Salagdoong Beach",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 326
+        },
+        {
+            "index": 850,
+            "name": "카티클란",
+            "englishName": "Caticlan",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 327
+        },
+        {
+            "index": 985,
+            "name": "스미론 섬",
+            "englishName": "Smilon Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 328
+        },
+        {
+            "index": 958,
+            "name": "마시누록 폭포",
+            "englishName": "Masinunok Falls",
+            "province": "Rizal",
+            "textsCount": 4,
+            "totalTextsLength": 328
+        },
+        {
+            "index": 948,
+            "name": "삼팔록 호수",
+            "englishName": "Lake Sampaloc",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 328
+        },
+        {
+            "index": 849,
+            "name": "칼리보",
+            "englishName": "Kalibo",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 329
+        },
+        {
+            "index": 972,
+            "name": "비간 시티",
+            "englishName": "Vigan City",
+            "province": "Ilocos Sur",
+            "textsCount": 4,
+            "totalTextsLength": 329
+        },
+        {
+            "index": 887,
+            "name": "소호톤 코브 아니라오",
+            "englishName": "Sombrero Island",
+            "province": "Batangas",
+            "textsCount": 4,
+            "totalTextsLength": 330
+        },
+        {
+            "index": 855,
+            "name": "카보간 동굴",
+            "englishName": "Cabugao Gamay Island",
+            "province": "Iloilo",
+            "textsCount": 4,
+            "totalTextsLength": 331
+        },
+        {
+            "index": 835,
+            "name": "크리스탈 코브 섬",
+            "englishName": "Crystal Cove Island",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 332
+        },
+        {
+            "index": 1016,
+            "name": "사가다 교수대 관",
+            "englishName": "Sagada Hanging Coffins",
+            "province": "Mountain Province",
+            "textsCount": 4,
+            "totalTextsLength": 332
+        },
+        {
+            "index": 856,
+            "name": "탕케 살트워터 라군",
+            "englishName": "Tangke Saltwater Lagoon",
+            "province": "Iloilo",
+            "textsCount": 4,
+            "totalTextsLength": 333
+        },
+        {
+            "index": 1015,
+            "name": "사가다 동굴",
+            "englishName": "Sagada Cave Connection",
+            "province": "Mountain Province",
+            "textsCount": 4,
+            "totalTextsLength": 334
+        },
+        {
+            "index": 872,
+            "name": "쌍둥이 호수 발린사사야오",
+            "englishName": "Twin Lakes Balinsasayao",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 335
+        },
+        {
+            "index": 1014,
+            "name": "바나헤 라이스 테라스 하이킹",
+            "englishName": "Banaue Rice Terraces",
+            "province": "Ifugao",
+            "textsCount": 4,
+            "totalTextsLength": 336
+        },
+        {
+            "index": 975,
+            "name": "카푸리얀 등대",
+            "englishName": "Cape Bojeador Lighthouse",
+            "province": "Ilocos Norte",
+            "textsCount": 4,
+            "totalTextsLength": 336
+        },
+        {
+            "index": 860,
+            "name": "캄바가호 폭포",
+            "englishName": "Cambugahay Falls",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 336
+        },
+        {
+            "index": 821,
+            "name": "칸우망 폭포",
+            "englishName": "Can-umantad Falls",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 337
+        },
+        {
+            "index": 822,
+            "name": "시케이호르 바지 다이브",
+            "englishName": "Siquijor Bohol Dive",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 338
+        },
+        {
+            "index": 962,
+            "name": "디카솔 폭포",
+            "englishName": "Ditumabo Falls",
+            "province": "Aurora",
+            "textsCount": 4,
+            "totalTextsLength": 338
+        },
+        {
+            "index": 832,
+            "name": "디니위드 비치",
+            "englishName": "Diniwid Beach",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 338
+        },
+        {
+            "index": 864,
+            "name": "올드 인챈티드 바오밥 트리",
+            "englishName": "Old Enchanted Balete Tree",
+            "province": "Siquijor",
+            "textsCount": 4,
+            "totalTextsLength": 338
+        },
+        {
+            "index": 1013,
+            "name": "피나투보 호수",
+            "englishName": "Mount Pinatubo Crater Lake",
+            "province": "Zambales",
+            "textsCount": 4,
+            "totalTextsLength": 339
+        },
+        {
+            "index": 935,
+            "name": "칸기파이 폭포",
+            "englishName": "Cangipai Falls",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 339
+        },
+        {
+            "index": 966,
+            "name": "바탄 섬",
+            "englishName": "Batan Island",
+            "province": "Batanes",
+            "textsCount": 4,
+            "totalTextsLength": 339
+        },
+        {
+            "index": 956,
+            "name": "다리탁 폭포",
+            "englishName": "Daranak Falls",
+            "province": "Rizal",
+            "textsCount": 4,
+            "totalTextsLength": 339
+        },
+        {
+            "index": 945,
+            "name": "보르드네오스 섬",
+            "englishName": "Burdeos Island",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 339
+        },
+        {
+            "index": 836,
+            "name": "크로코다일 섬",
+            "englishName": "Crocodile Island",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 340
+        },
+        {
+            "index": 973,
+            "name": "파가다 비치",
+            "englishName": "Pagudpud Beach",
+            "province": "Ilocos Norte",
+            "textsCount": 4,
+            "totalTextsLength": 341
+        },
+        {
+            "index": 833,
+            "name": "불라봉 비치",
+            "englishName": "Bulabog Beach",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 341
+        },
+        {
+            "index": 950,
+            "name": "로스 바뇨스 핫 스프링",
+            "englishName": "Los Banos Hot Springs",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 341
+        },
+        {
+            "index": 977,
+            "name": "파라파이쿠 동굴",
+            "englishName": "Callao Cave",
+            "province": "Cagayan",
+            "textsCount": 4,
+            "totalTextsLength": 341
+        },
+        {
+            "index": 960,
+            "name": "사방가 비치",
+            "englishName": "Sabang Beach Baler",
+            "province": "Aurora",
+            "textsCount": 4,
+            "totalTextsLength": 342
+        },
+        {
+            "index": 978,
+            "name": "팔루이 섬",
+            "englishName": "Palaui Island",
+            "province": "Cagayan",
+            "textsCount": 4,
+            "totalTextsLength": 343
+        },
+        {
+            "index": 944,
+            "name": "폴릴로 섬",
+            "englishName": "Polillo Islands",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 344
+        },
+        {
+            "index": 938,
+            "name": "다마팔리 비치",
+            "englishName": "Dampalitan Beach",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 344
+        },
+        {
+            "index": 869,
+            "name": "두마게테",
+            "englishName": "Dumaguete",
+            "province": "Negros Oriental",
+            "textsCount": 4,
+            "totalTextsLength": 345
+        },
+        {
+            "index": 823,
+            "name": "헤난 리조트 보홀",
+            "englishName": "Henann Resort Bohol",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 345
+        },
+        {
+            "index": 815,
+            "name": "칸디자이 동굴",
+            "englishName": "Candijay Caves",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 348
+        },
+        {
+            "index": 971,
+            "name": "파라오아케 샌드 듄",
+            "englishName": "Paoay Sand Dunes",
+            "province": "Ilocos Norte",
+            "textsCount": 4,
+            "totalTextsLength": 348
+        },
+        {
+            "index": 953,
+            "name": "부리갈락 폭포",
+            "englishName": "Burilag Falls",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 352
+        },
+        {
+            "index": 857,
+            "name": "일로일로 시티",
+            "englishName": "Iloilo City",
+            "province": "Iloilo",
+            "textsCount": 4,
+            "totalTextsLength": 352
+        },
+        {
+            "index": 858,
+            "name": "기마라스 섬",
+            "englishName": "Guimaras Island",
+            "province": "Guimaras",
+            "textsCount": 4,
+            "totalTextsLength": 353
+        },
+        {
+            "index": 952,
+            "name": "후루간 폭포",
+            "englishName": "Hulugan Falls",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 354
+        },
+        {
+            "index": 934,
+            "name": "힌다강 동굴",
+            "englishName": "Hindang Cave",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 355
+        },
+        {
+            "index": 933,
+            "name": "마비니 레이테",
+            "englishName": "Mabini Leyte",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 356
+        },
+        {
+            "index": 929,
+            "name": "라오잉 폭포",
+            "englishName": "Laoang Falls",
+            "province": "Northern Samar",
+            "textsCount": 4,
+            "totalTextsLength": 356
+        },
+        {
+            "index": 967,
+            "name": "사브탕 섬",
+            "englishName": "Sabtang Island",
+            "province": "Batanes",
+            "textsCount": 4,
+            "totalTextsLength": 358
+        },
+        {
+            "index": 360,
+            "name": "️ 불란 산",
+            "englishName": "Mount Bulan",
+            "province": "Sulu",
+            "textsCount": 4,
+            "totalTextsLength": 358
+        },
+        {
+            "index": 931,
+            "name": "울로트 리버 크루즈",
+            "englishName": "Ulot River Cruise",
+            "province": "Samar",
+            "textsCount": 4,
+            "totalTextsLength": 358
+        },
+        {
+            "index": 951,
+            "name": "마킬링 식물원",
+            "englishName": "Makiling Botanic Gardens",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 363
+        },
+        {
+            "index": 847,
+            "name": "아리엘스 포인트",
+            "englishName": "Ariel's Point",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 365
+        },
+        {
+            "index": 981,
+            "name": "타봉 케이브",
+            "englishName": "Tabon Caves",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 366
+        },
+        {
+            "index": 813,
+            "name": "퀸존 비치 안다",
+            "englishName": "Quinale Beach Anda",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 367
+        },
+        {
+            "index": 949,
+            "name": "칼람바 온천",
+            "englishName": "Calamba Hot Springs",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 368
+        },
+        {
+            "index": 943,
+            "name": "베르데 섬 패시지",
+            "englishName": "Verde Island Passage",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 371
+        },
+        {
+            "index": 928,
+            "name": "칸이곤 폭포",
+            "englishName": "Can-Igon Falls",
+            "province": "Samar",
+            "textsCount": 4,
+            "totalTextsLength": 371
+        },
+        {
+            "index": 955,
+            "name": "피트산 예술마을",
+            "englishName": "Pinto Art Museum",
+            "province": "Rizal",
+            "textsCount": 4,
+            "totalTextsLength": 378
+        },
+        {
+            "index": 814,
+            "name": "안다 풀",
+            "englishName": "Anda Pools",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 381
+        },
+        {
+            "index": 817,
+            "name": "바클레이온 교회",
+            "englishName": "Baclayon Church",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 382
+        },
+        {
+            "index": 982,
+            "name": "발라박 섬",
+            "englishName": "Balabac Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 383
+        },
+        {
+            "index": 932,
+            "name": "레이테 다이빙",
+            "englishName": "Leyte Diving",
+            "province": "Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 386
+        },
+        {
+            "index": 989,
+            "name": "보라카이 웨이크보드",
+            "englishName": "Boracay Wakeboard",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 387
+        },
+        {
+            "index": 819,
+            "name": "맨메이드 포레스트",
+            "englishName": "Man Made Forest",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 390
+        },
+        {
+            "index": 980,
+            "name": "산 비센테 롱비치",
+            "englishName": "San Vicente Long Beach",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 391
+        },
+        {
+            "index": 930,
+            "name": "발리카사그 동굴",
+            "englishName": "Torpedo Boat Cave",
+            "province": "Samar",
+            "textsCount": 4,
+            "totalTextsLength": 394
+        },
+        {
+            "index": 831,
+            "name": "스테이션 3",
+            "englishName": "Station 3 Boracay",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 395
+        },
+        {
+            "index": 990,
+            "name": "보라카이 스노클링",
+            "englishName": "Boracay Snorkeling",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 398
+        },
+        {
+            "index": 830,
+            "name": "스테이션 2",
+            "englishName": "Station 2 Boracay",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 398
+        },
+        {
+            "index": 940,
+            "name": "조마리그 섬",
+            "englishName": "Jomalig Island",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 398
+        },
+        {
+            "index": 954,
+            "name": "안고노 페트로글리프",
+            "englishName": "Angono Petroglyphs",
+            "province": "Rizal",
+            "textsCount": 4,
+            "totalTextsLength": 401
+        },
+        {
+            "index": 959,
+            "name": "발레르 서핑",
+            "englishName": "Baler Surfing",
+            "province": "Aurora",
+            "textsCount": 4,
+            "totalTextsLength": 403
+        },
+        {
+            "index": 854,
+            "name": "기가테스 제도",
+            "englishName": "Gigantes Islands",
+            "province": "Iloilo",
+            "textsCount": 4,
+            "totalTextsLength": 407
+        },
+        {
+            "index": 745,
+            "name": "갈로 섬",
+            "englishName": "Gato Island",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 407
+        },
+        {
+            "index": 818,
+            "name": "혈맹 기념비",
+            "englishName": "Blood Compact Shrine",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 411
+        },
+        {
+            "index": 988,
+            "name": "보라카이 스탠드업패들",
+            "englishName": "Boracay SUP",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 417
+        },
+        {
+            "index": 946,
+            "name": "파그산잔 폭포",
+            "englishName": "Pagsanjan Falls",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 417
+        },
+        {
+            "index": 808,
+            "name": "힐나그다난 동굴 팡라오",
+            "englishName": "Hinagdanan Cave Panglao",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 422
+        },
+        {
+            "index": 965,
+            "name": "바타네스",
+            "englishName": "Batanes",
+            "province": "Batanes",
+            "textsCount": 4,
+            "totalTextsLength": 423
+        },
+        {
+            "index": 812,
+            "name": "파밀라칸 섬",
+            "englishName": "Pamilacan Island",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 427
+        },
+        {
+            "index": 926,
+            "name": "칼발로간 시티",
+            "englishName": "Catbalogan City",
+            "province": "Samar",
+            "textsCount": 4,
+            "totalTextsLength": 428
+        },
+        {
+            "index": 546,
+            "name": "바나나 아일랜드",
+            "englishName": "Banana Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 430
+        },
+        {
+            "index": 838,
+            "name": "보라카이 헬멧 다이빙",
+            "englishName": "Boracay Helmet Diving",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 434
+        },
+        {
+            "index": 843,
+            "name": "보라카이 바나나 보트",
+            "englishName": "Boracay Banana Boat",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 434
+        },
+        {
+            "index": 947,
+            "name": "산 파블로 호수",
+            "englishName": "Seven Lakes of San Pablo",
+            "province": "Laguna",
+            "textsCount": 4,
+            "totalTextsLength": 434
+        },
+        {
+            "index": 837,
+            "name": "보라카이 파라세일링",
+            "englishName": "Boracay Parasailing",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 438
+        },
+        {
+            "index": 842,
+            "name": "보라카이 플라이피시",
+            "englishName": "Boracay Flyfish",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 446
+        },
+        {
+            "index": 841,
+            "name": "보라카이 선셋 세일링",
+            "englishName": "Boracay Sunset Sailing",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 447
+        },
+        {
+            "index": 844,
+            "name": "보라카이 제트스키",
+            "englishName": "Boracay Jet Ski",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 448
+        },
+        {
+            "index": 839,
+            "name": "보라카이 아일랜드 호핑",
+            "englishName": "Boracay Island Hopping",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 449
+        },
+        {
+            "index": 779,
+            "name": "화이트 비치 모알보알",
+            "englishName": "White Beach Moalboal",
+            "province": "Cebu",
+            "textsCount": 4,
+            "totalTextsLength": 452
+        },
+        {
+            "index": 936,
+            "name": "리마사와 섬",
+            "englishName": "Limasawa Island",
+            "province": "Southern Leyte",
+            "textsCount": 4,
+            "totalTextsLength": 454
+        },
+        {
+            "index": 925,
+            "name": "소호톤 내츄럴 브릿지",
+            "englishName": "Sohoton Natural Bridge",
+            "province": "Samar",
+            "textsCount": 4,
+            "totalTextsLength": 459
+        },
+        {
+            "index": 358,
+            "name": "️ 부가 산",
+            "englishName": "Mount Buga",
+            "province": "Zamboanga del Sur",
+            "textsCount": 4,
+            "totalTextsLength": 462
+        },
+        {
+            "index": 534,
+            "name": "시미즈 아일랜드",
+            "englishName": "Shimizu Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 462
+        },
+        {
+            "index": 799,
+            "name": "초콜릿 힐 전망대",
+            "englishName": "Chocolate Hills Viewpoint",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 475
+        },
+        {
+            "index": 811,
+            "name": "팡라오 해양보호구역",
+            "englishName": "Panglao Marine Sanctuary",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 477
+        },
+        {
+            "index": 848,
+            "name": "보라카이 나이트라이프",
+            "englishName": "Boracay D'Mall",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 479
+        },
+        {
+            "index": 545,
+            "name": "말카푸야 아일랜드",
+            "englishName": "Malcapuya Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 479
+        },
+        {
+            "index": 712,
+            "name": "바놀 비치",
+            "englishName": "Banol Beach",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 487
+        },
+        {
+            "index": 538,
+            "name": "라스 카바냐스 비치",
+            "englishName": "Las Cabanas Beach",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 490
+        },
+        {
+            "index": 536,
+            "name": "타라우 클리프",
+            "englishName": "Taraw Cliff",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 490
+        },
+        {
+            "index": 532,
+            "name": "엘니도 시크릿 라군",
+            "englishName": "El Nido Secret Lagoon",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 490
+        },
+        {
+            "index": 531,
+            "name": "엘니도 스몰 라군",
+            "englishName": "El Nido Small Lagoon",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 490
+        },
+        {
+            "index": 937,
+            "name": "보락 비치",
+            "englishName": "Borawan Beach",
+            "province": "Quezon",
+            "textsCount": 4,
+            "totalTextsLength": 492
+        },
+        {
+            "index": 800,
+            "name": "초콜릿 힐 ATV",
+            "englishName": "Chocolate Hills ATV Adventure",
+            "province": "Bohol",
+            "textsCount": 4,
+            "totalTextsLength": 492
+        },
+        {
+            "index": 539,
+            "name": "코론 카양안 호수",
+            "englishName": "Coron Kayangan Lake",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 492
+        },
+        {
+            "index": 535,
+            "name": "마틴록 아일랜드",
+            "englishName": "Matinloc Island",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 492
+        },
+        {
+            "index": 840,
+            "name": "보라카이 스쿠버 다이빙",
+            "englishName": "Boracay Scuba Diving",
+            "province": "Aklan",
+            "textsCount": 4,
+            "totalTextsLength": 495
+        },
+        {
+            "index": 927,
+            "name": "보롱간 서핑",
+            "englishName": "Borongan Surfing",
+            "province": "Eastern Samar",
+            "textsCount": 4,
+            "totalTextsLength": 498
+        },
+        {
+            "index": 541,
+            "name": "코론 트윈 라군",
+            "englishName": "Coron Twin Lagoon",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 498
+        },
+        {
+            "index": 533,
+            "name": "세븐 코만도스 비치",
+            "englishName": "Seven Commandos Beach",
+            "province": "Palawan",
+            "textsCount": 4,
+            "totalTextsLength": 499
+        }
+    ]
+}
