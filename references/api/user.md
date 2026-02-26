@@ -245,6 +245,7 @@ class UserController
 // lib/user/UserService.php
 namespace Philgo\User;
 
+use Philgo\Utils\AuthService;
 use Philgo\Utils\Db;
 use PDO;
 use RuntimeException;
@@ -263,6 +264,25 @@ class UserService
             throw new RuntimeException('사용자 수 조회에 실패했습니다.');
         }
         return (int) $row['cnt'];
+    }
+
+    /**
+     * 현재 로그인한 사용자 정보를 리턴한다.
+     *
+     * AuthService를 통해 세션 검증 후 사용자 레코드를 조회한다.
+     * password 필드는 보안을 위해 제거하고 리턴한다.
+     *
+     * @return array 사용자 정보 배열 (password 제외)
+     * @throws RuntimeException 비로그인 시
+     */
+    public static function getMe(): array
+    {
+        $user = AuthService::getLoginUser();
+        if ($user === null) {
+            throw new RuntimeException('로그인이 필요합니다.');
+        }
+        unset($user['password']);
+        return $user;
     }
 }
 ```
