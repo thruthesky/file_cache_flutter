@@ -48,6 +48,11 @@ class PhilgoConfig {
   /// If the variable is set to `prod`, it returns true; otherwise, it returns
   static bool get isProduction => getEnv == prod;
 
+  static const String v7ApiEndpoint = String.fromEnvironment(
+    'V7_API_ENDPOINT',
+    defaultValue: 'https://philgo.com/api.php',
+  );
+
   // philgo.com is the main site.
   // URL must end with a slash (/).
   static String philgoUrl = 'https://philgo.com/';
