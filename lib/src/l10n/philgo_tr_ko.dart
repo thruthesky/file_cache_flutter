@@ -352,6 +352,9 @@ class PhilgoTrKo extends PhilgoTr {
   String get success_user_blocked => '사용자가 성공적으로 차단되었습니다.';
 
   @override
+  String get block_and_leave => '차단 후 나가기';
+
+  @override
   String get blocked_message => '차단된 사용자로부터의 메시지';
 
   @override

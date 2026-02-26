@@ -360,7 +360,7 @@ Future<void> leaveChatRoom({
   Function(String error)? error,
 }) async {
   try {
-    await sendChatProtocolMessage(roomId: roomId, protocol: ChatProtocol.left);
+    // await sendChatProtocolMessage(roomId: roomId, protocol: ChatProtocol.left);
 
     await myJoinRoomRef(roomId).set(null);
 

@@ -50,31 +50,11 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                 leaveChatRoom(
                   roomId: init.join.id,
                   success: () {
-                    // Show success message with Comic design theme
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          content: Text(
-                            PhilgoTr.of(context)!.leftroom_successfully,
-                          ),
-                          // Comic design: Use theme primary color for success
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary,
-                          // Comic design: Rounded corners with borderRadius 12
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            // Comic design: 2.0px border
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.outline,
-                              width: 2.0,
-                            ),
-                          ),
-                          elevation: 0, // Comic design: No shadow
-                        ),
+                      showSuccessSnackBar(
+                        context,
+                        PhilgoTr.of(context)!.leftroom_successfully,
                       );
-
                       if (Navigator.canPop(context)) {
                         Navigator.of(context).pop();
                       }
@@ -82,26 +62,8 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   },
                   error: (e) {
                     debugPrint('Error leaving room: $e');
-
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          content: Text(PhilgoTr.of(context)!.error),
-                          // Comic design: Use theme error color
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                          // Comic design: Rounded corners with borderRadius 12
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            // Comic design: 2.0px border
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.outline,
-                              width: 2.0,
-                            ),
-                          ),
-                          elevation: 0, // Comic design: No shadow
-                        ),
-                      );
+                      showErrorSnackBar(context, PhilgoTr.of(context)!.error);
                     }
                   },
                 );

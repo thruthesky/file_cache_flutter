@@ -100,6 +100,7 @@
     "block": "차단",
     "unblock": "차단 해제",
     "success_user_blocked": "사용자가 성공적으로 차단되었습니다.",
+    "block_and_leave": "차단 후 나가기",
     "blocked_message": "차단된 사용자로부터의 메시지",
     "time_days_ago": "{count}일 전",
     "time_hours_ago": "{count}시간 전",

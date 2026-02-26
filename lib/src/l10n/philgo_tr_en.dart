@@ -365,6 +365,9 @@ class PhilgoTrEn extends PhilgoTr {
   String get success_user_blocked => 'User successfully blocked.';
 
   @override
+  String get block_and_leave => 'Block & Leave';
+
+  @override
   String get blocked_message => 'Message from blocked user';
 
   @override

@@ -401,6 +401,8 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               _showBlockDialog();
             } else if (value == 'unblock') {
               _showUnblockDialog();
+            } else if (value == 'leave') {
+              _showLeaveConfirmDialog();
             }
           },
           itemBuilder: (context) =>
@@ -516,6 +518,29 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       }
     }
 
+    // Leave room option - available for all room types
+    menuItems.add(
+      PopupMenuItem<String>(
+        value: 'leave',
+        child: Row(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.lightArrowRightFromBracket,
+              size: 16,
+              color: colorScheme.error,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              PhilgoTr.of(context)!.leave_room,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.error,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
     return menuItems;
   }
 
@@ -555,6 +580,213 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         },
       ),
     );
+  }
+
+  /// Show leave room confirmation dialog.
+  /// For single chat rooms, also offers "Block & Leave" option.
+  /// Comic design applied - 2.0px border, rounded corners, no shadow
+  void _showLeaveConfirmDialog() async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    // Returns null (dismissed), 'leave', or 'block_and_leave' (single only)
+    final String? action = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            border: Border.all(color: colorScheme.outline, width: 2.0),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                child: Text(
+                  PhilgoTr.of(dialogContext)!.leave_room,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              // Content
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                child: Text(
+                  PhilgoTr.of(dialogContext)!.leave_room_confirmation,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+              // Actions
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Block & Leave - only for single chat rooms
+                    if (isSingle) ...[
+                      ElevatedButton(
+                        onPressed: () =>
+                            Navigator.of(dialogContext).pop('block_and_leave'),
+                        style: ButtonStyle(
+                          elevation: WidgetStateProperty.all(0),
+                          shape: WidgetStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                color: colorScheme.error,
+                                width: 2.0,
+                              ),
+                            ),
+                          ),
+                          backgroundColor: WidgetStateProperty.all(
+                            colorScheme.error,
+                          ),
+                          foregroundColor: WidgetStateProperty.all(
+                            colorScheme.onError,
+                          ),
+                          padding: WidgetStateProperty.all(
+                            const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          textStyle: WidgetStateProperty.all(
+                            theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                        child: Text(
+                          PhilgoTr.of(dialogContext)!.block_and_leave,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    // Leave only - outlined error button
+                    ElevatedButton(
+                      onPressed: () =>
+                          Navigator.of(dialogContext).pop('leave'),
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.error,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.error,
+                        ),
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(PhilgoTr.of(dialogContext)!.leave),
+                    ),
+                    const SizedBox(height: 8),
+                    // Cancel - neutral button
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(PhilgoTr.of(dialogContext)!.cancel),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (action == 'block_and_leave' && isSingle) {
+      // Block the other user first, then leave the room
+      try {
+        await toggleBlockUser(getOtherUserUidFromChatRoomId(roomId)!);
+      } catch (e) {
+        debugPrint('Error blocking user before leave: $e');
+      }
+      if (!mounted) return;
+      leaveChatRoom(
+        roomId: roomId,
+        success: () {
+          if (mounted) {
+            showSuccessSnackBar(
+              context,
+              PhilgoTr.of(context)!.leftroom_successfully,
+            );
+          }
+        },
+        error: (e) => debugPrint('Error leaving room: $e'),
+      );
+    } else if (action == 'leave') {
+      leaveChatRoom(
+        roomId: roomId,
+        success: () {
+          if (mounted) {
+            showSuccessSnackBar(
+              context,
+              PhilgoTr.of(context)!.leftroom_successfully,
+            );
+          }
+        },
+        error: (e) => debugPrint('Error leaving room: $e'),
+      );
+    }
   }
 
   /// 읽지 않은 메시지 배지 - Comic design
