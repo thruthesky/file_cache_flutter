@@ -1,4 +1,4 @@
-# 필고 새로운 시스템 (New System) 레퍼런스
+# 필고 v7 시스템 레퍼런스
 
 ## 목차
 
@@ -26,7 +26,7 @@
 
 ### 1.1 배경
 
-필고 프로젝트(v6)의 기존 코드는 복잡하고 유지보수가 어렵다. 새로운 시스템은 기존 버전과의 **100% 호환성을 유지**하면서 코드 구조를 체계화하여 가독성, 유지보수성, 확장성을 높이는 것을 목표로 한다.
+필고 프로젝트(v6)의 기존 코드는 복잡하고 유지보수가 어렵다. v7 시스템은 기존 버전과의 **100% 호환성을 유지**하면서 코드 구조를 체계화하여 가독성, 유지보수성, 확장성을 높이는 것을 목표로 한다.
 
 ### 1.2 핵심 목표
 
@@ -55,7 +55,7 @@ API 통신: Axios (func() 래퍼 함수)
 
 ### 2.1 Controller + Entity 아키텍처
 
-새로운 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택한다. 각 기능 모듈(`lib/<module>/`)에 Controller 클래스를 두고, API 요청은 Controller 인스턴스의 멤버 함수로 디스패치한다. 데이터 구조는 Entity 클래스(POPO)로 정의한다.
+v7 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택한다. 각 기능 모듈(`lib/<module>/`)에 Controller 클래스를 두고, API 요청은 Controller 인스턴스의 멤버 함수로 디스패치한다. 데이터 구조는 Entity 클래스(POPO)로 정의한다.
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -101,7 +101,7 @@ API 통신: Axios (func() 래퍼 함수)
 4. **Entity (POPO)**: `lib/entities/` 에 데이터 구조를 정의하는 Entity 클래스 (PostEntity, UserEntity 등)
 5. **통일된 입출력**: 모든 Controller 멤버 함수는 `array $input` 입력, 배열/Entity 출력 (Controller는 반드시 객체를 리턴)
 6. **PDO 필수**: 모든 DB 쿼리는 `pdo()->prepare()` + `execute()` 방식 사용
-7. **⚠️ 기존 함수 사용 금지**: 새로운 시스템에서는 가능한 기존 함수(`*.functions.php`)를 사용하지 않는다. 필요한 유틸리티는 `lib/utils/<Module>Utils.php` 클래스로 작성하여 PSR-4 autoloading으로 로드한다.
+7. **⚠️ 기존 함수 사용 금지**: v7 시스템에서는 가능한 기존 함수(`*.functions.php`)를 사용하지 않는다. 필요한 유틸리티는 `lib/utils/<Module>Utils.php` 클래스로 작성하여 PSR-4 autoloading으로 로드한다.
 8. **Utils 클래스**: 공통 유틸리티는 `lib/utils/` 폴더에 `<Module>Utils.php` 형식으로 작성 (예: `RequestUtils.php`, `DbUtils.php`). 네임스페이스: `Philgo\Utils\`
 9. **boot.php 미포함**: `api.php`는 기존 `boot.php`를 로드하지 않는다. RequestUtils 등 Utils 클래스를 통해 독립적으로 동작한다.
 10. **에러 처리**: try/catch로 예외를 캐치하여 `{success: false, message: "에러 메시지"}` 형식으로 응답. 성공 시 `{success: true}` 추가 없이 Controller 리턴값 그대로 출력.
@@ -316,11 +316,11 @@ if (!defined('DEBUG')) { define('DEBUG', true); }
 require_once __DIR__ . '/etc/boot.php';
 ```
 
-**`API_CALL` 상수의 역할** (레거시): `API_CALL`이 정의되면 기존 `error()` 함수가 예외를 throw하지 않고 JSON 에러 응답을 출력 후 `exit`한다. 새로운 시스템의 `api.php`에서는 이 상수를 사용하지 않으며, try/catch로 직접 예외를 처리한다.
+**`API_CALL` 상수의 역할** (레거시): `API_CALL`이 정의되면 기존 `error()` 함수가 예외를 throw하지 않고 JSON 에러 응답을 출력 후 `exit`한다. v7 시스템의 `api.php`에서는 이 상수를 사용하지 않으며, try/catch로 직접 예외를 처리한다.
 
-> **참고**: 기존 시스템에서는 `func.php`를 API 엔트리포인트로 사용했으나, 새로운 시스템에서는 `api.php`를 사용한다. `api.php`의 필수 파라미터는 `method`이며, `<module>.<action>` 형식으로 호출할 Controller와 멤버 함수를 지정한다. (예: `method=post.create` → `PostController->create()`)
+> **참고**: 기존 시스템에서는 `func.php`를 API 엔트리포인트로 사용했으나, v7 시스템에서는 `api.php`를 사용한다. `api.php`의 필수 파라미터는 `method`이며, `<module>.<action>` 형식으로 호출할 Controller와 멤버 함수를 지정한다. (예: `method=post.create` → `PostController->create()`)
 >
-> ⚠️ **새로운 시스템 원칙**: `api.php`는 `boot.php`를 포함하지 않으며, 기존 함수(`in()`, `http_param()`, `error()` 등)에 의존하지 않는다. 대신 `RequestUtils`, `DbUtils` 등의 Utils 클래스를 사용한다.
+> ⚠️ **v7 시스템 원칙**: `api.php`는 `boot.php`를 포함하지 않으며, 기존 함수(`in()`, `http_param()`, `error()` 등)에 의존하지 않는다. 대신 `RequestUtils`, `DbUtils` 등의 Utils 클래스를 사용한다.
 
 ---
 
@@ -377,7 +377,7 @@ res = {idx: 123, subject: "제목", content: "내용", ...}
 <?php
 /**
  * @file api.php
- * @brief 새로운 시스템 API 엔트리포인트 - Controller 기반 디스패치 (PSR-4)
+ * @brief v7 시스템 API 엔트리포인트 - Controller 기반 디스패치 (PSR-4)
  *
  * method 파라미터를 파싱하여 Controller 클래스를 인스턴스화하고 멤버 함수를 호출한다.
  * 예: method=user.count → Philgo\User\UserController::count($input)
@@ -660,7 +660,7 @@ JavaScript: func('user.count')
 
 **파일**: `lib/api/api.allowed_functions.php`
 
-기존 `func.php`에서 사용하던 방식으로, `AllowedFunctions` 클래스의 public static 메서드를 통해 API 함수를 디스패치한다. 새로운 시스템에서는 Controller 방식을 사용하므로, 이 클래스는 레거시로 유지된다.
+기존 `func.php`에서 사용하던 방식으로, `AllowedFunctions` 클래스의 public static 메서드를 통해 API 함수를 디스패치한다. v7 시스템에서는 Controller 방식을 사용하므로, 이 클래스는 레거시로 유지된다.
 
 ### 5.7 응답 변환 규칙
 
@@ -851,16 +851,16 @@ $params = http_params(['name', 'email', 'phone' => '+default']);
 
 ## 9. 에러 처리
 
-### 9.0 ⚠️ 새로운 시스템 에러 처리 (api.php)
+### 9.0 ⚠️ v7 시스템 에러 처리 (api.php)
 
-> **핵심 원칙**: 새로운 시스템(`api.php`)에서는 기존 `error()` 함수를 사용하지 않는다. 대신 **throw + try/catch** 패턴을 사용한다.
+> **핵심 원칙**: v7 시스템(`api.php`)에서는 기존 `error()` 함수를 사용하지 않는다. 대신 **throw + try/catch** 패턴을 사용한다.
 
 **에러 처리 규칙**:
 1. **Service/Repository에서 에러 발생 시**: 반드시 `throw new RuntimeException('에러 메시지')` 한다.
 2. **api.php에서 try/catch로 캐치**: `{success: false, message: "에러 메시지"}` 형식으로 응답한다.
 3. **성공 시**: `{success: true}` 추가 없이 Controller 리턴값 그대로 JSON 출력한다.
 
-**에러 응답 형식 (새로운 시스템)**:
+**에러 응답 형식 (v7 시스템)**:
 ```json
 {
     "success": false,
@@ -868,7 +868,7 @@ $params = http_params(['name', 'email', 'phone' => '+default']);
 }
 ```
 
-**성공 응답 형식 (새로운 시스템)**:
+**성공 응답 형식 (v7 시스템)**:
 ```json
 // Controller 리턴값 그대로 (success: true 추가 없음!)
 {
@@ -906,7 +906,7 @@ class PostController
 
 ### 9.1 error() 함수 (레거시)
 
-> ⚠️ **레거시**: 새로운 시스템(`api.php`)에서는 이 함수를 사용하지 않는다. 기존 `func.php` 및 웹 페이지에서만 사용.
+> ⚠️ **레거시**: v7 시스템(`api.php`)에서는 이 함수를 사용하지 않는다. 기존 `func.php` 및 웹 페이지에서만 사용.
 
 **파일**: `lib/boot.functions.php`
 
@@ -1218,7 +1218,7 @@ function getTestUser(int $idx): ?array {
 
 ### 12.3 호환성 유지 규칙
 
-- 새 시스템 API 엔드포인트: `/api.php` (필수 파라미터: `method`, 형식: `<module>.<action>`)
+- v7 시스템 API 엔드포인트: `/api.php` (필수 파라미터: `method`, 형식: `<module>.<action>`)
 - 기존 `func.php`는 레거시로 유지하되, 새 코드는 `/api.php` + Controller 방식 사용
 - 기존 `AllowedFunctions` 클래스는 레거시로 유지, 새 코드는 Controller 클래스 작성
 - 기존 API 응답 구조 변경 금지 (필드 추가는 가능, 제거/변경 금지)
@@ -1285,7 +1285,7 @@ ready(() => {
 
 ### 14.0 ⚠️ 기존 함수 사용 금지 원칙
 
-> **핵심 원칙**: **새로운 시스템에서는 가능한 기존의 함수를 사용하지 않는다.** 기존 `*.functions.php` 파일의 함수(`in()`, `http_param()`, `pdo()`, `error()` 등)는 레거시로 취급하며, 새로운 코드에서 호출하지 않는다.
+> **핵심 원칙**: **v7 시스템에서는 가능한 기존의 함수를 사용하지 않는다.** 기존 `*.functions.php` 파일의 함수(`in()`, `http_param()`, `pdo()`, `error()` 등)는 레거시로 취급하며, 새로운 코드에서 호출하지 않는다.
 >
 > **필요한 유틸리티는 `lib/utils/<Module>Utils.php` 클래스로 작성하여 Composer PSR-4 autoloading으로 로드한다.** (`use Philgo\Utils\<Module>Utils;`)
 
@@ -1396,7 +1396,7 @@ DbUtils::setConfigPath(__DIR__ . '/etc/db.config.test.php');
 
 > **상태**: ✅ 적용 완료 (User API, Utils 클래스)
 
-새로운 시스템의 모든 클래스는 **PSR-4 Autoloading**을 사용하여 네임스페이스 기반으로 자동 로드한다. `require_once` 대신 Composer autoloader를 통해 클래스를 로드한다.
+v7 시스템의 모든 클래스는 **PSR-4 Autoloading**을 사용하여 네임스페이스 기반으로 자동 로드한다. `require_once` 대신 Composer autoloader를 통해 클래스를 로드한다.
 
 ### 15.1 네임스페이스 규칙
 
@@ -1451,8 +1451,8 @@ composer dump-autoload
 
 ```
 lib/user/
-├── UserController.php          # ★ 새로운 시스템 (PSR-4, namespace)
-├── UserService.php             # ★ 새로운 시스템 (PSR-4, namespace)
+├── UserController.php          # ★ v7 시스템 (PSR-4, namespace)
+├── UserService.php             # ★ v7 시스템 (PSR-4, namespace)
 ├── user.functions.php          # ⚠️ 레거시 (namespace 없음, require_once 사용)
 ├── user.login.functions.php    # ⚠️ 레거시
 └── ...
@@ -1541,7 +1541,7 @@ describe('UserController', function () {
 `architecture.md` 문서가 길어지면, 모듈별 상세 API 문서를 별도 파일로 분리한다.
 
 ```
-.claude/skills/new-philgo-skill/references/
+.claude/skills/v7-skill/references/
 ├── architecture.md            # ★ 메인 문서 (아키텍처, 설계 원칙, 공통 규칙)
 └── api/                       # ★ 모듈별 API 상세 문서
     ├── user.md                # 사용자 API (user.count, user.login 등)
@@ -1581,11 +1581,11 @@ describe('UserController', function () {
 
 ### 17.1 개요
 
-새로운 시스템의 Controller/Service 클래스는 **기존 레거시 페이지(page.header.php, page.footer.php)**와 함께 사용할 수 있다. 기존 레이아웃과 디자인을 유지하면서 새로운 시스템의 비즈니스 로직을 활용하는 방식이다.
+v7 시스템의 Controller/Service 클래스는 **기존 레거시 페이지(page.header.php, page.footer.php)**와 함께 사용할 수 있다. 기존 레이아웃과 디자인을 유지하면서 v7 시스템의 비즈니스 로직을 활용하는 방식이다.
 
 ### 17.2 사용 방법
 
-기존 페이지 템플릿 안에서 새로운 시스템의 Service 클래스를 사용하려면, `vendor/autoload.php`를 추가로 로드하면 된다.
+기존 페이지 템플릿 안에서 v7 시스템의 Service 클래스를 사용하려면, `vendor/autoload.php`를 추가로 로드하면 된다.
 
 ```php
 <?php
@@ -1613,8 +1613,8 @@ include_once '../page.footer.php';
 ### 17.4 주의사항
 
 - `page.header.php`를 먼저 include한 후 `vendor/autoload.php`를 require한다. (`ROOT_DIR` 상수가 `boot.php`에서 정의되기 때문)
-- 기존 레거시 함수(`pdo()`, `login()`, `in()` 등)와 새로운 시스템 클래스(`UserService`, `DbUtils` 등)를 **동일 페이지에서 함께** 사용할 수 있다.
-- 새로운 시스템의 `DbUtils::pdo()`와 기존 `pdo()` 함수는 **별도의 PDO 커넥션**이므로, 하나의 페이지에서는 가능하면 한쪽만 사용하는 것을 권장한다.
+- 기존 레거시 함수(`pdo()`, `login()`, `in()` 등)와 v7 시스템 클래스(`UserService`, `DbUtils` 등)를 **동일 페이지에서 함께** 사용할 수 있다.
+- v7 시스템의 `DbUtils::pdo()`와 기존 `pdo()` 함수는 **별도의 PDO 커넥션**이므로, 하나의 페이지에서는 가능하면 한쪽만 사용하는 것을 권장한다.
 
 ---
 

@@ -1,4 +1,4 @@
-# User API - 새로운 시스템 (PSR-4)
+# User API - v7 시스템 (PSR-4)
 
 ## 목차
 
@@ -12,7 +12,7 @@
 
 ## 1. 개요
 
-사용자(User) 모듈의 새로운 시스템 API이다.
+사용자(User) 모듈의 v7 시스템 API이다.
 `api.php`의 PSR-4 autoloading + Controller 기반 디스패치를 통해 호출된다.
 
 - **DB 테이블**: `sf_member`
