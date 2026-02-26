@@ -92,6 +92,7 @@ Windows 환경 설정 차이점을 포함합니다.
 |------|------|------|
 | User | [api/user.md](references/api/user.md) | ✅ 완료 |
 | Upload | [api/upload.md](references/api/upload.md) | ✅ 완료 |
+| AI | [api/ai.md](references/api/ai.md) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 

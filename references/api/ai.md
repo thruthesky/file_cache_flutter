@@ -11,12 +11,18 @@ Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모
 - [API 엔드포인트](#api-엔드포인트)
   - [ai.moderate - 텍스트 검열](#aimoderate---텍스트-검열)
   - [ai.generate - 텍스트 생성](#aigenerate---텍스트-생성)
-  - [ai.analyzeReceipt - 영수증 분석](#aianalyzereceipt---영수증-분석)
+  - [ai.analyzeReceipt - 영수증 분석 (인증 필수)](#aianalyzereceipt---영수증-분석-인증-필수)
+- [인증 방식](#인증-방식)
 - [Entity 구조](#entity-구조)
   - [ModerationEntity](#moderationentity)
   - [GenerateEntity](#generateentity)
   - [ReceiptEntity](#receiptentity)
 - [GeminiClient](#geminiclient)
+- [핵심 소스코드](#핵심-소스코드)
+  - [AiController 핵심 코드](#aicontroller-핵심-코드)
+  - [AiService 핵심 코드](#aiservice-핵심-코드)
+  - [GeminiClient 핵심 코드](#geminiclient-핵심-코드)
+  - [ReceiptEntity 핵심 코드](#receiptentity-핵심-코드)
 - [검열 정책](#검열-정책)
 - [테스트](#테스트)
 
@@ -49,7 +55,7 @@ lib/ai/
 
 ### ai.moderate - 텍스트 검열
 
-Gemini API를 사용하여 텍스트 콘텐츠를 검열한다.
+Gemini API를 사용하여 텍스트 콘텐츠를 검열한다. 인증 불필요.
 
 **요청:**
 
@@ -92,15 +98,6 @@ Content-Type: application/json
 }
 ```
 
-**응답 (에러):**
-
-```json
-{
-    "success": false,
-    "message": "text 파라미터가 필요합니다."
-}
-```
-
 **curl 예시:**
 
 ```bash
@@ -117,7 +114,7 @@ curl -k -X POST https://local.philgo.com/api.php \
 
 ### ai.generate - 텍스트 생성
 
-Gemini API를 사용하여 텍스트를 생성한다.
+Gemini API를 사용하여 텍스트를 생성한다. 인증 불필요.
 
 **요청:**
 
@@ -147,10 +144,6 @@ Content-Type: application/json
 **curl 예시:**
 
 ```bash
-# GET 방식
-curl -k "https://local.philgo.com/api.php?method=ai.generate&prompt=1%2B1%EC%9D%80?"
-
-# POST 방식
 curl -k -X POST https://local.philgo.com/api.php \
   -H "Content-Type: application/json" \
   -d '{"method":"ai.generate","prompt":"필리핀 마닐라의 날씨를 알려주세요","system_instruction":"필리핀 전문 여행 가이드"}'
@@ -158,29 +151,37 @@ curl -k -X POST https://local.philgo.com/api.php \
 
 ---
 
-### ai.analyzeReceipt - 영수증 분석
+### ai.analyzeReceipt - 영수증 분석 (인증 필수)
 
 영수증 이미지를 업로드하면 Gemini AI가 영수증 진위 여부를 판별하고 정보를 추출한다.
 
+**⚠️ 인증 필수**: Firebase ID Token(`id_token`) 또는 세션 ID(`session_id`)로 사용자 인증이 필요하다. `idx_member`를 직접 전달하지 않으며, 인증된 사용자의 idx가 자동으로 사용된다.
+
 **처리 흐름:**
-1. `UploadService::store()`로 이미지 업로드 (자동으로 1000px 썸네일 생성)
-2. `1000-{baseName}.webp` 썸네일 파일을 base64 인코딩
-3. `GeminiClient::generateJsonWithImage()`로 Gemini API 호출 (모델: `gemini-2.5-flash-lite-preview-09-2025`)
-4. 영수증이 아니면 에러 반환, 영수증이면 분석 결과 반환
+1. `AuthService::getLoginUser()`로 인증 확인 (미인증 시 RuntimeException)
+2. 인증된 사용자의 idx를 `idx_member`에 자동 설정
+3. `UploadService::store()`로 이미지 업로드 (자동으로 1000px 썸네일 생성)
+4. `1000-{baseName}.webp` 썸네일 파일을 base64 인코딩
+5. `GeminiClient::generateJsonWithImage()`로 Gemini API 호출 (모델: `gemini-2.5-flash-lite-preview-09-2025`)
+6. 영수증이 아니면 에러 반환, 영수증이면 분석 결과 반환
 
 **요청:**
 
 ```
 POST /api.php (multipart/form-data)
 - method: ai.analyzeReceipt
-- idx_member: 회원 idx (필수)
+- session_id: 세션 ID (인증 경로 1) — 또는
+- id_token: Firebase ID Token (인증 경로 2)
 - file: 영수증 이미지 파일 (필수)
 ```
 
 | 파라미터 | 타입 | 필수 | 설명 |
 |----------|------|------|------|
-| `idx_member` | int | ✅ | 회원 idx |
+| `session_id` | string | ✅* | 세션 ID (인증 경로 1) |
+| `id_token` | string | ✅* | Firebase ID Token (인증 경로 2) |
 | `file` | file | ✅ | 영수증 이미지 파일 (multipart/form-data) |
+
+> \* `session_id` 또는 `id_token` 중 하나가 반드시 필요하다.
 
 **응답 (성공 - 진짜 영수증):**
 
@@ -205,23 +206,12 @@ POST /api.php (multipart/form-data)
 }
 ```
 
-**응답 (성공 - 가짜 영수증):**
+**응답 (에러 - 미인증):**
 
 ```json
 {
-    "is_receipt": true,
-    "is_authentic": false,
-    "store_name": "Unknown Store",
-    "date": "2025-01-15",
-    "total_amount": "₱1,500.00",
-    "currency": "PHP",
-    "items": [],
-    "payment_method": "",
-    "receipt_type": "카드 매출전표",
-    "summary": "조작이 의심되는 영수증",
-    "suspicious_reasons": ["폰트 불일치 감지", "금액 합계 오류"],
-    "confidence_score": 25,
-    "upload_idx": 12346
+    "success": false,
+    "message": "로그인이 필요합니다. id_token 또는 session_id를 전달해주세요."
 }
 ```
 
@@ -234,22 +224,97 @@ POST /api.php (multipart/form-data)
 }
 ```
 
-**응답 (에러 - 파라미터 누락):**
-
-```json
-{
-    "success": false,
-    "message": "idx_member가 필요합니다."
-}
-```
-
-**curl 예시:**
+**curl 예시 (session_id 인증):**
 
 ```bash
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
-  -F "idx_member=190076" \
+  -F "session_id=abc123hash-190076" \
   -F "file=@/path/to/receipt.jpg"
+```
+
+**curl 예시 (Firebase ID Token 인증):**
+
+```bash
+curl -k -X POST "https://local.philgo.com/api.php" \
+  -F "method=ai.analyzeReceipt" \
+  -F "id_token=eyJhbGciOiJSUzI1NiIs..." \
+  -F "file=@/path/to/receipt.jpg"
+```
+
+---
+
+## 인증 방식
+
+영수증 분석 API(`ai.analyzeReceipt`)는 사용자 인증이 필수이다. v7 시스템은 `AuthService::getLoginUser()`를 통해 2가지 경로로 인증한다.
+
+### 인증 경로 1: session_id (SSR/CURL용)
+
+세션 ID는 `{MD5해시}-{사용자idx}` 형식이다.
+
+```
+파라미터: session_id=abc123hash-190076
+또는 쿠키: Cookie: session_id=abc123hash-190076
+```
+
+검증 흐름:
+1. session_id에서 idx 추출
+2. DB에서 sf_member 조회
+3. 해시 검증 (md5(LOGIN_SALT + idx + firebase_uid + phone_number))
+
+### 인증 경로 2: id_token (API/앱용)
+
+Firebase Authentication에서 발급한 ID Token을 전달한다.
+
+```
+파라미터: id_token=eyJhbGciOiJSUzI1NiIs...
+```
+
+검증 흐름:
+1. `FirebaseService::verifyIdToken($idToken)` → Firebase UID 획득
+2. DB에서 `firebase_uid`로 sf_member 조회
+3. 성공 시 세션 쿠키 자동 생성
+
+### 우선순위
+
+| 순위 | 인증 방식 | 용도 |
+|------|----------|------|
+| 1 | session_id (쿠키 또는 파라미터) | SSR, CURL 테스트 |
+| 2 | id_token (파라미터) | 앱, JavaScript API |
+
+### 핵심 코드 (AuthService)
+
+```php
+// lib/utils/AuthService.php
+public static function getLoginUser(): ?array
+{
+    if (self::$checked) return self::$cachedUser;
+    self::$checked = true;
+
+    // 경로 1: session_id (쿠키 또는 파라미터)
+    $sessionId = $_COOKIE['session_id'] ?? RequestUtils::get('session_id');
+    if (!empty($sessionId)) {
+        $user = self::getUserBySessionId($sessionId);
+        if ($user !== null) { self::$cachedUser = $user; return $user; }
+    }
+
+    // 경로 2: Firebase ID Token
+    $idToken = RequestUtils::get('id_token');
+    if (!empty($idToken)) {
+        $user = self::getUserByIdToken($idToken);
+        if ($user !== null) {
+            self::setSessionCookie($user);
+            self::$cachedUser = $user;
+            return $user;
+        }
+    }
+
+    return null;
+}
+
+// 테스트용 메서드
+public static function setTestUser(?array $user): void  // 인증 우회
+public static function reset(): void                     // 캐시 초기화
 ```
 
 ---
@@ -290,14 +355,6 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 | `is_gambling` | bool | `gambling && contact` |
 | `is_news` | bool | `news` |
 
-#### 메서드
-
-| 메서드 | 반환 | 설명 |
-|--------|------|------|
-| `fromArray(array $data)` | `self` | API 결과 배열 → Entity |
-| `toArray()` | `array` | Entity → 배열 |
-| `getReason()` | `string` | 판단 근거 문자열 |
-
 ---
 
 ### GenerateEntity
@@ -332,13 +389,6 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 | `confidence_score` | int | 신뢰도 점수 (0-100) |
 | `upload_idx` | int | 업로드 레코드 idx |
 
-#### 메서드
-
-| 메서드 | 반환 | 설명 |
-|--------|------|------|
-| `fromArray(array $data)` | `self` | API 결과 배열 → Entity |
-| `toArray()` | `array` | Entity → 배열 |
-
 ---
 
 ## GeminiClient
@@ -363,17 +413,292 @@ Gemini REST API에 cURL로 요청을 보내는 클라이언트 클래스이다.
 - **기본 모델**: `gemini-3-flash-preview`
 - **영수증 분석 모델**: `gemini-2.5-flash-lite-preview-09-2025`
 
-### 모델 변경 예시
+---
+
+## 핵심 소스코드
+
+### AiController 핵심 코드
 
 ```php
-// 기본 모델 사용 (gemini-3-flash-preview)
-GeminiClient::generateContent($prompt, $text);
+// lib/ai/AiController.php
+namespace Philgo\Ai;
 
-// 특정 모델 지정
-GeminiClient::generateContent($prompt, $text, null, 'gemini-2.5-flash-lite-preview-09-2025');
+class AiController
+{
+    // API: method=ai.moderate (인증 불필요)
+    public function moderate(array $input): array
+    {
+        $entity = AiService::moderate($input);
+        return $entity->toArray();
+    }
 
-// 이미지 분석 + 특정 모델
-GeminiClient::generateJsonWithImage($prompt, $base64, $mime, $text, $schema, 'gemini-2.5-flash-lite-preview-09-2025');
+    // API: method=ai.generate (인증 불필요)
+    public function generate(array $input): array
+    {
+        $entity = AiService::generate($input);
+        return $entity->toArray();
+    }
+
+    // API: method=ai.analyzeReceipt (⚠️ 인증 필수)
+    // 인증: id_token 또는 session_id 파라미터 필수
+    public function analyzeReceipt(array $input): array
+    {
+        $entity = AiService::analyzeReceipt($input);
+        return $entity->toArray();
+    }
+}
+```
+
+### AiService 핵심 코드
+
+#### moderate() - 텍스트 검열
+
+```php
+// lib/ai/AiService.php
+public static function moderate(array $input): ModerationEntity
+{
+    $text = trim((string)($input['text'] ?? ''));
+    if ($text === '') {
+        throw new RuntimeException('text 파라미터가 필요합니다.');
+    }
+
+    $systemPrompt = self::getModerationSystemPrompt();
+    $responseSchema = self::getModerationResponseSchema();
+
+    try {
+        $result = GeminiClient::generateJson($systemPrompt, $text, $responseSchema);
+        return ModerationEntity::fromArray($result);
+    } catch (RuntimeException $e) {
+        // API 오류 시 기본 Entity 반환 (모든 필드 false — 검열 통과 처리)
+        return new ModerationEntity();
+    }
+}
+```
+
+#### generate() - 텍스트 생성
+
+```php
+public static function generate(array $input): GenerateEntity
+{
+    $prompt = trim((string)($input['prompt'] ?? ''));
+    if ($prompt === '') {
+        throw new RuntimeException('prompt 파라미터가 필요합니다.');
+    }
+
+    $systemInstruction = trim((string)($input['system_instruction'] ?? '당신은 유용한 도우미입니다. 한국어로 답변하세요.'));
+    $result = GeminiClient::generateContent($systemInstruction, $prompt);
+
+    return GenerateEntity::fromArray([
+        'text' => $result['text'],
+        'model' => GeminiClient::getModel(),
+        'created_at' => time(),
+    ]);
+}
+```
+
+#### analyzeReceipt() - 영수증 분석 (인증 필수)
+
+```php
+use Philgo\Utils\AuthService;
+
+public static function analyzeReceipt(array $input): ReceiptEntity
+{
+    // 1. 인증 확인 — Firebase ID Token 또는 session_id 필수
+    $user = AuthService::getLoginUser();
+    if ($user === null) {
+        throw new RuntimeException('로그인이 필요합니다. id_token 또는 session_id를 전달해주세요.');
+    }
+
+    // 인증된 사용자의 idx를 idx_member로 자동 설정
+    $input['idx_member'] = (int) $user['idx'];
+
+    // 2. 이미지 업로드 (UploadService가 자동으로 1000px 썸네일 생성)
+    $uploadEntity = UploadService::store($input);
+
+    // 3. 1000-{baseName}.webp 썸네일 경로 계산
+    $rootDir = defined('ROOT_DIR') ? ROOT_DIR : dirname(__DIR__, 2);
+    $baseName = basename($uploadEntity->url);
+    $dir = dirname($uploadEntity->url);
+    $thumbnailUrl = $dir . '/1000-' . $baseName;
+    $thumbnailPath = $rootDir . $thumbnailUrl;
+
+    // 썸네일이 없으면 원본 사용
+    if (!file_exists($thumbnailPath)) {
+        $thumbnailPath = $rootDir . $uploadEntity->url;
+    }
+    if (!file_exists($thumbnailPath)) {
+        throw new RuntimeException('업로드된 이미지 파일을 찾을 수 없습니다.');
+    }
+
+    // 4. base64 인코딩
+    $imageBase64 = base64_encode(file_get_contents($thumbnailPath));
+    $imageMimeType = 'image/webp';
+
+    // 5. Gemini API 호출 (영수증 분석은 gemini-2.5-flash-lite 모델 사용)
+    $systemPrompt = self::getReceiptAnalysisSystemPrompt();
+    $responseSchema = self::getReceiptAnalysisResponseSchema();
+    $userText = '이 이미지를 분석하여 영수증인지 판별하고, 진위 여부를 확인한 후 정보를 추출해주세요.';
+    $receiptModel = 'gemini-2.5-flash-lite-preview-09-2025';
+
+    $result = GeminiClient::generateJsonWithImage(
+        $systemPrompt, $imageBase64, $imageMimeType, $userText, $responseSchema, $receiptModel
+    );
+
+    // 6. ReceiptEntity 변환 + upload_idx 설정
+    $entity = ReceiptEntity::fromArray($result);
+    $entity->upload_idx = $uploadEntity->idx;
+
+    // 7. 영수증이 아니면 예외 throw
+    if (!$entity->is_receipt) {
+        throw new RuntimeException('이미지가 영수증이 아닙니다.');
+    }
+
+    return $entity;
+}
+```
+
+### GeminiClient 핵심 코드
+
+```php
+// lib/ai/GeminiClient.php
+namespace Philgo\Ai;
+
+class GeminiClient
+{
+    // 텍스트 전용 생성 요청
+    public static function generateContent(
+        string $systemInstruction, string $userText,
+        ?array $generationConfig = null, ?string $model = null
+    ): array {
+        $payload = [
+            'system_instruction' => ['parts' => [['text' => $systemInstruction]]],
+            'contents' => [['parts' => [['text' => $userText]]]],
+        ];
+        if ($generationConfig !== null) $payload['generationConfig'] = $generationConfig;
+        $response = self::callApi($payload, $model);
+        return ['text' => self::extractText($response), 'raw' => $response];
+    }
+
+    // JSON 구조화 응답 요청
+    public static function generateJson(
+        string $systemInstruction, string $userText,
+        array $responseSchema, ?string $model = null
+    ): array {
+        $generationConfig = [
+            'responseMimeType' => 'application/json',
+            'responseSchema' => $responseSchema,
+        ];
+        $result = self::generateContent($systemInstruction, $userText, $generationConfig, $model);
+        return json_decode($result['text'], true);
+    }
+
+    // 이미지+텍스트 생성 요청 (inline_data 방식)
+    public static function generateContentWithImage(
+        string $systemInstruction, string $imageBase64, string $imageMimeType,
+        string $userText, ?array $generationConfig = null, ?string $model = null
+    ): array {
+        $payload = [
+            'system_instruction' => ['parts' => [['text' => $systemInstruction]]],
+            'contents' => [[
+                'parts' => [
+                    ['inline_data' => ['mime_type' => $imageMimeType, 'data' => $imageBase64]],
+                    ['text' => $userText]
+                ]
+            ]],
+        ];
+        if ($generationConfig !== null) $payload['generationConfig'] = $generationConfig;
+        $response = self::callApi($payload, $model);
+        return ['text' => self::extractText($response), 'raw' => $response];
+    }
+
+    // 이미지+텍스트 JSON 구조화 응답 요청
+    public static function generateJsonWithImage(
+        string $systemInstruction, string $imageBase64, string $imageMimeType,
+        string $userText, array $responseSchema, ?string $model = null
+    ): array {
+        $generationConfig = [
+            'responseMimeType' => 'application/json',
+            'responseSchema' => $responseSchema,
+        ];
+        $result = self::generateContentWithImage(
+            $systemInstruction, $imageBase64, $imageMimeType, $userText, $generationConfig, $model
+        );
+        return json_decode($result['text'], true);
+    }
+
+    // 기본 모델명
+    public static function getModel(): string { return 'gemini-3-flash-preview'; }
+
+    // cURL API 호출 (모델 파라미터 지원)
+    private static function callApi(array $payload, ?string $model = null): array {
+        $apiKey = self::getApiKey();
+        $useModel = $model ?? self::getModel();
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/{$useModel}:generateContent?key={$apiKey}";
+        // ... cURL 실행 + 에러 처리
+    }
+}
+```
+
+### ReceiptEntity 핵심 코드
+
+```php
+// lib/ai/ReceiptEntity.php
+namespace Philgo\Ai;
+
+class ReceiptEntity
+{
+    public bool $is_receipt = false;
+    public bool $is_authentic = false;
+    public string $store_name = '';
+    public string $date = '';
+    public string $total_amount = '';
+    public string $currency = '';
+    public array $items = [];
+    public string $payment_method = '';
+    public string $receipt_type = '';
+    public string $summary = '';
+    public array $suspicious_reasons = [];
+    public int $confidence_score = 0;
+    public int $upload_idx = 0;
+
+    public static function fromArray(array $data): self
+    {
+        $entity = new self();
+        $entity->is_receipt = (bool)($data['is_receipt'] ?? false);
+        $entity->is_authentic = (bool)($data['is_authentic'] ?? false);
+        $entity->store_name = (string)($data['store_name'] ?? '');
+        $entity->date = (string)($data['date'] ?? '');
+        $entity->total_amount = (string)($data['total_amount'] ?? '');
+        $entity->currency = (string)($data['currency'] ?? '');
+        $entity->items = (array)($data['items'] ?? []);
+        $entity->payment_method = (string)($data['payment_method'] ?? '');
+        $entity->receipt_type = (string)($data['receipt_type'] ?? '');
+        $entity->summary = (string)($data['summary'] ?? '');
+        $entity->suspicious_reasons = (array)($data['suspicious_reasons'] ?? []);
+        $entity->confidence_score = (int)($data['confidence_score'] ?? 0);
+        $entity->upload_idx = (int)($data['upload_idx'] ?? 0);
+        return $entity;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'is_receipt' => $this->is_receipt,
+            'is_authentic' => $this->is_authentic,
+            'store_name' => $this->store_name,
+            'date' => $this->date,
+            'total_amount' => $this->total_amount,
+            'currency' => $this->currency,
+            'items' => $this->items,
+            'payment_method' => $this->payment_method,
+            'receipt_type' => $this->receipt_type,
+            'summary' => $this->summary,
+            'suspicious_reasons' => $this->suspicious_reasons,
+            'confidence_score' => $this->confidence_score,
+            'upload_idx' => $this->upload_idx,
+        ];
+    }
+}
 ```
 
 ---
@@ -418,7 +743,7 @@ GeminiClient::generateJsonWithImage($prompt, $base64, $mime, $text, $schema, 'ge
 ./vendor/bin/pest tests/Unit/AiTest.php --filter="통합"
 ```
 
-### 테스트 항목
+### 테스트 항목 (30개)
 
 | 구분 | 테스트 | 설명 |
 |------|--------|------|
@@ -434,10 +759,81 @@ GeminiClient::generateJsonWithImage($prompt, $base64, $mime, $text, $schema, 'ge
 | ReceiptEntity | toArray() | 배열 변환 |
 | AiController | moderate() 입력 검증 | text 누락 시 예외 |
 | AiController | generate() 입력 검증 | prompt 누락 시 예외 |
-| AiController | analyzeReceipt() 입력 검증 | idx_member 누락 시 예외 |
+| AiController | analyzeReceipt() 미인증 | 로그인 없이 호출 시 예외 |
+| AiController | analyzeReceipt() 인증+파일없음 | 인증 후 파일 누락 시 예외 |
 | GeminiClient | getModel() | 모델명 반환 |
 | AiService | moderate() 통합 | 실제 API 호출 |
 | AiService | generate() 통합 | 실제 API 호출 |
+
+### 인증 기반 테스트 방법
+
+PEST 유닛 테스트에서는 `AuthService::setTestUser()`로 인증을 시뮬레이션한다.
+
+```php
+use Philgo\Utils\AuthService;
+
+// 미인증 테스트: AuthService 캐시 초기화
+it('analyzeReceipt() - 미인증 시 예외 발생', function () {
+    AuthService::reset();  // 캐시 초기화 (미인증 상태)
+    $ctrl = new AiController();
+    expect(fn() => $ctrl->analyzeReceipt([]))
+        ->toThrow(RuntimeException::class, '로그인이 필요합니다.');
+});
+
+// 인증 후 테스트: setTestUser()로 테스트 사용자 설정
+it('analyzeReceipt() - 인증 후에도 파일 없으면 업로드 예외 발생', function () {
+    AuthService::setTestUser(['idx' => 190076, 'firebase_uid' => 'test_uid']);
+    $ctrl = new AiController();
+    // 인증은 통과하지만 $_FILES['file']이 없으므로 UploadService에서 예외 발생
+    expect(fn() => $ctrl->analyzeReceipt([]))->toThrow(RuntimeException::class);
+    AuthService::reset();  // 테스트 후 캐시 초기화
+});
+```
+
+### CURL 테스트 방법 (실제 환경)
+
+영수증 분석 API는 인증이 필수이므로, 반드시 `session_id` 또는 `id_token`을 함께 전달해야 한다.
+
+#### 방법 1: session_id로 테스트
+
+```bash
+# session_id는 "{MD5해시}-{사용자idx}" 형식
+# 실제 session_id는 브라우저 쿠키에서 확인 가능
+curl -k -X POST "https://local.philgo.com/api.php" \
+  -F "method=ai.analyzeReceipt" \
+  -F "session_id=실제세션ID" \
+  -F "file=@/path/to/receipt.jpg"
+```
+
+#### 방법 2: Firebase ID Token으로 테스트
+
+```bash
+# Firebase ID Token은 클라이언트에서 Firebase Auth로 발급
+# JavaScript: firebase.auth().currentUser.getIdToken()
+curl -k -X POST "https://local.philgo.com/api.php" \
+  -F "method=ai.analyzeReceipt" \
+  -F "id_token=eyJhbGciOiJSUzI1NiIs..." \
+  -F "file=@/path/to/receipt.jpg"
+```
+
+#### 방법 3: 인증 없이 테스트 (에러 확인)
+
+```bash
+# 인증 파라미터 없이 호출 → 에러 응답
+curl -k -X POST "https://local.philgo.com/api.php" \
+  -F "method=ai.analyzeReceipt" \
+  -F "file=@/path/to/receipt.jpg"
+
+# 예상 응답:
+# {"success":false,"message":"로그인이 필요합니다. id_token 또는 session_id를 전달해주세요."}
+```
+
+### 브라우저에서 session_id 확인 방법
+
+1. `https://local.philgo.com:444`에 로그인
+2. 브라우저 개발자 도구 → Application → Cookies
+3. `session_id` 쿠키 값 복사
+4. CURL 명령에서 `-F "session_id=복사한값"` 사용
 
 ---
 
@@ -448,6 +844,7 @@ GeminiClient::generateJsonWithImage($prompt, $base64, $mime, $text, $schema, 'ge
 | `AiService::moderate()` | `gemini_moderate_api()` | 동일한 검열 정책 |
 | `ModerationEntity` | `ModerationResult` | 동일한 필드 구조 |
 | `GeminiClient` | cURL 직접 호출 | 클래스로 추출 |
+| `AuthService::getLoginUser()` | `login()` | 동일한 인증 흐름 |
 | `Philgo\Ai\` 네임스페이스 | 전역 함수 | PSR-4 |
 
 두 시스템은 완전히 독립적이며 공존한다. 기존 레거시 코드를 수정/삭제하지 않는다.
