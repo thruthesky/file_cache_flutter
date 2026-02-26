@@ -78,6 +78,7 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 | 모듈 | 문서 | 상태 |
 |------|------|------|
 | User | [api/user.md](references/api/user.md) | ✅ 완료 |
+| Upload | [api/upload.md](references/api/upload.md) | 📋 계획 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
