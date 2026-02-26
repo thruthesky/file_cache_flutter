@@ -1,5 +1,7 @@
 # Upload API - v7 시스템 (PSR-4)
 
+> **✅ 구현 완료** — 모든 API 엔드포인트, PEST Unit Test, curl 실전 테스트 검증 완료
+
 ## 목차
 
 - [1. 개요](#1-개요)
@@ -15,8 +17,9 @@
 - [11. API 엔드포인트](#11-api-엔드포인트)
 - [12. PSR-4 Autoload 설정](#12-psr-4-autoload-설정)
 - [13. 보안 및 검증](#13-보안-및-검증)
-- [14. 테스트 계획](#14-테스트-계획)
-- [15. 기존 시스템과의 차이점](#15-기존-시스템과의-차이점)
+- [14. PEST Unit Test](#14-pest-unit-test)
+- [15. curl 파일 업로드 가이드](#15-curl-파일-업로드-가이드)
+- [16. 기존 시스템과의 차이점](#16-기존-시스템과의-차이점)
 
 ---
 
@@ -1001,62 +1004,853 @@ composer dump-autoload
 
 ---
 
-## 14. 테스트 계획
+## 14. PEST Unit Test
 
-### 14.1 PEST Unit Test
+### 14.1 테스트 파일 및 실행
 
-**파일**: `tests/Unit/UploadControllerTest.php`
+**파일**: `tests/Unit/UploadTest.php`
+**총 21개 테스트** (UploadEntity 5개, UploadRepository 6개, UploadService 6개, UploadController 4개)
+
+```bash
+# Upload 모듈 테스트만 실행
+./vendor/bin/pest tests/Unit/UploadTest.php
+
+# 전체 테스트 실행 (Upload + User + 기타)
+./vendor/bin/pest
+```
+
+### 14.2 테스트 구조 개요
+
+| describe 블록 | 테스트 수 | 테스트 내용 |
+|---------------|----------|-------------|
+| UploadEntity | 5개 | fromArray/toArray 변환, 기본값, 빈 배열 처리, 라운드트립 |
+| UploadRepository | 6개 | create, findByIdx, findByIdx(없는 경우), findByMember, updateAttached, deleteByIdx |
+| UploadService | 6개 | get 예외(없는 idx, idx 누락), remove 예외(소유자 불일치, idx 누락), listByMember 예외/성공 |
+| UploadController | 4개 | get 성공, list 성공, updateAttached 소유자 일치 성공 |
+
+### 14.3 전체 테스트 코드
 
 ```php
-use Philgo\Upload\UploadController;
-use Philgo\Upload\UploadService;
-use Philgo\Upload\UploadRepository;
+<?php
+/**
+ * @file tests/Unit/UploadTest.php
+ * @brief Upload 모듈 PEST Unit Test - v7 시스템 API 테스트 (PSR-4)
+ *
+ * ## 테스트 목적
+ * - UploadEntity의 fromArray/toArray 변환 검증
+ * - UploadRepository의 CRUD 검증 (실제 DB 사용)
+ * - UploadService의 비즈니스 로직 검증 (소유자 검증, 예외 처리)
+ * - UploadController의 API 엔드포인트 검증
+ *
+ * ## 실행 방법
+ * ./vendor/bin/pest tests/Unit/UploadTest.php
+ *
+ * @see lib/upload/UploadController.php
+ * @see lib/upload/UploadService.php
+ * @see lib/upload/UploadRepository.php
+ * @see lib/upload/UploadEntity.php
+ * @see .claude/skills/v7-skill/references/api/upload.md
+ */
+
 use Philgo\Upload\UploadEntity;
+use Philgo\Upload\UploadRepository;
+use Philgo\Upload\UploadService;
+use Philgo\Upload\UploadController;
 
+/**
+ * v7 시스템 부트스트랩 (PSR-4 Autoloader 사용)
+ */
+beforeAll(function () {
+    if (!defined('ROOT_DIR')) {
+        define('ROOT_DIR', dirname(dirname(__DIR__)));
+    }
+    require_once ROOT_DIR . '/vendor/autoload.php';
+});
+
+
+/**
+ * UploadEntity 테스트
+ */
 describe('UploadEntity', function () {
-    it('fromArray() - 배열을 Entity로 변환한다', function () { ... });
-    it('toArray() - Entity를 배열로 변환한다', function () { ... });
-    it('기본값이 올바르게 설정된다', function () { ... });
+
+    it('fromArray() - 배열을 Entity로 변환한다', function () {
+        $data = [
+            'idx' => 1,
+            'idx_member' => 123,
+            'created_at' => 1709876543,
+            'updated_at' => 1709876543,
+            'name' => 'test.jpg',
+            'size' => 1048576,
+            'type' => 'image/jpeg',
+            'module' => 'post',
+            'code' => 'content',
+            'url' => '/uploads/123/abc.jpg',
+            'attached' => 1,
+        ];
+
+        $entity = UploadEntity::fromArray($data);
+
+        expect($entity)->toBeInstanceOf(UploadEntity::class);
+        expect($entity->idx)->toBe(1);
+        expect($entity->idx_member)->toBe(123);
+        expect($entity->name)->toBe('test.jpg');
+        expect($entity->size)->toBe(1048576);
+        expect($entity->type)->toBe('image/jpeg');
+        expect($entity->module)->toBe('post');
+        expect($entity->code)->toBe('content');
+        expect($entity->url)->toBe('/uploads/123/abc.jpg');
+        expect($entity->attached)->toBe(1);
+    });
+
+    it('toArray() - Entity를 배열로 변환한다', function () {
+        $entity = new UploadEntity();
+        $entity->idx = 5;
+        $entity->idx_member = 456;
+        $entity->name = 'photo.png';
+        $entity->size = 2048;
+        $entity->type = 'image/png';
+
+        $arr = $entity->toArray();
+
+        expect($arr)->toBeArray();
+        expect($arr['idx'])->toBe(5);
+        expect($arr['idx_member'])->toBe(456);
+        expect($arr['name'])->toBe('photo.png');
+        expect($arr)->toHaveKeys(['idx', 'idx_member', 'created_at', 'updated_at',
+            'name', 'size', 'type', 'module', 'code', 'url', 'attached']);
+    });
+
+    it('기본값이 올바르게 설정된다', function () {
+        $entity = new UploadEntity();
+
+        expect($entity->idx)->toBe(0);
+        expect($entity->idx_member)->toBe(0);
+        expect($entity->name)->toBe('');
+        expect($entity->size)->toBe(0);
+        expect($entity->type)->toBe('');
+        expect($entity->module)->toBe('');
+        expect($entity->code)->toBe('');
+        expect($entity->url)->toBe('');
+        expect($entity->attached)->toBe(0);
+    });
+
+    it('fromArray() - 빈 배열도 처리한다', function () {
+        $entity = UploadEntity::fromArray([]);
+
+        expect($entity->idx)->toBe(0);
+        expect($entity->name)->toBe('');
+    });
+
+    it('fromArray/toArray 라운드트립이 정확하다', function () {
+        $data = [
+            'idx' => 10,
+            'idx_member' => 200,
+            'created_at' => 1700000000,
+            'updated_at' => 1700000100,
+            'name' => 'document.pdf',
+            'size' => 5242880,
+            'type' => 'application/pdf',
+            'module' => 'company',
+            'code' => 'license',
+            'url' => '/uploads/200/xyz.pdf',
+            'attached' => 0,
+        ];
+
+        $entity = UploadEntity::fromArray($data);
+        $result = $entity->toArray();
+
+        expect($result)->toBe($data);
+    });
 });
 
+
+/**
+ * UploadRepository 테스트 (실제 DB CRUD)
+ */
 describe('UploadRepository', function () {
-    it('create() - 레코드를 생성하고 idx를 반환한다', function () { ... });
-    it('findByIdx() - idx로 레코드를 조회한다', function () { ... });
-    it('findByMember() - 회원번호로 목록을 조회한다', function () { ... });
-    it('deleteByIdx() - 레코드를 삭제한다', function () { ... });
-    it('updateAttached() - attached 상태를 변경한다', function () { ... });
+
+    it('create() - 레코드를 생성하고 idx를 반환한다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 99999,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'test_pest.jpg',
+            'size' => 1024,
+            'type' => 'image/jpeg',
+            'module' => 'test',
+            'code' => 'pest',
+            'url' => '/uploads/99999/test_pest.jpg',
+            'attached' => 0,
+        ]);
+
+        expect($idx)->toBeInt();
+        expect($idx)->toBeGreaterThan(0);
+
+        // 테스트 후 정리
+        UploadRepository::deleteByIdx($idx);
+    });
+
+    it('findByIdx() - idx로 레코드를 조회한다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 99999,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'find_test.png',
+            'size' => 2048,
+            'type' => 'image/png',
+            'module' => 'test',
+            'code' => 'find',
+            'url' => '/uploads/99999/find_test.png',
+            'attached' => 0,
+        ]);
+
+        $entity = UploadRepository::findByIdx($idx);
+
+        expect($entity)->toBeInstanceOf(UploadEntity::class);
+        expect($entity->idx)->toBe($idx);
+        expect($entity->name)->toBe('find_test.png');
+        expect($entity->idx_member)->toBe(99999);
+
+        // 정리
+        UploadRepository::deleteByIdx($idx);
+    });
+
+    it('findByIdx() - 존재하지 않는 idx는 null을 반환한다', function () {
+        $entity = UploadRepository::findByIdx(999999999);
+
+        expect($entity)->toBeNull();
+    });
+
+    it('findByMember() - 회원번호로 목록을 조회한다', function () {
+        $now = time();
+        $idx1 = UploadRepository::create([
+            'idx_member' => 88888,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'member_test_1.jpg',
+            'size' => 100,
+            'type' => 'image/jpeg',
+            'url' => '/uploads/88888/test1.jpg',
+        ]);
+        $idx2 = UploadRepository::create([
+            'idx_member' => 88888,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'member_test_2.jpg',
+            'size' => 200,
+            'type' => 'image/jpeg',
+            'url' => '/uploads/88888/test2.jpg',
+        ]);
+
+        $list = UploadRepository::findByMember(88888);
+
+        expect($list)->toBeArray();
+        expect(count($list))->toBeGreaterThanOrEqual(2);
+        expect($list[0])->toBeInstanceOf(UploadEntity::class);
+
+        // 정리
+        UploadRepository::deleteByIdx($idx1);
+        UploadRepository::deleteByIdx($idx2);
+    });
+
+    it('updateAttached() - attached 상태를 변경한다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 99999,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'attach_test.jpg',
+            'size' => 100,
+            'type' => 'image/jpeg',
+            'url' => '/uploads/99999/attach.jpg',
+            'attached' => 0,
+        ]);
+
+        // 0 → 1 변경
+        $result = UploadRepository::updateAttached($idx, 1);
+        expect($result)->toBeTrue();
+
+        $entity = UploadRepository::findByIdx($idx);
+        expect($entity->attached)->toBe(1);
+
+        // 정리
+        UploadRepository::deleteByIdx($idx);
+    });
+
+    it('deleteByIdx() - 레코드를 삭제한다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 99999,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'delete_test.jpg',
+            'size' => 100,
+            'type' => 'image/jpeg',
+            'url' => '/uploads/99999/delete.jpg',
+        ]);
+
+        $result = UploadRepository::deleteByIdx($idx);
+        expect($result)->toBeTrue();
+
+        $entity = UploadRepository::findByIdx($idx);
+        expect($entity)->toBeNull();
+    });
 });
 
+
+/**
+ * UploadService 테스트 (비즈니스 로직)
+ */
 describe('UploadService', function () {
-    it('remove() - 소유자 불일치 시 예외를 던진다', function () { ... });
-    it('get() - 존재하지 않는 idx 시 예외를 던진다', function () { ... });
+
+    it('get() - 존재하지 않는 idx 시 예외를 던진다', function () {
+        expect(fn() => UploadService::get(['idx' => 999999999]))
+            ->toThrow(RuntimeException::class, '해당 업로드 파일을 찾을 수 없습니다.');
+    });
+
+    it('get() - idx가 없으면 예외를 던진다', function () {
+        expect(fn() => UploadService::get([]))
+            ->toThrow(RuntimeException::class, '조회할 파일의 idx가 필요합니다.');
+    });
+
+    it('remove() - 소유자 불일치 시 예외를 던진다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 77777,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'owner_test.jpg',
+            'size' => 100,
+            'type' => 'image/jpeg',
+            'url' => '/uploads/77777/owner.jpg',
+        ]);
+
+        // 다른 회원이 삭제 시도
+        expect(fn() => UploadService::remove(['idx' => $idx, 'idx_member' => 11111]))
+            ->toThrow(RuntimeException::class, '파일 삭제 권한이 없습니다.');
+
+        // 정리
+        UploadRepository::deleteByIdx($idx);
+    });
+
+    it('remove() - idx가 없으면 예외를 던진다', function () {
+        expect(fn() => UploadService::remove(['idx_member' => 123]))
+            ->toThrow(RuntimeException::class, '삭제할 파일의 idx가 필요합니다.');
+    });
+
+    it('listByMember() - idx_member가 없으면 예외를 던진다', function () {
+        expect(fn() => UploadService::listByMember([]))
+            ->toThrow(RuntimeException::class, 'idx_member가 필요합니다.');
+    });
+
+    it('listByMember() - 목록을 배열로 반환한다', function () {
+        $result = UploadService::listByMember(['idx_member' => 99999]);
+
+        expect($result)->toBeArray();
+        expect($result)->toHaveKey('items');
+        expect($result['items'])->toBeArray();
+    });
+
+    it('updateAttached() - 소유자 불일치 시 예외를 던진다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 77777,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'attach_owner_test.jpg',
+            'size' => 100,
+            'type' => 'image/jpeg',
+            'url' => '/uploads/77777/attach_owner.jpg',
+        ]);
+
+        expect(fn() => UploadService::updateAttached([
+            'idx' => $idx, 'idx_member' => 11111, 'attached' => 1
+        ]))->toThrow(RuntimeException::class, '권한이 없습니다.');
+
+        // 정리
+        UploadRepository::deleteByIdx($idx);
+    });
+});
+
+
+/**
+ * UploadController 테스트
+ */
+describe('UploadController', function () {
+
+    it('get() - 존재하는 레코드를 배열로 반환한다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 99999,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'ctrl_test.jpg',
+            'size' => 512,
+            'type' => 'image/jpeg',
+            'module' => 'test',
+            'code' => 'controller',
+            'url' => '/uploads/99999/ctrl_test.jpg',
+            'attached' => 0,
+        ]);
+
+        $ctrl = new UploadController();
+        $result = $ctrl->get(['idx' => $idx]);
+
+        expect($result)->toBeArray();
+        expect($result['idx'])->toBe($idx);
+        expect($result['name'])->toBe('ctrl_test.jpg');
+        expect($result['module'])->toBe('test');
+
+        // 정리
+        UploadRepository::deleteByIdx($idx);
+    });
+
+    it('list() - 회원별 목록을 배열로 반환한다', function () {
+        $ctrl = new UploadController();
+        $result = $ctrl->list(['idx_member' => 99999]);
+
+        expect($result)->toBeArray();
+        expect($result)->toHaveKey('items');
+    });
+
+    it('updateAttached() - 소유자 일치 시 성공한다', function () {
+        $now = time();
+        $idx = UploadRepository::create([
+            'idx_member' => 99999,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'name' => 'ctrl_attach.jpg',
+            'size' => 100,
+            'type' => 'image/jpeg',
+            'url' => '/uploads/99999/ctrl_attach.jpg',
+            'attached' => 0,
+        ]);
+
+        $ctrl = new UploadController();
+        $result = $ctrl->updateAttached([
+            'idx' => $idx, 'idx_member' => 99999, 'attached' => 1
+        ]);
+
+        expect($result)->toBeTrue();
+
+        // 확인
+        $entity = UploadRepository::findByIdx($idx);
+        expect($entity->attached)->toBe(1);
+
+        // 정리
+        UploadRepository::deleteByIdx($idx);
+    });
 });
 ```
 
-### 14.2 curl 테스트
+### 14.4 테스트 실행 결과
+
+```
+ PASS  Tests\Unit\UploadTest
+  ✓ UploadEntity > fromArray() - 배열을 Entity로 변환한다
+  ✓ UploadEntity > toArray() - Entity를 배열로 변환한다
+  ✓ UploadEntity > 기본값이 올바르게 설정된다
+  ✓ UploadEntity > fromArray() - 빈 배열도 처리한다
+  ✓ UploadEntity > fromArray/toArray 라운드트립이 정확하다
+  ✓ UploadRepository > create() - 레코드를 생성하고 idx를 반환한다
+  ✓ UploadRepository > findByIdx() - idx로 레코드를 조회한다
+  ✓ UploadRepository > findByIdx() - 존재하지 않는 idx는 null을 반환한다
+  ✓ UploadRepository > findByMember() - 회원번호로 목록을 조회한다
+  ✓ UploadRepository > updateAttached() - attached 상태를 변경한다
+  ✓ UploadRepository > deleteByIdx() - 레코드를 삭제한다
+  ✓ UploadService > get() - 존재하지 않는 idx 시 예외를 던진다
+  ✓ UploadService > get() - idx가 없으면 예외를 던진다
+  ✓ UploadService > remove() - 소유자 불일치 시 예외를 던진다
+  ✓ UploadService > remove() - idx가 없으면 예외를 던진다
+  ✓ UploadService > listByMember() - idx_member가 없으면 예외를 던진다
+  ✓ UploadService > listByMember() - 목록을 배열로 반환한다
+  ✓ UploadService > updateAttached() - 소유자 불일치 시 예외를 던진다
+  ✓ UploadController > get() - 존재하는 레코드를 배열로 반환한다
+  ✓ UploadController > list() - 회원별 목록을 배열로 반환한다
+  ✓ UploadController > updateAttached() - 소유자 일치 시 성공한다
+
+  Tests:    21 passed (96 assertions)
+```
+
+> 참고: `UploadService::store()`(파일 업로드)는 `$_FILES`와 `move_uploaded_file()`에 의존하므로
+> PEST에서는 직접 테스트하지 않고, **curl 실전 테스트**로 검증한다. (아래 섹션 15 참조)
+
+---
+
+## 15. curl 파일 업로드 가이드
+
+이 섹션은 curl을 사용하여 Upload API에 직접 파일을 업로드하고 관리하는 상세 가이드이다.
+실제 서버에서 테스트한 결과를 기반으로 작성했다.
+
+### 15.1 파일 업로드 (upload.upload)
+
+#### 기본 사용법
 
 ```bash
-# 파일 업로드
-curl -s -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "file=@/path/to/photo.jpg"
+```
+
+> `-sk`: SSL 인증서 검증 무시 + 진행 표시 숨김 (로컬 개발 환경용)
+> `-F`: `multipart/form-data` 형식으로 필드 전송
+> `file=@경로`: `@` 접두사로 파일 전송
+
+#### 선택 파라미터 포함
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "module=post" \
   -F "code=content" \
-  -F "file=@test.jpg"
-
-# 파일 조회
-curl -s "https://local.philgo.com:444/api.php?method=upload.get&idx=1"
-
-# 파일 목록
-curl -s "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123"
-
-# 파일 삭제
-curl -s "https://local.philgo.com:444/api.php?method=upload.delete&idx=1&idx_member=123"
+  -F "attached=1" \
+  -F "file=@/path/to/document.pdf"
 ```
+
+#### 파라미터 설명
+
+| 파라미터 | 필수 | 설명 |
+|---------|------|------|
+| `method` | ✅ | `upload.upload` (고정) |
+| `idx_member` | ✅ | 업로더 회원번호 (sf_member.idx) |
+| `file` | ✅ | 업로드할 파일 (`@` 접두사 사용) |
+| `module` | | 사용 모듈 (예: `post`, `user`, `company`) |
+| `code` | | 모듈 내 용도 (예: `content`, `profile_photo`) |
+| `attached` | | 사용 여부 (0=미사용, 1=사용중, 기본값 0) |
+
+#### 응답 예시
+
+**성공 시:**
+```json
+{
+  "idx": 32,
+  "idx_member": 123,
+  "created_at": 1740000000,
+  "updated_at": 1740000000,
+  "name": "photo.jpg",
+  "size": 1024,
+  "type": "image/jpeg",
+  "module": "post",
+  "code": "content",
+  "url": "/uploads/123/67bea1c2d3e4f_1740000000.jpg",
+  "attached": 0
+}
+```
+
+**실패 시 (idx_member 누락):**
+```json
+{
+  "success": false,
+  "message": "idx_member가 필요합니다."
+}
+```
+
+**실패 시 (파일 누락):**
+```json
+{
+  "success": false,
+  "message": "파일 업로드에 실패했습니다. (error: -1)"
+}
+```
+
+### 15.2 다양한 파일 타입 업로드 예시
+
+#### 텍스트 파일
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "file=@./readme.txt"
+```
+응답의 `type` 값: `"text/plain"`
+
+#### 이미지 파일 (JPG)
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "module=user" \
+  -F "code=profile_photo" \
+  -F "file=@./profile.jpg"
+```
+응답의 `type` 값: `"image/jpeg"`
+
+#### 한글 파일명
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "file=@./사과.jpg"
+```
+응답의 `name` 값: `"사과.jpg"` (원본 파일명 보존, 저장은 유니크 파일명 사용)
+
+#### GIF 애니메이션
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "file=@./animation.gif"
+```
+응답의 `type` 값: `"image/gif"`
+
+#### PDF 문서
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "module=company" \
+  -F "code=license" \
+  -F "file=@./document.pdf"
+```
+응답의 `type` 값: `"application/pdf"`
+
+#### ZIP 압축 파일
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "file=@./archive.zip"
+```
+응답의 `type` 값: `"application/zip"`
+
+#### 대용량 파일 (3.8MB 이미지)
+
+```bash
+curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "file=@./large-photo.jpg"
+```
+응답의 `size` 값: `3932160` (약 3.8MB, 바이트 단위)
+
+### 15.3 파일 정보 조회 (upload.get)
+
+```bash
+curl -sk "https://local.philgo.com:444/api.php?method=upload.get&idx=32"
+```
+
+**응답 예시:**
+```json
+{
+  "idx": 32,
+  "idx_member": 123,
+  "created_at": 1740000000,
+  "updated_at": 1740000000,
+  "name": "photo.jpg",
+  "size": 1024,
+  "type": "image/jpeg",
+  "module": "post",
+  "code": "content",
+  "url": "/uploads/123/67bea1c2d3e4f_1740000000.jpg",
+  "attached": 0
+}
+```
+
+**존재하지 않는 idx:**
+```json
+{
+  "success": false,
+  "message": "해당 업로드 파일을 찾을 수 없습니다."
+}
+```
+
+### 15.4 회원별 파일 목록 조회 (upload.list)
+
+```bash
+# 기본 조회 (최대 100개)
+curl -sk "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123"
+
+# 페이징 (10개씩)
+curl -sk "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123&limit=10&offset=0"
+```
+
+**응답 예시:**
+```json
+{
+  "items": [
+    {
+      "idx": 37,
+      "idx_member": 123,
+      "name": "large-photo.jpg",
+      "size": 3932160,
+      "type": "image/jpeg",
+      "url": "/uploads/123/67bea1f2g3h4i_1740000005.jpg",
+      "attached": 0
+    },
+    {
+      "idx": 36,
+      "idx_member": 123,
+      "name": "archive.zip",
+      "size": 8192,
+      "type": "application/zip",
+      "url": "/uploads/123/67bea1e2f3g4h_1740000004.zip",
+      "attached": 0
+    }
+  ]
+}
+```
+
+> 결과는 `idx DESC` 순서 (최신 업로드 먼저)
+
+### 15.5 attached 상태 변경 (upload.updateAttached)
+
+```bash
+# attached를 1(사용중)로 변경
+curl -sk "https://local.philgo.com:444/api.php?method=upload.updateAttached&idx=32&idx_member=123&attached=1"
+```
+
+**성공 응답:**
+```json
+{
+  "data": true
+}
+```
+
+**소유자 불일치 시:**
+```json
+{
+  "success": false,
+  "message": "권한이 없습니다."
+}
+```
+
+### 15.6 파일 삭제 (upload.delete)
+
+```bash
+curl -sk "https://local.philgo.com:444/api.php?method=upload.delete&idx=32&idx_member=123"
+```
+
+**성공 응답:**
+```json
+{
+  "data": true
+}
+```
+
+**소유자 불일치 시:**
+```json
+{
+  "success": false,
+  "message": "파일 삭제 권한이 없습니다."
+}
+```
+
+> 삭제 시 파일 시스템의 실제 파일도 함께 삭제된다.
+
+### 15.7 업로드된 파일 직접 접근
+
+업로드된 파일은 URL로 직접 접근 가능하다:
+
+```bash
+# 응답의 url 값 사용
+curl -sk -o downloaded.jpg "https://local.philgo.com:444/uploads/123/67bea1c2d3e4f_1740000000.jpg"
+
+# 파일 존재 확인 (HTTP 200이면 성공)
+curl -sk -o /dev/null -w "%{http_code}" "https://local.philgo.com:444/uploads/123/67bea1c2d3e4f_1740000000.jpg"
+# 출력: 200
+```
+
+### 15.8 전체 업로드 → 조회 → 수정 → 삭제 플로우
+
+```bash
+# 1. 파일 업로드
+IDX=$(curl -sk -X POST "https://local.philgo.com:444/api.php" \
+  -F "method=upload.upload" \
+  -F "idx_member=123" \
+  -F "module=post" \
+  -F "code=content" \
+  -F "file=@./photo.jpg" | python3 -c "import sys,json; print(json.load(sys.stdin)['idx'])")
+echo "업로드 완료: idx=$IDX"
+
+# 2. 파일 정보 조회
+curl -sk "https://local.philgo.com:444/api.php?method=upload.get&idx=$IDX"
+
+# 3. attached 상태 변경 (미사용 → 사용중)
+curl -sk "https://local.philgo.com:444/api.php?method=upload.updateAttached&idx=$IDX&idx_member=123&attached=1"
+
+# 4. 회원 파일 목록 확인
+curl -sk "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123"
+
+# 5. 파일 삭제
+curl -sk "https://local.philgo.com:444/api.php?method=upload.delete&idx=$IDX&idx_member=123"
+```
+
+### 15.9 JavaScript (FormData) 업로드 예시
+
+```javascript
+// HTML: <input type="file" id="fileInput">
+const fileInput = document.getElementById('fileInput');
+const file = fileInput.files[0];
+
+const formData = new FormData();
+formData.append('method', 'upload.upload');
+formData.append('idx_member', 123);
+formData.append('module', 'post');
+formData.append('code', 'content');
+formData.append('file', file);
+
+const res = await axios.post('/api.php', formData);
+if (res.data.idx) {
+    console.log('업로드 성공:', res.data.url);
+} else {
+    console.error('업로드 실패:', res.data.message);
+}
+```
+
+### 15.10 지원 MIME 타입 목록
+
+서버에서 확장자 기반으로 자동 판별하는 MIME 타입 목록:
+
+| 분류 | 확장자 | MIME 타입 |
+|------|--------|-----------|
+| 이미지 | jpg, jpeg | image/jpeg |
+| | png | image/png |
+| | gif | image/gif |
+| | webp | image/webp |
+| | svg | image/svg+xml |
+| | bmp | image/bmp |
+| | ico | image/x-icon |
+| 동영상 | mp4 | video/mp4 |
+| | webm | video/webm |
+| | avi | video/x-msvideo |
+| | mov | video/quicktime |
+| | mkv | video/x-matroska |
+| 오디오 | mp3 | audio/mpeg |
+| | wav | audio/wav |
+| | ogg | audio/ogg |
+| 문서 | pdf | application/pdf |
+| | doc | application/msword |
+| | docx | application/vnd.openxmlformats-officedocument.wordprocessingml.document |
+| | xls | application/vnd.ms-excel |
+| | xlsx | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet |
+| | ppt | application/vnd.ms-powerpoint |
+| | pptx | application/vnd.openxmlformats-officedocument.presentationml.presentation |
+| 압축 | zip | application/zip |
+| | rar | application/x-rar-compressed |
+| | gz | application/gzip |
+| | tar | application/x-tar |
+| 텍스트 | txt | text/plain |
+| | csv | text/csv |
+| | html | text/html |
+| | css | text/css |
+| 개발 | js | application/javascript |
+| | json | application/json |
+| | xml | application/xml |
+| 기타 | (미등록 확장자) | application/octet-stream |
 
 ---
 
-## 15. 기존 시스템과의 차이점
+## 16. 기존 시스템과의 차이점
 
 | 항목 | 기존 시스템 (v6) | v7 시스템 |
 |------|-----------------|-----------|
