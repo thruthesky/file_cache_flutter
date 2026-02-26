@@ -8,13 +8,16 @@ Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모
 ### 영수증 진위 판별 API 상세 → [ai-receipt.md](ai-receipt.md)
 
 클라이언트(웹/앱)가 영수증 이미지를 업로드하면 Gemini AI가 진짜/가짜를 판별하는
-`ai.analyzeReceipt` API의 상세 사용법을 다룬다. `POST multipart/form-data`로
-`session_id` 또는 `id_token` 인증과 함께 영수증 이미지(`file`)를 전달하면,
-내부적으로 WebP 변환 및 1000px 썸네일을 생성하고 base64 인코딩 후
-`gemini-2.5-flash-lite` 모델에 6가지 검증 카테고리(물리적 특성, 폰트/레이아웃,
-금액/수치, 이미지 조작, 형식/일관성, 디지털 생성 패턴)로 진위를 판별한다.
-CoT/ToT 분석 기반 판별 로직, 클라이언트 통합 코드(JavaScript/Flutter), 에러 처리,
-CURL/PEST 테스트 가이드, 핵심 소스코드를 포함한다.
+`ai.analyzeReceipt` API의 상세 사용법을 다룬다. **필리핀에서 발행된 영수증만
+`is_authentic=true`로 인정하며**, 한국·미국·일본 등 타국 영수증은 무조건
+`is_authentic=false`로 거부하고 `suspicious_reasons`에 "필리핀 국가에서 발행한
+영수증이 아닙니다"를 추가한다. `POST multipart/form-data`로 `session_id` 또는
+`id_token` 인증과 함께 영수증 이미지(`file`)를 전달하면, 내부적으로 WebP 변환 및
+1000px 썸네일을 생성하고 base64 인코딩 후 `gemini-2.5-flash-lite` 모델에 필리핀
+발행 검증 + 6가지 검증 카테고리(물리적 특성, 폰트/레이아웃, 금액/수치, 이미지 조작,
+형식/일관성, 디지털 생성 패턴)로 진위를 판별한다. CoT/ToT 분석 기반 판별 로직,
+클라이언트 통합 코드(JavaScript/Flutter), 에러 처리, CURL/PEST 테스트 가이드,
+핵심 소스코드를 포함한다.
 
 ## 목차
 
@@ -572,11 +575,12 @@ public static function analyzeReceipt(array $input): ReceiptEntity
 
 `getReceiptAnalysisSystemPrompt()`의 핵심 설계 원칙:
 
-1. **기본 태도: "의심"** — 모든 영수증은 가짜로 간주하고 시작. 진짜임을 증명하는 근거를 찾는 방식.
-2. **6가지 검증 카테고리**: 물리적 특성(A), 폰트/레이아웃(B), 금액/수치(C), 이미지 조작(D), 형식/내용 일관성(E), 디지털 생성 패턴(F)
-3. **confidence_score 기준**: 90-100(확실 진짜), 70-89(진짜 가능성 높음), 50-69(불명확→가짜 판정), 30-49(가짜 가능성 높음), 0-29(명백한 위조)
-4. **is_authentic 판정**: confidence_score >= 70 AND 6가지 검증 모두 통과 시에만 true
-5. **suspicious_reasons 필수**: is_authentic=false일 때 반드시 1개 이상 구체적 이유 기재
+1. **필리핀 발행 필수**: 필리핀에서 발행된 영수증만 `is_authentic=true` 가능. 타국 영수증은 즉시 거부 (`confidence_score=0`, `suspicious_reasons`에 "필리핀 국가에서 발행한 영수증이 아닙니다" 추가).
+2. **기본 태도: "의심"** — 모든 영수증은 가짜로 간주하고 시작. 진짜임을 증명하는 근거를 찾는 방식.
+3. **6가지 검증 카테고리**: 물리적 특성(A), 폰트/레이아웃(B), 금액/수치(C), 이미지 조작(D), 형식/내용 일관성(E), 디지털 생성 패턴(F)
+4. **confidence_score 기준**: 90-100(확실 진짜), 70-89(진짜 가능성 높음), 50-69(불명확→가짜 판정), 30-49(가짜 가능성 높음), 0-29(명백한 위조)
+5. **is_authentic 판정**: 필리핀 발행 확인 AND confidence_score >= 70 AND 6가지 검증 모두 통과 시에만 true
+6. **suspicious_reasons 필수**: is_authentic=false일 때 반드시 1개 이상 구체적 이유 기재
 
 > 프롬프트 전문은 `lib/ai/AiService.php`의 `getReceiptAnalysisSystemPrompt()` 메서드를 참조한다.
 
@@ -828,7 +832,7 @@ it('analyzeReceipt() - 인증 후에도 파일 없으면 업로드 예외 발생
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "session_id=2278018daa75e0ab879d8791fb0e2b2d-190076" \
-  -F "file=@./tmp/sample-files/receipt.jpeg"
+  -F "file=@./tmp/sample-files/receipt-1.jpeg"
 ```
 
 #### 방법 2: Firebase ID Token으로 테스트
@@ -839,7 +843,7 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "id_token=eyJhbGciOiJSUzI1NiIs..." \
-  -F "file=@./tmp/sample-files/receipt.jpeg"
+  -F "file=@./tmp/sample-files/receipt-1.jpeg"
 ```
 
 #### 방법 3: 인증 없이 테스트 (에러 확인)
@@ -848,7 +852,7 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 # 인증 파라미터 없이 호출 → 에러 응답
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
-  -F "file=@./tmp/sample-files/receipt.jpeg"
+  -F "file=@./tmp/sample-files/receipt-1.jpeg"
 
 # 예상 응답:
 # {"success":false,"message":"로그인이 필요합니다. id_token 또는 session_id를 전달해주세요."}

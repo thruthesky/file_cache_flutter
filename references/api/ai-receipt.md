@@ -39,7 +39,8 @@
 | AI 모델 | `gemini-2.5-flash-lite-preview-09-2025` (경량 모델) |
 | 이미지 처리 | 업로드 → WebP 변환 → 1000px 썸네일 → base64 → Gemini API |
 | 진위 판별 원칙 | **"의심 우선"** — 모든 영수증을 가짜로 간주하고 시작 |
-| 판정 기준 | confidence_score >= 70 AND 6가지 검증 모두 통과 시에만 `is_authentic=true` |
+| 필리핀 발행 필수 | **필리핀에서 발행된 영수증만 `is_authentic=true` 가능** — 한국, 미국 등 타국 영수증은 무조건 거부 |
+| 판정 기준 | confidence_score >= 70 AND 6가지 검증 모두 통과 AND 필리핀 발행 확인 시에만 `is_authentic=true` |
 
 ### 왜 만들었는가?
 
@@ -65,7 +66,7 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "session_id=2278018daa75e0ab879d8791fb0e2b2d-190076" \
-  -F "file=@./tmp/sample-files/receipt.jpeg"
+  -F "file=@./tmp/sample-files/receipt-1.jpeg"
 ```
 
 ### Firebase ID Token 인증 (앱/웹 클라이언트용)
@@ -74,7 +75,7 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "id_token=eyJhbGciOiJSUzI1NiIs..." \
-  -F "file=@./tmp/sample-files/receipt.jpeg"
+  -F "file=@./tmp/sample-files/receipt-1.jpeg"
 ```
 
 ### JavaScript (웹 클라이언트)
@@ -196,31 +197,29 @@ Future<Map<String, dynamic>> analyzeReceipt(String filePath, String idToken) asy
 
 > 업로드된 이미지는 자동으로 **WebP 형식**으로 변환되고, **1000px 비율 유지 썸네일**이 생성된다. Gemini API에는 이 썸네일이 base64로 전달된다.
 
-### 성공 응답 (진짜 영수증)
+### 성공 응답 (필리핀 진짜 영수증)
 
 ```json
 {
   "is_receipt": true,
   "is_authentic": true,
-  "store_name": "global payments",
-  "date": "Feb 24, 26 20:27:25",
+  "store_name": "globalpayments (SONG JAEHO)",
+  "date": "Feb 24, 20 20:25",
   "total_amount": "PHP 816.96",
   "currency": "PHP",
-  "items": [
-    {"name": "SALE", "price": "816.96"}
-  ],
-  "payment_method": "Debit Card/UPI",
-  "receipt_type": "Card Payment Slip",
-  "summary": "PHP 816.96 결제가 Debit/UPI로 승인됨",
+  "items": [],
+  "payment_method": "Debit Card / UPI Debit",
+  "receipt_type": "Card Slip (Debit)",
+  "summary": "필리핀 Taguig에 위치한 가맹점에서 카드(Debit)로 PHP 816.96을 결제한 거래 승인 전표",
   "suspicious_reasons": [
-    "구매 항목이 'SALE' 하나로만 표시되어 있어 상세 내역 확인 불가"
+    "구매 항목 목록이 상세히 기록되지 않고 카드 승인 정보만 남아있는 전형적인 카드 매출 전표 형식 (위조 의심 요소 아님)"
   ],
-  "confidence_score": 85,
-  "upload_idx": 88
+  "confidence_score": 95,
+  "upload_idx": 107
 }
 ```
 
-### 성공 응답 (가짜 영수증)
+### 성공 응답 (비필리핀 영수증 — 자동 거부)
 
 ```json
 {
@@ -231,18 +230,18 @@ Future<Map<String, dynamic>> analyzeReceipt(String filePath, String idToken) asy
   "total_amount": "3,800 원",
   "currency": "KRW",
   "items": [
-    {"name": "1 종", "price": "3,800 원"}
+    {"name": "1종", "price": "3,800"}
   ],
   "payment_method": "카드",
-  "receipt_type": "하이패스 영수증",
-  "summary": "한국도로공사 동창원영업소에서 통행료 3,800원 카드 결제",
+  "receipt_type": "하이패스 영수증 (한국도로공사)",
+  "summary": "한국도로공사 동창원영업소에서 3,800원(카드)으로 하이패스 통행료를 지불한 영수증",
   "suspicious_reasons": [
-    "날짜 정보가 '20XX년 XX월 XX일'로 비식별 처리됨",
-    "폰트, 레이아웃이 지나치게 깔끔하여 디지털 생성 가능성 의심",
-    "카드 번호에 인위적 마스킹/강조 표시(노란색/청록색)가 있음"
+    "필리핀 국가에서 발행한 영수증이 아닙니다",
+    "거래 날짜(20XX년 XX월 XX일) 정보가 구체적이지 않고 마스킹되어 있습니다.",
+    "이미지가 디지털 생성 또는 편집된 것으로 보이는 매우 깔끔한 폰트와 레이아웃입니다."
   ],
-  "confidence_score": 25,
-  "upload_idx": 89
+  "confidence_score": 0,
+  "upload_idx": 108
 }
 ```
 
@@ -277,8 +276,14 @@ Future<Map<String, dynamic>> analyzeReceipt(String filePath, String idToken) asy
     │
     ▼
 [1단계] 이미지가 영수증인가?
-    ├─ YES → 2단계로 진행
+    ├─ YES → 1.5단계로 진행
     └─ NO  → is_receipt=false, 나머지 기본값 반환, RuntimeException throw
+    │
+    ▼
+[1.5단계] 필리핀 발행 영수증인가?
+    ├─ YES (PHP/₱ 통화, 필리핀 주소/지명, BIR 번호 등) → 2단계로 진행
+    └─ NO  → is_authentic=false, confidence_score=0,
+             suspicious_reasons에 "필리핀 국가에서 발행한 영수증이 아닙니다" 추가
     │
     ▼
 [2단계] 6가지 검증 카테고리 순차 점검
@@ -370,13 +375,15 @@ Future<Map<String, dynamic>> analyzeReceipt(String filePath, String idToken) asy
 ### is_authentic 최종 판정 기준
 
 ```
-is_authentic = true 조건:
+is_authentic = true 조건 (모두 충족해야 함):
+  ✅ 필리핀에서 발행된 영수증 (PHP/₱ 통화, 필리핀 주소, BIR 번호 등)
   ✅ confidence_score >= 70
   ✅ A~F 6가지 검증 항목 모두 통과
   ✅ 편집/조작 흔적 없음
   ✅ 금액 산술 검증 통과
 
 is_authentic = false 조건 (하나라도 해당):
+  ❌ 필리핀이 아닌 국가에서 발행된 영수증 (→ confidence_score=0, suspicious_reasons에 "필리핀 국가에서 발행한 영수증이 아닙니다" 추가)
   ❌ confidence_score < 70
   ❌ A~F 중 하나라도 실패
   ❌ 화면 캡처/스크린샷/디지털 생성
@@ -506,11 +513,12 @@ AiController → $entity->toArray() → JSON 응답
 
 ### 설계 원칙
 
-1. **기본 태도: "의심"** — 모든 영수증을 가짜로 간주하고 시작. 진짜임을 증명하는 근거를 찾는 방식.
-2. **6가지 검증 카테고리**: 물리적 특성(A), 폰트/레이아웃(B), 금액/수치(C), 이미지 조작(D), 형식/내용 일관성(E), 디지털 생성 패턴(F)
-3. **즉시 실패 조건**: 각 카테고리에 🔴로 표시된 즉시 실패 조건이 있으며, 해당 시 무조건 `is_authentic=false`
-4. **confidence_score 기준**: 70점 이상이어야 `is_authentic=true` 가능
-5. **suspicious_reasons 필수**: `is_authentic=false`일 때 반드시 1개 이상 구체적 이유 기재
+1. **필리핀 발행 필수**: 필리핀에서 발행된 영수증만 `is_authentic=true` 가능. 타국 영수증은 즉시 `is_authentic=false`, `confidence_score=0`, `suspicious_reasons`에 "필리핀 국가에서 발행한 영수증이 아닙니다" 추가.
+2. **기본 태도: "의심"** — 모든 영수증을 가짜로 간주하고 시작. 진짜임을 증명하는 근거를 찾는 방식.
+3. **6가지 검증 카테고리**: 물리적 특성(A), 폰트/레이아웃(B), 금액/수치(C), 이미지 조작(D), 형식/내용 일관성(E), 디지털 생성 패턴(F)
+4. **즉시 실패 조건**: 각 카테고리에 🔴로 표시된 즉시 실패 조건이 있으며, 해당 시 무조건 `is_authentic=false`
+5. **confidence_score 기준**: 70점 이상이어야 `is_authentic=true` 가능
+6. **suspicious_reasons 필수**: `is_authentic=false`일 때 반드시 1개 이상 구체적 이유 기재
 
 ### 프롬프트 핵심 구조
 
@@ -520,6 +528,10 @@ AiController → $entity->toArray() → JSON 응답
 
 [1단계] 영수증 여부 판별
   → is_receipt (true/false)
+
+[1.5단계] 필리핀 발행 영수증 필수 검증
+  → 필리핀 발행 아니면: is_authentic=false, confidence_score=0,
+    suspicious_reasons에 "필리핀 국가에서 발행한 영수증이 아닙니다" 추가
 
 [2단계] 진위 여부 판별 — 6가지 검증 카테고리
   A. 물리적 특성 (프린터 출력 여부)
@@ -711,26 +723,44 @@ API 테스트 시 [v7-accounts.md](../v7-accounts.md) 문서의 테스트 계정
 
 ### CURL 테스트
 
-#### 진짜 영수증 테스트
+#### 필리핀 진짜 영수증 테스트
 
 ```bash
+# receipt-1.jpeg: 필리핀 카드 결제 영수증 (PHP 816.96)
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "session_id=2278018daa75e0ab879d8791fb0e2b2d-190076" \
-  -F "file=@./tmp/sample-files/receipt.jpeg"
+  -F "file=@./tmp/sample-files/receipt-1.jpeg"
+
+# 예상: is_receipt=true, is_authentic=true, confidence_score >= 70
+
+# receipt-4.jpeg: 필리핀 SM Cinema 영수증 (PHP 202.00)
+curl -k -X POST "https://local.philgo.com/api.php" \
+  -F "method=ai.analyzeReceipt" \
+  -F "session_id=2278018daa75e0ab879d8791fb0e2b2d-190076" \
+  -F "file=@./tmp/sample-files/receipt-4.jpeg"
 
 # 예상: is_receipt=true, is_authentic=true, confidence_score >= 70
 ```
 
-#### 가짜 영수증 테스트
+#### 비필리핀 영수증 테스트 (자동 거부)
 
 ```bash
+# receipt-2.jpeg: 한국 하이패스 영수증 (가짜, KRW)
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "session_id=2278018daa75e0ab879d8791fb0e2b2d-190076" \
   -F "file=@./tmp/sample-files/receipt-2.jpeg"
 
-# 예상: is_receipt=true, is_authentic=false, confidence_score < 70
+# 예상: is_authentic=false, confidence_score=0, "필리핀 국가에서 발행한 영수증이 아닙니다"
+
+# receipt-3.jpeg: 한국 카드 매출전표 (진짜이지만 비필리핀)
+curl -k -X POST "https://local.philgo.com/api.php" \
+  -F "method=ai.analyzeReceipt" \
+  -F "session_id=2278018daa75e0ab879d8791fb0e2b2d-190076" \
+  -F "file=@./tmp/sample-files/receipt-3.jpeg"
+
+# 예상: is_authentic=false, confidence_score=0~10, "필리핀 국가에서 발행한 영수증이 아닙니다"
 ```
 
 #### 인증 없이 테스트 (에러 확인)
@@ -738,7 +768,7 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 ```bash
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
-  -F "file=@./tmp/sample-files/receipt.jpeg"
+  -F "file=@./tmp/sample-files/receipt-1.jpeg"
 
 # 예상: {"success":false,"message":"로그인이 필요합니다. id_token 또는 session_id를 전달해주세요."}
 ```
