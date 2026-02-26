@@ -176,7 +176,9 @@ class SingleChatRoomHeader extends StatelessWidget {
                                     isPinned
                                         ? FontAwesomeIcons.lightThumbtack
                                         : FontAwesomeIcons.solidThumbtack,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                   title: isPinned
                                       ? PhilgoTr.of(context)!.unpin
@@ -248,6 +250,21 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 showBlockDialog(parentContext);
                               },
                             ),
+                            const SizedBox(height: 8),
+
+                            /// Leave room menu item
+                            _buildComicMenuItem(
+                              context: context,
+                              icon: FaIcon(
+                                FontAwesomeIcons.lightArrowRightFromBracket,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              title: PhilgoTr.of(context)!.leave_room,
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                showLeaveConfirmDialog(parentContext);
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -276,29 +293,190 @@ class SingleChatRoomHeader extends StatelessWidget {
   }
 
   /// Show confirmation dialog for leaving room
+  /// Returns 'leave' or 'block_and_leave' as the user's choice.
+  /// Comic design applied - 2.0px border, rounded corners, no shadow
   void showLeaveConfirmDialog(BuildContext parentContext) async {
-    bool confirm = await showDialog(
+    final theme = Theme.of(parentContext);
+    final colorScheme = theme.colorScheme;
+
+    // Returns null (dismissed), 'leave', or 'block_and_leave'
+    final String? action = await showDialog<String>(
       context: parentContext,
-      builder: (context) => AlertDialog(
-        title: Text(PhilgoTr.of(context)!.leave_room),
-        content: Text(PhilgoTr.of(context)!.leave_room_confirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(PhilgoTr.of(context)!.cancel),
+      builder: (context) => Dialog(
+        // Comic design: no shadow
+        elevation: 0,
+        // Comic design: rounded corners (borderRadius: 12)
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        // Remove default background to use Container decoration
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            // Comic design: surface background color
+            color: colorScheme.surface,
+            // Comic design: 2.0px outline border with rounded corners
+            border: Border.all(color: colorScheme.outline, width: 2.0),
+            borderRadius: BorderRadius.circular(12),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: Text(PhilgoTr.of(context)!.leave),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title section - Comic design spacing (multiples of 8)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                child: Text(
+                  PhilgoTr.of(context)!.leave_room,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              // Content section - Comic design spacing
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                child: Text(
+                  PhilgoTr.of(context)!.leave_room_confirmation,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+
+              // Actions section - Column layout to fit 3 full-width buttons
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Block & Leave button - blocks user then leaves
+                    ElevatedButton(
+                      onPressed: () =>
+                          Navigator.of(context).pop('block_and_leave'),
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.error,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.error,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onError,
+                        ),
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(PhilgoTr.of(context)!.block_and_leave),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Leave only button - Comic design error outlined button
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop('leave'),
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.error,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        // Outlined style: surface background, error text
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.error,
+                        ),
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(PhilgoTr.of(context)!.leave),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Cancel button - Comic design neutral button
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text(PhilgoTr.of(context)!.cancel),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 
-    if (confirm == true && parentContext.mounted) {
-      // User confirmed to leave the room
+    if (!parentContext.mounted) return;
+
+    if (action == 'block_and_leave') {
+      // Block the other user first, then leave the room
+      try {
+        await toggleBlockUser(otherUser.uid);
+      } catch (e) {
+        debugPrint('Error blocking user before leave: $e');
+      }
+      if (parentContext.mounted) {
+        onLeave?.call();
+      }
+    } else if (action == 'leave') {
       onLeave?.call();
     }
   }
@@ -359,10 +537,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         await ref.set(true);
 
         if (context.mounted) {
-          showSuccessSnackBar(
-            context,
-            PhilgoTr.of(context)!.chat_room_pinned,
-          );
+          showSuccessSnackBar(context, PhilgoTr.of(context)!.chat_room_pinned);
         }
       }
     } catch (e) {

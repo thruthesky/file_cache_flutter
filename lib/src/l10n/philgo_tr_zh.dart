@@ -352,6 +352,9 @@ class PhilgoTrZh extends PhilgoTr {
   String get success_user_blocked => '用户已成功屏蔽。';
 
   @override
+  String get block_and_leave => '屏蔽并离开';
+
+  @override
   String get blocked_message => '来自被屏蔽用户的消息';
 
   @override

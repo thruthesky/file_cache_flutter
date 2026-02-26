@@ -701,6 +701,12 @@ abstract class PhilgoTr {
   /// **'User successfully blocked.'**
   String get success_user_blocked;
 
+  /// Button label to block the user and leave the room at once
+  ///
+  /// In en, this message translates to:
+  /// **'Block & Leave'**
+  String get block_and_leave;
+
   /// Message displayed when a user sends a message while blocked
   ///
   /// In en, this message translates to:

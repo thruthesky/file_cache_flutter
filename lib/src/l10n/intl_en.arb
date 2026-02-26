@@ -484,6 +484,10 @@
     "@success_user_blocked": {
         "description": "Message displayed when a user is successfully blocked"
     },
+    "block_and_leave": "Block & Leave",
+    "@block_and_leave": {
+        "description": "Button label to block the user and leave the room at once"
+    },
     "blocked_message": "Message from blocked user",
     "@blocked_message": {
         "description": "Message displayed when a user sends a message while blocked"

@@ -353,6 +353,9 @@ class PhilgoTrJa extends PhilgoTr {
   String get success_user_blocked => 'ユーザーが正常にブロックされました。';
 
   @override
+  String get block_and_leave => 'ブロックして退出';
+
+  @override
   String get blocked_message => 'ブロックされたユーザーからのメッセージ';
 
   @override
