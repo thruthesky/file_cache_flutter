@@ -1297,7 +1297,8 @@ ready(() => {
 |-------------|------|------------------|------|
 | `Philgo\Utils\RequestUtils` | `lib/utils/RequestUtils.php` | `in()`, `http_param()`, `http_params()` | 클라이언트 요청 입력 처리 |
 | `Philgo\Utils\Db` | `lib/utils/Db.php` | `pdo()`, `db_select()`, `db_insert()` 등 | PDO 데이터베이스 연결 |
-| `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | `login()`, `get_user_from_session_id()` | 세션 기반 로그인 사용자 인증 |
+| `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | `login()`, `get_user_from_session_id()`, `verify_login()` | 2경로 인증 (세션 + Firebase ID Token) |
+| `Philgo\Utils\FirebaseService` | `lib/utils/FirebaseService.php` | `verifyFirebaseToken()`, `config()->tokens` | Firebase ID Token 검증 유틸리티 |
 
 ### 14.2 RequestUtils 클래스
 
@@ -1386,7 +1387,11 @@ Db::setConfigPath(__DIR__ . '/etc/db.config.test.php');
 **파일**: `lib/utils/AuthService.php` | **네임스페이스**: `Philgo\Utils\AuthService`
 
 v7 `api.php`는 `boot.php`를 포함하지 않으므로 레거시 `login()` 함수를 사용할 수 없다.
-`AuthService`는 레거시 세션 검증 로직을 v7 시스템에서 독립적으로 처리한다.
+`AuthService`는 v6의 `login()` 함수와 동일한 2경로 인증을 v7에서 독립적으로 구현한다.
+
+**2경로 인증**:
+1. 쿠키/파라미터의 `session_id` → 세션 해시 검증 후 DB 조회 (SSR/CURL용)
+2. `id_token` 파라미터 → `FirebaseService`로 Firebase UID 획득 → DB 조회 (API용)
 
 ```php
 namespace Philgo\Utils;
@@ -1395,7 +1400,8 @@ class AuthService
 {
     /**
      * 현재 로그인한 사용자 정보를 리턴한다.
-     * 쿠키/파라미터의 session_id 검증 후 DB 조회.
+     * 경로 1: 쿠키/파라미터 session_id → 세션 기반 인증
+     * 경로 2: id_token 파라미터 → Firebase ID Token 인증
      * 동일 요청 내 중복 조회 방지 (static 캐싱).
      *
      * @return array|null sf_member 전체 컬럼, 비로그인 시 null
@@ -1421,9 +1427,53 @@ echo $user['name'];
 AuthService::reset();
 ```
 
-> 상세 인증 흐름, 세션 ID 구조, 핵심 소스코드는 → [api/user.md 섹션 5](api/user.md#5-인증-시스템-authservice) 참조
+> 상세 인증 흐름, 세션 ID 구조, 핵심 소스코드는 → [api/user.md 섹션 5](api/user.md#5-인증-시스템-authservice--firebaseservice) 참조
 
-### 14.5 새 Utils 클래스 작성 규칙
+### 14.5 FirebaseService 클래스
+
+**파일**: `lib/utils/FirebaseService.php` | **네임스페이스**: `Philgo\Utils\FirebaseService`
+
+Firebase ID Token 검증 전용 유틸리티. v7에서 boot.php 없이 독립적으로 동작한다.
+Kreait Firebase PHP SDK를 직접 사용하여 레거시 `verifyFirebaseToken()` 함수와 동일한 검증을 수행한다.
+
+```php
+namespace Philgo\Utils;
+
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
+
+class FirebaseService
+{
+    /**
+     * Firebase ID Token을 검증하고 Firebase UID를 반환한다.
+     * 테스트 토큰이면 Firebase 인증 우회, 실제 토큰이면 Kreait SDK로 검증.
+     *
+     * @param string $token Firebase ID Token 또는 테스트 토큰
+     * @return string Firebase UID
+     * @throws \RuntimeException 토큰 검증 실패 시
+     */
+    public static function verifyIdToken(string $token): string { ... }
+
+    /** 싱글톤 초기화 (테스트용) */
+    public static function reset(): void { ... }
+}
+```
+
+**사용 예시**:
+```php
+use Philgo\Utils\FirebaseService;
+
+// 테스트 토큰으로 검증
+$uid = FirebaseService::verifyIdToken('LOCAL_BANANA_TOKEN');
+// → 'DA76oHESU0YnHo7i9lzu85vdirA2'
+
+// 실제 Firebase ID Token으로 검증
+$uid = FirebaseService::verifyIdToken($realFirebaseToken);
+```
+
+> 테스트 토큰 목록, Firebase 프로젝트 설정, 핵심 소스코드는 → [api/user.md 섹션 5.5](api/user.md#55-firebaseservice-핵심-소스코드) 참조
+
+### 14.6 새 Utils 클래스 작성 규칙
 
 1. **파일 위치**: `lib/utils/<Module>Utils.php` (PascalCase 파일명)
 2. **네임스페이스**: `namespace Philgo\Utils;`
@@ -1454,7 +1504,8 @@ v7 시스템의 모든 클래스는 **PSR-4 Autoloading**을 사용하여 네임
 |---------------------|-----------|------|
 | `Philgo\Utils\RequestUtils` | `lib/utils/RequestUtils.php` | 요청 입력 처리 |
 | `Philgo\Utils\Db` | `lib/utils/Db.php` | PDO 데이터베이스 연결 |
-| `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | 세션 인증 서비스 |
+| `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | 2경로 인증 (세션 + Firebase) |
+| `Philgo\Utils\FirebaseService` | `lib/utils/FirebaseService.php` | Firebase ID Token 검증 |
 | `Philgo\User\UserController` | `lib/user/UserController.php` | 사용자 Controller |
 | `Philgo\User\UserService` | `lib/user/UserService.php` | 사용자 Service |
 
