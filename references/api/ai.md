@@ -794,15 +794,18 @@ it('analyzeReceipt() - 인증 후에도 파일 없으면 업로드 예외 발생
 
 영수증 분석 API는 인증이 필수이므로, 반드시 `session_id` 또는 `id_token`을 함께 전달해야 한다.
 
-#### 방법 1: session_id로 테스트
+**테스트 계정 정보**: [v7-accounts.md](../v7-accounts.md) 문서에 테스트용 계정 정보(session_id 포함)가 있다. CURL 테스트나 글 작성 등을 할 때 해당 문서의 session_id를 사용한다.
+
+#### 방법 1: Durian 테스트 계정으로 테스트 (권장)
 
 ```bash
-# session_id는 "{MD5해시}-{사용자idx}" 형식
-# 실제 session_id는 브라우저 쿠키에서 확인 가능
+# Durian 테스트 계정 (v7-accounts.md 참조)
+# session_id: 2278018daa75e0ab879d8791fb0e2b2d-190076
+# sf_member.idx: 190076
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
-  -F "session_id=실제세션ID" \
-  -F "file=@/path/to/receipt.jpg"
+  -F "session_id=2278018daa75e0ab879d8791fb0e2b2d-190076" \
+  -F "file=@./tmp/sample-files/receipt.jpeg"
 ```
 
 #### 방법 2: Firebase ID Token으로 테스트
@@ -813,7 +816,7 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "id_token=eyJhbGciOiJSUzI1NiIs..." \
-  -F "file=@/path/to/receipt.jpg"
+  -F "file=@./tmp/sample-files/receipt.jpeg"
 ```
 
 #### 방법 3: 인증 없이 테스트 (에러 확인)
@@ -822,18 +825,23 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 # 인증 파라미터 없이 호출 → 에러 응답
 curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
-  -F "file=@/path/to/receipt.jpg"
+  -F "file=@./tmp/sample-files/receipt.jpeg"
 
 # 예상 응답:
 # {"success":false,"message":"로그인이 필요합니다. id_token 또는 session_id를 전달해주세요."}
 ```
 
-### 브라우저에서 session_id 확인 방법
+### 테스트 계정 안내
 
-1. `https://local.philgo.com:444`에 로그인
-2. 브라우저 개발자 도구 → Application → Cookies
-3. `session_id` 쿠키 값 복사
-4. CURL 명령에서 `-F "session_id=복사한값"` 사용
+v7 API 테스트 시 인증이 필요한 경우, [v7-accounts.md](../v7-accounts.md) 문서에 기록된 테스트 계정의 `session_id`를 사용한다.
+
+| 계정 | session_id | idx | 용도 |
+|------|-----------|-----|------|
+| Durian | `2278018daa75e0ab879d8791fb0e2b2d-190076` | 190076 | 개발 테스트 전용 |
+
+> 브라우저 쿠키에서 session_id를 확인할 수도 있다:
+> 1. `https://local.philgo.com:444`에 로그인
+> 2. 개발자 도구 → Application → Cookies → `session_id` 값 복사
 
 ---
 
