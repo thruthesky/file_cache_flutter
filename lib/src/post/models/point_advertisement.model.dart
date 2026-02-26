@@ -15,7 +15,7 @@
 /// final ad = PointAdvertisement.fromJson(json);
 ///
 /// // 남은 광고 일수 확인
-/// print('D-${ad.remainingDays}');
+///// print('D-${ad.remainingDays}');
 ///
 /// // 클릭 URL 가져오기 (link 또는 viewUrl)
 /// final url = ad.clickUrl;

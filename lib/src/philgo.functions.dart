@@ -8,17 +8,17 @@
 /// ```dart
 /// final result = parsePhilgoUrl('https://philgo.com/post/view.php?idx=123&post_id=freetalk&category=취미&page=1');
 /// if (result != null) {
-///   print(result.postId);      // 'freetalk' (nullable)
-///   print(result.idx);         // 123 (nullable)
-///   print(result.category);    // '취미' (nullable)
-///   print(result.page);        // 1 (nullable)
-///   print(result.chatRoomId);  // null (nullable, 채팅방 URL에서만 값 있음)
+/////   print(result.postId);      // 'freetalk' (nullable)
+/////   print(result.idx);         // 123 (nullable)
+/////   print(result.category);    // '취미' (nullable)
+/////   print(result.page);        // 1 (nullable)
+/////   print(result.chatRoomId);  // null (nullable, 채팅방 URL에서만 값 있음)
 /// }
 ///
 /// // 채팅방 URL 예시
 /// final chatResult = parsePhilgoUrl('https://philgo.com/chat/room.php?id=RaHIcr45pvPzYdcDIv6JoW8DnSH2');
 /// if (chatResult != null && chatResult.isChatRoom) {
-///   print(chatResult.chatRoomId);  // 'RaHIcr45pvPzYdcDIv6JoW8DnSH2'
+/////   print(chatResult.chatRoomId);  // 'RaHIcr45pvPzYdcDIv6JoW8DnSH2'
 /// }
 /// ```
 typedef PhilgoUrlResult = ({
@@ -58,10 +58,10 @@ typedef PhilgoUrlResult = ({
 /// ```dart
 /// final result = parsePhilgoUrl(url);
 /// if (result != null) {
-///   print('Post ID: ${result.postId}');    // nullable
-///   print('IDX: ${result.idx}');           // nullable
-///   print('Category: ${result.category}'); // nullable
-///   print('Page: ${result.page}');         // nullable
+/////   print('Post ID: ${result.postId}');    // nullable
+/////   print('IDX: ${result.idx}');           // nullable
+/////   print('Category: ${result.category}'); // nullable
+/////   print('Page: ${result.page}');         // nullable
 /// }
 /// ```
 PhilgoUrlResult? parsePhilgoUrl(String url) {

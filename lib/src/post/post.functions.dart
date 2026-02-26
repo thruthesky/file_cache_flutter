@@ -369,16 +369,16 @@ Future<Post> getPost(int id) async {
   final res = await func('post_view', data: {'idx': id});
 
   // ========== 디버그 로그: 서버 응답 원본 확인 ==========
-  print('========== [getPost] 서버 응답 원본 JSON ==========');
-  print('[DEBUG] res.keys: ${res.keys.toList()}');
-  print('[DEBUG] res["blind"]: ${res["blind"]} (타입: ${res["blind"].runtimeType})');
-  print('[DEBUG] res["blinded"]: ${res["blinded"]} (타입: ${res["blinded"].runtimeType})');
-  print('[DEBUG] res["blocked"]: ${res["blocked"]} (타입: ${res["blocked"].runtimeType})');
-  print('[DEBUG] res["flagged"]: ${res["flagged"]} (타입: ${res["flagged"].runtimeType})');
-  print('[DEBUG] res["char_5"]: ${res["char_5"]} (타입: ${res["char_5"].runtimeType})');
-  print('[DEBUG] res["text_8"]: ${res["text_8"]}');
-  print('[DEBUG] res["moderation_reason"]: ${res["moderation_reason"]}');
-  print('===================================================');
+  //  print('========== [getPost] 서버 응답 원본 JSON ==========');
+  //  print('[DEBUG] res.keys: ${res.keys.toList()}');
+  //  print('[DEBUG] res["blind"]: ${res["blind"]} (타입: ${res["blind"].runtimeType})');
+  //  print('[DEBUG] res["blinded"]: ${res["blinded"]} (타입: ${res["blinded"].runtimeType})');
+  //  print('[DEBUG] res["blocked"]: ${res["blocked"]} (타입: ${res["blocked"].runtimeType})');
+  //  print('[DEBUG] res["flagged"]: ${res["flagged"]} (타입: ${res["flagged"].runtimeType})');
+  //  print('[DEBUG] res["char_5"]: ${res["char_5"]} (타입: ${res["char_5"].runtimeType})');
+  //  print('[DEBUG] res["text_8"]: ${res["text_8"]}');
+  //  print('[DEBUG] res["moderation_reason"]: ${res["moderation_reason"]}');
+  //  print('===================================================');
   // ========== 디버그 로그 끝 ==========
 
   final post = Post.fromJson(res);
@@ -488,8 +488,7 @@ Future<Post> createPost(RecordType data) async {
   cleanedData['subject'] = subject; // subject 필드 사용
   // content 처리: hiring form은 빈 값 허용, 그 외는 trim 처리
   // Hiring form allows empty content, others are trimmed
-  cleanedData['content'] =
-      (data['content'] ?? '').toString().trim();
+  cleanedData['content'] = (data['content'] ?? '').toString().trim();
 
   // category는 옵션 - 값이 있을 경우에만 포함
   if (data['category'] != null &&
@@ -857,10 +856,10 @@ Future reportPost({
 ///     idx: 12345,
 ///     days: 7,
 ///   );
-///   print('광고 종료일: ${DateTime.fromMillisecondsSinceEpoch(updatedPost.int5! * 1000)}');
-///   print('사용 포인트: ${updatedPost.int8}');
+/////   print('광고 종료일: ${DateTime.fromMillisecondsSinceEpoch(updatedPost.int5! * 1000)}');
+/////   print('사용 포인트: ${updatedPost.int8}');
 /// } catch (e) {
-///   print('광고 등록 실패: $e');
+/////   print('광고 등록 실패: $e');
 /// }
 /// ```
 ///
@@ -1019,10 +1018,10 @@ Future<Map<String, List<Post>>> getLatestPosts({
 ///     idx: 12345,
 ///     days: 7,
 ///   );
-///   print('광고 종료일: ${DateTime.fromMillisecondsSinceEpoch(updatedPost.int5! * 1000)}');
-///   print('사용 포인트: ${updatedPost.int8}');
+/////   print('광고 종료일: ${DateTime.fromMillisecondsSinceEpoch(updatedPost.int5! * 1000)}');
+/////   print('사용 포인트: ${updatedPost.int8}');
 /// } catch (e) {
-///   print('광고 등록 실패: $e');
+/////   print('광고 등록 실패: $e');
 /// }
 /// ```
 ///

@@ -34,7 +34,7 @@ import 'package:philgo_api/philgo_api.dart';
 ///
 /// // 통계 조회
 /// final stats = await service.getHomepageStats();
-/// print('회원 수: ${stats.totalUserCount}');
+///// print('회원 수: ${stats.totalUserCount}');
 ///
 /// // 공지사항 조회
 /// final notices = await service.loadLatestNotices(limit: 5);
@@ -248,12 +248,12 @@ class PhilgoService {
   /// ### 사용법 (Usage):
   /// ```dart
   /// final stats = await PhilgoService.instance.getHomepageStats();
-  /// print('회원 수: ${stats.totalUserCount}');
-  /// print('글 수: ${stats.totalPostCount}');
+  ///// print('회원 수: ${stats.totalUserCount}');
+  ///// print('글 수: ${stats.totalPostCount}');
   /// ```
   Future<HomepageStats> getHomepageStats() async {
     // 디버그: API URL 확인 (Debug: Check API URL)
-    // print('[PhilgoService] getHomepageStats 호출, URL: ${PhilgoConfig.phpApiUrl}');
+    //// print('[PhilgoService] getHomepageStats 호출, URL: ${PhilgoConfig.phpApiUrl}');
 
     final json = await apiCall(
       'get_homepage_stats',
@@ -262,7 +262,7 @@ class PhilgoService {
     );
 
     // 디버그: API 응답 확인 (Debug: Check API response)
-    // print('[PhilgoService] getHomepageStats 응답: $json');
+    //// print('[PhilgoService] getHomepageStats 응답: $json');
 
     return HomepageStats.fromJson(json);
   }
@@ -281,20 +281,20 @@ class PhilgoService {
   /// ### 사용법 (Usage):
   /// ```dart
   /// final notices = await PhilgoService.instance.loadLatestNotices();
-  /// print('공지사항 개수: ${notices.length}');
+  ///// print('공지사항 개수: ${notices.length}');
   ///
   /// // 최근 30일 이내 공지 필터링
   /// final recentNotices = notices.where((n) => n.isWithinDays(30)).toList();
   /// ```
   Future<List<Notice>> loadLatestNotices({int limit = 10}) async {
-    // print('[PhilgoService] loadLatestNotices 호출, limit: $limit');
+    //// print('[PhilgoService] loadLatestNotices 호출, limit: $limit');
 
     // get_posts API는 배열을 반환하므로 직접 HTTP 요청 사용
     // URL 인코딩된 카테고리명 사용 (공지사항 → %EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD)
     final url =
         '${PhilgoConfig.phpApiUrl}?func=get_posts&post_id=freetalk&category=${Uri.encodeComponent('공지사항')}&limit=$limit&extra_conditions[short_content]=y';
 
-    // print('[PhilgoService] loadLatestNotices URL: $url');
+    //// print('[PhilgoService] loadLatestNotices URL: $url');
 
     final client = HttpClient();
     try {
@@ -302,7 +302,7 @@ class PhilgoService {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      // print('[PhilgoService] loadLatestNotices 응답: $responseBody');
+      //// print('[PhilgoService] loadLatestNotices 응답: $responseBody');
 
       // HTTP 상태 코드 검증
       if (response.statusCode != 200) {
@@ -345,15 +345,15 @@ class PhilgoService {
   /// ### 사용법 (Usage):
   /// ```dart
   /// final post = await PhilgoService.instance.getPost(idx: 12345);
-  /// print('제목: ${post.subject}');
-  /// print('내용: ${post.content}');
+  ///// print('제목: ${post.subject}');
+  ///// print('내용: ${post.content}');
   /// ```
   Future<Notice> getPost({required int idx}) async {
-    // print('[PhilgoService] getPost 호출, idx: $idx');
+    //// print('[PhilgoService] getPost 호출, idx: $idx');
 
     final url = '${PhilgoConfig.phpApiUrl}?func=get_post&idx=$idx';
 
-    // print('[PhilgoService] getPost URL: $url');
+    //// print('[PhilgoService] getPost URL: $url');
 
     final client = HttpClient();
     try {
@@ -361,7 +361,7 @@ class PhilgoService {
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
 
-      // print('[PhilgoService] getPost 응답: $responseBody');
+      //// print('[PhilgoService] getPost 응답: $responseBody');
 
       // HTTP 상태 코드 검증 (HTTP status code verification)
       if (response.statusCode != 200) {

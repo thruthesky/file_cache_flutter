@@ -41,7 +41,7 @@ class PhilgoConfig {
   /// If the variable is set to `dev`, it returns true; otherwise, it returns false.
   static bool get isDevelopment => getEnv == dev;
 
-  static bool get isJaeho => getEnv == 'jaeho';
+  // static bool get isJaeho => getEnv == 'jaeho';
 
   /// Returns true if the current environment is production.
   /// This is determined by the `ENV` environment variable.
@@ -53,9 +53,6 @@ class PhilgoConfig {
   static String philgoUrl = 'https://philgo.com/';
 
   static String get phpApiUrl {
-    if (isJaeho) {
-      return 'https://local.philgo.com:444/func.php';
-    }
     return 'https://philgo.com/func.php';
   }
 
@@ -65,9 +62,6 @@ class PhilgoConfig {
   /// Otherwise, it defaults to 'https://file.philgo.com/v5-files/'.
   /// This URL is used for file uploads and downloads in the application.
   static String get fileServerUrl {
-    if (isJaeho) {
-      return 'https://local.philgo.com/v5-files/';
-    }
     return 'https://file.philgo.com/v5-files/';
   }
 
