@@ -17,7 +17,7 @@ import 'package:philgo_api/philgo_api.dart';
 /// ```dart
 /// Get all companies
 /// final companyList = await getCompanies();
-///// print('Total: ${companyList.company_count}');
+//// print('Total: ${companyList.company_count}');
 ///
 /// Get companies by category
 /// final restaurants = await getCompanies(category: 'restaurant');
@@ -26,8 +26,8 @@ import 'package:philgo_api/philgo_api.dart';
 /// final activeCompanies = await getCompanies(status: 'active', limit: 10);
 ///
 /// for (final company in companyList.companies) {
-/////   print('Company: ${company.name}');
-/////   print('Category: ${company.category}');
+////   print('Company: ${company.name}');
+////   print('Category: ${company.category}');
 /// }
 /// ```
 Future<CompanyList> getCompanies({
