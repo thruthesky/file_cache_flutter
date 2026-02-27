@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/extensions/nav.context.dart';
@@ -18,6 +19,7 @@ import 'package:philgo/widgets/home/main/home_quick_post_box.dart';
 import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
+import 'package:philgo/screens/company/company.qr_code_scanned.screen.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 메인 홈 화면 (Main Home Screen)
@@ -83,6 +85,43 @@ class _MainHomeState extends State<MainHome> {
             SliverToBoxAdapter(
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
+
+            /// [디버그 전용 테스트 버튼] - QR 코드 스캔 스크린 이동 (테스트 후 제거)
+            /// kDebugMode일 때만 표시
+            if (kDebugMode)
+              SliverToBoxAdapter(
+                child: GestureDetector(
+                  onTap: () {
+                    CompanyQrCodeScannedScreen.push(context, 1025, 'e41aa5ca0d55be94a8a92fab13a0f672');
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.bug,
+                          size: 12,
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'DEBUG  |  QR 스캔 테스트 (idx:1025)',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onErrorContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
             /// [빠른 글쓰기 박스] - 클릭 시 글쓰기 화면으로 이동
             /// Quick Post Box - Navigate to post creation screen on tap

@@ -14,6 +14,7 @@ dependencies:
   chewie: ^1.13.0
   cupertino_icons: ^1.0.8
   device_info_plus: ^12.3.0
+  dio: ^5.7.0
   easy_phone_sign_in:
     path: packages/easy_phone_sign_in
   file_cache_flutter: ^0.0.1

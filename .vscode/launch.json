@@ -12,7 +12,7 @@
             "deviceId": "DED2D464-68D0-46DC-893C-686999660183",
             "args": [
                 "--dart-define=ENV=dev",
-                "--dart-define=API_ENDPOINT=https://local.philgo.com",
+                "--dart-define=V7_API_ENDPOINT=http://127.0.0.1/api.php",
             ]
         },
         {
