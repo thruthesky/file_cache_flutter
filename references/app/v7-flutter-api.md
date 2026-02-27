@@ -1029,9 +1029,166 @@ v7 시스템에서 제공하는 Flutter 위젯 및 함수 목록.
 
 | 화면 | 파일 | v7 기능 |
 |------|------|---------|
-| QR 코드 스캔 결과 | `lib/screens/company/company.qr_code_scanned.screen.dart` | `v7api('user.me')` + `V7FileUpload` (영수증) |
+| QR 코드 스캔 결과 | `lib/screens/company/company.qr_code_scanned.screen.dart` | `UserApi.me()` + `CompanyApi.get()` + `V7FileUpload` (영수증) |
+| 업소록 폼 | `lib/screens/company/company.form.screen.dart` | `CompanyApi.getReceiptName()` + `CompanyApi.updateReceiptName()` |
 
 > 새 화면에서 v7 API를 사용할 때 이 목록을 업데이트한다.
+
+---
+
+## 14. 모듈별 API 클래스 (권장 패턴)
+
+### 14.1 개요 및 원칙
+
+v7 API 호출 시 `v7api('module.action')` 직접 호출 대신,
+**모듈별 API 클래스의 static 메서드**를 사용하는 것을 권장한다.
+
+**장점**:
+- 일관된 인터페이스: `CompanyApi.get()`, `UserApi.me()`, `UploadApi.list()`
+- IDE 자동완성 지원: 클래스명 입력 시 사용 가능한 메서드 목록 표시
+- 응답 파싱 캡슐화: 모델 변환, 에러 처리를 클래스 내부에서 처리
+- 중앙 관리: API 변경 시 한 곳만 수정
+
+**규칙**:
+- 모든 API 클래스는 `lib/v7_api/` 폴더에 `{module}_api.dart` 파일로 생성
+- `private constructor` (`ClassName._()`)로 인스턴스화 방지
+- 모든 메서드는 `static`
+- 내부에서 `v7api()` 또는 `v7apiFileUpload()`를 호출
+
+```
+lib/v7_api/
+├── v7_api.dart          ← 핵심 함수: v7api(), v7apiFileUpload()
+├── company_api.dart     ← CompanyApi 클래스
+├── user_api.dart        ← UserApi 클래스
+├── upload_api.dart      ← UploadApi 클래스
+└── widgets/
+    └── upload/
+        └── v7_file_upload.dart  ← V7FileUpload 위젯
+```
+
+### 14.2 CompanyApi
+
+**파일**: `lib/v7_api/company_api.dart`
+
+| 메서드 | API 엔드포인트 | 인증 | 반환 타입 | 설명 |
+|--------|---------------|------|----------|------|
+| `CompanyApi.list()` | `company.list` | 불필요 | `CompanyList` | 업소 목록 조회 |
+| `CompanyApi.get(idx)` | `company.get` | 불필요 | `Company` | 업소 단건 조회 |
+| `CompanyApi.mine()` | `company.mine` | 필수 | `Company` | 내 업소 조회 (없으면 자동 생성) |
+| `CompanyApi.create()` | `company.create` | 필수 | `Company` | 업소 생성 |
+| `CompanyApi.update(data)` | `company.update` | 필수 | `Company` | 업소 수정 |
+| `CompanyApi.getReceiptName(idx)` | `company_meta.get` | 불필요 | `String` | 영수증 표시 업소명 조회 |
+| `CompanyApi.updateReceiptName(idx, name)` | `company_meta.update` | 필수 | `void` | 영수증 표시 업소명 저장 |
+
+```dart
+import 'package:philgo/v7_api/company_api.dart';
+
+// 업소 목록 조회
+final companies = await CompanyApi.list(category: 'food');
+
+// 업소 단건 조회
+final company = await CompanyApi.get(123);
+
+// 내 업소 조회
+final myCompany = await CompanyApi.mine();
+
+// 업소 수정
+final updated = await CompanyApi.update({'idx': 123, 'name': '새 이름'});
+
+// 영수증 표시 업소명 조회/저장
+final receiptName = await CompanyApi.getReceiptName(123);
+await CompanyApi.updateReceiptName(123, 'ABC Store');
+```
+
+### 14.3 UserApi
+
+**파일**: `lib/v7_api/user_api.dart`
+
+| 메서드 | API 엔드포인트 | 인증 | 반환 타입 | 설명 |
+|--------|---------------|------|----------|------|
+| `UserApi.me()` | `user.me` | 필수 | `Map<String, dynamic>` | 현재 로그인 사용자 정보 |
+| `UserApi.count()` | `user.count` | 불필요 | `int` | 총 사용자 수 |
+
+```dart
+import 'package:philgo/v7_api/user_api.dart';
+
+// 현재 로그인 사용자 정보 조회
+final user = await UserApi.me();
+print(user['name']);        // 홍길동
+print(user['idx']);          // 123
+print(user['phone_number']); // +821012345678
+
+// 총 사용자 수 조회
+final total = await UserApi.count();
+print(total); // 188186
+```
+
+### 14.4 UploadApi
+
+**파일**: `lib/v7_api/upload_api.dart`
+
+| 메서드 | API 엔드포인트 | 인증 | 반환 타입 | 설명 |
+|--------|---------------|------|----------|------|
+| `UploadApi.upload(...)` | `upload.upload` | 필수 | `Map<String, dynamic>` | 파일 업로드 (v7apiFileUpload 래퍼) |
+| `UploadApi.get(idx)` | `upload.get` | 불필요 | `Map<String, dynamic>` | 파일 정보 단건 조회 |
+| `UploadApi.list()` | `upload.list` | 필수 | `List<Map<String, dynamic>>` | 내 파일 목록 (페이지네이션) |
+| `UploadApi.myFiles()` | `upload.myFiles` | 필수 | `List<Map<String, dynamic>>` | 내 전체 파일 목록 (최대 2,000개) |
+| `UploadApi.delete(idx)` | `upload.delete` | 필수 | `bool` | 파일 삭제 (소유자 검증) |
+| `UploadApi.updateAttached(idx)` | `upload.updateAttached` | 필수 | `bool` | attached 상태 변경 |
+
+```dart
+import 'package:philgo/v7_api/upload_api.dart';
+
+// 파일 업로드
+final result = await UploadApi.upload(
+  filePath: '/path/to/receipt.jpg',
+  idxMember: '123',
+  module: 'receipt',
+);
+print(result['url']); // /uploads/123/unique_file.jpg
+
+// 내 전체 파일 목록 조회 (최대 2,000개)
+final allFiles = await UploadApi.myFiles();
+for (final file in allFiles) {
+  print('${file['name']} - ${file['size']} bytes');
+}
+
+// 페이지네이션으로 목록 조회
+final page = await UploadApi.list(limit: 20, offset: 0);
+
+// 파일 삭제
+await UploadApi.delete(42);
+
+// attached 상태 변경
+await UploadApi.updateAttached(42, attached: 1);
+```
+
+### 14.5 새 API 클래스 추가 가이드라인
+
+새 v7 모듈이 추가되면 동일한 패턴으로 API 클래스를 생성한다:
+
+```dart
+// lib/v7_api/{module}_api.dart
+import 'v7_api.dart';
+
+/// v7 {모듈명} API 래퍼 클래스
+class {Module}Api {
+  {Module}Api._();
+
+  /// {기능 설명}
+  /// API 엔드포인트: {module}.{action}
+  /// 인증: {필수/불필요}
+  static Future<{반환타입}> {메서드명}({파라미터}) async {
+    final result = await v7api('{module}.{action}', data: {...});
+    return {파싱 결과};
+  }
+}
+```
+
+**네이밍 규칙**:
+- 파일: `{module}_api.dart` (snake_case)
+- 클래스: `{Module}Api` (PascalCase)
+- 메서드: v7 API의 action 이름과 동일하게 (예: `user.me` → `UserApi.me()`)
 
 ---
 

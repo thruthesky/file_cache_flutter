@@ -41,6 +41,28 @@ PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
 
 ---
 
+## 🔴🔴🔴 백엔드 소스코드 참조 경로 (READ-ONLY) 🔴🔴🔴
+
+> **필고 프로젝트의 PHP API 백엔드 소스코드 경로:**
+> `/Users/thruthesky/apps/withcenter/philgo/www`
+
+| 규칙 | 설명 |
+|------|------|
+| **📖 참고용으로 적극 활용** | v7 시스템 개발 시 기존 백엔드 코드의 로직, DB 쿼리, 비즈니스 규칙, 테이블 구조 등을 **반드시 참고**하여 일관성을 유지한다 |
+| **🚫 절대 수정 금지** | 이 경로의 파일은 **어떤 상황에서도 절대로 수정, 삭제, 이동하지 않는다** |
+| **🚫 쓰기 작업 금지** | `Edit`, `Write`, `Bash`(echo, sed, awk 등) 도구로 이 경로에 **어떠한 쓰기 작업도 수행하지 않는다** |
+
+**⚠️⚠️⚠️ 이 백엔드 코드는 100% 순수 참고용(READ-ONLY)입니다 ⚠️⚠️⚠️**
+
+- ✅ `Read`, `Grep`, `Glob` 도구로 코드를 **읽고 참고**하는 것은 적극 권장
+- ✅ 기존 API 로직, SQL 쿼리, 함수 동작 방식을 파악하여 v7 코드에 반영
+- ✅ DB 테이블 구조, 컬럼명, 데이터 타입 등을 확인하여 v7 Entity/Service에 활용
+- ❌ **절대로** 이 경로의 어떤 파일도 수정하지 않는다
+- ❌ **절대로** 이 경로에 새 파일을 생성하지 않는다
+- ❌ **절대로** 이 경로의 파일을 삭제하지 않는다
+
+---
+
 ## 핵심 아키텍처
 
 ```
@@ -121,6 +143,28 @@ v7 위젯 목록을 포함합니다.
 
 ---
 
+## 🔴🔴🔴 Flutter v7 코드 저장 경로 — 예외 없음 🔴🔴🔴
+
+> **Flutter 앱에서 v7 관련 모든 코드는 반드시 `lib/v7_api/` 폴더 하위에만 존재해야 한다.**
+> **위젯, 로직, 알고리즘, 리포지토리, 서비스, 스테이트, 모델, 유틸 등 종류를 불문하고 예외 없이 `lib/v7_api/` 하위에 저장한다.**
+
+| 분류 | 저장 경로 예시 |
+|------|---------------|
+| API 호출 함수 | `lib/v7_api/v7_api.dart` |
+| 위젯 | `lib/v7_api/widgets/upload/v7_file_upload.dart` |
+| 서비스/로직 | `lib/v7_api/services/` |
+| 모델/엔티티 | `lib/v7_api/models/` |
+| 스테이트 | `lib/v7_api/state/` |
+| 리포지토리 | `lib/v7_api/repositories/` |
+| 유틸리티 | `lib/v7_api/utils/` |
+
+- ✅ v7 관련 **모든 Dart 코드**(위젯, 서비스, 모델, 스테이트, 리포지토리, 유틸 등)는 `lib/v7_api/` 하위에 위치
+- ✅ 하위 폴더 구조는 자유롭게 생성 가능 (예: `lib/v7_api/widgets/`, `lib/v7_api/services/`)
+- ❌ **절대로** `lib/v7_api/` 외부에 v7 관련 코드를 생성하지 않는다
+- ❌ **절대로** 기존 레거시 폴더(`lib/philgo/`, `lib/widgets/`, `packages/philgo_api/` 등)에 v7 코드를 추가하지 않는다
+
+---
+
 ## Flutter v7 위젯/함수 재활용 원칙
 
 > **⚠️⚠️⚠️ 재활용 필수 ⚠️⚠️⚠️**
@@ -131,7 +175,7 @@ v7 위젯 목록을 포함합니다.
 |-----------|------|------|--------|
 | `v7api()` | `lib/v7_api/v7_api.dart` | v7 일반 API 호출 (JSON POST) | ✅ 필수 |
 | `v7apiFileUpload()` | `lib/v7_api/v7_api.dart` | v7 파일 업로드 (multipart/form-data) | ✅ 필수 |
-| `V7FileUpload` | `lib/widgets/upload/v7_file_upload.dart` | 파일 업로드 위젯 (카메라/갤러리/파일) | ✅ **필수** |
+| `V7FileUpload` | `lib/v7_api/widgets/upload/v7_file_upload.dart` | 파일 업로드 위젯 (카메라/갤러리/파일) | ✅ **필수** |
 
 상세 사용법: → [app/v7-flutter-api.md](references/app/v7-flutter-api.md) 11~13장 참조
 
