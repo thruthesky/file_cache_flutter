@@ -265,6 +265,21 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 showLeaveConfirmDialog(parentContext);
                               },
                             ),
+                            const SizedBox(height: 8),
+
+                            /// Block & Leave menu item - blocks user then leaves
+                            _buildComicMenuItem(
+                              context: context,
+                              icon: FaIcon(
+                                FontAwesomeIcons.lightBan,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              title: PhilgoTr.of(context)!.block_and_leave,
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                showBlockAndLeaveConfirmDialog(parentContext);
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -479,6 +494,15 @@ class SingleChatRoomHeader extends StatelessWidget {
     } else if (action == 'leave') {
       onLeave?.call();
     }
+  }
+
+  /// Delegates to ChatService to show "Block & Leave" confirmation dialog.
+  void showBlockAndLeaveConfirmDialog(BuildContext parentContext) {
+    ChatService.instance.showBlockAndLeaveConfirmDialog(
+      context: parentContext,
+      otherUserUid: otherUser.uid,
+      onLeave: () => onLeave?.call(),
+    );
   }
 
   /// Show block/unblock dialog with the other user's nickname

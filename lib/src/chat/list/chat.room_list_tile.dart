@@ -403,6 +403,8 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               _showUnblockDialog();
             } else if (value == 'leave') {
               _showLeaveConfirmDialog();
+            } else if (value == 'block_and_leave') {
+              _showBlockAndLeaveConfirmDialog();
             }
           },
           itemBuilder: (context) =>
@@ -540,6 +542,31 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         ),
       ),
     );
+
+    // Block & Leave option - only for single chat rooms
+    if (isSingle) {
+      menuItems.add(
+        PopupMenuItem<String>(
+          value: 'block_and_leave',
+          child: Row(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.lightBan,
+                size: 16,
+                color: colorScheme.error,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                PhilgoTr.of(context)!.block_and_leave,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.error,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return menuItems;
   }
@@ -787,6 +814,30 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         error: (e) => debugPrint('Error leaving room: $e'),
       );
     }
+  }
+
+  /// Show Block & Leave confirmation dialog for single chat rooms.
+  /// Blocks the other user first, then leaves the room.
+  /// Comic design applied - 2.0px border, rounded corners, no shadow
+  /// Delegates to ChatService to show "Block & Leave" confirmation dialog.
+  void _showBlockAndLeaveConfirmDialog() {
+    final otherUserUid = getOtherUserUidFromChatRoomId(roomId)!;
+    ChatService.instance.showBlockAndLeaveConfirmDialog(
+      context: context,
+      otherUserUid: otherUserUid,
+      onLeave: () => leaveChatRoom(
+        roomId: roomId,
+        success: () {
+          if (mounted) {
+            showSuccessSnackBar(
+              context,
+              PhilgoTr.of(context)!.leftroom_successfully,
+            );
+          }
+        },
+        error: (e) => debugPrint('Error leaving room: $e'),
+      ),
+    );
   }
 
   /// 읽지 않은 메시지 배지 - Comic design
