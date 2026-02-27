@@ -872,14 +872,15 @@ V7FileUpload(
 )
 ```
 
-### 12.4 실전 통합 패턴: 업로드 상태 관리
+### 12.4 실전 통합 패턴: 업로드 상태 관리 + 리턴값 표시
 
-화면에서 V7FileUpload를 사용할 때 권장하는 상태 관리 패턴:
+화면에서 V7FileUpload를 사용할 때 권장하는 상태 관리 패턴.
+**핵심: `receiptData`에 전체 응답 Map을 저장하여 리턴값 전체를 화면에 표시한다.**
 
 ```dart
 class _MyScreenState extends State<MyScreen> {
-  /// 업로드 상태 변수
-  String? uploadedUrl;
+  /// 업로드 상태 변수 — 전체 응답 Map 저장 (URL만이 아니라 idx, name, size, type 등 포함)
+  Map<String, dynamic>? receiptData;
   bool isUploading = false;
   double uploadProgress = 0.0;
 
@@ -887,11 +888,21 @@ class _MyScreenState extends State<MyScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        /// 업로드된 이미지 미리보기
-        if (uploadedUrl != null)
+        /// 업로드 결과 전체 표시 (이미지 미리보기 + 상세 정보)
+        if (receiptData != null) ...[
+          /// 이미지 미리보기
           Image.network(
-            '${PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '')}$uploadedUrl',
+            '${PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '')}${receiptData!['url']}',
           ),
+
+          /// 상세 정보 표시 (리턴값 필드 활용)
+          Text('IDX: ${receiptData!['idx']}'),
+          Text('파일명: ${receiptData!['name']}'),
+          Text('크기: ${receiptData!['size']} bytes'),
+          Text('타입: ${receiptData!['type']}'),
+          Text('URL: ${receiptData!['url']}'),
+          Text('업로드 시간: ${receiptData!['created_at']}'),
+        ],
 
         /// 업로드 버튼
         V7FileUpload(
@@ -903,7 +914,7 @@ class _MyScreenState extends State<MyScreen> {
           }),
           onProgress: (p) => setState(() { uploadProgress = p; }),
           onUploaded: (result) => setState(() {
-            uploadedUrl = result['url']?.toString();
+            receiptData = result;  // 전체 응답 Map 저장
             isUploading = false;
           }),
           onError: (_) => setState(() {
@@ -933,6 +944,41 @@ class _MyScreenState extends State<MyScreen> {
       ],
     );
   }
+}
+```
+
+> **핵심 포인트**: `onUploaded` 콜백에서 `result['url']`만 저장하지 말고,
+> `receiptData = result`로 **전체 응답 Map을 저장**하면 idx, name, size, type, url, created_at 등
+> 모든 리턴값을 화면에 자유롭게 표시할 수 있다.
+
+### 12.6 업로드 응답 필드 활용 가이드
+
+upload.upload 응답 Map의 주요 필드와 활용법:
+
+| 필드 | 타입 | 설명 | 활용 예시 |
+|------|------|------|---------|
+| `idx` | `int` | 업로드 파일 고유 번호 | DB 연동, 파일 관리 |
+| `idx_member` | `String` | 업로드한 회원번호 | 권한 확인 |
+| `name` | `String` | 원본 파일명 | 파일명 표시 |
+| `size` | `int` | 파일 크기 (bytes) | 용량 표시 |
+| `type` | `String` | MIME 타입 | 파일 유형 아이콘 표시 |
+| `module` | `String?` | 모듈 분류 | 용도별 분류 |
+| `code` | `String?` | 코드 분류 | 세부 분류 |
+| `url` | `String` | 파일 URL (상대경로) | 이미지 표시, 다운로드 |
+| `created_at` | `String` | 업로드 일시 | 시간 표시 |
+
+**URL을 이미지로 표시할 때**: 상대경로이므로 도메인 prefix 필요:
+```dart
+'${PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '')}${data['url']}'
+```
+
+**파일 크기 포맷팅**:
+```dart
+String formatFileSize(dynamic bytes) {
+  final b = bytes is int ? bytes : int.tryParse(bytes.toString()) ?? 0;
+  if (b < 1024) return '$b B';
+  if (b < 1024 * 1024) return '${(b / 1024).toStringAsFixed(1)} KB';
+  return '${(b / (1024 * 1024)).toStringAsFixed(1)} MB';
 }
 ```
 
