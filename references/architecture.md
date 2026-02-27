@@ -495,7 +495,7 @@ await func('post.like', { idx: 123, alertOnError: false });
 **파일 위치**: `lib/<module>/<Module>Controller.php` (PascalCase 파일명, PSR-4)
 
 > **주석 규칙**: 모든 Controller 멤버 함수의 PHPDoc에 **GET REST 호출 URL 예시**를 반드시 포함한다.
-> 형식: `GET 호출 예시:\n  https://local.philgo.com:444/api.php?method=<module>.<action>&파라미터=값`
+> 형식: `GET 호출 예시:\n  https://local.philgo.com/api.php?method=<module>.<action>&파라미터=값`
 
 ```php
 <?php
@@ -520,7 +520,7 @@ class PostController
      * API: method=post.create
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.create&post_id=freetalk&subject=제목&content=내용
+     *   https://local.philgo.com/api.php?method=post.create&post_id=freetalk&subject=제목&content=내용
      *
      * @param array $input ['post_id' => string, 'subject' => string, 'content' => string, ...]
      * @return PostEntity 생성된 게시글
@@ -539,7 +539,7 @@ class PostController
      * API: method=post.get
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.get&idx=12345
+     *   https://local.philgo.com/api.php?method=post.get&idx=12345
      */
     public function get(array $input): PostEntity {
         $idx = $input['idx'] ?? 0;
@@ -557,7 +557,7 @@ class PostController
      * API: method=post.update
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.update&idx=12345&subject=수정된제목
+     *   https://local.philgo.com/api.php?method=post.update&idx=12345&subject=수정된제목
      */
     public function update(array $input): PostEntity { ... }
 
@@ -566,7 +566,7 @@ class PostController
      * API: method=post.delete
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.delete&idx=12345
+     *   https://local.philgo.com/api.php?method=post.delete&idx=12345
      */
     public function delete(array $input): array { ... }
 
@@ -575,7 +575,7 @@ class PostController
      * API: method=post.list
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.list&post_id=freetalk&limit=20
+     *   https://local.philgo.com/api.php?method=post.list&post_id=freetalk&limit=20
      */
     public function list(array $input): array { ... }
 
@@ -584,7 +584,7 @@ class PostController
      * API: method=post.latest
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.latest&post_id=qna&limit=5
+     *   https://local.philgo.com/api.php?method=post.latest&post_id=qna&limit=5
      */
     public function latest(array $input): array { ... }
 
@@ -593,7 +593,7 @@ class PostController
      * API: method=post.increaseView
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.increaseView&idx=12345
+     *   https://local.philgo.com/api.php?method=post.increaseView&idx=12345
      */
     public function increaseView(array $input): array { ... }
 
@@ -602,7 +602,7 @@ class PostController
      * API: method=post.like
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.like&idx=12345
+     *   https://local.philgo.com/api.php?method=post.like&idx=12345
      */
     public function like(array $input): array { ... }
 
@@ -611,7 +611,7 @@ class PostController
      * API: method=post.report
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.report&idx=12345
+     *   https://local.philgo.com/api.php?method=post.report&idx=12345
      */
     public function report(array $input): array { ... }
 }
@@ -887,7 +887,7 @@ class PostController
      * API: method=post.get
      *
      * GET 호출 예시:
-     *   https://local.philgo.com:444/api.php?method=post.get&idx=12345
+     *   https://local.philgo.com/api.php?method=post.get&idx=12345
      */
     public function get(array $input): PostEntity {
         $idx = $input['idx'] ?? 0;
@@ -1121,7 +1121,7 @@ describe('get_latest_posts() API', function () {
 ```php
 <?php
 test('게시글 보기 페이지 접근 가능', function () {
-    $page = $this->visit('https://local.philgo.com:444/post/view.php?idx=123&post_id=massage');
+    $page = $this->visit('https://local.philgo.com/post/view.php?idx=123&post_id=massage');
     $page->assertPresent('.post-view-page');
 })->group('browser', 'post', 'view');
 ```

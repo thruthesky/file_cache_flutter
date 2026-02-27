@@ -826,7 +826,7 @@ class UploadController
      * API: method=upload.upload
      *
      * POST 호출 예시 (multipart/form-data):
-     *   https://local.philgo.com:444/api.php?method=upload.upload&session_id=xxx
+     *   https://local.philgo.com/api.php?method=upload.upload&session_id=xxx
      */
     public function upload(array $input): array
     {
@@ -895,7 +895,7 @@ class UploadController
 
 **curl 예시:**
 ```bash
-curl -s -X POST "https://local.philgo.com:444/api.php" \
+curl -s -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "session_id=abc123def-456" \
   -F "module=post" \
@@ -1540,7 +1540,7 @@ describe('UploadController', function () {
 #### 기본 사용법
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "file=@/path/to/photo.jpg"
@@ -1553,7 +1553,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### 선택 파라미터 포함
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "module=post" \
@@ -1613,7 +1613,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### 텍스트 파일
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "file=@./readme.txt"
@@ -1623,7 +1623,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### 이미지 파일 (JPG)
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "module=user" \
@@ -1635,7 +1635,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### 한글 파일명
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "file=@./사과.jpg"
@@ -1645,7 +1645,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### GIF 애니메이션
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "file=@./animation.gif"
@@ -1655,7 +1655,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### PDF 문서
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "module=company" \
@@ -1667,7 +1667,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### ZIP 압축 파일
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "file=@./archive.zip"
@@ -1677,7 +1677,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 #### 대용량 파일 (3.8MB 이미지)
 
 ```bash
-curl -sk -X POST "https://local.philgo.com:444/api.php" \
+curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "file=@./large-photo.jpg"
@@ -1687,7 +1687,7 @@ curl -sk -X POST "https://local.philgo.com:444/api.php" \
 ### 15.3 파일 정보 조회 (upload.get)
 
 ```bash
-curl -sk "https://local.philgo.com:444/api.php?method=upload.get&idx=32"
+curl -sk "https://local.philgo.com/api.php?method=upload.get&idx=32"
 ```
 
 **응답 예시:**
@@ -1719,10 +1719,10 @@ curl -sk "https://local.philgo.com:444/api.php?method=upload.get&idx=32"
 
 ```bash
 # 기본 조회 (최대 100개)
-curl -sk "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123"
+curl -sk "https://local.philgo.com/api.php?method=upload.list&idx_member=123"
 
 # 페이징 (10개씩)
-curl -sk "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123&limit=10&offset=0"
+curl -sk "https://local.philgo.com/api.php?method=upload.list&idx_member=123&limit=10&offset=0"
 ```
 
 **응답 예시:**
@@ -1757,7 +1757,7 @@ curl -sk "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123
 
 ```bash
 # attached를 1(사용중)로 변경
-curl -sk "https://local.philgo.com:444/api.php?method=upload.updateAttached&idx=32&idx_member=123&attached=1"
+curl -sk "https://local.philgo.com/api.php?method=upload.updateAttached&idx=32&idx_member=123&attached=1"
 ```
 
 **성공 응답:**
@@ -1778,7 +1778,7 @@ curl -sk "https://local.philgo.com:444/api.php?method=upload.updateAttached&idx=
 ### 15.6 파일 삭제 (upload.delete)
 
 ```bash
-curl -sk "https://local.philgo.com:444/api.php?method=upload.delete&idx=32&idx_member=123"
+curl -sk "https://local.philgo.com/api.php?method=upload.delete&idx=32&idx_member=123"
 ```
 
 **성공 응답:**
@@ -1804,10 +1804,10 @@ curl -sk "https://local.philgo.com:444/api.php?method=upload.delete&idx=32&idx_m
 
 ```bash
 # 응답의 url 값 사용
-curl -sk -o downloaded.jpg "https://local.philgo.com:444/uploads/123/67bea1c2d3e4f_1740000000.jpg"
+curl -sk -o downloaded.jpg "https://local.philgo.com/uploads/123/67bea1c2d3e4f_1740000000.jpg"
 
 # 파일 존재 확인 (HTTP 200이면 성공)
-curl -sk -o /dev/null -w "%{http_code}" "https://local.philgo.com:444/uploads/123/67bea1c2d3e4f_1740000000.jpg"
+curl -sk -o /dev/null -w "%{http_code}" "https://local.philgo.com/uploads/123/67bea1c2d3e4f_1740000000.jpg"
 # 출력: 200
 ```
 
@@ -1815,7 +1815,7 @@ curl -sk -o /dev/null -w "%{http_code}" "https://local.philgo.com:444/uploads/12
 
 ```bash
 # 1. 파일 업로드
-IDX=$(curl -sk -X POST "https://local.philgo.com:444/api.php" \
+IDX=$(curl -sk -X POST "https://local.philgo.com/api.php" \
   -F "method=upload.upload" \
   -F "idx_member=123" \
   -F "module=post" \
@@ -1824,16 +1824,16 @@ IDX=$(curl -sk -X POST "https://local.philgo.com:444/api.php" \
 echo "업로드 완료: idx=$IDX"
 
 # 2. 파일 정보 조회
-curl -sk "https://local.philgo.com:444/api.php?method=upload.get&idx=$IDX"
+curl -sk "https://local.philgo.com/api.php?method=upload.get&idx=$IDX"
 
 # 3. attached 상태 변경 (미사용 → 사용중)
-curl -sk "https://local.philgo.com:444/api.php?method=upload.updateAttached&idx=$IDX&idx_member=123&attached=1"
+curl -sk "https://local.philgo.com/api.php?method=upload.updateAttached&idx=$IDX&idx_member=123&attached=1"
 
 # 4. 회원 파일 목록 확인
-curl -sk "https://local.philgo.com:444/api.php?method=upload.list&idx_member=123"
+curl -sk "https://local.philgo.com/api.php?method=upload.list&idx_member=123"
 
 # 5. 파일 삭제
-curl -sk "https://local.philgo.com:444/api.php?method=upload.delete&idx=$IDX&idx_member=123"
+curl -sk "https://local.philgo.com/api.php?method=upload.delete&idx=$IDX&idx_member=123"
 ```
 
 ### 15.9 JavaScript (FormData) 업로드 예시

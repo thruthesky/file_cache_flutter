@@ -216,7 +216,7 @@ mariadb:
 | 서비스 | HTTP 포트 | HTTPS 포트 | 접속 URL |
 |--------|----------|-----------|----------|
 | **신규 필고** (nginx) | 80 | **443** | `https://local.philgo.com` |
-| **기존 필고** (old_philgo_nginx) | 81 | **444** | `https://local.philgo.com:444` |
+| **기존 필고** (old_philgo_nginx) | 81 | **444** | `https://local.philgo.com` |
 | **MariaDB** | - | - | `127.0.0.1:3306` |
 
 ### Docker 내부 포트 (컨테이너 간 통신)
@@ -553,7 +553,7 @@ mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo
 
 | 프로토콜 | URL | 비고 |
 |---------|-----|------|
-| HTTPS | `https://local.philgo.com:444` | 포트 444 명시 필수 |
+| HTTPS | `https://local.philgo.com` | 포트 444 명시 필수 |
 | HTTP | `http://local.philgo.com:81` | 포트 81 명시 필수 |
 
 ### 패밀리사이트 접속 URL
@@ -561,12 +561,12 @@ mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo
 | 프로토콜 | URL | 비고 |
 |---------|-----|------|
 | HTTPS | `https://banana.philgo.com` | 신규 필고 기반 |
-| HTTPS | `https://banana.philgo.com:444` | 기존 필고 기반 |
+| HTTPS | `https://banana.philgo.com` | 기존 필고 기반 |
 
 ### Chrome DevTools MCP 테스트 URL
 
 - **신규 필고**: `https://local.philgo.com` (포트 443)
-- **기존 필고**: `https://local.philgo.com:444` (포트 444)
+- **기존 필고**: `https://local.philgo.com` (포트 444)
 - **패밀리사이트**: `https://banana.philgo.com` (신규 필고 기반)
 
 ---

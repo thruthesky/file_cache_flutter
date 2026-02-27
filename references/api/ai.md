@@ -867,7 +867,7 @@ v7 API 테스트 시 인증이 필요한 경우, [v7-accounts.md](../v7-accounts
 | Durian | `2278018daa75e0ab879d8791fb0e2b2d-190076` | 190076 | 개발 테스트 전용 |
 
 > 브라우저 쿠키에서 session_id를 확인할 수도 있다:
-> 1. `https://local.philgo.com:444`에 로그인
+> 1. `https://local.philgo.com`에 로그인
 > 2. 개발자 도구 → Application → Cookies → `session_id` 값 복사
 
 ---
