@@ -542,12 +542,12 @@ class FirebaseService
 
     /**
      * Firebase Auth 인스턴스 반환 (싱글톤)
-     * APP_DEV true → test5 프로젝트, false → philgo 프로젝트
+     * 항상 philgo 프로덕션 프로젝트 사용
      */
     private static function getAuth(): \Kreait\Firebase\Contract\Auth
     {
         if (self::$authInstance === null) {
-            $proj = (defined('APP_DEV') && APP_DEV) ? 'test5' : 'philgo';
+            $proj = 'philgo';
             $factory = (new Factory)
                 ->withServiceAccount(ROOT_DIR . "/etc/{$proj}-firebase-service-account.json");
             self::$authInstance = $factory->createAuth();
