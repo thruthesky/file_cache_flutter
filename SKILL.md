@@ -126,6 +126,7 @@ v7 위젯 목록을 포함합니다.
 | Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
 | AI | [api/v7-ai.md](references/api/v7-ai.md) | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
+| Post | [api/v7-post.md](references/api/v7-post.md) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
