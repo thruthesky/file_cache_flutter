@@ -950,7 +950,32 @@ console.log(res.data.url); // /uploads/123/67a1b2c3_1709876543.webp
 
 > 인증된 사용자 본인의 파일만 조회 가능. `idx_member`는 자동 설정됨.
 
-### 11.5 upload.updateAttached - 사용 상태 변경
+### 11.5 upload.myFiles - 전체 파일 목록 조회 (최대 2,000개)
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `upload.myFiles` |
+| **인증** | **필수** — `session_id` 또는 `id_token` 파라미터 |
+| **HTTP** | `GET /api.php?method=upload.myFiles&session_id=xxx` |
+| **파라미터** | `session_id` 또는 `id_token` (필수) |
+| **응답** | `{"items": [{...}, {...}, ...]}` (최대 2,000개) |
+
+> 인증된 사용자 본인의 파일을 **최대 2,000개**까지 한 번에 반환한다.
+> `limit`/`offset` 파라미터를 받지 않으며, 항상 최신순(idx DESC)으로 정렬된다.
+> 기존 `upload.list`와 달리 페이지네이션 없이 전체 목록을 조회하는 용도이다.
+
+**curl 예시:**
+```bash
+curl -s "https://local.philgo.com/api.php?method=upload.myFiles&session_id=abc123def-456"
+```
+
+**JavaScript 호출 예시:**
+```javascript
+const res = await func('upload.myFiles', { session_id: getSessionId() });
+console.log(res.items); // [{idx: 1, url: '/uploads/...', ...}, ...]
+```
+
+### 11.6 upload.updateAttached - 사용 상태 변경
 
 | 항목 | 값 |
 |------|-----|
@@ -1060,7 +1085,7 @@ Service 로직 실행
 ### 14.1 테스트 파일 및 실행
 
 **파일**: `tests/Unit/UploadTest.php`
-**총 21개 테스트** (UploadEntity 5개, UploadRepository 6개, UploadService 6개, UploadController 4개)
+**총 28개 테스트** (UploadEntity 5개, UploadRepository 6개, UploadService 8개, UploadController 6개, myFiles 3개 포함)
 
 ```bash
 # Upload 모듈 테스트만 실행
@@ -1076,8 +1101,8 @@ Service 로직 실행
 |---------------|----------|-------------|
 | UploadEntity | 5개 | fromArray/toArray 변환, 기본값, 빈 배열 처리, 라운드트립 |
 | UploadRepository | 6개 | create, findByIdx, findByIdx(없는 경우), findByMember, updateAttached, deleteByIdx |
-| UploadService | 6개 | get 예외(없는 idx, idx 누락), remove 예외(소유자 불일치, idx 누락), listByMember 예외/성공 |
-| UploadController | 4개 | get 성공, list 성공, updateAttached 소유자 일치 성공 |
+| UploadService | 8개 | get 예외(없는 idx, idx 누락), remove 예외(소유자 불일치, idx 누락), listByMember 예외/성공, getAllMyFiles 예외/성공 |
+| UploadController | 6개 | get 성공, list 성공/미인증, updateAttached 성공/미인증, myFiles 성공/미인증, delete 미인증 |
 
 ### 14.3 전체 테스트 코드
 
