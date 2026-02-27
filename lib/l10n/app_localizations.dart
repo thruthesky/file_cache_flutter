@@ -4192,6 +4192,54 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Point Event'**
   String get pointEvent;
+
+  /// No description provided for @receiptDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Display Name'**
+  String get receiptDisplayName;
+
+  /// No description provided for @receiptDisplayNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Business name on the receipt'**
+  String get receiptDisplayNameHint;
+
+  /// No description provided for @receiptDisplayNameDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the business name shown on the receipt. Used for various events. Optional.'**
+  String get receiptDisplayNameDescription;
+
+  /// No description provided for @storeNameMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Name Mismatch'**
+  String get storeNameMismatch;
+
+  /// No description provided for @storeNameMismatchDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The store name on the receipt does not match the company information.'**
+  String get storeNameMismatchDesc;
+
+  /// No description provided for @receiptStoreName.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Store'**
+  String get receiptStoreName;
+
+  /// No description provided for @companyNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get companyNameLabel;
+
+  /// No description provided for @receiptDisplayNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Display Name'**
+  String get receiptDisplayNameLabel;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

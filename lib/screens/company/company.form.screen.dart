@@ -13,6 +13,7 @@ import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/widgets/step.progress.indicator.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
+import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 회사 정보 입력 폼 화면 - 멀티스텝
@@ -33,6 +34,7 @@ class CompanyFormScreen extends StatefulWidget {
 
 class _CompanyFormScreenState extends State<CompanyFormScreen> {
   // 폼 필드 컨트롤러
+  late TextEditingController _receiptNameController;
   late TextEditingController _nameController;
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
@@ -79,6 +81,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _pageController = PageController();
 
     // 기존 데이터로 컨트롤러 초기화
+    _receiptNameController = TextEditingController();
     _nameController = TextEditingController(text: widget.company?.name ?? '');
     _titleController = TextEditingController(text: widget.company?.title ?? '');
     _descriptionController = TextEditingController(
@@ -127,11 +130,29 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
     _companyIntroImageUrl = widget.company?.title_image_url ?? '';
     _businessLicenseUrl = widget.company?.business_license_url ?? '';
     _officeInteriorUrl = widget.company?.photo_url ?? '';
+
+    // 수정 모드일 때 receipt_name 비동기 로드
+    if (widget.company != null && widget.company!.idx > 0) {
+      _loadReceiptName();
+    }
+  }
+
+  /// v7 company_meta API로 receipt_name 로드
+  Future<void> _loadReceiptName() async {
+    try {
+      final name = await CompanyApi.getReceiptName(widget.company!.idx);
+      if (mounted && name.isNotEmpty) {
+        _receiptNameController.text = name;
+      }
+    } catch (_) {
+      // receipt_name 로드 실패 시 무시 (선택 항목이므로)
+    }
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _receiptNameController.dispose();
     _nameController.dispose();
     _titleController.dispose();
     _descriptionController.dispose();
@@ -282,6 +303,12 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
 
       final updatedCompany = await updateCompany(companyData);
 
+      // receipt_name 저장 (company_meta via v7 API)
+      final receiptName = _receiptNameController.text.trim();
+      if (receiptName.isNotEmpty) {
+        await CompanyApi.updateReceiptName(updatedCompany.idx, receiptName);
+      }
+
       if (!mounted) return;
 
       showComicSuccessSnackBar(
@@ -406,6 +433,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                 _buildStepContent(
                   FormBasicInfo(
                     nameController: _nameController,
+                    receiptNameController: _receiptNameController,
                   ),
                 ),
 

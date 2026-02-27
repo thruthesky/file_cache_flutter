@@ -2087,4 +2087,28 @@ class LoZh extends Lo {
 
   @override
   String get pointEvent => '积分活动';
+
+  @override
+  String get receiptDisplayName => '收据显示店名';
+
+  @override
+  String get receiptDisplayNameHint => '收据上显示的店名';
+
+  @override
+  String get receiptDisplayNameDescription => '请输入收据上显示的店名。用于各种活动。可选填。';
+
+  @override
+  String get storeNameMismatch => '店名不匹配';
+
+  @override
+  String get storeNameMismatchDesc => '收据上的店名与商家信息不匹配。';
+
+  @override
+  String get receiptStoreName => '收据店名';
+
+  @override
+  String get companyNameLabel => '商家名称';
+
+  @override
+  String get receiptDisplayNameLabel => '收据显示名称';
 }

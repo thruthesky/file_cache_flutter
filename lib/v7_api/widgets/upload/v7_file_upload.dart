@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo_api/philgo_api.dart';
 
-import '../../v7_api/v7_api.dart';
+import '../../v7_api.dart';
 
 /// v7 파일 업로드 위젯 (재활용 가능)
 ///
@@ -98,6 +98,7 @@ class V7FileUpload extends StatefulWidget {
     this.maxHeight,
     this.maxDuration,
     this.apiMethod = 'upload.upload',
+    this.extraData,
     this.showErrorSnackBar = true,
     this.debug = true,
   });
@@ -163,6 +164,10 @@ class V7FileUpload extends StatefulWidget {
   /// v7apiFileUpload()에 전달할 API method (기본값: 'upload.upload')
   /// 영수증 AI 분석 시 'ai.analyzeReceipt'를 지정
   final String apiMethod;
+
+  /// 업로드 시 함께 전달할 추가 데이터 (예: company_idx, receipt_name 등)
+  /// FormData에 spread되어 서버로 전송됨
+  final Map<String, dynamic>? extraData;
 
   /// 디버그 로깅 (기본값: true)
   final bool debug;
@@ -241,9 +246,7 @@ class _V7FileUploadState extends State<V7FileUpload> {
         return Container(
           decoration: BoxDecoration(
             color: scheme.surface,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(24),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: SafeArea(
             child: Padding(
@@ -330,10 +333,7 @@ class _V7FileUploadState extends State<V7FileUpload> {
           onTap: option.onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
                 /// 아이콘 배경
@@ -345,11 +345,7 @@ class _V7FileUploadState extends State<V7FileUpload> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Center(
-                    child: FaIcon(
-                      option.icon,
-                      size: 20,
-                      color: option.color,
-                    ),
+                    child: FaIcon(option.icon, size: 20, color: option.color),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -504,6 +500,7 @@ class _V7FileUploadState extends State<V7FileUpload> {
         method: widget.apiMethod,
         module: widget.module,
         code: widget.code,
+        extraData: widget.extraData,
         debug: widget.debug,
         onProgress: (progress) {
           widget.onProgress?.call(progress);

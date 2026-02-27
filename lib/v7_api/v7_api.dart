@@ -119,6 +119,7 @@ Future<Map<String, dynamic>> v7api(
 /// [idxMember] - 회원번호 (필수)
 /// [module] - 모듈명 (선택, 예: 'receipt')
 /// [code] - 코드 (선택)
+/// [extraData] - FormData에 추가할 임의의 필드 (예: company_idx, receipt_name 등)
 /// [onProgress] - 업로드 진행률 콜백 (0.0 ~ 1.0)
 /// [debug] - 디버그 모드
 ///
@@ -132,6 +133,7 @@ Future<Map<String, dynamic>> v7api(
 ///   filePath: '/path/to/receipt.jpg',
 ///   idxMember: '123',
 ///   module: 'receipt',
+///   extraData: {'company_idx': '456', 'receipt_name': 'ABC'},
 ///   onProgress: (p) => print('${(p * 100).toInt()}%'),
 /// );
 /// print(result['url']); // /uploads/123/unique_file.jpg
@@ -142,6 +144,7 @@ Future<Map<String, dynamic>> v7apiFileUpload({
   String method = 'upload.upload',
   String? module,
   String? code,
+  Map<String, dynamic>? extraData,
   void Function(double progress)? onProgress,
   bool debug = false,
 }) async {
@@ -164,6 +167,7 @@ Future<Map<String, dynamic>> v7apiFileUpload({
       if (idToken.isNotEmpty) 'id_token': idToken,
       if (module != null) 'module': module,
       if (code != null) 'code': code,
+      ...?extraData,
     });
 
     if (debug) {

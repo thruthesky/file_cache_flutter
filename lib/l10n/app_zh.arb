@@ -2091,5 +2091,14 @@
   "eventParticipation": "参加活动",
   "qrCodeNotApproved": "该商家的二维码尚未可用。\n请等待管理员审核。",
   "uploadReceiptForPointEvent": "积分活动收据上传",
-  "pointEvent": "积分活动"
+  "pointEvent": "积分活动",
+  "receiptDisplayName": "收据显示店名",
+  "receiptDisplayNameHint": "收据上显示的店名",
+  "receiptDisplayNameDescription": "请输入收据上显示的店名。用于各种活动。可选填。",
+  "optional": "可选",
+  "storeNameMismatch": "店名不匹配",
+  "storeNameMismatchDesc": "收据上的店名与商家信息不匹配。",
+  "receiptStoreName": "收据店名",
+  "companyNameLabel": "商家名称",
+  "receiptDisplayNameLabel": "收据显示名称"
 }

@@ -4,8 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
-import 'package:philgo/v7_api/v7_api.dart';
-import 'package:philgo/widgets/upload/v7_file_upload.dart';
+import 'package:philgo/v7_api/company_api.dart';
+import 'package:philgo/v7_api/user_api.dart';
+import 'package:philgo/v7_api/widgets/upload/v7_file_upload.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// QR 코드 스캔 결과 화면 (Company QR Code Scanned Screen)
@@ -27,13 +28,9 @@ class CompanyQrCodeScannedScreen extends StatefulWidget {
     required this.verificationId,
   });
 
-  static Future<void> Function(
-    BuildContext ctx,
-    int idx,
-    String verificationId,
-  ) push = (ctx, idx, verificationId) => ctx.push(
-        '$routeName?idx=$idx&verification_id=$verificationId',
-      );
+  static Future<void> Function(BuildContext ctx, int idx, String verificationId)
+  push = (ctx, idx, verificationId) =>
+      ctx.push('$routeName?idx=$idx&verification_id=$verificationId');
 
   @override
   State<CompanyQrCodeScannedScreen> createState() =>
@@ -51,6 +48,9 @@ class _CompanyQrCodeScannedScreenState
   bool isUserLoading = true;
   String? userErrorMessage;
 
+  /// 업소의 영수증 표시 업소명 (company_meta에서 조회)
+  String? receiptName;
+
   /// 영수증 업로드 상태
   Map<String, dynamic>? receiptData;
   bool isUploading = false;
@@ -65,14 +65,17 @@ class _CompanyQrCodeScannedScreenState
 
   Future<void> _loadCompany() async {
     try {
-      final details = await getCompany(widget.idx);
+      final details = await CompanyApi.get(widget.idx);
       if (!mounted) return;
       setState(() {
         company = details;
         isLoading = false;
       });
+
+      /// 업소 로드 후 receipt_name(영수증 표시 업소명)도 함께 조회
+      _loadReceiptName();
     } catch (e) {
-      debugLog('Error fetching company from QR scan: $e');
+      debugLog('v7 업소 조회 오류: $e');
       if (!mounted) return;
       setState(() {
         errorMessage = e.toString();
@@ -81,11 +84,24 @@ class _CompanyQrCodeScannedScreenState
     }
   }
 
+  /// company_meta에서 receipt_name 조회
+  Future<void> _loadReceiptName() async {
+    try {
+      final name = await CompanyApi.getReceiptName(widget.idx);
+      if (!mounted) return;
+      setState(() {
+        receiptName = name;
+      });
+    } catch (e) {
+      debugLog('receipt_name 조회 오류: $e');
+    }
+  }
+
   /// v7 API로 현재 로그인 사용자 정보를 가져온다
   /// user.me 엔드포인트: Firebase ID Token으로 인증 후 sf_member 테이블에서 사용자 정보 반환
   Future<void> _loadUserInfo() async {
     try {
-      final result = await v7api('user.me', debug: true);
+      final result = await UserApi.me();
       if (!mounted) return;
       setState(() {
         userInfo = result;
@@ -174,9 +190,7 @@ class _CompanyQrCodeScannedScreenState
             Expanded(
               child: Text(
                 '사용자 정보를 가져올 수 없습니다.',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.error,
-                ),
+                style: theme.textTheme.bodySmall?.copyWith(color: scheme.error),
               ),
             ),
             GestureDetector(
@@ -210,76 +224,74 @@ class _CompanyQrCodeScannedScreenState
     final displayName = name.isNotEmpty
         ? name
         : nickname.isNotEmpty
-            ? nickname
-            : id;
+        ? nickname
+        : id;
 
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: scheme.primary.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Row(
-        children: [
-          /// 사용자 아이콘
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: scheme.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Center(
-              child: FaIcon(
-                FontAwesomeIcons.solidUser,
-                size: 16,
-                color: scheme.primary,
-              ),
-            ),
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: scheme.primaryContainer.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: scheme.primary.withValues(alpha: 0.2)),
           ),
-          const SizedBox(width: 12),
-
-          /// 사용자 정보 텍스트
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// 이름 (또는 닉네임)
-                Text(
-                  displayName,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          child: Row(
+            children: [
+              /// 사용자 아이콘
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: scheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(18),
                 ),
-
-                /// 이메일 · 전화번호 (한 줄)
-                if (id.isNotEmpty || phoneNumber.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    [
-                      if (id.isNotEmpty) id,
-                      if (phoneNumber.isNotEmpty) phoneNumber,
-                    ].join(' · '),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.solidUser,
+                    size: 16,
+                    color: scheme.primary,
                   ),
-                ],
-              ],
-            ),
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              /// 사용자 정보 텍스트
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// 이름 (또는 닉네임)
+                    Text(
+                      displayName,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: scheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    /// 이메일 · 전화번호 (한 줄)
+                    if (id.isNotEmpty || phoneNumber.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        [
+                          if (id.isNotEmpty) id,
+                          if (phoneNumber.isNotEmpty) phoneNumber,
+                        ].join(' · '),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    )
+        )
         .animate()
         .fadeIn(duration: 300.ms, delay: 150.ms)
         .slideY(begin: 0.05, end: 0);
@@ -350,6 +362,23 @@ class _CompanyQrCodeScannedScreenState
       );
     }
 
+    /// store_name 비교: 서버 응답의 store_name_match 필드 또는 클라이언트 fallback
+    final bool storeNameMatches;
+    if (data.containsKey('store_name_match')) {
+      storeNameMatches = data['store_name_match'] == true;
+    } else {
+      /// 클라이언트 fallback: 영수증 store_name과 업소명/receipt_name 비교
+      final normalizedStore = storeName.trim().toLowerCase();
+      final normalizedCompany = (company?.name ?? '').trim().toLowerCase();
+      final normalizedReceipt = (receiptName ?? '').trim().toLowerCase();
+      storeNameMatches = normalizedStore.isEmpty ||
+          normalizedStore.contains(normalizedCompany) ||
+          normalizedCompany.contains(normalizedStore) ||
+          (normalizedReceipt.isNotEmpty &&
+              (normalizedStore.contains(normalizedReceipt) ||
+                  normalizedReceipt.contains(normalizedStore)));
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -405,11 +434,12 @@ class _CompanyQrCodeScannedScreenState
 
                 /// 신뢰도 점수 배지
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: scoreColor(confidenceScore)
-                        .withValues(alpha: 0.15),
+                    color: scoreColor(confidenceScore).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -507,12 +537,106 @@ class _CompanyQrCodeScannedScreenState
               ),
             ),
           ],
+
+          /// store_name 불일치 경고 (영수증 상점명과 업소명/receipt_name이 다를 때)
+          if (!storeNameMatches && storeName.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: scheme.errorContainer.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.lightTriangleExclamation,
+                        size: 14,
+                        color: scheme.error,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        T.storeNameMismatch,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: scheme.error,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    T.storeNameMismatchDesc,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onErrorContainer,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  /// 영수증 스토어명 vs 업소명 비교 표시
+                  _buildComparisonRow(
+                    theme: theme,
+                    scheme: scheme,
+                    label: T.receiptStoreName,
+                    value: storeName,
+                  ),
+                  const SizedBox(height: 4),
+                  _buildComparisonRow(
+                    theme: theme,
+                    scheme: scheme,
+                    label: T.companyNameLabel,
+                    value: company?.name ?? '',
+                  ),
+                  if (receiptName != null && receiptName!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    _buildComparisonRow(
+                      theme: theme,
+                      scheme: scheme,
+                      label: T.receiptDisplayNameLabel,
+                      value: receiptName!,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ],
       ),
-    )
-        .animate()
-        .fadeIn(duration: 300.ms)
-        .slideY(begin: 0.05, end: 0);
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0);
+  }
+
+  /// store_name 불일치 비교 표시용 행 위젯
+  Widget _buildComparisonRow({
+    required ThemeData theme,
+    required ColorScheme scheme,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      children: [
+        Text(
+          '$label: ',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurface,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
   }
 
   /// Get valid address (non-URL) from location or address field
@@ -529,10 +653,7 @@ class _CompanyQrCodeScannedScreenState
 
     return Scaffold(
       /// AppBar: show logo + company name when loaded
-      appBar: AppBar(
-        title: _buildAppBarTitle(theme, scheme),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: _buildAppBarTitle(theme, scheme), elevation: 0),
       body: _buildBody(scheme, theme),
     );
   }
@@ -774,6 +895,31 @@ class _CompanyQrCodeScannedScreenState
                   ),
                 ],
 
+                /// 영수증 표시 업소명 (receipt_name이 있는 경우에만 표시)
+                if (receiptName != null && receiptName!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.receipt,
+                        size: 12,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          '${T.receiptDisplayName}: $receiptName',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+
                 /// View full details link
                 const SizedBox(height: 8),
                 GestureDetector(
@@ -787,10 +933,7 @@ class _CompanyQrCodeScannedScreenState
                 ),
               ],
             ),
-          )
-              .animate()
-              .fadeIn(duration: 300.ms)
-              .slideY(begin: 0.05, end: 0),
+          ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0),
 
           const SizedBox(height: 12),
 
@@ -809,68 +952,75 @@ class _CompanyQrCodeScannedScreenState
           /// 영수증 업로드 버튼 (V7FileUpload로 감싸기)
           if (userInfo != null)
             V7FileUpload(
-              idxMember: userInfo!['idx']?.toString() ?? '',
-              apiMethod: 'ai.analyzeReceipt',
-              module: 'receipt',
-              onBeforeUpload: () {
-                setState(() {
-                  isUploading = true;
-                  uploadProgress = 0.0;
-                });
-              },
-              onProgress: (progress) {
-                setState(() {
-                  uploadProgress = progress;
-                });
-              },
-              onUploaded: (result) {
-                setState(() {
-                  receiptData = result;
-                  isUploading = false;
-                  uploadProgress = 0.0;
-                });
-              },
-              onError: (error) {
-                setState(() {
-                  isUploading = false;
-                  uploadProgress = 0.0;
-                });
-              },
-              onCancelled: () {
-                setState(() {
-                  isUploading = false;
-                  uploadProgress = 0.0;
-                });
-              },
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: FilledButton.icon(
-                  onPressed: () {},
-                  icon: isUploading
-                      ? SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            value: uploadProgress > 0 ? uploadProgress : null,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              scheme.onPrimary,
-                            ),
-                          ),
-                        )
-                      : const FaIcon(FontAwesomeIcons.receipt, size: 18),
-                  label: Text(
-                    isUploading
-                        ? '업로드 중... ${(uploadProgress * 100).toInt()}%'
-                        : T.uploadReceiptForPointEvent,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: scheme.onPrimary,
+                  idxMember: userInfo!['idx']?.toString() ?? '',
+                  apiMethod: 'ai.analyzeReceipt',
+                  module: 'receipt',
+                  extraData: {
+                    'company_idx': widget.idx.toString(),
+                    'company_name': company?.name ?? '',
+                    'receipt_name': receiptName ?? '',
+                  },
+                  onBeforeUpload: () {
+                    setState(() {
+                      isUploading = true;
+                      uploadProgress = 0.0;
+                    });
+                  },
+                  onProgress: (progress) {
+                    setState(() {
+                      uploadProgress = progress;
+                    });
+                  },
+                  onUploaded: (result) {
+                    setState(() {
+                      receiptData = result;
+                      isUploading = false;
+                      uploadProgress = 0.0;
+                    });
+                  },
+                  onError: (error) {
+                    setState(() {
+                      isUploading = false;
+                      uploadProgress = 0.0;
+                    });
+                  },
+                  onCancelled: () {
+                    setState(() {
+                      isUploading = false;
+                      uploadProgress = 0.0;
+                    });
+                  },
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: FilledButton.icon(
+                      onPressed: () {},
+                      icon: isUploading
+                          ? SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                value: uploadProgress > 0
+                                    ? uploadProgress
+                                    : null,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  scheme.onPrimary,
+                                ),
+                              ),
+                            )
+                          : const FaIcon(FontAwesomeIcons.receipt, size: 18),
+                      label: Text(
+                        isUploading
+                            ? '업로드 중... ${(uploadProgress * 100).toInt()}%'
+                            : T.uploadReceiptForPointEvent,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: scheme.onPrimary,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            )
+                )
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 200.ms)
                 .slideY(begin: 0.1, end: 0),
@@ -878,17 +1028,17 @@ class _CompanyQrCodeScannedScreenState
           /// userInfo 로딩 중이면 비활성 버튼 표시
           if (userInfo == null)
             SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: FilledButton.icon(
-                onPressed: null,
-                icon: const FaIcon(FontAwesomeIcons.receipt, size: 18),
-                label: Text(
-                  T.uploadReceiptForPointEvent,
-                  style: theme.textTheme.titleSmall,
-                ),
-              ),
-            )
+                  width: double.infinity,
+                  height: 56,
+                  child: FilledButton.icon(
+                    onPressed: null,
+                    icon: const FaIcon(FontAwesomeIcons.receipt, size: 18),
+                    label: Text(
+                      T.uploadReceiptForPointEvent,
+                      style: theme.textTheme.titleSmall,
+                    ),
+                  ),
+                )
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 200.ms)
                 .slideY(begin: 0.1, end: 0),

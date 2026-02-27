@@ -2091,5 +2091,14 @@
   "eventParticipation": "イベント参加",
   "qrCodeNotApproved": "この店舗のQRコードはまだ利用できません。\n管理者の承認をお待ちください。",
   "uploadReceiptForPointEvent": "ポイントイベント領収書アップロード",
-  "pointEvent": "ポイントイベント"
+  "pointEvent": "ポイントイベント",
+  "receiptDisplayName": "レシート表示店名",
+  "receiptDisplayNameHint": "レシートに表示される店名",
+  "receiptDisplayNameDescription": "レシートに表示される店名を入力してください。各種イベントで使用されます。任意入力です。",
+  "optional": "任意",
+  "storeNameMismatch": "店名不一致",
+  "storeNameMismatchDesc": "レシートの店名が店舗情報と一致しません。",
+  "receiptStoreName": "レシート店名",
+  "companyNameLabel": "店舗名",
+  "receiptDisplayNameLabel": "レシート表示名"
 }

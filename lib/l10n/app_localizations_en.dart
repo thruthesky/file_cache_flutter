@@ -2130,4 +2130,30 @@ class LoEn extends Lo {
 
   @override
   String get pointEvent => 'Point Event';
+
+  @override
+  String get receiptDisplayName => 'Receipt Display Name';
+
+  @override
+  String get receiptDisplayNameHint => 'Business name on the receipt';
+
+  @override
+  String get receiptDisplayNameDescription =>
+      'Please enter the business name shown on the receipt. Used for various events. Optional.';
+
+  @override
+  String get storeNameMismatch => 'Store Name Mismatch';
+
+  @override
+  String get storeNameMismatchDesc =>
+      'The store name on the receipt does not match the company information.';
+
+  @override
+  String get receiptStoreName => 'Receipt Store';
+
+  @override
+  String get companyNameLabel => 'Company Name';
+
+  @override
+  String get receiptDisplayNameLabel => 'Receipt Display Name';
 }

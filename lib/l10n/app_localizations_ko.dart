@@ -2092,4 +2092,29 @@ class LoKo extends Lo {
 
   @override
   String get pointEvent => '포인트 이벤트';
+
+  @override
+  String get receiptDisplayName => '영수증 표시 업소명';
+
+  @override
+  String get receiptDisplayNameHint => '영수증에 표시된 업소명';
+
+  @override
+  String get receiptDisplayNameDescription =>
+      '영수증에 표시되는 업소명을 적어주세요. 각종 이벤트에서 사용됩니다. 입력하지 않으셔도 됩니다.';
+
+  @override
+  String get storeNameMismatch => '스토어 이름 불일치';
+
+  @override
+  String get storeNameMismatchDesc => '영수증의 스토어 이름이 업소 정보와 일치하지 않습니다.';
+
+  @override
+  String get receiptStoreName => '영수증 스토어';
+
+  @override
+  String get companyNameLabel => '업소명';
+
+  @override
+  String get receiptDisplayNameLabel => '영수증 표시 이름';
 }

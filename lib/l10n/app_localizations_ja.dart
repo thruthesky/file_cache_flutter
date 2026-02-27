@@ -2093,4 +2093,29 @@ class LoJa extends Lo {
 
   @override
   String get pointEvent => 'ポイントイベント';
+
+  @override
+  String get receiptDisplayName => 'レシート表示店名';
+
+  @override
+  String get receiptDisplayNameHint => 'レシートに表示される店名';
+
+  @override
+  String get receiptDisplayNameDescription =>
+      'レシートに表示される店名を入力してください。各種イベントで使用されます。任意入力です。';
+
+  @override
+  String get storeNameMismatch => '店名不一致';
+
+  @override
+  String get storeNameMismatchDesc => 'レシートの店名が店舗情報と一致しません。';
+
+  @override
+  String get receiptStoreName => 'レシート店名';
+
+  @override
+  String get companyNameLabel => '店舗名';
+
+  @override
+  String get receiptDisplayNameLabel => 'レシート表示名';
 }
