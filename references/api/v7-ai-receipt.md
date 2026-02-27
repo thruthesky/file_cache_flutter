@@ -1,7 +1,7 @@
 # AI 영수증 진위 판별 API 상세 가이드
 
 > 본 문서는 `ai.analyzeReceipt` API의 상세 사용법을 다룬다.
-> 메인 문서: [ai.md](ai.md)
+> 메인 문서: [v7-ai.md](v7-ai.md)
 
 ## 목차
 

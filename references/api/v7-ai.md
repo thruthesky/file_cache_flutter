@@ -5,7 +5,7 @@
 Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모듈이다.
 기존 레거시 검열 코드(`lib/moderate/gemini-moderate-api.php`)를 v7 Controller+Service 아키텍처로 재구현한 것이다.
 
-### 영수증 진위 판별 API 상세 → [ai-receipt.md](ai-receipt.md)
+### 영수증 진위 판별 API 상세 → [v7-ai-receipt.md](v7-ai-receipt.md)
 
 클라이언트(웹/앱)가 영수증 이미지를 업로드하면 Gemini AI가 진짜/가짜를 판별하는
 `ai.analyzeReceipt` API의 상세 사용법을 다룬다. **필리핀에서 발행된 영수증만

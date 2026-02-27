@@ -65,7 +65,7 @@ PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
 
 ## 레퍼런스 문서
 
-### 아키텍처 전체 → [architecture.md](references/architecture.md)
+### 아키텍처 전체 → [v7-architecture.md](references/v7-architecture.md)
 
 v7 시스템의 전체 아키텍처, 설계 원칙, 폴더 구조, 부트 프로세스, API 시스템,
 Entity 구조체, 함수 작성 규칙, 입출력/에러/DB 처리, 테스트 시스템, 마이그레이션 전략,
@@ -75,7 +75,7 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 네임스페이스 매핑(`Philgo\User\` → `lib/user/`, `Philgo\Utils\` → `lib/utils/`)을
 정확히 따라야 합니다.
 
-### Docker 인프라 설정 → [docker.md](references/docker.md)
+### Docker 인프라 설정 → [v7-docker.md](references/v7-docker.md)
 
 필고 프로젝트의 Docker Compose 이중 구조(신규 v7 + 기존 v6)를 상세히 다룹니다.
 하나의 compose.yaml에서 5개 서비스(nginx, php, old_philgo_nginx, old_philgo_php, mariadb)를
@@ -86,7 +86,7 @@ PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2
 (`https://local.philgo.com`, `https://banana.philgo.com`), Docker 운영 명령어,
 Windows 환경 설정 차이점을 포함합니다.
 
-### Flutter 앱 API 연동 → [app/flutter-api.md](references/app/flutter-api.md)
+### Flutter 앱 API 연동 → [app/v7-flutter-api.md](references/app/v7-flutter-api.md)
 
 Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.
 `v7api()` 함수 시그니처, 매개변수, 반환값, 에러 처리 패턴,
@@ -100,9 +100,10 @@ v7 위젯 목록을 포함합니다.
 
 | 모듈 | 문서 | 상태 |
 |------|------|------|
-| User | [api/user.md](references/api/user.md) | ✅ 완료 |
-| Upload | [api/upload.md](references/api/upload.md) | ✅ 완료 |
-| AI | [api/ai.md](references/api/ai.md) | ✅ 완료 |
+| User | [api/v7-user.md](references/api/v7-user.md) | ✅ 완료 |
+| Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
+| AI | [api/v7-ai.md](references/api/v7-ai.md) | ✅ 완료 |
+| Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
@@ -132,7 +133,7 @@ v7 위젯 목록을 포함합니다.
 | `v7apiFileUpload()` | `lib/v7_api/v7_api.dart` | v7 파일 업로드 (multipart/form-data) | ✅ 필수 |
 | `V7FileUpload` | `lib/widgets/upload/v7_file_upload.dart` | 파일 업로드 위젯 (카메라/갤러리/파일) | ✅ **필수** |
 
-상세 사용법: → [app/flutter-api.md](references/app/flutter-api.md) 11~13장 참조
+상세 사용법: → [app/v7-flutter-api.md](references/app/v7-flutter-api.md) 11~13장 참조
 
 ---
 
