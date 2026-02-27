@@ -194,8 +194,10 @@ POST /api.php (multipart/form-data)
 | `session_id` | string | ✅* | 세션 ID (인증 경로 1) |
 | `id_token` | string | ✅* | Firebase ID Token (인증 경로 2) |
 | `file` | file | ✅ | 영수증 이미지 파일 (multipart/form-data) |
+| `company_idx` | int | ❌ | 업소 번호. 전달 시 영수증의 store_name과 업소명/영수증 표시 이름(receipt_name) 일치 여부를 검증 |
 
 > \* `session_id` 또는 `id_token` 중 하나가 반드시 필요하다.
+> `company_idx`는 선택이며, 전달 시 해당 업소의 이름 또는 영수증 표시 이름과 영수증의 상점명이 일치하는지 추가 검증한다. 불일치 시 `is_authentic=false`, `company_name_matched=false`.
 
 **응답 (성공 - 진짜 영수증):**
 
@@ -216,7 +218,8 @@ POST /api.php (multipart/form-data)
     "summary": "세븐일레븐에서 커피와 샌드위치 구매",
     "suspicious_reasons": [],
     "confidence_score": 95,
-    "upload_idx": 12345
+    "upload_idx": 12345,
+    "company_name_matched": null
 }
 ```
 
@@ -402,6 +405,7 @@ public static function reset(): void                     // 캐시 초기화
 | `suspicious_reasons` | array | 가짜로 의심되는 이유 목록 |
 | `confidence_score` | int | 신뢰도 점수 (0-100) |
 | `upload_idx` | int | 업로드 레코드 idx |
+| `company_name_matched` | bool\|null | 업소명 일치 여부. `company_idx` 전달 시: `true`/`false`. 미전달 시: `null` |
 
 ---
 
@@ -514,6 +518,8 @@ public static function generate(array $input): GenerateEntity
 
 ```php
 use Philgo\Utils\AuthService;
+use Philgo\Company\CompanyRepository;
+use Philgo\Company\CompanyMetaRepository;
 
 public static function analyzeReceipt(array $input): ReceiptEntity
 {
@@ -530,39 +536,46 @@ public static function analyzeReceipt(array $input): ReceiptEntity
     $uploadEntity = UploadService::store($input);
 
     // 3. 1000-{baseName}.webp 썸네일 경로 계산
-    $rootDir = defined('ROOT_DIR') ? ROOT_DIR : dirname(__DIR__, 2);
-    $baseName = basename($uploadEntity->url);
-    $dir = dirname($uploadEntity->url);
-    $thumbnailUrl = $dir . '/1000-' . $baseName;
-    $thumbnailPath = $rootDir . $thumbnailUrl;
+    // ... (동일)
 
-    // 썸네일이 없으면 원본 사용
-    if (!file_exists($thumbnailPath)) {
-        $thumbnailPath = $rootDir . $uploadEntity->url;
+    // 4. company_idx가 전달되면 업소 정보 조회
+    $companyIdx = (int)($input['company_idx'] ?? 0);
+    $companyName = null;
+    $receiptName = null;
+
+    if ($companyIdx > 0) {
+        $company = CompanyRepository::findByIdx($companyIdx);
+        if ($company === null) {
+            throw new RuntimeException('존재하지 않는 업소 번호입니다. company_idx: ' . $companyIdx);
+        }
+        $companyName = $company->name;
+
+        // 영수증 표시 이름 조회 (company_meta에서 key='receipt_name')
+        $receiptMeta = CompanyMetaRepository::findByCompanyAndKey($companyIdx, 'receipt_name');
+        if ($receiptMeta !== null && $receiptMeta->value !== '') {
+            $receiptName = $receiptMeta->value;
+        }
     }
-    if (!file_exists($thumbnailPath)) {
-        throw new RuntimeException('업로드된 이미지 파일을 찾을 수 없습니다.');
-    }
 
-    // 4. base64 인코딩
-    $imageBase64 = base64_encode(file_get_contents($thumbnailPath));
-    $imageMimeType = 'image/webp';
+    // 5. base64 인코딩 + Gemini API 호출 (동적 시스템 프롬프트에 업소명 포함)
+    $systemPrompt = self::getReceiptAnalysisSystemPrompt($companyName, $receiptName);
+    // ... Gemini API 호출
 
-    // 5. Gemini API 호출 (영수증 분석은 gemini-2.5-flash-lite 모델 사용)
-    $systemPrompt = self::getReceiptAnalysisSystemPrompt();
-    $responseSchema = self::getReceiptAnalysisResponseSchema();
-    $userText = '이 이미지를 분석하여 영수증인지 판별하고, 진위 여부를 확인한 후 정보를 추출해주세요.';
-    $receiptModel = 'gemini-2.5-flash-lite-preview-09-2025';
-
-    $result = GeminiClient::generateJsonWithImage(
-        $systemPrompt, $imageBase64, $imageMimeType, $userText, $responseSchema, $receiptModel
-    );
-
-    // 6. ReceiptEntity 변환 + upload_idx 설정
+    // 6. ReceiptEntity 변환 + company_name_matched 후처리
     $entity = ReceiptEntity::fromArray($result);
     $entity->upload_idx = $uploadEntity->idx;
+    if ($companyIdx === 0) {
+        $entity->company_name_matched = null;
+    }
 
-    // 7. 영수증이 아니면 예외 throw
+    // 7. 업소명 불일치 시 강제로 is_authentic=false 처리 (AI 판단 보정)
+    if ($companyIdx > 0 && $entity->company_name_matched === false) {
+        $entity->is_authentic = false;
+        $entity->confidence_score = 0;
+        $entity->suspicious_reasons[] = '영수증의 상점명이 등록된 업소명과 일치하지 않습니다';
+    }
+
+    // 8. 영수증이 아니면 예외 throw
     if (!$entity->is_receipt) {
         throw new RuntimeException('이미지가 영수증이 아닙니다.');
     }
@@ -573,14 +586,15 @@ public static function analyzeReceipt(array $input): ReceiptEntity
 
 ### 영수증 진위 판별 시스템 프롬프트 설계 원칙
 
-`getReceiptAnalysisSystemPrompt()`의 핵심 설계 원칙:
+`getReceiptAnalysisSystemPrompt(?string $companyName, ?string $receiptName)`의 핵심 설계 원칙:
 
 1. **필리핀 발행 필수**: 필리핀에서 발행된 영수증만 `is_authentic=true` 가능. 타국 영수증은 즉시 거부 (`confidence_score=0`, `suspicious_reasons`에 "필리핀 국가에서 발행한 영수증이 아닙니다" 추가).
-2. **기본 태도: "의심"** — 모든 영수증은 가짜로 간주하고 시작. 진짜임을 증명하는 근거를 찾는 방식.
-3. **6가지 검증 카테고리**: 물리적 특성(A), 폰트/레이아웃(B), 금액/수치(C), 이미지 조작(D), 형식/내용 일관성(E), 디지털 생성 패턴(F)
-4. **confidence_score 기준**: 90-100(확실 진짜), 70-89(진짜 가능성 높음), 50-69(불명확→가짜 판정), 30-49(가짜 가능성 높음), 0-29(명백한 위조)
-5. **is_authentic 판정**: 필리핀 발행 확인 AND confidence_score >= 70 AND 6가지 검증 모두 통과 시에만 true
-6. **suspicious_reasons 필수**: is_authentic=false일 때 반드시 1개 이상 구체적 이유 기재
+2. **업소명 일치 검증** (company_idx 전달 시): `$companyName`/`$receiptName`을 시스템 프롬프트에 동적으로 삽입하여 AI가 영수증 store_name과 비교. 불일치 시 PHP 후처리로 `is_authentic=false`, `confidence_score=0` 강제 처리.
+3. **기본 태도: "의심"** — 모든 영수증은 가짜로 간주하고 시작. 진짜임을 증명하는 근거를 찾는 방식.
+4. **6가지 검증 카테고리**: 물리적 특성(A), 폰트/레이아웃(B), 금액/수치(C), 이미지 조작(D), 형식/내용 일관성(E), 디지털 생성 패턴(F)
+5. **confidence_score 기준**: 90-100(확실 진짜), 70-89(진짜 가능성 높음), 50-69(불명확→가짜 판정), 30-49(가짜 가능성 높음), 0-29(명백한 위조)
+6. **is_authentic 판정**: 필리핀 발행 확인 AND 업소명 일치(전달 시) AND confidence_score >= 70 AND 6가지 검증 모두 통과 시에만 true
+7. **suspicious_reasons 필수**: is_authentic=false일 때 반드시 1개 이상 구체적 이유 기재
 
 > 프롬프트 전문은 `lib/ai/AiService.php`의 `getReceiptAnalysisSystemPrompt()` 메서드를 참조한다.
 
@@ -687,6 +701,7 @@ class ReceiptEntity
     public array $suspicious_reasons = [];
     public int $confidence_score = 0;
     public int $upload_idx = 0;
+    public ?bool $company_name_matched = null;
 
     public static function fromArray(array $data): self
     {
@@ -704,6 +719,8 @@ class ReceiptEntity
         $entity->suspicious_reasons = (array)($data['suspicious_reasons'] ?? []);
         $entity->confidence_score = (int)($data['confidence_score'] ?? 0);
         $entity->upload_idx = (int)($data['upload_idx'] ?? 0);
+        $entity->company_name_matched = isset($data['company_name_matched'])
+            ? (bool)$data['company_name_matched'] : null;
         return $entity;
     }
 
@@ -723,6 +740,7 @@ class ReceiptEntity
             'suspicious_reasons' => $this->suspicious_reasons,
             'confidence_score' => $this->confidence_score,
             'upload_idx' => $this->upload_idx,
+            'company_name_matched' => $this->company_name_matched,
         ];
     }
 }
