@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 27, 2026 at 03:05 PM
+-- Generation Time: Feb 28, 2026 at 02:14 PM
 -- Server version: 11.7.2-MariaDB-ubu2404
 -- PHP Version: 8.3.6
 
@@ -1224,7 +1224,7 @@ CREATE TABLE `uploads` (
   `thumbnail_400x400_url` varchar(500) NOT NULL DEFAULT '',
   `thumbnail_800x800_url` varchar(500) NOT NULL DEFAULT '',
   `thumbnail_1000_url` varchar(500) NOT NULL DEFAULT '',
-  `attached` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '사용 여부 (0=미사용, 1=사용중)'
+  `attached_to` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '파일 소유/첨부 대상 (0=미사용, 글 번호, 코멘트 번호, 회원번호=해당 회원에게 전송됨)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='v7 파일 업로드 메타데이터';
 
 --
@@ -1813,8 +1813,8 @@ ALTER TABLE `uploads`
   ADD PRIMARY KEY (`idx`),
   ADD KEY `idx_member` (`idx_member`),
   ADD KEY `module_code` (`module`,`code`),
-  ADD KEY `attached` (`attached`),
-  ADD KEY `url` (`url`);
+  ADD KEY `url` (`url`),
+  ADD KEY `attached_to` (`attached_to`);
 
 --
 -- AUTO_INCREMENT for dumped tables
