@@ -125,8 +125,26 @@ console.log(res.count);  // 188186
 | **HTTP** | `GET /api.php?method=user.me` 또는 `POST /api.php` (body: `{method: "user.me"}`) |
 | **인증** | 필수 — 쿠키/파라미터 `session_id` (SSR/CURL) 또는 파라미터 `id_token` (앱/웹 API) |
 | **파라미터** | `id_token` (Firebase ID Token, 앱/웹 호출 시) 또는 `session_id` (CURL 호출 시) |
-| **성공 응답** | 사용자 정보 배열 (password 제외) |
+| **성공 응답** | 사용자 정보 배열 (sf_member 전체 컬럼, password 제외). `point`, `level` 등 포함 |
 | **에러 응답** | `{"success": false, "message": "로그인이 필요합니다."}` |
+
+**주요 응답 필드**:
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `idx` | int | 사용자 고유 ID |
+| `id` | string | 사용자 아이디 (이메일) |
+| `name` | string | 이름 |
+| `nickname` | string | 닉네임 |
+| `phone_number` | string | 전화번호 |
+| `firebase_uid` | string | Firebase 인증 UID |
+| `point` | int | 회원 포인트 (현재 잔액) |
+| `level` | int | 회원 레벨 (포인트 기반 산정) |
+| `photo_url` | string | 프로필 사진 URL |
+| `gender` | string | 성별 (M/F) |
+| `no_of_post` | int | 작성한 글 수 |
+| `no_of_comment` | int | 작성한 댓글 수 |
+| `stamp` | int | 레코드 생성/수정 시간 (UNIX timestamp) |
 
 **인증 처리 흐름 (2경로)**:
 
@@ -188,6 +206,8 @@ const res = await func('user.me', { id_token: firebaseIdToken });
 console.log(res.idx);    // 123
 console.log(res.id);     // "user@test.com"
 console.log(res.name);   // "홍길동"
+console.log(res.point);  // 5000 (회원 포인트)
+console.log(res.level);  // 2 (회원 레벨)
 // ※ password 필드는 응답에 포함되지 않음
 ```
 
@@ -200,7 +220,13 @@ console.log(res.name);   // "홍길동"
     "nickname": "닉네임",
     "phone_number": "+821012345678",
     "firebase_uid": "abc123...",
-    "stamp": 1700000000
+    "stamp": 1700000000,
+    "point": 5000,
+    "level": 2,
+    "photo_url": "https://file.philgo.com/...",
+    "gender": "M",
+    "no_of_post": 10,
+    "no_of_comment": 5
 }
 ```
 
