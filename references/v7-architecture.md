@@ -1306,6 +1306,7 @@ ready(() => {
 | `Philgo\Utils\Db` | `lib/utils/Db.php` | `pdo()`, `db_select()`, `db_insert()` 등 | PDO 데이터베이스 연결 |
 | `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | `login()`, `get_user_from_session_id()`, `verify_login()` | 2경로 인증 (세션 + Firebase ID Token) |
 | `Philgo\Utils\FirebaseService` | `lib/utils/FirebaseService.php` | `verifyFirebaseToken()`, `config()->tokens` | Firebase ID Token 검증 유틸리티 |
+| `Philgo\Utils\Debug` | `lib/utils/Debug.php` | `debug_log()` | 디버그 로그 기록 (`var/debug.log`) |
 
 ### 14.2 RequestUtils 클래스
 
@@ -1480,7 +1481,87 @@ $uid = FirebaseService::verifyIdToken($realFirebaseToken);
 
 > 테스트 토큰 목록, Firebase 프로젝트 설정, 핵심 소스코드는 → [api/user.md 섹션 5.5](api/user.md#55-firebaseservice-핵심-소스코드) 참조
 
-### 14.6 새 Utils 클래스 작성 규칙
+### 14.6 Debug 클래스
+
+**파일**: `lib/utils/Debug.php` | **네임스페이스**: `Philgo\Utils\Debug`
+
+기존 `debug_log()` 함수(`lib/boot.functions.php`)의 핵심 기능을 PSR-4 클래스로 구현한 디버그 로깅 유틸리티이다.
+v7 `api.php`는 `boot.php`를 포함하지 않으므로, 레거시 `debug_log()` 함수를 사용할 수 없다.
+`Debug` 클래스는 동일한 기능을 v7에서 독립적으로 제공한다.
+
+**핵심 기능**:
+- 개발 환경에서만 로그 기록 (macOS/Windows/localhost/CLI)
+- 호출 스택 추적 자동 포함 (함수명, 파일명, 라인번호)
+- 배열/객체는 JSON, bool/null은 문자열로 자동 변환
+- 로그 파일: `var/debug.log` (기존과 동일 경로)
+
+```php
+namespace Philgo\Utils;
+
+class Debug
+{
+    /**
+     * 디버그 로그를 var/debug.log에 기록한다.
+     * 개발 환경에서만 동작 (macOS/Windows/localhost/CLI).
+     * 호출 스택 추적 자동 포함.
+     */
+    public static function log(mixed ...$messages): void { ... }
+
+    /** 로그 파일 경로를 수동 설정 (테스트용) */
+    public static function setLogPath(string $path): void { ... }
+
+    /** 디버그 모드 활성화/비활성화 */
+    public static function setEnabled(bool $enabled): void { ... }
+
+    /** 개발 환경 체크 여부 설정 (false면 항상 로그 기록) */
+    public static function setCheckEnv(bool $check): void { ... }
+
+    /** 모든 설정 초기화 (테스트용) */
+    public static function reset(): void { ... }
+}
+```
+
+**사용 예시**:
+```php
+use Philgo\Utils\Debug;
+
+// 기본 로그
+Debug::log('사용자 로그인 성공', $userId);
+
+// 배열 데이터 로그 (JSON으로 자동 변환)
+Debug::log('입력값:', $input);
+
+// 여러 인자 로그 (공백으로 구분)
+Debug::log('쿼리 결과:', $sql, $params, $result);
+
+// Controller에서 사용 예시
+class UserController {
+    public function me(array $input): array {
+        Debug::log('user.me 호출됨, 입력값:', $input);
+        $user = AuthService::getLoginUser();
+        Debug::log('로그인 사용자:', $user);
+        return $user;
+    }
+}
+```
+
+**로그 출력 형식 예시**:
+```
+[{main} at www/api.php:81 -> me() at utils/Debug.php:62] user.me 호출됨, 입력값: {"method":"user.me","session_id":"abc123"}
+```
+
+**로그 파일 확인**:
+```bash
+# 실시간 로그 모니터링
+tail -f var/debug.log
+
+# 로그 파일 비우기
+> var/debug.log
+```
+
+> **참고**: `var/debug.log`는 `.gitignore`에 등록되어 있어 git에 포함되지 않는다.
+
+### 14.7 새 Utils 클래스 작성 규칙
 
 1. **파일 위치**: `lib/utils/<Module>Utils.php` (PascalCase 파일명)
 2. **네임스페이스**: `namespace Philgo\Utils;`
