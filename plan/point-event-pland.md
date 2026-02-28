@@ -1395,3 +1395,131 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 | 포인트 설정 | `etc/app.config.php` (PointConfig 클래스) |
 | 포인트 함수 | `lib/point.functions.php` |
 | 상수 정의 | `lib/constants.php` |
+
+---
+
+## 12. 이벤트 응모 스피닝 휠 Prize Type 설계
+
+### 12.1 개요
+
+이벤트 응모 화면(`EventEntryScreen`)에서 사용자가 원판을 돌려 포인트를 획득하는 스피닝 휠 시스템.
+총 10개 섹션, 가중치(weight) 합계 1000 (0.1% 단위 확률 제어).
+
+### 12.2 Prize Type 목록
+
+| # | 섹션 | 포인트 | Weight | 확률 | 원판 각도 | 색상 | 아이콘 |
+|---|------|--------|--------|------|----------|------|--------|
+| 1 | 50P | 50 | 380 | 38.0% | 136.8° | `#E88B8B` (분홍) | - |
+| 2 | 100P | 100 | 80 | 8.0% | 28.8° | `#E8A87C` (살구) | - |
+| 3 | 200P | 200 | 70 | 7.0% | 25.2° | `#F5B971` (주황) | - |
+| 4 | 300P | 300 | 60 | 6.0% | 21.6° | `#D4A76A` (황토) | - |
+| 5 | 400P | 400 | 50 | 5.0% | 18.0° | `#D4B896` (베이지) | - |
+| 6 | 500P | 500 | 40 | 4.0% | 14.4° | `#E8C170` (금색) | - |
+| 7 | 1,000P | 1,000 | 15 | 1.5% | 5.4° | `#C9A9C9` (보라) | ★ (solidStar × 1) |
+| 8 | 2,000P | 2,000 | 4 | 0.4% | 1.44° | `#9CC2D8` (하늘) | ★★ (solidStar × 2) |
+| 9 | 스타벅스 쿠폰 | -1 (특별) | 1 | 0.1% | 0.36° | `#8BC78B` (초록) | ☕ (lightMugHot) |
+| 10 | 꽝 | 0 | 300 | 30.0% | 108.0° | `#B0B0B0` (회색) | - |
+| | **합계** | | **1,000** | **100%** | **360°** | | |
+
+### 12.3 확률 분포 설계 의도
+
+**기본 원칙**: 고포인트일수록 극히 낮은 확률, 저포인트는 높은 확률
+
+| 등급 | 섹션 | 확률 합계 | 설계 의도 |
+|------|------|----------|----------|
+| **일반** | 50P + 꽝 | 68% | 대부분의 결과 (약 2/3) |
+| **중간** | 100P ~ 500P | 30% | 적당한 보상감 제공 |
+| **희귀** | 1,000P | 1.5% | 드문 행운 |
+| **초희귀** | 2,000P | 0.4% | 매우 드문 대박 |
+| **전설** | 스타벅스 쿠폰 | 0.1% | 1,000회에 1번 (최고 보상) |
+
+### 12.4 기대값 분석
+
+```
+기대값 = Σ(포인트 × 확률)
+       = 50×0.38 + 100×0.08 + 200×0.07 + 300×0.06 + 400×0.05
+         + 500×0.04 + 1000×0.015 + 2000×0.004 + 0×0.30
+       = 19 + 8 + 14 + 18 + 20 + 20 + 15 + 8 + 0
+       = 122P (1회 회전 당 기대값)
+
+※ 스타벅스 쿠폰(0.1%)은 포인트가 아닌 실물 보상이므로 기대값 계산에서 제외
+```
+
+### 12.5 WheelSection 코드 정의
+
+```dart
+/// lib/screens/event/event_entry.screen.dart
+/// 원판 섹션 정의 (10개 섹션, 총 weight = 1000 → 확률 0.1% 단위)
+_sections = [
+  WheelSection(label: '50',    color: Color(0xFFE88B8B), points: 50,   weight: 380),
+  WheelSection(label: '100',   color: Color(0xFFE8A87C), points: 100,  weight: 80),
+  WheelSection(label: '200',   color: Color(0xFFF5B971), points: 200,  weight: 70),
+  WheelSection(label: '300',   color: Color(0xFFD4A76A), points: 300,  weight: 60),
+  WheelSection(label: '400',   color: Color(0xFFD4B896), points: 400,  weight: 50),
+  WheelSection(label: '500',   color: Color(0xFFE8C170), points: 500,  weight: 40),
+  WheelSection(label: '1,000', color: Color(0xFFC9A9C9), points: 1000, weight: 15,
+    icon: FontAwesomeIcons.solidStar),
+  WheelSection(label: '2,000', color: Color(0xFF9CC2D8), points: 2000, weight: 4,
+    icon: FontAwesomeIcons.solidStar, iconCount: 2),
+  WheelSection(label: l10n.spinWheelCoupon, color: Color(0xFF8BC78B), points: -1, weight: 1,
+    icon: FontAwesomeIcons.lightMugHot),
+  WheelSection(label: l10n.spinWheelMiss, color: Color(0xFFB0B0B0), points: 0, weight: 300),
+];
+```
+
+### 12.6 points 필드 규칙
+
+| points 값 | 의미 | 결과 처리 |
+|-----------|------|----------|
+| `> 0` | 포인트 당첨 | 해당 포인트 지급 |
+| `== 0` | 꽝 | 포인트 미지급 |
+| `== -1` | 스타벅스 쿠폰 (특별 상품) | 실물 쿠폰 지급, Auto Spin 중지 조건 |
+
+### 12.7 Auto Spin 중지 조건
+
+```dart
+/// 스타벅스 쿠폰(points == -1) 당첨 시 연속 돌리기 자동 중지
+autoSpinStopCondition: (section) => section.points == -1,
+```
+
+### 12.8 결과 메시지 분기
+
+```dart
+if (section.points == 0) {
+  message = l10n.spinWheelResultMiss;        // "아쉽지만 다음 기회에!"
+} else if (section.points == -1) {
+  message = l10n.spinWheelResultCoupon;      // "스타벅스 쿠폰 당첨!"
+} else {
+  message = l10n.spinWheelResultPoints(section.points);  // "{point}P 당첨!"
+}
+```
+
+### 12.9 서버 연동 시 고려사항
+
+서버에서 결과를 미리 결정할 때, 동일한 가중치 기반 확률을 서버 측에서도 적용해야 한다.
+
+```php
+/// PHP 서버 측 가중치 기반 랜덤 선택 (예시)
+$sections = [
+    ['points' => 50,   'weight' => 380],
+    ['points' => 100,  'weight' => 80],
+    ['points' => 200,  'weight' => 70],
+    ['points' => 300,  'weight' => 60],
+    ['points' => 400,  'weight' => 50],
+    ['points' => 500,  'weight' => 40],
+    ['points' => 1000, 'weight' => 15],
+    ['points' => 2000, 'weight' => 4],
+    ['points' => -1,   'weight' => 1],   // 스타벅스 쿠폰
+    ['points' => 0,    'weight' => 300],  // 꽝
+];
+
+$totalWeight = array_sum(array_column($sections, 'weight'));  // 1000
+$rand = random_int(1, $totalWeight);
+$cumulative = 0;
+foreach ($sections as $index => $section) {
+    $cumulative += $section['weight'];
+    if ($rand <= $cumulative) {
+        return $index;  // 당첨 섹션 인덱스
+    }
+}
+```
