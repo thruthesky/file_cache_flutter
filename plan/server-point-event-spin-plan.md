@@ -39,8 +39,8 @@
   → 클라이언트: event.spin API 호출
   → 서버: 사용 가능한 스타벅스 쿠폰 수 확인 (폴더 파일 vs DB 기록 비교)
   → 서버: 200P 차감
-  → 서버: 확률 기반 결과 결정 (쿠폰 없으면 스타벅스 확률 0%)
-  → 서버: 당첨 포인트 충전 (0, 50, 500, 1000, 2000)
+  → 서버: 가중치 기반 확률 결과 결정 (쿠폰 없으면 스타벅스 확률 0%)
+  → 서버: 당첨 포인트 충전 (0, 50, 100, 200, 300, 400, 500, 1000, 2000)
   → 서버: 스타벅스 당첨 시 쿠폰 파일명을 DB에 기록
   → 서버: DB에 이벤트 기록 저장
   → 서버: 클라이언트에 결과(section_index, points, prize_type) 응답
@@ -86,11 +86,11 @@
 
 | 과제 | 해결 방법 |
 |------|----------|
-| 확률 계산 | `random_int(1, 10000)` 사용, 만분율 기반 정밀 확률 |
+| 확률 계산 | 가중치(weight) 기반 확률, `random_int(1, 1000)` 사용 (0.1% 단위) |
 | 포인트 차감 | sf_member.point UPDATE + sf_point_log INSERT |
 | 포인트 충전 | sf_member.point UPDATE + sf_point_log INSERT |
 | 스타벅스 쿠폰 | `event/cupon/starbucks/` 폴더 파일 스캔 → event_spin_history와 비교 → 미사용 쿠폰 선별 |
-| 쿠폰 소진 | 사용 가능 쿠폰 0개 → 스타벅스 확률 0%로 변경 (50P 확률에 0.1% 합산) |
+| 쿠폰 소진 | 사용 가능 쿠폰 0개 → 스타벅스 확률 0%로 변경 (스타벅스 weight=1을 50P에 합산) |
 | 기록 저장 | event_spin_history 신규 테이블에 INSERT (쿠폰 파일명 포함) |
 | 클라이언트 연동 | section_index 반환 → 원판 회전 애니메이션 |
 
@@ -111,27 +111,25 @@ lib/event/
 
 ### 4단계: 확률 알고리즘 설계
 
-**만분율(10,000 기준) 확률 매핑** — 스타벅스 쿠폰 유무에 따라 동적 변경:
+**가중치 기반(weight 합계 1000) 확률 매핑** — 10개 섹션, 스타벅스 쿠폰 유무에 따라 동적 변경:
 
 ```php
-// ◆ 스타벅스 쿠폰이 있을 때 (기본 확률)
-$rand = random_int(1, 10000);
+// ◆ 10개 섹션 가중치 테이블 (weight 합계 = 1000 → 0.1% 단위)
+$sections = [
+    ['section_index' => 0, 'points' => 50,   'weight' => 380, 'prize_type' => 'point'],     // 38.0%
+    ['section_index' => 1, 'points' => 100,  'weight' => 80,  'prize_type' => 'point'],     // 8.0%
+    ['section_index' => 2, 'points' => 200,  'weight' => 70,  'prize_type' => 'point'],     // 7.0%
+    ['section_index' => 3, 'points' => 300,  'weight' => 60,  'prize_type' => 'point'],     // 6.0%
+    ['section_index' => 4, 'points' => 400,  'weight' => 50,  'prize_type' => 'point'],     // 5.0%
+    ['section_index' => 5, 'points' => 500,  'weight' => 40,  'prize_type' => 'point'],     // 4.0%
+    ['section_index' => 6, 'points' => 1000, 'weight' => 15,  'prize_type' => 'point'],     // 1.5%
+    ['section_index' => 7, 'points' => 2000, 'weight' => 4,   'prize_type' => 'point'],     // 0.4%
+    ['section_index' => 8, 'points' => -1,   'weight' => 1,   'prize_type' => 'starbucks'], // 0.1%
+    ['section_index' => 9, 'points' => 0,    'weight' => 300,  'prize_type' => 'miss'],     // 30.0%
+];
 
-if ($rand <= 3300)      → 꽝 (33.00%)        → section_index = 5, points = 0
-else if ($rand <= 8390) → 50P (50.90%)       → section_index = 0, points = 50
-else if ($rand <= 9390) → 500P (10.00%)      → section_index = 1, points = 500
-else if ($rand <= 9890) → 1,000P (5.00%)     → section_index = 2, points = 1000
-else if ($rand <= 9990) → 2,000P (1.00%)     → section_index = 3, points = 2000
-else                    → 스타벅스 (0.10%)    → section_index = 4, points = 0
-
-// ◆ 스타벅스 쿠폰이 없을 때 (스타벅스 0%, 50P에 합산)
-$rand = random_int(1, 10000);
-
-if ($rand <= 3300)      → 꽝 (33.00%)        → section_index = 5, points = 0
-else if ($rand <= 8400) → 50P (51.00%)       → section_index = 0, points = 50  ← +0.10%
-else if ($rand <= 9400) → 500P (10.00%)      → section_index = 1, points = 500
-else if ($rand <= 9900) → 1,000P (5.00%)     → section_index = 2, points = 1000
-else                    → 2,000P (1.00%)     → section_index = 3, points = 2000
+// ◆ 스타벅스 쿠폰이 없을 때: section_index=8(스타벅스)의 weight=1을 section_index=0(50P)에 합산
+// 즉 50P weight: 380 → 381, 스타벅스 weight: 1 → 0 (총합 여전히 1000)
 ```
 
 ### 5단계: 테스트 전략
@@ -156,9 +154,9 @@ else                    → 2,000P (1.00%)     → section_index = 3, points = 2
 │  └─ [P1-2] sf_point_log 기록 규칙 정의
 │
 ├─ [P2] 확률 시스템
-│  ├─ [P2-1] 만분율 기반 확률 매핑
+│  ├─ [P2-1] 가중치(weight) 기반 확률 매핑 (10개 섹션, 합계 1000)
 │  ├─ [P2-2] random_int() CSPRNG 사용
-│  ├─ [P2-3] section_index ↔ 확률 매핑 테이블
+│  ├─ [P2-3] section_index(0~9) ↔ 확률 매핑 테이블
 │  └─ [P2-4] ★ 스타벅스 쿠폰 유무에 따른 동적 확률 전환
 │
 ├─ [P3] 포인트 처리
@@ -194,14 +192,14 @@ else                    → 2,000P (1.00%)     → section_index = 3, points = 2
 | 문제 | 해결 방안 | 복잡도 |
 |------|----------|--------|
 | P1-1 | CREATE TABLE event_spin_history (starbucks_coupon_file VARCHAR 포함) | 낮음 |
-| P2-1 | random_int(1, 10000) 기반 구간 매핑 | 중간 |
+| P2-1 | 가중치(weight 합계 1000) 기반 누적 매핑, random_int(1, 1000) | 중간 |
 | P2-4 | 쿠폰 유무 판단 후 확률 테이블 분기 | 중간 |
 | P3-1 | BEGIN TRANSACTION → SELECT point → UPDATE → COMMIT | 높음 |
 | P3-3 | PDO transaction으로 원자성 보장 | 중간 |
 | P4-1 | `glob('event/cupon/starbucks/*.jpg')` + `*.png` 파일 스캔 | 낮음 |
 | P4-2 | SELECT starbucks_coupon_file FROM event_spin_history WHERE starbucks_coupon_file IS NOT NULL | 낮음 |
 | P4-3 | array_diff(폴더 파일, DB 기록) | 낮음 |
-| P4-4 | 사용 가능 쿠폰 0개 → $hasStarbucks = false → 확률 테이블 변경 | 낮음 |
+| P4-4 | 사용 가능 쿠폰 0개 → $hasStarbucks = false → 스타벅스 weight=0, 50P에 합산 | 낮음 |
 | P5-1 | EventController::spin($input) | 중간 |
 | P7-1 | JSON: {section_index, points, prize_type, ...} | 낮음 |
 
@@ -218,88 +216,113 @@ else                    → 2,000P (1.00%)     → section_index = 3, points = 2
 
 ### 기본 확률 분포표 (스타벅스 쿠폰 있을 때)
 
-| 섹션 | section_index | 당첨 포인트 | 확률 | 만분율 범위 |
-|------|:------------:|:-----------:|:----:|:-----------:|
-| 50P | 0 | +50P | **50.9%** | 3,301 ~ 8,390 |
-| 500P | 1 | +500P | **10.0%** | 8,391 ~ 9,390 |
-| 1,000P | 2 | +1,000P | **5.0%** | 9,391 ~ 9,890 |
-| 2,000P | 3 | +2,000P | **1.0%** | 9,891 ~ 9,990 |
-| 스타벅스 쿠폰 | 4 | 쿠폰 전송 | **0.1%** | 9,991 ~ 10,000 |
-| 꽝 | 5 | 0P | **33.0%** | 1 ~ 3,300 |
-| **합계** | | | **100.0%** | **10,000** |
+총 10개 섹션, 가중치(weight) 합계 1000 (0.1% 단위 확률 제어).
+
+| 섹션 | section_index | 당첨 포인트 | Weight | 확률 |
+|------|:------------:|:-----------:|:------:|:----:|
+| 50P | 0 | +50P | 380 | **38.0%** |
+| 100P | 1 | +100P | 80 | **8.0%** |
+| 200P | 2 | +200P | 70 | **7.0%** |
+| 300P | 3 | +300P | 60 | **6.0%** |
+| 400P | 4 | +400P | 50 | **5.0%** |
+| 500P | 5 | +500P | 40 | **4.0%** |
+| 1,000P | 6 | +1,000P | 15 | **1.5%** |
+| 2,000P | 7 | +2,000P | 4 | **0.4%** |
+| 스타벅스 쿠폰 | 8 | 쿠폰 전송 | 1 | **0.1%** |
+| 꽝 | 9 | 0P | 300 | **30.0%** |
+| **합계** | | | **1,000** | **100.0%** |
+
+### 확률 등급 분류
+
+| 등급 | 섹션 | 확률 합계 | 설계 의도 |
+|------|------|----------|----------|
+| **일반** | 50P + 꽝 | 68% | 대부분의 결과 (약 2/3) |
+| **중간** | 100P ~ 500P | 30% | 적당한 보상감 제공 |
+| **희귀** | 1,000P | 1.5% | 드문 행운 |
+| **초희귀** | 2,000P | 0.4% | 매우 드문 대박 |
+| **전설** | 스타벅스 쿠폰 | 0.1% | 1,000회에 1번 (최고 보상) |
 
 ### 쿠폰 소진 시 확률 분포표 (스타벅스 쿠폰 없을 때)
 
-> 스타벅스 0.1%를 50P에 합산 → 50P가 50.9% → **51.0%**로 변경
+> 스타벅스 0.1%(weight 1)을 50P에 합산 → 50P weight: 380 → **381**, 스타벅스 weight: 1 → **0**
 
-| 섹션 | section_index | 당첨 포인트 | 확률 | 만분율 범위 |
-|------|:------------:|:-----------:|:----:|:-----------:|
-| 50P | 0 | +50P | **51.0%** | 3,301 ~ 8,400 |
-| 500P | 1 | +500P | **10.0%** | 8,401 ~ 9,400 |
-| 1,000P | 2 | +1,000P | **5.0%** | 9,401 ~ 9,900 |
-| 2,000P | 3 | +2,000P | **1.0%** | 9,901 ~ 10,000 |
-| ~~스타벅스 쿠폰~~ | ~~4~~ | ~~쿠폰~~ | **0.0%** | *(제외)* |
-| 꽝 | 5 | 0P | **33.0%** | 1 ~ 3,300 |
-| **합계** | | | **100.0%** | **10,000** |
+| 섹션 | section_index | 당첨 포인트 | Weight | 확률 |
+|------|:------------:|:-----------:|:------:|:----:|
+| 50P | 0 | +50P | **381** | **38.1%** |
+| 100P | 1 | +100P | 80 | 8.0% |
+| 200P | 2 | +200P | 70 | 7.0% |
+| 300P | 3 | +300P | 60 | 6.0% |
+| 400P | 4 | +400P | 50 | 5.0% |
+| 500P | 5 | +500P | 40 | 4.0% |
+| 1,000P | 6 | +1,000P | 15 | 1.5% |
+| 2,000P | 7 | +2,000P | 4 | 0.4% |
+| ~~스타벅스 쿠폰~~ | ~~8~~ | ~~쿠폰~~ | **0** | **0.0%** |
+| 꽝 | 9 | 0P | 300 | 30.0% |
+| **합계** | | | **1,000** | **100.0%** |
 
 ### 손익 분석 (1회 게임 기준)
 
 | 항목 | 계산 |
 |------|------|
 | **비용** | -200P (게임 참가비) |
-| **기대 수익** | 50 × 0.509 + 500 × 0.10 + 1000 × 0.05 + 2000 × 0.01 + 0 × 0.33 = **145.45P** |
-| **기대 순손실** | 200 - 145.45 = **-54.55P** |
+| **기대 수익** | 50×0.38 + 100×0.08 + 200×0.07 + 300×0.06 + 400×0.05 + 500×0.04 + 1000×0.015 + 2000×0.004 + 0×0.30 = **122P** |
+| **기대 순손실** | 200 - 122 = **-78P** |
 
-> 사용자는 평균적으로 1회 게임당 약 54.55P를 잃는다. 이는 게임의 지속 가능성을 보장한다.
+> 사용자는 평균적으로 1회 게임당 약 78P를 잃는다. 이는 게임의 지속 가능성을 보장한다.
+> ※ 스타벅스 쿠폰(0.1%)은 포인트가 아닌 실물 보상이므로 기대값 계산에서 제외
 
 ### 확률 계산 알고리즘 (PHP)
 
 ```php
 /**
- * 스피닝 휠 확률 계산
+ * 스피닝 휠 확률 계산 (가중치 기반)
  *
+ * 10개 섹션의 weight 합계 1000 기반으로 확률 계산.
  * 사용 가능한 스타벅스 쿠폰 유무에 따라 확률 테이블을 동적으로 변경한다.
- * - 쿠폰 있음: 스타벅스 0.1% 포함
- * - 쿠폰 없음: 스타벅스 0%, 해당 확률을 50P에 합산
+ * - 쿠폰 있음: 스타벅스 weight=1 (0.1%) 포함
+ * - 쿠폰 없음: 스타벅스 weight=0, 해당 weight를 50P에 합산
  *
  * @param bool $hasStarbucksCoupon 사용 가능한 스타벅스 쿠폰 존재 여부
  * @return array ['section_index' => int, 'points' => int, 'prize_type' => string, 'random_value' => int]
  */
 public static function calculateSpinResult(bool $hasStarbucksCoupon): array
 {
-    $rand = random_int(1, 10000); // CSPRNG 사용
+    // 10개 섹션 가중치 테이블 (클라이언트와 동일한 순서)
+    $sections = [
+        ['section_index' => 0, 'points' => 50,   'weight' => 380, 'prize_type' => 'point'],
+        ['section_index' => 1, 'points' => 100,  'weight' => 80,  'prize_type' => 'point'],
+        ['section_index' => 2, 'points' => 200,  'weight' => 70,  'prize_type' => 'point'],
+        ['section_index' => 3, 'points' => 300,  'weight' => 60,  'prize_type' => 'point'],
+        ['section_index' => 4, 'points' => 400,  'weight' => 50,  'prize_type' => 'point'],
+        ['section_index' => 5, 'points' => 500,  'weight' => 40,  'prize_type' => 'point'],
+        ['section_index' => 6, 'points' => 1000, 'weight' => 15,  'prize_type' => 'point'],
+        ['section_index' => 7, 'points' => 2000, 'weight' => 4,   'prize_type' => 'point'],
+        ['section_index' => 8, 'points' => -1,   'weight' => 1,   'prize_type' => 'starbucks'],
+        ['section_index' => 9, 'points' => 0,    'weight' => 300, 'prize_type' => 'miss'],
+    ];
 
-    if ($hasStarbucksCoupon) {
-        // ◆ 스타벅스 쿠폰이 있을 때 (기본 확률)
-        $prizes = [
-            ['max' => 3300,  'section_index' => 5, 'points' => 0,    'prize_type' => 'miss'],
-            ['max' => 8390,  'section_index' => 0, 'points' => 50,   'prize_type' => 'point'],
-            ['max' => 9390,  'section_index' => 1, 'points' => 500,  'prize_type' => 'point'],
-            ['max' => 9890,  'section_index' => 2, 'points' => 1000, 'prize_type' => 'point'],
-            ['max' => 9990,  'section_index' => 3, 'points' => 2000, 'prize_type' => 'point'],
-            ['max' => 10000, 'section_index' => 4, 'points' => 0,    'prize_type' => 'starbucks'],
-        ];
-    } else {
-        // ◆ 스타벅스 쿠폰이 없을 때 (스타벅스 0%, 50P에 합산)
-        $prizes = [
-            ['max' => 3300,  'section_index' => 5, 'points' => 0,    'prize_type' => 'miss'],
-            ['max' => 8400,  'section_index' => 0, 'points' => 50,   'prize_type' => 'point'],
-            ['max' => 9400,  'section_index' => 1, 'points' => 500,  'prize_type' => 'point'],
-            ['max' => 9900,  'section_index' => 2, 'points' => 1000, 'prize_type' => 'point'],
-            ['max' => 10000, 'section_index' => 3, 'points' => 2000, 'prize_type' => 'point'],
-            // 스타벅스 항목 없음
-        ];
+    // 스타벅스 쿠폰이 없으면: 스타벅스 weight를 50P에 합산
+    if (!$hasStarbucksCoupon) {
+        $starbucksWeight = $sections[8]['weight']; // 1
+        $sections[0]['weight'] += $starbucksWeight; // 50P: 380 → 381
+        $sections[8]['weight'] = 0;                 // 스타벅스: 1 → 0
     }
 
-    foreach ($prizes as $prize) {
-        if ($rand <= $prize['max']) {
-            $prize['random_value'] = $rand;
-            return $prize;
+    $totalWeight = array_sum(array_column($sections, 'weight')); // 1000
+    $rand = random_int(1, $totalWeight); // CSPRNG 사용
+
+    $cumulative = 0;
+    foreach ($sections as $section) {
+        if ($section['weight'] <= 0) continue; // weight 0인 섹션 건너뛰기
+        $cumulative += $section['weight'];
+        if ($rand <= $cumulative) {
+            $section['random_value'] = $rand;
+            return $section;
         }
     }
 
     // 폴백 (도달할 수 없음)
-    return ['section_index' => 5, 'points' => 0, 'prize_type' => 'miss', 'random_value' => $rand];
+    return ['section_index' => 9, 'points' => 0, 'prize_type' => 'miss', 'random_value' => $rand];
 }
 ```
 
@@ -359,7 +382,7 @@ EventController::spin($input)
   │
   ├─ [7] 보상 처리 (prize_type에 따라 분기)
   │  │
-  │  ├─ prize_type == 'point' (50, 500, 1000, 2000P)
+  │  ├─ prize_type == 'point' (50, 100, 200, 300, 400, 500, 1000, 2000P)
   │  │  ├─ UPDATE sf_member SET point = point + ? WHERE idx = ?
   │  │  └─ INSERT INTO sf_point_log (충전 기록)
   │  │     └─ module='event', action='spin_reward', point=+N
@@ -406,10 +429,10 @@ EventController::spin($input)
 CREATE TABLE `event_spin_history` (
   `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `idx_member` int(10) UNSIGNED NOT NULL COMMENT '게임한 회원 번호 (sf_member.idx)',
-  `section_index` tinyint(3) UNSIGNED NOT NULL COMMENT '당첨 섹션 인덱스 (0~5)',
+  `section_index` tinyint(3) UNSIGNED NOT NULL COMMENT '당첨 섹션 인덱스 (0~9)',
   `prize_type` varchar(16) NOT NULL COMMENT '보상 유형: miss | point | starbucks',
   `points_cost` int(10) UNSIGNED NOT NULL DEFAULT 200 COMMENT '차감된 포인트 (참가비)',
-  `points_reward` int(10) NOT NULL DEFAULT 0 COMMENT '획득 포인트 (0=꽝, 50/500/1000/2000)',
+  `points_reward` int(10) NOT NULL DEFAULT 0 COMMENT '획득 포인트 (0=꽝, 50/100/200/300/400/500/1000/2000)',
   `starbucks_coupon_file` varchar(255) DEFAULT NULL COMMENT '스타벅스 쿠폰 파일명 (NULL=해당없음, 예: 2.jpg)',
   `random_value` int(10) UNSIGNED NOT NULL COMMENT '확률 계산에 사용된 랜덤 값 (1~10000, 감사 추적용)',
   `point_before` int(11) NOT NULL DEFAULT 0 COMMENT '게임 전 보유 포인트',
@@ -431,10 +454,10 @@ CREATE TABLE `event_spin_history` (
 |------|------|------|
 | `idx` | INT AUTO_INCREMENT | PK |
 | `idx_member` | INT | 게임한 회원 번호 |
-| `section_index` | TINYINT | 원판 섹션 인덱스 (0=50P, 1=500P, 2=1000P, 3=2000P, 4=스타벅스, 5=꽝) |
+| `section_index` | TINYINT | 원판 섹션 인덱스 (0=50P, 1=100P, 2=200P, 3=300P, 4=400P, 5=500P, 6=1000P, 7=2000P, 8=스타벅스, 9=꽝) |
 | `prize_type` | VARCHAR(16) | `miss` / `point` / `starbucks` |
 | `points_cost` | INT | 차감 포인트 (기본 200) |
-| `points_reward` | INT | 획득 포인트 (꽝=0, 스타벅스=0) |
+| `points_reward` | INT | 획득 포인트 (꽝=0, 스타벅스=-1, 포인트=50/100/200/300/400/500/1000/2000) |
 | `starbucks_coupon_file` | VARCHAR(255) NULL | ★ 스타벅스 쿠폰 파일명 (예: `2.jpg`, `KakaoTalk_Photo_...png`) |
 | `random_value` | INT | 확률 계산 랜덤 값 (감사 추적용) |
 | `point_before` | INT | 게임 전 잔액 |
@@ -472,6 +495,10 @@ event_spin_history 테이블:
 |------|--------|--------|-------|-----|
 | 게임 참가비 차감 | `event` | `spin_cost` | -200 | `spin_cost` |
 | 50P 당첨 | `event` | `spin_reward` | +50 | `spin_reward_50` |
+| 100P 당첨 | `event` | `spin_reward` | +100 | `spin_reward_100` |
+| 200P 당첨 | `event` | `spin_reward` | +200 | `spin_reward_200` |
+| 300P 당첨 | `event` | `spin_reward` | +300 | `spin_reward_300` |
+| 400P 당첨 | `event` | `spin_reward` | +400 | `spin_reward_400` |
 | 500P 당첨 | `event` | `spin_reward` | +500 | `spin_reward_500` |
 | 1,000P 당첨 | `event` | `spin_reward` | +1000 | `spin_reward_1000` |
 | 2,000P 당첨 | `event` | `spin_reward` | +2000 | `spin_reward_2000` |
@@ -517,8 +544,8 @@ event_spin_history 테이블:
 | 필드 | 타입 | 설명 |
 |------|------|------|
 | `success` | bool | 성공 여부 |
-| `section_index` | int | 원판 섹션 인덱스 (0~5) |
-| `points` | int | 당첨 포인트 (0=꽝) |
+| `section_index` | int | 원판 섹션 인덱스 (0~9) |
+| `points` | int | 당첨 포인트 (0=꽝, -1=스타벅스) |
 | `prize_type` | string | `miss` / `point` / `starbucks` |
 | `current_point` | int | 게임 후 잔여 포인트 |
 | `starbucks_coupon_file` | string\|null | 스타벅스 쿠폰 파일명 (당첨 시만) |
@@ -531,8 +558,8 @@ event_spin_history 테이블:
 ```json
 {
   "success": true,
-  "section_index": 4,
-  "points": 0,
+  "section_index": 8,
+  "points": -1,
   "prize_type": "starbucks",
   "current_point": 13800,
   "starbucks_coupon_file": "4.jpg",
@@ -875,7 +902,7 @@ public static function getUsedStarbucksCouponFiles(): array
 [5] 모든 쿠폰 소진 시
     ├─ 사용 가능: [] → 0개
     └─ $hasStarbucksCoupon = false
-    └─ 스타벅스 확률 0% → 50P에 0.1% 합산
+    └─ 스타벅스 weight=0, 50P weight: 380→381
 ```
 
 ### 쿠폰 보충 방법
@@ -917,36 +944,48 @@ SpinningWheel(
 );
 ```
 
-#### 2. 섹션 정의 (기존과 동일)
+#### 2. 섹션 정의 (10개 섹션, weight 합계 1000)
 
 ```dart
+/// 원판 섹션 정의 (10개 섹션, 총 weight = 1000 → 확률 0.1% 단위)
 _sections = [
-  WheelSection(label: '50',    color: Color(0xFFE88B8B), points: 50,   weight: 30),   // index 0
-  WheelSection(label: '500',   color: Color(0xFFF5B971), points: 500,  weight: 20),   // index 1
-  WheelSection(label: '1,000', color: Color(0xFFC9A9C9), points: 1000, weight: 10),   // index 2
-  WheelSection(label: '2,000', color: Color(0xFF9CC2D8), points: 2000, weight: 5),    // index 3
-  WheelSection(label: '스타벅스 쿠폰', color: Color(0xFF8BC78B), points: -1, weight: 5), // index 4
-  WheelSection(label: '꽝',    color: Color(0xFFB0B0B0), points: 0,    weight: 30),   // index 5
+  WheelSection(label: '50',    color: Color(0xFFE88B8B), points: 50,   weight: 380),   // index 0
+  WheelSection(label: '100',   color: Color(0xFFE8A87C), points: 100,  weight: 80),    // index 1
+  WheelSection(label: '200',   color: Color(0xFFF5B971), points: 200,  weight: 70),    // index 2
+  WheelSection(label: '300',   color: Color(0xFFD4A76A), points: 300,  weight: 60),    // index 3
+  WheelSection(label: '400',   color: Color(0xFFD4B896), points: 400,  weight: 50),    // index 4
+  WheelSection(label: '500',   color: Color(0xFFE8C170), points: 500,  weight: 40),    // index 5
+  WheelSection(label: '1,000', color: Color(0xFFC9A9C9), points: 1000, weight: 15,     // index 6
+    icon: FontAwesomeIcons.solidStar),
+  WheelSection(label: '2,000', color: Color(0xFF9CC2D8), points: 2000, weight: 4,      // index 7
+    icon: FontAwesomeIcons.solidStar, iconCount: 2),
+  WheelSection(label: l10n.spinWheelCoupon, color: Color(0xFF8BC78B), points: -1, weight: 1,  // index 8
+    icon: FontAwesomeIcons.lightMugHot),
+  WheelSection(label: l10n.spinWheelMiss, color: Color(0xFFB0B0B0), points: 0, weight: 300), // index 9
 ];
 ```
 
-> **참고**: 클라이언트의 `weight`는 원판에서 섹션이 차지하는 **시각적 크기**만 결정한다.
-> 실제 당첨 확률은 서버에서 100% 결정하므로, weight와 실제 확률은 의도적으로 다를 수 있다.
+> **참고**: 클라이언트의 `weight`는 원판에서 섹션이 차지하는 **시각적 크기**와 **실제 확률**을 동시에 결정한다.
+> 서버와 클라이언트가 **동일한 weight 테이블**을 사용하여 확률이 일치한다.
 > 스타벅스 쿠폰이 소진되어도 클라이언트 원판에는 여전히 스타벅스 섹션이 표시된다.
-> (단, 서버에서 절대 해당 section_index=4를 반환하지 않으므로 당첨되지 않음)
+> (단, 서버에서 절대 해당 section_index=8을 반환하지 않으므로 당첨되지 않음)
 
-#### 3. 서버/클라이언트 확률 비교
+#### 3. 서버/클라이언트 section_index 매핑
 
-| 섹션 | 서버 실제 확률 | 클라이언트 시각적 비중(weight) |
-|------|:-------------:|:----------------------------:|
-| 50P | 50.9% | 30 (33.3%) |
-| 500P | 10.0% | 20 (22.2%) |
-| 1,000P | 5.0% | 10 (11.1%) |
-| 2,000P | 1.0% | 5 (5.6%) |
-| 스타벅스 | 0.1% (쿠폰 있을 때) / 0% (쿠폰 없을 때) | 5 (5.6%) |
-| 꽝 | 33.0% | 30 (33.3%) |
+| section_index | 섹션 | 포인트 | Weight | 확률 |
+|:------------:|------|:------:|:------:|:----:|
+| 0 | 50P | 50 | 380 | 38.0% |
+| 1 | 100P | 100 | 80 | 8.0% |
+| 2 | 200P | 200 | 70 | 7.0% |
+| 3 | 300P | 300 | 60 | 6.0% |
+| 4 | 400P | 400 | 50 | 5.0% |
+| 5 | 500P | 500 | 40 | 4.0% |
+| 6 | 1,000P | 1,000 | 15 | 1.5% |
+| 7 | 2,000P | 2,000 | 4 | 0.4% |
+| 8 | 스타벅스 쿠폰 | -1 | 1 | 0.1% |
+| 9 | 꽝 | 0 | 300 | 30.0% |
 
-> 시각적으로는 모든 섹션이 적당한 크기로 보이지만, 실제 확률은 서버에서 별도로 관리된다.
+> 서버와 클라이언트가 동일한 weight 기반 확률을 사용한다.
 
 #### 4. 에러 처리
 
@@ -1035,8 +1074,8 @@ lib/screens/event/
 
 | 테스트 케이스 | 설명 |
 |-------------|------|
-| 확률 분포 검증 (쿠폰 있음) | 10만 회 시뮬레이션 → 스타벅스 0.1% 포함 확인 |
-| 확률 분포 검증 (쿠폰 없음) | 10만 회 시뮬레이션 → 스타벅스 0% 확인, 50P 51% 확인 |
+| 확률 분포 검증 (쿠폰 있음) | 10만 회 시뮬레이션 → 10개 섹션 확률 분포 확인, 스타벅스 0.1% 포함 |
+| 확률 분포 검증 (쿠폰 없음) | 10만 회 시뮬레이션 → 스타벅스 0% 확인, 50P 38.1% 확인 |
 | 포인트 차감 정확성 | 게임 전후 포인트 차이 = -200 + reward |
 | 잔액 부족 에러 | 199P 보유 시 에러 발생 확인 |
 | 쿠폰 사용 가능 확인 | 폴더 파일 - DB 기록 = 사용 가능 쿠폰 |

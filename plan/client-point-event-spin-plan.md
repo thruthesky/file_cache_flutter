@@ -1415,10 +1415,10 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 | 4 | 300P | 300 | 60 | 6.0% | 21.6° | `#D4A76A` (황토) | - |
 | 5 | 400P | 400 | 50 | 5.0% | 18.0° | `#D4B896` (베이지) | - |
 | 6 | 500P | 500 | 40 | 4.0% | 14.4° | `#E8C170` (금색) | - |
-| 7 | 1,000P | 1,000 | 15 | 1.5% | 5.4° | `#C9A9C9` (보라) | ★ (solidStar × 1) |
-| 8 | 2,000P | 2,000 | 4 | 0.4% | 1.44° | `#9CC2D8` (하늘) | ★★ (solidStar × 2) |
-| 9 | 스타벅스 쿠폰 | -1 (특별) | 1 | 0.1% | 0.36° | `#8BC78B` (초록) | ☕ (lightMugHot) |
-| 10 | 꽝 | 0 | 300 | 30.0% | 108.0° | `#B0B0B0` (회색) | - |
+| 7 | 꽝 | 0 | 300 | 30.0% | 108.0° | `#B0B0B0` (회색) | - |
+| 8 | 1,000P | 1,000 | 15 | 1.5% | 5.4° | `#C9A9C9` (보라) | ★ (solidStar × 1) |
+| 9 | 2,000P | 2,000 | 4 | 0.4% | 1.44° | `#9CC2D8` (하늘) | ★★ (solidStar × 2) |
+| 10 | 스타벅스 쿠폰 | -1 (특별) | 1 | 0.1% | 0.36° | `#8BC78B` (초록) | ☕ (lightMugHot) |
 | | **합계** | | **1,000** | **100%** | **360°** | | |
 
 ### 12.3 확률 분포 설계 의도
@@ -1457,13 +1457,13 @@ _sections = [
   WheelSection(label: '300',   color: Color(0xFFD4A76A), points: 300,  weight: 60),
   WheelSection(label: '400',   color: Color(0xFFD4B896), points: 400,  weight: 50),
   WheelSection(label: '500',   color: Color(0xFFE8C170), points: 500,  weight: 40),
+  WheelSection(label: l10n.spinWheelMiss, color: Color(0xFFB0B0B0), points: 0, weight: 300),
   WheelSection(label: '1,000', color: Color(0xFFC9A9C9), points: 1000, weight: 15,
     icon: FontAwesomeIcons.solidStar),
   WheelSection(label: '2,000', color: Color(0xFF9CC2D8), points: 2000, weight: 4,
     icon: FontAwesomeIcons.solidStar, iconCount: 2),
   WheelSection(label: l10n.spinWheelCoupon, color: Color(0xFF8BC78B), points: -1, weight: 1,
     icon: FontAwesomeIcons.lightMugHot),
-  WheelSection(label: l10n.spinWheelMiss, color: Color(0xFFB0B0B0), points: 0, weight: 300),
 ];
 ```
 
@@ -1507,10 +1507,10 @@ $sections = [
     ['points' => 300,  'weight' => 60],
     ['points' => 400,  'weight' => 50],
     ['points' => 500,  'weight' => 40],
+    ['points' => 0,    'weight' => 300],  // 꽝
     ['points' => 1000, 'weight' => 15],
     ['points' => 2000, 'weight' => 4],
     ['points' => -1,   'weight' => 1],   // 스타벅스 쿠폰
-    ['points' => 0,    'weight' => 300],  // 꽝
 ];
 
 $totalWeight = array_sum(array_column($sections, 'weight'));  // 1000
