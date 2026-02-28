@@ -125,7 +125,7 @@ console.log(res.count);  // 188186
 | **HTTP** | `GET /api.php?method=user.me` 또는 `POST /api.php` (body: `{method: "user.me"}`) |
 | **인증** | 필수 — 쿠키/파라미터 `session_id` (SSR/CURL) 또는 파라미터 `id_token` (앱/웹 API) |
 | **파라미터** | `id_token` (Firebase ID Token, 앱/웹 호출 시) 또는 `session_id` (CURL 호출 시) |
-| **성공 응답** | 사용자 정보 배열 (sf_member 전체 컬럼, password 제외). `point`, `level` 등 포함 |
+| **성공 응답** | 사용자 정보 배열 (sf_member 전체 컬럼, password 제외). `point`, `level`, `level_progress` 포함 |
 | **에러 응답** | `{"success": false, "message": "로그인이 필요합니다."}` |
 
 **주요 응답 필드**:
@@ -139,12 +139,17 @@ console.log(res.count);  // 188186
 | `phone_number` | string | 전화번호 |
 | `firebase_uid` | string | Firebase 인증 UID |
 | `point` | int | 회원 포인트 (현재 잔액) |
-| `level` | int | 회원 레벨 (포인트 기반 산정) |
+| `level` | int | 회원 레벨 (**포인트 기반 동적 계산**, POINT_LEVELS 상수 기준) |
+| `level_progress` | int | 다음 레벨까지 진행률 (0~100%, **동적 계산**) |
 | `photo_url` | string | 프로필 사진 URL |
 | `gender` | string | 성별 (M/F) |
 | `no_of_post` | int | 작성한 글 수 |
 | `no_of_comment` | int | 작성한 댓글 수 |
 | `stamp` | int | 레코드 생성/수정 시간 (UNIX timestamp) |
+
+> **참고**: `level`과 `level_progress`는 DB에 저장된 정적 값이 아니라, `point`에서 **매번 동적으로 계산**된다.
+> `UserService::calculateLevel()`과 `UserService::calculateLevelProgress()`가 레거시 `get_user_level()`, `get_user_level_progress()`와 동일한 로직으로 계산한다.
+> 레벨 기준은 `POINT_LEVELS` 상수(128단계, `etc/app.config.php`)에 정의되어 있다.
 
 **인증 처리 흐름 (2경로)**:
 
@@ -206,8 +211,9 @@ const res = await func('user.me', { id_token: firebaseIdToken });
 console.log(res.idx);    // 123
 console.log(res.id);     // "user@test.com"
 console.log(res.name);   // "홍길동"
-console.log(res.point);  // 5000 (회원 포인트)
-console.log(res.level);  // 2 (회원 레벨)
+console.log(res.point);           // 5000 (회원 포인트)
+console.log(res.level);           // 2 (포인트 기반 동적 계산)
+console.log(res.level_progress);  // 37 (다음 레벨까지 진행률 0~100%)
 // ※ password 필드는 응답에 포함되지 않음
 ```
 
@@ -223,6 +229,7 @@ console.log(res.level);  // 2 (회원 레벨)
     "stamp": 1700000000,
     "point": 5000,
     "level": 2,
+    "level_progress": 37,
     "photo_url": "https://file.philgo.com/...",
     "gender": "M",
     "no_of_post": 10,
@@ -331,8 +338,9 @@ class UserService
      *
      * AuthService를 통해 세션 검증 후 사용자 레코드를 조회한다.
      * password 필드는 보안을 위해 제거하고 리턴한다.
+     * point 기반으로 level과 level_progress를 동적으로 계산하여 포함한다.
      *
-     * @return array 사용자 정보 배열 (password 제외)
+     * @return array 사용자 정보 배열 (password 제외, level/level_progress 동적 계산)
      * @throws RuntimeException 비로그인 시
      */
     public static function getMe(): array
@@ -342,8 +350,25 @@ class UserService
             throw new RuntimeException('로그인이 필요합니다.');
         }
         unset($user['password']);
+
+        // 포인트 기반 동적 레벨 계산
+        $points = (int) ($user['point'] ?? 0);
+        $user['level'] = self::calculateLevel($points);
+        $user['level_progress'] = self::calculateLevelProgress($points, $user['level']);
+
         return $user;
     }
+
+    /**
+     * 포인트 기반 사용자 레벨 계산 (레거시 get_user_level()와 동일 로직)
+     * POINT_LEVELS 배열에서 포인트보다 큰 첫 번째 값의 인덱스를 리턴
+     */
+    public static function calculateLevel(int $points): int { /* ... */ }
+
+    /**
+     * 다음 레벨까지 진행률 계산 (0~100, 레거시 get_user_level_progress()와 동일 로직)
+     */
+    public static function calculateLevelProgress(int $points, int $level): int { /* ... */ }
 }
 ```
 
