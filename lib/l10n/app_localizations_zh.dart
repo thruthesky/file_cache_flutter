@@ -2089,15 +2089,6 @@ class LoZh extends Lo {
   String get pointEvent => '积分活动';
 
   @override
-  String get receiptDisplayName => '收据显示店名';
-
-  @override
-  String get receiptDisplayNameHint => '收据上显示的店名';
-
-  @override
-  String get receiptDisplayNameDescription => '请输入收据上显示的店名。用于各种活动。可选填。';
-
-  @override
   String get storeNameMismatch => '店名不匹配';
 
   @override
@@ -2108,9 +2099,6 @@ class LoZh extends Lo {
 
   @override
   String get companyNameLabel => '商家名称';
-
-  @override
-  String get receiptDisplayNameLabel => '收据显示名称';
 
   @override
   String get quickMenuCompanyEvent => '商家活动';
@@ -2175,5 +2163,48 @@ class LoZh extends Lo {
   @override
   String commentCreatedWithPoint(int point) {
     return '评论发布成功！+${point}P获得';
+  }
+
+  @override
+  String get spinWheelInstruction => '点击按钮转动转盘！';
+
+  @override
+  String get spinWheelSpin => '转动转盘';
+
+  @override
+  String get spinWheelReset => '重置';
+
+  @override
+  String get spinWheelMiss => '谢谢参与';
+
+  @override
+  String get spinWheelCoupon => '星巴克优惠券';
+
+  @override
+  String get spinWheelResultTitle => '抽奖结果';
+
+  @override
+  String spinWheelResultPoints(int point) {
+    return '恭喜获得${point}P！';
+  }
+
+  @override
+  String get spinWheelResultMiss => '下次再接再厉！';
+
+  @override
+  String get spinWheelResultCoupon => '恭喜获得星巴克优惠券！';
+
+  @override
+  String get spinWheelAutoSpin => '连续转动';
+
+  @override
+  String get spinWheelStop => '停止';
+
+  @override
+  String get spinWheelUntilCoupon => '直到出现星巴克优惠券';
+
+  @override
+  String spinWheelAutoSpinCount(int count) {
+    return '$count次';
   }
 }

@@ -2573,15 +2573,11 @@
   },
   "uploadReceiptForPointEvent": "Upload Receipt for Point Event",
   "pointEvent": "Point Event",
-  "receiptDisplayName": "Receipt Display Name",
-  "receiptDisplayNameHint": "Business name on the receipt",
-  "receiptDisplayNameDescription": "Please enter the business name shown on the receipt. Used for various events. Optional.",
   "optional": "Optional",
   "storeNameMismatch": "Store Name Mismatch",
   "storeNameMismatchDesc": "The store name on the receipt does not match the company information.",
   "receiptStoreName": "Receipt Store",
   "companyNameLabel": "Company Name",
-  "receiptDisplayNameLabel": "Receipt Display Name",
   "quickMenuCompanyEvent": "Store Event",
   "@quickMenuCompanyEvent": {
     "description": "Quick menu company (store visit QR scan) event label"
@@ -2667,6 +2663,68 @@
     "description": "Success message when comment is created with earned points",
     "placeholders": {
       "point": {
+        "type": "int"
+      }
+    }
+  },
+  "spinWheelInstruction": "Tap the button to spin the wheel!",
+  "@spinWheelInstruction": {
+    "description": "Spinning wheel game instruction text"
+  },
+  "spinWheelSpin": "Spin Wheel",
+  "@spinWheelSpin": {
+    "description": "Spin wheel button label"
+  },
+  "spinWheelReset": "Reset",
+  "@spinWheelReset": {
+    "description": "Reset button label"
+  },
+  "spinWheelMiss": "Miss",
+  "@spinWheelMiss": {
+    "description": "Spinning wheel miss (no prize) section label"
+  },
+  "spinWheelCoupon": "Starbucks Coupon",
+  "@spinWheelCoupon": {
+    "description": "Spinning wheel Starbucks coupon prize label"
+  },
+  "spinWheelResultTitle": "Result",
+  "@spinWheelResultTitle": {
+    "description": "Spinning wheel result dialog title"
+  },
+  "spinWheelResultPoints": "You won {point}P!",
+  "@spinWheelResultPoints": {
+    "description": "Spinning wheel points won message",
+    "placeholders": {
+      "point": {
+        "type": "int"
+      }
+    }
+  },
+  "spinWheelResultMiss": "Better luck next time!",
+  "@spinWheelResultMiss": {
+    "description": "Spinning wheel miss result message"
+  },
+  "spinWheelResultCoupon": "You won a Starbucks coupon!",
+  "@spinWheelResultCoupon": {
+    "description": "Spinning wheel coupon result message"
+  },
+  "spinWheelAutoSpin": "Auto Spin",
+  "@spinWheelAutoSpin": {
+    "description": "Auto spin button label"
+  },
+  "spinWheelStop": "Stop",
+  "@spinWheelStop": {
+    "description": "Stop auto spin button label"
+  },
+  "spinWheelUntilCoupon": "Until Starbucks Coupon",
+  "@spinWheelUntilCoupon": {
+    "description": "Auto spin until coupon option"
+  },
+  "spinWheelAutoSpinCount": "{count} times",
+  "@spinWheelAutoSpinCount": {
+    "description": "Auto spin count option label",
+    "placeholders": {
+      "count": {
         "type": "int"
       }
     }

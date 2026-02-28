@@ -48,9 +48,6 @@ class _CompanyQrCodeScannedScreenState
   bool isUserLoading = true;
   String? userErrorMessage;
 
-  /// 업소의 영수증 표시 업소명 (company_meta에서 조회)
-  String? receiptName;
-
   /// 영수증 업로드 상태
   Map<String, dynamic>? receiptData;
   bool isUploading = false;
@@ -72,8 +69,6 @@ class _CompanyQrCodeScannedScreenState
         isLoading = false;
       });
 
-      /// 업소 로드 후 receipt_name(영수증 표시 업소명)도 함께 조회
-      _loadReceiptName();
     } catch (e) {
       debugLog('v7 업소 조회 오류: $e');
       if (!mounted) return;
@@ -81,19 +76,6 @@ class _CompanyQrCodeScannedScreenState
         errorMessage = e.toString();
         isLoading = false;
       });
-    }
-  }
-
-  /// company_meta에서 receipt_name 조회
-  Future<void> _loadReceiptName() async {
-    try {
-      final name = await CompanyApi.getReceiptName(widget.idx);
-      if (!mounted) return;
-      setState(() {
-        receiptName = name;
-      });
-    } catch (e) {
-      debugLog('receipt_name 조회 오류: $e');
     }
   }
 
@@ -367,16 +349,12 @@ class _CompanyQrCodeScannedScreenState
     if (data.containsKey('store_name_match')) {
       storeNameMatches = data['store_name_match'] == true;
     } else {
-      /// 클라이언트 fallback: 영수증 store_name과 업소명/receipt_name 비교
+      /// 클라이언트 fallback: 영수증 store_name과 업소명 비교
       final normalizedStore = storeName.trim().toLowerCase();
       final normalizedCompany = (company?.name ?? '').trim().toLowerCase();
-      final normalizedReceipt = (receiptName ?? '').trim().toLowerCase();
       storeNameMatches = normalizedStore.isEmpty ||
           normalizedStore.contains(normalizedCompany) ||
-          normalizedCompany.contains(normalizedStore) ||
-          (normalizedReceipt.isNotEmpty &&
-              (normalizedStore.contains(normalizedReceipt) ||
-                  normalizedReceipt.contains(normalizedStore)));
+          normalizedCompany.contains(normalizedStore);
     }
 
     return Container(
@@ -591,15 +569,6 @@ class _CompanyQrCodeScannedScreenState
                     label: T.companyNameLabel,
                     value: company?.name ?? '',
                   ),
-                  if (receiptName != null && receiptName!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    _buildComparisonRow(
-                      theme: theme,
-                      scheme: scheme,
-                      label: T.receiptDisplayNameLabel,
-                      value: receiptName!,
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -895,31 +864,6 @@ class _CompanyQrCodeScannedScreenState
                   ),
                 ],
 
-                /// 영수증 표시 업소명 (receipt_name이 있는 경우에만 표시)
-                if (receiptName != null && receiptName!.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.receipt,
-                        size: 12,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          '${T.receiptDisplayName}: $receiptName',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-
                 /// View full details link
                 const SizedBox(height: 8),
                 GestureDetector(
@@ -958,7 +902,6 @@ class _CompanyQrCodeScannedScreenState
                   extraData: {
                     'company_idx': widget.idx.toString(),
                     'company_name': company?.name ?? '',
-                    'receipt_name': receiptName ?? '',
                   },
                   onBeforeUpload: () {
                     setState(() {

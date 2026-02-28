@@ -4193,24 +4193,6 @@ abstract class Lo {
   /// **'Point Event'**
   String get pointEvent;
 
-  /// No description provided for @receiptDisplayName.
-  ///
-  /// In en, this message translates to:
-  /// **'Receipt Display Name'**
-  String get receiptDisplayName;
-
-  /// No description provided for @receiptDisplayNameHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Business name on the receipt'**
-  String get receiptDisplayNameHint;
-
-  /// No description provided for @receiptDisplayNameDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter the business name shown on the receipt. Used for various events. Optional.'**
-  String get receiptDisplayNameDescription;
-
   /// No description provided for @storeNameMismatch.
   ///
   /// In en, this message translates to:
@@ -4234,12 +4216,6 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Company Name'**
   String get companyNameLabel;
-
-  /// No description provided for @receiptDisplayNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Receipt Display Name'**
-  String get receiptDisplayNameLabel;
 
   /// Quick menu company (store visit QR scan) event label
   ///
@@ -4366,6 +4342,84 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Comment added! +{point}P earned'**
   String commentCreatedWithPoint(int point);
+
+  /// Spinning wheel game instruction text
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the button to spin the wheel!'**
+  String get spinWheelInstruction;
+
+  /// Spin wheel button label
+  ///
+  /// In en, this message translates to:
+  /// **'Spin Wheel'**
+  String get spinWheelSpin;
+
+  /// Reset button label
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get spinWheelReset;
+
+  /// Spinning wheel miss (no prize) section label
+  ///
+  /// In en, this message translates to:
+  /// **'Miss'**
+  String get spinWheelMiss;
+
+  /// Spinning wheel Starbucks coupon prize label
+  ///
+  /// In en, this message translates to:
+  /// **'Starbucks Coupon'**
+  String get spinWheelCoupon;
+
+  /// Spinning wheel result dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get spinWheelResultTitle;
+
+  /// Spinning wheel points won message
+  ///
+  /// In en, this message translates to:
+  /// **'You won {point}P!'**
+  String spinWheelResultPoints(int point);
+
+  /// Spinning wheel miss result message
+  ///
+  /// In en, this message translates to:
+  /// **'Better luck next time!'**
+  String get spinWheelResultMiss;
+
+  /// Spinning wheel coupon result message
+  ///
+  /// In en, this message translates to:
+  /// **'You won a Starbucks coupon!'**
+  String get spinWheelResultCoupon;
+
+  /// Auto spin button label
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Spin'**
+  String get spinWheelAutoSpin;
+
+  /// Stop auto spin button label
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get spinWheelStop;
+
+  /// Auto spin until coupon option
+  ///
+  /// In en, this message translates to:
+  /// **'Until Starbucks Coupon'**
+  String get spinWheelUntilCoupon;
+
+  /// Auto spin count option label
+  ///
+  /// In en, this message translates to:
+  /// **'{count} times'**
+  String spinWheelAutoSpinCount(int count);
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

@@ -2092,15 +2092,11 @@
   "qrCodeNotApproved": "该商家的二维码尚未可用。\n请等待管理员审核。",
   "uploadReceiptForPointEvent": "积分活动收据上传",
   "pointEvent": "积分活动",
-  "receiptDisplayName": "收据显示店名",
-  "receiptDisplayNameHint": "收据上显示的店名",
-  "receiptDisplayNameDescription": "请输入收据上显示的店名。用于各种活动。可选填。",
   "optional": "可选",
   "storeNameMismatch": "店名不匹配",
   "storeNameMismatchDesc": "收据上的店名与商家信息不匹配。",
   "receiptStoreName": "收据店名",
   "companyNameLabel": "商家名称",
-  "receiptDisplayNameLabel": "收据显示名称",
   "quickMenuCompanyEvent": "商家活动",
   "@quickMenuCompanyEvent": {
     "description": "Quick menu company (store visit QR scan) event label"
@@ -2181,5 +2177,18 @@
   "@eventEntryVisitDate": {
     "description": "Event entry screen - visit date label"
   },
-  "commentCreatedWithPoint": "评论发布成功！+{point}P获得"
+  "commentCreatedWithPoint": "评论发布成功！+{point}P获得",
+  "spinWheelInstruction": "点击按钮转动转盘！",
+  "spinWheelSpin": "转动转盘",
+  "spinWheelReset": "重置",
+  "spinWheelMiss": "谢谢参与",
+  "spinWheelCoupon": "星巴克优惠券",
+  "spinWheelResultTitle": "抽奖结果",
+  "spinWheelResultPoints": "恭喜获得{point}P！",
+  "spinWheelResultMiss": "下次再接再厉！",
+  "spinWheelResultCoupon": "恭喜获得星巴克优惠券！",
+  "spinWheelAutoSpin": "连续转动",
+  "spinWheelStop": "停止",
+  "spinWheelUntilCoupon": "直到出现星巴克优惠券",
+  "spinWheelAutoSpinCount": "{count}次"
 }

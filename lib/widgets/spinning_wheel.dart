@@ -1,0 +1,744 @@
+import 'dart:math';
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+/// 스피닝 휠 섹션 데이터 모델
+///
+/// [weight] 로 섹션의 상대적 크기(영역 비율)를 지정.
+/// [icon] 으로 라벨 위에 FontAwesome 아이콘을 표시.
+/// [iconCount] 로 아이콘 반복 횟수를 지정 (예: 별 2개).
+class WheelSection {
+  /// 표시할 텍스트
+  final String label;
+
+  /// 섹션 배경색
+  final Color color;
+
+  /// 포인트 값 (0이면 꽝, -1이면 쿠폰 등 특별 당첨)
+  final int points;
+
+  /// 섹션의 상대적 크기 비중 (기본 1.0)
+  final double weight;
+
+  /// 섹션에 표시할 아이콘 (선택적)
+  final IconData? icon;
+
+  /// 아이콘 반복 횟수 (기본 1)
+  final int iconCount;
+
+  const WheelSection({
+    required this.label,
+    required this.color,
+    required this.points,
+    this.weight = 1.0,
+    this.icon,
+    this.iconCount = 1,
+  });
+}
+
+/// 연속 돌리기 옵션
+class AutoSpinOption {
+  final String label;
+
+  /// 반복 횟수. -1이면 stopCondition 충족까지.
+  final int count;
+
+  const AutoSpinOption({required this.label, required this.count});
+}
+
+/// 스피닝 휠 위젯
+///
+/// CustomPainter 기반의 원판 돌리기 게임 위젯.
+/// [onSpinRequested] 로 서버에서 미리 결정된 당첨 섹션 인덱스를 받아,
+/// 해당 섹션에 정확히 멈추도록 회전함.
+///
+/// 보안 목적: 결과값을 서버에서 미리 결정하여 클라이언트 조작 방지.
+class SpinningWheel extends StatefulWidget {
+  /// 원판 섹션 목록
+  final List<WheelSection> sections;
+
+  /// 스핀 버튼 클릭 시 호출되는 콜백.
+  /// 서버에서 미리 결정된 당첨 섹션 인덱스를 반환.
+  final Future<int> Function()? onSpinRequested;
+
+  /// 회전 완료 시 당첨된 섹션을 전달하는 콜백
+  final ValueChanged<WheelSection>? onResult;
+
+  /// 결과를 인라인으로 표시하기 위한 빌더.
+  final Widget Function(WheelSection section)? resultBuilder;
+
+  /// 안내 텍스트
+  final String instructionText;
+
+  /// 돌리기 버튼 텍스트
+  final String spinButtonText;
+
+  /// 연속 돌리기 버튼 텍스트
+  final String? autoSpinButtonText;
+
+  /// 연속 돌리기 중지 텍스트
+  final String? autoSpinStopText;
+
+  /// 연속 돌리기 옵션 목록. null이면 연속 돌리기 버튼 미표시.
+  final List<AutoSpinOption>? autoSpinOptions;
+
+  /// 연속 돌리기 count == -1일 때, 결과마다 호출.
+  /// true 반환 시 연속 돌리기 중지.
+  final bool Function(WheelSection)? autoSpinStopCondition;
+
+  const SpinningWheel({
+    super.key,
+    required this.sections,
+    this.onSpinRequested,
+    this.onResult,
+    this.resultBuilder,
+    required this.instructionText,
+    required this.spinButtonText,
+    this.autoSpinButtonText,
+    this.autoSpinStopText,
+    this.autoSpinOptions,
+    this.autoSpinStopCondition,
+  });
+
+  @override
+  State<SpinningWheel> createState() => _SpinningWheelState();
+}
+
+class _SpinningWheelState extends State<SpinningWheel>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  /// 현재 원판 회전 각도 (라디안)
+  double _currentAngle = 0;
+
+  /// 회전 중 여부
+  bool _isSpinning = false;
+
+  /// 마지막 당첨 결과 섹션 (인라인 표시용)
+  WheelSection? _lastResult;
+
+  /// 효과음 플레이어
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  /// 음소거 상태
+  bool _isMuted = false;
+
+  /// 연속 돌리기: 남은 횟수 (0이면 비활성)
+  int _autoSpinRemaining = 0;
+
+  /// 연속 돌리기: 조건 충족까지 모드
+  bool _autoSpinUntilCondition = false;
+
+  /// 연속 돌리기 진행 중 여부
+  bool get _isAutoSpinning => _autoSpinRemaining > 0 || _autoSpinUntilCondition;
+
+  final _random = Random();
+
+  /// 단일 스핀 회전 시간 (밀리초)
+  static const _normalDuration = 6000;
+
+  /// 연속 돌리기 시 회전 시간 (밀리초, 빠르게)
+  static const _autoSpinDuration = 2500;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: _normalDuration),
+    );
+
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _audioPlayer.stop();
+        setState(() {
+          _isSpinning = false;
+        });
+        _notifyResult();
+        _checkAutoSpin();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  /// 전체 weight 합계
+  double get _totalWeight =>
+      widget.sections.fold(0.0, (sum, s) => sum + s.weight);
+
+  /// 각 섹션의 시작 각도(라디안) 목록 계산
+  List<double> get _sectionStartAngles {
+    final total = _totalWeight;
+    final angles = <double>[];
+    double cumulative = 0;
+    for (final section in widget.sections) {
+      angles.add(cumulative / total * 2 * pi);
+      cumulative += section.weight;
+    }
+    return angles;
+  }
+
+  /// 특정 섹션의 각도 크기(라디안)
+  double _sectionSweep(int index) {
+    return widget.sections[index].weight / _totalWeight * 2 * pi;
+  }
+
+  /// 원판 돌리기 실행
+  Future<void> _spin() async {
+    if (_isSpinning) return;
+
+    setState(() {
+      _isSpinning = true;
+    });
+
+    /// 타겟 섹션 인덱스 결정
+    final int targetIndex;
+    if (widget.onSpinRequested != null) {
+      targetIndex = await widget.onSpinRequested!();
+    } else {
+      targetIndex = _random.nextInt(widget.sections.length);
+    }
+
+    /// 타겟 섹션에 포인터가 멈추도록 회전각 계산
+    final totalRotation = _calculateRotationForTarget(targetIndex);
+    final startAngle = _currentAngle;
+
+    _animation = Tween<double>(
+      begin: 0,
+      end: totalRotation,
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+
+    _animation.addListener(() {
+      setState(() {
+        _currentAngle = startAngle + _animation.value;
+      });
+    });
+
+    /// 효과음 재생
+    if (!_isMuted) {
+      try {
+        await _audioPlayer.play(AssetSource('sound/spinning_wheel.mp3'));
+      } catch (_) {}
+    }
+
+    _controller.reset();
+    _controller.forward();
+  }
+
+  /// 타겟 섹션에 포인터가 멈추도록 필요한 총 회전각 계산
+  double _calculateRotationForTarget(int targetIndex) {
+    final startAngles = _sectionStartAngles;
+    final sweep = _sectionSweep(targetIndex);
+    final targetCenterAngle = startAngles[targetIndex] + sweep / 2;
+    final targetNormalized = (2 * pi - targetCenterAngle) % (2 * pi);
+    final currentNormalized = _currentAngle % (2 * pi);
+    var delta = targetNormalized - currentNormalized;
+    if (delta < 0) delta += 2 * pi;
+
+    /// 연속 돌리기 시 2~3바퀴, 일반 시 5~8바퀴
+    final extraTurns = _isAutoSpinning
+        ? 2 + _random.nextInt(2)
+        : 5 + _random.nextInt(4);
+    final jitter = (_random.nextDouble() - 0.5) * sweep * 0.6;
+
+    return extraTurns * 2 * pi + delta + jitter;
+  }
+
+  /// 연속 돌리기 시작
+  void _startAutoSpin(AutoSpinOption option) {
+    if (option.count == -1) {
+      /// 조건 충족까지 모드
+      _autoSpinUntilCondition = true;
+      _autoSpinRemaining = 0;
+    } else {
+      _autoSpinUntilCondition = false;
+      _autoSpinRemaining = option.count;
+    }
+
+    /// 연속 돌리기 시 회전 속도를 빠르게
+    _controller.duration = const Duration(milliseconds: _autoSpinDuration);
+
+    _spin();
+  }
+
+  /// 연속 돌리기 중지
+  void _stopAutoSpin() {
+    setState(() {
+      _autoSpinRemaining = 0;
+      _autoSpinUntilCondition = false;
+    });
+    /// 일반 속도로 복원
+    _controller.duration = const Duration(milliseconds: _normalDuration);
+  }
+
+  /// 회전 완료 후 연속 돌리기 체크
+  void _checkAutoSpin() {
+    if (_autoSpinUntilCondition) {
+      /// 조건 충족 여부 확인
+      if (_lastResult != null &&
+          widget.autoSpinStopCondition?.call(_lastResult!) == true) {
+        _stopAutoSpin();
+        return;
+      }
+      /// 다음 스핀 (짧은 딜레이)
+      Future.delayed(const Duration(milliseconds: 600), () {
+        if (mounted && _autoSpinUntilCondition) _spin();
+      });
+    } else if (_autoSpinRemaining > 0) {
+      _autoSpinRemaining--;
+      if (_autoSpinRemaining > 0) {
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (mounted && _autoSpinRemaining > 0) _spin();
+        });
+      } else {
+        _stopAutoSpin();
+      }
+    }
+  }
+
+  /// 당첨 결과 콜백 호출 (가중치 기반 섹션 판별)
+  void _notifyResult() {
+    final normalizedAngle = (_currentAngle % (2 * pi));
+    final pointerAngle = (2 * pi - normalizedAngle) % (2 * pi);
+    final startAngles = _sectionStartAngles;
+    int sectionIndex = widget.sections.length - 1;
+    for (int i = 0; i < widget.sections.length; i++) {
+      final start = startAngles[i];
+      final end = start + _sectionSweep(i);
+      if (pointerAngle >= start && pointerAngle < end) {
+        sectionIndex = i;
+        break;
+      }
+    }
+    final result = widget.sections[sectionIndex];
+    setState(() {
+      _lastResult = result;
+    });
+    widget.onResult?.call(result);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        /// 안내 텍스트
+        Text(
+          widget.instructionText,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: scheme.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ).animate().fadeIn(duration: 400.ms),
+        const SizedBox(height: 24),
+
+        /// 원판 + 포인터 + 외곽 장식
+        SizedBox(
+          width: 310,
+          height: 340,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              /// 외곽 장식 링 (고정, 회전하지 않음)
+              Positioned(
+                top: 20,
+                child: SizedBox(
+                  width: 296,
+                  height: 296,
+                  child: CustomPaint(
+                    painter: _OuterRingPainter(
+                      color: scheme.outlineVariant,
+                      dotColor: scheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+
+              /// 원판 (회전)
+              Positioned(
+                top: 28,
+                child: Transform.rotate(
+                  angle: _currentAngle,
+                  child: SizedBox(
+                    width: 280,
+                    height: 280,
+                    child: CustomPaint(
+                      painter: _WheelPainter(
+                        sections: widget.sections,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              /// 중앙 장식 원
+              Positioned(
+                top: 148,
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: scheme.surface,
+                    border: Border.all(
+                      color: scheme.outlineVariant,
+                      width: 3,
+                    ),
+                  ),
+                ),
+              ),
+
+              /// 상단 포인터
+              Positioned(
+                top: 0,
+                child: _buildPointer(scheme),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        /// 버튼 영역
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /// 연속 돌리기 중이면 중지 버튼, 아니면 일반 돌리기 버튼
+            if (_isAutoSpinning) ...[
+              FilledButton.icon(
+                onPressed: _stopAutoSpin,
+                icon: const FaIcon(FontAwesomeIcons.lightCircleStop, size: 16),
+                label: Text(widget.autoSpinStopText ?? 'Stop'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: scheme.error,
+                  foregroundColor: scheme.onError,
+                ),
+              ),
+            ] else ...[
+              /// 원판 돌리기 버튼
+              FilledButton.icon(
+                onPressed: _isSpinning ? null : _spin,
+                icon: const FaIcon(FontAwesomeIcons.lightCirclePlay, size: 16),
+                label: Text(widget.spinButtonText),
+              ),
+              /// 연속 돌리기 드롭다운 버튼
+              if (widget.autoSpinOptions != null) ...[
+                const SizedBox(width: 8),
+                _buildAutoSpinButton(theme, scheme),
+              ],
+            ],
+            const SizedBox(width: 8),
+
+            /// 음소거 토글 (강조 스타일)
+            Material(
+              color: _isMuted
+                  ? scheme.errorContainer
+                  : scheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(20),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () => setState(() => _isMuted = !_isMuted),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  child: FaIcon(
+                    _isMuted
+                        ? FontAwesomeIcons.lightVolumeXmark
+                        : FontAwesomeIcons.lightVolumeHigh,
+                    size: 16,
+                    color: _isMuted
+                        ? scheme.onErrorContainer
+                        : scheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        /// 결과 인라인 표시
+        if (_lastResult != null && widget.resultBuilder != null) ...[
+          const SizedBox(height: 16),
+          widget.resultBuilder!(_lastResult!)
+              .animate()
+              .fadeIn(duration: 300.ms)
+              .slideY(begin: 0.1, end: 0),
+        ],
+      ],
+    );
+  }
+
+  /// 연속 돌리기 PopupMenuButton
+  Widget _buildAutoSpinButton(ThemeData theme, ColorScheme scheme) {
+    return PopupMenuButton<AutoSpinOption>(
+      enabled: !_isSpinning,
+      onSelected: _startAutoSpin,
+      offset: const Offset(0, -200),
+      itemBuilder: (_) => widget.autoSpinOptions!
+          .map((option) => PopupMenuItem<AutoSpinOption>(
+                value: option,
+                child: Text(option.label),
+              ))
+          .toList(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: _isSpinning
+              ? scheme.surfaceContainerHighest
+              : scheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.lightRepeat,
+              size: 14,
+              color: _isSpinning
+                  ? scheme.onSurfaceVariant
+                  : scheme.onSecondaryContainer,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              widget.autoSpinButtonText ?? 'Auto',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: _isSpinning
+                    ? scheme.onSurfaceVariant
+                    : scheme.onSecondaryContainer,
+              ),
+            ),
+            const SizedBox(width: 4),
+            FaIcon(
+              FontAwesomeIcons.lightChevronDown,
+              size: 10,
+              color: _isSpinning
+                  ? scheme.onSurfaceVariant
+                  : scheme.onSecondaryContainer,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPointer(ColorScheme scheme) {
+    return CustomPaint(
+      size: const Size(24, 24),
+      painter: _PointerPainter(color: scheme.error),
+    );
+  }
+}
+
+/// 원판 페인터 (가중치 기반, 귀여운 디자인)
+class _WheelPainter extends CustomPainter {
+  final List<WheelSection> sections;
+
+  _WheelPainter({required this.sections});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final totalWeight = sections.fold(0.0, (sum, s) => sum + s.weight);
+
+    double cumulativeAngle = -pi / 2;
+
+    for (int i = 0; i < sections.length; i++) {
+      final sweepAngle = sections[i].weight / totalWeight * 2 * pi;
+
+      /// 섹션 배경
+      final paint = Paint()
+        ..color = sections[i].color
+        ..style = PaintingStyle.fill;
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        cumulativeAngle,
+        sweepAngle,
+        true,
+        paint,
+      );
+
+      /// 섹션 구분선 (흰색, 부드럽게)
+      final linePaint = Paint()
+        ..color = Colors.white.withValues(alpha: 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+
+      final lineEnd = Offset(
+        center.dx + radius * cos(cumulativeAngle),
+        center.dy + radius * sin(cumulativeAngle),
+      );
+      canvas.drawLine(center, lineEnd, linePaint);
+
+      /// 섹션 라벨 텍스트 + 아이콘
+      canvas.save();
+      canvas.translate(center.dx, center.dy);
+      canvas.rotate(cumulativeAngle + sweepAngle / 2);
+
+      final hasIcon = sections[i].icon != null;
+      final textFontSize = sweepAngle > 0.6 ? 15.0 : 12.0;
+
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: sections[i].label,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: textFontSize,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                blurRadius: 3,
+                color: Colors.black.withValues(alpha: 0.4),
+              ),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
+
+      /// 라벨 텍스트 (안쪽, 중앙 근처)
+      textPainter.paint(
+        canvas,
+        Offset(
+          radius * 0.55 - textPainter.width / 2,
+          -textPainter.height / 2,
+        ),
+      );
+
+      /// 아이콘 (바깥쪽, 가장자리 근처)
+      /// 단일 아이콘(별 1개, 커피)은 더 바깥(0.88), 복수 아이콘(별 2개)은 안쪽(0.82)
+      if (hasIcon) {
+        final icon = sections[i].icon!;
+        final count = sections[i].iconCount;
+        final iconText = String.fromCharCode(icon.codePoint) * count;
+
+        /// 아이콘 개수에 따라 크기·위치 분기
+        final iconFontSize = count == 1 ? 16.0 : 13.0;
+        final iconRadius = count == 1 ? 0.88 : 0.82;
+
+        final iconPainter = TextPainter(
+          text: TextSpan(
+            text: iconText,
+            style: TextStyle(
+              fontFamily: icon.fontFamily,
+              package: icon.fontPackage,
+              fontSize: iconFontSize,
+              color: Colors.white,
+              letterSpacing: count > 1 ? 2 : 0,
+              shadows: [
+                Shadow(
+                  blurRadius: 3,
+                  color: Colors.black.withValues(alpha: 0.5),
+                ),
+              ],
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        );
+        iconPainter.layout();
+        iconPainter.paint(
+          canvas,
+          Offset(
+            radius * iconRadius - iconPainter.width / 2,
+            -iconPainter.height / 2,
+          ),
+        );
+      }
+
+      canvas.restore();
+      cumulativeAngle += sweepAngle;
+    }
+
+    /// 외곽 테두리 (흰색, 부드러운 느낌)
+    final outerBorderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawCircle(center, radius, outerBorderPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _WheelPainter oldDelegate) => false;
+}
+
+/// 외곽 장식 링 페인터 (도트 장식)
+class _OuterRingPainter extends CustomPainter {
+  final Color color;
+  final Color dotColor;
+
+  _OuterRingPainter({required this.color, required this.dotColor});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    /// 외곽 링 배경
+    final ringPaint = Paint()
+      ..color = color.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8;
+    canvas.drawCircle(center, radius - 4, ringPaint);
+
+    /// 장식 도트 (12개)
+    const dotCount = 12;
+    final dotRadius = 3.0;
+    final dotPaint = Paint()..color = dotColor.withValues(alpha: 0.6);
+
+    for (int i = 0; i < dotCount; i++) {
+      final angle = (i / dotCount) * 2 * pi - pi / 2;
+      final dotCenter = Offset(
+        center.dx + (radius - 4) * cos(angle),
+        center.dy + (radius - 4) * sin(angle),
+      );
+      canvas.drawCircle(dotCenter, dotRadius, dotPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _OuterRingPainter oldDelegate) =>
+      color != oldDelegate.color || dotColor != oldDelegate.dotColor;
+}
+
+/// 포인터(역삼각형) 페인터
+class _PointerPainter extends CustomPainter {
+  final Color color;
+
+  _PointerPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(size.width / 2, size.height)
+      ..lineTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PointerPainter oldDelegate) =>
+      color != oldDelegate.color;
+}

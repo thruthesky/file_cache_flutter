@@ -2095,16 +2095,6 @@ class LoJa extends Lo {
   String get pointEvent => 'ポイントイベント';
 
   @override
-  String get receiptDisplayName => 'レシート表示店名';
-
-  @override
-  String get receiptDisplayNameHint => 'レシートに表示される店名';
-
-  @override
-  String get receiptDisplayNameDescription =>
-      'レシートに表示される店名を入力してください。各種イベントで使用されます。任意入力です。';
-
-  @override
   String get storeNameMismatch => '店名不一致';
 
   @override
@@ -2115,9 +2105,6 @@ class LoJa extends Lo {
 
   @override
   String get companyNameLabel => '店舗名';
-
-  @override
-  String get receiptDisplayNameLabel => 'レシート表示名';
 
   @override
   String get quickMenuCompanyEvent => '店舗イベント';
@@ -2182,5 +2169,48 @@ class LoJa extends Lo {
   @override
   String commentCreatedWithPoint(int point) {
     return 'コメント投稿完了！+${point}P獲得';
+  }
+
+  @override
+  String get spinWheelInstruction => 'ボタンを押してルーレットを回してください！';
+
+  @override
+  String get spinWheelSpin => 'ルーレットを回す';
+
+  @override
+  String get spinWheelReset => 'リセット';
+
+  @override
+  String get spinWheelMiss => 'ハズレ';
+
+  @override
+  String get spinWheelCoupon => 'スタバクーポン';
+
+  @override
+  String get spinWheelResultTitle => '抽選結果';
+
+  @override
+  String spinWheelResultPoints(int point) {
+    return '${point}P当選！';
+  }
+
+  @override
+  String get spinWheelResultMiss => '残念！次回をお楽しみに！';
+
+  @override
+  String get spinWheelResultCoupon => 'スタバクーポン当選！';
+
+  @override
+  String get spinWheelAutoSpin => '連続回し';
+
+  @override
+  String get spinWheelStop => '停止';
+
+  @override
+  String get spinWheelUntilCoupon => 'スタバクーポンが出るまで';
+
+  @override
+  String spinWheelAutoSpinCount(int count) {
+    return '$count回';
   }
 }

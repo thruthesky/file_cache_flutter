@@ -2094,16 +2094,6 @@ class LoKo extends Lo {
   String get pointEvent => '포인트 이벤트';
 
   @override
-  String get receiptDisplayName => '영수증 표시 업소명';
-
-  @override
-  String get receiptDisplayNameHint => '영수증에 표시된 업소명';
-
-  @override
-  String get receiptDisplayNameDescription =>
-      '영수증에 표시되는 업소명을 적어주세요. 각종 이벤트에서 사용됩니다. 입력하지 않으셔도 됩니다.';
-
-  @override
   String get storeNameMismatch => '스토어 이름 불일치';
 
   @override
@@ -2114,9 +2104,6 @@ class LoKo extends Lo {
 
   @override
   String get companyNameLabel => '업소명';
-
-  @override
-  String get receiptDisplayNameLabel => '영수증 표시 이름';
 
   @override
   String get quickMenuCompanyEvent => '업소이벤트';
@@ -2181,5 +2168,48 @@ class LoKo extends Lo {
   @override
   String commentCreatedWithPoint(int point) {
     return '댓글 작성 완료! +${point}P 획득';
+  }
+
+  @override
+  String get spinWheelInstruction => '버튼을 눌러 원판을 돌려주세요!';
+
+  @override
+  String get spinWheelSpin => '원판 돌리기';
+
+  @override
+  String get spinWheelReset => '재설정하기';
+
+  @override
+  String get spinWheelMiss => '꽝';
+
+  @override
+  String get spinWheelCoupon => '스타벅스 쿠폰';
+
+  @override
+  String get spinWheelResultTitle => '당첨 결과';
+
+  @override
+  String spinWheelResultPoints(int point) {
+    return '${point}P 당첨!';
+  }
+
+  @override
+  String get spinWheelResultMiss => '아쉽지만 다음 기회에!';
+
+  @override
+  String get spinWheelResultCoupon => '스타벅스 쿠폰 당첨!';
+
+  @override
+  String get spinWheelAutoSpin => '연속 돌리기';
+
+  @override
+  String get spinWheelStop => '중지';
+
+  @override
+  String get spinWheelUntilCoupon => '스타벅스 쿠폰 나올 때까지';
+
+  @override
+  String spinWheelAutoSpinCount(int count) {
+    return '$count회';
   }
 }

@@ -14,8 +14,6 @@ import 'v7_api.dart';
 /// final myCompany = await CompanyApi.mine();
 /// final created = await CompanyApi.create();
 /// final updated = await CompanyApi.update({'idx': 123, 'name': '새 이름'});
-/// final receiptName = await CompanyApi.getReceiptName(123);
-/// await CompanyApi.updateReceiptName(123, '영수증 업소명');
 /// ```
 class CompanyApi {
   CompanyApi._();
@@ -113,40 +111,4 @@ class CompanyApi {
     return Company.fromJson(responseData);
   }
 
-  /// 업소의 receipt_name(영수증 표시 업소명) 조회
-  ///
-  /// API 엔드포인트: company_meta.get
-  /// company_meta 테이블에서 key='receipt_name'인 메타 데이터 조회
-  ///
-  /// [companyIdx] 업소 고유번호
-  /// 반환: receipt_name 문자열 (없으면 빈 문자열)
-  static Future<String> getReceiptName(int companyIdx) async {
-    try {
-      final result = await v7api('company_meta.get', data: {
-        'idx_company': companyIdx,
-        'key': 'receipt_name',
-      });
-      return result['value']?.toString() ?? '';
-    } catch (e) {
-      /// 메타 데이터가 없는 경우 빈 문자열 반환
-      return '';
-    }
-  }
-
-  /// 업소의 receipt_name(영수증 표시 업소명) 저장
-  ///
-  /// API 엔드포인트: company_meta.update (Upsert)
-  /// key 존재 시 UPDATE, 미존재 시 INSERT
-  ///
-  /// [companyIdx] 업소 고유번호
-  /// [receiptName] 영수증 표시 업소명
-  static Future<void> updateReceiptName(
-      int companyIdx, String receiptName) async {
-    await v7api('company_meta.update', data: {
-      'idx_company': companyIdx,
-      'key': 'receipt_name',
-      'group': 'company_info',
-      'value': receiptName,
-    });
-  }
 }

@@ -2092,15 +2092,11 @@
   "qrCodeNotApproved": "この店舗のQRコードはまだ利用できません。\n管理者の承認をお待ちください。",
   "uploadReceiptForPointEvent": "ポイントイベント領収書アップロード",
   "pointEvent": "ポイントイベント",
-  "receiptDisplayName": "レシート表示店名",
-  "receiptDisplayNameHint": "レシートに表示される店名",
-  "receiptDisplayNameDescription": "レシートに表示される店名を入力してください。各種イベントで使用されます。任意入力です。",
   "optional": "任意",
   "storeNameMismatch": "店名不一致",
   "storeNameMismatchDesc": "レシートの店名が店舗情報と一致しません。",
   "receiptStoreName": "レシート店名",
   "companyNameLabel": "店舗名",
-  "receiptDisplayNameLabel": "レシート表示名",
   "quickMenuCompanyEvent": "店舗イベント",
   "@quickMenuCompanyEvent": {
     "description": "Quick menu company (store visit QR scan) event label"
@@ -2181,5 +2177,18 @@
   "@eventEntryVisitDate": {
     "description": "Event entry screen - visit date label"
   },
-  "commentCreatedWithPoint": "コメント投稿完了！+{point}P獲得"
+  "commentCreatedWithPoint": "コメント投稿完了！+{point}P獲得",
+  "spinWheelInstruction": "ボタンを押してルーレットを回してください！",
+  "spinWheelSpin": "ルーレットを回す",
+  "spinWheelReset": "リセット",
+  "spinWheelMiss": "ハズレ",
+  "spinWheelCoupon": "スタバクーポン",
+  "spinWheelResultTitle": "抽選結果",
+  "spinWheelResultPoints": "{point}P当選！",
+  "spinWheelResultMiss": "残念！次回をお楽しみに！",
+  "spinWheelResultCoupon": "スタバクーポン当選！",
+  "spinWheelAutoSpin": "連続回し",
+  "spinWheelStop": "停止",
+  "spinWheelUntilCoupon": "スタバクーポンが出るまで",
+  "spinWheelAutoSpinCount": "{count}回"
 }

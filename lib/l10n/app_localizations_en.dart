@@ -2132,16 +2132,6 @@ class LoEn extends Lo {
   String get pointEvent => 'Point Event';
 
   @override
-  String get receiptDisplayName => 'Receipt Display Name';
-
-  @override
-  String get receiptDisplayNameHint => 'Business name on the receipt';
-
-  @override
-  String get receiptDisplayNameDescription =>
-      'Please enter the business name shown on the receipt. Used for various events. Optional.';
-
-  @override
   String get storeNameMismatch => 'Store Name Mismatch';
 
   @override
@@ -2153,9 +2143,6 @@ class LoEn extends Lo {
 
   @override
   String get companyNameLabel => 'Company Name';
-
-  @override
-  String get receiptDisplayNameLabel => 'Receipt Display Name';
 
   @override
   String get quickMenuCompanyEvent => 'Store Event';
@@ -2225,5 +2212,48 @@ class LoEn extends Lo {
   @override
   String commentCreatedWithPoint(int point) {
     return 'Comment added! +${point}P earned';
+  }
+
+  @override
+  String get spinWheelInstruction => 'Tap the button to spin the wheel!';
+
+  @override
+  String get spinWheelSpin => 'Spin Wheel';
+
+  @override
+  String get spinWheelReset => 'Reset';
+
+  @override
+  String get spinWheelMiss => 'Miss';
+
+  @override
+  String get spinWheelCoupon => 'Starbucks Coupon';
+
+  @override
+  String get spinWheelResultTitle => 'Result';
+
+  @override
+  String spinWheelResultPoints(int point) {
+    return 'You won ${point}P!';
+  }
+
+  @override
+  String get spinWheelResultMiss => 'Better luck next time!';
+
+  @override
+  String get spinWheelResultCoupon => 'You won a Starbucks coupon!';
+
+  @override
+  String get spinWheelAutoSpin => 'Auto Spin';
+
+  @override
+  String get spinWheelStop => 'Stop';
+
+  @override
+  String get spinWheelUntilCoupon => 'Until Starbucks Coupon';
+
+  @override
+  String spinWheelAutoSpinCount(int count) {
+    return '$count times';
   }
 }
