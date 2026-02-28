@@ -179,21 +179,63 @@ class _SpinningWheelState extends State<SpinningWheel>
   double get _totalWeight =>
       widget.sections.fold(0.0, (sum, s) => sum + s.weight);
 
-  /// 각 섹션의 시작 각도(라디안) 목록 계산
-  List<double> get _sectionStartAngles {
+  /// 시각적 최소 각도 (라디안). 약 20도.
+  /// 작은 섹션(1,000P, 2,000P, 쿠폰 등)의 텍스트를 읽을 수 있도록 확대 표시.
+  /// 확률 자체는 변경하지 않고, 화면에 그리는 크기만 조정.
+  static const _minDisplayAngle = 0.35;
+
+  /// 시각적 최소 각도를 보장하는 표시용 가중치 목록.
+  /// 최소 각도 미만인 섹션은 확대하고, 큰 섹션은 비례 축소.
+  List<double> get _displayWeights {
     final total = _totalWeight;
+    final sections = widget.sections;
+    final rawAngles =
+        sections.map((s) => s.weight / total * 2 * pi).toList();
+
+    double deficit = 0;
+    double surplusAngleSum = 0;
+
+    for (int i = 0; i < rawAngles.length; i++) {
+      if (rawAngles[i] < _minDisplayAngle) {
+        deficit += _minDisplayAngle - rawAngles[i];
+      } else {
+        surplusAngleSum += rawAngles[i];
+      }
+    }
+
+    /// 부족분이 없으면 원래 weight 반환
+    if (deficit <= 0) return sections.map((s) => s.weight).toList();
+
+    /// 큰 섹션의 축소 비율
+    final scale = (surplusAngleSum - deficit) / surplusAngleSum;
+
+    return List.generate(sections.length, (i) {
+      if (rawAngles[i] < _minDisplayAngle) {
+        return _minDisplayAngle / (2 * pi) * total;
+      } else {
+        return sections[i].weight * scale;
+      }
+    });
+  }
+
+  /// 각 섹션의 시작 각도(라디안) 목록 계산 (시각적 가중치 기반)
+  List<double> get _sectionStartAngles {
+    final weights = _displayWeights;
+    final total = weights.fold(0.0, (sum, w) => sum + w);
     final angles = <double>[];
     double cumulative = 0;
-    for (final section in widget.sections) {
+    for (final w in weights) {
       angles.add(cumulative / total * 2 * pi);
-      cumulative += section.weight;
+      cumulative += w;
     }
     return angles;
   }
 
-  /// 특정 섹션의 각도 크기(라디안)
+  /// 특정 섹션의 각도 크기(라디안) (시각적 가중치 기반)
   double _sectionSweep(int index) {
-    return widget.sections[index].weight / _totalWeight * 2 * pi;
+    final weights = _displayWeights;
+    final total = weights.fold(0.0, (sum, w) => sum + w);
+    return weights[index] / total * 2 * pi;
   }
 
   /// 원판 돌리기 실행
@@ -384,6 +426,7 @@ class _SpinningWheelState extends State<SpinningWheel>
                     child: CustomPaint(
                       painter: _WheelPainter(
                         sections: widget.sections,
+                        displayWeights: _displayWeights,
                       ),
                     ),
                   ),
@@ -549,22 +592,25 @@ class _SpinningWheelState extends State<SpinningWheel>
   }
 }
 
-/// 원판 페인터 (가중치 기반, 귀여운 디자인)
+/// 원판 페인터 (시각적 가중치 기반, 귀여운 디자인)
 class _WheelPainter extends CustomPainter {
   final List<WheelSection> sections;
 
-  _WheelPainter({required this.sections});
+  /// 시각적 최소 각도가 적용된 표시용 가중치
+  final List<double> displayWeights;
+
+  _WheelPainter({required this.sections, required this.displayWeights});
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    final totalWeight = sections.fold(0.0, (sum, s) => sum + s.weight);
+    final totalWeight = displayWeights.fold(0.0, (sum, w) => sum + w);
 
     double cumulativeAngle = -pi / 2;
 
     for (int i = 0; i < sections.length; i++) {
-      final sweepAngle = sections[i].weight / totalWeight * 2 * pi;
+      final sweepAngle = displayWeights[i] / totalWeight * 2 * pi;
 
       /// 섹션 배경
       final paint = Paint()

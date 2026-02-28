@@ -67,23 +67,34 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
     final scheme = theme.colorScheme;
     final l10n = Lo.of(context)!;
 
-    /// 원판 섹션 정의 (6개 섹션)
-    /// 꽝: 30%, 50: 30%, 500: 20%, 1000: 10%, 2000: 5%, 스타벅스 쿠폰: 5%
+    /// 원판 섹션 정의 (10개 섹션, 총 weight = 1000 → 확률 0.1% 단위)
+    /// 꽝 30%, 50P 38%, 100P 8%, 200P 7%, 300P 6%, 400P 5%,
+    /// 500P 4%, 1000P 1.5%, 2000P 0.4%, 스타벅스 쿠폰 0.1%
     _sections = [
-      WheelSection(label: '50', color: const Color(0xFFE88B8B), points: 50, weight: 30),
-      WheelSection(label: '500', color: const Color(0xFFF5B971), points: 500, weight: 20),
+      WheelSection(label: '50', color: const Color(0xFFE88B8B), points: 50, weight: 380),
+      WheelSection(label: '100', color: const Color(0xFFE8A87C), points: 100, weight: 80),
+      WheelSection(label: '200', color: const Color(0xFFF5B971), points: 200, weight: 70),
+      WheelSection(label: '300', color: const Color(0xFFD4A76A), points: 300, weight: 60),
+      WheelSection(label: '400', color: const Color(0xFFD4B896), points: 400, weight: 50),
+      WheelSection(label: '500', color: const Color(0xFFE8C170), points: 500, weight: 40),
+      WheelSection(
+        label: l10n.spinWheelMiss,
+        color: const Color(0xFFB0B0B0),
+        points: 0,
+        weight: 300,
+      ),
       WheelSection(
         label: '1,000',
         color: const Color(0xFFC9A9C9),
         points: 1000,
-        weight: 10,
+        weight: 15,
         icon: FontAwesomeIcons.solidStar,
       ),
       WheelSection(
         label: '2,000',
         color: const Color(0xFF9CC2D8),
         points: 2000,
-        weight: 5,
+        weight: 4,
         icon: FontAwesomeIcons.solidStar,
         iconCount: 2,
       ),
@@ -91,14 +102,8 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
         label: l10n.spinWheelCoupon,
         color: const Color(0xFF8BC78B),
         points: -1,
-        weight: 5,
+        weight: 1,
         icon: FontAwesomeIcons.lightMugHot,
-      ),
-      WheelSection(
-        label: l10n.spinWheelMiss,
-        color: const Color(0xFFB0B0B0),
-        points: 0,
-        weight: 30,
       ),
     ];
 
