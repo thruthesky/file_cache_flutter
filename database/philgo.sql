@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 28, 2026 at 02:14 PM
+-- Generation Time: Feb 28, 2026 at 03:05 PM
 -- Server version: 11.7.2-MariaDB-ubu2404
 -- PHP Version: 8.3.6
 
@@ -285,6 +285,27 @@ CREATE TABLE `data_node_entity` (
   `mime` varchar(64) DEFAULT '',
   `size` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event_spin_history`
+--
+
+CREATE TABLE `event_spin_history` (
+  `idx` int(10) UNSIGNED NOT NULL,
+  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '게임한 회원 번호 (sf_member.idx)',
+  `section_index` tinyint(3) UNSIGNED NOT NULL COMMENT '당첨 섹션 인덱스 (0~9)',
+  `prize_type` varchar(16) NOT NULL COMMENT '보상 유형: miss | point | starbucks',
+  `points_cost` int(10) UNSIGNED NOT NULL DEFAULT 200 COMMENT '차감된 포인트 (참가비)',
+  `points_reward` int(10) NOT NULL DEFAULT 0 COMMENT '획득 포인트 (0=꽝, 50/100/200/300/400/500/1000/2000)',
+  `starbucks_coupon_file` varchar(255) DEFAULT NULL COMMENT '스타벅스 쿠폰 파일명 (NULL=해당없음, 예: 2.jpg)',
+  `random_value` int(10) UNSIGNED NOT NULL COMMENT '확률 계산에 사용된 랜덤 값 (1~10000, 감사 추적용)',
+  `point_before` int(11) NOT NULL DEFAULT 0 COMMENT '게임 전 보유 포인트',
+  `point_after` int(11) NOT NULL DEFAULT 0 COMMENT '게임 후 보유 포인트',
+  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '게임 시각 (Unix timestamp)',
+  `ip` varchar(45) NOT NULL DEFAULT '' COMMENT '접속 IP (IPv4/IPv6)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='스피닝 휠 이벤트 기록';
 
 -- --------------------------------------------------------
 
@@ -1354,6 +1375,17 @@ ALTER TABLE `data_node_entity`
   ADD KEY `code` (`code`);
 
 --
+-- Indexes for table `event_spin_history`
+--
+ALTER TABLE `event_spin_history`
+  ADD PRIMARY KEY (`idx`),
+  ADD KEY `idx_member` (`idx_member`),
+  ADD KEY `prize_type` (`prize_type`),
+  ADD KEY `created_at` (`created_at`),
+  ADD KEY `idx_member_created` (`idx_member`,`created_at`),
+  ADD KEY `starbucks_coupon_file` (`starbucks_coupon_file`);
+
+--
 -- Indexes for table `log_geoip`
 --
 ALTER TABLE `log_geoip`
@@ -1897,6 +1929,12 @@ ALTER TABLE `cron_data`
 --
 ALTER TABLE `data_node_entity`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `event_spin_history`
+--
+ALTER TABLE `event_spin_history`
+  MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `log_geoip`

@@ -1,0 +1,53 @@
+### 이벤트 스피닝 휠 API 테스트
+### 사용법: VS Code REST Client 확장에서 "Send Request" 클릭
+### 참고: session_id를 실제 값으로 교체 필요
+
+@baseUrl = https://local.philgo.com/api.php
+@session_id = YOUR_SESSION_ID
+
+### ──────────────────────────────────────────
+### 1. 스피닝 휠 돌리기 (event.spin)
+### ──────────────────────────────────────────
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.spin",
+  "session_id": "{{session_id}}"
+}
+
+### ──────────────────────────────────────────
+### 2. 이벤트 기록 조회 - 1페이지 (event.history)
+### ──────────────────────────────────────────
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.history",
+  "session_id": "{{session_id}}",
+  "page": 1,
+  "limit": 20
+}
+
+### ──────────────────────────────────────────
+### 3. 이벤트 기록 조회 - 2페이지 (event.history)
+### ──────────────────────────────────────────
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.history",
+  "session_id": "{{session_id}}",
+  "page": 2,
+  "limit": 10
+}
+
+### ──────────────────────────────────────────
+### 4. 미인증 상태에서 스핀 시도 (에러 확인)
+### ──────────────────────────────────────────
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.spin"
+}
