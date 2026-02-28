@@ -1,6 +1,6 @@
 ---
 name: flutter-skill
-description: "본 스킬은 Flutter 프레임워크로 앱을 개발하는 데 반드시 따라야 하는 UI/UX 디자인, 상태관리, 네트워킹, API 연동에 관한 가이드라인 제공합니다. 본 스킬은 선택적인 정보를 제공하는 것이 아니라 Flutter 앱 개발에 필수적인 지침을 제공하며 반드시 준수해야 할 사항들을 제공합니다. 개발자가 디자인, UI, UX, 디자인 효과, 상태관리, 라우팅, 네트워킹, API 연동에 관한 요청, 코믹디자인, Comic 관련 요청, 채팅, FCM, 푸시 알림, 메시지, 알림에 관한 요청이 있을 때 반드시 본 스킬을 사용해서 본 스킬이 제공하는 대로 작업을 수행해야 합니다. 각 스킬 문서에의 상단에는 반드시 따라야 할 Workflow 가 있습니다. 반드시 그 Workflow 를 따라야 합니다. 추가 트리거 키워드 - 딥링크, deep link, 캐싱, cache, 아이콘, FontAwesome, Isolate, 동시성, concurrency, 카카오톡, KakaoTalk, Crashlytics, 크래시 리포팅, 공유, share, share_plus, 공유 버튼 (project)"
+description: "본 스킬은 Flutter 프레임워크로 앱을 개발하는 데 반드시 따라야 하는 UI/UX 디자인, 상태관리, 네트워킹, API 연동에 관한 가이드라인 제공합니다. 본 스킬은 선택적인 정보를 제공하는 것이 아니라 Flutter 앱 개발에 필수적인 지침을 제공하며 반드시 준수해야 할 사항들을 제공합니다. 개발자가 디자인, UI, UX, 디자인 효과, 상태관리, 라우팅, 네트워킹, API 연동에 관한 요청, 코믹디자인, Comic 관련 요청, 채팅, FCM, 푸시 알림, 메시지, 알림에 관한 요청이 있을 때 반드시 본 스킬을 사용해서 본 스킬이 제공하는 대로 작업을 수행해야 합니다. 각 스킬 문서에의 상단에는 반드시 따라야 할 Workflow 가 있습니다. 반드시 그 Workflow 를 따라야 합니다. 추가 트리거 키워드 - 딥링크, deep link, 캐싱, cache, 아이콘, FontAwesome, Isolate, 동시성, concurrency, 카카오톡, KakaoTalk, Crashlytics, 크래시 리포팅, 공유, share, share_plus, 공유 버튼, 바코드, QR코드, 스캔, scanner, mobile_scanner, 카메라 스캔, barcode, qr (project)"
 ---
 
 # Flutter Skill
@@ -59,6 +59,9 @@ description: "본 스킬은 Flutter 프레임워크로 앱을 개발하는 데 �
 
 14. **공유 기능 요청 시**: [Share Plus 문서](./references/share-plus.md) 참조
     - 키워드: 공유, share, 공유 버튼, share_plus, SharePlus, 외부 앱 공유, Share Sheet
+
+15. **바코드/QR코드 스캔 요청 시**: [Mobile Scanner 문서](./references/mobile-scanner.md) 참조
+    - 키워드: 바코드, QR코드, 스캔, scanner, mobile_scanner, 카메라 스캔, barcode, qr
 
 ## Core Principles
 
@@ -142,6 +145,7 @@ elevation: 0                                   // 플랫 디자인
 | [concurrency-and-isolates.md](./references/concurrency-and-isolates.md) | Dart Isolate, UI Jank 방지, 비동기 처리 |
 | [kakaotalk-friend-add.md](./references/kakaotalk-friend-add.md) | 카카오톡 오픈채팅 연동, 1:1 채팅 링크 처리 |
 | [share-plus.md](./references/share-plus.md) | share_plus 패키지, 텍스트/파일/URI 공유, iPad 호환, 게시글 공유 패턴 |
+| [mobile-scanner.md](./references/mobile-scanner.md) | mobile_scanner 패키지, 바코드/QR코드 실시간 스캔, 이미지 분석, 카메라 제어 |
 
 ## 필수 pub.dev 패키지
 
