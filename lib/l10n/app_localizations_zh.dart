@@ -2111,4 +2111,69 @@ class LoZh extends Lo {
 
   @override
   String get receiptDisplayNameLabel => '收据显示名称';
+
+  @override
+  String get quickMenuCompanyEvent => '商家活动';
+
+  @override
+  String get quickMenuEventEntry => '活动报名';
+
+  @override
+  String get companyEventInfoTitle => '三连组合活动';
+
+  @override
+  String get companyEventInfoSubtitle => '访问韩国商家赚取积分';
+
+  @override
+  String get companyEventStep1Title => '扫描二维码';
+
+  @override
+  String get companyEventStep1Desc => '访问韩国商家扫描二维码即可获得积分';
+
+  @override
+  String get companyEventStep2Title => '回访奖励';
+
+  @override
+  String get companyEventStep2Desc => '回访可获得额外积分';
+
+  @override
+  String get companyEventStep3Title => '撰写评价';
+
+  @override
+  String get companyEventStep3Desc => '留下评价可获得额外积分';
+
+  @override
+  String get companyEventChallengeTitle => '参加活动';
+
+  @override
+  String get companyEventChallengeDesc => '用获得的积分挑战星巴克优惠券';
+
+  @override
+  String get companyEventChallengeButton => '前往活动报名';
+
+  @override
+  String get companyEventGuide => '请访问PhilGo商家目录中的商家，并索取QR码。';
+
+  @override
+  String get companyEventScanButton => '扫描二维码';
+
+  @override
+  String get eventEntryMyHistory => '我的活动参与记录';
+
+  @override
+  String get eventEntryMyHistoryDesc => '您访问并参与活动的商家列表';
+
+  @override
+  String get eventEntryMyHistoryEmpty => '还没有参与过活动';
+
+  @override
+  String get eventEntryPointEarned => '获得积分';
+
+  @override
+  String get eventEntryVisitDate => '访问日期';
+
+  @override
+  String commentCreatedWithPoint(int point) {
+    return '评论发布成功！+${point}P获得';
+  }
 }

@@ -672,6 +672,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
           nickname: nickname,
           photoUrl: photoUrl,
           formattedDate: formatPostDate(stamp),
+          // 해당 글에서 획득한 포인트 (int_10 필드)
+          earnedPoint: post?.int10 ?? 0,
         ),
 
         const SizedBox(height: 16),

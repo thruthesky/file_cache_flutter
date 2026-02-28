@@ -2581,5 +2581,94 @@
   "storeNameMismatchDesc": "The store name on the receipt does not match the company information.",
   "receiptStoreName": "Receipt Store",
   "companyNameLabel": "Company Name",
-  "receiptDisplayNameLabel": "Receipt Display Name"
+  "receiptDisplayNameLabel": "Receipt Display Name",
+  "quickMenuCompanyEvent": "Store Event",
+  "@quickMenuCompanyEvent": {
+    "description": "Quick menu company (store visit QR scan) event label"
+  },
+  "quickMenuEventEntry": "Event Entry",
+  "@quickMenuEventEntry": {
+    "description": "Quick menu event entry (lottery) label"
+  },
+  "companyEventInfoTitle": "Triple Combo Event",
+  "@companyEventInfoTitle": {
+    "description": "Company event info section title - Triple Combo Event"
+  },
+  "companyEventInfoSubtitle": "Visit Korean businesses and earn points",
+  "@companyEventInfoSubtitle": {
+    "description": "Company event info section subtitle"
+  },
+  "companyEventStep1Title": "Scan QR Code",
+  "@companyEventStep1Title": {
+    "description": "Company event step 1 title - QR code scan"
+  },
+  "companyEventStep1Desc": "Visit a Korean business and scan the QR code to earn points",
+  "@companyEventStep1Desc": {
+    "description": "Company event step 1 description"
+  },
+  "companyEventStep2Title": "Revisit Bonus",
+  "@companyEventStep2Title": {
+    "description": "Company event step 2 title - revisit bonus"
+  },
+  "companyEventStep2Desc": "Earn additional points when you revisit",
+  "@companyEventStep2Desc": {
+    "description": "Company event step 2 description"
+  },
+  "companyEventStep3Title": "Write a Review",
+  "@companyEventStep3Title": {
+    "description": "Company event step 3 title - write review"
+  },
+  "companyEventStep3Desc": "Leave a review to earn extra points",
+  "@companyEventStep3Desc": {
+    "description": "Company event step 3 description"
+  },
+  "companyEventChallengeTitle": "Enter the Event",
+  "@companyEventChallengeTitle": {
+    "description": "Company event challenge section title"
+  },
+  "companyEventChallengeDesc": "Challenge for a Starbucks coupon with your earned points",
+  "@companyEventChallengeDesc": {
+    "description": "Company event challenge description"
+  },
+  "companyEventChallengeButton": "Go to Event Entry",
+  "@companyEventChallengeButton": {
+    "description": "Company event challenge button text"
+  },
+  "companyEventGuide": "Visit a business listed in the PhilGo Business Directory and ask for the QR code.",
+  "@companyEventGuide": {
+    "description": "Company event screen - top guide message about visiting businesses"
+  },
+  "companyEventScanButton": "Scan QR Code",
+  "@companyEventScanButton": {
+    "description": "Company event screen - QR code scan button label"
+  },
+  "eventEntryMyHistory": "My Event History",
+  "@eventEntryMyHistory": {
+    "description": "Event entry screen - my event participation history section title"
+  },
+  "eventEntryMyHistoryDesc": "Businesses you visited and participated in events",
+  "@eventEntryMyHistoryDesc": {
+    "description": "Event entry screen - my history section description"
+  },
+  "eventEntryMyHistoryEmpty": "No event participation yet",
+  "@eventEntryMyHistoryEmpty": {
+    "description": "Event entry screen - empty state when no participation history"
+  },
+  "eventEntryPointEarned": "Points Earned",
+  "@eventEntryPointEarned": {
+    "description": "Event entry screen - earned point label"
+  },
+  "eventEntryVisitDate": "Visit Date",
+  "@eventEntryVisitDate": {
+    "description": "Event entry screen - visit date label"
+  },
+  "commentCreatedWithPoint": "Comment added! +{point}P earned",
+  "@commentCreatedWithPoint": {
+    "description": "Success message when comment is created with earned points",
+    "placeholders": {
+      "point": {
+        "type": "int"
+      }
+    }
+  }
 }

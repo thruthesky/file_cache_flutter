@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
+import 'package:philgo/screens/event/company_event.screen.dart';
+import 'package:philgo/screens/event/event_entry.screen.dart';
 import 'package:philgo/screens/guide/must_read.screen.dart';
 import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/emergency/emergency_contact.screen.dart';
@@ -211,8 +213,42 @@ class HomeQuickMenuSection extends StatelessWidget {
               sp: sp,
             ),
 
-            /// 필독 정보 (내 정보 다음 위치)
-            /// Must-Read Information (after my info)
+            /// 업소 이벤트 (내 정보 다음 위치)
+            /// Company Event (after my info)
+            _buildMenuItem(
+              context: context,
+              icon: FontAwesomeIcons.lightStore,
+              label: l10n.quickMenuCompanyEvent,
+              onTap: () => CompanyEventScreen.push(context),
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+
+              /// 강조 표시: secondaryContainer 색상 사용
+              /// Highlight: Use secondaryContainer colors
+              backgroundColor: scheme.secondaryContainer,
+              iconColor: scheme.onSecondaryContainer,
+            ),
+
+            /// 이벤트 응모 (업소 이벤트 다음 위치)
+            /// Event Entry (after company event)
+            _buildMenuItem(
+              context: context,
+              icon: FontAwesomeIcons.lightGift,
+              label: l10n.quickMenuEventEntry,
+              onTap: () => EventEntryScreen.push(context),
+              scheme: scheme,
+              theme: theme,
+              sp: sp,
+
+              /// 강조 표시: errorContainer 색상 사용 (눈에 띄는 색상)
+              /// Highlight: Use errorContainer colors (eye-catching)
+              backgroundColor: scheme.errorContainer,
+              iconColor: scheme.onErrorContainer,
+            ),
+
+            /// 필독 정보 (포인트 추첨 다음 위치)
+            /// Must-Read Information (after point lottery)
             _buildMenuItem(
               context: context,
               icon: FontAwesomeIcons.starShooting,

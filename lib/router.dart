@@ -75,6 +75,8 @@ import 'package:philgo/screens/user/profile.view.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
+import 'package:philgo/screens/event/company_event.screen.dart';
+import 'package:philgo/screens/event/event_entry.screen.dart';
 import 'package:philgo/screens/search/search.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo_api/philgo_api.dart';
@@ -837,6 +839,20 @@ final router = GoRouter(
         final searchTerm = state.extra as String? ?? '';
         return SearchScreen(searchTerm: searchTerm);
       },
+    ),
+
+    /// 업소 이벤트 화면 (Company Event Screen)
+    GoRoute(
+      path: CompanyEventScreen.routeName,
+      name: CompanyEventScreen.routeName,
+      builder: (context, state) => const CompanyEventScreen(),
+    ),
+
+    /// 이벤트 응모 화면 (Event Entry Screen)
+    GoRoute(
+      path: EventEntryScreen.routeName,
+      name: EventEntryScreen.routeName,
+      builder: (context, state) => const EventEntryScreen(),
     ),
 
     /// QR 코드 스캔 결과 화면 (QR Code Scanned Screen)

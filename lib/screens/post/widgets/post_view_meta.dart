@@ -36,6 +36,10 @@ class PostViewMeta extends StatelessWidget {
   /// 이미 포맷팅된 작성 날짜 문자열 (예: "2024-01-15")
   final String formattedDate;
 
+  /// 해당 글에서 획득한 포인트 (int_10 필드)
+  /// 0 이하이면 뱃지를 표시하지 않음
+  final int earnedPoint;
+
   /// 아바타 크기 (기본값: 40)
   final double avatarSize;
 
@@ -48,6 +52,7 @@ class PostViewMeta extends StatelessWidget {
     required this.nickname,
     this.photoUrl,
     required this.formattedDate,
+    this.earnedPoint = 0,
     this.avatarSize = 40,
     this.padding = const EdgeInsets.fromLTRB(16, 16, 16, 0),
   });
@@ -89,12 +94,21 @@ class PostViewMeta extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                // 작성 날짜
-                Text(
-                  formattedDate,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: scheme.onSurface.withValues(alpha: 0.6),
-                  ),
+                // 작성 날짜 및 획득 포인트 뱃지
+                Row(
+                  children: [
+                    Text(
+                      formattedDate,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    // 획득 포인트가 있으면 뱃지 표시
+                    if (earnedPoint > 0) ...[
+                      const SizedBox(width: 8),
+                      EarnedPointBadge(point: earnedPoint),
+                    ],
+                  ],
                 ),
               ],
             ),

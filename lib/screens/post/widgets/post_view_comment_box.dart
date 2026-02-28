@@ -244,9 +244,13 @@ class _PostViewCommentBoxState extends State<PostViewCommentBox> {
 
                       if (mounted) {
                         widget.onStateChanged();
+                        // 획득 포인트가 있으면 포인트 포함 메시지 표시
+                        final replyEarnedPoint = createdComment.int10 ?? 0;
                         showSuccessSnackBar(
                           context,
-                          Lo.of(context)!.commentReplied,
+                          replyEarnedPoint > 0
+                              ? Lo.of(context)!.commentCreatedWithPoint(replyEarnedPoint)
+                              : Lo.of(context)!.commentReplied,
                         );
                       }
                     },
@@ -262,9 +266,13 @@ class _PostViewCommentBoxState extends State<PostViewCommentBox> {
 
                       if (mounted) {
                         widget.onStateChanged();
+                        // 획득 포인트가 있으면 포인트 포함 메시지 표시
+                        final earnedPoint = createdComment.int10 ?? 0;
                         showSuccessSnackBar(
                           context,
-                          Lo.of(context)!.commentCreated,
+                          earnedPoint > 0
+                              ? Lo.of(context)!.commentCreatedWithPoint(earnedPoint)
+                              : Lo.of(context)!.commentCreated,
                         );
                         // 새 댓글이 보이도록 하단으로 스크롤
                         widget.onScrollToBottom();

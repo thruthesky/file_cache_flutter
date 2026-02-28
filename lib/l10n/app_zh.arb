@@ -2100,5 +2100,86 @@
   "storeNameMismatchDesc": "收据上的店名与商家信息不匹配。",
   "receiptStoreName": "收据店名",
   "companyNameLabel": "商家名称",
-  "receiptDisplayNameLabel": "收据显示名称"
+  "receiptDisplayNameLabel": "收据显示名称",
+  "quickMenuCompanyEvent": "商家活动",
+  "@quickMenuCompanyEvent": {
+    "description": "Quick menu company (store visit QR scan) event label"
+  },
+  "quickMenuEventEntry": "活动报名",
+  "@quickMenuEventEntry": {
+    "description": "Quick menu event entry (lottery) label"
+  },
+  "companyEventInfoTitle": "三连组合活动",
+  "@companyEventInfoTitle": {
+    "description": "Company event info section title - Triple Combo Event"
+  },
+  "companyEventInfoSubtitle": "访问韩国商家赚取积分",
+  "@companyEventInfoSubtitle": {
+    "description": "Company event info section subtitle"
+  },
+  "companyEventStep1Title": "扫描二维码",
+  "@companyEventStep1Title": {
+    "description": "Company event step 1 title - QR code scan"
+  },
+  "companyEventStep1Desc": "访问韩国商家扫描二维码即可获得积分",
+  "@companyEventStep1Desc": {
+    "description": "Company event step 1 description"
+  },
+  "companyEventStep2Title": "回访奖励",
+  "@companyEventStep2Title": {
+    "description": "Company event step 2 title - revisit bonus"
+  },
+  "companyEventStep2Desc": "回访可获得额外积分",
+  "@companyEventStep2Desc": {
+    "description": "Company event step 2 description"
+  },
+  "companyEventStep3Title": "撰写评价",
+  "@companyEventStep3Title": {
+    "description": "Company event step 3 title - write review"
+  },
+  "companyEventStep3Desc": "留下评价可获得额外积分",
+  "@companyEventStep3Desc": {
+    "description": "Company event step 3 description"
+  },
+  "companyEventChallengeTitle": "参加活动",
+  "@companyEventChallengeTitle": {
+    "description": "Company event challenge section title"
+  },
+  "companyEventChallengeDesc": "用获得的积分挑战星巴克优惠券",
+  "@companyEventChallengeDesc": {
+    "description": "Company event challenge description"
+  },
+  "companyEventChallengeButton": "前往活动报名",
+  "@companyEventChallengeButton": {
+    "description": "Company event challenge button text"
+  },
+  "companyEventGuide": "请访问PhilGo商家目录中的商家，并索取QR码。",
+  "@companyEventGuide": {
+    "description": "Company event screen - top guide message about visiting businesses"
+  },
+  "companyEventScanButton": "扫描二维码",
+  "@companyEventScanButton": {
+    "description": "Company event screen - QR code scan button label"
+  },
+  "eventEntryMyHistory": "我的活动参与记录",
+  "@eventEntryMyHistory": {
+    "description": "Event entry screen - my event participation history section title"
+  },
+  "eventEntryMyHistoryDesc": "您访问并参与活动的商家列表",
+  "@eventEntryMyHistoryDesc": {
+    "description": "Event entry screen - my history section description"
+  },
+  "eventEntryMyHistoryEmpty": "还没有参与过活动",
+  "@eventEntryMyHistoryEmpty": {
+    "description": "Event entry screen - empty state when no participation history"
+  },
+  "eventEntryPointEarned": "获得积分",
+  "@eventEntryPointEarned": {
+    "description": "Event entry screen - earned point label"
+  },
+  "eventEntryVisitDate": "访问日期",
+  "@eventEntryVisitDate": {
+    "description": "Event entry screen - visit date label"
+  },
+  "commentCreatedWithPoint": "评论发布成功！+{point}P获得"
 }

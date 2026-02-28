@@ -2100,5 +2100,86 @@
   "storeNameMismatchDesc": "レシートの店名が店舗情報と一致しません。",
   "receiptStoreName": "レシート店名",
   "companyNameLabel": "店舗名",
-  "receiptDisplayNameLabel": "レシート表示名"
+  "receiptDisplayNameLabel": "レシート表示名",
+  "quickMenuCompanyEvent": "店舗イベント",
+  "@quickMenuCompanyEvent": {
+    "description": "Quick menu company (store visit QR scan) event label"
+  },
+  "quickMenuEventEntry": "イベント応募",
+  "@quickMenuEventEntry": {
+    "description": "Quick menu event entry (lottery) label"
+  },
+  "companyEventInfoTitle": "三段コンボイベント",
+  "@companyEventInfoTitle": {
+    "description": "Company event info section title - Triple Combo Event"
+  },
+  "companyEventInfoSubtitle": "韓国系店舗を訪問してポイントを獲得しましょう",
+  "@companyEventInfoSubtitle": {
+    "description": "Company event info section subtitle"
+  },
+  "companyEventStep1Title": "QRコードスキャン",
+  "@companyEventStep1Title": {
+    "description": "Company event step 1 title - QR code scan"
+  },
+  "companyEventStep1Desc": "韓国系店舗を訪問してQRコードをスキャンするとポイントを獲得できます",
+  "@companyEventStep1Desc": {
+    "description": "Company event step 1 description"
+  },
+  "companyEventStep2Title": "再訪問ボーナス",
+  "@companyEventStep2Title": {
+    "description": "Company event step 2 title - revisit bonus"
+  },
+  "companyEventStep2Desc": "再訪問すると追加ポイントを獲得できます",
+  "@companyEventStep2Desc": {
+    "description": "Company event step 2 description"
+  },
+  "companyEventStep3Title": "レビュー作成",
+  "@companyEventStep3Title": {
+    "description": "Company event step 3 title - write review"
+  },
+  "companyEventStep3Desc": "レビューを残すと追加ポイントを獲得できます",
+  "@companyEventStep3Desc": {
+    "description": "Company event step 3 description"
+  },
+  "companyEventChallengeTitle": "イベントに応募しましょう",
+  "@companyEventChallengeTitle": {
+    "description": "Company event challenge section title"
+  },
+  "companyEventChallengeDesc": "獲得したポイントでスターバックスクーポンに挑戦",
+  "@companyEventChallengeDesc": {
+    "description": "Company event challenge description"
+  },
+  "companyEventChallengeButton": "イベント応募へ",
+  "@companyEventChallengeButton": {
+    "description": "Company event challenge button text"
+  },
+  "companyEventGuide": "PhilGo業所録に登録された店舗を訪問し、QRコードをリクエストしてください。",
+  "@companyEventGuide": {
+    "description": "Company event screen - top guide message about visiting businesses"
+  },
+  "companyEventScanButton": "QRコードをスキャン",
+  "@companyEventScanButton": {
+    "description": "Company event screen - QR code scan button label"
+  },
+  "eventEntryMyHistory": "イベント参加履歴",
+  "@eventEntryMyHistory": {
+    "description": "Event entry screen - my event participation history section title"
+  },
+  "eventEntryMyHistoryDesc": "訪問してイベントに参加した店舗リストです",
+  "@eventEntryMyHistoryDesc": {
+    "description": "Event entry screen - my history section description"
+  },
+  "eventEntryMyHistoryEmpty": "まだ参加したイベントがありません",
+  "@eventEntryMyHistoryEmpty": {
+    "description": "Event entry screen - empty state when no participation history"
+  },
+  "eventEntryPointEarned": "獲得ポイント",
+  "@eventEntryPointEarned": {
+    "description": "Event entry screen - earned point label"
+  },
+  "eventEntryVisitDate": "訪問日",
+  "@eventEntryVisitDate": {
+    "description": "Event entry screen - visit date label"
+  },
+  "commentCreatedWithPoint": "コメント投稿完了！+{point}P獲得"
 }

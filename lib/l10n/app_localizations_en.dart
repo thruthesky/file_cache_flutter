@@ -2156,4 +2156,74 @@ class LoEn extends Lo {
 
   @override
   String get receiptDisplayNameLabel => 'Receipt Display Name';
+
+  @override
+  String get quickMenuCompanyEvent => 'Store Event';
+
+  @override
+  String get quickMenuEventEntry => 'Event Entry';
+
+  @override
+  String get companyEventInfoTitle => 'Triple Combo Event';
+
+  @override
+  String get companyEventInfoSubtitle =>
+      'Visit Korean businesses and earn points';
+
+  @override
+  String get companyEventStep1Title => 'Scan QR Code';
+
+  @override
+  String get companyEventStep1Desc =>
+      'Visit a Korean business and scan the QR code to earn points';
+
+  @override
+  String get companyEventStep2Title => 'Revisit Bonus';
+
+  @override
+  String get companyEventStep2Desc => 'Earn additional points when you revisit';
+
+  @override
+  String get companyEventStep3Title => 'Write a Review';
+
+  @override
+  String get companyEventStep3Desc => 'Leave a review to earn extra points';
+
+  @override
+  String get companyEventChallengeTitle => 'Enter the Event';
+
+  @override
+  String get companyEventChallengeDesc =>
+      'Challenge for a Starbucks coupon with your earned points';
+
+  @override
+  String get companyEventChallengeButton => 'Go to Event Entry';
+
+  @override
+  String get companyEventGuide =>
+      'Visit a business listed in the PhilGo Business Directory and ask for the QR code.';
+
+  @override
+  String get companyEventScanButton => 'Scan QR Code';
+
+  @override
+  String get eventEntryMyHistory => 'My Event History';
+
+  @override
+  String get eventEntryMyHistoryDesc =>
+      'Businesses you visited and participated in events';
+
+  @override
+  String get eventEntryMyHistoryEmpty => 'No event participation yet';
+
+  @override
+  String get eventEntryPointEarned => 'Points Earned';
+
+  @override
+  String get eventEntryVisitDate => 'Visit Date';
+
+  @override
+  String commentCreatedWithPoint(int point) {
+    return 'Comment added! +${point}P earned';
+  }
 }

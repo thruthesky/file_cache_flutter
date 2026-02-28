@@ -4240,6 +4240,132 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Receipt Display Name'**
   String get receiptDisplayNameLabel;
+
+  /// Quick menu company (store visit QR scan) event label
+  ///
+  /// In en, this message translates to:
+  /// **'Store Event'**
+  String get quickMenuCompanyEvent;
+
+  /// Quick menu event entry (lottery) label
+  ///
+  /// In en, this message translates to:
+  /// **'Event Entry'**
+  String get quickMenuEventEntry;
+
+  /// Company event info section title - Triple Combo Event
+  ///
+  /// In en, this message translates to:
+  /// **'Triple Combo Event'**
+  String get companyEventInfoTitle;
+
+  /// Company event info section subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Korean businesses and earn points'**
+  String get companyEventInfoSubtitle;
+
+  /// Company event step 1 title - QR code scan
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get companyEventStep1Title;
+
+  /// Company event step 1 description
+  ///
+  /// In en, this message translates to:
+  /// **'Visit a Korean business and scan the QR code to earn points'**
+  String get companyEventStep1Desc;
+
+  /// Company event step 2 title - revisit bonus
+  ///
+  /// In en, this message translates to:
+  /// **'Revisit Bonus'**
+  String get companyEventStep2Title;
+
+  /// Company event step 2 description
+  ///
+  /// In en, this message translates to:
+  /// **'Earn additional points when you revisit'**
+  String get companyEventStep2Desc;
+
+  /// Company event step 3 title - write review
+  ///
+  /// In en, this message translates to:
+  /// **'Write a Review'**
+  String get companyEventStep3Title;
+
+  /// Company event step 3 description
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a review to earn extra points'**
+  String get companyEventStep3Desc;
+
+  /// Company event challenge section title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the Event'**
+  String get companyEventChallengeTitle;
+
+  /// Company event challenge description
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge for a Starbucks coupon with your earned points'**
+  String get companyEventChallengeDesc;
+
+  /// Company event challenge button text
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Event Entry'**
+  String get companyEventChallengeButton;
+
+  /// Company event screen - top guide message about visiting businesses
+  ///
+  /// In en, this message translates to:
+  /// **'Visit a business listed in the PhilGo Business Directory and ask for the QR code.'**
+  String get companyEventGuide;
+
+  /// Company event screen - QR code scan button label
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get companyEventScanButton;
+
+  /// Event entry screen - my event participation history section title
+  ///
+  /// In en, this message translates to:
+  /// **'My Event History'**
+  String get eventEntryMyHistory;
+
+  /// Event entry screen - my history section description
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses you visited and participated in events'**
+  String get eventEntryMyHistoryDesc;
+
+  /// Event entry screen - empty state when no participation history
+  ///
+  /// In en, this message translates to:
+  /// **'No event participation yet'**
+  String get eventEntryMyHistoryEmpty;
+
+  /// Event entry screen - earned point label
+  ///
+  /// In en, this message translates to:
+  /// **'Points Earned'**
+  String get eventEntryPointEarned;
+
+  /// Event entry screen - visit date label
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Date'**
+  String get eventEntryVisitDate;
+
+  /// Success message when comment is created with earned points
+  ///
+  /// In en, this message translates to:
+  /// **'Comment added! +{point}P earned'**
+  String commentCreatedWithPoint(int point);
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

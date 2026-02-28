@@ -2117,4 +2117,69 @@ class LoKo extends Lo {
 
   @override
   String get receiptDisplayNameLabel => '영수증 표시 이름';
+
+  @override
+  String get quickMenuCompanyEvent => '업소이벤트';
+
+  @override
+  String get quickMenuEventEntry => '이벤트응모';
+
+  @override
+  String get companyEventInfoTitle => '삼단콤보 이벤트';
+
+  @override
+  String get companyEventInfoSubtitle => '한인 업소에 방문하여 포인트를 획득하세요';
+
+  @override
+  String get companyEventStep1Title => 'QR 코드 스캔';
+
+  @override
+  String get companyEventStep1Desc => '한인 업소를 방문하여 QR 코드를 스캔하면 포인트를 획득합니다';
+
+  @override
+  String get companyEventStep2Title => '재방문 보너스';
+
+  @override
+  String get companyEventStep2Desc => '재방문하면 추가 방문 포인트를 획득합니다';
+
+  @override
+  String get companyEventStep3Title => '후기 작성';
+
+  @override
+  String get companyEventStep3Desc => '후기를 남기면 추가 포인트를 획득합니다';
+
+  @override
+  String get companyEventChallengeTitle => '이벤트에 응모하세요';
+
+  @override
+  String get companyEventChallengeDesc => '획득한 포인트로 스타벅스 쿠폰에 도전하기';
+
+  @override
+  String get companyEventChallengeButton => '이벤트 응모하러 가기';
+
+  @override
+  String get companyEventGuide => '필고 업소록에 등록된 업소를 방문하시어 QR 코드를 요청하시면 됩니다.';
+
+  @override
+  String get companyEventScanButton => 'QR 코드 스캔하기';
+
+  @override
+  String get eventEntryMyHistory => '내 이벤트 참여 기록';
+
+  @override
+  String get eventEntryMyHistoryDesc => '방문하여 이벤트에 참여했던 업소 목록입니다';
+
+  @override
+  String get eventEntryMyHistoryEmpty => '아직 참여한 이벤트가 없습니다';
+
+  @override
+  String get eventEntryPointEarned => '획득 포인트';
+
+  @override
+  String get eventEntryVisitDate => '방문일';
+
+  @override
+  String commentCreatedWithPoint(int point) {
+    return '댓글 작성 완료! +${point}P 획득';
+  }
 }

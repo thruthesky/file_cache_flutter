@@ -2118,4 +2118,69 @@ class LoJa extends Lo {
 
   @override
   String get receiptDisplayNameLabel => 'レシート表示名';
+
+  @override
+  String get quickMenuCompanyEvent => '店舗イベント';
+
+  @override
+  String get quickMenuEventEntry => 'イベント応募';
+
+  @override
+  String get companyEventInfoTitle => '三段コンボイベント';
+
+  @override
+  String get companyEventInfoSubtitle => '韓国系店舗を訪問してポイントを獲得しましょう';
+
+  @override
+  String get companyEventStep1Title => 'QRコードスキャン';
+
+  @override
+  String get companyEventStep1Desc => '韓国系店舗を訪問してQRコードをスキャンするとポイントを獲得できます';
+
+  @override
+  String get companyEventStep2Title => '再訪問ボーナス';
+
+  @override
+  String get companyEventStep2Desc => '再訪問すると追加ポイントを獲得できます';
+
+  @override
+  String get companyEventStep3Title => 'レビュー作成';
+
+  @override
+  String get companyEventStep3Desc => 'レビューを残すと追加ポイントを獲得できます';
+
+  @override
+  String get companyEventChallengeTitle => 'イベントに応募しましょう';
+
+  @override
+  String get companyEventChallengeDesc => '獲得したポイントでスターバックスクーポンに挑戦';
+
+  @override
+  String get companyEventChallengeButton => 'イベント応募へ';
+
+  @override
+  String get companyEventGuide => 'PhilGo業所録に登録された店舗を訪問し、QRコードをリクエストしてください。';
+
+  @override
+  String get companyEventScanButton => 'QRコードをスキャン';
+
+  @override
+  String get eventEntryMyHistory => 'イベント参加履歴';
+
+  @override
+  String get eventEntryMyHistoryDesc => '訪問してイベントに参加した店舗リストです';
+
+  @override
+  String get eventEntryMyHistoryEmpty => 'まだ参加したイベントがありません';
+
+  @override
+  String get eventEntryPointEarned => '獲得ポイント';
+
+  @override
+  String get eventEntryVisitDate => '訪問日';
+
+  @override
+  String commentCreatedWithPoint(int point) {
+    return 'コメント投稿完了！+${point}P獲得';
+  }
 }

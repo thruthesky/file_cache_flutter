@@ -2707,5 +2707,86 @@
   "storeNameMismatchDesc": "영수증의 스토어 이름이 업소 정보와 일치하지 않습니다.",
   "receiptStoreName": "영수증 스토어",
   "companyNameLabel": "업소명",
-  "receiptDisplayNameLabel": "영수증 표시 이름"
+  "receiptDisplayNameLabel": "영수증 표시 이름",
+  "quickMenuCompanyEvent": "업소이벤트",
+  "@quickMenuCompanyEvent": {
+    "description": "Quick menu company (store visit QR scan) event label"
+  },
+  "quickMenuEventEntry": "이벤트응모",
+  "@quickMenuEventEntry": {
+    "description": "Quick menu event entry (lottery) label"
+  },
+  "companyEventInfoTitle": "삼단콤보 이벤트",
+  "@companyEventInfoTitle": {
+    "description": "Company event info section title - Triple Combo Event"
+  },
+  "companyEventInfoSubtitle": "한인 업소에 방문하여 포인트를 획득하세요",
+  "@companyEventInfoSubtitle": {
+    "description": "Company event info section subtitle"
+  },
+  "companyEventStep1Title": "QR 코드 스캔",
+  "@companyEventStep1Title": {
+    "description": "Company event step 1 title - QR code scan"
+  },
+  "companyEventStep1Desc": "한인 업소를 방문하여 QR 코드를 스캔하면 포인트를 획득합니다",
+  "@companyEventStep1Desc": {
+    "description": "Company event step 1 description"
+  },
+  "companyEventStep2Title": "재방문 보너스",
+  "@companyEventStep2Title": {
+    "description": "Company event step 2 title - revisit bonus"
+  },
+  "companyEventStep2Desc": "재방문하면 추가 방문 포인트를 획득합니다",
+  "@companyEventStep2Desc": {
+    "description": "Company event step 2 description"
+  },
+  "companyEventStep3Title": "후기 작성",
+  "@companyEventStep3Title": {
+    "description": "Company event step 3 title - write review"
+  },
+  "companyEventStep3Desc": "후기를 남기면 추가 포인트를 획득합니다",
+  "@companyEventStep3Desc": {
+    "description": "Company event step 3 description"
+  },
+  "companyEventChallengeTitle": "이벤트에 응모하세요",
+  "@companyEventChallengeTitle": {
+    "description": "Company event challenge section title"
+  },
+  "companyEventChallengeDesc": "획득한 포인트로 스타벅스 쿠폰에 도전하기",
+  "@companyEventChallengeDesc": {
+    "description": "Company event challenge description"
+  },
+  "companyEventChallengeButton": "이벤트 응모하러 가기",
+  "@companyEventChallengeButton": {
+    "description": "Company event challenge button text"
+  },
+  "companyEventGuide": "필고 업소록에 등록된 업소를 방문하시어 QR 코드를 요청하시면 됩니다.",
+  "@companyEventGuide": {
+    "description": "Company event screen - top guide message about visiting businesses"
+  },
+  "companyEventScanButton": "QR 코드 스캔하기",
+  "@companyEventScanButton": {
+    "description": "Company event screen - QR code scan button label"
+  },
+  "eventEntryMyHistory": "내 이벤트 참여 기록",
+  "@eventEntryMyHistory": {
+    "description": "Event entry screen - my event participation history section title"
+  },
+  "eventEntryMyHistoryDesc": "방문하여 이벤트에 참여했던 업소 목록입니다",
+  "@eventEntryMyHistoryDesc": {
+    "description": "Event entry screen - my history section description"
+  },
+  "eventEntryMyHistoryEmpty": "아직 참여한 이벤트가 없습니다",
+  "@eventEntryMyHistoryEmpty": {
+    "description": "Event entry screen - empty state when no participation history"
+  },
+  "eventEntryPointEarned": "획득 포인트",
+  "@eventEntryPointEarned": {
+    "description": "Event entry screen - earned point label"
+  },
+  "eventEntryVisitDate": "방문일",
+  "@eventEntryVisitDate": {
+    "description": "Event entry screen - visit date label"
+  },
+  "commentCreatedWithPoint": "댓글 작성 완료! +{point}P 획득"
 }
