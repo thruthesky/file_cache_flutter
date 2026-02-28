@@ -959,6 +959,13 @@ function soft_error(string $error_code, string $error_message = ''): void {
 
 ## 10. 데이터베이스 처리
 
+### 10.0 데이터베이스 스키마 참조
+
+> **필고 전체 DB 스키마(최신 버전)**: [`database/philgo.sql`](../database/philgo.sql)
+>
+> 이 파일에는 모든 테이블의 `CREATE TABLE` 문, 인덱스(`ALTER TABLE ... ADD KEY`), `AUTO_INCREMENT` 설정이 포함되어 있다.
+> v7 시스템에서 새로운 Service/Entity를 작성하거나 쿼리를 작성할 때, **반드시 이 파일을 참조**하여 테이블 구조, 컬럼명, 데이터 타입, 인덱스를 확인해야 한다.
+
 ### 10.1 PDO 연결
 
 ```php

@@ -433,6 +433,26 @@ class UploadRepository
     }
 
     /**
+     * URL로 업로드 레코드를 조회한다.
+     *
+     * uploads 테이블의 url 컬럼은 인덱싱되어 있어 빠른 검색이 가능하다.
+     * 글 작성 시 files 파라미터의 URL로 업로드 레코드를 찾아 썸네일 URL을 조회할 때 사용한다.
+     *
+     * @param string $url 업로드 파일 URL (상대경로, 예: /uploads/190076/abc.webp)
+     * @return UploadEntity|null 존재하면 Entity, 없으면 null
+     */
+    public static function findByUrl(string $url): ?UploadEntity
+    {
+        $stmt = Db::pdo()->prepare("SELECT * FROM uploads WHERE url = :url LIMIT 1");
+        $stmt->execute(['url' => $url]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row === false) {
+            return null;
+        }
+        return UploadEntity::fromArray($row);
+    }
+
+    /**
      * 회원번호로 업로드 목록을 조회한다.
      *
      * @param int $idxMember 회원번호

@@ -138,6 +138,59 @@ GET https://local.philgo.com/api.php?method=post.create&session_id=xxx&post_id=f
 | varchar_1 ~ varchar_20 | string | X | 커스텀 문자열 필드 |
 | text_1 ~ text_10 | string | X | 커스텀 텍스트 필드 |
 
+**미디어 필드 자동 설정** (`setMediaFields`):
+
+글 생성/수정 시 `files` 파라미터가 있으면 자동으로 미디어 관련 필드를 설정한다.
+
+| 필드 | 용도 | 설정 조건 |
+|------|------|-----------|
+| `has_image` | 이미지 포함 여부 (`'y'` 또는 `''`) | files에 이미지가 있으면 `'y'` |
+| `varchar_17` | 첫 번째 이미지 URL | files에서 첫 번째 이미지 URL |
+| `varchar_10` | 400x400 정사각형 center-crop 썸네일 URL | uploads 테이블에서 조회 |
+| `varchar_11` | 800x800 정사각형 center-crop 썸네일 URL | uploads 테이블에서 조회 |
+| `varchar_12` | 1000px 비율 유지 리사이즈 썸네일 URL | uploads 테이블에서 조회 |
+| `has_video` | 동영상 포함 여부 (`'y'` 또는 `''`) | files에 동영상이 있으면 `'y'` |
+| `varchar_18` | 첫 번째 동영상 URL | files에서 첫 번째 동영상 URL |
+
+**썸네일 URL 조회 로직** (핵심):
+
+1. `files` 파라미터를 콤마로 분리하여 파일 목록 생성
+2. 파일 목록에서 **첫 번째 이미지**를 찾음 (jpg, jpeg, png, gif, webp, bmp, svg, avif)
+3. 첫 번째 이미지가 `/uploads/` 로 시작하면 → `UploadRepository::findByUrl()`로 uploads 테이블 검색
+4. **DB 조회 우선**: uploads 레코드가 있고 `thumbnail_400x400_url`이 비어있지 않으면 → DB 값 사용
+5. **폴백 처리**: uploads 레코드가 없거나, 레코드는 있지만 thumbnail URL이 비어있는 기존 파일 → `ImageService::buildThumbnailUrl()`로 URL 패턴 기반 생성 (변환 가능한 포맷만: jpg, jpeg, png, webp, bmp, avif)
+6. `/uploads/` 로 시작하지 않는 URL(레거시 외부 URL) → varchar_10~12는 빈 문자열
+7. GIF는 변환 불가이므로 uploads에 썸네일 없고, 폴백에서도 `isConvertible('gif')` = false → 빈 문자열
+
+```php
+// PostService::setMediaFields() 핵심 코드
+$data['varchar_10'] = '';
+$data['varchar_11'] = '';
+$data['varchar_12'] = '';
+if ($firstImage !== null && str_starts_with($firstImage, '/uploads/')) {
+    $uploadEntity = UploadRepository::findByUrl($firstImage);
+    if ($uploadEntity !== null && !empty($uploadEntity->thumbnail_400x400_url)) {
+        // uploads 테이블에 썸네일 URL이 저장되어 있으면 그대로 사용
+        $data['varchar_10'] = $uploadEntity->thumbnail_400x400_url;
+        $data['varchar_11'] = $uploadEntity->thumbnail_800x800_url;
+        $data['varchar_12'] = $uploadEntity->thumbnail_1000_url;
+    } else {
+        // uploads 테이블에 썸네일 URL이 없는 경우 (기존 업로드 파일)
+        // URL 패턴으로 썸네일 URL을 생성하여 폴백
+        $imgExt = strtolower(pathinfo($firstImage, PATHINFO_EXTENSION));
+        if (ImageService::isConvertible($imgExt)) {
+            $data['varchar_10'] = ImageService::buildThumbnailUrl($firstImage, 400, 'square');
+            $data['varchar_11'] = ImageService::buildThumbnailUrl($firstImage, 800, 'square');
+            $data['varchar_12'] = ImageService::buildThumbnailUrl($firstImage, 1000, 'resize');
+        }
+    }
+}
+```
+
+> **중요**: 여러 이미지가 업로드된 경우, **오직 첫 번째 이미지**의 썸네일만 varchar_10~12에 저장된다.
+
+**PostEntity 편의 속성**: `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성으로 varchar_10~12에 직접 접근 가능하다. `toArray()` 출력에도 포함된다.
+
 **포인트 처리**:
 - sf_post_config.point_write 설정에 따라 자동 포인트 지급
 - 실제 지급된 포인트는 int_10 필드에 저장

@@ -153,6 +153,14 @@ Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.
 **v7apiFileUpload() 파일 업로드 함수**, **V7FileUpload 재활용 위젯**,
 v7 위젯 목록을 포함합니다.
 
+### 데이터베이스 스키마 → [database/philgo.sql](database/philgo.sql)
+
+필고 프로젝트의 **전체 MariaDB 데이터베이스 스키마**(최신 버전)가 `database/philgo.sql`에 저장되어 있습니다.
+이 파일에는 모든 테이블의 CREATE TABLE 문, 인덱스, AUTO_INCREMENT 설정이 포함되어 있으며,
+v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스 등을 참조할 때 **반드시 이 파일을 확인**해야 합니다.
+주요 테이블: `sf_member`(회원), `sf_post_data`(게시글), `sf_post_config`(게시판 설정), `uploads`(v7 파일 업로드),
+`company`(업체), `company_meta`(업체 메타), `sf_point_log`(포인트 로그) 등.
+
 ### 모듈별 API 문서 → [references/api/](references/api/)
 
 | 모듈 | 문서 | 상태 |
@@ -162,6 +170,7 @@ v7 위젯 목록을 포함합니다.
 | AI | [api/v7-ai.md](references/api/v7-ai.md) | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Post | [api/v7-post.md](references/api/v7-post.md) | ✅ 완료 |
+| PointEvent | [api/v7-point-event.md](references/api/v7-point-event.md) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
@@ -214,6 +223,21 @@ v7 위젯 목록을 포함합니다.
 | `V7FileUpload` | `lib/v7_api/widgets/upload/v7_file_upload.dart` | 파일 업로드 위젯 (카메라/갤러리/파일) | ✅ **필수** |
 
 상세 사용법: → [app/v7-flutter-api.md](references/app/v7-flutter-api.md) 11~13장 참조
+
+---
+
+## REST Client 테스트 쿼리 파일
+
+`.claude/skills/v7-skill/rest-client/` 폴더에 VS Code REST Client 확장용 `.http` 테스트 파일을 저장한다.
+각 API 모듈별로 테스트 쿼리를 작성하여 API 동작을 빠르게 검증할 수 있다.
+
+| 파일 | 용도 |
+|------|------|
+| `point-event-test.http` | PointEvent(먹방 이벤트) API 테스트 |
+| `post-thumbnail-test.http` | Post 글 생성 시 썸네일 URL 저장 테스트 |
+
+> 새 모듈 API를 추가할 때마다 `rest-client/<module>-test.http` 파일을 작성한다.
+> 파일 내에 `@baseUrl`, `@session_id` 등 변수를 정의하고 "Send Request"로 실행한다.
 
 ---
 

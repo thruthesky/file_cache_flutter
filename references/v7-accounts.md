@@ -17,3 +17,11 @@
 - 로그인: `poster@philgo.com:12345a,*`
 - session_id: `d87e7374e22f1bf1aaebbbb97d280115-193824`
 - sf_member.idx: `193824`
+
+
+
+## 글 쓰기 테스트 할 때 사용하는 이미지 목록
+
+- ./tmp/sample-files/receipt-{n}.jpeg 는 영수증 이미지 파일들입니다.
+- ./tmp/sample-files/[사과|바나나|체리|두리안].jpg 는 테스트용 업로드 과일 이미지 파일들입니다.
+
