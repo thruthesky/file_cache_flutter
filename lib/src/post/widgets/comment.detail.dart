@@ -124,6 +124,11 @@ class _CommentDetailState extends State<CommentDetail> {
                                 ).colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                         ),
+                        // 댓글에서 획득한 포인트 뱃지
+                        if ((widget.comment.int10 ?? 0) > 0) ...[
+                          const SizedBox(width: 8),
+                          EarnedPointBadge(point: widget.comment.int10!),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 4),

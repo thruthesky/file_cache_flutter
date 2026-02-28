@@ -165,7 +165,9 @@ class Comment {
       int7: json['int7'] != null ? int.parse(json['int7']) : null,
       int8: json['int8'] != null ? int.parse(json['int8']) : null,
       int9: json['int9'] != null ? int.parse(json['int9']) : null,
-      int10: json['int10'] != null ? int.parse(json['int10']) : null,
+      // int_10: 서버에서 'int_10' 또는 'int10' 키로 보낼 수 있으므로 두 키 모두 지원
+      int10: json['int_10'] as int? ??
+          (json['int10'] != null ? int.parse(json['int10'].toString()) : null),
       char1: json['char1'],
       char2: json['char2'],
       char3: json['char3'],

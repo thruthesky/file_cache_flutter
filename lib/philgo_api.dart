@@ -235,6 +235,7 @@ export 'src/user/widgets/user_avatar_with_upload_icon.dart';
 // =============================================================================
 export 'src/widgets/avatar.dart';
 export 'src/widgets/date_selector.dart';
+export 'src/widgets/earned_point_badge.dart';
 export 'src/widgets/file_upload.dart';
 export 'src/widgets/full_screen_image_viewer.dart';
 export 'src/widgets/icon.container.dart';
