@@ -146,6 +146,13 @@ Windows 환경 설정 차이점을 포함합니다.
 ### Flutter 앱 API 연동 → [app/v7-flutter-api.md](references/app/v7-flutter-api.md)
 
 Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.
+
+### 이벤트 응모 (스피닝 휠) → [app/v7-event-entry.md](references/app/v7-event-entry.md)
+
+스피닝 휠(원판 돌리기) 기반 이벤트 응모 시스템의 상세 문서입니다.
+COT/TOT 분석, CustomPainter 렌더링, 가중치 기반 섹션, 회전 애니메이션,
+서버 기반 안티치트, 연속 돌리기(Auto Spin), 사운드, v7 API 연동,
+사용자 프로필 표시, 다국어 지원, 파일 구조를 상세히 다룹니다.
 `v7api()` 함수 시그니처, 매개변수, 반환값, 에러 처리 패턴,
 기존 `func()`과의 비교, 핵심 헬퍼 함수(`createDio()`, `patchToken()`),
 `PhilgoConfig.v7ApiEndpoint` 설정, 위젯에서의 3상태 관리 패턴
