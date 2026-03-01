@@ -21,6 +21,7 @@
 - [15. curl 파일 업로드 가이드](#15-curl-파일-업로드-가이드)
 - [16. 기존 시스템과의 차이점](#16-기존-시스템과의-차이점)
 - [17. 이미지 처리 (썸네일/WebP 변환)](#17-이미지-처리-썸네일webp-변환)
+- [18. 1:N 관계 파일 첨부 패턴 (attached_to 활용)](#18-1n-관계-파일-첨부-패턴-attached_to-활용)
 
 ---
 
@@ -2064,3 +2065,164 @@ GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800
 **파일**: `tests/Unit/ImageServiceTest.php`
 **실행**: `./vendor/bin/pest tests/Unit/ImageServiceTest.php`
 **테스트 수**: 25개
+
+---
+
+## 18. 1:N 관계 파일 첨부 패턴 (attached_to 활용)
+
+### 18.1 개요
+
+v7 시스템에서 **각 객체(글/코멘트/후기/기타 테이블)에 여러 장의 사진(파일)을 첨부**할 때,
+해당 테이블에 URL을 직접 저장하지 않고 **uploads 테이블의 `module` + `code` + `attached_to` 필드로 1:N 관계를 연결**한다.
+
+**핵심 원리:**
+```
+[대상 테이블] 1 ←──→ N [uploads 테이블]
+                         module = '모듈명'
+                         code = '용도 코드'
+                         attached_to = 대상.idx
+```
+
+### 18.2 왜 이 패턴을 사용하는가?
+
+| 방식 | 단점 |
+|------|------|
+| 대상 테이블에 `photo_url` 컬럼 저장 | 1장만 가능, 여러 장 저장 불가 |
+| 대상 테이블에 `photo_urls` JSON 저장 | 정규화 위반, 썸네일 관리 불가 |
+| **uploads 테이블 1:N 연결 (권장)** | **사진 개수 제한 없음, 기존 Upload 시스템 그대로 활용** |
+
+**장점:**
+- 사진 개수 제한 없음 (1장 이상 자유롭게 등록)
+- 기존 v7 Upload 시스템(WebP 변환, 썸네일 생성) 그대로 활용
+- 대상 삭제 시 `attached_to`로 일괄 정리 가능
+- 대상 테이블에 URL 컬럼을 추가할 필요 없음
+
+### 18.3 uploads 테이블 필드 매핑 규칙
+
+| uploads 필드 | 값 | 설명 |
+|-------------|-----|------|
+| `module` | `'모듈명'` | 어느 모듈에서 사용하는지 (예: `'company'`, `'post'`, `'user'`) |
+| `code` | `'용도 코드'` | 모듈 내 구체적 용도 (예: `'visit_review'`, `'content'`, `'gallery'`) |
+| `attached_to` | `대상.idx` | 대상 레코드의 idx (예: 후기 idx, 글 idx, 코멘트 idx) |
+| `url` | 원본 이미지 URL | 자동 WebP 변환됨 |
+| `thumbnail_400x400_url` | 정사각형 썸네일 URL | 자동 생성 |
+| `thumbnail_800x800_url` | 정사각형 썸네일 URL | 자동 생성 |
+| `thumbnail_1000_url` | 비율 유지 썸네일 URL | 자동 생성 |
+
+### 18.4 실전 예시: 업체 방문 후기 사진
+
+```
+uploads 테이블 연결:
+  module = 'company'
+  code = 'visit_review'
+  attached_to = company_visit_reviews.idx (후기 idx)
+```
+
+**업로드 시 (클라이언트 → 서버):**
+```php
+// 1) 파일 업로드 시 module, code 지정
+// API: method=upload.upload, module=company, code=visit_review
+// → 업로드 후 uploads.idx 반환
+
+// 2) 후기 생성 후, 업로드된 파일의 attached_to를 후기 idx로 업데이트
+UploadRepository::updateAttached($uploadIdx, $reviewIdx);
+```
+
+**조회 시:**
+```php
+// 특정 후기에 첨부된 모든 사진 조회
+$photos = UploadRepository::findByAttached('company', 'visit_review', $reviewIdx);
+// → UploadEntity[] 배열 반환 (여러 장)
+```
+
+**삭제 시:**
+```php
+// 후기 삭제 시, 연결된 모든 사진 일괄 삭제
+UploadRepository::deleteByAttached('company', 'visit_review', $reviewIdx);
+```
+
+### 18.5 조회 메서드: `UploadRepository::findByAttached()`
+
+특정 모듈+코드+대상 idx로 연결된 모든 업로드 파일을 조회한다.
+
+```php
+/**
+ * module, code, attached_to로 업로드 목록을 조회한다.
+ * 1:N 관계에서 특정 대상에 첨부된 모든 파일을 가져올 때 사용한다.
+ *
+ * @param string $module 모듈명 (예: 'company', 'post')
+ * @param string $code 용도 코드 (예: 'visit_review', 'content')
+ * @param int $attachedTo 대상 레코드의 idx
+ * @return UploadEntity[] 연결된 업로드 Entity 배열
+ */
+public static function findByAttached(string $module, string $code, int $attachedTo): array
+```
+
+**사용 예시:**
+```php
+// 업체 방문 후기 사진 조회
+$photos = UploadRepository::findByAttached('company', 'visit_review', $reviewIdx);
+foreach ($photos as $photo) {
+    echo $photo->url;                    // 원본 URL
+    echo $photo->thumbnail_400x400_url;  // 400x400 썸네일
+}
+
+// 게시글 첨부 파일 조회
+$files = UploadRepository::findByAttached('post', 'content', $postIdx);
+
+// 코멘트 첨부 파일 조회
+$files = UploadRepository::findByAttached('comment', 'content', $commentIdx);
+```
+
+### 18.6 삭제 메서드: `UploadRepository::deleteByAttached()`
+
+대상 레코드 삭제 시, 연결된 모든 업로드 파일을 일괄 삭제한다.
+
+```php
+/**
+ * module, code, attached_to로 연결된 모든 업로드 레코드를 삭제한다.
+ * 대상 레코드(글/코멘트/후기 등) 삭제 시 연결된 파일을 일괄 정리할 때 사용한다.
+ *
+ * @param string $module 모듈명
+ * @param string $code 용도 코드
+ * @param int $attachedTo 대상 레코드의 idx
+ * @return int 삭제된 레코드 수
+ */
+public static function deleteByAttached(string $module, string $code, int $attachedTo): int
+```
+
+**주의:** 이 메서드는 DB 레코드만 삭제한다. 파일 시스템의 실제 파일까지 삭제하려면
+`UploadService`에서 각 파일을 순회하며 `remove()`를 호출해야 한다.
+
+### 18.7 전체 흐름 요약
+
+```
+[업로드 단계]
+1. 클라이언트 → upload.upload API (module, code 지정)
+2. 파일 저장 + DB 레코드 생성 (attached_to = 0, 아직 미연결)
+3. 대상 레코드 생성 (예: 후기 INSERT → 후기 idx 획득)
+4. upload.updateAttached API (idx=업로드idx, attached_to=후기idx)
+
+[조회 단계]
+5. UploadRepository::findByAttached(module, code, 후기idx)
+   → UploadEntity[] 배열 반환 (여러 장)
+
+[삭제 단계]
+6. 후기 삭제 시 → UploadRepository::deleteByAttached(module, code, 후기idx)
+   → 연결된 모든 업로드 레코드 삭제
+```
+
+### 18.8 module + code 네이밍 규칙
+
+| 대상 | module | code | 설명 |
+|------|--------|------|------|
+| 업체 방문 후기 사진 | `'company'` | `'visit_review'` | 업체 방문 후기에 첨부된 사진 |
+| 게시글 첨부 파일 | `'post'` | `'content'` | 게시글 본문에 첨부된 파일 |
+| 코멘트 첨부 파일 | `'comment'` | `'content'` | 코멘트에 첨부된 파일 |
+| 사용자 프로필 사진 | `'user'` | `'profile_photo'` | 프로필 사진 |
+| 사용자 커버 사진 | `'user'` | `'cover_photo'` | 프로필 커버 이미지 |
+| 업체 대표 사진 | `'company'` | `'main_photo'` | 업체 대표 이미지 |
+| 업체 갤러리 | `'company'` | `'gallery'` | 업체 사진 갤러리 |
+
+> **새로운 기능에서 사진/파일 첨부가 필요하면**, 대상 테이블에 URL 컬럼을 추가하지 말고
+> 위 패턴을 따라 `module`과 `code`를 정의하여 uploads 테이블로 연결한다.
