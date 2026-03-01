@@ -1,7 +1,9 @@
 # 필고 v7 이벤트 시스템 통합 개요
 
-> 이 문서는 필고 v7의 모든 포인트 이벤트 시스템을 하나로 통합 요약한다.
-> 상세 구현은 각 서브 문서를 참조한다.
+> **📌 문서 목적**: 이 문서는 필고 v7의 **모든 포인트 이벤트 시스템을 하나로 통합 요약**한다.
+> 스피닝 휠 이벤트, 업소록 QR 코드 삼단콤보(QR 스캔 → 재방문 보너스 → 후기 포인트),
+> 포인트 로그 공통 인프라 등 **전체 이벤트 시스템의 전반적인 구조와 흐름**을 다루며,
+> API 코드/로직 상세는 [v7-event.md](../api/v7-event.md)를 참조한다.
 
 ## 목차
 
@@ -9,9 +11,10 @@
 - [2. 스피닝 휠 이벤트 (서버)](#2-스피닝-휠-이벤트-서버)
 - [3. 스피닝 휠 이벤트 (클라이언트 Flutter)](#3-스피닝-휠-이벤트-클라이언트-flutter)
 - [4. 업소록 QR 코드 이벤트 (삼단콤보)](#4-업소록-qr-코드-이벤트-삼단콤보)
-- [5. 포인트 로그 시스템 (공통 인프라)](#5-포인트-로그-시스템-공통-인프라)
-- [6. DB 스키마 요약](#6-db-스키마-요약)
-- [7. 파일 구조 및 참조 문서](#7-파일-구조-및-참조-문서)
+- [5. 업소록 방문 후기 포인트 (삼단콤보 3단계)](#5-업소록-방문-후기-포인트-삼단콤보-3단계)
+- [6. 포인트 로그 시스템 (공통 인프라)](#6-포인트-로그-시스템-공통-인프라)
+- [7. DB 스키마 요약](#7-db-스키마-요약)
+- [8. 파일 구조 및 참조 문서](#8-파일-구조-및-참조-문서)
 
 ---
 
@@ -39,8 +42,8 @@
 │ history        │ codes          │                           │
 │                │ company_qr_    │                           │
 │                │ code_usages    │                           │
-│                │ point_event_   │                           │
-│                │ history        │                           │
+│                │ company_reviews│                           │
+│                │ uploads        │                           │
 └────────────────┴────────────────┴───────────────────────────┘
 ```
 
@@ -49,16 +52,23 @@
 ```
 사용자 업소 방문
   ↓
-QR 코드 스캔 → 1,000~2,000P 즉시 적립
-  ↓
-재방문 판별 → 추가 2,000~3,000P 추첨
-  ↓
-후기 작성 → 추가 2,000~3,000P 적립
+[1단계] QR 코드 스캔 → 1,000~2,000P 즉시 적립
+  ↓                     (qr-code-scanned.php)
+  ├─ 재방문자 → [2단계] 재방문 포인트 추첨 → 추가 2,000~3,000P
+  │              (re-visit-point.php)
+  │                ↓
+  │              후기 CTA → [3단계] 후기 작성 → 추가 2,000~3,000P
+  │                          (visit-review-point.php)
+  │
+  └─ 첫 방문자 → 후기 CTA → [3단계] 후기 작성 → 추가 2,000~3,000P
+                              (visit-review-point.php)
   ↓
 획득한 포인트로 스피닝 휠 이벤트 참여
   ↓
 200P 소비 → 확률 게임 → 50P~2,000P 또는 스타벅스 쿠폰
 ```
+
+**삼단콤보 최대 포인트**: 2,000 + 3,000 + 3,000 = **8,000P/회**
 
 ---
 
@@ -546,9 +556,9 @@ public static function reVisitPoint(array $input): array
 |------|--------|--------|-------|-----|
 | QR 스캔 적립 | `company` | `qr_scan` | +1,000~2,000 | `{업소명} QR 스캔 보상` |
 | 재방문 보너스 | `company` | `qr_revisit` | +2,000~3,000 | `{업소명} 재방문 보상 (usage_idx:{N})` |
-| 후기 작성 | `company` | `review` | +2,000~3,000 | `{업소명} 후기 보상` |
+| 후기 작성 보상 | `company` | `visit_review` | +2,000~3,000 | `{업소명} 방문 후기 보상 (usage_idx:{N})` |
 
-### 4.7 QR 코드 API 엔드포인트
+### 4.7 QR 코드 & 후기 API 엔드포인트
 
 | 메서드 | 용도 | 인증 |
 |--------|------|------|
@@ -557,6 +567,8 @@ public static function reVisitPoint(array $input): array
 | `company.listQrCodes` | 발행된 QR 코드 목록 | 필수 |
 | `company.listQrCodeUsages` | 스캔 기록 목록 | 필수 |
 | `company.qrCodeStats` | 발행/스캔 통계 | 필수 |
+| `company.submitVisitReview` | 방문 후기 작성 + 포인트 적립 | 필수 |
+| `company.getVisitReviews` | 업소별 후기 목록 조회 | 불필요 |
 
 ### 4.8 데이터 관계도
 
@@ -574,22 +586,123 @@ company_qr_code_usages (사용 기록)
     ├─ result ('s'|'f'|'r')
     └─ scanned_at
     │
+company_reviews (방문 후기)          ← 삼단콤보 3단계
+    ├─ usage_idx (UNIQUE, 1회 제한)
+    ├─ content (후기 글)
+    ├─ reward_points (2,000~3,000)
+    └─ → uploads 테이블 (사진 연결)
+    │
 sf_point_log (포인트 기록)
     ├─ module='company'
-    └─ action='qr_scan'|'qr_revisit'|'review'
+    └─ action='qr_scan'|'qr_revisit'|'visit_review'
 ```
 
 ---
 
-## 5. 포인트 로그 시스템 (공통 인프라)
+## 5. 업소록 방문 후기 포인트 (삼단콤보 3단계)
 
 ### 5.1 핵심 개념
+
+QR 코드 삼단콤보의 **3단계**: 사진과 글로 업소록 후기를 작성하면 랜덤 2,000~3,000P를 추가 적립한다.
+QR 스캔 성공 페이지(`qr-code-scanned.php`)와 재방문 포인트 성공 페이지(`re-visit-point.php`) 모두에서
+후기 작성 CTA 버튼을 표시하여 `visit-review-point.php`로 유도한다.
+
+| 항목 | 값 |
+|------|------|
+| **적립 범위** | 랜덤 2,000~3,000P |
+| **필수 조건** | 로그인 + 본인 스캔 기록 + 성공(result='s') + 미작성 |
+| **글 최소 길이** | 10자 |
+| **사진 최소 장수** | 1장 이상 |
+| **중복 방지** | usage_idx UNIQUE 제약 → 1회만 |
+| **포인트 로그** | module='company', action='visit_review' |
+| **DB 테이블** | `company_reviews` |
+| **사진 저장** | `uploads` 테이블 (module='company', code='visit_review') |
+
+### 5.2 후기 작성 흐름
+
+```
+사용자가 후기 CTA 클릭
+  ↓
+visit-review-point.php?usage_idx={N}
+  ↓
+[PHP 서버 사이드 검증]
+  ├─ 로그인 확인
+  ├─ usage_idx 유효성 검증
+  ├─ 본인 스캔 기록 확인
+  ├─ 성공한 스캔 확인 (result='s')
+  └─ 이미 후기 작성 여부 확인
+  ↓
+[Vue.js 프론트엔드]
+  ├─ 사진 업로드 (v7apiUpload → uploads 테이블)
+  ├─ 글 내용 입력 (최소 10자)
+  └─ 제출 → v7api('company.submitVisitReview')
+  ↓
+[CompanyService::submitVisitReview()]
+  ├─ 입력 검증 (중복, 길이, 사진 수)
+  ├─ 후기 저장 (company_reviews INSERT)
+  ├─ 사진 연결 (uploads.attached_to 업데이트)
+  └─ 포인트 적립 (PointLogService::changePoints)
+  ↓
+성공 → 축하 화면 (적립 포인트 표시)
+```
+
+### 5.3 후기 CTA 진입 경로
+
+| 진입 경로 | 조건 | CTA 위치 |
+|-----------|------|----------|
+| QR 스캔 성공 (첫 방문) | `!is_revisit && login()` | `qr-code-scanned.php` 하단 |
+| QR 스캔 성공 (재방문) | `is_revisit && login()` | `qr-code-scanned.php` 재방문 추첨 버튼 위 |
+| 재방문 포인트 적립 성공 | 항상 표시 | `re-visit-point.php` 성공 화면 하단 |
+
+**CTA 디자인**: 녹색 그라데이션 카드 + 글로우 애니메이션 + "후기 작성하기" 뱃지 버튼 + "포인트를 두배로 받으세요!" 안내 메시지
+
+### 5.4 v7 클래스 구조
+
+```
+lib/company/
+├── VisitReviewEntity.php       ← Philgo\Company\VisitReviewEntity
+│   ├── fromArray(array): self  ← DB 행 → Entity 변환
+│   └── toArray(): array        ← Entity → 배열 변환 (photos 포함)
+│
+├── VisitReviewRepository.php   ← Philgo\Company\VisitReviewRepository
+│   ├── insert(array): int      ← 후기 INSERT
+│   ├── findByIdx(int): ?Entity ← idx로 조회
+│   ├── findByUsageIdx(int): ?Entity ← usage_idx로 조회
+│   ├── existsByUsageIdx(int): bool  ← 중복 확인
+│   ├── findByCompany(int, int, int): Entity[] ← 업소별 목록
+│   └── countByCompany(int): int ← 업소별 개수
+│
+├── CompanyService.php          ← submitVisitReview(), getVisitReviews() 추가
+└── CompanyController.php       ← company.submitVisitReview, company.getVisitReviews 추가
+```
+
+### 5.5 웹 페이지 파일
+
+| 파일 | URL | 용도 |
+|------|-----|------|
+| `company/visit-review-point.php` | `/company/visit-review-point.php?usage_idx={N}` | 후기 작성 폼 (Vue.js + v7api) |
+| `company/qr-code-scanned.php` | `/company/qr-code-scanned.php?code={code}` | QR 스캔 성공 → 후기 CTA 표시 |
+| `company/re-visit-point.php` | `/company/re-visit-point.php?usage_idx={N}` | 재방문 적립 성공 → 후기 CTA 표시 |
+| `company/view.php` | `/company/view.php?idx={N}` | 업소 상세 → 후기 목록 표시 |
+| `js/v7api.js` | `/js/v7api.js` | v7api(), v7apiUpload() 헬퍼 함수 |
+
+### 5.6 업소 상세 페이지 후기 표시
+
+`company/view.php` 하단에 Vue.js 앱으로 해당 업소의 후기 목록을 표시한다.
+`v7api('company.getVisitReviews', { idx_company })` 호출로 데이터를 로드하며,
+후기가 없으면 섹션을 숨긴다 (`v-if="reviews.length > 0"`).
+
+---
+
+## 6. 포인트 로그 시스템 (공통 인프라)
+
+### 6.1 핵심 개념
 
 모든 포인트 이벤트의 공통 기반. `sf_point_log` 테이블에 모든 포인트 변동을 기록한다.
 
 **파일**: `lib/point_log/PointLogController.php`, `lib/point_log/PointLogService.php`, `lib/point_log/PointLogRepository.php`, `lib/point_log/PointLogEntity.php`
 
-### 5.2 핵심 메서드 — PointLogService::changePoints()
+### 6.2 핵심 메서드 — PointLogService::changePoints()
 
 ```php
 // 포인트 변경 (모든 이벤트에서 공통 사용)
@@ -605,7 +718,7 @@ $log = PointLogService::changePoints([
 
 **처리 흐름**: 인증 확인 → 파라미터 검증 → 현재 포인트 조회 → 계산 → 최소값 0 검증 → sf_point_log INSERT → sf_member.point UPDATE
 
-### 5.3 API 엔드포인트 (11개)
+### 6.3 API 엔드포인트 (11개)
 
 | 메서드 | 용도 |
 |--------|------|
@@ -620,7 +733,7 @@ $log = PointLogService::changePoints([
 | `pointLog.update` | 로그 수정 (메타 정보만) |
 | `pointLog.delete` | 로그 삭제 |
 
-### 5.4 module/action 매트릭스 (전체 이벤트)
+### 6.4 module/action 매트릭스 (전체 이벤트)
 
 | module | action | etc | 용도 |
 |--------|--------|-----|------|
@@ -629,7 +742,7 @@ $log = PointLogService::changePoints([
 | `event` | `spin_reward` | `spin_reward_starbucks:{파일}` | 스타벅스 쿠폰 당첨 |
 | `company` | `qr_scan` | `{업소명} QR 스캔 보상` | QR 스캔 +1,000~2,000P |
 | `company` | `qr_revisit` | `{업소명} 재방문 보상` | 재방문 +2,000~3,000P |
-| `company` | `review` | `{업소명} 후기 보상` | 후기 +2,000~3,000P |
+| `company` | `visit_review` | `{업소명} 방문 후기 보상 (usage_idx:{N})` | 후기 +2,000~3,000P |
 | `post` | `create` | `point_write` | 글 작성 포인트 |
 | `post` | `delete` | `point_write_delete` | 글 삭제 환급 |
 | `comment` | `create` | `point_comment` | 코멘트 포인트 |
@@ -637,7 +750,7 @@ $log = PointLogService::changePoints([
 | `point_event` | `mukbang_create` | `mukbang_event_bonus` | 먹방 이벤트 (보너스) |
 | `admin` | `update` | `admin-point-update` | 관리자 수동 수정 |
 
-### 5.5 레거시 호환
+### 6.5 레거시 호환
 
 | 레거시 함수 | v7 대응 |
 |------------|---------|
@@ -647,7 +760,7 @@ $log = PointLogService::changePoints([
 
 ---
 
-## 6. DB 스키마 요약
+## 7. DB 스키마 요약
 
 ### event_spin_history (스피닝 휠 기록)
 
@@ -710,6 +823,26 @@ CREATE TABLE `company_qr_code_usages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
+### company_reviews (방문 후기)
+
+```sql
+CREATE TABLE `company_reviews` (
+  `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idx_company` int(10) UNSIGNED NOT NULL COMMENT '업소 FK',
+  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '회원 FK',
+  `usage_idx` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'QR 사용 기록 FK',
+  `content` text NOT NULL COMMENT '후기 내용',
+  `reward_points` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '지급 포인트',
+  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '작성 시간',
+  PRIMARY KEY (`idx`),
+  KEY `idx_company` (`idx_company`),
+  KEY `idx_member` (`idx_member`),
+  UNIQUE KEY `uk_usage_idx` (`usage_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='업소록 방문 후기';
+```
+
+> 사진은 `uploads` 테이블에 `module='company'`, `code='visit_review'`, `attached_to=company_reviews.idx`로 연결.
+
 ### sf_point_log (포인트 로그 — 기존 테이블)
 
 | 주요 컬럼 | 설명 |
@@ -726,7 +859,7 @@ CREATE TABLE `company_qr_code_usages` (
 
 ---
 
-## 7. 파일 구조 및 참조 문서
+## 8. 파일 구조 및 참조 문서
 
 ### PHP 서버 파일
 
@@ -737,12 +870,14 @@ lib/event/
 └── EventRepository.php        ← event_spin_history CRUD
 
 lib/company/
-├── CompanyController.php      ← company.* API (QR 관련 포함)
-├── CompanyService.php         ← issueQrCode(), scanQrCode(), reVisitPoint()
+├── CompanyController.php      ← company.* API (QR + 후기 포함)
+├── CompanyService.php         ← issueQrCode(), scanQrCode(), reVisitPoint(), submitVisitReview(), getVisitReviews()
 ├── CompanyRepository.php      ← company 테이블 CRUD
 ├── QrCodeRepository.php       ← company_qr_codes 테이블 CRUD
 ├── QrCodeUsageRepository.php  ← company_qr_code_usages 테이블 CRUD
-└── QrCodeEntity.php           ← QR 코드 데이터 구조체
+├── QrCodeEntity.php           ← QR 코드 데이터 구조체
+├── VisitReviewEntity.php      ← 방문 후기 데이터 구조체
+└── VisitReviewRepository.php  ← company_reviews 테이블 CRUD
 
 lib/point_log/
 ├── PointLogController.php     ← pointLog.* API (11개)
@@ -751,6 +886,14 @@ lib/point_log/
 └── PointLogEntity.php         ← 포인트 로그 데이터 구조체
 
 event/cupon/starbucks/         ← 스타벅스 쿠폰 이미지 저장 폴더
+
+company/
+├── qr-code-scanned.php        ← QR 스캔 성공 감사 페이지 (후기 CTA 포함)
+├── re-visit-point.php         ← 재방문 포인트 적립 페이지 (후기 CTA 포함)
+├── visit-review-point.php     ← 후기 작성 폼 페이지 (Vue.js + v7api)
+└── view.php                   ← 업소 상세 페이지 (후기 목록 표시)
+
+js/v7api.js                    ← v7api(), v7apiUpload() 헬퍼 함수
 ```
 
 ### 상세 참조 문서
@@ -775,3 +918,6 @@ event/cupon/starbucks/         ← 스타벅스 쿠폰 이미지 저장 폴더
 | 자기 업소 스캔 | idx_member_created 비교 |
 | 포인트 조작 | 서버 random_int() + 트랜잭션 |
 | 감사 추적 | random_value, ip, starbucks_coupon_file 저장 |
+| 후기 중복 작성 | usage_idx UNIQUE 제약 + existsByUsageIdx() 검증 |
+| 후기 타인 스캔 도용 | idx_member 비교로 본인 스캔 기록만 허용 |
+| 후기 내용 검증 | 최소 10자 + 사진 1장 이상 필수 |

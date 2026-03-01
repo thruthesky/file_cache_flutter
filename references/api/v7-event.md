@@ -1,5 +1,9 @@
 # v7 Event (스피닝 휠) API 문서
 
+> **📌 문서 목적**: 이 문서는 v7 이벤트 시스템의 **API 엔드포인트, 서버 비즈니스 로직, 코드 구현 상세**를 다룬다.
+> 스피닝 휠 이벤트의 확률 알고리즘, 트랜잭션 처리, 스타벅스 쿠폰 관리, 업소록 방문 후기 포인트 API 등
+> **서버 측 코드와 로직**에 집중하며, 전체 이벤트 시스템 개요는 [v7-event-overview.md](../event/v7-event-overview.md)를 참조한다.
+
 ## 목차
 
 1. [개요](#개요)
@@ -51,6 +55,14 @@
     - [REST Client 테스트](#rest-client-테스트)
 13. [보안 고려사항](#보안-고려사항)
 14. [향후 확장 방향](#향후-확장-방향)
+15. [업소록 방문 후기 포인트 API](#업소록-방문-후기-포인트-api)
+    - [개요 (후기)](#개요-후기)
+    - [company.submitVisitReview — 후기 작성](#companysubmitvisitreview--후기-작성)
+    - [company.getVisitReviews — 후기 목록 조회](#companygetvisitreviews--후기-목록-조회)
+    - [후기 서비스 로직 상세](#후기-서비스-로직-상세)
+    - [후기 DB 테이블: company_reviews](#후기-db-테이블-company_reviews)
+    - [후기 웹 페이지: visit-review-point.php](#후기-웹-페이지-visit-review-pointphp)
+    - [후기 JavaScript 헬퍼: v7api.js](#후기-javascript-헬퍼-v7apijs)
 
 ---
 
@@ -1081,6 +1093,313 @@ Content-Type: application/json
 
 ---
 
+## 업소록 방문 후기 포인트 API
+
+### 개요 (후기)
+
+업소록 QR 코드 삼단콤보의 **3단계**이다.
+QR 스캔 성공 후 사진과 글(최소 10자)로 후기를 남기면 **랜덤 2,000~3,000P**를 추가 적립한다.
+동일 스캔 기록(usage_idx)에 대해 **1회만** 후기 작성이 가능하다.
+
+| 항목 | 값 |
+|------|------|
+| **적립 범위** | 랜덤 2,000~3,000P (`random_int(2000, 3000)`) |
+| **필수 조건** | 로그인 + 본인 스캔 기록 + 성공(result='s') + 미작성 |
+| **글 최소 길이** | 10자 |
+| **사진 최소 장수** | 1장 이상 |
+| **중복 방지** | usage_idx 기준 1회만 |
+| **포인트 로그** | module='company', action='visit_review' |
+| **DB 테이블** | `company_reviews` |
+| **사진 저장** | `uploads` 테이블 (module='company', code='visit_review') |
+
+### company.submitVisitReview — 후기 작성
+
+인증 필수.
+
+QR 스캔 성공 후 사진+글로 업소록 후기를 작성하고 보너스 포인트를 적립한다.
+
+**메서드**: `POST /api.php?method=company.submitVisitReview`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "company.submitVisitReview",
+    "session_id": "YOUR_SESSION_ID",
+    "usage_idx": 104,
+    "content": "매우 친절하고 음식이 맛있었습니다. 다음에도 꼭 방문하겠습니다!",
+    "photo_idxs": [501, 502]
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `usage_idx` | int | O | QR 코드 사용 기록 idx |
+| `content` | string | O | 후기 글 내용 (최소 10자) |
+| `photo_idxs` | int[] | O | 업로드된 사진 idx 배열 (1장 이상) |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "review_idx": 15,
+  "reward_points": 2547,
+  "point_before": 3969845,
+  "point_after": 3972392,
+  "company_name": "체리",
+  "idx_company": 1337
+}
+```
+
+#### 응답 필드
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `success` | bool | 성공 여부 |
+| `review_idx` | int | 생성된 후기 idx |
+| `reward_points` | int | 지급된 포인트 (2,000~3,000) |
+| `point_before` | int | 적립 전 포인트 |
+| `point_after` | int | 적립 후 포인트 |
+| `company_name` | string | 업소명 |
+| `idx_company` | int | 업소 idx |
+
+#### 에러 응답
+
+| 상황 | 에러 메시지 |
+|------|------------|
+| 미로그인 | `'로그인이 필요합니다.'` |
+| usage_idx 없음 | `'유효하지 않은 요청입니다.'` |
+| 스캔 기록 없음 | `'스캔 기록을 찾을 수 없습니다.'` |
+| 본인 기록 아님 | `'본인의 스캔 기록이 아닙니다.'` |
+| 실패한 스캔 | `'성공한 스캔 기록이 아닙니다.'` |
+| 중복 작성 | `'이미 후기를 작성하셨습니다.'` |
+| 내용 부족 | `'후기 내용은 최소 10자 이상 입력해 주세요.'` |
+| 사진 없음 | `'사진을 1장 이상 첨부해 주세요.'` |
+
+---
+
+### company.getVisitReviews — 후기 목록 조회
+
+인증 불필요 (공개 조회).
+
+업소별 방문 후기를 페이지네이션으로 조회한다. 각 후기에 첨부된 사진도 함께 반환한다.
+
+**메서드**: `POST /api.php?method=company.getVisitReviews`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "company.getVisitReviews",
+    "idx_company": 1337,
+    "page": 1,
+    "limit": 10
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `idx_company` | int | O | 업소 idx |
+| `page` | int | X | 페이지 번호 (기본 1) |
+| `limit` | int | X | 페이지당 개수 (기본 10, 최대 50) |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "reviews": [
+    {
+      "idx": 15,
+      "idx_company": 1337,
+      "idx_member": 186427,
+      "usage_idx": 104,
+      "content": "매우 친절하고 음식이 맛있었습니다.",
+      "reward_points": 2547,
+      "created_at": 1740900000,
+      "photos": [
+        {
+          "idx": 501,
+          "url": "/uploads/company/visit_review/photo1.jpg",
+          "filename": "photo1.jpg"
+        }
+      ]
+    }
+  ],
+  "total": 5,
+  "page": 1,
+  "limit": 10
+}
+```
+
+---
+
+### 후기 서비스 로직 상세
+
+#### CompanyService::submitVisitReview() 처리 흐름
+
+```
+[1] 입력 검증
+    ├─ idx_member > 0 (로그인 필수)
+    ├─ usage_idx > 0
+    ├─ content 길이 >= 10자
+    └─ photo_idxs 개수 >= 1
+
+[2] 스캔 기록 검증
+    ├─ QrCodeUsageRepository::findByIdx($usageIdx) → 존재 확인
+    ├─ $usage['idx_member'] === $idxMember → 본인 확인
+    └─ $usage['result'] === 's' → 성공 스캔 확인
+
+[3] 중복 검증
+    └─ VisitReviewRepository::existsByUsageIdx($usageIdx) → false 필수
+
+[4] 업소 정보 조회
+    └─ CompanyRepository::findByIdx($usage['idx_company'])
+
+[5] 포인트 결정
+    └─ $rewardPoints = random_int(2000, 3000)
+
+[6] 후기 저장
+    └─ VisitReviewRepository::insert([
+         idx_company, idx_member, usage_idx, content, reward_points
+       ])
+
+[7] 사진 연결
+    └─ UploadRepository::updateAttached([
+         module='company', code='visit_review',
+         attached_to=$reviewIdx, photo_idxs
+       ])
+
+[8] 포인트 적립
+    └─ PointLogService::changePoints([
+         idx_member, points=$rewardPoints,
+         module='company', action='visit_review',
+         etc='{업소명} 방문 후기 보상 (usage_idx:{N})'
+       ])
+
+[9] 결과 반환
+```
+
+#### sf_point_log 기록 규칙 (후기)
+
+| 상황 | module | action | point | etc |
+|------|--------|--------|-------|-----|
+| 후기 작성 보상 | `company` | `visit_review` | +2,000~3,000 | `{업소명} 방문 후기 보상 (usage_idx:{N})` |
+
+#### VisitReviewRepository 메서드
+
+| 메서드 | 쿼리 | 반환 |
+|--------|------|------|
+| `insert(array $data)` | `INSERT INTO company_reviews (...)` | `int` (생성된 idx) |
+| `findByIdx(int $idx)` | `SELECT * WHERE idx = ?` | `?VisitReviewEntity` |
+| `findByUsageIdx(int $usageIdx)` | `SELECT * WHERE usage_idx = ?` | `?VisitReviewEntity` |
+| `existsByUsageIdx(int $usageIdx)` | `SELECT COUNT(*) WHERE usage_idx = ?` | `bool` |
+| `findByCompany(int $idx, int $p, int $l)` | `SELECT * WHERE idx_company = ? LIMIT ? OFFSET ?` | `VisitReviewEntity[]` |
+| `countByCompany(int $idxCompany)` | `SELECT COUNT(*) WHERE idx_company = ?` | `int` |
+
+---
+
+### 후기 DB 테이블: company_reviews
+
+```sql
+CREATE TABLE `company_reviews` (
+  `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idx_company` int(10) UNSIGNED NOT NULL COMMENT '업소 FK',
+  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '회원 FK',
+  `usage_idx` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'QR 사용 기록 FK',
+  `content` text NOT NULL COMMENT '후기 내용',
+  `reward_points` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '지급 포인트',
+  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '작성 시간',
+  PRIMARY KEY (`idx`),
+  KEY `idx_company` (`idx_company`),
+  KEY `idx_member` (`idx_member`),
+  UNIQUE KEY `uk_usage_idx` (`usage_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='업소록 방문 후기';
+```
+
+**컬럼 설명**:
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `idx` | INT AUTO_INCREMENT | PK |
+| `idx_company` | INT | 업소 FK |
+| `idx_member` | INT | 작성자 회원 FK |
+| `usage_idx` | INT UNIQUE | QR 사용 기록 FK (1회 제한 보장) |
+| `content` | TEXT | 후기 글 내용 |
+| `reward_points` | INT | 지급한 포인트 (2,000~3,000) |
+| `created_at` | INT | 작성 시간 (Unix timestamp) |
+
+**사진 저장**: `uploads` 테이블에 `module='company'`, `code='visit_review'`, `attached_to=company_reviews.idx`로 연결.
+
+---
+
+### 후기 웹 페이지: visit-review-point.php
+
+**URL**: `/company/visit-review-point.php?usage_idx={usage_idx}`
+
+레거시(boot.php) + v7(CompanyService) 혼용 페이지.
+Vue.js Options API로 프론트엔드를 구성하며, `v7apiUpload()`로 사진 업로드, `v7api()`로 후기 제출을 처리한다.
+
+```
+boot.php 로드 + vendor/autoload.php
+  ↓
+로그인/usage_idx 검증 (PHP 서버 사이드)
+  ↓
+Vue.js 앱 마운트
+  ├─ 사진 업로드 그리드 (v7apiUpload → uploads 테이블)
+  ├─ 글 내용 textarea (최소 10자)
+  └─ 제출 버튼 → v7api('company.submitVisitReview')
+       ├─ 성공 → 축하 화면 (포인트 표시)
+       └─ 실패 → 에러 메시지
+```
+
+**진입 경로**:
+1. QR 스캔 성공 → `qr-code-scanned.php` → "업소록 후기 포인트" CTA → `visit-review-point.php`
+2. 재방문 포인트 적립 → `re-visit-point.php` → "후기 작성하기" CTA → `visit-review-point.php`
+
+---
+
+### 후기 JavaScript 헬퍼: v7api.js
+
+`/js/v7api.js`에 v7 시스템 전용 API 호출 함수가 정의되어 있다.
+기존 레거시 `func()` 함수 대신 사용한다.
+
+#### v7api() — API 호출
+
+```javascript
+async function v7api(method, params = {}, options = {})
+// method: API 메서드명 (예: 'company.submitVisitReview')
+// params: 파라미터 객체
+// options: { alertOnError: true } — 에러 시 alert 표시 여부
+// 반환: Promise<Object> — API 응답 데이터
+// 내부: session_id 자동 추가 → axios.post('/api.php', params)
+```
+
+#### v7apiUpload() — 파일 업로드
+
+```javascript
+async function v7apiUpload(file, module, code)
+// file: File 객체
+// module: 모듈명 (예: 'company')
+// code: 코드 (예: 'visit_review')
+// 반환: Promise<Object> — 업로드 응답 (idx, url 포함)
+// 내부: FormData + axios.post('/api.php?method=upload.create')
+```
+
+> **중요**: 기존 레거시 `func()` 함수로는 v7 API를 호출할 수 없다.
+> v7 시스템 API 호출 시 반드시 `v7api()` 또는 `v7apiUpload()`를 사용해야 한다.
+
+---
+
 ## 관련 문서
 
 | 문서 | 내용 |
@@ -1089,4 +1408,5 @@ Content-Type: application/json
 | [v7-event-entry.md](../app/v7-event-entry.md) | 클라이언트 스피닝 휠 위젯 아키텍처 |
 | [v7-point-event.md](v7-point-event.md) | 기존 먹방 이벤트 API (참고용) |
 | [v7-architecture.md](../v7-architecture.md) | v7 시스템 아키텍처 |
+| [v7-event-overview.md](../event/v7-event-overview.md) | 이벤트 시스템 통합 개요 |
 | [philgo.sql](../../database/philgo.sql) | DB 스키마 |
