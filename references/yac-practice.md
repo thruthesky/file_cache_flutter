@@ -1,6 +1,6 @@
 # httpYac 가이드 — 실전 예제, 비교 & 베스트 프랙티스
 
-> 메인 문서: [yac.md](yac.md)
+> 메인 문서: [yac.md](../httpYac/yac.md)
 
 ---
 

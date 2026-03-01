@@ -1,6 +1,6 @@
 # httpYac 가이드 — Assert & 응답 처리
 
-> 메인 문서: [yac.md](yac.md)
+> 메인 문서: [yac.md](../httpYac/yac.md)
 
 ---
 

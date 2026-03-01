@@ -1,6 +1,6 @@
 # httpYac 가이드 — 메타데이터 & 스크립팅
 
-> 메인 문서: [yac.md](yac.md)
+> 메인 문서: [yac.md](../httpYac/yac.md)
 
 ---
 

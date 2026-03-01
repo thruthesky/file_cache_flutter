@@ -1,6 +1,6 @@
 # httpYac 가이드 — 변수 시스템 & 환경 설정
 
-> 메인 문서: [yac.md](yac.md)
+> 메인 문서: [yac.md](../httpYac/yac.md)
 
 ---
 

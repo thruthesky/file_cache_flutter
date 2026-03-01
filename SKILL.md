@@ -248,7 +248,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 > 새 모듈 API를 추가할 때마다 `httpYac/<module>-test.http` 파일을 작성한다.
 > 파일 내에 `@baseUrl`, `@session_id` 등 변수를 정의하고 ▶ (Send) 버튼으로 실행한다.
-> httpYac 문법 상세는 → [references/yac.md](references/yac.md) 참조.
+> httpYac 문법 상세는 → [httpYac/yac.md](httpYac/yac.md) 참조.
 
 ### httpYac 핵심 문법
 

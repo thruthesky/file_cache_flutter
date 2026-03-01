@@ -1,6 +1,6 @@
 # httpYac 가이드 — 인증, 고급 요청, Hooks & Injected Languages
 
-> 메인 문서: [yac.md](yac.md)
+> 메인 문서: [yac.md](../httpYac/yac.md)
 
 ---
 
