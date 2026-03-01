@@ -10,6 +10,10 @@
 #
 # 참고: api.php는 성공 시 Controller 리턴값을 그대로 json_encode하며,
 #       에러 시에만 {success: false, message: "..."} 형식으로 응답한다.
+#
+# 주의: httpYac의 `exists` assertion은 truthy 체크이므로 값이 0이면 실패한다.
+#       0이 될 수 있는 숫자 필드(section_index, points, total, available_coupons 등)는
+#       `exists` 대신 `>= 0` 또는 `>= -1` 비교를 사용해야 한다.
 
 # === 파일 글로벌 변수 (첫 ### 이전 = Global Region) ===
 @baseUrl = https://local.philgo.com/api.php
@@ -30,12 +34,12 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body section_index exists
-?? body points exists
-?? body prize_type exists
-?? body current_point exists
-?? body spin_idx exists
-?? body available_coupons exists
+?? body section_index >= 0
+?? body points >= -1
+?? body prize_type isString
+?? body current_point >= 0
+?? body spin_idx >= 1
+?? body available_coupons >= 0
 
 {{
   const body = response.parsedBody;
@@ -75,9 +79,9 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body total exists
-?? body page exists
-?? body limit exists
+?? body total >= 0
+?? body page >= 1
+?? body limit >= 1
 ?? body items isArray
 
 {{
@@ -120,7 +124,7 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body total exists
+?? body total >= 0
 ?? body items isArray
 
 {{
@@ -175,7 +179,7 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body total exists
+?? body total >= 0
 ?? body items isArray
 
 {{
