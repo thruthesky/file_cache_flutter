@@ -1,6 +1,15 @@
 # 이벤트 스피닝 휠 API 테스트 (httpYac)
-# 참고: session_id를 실제 값으로 교체 필요
+# 참고 문서: plan/server-point-event-spin-plan.md (API 엔드포인트 명세)
 # 참고 문서: references/api/v7-event.md
+#
+# 실제 코드 기준 응답 구조 (flat, success 키 없음):
+#   event.spin    → {section_index, points, prize_type, current_point,
+#                     starbucks_coupon_file, starbucks_coupon_url, available_coupons, spin_idx}
+#   event.history → {total, page, limit, items[]}
+#   에러 시       → {success: false, message: "..."}
+#
+# 참고: api.php는 성공 시 Controller 리턴값을 그대로 json_encode하며,
+#       에러 시에만 {success: false, message: "..."} 형식으로 응답한다.
 
 # === 파일 글로벌 변수 (첫 ### 이전 = Global Region) ===
 @baseUrl = https://local.philgo.com/api.php
@@ -8,6 +17,7 @@
 
 ### ──────────────────────────────────────────
 ### 1. 스피닝 휠 돌리기 (event.spin)
+### 200P 차감 → 확률 계산 → 보상 처리 → 기록 저장
 ### ──────────────────────────────────────────
 # @name spin
 # @no-reject-unauthorized
@@ -20,15 +30,30 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body success == true
-?? body data.prize exists
+?? body section_index exists
+?? body points exists
+?? body prize_type exists
+?? body current_point exists
+?? body spin_idx exists
+?? body available_coupons exists
 
 {{
   const body = response.parsedBody;
   console.info("[spin] 상태: " + response.statusCode);
-  if (body.success) {
-    console.info("[spin] 당첨 결과: " + JSON.stringify(body.data.prize));
-    console.info("[spin] 포인트: " + (body.data.prize.point || 0));
+  if (body.section_index !== undefined) {
+    console.info("[spin] 섹션 인덱스: " + body.section_index);
+    console.info("[spin] 당첨 포인트: " + body.points);
+    console.info("[spin] 보상 유형: " + body.prize_type);
+    console.info("[spin] 현재 포인트: " + body.current_point);
+    console.info("[spin] 기록 번호: " + body.spin_idx);
+    console.info("[spin] 남은 쿠폰: " + body.available_coupons);
+    if (body.prize_type === 'starbucks') {
+      console.info("[spin] ★ 스타벅스 당첨! 쿠폰: " + body.starbucks_coupon_file);
+      console.info("[spin] ★ 쿠폰 URL: " + body.starbucks_coupon_url);
+    }
+    // 글로벌 변수에 spin_idx 저장 (체이닝용)
+    $global.lastSpinIdx = body.spin_idx;
+    $global.lastSectionIndex = body.section_index;
   } else {
     console.warn("[spin] 실패: " + body.message);
   }
@@ -50,15 +75,32 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body success == true
-?? body data.items isArray
+?? body total exists
+?? body page exists
+?? body limit exists
+?? body items isArray
 
 {{
   const body = response.parsedBody;
   console.info("[history1] 상태: " + response.statusCode);
-  if (body.success) {
-    console.info("[history1] 총 기록 수: " + body.data.total);
-    console.info("[history1] 현재 페이지 항목 수: " + body.data.items.length);
+  if (body.items) {
+    console.info("[history1] 총 기록 수: " + body.total);
+    console.info("[history1] 현재 페이지: " + body.page);
+    console.info("[history1] 페이지당 개수: " + body.limit);
+    console.info("[history1] 현재 페이지 항목 수: " + body.items.length);
+    if (body.items.length > 0) {
+      const item = body.items[0];
+      console.info("[history1] 최신 기록: idx=" + item.idx
+        + ", section=" + item.section_index
+        + ", type=" + item.prize_type
+        + ", cost=" + item.points_cost
+        + ", reward=" + item.points_reward
+        + ", before=" + item.point_before
+        + ", after=" + item.point_after);
+      if (item.starbucks_coupon_file) {
+        console.info("[history1] 스타벅스 쿠폰: " + item.starbucks_coupon_file);
+      }
+    }
   }
 }}
 
@@ -78,19 +120,21 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body success == true
-?? body data.items isArray
+?? body total exists
+?? body items isArray
 
 {{
   const body = response.parsedBody;
   console.info("[history2] 상태: " + response.statusCode);
-  if (body.success) {
-    console.info("[history2] 2페이지 항목 수: " + body.data.items.length);
+  if (body.items) {
+    console.info("[history2] 총 기록 수: " + body.total);
+    console.info("[history2] 2페이지 항목 수: " + body.items.length);
   }
 }}
 
 ### ──────────────────────────────────────────
 ### 4. 미인증 상태에서 스핀 시도 (에러 확인)
+### 예상: {success: false, message: "로그인이 필요합니다."}
 ### ──────────────────────────────────────────
 # @name spinNoAuth
 # @no-reject-unauthorized
@@ -103,6 +147,7 @@ Content-Type: application/json
 
 ?? status == 200
 ?? body success == false
+?? body message exists
 
 {{
   const body = response.parsedBody;
@@ -130,13 +175,109 @@ Content-Type: application/json
 }
 
 ?? status == 200
-?? body success == true
-?? body data.items isArray
+?? body total exists
+?? body items isArray
 
 {{
   const body = response.parsedBody;
-  console.info("[spinThenHistory] 스핀 후 최신 기록 수: " + body.data.items.length);
-  if (body.data.items.length > 0) {
-    console.info("[spinThenHistory] 최신 기록: " + JSON.stringify(body.data.items[0]));
+  console.info("[spinThenHistory] 스핀 후 최신 기록 수: " + body.items.length);
+  if (body.items.length > 0) {
+    const latest = body.items[0];
+    console.info("[spinThenHistory] 최신 기록: " + JSON.stringify(latest));
+    // spin 결과의 spin_idx와 최신 기록의 idx가 일치하는지 확인
+    if ($global.lastSpinIdx && latest.idx == $global.lastSpinIdx) {
+      console.info("[spinThenHistory] ✅ spin_idx 일치: " + latest.idx);
+    }
+    // section_index 일치 확인
+    if ($global.lastSectionIndex !== undefined && latest.section_index == $global.lastSectionIndex) {
+      console.info("[spinThenHistory] ✅ section_index 일치: " + latest.section_index);
+    }
   }
+}}
+
+### ──────────────────────────────────────────
+### 6. 연속 스핀 3회 (포인트 변동 추적)
+### 매 스핀마다 200P 차감 → 보상 지급 → 포인트 변동 확인
+### ──────────────────────────────────────────
+# @name spinMultiple
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.spin",
+  "session_id": "{{session_id}}"
+}
+
+?? status == 200
+
+{{
+  const body = response.parsedBody;
+  if (body.section_index !== undefined) {
+    console.info("[spinMultiple-1] 섹션: " + body.section_index
+      + " | 유형: " + body.prize_type
+      + " | 보상: " + body.points + "P"
+      + " | 잔액: " + body.current_point + "P");
+    $global.pointAfterSpin1 = body.current_point;
+  } else {
+    console.warn("[spinMultiple-1] 실패: " + body.message);
+  }
+}}
+
+###
+# @name spinMultiple2
+# @ref spinMultiple
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.spin",
+  "session_id": "{{session_id}}"
+}
+
+?? status == 200
+
+{{
+  const body = response.parsedBody;
+  if (body.section_index !== undefined) {
+    console.info("[spinMultiple-2] 섹션: " + body.section_index
+      + " | 유형: " + body.prize_type
+      + " | 보상: " + body.points + "P"
+      + " | 잔액: " + body.current_point + "P");
+    $global.pointAfterSpin2 = body.current_point;
+  } else {
+    console.warn("[spinMultiple-2] 실패 (포인트 부족?): " + body.message);
+  }
+}}
+
+###
+# @name spinMultiple3
+# @ref spinMultiple2
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.spin",
+  "session_id": "{{session_id}}"
+}
+
+?? status == 200
+
+{{
+  const body = response.parsedBody;
+  if (body.section_index !== undefined) {
+    console.info("[spinMultiple-3] 섹션: " + body.section_index
+      + " | 유형: " + body.prize_type
+      + " | 보상: " + body.points + "P"
+      + " | 잔액: " + body.current_point + "P");
+  } else {
+    console.warn("[spinMultiple-3] 실패 (포인트 부족?): " + body.message);
+  }
+  // 3회 스핀 결과 요약
+  console.info("──────────────────────────────");
+  console.info("[요약] 스핀 1 후: " + ($global.pointAfterSpin1 || "N/A") + "P");
+  console.info("[요약] 스핀 2 후: " + ($global.pointAfterSpin2 || "N/A") + "P");
+  console.info("[요약] 스핀 3 후: " + (body.section_index !== undefined ? body.current_point : "실패") + "P");
 }}
