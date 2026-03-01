@@ -345,31 +345,31 @@ GET https://httpbin.org/get
 
 ---
 
-### 변수 시스템 & 환경 설정 → [yac-variables.md](../references/yac-variables.md)
+### 변수 시스템 & 환경 설정 → [yac-variables.md](../references/http-yac/yac-variables.md)
 
 httpYac에서 `.http` 파일 작성 시 변수를 정의하고 활용하는 전체 방법을 다룬다. `@변수명=값` 형태의 인라인 변수 정의, 고정 변수(`=`)와 지연 변수(`:=`)의 차이, `host` 변수를 통한 URL 자동 구성, `\{\{...\}\}` 이스케이프 방법을 설명한다. NodeJS 표현식으로 `{{Date.now()}}` 같은 동적 값을 생성하고, `$uuid`, `$timestamp`, `$randomInt` 등 IntelliJ/REST Client 호환 내장 동적 변수를 사용할 수 있다. `$input`, `$password`, `$pick` 으로 사용자 입력을 받고, `$global` 객체로 파일 간 글로벌 변수를 공유한다. 환경 설정에서는 `.env` 파일, `.httpyac.js` JSON 설정, IntelliJ 호환 `http-client.env.json` 파일을 통한 dev/staging/prod 환경 분리와 VS Code에서의 환경 전환 방법을 포함한다.
 
 ---
 
-### 메타데이터 & 스크립팅 → [yac-metadata-scripting.md](../references/yac-metadata-scripting.md)
+### 메타데이터 & 스크립팅 → [yac-metadata-scripting.md](../references/http-yac/yac-metadata-scripting.md)
 
 요청의 동작을 제어하는 `# @태그` 메타데이터와 `{{ }}` JavaScript 스크립팅을 다룬다. `@name`으로 응답을 변수화하여 다른 요청에서 `{{name.field}}` 형태로 참조하고, `@ref`/`@forceRef`로 요청 간 의존성을 설정한다. `@import`로 외부 `.http` 파일을 참조하고, `@loop`로 배열 순회 및 횟수/조건 반복 실행을 구성한다. `@sleep`, `@disabled`, `@ratelimit`으로 실행 흐름을 제어하며, `@no-redirect`, `@no-reject-unauthorized`, `@proxy` 등 네트워크 관련 태그와 `@debug`, `@save` 등 출력/로깅 태그를 제공한다. 스크립팅에서는 `{{ }}` 블록의 요청 전/후 실행 시점 구분, `{{@request}}`, `{{@response}}` 등 이벤트 기반 스크립트, `exports`/`$global` 변수 저장, `require()`를 통한 외부 모듈(uuid, dayjs, crypto 등) 사용, `$cancel`로 실행 중단하는 방법을 설명한다.
 
 ---
 
-### Assert & 응답 처리 → [yac-assert.md](../references/yac-assert.md)
+### Assert & 응답 처리 → [yac-assert.md](../references/http-yac/yac-assert.md)
 
 API 테스트 자동화의 핵심인 `??` Assert 문법과 응답 처리 방법을 다룬다. `?? [대상] [조건] [예상값]` 형식으로 status, header, body, duration 네 가지 대상에 대해 `==`, `!=`, `>`, `<`, `includes`, `exists`, `isNumber`, `isArray`, `matches` 등 조건 연산자를 사용한다. JSON 응답은 `body data.user.name` 형태의 경로 접근으로 중첩 필드를 검증하고, `?? js` 접두사로 JavaScript 표현식 기반 복합 검증을 수행한다. XPath Assert로 XML 응답도 검증 가능하다. `test()` 함수와 Node.js `assert` 모듈 또는 Chai 라이브러리로 구조화된 테스트를 작성하며, `test.status()`, `test.headerContains()` 등 보조 테스트 메서드를 제공한다. 응답 문서화(`HTTP/1.1 200 OK`)와 `>>`/`>>!` 연산자로 응답을 파일에 저장하는 방법도 포함한다.
 
 ---
 
-### 인증, 고급 요청, Hooks & Injected Languages → [yac-advanced.md](../references/yac-advanced.md)
+### 인증, 고급 요청, Hooks & Injected Languages → [yac-advanced.md](../references/http-yac/yac-advanced.md)
 
 httpYac의 인증 기능과 HTTP 이외의 프로토콜 지원, 플러그인 시스템을 다룬다. Basic/Digest Authentication, OAuth2/OpenID Connect(Client Credentials, Authorization Code, PKCE, Implicit, Password, Device Code 6개 플로우), AWS Signature v4, SSL 클라이언트 인증서 등 인증 방식을 설명한다. 고급 요청 타입에서는 GraphQL(쿼리, Fragment, 외부 `.gql` 파일 임포트), gRPC(Proto 로드, Unary/Server/Client/Bidirectional Streaming, Reflection), WebSocket(양방향 통신, `@keepStreaming`), SSE(Server-Sent Events), MQTT(Pub/Sub, QoS, 인증 옵션), AMQP/RabbitMQ(Exchange/Queue 선언, 바인딩, 메시지 발행/소비)를 포함한다. Hooks 시스템에서는 `httpyac.config.js`를 통한 `responseLogging`, `onRequest` 등 플러그인 Hook 설정을 다루고, Injected Languages로 Markdown이나 Asciidoctor 파일 내에서 HTTP 요청 블록을 인식하는 방법을 설명한다.
 
 ---
 
-### 실전 예제, 비교 & 베스트 프랙티스 → [yac-practice.md](../references/yac-practice.md)
+### 실전 예제, 비교 & 베스트 프랙티스 → [yac-practice.md](../references/http-yac/yac-practice.md)
 
 httpYac을 실무에서 활용하는 구체적인 워크플로우와 도구 비교를 다룬다. 필고 API 테스트를 예시로 로그인-스핀실행-히스토리조회의 멀티스텝 API 테스트 워크플로우를 완전한 `.http` 파일로 구성하는 방법을 보여준다. REST Client와 httpYac의 기능 비교표(스크립팅, Assert, gRPC, WebSocket, CLI, CI/CD 등)를 제공한다. 베스트 프랙티스에서는 요청당 파일 분리, `@import`/`@ref` 활용, 환경별 host 전환, CI/CD 자동화(`httpyac --all -e dev`), 응답값 체이닝 패턴(생성-조회-삭제), `.env.local`과 `.gitignore`를 통한 민감 정보 관리를 제안한다. 자주 사용하는 패턴 Quick Reference도 포함한다. Bruno vs httpYac 실전 비교에서는 HTTP 파일 포맷의 역사, 인기도 차이(Bruno 27,000+ vs httpYac 500 Stars), 대상 사용자별 추천, Postman 마이그레이션 팁, GitHub Actions CI/CD 설정 예시를 다룬다.
 
