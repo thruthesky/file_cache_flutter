@@ -3,7 +3,7 @@
 ### 참고: session_id를 실제 값으로 교체 필요
 
 @baseUrl = https://local.philgo.com/api.php
-@session_id = YOUR_SESSION_ID
+@session_id = 8d70afcb6c88ecb95bc78d2d58f7f5d3-188690
 
 ### ──────────────────────────────────────────
 ### 1. 스피닝 휠 돌리기 (event.spin)
