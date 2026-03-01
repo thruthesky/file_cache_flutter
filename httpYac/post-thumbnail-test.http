@@ -1,0 +1,256 @@
+# ============================================================
+# v7 Post Thumbnail API — httpYac 테스트
+# ============================================================
+#
+# 글 생성 시 첫번째 이미지의 썸네일 URL이 varchar_10~12에 저장되는지 테스트.
+#
+# 핵심 로직:
+#   - files 파라미터에서 /uploads/ 로 시작하는 첫 번째 이미지 URL을 찾음
+#   - uploads 테이블의 url 컬럼(인덱싱됨)에서 해당 URL로 검색
+#   - 해당 레코드의 thumbnail_400x400_url → varchar_10
+#   - 해당 레코드의 thumbnail_800x800_url → varchar_11
+#   - 해당 레코드의 thumbnail_1000_url → varchar_12
+#   - 여러 이미지인 경우 오직 첫 번째 이미지의 썸네일만 저장
+#
+# 사용법:
+#   1. VS Code에서 "httpYac" 확장 설치 (anweber.vscode-httpyac)
+#   2. 아래 @session_id 값을 실제 세션 ID로 변경
+#   3. 먼저 "0. 파일 업로드"로 이미지를 업로드
+#   4. 반환된 URL이 자동으로 변수에 저장됨 (@name + 스크립트 활용)
+#   5. 각 요청 옆의 ▶ (Send) 클릭
+#
+# 테스트 계정:
+#   - Durian 계정: session_id = 2278018daa75e0ab879d8791fb0e2b2d-190076
+#
+# 참고 문서: references/api/v7-post.md
+# ============================================================
+
+# === 파일 글로벌 변수 (첫 ### 이전 = Global Region) ===
+@baseUrl = https://local.philgo.com/api.php
+# Durian 테스트 계정 (sf_member.idx: 190076)
+@session_id = 2278018daa75e0ab879d8791fb0e2b2d-190076
+
+# 업로드된 파일 URL (사전에 upload.upload API로 업로드 필요)
+# 아래는 예시 URL입니다. 실제 테스트 시 업로드 후 반환된 URL로 교체하세요.
+@uploaded_image_1 = /uploads/190076/69a19632f23df_1772197426.webp
+@uploaded_image_2 = /uploads/190076/69a1963a494c5_1772197434.webp
+
+
+### ============================================================
+### 0. 파일 업로드 (사전 단계)
+### ============================================================
+# 글 작성 전 이미지를 먼저 업로드합니다.
+# 응답에 url, thumbnail_400x400_url, thumbnail_800x800_url, thumbnail_1000_url 포함.
+# @name uploadImage
+# @no-reject-unauthorized
+POST {{baseUrl}}?method=upload.upload&session_id={{session_id}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="사과.jpg"
+Content-Type: image/jpeg
+
+< ./tmp/sample-files/사과.jpg
+------WebKitFormBoundary--
+
+?? status == 200
+
+{{
+  const body = response.parsedBody;
+  console.info("[uploadImage] 상태: " + response.statusCode);
+  if (body.url) {
+    console.info("[uploadImage] 원본 URL: " + body.url);
+    console.info("[uploadImage] 400x400: " + (body.thumbnail_400x400_url || "없음"));
+    console.info("[uploadImage] 800x800: " + (body.thumbnail_800x800_url || "없음"));
+    console.info("[uploadImage] 1000: " + (body.thumbnail_1000_url || "없음"));
+    exports.uploadedUrl = body.url;
+  }
+}}
+
+### ============================================================
+### 1. 단일 이미지 글 생성 — 썸네일 URL 저장 확인
+### ============================================================
+# 1개 이미지로 글 생성 후 응답에서 확인:
+# - varchar_17: 첫 번째 이미지 URL
+# - varchar_10: 400x400 썸네일 URL
+# - varchar_11: 800x800 썸네일 URL
+# - varchar_12: 1000 썸네일 URL
+# @name createSingleImage
+# @no-reject-unauthorized
+GET {{baseUrl}}?method=post.create&session_id={{session_id}}&post_id=freetalk&subject=단일 이미지 썸네일 테스트&content=테스트 내용입니다&files={{uploaded_image_1}}
+
+?? status == 200
+?? body success == true
+
+{{
+  const body = response.parsedBody;
+  console.info("[createSingleImage] 상태: " + response.statusCode);
+  if (body.success) {
+    const data = body.data;
+    console.info("[createSingleImage] 글 IDX: " + data.idx);
+    console.info("[createSingleImage] varchar_17 (원본 URL): " + (data.varchar_17 || "없음"));
+    console.info("[createSingleImage] varchar_10 (400x400): " + (data.varchar_10 || "없음"));
+    console.info("[createSingleImage] varchar_11 (800x800): " + (data.varchar_11 || "없음"));
+    console.info("[createSingleImage] varchar_12 (1000): " + (data.varchar_12 || "없음"));
+    exports.createdPostIdx = data.idx;
+  }
+}}
+
+### ============================================================
+### 2. 다중 이미지 글 생성 — 첫번째 이미지의 썸네일만 저장
+### ============================================================
+# 2개 이미지를 콤마로 구분하여 전달.
+# varchar_10~12에는 오직 첫 번째 이미지(uploaded_image_1)의 썸네일만 저장.
+# @name createMultiImage
+# @no-reject-unauthorized
+GET {{baseUrl}}?method=post.create&session_id={{session_id}}&post_id=freetalk&subject=다중 이미지 썸네일 테스트&content=첫번째 이미지의 썸네일만 저장됩니다&files={{uploaded_image_1}},{{uploaded_image_2}}
+
+?? status == 200
+?? body success == true
+
+{{
+  const body = response.parsedBody;
+  console.info("[createMultiImage] 상태: " + response.statusCode);
+  if (body.success) {
+    const data = body.data;
+    console.info("[createMultiImage] 글 IDX: " + data.idx);
+    console.info("[createMultiImage] varchar_17 (원본 URL): " + (data.varchar_17 || "없음"));
+    console.info("[createMultiImage] varchar_10 (400x400): " + (data.varchar_10 || "없음"));
+    console.info("[createMultiImage] varchar_11 (800x800): " + (data.varchar_11 || "없음"));
+    console.info("[createMultiImage] varchar_12 (1000): " + (data.varchar_12 || "없음"));
+  }
+}}
+
+### ============================================================
+### 3. 이미지 없이 텍스트만 글 생성
+### ============================================================
+# files 파라미터가 없으므로 varchar_17, varchar_10~12 모두 비어있어야 함.
+# @name createTextOnly
+# @no-reject-unauthorized
+GET {{baseUrl}}?method=post.create&session_id={{session_id}}&post_id=freetalk&subject=텍스트만 테스트&content=이미지 없는 글입니다
+
+?? status == 200
+?? body success == true
+
+{{
+  const body = response.parsedBody;
+  console.info("[createTextOnly] 상태: " + response.statusCode);
+  if (body.success) {
+    const data = body.data;
+    console.info("[createTextOnly] 글 IDX: " + data.idx);
+    console.info("[createTextOnly] varchar_17 (원본 URL): '" + (data.varchar_17 || "") + "'");
+    console.info("[createTextOnly] varchar_10 (400x400): '" + (data.varchar_10 || "") + "'");
+
+    // 이미지 없는 글은 varchar_10~12가 비어있어야 함
+    if (!data.varchar_10 && !data.varchar_11 && !data.varchar_12) {
+      console.info("[createTextOnly] ✅ 정상: 이미지 없이 썸네일 필드 비어있음");
+    } else {
+      console.warn("[createTextOnly] ⚠️ 비정상: 이미지 없는데 썸네일 필드가 채워져 있음");
+    }
+  }
+}}
+
+### ============================================================
+### 4. 글 조회로 varchar_10~12 확인
+### ============================================================
+# 위에서 생성한 글의 idx를 사용하여 조회합니다.
+# 응답의 varchar_10, varchar_11, varchar_12 필드를 확인하세요.
+# @name getPost
+# @ref createSingleImage
+# @no-reject-unauthorized
+GET {{baseUrl}}?method=post.get&idx={{createdPostIdx}}
+
+?? status == 200
+?? body success == true
+
+{{
+  const body = response.parsedBody;
+  console.info("[getPost] 상태: " + response.statusCode);
+  if (body.success) {
+    const data = body.data;
+    console.info("[getPost] 글 IDX: " + data.idx);
+    console.info("[getPost] 제목: " + data.subject);
+    console.info("[getPost] varchar_17 (원본 URL): " + (data.varchar_17 || "없음"));
+    console.info("[getPost] varchar_10 (400x400): " + (data.varchar_10 || "없음"));
+    console.info("[getPost] varchar_11 (800x800): " + (data.varchar_11 || "없음"));
+    console.info("[getPost] varchar_12 (1000): " + (data.varchar_12 || "없음"));
+  }
+}}
+
+### ============================================================
+### 5. 업로드 파일 정보 조회 — 썸네일 URL 확인
+### ============================================================
+# uploads 테이블에 저장된 썸네일 URL을 확인합니다.
+# @name getUpload
+# @no-reject-unauthorized
+@upload_idx = 1
+GET {{baseUrl}}?method=upload.get&session_id={{session_id}}&idx={{upload_idx}}
+
+?? status == 200
+
+{{
+  const body = response.parsedBody;
+  console.info("[getUpload] 상태: " + response.statusCode);
+  if (body.success !== false) {
+    console.info("[getUpload] URL: " + (body.url || body.data?.url || "없음"));
+    console.info("[getUpload] 400x400: " + (body.thumbnail_400x400_url || body.data?.thumbnail_400x400_url || "없음"));
+    console.info("[getUpload] 800x800: " + (body.thumbnail_800x800_url || body.data?.thumbnail_800x800_url || "없음"));
+    console.info("[getUpload] 1000: " + (body.thumbnail_1000_url || body.data?.thumbnail_1000_url || "없음"));
+  }
+}}
+
+### ============================================================
+### 6. 내 업로드 파일 목록 — 썸네일 URL 확인
+### ============================================================
+# 회원의 업로드 파일 목록을 조회하여 각 파일의 썸네일 URL을 확인합니다.
+# @name myFiles
+# @no-reject-unauthorized
+GET {{baseUrl}}?method=upload.myFiles&session_id={{session_id}}
+
+?? status == 200
+
+{{
+  const body = response.parsedBody;
+  console.info("[myFiles] 상태: " + response.statusCode);
+  const files = body.data?.files || body.files || [];
+  console.info("[myFiles] 파일 수: " + (Array.isArray(files) ? files.length : 0));
+  if (Array.isArray(files) && files.length > 0) {
+    files.slice(0, 3).forEach((f, i) => {
+      console.info("[myFiles] 파일 " + (i+1) + ": " + (f.url || "URL없음") + " | 400x400: " + (f.thumbnail_400x400_url || "없음"));
+    });
+  }
+}}
+
+### ============================================================
+### 7. 업로드→글생성→조회 전체 체이닝 테스트
+### ============================================================
+# uploadImage → createSingleImage → getPost 순서로 자동 실행.
+# 업로드된 URL을 사용하여 글을 생성하고, 조회하여 썸네일 확인.
+# @name fullChainTest
+# @forceRef uploadImage
+# @no-reject-unauthorized
+GET {{baseUrl}}?method=post.create&session_id={{session_id}}&post_id=freetalk&subject=체이닝 썸네일 테스트 {{$timestamp}}&content=업로드부터 글생성까지 자동 체이닝 테스트&files={{uploadedUrl}}
+
+?? status == 200
+?? body success == true
+
+{{
+  const body = response.parsedBody;
+  console.info("[fullChainTest] === 전체 체이닝 테스트 결과 ===");
+  if (body.success) {
+    const data = body.data;
+    console.info("[fullChainTest] 글 IDX: " + data.idx);
+    console.info("[fullChainTest] 원본 이미지 URL: " + (data.varchar_17 || "없음"));
+    console.info("[fullChainTest] 400x400 썸네일: " + (data.varchar_10 || "없음"));
+    console.info("[fullChainTest] 800x800 썸네일: " + (data.varchar_11 || "없음"));
+    console.info("[fullChainTest] 1000 썸네일: " + (data.varchar_12 || "없음"));
+
+    if (data.varchar_10 && data.varchar_11 && data.varchar_12) {
+      console.info("[fullChainTest] ✅ 모든 썸네일 URL 정상 저장됨");
+    } else {
+      console.warn("[fullChainTest] ⚠️ 일부 썸네일 URL 누락");
+    }
+  } else {
+    console.error("[fullChainTest] ❌ 글 생성 실패: " + body.message);
+  }
+}}

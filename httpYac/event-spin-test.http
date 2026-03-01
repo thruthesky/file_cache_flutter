@@ -1,0 +1,142 @@
+# 이벤트 스피닝 휠 API 테스트 (httpYac)
+# 참고: session_id를 실제 값으로 교체 필요
+# 참고 문서: references/api/v7-event.md
+
+# === 파일 글로벌 변수 (첫 ### 이전 = Global Region) ===
+@baseUrl = https://local.philgo.com/api.php
+@session_id = 8d70afcb6c88ecb95bc78d2d58f7f5d3-188690
+
+### ──────────────────────────────────────────
+### 1. 스피닝 휠 돌리기 (event.spin)
+### ──────────────────────────────────────────
+# @name spin
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.spin",
+  "session_id": "{{session_id}}"
+}
+
+?? status == 200
+?? body success == true
+?? body data.prize exists
+
+{{
+  const body = response.parsedBody;
+  console.info("[spin] 상태: " + response.statusCode);
+  if (body.success) {
+    console.info("[spin] 당첨 결과: " + JSON.stringify(body.data.prize));
+    console.info("[spin] 포인트: " + (body.data.prize.point || 0));
+  } else {
+    console.warn("[spin] 실패: " + body.message);
+  }
+}}
+
+### ──────────────────────────────────────────
+### 2. 이벤트 기록 조회 - 1페이지 (event.history)
+### ──────────────────────────────────────────
+# @name history1
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.history",
+  "session_id": "{{session_id}}",
+  "page": 1,
+  "limit": 20
+}
+
+?? status == 200
+?? body success == true
+?? body data.items isArray
+
+{{
+  const body = response.parsedBody;
+  console.info("[history1] 상태: " + response.statusCode);
+  if (body.success) {
+    console.info("[history1] 총 기록 수: " + body.data.total);
+    console.info("[history1] 현재 페이지 항목 수: " + body.data.items.length);
+  }
+}}
+
+### ──────────────────────────────────────────
+### 3. 이벤트 기록 조회 - 2페이지 (event.history)
+### ──────────────────────────────────────────
+# @name history2
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.history",
+  "session_id": "{{session_id}}",
+  "page": 2,
+  "limit": 10
+}
+
+?? status == 200
+?? body success == true
+?? body data.items isArray
+
+{{
+  const body = response.parsedBody;
+  console.info("[history2] 상태: " + response.statusCode);
+  if (body.success) {
+    console.info("[history2] 2페이지 항목 수: " + body.data.items.length);
+  }
+}}
+
+### ──────────────────────────────────────────
+### 4. 미인증 상태에서 스핀 시도 (에러 확인)
+### ──────────────────────────────────────────
+# @name spinNoAuth
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.spin"
+}
+
+?? status == 200
+?? body success == false
+
+{{
+  const body = response.parsedBody;
+  console.info("[spinNoAuth] 상태: " + response.statusCode);
+  console.info("[spinNoAuth] 성공 여부: " + body.success);
+  console.info("[spinNoAuth] 에러 메시지: " + body.message);
+}}
+
+### ──────────────────────────────────────────
+### 5. 스핀 후 기록 확인 (체이닝 테스트)
+### spin 요청을 먼저 실행한 후 기록을 조회하여
+### 최신 이벤트가 기록에 포함되었는지 확인
+### ──────────────────────────────────────────
+# @name spinThenHistory
+# @forceRef spin
+# @no-reject-unauthorized
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "method": "event.history",
+  "session_id": "{{session_id}}",
+  "page": 1,
+  "limit": 5
+}
+
+?? status == 200
+?? body success == true
+?? body data.items isArray
+
+{{
+  const body = response.parsedBody;
+  console.info("[spinThenHistory] 스핀 후 최신 기록 수: " + body.data.items.length);
+  if (body.data.items.length > 0) {
+    console.info("[spinThenHistory] 최신 기록: " + JSON.stringify(body.data.items[0]));
+  }
+}}

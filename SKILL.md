@@ -235,18 +235,31 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
-## REST Client 테스트 쿼리 파일
+## httpYac API 테스트 파일
 
-`.claude/skills/v7-skill/rest-client/` 폴더에 VS Code REST Client 확장용 `.http` 테스트 파일을 저장한다.
-각 API 모듈별로 테스트 쿼리를 작성하여 API 동작을 빠르게 검증할 수 있다.
+`.claude/skills/v7-skill/httpYac/` 폴더에 httpYac 확장용 `.http` 테스트 파일을 저장한다.
+각 API 모듈별로 테스트 쿼리를 작성하여 Assert, 스크립팅, 요청 체이닝으로 API 동작을 자동 검증할 수 있다.
 
 | 파일 | 용도 |
 |------|------|
+| `event-spin-test.http` | Event(스피닝 휠) API 테스트 |
 | `point-event-test.http` | PointEvent(먹방 이벤트) API 테스트 |
 | `post-thumbnail-test.http` | Post 글 생성 시 썸네일 URL 저장 테스트 |
 
-> 새 모듈 API를 추가할 때마다 `rest-client/<module>-test.http` 파일을 작성한다.
-> 파일 내에 `@baseUrl`, `@session_id` 등 변수를 정의하고 "Send Request"로 실행한다.
+> 새 모듈 API를 추가할 때마다 `httpYac/<module>-test.http` 파일을 작성한다.
+> 파일 내에 `@baseUrl`, `@session_id` 등 변수를 정의하고 ▶ (Send) 버튼으로 실행한다.
+> httpYac 문법 상세는 → [references/yac.md](references/yac.md) 참조.
+
+### httpYac 핵심 문법
+
+| 기능 | 문법 | 설명 |
+|------|------|------|
+| 응답 변수화 | `# @name 이름` | 응답을 변수로 저장하여 다른 요청에서 `{{이름.필드}}` 참조 |
+| 요청 체이닝 | `# @ref 이름` / `# @forceRef 이름` | 현재 요청 전에 다른 요청을 먼저 실행 |
+| SSL 무시 | `# @no-reject-unauthorized` | 로컬 HTTPS 자체 서명 인증서 허용 |
+| Assert | `?? status == 200` | 응답 상태, 헤더, 바디 자동 검증 |
+| 스크립팅 | `{{ 코드 }}` | 요청 전/후 JavaScript 실행, 응답 파싱 |
+| 글로벌 변수 | `$global.변수 = 값` | 모든 요청에서 접근 가능한 글로벌 변수 |
 
 ---
 
