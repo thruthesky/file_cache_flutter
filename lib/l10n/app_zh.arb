@@ -2190,5 +2190,17 @@
   "spinWheelAutoSpin": "连续转动",
   "spinWheelStop": "停止",
   "spinWheelUntilCoupon": "直到出现星巴克优惠券",
-  "spinWheelAutoSpinCount": "{count}次"
+  "spinWheelAutoSpinCount": "{count}次",
+  "eventCoupon": "活动优惠券",
+  "@eventCoupon": {
+    "description": "Event coupon menu item and screen title"
+  },
+  "noCouponsMessage": "没有中奖的优惠券。",
+  "@noCouponsMessage": {
+    "description": "Message shown when user has no won coupons"
+  },
+  "spinWheelStopFirst": "请先停止转盘。",
+  "@spinWheelStopFirst": {
+    "description": "Message shown when user tries to navigate while wheel is spinning"
+  }
 }

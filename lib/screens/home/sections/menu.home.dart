@@ -22,6 +22,7 @@ import 'package:philgo/screens/info/travel/travel_info.screen.dart';
 import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/delivery/food_delivery.screen.dart';
 import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
+import 'package:philgo/screens/event/event_coupon.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
@@ -173,84 +174,8 @@ class _MenuHomeState extends State<MenuHome> {
                 // 첫 번째 섹션 상단 여백 (Top padding for first section)
                 const SizedBox(height: 8),
 
-                /// [1. 필리핀 생활 정보 섹션] - Philippine Life Info Section
-                /// 퀵 메뉴의 페이지들을 메뉴 화면에서도 접근 가능하도록 추가
-                /// Wrap + 아이콘 위/레이블 아래 형태로 변경
-                MenuGridSection(
-                  title: l10n.philippineLifeInfo,
-                  children: [
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.starShooting,
-                      title: l10n.quickMenuMustReadInfo,
-                      onTap: () => context.push(MustReadScreen.routeName),
-
-                      /// 강조 표시: tertiaryContainer 색상 사용
-                      backgroundColor: scheme.tertiaryContainer,
-                      iconColor: scheme.onTertiaryContainer,
-                    ),
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.bullhorn,
-                      title: l10n.quickMenuNotice,
-                      onTap: () => NoticeScreen.push(context),
-                    ),
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.coins,
-                      title: l10n.quickMenuExchangeRate,
-                      onTap: () => ExchangeRateScreen.push(context),
-                    ),
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.cloudSun,
-                      title: l10n.quickMenuWeather,
-                      onTap: () => WeatherScreen.push(context),
-                    ),
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.phoneVolume,
-                      title: l10n.quickMenuEmergency,
-                      onTap: () => EmergencyContactScreen.push(context),
-                    ),
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.circleInfo,
-                      title: l10n.quickMenuEssentialInfo,
-                      onTap: () => EssentialInfoScreen.push(context),
-                    ),
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.calendarDays,
-                      title: l10n.quickMenuMonthlyLiving,
-                      onTap: () => MonthlyLivingScreen.push(context),
-                    ),
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.umbrellaBeach,
-                      title: l10n.quickMenuTravel,
-                      onTap: () => TravelInfoScreen.push(context),
-                    ),
-                    // 여행 명소 (Travel Spots) - 필리핀 여행 명소 목록
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.mapLocationDot,
-                      title: l10n.quickMenuTravelSpots,
-                      onTap: () => TravelSpotsScreen.push(context),
-                    ),
-                    // 음식 배달 (Food Delivery) - Grab 앱을 이용한 음식 배달 정보
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.lightMotorcycle,
-                      title: l10n.quickMenuFoodDelivery,
-                      onTap: () => FoodDeliveryScreen.push(context),
-                    ),
-                    // 배달K (Baedal K) - 한국 음식 전문 배달 앱
-                    MenuGridItem(
-                      icon: FontAwesomeIcons.lightBowlRice,
-                      title: l10n.quickMenuBaedalK,
-                      onTap: () => BaedalKScreen.push(context),
-                    ),
-                  ],
-                ),
-
-                /// [2. 게시판 섹션] - Forum Section (3단 카테고리 구조)
-                /// 게시판 -> 커뮤니티 / 회원장터 / 기타 로 분리
-                /// 3-tier category structure: Forum -> Community / Market / Other
-                _buildForumSection(l10n, scheme),
-
-                /// [3. 내 활동 섹션] - My Activity Section
-                /// Wrap + 아이콘 위/레이블 아래 형태로 변경
+                /// [1. 내 활동 섹션] - My Activity Section
+                /// 메뉴 화면 최상단 배치
                 MenuGridSection(
                   title: l10n.myActivity,
                   children: [
@@ -367,10 +292,92 @@ class _MenuHomeState extends State<MenuHome> {
                       title: l10n.blockedUsers,
                       onTap: () => showBlockedUserListDialog(context),
                     ),
+                    // 이벤트 쿠폰 (Event Coupon) - 스피닝 휠에서 당첨된 스타벅스 쿠폰 확인
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.ticket,
+                      title: l10n.eventCoupon,
+                      onTap: () => EventCouponScreen.push(context),
+                    ),
                   ],
                 ),
 
-                /// [4. 업소록 섹션] - Business Directory Section
+                /// [2. 필리핀 생활 정보 섹션] - Philippine Life Info Section
+                /// 퀵 메뉴의 페이지들을 메뉴 화면에서도 접근 가능하도록 추가
+                /// Wrap + 아이콘 위/레이블 아래 형태로 변경
+                MenuGridSection(
+                  title: l10n.philippineLifeInfo,
+                  children: [
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.starShooting,
+                      title: l10n.quickMenuMustReadInfo,
+                      onTap: () => context.push(MustReadScreen.routeName),
+
+                      /// 강조 표시: tertiaryContainer 색상 사용
+                      backgroundColor: scheme.tertiaryContainer,
+                      iconColor: scheme.onTertiaryContainer,
+                    ),
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.bullhorn,
+                      title: l10n.quickMenuNotice,
+                      onTap: () => NoticeScreen.push(context),
+                    ),
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.coins,
+                      title: l10n.quickMenuExchangeRate,
+                      onTap: () => ExchangeRateScreen.push(context),
+                    ),
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.cloudSun,
+                      title: l10n.quickMenuWeather,
+                      onTap: () => WeatherScreen.push(context),
+                    ),
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.phoneVolume,
+                      title: l10n.quickMenuEmergency,
+                      onTap: () => EmergencyContactScreen.push(context),
+                    ),
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.circleInfo,
+                      title: l10n.quickMenuEssentialInfo,
+                      onTap: () => EssentialInfoScreen.push(context),
+                    ),
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.calendarDays,
+                      title: l10n.quickMenuMonthlyLiving,
+                      onTap: () => MonthlyLivingScreen.push(context),
+                    ),
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.umbrellaBeach,
+                      title: l10n.quickMenuTravel,
+                      onTap: () => TravelInfoScreen.push(context),
+                    ),
+                    // 여행 명소 (Travel Spots) - 필리핀 여행 명소 목록
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.mapLocationDot,
+                      title: l10n.quickMenuTravelSpots,
+                      onTap: () => TravelSpotsScreen.push(context),
+                    ),
+                    // 음식 배달 (Food Delivery) - Grab 앱을 이용한 음식 배달 정보
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.lightMotorcycle,
+                      title: l10n.quickMenuFoodDelivery,
+                      onTap: () => FoodDeliveryScreen.push(context),
+                    ),
+                    // 배달K (Baedal K) - 한국 음식 전문 배달 앱
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.lightBowlRice,
+                      title: l10n.quickMenuBaedalK,
+                      onTap: () => BaedalKScreen.push(context),
+                    ),
+                  ],
+                ),
+
+                /// [2. 게시판 섹션] - Forum Section (3단 카테고리 구조)
+                /// 게시판 -> 커뮤니티 / 회원장터 / 기타 로 분리
+                /// 3-tier category structure: Forum -> Community / Market / Other
+                _buildForumSection(l10n, scheme),
+
+                /// [3. 업소록 섹션] - Business Directory Section
                 /// Wrap + 아이콘 위/레이블 아래 형태로 변경
                 MenuGridSection(
                   title: l10n.businessDirectoryTitle,

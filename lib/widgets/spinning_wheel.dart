@@ -62,7 +62,8 @@ class SpinningWheel extends StatefulWidget {
 
   /// 스핀 버튼 클릭 시 호출되는 콜백.
   /// 서버에서 미리 결정된 당첨 섹션 인덱스를 반환.
-  final Future<int> Function()? onSpinRequested;
+  /// null 반환 시 스핀 취소 (서버 에러, 포인트 부족 등).
+  final Future<int?> Function()? onSpinRequested;
 
   /// 회전 완료 시 당첨된 섹션을 전달하는 콜백
   final ValueChanged<WheelSection>? onResult;
@@ -89,6 +90,9 @@ class SpinningWheel extends StatefulWidget {
   /// true 반환 시 연속 돌리기 중지.
   final bool Function(WheelSection)? autoSpinStopCondition;
 
+  /// 원판 활동 상태 변경 콜백 (회전 중 또는 연속 돌리기 중)
+  final ValueChanged<bool>? onBusyChanged;
+
   const SpinningWheel({
     super.key,
     required this.sections,
@@ -101,6 +105,7 @@ class SpinningWheel extends StatefulWidget {
     this.autoSpinStopText,
     this.autoSpinOptions,
     this.autoSpinStopCondition,
+    this.onBusyChanged,
   });
 
   @override
@@ -117,6 +122,9 @@ class _SpinningWheelState extends State<SpinningWheel>
 
   /// 회전 중 여부
   bool _isSpinning = false;
+
+  /// API 호출 대기 중 여부 (로딩 오버레이 표시용)
+  bool _isLoading = false;
 
   /// 마지막 당첨 결과 섹션 (인라인 표시용)
   WheelSection? _lastResult;
@@ -135,6 +143,9 @@ class _SpinningWheelState extends State<SpinningWheel>
 
   /// 연속 돌리기 진행 중 여부
   bool get _isAutoSpinning => _autoSpinRemaining > 0 || _autoSpinUntilCondition;
+
+  /// 이전 busy 상태 (콜백 중복 방지용)
+  bool _wasBusy = false;
 
   final _random = Random();
 
@@ -164,6 +175,7 @@ class _SpinningWheelState extends State<SpinningWheel>
         });
         _notifyResult();
         _checkAutoSpin();
+        _notifyBusyChange();
       }
     });
   }
@@ -173,6 +185,15 @@ class _SpinningWheelState extends State<SpinningWheel>
     _controller.dispose();
     _audioPlayer.dispose();
     super.dispose();
+  }
+
+  /// busy 상태 변경 시 콜백 호출 (중복 방지)
+  void _notifyBusyChange() {
+    final isBusy = _isSpinning || _isAutoSpinning;
+    if (isBusy != _wasBusy) {
+      _wasBusy = isBusy;
+      widget.onBusyChanged?.call(isBusy);
+    }
   }
 
   /// 전체 weight 합계
@@ -244,14 +265,34 @@ class _SpinningWheelState extends State<SpinningWheel>
 
     setState(() {
       _isSpinning = true;
+      _isLoading = true;
+      _lastResult = null;
     });
+    _notifyBusyChange();
 
-    /// 타겟 섹션 인덱스 결정
-    final int targetIndex;
+    /// 타겟 섹션 인덱스 결정 (서버 API 호출 대기)
+    final int? targetIndex;
     if (widget.onSpinRequested != null) {
       targetIndex = await widget.onSpinRequested!();
     } else {
       targetIndex = _random.nextInt(widget.sections.length);
+    }
+
+    /// 로딩 해제
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    /// null이면 스핀 취소 (서버 에러, 포인트 부족 등)
+    if (targetIndex == null) {
+      setState(() {
+        _isSpinning = false;
+      });
+      if (_isAutoSpinning) _stopAutoSpin();
+      _notifyBusyChange();
+      return;
     }
 
     /// 타겟 섹션에 포인터가 멈추도록 회전각 계산
@@ -326,6 +367,7 @@ class _SpinningWheelState extends State<SpinningWheel>
     });
     /// 일반 속도로 복원
     _controller.duration = const Duration(milliseconds: _normalDuration);
+    _notifyBusyChange();
   }
 
   /// 회전 완료 후 연속 돌리기 체크
@@ -415,6 +457,25 @@ class _SpinningWheelState extends State<SpinningWheel>
                 ),
               ),
 
+              /// 원판 그림자 (고정, 회전하지 않음)
+              Positioned(
+                top: 30,
+                child: Container(
+                  width: 280,
+                  height: 280,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.18),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
               /// 원판 (회전)
               Positioned(
                 top: 28,
@@ -433,18 +494,44 @@ class _SpinningWheelState extends State<SpinningWheel>
                 ),
               ),
 
-              /// 중앙 장식 원
+              /// 중앙 장식 원 (이중 원, 원판 정중앙에 배치)
+              /// 원판 중심 Y = top(28) + 280/2 = 168
+              /// 바깥 원: 36x36 → top = 168 - 18 = 150
               Positioned(
-                top: 148,
+                top: 150,
                 child: Container(
-                  width: 24,
-                  height: 24,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: scheme.surface,
-                    border: Border.all(
-                      color: scheme.outlineVariant,
-                      width: 3,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        scheme.primary.withValues(alpha: 0.9),
+                        scheme.tertiary.withValues(alpha: 0.9),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.25),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: scheme.surface,
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          width: 2,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -455,6 +542,26 @@ class _SpinningWheelState extends State<SpinningWheel>
                 top: 0,
                 child: _buildPointer(scheme),
               ),
+
+              /// API 호출 대기 중 로딩 오버레이
+              if (_isLoading)
+                Positioned(
+                  top: 28,
+                  child: Container(
+                    width: 280,
+                    height: 280,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black.withValues(alpha: 0.3),
+                    ),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: scheme.onPrimary,
+                        strokeWidth: 3,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -519,8 +626,8 @@ class _SpinningWheelState extends State<SpinningWheel>
           ],
         ),
 
-        /// 결과 인라인 표시
-        if (_lastResult != null && widget.resultBuilder != null) ...[
+        /// 결과 인라인 표시 (회전 완료 후에만)
+        if (_lastResult != null && !_isSpinning && widget.resultBuilder != null) ...[
           const SizedBox(height: 16),
           widget.resultBuilder!(_lastResult!)
               .animate()
@@ -585,9 +692,20 @@ class _SpinningWheelState extends State<SpinningWheel>
   }
 
   Widget _buildPointer(ColorScheme scheme) {
-    return CustomPaint(
-      size: const Size(24, 24),
-      painter: _PointerPainter(color: scheme.error),
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: scheme.error.withValues(alpha: 0.4),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: CustomPaint(
+        size: const Size(28, 28),
+        painter: _PointerPainter(color: scheme.error),
+      ),
     );
   }
 }
@@ -741,25 +859,39 @@ class _OuterRingPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    /// 외곽 링 배경
+    /// 외곽 링 배경 (두께감 있는 링)
     final ringPaint = Paint()
-      ..color = color.withValues(alpha: 0.3)
+      ..color = color.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 8;
-    canvas.drawCircle(center, radius - 4, ringPaint);
+      ..strokeWidth = 12;
+    canvas.drawCircle(center, radius - 6, ringPaint);
 
-    /// 장식 도트 (12개)
-    const dotCount = 12;
-    final dotRadius = 3.0;
-    final dotPaint = Paint()..color = dotColor.withValues(alpha: 0.6);
+    /// 외곽 링 테두리 (안쪽/바깥쪽)
+    final borderPaint = Paint()
+      ..color = color.withValues(alpha: 0.15)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawCircle(center, radius, borderPaint);
+    canvas.drawCircle(center, radius - 12, borderPaint);
+
+    /// 장식 도트 (20개, 교대 크기)
+    const dotCount = 20;
+    final dotPaintLarge = Paint()..color = dotColor.withValues(alpha: 0.7);
+    final dotPaintSmall = Paint()..color = dotColor.withValues(alpha: 0.35);
 
     for (int i = 0; i < dotCount; i++) {
       final angle = (i / dotCount) * 2 * pi - pi / 2;
       final dotCenter = Offset(
-        center.dx + (radius - 4) * cos(angle),
-        center.dy + (radius - 4) * sin(angle),
+        center.dx + (radius - 6) * cos(angle),
+        center.dy + (radius - 6) * sin(angle),
       );
-      canvas.drawCircle(dotCenter, dotRadius, dotPaint);
+      /// 짝수: 큰 도트, 홀수: 작은 도트
+      final isLarge = i % 2 == 0;
+      canvas.drawCircle(
+        dotCenter,
+        isLarge ? 3.5 : 2.0,
+        isLarge ? dotPaintLarge : dotPaintSmall,
+      );
     }
   }
 

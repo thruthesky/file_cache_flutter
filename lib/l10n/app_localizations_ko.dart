@@ -2212,4 +2212,13 @@ class LoKo extends Lo {
   String spinWheelAutoSpinCount(int count) {
     return '$count회';
   }
+
+  @override
+  String get eventCoupon => '이벤트 쿠폰';
+
+  @override
+  String get noCouponsMessage => '당첨된 쿠폰이 없습니다.';
+
+  @override
+  String get spinWheelStopFirst => '원판 돌리기를 먼저 중단해주세요.';
 }

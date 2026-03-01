@@ -2190,5 +2190,17 @@
   "spinWheelAutoSpin": "連続回し",
   "spinWheelStop": "停止",
   "spinWheelUntilCoupon": "スタバクーポンが出るまで",
-  "spinWheelAutoSpinCount": "{count}回"
+  "spinWheelAutoSpinCount": "{count}回",
+  "eventCoupon": "イベントクーポン",
+  "@eventCoupon": {
+    "description": "Event coupon menu item and screen title"
+  },
+  "noCouponsMessage": "当選したクーポンがありません。",
+  "@noCouponsMessage": {
+    "description": "Message shown when user has no won coupons"
+  },
+  "spinWheelStopFirst": "ルーレットを先に止めてください。",
+  "@spinWheelStopFirst": {
+    "description": "Message shown when user tries to navigate while wheel is spinning"
+  }
 }

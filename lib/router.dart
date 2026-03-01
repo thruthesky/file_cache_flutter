@@ -76,6 +76,7 @@ import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/screens/event/company_event.screen.dart';
+import 'package:philgo/screens/event/event_coupon.screen.dart';
 import 'package:philgo/screens/event/event_entry.screen.dart';
 import 'package:philgo/screens/search/search.screen.dart';
 import 'package:philgo/state/navigation.state.dart';
@@ -853,6 +854,14 @@ final router = GoRouter(
       path: EventEntryScreen.routeName,
       name: EventEntryScreen.routeName,
       builder: (context, state) => const EventEntryScreen(),
+    ),
+
+    /// 이벤트 쿠폰 화면 (Event Coupon Screen)
+    /// 스피닝 휠에서 당첨된 스타벅스 쿠폰 목록 표시
+    GoRoute(
+      path: EventCouponScreen.routeName,
+      name: EventCouponScreen.routeName,
+      builder: (context, state) => const EventCouponScreen(),
     ),
 
     /// QR 코드 스캔 결과 화면 (QR Code Scanned Screen)

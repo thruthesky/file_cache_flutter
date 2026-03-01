@@ -4420,6 +4420,24 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'{count} times'**
   String spinWheelAutoSpinCount(int count);
+
+  /// Event coupon menu item and screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Event Coupon'**
+  String get eventCoupon;
+
+  /// Message shown when user has no won coupons
+  ///
+  /// In en, this message translates to:
+  /// **'No coupons won yet.'**
+  String get noCouponsMessage;
+
+  /// Message shown when user tries to navigate while wheel is spinning
+  ///
+  /// In en, this message translates to:
+  /// **'Please stop the wheel first.'**
+  String get spinWheelStopFirst;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

@@ -2256,4 +2256,13 @@ class LoEn extends Lo {
   String spinWheelAutoSpinCount(int count) {
     return '$count times';
   }
+
+  @override
+  String get eventCoupon => 'Event Coupon';
+
+  @override
+  String get noCouponsMessage => 'No coupons won yet.';
+
+  @override
+  String get spinWheelStopFirst => 'Please stop the wheel first.';
 }

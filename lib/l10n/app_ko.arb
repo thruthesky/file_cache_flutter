@@ -2797,5 +2797,17 @@
   "spinWheelAutoSpin": "연속 돌리기",
   "spinWheelStop": "중지",
   "spinWheelUntilCoupon": "스타벅스 쿠폰 나올 때까지",
-  "spinWheelAutoSpinCount": "{count}회"
+  "spinWheelAutoSpinCount": "{count}회",
+  "eventCoupon": "이벤트 쿠폰",
+  "@eventCoupon": {
+    "description": "Event coupon menu item and screen title"
+  },
+  "noCouponsMessage": "당첨된 쿠폰이 없습니다.",
+  "@noCouponsMessage": {
+    "description": "Message shown when user has no won coupons"
+  },
+  "spinWheelStopFirst": "원판 돌리기를 먼저 중단해주세요.",
+  "@spinWheelStopFirst": {
+    "description": "Message shown when user tries to navigate while wheel is spinning"
+  }
 }

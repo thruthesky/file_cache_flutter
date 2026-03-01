@@ -2207,4 +2207,13 @@ class LoZh extends Lo {
   String spinWheelAutoSpinCount(int count) {
     return '$count次';
   }
+
+  @override
+  String get eventCoupon => '活动优惠券';
+
+  @override
+  String get noCouponsMessage => '没有中奖的优惠券。';
+
+  @override
+  String get spinWheelStopFirst => '请先停止转盘。';
 }

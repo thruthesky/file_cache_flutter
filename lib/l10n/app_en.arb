@@ -2728,5 +2728,17 @@
         "type": "int"
       }
     }
+  },
+  "eventCoupon": "Event Coupon",
+  "@eventCoupon": {
+    "description": "Event coupon menu item and screen title"
+  },
+  "noCouponsMessage": "No coupons won yet.",
+  "@noCouponsMessage": {
+    "description": "Message shown when user has no won coupons"
+  },
+  "spinWheelStopFirst": "Please stop the wheel first.",
+  "@spinWheelStopFirst": {
+    "description": "Message shown when user tries to navigate while wheel is spinning"
   }
 }

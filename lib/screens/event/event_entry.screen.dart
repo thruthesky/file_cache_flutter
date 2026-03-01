@@ -4,13 +4,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/v7_api/user_api.dart';
+import 'package:philgo/screens/event/event_coupon.screen.dart';
+import 'package:philgo/v7_api/v7_api.dart';
 import 'package:philgo/widgets/spinning_wheel.dart';
 
 /// 이벤트 응모 화면 (Event Entry Screen)
 ///
 /// 스피닝 휠 형태의 원판 돌리기 랜덤 뽑기 게임.
-/// 서버에서 미리 결과를 결정하고, 클라이언트는 해당 결과에 맞춰 원판을 돌림.
-/// 현재는 서버 연동 전이므로 상단에 테스트용 결과 선택 UI 제공.
+/// 서버 event.spin API로 결과를 미리 결정하고, 클라이언트는 해당 결과에 맞춰 원판을 돌림.
+/// AppBar 우측에 쿠폰 확인 버튼으로 당첨 쿠폰 목록 화면으로 이동 가능.
 class EventEntryScreen extends StatefulWidget {
   static const String routeName = '/event-entry';
 
@@ -25,11 +27,14 @@ class EventEntryScreen extends StatefulWidget {
 }
 
 class _EventEntryScreenState extends State<EventEntryScreen> {
-  /// 테스트용: 미리 선택된 당첨 섹션 인덱스 (null이면 랜덤)
-  int? _testTargetIndex;
-
   /// 원판 섹션 목록 (build에서 l10n 필요하므로 late 초기화)
   late List<WheelSection> _sections;
+
+  /// 마지막 서버 스핀 응답 (쿠폰 URL 등 추가 정보용)
+  Map<String, dynamic>? _lastSpinResult;
+
+  /// 원판 활동 상태 (회전 중 또는 연속 돌리기 중)
+  bool _isWheelBusy = false;
 
   /// v7 API로 가져온 현재 로그인 사용자 정보
   Map<String, dynamic>? _userInfo;
@@ -61,6 +66,46 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
     }
   }
 
+  /// 원판 회전 완료 후 사용자 포인트/레벨 갱신 (로딩 표시 없이 조용히)
+  Future<void> _refreshUserInfo() async {
+    try {
+      final result = await UserApi.me();
+      if (!mounted) return;
+      setState(() {
+        _userInfo = result;
+      });
+    } catch (_) {
+      // 갱신 실패 시 무시 (기존 정보 유지)
+    }
+  }
+
+  /// 서버 event.spin API 호출 → 결과 section_index 반환.
+  /// 에러 시 스낵바 표시 후 null 반환 (스핀 취소).
+  Future<int?> _callSpinApi() async {
+    try {
+      final result = await v7api('event.spin');
+
+      // 서버 응답 저장 (결과 배너에서 쿠폰 정보 등 사용)
+      _lastSpinResult = result;
+
+      return result['section_index'] as int;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e
+                  .toString()
+                  .replaceAll('Exception: ', '')
+                  .replaceAll(RegExp(r'^v7api\([^)]*\):\s*'), ''),
+            ),
+          ),
+        );
+      }
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -70,6 +115,9 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
     /// 원판 섹션 정의 (10개 섹션, 총 weight = 1000 → 확률 0.1% 단위)
     /// 꽝 30%, 50P 38%, 100P 8%, 200P 7%, 300P 6%, 400P 5%,
     /// 500P 4%, 1000P 1.5%, 2000P 0.4%, 스타벅스 쿠폰 0.1%
+    /// 서버 section_index와 동일한 순서:
+    /// 0=50P, 1=100P, 2=200P, 3=300P, 4=400P, 5=500P,
+    /// 6=1000P, 7=2000P, 8=스타벅스, 9=꽝
     _sections = [
       WheelSection(label: '50', color: const Color(0xFFE88B8B), points: 50, weight: 380),
       WheelSection(label: '100', color: const Color(0xFFE8A87C), points: 100, weight: 80),
@@ -77,12 +125,6 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
       WheelSection(label: '300', color: const Color(0xFFD4A76A), points: 300, weight: 60),
       WheelSection(label: '400', color: const Color(0xFFD4B896), points: 400, weight: 50),
       WheelSection(label: '500', color: const Color(0xFFE8C170), points: 500, weight: 40),
-      WheelSection(
-        label: l10n.spinWheelMiss,
-        color: const Color(0xFFB0B0B0),
-        points: 0,
-        weight: 300,
-      ),
       WheelSection(
         label: '1,000',
         color: const Color(0xFFC9A9C9),
@@ -105,11 +147,33 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
         weight: 1,
         icon: FontAwesomeIcons.lightMugHot,
       ),
+      WheelSection(
+        label: l10n.spinWheelMiss,
+        color: const Color(0xFFB0B0B0),
+        points: 0,
+        weight: 300,
+      ),
     ];
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.quickMenuEventEntry),
+        actions: [
+          /// 이벤트 쿠폰 당첨 목록 화면 이동 버튼
+          IconButton(
+            onPressed: () {
+              if (_isWheelBusy) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.spinWheelStopFirst)),
+                );
+                return;
+              }
+              EventCouponScreen.push(context);
+            },
+            icon: const FaIcon(FontAwesomeIcons.lightTicket, size: 20),
+            tooltip: l10n.eventCoupon,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -119,16 +183,13 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             _buildUserProfileSection(theme, scheme),
             const SizedBox(height: 16),
 
-            /// 테스트용 결과 선택 UI
-            _buildTestSelector(theme, scheme, l10n),
-            const SizedBox(height: 16),
-
             /// 스피닝 휠
             SpinningWheel(
               sections: _sections,
               instructionText: l10n.spinWheelInstruction,
               spinButtonText: l10n.spinWheelSpin,
-              onSpinRequested: () async => _resolveTargetIndex(),
+              onSpinRequested: _callSpinApi,
+              onResult: (_) => _refreshUserInfo(),
               resultBuilder: (section) => _buildResultBanner(
                 theme: theme,
                 scheme: scheme,
@@ -147,91 +208,10 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
               ],
               /// 쿠폰(points == -1) 당첨 시 연속 돌리기 중지
               autoSpinStopCondition: (section) => section.points == -1,
+              onBusyChanged: (busy) => setState(() => _isWheelBusy = busy),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// 타겟 인덱스 반환.
-  /// 테스트 선택값이 있으면 그 값, 없으면 랜덤.
-  /// 추후 서버 API 호출로 교체.
-  int _resolveTargetIndex() {
-    if (_testTargetIndex != null) return _testTargetIndex!;
-    return DateTime.now().microsecond % _sections.length;
-  }
-
-  /// 테스트용: 상단 결과 선택 드롭다운
-  Widget _buildTestSelector(
-    ThemeData theme,
-    ColorScheme scheme,
-    Lo l10n,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: scheme.tertiaryContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.science_outlined, color: scheme.onTertiaryContainer),
-          const SizedBox(width: 12),
-          Expanded(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int?>(
-                value: _testTargetIndex,
-                isExpanded: true,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onTertiaryContainer,
-                ),
-                dropdownColor: scheme.tertiaryContainer,
-                hint: Text(
-                  'TEST: Random',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: scheme.onTertiaryContainer,
-                  ),
-                ),
-                items: [
-                  /// 랜덤 옵션
-                  DropdownMenuItem<int?>(
-                    value: null,
-                    child: Text(
-                      'Random',
-                      style: TextStyle(color: scheme.onTertiaryContainer),
-                    ),
-                  ),
-                  /// 각 섹션 옵션
-                  ...List.generate(_sections.length, (i) {
-                    final section = _sections[i];
-                    return DropdownMenuItem<int?>(
-                      value: i,
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 16,
-                            height: 16,
-                            decoration: BoxDecoration(
-                              color: section.color,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            section.label,
-                            style: TextStyle(color: scheme.onTertiaryContainer),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ],
-                onChanged: (value) => setState(() => _testTargetIndex = value),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -451,6 +431,15 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
       message = l10n.spinWheelResultPoints(section.points);
     }
 
+    /// 서버 응답에서 잔여 포인트 (표시용)
+    final currentPoint = (_lastSpinResult?['current_point'] as num?)?.toInt();
+    final pointSuffix = currentPoint != null
+        ? ' (${currentPoint.toString().replaceAllMapped(
+              RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+              (m) => '${m[1]},',
+            )}P)'
+        : '';
+
     /// 결과 유형에 따른 배경색/텍스트색
     final Color bgColor;
     final Color textColor;
@@ -470,7 +459,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        message,
+        '$message$pointSuffix',
         style: theme.textTheme.titleMedium?.copyWith(
           color: textColor,
           fontWeight: isMiss ? FontWeight.normal : FontWeight.bold,

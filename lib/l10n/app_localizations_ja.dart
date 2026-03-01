@@ -2213,4 +2213,13 @@ class LoJa extends Lo {
   String spinWheelAutoSpinCount(int count) {
     return '$count回';
   }
+
+  @override
+  String get eventCoupon => 'イベントクーポン';
+
+  @override
+  String get noCouponsMessage => '当選したクーポンがありません。';
+
+  @override
+  String get spinWheelStopFirst => 'ルーレットを先に止めてください。';
 }
