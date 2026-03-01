@@ -178,7 +178,6 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | AI | [api/v7-ai.md](references/api/v7-ai.md) | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Post | [api/v7-post.md](references/api/v7-post.md) | ✅ 완료 |
-| PointEvent | [api/v7-point-event.md](references/api/v7-point-event.md) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
@@ -243,7 +242,6 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | 파일 | 용도 |
 |------|------|
 | `event-spin-test.http` | Event(스피닝 휠) API 테스트 |
-| `point-event-test.http` | PointEvent(먹방 이벤트) API 테스트 |
 | `post-thumbnail-test.http` | Post 글 생성 시 썸네일 URL 저장 테스트 |
 
 > 새 모듈 API를 추가할 때마다 `httpYac/<module>-test.http` 파일을 작성한다.
