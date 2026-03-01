@@ -20,6 +20,7 @@
 - [14. 관리자 페이지](#14-관리자-페이지)
 - [15. PEST Unit Test](#15-pest-unit-test)
 - [16. 레거시(v6)와의 관계](#16-레거시v6와의-관계)
+- [17. 웹 페이지 통합](#17-웹-페이지-통합-v6-파일에서-v7-api-호출)
 
 ---
 
@@ -37,11 +38,13 @@
 |------|------|
 | **랜덤 QR 코드 생성** | `bin2hex(random_bytes(32))` → 64자 hex 고유 검증 ID |
 | **일일 발행 제한** | 업소당 하루 최대 10개 QR 코드 발행 가능 |
+| **180초 만료** | QR 코드 발행 후 180초(3분) 이내에 스캔해야 유효 (`expired_at = time() + 180`) |
 | **24시간 중복 사용 제한** | 동일 사용자가 동일 업소에서 24시간 내 중복 사용 불가 |
 | **비회원 스캔 허용** | 로그인하지 않은 사용자도 QR 코드 스캔 가능 (제한 없음) |
 | **모든 스캔 기록** | 성공/실패/거부 모든 결과를 기록하여 통계/감사 활용 |
 | **show_qr_code 무관** | `status='a'`(승인) 업소면 show_qr_code 값과 무관하게 발행 가능 |
 | **디바이스 추적** | User-Agent 분석으로 mobile/tablet/desktop 기기 유형 기록 |
+| **환경 자동 대응 URL** | QR 코드 URL에 `$_SERVER['HTTP_HOST']`를 사용하여 로컬/프로덕션 환경을 자동 구분 |
 
 ### 1.3 관련 테이블
 
@@ -116,7 +119,7 @@ CREATE TABLE company_qr_codes (
     verification_id VARCHAR(128) NOT NULL DEFAULT '',  -- 고유 검증 ID (64자 hex)
     status CHAR(1) NOT NULL DEFAULT 'a',          -- 상태: 'a'=활성, 'd'=비활성
     created_at INT NOT NULL DEFAULT 0,            -- 발행 시각 (Unix timestamp)
-    expired_at INT NOT NULL DEFAULT 0,            -- 만료 시각 (0=무제한)
+    expired_at INT NOT NULL DEFAULT 0,            -- 만료 시각 (time()+180, 180초 후 만료)
     used_count INT NOT NULL DEFAULT 0,            -- 총 사용 횟수
     memo VARCHAR(255) NOT NULL DEFAULT '',        -- 메모
     UNIQUE KEY idx_verification_id (verification_id),
@@ -638,15 +641,121 @@ cd /Users/thruthesky/apps/withcenter/philgo/www
 | 항목 | v6 (레거시) | v7 (신규) |
 |------|-------------|-----------|
 | QR 코드 생성 | `md5(idx + idx_member)` 고정 | `random_bytes(32)` 랜덤 |
-| QR 코드 표시 | `company/qr-code.php` | v7 API `company.issueQrCode` |
-| QR 코드 검증 | `company/qr-code-scanned.php` | v7 API `company.scanQrCode` |
+| QR 코드 표시 | `company/qr-code.php` (v7 API 호출) | v7 API `company.issueQrCode` |
+| QR 코드 검증 | `company/qr-code-scanned.php` (v7 API + v6 호환) | v7 API `company.scanQrCode` |
 | DB 기록 | 없음 | `company_qr_codes` + `company_qr_code_usages` |
 | 통계 | 없음 | `company.qrCodeStats` API |
 | 관리 | 없음 | 관리자 페이지 (목록/스캔현황) |
 
-### 마이그레이션 노트
+### 마이그레이션 완료 사항
 
-- v6의 기존 `qr-code.php`, `qr-code-scanned.php`는 그대로 유지
+- **`qr-code.php`**: v6 고정 QR 코드(`md5()`) → v7 API `CompanyService::issueQrCode()` 호출로 전환 완료
+- **`qr-code-scanned.php`**: v7 `code` 파라미터 처리 추가 + v6 `idx`+`verification_id` 레거시 호환 유지
 - v7 QR 코드는 별도 테이블(`company_qr_codes`, `company_qr_code_usages`)을 사용
-- 점진적으로 v7 API로 전환하되, v6 QR 코드와 동시 운영 가능
-- `show_qr_code` 컬럼은 v6 QR 코드 표시 여부에만 영향 (v7과 무관)
+- `show_qr_code` 컬럼은 `qr-code.php` 페이지 접근 제어에만 영향 (v7 API와 무관)
+
+---
+
+## 17. 웹 페이지 통합 (v6 파일에서 v7 API 호출)
+
+### 17.1 company/qr-code.php — QR 코드 발행 페이지
+
+v6 레거시 파일이 v7 `CompanyService::issueQrCode()`를 직접 호출하여 매 접속마다 새 QR 코드를 발행한다.
+
+#### 동작 흐름
+
+```
+사용자 접속 → qr-code.php
+  ↓
+1. 업소 존재 여부 확인 (get_company)
+2. QR 코드 활성화 여부 확인 (qr_code_enabled)
+3. 로그인 확인 (login())
+4. v7 API 호출: CompanyService::issueQrCode()
+   → verification_id 랜덤 생성
+   → expired_at = time() + 180 (180초 후 만료)
+   → DB 기록 저장
+5. QR 코드 이미지 생성 (qrcodejs CDN)
+6. 오늘 발행 현황 표시 (UTC+8 기준)
+```
+
+#### 주요 UI 요소
+
+| 요소 | 설명 |
+|------|------|
+| **업소 정보 카드** | 로고, 업소명, 카테고리, 위치, 연락처 |
+| **이벤트 배너** | "필고 + {업소명} 이벤트 참여" 그래디언트 배너 |
+| **QR 코드 이미지** | qrcodejs로 생성, 256x256, 높은 오류 복구 수준(H) |
+| **발행 현황 뱃지** | 오늘 날짜(UTC+8), 발행 수/일일 제한, 남은 횟수 |
+| **안내 문구** | QR 코드 스캔 안내 + 180초 만료 안내 |
+| **액션 버튼** | 프린트, 다운로드(PNG), 업소 보기 |
+| **에러 상태** | 발행 실패 시 에러 메시지 표시 (로그인 필요, 일일 제한 초과 등) |
+
+#### QR 코드 URL 생성 규칙
+
+```php
+// QrCodeEntity::getQrUrl()
+// 웹 환경: $_SERVER['HTTP_HOST'] 사용 (환경별 자동 대응)
+// CLI 환경: PHILGO_DOMAIN 상수 사용 (기본값: philgo.com)
+$host = $_SERVER['HTTP_HOST'] ?? '';
+if (empty($host)) {
+    $domain = defined('PHILGO_DOMAIN') ? PHILGO_DOMAIN : 'philgo.com';
+    $host = "www.{$domain}";
+}
+return "https://{$host}/company/qr-code-scanned.php?code={$this->verification_id}";
+```
+
+| 환경 | 생성되는 QR 코드 URL |
+|------|----------------------|
+| 로컬 (`local.philgo.com`) | `https://local.philgo.com/company/qr-code-scanned.php?code=...` |
+| 프로덕션 (`www.philgo.com`) | `https://www.philgo.com/company/qr-code-scanned.php?code=...` |
+| CLI | `https://www.philgo.com/company/qr-code-scanned.php?code=...` |
+
+### 17.2 company/qr-code-scanned.php — QR 코드 스캔 감사 페이지
+
+v7 `code` 파라미터와 v6 `idx`+`verification_id` 레거시 형식을 모두 지원한다.
+
+#### 이중 경로 처리
+
+```
+스캔 URL 접속
+  ↓
+파라미터 확인
+  ├─ code 파라미터 존재 → v7 처리
+  │   └─ CompanyService::scanQrCode() 호출
+  │       ├─ 성공 → 감사 페이지 표시
+  │       └─ 실패 → 에러 메시지 (만료/비활성/중복 등)
+  │
+  ├─ idx + verification_id 존재 → v6 레거시 처리
+  │   └─ md5(idx + idx_member) 검증
+  │       ├─ 일치 → 감사 페이지 표시
+  │       └─ 불일치 → 에러 페이지
+  │
+  └─ 파라미터 없음 → 에러 페이지
+```
+
+#### v7 스캔 에러 메시지
+
+| 에러 | 메시지 |
+|------|--------|
+| QR 코드 없음 | "유효하지 않은 QR 코드입니다." |
+| 비활성화 | "비활성화된 QR 코드입니다." |
+| 만료 | "만료된 QR 코드입니다." |
+| 업소 무효 | "해당 업소가 유효하지 않습니다." |
+| 24시간 중복 | "24시간 이내에 이미 사용하셨습니다. 내일 다시 시도해 주세요." |
+
+### 17.3 page/help/guideline.php — 이용안내 페이지
+
+"업소록 관리 안내" 아코디언 항목에 QR 코드 규칙을 표시한다.
+
+| 안내 항목 | 내용 |
+|-----------|------|
+| QR 코드 발행 제한 | 각 업소별로 하루 최대 10개 발행 가능 |
+| QR 코드 만료 | 발행 후 180초(3분) 이내에 스캔해야 유효 |
+
+### 17.4 다국어 지원
+
+모든 페이지에서 `inject_*_language()` 함수를 사용하여 4개 언어(ko, en, ja, zh) 지원:
+
+- `qr-code.php`: `inject_company_qr_code_language()`
+- `qr-code-scanned.php`: `inject_company_qr_code_scanned_language()`
+- `guideline.php`: `inject_help_guideline_language()`
