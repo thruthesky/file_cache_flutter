@@ -470,6 +470,8 @@ curl -X POST "https://local.philgo.com/api.php" \
   "points": 200,
   "prize_type": "point",
   "current_point": 5000,
+  "lv": 4,
+  "level_progress": 50,
   "starbucks_coupon_file": null,
   "starbucks_coupon_url": null,
   "available_coupons": 3,
@@ -486,6 +488,8 @@ curl -X POST "https://local.philgo.com/api.php" \
   "points": -1,
   "prize_type": "starbucks",
   "current_point": 4800,
+  "lv": 4,
+  "level_progress": 42,
   "starbucks_coupon_file": "4.jpg",
   "starbucks_coupon_url": "/event/cupon/starbucks/4.jpg",
   "available_coupons": 2,
@@ -502,6 +506,8 @@ curl -X POST "https://local.philgo.com/api.php" \
   "points": 0,
   "prize_type": "miss",
   "current_point": 4800,
+  "lv": 4,
+  "level_progress": 42,
   "starbucks_coupon_file": null,
   "starbucks_coupon_url": null,
   "available_coupons": 3,
@@ -518,6 +524,8 @@ curl -X POST "https://local.philgo.com/api.php" \
 | `points` | int | 당첨 포인트 (0=꽝, -1=스타벅스, 50/100/200/300/400/500/1000/2000=포인트) |
 | `prize_type` | string | `miss` / `point` / `starbucks` |
 | `current_point` | int | 게임 후 잔여 포인트 |
+| `lv` | int | 게임 후 회원 레벨 (**포인트 기반 동적 계산**, `UserService::calculateLevel()`) |
+| `level_progress` | int | 다음 레벨까지 진행률 (0~100%, **동적 계산**) |
 | `starbucks_coupon_file` | string\|null | 스타벅스 쿠폰 파일명 (당첨 시만) |
 | `starbucks_coupon_url` | string\|null | 스타벅스 쿠폰 이미지 URL (당첨 시만) |
 | `available_coupons` | int | 남은 사용 가능 쿠폰 수 |

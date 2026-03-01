@@ -10,6 +10,15 @@
 - [4. 파일 구조](#4-파일-구조)
 - [5. 인증 시스템 (AuthService)](#5-인증-시스템-authservice)
 - [6. 테스트](#6-테스트)
+- [7. 레벨 계산 시스템](#7-레벨-계산-시스템)
+  - [7.1 핵심 원칙](#71-핵심-원칙)
+  - [7.2 POINT_LEVELS 상수 (128단계)](#72-point_levels-상수-128단계)
+  - [7.3 레벨 계산 알고리즘](#73-레벨-계산-알고리즘)
+  - [7.4 레벨 진행률 계산 알고리즘](#74-레벨-진행률-계산-알고리즘)
+  - [7.5 계산 예시](#75-계산-예시)
+  - [7.6 레거시 함수와의 관계](#76-레거시-함수와의-관계)
+  - [7.7 v7 API에서의 레벨 반환 규칙](#77-v7-api에서의-레벨-반환-규칙)
+- [8. UserEntity](#8-userentity)
 
 ---
 
@@ -742,3 +751,249 @@ curl -s "https://local.philgo.com:443/api.php?method=user.me&id_token=LIVE_ONE_T
 curl -s -b "session_id={세션ID}" "https://local.philgo.com:443/api.php?method=user.me"
 # → {"idx":123,"id":"user@test.com","name":"홍길동",...}
 ```
+
+---
+
+## 7. 레벨 계산 시스템
+
+### 7.1 핵심 원칙
+
+> **🔴🔴🔴 절대 규칙: 회원 레벨은 DB에서 가져오는 것이 아니라, 포인트에서 동적으로 계산한다 🔴🔴🔴**
+
+| 규칙 | 설명 |
+|------|------|
+| **DB level 컬럼 사용 금지** | `sf_member.level` 컬럼은 **레거시 필드**이며, 업데이트되지 않는다. 이 값을 읽어서 사용하면 안 된다 |
+| **항상 동적 계산** | 레벨은 `point` 값을 기반으로 **매번 동적으로 계산**한다 |
+| **POINT_LEVELS 상수 기준** | `etc/app.config.php`에 정의된 `POINT_LEVELS` 상수(128단계)를 기준으로 계산한다 |
+| **v7 함수 사용** | `UserService::calculateLevel(int $points)` 과 `UserService::calculateLevelProgress(int $points, int $level)` 사용 |
+| **레거시 함수 참조** | v7 함수는 레거시 `get_user_level()`, `get_user_level_progress()`와 **100% 동일한 로직** |
+
+**절대 금지 코드 예시**:
+```php
+// ❌ 금지: DB에서 level 필드를 읽어서 사용
+$level = (int)($member['level'] ?? 0);
+
+// ❌ 금지: DB의 level 컬럼을 직접 조회
+$stmt = Db::pdo()->prepare("SELECT level FROM sf_member WHERE idx = ?");
+
+// ✅ 올바른 방법: point에서 동적 계산
+$points = (int)($member['point'] ?? 0);
+$level = UserService::calculateLevel($points);
+$levelProgress = UserService::calculateLevelProgress($points, $level);
+```
+
+### 7.2 POINT_LEVELS 상수 (128단계)
+
+`etc/app.config.php`에 정의된 배열 상수이다. 인덱스가 레벨, 값이 해당 레벨에 도달하기 위한 **최소 누적 포인트**이다.
+
+```php
+// etc/app.config.php
+const POINT_LEVELS = [
+    0,          // 레벨 0: 0P 이상
+    400,        // 레벨 1: 400P 이상
+    1600,       // 레벨 2: 1,600P 이상
+    3600,       // 레벨 3: 3,600P 이상
+    6400,       // 레벨 4: 6,400P 이상
+    10000,      // 레벨 5: 10,000P 이상
+    // ... (중간 생략)
+    14400,      // 레벨 6
+    19600,      // 레벨 7
+    25600,      // 레벨 8
+    32400,      // 레벨 9
+    40000,      // 레벨 10
+    // ...
+    1000000,    // 레벨 50: 1,000,000P 이상
+    // ...
+    4000000,    // 레벨 100: 4,000,000P 이상
+    // ...
+    20000000,   // 레벨 125: 20,000,000P 이상
+    30000000,   // 레벨 126
+    40000000,   // 레벨 127
+];
+// 총 128개 요소 (인덱스 0~127)
+```
+
+**레벨 구간 요약**:
+
+| 레벨 구간 | 필요 포인트 범위 | 특징 |
+|-----------|-----------------|------|
+| 0~5 | 0 ~ 10,000P | 초급 (빠른 레벨업) |
+| 6~20 | 14,400 ~ 160,000P | 중급 |
+| 21~50 | 176,400 ~ 1,000,000P | 고급 |
+| 51~100 | 1,040,400 ~ 4,000,000P | 상급 |
+| 101~127 | 4,100,000 ~ 40,000,000P | 최상급 (느린 레벨업) |
+
+### 7.3 레벨 계산 알고리즘
+
+`UserService::calculateLevel(int $points): int`
+
+POINT_LEVELS 배열을 순회하면서, 보유 포인트보다 큰 첫 번째 값의 **인덱스**를 레벨로 반환한다.
+
+```php
+// lib/user/UserService.php
+public static function calculateLevel(int $points): int
+{
+    $level = 0;
+    foreach (POINT_LEVELS as $idx => $point) {
+        if ($points < $point) {
+            $level = $idx;
+            break;
+        }
+    }
+    return $level;
+}
+```
+
+**동작 원리**:
+```
+보유 포인트: 5,000P
+
+POINT_LEVELS 순회:
+  [0] = 0      → 5000 < 0?    No
+  [1] = 400    → 5000 < 400?   No
+  [2] = 1600   → 5000 < 1600?  No
+  [3] = 3600   → 5000 < 3600?  No
+  [4] = 6400   → 5000 < 6400?  Yes → level = 4 ★
+
+결과: 레벨 4
+```
+
+### 7.4 레벨 진행률 계산 알고리즘
+
+`UserService::calculateLevelProgress(int $points, int $level): int`
+
+현재 레벨에서 다음 레벨까지의 진행률을 0~100 정수로 반환한다.
+
+```php
+// lib/user/UserService.php
+public static function calculateLevelProgress(int $points, int $level): int
+{
+    $currentLevelPoints = POINT_LEVELS[$level - 1] ?? 0;  // 현재 레벨 시작점
+    $nextLevelPoints = POINT_LEVELS[$level] ?? 0;          // 다음 레벨 시작점
+
+    $pointsNeeded = $nextLevelPoints - $currentLevelPoints; // 레벨업에 필요한 총 포인트
+    $pointsEarned = $points - $currentLevelPoints;          // 현재 레벨에서 획득한 포인트
+
+    if ($pointsNeeded > 0) {
+        return (int) floor(($pointsEarned / $pointsNeeded) * 100);
+    }
+    return 0;
+}
+```
+
+**공식**:
+```
+진행률 = floor((보유포인트 - 현재레벨기준점) / (다음레벨기준점 - 현재레벨기준점) × 100)
+```
+
+### 7.5 계산 예시
+
+| 보유 포인트 | 레벨 | 현재 레벨 기준점 | 다음 레벨 기준점 | 진행률 계산 | 진행률 |
+|:----------:|:----:|:---------------:|:---------------:|:----------:|:-----:|
+| 0 | 0 | 0 | 0 | - | 0% |
+| 500 | 1 | 0 | 400 | (500-0)/(400-0)×100 | 125% → 100+ |
+| 1000 | 1 | 0 | 400 | (1000-0)/(400-0)×100 | 250% → 100+ |
+| 2000 | 2 | 400 | 1600 | (2000-400)/(1600-400)×100 | 133% → 100+ |
+| 5000 | 4 | 3600 | 6400 | (5000-3600)/(6400-3600)×100 | **50%** |
+| 8000 | 4 | 3600 | 6400 | (8000-3600)/(6400-3600)×100 | 157% → 100+ |
+| 10000 | 5 | 6400 | 10000 | (10000-6400)/(10000-6400)×100 | **100%** |
+| 100000 | 14 | 78400 | 90000 | (100000-78400)/(90000-78400)×100 | **186%** → 100+ |
+
+> **참고**: 진행률이 100%를 초과할 수 있다. 이는 POINT_LEVELS 구간이 비선형이기 때문이며,
+> 클라이언트에서 `min(progress, 100)`으로 캡핑하여 표시한다.
+
+### 7.6 레거시 함수와의 관계
+
+| v7 함수 | 레거시 함수 | 파일 위치 |
+|---------|------------|----------|
+| `UserService::calculateLevel(int $points)` | `get_user_level(int $points)` | `lib/point.functions.php:19-29` |
+| `UserService::calculateLevelProgress(int $points, int $level)` | `get_user_level_progress(int $points)` | `lib/point.functions.php:42-57` |
+| (POINT_LEVELS 상수 공유) | (POINT_LEVELS 상수 공유) | `etc/app.config.php:156-304` |
+
+> v7과 레거시 함수는 **동일한 POINT_LEVELS 상수**를 사용하므로 결과가 항상 일치한다.
+> 레거시 UserModel(`lib/models/user.model.php:87-88`)도 생성자에서 동적 계산을 수행한다.
+
+### 7.7 v7 API에서의 레벨 반환 규칙
+
+v7 API에서 회원 레벨을 응답에 포함할 때는 **반드시 동적 계산**해야 한다:
+
+```php
+// ✅ 올바른 패턴 (v7 API에서 레벨 반환)
+$points = (int)($member['point'] ?? 0);
+$level = UserService::calculateLevel($points);
+$levelProgress = UserService::calculateLevelProgress($points, $level);
+
+return [
+    'point' => $points,
+    'lv' => $level,
+    'level_progress' => $levelProgress,
+    // ...
+];
+```
+
+**적용 위치**:
+
+| API | 파일 | 레벨 반환 방식 |
+|-----|------|--------------|
+| `user.me` | `UserService::getMe()` | `calculateLevel($points)` + `calculateLevelProgress()` |
+| `event.spin` | `EventService::spin()` | `UserService::calculateLevel($finalPoint)` + `UserService::calculateLevelProgress()` |
+| `UserEntity` | `UserEntity::__construct()` | 생성자에서 `UserService::calculateLevel($this->point)` 자동 계산 |
+
+---
+
+## 8. UserEntity
+
+### 8.1 개요
+
+`Philgo\User\UserEntity` — `sf_member` 테이블의 한 행(row)을 PHP 객체로 매핑하는 Entity 클래스이다.
+
+**핵심**: `level`과 `level_progress`는 DB에서 읽는 것이 아니라, **생성자에서 `point` 기반으로 동적 계산**한다.
+
+**파일**: `lib/user/UserEntity.php`
+
+### 8.2 프로퍼티
+
+| 프로퍼티 | 타입 | DB 컬럼 | 설명 |
+|---------|------|---------|------|
+| `idx` | int | `sf_member.idx` | 회원 고유 ID |
+| `id` | string | `sf_member.id` | 아이디 (이메일) |
+| `name` | string | `sf_member.name` | 이름 |
+| `nickname` | string | `sf_member.nickname` | 닉네임 |
+| `phone_number` | string | `sf_member.phone_number` | 전화번호 |
+| `firebase_uid` | string | `sf_member.firebase_uid` | Firebase UID |
+| `point` | int | `sf_member.point` | 보유 포인트 |
+| `level` | int | ⚠️ **동적 계산** | 회원 레벨 (DB level 컬럼 미사용) |
+| `level_progress` | int | ⚠️ **동적 계산** | 다음 레벨까지 진행률 (0~100%) |
+| `photo_url` | string | `sf_member.photo_url` | 프로필 사진 URL |
+| `gender` | string | `sf_member.gender` | 성별 (M/F) |
+| `no_of_post` | int | `sf_member.no_of_post` | 작성 글 수 |
+| `no_of_comment` | int | `sf_member.no_of_comment` | 작성 댓글 수 |
+| `stamp` | int | `sf_member.stamp` | 생성/수정 시간 |
+
+### 8.3 사용 예시
+
+```php
+use Philgo\User\UserEntity;
+
+// DB 조회 결과에서 Entity 생성
+$stmt = Db::pdo()->prepare("SELECT * FROM sf_member WHERE idx = ?");
+$stmt->execute([123]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$user = new UserEntity($row);
+// 또는
+$user = UserEntity::fromArray($row);
+
+echo $user->point;          // 5000
+echo $user->level;          // 4 (동적 계산됨)
+echo $user->level_progress; // 50 (동적 계산됨)
+
+// API 응답용 배열 변환
+$responseData = $user->toArray();
+// → ['idx' => 123, 'level' => 4, 'level_progress' => 50, ...]
+```
+
+### 8.4 password 필드 미포함
+
+`UserEntity`는 보안상 `password` 필드를 포함하지 않는다.
+`toArray()`로 변환한 결과를 API 응답으로 직접 사용할 수 있다.
