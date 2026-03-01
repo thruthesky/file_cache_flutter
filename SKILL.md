@@ -148,6 +148,14 @@ Windows 환경 설정 차이점을 포함합니다.
 
 Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.
 
+### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
+
+필고 포인트 이벤트 시스템 전체를 하나로 통합 정리한 개요 문서입니다.
+스피닝 휠(서버 API + Flutter 클라이언트), QR 코드 삼단콤보(QR 발행→스캔→재방문→후기),
+포인트 로그 인프라(sf_point_log), DB 스키마 요약, 확률 계산·안티치트·스타벅스 쿠폰 관리 로직,
+module/action 매트릭스, 핵심 PHP/Dart 코드 스니펫을 포함합니다.
+이벤트 관련 작업 시 **이 문서를 먼저 읽고** 필요에 따라 개별 상세 문서로 이동하세요.
+
 ### 이벤트 응모 (스피닝 휠) → [app/v7-event-entry.md](references/app/v7-event-entry.md)
 
 스피닝 휠(원판 돌리기) 기반 이벤트 응모 시스템의 상세 문서입니다.
