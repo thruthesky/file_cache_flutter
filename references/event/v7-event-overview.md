@@ -11,6 +11,11 @@
 - [2. 스피닝 휠 이벤트 (서버)](#2-스피닝-휠-이벤트-서버)
 - [3. 스피닝 휠 이벤트 (클라이언트 Flutter)](#3-스피닝-휠-이벤트-클라이언트-flutter)
 - [4. 업소록 QR 코드 이벤트 (삼단콤보)](#4-업소록-qr-코드-이벤트-삼단콤보)
+  - [4.9 업소록 이벤트 전체 흐름 (CoT 단계별 분석)](#49-업소록-이벤트-전체-흐름-cot-단계별-분석)
+  - [4.10 분기별 사용자 경험 (ToT 트리 구조 분석)](#410-분기별-사용자-경험-tot-트리-구조-분석)
+  - [4.11 API 메서드별 검증 로직 상세](#411-api-메서드별-검증-로직-상세)
+  - [4.12 에러 시나리오 매트릭스](#412-에러-시나리오-매트릭스)
+  - [4.13 웹 페이지 통합 흐름](#413-웹-페이지-통합-흐름)
 - [5. 업소록 방문 후기 포인트 (삼단콤보 3단계)](#5-업소록-방문-후기-포인트-삼단콤보-3단계)
 - [6. 포인트 로그 시스템 (공통 인프라)](#6-포인트-로그-시스템-공통-인프라)
 - [7. DB 스키마 요약](#7-db-스키마-요약)
@@ -596,6 +601,490 @@ sf_point_log (포인트 기록)
     ├─ module='company'
     └─ action='qr_scan'|'qr_revisit'|'visit_review'
 ```
+
+### 4.9 업소록 이벤트 전체 흐름 (CoT 단계별 분석)
+
+> **CoT(Chain of Thought)**: 업소록 QR 코드 이벤트의 전체 흐름을 **5단계**로 분해하여,
+> 각 단계의 입력→처리→출력을 순서대로 추적한다.
+
+#### 전체 흐름 요약도
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                  업소록 QR 코드 이벤트 — 5단계 전체 흐름                    │
+├──────────┬──────────┬──────────┬──────────┬──────────────────────────────┤
+│ [1단계]  │ [2단계]  │ [3단계]  │ [4단계]  │ [5단계]                      │
+│ QR 발행  │ QR 스캔  │ 재방문   │ 후기     │ 업소 보기                    │
+│          │          │ 포인트   │ 작성     │ (후기 표시)                  │
+├──────────┼──────────┼──────────┼──────────┼──────────────────────────────┤
+│ 업소     │ 고객     │ 재방문   │ 고객     │ 모든 사용자                   │
+│ 소유자   │ (모든    │ 고객     │ (로그인) │                              │
+│ (관리자) │ 사용자)  │ (로그인) │          │                              │
+├──────────┼──────────┼──────────┼──────────┼──────────────────────────────┤
+│ —        │ 1,000~   │ 2,000~   │ 2,000~   │ —                            │
+│          │ 2,000P   │ 3,000P   │ 3,000P   │                              │
+├──────────┼──────────┼──────────┼──────────┼──────────────────────────────┤
+│ qr-code  │ qr-code  │ re-visit │ visit-   │ view.php                     │
+│ .php     │ -scanned │ -point   │ review-  │ (#visit-                     │
+│          │ .php     │ .php     │ point.php│  reviews-app)                │
+└──────────┴──────────┴──────────┴──────────┴──────────────────────────────┘
+```
+
+---
+
+#### [1단계] QR 코드 발행 — `company/qr-code.php`
+
+> **누가**: 업소 소유자 또는 관리자
+> **언제**: 고객에게 QR 코드를 보여주고 싶을 때
+> **어디서**: 업소 현장 (매장 카운터, 테이블 등)
+
+```
+[입력]
+  URL: /company/qr-code.php?idx={업소_idx}
+  요구: 로그인 필수, 업소 소유자 또는 관리자
+
+[처리] CompanyService::issueQrCode()
+  ① 로그인 확인 (idx_member > 0)
+  ② 업소 idx 유효성 확인 (idx > 0)
+  ③ 업소 존재 확인 (CompanyRepository::findByIdx)
+  ④ 업소 승인 상태 확인 (status === 'a')
+  ⑤ 권한 확인 (업소 소유자 OR 관리자)
+  ⑥ 하루 발행 한도 확인 (QrCodeRepository::countTodayIssued < 10)
+  ⑦ verification_id 생성: bin2hex(random_bytes(32)) → 64자 hex
+  ⑧ DB INSERT: company_qr_codes
+     ├─ status = 'a'
+     ├─ created_at = time()
+     └─ expired_at = time() + 180 (3분)
+
+[출력]
+  QR URL: https://philgo.com/company/qr-code-scanned.php?code={verification_id}
+  화면에 QRCode.js 라이브러리(CDN)로 256×256 QR 코드 이미지 렌더링
+  오늘 발행 현황: "발행 N/10 · 남은 횟수 M"
+```
+
+**핵심 제약 조건**:
+
+| 항목 | 값 | 설명 |
+|------|-----|------|
+| verification_id 길이 | 64자 hex | 256비트 CSPRNG (`bin2hex(random_bytes(32))`) |
+| 만료 시간 | 180초 (3분) | `time() + 180` |
+| 일일 발행 한도 | 업소당 10개/일 | `countTodayIssued()` |
+| QR 코드 크기 | 256×256px | QRCode.js 설정 |
+| 오류 복구 수준 | H (High) | QRCode.CorrectLevel.H |
+
+---
+
+#### [2단계] QR 코드 스캔 — `company/qr-code-scanned.php`
+
+> **누가**: 업소를 방문한 고객 (로그인/비로그인 모두 가능)
+> **언제**: 업소에서 QR 코드를 스캔했을 때
+> **어디서**: 고객의 모바일 기기 (카메라 앱 또는 QR 스캐너)
+
+```
+[입력]
+  URL: /company/qr-code-scanned.php?code={verification_id}
+  요구: 없음 (비로그인도 스캔 가능, 포인트 적립은 로그인 시만)
+
+[처리] CompanyService::scanQrCode()
+  ① code 파라미터 존재 확인
+  ② verification_id로 QR 코드 조회 (QrCodeRepository::findByVerificationId)
+  ③ QR 코드 상태 확인 (status === 'a')
+  ④ 만료 확인 (time() <= expired_at, expired_at=0이면 무제한)
+  ⑤ 업소 승인 확인 (CompanyRepository::findByIdx → isApproved)
+  ⑥ 24시간 중복 확인 (로그인 사용자만)
+     ├─ QrCodeUsageRepository::hasRecentUsage(idx_company, idx_member)
+     │  SELECT COUNT(*) FROM company_qr_code_usages
+     │  WHERE idx_company=? AND idx_member=? AND scanned_at > time()-86400 AND result='s'
+     └─ 중복 시: result='r' 기록 → 에러 (이전 방문 시간 포함)
+  ⑦ 성공 기록 INSERT: company_qr_code_usages (result='s')
+  ⑧ used_count 증가: company_qr_codes
+  ⑨ 포인트 적립 (로그인 사용자만):
+     ├─ 금액: random_int(1000, 2000) → 1,000P~2,000P
+     └─ PointLogService::changePoints(module='company', action='qr_scan')
+  ⑩ 재방문 판별:
+     └─ QrCodeUsageRepository::hasPreviousVisit(idx_company, idx_member)
+        SELECT COUNT(*) FROM company_qr_code_usages
+        WHERE idx_company=? AND idx_member=? AND scanned_at <= time()-86400 AND result='s'
+
+[출력]
+  성공: { usage_idx, reward_points, point_after, is_revisit, company }
+  화면:
+    ├─ 체크 아이콘 (펄스 애니메이션 3회)
+    ├─ "N포인트 적립!" 표시
+    ├─ 재방문자 → "재방문 포인트 추첨" 강조 버튼 (글로우 애니메이션)
+    └─ 첫 방문자 → "업소록 후기 포인트" CTA (녹색 그라데이션)
+```
+
+**중요 분기점**: `is_revisit` 값에 따라 다음 단계 결정
+
+```
+is_revisit === true  → [3단계] 재방문 포인트 추첨으로 유도
+is_revisit === false → [4단계] 후기 작성으로 유도 (재방문 건너뜀)
+비로그인             → 로그인 안내 메시지 표시
+```
+
+---
+
+#### [3단계] 재방문 포인트 추첨 — `company/re-visit-point.php`
+
+> **누가**: 24시간 이전에 해당 업소를 방문한 이력이 있는 로그인 고객
+> **언제**: QR 스캔 성공 후 "재방문 포인트 추첨" 버튼 클릭
+> **어디서**: `qr-code-scanned.php` → `re-visit-point.php`
+
+```
+[입력]
+  URL: /company/re-visit-point.php?usage_idx={usage_idx}
+  요구: 로그인 필수, 재방문자만
+
+[처리] CompanyService::reVisitPoint()
+  ① 로그인 확인 (idx_member > 0)
+  ② usage_idx 유효성 확인 (> 0)
+  ③ 스캔 기록 조회 (QrCodeUsageRepository::findByIdx)
+  ④ 본인 기록 확인 (usage.idx_member === 로그인 사용자)
+  ⑤ 성공한 스캔 확인 (usage.result === 's')
+  ⑥ 재방문 여부 재확인 (QrCodeUsageRepository::hasPreviousVisit)
+  ⑦ 중복 적립 방지:
+     SELECT COUNT(*) FROM sf_point_log
+     WHERE module='company' AND action='qr_revisit'
+       AND idx_member_to=? AND etc LIKE '%usage_idx:{N}%'
+  ⑧ 포인트 적립:
+     ├─ 금액: random_int(2000, 3000) → 2,000P~3,000P
+     └─ PointLogService::changePoints(module='company', action='qr_revisit')
+     └─ etc: "{업소명} 재방문 보상 (usage_idx:{N})"
+
+[출력]
+  성공: { reward_points, point_before, point_after, company_name }
+  화면:
+    ├─ 선물 아이콘 (confetti-drop 애니메이션)
+    ├─ "재방문 축하" 제목
+    ├─ "N포인트" 강조 (point-reveal 애니메이션)
+    ├─ 포인트 변동: "변경 전 → 변경 후"
+    └─ "업소록 후기 포인트" CTA → [4단계]로 유도
+```
+
+---
+
+#### [4단계] 업소록 후기 작성 — `company/visit-review-point.php`
+
+> **누가**: QR 스캔에 성공한 로그인 고객 (재방문/첫방문 모두)
+> **언제**: QR 스캔 성공 후 또는 재방문 포인트 추첨 후
+> **어디서**: `qr-code-scanned.php` 또는 `re-visit-point.php` → `visit-review-point.php`
+
+```
+[입력]
+  URL: /company/visit-review-point.php?usage_idx={usage_idx}
+  요구: 로그인 필수, 본인 스캔 기록, 미작성 상태
+
+[서버 검증] (PHP 사이드, 페이지 로드 시)
+  ① 로그인 확인
+  ② usage_idx 유효성 확인
+  ③ 스캔 기록 조회 → 본인 확인 → result='s' 확인
+  ④ 중복 후기 확인: VisitReviewRepository::existsByUsageIdx($usage_idx)
+  ⑤ 상태 분기:
+     ├─ 에러 → 에러 메시지 표시
+     ├─ 이미 작성 → "이미 후기를 작성하셨습니다" 안내
+     └─ 작성 가능 → Vue.js 폼 표시
+
+[Vue.js 프론트엔드 처리]
+  ① 사진 업로드:
+     ├─ <input type="file" accept="image/*" multiple>
+     ├─ v7apiUpload(file, 'company', 'visit_review')
+     └─ 업로드된 사진 idx 배열 저장
+  ② 후기 내용 입력:
+     ├─ <textarea v-model="content" maxlength="1000">
+     └─ 유효성: mb_strlen(content) >= 10
+  ③ 제출 유효성:
+     └─ isValid = content.length >= 10 && uploadedPhotos.length >= 1
+
+[API 호출] v7api('company.submitVisitReview', {...})
+  → CompanyService::submitVisitReview()
+    ① 로그인 확인
+    ② usage_idx 유효성
+    ③ 스캔 기록 조회 → 본인 → result='s'
+    ④ 중복 후기 확인 (VisitReviewRepository::existsByUsageIdx)
+    ⑤ 내용 검증 (최소 10자)
+    ⑥ 사진 검증 (최소 1장)
+    ⑦ 후기 INSERT: company_reviews (usage_idx UNIQUE 제약)
+    ⑧ 사진 연결: uploads.attached_to = review_idx
+    ⑨ 포인트 적립:
+       ├─ 금액: random_int(2000, 3000) → 2,000P~3,000P
+       └─ PointLogService::changePoints(module='company', action='visit_review')
+       └─ etc: "{업소명} 방문 후기 보상 (usage_idx:{N})"
+
+[출력]
+  성공: { review_idx, reward_points, point_before, point_after }
+  화면:
+    ├─ 별 아이콘 (success-pop 애니메이션)
+    ├─ "후기 포인트 적립 완료!"
+    ├─ "N포인트" 강조
+    ├─ 포인트 변동: "변경 전 → 변경 후"
+    └─ 버튼: "업소 보기" | "업소록 홈"
+```
+
+---
+
+#### [5단계] 업소 상세 페이지 — `company/view.php`
+
+> **누가**: 모든 사용자 (로그인 불필요)
+> **언제**: 업소 정보와 방문 후기를 확인하고 싶을 때
+> **어디서**: 업소록 목록, 검색 결과, 후기 작성 완료 후
+
+```
+[입력]
+  URL: /company/view.php?idx={업소_idx}
+  요구: 없음
+
+[처리] Vue.js 앱 (#visit-reviews-app)
+  mounted() → v7api('company.getVisitReviews', { idx_company, page: 1, limit: 5 })
+  → CompanyService::getVisitReviews()
+    ① 업소 idx 확인 (> 0)
+    ② 페이지네이션: page=max(1,...), limit=max(1,min(50,...))
+    ③ 후기 목록 조회: VisitReviewRepository::findByCompany
+    ④ 각 후기의 사진 조회: UploadRepository::findByAttached
+    ⑤ 후기 총 개수 조회: VisitReviewRepository::countByCompany
+
+[출력]
+  { reviews: [...], total, page, limit }
+  화면:
+    ├─ "방문 후기" 섹션 제목 + 총 개수 배지
+    ├─ 후기 카드 목록:
+    │  ├─ 사진 갤러리 (수평 스크롤, 80×80px)
+    │  ├─ 후기 내용 (줄바꿈 보존, 200자 truncate)
+    │  └─ 메타: 날짜 + 포인트 배지 + 사진 개수
+    └─ "더보기" 버튼 (page++ → 추가 5개 로드)
+```
+
+---
+
+### 4.10 분기별 사용자 경험 (ToT 트리 구조 분석)
+
+> **ToT(Tree of Thought)**: 각 분기점에서 발생할 수 있는 **모든 경로**를 트리 구조로 나열한다.
+> 이를 통해 모든 사용자 시나리오와 에러 케이스를 빠짐없이 파악할 수 있다.
+
+```
+사용자가 업소에서 QR 코드 스캔
+│
+├─ [A] code 파라미터 없음
+│  └─ ❌ "QR 코드가 필요합니다" → 업소록 홈
+│
+├─ [B] verification_id 미존재 (잘못된 QR)
+│  └─ ❌ "유효하지 않은 QR 코드입니다" (result='f') → 업소록 홈
+│
+├─ [C] QR 코드 비활성 (status !== 'a')
+│  └─ ❌ "비활성화된 QR 코드입니다" (result='f') → 업소록 홈
+│
+├─ [D] QR 코드 만료 (time() > expired_at)
+│  └─ ❌ "만료된 QR 코드입니다" (result='f') → 업소록 홈
+│
+├─ [E] 업소 미승인/삭제
+│  └─ ❌ "해당 업소가 유효하지 않습니다" (result='f') → 업소록 홈
+│
+├─ [F] 24시간 중복 (로그인 상태)
+│  └─ ⚠️ "포인트 충전 실패" + 이전 방문 시간 (result='r') → 업소록 홈
+│
+├─ [G] 스캔 성공 — 비로그인
+│  └─ ✅ 감사 페이지 (포인트 0) + 로그인 안내 → 끝
+│
+├─ [H] 스캔 성공 — 로그인 + 첫 방문
+│  ├─ ✅ 1,000~2,000P 적립 + is_revisit=false
+│  └─ 후기 CTA 표시
+│     ├─ [H-1] 후기 작성 클릭 → [4단계]
+│     │  ├─ [H-1a] 사진+글 제출 성공 → 2,000~3,000P 추가 적립
+│     │  │  └─ "업소 보기" | "업소록 홈"
+│     │  ├─ [H-1b] 내용 부족 (< 10자) → 에러 안내 → 재시도
+│     │  ├─ [H-1c] 사진 없음 → 에러 안내 → 재시도
+│     │  └─ [H-1d] 이미 작성함 → "이미 후기를 작성하셨습니다"
+│     └─ [H-2] 후기 미작성 → 끝 (포인트: 1,000~2,000P)
+│
+└─ [I] 스캔 성공 — 로그인 + 재방문
+   ├─ ✅ 1,000~2,000P 적립 + is_revisit=true
+   └─ 재방문 포인트 추첨 버튼 표시
+      ├─ [I-1] 추첨 버튼 클릭 → [3단계]
+      │  ├─ [I-1a] 추첨 성공 → 2,000~3,000P 추가 적립
+      │  │  └─ 후기 CTA 표시
+      │  │     ├─ [I-1a-i] 후기 작성 → 2,000~3,000P 추가 적립
+      │  │     │  └─ 최대 합계: 2,000 + 3,000 + 3,000 = 8,000P
+      │  │     └─ [I-1a-ii] 후기 미작성 → 끝 (합계: ~5,000P)
+      │  ├─ [I-1b] 이미 적립함 → "이미 재방문 포인트를 받으셨습니다"
+      │  └─ [I-1c] 재방문 조건 미충족 → "재방문 조건을 충족하지 않습니다"
+      └─ [I-2] 추첨 미클릭 → 끝 (포인트: 1,000~2,000P)
+```
+
+#### 포인트 적립 시나리오별 합산
+
+| 시나리오 | QR 스캔 | 재방문 추첨 | 후기 작성 | **합계** |
+|----------|---------|------------|----------|----------|
+| 비로그인 스캔 | 0P | — | — | **0P** |
+| 첫 방문 (후기 미작성) | 1,000~2,000P | — | — | **1,000~2,000P** |
+| 첫 방문 + 후기 작성 | 1,000~2,000P | — | 2,000~3,000P | **3,000~5,000P** |
+| 재방문 (추첨+후기 미진행) | 1,000~2,000P | — | — | **1,000~2,000P** |
+| 재방문 + 추첨만 | 1,000~2,000P | 2,000~3,000P | — | **3,000~5,000P** |
+| 재방문 + 추첨 + 후기 | 1,000~2,000P | 2,000~3,000P | 2,000~3,000P | **5,000~8,000P** |
+
+---
+
+### 4.11 API 메서드별 검증 로직 상세
+
+#### issueQrCode() — QR 코드 발행
+
+```
+순서  검증 항목                     에러 메시지                              에러 조건
+──── ──────────────────────────── ─────────────────────────────────────── ─────────────────
+ ①   로그인 확인                   '로그인이 필요합니다.'                    idx_member <= 0
+ ②   업소 idx 확인                 '업소 idx가 필요합니다.'                  idx <= 0
+ ③   업소 존재 확인                '해당 업소를 찾을 수 없습니다.'           findByIdx === null
+ ④   업소 승인 상태                '승인된 업소만 QR 코드를 발행...'         status !== 'a'
+ ⑤   권한 확인                     'QR 코드 발행 권한이 없습니다.'          소유자 아님 AND 관리자 아님
+ ⑥   하루 발행 한도                '하루 최대 10개까지 발행 가능...'         todayCount >= 10
+```
+
+#### scanQrCode() — QR 코드 스캔
+
+```
+순서  검증 항목                     에러 메시지                              result   에러 조건
+──── ──────────────────────────── ─────────────────────────────────────── ─────── ─────────────────
+ ①   code 존재                     'QR 코드가 필요합니다.'                  'f'      empty($code)
+ ②   verification_id 조회          '유효하지 않은 QR 코드입니다.'           'f'      findByVerificationId === null
+ ③   QR 코드 상태                  '비활성화된 QR 코드입니다.'              'f'      status !== 'a'
+ ④   만료 확인                     '만료된 QR 코드입니다.'                  'f'      time() > expired_at
+ ⑤   업소 승인                     '해당 업소가 유효하지 않습니다.'         'f'      company === null || !isApproved
+ ⑥   24시간 중복                   '24시간_중복|{이전 방문 시간}'           'r'      hasRecentUsage === true
+```
+
+#### reVisitPoint() — 재방문 포인트 추첨
+
+```
+순서  검증 항목                     에러 메시지                              에러 조건
+──── ──────────────────────────── ─────────────────────────────────────── ─────────────────
+ ①   로그인 확인                   '로그인이 필요합니다.'                    idx_member <= 0
+ ②   usage_idx 유효성              '유효하지 않은 요청입니다.'               usage_idx <= 0
+ ③   스캔 기록 존재                '스캔 기록을 찾을 수 없습니다.'           findByIdx === null
+ ④   본인 기록 확인                '본인의 스캔 기록이 아닙니다.'            idx_member 불일치
+ ⑤   성공 스캔 확인                '유효한 스캔 기록이 아닙니다.'            result !== 's'
+ ⑥   재방문 여부                   '재방문 조건을 충족하지 않습니다.'        hasPreviousVisit === false
+ ⑦   중복 적립 방지                '이미 재방문 포인트를 받으셨습니다.'      sf_point_log에 동일 usage_idx 존재
+```
+
+#### submitVisitReview() — 방문 후기 제출
+
+```
+순서  검증 항목                     에러 메시지                              에러 조건
+──── ──────────────────────────── ─────────────────────────────────────── ─────────────────
+ ①   로그인 확인                   '로그인이 필요합니다.'                    idx_member <= 0
+ ②   usage_idx 유효성              '유효하지 않은 요청입니다.'               usage_idx <= 0
+ ③   스캔 기록 존재                '스캔 기록을 찾을 수 없습니다.'           findByIdx === null
+ ④   본인 기록 확인                '본인의 스캔 기록이 아닙니다.'            idx_member 불일치
+ ⑤   성공 스캔 확인                '유효한 스캔 기록이 아닙니다.'            result !== 's'
+ ⑥   중복 후기 방지                '이미 후기를 작성하셨습니다.'             existsByUsageIdx === true
+ ⑦   내용 최소 길이                '후기 내용을 10자 이상 작성해 주세요.'    mb_strlen(content) < 10
+ ⑧   사진 최소 장수                '사진을 1장 이상 첨부해 주세요.'          photoIdxs count < 1
+```
+
+---
+
+### 4.12 에러 시나리오 매트릭스
+
+> 모든 에러 케이스를 **페이지 × 에러 유형**으로 정리한 종합 매트릭스이다.
+
+| 페이지 | 에러 | 원인 | result | 화면 처리 | 다음 액션 |
+|--------|------|------|:------:|-----------|-----------|
+| qr-code.php | 로그인 필요 | 비로그인 | — | 에러 메시지 | 로그인 유도 |
+| qr-code.php | 업소 없음 | idx 파라미터 오류 | — | 에러 카드 | 업소록 홈 |
+| qr-code.php | 업소 미승인 | status !== 'a' | — | 에러 카드 | 업소 보기 |
+| qr-code.php | 권한 없음 | 소유자 아님 | — | 에러 카드 | 업소 보기 |
+| qr-code.php | 발행 한도 초과 | 하루 10개 초과 | — | 에러 카드 | 내일 재시도 |
+| **scanned.php** | **QR 코드 없음** | **code 파라미터 누락** | **'f'** | **에러 아이콘** | **업소록 홈** |
+| scanned.php | 유효하지 않은 QR | verification_id 미존재 | 'f' | 에러 아이콘 | 업소록 홈 |
+| scanned.php | 비활성 QR | status !== 'a' | 'f' | 에러 아이콘 | 업소록 홈 |
+| scanned.php | 만료된 QR | 180초 초과 | 'f' | 에러 아이콘 | 업소록 홈 |
+| scanned.php | 업소 미유효 | 업소 미승인/삭제 | 'f' | 에러 아이콘 | 업소록 홈 |
+| **scanned.php** | **24시간 중복** | **동일 업소 24시간 내 재스캔** | **'r'** | **시계 아이콘 + 이전 방문 시간** | **업소록 홈** |
+| re-visit.php | 로그인 필요 | 비로그인 | — | 에러 카드 | 로그인 유도 |
+| re-visit.php | 유효하지 않은 요청 | usage_idx 오류 | — | 에러 카드 | 업소록 홈 |
+| re-visit.php | 본인 기록 아님 | idx_member 불일치 | — | 에러 카드 | 업소록 홈 |
+| re-visit.php | 재방문 미충족 | hasPreviousVisit=false | — | 에러 카드 | 업소록 홈 |
+| **re-visit.php** | **중복 적립** | **sf_point_log에 이미 존재** | — | **에러 카드** | **업소록 홈** |
+| review.php | 로그인 필요 | 비로그인 | — | 에러 카드 | 로그인 유도 |
+| review.php | 유효하지 않은 요청 | usage_idx 오류 | — | 에러 카드 | 업소록 홈 |
+| review.php | 본인 기록 아님 | idx_member 불일치 | — | 에러 카드 | 업소록 홈 |
+| **review.php** | **이미 작성** | **existsByUsageIdx=true** | — | **체크 아이콘 + 안내** | **업소 보기** |
+| review.php | 내용 부족 | < 10자 | — | alert-danger | 재시도 |
+| review.php | 사진 없음 | 0장 | — | alert-danger | 재시도 |
+
+---
+
+### 4.13 웹 페이지 통합 흐름
+
+> 각 PHP 페이지 간의 **데이터 전달 방식**과 **이동 경로**를 종합 정리한다.
+
+#### 페이지 간 데이터 전달
+
+```
+[1단계] qr-code.php
+  ├─ 입력: ?idx={업소_idx}
+  ├─ 생성: verification_id (64자 hex)
+  └─ 출력: QR URL에 code={verification_id} 인코딩
+
+       ↓ QR 스캔 (물리적 행위)
+
+[2단계] qr-code-scanned.php
+  ├─ 입력: ?code={verification_id}
+  ├─ 생성: usage_idx (사용 기록 ID)
+  ├─ 판단: is_revisit (재방문 여부)
+  └─ 출력: usage_idx를 URL 파라미터로 전달
+
+       ↓ 링크 클릭
+
+[3단계] re-visit-point.php          (재방문자만)
+  ├─ 입력: ?usage_idx={usage_idx}
+  ├─ 처리: 재방문 포인트 적립
+  └─ 출력: usage_idx를 다음 페이지에 전달
+
+       ↓ 링크 클릭
+
+[4단계] visit-review-point.php
+  ├─ 입력: ?usage_idx={usage_idx}
+  ├─ 처리: 사진 업로드 + 후기 작성 + 포인트 적립
+  └─ 출력: 업소 보기 또는 업소록 홈으로 이동
+
+       ↓ 링크 클릭
+
+[5단계] view.php
+  ├─ 입력: ?idx={업소_idx}
+  └─ 처리: 후기 목록 표시 (Vue.js + v7api)
+```
+
+#### 핵심 연결 키(Key)
+
+| 키 | 형식 | 생성 시점 | 사용 페이지 |
+|-----|------|-----------|-------------|
+| `verification_id` | 64자 hex | issueQrCode() | qr-code.php → qr-code-scanned.php |
+| `usage_idx` | int (AUTO_INCREMENT) | scanQrCode() | qr-code-scanned.php → re-visit-point.php → visit-review-point.php |
+| `idx_company` | int | 업소 등록 시 | 모든 페이지에서 사용 |
+
+#### 중복 방지 메커니즘 종합
+
+| 대상 | 방지 방법 | DB 검증 |
+|------|-----------|---------|
+| QR 스캔 (24시간) | `hasRecentUsage()` | `company_qr_code_usages` WHERE scanned_at > time()-86400 AND result='s' |
+| 재방문 포인트 | `sf_point_log` 검색 | WHERE module='company' AND action='qr_revisit' AND etc LIKE '%usage_idx:{N}%' |
+| 후기 작성 | `existsByUsageIdx()` + UNIQUE 제약 | `company_reviews.usage_idx` UNIQUE KEY |
+
+#### sf_point_log 기록 종합
+
+| 단계 | module | action | 포인트 | etc 형식 |
+|------|--------|--------|--------|----------|
+| QR 스캔 | `company` | `qr_scan` | +1,000~2,000 | `{업소명} QR 스캔 보상` |
+| 재방문 추첨 | `company` | `qr_revisit` | +2,000~3,000 | `{업소명} 재방문 보상 (usage_idx:{N})` |
+| 후기 작성 | `company` | `visit_review` | +2,000~3,000 | `{업소명} 방문 후기 보상 (usage_idx:{N})` |
+
+#### Debug 로그 태그
+
+| 단계 | 로그 태그 | 기록 시점 |
+|------|-----------|-----------|
+| QR 스캔 | `[QR-POINT]` | 포인트 적립 시작 / 랜덤 포인트 결정 / 적립 완료 |
+| 재방문 추첨 | `[QR-REVISIT]` | 추첨 시작 / 포인트 결정 / 적립 완료 |
+| 후기 제출 | `[VISIT-REVIEW]` | 제출 시작 / 포인트 결정 / 저장+적립 완료 |
 
 ---
 
