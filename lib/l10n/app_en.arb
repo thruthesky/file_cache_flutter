@@ -494,6 +494,10 @@
   "@companyDirectoryTitle": {
     "description": "Title for company directory screen"
   },
+  "myCompanySection": "My Company",
+  "@myCompanySection": {
+    "description": "Section title for user's own company in the company list"
+  },
   "addCompany": "Add Company",
   "@addCompany": {
     "description": "Button text for adding a new company"

@@ -97,7 +97,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
       );
       if (!mounted) return;
       setState(() {
-        _reviews = (result['items'] as List<dynamic>?) ?? [];
+        _reviews = (result['reviews'] as List<dynamic>?) ?? [];
         _isReviewsLoading = false;
       });
     } catch (e) {
@@ -819,14 +819,17 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   ) {
     final content = (review['content'] as String?) ?? '';
     final authorName = (review['author_name'] as String?) ?? '';
-    final createdAt = (review['created_at'] as String?) ?? '';
+    final createdAtRaw = review['created_at'];
     final photos = (review['photos'] as List<dynamic>?) ?? [];
 
-    /// 날짜 포맷
-    String formattedDate = createdAt;
+    /// 날짜 포맷: created_at은 Unix timestamp (초 단위 정수)
+    String formattedDate = '';
     try {
-      if (createdAt.isNotEmpty) {
-        final date = DateTime.parse(createdAt);
+      if (createdAtRaw is int && createdAtRaw > 0) {
+        final date = DateTime.fromMillisecondsSinceEpoch(createdAtRaw * 1000);
+        formattedDate = dateFormatter.format(date);
+      } else if (createdAtRaw is String && createdAtRaw.isNotEmpty) {
+        final date = DateTime.parse(createdAtRaw);
         formattedDate = dateFormatter.format(date);
       }
     } catch (_) {}
@@ -881,10 +884,15 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               itemCount: photos.length,
               separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
-                final photoUrl =
+                final rawUrl =
                     (photos[index] is Map ? photos[index]['url'] : photos[index])
                             ?.toString() ??
                         '';
+                /// 상대 경로를 전체 URL로 변환
+                final baseUrl =
+                    PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '');
+                final photoUrl =
+                    rawUrl.startsWith('http') ? rawUrl : '$baseUrl$rawUrl';
                 return Container(
                   width: 72,
                   height: 72,

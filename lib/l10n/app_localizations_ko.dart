@@ -378,6 +378,9 @@ class LoKo extends Lo {
   String get companyDirectoryTitle => '업체 목록';
 
   @override
+  String get myCompanySection => '내 업소';
+
+  @override
   String get addCompany => '업체 추가';
 
   @override

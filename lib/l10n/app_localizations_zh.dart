@@ -377,6 +377,9 @@ class LoZh extends Lo {
   String get companyDirectoryTitle => '商家目录';
 
   @override
+  String get myCompanySection => '我的公司';
+
+  @override
   String get addCompany => '添加商家';
 
   @override

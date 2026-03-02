@@ -20,6 +20,7 @@ import 'package:philgo/widgets/home/menu/home_menu_categories.dart';
 import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
 import 'package:philgo/screens/company/company.qr_code_scanned.screen.dart';
+import 'package:philgo/screens/event/event_entry.screen.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 메인 홈 화면 (Main Home Screen)
@@ -59,22 +60,28 @@ class _MainHomeState extends State<MainHome> {
       /// Set background transparent (use parent background)
       backgroundColor: Colors.transparent,
 
-      /// 글쓰기 FAB (Floating Action Button)
-      /// Create Post FAB (Floating Action Button)
-      /// Comic Design: 흰색 배경, 검정 아이콘, 2.0px 테두리, borderRadius 24
-      /// Comic Design: white background, black icon, 2.0px border, borderRadius 24
-      floatingActionButton: ComicFab(
-        /// FAB 클릭 시 카테고리 선택 다이얼로그 표시
-        /// Show category selection dialog on FAB tap
-        onPressed: () => showPostCategoryDialog(context),
+      /// FAB 영역 - 이벤트 FAB + 글쓰기 FAB 나란히 배치
+      /// 오른쪽 하단에 [이벤트] [글쓰기] 순서로 표시
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          /// 이벤트 응모 FAB - 스피닝 휠 이벤트 페이지로 이동
+          ComicFab(
+            onPressed: () => EventEntryScreen.push(context),
+            tooltip: '이벤트',
+            heroTag: 'event_fab',
+            child: const FaIcon(FontAwesomeIcons.gift),
+          ),
+          const SizedBox(width: 8),
 
-        /// FAB 툴팁
-        /// FAB tooltip
-        tooltip: '글쓰기',
-
-        /// FAB 아이콘
-        /// FAB icon
-        child: const FaIcon(FontAwesomeIcons.plus),
+          /// 글쓰기 FAB - 카테고리 선택 다이얼로그 표시
+          ComicFab(
+            onPressed: () => showPostCategoryDialog(context),
+            tooltip: '글쓰기',
+            heroTag: 'write_fab',
+            child: const FaIcon(FontAwesomeIcons.plus),
+          ),
+        ],
       ),
       body: ContentContainer(
         child: CustomScrollView(

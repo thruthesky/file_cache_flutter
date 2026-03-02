@@ -833,6 +833,12 @@ abstract class Lo {
   /// **'Company Directory'**
   String get companyDirectoryTitle;
 
+  /// Section title for user's own company in the company list
+  ///
+  /// In en, this message translates to:
+  /// **'My Company'**
+  String get myCompanySection;
+
   /// Button text for adding a new company
   ///
   /// In en, this message translates to:

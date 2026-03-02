@@ -122,6 +122,7 @@
   "postWithCommentsCannotBeDeleted": "댓글이 있는 게시글은 삭제할 수 없습니다",
   "postWithCommentsCannotBeEdited": "댓글이 있는 게시글은 수정할 수 없습니다",
   "companyDirectoryTitle": "업체 목록",
+  "myCompanySection": "내 업소",
   "addCompany": "업체 추가",
   "companyDirectoryDescription": "업체를 등록하면 구글, 네이버 등에 검색되어 더 많은 고객에게 노출됩니다.",
   "registerCompany": "등록",

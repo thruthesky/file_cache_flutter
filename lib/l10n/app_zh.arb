@@ -266,6 +266,7 @@
   "officeInteriorPhoto": "办公室/商店内部照片",
   "officeInteriorGuideline": "办公室/商店内部全景照片",
   "companyDirectoryTitle": "商家目录",
+  "myCompanySection": "我的公司",
   "addCompany": "添加商家",
   "companyDirectoryDescription": "注册商家后，它将显示在导航栏和其他位置，让更多用户看到。",
   "companiesRegistered": "{count, plural, =0{共注册0家商家。} =1{共注册1家商家。} other{共注册{count}家商家。}}",

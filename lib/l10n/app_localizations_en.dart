@@ -389,6 +389,9 @@ class LoEn extends Lo {
   String get companyDirectoryTitle => 'Company Directory';
 
   @override
+  String get myCompanySection => 'My Company';
+
+  @override
   String get addCompany => 'Add Company';
 
   @override

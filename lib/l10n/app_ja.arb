@@ -266,6 +266,7 @@
   "officeInteriorPhoto": "オフィス/店舗内装写真",
   "officeInteriorGuideline": "オフィス/店舗内装全体写真",
   "companyDirectoryTitle": "業者録",
+  "myCompanySection": "マイ企業",
   "addCompany": "業者を追加",
   "companyDirectoryDescription": "業者を登録すると、ナビゲーションバーなどに表示され、より多くのユーザーに見られます。",
   "companiesRegistered": "{count, plural, =0{合計0社登録済み。} =1{合計1社登録済み。} other{合計{count}社登録済み。}}",

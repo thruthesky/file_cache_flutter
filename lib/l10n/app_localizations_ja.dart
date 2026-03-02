@@ -378,6 +378,9 @@ class LoJa extends Lo {
   String get companyDirectoryTitle => '業者録';
 
   @override
+  String get myCompanySection => 'マイ企業';
+
+  @override
   String get addCompany => '業者を追加';
 
   @override
