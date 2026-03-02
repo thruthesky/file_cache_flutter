@@ -4346,7 +4346,7 @@ abstract class Lo {
   /// Spinning wheel game instruction text
   ///
   /// In en, this message translates to:
-  /// **'Tap the button to spin the wheel!'**
+  /// **'Spin the wheel and try for a Starbucks coupon!'**
   String get spinWheelInstruction;
 
   /// Spin wheel button label
@@ -4438,6 +4438,12 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Please stop the wheel first.'**
   String get spinWheelStopFirst;
+
+  /// Button text to view coupon image
+  ///
+  /// In en, this message translates to:
+  /// **'View Coupon'**
+  String get viewCoupon;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

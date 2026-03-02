@@ -2667,7 +2667,7 @@
       }
     }
   },
-  "spinWheelInstruction": "Tap the button to spin the wheel!",
+  "spinWheelInstruction": "Spin the wheel and try for a Starbucks coupon!",
   "@spinWheelInstruction": {
     "description": "Spinning wheel game instruction text"
   },
@@ -2740,5 +2740,9 @@
   "spinWheelStopFirst": "Please stop the wheel first.",
   "@spinWheelStopFirst": {
     "description": "Message shown when user tries to navigate while wheel is spinning"
+  },
+  "viewCoupon": "View Coupon",
+  "@viewCoupon": {
+    "description": "Button text to view coupon image"
   }
 }

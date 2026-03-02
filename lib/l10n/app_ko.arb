@@ -2785,7 +2785,7 @@
     "description": "Event entry screen - visit date label"
   },
   "commentCreatedWithPoint": "댓글 작성 완료! +{point}P 획득",
-  "spinWheelInstruction": "버튼을 눌러 원판을 돌려주세요!",
+  "spinWheelInstruction": "원판을 돌려 스타벅스 쿠폰에 도전해 보세요!",
   "spinWheelSpin": "원판 돌리기",
   "spinWheelReset": "재설정하기",
   "spinWheelMiss": "꽝",
@@ -2809,5 +2809,9 @@
   "spinWheelStopFirst": "원판 돌리기를 먼저 중단해주세요.",
   "@spinWheelStopFirst": {
     "description": "Message shown when user tries to navigate while wheel is spinning"
+  },
+  "viewCoupon": "쿠폰 확인",
+  "@viewCoupon": {
+    "description": "Button text to view coupon image"
   }
 }

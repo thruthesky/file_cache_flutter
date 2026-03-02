@@ -2215,7 +2215,8 @@ class LoEn extends Lo {
   }
 
   @override
-  String get spinWheelInstruction => 'Tap the button to spin the wheel!';
+  String get spinWheelInstruction =>
+      'Spin the wheel and try for a Starbucks coupon!';
 
   @override
   String get spinWheelSpin => 'Spin Wheel';
@@ -2265,4 +2266,7 @@ class LoEn extends Lo {
 
   @override
   String get spinWheelStopFirst => 'Please stop the wheel first.';
+
+  @override
+  String get viewCoupon => 'View Coupon';
 }

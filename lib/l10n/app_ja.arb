@@ -2178,7 +2178,7 @@
     "description": "Event entry screen - visit date label"
   },
   "commentCreatedWithPoint": "コメント投稿完了！+{point}P獲得",
-  "spinWheelInstruction": "ボタンを押してルーレットを回してください！",
+  "spinWheelInstruction": "ルーレットを回してスタバクーポンに挑戦しよう！",
   "spinWheelSpin": "ルーレットを回す",
   "spinWheelReset": "リセット",
   "spinWheelMiss": "ハズレ",
@@ -2202,5 +2202,9 @@
   "spinWheelStopFirst": "ルーレットを先に止めてください。",
   "@spinWheelStopFirst": {
     "description": "Message shown when user tries to navigate while wheel is spinning"
+  },
+  "viewCoupon": "クーポン確認",
+  "@viewCoupon": {
+    "description": "Button text to view coupon image"
   }
 }

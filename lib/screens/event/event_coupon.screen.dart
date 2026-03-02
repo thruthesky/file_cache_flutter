@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/screens/event/event_entry.screen.dart';
+import 'package:philgo_api/philgo_api.dart' show PhilgoConfig;
 import 'package:philgo/v7_api/v7_api.dart';
 
 /// 이벤트 쿠폰 화면 (Event Coupon Screen)
@@ -72,12 +73,12 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
   }
 
   /// 쿠폰 이미지의 전체 URL 생성
-  /// 서버 응답의 starbucks_coupon_url은 상대 경로 (예: /event/cupon/starbucks/4.jpg)
+  /// v7ApiEndpoint에서 api.php를 제거하고 쿠폰 상대 경로를 결합
   String _getCouponImageUrl(Map<String, dynamic> coupon) {
     final relativePath = coupon['starbucks_coupon_url'] as String? ?? '';
     if (relativePath.isEmpty) return '';
-    // PhilgoConfig의 서버 URL 사용
-    return 'https://philgo.com$relativePath';
+    final baseUrl = PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '');
+    return '$baseUrl$relativePath';
   }
 
   /// 쿠폰 당첨 날짜 포맷 (Unix timestamp → 날짜 문자열)
@@ -172,12 +173,78 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
     );
   }
 
+  /// 쿠폰 이미지를 전체 화면 다이얼로그로 표시
+  void _showCouponImage(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final scheme = Theme.of(context).colorScheme;
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(16),
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              /// 쿠폰 이미지 (핀치 줌 지원)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: InteractiveViewer(
+                  minScale: 0.5,
+                  maxScale: 3.0,
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.contain,
+                    placeholder: (_, _) => Container(
+                      height: 300,
+                      color: scheme.surfaceContainerLow,
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                    errorWidget: (_, _, _) => Container(
+                      height: 300,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: scheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.image,
+                          size: 48,
+                          color: scheme.onSurfaceVariant.withValues(alpha: 0.3),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              /// 닫기 버튼
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: IconButton.filled(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const FaIcon(FontAwesomeIcons.xmark, size: 18),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.black.withValues(alpha: 0.5),
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   /// 쿠폰 목록 위젯
   Widget _buildCouponList(ColorScheme scheme) {
+    final l10n = Lo.of(context)!;
+
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _coupons.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 16),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final coupon = _coupons[index];
         final imageUrl = _getCouponImageUrl(coupon);
@@ -187,60 +254,62 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
           elevation: 0,
           color: scheme.surfaceContainerLowest,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 쿠폰 이미지
-              if (imageUrl.isNotEmpty)
-                CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.contain,
-                  placeholder: (context, url) => Container(
-                    height: 200,
-                    color: scheme.surfaceContainerLow,
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    height: 200,
-                    color: scheme.surfaceContainerLow,
-                    child: Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.image,
-                        size: 48,
-                        color: scheme.onSurfaceVariant.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  ),
-                ),
-
-              // 당첨 날짜 표시
-              if (date.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                /// 당첨 날짜 + 파일명
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FaIcon(
-                        FontAwesomeIcons.calendar,
-                        size: 14,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        date,
-                        style:
-                            Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: scheme.onSurfaceVariant,
+                      /// 당첨 날짜
+                      Row(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.calendar,
+                            size: 12,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            date.isNotEmpty ? date : '-',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: scheme.onSurface,
                                 ),
+                          ),
+                        ],
                       ),
+
+                      /// 쿠폰 파일명
+                      if ((coupon['starbucks_coupon_file'] as String?)?.isNotEmpty == true) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          coupon['starbucks_coupon_file'] as String,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   ),
                 ),
-            ],
+
+                /// 쿠폰 확인 버튼
+                if (imageUrl.isNotEmpty)
+                  FilledButton.tonalIcon(
+                    onPressed: () => _showCouponImage(imageUrl),
+                    icon: const FaIcon(FontAwesomeIcons.lightImage, size: 14),
+                    label: Text(l10n.viewCoupon),
+                  ),
+              ],
+            ),
           ),
-        ).animate().fadeIn(duration: 300.ms, delay: (index * 100).ms);
+        ).animate().fadeIn(duration: 300.ms, delay: (index * 80).ms);
       },
     );
   }

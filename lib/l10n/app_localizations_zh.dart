@@ -2166,7 +2166,7 @@ class LoZh extends Lo {
   }
 
   @override
-  String get spinWheelInstruction => '点击按钮转动转盘！';
+  String get spinWheelInstruction => '转动转盘，挑战星巴克优惠券！';
 
   @override
   String get spinWheelSpin => '转动转盘';
@@ -2216,4 +2216,7 @@ class LoZh extends Lo {
 
   @override
   String get spinWheelStopFirst => '请先停止转盘。';
+
+  @override
+  String get viewCoupon => '查看优惠券';
 }

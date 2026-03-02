@@ -6,6 +6,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo/v7_api/user_api.dart';
+import 'package:philgo/v7_api/v7_api.dart';
 import 'package:philgo/v7_api/widgets/upload/v7_file_upload.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -53,11 +54,17 @@ class _CompanyQrCodeScannedScreenState
   bool isUploading = false;
   double uploadProgress = 0.0;
 
+  /// QR 코드 검증 상태
+  Map<String, dynamic>? scanResult;
+  bool isScanLoading = true;
+  String? scanErrorMessage;
+
   @override
   void initState() {
     super.initState();
     _loadCompany();
     _loadUserInfo();
+    _scanQrCode();
   }
 
   Future<void> _loadCompany() async {
@@ -95,6 +102,28 @@ class _CompanyQrCodeScannedScreenState
       setState(() {
         userErrorMessage = e.toString();
         isUserLoading = false;
+      });
+    }
+  }
+
+  /// v7 API company.scanQrCode를 호출하여 QR 코드 검증
+  /// 응답: result ('s'=성공, 'f'=실패, 'r'=24시간 중복 거부), message, company_name 등
+  Future<void> _scanQrCode() async {
+    try {
+      final result = await v7api('company.scanQrCode', data: {
+        'code': widget.verificationId,
+      });
+      if (!mounted) return;
+      setState(() {
+        scanResult = result;
+        isScanLoading = false;
+      });
+    } catch (e) {
+      debugLog('company.scanQrCode API 에러: $e');
+      if (!mounted) return;
+      setState(() {
+        scanErrorMessage = e.toString();
+        isScanLoading = false;
       });
     }
   }
@@ -277,6 +306,134 @@ class _CompanyQrCodeScannedScreenState
         .animate()
         .fadeIn(duration: 300.ms, delay: 150.ms)
         .slideY(begin: 0.05, end: 0);
+  }
+
+  /// QR 코드 검증 결과 섹션 위젯
+  /// company.scanQrCode API 응답을 표시 (성공/실패/거부)
+  Widget _buildScanResultSection(ColorScheme scheme, ThemeData theme) {
+    /// 로딩 중
+    if (isScanLoading) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: scheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 1.5,
+                valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'QR 코드 검증 중...',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    /// API 호출 에러
+    if (scanErrorMessage != null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: scheme.errorContainer.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.triangleExclamation,
+              size: 14,
+              color: scheme.error,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                scanErrorMessage!,
+                style:
+                    theme.textTheme.bodySmall?.copyWith(color: scheme.error),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isScanLoading = true;
+                  scanErrorMessage = null;
+                });
+                _scanQrCode();
+              },
+              child: FaIcon(
+                FontAwesomeIcons.arrowsRotate,
+                size: 14,
+                color: scheme.error,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    /// 결과 없음
+    if (scanResult == null) return const SizedBox.shrink();
+
+    final result = scanResult!['result']?.toString() ?? '';
+    final message = scanResult!['message']?.toString() ?? '';
+
+    /// 결과 코드별 색상 및 아이콘 결정
+    final bool isSuccess = result == 's';
+    final bool isRejected = result == 'r';
+    final Color statusColor =
+        isSuccess ? scheme.primary : (isRejected ? scheme.tertiary : scheme.error);
+    final Color bgColor = isSuccess
+        ? scheme.primaryContainer.withValues(alpha: 0.3)
+        : isRejected
+            ? scheme.tertiaryContainer.withValues(alpha: 0.3)
+            : scheme.errorContainer.withValues(alpha: 0.3);
+    final IconData statusIcon = isSuccess
+        ? FontAwesomeIcons.solidCircleCheck
+        : isRejected
+            ? FontAwesomeIcons.solidClock
+            : FontAwesomeIcons.solidTriangleExclamation;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          FaIcon(statusIcon, size: 20, color: statusColor),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms, delay: 200.ms);
   }
 
   /// 영수증 AI 분석 결과 카드 위젯
@@ -883,6 +1040,11 @@ class _CompanyQrCodeScannedScreenState
 
           /// 현재 로그인 사용자 정보 카드 (v7 API user.me)
           _buildUserInfoSection(scheme, theme),
+
+          const SizedBox(height: 12),
+
+          /// QR 코드 검증 결과 카드
+          _buildScanResultSection(scheme, theme),
 
           /// 업로드된 영수증 결과 표시
           if (receiptData != null) ...[

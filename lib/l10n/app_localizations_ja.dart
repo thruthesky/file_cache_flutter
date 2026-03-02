@@ -2172,7 +2172,7 @@ class LoJa extends Lo {
   }
 
   @override
-  String get spinWheelInstruction => 'ボタンを押してルーレットを回してください！';
+  String get spinWheelInstruction => 'ルーレットを回してスタバクーポンに挑戦しよう！';
 
   @override
   String get spinWheelSpin => 'ルーレットを回す';
@@ -2222,4 +2222,7 @@ class LoJa extends Lo {
 
   @override
   String get spinWheelStopFirst => 'ルーレットを先に止めてください。';
+
+  @override
+  String get viewCoupon => 'クーポン確認';
 }

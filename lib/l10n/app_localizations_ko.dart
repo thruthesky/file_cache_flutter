@@ -2171,7 +2171,7 @@ class LoKo extends Lo {
   }
 
   @override
-  String get spinWheelInstruction => '버튼을 눌러 원판을 돌려주세요!';
+  String get spinWheelInstruction => '원판을 돌려 스타벅스 쿠폰에 도전해 보세요!';
 
   @override
   String get spinWheelSpin => '원판 돌리기';
@@ -2221,4 +2221,7 @@ class LoKo extends Lo {
 
   @override
   String get spinWheelStopFirst => '원판 돌리기를 먼저 중단해주세요.';
+
+  @override
+  String get viewCoupon => '쿠폰 확인';
 }

@@ -324,6 +324,15 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
         ),
         backgroundColor: scheme.surface,
         elevation: 0,
+        actions: [
+          /// 수정 모드일 때 업소 보기 버튼 표시
+          if (widget.company != null)
+            TextButton(
+              onPressed: () =>
+                  CompanyViewScreen.push(context, widget.company!.idx),
+              child: Text(T.viewDetails),
+            ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: scheme.outlineVariant),

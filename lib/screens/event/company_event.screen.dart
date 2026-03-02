@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
+import 'package:philgo/screens/event/qr_scanner.screen.dart';
 
 /// 업소 이벤트 화면 (Company Event Screen)
 ///
@@ -150,9 +151,7 @@ class CompanyEventScreen extends StatelessWidget {
 
             /// QR 코드 스캔하기 버튼
             FilledButton.icon(
-              onPressed: () {
-                /// TODO: QR 코드 스캐너 화면 연결
-              },
+              onPressed: () => QrScannerScreen.push(context),
               icon: const FaIcon(FontAwesomeIcons.lightQrcode, size: 20),
               label: Text(l10n.companyEventScanButton),
               style: FilledButton.styleFrom(

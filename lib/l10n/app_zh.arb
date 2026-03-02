@@ -2178,7 +2178,7 @@
     "description": "Event entry screen - visit date label"
   },
   "commentCreatedWithPoint": "评论发布成功！+{point}P获得",
-  "spinWheelInstruction": "点击按钮转动转盘！",
+  "spinWheelInstruction": "转动转盘，挑战星巴克优惠券！",
   "spinWheelSpin": "转动转盘",
   "spinWheelReset": "重置",
   "spinWheelMiss": "谢谢参与",
@@ -2202,5 +2202,9 @@
   "spinWheelStopFirst": "请先停止转盘。",
   "@spinWheelStopFirst": {
     "description": "Message shown when user tries to navigate while wheel is spinning"
+  },
+  "viewCoupon": "查看优惠券",
+  "@viewCoupon": {
+    "description": "Button text to view coupon image"
   }
 }
