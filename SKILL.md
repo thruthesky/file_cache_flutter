@@ -185,6 +185,8 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
 | AI | [api/v7-ai.md](references/api/v7-ai.md) | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
+| Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |
+| Company Visit Review | [api/v7-company-visit-review.md](references/api/v7-company-visit-review.md) | ✅ 완료 |
 | Post | [api/v7-post.md](references/api/v7-post.md) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 
