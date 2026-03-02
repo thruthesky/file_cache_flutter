@@ -14,6 +14,7 @@
 - [설정 키 정의](#설정-키-정의)
 - [API 엔드포인트](#api-엔드포인트)
   - [settings.get](#settingsget)
+  - [settings.get 관리자 목록 조회](#settingsget-관리자-목록-조회)
   - [settings.update](#settingsupdate)
   - [settings.appVersion](#settingsappversion)
 - [관리자 확인 로직 (isAdmin)](#관리자-확인-로직-isadmin)
@@ -52,14 +53,16 @@
 ### settings.get
 
 설정 조회 (공개 API). 인증 불필요.
+전체 조회 시 관리자 목록(admins)도 함께 반환한다.
 
 **요청:**
 ```
 GET /api.php?method=settings.get
 GET /api.php?method=settings.get&key=app_version_android
+GET /api.php?method=settings.get&key=admins
 ```
 
-**응답 (전체):**
+**응답 (전체 - 관리자 목록 포함):**
 ```json
 {
   "app_version_android": "2.0.16",
@@ -67,7 +70,14 @@ GET /api.php?method=settings.get&key=app_version_android
   "app_version_ios": "2.0.16",
   "app_version_ios_build": "46",
   "company_qr_event_enabled": "Y",
-  "event_entry_enabled": "Y"
+  "event_entry_enabled": "Y",
+  "admins": {
+    "admins": [
+      "OSXtfcfdJkcLBovnQAC6Q1WMa2x1",
+      "xG3UczB56qazt2fMLH97154Cda62"
+    ],
+    "chat_admin": "RaHIcr45pvPzYdcDIv6JoW8DnSH2"
+  }
 }
 ```
 
@@ -77,6 +87,32 @@ GET /api.php?method=settings.get&key=app_version_android
   "key": "app_version_android",
   "value": "2.0.16"
 }
+```
+
+### settings.get 관리자 목록 조회
+
+`key=admins`로 관리자 목록만 단독 조회할 수 있다. 인증 불필요.
+`etc/app.config.php`의 `ADMINS` 상수(Firebase UID 배열)와 채팅 관리자 UID를 반환한다.
+기존 `get_admins()` 함수와 동일한 형태이다.
+
+**요청:**
+```
+GET /api.php?method=settings.get&key=admins
+```
+
+**응답:**
+```json
+{
+  "admins": [
+    "OSXtfcfdJkcLBovnQAC6Q1WMa2x1",
+    "xG3UczB56qazt2fMLH97154Cda62"
+  ],
+  "chat_admin": "RaHIcr45pvPzYdcDIv6JoW8DnSH2"
+}
+```
+
+> **참고**: `admins` 데이터는 DB(`sf_config` 테이블)가 아닌 PHP 상수(`etc/app.config.php`의 `ADMINS`)에서 가져온다.
+> 따라서 `settings.update`로 변경할 수 없고, 소스 코드 수정을 통해서만 변경 가능하다.
 ```
 
 ### settings.update
@@ -379,6 +415,11 @@ if (!SettingsService::isEventEntryEnabled()) {
 // 앱 버전 정보
 $version = SettingsService::getAppVersion();
 // ['android' => ['version' => '2.0.16', 'build_number' => 46], 'ios' => [...]]
+
+// 관리자 목록 조회
+$admins = SettingsService::getAdmins();
+// ['admins' => ['OSXtfcfdJkcLBovnQAC6Q1WMa2x1', ...], 'chat_admin' => 'RaHIcr45pvPzYdcDIv6JoW8DnSH2']
+```
 ```
 
 ### 기존 레거시 페이지
@@ -396,11 +437,11 @@ $enabled = SettingsService::isCompanyQrEventEnabled();
 ./vendor/bin/pest tests/Unit/SettingsTest.php
 ```
 
-34개 테스트, 86개 assertions:
+37개 테스트, 101개 assertions:
 - SettingsEntity: fromArray, toArray, toBool, toJson
 - SettingsRepository: CRUD, findByKeys, setMultiple, 기존 config 호환성
-- SettingsService: getAll, get, update (권한 검증), getAppVersion, On/Off 토글
-- SettingsController: get, update, appVersion
+- SettingsService: getAll, get, update (권한 검증), getAppVersion, On/Off 토글, **getAdmins**
+- SettingsController: get (전체/특정키/**admins**), update, appVersion
 
 ## 발견된 이슈 및 해결
 
