@@ -6,8 +6,9 @@ import 'company.image.placeholder.dart';
 /// Company Card Widget (업체 카드 위젯)
 ///
 /// Masonry 레이아웃에 최적화된 업체 카드입니다.
+/// - 이미지 영역과 텍스트 영역 분리 (깔끔한 카드 구조)
 /// - 이미지 비율에 따른 동적 높이 조절
-/// - 카테고리 아이콘 + 업체명 오버레이
+/// - 카테고리 아이콘 + 업체명 하단 표시
 /// - Comic 디자인 스타일 (surfaceContainerLowest, outlineVariant 테두리)
 /// - 이미지가 없을 때 예쁜 fallback UI (그라데이션 배경 + 큰 아이콘)
 class CompanyCard extends StatefulWidget {
@@ -32,8 +33,8 @@ class CompanyCard extends StatefulWidget {
   final VoidCallback? onTap;
 
   /// 이미지 최소/최대 높이 (Image min/max height)
-  static const double minImageHeight = 140.0;
-  static const double maxImageHeight = 300.0;
+  static const double minImageHeight = 100.0;
+  static const double maxImageHeight = 220.0;
 
   /// 이미지 높이 캐시 (Image height cache)
   static final Map<String, double> _heightCache = {};
@@ -78,100 +79,83 @@ class _CompanyCardState extends State<CompanyCard> {
           ),
         ),
         clipBehavior: Clip.antiAlias,
-        child: hasImage
-            ? _buildImageContent(theme, scheme)
-            : _buildFallback(theme, scheme),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// 이미지 영역
+            hasImage
+                ? _buildImageContent(scheme)
+                : _buildFallbackImage(scheme),
+
+            /// 하단 텍스트 영역 (카테고리 아이콘 + 업체명)
+            _buildInfoSection(theme, scheme),
+          ],
+        ),
       ),
     );
   }
 
-  /// Fallback UI (이미지가 없을 때)
-  ///
-  /// 그라데이션 배경 + 큰 카테고리 아이콘 + 업체명을 표시합니다.
-  /// Beautiful fallback with gradient background, large category icon, and company name
-  Widget _buildFallback(ThemeData theme, ColorScheme scheme) {
+  /// 이미지 없을 때 fallback 영역
+  /// 그라데이션 배경 + 큰 카테고리 아이콘
+  Widget _buildFallbackImage(ColorScheme scheme) {
     return Container(
-      /// 이미지가 없을 때 최소 높이 적용
       height: CompanyCard.minImageHeight,
       width: double.infinity,
-
-      /// 그라데이션 배경 (primary 색상 기반)
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            scheme.primary.withValues(alpha: 0.08),
-            scheme.primary.withValues(alpha: 0.15),
-            scheme.secondary.withValues(alpha: 0.1),
+            scheme.primary.withValues(alpha: 0.06),
+            scheme.primary.withValues(alpha: 0.12),
+            scheme.secondary.withValues(alpha: 0.08),
           ],
         ),
       ),
-      child: Stack(
+      child: Center(
+        child: FaIcon(
+          widget.categoryIcon,
+          size: 40,
+          color: scheme.primary.withValues(alpha: 0.2),
+        ),
+      ),
+    );
+  }
+
+  /// 하단 정보 섹션 (카테고리 아이콘 배지 + 업체명)
+  Widget _buildInfoSection(ThemeData theme, ColorScheme scheme) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+      child: Row(
         children: [
-          /// 중앙의 큰 카테고리 아이콘
-          Padding(
-            padding: const EdgeInsets.only(bottom: 48.0),
+          /// 카테고리 아이콘 배지
+          Container(
+            width: 26,
+            height: 26,
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
             child: Center(
               child: FaIcon(
                 widget.categoryIcon,
-                size: 48,
-                color: scheme.primary.withValues(alpha: 0.15),
+                size: 12,
+                color: scheme.primary,
               ),
             ),
           ),
+          const SizedBox(width: 8),
 
-          /// 하단 업체명 + 카테고리 아이콘
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    scheme.surface.withValues(alpha: 0.9),
-                  ],
-                ),
+          /// 업체명
+          Expanded(
+            child: Text(
+              widget.name,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w600,
               ),
-              child: Row(
-                children: [
-                  /// 카테고리 아이콘 (작은 사이즈)
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: scheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Center(
-                      child: FaIcon(
-                        widget.categoryIcon,
-                        size: 14,
-                        color: scheme.primary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  /// 업체명
-                  Expanded(
-                    child: Text(
-                      widget.name,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: scheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -179,17 +163,17 @@ class _CompanyCardState extends State<CompanyCard> {
     );
   }
 
-  Widget _buildImageContent(ThemeData theme, ColorScheme scheme) {
+  /// 이미지 콘텐츠 (CachedNetworkImage 사용)
+  Widget _buildImageContent(ColorScheme scheme) {
     return CachedNetworkImage(
       imageUrl: widget.imageUrl!,
       fit: BoxFit.cover,
       imageBuilder: (context, imageProvider) {
         if (_cachedHeight != null) {
-          return _buildImageContainer(
-            imageProvider,
-            _cachedHeight!,
-            theme,
-            scheme,
+          return SizedBox(
+            height: _cachedHeight!,
+            width: double.infinity,
+            child: Image(image: imageProvider, fit: BoxFit.cover),
           );
         }
 
@@ -242,93 +226,6 @@ class _CompanyCardState extends State<CompanyCard> {
       errorWidget: (context, url, error) => SizedBox(
         height: _cachedHeight ?? CompanyCard.minImageHeight,
         child: CompanyImagePlaceholder(icon: widget.categoryIcon),
-      ),
-    );
-  }
-
-  Widget _buildImageContainer(
-    ImageProvider imageProvider,
-    double height,
-    ThemeData theme,
-    ColorScheme scheme,
-  ) {
-    return SizedBox(
-      height: height,
-      width: double.infinity,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image(image: imageProvider, fit: BoxFit.cover),
-          _buildOverlay(theme, scheme),
-        ],
-      ),
-    );
-  }
-
-  /// 이미지 오버레이 (Image Overlay)
-  ///
-  /// 그라데이션 배경 위에 카테고리 아이콘 + 업체명을 표시합니다.
-  /// Shows category icon + company name on gradient background
-  Widget _buildOverlay(ThemeData theme, ColorScheme scheme) {
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 20, 12, 14),
-        decoration: BoxDecoration(
-          /// Theme-based gradient overlay for image readability
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.transparent,
-              scheme.scrim.withValues(alpha: 0.5),
-              scheme.scrim.withValues(alpha: 0.75),
-            ],
-          ),
-        ),
-        child: Row(
-          children: [
-            /// 카테고리 아이콘 배지 (반투명 배경)
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                color: scheme.surface.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Center(
-                child: FaIcon(
-                  widget.categoryIcon,
-                  size: 14,
-                  color: scheme.surface,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-
-            /// 업체명
-            Expanded(
-              child: Text(
-                widget.name,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: scheme.surface,
-                  fontWeight: FontWeight.w600,
-                  shadows: [
-                    Shadow(
-                      color: scheme.scrim.withValues(alpha: 0.5),
-                      offset: const Offset(0, 1),
-                      blurRadius: 2,
-                    ),
-                  ],
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
