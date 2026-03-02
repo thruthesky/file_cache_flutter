@@ -320,6 +320,71 @@ private function requireAdmin(): void
 }
 ```
 
+## 관리자 목록 조회 (getAdmins)
+
+### 핵심 로직
+
+`SettingsService::getAdmins()`는 `etc/app.config.php`의 `ADMINS` 상수(Firebase UID 배열)와
+채팅 관리자 UID를 반환한다. 기존 레거시 `get_admins()` 함수와 동일한 형태이다.
+DB 기반이 아닌 PHP 상수 기반이므로 `settings.update`로 변경할 수 없다.
+
+### 핵심 소스코드
+
+```php
+// lib/settings/SettingsService.php
+
+/**
+ * 관리자 목록을 반환한다.
+ *
+ * etc/app.config.php의 ADMINS 상수(Firebase UID 배열)와
+ * 채팅 관리자 UID를 포함한 배열을 반환한다.
+ * 기존 get_admins() 함수와 동일한 형태이다.
+ *
+ * @return array ['admins' => string[], 'chat_admin' => string]
+ */
+public static function getAdmins(): array
+{
+    return [
+        'admins' => \ADMINS,
+        'chat_admin' => \get_chat_admin_firebase_uid(),
+    ];
+}
+```
+
+### Controller에서의 관리자 목록 반환 로직
+
+```php
+// lib/settings/SettingsController.php — get() 메서드
+
+public function get(array $input): array
+{
+    $key = $input['key'] ?? '';
+
+    // 관리자 목록 조회
+    if ($key === 'admins') {
+        return SettingsService::getAdmins();
+    }
+
+    // 특정 키 조회
+    if (!empty($key)) {
+        return [
+            'key' => $key,
+            'value' => SettingsService::get($key),
+        ];
+    }
+
+    // 전체 설정 조회 (관리자 목록 포함)
+    $all = SettingsService::getAll();
+    $all['admins'] = SettingsService::getAdmins();
+    return $all;
+}
+```
+
+> **주의: 네임스페이스 전역 참조**
+> `Philgo\Settings` 네임스페이스 내에서 전역 상수/함수를 참조할 때는
+> 반드시 `\ADMINS`, `\get_chat_admin_firebase_uid()`와 같이 백슬래시(`\`)를 붙여
+> 전역 네임스페이스를 명시해야 한다. PHP 8에서 네임스페이스 내 미정의 상수 참조 시 에러가 발생한다.
+
 ## 관리자 페이지
 
 ### 기본 정보
