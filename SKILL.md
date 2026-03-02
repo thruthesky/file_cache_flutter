@@ -148,6 +148,16 @@ Windows 환경 설정 차이점을 포함합니다.
 
 Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.
 
+### Flutter 앱 업소록 연동 → [app/v7-app.md](references/app/v7-app.md)
+
+Flutter 앱의 업소록(Company) 기능이 v7 API를 통해 데이터를 가져오는 방법을 상세히 다룹니다.
+CompanyApi 클래스(list, get, mine, create, update, reVisitPoint, submitVisitReview, getVisitReviews),
+개발 모드/프로덕션 모드 엔드포인트 설정(`--dart-define=V7_API_ENDPOINT`),
+개발 모드에서 로컬 MariaDB 직접 접근, 8개 화면 구조와 라우팅,
+QR 코드 삼단콤보 흐름(QR 스캔→재방문→후기→포인트), CompanyEntity 필드(33개),
+업소 상태 흐름(신규→심사중→승인), 파일 업로드(V7FileUpload 위젯),
+포인트 적립 규칙, 에러 처리 패턴, 권한 모델을 포함합니다.
+
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
 필고 포인트 이벤트 시스템 전체를 하나로 통합 정리한 개요 문서입니다.
