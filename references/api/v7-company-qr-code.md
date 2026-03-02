@@ -363,17 +363,36 @@ CompanyService::scanQrCode(array $input): array
    - 업소 승인 상태 → 실패 기록
 3. 로그인 사용자: 24시간 중복 사용 확인 → 거부 기록 (result='r')
 4. 성공 기록 (result='s') + used_count 증가
-5. 결과 반환
+5. **포인트 적립** (로그인 사용자만): 1,000~2,000P 랜덤 적립 (`PointLogService::changePoints()`)
+6. 결과 반환 (포인트 정보 포함)
 
-**응답 예시 (성공):**
+**응답 예시 (성공 — 로그인 사용자, 포인트 적립 포함):**
 
 ```json
 {
-    "result": "s",
-    "message": "QR 코드 사용이 완료되었습니다.",
-    "company_name": "테스트 업소",
-    "company_idx": 100,
-    "scanned_at": 1709280000
+    "success": true,
+    "usage_idx": 42,
+    "idx_company": 1108,
+    "company_name": "Durian",
+    "company": { ... },
+    "reward_points": 1523,
+    "point_before": 5000,
+    "point_after": 6523
+}
+```
+
+**응답 예시 (성공 — 비로그인 사용자, 포인트 미적립):**
+
+```json
+{
+    "success": true,
+    "usage_idx": 43,
+    "idx_company": 1108,
+    "company_name": "Durian",
+    "company": { ... },
+    "reward_points": 0,
+    "point_before": 0,
+    "point_after": 0
 }
 ```
 
@@ -569,6 +588,70 @@ final stats = await v7api('company.qrCodeStats', {'idx': 1025, 'period': 'month'
 | `f` | fail | 유효하지 않은 QR 코드 (존재하지 않음, 비활성, 만료, 업소 미승인) |
 | `r` | rejected | 24시간 이내 중복 사용 거부 |
 
+### 13.4 QR 코드 스캔 포인트 적립 규칙
+
+QR 코드 스캔 성공(result='s') 시 로그인 사용자에게 보상 포인트를 즉시 적립한다.
+
+| 규칙 | 설명 |
+|------|------|
+| 적립 대상 | 로그인 사용자만 (`idx_member > 0`) |
+| 적립 범위 | 1,000P ~ 2,000P 랜덤 (`random_int(1000, 2000)`) |
+| 적립 시점 | QR 코드 스캔 성공 즉시 (서버 측, `scanQrCode()` 내부) |
+| 포인트 로그 | `sf_point_log` 테이블에 기록 (module='company', action='qr_scan') |
+| 적립 함수 | `PointLogService::changePoints()` (lib/point_log/PointLogService.php) |
+| etc 필드 | `"{업소명} QR 스캔 보상"` 형식 |
+| 비로그인 | 스캔은 성공하지만 포인트 미적립 (reward_points=0) |
+| 상세 로깅 | `Debug::log()` (var/debug.log)에 `[QR-POINT]` 태그로 상세 기록 |
+
+**로그 태그 및 기록 항목:**
+
+| 시점 | 로그 태그 | 기록 항목 |
+|------|-----------|-----------|
+| 적립 시작 | `[QR-POINT] 포인트 적립 시작` | idx_member, verification_id, idx_company, company_name, usage_idx, ip, user_agent |
+| 포인트 결정 | `[QR-POINT] 랜덤 포인트 결정` | reward_points, range |
+| 적립 완료 | `[QR-POINT] 포인트 적립 완료` | idx_member, reward_points, point_before, point_after, point_log_idx, module, action |
+| 비로그인 | `[QR-POINT] 비로그인 사용자` | verification_id, idx_company, company_name |
+
+### 13.5 재방문 포인트 추첨 규칙
+
+QR 코드 스캔 성공 시 재방문자에게 추가 포인트 추첨 기회를 제공한다.
+
+| 규칙 | 설명 |
+|------|------|
+| 재방문 판별 | 해당 업소에서 24시간 이전 성공(result='s') 기록 보유 |
+| 적립 대상 | 로그인 사용자 중 재방문자만 |
+| 적립 범위 | 2,000P ~ 3,000P 랜덤 (`random_int(2000, 3000)`) |
+| 적립 시점 | `company/re-visit-point.php` 페이지에서 사용자 클릭 시 |
+| 중복 적립 방지 | 동일 usage_idx에 대해 1회만 적립 (sf_point_log etc 필드 검색) |
+| 포인트 로그 | module='company', action='qr_revisit' |
+| etc 필드 | `"{업소명} 재방문 보상 (usage_idx:{N})"` 형식 |
+| 상세 로깅 | `[QR-REVISIT]` 태그로 Debug::log() 기록 |
+
+**`CompanyService::reVisitPoint()` API:**
+
+```php
+CompanyService::reVisitPoint(['usage_idx' => int, 'idx_member' => int]): array
+```
+
+반환값:
+```json
+{
+    "success": true,
+    "reward_points": 2521,
+    "point_before": 12019,
+    "point_after": 14540,
+    "company_name": "Durian",
+    "idx_company": 1108
+}
+```
+
+**24시간 중복 에러 메시지 (qr-code-scanned.php):**
+
+스캔 시 24시간 내 중복 방문이면 "포인트 충전 실패" 페이지를 표시한다:
+- 제목: "포인트 충전 실패"
+- 안내: "한 업소에서 24시간 이내 재방문한 경우 포인트를 충전하지 않습니다."
+- 이전 방문 시간: "이전 방문 시간: 2026년 03월 01일 15:30"
+
 ---
 
 ## 14. 관리자 페이지
@@ -722,7 +805,7 @@ v7 `code` 파라미터와 v6 `idx`+`verification_id` 레거시 형식을 모두 
 파라미터 확인
   ├─ code 파라미터 존재 → v7 처리
   │   └─ CompanyService::scanQrCode() 호출
-  │       ├─ 성공 → 감사 페이지 표시
+  │       ├─ 성공 → 포인트 적립 (로그인 시 1,000~2,000P) → 감사 페이지 + 포인트 표시
   │       └─ 실패 → 에러 메시지 (만료/비활성/중복 등)
   │
   ├─ idx + verification_id 존재 → v6 레거시 처리
@@ -743,6 +826,45 @@ v7 `code` 파라미터와 v6 `idx`+`verification_id` 레거시 형식을 모두 
 | 업소 무효 | "해당 업소가 유효하지 않습니다." |
 | 24시간 중복 | "24시간 이내에 이미 사용하셨습니다. 내일 다시 시도해 주세요." |
 
+#### 포인트 적립 UI
+
+스캔 성공 시 감사 메시지 하단에 포인트 적립 정보를 표시한다.
+
+| 상태 | UI 표시 |
+|------|---------|
+| 로그인 + 포인트 적립 | 노란색 카드: `{reward_points}P 적립!` + `현재 포인트: {point_after}P` |
+| 비로그인 | 파란색 안내: `로그인하면 포인트를 받을 수 있습니다.` |
+
+다국어 지원 키: `적립`, `현재_포인트`, `로그인_포인트_안내`
+
+#### 재방문 포인트 추첨 버튼
+
+재방문자(`is_revisit=true`)이고 로그인한 사용자에게 강조 버튼을 표시한다.
+
+| 요소 | 설명 |
+|------|------|
+| 조건 | `$result['is_revisit'] === true && login()` |
+| 버튼 스타일 | `btn-lg btn-warning rounded-pill w-100 fw-bold` + 글로우 애니메이션 |
+| 클릭 대상 | `/company/re-visit-point.php?usage_idx={usage_idx}` |
+| 표시 내용 | "재방문 포인트 추첨" + "2,000P ~ 3,000P" 서브텍스트 |
+
+### 17.2.1 company/re-visit-point.php — 재방문 포인트 적립 페이지
+
+재방문 사용자가 "재방문 포인트 추첨" 버튼 클릭 시 이동하는 페이지.
+`CompanyService::reVisitPoint()`를 호출하여 2,000~3,000P 랜덤 포인트를 적립한다.
+
+```
+사용자 클릭 → re-visit-point.php
+  ↓
+로그인 확인
+  ↓
+CompanyService::reVisitPoint() 호출
+  ├─ 성공 → 축하 카드 + 적립 포인트 표시 (그래디언트 강조)
+  └─ 실패 → 에러 카드 (이미 적립됨, 재방문 아님 등)
+```
+
+다국어 지원 키: `재방문_축하`, `재방문_보상_안내`, `재방문_적립_포인트`, `변경_전`, `변경_후`, `재방문_포인트_실패`
+
 ### 17.3 page/help/guideline.php — 이용안내 페이지
 
 "업소록 관리 안내" 아코디언 항목에 QR 코드 규칙을 표시한다.
@@ -758,4 +880,5 @@ v7 `code` 파라미터와 v6 `idx`+`verification_id` 레거시 형식을 모두 
 
 - `qr-code.php`: `inject_company_qr_code_language()`
 - `qr-code-scanned.php`: `inject_company_qr_code_scanned_language()`
+- `re-visit-point.php`: `inject_company_re_visit_point_language()`
 - `guideline.php`: `inject_help_guideline_language()`
