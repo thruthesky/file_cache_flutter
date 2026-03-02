@@ -17,7 +17,7 @@
 
 - QR 코드는 **1회용**: 한 번 사용된 QR 코드는 재사용 불가
 - QR 코드에는 **verification_id** 포함: 업소 회원이 생성할 때 랜덤 고유 ID 발급, DB에 저장
-- QR 코드 내용 형식: `https://philgo.com/company/qr-code-scanned.php?idx={idx_company}&verification_id={verification_id}`
+- QR 코드 내용 형식: `https://philgo.com/company/qr-code-scanned.php?code={verification_id}`
 - 하루 최대 **10개** QR 코드 생성 제한 (업소 당, 24시간 기준)
 - 모든 포인트는 **서버에서 랜덤 생성**: `random_int()` 사용, 클라이언트 조작 방지
 - 모든 API 호출은 **v7 API 아키텍처** 사용 (Controller → Service → Repository → DB)
@@ -47,12 +47,12 @@
 #### 기존 QR 코드 스캔 화면 참고
 
 - **company.qr_code_scanned.screen.dart**: 기존 먹방 이벤트 QR 스캔 결과 화면
-  - `idx`(업소 idx)와 `verificationId`를 파라미터로 수신
-  - `CompanyApi.get(idx)`로 업소 정보 로드
+  - `code`(verification_id)를 파라미터로 수신
+  - verification_id로 QR 코드 조회하여 업소 정보 로드
   - `UserApi.me()`로 사용자 정보 로드
   - `V7FileUpload` 위젯으로 영수증 업로드
   - `ai.analyzeReceipt` API로 AI 영수증 분석
-  - 라우트: `/company/qr-code-scanned.php?idx={idx}&verification_id={verificationId}`
+  - 라우트: `/company/qr-code-scanned.php?code={verificationId}`
   - **이 화면의 패턴을 참고하여** 포인트 이벤트 QR 스캔 결과 화면 구현
 
 ---
@@ -100,12 +100,12 @@
 서버: point_event_qr 테이블에 INSERT
     - idx_company: 업소 idx
     - idx_member_created: 로그인 회원 idx
-    - verification_id: 생성된 32자 hex
+    - verification_id: 생성된 64자 hex
     - created_at: time()
-    - expired_at: time() + 86400 (24시간 후)
+    - expired_at: time() + 180 (180초 후)
     ↓
-서버: QR 코드 콘텐츠 반환
-    qr_content = "https://philgo.com/company/qr-code-scanned.php?idx={idx_company}&verification_id={verification_id}"
+서버: QR 코드 URL 반환
+    qr_url = "https://philgo.com/company/qr-code-scanned.php?code={verification_id}"
     ↓
 Flutter: qr_flutter 패키지로 QR 이미지 렌더링
     사용자에게 QR 코드 이미지 표시
@@ -115,10 +115,10 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 
 | 항목 | 상세 |
 |------|------|
-| 생성 방식 | `bin2hex(random_bytes(16))` — PHP CSPRNG 사용 |
-| 길이 | 32자 hex (128비트) |
-| 충돌 확률 | 약 2^-128 (사실상 0) |
-| 유효 기간 | 생성 후 24시간 |
+| 생성 방식 | `bin2hex(random_bytes(32))` — PHP CSPRNG 사용 |
+| 길이 | 64자 hex (256비트) |
+| 충돌 확률 | 약 2^-256 (사실상 0) |
+| 유효 기간 | 생성 후 180초(3분) |
 | 사용 횟수 | 1회만 가능 (사용 후 used_at 업데이트) |
 | DB 인덱스 | UNIQUE KEY로 중복 방지 |
 
@@ -138,25 +138,23 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
     │   (BarcodeCapture capture) {
     │     final barcode = capture.barcodes.first;
     │     final rawValue = barcode.rawValue;
-    │     // "https://philgo.com/company/qr-code-scanned.php?idx={idx}&verification_id={vid}"
-    │     // URL에서 idx와 verification_id 쿼리 파라미터 파싱
+    │     // "https://philgo.com/company/qr-code-scanned.php?code={verification_id}"
+    │     // URL에서 code 쿼리 파라미터 파싱
     │   }
     ↓
 [QR 코드 파싱]
-    │ rawValue = "https://philgo.com/company/qr-code-scanned.php?idx=1025&verification_id=a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
+    │ rawValue = "https://philgo.com/company/qr-code-scanned.php?code=a1b2c3d4e5f6..."
     │ → Uri.parse(rawValue)
-    │ → idx_company = uri.queryParameters['idx'] → 1025
-    │ → verification_id = uri.queryParameters['verification_id'] → "a1b2c3..."
+    │ → verification_id = uri.queryParameters['code'] → "a1b2c3d4e5f6..."
     │
     │ 형식 검증:
     │ - "https://philgo.com/company/qr-code-scanned.php" URL 확인
-    │ - idx 쿼리 파라미터가 정수인지 확인
-    │ - verification_id 쿼리 파라미터가 32자 hex인지 확인
+    │ - code 쿼리 파라미터가 64자 hex인지 확인
     │ → 형식 불일치 시: 에러 표시 ("유효하지 않은 QR 코드 형식입니다.")
     ↓
 [company.qr_code_scanned.screen.dart 화면 오픈]
-    │ CompanyQrCodeScannedScreen.push(context, idx_company, verification_id)
-    │ → 라우트: /company/qr-code-scanned.php?idx={idx}&verification_id={vid}
+    │ CompanyQrCodeScannedScreen.push(context, verification_id)
+    │ → 라우트: /company/qr-code-scanned.php?code={verification_id}
     │
     │ 화면 로드 시:
     │ 1. CompanyApi.get(idx) → 업소 정보 로드
@@ -213,14 +211,14 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 
 | 항목 | 결정 | 이유 |
 |------|------|------|
-| QR 코드 포맷 | `https://philgo.com/company/qr-code-scanned.php?idx={idx}&verification_id={vid}` | 딥링크 URL 형태, 웹/앱 모두 대응 |
-| verification_id 생성 | PHP `bin2hex(random_bytes(16))` | 32자 hex, 128비트 CSPRNG, 충돌 불가 |
+| QR 코드 포맷 | `https://philgo.com/company/qr-code-scanned.php?code={verification_id}` | 딥링크 URL 형태, 웹/앱 모두 대응 |
+| verification_id 생성 | PHP `bin2hex(random_bytes(32))` | 64자 hex, 256비트 CSPRNG, 충돌 불가 |
 | QR 스캔 패키지 | `mobile_scanner: ^7.2.0` | Flutter 공식 추천, 높은 인식률 |
-| QR 스캔 결과 화면 | `company.qr_code_scanned.screen.dart` 활용 | 기존 화면 패턴 참고, idx+verificationId 파라미터 구조 동일 |
+| QR 스캔 결과 화면 | `company.qr_code_scanned.screen.dart` 활용 | 기존 화면 패턴 참고, code(verification_id) 파라미터 전달 |
 | 포인트 랜덤 생성 | PHP `random_int(min, max)` | 보안 강화된 CSPRNG 랜덤 함수 |
 | 재방문 판단 | `point_event_history` 테이블에서 동일 업소 이력 확인 | 간단하고 정확 |
 | 후기 저장 | 별도 테이블 or 기존 Post 시스템 활용 | 결정 필요 - 후기 내용은 point_event_history에 저장 가능 |
-| QR 만료 | 생성 후 24시간 | 보안 + 신선도 유지 |
+| QR 만료 | 생성 후 180초(3분) | 보안 + 현장 인증 강화 |
 | 하루 제한 | 업소 당 10개/24시간 | DB created_at 기준 카운트, 남용 방지 |
 | 포인트 기록 | sf_point_log + point_event_history 이중 기록 | 기존 포인트 시스템과 호환 + 이벤트 전용 기록 |
 
@@ -234,11 +232,11 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 |---|----------|----------|
 | 1 | 업소록 등록 회원(status='a')만 QR 코드를 생성할 수 있다 | 비업소 회원 호출 시 에러, 미승인(status!='a') 업소 회원 호출 시 에러 |
 | 2 | 매 호출마다 새로운 고유 verification_id가 생성된다 | 동일 업소에서 연속 호출 시 다른 verification_id 반환 |
-| 3 | verification_id는 32자 hex(128비트 CSPRNG)이다 | 생성된 ID 형식 검증 (정규표현식 `/^[0-9a-f]{32}$/`) |
+| 3 | verification_id는 64자 hex(256비트 CSPRNG)이다 | 생성된 ID 형식 검증 (정규표현식 `/^[0-9a-f]{64}$/`) |
 | 4 | 하루 최대 10개 제한이 적용된다 (24시간 기준) | 11번째 생성 시 에러 반환, 24시간 경과 후 카운트 리셋 |
 | 5 | QR 코드가 DB point_event_qr 테이블에 저장된다 | INSERT 레코드 존재 확인 |
-| 6 | QR 콘텐츠 형식이 `https://philgo.com/company/qr-code-scanned.php?idx={idx}&verification_id={vid}`이다 | 반환된 qr_content URL 파싱 검증 |
-| 7 | expired_at이 created_at + 86400 (24시간)으로 설정된다 | DB 값 확인 |
+| 6 | QR URL 형식이 `https://philgo.com/company/qr-code-scanned.php?code={verification_id}`이다 | 반환된 qr_url URL 파싱 검증 |
+| 7 | expired_at이 created_at + 180 (180초)으로 설정된다 | DB 값 확인 |
 | 8 | QR 코드가 Flutter 화면에 이미지로 표시된다 | qr_flutter 위젯 렌더링 확인 |
 | 9 | 오늘 생성 횟수와 남은 횟수가 표시된다 | today_count, today_remaining 값 확인 |
 | 10 | PEST Unit Test 통과 | 생성/제한/에러/형식 모든 케이스 테스트 |
@@ -249,13 +247,13 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 |---|----------|----------|
 | 1 | 로그인한 회원만 QR 코드를 스캔할 수 있다 | 미로그인 시 에러 반환 |
 | 2 | mobile_scanner 카메라가 정상 오픈된다 | MobileScanner 위젯 렌더링, BarcodeFormat.qr 설정 |
-| 3 | QR 코드 인식 후 올바르게 파싱된다 | URL 쿼리 파라미터에서 idx, verification_id 추출 |
+| 3 | QR 코드 인식 후 올바르게 파싱된다 | URL 쿼리 파라미터에서 code(verification_id) 추출 |
 | 4 | 잘못된 QR 코드 형식 시 에러 표시된다 | philgo:// prefix 없는 코드, 파라미터 불일치 시 에러 |
-| 5 | company.qr_code_scanned.screen.dart 화면이 오픈된다 | 라우팅 확인 (idx, verificationId 파라미터 전달) |
+| 5 | company.qr_code_scanned.screen.dart 화면이 오픈된다 | 라우팅 확인 (code 파라미터 전달) |
 | 6 | 서버에서 verification_id로 QR 코드를 검증한다 | DB 조회 결과 확인 |
 | 7 | 유효한 QR 스캔 시 랜덤 1,000~2,000P 지급된다 | 포인트 기록 DB에 저장, 사용자 알림 |
 | 8 | 이미 사용된 QR 코드 스캔 시 에러 반환된다 | used_at NOT NULL인 코드 거부 |
-| 9 | 만료된 QR 코드(24시간 경과) 스캔 시 에러 반환된다 | expired_at < time() 코드 거부 |
+| 9 | 만료된 QR 코드(180초 경과) 스캔 시 에러 반환된다 | expired_at < time() 코드 거부 |
 | 10 | 자기 업소의 QR 코드는 스캔할 수 없다 | idx_member_created == 로그인 회원 시 에러 |
 | 11 | 스캔 성공 시 QR 코드가 사용됨 상태로 변경된다 | used_at, idx_member_used 업데이트 |
 | 12 | sf_member.point가 업데이트된다 | point = point + 획득포인트 |
@@ -332,10 +330,10 @@ CREATE TABLE `point_event_qr` (
   `idx_company` int(10) UNSIGNED NOT NULL COMMENT '업소 idx (company.idx)',
   `idx_member_created` int(10) UNSIGNED NOT NULL COMMENT 'QR 생성한 업소 회원 idx (sf_member.idx)',
   `idx_member_used` int(10) UNSIGNED DEFAULT NULL COMMENT 'QR 사용한 회원 idx (NULL=미사용)',
-  `verification_id` varchar(32) NOT NULL COMMENT '고유 검증 ID (32자 hex, bin2hex(random_bytes(16)))',
+  `verification_id` varchar(64) NOT NULL COMMENT '고유 검증 ID (64자 hex, bin2hex(random_bytes(32)))',
   `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '생성 시각 (Unix timestamp)',
   `used_at` int(10) UNSIGNED DEFAULT NULL COMMENT '사용 시각 (NULL=미사용)',
-  `expired_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '만료 시각 (created_at + 86400)',
+  `expired_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '만료 시각 (created_at + 180)',
   PRIMARY KEY (`idx`),
   UNIQUE KEY `uk_verification_id` (`verification_id`),
   KEY `idx_company` (`idx_company`),
@@ -509,8 +507,8 @@ public function generateQr(array $input): array
         throw new RuntimeException('하루 최대 10개까지 QR 코드를 생성할 수 있습니다.');
     }
 
-    // 4. verification_id 생성 (32자 hex)
-    $verificationId = bin2hex(random_bytes(16));
+    // 4. verification_id 생성 (64자 hex)
+    $verificationId = bin2hex(random_bytes(32));
 
     // 5. DB 저장
     $now = time();
@@ -519,7 +517,7 @@ public function generateQr(array $input): array
         'idx_member_created' => $user['idx'],
         'verification_id' => $verificationId,
         'created_at' => $now,
-        'expired_at' => $now + 86400,
+        'expired_at' => $now + 180,
     ]);
 
     // 6. 반환
@@ -527,9 +525,9 @@ public function generateQr(array $input): array
         'idx' => $idx,
         'idx_company' => $company['idx'],
         'verification_id' => $verificationId,
-        'qr_content' => "https://philgo.com/company/qr-code-scanned.php?idx={$company['idx']}&verification_id={$verificationId}",
+        'qr_url' => "https://philgo.com/company/qr-code-scanned.php?code={$verificationId}",
         'created_at' => $now,
-        'expired_at' => $now + 86400,
+        'expired_at' => $now + 180,
         'today_count' => $todayCount + 1,
         'today_remaining' => 10 - $todayCount - 1,
     ];
@@ -542,9 +540,9 @@ public function generateQr(array $input): array
   "idx": 1,
   "idx_company": 1025,
   "verification_id": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
-  "qr_content": "https://philgo.com/company/qr-code-scanned.php?idx=1025&verification_id=a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+  "qr_url": "https://philgo.com/company/qr-code-scanned.php?code=a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
   "created_at": 1740700000,
-  "expired_at": 1740786400,
+  "expired_at": 1740700180,
   "today_count": 3,
   "today_remaining": 7
 }
@@ -814,9 +812,9 @@ Body: { "method": "pointEvent.qrList", "limit": 20, "offset": 0 }
     {
       "idx": 5,
       "verification_id": "a1b2c3...",
-      "qr_content": "https://philgo.com/company/qr-code-scanned.php?idx=1025&verification_id=a1b2c3...",
+      "qr_url": "https://philgo.com/company/qr-code-scanned.php?code=a1b2c3...",
       "created_at": 1740700000,
-      "expired_at": 1740786400,
+      "expired_at": 1740700180,
       "used_at": null,
       "idx_member_used": null,
       "is_expired": false,
@@ -882,7 +880,7 @@ class _QrScannerPageState extends State<_QrScannerPage> {
           if (barcode == null || barcode.rawValue == null) return;
 
           final rawValue = barcode.rawValue!;
-          // "https://philgo.com/company/qr-code-scanned.php?idx={idx}&verification_id={vid}" 파싱
+          // "https://philgo.com/company/qr-code-scanned.php?code={verification_id}" 파싱
           final uri = Uri.tryParse(rawValue);
           if (uri == null ||
               uri.host != 'philgo.com' ||
@@ -894,17 +892,16 @@ class _QrScannerPageState extends State<_QrScannerPage> {
           _isProcessing = true;
           controller.stop();  // 카메라 중지
 
-          final idxCompany = int.tryParse(uri.queryParameters['idx'] ?? '');
-          final verificationId = uri.queryParameters['verification_id'];
+          final verificationId = uri.queryParameters['code'];
 
-          if (idxCompany == null || verificationId == null || verificationId.length != 32) {
+          if (verificationId == null || verificationId.length != 64) {
             _showError('QR 코드 데이터가 올바르지 않습니다.');
             return;
           }
 
           // 기존 화면으로 이동
           Navigator.of(context).pop();  // 스캐너 닫기
-          CompanyQrCodeScannedScreen.push(context, idxCompany, verificationId);
+          CompanyQrCodeScannedScreen.push(context, verificationId);
         },
       ),
     );
@@ -929,11 +926,11 @@ class _QrScannerPageState extends State<_QrScannerPage> {
   ▼
 [_QrScannerPage] ← mobile_scanner 카메라
   │ QR 코드 인식
-  │ URL 파싱: "https://philgo.com/company/qr-code-scanned.php?idx={idx}&verification_id={vid}"
-  │ 유효성 검증 (host, path, idx 정수, vid 32자)
+  │ URL 파싱: "https://philgo.com/company/qr-code-scanned.php?code={verification_id}"
+  │ 유효성 검증 (host, path, code 64자 hex)
   ▼
 [CompanyQrCodeScannedScreen] ← 기존 화면 활용/수정
-  │ 파라미터: idx (업소 idx), verificationId (32자 hex)
+  │ 파라미터: verificationId (64자 hex, URL의 code 파라미터)
   │
   │ 화면 초기화 시:
   │ 1. CompanyApi.get(idx) → 업소 정보 로드
@@ -1059,7 +1056,7 @@ class PointEventApi {
 
   /// QR 코드 생성 (업소 회원용)
   /// API: pointEvent.generateQr (인증 필수, 업소 회원만)
-  /// 반환: idx, verification_id, qr_content, today_count, today_remaining
+  /// 반환: idx, verification_id, qr_url, today_count, today_remaining
   static Future<Map<String, dynamic>> generateQr() async {
     return await v7api('pointEvent.generateQr');
   }
@@ -1137,7 +1134,7 @@ class PointEventApi {
 | `'업소록에 등록된 회원만 QR 코드를 생성할 수 있습니다.'` | 비업소 회원이 QR 생성 시도 | 200 | RuntimeException |
 | `'하루 최대 10개까지 QR 코드를 생성할 수 있습니다.'` | 업소 일일 제한 초과 | 200 | RuntimeException |
 | `'유효하지 않은 QR 코드입니다.'` | DB에 없는 verification_id | 200 | RuntimeException |
-| `'만료된 QR 코드입니다.'` | 24시간 경과 (expired_at < time()) | 200 | RuntimeException |
+| `'만료된 QR 코드입니다.'` | 180초 경과 (expired_at < time()) | 200 | RuntimeException |
 | `'이미 사용된 QR 코드입니다.'` | used_at NOT NULL | 200 | RuntimeException |
 | `'자신의 업소 QR 코드는 스캔할 수 없습니다.'` | idx_member_created == 로그인 회원 | 200 | RuntimeException |
 | `'이미 재방문 보너스를 받았습니다.'` | 중복 보너스 요청 | 208 | soft_error |
@@ -1189,14 +1186,14 @@ try {
 
 | 항목 | 위협 | 대응 | 상세 |
 |------|------|------|------|
-| QR 코드 위조 | 악의적 QR 코드 생성 | 32자 hex (128bit) CSPRNG 랜덤 | bin2hex(random_bytes(16)), 추측 불가 |
+| QR 코드 위조 | 악의적 QR 코드 생성 | 64자 hex (256bit) CSPRNG 랜덤 | bin2hex(random_bytes(32)), 추측 불가 |
 | QR 코드 재사용 | 동일 QR 코드 다수 사용 | used_at NOT NULL 체크 | 1회 사용 후 폐기 |
-| QR 코드 스크린샷 공유 | QR 이미지 공유로 타인 사용 | 24시간 만료 + 1회용 | 피해 최소화 |
+| QR 코드 스크린샷 공유 | QR 이미지 공유로 타인 사용 | 180초 만료 + 1회용 | 피해 최소화 |
 | 자가 포인트 부여 | 업소 회원이 자기 QR 스캔 | idx_member_created 비교 | 자기 업소 QR 스캔 차단 |
 | 포인트 조작 | 클라이언트에서 포인트 값 조작 | 서버에서만 random_int() 생성 | 클라이언트 불신 원칙 |
 | 중복 보너스/후기 | 동일 QR로 반복 보너스/후기 | idx_qr + type 조합 중복 검사 | DB 제약 |
 | SQL Injection | 파라미터 조작 | Prepared Statement 필수 | v7 원칙, pdo()->prepare() |
-| 무작위 대입 공격 | verification_id 무작위 시도 | 128비트 엔트로피 | 사실상 추측 불가 (2^128 경우의 수) |
+| 무작위 대입 공격 | verification_id 무작위 시도 | 256비트 엔트로피 | 사실상 추측 불가 (2^256 경우의 수) |
 | 일일 제한 우회 | 시간대 조작으로 제한 우회 | 서버 시간 기준 24시간 | 클라이언트 시간 무시 |
 | 권한 탈취 | 타인의 QR 결과에 보너스/후기 요청 | idx_member_used 검증 | QR 사용자와 요청자 일치 확인 |
 
@@ -1220,9 +1217,9 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
     it('generateQr() - 비업소 회원 시 에러');
     it('generateQr() - 미승인(status!=a) 업소 회원 시 에러');
     it('generateQr() - 정상 생성 성공');
-    it('generateQr() - verification_id가 32자 hex인지 확인');
-    it('generateQr() - qr_content 형식 확인 (https://philgo.com/company/qr-code-scanned.php?idx=...&verification_id=...)');
-    it('generateQr() - expired_at = created_at + 86400 확인');
+    it('generateQr() - verification_id가 64자 hex인지 확인');
+    it('generateQr() - qr_url 형식 확인 (https://philgo.com/company/qr-code-scanned.php?code={verification_id})');
+    it('generateQr() - expired_at = created_at + 180 확인');
     it('generateQr() - 연속 생성 시 서로 다른 verification_id');
     it('generateQr() - 11번째 생성 시 일일 제한 에러');
     it('generateQr() - 24시간 경과 후 카운트 리셋');
@@ -1307,7 +1304,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 
 1. `lib/screens/event/qr_scanner.screen.dart` 구현 (mobile_scanner 카메라)
 2. `lib/screens/event/company_event.screen.dart` 수정 (QR 스캔 버튼 연결)
-3. QR 코드 URL 파싱 로직 구현 (`Uri.parse()` → `queryParameters['idx']`, `queryParameters['verification_id']`)
+3. QR 코드 URL 파싱 로직 구현 (`Uri.parse()` → `queryParameters['code']`로 verification_id 추출)
 
 ### Phase 4: Flutter UI — 포인트 획득
 
