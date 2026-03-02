@@ -149,21 +149,58 @@ class CompanyEventScreen extends StatelessWidget {
                 .slideY(begin: 0.05, end: 0),
             const SizedBox(height: 24),
 
-            /// QR 코드 스캔하기 버튼
-            FilledButton.icon(
-              onPressed: () => QrScannerScreen.push(context),
-              icon: const FaIcon(FontAwesomeIcons.lightQrcode, size: 20),
-              label: Text(l10n.companyEventScanButton),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                textStyle: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+            /// QR 코드 스캔하기 버튼 — 강조 디자인
+            Container(
+              decoration: BoxDecoration(
+                color: scheme.primary,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => QrScannerScreen.push(context),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 24,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.lightQrcode,
+                          size: 28,
+                          color: scheme.onPrimary,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          l10n.companyEventScanButton,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: scheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             )
-                .animate()
-                .fadeIn(duration: 400.ms, delay: 200.ms)
-                .slideY(begin: 0.05, end: 0),
+                .animate(
+                  onPlay: (c) => c.repeat(reverse: true),
+                )
+                .scaleXY(
+                  begin: 1.0,
+                  end: 1.03,
+                  duration: 1200.ms,
+                  curve: Curves.easeInOut,
+                )
+                .then()
+                .shimmer(
+                  duration: 1500.ms,
+                  color: scheme.onPrimary.withValues(alpha: 0.3),
+                ),
           ],
         ),
       ),

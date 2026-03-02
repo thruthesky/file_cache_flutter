@@ -111,4 +111,59 @@ class CompanyApi {
     return Company.fromJson(responseData);
   }
 
+  /// 재방문 포인트 추첨
+  ///
+  /// API 엔드포인트: company.reVisitPoint
+  /// 인증: 필수
+  ///
+  /// [usageIdx] QR 스캔 기록 고유번호 (scanQrCode 응답의 usage_idx)
+  /// 반환: { success, reward_points, point_before, point_after, company_name, idx_company }
+  static Future<Map<String, dynamic>> reVisitPoint(int usageIdx) async {
+    return await v7api('company.reVisitPoint', data: {
+      'usage_idx': usageIdx,
+    });
+  }
+
+  /// 방문 후기 작성 + 포인트 적립
+  ///
+  /// API 엔드포인트: company.submitVisitReview
+  /// 인증: 필수
+  ///
+  /// [usageIdx] QR 스캔 기록 고유번호
+  /// [content] 후기 내용 (10자 이상 필수)
+  /// [photoIdxs] 업로드된 사진 idx 목록 (1장 이상 필수)
+  /// 반환: { success, review_idx, reward_points, point_before, point_after }
+  static Future<Map<String, dynamic>> submitVisitReview({
+    required int usageIdx,
+    required String content,
+    required List<int> photoIdxs,
+  }) async {
+    return await v7api('company.submitVisitReview', data: {
+      'usage_idx': usageIdx,
+      'content': content,
+      'photo_idxs': photoIdxs,
+    });
+  }
+
+  /// 방문 후기 목록 조회
+  ///
+  /// API 엔드포인트: company.getVisitReviews
+  /// 인증: 불필요 (공개 API)
+  ///
+  /// [idxCompany] 업소 고유번호
+  /// [page] 페이지 번호 (선택)
+  /// [limit] 조회 수 (선택)
+  /// 반환: { items: [...], total: int }
+  static Future<Map<String, dynamic>> getVisitReviews({
+    required int idxCompany,
+    int? page,
+    int? limit,
+  }) async {
+    return await v7api('company.getVisitReviews', data: {
+      'idx_company': idxCompany,
+      if (page != null) 'page': page,
+      if (limit != null) 'limit': limit,
+    });
+  }
+
 }

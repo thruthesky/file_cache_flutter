@@ -10,6 +10,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
+import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -60,7 +61,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
   /// Load company information by idx (same pattern as CompanyViewScreen)
   Future<void> _loadCompany() async {
     try {
-      final details = await getCompany(widget.companyIdx);
+      final details = await CompanyApi.get(widget.companyIdx);
       if (!mounted) return;
       setState(() {
         company = details;

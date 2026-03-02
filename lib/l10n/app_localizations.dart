@@ -4190,7 +4190,7 @@ abstract class Lo {
   /// No description provided for @pointEvent.
   ///
   /// In en, this message translates to:
-  /// **'Point Event'**
+  /// **'PhilGo Company Point Event'**
   String get pointEvent;
 
   /// No description provided for @storeNameMismatch.
@@ -4444,6 +4444,264 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'View Coupon'**
   String get viewCoupon;
+
+  /// No description provided for @revisitPointEventDraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Revisit Point Event Draw'**
+  String get revisitPointEventDraw;
+
+  /// No description provided for @writeReviewForPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Write Review → Random 3,000P'**
+  String get writeReviewForPoints;
+
+  /// No description provided for @revisitPointResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Revisit Points'**
+  String get revisitPointResult;
+
+  /// No description provided for @revisitBonusEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Revisit Bonus {point}P Earned!'**
+  String revisitBonusEarned(String point);
+
+  /// No description provided for @pointDrawing.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawing points...'**
+  String get pointDrawing;
+
+  /// No description provided for @visitReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Write Review'**
+  String get visitReviewTitle;
+
+  /// No description provided for @visitReviewGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 10 characters and 1 photo required'**
+  String get visitReviewGuide;
+
+  /// No description provided for @visitReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your visit review (10+ characters)'**
+  String get visitReviewHint;
+
+  /// No description provided for @visitReviewContentTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter at least 10 characters'**
+  String get visitReviewContentTooShort;
+
+  /// No description provided for @visitReviewPhotoRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload at least 1 photo'**
+  String get visitReviewPhotoRequired;
+
+  /// No description provided for @visitReviewSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Review'**
+  String get visitReviewSubmit;
+
+  /// No description provided for @visitReviewSubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting...'**
+  String get visitReviewSubmitting;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get addPhoto;
+
+  /// No description provided for @reviewPointResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Point Earned'**
+  String get reviewPointResult;
+
+  /// No description provided for @reviewBonusEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Bonus {point}P Earned!'**
+  String reviewBonusEarned(String point);
+
+  /// No description provided for @viewCompanyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'View Business Info'**
+  String get viewCompanyInfo;
+
+  /// No description provided for @visitReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Reviews'**
+  String get visitReviews;
+
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get noReviewsYet;
+
+  /// No description provided for @pointChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{before}P → {after}P'**
+  String pointChange(String before, String after);
+
+  /// No description provided for @qrScanErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code Scan Failed'**
+  String get qrScanErrorTitle;
+
+  /// No description provided for @qrScanRetryGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Please scan the QR code again.'**
+  String get qrScanRetryGuide;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
+
+  /// No description provided for @reviewAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Author'**
+  String get reviewAuthor;
+
+  /// No description provided for @reviewDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get reviewDate;
+
+  /// No description provided for @qrErrorDuplicate24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate Scan Within 24 Hours'**
+  String get qrErrorDuplicate24h;
+
+  /// No description provided for @qrErrorDuplicate24hDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot scan the same business again within 24 hours.'**
+  String get qrErrorDuplicate24hDesc;
+
+  /// No description provided for @qrErrorLastVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Last visit: {time}'**
+  String qrErrorLastVisit(String time);
+
+  /// No description provided for @qrErrorExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired QR Code'**
+  String get qrErrorExpired;
+
+  /// No description provided for @qrErrorExpiredDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code has expired.'**
+  String get qrErrorExpiredDesc;
+
+  /// No description provided for @qrErrorInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid QR Code'**
+  String get qrErrorInvalid;
+
+  /// No description provided for @qrErrorInvalidDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code cannot be recognized.'**
+  String get qrErrorInvalidDesc;
+
+  /// No description provided for @qrErrorDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled QR Code'**
+  String get qrErrorDisabled;
+
+  /// No description provided for @qrErrorDisabledDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code is currently unavailable.'**
+  String get qrErrorDisabledDesc;
+
+  /// No description provided for @qrErrorCompanyInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Not Found'**
+  String get qrErrorCompanyInvalid;
+
+  /// No description provided for @qrErrorCompanyInvalidDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to verify the business information.'**
+  String get qrErrorCompanyInvalidDesc;
+
+  /// No description provided for @qrErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Error'**
+  String get qrErrorGeneric;
+
+  /// No description provided for @qrErrorGenericDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while processing the QR code.'**
+  String get qrErrorGenericDesc;
+
+  /// No description provided for @userPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get userPoint;
+
+  /// No description provided for @managementLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get managementLevel;
+
+  /// No description provided for @companyInfoSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Info'**
+  String get companyInfoSection;
+
+  /// No description provided for @visitorInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Visitor Info'**
+  String get visitorInfo;
+
+  /// No description provided for @qrScanResult.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Scan Result'**
+  String get qrScanResult;
+
+  /// No description provided for @earnExtraPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn extra points!'**
+  String get earnExtraPoints;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

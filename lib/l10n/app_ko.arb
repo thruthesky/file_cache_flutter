@@ -2698,7 +2698,7 @@
   "eventParticipation": "이벤트 참여",
   "qrCodeNotApproved": "이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.",
   "uploadReceiptForPointEvent": "포인트 이벤트 영수증 업로드",
-  "pointEvent": "포인트 이벤트",
+  "pointEvent": "필고 업소 포인트 이벤트",
   "optional": "선택",
   "storeNameMismatch": "스토어 이름 불일치",
   "storeNameMismatchDesc": "영수증의 스토어 이름이 업소 정보와 일치하지 않습니다.",
@@ -2813,5 +2813,60 @@
   "viewCoupon": "쿠폰 확인",
   "@viewCoupon": {
     "description": "Button text to view coupon image"
-  }
+  },
+  "revisitPointEventDraw": "업소록 재방문 포인트 이벤트 추첨",
+  "writeReviewForPoints": "후기 작성 → 3천 포인트 랜덤",
+  "revisitPointResult": "재방문 포인트",
+  "revisitBonusEarned": "재방문 보너스 {point}P 적립!",
+  "@revisitBonusEarned": {
+    "placeholders": { "point": { "type": "String" } }
+  },
+  "pointDrawing": "포인트 추첨 중...",
+  "visitReviewTitle": "후기 작성",
+  "visitReviewGuide": "내용 10자 이상, 사진 1장 이상 필수입니다",
+  "visitReviewHint": "방문 후기를 작성해 주세요 (10자 이상)",
+  "visitReviewContentTooShort": "내용을 10자 이상 입력해 주세요",
+  "visitReviewPhotoRequired": "사진을 1장 이상 업로드해 주세요",
+  "visitReviewSubmit": "후기 저장하기",
+  "visitReviewSubmitting": "저장 중...",
+  "addPhoto": "사진 추가",
+  "reviewPointResult": "후기 포인트 적립",
+  "reviewBonusEarned": "후기 작성 보너스 {point}P 적립!",
+  "@reviewBonusEarned": {
+    "placeholders": { "point": { "type": "String" } }
+  },
+  "viewCompanyInfo": "업소 정보 보기",
+  "visitReviews": "방문 후기",
+  "noReviewsYet": "아직 등록된 후기가 없습니다",
+  "pointChange": "{before}P → {after}P",
+  "@pointChange": {
+    "placeholders": { "before": { "type": "String" }, "after": { "type": "String" } }
+  },
+  "qrScanErrorTitle": "QR 코드 스캔 실패",
+  "qrScanRetryGuide": "QR 코드를 다시 스캔해 주세요.",
+  "goBack": "돌아가기",
+  "reviewAuthor": "작성자",
+  "reviewDate": "작성일",
+  "qrErrorDuplicate24h": "24시간 이내 중복 스캔",
+  "qrErrorDuplicate24hDesc": "같은 업소에서 24시간 이내에 다시 스캔할 수 없습니다.",
+  "qrErrorLastVisit": "이전 방문: {time}",
+  "@qrErrorLastVisit": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "qrErrorExpired": "만료된 QR 코드",
+  "qrErrorExpiredDesc": "이 QR 코드는 유효 기간이 지났습니다.",
+  "qrErrorInvalid": "유효하지 않은 QR 코드",
+  "qrErrorInvalidDesc": "인식할 수 없는 QR 코드입니다.",
+  "qrErrorDisabled": "비활성화된 QR 코드",
+  "qrErrorDisabledDesc": "이 QR 코드는 현재 사용할 수 없습니다.",
+  "qrErrorCompanyInvalid": "업소 확인 불가",
+  "qrErrorCompanyInvalidDesc": "해당 업소 정보를 확인할 수 없습니다.",
+  "qrErrorGeneric": "스캔 오류",
+  "qrErrorGenericDesc": "QR 코드 처리 중 문제가 발생했습니다.",
+  "userPoint": "포인트",
+  "managementLevel": "관리레벨",
+  "companyInfoSection": "업소 정보",
+  "visitorInfo": "방문자 정보",
+  "qrScanResult": "QR 스캔 결과",
+  "earnExtraPoints": "추가 포인트를 받으세요!"
 }

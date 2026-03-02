@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.qr_code.screen.dart';
+import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 업체 상세 보기 화면 (Company View Screen)
@@ -42,6 +44,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     loadCompany();
+    _loadReviews();
   }
 
   @override
@@ -54,12 +57,24 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   /// Error message when company loading fails
   String? errorMessage;
 
+  /// 방문 후기 목록
+  List<dynamic> _reviews = [];
+  bool _isReviewsLoading = true;
+
   /// 업체 정보 로드 (Load company information)
   Future<void> loadCompany() async {
     try {
-      final details = await getCompany(widget.companyIdx);
+      final details = await CompanyApi.get(widget.companyIdx);
 
       if (!mounted) return;
+
+      // ignore: avoid_print
+      print('[CompanyView] company.idx_member: ${details.idx_member}');
+      // ignore: avoid_print
+      print('[CompanyView] PhilgoState user.idx: ${PhilgoState.of(context).user?.idx}');
+      // ignore: avoid_print
+      print('[CompanyView] qr_code_enabled: ${details.qr_code_enabled}');
+
       setState(() {
         company = details;
         isLoading = false;
@@ -70,6 +85,26 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
       setState(() {
         errorMessage = e.toString();
         isLoading = false;
+      });
+    }
+  }
+
+  /// 방문 후기 목록 로드
+  Future<void> _loadReviews() async {
+    try {
+      final result = await CompanyApi.getVisitReviews(
+        idxCompany: widget.companyIdx,
+      );
+      if (!mounted) return;
+      setState(() {
+        _reviews = (result['items'] as List<dynamic>?) ?? [];
+        _isReviewsLoading = false;
+      });
+    } catch (e) {
+      debugLog('방문 후기 로드 에러: $e');
+      if (!mounted) return;
+      setState(() {
+        _isReviewsLoading = false;
       });
     }
   }
@@ -154,11 +189,11 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               child: Container(height: 1.0, color: scheme.outlineVariant),
             ),
 
-            /// QR code button: visible to all users, but only when qr_code_enabled is true (admin-approved)
-            /// Edit button: only visible to the company owner (_isMyCompany)
+            /// QR 코드 버튼: 관리자 승인(qr_code_enabled) 또는 내 업소(_isMyCompany)인 경우 표시
+            /// 수정 버튼: 내 업소 소유자(_isMyCompany)인 경우만 표시
             actions: [
-              /// QR code view button - accessible to all users when qr_code_enabled is true
-              if (_isQrCodeEnabled) ...[
+              /// QR 코드 보기 버튼 - 관리자 승인 또는 내 업소
+              if (_isQrCodeEnabled || _isMyCompany) ...[
                 _isCollapsed
                     ? IconButton(
                         icon: const FaIcon(
@@ -348,6 +383,16 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                             .animate()
                             .fadeIn(duration: 400.ms, delay: 200.ms)
                             .slideY(begin: 0.1, end: 0),
+
+                      /// [4. 방문 후기 섹션] - Visit Reviews Section
+                      _buildSection(
+                            title: T.visitReviews,
+                            icon: FontAwesomeIcons.lightCommentDots,
+                            child: _buildReviewsContent(),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 300.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       const SizedBox(height: 16),
                     ],
@@ -698,6 +743,175 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         color: scheme.onSurfaceVariant,
         height: 1.6,
       ),
+    );
+  }
+
+  /// 방문 후기 콘텐츠 빌드
+  Widget _buildReviewsContent() {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final dateFormatter = DateFormat('yyyy.MM.dd');
+
+    /// 로딩 중
+    if (_isReviewsLoading) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+            ),
+          ),
+        ),
+      );
+    }
+
+    /// 후기 없음
+    if (_reviews.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.lightCommentSlash,
+                size: 28,
+                color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                T.noReviewsYet,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    /// 후기 목록 표시
+    return Column(
+      children: [
+        for (int i = 0; i < _reviews.length; i++) ...[
+          _buildReviewItem(_reviews[i], theme, scheme, dateFormatter),
+          if (i < _reviews.length - 1)
+            Container(
+              height: 1,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              color: scheme.outlineVariant.withValues(alpha: 0.3),
+            ),
+        ],
+      ],
+    );
+  }
+
+  /// 개별 후기 아이템 빌드
+  Widget _buildReviewItem(
+    dynamic review,
+    ThemeData theme,
+    ColorScheme scheme,
+    DateFormat dateFormatter,
+  ) {
+    final content = (review['content'] as String?) ?? '';
+    final authorName = (review['author_name'] as String?) ?? '';
+    final createdAt = (review['created_at'] as String?) ?? '';
+    final photos = (review['photos'] as List<dynamic>?) ?? [];
+
+    /// 날짜 포맷
+    String formattedDate = createdAt;
+    try {
+      if (createdAt.isNotEmpty) {
+        final date = DateTime.parse(createdAt);
+        formattedDate = dateFormatter.format(date);
+      }
+    } catch (_) {}
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// 작성자 + 날짜
+        Row(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.lightUser,
+              size: 12,
+              color: scheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              authorName,
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: scheme.onSurface,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              formattedDate,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+
+        /// 후기 내용
+        Text(
+          content,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+            height: 1.5,
+          ),
+        ),
+
+        /// 사진 썸네일 (가로 스크롤)
+        if (photos.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 72,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: photos.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final photoUrl =
+                    (photos[index] is Map ? photos[index]['url'] : photos[index])
+                            ?.toString() ??
+                        '';
+                return Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: scheme.outlineVariant.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.network(
+                    photoUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Center(
+                      child: FaIcon(
+                        FontAwesomeIcons.lightImage,
+                        size: 20,
+                        color: scheme.onSurfaceVariant.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ],
     );
   }
 

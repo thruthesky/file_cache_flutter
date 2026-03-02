@@ -3,11 +3,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/screens/company/company.revisit_point_result.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
+import 'package:philgo/screens/company/company.visit_review.screen.dart';
 import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo/v7_api/user_api.dart';
 import 'package:philgo/v7_api/v7_api.dart';
-import 'package:philgo/v7_api/widgets/upload/v7_file_upload.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// QR 코드 스캔 결과 화면 (Company QR Code Scanned Screen)
@@ -49,11 +50,6 @@ class _CompanyQrCodeScannedScreenState
   bool isUserLoading = true;
   String? userErrorMessage;
 
-  /// 영수증 업로드 상태
-  Map<String, dynamic>? receiptData;
-  bool isUploading = false;
-  double uploadProgress = 0.0;
-
   /// QR 코드 검증 상태
   Map<String, dynamic>? scanResult;
   bool isScanLoading = true;
@@ -62,14 +58,25 @@ class _CompanyQrCodeScannedScreenState
   @override
   void initState() {
     super.initState();
-    _loadCompany();
+    // ignore: avoid_print
+    print('[QR-SCANNED] ===== CompanyQrCodeScannedScreen initState =====');
+    // ignore: avoid_print
+    print('[QR-SCANNED] widget.idx: ${widget.idx}, widget.verificationId: ${widget.verificationId}');
+
+    /// idx가 있으면 바로 업소 정보 로드, 없으면 scanQrCode 응답 후 로드
+    if (widget.idx > 0) {
+      _loadCompany(widget.idx);
+    }
     _loadUserInfo();
     _scanQrCode();
   }
 
-  Future<void> _loadCompany() async {
+  /// 업소 정보 로드 (idx로 CompanyApi.get 호출)
+  Future<void> _loadCompany(int idx) async {
+    // ignore: avoid_print
+    print('[QR-SCANNED] _loadCompany 호출, idx: $idx');
     try {
-      final details = await CompanyApi.get(widget.idx);
+      final details = await CompanyApi.get(idx);
       if (!mounted) return;
       setState(() {
         company = details;
@@ -107,25 +114,274 @@ class _CompanyQrCodeScannedScreenState
   }
 
   /// v7 API company.scanQrCode를 호출하여 QR 코드 검증
-  /// 응답: result ('s'=성공, 'f'=실패, 'r'=24시간 중복 거부), message, company_name 등
+  /// 성공 응답: { success, usage_idx, idx_company, company_name, reward_points,
+  ///            point_before, point_after, is_revisit }
+  /// 거부 응답: { result: 'r', message: '...' }
+  /// 실패 시: RuntimeException → catch로 처리
   Future<void> _scanQrCode() async {
+    // ignore: avoid_print
+    print('[QR-SCANNED] ===== _scanQrCode 호출 =====');
+    // ignore: avoid_print
+    print('[QR-SCANNED] code: ${widget.verificationId}');
     try {
       final result = await v7api('company.scanQrCode', data: {
         'code': widget.verificationId,
       });
+      // ignore: avoid_print
+      print('[QR-SCANNED] scanQrCode 성공 응답: $result');
       if (!mounted) return;
       setState(() {
         scanResult = result;
         isScanLoading = false;
       });
+
+      /// idx가 0이었으면 서버 응답의 idx_company로 업소 정보 로드
+      if (widget.idx == 0 && result['idx_company'] != null) {
+        final companyIdx = (result['idx_company'] as num).toInt();
+        // ignore: avoid_print
+        print('[QR-SCANNED] widget.idx==0, 서버 응답 idx_company: $companyIdx');
+        if (companyIdx > 0) {
+          _loadCompany(companyIdx);
+        } else {
+          setState(() => isLoading = false);
+        }
+      }
     } catch (e) {
+      // ignore: avoid_print
+      print('[QR-SCANNED] scanQrCode API 에러: $e');
       debugLog('company.scanQrCode API 에러: $e');
       if (!mounted) return;
       setState(() {
         scanErrorMessage = e.toString();
         isScanLoading = false;
+        /// idx가 0이면 업소 정보도 로딩 해제
+        if (widget.idx == 0) isLoading = false;
       });
     }
+  }
+
+  /// v7 API 에러 메시지에서 핵심 메시지만 추출
+  /// "Exception: v7api(company.scanQrCode): 만료된 QR 코드입니다." → "만료된 QR 코드입니다."
+  String _extractErrorMessage(String rawError) {
+    final colonIdx = rawError.lastIndexOf('): ');
+    if (colonIdx != -1) {
+      return rawError.substring(colonIdx + 3);
+    }
+    if (rawError.startsWith('Exception: ')) {
+      return rawError.substring(11);
+    }
+    return rawError;
+  }
+
+  /// 에러 메시지를 분석하여 에러 유형 정보를 반환
+  /// { icon, title, description, extra }
+  ({IconData icon, String title, String description, String? extra})
+      _classifyError(String? rawError) {
+    if (rawError == null) {
+      return (
+        icon: FontAwesomeIcons.lightCircleExclamation,
+        title: T.qrErrorGeneric,
+        description: T.qrErrorGenericDesc,
+        extra: null,
+      );
+    }
+
+    final msg = _extractErrorMessage(rawError);
+
+    /// 24시간 중복: "24시간_중복|2026년 03월 02일 04:43"
+    if (msg.startsWith('24시간_중복')) {
+      final parts = msg.split('|');
+      final lastVisitTime = parts.length > 1 ? parts[1] : '';
+      return (
+        icon: FontAwesomeIcons.lightClockRotateLeft,
+        title: T.qrErrorDuplicate24h,
+        description: T.qrErrorDuplicate24hDesc,
+        extra: lastVisitTime.isNotEmpty ? T.qrErrorLastVisit(lastVisitTime) : null,
+      );
+    }
+
+    /// 만료된 QR 코드
+    if (msg.contains('만료된')) {
+      return (
+        icon: FontAwesomeIcons.lightHourglassEnd,
+        title: T.qrErrorExpired,
+        description: T.qrErrorExpiredDesc,
+        extra: null,
+      );
+    }
+
+    /// 유효하지 않은 QR 코드
+    if (msg.contains('유효하지 않은')) {
+      return (
+        icon: FontAwesomeIcons.lightQrcode,
+        title: T.qrErrorInvalid,
+        description: T.qrErrorInvalidDesc,
+        extra: null,
+      );
+    }
+
+    /// 비활성화된 QR 코드
+    if (msg.contains('비활성화')) {
+      return (
+        icon: FontAwesomeIcons.lightBan,
+        title: T.qrErrorDisabled,
+        description: T.qrErrorDisabledDesc,
+        extra: null,
+      );
+    }
+
+    /// 업소 유효하지 않음
+    if (msg.contains('업소')) {
+      return (
+        icon: FontAwesomeIcons.lightBuilding,
+        title: T.qrErrorCompanyInvalid,
+        description: T.qrErrorCompanyInvalidDesc,
+        extra: null,
+      );
+    }
+
+    /// 기타 에러
+    return (
+      icon: FontAwesomeIcons.lightCircleExclamation,
+      title: T.qrErrorGeneric,
+      description: msg,
+      extra: null,
+    );
+  }
+
+  /// QR 스캔 실패 또는 업소 정보 없음 에러 화면
+  /// 에러 유형별 아이콘, 제목, 설명을 구조화하여 표시
+  Widget _buildScanErrorScreen(ColorScheme scheme, ThemeData theme) {
+    final errorInfo = _classifyError(scanErrorMessage);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// 에러 아이콘 (원형 배경)
+            Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                color: scheme.errorContainer.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(44),
+              ),
+              child: Center(
+                child: FaIcon(
+                  errorInfo.icon,
+                  size: 38,
+                  color: scheme.error,
+                ),
+              ),
+            ).animate().scale(
+                  duration: 500.ms,
+                  begin: const Offset(0.5, 0.5),
+                  end: const Offset(1.0, 1.0),
+                  curve: Curves.elasticOut,
+                ),
+
+            const SizedBox(height: 24),
+
+            /// 에러 제목
+            Text(
+              errorInfo.title,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+
+            const SizedBox(height: 16),
+
+            /// 에러 상세 카드
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: scheme.outlineVariant.withValues(alpha: 0.5),
+                ),
+              ),
+              child: Column(
+                children: [
+                  /// 설명 텍스트
+                  Text(
+                    errorInfo.description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  /// 추가 정보 (예: 이전 방문 시간)
+                  if (errorInfo.extra != null) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: scheme.primary.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.lightClock,
+                            size: 14,
+                            color: scheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            errorInfo.extra!,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ).animate().fadeIn(duration: 400.ms, delay: 200.ms),
+
+            const SizedBox(height: 12),
+
+            /// 안내 텍스트
+            Text(
+              T.qrScanRetryGuide,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ).animate().fadeIn(duration: 400.ms, delay: 300.ms),
+
+            const SizedBox(height: 32),
+
+            /// 돌아가기 버튼
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: FilledButton.icon(
+                onPressed: () => context.pop(),
+                icon: const FaIcon(FontAwesomeIcons.lightArrowLeft, size: 16),
+                label: Text(T.goBack),
+              ),
+            ).animate().fadeIn(duration: 400.ms, delay: 400.ms),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Check if a string value is a URL (not a real address/location)
@@ -133,50 +389,32 @@ class _CompanyQrCodeScannedScreenState
     return value.startsWith('http://') || value.startsWith('https://');
   }
 
-  /// Build a single-line contact summary string
-  /// Combines phone, mobile, kakao into one compact line
-  String _buildContactSummary(Company c) {
-    final parts = <String>[];
-    if (c.phone_number.isNotEmpty) parts.add(c.phone_number);
-    if (c.mobile_number.isNotEmpty) parts.add(c.mobile_number);
-    if (c.kakaotalk_id.isNotEmpty) parts.add(c.kakaotalk_id);
-    if (c.telegram_id.isNotEmpty) parts.add(c.telegram_id);
-    return parts.join(' · ');
-  }
 
   /// 현재 로그인 사용자 정보 섹션 위젯
-  /// v7 API user.me 응답 데이터를 콤팩트하게 표시
+  /// v7 API user.me 응답 데이터를 중앙 정렬로 표시
+  /// 아바타 + 닉네임 + 포인트 + 관리레벨
   Widget _buildUserInfoSection(ColorScheme scheme, ThemeData theme) {
     /// 로딩 중
     if (isUserLoading) {
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         decoration: BoxDecoration(
           color: scheme.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: scheme.outlineVariant.withValues(alpha: 0.5),
           ),
         ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 1.5,
-                valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
-              ),
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
             ),
-            const SizedBox(width: 8),
-            Text(
-              '사용자 정보 로딩 중...',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+          ),
         ),
       );
     }
@@ -185,12 +423,13 @@ class _CompanyQrCodeScannedScreenState
     if (userErrorMessage != null) {
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: scheme.errorContainer.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FaIcon(
               FontAwesomeIcons.triangleExclamation,
@@ -198,12 +437,13 @@ class _CompanyQrCodeScannedScreenState
               color: scheme.error,
             ),
             const SizedBox(width: 8),
-            Expanded(
+            Flexible(
               child: Text(
                 '사용자 정보를 가져올 수 없습니다.',
                 style: theme.textTheme.bodySmall?.copyWith(color: scheme.error),
               ),
             ),
+            const SizedBox(width: 8),
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -226,90 +466,283 @@ class _CompanyQrCodeScannedScreenState
     /// 사용자 정보 없음
     if (userInfo == null) return const SizedBox.shrink();
 
-    final name = userInfo!['name']?.toString() ?? '';
     final nickname = userInfo!['nickname']?.toString() ?? '';
+    final name = userInfo!['name']?.toString() ?? '';
     final id = userInfo!['id']?.toString() ?? '';
-    final phoneNumber = userInfo!['phone_number']?.toString() ?? '';
+    final photoUrl = userInfo!['photo_url']?.toString() ?? '';
+    final point = (userInfo!['point'] as num?)?.toInt() ?? 0;
 
-    /// 표시할 이름 결정: name > nickname > id
-    final displayName = name.isNotEmpty
-        ? name
-        : nickname.isNotEmpty
+    /// 표시할 이름: nickname > name > id
+    final displayName = nickname.isNotEmpty
         ? nickname
-        : id;
+        : name.isNotEmpty
+            ? name
+            : id;
+
+    /// 컴팩트 가로 레이아웃: 아바타 + 닉네임 + 포인트 배지
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          /// 아바타 (컴팩트 36px)
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: scheme.primary.withValues(alpha: 0.1),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: photoUrl.isNotEmpty
+                ? Image.network(
+                    photoUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Center(
+                      child: FaIcon(
+                        FontAwesomeIcons.solidUser,
+                        size: 16,
+                        color: scheme.primary,
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.solidUser,
+                      size: 16,
+                      color: scheme.primary,
+                    ),
+                  ),
+          ),
+          const SizedBox(width: 12),
+
+          /// 닉네임
+          Expanded(
+            child: Text(
+              displayName,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+
+          /// 포인트 배지
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightCoins,
+                  size: 12,
+                  color: scheme.primary,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${_formatNumber(point)}P',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: scheme.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms, delay: 100.ms);
+  }
+
+
+  /// 숫자를 천 단위 콤마로 포맷
+  String _formatNumber(int number) {
+    final result = StringBuffer();
+    final str = number.toString();
+    for (var i = 0; i < str.length; i++) {
+      if (i > 0 && (str.length - i) % 3 == 0) result.write(',');
+      result.write(str[i]);
+    }
+    return result.toString();
+  }
+
+  /// Best Practice 섹션 헤더 위젯 (인디케이터 바 + 아이콘 + 타이틀)
+  Widget _buildSectionHeader(
+    String title,
+    IconData icon,
+    ColorScheme scheme,
+    ThemeData theme,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 12),
+      child: Row(
+        children: [
+          /// 세로 인디케이터 바
+          Container(
+            width: 3,
+            height: 16,
+            decoration: BoxDecoration(
+              color: scheme.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          /// 아이콘
+          FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
+          const SizedBox(width: 6),
+
+          /// 타이틀
+          Text(
+            title,
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: scheme.onSurface,
+              fontWeight: FontWeight.normal,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 하단 고정 CTA 버튼 (강조 디자인)
+  /// 삼단콤보: 재방문 → 추첨, 첫방문 → 후기 작성
+  Widget _buildBottomActionButton(ColorScheme scheme, ThemeData theme) {
+    final isRevisit = scanResult!['is_revisit'] == true;
 
     return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: scheme.primaryContainer.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: scheme.primary.withValues(alpha: 0.2)),
-          ),
-          child: Row(
-            children: [
-              /// 사용자 아이콘
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: scheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(18),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        border: Border(
+          top: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          /// 안내 텍스트
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightSparkles,
+                  size: 14,
+                  color: scheme.primary,
                 ),
-                child: Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.solidUser,
-                    size: 16,
+                const SizedBox(width: 6),
+                Text(
+                  T.earnExtraPoints,
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          /// CTA 버튼 — 강조 디자인 (primary 배경 + 큰 아이콘/텍스트 + 펄스 + shimmer)
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: scheme.primary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  final usageIdx =
+                      (scanResult?['usage_idx'] as num?)?.toInt() ?? 0;
+                  final idxCompany =
+                      (scanResult?['idx_company'] as num?)?.toInt() ??
+                          widget.idx;
+                  if (isRevisit) {
+                    CompanyRevisitPointResultScreen.push(
+                      context,
+                      usageIdx: usageIdx,
+                      idxCompany: idxCompany,
+                      companyName: company?.name ?? '',
+                    );
+                  } else {
+                    CompanyVisitReviewScreen.push(
+                      context,
+                      usageIdx: usageIdx,
+                      idxCompany: idxCompany,
+                      companyName: company?.name ?? '',
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 24,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FaIcon(
+                        isRevisit
+                            ? FontAwesomeIcons.lightDice
+                            : FontAwesomeIcons.lightPenToSquare,
+                        size: 28,
+                        color: scheme.onPrimary,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        isRevisit
+                            ? T.revisitPointEventDraw
+                            : T.writeReviewForPoints,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: scheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-
-              /// 사용자 정보 텍스트
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// 이름 (또는 닉네임)
-                    Text(
-                      displayName,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: scheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    /// 이메일 · 전화번호 (한 줄)
-                    if (id.isNotEmpty || phoneNumber.isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        [
-                          if (id.isNotEmpty) id,
-                          if (phoneNumber.isNotEmpty) phoneNumber,
-                        ].join(' · '),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ],
-                ),
+            ),
+          )
+              .animate(
+                onPlay: (controller) => controller.repeat(reverse: true),
+              )
+              .scaleXY(
+                begin: 1.0,
+                end: 1.03,
+                duration: 1200.ms,
+                curve: Curves.easeInOut,
+              )
+              .then()
+              .shimmer(
+                duration: 1500.ms,
+                color: scheme.onPrimary.withValues(alpha: 0.3),
               ),
-            ],
-          ),
-        )
-        .animate()
-        .fadeIn(duration: 300.ms, delay: 150.ms)
-        .slideY(begin: 0.05, end: 0);
+        ],
+      ),
+    );
   }
 
   /// QR 코드 검증 결과 섹션 위젯
-  /// company.scanQrCode API 응답을 표시 (성공/실패/거부)
+  /// company.scanQrCode API 응답 표시:
+  /// - 성공: reward_points, is_revisit, point_after 등 표시
+  /// - 거부: result='r', message 표시
+  /// - 에러: 에러 메시지 + 재시도 버튼
   Widget _buildScanResultSection(ColorScheme scheme, ThemeData theme) {
     /// 로딩 중
     if (isScanLoading) {
@@ -345,7 +778,7 @@ class _CompanyQrCodeScannedScreenState
       );
     }
 
-    /// API 호출 에러
+    /// API 호출 에러 (RuntimeException 등)
     if (scanErrorMessage != null) {
       return Container(
         width: double.infinity,
@@ -391,12 +824,17 @@ class _CompanyQrCodeScannedScreenState
     /// 결과 없음
     if (scanResult == null) return const SizedBox.shrink();
 
-    final result = scanResult!['result']?.toString() ?? '';
+    /// 응답 형식 판별:
+    /// - 성공: { success: true, reward_points, is_revisit, ... }
+    /// - 거부: { result: 'r', message: '...' }
+    final bool isSuccess = scanResult!['success'] == true;
+    final bool isRejected = scanResult!['result']?.toString() == 'r';
     final message = scanResult!['message']?.toString() ?? '';
+    final rewardPoints = (scanResult!['reward_points'] as num?)?.toInt() ?? 0;
+    final pointAfter = (scanResult!['point_after'] as num?)?.toInt() ?? 0;
+    final companyName = scanResult!['company_name']?.toString() ?? '';
 
     /// 결과 코드별 색상 및 아이콘 결정
-    final bool isSuccess = result == 's';
-    final bool isRejected = result == 'r';
     final Color statusColor =
         isSuccess ? scheme.primary : (isRejected ? scheme.tertiary : scheme.error);
     final Color bgColor = isSuccess
@@ -410,360 +848,97 @@ class _CompanyQrCodeScannedScreenState
             ? FontAwesomeIcons.solidClock
             : FontAwesomeIcons.solidTriangleExclamation;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          FaIcon(statusIcon, size: 20, color: statusColor),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: statusColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+    /// 포인트 포맷 (천 단위 콤마)
+    String formatPoint(int p) => p.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (m) => '${m[1]},',
+        );
+
+    return Column(
+      children: [
+        /// 스캔 결과 상태 카드
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: statusColor.withValues(alpha: 0.3)),
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms, delay: 200.ms);
-  }
-
-  /// 영수증 AI 분석 결과 카드 위젯
-  /// ai.analyzeReceipt 응답 데이터를 표시 (인증 상태 + 상점/금액/날짜 + 의심 사유)
-  Widget _buildReceiptResultCard(ColorScheme scheme, ThemeData theme) {
-    final data = receiptData!;
-    final isAuthentic = data['is_authentic'] == true;
-    final storeName = data['store_name']?.toString() ?? '';
-    final totalAmount = data['total_amount']?.toString() ?? '';
-    final date = data['date']?.toString() ?? '';
-    final currency = data['currency']?.toString() ?? '';
-    final paymentMethod = data['payment_method']?.toString() ?? '';
-    final receiptType = data['receipt_type']?.toString() ?? '';
-    final summary = data['summary']?.toString() ?? '';
-    final int confidenceScore =
-        (data['confidence_score'] as num?)?.toInt() ?? 0;
-    final suspiciousReasons =
-        (data['suspicious_reasons'] as List<dynamic>?) ?? [];
-
-    /// 인증 상태에 따른 색상
-    final statusColor = isAuthentic ? scheme.primary : scheme.error;
-    final statusBgColor = isAuthentic
-        ? scheme.primaryContainer.withValues(alpha: 0.3)
-        : scheme.errorContainer.withValues(alpha: 0.3);
-    final statusBorderColor = isAuthentic
-        ? scheme.primary.withValues(alpha: 0.3)
-        : scheme.error.withValues(alpha: 0.4);
-
-    /// 신뢰도 점수 색상
-    Color scoreColor(int score) {
-      if (score >= 70) return scheme.primary;
-      if (score >= 50) return scheme.tertiary;
-      return scheme.error;
-    }
-
-    /// 상세 정보 행 빌더
-    Widget infoRow(IconData icon, String label, String value) {
-      if (value.isEmpty) return const SizedBox.shrink();
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FaIcon(icon, size: 12, color: scheme.onSurfaceVariant),
-            const SizedBox(width: 8),
-            Text(
-              '$label: ',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                value,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurface,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    /// store_name 비교: 서버 응답의 store_name_match 필드 또는 클라이언트 fallback
-    final bool storeNameMatches;
-    if (data.containsKey('store_name_match')) {
-      storeNameMatches = data['store_name_match'] == true;
-    } else {
-      /// 클라이언트 fallback: 영수증 store_name과 업소명 비교
-      final normalizedStore = storeName.trim().toLowerCase();
-      final normalizedCompany = (company?.name ?? '').trim().toLowerCase();
-      storeNameMatches = normalizedStore.isEmpty ||
-          normalizedStore.contains(normalizedCompany) ||
-          normalizedCompany.contains(normalizedStore);
-    }
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusBorderColor, width: 1.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// 인증 상태 배너
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: statusBgColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                FaIcon(
-                  isAuthentic
-                      ? FontAwesomeIcons.solidCircleCheck
-                      : FontAwesomeIcons.solidTriangleExclamation,
-                  size: 20,
-                  color: statusColor,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isAuthentic ? '영수증 인증 완료' : '영수증 인증 실패',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: statusColor,
-                          fontWeight: FontWeight.w700,
-                        ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  FaIcon(statusIcon, size: 20, color: statusColor),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      isSuccess
+                          ? (companyName.isNotEmpty
+                              ? '$companyName QR 스캔 성공!'
+                              : 'QR 코드 스캔 성공!')
+                          : message,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: statusColor,
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        isAuthentic
-                            ? '영수증이 정상적으로 확인되었습니다.'
-                            : '한인 업소 영수증으로 인증되지 않았습니다.',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: statusColor.withValues(alpha: 0.8),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
+              ),
 
-                /// 신뢰도 점수 배지
+              /// 성공 시 적립 포인트 표시
+              if (isSuccess && rewardPoints > 0) ...[
+                const SizedBox(height: 10),
                 Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: scoreColor(confidenceScore).withValues(alpha: 0.15),
+                    color: scheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                    '$confidenceScore%',
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: scoreColor(confidenceScore),
-                      fontWeight: FontWeight.w700,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.solidCoins,
+                        size: 16,
+                        color: scheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${formatPoint(rewardPoints)}P 적립!',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: scheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (pointAfter > 0) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '(현재 ${formatPoint(pointAfter)}P)',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],
-            ),
+            ],
           ),
-          const SizedBox(height: 12),
+        ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
 
-          /// 영수증 상세 정보
-          infoRow(FontAwesomeIcons.store, '상점', storeName),
-          infoRow(FontAwesomeIcons.moneyBill, '금액', totalAmount),
-          infoRow(FontAwesomeIcons.calendar, '날짜', date),
-          infoRow(FontAwesomeIcons.coins, '통화', currency),
-          infoRow(FontAwesomeIcons.creditCard, '결제', paymentMethod),
-          infoRow(FontAwesomeIcons.receipt, '유형', receiptType),
-
-          /// 요약
-          if (summary.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              summary,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
-              ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-
-          /// 의심 사유 목록 (is_authentic == false일 때 강조 표시)
-          if (!isAuthentic && suspiciousReasons.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: scheme.errorContainer.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.lightCircleExclamation,
-                        size: 14,
-                        color: scheme.error,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '의심 사유',
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: scheme.error,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  ...suspiciousReasons.map(
-                    (reason) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '• ',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.error,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              reason.toString(),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.onErrorContainer,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          /// store_name 불일치 경고 (영수증 상점명과 업소명/receipt_name이 다를 때)
-          if (!storeNameMatches && storeName.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: scheme.errorContainer.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.lightTriangleExclamation,
-                        size: 14,
-                        color: scheme.error,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        T.storeNameMismatch,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: scheme.error,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    T.storeNameMismatchDesc,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onErrorContainer,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  /// 영수증 스토어명 vs 업소명 비교 표시
-                  _buildComparisonRow(
-                    theme: theme,
-                    scheme: scheme,
-                    label: T.receiptStoreName,
-                    value: storeName,
-                  ),
-                  const SizedBox(height: 4),
-                  _buildComparisonRow(
-                    theme: theme,
-                    scheme: scheme,
-                    label: T.companyNameLabel,
-                    value: company?.name ?? '',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0);
-  }
-
-  /// store_name 불일치 비교 표시용 행 위젯
-  Widget _buildComparisonRow({
-    required ThemeData theme,
-    required ColorScheme scheme,
-    required String label,
-    required String value,
-  }) {
-    return Row(
-      children: [
-        Text(
-          '$label: ',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
       ],
     );
   }
+
+
+
 
   /// Get valid address (non-URL) from location or address field
   String _getValidAddress(Company c) {
@@ -779,7 +954,14 @@ class _CompanyQrCodeScannedScreenState
 
     return Scaffold(
       /// AppBar: show logo + company name when loaded
-      appBar: AppBar(title: _buildAppBarTitle(theme, scheme), elevation: 0),
+      appBar: AppBar(
+        title: _buildAppBarTitle(theme, scheme),
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: scheme.outlineVariant),
+        ),
+      ),
       body: _buildBody(scheme, theme),
     );
   }
@@ -879,7 +1061,15 @@ class _CompanyQrCodeScannedScreenState
                     isLoading = true;
                     errorMessage = null;
                   });
-                  _loadCompany();
+                  /// 재시도: widget.idx > 0이면 widget.idx, 아니면 scanResult에서 idx_company 사용
+                  final retryIdx = widget.idx > 0
+                      ? widget.idx
+                      : (scanResult?['idx_company'] as num?)?.toInt() ?? 0;
+                  if (retryIdx > 0) {
+                    _loadCompany(retryIdx);
+                  } else {
+                    setState(() => isLoading = false);
+                  }
                 },
                 icon: const FaIcon(FontAwesomeIcons.arrowsRotate, size: 16),
                 label: Text(T.retry),
@@ -890,267 +1080,166 @@ class _CompanyQrCodeScannedScreenState
       );
     }
 
-    if (company == null) return const SizedBox.shrink();
+    /// QR 스캔 에러 또는 업소 정보 없음: 에러 화면 표시
+    if (company == null) {
+      return _buildScanErrorScreen(scheme, theme);
+    }
 
     final c = company!;
-    final contactSummary = _buildContactSummary(c);
     final validAddress = _getValidAddress(c);
+    /// 전화번호 표시: phone_number 우선, 없으면 mobile_number
+    final phoneDisplay = c.phone_number.isNotEmpty
+        ? c.phone_number
+        : c.mobile_number.isNotEmpty
+            ? c.mobile_number
+            : '';
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          /// Compact company info card
-          Container(
-            width: double.infinity,
+    return Column(
+      children: [
+        /// 스크롤 가능한 콘텐츠 영역
+        Expanded(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: scheme.outlineVariant.withValues(alpha: 0.5),
-              ),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Company name + title (one line each)
-                if (c.title.isNotEmpty)
-                  Text(
-                    c.title,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                /// Category tag (compact)
-                if (c.category.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      c.category,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: scheme.onPrimaryContainer,
-                      ),
-                    ),
-                  ),
-                ],
-
-                /// Contact summary (one line: phone · mobile · kakao)
-                if (contactSummary.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.phone,
-                        size: 12,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          contactSummary,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-
-                /// Address (one line)
-                if (validAddress.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.locationDot,
-                        size: 12,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          validAddress,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-
-                /// Description (one line)
-                if (c.description.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.circleInfo,
-                        size: 12,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          c.description,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-
-                /// View full details link
                 const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () => CompanyViewScreen.push(context, widget.idx),
-                  child: Text(
-                    T.viewDetails,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: scheme.primary,
-                    ),
-                  ),
+
+                /// 섹션 1: 업소 정보
+                _buildSectionHeader(
+                  T.companyInfoSection,
+                  FontAwesomeIcons.lightBuilding,
+                  scheme,
+                  theme,
                 ),
+                /// 업소 정보 — 컴팩트 (전화번호 + 주소 + 상세보기)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerLowest,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      /// 전화번호 + 주소
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (phoneDisplay.isNotEmpty)
+                              Row(
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.phone,
+                                    size: 12,
+                                    color: scheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      phoneDisplay,
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: scheme.onSurfaceVariant,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            if (validAddress.isNotEmpty) ...[
+                              if (phoneDisplay.isNotEmpty)
+                                const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  FaIcon(
+                                    FontAwesomeIcons.locationDot,
+                                    size: 12,
+                                    color: scheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      validAddress,
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: scheme.onSurfaceVariant,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+
+                      /// 상세보기 버튼
+                      const SizedBox(width: 12),
+                      GestureDetector(
+                        onTap: () =>
+                            CompanyViewScreen.push(context, widget.idx),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: scheme.primary.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            T.viewDetails,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: scheme.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(duration: 300.ms),
+
+                const SizedBox(height: 24),
+
+                /// 섹션 2: 방문자 정보
+                _buildSectionHeader(
+                  T.visitorInfo,
+                  FontAwesomeIcons.lightUser,
+                  scheme,
+                  theme,
+                ),
+                _buildUserInfoSection(scheme, theme),
+
+                const SizedBox(height: 24),
+
+                /// 섹션 3: QR 스캔 결과
+                _buildSectionHeader(
+                  T.qrScanResult,
+                  FontAwesomeIcons.lightQrcode,
+                  scheme,
+                  theme,
+                ),
+                _buildScanResultSection(scheme, theme),
+
+                const SizedBox(height: 24),
               ],
             ),
-          ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0),
+          ),
+        ),
 
-          const SizedBox(height: 12),
-
-          /// 현재 로그인 사용자 정보 카드 (v7 API user.me)
-          _buildUserInfoSection(scheme, theme),
-
-          const SizedBox(height: 12),
-
-          /// QR 코드 검증 결과 카드
-          _buildScanResultSection(scheme, theme),
-
-          /// 업로드된 영수증 결과 표시
-          if (receiptData != null) ...[
-            const SizedBox(height: 12),
-            _buildReceiptResultCard(scheme, theme),
-          ],
-
-          /// Spacer to push button to bottom
-          const Spacer(),
-
-          /// 영수증 업로드 버튼 (V7FileUpload로 감싸기)
-          if (userInfo != null)
-            V7FileUpload(
-                  idxMember: userInfo!['idx']?.toString() ?? '',
-                  apiMethod: 'ai.analyzeReceipt',
-                  module: 'receipt',
-                  extraData: {
-                    'company_idx': widget.idx.toString(),
-                    'company_name': company?.name ?? '',
-                  },
-                  onBeforeUpload: () {
-                    setState(() {
-                      isUploading = true;
-                      uploadProgress = 0.0;
-                    });
-                  },
-                  onProgress: (progress) {
-                    setState(() {
-                      uploadProgress = progress;
-                    });
-                  },
-                  onUploaded: (result) {
-                    setState(() {
-                      receiptData = result;
-                      isUploading = false;
-                      uploadProgress = 0.0;
-                    });
-                  },
-                  onError: (error) {
-                    setState(() {
-                      isUploading = false;
-                      uploadProgress = 0.0;
-                    });
-                  },
-                  onCancelled: () {
-                    setState(() {
-                      isUploading = false;
-                      uploadProgress = 0.0;
-                    });
-                  },
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: FilledButton.icon(
-                      onPressed: () {},
-                      icon: isUploading
-                          ? SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                value: uploadProgress > 0
-                                    ? uploadProgress
-                                    : null,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  scheme.onPrimary,
-                                ),
-                              ),
-                            )
-                          : const FaIcon(FontAwesomeIcons.receipt, size: 18),
-                      label: Text(
-                        isUploading
-                            ? '업로드 중... ${(uploadProgress * 100).toInt()}%'
-                            : T.uploadReceiptForPointEvent,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: scheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-                .animate()
-                .fadeIn(duration: 400.ms, delay: 200.ms)
-                .slideY(begin: 0.1, end: 0),
-
-          /// userInfo 로딩 중이면 비활성 버튼 표시
-          if (userInfo == null)
-            SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: FilledButton.icon(
-                    onPressed: null,
-                    icon: const FaIcon(FontAwesomeIcons.receipt, size: 18),
-                    label: Text(
-                      T.uploadReceiptForPointEvent,
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ),
-                )
-                .animate()
-                .fadeIn(duration: 400.ms, delay: 200.ms)
-                .slideY(begin: 0.1, end: 0),
-
-          const SizedBox(height: 16),
-        ],
-      ),
+        /// 하단 고정 CTA 버튼 (강조)
+        if (scanResult != null && scanResult!['success'] == true)
+          _buildBottomActionButton(scheme, theme),
+      ],
     );
   }
 }

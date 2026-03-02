@@ -13,6 +13,7 @@ import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/widgets/step.progress.indicator.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
+import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 회사 정보 입력 폼 화면 - 멀티스텝
@@ -281,7 +282,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
       companyData['kakaotalk_qr_code_url'] = _kakaoTalkQrCodeUrl;
       companyData['photo_url'] = _officeInteriorUrl;
 
-      final updatedCompany = await updateCompany(companyData);
+      final updatedCompany = await CompanyApi.update(companyData);
 
       if (!mounted) return;
 
@@ -450,7 +451,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     kakaoTalkQrCodeUrl: _kakaoTalkQrCodeUrl,
                     onKakaoQrCodeSelected: (url) async {
                       try {
-                        await updateCompany({'kakaotalk_qr_code_url': url});
+                        await CompanyApi.update({'kakaotalk_qr_code_url': url});
                         setState(() => _kakaoTalkQrCodeUrl = url);
                       } catch (e) {
                         if (context.mounted) {
@@ -463,8 +464,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     },
                     onKakaoQrCodeDelete: () async {
                       try {
-                        await philgoApiFileDelete(_kakaoTalkQrCodeUrl);
-                        await updateCompany({'kakaotalk_qr_code_url': ''});
+                        await CompanyApi.update({'kakaotalk_qr_code_url': ''});
                         setState(() => _kakaoTalkQrCodeUrl = '');
                         if (context.mounted) {
                           showComicSuccessSnackBar(
@@ -498,7 +498,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     logoUrl: _logoUrl,
                     onLogoSelected: (url) async {
                       try {
-                        await updateCompany({'logo_url': url});
+                        await CompanyApi.update({'logo_url': url});
                         setState(() => _logoUrl = url);
                       } catch (e) {
                         if (context.mounted) {
@@ -511,8 +511,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     },
                     onLogoDelete: () async {
                       try {
-                        await philgoApiFileDelete(_logoUrl);
-                        await updateCompany({'logo_url': ''});
+                        await CompanyApi.update({'logo_url': ''});
                         setState(() => _logoUrl = '');
                         if (context.mounted) {
                           showComicSuccessSnackBar(
@@ -532,7 +531,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     businessLicenseUrl: _businessLicenseUrl,
                     onBusinessLicenseSelected: (url) async {
                       try {
-                        await updateCompany({'business_license_url': url});
+                        await CompanyApi.update({'business_license_url': url});
                         setState(() => _businessLicenseUrl = url);
                       } catch (e) {
                         if (context.mounted) {
@@ -545,8 +544,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     },
                     onBusinessLicenseDelete: () async {
                       try {
-                        await philgoApiFileDelete(_businessLicenseUrl);
-                        await updateCompany({'business_license_url': ''});
+                        await CompanyApi.update({'business_license_url': ''});
                         setState(() => _businessLicenseUrl = '');
                         if (context.mounted) {
                           showComicSuccessSnackBar(
@@ -566,7 +564,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     companyIntroImageUrl: _companyIntroImageUrl,
                     onCompanyIntroImageSelected: (url) async {
                       try {
-                        await updateCompany({'title_image_url': url});
+                        await CompanyApi.update({'title_image_url': url});
                         setState(() => _companyIntroImageUrl = url);
                       } catch (e) {
                         if (context.mounted) {
@@ -579,8 +577,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     },
                     onCompanyIntroImageDelete: () async {
                       try {
-                        await philgoApiFileDelete(_companyIntroImageUrl);
-                        await updateCompany({'title_image_url': ''});
+                        await CompanyApi.update({'title_image_url': ''});
                         setState(() => _companyIntroImageUrl = '');
                         if (context.mounted) {
                           showComicSuccessSnackBar(
@@ -600,7 +597,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     officeInteriorUrl: _officeInteriorUrl,
                     onOfficeInteriorSelected: (url) async {
                       try {
-                        await updateCompany({'photo_url': url});
+                        await CompanyApi.update({'photo_url': url});
                         setState(() => _officeInteriorUrl = url);
                       } catch (e) {
                         if (context.mounted) {
@@ -613,8 +610,7 @@ class _CompanyFormScreenState extends State<CompanyFormScreen> {
                     },
                     onOfficeInteriorDelete: () async {
                       try {
-                        await philgoApiFileDelete(_officeInteriorUrl);
-                        await updateCompany({'photo_url': ''});
+                        await CompanyApi.update({'photo_url': ''});
                         setState(() => _officeInteriorUrl = '');
                         if (context.mounted) {
                           showComicSuccessSnackBar(

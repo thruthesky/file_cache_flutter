@@ -37,6 +37,7 @@ import 'package:philgo/widgets/home/menu/menu.grid_section.dart';
 import 'package:philgo/widgets/home/menu/menu.item.dart';
 import 'package:philgo/widgets/home/menu/menu.section.dart';
 import 'package:philgo/widgets/logo/logo.dart';
+import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 메뉴 홈 화면 위젯 (Menu Home Screen Widget)
@@ -71,9 +72,12 @@ class _MenuHomeState extends State<MenuHome> {
   /// 내 업소 데이터 로드 (Load my company data)
   Future<void> _loadMyCompany() async {
     try {
-      final company = await getMyCompany();
+      final company = await CompanyApi.mine();
       if (mounted) {
-        setState(() => _myCompany = company);
+        /// 빈 업소(서버 자동 생성)는 null 처리하여 기존 null 체크 로직 유지
+        setState(
+          () => _myCompany = company.name.isNotEmpty ? company : null,
+        );
       }
     } catch (e) {
       debugLog('Error loading my company in menu: $e');

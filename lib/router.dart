@@ -9,6 +9,9 @@ import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.qr_code.screen.dart';
 import 'package:philgo/screens/company/company.qr_code_scanned.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
+import 'package:philgo/screens/company/company.visit_review.screen.dart';
+import 'package:philgo/screens/company/company.review_point_result.screen.dart';
+import 'package:philgo/screens/company/company.revisit_point_result.screen.dart';
 import 'package:philgo/screens/entry/entry.screen.dart';
 import 'package:philgo/screens/guide/app.guide.screen.dart';
 import 'package:philgo/screens/guide/must_read.screen.dart';
@@ -886,6 +889,49 @@ final router = GoRouter(
         );
 
         return HomeScreen(redirect: screen);
+      },
+    ),
+
+    /// 후기 작성 화면
+    GoRoute(
+      path: CompanyVisitReviewScreen.routeName,
+      name: CompanyVisitReviewScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return CompanyVisitReviewScreen(
+          usageIdx: (extra['usageIdx'] as num?)?.toInt() ?? 0,
+          idxCompany: (extra['idxCompany'] as num?)?.toInt() ?? 0,
+          companyName: extra['companyName']?.toString() ?? '',
+        );
+      },
+    ),
+
+    /// 후기 포인트 결과 화면
+    GoRoute(
+      path: CompanyReviewPointResultScreen.routeName,
+      name: CompanyReviewPointResultScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return CompanyReviewPointResultScreen(
+          rewardPoints: (extra['rewardPoints'] as num?)?.toInt() ?? 0,
+          pointBefore: (extra['pointBefore'] as num?)?.toInt() ?? 0,
+          pointAfter: (extra['pointAfter'] as num?)?.toInt() ?? 0,
+          idxCompany: (extra['idxCompany'] as num?)?.toInt() ?? 0,
+        );
+      },
+    ),
+
+    /// 재방문 포인트 결과 화면
+    GoRoute(
+      path: CompanyRevisitPointResultScreen.routeName,
+      name: CompanyRevisitPointResultScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return CompanyRevisitPointResultScreen(
+          usageIdx: (extra['usageIdx'] as num?)?.toInt() ?? 0,
+          idxCompany: (extra['idxCompany'] as num?)?.toInt() ?? 0,
+          companyName: extra['companyName']?.toString() ?? '',
+        );
       },
     ),
   ],

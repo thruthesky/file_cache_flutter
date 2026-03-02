@@ -8,6 +8,7 @@ import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.view.screen.dart';
 import 'package:philgo/themes/app.spacing.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
+import 'package:philgo/v7_api/company_api.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -167,8 +168,9 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   /// Fetch current user's company
   Future<void> _loadMyCompany() async {
     try {
-      final result = await getMyCompany();
-      myCompany = result;
+      final result = await CompanyApi.mine();
+      /// 빈 업소(서버 자동 생성)는 null 처리하여 기존 null 체크 로직 유지
+      myCompany = result.name.isNotEmpty ? result : null;
     } catch (e) {
       debugLog('Error loading my company: $e');
     } finally {
@@ -194,7 +196,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     // Create new company, then navigate to edit form
     setState(() => isLoadingMyCompany = true);
     try {
-      myCompany = await createCompany();
+      myCompany = await CompanyApi.create();
       if (mounted && myCompany != null) {
         final result = await CompanyFormScreen.push(context, company: myCompany);
         if (result != null) setState(() => myCompany = result);
@@ -219,7 +221,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     try {
       // Load all companies or filtered by category
-      final result = await getCompanies(category: selectedCategoryId);
+      final result = await CompanyApi.list(category: selectedCategoryId);
       companyList = result;
     } catch (e) {
       if (mounted) {

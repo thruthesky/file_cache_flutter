@@ -2091,7 +2091,7 @@ class LoKo extends Lo {
   String get uploadReceiptForPointEvent => '포인트 이벤트 영수증 업로드';
 
   @override
-  String get pointEvent => '포인트 이벤트';
+  String get pointEvent => '필고 업소 포인트 이벤트';
 
   @override
   String get storeNameMismatch => '스토어 이름 불일치';
@@ -2224,4 +2224,141 @@ class LoKo extends Lo {
 
   @override
   String get viewCoupon => '쿠폰 확인';
+
+  @override
+  String get revisitPointEventDraw => '업소록 재방문 포인트 이벤트 추첨';
+
+  @override
+  String get writeReviewForPoints => '후기 작성 → 3천 포인트 랜덤';
+
+  @override
+  String get revisitPointResult => '재방문 포인트';
+
+  @override
+  String revisitBonusEarned(String point) {
+    return '재방문 보너스 ${point}P 적립!';
+  }
+
+  @override
+  String get pointDrawing => '포인트 추첨 중...';
+
+  @override
+  String get visitReviewTitle => '후기 작성';
+
+  @override
+  String get visitReviewGuide => '내용 10자 이상, 사진 1장 이상 필수입니다';
+
+  @override
+  String get visitReviewHint => '방문 후기를 작성해 주세요 (10자 이상)';
+
+  @override
+  String get visitReviewContentTooShort => '내용을 10자 이상 입력해 주세요';
+
+  @override
+  String get visitReviewPhotoRequired => '사진을 1장 이상 업로드해 주세요';
+
+  @override
+  String get visitReviewSubmit => '후기 저장하기';
+
+  @override
+  String get visitReviewSubmitting => '저장 중...';
+
+  @override
+  String get addPhoto => '사진 추가';
+
+  @override
+  String get reviewPointResult => '후기 포인트 적립';
+
+  @override
+  String reviewBonusEarned(String point) {
+    return '후기 작성 보너스 ${point}P 적립!';
+  }
+
+  @override
+  String get viewCompanyInfo => '업소 정보 보기';
+
+  @override
+  String get visitReviews => '방문 후기';
+
+  @override
+  String get noReviewsYet => '아직 등록된 후기가 없습니다';
+
+  @override
+  String pointChange(String before, String after) {
+    return '${before}P → ${after}P';
+  }
+
+  @override
+  String get qrScanErrorTitle => 'QR 코드 스캔 실패';
+
+  @override
+  String get qrScanRetryGuide => 'QR 코드를 다시 스캔해 주세요.';
+
+  @override
+  String get goBack => '돌아가기';
+
+  @override
+  String get reviewAuthor => '작성자';
+
+  @override
+  String get reviewDate => '작성일';
+
+  @override
+  String get qrErrorDuplicate24h => '24시간 이내 중복 스캔';
+
+  @override
+  String get qrErrorDuplicate24hDesc => '같은 업소에서 24시간 이내에 다시 스캔할 수 없습니다.';
+
+  @override
+  String qrErrorLastVisit(String time) {
+    return '이전 방문: $time';
+  }
+
+  @override
+  String get qrErrorExpired => '만료된 QR 코드';
+
+  @override
+  String get qrErrorExpiredDesc => '이 QR 코드는 유효 기간이 지났습니다.';
+
+  @override
+  String get qrErrorInvalid => '유효하지 않은 QR 코드';
+
+  @override
+  String get qrErrorInvalidDesc => '인식할 수 없는 QR 코드입니다.';
+
+  @override
+  String get qrErrorDisabled => '비활성화된 QR 코드';
+
+  @override
+  String get qrErrorDisabledDesc => '이 QR 코드는 현재 사용할 수 없습니다.';
+
+  @override
+  String get qrErrorCompanyInvalid => '업소 확인 불가';
+
+  @override
+  String get qrErrorCompanyInvalidDesc => '해당 업소 정보를 확인할 수 없습니다.';
+
+  @override
+  String get qrErrorGeneric => '스캔 오류';
+
+  @override
+  String get qrErrorGenericDesc => 'QR 코드 처리 중 문제가 발생했습니다.';
+
+  @override
+  String get userPoint => '포인트';
+
+  @override
+  String get managementLevel => '관리레벨';
+
+  @override
+  String get companyInfoSection => '업소 정보';
+
+  @override
+  String get visitorInfo => '방문자 정보';
+
+  @override
+  String get qrScanResult => 'QR 스캔 결과';
+
+  @override
+  String get earnExtraPoints => '추가 포인트를 받으세요!';
 }

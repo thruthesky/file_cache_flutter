@@ -50,7 +50,9 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
   }
 
   /// QR 코드 감지 콜백
-  /// URL에서 idx, verification_id를 파싱하여 결과 화면으로 이동
+  /// URL에서 code (verification_id)를 파싱하여 결과 화면으로 이동.
+  /// v7 QR 코드 URL 형식: https://philgo.com/company/qr-code-scanned.php?code={verification_id}
+  /// idx 파라미터는 선택 사항 (v7에서는 code만 사용, idx는 서버 응답에서 획득)
   void _handleBarcode(BarcodeCapture capture) {
     if (_isProcessing || !mounted) return;
 
@@ -58,45 +60,62 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     if (barcode == null || barcode.rawValue == null) return;
 
     final rawValue = barcode.rawValue!;
-    debugPrint('[QR] rawValue: $rawValue');
+    // ignore: avoid_print
+    print('[QR] ===== QR 코드 감지 시작 =====');
+    // ignore: avoid_print
+    print('[QR] rawValue: $rawValue');
 
-    /// URL 파싱하여 idx, verification_id 추출
+    /// URL 파싱
     final uri = Uri.tryParse(rawValue);
-    debugPrint('[QR] uri: $uri');
-    debugPrint('[QR] uri.scheme: ${uri?.scheme}');
-    debugPrint('[QR] uri.host: ${uri?.host}');
-    debugPrint('[QR] uri.path: ${uri?.path}');
-    debugPrint('[QR] uri.queryParameters: ${uri?.queryParameters}');
+    // ignore: avoid_print
+    print('[QR] uri: $uri');
+    // ignore: avoid_print
+    print('[QR] scheme: ${uri?.scheme}, host: ${uri?.host}, path: ${uri?.path}');
+    // ignore: avoid_print
+    print('[QR] queryParameters: ${uri?.queryParameters}');
 
     if (uri == null) {
-      debugPrint('[QR] ERROR: Uri.tryParse 실패 - rawValue를 파싱할 수 없음');
+      // ignore: avoid_print
+      print('[QR] ERROR: Uri.tryParse 실패 - rawValue를 파싱할 수 없음');
       _showInvalidQrSnackBar();
       return;
     }
 
-    /// 쿼리 파라미터에서 idx, verification_id 추출
-    /// URL 형식: https://philgo.com/company/qr-code-scanned.php?idx={idx}&verification_id={vid}
-    /// 또는 code 파라미터 사용: ?code={verification_id}
+    /// 쿼리 파라미터에서 code (verification_id) 추출
+    /// v7 형식: ?code={64자 hex verification_id}
+    /// 레거시 형식: ?idx={idx}&verification_id={vid}
+    final codeParam = uri.queryParameters['code'];
+    final verificationIdParam = uri.queryParameters['verification_id'];
+    final verificationId = codeParam ?? verificationIdParam ?? '';
     final idxStr = uri.queryParameters['idx'];
-    final verificationId = uri.queryParameters['verification_id'] ??
-        uri.queryParameters['code'] ??
-        '';
-
     final idx = int.tryParse(idxStr ?? '') ?? 0;
 
-    debugPrint('[QR] idxStr: $idxStr, idx: $idx');
-    debugPrint('[QR] verificationId: $verificationId');
+    // ignore: avoid_print
+    print('[QR] code param: $codeParam');
+    // ignore: avoid_print
+    print('[QR] verification_id param: $verificationIdParam');
+    // ignore: avoid_print
+    print('[QR] 최종 verificationId: $verificationId (길이: ${verificationId.length})');
+    // ignore: avoid_print
+    print('[QR] idx: $idx');
 
-    if (idx == 0 || verificationId.isEmpty) {
-      debugPrint('[QR] ERROR: idx=$idx, verificationId=$verificationId - 유효하지 않음');
+    /// code (verification_id)만 있으면 유효 — idx는 서버에서 반환
+    if (verificationId.isEmpty) {
+      // ignore: avoid_print
+      print('[QR] ERROR: verificationId가 비어있음 - 유효하지 않은 QR 코드');
       _showInvalidQrSnackBar();
       return;
     }
+
+    // ignore: avoid_print
+    print('[QR] ✅ 유효한 QR 코드 → CompanyQrCodeScannedScreen으로 이동');
+    // ignore: avoid_print
+    print('[QR] push(context, idx=$idx, verificationId=$verificationId)');
 
     /// 중복 스캔 방지
     _isProcessing = true;
 
-    /// CompanyQrCodeScannedScreen으로 이동
+    /// CompanyQrCodeScannedScreen으로 이동 (idx=0이면 서버 응답에서 idx_company 사용)
     CompanyQrCodeScannedScreen.push(context, idx, verificationId);
   }
 

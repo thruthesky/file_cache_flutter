@@ -2129,7 +2129,7 @@ class LoEn extends Lo {
   String get uploadReceiptForPointEvent => 'Upload Receipt for Point Event';
 
   @override
-  String get pointEvent => 'Point Event';
+  String get pointEvent => 'PhilGo Company Point Event';
 
   @override
   String get storeNameMismatch => 'Store Name Mismatch';
@@ -2269,4 +2269,145 @@ class LoEn extends Lo {
 
   @override
   String get viewCoupon => 'View Coupon';
+
+  @override
+  String get revisitPointEventDraw => 'Revisit Point Event Draw';
+
+  @override
+  String get writeReviewForPoints => 'Write Review → Random 3,000P';
+
+  @override
+  String get revisitPointResult => 'Revisit Points';
+
+  @override
+  String revisitBonusEarned(String point) {
+    return 'Revisit Bonus ${point}P Earned!';
+  }
+
+  @override
+  String get pointDrawing => 'Drawing points...';
+
+  @override
+  String get visitReviewTitle => 'Write Review';
+
+  @override
+  String get visitReviewGuide => 'At least 10 characters and 1 photo required';
+
+  @override
+  String get visitReviewHint => 'Write your visit review (10+ characters)';
+
+  @override
+  String get visitReviewContentTooShort =>
+      'Please enter at least 10 characters';
+
+  @override
+  String get visitReviewPhotoRequired => 'Please upload at least 1 photo';
+
+  @override
+  String get visitReviewSubmit => 'Submit Review';
+
+  @override
+  String get visitReviewSubmitting => 'Submitting...';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get reviewPointResult => 'Review Point Earned';
+
+  @override
+  String reviewBonusEarned(String point) {
+    return 'Review Bonus ${point}P Earned!';
+  }
+
+  @override
+  String get viewCompanyInfo => 'View Business Info';
+
+  @override
+  String get visitReviews => 'Visit Reviews';
+
+  @override
+  String get noReviewsYet => 'No reviews yet';
+
+  @override
+  String pointChange(String before, String after) {
+    return '${before}P → ${after}P';
+  }
+
+  @override
+  String get qrScanErrorTitle => 'QR Code Scan Failed';
+
+  @override
+  String get qrScanRetryGuide => 'Please scan the QR code again.';
+
+  @override
+  String get goBack => 'Go Back';
+
+  @override
+  String get reviewAuthor => 'Author';
+
+  @override
+  String get reviewDate => 'Date';
+
+  @override
+  String get qrErrorDuplicate24h => 'Duplicate Scan Within 24 Hours';
+
+  @override
+  String get qrErrorDuplicate24hDesc =>
+      'You cannot scan the same business again within 24 hours.';
+
+  @override
+  String qrErrorLastVisit(String time) {
+    return 'Last visit: $time';
+  }
+
+  @override
+  String get qrErrorExpired => 'Expired QR Code';
+
+  @override
+  String get qrErrorExpiredDesc => 'This QR code has expired.';
+
+  @override
+  String get qrErrorInvalid => 'Invalid QR Code';
+
+  @override
+  String get qrErrorInvalidDesc => 'This QR code cannot be recognized.';
+
+  @override
+  String get qrErrorDisabled => 'Disabled QR Code';
+
+  @override
+  String get qrErrorDisabledDesc => 'This QR code is currently unavailable.';
+
+  @override
+  String get qrErrorCompanyInvalid => 'Business Not Found';
+
+  @override
+  String get qrErrorCompanyInvalidDesc =>
+      'Unable to verify the business information.';
+
+  @override
+  String get qrErrorGeneric => 'Scan Error';
+
+  @override
+  String get qrErrorGenericDesc =>
+      'An error occurred while processing the QR code.';
+
+  @override
+  String get userPoint => 'Points';
+
+  @override
+  String get managementLevel => 'Level';
+
+  @override
+  String get companyInfoSection => 'Business Info';
+
+  @override
+  String get visitorInfo => 'Visitor Info';
+
+  @override
+  String get qrScanResult => 'QR Scan Result';
+
+  @override
+  String get earnExtraPoints => 'Earn extra points!';
 }

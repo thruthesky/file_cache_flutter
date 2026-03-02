@@ -2086,7 +2086,7 @@ class LoZh extends Lo {
   String get uploadReceiptForPointEvent => '积分活动收据上传';
 
   @override
-  String get pointEvent => '积分活动';
+  String get pointEvent => 'PhilGo商家积分活动';
 
   @override
   String get storeNameMismatch => '店名不匹配';
@@ -2219,4 +2219,141 @@ class LoZh extends Lo {
 
   @override
   String get viewCoupon => '查看优惠券';
+
+  @override
+  String get revisitPointEventDraw => '商家回访积分抽奖';
+
+  @override
+  String get writeReviewForPoints => '写评价 → 随机3千积分';
+
+  @override
+  String get revisitPointResult => '回访积分';
+
+  @override
+  String revisitBonusEarned(String point) {
+    return '回访奖励 ${point}P已到账!';
+  }
+
+  @override
+  String get pointDrawing => '积分抽奖中...';
+
+  @override
+  String get visitReviewTitle => '写评价';
+
+  @override
+  String get visitReviewGuide => '内容10字以上，照片1张以上必填';
+
+  @override
+  String get visitReviewHint => '请写下您的访问评价（10字以上）';
+
+  @override
+  String get visitReviewContentTooShort => '请输入10字以上';
+
+  @override
+  String get visitReviewPhotoRequired => '请上传至少1张照片';
+
+  @override
+  String get visitReviewSubmit => '保存评价';
+
+  @override
+  String get visitReviewSubmitting => '保存中...';
+
+  @override
+  String get addPhoto => '添加照片';
+
+  @override
+  String get reviewPointResult => '评价积分到账';
+
+  @override
+  String reviewBonusEarned(String point) {
+    return '评价奖励 ${point}P已到账!';
+  }
+
+  @override
+  String get viewCompanyInfo => '查看商家信息';
+
+  @override
+  String get visitReviews => '访问评价';
+
+  @override
+  String get noReviewsYet => '还没有评价';
+
+  @override
+  String pointChange(String before, String after) {
+    return '${before}P → ${after}P';
+  }
+
+  @override
+  String get qrScanErrorTitle => '二维码扫描失败';
+
+  @override
+  String get qrScanRetryGuide => '请重新扫描二维码。';
+
+  @override
+  String get goBack => '返回';
+
+  @override
+  String get reviewAuthor => '作者';
+
+  @override
+  String get reviewDate => '日期';
+
+  @override
+  String get qrErrorDuplicate24h => '24小时内重复扫描';
+
+  @override
+  String get qrErrorDuplicate24hDesc => '同一商家24小时内不能再次扫描。';
+
+  @override
+  String qrErrorLastVisit(String time) {
+    return '上次访问: $time';
+  }
+
+  @override
+  String get qrErrorExpired => '二维码已过期';
+
+  @override
+  String get qrErrorExpiredDesc => '此二维码已超过有效期。';
+
+  @override
+  String get qrErrorInvalid => '无效的二维码';
+
+  @override
+  String get qrErrorInvalidDesc => '无法识别此二维码。';
+
+  @override
+  String get qrErrorDisabled => '已停用的二维码';
+
+  @override
+  String get qrErrorDisabledDesc => '此二维码目前不可用。';
+
+  @override
+  String get qrErrorCompanyInvalid => '无法确认商家';
+
+  @override
+  String get qrErrorCompanyInvalidDesc => '无法验证商家信息。';
+
+  @override
+  String get qrErrorGeneric => '扫描错误';
+
+  @override
+  String get qrErrorGenericDesc => '处理二维码时出现问题。';
+
+  @override
+  String get userPoint => '积分';
+
+  @override
+  String get managementLevel => '管理级别';
+
+  @override
+  String get companyInfoSection => '商家信息';
+
+  @override
+  String get visitorInfo => '访客信息';
+
+  @override
+  String get qrScanResult => '二维码扫描结果';
+
+  @override
+  String get earnExtraPoints => '获取额外积分！';
 }

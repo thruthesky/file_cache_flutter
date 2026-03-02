@@ -2092,7 +2092,7 @@ class LoJa extends Lo {
   String get uploadReceiptForPointEvent => 'ポイントイベント領収書アップロード';
 
   @override
-  String get pointEvent => 'ポイントイベント';
+  String get pointEvent => 'フィルゴ店舗ポイントイベント';
 
   @override
   String get storeNameMismatch => '店名不一致';
@@ -2225,4 +2225,141 @@ class LoJa extends Lo {
 
   @override
   String get viewCoupon => 'クーポン確認';
+
+  @override
+  String get revisitPointEventDraw => '店舗再訪問ポイント抽選';
+
+  @override
+  String get writeReviewForPoints => 'レビュー作成 → 3千ポイントランダム';
+
+  @override
+  String get revisitPointResult => '再訪問ポイント';
+
+  @override
+  String revisitBonusEarned(String point) {
+    return '再訪問ボーナス ${point}P獲得!';
+  }
+
+  @override
+  String get pointDrawing => 'ポイント抽選中...';
+
+  @override
+  String get visitReviewTitle => 'レビュー作成';
+
+  @override
+  String get visitReviewGuide => '内容10文字以上、写真1枚以上必須です';
+
+  @override
+  String get visitReviewHint => '訪問レビューを書いてください（10文字以上）';
+
+  @override
+  String get visitReviewContentTooShort => '10文字以上入力してください';
+
+  @override
+  String get visitReviewPhotoRequired => '写真を1枚以上アップロードしてください';
+
+  @override
+  String get visitReviewSubmit => 'レビュー保存';
+
+  @override
+  String get visitReviewSubmitting => '保存中...';
+
+  @override
+  String get addPhoto => '写真追加';
+
+  @override
+  String get reviewPointResult => 'レビューポイント獲得';
+
+  @override
+  String reviewBonusEarned(String point) {
+    return 'レビューボーナス ${point}P獲得!';
+  }
+
+  @override
+  String get viewCompanyInfo => '店舗情報を見る';
+
+  @override
+  String get visitReviews => '訪問レビュー';
+
+  @override
+  String get noReviewsYet => 'まだレビューがありません';
+
+  @override
+  String pointChange(String before, String after) {
+    return '${before}P → ${after}P';
+  }
+
+  @override
+  String get qrScanErrorTitle => 'QRコードスキャン失敗';
+
+  @override
+  String get qrScanRetryGuide => 'QRコードをもう一度スキャンしてください。';
+
+  @override
+  String get goBack => '戻る';
+
+  @override
+  String get reviewAuthor => '作成者';
+
+  @override
+  String get reviewDate => '作成日';
+
+  @override
+  String get qrErrorDuplicate24h => '24時間以内の重複スキャン';
+
+  @override
+  String get qrErrorDuplicate24hDesc => '同じ店舗で24時間以内に再スキャンできません。';
+
+  @override
+  String qrErrorLastVisit(String time) {
+    return '前回の訪問: $time';
+  }
+
+  @override
+  String get qrErrorExpired => '期限切れのQRコード';
+
+  @override
+  String get qrErrorExpiredDesc => 'このQRコードは有効期限が過ぎています。';
+
+  @override
+  String get qrErrorInvalid => '無効なQRコード';
+
+  @override
+  String get qrErrorInvalidDesc => '認識できないQRコードです。';
+
+  @override
+  String get qrErrorDisabled => '無効化されたQRコード';
+
+  @override
+  String get qrErrorDisabledDesc => 'このQRコードは現在使用できません。';
+
+  @override
+  String get qrErrorCompanyInvalid => '店舗確認不可';
+
+  @override
+  String get qrErrorCompanyInvalidDesc => '店舗情報を確認できません。';
+
+  @override
+  String get qrErrorGeneric => 'スキャンエラー';
+
+  @override
+  String get qrErrorGenericDesc => 'QRコード処理中に問題が発生しました。';
+
+  @override
+  String get userPoint => 'ポイント';
+
+  @override
+  String get managementLevel => '管理レベル';
+
+  @override
+  String get companyInfoSection => '店舗情報';
+
+  @override
+  String get visitorInfo => '訪問者情報';
+
+  @override
+  String get qrScanResult => 'QRスキャン結果';
+
+  @override
+  String get earnExtraPoints => '追加ポイントをゲット！';
 }

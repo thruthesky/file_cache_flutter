@@ -2572,7 +2572,7 @@
     "description": "Message shown when company QR code is not approved by admin"
   },
   "uploadReceiptForPointEvent": "Upload Receipt for Point Event",
-  "pointEvent": "Point Event",
+  "pointEvent": "PhilGo Company Point Event",
   "optional": "Optional",
   "storeNameMismatch": "Store Name Mismatch",
   "storeNameMismatchDesc": "The store name on the receipt does not match the company information.",
@@ -2744,5 +2744,60 @@
   "viewCoupon": "View Coupon",
   "@viewCoupon": {
     "description": "Button text to view coupon image"
-  }
+  },
+  "revisitPointEventDraw": "Revisit Point Event Draw",
+  "writeReviewForPoints": "Write Review → Random 3,000P",
+  "revisitPointResult": "Revisit Points",
+  "revisitBonusEarned": "Revisit Bonus {point}P Earned!",
+  "@revisitBonusEarned": {
+    "placeholders": { "point": { "type": "String" } }
+  },
+  "pointDrawing": "Drawing points...",
+  "visitReviewTitle": "Write Review",
+  "visitReviewGuide": "At least 10 characters and 1 photo required",
+  "visitReviewHint": "Write your visit review (10+ characters)",
+  "visitReviewContentTooShort": "Please enter at least 10 characters",
+  "visitReviewPhotoRequired": "Please upload at least 1 photo",
+  "visitReviewSubmit": "Submit Review",
+  "visitReviewSubmitting": "Submitting...",
+  "addPhoto": "Add Photo",
+  "reviewPointResult": "Review Point Earned",
+  "reviewBonusEarned": "Review Bonus {point}P Earned!",
+  "@reviewBonusEarned": {
+    "placeholders": { "point": { "type": "String" } }
+  },
+  "viewCompanyInfo": "View Business Info",
+  "visitReviews": "Visit Reviews",
+  "noReviewsYet": "No reviews yet",
+  "pointChange": "{before}P → {after}P",
+  "@pointChange": {
+    "placeholders": { "before": { "type": "String" }, "after": { "type": "String" } }
+  },
+  "qrScanErrorTitle": "QR Code Scan Failed",
+  "qrScanRetryGuide": "Please scan the QR code again.",
+  "goBack": "Go Back",
+  "reviewAuthor": "Author",
+  "reviewDate": "Date",
+  "qrErrorDuplicate24h": "Duplicate Scan Within 24 Hours",
+  "qrErrorDuplicate24hDesc": "You cannot scan the same business again within 24 hours.",
+  "qrErrorLastVisit": "Last visit: {time}",
+  "@qrErrorLastVisit": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "qrErrorExpired": "Expired QR Code",
+  "qrErrorExpiredDesc": "This QR code has expired.",
+  "qrErrorInvalid": "Invalid QR Code",
+  "qrErrorInvalidDesc": "This QR code cannot be recognized.",
+  "qrErrorDisabled": "Disabled QR Code",
+  "qrErrorDisabledDesc": "This QR code is currently unavailable.",
+  "qrErrorCompanyInvalid": "Business Not Found",
+  "qrErrorCompanyInvalidDesc": "Unable to verify the business information.",
+  "qrErrorGeneric": "Scan Error",
+  "qrErrorGenericDesc": "An error occurred while processing the QR code.",
+  "userPoint": "Points",
+  "managementLevel": "Level",
+  "companyInfoSection": "Business Info",
+  "visitorInfo": "Visitor Info",
+  "qrScanResult": "QR Scan Result",
+  "earnExtraPoints": "Earn extra points!"
 }
