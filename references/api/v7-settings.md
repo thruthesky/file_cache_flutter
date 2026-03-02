@@ -6,6 +6,8 @@
 기존 `sf_config` 테이블(key-value)을 사용하여 앱 버전, 이벤트 On/Off 등의 설정을 저장/조회한다.
 기존 `config_get()`/`config_set()` 함수(lib/config.functions.php)와 100% 호환된다.
 
+> **레거시 앱 설정 API** (`func.php` 기반 `get_app_settings`)는 → [v7-app-settings.md](../app/v7-app-settings.md) 참조.
+
 ## 목차
 
 - [아키텍처](#아키텍처)
@@ -14,9 +16,11 @@
   - [settings.get](#settingsget)
   - [settings.update](#settingsupdate)
   - [settings.appVersion](#settingsappversion)
+- [관리자 확인 로직 (isAdmin)](#관리자-확인-로직-isadmin)
 - [관리자 페이지](#관리자-페이지)
 - [다른 모듈에서 사용하기](#다른-모듈에서-사용하기)
 - [PEST 테스트](#pest-테스트)
+- [발견된 이슈 및 해결](#발견된-이슈-및-해결)
 
 ## 아키텍처
 
@@ -86,6 +90,7 @@ Content-Type: application/json
 
 {
   "method": "settings.update",
+  "session_id": "xxx",
   "settings": {
     "app_version_android": "2.0.17",
     "app_version_android_build": "47",
@@ -93,6 +98,9 @@ Content-Type: application/json
   }
 }
 ```
+
+> **인증 방식**: `session_id`를 JSON body에 포함하거나, 쿠키의 `session_id`를 사용한다.
+> 관리자 확인은 `ADMINS` 상수 배열 기반이다. 상세 → [관리자 확인 로직](#관리자-확인-로직-isadmin) 참조.
 
 **성공 응답:**
 ```json
@@ -136,13 +144,220 @@ GET /api.php?method=settings.appVersion
 }
 ```
 
+## 관리자 확인 로직 (isAdmin)
+
+### 핵심 원칙: ADMINS 상수 배열 기반 확인
+
+> **v7 시스템에서 관리자 확인은 반드시 `ADMINS` 상수 배열에 사용자의 `firebase_uid`가 포함되어 있는지로 판단해야 한다.**
+> **절대로 `sf_member.admin` 컬럼을 사용하면 안 된다.**
+
+### 관리자 확인 방식 비교
+
+| 방식 | 코드 | 올바른 사용 |
+|------|------|-------------|
+| **ADMINS 배열 (올바름)** | `in_array($user['firebase_uid'], ADMINS)` | v7 및 레거시 모두 사용 |
+| **admin 컬럼 (잘못됨)** | `$user['admin'] === 'Y'` | **절대 사용 금지** |
+
+### ADMINS 상수 정의
+
+`etc/app.config.php`에 정의된 `ADMINS` 상수는 관리자 Firebase UID 배열이다:
+
+```php
+// etc/app.config.php
+const ADMINS = [
+    "OSXtfcfdJkcLBovnQAC6Q1WMa2x1",  // 로컬 테스트 관리자
+    "xG3UczB56qazt2fMLH97154Cda62",    // 로컬 테스트 관리자 for philgo
+    // ... 기타 관리자
+];
+```
+
+### v7 Controller에서의 올바른 관리자 확인 구현
+
+```php
+// lib/settings/SettingsController.php
+
+use Philgo\Utils\AuthService;
+
+/**
+ * 현재 사용자가 관리자인지 확인한다.
+ *
+ * 레거시 is_admin_user()와 동일한 로직:
+ * ADMINS 상수 배열(etc/app.config.php)에 사용자의 firebase_uid가 포함되어 있는지 확인.
+ *
+ * @return bool 관리자이면 true
+ * @see lib/functions.php:239 is_admin_user()
+ * @see etc/app.config.php ADMINS 상수
+ */
+private function isAdmin(): bool
+{
+    $user = AuthService::getLoginUser();
+    if ($user === null) {
+        return false;
+    }
+    if (empty($user['firebase_uid'])) {
+        return false;
+    }
+    return in_array($user['firebase_uid'], ADMINS);
+}
+
+/**
+ * 관리자 권한을 요구한다. 관리자가 아니면 예외를 던진다.
+ *
+ * @throws RuntimeException 관리자가 아닌 경우
+ */
+private function requireAdmin(): void
+{
+    if (!$this->isAdmin()) {
+        throw new RuntimeException('관리자 권한이 필요합니다.');
+    }
+}
+```
+
+### 레거시 관리자 확인 함수 (참고)
+
+```php
+// lib/functions.php:239-263
+
+function is_admin_user(array $login_user): bool
+{
+    if (empty($login_user) || empty($login_user[IDX])) return false;
+    if (!isset($login_user[FIREBASE_UID])) return false;
+    if (!in_array($login_user[FIREBASE_UID], ADMINS)) return false;
+    return true;
+}
+
+function is_admin(): bool
+{
+    if (!login()) return false;
+    return is_admin_user(login()->toArray());
+}
+```
+
+### 관리자 확인 흐름도
+
+```
+[v7 관리자 확인 흐름]
+
+settings.update 요청
+    │
+    ▼ SettingsController::update($input)
+    │
+    ▼ $this->requireAdmin()
+    │
+    ▼ $this->isAdmin()
+    │
+    ▼ AuthService::getLoginUser()
+    │  ├─ 경로 1: 쿠키/파라미터의 session_id → getUserBySessionId()
+    │  │  └─ session_id 파싱 → DB 조회 → 해시 검증 → 사용자 반환
+    │  └─ 경로 2: id_token 파라미터 → getUserByIdToken()
+    │     └─ Firebase 토큰 검증 → firebase_uid → DB 조회 → 사용자 반환
+    │
+    ▼ $user['firebase_uid'] 추출
+    │
+    ▼ in_array($user['firebase_uid'], ADMINS)
+    │  ├─ true → 관리자 확인 완료 → 설정 저장 진행
+    │  └─ false → RuntimeException('관리자 권한이 필요합니다.')
+```
+
+### 다른 v7 Controller에서 관리자 확인 패턴 재사용
+
+새로운 v7 Controller에서 관리자 확인이 필요한 경우, **반드시** 아래 패턴을 따른다:
+
+```php
+// 새 Controller에서 관리자 확인 패턴
+use Philgo\Utils\AuthService;
+use RuntimeException;
+
+private function isAdmin(): bool
+{
+    $user = AuthService::getLoginUser();
+    if ($user === null) return false;
+    if (empty($user['firebase_uid'])) return false;
+    return in_array($user['firebase_uid'], ADMINS);
+}
+
+private function requireAdmin(): void
+{
+    if (!$this->isAdmin()) {
+        throw new RuntimeException('관리자 권한이 필요합니다.');
+    }
+}
+```
+
 ## 관리자 페이지
+
+### 기본 정보
 
 - **URL**: `https://local.philgo.com/page/admin/system-settings.php`
 - **메뉴 위치**: 관리자 대시보드 → 메뉴 → "설정"
 - **기능**: 앱 버전 편집, 업소록 QR 이벤트 토글, 이벤트 응모 토글
 - **기술**: Vue.js Options API + axios + api.php AJAX 호출
 - **다국어**: `inject_admin_system_settings_language()` 함수 (ko, en, ja, zh)
+
+### 페이지 구조
+
+```
+page/admin/system-settings.php
+├─ page.header.php (레거시 include)
+├─ vendor/autoload.php (v7 autoloader)
+├─ is_admin() 체크 (레거시 SSR 권한 확인)
+├─ SettingsService::getAll() (v7 SSR 초기 데이터 로드)
+├─ Vue.js 앱 (Options API)
+│  ├─ data: settings (SSR에서 주입), sessionId (쿠키에서 추출)
+│  └─ methods:
+│     └─ save() → axios.post('/api.php', {
+│           method: 'settings.update',
+│           session_id: this.sessionId,
+│           settings: this.settings
+│        })
+├─ Bootstrap 5.3 카드 레이아웃
+│  ├─ 앱 버전 설정 (Android/iOS 버전, 빌드 번호)
+│  ├─ 업소록 QR 이벤트 (토글 스위치)
+│  └─ 이벤트 응모 (토글 스위치)
+└─ page.footer.php (레거시 include)
+```
+
+### 인증 이중 구조
+
+관리자 설정 페이지는 **레거시 SSR 인증**과 **v7 API 인증**이 모두 필요하다:
+
+| 단계 | 시스템 | 코드 | 설명 |
+|------|--------|------|------|
+| 1. 페이지 로드 | 레거시 | `is_admin()` | SSR 단계에서 관리자 확인 (관리자 아니면 페이지 접근 차단) |
+| 2. 설정 저장 | v7 | `SettingsController::requireAdmin()` | API 호출 시 관리자 확인 (ADMINS 배열 기반) |
+
+> **중요**: `page.header.php`를 include한 후 `vendor/autoload.php`를 require해야 한다.
+> `ROOT_DIR` 상수가 `boot.php`에서 정의되기 때문이다.
+
+### session_id 전달 방식
+
+관리자 페이지에서 v7 API 호출 시, 인증을 위해 `session_id`를 명시적으로 전달해야 한다:
+
+```php
+// PHP SSR
+$currentSessionId = $_COOKIE[SESSION_ID] ?? '';
+```
+
+```javascript
+// Vue.js
+data() {
+    return {
+        sessionId: '<?= addslashes($currentSessionId) ?>',
+    };
+},
+methods: {
+    async save() {
+        const res = await axios.post('/api.php', {
+            method: 'settings.update',
+            session_id: this.sessionId,  // 명시적 전달
+            settings: this.settings
+        });
+    }
+}
+```
+
+> `AuthService::getLoginUser()`는 쿠키의 `session_id`와 파라미터의 `session_id`를 모두 확인한다.
+> 따라서 body에 명시적으로 포함하면 쿠키 전달 실패 시에도 인증이 가능하다.
 
 ## 다른 모듈에서 사용하기
 
@@ -186,420 +401,68 @@ $enabled = SettingsService::isCompanyQrEventEnabled();
 - SettingsRepository: CRUD, findByKeys, setMultiple, 기존 config 호환성
 - SettingsService: getAll, get, update (권한 검증), getAppVersion, On/Off 토글
 - SettingsController: get, update, appVersion
-# Settings API - 앱 설정 조회 (레거시 func.php)
 
-## 목차
+## 발견된 이슈 및 해결
 
-- [1. 개요](#1-개요)
-- [2. 아키텍처](#2-아키텍처)
-- [3. API 엔드포인트](#3-api-엔드포인트)
-  - [3.1 get_app_settings - 앱 설정 조회](#31-get_app_settings---앱-설정-조회)
-- [4. 응답 데이터 구조 상세](#4-응답-데이터-구조-상세)
-  - [4.1 bank_info - 은행 입금 정보](#41-bank_info---은행-입금-정보)
-  - [4.2 point - 포인트 광고 설정](#42-point---포인트-광고-설정)
-  - [4.3 admin_uids - 관리자 목록](#43-admin_uids---관리자-목록)
-- [5. 파일 구조](#5-파일-구조)
-  - [5.1 백엔드 (PHP)](#51-백엔드-php)
-  - [5.2 Flutter 앱](#52-flutter-앱)
-- [6. Flutter 앱 연동 상세](#6-flutter-앱-연동-상세)
-  - [6.1 초기화 흐름](#61-초기화-흐름)
-  - [6.2 PhilgoSetting 모델 계층](#62-philgosetting-모델-계층)
-  - [6.3 PhilgoState 상태 관리](#63-philgostate-상태-관리)
-  - [6.4 앱 내 사용 예시](#64-앱-내-사용-예시)
-- [7. 테스트](#7-테스트)
-- [8. 레거시 시스템과의 관계](#8-레거시-시스템과의-관계)
+### 이슈 1: 관리자 확인 로직 불일치 (v7 vs 레거시)
 
----
+**증상**: 관리자로 로그인했음에도 `settings.update` API 호출 시 "관리자 권한이 필요합니다." 에러 발생.
 
-## 1. 개요
+**원인 분석**:
 
-앱 설정(Settings) API는 **레거시 func.php 시스템**을 통해 호출되는 API이다.
-Flutter 앱이 시작할 때 서버에서 앱 운영에 필요한 설정 정보를 한 번에 가져온다.
+| 항목 | 잘못된 v7 구현 | 올바른 레거시 구현 |
+|------|---------------|-------------------|
+| **확인 방식** | `$user['admin'] === 'Y'` | `in_array($user['firebase_uid'], ADMINS)` |
+| **데이터 소스** | `sf_member.admin` 컬럼 | `etc/app.config.php`의 `ADMINS` 상수 |
+| **문제** | 대부분의 관리자 계정에서 `admin` 컬럼이 비어있음 | `ADMINS` 배열에 Firebase UID가 정확히 등록되어 있음 |
 
-> **주의**: 이 API는 v7 시스템(`api.php`)이 아니라 **레거시 시스템(`func.php`)**을 통해 호출된다.
-> `AllowedFunctions::get_app_settings()` → `get_app_settings()` 함수 호출 구조이다.
+**근본 원인**: 필고 시스템에서 관리자 여부는 `sf_member` 테이블의 `admin` 컬럼이 아니라, `etc/app.config.php`의 `ADMINS` 상수 배열에 해당 사용자의 Firebase UID가 포함되어 있는지로 결정된다. v7 초기 구현에서 이를 잘못 구현하여 `$user['admin'] === 'Y'`로 체크했다.
 
-- **API 엔트리포인트**: `func.php` (레거시)
-- **함수명**: `get_app_settings`
-- **함수 정의**: `lib/functions/app.config.functions.php`
-- **설정 상수 정의**: `etc/app.config.php`
-- **API 래핑 클래스**: `AllowedFunctions` (`lib/api/api.allowed_functions.php`)
-- **인증**: 불필요 (공개 API)
-- **Flutter 모델**: `PhilgoSetting` (`packages/philgo_api/lib/src/models/philgo.setting.model.dart`)
+**해결**: `SettingsController::isAdmin()` 메서드를 `ADMINS` 배열 기반으로 수정:
 
----
-
-## 2. 아키텍처
-
-```
-[앱 설정 로딩 흐름 — 전체]
-
-Flutter App
-    │
-    ▼ main() → PhilgoState() 생성자
-    │
-    ▼ PhilgoState._init()
-    │  ├─ [병렬 1] FirebaseAuth.authStateChanges() 리스너 등록
-    │  └─ [병렬 2] PhilgoService.instance.loadSetting()
-    │              │
-    │              ▼ apiCall('get_app_settings', PhilgoConfig.phpApiUrl)
-    │              │
-    │              ▼ POST https://philgo.com/func.php
-    │              │  Content-Type: application/x-www-form-urlencoded
-    │              │  Body: func=get_app_settings
-    │              │
-    │              ▼ PHP 서버 (func.php)
-    │              │  ├─ AllowedFunctions::get_app_settings([])
-    │              │  └─ get_app_settings() 함수 호출
-    │              │     ├─ etc/app.config.php 상수 참조
-    │              │     │  ├─ KB_NAME, KB_ACCOUNT_NO, KB_ACCOUNT_NAME
-    │              │     │  ├─ BDO_NAME, BDO_ACCOUNT_NO, BDO_ACCOUNT_NAME
-    │              │     │  ├─ POINT_ADVERTISEMENT_DAYS
-    │              │     │  ├─ PointConfig::$advertising_post_categories
-    │              │     │  ├─ PointConfig::$point_adv_cost_per_hour
-    │              │     │  └─ ADMINS (Firebase UID 배열)
-    │              │     └─ 배열 조합 → JSON 응답
-    │              │
-    │              ▼ JSON 응답 수신
-    │              │
-    │              ▼ PhilgoSetting.fromJson(json) → 모델 파싱
-    │                 ├─ PhilgoSettingBankInfo.fromJson(json['bank_info'])
-    │                 │  └─ BankAccount.fromJson() × N개 은행
-    │                 ├─ PhilgoSettingPoint.fromJson(json['point'])
-    │                 └─ adminUids = List<String>.from(json['admin_uids'])
-    │
-    ▼ PhilgoState.setting = loadedSetting
-    │
-    ▼ notifyListeners() → UI 갱신
-```
-
----
-
-## 3. API 엔드포인트
-
-### 3.1 get_app_settings - 앱 설정 조회
-
-| 항목 | 값 |
-|------|-----|
-| **함수명** | `get_app_settings` |
-| **HTTP** | `GET https://philgo.com/func.php?func=get_app_settings` 또는 `POST` |
-| **인증** | 불필요 |
-| **파라미터** | 없음 |
-| **응답** | `{ bank_info: {...}, point: {...}, admin_uids: [...] }` |
-
-**curl 예시**:
-```bash
-# GET 방식
-curl -s "https://philgo.com/func.php?func=get_app_settings"
-
-# POST 방식
-curl -s -X POST "https://philgo.com/func.php" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "func=get_app_settings"
-```
-
-**JavaScript 호출 예시**:
-```javascript
-const settings = await func('get_app_settings');
-console.log(settings.admin_uids);                 // 관리자 Firebase UID 배열
-console.log(settings.bank_info.kb.account_no);     // 국민은행 계좌번호
-console.log(settings.point.adv_cost_per_hour);     // 시간당 광고 비용 (240)
-```
-
-**Flutter 호출 예시**:
-```dart
-final json = await apiCall(
-  'get_app_settings',
-  apiServerUrl: PhilgoConfig.phpApiUrl,  // https://philgo.com/func.php
-);
-final setting = PhilgoSetting.fromJson(json);
-```
-
-**전체 응답 형식**:
-```json
+```php
+// 수정 전 (잘못됨)
+private function isAdmin(): bool
 {
-    "bank_info": {
-        "kb": {
-            "name": "국민은행",
-            "account_no": "655-601-04-1644-08",
-            "account_name": "송재호"
-        },
-        "bdo": {
-            "name": "BDO",
-            "account_no": "008-018-022-138",
-            "account_name": "JAEHO SONG"
-        }
-    },
-    "point": {
-        "advertising_post_categories": ["임대", "매매", "구인", "구직", ...],
-        "advertisement_days": [3, 5, 7, 10, 15, 30, 60, 90, 180, 365],
-        "adv_cost_per_hour": 240
-    },
-    "admin_uids": [
-        "OSXtfcfdJkcLBovnQAC6Q1WMa2x1",
-        "xG3UczB56qazt2fMLH97154Cda62",
-        "RaHIcr45pvPzYdcDIv6JoW8DnSH2",
-        "eo4kPM2cbia9nhuGrD7aZjzrwGu2"
-    ]
+    $user = AuthService::getLoginUser();
+    if ($user === null) return false;
+    return ($user['admin'] ?? '') === 'Y';
+}
+
+// 수정 후 (올바름)
+private function isAdmin(): bool
+{
+    $user = AuthService::getLoginUser();
+    if ($user === null) return false;
+    if (empty($user['firebase_uid'])) return false;
+    return in_array($user['firebase_uid'], ADMINS);
 }
 ```
 
----
+**교훈**:
+- v7 시스템에서 관리자 확인이 필요한 모든 Controller는 반드시 `ADMINS` 배열을 사용해야 한다.
+- `sf_member.admin` 컬럼은 사용하면 안 된다.
+- 레거시 `is_admin_user()` 함수(`lib/functions.php:239`)의 로직을 정확히 따라야 한다.
 
-## 4. 응답 데이터 구조 상세
+### 이슈 2: v7 API 인증 시 session_id 전달
 
-### 4.1 bank_info - 은행 입금 정보
+**증상**: 관리자 설정 페이지에서 axios POST로 `api.php`를 호출할 때, 쿠키의 `session_id`만으로 인증이 불안정할 수 있다.
 
-| 키 | 타입 | 설명 | 상수 출처 (`etc/app.config.php`) |
-|-----|------|------|------|
-| `bank_info.kb.name` | string | 국민은행 이름 | `KB_NAME` ("국민은행") |
-| `bank_info.kb.account_no` | string | 국민은행 계좌번호 | `KB_ACCOUNT_NO` ("655-601-04-1644-08") |
-| `bank_info.kb.account_name` | string | 국민은행 예금주 | `KB_ACCOUNT_NAME` ("송재호") |
-| `bank_info.bdo.name` | string | BDO 은행 이름 | `BDO_NAME` ("BDO") |
-| `bank_info.bdo.account_no` | string | BDO 계좌번호 | `BDO_ACCOUNT_NO` ("008-018-022-138") |
-| `bank_info.bdo.account_name` | string | BDO 예금주 | `BDO_ACCOUNT_NAME` ("JAEHO SONG") |
+**해결**: PHP SSR 단계에서 쿠키의 `session_id`를 JavaScript 변수로 주입하고, axios POST body에 명시적으로 포함:
 
-> **용도**: 앱 내 입금 안내 화면에서 은행 정보 표시
-
-### 4.2 point - 포인트 광고 설정
-
-| 키 | 타입 | 설명 | 상수 출처 |
-|-----|------|------|------|
-| `point.advertising_post_categories` | string[] | 광고 가능 게시판 카테고리 목록 | `PointConfig::$advertising_post_categories` (= `POINT_ADVERTISEMENT_POST_CATEGORIES`) |
-| `point.advertisement_days` | int[] | 광고 기간 옵션 (일 단위) | `POINT_ADVERTISEMENT_DAYS` (`[3, 5, 7, 10, 15, 30, 60, 90, 180, 365]`) |
-| `point.adv_cost_per_hour` | int | 시간당 광고 비용 (포인트) | `PointConfig::$point_adv_cost_per_hour` (기본값: `240`) |
-
-> **광고 비용 계산**: 일일 비용 = `adv_cost_per_hour × 24` = 5,760 포인트/일
-> 예: 7일 광고 = 5,760 × 7 = 40,320 포인트
-
-### 4.3 admin_uids - 관리자 목록
-
-| 키 | 타입 | 설명 | 상수 출처 |
-|-----|------|------|------|
-| `admin_uids` | string[] | 관리자 Firebase UID 배열 | `ADMINS` (`etc/app.config.php` 줄 41-55) |
-
-> **용도**: 앱에서 현재 사용자가 관리자인지 판별. 관리자는 **글쓰기/댓글 작성이 제한**됨.
-
----
-
-## 5. 파일 구조
-
-### 5.1 백엔드 (PHP)
-
-```
-/www/
-├─ func.php                                     # 레거시 API 엔트리포인트
-├─ etc/
-│  └─ app.config.php                            # 설정 상수 정의
-│     ├─ KB_NAME, KB_ACCOUNT_NO, KB_ACCOUNT_NAME  (줄 16-18)
-│     ├─ BDO_NAME, BDO_ACCOUNT_NO, BDO_ACCOUNT_NAME  (줄 20-22)
-│     ├─ ADMINS (Firebase UID 배열)                (줄 41-55)
-│     ├─ POINT_ADVERTISEMENT_DAYS                  (줄 315)
-│     └─ class PointConfig                         (줄 348~)
-│        ├─ $advertising_post_categories           (줄 535)
-│        └─ $point_adv_cost_per_hour = 240         (줄 480)
-├─ lib/
-│  ├─ api/
-│  │  └─ api.allowed_functions.php              # AllowedFunctions::get_app_settings() (줄 1072-1075)
-│  └─ functions/
-│     └─ app.config.functions.php               # get_app_settings() 함수 정의 (줄 8-38)
-└─ tests/Unit/
-   └─ ApiSettingTest.php                        # PEST 유닛 테스트 (14개 테스트)
+```php
+// PHP SSR
+$currentSessionId = $_COOKIE[SESSION_ID] ?? '';
 ```
 
-### 5.2 Flutter 앱
-
-```
-philgo_app/
-├─ lib/
-│  ├─ main.dart                                 # 앱 진입점 — PhilgoState 초기화
-│  └─ screens/
-│     ├─ home/sections/forum.home.dart          # isAdmin 사용 — 글쓰기 제한 (줄 275)
-│     └─ post/widgets/
-│        └─ post_view_option_menu.dart          # setting.point 사용 — 광고 비용 계산 (줄 161, 175)
-└─ packages/philgo_api/lib/src/
-   ├─ philgo.config.dart                        # PhilgoConfig.phpApiUrl (func.php URL)
-   ├─ models/
-   │  └─ philgo.setting.model.dart              # PhilgoSetting, PhilgoSettingBankInfo,
-   │                                            #   PhilgoSettingPoint, BankAccount 모델
-   ├─ services/
-   │  └─ philgo.service.dart                    # PhilgoService.loadSetting() (줄 230-238)
-   ├─ state/
-   │  └─ philgo_state.dart                      # PhilgoState._init(), isAdmin (줄 20-35, 69-72)
-   └─ functions/
-      └─ api.functions.dart                     # apiCall() — HTTP POST 요청 (줄 89-213)
+```javascript
+// Vue.js — axios POST body에 session_id 명시적 포함
+const res = await axios.post('/api.php', {
+    method: 'settings.update',
+    session_id: this.sessionId,
+    settings: this.settings
+});
 ```
 
----
-
-## 6. Flutter 앱 연동 상세
-
-### 6.1 초기화 흐름
-
-```
-main()
-  │
-  ├─ WidgetsFlutterBinding.ensureInitialized()
-  ├─ Firebase.initializeApp()
-  │
-  ▼ runApp(MultiProvider(providers: [PhilgoState()]))
-      │
-      ▼ PhilgoState() 생성자
-          │
-          ▼ _init() (async)
-              ├─ [병렬 1] Firebase authStateChanges() 리스너 등록
-              │  └─ firebaseUser != null → philgoApiUserVerify() → user 설정
-              │
-              └─ [병렬 2] PhilgoService.instance.loadSetting()
-                 │
-                 ▼ apiCall('get_app_settings', PhilgoConfig.phpApiUrl)
-                 │  POST https://philgo.com/func.php
-                 │  Body: func=get_app_settings
-                 │
-                 ▼ PhilgoSetting.fromJson(json)
-                 │
-                 ▼ PhilgoState.setting = loadedSetting
-                 │
-                 ▼ notifyListeners() → UI 갱신
-```
-
-**핵심 특징**:
-- Firebase 인증 확인과 설정 로드가 **비동기 병렬** 실행
-- 앱 실행 중 메모리에 유지 — 재시작 시 다시 로드 (캐싱 없음)
-- `setting`이 null일 수 있으므로 사용 시 null 체크 필요
-
-### 6.2 PhilgoSetting 모델 계층
-
-```
-PhilgoSetting                           ← 최상위 모델
-├─ bankInfo: PhilgoSettingBankInfo       ← 은행 정보 컬렉션
-│  └─ banks: Map<String, BankAccount>   ← 은행 코드 → 계좌 정보
-│     ├─ 'kb' → BankAccount(name, accountNo, accountName)
-│     └─ 'bdo' → BankAccount(name, accountNo, accountName)
-├─ point: PhilgoSettingPoint            ← 포인트/광고 설정
-│  ├─ advertisingPostCategories: List<String>
-│  ├─ advertisementDays: List<int>
-│  └─ advCostPerHour: int
-└─ adminUids: List<String>              ← 관리자 Firebase UID 목록
-```
-
-**JSON 키 ↔ Dart 필드 매핑**:
-
-| JSON 키 | Dart 필드 | 타입 |
-|---------|-----------|------|
-| `bank_info` | `bankInfo` | `PhilgoSettingBankInfo` |
-| `bank_info.{code}.name` | `bankInfo.getBank(code)?.name` | `String` |
-| `bank_info.{code}.account_no` | `bankInfo.getBank(code)?.accountNo` | `String` |
-| `bank_info.{code}.account_name` | `bankInfo.getBank(code)?.accountName` | `String` |
-| `point.advertising_post_categories` | `point.advertisingPostCategories` | `List<String>` |
-| `point.advertisement_days` | `point.advertisementDays` | `List<int>` |
-| `point.adv_cost_per_hour` | `point.advCostPerHour` | `int` |
-| `admin_uids` | `adminUids` | `List<String>` |
-
-**편의 getter**:
-- `bankInfo.kb` → 국민은행 BankAccount (null 가능)
-- `bankInfo.bdo` → BDO BankAccount (null 가능)
-- `bankInfo.getBank('kb')` → 동적 은행 코드 조회
-
-### 6.3 PhilgoState 상태 관리
-
-```dart
-class PhilgoState extends ChangeNotifier {
-  PhilgoSetting? setting;   // null → 로딩 중 또는 실패
-  User? user;
-  bool loading = true;
-
-  /// 현재 사용자가 관리자인지 확인
-  /// setting.adminUids에 user.uid가 포함되면 관리자
-  bool get isAdmin {
-    if (user == null || setting == null) return false;
-    return setting!.adminUids.contains(user!.uid);
-  }
-
-  /// BuildContext로 PhilgoState 접근
-  static PhilgoState of(BuildContext context, {bool listen = false}) {
-    return Provider.of<PhilgoState>(context, listen: false);
-  }
-}
-```
-
-### 6.4 앱 내 사용 예시
-
-**1) 관리자 글쓰기 제한** (`lib/screens/home/sections/forum.home.dart:275`):
-```dart
-final philgoState = PhilgoState.of(context);
-if (philgoState.isAdmin) {
-  // "운영자는 글을 작성할 수 없습니다." 알림 표시
-  return;
-}
-```
-
-**2) 포인트 광고 비용 계산** (`lib/screens/post/widgets/post_view_option_menu.dart:161-175`):
-```dart
-final state = PhilgoState.of(context, listen: false);
-final setting = state.setting;
-if (setting == null) return;
-
-// 광고 기간 선택 바텀시트 표시
-PointSelectionBottomSheet(
-  pointSetting: setting.point,       // 광고 설정 전달
-  userPoints: state.user?.point ?? 0,
-);
-
-// 포인트 비용 계산
-final pointCost = calculatePointCost(
-  selectedDays,
-  setting.point.advCostPerHour,      // 시간당 비용: 240
-);
-```
-
-**3) 은행 정보 접근**:
-```dart
-final setting = PhilgoState.of(context).setting;
-if (setting != null) {
-  final kb = setting.bankInfo.kb;        // 국민은행
-  final bdo = setting.bankInfo.bdo;      // BDO
-  print('국민은행: ${kb?.accountNo}');    // "655-601-04-1644-08"
-  print('BDO: ${bdo?.accountName}');      // "JAEHO SONG"
-}
-```
-
----
-
-## 7. 테스트
-
-**테스트 파일**: `tests/Unit/ApiSettingTest.php`
-**실행 명령**: `./vendor/bin/pest tests/Unit/ApiSettingTest.php`
-
-| # | 테스트 | 설명 |
-|---|--------|------|
-| 1 | `get_app_settings() 함수가 배열을 반환한다` | 반환 타입 검증 |
-| 2 | `응답에 bank_info 키가 존재한다` | 최상위 키 존재 확인 |
-| 3 | `응답에 point 키가 존재한다` | 최상위 키 존재 확인 |
-| 4 | `bank_info.kb에 필수 키가 존재한다` | name, account_no, account_name |
-| 5 | `bank_info.bdo에 필수 키가 존재한다` | name, account_no, account_name |
-| 6 | `bank_info.kb.name 값이 비어있지 않다` | 값 유효성 |
-| 7 | `bank_info.bdo.name 값이 비어있지 않다` | 값 유효성 |
-| 8 | `point에 필수 키가 존재한다` | advertising_post_categories, advertisement_days, adv_cost_per_hour |
-| 9 | `point.advertising_post_categories 값이 비어있지 않다` | 값 유효성 |
-| 10 | `point.advertisement_days 값이 비어있지 않다` | 값 유효성 |
-| 11 | `point.adv_cost_per_hour 값이 비어있지 않다` | 값 유효성 |
-| 12 | `point.advertising_post_categories가 배열이다` | 타입 검증 |
-| 13 | `point.advertisement_days가 배열이다` | 타입 검증 |
-| 14 | `point.adv_cost_per_hour가 숫자이다` | 타입 검증 |
-
----
-
-## 8. 레거시 시스템과의 관계
-
-| 항목 | 설명 |
-|------|------|
-| **API 시스템** | 레거시 `func.php` 시스템 (v7 `api.php` 아님) |
-| **호출 경로** | `func.php` → `AllowedFunctions::get_app_settings()` → `get_app_settings()` |
-| **설정 소스** | `etc/app.config.php`의 PHP 상수/클래스 (`ADMINS`, `PointConfig` 등) |
-| **DB 의존성** | 없음 — 모든 설정이 PHP 상수/정적 변수에 하드코딩 |
-| **Flutter 호출** | `apiCall()` → `PhilgoConfig.phpApiUrl` (`https://philgo.com/func.php`) |
-| **v7 시스템과 무관** | `api.php` 디스패치를 거치지 않으며, Controller/Service 패턴 미사용 |
-
-> 이 API는 현재 레거시 시스템으로만 제공되며, 별도의 v7 마이그레이션 계획은 없다.
-> 설정 값 변경은 `etc/app.config.php` 파일을 직접 수정해야 한다.
+> `AuthService::getLoginUser()`는 쿠키의 `session_id`와 파라미터의 `session_id`를 모두 확인한다.
+> 따라서 body에 명시적으로 포함하면 쿠키 전달 실패 시에도 인증이 가능하다.

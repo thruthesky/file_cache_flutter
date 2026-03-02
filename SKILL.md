@@ -123,6 +123,19 @@ PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
 
 ## 레퍼런스 문서
 
+### 레퍼런스 폴더 구조
+
+| 폴더 | 용도 | 대상 |
+|------|------|------|
+| `references/api/` | v7 API 모듈 문서 (웹+앱 공통) | 모든 v7 API 엔드포인트 (Controller/Service) — 웹과 앱 모두 사용하는 공통 API |
+| `references/web/` | 웹/서버 전용 문서 | 웹서버, PHP, Vue.js, Bootstrap, SEO 등 웹 프론트엔드/백엔드 관련 내용만 포함 |
+| `references/app/` | Flutter 앱 전용 문서 | Flutter 앱 개발, Dart 코드, 앱 위젯, 앱 API 연동 등 앱 관련 내용만 포함 |
+| `references/event/` | 이벤트 시스템 문서 | 포인트 이벤트, 스피닝 휠, QR 코드 등 이벤트 관련 통합 문서 |
+| `references/` (루트) | 공통 인프라 문서 | 아키텍처, Docker, DB 스키마 등 전체 시스템 공통 문서 |
+
+> **`references/api/`** 폴더의 문서는 **웹과 앱 모두에서 사용하는 공통 API 문서**이다.
+> 특정 플랫폼(웹 또는 앱) 전용 내용은 해당 폴더(`web/` 또는 `app/`)에 작성한다.
+
 ### 아키텍처 전체 → [v7-architecture.md](references/v7-architecture.md)
 
 v7 시스템의 전체 아키텍처, 설계 원칙, 폴더 구조, 부트 프로세스, API 시스템,
@@ -148,6 +161,12 @@ Windows 환경 설정 차이점을 포함합니다.
 
 Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.
 
+### 레거시 앱 설정 API → [app/v7-app-settings.md](references/app/v7-app-settings.md)
+
+레거시 `func.php` 기반 `get_app_settings` API 문서이다.
+Flutter 앱이 시작할 때 서버에서 은행 정보, 포인트 설정, 관리자 UID 목록을 한 번에 가져온다.
+`PhilgoSetting` 모델 계층, `PhilgoState` 상태 관리, 앱 내 사용 예시를 포함한다.
+
 ### Flutter 앱 업소록 연동 → [app/v7-app.md](references/app/v7-app.md)
 
 Flutter 앱의 업소록(Company) 기능이 v7 API를 통해 데이터를 가져오는 방법을 상세히 다룹니다.
@@ -157,6 +176,14 @@ CompanyApi 클래스(list, get, mine, create, update, reVisitPoint, submitVisitR
 QR 코드 삼단콤보 흐름(QR 스캔→재방문→후기→포인트), CompanyEntity 필드(33개),
 업소 상태 흐름(신규→심사중→승인), 파일 업로드(V7FileUpload 위젯),
 포인트 적립 규칙, 에러 처리 패턴, 권한 모델을 포함합니다.
+
+### 웹 문서 → [references/web/](references/web/)
+
+| 문서 | 설명 | 상태 |
+|------|------|------|
+| SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
+
+> 웹/서버(PHP, Vue.js, Bootstrap, Nginx) 관련 문서는 `references/web/` 폴더에 작성한다.
 
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
