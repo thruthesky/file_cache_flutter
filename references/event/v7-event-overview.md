@@ -762,6 +762,28 @@ $log = PointLogService::changePoints([
 
 ## 7. DB 스키마 요약
 
+### 설계 문서 vs 실제 구현 테이블 매핑
+
+> **⚠️ 참고**: [client-point-event-spin.md](client-point-event-spin.md)는 초기 설계 문서로,
+> 설계 단계에서 `point_event_qr`, `point_event_history` 테이블을 계획했으나,
+> 실제 구현에서는 아래와 같이 `company_` 접두사 테이블로 변경되었다.
+
+| 초기 설계 (레거시) | 실제 구현 | 변경 사유 |
+|---|---|---|
+| `point_event_qr` | `company_qr_codes` | 업소록(company) 모듈에 통합 |
+| `point_event_history` | `company_qr_code_usages` | 스캔 기록 전용 테이블로 분리 |
+| *(point_event_history.content)* | `company_reviews` | 후기를 별도 테이블로 분리 (사진 연결 등) |
+
+**현재 사용 중인 테이블 5개:**
+
+| 테이블 | 용도 | 모듈 |
+|---|---|---|
+| `event_spin_history` | 스피닝 휠 게임 기록 | event |
+| `company_qr_codes` | QR 코드 발행/검증/만료 | company |
+| `company_qr_code_usages` | QR 스캔 기록 (성공/실패/거부) | company |
+| `company_reviews` | 방문 후기 + 포인트 적립 | company |
+| `sf_point_log` | 포인트 변동 이력 (공통) | 공통 |
+
 ### event_spin_history (스피닝 휠 기록)
 
 ```sql

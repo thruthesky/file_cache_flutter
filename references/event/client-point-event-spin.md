@@ -97,7 +97,7 @@
     $verification_id = bin2hex(random_bytes(16));  // 32자 hex
     → 128비트 랜덤 → 사실상 충돌/추측 불가
     ↓
-서버: point_event_qr 테이블에 INSERT
+서버: company_qr_codes 테이블에 INSERT
     - idx_company: 업소 idx
     - idx_member_created: 로그인 회원 idx
     - verification_id: 생성된 64자 hex
@@ -163,7 +163,7 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
     ↓
 [서버: pointEvent.scanQr 처리]
     │ 1. AuthService::getLoginUser() → 로그인 확인
-    │ 2. verification_id로 point_event_qr 테이블 조회
+    │ 2. verification_id로 company_qr_codes 테이블 조회
     │    → 없으면: RuntimeException('유효하지 않은 QR 코드입니다.')
     │ 3. 만료 확인: expired_at < time()
     │    → 만료: RuntimeException('만료된 QR 코드입니다.')
@@ -172,13 +172,13 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
     │ 5. 자기 업소 QR 확인: idx_member_created == 현재 로그인 회원
     │    → 자기 QR: RuntimeException('자신의 업소 QR 코드는 스캔할 수 없습니다.')
     │ 6. QR 코드 사용 처리:
-    │    UPDATE point_event_qr SET used_at = time(), idx_member_used = ? WHERE idx = ?
+    │    company_qr_code_usages에 사용 기록 INSERT (result='s')
     │ 7. 재방문 여부 확인:
-    │    SELECT COUNT(*) FROM point_event_history
+    │    SELECT COUNT(*) FROM company_qr_code_usages
     │    WHERE idx_member = ? AND idx_company = ? AND type = 'qr_scan'
     │    → 이전 기록 존재 = 재방문
     │ 8. 랜덤 포인트 생성: random_int(1000, 2000)
-    │ 9. point_event_history INSERT (type='qr_scan')
+    │ 9. company_qr_code_usages INSERT (result='s')
     │ 10. sf_member.point 업데이트: point = point + {포인트}
     │ 11. sf_point_log INSERT (포인트 변동 기록)
     │ 12. 결과 반환:
@@ -216,11 +216,11 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 | QR 스캔 패키지 | `mobile_scanner: ^7.2.0` | Flutter 공식 추천, 높은 인식률 |
 | QR 스캔 결과 화면 | `company.qr_code_scanned.screen.dart` 활용 | 기존 화면 패턴 참고, code(verification_id) 파라미터 전달 |
 | 포인트 랜덤 생성 | PHP `random_int(min, max)` | 보안 강화된 CSPRNG 랜덤 함수 |
-| 재방문 판단 | `point_event_history` 테이블에서 동일 업소 이력 확인 | 간단하고 정확 |
-| 후기 저장 | 별도 테이블 or 기존 Post 시스템 활용 | 결정 필요 - 후기 내용은 point_event_history에 저장 가능 |
+| 재방문 판단 | `company_qr_code_usages` 테이블에서 동일 업소 이력 확인 | 간단하고 정확 |
+| 후기 저장 | `company_reviews` 테이블에 저장 | 결정 완료 - 별도 테이블 사용 |
 | QR 만료 | 생성 후 180초(3분) | 보안 + 현장 인증 강화 |
 | 하루 제한 | 업소 당 10개/24시간 | DB created_at 기준 카운트, 남용 방지 |
-| 포인트 기록 | sf_point_log + point_event_history 이중 기록 | 기존 포인트 시스템과 호환 + 이벤트 전용 기록 |
+| 포인트 기록 | sf_point_log + company_qr_code_usages 이중 기록 | 기존 포인트 시스템과 호환 + 이벤트 전용 기록 |
 
 ---
 
@@ -234,7 +234,7 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 | 2 | 매 호출마다 새로운 고유 verification_id가 생성된다 | 동일 업소에서 연속 호출 시 다른 verification_id 반환 |
 | 3 | verification_id는 64자 hex(256비트 CSPRNG)이다 | 생성된 ID 형식 검증 (정규표현식 `/^[0-9a-f]{64}$/`) |
 | 4 | 하루 최대 10개 제한이 적용된다 (24시간 기준) | 11번째 생성 시 에러 반환, 24시간 경과 후 카운트 리셋 |
-| 5 | QR 코드가 DB point_event_qr 테이블에 저장된다 | INSERT 레코드 존재 확인 |
+| 5 | QR 코드가 DB company_qr_codes 테이블에 저장된다 | INSERT 레코드 존재 확인 |
 | 6 | QR URL 형식이 `https://philgo.com/company/qr-code-scanned.php?code={verification_id}`이다 | 반환된 qr_url URL 파싱 검증 |
 | 7 | expired_at이 created_at + 180 (180초)으로 설정된다 | DB 값 확인 |
 | 8 | QR 코드가 Flutter 화면에 이미지로 표시된다 | qr_flutter 위젯 렌더링 확인 |
@@ -258,7 +258,7 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 | 11 | 스캔 성공 시 QR 코드가 사용됨 상태로 변경된다 | used_at, idx_member_used 업데이트 |
 | 12 | sf_member.point가 업데이트된다 | point = point + 획득포인트 |
 | 13 | sf_point_log에 기록된다 | module='point_event', action='qr_scan' |
-| 14 | point_event_history에 기록된다 | type='qr_scan', points=획득포인트 |
+| 14 | company_qr_code_usages에 기록된다 | type='qr_scan', points=획득포인트 |
 | 15 | 재방문 여부가 응답에 포함된다 | is_revisit, revisit_bonus_available 필드 |
 | 16 | 포인트 획득 알림 애니메이션이 표시된다 | Flutter 위젯 확인 |
 | 17 | PEST Unit Test 통과 | 유효/무효/만료/자가스캔/재방문판단 모든 케이스 |
@@ -267,10 +267,10 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 
 | # | 완료 조건 | 검증 방법 |
 |---|----------|----------|
-| 1 | 동일 업소 재방문 여부가 정확히 판단된다 | point_event_history에서 이전 방문(type='qr_scan') 이력 확인 |
+| 1 | 동일 업소 재방문 여부가 정확히 판단된다 | company_qr_code_usages에서 이전 방문(result='s') 이력 확인 |
 | 2 | 재방문 시에만 보너스 버튼이 활성화된다 | 처음 방문 시 보너스 버튼 비활성화/숨김 |
 | 3 | 보너스 버튼 클릭 시 랜덤 2,000~3,000P 추가 지급된다 | random_int(2000, 3000) 범위 확인 |
-| 4 | point_event_history에 type='revisit'로 기록된다 | DB 레코드 확인 |
+| 4 | sf_point_log에 action='qr_revisit'로 기록된다 | DB 레코드 확인 |
 | 5 | sf_member.point가 업데이트된다 | point = point + 재방문보너스 |
 | 6 | sf_point_log에 기록된다 | module='point_event', action='revisit' |
 | 7 | 같은 QR 스캔 건에서 보너스는 1회만 가능하다 | 중복 클릭 시 에러 (HTTP 208 soft error) |
@@ -281,9 +281,9 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 | # | 완료 조건 | 검증 방법 |
 |---|----------|----------|
 | 1 | 후기 입력 UI가 표시된다 | 텍스트 입력 필드 + 사진 첨부 버튼 (V7FileUpload) |
-| 2 | 후기 등록 시 서버에 저장된다 | point_event_history에 content 저장 또는 Post 레코드 생성 |
+| 2 | 후기 등록 시 서버에 저장된다 | company_reviews 테이블에 content 저장 |
 | 3 | 후기 등록 성공 시 랜덤 2,000~3,000P 추가 지급된다 | random_int(2000, 3000) 범위 확인 |
-| 4 | point_event_history에 type='review'로 기록된다 | DB 레코드 확인 |
+| 4 | company_reviews에 후기가 저장되고 sf_point_log에 기록된다 | DB 레코드 확인 |
 | 5 | sf_member.point가 업데이트된다 | point = point + 후기포인트 |
 | 6 | sf_point_log에 기록된다 | module='point_event', action='review' |
 | 7 | 같은 QR 스캔 건에서 후기 포인트는 1회만 가능하다 | 중복 등록 시 에러 (HTTP 208 soft error) |
@@ -311,93 +311,18 @@ Flutter: qr_flutter 패키지로 QR 이미지 렌더링
 | `sf_member` | point 필드 업데이트 (포인트 잔액) | ❌ 추가 불필요 — 기존 그대로 사용 |
 | `sf_point_log` | 포인트 변동 기록 (module/action/point) | ❌ 추가 불필요 — 기존 그대로 사용 |
 | `company` | 업소 정보 조회 (idx, idx_member, status, name) | ❌ 추가 불필요 — 기존 그대로 사용 |
-| `sf_post_data` | 후기 글 저장 시 활용 가능 | ⚠️ 선택적 — point_event_history에 content 저장도 가능 |
+| `company_reviews` | 방문 후기 저장 (content, reward_points 등) | ✅ **필수** — 후기 전용 테이블 |
 
-#### 신규 테이블 필요성
+#### 실제 구현 테이블
 
-| 신규 테이블 | 필요 사유 |
-|------------|----------|
-| `point_event_qr` | ✅ **필수** — QR 코드 생성/검증/사용 상태 관리. 기존 테이블로 대체 불가 |
-| `point_event_history` | ✅ **필수** — 이벤트별 포인트 획득 기록 (qr_scan/revisit/review). sf_point_log만으로는 이벤트 전용 기록(재방문 판단, 중복 방지) 불충분 |
+> **⚠️ 참고**: 본 문서는 초기 설계 문서이다. 실제 구현에서는 아래 3개 테이블을 사용한다.
+> 테이블 DDL 및 관계도 상세는 [v7-event-overview.md](v7-event-overview.md) 7장 "DB 스키마 요약"을 참조한다.
 
-**결론**: **2개의 신규 테이블**이 필요하며, 기존 3개 테이블(sf_member, sf_point_log, company)을 함께 활용한다.
-
-### 4.2 `point_event_qr` 테이블 (QR 코드 관리)
-
-```sql
-CREATE TABLE `point_event_qr` (
-  `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `idx_company` int(10) UNSIGNED NOT NULL COMMENT '업소 idx (company.idx)',
-  `idx_member_created` int(10) UNSIGNED NOT NULL COMMENT 'QR 생성한 업소 회원 idx (sf_member.idx)',
-  `idx_member_used` int(10) UNSIGNED DEFAULT NULL COMMENT 'QR 사용한 회원 idx (NULL=미사용)',
-  `verification_id` varchar(64) NOT NULL COMMENT '고유 검증 ID (64자 hex, bin2hex(random_bytes(32)))',
-  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '생성 시각 (Unix timestamp)',
-  `used_at` int(10) UNSIGNED DEFAULT NULL COMMENT '사용 시각 (NULL=미사용)',
-  `expired_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '만료 시각 (created_at + 180)',
-  PRIMARY KEY (`idx`),
-  UNIQUE KEY `uk_verification_id` (`verification_id`),
-  KEY `idx_company` (`idx_company`),
-  KEY `idx_member_created` (`idx_member_created`),
-  KEY `idx_member_used` (`idx_member_used`),
-  KEY `idx_created_at` (`idx_company`, `created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='포인트 이벤트 QR 코드 관리';
-```
-
-**주요 인덱스 설명**:
-- `uk_verification_id`: verification_id 유일성 보장 + 스캔 시 빠른 조회
-- `idx_created_at`: 업소별 일일 생성 횟수 카운트 쿼리 최적화
-
-### 4.3 `point_event_history` 테이블 (이벤트 참여 기록)
-
-```sql
-CREATE TABLE `point_event_history` (
-  `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '포인트 획득 회원 idx (sf_member.idx)',
-  `idx_company` int(10) UNSIGNED NOT NULL COMMENT '업소 idx (company.idx)',
-  `idx_qr` int(10) UNSIGNED NOT NULL COMMENT 'QR 코드 idx (point_event_qr.idx)',
-  `type` varchar(16) NOT NULL COMMENT '유형: qr_scan | revisit | review',
-  `points` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '획득 포인트',
-  `content` text DEFAULT NULL COMMENT '후기 내용 (type=review인 경우)',
-  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '획득 시각 (Unix timestamp)',
-  PRIMARY KEY (`idx`),
-  KEY `idx_member` (`idx_member`),
-  KEY `idx_company` (`idx_company`),
-  KEY `idx_qr` (`idx_qr`),
-  KEY `idx_member_company_type` (`idx_member`, `idx_company`, `type`),
-  KEY `idx_qr_type` (`idx_qr`, `type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='포인트 이벤트 참여 기록';
-```
-
-**주요 인덱스 설명**:
-- `idx_member_company_type`: 재방문 판단 쿼리 최적화 (동일 회원 + 동일 업소 + type='qr_scan' 검색)
-- `idx_qr_type`: 중복 보너스/후기 방지 쿼리 최적화 (같은 QR + 같은 type 검색)
-
-### 4.4 테이블 관계도
-
-```
-sf_member (기존)                    company (기존)
-  │ idx                              │ idx
-  │                                  │ idx_member → sf_member.idx
-  │                                  │
-  ├──┬───────────────────────────────┤
-  │  │                               │
-  │  ├──── point_event_qr (신규)     │
-  │  │       idx_company ─────────── → company.idx
-  │  │       idx_member_created ──── → sf_member.idx (업소 회원)
-  │  │       idx_member_used ─────── → sf_member.idx (스캔 회원)
-  │  │       verification_id (UNIQUE)
-  │  │
-  │  └──── point_event_history (신규)
-  │         idx_company ─────────── → company.idx
-  │         idx_member ──────────── → sf_member.idx (포인트 획득 회원)
-  │         idx_qr ─────────────── → point_event_qr.idx
-  │
-  └──── sf_point_log (기존)
-          idx_member_from ────────── → sf_member.idx
-          idx_member_to ─────────── → sf_member.idx
-          module = 'point_event'
-          action = 'qr_scan' | 'revisit' | 'review'
-```
+| 실제 테이블 | 용도 | 상세 참조 |
+|---|---|---|
+| `company_qr_codes` | QR 코드 발행/검증/만료 관리 | [v7-event-overview.md §4.8](v7-event-overview.md#48-데이터-관계도) |
+| `company_qr_code_usages` | QR 스캔 기록 (성공/실패/거부) | [v7-event-overview.md §7](v7-event-overview.md#7-db-스키마-요약) |
+| `company_reviews` | 방문 후기 + 포인트 적립 | [v7-event-overview.md §7](v7-event-overview.md#7-db-스키마-요약) |
 
 ### 4.5 sf_point_log 기록 규칙
 
@@ -596,7 +521,7 @@ public function scanQr(array $user, string $verificationId): array
     // 7. 랜덤 포인트 생성 (1,000 ~ 2,000)
     $points = random_int(1000, 2000);
 
-    // 8. 포인트 지급 (sf_member.point + sf_point_log + point_event_history)
+    // 8. 포인트 지급 (PointLogService::changePoints())
     $this->grantPoints($user['idx'], $qr['idx_company'], $qr['idx'], 'qr_scan', $points);
 
     // 9. 업소 정보 조회
@@ -614,7 +539,7 @@ public function scanQr(array $user, string $verificationId): array
 }
 
 /**
- * 포인트 지급: sf_member.point 업데이트 + sf_point_log 기록 + point_event_history 기록
+ * 포인트 지급: PointLogService::changePoints() (sf_member.point 업데이트 + sf_point_log 기록)
  */
 private function grantPoints(int $idxMember, int $idxCompany, int $idxQr, string $type, int $points): void
 {
@@ -637,8 +562,8 @@ private function grantPoints(int $idxMember, int $idxCompany, int $idxQr, string
         time(),
     ]);
 
-    // point_event_history 기록
-    $stmt = $pdo->prepare('INSERT INTO point_event_history SET
+    // company_qr_code_usages 기록은 scanQrCode()에서 처리됨
+    // PointLogService::changePoints()로 sf_point_log INSERT
         idx_member = ?, idx_company = ?, idx_qr = ?, type = ?, points = ?, created_at = ?');
     $stmt->execute([$idxMember, $idxCompany, $idxQr, $type, $points, time()]);
 }
@@ -675,12 +600,12 @@ Body: { "method": "pointEvent.claimRevisitBonus", "idx_qr": 1 }
 1. AuthService::getLoginUser() → 로그인 확인
 2. idx_qr로 QR 코드 조회 → idx_member_used == 현재 회원인지 확인
    → 불일치: RuntimeException('권한이 없습니다.')
-3. 재방문 여부 확인: point_event_history에서 이전 방문(qr_scan) 이력 존재?
+3. 재방문 여부 확인: company_qr_code_usages에서 이전 방문(result='s') 이력 존재?
    → 이전 이력 없으면: RuntimeException('재방문 보너스 대상이 아닙니다.')
 4. 이미 보너스 수령 확인: 같은 idx_qr + type='revisit' 이력 존재?
    → 이미 수령: soft_error('이미 재방문 보너스를 받았습니다.') (HTTP 208)
 5. 랜덤 포인트 생성: random_int(2000, 3000)
-6. grantPoints() 호출 (sf_member + sf_point_log + point_event_history)
+6. grantPoints() 호출 (sf_member + sf_point_log)
 7. 결과 반환
 ```
 
@@ -717,10 +642,10 @@ Body: { "method": "pointEvent.submitReview", "idx_qr": 1, "content": "정말 맛
 4. 이미 후기 포인트 수령 확인: 같은 idx_qr + type='review' 이력 존재?
    → 이미 수령: soft_error('이미 후기 포인트를 받았습니다.') (HTTP 208)
 5. 후기 내용 저장:
-   - point_event_history에 content 필드에 저장
+   - company_reviews에 content 필드에 저장
    - (선택) 별도 Post 레코드 생성 가능
 6. 랜덤 포인트 생성: random_int(2000, 3000)
-7. grantPoints() 호출 (sf_member + sf_point_log + point_event_history)
+7. grantPoints() 호출 (sf_member + sf_point_log)
 8. 결과 반환
 ```
 
@@ -752,7 +677,7 @@ Body: { "method": "pointEvent.history", "limit": 20, "offset": 0 }
 **SQL 쿼리**:
 ```sql
 SELECT h.*, c.name as company_name
-FROM point_event_history h
+FROM company_qr_code_usages h
 LEFT JOIN company c ON h.idx_company = c.idx
 WHERE h.idx_member = ?
 ORDER BY h.created_at DESC
@@ -1235,7 +1160,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
     it('scanQr() - used_at 업데이트 확인');
     it('scanQr() - sf_member.point 증가 확인');
     it('scanQr() - sf_point_log 기록 확인');
-    it('scanQr() - point_event_history 기록 확인 (type=qr_scan)');
+    it('scanQr() - company_qr_code_usages 기록 확인 (result=s)');
     it('scanQr() - 첫 방문 시 is_revisit=false');
     it('scanQr() - 재방문 시 is_revisit=true');
 
@@ -1256,7 +1181,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
     it('submitReview() - 포인트가 2000~3000 범위인지 확인');
     it('submitReview() - 중복 요청 시 HTTP 208 soft error');
     it('submitReview() - sf_member.point 증가 확인');
-    it('submitReview() - point_event_history에 content 저장 확인');
+    it('submitReview() - company_reviews에 content 저장 확인');
 
     // === 기록 조회 ===
     it('history() - 미인증 시 에러');
@@ -1287,7 +1212,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 
 ### Phase 1: 서버 (PHP v7) — DB + API
 
-1. DB 테이블 생성 (`point_event_qr`, `point_event_history`)
+1. DB 테이블 확인 (`company_qr_codes`, `company_qr_code_usages`, `company_reviews`)
 2. Entity 클래스 작성 (`PointEventQrEntity`, `PointEventHistoryEntity`)
 3. Repository 클래스 확장 (`PointEventRepository` — QR 관련 CRUD 메서드 추가)
 4. Service 클래스 확장 (`PointEventService` — 비즈니스 로직 추가)
