@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/extensions/nav.context.dart';
 import 'package:philgo/functions/ui.functions.dart';
@@ -65,13 +66,27 @@ class _MainHomeState extends State<MainHome> {
       floatingActionButton: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// 이벤트 응모 FAB - 스피닝 휠 이벤트 페이지로 이동
+          /// 이벤트 응모 FAB - 연한 빨간 배경 + 펄스 애니메이션으로 강조
           ComicFab(
             onPressed: () => EventEntryScreen.push(context),
             tooltip: '이벤트',
             heroTag: 'event_fab',
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+            foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+            borderColor: Theme.of(context).colorScheme.errorContainer,
             child: const FaIcon(FontAwesomeIcons.gift),
-          ),
+          )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(
+                begin: const Offset(1.0, 1.0),
+                end: const Offset(1.08, 1.08),
+                duration: 800.ms,
+                curve: Curves.easeInOut,
+              )
+              .shimmer(
+                duration: 1500.ms,
+                color: Theme.of(context).colorScheme.onError.withAlpha(60),
+              ),
           const SizedBox(width: 8),
 
           /// 글쓰기 FAB - 카테고리 선택 다이얼로그 표시

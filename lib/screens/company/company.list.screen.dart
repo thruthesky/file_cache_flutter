@@ -295,19 +295,21 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            /// 카테고리 필터 칩 영역 (스크롤 시 접힘/펼침)
+            /// 카테고리 필터 + 내 업소 영역 (스크롤 시 접힘/펼침)
             ClipRect(
-            child: AnimatedAlign(
-              alignment: Alignment.topCenter,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              heightFactor: _showHeader ? 1.0 : 0.0,
-              child: _buildHeader(theme, sp, categories),
+              child: AnimatedAlign(
+                alignment: Alignment.topCenter,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                heightFactor: _showHeader ? 1.0 : 0.0,
+                child: Column(
+                  children: [
+                    _buildHeader(theme, sp, categories),
+                    _buildMyCompanySection(theme, scheme, sp, categories),
+                  ],
+                ),
+              ),
             ),
-          ),
-
-          /// 내 업소 하이라이트 카드 (전체 필터 + 내 업소 존재 시)
-          _buildMyCompanySection(theme, scheme, sp, categories),
 
           /// 업소 목록 (로딩/에러/빈/목록)
           Expanded(child: _buildBodyContent(theme, scheme, sp, categories)),
@@ -334,7 +336,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           ),
         ),
       ),
-      padding: EdgeInsets.fromLTRB(sp.s12, sp.s4, sp.s12, sp.s4),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
       child: _buildWrappedFilters(categories, sp),
     );
   }
@@ -354,7 +356,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final availableWidth = constraints.maxWidth;
-        final spacing = sp.s4;
+        const spacing = 2.0;
 
         // 한 줄에 6개 칩 배치 시도
         int chipsPerRow = 6;
@@ -377,8 +379,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         }
 
         return Wrap(
-          spacing: sp.s4,
-          runSpacing: sp.s4,
+          spacing: 2,
+          runSpacing: 2,
           children: items.map((category) {
             final isAll = category.id == 'all';
             final isSelected = isAll
@@ -413,153 +415,60 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     final category = _resolveCategory(categories, myCompany!.category);
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(sp.s16, sp.s16, sp.s16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    /// 컴팩트 내 업소 바 — 한 줄로 이름 + 카테고리 + 버튼
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        border: Border(
+          bottom: BorderSide(
+            color: scheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
+      ),
+      child: Row(
         children: [
-          /// 섹션 헤더 — 인디케이터 바 + 아이콘 + 타이틀
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 12),
-            child: Row(
-              children: [
-                /// 인디케이터 바
-                Container(
-                  width: 3,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: scheme.primary,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                FaIcon(
-                  FontAwesomeIcons.lightBuilding,
-                  size: 14,
-                  color: scheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  Lo.of(context)!.myCompanySection,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.normal,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ],
+          /// 카테고리 아이콘
+          FaIcon(category.icon, size: 12, color: scheme.primary),
+          const SizedBox(width: 8),
+
+          /// 업소명
+          Expanded(
+            child: Text(
+              myCompany!.name,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          const SizedBox(width: 8),
 
-          /// 섹션 콘텐츠 컨테이너
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerLowest,
-              border: Border.all(
-                color: scheme.outlineVariant.withValues(alpha: 0.5),
-                width: 1.0,
-              ),
-              borderRadius: BorderRadius.circular(16),
+          /// 보기 버튼
+          GestureDetector(
+            onTap: () => CompanyViewScreen.push(context, myCompany!.idx),
+            child: FaIcon(
+              FontAwesomeIcons.lightEye,
+              size: 14,
+              color: scheme.onSurfaceVariant,
             ),
-            clipBehavior: Clip.antiAlias,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                /// 업소 정보 (이름 + 카테고리 태그)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        myCompany!.name,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
+          ),
+          const SizedBox(width: 12),
 
-                      /// 카테고리 태그
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: scheme.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FaIcon(
-                              category.icon,
-                              size: 10,
-                              color: scheme.primary,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              category.name,
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: scheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                /// 액션 버튼 (보기 + 수정)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    /// 보기 버튼
-                    IconButton(
-                      onPressed: () =>
-                          CompanyViewScreen.push(context, myCompany!.idx),
-                      icon: FaIcon(
-                        FontAwesomeIcons.lightEye,
-                        size: 16,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      style: IconButton.styleFrom(
-                        side: BorderSide(
-                          color: scheme.outlineVariant.withValues(alpha: 0.5),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-
-                    /// 수정 버튼
-                    IconButton(
-                      onPressed: _handleCreateOrUpdateButton,
-                      icon: FaIcon(
-                        FontAwesomeIcons.lightPenToSquare,
-                        size: 16,
-                        color: scheme.onPrimary,
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor: scheme.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          /// 수정 버튼
+          GestureDetector(
+            onTap: _handleCreateOrUpdateButton,
+            child: FaIcon(
+              FontAwesomeIcons.lightPenToSquare,
+              size: 14,
+              color: scheme.primary,
             ),
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0);
+    );
   }
 
   /// 본문 콘텐츠 (로딩/에러/빈/목록 상태별 표시)
