@@ -82,7 +82,7 @@
 - **스타벅스 쿠폰 event_coupons DB 기반 관리**: `EventCouponService`로 쿠폰 유무 확인/배정 (`SELECT ... FOR UPDATE` race condition 방어)
 - **동적 확률 전환**: 사용 가능한 쿠폰이 0개이면 스타벅스 확률 자동 0% (해당 weight를 50P에 합산)
 - **PDO 트랜잭션**: 포인트 차감 → 확률 계산 → 보상 지급 → 기록 저장을 원자적으로 처리
-- **감사 추적**: `random_value`, `ip`, `starbucks_coupon_file`로 사후 검증 가능
+- **감사 추적**: `random_value`, `ip`로 사후 검증 가능
 
 ### 안티치트 원칙
 
@@ -101,7 +101,7 @@
 - 200P를 차감하고 게임 진행
 - 서버에서 확률적으로 결과를 미리 결정 (안티치트)
 - 당첨 시 포인트 자동 충전
-- 스타벅스 쿠폰 당첨 시 쿠폰 파일명을 DB에 기록 (사용 처리)
+- 스타벅스 쿠폰 당첨 시 `event_coupons` 테이블에서 쿠폰 배정 (`EventCouponService`)
 - 사용 가능한 쿠폰이 없으면 스타벅스 당첨 불가
 - 모든 게임 기록을 DB에 상세히 저장
 - 클라이언트에는 `section_index`만 응답하여 원판 애니메이션에 사용
@@ -129,9 +129,9 @@
 | 확률 계산 | 가중치(weight) 기반 확률, `random_int(1, 1000)` CSPRNG 사용 |
 | 포인트 차감 | `sf_member.point` UPDATE + `sf_point_log` INSERT |
 | 포인트 충전 | `sf_member.point` UPDATE + `sf_point_log` INSERT |
-| 스타벅스 쿠폰 | `event/cupon/starbucks/` 폴더 파일 스캔 → `event_spin_history`와 비교 → 미사용 쿠폰 선별 |
+| 스타벅스 쿠폰 | `event_coupons` DB 테이블 기반 — `EventCouponService::hasAvailableCoupon()` / `assignCouponToWinner()` |
 | 쿠폰 소진 | 사용 가능 쿠폰 0개 → 스타벅스 확률 0%로 변경 (스타벅스 weight=2를 50P에 합산) |
-| 기록 저장 | `event_spin_history` 테이블에 INSERT (쿠폰 파일명 포함) |
+| 기록 저장 | `event_spin_history` 테이블에 INSERT |
 | 클라이언트 연동 | `section_index` 반환 → 원판 회전 애니메이션 |
 | 트랜잭션 | PDO `beginTransaction()` → `commit()` / `rollBack()` |
 
@@ -179,8 +179,9 @@ COMMIT
 ```
 이벤트 스피닝 휠 서버 API
 ├─ [P1] 데이터베이스
-│  ├─ [P1-1] event_spin_history 테이블 (starbucks_coupon_file 컬럼 포함)
-│  └─ [P1-2] sf_point_log 기록 규칙 정의
+│  ├─ [P1-1] event_spin_history 테이블 (게임 기록)
+│  ├─ [P1-2] event_coupons 테이블 (쿠폰 관리)
+│  └─ [P1-3] sf_point_log 기록 규칙 정의
 │
 ├─ [P2] 확률 시스템
 │  ├─ [P2-1] 가중치(weight) 기반 확률 매핑 (10개 섹션, 합계 1000)
@@ -193,12 +194,11 @@ COMMIT
 │  ├─ [P3-2] 당첨 포인트 충전 (UPDATE → LOG)
 │  └─ [P3-3] 트랜잭션 원자성 보장
 │
-├─ [P4] 스타벅스 쿠폰 관리 (파일 시스템 기반)
-│  ├─ [P4-1] event/cupon/starbucks/ 폴더에서 이미지 파일 스캔 (glob)
-│  ├─ [P4-2] event_spin_history에서 이미 사용된 쿠폰 파일명 조회
-│  ├─ [P4-3] 사용 가능 쿠폰 = 폴더 파일 - DB 기록 (array_diff)
-│  ├─ [P4-4] 쿠폰 0개 → 스타벅스 확률 0%로 전환
-│  └─ [P4-5] 당첨 시 쿠폰 파일명을 event_spin_history에 기록
+├─ [P4] 스타벅스 쿠폰 관리 (event_coupons DB 기반)
+│  ├─ [P4-1] EventCouponService::hasAvailableCoupon('starbucks') — 사용 가능 쿠폰 확인
+│  ├─ [P4-2] 쿠폰 0개 → 스타벅스 확률 0%로 전환 (weight → 50P에 합산)
+│  ├─ [P4-3] 당첨 시 EventCouponService::assignCouponToWinner() — SELECT...FOR UPDATE
+│  └─ [P4-4] 관리자가 v7 Upload API로 QR 이미지 업로드하여 쿠폰 등록
 │
 ├─ [P5] API 엔드포인트
 │  ├─ [P5-1] event.spin (메인 API)
@@ -220,15 +220,15 @@ COMMIT
 
 | 문제 | 해결 방안 | 복잡도 |
 |------|----------|--------|
-| P1-1 | CREATE TABLE event_spin_history (starbucks_coupon_file VARCHAR 포함) | 낮음 |
+| P1-1 | CREATE TABLE event_spin_history (게임 기록 테이블) | 낮음 |
 | P2-1 | 가중치(weight 합계 1000) 기반 누적 매핑, `random_int(1, 1000)` | 중간 |
 | P2-4 | 쿠폰 유무 판단 후 확률 테이블 분기 | 중간 |
 | P3-1 | BEGIN TRANSACTION → SELECT point → UPDATE → COMMIT | 높음 |
 | P3-3 | PDO transaction으로 원자성 보장 | 중간 |
-| P4-1 | `glob('event/cupon/starbucks/*.{jpg,png}')` 파일 스캔 | 낮음 |
-| P4-2 | SELECT starbucks_coupon_file FROM event_spin_history WHERE IS NOT NULL | 낮음 |
-| P4-3 | `array_diff(폴더 파일, DB 기록)` | 낮음 |
-| P4-4 | 사용 가능 쿠폰 0개 → `$hasStarbucks = false` → weight 재조정 | 낮음 |
+| P4-1 | `EventCouponService::hasAvailableCoupon('starbucks')` — DB에서 available 쿠폰 확인 | 낮음 |
+| P4-2 | 사용 가능 쿠폰 0개 → `$hasStarbucks = false` → weight 재조정 | 낮음 |
+| P4-3 | 당첨 시 `EventCouponService::assignCouponToWinner()` — SELECT...FOR UPDATE | 중간 |
+| P4-4 | 관리자 쿠폰 등록: v7 Upload API → `event_coupons` INSERT | 낮음 |
 | P5-1 | `EventController::spin($input)` | 중간 |
 | P7-1 | JSON: `{section_index, points, prize_type, ...}` | 낮음 |
 
@@ -318,8 +318,6 @@ lib/event/
 │   ├── spin(array $user)                     ← 메인 비즈니스 로직 (EventCouponService 연동)
 │   ├── calculateSpinResult(bool $has)        ← 가중치 기반 확률 계산
 │   ├── getSections()                          ← 10개 섹션 테이블 반환
-│   ├── getAvailableStarbucksCoupons()        ← 사용 가능 쿠폰 조회 (레거시)
-│   ├── getCouponDirPath()                    ← 쿠폰 폴더 절대 경로 (레거시)
 │   └── getHistory(...)                        ← 기록 페이지네이션 조회
 │
 ├── EventCouponService.php     ← Philgo\Event\EventCouponService (쿠폰 비즈니스 로직)
@@ -331,13 +329,12 @@ lib/event/
 ├── EventCouponRepository.php  ← Philgo\Event\EventCouponRepository (쿠폰 DB 계층)
 │   ├── lockAndPickAvailable(?type): ?array   ← SELECT ... FOR UPDATE
 │   ├── assignToWinner(idx, member, spin): bool  ← 당첨자 배정 UPDATE
-│   ├── findByWinner(idx, page, limit): array ← 당첨자 쿠폰 목록 (uploads JOIN)
+│   ├── findByWinner(idxMember, page, limit): array ← 당첨자별 쿠폰 목록 (won/sent, uploads JOIN)
 │   └── ...                                    ← 기타 CRUD
 │
 └── EventRepository.php        ← Philgo\Event\EventRepository
     ├── getMember(int $idx)                    ← sf_member 조회
     ├── insertSpinHistory(array $data)        ← event_spin_history INSERT
-    ├── getUsedStarbucksCouponFiles()         ← 사용된 쿠폰 파일명 조회 (레거시)
     └── getSpinHistory(int $idx, int $p, int $l) ← 페이지네이션 조회
 ```
 
@@ -634,8 +631,8 @@ curl -X POST "https://local.philgo.com/api.php" \
       "prize_type": "starbucks",
       "points_cost": 200,
       "points_reward": -1,
-      "starbucks_coupon_file": "4.jpg",
-      "starbucks_coupon_url": "/event/cupon/starbucks/4.jpg",
+      "starbucks_coupon_file": null,
+      "starbucks_coupon_url": null,
       "random_value": 700,
       "point_before": 5200,
       "point_after": 5000,
@@ -654,7 +651,7 @@ curl -X POST "https://local.philgo.com/api.php" \
 | `page` | int | 현재 페이지 번호 |
 | `limit` | int | 페이지당 개수 |
 | `items` | array | 기록 배열 (최신순 정렬) |
-| `items[].starbucks_coupon_url` | string\|null | 쿠폰 URL (Service에서 자동 추가) |
+| `items[].starbucks_coupon_url` | null | ~~레거시~~ 항상 null (하위 호환 유지) |
 
 ---
 
@@ -742,76 +739,32 @@ curl -X POST "https://local.philgo.com/api.php" \
 > 사용 가능한 쿠폰이 **0개이면 스타벅스 당첨 확률은 자동으로 0%**가 된다.
 > 상세는 → [v7-event-coupon.md](../event/v7-event-coupon.md) 참조.
 
-### 쿠폰 파일 저장 위치
+### 쿠폰 관리 — event_coupons DB 기반
+
+> ~~기존 `event/cupon/starbucks/` 폴더 기반 파일 스캔 방식은 폐기되었다.~~
+> 현재는 `event_coupons` DB 테이블 기반으로 쿠폰을 관리한다.
+> 상세는 → [v7-event-coupon.md](../event/v7-event-coupon.md) 참조.
+
+**쿠폰 라이프사이클 (DB 기반)**:
 
 ```
-www/event/cupon/starbucks/
-├── index.php                          ← 디렉토리 접근 차단용
-├── 2.jpg                              ← 스타벅스 쿠폰 이미지
-├── 3.jpg                              ← 스타벅스 쿠폰 이미지
-├── 4.jpg                              ← 스타벅스 쿠폰 이미지
-└── KakaoTalk_Photo_2026-02-28-22-10-33.png  ← 스타벅스 쿠폰 이미지
-```
-
-> 관리자가 이 폴더에 쿠폰 이미지를 직접 업로드(복사)하면 자동으로 이벤트에 사용된다.
-> 파일명은 랜덤하게 지정되며, 확장자는 `.jpg`, `.jpeg`, `.png`이다.
-
-### 사용 가능 쿠폰 조회 알고리즘
-
-`EventService::getAvailableStarbucksCoupons()` 구현:
-
-```php
-public static function getAvailableStarbucksCoupons(): array
-{
-    // [1] 폴더에서 이미지 파일 스캔 (jpg, jpeg, png)
-    $couponDir = self::getCouponDirPath();
-    $allFiles = [];
-    foreach (['*.jpg', '*.jpeg', '*.png'] as $pattern) {
-        $matched = glob($couponDir . $pattern);
-        if ($matched) {
-            foreach ($matched as $filePath) {
-                $allFiles[] = basename($filePath);
-            }
-        }
-    }
-
-    if (empty($allFiles)) return []; // 폴더에 쿠폰 파일 없음
-
-    // [2] DB에서 이미 사용된 쿠폰 파일명 조회
-    $usedFiles = EventRepository::getUsedStarbucksCouponFiles();
-
-    // [3] 차집합 = 사용 가능 쿠폰
-    return array_values(array_diff($allFiles, $usedFiles));
-}
-```
-
-### 쿠폰 라이프사이클
-
-```
-[1] 관리자가 쿠폰 파일 업로드
-    └─ event/cupon/starbucks/new_coupon.jpg 저장
+[1] 관리자가 쿠폰 등록 (관리자 위젯)
+    └─ v7 Upload API로 QR 이미지 업로드 → event_coupons INSERT (status='available')
 
 [2] 스핀 API 호출 시 사용 가능 쿠폰 확인
-    ├─ 폴더 파일: ['2.jpg', '3.jpg', '4.jpg', 'new_coupon.jpg']
-    ├─ DB 사용됨: ['2.jpg']
-    └─ 사용 가능: ['3.jpg', '4.jpg', 'new_coupon.jpg'] → 3개
+    └─ EventCouponService::hasAvailableCoupon('starbucks')
+    └─ SELECT COUNT(*) FROM event_coupons WHERE status='available' AND coupon_type='starbucks'
 
-[3] 스타벅스 당첨 시
-    └─ event_spin_history에 starbucks_coupon_file='3.jpg' 기록
-    └─ 이제 3.jpg는 사용 불가
+[3] 스타벅스 당첨 시 (트랜잭션 내)
+    └─ EventCouponService::assignCouponToWinner('starbucks', $idxMember, $spinIdx)
+    └─ SELECT ... FOR UPDATE (race condition 방어) → UPDATE status='won'
 
-[4] 다음 스핀 API 호출 시
-    ├─ DB 사용됨: ['2.jpg', '3.jpg']
-    └─ 사용 가능: ['4.jpg', 'new_coupon.jpg'] → 2개
-
-[5] 모든 쿠폰 소진 시
-    ├─ 사용 가능: [] → 0개
-    └─ $hasStarbucksCoupon = false
+[4] 모든 쿠폰 소진 시
+    └─ hasAvailableCoupon() == false
     └─ 스타벅스 weight=0, 50P weight: 379→381
 ```
 
-> **쿠폰 보충**: 관리자가 새 쿠폰 이미지를 폴더에 복사하기만 하면 된다.
-> DB 작업 불필요. 파일만 추가하면 자동으로 다음 스핀부터 스타벅스 당첨 가능하다.
+> **쿠폰 보충**: 관리자가 관리자 페이지에서 새 쿠폰을 등록하면 자동으로 다음 스핀부터 스타벅스 당첨 가능하다.
 
 ---
 
@@ -820,7 +773,7 @@ public static function getAvailableStarbucksCoupons(): array
 ### event_spin_history 테이블
 
 스피닝 휠 이벤트의 **모든 게임 기록**을 저장한다.
-스타벅스 쿠폰 당첨 시 **쿠폰 파일명**을 함께 기록하여 쿠폰 사용 여부를 추적한다.
+쿠폰 배정은 `event_coupons` 테이블에서 관리한다 (`starbucks_coupon_file` 컬럼은 레거시 호환용으로 유지, 항상 null).
 
 ```sql
 CREATE TABLE `event_spin_history` (
@@ -855,7 +808,7 @@ CREATE TABLE `event_spin_history` (
 | `prize_type` | VARCHAR(16) | `miss` / `point` / `starbucks` |
 | `points_cost` | INT | 차감 포인트 (기본 200) |
 | `points_reward` | INT | 획득 포인트 (꽝=0, 스타벅스=-1) |
-| `starbucks_coupon_file` | VARCHAR(255) NULL | 스타벅스 쿠폰 파일명 |
+| `starbucks_coupon_file` | VARCHAR(255) NULL | ~~레거시~~ 항상 null (쿠폰은 event_coupons 테이블로 이관) |
 | `random_value` | INT | 확률 계산 랜덤 값 (감사 추적용) |
 | `point_before` | INT | 게임 전 잔액 |
 | `point_after` | INT | 게임 후 잔액 |
@@ -880,7 +833,7 @@ CREATE TABLE `event_spin_history` (
 
 > 꽝인 경우 포인트 변동이 없으므로 `sf_point_log`에 충전 기록을 남기지 않는다.
 > 단, 참가비 차감 기록(`spin_cost`)은 항상 남긴다.
-> 스타벅스 당첨 시 `etc`에 파일명을 함께 기록하여 추적 가능하게 한다.
+> 스타벅스 당첨 시 `etc`에 `spin_reward_starbucks`로 기록하여 추적 가능하게 한다.
 > `event_spin_history`에는 꽝 포함 모든 결과를 기록한다.
 
 ---
@@ -907,17 +860,14 @@ CREATE TABLE `event_spin_history` (
 | 상수 | 값 | 설명 |
 |------|------|------|
 | `SPIN_COST` | 200 | 게임 참가비 (포인트) |
-| `COUPON_DIR` | `/event/cupon/starbucks/` | 쿠폰 폴더 경로 (ROOT_DIR 기준 상대) |
 
 #### 메서드 상세
 
 | 메서드 | 접근 | 설명 |
 |--------|:----:|------|
-| `spin(array $user)` | public static | 메인 비즈니스 로직 — 8단계 처리 |
+| `spin(array $user)` | public static | 메인 비즈니스 로직 — 8단계 처리 (EventCouponService 연동) |
 | `calculateSpinResult(bool $has)` | public static | 가중치 기반 확률 계산, CSPRNG 사용 |
 | `getSections()` | public static | 10개 섹션 가중치 테이블 반환 |
-| `getAvailableStarbucksCoupons()` | public static | 폴더 스캔 + DB 비교 → 사용 가능 쿠폰 |
-| `getCouponDirPath()` | public static | 쿠폰 폴더 절대 경로 반환 |
 | `getHistory(int $idx, int $p, int $l)` | public static | 히스토리 페이지네이션 조회 |
 
 #### `spin()` 처리 흐름 (event_coupons DB 기반)
@@ -991,7 +941,7 @@ CREATE TABLE `event_spin_history` (
 | `updateMemberPoint(int $idx, int $pt)` | `UPDATE sf_member SET point = ? WHERE idx = ?` | `bool` |
 | `insertPointLog(array $data)` | `INSERT INTO sf_point_log (...)` | `int` (생성된 idx) |
 | `insertSpinHistory(array $data)` | `INSERT INTO event_spin_history (...)` | `int` (생성된 idx) |
-| `getUsedStarbucksCouponFiles()` | `SELECT starbucks_coupon_file WHERE IS NOT NULL` | `array` (파일명 배열) |
+| ~~`getUsedStarbucksCouponFiles()`~~ | ~~폐기~~ — 쿠폰 관리는 `EventCouponRepository`로 이관 | — |
 | `getSpinHistory(int $idx, int $p, int $l)` | `SELECT * ... LIMIT ? OFFSET ?` | `['total' => int, 'items' => array]` |
 
 #### `insertPointLog()` 자동 기본값
@@ -1104,7 +1054,7 @@ _sections = [
 | `EventService::getSections` | 7 | 섹션 테이블 정합성 (10개 섹션, weight 합계 1000, 인덱스/포인트/유형) |
 | `EventService::calculateSpinResult` | 6 | 확률 계산 (유효 범위, 쿠폰 없을 때 스타벅스 0%, 10만 회 시뮬레이션 ×2) |
 | `EventRepository` | 6 | DB CRUD (getMember, updateMemberPoint, insertPointLog, insertSpinHistory, 쿠폰 조회, 페이지네이션) |
-| `getAvailableStarbucksCoupons` | 3 | 쿠폰 폴더 스캔, 사용된 쿠폰 제외, 경로 정확성 |
+| `EventCouponService` | 3 | DB 기반 쿠폰 조회, 배정, race condition 방어 |
 | `EventService::spin` | 11 | 메인 로직 (정상 실행, 200P 차감, 포인트 당첨, 꽝, 잔액 부족, 기록 저장, 로그 확인, 연속 스핀) |
 | `EventService::getHistory` | 4 | 페이지네이션, 쿠폰 URL 추가, limit/page 검증 |
 | `EventController` | 5 | API 엔드포인트 (미인증 예외, 인증 실행, 잔액 부족) |
@@ -1178,7 +1128,7 @@ Content-Type: application/json
 | 필드 | 용도 |
 |------|------|
 | `event_spin_history.random_value` | 확률 계산에 사용된 랜덤 값 → 사후 검증 가능 |
-| `event_spin_history.starbucks_coupon_file` | 어떤 쿠폰 파일이 배분되었는지 추적 |
+| `event_coupons.idx_spin_history` | 어떤 쿠폰이 어떤 스핀에서 배분되었는지 추적 (DB 기반) |
 | `event_spin_history.ip` | 접속 IP 기록 |
 | `sf_point_log` | 모든 포인트 변동 기록 |
 
