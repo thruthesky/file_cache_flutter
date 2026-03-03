@@ -260,12 +260,17 @@ public static function spin(array $user): array
 }
 ```
 
-### 2.6 스타벅스 쿠폰 관리
+### 2.6 쿠폰 관리 시스템 → [v7-event-coupon.md](v7-event-coupon.md)
 
-- **저장 위치**: `event/cupon/starbucks/` 폴더 (파일 시스템 기반)
-- **사용 추적**: `event_spin_history.starbucks_coupon_file` 컬럼
-- **사용 가능 쿠폰** = 폴더 파일 - DB 사용됨 (차집합)
-- 쿠폰 0개 → 스타벅스 확률 자동 0%, 50P에 weight 합산
+`event_coupons` DB 테이블 기반 범용 쿠폰 관리 시스템이다. 관리자가 쿠폰을 등록하면
+v7 Upload API로 QR 이미지를 `uploads` 테이블에 저장하고 `idx_upload`로 연결한다.
+스피닝 휠에서 스타벅스 당첨 시 `SELECT ... FOR UPDATE`로 race condition을 방어하며
+사용 가능한 쿠폰 1개를 자동 배정한다. 상태 흐름은 `available → won → sent`이며,
+관리자가 별도 채널(카카오톡 등)로 쿠폰 이미지를 전송한 후 "전송 완료" 처리한다.
+쿠폰이 0개이면 스타벅스 확률이 자동으로 0%가 되고 해당 weight가 50P에 합산된다.
+관리자 위젯(`widgets/admin/event/coupon-list.php`)에서 통계 대시보드, 등록/수정/삭제/전송 관리를 수행한다.
+
+**레거시 호환**: 기존 파일 시스템 기반 쿠폰(`event/cupon/starbucks/` 폴더)도 병행 운용 가능하다.
 
 ### 2.7 sf_point_log 기록 규칙 (스피닝 휠)
 
@@ -1265,11 +1270,12 @@ $log = PointLogService::changePoints([
 | `point_event_history` | `company_qr_code_usages` | 스캔 기록 전용 테이블로 분리 |
 | *(point_event_history.content)* | `company_reviews` | 후기를 별도 테이블로 분리 (사진 연결 등) |
 
-**현재 사용 중인 테이블 5개:**
+**현재 사용 중인 테이블 6개:**
 
 | 테이블 | 용도 | 모듈 |
 |---|---|---|
 | `event_spin_history` | 스피닝 휠 게임 기록 | event |
+| `event_coupons` | 쿠폰 관리 (등록/당첨/전송/만료) | event |
 | `company_qr_codes` | QR 코드 발행/검증/만료 | company |
 | `company_qr_code_usages` | QR 스캔 기록 (성공/실패/거부) | company |
 | `company_reviews` | 방문 후기 + 포인트 적립 | company |
@@ -1297,6 +1303,33 @@ CREATE TABLE `event_spin_history` (
   KEY `starbucks_coupon_file` (`starbucks_coupon_file`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
+
+### event_coupons (이벤트 쿠폰)
+
+```sql
+CREATE TABLE `event_coupons` (
+  `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `coupon_type` varchar(50) NOT NULL DEFAULT 'starbucks',
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `memo` text DEFAULT NULL,
+  `image_url` varchar(512) DEFAULT NULL COMMENT '외부 이미지 URL (레거시)',
+  `idx_upload` int(10) UNSIGNED DEFAULT NULL COMMENT 'uploads.idx FK (v7 Upload)',
+  `status` varchar(20) NOT NULL DEFAULT 'available' COMMENT 'available|won|sent|expired|cancelled',
+  `idx_winner` int(10) UNSIGNED DEFAULT NULL,
+  `idx_spin_history` int(10) UNSIGNED DEFAULT NULL,
+  `won_at` int(10) UNSIGNED DEFAULT NULL,
+  `sent_at` int(10) UNSIGNED DEFAULT NULL,
+  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `updated_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`idx`),
+  KEY `idx_status` (`status`),
+  KEY `idx_coupon_type_status` (`coupon_type`, `status`),
+  KEY `idx_winner` (`idx_winner`),
+  KEY `idx_upload` (`idx_upload`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+> 상세 문서: [v7-event-coupon.md](v7-event-coupon.md) — 쿠폰 상태 흐름, 관리자 위젯, 당첨 배정, Race Condition 방어
 
 ### company_qr_codes (QR 코드)
 
@@ -1380,7 +1413,9 @@ CREATE TABLE `company_reviews` (
 lib/event/
 ├── EventController.php        ← event.spin, event.history API
 ├── EventService.php           ← spin(), calculateSpinResult(), getAvailableStarbucksCoupons()
-└── EventRepository.php        ← event_spin_history CRUD
+├── EventRepository.php        ← event_spin_history CRUD
+├── EventCouponService.php     ← 쿠폰 비즈니스 로직 (생성/삭제/수정/배정/통계)
+└── EventCouponRepository.php  ← event_coupons 테이블 CRUD (SELECT...FOR UPDATE)
 
 lib/company/
 ├── CompanyController.php      ← company.* API (QR + 후기 포함)
@@ -1398,7 +1433,10 @@ lib/point_log/
 ├── PointLogRepository.php     ← sf_point_log 테이블 CRUD
 └── PointLogEntity.php         ← 포인트 로그 데이터 구조체
 
-event/cupon/starbucks/         ← 스타벅스 쿠폰 이미지 저장 폴더
+widgets/admin/event/
+└── coupon-list.php             ← 관리자 쿠폰 관리 위젯 (Vue.js + v7 Upload API)
+
+event/cupon/starbucks/         ← 스타벅스 쿠폰 이미지 저장 폴더 (레거시)
 
 company/
 ├── qr-code-scanned.php        ← QR 스캔 성공 감사 페이지 (후기 CTA 포함)
@@ -1413,6 +1451,7 @@ js/v7api.js                    ← v7api(), v7apiUpload() 헬퍼 함수
 
 | 문서 | 내용 | 라인 수 |
 |------|------|--------|
+| [event/v7-event-coupon.md](v7-event-coupon.md) | 이벤트 쿠폰 관리 (DB 스키마, 관리자 위젯, 당첨 배정, 전송 관리) | ~300 |
 | [api/v7-event.md](../api/v7-event.md) | 스피닝 휠 서버 API 전체 (CoT/ToT, 아키텍처, PEST 테스트) | ~1,100 |
 | [event/server-point-event-spin.md](server-point-event-spin.md) | 서버 포인트 이벤트 상세 (확률, 쿠폰, 트랜잭션) | ~1,300 |
 | [event/client-point-event-spin.md](client-point-event-spin.md) | 클라이언트 삼단콤보 (QR 스캔, 재방문, 후기) | ~1,700 |

@@ -201,6 +201,17 @@ QR 코드 삼단콤보 흐름(QR 스캔→재방문→후기→포인트), Compa
 module/action 매트릭스, 핵심 PHP/Dart 코드 스니펫을 포함합니다.
 이벤트 관련 작업 시 **이 문서를 먼저 읽고** 필요에 따라 개별 상세 문서로 이동하세요.
 
+### 이벤트 쿠폰 관리 → [event/v7-event-coupon.md](references/event/v7-event-coupon.md)
+
+`event_coupons` DB 테이블 기반 범용 쿠폰 관리 시스템의 전체 구조를 다룹니다.
+관리자가 v7 Upload API로 QR 이미지를 업로드하여 쿠폰을 등록하고,
+스피닝 휠 당첨 시 `SELECT ... FOR UPDATE`로 race condition을 방어하며 자동 배정합니다.
+상태 흐름(`available → won → sent`), 관리자 위젯(Vue.js 등록/수정/삭제/전송 관리),
+EventCouponService/Repository 클래스 구조, 레거시 `func()` API 함수
+(`create_event_coupon`, `delete_event_coupon`, `update_event_coupon`, `update_event_coupon_sent`),
+동적 확률 조정(쿠폰 0개 시 스타벅스 weight → 50P 합산), 당첨 시 freetalk 자동 게시글 작성,
+Flutter 앱/웹에서의 쿠폰 표시 로직을 상세히 기술합니다.
+
 ### 이벤트 응모 (스피닝 휠) → [app/v7-event-entry.md](references/app/v7-event-entry.md)
 
 스피닝 휠(원판 돌리기) 기반 이벤트 응모 시스템의 상세 문서입니다.
