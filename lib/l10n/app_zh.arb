@@ -2212,6 +2212,10 @@
   "@spinWheelCostNotice": {
     "description": "Notice about point cost per spin"
   },
+  "spinWheelCouponsExhausted": "星巴克优惠券已全部领完，转盘抽奖暂时不可用。",
+  "@spinWheelCouponsExhausted": {
+    "description": "Message when all Starbucks coupons are exhausted"
+  },
   "viewCoupon": "查看优惠券",
   "@viewCoupon": {
     "description": "Button text to view coupon image"

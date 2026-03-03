@@ -2819,6 +2819,10 @@
   "@spinWheelCostNotice": {
     "description": "Notice about point cost per spin"
   },
+  "spinWheelCouponsExhausted": "스타벅스 쿠폰이 모두 소진되어서 더 이상 원판 돌리기를 하지 않습니다.",
+  "@spinWheelCouponsExhausted": {
+    "description": "Message when all Starbucks coupons are exhausted"
+  },
   "viewCoupon": "쿠폰 확인",
   "@viewCoupon": {
     "description": "Button text to view coupon image"

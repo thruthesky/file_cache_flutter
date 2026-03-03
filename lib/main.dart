@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,15 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // iOS 시뮬레이터에서 전화번호 인증 테스트를 위해 APNs 검증 비활성화
+  // SIMULATOR_DEVICE_NAME 환경변수는 시뮬레이터에서만 존재
+  if (kDebugMode &&
+      Platform.isIOS &&
+      Platform.environment.containsKey('SIMULATOR_DEVICE_NAME')) {
+    await FirebaseAuth.instance
+        .setSettings(appVerificationDisabledForTesting: true);
+  }
 
   OmniVideoPlayer.ensureInitialized();
 

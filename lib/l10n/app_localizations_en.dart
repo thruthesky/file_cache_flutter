@@ -2278,6 +2278,10 @@ class LoEn extends Lo {
   String get spinWheelCostNotice => '200 points are deducted per spin.';
 
   @override
+  String get spinWheelCouponsExhausted =>
+      'All Starbucks coupons have been claimed. The spinning wheel is no longer available.';
+
+  @override
   String get viewCoupon => 'View Coupon';
 
   @override

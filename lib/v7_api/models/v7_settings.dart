@@ -11,7 +11,8 @@
 ///   "app_version_ios": "2.0.16",
 ///   "app_version_ios_build": "46",
 ///   "company_qr_event_enabled": "Y",
-///   "event_entry_enabled": "Y"
+///   "event_entry_enabled": "Y",
+///   "available_starbucks_coupons": 5
 /// }
 /// ```
 class V7Settings {
@@ -21,6 +22,7 @@ class V7Settings {
   final String appVersionIosBuild;
   final bool companyQrEventEnabled;
   final bool eventEntryEnabled;
+  final int availableStarbucksCoupons;
 
   V7Settings({
     required this.appVersionAndroid,
@@ -29,6 +31,7 @@ class V7Settings {
     required this.appVersionIosBuild,
     required this.companyQrEventEnabled,
     required this.eventEntryEnabled,
+    required this.availableStarbucksCoupons,
   });
 
   /// JSON 응답에서 V7Settings 생성
@@ -45,6 +48,8 @@ class V7Settings {
           (json['company_qr_event_enabled']?.toString() ?? 'N') == 'Y',
       eventEntryEnabled:
           (json['event_entry_enabled']?.toString() ?? 'N') == 'Y',
+      availableStarbucksCoupons:
+          (json['available_starbucks_coupons'] as num?)?.toInt() ?? 0,
     );
   }
 
@@ -54,6 +59,7 @@ class V7Settings {
         'android: $appVersionAndroid+$appVersionAndroidBuild, '
         'ios: $appVersionIos+$appVersionIosBuild, '
         'qrEvent: $companyQrEventEnabled, '
-        'eventEntry: $eventEntryEnabled)';
+        'eventEntry: $eventEntryEnabled, '
+        'starbucksCoupons: $availableStarbucksCoupons)';
   }
 }

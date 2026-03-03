@@ -2232,6 +2232,10 @@ class LoKo extends Lo {
   String get spinWheelCostNotice => '추첨을 할 때마다 200 포인트가 소진됩니다.';
 
   @override
+  String get spinWheelCouponsExhausted =>
+      '스타벅스 쿠폰이 모두 소진되어서 더 이상 원판 돌리기를 하지 않습니다.';
+
+  @override
   String get viewCoupon => '쿠폰 확인';
 
   @override

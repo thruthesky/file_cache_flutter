@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,8 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
 import 'package:philgo/v7_api/user_api.dart';
 import 'package:philgo/screens/event/event_coupon.screen.dart';
+import 'package:philgo/v7_api/state/v7_settings_state.dart';
 import 'package:philgo/v7_api/v7_api.dart';
 import 'package:philgo/widgets/spinning_wheel.dart';
+import 'package:provider/provider.dart' show Selector;
 
 /// 이벤트 응모 화면 (Event Entry Screen)
 ///
@@ -81,6 +84,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
 
   /// 서버 event.spin API 호출 → 결과 section_index 반환.
   /// 에러 시 스낵바 표시 후 null 반환 (스핀 취소).
+  /// 쿠폰 소진 에러이면 V7SettingsState를 갱신하여 스피닝 휠을 숨긴다.
   Future<int?> _callSpinApi() async {
     try {
       final result = await v7api('event.spin');
@@ -88,18 +92,29 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
       // 서버 응답 저장 (결과 배너에서 쿠폰 정보 등 사용)
       _lastSpinResult = result;
 
+      // 서버 응답의 남은 쿠폰 수로 V7SettingsState 실시간 갱신
+      // 쿠폰 당첨(starbucks)인 경우: 즉시 갱신하지 않음 (onResult에서 축하 다이얼로그 표시 후 갱신)
+      final prizeType = result['prize_type']?.toString();
+      final availableCoupons = (result['available_coupons'] as num?)?.toInt();
+      if (mounted && availableCoupons != null && prizeType != 'starbucks') {
+        V7SettingsState.of(context).updateAvailableStarbucksCoupons(availableCoupons);
+      }
+
       return result['section_index'] as int;
     } catch (e) {
       if (mounted) {
+        final errorMsg = e
+            .toString()
+            .replaceAll('Exception: ', '')
+            .replaceAll(RegExp(r'^v7api\([^)]*\):\s*'), '');
+
+        // 쿠폰 소진 에러이면 V7SettingsState를 0으로 갱신 → 스피닝 휠 숨김
+        if (errorMsg.contains('쿠폰') || errorMsg.contains('coupon')) {
+          V7SettingsState.of(context).updateAvailableStarbucksCoupons(0);
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e
-                  .toString()
-                  .replaceAll('Exception: ', '')
-                  .replaceAll(RegExp(r'^v7api\([^)]*\):\s*'), ''),
-            ),
-          ),
+          SnackBar(content: Text(errorMsg)),
         );
       }
       return null;
@@ -183,15 +198,31 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             _buildUserProfileSection(theme, scheme),
             const SizedBox(height: 16),
 
-            /// 스피닝 휠
-            SpinningWheel(
+            /// 스타벅스 쿠폰 소진 여부에 따라 스피닝 휠 또는 안내 메시지 표시
+            Selector<V7SettingsState, int>(
+              selector: (_, state) =>
+                  state.settings?.availableStarbucksCoupons ?? -1,
+              builder: (context, availableCoupons, _) {
+                /// 쿠폰 수량 0이면 소진 안내 메시지
+                if (availableCoupons == 0) {
+                  return _buildCouponsExhaustedBanner(theme, scheme, l10n);
+                }
+
+                /// 쿠폰이 남아있거나 아직 로딩 중(-1)이면 스피닝 휠 표시
+                return SpinningWheel(
               sections: _sections,
               instructionText: l10n.spinWheelInstruction,
               disclaimerText: l10n.spinWheelDisclaimer,
               costNoticeText: l10n.spinWheelCostNotice,
               spinButtonText: l10n.spinWheelSpin,
               onSpinRequested: _callSpinApi,
-              onResult: (_) => _refreshUserInfo(),
+              onResult: (section) {
+                _refreshUserInfo();
+                // 쿠폰 당첨(points == -1)이면 축하 다이얼로그 + 사운드 재생
+                if (section.points == -1) {
+                  _showCouponCongratulationsDialog();
+                }
+              },
               resultBuilder: (section) => _buildResultBanner(
                 theme: theme,
                 scheme: scheme,
@@ -211,6 +242,8 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
               /// 쿠폰(points == -1) 당첨 시 연속 돌리기 중지
               autoSpinStopCondition: (section) => section.points == -1,
               onBusyChanged: (busy) => setState(() => _isWheelBusy = busy),
+                );
+              },
             ),
           ],
         ),
@@ -469,5 +502,38 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
         textAlign: TextAlign.center,
       ),
     );
+  }
+
+  /// 스타벅스 쿠폰 소진 안내 배너
+  Widget _buildCouponsExhaustedBanner(
+    ThemeData theme,
+    ColorScheme scheme,
+    Lo l10n,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      decoration: BoxDecoration(
+        color: scheme.errorContainer.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightMugHot,
+            size: 48,
+            color: scheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.spinWheelCouponsExhausted,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0);
   }
 }

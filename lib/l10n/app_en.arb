@@ -2753,6 +2753,10 @@
   "@spinWheelCostNotice": {
     "description": "Notice about point cost per spin"
   },
+  "spinWheelCouponsExhausted": "All Starbucks coupons have been claimed. The spinning wheel is no longer available.",
+  "@spinWheelCouponsExhausted": {
+    "description": "Message when all Starbucks coupons are exhausted"
+  },
   "viewCoupon": "View Coupon",
   "@viewCoupon": {
     "description": "Button text to view coupon image"

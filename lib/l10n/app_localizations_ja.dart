@@ -2233,6 +2233,10 @@ class LoJa extends Lo {
   String get spinWheelCostNotice => '1回の抽選ごとに200ポイントが消費されます。';
 
   @override
+  String get spinWheelCouponsExhausted =>
+      'スターバックスクーポンがすべてなくなったため、ルーレットは利用できません。';
+
+  @override
   String get viewCoupon => 'クーポン確認';
 
   @override

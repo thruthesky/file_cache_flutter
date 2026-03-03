@@ -4457,6 +4457,12 @@ abstract class Lo {
   /// **'200 points are deducted per spin.'**
   String get spinWheelCostNotice;
 
+  /// Message when all Starbucks coupons are exhausted
+  ///
+  /// In en, this message translates to:
+  /// **'All Starbucks coupons have been claimed. The spinning wheel is no longer available.'**
+  String get spinWheelCouponsExhausted;
+
   /// Button text to view coupon image
   ///
   /// In en, this message translates to:

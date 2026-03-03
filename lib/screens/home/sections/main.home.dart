@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -46,6 +46,9 @@ class MainHome extends StatefulWidget {
 }
 
 class _MainHomeState extends State<MainHome> {
+  /// 디버그 카드 접기/펼치기 상태
+  bool _debugCardExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -120,74 +123,109 @@ class _MainHomeState extends State<MainHome> {
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
 
-            /// [디버그 전용] QR 스캔 테스트 + v7 설정 정보 통합 카드
-            /// kDebugMode일 때만 표시
-            if (kDebugMode)
-              SliverToBoxAdapter(
-                child: Selector<V7SettingsState, ({V7Settings? settings, String? error})>(
-                  selector: (_, state) => (settings: state.settings, error: state.error),
-                  builder: (context, data, _) {
-                    final s = data.settings;
-                    final err = data.error;
-                    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onErrorContainer,
-                    );
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.errorContainer,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /// 헤더 + QR 스캔 테스트 버튼
-                          GestureDetector(
-                            onTap: () {
-                              CompanyQrCodeScannedScreen.push(context, 1025, 'e41aa5ca0d55be94a8a92fab13a0f672');
-                            },
+            /// [디버그/관리자 전용] QR 스캔 테스트 + v7 설정 정보 통합 카드
+            /// kDebugMode이거나 관리자인 경우에만 표시, 접기/펼치기 가능
+            SliverToBoxAdapter(
+              child: Selector<PhilgoState, bool>(
+                selector: (_, state) => state.isAdmin,
+                builder: (context, isAdmin, _) {
+                  /// kDebugMode 또는 관리자일 때만 표시
+                  if (!kDebugMode && !isAdmin) return const SizedBox.shrink();
+                  final scheme = Theme.of(context).colorScheme;
+                  final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: scheme.onErrorContainer,
+                  );
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: scheme.errorContainer,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// 헤더 (탭하면 접기/펼치기)
+                        GestureDetector(
+                          onTap: () => setState(() => _debugCardExpanded = !_debugCardExpanded),
+                          behavior: HitTestBehavior.opaque,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             child: Row(
                               children: [
-                                FaIcon(
-                                  FontAwesomeIcons.bug,
-                                  size: 12,
-                                  color: Theme.of(context).colorScheme.onErrorContainer,
-                                ),
-                                const SizedBox(width: 8),
+                                FaIcon(FontAwesomeIcons.bug, size: 10, color: scheme.onErrorContainer),
+                                const SizedBox(width: 6),
+                                Text('DEBUG', style: labelStyle?.copyWith(fontWeight: FontWeight.bold, fontSize: 10)),
+                                const SizedBox(width: 6),
                                 Text(
-                                  'DEBUG  |  QR 스캔 테스트 (idx:1025)',
-                                  style: labelStyle?.copyWith(fontWeight: FontWeight.bold),
+                                  kDebugMode && isAdmin ? '(디버그+관리자)' : kDebugMode ? '(디버그)' : '(관리자)',
+                                  style: labelStyle?.copyWith(fontSize: 9),
+                                ),
+                                const Spacer(),
+                                FaIcon(
+                                  _debugCardExpanded ? FontAwesomeIcons.chevronUp : FontAwesomeIcons.chevronDown,
+                                  size: 10,
+                                  color: scheme.onErrorContainer,
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 4),
+                        ),
 
-                          /// v7 설정 정보
-                          if (err != null)
-                            Text(
-                              'v7 Settings 에러: $err',
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Theme.of(context).colorScheme.error,
-                              ),
-                            )
-                          else if (s == null)
-                            Text('v7 Settings: 로딩 중...', style: labelStyle)
-                          else
-                            Text(
-                              'v7  Android: ${s.appVersionAndroid}+${s.appVersionAndroidBuild}'
-                              '  |  iOS: ${s.appVersionIos}+${s.appVersionIosBuild}'
-                              '  |  QR: ${s.companyQrEventEnabled ? "ON" : "OFF"}'
-                              '  |  Event: ${s.eventEntryEnabled ? "ON" : "OFF"}',
-                              style: labelStyle,
+                        /// 펼쳐진 상세 내용
+                        if (_debugCardExpanded)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                /// QR 스캔 테스트 버튼
+                                GestureDetector(
+                                  onTap: () {
+                                    CompanyQrCodeScannedScreen.push(context, 1025, 'e41aa5ca0d55be94a8a92fab13a0f672');
+                                  },
+                                  child: Text(
+                                    'QR 스캔 테스트 (idx:1025)',
+                                    style: labelStyle?.copyWith(
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+
+                                /// v7 설정 정보
+                                Selector<V7SettingsState, ({V7Settings? settings, String? error})>(
+                                  selector: (_, state) => (settings: state.settings, error: state.error),
+                                  builder: (context, data, _) {
+                                    final s = data.settings;
+                                    final err = data.error;
+                                    if (err != null) {
+                                      return Text(
+                                        'v7 Settings 에러: $err',
+                                        style: labelStyle?.copyWith(color: scheme.error),
+                                      );
+                                    }
+                                    if (s == null) {
+                                      return Text('v7 Settings: 로딩 중...', style: labelStyle);
+                                    }
+                                    return Text(
+                                      'Android: ${s.appVersionAndroid}+${s.appVersionAndroidBuild}'
+                                      '  |  iOS: ${s.appVersionIos}+${s.appVersionIosBuild}\n'
+                                      'QR: ${s.companyQrEventEnabled ? "ON" : "OFF"}'
+                                      '  |  Event: ${s.eventEntryEnabled ? "ON" : "OFF"}'
+                                      '  |  Coupons: ${s.availableStarbucksCoupons}',
+                                      style: labelStyle,
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
               ),
+            ),
 
             /// [빠른 글쓰기 박스] - 클릭 시 글쓰기 화면으로 이동
             /// Quick Post Box - Navigate to post creation screen on tap

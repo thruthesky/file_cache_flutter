@@ -32,6 +32,24 @@ class V7SettingsState extends ChangeNotifier {
     }
   }
 
+  /// 스타벅스 쿠폰 잔여 수량을 업데이트한다.
+  ///
+  /// event.spin API 응답의 available_coupons 값으로 실시간 갱신하거나,
+  /// 서버 에러(쿠폰 소진) 시 0으로 설정하여 UI를 즉시 반영한다.
+  void updateAvailableStarbucksCoupons(int count) {
+    if (settings == null) return;
+    settings = V7Settings(
+      appVersionAndroid: settings!.appVersionAndroid,
+      appVersionAndroidBuild: settings!.appVersionAndroidBuild,
+      appVersionIos: settings!.appVersionIos,
+      appVersionIosBuild: settings!.appVersionIosBuild,
+      companyQrEventEnabled: settings!.companyQrEventEnabled,
+      eventEntryEnabled: settings!.eventEntryEnabled,
+      availableStarbucksCoupons: count,
+    );
+    notifyListeners();
+  }
+
   /// BuildContext에서 V7SettingsState 접근 헬퍼
   static V7SettingsState of(BuildContext context, {bool listen = false}) {
     return Provider.of<V7SettingsState>(context, listen: listen);

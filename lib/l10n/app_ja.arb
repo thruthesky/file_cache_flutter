@@ -2212,6 +2212,10 @@
   "@spinWheelCostNotice": {
     "description": "Notice about point cost per spin"
   },
+  "spinWheelCouponsExhausted": "スターバックスクーポンがすべてなくなったため、ルーレットは利用できません。",
+  "@spinWheelCouponsExhausted": {
+    "description": "Message when all Starbucks coupons are exhausted"
+  },
   "viewCoupon": "クーポン確認",
   "@viewCoupon": {
     "description": "Button text to view coupon image"

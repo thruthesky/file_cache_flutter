@@ -2227,6 +2227,9 @@ class LoZh extends Lo {
   String get spinWheelCostNotice => '每次抽奖将消耗200积分。';
 
   @override
+  String get spinWheelCouponsExhausted => '星巴克优惠券已全部领完，转盘抽奖暂时不可用。';
+
+  @override
   String get viewCoupon => '查看优惠券';
 
   @override
