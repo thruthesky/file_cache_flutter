@@ -85,13 +85,19 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                         ),
                         child: PhoneSignIn(
                           onCompletePhoneNumber: (String phoneNumber) {
-                            // Normalize common local inputs to E.164 by country prefix heuristics
+                            // 로컬 입력을 E.164 국제 형식으로 변환
+                            // 한국: '10'으로 시작 → +82 추가
                             if (phoneNumber.startsWith('10')) {
                               return '+82$phoneNumber';
-                            } else if (phoneNumber.startsWith('9')) {
+                            }
+                            // 필리핀: '9'로 시작 → +63 추가
+                            else if (phoneNumber.startsWith('9')) {
                               return '+63$phoneNumber';
                             }
                             return phoneNumber;
+                          },
+                          onValidatePhoneNumber: (String phoneNumber) {
+                            return _validatePhoneNumber(context, phoneNumber);
                           },
                           onSignInSuccess: _onSignInSuccess,
                           onSignInFailed: _onSignInFailed,
@@ -226,6 +232,45 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
         ),
       ),
     );
+  }
+
+  /// 전화번호 검증: 한국/필리핀 번호만 허용, +1은 화이트리스트만 허용
+  ///
+  /// 허용 규칙:
+  /// - +82 (한국) → 무조건 허용
+  /// - +63 (필리핀) → 무조건 허용
+  /// - +1 (미국/캐나다) → 화이트리스트에 등록된 번호만 허용
+  /// - 그 외 모든 국가 → 차단
+  ///
+  /// null 반환 시 유효, String 반환 시 에러 메시지
+  static String? _validatePhoneNumber(
+    BuildContext context,
+    String phoneNumber,
+  ) {
+    // 한국 (+82) 번호 → 허용
+    if (phoneNumber.startsWith('+82')) return null;
+
+    // 필리핀 (+63) 번호 → 허용
+    if (phoneNumber.startsWith('+63')) return null;
+
+    // +1 (미국/캐나다) 번호 → 화이트리스트만 허용
+    if (phoneNumber.startsWith('+1')) {
+      const allowedNumbers = {
+        '+11234567890',
+        '+11111111111',
+        '+12222222222',
+        '+13333333333',
+        '+14444444444',
+        '+15555555555',
+        '+16666666666',
+        '+17777777777',
+      };
+      if (allowedNumbers.contains(phoneNumber)) return null;
+      return Lo.of(context)!.phoneNumberNotAllowed;
+    }
+
+    // 그 외 국가 → 차단
+    return Lo.of(context)!.phoneNumberNotAllowed;
   }
 
   void _onSignInSuccess() {

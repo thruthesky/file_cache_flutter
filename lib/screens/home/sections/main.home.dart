@@ -22,7 +22,10 @@ import 'package:philgo/widgets/layout/content_container.dart';
 import 'package:philgo/widgets/theme/comic_fab.dart';
 import 'package:philgo/screens/company/company.qr_code_scanned.screen.dart';
 import 'package:philgo/screens/event/event_entry.screen.dart';
+import 'package:philgo/v7_api/models/v7_settings.dart';
+import 'package:philgo/v7_api/state/v7_settings_state.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:provider/provider.dart';
 
 /// 메인 홈 화면 (Main Home Screen)
 ///
@@ -62,41 +65,50 @@ class _MainHomeState extends State<MainHome> {
       backgroundColor: Colors.transparent,
 
       /// FAB 영역 - 이벤트 FAB + 글쓰기 FAB 나란히 배치
+      /// 이벤트 응모 FAB는 v7 설정의 eventEntryEnabled가 ON일 때만 표시
       /// 오른쪽 하단에 [이벤트] [글쓰기] 순서로 표시
-      floatingActionButton: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// 이벤트 응모 FAB - 연한 빨간 배경 + 펄스 애니메이션으로 강조
-          ComicFab(
-            onPressed: () => EventEntryScreen.push(context),
-            tooltip: '이벤트',
-            heroTag: 'event_fab',
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
-            foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-            borderColor: Theme.of(context).colorScheme.errorContainer,
-            child: const FaIcon(FontAwesomeIcons.gift),
-          )
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .scale(
-                begin: const Offset(1.0, 1.0),
-                end: const Offset(1.08, 1.08),
-                duration: 800.ms,
-                curve: Curves.easeInOut,
-              )
-              .shimmer(
-                duration: 1500.ms,
-                color: Theme.of(context).colorScheme.onError.withAlpha(60),
-              ),
-          const SizedBox(width: 8),
+      floatingActionButton: Selector<V7SettingsState, bool>(
+        selector: (_, state) => state.settings?.eventEntryEnabled ?? false,
+        builder: (context, eventEnabled, _) {
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// 이벤트 응모 FAB - eventEntryEnabled ON일 때만 표시
+              /// 연한 빨간 배경 + 펄스 애니메이션으로 강조
+              if (eventEnabled) ...[
+                ComicFab(
+                  onPressed: () => EventEntryScreen.push(context),
+                  tooltip: '이벤트',
+                  heroTag: 'event_fab',
+                  backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                  foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+                  borderColor: Theme.of(context).colorScheme.errorContainer,
+                  child: const FaIcon(FontAwesomeIcons.gift),
+                )
+                    .animate(onPlay: (c) => c.repeat(reverse: true))
+                    .scale(
+                      begin: const Offset(1.0, 1.0),
+                      end: const Offset(1.08, 1.08),
+                      duration: 800.ms,
+                      curve: Curves.easeInOut,
+                    )
+                    .shimmer(
+                      duration: 1500.ms,
+                      color: Theme.of(context).colorScheme.onError.withAlpha(60),
+                    ),
+                const SizedBox(width: 8),
+              ],
 
-          /// 글쓰기 FAB - 카테고리 선택 다이얼로그 표시
-          ComicFab(
-            onPressed: () => showPostCategoryDialog(context),
-            tooltip: '글쓰기',
-            heroTag: 'write_fab',
-            child: const FaIcon(FontAwesomeIcons.plus),
-          ),
-        ],
+              /// 글쓰기 FAB - 카테고리 선택 다이얼로그 표시
+              ComicFab(
+                onPressed: () => showPostCategoryDialog(context),
+                tooltip: '글쓰기',
+                heroTag: 'write_fab',
+                child: const FaIcon(FontAwesomeIcons.plus),
+              ),
+            ],
+          );
+        },
       ),
       body: ContentContainer(
         child: CustomScrollView(
@@ -108,40 +120,72 @@ class _MainHomeState extends State<MainHome> {
               child: SafeArea(bottom: false, child: const HomeMenuCategories()),
             ),
 
-            /// [디버그 전용 테스트 버튼] - QR 코드 스캔 스크린 이동 (테스트 후 제거)
+            /// [디버그 전용] QR 스캔 테스트 + v7 설정 정보 통합 카드
             /// kDebugMode일 때만 표시
             if (kDebugMode)
               SliverToBoxAdapter(
-                child: GestureDetector(
-                  onTap: () {
-                    CompanyQrCodeScannedScreen.push(context, 1025, 'e41aa5ca0d55be94a8a92fab13a0f672');
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.errorContainer,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.bug,
-                          size: 12,
-                          color: Theme.of(context).colorScheme.onErrorContainer,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'DEBUG  |  QR 스캔 테스트 (idx:1025)',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onErrorContainer,
-                            fontWeight: FontWeight.bold,
+                child: Selector<V7SettingsState, ({V7Settings? settings, String? error})>(
+                  selector: (_, state) => (settings: state.settings, error: state.error),
+                  builder: (context, data, _) {
+                    final s = data.settings;
+                    final err = data.error;
+                    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    );
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// 헤더 + QR 스캔 테스트 버튼
+                          GestureDetector(
+                            onTap: () {
+                              CompanyQrCodeScannedScreen.push(context, 1025, 'e41aa5ca0d55be94a8a92fab13a0f672');
+                            },
+                            child: Row(
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.bug,
+                                  size: 12,
+                                  color: Theme.of(context).colorScheme.onErrorContainer,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'DEBUG  |  QR 스캔 테스트 (idx:1025)',
+                                  style: labelStyle?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                          const SizedBox(height: 4),
+
+                          /// v7 설정 정보
+                          if (err != null)
+                            Text(
+                              'v7 Settings 에러: $err',
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            )
+                          else if (s == null)
+                            Text('v7 Settings: 로딩 중...', style: labelStyle)
+                          else
+                            Text(
+                              'v7  Android: ${s.appVersionAndroid}+${s.appVersionAndroidBuild}'
+                              '  |  iOS: ${s.appVersionIos}+${s.appVersionIosBuild}'
+                              '  |  QR: ${s.companyQrEventEnabled ? "ON" : "OFF"}'
+                              '  |  Event: ${s.eventEntryEnabled ? "ON" : "OFF"}',
+                              style: labelStyle,
+                            ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
 

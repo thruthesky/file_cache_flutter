@@ -2803,5 +2803,71 @@
   "companyInfoSection": "Business Info",
   "visitorInfo": "Visitor Info",
   "qrScanResult": "QR Scan Result",
-  "earnExtraPoints": "Earn extra points!"
+  "earnExtraPoints": "Earn extra points!",
+  "apiServerTitle": "API Server Info",
+  "@apiServerTitle": {
+    "description": "API server information section title"
+  },
+  "apiServerAddress": "API Server",
+  "@apiServerAddress": {
+    "description": "API server address label"
+  },
+  "phpApiAddress": "PHP API",
+  "@phpApiAddress": {
+    "description": "PHP API address label"
+  },
+  "fileServerAddress": "File Server",
+  "@fileServerAddress": {
+    "description": "File server address label"
+  },
+  "environmentTitle": "Environment",
+  "@environmentTitle": {
+    "description": "Environment information section title"
+  },
+  "environmentMode": "Mode",
+  "@environmentMode": {
+    "description": "Environment mode label (production/development)"
+  },
+  "myProfileInfo": "My Info",
+  "@myProfileInfo": {
+    "description": "Label for my profile info card in menu"
+  },
+  "tapToEditProfile": "Tap to edit profile",
+  "@tapToEditProfile": {
+    "description": "Hint text below profile card"
+  },
+  "myCompanyInfo": "My Company",
+  "@myCompanyInfo": {
+    "description": "Label for my company info card in menu"
+  },
+  "noCompanyRegistered": "No company registered yet",
+  "@noCompanyRegistered": {
+    "description": "Placeholder when user has no company"
+  },
+  "tapToRegisterCompany": "Tap to register your company",
+  "@tapToRegisterCompany": {
+    "description": "Hint text when no company is registered"
+  },
+  "tapToViewCompany": "Tap to view details",
+  "@tapToViewCompany": {
+    "description": "Hint text below company card"
+  },
+  "postsCount": "{count} posts",
+  "@postsCount": {
+    "description": "Posts count label",
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "commentsCount": "{count} comments",
+  "@commentsCount": {
+    "description": "Comments count label",
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "anonymous": "Anonymous",
+  "@anonymous": {
+    "description": "Placeholder for users without a nickname"
+  },
+  "phoneNumberNotAllowed": "This phone number is not allowed. Only Korean or Philippine phone numbers are supported.",
+  "@phoneNumberNotAllowed": {
+    "description": "Error message when user tries to log in with an unsupported phone number"
+  }
 }

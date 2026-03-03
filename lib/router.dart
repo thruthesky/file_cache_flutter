@@ -47,6 +47,7 @@ import 'package:philgo/screens/info/car/or_renewal.screen.dart';
 import 'package:philgo/screens/info/residence/bgc.screen.dart';
 import 'package:philgo/screens/info/residence/ortigas.screen.dart';
 import 'package:philgo/screens/info/residence/alabang.screen.dart';
+import 'package:philgo/screens/info/app_info.screen.dart';
 import 'package:philgo/screens/info/holiday/holiday.screen.dart';
 import 'package:philgo/screens/info/travel_destination/manila.screen.dart';
 import 'package:philgo/screens/info/travel_destination/cebu.screen.dart';
@@ -465,6 +466,11 @@ final router = GoRouter(
       path: VersionScreen.routeName,
       name: VersionScreen.routeName,
       builder: (context, state) => const VersionScreen(),
+    ),
+    GoRoute(
+      path: AppInfoScreen.routeName,
+      name: AppInfoScreen.routeName,
+      builder: (context, state) => const AppInfoScreen(),
     ),
     GoRoute(
       path: WeatherScreen.routeName,

@@ -2253,5 +2253,18 @@
   "companyInfoSection": "商家信息",
   "visitorInfo": "访客信息",
   "qrScanResult": "二维码扫描结果",
-  "earnExtraPoints": "获取额外积分！"
+  "earnExtraPoints": "获取额外积分！",
+  "myProfileInfo": "我的信息",
+  "tapToEditProfile": "点击编辑资料",
+  "myCompanyInfo": "我的商家",
+  "noCompanyRegistered": "尚未注册商家",
+  "tapToRegisterCompany": "点击注册商家",
+  "tapToViewCompany": "点击查看详情",
+  "postsCount": "{count}篇帖子",
+  "commentsCount": "{count}条评论",
+  "anonymous": "匿名",
+  "phoneNumberNotAllowed": "此电话号码不可用。仅支持韩国或菲律宾电话号码。",
+  "@phoneNumberNotAllowed": {
+    "description": "Error message when user tries to log in with an unsupported phone number"
+  }
 }

@@ -149,6 +149,9 @@ class _SpinningWheelState extends State<SpinningWheel>
 
   final _random = Random();
 
+  /// 현재 세션 내 총 회전 횟수
+  int _totalSpinCount = 0;
+
   /// 단일 스핀 회전 시간 (밀리초)
   static const _normalDuration = 6000;
 
@@ -294,6 +297,9 @@ class _SpinningWheelState extends State<SpinningWheel>
       _notifyBusyChange();
       return;
     }
+
+    /// 성공적인 스핀: 총 회전 횟수 증가
+    _totalSpinCount++;
 
     /// 타겟 섹션에 포인터가 멈추도록 회전각 계산
     final totalRotation = _calculateRotationForTarget(targetIndex);
@@ -494,14 +500,14 @@ class _SpinningWheelState extends State<SpinningWheel>
                 ),
               ),
 
-              /// 중앙 장식 원 (이중 원, 원판 정중앙에 배치)
+              /// 중앙 장식 원 (원판 정중앙에 배치, 총 회전 횟수 표시)
               /// 원판 중심 Y = top(28) + 280/2 = 168
-              /// 바깥 원: 36x36 → top = 168 - 18 = 150
+              /// 바깥 원: 64x64 → top = 168 - 32 = 136
               Positioned(
-                top: 150,
+                top: 136,
                 child: Container(
-                  width: 36,
-                  height: 36,
+                  width: 64,
+                  height: 64,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
@@ -514,22 +520,32 @@ class _SpinningWheelState extends State<SpinningWheel>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.25),
-                        blurRadius: 4,
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
                     ],
                   ),
                   child: Center(
                     child: Container(
-                      width: 16,
-                      height: 16,
+                      width: 50,
+                      height: 50,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: scheme.surface,
                         border: Border.all(
                           color: Colors.white.withValues(alpha: 0.8),
                           width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$_totalSpinCount',
+                          style: TextStyle(
+                            fontSize: _totalSpinCount >= 1000 ? 11 : 14,
+                            fontWeight: FontWeight.bold,
+                            color: scheme.primary,
+                          ),
                         ),
                       ),
                     ),

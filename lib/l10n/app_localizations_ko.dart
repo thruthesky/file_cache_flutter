@@ -2364,4 +2364,57 @@ class LoKo extends Lo {
 
   @override
   String get earnExtraPoints => '추가 포인트를 받으세요!';
+
+  @override
+  String get apiServerTitle => 'API 서버 정보';
+
+  @override
+  String get apiServerAddress => 'API 서버';
+
+  @override
+  String get phpApiAddress => 'PHP API';
+
+  @override
+  String get fileServerAddress => '파일 서버';
+
+  @override
+  String get environmentTitle => '환경 정보';
+
+  @override
+  String get environmentMode => '실행 모드';
+
+  @override
+  String get myProfileInfo => '내 정보';
+
+  @override
+  String get tapToEditProfile => '탭하여 프로필 수정';
+
+  @override
+  String get myCompanyInfo => '내 업소';
+
+  @override
+  String get noCompanyRegistered => '등록된 업소가 없습니다';
+
+  @override
+  String get tapToRegisterCompany => '탭하여 업소 등록';
+
+  @override
+  String get tapToViewCompany => '탭하여 상세 보기';
+
+  @override
+  String postsCount(String count) {
+    return '$count개 게시물';
+  }
+
+  @override
+  String commentsCount(String count) {
+    return '$count개 댓글';
+  }
+
+  @override
+  String get anonymous => '익명';
+
+  @override
+  String get phoneNumberNotAllowed =>
+      '이 전화번호는 사용할 수 없습니다. 한국 또는 필리핀 전화번호만 지원합니다.';
 }

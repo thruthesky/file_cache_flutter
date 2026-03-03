@@ -2869,5 +2869,71 @@
   "companyInfoSection": "업소 정보",
   "visitorInfo": "방문자 정보",
   "qrScanResult": "QR 스캔 결과",
-  "earnExtraPoints": "추가 포인트를 받으세요!"
+  "earnExtraPoints": "추가 포인트를 받으세요!",
+  "apiServerTitle": "API 서버 정보",
+  "@apiServerTitle": {
+    "description": "API server information section title"
+  },
+  "apiServerAddress": "API 서버",
+  "@apiServerAddress": {
+    "description": "API server address label"
+  },
+  "phpApiAddress": "PHP API",
+  "@phpApiAddress": {
+    "description": "PHP API address label"
+  },
+  "fileServerAddress": "파일 서버",
+  "@fileServerAddress": {
+    "description": "File server address label"
+  },
+  "environmentTitle": "환경 정보",
+  "@environmentTitle": {
+    "description": "Environment information section title"
+  },
+  "environmentMode": "실행 모드",
+  "@environmentMode": {
+    "description": "Environment mode label (production/development)"
+  },
+  "myProfileInfo": "내 정보",
+  "@myProfileInfo": {
+    "description": "Label for my profile info card in menu"
+  },
+  "tapToEditProfile": "탭하여 프로필 수정",
+  "@tapToEditProfile": {
+    "description": "Hint text below profile card"
+  },
+  "myCompanyInfo": "내 업소",
+  "@myCompanyInfo": {
+    "description": "Label for my company info card in menu"
+  },
+  "noCompanyRegistered": "등록된 업소가 없습니다",
+  "@noCompanyRegistered": {
+    "description": "Placeholder when user has no company"
+  },
+  "tapToRegisterCompany": "탭하여 업소 등록",
+  "@tapToRegisterCompany": {
+    "description": "Hint text when no company is registered"
+  },
+  "tapToViewCompany": "탭하여 상세 보기",
+  "@tapToViewCompany": {
+    "description": "Hint text below company card"
+  },
+  "postsCount": "{count}개 게시물",
+  "@postsCount": {
+    "description": "Posts count label",
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "commentsCount": "{count}개 댓글",
+  "@commentsCount": {
+    "description": "Comments count label",
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "anonymous": "익명",
+  "@anonymous": {
+    "description": "Placeholder for users without a nickname"
+  },
+  "phoneNumberNotAllowed": "이 전화번호는 사용할 수 없습니다. 한국 또는 필리핀 전화번호만 지원합니다.",
+  "@phoneNumberNotAllowed": {
+    "description": "Error message when user tries to log in with an unsupported phone number"
+  }
 }

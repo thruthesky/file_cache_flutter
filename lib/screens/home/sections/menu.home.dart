@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
 import 'package:philgo/screens/event/event_coupon.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
+import 'package:philgo/screens/info/app_info.screen.dart';
 import 'package:philgo/screens/version/version.screen.dart';
 import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
@@ -75,9 +77,7 @@ class _MenuHomeState extends State<MenuHome> {
       final company = await CompanyApi.mine();
       if (mounted) {
         /// 빈 업소(서버 자동 생성)는 null 처리하여 기존 null 체크 로직 유지
-        setState(
-          () => _myCompany = company.name.isNotEmpty ? company : null,
-        );
+        setState(() => _myCompany = company.name.isNotEmpty ? company : null);
       }
     } catch (e) {
       debugLog('Error loading my company in menu: $e');
@@ -178,101 +178,21 @@ class _MenuHomeState extends State<MenuHome> {
                 // 첫 번째 섹션 상단 여백 (Top padding for first section)
                 const SizedBox(height: 8),
 
-                /// [1. 내 활동 섹션] - My Activity Section
-                /// 메뉴 화면 최상단 배치
+                /// [1. 내 정보 섹션] - My Profile Info Section
+                /// 프로필 미리보기 카드: 사진, 닉네임, 이름, 게시물/댓글 수
+                _buildProfileCard(l10n, scheme)
+                    .animate()
+                    .fadeIn(duration: 400.ms)
+                    .slideY(begin: 0.1, end: 0),
+
+                /// [2. 내 활동 섹션] - My Activity Section
                 MenuGridSection(
                   title: l10n.myActivity,
                   children: [
-                    /// 프로필 수정 아이템 (Edit Profile Item)
-                    /// 사용자 프로필 사진이 있으면 사진 표시, 없으면 기본 아이콘 표시
-                    /// Selector를 사용하여 photoUrl 변경 시에만 리빌드
-                    Selector<PhilgoState, String?>(
-                      selector: (_, state) => state.user?.photoUrl,
-                      builder: (context, photoUrl, _) {
-                        // 프로필 사진이 있는지 확인
-                        final hasPhoto =
-                            photoUrl != null && photoUrl.isNotEmpty;
-
-                        return MenuGridItem(
-                          icon: hasPhoto ? null : FontAwesomeIcons.user,
-                          iconWidget: hasPhoto
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(14),
-                                  child: CachedNetworkImage(
-                                    imageUrl: photoUrl,
-                                    width: 48,
-                                    height: 48,
-                                    fit: BoxFit.cover,
-                                    // 로딩 중에는 기본 아이콘 표시
-                                    placeholder: (context, url) => Container(
-                                      width: 48,
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withValues(alpha: 0.12),
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withValues(alpha: 0.04),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: Center(
-                                        child: FaIcon(
-                                          FontAwesomeIcons.user,
-                                          size: 20,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimaryContainer,
-                                        ),
-                                      ),
-                                    ),
-                                    // 에러 시 기본 아이콘 표시
-                                    errorWidget: (context, url, error) =>
-                                        Container(
-                                      width: 48,
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withValues(alpha: 0.12),
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withValues(alpha: 0.04),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: Center(
-                                        child: FaIcon(
-                                          FontAwesomeIcons.user,
-                                          size: 20,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimaryContainer,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : null,
-                          title: l10n.editProfile,
-                          onTap: () => ProfileEditScreen.push(context),
-                        );
-                      },
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.penToSquare,
+                      title: l10n.editProfile,
+                      onTap: () => ProfileEditScreen.push(context),
                     ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.clockRotateLeft,
@@ -381,8 +301,12 @@ class _MenuHomeState extends State<MenuHome> {
                 /// 3-tier category structure: Forum -> Community / Market / Other
                 _buildForumSection(l10n, scheme),
 
-                /// [3. 업소록 섹션] - Business Directory Section
-                /// Wrap + 아이콘 위/레이블 아래 형태로 변경
+                /// [4. 내 업소 미리보기 + 업소록 섹션] - My Company Preview + Business Directory
+                _buildMyCompanyCard(l10n, scheme)
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 100.ms)
+                    .slideY(begin: 0.1, end: 0),
+
                 MenuGridSection(
                   title: l10n.businessDirectoryTitle,
                   children: [
@@ -399,15 +323,6 @@ class _MenuHomeState extends State<MenuHome> {
                         }
                       },
                     ),
-                    // Show "View my company" icon only when user has a registered company
-                    if (_myCompany != null)
-                      MenuGridItem(
-                        icon: FontAwesomeIcons.eye,
-                        title: l10n.viewMyCompany,
-                        onTap: () {
-                          CompanyViewScreen.push(context, _myCompany!.idx);
-                        },
-                      ),
                     MenuGridItem(
                       icon: _myCompany != null
                           ? FontAwesomeIcons.penToSquare
@@ -512,6 +427,11 @@ class _MenuHomeState extends State<MenuHome> {
                 MenuGridSection(
                   title: l10n.appInfoTitle,
                   children: [
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.mobileScreen,
+                      title: l10n.appInfoTitle,
+                      onTap: () => AppInfoScreen.push(context),
+                    ),
                     MenuGridItem(
                       icon: FontAwesomeIcons.circleInfo,
                       title: l10n.versionTitle,
@@ -711,5 +631,517 @@ class _MenuHomeState extends State<MenuHome> {
         ),
       ],
     );
+  }
+
+  /// 내 정보 미리보기 카드 (Profile Preview Card)
+  ///
+  /// 사용자 프로필 사진, 닉네임, 이름, 게시물/댓글 수를 보여주는 카드.
+  /// Selector로 user 변경 시에만 리빌드.
+  Widget _buildProfileCard(Lo l10n, ColorScheme scheme) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// 섹션 헤더 (Section Header)
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 3,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FaIcon(
+                FontAwesomeIcons.circleUser,
+                size: 14,
+                color: scheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                l10n.myProfileInfo,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        /// 프로필 카드 본체 (Profile Card Body)
+        /// Record 타입으로 필요한 필드만 선택 (firebase User 타입 충돌 방지)
+        Selector<PhilgoState,
+            ({String? photoUrl, String nickname, String name, int postCount, int commentCount})>(
+          selector: (_, state) {
+            final u = state.user;
+            return (
+              photoUrl: u?.photoUrl,
+              nickname: u?.nickname ?? '',
+              name: u?.name ?? '',
+              postCount: u?.noOfPost ?? 0,
+              commentCount: u?.noOfComment ?? 0,
+            );
+          },
+          builder: (context, data, _) {
+            final hasPhoto =
+                data.photoUrl != null && data.photoUrl!.isNotEmpty;
+            final nickname = data.nickname.isNotEmpty
+                ? data.nickname
+                : l10n.anonymous;
+
+            return GestureDetector(
+              onTap: () => ProfileEditScreen.push(context),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: scheme.surfaceContainerLowest,
+                  border: Border.all(
+                    color: scheme.outlineVariant.withValues(alpha: 0.5),
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                clipBehavior: Clip.antiAlias,
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    /// 프로필 사진 (Profile Photo)
+                    Hero(
+                      tag: 'profile-photo-hero',
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: scheme.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: hasPhoto
+                            ? CachedNetworkImage(
+                                imageUrl: data.photoUrl!,
+                                width: 64,
+                                height: 64,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.user,
+                                    size: 24,
+                                    color: scheme.primary.withValues(
+                                      alpha: 0.4,
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.user,
+                                    size: 24,
+                                    color: scheme.primary.withValues(
+                                      alpha: 0.4,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.user,
+                                  size: 24,
+                                  color: scheme.primary.withValues(alpha: 0.4),
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+
+                    /// 프로필 텍스트 정보 (Profile Text Info)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// 닉네임 (Nickname)
+                          Text(
+                            nickname,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: scheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+
+                          /// 이름 (Name)
+                          if (data.name.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              data.name,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                          const SizedBox(height: 8),
+
+                          /// 게시물/댓글 수 (Posts/Comments count)
+                          Row(
+                            children: [
+                              _buildStatChip(
+                                scheme,
+                                theme,
+                                FontAwesomeIcons.penToSquare,
+                                l10n.postsCount('${data.postCount}'),
+                              ),
+                              const SizedBox(width: 12),
+                              _buildStatChip(
+                                scheme,
+                                theme,
+                                FontAwesomeIcons.comment,
+                                l10n.commentsCount('${data.commentCount}'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    /// 편집 화살표 (Edit Arrow)
+                    FaIcon(
+                      FontAwesomeIcons.chevronRight,
+                      size: 14,
+                      color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  /// 통계 칩 위젯 (Stat Chip Widget)
+  ///
+  /// 게시물/댓글 수를 아이콘 + 텍스트로 표시하는 작은 칩
+  Widget _buildStatChip(
+    ColorScheme scheme,
+    ThemeData theme,
+    IconData icon,
+    String label,
+  ) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        FaIcon(icon, size: 11, color: scheme.onSurfaceVariant),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 내 업소 미리보기 카드 (My Company Preview Card)
+  ///
+  /// 업소가 있으면 업소 정보(이름, 카테고리, 주소, 전화번호) 미리보기 표시.
+  /// 업소가 없으면 등록 유도 안내 표시.
+  Widget _buildMyCompanyCard(Lo l10n, ColorScheme scheme) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// 섹션 헤더 (Section Header)
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 3,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FaIcon(
+                FontAwesomeIcons.store,
+                size: 14,
+                color: scheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                l10n.myCompanyInfo,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        /// 업소 카드 본체 (Company Card Body)
+        GestureDetector(
+          onTap: () {
+            if (_myCompany != null) {
+              /// 업소 상세 화면으로 이동 (Navigate to company detail)
+              CompanyViewScreen.push(context, _myCompany!.idx);
+            } else {
+              /// 업소 등록 화면으로 이동 (Navigate to company form)
+              _navigateToCompanyForm();
+            }
+          },
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerLowest,
+              border: Border.all(
+                color: scheme.outlineVariant.withValues(alpha: 0.5),
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            clipBehavior: Clip.antiAlias,
+            padding: const EdgeInsets.all(20),
+            child: _myCompany != null
+                ? _buildCompanyInfo(l10n, scheme, theme)
+                : _buildNoCompanyPlaceholder(l10n, scheme, theme),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 업소 정보 표시 (Company Info Display)
+  ///
+  /// 업소가 등록되어 있을 때 로고, 이름, 카테고리, 주소, 전화번호 표시
+  Widget _buildCompanyInfo(Lo l10n, ColorScheme scheme, ThemeData theme) {
+    final company = _myCompany!;
+    final hasLogo = company.logo_url.isNotEmpty;
+
+    return Row(
+      children: [
+        /// 업소 로고 (Company Logo)
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: scheme.secondaryContainer.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: hasLogo
+              ? CachedNetworkImage(
+                  imageUrl: company.logo_url,
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.store,
+                      size: 24,
+                      color: scheme.secondary.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.store,
+                      size: 24,
+                      color: scheme.secondary.withValues(alpha: 0.4),
+                    ),
+                  ),
+                )
+              : Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.store,
+                    size: 24,
+                    color: scheme.secondary.withValues(alpha: 0.4),
+                  ),
+                ),
+        ),
+        const SizedBox(width: 16),
+
+        /// 업소 텍스트 정보 (Company Text Info)
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 업소명 (Company Name)
+              Text(
+                company.name,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              /// 카테고리 (Category)
+              if (company.category.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.tag,
+                      size: 11,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        company.category,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              /// 주소 (Address)
+              if (company.address.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.locationDot,
+                      size: 11,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        company.address,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              /// 전화번호 (Phone Number)
+              if (company.phone_number.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.phone,
+                      size: 11,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      company.phone_number,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+
+        /// 상세 보기 화살표 (View Detail Arrow)
+        FaIcon(
+          FontAwesomeIcons.chevronRight,
+          size: 14,
+          color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+        ),
+      ],
+    );
+  }
+
+  /// 업소 미등록 안내 (No Company Placeholder)
+  ///
+  /// 업소가 없을 때 등록 유도 안내 표시
+  Widget _buildNoCompanyPlaceholder(
+    Lo l10n,
+    ColorScheme scheme,
+    ThemeData theme,
+  ) {
+    return Row(
+      children: [
+        /// 빈 업소 아이콘 (Empty Company Icon)
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.store,
+              size: 24,
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.3),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+
+        /// 안내 텍스트 (Guide Text)
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.noCompanyRegistered,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.tapToRegisterCompany,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        /// 등록 화살표 (Register Arrow)
+        FaIcon(
+          FontAwesomeIcons.chevronRight,
+          size: 14,
+          color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+        ),
+      ],
+    );
+  }
+
+  /// 업소 등록/수정 화면으로 이동 (Navigate to Company Form)
+  Future<void> _navigateToCompanyForm() async {
+    final result = await CompanyFormScreen.push(
+      context,
+      company: _myCompany,
+    );
+    if (result is Company && mounted) {
+      setState(() => _myCompany = result);
+    }
   }
 }

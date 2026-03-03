@@ -1,9 +1,8 @@
 /// 앱 실행 시 빌드 번호를 점검하는 초기화 함수입니다.
 /// - 최초: 앱 실행 5초 후 1회 체크
 /// - 이후: 백그라운드에서 5분마다 주기적으로 체크
-/// API에서 최소 요구 빌드 번호를 가져와서 현재 앱의 빌드 번호와 비교합니다.
+/// v7 API(settings.get)에서 최소 요구 빌드 번호를 가져와서 현재 앱의 빌드 번호와 비교합니다.
 /// 빌드 번호가 최소 요구 빌드 번호보다 낮으면 업그레이드 안내 다이얼로그를 표시합니다.
-/// 참고: .claude/skills/philgo-app/SKILL.md 와 .claude/skills/philgo-app/references/upgrade.md 를 참고합니다.
 library;
 
 import 'dart:async';
@@ -18,6 +17,7 @@ import 'package:philgo/widgets/logo/philgo.logo.triangles.dart';
 import 'package:philgo/widgets/theme/comic_button.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:philgo/l10n/app_localizations.dart';
+import 'package:philgo/v7_api/v7_api.dart';
 
 /// 주기적 빌드 번호 체크를 위한 타이머 (취소 가능하도록 보관)
 Timer? _periodicBuildCheckTimer;
@@ -25,7 +25,7 @@ Timer? _periodicBuildCheckTimer;
 /// 앱 실행 후 빌드 번호를 점검합니다.
 /// - 최초: 5초 후 1회 체크
 /// - 이후: 백그라운드에서 5분마다 주기적으로 체크
-/// API func('version')을 호출하여 서버에서 최소 요구 빌드 번호를 가져옵니다.
+/// v7 API(settings.get)를 호출하여 서버에서 최소 요구 빌드 번호를 가져옵니다.
 /// 현재 앱의 빌드 번호가 서버의 최소 요구 빌드 번호보다 낮으면
 /// 사용자에게 업그레이드를 안내하는 다이얼로그를 표시합니다.
 void initMinimalBuildNumberCheck() {
@@ -45,28 +45,32 @@ void initMinimalBuildNumberCheck() {
 }
 
 /// 빌드 번호 체크 로직 (공통 함수)
-/// 현재 앱의 빌드 번호와 서버의 최소 요구 빌드 번호를 비교합니다.
+/// 현재 앱의 빌드 번호와 v7 서버의 최소 요구 빌드 번호를 비교합니다.
+/// v7 API(settings.get)에서 app_version_android_build / app_version_ios_build 값을 가져옵니다.
 Future<void> _checkBuildNumber() async {
   try {
     // 1. 현재 앱의 빌드 번호 조회
     final packageInfo = await PackageInfo.fromPlatform();
     final currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
 
-    // 2. API에서 버전 정보 가져오기
-    // API 응답 형식:
-    // {"version":"2025-12-11-14-41-07","app":{"android":{"version":"2.0.3","build_number":36},"ios":{"version":"2.0.3","build_number":36}}}
+    // 2. v7 API에서 설정 정보 가져오기
+    // v7 settings.get 응답 예시:
+    // {"app_version_android": "2.0.16", "app_version_android_build": "46",
+    //  "app_version_ios": "2.0.16", "app_version_ios_build": "46", ...}
     // alertOnError: false - 네트워크 에러 발생 시 다이얼로그를 표시하지 않음
     // 버전 체크는 백그라운드 작업이므로 에러 시 로그만 출력하고 사용자 경험을 방해하지 않음
-    final versionInfo = await func('version', alertOnError: false);
+    final settingsJson = await v7api('settings.get', alertOnError: false);
 
     // 3. 플랫폼별 최소 요구 빌드 번호 추출
     int minBuildNumber = 0;
     if (Platform.isAndroid) {
-      // Android 플랫폼: app.android.build_number 값 사용
-      minBuildNumber = versionInfo['app']?['android']?['build_number'] ?? 0;
+      // Android 플랫폼: app_version_android_build 값 사용
+      minBuildNumber =
+          int.tryParse(settingsJson['app_version_android_build']?.toString() ?? '0') ?? 0;
     } else if (Platform.isIOS) {
-      // iOS 플랫폼: app.ios.build_number 값 사용
-      minBuildNumber = versionInfo['app']?['ios']?['build_number'] ?? 0;
+      // iOS 플랫폼: app_version_ios_build 값 사용
+      minBuildNumber =
+          int.tryParse(settingsJson['app_version_ios_build']?.toString() ?? '0') ?? 0;
     }
 
     // 4. 현재 빌드 번호가 최소 요구 빌드 번호보다 낮으면 업그레이드 안내 다이얼로그 표시
@@ -76,7 +80,7 @@ Future<void> _checkBuildNumber() async {
   } catch (e) {
     // API 호출 실패 또는 파싱 오류 시 로그만 출력하고 종료
     // 네트워크 오류 등으로 인해 사용자 경험을 방해하지 않음
-    // 빌드 번호 체크 중 오류 발생 시 무시
+    debugPrint('[빌드 번호 체크] v7 settings.get 호출 실패: $e');
   }
 }
 

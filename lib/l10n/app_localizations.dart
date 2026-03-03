@@ -4708,6 +4708,102 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'Earn extra points!'**
   String get earnExtraPoints;
+
+  /// API server information section title
+  ///
+  /// In en, this message translates to:
+  /// **'API Server Info'**
+  String get apiServerTitle;
+
+  /// API server address label
+  ///
+  /// In en, this message translates to:
+  /// **'API Server'**
+  String get apiServerAddress;
+
+  /// PHP API address label
+  ///
+  /// In en, this message translates to:
+  /// **'PHP API'**
+  String get phpApiAddress;
+
+  /// File server address label
+  ///
+  /// In en, this message translates to:
+  /// **'File Server'**
+  String get fileServerAddress;
+
+  /// Environment information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Environment'**
+  String get environmentTitle;
+
+  /// Environment mode label (production/development)
+  ///
+  /// In en, this message translates to:
+  /// **'Mode'**
+  String get environmentMode;
+
+  /// Label for my profile info card in menu
+  ///
+  /// In en, this message translates to:
+  /// **'My Info'**
+  String get myProfileInfo;
+
+  /// Hint text below profile card
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to edit profile'**
+  String get tapToEditProfile;
+
+  /// Label for my company info card in menu
+  ///
+  /// In en, this message translates to:
+  /// **'My Company'**
+  String get myCompanyInfo;
+
+  /// Placeholder when user has no company
+  ///
+  /// In en, this message translates to:
+  /// **'No company registered yet'**
+  String get noCompanyRegistered;
+
+  /// Hint text when no company is registered
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to register your company'**
+  String get tapToRegisterCompany;
+
+  /// Hint text below company card
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view details'**
+  String get tapToViewCompany;
+
+  /// Posts count label
+  ///
+  /// In en, this message translates to:
+  /// **'{count} posts'**
+  String postsCount(String count);
+
+  /// Comments count label
+  ///
+  /// In en, this message translates to:
+  /// **'{count} comments'**
+  String commentsCount(String count);
+
+  /// Placeholder for users without a nickname
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get anonymous;
+
+  /// Error message when user tries to log in with an unsupported phone number
+  ///
+  /// In en, this message translates to:
+  /// **'This phone number is not allowed. Only Korean or Philippine phone numbers are supported.'**
+  String get phoneNumberNotAllowed;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

@@ -2253,5 +2253,18 @@
   "companyInfoSection": "店舗情報",
   "visitorInfo": "訪問者情報",
   "qrScanResult": "QRスキャン結果",
-  "earnExtraPoints": "追加ポイントをゲット！"
+  "earnExtraPoints": "追加ポイントをゲット！",
+  "myProfileInfo": "マイ情報",
+  "tapToEditProfile": "タップしてプロフィール編集",
+  "myCompanyInfo": "私の店舗",
+  "noCompanyRegistered": "まだ店舗が登録されていません",
+  "tapToRegisterCompany": "タップして店舗を登録",
+  "tapToViewCompany": "タップして詳細を表示",
+  "postsCount": "{count}件の投稿",
+  "commentsCount": "{count}件のコメント",
+  "anonymous": "匿名",
+  "phoneNumberNotAllowed": "この電話番号は使用できません。韓国またはフィリピンの電話番号のみ対応しています。",
+  "@phoneNumberNotAllowed": {
+    "description": "Error message when user tries to log in with an unsupported phone number"
+  }
 }

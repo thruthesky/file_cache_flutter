@@ -18,6 +18,7 @@ import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.theme.dart';
 import 'package:provider/provider.dart';
 import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/v7_api/state/v7_settings_state.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -47,6 +48,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AppState()),
         ChangeNotifierProvider(create: (_) => NavigationState()),
         ChangeNotifierProvider(create: (_) => PhilgoState(), lazy: false),
+        ChangeNotifierProvider(create: (_) => V7SettingsState(), lazy: false),
       ],
       child: const MyApp(),
     ),

@@ -55,7 +55,13 @@
     "wantedSalaryRequired",
     "wantedWorkType",
     "wantedWorkTypeHint",
-    "wantedWorkTypeRequired"
+    "wantedWorkTypeRequired",
+    "apiServerTitle",
+    "apiServerAddress",
+    "phpApiAddress",
+    "fileServerAddress",
+    "environmentTitle",
+    "environmentMode"
   ],
 
   "zh": [
@@ -114,6 +120,12 @@
     "wantedSalaryRequired",
     "wantedWorkType",
     "wantedWorkTypeHint",
-    "wantedWorkTypeRequired"
+    "wantedWorkTypeRequired",
+    "apiServerTitle",
+    "apiServerAddress",
+    "phpApiAddress",
+    "fileServerAddress",
+    "environmentTitle",
+    "environmentMode"
   ]
 }

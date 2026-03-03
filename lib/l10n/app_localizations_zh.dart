@@ -2359,4 +2359,56 @@ class LoZh extends Lo {
 
   @override
   String get earnExtraPoints => '获取额外积分！';
+
+  @override
+  String get apiServerTitle => 'API Server Info';
+
+  @override
+  String get apiServerAddress => 'API Server';
+
+  @override
+  String get phpApiAddress => 'PHP API';
+
+  @override
+  String get fileServerAddress => 'File Server';
+
+  @override
+  String get environmentTitle => 'Environment';
+
+  @override
+  String get environmentMode => 'Mode';
+
+  @override
+  String get myProfileInfo => '我的信息';
+
+  @override
+  String get tapToEditProfile => '点击编辑资料';
+
+  @override
+  String get myCompanyInfo => '我的商家';
+
+  @override
+  String get noCompanyRegistered => '尚未注册商家';
+
+  @override
+  String get tapToRegisterCompany => '点击注册商家';
+
+  @override
+  String get tapToViewCompany => '点击查看详情';
+
+  @override
+  String postsCount(String count) {
+    return '$count篇帖子';
+  }
+
+  @override
+  String commentsCount(String count) {
+    return '$count条评论';
+  }
+
+  @override
+  String get anonymous => '匿名';
+
+  @override
+  String get phoneNumberNotAllowed => '此电话号码不可用。仅支持韩国或菲律宾电话号码。';
 }

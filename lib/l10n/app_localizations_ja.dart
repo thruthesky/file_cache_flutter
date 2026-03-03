@@ -2365,4 +2365,57 @@ class LoJa extends Lo {
 
   @override
   String get earnExtraPoints => '追加ポイントをゲット！';
+
+  @override
+  String get apiServerTitle => 'API Server Info';
+
+  @override
+  String get apiServerAddress => 'API Server';
+
+  @override
+  String get phpApiAddress => 'PHP API';
+
+  @override
+  String get fileServerAddress => 'File Server';
+
+  @override
+  String get environmentTitle => 'Environment';
+
+  @override
+  String get environmentMode => 'Mode';
+
+  @override
+  String get myProfileInfo => 'マイ情報';
+
+  @override
+  String get tapToEditProfile => 'タップしてプロフィール編集';
+
+  @override
+  String get myCompanyInfo => '私の店舗';
+
+  @override
+  String get noCompanyRegistered => 'まだ店舗が登録されていません';
+
+  @override
+  String get tapToRegisterCompany => 'タップして店舗を登録';
+
+  @override
+  String get tapToViewCompany => 'タップして詳細を表示';
+
+  @override
+  String postsCount(String count) {
+    return '$count件の投稿';
+  }
+
+  @override
+  String commentsCount(String count) {
+    return '$count件のコメント';
+  }
+
+  @override
+  String get anonymous => '匿名';
+
+  @override
+  String get phoneNumberNotAllowed =>
+      'この電話番号は使用できません。韓国またはフィリピンの電話番号のみ対応しています。';
 }

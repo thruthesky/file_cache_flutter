@@ -23,6 +23,7 @@ import 'package:philgo/services/weather/weather.model.dart';
 import 'package:philgo/services/weather/weather.service.dart';
 import 'package:philgo/state/navigation.state.dart';
 import 'package:philgo/themes/app.spacing.dart';
+import 'package:philgo/v7_api/state/v7_settings_state.dart';
 import 'package:philgo_api/philgo_api.dart';
 import 'package:provider/provider.dart';
 
@@ -138,6 +139,20 @@ class HomeQuickMenuSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// v7 설정에서 이벤트 토글 값 구독 (Selector 패턴)
+    /// QR 이벤트 ON → 업소이벤트 메뉴 표시
+    /// 포인트 이벤트 ON → 이벤트응모 메뉴 표시
+    return Selector<V7SettingsState, ({bool qr, bool event})>(
+      selector: (_, state) => (
+        qr: state.settings?.companyQrEventEnabled ?? false,
+        event: state.settings?.eventEntryEnabled ?? false,
+      ),
+      builder: (context, flags, _) => _buildContent(context, flags),
+    );
+  }
+
+  /// 퀵메뉴 콘텐츠 빌드
+  Widget _buildContent(BuildContext context, ({bool qr, bool event}) flags) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final sp = theme.extension<AppSpacing>()!;
@@ -214,38 +229,42 @@ class HomeQuickMenuSection extends StatelessWidget {
             ),
 
             /// 업소 이벤트 (내 정보 다음 위치)
-            /// Company Event (after my info)
-            _buildMenuItem(
-              context: context,
-              icon: FontAwesomeIcons.lightStore,
-              label: l10n.quickMenuCompanyEvent,
-              onTap: () => CompanyEventScreen.push(context),
-              scheme: scheme,
-              theme: theme,
-              sp: sp,
+            /// v7 설정의 companyQrEventEnabled가 ON일 때만 표시
+            /// Company Event (after my info) - only when QR event is enabled
+            if (flags.qr)
+              _buildMenuItem(
+                context: context,
+                icon: FontAwesomeIcons.lightStore,
+                label: l10n.quickMenuCompanyEvent,
+                onTap: () => CompanyEventScreen.push(context),
+                scheme: scheme,
+                theme: theme,
+                sp: sp,
 
-              /// 강조 표시: secondaryContainer 색상 사용
-              /// Highlight: Use secondaryContainer colors
-              backgroundColor: scheme.secondaryContainer,
-              iconColor: scheme.onSecondaryContainer,
-            ),
+                /// 강조 표시: secondaryContainer 색상 사용
+                /// Highlight: Use secondaryContainer colors
+                backgroundColor: scheme.secondaryContainer,
+                iconColor: scheme.onSecondaryContainer,
+              ),
 
             /// 이벤트 응모 (업소 이벤트 다음 위치)
-            /// Event Entry (after company event)
-            _buildMenuItem(
-              context: context,
-              icon: FontAwesomeIcons.lightGift,
-              label: l10n.quickMenuEventEntry,
-              onTap: () => EventEntryScreen.push(context),
-              scheme: scheme,
-              theme: theme,
-              sp: sp,
+            /// v7 설정의 eventEntryEnabled가 ON일 때만 표시
+            /// Event Entry (after company event) - only when event entry is enabled
+            if (flags.event)
+              _buildMenuItem(
+                context: context,
+                icon: FontAwesomeIcons.lightGift,
+                label: l10n.quickMenuEventEntry,
+                onTap: () => EventEntryScreen.push(context),
+                scheme: scheme,
+                theme: theme,
+                sp: sp,
 
-              /// 강조 표시: errorContainer 색상 사용 (눈에 띄는 색상)
-              /// Highlight: Use errorContainer colors (eye-catching)
-              backgroundColor: scheme.errorContainer,
-              iconColor: scheme.onErrorContainer,
-            ),
+                /// 강조 표시: errorContainer 색상 사용 (눈에 띄는 색상)
+                /// Highlight: Use errorContainer colors (eye-catching)
+                backgroundColor: scheme.errorContainer,
+                iconColor: scheme.onErrorContainer,
+              ),
 
             /// 필독 정보 (포인트 추첨 다음 위치)
             /// Must-Read Information (after point lottery)
@@ -449,11 +468,9 @@ class HomeQuickMenuSection extends StatelessWidget {
             Selector<PhilgoState, String?>(
               selector: (_, state) => state.user?.photoUrl,
               builder: (_, photoUrl, _) {
-                return Hero(
-                  /// Hero 태그: 프로필 사진 전환 애니메이션용
-                  /// Hero tag: For profile photo transition animation
-                  tag: 'profile-photo-hero',
-                  child: Container(
+                /// Hero 제거: IndexedStack 내에서 menu.home.dart의 Hero와 태그 충돌 방지
+                /// Hero removed: Prevent tag collision with menu.home.dart Hero in IndexedStack
+                return Container(
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
@@ -501,7 +518,6 @@ class HomeQuickMenuSection extends StatelessWidget {
                               color: scheme.onPrimaryContainer,
                             ),
                           ),
-                  ),
                 );
               },
             ),

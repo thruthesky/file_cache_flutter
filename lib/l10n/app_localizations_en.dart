@@ -2413,4 +2413,57 @@ class LoEn extends Lo {
 
   @override
   String get earnExtraPoints => 'Earn extra points!';
+
+  @override
+  String get apiServerTitle => 'API Server Info';
+
+  @override
+  String get apiServerAddress => 'API Server';
+
+  @override
+  String get phpApiAddress => 'PHP API';
+
+  @override
+  String get fileServerAddress => 'File Server';
+
+  @override
+  String get environmentTitle => 'Environment';
+
+  @override
+  String get environmentMode => 'Mode';
+
+  @override
+  String get myProfileInfo => 'My Info';
+
+  @override
+  String get tapToEditProfile => 'Tap to edit profile';
+
+  @override
+  String get myCompanyInfo => 'My Company';
+
+  @override
+  String get noCompanyRegistered => 'No company registered yet';
+
+  @override
+  String get tapToRegisterCompany => 'Tap to register your company';
+
+  @override
+  String get tapToViewCompany => 'Tap to view details';
+
+  @override
+  String postsCount(String count) {
+    return '$count posts';
+  }
+
+  @override
+  String commentsCount(String count) {
+    return '$count comments';
+  }
+
+  @override
+  String get anonymous => 'Anonymous';
+
+  @override
+  String get phoneNumberNotAllowed =>
+      'This phone number is not allowed. Only Korean or Philippine phone numbers are supported.';
 }
