@@ -34,6 +34,18 @@
   - [6.6 EventCouponRepository — 리네이밍 + Entity 리턴 타입 수정](#66-eventcouponrepository--리네이밍--entity-리턴-타입-수정)
 - [7. 새 Entity/Repository 추가 워크플로우](#7-새-entityrepository-추가-워크플로우)
 - [8. 주의 사항 및 규칙](#8-주의-사항-및-규칙)
+- [9. Interface 호환성 테스트 (PEST)](#9-interface-호환성-테스트-pest)
+  - [9.1 테스트 파일 및 실행 방법](#91-테스트-파일-및-실행-방법)
+  - [9.2 EntityInterface 테스트 패턴](#92-entityinterface-테스트-패턴)
+  - [9.3 RepositoryInterface Reflection 검증 패턴](#93-repositoryinterface-reflection-검증-패턴)
+  - [9.4 findByIdx() 반환 타입 검증 (Fatal Error 방지)](#94-findbyidx-반환-타입-검증-fatal-error-방지)
+  - [9.5 CRUD 전체 사이클 테스트](#95-crud-전체-사이클-테스트)
+  - [9.6 Service 계층 연동 테스트](#96-service-계층-연동-테스트)
+  - [9.7 Settings API 종단 간 테스트](#97-settings-api-종단-간-테스트)
+- [10. 리네이밍 마이그레이션 전수 조사 결과](#10-리네이밍-마이그레이션-전수-조사-결과)
+  - [10.1 메서드 리네이밍 전후 대조표](#101-메서드-리네이밍-전후-대조표)
+  - [10.2 호출부 변경 영향 분석](#102-호출부-변경-영향-분석)
+  - [10.3 CompanyMetaRepository Interface 적용/제거 사례](#103-companymetarepository-interface-적용제거-사례)
 
 ---
 
@@ -1092,3 +1104,302 @@ return array_map(fn($row) => XxxEntity::fromArray($row), $rows);
 // ❌ 금지 (배열 리턴)
 return $stmt->fetchAll(PDO::FETCH_ASSOC);
 ```
+
+---
+
+## 9. Interface 호환성 테스트 (PEST)
+
+### 9.1 테스트 파일 및 실행 방법
+
+**파일**: `tests/Unit/InterfaceCompatibilityTest.php`
+
+```bash
+# 전체 Interface 호환성 테스트 실행
+./vendor/bin/pest tests/Unit/InterfaceCompatibilityTest.php
+
+# 특정 describe 블록만 실행
+./vendor/bin/pest tests/Unit/InterfaceCompatibilityTest.php --filter "EntityInterface 구현 검증"
+./vendor/bin/pest tests/Unit/InterfaceCompatibilityTest.php --filter "RepositoryInterface"
+./vendor/bin/pest tests/Unit/InterfaceCompatibilityTest.php --filter "findByIdx"
+```
+
+**테스트 구성** (68개 테스트, 193 assertions):
+
+| describe 블록 | 테스트 수 | 검증 내용 |
+|---------------|----------|----------|
+| EntityInterface 구현 검증 | 14 | 14개 Entity의 instanceof 체크 |
+| EntityInterface 왕복 변환 | 8 | fromArray() → toArray() 데이터 일관성 |
+| RepositoryInterface 구현 검증 | 6 | 6개 Repository의 Reflection 체크 |
+| findByIdx() 반환 타입 검증 | 6 | Entity 인스턴스 반환 확인 (Fatal Error 방지) |
+| Service 계층 연동 검증 | 5 | Service가 배열을 반환하는지 확인 |
+| Settings API 호환성 | 4 | Controller/Service 종단 간 검증 |
+| Reflection 시그니처 검증 | 24 | 6 Repository × 4 메서드 시그니처 |
+| CRUD 전체 사이클 | 1 | create → find → update → delete 전 과정 |
+
+### 9.2 EntityInterface 테스트 패턴
+
+**14개 Entity의 instanceof 검증**:
+
+```php
+use Philgo\Utils\EntityInterface;
+use Philgo\Event\EventCouponEntity;
+
+it('EventCouponEntity는 EntityInterface를 구현한다', function () {
+    $entity = EventCouponEntity::fromArray(['idx' => 1, 'coupon_type' => 'starbucks']);
+    expect($entity)->toBeInstanceOf(EntityInterface::class);
+    expect($entity->toArray())->toBeArray();
+});
+```
+
+**fromArray() → toArray() 왕복 변환 검증**:
+
+```php
+it('EventCouponEntity: nullable 필드가 누락되면 null이 된다', function () {
+    $entity = EventCouponEntity::fromArray([]);
+
+    expect($entity->memo)->toBeNull();
+    expect($entity->image_url)->toBeNull();
+    expect($entity->idx_upload)->toBeNull();
+    expect($entity->idx_winner)->toBeNull();
+    expect($entity->won_at)->toBeNull();
+    expect($entity->sent_at)->toBeNull();
+});
+
+it('EventCouponEntity: nullable 필드에 값이 있으면 올바르게 변환된다', function () {
+    $data = [
+        'memo' => '메모 있음',
+        'idx_upload' => 55,
+        'idx_winner' => 1001,
+        'won_at' => 1700000000,
+    ];
+    $entity = EventCouponEntity::fromArray($data);
+
+    expect($entity->memo)->toBe('메모 있음');
+    expect($entity->idx_upload)->toBe(55);
+    expect($entity->idx_winner)->toBe(1001);
+    expect($entity->won_at)->toBe(1700000000);
+});
+```
+
+### 9.3 RepositoryInterface Reflection 검증 패턴
+
+PHP Reflection API를 사용하여 런타임에 메서드 시그니처를 검증한다.
+이 패턴은 `implements RepositoryInterface` 선언만으로는 잡을 수 없는 세부 타입 문제를 잡는다.
+
+```php
+use Philgo\Utils\EntityInterface;
+use Philgo\Event\EventCouponRepository;
+
+$repositoryClasses = [
+    PostRepository::class,
+    CompanyRepository::class,
+    QrCodeRepository::class,
+    UploadRepository::class,
+    EventCouponRepository::class,
+    PointLogRepository::class,
+];
+
+foreach ($repositoryClasses as $repoClass) {
+    $shortName = (new ReflectionClass($repoClass))->getShortName();
+
+    it("{$shortName}::create()가 int를 반환한다", function () use ($repoClass) {
+        $method = new ReflectionMethod($repoClass, 'create');
+        expect($method->isStatic())->toBeTrue();
+        expect($method->getReturnType()?->getName())->toBe('int');
+    });
+
+    it("{$shortName}::findByIdx()가 nullable EntityInterface를 반환한다", function () use ($repoClass) {
+        $method = new ReflectionMethod($repoClass, 'findByIdx');
+        $returnType = $method->getReturnType();
+        expect($returnType->allowsNull())->toBeTrue();
+
+        $typeName = $returnType->getName();
+        if ($typeName !== EntityInterface::class) {
+            $entityRef = new ReflectionClass($typeName);
+            expect($entityRef->implementsInterface(EntityInterface::class))->toBeTrue();
+        }
+    });
+}
+```
+
+**검증 항목** (6 Repository × 4 메서드 = 24 테스트):
+- `create()`: static, 리턴 int
+- `findByIdx()`: static, 리턴 nullable, EntityInterface 구현체
+- `update()`: static, 리턴 bool
+- `deleteByIdx()`: static, 리턴 bool
+
+### 9.4 findByIdx() 반환 타입 검증 (Fatal Error 방지)
+
+이 테스트는 **이전 Fatal Error의 재발을 방지**하는 핵심 테스트이다.
+`findByIdx()`가 배열이 아닌 Entity 인스턴스를 반환하는지 실제 DB 호출로 확인한다.
+
+```php
+it('EventCouponRepository::findByIdx()는 EventCouponEntity를 반환한다', function () {
+    $idx = EventCouponRepository::create([
+        'coupon_type' => 'test_iface_findby',
+        'title' => '인터페이스 findByIdx 테스트',
+        'status' => 'available',
+        'created_at' => time(),
+        'updated_at' => time(),
+    ]);
+
+    $entity = EventCouponRepository::findByIdx($idx);
+
+    // ★ 핵심 검증: EntityInterface 인스턴스인지 확인
+    expect($entity)->toBeInstanceOf(EntityInterface::class);
+    expect($entity)->toBeInstanceOf(EventCouponEntity::class);
+
+    // 프로퍼티 접근 가능한지 확인 (배열이면 Fatal Error)
+    expect($entity->idx)->toBe($idx);
+    expect($entity->coupon_type)->toBe('test_iface_findby');
+
+    // toArray()가 배열을 반환하는지 확인
+    $arr = $entity->toArray();
+    expect($arr)->toBeArray();
+    expect($arr['idx'])->toBe($idx);
+
+    EventCouponRepository::deleteByIdx($idx);
+});
+```
+
+### 9.5 CRUD 전체 사이클 테스트
+
+`create → findByIdx → update → findByIdx → deleteByIdx` 전체 사이클을 하나의 테스트에서 검증한다.
+각 단계에서 반환 타입과 Entity 프로퍼티 접근을 확인한다.
+
+```php
+it('create → findByIdx → update → findByIdx → deleteByIdx 전체 사이클', function () {
+    // 1. create: int 반환
+    $idx = EventCouponRepository::create([...]);
+    expect($idx)->toBeInt()->toBeGreaterThan(0);
+
+    // 2. findByIdx: EntityInterface 반환
+    $entity = EventCouponRepository::findByIdx($idx);
+    expect($entity)->toBeInstanceOf(EventCouponEntity::class);
+    expect($entity->coupon_type)->toBe('test_iface_lifecycle');
+
+    // 3. update: bool 반환
+    $success = EventCouponRepository::update($idx, ['title' => '수정된 제목']);
+    expect($success)->toBeTrue();
+
+    // 4. findByIdx 재조회: 수정 반영 확인
+    $updated = EventCouponRepository::findByIdx($idx);
+    expect($updated->title)->toBe('수정된 제목');
+
+    // 5. toArray(): 배열 변환 확인
+    $arr = $updated->toArray();
+    expect($arr)->toBeArray();
+
+    // 6. deleteByIdx: bool 반환
+    $deleted = EventCouponRepository::deleteByIdx($idx);
+    expect($deleted)->toBeTrue();
+
+    // 7. 삭제 확인
+    expect(EventCouponRepository::findByIdx($idx))->toBeNull();
+});
+```
+
+### 9.6 Service 계층 연동 테스트
+
+Service가 Repository의 Entity를 올바르게 사용하여 배열을 반환하는지 확인한다.
+
+```php
+it('EventCouponService::createCoupon()이 배열을 반환한다', function () {
+    $result = EventCouponService::createCoupon([
+        'coupon_type' => 'test_iface_svc_create',
+        'title' => '서비스 생성 인터페이스 테스트',
+    ]);
+
+    // Service는 내부에서 Entity->toArray() 결과를 반환
+    expect($result)->toBeArray();
+    expect($result)->toHaveKeys(['idx', 'coupon_type', 'title', 'status']);
+});
+```
+
+### 9.7 Settings API 종단 간 테스트
+
+Flutter 앱에서 호출하는 Settings API의 호환성을 직접 검증한다.
+
+```php
+it('SettingsController::get()이 배열을 반환한다', function () {
+    $ctrl = new SettingsController();
+    $result = $ctrl->get([]);
+
+    expect($result)->toBeArray();
+    expect($result)->toHaveKey('admins');
+    expect($result)->toHaveKey('available_starbucks_coupons');
+});
+
+it('SettingsController::appVersion()이 배열을 반환한다', function () {
+    $ctrl = new SettingsController();
+    $result = $ctrl->appVersion([]);
+    expect($result)->toBeArray();
+});
+
+it('SettingsService::getAll()이 배열을 반환한다', function () {
+    $result = SettingsService::getAll();
+    expect($result)->toBeArray();
+});
+```
+
+---
+
+## 10. 리네이밍 마이그레이션 전수 조사 결과
+
+### 10.1 메서드 리네이밍 전후 대조표
+
+Interface 도입 시 기존 메서드명을 표준화하기 위해 리네이밍한 전체 내역이다.
+
+| Repository | 구 메서드 | 신 메서드 | 리턴 타입 변경 |
+|-----------|----------|----------|-------------|
+| PointLogRepository | `insert(array $data): int` | `create(array $data): int` | 없음 |
+| PointLogRepository | `getByIdx(int $idx): ?array` | `findByIdx(int $idx): ?PointLogEntity` | **`?array` → `?PointLogEntity`** |
+| PointLogRepository | `delete(int $idx): bool` | `deleteByIdx(int $idx): bool` | 없음 |
+| QrCodeRepository | `insert(array $data): int` | `create(array $data): int` | 없음 |
+| QrCodeRepository | (신규 추가) | `update(int $idx, array $data): bool` | 신규 |
+| EventCouponRepository | `findByIdx(int $idx): ?array` | `findByIdx(int $idx): ?EventCouponEntity` | **`?array` → `?EventCouponEntity`** |
+| EventCouponRepository | `delete(int $idx): bool` | `deleteByIdx(int $idx): bool` | 없음 |
+| UploadRepository | (신규 추가) | `update(int $idx, array $data): bool` | 신규 |
+
+### 10.2 호출부 변경 영향 분석
+
+`findByIdx()` 리턴 타입이 `?array` → `?Entity`로 변경된 경우, 호출부에서 접근 방식이 바뀌어야 한다.
+
+**PointLogRepository 호출부**:
+- `PointLogService::changePoints()`: `$existingLog['point']` → `$existingLog->point` (이미 Entity 접근 사용 중이었으므로 변경 불필요)
+
+**EventCouponRepository 호출부**:
+- `EventCouponService::deleteCoupon()`: `$coupon['status']` → `$coupon->status`
+- `EventCouponService::toggleSentStatus()`: 내부에서 `findByIdx()` 호출 후 `$entity->toArray()` 리턴
+- `EventCouponService::assignCouponToWinner()`: `findByIdx()` 호출 후 `$entity->toArray()` 리턴
+- `EventCouponService::updateCoupon()`: `$coupon` 유효성 검증 → `$coupon->status` 등 프로퍼티 접근
+
+**⚠️ lockAndPickAvailable()는 배열 리턴 유지**: RepositoryInterface에 포함되지 않는 확장 쿼리이므로 기존 `?array` 리턴을 유지한다. 트랜잭션 내에서 `SELECT ... FOR UPDATE`로 사용되며, Entity 변환 없이 바로 `$coupon['idx']`로 접근한다.
+
+### 10.3 CompanyMetaRepository Interface 적용/제거 사례
+
+**경위**: 처음에는 CompanyMetaRepository에도 `implements RepositoryInterface`를 적용했으나, 시그니처 불일치로 **즉시 제거**했다.
+
+**문제**: CompanyMetaRepository의 `update()` 메서드가 3개 파라미터를 받는다:
+
+```php
+// CompanyMetaRepository — 실제 시그니처
+public static function update(int $idxCompany, string $key, array $data): bool
+
+// RepositoryInterface — 요구 시그니처
+public static function update(int $idx, array $data): bool
+```
+
+파라미터 수가 2개 vs 3개로 호환 불가. PHP에서 `implements` 선언 시 **Fatal Error** 발생:
+
+```
+Declaration of CompanyMetaRepository::update(int $idxCompany, string $key, array $data): bool
+must be compatible with RepositoryInterface::update(int $idx, array $data): bool
+```
+
+**근본 원인**: CompanyMetaRepository는 `idx` 기반 단일 키가 아니라 `(idx_company, key)` 복합 키로 데이터를 관리하는 key-value 패턴이다. 표준 CRUD의 `update(int $idx, array $data)` 시그니처와 구조적으로 맞지 않는다.
+
+**교훈**: RepositoryInterface 적용 전 반드시 다음을 확인한다:
+1. 해당 Repository가 `idx` 기반 단일 키를 사용하는가?
+2. `create()`, `findByIdx()`, `update()`, `deleteByIdx()` 4개 메서드의 시그니처가 인터페이스와 호환되는가?
+3. 도메인 특성상 삭제/수정이 불가능한 경우는 아닌가?
