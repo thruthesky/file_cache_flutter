@@ -84,6 +84,7 @@ class _EntryLoginScreenState extends State<EntryLoginScreen> {
                           ),
                         ),
                         child: PhoneSignIn(
+                          debug: true,
                           onCompletePhoneNumber: (String phoneNumber) {
                             // 로컬 입력을 E.164 국제 형식으로 변환
                             // 한국: '10'으로 시작 → +82 추가

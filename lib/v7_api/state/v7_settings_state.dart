@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:philgo/config/app.config.dart';
 import 'package:philgo/v7_api/v7_api.dart';
 import 'package:philgo/v7_api/models/v7_settings.dart';
 
 /// v7 Settings 상태 관리
 ///
 /// 앱 시작 시 v7 api.php → settings.get 호출하여 설정을 로딩한다.
+/// 이후 [AppConfig.v7SettingsRefreshInterval] 주기로 자동 갱신한다.
+/// (디버그: 30초, 프로덕션: 5분)
 /// Provider로 등록하여 앱 전체에서 접근 가능.
 ///
 /// 기존 PhilgoState.setting (레거시 func.php → bank_info/point/admin_uids)과
@@ -13,9 +18,20 @@ import 'package:philgo/v7_api/models/v7_settings.dart';
 class V7SettingsState extends ChangeNotifier {
   V7Settings? settings;
   String? error;
+  Timer? _refreshTimer;
 
   V7SettingsState() {
     _loadSettings();
+    _refreshTimer = Timer.periodic(
+      AppConfig.v7SettingsRefreshInterval,
+      (_) => _loadSettings(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   /// v7 settings.get API 호출하여 설정 로딩

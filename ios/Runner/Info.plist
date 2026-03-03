@@ -69,7 +69,7 @@
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
-	<true/>
+	<false/>
 	<key>FlutterDeepLinkingEnabled</key>
 	<true/>
 	<key>LSApplicationQueriesSchemes</key>

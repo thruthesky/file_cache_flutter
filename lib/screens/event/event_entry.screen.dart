@@ -504,6 +504,83 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
     );
   }
 
+  /// 스타벅스 쿠폰 당첨 축하 다이얼로그 + pangpare.mp3 사운드 재생
+  ///
+  /// 다이얼로그가 닫힌 후 V7SettingsState의 available_coupons를 갱신한다.
+  /// 쿠폰이 마지막이었으면(0) Selector가 감지하여 소진 메시지를 표시한다.
+  Future<void> _showCouponCongratulationsDialog() async {
+    final player = AudioPlayer();
+    try {
+      // pangpare.mp3 사운드 재생
+      await player.play(AssetSource('sound/pangpare.mp3'));
+    } catch (e) {
+      debugPrint('축하 사운드 재생 실패: $e');
+    }
+
+    if (!mounted) {
+      player.dispose();
+      return;
+    }
+
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    // 축하 다이얼로그 표시
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.solidMugHot,
+              size: 56,
+              color: scheme.primary,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '축하합니다!',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: scheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '스타벅스 쿠폰에 당첨되었습니다!',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: scheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('확인'),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // 다이얼로그 닫힌 후 사운드 정리
+    player.dispose();
+
+    // 다이얼로그 닫힌 후 V7SettingsState 갱신 → 0이면 소진 메시지 전환
+    final availableCoupons =
+        (_lastSpinResult?['available_coupons'] as num?)?.toInt();
+    if (mounted && availableCoupons != null) {
+      V7SettingsState.of(context)
+          .updateAvailableStarbucksCoupons(availableCoupons);
+    }
+  }
+
   /// 스타벅스 쿠폰 소진 안내 배너
   Widget _buildCouponsExhaustedBanner(
     ThemeData theme,

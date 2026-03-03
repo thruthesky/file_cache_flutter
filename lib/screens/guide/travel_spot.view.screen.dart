@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:philgo/models/travel_spot.model.dart';
+import 'package:philgo/services/travel/travel_spot.service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 여행 명소 상세 보기 화면 (Travel Spot View Screen)
@@ -46,10 +47,44 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
   /// AppBar 접힘 상태 (AppBar collapsed state)
   bool _isCollapsed = false;
 
+  /// 상세 데이터가 로드된 spot (texts 포함)
+  /// 목록에서 전달받은 spot에 texts가 없으면 API로 로드하여 여기에 저장
+  late TravelSpot _spot;
+
+  /// texts 로딩 중 상태
+  bool _isLoadingTexts = false;
+
   @override
   void initState() {
     super.initState();
+    _spot = _spot;
     _scrollController.addListener(_onScroll);
+
+    /// texts가 없으면 v7 API로 상세 데이터 로드
+    if (!_spot.hasTexts) {
+      _loadTextsFromApi();
+    }
+  }
+
+  /// v7 travel.get API로 texts(마크다운 상세 콘텐츠)를 로드
+  Future<void> _loadTextsFromApi() async {
+    setState(() => _isLoadingTexts = true);
+    try {
+      final detailSpot = await TravelSpotService.instance.getSpotDetail(
+        _spot.index,
+      );
+      if (mounted) {
+        setState(() {
+          _spot = detailSpot;
+          _isLoadingTexts = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('TravelSpotViewScreen: texts 로드 실패 - $e');
+      if (mounted) {
+        setState(() => _isLoadingTexts = false);
+      }
+    }
   }
 
   @override
@@ -76,9 +111,9 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
   /// Hero 태그 생성 (Generate Hero tag)
   /// 이미지 유무에 따라 다른 태그 사용
   String get _heroTag =>
-      widget.spot.hasImage
-          ? 'travel-spot-${widget.spot.name}-image'
-          : 'travel-spot-${widget.spot.name}-icon';
+      _spot.hasImage
+          ? 'travel-spot-${_spot.name}-image'
+          : 'travel-spot-${_spot.name}-icon';
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +138,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
               child: Container(height: 1.0, color: scheme.outlineVariant),
             ),
             title: _isCollapsed
-                ? Text(widget.spot.name, style: theme.textTheme.titleLarge)
+                ? Text(_spot.name, style: theme.textTheme.titleLarge)
                 : null,
             leading: _isCollapsed
                 ? null
@@ -144,8 +179,18 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
                   const SizedBox(height: 28),
 
                   /// 마크다운 콘텐츠 또는 설명 섹션 (Markdown content or description section)
-                  if (widget.spot.hasTexts)
+                  /// texts가 있으면 마크다운 섹션, 로딩 중이면 스피너, 없으면 설명 섹션
+                  if (_spot.hasTexts)
                     ..._buildMarkdownSections(theme, scheme)
+                  else if (_isLoadingTexts)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: CircularProgressIndicator(
+                          color: scheme.primary,
+                        ),
+                      ),
+                    )
                   else
                     _buildDescriptionSection(theme, scheme)
                         .animate()
@@ -167,9 +212,9 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
   Widget _buildHeroImage(ColorScheme scheme) {
     return Hero(
       tag: _heroTag,
-      child: widget.spot.hasImage
+      child: _spot.hasImage
           ? CachedNetworkImage(
-              imageUrl: widget.spot.imageUrl!,
+              imageUrl: _spot.imageUrl!,
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
@@ -189,7 +234,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
       color: scheme.primaryContainer,
       child: Center(
         child: Text(
-          widget.spot.icon,
+          _spot.icon,
           style: const TextStyle(fontSize: 80),
         ),
       ),
@@ -218,7 +263,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    widget.spot.icon,
+                    _spot.icon,
                     style: const TextStyle(fontSize: 24),
                   ),
                 ),
@@ -229,13 +274,13 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.spot.name,
+                      _spot.name,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      widget.spot.englishName,
+                      _spot.englishName,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
@@ -250,7 +295,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
 
           /// 제목/부제목 (Title/Subtitle)
           Text(
-            widget.spot.title,
+            _spot.title,
             style: theme.textTheme.titleMedium?.copyWith(
               color: scheme.primary,
               fontWeight: FontWeight.w500,
@@ -267,7 +312,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              widget.spot.category,
+              _spot.category,
               style: theme.textTheme.labelMedium?.copyWith(
                 color: scheme.onTertiaryContainer,
                 fontWeight: FontWeight.w500,
@@ -288,7 +333,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  '${widget.spot.city}, ${widget.spot.province}',
+                  '${_spot.city}, ${_spot.province}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -310,7 +355,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
       theme: theme,
       scheme: scheme,
       child: Text(
-        widget.spot.description,
+        _spot.description,
         style: theme.textTheme.bodyMedium?.copyWith(
           color: scheme.onSurface,
           height: 1.6,
@@ -324,7 +369,7 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
   List<Widget> _buildMarkdownSections(ThemeData theme, ColorScheme scheme) {
     final sections = <Widget>[];
 
-    for (int i = 0; i < widget.spot.texts!.length; i++) {
+    for (int i = 0; i < _spot.texts!.length; i++) {
       final sectionInfo = _getSectionInfo(i);
 
       sections.add(
@@ -333,14 +378,14 @@ class _TravelSpotViewScreenState extends State<TravelSpotViewScreen> {
           icon: sectionInfo.icon,
           theme: theme,
           scheme: scheme,
-          child: _buildMarkdownContent(widget.spot.texts![i], theme, scheme),
+          child: _buildMarkdownContent(_spot.texts![i], theme, scheme),
         )
             .animate()
             .fadeIn(duration: 400.ms, delay: (100 * (i + 1)).ms)
             .slideY(begin: 0.1, end: 0),
       );
 
-      if (i < widget.spot.texts!.length - 1) {
+      if (i < _spot.texts!.length - 1) {
         sections.add(const SizedBox(height: 28));
       }
     }

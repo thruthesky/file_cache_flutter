@@ -36,8 +36,12 @@ class TravelSpotsData {
 /// 여행 명소 데이터 모델 (Travel Spot Data Model)
 ///
 /// travel_spots.json 파일의 여행 명소 정보를 담는 모델입니다.
-/// Model containing travel spot information from travel_spots.json file.
+/// v7 API(travel.list, travel.get)를 통해 데이터를 받습니다.
+/// Model containing travel spot information from v7 Travel API.
 class TravelSpot {
+  /// JSON 배열 인덱스 (v7 API 식별자)
+  final int index;
+
   /// 한글 이름 (Korean name)
   final String name;
 
@@ -67,9 +71,15 @@ class TravelSpot {
 
   /// 마크다운 형식의 상세 텍스트 배열 (옵션, Option)
   /// Markdown formatted detail text array (optional)
+  /// travel.list에서는 제외됨, travel.get에서만 포함
   final List<String>? texts;
 
+  /// 상세 텍스트 존재 여부 플래그 (서버에서 제공)
+  /// travel.list 응답에서 texts 없이도 존재 여부를 알 수 있음
+  final bool hasTextsFlag;
+
   const TravelSpot({
+    this.index = 0,
     required this.name,
     required this.englishName,
     required this.title,
@@ -80,6 +90,7 @@ class TravelSpot {
     required this.category,
     this.imageUrl,
     this.texts,
+    this.hasTextsFlag = false,
   });
 
   /// 이미지 URL이 있는지 확인 (Check if image URL exists)
@@ -89,24 +100,30 @@ class TravelSpot {
   bool get hasTexts => texts != null && texts!.isNotEmpty;
 
   /// JSON에서 TravelSpot 객체 생성 (Create TravelSpot from JSON)
+  ///
+  /// v7 API 응답과 기존 JSON 파일 양쪽 모두 호환.
+  /// 'english name' (공백 있음)과 'english_name' (언더스코어) 모두 지원.
   factory TravelSpot.fromJson(Map<String, dynamic> json) {
     return TravelSpot(
+      index: json['index'] as int? ?? 0,
       name: json['name'] as String? ?? '',
-      englishName: json['english name'] as String? ?? '',
+      englishName: (json['english name'] ?? json['english_name']) as String? ?? '',
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       city: json['city'] as String? ?? '',
       province: json['province'] as String? ?? '',
       icon: json['icon'] as String? ?? '📍',
       category: json['category'] as String? ?? '',
-      imageUrl: json['imageUrl'] as String?,
+      imageUrl: (json['imageUrl'] ?? json['image_url']) as String?,
       texts: (json['texts'] as List<dynamic>?)?.cast<String>(),
+      hasTextsFlag: json['has_texts'] as bool? ?? false,
     );
   }
 
   /// TravelSpot 객체를 JSON으로 변환 (Convert TravelSpot to JSON)
   Map<String, dynamic> toJson() {
     return {
+      'index': index,
       'name': name,
       'english name': englishName,
       'title': title,
@@ -115,6 +132,7 @@ class TravelSpot {
       'province': province,
       'icon': icon,
       'category': category,
+      'has_texts': hasTextsFlag,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (texts != null) 'texts': texts,
     };
