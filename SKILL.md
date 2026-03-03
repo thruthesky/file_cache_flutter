@@ -1,14 +1,26 @@
 ---
 name: v7-skill
-description: 필고(Philgo) v7 시스템 개발 스킬. PSR-4 Autoloading 기반 Controller + Service 아키텍처, api.php 디스패치, PEST Unit Test, 네임스페이스(Philgo\*) 등 필고 v7 시스템 코드를 개발할 때 사용합니다. 새로운 API 엔드포인트 추가, Controller/Service 클래스 생성, PEST 테스트 작성, PSR-4 모듈 추가, api.php 관련 작업, v7 마이그레이션 등을 작업할 때 이 스킬을 사용하세요.
+description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR-4 Controller + Service 아키텍처, api.php, PEST Unit Test), 웹 홈페이지(Vue.js CDN MPA, Bootstrap, SEO), Flutter 앱(v7 API 연동, V7FileUpload, CompanyApi, TravelApi) 개발을 모두 포함합니다. (1) PHP 백엔드: 새 API 엔드포인트 추가, Controller/Service 클래스 생성, PEST 테스트 작성, PSR-4 모듈 추가, api.php 관련 작업, (2) 웹 홈페이지: Vue.js 페이지 개발, PHP 페이지에서 v7 Service 호출, 웹 프론트엔드 작업, (3) Flutter 앱: v7api() 호출, V7FileUpload 위젯, 업소록/여행/이벤트 등 v7 기반 앱 기능 개발, v7 마이그레이션 등을 작업할 때 이 스킬을 사용하세요. 트리거 키워드: v7, v7 API, v7 백엔드, v7 웹, v7 앱, v7 홈페이지, Philgo v7, PSR-4, Controller, Service, api.php, PEST, v7api, V7FileUpload, CompanyApi, TravelApi, v7 마이그레이션.
 ---
 
 # 필고 v7 시스템 개발 가이드
 
+## 🔴🔴🔴 v7-skill 적용 범위: 백엔드 + 웹 홈페이지 + Flutter 앱 🔴🔴🔴
+
+> **⚠️ v7-skill은 PHP 백엔드 개발만을 위한 스킬이 아닙니다.**
+> **v7 시스템과 관련된 모든 개발 — PHP 백엔드, 웹 홈페이지, Flutter 앱 — 에 이 스킬을 사용합니다.**
+> **v7 API를 호출하는 Flutter 앱 코드, v7 Service를 사용하는 웹 페이지 모두 이 스킬의 범위입니다.**
+
 ## 개요
 
-이 스킬은 **필고 v7 시스템** 개발을 위한 전용 스킬입니다.
-PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
+이 스킬은 **필고 v7 시스템** 개발을 위한 **통합 스킬**입니다.
+PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
+
+| 영역 | 설명 | 핵심 기술 |
+|------|------|-----------|
+| **PHP 백엔드** | PSR-4 기반 Controller + Service 아키텍처로 v7 API 개발 | PHP 8.3, PSR-4, PEST, MariaDB |
+| **웹 홈페이지** | v7 Service를 활용한 PHP 페이지 및 Vue.js CDN MPA 웹 개발 | Vue.js, Bootstrap, PHP, SEO |
+| **Flutter 앱** | v7 API를 호출하는 Flutter 앱 기능 개발 | Dart, v7api(), V7FileUpload, Provider |
 
 ### ⚠️⚠️⚠️ 핵심 원칙: 기존 필고 코드와 100% 공존 ⚠️⚠️⚠️
 
@@ -56,9 +68,9 @@ PSR-4 기반 Controller + Service 아키텍처로 API를 개발합니다.
 | 스킬 | 용도 |
 |------|------|
 | `philgo-skill` | 기존 레거시 시스템 (앱, 웹, API) 개발 |
-| **`v7-skill`** | **v7 시스템 (PSR-4 Controller/Service) 개발 — 기존 코드와 공존** |
+| **`v7-skill`** | **v7 시스템 통합 개발 — PHP 백엔드 + 웹 홈페이지 + Flutter 앱 (기존 코드와 공존)** |
 
-> 레거시 코드 작업 시에는 `philgo-skill`을, v7 시스템 API 작업 시에는 이 스킬을 사용합니다.
+> v7 시스템 관련 작업(백엔드 API, 웹 홈페이지, Flutter 앱)은 이 스킬을, 레거시 코드 작업 시에는 `philgo-skill`을 사용합니다.
 > **두 스킬은 상호 배타적이 아니며, 하나의 페이지에서 두 시스템을 동시에 사용할 수 있습니다.**
 
 ---
