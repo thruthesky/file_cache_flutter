@@ -168,67 +168,51 @@ public static function spin(array $user): array
         throw new RuntimeException("포인트가 부족합니다. (최소 200P 필요, 현재 {$currentPoint}P)");
     }
 
-    $availableCoupons = self::getAvailableStarbucksCoupons();
-    $hasStarbucksCoupon = count($availableCoupons) > 0;
+    // DB 기반 쿠폰 존재 여부 확인
+    $hasStarbucksCoupon = EventCouponService::hasAvailableCoupon('starbucks');
 
     $pdo->beginTransaction();
     try {
-        // 200P 차감
-        $pointAfterCost = $currentPoint - 200;
-        EventRepository::updateMemberPoint($idxMember, $pointAfterCost);
-        EventRepository::insertPointLog([
-            'idx_member_from' => $idxMember, 'idx_member_to' => $idxMember,
-            'point_before' => $currentPoint, 'point' => -200,
-            'point_after' => $pointAfterCost,
-            'module' => 'event', 'action' => 'spin_cost', 'etc' => 'spin_cost',
-        ]);
+        // 200P 차감 (PointLogService 사용)
+        $costLog = PointLogService::changePoints(-200, $idxMember, $idxMember, 'event', 'spin_cost', 0, 'spin_cost');
+        $pointAfterCost = $costLog->point_after;
 
-        // 확률 계산
+        // 확률 계산 (쿠폰 유무에 따라 동적 확률)
         $result = self::calculateSpinResult($hasStarbucksCoupon);
+        $assignedCoupon = null;
         $finalPoint = $pointAfterCost;
-        $starbucksCouponFile = null;
 
         // 보상 처리
         if ($result['prize_type'] === 'point' && $result['points'] > 0) {
-            $finalPoint = $pointAfterCost + $result['points'];
-            EventRepository::updateMemberPoint($idxMember, $finalPoint);
-            EventRepository::insertPointLog([
-                'idx_member_from' => 0, 'idx_member_to' => $idxMember,
-                'point_before' => $pointAfterCost, 'point' => $result['points'],
-                'point_after' => $finalPoint,
-                'module' => 'event', 'action' => 'spin_reward',
-                'etc' => "spin_reward_{$result['points']}",
-            ]);
+            $rewardLog = PointLogService::changePoints($result['points'], 0, $idxMember, 'event', 'spin_reward', 0, "spin_reward_{$result['points']}");
+            $finalPoint = $rewardLog->point_after;
         } elseif ($result['prize_type'] === 'starbucks') {
-            $starbucksCouponFile = $availableCoupons[0];
-            EventRepository::insertPointLog([
-                'idx_member_from' => 0, 'idx_member_to' => $idxMember,
-                'point_before' => $pointAfterCost, 'point' => 0,
-                'point_after' => $pointAfterCost,
-                'module' => 'event', 'action' => 'spin_reward',
-                'etc' => "spin_reward_starbucks:{$starbucksCouponFile}",
-            ]);
+            PointLogService::changePoints(0, 0, $idxMember, 'event', 'spin_reward', 0, 'spin_reward_starbucks');
         }
 
         // 기록 저장
-        $spinIdx = EventRepository::insertSpinHistory([
-            'idx_member' => $idxMember, 'section_index' => $result['section_index'],
-            'prize_type' => $result['prize_type'], 'points_cost' => 200,
-            'points_reward' => $result['points'],
-            'starbucks_coupon_file' => $starbucksCouponFile,
-            'random_value' => $result['random_value'],
-            'point_before' => $currentPoint, 'point_after' => $finalPoint,
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-        ]);
+        $spinIdx = EventRepository::insertSpinHistory([...]);
+
+        // 스타벅스 당첨 시 DB 기반 쿠폰 배정 (SELECT ... FOR UPDATE)
+        if ($result['prize_type'] === 'starbucks') {
+            $assignedCoupon = EventCouponService::assignCouponToWinner('starbucks', $idxMember, $spinIdx);
+        }
 
         $pdo->commit();
+        $remainingCoupons = EventCouponService::getAvailableCount('starbucks');
+
         return [
             'section_index' => $result['section_index'], 'points' => $result['points'],
             'prize_type' => $result['prize_type'], 'current_point' => $finalPoint,
-            'starbucks_coupon_file' => $starbucksCouponFile,
-            'starbucks_coupon_url' => $starbucksCouponFile ? "/event/cupon/starbucks/{$starbucksCouponFile}" : null,
-            'available_coupons' => count($availableCoupons) - ($starbucksCouponFile ? 1 : 0),
-            'spin_idx' => $spinIdx,
+            'lv' => UserService::calculateLevel($finalPoint),
+            'level_progress' => UserService::calculateLevelProgress($finalPoint, ...),
+            'starbucks_coupon_file' => null, 'starbucks_coupon_url' => null,
+            'available_coupons' => $remainingCoupons, 'spin_idx' => $spinIdx,
+            'coupon' => $assignedCoupon ? [
+                'idx' => (int) $assignedCoupon['idx'],
+                'title' => $assignedCoupon['title'] ?? '',
+                'coupon_type' => $assignedCoupon['coupon_type'] ?? 'starbucks',
+            ] : null,
         ];
     } catch (\Exception $e) {
         $pdo->rollBack();
@@ -270,7 +254,7 @@ v7 Upload API로 QR 이미지를 `uploads` 테이블에 저장하고 `idx_upload
 쿠폰이 0개이면 스타벅스 확률이 자동으로 0%가 되고 해당 weight가 50P에 합산된다.
 관리자 위젯(`widgets/admin/event/coupon-list.php`)에서 통계 대시보드, 등록/수정/삭제/전송 관리를 수행한다.
 
-**레거시 호환**: 기존 파일 시스템 기반 쿠폰(`event/cupon/starbucks/` 폴더)도 병행 운용 가능하다.
+**참고**: 쿠폰 관리는 100% DB 기반이다. 기존 파일 시스템 기반 쿠폰 관리(`event/cupon/starbucks/` 폴더)는 완전히 제거되었다.
 
 ### 2.7 sf_point_log 기록 규칙 (스피닝 휠)
 
@@ -278,7 +262,7 @@ v7 Upload API로 QR 이미지를 `uploads` 테이블에 저장하고 `idx_upload
 |------|--------|--------|-------|-----|
 | 참가비 차감 | `event` | `spin_cost` | -200 | `spin_cost` |
 | 50P~2,000P 당첨 | `event` | `spin_reward` | +N | `spin_reward_{N}` |
-| 스타벅스 당첨 | `event` | `spin_reward` | 0 | `spin_reward_starbucks:{파일명}` |
+| 스타벅스 당첨 | `event` | `spin_reward` | 0 | `spin_reward_starbucks` |
 | 꽝 | *(기록 없음)* | | | |
 
 ---
@@ -1435,8 +1419,6 @@ lib/point_log/
 
 widgets/admin/event/
 └── coupon-list.php             ← 관리자 쿠폰 관리 위젯 (Vue.js + v7 Upload API)
-
-event/cupon/starbucks/         ← 스타벅스 쿠폰 이미지 저장 폴더 (레거시)
 
 company/
 ├── qr-code-scanned.php        ← QR 스캔 성공 감사 페이지 (후기 CTA 포함)

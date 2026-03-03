@@ -381,7 +381,7 @@ if ($prizeType === 'starbucks') {
 
 ### 7.1 스피닝 휠 API 응답
 
-쿠폰 당첨 시 `event.spin` API 응답에 쿠폰 정보가 포함된다:
+쿠폰 당첨 시 `event.spin` API 응답에 `coupon` 객체가 포함된다:
 
 ```json
 {
@@ -390,23 +390,35 @@ if ($prizeType === 'starbucks') {
   "points": -1,
   "prize_type": "starbucks",
   "current_point": 4800,
-  "starbucks_coupon_file": "example.jpg",
-  "starbucks_coupon_url": "/event/cupon/starbucks/example.jpg",
+  "lv": 3,
+  "level_progress": 45,
+  "starbucks_coupon_file": null,
+  "starbucks_coupon_url": null,
   "available_coupons": 2,
-  "spin_idx": 789
+  "spin_idx": 789,
+  "coupon": {
+    "idx": 42,
+    "title": "아메리카노 기프티콘",
+    "coupon_type": "starbucks"
+  }
 }
 ```
 
+> **참고**: `starbucks_coupon_file`과 `starbucks_coupon_url`은 레거시 호환용으로 항상 `null`을 반환한다.
+> 쿠폰 정보는 `coupon` 객체에서 확인한다. 스타벅스 미당첨 시 `coupon`은 `null`이다.
+
 ### 7.2 Flutter 앱에서 쿠폰 표시
 
-스피닝 휠 결과 다이얼로그에서 `prize_type == 'starbucks'`일 때 쿠폰 이미지를 표시한다:
+스피닝 휠 결과 다이얼로그에서 `prize_type == 'starbucks'`일 때 `coupon` 객체로 쿠폰 정보를 표시한다:
 
 ```dart
 // 스피닝 휠 결과 콜백
 onResult: (section) {
     if (_lastSpinResult['prize_type'] == 'starbucks') {
+        final coupon = _lastSpinResult['coupon'];
         _showStarbucksCouponDialog(
-            couponUrl: _lastSpinResult['starbucks_coupon_url'],
+            couponTitle: coupon?['title'] ?? '',
+            couponIdx: coupon?['idx'],
         );
     } else {
         _showPointResultDialog(_lastSpinResult);
@@ -414,23 +426,39 @@ onResult: (section) {
 }
 ```
 
-### 7.3 웹에서 쿠폰 히스토리 표시
+### 7.3 내 당첨 쿠폰 목록 조회 (event.myCoupons API)
 
-`event.history` API로 사용자의 스핀 기록을 조회하면 당첨 쿠폰 정보가 포함된다:
+`event.myCoupons` API로 로그인 사용자의 당첨 쿠폰 목록을 조회한다:
+
+```
+GET /api.php?method=event.myCoupons&session_id=xxx&page=1&limit=20
+```
 
 ```json
 {
+  "total": 2,
+  "page": 1,
+  "limit": 20,
   "items": [
     {
-      "idx": 789,
-      "prize_type": "starbucks",
-      "starbucks_coupon_file": "example.jpg",
-      "starbucks_coupon_url": "/event/cupon/starbucks/example.jpg",
-      "created_at": 1709446800
+      "idx": 42,
+      "coupon_type": "starbucks",
+      "title": "아메리카노 기프티콘",
+      "memo": "",
+      "status": "won",
+      "won_at": 1709446800,
+      "sent_at": null,
+      "idx_spin_history": 789,
+      "display_image_url": "https://file.philgo.com/uploads/qr.png",
+      "thumbnail_url": "https://file.philgo.com/uploads/qr_400x400.png"
     }
   ]
 }
 ```
+
+- `status`가 `won`(당첨) 또는 `sent`(전송완료)인 쿠폰만 반환
+- `display_image_url`: COALESCE(c.image_url, u.url) — v7 Upload 이미지 우선
+- `thumbnail_url`: uploads 테이블의 400x400 썸네일
 
 ### 7.4 관리자 당첨자 확인 → 쿠폰 전송
 
@@ -478,10 +506,13 @@ lib/event/
 │   ├── countAvailable(?type): int           ← COUNT(available)
 │   ├── getStatsByType(): array              ← GROUP BY 통계
 │   ├── getDistinctTypes(): array            ← DISTINCT coupon_type
-│   └── getListWithPagination(filters, page, limit): array  ← 페이지네이션 목록
+│   ├── getListWithPagination(filters, page, limit): array  ← 페이지네이션 목록
+│   └── findByWinner(idxMember, page, limit): array  ← 당첨자별 쿠폰 목록 (won/sent)
 │
-├── EventService.php            ← 기존 스피닝 휠 로직 (쿠폰 배정 호출)
-└── EventController.php         ← event.spin, event.history API
+├── EventService.php            ← 스피닝 휠 로직 + DB 기반 쿠폰 배정
+├── EventController.php         ← event.spin, event.history, event.myCoupons API
+│   └── myCoupons(array): array            ← 내 당첨 쿠폰 목록 조회
+└── EventRepository.php          ← event_spin_history DB 계층
 ```
 
 ---
