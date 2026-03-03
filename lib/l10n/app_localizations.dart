@@ -4445,6 +4445,18 @@ abstract class Lo {
   /// **'Please stop the wheel first.'**
   String get spinWheelStopFirst;
 
+  /// Disclaimer text shown below the spinning wheel
+  ///
+  /// In en, this message translates to:
+  /// **'The winning areas on the wheel may differ from the actual winning probability.'**
+  String get spinWheelDisclaimer;
+
+  /// Notice about point cost per spin
+  ///
+  /// In en, this message translates to:
+  /// **'200 points are deducted per spin.'**
+  String get spinWheelCostNotice;
+
   /// Button text to view coupon image
   ///
   /// In en, this message translates to:

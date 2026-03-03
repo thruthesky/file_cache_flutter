@@ -2226,6 +2226,12 @@ class LoKo extends Lo {
   String get spinWheelStopFirst => '원판 돌리기를 먼저 중단해주세요.';
 
   @override
+  String get spinWheelDisclaimer => '회전판의 당첨 영역은 실제 당첨 확률과 다를 수 있습니다.';
+
+  @override
+  String get spinWheelCostNotice => '추첨을 할 때마다 200 포인트가 소진됩니다.';
+
+  @override
   String get viewCoupon => '쿠폰 확인';
 
   @override

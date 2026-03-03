@@ -113,13 +113,13 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
     final l10n = Lo.of(context)!;
 
     /// 원판 섹션 정의 (10개 섹션, 총 weight = 1000 → 확률 0.1% 단위)
-    /// 꽝 30%, 50P 38%, 100P 8%, 200P 7%, 300P 6%, 400P 5%,
-    /// 500P 4%, 1000P 1.5%, 2000P 0.4%, 스타벅스 쿠폰 0.1%
+    /// 꽝 30%, 50P 37.9%, 100P 8%, 200P 7%, 300P 6%, 400P 5%,
+    /// 500P 4%, 1000P 1.5%, 2000P 0.4%, 스타벅스 쿠폰 0.2%
     /// 서버 section_index와 동일한 순서:
     /// 0=50P, 1=100P, 2=200P, 3=300P, 4=400P, 5=500P,
     /// 6=1000P, 7=2000P, 8=스타벅스, 9=꽝
     _sections = [
-      WheelSection(label: '50', color: const Color(0xFFE88B8B), points: 50, weight: 380),
+      WheelSection(label: '50', color: const Color(0xFFE88B8B), points: 50, weight: 379),
       WheelSection(label: '100', color: const Color(0xFFE8A87C), points: 100, weight: 80),
       WheelSection(label: '200', color: const Color(0xFFF5B971), points: 200, weight: 70),
       WheelSection(label: '300', color: const Color(0xFFD4A76A), points: 300, weight: 60),
@@ -144,7 +144,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
         label: l10n.spinWheelCoupon,
         color: const Color(0xFF8BC78B),
         points: -1,
-        weight: 1,
+        weight: 2,
         icon: FontAwesomeIcons.lightMugHot,
       ),
       WheelSection(
@@ -187,6 +187,8 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             SpinningWheel(
               sections: _sections,
               instructionText: l10n.spinWheelInstruction,
+              disclaimerText: l10n.spinWheelDisclaimer,
+              costNoticeText: l10n.spinWheelCostNotice,
               spinButtonText: l10n.spinWheelSpin,
               onSpinRequested: _callSpinApi,
               onResult: (_) => _refreshUserInfo(),

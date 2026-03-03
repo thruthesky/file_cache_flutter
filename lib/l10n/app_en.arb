@@ -2745,6 +2745,14 @@
   "@spinWheelStopFirst": {
     "description": "Message shown when user tries to navigate while wheel is spinning"
   },
+  "spinWheelDisclaimer": "The winning areas on the wheel may differ from the actual winning probability.",
+  "@spinWheelDisclaimer": {
+    "description": "Disclaimer text shown below the spinning wheel"
+  },
+  "spinWheelCostNotice": "200 points are deducted per spin.",
+  "@spinWheelCostNotice": {
+    "description": "Notice about point cost per spin"
+  },
   "viewCoupon": "View Coupon",
   "@viewCoupon": {
     "description": "Button text to view coupon image"

@@ -74,6 +74,12 @@ class SpinningWheel extends StatefulWidget {
   /// 안내 텍스트
   final String instructionText;
 
+  /// 안내 텍스트 아래 부가 설명 (선택적)
+  final String? disclaimerText;
+
+  /// 포인트 소진 안내 문구 (선택적)
+  final String? costNoticeText;
+
   /// 돌리기 버튼 텍스트
   final String spinButtonText;
 
@@ -100,6 +106,8 @@ class SpinningWheel extends StatefulWidget {
     this.onResult,
     this.resultBuilder,
     required this.instructionText,
+    this.disclaimerText,
+    this.costNoticeText,
     required this.spinButtonText,
     this.autoSpinButtonText,
     this.autoSpinStopText,
@@ -439,6 +447,30 @@ class _SpinningWheelState extends State<SpinningWheel>
           ),
           textAlign: TextAlign.center,
         ).animate().fadeIn(duration: 400.ms),
+
+        /// 부가 안내 문구 (disclaimerText가 있을 때만 표시)
+        if (widget.disclaimerText != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            widget.disclaimerText!,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+
+        /// 포인트 소진 안내 문구 (costNoticeText가 있을 때만 표시)
+        if (widget.costNoticeText != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            widget.costNoticeText!,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
         const SizedBox(height: 24),
 
         /// 원판 + 포인터 + 외곽 장식

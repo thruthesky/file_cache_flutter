@@ -2204,6 +2204,14 @@
   "@spinWheelStopFirst": {
     "description": "Message shown when user tries to navigate while wheel is spinning"
   },
+  "spinWheelDisclaimer": "ルーレットの当選エリアは実際の当選確率と異なる場合があります。",
+  "@spinWheelDisclaimer": {
+    "description": "Disclaimer text shown below the spinning wheel"
+  },
+  "spinWheelCostNotice": "1回の抽選ごとに200ポイントが消費されます。",
+  "@spinWheelCostNotice": {
+    "description": "Notice about point cost per spin"
+  },
   "viewCoupon": "クーポン確認",
   "@viewCoupon": {
     "description": "Button text to view coupon image"

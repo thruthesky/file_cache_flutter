@@ -10,9 +10,9 @@ import 'package:philgo/v7_api/v7_api.dart';
 
 /// 이벤트 쿠폰 화면 (Event Coupon Screen)
 ///
-/// 포인트 응모 스피닝 휠에서 당첨된 스타벅스 쿠폰 목록을 표시한다.
-/// event.history API를 호출하여 prize_type == 'starbucks'인 항목만 필터링하여 보여준다.
-/// 당첨된 쿠폰이 없으면 빈 상태 메시지를 표시한다.
+/// 포인트 응모 스피닝 휠에서 당첨된 쿠폰 목록을 표시한다.
+/// event.myCoupons API를 호출하여 event_coupons 테이블에서 당첨(won/sent) 쿠폰을 조회한다.
+/// 쿠폰 이미지는 uploads 테이블 기반 URL(display_image_url)로 표시한다.
 class EventCouponScreen extends StatefulWidget {
   static const String routeName = '/event-coupon';
 
@@ -27,7 +27,7 @@ class EventCouponScreen extends StatefulWidget {
 }
 
 class _EventCouponScreenState extends State<EventCouponScreen> {
-  /// 스타벅스 쿠폰 당첨 기록 목록
+  /// 당첨 쿠폰 목록 (event_coupons 테이블 기반)
   List<Map<String, dynamic>> _coupons = [];
 
   /// 로딩 상태
@@ -42,28 +42,23 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
     _loadCoupons();
   }
 
-  /// event.history API를 호출하여 스타벅스 쿠폰 당첨 기록만 필터링
+  /// event.myCoupons API를 호출하여 당첨 쿠폰 목록 조회
   Future<void> _loadCoupons() async {
     try {
-      // 최대 100건의 기록을 가져와서 스타벅스 쿠폰만 필터링
-      final result = await v7api('event.history', data: {
+      final result = await v7api('event.myCoupons', data: {
         'page': 1,
         'limit': 100,
       });
       if (!mounted) return;
 
       final items = (result['items'] as List<dynamic>?) ?? [];
-      final starbucksCoupons = items
-          .whereType<Map<String, dynamic>>()
-          .where((item) => item['prize_type'] == 'starbucks')
-          .toList();
 
       setState(() {
-        _coupons = starbucksCoupons;
+        _coupons = items.whereType<Map<String, dynamic>>().toList();
         _isLoading = false;
       });
     } catch (e) {
-      debugPrint('event.history API 에러: $e');
+      debugPrint('event.myCoupons API 에러: $e');
       if (!mounted) return;
       setState(() {
         _errorMessage = e.toString();
@@ -73,12 +68,17 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
   }
 
   /// 쿠폰 이미지의 전체 URL 생성
-  /// v7ApiEndpoint에서 api.php를 제거하고 쿠폰 상대 경로를 결합
+  ///
+  /// event_coupons + uploads JOIN 결과의 display_image_url을 사용한다.
+  /// 절대 URL이면 그대로 사용, 상대 경로면 v7ApiEndpoint 기준으로 결합.
   String _getCouponImageUrl(Map<String, dynamic> coupon) {
-    final relativePath = coupon['starbucks_coupon_url'] as String? ?? '';
-    if (relativePath.isEmpty) return '';
+    final imageUrl = coupon['display_image_url'] as String? ?? '';
+    if (imageUrl.isEmpty) return '';
+    // 절대 URL인 경우 그대로 반환
+    if (imageUrl.startsWith('http')) return imageUrl;
+    // 상대 경로인 경우 baseUrl 결합
     final baseUrl = PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '');
-    return '$baseUrl$relativePath';
+    return '$baseUrl$imageUrl';
   }
 
   /// 쿠폰 당첨 날짜 포맷 (Unix timestamp → 날짜 문자열)
@@ -248,7 +248,10 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
       itemBuilder: (context, index) {
         final coupon = _coupons[index];
         final imageUrl = _getCouponImageUrl(coupon);
-        final date = _formatDate(coupon['created_at']);
+        final date = _formatDate(coupon['won_at']);
+        final title = coupon['title'] as String? ?? '';
+        final status = coupon['status'] as String? ?? '';
+        final isSent = status == 'sent';
 
         return Card(
           elevation: 0,
@@ -260,12 +263,25 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                /// 당첨 날짜 + 파일명
+                /// 쿠폰 제목 + 당첨 날짜 + 상태 배지
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// 당첨 날짜
+                      /// 쿠폰 제목
+                      if (title.isNotEmpty) ...[
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: scheme.onSurface,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                      ],
+
+                      /// 당첨 날짜 + 상태 아이콘
                       Row(
                         children: [
                           FaIcon(
@@ -277,24 +293,21 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
                           Text(
                             date.isNotEmpty ? date : '-',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: scheme.onSurface,
+                                  color: scheme.onSurfaceVariant,
                                 ),
                           ),
+                          const SizedBox(width: 8),
+
+                          /// 전송 완료 상태 아이콘
+                          if (isSent)
+                            FaIcon(
+                              FontAwesomeIcons.circleCheck,
+                              size: 14,
+                              // 전송 완료된 쿠폰은 primary 색상으로 체크 표시
+                              color: scheme.primary,
+                            ),
                         ],
                       ),
-
-                      /// 쿠폰 파일명
-                      if ((coupon['starbucks_coupon_file'] as String?)?.isNotEmpty == true) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          coupon['starbucks_coupon_file'] as String,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                              ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
                     ],
                   ),
                 ),

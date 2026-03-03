@@ -2271,6 +2271,13 @@ class LoEn extends Lo {
   String get spinWheelStopFirst => 'Please stop the wheel first.';
 
   @override
+  String get spinWheelDisclaimer =>
+      'The winning areas on the wheel may differ from the actual winning probability.';
+
+  @override
+  String get spinWheelCostNotice => '200 points are deducted per spin.';
+
+  @override
   String get viewCoupon => 'View Coupon';
 
   @override

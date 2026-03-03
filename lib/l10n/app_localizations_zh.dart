@@ -2221,6 +2221,12 @@ class LoZh extends Lo {
   String get spinWheelStopFirst => '请先停止转盘。';
 
   @override
+  String get spinWheelDisclaimer => '转盘的中奖区域可能与实际中奖概率不同。';
+
+  @override
+  String get spinWheelCostNotice => '每次抽奖将消耗200积分。';
+
+  @override
   String get viewCoupon => '查看优惠券';
 
   @override
