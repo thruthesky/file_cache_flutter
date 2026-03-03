@@ -92,7 +92,7 @@
 
 | index | 섹션 | 포인트 | Weight | 확률 | prize_type |
 |:-----:|------|:------:|:------:|:----:|:----------:|
-| 0 | 50P | +50 | 380 | 38.0% | `point` |
+| 0 | 50P | +50 | 379 | 37.9% | `point` |
 | 1 | 100P | +100 | 80 | 8.0% | `point` |
 | 2 | 200P | +200 | 70 | 7.0% | `point` |
 | 3 | 300P | +300 | 60 | 6.0% | `point` |
@@ -100,10 +100,10 @@
 | 5 | 500P | +500 | 40 | 4.0% | `point` |
 | 6 | 1,000P | +1,000 | 15 | 1.5% | `point` |
 | 7 | 2,000P | +2,000 | 4 | 0.4% | `point` |
-| 8 | 스타벅스 | -1 | 1 | 0.1% | `starbucks` |
+| 8 | 스타벅스 | -1 | 2 | 0.2% | `starbucks` |
 | 9 | 꽝 | 0 | 300 | 30.0% | `miss` |
 
-**쿠폰 소진 시**: 스타벅스 weight(1) → 50P에 합산 (380→381), 스타벅스 0%
+**쿠폰 소진 시**: 스타벅스 weight(2) → 50P에 합산 (379→381), 스타벅스 0%
 
 **손익**: 1회 게임당 기대 순손실 **-78P** (기대 수익 122P - 비용 200P)
 
@@ -111,13 +111,15 @@
 
 ```
 [1] 잔액 확인 (200P 이상 필수)
-[2] 사용 가능 스타벅스 쿠폰 확인 (폴더 스캔 - DB 사용됨 = 차집합)
+[2] 사용 가능 스타벅스 쿠폰 확인 (EventCouponService — event_coupons DB 기반)
 [3] BEGIN TRANSACTION
-[4] 200P 차감 (sf_member + sf_point_log)
+[4] 200P 차감 (PointLogService::changePoints)
 [5] 확률 계산 (random_int(1,1000) → 누적 weight 비교)
 [6] 보상 처리 (point/starbucks/miss 분기)
 [7] 이벤트 기록 저장 (event_spin_history)
+[7-1] 스타벅스 당첨 시 쿠폰 배정 (EventCouponService::assignCouponToWinner — FOR UPDATE)
 [8] COMMIT (실패 시 ROLLBACK)
+[8-1] 스타벅스 당첨 시 freetalk 자동 게시글 (PostService — 커밋 후)
 ```
 
 ### 2.4 핵심 소스코드
@@ -133,7 +135,7 @@ public static function calculateSpinResult(bool $hasStarbucksCoupon): array
 
     // 쿠폰 없으면 동적 재조정
     if (!$hasStarbucksCoupon) {
-        $sections[0]['weight'] += $sections[8]['weight']; // 50P: 380→381
+        $sections[0]['weight'] += $sections[8]['weight']; // 50P: 379→381
         $sections[8]['weight'] = 0;                        // 스타벅스: 0%
     }
 
@@ -153,7 +155,7 @@ public static function calculateSpinResult(bool $hasStarbucksCoupon): array
 }
 ```
 
-#### 메인 로직 — EventService::spin()
+#### 메인 로직 — EventService::spin() (event_coupons DB 기반)
 
 ```php
 public static function spin(array $user): array
@@ -161,74 +163,57 @@ public static function spin(array $user): array
     $pdo = Db::pdo();
     $idxMember = (int) $user['idx'];
 
+    // [1] 잔액 확인
     $member = EventRepository::getMember($idxMember);
     $currentPoint = (int) $member['point'];
-
-    if ($currentPoint < 200) {
+    if ($currentPoint < self::SPIN_COST) {
         throw new RuntimeException("포인트가 부족합니다. (최소 200P 필요, 현재 {$currentPoint}P)");
     }
 
-    $availableCoupons = self::getAvailableStarbucksCoupons();
-    $hasStarbucksCoupon = count($availableCoupons) > 0;
+    // [2] 사용 가능 쿠폰 확인 — event_coupons DB 기반
+    $hasStarbucksCoupon = EventCouponService::hasAvailableCoupon('starbucks');
 
     $pdo->beginTransaction();
     try {
-        // 200P 차감
-        $pointAfterCost = $currentPoint - 200;
-        EventRepository::updateMemberPoint($idxMember, $pointAfterCost);
-        EventRepository::insertPointLog([
-            'idx_member_from' => $idxMember, 'idx_member_to' => $idxMember,
-            'point_before' => $currentPoint, 'point' => -200,
-            'point_after' => $pointAfterCost,
-            'module' => 'event', 'action' => 'spin_cost', 'etc' => 'spin_cost',
-        ]);
+        // [4] 200P 차감 (PointLogService 사용)
+        $costLog = PointLogService::changePoints(-self::SPIN_COST, $idxMember, $idxMember, 'event', 'spin_cost', 0, 'spin_cost');
 
-        // 확률 계산
+        // [5] 확률 계산
         $result = self::calculateSpinResult($hasStarbucksCoupon);
-        $finalPoint = $pointAfterCost;
-        $starbucksCouponFile = null;
 
-        // 보상 처리
+        // [6] 보상 처리
+        $assignedCoupon = null;
         if ($result['prize_type'] === 'point' && $result['points'] > 0) {
-            $finalPoint = $pointAfterCost + $result['points'];
-            EventRepository::updateMemberPoint($idxMember, $finalPoint);
-            EventRepository::insertPointLog([
-                'idx_member_from' => 0, 'idx_member_to' => $idxMember,
-                'point_before' => $pointAfterCost, 'point' => $result['points'],
-                'point_after' => $finalPoint,
-                'module' => 'event', 'action' => 'spin_reward',
-                'etc' => "spin_reward_{$result['points']}",
-            ]);
+            $rewardLog = PointLogService::changePoints($result['points'], 0, $idxMember, 'event', 'spin_reward', 0, "spin_reward_{$result['points']}");
         } elseif ($result['prize_type'] === 'starbucks') {
-            $starbucksCouponFile = $availableCoupons[0];
-            EventRepository::insertPointLog([
-                'idx_member_from' => 0, 'idx_member_to' => $idxMember,
-                'point_before' => $pointAfterCost, 'point' => 0,
-                'point_after' => $pointAfterCost,
-                'module' => 'event', 'action' => 'spin_reward',
-                'etc' => "spin_reward_starbucks:{$starbucksCouponFile}",
-            ]);
+            PointLogService::changePoints(0, 0, $idxMember, 'event', 'spin_reward', 0, 'spin_reward_starbucks');
         }
 
-        // 기록 저장
-        $spinIdx = EventRepository::insertSpinHistory([
-            'idx_member' => $idxMember, 'section_index' => $result['section_index'],
-            'prize_type' => $result['prize_type'], 'points_cost' => 200,
-            'points_reward' => $result['points'],
-            'starbucks_coupon_file' => $starbucksCouponFile,
-            'random_value' => $result['random_value'],
-            'point_before' => $currentPoint, 'point_after' => $finalPoint,
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-        ]);
+        // [7] 이벤트 기록 저장
+        $spinIdx = EventRepository::insertSpinHistory([...]);
+
+        // [7-1] 스타벅스 당첨 시 쿠폰 배정 (트랜잭션 내)
+        if ($result['prize_type'] === 'starbucks') {
+            $assignedCoupon = EventCouponService::assignCouponToWinner('starbucks', $idxMember, $spinIdx);
+        }
 
         $pdo->commit();
+
+        // [8-1] 스타벅스 당첨 시 freetalk 자동 게시글 (커밋 후)
+        if ($result['prize_type'] === 'starbucks') {
+            PostService::create(['idx_member' => $idxMember, 'post_id' => 'freetalk', ...]);
+        }
+
         return [
-            'section_index' => $result['section_index'], 'points' => $result['points'],
-            'prize_type' => $result['prize_type'], 'current_point' => $finalPoint,
-            'starbucks_coupon_file' => $starbucksCouponFile,
-            'starbucks_coupon_url' => $starbucksCouponFile ? "/event/cupon/starbucks/{$starbucksCouponFile}" : null,
-            'available_coupons' => count($availableCoupons) - ($starbucksCouponFile ? 1 : 0),
+            'section_index' => ..., 'points' => ..., 'prize_type' => ...,
+            'current_point' => $finalPoint, 'lv' => ..., 'level_progress' => ...,
+            'starbucks_coupon_file' => null, 'starbucks_coupon_url' => null,
+            'available_coupons' => EventCouponService::getAvailableCount('starbucks'),
             'spin_idx' => $spinIdx,
+            'coupon' => $assignedCoupon ? [
+                'idx' => $assignedCoupon['idx'], 'title' => $assignedCoupon['title'],
+                'coupon_type' => $assignedCoupon['coupon_type'],
+            ] : null,
         ];
     } catch (\Exception $e) {
         $pdo->rollBack();
@@ -243,8 +228,9 @@ public static function spin(array $user): array
 |--------|------|------|
 | `event.spin` | 스피닝 휠 돌리기 | 필수 |
 | `event.history` | 게임 기록 조회 (페이지네이션) | 필수 |
+| `event.myCoupons` | 내 당첨 쿠폰 목록 (event_coupons + uploads JOIN) | 필수 |
 
-**event.spin 응답 예시:**
+**event.spin 응답 예시 (포인트 당첨):**
 
 ```json
 {
@@ -253,10 +239,36 @@ public static function spin(array $user): array
   "points": 200,
   "prize_type": "point",
   "current_point": 5000,
+  "lv": 4,
+  "level_progress": 50,
   "starbucks_coupon_file": null,
   "starbucks_coupon_url": null,
   "available_coupons": 3,
-  "spin_idx": 456
+  "spin_idx": 456,
+  "coupon": null
+}
+```
+
+**event.spin 응답 예시 (스타벅스 당첨):**
+
+```json
+{
+  "success": true,
+  "section_index": 8,
+  "points": -1,
+  "prize_type": "starbucks",
+  "current_point": 4800,
+  "lv": 4,
+  "level_progress": 42,
+  "starbucks_coupon_file": null,
+  "starbucks_coupon_url": null,
+  "available_coupons": 2,
+  "spin_idx": 457,
+  "coupon": {
+    "idx": 42,
+    "title": "아메리카노 기프티콘",
+    "coupon_type": "starbucks"
+  }
 }
 ```
 
@@ -270,7 +282,9 @@ v7 Upload API로 QR 이미지를 `uploads` 테이블에 저장하고 `idx_upload
 쿠폰이 0개이면 스타벅스 확률이 자동으로 0%가 되고 해당 weight가 50P에 합산된다.
 관리자 위젯(`widgets/admin/event/coupon-list.php`)에서 통계 대시보드, 등록/수정/삭제/전송 관리를 수행한다.
 
-**레거시 호환**: 기존 파일 시스템 기반 쿠폰(`event/cupon/starbucks/` 폴더)도 병행 운용 가능하다.
+**전환 완료**: `EventService::spin()`이 `EventCouponService`를 직접 연동하여
+쿠폰 유무 확인(`hasAvailableCoupon`) → 당첨 시 배정(`assignCouponToWinner`)을 처리한다.
+Flutter 앱은 `event.myCoupons` API로 당첨 쿠폰 목록을 조회한다.
 
 ### 2.7 sf_point_log 기록 규칙 (스피닝 휠)
 
@@ -278,7 +292,7 @@ v7 Upload API로 QR 이미지를 `uploads` 테이블에 저장하고 `idx_upload
 |------|--------|--------|-------|-----|
 | 참가비 차감 | `event` | `spin_cost` | -200 | `spin_cost` |
 | 50P~2,000P 당첨 | `event` | `spin_reward` | +N | `spin_reward_{N}` |
-| 스타벅스 당첨 | `event` | `spin_reward` | 0 | `spin_reward_starbucks:{파일명}` |
+| 스타벅스 당첨 | `event` | `spin_reward` | 0 | `spin_reward_starbucks` |
 | 꽝 | *(기록 없음)* | | | |
 
 ---
@@ -375,6 +389,7 @@ _startAutoSpin(option)
 lib/
 ├─ screens/event/
 │   ├─ event_entry.screen.dart       ← 이벤트 응모 메인 화면
+│   ├─ event_coupon.screen.dart      ← 당첨 쿠폰 목록 화면 (event.myCoupons API)
 │   └─ company_event.screen.dart     ← 업소 이벤트 안내 화면
 ├─ widgets/spinning_wheel.dart       ← 재사용 스피닝 휠 위젯
 ├─ v7_api/
@@ -1411,11 +1426,11 @@ CREATE TABLE `company_reviews` (
 
 ```
 lib/event/
-├── EventController.php        ← event.spin, event.history API
-├── EventService.php           ← spin(), calculateSpinResult(), getAvailableStarbucksCoupons()
+├── EventController.php        ← event.spin, event.history, event.myCoupons API
+├── EventService.php           ← spin() (EventCouponService 연동), calculateSpinResult()
 ├── EventRepository.php        ← event_spin_history CRUD
 ├── EventCouponService.php     ← 쿠폰 비즈니스 로직 (생성/삭제/수정/배정/통계)
-└── EventCouponRepository.php  ← event_coupons 테이블 CRUD (SELECT...FOR UPDATE)
+└── EventCouponRepository.php  ← event_coupons 테이블 CRUD (SELECT...FOR UPDATE, findByWinner)
 
 lib/company/
 ├── CompanyController.php      ← company.* API (QR + 후기 포함)

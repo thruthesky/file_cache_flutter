@@ -1331,7 +1331,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 
 | # | 섹션 | 포인트 | Weight | 확률 | 원판 각도 | 색상 | 아이콘 |
 |---|------|--------|--------|------|----------|------|--------|
-| 1 | 50P | 50 | 380 | 38.0% | 136.8° | `#E88B8B` (분홍) | - |
+| 1 | 50P | 50 | 379 | 37.9% | 136.44° | `#E88B8B` (분홍) | - |
 | 2 | 100P | 100 | 80 | 8.0% | 28.8° | `#E8A87C` (살구) | - |
 | 3 | 200P | 200 | 70 | 7.0% | 25.2° | `#F5B971` (주황) | - |
 | 4 | 300P | 300 | 60 | 6.0% | 21.6° | `#D4A76A` (황토) | - |
@@ -1340,7 +1340,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 | 7 | 꽝 | 0 | 300 | 30.0% | 108.0° | `#B0B0B0` (회색) | - |
 | 8 | 1,000P | 1,000 | 15 | 1.5% | 5.4° | `#C9A9C9` (보라) | ★ (solidStar × 1) |
 | 9 | 2,000P | 2,000 | 4 | 0.4% | 1.44° | `#9CC2D8` (하늘) | ★★ (solidStar × 2) |
-| 10 | 스타벅스 쿠폰 | -1 (특별) | 1 | 0.1% | 0.36° | `#8BC78B` (초록) | ☕ (lightMugHot) |
+| 10 | 스타벅스 쿠폰 | -1 (특별) | 2 | 0.2% | 0.72° | `#8BC78B` (초록) | ☕ (lightMugHot) |
 | | **합계** | | **1,000** | **100%** | **360°** | | |
 
 ### 12.3 확률 분포 설계 의도
@@ -1349,22 +1349,22 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 
 | 등급 | 섹션 | 확률 합계 | 설계 의도 |
 |------|------|----------|----------|
-| **일반** | 50P + 꽝 | 68% | 대부분의 결과 (약 2/3) |
+| **일반** | 50P + 꽝 | 67.9% | 대부분의 결과 (약 2/3) |
 | **중간** | 100P ~ 500P | 30% | 적당한 보상감 제공 |
 | **희귀** | 1,000P | 1.5% | 드문 행운 |
 | **초희귀** | 2,000P | 0.4% | 매우 드문 대박 |
-| **전설** | 스타벅스 쿠폰 | 0.1% | 1,000회에 1번 (최고 보상) |
+| **전설** | 스타벅스 쿠폰 | 0.2% | 500회에 1번 (최고 보상) |
 
 ### 12.4 기대값 분석
 
 ```
 기대값 = Σ(포인트 × 확률)
-       = 50×0.38 + 100×0.08 + 200×0.07 + 300×0.06 + 400×0.05
+       = 50×0.379 + 100×0.08 + 200×0.07 + 300×0.06 + 400×0.05
          + 500×0.04 + 1000×0.015 + 2000×0.004 + 0×0.30
-       = 19 + 8 + 14 + 18 + 20 + 20 + 15 + 8 + 0
-       = 122P (1회 회전 당 기대값)
+       = 18.95 + 8 + 14 + 18 + 20 + 20 + 15 + 8 + 0
+       = 121.95P (1회 회전 당 기대값, 약 122P)
 
-※ 스타벅스 쿠폰(0.1%)은 포인트가 아닌 실물 보상이므로 기대값 계산에서 제외
+※ 스타벅스 쿠폰(0.2%)은 포인트가 아닌 실물 보상이므로 기대값 계산에서 제외
 ```
 
 ### 12.5 WheelSection 코드 정의
@@ -1373,7 +1373,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 /// lib/screens/event/event_entry.screen.dart
 /// 원판 섹션 정의 (10개 섹션, 총 weight = 1000 → 확률 0.1% 단위)
 _sections = [
-  WheelSection(label: '50',    color: Color(0xFFE88B8B), points: 50,   weight: 380),
+  WheelSection(label: '50',    color: Color(0xFFE88B8B), points: 50,   weight: 379),
   WheelSection(label: '100',   color: Color(0xFFE8A87C), points: 100,  weight: 80),
   WheelSection(label: '200',   color: Color(0xFFF5B971), points: 200,  weight: 70),
   WheelSection(label: '300',   color: Color(0xFFD4A76A), points: 300,  weight: 60),
@@ -1384,7 +1384,7 @@ _sections = [
     icon: FontAwesomeIcons.solidStar),
   WheelSection(label: '2,000', color: Color(0xFF9CC2D8), points: 2000, weight: 4,
     icon: FontAwesomeIcons.solidStar, iconCount: 2),
-  WheelSection(label: l10n.spinWheelCoupon, color: Color(0xFF8BC78B), points: -1, weight: 1,
+  WheelSection(label: l10n.spinWheelCoupon, color: Color(0xFF8BC78B), points: -1, weight: 2,
     icon: FontAwesomeIcons.lightMugHot),
 ];
 ```

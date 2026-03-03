@@ -79,7 +79,7 @@
 - **200P 소비 → 10개 섹션 가중치 기반 확률 게임**: weight 합계 1000 (0.1% 단위 확률 제어)
 - **서버 100% 결과 결정 (안티치트)**: 클라이언트는 `section_index`만 수신하여 원판 회전 애니메이션 재생
 - **10개 보상 섹션**: 50P, 100P, 200P, 300P, 400P, 500P, 1,000P, 2,000P, 스타벅스 쿠폰, 꽝
-- **스타벅스 쿠폰 파일 시스템 기반 관리**: `event/cupon/starbucks/` 폴더 스캔 → DB 비교 → 미사용 쿠폰 선별
+- **스타벅스 쿠폰 event_coupons DB 기반 관리**: `EventCouponService`로 쿠폰 유무 확인/배정 (`SELECT ... FOR UPDATE` race condition 방어)
 - **동적 확률 전환**: 사용 가능한 쿠폰이 0개이면 스타벅스 확률 자동 0% (해당 weight를 50P에 합산)
 - **PDO 트랜잭션**: 포인트 차감 → 확률 계산 → 보상 지급 → 기록 저장을 원자적으로 처리
 - **감사 추적**: `random_value`, `ip`, `starbucks_coupon_file`로 사후 검증 가능
@@ -130,7 +130,7 @@
 | 포인트 차감 | `sf_member.point` UPDATE + `sf_point_log` INSERT |
 | 포인트 충전 | `sf_member.point` UPDATE + `sf_point_log` INSERT |
 | 스타벅스 쿠폰 | `event/cupon/starbucks/` 폴더 파일 스캔 → `event_spin_history`와 비교 → 미사용 쿠폰 선별 |
-| 쿠폰 소진 | 사용 가능 쿠폰 0개 → 스타벅스 확률 0%로 변경 (스타벅스 weight=1을 50P에 합산) |
+| 쿠폰 소진 | 사용 가능 쿠폰 0개 → 스타벅스 확률 0%로 변경 (스타벅스 weight=2를 50P에 합산) |
 | 기록 저장 | `event_spin_history` 테이블에 INSERT (쿠폰 파일명 포함) |
 | 클라이언트 연동 | `section_index` 반환 → 원판 회전 애니메이션 |
 | 트랜잭션 | PDO `beginTransaction()` → `commit()` / `rollBack()` |
@@ -142,7 +142,7 @@
 ```php
 // 10개 섹션 가중치 테이블 (weight 합계 = 1000 → 0.1% 단위)
 $sections = [
-    ['section_index' => 0, 'points' => 50,   'weight' => 380, 'prize_type' => 'point'],     // 38.0%
+    ['section_index' => 0, 'points' => 50,   'weight' => 379, 'prize_type' => 'point'],     // 37.9%
     ['section_index' => 1, 'points' => 100,  'weight' => 80,  'prize_type' => 'point'],     // 8.0%
     ['section_index' => 2, 'points' => 200,  'weight' => 70,  'prize_type' => 'point'],     // 7.0%
     ['section_index' => 3, 'points' => 300,  'weight' => 60,  'prize_type' => 'point'],     // 6.0%
@@ -150,12 +150,12 @@ $sections = [
     ['section_index' => 5, 'points' => 500,  'weight' => 40,  'prize_type' => 'point'],     // 4.0%
     ['section_index' => 6, 'points' => 1000, 'weight' => 15,  'prize_type' => 'point'],     // 1.5%
     ['section_index' => 7, 'points' => 2000, 'weight' => 4,   'prize_type' => 'point'],     // 0.4%
-    ['section_index' => 8, 'points' => -1,   'weight' => 1,   'prize_type' => 'starbucks'], // 0.1%
+    ['section_index' => 8, 'points' => -1,   'weight' => 2,   'prize_type' => 'starbucks'], // 0.2%
     ['section_index' => 9, 'points' => 0,    'weight' => 300,  'prize_type' => 'miss'],     // 30.0%
 ];
 
-// 스타벅스 쿠폰이 없을 때: section_index=8의 weight=1을 section_index=0(50P)에 합산
-// 50P weight: 380 → 381, 스타벅스 weight: 1 → 0 (총합 여전히 1000)
+// 스타벅스 쿠폰이 없을 때: section_index=8의 weight=2를 section_index=0(50P)에 합산
+// 50P weight: 379 → 381, 스타벅스 weight: 2 → 0 (총합 여전히 1000)
 ```
 
 ### Step 5: 트랜잭션 설계
@@ -274,9 +274,7 @@ EventController::spin($input)
      │  └─ EventRepository::getMember($idxMember)
      │
      ├─ [3] 사용 가능한 스타벅스 쿠폰 확인
-     │  ├─ glob('event/cupon/starbucks/*.{jpg,png}')
-     │  ├─ EventRepository::getUsedStarbucksCouponFiles()
-     │  └─ array_diff → $availableCoupons
+     │  └─ EventCouponService::hasAvailableCoupon('starbucks') → DB 기반
      │
      ├─ [4] BEGIN TRANSACTION
      │
@@ -288,17 +286,23 @@ EventController::spin($input)
      │  └─ EventService::calculateSpinResult($hasStarbucksCoupon)
      │
      ├─ [7] 보상 처리
-     │  ├─ point: 포인트 충전 (UPDATE + LOG)
-     │  ├─ starbucks: 쿠폰 파일명 할당
+     │  ├─ point: 포인트 충전 (PointLogService::changePoints)
+     │  ├─ starbucks: 포인트 로그 기록 (0P 변동)
      │  └─ miss: 보상 없음
      │
      ├─ [8] 이벤트 기록 저장
      │  └─ EventRepository::insertSpinHistory()
      │
+     ├─ [8-1] 스타벅스 당첨 시 쿠폰 배정
+     │  └─ EventCouponService::assignCouponToWinner('starbucks', $idxMember, $spinIdx)
+     │
      ├─ [9] COMMIT
      │
+     ├─ [9-1] 스타벅스 당첨 시 freetalk 자동 게시글
+     │  └─ PostService::create() (커밋 후 실행)
+     │
      └─ [10] 응답 반환
-        └─ {section_index, points, prize_type, current_point, ...}
+        └─ {section_index, points, prize_type, current_point, coupon, ...}
 ```
 
 ### 파일 구조
@@ -307,22 +311,33 @@ EventController::spin($input)
 lib/event/
 ├── EventController.php        ← Philgo\Event\EventController
 │   ├── spin(array $input)     ← event.spin API
-│   └── history(array $input)  ← event.history API
+│   ├── history(array $input)  ← event.history API
+│   └── myCoupons(array $input) ← event.myCoupons API (당첨 쿠폰 목록)
 │
 ├── EventService.php           ← Philgo\Event\EventService
-│   ├── spin(array $user)                     ← 메인 비즈니스 로직 (8단계)
+│   ├── spin(array $user)                     ← 메인 비즈니스 로직 (EventCouponService 연동)
 │   ├── calculateSpinResult(bool $has)        ← 가중치 기반 확률 계산
 │   ├── getSections()                          ← 10개 섹션 테이블 반환
-│   ├── getAvailableStarbucksCoupons()        ← 사용 가능 쿠폰 조회
-│   ├── getCouponDirPath()                    ← 쿠폰 폴더 절대 경로
+│   ├── getAvailableStarbucksCoupons()        ← 사용 가능 쿠폰 조회 (레거시)
+│   ├── getCouponDirPath()                    ← 쿠폰 폴더 절대 경로 (레거시)
 │   └── getHistory(...)                        ← 기록 페이지네이션 조회
+│
+├── EventCouponService.php     ← Philgo\Event\EventCouponService (쿠폰 비즈니스 로직)
+│   ├── hasAvailableCoupon(?type): bool       ← 쿠폰 존재 여부 (spin에서 사용)
+│   ├── assignCouponToWinner(?type, idx, spin): ?array  ← 당첨자 배정 (FOR UPDATE)
+│   ├── getAvailableCount(?type): int         ← 사용 가능 쿠폰 수
+│   └── ...                                    ← 기타 관리자 기능
+│
+├── EventCouponRepository.php  ← Philgo\Event\EventCouponRepository (쿠폰 DB 계층)
+│   ├── lockAndPickAvailable(?type): ?array   ← SELECT ... FOR UPDATE
+│   ├── assignToWinner(idx, member, spin): bool  ← 당첨자 배정 UPDATE
+│   ├── findByWinner(idx, page, limit): array ← 당첨자 쿠폰 목록 (uploads JOIN)
+│   └── ...                                    ← 기타 CRUD
 │
 └── EventRepository.php        ← Philgo\Event\EventRepository
     ├── getMember(int $idx)                    ← sf_member 조회
-    ├── updateMemberPoint(int $idx, int $pt)  ← sf_member 포인트 업데이트
-    ├── insertPointLog(array $data)           ← sf_point_log INSERT
     ├── insertSpinHistory(array $data)        ← event_spin_history INSERT
-    ├── getUsedStarbucksCouponFiles()         ← 사용된 쿠폰 파일명 조회
+    ├── getUsedStarbucksCouponFiles()         ← 사용된 쿠폰 파일명 조회 (레거시)
     └── getSpinHistory(int $idx, int $p, int $l) ← 페이지네이션 조회
 ```
 
@@ -345,7 +360,7 @@ lib/event/
 
 | 섹션 | section_index | 당첨 포인트 | Weight | 확률 | prize_type |
 |------|:------------:|:-----------:|:------:|:----:|:----------:|
-| 50P | 0 | +50P | 380 | **38.0%** | `point` |
+| 50P | 0 | +50P | 379 | **37.9%** | `point` |
 | 100P | 1 | +100P | 80 | **8.0%** | `point` |
 | 200P | 2 | +200P | 70 | **7.0%** | `point` |
 | 300P | 3 | +300P | 60 | **6.0%** | `point` |
@@ -353,19 +368,19 @@ lib/event/
 | 500P | 5 | +500P | 40 | **4.0%** | `point` |
 | 1,000P | 6 | +1,000P | 15 | **1.5%** | `point` |
 | 2,000P | 7 | +2,000P | 4 | **0.4%** | `point` |
-| 스타벅스 쿠폰 | 8 | 쿠폰 전송 | 1 | **0.1%** | `starbucks` |
+| 스타벅스 쿠폰 | 8 | 쿠폰 전송 | 2 | **0.2%** | `starbucks` |
 | 꽝 | 9 | 0P | 300 | **30.0%** | `miss` |
 | **합계** | | | **1,000** | **100.0%** | |
 
 ### 쿠폰 소진 시 확률 분포표
 
-> 스타벅스 0.1%(weight 1)을 50P에 합산 → 50P weight: 380 → **381**, 스타벅스 weight: 1 → **0**
+> 스타벅스 0.2%(weight 2)를 50P에 합산 → 50P weight: 379 → **381**, 스타벅스 weight: 2 → **0**
 
 | 섹션 | section_index | Weight | 확률 | 변경 |
 |------|:------------:|:------:|:----:|:----:|
-| 50P | 0 | **381** | **38.1%** | +0.1% |
+| 50P | 0 | **381** | **38.1%** | +0.2% |
 | 100P~2,000P | 1~7 | (변동 없음) | (변동 없음) | |
-| ~~스타벅스~~ | ~~8~~ | **0** | **0.0%** | -0.1% |
+| ~~스타벅스~~ | ~~8~~ | **0** | **0.0%** | -0.2% |
 | 꽝 | 9 | 300 | 30.0% | |
 | **합계** | | **1,000** | **100.0%** | |
 
@@ -377,7 +392,7 @@ lib/event/
 | **중간** | 100P ~ 500P | 30% | 적당한 보상감 제공 |
 | **희귀** | 1,000P | 1.5% | 드문 행운 |
 | **초희귀** | 2,000P | 0.4% | 매우 드문 대박 |
-| **전설** | 스타벅스 쿠폰 | 0.1% | 1,000회에 1번 (최고 보상) |
+| **전설** | 스타벅스 쿠폰 | 0.2% | 500회에 1번 (최고 보상) |
 
 ### 확률 계산 알고리즘
 
@@ -390,9 +405,9 @@ public static function calculateSpinResult(bool $hasStarbucksCoupon): array
 
     // 스타벅스 쿠폰이 없으면: weight 동적 재조정
     if (!$hasStarbucksCoupon) {
-        $starbucksWeight = $sections[8]['weight']; // 1
-        $sections[0]['weight'] += $starbucksWeight; // 50P: 380 → 381
-        $sections[8]['weight'] = 0;                 // 스타벅스: 1 → 0
+        $starbucksWeight = $sections[8]['weight']; // 2
+        $sections[0]['weight'] += $starbucksWeight; // 50P: 379 → 381
+        $sections[8]['weight'] = 0;                 // 스타벅스: 2 → 0
     }
 
     $totalWeight = array_sum(array_column($sections, 'weight')); // 1000
@@ -419,15 +434,15 @@ public static function calculateSpinResult(bool $hasStarbucksCoupon): array
 random_int(1, 1000) = 250 일 때:
 
 누적 계산:
-  0:  380 (50P)   → 1~380    ← 250 ≤ 380 → ★ 50P 당첨!
-  1:  460 (100P)  → 381~460
-  2:  530 (200P)  → 461~530
-  3:  590 (300P)  → 531~590
-  4:  640 (400P)  → 591~640
-  5:  680 (500P)  → 641~680
-  6:  695 (1000P) → 681~695
-  7:  699 (2000P) → 696~699
-  8:  700 (쿠폰)  → 700
+  0:  379 (50P)   → 1~379    ← 250 ≤ 379 → ★ 50P 당첨!
+  1:  459 (100P)  → 380~459
+  2:  529 (200P)  → 460~529
+  3:  589 (300P)  → 530~589
+  4:  639 (400P)  → 590~639
+  5:  679 (500P)  → 640~679
+  6:  694 (1000P) → 680~694
+  7:  698 (2000P) → 695~698
+  8:  700 (쿠폰)  → 699~700
   9: 1000 (꽝)    → 701~1000
 ```
 
@@ -436,11 +451,11 @@ random_int(1, 1000) = 250 일 때:
 | 항목 | 계산 |
 |------|------|
 | **비용** | -200P (게임 참가비) |
-| **기대 수익** | 50×0.38 + 100×0.08 + 200×0.07 + 300×0.06 + 400×0.05 + 500×0.04 + 1000×0.015 + 2000×0.004 + 0×0.30 = **122P** |
+| **기대 수익** | 50×0.379 + 100×0.08 + 200×0.07 + 300×0.06 + 400×0.05 + 500×0.04 + 1000×0.015 + 2000×0.004 + 0×0.30 = **122P** |
 | **기대 순손실** | 200 - 122 = **-78P** |
 
 > 사용자는 평균적으로 1회 게임당 약 78P를 잃는다. 이는 게임의 지속 가능성을 보장한다.
-> ※ 스타벅스 쿠폰(0.1%)은 포인트가 아닌 실물 보상이므로 기대값 계산에서 제외한다.
+> ※ 스타벅스 쿠폰(0.2%)은 포인트가 아닌 실물 보상이므로 기대값 계산에서 제외한다.
 
 ---
 
@@ -502,10 +517,15 @@ curl -X POST "https://local.philgo.com/api.php" \
   "current_point": 4800,
   "lv": 4,
   "level_progress": 42,
-  "starbucks_coupon_file": "4.jpg",
-  "starbucks_coupon_url": "/event/cupon/starbucks/4.jpg",
+  "starbucks_coupon_file": null,
+  "starbucks_coupon_url": null,
   "available_coupons": 2,
-  "spin_idx": 457
+  "spin_idx": 457,
+  "coupon": {
+    "idx": 42,
+    "title": "아메리카노 기프티콘",
+    "coupon_type": "starbucks"
+  }
 }
 ```
 
@@ -538,10 +558,11 @@ curl -X POST "https://local.philgo.com/api.php" \
 | `current_point` | int | 게임 후 잔여 포인트 |
 | `lv` | int | 게임 후 회원 레벨 (**포인트 기반 동적 계산**, `UserService::calculateLevel()`) |
 | `level_progress` | int | 다음 레벨까지 진행률 (0~100%, **동적 계산**) |
-| `starbucks_coupon_file` | string\|null | 스타벅스 쿠폰 파일명 (당첨 시만) |
-| `starbucks_coupon_url` | string\|null | 스타벅스 쿠폰 이미지 URL (당첨 시만) |
-| `available_coupons` | int | 남은 사용 가능 쿠폰 수 |
+| `starbucks_coupon_file` | null | ~~레거시~~ 항상 null (하위 호환 유지) |
+| `starbucks_coupon_url` | null | ~~레거시~~ 항상 null (하위 호환 유지) |
+| `available_coupons` | int | 남은 사용 가능 쿠폰 수 (`EventCouponService::getAvailableCount`) |
 | `spin_idx` | int | `event_spin_history.idx` (기록 번호) |
+| `coupon` | object\|null | 당첨 쿠폰 정보 (스타벅스 당첨 시만). `{idx, title, coupon_type}` |
 
 #### 에러 응답
 
@@ -637,14 +658,89 @@ curl -X POST "https://local.philgo.com/api.php" \
 
 ---
 
+### event.myCoupons — 내 당첨 쿠폰 목록 조회
+
+인증 필수.
+
+로그인 사용자의 당첨 쿠폰 목록을 `event_coupons` 테이블에서 조회한다.
+`uploads` 테이블과 JOIN하여 쿠폰 이미지 URL을 포함한다.
+상태가 `won`(당첨) 또는 `sent`(전송완료)인 쿠폰만 반환한다.
+
+**메서드**: `POST /api.php?method=event.myCoupons`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.myCoupons",
+    "session_id": "YOUR_SESSION_ID",
+    "page": 1,
+    "limit": 20
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `page` | int | X | 페이지 번호 (기본 1) |
+| `limit` | int | X | 페이지당 개수 (기본 20, 최대 100) |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "total": 3,
+  "page": 1,
+  "limit": 20,
+  "items": [
+    {
+      "idx": 42,
+      "coupon_type": "starbucks",
+      "title": "아메리카노 기프티콘",
+      "memo": null,
+      "status": "sent",
+      "won_at": 1709446800,
+      "sent_at": 1709533200,
+      "idx_spin_history": 789,
+      "display_image_url": "/uploads/event/coupon_qr/image.jpg",
+      "thumbnail_url": "/uploads/event/coupon_qr/image_400x400.jpg"
+    }
+  ]
+}
+```
+
+#### 응답 필드
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `total` | int | 전체 당첨 쿠폰 수 |
+| `page` | int | 현재 페이지 번호 |
+| `limit` | int | 페이지당 개수 |
+| `items` | array | 쿠폰 배열 (당첨일 역순) |
+| `items[].idx` | int | 쿠폰 번호 |
+| `items[].coupon_type` | string | 쿠폰 유형 (`starbucks` 등) |
+| `items[].title` | string | 쿠폰 제목 |
+| `items[].status` | string | `won` (당첨) 또는 `sent` (전송완료) |
+| `items[].won_at` | int | 당첨 시간 (Unix timestamp) |
+| `items[].sent_at` | int\|null | 전송 완료 시간 |
+| `items[].display_image_url` | string\|null | 쿠폰 이미지 URL (`COALESCE(image_url, uploads.url)`) |
+| `items[].thumbnail_url` | string\|null | 썸네일 URL (`uploads.thumbnail_400x400_url`) |
+
+---
+
 ## 스타벅스 쿠폰 관리 시스템
 
 ### 핵심 원칙
 
-> **uploads 테이블을 사용하지 않는다.**
-> 쿠폰 파일은 `event/cupon/starbucks/` 폴더에 직접 저장되며,
-> `event_spin_history.starbucks_coupon_file` 컬럼으로 사용 여부를 추적한다.
+> **`event_coupons` DB 테이블 기반으로 쿠폰을 관리한다.**
+> 관리자가 v7 Upload API로 QR 이미지를 업로드하여 쿠폰을 등록하고,
+> 스피닝 휠 당첨 시 `EventCouponService::assignCouponToWinner()`로 자동 배정한다.
 > 사용 가능한 쿠폰이 **0개이면 스타벅스 당첨 확률은 자동으로 0%**가 된다.
+> 상세는 → [v7-event-coupon.md](../event/v7-event-coupon.md) 참조.
 
 ### 쿠폰 파일 저장 위치
 
@@ -711,7 +807,7 @@ public static function getAvailableStarbucksCoupons(): array
 [5] 모든 쿠폰 소진 시
     ├─ 사용 가능: [] → 0개
     └─ $hasStarbucksCoupon = false
-    └─ 스타벅스 weight=0, 50P weight: 380→381
+    └─ 스타벅스 weight=0, 50P weight: 379→381
 ```
 
 > **쿠폰 보충**: 관리자가 새 쿠폰 이미지를 폴더에 복사하기만 하면 된다.
@@ -779,7 +875,7 @@ CREATE TABLE `event_spin_history` (
 | 500P 당첨 | `event` | `spin_reward` | +500 | `spin_reward_500` |
 | 1,000P 당첨 | `event` | `spin_reward` | +1000 | `spin_reward_1000` |
 | 2,000P 당첨 | `event` | `spin_reward` | +2000 | `spin_reward_2000` |
-| 스타벅스 당첨 | `event` | `spin_reward` | 0 | `spin_reward_starbucks:{파일명}` |
+| 스타벅스 당첨 | `event` | `spin_reward` | 0 | `spin_reward_starbucks` |
 | 꽝 | *(충전 기록 없음)* | | | |
 
 > 꽝인 경우 포인트 변동이 없으므로 `sf_point_log`에 충전 기록을 남기지 않는다.
@@ -800,6 +896,7 @@ CREATE TABLE `event_spin_history` (
 | `getAuthenticatedUser()` | (private) | | `AuthService::getLoginUser()` 호출, 미인증 시 예외 |
 | `spin(array $input)` | `event.spin` | 필수 | 인증 확인 → `EventService::spin($user)` 호출 |
 | `history(array $input)` | `event.history` | 필수 | 인증 확인 → `EventService::getHistory()` 호출 |
+| `myCoupons(array $input)` | `event.myCoupons` | 필수 | 인증 확인 → `EventCouponRepository::findByWinner()` 호출 |
 
 ### EventService 클래스
 
@@ -823,22 +920,20 @@ CREATE TABLE `event_spin_history` (
 | `getCouponDirPath()` | public static | 쿠폰 폴더 절대 경로 반환 |
 | `getHistory(int $idx, int $p, int $l)` | public static | 히스토리 페이지네이션 조회 |
 
-#### `spin()` 8단계 처리 흐름
+#### `spin()` 처리 흐름 (event_coupons DB 기반)
 
 ```
 [1] 잔액 확인
     └─ EventRepository::getMember($idxMember)
     └─ currentPoint < 200 → RuntimeException
 
-[2] 사용 가능 쿠폰 확인
-    └─ self::getAvailableStarbucksCoupons()
-    └─ $hasStarbucksCoupon = count($availableCoupons) > 0
+[2] 사용 가능 쿠폰 확인 (event_coupons DB 기반)
+    └─ EventCouponService::hasAvailableCoupon('starbucks')
 
 [3] BEGIN TRANSACTION
 
 [4] 200P 차감
-    ├─ EventRepository::updateMemberPoint($idxMember, $pointAfterCost)
-    └─ EventRepository::insertPointLog([module='event', action='spin_cost', point=-200])
+    └─ PointLogService::changePoints(-200, $idxMember, $idxMember, 'event', 'spin_cost', 0, 'spin_cost')
 
 [5] 확률 계산 (쿠폰 유무에 따라 동적)
     └─ self::calculateSpinResult($hasStarbucksCoupon)
@@ -846,12 +941,10 @@ CREATE TABLE `event_spin_history` (
 
 [6] 보상 처리
     ├─ prize_type == 'point' && points > 0:
-    │   ├─ EventRepository::updateMemberPoint($idxMember, $finalPoint)
-    │   └─ EventRepository::insertPointLog([action='spin_reward', etc="spin_reward_{$rewardPoints}"])
+    │   └─ PointLogService::changePoints($rewardPoints, 0, $idxMember, 'event', 'spin_reward', 0, "spin_reward_{$rewardPoints}")
     │
     ├─ prize_type == 'starbucks':
-    │   ├─ $starbucksCouponFile = $availableCoupons[0] (첫 번째 사용 가능 쿠폰)
-    │   └─ EventRepository::insertPointLog([etc="spin_reward_starbucks:{$file}"])
+    │   └─ PointLogService::changePoints(0, 0, $idxMember, 'event', 'spin_reward', 0, 'spin_reward_starbucks')
     │
     └─ prize_type == 'miss':
         └─ (보상 없음)
@@ -859,10 +952,22 @@ CREATE TABLE `event_spin_history` (
 [7] 이벤트 기록 저장
     └─ EventRepository::insertSpinHistory([
          idx_member, section_index, prize_type, points_cost, points_reward,
-         starbucks_coupon_file, random_value, point_before, point_after, ip
+         starbucks_coupon_file=null, random_value, point_before, point_after, ip
        ])
 
-[8] COMMIT → 응답 반환
+[7-1] 스타벅스 당첨 시 쿠폰 배정 (트랜잭션 내)
+     └─ EventCouponService::assignCouponToWinner('starbucks', $idxMember, $spinIdx)
+        ├─ EventCouponRepository::lockAndPickAvailable('starbucks')  — SELECT ... FOR UPDATE
+        └─ EventCouponRepository::assignToWinner($couponIdx, $idxMember, $spinIdx)
+
+[8] COMMIT
+
+[8-1] 스타벅스 당첨 시 freetalk 자동 게시글 (커밋 후)
+     └─ PostService::create([post_id='freetalk', ...])
+
+[9] 응답 반환
+    └─ {section_index, points, prize_type, current_point, coupon, available_coupons, ...}
+    └─ 남은 쿠폰 수: EventCouponService::getAvailableCount('starbucks')
     └─ 실패 시 ROLLBACK (catch 블록에서 $pdo->rollBack())
 ```
 
@@ -948,7 +1053,7 @@ SpinningWheel(
 
 ```dart
 _sections = [
-  WheelSection(label: '50',    color: Color(0xFFE88B8B), points: 50,   weight: 380),   // index 0
+  WheelSection(label: '50',    color: Color(0xFFE88B8B), points: 50,   weight: 379),   // index 0
   WheelSection(label: '100',   color: Color(0xFFE8A87C), points: 100,  weight: 80),    // index 1
   WheelSection(label: '200',   color: Color(0xFFF5B971), points: 200,  weight: 70),    // index 2
   WheelSection(label: '300',   color: Color(0xFFD4A76A), points: 300,  weight: 60),    // index 3
@@ -956,7 +1061,7 @@ _sections = [
   WheelSection(label: '500',   color: Color(0xFFE8C170), points: 500,  weight: 40),    // index 5
   WheelSection(label: '1,000', color: Color(0xFFC9A9C9), points: 1000, weight: 15),    // index 6
   WheelSection(label: '2,000', color: Color(0xFF9CC2D8), points: 2000, weight: 4),     // index 7
-  WheelSection(label: '쿠폰',  color: Color(0xFF8BC78B), points: -1,   weight: 1),     // index 8
+  WheelSection(label: '쿠폰',  color: Color(0xFF8BC78B), points: -1,   weight: 2),     // index 8
   WheelSection(label: '꽝',    color: Color(0xFFB0B0B0), points: 0,    weight: 300),   // index 9
 ];
 ```
@@ -969,7 +1074,7 @@ _sections = [
 
 | section_index | 섹션 | 포인트 | Weight | 확률 | prize_type |
 |:------------:|------|:------:|:------:|:----:|:----------:|
-| 0 | 50P | 50 | 380 | 38.0% | `point` |
+| 0 | 50P | 50 | 379 | 37.9% | `point` |
 | 1 | 100P | 100 | 80 | 8.0% | `point` |
 | 2 | 200P | 200 | 70 | 7.0% | `point` |
 | 3 | 300P | 300 | 60 | 6.0% | `point` |
@@ -977,7 +1082,7 @@ _sections = [
 | 5 | 500P | 500 | 40 | 4.0% | `point` |
 | 6 | 1,000P | 1,000 | 15 | 1.5% | `point` |
 | 7 | 2,000P | 2,000 | 4 | 0.4% | `point` |
-| 8 | 스타벅스 쿠폰 | -1 | 1 | 0.1% | `starbucks` |
+| 8 | 스타벅스 쿠폰 | -1 | 2 | 0.2% | `starbucks` |
 | 9 | 꽝 | 0 | 300 | 30.0% | `miss` |
 
 ---
@@ -1011,7 +1116,7 @@ _sections = [
 
 | 테스트 | 방법 | 검증 |
 |--------|------|------|
-| 확률 분포 (쿠폰 있음) | 10만 회 시뮬레이션 | 모든 섹션 기대값 ±2% 이내, 스타벅스 0.1% 포함 |
+| 확률 분포 (쿠폰 있음) | 10만 회 시뮬레이션 | 모든 섹션 기대값 ±2% 이내, 스타벅스 0.2% 포함 |
 | 확률 분포 (쿠폰 없음) | 10만 회 시뮬레이션 | 스타벅스 0% (0회), 50P 38.1% 확인 |
 | 쿠폰 없을 때 차단 | `calculateSpinResult(false)` 1만 회 | `section_index=8` 절대 불가 |
 | 포인트 정확도 | 연속 5회 스핀 | 매 스핀 후 잔액 = 이전 - 200 + reward |
@@ -1086,10 +1191,10 @@ Content-Type: application/json
 | 일일 횟수 제한 | 없음 (포인트 잔액으로만 제한) | 일일 N회 제한 추가 |
 | 확률 동적 변경 | 코드에 하드코딩 | DB 테이블로 확률 관리 (관리자 페이지에서 변경) |
 | 이벤트 기간 | 상시 | 시작/종료일 설정 |
-| 보상 종류 | 포인트 + 스타벅스 | 다양한 쿠폰/상품 추가 (폴더별 관리) |
-| 통계 대시보드 | 없음 | 관리자용 통계 페이지 |
+| 보상 종류 | 포인트 + 스타벅스 | 다양한 쿠폰/상품 추가 (`coupon_type` 확장) |
+| 통계 대시보드 | ✅ 관리자 위젯 (유형별/상태별 통계) | 더 상세한 통계 페이지 |
 | Auto Spin 서버 제한 | 없음 | 연속 돌리기 시 최소 간격 1초 |
-| 쿠폰 관리 UI | 파일 직접 복사 | 관리자 페이지에서 쿠폰 업로드/삭제/현황 확인 |
+| 쿠폰 관리 UI | ✅ 관리자 위젯 (`event_coupons` DB + v7 Upload) | — |
 
 ---
 

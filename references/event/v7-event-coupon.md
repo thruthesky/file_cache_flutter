@@ -390,33 +390,116 @@ if ($prizeType === 'starbucks') {
   "points": -1,
   "prize_type": "starbucks",
   "current_point": 4800,
-  "starbucks_coupon_file": "example.jpg",
-  "starbucks_coupon_url": "/event/cupon/starbucks/example.jpg",
+  "lv": 4,
+  "level_progress": 42,
+  "starbucks_coupon_file": null,
+  "starbucks_coupon_url": null,
   "available_coupons": 2,
-  "spin_idx": 789
+  "spin_idx": 789,
+  "coupon": {
+    "idx": 42,
+    "title": "아메리카노 기프티콘",
+    "coupon_type": "starbucks"
+  }
 }
 ```
 
-### 7.2 Flutter 앱에서 쿠폰 표시
+> **레거시 호환**: `starbucks_coupon_file`, `starbucks_coupon_url`은 `null`로 반환된다.
+> 쿠폰 정보는 `coupon` 필드에서 제공되며, 이미지 URL은 `event.myCoupons` API에서 조회한다.
 
-스피닝 휠 결과 다이얼로그에서 `prize_type == 'starbucks'`일 때 쿠폰 이미지를 표시한다:
+### 7.2 내 당첨 쿠폰 목록 API — event.myCoupons
+
+로그인 사용자의 당첨 쿠폰 목록을 `event_coupons` 테이블에서 조회한다.
+`uploads` 테이블과 JOIN하여 쿠폰 이미지 URL을 포함한다.
+
+**API**: `POST /api.php?method=event.myCoupons`
+
+```json
+// 요청
+{
+  "method": "event.myCoupons",
+  "session_id": "xxx",
+  "page": 1,
+  "limit": 20
+}
+
+// 응답
+{
+  "success": true,
+  "total": 3,
+  "page": 1,
+  "limit": 20,
+  "items": [
+    {
+      "idx": 42,
+      "coupon_type": "starbucks",
+      "title": "아메리카노 기프티콘",
+      "memo": null,
+      "status": "sent",
+      "won_at": 1709446800,
+      "sent_at": 1709533200,
+      "idx_spin_history": 789,
+      "display_image_url": "/uploads/event/coupon_qr/image.jpg",
+      "thumbnail_url": "/uploads/event/coupon_qr/image_400x400.jpg"
+    }
+  ]
+}
+```
+
+**응답 필드**:
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `total` | int | 전체 당첨 쿠폰 수 |
+| `items[].idx` | int | 쿠폰 번호 |
+| `items[].coupon_type` | string | 쿠폰 유형 (`starbucks` 등) |
+| `items[].title` | string | 쿠폰 제목 |
+| `items[].status` | string | `won` (당첨) 또는 `sent` (전송완료) |
+| `items[].won_at` | int | 당첨 시간 (Unix timestamp) |
+| `items[].sent_at` | int\|null | 전송 완료 시간 |
+| `items[].display_image_url` | string\|null | 쿠폰 이미지 URL (`COALESCE(image_url, uploads.url)`) |
+| `items[].thumbnail_url` | string\|null | 썸네일 URL |
+
+### 7.3 Flutter 앱에서 쿠폰 목록 표시
+
+`event.myCoupons` API를 호출하여 당첨 쿠폰 목록을 표시한다.
+
+**파일**: `lib/screens/event/event_coupon.screen.dart`
 
 ```dart
-// 스피닝 휠 결과 콜백
-onResult: (section) {
-    if (_lastSpinResult['prize_type'] == 'starbucks') {
-        _showStarbucksCouponDialog(
-            couponUrl: _lastSpinResult['starbucks_coupon_url'],
-        );
-    } else {
-        _showPointResultDialog(_lastSpinResult);
-    }
+// API 호출
+final result = await v7api('event.myCoupons', data: {'page': 1, 'limit': 100});
+final items = (result['items'] as List<dynamic>?) ?? [];
+_coupons = items.whereType<Map<String, dynamic>>().toList();
+```
+
+**이미지 URL 처리**:
+
+```dart
+String _getCouponImageUrl(Map<String, dynamic> coupon) {
+    final imageUrl = coupon['display_image_url'] as String? ?? '';
+    if (imageUrl.isEmpty) return '';
+    // 절대 URL인 경우 그대로 반환
+    if (imageUrl.startsWith('http')) return imageUrl;
+    // 상대 경로인 경우 baseUrl 결합
+    final baseUrl = PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '');
+    return '$baseUrl$imageUrl';
 }
 ```
 
-### 7.3 웹에서 쿠폰 히스토리 표시
+**쿠폰 카드 표시 정보**:
 
-`event.history` API로 사용자의 스핀 기록을 조회하면 당첨 쿠폰 정보가 포함된다:
+| 항목 | 필드 | 설명 |
+|------|------|------|
+| 쿠폰 제목 | `title` | "아메리카노 기프티콘" |
+| 당첨 날짜 | `won_at` | Unix timestamp → `YYYY.MM.DD` 포맷 |
+| 전송 상태 | `status` | `sent`일 때 체크 아이콘 (primary 색상) |
+| 쿠폰 보기 | `display_image_url` | 다이얼로그에서 핀치 줌 지원 이미지 표시 |
+
+### 7.4 웹에서 쿠폰 히스토리 표시
+
+`event.history` API로 사용자의 스핀 기록을 조회하면 당첨 기록이 포함된다.
+단, 쿠폰 이미지 URL은 `event.myCoupons` API에서 별도 조회해야 한다.
 
 ```json
 {
@@ -424,8 +507,8 @@ onResult: (section) {
     {
       "idx": 789,
       "prize_type": "starbucks",
-      "starbucks_coupon_file": "example.jpg",
-      "starbucks_coupon_url": "/event/cupon/starbucks/example.jpg",
+      "starbucks_coupon_file": null,
+      "starbucks_coupon_url": null,
       "created_at": 1709446800
     }
   ]
@@ -478,10 +561,11 @@ lib/event/
 │   ├── countAvailable(?type): int           ← COUNT(available)
 │   ├── getStatsByType(): array              ← GROUP BY 통계
 │   ├── getDistinctTypes(): array            ← DISTINCT coupon_type
-│   └── getListWithPagination(filters, page, limit): array  ← 페이지네이션 목록
+│   ├── getListWithPagination(filters, page, limit): array  ← 페이지네이션 목록
+│   └── findByWinner(idx, page, limit): array  ← 당첨자 쿠폰 목록 (uploads JOIN)
 │
-├── EventService.php            ← 기존 스피닝 휠 로직 (쿠폰 배정 호출)
-└── EventController.php         ← event.spin, event.history API
+├── EventService.php            ← 스피닝 휠 로직 (EventCouponService 연동)
+└── EventController.php         ← event.spin, event.history, event.myCoupons API
 ```
 
 ---
