@@ -157,6 +157,14 @@ PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2
 (`https://local.philgo.com`, `https://banana.philgo.com`), Docker 운영 명령어,
 Windows 환경 설정 차이점을 포함합니다.
 
+### Flutter 앱 전화번호 로그인 → [app/v7-app-phone-login.md](references/app/v7-app-phone-login.md)
+
+Flutter 앱의 전화번호 로그인 시스템과 v7 API 인증 연동을 상세히 다룹니다.
+Firebase Phone Auth 기반 전화번호 인증, E.164 국제 형식 변환, +1 화이트리스트 검증,
+특수 계정(리뷰/테스트), SMS 코드 전송/확인 흐름, 로그인 후 Firebase ID Token을
+v7 API에 전달하는 인증 구조, AuthService 2경로 인증(세션+Firebase Token),
+sf_member 테이블 연동, 다국어 에러 메시지를 포함합니다.
+
 ### Flutter 앱 API 연동 → [app/v7-flutter-api.md](references/app/v7-flutter-api.md)
 
 Flutter 앱에서 v7 API를 호출하는 방법을 상세히 다룹니다.

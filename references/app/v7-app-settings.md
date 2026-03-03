@@ -20,6 +20,13 @@
   - [6.4 앱 내 사용 예시](#64-앱-내-사용-예시)
 - [7. 테스트](#7-테스트)
 - [8. 레거시 시스템과의 관계](#8-레거시-시스템과의-관계)
+- [9. v7 Settings API 연동 (Flutter)](#9-v7-settings-api-연동-flutter)
+  - [9.1 개요](#91-개요)
+  - [9.2 V7Settings 모델](#92-v7settings-모델)
+  - [9.3 V7SettingsState 상태 관리](#93-v7settingsstate-상태-관리)
+  - [9.4 초기화 흐름](#94-초기화-흐름)
+  - [9.5 홈 화면 디버그 카드](#95-홈-화면-디버그-카드)
+  - [9.6 파일 구조](#96-파일-구조)
 
 ---
 
@@ -370,3 +377,113 @@ if (setting != null) {
 | **v7 Settings와 차이** | v7은 DB(`sf_config`) 기반, 레거시는 PHP 상수 기반 |
 
 > v7 시스템의 Settings 모듈 (DB 기반 동적 설정)은 → [v7-settings.md](../api/v7-settings.md) 참조.
+
+---
+
+## 9. v7 Settings API 연동 (Flutter)
+
+### 9.1 개요
+
+레거시 `get_app_settings` (bank_info, point, admin_uids)과 **별도로**, v7 `settings.get` API를 호출하여 앱 버전 정보와 이벤트 토글 설정을 가져온다.
+
+| 항목 | 레거시 (PhilgoState.setting) | v7 (V7SettingsState.settings) |
+|------|---------------------------|------------------------------|
+| **API** | `func.php` → `get_app_settings` | `api.php` → `settings.get` |
+| **데이터** | bank_info, point, admin_uids | app_version, event 토글 |
+| **소스** | PHP 상수 (`etc/app.config.php`) | DB (`sf_config` 테이블) |
+| **모델** | `PhilgoSetting` | `V7Settings` |
+| **상태** | `PhilgoState` | `V7SettingsState` |
+
+> 두 설정은 **완전히 다른 데이터셋**이므로 병렬로 공존한다.
+
+### 9.2 V7Settings 모델
+
+**파일**: `lib/v7_api/models/v7_settings.dart`
+
+```dart
+class V7Settings {
+  final String appVersionAndroid;
+  final String appVersionAndroidBuild;
+  final String appVersionIos;
+  final String appVersionIosBuild;
+  final bool companyQrEventEnabled;   // "Y"/"N" → bool 변환
+  final bool eventEntryEnabled;       // "Y"/"N" → bool 변환
+
+  factory V7Settings.fromJson(Map<String, dynamic> json);
+}
+```
+
+### 9.3 V7SettingsState 상태 관리
+
+**파일**: `lib/v7_api/state/v7_settings_state.dart`
+
+```dart
+class V7SettingsState extends ChangeNotifier {
+  V7Settings? settings;
+
+  V7SettingsState() {
+    _loadSettings();  // 생성자에서 자동 로딩
+  }
+
+  Future<void> _loadSettings() async {
+    final json = await v7api('settings.get');
+    settings = V7Settings.fromJson(json);
+    notifyListeners();
+  }
+
+  static V7SettingsState of(BuildContext context, {bool listen = false}) {
+    return Provider.of<V7SettingsState>(context, listen: listen);
+  }
+}
+```
+
+### 9.4 초기화 흐름
+
+```
+main()
+  │
+  ▼ runApp(MultiProvider(providers: [
+      PhilgoState(),        // 레거시 설정 (bank_info, point, admin_uids)
+      V7SettingsState(),    // v7 설정 (app_version, event 토글)
+    ]))
+      │
+      ├─ PhilgoState._init()
+      │  └─ PhilgoService.instance.loadSetting()  // func.php → get_app_settings
+      │
+      └─ V7SettingsState._loadSettings()
+         └─ v7api('settings.get')                  // api.php → settings.get
+```
+
+### 9.5 홈 화면 디버그 카드
+
+**파일**: `lib/screens/home/sections/main.home.dart`
+
+`kDebugMode`일 때만 v7 설정 정보를 표시하는 카드가 홈 화면에 노출된다:
+
+```dart
+if (kDebugMode)
+  SliverToBoxAdapter(
+    child: Selector<V7SettingsState, V7SettingsState>(
+      selector: (_, state) => state,
+      builder: (context, v7State, _) {
+        final s = v7State.settings;
+        // Android/iOS 버전, QR이벤트 ON/OFF, 이벤트응모 ON/OFF 표시
+      },
+    ),
+  ),
+```
+
+### 9.6 파일 구조
+
+```
+philgo_app/lib/v7_api/
+├─ v7_api.dart                              # v7api() 함수 — HTTP POST 호출
+├─ models/
+│  └─ v7_settings.dart                      # V7Settings 모델
+├─ state/
+│  └─ v7_settings_state.dart                # V7SettingsState (ChangeNotifier)
+├─ company_api.dart
+├─ user_api.dart
+├─ upload_api.dart
+└─ widgets/upload/v7_file_upload.dart
+```
