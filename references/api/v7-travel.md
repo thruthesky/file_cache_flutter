@@ -9,6 +9,7 @@
 5. [API 엔드포인트 상세](#5-api-엔드포인트-상세)
 6. [PEST 테스트](#6-pest-테스트)
 7. [배포 체크리스트](#7-배포-체크리스트)
+8. [테스트 검증 결과](#8-테스트-검증-결과)
 
 ---
 
@@ -38,7 +39,7 @@
 |------|------|------|
 | 데이터 저장 | JSON 파일 (DB 미사용) | AI 관리, ~1천 개, Git 버전 관리 |
 | 식별자 | JSON 배열 `index` | 추가 필드 불필요, 향후 slug `id` 도입 검토 |
-| 앱 목록 로드 | 전체 로드 (`limit=9999`, texts 제외) | ~500KB, 기존 클라이언트 검색/필터 UX 유지 |
+| 앱 목록 로드 | 전체 로드 (`limit=9999`, texts 제외) | 1,045건 경량 데이터, 기존 클라이언트 검색/필터 UX 유지 |
 | 캐싱 | 앱 3일 TTL / 서버 static 메모리 | 여행 정보 변경 빈도 낮음 |
 | 번들 JSON | 유지 (오프라인 폴백) | 네트워크 없이도 목록+상세 표시 |
 
@@ -94,8 +95,8 @@ www/
 | 서버 경로 | `www/data/travel/travel_spots.json` |
 | PHP 참조 | `__DIR__ . '/../../data/travel/travel_spots.json'` (TravelService 기준) |
 | 앱 번들 | `lib/philgo_files/travel/travel_spots.json` (Flutter assets) |
-| 파일 크기 | ~3.2MB (약 19,000행) |
-| 항목 수 | ~1,000개 |
+| 파일 크기 | ~3.1MB (약 19,032행) |
+| 항목 수 | 1,045개 (2026-03-03 기준) |
 
 ### 3.2 JSON 구조
 
@@ -418,3 +419,49 @@ GET api.php?method=travel.filters
 | JSON 파일 로드 실패 | 파일 경로 불일치 | `www/data/travel/travel_spots.json` 존재 확인 |
 | 검색 결과 없음 | `mb_string` 확장 미설치 | PHP `mbstring` 확장 설치 확인 |
 | 앱에서 구 데이터 표시 | 3일 캐시 미만료 | `forceRefresh()` 또는 `clearCache()` 호출 |
+
+---
+
+## 8. 테스트 검증 결과
+
+### 8.1 PEST 단위 테스트 (2026-03-03 기준)
+
+**실행 명령**: `./vendor/bin/pest tests/Unit/TravelControllerTest.php`
+
+| 결과 | 값 |
+|------|-----|
+| **전체 테스트** | 20개 |
+| **통과** | 20개 ✅ |
+| **실패** | 0개 |
+| **Assertion** | 151개 |
+| **실행 시간** | 0.14s |
+
+### 8.2 curl API 엔드포인트 테스트
+
+| # | 테스트 | 결과 | 상세 |
+|---|--------|------|------|
+| 1 | `travel.list` 기본 조회 | ✅ | 1,045건 반환, pagination 정상 |
+| 2 | `travel.list` texts 제외 확인 | ✅ | items 내 texts 필드 0건 (경량화 정상) |
+| 3 | `travel.list` has_texts 플래그 | ✅ | 1,045건 모두 has_texts=true |
+| 4 | `travel.list` province+category 조합 필터 | ✅ | 세부+폭포 → 6건 |
+| 5 | `travel.list` city 필터 | ✅ | 바디안 → 1건 |
+| 6 | `travel.list` 한글 검색 | ✅ | "가와산" → 1건 (가와산 폭포) |
+| 7 | `travel.list` 영어 검색 | ✅ | "Kawasan" → 3건 |
+| 8 | `travel.list` 페이징 | ✅ | page1 ≠ page2, total_pages 정상 |
+| 9 | `travel.list` 빈 결과 | ✅ | 존재하지 않는 필터 → 0건 |
+| 10 | `travel.list` 전체 로드 (limit=9999) | ✅ | 1,045건 전부 반환, index 0~1044 |
+| 11 | `travel.get` index=0 조회 | ✅ | texts 배열 4개 포함, has_texts=true |
+| 12 | `travel.get` index 누락 | ✅ | `{success:false, message:"index 파라미터가 필요합니다."}` |
+| 13 | `travel.get` index=-1 | ✅ | `{success:false, message:"유효하지 않은 인덱스입니다: -1"}` |
+| 14 | `travel.get` index=999999 | ✅ | `{success:false, message:"유효하지 않은 인덱스입니다: 999999"}` |
+| 15 | `travel.filters` 조회 | ✅ | provinces/cities/categories 모두 반환, 가나다순 정렬 |
+
+### 8.3 데이터 현황
+
+| 항목 | 값 |
+|------|-----|
+| 전체 여행 명소 | 1,045건 |
+| JSON 파일 크기 | 3.1MB |
+| JSON 파일 행 수 | 19,032행 |
+| texts 보유 항목 | 1,045건 (100%) |
+| index 범위 | 0~1044 |
