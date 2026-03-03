@@ -196,6 +196,16 @@ QR 코드 삼단콤보 흐름(QR 스캔→재방문→후기→포인트), Compa
 업소 상태 흐름(신규→심사중→승인), 파일 업로드(V7FileUpload 위젯),
 포인트 적립 규칙, 에러 처리 패턴, 권한 모델을 포함합니다.
 
+### Flutter 앱 여행 명소 연동 → [app/v7-app-travel.md](references/app/v7-app-travel.md)
+
+Flutter 앱의 여행 명소 기능이 v7 Travel API를 통해 데이터를 가져오는 방법을 상세히 다룹니다.
+TravelApi 래퍼 클래스(list, get, filters), TravelSpot 모델(index/hasTextsFlag 필드, 이중 키 호환),
+TravelSpotService(3일 캐시 TTL, 번들 폴백, Isolate JSON 파싱),
+TravelSpotViewScreen(texts API 로드, _spot 상태 변수),
+데이터 흐름 다이어그램(목록/상세), CoT/ToT 핵심 결정 사항을 포함합니다.
+JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
+→ [api/v7-travel.md](references/api/v7-travel.md) 3장 참조.
+
 ### 웹 문서 → [references/web/](references/web/)
 
 | 문서 | 설명 | 상태 |
@@ -257,6 +267,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Post | [api/v7-post.md](references/api/v7-post.md) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |
+| Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
