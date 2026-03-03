@@ -693,11 +693,23 @@ if (is_object($res)) {
 
 ## 6. Entity (데이터 구조체)
 
-Entity는 `lib/entities/` 폴더에 위치하는 **POPO (Plain Old PHP Object)** 클래스로, DB 레코드를 PHP 객체로 표현하는 데이터 구조체이다.
+### 6.0 v7 Entity/Repository Interface 시스템 → [v7-interface.md](v7-interface.md)
 
-### 6.1 Entity 클래스 목록
+v7 시스템은 `EntityInterface`와 `RepositoryInterface`를 도입하여 모든 Entity/Repository 클래스의 구조를 강제한다.
+`lib/<module>/` 폴더에 위치하는 13개 Entity는 모두 `Philgo\Utils\EntityInterface`를 구현하며,
+`fromArray(array $data): static` 정적 팩토리 메서드와 `toArray(): array` 배열 변환 메서드를 필수로 제공한다.
+7개 Repository는 `Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`, `update()`, `deleteByIdx()` 표준 CRUD 메서드명을 강제한다.
+Service는 인터페이스 없이 문서 기반 명명 규칙(`get()`, `list()`, `create()`, `update()`, `delete()`)을 따른다.
+전체 Entity 13개 목록, Repository 11개 목록(7개 적용 + 4개 예외), Service 13개 목록, 표준 패턴 코드,
+계산 필드 패턴, 런타임 속성 패턴, 데이터 흐름, 새 모듈 추가 워크플로우 등 상세 내용은
+[v7-interface.md](v7-interface.md)를 참조한다.
 
-**위치**: `lib/entities/`
+### 6.1 레거시 Entity 클래스 목록
+
+**위치**: `lib/entities/` (레거시, 기존 v6 코드에서 사용)
+
+> ⚠️ 아래는 기존 v6 시스템의 Entity이다. v7 시스템의 Entity는 `lib/<module>/` 폴더에 위치하며
+> `EntityInterface`를 구현한다. 상세 목록은 [v7-interface.md](v7-interface.md) 참조.
 
 | Entity | 파일 | 설명 |
 |------|------|------|
@@ -712,9 +724,9 @@ Entity는 `lib/entities/` 폴더에 위치하는 **POPO (Plain Old PHP Object)**
 | `ActiveAdvertisementEntity` | `active.advertisement.entity.php` | 활성 광고 |
 | `ReminderEntity` | `reminder.entity.php` | 알림 |
 
-### 6.2 Entity 패턴
+### 6.2 레거시 Entity 패턴
 
-모든 Entity는 **POPO (Plain Old PHP Object)** 패턴을 따른다:
+레거시 Entity는 **POPO (Plain Old PHP Object)** 패턴을 따른다:
 
 ```php
 class PostEntity {
