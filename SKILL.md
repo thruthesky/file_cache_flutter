@@ -146,6 +146,17 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 네임스페이스 매핑(`Philgo\User\` → `lib/user/`, `Philgo\Utils\` → `lib/utils/`)을
 정확히 따라야 합니다.
 
+### Interface 시스템 → [v7-interface.md](references/v7-interface.md)
+
+v7 시스템의 EntityInterface와 RepositoryInterface를 상세히 다룹니다. 모든 Entity(13개)는
+`Philgo\Utils\EntityInterface`를 구현하여 `fromArray(array $data): static` 정적 팩토리와
+`toArray(): array` 배열 변환을 필수로 제공합니다. 7개 Repository는
+`Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`, `update()`,
+`deleteByIdx()` 표준 CRUD 메서드명을 강제합니다. 4개 예외 Repository(SettingsRepository,
+EventRepository, QrCodeUsageRepository, VisitReviewRepository)는 도메인 특성상
+인터페이스를 미적용합니다. 표준 패턴 코드, 계산 필드 패턴, 런타임 속성 패턴,
+데이터 흐름, 새 모듈 추가 워크플로우 등을 포함합니다.
+
 ### Docker 인프라 설정 → [v7-docker.md](references/v7-docker.md)
 
 필고 프로젝트의 Docker Compose 이중 구조(신규 v7 + 기존 v6)를 상세히 다룹니다.
