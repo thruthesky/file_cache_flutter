@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 28, 2026 at 03:05 PM
+-- Generation Time: Mar 03, 2026 at 01:34 PM
 -- Server version: 11.7.2-MariaDB-ubu2404
 -- PHP Version: 8.3.6
 
@@ -244,6 +244,60 @@ CREATE TABLE `company_meta` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `company_qr_codes`
+--
+
+CREATE TABLE `company_qr_codes` (
+  `idx` int(11) NOT NULL COMMENT 'QR 코드 고유 번호',
+  `idx_company` int(11) NOT NULL DEFAULT 0 COMMENT '업소 idx (company.idx FK)',
+  `idx_member` int(11) NOT NULL DEFAULT 0 COMMENT '발행자 회원 idx (member.idx FK)',
+  `verification_id` varchar(64) NOT NULL DEFAULT '' COMMENT 'QR 코드 고유 검증 ID (랜덤 생성)',
+  `status` char(1) NOT NULL DEFAULT 'a' COMMENT '상태: a=활성, d=비활성, e=만료, u=사용완료',
+  `created_at` int(11) NOT NULL DEFAULT 0 COMMENT '발행 시각 (Unix timestamp)',
+  `expired_at` int(11) NOT NULL DEFAULT 0 COMMENT '만료 시각 (Unix timestamp, 0=무제한)',
+  `used_count` int(11) NOT NULL DEFAULT 0 COMMENT '사용(스캔) 횟수',
+  `memo` varchar(255) NOT NULL DEFAULT '' COMMENT '관리자 메모'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='업소록 QR 코드 발행 기록';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `company_qr_code_usages`
+--
+
+CREATE TABLE `company_qr_code_usages` (
+  `idx` int(11) NOT NULL COMMENT '사용 기록 고유 번호',
+  `idx_qr_code` int(11) NOT NULL DEFAULT 0 COMMENT 'QR 코드 idx (company_qr_codes.idx FK)',
+  `idx_company` int(11) NOT NULL DEFAULT 0 COMMENT '업소 idx (company.idx FK)',
+  `idx_member` int(11) NOT NULL DEFAULT 0 COMMENT '사용자 회원 idx (0=비로그인)',
+  `verification_id` varchar(64) NOT NULL DEFAULT '' COMMENT '사용한 QR 코드의 verification_id',
+  `scanned_at` int(11) NOT NULL DEFAULT 0 COMMENT '스캔 시각 (Unix timestamp)',
+  `ip_address` varchar(45) NOT NULL DEFAULT '' COMMENT '스캔자 IP 주소 (IPv6 대응)',
+  `user_agent` varchar(512) NOT NULL DEFAULT '' COMMENT '스캔자 User-Agent',
+  `referer` varchar(512) NOT NULL DEFAULT '' COMMENT '리퍼러 URL',
+  `device_type` varchar(20) NOT NULL DEFAULT '' COMMENT '디바이스 유형: mobile, tablet, desktop',
+  `result` char(1) NOT NULL DEFAULT 's' COMMENT '결과: s=성공, f=실패(검증실패), r=거부(24시간제한)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='업소록 QR 코드 사용(스캔) 기록';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `company_reviews`
+--
+
+CREATE TABLE `company_reviews` (
+  `idx` int(11) NOT NULL,
+  `idx_company` int(11) NOT NULL DEFAULT 0,
+  `idx_member` int(11) NOT NULL DEFAULT 0,
+  `usage_idx` int(11) NOT NULL DEFAULT 0,
+  `content` text NOT NULL,
+  `reward_points` int(11) NOT NULL DEFAULT 0,
+  `created_at` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `coupon`
 --
 
@@ -289,6 +343,31 @@ CREATE TABLE `data_node_entity` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `event_coupons`
+--
+
+CREATE TABLE `event_coupons` (
+  `idx` int(10) UNSIGNED NOT NULL,
+  `coupon_type` varchar(32) NOT NULL COMMENT '쿠폰 유형: starbucks, mcdonalds, phone_load, gift_card 등',
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `description` text DEFAULT NULL COMMENT '쿠폰 설명 (선택)',
+  `status` enum('available','won','sent','expired','cancelled') NOT NULL DEFAULT 'available' COMMENT '상태: available=미사용, won=당첨(미전송), sent=전송완료, expired=만료, cancelled=취소',
+  `idx_upload` int(10) UNSIGNED DEFAULT NULL COMMENT 'uploads.idx FK (QR 코드/쿠폰 이미지, NULL=이미지 없음)',
+  `image_url` varchar(500) DEFAULT NULL,
+  `idx_winner` int(10) UNSIGNED DEFAULT NULL COMMENT 'sf_member.idx - 당첨자 (NULL=미당첨)',
+  `idx_spin_history` int(10) UNSIGNED DEFAULT NULL COMMENT 'event_spin_history.idx - 당첨 스핀 기록 (NULL=미당첨)',
+  `won_at` int(10) UNSIGNED DEFAULT NULL COMMENT '당첨 시각 (Unix timestamp)',
+  `sent_at` int(10) UNSIGNED DEFAULT NULL COMMENT '전송 시각 (Unix timestamp)',
+  `viewed_at` int(10) UNSIGNED DEFAULT NULL COMMENT '사용자가 QR 코드를 최초 확인한 시간 (unix timestamp)',
+  `expired_at` int(10) UNSIGNED DEFAULT NULL COMMENT '만료 시각 (Unix timestamp, NULL=무기한)',
+  `memo` varchar(500) DEFAULT '' COMMENT '관리자 메모',
+  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '쿠폰 등록 시각',
+  `updated_at` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '마지막 수정 시각'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='이벤트 쿠폰 관리 (범용)';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `event_spin_history`
 --
 
@@ -300,6 +379,7 @@ CREATE TABLE `event_spin_history` (
   `points_cost` int(10) UNSIGNED NOT NULL DEFAULT 200 COMMENT '차감된 포인트 (참가비)',
   `points_reward` int(10) NOT NULL DEFAULT 0 COMMENT '획득 포인트 (0=꽝, 50/100/200/300/400/500/1000/2000)',
   `starbucks_coupon_file` varchar(255) DEFAULT NULL COMMENT '스타벅스 쿠폰 파일명 (NULL=해당없음, 예: 2.jpg)',
+  `coupon_sent_at` int(10) UNSIGNED DEFAULT NULL COMMENT '쿠폰 전송 시각 (Unix timestamp, NULL=미전송)',
   `random_value` int(10) UNSIGNED NOT NULL COMMENT '확률 계산에 사용된 랜덤 값 (1~10000, 감사 추적용)',
   `point_before` int(11) NOT NULL DEFAULT 0 COMMENT '게임 전 보유 포인트',
   `point_after` int(11) NOT NULL DEFAULT 0 COMMENT '게임 후 보유 포인트',
@@ -1349,6 +1429,39 @@ ALTER TABLE `company_meta`
   ADD KEY `idx_company_type` (`idx_company`,`type`);
 
 --
+-- Indexes for table `company_qr_codes`
+--
+ALTER TABLE `company_qr_codes`
+  ADD PRIMARY KEY (`idx`),
+  ADD UNIQUE KEY `uk_verification_id` (`verification_id`),
+  ADD KEY `idx_company` (`idx_company`),
+  ADD KEY `idx_member` (`idx_member`),
+  ADD KEY `idx_created_at` (`created_at`),
+  ADD KEY `idx_company_created` (`idx_company`,`created_at`),
+  ADD KEY `idx_status` (`status`);
+
+--
+-- Indexes for table `company_qr_code_usages`
+--
+ALTER TABLE `company_qr_code_usages`
+  ADD PRIMARY KEY (`idx`),
+  ADD KEY `idx_qr_code` (`idx_qr_code`),
+  ADD KEY `idx_company` (`idx_company`),
+  ADD KEY `idx_member` (`idx_member`),
+  ADD KEY `idx_scanned_at` (`scanned_at`),
+  ADD KEY `idx_company_member_scanned` (`idx_company`,`idx_member`,`scanned_at`),
+  ADD KEY `idx_verification_id` (`verification_id`);
+
+--
+-- Indexes for table `company_reviews`
+--
+ALTER TABLE `company_reviews`
+  ADD PRIMARY KEY (`idx`),
+  ADD UNIQUE KEY `idx_usage_idx` (`usage_idx`),
+  ADD KEY `idx_company` (`idx_company`),
+  ADD KEY `idx_member` (`idx_member`);
+
+--
 -- Indexes for table `coupon`
 --
 ALTER TABLE `coupon`
@@ -1373,6 +1486,18 @@ ALTER TABLE `data_node_entity`
   ADD KEY `updated` (`updated`),
   ADD KEY `gid` (`gid`),
   ADD KEY `code` (`code`);
+
+--
+-- Indexes for table `event_coupons`
+--
+ALTER TABLE `event_coupons`
+  ADD PRIMARY KEY (`idx`),
+  ADD KEY `coupon_type` (`coupon_type`),
+  ADD KEY `status` (`status`),
+  ADD KEY `idx_winner` (`idx_winner`),
+  ADD KEY `idx_upload` (`idx_upload`),
+  ADD KEY `idx_spin_history` (`idx_spin_history`),
+  ADD KEY `coupon_type_status` (`coupon_type`,`status`);
 
 --
 -- Indexes for table `event_spin_history`
@@ -1913,6 +2038,24 @@ ALTER TABLE `company_meta`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `company_qr_codes`
+--
+ALTER TABLE `company_qr_codes`
+  MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT COMMENT 'QR 코드 고유 번호';
+
+--
+-- AUTO_INCREMENT for table `company_qr_code_usages`
+--
+ALTER TABLE `company_qr_code_usages`
+  MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT COMMENT '사용 기록 고유 번호';
+
+--
+-- AUTO_INCREMENT for table `company_reviews`
+--
+ALTER TABLE `company_reviews`
+  MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `coupon`
 --
 ALTER TABLE `coupon`
@@ -1929,6 +2072,12 @@ ALTER TABLE `cron_data`
 --
 ALTER TABLE `data_node_entity`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `event_coupons`
+--
+ALTER TABLE `event_coupons`
+  MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `event_spin_history`
