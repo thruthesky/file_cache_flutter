@@ -170,34 +170,61 @@ public static function spin(array $user): array
         throw new RuntimeException("포인트가 부족합니다. (최소 200P 필요, 현재 {$currentPoint}P)");
     }
 
+<<<<<<< HEAD
     // [2] 사용 가능 쿠폰 확인 — event_coupons DB 기반
+=======
+    // DB 기반 쿠폰 존재 여부 확인
+>>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
     $hasStarbucksCoupon = EventCouponService::hasAvailableCoupon('starbucks');
 
     $pdo->beginTransaction();
     try {
+<<<<<<< HEAD
         // [4] 200P 차감 (PointLogService 사용)
         $costLog = PointLogService::changePoints(-self::SPIN_COST, $idxMember, $idxMember, 'event', 'spin_cost', 0, 'spin_cost');
 
         // [5] 확률 계산
         $result = self::calculateSpinResult($hasStarbucksCoupon);
+=======
+        // 200P 차감 (PointLogService 사용)
+        $costLog = PointLogService::changePoints(-200, $idxMember, $idxMember, 'event', 'spin_cost', 0, 'spin_cost');
+        $pointAfterCost = $costLog->point_after;
+
+        // 확률 계산 (쿠폰 유무에 따라 동적 확률)
+        $result = self::calculateSpinResult($hasStarbucksCoupon);
+        $assignedCoupon = null;
+        $finalPoint = $pointAfterCost;
+>>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
 
         // [6] 보상 처리
         $assignedCoupon = null;
         if ($result['prize_type'] === 'point' && $result['points'] > 0) {
             $rewardLog = PointLogService::changePoints($result['points'], 0, $idxMember, 'event', 'spin_reward', 0, "spin_reward_{$result['points']}");
+<<<<<<< HEAD
+=======
+            $finalPoint = $rewardLog->point_after;
+>>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
         } elseif ($result['prize_type'] === 'starbucks') {
             PointLogService::changePoints(0, 0, $idxMember, 'event', 'spin_reward', 0, 'spin_reward_starbucks');
         }
 
+<<<<<<< HEAD
         // [7] 이벤트 기록 저장
         $spinIdx = EventRepository::insertSpinHistory([...]);
 
         // [7-1] 스타벅스 당첨 시 쿠폰 배정 (트랜잭션 내)
+=======
+        // 기록 저장
+        $spinIdx = EventRepository::insertSpinHistory([...]);
+
+        // 스타벅스 당첨 시 DB 기반 쿠폰 배정 (SELECT ... FOR UPDATE)
+>>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
         if ($result['prize_type'] === 'starbucks') {
             $assignedCoupon = EventCouponService::assignCouponToWinner('starbucks', $idxMember, $spinIdx);
         }
 
         $pdo->commit();
+<<<<<<< HEAD
 
         // [8-1] 스타벅스 당첨 시 freetalk 자동 게시글 (커밋 후)
         if ($result['prize_type'] === 'starbucks') {
@@ -213,6 +240,21 @@ public static function spin(array $user): array
             'coupon' => $assignedCoupon ? [
                 'idx' => $assignedCoupon['idx'], 'title' => $assignedCoupon['title'],
                 'coupon_type' => $assignedCoupon['coupon_type'],
+=======
+        $remainingCoupons = EventCouponService::getAvailableCount('starbucks');
+
+        return [
+            'section_index' => $result['section_index'], 'points' => $result['points'],
+            'prize_type' => $result['prize_type'], 'current_point' => $finalPoint,
+            'lv' => UserService::calculateLevel($finalPoint),
+            'level_progress' => UserService::calculateLevelProgress($finalPoint, ...),
+            'starbucks_coupon_file' => null, 'starbucks_coupon_url' => null,
+            'available_coupons' => $remainingCoupons, 'spin_idx' => $spinIdx,
+            'coupon' => $assignedCoupon ? [
+                'idx' => (int) $assignedCoupon['idx'],
+                'title' => $assignedCoupon['title'] ?? '',
+                'coupon_type' => $assignedCoupon['coupon_type'] ?? 'starbucks',
+>>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
             ] : null,
         ];
     } catch (\Exception $e) {
@@ -282,9 +324,13 @@ v7 Upload API로 QR 이미지를 `uploads` 테이블에 저장하고 `idx_upload
 쿠폰이 0개이면 스타벅스 확률이 자동으로 0%가 되고 해당 weight가 50P에 합산된다.
 관리자 위젯(`widgets/admin/event/coupon-list.php`)에서 통계 대시보드, 등록/수정/삭제/전송 관리를 수행한다.
 
+<<<<<<< HEAD
 **전환 완료**: `EventService::spin()`이 `EventCouponService`를 직접 연동하여
 쿠폰 유무 확인(`hasAvailableCoupon`) → 당첨 시 배정(`assignCouponToWinner`)을 처리한다.
 Flutter 앱은 `event.myCoupons` API로 당첨 쿠폰 목록을 조회한다.
+=======
+**참고**: 쿠폰 관리는 100% DB 기반이다. 기존 파일 시스템 기반 쿠폰 관리(`event/cupon/starbucks/` 폴더)는 완전히 제거되었다.
+>>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
 
 ### 2.7 sf_point_log 기록 규칙 (스피닝 휠)
 
@@ -1450,8 +1496,6 @@ lib/point_log/
 
 widgets/admin/event/
 └── coupon-list.php             ← 관리자 쿠폰 관리 위젯 (Vue.js + v7 Upload API)
-
-event/cupon/starbucks/         ← 스타벅스 쿠폰 이미지 저장 폴더 (레거시)
 
 company/
 ├── qr-code-scanned.php        ← QR 스캔 성공 감사 페이지 (후기 CTA 포함)
