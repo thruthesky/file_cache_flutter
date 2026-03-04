@@ -161,6 +161,29 @@ class _MainHomeState extends State<MainHome> {
                                   style: labelStyle?.copyWith(fontSize: 9),
                                 ),
                                 const Spacer(),
+                                /// V7 API 엔드포인트 주소 + 세팅 로딩 상태 (헤더 오른쪽 표시)
+                                Selector<V7SettingsState, ({V7Settings? settings, String? error})>(
+                                  selector: (_, state) => (settings: state.settings, error: state.error),
+                                  builder: (context, data, _) {
+                                    /// 세팅 로딩 상태 아이콘: 성공 ✓ / 실패 ✗ / 로딩중 …
+                                    final String status;
+                                    if (data.error != null) {
+                                      status = ' ✗';
+                                    } else if (data.settings != null) {
+                                      status = ' ✓';
+                                    } else {
+                                      status = ' …';
+                                    }
+                                    return Flexible(
+                                      child: Text(
+                                        '${PhilgoConfig.v7ApiEndpoint}$status',
+                                        style: labelStyle?.copyWith(fontSize: 10),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 6),
                                 FaIcon(
                                   _debugCardExpanded ? FontAwesomeIcons.chevronUp : FontAwesomeIcons.chevronDown,
                                   size: 10,
