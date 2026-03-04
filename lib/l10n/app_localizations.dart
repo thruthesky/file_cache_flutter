@@ -4460,7 +4460,7 @@ abstract class Lo {
   /// Message when all Starbucks coupons are exhausted
   ///
   /// In en, this message translates to:
-  /// **'All Starbucks coupons have been claimed. The spinning wheel is no longer available.'**
+  /// **'The Starbucks coupon event has ended.\nCheck your won coupons below.'**
   String get spinWheelCouponsExhausted;
 
   /// Button text to view coupon image
@@ -4468,6 +4468,66 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'View Coupon'**
   String get viewCoupon;
+
+  /// Coupon status badge label for sent coupons
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get couponSent;
+
+  /// Coupon status badge label for won coupons
+  ///
+  /// In en, this message translates to:
+  /// **'Won'**
+  String get couponWon;
+
+  /// Coupon warning: cost is already paid regardless of usage
+  ///
+  /// In en, this message translates to:
+  /// **'Note: PhilGo has already paid the full cost of the Starbucks coupon.'**
+  String get couponNoticeAlreadyPaid;
+
+  /// Coupon warning: QR code transfer makes coupon unusable
+  ///
+  /// In en, this message translates to:
+  /// **'If you send the Starbucks coupon QR code to another user, they can use it.'**
+  String get couponNoticeQrTransfer;
+
+  /// Coupon warning: no reuse and disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon QR codes cannot be reused. PhilGo is not responsible for any issues arising from coupon usage.'**
+  String get couponNoticeDisclaimer;
+
+  /// Confirmation dialog title before showing coupon QR code
+  ///
+  /// In en, this message translates to:
+  /// **'Use this coupon?'**
+  String get couponUseConfirmTitle;
+
+  /// Confirmation dialog message warning about one-time use
+  ///
+  /// In en, this message translates to:
+  /// **'The coupon QR code can only be scanned once and cannot be reused.'**
+  String get couponUseConfirmMessage;
+
+  /// Confirmation dialog positive button text
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, use it'**
+  String get couponUseConfirmButton;
+
+  /// Label showing when the coupon QR code was first viewed
+  ///
+  /// In en, this message translates to:
+  /// **'Viewed: {date}'**
+  String couponViewedDate(String date);
+
+  /// Badge label for coupons that have been viewed
+  ///
+  /// In en, this message translates to:
+  /// **'QR Viewed'**
+  String get couponQrViewed;
 
   /// No description provided for @revisitPointEventDraw.
   ///

@@ -2753,13 +2753,58 @@
   "@spinWheelCostNotice": {
     "description": "Notice about point cost per spin"
   },
-  "spinWheelCouponsExhausted": "All Starbucks coupons have been claimed. The spinning wheel is no longer available.",
+  "spinWheelCouponsExhausted": "The Starbucks coupon event has ended.\nCheck your won coupons below.",
   "@spinWheelCouponsExhausted": {
     "description": "Message when all Starbucks coupons are exhausted"
   },
   "viewCoupon": "View Coupon",
   "@viewCoupon": {
     "description": "Button text to view coupon image"
+  },
+  "couponSent": "Sent",
+  "@couponSent": {
+    "description": "Coupon status badge label for sent coupons"
+  },
+  "couponWon": "Won",
+  "@couponWon": {
+    "description": "Coupon status badge label for won coupons"
+  },
+  "couponNoticeAlreadyPaid": "Note: PhilGo has already paid the full cost of the Starbucks coupon.",
+  "@couponNoticeAlreadyPaid": {
+    "description": "Coupon warning: cost is already paid regardless of usage"
+  },
+  "couponNoticeQrTransfer": "If you send the Starbucks coupon QR code to another user, they can use it.",
+  "@couponNoticeQrTransfer": {
+    "description": "Coupon warning: QR code transfer makes coupon unusable"
+  },
+  "couponNoticeDisclaimer": "Coupon QR codes cannot be reused. PhilGo is not responsible for any issues arising from coupon usage.",
+  "@couponNoticeDisclaimer": {
+    "description": "Coupon warning: no reuse and disclaimer"
+  },
+  "couponUseConfirmTitle": "Use this coupon?",
+  "@couponUseConfirmTitle": {
+    "description": "Confirmation dialog title before showing coupon QR code"
+  },
+  "couponUseConfirmMessage": "The coupon QR code can only be scanned once and cannot be reused.",
+  "@couponUseConfirmMessage": {
+    "description": "Confirmation dialog message warning about one-time use"
+  },
+  "couponUseConfirmButton": "Yes, use it",
+  "@couponUseConfirmButton": {
+    "description": "Confirmation dialog positive button text"
+  },
+  "couponViewedDate": "Viewed: {date}",
+  "@couponViewedDate": {
+    "description": "Label showing when the coupon QR code was first viewed",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "couponQrViewed": "QR Viewed",
+  "@couponQrViewed": {
+    "description": "Badge label for coupons that have been viewed"
   },
   "revisitPointEventDraw": "Revisit Point Event Draw",
   "writeReviewForPoints": "Write Review → Random 3,000P",

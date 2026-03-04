@@ -2212,13 +2212,58 @@
   "@spinWheelCostNotice": {
     "description": "Notice about point cost per spin"
   },
-  "spinWheelCouponsExhausted": "星巴克优惠券已全部领完，转盘抽奖暂时不可用。",
+  "spinWheelCouponsExhausted": "星巴克优惠券活动已结束。\n请在下方查看您中奖的优惠券。",
   "@spinWheelCouponsExhausted": {
     "description": "Message when all Starbucks coupons are exhausted"
   },
   "viewCoupon": "查看优惠券",
   "@viewCoupon": {
     "description": "Button text to view coupon image"
+  },
+  "couponSent": "已发送",
+  "@couponSent": {
+    "description": "Coupon status badge label for sent coupons"
+  },
+  "couponWon": "中奖",
+  "@couponWon": {
+    "description": "Coupon status badge label for won coupons"
+  },
+  "couponNoticeAlreadyPaid": "参考：PhilGo已全额支付星巴克优惠券费用。",
+  "@couponNoticeAlreadyPaid": {
+    "description": "Coupon warning: cost is already paid regardless of usage"
+  },
+  "couponNoticeQrTransfer": "将星巴克优惠券QR码发送给其他用户后，该用户即可使用。",
+  "@couponNoticeQrTransfer": {
+    "description": "Coupon warning: QR code transfer makes coupon unusable"
+  },
+  "couponNoticeDisclaimer": "优惠券QR码不可重复使用。使用过程中产生的任何问题，PhilGo概不负责。",
+  "@couponNoticeDisclaimer": {
+    "description": "Coupon warning: no reuse and disclaimer"
+  },
+  "couponUseConfirmTitle": "使用此优惠券？",
+  "@couponUseConfirmTitle": {
+    "description": "Confirmation dialog title before showing coupon QR code"
+  },
+  "couponUseConfirmMessage": "优惠券QR码扫描一次后将无法再次使用。",
+  "@couponUseConfirmMessage": {
+    "description": "Confirmation dialog message warning about one-time use"
+  },
+  "couponUseConfirmButton": "是的，使用",
+  "@couponUseConfirmButton": {
+    "description": "Confirmation dialog positive button text"
+  },
+  "couponViewedDate": "确认日期：{date}",
+  "@couponViewedDate": {
+    "description": "Label showing when the coupon QR code was first viewed",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "couponQrViewed": "QR已确认",
+  "@couponQrViewed": {
+    "description": "Badge label for coupons that have been viewed"
   },
   "revisitPointEventDraw": "商家回访积分抽奖",
   "writeReviewForPoints": "写评价 → 随机3千积分",

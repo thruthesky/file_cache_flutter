@@ -2279,10 +2279,46 @@ class LoEn extends Lo {
 
   @override
   String get spinWheelCouponsExhausted =>
-      'All Starbucks coupons have been claimed. The spinning wheel is no longer available.';
+      'The Starbucks coupon event has ended.\nCheck your won coupons below.';
 
   @override
   String get viewCoupon => 'View Coupon';
+
+  @override
+  String get couponSent => 'Sent';
+
+  @override
+  String get couponWon => 'Won';
+
+  @override
+  String get couponNoticeAlreadyPaid =>
+      'Note: PhilGo has already paid the full cost of the Starbucks coupon.';
+
+  @override
+  String get couponNoticeQrTransfer =>
+      'If you send the Starbucks coupon QR code to another user, they can use it.';
+
+  @override
+  String get couponNoticeDisclaimer =>
+      'Coupon QR codes cannot be reused. PhilGo is not responsible for any issues arising from coupon usage.';
+
+  @override
+  String get couponUseConfirmTitle => 'Use this coupon?';
+
+  @override
+  String get couponUseConfirmMessage =>
+      'The coupon QR code can only be scanned once and cannot be reused.';
+
+  @override
+  String get couponUseConfirmButton => 'Yes, use it';
+
+  @override
+  String couponViewedDate(String date) {
+    return 'Viewed: $date';
+  }
+
+  @override
+  String get couponQrViewed => 'QR Viewed';
 
   @override
   String get revisitPointEventDraw => 'Revisit Point Event Draw';

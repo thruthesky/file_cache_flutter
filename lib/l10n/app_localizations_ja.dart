@@ -2234,10 +2234,45 @@ class LoJa extends Lo {
 
   @override
   String get spinWheelCouponsExhausted =>
-      'スターバックスクーポンがすべてなくなったため、ルーレットは利用できません。';
+      'スターバックスクーポンイベントが終了しました。\n当選したクーポンは下記からご確認ください。';
 
   @override
   String get viewCoupon => 'クーポン確認';
+
+  @override
+  String get couponSent => '送信済み';
+
+  @override
+  String get couponWon => '当選';
+
+  @override
+  String get couponNoticeAlreadyPaid =>
+      '参考：PhilGoがすでにスターバックスクーポンの費用を全額支払っています。';
+
+  @override
+  String get couponNoticeQrTransfer =>
+      'スターバックスクーポンのQRコードを他のユーザーに送ると、そのユーザーが使用できます。';
+
+  @override
+  String get couponNoticeDisclaimer =>
+      'クーポンのQRコードは再利用できません。使用に関して発生する問題について、PhilGoは責任を負いません。';
+
+  @override
+  String get couponUseConfirmTitle => 'クーポンを使用しますか？';
+
+  @override
+  String get couponUseConfirmMessage => 'クーポンのQRコードは一度スキャンすると再利用できません。';
+
+  @override
+  String get couponUseConfirmButton => 'はい、使用します';
+
+  @override
+  String couponViewedDate(String date) {
+    return '確認日：$date';
+  }
+
+  @override
+  String get couponQrViewed => 'QR確認済み';
 
   @override
   String get revisitPointEventDraw => '店舗再訪問ポイント抽選';

@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
-import 'package:philgo/screens/event/event_entry.screen.dart';
 import 'package:philgo_api/philgo_api.dart' show PhilgoConfig;
 import 'package:philgo/v7_api/v7_api.dart';
 
@@ -100,14 +99,6 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
       appBar: AppBar(
         title: Text(l10n.eventCoupon),
         elevation: 0,
-        actions: [
-          /// 이벤트 응모 페이지로 이동하는 액션 버튼
-          IconButton(
-            onPressed: () => EventEntryScreen.push(context),
-            icon: const FaIcon(FontAwesomeIcons.gift, size: 20),
-            tooltip: l10n.quickMenuEventEntry,
-          ),
-        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -171,6 +162,63 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
         ).animate().fadeIn(duration: 400.ms),
       ),
     );
+  }
+
+  /// 쿠폰 클릭 시 확인 다이얼로그 → API 호출 → QR 코드 표시
+  ///
+  /// 1. 확인 다이얼로그로 사용자 의사 확인
+  /// 2. event.viewCoupon API 호출하여 viewed_at 기록
+  /// 3. QR 코드 이미지를 전체 화면으로 표시
+  Future<void> _onCouponTap(Map<String, dynamic> coupon, String imageUrl) async {
+    final l10n = Lo.of(context)!;
+    final couponIdx = coupon['idx'];
+    final viewedAt = coupon['viewed_at'];
+
+    // 이미 확인한 쿠폰은 바로 QR 표시
+    if (viewedAt != null && viewedAt != 0 && '$viewedAt' != '0') {
+      _showCouponImage(imageUrl);
+      return;
+    }
+
+    // 미확인 쿠폰: 확인 다이얼로그 표시
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.couponUseConfirmTitle),
+        content: Text(l10n.couponUseConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.couponUseConfirmButton),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    // event.viewCoupon API 호출하여 viewed_at 기록
+    try {
+      await v7api('event.viewCoupon', data: {'idx': couponIdx});
+
+      // 로컬 쿠폰 데이터에 viewed_at 업데이트
+      if (mounted) {
+        setState(() {
+          coupon['viewed_at'] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        });
+      }
+    } catch (e) {
+      debugPrint('event.viewCoupon API 에러: $e');
+    }
+
+    // QR 코드 이미지 표시
+    if (mounted) {
+      _showCouponImage(imageUrl);
+    }
   }
 
   /// 쿠폰 이미지를 전체 화면 다이얼로그로 표시
@@ -237,93 +285,281 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
     );
   }
 
+
+  /// 쿠폰 경고 메시지 위젯 (목록 상단 고정)
+  Widget _buildCouponNotice(ColorScheme scheme, Lo l10n) {
+    final notices = [
+      l10n.couponNoticeAlreadyPaid,
+      l10n.couponNoticeQrTransfer,
+      l10n.couponNoticeDisclaimer,
+    ];
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        // 경고 메시지 배경은 errorContainer 색상 사용
+        color: scheme.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (int i = 0; i < notices.length; i++) ...[
+            if (i > 0) const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: FaIcon(
+                    FontAwesomeIcons.triangleExclamation,
+                    size: 12,
+                    // 경고 아이콘은 onErrorContainer 색상 사용
+                    color: scheme.onErrorContainer,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    notices[i],
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          // 경고 텍스트는 onErrorContainer 색상 사용
+                          color: scheme.onErrorContainer,
+                          height: 1.4,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   /// 쿠폰 목록 위젯
   Widget _buildCouponList(ColorScheme scheme) {
     final l10n = Lo.of(context)!;
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
+    return Column(
+      children: [
+        /// 경고 메시지 (스크롤되지 않는 고정 헤더)
+        _buildCouponNotice(scheme, l10n),
+        const SizedBox(height: 8),
+
+        /// 쿠폰 카드 목록
+        Expanded(
+          child: ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       itemCount: _coupons.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final coupon = _coupons[index];
         final imageUrl = _getCouponImageUrl(coupon);
         final date = _formatDate(coupon['won_at']);
+        // event_coupons 테이블의 idx를 식별 코드로 사용
+        final couponId = '${coupon['idx'] ?? ''}';
         final title = coupon['title'] as String? ?? '';
+        final couponType = coupon['coupon_type'] as String? ?? '';
         final status = coupon['status'] as String? ?? '';
         final isSent = status == 'sent';
+        final viewedAt = coupon['viewed_at'];
+        final isViewed = viewedAt != null && viewedAt != 0 && '$viewedAt' != '0';
+        final viewedDate = isViewed ? _formatDate(viewedAt) : '';
 
-        return Card(
-          elevation: 0,
-          color: scheme.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                /// 쿠폰 제목 + 당첨 날짜 + 상태 배지
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// 쿠폰 제목
-                      if (title.isNotEmpty) ...[
+        return InkWell(
+          onTap: imageUrl.isNotEmpty ? () => _onCouponTap(coupon, imageUrl) : null,
+          borderRadius: BorderRadius.circular(16),
+          child: Card(
+            elevation: 0,
+            color: scheme.surfaceContainerLowest,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  /// 쿠폰 유형 라벨 (이미지 대신 텍스트 표시)
+                  _buildCouponLabel(
+                    scheme,
+                    couponType: couponType,
+                    title: title,
+                  ),
+                  const SizedBox(width: 16),
+
+                  /// 쿠폰 정보 (제목 + 날짜/코드 + 상태)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// 쿠폰 제목
                         Text(
-                          title,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          title.isNotEmpty ? title : couponType,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                 color: scheme.onSurface,
                               ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                      ],
 
-                      /// 당첨 날짜 + 상태 아이콘
-                      Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.calendar,
-                            size: 12,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 6),
+                        /// 당첨 날짜 + 식별 코드
+                        Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.calendar,
+                              size: 11,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              date.isNotEmpty ? date : '-',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: scheme.onSurfaceVariant,
+                                  ),
+                            ),
+                            if (couponId.isNotEmpty) ...[
+                              const SizedBox(width: 8),
+                              // 식별 코드를 작은 칩으로 표시
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 1,
+                                ),
+                                decoration: BoxDecoration(
+                                  // 칩 배경은 secondaryContainer 색상 사용
+                                  color: scheme.secondaryContainer,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  '#$couponId',
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                        color: scheme.onSecondaryContainer,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        /// 상태 배지
+                        _buildStatusBadge(scheme, isSent: isSent, l10n: l10n),
+
+                        /// QR 확인 날짜 (viewed_at이 있는 경우만 표시)
+                        if (isViewed && viewedDate.isNotEmpty) ...[
+                          const SizedBox(height: 4),
                           Text(
-                            date.isNotEmpty ? date : '-',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: scheme.onSurfaceVariant,
+                            l10n.couponViewedDate(viewedDate),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: scheme.tertiary,
+                                  fontWeight: FontWeight.w500,
                                 ),
                           ),
-                          const SizedBox(width: 8),
-
-                          /// 전송 완료 상태 아이콘
-                          if (isSent)
-                            FaIcon(
-                              FontAwesomeIcons.circleCheck,
-                              size: 14,
-                              // 전송 완료된 쿠폰은 primary 색상으로 체크 표시
-                              color: scheme.primary,
-                            ),
                         ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                /// 쿠폰 확인 버튼
-                if (imageUrl.isNotEmpty)
-                  FilledButton.tonalIcon(
-                    onPressed: () => _showCouponImage(imageUrl),
-                    icon: const FaIcon(FontAwesomeIcons.lightImage, size: 14),
-                    label: Text(l10n.viewCoupon),
-                  ),
-              ],
+                  /// 쿠폰 보기 화살표
+                  if (imageUrl.isNotEmpty)
+                    FaIcon(
+                      FontAwesomeIcons.chevronRight,
+                      size: 14,
+                      color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+                    ),
+                ],
+              ),
             ),
           ),
-        ).animate().fadeIn(duration: 300.ms, delay: (index * 80).ms);
+        ).animate().fadeIn(duration: 300.ms, delay: (index * 60).ms);
       },
+          ),
+        ),
+      ],
     );
   }
+
+  /// 쿠폰 유형 라벨 위젯 (이미지 대신 유형 + 제목 텍스트 표시)
+  Widget _buildCouponLabel(
+    ColorScheme scheme, {
+    required String couponType,
+    required String title,
+  }) {
+    // 쿠폰 유형별 고정 라벨 텍스트
+    final displayText = switch (couponType) {
+      'starbucks' => '스타벅스\n300 쿠폰',
+      'mcdonalds' => '맥도날드\n쿠폰',
+      _ => title.isNotEmpty ? title : couponType,
+    };
+
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        // 라벨 배경은 primaryContainer 색상 사용
+        color: scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Text(
+            displayText,
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  // 라벨 텍스트는 onPrimaryContainer 색상 사용
+                  color: scheme.onPrimaryContainer,
+                  fontWeight: FontWeight.w600,
+                  height: 1.2,
+                ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 전송 상태 배지 위젯
+  Widget _buildStatusBadge(
+    ColorScheme scheme, {
+    required bool isSent,
+    required Lo l10n,
+  }) {
+    // 전송 완료: tertiary, 당첨(미전송): secondary
+    final bgColor =
+        isSent ? scheme.tertiaryContainer : scheme.secondaryContainer;
+    final fgColor =
+        isSent ? scheme.onTertiaryContainer : scheme.onSecondaryContainer;
+    final icon =
+        isSent ? FontAwesomeIcons.circleCheck : FontAwesomeIcons.trophy;
+    final label = isSent ? l10n.couponSent : l10n.couponWon;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FaIcon(icon, size: 10, color: fgColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: fgColor,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

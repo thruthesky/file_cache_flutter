@@ -2212,13 +2212,58 @@
   "@spinWheelCostNotice": {
     "description": "Notice about point cost per spin"
   },
-  "spinWheelCouponsExhausted": "スターバックスクーポンがすべてなくなったため、ルーレットは利用できません。",
+  "spinWheelCouponsExhausted": "スターバックスクーポンイベントが終了しました。\n当選したクーポンは下記からご確認ください。",
   "@spinWheelCouponsExhausted": {
     "description": "Message when all Starbucks coupons are exhausted"
   },
   "viewCoupon": "クーポン確認",
   "@viewCoupon": {
     "description": "Button text to view coupon image"
+  },
+  "couponSent": "送信済み",
+  "@couponSent": {
+    "description": "Coupon status badge label for sent coupons"
+  },
+  "couponWon": "当選",
+  "@couponWon": {
+    "description": "Coupon status badge label for won coupons"
+  },
+  "couponNoticeAlreadyPaid": "参考：PhilGoがすでにスターバックスクーポンの費用を全額支払っています。",
+  "@couponNoticeAlreadyPaid": {
+    "description": "Coupon warning: cost is already paid regardless of usage"
+  },
+  "couponNoticeQrTransfer": "スターバックスクーポンのQRコードを他のユーザーに送ると、そのユーザーが使用できます。",
+  "@couponNoticeQrTransfer": {
+    "description": "Coupon warning: QR code transfer makes coupon unusable"
+  },
+  "couponNoticeDisclaimer": "クーポンのQRコードは再利用できません。使用に関して発生する問題について、PhilGoは責任を負いません。",
+  "@couponNoticeDisclaimer": {
+    "description": "Coupon warning: no reuse and disclaimer"
+  },
+  "couponUseConfirmTitle": "クーポンを使用しますか？",
+  "@couponUseConfirmTitle": {
+    "description": "Confirmation dialog title before showing coupon QR code"
+  },
+  "couponUseConfirmMessage": "クーポンのQRコードは一度スキャンすると再利用できません。",
+  "@couponUseConfirmMessage": {
+    "description": "Confirmation dialog message warning about one-time use"
+  },
+  "couponUseConfirmButton": "はい、使用します",
+  "@couponUseConfirmButton": {
+    "description": "Confirmation dialog positive button text"
+  },
+  "couponViewedDate": "確認日：{date}",
+  "@couponViewedDate": {
+    "description": "Label showing when the coupon QR code was first viewed",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "couponQrViewed": "QR確認済み",
+  "@couponQrViewed": {
+    "description": "Badge label for coupons that have been viewed"
   },
   "revisitPointEventDraw": "店舗再訪問ポイント抽選",
   "writeReviewForPoints": "レビュー作成 → 3千ポイントランダム",

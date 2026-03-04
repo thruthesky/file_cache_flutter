@@ -2227,10 +2227,42 @@ class LoZh extends Lo {
   String get spinWheelCostNotice => '每次抽奖将消耗200积分。';
 
   @override
-  String get spinWheelCouponsExhausted => '星巴克优惠券已全部领完，转盘抽奖暂时不可用。';
+  String get spinWheelCouponsExhausted => '星巴克优惠券活动已结束。\n请在下方查看您中奖的优惠券。';
 
   @override
   String get viewCoupon => '查看优惠券';
+
+  @override
+  String get couponSent => '已发送';
+
+  @override
+  String get couponWon => '中奖';
+
+  @override
+  String get couponNoticeAlreadyPaid => '参考：PhilGo已全额支付星巴克优惠券费用。';
+
+  @override
+  String get couponNoticeQrTransfer => '将星巴克优惠券QR码发送给其他用户后，该用户即可使用。';
+
+  @override
+  String get couponNoticeDisclaimer => '优惠券QR码不可重复使用。使用过程中产生的任何问题，PhilGo概不负责。';
+
+  @override
+  String get couponUseConfirmTitle => '使用此优惠券？';
+
+  @override
+  String get couponUseConfirmMessage => '优惠券QR码扫描一次后将无法再次使用。';
+
+  @override
+  String get couponUseConfirmButton => '是的，使用';
+
+  @override
+  String couponViewedDate(String date) {
+    return '确认日期：$date';
+  }
+
+  @override
+  String get couponQrViewed => 'QR已确认';
 
   @override
   String get revisitPointEventDraw => '商家回访积分抽奖';

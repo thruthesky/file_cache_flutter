@@ -2233,10 +2233,44 @@ class LoKo extends Lo {
 
   @override
   String get spinWheelCouponsExhausted =>
-      '스타벅스 쿠폰이 모두 소진되어서 더 이상 원판 돌리기를 하지 않습니다.';
+      '스타벅스 쿠폰 이벤트가 종료되었습니다.\n당첨된 쿠폰은 아래에서 확인하세요.';
 
   @override
   String get viewCoupon => '쿠폰 확인';
+
+  @override
+  String get couponSent => '전송 완료';
+
+  @override
+  String get couponWon => '당첨';
+
+  @override
+  String get couponNoticeAlreadyPaid => '참고: 필고에서 이미 스타벅스 쿠폰 비용을 전액 지불한 것입니다.';
+
+  @override
+  String get couponNoticeQrTransfer =>
+      '스타벅스 쿠폰 큐알코드를 다른 사용자에게 보내면 그 사용자가 사용할 수 있습니다.';
+
+  @override
+  String get couponNoticeDisclaimer =>
+      '쿠폰의 QR 코드는 재사용할 수 없으며, 사용 과정에서 발생하는 문제에 대해 필고는 책임을 지지 않습니다.';
+
+  @override
+  String get couponUseConfirmTitle => '쿠폰을 사용하시겠습니까?';
+
+  @override
+  String get couponUseConfirmMessage => '쿠폰 QR 코드는 한 번 스캔하면 더 이상 쓸 수 없습니다.';
+
+  @override
+  String get couponUseConfirmButton => '예, 사용하겠습니다';
+
+  @override
+  String couponViewedDate(String date) {
+    return '확인 날짜: $date';
+  }
+
+  @override
+  String get couponQrViewed => 'QR 확인됨';
 
   @override
   String get revisitPointEventDraw => '업소록 재방문 포인트 이벤트 추첨';

@@ -109,7 +109,11 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             .replaceAll(RegExp(r'^v7api\([^)]*\):\s*'), '');
 
         // 쿠폰 소진 에러이면 V7SettingsState를 0으로 갱신 → 스피닝 휠 숨김
+        // V7SettingsState 갱신 전에 busy 상태를 먼저 해제한다.
+        // Selector 리빌드로 SpinningWheel이 제거되면 onBusyChanged가
+        // 호출되지 않을 수 있으므로, 여기서 선제적으로 reset한다.
         if (errorMsg.contains('쿠폰') || errorMsg.contains('coupon')) {
+          setState(() => _isWheelBusy = false);
           V7SettingsState.of(context).updateAvailableStarbucksCoupons(0);
         }
 
@@ -579,38 +583,128 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
       V7SettingsState.of(context)
           .updateAvailableStarbucksCoupons(availableCoupons);
     }
+
+    // 축하 다이얼로그 확인 후 쿠폰 목록 페이지로 이동
+    if (mounted) {
+      EventCouponScreen.push(context);
+    }
   }
 
   /// 스타벅스 쿠폰 소진 안내 배너
+  ///
+  /// 카드 형태의 레이아웃으로 아이콘 + 설명 + 쿠폰 확인 버튼을 구성.
+  /// Flat design 원칙에 따라 색상 대비만으로 요소를 구분한다.
   Widget _buildCouponsExhaustedBanner(
     ThemeData theme,
     ColorScheme scheme,
     Lo l10n,
   ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      decoration: BoxDecoration(
-        color: scheme.errorContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          FaIcon(
-            FontAwesomeIcons.lightMugHot,
-            size: 48,
-            color: scheme.onSurfaceVariant,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// 섹션 헤더 (인디케이터 바 + 아이콘 + 타이틀)
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              /// 인디케이터 바 (3px × 16px)
+              Container(
+                width: 3,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FaIcon(
+                FontAwesomeIcons.lightMugHot,
+                size: 14,
+                color: scheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                l10n.eventCoupon,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            l10n.spinWheelCouponsExhausted,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: scheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
+        ).animate().fadeIn(duration: 400.ms),
+
+        /// 메인 카드 컨테이너
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05, end: 0);
+          clipBehavior: Clip.antiAlias,
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
+          child: Column(
+            children: [
+              /// 커피 아이콘 (그라데이션 원형 배경)
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      scheme.primaryContainer.withValues(alpha: 0.6),
+                      scheme.primaryContainer.withValues(alpha: 0.2),
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.lightMugHot,
+                    size: 36,
+                    color: scheme.primary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              /// 안내 메시지
+              Text(
+                l10n.spinWheelCouponsExhausted,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  height: 1.6,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 28),
+
+              /// 쿠폰 목록 보기 버튼
+              /// FilledButton 내부에 inline style을 지정하지 않아야 기본 foreground 색상 적용됨
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () => EventCouponScreen.push(context),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  icon: const FaIcon(FontAwesomeIcons.lightTicket, size: 16),
+                  label: Text(l10n.eventCoupon),
+                ),
+              ),
+            ],
+          ),
+        )
+            .animate()
+            .fadeIn(duration: 400.ms, delay: 100.ms)
+            .slideY(begin: 0.1, end: 0),
+      ],
+    );
   }
 }

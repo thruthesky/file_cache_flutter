@@ -137,6 +137,12 @@ class _SpinningWheelState extends State<SpinningWheel>
   /// 마지막 당첨 결과 섹션 (인라인 표시용)
   WheelSection? _lastResult;
 
+  /// 서버에서 반환한 당첨 섹션 인덱스 (시각적 판별 대신 사용)
+  ///
+  /// _notifyResult()에서 시각적 각도 판별은 jitter로 인해 인접 섹션으로
+  /// 오판될 수 있으므로, 서버 결과를 직접 사용하여 정확한 결과를 보장한다.
+  int? _serverTargetIndex;
+
   /// 효과음 플레이어
   final AudioPlayer _audioPlayer = AudioPlayer();
 
@@ -193,6 +199,13 @@ class _SpinningWheelState extends State<SpinningWheel>
 
   @override
   void dispose() {
+    /// 위젯 제거 시 busy 상태를 false로 알림.
+    /// V7SettingsState 갱신으로 SpinningWheel이 위젯 트리에서 제거될 때,
+    /// onBusyChanged(false)가 호출되지 않아 부모의 _isWheelBusy가
+    /// true로 남는 버그를 방지한다.
+    if (_wasBusy) {
+      widget.onBusyChanged?.call(false);
+    }
     _controller.dispose();
     _audioPlayer.dispose();
     super.dispose();
@@ -288,6 +301,9 @@ class _SpinningWheelState extends State<SpinningWheel>
     } else {
       targetIndex = _random.nextInt(widget.sections.length);
     }
+
+    /// 서버 결과 저장 (_notifyResult에서 시각적 판별 대신 사용)
+    _serverTargetIndex = targetIndex;
 
     /// 로딩 해제
     if (mounted) {
@@ -409,19 +425,33 @@ class _SpinningWheelState extends State<SpinningWheel>
     }
   }
 
-  /// 당첨 결과 콜백 호출 (가중치 기반 섹션 판별)
+  /// 당첨 결과 콜백 호출 (서버 targetIndex 기반)
+  ///
+  /// 시각적 각도 판별은 jitter로 인해 인접 섹션으로 오판될 수 있으므로,
+  /// 서버에서 반환한 _serverTargetIndex를 직접 사용한다.
+  /// _serverTargetIndex가 없는 경우에만 시각적 판별로 폴백한다.
   void _notifyResult() {
-    final normalizedAngle = (_currentAngle % (2 * pi));
-    final pointerAngle = (2 * pi - normalizedAngle) % (2 * pi);
-    final startAngles = _sectionStartAngles;
-    int sectionIndex = widget.sections.length - 1;
-    for (int i = 0; i < widget.sections.length; i++) {
-      final start = startAngles[i];
-      final end = start + _sectionSweep(i);
-      if (pointerAngle >= start && pointerAngle < end) {
-        sectionIndex = i;
-        break;
+    final int sectionIndex;
+    if (_serverTargetIndex != null &&
+        _serverTargetIndex! >= 0 &&
+        _serverTargetIndex! < widget.sections.length) {
+      /// 서버 결과 직접 사용 (정확한 판별 보장)
+      sectionIndex = _serverTargetIndex!;
+    } else {
+      /// 폴백: 시각적 각도 기반 판별
+      final normalizedAngle = (_currentAngle % (2 * pi));
+      final pointerAngle = (2 * pi - normalizedAngle) % (2 * pi);
+      final startAngles = _sectionStartAngles;
+      int fallbackIndex = widget.sections.length - 1;
+      for (int i = 0; i < widget.sections.length; i++) {
+        final start = startAngles[i];
+        final end = start + _sectionSweep(i);
+        if (pointerAngle >= start && pointerAngle < end) {
+          fallbackIndex = i;
+          break;
+        }
       }
+      sectionIndex = fallbackIndex;
     }
     final result = widget.sections[sectionIndex];
     setState(() {
