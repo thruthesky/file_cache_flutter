@@ -11,7 +11,7 @@
 - [4. 관리자 쿠폰 등록 (Admin Widget)](#4-관리자-쿠폰-등록-admin-widget)
 - [5. 관리자 쿠폰 관리 (목록/필터/수정/삭제)](#5-관리자-쿠폰-관리-목록필터수정삭제)
 - [6. 쿠폰 당첨 배정 (스피닝 휠 연동)](#6-쿠폰-당첨-배정-스피닝-휠-연동)
-- [7. 당첨 쿠폰 사용자 표시](#7-당첨-쿠폰-사용자-표시)
+- [7. 당첨 쿠폰 사용자 표시](#7-당첨-쿠폰-사용자-표시) ← `event.viewCoupon` API, QR 확인 흐름 포함
 - [8. v7 클래스 구조](#8-v7-클래스-구조)
 - [9. 레거시 API 함수](#9-레거시-api-함수)
 - [10. 파일 구조](#10-파일-구조)
@@ -43,6 +43,7 @@ CREATE TABLE `event_coupons` (
   `idx_spin_history` int(10) UNSIGNED DEFAULT NULL COMMENT 'event_spin_history.idx',
   `won_at` int(10) UNSIGNED DEFAULT NULL COMMENT '당첨 시간 (unix timestamp)',
   `sent_at` int(10) UNSIGNED DEFAULT NULL COMMENT '전송 완료 시간',
+  `viewed_at` int(10) UNSIGNED DEFAULT NULL COMMENT 'QR 코드 최초 확인 시간',
   `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `updated_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`idx`),
@@ -63,6 +64,7 @@ CREATE TABLE `event_coupons` (
 | `status` | 쿠폰 상태 (아래 상태 흐름 참조) | 5가지 상태 |
 | `idx_winner` | 당첨자 회원 번호 | `sf_member.idx` FK |
 | `idx_spin_history` | 스피닝 휠 게임 기록 번호 | `event_spin_history.idx` FK |
+| `viewed_at` | QR 코드 최초 확인 시간 (unix timestamp) | NULL이면 미확인, 값이 있으면 확인 완료. 1회만 기록 |
 
 ### 이미지 표시 우선순위
 
@@ -476,10 +478,56 @@ onResult: (section) {
 | `items[].status` | string | `won` (당첨) 또는 `sent` (전송완료) |
 | `items[].won_at` | int | 당첨 시간 (Unix timestamp) |
 | `items[].sent_at` | int\|null | 전송 완료 시간 |
+| `items[].viewed_at` | int\|null | QR 코드 최초 확인 시간 (NULL이면 미확인) |
 | `items[].display_image_url` | string\|null | 쿠폰 이미지 URL (`COALESCE(image_url, uploads.url)`) |
 | `items[].thumbnail_url` | string\|null | 썸네일 URL |
 
-### 7.4 Flutter 앱에서 쿠폰 목록 표시
+### 7.4 쿠폰 QR 코드 확인 API — event.viewCoupon
+
+사용자가 쿠폰 QR 코드를 확인할 때 호출하여 `viewed_at`에 최초 확인 시간을 기록한다.
+이미 확인한 쿠폰은 `viewed_at`을 갱신하지 않고 기존 쿠폰 정보를 반환한다.
+
+**API**: `GET /api.php?method=event.viewCoupon&session_id=xxx&idx=123`
+
+```json
+// 요청
+{
+  "method": "event.viewCoupon",
+  "session_id": "xxx",
+  "idx": 123
+}
+
+// 응답
+{
+  "success": true,
+  "idx": 123,
+  "coupon_type": "starbucks",
+  "title": "아메리카노 기프티콘",
+  "status": "won",
+  "viewed_at": 1709533200,
+  "won_at": 1709446800
+}
+```
+
+**비즈니스 규칙**:
+- 인증 필수 (본인 쿠폰만 확인 가능)
+- 상태가 `won` 또는 `sent`인 쿠폰만 확인 가능
+- `viewed_at`이 NULL인 경우에만 현재 시간 기록 (최초 1회)
+- 이미 확인된 쿠폰도 에러 없이 현재 정보 반환
+
+**Flutter 앱 사용 흐름**:
+1. 사용자가 쿠폰 목록에서 쿠폰 클릭
+2. 미확인 쿠폰: 확인 다이얼로그 표시 ("쿠폰을 사용하시겠습니까?")
+3. 사용자가 "예, 사용하겠습니다" 클릭
+4. `event.viewCoupon` API 호출 → `viewed_at` 기록
+5. QR 코드 이미지를 전체 화면 다이얼로그로 표시
+6. 이미 확인한 쿠폰: 다이얼로그 없이 바로 QR 코드 표시
+
+**쿠폰 목록에서 확인 날짜 표시**:
+- `viewed_at`이 있는 쿠폰은 "확인 날짜: YYYY.MM.DD" 형태로 표시
+- tertiary 색상으로 구분하여 시각적 식별
+
+### 7.5 Flutter 앱에서 쿠폰 목록 표시
 
 `event.myCoupons` API를 호출하여 당첨 쿠폰 목록을 표시한다.
 
@@ -577,7 +625,8 @@ lib/event/
 │   ├── getAvailableCount(?type): int        ← 사용 가능 쿠폰 수
 │   ├── hasAvailableCoupon(?type): bool      ← 쿠폰 존재 여부
 │   ├── getStatsSummary(): array             ← 유형별/상태별 통계
-│   └── getCouponListForAdmin(array): array  ← 관리자 목록 (페이지네이션)
+│   ├── getCouponListForAdmin(array): array  ← 관리자 목록 (페이지네이션)
+│   └── markCouponViewed(array, int): array  ← QR 코드 최초 확인 시간 기록 (본인 쿠폰만)
 │
 ├── EventCouponRepository.php   ← 쿠폰 DB 계층 (Philgo\Event\EventCouponRepository)
 │   ├── create(array): int                   ← INSERT
@@ -593,11 +642,13 @@ lib/event/
 │   ├── getStatsByType(): array              ← GROUP BY 통계
 │   ├── getDistinctTypes(): array            ← DISTINCT coupon_type
 │   ├── getListWithPagination(filters, page, limit): array  ← 페이지네이션 목록
-│   └── findByWinner(idxMember, page, limit): array  ← 당첨자별 쿠폰 목록 (won/sent)
+│   ├── findByWinner(idxMember, page, limit): array  ← 당첨자별 쿠폰 목록 (won/sent, viewed_at 포함)
+│   └── markAsViewed(idx): bool              ← QR 코드 최초 확인 (viewed_at NULL → 현재 시간)
 │
 ├── EventService.php            ← 스피닝 휠 로직 + DB 기반 쿠폰 배정
-├── EventController.php         ← event.spin, event.history, event.myCoupons API
-│   └── myCoupons(array): array            ← 내 당첨 쿠폰 목록 조회
+├── EventController.php         ← event.spin, event.history, event.myCoupons, event.viewCoupon API
+│   ├── myCoupons(array): array            ← 내 당첨 쿠폰 목록 조회
+│   └── viewCoupon(array): array           ← 쿠폰 QR 코드 확인 (viewed_at 기록)
 └── EventRepository.php          ← event_spin_history DB 계층
 ```
 
@@ -647,7 +698,7 @@ lib/event/
 ├── EventCouponService.php       ← 쿠폰 비즈니스 로직
 ├── EventCouponRepository.php    ← 쿠폰 DB 계층
 ├── EventService.php             ← 스피닝 휠 + 쿠폰 배정 호출
-├── EventController.php          ← event.spin, event.history API
+├── EventController.php          ← event.spin, event.history, event.myCoupons, event.viewCoupon API
 └── EventRepository.php          ← event_spin_history DB 계층
 
 lib/api/
