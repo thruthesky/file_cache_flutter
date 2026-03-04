@@ -570,28 +570,80 @@ mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo
 - **기존 필고**: `https://local.philgo.com` (포트 444)
 - **패밀리사이트**: `https://banana.philgo.com` (신규 필고 기반)
 
-### Cloudflare 터널을 통한 외부 접속 (에뮬레이터/시뮬레이터)
+### Cloudflare 터널을 통한 외부 접속
 
 로컬 개발 컴퓨터에서 실행 중인 Docker 환경에 **Cloudflare 터널**을 통해 외부에서 접속할 수 있다.
 
 | 접속 URL | 용도 |
 |----------|------|
-| `https://dev-philgo.sonub.com` | 안드로이드 에뮬레이터, iOS 시뮬레이터, 외부 기기에서 로컬 개발 서버 접속 |
+| `https://local.philgo.com` | 브라우저, 안드로이드 에뮬레이터, iOS 시뮬레이터, 외부 기기에서 로컬 개발 서버 접속 |
 
-**왜 `local.philgo.com`을 사용하지 않는가?**
+**Cloudflare 터널 구조:**
+
+Cloudflare DNS에서 `local` 서브도메인을 **Tunnel 타입** 레코드로 등록하고, **Proxied** 상태로 설정한다.
+Cloudflare 터널(`cloudflared`)이 로컬 Docker Nginx의 HTTP 80번 포트로 트래픽을 전달한다.
+
+```
+브라우저 → (HTTPS) → Cloudflare (IUAM 챌린지) → Tunnel → http://127.0.0.1:80 → Docker Nginx → PHP
+```
+
+**IUAM 모드와의 호환:**
 
 `*.philgo.com` 도메인은 Cloudflare의 **IUAM(I'm Under Attack Mode)** 모드가 활성화되어 있다.
-IUAM 모드에서는 Cloudflare가 모든 요청에 JavaScript 챌린지를 삽입하여 봇/자동화 요청을 차단하므로,
-안드로이드 에뮬레이터나 iOS 시뮬레이터 등에서 `local.philgo.com`으로 직접 접속하면 챌린지 페이지에 막히게 된다.
+IUAM 모드에서는 Cloudflare가 모든 요청에 JavaScript 챌린지를 삽입하여 봇/자동화 요청을 차단한다.
 
-따라서 IUAM이 적용되지 않는 별도 도메인인 `https://dev-philgo.sonub.com`을 Cloudflare 터널로 연결하여 사용한다.
+- **브라우저 접속**: 챌린지 통과 후 정상 이용 가능
+- **안드로이드 에뮬레이터/iOS 시뮬레이터**: Flutter 앱의 WebView 또는 HTTP 클라이언트에서는 챌린지 통과가 불가능하므로, 앱 개발 시에는 IUAM 모드를 일시적으로 비활성화하거나 별도 도메인을 사용해야 한다.
+
+**Nginx 설정 (무한 리다이렉트 방지):**
+
+Cloudflare 터널은 HTTP(80번 포트)로 Nginx에 요청을 전달하므로, Nginx의 HTTP→HTTPS 301 리다이렉트가 무한 루프를 발생시킬 수 있다.
+이를 방지하기 위해 `X-Forwarded-Proto` 헤더를 확인하여 Cloudflare 터널 경유 요청은 리다이렉트하지 않고 직접 처리한다.
+
+```nginx
+# docker/etc/nginx/nginx.conf - .philgo.com 80번 포트 서버 블록
+server {
+    listen 80;
+    server_name .philgo.com;
+
+    # Cloudflare Tunnel 경유 시 X-Forwarded-Proto 가 https 이면 직접 처리
+    set $redirect_to_https 1;
+    if ($http_x_forwarded_proto = "https") {
+        set $redirect_to_https 0;
+    }
+    if ($redirect_to_https = 1) {
+        return 301 https://$host$request_uri;
+    }
+
+    # Cloudflare Tunnel 경유 요청은 여기서 직접 처리 (443 서버 블록과 동일)
+    root /www;
+
+    location / {
+        index index.php;
+    }
+
+    location ~ \.(php|xml)$ {
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param HTTPS on;  # PHP에서 $_SERVER['HTTPS'] 설정 → URL 생성 시 https:// 사용
+        include fastcgi_params;
+    }
+}
+```
+
+핵심 포인트:
+- `$http_x_forwarded_proto = "https"` 조건으로 Cloudflare Tunnel 경유 여부 판별
+- `fastcgi_param HTTPS on` 으로 PHP에서 `$_SERVER['HTTPS']`가 설정되어 `current_url()`, `base_url()` 등의 함수가 `https://`로 올바르게 URL 생성
+- 직접 HTTP 접속(Tunnel 경유가 아닌 경우)은 기존처럼 HTTPS로 301 리다이렉트
 
 **사용 시나리오:**
 
+- 브라우저에서 `https://local.philgo.com` 접속하여 로컬 개발 서버 테스트
 - Flutter 앱 개발 시 안드로이드 에뮬레이터에서 로컬 API 서버 접속
 - Flutter 앱 개발 시 iOS 시뮬레이터에서 로컬 API 서버 접속
 - 실제 기기(USB 디버깅)에서 로컬 개발 서버 테스트
-- `--dart-define=V7_API_ENDPOINT=https://dev-philgo.sonub.com/api.php` 형태로 엔드포인트 지정
+- `--dart-define=V7_API_ENDPOINT=https://local.philgo.com/api.php` 형태로 엔드포인트 지정
 
 **wget / curl 로 로컬 서버 페이지 가져오기:**
 
@@ -599,17 +651,18 @@ Cloudflare 터널을 통해 로컬 서버의 PHP 페이지를 커맨드라인에
 
 ```bash
 # wget 으로 게시판 목록 페이지 가져오기 (한글 파라미터는 URL 인코딩)
-wget "https://dev-philgo.sonub.com/post/list.php?post_id=buyandsell&category=%EA%B3%A8%ED%94%84"
+wget "https://local.philgo.com/post/list.php?post_id=buyandsell&category=%EA%B3%A8%ED%94%84"
 
 # curl 로 동일한 페이지 가져오기
-curl "https://dev-philgo.sonub.com/post/list.php?post_id=buyandsell&category=%EA%B3%A8%ED%94%84"
+curl "https://local.philgo.com/post/list.php?post_id=buyandsell&category=%EA%B3%A8%ED%94%84"
 
 # v7 API 호출 예시
-curl "https://dev-philgo.sonub.com/api.php?method=user.profile"
+curl "https://local.philgo.com/api.php?method=user.profile"
 ```
 
 > **참고:** 쉘에서 `?`, `&` 등 특수문자가 포함된 URL은 반드시 따옴표(`"..."`)로 감싸야 한다.
 > 한글 파라미터(예: `골프`)는 URL 인코딩(`%EA%B3%A8%ED%94%84`)으로 변환하여 전달한다.
+> IUAM 모드가 활성화된 상태에서 curl/wget은 JavaScript 챌린지를 통과할 수 없어 403 응답을 받는다.
 
 ---
 

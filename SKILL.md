@@ -200,8 +200,8 @@ EventRepository, QrCodeUsageRepository, VisitReviewRepository)는 도메인 특�
 PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2 접속 정보,
 볼륨 매핑(소스코드·로그·DB 데이터 영구 저장), 개발 환경 접속 URL
 (`https://local.philgo.com`, `https://banana.philgo.com`),
-Cloudflare 터널을 통한 외부 접속(`https://dev-philgo.sonub.com` — `*.philgo.com` IUAM 모드로 인해
-안드로이드/iOS 에뮬레이터·시뮬레이터에서는 이 URL 사용 필수),
+Cloudflare 터널을 통한 외부 접속(`https://local.philgo.com` — Cloudflare Tunnel + Proxied DNS 레코드로
+로컬 Docker에 접속, IUAM 모드 호환을 위해 Nginx에서 `X-Forwarded-Proto` 헤더 기반 리다이렉트 예외 처리),
 Docker 운영 명령어, Windows 환경 설정 차이점을 포함합니다.
 
 ### Flutter 앱 전화번호 로그인 → [app/v7-app-phone-login.md](references/app/v7-app-phone-login.md)
