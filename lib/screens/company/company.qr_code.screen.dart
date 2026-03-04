@@ -301,6 +301,14 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
               .animate()
               .fadeIn(duration: 400.ms, delay: 300.ms),
 
+          const SizedBox(height: 32),
+
+          /// [5] QR 코드 부정 사용 경고 배너
+          _buildFraudWarningBanner(scheme, theme)
+              .animate()
+              .fadeIn(duration: 500.ms, delay: 400.ms)
+              .slideY(begin: 0.15, end: 0),
+
           const SizedBox(height: 24),
         ],
       ),
@@ -536,6 +544,51 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
         .animate()
         .fadeIn(duration: 400.ms)
         .slideY(begin: 0.1, end: 0);
+  }
+
+  /// [5] QR 코드 부정 사용 경고 배너
+  /// 빨간 계열 그라데이션 배경에 경고 아이콘과 텍스트를 표시
+  Widget _buildFraudWarningBanner(ColorScheme scheme, ThemeData theme) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            scheme.error.withValues(alpha: 0.08),
+            scheme.error.withValues(alpha: 0.04),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: scheme.error.withValues(alpha: 0.25),
+          width: 1.0,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightTriangleExclamation,
+            size: 18,
+            color: scheme.error,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              T.qrCodeFraudWarning,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.error,
+                fontWeight: FontWeight.w600,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Bottom action bar with 3 buttons: Share, Download, View Company

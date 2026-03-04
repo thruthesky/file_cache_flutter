@@ -2086,6 +2086,9 @@ class LoZh extends Lo {
   String get qrCodeNotApproved => '该商家的二维码尚未可用。\n请等待管理员审核。';
 
   @override
+  String get qrCodeFraudWarning => '注意：滥用本二维码的商家将从商家列表中删除。请务必公正使用。';
+
+  @override
   String get uploadReceiptForPointEvent => '积分活动收据上传';
 
   @override

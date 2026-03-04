@@ -2091,6 +2091,7 @@
   "qrCodeSaveFailed": "QRコードの保存に失敗しました。",
   "eventParticipation": "イベント参加",
   "qrCodeNotApproved": "この店舗のQRコードはまだ利用できません。\n管理者の承認をお待ちください。",
+  "qrCodeFraudWarning": "注意: 本QRコードを不正使用する店舗は、店舗リストから削除されます。必ず公正にご利用ください。",
   "uploadReceiptForPointEvent": "ポイントイベント領収書アップロード",
   "pointEvent": "フィルゴ店舗ポイントイベント",
   "optional": "任意",

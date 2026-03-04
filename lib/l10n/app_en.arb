@@ -2575,6 +2575,10 @@
   "@qrCodeNotApproved": {
     "description": "Message shown when company QR code is not approved by admin"
   },
+  "qrCodeFraudWarning": "Warning: Companies found misusing this QR code will be removed from the company listing. Please use it fairly.",
+  "@qrCodeFraudWarning": {
+    "description": "Warning message about QR code misuse shown at bottom of QR code screen"
+  },
   "uploadReceiptForPointEvent": "Upload Receipt for Point Event",
   "pointEvent": "PhilGo Company Point Event",
   "optional": "Optional",

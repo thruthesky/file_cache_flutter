@@ -4187,6 +4187,12 @@ abstract class Lo {
   /// **'This company\'s QR code is not yet available.\nPlease wait for admin approval.'**
   String get qrCodeNotApproved;
 
+  /// Warning message about QR code misuse shown at bottom of QR code screen
+  ///
+  /// In en, this message translates to:
+  /// **'Warning: Companies found misusing this QR code will be removed from the company listing. Please use it fairly.'**
+  String get qrCodeFraudWarning;
+
   /// No description provided for @uploadReceiptForPointEvent.
   ///
   /// In en, this message translates to:

@@ -2129,6 +2129,10 @@ class LoEn extends Lo {
       'This company\'s QR code is not yet available.\nPlease wait for admin approval.';
 
   @override
+  String get qrCodeFraudWarning =>
+      'Warning: Companies found misusing this QR code will be removed from the company listing. Please use it fairly.';
+
+  @override
   String get uploadReceiptForPointEvent => 'Upload Receipt for Point Event';
 
   @override
