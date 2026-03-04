@@ -19,6 +19,7 @@
 - [8. SSL/TLS 인증서](#8-ssltls-인증서)
 - [9. 볼륨 매핑](#9-볼륨-매핑)
 - [10. 개발 환경 접속 방법](#10-개발-환경-접속-방법)
+  - [Cloudflare 터널을 통한 외부 접속](#cloudflare-터널을-통한-외부-접속-에뮬레이터시뮬레이터)
 - [11. Docker 운영 명령어](#11-docker-운영-명령어)
 - [12. Windows 환경 설정](#12-windows-환경-설정)
 - [13. 주의사항](#13-주의사항)
@@ -568,6 +569,29 @@ mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo
 - **신규 필고**: `https://local.philgo.com` (포트 443)
 - **기존 필고**: `https://local.philgo.com` (포트 444)
 - **패밀리사이트**: `https://banana.philgo.com` (신규 필고 기반)
+
+### Cloudflare 터널을 통한 외부 접속 (에뮬레이터/시뮬레이터)
+
+로컬 개발 컴퓨터에서 실행 중인 Docker 환경에 **Cloudflare 터널**을 통해 외부에서 접속할 수 있다.
+
+| 접속 URL | 용도 |
+|----------|------|
+| `https://dev-philgo.sonub.com` | 안드로이드 에뮬레이터, iOS 시뮬레이터, 외부 기기에서 로컬 개발 서버 접속 |
+
+**왜 `local.philgo.com`을 사용하지 않는가?**
+
+`*.philgo.com` 도메인은 Cloudflare의 **IUAM(I'm Under Attack Mode)** 모드가 활성화되어 있다.
+IUAM 모드에서는 Cloudflare가 모든 요청에 JavaScript 챌린지를 삽입하여 봇/자동화 요청을 차단하므로,
+안드로이드 에뮬레이터나 iOS 시뮬레이터 등에서 `local.philgo.com`으로 직접 접속하면 챌린지 페이지에 막히게 된다.
+
+따라서 IUAM이 적용되지 않는 별도 도메인인 `https://dev-philgo.sonub.com`을 Cloudflare 터널로 연결하여 사용한다.
+
+**사용 시나리오:**
+
+- Flutter 앱 개발 시 안드로이드 에뮬레이터에서 로컬 API 서버 접속
+- Flutter 앱 개발 시 iOS 시뮬레이터에서 로컬 API 서버 접속
+- 실제 기기(USB 디버깅)에서 로컬 개발 서버 테스트
+- `--dart-define=V7_API_ENDPOINT=https://dev-philgo.sonub.com/api.php` 형태로 엔드포인트 지정
 
 ---
 
