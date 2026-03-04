@@ -593,6 +593,24 @@ IUAM 모드에서는 Cloudflare가 모든 요청에 JavaScript 챌린지를 삽�
 - 실제 기기(USB 디버깅)에서 로컬 개발 서버 테스트
 - `--dart-define=V7_API_ENDPOINT=https://dev-philgo.sonub.com/api.php` 형태로 엔드포인트 지정
 
+**wget / curl 로 로컬 서버 페이지 가져오기:**
+
+Cloudflare 터널을 통해 로컬 서버의 PHP 페이지를 커맨드라인에서 직접 가져올 수 있다.
+
+```bash
+# wget 으로 게시판 목록 페이지 가져오기 (한글 파라미터는 URL 인코딩)
+wget "https://dev-philgo.sonub.com/post/list.php?post_id=buyandsell&category=%EA%B3%A8%ED%94%84"
+
+# curl 로 동일한 페이지 가져오기
+curl "https://dev-philgo.sonub.com/post/list.php?post_id=buyandsell&category=%EA%B3%A8%ED%94%84"
+
+# v7 API 호출 예시
+curl "https://dev-philgo.sonub.com/api.php?method=user.profile"
+```
+
+> **참고:** 쉘에서 `?`, `&` 등 특수문자가 포함된 URL은 반드시 따옴표(`"..."`)로 감싸야 한다.
+> 한글 파라미터(예: `골프`)는 URL 인코딩(`%EA%B3%A8%ED%94%84`)으로 변환하여 전달한다.
+
 ---
 
 ## 11. Docker 운영 명령어
