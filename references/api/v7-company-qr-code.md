@@ -770,6 +770,7 @@ v6 레거시 파일이 v7 `CompanyService::issueQrCode()`를 직접 호출하여
 | **QR 코드 이미지** | qrcodejs로 생성, 256x256, 높은 오류 복구 수준(H) |
 | **발행 현황 뱃지** | 오늘 날짜(UTC+8), 발행 수/일일 제한, 남은 횟수 |
 | **안내 문구** | QR 코드 스캔 안내 + 180초 만료 안내 |
+| **부정 사용 경고 배너** | error 색상 그라데이션 배경 + 경고 아이콘 + bold 텍스트. i18n 키: `qrCodeFraudWarning` |
 | **액션 버튼** | 프린트, 다운로드(PNG), 업소 보기 |
 | **에러 상태** | 발행 실패 시 에러 메시지 표시 (로그인 필요, 일일 제한 초과 등) |
 
@@ -882,3 +883,13 @@ CompanyService::reVisitPoint() 호출
 - `qr-code-scanned.php`: `inject_company_qr_code_scanned_language()`
 - `re-visit-point.php`: `inject_company_re_visit_point_language()`
 - `guideline.php`: `inject_help_guideline_language()`
+
+#### Flutter 앱 i18n 키 (arb 파일)
+
+| i18n 키 | 설명 |
+|---------|------|
+| `qrCodeScanGuide` | QR 코드 스캔 안내 문구 |
+| `qrCodeSavedToGallery` | QR 코드 갤러리 저장 성공 |
+| `qrCodeSaveFailed` | QR 코드 저장 실패 |
+| `qrCodeNotApproved` | QR 코드 미승인 안내 |
+| `qrCodeFraudWarning` | QR 코드 부정 사용 경고 (4개 언어 지원) |

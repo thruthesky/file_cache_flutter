@@ -173,7 +173,7 @@ try {
 | 업소 목록 | `CompanyListScreen` | `/company-list` | 카테고리별 업소 그리드 |
 | 업소 보기 | `CompanyViewScreen` | `/company/view.php` | 업소 상세 정보 + 후기 |
 | 업소 폼 | `CompanyFormScreen` | `/company-form` | 업소 정보 입력/수정 (멀티스텝) |
-| QR 코드 | `CompanyQrCodeScreen` | `/company-qr-code` | QR 코드 발행/표시 |
+| QR 코드 | `CompanyQrCodeScreen` | `/company-qr-code` | QR 코드 발행/표시 + 부정 사용 경고 배너 |
 | QR 스캔 결과 | `CompanyQrCodeScannedScreen` | `/company/qr-code-scanned.php` | QR 스캔 + 포인트 적립 |
 | 재방문 결과 | `CompanyRevisitPointResultScreen` | `/company/revisit-point-result` | 재방문 포인트 결과 |
 | 후기 작성 | `CompanyVisitReviewScreen` | `/company/visit-review` | 방문 후기 입력 |
@@ -300,6 +300,26 @@ final result = await CompanyApi.getVisitReviews(
 ---
 
 ## 7. QR 코드 삼단콤보 흐름
+
+### CompanyQrCodeScreen 위젯 구성
+
+`lib/screens/company/company.qr_code.screen.dart`
+
+| 순서 | 위젯 메서드 | 설명 |
+|------|-------------|------|
+| [1] | `_buildCompanyInfoSection` | 로고, 업소명, 카테고리 태그, 위치, 연락처 |
+| [2] | `_buildEventBanner` | "필고 + {업소명} 이벤트 참여" 그라데이션 배너 |
+| [3] | `_buildQrCodeSection` | QR 코드 이미지 (RepaintBoundary로 캡처 지원) |
+| [4] | QR 스캔 가이드 | `T.qrCodeScanGuide` 안내 문구 |
+| [5] | `_buildFraudWarningBanner` | QR 코드 부정 사용 경고 배너 (`T.qrCodeFraudWarning`) |
+
+#### 부정 사용 경고 배너 (`_buildFraudWarningBanner`)
+
+- **디자인**: `scheme.error` 색상 그라데이션 배경 (8%→4% 투명도) + error 테두리 (25%)
+- **아이콘**: `FontAwesomeIcons.lightTriangleExclamation`
+- **텍스트**: `T.qrCodeFraudWarning` (fontWeight: w600, height: 1.5)
+- **애니메이션**: fadeIn 500ms + slideY (delay: 400ms)
+- **i18n 키**: `qrCodeFraudWarning` (ko/en/ja/zh 4개 언어 지원)
 
 ### 재방문 흐름 (is_revisit == true)
 
