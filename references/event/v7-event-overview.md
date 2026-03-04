@@ -170,61 +170,34 @@ public static function spin(array $user): array
         throw new RuntimeException("포인트가 부족합니다. (최소 200P 필요, 현재 {$currentPoint}P)");
     }
 
-<<<<<<< HEAD
     // [2] 사용 가능 쿠폰 확인 — event_coupons DB 기반
-=======
-    // DB 기반 쿠폰 존재 여부 확인
->>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
     $hasStarbucksCoupon = EventCouponService::hasAvailableCoupon('starbucks');
 
     $pdo->beginTransaction();
     try {
-<<<<<<< HEAD
         // [4] 200P 차감 (PointLogService 사용)
         $costLog = PointLogService::changePoints(-self::SPIN_COST, $idxMember, $idxMember, 'event', 'spin_cost', 0, 'spin_cost');
 
         // [5] 확률 계산
         $result = self::calculateSpinResult($hasStarbucksCoupon);
-=======
-        // 200P 차감 (PointLogService 사용)
-        $costLog = PointLogService::changePoints(-200, $idxMember, $idxMember, 'event', 'spin_cost', 0, 'spin_cost');
-        $pointAfterCost = $costLog->point_after;
-
-        // 확률 계산 (쿠폰 유무에 따라 동적 확률)
-        $result = self::calculateSpinResult($hasStarbucksCoupon);
-        $assignedCoupon = null;
-        $finalPoint = $pointAfterCost;
->>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
 
         // [6] 보상 처리
         $assignedCoupon = null;
         if ($result['prize_type'] === 'point' && $result['points'] > 0) {
             $rewardLog = PointLogService::changePoints($result['points'], 0, $idxMember, 'event', 'spin_reward', 0, "spin_reward_{$result['points']}");
-<<<<<<< HEAD
-=======
-            $finalPoint = $rewardLog->point_after;
->>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
         } elseif ($result['prize_type'] === 'starbucks') {
             PointLogService::changePoints(0, 0, $idxMember, 'event', 'spin_reward', 0, 'spin_reward_starbucks');
         }
 
-<<<<<<< HEAD
         // [7] 이벤트 기록 저장
         $spinIdx = EventRepository::insertSpinHistory([...]);
 
         // [7-1] 스타벅스 당첨 시 쿠폰 배정 (트랜잭션 내)
-=======
-        // 기록 저장
-        $spinIdx = EventRepository::insertSpinHistory([...]);
-
-        // 스타벅스 당첨 시 DB 기반 쿠폰 배정 (SELECT ... FOR UPDATE)
->>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
         if ($result['prize_type'] === 'starbucks') {
             $assignedCoupon = EventCouponService::assignCouponToWinner('starbucks', $idxMember, $spinIdx);
         }
 
         $pdo->commit();
-<<<<<<< HEAD
 
         // [8-1] 스타벅스 당첨 시 freetalk 자동 게시글 (커밋 후)
         if ($result['prize_type'] === 'starbucks') {
@@ -240,21 +213,6 @@ public static function spin(array $user): array
             'coupon' => $assignedCoupon ? [
                 'idx' => $assignedCoupon['idx'], 'title' => $assignedCoupon['title'],
                 'coupon_type' => $assignedCoupon['coupon_type'],
-=======
-        $remainingCoupons = EventCouponService::getAvailableCount('starbucks');
-
-        return [
-            'section_index' => $result['section_index'], 'points' => $result['points'],
-            'prize_type' => $result['prize_type'], 'current_point' => $finalPoint,
-            'lv' => UserService::calculateLevel($finalPoint),
-            'level_progress' => UserService::calculateLevelProgress($finalPoint, ...),
-            'starbucks_coupon_file' => null, 'starbucks_coupon_url' => null,
-            'available_coupons' => $remainingCoupons, 'spin_idx' => $spinIdx,
-            'coupon' => $assignedCoupon ? [
-                'idx' => (int) $assignedCoupon['idx'],
-                'title' => $assignedCoupon['title'] ?? '',
-                'coupon_type' => $assignedCoupon['coupon_type'] ?? 'starbucks',
->>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
             ] : null,
         ];
     } catch (\Exception $e) {
@@ -324,13 +282,10 @@ v7 Upload API로 QR 이미지를 `uploads` 테이블에 저장하고 `idx_upload
 쿠폰이 0개이면 스타벅스 확률이 자동으로 0%가 되고 해당 weight가 50P에 합산된다.
 관리자 위젯(`widgets/admin/event/coupon-list.php`)에서 통계 대시보드, 등록/수정/삭제/전송 관리를 수행한다.
 
-<<<<<<< HEAD
 **전환 완료**: `EventService::spin()`이 `EventCouponService`를 직접 연동하여
 쿠폰 유무 확인(`hasAvailableCoupon`) → 당첨 시 배정(`assignCouponToWinner`)을 처리한다.
 Flutter 앱은 `event.myCoupons` API로 당첨 쿠폰 목록을 조회한다.
-=======
-**참고**: 쿠폰 관리는 100% DB 기반이다. 기존 파일 시스템 기반 쿠폰 관리(`event/cupon/starbucks/` 폴더)는 완전히 제거되었다.
->>>>>>> d9e07519a94aad911e38da583dc3c6551ed89bb3
+쿠폰 관리는 100% DB 기반이며, 기존 파일 시스템 기반 쿠폰 관리(`event/cupon/starbucks/` 폴더)는 완전히 제거되었다.
 
 ### 2.7 sf_point_log 기록 규칙 (스피닝 휠)
 
@@ -1319,6 +1274,23 @@ $log = PointLogService::changePoints([
 
 ## 7. DB 스키마 요약
 
+### 실제 서버에 생성해야 할 신규 테이블
+
+> **⚠️ 중요**: 기존 스키마(`etc/database-schema/philgo-latest-database-schema.sql`, 2025-11-27)에는 아래 6개 테이블이 존재하지 않는다.
+> v7 시스템 배포 시 반드시 아래 테이블을 실제 서버에 생성해야 한다.
+> 전체 CREATE TABLE 문은 `database/philgo.sql` 파일에 있으며, 인덱스와 AUTO_INCREMENT 설정이 별도 ALTER TABLE 문으로 되어 있으므로 함께 실행해야 한다.
+
+| # | 테이블명 | 용도 | 관련 시스템 |
+|---|----------|------|------------|
+| 1 | **`event_coupons`** | 이벤트 쿠폰 관리 (범용) | 스피닝 휠 이벤트 |
+| 2 | **`event_spin_history`** | 스피닝 휠 이벤트 기록 | 스피닝 휠 이벤트 |
+| 3 | **`company_qr_codes`** | 업소록 QR 코드 발행 기록 | QR 삼단콤보 |
+| 4 | **`company_qr_code_usages`** | 업소록 QR 코드 사용(스캔) 기록 | QR 삼단콤보 |
+| 5 | **`company_reviews`** | 업소 방문 후기 | QR 삼단콤보 3단계 |
+| 6 | **`uploads`** | v7 파일 업로드 메타데이터 | v7 Upload API 전체 |
+
+> **참고**: `sf_point_log` 테이블은 기존 스키마에 이미 존재하므로 별도 생성 불필요.
+
 ### 설계 문서 vs 실제 구현 테이블 매핑
 
 > **⚠️ 참고**: [client-point-event-spin.md](client-point-event-spin.md)는 초기 설계 문서로,
@@ -1331,16 +1303,17 @@ $log = PointLogService::changePoints([
 | `point_event_history` | `company_qr_code_usages` | 스캔 기록 전용 테이블로 분리 |
 | *(point_event_history.content)* | `company_reviews` | 후기를 별도 테이블로 분리 (사진 연결 등) |
 
-**현재 사용 중인 테이블 6개:**
+**현재 사용 중인 테이블 7개:**
 
-| 테이블 | 용도 | 모듈 |
-|---|---|---|
-| `event_spin_history` | 스피닝 휠 게임 기록 | event |
-| `event_coupons` | 쿠폰 관리 (등록/당첨/전송/만료) | event |
-| `company_qr_codes` | QR 코드 발행/검증/만료 | company |
-| `company_qr_code_usages` | QR 스캔 기록 (성공/실패/거부) | company |
-| `company_reviews` | 방문 후기 + 포인트 적립 | company |
-| `sf_point_log` | 포인트 변동 이력 (공통) | 공통 |
+| 테이블 | 용도 | 모듈 | 기존 스키마 존재 |
+|---|---|---|:---:|
+| `event_spin_history` | 스피닝 휠 게임 기록 | event | ❌ 신규 |
+| `event_coupons` | 쿠폰 관리 (등록/당첨/전송/만료) | event | ❌ 신규 |
+| `company_qr_codes` | QR 코드 발행/검증/만료 | company | ❌ 신규 |
+| `company_qr_code_usages` | QR 스캔 기록 (성공/실패/거부) | company | ❌ 신규 |
+| `company_reviews` | 방문 후기 + 포인트 적립 | company | ❌ 신규 |
+| `uploads` | v7 파일 업로드 메타데이터 | 공통 | ❌ 신규 |
+| `sf_point_log` | 포인트 변동 이력 (공통) | 공통 | ✅ 기존 |
 
 ### event_spin_history (스피닝 휠 기록)
 
@@ -1367,19 +1340,24 @@ CREATE TABLE `event_spin_history` (
 
 ### event_coupons (이벤트 쿠폰)
 
+> **⚠️ 최신 스키마**: `database/philgo.sql` 기준. 이전 문서 버전과 차이가 있으므로 아래를 기준으로 한다.
+
 ```sql
 CREATE TABLE `event_coupons` (
   `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `coupon_type` varchar(50) NOT NULL DEFAULT 'starbucks',
+  `coupon_type` varchar(32) NOT NULL COMMENT '쿠폰 유형: starbucks, mcdonalds, phone_load, gift_card 등',
   `title` varchar(255) NOT NULL DEFAULT '',
-  `memo` text DEFAULT NULL,
-  `image_url` varchar(512) DEFAULT NULL COMMENT '외부 이미지 URL (레거시)',
+  `description` text DEFAULT NULL COMMENT '쿠폰 설명 (선택)',
+  `status` enum('available','won','sent','expired','cancelled') NOT NULL DEFAULT 'available',
   `idx_upload` int(10) UNSIGNED DEFAULT NULL COMMENT 'uploads.idx FK (v7 Upload)',
-  `status` varchar(20) NOT NULL DEFAULT 'available' COMMENT 'available|won|sent|expired|cancelled',
-  `idx_winner` int(10) UNSIGNED DEFAULT NULL,
-  `idx_spin_history` int(10) UNSIGNED DEFAULT NULL,
-  `won_at` int(10) UNSIGNED DEFAULT NULL,
-  `sent_at` int(10) UNSIGNED DEFAULT NULL,
+  `image_url` varchar(500) DEFAULT NULL COMMENT '외부 이미지 URL (레거시 호환)',
+  `idx_winner` int(10) UNSIGNED DEFAULT NULL COMMENT 'sf_member.idx - 당첨자',
+  `idx_spin_history` int(10) UNSIGNED DEFAULT NULL COMMENT 'event_spin_history.idx',
+  `won_at` int(10) UNSIGNED DEFAULT NULL COMMENT '당첨 시각 (Unix timestamp)',
+  `sent_at` int(10) UNSIGNED DEFAULT NULL COMMENT '전송 시각',
+  `viewed_at` int(10) UNSIGNED DEFAULT NULL COMMENT '사용자가 QR 코드를 최초 확인한 시간',
+  `expired_at` int(10) UNSIGNED DEFAULT NULL COMMENT '만료 시각 (NULL=무기한)',
+  `memo` varchar(500) DEFAULT '' COMMENT '관리자 메모',
   `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `updated_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`idx`),
@@ -1387,8 +1365,20 @@ CREATE TABLE `event_coupons` (
   KEY `idx_coupon_type_status` (`coupon_type`, `status`),
   KEY `idx_winner` (`idx_winner`),
   KEY `idx_upload` (`idx_upload`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='이벤트 쿠폰 관리 (범용)';
 ```
+
+#### 이전 문서 대비 스키마 변경 사항
+
+| 컬럼 | 이전 (문서) | 현재 (philgo.sql) | 변경 내용 |
+|------|------------|-------------------|-----------|
+| `coupon_type` | varchar(50), DEFAULT 'starbucks' | varchar(32), DEFAULT 없음 | 길이 축소, 기본값 제거 |
+| `description` | 없음 | text DEFAULT NULL | **신규 추가** — 쿠폰 설명용 |
+| `status` | varchar(20) | enum(5개 값) | varchar → enum으로 변경 (데이터 무결성 강화) |
+| `image_url` | varchar(512) | varchar(500) | 길이 미세 조정 |
+| `viewed_at` | 없음 | int(10) UNSIGNED | **신규 추가** — QR 코드 최초 확인 시간 |
+| `expired_at` | 없음 | int(10) UNSIGNED | **신규 추가** — 쿠폰 만료 시각 |
+| `memo` | text | varchar(500) | text → varchar(500)으로 변경 |
 
 > 상세 문서: [v7-event-coupon.md](v7-event-coupon.md) — 쿠폰 상태 흐름, 관리자 위젯, 당첨 배정, Race Condition 방어
 
@@ -1449,6 +1439,34 @@ CREATE TABLE `company_reviews` (
 ```
 
 > 사진은 `uploads` 테이블에 `module='company'`, `code='visit_review'`, `attached_to=company_reviews.idx`로 연결.
+
+### uploads (v7 파일 업로드)
+
+```sql
+CREATE TABLE `uploads` (
+  `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `idx_member` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'sf_member.idx',
+  `created_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `updated_at` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '원본 파일 이름',
+  `size` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '파일 크기 (bytes)',
+  `type` varchar(100) NOT NULL DEFAULT '' COMMENT 'MIME 타입',
+  `module` varchar(50) NOT NULL DEFAULT '' COMMENT '사용 모듈 (user, post, company, event 등)',
+  `code` varchar(50) NOT NULL DEFAULT '' COMMENT '모듈 내 용도 (profile_photo, coupon_qr 등)',
+  `url` varchar(500) NOT NULL DEFAULT '' COMMENT '다운로드 URL (상대경로)',
+  `thumbnail_400x400_url` varchar(500) NOT NULL DEFAULT '',
+  `thumbnail_800x800_url` varchar(500) NOT NULL DEFAULT '',
+  `thumbnail_1000_url` varchar(500) NOT NULL DEFAULT '',
+  `attached_to` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '첨부 대상 (글 번호, 코멘트 번호, 회원번호 등)',
+  PRIMARY KEY (`idx`),
+  KEY `idx_member` (`idx_member`),
+  KEY `idx_module_code` (`module`, `code`),
+  KEY `idx_attached_to` (`attached_to`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='v7 파일 업로드 메타데이터';
+```
+
+> 이벤트 쿠폰의 QR 이미지는 `module='event'`, `code='coupon_qr'`로 저장되며,
+> `event_coupons.idx_upload`로 연결된다. 방문 후기 사진은 `module='company'`, `code='visit_review'`로 저장.
 
 ### sf_point_log (포인트 로그 — 기존 테이블)
 

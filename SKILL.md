@@ -266,6 +266,9 @@ EventCouponService/Repository 클래스 구조, 레거시 `func()` API 함수
 (`create_event_coupon`, `delete_event_coupon`, `update_event_coupon`, `update_event_coupon_sent`),
 동적 확률 조정(쿠폰 0개 시 스타벅스 weight → 50P 합산), 당첨 시 freetalk 자동 게시글 작성,
 Flutter 앱/웹에서의 쿠폰 표시 로직을 상세히 기술합니다.
+최신 `database/philgo.sql` 스키마에서 `description`(쿠폰 설명), `viewed_at`(QR 최초 확인 시간),
+`expired_at`(만료 시각) 컬럼이 추가되었고, `status`가 enum 타입으로 변경되었습니다.
+기존 스키마(`etc/database-schema/`)에는 이 테이블이 존재하지 않으므로 실제 서버 배포 시 신규 생성이 필요합니다.
 
 ### 이벤트 응모 (스피닝 휠) → [app/v7-event-entry.md](references/app/v7-event-entry.md)
 
