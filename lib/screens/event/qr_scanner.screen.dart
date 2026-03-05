@@ -11,7 +11,7 @@ import 'package:philgo/screens/company/company.qr_code_scanned.screen.dart';
 ///
 /// 업소 이벤트 참여를 위해 QR 코드를 스캔하는 화면.
 /// mobile_scanner 패키지를 사용하여 카메라 프리뷰를 표시하고,
-/// QR 코드 인식 시 URL에서 idx, verification_id를 파싱하여
+/// QR 코드 인식 시 URL에서 idx, code를 파싱하여
 /// CompanyQrCodeScannedScreen으로 이동한다.
 class QrScannerScreen extends StatefulWidget {
   static const String routeName = '/qr-scanner';
@@ -50,9 +50,8 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
   }
 
   /// QR 코드 감지 콜백
-  /// URL에서 code (verification_id)를 파싱하여 결과 화면으로 이동.
-  /// v7 QR 코드 URL 형식: https://philgo.com/company/qr-code-scanned.php?code={verification_id}
-  /// idx 파라미터는 선택 사항 (v7에서는 code만 사용, idx는 서버 응답에서 획득)
+  /// URL에서 code를 파싱하여 결과 화면으로 이동.
+  /// v7 QR 코드 URL 형식: https://philgo.com/company/qr-code-scanned.php?code={64자 hex}
   void _handleBarcode(BarcodeCapture capture) {
     if (_isProcessing || !mounted) return;
 
@@ -81,28 +80,21 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
       return;
     }
 
-    /// 쿼리 파라미터에서 code (verification_id) 추출
-    /// v7 형식: ?code={64자 hex verification_id}
-    /// 레거시 형식: ?idx={idx}&verification_id={vid}
-    final codeParam = uri.queryParameters['code'];
-    final verificationIdParam = uri.queryParameters['verification_id'];
-    final verificationId = codeParam ?? verificationIdParam ?? '';
+    /// 쿼리 파라미터에서 code 추출
+    /// v7 형식: ?code={64자 hex}
+    final code = uri.queryParameters['code'] ?? '';
     final idxStr = uri.queryParameters['idx'];
     final idx = int.tryParse(idxStr ?? '') ?? 0;
 
     // ignore: avoid_print
-    print('[QR] code param: $codeParam');
-    // ignore: avoid_print
-    print('[QR] verification_id param: $verificationIdParam');
-    // ignore: avoid_print
-    print('[QR] 최종 verificationId: $verificationId (길이: ${verificationId.length})');
+    print('[QR] code: $code (길이: ${code.length})');
     // ignore: avoid_print
     print('[QR] idx: $idx');
 
-    /// code (verification_id)만 있으면 유효 — idx는 서버에서 반환
-    if (verificationId.isEmpty) {
+    /// code가 있으면 유효 — idx는 서버에서 반환
+    if (code.isEmpty) {
       // ignore: avoid_print
-      print('[QR] ERROR: verificationId가 비어있음 - 유효하지 않은 QR 코드');
+      print('[QR] ERROR: code가 비어있음 - 유효하지 않은 QR 코드');
       _showInvalidQrSnackBar();
       return;
     }
@@ -110,13 +102,19 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     // ignore: avoid_print
     print('[QR] ✅ 유효한 QR 코드 → CompanyQrCodeScannedScreen으로 이동');
     // ignore: avoid_print
-    print('[QR] push(context, idx=$idx, verificationId=$verificationId)');
+    print('[QR] push(context, idx=$idx, code=$code)');
 
     /// 중복 스캔 방지
     _isProcessing = true;
 
     /// CompanyQrCodeScannedScreen으로 이동 (idx=0이면 서버 응답에서 idx_company 사용)
-    CompanyQrCodeScannedScreen.push(context, idx, verificationId);
+    /// pushReplacement로 QR 스캐너를 스택에서 제거하여,
+    /// 결과 화면에서 백 버튼 시 홈으로 바로 돌아가도록 한다.
+    if (mounted) {
+      context.pushReplacement(
+        '${CompanyQrCodeScannedScreen.routeName}?idx=$idx&code=$code',
+      );
+    }
   }
 
   /// 유효하지 않은 QR 코드 스낵바 표시

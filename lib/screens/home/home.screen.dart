@@ -30,15 +30,35 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.redirect != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => widget.redirect!),
-        );
-      }
+      _pushRedirectIfNeeded();
     });
+  }
+
+  /// 딥링크 재진입 처리 (Deep link re-entry handling)
+  ///
+  /// 앱이 백그라운드에 있을 때 외부 카메라로 QR 코드를 스캔하면,
+  /// GoRouter가 새 URL로 네비게이션하여 HomeScreen의 redirect가 업데이트됩니다.
+  /// initState는 State 최초 생성 시에만 호출되므로, didUpdateWidget에서
+  /// redirect 변경을 감지하여 새 화면을 push해야 합니다.
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.redirect != null && widget.redirect != oldWidget.redirect) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _pushRedirectIfNeeded();
+      });
+    }
+  }
+
+  /// redirect 위젯이 있으면 Navigator로 push
+  void _pushRedirectIfNeeded() {
+    if (widget.redirect != null && mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => widget.redirect!),
+      );
+    }
   }
 
   @override

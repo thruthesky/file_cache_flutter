@@ -453,6 +453,12 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                     setState(() => _uploadProgress = progress);
                   },
                   onUploaded: (result) {
+                    // ignore: avoid_print
+                    print('[UPLOAD] 업로드 응답 전체: $result');
+                    // ignore: avoid_print
+                    print('[UPLOAD] url: ${result['url']}');
+                    // ignore: avoid_print
+                    print('[UPLOAD] 모든 키: ${result.keys.toList()}');
                     setState(() {
                       _uploadedPhotos.add(result);
                       _isUploading = false;
@@ -552,6 +558,8 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
     final baseUrl =
         PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '');
     final fullUrl = url.startsWith('http') ? url : '$baseUrl$url';
+    // ignore: avoid_print
+    print('[UPLOAD-PREVIEW] url=$url, baseUrl=$baseUrl, fullUrl=$fullUrl');
 
     return Padding(
       padding: const EdgeInsets.only(right: 8),

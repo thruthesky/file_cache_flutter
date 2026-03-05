@@ -22,17 +22,17 @@ class CompanyQrCodeScannedScreen extends StatefulWidget {
   static const String routeName = '/company/qr-code-scanned.php';
 
   final int idx;
-  final String verificationId;
+  final String code;
 
   const CompanyQrCodeScannedScreen({
     super.key,
     required this.idx,
-    required this.verificationId,
+    required this.code,
   });
 
-  static Future<void> Function(BuildContext ctx, int idx, String verificationId)
-  push = (ctx, idx, verificationId) =>
-      ctx.push('$routeName?idx=$idx&verification_id=$verificationId');
+  static Future<void> Function(BuildContext ctx, int idx, String code)
+  push = (ctx, idx, code) =>
+      ctx.push('$routeName?idx=$idx&code=$code');
 
   @override
   State<CompanyQrCodeScannedScreen> createState() =>
@@ -61,7 +61,7 @@ class _CompanyQrCodeScannedScreenState
     // ignore: avoid_print
     print('[QR-SCANNED] ===== CompanyQrCodeScannedScreen initState =====');
     // ignore: avoid_print
-    print('[QR-SCANNED] widget.idx: ${widget.idx}, widget.verificationId: ${widget.verificationId}');
+    print('[QR-SCANNED] widget.idx: ${widget.idx}, widget.code: ${widget.code}');
 
     /// idx가 있으면 바로 업소 정보 로드, 없으면 scanQrCode 응답 후 로드
     if (widget.idx > 0) {
@@ -122,10 +122,10 @@ class _CompanyQrCodeScannedScreenState
     // ignore: avoid_print
     print('[QR-SCANNED] ===== _scanQrCode 호출 =====');
     // ignore: avoid_print
-    print('[QR-SCANNED] code: ${widget.verificationId}');
+    print('[QR-SCANNED] code: ${widget.code}');
     try {
       final result = await v7api('company.scanQrCode', data: {
-        'code': widget.verificationId,
+        'code': widget.code,
       });
       // ignore: avoid_print
       print('[QR-SCANNED] scanQrCode 성공 응답: $result');

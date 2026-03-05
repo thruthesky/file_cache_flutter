@@ -882,19 +882,20 @@ final router = GoRouter(
     ),
 
     /// QR 코드 스캔 결과 화면 (QR Code Scanned Screen)
-    /// 쿼리 파라미터로 idx(업체 번호)와 verification_id(인증 ID)를 전달받습니다.
+    /// v7 형식: ?code={64자 hex} — QR 코드 검증 ID
     GoRoute(
       path: CompanyQrCodeScannedScreen.routeName,
       builder: (context, state) {
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-        final verificationId =
-            state.uri.queryParameters['verification_id'] ?? '';
+        final code = state.uri.queryParameters['code'] ?? '';
         final screen = CompanyQrCodeScannedScreen(
           idx: idx,
-          verificationId: verificationId,
+          code: code,
         );
 
-        return HomeScreen(redirect: screen);
+        /// 앱 내 QR 스캔 시 결과 화면을 직접 반환하여
+        /// 네비게이션 스택이 쌓이지 않도록 한다.
+        return screen;
       },
     ),
 
