@@ -33,6 +33,14 @@
 6. [API 엔드포인트](#api-엔드포인트)
    - [event.spin — 스피닝 휠 돌리기](#eventspin--스피닝-휠-돌리기)
    - [event.history — 이벤트 기록 조회](#eventhistory--이벤트-기록-조회)
+   - [event.myCoupons — 내 당첨 쿠폰 목록 조회](#eventmycoupons--내-당첨-쿠폰-목록-조회)
+   - [event.viewCoupon — 쿠폰 QR 코드 확인](#eventviewcoupon--쿠폰-qr-코드-확인)
+   - [event.createCoupon — 쿠폰 생성 (관리자)](#eventcreatecoupon--쿠폰-생성-관리자)
+   - [event.deleteCoupon — 쿠폰 삭제 (관리자)](#eventdeletecoupon--쿠폰-삭제-관리자)
+   - [event.updateCoupon — 쿠폰 수정 (관리자)](#eventupdatecoupon--쿠폰-수정-관리자)
+   - [event.updateCouponSent — 쿠폰 전송 상태 토글 (관리자)](#eventupdatecouponsent--쿠폰-전송-상태-토글-관리자)
+   - [event.listCoupons — 쿠폰 목록 조회 (관리자)](#eventlistcoupons--쿠폰-목록-조회-관리자)
+   - [event.couponStats — 쿠폰 통계 조회 (관리자)](#eventcouponstats--쿠폰-통계-조회-관리자)
 7. [스타벅스 쿠폰 관리 시스템](#스타벅스-쿠폰-관리-시스템)
    - [핵심 원칙](#핵심-원칙-1)
    - [쿠폰 파일 저장 위치](#쿠폰-파일-저장-위치)
@@ -310,9 +318,16 @@ EventController::spin($input)
 ```
 lib/event/
 ├── EventController.php        ← Philgo\Event\EventController
-│   ├── spin(array $input)     ← event.spin API
-│   ├── history(array $input)  ← event.history API
-│   └── myCoupons(array $input) ← event.myCoupons API (당첨 쿠폰 목록)
+│   ├── spin(array $input)           ← event.spin API
+│   ├── history(array $input)        ← event.history API
+│   ├── myCoupons(array $input)      ← event.myCoupons API (당첨 쿠폰 목록)
+│   ├── viewCoupon(array $input)     ← event.viewCoupon API (쿠폰 QR 확인)
+│   ├── createCoupon(array $input)   ← event.createCoupon API (관리자: 쿠폰 생성)
+│   ├── deleteCoupon(array $input)   ← event.deleteCoupon API (관리자: 쿠폰 삭제)
+│   ├── updateCoupon(array $input)   ← event.updateCoupon API (관리자: 쿠폰 수정)
+│   ├── updateCouponSent(array $input) ← event.updateCouponSent API (관리자: 전송 상태 토글)
+│   ├── listCoupons(array $input)    ← event.listCoupons API (관리자: 쿠폰 목록)
+│   └── couponStats(array $input)    ← event.couponStats API (관리자: 쿠폰 통계)
 │
 ├── EventService.php           ← Philgo\Event\EventService
 │   ├── spin(array $user)                     ← 메인 비즈니스 로직 (EventCouponService 연동)
@@ -729,6 +744,348 @@ curl -X POST "https://local.philgo.com/api.php" \
 
 ---
 
+### event.viewCoupon — 쿠폰 QR 코드 확인
+
+인증 필수. 본인 쿠폰만 확인 가능.
+
+사용자가 쿠폰 QR 코드를 확인할 때 호출한다.
+최초 확인 시 `viewed_at`에 현재 시간을 기록하고 (1회만),
+이미 확인된 쿠폰은 `viewed_at`을 갱신하지 않고 기존 정보를 반환한다.
+
+**메서드**: `POST /api.php?method=event.viewCoupon`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.viewCoupon",
+    "session_id": "YOUR_SESSION_ID",
+    "idx": 123
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `idx` | int | O | 쿠폰 번호 |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "idx": 123,
+  "coupon_type": "starbucks",
+  "title": "아메리카노 기프티콘",
+  "status": "won",
+  "viewed_at": 1709533200
+}
+```
+
+---
+
+### event.createCoupon — 쿠폰 생성 (관리자)
+
+관리자 전용. `requireAdmin()` 권한 확인.
+
+관리자가 새 쿠폰을 등록한다. v7 Upload API로 QR 이미지를 먼저 업로드한 후,
+반환된 `idx_upload`를 함께 전달하여 쿠폰과 이미지를 연결한다.
+
+**메서드**: `POST /api.php?method=event.createCoupon`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.createCoupon",
+    "session_id": "YOUR_SESSION_ID",
+    "coupon_type": "starbucks",
+    "title": "아메리카노 기프티콘",
+    "memo": "3월 이벤트용",
+    "idx_upload": 456
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `coupon_type` | string | O | 쿠폰 유형 (예: `starbucks`, `mcdonalds`) |
+| `title` | string | X | 쿠폰 제목 |
+| `memo` | string | X | 관리자 메모 |
+| `idx_upload` | int | X | 업로드 이미지 idx |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "idx": 789,
+  "coupon_type": "starbucks",
+  "title": "아메리카노 기프티콘",
+  "status": "available"
+}
+```
+
+---
+
+### event.deleteCoupon — 쿠폰 삭제 (관리자)
+
+관리자 전용. `requireAdmin()` 권한 확인.
+
+`available` 상태의 쿠폰만 삭제 가능하다.
+이미 당첨(`won`)되거나 전송(`sent`)된 쿠폰은 삭제할 수 없다.
+
+**메서드**: `POST /api.php?method=event.deleteCoupon`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.deleteCoupon",
+    "session_id": "YOUR_SESSION_ID",
+    "idx": 789
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `idx` | int | O | 쿠폰 번호 |
+
+#### 성공 응답
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+### event.updateCoupon — 쿠폰 수정 (관리자)
+
+관리자 전용. `requireAdmin()` 권한 확인.
+
+쿠폰의 유형, 제목, 메모, 이미지를 수정한다.
+
+**메서드**: `POST /api.php?method=event.updateCoupon`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.updateCoupon",
+    "session_id": "YOUR_SESSION_ID",
+    "idx": 789,
+    "title": "카페라떼 기프티콘",
+    "memo": "제목 수정"
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `idx` | int | O | 쿠폰 번호 |
+| `coupon_type` | string | X | 쿠폰 유형 |
+| `title` | string | X | 쿠폰 제목 |
+| `memo` | string | X | 관리자 메모 |
+| `idx_upload` | int | X | 업로드 이미지 idx |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "idx": 789,
+  "coupon_type": "starbucks",
+  "title": "카페라떼 기프티콘",
+  "status": "available"
+}
+```
+
+---
+
+### event.updateCouponSent — 쿠폰 전송 상태 토글 (관리자)
+
+관리자 전용. `requireAdmin()` 권한 확인.
+
+당첨된 쿠폰(`won`)의 전송 상태를 토글한다.
+`sent=true`면 `won → sent`, `sent=false`면 `sent → won`으로 변경.
+
+**메서드**: `POST /api.php?method=event.updateCouponSent`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.updateCouponSent",
+    "session_id": "YOUR_SESSION_ID",
+    "idx": 42,
+    "sent": true
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `idx` | int | O | 쿠폰 번호 |
+| `sent` | bool | O | `true`=전송완료, `false`=전송취소 |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "idx": 42,
+  "status": "sent",
+  "sent_at": 1709533200
+}
+```
+
+---
+
+### event.listCoupons — 쿠폰 목록 조회 (관리자)
+
+관리자 전용. `requireAdmin()` 권한 확인.
+
+쿠폰 유형, 상태, 검색어로 필터링하여 쿠폰 목록을 페이지네이션으로 조회한다.
+
+**메서드**: `POST /api.php?method=event.listCoupons`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.listCoupons",
+    "session_id": "YOUR_SESSION_ID",
+    "coupon_type": "starbucks",
+    "status": "available",
+    "page": 1,
+    "limit": 20
+  }'
+```
+
+#### 요청 파라미터
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|:----:|------|
+| `coupon_type` | string | X | 쿠폰 유형 필터 |
+| `status` | string | X | 상태 필터 (`available`/`won`/`sent`/`expired`/`cancelled`) |
+| `search` | string | X | 검색어 (제목/메모) |
+| `page` | int | X | 페이지 번호 (기본 1) |
+| `limit` | int | X | 페이지당 개수 (기본 20, 최대 100) |
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "total": 50,
+  "page": 1,
+  "limit": 20,
+  "items": [
+    {
+      "idx": 789,
+      "coupon_type": "starbucks",
+      "title": "아메리카노 기프티콘",
+      "status": "available",
+      "created_at": 1709446800
+    }
+  ]
+}
+```
+
+---
+
+### event.couponStats — 쿠폰 통계 조회 (관리자)
+
+관리자 전용. `requireAdmin()` 권한 확인.
+
+쿠폰 유형별/상태별 통계를 조회한다.
+
+**메서드**: `POST /api.php?method=event.couponStats`
+
+#### cURL 예시
+
+```bash
+curl -X POST "https://local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "event.couponStats",
+    "session_id": "YOUR_SESSION_ID"
+  }'
+```
+
+#### 요청 파라미터
+
+없음 (인증 정보만 필요)
+
+#### 성공 응답
+
+```json
+{
+  "success": true,
+  "by_type": {
+    "starbucks": { "available": 10, "won": 5, "sent": 3 }
+  },
+  "by_status": {
+    "available": 10,
+    "won": 5,
+    "sent": 3
+  },
+  "total": 18
+}
+```
+
+---
+
+### 관리자 쿠폰 API 프론트엔드 호출 패턴
+
+관리자 쿠폰 관리 위젯(`widgets/admin/event/coupon-list.php`)에서는
+기존 레거시 `func()` 함수 대신 **v7 API(`axios.post('/api.php', ...)`)** 방식으로 호출한다.
+`session_id`는 쿠키로 자동 전송되므로 별도로 전달하지 않아도 된다.
+
+```javascript
+// 쿠폰 생성
+const res = await axios.post('/api.php', Object.assign({ method: 'event.createCoupon' }, params));
+if (res.data && res.data.success === false) {
+    alert(res.data.message);
+    return;
+}
+const newIdx = res.data.idx;
+
+// 쿠폰 삭제
+await axios.post('/api.php', { method: 'event.deleteCoupon', idx: couponIdx });
+
+// 쿠폰 수정
+await axios.post('/api.php', Object.assign({ method: 'event.updateCoupon' }, params));
+
+// 전송 상태 토글
+await axios.post('/api.php', { method: 'event.updateCouponSent', idx: couponIdx, sent: true });
+```
+
+> **주의**: v7 API 에러 처리는 `res.data.success === false` 체크 방식이다.
+> 레거시 `func()`의 `res.error` 방식과 다르다.
+
+---
+
 ## 스타벅스 쿠폰 관리 시스템
 
 ### 핵심 원칙
@@ -847,9 +1204,18 @@ CREATE TABLE `event_spin_history` (
 | 메서드 | API | 인증 | 설명 |
 |--------|-----|:----:|------|
 | `getAuthenticatedUser()` | (private) | | `AuthService::getLoginUser()` 호출, 미인증 시 예외 |
+| `isAdmin()` | (private) | | `ADMINS` 상수(firebase_uid 배열)로 관리자 확인 |
+| `requireAdmin()` | (private) | | `isAdmin()` false 시 RuntimeException |
 | `spin(array $input)` | `event.spin` | 필수 | 인증 확인 → `EventService::spin($user)` 호출 |
 | `history(array $input)` | `event.history` | 필수 | 인증 확인 → `EventService::getHistory()` 호출 |
 | `myCoupons(array $input)` | `event.myCoupons` | 필수 | 인증 확인 → `EventCouponRepository::findByWinner()` 호출 |
+| `viewCoupon(array $input)` | `event.viewCoupon` | 필수 | 쿠폰 QR 최초 확인 → `EventCouponService::markCouponViewed()` |
+| `createCoupon(array $input)` | `event.createCoupon` | 관리자 | 쿠폰 생성 → `EventCouponService::createCoupon()` |
+| `deleteCoupon(array $input)` | `event.deleteCoupon` | 관리자 | 쿠폰 삭제 → `EventCouponService::deleteCoupon()` |
+| `updateCoupon(array $input)` | `event.updateCoupon` | 관리자 | 쿠폰 수정 → `EventCouponService::updateCoupon()` |
+| `updateCouponSent(array $input)` | `event.updateCouponSent` | 관리자 | 전송 상태 토글 → `EventCouponService::toggleSentStatus()` |
+| `listCoupons(array $input)` | `event.listCoupons` | 관리자 | 쿠폰 목록 조회 → `EventCouponService::getCouponListForAdmin()` |
+| `couponStats(array $input)` | `event.couponStats` | 관리자 | 쿠폰 통계 → `EventCouponService::getStatsSummary()` |
 
 ### EventService 클래스
 

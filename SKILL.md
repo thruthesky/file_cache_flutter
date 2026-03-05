@@ -264,8 +264,9 @@ module/action 매트릭스, 핵심 PHP/Dart 코드 스니펫을 포함합니다.
 관리자가 v7 Upload API로 QR 이미지를 업로드하여 쿠폰을 등록하고,
 스피닝 휠 당첨 시 `SELECT ... FOR UPDATE`로 race condition을 방어하며 자동 배정합니다.
 상태 흐름(`available → won → sent`), 관리자 위젯(Vue.js 등록/수정/삭제/전송 관리),
-EventCouponService/Repository 클래스 구조, 레거시 `func()` API 함수
-(`create_event_coupon`, `delete_event_coupon`, `update_event_coupon`, `update_event_coupon_sent`),
+EventCouponService/Repository 클래스 구조, v7 API 엔드포인트
+(`event.createCoupon`, `event.deleteCoupon`, `event.updateCoupon`, `event.updateCouponSent`,
+`event.listCoupons`, `event.couponStats` — 모두 `EventController`에서 `axios.post('/api.php')` 방식으로 호출),
 동적 확률 조정(쿠폰 0개 시 스타벅스 weight → 50P 합산), 당첨 시 freetalk 자동 게시글 작성,
 Flutter 앱/웹에서의 쿠폰 표시 로직을 상세히 기술합니다.
 최신 `database/philgo.sql` 스키마에서 `description`(쿠폰 설명), `viewed_at`(QR 최초 확인 시간),
