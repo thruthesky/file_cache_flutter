@@ -47,6 +47,8 @@
 | `app_version_ios_build` | `KEY_APP_VERSION_IOS_BUILD` | string | `'46'` | iOS 빌드 번호 |
 | `company_qr_event_enabled` | `KEY_COMPANY_QR_EVENT_ENABLED` | Y/N | `'Y'` | 업소록 QR 이벤트 On/Off |
 | `event_entry_enabled` | `KEY_EVENT_ENTRY_ENABLED` | Y/N | `'Y'` | 이벤트 응모 On/Off |
+| `event_spin_weights` | `KEY_EVENT_SPIN_WEIGHTS` | JSON | `'{"0":379,"1":80,...,"8":2}'` | 스피닝 휠 섹션별 weight (합계 1000) |
+| `event_starbucks_24h_weight` | `KEY_EVENT_STARBUCKS_24H_WEIGHT` | int | `'1'` | 24시간 이내 스타벅스 재당첨 weight |
 
 ## API 엔드포인트
 
@@ -179,6 +181,122 @@ GET /api.php?method=settings.appVersion
   }
 }
 ```
+
+## 스피닝 휠 확률 설정
+
+### 개요
+
+관리자가 실시간으로 스피닝 휠의 당첨 확률을 조정할 수 있다.
+`sf_config` 테이블에 JSON 형태로 저장하며, `SettingsService`와 `EventService`가 연동한다.
+
+### 설정 키 상세
+
+#### event_spin_weights (섹션별 weight)
+
+10개 섹션의 weight를 JSON 형태로 저장한다. 합계가 1000이 되어야 한다 (0.1% 단위 확률).
+
+| 섹션 | 인덱스 | 포인트 | 기본 weight | 확률 |
+|------|--------|--------|-------------|------|
+| 50P | 0 | 50 | 379 | 37.9% |
+| 100P | 1 | 100 | 80 | 8.0% |
+| 200P | 2 | 200 | 70 | 7.0% |
+| 300P | 3 | 300 | 60 | 6.0% |
+| 400P | 4 | 400 | 50 | 5.0% |
+| 500P | 5 | 500 | 40 | 4.0% |
+| 1000P | 6 | 1000 | 15 | 1.5% |
+| 2000P | 7 | 2000 | 4 | 0.4% |
+| 스타벅스 | 8 | - | 2 | 0.2% |
+| 꽝 | 9 | 0 | 자동 계산 | 나머지 |
+
+- 섹션 0~8의 weight 합이 1000을 초과하면 꽝(섹션 9)의 weight가 0이 된다.
+- 꽝 weight = `max(0, 1000 - sum(섹션 0~8))`
+
+**JSON 형식:**
+```json
+{"0":379,"1":80,"2":70,"3":60,"4":50,"5":40,"6":15,"7":4,"8":2}
+```
+
+#### event_starbucks_24h_weight (24시간 재당첨 weight)
+
+24시간 이내에 스타벅스 쿠폰에 당첨된 사용자의 재당첨 확률을 제어한다.
+기본값은 `1` (0.1%)이며, `0`으로 설정하면 24시간 이내 재당첨이 불가능하다.
+
+**동작 흐름:**
+1. `EventService::hasWonStarbucksWithin24Hours($idxMember)` — `event_spin_history` 테이블에서 24시간 이내 `prize_type='starbucks'` 확인
+2. 해당하면 `sections[8]['weight']`를 `event_starbucks_24h_weight` 값으로 교체
+3. 꽝 weight가 자동으로 재계산됨
+
+### API 호출 예시
+
+**스피닝 휠 확률 업데이트:**
+```
+POST /api.php
+{
+  "method": "settings.update",
+  "session_id": "xxx",
+  "settings": {
+    "event_spin_weights": "{\"0\":400,\"1\":80,\"2\":70,\"3\":60,\"4\":50,\"5\":40,\"6\":15,\"7\":4,\"8\":1}",
+    "event_starbucks_24h_weight": "0"
+  }
+}
+```
+
+**확률 조회 (settings.get 전체 응답에 포함):**
+```json
+{
+  "event_spin_weights": "{\"0\":379,\"1\":80,\"2\":70,\"3\":60,\"4\":50,\"5\":40,\"6\":15,\"7\":4,\"8\":2}",
+  "event_starbucks_24h_weight": "1",
+  ...
+}
+```
+
+### 핵심 Service 메서드
+
+```php
+// SettingsService
+SettingsService::getSpinWeights(): array
+// DB에서 JSON 파싱 → ['0' => 379, '1' => 80, ...], 잘못된 JSON이면 기본값 폴백
+
+SettingsService::getStarbucks24hWeight(): int
+// DB에서 정수값 반환, 기본값 1
+
+// EventService
+EventService::getSections(?int $idxMember = null): array
+// DB weight 읽기 + 24시간 재당첨 로직 적용 → 10개 섹션 배열
+
+EventService::hasWonStarbucksWithin24Hours(int $idxMember): bool
+// event_spin_history 테이블에서 24시간 이내 스타벅스 당첨 확인
+
+EventService::calculateSpinResult(bool $hasStarbucksCoupon, ?int $idxMember = null): array
+// 확률 계산 → 당첨 결과 반환
+```
+
+### 관리자 UI
+
+`page/admin/system-settings.php`에 다음 섹션이 추가되어 있다:
+
+1. **스피닝 휠 확률 설정 카드** — 섹션별 weight 입력 (숫자 입력란)
+2. **24시간 재당첨 확률** — 별도 입력란
+3. **꽝 자동 계산** — `1000 - 섹션합`으로 실시간 표시
+4. **저장 버튼** — `settings.update` API 호출
+
+### PEST 테스트
+
+스피닝 휠 확률 관련 테스트 (SettingsTest.php):
+
+- SettingsService 테스트 (10개):
+  - MANAGED_KEYS 포함 확인
+  - DEFAULTS 기본값 검증
+  - getSpinWeights() — 기본값/DB값/잘못된 JSON 폴백
+  - getStarbucks24hWeight() — 기본값/DB값
+  - update() 라운드트립
+
+- EventService 테스트 (15개):
+  - getSections() — 기본 weight/DB weight/10개 섹션 구조/weight 비음수/prize_type/section_points
+  - hasWonStarbucksWithin24Hours() — 이력없음/24시간이내/24시간이전
+  - getSections() 24시간 재당첨 — 기본값/DB값 적용
+  - calculateSpinResult() — 결과 구조/쿠폰없음/24시간 weight=0
+  - 상수 검증/DB 변경 즉시 반영
 
 ## 관리자 확인 로직 (isAdmin)
 
@@ -414,7 +532,8 @@ page/admin/system-settings.php
 ├─ Bootstrap 5.3 카드 레이아웃
 │  ├─ 앱 버전 설정 (Android/iOS 버전, 빌드 번호)
 │  ├─ 업소록 QR 이벤트 (토글 스위치)
-│  └─ 이벤트 응모 (토글 스위치)
+│  ├─ 이벤트 응모 (토글 스위치)
+│  └─ 스피닝 휠 확률 설정 (섹션별 weight + 24시간 재당첨 weight)
 └─ page.footer.php (레거시 include)
 ```
 
@@ -502,11 +621,13 @@ $enabled = SettingsService::isCompanyQrEventEnabled();
 ./vendor/bin/pest tests/Unit/SettingsTest.php
 ```
 
-37개 테스트, 101개 assertions:
+65개 테스트, 259개 assertions:
 - SettingsEntity: fromArray, toArray, toBool, toJson
 - SettingsRepository: CRUD, findByKeys, setMultiple, 기존 config 호환성
 - SettingsService: getAll, get, update (권한 검증), getAppVersion, On/Off 토글, **getAdmins**
-- SettingsController: get (전체/특정키/**admins**), update, appVersion
+- SettingsController: get (전체/특정키/**admins**), update, appVersion, **spin weights/24h weight 포함 확인**
+- **스피닝 휠 확률 - SettingsService** (10개): MANAGED_KEYS, DEFAULTS, getSpinWeights, getStarbucks24hWeight, update 라운드트립
+- **스피닝 휠 확률 - EventService** (15개): getSections, hasWonStarbucksWithin24Hours, calculateSpinResult, 24시간 재당첨 로직, DB 즉시 반영
 
 ## 발견된 이슈 및 해결
 
