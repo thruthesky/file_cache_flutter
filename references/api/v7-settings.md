@@ -20,6 +20,7 @@
 - [관리자 확인 로직 (isAdmin)](#관리자-확인-로직-isadmin)
 - [관리자 페이지](#관리자-페이지)
 - [다른 모듈에서 사용하기](#다른-모듈에서-사용하기)
+- [Flutter 앱 연동 (settings.get 전체 응답)](#flutter-앱-연동-settingsget-전체-응답)
 - [PEST 테스트](#pest-테스트)
 - [발견된 이슈 및 해결](#발견된-이슈-및-해결)
 
@@ -55,7 +56,11 @@
 ### settings.get
 
 설정 조회 (공개 API). 인증 불필요.
-전체 조회 시 관리자 목록(admins)도 함께 반환한다.
+전체 조회 시 관리자 목록(admins), 스피닝 휠 구조화 정보(spin_sections), 게임 참가비(spin_cost),
+스타벅스 쿠폰 잔여 수량(available_starbucks_coupons)도 함께 반환한다.
+
+> **Flutter 앱 연동**: Flutter 앱은 실행 시 `v7api('settings.get')`을 호출하여 이 전체 응답을 받아 사용한다.
+> 상세 → [Flutter 앱 연동](#flutter-앱-연동-settingsget-전체-응답) 참조.
 
 **요청:**
 ```
@@ -64,7 +69,7 @@ GET /api.php?method=settings.get&key=app_version_android
 GET /api.php?method=settings.get&key=admins
 ```
 
-**응답 (전체 - 관리자 목록 포함):**
+**응답 (전체 - 모든 부가 정보 포함):**
 ```json
 {
   "app_version_android": "2.0.16",
@@ -73,13 +78,29 @@ GET /api.php?method=settings.get&key=admins
   "app_version_ios_build": "46",
   "company_qr_event_enabled": "Y",
   "event_entry_enabled": "Y",
+  "event_spin_weights": "{\"0\":379,\"1\":80,\"2\":70,\"3\":60,\"4\":50,\"5\":40,\"6\":15,\"7\":4,\"8\":2}",
+  "event_starbucks_24h_weight": "1",
   "admins": {
     "admins": [
       "OSXtfcfdJkcLBovnQAC6Q1WMa2x1",
       "xG3UczB56qazt2fMLH97154Cda62"
     ],
     "chat_admin": "RaHIcr45pvPzYdcDIv6JoW8DnSH2"
-  }
+  },
+  "available_starbucks_coupons": 5,
+  "spin_sections": [
+    {"section_index": 0, "points": 50, "weight": 379, "prize_type": "point"},
+    {"section_index": 1, "points": 100, "weight": 80, "prize_type": "point"},
+    {"section_index": 2, "points": 200, "weight": 70, "prize_type": "point"},
+    {"section_index": 3, "points": 300, "weight": 60, "prize_type": "point"},
+    {"section_index": 4, "points": 400, "weight": 50, "prize_type": "point"},
+    {"section_index": 5, "points": 500, "weight": 40, "prize_type": "point"},
+    {"section_index": 6, "points": 1000, "weight": 15, "prize_type": "point"},
+    {"section_index": 7, "points": 2000, "weight": 4, "prize_type": "point"},
+    {"section_index": 8, "points": 0, "weight": 2, "prize_type": "starbucks"},
+    {"section_index": 9, "points": 0, "weight": 300, "prize_type": "miss"}
+  ],
+  "spin_cost": 200
 }
 ```
 
@@ -469,10 +490,13 @@ public static function getAdmins(): array
 }
 ```
 
-### Controller에서의 관리자 목록 반환 로직
+### Controller에서의 전체 설정 반환 로직
 
 ```php
 // lib/settings/SettingsController.php — get() 메서드
+
+use Philgo\Event\EventCouponService;
+use Philgo\Event\EventService;
 
 public function get(array $input): array
 {
@@ -487,13 +511,23 @@ public function get(array $input): array
     if (!empty($key)) {
         return [
             'key' => $key,
-            'value' => SettingsService::get($key),
+            'value' => SettingsService::getValue($key),
         ];
     }
 
-    // 전체 설정 조회 (관리자 목록 포함)
+    // 전체 설정 조회
     $all = SettingsService::getAll();
+
+    // 관리자 목록
     $all['admins'] = SettingsService::getAdmins();
+
+    // 스타벅스 쿠폰 잔여 수량
+    $all['available_starbucks_coupons'] = EventCouponService::getAvailableCount('starbucks');
+
+    // 스피닝 휠 구조화 정보 (Flutter 앱에서 바로 사용 가능)
+    $all['spin_sections'] = EventService::getSections();
+    $all['spin_cost'] = EventService::SPIN_COST;
+
     return $all;
 }
 ```
@@ -579,6 +613,63 @@ methods: {
 > `AuthService::getLoginUser()`는 쿠키의 `session_id`와 파라미터의 `session_id`를 모두 확인한다.
 > 따라서 body에 명시적으로 포함하면 쿠키 전달 실패 시에도 인증이 가능하다.
 
+## Flutter 앱 연동 (settings.get 전체 응답)
+
+### 개요
+
+Flutter 앱은 실행 시 `v7api('settings.get')`을 호출하여 모든 설정을 한 번에 가져온다.
+전체 조회 응답에는 기본 설정 키-값 외에 다음 부가 정보가 포함된다:
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `admins` | object | 관리자 목록 (`admins`: Firebase UID 배열, `chat_admin`: 채팅 관리자 UID) |
+| `available_starbucks_coupons` | int | 사용 가능한 스타벅스 쿠폰 잔여 수량 |
+| `spin_sections` | array | 스피닝 휠 10개 섹션 구조화 배열 (아래 참조) |
+| `spin_cost` | int | 스피닝 휠 게임 참가비 (포인트, 기본 200) |
+
+### spin_sections 구조
+
+`spin_sections`는 10개 섹션 객체의 배열이다. 각 섹션은 다음 필드를 포함한다:
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `section_index` | int | 섹션 인덱스 (0~9) |
+| `points` | int | 당첨 포인트 (꽝/스타벅스는 0) |
+| `weight` | int | 당첨 가중치 (전체 합계 1000) |
+| `prize_type` | string | 상품 유형: `"point"`, `"starbucks"`, `"miss"` |
+
+- 섹션 0~7: 포인트 당첨 (`prize_type: "point"`)
+- 섹션 8: 스타벅스 쿠폰 (`prize_type: "starbucks"`)
+- 섹션 9: 꽝 (`prize_type: "miss"`, weight = `1000 - sum(섹션 0~8)`)
+
+### Flutter 사용 예시
+
+```dart
+// Flutter 앱 시작 시 설정 로드
+final settings = await v7api('settings.get');
+
+// 앱 버전 확인
+final androidVersion = settings['app_version_android'];
+
+// 관리자 확인
+final admins = settings['admins']['admins'] as List;
+final isAdmin = admins.contains(currentUser.firebaseUid);
+
+// 스피닝 휠 정보
+final sections = settings['spin_sections'] as List;
+final spinCost = settings['spin_cost'] as int;
+final availableCoupons = settings['available_starbucks_coupons'] as int;
+
+// 이벤트 활성화 확인
+final eventEnabled = settings['event_entry_enabled'] == 'Y';
+```
+
+### 생성 소스
+
+- `SettingsController::get()` — [lib/settings/SettingsController.php](../../../lib/settings/SettingsController.php)
+- `EventService::getSections()` — [lib/event/EventService.php](../../../lib/event/EventService.php)
+- `EventCouponService::getAvailableCount()` — [lib/event/EventCouponService.php](../../../lib/event/EventCouponService.php)
+
 ## 다른 모듈에서 사용하기
 
 ### v7 모듈 (Service 레벨)
@@ -621,11 +712,15 @@ $enabled = SettingsService::isCompanyQrEventEnabled();
 ./vendor/bin/pest tests/Unit/SettingsTest.php
 ```
 
-65개 테스트, 259개 assertions:
+68개 테스트, 280+ assertions:
 - SettingsEntity: fromArray, toArray, toBool, toJson
 - SettingsRepository: CRUD, findByKeys, setMultiple, 기존 config 호환성
 - SettingsService: getAll, get, update (권한 검증), getAppVersion, On/Off 토글, **getAdmins**
 - SettingsController: get (전체/특정키/**admins**), update, appVersion, **spin weights/24h weight 포함 확인**
+- **SettingsController::get() 전체 응답 검증** (3개 추가):
+  - `spin_sections` — 10개 섹션, 구조화 필드 검증, weight 합계 1000
+  - `spin_cost` — 200 포인트 확인
+  - `available_starbucks_coupons` — 0 이상의 정수 확인
 - **스피닝 휠 확률 - SettingsService** (10개): MANAGED_KEYS, DEFAULTS, getSpinWeights, getStarbucks24hWeight, update 라운드트립
 - **스피닝 휠 확률 - EventService** (15개): getSections, hasWonStarbucksWithin24Hours, calculateSpinResult, 24시간 재당첨 로직, DB 즉시 반영
 
