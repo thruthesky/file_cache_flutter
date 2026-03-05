@@ -1,4 +1,4 @@
-# v7 Interface 시스템 — EntityInterface + RepositoryInterface + ControllerInterface
+# v7 Interface 시스템 — EntityInterface + RepositoryInterface + ServiceInterface + ControllerInterface
 
 ## 목차
 
@@ -55,6 +55,15 @@
   - [11.6 delete 반환 타입 통일](#116-delete-반환-타입-통일)
   - [11.7 래퍼 메서드 패턴](#117-래퍼-메서드-패턴)
   - [11.8 ControllerInterface 테스트 (PEST)](#118-controllerinterface-테스트-pest)
+- [12. ServiceInterface](#12-serviceinterface)
+  - [12.1 도입 배경](#121-도입-배경)
+  - [12.2 인터페이스 소스코드](#122-인터페이스-소스코드)
+  - [12.3 미지원 CRUD 처리 방식](#123-미지원-crud-처리-방식)
+  - [12.4 적용된 Service (10개)](#124-적용된-service-10개)
+  - [12.5 Controller ↔ Service 역할 분리](#125-controller--service-역할-분리)
+  - [12.6 list 페이지네이션 표준](#126-list-페이지네이션-표준)
+  - [12.7 Service CRUD 반환 타입 통일](#127-service-crud-반환-타입-통일)
+  - [12.8 ServiceInterface 테스트 (PEST)](#128-serviceinterface-테스트-pest)
 
 ---
 
@@ -90,7 +99,7 @@ v7 시스템의 Entity 14개, Service 13개, Repository 11개 클래스 사이�
 |------|-----------|------|-----------|
 | **Entity** | `EntityInterface` | 14개 전체 | — |
 | **Repository** | `RepositoryInterface` | 6개 | 5개 예외: CRUD 패턴과 안 맞는 도메인 |
-| **Service** | 없음 (문서 기반 관례) | — | 도메인별 메서드가 천차만별이라 Interface 강제가 부적절 |
+| **Service** | `ServiceInterface` | 10개 전체 | 모든 Service가 5개 CRUD를 직접 구현 |
 
 ---
 
@@ -564,25 +573,27 @@ UploadRepository:
 
 ---
 
-## 4. Service 명명 규칙 (문서 기반)
+## 4. Service 명명 규칙 (ServiceInterface 기반)
 
-Service는 인터페이스를 적용하지 않되, 아래 명명 규칙을 따른다.
+모든 도메인 Service는 `ServiceInterface`를 구현하여 표준 CRUD 메서드를 강제한다.
+상세 구현 정보는 [12. ServiceInterface](#12-serviceinterface) 참조.
 
 ### 4.1 표준 메서드명
 
 | 작업 | 표준 메서드명 | 입력 | 리턴 |
 |------|-------------|------|------|
-| 단건 조회 | `get(array $input)` | `array $input` | Entity |
-| 목록 조회 | `list(array $input)` | `array $input` | `array` (`['items' => [], 'total' => int]`) |
-| 생성 | `create(array $input)` | `array $input` | Entity |
-| 수정 | `update(array $input)` | `array $input` | Entity |
-| 삭제 | `delete(array $input)` | `array $input` | `bool` |
+| 단건 조회 | `get(array $input)` | `array $input` | `array` |
+| 목록 조회 | `list(array $input)` | `array $input` | `array` (`['items' => [], 'total' => int, 'page' => int, 'limit' => int]`) |
+| 생성 | `create(array $input)` | `array $input` | `array` |
+| 수정 | `update(array $input)` | `array $input` | `array` |
+| 삭제 | `delete(array $input)` | `array $input` | `array` (`['deleted' => bool]`) |
 
 **규칙**:
-- 모든 메서드는 `public static`으로 선언한다
+- 모든 메서드는 `public static`으로 선언한다 (ServiceInterface 강제)
+- 모든 메서드의 반환 타입은 `array`로 통일한다 (Entity가 아닌 배열)
 - 입력 파라미터는 `array $input`으로 통일한다 (JavaScript `func()` 호출과 호환)
 - 에러는 `RuntimeException`으로 던진다
-- 조회/생성/수정 시 Entity를 리턴한다
+- 모든 Service는 5개 CRUD를 직접 구현한다. 미지원 메서드는 도메인에 맞는 구체적인 에러 메시지로 `RuntimeException`을 throw한다
 - 유틸리티 Service (AuthService, FirebaseService, ImageService)는 도메인별 메서드를 자유롭게 정의한다
 
 ### 4.2 전체 Service 목록 (13개)
@@ -610,18 +621,20 @@ Service는 인터페이스를 적용하지 않되, 아래 명명 규칙을 따�
 ```
 API 요청 (JSON)
     ↓
-Controller (api.php → dispatch)
-    ↓ array $input
-Service (비즈니스 로직, 검증, 권한 확인)
+Controller (api.php → dispatch)              ← ★ ControllerInterface
+    ↓ array $input (인증/검증 후)
+Service (비즈니스 로직, 검증, 데이터 처리)       ← ★ ServiceInterface
     ↓ array $data
-Repository (PDO Prepared Statement)
+Repository (PDO Prepared Statement)          ← ★ RepositoryInterface
     ↓ SQL
 DB (MariaDB)
     ↓ array $row (PDO::FETCH_ASSOC)
-Repository → Entity::fromArray($row)        ← ★ EntityInterface
+Repository → Entity::fromArray($row)         ← ★ EntityInterface
     ↓ Entity 객체
-Service → Entity->toArray()                 ← ★ EntityInterface
+Service → Entity->toArray()                  ← ★ ServiceInterface (array 반환)
     ↓ array
+Controller → return array                   ← ★ ControllerInterface (그대로 전달)
+    ↓
 api.php → json_encode()
     ↓
 API 응답 (JSON)
@@ -630,7 +643,8 @@ API 응답 (JSON)
 **핵심 포인트**:
 - Repository의 `findByIdx()`는 DB 행을 `Entity::fromArray($row)`로 변환하여 Entity를 리턴
 - Service에서 Entity의 도메인 메서드(`isComment()`, `isSuccess()` 등)를 직접 호출 가능
-- api.php에서 Entity의 `toArray()`를 호출하여 JSON 응답 변환
+- Service가 `Entity->toArray()`를 호출하여 array를 반환 (ServiceInterface 강제)
+- Controller는 Service 결과를 그대로 반환 (얇은 계층)
 
 ---
 
@@ -1517,3 +1531,184 @@ public function create(array $input): array { return $this->upload($input); }
 4. 직접 구현 메서드의 declaring class 검증
 5. 래퍼 메서드(create→changePoints, create→upload 등) 존재 검증
 6. Interface/Trait 정의 자체의 무결성 검증
+
+---
+
+## 12. ServiceInterface
+
+### 12.1 도입 배경
+
+v7 시스템에서 Controller는 클라이언트 요청을 받아 입력값을 검증하고, Service를 호출한 후 결과를 응답하는 **얇은 계층(thin layer)**이다. 실제 비즈니스 로직/데이터 처리는 모두 **Service 클래스가 담당(thick layer)**한다.
+
+기존에는 Service 클래스에 강제하는 인터페이스가 없어 다음 문제가 있었다:
+
+| 문제 | 예시 |
+|------|------|
+| CRUD 메서드명 불일치 | `store()` vs `create()`, `remove()` vs `delete()`, `upsert()` vs `update()` |
+| 반환 타입 불일치 | Entity 객체 vs 배열 vs bool 혼재 |
+| list 페이지네이션 형식 불일치 | `posts` 키 vs `items` 키, `pagination` 중첩 vs 플랫 구조 |
+| Controller에서 `->toArray()` 변환 부담 | Service가 Entity를 반환하면 Controller가 배열로 변환 |
+
+**목표**: ServiceInterface를 도입하여 모든 Service에 **표준 CRUD 메서드(create, update, delete, get, list)**를 강제하고, **반환 타입을 `array`로 통일**하여 Controller를 단순화한다.
+
+**설계 결정: Interface 기반 직접 구현**
+
+모든 Service는 ServiceInterface의 5개 CRUD 메서드를 직접 구현한다:
+
+- **ServiceInterface**: 5개 static CRUD 메서드 시그니처 강제
+- 모든 Service가 5개 CRUD를 직접 구현한다
+- 미지원 메서드는 도메인에 맞는 구체적인 에러 메시지로 `RuntimeException`을 throw한다
+
+### 12.2 인터페이스 소스코드
+
+파일: `lib/utils/ServiceInterface.php`
+
+```php
+namespace Philgo\Utils;
+
+interface ServiceInterface
+{
+    public static function create(array $input): array;
+    public static function update(array $input): array;
+    public static function delete(array $input): array;
+    public static function get(array $input): array;
+    public static function list(array $input): array;
+}
+```
+
+**ControllerInterface와의 핵심 차이점**: Service 메서드는 모두 `public static`이다. Controller는 인스턴스 메서드(`public function`)를 사용한다.
+
+### 12.3 미지원 CRUD 처리 방식
+
+모든 Service는 5개 CRUD를 직접 구현한다. 미지원 메서드는 도메인에 맞는 구체적인 에러 메시지로 `RuntimeException`을 throw한다.
+
+```php
+// 예시: TravelService — JSON 읽기 전용이므로 create/update/delete는 미지원
+public static function create(array $input): array
+{
+    throw new RuntimeException('여행 데이터는 읽기 전용입니다. 생성할 수 없습니다.');
+}
+
+public static function update(array $input): array
+{
+    throw new RuntimeException('여행 데이터는 읽기 전용입니다. 수정할 수 없습니다.');
+}
+
+public static function delete(array $input): array
+{
+    throw new RuntimeException('여행 데이터는 읽기 전용입니다. 삭제할 수 없습니다.');
+}
+```
+
+**핵심 원칙**: 기존의 `ServiceDefaultsTrait`는 삭제되었다. 모든 Service 클래스가 5개 CRUD 메서드를 직접 구현하며, 미지원 기능은 도메인 맥락에 맞는 구체적인 에러 메시지를 포함한 `RuntimeException`을 throw한다.
+
+### 12.4 적용된 Service (10개)
+
+| Service | create | update | delete | get | list | 비고 |
+|---------|--------|--------|--------|-----|------|------|
+| PostService | 직접 | 직접 | 직접 | 직접 | 직접 | 5개 CRUD 모두 `array` 반환 |
+| CompanyService | 직접 | 직접 | 직접 | 직접 | 직접 | delete가 `['deleted' => bool]` 반환 |
+| PointLogService | 직접 | 직접 | 직접 | 직접 | 직접 | 기존 메서드를 CRUD 래퍼로 제공 |
+| CompanyMetaService | 직접 | 직접 | 직접 | 직접 | 직접 | create→upsert 래퍼, list→findByCompany 래퍼 |
+| UploadService | 직접 | 직접 | 직접 | 직접 | 직접 | create→store 래퍼, update→updateAttached 래퍼 |
+| SettingsService | 직접 | 직접 | 직접 | 직접 | 직접 | create→update 래퍼(UPSERT), list→getAll 래퍼 |
+| TravelService | 직접 | 직접 | 직접 | 직접 | 직접 | JSON 읽기 전용: create/update/delete는 RuntimeException |
+| UserService | 직접 | 직접 | 직접 | 직접 | 직접 | sf_member 직접 쿼리, password 제외 |
+| AiService | 직접 | 직접 | 직접 | 직접 | 직접 | create→generate 래퍼, get→moderate 래퍼, update/delete/list는 RuntimeException |
+| EventService | 직접 | 직접 | 직접 | 직접 | 직접 | create→spin 래퍼, list→getHistory 래퍼, update/delete는 RuntimeException |
+
+### 12.5 Controller <-> Service 역할 분리
+
+ServiceInterface 도입으로 Controller와 Service의 역할이 명확히 분리되었다:
+
+```
+Controller (얇은 계층)          Service (두꺼운 계층)
+─────────────────────           ─────────────────────
+1. 클라이언트 입력 수신          1. 비즈니스 로직 처리
+2. 인증/권한 확인               2. DB 조회/저장 (Repository 호출)
+3. Service 호출                 3. Entity → array 변환
+4. 결과를 클라이언트에 응답       4. 표준 형식으로 결과 반환
+```
+
+**변경 전** (Controller가 변환 담당):
+```php
+// PostController — 변경 전
+public function get(array $input): array
+{
+    $entity = PostService::get($input);
+    return $entity->toArray();  // Controller에서 변환
+}
+```
+
+**변경 후** (Service가 array 반환):
+```php
+// PostController — 변경 후
+public function get(array $input): array
+{
+    return PostService::get($input);  // Service가 이미 array 반환
+}
+```
+
+### 12.6 list 페이지네이션 표준
+
+모든 Service의 `list()` 메서드는 다음 표준을 따른다:
+
+**입력 표준**:
+- `page` (int): 페이지 번호 (기본 1)
+- `limit` (int): 페이지당 항목 수 (기본 20, 최대 100)
+
+**반환 형식 표준**:
+```php
+['items' => array, 'total' => int, 'page' => int, 'limit' => int]
+```
+
+| Service | 변환 내용 |
+|---------|----------|
+| PostService | `posts` 키 → `items` 키 추가 (하위 호환) |
+| TravelService | `pagination` 중첩 → 플랫 구조 |
+| UploadService | 신규 list() 추가 (표준 형식) |
+| CompanyService | 기존 `items` 키 유지 |
+| PointLogService | 기존 getHistory() 래퍼 |
+
+### 12.7 Service CRUD 반환 타입 통일
+
+ServiceInterface의 모든 메서드는 `array`를 반환한다. 기존에 Entity 객체나 bool을 반환하던 Service는 다음과 같이 변경되었다:
+
+**Entity → array 변환**:
+```php
+// 변경 전: Entity 반환
+public static function get(array $input): PostEntity { ... }
+
+// 변경 후: array 반환 (Service 내부에서 toArray() 호출)
+public static function get(array $input): array
+{
+    $entity = PostRepository::findByIdx($idx);
+    return $entity->toArray();
+}
+```
+
+**delete bool → array 래핑**:
+```php
+// 변경 전: bool 반환
+public static function delete(array $input): bool { ... }
+
+// 변경 후: array 반환
+public static function delete(array $input): array
+{
+    return ['deleted' => CompanyRepository::deleteByIdx($idx)];
+}
+```
+
+### 12.8 ServiceInterface 테스트 (PEST)
+
+파일: `tests/Unit/ServiceInterfaceTest.php`
+실행: `./vendor/bin/pest tests/Unit/ServiceInterfaceTest.php`
+결과: **87개 테스트, 329개 assertions 통과**
+
+테스트 항목:
+1. 10개 Service `instanceof ServiceInterface` 검증
+2. 50개 CRUD 메서드 시그니처 검증 (10 Service x 5 메서드, static/파라미터/반환 타입)
+3. Trait 사용 Service의 미지원 메서드 `RuntimeException` 검증
+4. TravelService CRUD 실제 동작 테스트 (list 페이지네이션, get 단건 조회)
+5. SettingsService get/getValue 구분 테스트
+6. PointLogService 시그니처 검증
