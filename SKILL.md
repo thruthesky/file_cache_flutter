@@ -182,13 +182,16 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 
 ### Interface 시스템 → [v7-interface.md](references/v7-interface.md)
 
-v7 시스템의 EntityInterface와 RepositoryInterface를 상세히 다룹니다. 모든 Entity(13개)는
-`Philgo\Utils\EntityInterface`를 구현하여 `fromArray(array $data): static` 정적 팩토리와
-`toArray(): array` 배열 변환을 필수로 제공합니다. 7개 Repository는
-`Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`, `update()`,
-`deleteByIdx()` 표준 CRUD 메서드명을 강제합니다. 4개 예외 Repository(SettingsRepository,
-EventRepository, QrCodeUsageRepository, VisitReviewRepository)는 도메인 특성상
-인터페이스를 미적용합니다. 표준 패턴 코드, 계산 필드 패턴, 런타임 속성 패턴,
+v7 시스템의 EntityInterface, RepositoryInterface, ServiceInterface, ControllerInterface를
+상세히 다룹니다. 모든 Entity(14개)는 `Philgo\Utils\EntityInterface`를 구현하여
+`fromArray(array $data): static` 정적 팩토리와 `toArray(): array` 배열 변환을 필수로 제공합니다.
+6개 Repository는 `Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`,
+`update()`, `deleteByIdx()` 표준 CRUD 메서드명을 강제합니다. 10개 Service는
+`Philgo\Utils\ServiceInterface`를 구현하여 `create()`, `update()`, `delete()`, `get()`,
+`list()` 표준 CRUD 메서드를 강제하며, CRUD를 지원하지 않는 Service는
+도메인 특성상 지원하지 않는 CRUD 메서드는 도메인에 맞는 구체적인 에러 메시지로
+`RuntimeException`을 throw합니다. 10개 Controller는 `Philgo\Utils\ControllerInterface`를
+구현합니다. 표준 패턴 코드, 계산 필드 패턴, 런타임 속성 패턴,
 데이터 흐름, 새 모듈 추가 워크플로우 등을 포함합니다.
 
 ### Docker 인프라 설정 → [v7-docker.md](references/v7-docker.md)
