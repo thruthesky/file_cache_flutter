@@ -789,7 +789,7 @@ public static function spin(array $user): array
 
 ```
 [1] 관리자가 쿠폰 등록 (관리자 위젯)
-    └─ func('create_event_coupon', {...}) → event_coupons INSERT (status='available')
+    └─ axios.post('/api.php', { method: 'event.createCoupon', ... }) → event_coupons INSERT (status='available')
 
 [2] 스핀 API 호출 시 사용 가능 쿠폰 확인
     └─ EventCouponService::hasAvailableCoupon('starbucks')
@@ -800,7 +800,7 @@ public static function spin(array $user): array
        → SELECT ... FOR UPDATE + UPDATE status='won', idx_winner, won_at, idx_spin_history
 
 [4] 관리자가 쿠폰 전송 완료 처리
-    └─ func('update_event_coupon_sent', {idx: ...}) → UPDATE status='sent'
+    └─ axios.post('/api.php', { method: 'event.updateCouponSent', idx: ... }) → UPDATE status='sent'
 
 [5] 모든 쿠폰 소진 시
     ├─ $hasStarbucksCoupon = false
@@ -809,7 +809,7 @@ public static function spin(array $user): array
 
 ### 쿠폰 보충 방법
 
-관리자 위젯에서 `func('create_event_coupon', {...})`으로 새 쿠폰을 등록하면 된다.
+관리자 위젯에서 `axios.post('/api.php', { method: 'event.createCoupon', ... })`으로 새 쿠폰을 등록하면 된다.
 **DB에 INSERT하면 자동으로 다음 스핀부터 스타벅스 당첨 가능**.
 
 ---

@@ -180,16 +180,22 @@ async function v7DeleteUpload(idx) {
 if (!this.couponType.trim()) { /* 에러: 쿠폰 유형 필수 */ return; }
 if (!this.idxUpload) { /* 에러: QR 이미지 필수 */ return; }
 
-const res = await func('create_event_coupon', {
+const res = await axios.post('/api.php', Object.assign({
+    method: 'event.createCoupon'
+}, {
     coupon_type: 'starbucks',
     title: '아메리카노 기프티콘',
     memo: '관리자 메모',
     idx_upload: this.idxUpload
-});
-// 성공 → 2초 후 페이지 리로드
+}));
+if (res.data && res.data.success === false) {
+    // 에러 처리
+    return;
+}
+// 성공 → res.data.idx 로 생성된 쿠폰 idx 확인
 ```
 
-**백엔드 흐름**: `func('create_event_coupon')` → `api.allowed_functions.php` → `is_admin()` 검증 → `EventCouponService::createCoupon()` → `EventCouponRepository::create()` → `event_coupons` INSERT
+**백엔드 흐름**: `axios.post('/api.php', { method: 'event.createCoupon' })` → `api.php` → `EventController::createCoupon()` → `requireAdmin()` (ADMINS 상수로 관리자 확인) → `EventCouponService::createCoupon()` → `EventCouponRepository::create()` → `event_coupons` INSERT
 
 ### 4.5 Vue.js 등록 앱 (coupon-create-app)
 
@@ -211,7 +217,7 @@ Vue.createApp({
     methods: {
         onFileSelected(event),   // 파일 선택 → v7Upload
         removeImage(),           // 이미지 삭제 → v7DeleteUpload
-        createCoupon(),          // 등록 → func('create_event_coupon')
+        createCoupon(),          // 등록 → axios.post('/api.php', { method: 'event.createCoupon' })
         resetForm(),             // 폼 초기화
         showMessage(msg, cls),   // 결과 메시지 표시 (5초 후 자동 소멸)
     },
@@ -261,9 +267,9 @@ Vue.createApp({
 
 | 상태 | 버튼 | 동작 |
 |------|------|------|
-| `available` | 수정 + 삭제 | 수정 모달 / `func('delete_event_coupon')` |
-| `won` | 전송 | `func('update_event_coupon_sent', { idx, sent: true })` |
-| `sent` | 전송취소 | `func('update_event_coupon_sent', { idx, sent: false })` |
+| `available` | 수정 + 삭제 | 수정 모달 / `axios.post('/api.php', { method: 'event.deleteCoupon', idx })` |
+| `won` | 전송 | `axios.post('/api.php', { method: 'event.updateCouponSent', idx, sent: true })` |
+| `sent` | 전송취소 | `axios.post('/api.php', { method: 'event.updateCouponSent', idx, sent: false })` |
 | `expired` / `cancelled` | 없음 | — |
 
 ### 5.5 쿠폰 수정 (Bootstrap Modal)
@@ -279,13 +285,15 @@ window.openEditCoupon = function(idx, title, memo, imageUrl, idxUpload) {
 };
 
 // 수정 저장
-const res = await func('update_event_coupon', {
+const res = await axios.post('/api.php', Object.assign({
+    method: 'event.updateCoupon'
+}, {
     idx: this.editIdx,
     title: this.editTitle.trim(),
     memo: this.editMemo.trim(),
     idx_upload: this.editIdxUpload,
     image_url: '',  // v7 Upload으로 전환하므로 image_url 초기화
-});
+}));
 ```
 
 **이미지 교체 로직**:
@@ -605,7 +613,7 @@ QR 이미지 클릭 → 원본 이미지 새 탭 오픈
   ↓
 별도 채널(카카오톡 등)로 쿠폰 이미지를 사용자에게 전송
   ↓
-"전송" 버튼 클릭 → func('update_event_coupon_sent', { idx, sent: true })
+"전송" 버튼 클릭 → axios.post('/api.php', { method: 'event.updateCouponSent', idx, sent: true })
   ↓
 상태: won → sent
 ```
@@ -646,48 +654,79 @@ lib/event/
 │   └── markAsViewed(idx): bool              ← QR 코드 최초 확인 (viewed_at NULL → 현재 시간)
 │
 ├── EventService.php            ← 스피닝 휠 로직 + DB 기반 쿠폰 배정
-├── EventController.php         ← event.spin, event.history, event.myCoupons, event.viewCoupon API
+├── EventController.php         ← event.* API (스핀 + 쿠폰 관리 통합)
+│   ├── spin(array): array                 ← 스피닝 휠 돌리기
+│   ├── history(array): array              ← 스핀 히스토리 조회
 │   ├── myCoupons(array): array            ← 내 당첨 쿠폰 목록 조회
-│   └── viewCoupon(array): array           ← 쿠폰 QR 코드 확인 (viewed_at 기록)
+│   ├── viewCoupon(array): array           ← 쿠폰 QR 코드 확인 (viewed_at 기록)
+│   ├── createCoupon(array): array         ← 쿠폰 생성 (관리자)
+│   ├── deleteCoupon(array): array         ← 쿠폰 삭제 (관리자)
+│   ├── updateCoupon(array): array         ← 쿠폰 수정 (관리자)
+│   ├── updateCouponSent(array): array     ← 전송 상태 토글 (관리자)
+│   ├── listCoupons(array): array          ← 쿠폰 목록 조회 (관리자)
+│   └── couponStats(array): array          ← 쿠폰 통계 조회 (관리자)
 └── EventRepository.php          ← event_spin_history DB 계층
 ```
 
 ---
 
-## 9. 레거시 API 함수
+## 9. v7 API 엔드포인트 (관리자 전용 쿠폰 관리)
 
-쿠폰 관리 API는 **레거시 `func()` 방식**으로 제공된다 (`lib/api/api.allowed_functions.php`):
+쿠폰 관리 API는 **v7 API** (`api.php` → `EventController`)를 통해 제공된다.
+관리자 확인은 `ADMINS` 상수(firebase_uid 배열)로 수행한다.
 
-| 함수명 | 용도 | 권한 | 내부 호출 |
-|--------|------|------|-----------|
-| `create_event_coupon` | 쿠폰 생성 | 관리자 | `EventCouponService::createCoupon()` |
-| `delete_event_coupon` | 쿠폰 삭제 | 관리자 | `EventCouponService::deleteCoupon()` |
-| `update_event_coupon` | 쿠폰 수정 | 관리자 | `EventCouponService::updateCoupon()` |
-| `update_event_coupon_sent` | 전송 상태 토글 | 관리자 | `EventCouponService::toggleSentStatus()` |
+| API method | 용도 | 권한 | Controller 메서드 |
+|------------|------|------|-------------------|
+| `event.createCoupon` | 쿠폰 생성 | 관리자 | `EventController::createCoupon()` |
+| `event.deleteCoupon` | 쿠폰 삭제 | 관리자 | `EventController::deleteCoupon()` |
+| `event.updateCoupon` | 쿠폰 수정 | 관리자 | `EventController::updateCoupon()` |
+| `event.updateCouponSent` | 전송 상태 토글 | 관리자 | `EventController::updateCouponSent()` |
+| `event.listCoupons` | 쿠폰 목록 | 관리자 | `EventController::listCoupons()` |
+| `event.couponStats` | 쿠폰 통계 | 관리자 | `EventController::couponStats()` |
+| `event.myCoupons` | 내 당첨 쿠폰 | 로그인 | `EventController::myCoupons()` |
+| `event.viewCoupon` | 쿠폰 QR 확인 | 로그인 | `EventController::viewCoupon()` |
 
-**JavaScript 호출 예시**:
+**JavaScript 호출 예시 (axios)**:
 
 ```javascript
 // 쿠폰 생성
-const res = await func('create_event_coupon', {
+const res = await axios.post('/api.php', {
+    method: 'event.createCoupon',
     coupon_type: 'starbucks',
     title: '아메리카노 기프티콘',
     memo: '관리자 메모',
     idx_upload: 42  // v7 Upload API로 미리 업로드한 이미지 idx
 });
+// 에러: res.data.success === false, res.data.message
+// 성공: res.data.idx, res.data.coupon_type 등
 
 // 쿠폰 삭제 (available 상태만)
-await func('delete_event_coupon', { idx: 123 });
+await axios.post('/api.php', { method: 'event.deleteCoupon', idx: 123 });
 
 // 쿠폰 수정
-await func('update_event_coupon', {
+await axios.post('/api.php', {
+    method: 'event.updateCoupon',
     idx: 123, title: '새 제목', memo: '새 메모', idx_upload: 43
 });
 
 // 전송 상태 토글
-await func('update_event_coupon_sent', { idx: 123, sent: true });  // won → sent
-await func('update_event_coupon_sent', { idx: 123, sent: false }); // sent → won
+await axios.post('/api.php', { method: 'event.updateCouponSent', idx: 123, sent: true });  // won → sent
+await axios.post('/api.php', { method: 'event.updateCouponSent', idx: 123, sent: false }); // sent → won
+
+// 쿠폰 목록 조회 (관리자)
+const list = await axios.post('/api.php', {
+    method: 'event.listCoupons',
+    coupon_type: 'starbucks', status: 'won', page: 1, limit: 20
+});
+// list.data = { total, page, limit, items: [...] }
+
+// 쿠폰 통계 (관리자)
+const stats = await axios.post('/api.php', { method: 'event.couponStats' });
+// stats.data = { total, available, won, sent, expired, cancelled, by_type, types }
 ```
+
+> **참고**: 쿠키의 `session_id`가 자동 전송되므로 별도의 인증 파라미터가 필요 없다.
+> 관리자 확인은 `ADMINS` 상수(firebase_uid 배열)로 수행하며, DB의 admin 필드는 사용하지 않는다.
 
 ---
 
@@ -700,9 +739,6 @@ lib/event/
 ├── EventService.php             ← 스피닝 휠 + 쿠폰 배정 호출
 ├── EventController.php          ← event.spin, event.history, event.myCoupons, event.viewCoupon API
 └── EventRepository.php          ← event_spin_history DB 계층
-
-lib/api/
-└── api.allowed_functions.php    ← 레거시 API (create/delete/update/sent)
 
 widgets/admin/event/
 └── coupon-list.php              ← 관리자 쿠폰 관리 위젯 (Vue.js + v7 Upload)
