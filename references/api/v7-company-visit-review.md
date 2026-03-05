@@ -70,7 +70,7 @@
 ### 1.3 관련 테이블
 
 - **company_reviews**: 방문 후기 본문 + 보상 포인트 정보
-- **uploads**: 후기 사진 (module='company', code='visit_review', attached_to=review.idx)
+- **uploads**: 후기 사진 (module='visit_review', code='', attached_to=review.idx)
 - **company_qr_code_usages**: QR 스캔 기록 (후기 작성 권한 검증)
 - **company**: 업소 정보 (업소명 조회)
 - **sf_point_log**: 포인트 로그 (module='company', action='visit_review')
@@ -99,7 +99,7 @@
 
 - **company_reviews 테이블**: idx, idx_company, idx_member, usage_idx(UNIQUE), content, reward_points, created_at
 - **사진 저장 방식**: uploads 테이블의 기존 attached 메커니즘 활용
-  - module='company', code='visit_review', attached_to=review.idx
+  - module='visit_review', code='', attached_to=review.idx
   - 1:N 관계 (후기 1개에 여러 사진)
 - **포인트 로그**: sf_point_log 테이블에 module='company', action='visit_review'로 기록
 
@@ -218,15 +218,15 @@ CREATE TABLE company_reviews (
 ```sql
 -- uploads 테이블에서 후기 사진 조회 조건:
 SELECT * FROM uploads
-WHERE module = 'company'
-  AND code = 'visit_review'
+WHERE module = 'visit_review'
+  AND code = ''
   AND attached_to = {review.idx};
 ```
 
 | 필드 | 값 | 설명 |
 |------|-----|------|
-| `module` | `'company'` | 업소록 모듈 |
-| `code` | `'visit_review'` | 방문 후기 코드 |
+| `module` | `'visit_review'` | 방문 후기 모듈 |
+| `code` | `''` | 빈 값 |
 | `attached_to` | `review.idx` | 후기 idx에 연결 |
 
 ### 4.3 관련 테이블 — sf_point_log (포인트 로그)
@@ -362,15 +362,15 @@ class VisitReviewEntity
         {
             "idx": 101,
             "url": "https://...",
-            "module": "company",
-            "code": "visit_review",
+            "module": "visit_review",
+            "code": "",
             "attached_to": 15
         },
         {
             "idx": 102,
             "url": "https://...",
-            "module": "company",
-            "code": "visit_review",
+            "module": "visit_review",
+            "code": "",
             "attached_to": 15
         }
     ]
@@ -587,7 +587,7 @@ $pointLog = PointLogService::changePoints(
             "reward_points": 2500,
             "created_at": 1709337600,
             "photos": [
-                { "idx": 101, "url": "...", "module": "company", "code": "visit_review" }
+                { "idx": 101, "url": "...", "module": "visit_review", "code": "" }
             ]
         }
     ],
@@ -606,8 +606,8 @@ $total = VisitReviewRepository::countByCompany($idxCompany);
 // 각 후기에 연결된 사진 목록을 uploads 테이블에서 조회
 foreach ($reviews as $review) {
     $review->photos = \Philgo\Upload\UploadRepository::findByAttached(
-        'company',        // module
-        'visit_review',   // code
+        'visit_review',   // module
+        '',               // code (빈 값)
         $review->idx      // attached_to (후기 idx)
     );
 }
@@ -788,7 +788,7 @@ for (final r in reviews['reviews']) {
 ```
 클라이언트에서 사진 업로드 (v7 Upload API)
   ↓
-uploads 테이블에 저장 (module='company', code='visit_review')
+uploads 테이블에 저장 (module='visit_review', code='')
   ↓
 클라이언트에서 photo_idxs[] 배열로 전달
   ↓
@@ -815,8 +815,8 @@ foreach ($photoIdxs as $photoIdx) {
 // 각 후기에 연결된 사진 목록을 uploads 테이블에서 조회
 foreach ($reviews as $review) {
     $review->photos = \Philgo\Upload\UploadRepository::findByAttached(
-        'company',        // module
-        'visit_review',   // code
+        'visit_review',   // module
+        '',               // code (빈 값)
         $review->idx      // attached_to 값
     );
 }
@@ -828,8 +828,8 @@ foreach ($reviews as $review) {
 
 | 파라미터 | 값 | 설명 |
 |---------|-----|------|
-| `module` | `company` | 업소록 모듈 |
-| `code` | `visit_review` | 방문 후기 코드 |
+| `module` | `visit_review` | 방문 후기 모듈 |
+| `code` | `` (빈 값) | 코드 없음 |
 | `attached_to` | `0` (임시) → 이후 `review.idx`로 업데이트 | 후기 생성 후 연결 |
 
 ---
@@ -958,7 +958,7 @@ Vue.js + Bootstrap 기반으로 구현되어 있으며, v7 Upload API로 사진 
   ↓
 [visit-review-point.php]
   ├─ 사진 업로드 (v7 Upload API)
-  │   └─ uploads 테이블에 임시 저장 (attached_to=0)
+  │   └─ uploads 테이블에 임시 저장 (module='visit_review', code='', attached_to=0)
   ├─ 후기 내용 작성 (10자 이상)
   ├─ "제출" 클릭
   │   └─ company.submitVisitReview API 호출
@@ -1000,7 +1000,7 @@ company (업소 정보)
   │           └─ company_reviews (방문 후기)  ← usage_idx FK
   │                 │
   │                 └─ uploads (사진)  ← attached_to = review.idx
-  │                       module='company', code='visit_review'
+  │                       module='visit_review', code=''
   │
   └─ sf_point_log (포인트 로그)
         module='company'
