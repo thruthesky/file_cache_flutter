@@ -26,11 +26,12 @@
             ]
         },
         {
-            "name": "🚀 A17",
+            "name": "🚀 iPhone16",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
-            "deviceId": "RRGYB01TE2F"
+            "deviceId": "00008140-001C24C93E93001C",
+            "args": []
         },
         {
             "name": "🚀 iPhone16 : Dev",
@@ -42,6 +43,13 @@
                 "--dart-define=ENV=dev",
                 "--dart-define=V7_API_ENDPOINT=https://dev-philgo.sonub.com/api.php",
             ]
+        },
+        {
+            "name": "🚀 A17",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "RRGYB01TE2F"
         },
         {
             "name": "🚀 Simulator",

@@ -2307,7 +2307,7 @@
   "qrErrorGeneric": "扫描错误",
   "qrErrorGenericDesc": "处理二维码时出现问题。",
   "userPoint": "积分",
-  "managementLevel": "管理级别",
+  "managementLevel": "级别",
   "companyInfoSection": "商家信息",
   "visitorInfo": "访客信息",
   "qrScanResult": "二维码扫描结果",
@@ -2324,5 +2324,17 @@
   "phoneNumberNotAllowed": "此电话号码不可用。仅支持韩国或菲律宾电话号码。",
   "@phoneNumberNotAllowed": {
     "description": "Error message when user tries to log in with an unsupported phone number"
+  },
+  "pointHistory": "积分记录",
+  "@pointHistory": {
+    "description": "Point history menu item and screen title"
+  },
+  "currentPoints": "当前积分",
+  "@currentPoints": {
+    "description": "Label for current point balance"
+  },
+  "noPointHistory": "没有积分记录。",
+  "@noPointHistory": {
+    "description": "Message shown when there are no point history records"
   }
 }

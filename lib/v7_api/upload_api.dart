@@ -1,3 +1,4 @@
+import 'models/v7_upload_model.dart';
 import 'v7_api.dart';
 
 /// v7 업로드(Upload) API 래퍼 클래스
@@ -43,7 +44,7 @@ class UploadApi {
   /// [debug] 디버그 로깅
   ///
   /// 반환: 업로드 응답 Map (idx, name, size, type, url 등)
-  static Future<Map<String, dynamic>> upload({
+  static Future<V7UploadModel> upload({
     required String filePath,
     required String idxMember,
     String method = 'upload.upload',

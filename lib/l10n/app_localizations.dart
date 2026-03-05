@@ -4888,6 +4888,24 @@ abstract class Lo {
   /// In en, this message translates to:
   /// **'This phone number is not allowed. Only Korean or Philippine phone numbers are supported.'**
   String get phoneNumberNotAllowed;
+
+  /// Point history menu item and screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Point History'**
+  String get pointHistory;
+
+  /// Label for current point balance
+  ///
+  /// In en, this message translates to:
+  /// **'Current Points'**
+  String get currentPoints;
+
+  /// Message shown when there are no point history records
+  ///
+  /// In en, this message translates to:
+  /// **'No point history.'**
+  String get noPointHistory;
 }
 
 class _LoDelegate extends LocalizationsDelegate<Lo> {

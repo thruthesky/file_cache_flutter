@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.review_point_result.screen.dart';
 import 'package:philgo/v7_api/company_api.dart';
+import 'package:philgo/v7_api/models/v7_upload_model.dart';
 import 'package:philgo/v7_api/v7_api.dart';
+import 'package:philgo/v7_api/widgets/upload/v7_display_upload.dart';
 import 'package:philgo/v7_api/widgets/upload/v7_file_upload.dart';
 import 'package:philgo_api/philgo_api.dart';
 
@@ -50,7 +52,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
   final TextEditingController _contentController = TextEditingController();
 
   /// 업로드된 사진 목록 [{idx: int, url: String}, ...]
-  final List<Map<String, dynamic>> _uploadedPhotos = [];
+  final List<V7UploadModel> _uploadedPhotos = [];
 
   bool _isSubmitting = false;
   String? _errorMessage;
@@ -110,7 +112,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
 
     try {
       final photoIdxs = _uploadedPhotos
-          .map((p) => (p['idx'] as num).toInt())
+          .map((p) => p.idx)
           .toList();
 
       final result = await CompanyApi.submitVisitReview(
@@ -434,11 +436,10 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                 );
               }),
 
-              /// 업로드 중 슬롯 표시
-              if (_isUploading) _buildUploadingSlot(scheme, theme),
-
-              /// 사진 추가 버튼 (V7FileUpload)
-              if (_userInfo != null && !_isUploading)
+              /// 업로드 중이면 진행률 슬롯, 아니면 사진 추가 버튼 표시
+              /// V7FileUpload는 항상 트리에 유지해야 async 업로드 완료 후
+              /// onUploaded 콜백이 정상 호출됨 (dispose 방지)
+              if (_userInfo != null)
                 V7FileUpload(
                   idxMember: _userInfo!['idx']?.toString() ?? '',
                   module: 'visit_review',
@@ -454,11 +455,15 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                   },
                   onUploaded: (result) {
                     // ignore: avoid_print
-                    print('[UPLOAD] 업로드 응답 전체: $result');
+                    print('[UPLOAD-DEBUG] ===== 업로드 완료 =====');
                     // ignore: avoid_print
-                    print('[UPLOAD] url: ${result['url']}');
+                    print('[UPLOAD-DEBUG] url: ${result.url}');
                     // ignore: avoid_print
-                    print('[UPLOAD] 모든 키: ${result.keys.toList()}');
+                    print('[UPLOAD-DEBUG] idx: ${result.idx}');
+                    // ignore: avoid_print
+                    print('[UPLOAD-DEBUG] type: ${result.type}');
+                    // ignore: avoid_print
+                    print('[UPLOAD-DEBUG] name: ${result.name}');
                     setState(() {
                       _uploadedPhotos.add(result);
                       _isUploading = false;
@@ -472,7 +477,9 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                     });
                     _showSnackBar(error);
                   },
-                  child: _buildAddPhotoButton(scheme, theme),
+                  child: _isUploading
+                      ? _buildUploadingSlot(scheme, theme)
+                      : _buildAddPhotoButton(scheme, theme),
                 ),
             ],
           ),
@@ -547,78 +554,24 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
     ).animate().fadeIn(duration: 200.ms);
   }
 
-  /// 업로드된 사진 썸네일
+  /// 업로드된 파일 썸네일 (V7DisplayUpload 위젯 사용)
   Widget _buildPhotoThumbnail(
     ColorScheme scheme,
     ThemeData theme,
-    Map<String, dynamic> photo,
+    V7UploadModel photo,
     int index,
   ) {
-    final url = photo['url']?.toString() ?? '';
-    final baseUrl =
-        PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '');
-    final fullUrl = url.startsWith('http') ? url : '$baseUrl$url';
-    // ignore: avoid_print
-    print('[UPLOAD-PREVIEW] url=$url, baseUrl=$baseUrl, fullUrl=$fullUrl');
-
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: Stack(
-        children: [
-          /// 사진 이미지
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              fullUrl,
-              width: 110,
-              height: 110,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
-                width: 110,
-                height: 110,
-                decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.lightImage,
-                    color: scheme.onSurfaceVariant,
-                    size: 28,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          /// 삭제 버튼
-          Positioned(
-            top: 4,
-            right: 4,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _uploadedPhotos.removeAt(index);
-                });
-              },
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: scheme.error.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.xmark,
-                    size: 12,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+      child: V7DisplayUpload(
+        data: photo,
+        width: 110,
+        height: 110,
+        onDelete: () {
+          setState(() {
+            _uploadedPhotos.removeAt(index);
+          });
+        },
       ),
     );
   }

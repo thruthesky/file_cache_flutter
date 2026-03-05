@@ -2401,7 +2401,7 @@ class LoJa extends Lo {
   String get userPoint => 'ポイント';
 
   @override
-  String get managementLevel => '管理レベル';
+  String get managementLevel => 'レベル';
 
   @override
   String get companyInfoSection => '店舗情報';
@@ -2467,4 +2467,13 @@ class LoJa extends Lo {
   @override
   String get phoneNumberNotAllowed =>
       'この電話番号は使用できません。韓国またはフィリピンの電話番号のみ対応しています。';
+
+  @override
+  String get pointHistory => 'ポイント履歴';
+
+  @override
+  String get currentPoints => '現在のポイント';
+
+  @override
+  String get noPointHistory => 'ポイント履歴がありません。';
 }

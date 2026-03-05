@@ -2390,7 +2390,7 @@ class LoZh extends Lo {
   String get userPoint => '积分';
 
   @override
-  String get managementLevel => '管理级别';
+  String get managementLevel => '级别';
 
   @override
   String get companyInfoSection => '商家信息';
@@ -2455,4 +2455,13 @@ class LoZh extends Lo {
 
   @override
   String get phoneNumberNotAllowed => '此电话号码不可用。仅支持韩国或菲律宾电话号码。';
+
+  @override
+  String get pointHistory => '积分记录';
+
+  @override
+  String get currentPoints => '当前积分';
+
+  @override
+  String get noPointHistory => '没有积分记录。';
 }

@@ -11,6 +11,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/widgets/theme/comic_text_form_field.dart';
 import 'package:philgo/widgets/theme/comic_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 /// Profile Edit Screen (프로필 수정 화면)
 ///
@@ -200,6 +201,90 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       ),
                     ),
                   ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+
+                  /// 포인트/레벨 콤팩트 칩 표시
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: scheme.primary.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.coins,
+                                size: 14,
+                                color: scheme.primary,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                T.userPoint,
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${NumberFormat('#,###').format(user.point ?? 0)}P',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: scheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: scheme.tertiary.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.trophy,
+                                size: 14,
+                                color: scheme.tertiary,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                T.managementLevel,
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Lv.${user.level ?? 0}',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: scheme.tertiary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 50.ms)
+                      .slideY(begin: 0.1, end: 0),
 
                   /// [2. Basic Info Section] - 기본 정보 섹션
                   _buildSection(

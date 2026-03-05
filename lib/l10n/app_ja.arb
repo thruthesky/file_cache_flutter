@@ -2307,7 +2307,7 @@
   "qrErrorGeneric": "スキャンエラー",
   "qrErrorGenericDesc": "QRコード処理中に問題が発生しました。",
   "userPoint": "ポイント",
-  "managementLevel": "管理レベル",
+  "managementLevel": "レベル",
   "companyInfoSection": "店舗情報",
   "visitorInfo": "訪問者情報",
   "qrScanResult": "QRスキャン結果",
@@ -2324,5 +2324,17 @@
   "phoneNumberNotAllowed": "この電話番号は使用できません。韓国またはフィリピンの電話番号のみ対応しています。",
   "@phoneNumberNotAllowed": {
     "description": "Error message when user tries to log in with an unsupported phone number"
+  },
+  "pointHistory": "ポイント履歴",
+  "@pointHistory": {
+    "description": "Point history menu item and screen title"
+  },
+  "currentPoints": "現在のポイント",
+  "@currentPoints": {
+    "description": "Label for current point balance"
+  },
+  "noPointHistory": "ポイント履歴がありません。",
+  "@noPointHistory": {
+    "description": "Message shown when there are no point history records"
   }
 }

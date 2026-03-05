@@ -2923,7 +2923,7 @@
   "qrErrorGeneric": "스캔 오류",
   "qrErrorGenericDesc": "QR 코드 처리 중 문제가 발생했습니다.",
   "userPoint": "포인트",
-  "managementLevel": "관리레벨",
+  "managementLevel": "레벨",
   "companyInfoSection": "업소 정보",
   "visitorInfo": "방문자 정보",
   "qrScanResult": "QR 스캔 결과",
@@ -2993,5 +2993,17 @@
   "phoneNumberNotAllowed": "이 전화번호는 사용할 수 없습니다. 한국 또는 필리핀 전화번호만 지원합니다.",
   "@phoneNumberNotAllowed": {
     "description": "Error message when user tries to log in with an unsupported phone number"
+  },
+  "pointHistory": "포인트 내역",
+  "@pointHistory": {
+    "description": "Point history menu item and screen title"
+  },
+  "currentPoints": "현재 보유 포인트",
+  "@currentPoints": {
+    "description": "Label for current point balance"
+  },
+  "noPointHistory": "포인트 내역이 없습니다.",
+  "@noPointHistory": {
+    "description": "Message shown when there are no point history records"
   }
 }

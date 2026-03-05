@@ -24,6 +24,7 @@ import 'package:philgo/screens/guide/travel_spots.screen.dart';
 import 'package:philgo/screens/info/delivery/food_delivery.screen.dart';
 import 'package:philgo/screens/info/delivery/baedal_k.screen.dart';
 import 'package:philgo/screens/event/event_coupon.screen.dart';
+import 'package:philgo/v7_api/widgets/point/point_history.screen.dart';
 import 'package:philgo/screens/user/profile.edit.screen.dart';
 import 'package:philgo/screens/user/user.activity.screen.dart';
 import 'package:philgo/screens/info/app_info.screen.dart';
@@ -221,6 +222,12 @@ class _MenuHomeState extends State<MenuHome> {
                       icon: FontAwesomeIcons.ticket,
                       title: l10n.eventCoupon,
                       onTap: () => EventCouponScreen.push(context),
+                    ),
+                    // 포인트 내역 (Point History)
+                    MenuGridItem(
+                      icon: FontAwesomeIcons.coins,
+                      title: l10n.pointHistory,
+                      onTap: () => PointHistoryScreen.push(context),
                     ),
                   ],
                 ),

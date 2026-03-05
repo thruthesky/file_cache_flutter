@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo_api/philgo_api.dart';
 
+import '../../models/v7_upload_model.dart';
 import '../../v7_api.dart';
 
 /// v7 파일 업로드 위젯 (재활용 가능)
@@ -109,9 +110,9 @@ class V7FileUpload extends StatefulWidget {
   /// 회원번호 (필수)
   final String idxMember;
 
-  /// 업로드 완료 시 호출되는 콜백 (v7 응답 Map 전달)
-  /// 응답 필드: idx, idx_member, name, size, type, module, code, url 등
-  final Function(Map<String, dynamic>) onUploaded;
+  /// 업로드 완료 시 호출되는 콜백 (V7UploadModel 전달)
+  /// 응답 필드: idx, idxMember, name, size, type, module, code, url(full URL) 등
+  final Function(V7UploadModel) onUploaded;
 
   /// 업로드 시작 전 호출되는 콜백
   final VoidCallback? onBeforeUpload;
@@ -507,7 +508,7 @@ class _V7FileUploadState extends State<V7FileUpload> {
         },
       );
 
-      if (widget.debug) debugLog('v7 파일 업로드 성공: ${result['url']}');
+      if (widget.debug) debugLog('v7 파일 업로드 성공: ${result.url}');
       widget.onUploaded(result);
     } catch (e) {
       if (widget.debug) debugLog('v7 파일 업로드 오류: $e');

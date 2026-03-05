@@ -7,6 +7,8 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/screens/company/company.form.screen.dart';
 import 'package:philgo/screens/company/company.qr_code.screen.dart';
 import 'package:philgo/v7_api/company_api.dart';
+import 'package:philgo/v7_api/models/v7_upload_model.dart';
+import 'package:philgo/v7_api/widgets/upload/v7_display_upload.dart';
 import 'package:philgo_api/philgo_api.dart';
 
 /// 업체 상세 보기 화면 (Company View Screen)
@@ -884,36 +886,40 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               itemCount: photos.length,
               separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
-                final rawUrl =
-                    (photos[index] is Map ? photos[index]['url'] : photos[index])
-                            ?.toString() ??
-                        '';
-                /// 상대 경로를 전체 URL로 변환
-                final baseUrl =
-                    PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '');
-                final photoUrl =
-                    rawUrl.startsWith('http') ? rawUrl : '$baseUrl$rawUrl';
-                return Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: scheme.outlineVariant.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.network(
-                    photoUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.lightImage,
-                        size: 20,
-                        color: scheme.onSurfaceVariant.withValues(alpha: 0.3),
+                /// photos 항목을 V7UploadModel로 변환
+                final photoMap = photos[index] is Map
+                    ? Map<String, dynamic>.from(photos[index] as Map)
+                    : <String, dynamic>{'url': photos[index]?.toString() ?? ''};
+                final model = V7UploadModel.fromJson(photoMap);
+                // ignore: avoid_print
+                print('[PHOTO-DEBUG] [$index] photoMap: $photoMap');
+                // ignore: avoid_print
+                print('[PHOTO-DEBUG] [$index] model.url: ${model.url}');
+                // ignore: avoid_print
+                print('[PHOTO-DEBUG] [$index] model.thumbnail400: ${model.thumbnail400x400Url}');
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 72,
+                      height: 56,
+                      child: V7DisplayUpload(
+                        data: model,
+                        width: 72,
+                        height: 56,
+                        borderRadius: 8,
                       ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 72,
+                      height: 16,
+                      child: Text(
+                        model.url.split('/').last,
+                        style: const TextStyle(fontSize: 6),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 );
               },
             ),

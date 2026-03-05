@@ -2517,4 +2517,13 @@ class LoEn extends Lo {
   @override
   String get phoneNumberNotAllowed =>
       'This phone number is not allowed. Only Korean or Philippine phone numbers are supported.';
+
+  @override
+  String get pointHistory => 'Point History';
+
+  @override
+  String get currentPoints => 'Current Points';
+
+  @override
+  String get noPointHistory => 'No point history.';
 }

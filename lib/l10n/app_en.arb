@@ -2930,5 +2930,17 @@
   "phoneNumberNotAllowed": "This phone number is not allowed. Only Korean or Philippine phone numbers are supported.",
   "@phoneNumberNotAllowed": {
     "description": "Error message when user tries to log in with an unsupported phone number"
+  },
+  "pointHistory": "Point History",
+  "@pointHistory": {
+    "description": "Point history menu item and screen title"
+  },
+  "currentPoints": "Current Points",
+  "@currentPoints": {
+    "description": "Label for current point balance"
+  },
+  "noPointHistory": "No point history.",
+  "@noPointHistory": {
+    "description": "Message shown when there are no point history records"
   }
 }

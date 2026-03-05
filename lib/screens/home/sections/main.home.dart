@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kDebugMode;
+import 'package:philgo/config/app.config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -198,49 +199,120 @@ class _MainHomeState extends State<MainHome> {
                         if (_debugCardExpanded)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                /// QR 스캔 테스트 버튼
-                                GestureDetector(
-                                  onTap: () {
-                                    CompanyQrCodeScannedScreen.push(context, 1025, 'e41aa5ca0d55be94a8a92fab13a0f672');
-                                  },
-                                  child: Text(
-                                    'QR 스캔 테스트 (idx:1025)',
-                                    style: labelStyle?.copyWith(
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-
-                                /// v7 설정 정보
-                                Selector<V7SettingsState, ({V7Settings? settings, String? error})>(
-                                  selector: (_, state) => (settings: state.settings, error: state.error),
-                                  builder: (context, data, _) {
-                                    final s = data.settings;
-                                    final err = data.error;
-                                    if (err != null) {
-                                      return Text(
-                                        'v7 Settings 에러: $err',
-                                        style: labelStyle?.copyWith(color: scheme.error),
-                                      );
-                                    }
-                                    if (s == null) {
-                                      return Text('v7 Settings: 로딩 중...', style: labelStyle);
-                                    }
-                                    return Text(
-                                      'Android: ${s.appVersionAndroid}+${s.appVersionAndroidBuild}'
-                                      '  |  iOS: ${s.appVersionIos}+${s.appVersionIosBuild}\n'
-                                      'QR: ${s.companyQrEventEnabled ? "ON" : "OFF"}'
-                                      '  |  Event: ${s.eventEntryEnabled ? "ON" : "OFF"}'
-                                      '  |  Coupons: ${s.availableStarbucksCoupons}',
+                            child: Builder(
+                              builder: (context) {
+                                final philgoState = PhilgoState.of(context);
+                                final ps = philgoState.setting;
+                                final u = philgoState.user;
+                                final sectionStyle = labelStyle?.copyWith(fontWeight: FontWeight.bold);
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    /// ── 환경 정보 ──
+                                    Text('── 환경 ──', style: sectionStyle),
+                                    Text(
+                                      'ENV: ${PhilgoConfig.getEnv}'
+                                      '  |  Debug: $kDebugMode'
+                                      '  |  Platform: $defaultTargetPlatform',
                                       style: labelStyle,
-                                    );
-                                  },
-                                ),
-                              ],
+                                    ),
+                                    const SizedBox(height: 4),
+
+                                    /// ── URL 정보 ──
+                                    Text('── URL ──', style: sectionStyle),
+                                    Text(
+                                      'v7 API: ${PhilgoConfig.v7ApiEndpoint}\n'
+                                      'PHP API: ${PhilgoConfig.phpApiUrl}\n'
+                                      'File: ${PhilgoConfig.fileServerUrl}',
+                                      style: labelStyle,
+                                    ),
+                                    const SizedBox(height: 4),
+
+                                    /// ── 사용자 정보 ──
+                                    Text('── 사용자 ──', style: sectionStyle),
+                                    if (u != null)
+                                      Text(
+                                        'UID: ${u.uid}\n'
+                                        'idx: ${u.idx}  |  닉네임: ${u.nickname}\n'
+                                        'Lv: ${u.level}  |  Point: ${u.point}'
+                                        '  |  글: ${u.noOfPost}  |  댓글: ${u.noOfComment}\n'
+                                        'Admin: ${philgoState.isAdmin}',
+                                        style: labelStyle,
+                                      )
+                                    else
+                                      Text('로그인 안됨 (loading: ${philgoState.loading})', style: labelStyle),
+                                    const SizedBox(height: 4),
+
+                                    /// ── PhilGo 설정 ──
+                                    Text('── PhilGo 설정 ──', style: sectionStyle),
+                                    if (ps != null) ...[
+                                      Text(
+                                        'Admin UIDs: ${ps.adminUids.length}명\n'
+                                        '광고 카테고리: ${ps.point.advertisingPostCategories.join(", ")}\n'
+                                        '광고 일수: ${ps.point.advertisementDays.join(", ")}\n'
+                                        '시간당 비용: ${ps.point.advCostPerHour}P\n'
+                                        '은행: ${ps.bankInfo.banks.keys.join(", ")}',
+                                        style: labelStyle,
+                                      ),
+                                    ] else
+                                      Text('PhilGo 설정: 로딩 중...', style: labelStyle),
+                                    const SizedBox(height: 4),
+
+                                    /// ── V7 설정 ──
+                                    Selector<V7SettingsState, ({V7Settings? settings, String? error})>(
+                                      selector: (_, state) => (settings: state.settings, error: state.error),
+                                      builder: (context, data, _) {
+                                        final s = data.settings;
+                                        final err = data.error;
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text('── V7 설정 ──', style: sectionStyle),
+                                            if (err != null)
+                                              Text('에러: $err', style: labelStyle?.copyWith(color: scheme.error))
+                                            else if (s == null)
+                                              Text('로딩 중...', style: labelStyle)
+                                            else
+                                              Text(
+                                                'Android: ${s.appVersionAndroid}+${s.appVersionAndroidBuild}'
+                                                '  |  iOS: ${s.appVersionIos}+${s.appVersionIosBuild}\n'
+                                                'QR: ${s.companyQrEventEnabled ? "ON" : "OFF"}'
+                                                '  |  Event: ${s.eventEntryEnabled ? "ON" : "OFF"}'
+                                                '  |  Coupons: ${s.availableStarbucksCoupons}\n'
+                                                '갱신 주기: ${AppConfig.v7SettingsRefreshInterval.inSeconds}초',
+                                                style: labelStyle,
+                                              ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(height: 4),
+
+                                    /// ── 이벤트 스핀 확률 ──
+                                    Text('── 이벤트 스핀 확률 ──', style: sectionStyle),
+                                    Text(
+                                      '50P: 37.9%  |  100P: 8%  |  200P: 7%\n'
+                                      '300P: 6%  |  400P: 5%  |  500P: 4%\n'
+                                      '1000P: 1.5%  |  2000P: 0.4%\n'
+                                      '스타벅스 쿠폰: 0.2%  |  꽝: 30%\n'
+                                      '총 weight: 1000 (서버 결정, 클라이언트 하드코딩)',
+                                      style: labelStyle,
+                                    ),
+                                    const SizedBox(height: 4),
+
+                                    /// QR 스캔 테스트 버튼
+                                    GestureDetector(
+                                      onTap: () {
+                                        CompanyQrCodeScannedScreen.push(context, 1025, 'e41aa5ca0d55be94a8a92fab13a0f672');
+                                      },
+                                      child: Text(
+                                        'QR 스캔 테스트 (idx:1025)',
+                                        style: labelStyle?.copyWith(decoration: TextDecoration.underline),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                       ],

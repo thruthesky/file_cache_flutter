@@ -81,6 +81,7 @@ import 'package:philgo/screens/weather/weather.screen.dart';
 import 'package:philgo/screens/webview/webview.screen.dart';
 import 'package:philgo/screens/event/company_event.screen.dart';
 import 'package:philgo/screens/event/event_coupon.screen.dart';
+import 'package:philgo/v7_api/widgets/point/point_history.screen.dart';
 import 'package:philgo/screens/event/event_entry.screen.dart';
 import 'package:philgo/screens/event/qr_scanner.screen.dart';
 import 'package:philgo/screens/search/search.screen.dart';
@@ -872,6 +873,13 @@ final router = GoRouter(
       path: EventCouponScreen.routeName,
       name: EventCouponScreen.routeName,
       builder: (context, state) => const EventCouponScreen(),
+    ),
+
+    /// 포인트 내역 화면 (Point History Screen)
+    GoRoute(
+      path: PointHistoryScreen.routeName,
+      name: PointHistoryScreen.routeName,
+      builder: (context, state) => const PointHistoryScreen(),
     ),
 
     /// QR 코드 스캐너 화면 (QR Scanner Screen)

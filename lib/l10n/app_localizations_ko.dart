@@ -2399,7 +2399,7 @@ class LoKo extends Lo {
   String get userPoint => '포인트';
 
   @override
-  String get managementLevel => '관리레벨';
+  String get managementLevel => '레벨';
 
   @override
   String get companyInfoSection => '업소 정보';
@@ -2465,4 +2465,13 @@ class LoKo extends Lo {
   @override
   String get phoneNumberNotAllowed =>
       '이 전화번호는 사용할 수 없습니다. 한국 또는 필리핀 전화번호만 지원합니다.';
+
+  @override
+  String get pointHistory => '포인트 내역';
+
+  @override
+  String get currentPoints => '현재 보유 포인트';
+
+  @override
+  String get noPointHistory => '포인트 내역이 없습니다.';
 }

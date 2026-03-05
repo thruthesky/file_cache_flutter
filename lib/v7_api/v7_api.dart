@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:philgo_api/philgo_api.dart';
 
+import 'models/v7_upload_model.dart';
+
 /// v7 API 호출 함수
 ///
 /// 필고 v7 서버(api.php)에 HTTP POST 요청을 보내고 응답을 반환한다.
@@ -138,7 +140,7 @@ Future<Map<String, dynamic>> v7api(
 /// );
 /// print(result['url']); // /uploads/123/unique_file.jpg
 /// ```
-Future<Map<String, dynamic>> v7apiFileUpload({
+Future<V7UploadModel> v7apiFileUpload({
   required String filePath,
   required String idxMember,
   String method = 'upload.upload',
@@ -215,11 +217,13 @@ Future<Map<String, dynamic>> v7apiFileUpload({
       throw Exception('v7apiFileUpload: $errorMessage');
     }
 
+    final result = V7UploadModel.fromJson(json);
+
     if (debug) {
-      log('v7 업로드 성공: ${json['url']}', name: 'v7apiFileUpload');
+      log('v7 업로드 성공: ${result.url}', name: 'v7apiFileUpload');
     }
 
-    return json;
+    return result;
   } on DioException catch (dioError) {
     log('v7 파일 업로드 DioException: ${dioError.message}',
         name: 'v7apiFileUpload:ERROR');
