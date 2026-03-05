@@ -1,6 +1,6 @@
 # Company Visit Review API - v7 시스템 (PSR-4)
 
-> **✅ 구현 완료** — 업소록 방문 후기 제출/조회 API, 포인트 적립 로직, 사진 연결 구현 완료
+> **✅ 구현 완료** — 업소록 방문 후기 제출/조회/삭제 API, 포인트 적립 로직, 사진 연결 구현 완료
 
 ## 목차
 
@@ -620,6 +620,57 @@ return [
 ];
 ```
 
+### 9.3 deleteVisitReview — 후기 삭제 (관리자 전용)
+
+**파일**: `lib/company/CompanyService.php` (1116~1141줄)
+**시그니처**: `CompanyService::deleteVisitReview(array $input): array`
+
+**입력 파라미터**:
+
+| 키 | 타입 | 필수 | 설명 |
+|----|------|------|------|
+| `idx` | int | ✅ | 삭제할 후기 idx |
+| `is_admin` | bool | ✅ | 관리자 여부 (Controller에서 주입) |
+
+**3단계 검증 체인** (CompanyService.php:1118~1132):
+
+| 단계 | 검증 | 라인 | 에러 메시지 |
+|------|------|------|------------|
+| 1 | 관리자 확인 | 1119 | `관리자만 삭제할 수 있습니다.` |
+| 2 | idx > 0 | 1124 | `후기 idx가 필요합니다.` |
+| 3 | 후기 존재 확인 | 1130 | `후기를 찾을 수 없습니다.` |
+
+**처리 흐름** (CompanyService.php:1134~1140):
+
+```
+검증 통과 후:
+  ↓
+4. 연결된 사진 삭제 (UploadRepository::deleteByAttached)  — 1135줄
+5. 후기 레코드 삭제 (VisitReviewRepository::deleteByIdx)  — 1138줄
+  ↓
+결과 반환
+```
+
+**응답 구조**:
+
+```json
+{
+    "success": true
+}
+```
+
+**핵심 코드** — 사진 삭제 + 후기 삭제:
+
+```php
+// 3. 연결된 사진 삭제 (module='visit_review', code='')
+\Philgo\Upload\UploadRepository::deleteByAttached('visit_review', '', $idx);
+
+// 4. 후기 레코드 삭제
+VisitReviewRepository::deleteByIdx($idx);
+
+return ['success' => true];
+```
+
 ---
 
 ## 10. Controller API 엔드포인트
@@ -671,6 +722,37 @@ public function getVisitReviews(array $input): array
 }
 ```
 
+### 10.3 company.deleteVisitReview — 후기 삭제 (관리자 전용)
+
+**파일**: `lib/company/CompanyController.php` (457~462줄)
+
+```
+POST https://local.philgo.com/api.php
+    method=company.deleteVisitReview
+    idx=15
+```
+
+**인증**: 필수 (관리자만 가능, session_id는 쿠키로 자동 전송)
+
+**Controller 코드**:
+
+```php
+public function deleteVisitReview(array $input): array
+{
+    $this->getAuthenticatedMemberIdx();
+    $input['is_admin'] = $this->isAdmin();
+    return CompanyService::deleteVisitReview($input);
+}
+```
+
+**권한 검사 흐름**:
+
+```
+1. getAuthenticatedMemberIdx() → 로그인 확인 (미인증 시 RuntimeException)
+2. isAdmin() → ADMINS 상수(firebase_uid 배열)에 포함 여부 확인
+3. is_admin 플래그를 input에 추가 → Service에서 최종 검증
+```
+
 ---
 
 ## 11. API 호출 예시
@@ -683,6 +765,12 @@ curl "https://local.philgo.com/api.php?method=company.submitVisitReview&usage_id
 
 # 후기 목록 조회
 curl "https://local.philgo.com/api.php?method=company.getVisitReviews&idx_company=1337&page=1&limit=10"
+
+# 후기 삭제 (관리자만)
+curl -X POST "https://local.philgo.com/api.php" \
+  -d "method=company.deleteVisitReview" \
+  -d "idx=15" \
+  --cookie "session_id=xxx"
 ```
 
 ### 11.2 JavaScript (func) 호출 예시
@@ -710,6 +798,15 @@ console.log(reviews.total);         // 전체 후기 수
 reviews.reviews.forEach(r => {
     console.log(r.content, r.photos.length + '장');
 });
+
+// 후기 삭제 (관리자만, v7api 사용)
+// session_id는 쿠키로 자동 전송되므로 별도 전달 불필요
+try {
+    await v7api('company.deleteVisitReview', { idx: 15 });
+    console.log('삭제 성공');
+} catch (e) {
+    // v7api()가 alertOnError 기본 옵션으로 에러 메시지 자동 표시
+}
 ```
 
 ### 11.3 Flutter (v7api) 호출 예시
@@ -733,6 +830,12 @@ final reviews = await v7api('company.getVisitReviews', {
 for (final r in reviews['reviews']) {
     print('${r['content']} (사진 ${r['photos'].length}장)');
 }
+
+// 후기 삭제 (관리자만)
+final deleteResult = await v7api('company.deleteVisitReview', {
+    'idx': reviewIdx,
+});
+print('삭제 성공: ${deleteResult['success']}');
 ```
 
 ---
@@ -849,13 +952,21 @@ foreach ($reviews as $review) {
 | 7 | 내용 < 10자 | `후기 내용을 10자 이상 작성해 주세요.` | 400 |
 | 8 | 사진 < 1장 | `사진을 1장 이상 첨부해 주세요.` | 400 |
 
-### 14.2 조회 에러
+### 14.2 삭제 에러
+
+| 단계 | 조건 | 에러 메시지 | HTTP 상태 |
+|------|------|------------|-----------|
+| 1 | 비관리자 | `관리자만 삭제할 수 있습니다.` | 403 |
+| 2 | `idx <= 0` | `후기 idx가 필요합니다.` | 400 |
+| 3 | 후기 미존재 | `후기를 찾을 수 없습니다.` | 404 |
+
+### 14.3 조회 에러
 
 | 조건 | 에러 메시지 |
 |------|------------|
 | `idx_company <= 0` | `업소 idx가 필요합니다.` |
 
-### 14.3 에러 응답 형식
+### 14.4 에러 응답 형식
 
 모든 에러는 `RuntimeException`으로 throw되며, `api.php`에서 catch하여 JSON 응답:
 
@@ -936,6 +1047,25 @@ Vue.js + Bootstrap 기반으로 구현되어 있으며, v7 Upload API로 사진 
 업소 상세 페이지 하단에 `company.getVisitReviews` API를 호출하여
 해당 업소의 방문 후기 목록을 표시한다.
 
+관리자인 경우 각 후기 카드에 "삭제" 버튼이 표시되며,
+`v7api('company.deleteVisitReview', { idx })` 호출로 후기를 삭제한다.
+`session_id`는 쿠키로 자동 전송되므로 별도 전달이 불필요하다.
+
+**삭제 JavaScript 코드** (company/view.php):
+
+```javascript
+async function deleteVisitReview(idx, btn) {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+    try {
+        await v7api('company.deleteVisitReview', { idx: idx });
+        var card = btn.closest('.card');
+        if (card) card.remove();
+    } catch (e) {
+        // v7api()가 alertOnError 기본 옵션으로 에러 메시지 자동 표시
+    }
+}
+```
+
 ---
 
 ## 17. 전체 데이터 흐름도
@@ -969,7 +1099,36 @@ Vue.js + Bootstrap 기반으로 구현되어 있으며, v7 Upload API로 사진 
   └─ 3단계 포인트 적립 결과 표시 (2,000~3,000P)
 ```
 
-### 17.2 후기 조회 흐름
+### 17.2 후기 삭제 전체 흐름 (관리자)
+
+```
+[관리자] 업소 상세 페이지 (company/view.php)
+  ├─ 후기 카드의 "삭제" 버튼 클릭
+  ├─ confirm() 확인 대화상자
+  └─ v7api('company.deleteVisitReview', { idx: N }) 호출
+  ↓
+[api.php]
+  ↓
+[CompanyController::deleteVisitReview()]
+  ├─ getAuthenticatedMemberIdx() → 로그인 확인
+  ├─ isAdmin() → ADMINS 상수로 관리자 확인
+  └─ is_admin 플래그를 input에 추가
+  ↓
+[CompanyService::deleteVisitReview()]
+  ├─ 관리자 확인 (is_admin 플래그)
+  ├─ idx 유효성 검증
+  ├─ 후기 존재 확인 (VisitReviewRepository::findByIdx)
+  ├─ 연결된 사진 삭제 (UploadRepository::deleteByAttached)
+  │   └─ uploads 테이블에서 module='visit_review', attached_to=idx 레코드 삭제
+  └─ 후기 레코드 삭제 (VisitReviewRepository::deleteByIdx)
+      └─ company_reviews 테이블에서 DELETE
+  ↓
+JSON 응답 { "success": true }
+  ↓
+[프론트엔드] 해당 카드 DOM 제거 (card.remove())
+```
+
+### 17.3 후기 조회 흐름
 
 ```
 [사용자] 업소 상세 페이지 방문 (company/view.php)
@@ -988,7 +1147,7 @@ JSON 응답 → 프론트엔드 렌더링
   └─ 페이지네이션
 ```
 
-### 17.3 DB 테이블 관계도
+### 17.4 DB 테이블 관계도
 
 ```
 company (업소 정보)
