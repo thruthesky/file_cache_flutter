@@ -50,6 +50,7 @@
 | `event_entry_enabled` | `KEY_EVENT_ENTRY_ENABLED` | Y/N | `'Y'` | 이벤트 응모 On/Off |
 | `event_spin_weights` | `KEY_EVENT_SPIN_WEIGHTS` | JSON | `'{"0":379,"1":80,...,"8":2}'` | 스피닝 휠 섹션별 weight (합계 1000) |
 | `event_starbucks_24h_weight` | `KEY_EVENT_STARBUCKS_24H_WEIGHT` | int | `'1'` | 24시간 이내 스타벅스 재당첨 weight |
+| `event_spin_cost` | `KEY_EVENT_SPIN_COST` | int | `'200'` | 스피닝 휠 1회 참가비 (포인트) |
 
 ## API 엔드포인트
 
@@ -80,6 +81,7 @@ GET /api.php?method=settings.get&key=admins
   "event_entry_enabled": "Y",
   "event_spin_weights": "{\"0\":379,\"1\":80,\"2\":70,\"3\":60,\"4\":50,\"5\":40,\"6\":15,\"7\":4,\"8\":2}",
   "event_starbucks_24h_weight": "1",
+  "event_spin_cost": "200",
   "admins": {
     "admins": [
       "OSXtfcfdJkcLBovnQAC6Q1WMa2x1",
@@ -237,6 +239,20 @@ GET /api.php?method=settings.appVersion
 {"0":379,"1":80,"2":70,"3":60,"4":50,"5":40,"6":15,"7":4,"8":2}
 ```
 
+#### event_spin_cost (1회 참가비)
+
+스피닝 휠을 한 번 돌릴 때 차감되는 포인트를 설정한다.
+기본값은 `200` (200P)이다. 관리자가 실시간으로 변경 가능하다.
+
+**동작 흐름:**
+1. `EventService::spin()` 호출 시 `SettingsService::getSpinCost()`로 현재 참가비 조회
+2. 사용자 잔액이 참가비 미만이면 게임 진행 불가 (`RuntimeException`)
+3. `PointLogService::changePoints()`로 참가비 차감
+4. `event_spin_history.points_cost`에 차감된 금액 기록
+
+> **주의**: `EventService::SPIN_COST = 200` 상수는 기본값 참조용으로 유지되지만,
+> 실제 런타임에서는 DB 설정(`event_spin_cost`)을 사용한다.
+
 #### event_starbucks_24h_weight (24시간 재당첨 weight)
 
 24시간 이내에 스타벅스 쿠폰에 당첨된 사용자의 재당첨 확률을 제어한다.
@@ -257,7 +273,8 @@ POST /api.php
   "session_id": "xxx",
   "settings": {
     "event_spin_weights": "{\"0\":400,\"1\":80,\"2\":70,\"3\":60,\"4\":50,\"5\":40,\"6\":15,\"7\":4,\"8\":1}",
-    "event_starbucks_24h_weight": "0"
+    "event_starbucks_24h_weight": "0",
+    "event_spin_cost": "300"
   }
 }
 ```
@@ -267,6 +284,7 @@ POST /api.php
 {
   "event_spin_weights": "{\"0\":379,\"1\":80,\"2\":70,\"3\":60,\"4\":50,\"5\":40,\"6\":15,\"7\":4,\"8\":2}",
   "event_starbucks_24h_weight": "1",
+  "event_spin_cost": "200",
   ...
 }
 ```
@@ -280,6 +298,9 @@ SettingsService::getSpinWeights(): array
 
 SettingsService::getStarbucks24hWeight(): int
 // DB에서 정수값 반환, 기본값 1
+
+SettingsService::getSpinCost(): int
+// DB에서 1회 참가비 조회, 기본값 200
 
 // EventService
 EventService::getSections(?int $idxMember = null): array
@@ -297,20 +318,22 @@ EventService::calculateSpinResult(bool $hasStarbucksCoupon, ?int $idxMember = nu
 `page/admin/system-settings.php`에 다음 섹션이 추가되어 있다:
 
 1. **스피닝 휠 확률 설정 카드** — 섹션별 weight 입력 (숫자 입력란)
-2. **24시간 재당첨 확률** — 별도 입력란
-3. **꽝 자동 계산** — `1000 - 섹션합`으로 실시간 표시
-4. **저장 버튼** — `settings.update` API 호출
+2. **회전판 돌리기 일회 차감 비용** — 1회 참가비 포인트 입력란 (기본값 200P)
+3. **24시간 재당첨 확률** — 별도 입력란
+4. **꽝 자동 계산** — `1000 - 섹션합`으로 실시간 표시
+5. **저장 버튼** — `settings.update` API 호출 (`event_spin_cost` 포함)
 
 ### PEST 테스트
 
 스피닝 휠 확률 관련 테스트 (SettingsTest.php):
 
-- SettingsService 테스트 (10개):
-  - MANAGED_KEYS 포함 확인
+- SettingsService 테스트 (15개):
+  - MANAGED_KEYS 포함 확인 (spin_weights, starbucks_24h_weight, spin_cost)
   - DEFAULTS 기본값 검증
   - getSpinWeights() — 기본값/DB값/잘못된 JSON 폴백
   - getStarbucks24hWeight() — 기본값/DB값
-  - update() 라운드트립
+  - getSpinCost() — 기본값 200/DB값 반영
+  - update() 라운드트립 (spin_weights + spin_cost)
 
 - EventService 테스트 (15개):
   - getSections() — 기본 weight/DB weight/10개 섹션 구조/weight 비음수/prize_type/section_points
@@ -625,7 +648,7 @@ Flutter 앱은 실행 시 `v7api('settings.get')`을 호출하여 모든 설정�
 | `admins` | object | 관리자 목록 (`admins`: Firebase UID 배열, `chat_admin`: 채팅 관리자 UID) |
 | `available_starbucks_coupons` | int | 사용 가능한 스타벅스 쿠폰 잔여 수량 |
 | `spin_sections` | array | 스피닝 휠 10개 섹션 구조화 배열 (아래 참조) |
-| `spin_cost` | int | 스피닝 휠 게임 참가비 (포인트, 기본 200) |
+| `spin_cost` | int | 스피닝 휠 게임 참가비 (포인트, DB 설정 `event_spin_cost`에서 조회, 기본 200) |
 
 ### spin_sections 구조
 
@@ -712,7 +735,7 @@ $enabled = SettingsService::isCompanyQrEventEnabled();
 ./vendor/bin/pest tests/Unit/SettingsTest.php
 ```
 
-68개 테스트, 280+ assertions:
+73개 테스트, 328 assertions:
 - SettingsEntity: fromArray, toArray, toBool, toJson
 - SettingsRepository: CRUD, findByKeys, setMultiple, 기존 config 호환성
 - SettingsService: getAll, get, update (권한 검증), getAppVersion, On/Off 토글, **getAdmins**
