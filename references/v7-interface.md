@@ -1,4 +1,4 @@
-# v7 Interface 시스템 — EntityInterface + RepositoryInterface
+# v7 Interface 시스템 — EntityInterface + RepositoryInterface + ControllerInterface
 
 ## 목차
 
@@ -46,6 +46,15 @@
   - [10.1 메서드 리네이밍 전후 대조표](#101-메서드-리네이밍-전후-대조표)
   - [10.2 호출부 변경 영향 분석](#102-호출부-변경-영향-분석)
   - [10.3 CompanyMetaRepository Interface 적용/제거 사례](#103-companymetarepository-interface-적용제거-사례)
+- [11. ControllerInterface](#11-controllerinterface)
+  - [11.1 도입 배경](#111-도입-배경)
+  - [11.2 인터페이스 소스코드](#112-인터페이스-소스코드)
+  - [11.3 적용된 Controller (10개)](#113-적용된-controller-10개)
+  - [11.4 적용된 Controller (10개)](#114-적용된-controller-10개)
+  - [11.5 list 페이지네이션 표준](#115-list-페이지네이션-표준)
+  - [11.6 delete 반환 타입 통일](#116-delete-반환-타입-통일)
+  - [11.7 래퍼 메서드 패턴](#117-래퍼-메서드-패턴)
+  - [11.8 ControllerInterface 테스트 (PEST)](#118-controllerinterface-테스트-pest)
 
 ---
 
@@ -1403,3 +1412,108 @@ must be compatible with RepositoryInterface::update(int $idx, array $data): bool
 1. 해당 Repository가 `idx` 기반 단일 키를 사용하는가?
 2. `create()`, `findByIdx()`, `update()`, `deleteByIdx()` 4개 메서드의 시그니처가 인터페이스와 호환되는가?
 3. 도메인 특성상 삭제/수정이 불가능한 경우는 아닌가?
+
+---
+
+## 11. ControllerInterface
+
+### 11.1 도입 배경
+
+v7 시스템의 10개 Controller가 각각 독립적인 메서드명과 반환 형식을 사용하여 일관성이 부족했다.
+ControllerInterface를 도입하여 모든 Controller에 CRUD(create, update, delete, get, list)
+메서드를 강제하고, 특히 list의 페이지네이션 반환 형식을 통일했다.
+
+**설계 결정: 모든 Controller가 5개 CRUD 메서드를 직접 구현**
+
+- Interface: 5개 메서드 시그니처 강제 (컴파일 타임 검증)
+- 모든 Controller 클래스가 create, update, delete, get, list를 직접 구현
+- 아직 구현되지 않은 메서드는 RuntimeException을 직접 던지도록 작성
+- Trait(ControllerDefaultsTrait)은 사용하지 않음 (삭제됨)
+
+### 11.2 인터페이스 소스코드
+
+파일: `lib/utils/ControllerInterface.php`
+
+```php
+namespace Philgo\Utils;
+
+interface ControllerInterface
+{
+    public function create(array $input): array;
+    public function update(array $input): array;
+    public function delete(array $input): array;
+    public function get(array $input): array;
+    public function list(array $input): array;
+}
+```
+
+### 11.3 적용된 Controller (10개)
+
+모든 Controller가 5개 CRUD 메서드를 직접 구현한다.
+아직 비즈니스 로직이 없는 메서드는 RuntimeException을 던진다.
+
+| Controller | create | update | delete | get | list |
+|-----------|--------|--------|--------|-----|------|
+| PostController | Service 호출 | Service 호출 | Service 호출 | Service 호출 | Service 호출 |
+| CompanyController | Service 호출 | Service 호출 | Service 호출 | Service 호출 | Service 호출 |
+| CompanyMetaController | update 래퍼 | Service 호출 | Service 호출 | Service 호출 | get 래퍼 |
+| UploadController | upload 래퍼 | 미구현 | Service 호출 | Service 호출 | Service 호출 |
+| PointLogController | changePoints 래퍼 | Service 호출 | Service 호출 | Service 호출 | history 래퍼 |
+| SettingsController | update 래퍼 | Service 호출 | 미구현 | Service 호출 | get 래퍼 |
+| UserController | 미구현 | 미구현 | 미구현 | Service 호출 | 미구현 |
+| AiController | generate 래퍼 | 미구현 | 미구현 | 미구현 | 미구현 |
+| TravelController | 미구현 | 미구현 | 미구현 | Service 호출 | Service 호출 |
+| EventController | spin 래퍼 | 미구현 | 미구현 | 미구현 | history 래퍼 |
+
+### 11.5 list 페이지네이션 표준
+
+**입력**: `page` (int, 기본 1), `limit` (int, 기본 20, 최대 100)
+
+**반환 형식**:
+```php
+['items' => array, 'total' => int, 'page' => int, 'limit' => int]
+```
+
+| Controller | 변환 내용 |
+|-----------|----------|
+| PostController | `posts` 키 유지 + `items` 키 추가 (하위 호환) |
+| TravelController | `pagination` 중첩 → 플랫 구조로 변환 |
+| CompanyController | 기존 `items` 키 유지 |
+
+### 11.6 delete 반환 타입 통일
+
+기존에 `bool`을 반환하던 3개 Controller → `array` 반환으로 변경:
+
+```php
+// 변경 전: return Service::delete($input);  // bool
+// 변경 후: return ['deleted' => Service::delete($input)];  // array
+```
+
+변경된 Controller: CompanyController, UploadController, CompanyMetaController
+
+### 11.7 래퍼 메서드 패턴
+
+CRUD 메서드명과 기존 메서드명이 다른 Controller에서 래퍼 패턴 사용:
+
+```php
+// PointLogController
+public function create(array $input): array { return $this->changePoints($input); }
+public function list(array $input): array { return $this->history($input); }
+
+// UploadController
+public function create(array $input): array { return $this->upload($input); }
+```
+
+### 11.8 ControllerInterface 테스트 (PEST)
+
+파일: `tests/Unit/ControllerInterfaceTest.php`
+실행: `./vendor/bin/pest tests/Unit/ControllerInterfaceTest.php`
+결과: **128개 테스트, 390개 assertions 통과**
+
+테스트 항목:
+1. 10개 Controller instanceof ControllerInterface 검증
+2. 50개 CRUD 메서드 시그니처 검증 (10 Controller × 5 메서드)
+3. Trait 사용 Controller의 미지원 메서드 RuntimeException 검증
+4. 직접 구현 메서드의 declaring class 검증
+5. 래퍼 메서드(create→changePoints, create→upload 등) 존재 검증
+6. Interface/Trait 정의 자체의 무결성 검증
