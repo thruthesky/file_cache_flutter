@@ -501,6 +501,36 @@ GET https://local.philgo.com/api.php?method=company.qrCodeStats&idx=1025&session
 
 **인증:** 필수
 
+### 10.6 reVisitPoint (재방문 포인트 추첨)
+
+```
+GET https://local.philgo.com/api.php?method=company.reVisitPoint&usage_idx=42&session_id=xxx
+```
+
+**인증:** 필수
+
+**Controller 메서드:**
+```php
+// CompanyController.php
+public function reVisitPoint(array $input): array
+{
+    $input['idx_member'] = $this->getAuthenticatedMemberIdx();
+    return CompanyService::reVisitPoint($input);
+}
+```
+
+**응답:**
+```json
+{
+    "success": true,
+    "reward_points": 2521,
+    "point_before": 12019,
+    "point_after": 14540,
+    "company_name": "Durian",
+    "idx_company": 1108
+}
+```
+
 ---
 
 ## 11. API 호출 예시

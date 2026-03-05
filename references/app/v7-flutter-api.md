@@ -1019,18 +1019,25 @@ v7 시스템에서 제공하는 Flutter 위젯 및 함수 목록.
 | `v7api()` | `lib/v7_api/v7_api.dart` | v7 일반 API 호출 (JSON POST) | ✅ 필수 |
 | `v7apiFileUpload()` | `lib/v7_api/v7_api.dart` | v7 파일 업로드 (multipart/form-data) | ✅ 필수 |
 
-### 13.2 업로드 위젯
+### 13.2 페이지네이션 위젯
+
+| 위젯 | 파일 | 용도 | 재활용 |
+|------|------|------|--------|
+| `ApiListView<T>` | `lib/v7_api/widgets/api_list_view/api_list_view.dart` | v7 API 무한 스크롤 리스트 (infinite_scroll_pagination encapsulation) | ✅ **필수** — v7 API 페이지네이션 목록에 이 위젯 사용 |
+
+### 13.3 업로드 위젯
 
 | 위젯 | 파일 | 용도 | 재활용 |
 |------|------|------|--------|
 | `V7FileUpload` | `lib/widgets/upload/v7_file_upload.dart` | v7 파일 업로드 (카메라/갤러리/파일) | ✅ **필수** — 모든 v7 업로드에 이 위젯 사용 |
 
-### 13.3 사용 중인 화면
+### 13.4 사용 중인 화면
 
 | 화면 | 파일 | v7 기능 |
 |------|------|---------|
 | QR 코드 스캔 결과 | `lib/screens/company/company.qr_code_scanned.screen.dart` | `UserApi.me()` + `CompanyApi.get()` + `V7FileUpload` (영수증) |
 | 업소록 폼 | `lib/screens/company/company.form.screen.dart` | `CompanyApi.getReceiptName()` + `CompanyApi.updateReceiptName()` |
+| 포인트 내역 | `lib/v7_api/widgets/point/point_history.screen.dart` | `PointLogApi.history()` + `ApiListView` (무한 스크롤) |
 
 > 새 화면에서 v7 API를 사용할 때 이 목록을 업데이트한다.
 
@@ -1061,7 +1068,12 @@ lib/v7_api/
 ├── company_api.dart     ← CompanyApi 클래스
 ├── user_api.dart        ← UserApi 클래스
 ├── upload_api.dart      ← UploadApi 클래스
+├── point_log_api.dart   ← PointLogApi 클래스
 └── widgets/
+    ├── api_list_view/
+    │   └── api_list_view.dart  ← ApiListView<T> 무한 스크롤 위젯
+    ├── point/
+    │   └── point_history.screen.dart  ← 포인트 내역 화면
     └── upload/
         └── v7_file_upload.dart  ← V7FileUpload 위젯
 ```
@@ -1189,6 +1201,120 @@ class {Module}Api {
 - 파일: `{module}_api.dart` (snake_case)
 - 클래스: `{Module}Api` (PascalCase)
 - 메서드: v7 API의 action 이름과 동일하게 (예: `user.me` → `UserApi.me()`)
+
+---
+
+## 15. ApiListView<T> 위젯 (재활용 필수)
+
+### 15.1 개요 및 재활용 원칙
+
+> **⚠️⚠️⚠️ 재활용 필수 원칙 ⚠️⚠️⚠️**
+>
+> v7 API에서 페이지네이션 목록을 표시하는 **모든 곳**에서 이 위젯을 재활용해야 한다.
+> **절대로 수동 ScrollController + loadMore 패턴을 사용하지 말 것.**
+> `infinite_scroll_pagination` 패키지를 직접 사용하지 말고 `ApiListView<T>`를 통해 사용한다.
+
+**위치**: `lib/v7_api/widgets/api_list_view/api_list_view.dart`
+
+**역할**: `infinite_scroll_pagination` 패키지(`PagingController`, `PagingListener`, `PagedListView`)를
+encapsulation하여 `fetchPage` 콜백과 `itemBuilder` 콜백만으로 무한 스크롤 리스트를 구현한다.
+
+### 15.2 위젯 속성 (Props)
+
+| 속성 | 타입 | 필수 | 기본값 | 설명 |
+|------|------|------|-------|------|
+| `fetchPage` | `Future<List<T>> Function(int page)` | ✅ | — | 페이지 번호(1부터)를 받아 아이템 리스트를 반환하는 콜백 |
+| `itemBuilder` | `Widget Function(BuildContext, T, int)` | ✅ | — | 각 아이템을 위젯으로 빌드하는 콜백 |
+| `separatorBuilder` | `Widget Function(BuildContext, int)?` | ❌ | `null` | 아이템 사이 구분자 위젯 빌더 |
+| `noItemsBuilder` | `WidgetBuilder?` | ❌ | `null` | 아이템이 없을 때 표시할 위젯 빌더 |
+| `errorBuilder` | `Widget Function(BuildContext, String, VoidCallback)?` | ❌ | `null` | 첫 페이지 에러 시 표시 (error 문자열 + retry 콜백) |
+| `firstPageProgressBuilder` | `WidgetBuilder?` | ❌ | `CircularProgressIndicator` | 첫 페이지 로딩 인디케이터 |
+| `newPageProgressBuilder` | `WidgetBuilder?` | ❌ | `CircularProgressIndicator` | 다음 페이지 로딩 인디케이터 |
+| `padding` | `EdgeInsetsGeometry?` | ❌ | `null` | 리스트 패딩 |
+
+### 15.3 사용 예시
+
+#### (1) 기본 사용 — 포인트 히스토리
+
+```dart
+import 'package:philgo/v7_api/widgets/api_list_view/api_list_view.dart';
+import 'package:philgo/v7_api/point_log_api.dart';
+
+ApiListView<Map<String, dynamic>>(
+  padding: const EdgeInsets.all(16),
+  separatorBuilder: (_, _) => const SizedBox(height: 4),
+  fetchPage: (page) async {
+    final result = await PointLogApi.history(page: page, limit: 20);
+    final items = (result['items'] as List<dynamic>?) ?? [];
+    return items.whereType<Map<String, dynamic>>().toList();
+  },
+  noItemsBuilder: (context) => const Center(child: Text('No data')),
+  errorBuilder: (context, error, retry) => Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(error),
+        FilledButton(onPressed: retry, child: const Text('Retry')),
+      ],
+    ),
+  ),
+  itemBuilder: (context, log, index) {
+    final point = (log['point'] as num?)?.toInt() ?? 0;
+    return ListTile(
+      title: Text('${log['module']}/${log['action']}'),
+      trailing: Text('${point >= 0 ? '+' : ''}${point}P'),
+    );
+  },
+)
+```
+
+#### (2) 외부에서 새로고침
+
+```dart
+final _listKey = GlobalKey<ApiListViewState<Map<String, dynamic>>>();
+
+// 위젯에 key 전달
+ApiListView<Map<String, dynamic>>(
+  key: _listKey,
+  fetchPage: (page) async { ... },
+  itemBuilder: (context, item, index) => ...,
+)
+
+// 외부에서 새로고침 호출
+_listKey.currentState?.refresh();
+```
+
+### 15.4 동작 원리
+
+```
+ApiListView 초기화
+    ▼ PagingController 생성 (getNextPageKey + fetchPage)
+    ▼
+PagingListener가 상태 변화 감지
+    ▼
+fetchPage(1) 호출 → widget.fetchPage(1) → List<T> 반환
+    ▼
+PagedListView가 아이템 렌더링 (widget.itemBuilder)
+    ▼
+스크롤이 바닥에 도달
+    ▼
+fetchPage(2) 자동 호출 → 다음 페이지 아이템 추가
+    ▼ ...반복...
+fetchPage(N) → 빈 리스트 반환 → 더 이상 로드하지 않음
+```
+
+**페이지네이션 종료 조건**: `fetchPage`가 빈 리스트(`[]`)를 반환하면
+`PagingController`의 `lastPageIsEmpty` 판별에 의해 자동 종료된다.
+
+### 15.5 기존 수동 방식과의 비교
+
+| 항목 | 수동 ScrollController | ApiListView<T> |
+|------|----------------------|----------------|
+| **코드량** | ~80줄 (상태변수 + 리스너 + loadMore) | ~10줄 (fetchPage + itemBuilder) |
+| **상태 관리** | _isLoading, _hasMore, _currentPage, _logs 수동 관리 | PagingController가 자동 관리 |
+| **에러 처리** | 직접 try-catch + setState | errorBuilder 콜백으로 선언적 처리 |
+| **빈 상태** | 직접 분기 처리 | noItemsBuilder 콜백 |
+| **새로고침** | 상태 초기화 + 재호출 | `refresh()` 한 줄 |
 
 ---
 

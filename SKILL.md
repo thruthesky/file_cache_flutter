@@ -364,8 +364,9 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | `v7api()` | `lib/v7_api/v7_api.dart` | v7 일반 API 호출 (JSON POST) | ✅ 필수 |
 | `v7apiFileUpload()` | `lib/v7_api/v7_api.dart` | v7 파일 업로드 (multipart/form-data) | ✅ 필수 |
 | `V7FileUpload` | `lib/v7_api/widgets/upload/v7_file_upload.dart` | 파일 업로드 위젯 (카메라/갤러리/파일) | ✅ **필수** |
+| `ApiListView<T>` | `lib/v7_api/widgets/api_list_view/api_list_view.dart` | v7 API 무한 스크롤 리스트 (infinite_scroll_pagination encapsulation) | ✅ **필수** |
 
-상세 사용법: → [app/v7-flutter-api.md](references/app/v7-flutter-api.md) 11~13장 참조
+상세 사용법: → [app/v7-flutter-api.md](references/app/v7-flutter-api.md) 11~15장 참조
 
 ---
 

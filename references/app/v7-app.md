@@ -174,6 +174,7 @@ try {
 | 업소 보기 | `CompanyViewScreen` | `/company/view.php` | 업소 상세 정보 + 후기 |
 | 업소 폼 | `CompanyFormScreen` | `/company-form` | 업소 정보 입력/수정 (멀티스텝) |
 | QR 코드 | `CompanyQrCodeScreen` | `/company-qr-code` | QR 코드 발행/표시 + 부정 사용 경고 배너 |
+| QR 스캐너 | `QrScannerScreen` | `/qr-scanner` | 카메라 QR 코드 스캔 |
 | QR 스캔 결과 | `CompanyQrCodeScannedScreen` | `/company/qr-code-scanned.php` | QR 스캔 + 포인트 적립 |
 | 재방문 결과 | `CompanyRevisitPointResultScreen` | `/company/revisit-point-result` | 재방문 포인트 결과 |
 | 후기 작성 | `CompanyVisitReviewScreen` | `/company/visit-review` | 방문 후기 입력 |
@@ -411,11 +412,13 @@ GoRoute(path: '/company/view.php', builder: (context, state) {
 GoRoute(path: '/company-qr-code', builder: (_, state) =>
   CompanyQrCodeScreen(companyIdx: state.extra as int? ?? 0))
 
-// QR 스캔 결과 (Deeplink 지원: ?idx=N&verification_id=XXX)
+// QR 스캔 결과 (?code={64자 hex})
+// ⚠️ CompanyQrCodeScannedScreen을 직접 반환 (HomeScreen redirect 미사용)
+// → QR 스캐너에서 pushReplacement로 이동하므로 스택이 쌓이지 않음
 GoRoute(path: '/company/qr-code-scanned.php', builder: (context, state) {
   final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-  final verificationId = state.uri.queryParameters['verification_id'] ?? '';
-  return HomeScreen(redirect: CompanyQrCodeScannedScreen(idx: idx, verificationId: verificationId));
+  final code = state.uri.queryParameters['code'] ?? '';
+  return CompanyQrCodeScannedScreen(idx: idx, code: code);
 })
 
 // 업소 폼
@@ -440,6 +443,14 @@ context.push(CompanyFormScreen.routeName, extra: company);
 // 후기 결과 → 업소 보기 (nav stack 초기화)
 context.go('/');
 context.push(CompanyViewScreen.routeName, extra: idxCompany);
+
+// ⚠️ QR 스캐너 → QR 스캔 결과 (pushReplacement 필수)
+// pushReplacement로 QR 스캐너를 스택에서 제거하여
+// 결과 화면에서 백 버튼 시 홈으로 바로 돌아가도록 한다.
+// context.push()를 사용하면 스택이 쌓여 백 버튼으로 홈에 갈 수 없음.
+context.pushReplacement(
+  '${CompanyQrCodeScannedScreen.routeName}?idx=$idx&code=$code',
+);
 ```
 
 ---
