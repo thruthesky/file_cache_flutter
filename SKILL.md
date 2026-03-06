@@ -155,6 +155,50 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 ---
 
+## 🔴 PHP 코딩 규칙: 타입 안전성 필수 🔴
+
+### Intelephense / 정적 분석 타입 경고 방지 — 캐스팅 필수
+
+> **⛔ PHP 코드 작성 시 반드시 타입 에러 및 타입 경고가 발생하지 않도록 해야 한다. ⛔**
+> **VSCode Intelephense(PHP 정적 분석기)에서 타입 관련 경고(P1006 등)가 절대 발생하지 않도록 명시적 타입 캐스팅을 수행한다.**
+
+| 규칙 | 설명 |
+|------|------|
+| **nullable 타입 반환 시 캐스팅 필수** | `?bool`, `?int`, `?string` 등 nullable 속성을 non-nullable 반환 타입 메서드에서 반환할 때 반드시 `(bool)`, `(int)`, `(string)` 등으로 캐스팅한다 |
+| **반환 타입과 실제 값 일치** | 메서드의 반환 타입 선언(`bool`, `int`, `string`)과 실제 반환 값의 타입이 항상 일치해야 한다 |
+| **PHPDoc 타입 힌트 정확히 작성** | `@var`, `@param`, `@return` 어노테이션의 타입이 실제 코드와 일치해야 한다 |
+| **함수 반환값 타입 확인** | `parse_url()`, `realpath()` 등 `false`나 `null`을 반환할 수 있는 PHP 내장 함수 사용 시 반드시 반환 타입을 확인하고 적절히 처리한다 |
+
+**올바른 예시:**
+
+```php
+// ✅ nullable 속성을 non-nullable 반환 타입으로 반환 시 캐스팅
+private ?bool $validPath = null;
+
+public function isValidPath(): bool
+{
+    if ($this->validPath === null) {
+        $this->resolvePageFile();
+    }
+    return (bool) $this->validPath;  // ✅ (bool) 캐스팅으로 타입 안전성 보장
+}
+
+// ✅ parse_url() 반환값 처리
+$this->uri = (string) (parse_url($rawUri, PHP_URL_PATH) ?: '/');
+```
+
+**잘못된 예시:**
+
+```php
+// ❌ nullable 속성을 캐스팅 없이 직접 반환 → Intelephense P1006 경고 발생
+public function isValidPath(): bool
+{
+    return $this->validPath;  // ❌ ?bool → bool 타입 불일치
+}
+```
+
+---
+
 ## 레퍼런스 문서
 
 ### 레퍼런스 폴더 구조
@@ -249,6 +293,7 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 
 | 문서 | 설명 | 상태 |
 |------|------|------|
+| v7 홈페이지 개요 | [web/v7-overview.md](references/web/v7-overview.md) | ✅ 완료 |
 | Firebase | [web/v7-firebase.md](references/web/v7-firebase.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 
@@ -418,6 +463,54 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
+## Web Awesome UI 개발 — AI 활용 가이드
+
+v7 홈페이지는 **Web Awesome Pro**를 UI 라이브러리로 사용한다.
+AI(Claude Code 등)를 통해 Web Awesome 컴포넌트를 활용한 UI 개발을 효율적으로 수행할 수 있다.
+
+### llms.txt 활용
+
+Web Awesome 배포판에 포함된 `llms.txt` 파일은 AI가 컴포넌트 목록과 공식 문서 URL을 빠르게 파악할 수 있도록 설계된 파일이다.
+
+| 파일 위치 | 설명 |
+|-----------|------|
+| `v7/dist-cdn/llms.txt` | Web Awesome 배포판에 포함된 llms.txt |
+| `llms.txt` (프로젝트 루트) | 동일 내용 (루트 접근용) |
+
+**프롬프트 예시:**
+
+```
+@llms.txt 를 참고해서 wa-button 컴포넌트로 로그인 버튼 코드 작성해줘
+
+@v7/dist-cdn/llms.txt 를 참고해서 wa-card와 wa-input으로 회원가입 폼 만들어줘
+```
+
+### webawesome 스킬 활용
+
+프로젝트에 `webawesome` 스킬(`.claude/skills/webawesome/`)이 설치되어 있다.
+이 스킬에는 Web Awesome의 **모든 컴포넌트에 대한 상세한 레퍼런스 문서**(속성, 이벤트, 슬롯, CSS 변수, 예제 코드)가 포함되어 있어,
+AI가 정확한 코드를 작성할 수 있다.
+
+**프롬프트 예시:**
+
+```
+webawesome 스킬을 참고해서 wa-dialog로 확인 모달 만들어줘
+
+wa-select와 wa-option으로 카테고리 선택 드롭다운 만들어줘 (webawesome 스킬 참조)
+```
+
+### 두 방법의 차이
+
+| 항목 | llms.txt | webawesome 스킬 |
+|------|----------|-----------------|
+| **내용** | 컴포넌트 목록 + 공식 문서 URL 링크 | 각 컴포넌트별 상세 레퍼런스 (속성, 이벤트, 슬롯, CSS 변수, 예제) |
+| **용도** | 어떤 컴포넌트가 있는지 빠르게 탐색 | 특정 컴포넌트의 정확한 사용법 확인 |
+| **장점** | 간결, 빠른 개요 파악 | 상세한 코드 예제와 옵션 제공 |
+
+> 상세 내용은 → [web/v7-overview.md](references/web/v7-overview.md) 8장 「AI(Claude, LLM)를 활용한 Web Awesome 개발 방법」 참조.
+
+---
+
 ## 새 모듈 추가 워크플로우
 
 1. `lib/<module>/` 폴더 생성
@@ -431,9 +524,9 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
-## 기존 코드와의 통합
+## 기존 v6 코드와의 통합 (v6 레거시 페이지에서 v7 Service 사용)
 
-기존 페이지(page.header.php)에서 v7 시스템 Service를 사용할 수 있습니다:
+기존 v6 페이지(page.header.php)에서 v7 시스템 Service를 사용할 수 있습니다:
 
 ```php
 <?php
@@ -450,3 +543,123 @@ include_once '../page.footer.php';
 
 > `page.header.php`를 먼저 include한 후 `vendor/autoload.php`를 require합니다.
 > (`ROOT_DIR` 상수가 `boot.php`에서 정의되기 때문)
+
+---
+
+## 🔴🔴🔴 v7 웹 홈페이지: v6 코드 사용 절대 금지 — 완전히 새로운 코드 작성 필수 🔴🔴🔴
+
+> **⛔⛔⛔ 최우선 절대 규칙: v7 웹 홈페이지(`v7/` 폴더)에서는 v6 코드를 절대로 사용하지 않는다. ⛔⛔⛔**
+> **v7 홈페이지를 만들 때는 반드시 완전히 새로운 v7 코드를 작성해야 한다.**
+> **v6 코드(boot.php, page.header.php, widget/, func(), pdo(), login(), t() 등)를 재사용하거나 참조하여 include하는 것은 엄격히 금지한다.**
+
+### v7 전용 부팅 시스템 (`v7/boot.php`)
+
+v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적인 부팅 파일 `v7/boot.php`를 사용한다.
+
+| 항목 | v6 (기존) | v7 (신규) |
+|------|-----------|-----------|
+| **부팅 파일** | `boot.php` → `etc/boot.php` → `etc/includes.php` (50개+ 파일) | `v7/boot.php` (PSR-4 오토로더 + 설정 상수만) |
+| **프론트 컨트롤러** | `v7.php`에서 `boot.php` include | `v7.php`에서 `v7/boot.php` include |
+| **DB 연결** | `pdo()` 전역 함수 | `Philgo\Utils\Db::pdo()` 클래스 |
+| **인증** | `login()` 전역 함수 | `Philgo\Utils\AuthService::getLoginUser()` |
+| **입력 처리** | `in()` 전역 함수 | `Philgo\Utils\RequestUtils::all()` |
+| **다국어** | `t()->키` 전역 함수 | v7 자체 다국어 시스템 |
+| **레이아웃** | `page.header.php` / `page.footer.php` | `v7/layouts/` 폴더에서 자체 관리 |
+| **UI 라이브러리** | Bootstrap 5 + FontAwesome 7 | Web Awesome Pro + FontAwesome 7 |
+| **JavaScript** | jQuery + Vue.js CDN + `func()` | Vue.js 3 CDN + `fetch('/api.php')` |
+
+### v7 웹 홈페이지에서 사용 금지 목록
+
+| 분류 | 사용 금지 (v6) | 대체 사용 (v7) |
+|------|---------------|---------------|
+| **부팅** | `include boot.php` | `include v7/boot.php` |
+| **레이아웃** | `page.header.php`, `page.footer.php` | `v7/layouts/` 자체 레이아웃 |
+| **위젯** | `widget/*.php`, `include widget()` | v7 자체 컴포넌트/뷰 |
+| **DB** | `pdo()`, `db_select_row()`, `db_insert()` | `Db::pdo()`, `Db::prepare()` |
+| **인증** | `login()`, `is_admin()` | `AuthService::getLoginUser()` |
+| **입력** | `in()` | `RequestUtils::all()`, `RequestUtils::get()` |
+| **다국어** | `t()->키`, `tr()` | v7 자체 다국어 시스템 |
+| **API 호출** | `func('함수명', {...})` | `fetch('/api.php', { method: 'module.action' })` |
+| **CSS** | Bootstrap utility class | Web Awesome CSS 변수 + 유틸리티 |
+| **JavaScript** | `ready()`, `firebase_ready()`, jQuery | `DOMContentLoaded`, Vue.js 3, `fetch()` |
+| **이미지 처리** | `attr_onerror_xbox()` | v7 자체 이미지 에러 처리 |
+| **URL 생성** | `href()->post->view(...)` | v7 자체 라우팅 |
+
+### 왜 v6 코드를 사용하면 안 되는가
+
+1. **성능**: v6 `boot.php`는 50개 이상의 파일을 include하여 무겁다. v7은 PSR-4 오토로더로 필요한 클래스만 로드한다.
+2. **독립성**: v7 홈페이지는 v6과 완전히 독립적으로 운영되어야 한다. v6에 대한 의존성이 있으면 향후 v6 변경 시 v7도 영향을 받는다.
+3. **일관성**: v7 API(`api.php`)도 `boot.php`를 사용하지 않는다. v7 웹 홈페이지도 동일한 원칙을 따른다.
+4. **UI 통일성**: v7은 Web Awesome Pro를 사용하며, Bootstrap 기반 v6 위젯/레이아웃을 혼용하면 UI가 혼재된다.
+5. **미래 지향적**: v7 시스템이 완성되면 v6 코드는 점진적으로 제거될 예정이다. v6에 의존하면 마이그레이션이 어려워진다.
+
+### v7 웹 페이지 작성 예시 (올바른 방법)
+
+```php
+<?php
+/**
+ * v7/post/list.php - v7 게시판 목록 페이지
+ *
+ * v7/boot.php가 이미 로드된 상태 (v7.php 프론트 컨트롤러에서 include).
+ * v6 boot.php, page.header.php 등은 사용하지 않는다.
+ *
+ * 접속 URL: https://v7-local.philgo.com/post/list
+ */
+use Philgo\Post\PostService;
+use Philgo\Utils\AuthService;
+
+// v7 Service로 데이터 조회 (SSR)
+$posts = PostService::list(['post_id' => 'freetalk', 'limit' => 20]);
+$user = AuthService::getLoginUser();
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자유게시판 - 필고 v7</title>
+    <!-- Web Awesome Pro -->
+    <link rel="stylesheet" href="/v7/dist-cdn/styles/webawesome.css">
+    <script type="module" src="/v7/dist-cdn/webawesome.loader.js" data-webawesome="/v7/dist-cdn"></script>
+    <!-- Font Awesome 7 -->
+    <link rel="stylesheet" href="/v7/etc/font-awesome/css/all.min.css">
+    <!-- Vue.js 3 CDN -->
+    <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+    <!-- v7 자체 레이아웃 (page.header.php 사용 금지) -->
+    <div class="wa-stack" style="--wa-stack-gap: var(--wa-space-xl); max-width: 1200px; margin: 0 auto;">
+        <!-- SSR: PHP에서 렌더링 -->
+        <?php foreach ($posts as $post): ?>
+            <wa-card>
+                <div slot="header"><?= htmlspecialchars($post['subject'] ?? '') ?></div>
+                <p><?= htmlspecialchars($post['content'] ?? '') ?></p>
+            </wa-card>
+        <?php endforeach; ?>
+    </div>
+</body>
+</html>
+```
+
+### 잘못된 예시 (절대 금지)
+
+```php
+<?php
+// ❌ 절대 금지: v6 boot.php include
+include_once '../boot.php';
+
+// ❌ 절대 금지: v6 레이아웃 사용
+include_once '../page.header.php';
+
+// ❌ 절대 금지: v6 전역 함수 사용
+$user = login();
+$posts = db_select_all("SELECT * FROM sf_post_data");
+
+// ❌ 절대 금지: v6 위젯 include
+include widget('post/list/default');
+
+// ❌ 절대 금지: v6 다국어 함수 사용
+echo t()->게시판목록;
+
+include_once '../page.footer.php';
+```
