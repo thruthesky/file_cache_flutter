@@ -297,10 +297,22 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 | 문서 | 설명 | 상태 |
 |------|------|------|
 | v7 홈페이지 개요 | [web/v7-overview.md](references/web/v7-overview.md) | ✅ 완료 |
+| **레이아웃 시스템** | [web/v7-layout.md](references/web/v7-layout.md) | ✅ 완료 |
 | Firebase | [web/v7-firebase.md](references/web/v7-firebase.md) | ✅ 완료 |
 | 위젯 시스템 | [web/v7-widgets.md](references/web/v7-widgets.md) | ✅ 완료 |
 | 폰트 로딩 | [web/v7-fonts.md](references/web/v7-fonts.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
+
+### 레이아웃 시스템 → [web/v7-layout.md](references/web/v7-layout.md)
+
+v7 홈페이지의 5-column flex 레이아웃 구조를 완전히 문서화합니다.
+CSS 변수(`--v7-sidebar-width: 240px`, `--v7-wing-width: 120px`, `--v7-gap: 16px`,
+`--v7-max-width: 1320px`, `--v7-topbar-height: 2.25rem`), 탑바·헤더·사이드바·메인·날개·푸터 각 영역의
+정확한 CSS 규칙, 3단계 반응형 브레이크포인트(모바일 <992px, lg ≥992px, xl ≥1200px)에서의 레이아웃 전환,
+`layout.css`/`responsive.css`/`utilities.css` 3파일의 핵심 코드, 색상 팔레트(`#7f1d1d` 브랜드색,
+`#dc2626` 강조색 등), 폰트 크기 체계(0.8em~1em), 위젯 포함 관계도, `layout.php` 핵심 소스코드,
+레이아웃 수정 시 절대 변경 금지 항목과 연쇄 확인 필요 항목을 상세히 기술합니다.
+**레이아웃 관련 작업 시 반드시 이 문서를 참조하여 레이아웃이 흐트러지지 않도록 한다.**
 
 ### 위젯 시스템 → [web/v7-widgets.md](references/web/v7-widgets.md)
 
