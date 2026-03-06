@@ -1214,6 +1214,44 @@ class {Module}Api {
 > **절대로 수동 ScrollController + loadMore 패턴을 사용하지 말 것.**
 > `infinite_scroll_pagination` 패키지를 직접 사용하지 말고 `ApiListView<T>`를 통해 사용한다.
 
+> **🔴🔴🔴 데이터 모델 클래스 필수 사용 — 절대 규칙 🔴🔴🔴**
+>
+> `ApiListView<T>`의 제네릭 타입 `T`에 **`Map<String, dynamic>`을 절대로 사용하지 않는다.**
+> **반드시 데이터 모델 클래스를 만들어서 사용해야 한다.**
+>
+> | 사용 | 예시 | 설명 |
+> |------|------|------|
+> | ❌ **절대 금지** | `ApiListView<Map<String, dynamic>>` | 타입 안전성 없음, 런타임 에러 위험 |
+> | ✅ **필수** | `ApiListView<PointLog>` | 데이터 모델 클래스로 타입 안전하게 사용 |
+> | ✅ **필수** | `ApiListView<Company>` | 데이터 모델 클래스로 타입 안전하게 사용 |
+>
+> **이유**:
+> - `Map<String, dynamic>`은 컴파일 타임에 필드명 오타를 감지할 수 없다
+> - IDE 자동완성이 작동하지 않아 생산성이 떨어진다
+> - `log['point']` 같은 문자열 키 접근은 리팩토링에 취약하다
+> - 데이터 모델 클래스의 `fromJson()` 팩토리에서 타입 변환을 캡슐화하여 안전하게 처리한다
+>
+> **데이터 모델 클래스 패턴** (`lib/v7_api/models/` 폴더에 생성):
+> ```dart
+> class PointLog {
+>   final int idx;
+>   final int point;
+>   final String module;
+>   // ...
+>   const PointLog({required this.idx, required this.point, ...});
+>   factory PointLog.fromJson(Map<String, dynamic> json) => PointLog(...);
+> }
+> ```
+>
+> **API 클래스에서 모델로 변환하여 반환**:
+> ```dart
+> static Future<List<PointLog>> history({int page = 1}) async {
+>   final response = await v7api('pointLog.history', data: {'page': page});
+>   final items = (response['items'] as List<dynamic>?) ?? [];
+>   return items.whereType<Map<String, dynamic>>().map(PointLog.fromJson).toList();
+> }
+> ```
+
 **위치**: `lib/v7_api/widgets/api_list_view/api_list_view.dart`
 
 **역할**: `infinite_scroll_pagination` 패키지(`PagingController`, `PagingListener`, `PagedListView`)를
@@ -1234,20 +1272,18 @@ encapsulation하여 `fetchPage` 콜백과 `itemBuilder` 콜백만으로 무한 �
 
 ### 15.3 사용 예시
 
-#### (1) 기본 사용 — 포인트 히스토리
+#### (1) 기본 사용 — 포인트 히스토리 (데이터 모델 클래스 필수)
 
 ```dart
 import 'package:philgo/v7_api/widgets/api_list_view/api_list_view.dart';
+import 'package:philgo/v7_api/models/v7_point_log_model.dart';
 import 'package:philgo/v7_api/point_log_api.dart';
 
-ApiListView<Map<String, dynamic>>(
+// ✅ 데이터 모델 클래스(PointLog)를 제네릭 타입으로 사용
+ApiListView<PointLog>(
   padding: const EdgeInsets.all(16),
   separatorBuilder: (_, _) => const SizedBox(height: 4),
-  fetchPage: (page) async {
-    final result = await PointLogApi.history(page: page, limit: 20);
-    final items = (result['items'] as List<dynamic>?) ?? [];
-    return items.whereType<Map<String, dynamic>>().toList();
-  },
+  fetchPage: (page) => PointLogApi.history(page: page, limit: 20),
   noItemsBuilder: (context) => const Center(child: Text('No data')),
   errorBuilder: (context, error, retry) => Center(
     child: Column(
@@ -1259,10 +1295,10 @@ ApiListView<Map<String, dynamic>>(
     ),
   ),
   itemBuilder: (context, log, index) {
-    final point = (log['point'] as num?)?.toInt() ?? 0;
+    // ✅ 타입 안전한 속성 접근 — IDE 자동완성 지원
     return ListTile(
-      title: Text('${log['module']}/${log['action']}'),
-      trailing: Text('${point >= 0 ? '+' : ''}${point}P'),
+      title: Text('${log.module}/${log.action}'),
+      trailing: Text('${log.isPositive ? '+' : ''}${log.point}P'),
     );
   },
 )
@@ -1271,13 +1307,13 @@ ApiListView<Map<String, dynamic>>(
 #### (2) 외부에서 새로고침
 
 ```dart
-final _listKey = GlobalKey<ApiListViewState<Map<String, dynamic>>>();
+final _listKey = GlobalKey<ApiListViewState<PointLog>>();
 
 // 위젯에 key 전달
-ApiListView<Map<String, dynamic>>(
+ApiListView<PointLog>(
   key: _listKey,
-  fetchPage: (page) async { ... },
-  itemBuilder: (context, item, index) => ...,
+  fetchPage: (page) => PointLogApi.history(page: page, limit: 20),
+  itemBuilder: (context, log, index) => ListTile(title: Text(log.module)),
 )
 
 // 외부에서 새로고침 호출

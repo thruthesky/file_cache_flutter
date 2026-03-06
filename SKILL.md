@@ -366,6 +366,15 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | `V7FileUpload` | `lib/v7_api/widgets/upload/v7_file_upload.dart` | 파일 업로드 위젯 (카메라/갤러리/파일) | ✅ **필수** |
 | `ApiListView<T>` | `lib/v7_api/widgets/api_list_view/api_list_view.dart` | v7 API 무한 스크롤 리스트 (infinite_scroll_pagination encapsulation) | ✅ **필수** |
 
+> **🔴🔴🔴 ApiListView 데이터 모델 클래스 필수 — 절대 규칙 🔴🔴🔴**
+>
+> `ApiListView<T>`의 제네릭 타입 `T`에 **`Map<String, dynamic>`을 절대로 사용하지 않는다.**
+> **반드시 `lib/v7_api/models/` 폴더에 데이터 모델 클래스를 만들고, `fromJson()` 팩토리를 통해 변환하여 사용해야 한다.**
+>
+> - ❌ `ApiListView<Map<String, dynamic>>` — **절대 금지**
+> - ✅ `ApiListView<PointLog>` — 데이터 모델 클래스 필수
+> - ✅ `ApiListView<Company>` — 데이터 모델 클래스 필수
+
 상세 사용법: → [app/v7-flutter-api.md](references/app/v7-flutter-api.md) 11~15장 참조
 
 ---
