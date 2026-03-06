@@ -19,7 +19,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 | 영역 | 설명 | 핵심 기술 |
 |------|------|-----------|
 | **PHP 백엔드** | PSR-4 기반 Controller + Service 아키텍처로 v7 API 개발 | PHP 8.3, PSR-4, PEST, MariaDB |
-| **웹 홈페이지** | v7 Service를 활용한 PHP 페이지 및 Vue.js CDN MPA 웹 개발 | Vue.js, Bootstrap, PHP, SEO |
+| **웹 홈페이지** | v7 Service를 활용한 PHP 페이지 및 Vue.js CDN MPA 웹 개발 | Vue.js, Bootstrap, PHP, Firebase, SEO |
 | **Flutter 앱** | v7 API를 호출하는 Flutter 앱 기능 개발 | Dart, v7api(), V7FileUpload, Provider |
 
 ### ⚠️⚠️⚠️ 핵심 원칙: 기존 필고 코드와 100% 공존 ⚠️⚠️⚠️
@@ -249,7 +249,19 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 
 | 문서 | 설명 | 상태 |
 |------|------|------|
+| Firebase | [web/v7-firebase.md](references/web/v7-firebase.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
+
+### Firebase 웹 SDK 초기화 및 사용 → [web/v7-firebase.md](references/web/v7-firebase.md)
+
+필고 웹 페이지에서 Firebase JavaScript SDK(compat 버전 12.3.0)를 초기화하고 사용하는 전체 흐름을 다룹니다.
+`etc/default-head-javascript.php`의 `<head>`에서 `ready()`와 `firebase_ready()` 래퍼 함수를 정의하고,
+`etc/firebase/firebase-js-setup.php`에서 5개 Firebase SDK 스크립트를 `defer`로 로딩하며
+`firebaseConfig`와 `vapidKey`를 PHP 서버에서 주입합니다. `firebase_ready()` 함수는 싱글톤 패턴으로
+`firebase.initializeApp()`을 한 번만 호출하여 초기화를 보장합니다. Auth(`onAuthStateChanged`),
+Realtime Database(Presence 시스템, 채팅 알림), Cloud Messaging(FCM 토큰 획득/저장/권한 요청),
+Storage 사용법과 서비스 워커(`firebase-messaging-sw.js`) 구조, 전역 변수(`appConfig.token`,
+`window.__HYDRATE__`) 흐름, 안티패턴을 상세히 기술합니다.
 
 > 웹/서버(PHP, Vue.js, Bootstrap, Nginx) 관련 문서는 `references/web/` 폴더에 작성한다.
 
