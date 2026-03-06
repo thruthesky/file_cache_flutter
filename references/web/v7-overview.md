@@ -7,7 +7,7 @@
 3. [접속 URL 및 도메인 설정](#3-접속-url-및-도메인-설정)
 4. [SSL 인증서 (mkcert)](#4-ssl-인증서-mkcert)
 5. [Docker / Nginx 설정](#5-docker--nginx-설정)
-6. [프론트 컨트롤러 (v7-layout.php)](#6-프론트-컨트롤러-v7-layoutphp)
+6. [프론트 컨트롤러 (v7.php)](#6-프론트-컨트롤러-v7php)
 7. [v7/ 폴더 구조](#7-v7-폴더-구조)
 8. [UI 컴포넌트 (Web Awesome Pro)](#8-ui-컴포넌트-web-awesome-pro)
 9. [아이콘 (Font Awesome 7.2.0)](#9-아이콘-font-awesome-720)
@@ -27,7 +27,7 @@
 | 항목 | 내용 |
 |------|------|
 | **프로젝트 목표** | v7 시스템 기반 새 웹 프론트엔드 구축 |
-| **진입점** | `v7-layout.php` (프론트 컨트롤러) |
+| **진입점** | `v7.php` (프론트 컨트롤러) |
 | **뷰 폴더** | `./v7/` (모든 웹 뷰 파일 저장) |
 | **접속 도메인** | `https://v7-local.philgo.com` (개발) |
 | **UI 라이브러리** | Web Awesome Pro (v7/etc/dist-cdn/) |
@@ -54,7 +54,7 @@ Docker Nginx (v7-local.philgo.com server block)
     │
     ├─ 정적 파일 존재? → 직접 서빙 (CSS, JS, 이미지 등)
     │
-    └─ 파일 없음? → /v7-layout.php로 내부 rewrite
+    └─ 파일 없음? → /v7.php로 내부 rewrite
                         │
                         ├─ boot.php (DB, 인증, 세션 초기화)
                         ├─ vendor/autoload.php (PSR-4)
@@ -70,10 +70,10 @@ Docker Nginx (v7-local.philgo.com server block)
 
 1. 브라우저가 `https://v7-local.philgo.com/user/login` 접속
 2. Nginx `v7-local.philgo.com` server block에서 처리
-3. `index v7-layout.php` + `try_files $uri /v7-layout.php?$query_string`
-   - `/` 요청 시 `index` 지시어에 의해 `v7-layout.php` 실행
-   - `/user/login` 등 파일이 존재하지 않는 경로 → `/v7-layout.php`로 내부 rewrite
-4. `v7-layout.php`에서 URL 경로 `/user/login` 파싱
+3. `index v7.php` + `try_files $uri /v7.php?$query_string`
+   - `/` 요청 시 `index` 지시어에 의해 `v7.php` 실행
+   - `/user/login` 등 파일이 존재하지 않는 경로 → `/v7.php`로 내부 rewrite
+4. `v7.php`에서 URL 경로 `/user/login` 파싱
 5. `./v7/user/login.php` 파일 존재 확인 후 include
 6. 해당 PHP 파일이 HTML 출력 (Web Awesome + Vue.js)
 
@@ -92,7 +92,7 @@ Docker Nginx (v7-local.philgo.com server block)
 
 | 도메인 | 용도 | 비고 |
 |--------|------|------|
-| `https://v7-local.philgo.com` | **v7 홈페이지 (신규)** | Nginx → v7-layout.php |
+| `https://v7-local.philgo.com` | **v7 홈페이지 (신규)** | Nginx → v7.php |
 | `https://local.philgo.com` | 기존 v6 홈페이지 | Nginx → index.php |
 | `https://banana.philgo.com` | 패밀리사이트 테스트 | 기존 유지 |
 
@@ -198,14 +198,14 @@ server {
         include fastcgi_params;
     }
 
-    # / 루트 요청 시 index.html 대신 v7-layout.php가 실행되도록 설정.
+    # / 루트 요청 시 index.html 대신 v7.php가 실행되도록 설정.
     # 기본값 index.html이 try_files보다 먼저 처리되므로 반드시 재정의 필요.
-    index v7-layout.php;
+    index v7.php;
 
     # 존재하는 정적 파일(CSS, JS, 이미지 등)은 직접 서빙,
-    # 그 외 모든 요청은 /v7-layout.php로 내부 rewrite
+    # 그 외 모든 요청은 /v7.php로 내부 rewrite
     location / {
-        try_files $uri /v7-layout.php?$query_string;
+        try_files $uri /v7.php?$query_string;
     }
 }
 ```
@@ -213,16 +213,16 @@ server {
 ### `index` 지시어와 `try_files` 관계
 
 Nginx의 `index` 지시어는 URI가 `/`로 끝날 때 `try_files`보다 **먼저** 처리된다.
-기본값은 `index index.html`이므로, `/www/index.html`이 존재하면 v7-layout.php 대신
+기본값은 `index index.html`이므로, `/www/index.html`이 존재하면 v7.php 대신
 index.html이 서빙되는 문제가 발생한다.
 
-이를 방지하기 위해 `index v7-layout.php;`를 명시적으로 선언하여,
-루트 요청(`/`) 시 v7-layout.php가 실행되도록 한다.
+이를 방지하기 위해 `index v7.php;`를 명시적으로 선언하여,
+루트 요청(`/`) 시 v7.php가 실행되도록 한다.
 
 | 설정 | `/` 요청 시 동작 |
 |------|------------------|
 | `index index.html` (기본값) | `/www/index.html` 서빙 (v7 무시) |
-| `index v7-layout.php` (v7 설정) | `v7-layout.php` 실행 → `v7/index.php` include |
+| `index v7.php` (v7 설정) | `v7.php` 실행 → `v7/index.php` include |
 
 ### HTTP → HTTPS 리다이렉트
 
@@ -260,12 +260,12 @@ docker restart nginx
 
 ---
 
-## 6. 프론트 컨트롤러 (v7-layout.php)
+## 6. 프론트 컨트롤러 (v7.php)
 
 ### 파일 위치
 
 ```
-./v7-layout.php (프로젝트 루트)
+./v7.php (프로젝트 루트)
 ```
 
 ### 역할
@@ -312,7 +312,7 @@ if (file_exists($v7File)) {
 
 ### 주의사항
 
-- `v7-layout.php`는 **레이아웃을 포함하지 않는 순수 라우터**이다
+- `v7.php`는 **레이아웃을 포함하지 않는 순수 라우터**이다
 - 각 v7/ 파일이 전체 HTML(<!DOCTYPE html>부터 </html>까지)을 직접 출력한다
 - 공통 레이아웃이 필요하면 `v7/layouts/` 폴더에서 별도 관리할 수 있다
 - `boot.php`가 이미 로드되므로, `pdo()`, `login()`, `t()` 등 기존 함수 사용 가능
@@ -634,7 +634,7 @@ const posts = await v7api('post.list', { post_id: 'freetalk', limit: 10 });
 
 ### PHP에서 v7 Service 직접 사용
 
-`v7-layout.php`에서 `boot.php`와 `autoload.php`가 이미 로드되므로,
+`v7.php`에서 `boot.php`와 `autoload.php`가 이미 로드되므로,
 v7 PHP 파일에서 Service 클래스를 직접 사용할 수 있다:
 
 ```php
@@ -717,7 +717,7 @@ $post = PostService::get(['idx' => $_GET['idx'] ?? 0]);
 /**
  * v7/모듈/페이지.php - 페이지 설명
  *
- * v7-layout.php에서 include. boot.php, autoload 이미 로드됨.
+ * v7.php에서 include. boot.php, autoload 이미 로드됨.
  *
  * 접속 URL: https://v7-local.philgo.com/모듈/페이지
  */
