@@ -617,11 +617,22 @@ include_once '../page.footer.php';
 
 ---
 
-## 🔴🔴🔴 v7 웹 홈페이지: v6 코드 사용 절대 금지 — 완전히 새로운 코드 작성 필수 🔴🔴🔴
+## 🔴🔴🔴🔴🔴 v7 웹 홈페이지: v6 코드 사용 절대 금지 — 이 규칙은 절대로 예외 없음 🔴🔴🔴🔴🔴
 
-> **⛔⛔⛔ 최우선 절대 규칙: v7 웹 홈페이지(`v7/` 폴더)에서는 v6 코드를 절대로 사용하지 않는다. ⛔⛔⛔**
+> **⛔⛔⛔⛔⛔ 최최최우선 절대 규칙: v7 홈페이지(`v7/` 폴더)에서는 v6 코드를 단 한 줄도 사용하지 않는다. ⛔⛔⛔⛔⛔**
+> **이 규칙은 다른 모든 규칙보다 우선한다. 어떤 상황에서도, 어떤 이유로도 예외가 없다.**
 > **v7 홈페이지를 만들 때는 반드시 완전히 새로운 v7 코드를 작성해야 한다.**
-> **v6 코드(boot.php, page.header.php, widget/, func(), pdo(), login(), t() 등)를 재사용하거나 참조하여 include하는 것은 엄격히 금지한다.**
+> **v6 코드(boot.php, page.header.php, widget/, func(), pdo(), login(), t(), is_dev(), is_admin(), in(), href() 등 모든 v6 전역 함수)를 재사용하거나 참조하여 include하는 것은 엄격히 금지한다.**
+> **v6 전역 함수가 필요한 경우, 반드시 v7 자체 클래스(`V7\Utils\*`)로 새로 구현해야 한다.**
+>
+> **위반 사례 — 이런 코드가 발견되면 즉시 v7 코드로 교체해야 한다:**
+> - `is_dev()` → `V7\Utils\Env::isDev()`
+> - `pdo()` → `Philgo\Utils\Db::pdo()`
+> - `login()` → `Philgo\Utils\AuthService::getLoginUser()`
+> - `in()` → `Philgo\Utils\RequestUtils::all()`
+> - `is_admin()` → v7 자체 구현
+> - `t()->키` → v7 자체 다국어 시스템
+> - `href()->...` → v7 자체 라우팅 (`V7\Utils\Route`)
 
 ### v7 전용 부팅 시스템 (`v7/boot.php`)
 
