@@ -314,13 +314,12 @@ index.php 공유 위젯 사용 패턴, 새 위젯 추가 방법을 포함합니�
 
 ### 폰트 로딩 및 적용 → [web/v7-fonts.md](references/web/v7-fonts.md)
 
-v7 홈페이지의 OS별 폰트 자동 선택 전략을 상세히 다룹니다.
-CSS font-family 스택에서 `-apple-system`, `BlinkMacSystemFont`를 `Noto Sans KR` 앞에 배치하여
-Apple 기기는 시스템 폰트(San Francisco), Windows는 Google Fonts Noto Sans KR 웹폰트를 사용합니다.
-PHP User-Agent 감지(`preg_match('/Mac|iPhone|iPad|iPod/')`)로 Apple 기기에서는 Google Fonts
-`<link>` 태그 자체를 출력하지 않아 HTTP 요청을 완전히 차단합니다.
-`v7/css/layout.css` 26행의 font-family 선언, `v7/layout.php` 62~67행의 조건부 로딩 코드,
-`@font-face` 다운로드 최적화 원리를 포함합니다.
+v7 홈페이지의 폰트 로딩 전략을 상세히 다룹니다.
+모든 OS(Mac, Windows, Android)에서 **Noto Sans KR** 웹폰트를 통일 사용합니다.
+CSS font-family 스택에서 `'Noto Sans KR'`을 최우선으로 배치하고,
+Google Fonts를 조건 없이 모든 기기에서 로드합니다.
+`v7/css/layout.css` 26행의 font-family 선언, `v7/layout.php` 63~67행의
+Google Fonts 로딩 코드, 폴백 폰트 구성을 포함합니다.
 
 ### Firebase 웹 SDK 초기화 및 사용 → [web/v7-firebase.md](references/web/v7-firebase.md)
 
