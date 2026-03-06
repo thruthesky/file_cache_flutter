@@ -246,7 +246,7 @@ v7 시스템의 EntityInterface, RepositoryInterface, ServiceInterface, Controll
 서비스됩니다. Nginx 설정(SSL/TLS, HTTP→HTTPS 리다이렉트, Sitemap/Google 확인 rewrite 규칙),
 PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2 접속 정보,
 볼륨 매핑(소스코드·로그·DB 데이터 영구 저장), 개발 환경 접속 URL
-(`https://local.philgo.com` — v6, `https://v7-local.philgo.com` — v7, `https://banana.philgo.com` — 패밀리사이트),
+(`https://local.philgo.com` — v6, `https://v7-local.philgo.com` — v7),
 Cloudflare 터널을 통한 외부 접속(`https://local.philgo.com` — Cloudflare Tunnel + Proxied DNS 레코드로
 로컬 Docker에 접속, IUAM 모드 호환을 위해 Nginx에서 `X-Forwarded-Proto` 헤더 기반 리다이렉트 예외 처리),
 Docker 운영 명령어, Windows 환경 설정 차이점을 포함합니다.
@@ -301,6 +301,26 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 | 위젯 시스템 | [web/v7-widgets.md](references/web/v7-widgets.md) | ✅ 완료 |
 | 폰트 로딩 | [web/v7-fonts.md](references/web/v7-fonts.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
+
+### 위젯 시스템 → [web/v7-widgets.md](references/web/v7-widgets.md)
+
+v7 홈페이지의 PHP include 기반 위젯 시스템을 상세히 다룹니다.
+`v7/widgets/` 폴더에 17개 독립 PHP 파일로 분리된 위젯 구조, 5-column 레이아웃 배치,
+레이아웃 위젯 8개(topbar, header-mobile/desktop, sidebar-left/right, wing-left/right, footer),
+공유 위젯 4개(exchange-rate, company-categories, latest-companies, stats — 사이드바와 모바일 양쪽에서
+동일 파일을 include하여 DRY 원칙 적용), 콘텐츠 위젯 5개(mobile-top-banners, news-tabs,
+mobile-wing-banners, latest-posts, popular-posts), layout.php 핵심 소스코드(~130줄),
+index.php 공유 위젯 사용 패턴, 새 위젯 추가 방법을 포함합니다.
+
+### 폰트 로딩 및 적용 → [web/v7-fonts.md](references/web/v7-fonts.md)
+
+v7 홈페이지의 OS별 폰트 자동 선택 전략을 상세히 다룹니다.
+CSS font-family 스택에서 `-apple-system`, `BlinkMacSystemFont`를 `Noto Sans KR` 앞에 배치하여
+Apple 기기는 시스템 폰트(San Francisco), Windows는 Google Fonts Noto Sans KR 웹폰트를 사용합니다.
+PHP User-Agent 감지(`preg_match('/Mac|iPhone|iPad|iPod/')`)로 Apple 기기에서는 Google Fonts
+`<link>` 태그 자체를 출력하지 않아 HTTP 요청을 완전히 차단합니다.
+`v7/css/layout.css` 26행의 font-family 선언, `v7/layout.php` 62~67행의 조건부 로딩 코드,
+`@font-face` 다운로드 최적화 원리를 포함합니다.
 
 ### Firebase 웹 SDK 초기화 및 사용 → [web/v7-firebase.md](references/web/v7-firebase.md)
 
@@ -626,7 +646,6 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 |--------|-----|------|
 | **v6 홈페이지** | `https://local.philgo.com` | 기존 레거시 v6 홈페이지 |
 | **v7 홈페이지** | `https://v7-local.philgo.com` | 신규 v7 홈페이지 |
-| **패밀리사이트** | `https://banana.philgo.com` | 패밀리사이트 테스트용 |
 
 > Chrome DevTools MCP 테스트 시 v7 페이지는 반드시 `https://v7-local.philgo.com` URL을 사용한다.
 > 예: v7 홈페이지 테스트 → `https://v7-local.philgo.com/`
