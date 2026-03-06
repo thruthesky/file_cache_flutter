@@ -1,6 +1,6 @@
 ---
 name: v7-skill
-description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR-4 Controller + Service 아키텍처, api.php, PEST Unit Test), 웹 홈페이지(Vue.js CDN MPA, Bootstrap, SEO), Flutter 앱(v7 API 연동, V7FileUpload, CompanyApi, TravelApi) 개발을 모두 포함합니다. (1) PHP 백엔드: 새 API 엔드포인트 추가, Controller/Service 클래스 생성, PEST 테스트 작성, PSR-4 모듈 추가, api.php 관련 작업, (2) 웹 홈페이지: Vue.js 페이지 개발, PHP 페이지에서 v7 Service 호출, 웹 프론트엔드 작업, (3) Flutter 앱: v7api() 호출, V7FileUpload 위젯, 업소록/여행/이벤트 등 v7 기반 앱 기능 개발, v7 마이그레이션 등을 작업할 때 이 스킬을 사용하세요. 트리거 키워드: v7, v7 API, v7 백엔드, v7 웹, v7 앱, v7 홈페이지, Philgo v7, PSR-4, Controller, Service, api.php, PEST, v7api, V7FileUpload, CompanyApi, TravelApi, v7 마이그레이션.
+description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR-4 Controller + Service 아키텍처, api.php, PEST Unit Test), 웹 홈페이지(Vue.js CDN MPA, Web Awesome Pro, SEO — Bootstrap 미사용), Flutter 앱(v7 API 연동, V7FileUpload, CompanyApi, TravelApi) 개발을 모두 포함합니다. (1) PHP 백엔드: 새 API 엔드포인트 추가, Controller/Service 클래스 생성, PEST 테스트 작성, PSR-4 모듈 추가, api.php 관련 작업, (2) 웹 홈페이지: Vue.js 페이지 개발, PHP 페이지에서 v7 Service 호출, 웹 프론트엔드 작업, (3) Flutter 앱: v7api() 호출, V7FileUpload 위젯, 업소록/여행/이벤트 등 v7 기반 앱 기능 개발, v7 마이그레이션 등을 작업할 때 이 스킬을 사용하세요. 트리거 키워드: v7, v7 API, v7 백엔드, v7 웹, v7 앱, v7 홈페이지, Philgo v7, PSR-4, Controller, Service, api.php, PEST, v7api, V7FileUpload, CompanyApi, TravelApi, v7 마이그레이션.
 ---
 
 # 필고 v7 시스템 개발 가이드
@@ -19,7 +19,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 | 영역 | 설명 | 핵심 기술 |
 |------|------|-----------|
 | **PHP 백엔드** | PSR-4 기반 Controller + Service 아키텍처로 v7 API 개발 | PHP 8.3, PSR-4, PEST, MariaDB |
-| **웹 홈페이지** | v7 Service를 활용한 PHP 페이지 및 Vue.js CDN MPA 웹 개발 | Vue.js, Bootstrap, PHP, Firebase, SEO |
+| **웹 홈페이지** | v7 Service를 활용한 PHP 페이지 및 Vue.js CDN MPA 웹 개발 | Vue.js, **Web Awesome Pro**, PHP, Firebase, SEO (**Bootstrap 미사용**) |
 | **Flutter 앱** | v7 API를 호출하는 Flutter 앱 기능 개발 | Dart, v7api(), V7FileUpload, Provider |
 
 ### ⚠️⚠️⚠️ 핵심 원칙: 기존 필고 코드와 100% 공존 ⚠️⚠️⚠️
@@ -246,7 +246,7 @@ v7 시스템의 EntityInterface, RepositoryInterface, ServiceInterface, Controll
 서비스됩니다. Nginx 설정(SSL/TLS, HTTP→HTTPS 리다이렉트, Sitemap/Google 확인 rewrite 규칙),
 PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2 접속 정보,
 볼륨 매핑(소스코드·로그·DB 데이터 영구 저장), 개발 환경 접속 URL
-(`https://local.philgo.com`, `https://banana.philgo.com`),
+(`https://local.philgo.com` — v6, `https://v7-local.philgo.com` — v7, `https://banana.philgo.com` — 패밀리사이트),
 Cloudflare 터널을 통한 외부 접속(`https://local.philgo.com` — Cloudflare Tunnel + Proxied DNS 레코드로
 로컬 Docker에 접속, IUAM 모드 호환을 위해 Nginx에서 `X-Forwarded-Proto` 헤더 기반 리다이렉트 예외 처리),
 Docker 운영 명령어, Windows 환경 설정 차이점을 포함합니다.
@@ -291,10 +291,15 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 
 ### 웹 문서 → [references/web/](references/web/)
 
+> **🔴 모든 웹 관련 작업 내용은 `references/web/` 폴더에 문서를 보관한다. 🔴**
+> 웹서버, PHP 뷰, Vue.js, CSS, 레이아웃, 위젯, 폰트, SEO 등 웹 프론트엔드/백엔드 관련 내용은 모두 이 폴더에 작성한다.
+
 | 문서 | 설명 | 상태 |
 |------|------|------|
 | v7 홈페이지 개요 | [web/v7-overview.md](references/web/v7-overview.md) | ✅ 완료 |
 | Firebase | [web/v7-firebase.md](references/web/v7-firebase.md) | ✅ 완료 |
+| 위젯 시스템 | [web/v7-widgets.md](references/web/v7-widgets.md) | ✅ 완료 |
+| 폰트 로딩 | [web/v7-fonts.md](references/web/v7-fonts.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 
 ### Firebase 웹 SDK 초기화 및 사용 → [web/v7-firebase.md](references/web/v7-firebase.md)
@@ -308,7 +313,7 @@ Realtime Database(Presence 시스템, 채팅 알림), Cloud Messaging(FCM 토큰
 Storage 사용법과 서비스 워커(`firebase-messaging-sw.js`) 구조, 전역 변수(`appConfig.token`,
 `window.__HYDRATE__`) 흐름, 안티패턴을 상세히 기술합니다.
 
-> 웹/서버(PHP, Vue.js, Bootstrap, Nginx) 관련 문서는 `references/web/` 폴더에 작성한다.
+> 웹/서버(PHP, Vue.js, Web Awesome Pro, Nginx) 관련 문서는 `references/web/` 폴더에 작성한다.
 
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
@@ -463,6 +468,31 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
+## 🔴🔴🔴 v7 홈페이지는 Bootstrap을 사용하지 않는다 — 절대 금지 🔴🔴🔴
+
+> **⛔⛔⛔ v7 웹 홈페이지(`v7/` 폴더)에서는 Bootstrap CSS를 절대로 사용하지 않는다. ⛔⛔⛔**
+> **Bootstrap은 v6(레거시)에서만 사용하며, v7은 Web Awesome Pro + 커스텀 CSS로 완전히 대체한다.**
+
+| 항목 | v6 (레거시) | v7 (신규) |
+|------|------------|-----------|
+| **UI 프레임워크** | Bootstrap 5.3 | **Web Awesome Pro v3.3.1** (Bootstrap 완전 배제) |
+| **반응형 유틸리티** | `d-none`, `d-lg-block`, `d-xl-block` 등 | `v7-lg`, `v7-xl`, `v7-mobile-only` 등 커스텀 CSS (`v7/css/responsive.css`) |
+| **그리드 시스템** | `row`, `col-md-6` 등 | CSS flex/grid 직접 작성 (`v7/css/layout.css`) |
+| **컴포넌트** | Bootstrap Card, Modal, Dropdown 등 | `wa-card`, `wa-dialog`, `wa-dropdown` 등 Web Awesome 컴포넌트 |
+| **CSS 변수** | `--bs-*` | `--wa-*` (Web Awesome) + `--v7-*` (커스텀) |
+
+**사용 금지 목록:**
+- ❌ `class="d-none d-lg-block"` → ✅ `class="v7-lg"`
+- ❌ `class="row"`, `class="col-md-6"` → ✅ CSS flex/grid 직접 작성
+- ❌ `class="btn btn-primary"` → ✅ `<wa-button variant="brand">`
+- ❌ `class="card"` → ✅ `<wa-card>`
+- ❌ `class="container"` → ✅ `class="v7-page-wrapper"` 또는 `max-width` 직접 지정
+- ❌ Bootstrap CDN `<link>` 또는 `<script>` → ✅ 포함하지 않음
+
+> 상세 내용은 → [web/v7-fonts.md](references/web/v7-fonts.md), [web/v7-widgets.md](references/web/v7-widgets.md) 참조.
+
+---
+
 ## 🔴🔴🔴 Web Awesome Pro + Font Awesome Pro — 최대 활용 필수 🔴🔴🔴
 
 v7 홈페이지는 **Web Awesome Pro v3.3.1** (유료 버전)과 **Font Awesome Pro v7.2.0** (유료 버전)을 UI 라이브러리로 사용한다.
@@ -589,6 +619,17 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **레이아웃** | `page.header.php` / `page.footer.php` | `v7/layouts/` 폴더에서 자체 관리 |
 | **UI 라이브러리** | Bootstrap 5 + FontAwesome 7 | **Web Awesome Pro v3.3.1** + **Font Awesome Pro v7.2.0** |
 | **JavaScript** | jQuery + Vue.js CDN + `func()` | Vue.js 3 CDN + `fetch('/api.php')` |
+
+### 개발 환경 접속 URL
+
+| 사이트 | URL | 설명 |
+|--------|-----|------|
+| **v6 홈페이지** | `https://local.philgo.com` | 기존 레거시 v6 홈페이지 |
+| **v7 홈페이지** | `https://v7-local.philgo.com` | 신규 v7 홈페이지 |
+| **패밀리사이트** | `https://banana.philgo.com` | 패밀리사이트 테스트용 |
+
+> Chrome DevTools MCP 테스트 시 v7 페이지는 반드시 `https://v7-local.philgo.com` URL을 사용한다.
+> 예: v7 홈페이지 테스트 → `https://v7-local.philgo.com/`
 
 ### v7 웹 홈페이지에서 사용 금지 목록
 
