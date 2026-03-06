@@ -463,9 +463,31 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
-## Web Awesome UI 개발 — AI 활용 가이드
+## 🔴🔴🔴 Web Awesome Pro + Font Awesome Pro — 최대 활용 필수 🔴🔴🔴
 
-v7 홈페이지는 **Web Awesome Pro**를 UI 라이브러리로 사용한다.
+v7 홈페이지는 **Web Awesome Pro v3.3.1** (유료 버전)과 **Font Awesome Pro v7.2.0** (유료 버전)을 UI 라이브러리로 사용한다.
+
+> **⛔⛔⛔ 절대 규칙: 이 두 유료 라이브러리의 기능을 최대한 활용해야 한다. ⛔⛔⛔**
+> **커스텀 CSS/HTML로 직접 구현하기 전에, 반드시 Web Awesome 컴포넌트와 Font Awesome 아이콘으로 해결할 수 있는지 먼저 확인한다.**
+> **유료 라이브러리를 사용하는 이유는 풍부한 컴포넌트와 아이콘을 활용하기 위함이므로, 사용하지 않으면 라이선스 비용이 낭비된다.**
+
+| 라이브러리 | 버전 | 라이선스 | 활용 범위 |
+|-----------|------|---------|----------|
+| **Web Awesome Pro** | v3.3.1 | 유료 (Pro) | 모든 UI 컴포넌트 (버튼, 입력, 다이얼로그, 카드, 탭, 드롭다운 등) |
+| **Font Awesome Pro** | v7.2.0 | 유료 (Pro) | 모든 아이콘 (Solid, Regular, Light, Thin, Duotone, Sharp 스타일 포함) |
+
+### 최대 활용 원칙
+
+| 원칙 | 설명 |
+|------|------|
+| **컴포넌트 우선** | 버튼, 입력, 셀렉트, 다이얼로그, 카드, 탭, 드롭다운, 툴팁 등 UI 요소는 **반드시 Web Awesome 컴포넌트**(`wa-button`, `wa-input`, `wa-dialog` 등)를 사용한다. `<button>`, `<input>` 등 네이티브 HTML 태그를 직접 스타일링하지 않는다. |
+| **CSS 유틸리티 우선** | 레이아웃은 Web Awesome CSS 유틸리티(`wa-stack`, `wa-cluster`, `wa-grid`, `wa-sidebar` 등)를 우선 사용한다. |
+| **아이콘 적극 활용** | Font Awesome Pro v7.2.0의 풍부한 아이콘 세트(Solid, Regular, Light, Thin, Duotone, Sharp)를 적극 활용한다. Pro 전용 아이콘과 스타일을 최대한 사용한다. |
+| **CSS 변수 활용** | Web Awesome의 CSS 커스텀 속성(`--wa-*`)을 활용하여 테마와 스타일을 일관되게 관리한다. |
+| **커스텀 CSS 최소화** | Web Awesome 컴포넌트의 내장 속성, 슬롯, CSS 파트로 해결 가능한 스타일링은 커스텀 CSS를 작성하지 않는다. |
+
+### AI 활용 가이드
+
 AI(Claude Code 등)를 통해 Web Awesome 컴포넌트를 활용한 UI 개발을 효율적으로 수행할 수 있다.
 
 ### llms.txt 활용
@@ -565,7 +587,7 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **입력 처리** | `in()` 전역 함수 | `Philgo\Utils\RequestUtils::all()` |
 | **다국어** | `t()->키` 전역 함수 | v7 자체 다국어 시스템 |
 | **레이아웃** | `page.header.php` / `page.footer.php` | `v7/layouts/` 폴더에서 자체 관리 |
-| **UI 라이브러리** | Bootstrap 5 + FontAwesome 7 | Web Awesome Pro + FontAwesome 7 |
+| **UI 라이브러리** | Bootstrap 5 + FontAwesome 7 | **Web Awesome Pro v3.3.1** + **Font Awesome Pro v7.2.0** |
 | **JavaScript** | jQuery + Vue.js CDN + `func()` | Vue.js 3 CDN + `fetch('/api.php')` |
 
 ### v7 웹 홈페이지에서 사용 금지 목록
@@ -580,7 +602,7 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **입력** | `in()` | `RequestUtils::all()`, `RequestUtils::get()` |
 | **다국어** | `t()->키`, `tr()` | v7 자체 다국어 시스템 |
 | **API 호출** | `func('함수명', {...})` | `fetch('/api.php', { method: 'module.action' })` |
-| **CSS** | Bootstrap utility class | Web Awesome CSS 변수 + 유틸리티 |
+| **CSS** | Bootstrap utility class | **Web Awesome Pro v3.3.1** CSS 변수 + 유틸리티 (`wa-stack`, `wa-cluster`, `wa-grid` 등) |
 | **JavaScript** | `ready()`, `firebase_ready()`, jQuery | `DOMContentLoaded`, Vue.js 3, `fetch()` |
 | **이미지 처리** | `attr_onerror_xbox()` | v7 자체 이미지 에러 처리 |
 | **URL 생성** | `href()->post->view(...)` | v7 자체 라우팅 |
@@ -618,10 +640,10 @@ $user = AuthService::getLoginUser();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>자유게시판 - 필고 v7</title>
-    <!-- Web Awesome Pro -->
+    <!-- Web Awesome Pro v3.3.1 (유료) -->
     <link rel="stylesheet" href="/v7/dist-cdn/styles/webawesome.css">
     <script type="module" src="/v7/dist-cdn/webawesome.loader.js" data-webawesome="/v7/dist-cdn"></script>
-    <!-- Font Awesome 7 -->
+    <!-- Font Awesome Pro v7.2.0 (유료) -->
     <link rel="stylesheet" href="/v7/etc/font-awesome/css/all.min.css">
     <!-- Vue.js 3 CDN -->
     <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
