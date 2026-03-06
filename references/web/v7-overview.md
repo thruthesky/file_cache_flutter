@@ -15,7 +15,8 @@
 11. [기존 v7 API 연동](#11-기존-v7-api-연동)
 12. [SSR/SEO 전략](#12-ssrseo-전략)
 13. [페이지 개발 가이드](#13-페이지-개발-가이드)
-14. [개발 환경 설정 절차](#14-개발-환경-설정-절차)
+14. [CSS/JS 캐시 버스팅 (CACHE_VERSION)](#14-cssjs-캐시-버스팅-cache_version)
+15. [개발 환경 설정 절차](#15-개발-환경-설정-절차)
 
 ---
 
@@ -40,7 +41,7 @@
 - **기존 v7 API 코드 수정 없음**: `api.php`, Controller, Service, Repository, Entity 그대로 사용
 - **웹 뷰만 새로 작성**: `./v7/` 폴더에 PHP, CSS, JS, 이미지 등 모든 프론트엔드 파일 저장
 - **기존 레거시(v6) 웹사이트와 공존**: `local.philgo.com`(v6)과 `v7-local.philgo.com`(v7) 동시 운영
-- **기존 인프라 활용**: `boot.php`를 통해 DB, 인증, 세션, 다국어 등 기존 인프라 사용
+- **v6 코드 사용 금지**: v7 전용 `v7/boot.php`만 사용. v6 `boot.php`, `page.header.php`, `widget/`, `pdo()`, `login()`, `t()` 등 v6 코드는 일체 사용하지 않는다
 
 ---
 
@@ -56,8 +57,7 @@ Docker Nginx (v7-local.philgo.com server block)
     │
     └─ 파일 없음? → /v7.php로 내부 rewrite
                         │
-                        ├─ boot.php (DB, 인증, 세션 초기화)
-                        ├─ vendor/autoload.php (PSR-4)
+                        ├─ v7/boot.php (v7 전용 부팅: PSR-4 오토로더 + 설정 상수)
                         ├─ URL 파싱: /user/login
                         └─ include ./v7/user/login.php
                                     │
@@ -270,10 +270,11 @@ docker restart nginx
 
 ### 역할
 
-1. `boot.php` include → 기존 인프라(DB, 인증, 세션, 다국어) 초기화
-2. `vendor/autoload.php` require → v7 Controller/Service 클래스 사용 가능
-3. URL 경로 파싱 → `./v7/` 폴더의 해당 PHP 파일 include
-4. 파일 미존재 시 404 처리
+1. `v7/boot.php` include → v7 전용 부팅 (PSR-4 오토로더, 설정 상수, 타임존)
+2. URL 경로 파싱 → `./v7/` 폴더의 해당 PHP 파일 include
+3. 파일 미존재 시 404 처리
+
+> **주의**: v6 `boot.php`는 사용하지 않는다. v7 전용 `v7/boot.php`만 사용한다.
 
 ### 라우팅 규칙
 
@@ -290,17 +291,14 @@ docker restart nginx
 
 ```php
 <?php
-// 1. 기존 필고 인프라 부팅
-include_once __DIR__ . '/boot.php';
+// 1. v7 전용 부팅 (v6 boot.php 사용 금지)
+include_once __DIR__ . '/v7/boot.php';
 
-// 2. PSR-4 오토로더
-require_once ROOT_DIR . '/vendor/autoload.php';
-
-// 3. URL 파싱
+// 2. URL 파싱
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $path = rtrim($path, '/') ?: '/index';
 
-// 4. v7/ 파일 include 또는 404
+// 3. v7/ 파일 include 또는 404
 $v7File = ROOT_DIR . '/v7' . $path . '.php';
 if (file_exists($v7File)) {
     include $v7File;
@@ -315,8 +313,8 @@ if (file_exists($v7File)) {
 - `v7.php`는 **레이아웃을 포함하지 않는 순수 라우터**이다
 - 각 v7/ 파일이 전체 HTML(<!DOCTYPE html>부터 </html>까지)을 직접 출력한다
 - 공통 레이아웃이 필요하면 `v7/layouts/` 폴더에서 별도 관리할 수 있다
-- `boot.php`가 이미 로드되므로, `pdo()`, `login()`, `t()` 등 기존 함수 사용 가능
-- `vendor/autoload.php`가 이미 로드되므로, v7 Service 클래스 직접 사용 가능
+- `v7/boot.php`가 이미 로드되므로, v7 Service 클래스(`Db::pdo()`, `AuthService::getLoginUser()` 등) 직접 사용 가능
+- **v6 함수(`pdo()`, `login()`, `t()` 등)는 사용 불가** — v7 전용 클래스만 사용
 
 ---
 
@@ -339,14 +337,15 @@ v7/
 ├── company/
 │   ├── list.php                 # 업소록 목록
 │   └── view.php                 # 업소록 상세
-├── etc/                         # 외부 라이브러리 (변경 금지)
-│   ├── dist-cdn/                # Web Awesome Pro (UI 컴포넌트)
+├── etc/                         # 설정 및 외부 라이브러리
+│   ├── cache-version.php        # CACHE_VERSION 상수 (CSS/JS 캐시 버스팅)
+│   ├── dist-cdn/                # Web Awesome Pro (UI 컴포넌트, 변경 금지)
 │   │   ├── styles/
 │   │   │   └── webawesome.css
 │   │   ├── components/
 │   │   ├── webawesome.loader.js
 │   │   └── ...
-│   └── font-awesome/            # Font Awesome 7.2.0 (아이콘)
+│   └── font-awesome/            # Font Awesome 7.2.0 (아이콘, 변경 금지)
 │       ├── css/
 │       │   └── all.min.css      # FA 전체 CSS
 │       └── webfonts/            # 아이콘 웹폰트 파일
@@ -371,6 +370,7 @@ v7/
 | 이미지/아이콘 | `v7/images/` | `v7/images/logo.svg` |
 | 폰트 | `v7/fonts/` | `v7/fonts/NotoSansKR.woff2` |
 | JSON 데이터 | `v7/data/` | `v7/data/config.json` |
+| 캐시 버전 상수 | `v7/etc/cache-version.php` | 배포 시 타임스탬프 업데이트 |
 | Web Awesome | `v7/etc/dist-cdn/` | 변경 금지 (라이브러리) |
 | Font Awesome | `v7/etc/font-awesome/` | 변경 금지 (라이브러리) |
 
@@ -634,7 +634,7 @@ const posts = await v7api('post.list', { post_id: 'freetalk', limit: 10 });
 
 ### PHP에서 v7 Service 직접 사용
 
-`v7.php`에서 `boot.php`와 `autoload.php`가 이미 로드되므로,
+`v7.php`에서 `v7/boot.php`가 이미 로드되므로(PSR-4 오토로더 포함),
 v7 PHP 파일에서 Service 클래스를 직접 사용할 수 있다:
 
 ```php
@@ -717,7 +717,8 @@ $post = PostService::get(['idx' => $_GET['idx'] ?? 0]);
 /**
  * v7/모듈/페이지.php - 페이지 설명
  *
- * v7.php에서 include. boot.php, autoload 이미 로드됨.
+ * v7.php에서 include. v7/boot.php(PSR-4 오토로더 + 설정 상수) 이미 로드됨.
+ * v6 boot.php, page.header.php 등은 사용하지 않는다.
  *
  * 접속 URL: https://v7-local.philgo.com/모듈/페이지
  */
@@ -750,7 +751,60 @@ $post = PostService::get(['idx' => $_GET['idx'] ?? 0]);
 
 ---
 
-## 14. 개발 환경 설정 절차
+## 14. CSS/JS 캐시 버스팅 (CACHE_VERSION)
+
+### 개요
+
+CSS/JS 파일의 브라우저 캐시를 제어하기 위해 `CACHE_VERSION` 상수를 사용한다.
+`time()` 함수를 사용하면 매 요청마다 캐시가 무효화되므로, 상수로 관리하여 **배포 시에만** 캐시를 갱신한다.
+
+### 상수 정의 파일
+
+**파일**: `v7/etc/cache-version.php`
+
+```php
+<?php
+/**
+ * v7 CSS/JS 캐시 버스팅 버전 상수
+ *
+ * 배포 또는 필요할 때 타임스탬프 값을 업데이트하여 캐시를 무효화합니다.
+ */
+const CACHE_VERSION = 1741305600;
+```
+
+### 사용 방법
+
+`v7/layout.php` 상단에서 `require_once`로 로드한 뒤, CSS/JS 파일의 쿼리 파라미터로 사용한다.
+
+```php
+<?php
+require_once __DIR__ . '/etc/cache-version.php';
+?>
+<link rel="stylesheet" href="/v7/css/layout.css?v=<?= CACHE_VERSION ?>">
+<link rel="stylesheet" href="/v7/css/responsive.css?v=<?= CACHE_VERSION ?>">
+<link rel="stylesheet" href="/v7/css/utilities.css?v=<?= CACHE_VERSION ?>">
+```
+
+### 캐시 갱신 방법
+
+배포 시 또는 CSS/JS 변경 후 캐시를 무효화해야 할 때, `v7/etc/cache-version.php`의 타임스탬프 값을 업데이트한다.
+
+```php
+const CACHE_VERSION = 1741305600; // ← 새 타임스탬프로 변경
+```
+
+### 규칙
+
+| 항목 | 규칙 |
+|------|------|
+| `time()` 사용 | 금지 (매 요청마다 캐시 무효화됨) |
+| `CACHE_VERSION` 상수 | CSS/JS 캐시 버스팅에 반드시 사용 |
+| 상수 업데이트 시점 | 배포 시 또는 CSS/JS 파일 변경 시 |
+| 상수 파일 위치 | `v7/etc/cache-version.php` |
+
+---
+
+## 15. 개발 환경 설정 절차
 
 ### 최초 설정 (1회)
 
