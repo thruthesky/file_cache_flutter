@@ -19,7 +19,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 | 영역 | 설명 | 핵심 기술 |
 |------|------|-----------|
 | **PHP 백엔드** | PSR-4 기반 Controller + Service 아키텍처로 v7 API 개발 | PHP 8.3, PSR-4, PEST, MariaDB |
-| **웹 홈페이지** | v7 Service를 활용한 PHP 페이지 및 Vue.js CDN MPA 웹 개발 | Vue.js, **Web Awesome Pro**, PHP, Firebase, SEO (**Bootstrap 미사용**) |
+| **웹 홈페이지** | v7 Service를 활용한 PHP 페이지 및 Vue.js CDN MPA 웹 개발 | Vue.js, **Web Awesome Pro v3.3.1**, **Font Awesome Pro v7.2.0**, PHP, Firebase, SEO (**🚫 Bootstrap 미사용**) |
 | **Flutter 앱** | v7 API를 호출하는 Flutter 앱 기능 개발 | Dart, v7api(), V7FileUpload, Provider |
 
 ### ⚠️⚠️⚠️ 핵심 원칙: 기존 필고 코드와 100% 공존 ⚠️⚠️⚠️
@@ -206,7 +206,7 @@ public function isValidPath(): bool
 | 폴더 | 용도 | 대상 |
 |------|------|------|
 | `references/api/` | v7 API 모듈 문서 (웹+앱 공통) | 모든 v7 API 엔드포인트 (Controller/Service) — 웹과 앱 모두 사용하는 공통 API |
-| `references/web/` | 웹/서버 전용 문서 | 웹서버, PHP, Vue.js, Bootstrap, SEO 등 웹 프론트엔드/백엔드 관련 내용만 포함 |
+| `references/web/` | 웹/서버 전용 문서 | 웹서버, PHP, Vue.js, **Web Awesome Pro**, 폰트, 위젯, 레이아웃, SEO 등 웹 프론트엔드/백엔드 관련 내용만 포함 (**Bootstrap 미사용**) |
 | `references/app/` | Flutter 앱 전용 문서 | Flutter 앱 개발, Dart 코드, 앱 위젯, 앱 API 연동 등 앱 관련 내용만 포함 |
 | `references/event/` | 이벤트 시스템 문서 | 포인트 이벤트, 스피닝 휠, QR 코드 등 이벤트 관련 통합 문서 |
 | `references/` (루트) | 공통 인프라 문서 | 아키텍처, Docker, DB 스키마 등 전체 시스템 공통 문서 |
@@ -333,7 +333,7 @@ Realtime Database(Presence 시스템, 채팅 알림), Cloud Messaging(FCM 토큰
 Storage 사용법과 서비스 워커(`firebase-messaging-sw.js`) 구조, 전역 변수(`appConfig.token`,
 `window.__HYDRATE__`) 흐름, 안티패턴을 상세히 기술합니다.
 
-> 웹/서버(PHP, Vue.js, Web Awesome Pro, Nginx) 관련 문서는 `references/web/` 폴더에 작성한다.
+> 웹/서버(PHP, Vue.js, Web Awesome Pro, Nginx, 폰트, 위젯, 레이아웃) 관련 문서는 모두 `references/web/` 폴더에 작성한다.
 
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
