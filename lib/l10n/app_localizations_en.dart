@@ -2279,7 +2279,9 @@ class LoEn extends Lo {
       'The winning areas on the wheel may differ from the actual winning probability.';
 
   @override
-  String get spinWheelCostNotice => '200 points are deducted per spin.';
+  String spinWheelCostNotice(int cost) {
+    return '$cost points are deducted per spin.';
+  }
 
   @override
   String get spinWheelCouponsExhausted =>

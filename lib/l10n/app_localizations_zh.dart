@@ -2227,7 +2227,9 @@ class LoZh extends Lo {
   String get spinWheelDisclaimer => '转盘的中奖区域可能与实际中奖概率不同。';
 
   @override
-  String get spinWheelCostNotice => '每次抽奖将消耗200积分。';
+  String spinWheelCostNotice(int cost) {
+    return '每次抽奖将消耗$cost积分。';
+  }
 
   @override
   String get spinWheelCouponsExhausted => '星巴克优惠券活动已结束。\n请在下方查看您中奖的优惠券。';

@@ -288,15 +288,42 @@ class _MainHomeState extends State<MainHome> {
                                     ),
                                     const SizedBox(height: 4),
 
-                                    /// ── 이벤트 스핀 확률 ──
-                                    Text('── 이벤트 스핀 확률 ──', style: sectionStyle),
-                                    Text(
-                                      '50P: 37.9%  |  100P: 8%  |  200P: 7%\n'
-                                      '300P: 6%  |  400P: 5%  |  500P: 4%\n'
-                                      '1000P: 1.5%  |  2000P: 0.4%\n'
-                                      '스타벅스 쿠폰: 0.2%  |  꽝: 30%\n'
-                                      '총 weight: 1000 (서버 결정, 클라이언트 하드코딩)',
-                                      style: labelStyle,
+                                    /// ── 이벤트 스핀 확률 (서버 settings.get) ──
+                                    Selector<V7SettingsState, V7Settings?>(
+                                      selector: (_, state) => state.settings,
+                                      builder: (context, s, _) {
+                                        if (s == null || s.spinSections.isEmpty) {
+                                          return Text('── 이벤트 스핀 확률 ──\n로딩 중...', style: sectionStyle);
+                                        }
+                                        final totalWeight = s.spinSections.fold<int>(0, (sum, sec) => sum + sec.weight);
+                                        final lines = <String>[];
+                                        for (final sec in s.spinSections) {
+                                          lines.add('${sec.label}: ${sec.percent}% (w:${sec.weight})');
+                                        }
+                                        /// 3개씩 묶어서 줄바꿈
+                                        final buf = StringBuffer();
+                                        for (var i = 0; i < lines.length; i++) {
+                                          buf.write(lines[i]);
+                                          if (i < lines.length - 1) {
+                                            buf.write((i + 1) % 3 == 0 ? '\n' : '  |  ');
+                                          }
+                                        }
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text('── 이벤트 스핀 확률 (서버) ──', style: sectionStyle),
+                                            Text(buf.toString(), style: labelStyle),
+                                            Text(
+                                              '총 weight: $totalWeight  |  참가비: ${s.spinCost}P',
+                                              style: labelStyle,
+                                            ),
+                                            Text(
+                                              '스타벅스 24h 재당첨 weight: ${s.eventStarbucks24hWeight} (${s.eventStarbucks24hWeight / 10.0}%)',
+                                              style: labelStyle,
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     ),
                                     const SizedBox(height: 4),
 

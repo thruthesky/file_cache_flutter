@@ -2209,9 +2209,14 @@
   "@spinWheelDisclaimer": {
     "description": "Disclaimer text shown below the spinning wheel"
   },
-  "spinWheelCostNotice": "1回の抽選ごとに200ポイントが消費されます。",
+  "spinWheelCostNotice": "1回の抽選ごとに{cost}ポイントが消費されます。",
   "@spinWheelCostNotice": {
-    "description": "Notice about point cost per spin"
+    "description": "Notice about point cost per spin",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
   },
   "spinWheelCouponsExhausted": "スターバックスクーポンイベントが終了しました。\n当選したクーポンは下記からご確認ください。",
   "@spinWheelCouponsExhausted": {

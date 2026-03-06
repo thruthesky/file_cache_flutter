@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:philgo/l10n/app_localizations.dart' show Lo;
+import 'package:philgo/v7_api/models/v7_point_log_model.dart';
 import 'package:philgo/v7_api/point_log_api.dart';
 import 'package:philgo/v7_api/widgets/api_list_view/api_list_view.dart';
 
@@ -38,7 +39,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
   static const int _pageLimit = 20;
 
   /// ApiListView의 GlobalKey (새로고침용)
-  final _listKey = GlobalKey<ApiListViewState<Map<String, dynamic>>>();
+  final _listKey = GlobalKey<ApiListViewState<PointLog>>();
 
   @override
   void initState() {
@@ -130,21 +131,14 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
 
           // 포인트 기록 리스트 (ApiListView)
           Expanded(
-            child: ApiListView<Map<String, dynamic>>(
+            child: ApiListView<PointLog>(
               key: _listKey,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               separatorBuilder: (_, _) => const SizedBox(height: 4),
-              fetchPage: (page) async {
-                final result = await PointLogApi.history(
-                  page: page,
-                  limit: _pageLimit,
-                );
-                final items =
-                    (result['items'] as List<dynamic>?) ?? [];
-                return items
-                    .whereType<Map<String, dynamic>>()
-                    .toList();
-              },
+              fetchPage: (page) => PointLogApi.history(
+                page: page,
+                limit: _pageLimit,
+              ),
               noItemsBuilder: (context) =>
                   _buildEmptyState(scheme, l10n),
               errorBuilder: (context, error, retry) =>
@@ -333,16 +327,9 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
   /// 포인트 기록 아이템 위젯
   Widget _buildLogItem(
     ColorScheme scheme,
-    Map<String, dynamic> log,
+    PointLog log,
     int index,
   ) {
-    final point = (log['point'] as num?)?.toInt() ?? 0;
-    final pointAfter = (log['point_after'] as num?)?.toInt() ?? 0;
-    final module = (log['module'] as String?) ?? '';
-    final action = (log['action'] as String?) ?? '';
-    final etc = (log['etc'] as String?) ?? '';
-    final stamp = log['stamp'];
-    final isPositive = point >= 0;
 
     return Card(
       elevation: 0,
@@ -359,16 +346,16 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isPositive
+                color: log.isPositive
                     ? scheme.primaryContainer
                     : scheme.errorContainer,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
                 child: FaIcon(
-                  _getLogIcon(module, action),
+                  _getLogIcon(log.module, log.action),
                   size: 16,
-                  color: isPositive
+                  color: log.isPositive
                       ? scheme.onPrimaryContainer
                       : scheme.onErrorContainer,
                 ),
@@ -382,7 +369,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _getLogDescription(module, action, etc),
+                    _getLogDescription(log.module, log.action, log.etc),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface,
                         ),
@@ -391,7 +378,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    _formatDate(stamp),
+                    _formatDate(log.stamp),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: scheme.onSurfaceVariant,
                         ),
@@ -405,15 +392,15 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '${isPositive ? '+' : ''}${_formatPoint(point)}P',
+                  '${log.isPositive ? '+' : ''}${_formatPoint(log.point)}P',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: isPositive ? scheme.primary : scheme.error,
+                        color: log.isPositive ? scheme.primary : scheme.error,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${_formatPoint(pointAfter)}P',
+                  '${_formatPoint(log.pointAfter)}P',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),

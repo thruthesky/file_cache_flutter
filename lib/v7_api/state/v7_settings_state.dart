@@ -62,6 +62,9 @@ class V7SettingsState extends ChangeNotifier {
       companyQrEventEnabled: settings!.companyQrEventEnabled,
       eventEntryEnabled: settings!.eventEntryEnabled,
       availableStarbucksCoupons: count,
+      spinSections: settings!.spinSections,
+      spinCost: settings!.spinCost,
+      eventStarbucks24hWeight: settings!.eventStarbucks24hWeight,
     );
     notifyListeners();
   }

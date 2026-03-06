@@ -6,14 +6,19 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 /// [infinite_scroll_pagination] 패키지를 encapsulation하여
 /// 재사용 가능한 페이지네이션 리스트 위젯을 제공한다.
 ///
+/// **🔴 절대 규칙: 제네릭 타입 T에 Map<String, dynamic>을 사용하지 말 것!**
+/// **반드시 데이터 모델 클래스(예: PointLog, Company)를 만들어서 사용해야 한다.**
+/// - ❌ `ApiListView<Map<String, dynamic>>` — 절대 금지
+/// - ✅ `ApiListView<PointLog>` — 데이터 모델 클래스 필수
+///
 /// 사용 예시:
 /// ```dart
-/// ApiListView<Map<String, dynamic>>(
-///   fetchPage: (page) async {
-///     final result = await PointLogApi.history(page: page, limit: 20);
-///     return (result['items'] as List).cast<Map<String, dynamic>>();
-///   },
-///   itemBuilder: (context, item, index) => ListTile(title: Text(item['name'])),
+/// ApiListView<PointLog>(
+///   fetchPage: (page) => PointLogApi.history(page: page, limit: 20),
+///   itemBuilder: (context, log, index) => ListTile(
+///     title: Text('${log.module}/${log.action}'),
+///     trailing: Text('${log.isPositive ? '+' : ''}${log.point}P'),
+///   ),
 /// )
 /// ```
 class ApiListView<T> extends StatefulWidget {

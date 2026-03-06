@@ -401,15 +401,20 @@ class _SpinningWheelState extends State<SpinningWheel>
   }
 
   /// 회전 완료 후 연속 돌리기 체크
+  ///
+  /// 횟수 모드/조건 모드 모두 autoSpinStopCondition을 먼저 확인한다.
+  /// 스타벅스 쿠폰 당첨(points == -1) 시 남은 횟수와 관계없이 즉시 중단.
   void _checkAutoSpin() {
+    /// 모든 연속 모드 공통: stopCondition 충족 시 즉시 중단
+    if (_isAutoSpinning &&
+        _lastResult != null &&
+        widget.autoSpinStopCondition?.call(_lastResult!) == true) {
+      _stopAutoSpin();
+      return;
+    }
+
     if (_autoSpinUntilCondition) {
-      /// 조건 충족 여부 확인
-      if (_lastResult != null &&
-          widget.autoSpinStopCondition?.call(_lastResult!) == true) {
-        _stopAutoSpin();
-        return;
-      }
-      /// 다음 스핀 (짧은 딜레이)
+      /// 조건 모드: 다음 스핀 (짧은 딜레이)
       Future.delayed(const Duration(milliseconds: 600), () {
         if (mounted && _autoSpinUntilCondition) _spin();
       });

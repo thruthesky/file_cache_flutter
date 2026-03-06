@@ -2816,9 +2816,14 @@
   "@spinWheelDisclaimer": {
     "description": "Disclaimer text shown below the spinning wheel"
   },
-  "spinWheelCostNotice": "추첨을 할 때마다 200 포인트가 소진됩니다.",
+  "spinWheelCostNotice": "추첨을 할 때마다 {cost} 포인트가 소진됩니다.",
   "@spinWheelCostNotice": {
-    "description": "Notice about point cost per spin"
+    "description": "Notice about point cost per spin",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
   },
   "spinWheelCouponsExhausted": "스타벅스 쿠폰 이벤트가 종료되었습니다.\n당첨된 쿠폰은 아래에서 확인하세요.",
   "@spinWheelCouponsExhausted": {

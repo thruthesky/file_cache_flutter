@@ -2209,9 +2209,14 @@
   "@spinWheelDisclaimer": {
     "description": "Disclaimer text shown below the spinning wheel"
   },
-  "spinWheelCostNotice": "每次抽奖将消耗200积分。",
+  "spinWheelCostNotice": "每次抽奖将消耗{cost}积分。",
   "@spinWheelCostNotice": {
-    "description": "Notice about point cost per spin"
+    "description": "Notice about point cost per spin",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
   },
   "spinWheelCouponsExhausted": "星巴克优惠券活动已结束。\n请在下方查看您中奖的优惠券。",
   "@spinWheelCouponsExhausted": {

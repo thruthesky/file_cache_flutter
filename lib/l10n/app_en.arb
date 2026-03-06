@@ -2753,9 +2753,14 @@
   "@spinWheelDisclaimer": {
     "description": "Disclaimer text shown below the spinning wheel"
   },
-  "spinWheelCostNotice": "200 points are deducted per spin.",
+  "spinWheelCostNotice": "{cost} points are deducted per spin.",
   "@spinWheelCostNotice": {
-    "description": "Notice about point cost per spin"
+    "description": "Notice about point cost per spin",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
   },
   "spinWheelCouponsExhausted": "The Starbucks coupon event has ended.\nCheck your won coupons below.",
   "@spinWheelCouponsExhausted": {

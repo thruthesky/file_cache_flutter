@@ -2234,7 +2234,9 @@ class LoJa extends Lo {
   String get spinWheelDisclaimer => 'ルーレットの当選エリアは実際の当選確率と異なる場合があります。';
 
   @override
-  String get spinWheelCostNotice => '1回の抽選ごとに200ポイントが消費されます。';
+  String spinWheelCostNotice(int cost) {
+    return '1回の抽選ごとに$costポイントが消費されます。';
+  }
 
   @override
   String get spinWheelCouponsExhausted =>

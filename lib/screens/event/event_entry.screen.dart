@@ -9,7 +9,7 @@ import 'package:philgo/screens/event/event_coupon.screen.dart';
 import 'package:philgo/v7_api/state/v7_settings_state.dart';
 import 'package:philgo/v7_api/v7_api.dart';
 import 'package:philgo/widgets/spinning_wheel.dart';
-import 'package:provider/provider.dart' show Selector;
+import 'package:provider/provider.dart' show ReadContext, Selector;
 
 /// 이벤트 응모 화면 (Event Entry Screen)
 ///
@@ -217,7 +217,9 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
               sections: _sections,
               instructionText: l10n.spinWheelInstruction,
               disclaimerText: l10n.spinWheelDisclaimer,
-              costNoticeText: l10n.spinWheelCostNotice,
+              costNoticeText: l10n.spinWheelCostNotice(
+                context.read<V7SettingsState>().settings?.spinCost ?? 200,
+              ),
               spinButtonText: l10n.spinWheelSpin,
               onSpinRequested: _callSpinApi,
               onResult: (section) {

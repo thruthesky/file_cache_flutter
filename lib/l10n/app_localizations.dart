@@ -4460,8 +4460,8 @@ abstract class Lo {
   /// Notice about point cost per spin
   ///
   /// In en, this message translates to:
-  /// **'200 points are deducted per spin.'**
-  String get spinWheelCostNotice;
+  /// **'{cost} points are deducted per spin.'**
+  String spinWheelCostNotice(int cost);
 
   /// Message when all Starbucks coupons are exhausted
   ///

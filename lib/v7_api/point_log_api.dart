@@ -1,3 +1,4 @@
+import 'models/v7_point_log_model.dart';
 import 'v7_api.dart';
 
 /// v7 포인트 로그(PointLog) API 래퍼 클래스
@@ -8,7 +9,7 @@ import 'v7_api.dart';
 /// 사용 예시:
 /// ```dart
 /// final point = await PointLogApi.memberPoint();
-/// final history = await PointLogApi.history(page: 1, limit: 20);
+/// final logs = await PointLogApi.history(page: 1, limit: 20);
 /// ```
 class PointLogApi {
   PointLogApi._();
@@ -34,18 +35,23 @@ class PointLogApi {
   /// [module] 모듈 필터 (선택)
   /// [action] 액션 필터 (선택)
   ///
-  /// 반환: {total, page, limit, items[]}
-  static Future<Map<String, dynamic>> history({
+  /// 반환: PointLog 모델 리스트
+  static Future<List<PointLog>> history({
     int page = 1,
     int limit = 20,
     String? module,
     String? action,
   }) async {
-    return await v7api('pointLog.history', data: {
+    final response = await v7api('pointLog.history', data: {
       'page': page,
       'limit': limit,
       if (module != null) 'module': module,
       if (action != null) 'action': action,
     });
+    final items = (response['items'] as List<dynamic>?) ?? [];
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(PointLog.fromJson)
+        .toList();
   }
 }
