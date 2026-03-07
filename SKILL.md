@@ -371,6 +371,7 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 | 폰트 로딩 | [web/v7-fonts.md](references/web/v7-fonts.md) | ✅ 완료 |
 | **업소록 홈페이지** | [web/v7-company.md](references/web/v7-company.md) | ✅ 완료 |
 | **관리자 대시보드** | [web/v7-admin.md](references/web/v7-admin.md) | ✅ 완료 |
+| **웹 로그인 인증** | [web/v7-web-login.md](references/web/v7-web-login.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 
 ### 관리자 대시보드 → [web/v7-admin.md](references/web/v7-admin.md)
@@ -685,6 +686,71 @@ wa-select와 wa-option으로 카테고리 선택 드롭다운 만들어줘 (weba
 | **장점** | 간결, 빠른 개요 파악 | 상세한 코드 예제와 옵션 제공 |
 
 > 상세 내용은 → [web/v7-overview.md](references/web/v7-overview.md) 8장 「AI(Claude, LLM)를 활용한 Web Awesome 개발 방법」 참조.
+
+---
+
+## 🔴🔴🔴 v7 색상 테마: 블루 기본 + 메인 메뉴 헤더만 빨간색 — 절대 규칙 🔴🔴🔴
+
+> **⛔⛔⛔ v7 홈페이지의 기본 테마 색상은 블루(Blue)이다. Web Awesome Pro의 기본 default theme 색상(Blue)을 그대로 사용한다. ⛔⛔⛔**
+> **단 하나의 예외: 데스크탑 상단 메인 메뉴의 1차 카테고리 바탕색만 빨간색(`#7f1d1d`)으로 표시한다.**
+> **그 외 모든 UI 요소(버튼, 링크, 탭, 페이지네이션, 배지, 폼 요소 등)는 블루 테마를 따른다.**
+
+### 색상 테마 원칙
+
+| 원칙 | 설명 |
+|------|------|
+| **기본 테마: 블루** | Web Awesome Pro의 기본 default theme(Blue)를 그대로 사용한다. `--wa-color-brand-*` CSS 변수가 블루 계열로 설정된 기본 상태를 유지한다. |
+| **🔴 유일한 예외: 메인 메뉴 헤더** | 데스크탑 상단의 메인 메뉴 1차 카테고리 헤더(`.v7-main-menu .menu-col-header`)만 빨간색 배경(`#7f1d1d`)을 사용한다. 이것은 필고 브랜드 아이덴티티를 나타내는 유일한 빨간색 영역이다. |
+| **그 외 모두 블루** | 메인 메뉴 헤더를 제외한 모든 UI 요소는 블루 테마를 따른다. 빨간색 계열을 임의로 사용하지 않는다. |
+
+### 색상 적용 가이드
+
+| UI 요소 | 색상 | 비고 |
+|---------|------|------|
+| **메인 메뉴 1차 카테고리 헤더** | `#7f1d1d` (빨간색 배경, 흰색 텍스트) | 🔴 **유일한 빨간색 예외 영역** |
+| **버튼 (primary)** | 블루 (Web Awesome 기본 `wa-button variant="brand"`) | 블루 테마 |
+| **링크** | 블루 (Web Awesome 기본 링크 색상) | 블루 테마 |
+| **탭 활성 상태** | 블루 | 블루 테마 |
+| **페이지네이션 활성 버튼** | 블루 | 블루 테마 |
+| **배지, 태그** | 블루 | 블루 테마 |
+| **폼 요소 포커스** | 블루 | 블루 테마 |
+| **글쓰기 버튼** | 블루 | 블루 테마 |
+| **섹션 타이틀 언더라인** | 블루 | 블루 테마 |
+| **인기글 순위 뱃지** | 블루 | 블루 테마 |
+
+### Web Awesome 기본 테마 활용
+
+Web Awesome Pro의 기본 default theme는 **블루**이다. 별도의 테마 커스터마이징 없이 기본 상태를 그대로 사용하면 된다.
+
+```css
+/* ✅ 올바름: Web Awesome 기본 CSS 변수를 그대로 사용 (블루) */
+/* --wa-color-brand-600 등은 기본값이 블루이므로 별도 오버라이드 불필요 */
+
+/* ✅ 올바름: 컴포넌트는 기본 블루 테마를 따름 */
+<wa-button variant="brand">확인</wa-button>
+
+/* 🔴 유일한 예외: 메인 메뉴 헤더만 빨간색 */
+.v7-main-menu .menu-col-header {
+    background-color: #7f1d1d;   /* 필고 브랜드 빨간색 — 이 영역만 예외 */
+    color: white;
+}
+```
+
+### 잘못된 사용법 (금지)
+
+```css
+/* ❌ 금지: 메인 메뉴 헤더 외 영역에 빨간색 사용 */
+.post-write-btn { background: #7f1d1d; }         /* ❌ → 블루로 변경 */
+.pagination .active { background: #dc2626; }      /* ❌ → 블루로 변경 */
+.section-title { border-bottom: 2px solid #7f1d1d; } /* ❌ → 블루로 변경 */
+.rank-badge { background: #7f1d1d; }              /* ❌ → 블루로 변경 */
+
+/* ❌ 금지: Web Awesome brand 색상을 빨간색으로 오버라이드 */
+:root { --wa-color-brand-600: #dc2626; }          /* ❌ 절대 금지 */
+```
+
+> **참고**: 기존 CSS에 빨간색(`#7f1d1d`, `#dc2626`, `#991b1b`)이 하드코딩된 부분이 있다면, 메인 메뉴 헤더를 제외하고 모두 블루 테마(Web Awesome 기본 brand 변수)로 전환해야 한다.
+> 상세 색상 팔레트 → [web/v7-layout.md](references/web/v7-layout.md) 「색상 팔레트」 섹션 참조.
 
 ---
 
