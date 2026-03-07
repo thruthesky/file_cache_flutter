@@ -14,9 +14,10 @@
 10. [Vue.js CDN 연동](#10-vuejs-cdn-연동)
 11. [기존 v7 API 연동](#11-기존-v7-api-연동)
 12. [SSR/SEO 전략](#12-ssrseo-전략)
-13. [페이지 개발 가이드](#13-페이지-개발-가이드)
+13. [페이지 개발 가이드](#13-페이지-개발-가이드) (페이지별 CSS 파일 분리 규칙 포함)
 14. [CSS/JS 캐시 버스팅 (CACHE_VERSION)](#14-cssjs-캐시-버스팅-cache_version)
 15. [개발 환경 설정 절차](#15-개발-환경-설정-절차)
+16. [개발 환경 테스트 로그인](#16-개발-환경-테스트-로그인)
 
 ---
 
@@ -584,13 +585,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         methods: {
             async submit() {
-                // v7 API 호출
-                const res = await fetch('/api.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ method: 'user.login', email: this.email })
-                });
-                const data = await res.json();
+                // v7 API 호출 — 반드시 v7api() 함수 사용 (fetch 직접 호출 금지)
+                const data = await v7api('user.login', { email: this.email });
                 console.log(data);
             }
         }
@@ -616,20 +612,30 @@ v7 API는 기존 `api.php`를 그대로 사용한다.
 
 ### JavaScript에서 API 호출
 
-```javascript
-// v7 API 호출 (api.php)
-async function v7api(method, params = {}) {
-    const res = await fetch('/api.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ method, ...params })
-    });
-    return res.json();
-}
+> **🔴 절대 규칙: v7 API 호출 시 반드시 `v7api()` 함수를 사용해야 한다. `fetch()`로 직접 호출 금지. 🔴**
 
-// 사용 예시
+`v7api()` 함수는 `/js/v7api.js`에 정의되어 있으며, 입력값 핸들링, 에러 감지, 사용자 알림(alert)을 자동으로 처리한다.
+v7 페이지에서 이 스크립트를 로드한 후 사용한다.
+
+```javascript
+// ✅ 올바른 방법: v7api() 함수 사용 (js/v7api.js에 정의됨)
 const result = await v7api('user.count');
 const posts = await v7api('post.list', { post_id: 'freetalk', limit: 10 });
+
+// ✅ 에러 알림을 끄고 싶은 경우
+const data = await v7api('user.me', {}, { alertOnError: false });
+
+// ✅ 파일 업로드
+const uploaded = await v7apiUpload(file, 'company', 'visit_review');
+```
+
+```javascript
+// ❌ 절대 금지: fetch()로 직접 호출
+const res = await fetch('/api.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ method: 'user.count' })
+});
 ```
 
 ### PHP에서 v7 Service 직접 사용
@@ -740,6 +746,8 @@ $post = PostService::get(['idx' => $_GET['idx'] ?? 0]);
     <link rel="stylesheet" href="/v7/etc/font-awesome/css/all.min.css">
     <!-- Vue.js CDN (필요 시) -->
     <script defer src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <!-- 페이지 전용 CSS (같은 폴더에 분리) -->
+    <link rel="stylesheet" href="/v7/모듈/페이지.css">
 </head>
 <body>
     <div class="wa-stack" style="--wa-stack-gap: var(--wa-space-xl); padding: var(--wa-space-xl); max-width: 1200px; margin: 0 auto;">
@@ -747,6 +755,47 @@ $post = PostService::get(['idx' => $_GET['idx'] ?? 0]);
     </div>
 </body>
 </html>
+```
+
+### 페이지별 CSS 파일 분리 (필수 규칙)
+
+> **🔴 각 PHP 페이지에 적용되는 CSS는 반드시 해당 PHP 파일과 같은 폴더에 별도 `.css` 파일로 분리해야 한다. 🔴**
+> **PHP 파일 안에 `<style>` 태그로 CSS를 인라인 작성하는 것은 금지한다.**
+
+이 규칙의 목적은 PHP 파일을 슬림하게 유지하고, CSS를 독립적으로 관리하기 위함이다.
+
+**파일 명명 규칙:** PHP 파일명과 동일한 이름에 `.css` 확장자를 사용한다.
+
+| PHP 파일 | CSS 파일 (같은 폴더) |
+|----------|---------------------|
+| `v7/user/login.php` | `v7/user/login.css` |
+| `v7/post/list.php` | `v7/post/list.css` |
+| `v7/widgets/topbar.php` | `v7/widgets/topbar.css` |
+| `v7/index.php` | `v7/index.css` |
+
+**CSS 파일 분류:**
+
+| 분류 | 위치 | 설명 |
+|------|------|------|
+| **공통 CSS** | `v7/css/layout.css`, `v7/css/responsive.css`, `v7/css/utilities.css` | 전체 사이트에 적용되는 공통 스타일 |
+| **페이지별 CSS** | 해당 PHP와 같은 폴더 | 해당 페이지에만 적용되는 스타일 |
+| **위젯별 CSS** | `v7/widgets/` 폴더 | 해당 위젯에만 적용되는 스타일 |
+
+**올바른 예시:**
+
+```php
+<!-- v7/user/login.php -->
+<link rel="stylesheet" href="/v7/user/login.css">
+<!-- ✅ CSS는 같은 폴더의 별도 파일에 작성 -->
+```
+
+**잘못된 예시 (금지):**
+
+```php
+<!-- ❌ 절대 금지: PHP 파일 안에 <style> 태그 -->
+<style>
+.login-form { max-width: 400px; margin: 0 auto; }
+</style>
 ```
 
 ---
@@ -845,3 +894,85 @@ open https://v7-local.philgo.com
 | 502 Bad Gateway | PHP-FPM 미실행 | `docker restart php` |
 | 404 Not Found | v7/ 파일 없음 | 해당 PHP 파일 생성 |
 | 기존 v6 사이트 표시됨 | Nginx 매칭 오류 | server block 순서 확인 |
+
+---
+
+## 16. 개발 환경 테스트 로그인
+
+### 개요
+
+v7 홈페이지의 **데스크톱 모드**(화면 너비 992px 이상)에서는 상단 탑바(topbar)의 **오른쪽 영역**에
+`[A]` `[B]` `[C]` `[D]` `[E]` `[F]` 테스트 로그인 버튼이 표시된다.
+
+이 버튼은 **개발 환경(`Env::isDev()` = true)에서만** 표시되며,
+프로덕션 환경에서는 자동으로 숨겨진다.
+
+### 테스트 계정 목록
+
+각 버튼은 Firebase email/password 인증을 사용하여 테스트 계정으로 로그인한다.
+모든 계정의 비밀번호는 동일하다.
+
+| 버튼 | 이메일 | 설명 |
+|------|--------|------|
+| **[A]** | `apple@test.com` | 관리자 테스트 계정 (ADMINS에 포함) |
+| **[B]** | `banana@test.com` | 일반 사용자 테스트 계정 |
+| **[C]** | `cherry@test.com` | 일반 사용자 테스트 계정 |
+| **[D]** | `durian@test.com` | 일반 사용자 테스트 계정 |
+| **[E]** | `elderberry@test.com` | 일반 사용자 테스트 계정 |
+| **[F]** | `fig@test.com` | 일반 사용자 테스트 계정 |
+
+### 로그인 방법
+
+1. `https://v7-local.philgo.com`에 접속한다 (데스크톱 브라우저, 화면 너비 992px 이상)
+2. 상단 탑바 오른쪽에 `[A]` ~ `[F]` 버튼이 보인다
+3. 원하는 버튼을 클릭하면 **자동으로 로그인**된다
+4. 로그인 성공 시 페이지가 자동으로 새로고침된다
+5. 로그인 후에는 버튼 대신 **닉네임**과 **[로그아웃]** 버튼이 표시된다
+
+### 로그아웃 방법
+
+1. 로그인 상태에서 탑바 오른쪽의 **[로그아웃]** 버튼을 클릭한다
+2. 세션 쿠키(`session_id`)가 삭제되고 페이지가 새로고침된다
+
+### 로그인이 필요한 테스트 시
+
+> **⚠️ AI(Claude Code 등)가 Chrome DevTools MCP로 v7 페이지를 테스트할 때,
+> 로그인이 필요한 기능을 테스트하려면 반드시 이 테스트 로그인 버튼을 사용해야 한다.**
+
+**Chrome DevTools MCP에서 테스트 로그인하는 방법:**
+
+1. `https://v7-local.philgo.com`으로 이동
+2. JavaScript 실행으로 테스트 로그인 수행:
+
+```javascript
+// Chrome DevTools MCP의 evaluate_script로 실행
+await v7DevLogin('apple@test.com');
+// → Firebase email/password 인증 → v7api('user.socialLogin') → 페이지 리로드
+```
+
+3. 페이지 리로드 후 로그인 상태가 유지되므로 로그인 필요 기능 테스트 가능
+
+### 기술 구현 상세
+
+| 항목 | 내용 |
+|------|------|
+| **위젯 파일** | `v7/widgets/layout/layout.topbar.php` |
+| **CSS 파일** | `v7/widgets/layout/layout-widget.css` (`.v7-dev-login-btn`, `.v7-dev-user` 클래스) |
+| **표시 조건** | `Env::isDev()` — macOS, Windows, 또는 localhost 접속 시에만 표시 |
+| **로그인 상태 확인** | `AuthService::getLoginUser()` — 세션 쿠키 또는 Firebase ID Token 기반 인증 |
+| **설정 클래스** | `V7\Utils\Config` — `devUsers()`, `devPassword()`, `firebaseConfigJson()` |
+| **인증 흐름** | Firebase `signInWithEmailAndPassword()` → `getIdToken()` → `v7api('user.socialLogin', { id_token })` → 쿠키 저장 → 리로드 |
+| **Firebase SDK** | `firebase-app-compat.js` + `firebase-auth-compat.js` (v12.3.0, 개발 환경에서만 로드) |
+
+### 핵심 코드 흐름
+
+```
+[A] 버튼 클릭
+  → v7DevLogin('apple@test.com')
+  → firebase.auth().signInWithEmailAndPassword(email, password)
+  → cred.user.getIdToken()
+  → v7api('user.socialLogin', { id_token: idToken })
+  → 서버: AuthService → FirebaseService 토큰 검증 → sf_member 조회 → 세션 쿠키 설정
+  → location.reload()
+  → 다음 요청부터 쿠키 기반 세션 인증
+```
