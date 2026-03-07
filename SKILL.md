@@ -215,6 +215,56 @@ public function isValidPath(): bool
 }
 ```
 
+### 🔴🔴🔴 Db 헬퍼 메서드 반환값 타입 처리 — 절대 규칙 🔴🔴🔴
+
+> **⛔ `Db::fetch()`는 `array<string, mixed>|false`를 반환한다. `array` 타입이 필요한 곳에 바로 전달하면 P1006 에러가 발생한다. ⛔**
+
+| Db 메서드 | 반환 타입 | 주의사항 |
+|-----------|-----------|----------|
+| `Db::fetch()` | `array\|false` | **결과 없으면 `false` 반환** → `false` 체크 필수 |
+| `Db::fetchAll()` | `array` | 결과 없으면 빈 배열 → 안전하게 사용 가능 |
+| `Db::fetchColumn()` | `mixed` | 결과 없으면 `false` → 타입 체크 필수 |
+| `Db::insert()` | `int` | 항상 정수 반환 → 안전 |
+| `Db::execute()` | `PDOStatement` | 항상 PDOStatement 반환 → 안전 |
+
+**✅ 올바른 `Db::fetch()` 사용 패턴:**
+
+```php
+// 패턴 1: false 체크 후 사용 (권장)
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [$idx]);
+if ($user === false) {
+    throw new RuntimeException("사용자를 찾을 수 없습니다");
+}
+// 이 시점에서 $user는 array 타입으로 확정
+AuthService::loginUser($user);  // ✅ 안전
+
+// 패턴 2: 조건부 사용
+$row = Db::fetch("SELECT * FROM sf_post_data WHERE idx = ?", [$idx]);
+if ($row !== false) {
+    $post = PostEntity::fromArray($row);  // ✅ 안전
+}
+
+// 패턴 3: 변수에 기본값 할당
+$config = Db::fetch("SELECT * FROM settings WHERE key = ?", [$key]);
+if ($config === false) {
+    $config = ['value' => 'default'];  // 기본값 설정
+}
+```
+
+**❌ 잘못된 `Db::fetch()` 사용 (P1006 에러 발생):**
+
+```php
+// ❌ false 체크 없이 array 기대 함수에 전달
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [$idx]);
+AuthService::loginUser($user);  // ❌ array|false를 array로 전달 → P1006!
+
+// ❌ false 체크 없이 Entity 변환
+$row = Db::fetch("SELECT * FROM sf_post_data WHERE idx = ?", [$idx]);
+$post = PostEntity::fromArray($row);  // ❌ array|false를 array로 전달 → P1006!
+```
+
+> **⛔⛔⛔ 코드 수정 후 반드시 LSP 진단(Diagnostics)을 실행하여 P1006 등 타입 에러가 없는지 검증할 것! ⛔⛔⛔**
+
 ---
 
 ## 레퍼런스 문서
@@ -319,7 +369,20 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 | Firebase | [web/v7-firebase.md](references/web/v7-firebase.md) | ✅ 완료 |
 | 위젯 시스템 | [web/v7-widgets.md](references/web/v7-widgets.md) | ✅ 완료 |
 | 폰트 로딩 | [web/v7-fonts.md](references/web/v7-fonts.md) | ✅ 완료 |
+| **업소록 홈페이지** | [web/v7-company.md](references/web/v7-company.md) | ✅ 완료 |
+| **관리자 대시보드** | [web/v7-admin.md](references/web/v7-admin.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
+
+### 관리자 대시보드 → [web/v7-admin.md](references/web/v7-admin.md)
+
+v7 관리자 대시보드 시스템(`/admin/**` 경로)의 전체 아키텍처를 상세히 문서화합니다.
+`v7/layout.php`에서 `/admin` 경로 감지 시 관리자 전용 레이아웃(`admin-layout.php`)으로 분기하며,
+`AuthService::getLoginUser()`와 `Config::admins()` Firebase UID 배열 대조로 관리자 인증을 처리합니다.
+7개 관리자 페이지(대시보드, 회원, 게시판, 글 목록, 코멘트, 업소록, 설정)의 PHP SSR 구현,
+`Db::pdo()` 직접 쿼리 패턴, 검색/필터/페이지네이션 공통 코딩 패턴, `admin.css` CSS 클래스 체계(탑바·네비·통계카드·테이블·배지·버튼·페이지네이션),
+반응형 모바일 대응, `admin.js` 유틸리티 함수, DB 테이블 컬럼 참조(sf_member, sf_post_data, sf_post_config, company),
+새 관리자 페이지 추가 방법을 포함합니다.
+**관리자 페이지 관련 작업 시 반드시 이 문서를 참조한다.**
 
 ### 레이아웃 시스템 → [web/v7-layout.md](references/web/v7-layout.md)
 
@@ -361,6 +424,19 @@ Google Fonts 로딩 코드, 폴백 폰트 구성을 포함합니다.
 Realtime Database(Presence 시스템, 채팅 알림), Cloud Messaging(FCM 토큰 획득/저장/권한 요청),
 Storage 사용법과 서비스 워커(`firebase-messaging-sw.js`) 구조, 전역 변수(`appConfig.token`,
 `window.__HYDRATE__`) 흐름, 안티패턴을 상세히 기술합니다.
+
+### 업소록 홈페이지 → [web/v7-company.md](references/web/v7-company.md)
+
+v7 업소록 웹 홈페이지의 전체 구현을 상세히 다룹니다.
+목록(`v7/company/index.php`)과 상세(`v7/company/view.php`) 페이지는 SSR로 구현하여
+`CompanyService::list()`/`CompanyService::info()`를 호출해 서버에서 렌더링하고,
+등록/수정(`v7/company/register.php`)은 Vue.js CDN CSR로 `v7api('company.mine')`,
+`v7api('company.update')`, `v7apiUpload()`를 통해 동적 처리합니다.
+`Route::companyList()`/`companyView()` URL 헬퍼, `url()->company->*` 프로퍼티 접근,
+디렉토리 인덱스 폴백(`/company` → `v7/company/index.php`), `Config::companyCategoryIcon()`
+등 16개 카테고리 매핑, SEO(`Seo::title/description/canonical/ogImage`),
+사이드바 위젯 2개(`shared.company-categories.php`, `shared.latest-companies.php`),
+CSS 3파일(`index.css`, `view.css`, `register.css`)의 핵심 코드를 포함합니다.
 
 > 웹/서버(PHP, Vue.js, Web Awesome Pro, Nginx, 폰트, 위젯, 레이아웃) 관련 문서는 모두 `references/web/` 폴더에 작성한다.
 
@@ -762,6 +838,105 @@ v7/user/login.css      ← 해당 페이지 전용 CSS (같은 폴더에 분리)
 
 ---
 
+## 🔴🔴🔴🔴🔴 v7 웹 홈페이지: URL 생성 시 url() 함수 필수 사용 — 절대 규칙 🔴🔴🔴🔴🔴
+
+> **⛔⛔⛔⛔⛔ 최최최우선 절대 규칙: v7 홈페이지(`v7/` 폴더)에서 URL을 생성할 때는 반드시 `url()` 함수를 사용해야 한다. ⛔⛔⛔⛔⛔**
+> **URL을 하드코딩하는 것은 엄격히 금지한다. 이 규칙은 어떤 상황에서도, 어떤 이유로도 예외가 없다.**
+
+### url() 함수란?
+
+`v7/utils/Url.php`에 정의된 v7 시스템 전용 URL 유틸리티 싱글톤 함수이다.
+v6의 `href()` 함수와 동일한 패턴으로, 중첩 프로퍼티를 통해 모든 URL을 중앙에서 관리한다.
+
+| 내장 기능 | 설명 |
+|----------|------|
+| **게시판 URL 매핑** | v6의 50+ 카테고리 URL을 v7 형식(`/post/list?category=X`)으로 자동 변환 |
+| **중앙 집중 관리** | URL이 변경되면 `Url.php` 한 곳만 수정하면 전체 사이트에 반영 |
+| **타입 안전성** | 문자열 하드코딩 대신 프로퍼티 접근으로 오타 방지 |
+| **싱글톤 패턴** | `url()` 호출마다 새 인스턴스를 생성하지 않고 기존 인스턴스를 재사용 |
+
+### 올바른 사용법
+
+```php
+<!-- ✅ 올바른 방법: url() 함수 사용 -->
+<a href="<?= url()->home ?>">홈</a>
+<a href="<?= url()->post->list->community ?>">커뮤니티</a>
+<a href="<?= url()->post->list->qna ?>">질문답변</a>
+<a href="<?= url()->user->login ?>">로그인</a>
+<a href="<?= url()->user->profile ?>">프로필</a>
+<a href="<?= url()->company->home ?>">업소록</a>
+
+<!-- ✅ 동적 URL 생성 -->
+<a href="<?= url()->post->view(123) ?>">글 보기</a>
+<a href="<?= url()->post->create('qna') ?>">글 작성</a>
+<a href="<?= url()->company->view(99) ?>">업소 보기</a>
+```
+
+### 잘못된 사용법 (절대 금지)
+
+```php
+<!-- ❌ 절대 금지: URL 하드코딩 -->
+<a href="/">홈</a>
+<a href="/post/list?category=freetalk">커뮤니티</a>
+<a href="/post/list?category=qna">질문답변</a>
+<a href="/user/login">로그인</a>
+<a href="/user/profile">프로필</a>
+```
+
+### URL 구조
+
+```
+url()
+├── home                          → '/'
+├── search                        → '/post/search'
+├── post (PostUrl)
+│   ├── list (PostListUrl)
+│   │   ├── community             → '/post/list?category=freetalk'
+│   │   ├── qna                   → '/post/list?category=qna'
+│   │   ├── discussion            → '/post/list?category=discussion'
+│   │   ├── info                  → '/post/list?category=info'
+│   │   ├── buyandsell            → '/post/list?category=buyandsell'
+│   │   ├── job                   → '/post/list?category=wanted'
+│   │   ├── travel                → '/post/list?category=travel'
+│   │   └── ... (50+ 카테고리)
+│   ├── view(id)                  → '/post/view?id=123'
+│   ├── create(category)          → '/post/create?category=qna'
+│   ├── update(id)                → '/post/update?id=123'
+│   └── search(query)             → '/post/search?query=...'
+├── user (UserUrl)
+│   ├── login                     → '/user/login'
+│   ├── profile                   → '/user/profile'
+│   ├── logout                    → '/user/logout'
+│   ├── settings                  → '/user/settings'
+│   └── publicProfile(id)         → '/user/public-profile?idx_member=42'
+└── company (CompanyUrl)
+    ├── home                      → '/company'
+    ├── view(idx)                 → '/company/view?idx=99'
+    └── category(cat)             → '/company/category?category=...'
+```
+
+### v6 href()와의 대응 관계
+
+| v6 (레거시) | v7 (신규) |
+|------------|-----------|
+| `href()->home` | `url()->home` |
+| `href()->post->list->community` | `url()->post->list->community` |
+| `href()->post->list->qna` | `url()->post->list->qna` |
+| `href()->post->view($params)` | `url()->post->view($id)` |
+| `href()->user->login` | `url()->user->login` |
+| `href()->user->profile` | `url()->user->profile` |
+| `href()->company->home` | `url()->company->home` |
+
+### 소스 파일
+
+| 파일 | 설명 |
+|------|------|
+| `v7/utils/Url.php` | Url 클래스 + url() 전역 함수 정의 |
+| `v7/boot.php` | Url.php를 자동 require (url() 함수를 즉시 사용 가능) |
+| `v7/tests/UrlTest.php` | PEST 유닛 테스트 |
+
+---
+
 ## 🔴🔴🔴🔴🔴 v7 웹 홈페이지: v6 코드 사용 절대 금지 — 이 규칙은 절대로 예외 없음 🔴🔴🔴🔴🔴
 
 > **⛔⛔⛔⛔⛔ 최최최우선 절대 규칙: v7 홈페이지(`v7/` 폴더)에서는 v6 코드를 단 한 줄도 사용하지 않는다. ⛔⛔⛔⛔⛔**
@@ -777,7 +952,7 @@ v7/user/login.css      ← 해당 페이지 전용 CSS (같은 폴더에 분리)
 > - `in()` → `Philgo\Utils\RequestUtils::all()`
 > - `is_admin()` → v7 자체 구현
 > - `t()->키` → v7 자체 다국어 시스템
-> - `href()->...` → v7 자체 라우팅 (`V7\Utils\Route`)
+> - `href()->...` → **`url()` 함수** (`V7\Utils\Url` — `url()->post->list->community`, `url()->user->login` 등)
 
 ### v7 전용 부팅 시스템 (`v7/boot.php`)
 
@@ -820,7 +995,7 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **CSS** | Bootstrap utility class | **Web Awesome Pro v3.3.1** CSS 변수 + 유틸리티 (`wa-stack`, `wa-cluster`, `wa-grid` 등) |
 | **JavaScript** | `ready()`, `firebase_ready()`, jQuery | `DOMContentLoaded`, Vue.js 3, **`v7api()`** (fetch 직접 사용 금지) |
 | **이미지 처리** | `attr_onerror_xbox()` | v7 자체 이미지 에러 처리 |
-| **URL 생성** | `href()->post->view(...)` | v7 자체 라우팅 |
+| **URL 생성** | `href()->post->view(...)` | **`url()->post->view(...)`, `url()->post->list->community` 등** (`V7\Utils\Url`) |
 
 ### 왜 v6 코드를 사용하면 안 되는가
 
