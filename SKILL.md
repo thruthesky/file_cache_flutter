@@ -155,6 +155,24 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 ---
 
+## 🔴🔴🔴 PHP LSP (intelephense) 필수 사용 — 절대 규칙 🔴🔴🔴
+
+> **⛔⛔⛔ 프로젝트에 `intelephense@claude-code-lsps`를 통한 PHP LSP가 설치되어 있다. ⛔⛔⛔**
+> **모든 PHP 관련 작업(코드 분석, 수정, 리팩토링, 디버깅 등)과 웹 관련 작업 시 반드시 PHP LSP를 활용해야 한다.**
+> **LSP 없이 Grep/Glob만으로 코드를 추측하여 작업하는 것은 엄격히 금지한다.**
+
+| 활용 항목 | 설명 |
+|-----------|------|
+| **심볼 정의 탐색** | 함수, 클래스, 메서드의 정확한 정의 위치를 LSP `definition` 기능으로 확인한다 |
+| **참조 검색** | 특정 함수/클래스/변수가 어디서 사용되는지 LSP `references` 기능으로 검색한다 |
+| **타입 정보 확인** | 변수, 매개변수, 반환값의 타입을 LSP `hover` 기능으로 확인한다 |
+| **진단(Diagnostics)** | PHP 코드의 타입 에러, 문법 에러, 경고를 LSP `diagnostics`로 감지하고 반드시 수정한다 |
+| **코드 수정 후 검증** | 코드 수정 후 LSP 진단을 확인하여 타입 에러나 경고(P1006 등)가 없는지 반드시 검증한다 |
+
+**⛔ 절대 금지: Grep/Glob만으로 코드 관계를 추측하여 작업하는 것. 반드시 LSP를 통해 정확한 코드 관계를 파악한 후 작업할 것. ⛔**
+
+---
+
 ## 🔴 PHP 코딩 규칙: 타입 안전성 필수 🔴
 
 ### Intelephense / 정적 분석 타입 경고 방지 — 캐스팅 필수
@@ -629,6 +647,121 @@ include_once '../page.footer.php';
 
 ---
 
+## 🔴🔴🔴🔴🔴 v7 웹 홈페이지: API 호출 시 v7api() 함수 필수 사용 — 절대 규칙 🔴🔴🔴🔴🔴
+
+> **⛔⛔⛔⛔⛔ 최최최우선 절대 규칙: v7 홈페이지(`v7/` 폴더)에서 v7 API를 호출할 때는 반드시 `v7api()` 함수를 사용해야 한다. ⛔⛔⛔⛔⛔**
+> **`fetch()`, `axios.post()`, `XMLHttpRequest` 등으로 `/api.php`를 직접 호출하는 것은 엄격히 금지한다.**
+> **이 규칙은 어떤 상황에서도, 어떤 이유로도 예외가 없다.**
+
+### v7api() 함수란?
+
+`/js/v7api.js`에 정의된 v7 시스템 전용 API 호출 래퍼 함수이다. 이 함수는 다음 기능을 내장하고 있다:
+
+| 내장 기능 | 설명 |
+|----------|------|
+| **입력값 핸들링** | `method` 파라미터를 자동으로 요청에 추가, 세션 ID는 쿠키로 자동 전송 |
+| **에러 감지** | `success === false` 응답을 자동으로 감지하여 Error throw |
+| **기본 에러 UI** | 에러 발생 시 `alert()`으로 사용자에게 에러 메시지 자동 표시 (`alertOnError: true` 기본값) |
+| **에러 메시지 추출** | 서버 응답, HTTP 에러, 네트워크 에러 등 다양한 에러 상황에서 적절한 메시지 추출 |
+
+### 올바른 사용법
+
+```javascript
+// ✅ 올바른 방법: v7api() 함수 사용
+const result = await v7api('user.socialLogin', { id_token: idToken });
+const posts = await v7api('post.list', { post_id: 'freetalk', limit: 10 });
+
+// ✅ 에러 알림을 끄고 싶은 경우
+const data = await v7api('user.me', {}, { alertOnError: false });
+
+// ✅ 파일 업로드: v7apiUpload() 함수 사용
+const uploaded = await v7apiUpload(file, 'company', 'visit_review');
+```
+
+### 잘못된 사용법 (절대 금지)
+
+```javascript
+// ❌ 절대 금지: fetch()로 직접 API 호출
+const response = await fetch('/api.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ method: 'user.socialLogin', id_token: idToken }),
+});
+
+// ❌ 절대 금지: axios로 직접 API 호출
+const res = await axios.post('/api.php', { method: 'post.list', post_id: 'freetalk' });
+
+// ❌ 절대 금지: XMLHttpRequest로 직접 API 호출
+const xhr = new XMLHttpRequest();
+xhr.open('POST', '/api.php');
+```
+
+### fetch 직접 호출이 금지되는 이유
+
+1. **에러 처리 누락**: `v7api()`는 `success === false` 응답을 자동 감지하여 에러를 throw한다. fetch를 직접 사용하면 이 로직을 매번 수동으로 작성해야 하며, 누락 시 에러가 무시된다.
+2. **사용자 알림 누락**: `v7api()`는 에러 시 `alert()`으로 사용자에게 자동 알림한다. fetch를 직접 사용하면 에러가 콘솔에만 출력되고 사용자는 모른다.
+3. **코드 중복**: 모든 API 호출마다 에러 처리, 응답 파싱, 메시지 추출 로직을 반복 작성해야 한다.
+4. **일관성 저해**: 프로젝트 전체에서 API 호출 패턴이 달라져 유지보수가 어려워진다.
+
+> **위반 사례 — 이런 코드가 발견되면 즉시 v7api()로 교체해야 한다:**
+> - `fetch('/api.php', ...)` → `v7api('module.action', { ... })`
+> - `axios.post('/api.php', ...)` → `v7api('module.action', { ... })`
+> - `new URLSearchParams({ method: '...' })` → `v7api('module.action', { ... })`
+
+---
+
+## 🔴🔴🔴 v7 웹 홈페이지: 페이지별 CSS 파일 분리 — 필수 규칙 🔴🔴🔴
+
+> **⛔ 각 PHP 페이지에 적용되는 CSS `<style>` 코드는 반드시 해당 PHP 파일과 같은 폴더에 별도 `.css` 파일로 분리해야 한다. ⛔**
+> **PHP 파일 안에 `<style>` 태그로 CSS를 인라인 작성하는 것은 금지한다.**
+
+### 규칙
+
+| 규칙 | 설명 |
+|------|------|
+| **CSS 파일 위치** | PHP 파일과 **같은 폴더**, **같은 이름**으로 `.css` 확장자 파일 생성 |
+| **PHP 파일 슬림 유지** | PHP 파일에는 HTML 구조와 로직만 유지, CSS는 외부 파일로 분리 |
+| **`<style>` 태그 금지** | PHP 파일 내 `<style>...</style>` 인라인 CSS 작성 금지 |
+| **`<link>` 태그로 로드** | 분리된 CSS 파일은 `<link rel="stylesheet" href="...">` 로 로드 |
+
+### 올바른 예시
+
+```
+v7/user/login.php      ← PHP 페이지 (HTML + 로직만)
+v7/user/login.css      ← 해당 페이지 전용 CSS (같은 폴더에 분리)
+```
+
+```php
+<!-- v7/user/login.php -->
+<link rel="stylesheet" href="/v7/user/login.css">
+```
+
+```css
+/* v7/user/login.css */
+.login-form { max-width: 400px; margin: 0 auto; }
+.login-title { font-size: 1.2em; }
+```
+
+### 잘못된 예시 (금지)
+
+```php
+<!-- ❌ 절대 금지: PHP 파일 안에 <style> 태그로 CSS 인라인 작성 -->
+<style>
+.login-form { max-width: 400px; margin: 0 auto; }
+.login-title { font-size: 1.2em; }
+</style>
+```
+
+### CSS 파일 분류
+
+| 분류 | 위치 | 설명 |
+|------|------|------|
+| **공통 CSS** | `v7/css/layout.css`, `v7/css/responsive.css`, `v7/css/utilities.css` | 전체 사이트에 적용되는 공통 스타일 |
+| **페이지별 CSS** | 해당 PHP와 같은 폴더 (예: `v7/user/login.css`) | 해당 페이지에만 적용되는 스타일 |
+| **위젯별 CSS** | `v7/widgets/` 폴더 (예: `v7/widgets/topbar.css`) | 해당 위젯에만 적용되는 스타일 |
+
+---
+
 ## 🔴🔴🔴🔴🔴 v7 웹 홈페이지: v6 코드 사용 절대 금지 — 이 규칙은 절대로 예외 없음 🔴🔴🔴🔴🔴
 
 > **⛔⛔⛔⛔⛔ 최최최우선 절대 규칙: v7 홈페이지(`v7/` 폴더)에서는 v6 코드를 단 한 줄도 사용하지 않는다. ⛔⛔⛔⛔⛔**
@@ -660,7 +793,7 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **다국어** | `t()->키` 전역 함수 | v7 자체 다국어 시스템 |
 | **레이아웃** | `page.header.php` / `page.footer.php` | `v7/layouts/` 폴더에서 자체 관리 |
 | **UI 라이브러리** | Bootstrap 5 + FontAwesome 7 | **Web Awesome Pro v3.3.1** + **Font Awesome Pro v7.2.0** |
-| **JavaScript** | jQuery + Vue.js CDN + `func()` | Vue.js 3 CDN + `fetch('/api.php')` |
+| **JavaScript** | jQuery + Vue.js CDN + `func()` | Vue.js 3 CDN + **`v7api()`** (`/js/v7api.js`) |
 
 ### 개발 환경 접속 URL
 
@@ -683,9 +816,9 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **인증** | `login()`, `is_admin()` | `AuthService::getLoginUser()` |
 | **입력** | `in()` | `RequestUtils::all()`, `RequestUtils::get()` |
 | **다국어** | `t()->키`, `tr()` | v7 자체 다국어 시스템 |
-| **API 호출** | `func('함수명', {...})` | `fetch('/api.php', { method: 'module.action' })` |
+| **API 호출** | `func('함수명', {...})` | **`v7api('module.action', { ... })`** (`/js/v7api.js` — fetch 직접 호출 절대 금지) |
 | **CSS** | Bootstrap utility class | **Web Awesome Pro v3.3.1** CSS 변수 + 유틸리티 (`wa-stack`, `wa-cluster`, `wa-grid` 등) |
-| **JavaScript** | `ready()`, `firebase_ready()`, jQuery | `DOMContentLoaded`, Vue.js 3, `fetch()` |
+| **JavaScript** | `ready()`, `firebase_ready()`, jQuery | `DOMContentLoaded`, Vue.js 3, **`v7api()`** (fetch 직접 사용 금지) |
 | **이미지 처리** | `attr_onerror_xbox()` | v7 자체 이미지 에러 처리 |
 | **URL 생성** | `href()->post->view(...)` | v7 자체 라우팅 |
 
