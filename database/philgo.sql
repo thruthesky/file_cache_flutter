@@ -714,6 +714,7 @@ CREATE TABLE `sf_member` (
   `stamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `id` varchar(64) NOT NULL DEFAULT '',
   `firebase_uid` varchar(64) DEFAULT NULL,
+  `login_provider` varchar(32) DEFAULT NULL COMMENT 'v7 전용: 소셜 로그인 제공자 (google, apple, kakaotalk, naver, phone_sign_in)',
   `phone_number` varchar(24) DEFAULT NULL,
   `point` int(11) NOT NULL DEFAULT 0,
   `level` smallint(5) UNSIGNED NOT NULL DEFAULT 0,

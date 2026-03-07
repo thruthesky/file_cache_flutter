@@ -254,6 +254,67 @@ console.log(res.level_progress);  // 37 (다음 레벨까지 진행률 0~100%)
 }
 ```
 
+### 3.3 user.socialLogin - 소셜 로그인
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `user.socialLogin` |
+| **HTTP** | `POST /api.php` (body: `{method: "user.socialLogin", id_token: "...", login_provider: "google"}`) |
+| **파라미터** | `id_token` (필수): Firebase ID Token, `login_provider` (선택): 소셜 로그인 제공자 |
+| **응답** | `UserEntity` (로그인된 사용자 정보) |
+
+**파라미터 상세**:
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `id_token` | string | 필수 | Firebase ID Token (Google/Apple/Kakao/Naver/Phone Auth) |
+| `login_provider` | string | 선택 | 소셜 로그인 제공자. 값: `google`, `apple`, `kakaotalk`, `naver`, `phone_sign_in` 등 |
+
+**login_provider 필드 (v7 홈페이지/앱 전용)**:
+
+> `login_provider`는 **v7 홈페이지와 앱에서만 사용**하는 필드이다. v6에서는 사용하지 않는다.
+> 클라이언트(웹/앱)에서 소셜 로그인 시 어떤 제공자를 사용했는지 명시적으로 전달한다.
+> - 신규 사용자: INSERT 시 login_provider 저장
+> - 기존 사용자: login_provider가 전달된 경우에만 UPDATE
+> - login_provider가 전달되지 않으면 기존 값 유지
+
+**JavaScript 호출 예시 (v7 홈페이지)**:
+```javascript
+// Google 로그인
+const data = await v7api('user.socialLogin', {
+    id_token: idToken,
+    login_provider: 'google'
+});
+
+// Apple 로그인
+const data = await v7api('user.socialLogin', {
+    id_token: idToken,
+    login_provider: 'apple'
+});
+```
+
+**curl 예시**:
+```bash
+curl -s -X POST "https://local.philgo.com:443/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{"method": "user.socialLogin", "id_token": "LOCAL_BANANA_TOKEN", "login_provider": "google"}'
+```
+
+**응답 형식**:
+```json
+{
+    "idx": 123,
+    "id": "user@gmail.com",
+    "name": "홍길동",
+    "nickname": "길동이",
+    "firebase_uid": "abc123...",
+    "login_provider": "google",
+    "point": 500,
+    "level": 2,
+    "level_progress": 50
+}
+```
+
 ---
 
 ## 4. 파일 구조
@@ -961,6 +1022,7 @@ return [
 | `nickname` | string | `sf_member.nickname` | 닉네임 |
 | `phone_number` | string | `sf_member.phone_number` | 전화번호 |
 | `firebase_uid` | string | `sf_member.firebase_uid` | Firebase UID |
+| `login_provider` | string | `sf_member.login_provider` | 소셜 로그인 제공자 (**v7 홈페이지/앱 전용**). 값: `google`, `apple`, `kakaotalk`, `naver`, `phone_sign_in` 등 |
 | `point` | int | `sf_member.point` | 보유 포인트 |
 | `level` | int | ⚠️ **동적 계산** | 회원 레벨 (DB level 컬럼 미사용) |
 | `level_progress` | int | ⚠️ **동적 계산** | 다음 레벨까지 진행률 (0~100%) |

@@ -1012,7 +1012,61 @@ $stmt = pdo()->prepare("DELETE FROM " . POST_TABLE . " WHERE idx = :idx");
 $stmt->execute(['idx' => $idx]);
 ```
 
-### 10.3 금지 패턴
+### 10.3 Db 헬퍼 메서드 (1줄 패턴)
+
+`Philgo\Utils\Db` 클래스는 반복적인 3줄 패턴(`prepare → execute → fetch`)을 1줄로 줄이는
+헬퍼 메서드를 제공한다. **새 코드 작성 시 헬퍼 메서드를 우선 사용**한다.
+
+```php
+use Philgo\Utils\Db;
+
+// 단일 행 조회 (기본 PDO::FETCH_ASSOC)
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [$idx]);
+$user = Db::fetch("SELECT * FROM sf_member WHERE firebase_uid = :uid", ['uid' => $uid]);
+
+// 다중 행 조회 (기본 PDO::FETCH_ASSOC)
+$rows = Db::fetchAll("SELECT * FROM sf_post_data WHERE post_id = ? LIMIT 10", ['freetalk']);
+
+// 단일 컬럼 값 (COUNT, MAX 등 스칼라 쿼리)
+$count = Db::fetchColumn("SELECT COUNT(*) FROM sf_member");
+$name = Db::fetchColumn("SELECT name FROM sf_member WHERE idx = ?", [123]);
+
+// INSERT/UPDATE/DELETE (PDOStatement 반환 — rowCount() 접근 가능)
+Db::execute("UPDATE sf_member SET name = ? WHERE idx = ?", ['홍길동', 123]);
+$stmt = Db::execute("DELETE FROM sf_member WHERE idx = ?", [999]);
+$affected = $stmt->rowCount();
+
+// INSERT 후 lastInsertId 정수 반환
+$newIdx = Db::insert(
+    "INSERT INTO sf_member (id, nickname, stamp) VALUES (?, ?, ?)",
+    ['user123', '홍길동', time()]
+);
+```
+
+#### 메서드 시그니처
+
+| 메서드 | 반환 타입 | 용도 |
+|--------|----------|------|
+| `Db::fetch(string $sql, array $params = [], int $fetchMode = PDO::FETCH_ASSOC)` | `array\|false` | 단일 행 조회, 결과 없으면 `false` |
+| `Db::fetchAll(string $sql, array $params = [], int $fetchMode = PDO::FETCH_ASSOC)` | `array` | 다중 행 조회, 결과 없으면 빈 배열 |
+| `Db::fetchColumn(string $sql, array $params = [], int $column = 0)` | `mixed` | 단일 컬럼 값, 결과 없으면 `false` |
+| `Db::execute(string $sql, array $params = [])` | `PDOStatement` | INSERT/UPDATE/DELETE 실행 |
+| `Db::insert(string $sql, array $params = [])` | `int` | INSERT 후 `lastInsertId` 정수 반환 |
+
+#### 헬퍼로 변환하면 안 되는 패턴
+
+`bindValue()`로 `PDO::PARAM_INT`를 명시해야 하는 LIMIT/OFFSET 쿼리는 기존 `prepare()` 패턴을 유지한다:
+
+```php
+// ❌ 헬퍼로 변환 불가 — bindValue 필요
+$stmt = Db::prepare($sql);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute($params);
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+```
+
+### 10.4 금지 패턴
 
 ```php
 // ❌ 기존 db_ 헬퍼 함수 사용 금지
@@ -1028,7 +1082,7 @@ $stmt = pdo()->prepare("SELECT * FROM table WHERE idx = :idx");
 $stmt->execute(['idx' => $idx]);
 ```
 
-### 10.4 주요 테이블 상수
+### 10.5 주요 테이블 상수
 
 ```php
 POST_TABLE         // 게시글 테이블

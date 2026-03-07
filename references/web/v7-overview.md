@@ -18,6 +18,9 @@
 14. [CSS/JS 캐시 버스팅 (CACHE_VERSION)](#14-cssjs-캐시-버스팅-cache_version)
 15. [개발 환경 설정 절차](#15-개발-환경-설정-절차)
 16. [개발 환경 테스트 로그인](#16-개발-환경-테스트-로그인)
+17. [URL 유틸리티 (url() 함수)](#17-url-유틸리티-url-함수)
+18. [게시판 목록 페이지 (v7/post/list.php)](#18-게시판-목록-페이지-v7postlistphp)
+19. [게시판 글 읽기 페이지 (v7/post/view.php)](#19-게시판-글-읽기-페이지-v7postviewphp)
 
 ---
 
@@ -976,3 +979,212 @@ await v7DevLogin('apple@test.com');
   → location.reload()
   → 다음 요청부터 쿠키 기반 세션 인증
 ```
+
+---
+
+## 17. URL 유틸리티 (url() 함수)
+
+### 개요
+
+v7 홈페이지에서 URL을 하드코딩하지 않고 `url()` 전역 함수를 통해 관리한다.
+v6의 `href()` 함수와 동일한 패턴이다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/utils/Url.php` |
+| **전역 함수** | `url()` → `\V7\Utils\Url` 싱글톤 인스턴스 |
+| **로딩** | `v7/boot.php`에서 `require_once` |
+| **v6 대응** | `href()` → `url()` |
+
+### URL 파라미터 구조
+
+게시판 목록 URL은 다음 파라미터를 사용한다:
+
+| 파라미터 | 설명 | 필수 여부 |
+|----------|------|-----------|
+| `post_id` | 게시판 ID (1차 카테고리) | **필수** |
+| `category` | 2차 카테고리 | 옵션 |
+
+```
+/post/list?post_id=freetalk                      ← post_id만
+/post/list?post_id=freetalk&category=discussion   ← post_id + category
+/post/list?post_id=buyandsell&category=골프       ← post_id + 한글 category
+```
+
+### 사용법
+
+```php
+// 기본 URL
+url()->home                         // '/'
+url()->search                       // '/post/search'
+
+// 게시판 목록 (프로퍼티)
+url()->post->list->community        // '/post/list?post_id=freetalk'
+url()->post->list->discussion       // '/post/list?post_id=freetalk&category=discussion'
+url()->post->list->qna              // '/post/list?post_id=qna'
+url()->post->list->buyandsell       // '/post/list?post_id=buyandsell'
+url()->post->list->golf             // '/post/list?post_id=buyandsell&category=골프'
+
+// 게시판 메서드
+url()->post->view(123)              // '/post/view?id=123'
+url()->post->create('qna')          // '/post/create?post_id=qna'
+url()->post->update(789)            // '/post/update?id=789'
+
+// 사용자
+url()->user->login                  // '/user/login'
+url()->user->profile                // '/user/profile'
+
+// 업소록
+url()->company->home                // '/company'
+url()->company->view(99)            // '/company/view?idx=99'
+```
+
+### HTML 템플릿 사용 예시
+
+```php
+<a href="<?= url()->post->list->community ?>">자유게시판</a>
+<a href="<?= url()->user->login ?>">로그인</a>
+<a href="<?= url()->company->home ?>">업소록</a>
+```
+
+### 테스트
+
+```bash
+./vendor/bin/pest v7/tests/UrlTest.php
+```
+
+---
+
+## 18. 게시판 목록 페이지 (v7/post/list.php)
+
+### 개요
+
+게시판 목록 페이지는 `PostService::list()`를 호출하여 서버사이드 렌더링(SSR)한다.
+`post_id`(1차 카테고리)와 `category`(2차 카테고리)를 모두 `PostService::list()`에 전달하여
+**카테고리별 글 필터링**을 수행한다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/post/list.php` |
+| **CSS** | `v7/post/list.css` (같은 폴더에 분리) |
+| **접속 URL** | `https://v7-local.philgo.com/post/list?post_id=freetalk` |
+| **렌더링** | SSR (PHP에서 직접 HTML 출력) |
+| **데이터 소스** | `PostService::list()` → `PostRepository::findAll()` |
+
+### URL 파라미터
+
+| 파라미터 | 설명 | 기본값 | 예시 |
+|----------|------|--------|------|
+| `post_id` | 게시판 ID (1차 카테고리) | `freetalk` | `buyandsell`, `qna`, `wanted` |
+| `category` | 2차 카테고리 | `null` (전체) | `페소환전`, `사업/동업구함`, `discussion` |
+| `page` | 페이지 번호 | `1` | `2`, `3` |
+
+### 카테고리 필터링 동작
+
+`category` 파라미터가 `PostService::list()`에 전달되면, `PostRepository::findAll()`에서
+SQL WHERE 절에 `category = :category` 조건이 추가되어 해당 카테고리의 글만 필터링된다.
+
+```php
+// v7/post/list.php 핵심 코드
+$postId = $route->query('post_id', 'freetalk');
+$category = $route->query('category');
+
+$result = PostService::list([
+    'post_id' => $postId,
+    'category' => $category,    // 카테고리 필터링 (null이면 전체)
+    'page' => $page,
+    'limit' => $limit,
+]);
+```
+
+**동작 예시:**
+
+| URL | 결과 |
+|-----|------|
+| `/post/list?post_id=buyandsell` | 사고팔고 게시판 전체 글 |
+| `/post/list?post_id=buyandsell&category=페소환전` | 사고팔고 > 페소환전 글만 |
+| `/post/list?post_id=buyandsell&category=사업/동업구함` | 사고팔고 > 사업/동업구함 글만 |
+| `/post/list?post_id=freetalk&category=discussion` | 자유게시판 > 토론 글만 |
+
+### 브레드크럼 (Breadcrumb)
+
+카테고리가 있으면 2단계 브레드크럼, 없으면 1단계 브레드크럼을 표시한다.
+
+```
+카테고리 없음: 홈 > 자유게시판
+카테고리 있음: 홈 > 사고팔고 > 페소환전
+```
+
+### SEO 처리
+
+- 카테고리가 있으면: `{카테고리명} - {게시판명} - 필고`
+- 카테고리가 없으면: `{게시판명} - 필고`
+- `Config::boardName()`으로 영문 post_id/category를 한글 이름으로 변환
+
+### 게시판/카테고리 이름 매핑
+
+`V7\Utils\Config::boardName()` 메서드가 post_id 또는 영문 category를 한글 이름으로 변환한다.
+한글 카테고리(예: '페소환전', '사업/동업구함')는 매핑 없이 그대로 반환된다.
+
+```php
+Config::boardName('freetalk')    // → '자유게시판'
+Config::boardName('discussion')  // → '토론'
+Config::boardName('페소환전')     // → '페소환전' (한글은 그대로)
+```
+
+### 페이지네이션
+
+- 페이지 범위: 현재 페이지 기준 앞뒤 5페이지
+- 처음/이전/다음/마지막 링크 제공
+- `Route::postList($postId, $category, $page)` 함수로 URL 생성
+
+---
+
+## 19. 게시판 글 읽기 페이지 (v7/post/view.php)
+
+### 개요
+
+게시판 글 읽기 페이지는 `PostService::get()`으로 글 데이터를 로드하고,
+하단에 같은 게시판의 글 목록을 표시한다. 하단 글 목록도 카테고리 필터링을 지원한다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/post/view.php` |
+| **CSS** | `v7/post/view.css` (같은 폴더에 분리) |
+| **접속 URL** | `https://v7-local.philgo.com/post/view?id=12345` |
+| **렌더링** | SSR (PHP) + CSR (Vue.js — 좋아요, 댓글 등) |
+
+### URL 파라미터
+
+| 파라미터 | 설명 | 기본값 |
+|----------|------|--------|
+| `id` | 글 번호 (idx) | 필수 |
+| `list_post_id` | 목록으로 돌아갈 게시판 ID | 글의 post_id |
+| `list_category` | 목록으로 돌아갈 카테고리 | `null` |
+| `list_page` | 목록으로 돌아갈 페이지 | `1` |
+
+### 하단 글 목록 카테고리 필터링
+
+글 읽기 페이지 하단에 표시되는 같은 게시판 글 목록도 `category` 파라미터를 전달하여
+카테고리별 필터링을 수행한다.
+
+```php
+// v7/post/view.php 핵심 코드
+$effectivePostId = !empty($listPostId) ? $listPostId : $post->post_id;
+$effectiveCategory = !empty($listCategory) ? $listCategory : null;
+
+$bottomResult = PostService::list([
+    'post_id' => $effectivePostId,
+    'category' => $effectiveCategory,   // 카테고리 필터링
+    'page' => $listPage,
+    'limit' => 20,
+]);
+```
+
+### URL 생성 (Route 클래스)
+
+| 메서드 | 시그니처 | 예시 |
+|--------|----------|------|
+| `Route::postList()` | `(string $postId, ?string $category, int $page)` | `/post/list?post_id=buyandsell&category=페소환전` |
+| `Route::postView()` | `(int $id, ?string $listPostId, ?string $listCategory, int $listPage)` | `/post/view?id=123&list_post_id=buyandsell&list_category=페소환전` |
+| `Route::postCreate()` | `(string $postId, ?string $category)` | `/post/create?post_id=buyandsell&category=페소환전` |
