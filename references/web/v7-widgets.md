@@ -12,6 +12,7 @@
 8. [index.php 공유 위젯 사용](#8-indexphp-공유-위젯-사용)
 9. [위젯 CSS 관리](#9-위젯-css-관리)
 10. [위젯 추가 방법](#10-위젯-추가-방법)
+11. [날씨+환율 통합 위젯 (shared.weather-currency)](#11-날씨환율-통합-위젯-sharedweather-currency)
 
 ---
 
@@ -25,7 +26,7 @@ v7 홈페이지는 **PHP include 기반 위젯 시스템**을 사용한다.
 | **위젯 루트** | `v7/widgets/` |
 | **모듈 폴더** | `layout/`, `home/`, `shared/` |
 | **파일 네이밍** | `<module>/<module>.<name>.php` (예: `layout/layout.topbar.php`) |
-| **총 위젯 수** | 17개 (layout 8 + home 5 + shared 4) |
+| **총 위젯 수** | 18개 (layout 8 + home 5 + shared 5) |
 | **사용 방식** | `<?php include __DIR__ . '/widgets/<module>/<module>.<name>.php'; ?>` |
 | **CSS 관리** | 모듈별 하나의 CSS 파일 (`layout-widget.css`, `home-widget.css`) |
 | **공유 위젯** | 4개 (사이드바 + 모바일 양쪽에서 재사용) |
@@ -76,8 +77,10 @@ v7/
     │   ├── home.latest-posts.php
     │   └── home.popular-posts.php
     │
-    └── shared/                         ← 공유 위젯 (4개 — 사이드바 + 모바일 공용)
-        ├── shared.exchange-rate.php
+    └── shared/                         ← 공유 위젯 (5개 — 사이드바 + 모바일 공용)
+        ├── shared.weather-currency.php    ← ★ 날씨+환율 통합 위젯 (API + 파일 캐시)
+        ├── shared.weather-currency.css    ← ★ 날씨+환율 위젯 전용 CSS
+        ├── shared.exchange-rate.php       ← (레거시 — weather-currency로 대체)
         ├── shared.company-categories.php
         ├── shared.latest-companies.php
         └── shared.stats.php
@@ -104,7 +107,8 @@ v7/
 
 | 파일 | 용도 | 데스크톱 위치 | 모바일 위치 |
 |------|------|-------------|------------|
-| `shared/shared.exchange-rate.php` | 환율 계산기 | 오른쪽 사이드바 | 본문 하단 |
+| `shared/shared.weather-currency.php` | **날씨+환율 통합** (Open-Meteo + Frankfurter API, 40분 파일 캐시) | 오른쪽 사이드바 | 본문 하단 |
+| `shared/shared.exchange-rate.php` | 환율 계산기 (레거시 — weather-currency로 대체됨) | — | — |
 | `shared/shared.company-categories.php` | 업소 카테고리 목록 | 오른쪽 사이드바 | 본문 하단 |
 | `shared/shared.latest-companies.php` | 최신 등록 업소 | 오른쪽 사이드바 | 본문 하단 |
 | `shared/shared.stats.php` | 사이트 통계 (회원수, 글수 등) | 오른쪽 사이드바 | 본문 하단 |
@@ -175,25 +179,31 @@ v7/
 
 ### 데스크톱: layout.sidebar-right.php에서 include
 
+사이드바에서는 **래퍼 패턴**을 사용한다. `layout.sidebar-right.*.php` 래퍼 파일이 shared 위젯을 include하여 일관된 네이밍을 제공한다.
+
 ```php
 <!-- 오른쪽 사이드바 (xl 이상, 홈에서만) -->
 <aside class="v7-sidebar v7-xl" id="right-sidebar">
-    <?php include __DIR__ . '/../shared/shared.exchange-rate.php'; ?>
-    <?php include __DIR__ . '/../shared/shared.company-categories.php'; ?>
-    <?php include __DIR__ . '/../shared/shared.latest-companies.php'; ?>
-    <?php include __DIR__ . '/../shared/shared.stats.php'; ?>
+    <?php include __DIR__ . '/layout.sidebar-right.weather-currency.php'; ?>
+    <?php include __DIR__ . '/layout.sidebar-right.company-categories.php'; ?>
+    <?php include __DIR__ . '/layout.sidebar-right.latest-companies.php'; ?>
+    <?php include __DIR__ . '/layout.sidebar-right.stats.php'; ?>
 </aside>
 ```
 
-> **경로 주의**: `layout.sidebar-right.php`는 `widgets/layout/` 폴더에 위치하므로,
-> shared 위젯을 include할 때 `__DIR__ . '/../shared/shared.xxx.php'`로 한 단계 상위로 올라간다.
+각 래퍼 파일은 shared 위젯을 단순히 include한다:
+
+```php
+// layout.sidebar-right.weather-currency.php
+include __DIR__ . '/../shared/shared.weather-currency.php';
+```
 
 ### 모바일: index.php에서 include
 
 ```php
 <!-- 모바일 전용 위젯 블록 (모바일만) — shared 위젯 include -->
 <data class="v7-mobile-only">
-    <?php include __DIR__ . '/widgets/shared/shared.exchange-rate.php'; ?>
+    <?php include __DIR__ . '/widgets/shared/shared.weather-currency.php'; ?>
     <?php include __DIR__ . '/widgets/shared/shared.company-categories.php'; ?>
     <?php include __DIR__ . '/widgets/shared/shared.latest-companies.php'; ?>
     <?php include __DIR__ . '/widgets/shared/shared.stats.php'; ?>
@@ -217,7 +227,7 @@ v7/
     <?php include __DIR__ . '/widgets/home/home.popular-posts.php'; ?>
 
     <data class="v7-mobile-only">
-        <?php include __DIR__ . '/widgets/shared/shared.exchange-rate.php'; ?>
+        <?php include __DIR__ . '/widgets/shared/shared.weather-currency.php'; ?>
         <?php include __DIR__ . '/widgets/shared/shared.company-categories.php'; ?>
         <?php include __DIR__ . '/widgets/shared/shared.latest-companies.php'; ?>
         <?php include __DIR__ . '/widgets/shared/shared.stats.php'; ?>
@@ -268,7 +278,7 @@ layout.php의 `$content` 변수에 캡처되어 `<main>` 태그 안에 렌더링
 |------|----------|------|
 | **layout** | `v7/widgets/layout/layout-widget.css` | 탑바, 헤더, 사이드바, 푸터, 댓글, 업소, 카테고리 등 layout 위젯 전체 CSS |
 | **home** | `v7/widgets/home/home-widget.css` | 뉴스 탭, 최신 게시글, 인기 게시글, 모바일 배너 등 home 위젯 전체 CSS |
-| **shared** | (CSS 없음 — layout-widget.css에 포함) | shared 위젯의 CSS는 사이드바에서 사용하므로 layout-widget.css에 포함 |
+| **shared** | `v7/widgets/shared/shared.weather-currency.css` (위젯 자체 로드) | 날씨+환율 위젯은 자체 CSS 파일을 `define()` 가드로 한 번만 동적 로드. 나머지 shared 위젯 CSS는 layout-widget.css에 포함 |
 
 ### CSS 분리 규칙
 
@@ -338,10 +348,10 @@ v7/layout.php (메인 레이아웃)
 ├── widgets/layout/layout.header-desktop.php
 ├── widgets/layout/layout.sidebar-left.php
 ├── widgets/layout/layout.sidebar-right.php (← 컴포지트 위젯)
-│   ├── widgets/shared/shared.exchange-rate.php
-│   ├── widgets/shared/shared.company-categories.php
-│   ├── widgets/shared/shared.latest-companies.php
-│   └── widgets/shared/shared.stats.php
+│   ├── layout.sidebar-right.weather-currency.php → widgets/shared/shared.weather-currency.php
+│   ├── layout.sidebar-right.company-categories.php → widgets/shared/shared.company-categories.php
+│   ├── layout.sidebar-right.latest-companies.php → widgets/shared/shared.latest-companies.php
+│   └── layout.sidebar-right.stats.php → widgets/shared/shared.stats.php
 └── widgets/layout/layout.footer.php
 
 v7/index.php (홈페이지 본문)
@@ -351,8 +361,198 @@ v7/index.php (홈페이지 본문)
 ├── widgets/home/home.latest-posts.php
 ├── widgets/home/home.popular-posts.php
 └── [모바일 전용 블록]
-    ├── widgets/shared/shared.exchange-rate.php (공유)
+    ├── widgets/shared/shared.weather-currency.php (공유)
     ├── widgets/shared/shared.company-categories.php (공유)
     ├── widgets/shared/shared.latest-companies.php (공유)
     └── widgets/shared/shared.stats.php (공유)
+```
+
+---
+
+## 11. 날씨+환율 통합 위젯 (shared.weather-currency)
+
+### 11.1 개요
+
+필리핀 마닐라의 현재 날씨와 페소/달러→원 환율을 **하나의 컴팩트 위젯**에 표시한다.
+왼쪽에 날씨(아이콘 + 온도), 오른쪽에 환율(₱→원 큰 글씨 + $→원 작은 글씨)을 보여준다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/widgets/shared/shared.weather-currency.php` |
+| **CSS** | `v7/widgets/shared/shared.weather-currency.css` |
+| **캐시** | `var/cache/v7_weather_currency.json` (파일 기반, 40분 TTL) |
+| **v6 의존성** | 없음 — v7 독립 구현 |
+| **공유 패턴** | 데스크톱 사이드바 + 모바일 본문 양쪽에서 include (DRY) |
+
+### 11.2 위젯 레이아웃
+
+```
+┌─────────────────────────────────────┐
+│   v7-widget-box  wc-widget          │
+│ ┌───────────┬─┬───────────────────┐ │
+│ │  wc-left  │ │     wc-right      │ │
+│ │           │d│                   │ │
+│ │  [label]  │i│     [label]       │ │
+│ │  날씨     │v│     환율          │ │
+│ │           │i│                   │ │
+│ │  [icon]   │d│  ₱24.9 (큰 글씨) │ │
+│ │  ☀️       │e│                   │ │
+│ │           │r│  $1=1432원        │ │
+│ │  32.5°C   │ │  (작은 회색)      │ │
+│ └───────────┴─┴───────────────────┘ │
+└─────────────────────────────────────┘
+```
+
+### 11.3 API 엔드포인트
+
+| API | 엔드포인트 | 용도 |
+|-----|-----------|------|
+| **Open-Meteo** | `api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842&current=temperature_2m,weather_code,is_day&timezone=Asia/Manila` | 마닐라 현재 날씨 (온도, WMO 날씨 코드, 낮/밤 여부) |
+| **Frankfurter** | `api.frankfurter.dev/v1/latest?base=USD&symbols=KRW,PHP` | USD 기준 KRW, PHP 환율 (ECB 데이터) |
+
+**환율 계산 로직:**
+
+```
+API 응답: USD→KRW = 1432, USD→PHP = 57.5
+1 PHP = KRW / PHP = 1432 / 57.5 = 24.9원
+```
+
+하나의 API 호출로 두 통화를 모두 가져와 `KRW / PHP`로 페소 환율을 계산한다.
+
+### 11.4 파일 기반 캐시 시스템
+
+v7 시스템은 v6의 `get_cache()`/`set_cache()`를 사용할 수 없으므로, **파일 기반 캐시**를 자체 구현한다.
+
+| 항목 | 값 |
+|------|-----|
+| **캐시 파일** | `ROOT_DIR . '/var/cache/v7_weather_currency.json'` |
+| **TTL** | 2400초 (40분) |
+| **형식** | `{"expires_at": 1710000000, "value": {...}}` |
+| **갱신 조건** | 파일 없거나 `expires_at` 초과 시 API 재호출 |
+| **HTTP 타임아웃** | 5초 (`stream_context_create`) |
+
+```php
+// 캐시 파일 구조
+{
+    "expires_at": 1710000000,
+    "value": {
+        "weather": {
+            "temperature_2m": 32.5,
+            "weather_code": 0,
+            "is_day": 1
+        },
+        "rates": {
+            "KRW": 1432.0,
+            "PHP": 57.5
+        }
+    }
+}
+```
+
+### 11.5 이중 include 보호 패턴
+
+이 위젯은 데스크톱 사이드바와 모바일 본문 양쪽에서 include되므로, 3가지 이중 실행 방지 메커니즘을 사용한다.
+
+| 보호 대상 | 메커니즘 | 코드 |
+|-----------|---------|------|
+| **CSS 로딩** | `define()` 상수 가드 | `if (!defined('WC_WIDGET_CSS_LOADED'))` |
+| **헬퍼 함수** | `function_exists()` 가드 | `if (!function_exists('_v7_wc_load_data'))` |
+| **데이터 로딩** | `$GLOBALS` 캐싱 | `if (!isset($GLOBALS['_v7_wc_data']))` |
+
+```php
+// 1. CSS — define() 가드로 한 번만 <link> 태그 출력
+if (!defined('WC_WIDGET_CSS_LOADED')) {
+    define('WC_WIDGET_CSS_LOADED', true);
+    echo '<link rel="stylesheet" href="/v7/widgets/shared/shared.weather-currency.css?v=...">';
+}
+
+// 2. 함수 — function_exists()로 한 번만 정의
+if (!function_exists('_v7_wc_load_data')) {
+    function _v7_wc_load_data(): array { /* ... */ }
+    function _v7_wc_get_icon(int $code, int $isDay): string { /* ... */ }
+    function _v7_wc_get_icon_color(int $code, int $isDay): string { /* ... */ }
+}
+
+// 3. 데이터 — $GLOBALS로 같은 요청에서 한 번만 로드
+if (!isset($GLOBALS['_v7_wc_data'])) {
+    $GLOBALS['_v7_wc_data'] = _v7_wc_load_data();
+}
+```
+
+### 11.6 WMO 날씨 코드 → Font Awesome Pro 7 아이콘 매핑
+
+| WMO 코드 | 날씨 | 아이콘 클래스 (낮) | 아이콘 클래스 (밤) | 색상 |
+|----------|------|-------------------|-------------------|------|
+| 0 | 맑음 | `fa-solid fa-sun` | `fa-solid fa-moon` | 낮 `#f59e0b` / 밤 `#818cf8` |
+| 1~2 | 약간 흐림 | `fa-solid fa-cloud-sun` | `fa-solid fa-cloud-moon` | `#64748b` |
+| 3 | 흐림 | `fa-solid fa-cloud` | `fa-solid fa-cloud` | `#64748b` |
+| 4~48 | 안개/연무 | `fa-solid fa-smog` | `fa-solid fa-smog` | `#94a3b8` |
+| 51~57 | 이슬비 | `fa-solid fa-cloud-rain` | `fa-solid fa-cloud-rain` | `#3b82f6` |
+| 61~67 | 비 | `fa-solid fa-cloud-showers-heavy` | `fa-solid fa-cloud-showers-heavy` | `#3b82f6` |
+| 71~77 | 눈 | `fa-solid fa-snowflake` | `fa-solid fa-snowflake` | `#93c5fd` |
+| 80~86 | 소나기 | `fa-solid fa-cloud-showers-water` | `fa-solid fa-cloud-showers-water` | `#60a5fa` |
+| 95~99 | 뇌우 | `fa-solid fa-cloud-bolt` | `fa-solid fa-cloud-bolt` | `#eab308` |
+
+### 11.7 CSS 클래스
+
+| 클래스 | 역할 | 주요 스타일 |
+|--------|------|-----------|
+| `.wc-widget` | 위젯 루트 | `margin-top: var(--v7-gap)` |
+| `.wc-content` | 2열 flex 컨테이너 | `display: flex; align-items: stretch` |
+| `.wc-left` | 왼쪽 날씨 영역 | `flex: 1; text-align: center; padding: 0.5rem 0.625rem` |
+| `.wc-right` | 오른쪽 환율 영역 | `flex: 1; text-align: center; padding: 0.5rem 0.625rem` |
+| `.wc-divider` | 수직 구분선 | `width: 1px; background: var(--wa-color-neutral-border-normal)` |
+| `.wc-label` | 상단 라벨 (날씨/환율) | `font-size: 0.7em; text-transform: uppercase; color: var(--wa-color-text-quiet)` |
+| `.wc-icon` | 날씨 아이콘 | `font-size: 1.75em` |
+| `.wc-temp` | 온도 텍스트 | `font-size: 0.8em; font-weight: 600` |
+| `.wc-peso` | 페소 환율 (큰 글씨) | `font-size: 1.5em; font-weight: 700` |
+| `.wc-dollar` | 달러 환율 (작은 글씨) | `font-size: 0.7em; color: var(--wa-color-text-quiet)` |
+
+### 11.8 환율 표시 형식
+
+| 통화 | 표시 형식 | 소수점 | 예시 |
+|------|----------|--------|------|
+| 페소(₱) | `₱` + 소수점 1자리 | `number_format($val, 1)` | ₱24.9 |
+| 달러($) | `$1=` + 소수점 없음 + `원` | `number_format($val, 0)` | $1=1,432원 |
+
+### 11.9 헬퍼 함수
+
+| 함수명 | 반환 타입 | 용도 |
+|--------|----------|------|
+| `_v7_wc_load_data()` | `array{weather: ?array, rates: ?array}` | 캐시에서 로드 또는 API 호출 후 캐시 저장 |
+| `_v7_wc_get_icon(int $code, int $isDay)` | `string` | WMO 코드 → Font Awesome 아이콘 클래스 |
+| `_v7_wc_get_icon_color(int $code, int $isDay)` | `string` | WMO 코드 → CSS 색상 코드 |
+
+> 모든 함수명은 `_v7_wc_` 접두사로 글로벌 네임스페이스 충돌을 방지한다.
+
+### 11.10 사이드바 래퍼 파일
+
+데스크톱 사이드바에서는 래퍼 패턴으로 shared 위젯을 include한다.
+
+```php
+// v7/widgets/layout/layout.sidebar-right.weather-currency.php
+<?php
+/**
+ * 오른쪽 사이드바 날씨+환율 위젯 — shared 위젯 래퍼
+ */
+include __DIR__ . '/../shared/shared.weather-currency.php';
+```
+
+### 11.11 데이터 흐름
+
+```
+1. 위젯 include (사이드바 또는 모바일)
+   │
+2. $GLOBALS 체크 → 이미 로드됨? → 캐시된 데이터 사용
+   │                                    ↓
+3. _v7_wc_load_data() 호출
+   │
+4. var/cache/v7_weather_currency.json 존재 + 미만료?
+   │  YES → 파일 캐시 반환
+   │  NO  ↓
+5. Open-Meteo API + Frankfurter API 동시 호출 (타임아웃 5초)
+   │
+6. 캐시 파일 저장 (TTL 40분)
+   │
+7. HTML 렌더링 (날씨 왼쪽 + 환율 오른쪽)
 ```
