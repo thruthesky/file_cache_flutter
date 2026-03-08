@@ -1189,6 +1189,8 @@ describe('get_latest_posts() API', function () {
 
 ### 11.4 PEST 브라우저 테스트 패턴
 
+> **상세 가이드**: → [v7-pest-browser-test.md](v7-pest-browser-test.md) 참조 (60+ assertion, 디바이스 에뮬레이션, 필고 전용 패턴 등)
+
 **파일**: `tests/Browser/*.php`
 
 ```php

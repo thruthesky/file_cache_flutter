@@ -1,6 +1,6 @@
 ---
 name: v7-skill
-description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR-4 Controller + Service 아키텍처, api.php, PEST Unit Test), 웹 홈페이지(Vue.js CDN MPA, Web Awesome Pro, SEO — Bootstrap 미사용), Flutter 앱(v7 API 연동, V7FileUpload, CompanyApi, TravelApi) 개발을 모두 포함합니다. (1) PHP 백엔드: 새 API 엔드포인트 추가, Controller/Service 클래스 생성, PEST 테스트 작성, PSR-4 모듈 추가, api.php 관련 작업, (2) 웹 홈페이지: Vue.js 페이지 개발, PHP 페이지에서 v7 Service 호출, 웹 프론트엔드 작업, (3) Flutter 앱: v7api() 호출, V7FileUpload 위젯, 업소록/여행/이벤트 등 v7 기반 앱 기능 개발, v7 마이그레이션 등을 작업할 때 이 스킬을 사용하세요. 트리거 키워드: v7, v7 API, v7 백엔드, v7 웹, v7 앱, v7 홈페이지, Philgo v7, PSR-4, Controller, Service, api.php, PEST, v7api, V7FileUpload, CompanyApi, TravelApi, v7 마이그레이션.
+description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR-4 Controller + Service 아키텍처, api.php, PEST Unit Test), 웹 홈페이지(Vue.js CDN MPA, Web Awesome Pro, SEO — Bootstrap 미사용), Flutter 앱(v7 API 연동, V7FileUpload, CompanyApi, TravelApi) 개발을 모두 포함합니다. (1) PHP 백엔드: 새 API 엔드포인트 추가, Controller/Service 클래스 생성, PEST 테스트 작성, PSR-4 모듈 추가, api.php 관련 작업, (2) 웹 홈페이지: Vue.js 페이지 개발, PHP 페이지에서 v7 Service 호출, 웹 프론트엔드 작업, (3) Flutter 앱: v7api() 호출, V7FileUpload 위젯, 업소록/여행/이벤트 등 v7 기반 앱 기능 개발, v7 마이그레이션 등을 작업할 때 이 스킬을 사용하세요. 트리거 키워드: v7, v7 API, v7 백엔드, v7 웹, v7 앱, v7 홈페이지, Philgo v7, PSR-4, Controller, Service, api.php, PEST, PEST 브라우저 테스트, PEST Browser Test, Playwright, v7api, V7FileUpload, CompanyApi, TravelApi, v7 마이그레이션.
 ---
 
 # 필고 v7 시스템 개발 가이드
@@ -151,7 +151,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 - **Firebase 토큰 검증**: `Philgo\Utils\FirebaseService::verifyIdToken()` (레거시 `verifyFirebaseToken()` 사용 금지)
 - **디버그 로깅**: `Philgo\Utils\Debug::log()` → `var/debug.log` 기록 (레거시 `debug_log()` 사용 금지)
 - **에러 처리**: `throw new RuntimeException()` → api.php에서 catch → `{success: false}`
-- **테스트**: PEST v4 Unit Test (`tests/Unit/`)
+- **테스트**: PEST v4 Unit Test (`tests/Unit/`) + PEST Browser Test (`tests/Browser/`) → [상세 가이드](references/v7-pest-browser-test.md)
 
 ---
 
@@ -591,6 +591,17 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Assert | `?? status == 200` | 응답 상태, 헤더, 바디 자동 검증 |
 | 스크립팅 | `{{ 코드 }}` | 요청 전/후 JavaScript 실행, 응답 파싱 |
 | 글로벌 변수 | `$global.변수 = 값` | 모든 요청에서 접근 가능한 글로벌 변수 |
+
+### PEST 브라우저 테스트 (E2E) → [v7-pest-browser-test.md](references/v7-pest-browser-test.md)
+
+PEST v4 Browser Plugin + Playwright 기반 브라우저 E2E 테스트의 완벽 가이드이다.
+`tests/Browser/*.php` 파일에서 실제 브라우저(Chromium/Firefox/Safari)를 실행하여
+페이지 방문(`visit()`), 요소 클릭(`click()`), 텍스트 입력(`type()`), 폼 조작(`select()`, `check()`),
+60+ assertion 메서드(`assertSee()`, `assertPresent()`, `assertUrlIs()`, `assertNoSmoke()` 등),
+스크린샷 캡처(`screenshot()`), 디바이스 에뮬레이션(`on()->mobile()`), 디버깅(`debug()`, `waitForKey()`)을
+수행하는 방법을 설명한다. 필고 프로젝트 전용 패턴(v6/v7 URL, 그룹 태깅, 로그인 테스트, 패밀리사이트 테스트),
+`Pest.php` 전역 설정, CI/CD GitHub Actions 설정도 포함한다.
+**브라우저 테스트 작성 시 반드시 이 문서를 참조한다.**
 
 ---
 
