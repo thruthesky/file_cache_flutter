@@ -3,6 +3,7 @@
 ## 목차
 
 - [1. Firebase PHP SDK 버전 업데이트 (class T 충돌 해결)](#1-firebase-php-sdk-버전-업데이트-class-t-충돌-해결)
+- [2. kreait/firebase-php 8.x 메이저 업그레이드](#2-kreaitfirebase-php-8x-메이저-업그레이드)
 
 ---
 
@@ -75,3 +76,58 @@ Could not map type `Kreait\Firebase\ServiceAccount`:
 ### 분석 일자
 
 - 2026-03-08: 문제 발견 및 근본 원인 분석 완료
+
+---
+
+## 2. kreait/firebase-php 8.x 메이저 업그레이드
+
+### 상태: 🔲 미완료
+
+### 작업 요약
+
+`composer.json`의 `kreait/firebase-php` 버전을 현재 `^7.16`(설치: 7.24.1)에서 **8.2.0**(최신 메이저 버전)으로 업그레이드해야 한다.
+
+### 현재 상태
+
+| 항목 | 값 |
+|------|-----|
+| **composer.json 제약** | `"kreait/firebase-php": "^7.16"` |
+| **현재 설치 버전** | 7.24.1 (`composer.lock` 기준) |
+| **최신 버전** | **8.2.0** (2026-03-04 릴리스) |
+
+### 업그레이드 필요 이유
+
+1. **메이저 버전 업데이트**: 7.x → 8.x로 메이저 버전이 올라가면서 새로운 기능과 개선 사항 포함
+2. **장기 지원**: 7.x는 향후 보안 패치만 제공될 가능성이 높으므로, 8.x로 전환하여 장기 지원 확보
+3. **v7 시스템 안정성**: v7 시스템이 완성되면 최신 SDK 기반으로 운영되는 것이 바람직
+
+### 업그레이드 시 주의사항
+
+| 주의사항 | 설명 |
+|----------|------|
+| **Breaking Changes** | 메이저 버전 업그레이드이므로 API 변경, 클래스/메서드 제거, 네임스페이스 변경 등이 있을 수 있음 |
+| **v6 호환성** | v6 `lib/firebase/firebase.functions.php`의 `getFactory()`, `firebase_auth_admin()` 등이 8.x API와 호환되는지 확인 필요 |
+| **v7 호환성** | v7 `Philgo\Utils\FirebaseService::verifyIdToken()`이 8.x API와 호환되는지 확인 필요 |
+| **PHP 버전 요구** | 8.x의 최소 PHP 버전 요구사항 확인 필요 |
+| **의존성 충돌** | 다른 패키지와의 의존성 충돌 여부 확인 필요 |
+
+### 업그레이드 절차 (계획)
+
+1. `composer.json`에서 `"kreait/firebase-php": "^8.0"` 으로 변경
+2. `composer update kreait/firebase-php` 실행
+3. Breaking changes 확인 및 코드 수정
+4. v6 Firebase 로그인 테스트 (테스트 계정 A, B, C)
+5. v7 API Firebase 토큰 검증 테스트
+6. 전체 검증 후 커밋
+
+### 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `composer.json` | `kreait/firebase-php` 버전 제약 — 수정 대상 |
+| `lib/firebase/firebase.functions.php` | v6 Firebase 함수 — 호환성 확인 대상 |
+| `lib/utils/FirebaseService.php` | v7 Firebase 서비스 — 호환성 확인 대상 |
+
+### 등록 일자
+
+- 2026-03-08: TODO 항목 등록
