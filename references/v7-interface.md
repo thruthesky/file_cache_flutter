@@ -799,6 +799,13 @@ class PostRepository implements RepositoryInterface
 
     public static function count(string $postId, ?string $category = null): int { ... }
     public static function getPostConfig(string $postId): ?array { ... }
+
+    // ★ 위젯 전용 확장 쿼리 (v7 위젯에서 Service를 통해 호출)
+    public static function findPopular(int $withinDays = 30, int $limit = 20): array { ... }
+    public static function findReported(int $limit = 5): array { ... }
+    public static function findLatestSimple(string $postId, ?string $category = null, int $limit = 6, array $columns = [...]): array { ... }
+    public static function findLatestPhotos(int $limit = 9): array { ... }
+    public static function findRecentComments(int $limit = 20): array { ... }
 }
 ```
 

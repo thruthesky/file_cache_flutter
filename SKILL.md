@@ -135,12 +135,15 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 ## 핵심 아키텍처
 
 ```
-클라이언트 → api.php → Controller → Service → DB
+클라이언트 → api.php → Controller → Service → Repository → Db → DB
                 │
                 ├─ vendor/autoload.php (PSR-4)
                 ├─ RequestUtils::parseMethod() → [module, action]
                 ├─ FQCN: "Philgo\{Module}\{Module}Controller"
                 └─ $ctrl->$action($input) → JSON 응답
+
+위젯(v7/widgets/) → Service → Repository → Db → DB
+  (위젯에서 Db:: 직접 사용 절대 금지)
 ```
 
 - **엔트리포인트**: `api.php` (boot.php 미포함)

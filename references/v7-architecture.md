@@ -107,6 +107,7 @@ v7 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택�
 10. **에러 처리**: try/catch로 예외를 캐치하여 `{success: false, message: "에러 메시지"}` 형식으로 응답. 성공 시 `{success: true}` 추가 없이 Controller 리턴값 그대로 출력.
 11. **⚠️ API 테스트 필수**: 모든 API endpoint는 반드시 **PEST Unit Test**로 테스트한다.
 12. **레거시 AllowedFunctions**: 기존 `AllowedFunctions` 클래스는 레거시로 유지하되, 새 코드는 Controller 방식 사용
+13. **위젯 DB 접근 금지**: v7 위젯(`v7/widgets/**/*.php`)에서 `Db::` 클래스를 직접 사용하지 않는다. 모든 DB 접근은 Service → Repository → Db 3계층을 통해야 한다. 필요한 Service 메서드가 없으면 Repository → Service 순으로 새 메서드를 추가한 후 위젯에서 호출한다.
 
 ---
 

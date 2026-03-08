@@ -43,6 +43,57 @@ v7 홈페이지는 **PHP include 기반 위젯 시스템**을 사용한다.
 - **Bootstrap 미사용**: 반응형은 `v7/css/responsive.css`의 커스텀 클래스 사용
 - **중복 제거**: 데스크톱 사이드바와 모바일 본문에서 동일 위젯을 `include`로 공유
 
+### 🔴🔴🔴 위젯 데이터 접근 규칙 — 절대 규칙 🔴🔴🔴
+
+> **⛔ 위젯에서 `Db::` 클래스를 직접 사용하여 DB에 접근하는 것은 엄격히 금지한다. ⛔**
+> **모든 DB 접근은 반드시 Service → Repository → Db 3계층 아키텍처를 통해야 한다.**
+
+| 규칙 | 설명 |
+|------|------|
+| **Db:: 직접 사용 금지** | 위젯 PHP 파일에서 `Db::fetchAll()`, `Db::fetch()`, `Db::execute()` 등을 직접 호출하지 않는다 |
+| **Service 클래스 필수** | 데이터 조회는 반드시 해당 도메인의 Service 클래스 메서드를 통해 수행한다 |
+| **Repository 캡슐화** | SQL 쿼리는 Repository 클래스에만 존재해야 하며, Service가 Repository를 호출한다 |
+| **메서드 부재 시 추가** | 필요한 Service 메서드가 없으면 Repository → Service 순으로 새 메서드를 추가한 후 위젯에서 호출한다 |
+
+**데이터 흐름:**
+
+```
+위젯 (PHP include) → Service::method() → Repository::method() → Db::fetchAll/fetch/execute
+```
+
+**올바른 사용법:**
+
+```php
+// ✅ Service를 통한 데이터 조회
+use Philgo\Post\PostService;
+
+$_popularRows = PostService::listPopular(30, 20);
+$_freetalkRows = PostService::listLatestSimple('freetalk', null, 5, ['idx', 'subject', 'no_of_comment']);
+$latestPhotos = PostService::listLatestPhotos(9);
+$comments = PostService::listRecentComments(20);
+```
+
+**잘못된 사용법 (절대 금지):**
+
+```php
+// ❌ 위젯에서 Db:: 직접 사용
+use Philgo\Utils\Db;
+
+$_popularRows = Db::fetchAll("SELECT idx, subject FROM sf_post_data WHERE ...", [...]);
+```
+
+**위젯에서 사용 가능한 주요 Service 메서드:**
+
+| Service 메서드 | 용도 | 사용 위젯 |
+|---|---|---|
+| `PostService::listPopular($days, $limit)` | 인기 게시글 (댓글순) | home.popular-posts |
+| `PostService::listReported($limit)` | 신고된 글 | home.admin-reminder |
+| `PostService::listLatestSimple($postId, $category, $limit, $columns)` | 최신 게시글 (유연한 컬럼) | home.news-tabs, home.latest-posts |
+| `PostService::listLatestPhotos($limit)` | 이미지 있는 최신 글 | layout.sidebar-left.latest-photos |
+| `PostService::listRecentComments($limit)` | 최근 댓글 (회원 JOIN) | layout.sidebar-left.recent-comments |
+| `UserService::listRecent($limit)` | 최근 가입 회원 | home.admin-reminder |
+| `CompanyService::listPending($limit)` | 미승인 업소 | home.admin-reminder |
+
 ---
 
 ## 2. 폴더 구조
