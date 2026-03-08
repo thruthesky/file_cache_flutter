@@ -603,6 +603,19 @@ PEST v4 Browser Plugin + Playwright 기반 브라우저 E2E 테스트의 완벽 
 `Pest.php` 전역 설정, CI/CD GitHub Actions 설정도 포함한다.
 **브라우저 테스트 작성 시 반드시 이 문서를 참조한다.**
 
+#### 🔴🔴🔴 PEST 브라우저 테스트 PHP 타입 안전성 (절대 규칙) 🔴🔴🔴
+
+> **⛔ 브라우저 테스트 코드에서 반드시 PHPDoc 타입 힌트를 지정하여 intelephense P1006 에러가 발생하지 않도록 해야 한다. ⛔**
+
+| 규칙 | 설명 |
+|------|------|
+| **`$this->visit()` 타입 힌트 필수** | `/** @var \Pest\Browser\Api\PendingAwaitablePage $page */` 반드시 추가 |
+| **`test()->group()` P1006** | PEST 프레임워크 타입 한계로 경고 표시됨 — 런타임 정상 동작, 무시 가능 |
+| **`test()` 변수 할당 금지** | `$test = test(...)` 하면 테스트 미등록됨 — 반드시 `test()->group()` 체이닝 사용 |
+| **`@noinspection` 필수** | 파일 상단에 `PhpUndefinedMethodInspection`, `PhpUndefinedFunctionInspection` 추가 |
+
+> **상세 규칙**: → [v7-pest-browser-test.md](references/v7-pest-browser-test.md) 26.6절
+
 #### 🔴 필고 프로젝트 전용 테스트 계정 (브라우저 테스트 필수)
 
 | 계정 | session_id | 용도 |

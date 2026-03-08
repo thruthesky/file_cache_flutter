@@ -895,7 +895,7 @@ tests/
 └── Unit/                        ← PEST 유닛 테스트
 ```
 
-### 26.2 필고 브라우저 테스트 기본 템플릿
+### 26.2 필고 v7 브라우저 테스트 기본 템플릿
 
 ```php
 <?php
@@ -905,10 +905,15 @@ tests/
 
 /**
  * @file tests/Browser/XxxTest.php
- * @brief Xxx 페이지 브라우저 테스트
+ * @brief v7 Xxx 페이지 브라우저 테스트
  *
  * PEST v4 Browser Plugin (Playwright 기반)을 사용하여
- * 실제 브라우저에서 Xxx 페이지를 테스트한다.
+ * 실제 브라우저에서 v7 Xxx 페이지를 테스트한다.
+ *
+ * 🔴 P1006 타입 안전성 규칙:
+ * - $this->visit() 반환값에 반드시 @var 타입 힌트 추가
+ * - test()->group() 체이닝의 P1006 경고는 프레임워크 한계 (무시 가능)
+ * - test() 반환값을 변수에 할당하면 테스트 미등록 — 절대 금지
  *
  * 실행 방법:
  * ./vendor/bin/pest tests/Browser/XxxTest.php
@@ -917,20 +922,19 @@ tests/
 
 // ==================== 테스트 상수 ====================
 
-if (!defined('TEST_BASE_URL')) {
-    define('TEST_BASE_URL', 'https://local.philgo.com');
+if (!defined('V7_TEST_BASE_URL')) {
+    define('V7_TEST_BASE_URL', 'https://v7-local.philgo.com');
 }
 
 // ==================== 테스트 케이스 ====================
 
-test('Xxx 페이지에 접근할 수 있다', function () {
-    $url = TEST_BASE_URL . '/page/xxx.php';
-
+test('v7 Xxx 페이지에 접근할 수 있다', function () {
     /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
-    $page = $this->visit($url);
+    $page = $this->visit(V7_TEST_BASE_URL . '/xxx');
 
-    $page->assertPresent('#site-footer');
-})->group('browser', 'xxx', 'smoke');
+    // v7 레이아웃 필수 요소 확인
+    $page->assertPresent('footer.v7-footer');
+})->group('browser', 'v7', 'xxx', 'smoke');
 ```
 
 ### 26.3 v6 테스트 URL (기존 필고)
@@ -979,18 +983,71 @@ test('게시글 페이지 필수 요소 확인', function () {
 // ./vendor/bin/pest --group=browser        ← 브라우저 테스트만
 ```
 
-### 26.6 PHPDoc으로 타입 힌트 제공
+### 🔴🔴🔴 26.6 PHP 타입 안전성 — intelephense P1006 에러 방지 (필수) 🔴🔴🔴
+
+> **⛔⛔⛔ PEST 브라우저 테스트 코드에서 반드시 PHPDoc 타입 힌트를 지정하여 intelephense P1006 에러가 발생하지 않도록 해야 한다. ⛔⛔⛔**
+>
+> PHP 타입 힌트 없이 코드를 작성하면 IDE(intelephense)가 타입을 추론하지 못해 P1006 에러가 발생한다.
+> 이 에러는 코드 품질을 저하시키고, 다른 실제 에러를 놓칠 수 있으므로 **절대 무시하지 말 것**.
+
+#### `$this->visit()` 반환값 타입 힌트 (필수)
+
+`$this->visit()` 반환값은 반드시 `@var` PHPDoc으로 타입을 명시해야 한다:
 
 ```php
+// ✅ 올바른 방식 — @var 타입 힌트 필수
 /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
 $page = $this->visit($url);
+$page->assertPresent('#site-footer');  // P1006 에러 없음
+
+// ❌ 잘못된 방식 — 타입 힌트 누락 시 P1006 발생
+$page = $this->visit($url);
+$page->assertPresent('#site-footer');  // ⚠️ P1006: Expected type 'object'
 ```
 
-> `@noinspection` 주석으로 IDE 경고 억제:
+#### `test()->group()` 체이닝 시 P1006 경고 (프레임워크 한계)
+
+PEST의 `test()` 함수는 `TestCall|null|true|false` union type을 반환한다.
+`->group()` 체이닝 시 intelephense가 P1006 경고를 표시하지만, 이것은 **PEST 프레임워크의 타입 정의 한계**이며 런타임에는 정상 동작한다.
+
+```php
+// ⚠️ P1006 경고가 표시되지만, 이 패턴이 올바른 PEST 사용법이다
+test('페이지 로드 테스트', function () {
+    /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
+    $page = $this->visit(V7_TEST_BASE_URL . '/');
+    $page->assertPresent('footer.v7-footer');
+})->group('browser', 'v7', 'smoke');  // ← P1006 경고 (프레임워크 한계, 무시 가능)
+```
+
+> **⛔ 중요: `test()` 반환값을 변수에 할당하면 테스트가 등록되지 않는다! ⛔**
+>
 > ```php
-> /** @noinspection PhpUndefinedMethodInspection */
-> /** @noinspection PhpUndefinedFunctionInspection */
+> // ❌ 절대 금지 — test()를 변수에 할당하면 테스트 미등록
+> $test = test('...', function () { ... });
+> $test->group('browser');  // 테스트가 PEST에 등록되지 않아 실행 안 됨!
+>
+> // ✅ 반드시 체이닝으로 사용
+> test('...', function () { ... })->group('browser');
 > ```
+
+#### P1006 경고 요약
+
+| 위치 | P1006 발생 여부 | 해결 방법 |
+|------|----------------|-----------|
+| `$this->visit()` 반환값 | **해결 가능** | `/** @var \Pest\Browser\Api\PendingAwaitablePage $page */` 추가 |
+| `test()->group()` 체이닝 | **프레임워크 한계** | 무시 가능 (런타임 정상 동작) |
+| `test()` 변수 할당 | **❌ 절대 금지** | 테스트 미등록 문제 발생 |
+
+#### 파일 상단 필수 `@noinspection` 주석
+
+모든 PEST 브라우저 테스트 파일 상단에 반드시 다음 주석을 추가한다:
+
+```php
+<?php
+
+/** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection PhpUndefinedFunctionInspection */
+```
 
 ### 26.7 로그인이 필요한 테스트
 
