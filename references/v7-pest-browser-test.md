@@ -30,6 +30,11 @@
 - [24. 디버깅](#24-디버깅)
 - [25. 여러 페이지 동시 테스트](#25-여러-페이지-동시-테스트)
 - [26. 필고 프로젝트 전용 패턴](#26-필고-프로젝트-전용-패턴)
+  - [26.8 v7 관리자 대시보드 인증 패턴](#268-v7-관리자-대시보드-인증-패턴-2차-인증-쿠키)
+  - [26.9 Playwright 타임아웃 방지 — script()로 폼 제출](#269-playwright-타임아웃-방지--script로-폼-제출)
+  - [26.10 Vue.js v-model 입력값 조작](#2610-vuejs-v-model-입력값-조작--nativeinputvaluesetter-패턴)
+  - [26.11 Vue.js v-model DOM 속성 — placeholder 셀렉터](#2611-vuejs-v-model-dom-속성--placeholder-셀렉터-사용)
+  - [26.12 script() 메서드의 return 키워드 주의사항](#2612-script-메서드의-return-키워드-주의사항)
 - [27. CI/CD 설정 (GitHub Actions)](#27-cicd-설정-github-actions)
 
 ---
@@ -319,7 +324,13 @@ $page->click('#button');
 $page->click('#button', options: ['clickCount' => 2]);
 ```
 
-### 9.3 버튼 누르기
+### 9.3 오른쪽 클릭
+
+```php
+$page->rightClick('메뉴 항목');
+```
+
+### 9.4 버튼 누르기
 
 ```php
 // 버튼 텍스트로 클릭
@@ -351,7 +362,16 @@ $page->typeSlowly('email', 'test@example.com');
 $page->append('description', ' 추가 정보.');
 ```
 
-### 10.4 clear() — 입력 필드 비우기
+### 10.4 fill() — type()의 별칭
+
+`fill()`은 내부적으로 `type()`을 호출하는 별칭 메서드이다. 공식 문서에서 사용되는 패턴:
+
+```php
+$page->fill('email', 'nuno@laravel.com');
+$page->fill('password', 'password');
+```
+
+### 10.5 clear() — 입력 필드 비우기
 
 ```php
 $page->clear('search');
@@ -505,7 +525,28 @@ $page->wait(2);
 $page->waitForKey();
 ```
 
-### 17.2 창 크기 조정
+### 17.2 waitForEvent() — 페이지 로드 상태 대기
+
+페이지 네비게이션(폼 제출, 리다이렉트 등) 후 로드 완료를 기다릴 때 사용한다.
+
+```php
+// 폼 제출 후 페이지 로드 대기
+$page->script("document.querySelector('form').submit()");
+$page->waitForEvent('load');
+
+// 네비게이션 완료 대기
+$page->waitForEvent('networkidle');
+```
+
+| 상태 | 설명 |
+|------|------|
+| `'load'` | `window.onload` 이벤트 대기 (DOMContentLoaded + 리소스 로드) |
+| `'domcontentloaded'` | DOMContentLoaded 이벤트 대기 |
+| `'networkidle'` | 네트워크 요청이 500ms 이상 없을 때까지 대기 |
+
+> **주의**: `waitForEvent()`는 Playwright의 `page.waitForLoadState()`를 내부적으로 호출한다.
+
+### 17.3 창 크기 조정
 
 ```php
 $page->resize(1280, 720);
@@ -875,25 +916,52 @@ test('이메일 비밀번호로 로그인', function () {
 | `./tmp/sample-files/체리.jpg` | 업로드 테스트용 과일 이미지 |
 | `./tmp/sample-files/두리안.jpg` | 업로드 테스트용 과일 이미지 |
 
-### 26.1 필고 브라우저 테스트 구조
+### 🔴 26.1 브라우저 테스트 파일 경로 — 반드시 `tests/Browser/` (절대 규칙) 🔴
+
+> **⛔ PEST Browser Plugin은 `tests/Browser/` 경로만 인식한다. `v7/tests/Browser/` 등 다른 경로에 브라우저 테스트를 배치하면 Playwright 서버가 시작되지 않아 "WebSocket client is not connected" 에러가 발생한다. ⛔**
+>
+> 이는 `vendor/pestphp/pest-plugin-browser/src/Support/BrowserTestIdentifier.php`의 `usesBrowserFolder()` 메서드가 `{rootPath}/tests/Browser/` 경로를 하드코딩으로 체크하기 때문이다.
+
+| 규칙 | 설명 |
+|------|------|
+| **✅ 브라우저 테스트** | `tests/Browser/*.php` — 반드시 이 경로에 배치 |
+| **✅ 유닛 테스트** | `v7/tests/*.php` 또는 `tests/Unit/*.php` — 경로 자유 |
+| **❌ 금지** | `v7/tests/Browser/*.php` — Playwright 미시작으로 에러 발생 |
+| **v7 구분** | `->group('v7')` 태그로 v7 테스트를 구분하여 `--group=v7`로 실행 |
 
 ```
 tests/
 ├── Pest.php                     ← PEST 설정 & 헬퍼 (브라우저 타임아웃 15초)
-├── Browser/                     ← PEST 브라우저(E2E) 테스트
-│   ├── PostViewTest.php         ← 게시글 보기 페이지 테스트
-│   ├── CompanyIndexTest.php     ← 업소록 인덱스 페이지 테스트
-│   ├── CompanyCategoryTest.php  ← 업소록 카테고리 테스트
-│   ├── CompanyRegisterTest.php  ← 업소 등록 페이지 테스트
-│   ├── ProfileTest.php          ← 회원 프로필 테스트
-│   ├── PublicProfileTest.php    ← 공개 프로필 테스트
-│   ├── PostCreateWithoutLoginTest.php ← 미로그인 글작성 테스트
-│   ├── BannerTest.php           ← 배너 테스트
-│   ├── PointTest.php            ← 포인트 테스트
-│   ├── MassageGuideTest.php     ← 마사지 가이드 테스트
+├── Browser/                     ← PEST 브라우저(E2E) 테스트 — v7 전용
+│   ├── HomepageTest.php         ← v7 홈페이지 테스트
+│   ├── PostListTest.php         ← v7 게시판 목록 테스트
+│   ├── PostViewTest.php         ← v7 게시글 보기 테스트
+│   ├── PostCreateTest.php       ← v7 게시글 작성 테스트 (비로그인)
+│   ├── CompanyIndexTest.php     ← v7 업소록 목록 테스트
+│   ├── CompanyRegisterTest.php  ← v7 업소록 등록 테스트
+│   ├── LoginTest.php            ← v7 로그인 페이지 테스트
 │   └── Screenshots/             ← 스크린샷 저장 (.gitignore)
-└── Unit/                        ← PEST 유닛 테스트
+├── Unit/                        ← PEST 유닛 테스트
+└── ...
+v7/tests/
+├── UrlTest.php                  ← v7 URL 유틸리티 유닛 테스트
+└── ...                          ← v7 유닛 테스트 (브라우저 테스트 금지)
 ```
+
+### 26.1.1 v7 레이아웃 CSS 선택자 (테스트용)
+
+모든 v7 페이지에서 공통으로 사용되는 레이아웃 CSS 선택자:
+
+| 선택자 | 설명 |
+|--------|------|
+| `footer.v7-footer` | v7 푸터 (페이지 로드 확인용) |
+| `.v7-page-wrapper` | 전체 페이지 래퍼 |
+| `.v7-header` | 헤더 영역 |
+| `.v7-main` | 메인 콘텐츠 영역 |
+| `.v7-body` | 바디 영역 (사이드바 + 메인) |
+| `.v7-layout` | 5-column 레이아웃 컨테이너 |
+
+> **주의: v6의 `#site-footer`는 v7에서 `footer.v7-footer`로 변경되었다.**
 
 ### 26.2 필고 v7 브라우저 테스트 기본 템플릿
 
@@ -910,10 +978,8 @@ tests/
  * PEST v4 Browser Plugin (Playwright 기반)을 사용하여
  * 실제 브라우저에서 v7 Xxx 페이지를 테스트한다.
  *
- * 🔴 P1006 타입 안전성 규칙:
- * - $this->visit() 반환값에 반드시 @var 타입 힌트 추가
- * - test()->group() 체이닝의 P1006 경고는 프레임워크 한계 (무시 가능)
- * - test() 반환값을 변수에 할당하면 테스트 미등록 — 절대 금지
+ * @note browserTest() 래퍼 함수를 사용하여 test()->group() P1006 타입 에러를 방지한다.
+ *       browserTest()는 tests/Pest.php에 정의되어 있으며, 반환 타입을 TestCall로 명시한다.
  *
  * 실행 방법:
  * ./vendor/bin/pest tests/Browser/XxxTest.php
@@ -928,7 +994,7 @@ if (!defined('V7_TEST_BASE_URL')) {
 
 // ==================== 테스트 케이스 ====================
 
-test('v7 Xxx 페이지에 접근할 수 있다', function () {
+browserTest('v7 Xxx 페이지에 접근할 수 있다', function () {
     /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
     $page = $this->visit(V7_TEST_BASE_URL . '/xxx');
 
@@ -957,23 +1023,37 @@ $page = $this->visit(TEST_BASE_URL . '/user/profile.php');
 
 ```php
 // v7 기본 URL
-define('TEST_V7_BASE_URL', 'https://v7-local.philgo.com');
+define('V7_TEST_BASE_URL', 'https://v7-local.philgo.com');
 
 // v7 홈페이지
-$page = $this->visit(TEST_V7_BASE_URL . '/');
+$page = $this->visit(V7_TEST_BASE_URL . '/');
 
 // v7 게시판 목록
-$page = $this->visit(TEST_V7_BASE_URL . '/post/list?category=freetalk');
+$page = $this->visit(V7_TEST_BASE_URL . '/post/list?post_id=freetalk');
 
-// v7 업소록
-$page = $this->visit(TEST_V7_BASE_URL . '/company');
+// v7 게시글 보기
+$page = $this->visit(V7_TEST_BASE_URL . '/post/view?id=123');
+
+// v7 게시글 작성
+$page = $this->visit(V7_TEST_BASE_URL . '/post/create?post_id=freetalk');
+
+// v7 업소록 목록
+$page = $this->visit(V7_TEST_BASE_URL . '/company');
+
+// v7 업소록 등록
+$page = $this->visit(V7_TEST_BASE_URL . '/company/register');
+
+// v7 로그인
+$page = $this->visit(V7_TEST_BASE_URL . '/user/login');
 ```
+
+> **v7 URL은 `.php` 확장자 없이 라우팅된다.** v6는 `/post/list.php`, v7은 `/post/list`.
 
 ### 26.5 그룹(Group) 사용 패턴
 
 ```php
 // 여러 그룹을 지정하여 선택적 실행 가능
-test('게시글 페이지 필수 요소 확인', function () {
+browserTest('게시글 페이지 필수 요소 확인', function () {
     // ...
 })->group('browser', 'post', 'view', 'smoke');
 
@@ -983,12 +1063,53 @@ test('게시글 페이지 필수 요소 확인', function () {
 // ./vendor/bin/pest --group=browser        ← 브라우저 테스트만
 ```
 
-### 🔴🔴🔴 26.6 PHP 타입 안전성 — intelephense P1006 에러 방지 (필수) 🔴🔴🔴
+### 🔴🔴🔴 26.6 PHP 타입 안전성 — intelephense P1006 에러 완전 해결 (필수) 🔴🔴🔴
 
-> **⛔⛔⛔ PEST 브라우저 테스트 코드에서 반드시 PHPDoc 타입 힌트를 지정하여 intelephense P1006 에러가 발생하지 않도록 해야 한다. ⛔⛔⛔**
->
-> PHP 타입 힌트 없이 코드를 작성하면 IDE(intelephense)가 타입을 추론하지 못해 P1006 에러가 발생한다.
-> 이 에러는 코드 품질을 저하시키고, 다른 실제 에러를 놓칠 수 있으므로 **절대 무시하지 말 것**.
+> **⛔⛔⛔ PEST 브라우저 테스트 코드에서 P1006 에러가 발생하지 않도록 반드시 타입 안전한 코드를 작성해야 한다. ⛔⛔⛔**
+
+#### 문제: `test()->group()` P1006 에러
+
+PEST의 `test()` 함수는 `TestCall|null|true|false` union type을 반환한다.
+`->group()` 체이닝 시 intelephense가 P1006 에러를 표시한다:
+
+```
+Expected type 'object'. Found 'Pest\PendingCalls\TestCall|null|true|false'. intelephense(P1006)
+```
+
+#### 해결: `browserTest()` 래퍼 함수 (tests/Pest.php에 정의)
+
+`tests/Pest.php`에 반환 타입을 `TestCall`로 명시한 래퍼 함수를 정의하여 P1006을 완전히 해결한다:
+
+```php
+// tests/Pest.php에 정의된 래퍼 함수
+/**
+ * @param string $description 테스트 설명
+ * @param \Closure|null $closure 테스트 본문
+ * @return \Pest\PendingCalls\TestCall
+ */
+function browserTest(string $description, ?\Closure $closure = null): \Pest\PendingCalls\TestCall
+{
+    /** @var \Pest\PendingCalls\TestCall $testCall */
+    $testCall = test($description, $closure);
+    return $testCall;
+}
+```
+
+#### 사용법: `test()` 대신 `browserTest()` 사용
+
+```php
+// ✅ 올바른 방식 — browserTest() 사용으로 P1006 에러 없음
+browserTest('v7 홈페이지에 접근할 수 있다', function () {
+    /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
+    $page = $this->visit(V7_TEST_BASE_URL . '/');
+    $page->assertPresent('footer.v7-footer');
+})->group('browser', 'v7', 'smoke');  // ← P1006 에러 없음!
+
+// ❌ 잘못된 방식 — test() 직접 사용 시 P1006 발생
+test('v7 홈페이지에 접근할 수 있다', function () {
+    // ...
+})->group('browser', 'v7', 'smoke');  // ← P1006 에러 발생!
+```
 
 #### `$this->visit()` 반환값 타입 힌트 (필수)
 
@@ -998,45 +1119,19 @@ test('게시글 페이지 필수 요소 확인', function () {
 // ✅ 올바른 방식 — @var 타입 힌트 필수
 /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
 $page = $this->visit($url);
-$page->assertPresent('#site-footer');  // P1006 에러 없음
+$page->assertPresent('footer.v7-footer');  // P1006 에러 없음
 
 // ❌ 잘못된 방식 — 타입 힌트 누락 시 P1006 발생
 $page = $this->visit($url);
-$page->assertPresent('#site-footer');  // ⚠️ P1006: Expected type 'object'
+$page->assertPresent('footer.v7-footer');  // ⚠️ P1006: Expected type 'object'
 ```
 
-#### `test()->group()` 체이닝 시 P1006 경고 (프레임워크 한계)
+#### P1006 해결 요약
 
-PEST의 `test()` 함수는 `TestCall|null|true|false` union type을 반환한다.
-`->group()` 체이닝 시 intelephense가 P1006 경고를 표시하지만, 이것은 **PEST 프레임워크의 타입 정의 한계**이며 런타임에는 정상 동작한다.
-
-```php
-// ⚠️ P1006 경고가 표시되지만, 이 패턴이 올바른 PEST 사용법이다
-test('페이지 로드 테스트', function () {
-    /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
-    $page = $this->visit(V7_TEST_BASE_URL . '/');
-    $page->assertPresent('footer.v7-footer');
-})->group('browser', 'v7', 'smoke');  // ← P1006 경고 (프레임워크 한계, 무시 가능)
-```
-
-> **⛔ 중요: `test()` 반환값을 변수에 할당하면 테스트가 등록되지 않는다! ⛔**
->
-> ```php
-> // ❌ 절대 금지 — test()를 변수에 할당하면 테스트 미등록
-> $test = test('...', function () { ... });
-> $test->group('browser');  // 테스트가 PEST에 등록되지 않아 실행 안 됨!
->
-> // ✅ 반드시 체이닝으로 사용
-> test('...', function () { ... })->group('browser');
-> ```
-
-#### P1006 경고 요약
-
-| 위치 | P1006 발생 여부 | 해결 방법 |
-|------|----------------|-----------|
-| `$this->visit()` 반환값 | **해결 가능** | `/** @var \Pest\Browser\Api\PendingAwaitablePage $page */` 추가 |
-| `test()->group()` 체이닝 | **프레임워크 한계** | 무시 가능 (런타임 정상 동작) |
-| `test()` 변수 할당 | **❌ 절대 금지** | 테스트 미등록 문제 발생 |
+| 위치 | 해결 방법 |
+|------|-----------|
+| `test()->group()` 체이닝 | **`browserTest()` 래퍼 사용** (tests/Pest.php에 정의) |
+| `$this->visit()` 반환값 | `/** @var \Pest\Browser\Api\PendingAwaitablePage $page */` 추가 |
 
 #### 파일 상단 필수 `@noinspection` 주석
 
@@ -1062,7 +1157,120 @@ test('로그인 후 프로필 페이지 접근', function () {
 })->group('browser', 'auth');
 ```
 
-### 26.8 패밀리사이트 테스트
+### 26.8 v7 관리자 대시보드 인증 패턴 (2차 인증 쿠키)
+
+v7 관리자 페이지는 2단계 인증이 필요하다: (1) session_id 쿠키, (2) 대시보드 2차 인증 쿠키.
+
+```php
+// 관리자 인증 상수 정의
+if (!defined('V7_ADMIN_SESSION_ID')) {
+    define('V7_ADMIN_SESSION_ID', '090e2895f9280a7d7d6ec11d3f0ce483-186619');
+}
+if (!defined('V7_ADMIN_COOKIE_KEY')) {
+    define('V7_ADMIN_COOKIE_KEY', md5('admin-dashboard-credentials'));
+}
+if (!defined('V7_ADMIN_COOKIE_VALUE')) {
+    define('V7_ADMIN_COOKIE_VALUE', md5('Wc~8603,*'));
+}
+
+browserTest('v7 관리자 대시보드에 접근할 수 있다', function () {
+    /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
+    $page = $this->visit(V7_TEST_BASE_URL . '/admin');
+
+    // 1단계: session_id 쿠키 설정
+    $page->script("document.cookie = 'session_id=" . V7_ADMIN_SESSION_ID . "; path=/'");
+
+    // 2단계: 2차 인증 쿠키 설정
+    $page->script("document.cookie = '" . V7_ADMIN_COOKIE_KEY . "=" . V7_ADMIN_COOKIE_VALUE . "; path=/'");
+
+    // 쿠키 적용을 위해 페이지 새로고침
+    $page->navigate(V7_TEST_BASE_URL . '/admin');
+
+    // 관리자 대시보드 확인
+    $page->assertPresent('.admin-nav');
+    $page->assertSee('대시보드');
+})->group('browser', 'v7', 'admin', 'smoke');
+```
+
+### 26.9 Playwright 타임아웃 방지 — script()로 폼 제출
+
+Playwright의 `click()`/`press()`는 5초 내에 클릭 액션이 완료되지 않으면 타임아웃 에러가 발생한다.
+**폼 제출로 페이지 네비게이션이 발생하는 경우**, `script()`로 폼을 직접 제출하고 `waitForEvent('load')`로 대기해야 한다.
+
+```php
+// ❌ 잘못된 방식 — Playwright 타임아웃 발생 가능
+$page->press('인증');  // 페이지 이동 발생 시 타임아웃!
+
+// ✅ 올바른 방식 — script()로 직접 제출 + load 대기
+$page->script("document.querySelector('.admin-access-denied form').submit()");
+$page->waitForEvent('load');
+
+// 제출 후 결과 확인
+$page->assertPresent('.admin-nav');
+$page->assertSee('대시보드');
+```
+
+> **규칙**: 폼 제출 후 **같은 페이지에 머무는 경우**(AJAX 제출)는 `press()`를 사용하고,
+> **페이지가 이동/리다이렉트되는 경우**(서버 사이드 POST → redirect)는 `script("form.submit()")` + `waitForEvent('load')`를 사용한다.
+
+### 26.10 Vue.js v-model 입력값 조작 — nativeInputValueSetter 패턴
+
+Vue.js의 `v-model` 바인딩된 input에 값을 설정할 때, 단순히 `.value`를 변경하면 Vue가 감지하지 못한다.
+**nativeInputValueSetter + input 이벤트 dispatch** 패턴을 사용해야 한다.
+
+```php
+$testVersion = '99.0.' . (time() % 1000);
+$page->script(
+    "(() => {" .
+    "  var input = document.querySelector('input[placeholder=\"예: 2.0.16\"]');" .
+    "  var nativeInputValueSetter = Object.getOwnPropertyDescriptor(" .
+    "    window.HTMLInputElement.prototype, 'value').set;" .
+    "  nativeInputValueSetter.call(input, '{$testVersion}');" .
+    "  input.dispatchEvent(new Event('input', { bubbles: true }));" .
+    "})()"
+);
+```
+
+> **핵심**: `Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set`을 사용하면
+> Vue.js의 getter/setter 프록시를 우회하여 네이티브 value를 설정하고, `input` 이벤트를 dispatch하여 Vue가 변경을 감지하게 한다.
+
+### 26.11 Vue.js v-model DOM 속성 — placeholder 셀렉터 사용
+
+Vue.js는 `v-model` 디렉티브를 컴파일 시 DOM에서 제거한다.
+따라서 `document.querySelector('input[v-model="settings.xxx"]')`는 **항상 null을 반환**한다.
+
+```php
+// ❌ 잘못된 방식 — v-model은 DOM 속성이 아님 (항상 null 반환)
+$page->script("document.querySelector('input[v-model=\"settings.app_version_android\"]').value");
+
+// ✅ 올바른 방식 — placeholder, class, id 등 실제 DOM 속성으로 선택
+$page->script("document.querySelector('input[placeholder=\"예: 2.0.16\"]').value");
+```
+
+| 셀렉터 | 사용 가능 여부 | 설명 |
+|--------|---------------|------|
+| `input[v-model="..."]` | ❌ 사용 불가 | Vue.js가 컴파일 시 제거 |
+| `input[placeholder="..."]` | ✅ 사용 가능 | HTML 표준 속성 유지 |
+| `input[type="text"]` | ✅ 사용 가능 | HTML 표준 속성 유지 |
+| `input.class-name` | ✅ 사용 가능 | CSS 클래스로 선택 |
+| `#element-id` | ✅ 사용 가능 | ID 셀렉터 |
+
+### 26.12 script() 메서드의 return 키워드 주의사항
+
+PEST의 `script()` 메서드는 Playwright의 `page.evaluate()`를 내부 호출한다.
+**Playwright evaluate에서는 최상위 `return`을 사용하지 않고, 마지막 표현식의 값이 자동 반환된다.**
+
+```php
+// ❌ 잘못된 방식 — SyntaxError: Illegal return statement
+$title = $page->script("return document.title");
+
+// ✅ 올바른 방식 — 표현식 값이 자동 반환됨
+$title = $page->script("document.title");
+$value = $page->script("document.querySelector('#input').value");
+$count = $page->script("document.querySelectorAll('.item').length");
+```
+
+### 26.13 패밀리사이트 테스트
 
 ```php
 test('패밀리사이트 홈페이지 접근', function () {

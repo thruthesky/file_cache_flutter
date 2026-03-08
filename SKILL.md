@@ -596,10 +596,12 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 PEST v4 Browser Plugin + Playwright 기반 브라우저 E2E 테스트의 완벽 가이드이다.
 `tests/Browser/*.php` 파일에서 실제 브라우저(Chromium/Firefox/Safari)를 실행하여
-페이지 방문(`visit()`), 요소 클릭(`click()`), 텍스트 입력(`type()`), 폼 조작(`select()`, `check()`),
+페이지 방문(`visit()`), 요소 클릭(`click()`), 텍스트 입력(`type()`/`fill()`), 폼 조작(`select()`, `check()`),
 60+ assertion 메서드(`assertSee()`, `assertPresent()`, `assertUrlIs()`, `assertNoSmoke()` 등),
 스크린샷 캡처(`screenshot()`), 디바이스 에뮬레이션(`on()->mobile()`), 디버깅(`debug()`, `waitForKey()`)을
 수행하는 방법을 설명한다. 필고 프로젝트 전용 패턴(v6/v7 URL, 그룹 태깅, 로그인 테스트, 패밀리사이트 테스트),
+v7 관리자 대시보드 2차 인증 쿠키 패턴, Playwright 타임아웃 방지 폼 제출(`script()` + `waitForEvent('load')`),
+Vue.js v-model 입력값 조작(nativeInputValueSetter), `script()`의 return 키워드 주의사항,
 `Pest.php` 전역 설정, CI/CD GitHub Actions 설정도 포함한다.
 **브라우저 테스트 작성 시 반드시 이 문서를 참조한다.**
 
@@ -609,9 +611,9 @@ PEST v4 Browser Plugin + Playwright 기반 브라우저 E2E 테스트의 완벽 
 
 | 규칙 | 설명 |
 |------|------|
+| **`browserTest()` 래퍼 필수** | `test()` 대신 `browserTest()` 래퍼 함수 사용 — P1006 완전 해결 (`tests/Pest.php`에 정의) |
 | **`$this->visit()` 타입 힌트 필수** | `/** @var \Pest\Browser\Api\PendingAwaitablePage $page */` 반드시 추가 |
-| **`test()->group()` P1006** | PEST 프레임워크 타입 한계로 경고 표시됨 — 런타임 정상 동작, 무시 가능 |
-| **`test()` 변수 할당 금지** | `$test = test(...)` 하면 테스트 미등록됨 — 반드시 `test()->group()` 체이닝 사용 |
+| **`test()` 직접 사용 금지** | `test()->group()` 대신 `browserTest()->group()` 체이닝 사용 — P1006 에러 방지 |
 | **`@noinspection` 필수** | 파일 상단에 `PhpUndefinedMethodInspection`, `PhpUndefinedFunctionInspection` 추가 |
 
 > **상세 규칙**: → [v7-pest-browser-test.md](references/v7-pest-browser-test.md) 26.6절
