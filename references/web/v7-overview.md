@@ -288,8 +288,71 @@ docker restart nginx
 | `/user/login` | `/user/login` | `./v7/user/login.php` |
 | `/post/list` | `/post/list` | `./v7/post/list.php` |
 | `/post/view` | `/post/view` | `./v7/post/view.php` |
+| `/post/list.php` | `/post/list` | `./v7/post/list.php` (v6 호환) |
+| `/post/view.php` | `/post/view` | `./v7/post/view.php` (v6 호환) |
 | `/company/list` | `/company/list` | `./v7/company/list.php` |
 | `/없는경로` | `/없는경로` | 404 (v7/404.php 또는 기본 메시지) |
+
+### v6 URL Backward Compatibility (v6 URL 하위 호환)
+
+v7 홈페이지는 v6 URL 패턴(`/post/list.php`, `/post/view.php`)을 **100% 지원**한다.
+Google 검색엔진 등에서 v6 URL로 접속해도 v7 페이지가 정상적으로 표시된다.
+
+**지원하는 v6 URL 패턴:**
+
+| v6 URL 패턴 | v7 내부 라우팅 | 설명 |
+|-------------|---------------|------|
+| `/post/list.php?post_id=qna&category=여권/비자` | `v7/post/list.php` | 게시판 목록 |
+| `/post/view.php?idx=797646&post_id=buyandsell&page=15674` | `v7/post/view.php` | 글 읽기 |
+
+**구현 방법 (2단계):**
+
+**1단계: Nginx Rewrite 규칙** (`docker/etc/nginx/nginx.conf`)
+
+v7 서버 블록에서 `/post/list.php`와 `/post/view.php` 요청을 v7.php 프론트 컨트롤러로 전달한다.
+이 규칙이 일반 `.php` 핸들러보다 **먼저** 위치해야 한다. (Nginx는 정규식 location을 순서대로 매칭한다.)
+
+```nginx
+# v6 backward compatibility: post/*.php URL을 v7.php 프론트 컨트롤러로 전달
+# Google 검색엔진 등에서 v6 URL로 접속 시 v7 페이지로 라우팅한다.
+# 예: /post/list.php?post_id=qna&category=여권/비자 → v7.php
+# 예: /post/view.php?idx=12345&post_id=buyandsell → v7.php
+# REQUEST_URI와 $_GET 파라미터는 그대로 유지된다.
+location ~ ^/post/(list|view)\.php$ {
+    rewrite ^ /v7.php last;
+}
+
+# 위 규칙이 이 일반 .php 핸들러보다 반드시 먼저 와야 한다
+location ~ \.php$ {
+    fastcgi_pass php:9000;
+    ...
+}
+```
+
+**2단계: Route.php `.php` 확장자 제거** (`v7/utils/Route.php`)
+
+`parseRequest()` 메서드에서 경로의 `.php` 확장자를 자동으로 제거한다.
+이를 통해 `/post/list.php` → `/post/list`, `/post/view.php` → `/post/view`로 변환되어
+기존 v7 라우팅 로직이 그대로 동작한다.
+
+```php
+// .php 확장자 제거 (v6 backward compatibility)
+// 예: post/view.php → post/view, post/list.php → post/list
+if (str_ends_with($this->path, '.php')) {
+    $this->path = substr($this->path, 0, -4);
+}
+```
+
+**v6/v7 파라미터 이름 통일:**
+
+v7에서는 v6와 동일한 쿼리 파라미터 이름을 사용한다:
+
+| 파라미터 | 설명 | 사용 페이지 |
+|----------|------|-------------|
+| `idx` | 글 번호 | `/post/view`, `/post/update` |
+| `post_id` | 게시판 ID | `/post/list`, `/post/view` |
+| `category` | 2차 카테고리 | `/post/list`, `/post/view` |
+| `page` | 페이지 번호 | `/post/list`, `/post/view` |
 
 ### 코드 구조
 
@@ -1026,9 +1089,9 @@ url()->post->list->buyandsell       // '/post/list?post_id=buyandsell'
 url()->post->list->golf             // '/post/list?post_id=buyandsell&category=골프'
 
 // 게시판 메서드
-url()->post->view(123)              // '/post/view?id=123'
+url()->post->view(123)              // '/post/view?idx=123'
 url()->post->create('qna')          // '/post/create?post_id=qna'
-url()->post->update(789)            // '/post/update?id=789'
+url()->post->update(789)            // '/post/update?idx=789'
 
 // 사용자
 url()->user->login                  // '/user/login'
@@ -1151,17 +1214,20 @@ Config::boardName('페소환전')     // → '페소환전' (한글은 그대로
 |------|------|
 | **파일** | `v7/post/view.php` |
 | **CSS** | `v7/post/view.css` (같은 폴더에 분리) |
-| **접속 URL** | `https://v7-local.philgo.com/post/view?id=12345` |
+| **접속 URL** | `https://v7-local.philgo.com/post/view?idx=12345` |
+| **v6 호환 URL** | `https://v7-local.philgo.com/post/view.php?idx=12345&post_id=buyandsell` |
 | **렌더링** | SSR (PHP) + CSR (Vue.js — 좋아요, 댓글 등) |
 
 ### URL 파라미터
 
+v6과 동일한 파라미터 이름을 사용한다.
+
 | 파라미터 | 설명 | 기본값 |
 |----------|------|--------|
-| `id` | 글 번호 (idx) | 필수 |
-| `list_post_id` | 목록으로 돌아갈 게시판 ID | 글의 post_id |
-| `list_category` | 목록으로 돌아갈 카테고리 | `null` |
-| `list_page` | 목록으로 돌아갈 페이지 | `1` |
+| `idx` | 글 번호 | 필수 |
+| `post_id` | 목록으로 돌아갈 게시판 ID | 글의 post_id |
+| `category` | 목록으로 돌아갈 카테고리 | `null` |
+| `page` | 목록으로 돌아갈 페이지 | `1` |
 
 ### 하단 글 목록 카테고리 필터링
 
@@ -1186,5 +1252,5 @@ $bottomResult = PostService::list([
 | 메서드 | 시그니처 | 예시 |
 |--------|----------|------|
 | `Route::postList()` | `(string $postId, ?string $category, int $page)` | `/post/list?post_id=buyandsell&category=페소환전` |
-| `Route::postView()` | `(int $id, ?string $listPostId, ?string $listCategory, int $listPage)` | `/post/view?id=123&list_post_id=buyandsell&list_category=페소환전` |
+| `Route::postView()` | `(int $idx, ?string $postId, ?string $category, int $page)` | `/post/view?idx=123&post_id=buyandsell&category=페소환전` |
 | `Route::postCreate()` | `(string $postId, ?string $category)` | `/post/create?post_id=buyandsell&category=페소환전` |

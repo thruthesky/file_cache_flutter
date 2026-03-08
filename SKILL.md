@@ -1003,9 +1003,9 @@ url()
 │   │   ├── job                   → '/post/list?category=wanted'
 │   │   ├── travel                → '/post/list?category=travel'
 │   │   └── ... (50+ 카테고리)
-│   ├── view(id)                  → '/post/view?id=123'
+│   ├── view(idx)                 → '/post/view?idx=123'
 │   ├── create(category)          → '/post/create?category=qna'
-│   ├── update(id)                → '/post/update?id=123'
+│   ├── update(idx)               → '/post/update?idx=123'
 │   └── search(query)             → '/post/search?query=...'
 ├── user (UserUrl)
 │   ├── login                     → '/user/login'
@@ -1026,7 +1026,7 @@ url()
 | `href()->home` | `url()->home` |
 | `href()->post->list->community` | `url()->post->list->community` |
 | `href()->post->list->qna` | `url()->post->list->qna` |
-| `href()->post->view($params)` | `url()->post->view($id)` |
+| `href()->post->view($params)` | `url()->post->view($idx)` |
 | `href()->user->login` | `url()->user->login` |
 | `href()->user->profile` | `url()->user->profile` |
 | `href()->company->home` | `url()->company->home` |
@@ -1083,6 +1083,26 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 
 > Chrome DevTools MCP 테스트 시 v7 페이지는 반드시 `https://v7-local.philgo.com` URL을 사용한다.
 > 예: v7 홈페이지 테스트 → `https://v7-local.philgo.com/`
+
+### v6 URL Backward Compatibility (v6 URL 하위 호환)
+
+v7 홈페이지는 v6 URL 패턴(`.php` 확장자 포함)을 **100% 지원**한다.
+Google 검색엔진, 외부 링크, 북마크 등에서 v6 URL로 접속해도 v7 페이지가 정상적으로 표시된다.
+
+**지원하는 v6 URL 패턴:**
+
+| v6 URL 패턴 | v7 내부 라우팅 | 예시 |
+|-------------|---------------|------|
+| `/post/list.php?...` | `v7/post/list.php` | `/post/list.php?post_id=qna&category=여권/비자` |
+| `/post/view.php?...` | `v7/post/view.php` | `/post/view.php?idx=797646&post_id=buyandsell&page=15674` |
+
+**구현 구조:**
+
+1. **Nginx Rewrite** (`docker/etc/nginx/nginx.conf`): `location ~ ^/post/(list|view)\.php$` 규칙으로 v7.php 프론트 컨트롤러로 전달
+2. **Route.php `.php` 확장자 제거** (`v7/utils/Route.php`): `parseRequest()`에서 `.php` 확장자를 자동 제거하여 기존 라우팅 로직으로 처리
+3. **v6와 동일한 파라미터 이름**: `idx`, `post_id`, `category`, `page` (v6과 100% 동일)
+
+> 상세 내용은 → [web/v7-overview.md](references/web/v7-overview.md) 6장 「v6 URL Backward Compatibility」 참조.
 
 ### v7 웹 홈페이지에서 사용 금지 목록
 
