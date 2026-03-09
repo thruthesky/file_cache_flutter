@@ -4,9 +4,6 @@
 [submodule "packages/font_awesome_flutter"]
 	path = packages/font_awesome_flutter
 	url = https://github.com/thruthesky/font_awesome_flutter
-[submodule ".claude/skills/philgo-skill"]
-	path = .claude/skills/philgo-skill
-	url = https://github.com/thruthesky/philgo-skill
 [submodule ".claude/skills/flutter-skill"]
 	path = .claude/skills/flutter-skill
 	url = https://github.com/thruthesky/flutter-skill
