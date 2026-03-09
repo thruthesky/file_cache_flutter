@@ -1196,7 +1196,7 @@ lib/company/
 | `company/qr-code-scanned.php` | `/company/qr-code-scanned.php?code={code}` | QR 스캔 성공 → 후기 CTA 표시 |
 | `company/re-visit-point.php` | `/company/re-visit-point.php?usage_idx={N}` | 재방문 적립 성공 → 후기 CTA 표시 |
 | `company/view.php` | `/company/view.php?idx={N}` | 업소 상세 → 후기 목록 표시 |
-| `js/v7api.js` | `/js/v7api.js` | v7api(), v7apiUpload() 헬퍼 함수 |
+| `v7/js/v7api.js` | `/v7/js/v7api.js` | v7api(), v7apiUpload() 헬퍼 함수 |
 
 ### 5.6 업소 상세 페이지 후기 표시
 
@@ -1521,7 +1521,7 @@ company/
 ├── visit-review-point.php     ← 후기 작성 폼 페이지 (Vue.js + v7api)
 └── view.php                   ← 업소 상세 페이지 (후기 목록 표시)
 
-js/v7api.js                    ← v7api(), v7apiUpload() 헬퍼 함수
+v7/js/v7api.js                    ← v7api(), v7apiUpload() 헬퍼 함수
 ```
 
 ### 상세 참조 문서

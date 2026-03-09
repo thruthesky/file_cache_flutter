@@ -1791,7 +1791,7 @@ Vue.js 앱 마운트
 
 ### 후기 JavaScript 헬퍼: v7api.js
 
-`/js/v7api.js`에 v7 시스템 전용 API 호출 함수가 정의되어 있다.
+`/v7/js/v7api.js`에 v7 시스템 전용 API 호출 함수가 정의되어 있다.
 기존 레거시 `func()` 함수 대신 사용한다.
 
 #### v7api() — API 호출
