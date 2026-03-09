@@ -1287,7 +1287,7 @@ describe('PointEventController - QR 기반 삼단콤보', function () {
 | v7 User API | `.claude/skills/v7-skill/references/api/v7-user.md` |
 | v7 Upload API | `.claude/skills/v7-skill/references/api/v7-upload.md` |
 | v7 AI 영수증 | `.claude/skills/v7-skill/references/api/v7-ai-receipt.md` |
-| v7 Docker | `.claude/skills/v7-skill/references/v7-docker.md` |
+| v7 Docker | `.claude/skills/v7-skill/references/server/v7-docker.md` |
 
 ### philgo-skill 문서
 
