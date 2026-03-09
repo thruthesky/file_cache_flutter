@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/home/home.screen.dart';
-import 'package:philgo/menu/menu.screen.dart';
+import 'package:philgo/app/app.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -11,15 +10,20 @@ final router = GoRouter(
   navigatorKey: globalNavigatorKey,
   routes: [
     GoRoute(
-      path: HomeScreen.routeName,
-      name: HomeScreen.routeName,
-      builder: (context, state) => const HomeScreen(),
+      path: AppScreen.routeName,
+      name: AppScreen.routeName,
+      builder: (context, state) => const AppScreen(),
     ),
-    GoRoute(
-      path: MenuScreen.routeName,
-      name: MenuScreen.routeName,
-      builder: (context, state) => const MenuScreen(),
-    ),
+    // GoRoute(
+    //   path: AppScreen.routeName,
+    //   name: AppScreen.routeName,
+    //   builder: (context, state) => const AppScreen(),
+    // ),
+    // GoRoute(
+    //   path: MenuScreen.routeName,
+    //   name: MenuScreen.routeName,
+    //   builder: (context, state) => const MenuScreen(),
+    // ),
     // GoRoute(
     //   path: EntryScreen.routeName,
     //   name: EntryScreen.routeName,

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/user/user.state.dart';
@@ -28,21 +29,24 @@ void main() async {
   };
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => UserState(),
-      child: const PhilGoV7Ap(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserState()),
+        ChangeNotifierProvider(create: (_) => AppNavigationState()),
+      ],
+      child: const PhilGoV7App(),
     ),
   );
 }
 
-class PhilGoV7Ap extends StatefulWidget {
-  const PhilGoV7Ap({super.key});
+class PhilGoV7App extends StatefulWidget {
+  const PhilGoV7App({super.key});
 
   @override
-  State<PhilGoV7Ap> createState() => _MyAppState();
+  State<PhilGoV7App> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<PhilGoV7Ap> {
+class _MyAppState extends State<PhilGoV7App> {
   @override
   void initState() {
     super.initState();
@@ -51,32 +55,6 @@ class _MyAppState extends State<PhilGoV7Ap> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  /// 디버깅용 테스트 실행 함수 (Debug test run function)
-  ///
-  /// 앱 시작 시 특정 화면으로 이동하여 테스트합니다.
-  /// Navigates to a specific screen for testing when app starts.
-  // ignore: unused_element
-  void _debugTestRun() {
-    // Timer(Duration(seconds: 1), showUpgradeDialog);
-    // Timer(Duration(seconds: 1), showShorebirdUpdateDialog);
-
-    /// 디버깅용: 0.5초 후 메뉴 탭으로 이동 (확인 후 제거)
-    /// For debugging: Navigate to menu tab after 0.5s (remove after verification)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // _debugNavigateToMenu(context);
-
-      /// 디버깅: ElNidoScreen 열기 (Debug: Open ElNidoScreen)
-      /// 0.5초 후 엘니도 여행 정보 화면으로 이동합니다.
-      /// Navigates to El Nido travel info screen after 0.5 seconds.
-      // Future.delayed(const Duration(milliseconds: 500), () {
-      //   if (context.mounted) {
-      //     debugPrint('[DEBUG] _debugTestRun: ElNidoScreen으로 이동합니다.');
-      //     ElNidoScreen.push(context);
-      //   }
-      // });
-    });
   }
 
   @override
