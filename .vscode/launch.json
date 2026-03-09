@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "🚀 Emulator : Dev",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "emulator-5554",
+            "args": [
+                "--dart-define=ENV=dev",
+                "--dart-define=V7_API_ENDPOINT=http://192.168.0.26/api.php",
+            ]
+        },
+        {
             "name": "🤑 JaeHo: Simulator: Dev",
             "request": "launch",
             "type": "dart",
@@ -12,7 +23,7 @@
             "deviceId": "DED2D464-68D0-46DC-893C-686999660183",
             "args": [
                 "--dart-define=ENV=dev",
-                "--dart-define=V7_API_ENDPOINT=http://127.0.0.1/api.php",
+                "--dart-define=V7_API_ENDPOINT=http://192.168.0.26/api.php",
             ]
         },
         {
