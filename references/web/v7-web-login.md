@@ -58,7 +58,7 @@ v7 웹 시스템은 **Firebase Auth + 서버 세션 쿠키** 기반의 하이브
               │              │              │
               │              │              │
     ┌─────────▼──┐   ┌──────▼──────┐   ┌──▼──────────┐
-    │  v7.php     │   │ js/v7api.js │   │ Flutter 앱   │
+    │  v7.php     │   │ v7/js/v7api.js │   │ Flutter 앱   │
     │  ↓          │   │ axios.post  │   │ v7api()     │
     │  v7/boot.php│   │ ('/api.php')│   │             │
     │  ↓          │   └──────┬──────┘   └──┬──────────┘
@@ -273,7 +273,7 @@ null
 
 ### v7api() 함수
 
-**소스 파일**: `js/v7api.js` (라인 16-43)
+**소스 파일**: `v7/js/v7api.js` (라인 16-43)
 
 ```javascript
 async function v7api(method, params = {}, options = {}) {
@@ -879,7 +879,7 @@ AuthService::setTestUser(['idx' => 123, 'firebase_uid' => 'test_uid']);
 | `lib/user/UserController.php` | 사용자 API 컨트롤러 | `socialLogin()`, `me()` |
 | `lib/utils/RequestUtils.php` | HTTP 입력 파라미터 처리 | `all()`, `get()`, `parseMethod()` |
 | `lib/utils/Db.php` | DB 연결 (PDO) | `fetch()`, `insert()`, `execute()` |
-| `js/v7api.js` | v7 API 호출 래퍼 (JavaScript) | `v7api()` |
+| `v7/js/v7api.js` | v7 API 호출 래퍼 (JavaScript) | `v7api()` |
 | `v7/user/login.php` | 로그인 UI (Vue.js + Firebase) | `loginWithGoogle()` |
 | `v7/boot.php` | v7 부팅 (PSR-4 + 설정) | — |
 | `v7/layout.php` | v7 전체 레이아웃 | — |

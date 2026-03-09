@@ -235,7 +235,7 @@ if ($path === '/admin' && $currentPath !== '/admin') $isActive = false;
 
 <!-- Axios + v7 API 호출 함수 -->
 <script defer src="https://cdn.jsdelivr.net/npm/axios@1/dist/axios.min.js"></script>
-<script defer src="/js/v7api.js"></script>
+<script defer src="/v7/js/v7api.js"></script>
 
 <!-- 관리자 공통 JS -->
 <script defer src="/v7/admin/admin.js?v=<?= CACHE_VERSION ?>"></script>

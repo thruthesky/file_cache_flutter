@@ -680,11 +680,11 @@ v7 API는 기존 `api.php`를 그대로 사용한다.
 
 > **🔴 절대 규칙: v7 API 호출 시 반드시 `v7api()` 함수를 사용해야 한다. `fetch()`로 직접 호출 금지. 🔴**
 
-`v7api()` 함수는 `/js/v7api.js`에 정의되어 있으며, 입력값 핸들링, 에러 감지, 사용자 알림(alert)을 자동으로 처리한다.
+`v7api()` 함수는 `/v7/js/v7api.js`에 정의되어 있으며, 입력값 핸들링, 에러 감지, 사용자 알림(alert)을 자동으로 처리한다.
 v7 페이지에서 이 스크립트를 로드한 후 사용한다.
 
 ```javascript
-// ✅ 올바른 방법: v7api() 함수 사용 (js/v7api.js에 정의됨)
+// ✅ 올바른 방법: v7api() 함수 사용 (v7/js/v7api.js에 정의됨)
 const result = await v7api('user.count');
 const posts = await v7api('post.list', { post_id: 'freetalk', limit: 10 });
 

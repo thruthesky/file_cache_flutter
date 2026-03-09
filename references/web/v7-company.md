@@ -55,7 +55,7 @@ v7/company/
 v7/js/
 └── company-register.js    # 등록/수정 Vue.js 앱 (~333줄)
 
-js/
+v7/js/
 └── v7api.js               # v7 API 호출 래퍼 (v7api, v7apiUpload)
 
 v7/utils/
@@ -834,7 +834,7 @@ Seo::title('업소 등록/수정 - 필고');
 
 ### 11.1 v7api() — API 호출
 
-**파일**: `js/v7api.js`
+**파일**: `v7/js/v7api.js`
 
 ```javascript
 // 내 업소 로드

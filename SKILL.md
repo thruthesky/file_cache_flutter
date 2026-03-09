@@ -851,7 +851,7 @@ include_once '../page.footer.php';
 
 ### v7api() 함수란?
 
-`/js/v7api.js`에 정의된 v7 시스템 전용 API 호출 래퍼 함수이다. 이 함수는 다음 기능을 내장하고 있다:
+`/v7/js/v7api.js`에 정의된 v7 시스템 전용 API 호출 래퍼 함수이다. 이 함수는 다음 기능을 내장하고 있다:
 
 | 내장 기능 | 설명 |
 |----------|------|
@@ -1088,7 +1088,7 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **다국어** | `t()->키` 전역 함수 | v7 자체 다국어 시스템 |
 | **레이아웃** | `page.header.php` / `page.footer.php` | `v7/layouts/` 폴더에서 자체 관리 |
 | **UI 라이브러리** | Bootstrap 5 + FontAwesome 7 | **Web Awesome Pro v3.3.1** + **Font Awesome Pro v7.2.0** |
-| **JavaScript** | jQuery + Vue.js CDN + `func()` | Vue.js 3 CDN + **`v7api()`** (`/js/v7api.js`) |
+| **JavaScript** | jQuery + Vue.js CDN + `func()` | Vue.js 3 CDN + **`v7api()`** (`/v7/js/v7api.js`) |
 
 ### 개발 환경 접속 URL
 
@@ -1131,7 +1131,7 @@ Google 검색엔진, 외부 링크, 북마크 등에서 v6 URL로 접속해도 v
 | **인증** | `login()`, `is_admin()` | `AuthService::getLoginUser()` |
 | **입력** | `in()` | `RequestUtils::all()`, `RequestUtils::get()` |
 | **다국어** | `t()->키`, `tr()` | v7 자체 다국어 시스템 |
-| **API 호출** | `func('함수명', {...})` | **`v7api('module.action', { ... })`** (`/js/v7api.js` — fetch 직접 호출 절대 금지) |
+| **API 호출** | `func('함수명', {...})` | **`v7api('module.action', { ... })`** (`/v7/js/v7api.js` — fetch 직접 호출 절대 금지) |
 | **CSS** | Bootstrap utility class | **Web Awesome Pro v3.3.1** CSS 변수 + 유틸리티 (`wa-stack`, `wa-cluster`, `wa-grid` 등) |
 | **JavaScript** | `ready()`, `firebase_ready()`, jQuery | `DOMContentLoaded`, Vue.js 3, **`v7api()`** (fetch 직접 사용 금지) |
 | **이미지 처리** | `attr_onerror_xbox()` | v7 자체 이미지 에러 처리 |
