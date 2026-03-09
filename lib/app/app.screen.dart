@@ -43,6 +43,7 @@ class _AppScreenState extends State<AppScreen> {
         selector: (_, state) => state.currentIndex,
         builder: (context, currentIndex, child) {
           return BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
             currentIndex: currentIndex,
             onTap: (index) {
               // Handle navigation based on the tapped index
