@@ -14,6 +14,7 @@
 5. [PostEntity 필드](#postentity-필드)
 6. [에러 처리](#에러-처리)
 7. [테스트](#테스트)
+8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
 
 ---
 
@@ -380,3 +381,82 @@ curl "https://local.philgo.com/api.php?method=post.get&idx=12345"
 | PostService | 11 | CRUD + 포인트 증/감 + 권한 검사 + 에러 처리 |
 | PostController | 7 | 인증/비인증 + CRUD |
 | **합계** | **36** | 115 assertions |
+
+---
+
+## 게시글 목록 관리자 기능
+
+### 개요
+
+v7 게시글 목록 페이지(`v7/post/list.php`)에는 관리자 전용 기능이 포함되어 있다.
+체크박스로 글을 선택하고, 다른 게시판으로 이동하거나, 작성자를 차단하거나, 임시 보관할 수 있다.
+v6 `widgets/post/list/post-list-tile.php`와 `widgets/post/list/post-list-footer.php`의 로직을 v7 아키텍처로 재구현한 것이다.
+
+### 파일 구조
+
+| 파일 | 설명 |
+|------|------|
+| `v7/post/list.php` | 게시글 목록 페이지 (관리자 인증 + 차단 회원 조회 포함) |
+| `v7/widgets/post/list/post-list-tile.php` | 게시글 행 위젯 (관리자 체크박스 + 차단 글 표시) |
+| `v7/widgets/post/list/post-list-footer.php` | 관리자 일괄 작업 UI (모두선택, 이동, 차단, 임시보관) |
+| `v7/admin/move-post.php` | 글 이동 관리 페이지 (Vue.js 동적 게시판/카테고리 선택) |
+
+### 관리자 인증 패턴
+
+```php
+use Philgo\Utils\AuthService;
+use V7\Utils\Config;
+
+$_v7LoginUser = AuthService::getLoginUser();
+$_isAdmin = false;
+if ($_v7LoginUser) {
+    $_isAdmin = in_array($_v7LoginUser->firebase_uid, Config::admins(), true);
+}
+```
+
+### 차단 회원 조회 패턴
+
+```php
+use Philgo\Utils\Db;
+
+$_blockedMemberIds = [];
+if ($_v7LoginUser) {
+    $stmtBlocked = Db::pdo()->prepare("SELECT idx_blockee FROM sf_member_blocks WHERE idx_blocker = ?");
+    $stmtBlocked->execute([$_v7LoginUser->idx]);
+    $_blockedMemberIds = $stmtBlocked->fetchAll(\PDO::FETCH_COLUMN, 0);
+}
+```
+
+### 관리자 일괄 작업 URL 패턴
+
+| 작업 | URL 패턴 | 설명 |
+|------|----------|------|
+| 글 이동 | `/admin/move-post?idxes=123,456` | 선택한 글을 다른 게시판으로 이동 |
+| 글 이동 + 차단 | `/admin/move-post?idxes=123,456&block=1` | 이동 + 작성자 차단 |
+| 임시 보관 | `/admin/move-post?idxes=123,456&target_post_id=temp` | 임시 보관 게시판으로 이동 |
+
+### DB 테이블 참조
+
+#### sf_member_blocks (회원 차단)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `idx` | int | PK (AUTO_INCREMENT) |
+| `idx_blocker` | int | 차단한 회원의 sf_member.idx |
+| `idx_blockee` | int | 차단된 회원의 sf_member.idx |
+| `created_at` | int | 차단 시간 (Unix timestamp) |
+
+#### sf_post_config.category
+
+카테고리 컬럼명은 `category` (단수형)이다. 줄바꿈(`\n`)으로 구분된 문자열이다.
+
+### JavaScript 주의사항
+
+- v7에서는 `ready()` 함수가 없다. `document.addEventListener('DOMContentLoaded', ...)` 사용 필수이다.
+- 전역 함수는 `window.functionName = function() {...}` 패턴으로 등록한다.
+- bfcache(브라우저 back 버튼) 대응을 위해 `pageshow` 이벤트에서 체크박스를 초기화한다.
+
+### 상세 문서
+
+관리자 일괄 작업 UI, 글 이동 페이지, Vue.js 동적 카테고리 선택, 차단 사유 옵션 등
+상세 내용은 → [v7-admin.md 18장](../web/v7-admin.md#18-게시글-목록-관리자-기능-체크박스--일괄-작업--글-이동) 참조.

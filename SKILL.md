@@ -396,10 +396,10 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 v7 관리자 대시보드 시스템(`/admin/**` 경로)의 전체 아키텍처를 상세히 문서화합니다.
 `v7/layout.php`에서 `/admin` 경로 감지 시 관리자 전용 레이아웃(`admin-layout.php`)으로 분기하며,
 `AuthService::getLoginUser()`와 `Config::admins()` Firebase UID 배열 대조로 관리자 인증을 처리합니다.
-7개 관리자 페이지(대시보드, 회원, 게시판, 글 목록, 코멘트, 업소록, 설정)의 PHP SSR 구현,
+8개 관리자 페이지(대시보드, 회원, 게시판, 글 목록, 코멘트, 업소록, 설정, **글 이동**)의 PHP SSR 구현,
 `Db::pdo()` 직접 쿼리 패턴, 검색/필터/페이지네이션 공통 코딩 패턴, `admin.css` CSS 클래스 체계(탑바·네비·통계카드·테이블·배지·버튼·페이지네이션),
-반응형 모바일 대응, `admin.js` 유틸리티 함수, DB 테이블 컬럼 참조(sf_member, sf_post_data, sf_post_config, company),
-새 관리자 페이지 추가 방법을 포함합니다.
+반응형 모바일 대응, `admin.js` 유틸리티 함수, DB 테이블 컬럼 참조(sf_member, sf_post_data, sf_post_config, sf_member_blocks, company),
+새 관리자 페이지 추가 방법, **게시글 목록 관리자 기능**(체크박스 선택, 일괄 작업 UI, 글 이동/차단/임시보관, Vue.js 동적 카테고리 선택)을 포함합니다.
 **관리자 페이지 관련 작업 시 반드시 이 문서를 참조한다.**
 
 ### 레이아웃 시스템 → [web/v7-layout.md](references/web/v7-layout.md)

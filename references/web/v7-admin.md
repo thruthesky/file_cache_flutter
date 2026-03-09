@@ -19,6 +19,7 @@
 15. [DB 테이블 참조](#15-db-테이블-참조)
 16. [공통 코딩 패턴](#16-공통-코딩-패턴)
 17. [새 관리자 페이지 추가 방법](#17-새-관리자-페이지-추가-방법)
+18. [게시글 목록 관리자 기능](#18-게시글-목록-관리자-기능-체크박스--일괄-작업--글-이동)
 
 ---
 
@@ -54,6 +55,7 @@ v7 전용 부팅(`v7/boot.php`), `Db::pdo()`, `AuthService`, Web Awesome Pro + F
 | `/admin/comments` | `v7/admin/comments.php` | 코멘트 관리 |
 | `/admin/companies` | `v7/admin/companies.php` | 업소록 관리 |
 | `/admin/settings` | `v7/admin/settings.php` | 설정 관리 |
+| `/admin/move-post` | `v7/admin/move-post.php` | 글 이동 (체크박스 선택 후 이동) |
 
 ---
 
@@ -70,7 +72,12 @@ v7/admin/
 ├── posts.php           ← 글 목록 관리 (필터 + 검색 + 페이지네이션)
 ├── comments.php        ← 코멘트 관리 (검색 + 페이지네이션)
 ├── companies.php       ← 업소록 관리 (카테고리 필터 + 검색 + 페이지네이션)
-└── settings.php        ← 설정 관리 (Config 값 읽기 전용 표시)
+├── settings.php        ← 설정 관리 (Config 값 읽기 전용 표시)
+└── move-post.php       ← 글 이동 관리 (게시판/카테고리 선택 + 차단)
+
+v7/widgets/post/list/
+├── post-list-tile.php    ← 게시글 행 위젯 (관리자 체크박스 + 차단 글 표시)
+└── post-list-footer.php  ← 관리자 일괄 작업 UI (모두선택, 이동, 차단, 임시보관)
 ```
 
 ---
@@ -942,3 +949,275 @@ $navItems = [
 4. Route 해석은 자동 — `v7/admin/logs.php`가 존재하면 `/admin/logs` URL로 접근 가능
 
 5. 이 문서 업데이트 — 새 페이지 정보를 목차와 해당 섹션에 추가
+
+---
+
+## 18. 게시글 목록 관리자 기능 (체크박스 + 일괄 작업 + 글 이동)
+
+### 개요
+
+v7 게시글 목록 페이지(`v7/post/list.php`)에서 관리자가 체크박스로 글을 선택하고,
+일괄 이동/차단/임시 보관 작업을 수행할 수 있는 기능이다.
+v6의 `widgets/post/list/post-list-tile.php`와 `widgets/post/list/post-list-footer.php`의
+로직을 v7 아키텍처로 100% 재구현한 것이다.
+
+### 파일 구조
+
+```
+v7/post/list.php                              ← 게시글 목록 페이지 (관리자 인증 + 차단 조회 포함)
+v7/widgets/post/list/post-list-tile.php       ← 게시글 행 위젯 (관리자 체크박스 포함)
+v7/widgets/post/list/post-list-footer.php     ← 관리자 일괄 작업 UI (모두선택, 이동, 차단, 임시보관)
+v7/admin/move-post.php                        ← 글 이동 관리 페이지 (Vue.js 동적 게시판/카테고리 선택)
+```
+
+### v7 관리자 인증 패턴
+
+게시글 목록 페이지에서 관리자 여부를 판별하는 표준 패턴이다.
+`AuthService::getLoginUser()`로 로그인 사용자를 가져온 후, `firebase_uid`가 `Config::admins()`에 포함되는지 확인한다.
+
+```php
+// v7/post/list.php 88~93행
+use Philgo\Utils\AuthService;
+use V7\Utils\Config;
+
+$_v7LoginUser = AuthService::getLoginUser();
+$_isAdmin = false;
+if ($_v7LoginUser) {
+    $_isAdmin = in_array($_v7LoginUser->firebase_uid, Config::admins(), true);
+}
+```
+
+### v7 차단 회원 조회 패턴
+
+로그인한 사용자가 차단한 회원 목록을 조회하여, 차단된 사용자의 글을 숨기거나 표시를 변경한다.
+
+```php
+// v7/post/list.php 94~99행
+use Philgo\Utils\Db;
+
+$_blockedMemberIds = [];
+if ($_v7LoginUser) {
+    $stmtBlocked = Db::pdo()->prepare("SELECT idx_blockee FROM sf_member_blocks WHERE idx_blocker = ?");
+    $stmtBlocked->execute([$_v7LoginUser->idx]);
+    $_blockedMemberIds = $stmtBlocked->fetchAll(\PDO::FETCH_COLUMN, 0);
+}
+```
+
+### 게시글 행 위젯 (`post-list-tile.php`)
+
+#### 필요 변수
+
+| 변수 | 타입 | 설명 |
+|------|------|------|
+| `$post` | `array` | `PostEntity->toArray()` 배열 |
+| `$postId` | `string` | 현재 게시판 ID |
+| `$category` | `string\|null` | 현재 카테고리 |
+| `$page` | `int` | 현재 페이지 번호 |
+| `$_isAdmin` | `bool` | 관리자 여부 |
+| `$_blockedMemberIds` | `array` | 차단된 회원 ID 배열 |
+
+#### 관리자 체크박스 렌더링
+
+관리자인 경우에만 제목 앞에 체크박스가 표시된다. 체크박스에는 글 번호(`value`), 게시판 ID(`data-post-id`), 카테고리(`data-category`)가 데이터 속성으로 설정된다. 링크 클릭 전파를 방지하기 위해 `event.preventDefault()`와 `event.stopPropagation()`을 사용한다.
+
+```php
+<?php if ($_isAdmin): ?>
+    <span class="form-check me-1" onclick="event.preventDefault(); event.stopPropagation();">
+        <input
+            class="form-check-input admin-post-checkbox"
+            type="checkbox"
+            value="<?= $_postIdx ?>"
+            data-post-id="<?= htmlspecialchars($post['post_id'] ?? '') ?>"
+            data-category="<?= htmlspecialchars($post['category'] ?? '') ?>"
+            onclick="event.stopPropagation();">
+    </span>
+<?php endif; ?>
+```
+
+#### 차단된 사용자 글 표시
+
+차단된 사용자의 글은 제목 대신 "차단된 사용자의 글입니다" 메시지를 표시한다.
+
+```php
+$_isBlockedPost = !empty($_blockedMemberIds) && in_array($post['idx_member'] ?? 0, $_blockedMemberIds);
+
+<?php if ($_isBlockedPost): ?>
+    <span class="text-muted">
+        <i class="fa-solid fa-ban me-1 opacity-50"></i>
+        차단된 사용자의 글입니다
+    </span>
+<?php endif; ?>
+```
+
+### 관리자 일괄 작업 UI (`post-list-footer.php`)
+
+#### 필요 변수
+
+| 변수 | 타입 | 설명 |
+|------|------|------|
+| `$_isAdmin` | `bool` | 관리자 여부 (`false`이면 즉시 `return`) |
+
+#### UI 구성
+
+관리자 전용 UI로 다음 요소를 포함한다:
+
+| 요소 | ID/클래스 | 설명 |
+|------|-----------|------|
+| 모두 선택 체크박스 | `#v7-select-all` | 전체 글 체크박스 토글 |
+| 일괄 작업 영역 | `#v7-admin-bulk-actions` | 선택 시에만 표시 (`display: none` → `block`) |
+| 선택 개수 표시 | `#v7-selected-count` | "N개 선택됨" 텍스트 |
+| 작업 선택 드롭다운 | `#v7-bulk-action-select` | 이동/차단/임시보관 선택 |
+
+#### 작업 종류
+
+| 작업 | `value` | URL 패턴 |
+|------|---------|----------|
+| 글 이동 | `move` | `/admin/move-post?idxes=123,456` |
+| 글 이동 & 차단 | `move-block` | `/admin/move-post?idxes=123,456&block=1` |
+| 임시 보관 | `temp-storage` | `/admin/move-post?idxes=123,456&target_post_id=temp` |
+
+#### JavaScript 함수
+
+| 함수 | 등록 방식 | 설명 |
+|------|-----------|------|
+| `v7ToggleAllCheckboxes(cb)` | `window.v7ToggleAllCheckboxes` | 전체 선택/해제 토글 |
+| `v7ExecuteBulkAction()` | `window.v7ExecuteBulkAction` | 선택된 작업 실행 → `move-post.php`로 이동 |
+| `v7ClearSelection()` | `window.v7ClearSelection` | 선택 초기화 |
+| `v7UpdateBulkUI()` | 내부 함수 | 선택 수 표시 및 일괄 작업 영역 표시/숨김 |
+| `v7InitSelection()` | 내부 함수 | 체크박스 초기화 (페이지 로드/back 버튼 대응) |
+
+#### JavaScript 주의사항
+
+- v7에서는 `ready()` 함수가 없다. `document.addEventListener('DOMContentLoaded', ...)` 사용 필수이다.
+- 전역 함수는 `window.functionName = function() {...}` 패턴으로 등록한다.
+- `pageshow` 이벤트로 bfcache(브라우저 back 버튼) 대응 초기화를 수행한다.
+
+### 글 이동 관리 페이지 (`move-post.php`)
+
+#### 파일 경로
+
+`v7/admin/move-post.php` — URL: `/admin/move-post`
+
+#### GET 파라미터
+
+| 파라미터 | 타입 | 설명 |
+|----------|------|------|
+| `idxes` | `string` | 콤마로 구분된 글 번호 (예: `10001,10002,10003`) |
+| `block` | `string` | `1`이면 차단 모드 (차단 사유 선택 UI 표시) |
+| `target_post_id` | `string` | `temp`이면 임시 보관 모드 |
+
+#### POST 처리 흐름
+
+1. **글 이동**: `sf_post_data` 테이블의 `post_id`와 `category`를 업데이트한다.
+2. **차단 처리**: `block_reason`이 있으면 작성자를 `sf_member_blocks` 테이블에 차단 등록한다.
+   - 이미 차단된 회원은 중복 등록하지 않는다.
+
+```php
+// 글 이동 쿼리
+$stmt = $pdo->prepare("UPDATE sf_post_data SET post_id = ?, category = ? WHERE idx IN ($placeholders)");
+
+// 차단 등록 쿼리
+$stmtBlock = $pdo->prepare(
+    "INSERT INTO sf_member_blocks (idx_blocker, idx_blockee, created_at) VALUES (?, ?, ?)"
+);
+$stmtBlock->execute([$adminIdx, (int)$memberIdx, time()]);
+```
+
+#### Vue.js 동적 카테고리 선택
+
+게시판을 선택하면 해당 게시판의 카테고리 목록이 동적으로 표시된다.
+`sf_post_config.category` 컬럼에서 줄바꿈(`\n`)으로 구분된 카테고리를 파싱하여
+PHP에서 `$boardCategories` 배열을 생성하고, JSON으로 Vue.js에 전달한다.
+
+```php
+// 게시판별 카테고리 목록 구성
+$boardRows = Db::fetchAll("SELECT post_id, category FROM sf_post_config WHERE post_id <> '' ORDER BY post_id ASC");
+$boardCategories = [];
+foreach ($boardRows as $row) {
+    $cats = [];
+    if (!empty($row['category'])) {
+        $cats = array_filter(array_map('trim', explode("\n", $row['category'])));
+    }
+    $boardCategories[$row['post_id']] = $cats;
+}
+```
+
+```javascript
+// Vue.js Options API — 동적 카테고리
+document.addEventListener('DOMContentLoaded', function() {
+    Vue.createApp({
+        data: function() {
+            return {
+                boardCategories: <?= json_encode($boardCategories) ?>,
+                selectedPostId: '',
+                selectedCategory: ''
+            };
+        },
+        computed: {
+            categories: function() {
+                return this.selectedPostId ? (this.boardCategories[this.selectedPostId] || []) : [];
+            }
+        }
+    }).mount('#move-post-app');
+});
+```
+
+#### 차단 사유 옵션
+
+차단 모드(`block=1`)일 때만 차단 사유 선택 UI가 표시된다.
+
+| 값 | 레이블 |
+|----|--------|
+| `광고 미분류` | 광고게시판 외 곳에 광고 등록 |
+| `욕설/시비/모욕` | 욕설/시비/모욕 |
+| `부적절한 내용` | 부적절한 내용 |
+| `spam` | 스팸 |
+| `abuse` | 악용 |
+| `other` | 기타 |
+
+### DB 테이블 참조
+
+#### sf_member_blocks (회원 차단)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `idx` | int | PK (AUTO_INCREMENT) |
+| `idx_blocker` | int | 차단한 회원의 sf_member.idx |
+| `idx_blockee` | int | 차단된 회원의 sf_member.idx |
+| `created_at` | int | 차단 시간 (Unix timestamp) |
+
+#### sf_post_config (게시판 설정 — 카테고리 관련)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `post_id` | varchar | 게시판 ID (PK) |
+| `category` | text | 카테고리 목록 (**단수형**, 줄바꿈 `\n`으로 구분) |
+
+> **주의**: 카테고리 컬럼명은 `category`(단수형)이다. `categories`(복수형)가 아님에 유의한다.
+
+### 전체 데이터 흐름
+
+```
+1. 사용자가 게시글 목록(v7/post/list.php) 접속
+   ↓
+2. AuthService::getLoginUser() → $_v7LoginUser
+   Config::admins()로 관리자 여부 확인 → $_isAdmin
+   sf_member_blocks 쿼리로 차단 회원 조회 → $_blockedMemberIds
+   ↓
+3. 게시글 행 위젯(post-list-tile.php)에서:
+   - $_isAdmin이면 체크박스 표시
+   - $_blockedMemberIds에 포함된 글이면 "차단된 사용자의 글입니다" 표시
+   ↓
+4. 관리자 일괄 작업 UI(post-list-footer.php)에서:
+   - 모두 선택 / 개별 선택 → v7SelectedPosts 배열 관리
+   - 작업 선택(이동/차단/임시보관) → v7ExecuteBulkAction()
+   ↓
+5. /admin/move-post?idxes=... 페이지로 이동
+   ↓
+6. 글 이동 관리 페이지(move-post.php)에서:
+   - 선택된 글 정보 표시
+   - 게시판/카테고리 선택 (Vue.js 동적 UI)
+   - 차단 모드면 차단 사유 선택
+   ↓
+7. POST 제출 → sf_post_data 업데이트 + (선택 시) sf_member_blocks 등록
+```
