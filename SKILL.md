@@ -280,7 +280,8 @@ $post = PostEntity::fromArray($row);  // ❌ array|false를 array로 전달 → 
 | `references/web/` | 웹/서버 전용 문서 | 웹서버, PHP, Vue.js, **Web Awesome Pro**, 폰트, 위젯, 레이아웃, SEO 등 웹 프론트엔드/백엔드 관련 내용만 포함 (**Bootstrap 미사용**) |
 | `references/app/` | Flutter 앱 전용 문서 | Flutter 앱 개발, Dart 코드, 앱 위젯, 앱 API 연동 등 앱 관련 내용만 포함 |
 | `references/event/` | 이벤트 시스템 문서 | 포인트 이벤트, 스피닝 휠, QR 코드 등 이벤트 관련 통합 문서 |
-| `references/` (루트) | 공통 인프라 문서 | 아키텍처, Docker, DB 스키마 등 전체 시스템 공통 문서 |
+| `references/server/` | 서버/인프라 문서 | Docker, DB, Nginx 등 서버 인프라 관련 문서 |
+| `references/` (루트) | 공통 인프라 문서 | 아키텍처, DB 스키마 등 전체 시스템 공통 문서 |
 
 > **`references/api/`** 폴더의 문서는 **웹과 앱 모두에서 사용하는 공통 API 문서**이다.
 > 특정 플랫폼(웹 또는 앱) 전용 내용은 해당 폴더(`web/` 또는 `app/`)에 작성한다.
@@ -309,7 +310,7 @@ v7 시스템의 EntityInterface, RepositoryInterface, ServiceInterface, Controll
 구현합니다. 표준 패턴 코드, 계산 필드 패턴, 런타임 속성 패턴,
 데이터 흐름, 새 모듈 추가 워크플로우 등을 포함합니다.
 
-### Docker 인프라 설정 → [v7-docker.md](references/v7-docker.md)
+### Docker 인프라 설정 → [v7-docker.md](references/server/v7-docker.md)
 
 필고 프로젝트의 Docker Compose 이중 구조(신규 v7 + 기존 v6)를 상세히 다룹니다.
 하나의 compose.yaml에서 5개 서비스(nginx, php, old_philgo_nginx, old_philgo_php, mariadb)를
@@ -321,6 +322,18 @@ PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2
 Cloudflare 터널을 통한 외부 접속(`https://local.philgo.com` — Cloudflare Tunnel + Proxied DNS 레코드로
 로컬 Docker에 접속, IUAM 모드 호환을 위해 Nginx에서 `X-Forwarded-Proto` 헤더 기반 리다이렉트 예외 처리),
 Docker 운영 명령어, Windows 환경 설정 차이점을 포함합니다.
+
+### 데이터베이스 관리 → [v7-db.md](references/server/v7-db.md)
+
+MariaDB 11.7.2 데이터베이스 접속·관리·사용 방법을 상세히 다룹니다.
+DB 접속 정보(`etc/db.config.php`, `etc/db.config.dev.php`), Docker 컨테이너에서
+`docker exec -it mariadb mysql` 명령으로 직접 접속하는 방법, 호스트에서
+`mysql -h 127.0.0.1 -P 3306` CLI 접속 방법을 포함합니다. v7 `Philgo\Utils\Db` 클래스의
+전체 메서드 레퍼런스(`fetch`, `fetchAll`, `fetchColumn`, `execute`, `insert`)와 사용 예제,
+Intelephense P1006 타입 안전성 규칙(`Db::fetch()` 반환값 `array|false` 체크 필수),
+레거시 `pdo()` 함수 및 `db_*()` 헬퍼 함수와의 비교, v7 3계층 DB 접근 패턴
+(Controller → Service → Repository → Db), 위젯에서 직접 DB 접근 금지 규칙,
+주요 테이블 목록(`sf_member`, `sf_post_data` 등), 테스트 환경 DB 설정을 포함합니다.
 
 ### Flutter 앱 전화번호 로그인 → [app/v7-app-phone-login.md](references/app/v7-app-phone-login.md)
 
