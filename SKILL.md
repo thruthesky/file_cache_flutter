@@ -388,6 +388,7 @@ JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 | **업소록 홈페이지** | [web/v7-company.md](references/web/v7-company.md) | ✅ 완료 |
 | **관리자 대시보드** | [web/v7-admin.md](references/web/v7-admin.md) | ✅ 완료 |
 | **웹 로그인 인증** | [web/v7-web-login.md](references/web/v7-web-login.md) | ✅ 완료 |
+| **검색 (Google CSE)** | [web/v7-search.md](references/web/v7-search.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 
 ### 관리자 대시보드 → [web/v7-admin.md](references/web/v7-admin.md)
@@ -456,6 +457,15 @@ v7 업소록 웹 홈페이지의 전체 구현을 상세히 다룹니다.
 CSS 3파일(`index.css`, `view.css`, `register.css`)의 핵심 코드를 포함합니다.
 
 > 웹/서버(PHP, Vue.js, Web Awesome Pro, Nginx, 폰트, 위젯, 레이아웃) 관련 문서는 모두 `references/web/` 폴더에 작성한다.
+
+### 검색 (Google CSE) → [web/v7-search.md](references/web/v7-search.md)
+
+v7 검색 기능의 전체 구현을 상세히 다룹니다.
+Google Custom Search Engine(CSE)을 사용한 검색 결과 페이지(`v7/post/search.php`), 데스크톱 헤더 검색 폼(`.v7-search-form`,
+debounce 자동 제출), 모바일 헤더 검색 링크, `Route::postSearch()` URL 헬퍼, `url()->search` / `url()->post->search()` 프로퍼티,
+검색 CSS(`v7/post/search.css`), 검색 JS(`v7/js/search.js`),
+향후 활용 가능한 FULLTEXT 검색 서비스(`SearchService`), PEST 브라우저 테스트(7개)를 포함합니다.
+**검색 관련 작업 시 반드시 이 문서를 참조한다.**
 
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
