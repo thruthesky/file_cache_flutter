@@ -16,6 +16,12 @@
 7. [테스트](#테스트)
 8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
 9. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+   - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
+   - [코멘트 HTML 구조 (SSR)](#코멘트-html-구조-ssr)
+   - [코멘트 CSS 핵심 스타일](#코멘트-css-핵심-스타일-v7postviewcss)
+   - [코멘트 모바일 반응형](#코멘트-모바일-반응형-media-max-width-640px)
+   - [빈 상태 디자인](#빈-상태-디자인)
+   - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
 
 ---
 
@@ -580,6 +586,207 @@ GET /api.php?method=post.commentList&idx_root=12345
 | 파일 | 설명 |
 |------|------|
 | `v7/post/view.php` | SSR 코멘트 렌더링 (PostService::commentList → depth 기반 들여쓰기) |
+| `v7/post/view.css` | 코멘트 영역 전용 CSS (블루 테마, 아바타, 대댓글 연결선, 반응형) |
 | `v7/js/comment.js` | Vue.js 코멘트 CRUD (v7api 호출, 답글 UI) |
 
-코멘트는 `depth` 값에 따라 CSS 클래스 `depth-1`, `depth-2`, `depth-3` 등이 적용되어 들여쓰기로 표시된다.
+코멘트는 `depth` 값에 따라 CSS 클래스 `depth-1`, `depth-2`, `depth-3`, `depth-4` 등이 적용되어 들여쓰기로 표시된다.
+
+### 코멘트 디자인 시스템
+
+#### 사용 Web Awesome Pro 컴포넌트
+
+| 컴포넌트 | 속성 | 용도 |
+|----------|------|------|
+| `wa-avatar` | `initials`, `shape="circle"` | 코멘트 작성자 이니셜을 원형 아바타로 표시. 작성자명 첫 글자를 `mb_substr($c->user_name, 0, 1)`로 추출하여 initials에 전달 |
+| `wa-relative-time` | `date`, `lang="ko"` | 절대 시간(`2024-01-15 14:30`) 대신 상대 시간(`3시간 전`)으로 표시. date에 `date('c', $c->stamp)` ISO 8601 형식 전달 |
+| `wa-badge` | `variant="brand"`, `pill` | 코멘트 섹션 타이틀에 댓글 수를 블루 배지로 표시 |
+
+#### 코멘트 HTML 구조 (SSR)
+
+```php
+<section class="post-comments-section">
+    <div class="post-comments-header">
+        <h3 class="post-comments-title">
+            <i class="fa-regular fa-comments"></i> 댓글
+            <?php if ($post->no_of_comment > 0): ?>
+                <wa-badge variant="brand" pill><?= $post->no_of_comment ?></wa-badge>
+            <?php endif; ?>
+        </h3>
+    </div>
+
+    <!-- 코멘트 작성 폼 — Vue.js -->
+    <div id="comment-create-app" data-idx-root="<?= $post->idx ?>" data-post-id="<?= htmlspecialchars($post->post_id) ?>"></div>
+
+    <!-- 코멘트 목록 (SSR) -->
+    <div class="post-comment-list" id="comment-list">
+        <?php foreach ($comments as $commentArr): ?>
+            <?php $c = PostEntity::fromArray($commentArr); ?>
+            <div class="post-comment-item depth-<?= min((int)$c->depth, 4) ?>"
+                 data-idx="<?= $c->idx ?>" data-depth="<?= $c->depth ?>">
+
+                <div class="comment-avatar">
+                    <wa-avatar initials="<?= htmlspecialchars(mb_substr($c->user_name ?: '?', 0, 1)) ?>"
+                               label="<?= htmlspecialchars($c->user_name ?: '익명') ?>"
+                               shape="circle"></wa-avatar>
+                </div>
+
+                <div class="comment-body-wrap">
+                    <div class="post-comment-header">
+                        <strong class="comment-author"><?= htmlspecialchars($c->user_name ?: '익명') ?></strong>
+                        <span class="comment-date">
+                            <wa-relative-time date="<?= date('c', $c->stamp) ?>" lang="ko"></wa-relative-time>
+                        </span>
+                    </div>
+                    <div class="post-comment-body">
+                        <?php if ($c->isBlockedOrBlinded()): ?>
+                            <span class="comment-blocked"><i class="fa-solid fa-ban"></i> 차단된 댓글입니다.</span>
+                        <?php else: ?>
+                            <?= nl2br(htmlspecialchars($c->content ?: '')) ?>
+                        <?php endif; ?>
+                    </div>
+                    <!-- 코멘트 액션 — Vue.js -->
+                    <div class="post-comment-actions" data-idx="<?= $c->idx ?>"
+                         data-idx-root="<?= $c->idx_root ?>" data-depth="<?= $c->depth ?>"></div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- 빈 상태 -->
+    <div class="post-comments-empty">
+        <i class="fa-regular fa-comment-dots"></i>
+        <p>아직 댓글이 없습니다.</p>
+        <span>첫 댓글을 남겨보세요!</span>
+    </div>
+</section>
+```
+
+#### 코멘트 CSS 핵심 스타일 (`v7/post/view.css`)
+
+**블루 테마 적용**: 코멘트 영역 전체가 v7 블루 테마를 따른다. 빨간색은 사용하지 않는다.
+
+```css
+/* 코멘트 아이템 — hover 시 배경색 변경 */
+.post-comment-item {
+    display: flex; gap: 0.65rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+.post-comment-item:hover {
+    background-color: var(--wa-color-neutral-50, #f8fafc);
+}
+
+/* 아바타 크기 — 기본 2rem, 대댓글 1.75rem */
+.comment-avatar wa-avatar { --size: 2rem; font-size: 0.75rem; }
+.post-comment-item.depth-2 .comment-avatar wa-avatar,
+.post-comment-item.depth-3 .comment-avatar wa-avatar,
+.post-comment-item.depth-4 .comment-avatar wa-avatar {
+    --size: 1.75rem; font-size: 0.7rem;
+}
+
+/* 대댓글 들여쓰기 + 좌측 연결선 (padding-left 대신 margin-left + border-left) */
+.post-comment-item.depth-2 {
+    margin-left: 1.5rem; padding-left: 1rem;
+    border-left: 2px solid var(--wa-color-brand-200, #bfdbfe);  /* 블루 연결선 */
+    border-radius: 0 8px 8px 0;
+}
+.post-comment-item.depth-3 {
+    margin-left: 3rem; padding-left: 1rem;
+    border-left: 2px solid var(--wa-color-brand-100, #dbeafe);  /* 연한 블루 */
+    border-radius: 0 8px 8px 0;
+}
+.post-comment-item.depth-4 {
+    margin-left: 4rem; padding-left: 1rem;
+    border-left: 2px solid var(--wa-color-neutral-200, #e2e8f0);  /* 뉴트럴 */
+    border-radius: 0 8px 8px 0;
+}
+
+/* 코멘트 작성 폼 — 카드 스타일 */
+.comment-create-form {
+    margin-bottom: 1.25rem; padding: 0.75rem;
+    background: var(--wa-color-neutral-50, #f8fafc);
+    border-radius: 10px;
+    border: 1px solid var(--wa-color-neutral-200, #e2e8f0);
+}
+
+/* textarea 포커스 — 블루 */
+.comment-textarea:focus {
+    border-color: var(--wa-color-brand-500, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 등록 버튼 — 블루 */
+.comment-submit-btn {
+    color: #fff;
+    background: var(--wa-color-brand-600, #2563eb);
+    border-radius: 8px;
+}
+
+/* 액션 버튼 — hover 시 블루 (삭제는 빨간색) */
+.comment-action-link:hover {
+    color: var(--wa-color-brand-600, #2563eb);
+    background: var(--wa-color-brand-50, #eff6ff);
+}
+.comment-action-danger:hover {
+    color: #dc2626 !important;
+    background: #fef2f2 !important;
+}
+
+/* 수정/대댓글 폼 — 카드 스타일 */
+.comment-edit-form, .comment-reply-form {
+    margin-top: 0.5rem; padding: 0.5rem;
+    background: var(--wa-color-neutral-50, #f8fafc);
+    border-radius: 8px;
+    border: 1px solid var(--wa-color-neutral-200, #e2e8f0);
+}
+
+/* 첨부 이미지 hover — scale(1.02) 확대 */
+.comment-image:hover { transform: scale(1.02); }
+```
+
+#### 코멘트 모바일 반응형 (`@media max-width: 640px`)
+
+| 요소 | 데스크톱 | 모바일 (640px 이하) |
+|------|---------|------------------|
+| depth-2 들여쓰기 | `margin-left: 1.5rem` | `margin-left: 0.75rem` |
+| depth-3 들여쓰기 | `margin-left: 3rem` | `margin-left: 1.25rem` |
+| depth-4 들여쓰기 | `margin-left: 4rem` | `margin-left: 1.5rem` |
+| 기본 아바타 | `--size: 2rem` | `--size: 1.75rem` |
+| 대댓글 아바타 | `--size: 1.75rem` | `--size: 1.5rem` |
+| 작성 폼 레이아웃 | 가로 (flex-row) | 세로 (flex-column) |
+| 입력 액션 위치 | textarea 옆 | textarea 아래 (우측 정렬) |
+
+#### 빈 상태 디자인
+
+댓글이 없을 때 아이콘 + 분리된 메시지 + 부가 텍스트로 친근한 빈 상태를 표시한다.
+
+```css
+.post-comments-empty {
+    padding: 2.5rem 1rem; text-align: center;
+    color: var(--wa-color-neutral-400, #94a3b8);
+}
+.post-comments-empty i {
+    font-size: 2.5rem; margin-bottom: 0.75rem; display: block;
+    color: var(--wa-color-neutral-300, #cbd5e1);
+}
+.post-comments-empty p {
+    margin: 0 0 0.25rem; font-size: 0.9rem; font-weight: 600;
+    color: var(--wa-color-neutral-500, #64748b);
+}
+.post-comments-empty span {
+    font-size: 0.8rem;
+    color: var(--wa-color-neutral-400, #94a3b8);
+}
+```
+
+#### 코멘트 디자인 수정 시 주의사항
+
+| 규칙 | 설명 |
+|------|------|
+| **블루 테마 유지** | 코멘트 영역의 모든 interactive 요소(버튼, 포커스, hover)는 `--wa-color-brand-*` 블루 변수를 사용해야 한다. 빨간색(`#7f1d1d`, `#dc2626`)은 삭제 액션에만 허용 |
+| **wa-avatar initials 필수** | 코멘트 작성자 아바타는 `wa-avatar`의 `initials` 속성으로 구현. 이미지 URL 없이 이니셜로 표시 |
+| **wa-relative-time 필수** | 코멘트 시간은 `wa-relative-time`으로 표시. `date` 속성에 ISO 8601(`date('c', $stamp)`) 전달, `lang="ko"` 필수 |
+| **depth 최대 4** | CSS depth 클래스는 `depth-1`~`depth-4`만 정의. `min((int)$c->depth, 4)`로 제한 |
+| **border-left 연결선** | 대댓글은 `padding-left` 대신 `margin-left + border-left`로 시각적 연결선 표현. depth별 색상 그라데이션 유지 |
+| **hover 효과** | 코멘트 아이템 hover 시 `neutral-50` 배경. 첨부 이미지 hover 시 `scale(1.02)` |

@@ -788,6 +788,7 @@ a:hover { text-decoration: underline; }
 - 전체 아키텍처 → [v7-overview.md](v7-overview.md)
 - 폰트 전략 → [v7-fonts.md](v7-fonts.md)
 - 반응형 SEO → [v7-seo.md](v7-seo.md)
+- **코멘트 디자인 시스템** → [v7-post.md 코멘트 디자인 시스템](../api/v7-post.md#코멘트-디자인-시스템) (wa-avatar, wa-relative-time, wa-badge 컴포넌트, 블루 테마, 대댓글 연결선, 모바일 반응형)
 
 ---
 
