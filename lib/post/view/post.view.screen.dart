@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
+import 'package:philgo/post/view/widgets/comment.list.view.dart';
 import 'package:philgo/post/view/widgets/post.action.bar.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/user/user.state.dart';
@@ -236,18 +237,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   ),
 
                   // ── 댓글 ──────────────────────────────────────────
-                  if (_commentsLoading)
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  else
-                    for (final comment in _comments)
-                      _CommentTile(
-                        comment: comment,
-                        scheme: scheme,
-                        theme: theme,
-                      ),
+                  CommentListView(
+                    comments: _comments,
+                    isLoading: _commentsLoading,
+                    noOfComment: _post.noOfComment,
+                  ),
 
                   const SizedBox(height: 32),
                 ],
@@ -300,121 +294,3 @@ class _PostViewScreenState extends State<PostViewScreen> {
         '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
-
-// ---------------------------------------------------------------------------
-// 댓글 타일 — 원글과 동일 포맷: 파일 상단 → 내용 → 액션 바
-// ---------------------------------------------------------------------------
-
-class _CommentTile extends StatefulWidget {
-  final Post comment;
-  final ColorScheme scheme;
-  final ThemeData theme;
-
-  const _CommentTile({
-    required this.comment,
-    required this.scheme,
-    required this.theme,
-  });
-
-  @override
-  State<_CommentTile> createState() => _CommentTileState();
-}
-
-class _CommentTileState extends State<_CommentTile> {
-  bool _liked = false;
-  late int _goodCount;
-
-  @override
-  void initState() {
-    super.initState();
-    _goodCount = widget.comment.good;
-  }
-
-  Future<void> _toggleLike() async {
-    try {
-      final result = await PostService.like(widget.comment.idx);
-      if (!mounted) return;
-      setState(() {
-        _liked = result.liked;
-        _goodCount = result.good;
-      });
-    } catch (_) {}
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final comment = widget.comment;
-    final scheme = widget.scheme;
-    final theme = widget.theme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 메타 (날짜)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: Row(
-            children: [
-              FaIcon(
-                FontAwesomeIcons.lightUser,
-                size: 13,
-                color: scheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                _formatDate(comment.stamp),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // 첨부 파일 (전체 너비)
-        PostViewFiles(post: comment),
-
-        // 내용
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-          child: Text(
-            comment.content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurface,
-              height: 1.5,
-            ),
-          ),
-        ),
-
-        // 액션 바 (좋아요만 — isMine은 false로 단순화, 신고/차단 표시)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: PostActionBar(
-            post: comment,
-            isMine: false,
-            liked: _liked,
-            goodCount: _goodCount,
-            onLike: _toggleLike,
-            onEdit: () {},
-            onDelete: () {},
-          ),
-        ),
-
-        Divider(
-          color: scheme.outlineVariant,
-          height: 24,
-          indent: 16,
-          endIndent: 16,
-        ),
-      ],
-    );
-  }
-
-  String _formatDate(int stamp) {
-    if (stamp == 0) return '';
-    final date = DateTime.fromMillisecondsSinceEpoch(stamp * 1000);
-    return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-}
-
