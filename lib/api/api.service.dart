@@ -86,6 +86,7 @@ class ApiService {
       debugPrint('[ApiService] v7api error — method: $method');
       debugPrint('[ApiService] error: $e');
       debugPrint('[ApiService] stackTrace: $stackTrace');
+      rethrow;
     }
   }
 
