@@ -918,15 +918,15 @@ test('이메일 비밀번호로 로그인', function () {
 
 ### 🔴 26.1 브라우저 테스트 파일 경로 — 반드시 `tests/Browser/` (절대 규칙) 🔴
 
-> **⛔ PEST Browser Plugin은 `tests/Browser/` 경로만 인식한다. `v7/tests/Browser/` 등 다른 경로에 브라우저 테스트를 배치하면 Playwright 서버가 시작되지 않아 "WebSocket client is not connected" 에러가 발생한다. ⛔**
+> **⛔ PEST Browser Plugin은 `tests/Browser/` 경로만 인식한다. 다른 경로에 브라우저 테스트를 배치하면 Playwright 서버가 시작되지 않아 "WebSocket client is not connected" 에러가 발생한다. 모든 테스트(유닛/브라우저/Feature)는 반드시 `tests/` 폴더 하위에 저장한다. ⛔**
 >
 > 이는 `vendor/pestphp/pest-plugin-browser/src/Support/BrowserTestIdentifier.php`의 `usesBrowserFolder()` 메서드가 `{rootPath}/tests/Browser/` 경로를 하드코딩으로 체크하기 때문이다.
 
 | 규칙 | 설명 |
 |------|------|
 | **✅ 브라우저 테스트** | `tests/Browser/*.php` — 반드시 이 경로에 배치 |
-| **✅ 유닛 테스트** | `v7/tests/*.php` 또는 `tests/Unit/*.php` — 경로 자유 |
-| **❌ 금지** | `v7/tests/Browser/*.php` — Playwright 미시작으로 에러 발생 |
+| **✅ 유닛 테스트** | `tests/Unit/*.php` — 모든 유닛 테스트는 이 경로에 배치 |
+| **❌ 금지** | `v7/tests/` — 더 이상 사용하지 않음. 모든 테스트는 `tests/`에 통합 |
 | **v7 구분** | `->group('v7')` 태그로 v7 테스트를 구분하여 `--group=v7`로 실행 |
 
 ```
@@ -941,11 +941,10 @@ tests/
 │   ├── CompanyRegisterTest.php  ← v7 업소록 등록 테스트
 │   ├── LoginTest.php            ← v7 로그인 페이지 테스트
 │   └── Screenshots/             ← 스크린샷 저장 (.gitignore)
-├── Unit/                        ← PEST 유닛 테스트
-└── ...
-v7/tests/
-├── UrlTest.php                  ← v7 URL 유틸리티 유닛 테스트
-└── ...                          ← v7 유닛 테스트 (브라우저 테스트 금지)
+├── Unit/                        ← PEST 유닛 테스트 (v7 포함 모든 유닛 테스트 통합)
+│   ├── UrlTest.php              ← v7 URL 유틸리티 유닛 테스트
+│   └── ...
+└── Feature/                     ← Feature 테스트
 ```
 
 ### 26.1.1 v7 레이아웃 CSS 선택자 (테스트용)

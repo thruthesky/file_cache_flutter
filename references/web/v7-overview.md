@@ -1113,7 +1113,7 @@ url()->company->view(99)            // '/company/view?idx=99'
 ### 테스트
 
 ```bash
-./vendor/bin/pest v7/tests/UrlTest.php
+./vendor/bin/pest tests/Unit/UrlTest.php
 ```
 
 ---

@@ -1116,7 +1116,7 @@ url()
 |------|------|
 | `v7/utils/Url.php` | Url 클래스 + url() 전역 함수 정의 |
 | `v7/boot.php` | Url.php를 자동 require (url() 함수를 즉시 사용 가능) |
-| `v7/tests/UrlTest.php` | PEST 유닛 테스트 |
+| `tests/Unit/UrlTest.php` | PEST 유닛 테스트 |
 
 ---
 
