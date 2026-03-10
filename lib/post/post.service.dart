@@ -1,6 +1,59 @@
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/app.config.dart';
 
 import 'post.model.dart';
+
+// ---------------------------------------------------------------------------
+// 미디어 타입 판별 유틸리티 (display_thumbnail.dart 와 post view 에서 공유)
+// ---------------------------------------------------------------------------
+
+enum MediaType { image, video, youtube, unknown }
+
+MediaType getMediaType(String? url) {
+  if (url == null || url.isEmpty) return MediaType.unknown;
+  final lower = url.toLowerCase();
+
+  if (lower.contains('youtube.com') || lower.contains('youtu.be')) {
+    return MediaType.youtube;
+  }
+
+  final path = Uri.tryParse(url)?.path.toLowerCase() ?? lower;
+
+  if (path.endsWith('.mp4') ||
+      path.endsWith('.mov') ||
+      path.endsWith('.avi') ||
+      path.endsWith('.mkv') ||
+      path.endsWith('.webm')) {
+    return MediaType.video;
+  }
+
+  if (path.endsWith('.jpg') ||
+      path.endsWith('.jpeg') ||
+      path.endsWith('.png') ||
+      path.endsWith('.gif') ||
+      path.endsWith('.webp') ||
+      path.endsWith('.bmp') ||
+      path.endsWith('.svg') ||
+      path.endsWith('.avif')) {
+    return MediaType.image;
+  }
+
+  return MediaType.unknown;
+}
+
+/// YouTube URL 에서 비디오 ID 추출
+String? getYouTubeVideoId(String url) {
+  final uri = Uri.tryParse(url);
+  if (uri == null) return null;
+  if (uri.host.contains('youtu.be')) return uri.pathSegments.firstOrNull;
+  return uri.queryParameters['v'];
+}
+
+/// 상대 URL → 절대 URL 변환
+String toAbsoluteUrl(String url) {
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return '$v7BaseUrl$url';
+}
 
 /// v7 Post API 서비스
 ///

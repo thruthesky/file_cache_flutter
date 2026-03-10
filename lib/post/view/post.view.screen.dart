@@ -2,8 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/app.config.dart';
-import 'package:philgo/post/list/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
@@ -12,9 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 게시글 상세 보기 화면
-///
-/// v6 PostViewScreen의 핵심 로직을 v7에 적용.
-/// CustomScrollView + Sliver 기반 레이아웃.
 class PostViewScreen extends StatefulWidget {
   final Post post;
 
@@ -37,7 +32,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     _loadFullPost();
   }
 
-  /// 서버에서 최신 게시글 데이터 로드 (조회수 증가 포함)
   Future<void> _loadFullPost() async {
     try {
       final fullPost = await PostService.get(_post.idx);
@@ -55,12 +49,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
-  /// 게시글 수정 화면 열기
   Future<void> _editPost() async {
     final result = await Navigator.of(context).push<Post>(
       MaterialPageRoute(builder: (_) => PostUpdateScreen(post: _post)),
     );
-
     if (result != null && mounted) {
       setState(() {
         _post = result;
@@ -69,7 +61,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
-  /// 게시글 삭제
   Future<void> _deletePost() async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -89,7 +80,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
         ],
       ),
     );
-
     if (confirm != true) return;
 
     try {
@@ -121,56 +111,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
         backgroundColor: scheme.surface,
         body: CustomScrollView(
           slivers: [
-            // 앱바 — 제목 대신 popup 메뉴로 카테고리 선택, isMine이면 수정/삭제 표시
             SliverAppBar(
               pinned: true,
               backgroundColor: scheme.surface,
               foregroundColor: scheme.onSurface,
               elevation: 0,
               scrolledUnderElevation: 1,
-              title: _CategoryPopup(post: _post),
-              actions: [
-                if (isMine)
-                  PopupMenuButton<String>(
-                    icon: FaIcon(
-                      FontAwesomeIcons.lightEllipsisVertical,
-                      size: 18,
-                      color: scheme.onSurfaceVariant,
-                    ),
-                    onSelected: (value) {
-                      if (value == 'edit') _editPost();
-                      if (value == 'delete') _deletePost();
-                    },
-                    itemBuilder: (_) => [
-                      PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.lightPenToSquare,
-                                size: 16, color: scheme.onSurface),
-                            const SizedBox(width: 10),
-                            const Text('수정'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.lightTrashCan,
-                                size: 16, color: scheme.error),
-                            const SizedBox(width: 10),
-                            Text('삭제',
-                                style: TextStyle(color: scheme.error)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-              ],
             ),
 
-            // 본문
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -187,14 +135,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    // 메타 정보 (작성자, 날짜)
+                    // 메타 정보 (날짜, 카테고리)
                     _buildMeta(theme, scheme),
                     const SizedBox(height: 16),
 
                     Divider(color: scheme.outlineVariant),
                     const SizedBox(height: 16),
 
-                    // 본문 이미지 (있으면)
+                    // 대표 이미지
                     if (_post.imageUrl != null &&
                         _post.imageUrl!.isNotEmpty) ...[
                       ClipRRect(
@@ -207,8 +155,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             height: 200,
                             color: scheme.surfaceContainerHigh,
                             child: const Center(
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2)),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           ),
                           errorWidget: (_, _, _) => const SizedBox.shrink(),
                         ),
@@ -216,7 +164,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       const SizedBox(height: 16),
                     ],
 
-                    // 본문 내용
+                    // 본문
                     if (_isLoading)
                       const Center(child: CircularProgressIndicator())
                     else if (_error != null)
@@ -242,10 +190,20 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         },
                       ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
-                    // 첨부 파일 (이미지/비디오/유튜브)
-                    PostFilesWidget(post: _post, scheme: scheme),
+                    // 첨부 파일
+                    PostViewFiles(post: _post, scheme: scheme),
+
+                    const SizedBox(height: 8),
+
+                    // 액션 버튼
+                    PostActionButtons(
+                      post: _post,
+                      isMine: isMine,
+                      onEdit: _editPost,
+                      onDelete: _deletePost,
+                    ),
                   ],
                 ),
               ),
@@ -256,21 +214,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  /// 메타 정보 (날짜, 카테고리)
   Widget _buildMeta(ThemeData theme, ColorScheme scheme) {
     return Row(
       children: [
-        // 날짜
         FaIcon(FontAwesomeIcons.lightClock,
             size: 14, color: scheme.onSurfaceVariant),
         const SizedBox(width: 6),
         Text(
           _formatFullDate(_post.stamp),
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
-          ),
+          style: theme.textTheme.bodySmall
+              ?.copyWith(color: scheme.onSurfaceVariant),
         ),
-        // 카테고리
         if (_post.category.isNotEmpty) ...[
           const SizedBox(width: 16),
           FaIcon(FontAwesomeIcons.lightTag,
@@ -278,16 +232,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
           const SizedBox(width: 6),
           Text(
             _post.category,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant,
-            ),
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],
       ],
     );
   }
 
-  /// Unix timestamp → 전체 날짜 문자열
   String _formatFullDate(int stamp) {
     if (stamp == 0) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(stamp * 1000);
@@ -296,70 +248,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 }
 
-/// AppBar 제목 영역에 표시되는 카테고리 팝업 선택 위젯
-class _CategoryPopup extends StatelessWidget {
-  final Post post;
+// ---------------------------------------------------------------------------
+// PostViewFiles
+// ---------------------------------------------------------------------------
 
-  const _CategoryPopup({required this.post});
-
-  String get _label {
-    // postId + category로 현재 카테고리 라벨 찾기
-    for (final cat in forumCategories) {
-      final (postId, category, label) = cat;
-      if (postId == post.postId &&
-          (category == null ? post.category.isEmpty : category == post.category)) {
-        return label;
-      }
-    }
-    // 못 찾으면 postId 표시
-    return post.postId;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => _showPicker(context),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            _label,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(width: 4),
-          FaIcon(FontAwesomeIcons.lightChevronDown,
-              size: 14, color: scheme.onSurfaceVariant),
-        ],
-      ),
-    );
-  }
-
-  void _showPicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => ListView(
-        children: [
-          for (final cat in forumCategories)
-            ListTile(
-              title: Text(cat.$3),
-              onTap: () => Navigator.pop(ctx),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 게시글 첨부 파일(이미지/비디오/유튜브) 표시 위젯
-///
-/// [DisplayThumbnail]과 동일한 미디어 타입 판별 로직을 사용한다.
-class PostFilesWidget extends StatelessWidget {
+/// 게시글 첨부 파일(이미지/비디오/유튜브)을 전체 너비로 세로 나열하는 위젯
+class PostViewFiles extends StatelessWidget {
   final Post post;
   final ColorScheme scheme;
 
-  const PostFilesWidget({super.key, required this.post, required this.scheme});
+  const PostViewFiles({super.key, required this.post, required this.scheme});
 
   List<String> get _urls {
     final urls = <String>[];
@@ -372,43 +270,229 @@ class PostFilesWidget extends StatelessWidget {
     return urls;
   }
 
-  String _toAbsolute(String url) {
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return '$v7BaseUrl$url';
-  }
-
   @override
   Widget build(BuildContext context) {
     final urls = _urls;
     if (urls.isEmpty) return const SizedBox.shrink();
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final url in urls)
-              GestureDetector(
-                onTap: () => _openUrl(context, _toAbsolute(url)),
-                child: DisplayThumbnail(
-                  url: url,
-                  scheme: scheme,
-                  size: 100,
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 16),
+        for (final url in urls) _buildMediaItem(toAbsoluteUrl(url)),
       ],
     );
   }
 
-  Future<void> _openUrl(BuildContext context, String url) async {
-    final uri = Uri.tryParse(url);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+  Widget _buildMediaItem(String absoluteUrl) {
+    final type = getMediaType(absoluteUrl);
+
+    switch (type) {
+      case MediaType.image:
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: CachedNetworkImage(
+              imageUrl: absoluteUrl,
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              placeholder: (_, _) => Container(
+                height: 200,
+                color: scheme.surfaceContainerHigh,
+                child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2)),
+              ),
+              errorWidget: (_, _, _) => const SizedBox.shrink(),
+            ),
+          ),
+        );
+
+      case MediaType.youtube:
+        final videoId = getYouTubeVideoId(absoluteUrl);
+        final thumbUrl = videoId != null
+            ? 'https://img.youtube.com/vi/$videoId/hqdefault.jpg'
+            : null;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (thumbUrl != null)
+                  CachedNetworkImage(
+                    imageUrl: thumbUrl,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
+                    placeholder: (_, _) => Container(
+                      height: 200,
+                      color: scheme.surfaceContainerHigh,
+                    ),
+                    errorWidget: (_, _, _) => Container(
+                      height: 200,
+                      color: scheme.surfaceContainerHigh,
+                    ),
+                  )
+                else
+                  Container(
+                    height: 200,
+                    color: scheme.surfaceContainerHigh,
+                  ),
+                Container(
+                  width: double.infinity,
+                  height: 200,
+                  color: Colors.black38,
+                ),
+                FaIcon(FontAwesomeIcons.youtube, size: 56, color: Colors.red),
+              ],
+            ),
+          ),
+        );
+
+      case MediaType.video:
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              height: 200,
+              color: scheme.surfaceContainerHigh,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.circlePlay,
+                  size: 56,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ),
+        );
+
+      case MediaType.unknown:
+        return const SizedBox.shrink();
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// PostActionButtons
+// ---------------------------------------------------------------------------
+
+/// 게시글 하단 액션 버튼 행
+///
+/// 좌측: 좋아요 · 댓글
+/// 우측(isMine): 수정 · 삭제 / 내 글이 아닌 경우: 신고 · 차단
+class PostActionButtons extends StatelessWidget {
+  final Post post;
+  final bool isMine;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const PostActionButtons({
+    super.key,
+    required this.post,
+    required this.isMine,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        // 좋아요
+        _ActionBtn(
+          icon: FontAwesomeIcons.lightThumbsUp,
+          label: '${post.good > 0 ? post.good : ''}',
+          color: scheme.onSurfaceVariant,
+          onTap: () {},
+        ),
+        const SizedBox(width: 8),
+        // 댓글
+        _ActionBtn(
+          icon: FontAwesomeIcons.lightComment,
+          label: '${post.noOfComment > 0 ? post.noOfComment : ''}',
+          color: scheme.onSurfaceVariant,
+          onTap: () {},
+        ),
+
+        const Spacer(),
+
+        if (isMine) ...[
+          // 수정
+          _ActionBtn(
+            icon: FontAwesomeIcons.lightPenToSquare,
+            label: '수정',
+            color: scheme.onSurfaceVariant,
+            onTap: onEdit,
+          ),
+          const SizedBox(width: 8),
+          // 삭제
+          _ActionBtn(
+            icon: FontAwesomeIcons.lightTrashCan,
+            label: '삭제',
+            color: scheme.error,
+            onTap: onDelete,
+          ),
+        ] else ...[
+          // 신고
+          _ActionBtn(
+            icon: FontAwesomeIcons.lightFlag,
+            label: '신고',
+            color: scheme.onSurfaceVariant,
+            onTap: () {},
+          ),
+          const SizedBox(width: 8),
+          // 차단
+          _ActionBtn(
+            icon: FontAwesomeIcons.lightBan,
+            label: '차단',
+            color: scheme.onSurfaceVariant,
+            onTap: () {},
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _ActionBtn extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ActionBtn({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FaIcon(icon, size: 16, color: color),
+            if (label.isNotEmpty) ...[
+              const SizedBox(width: 5),
+              Text(label,
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium
+                      ?.copyWith(color: color)),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }
