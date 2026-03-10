@@ -107,6 +107,7 @@ v7 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택�
 10. **에러 처리**: try/catch로 예외를 캐치하여 `{success: false, message: "에러 메시지"}` 형식으로 응답. 성공 시 `{success: true}` 추가 없이 Controller 리턴값 그대로 출력.
 11. **⚠️ API 테스트 필수**: 모든 API endpoint는 반드시 **PEST Unit Test**로 테스트한다.
 12. **레거시 AllowedFunctions**: 기존 `AllowedFunctions` 클래스는 레거시로 유지하되, 새 코드는 Controller 방식 사용
+13. **위젯 DB 접근 금지**: v7 위젯(`v7/widgets/**/*.php`)에서 `Db::` 클래스를 직접 사용하지 않는다. 모든 DB 접근은 Service → Repository → Db 3계층을 통해야 한다. 필요한 Service 메서드가 없으면 Repository → Service 순으로 새 메서드를 추가한 후 위젯에서 호출한다.
 
 ---
 
@@ -1012,7 +1013,61 @@ $stmt = pdo()->prepare("DELETE FROM " . POST_TABLE . " WHERE idx = :idx");
 $stmt->execute(['idx' => $idx]);
 ```
 
-### 10.3 금지 패턴
+### 10.3 Db 헬퍼 메서드 (1줄 패턴)
+
+`Philgo\Utils\Db` 클래스는 반복적인 3줄 패턴(`prepare → execute → fetch`)을 1줄로 줄이는
+헬퍼 메서드를 제공한다. **새 코드 작성 시 헬퍼 메서드를 우선 사용**한다.
+
+```php
+use Philgo\Utils\Db;
+
+// 단일 행 조회 (기본 PDO::FETCH_ASSOC)
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [$idx]);
+$user = Db::fetch("SELECT * FROM sf_member WHERE firebase_uid = :uid", ['uid' => $uid]);
+
+// 다중 행 조회 (기본 PDO::FETCH_ASSOC)
+$rows = Db::fetchAll("SELECT * FROM sf_post_data WHERE post_id = ? LIMIT 10", ['freetalk']);
+
+// 단일 컬럼 값 (COUNT, MAX 등 스칼라 쿼리)
+$count = Db::fetchColumn("SELECT COUNT(*) FROM sf_member");
+$name = Db::fetchColumn("SELECT name FROM sf_member WHERE idx = ?", [123]);
+
+// INSERT/UPDATE/DELETE (PDOStatement 반환 — rowCount() 접근 가능)
+Db::execute("UPDATE sf_member SET name = ? WHERE idx = ?", ['홍길동', 123]);
+$stmt = Db::execute("DELETE FROM sf_member WHERE idx = ?", [999]);
+$affected = $stmt->rowCount();
+
+// INSERT 후 lastInsertId 정수 반환
+$newIdx = Db::insert(
+    "INSERT INTO sf_member (id, nickname, stamp) VALUES (?, ?, ?)",
+    ['user123', '홍길동', time()]
+);
+```
+
+#### 메서드 시그니처
+
+| 메서드 | 반환 타입 | 용도 |
+|--------|----------|------|
+| `Db::fetch(string $sql, array $params = [], int $fetchMode = PDO::FETCH_ASSOC)` | `array\|false` | 단일 행 조회, 결과 없으면 `false` |
+| `Db::fetchAll(string $sql, array $params = [], int $fetchMode = PDO::FETCH_ASSOC)` | `array` | 다중 행 조회, 결과 없으면 빈 배열 |
+| `Db::fetchColumn(string $sql, array $params = [], int $column = 0)` | `mixed` | 단일 컬럼 값, 결과 없으면 `false` |
+| `Db::execute(string $sql, array $params = [])` | `PDOStatement` | INSERT/UPDATE/DELETE 실행 |
+| `Db::insert(string $sql, array $params = [])` | `int` | INSERT 후 `lastInsertId` 정수 반환 |
+
+#### 헬퍼로 변환하면 안 되는 패턴
+
+`bindValue()`로 `PDO::PARAM_INT`를 명시해야 하는 LIMIT/OFFSET 쿼리는 기존 `prepare()` 패턴을 유지한다:
+
+```php
+// ❌ 헬퍼로 변환 불가 — bindValue 필요
+$stmt = Db::prepare($sql);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute($params);
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+```
+
+### 10.4 금지 패턴
 
 ```php
 // ❌ 기존 db_ 헬퍼 함수 사용 금지
@@ -1028,7 +1083,7 @@ $stmt = pdo()->prepare("SELECT * FROM table WHERE idx = :idx");
 $stmt->execute(['idx' => $idx]);
 ```
 
-### 10.4 주요 테이블 상수
+### 10.5 주요 테이블 상수
 
 ```php
 POST_TABLE         // 게시글 테이블
@@ -1134,6 +1189,8 @@ describe('get_latest_posts() API', function () {
 ```
 
 ### 11.4 PEST 브라우저 테스트 패턴
+
+> **상세 가이드**: → [v7-pest-browser-test.md](v7-pest-browser-test.md) 참조 (60+ assertion, 디바이스 에뮬레이션, 필고 전용 패턴 등)
 
 **파일**: `tests/Browser/*.php`
 

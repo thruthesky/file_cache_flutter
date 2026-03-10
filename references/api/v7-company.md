@@ -676,7 +676,55 @@ GET https://local.philgo.com/api.php?method=company.info&idx=1025
 ```
 
 **인증 불필요**.
-**출력**: `{ company: {...}, owner: {idx, nickname, name, photo_url, created_at} }`
+**출력**: `{ company: {...}, owner: {idx, nickname, name, photo_url} }`
+
+> **주의**: `sf_member` 테이블에는 `created_at` 컬럼이 없다 (`stamp` 컬럼 사용).
+> owner 쿼리에서 `created_at`을 SELECT하면 `Column not found: 1054` 에러가 발생한다.
+> 따라서 owner 쿼리는 `SELECT idx, nickname, name, photo_url FROM sf_member WHERE idx = :idx`로 작성해야 한다.
+
+### 11.12 company.list — page 파라미터 지원
+
+`CompanyService::list()`는 `page` 파라미터를 통한 페이지 기반 조회를 지원한다.
+내부적으로 `offset = (page - 1) * limit`으로 변환하여 `CompanyRepository::findAll()`에 전달한다.
+
+```
+GET https://local.philgo.com/api.php?method=company.list&status=a&category=food&page=2&limit=20
+```
+
+**입력**:
+- `page`: 페이지 번호 (기본: 1)
+- `limit`: 페이지 크기 (기본: 100)
+
+**출력**:
+```json
+{
+  "items": [...],
+  "total": 150,
+  "page": 2,
+  "limit": 20
+}
+```
+
+### 11.13 v7 웹 홈페이지 연동
+
+v7 웹 홈페이지에서 업소록 API를 사용하는 방법은 → [web/v7-company.md](../web/v7-company.md) 참조.
+
+**SSR 페이지** (목록/상세):
+```php
+// 목록: CompanyService::list() 직접 호출
+$result = CompanyService::list(['category' => $category, 'status' => 'a', 'page' => $page, 'limit' => 20]);
+
+// 상세: CompanyService::info() 직접 호출
+$info = CompanyService::info(['idx' => $idx]);
+```
+
+**CSR 페이지** (등록/수정 — Vue.js):
+```javascript
+// v7api() 함수 사용 (fetch/axios 직접 호출 금지)
+var data = await v7api('company.mine', {}, { alertOnError: false });
+var data = await v7api('company.update', { name: '업소명', ... });
+var data = await v7apiUpload(file, 'company', 'logo');
+```
 
 ---
 

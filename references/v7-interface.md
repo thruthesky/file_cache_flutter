@@ -582,15 +582,16 @@ UploadRepository:
 
 | 작업 | 표준 메서드명 | 입력 | 리턴 |
 |------|-------------|------|------|
-| 단건 조회 | `get(array $input)` | `array $input` | `array` |
+| 단건 조회 | `get(array $input)` | `array $input` | `array\|Entity` |
 | 목록 조회 | `list(array $input)` | `array $input` | `array` (`['items' => [], 'total' => int, 'page' => int, 'limit' => int]`) |
-| 생성 | `create(array $input)` | `array $input` | `array` |
-| 수정 | `update(array $input)` | `array $input` | `array` |
+| 생성 | `create(array $input)` | `array $input` | `array\|Entity` |
+| 수정 | `update(array $input)` | `array $input` | `array\|Entity` |
 | 삭제 | `delete(array $input)` | `array $input` | `array` (`['deleted' => bool]`) |
 
 **규칙**:
 - 모든 메서드는 `public static`으로 선언한다 (ServiceInterface 강제)
-- 모든 메서드의 반환 타입은 `array`로 통일한다 (Entity가 아닌 배열)
+- 반환 타입은 `array|EntityInterface`이다. **단건 결과(create, get, update)는 가능한 한 Entity 객체를 직접 반환**하고, 목록(list)과 삭제(delete)는 array를 반환한다
+- **Entity를 반환하면 api.php가 자동으로 `toArray()`를 호출**하여 JSON으로 변환하므로, Service/Controller에서 별도의 `->toArray()` 변환이 불필요하다
 - 입력 파라미터는 `array $input`으로 통일한다 (JavaScript `func()` 호출과 호환)
 - 에러는 `RuntimeException`으로 던진다
 - 모든 Service는 5개 CRUD를 직접 구현한다. 미지원 메서드는 도메인에 맞는 구체적인 에러 메시지로 `RuntimeException`을 throw한다
@@ -631,10 +632,12 @@ DB (MariaDB)
     ↓ array $row (PDO::FETCH_ASSOC)
 Repository → Entity::fromArray($row)         ← ★ EntityInterface
     ↓ Entity 객체
-Service → Entity->toArray()                  ← ★ ServiceInterface (array 반환)
-    ↓ array
-Controller → return array                   ← ★ ControllerInterface (그대로 전달)
+Service → Entity 직접 반환 (또는 array)       ← ★ ServiceInterface (array|EntityInterface)
+    ↓ Entity 또는 array
+Controller → Entity 직접 반환 (또는 array)    ← ★ ControllerInterface (array|EntityInterface)
     ↓
+api.php → toArray() 자동 호출 (Entity인 경우)
+    ↓ array
 api.php → json_encode()
     ↓
 API 응답 (JSON)
@@ -643,7 +646,9 @@ API 응답 (JSON)
 **핵심 포인트**:
 - Repository의 `findByIdx()`는 DB 행을 `Entity::fromArray($row)`로 변환하여 Entity를 리턴
 - Service에서 Entity의 도메인 메서드(`isComment()`, `isSuccess()` 등)를 직접 호출 가능
-- Service가 `Entity->toArray()`를 호출하여 array를 반환 (ServiceInterface 강제)
+- **단건 결과(create, get, update)는 Entity 객체를 직접 반환**하여 타입 안전성을 확보
+- **api.php가 Entity 객체를 받으면 자동으로 `toArray()`를 호출**하여 배열로 변환 (api.php:96-106)
+- 목록(list)과 삭제(delete) 등 복합 결과는 array를 반환
 - Controller는 Service 결과를 그대로 반환 (얇은 계층)
 
 ---
@@ -794,6 +799,13 @@ class PostRepository implements RepositoryInterface
 
     public static function count(string $postId, ?string $category = null): int { ... }
     public static function getPostConfig(string $postId): ?array { ... }
+
+    // ★ 위젯 전용 확장 쿼리 (v7 위젯에서 Service를 통해 호출)
+    public static function findPopular(int $withinDays = 30, int $limit = 20): array { ... }
+    public static function findReported(int $limit = 5): array { ... }
+    public static function findLatestSimple(string $postId, ?string $category = null, int $limit = 6, array $columns = [...]): array { ... }
+    public static function findLatestPhotos(int $limit = 9): array { ... }
+    public static function findRecentComments(int $limit = 20): array { ... }
 }
 ```
 
@@ -1453,12 +1465,34 @@ namespace Philgo\Utils;
 
 interface ControllerInterface
 {
-    public function create(array $input): array;
-    public function update(array $input): array;
-    public function delete(array $input): array;
-    public function get(array $input): array;
-    public function list(array $input): array;
+    public function create(array $input): array|EntityInterface;
+    public function update(array $input): array|EntityInterface;
+    public function delete(array $input): array|EntityInterface;
+    public function get(array $input): array|EntityInterface;
+    public function list(array $input): array|EntityInterface;
 }
+```
+
+> **Entity 직접 반환 원칙**: 단건 결과(create, get, update)는 가능한 한 Entity 객체를 직접 반환한다.
+> api.php가 Entity 객체를 받으면 자동으로 `toArray()`를 호출하여 JSON 배열로 변환한다.
+> 이를 통해 **타입 안전성**을 확보하고, Controller/Service에서 불필요한 `->toArray()` 변환을 제거한다.
+
+**각 모듈의 Controller Entity 반환 현황**:
+
+| Controller | create | update | get | delete | list |
+|-----------|--------|--------|-----|--------|------|
+| PostController | `PostEntity` | `PostEntity` | `PostEntity` | `array` | `array` |
+| CompanyController | `CompanyEntity` | `CompanyEntity` | `CompanyEntity` | `array` | `array` |
+| CompanyMetaController | `CompanyMetaEntity` | `CompanyMetaEntity` | `array` | `array` | `array` |
+| UploadController | `UploadEntity` | `UploadEntity` | `UploadEntity` | `array` | `array` |
+| PointLogController | `PointLogEntity` | `PointLogEntity` | `PointLogEntity` | `array` | `array` |
+| UserController | `UserEntity` | `UserEntity` | `UserEntity` | `array` | `array` |
+| SettingsController | `array` | `array` | `array` | `array` | `array` |
+| AiController | `array` | `array` | `array` | `array` | `array` |
+| TravelController | `array` | `array` | `array` | `array` | `array` |
+| EventController | `array` | `array` | `array` | `array` | `array` |
+
+```text
 ```
 
 ### 11.3 적용된 Controller (10개)
@@ -1510,12 +1544,12 @@ interface ControllerInterface
 CRUD 메서드명과 기존 메서드명이 다른 Controller에서 래퍼 패턴 사용:
 
 ```php
-// PointLogController
-public function create(array $input): array { return $this->changePoints($input); }
+// PointLogController — Entity 직접 반환
+public function create(array $input): PointLogEntity { return $this->changePoints($input); }
 public function list(array $input): array { return $this->history($input); }
 
-// UploadController
-public function create(array $input): array { return $this->upload($input); }
+// UploadController — Entity 직접 반환
+public function create(array $input): UploadEntity { return $this->upload($input); }
 ```
 
 ### 11.8 ControllerInterface 테스트 (PEST)
@@ -1549,7 +1583,7 @@ v7 시스템에서 Controller는 클라이언트 요청을 받아 입력값을 �
 | list 페이지네이션 형식 불일치 | `posts` 키 vs `items` 키, `pagination` 중첩 vs 플랫 구조 |
 | Controller에서 `->toArray()` 변환 부담 | Service가 Entity를 반환하면 Controller가 배열로 변환 |
 
-**목표**: ServiceInterface를 도입하여 모든 Service에 **표준 CRUD 메서드(create, update, delete, get, list)**를 강제하고, **반환 타입을 `array`로 통일**하여 Controller를 단순화한다.
+**목표**: ServiceInterface를 도입하여 모든 Service에 **표준 CRUD 메서드(create, update, delete, get, list)**를 강제하고, **반환 타입을 `array|EntityInterface`로 통일**하여 Entity 직접 반환을 지원한다. api.php가 Entity 객체를 자동으로 `toArray()` 변환하므로, Service/Controller에서 불필요한 변환 코드가 제거된다.
 
 **설계 결정: Interface 기반 직접 구현**
 
@@ -1568,10 +1602,10 @@ namespace Philgo\Utils;
 
 interface ServiceInterface
 {
-    public static function create(array $input): array;
-    public static function update(array $input): array;
-    public static function delete(array $input): array;
-    public static function get(array $input): array;
+    public static function create(array $input): array|EntityInterface;
+    public static function update(array $input): array|EntityInterface;
+    public static function delete(array $input): array|EntityInterface;
+    public static function get(array $input): array|EntityInterface;
     public static function list(array $input): array;
 }
 ```
@@ -1670,29 +1704,45 @@ public function get(array $input): array
 | CompanyService | 기존 `items` 키 유지 |
 | PointLogService | 기존 getHistory() 래퍼 |
 
-### 12.7 Service CRUD 반환 타입 통일
+### 12.7 Service/Controller CRUD 반환 타입 — Entity 직접 반환 원칙
 
-ServiceInterface의 모든 메서드는 `array`를 반환한다. 기존에 Entity 객체나 bool을 반환하던 Service는 다음과 같이 변경되었다:
+ServiceInterface와 ControllerInterface의 CRUD 메서드는 `array|EntityInterface`를 반환한다.
+**단건 결과(create, get, update)는 가능한 한 Entity 객체를 직접 반환**하여 타입 안전성을 확보한다.
+api.php가 Entity 객체를 받으면 자동으로 `toArray()`를 호출하므로, 불필요한 변환 코드가 제거된다.
 
-**Entity → array 변환**:
+**Entity 직접 반환 패턴 (권장)**:
 ```php
-// 변경 전: Entity 반환
-public static function get(array $input): PostEntity { ... }
-
-// 변경 후: array 반환 (Service 내부에서 toArray() 호출)
-public static function get(array $input): array
+// Service: Entity 직접 반환
+public static function get(array $input): PostEntity
 {
     $entity = PostRepository::findByIdx($idx);
-    return $entity->toArray();
+    if ($entity === null) {
+        throw new RuntimeException('해당 게시글을 찾을 수 없습니다.');
+    }
+    return $entity;  // Entity 직접 반환 → api.php에서 toArray() 자동 호출
+}
+
+// Controller: Service 결과를 그대로 전달
+public function get(array $input): PostEntity
+{
+    return PostService::get($input);
 }
 ```
 
+**각 모듈의 Service Entity 반환 현황**:
+
+| Service | create | update | get | delete | list |
+|---------|--------|--------|-----|--------|------|
+| UserService | `UserEntity` | `UserEntity` | `UserEntity` | `array` | `array` |
+| PostService | `PostEntity` | `PostEntity` | `PostEntity` | `array` | `array` |
+| CompanyService | `CompanyEntity` | `CompanyEntity` | `CompanyEntity` | `array` | `array` |
+| CompanyMetaService | `CompanyMetaEntity` | `CompanyMetaEntity` | `array` | `array` | `array` |
+| UploadService | `UploadEntity` | `UploadEntity` | `UploadEntity` | `array` | `array` |
+| PointLogService | `PointLogEntity` | `PointLogEntity` | `PointLogEntity` | `array` | `array` |
+
 **delete bool → array 래핑**:
 ```php
-// 변경 전: bool 반환
-public static function delete(array $input): bool { ... }
-
-// 변경 후: array 반환
+// delete는 항상 array 반환 (삭제 결과)
 public static function delete(array $input): array
 {
     return ['deleted' => CompanyRepository::deleteByIdx($idx)];
