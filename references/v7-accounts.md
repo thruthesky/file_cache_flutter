@@ -5,6 +5,8 @@
 이 Durian 계정은 테스트 전용입니다.  각종 테스트를 할 때 사용하면 됩니다. 
 
 - 닉네임: Durian
+- Email: `apple@test.com`
+- Password: `12345a,*`
 - session_id: `2278018daa75e0ab879d8791fb0e2b2d-190076`
 - sf_member.idx: `190076`
 
