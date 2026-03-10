@@ -181,26 +181,6 @@
             ]
         },
         {
-            "name": "Philgo - Fred: Ipad 10th generation",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "deviceId": "ABA5775C-DE54-414D-97B4-1F8382B7F684",
-            "args": [
-                "--dart-define=ENV=dev",
-            ]
-        },
-        {
-            "name": "Philgo - Fred: Samsung Galaxy A12",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "deviceId": "RR8R90795VZ",
-            "args": [
-                "--dart-define=ENV=dev",
-            ]
-        },
-        {
             "name": "Fred: Realme",
             "request": "launch",
             "type": "dart",
@@ -208,6 +188,7 @@
             "deviceId": "0N14426I24109E26",
             "args": [
                 "--dart-define=ENV=dev",
+                "--dart-define=V7_API_ENDPOINT=https://192.168.55.109/api.php"
             ]
         },
         {

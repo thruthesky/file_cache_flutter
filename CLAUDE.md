@@ -1,9 +1,22 @@
 This project is a Flutter app for building PhilGo v7 application.
 
+# App Configuration
+
+- All app configuration is defined in `lib/app.config.dart` (forum categories, etc.).
+
+
+# Important Rules
+
+## Never use packages/philgo_api/
+
+- **NEVER** use, import, or reference any code from the `packages/philgo_api/` folder.
+- This package is deprecated/legacy and must not be used in any new or existing code.
+- If you encounter imports from `packages/philgo_api/`, do not follow that pattern. Use the v7 API approach instead.
+
 
 # Design Principles
 
-## Design refernces
+## Design references
 
 - Use .claude/commands/design/*.md files as design references for UI and UX decisions.
 
@@ -28,14 +41,14 @@ DTD testing uses **hot reload** to inject temporary test code into `initState()`
 
 ## Testing Workflow
 
-### Step 0: DTD URI 확인 (필수)
+### Step 0: Confirm DTD URI (Required)
 
-테스트를 시작하기 전에 **반드시 사용자에게 DTD URI를 요청**해야 합니다. DTD URI는 Flutter 앱이 디버그 모드로 실행 중일 때 생성되며, hot reload를 수행하는 데 필요합니다.
+Before starting a test, **you must ask the user for the DTD URI**. The DTD URI is generated when the Flutter app is running in debug mode and is required to perform hot reload.
 
-사용자에게 다음과 같이 요청하세요:
-> "DTD URI를 제공해 주세요. Flutter 앱을 디버그 모드로 실행하면 터미널에 표시됩니다. (예: `ws://127.0.0.1:xxxxx/yyyyyyy=/ws`)"
+Ask the user as follows:
+> "Please provide the DTD URI. It is displayed in the terminal when the Flutter app is running in debug mode. (e.g., `ws://127.0.0.1:xxxxx/yyyyyyy=/ws`)"
 
-DTD URI 없이는 hot reload를 수행할 수 없으므로, URI를 받기 전에 테스트 코드 작성을 진행하지 마세요.
+Hot reload cannot be performed without the DTD URI, so do not proceed with writing test code until the URI is received.
 
 ### Step 1: Navigate to the Target Screen
 
