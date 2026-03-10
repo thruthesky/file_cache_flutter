@@ -47,7 +47,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  Text(T.bookmarked_folders, style: textTheme.titleMedium),
+                  Text('Favorites', style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.pop(context),
@@ -100,7 +100,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          T.no_bookmarked_folders,
+                          'No favorites yet',
                           style: textTheme.bodyLarge?.copyWith(
                             color: colorScheme.outline,
                           ),
