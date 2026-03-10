@@ -461,6 +461,16 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | **카카오톡 소셜 로그인** | [web/v7-web-kakoatalk-social-login.md](references/web/v7-web-kakoatalk-social-login.md) | ✅ 완료 |
 | **네이버 소셜 로그인** | [web/v7-web-naver-social-login.md](references/web/v7-web-naver-social-login.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
+| **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
+
+### 코멘트 스레드 세로선 → [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md)
+
+Reddit 스타일 코멘트 스레드 세로선의 완전 구현 가이드이다. PHP 재귀 렌더링(`renderCommentThread()`)으로
+`.comment-node` 트리를 생성하고, CSS 절대 위치 `.thread-line`(1px, `#94a3b8`, `left: 17px`)으로
+아바타 바로 아래에서 세로선을 시작한다. JavaScript `adjustThreadLines()` 함수가 마지막 직접 자식의
+상단까지만 세로선 높이를 동적 계산하며, `::before` 의사 요소로 모든 직접 자식에 `border-bottom-left-radius`
+L자 곡선 연결선을 표시한다. 세로선 클릭으로 접기/펼치기, "[+N개 답글]" 텍스트 클릭으로 펼치기를 지원한다.
+HTML/CSS/JS 전체 소스코드, 좌표 계산 다이어그램, 복구 체크리스트를 포함한다.
 
 ### 관리자 대시보드 → [web/v7-admin.md](references/web/v7-admin.md)
 
