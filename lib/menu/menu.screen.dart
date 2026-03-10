@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/login.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -71,6 +72,28 @@ class _MenuScreenState extends State<MenuScreen> {
                         duration: 400.ms,
                         delay: 200.ms,
                       ).slideY(begin: 0.1, end: 0),
+
+                      // 로그아웃
+                      OutlinedButton.icon(
+                        onPressed: () async {
+                          await UserService.signOut();
+                        },
+                        icon: FaIcon(
+                          FontAwesomeIcons.lightRightFromBracket,
+                          size: 16,
+                          color: scheme.error,
+                        ),
+                        label: Text(
+                          '로그아웃',
+                          style: TextStyle(color: scheme.error),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: scheme.error.withValues(alpha: 0.4)),
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ).animate().fadeIn(duration: 400.ms, delay: 300.ms),
+
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),

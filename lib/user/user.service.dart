@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart';
 
-import 'package:philgo/app.config.dart';
+import 'package:philgo/api/api.service.dart';
 
 import 'user.model.dart';
 
@@ -51,9 +47,6 @@ class UserService {
   final List<Map<String, dynamic>> favoriteFolders = [];
   final favoriteFoldersStream = ValueNotifier<List<Map<String, dynamic>>>([]);
 
-  /// v7 API 엔드포인트
-  static final String _endpoint = v7ApiEndpoint;
-
   /// 이메일/비밀번호로 로그인
   ///
   /// Firebase Auth의 signInWithEmailAndPassword를 사용한다.
@@ -88,12 +81,11 @@ class UserService {
 
   /// 로그아웃
   static Future<void> signOut() async {
-    await GoogleSignIn().signOut();
     await FirebaseAuth.instance.signOut();
   }
 
-  /// Google 소셜 로그인
-  static Future<User> signInWithGoogle() async {
+  /// Google 소셜 로그인 + v7 user.socialLogin 등록
+  static Future<UserModel> signInWithGoogle() async {
     final googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) throw Exception('Google 로그인이 취소되었습니다.');
     final googleAuth = await googleUser.authentication;
@@ -101,8 +93,13 @@ class UserService {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-    return userCredential.user!;
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    // v7 DB에 사용자 등록/업데이트
+    final json = await ApiService.v7api(
+      'user.socialLogin',
+      data: {'login_provider': 'google'},
+    );
+    return UserModel.fromJson(json);
   }
 
   /// 현재 로그인된 사용자
@@ -116,42 +113,8 @@ class UserService {
   /// Firebase Auth에 로그인된 상태이면 v7 API(user.me)를 호출하여
   /// UserModel을 반환한다. 미로그인이면 null을 반환한다.
   static Future<UserModel?> loadCurrentUser() async {
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    if (firebaseUser == null) return null;
-
-    final data = <String, dynamic>{'method': 'user.me'};
-
-    // Firebase ID Token 추가
-    try {
-      data['id_token'] = await firebaseUser.getIdToken() ?? '';
-    } catch (_) {
-      data['id_token'] = '';
-    }
-
-    final dio = Dio();
-    if (kDebugMode) {
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-        final httpClient = HttpClient();
-        httpClient.badCertificateCallback = (_, _, _) => true;
-        return httpClient;
-      };
-    }
-
-    final response = await dio.post(_endpoint, data: data);
-
-    Map<String, dynamic> json;
-    if (response.data is Map<String, dynamic>) {
-      json = response.data;
-    } else if (response.data is String) {
-      json = jsonDecode(response.data) as Map<String, dynamic>;
-    } else {
-      throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
-    }
-
-    if (json['success'] == false) {
-      throw Exception(json['message'] ?? '알 수 없는 오류');
-    }
-
+    if (FirebaseAuth.instance.currentUser == null) return null;
+    final json = await ApiService.v7api('user.me');
     return UserModel.fromJson(json);
   }
 }
