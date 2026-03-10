@@ -1,18 +1,17 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
+import 'package:philgo/post/view/widgets/comment.list.view.dart';
+import 'package:philgo/post/view/widgets/post.action.bar.dart';
+import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 게시글 상세 보기 화면
-///
-/// v6 PostViewScreen의 핵심 로직을 v7에 적용.
-/// CustomScrollView + Sliver 기반 레이아웃.
 class PostViewScreen extends StatefulWidget {
   final Post post;
 
@@ -28,22 +27,32 @@ class _PostViewScreenState extends State<PostViewScreen> {
   String? _error;
   bool _postChanged = false;
 
+  // 좋아요 상태
+  bool _liked = false;
+  late int _goodCount;
+
+  // 댓글
+  List<Post> _comments = [];
+  bool _commentsLoading = false;
+
   @override
   void initState() {
     super.initState();
     _post = widget.post;
+    _goodCount = _post.good;
     _loadFullPost();
   }
 
-  /// 서버에서 최신 게시글 데이터 로드 (조회수 증가 포함)
   Future<void> _loadFullPost() async {
     try {
       final fullPost = await PostService.get(_post.idx);
       if (!mounted) return;
       setState(() {
         _post = fullPost;
+        _goodCount = fullPost.good;
         _isLoading = false;
       });
+      _loadComments();
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -53,12 +62,34 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
-  /// 게시글 수정 화면 열기
+  Future<void> _loadComments() async {
+    setState(() => _commentsLoading = true);
+    try {
+      final comments = await PostService.listComments(_post.idx);
+      if (!mounted) return;
+      setState(() {
+        _comments = comments;
+        _commentsLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _commentsLoading = false);
+    }
+  }
+
+  Future<void> _toggleLike() async {
+    final result = await PostService.like(_post.idx);
+    if (!mounted) return;
+    setState(() {
+      _liked = result.liked;
+      _goodCount = result.good;
+    });
+  }
+
   Future<void> _editPost() async {
     final result = await Navigator.of(context).push<Post>(
       MaterialPageRoute(builder: (_) => PostUpdateScreen(post: _post)),
     );
-
     if (result != null && mounted) {
       setState(() {
         _post = result;
@@ -67,7 +98,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
-  /// 게시글 삭제
   Future<void> _deletePost() async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -87,7 +117,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
         ],
       ),
     );
-
     if (confirm != true) return;
 
     try {
@@ -96,9 +125,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
       Navigator.of(context).pop('deleted');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('삭제 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
     }
   }
 
@@ -119,117 +148,98 @@ class _PostViewScreenState extends State<PostViewScreen> {
         backgroundColor: scheme.surface,
         body: CustomScrollView(
           slivers: [
-            // 앱바
             SliverAppBar(
               pinned: true,
               backgroundColor: scheme.surface,
               foregroundColor: scheme.onSurface,
               elevation: 0,
               scrolledUnderElevation: 1,
-              title: Text(
-                _post.postId,
-                style: theme.textTheme.titleMedium,
-              ),
-              actions: [
-                if (isMine) ...[
-                  IconButton(
-                    onPressed: _editPost,
-                    icon: FaIcon(
-                      FontAwesomeIcons.lightPenToSquare,
-                      size: 18,
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _deletePost,
-                    icon: FaIcon(
-                      FontAwesomeIcons.lightTrashCan,
-                      size: 18,
-                      color: scheme.error,
-                    ),
-                  ),
-                ],
-              ],
             ),
 
-            // 본문
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 제목
-                    Text(
-                      _post.subject,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // 메타 정보 (작성자, 날짜)
-                    _buildMeta(theme, scheme),
-                    const SizedBox(height: 16),
-
-                    Divider(color: scheme.outlineVariant),
-                    const SizedBox(height: 16),
-
-                    // 본문 이미지 (있으면)
-                    if (_post.imageUrl != null &&
-                        _post.imageUrl!.isNotEmpty) ...[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(
-                          imageUrl: _post.imageUrl!,
-                          width: double.infinity,
-                          fit: BoxFit.fitWidth,
-                          placeholder: (_, _) => Container(
-                            height: 200,
-                            color: scheme.surfaceContainerHigh,
-                            child: const Center(
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── 원글 ──────────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _post.subject,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurface,
                           ),
-                          errorWidget: (_, _, _) => const SizedBox.shrink(),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                        const SizedBox(height: 12),
+                        _buildMeta(_post, theme, scheme),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
 
-                    // 본문 내용
-                    if (_isLoading)
-                      const Center(child: CircularProgressIndicator())
-                    else if (_error != null)
-                      Text('내용을 불러올 수 없습니다',
-                          style: TextStyle(color: scheme.error))
-                    else
-                      SelectableLinkify(
-                        text: _post.content,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: scheme.onSurface,
-                          height: 1.6,
-                        ),
-                        linkStyle: TextStyle(
-                          color: scheme.primary,
-                          decoration: TextDecoration.underline,
-                        ),
-                        onOpen: (link) async {
-                          final uri = Uri.tryParse(link.url);
-                          if (uri != null && await canLaunchUrl(uri)) {
-                            await launchUrl(uri,
-                                mode: LaunchMode.externalApplication);
-                          }
-                        },
-                      ),
+                  // 첨부 파일 (전체 너비)
+                  PostViewFiles(post: _post),
 
-                    const SizedBox(height: 24),
+                  // 본문
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _error != null
+                        ? Text(
+                            '내용을 불러올 수 없습니다',
+                            style: TextStyle(color: scheme.error),
+                          )
+                        : SelectableLinkify(
+                            text: _post.content,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: scheme.onSurface,
+                              height: 1.6,
+                            ),
+                            linkStyle: TextStyle(
+                              color: scheme.primary,
+                              decoration: TextDecoration.underline,
+                            ),
+                            onOpen: (link) async {
+                              final uri = Uri.tryParse(link.url);
+                              if (uri != null && await canLaunchUrl(uri)) {
+                                await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              }
+                            },
+                          ),
+                  ),
 
-                    // 통계 및 액션 버튼
-                    _buildStats(theme, scheme),
-                  ],
-                ),
+                  // 원글 액션 바
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: PostActionBar(
+                      post: _post,
+                      isMine: isMine,
+                      liked: _liked,
+                      goodCount: _goodCount,
+                      onLike: _toggleLike,
+                      onEdit: _editPost,
+                      onDelete: _deletePost,
+                    ),
+                  ),
+
+                  SizedBox(height: 32),
+
+                  // ── 댓글 ──────────────────────────────────────────
+                  CommentListView(
+                    comments: _comments,
+                    isLoading: _commentsLoading,
+                    noOfComment: _post.noOfComment,
+                  ),
+
+                  const SizedBox(height: 32),
+                ],
               ),
             ),
           ],
@@ -238,28 +248,31 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  /// 메타 정보 (날짜, 카테고리)
-  Widget _buildMeta(ThemeData theme, ColorScheme scheme) {
+  Widget _buildMeta(Post post, ThemeData theme, ColorScheme scheme) {
     return Row(
       children: [
-        // 날짜
-        FaIcon(FontAwesomeIcons.lightClock,
-            size: 14, color: scheme.onSurfaceVariant),
+        FaIcon(
+          FontAwesomeIcons.lightClock,
+          size: 14,
+          color: scheme.onSurfaceVariant,
+        ),
         const SizedBox(width: 6),
         Text(
-          _formatFullDate(_post.stamp),
+          _formatFullDate(post.stamp),
           style: theme.textTheme.bodySmall?.copyWith(
             color: scheme.onSurfaceVariant,
           ),
         ),
-        // 카테고리
-        if (_post.category.isNotEmpty) ...[
+        if (post.category.isNotEmpty) ...[
           const SizedBox(width: 16),
-          FaIcon(FontAwesomeIcons.lightTag,
-              size: 14, color: scheme.onSurfaceVariant),
+          FaIcon(
+            FontAwesomeIcons.lightTag,
+            size: 14,
+            color: scheme.onSurfaceVariant,
+          ),
           const SizedBox(width: 6),
           Text(
-            _post.category,
+            post.category,
             style: theme.textTheme.bodySmall?.copyWith(
               color: scheme.onSurfaceVariant,
             ),
@@ -269,65 +282,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  /// 통계 바 (조회수, 댓글, 좋아요)
-  Widget _buildStats(ThemeData theme, ColorScheme scheme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHigh.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _statItem(
-            FontAwesomeIcons.lightEye,
-            '${_post.noOfView}',
-            '조회',
-            scheme,
-            theme,
-          ),
-          _statItem(
-            FontAwesomeIcons.lightComment,
-            '${_post.noOfComment}',
-            '댓글',
-            scheme,
-            theme,
-          ),
-          _statItem(
-            FontAwesomeIcons.lightThumbsUp,
-            '${_post.good}',
-            '좋아요',
-            scheme,
-            theme,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _statItem(
-    IconData icon,
-    String value,
-    String label,
-    ColorScheme scheme,
-    ThemeData theme,
-  ) {
-    return Column(
-      children: [
-        FaIcon(icon, size: 18, color: scheme.onSurfaceVariant),
-        const SizedBox(height: 4),
-        Text(value,
-            style: theme.textTheme.titleSmall
-                ?.copyWith(fontWeight: FontWeight.bold)),
-        Text(label,
-            style: theme.textTheme.labelSmall
-                ?.copyWith(color: scheme.onSurfaceVariant)),
-      ],
-    );
-  }
-
-  /// Unix timestamp → 전체 날짜 문자열
   String _formatFullDate(int stamp) {
     if (stamp == 0) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(stamp * 1000);

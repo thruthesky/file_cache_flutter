@@ -1,12 +1,59 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+import 'package:philgo/api/api.service.dart';
+import 'package:philgo/app.config.dart';
 
 import 'post.model.dart';
+
+// ---------------------------------------------------------------------------
+// 미디어 타입 판별 유틸리티 (display_thumbnail.dart 와 post view 에서 공유)
+// ---------------------------------------------------------------------------
+
+enum MediaType { image, video, youtube, unknown }
+
+MediaType getMediaType(String? url) {
+  if (url == null || url.isEmpty) return MediaType.unknown;
+  final lower = url.toLowerCase();
+
+  if (lower.contains('youtube.com') || lower.contains('youtu.be')) {
+    return MediaType.youtube;
+  }
+
+  final path = Uri.tryParse(url)?.path.toLowerCase() ?? lower;
+
+  if (path.endsWith('.mp4') ||
+      path.endsWith('.mov') ||
+      path.endsWith('.avi') ||
+      path.endsWith('.mkv') ||
+      path.endsWith('.webm')) {
+    return MediaType.video;
+  }
+
+  if (path.endsWith('.jpg') ||
+      path.endsWith('.jpeg') ||
+      path.endsWith('.png') ||
+      path.endsWith('.gif') ||
+      path.endsWith('.webp') ||
+      path.endsWith('.bmp') ||
+      path.endsWith('.svg') ||
+      path.endsWith('.avif')) {
+    return MediaType.image;
+  }
+
+  return MediaType.unknown;
+}
+
+/// YouTube URL 에서 비디오 ID 추출
+String? getYouTubeVideoId(String url) {
+  final uri = Uri.tryParse(url);
+  if (uri == null) return null;
+  if (uri.host.contains('youtu.be')) return uri.pathSegments.firstOrNull;
+  return uri.queryParameters['v'];
+}
+
+/// 상대 URL → 절대 URL 변환
+String toAbsoluteUrl(String url) {
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return '$v7BaseUrl$url';
+}
 
 /// v7 Post API 서비스
 ///
@@ -20,12 +67,6 @@ import 'post.model.dart';
 /// ```
 class PostService {
   PostService._();
-
-  /// v7 API 엔드포인트 (--dart-define=V7_API_ENDPOINT 으로 설정 가능)
-  static const String _endpoint = String.fromEnvironment(
-    'V7_API_ENDPOINT',
-    defaultValue: 'https://philgo.com/api.php',
-  );
 
   /// 게시글 목록 조회
   ///
@@ -45,20 +86,23 @@ class PostService {
     int? limit,
     int? offset,
   }) async {
-    final result = await _v7api('post.list', data: {
-      'post_id': postId,
-      if (category != null) 'category': category,
-      if (orderby != null) 'orderby': orderby,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-    });
+    final result = await ApiService.v7api(
+      'post.list',
+      data: {
+        'post_id': postId,
+        if (category != null) 'category': category,
+        if (orderby != null) 'orderby': orderby,
+        if (limit != null) 'limit': limit,
+        if (offset != null) 'offset': offset,
+      },
+    );
 
     final items = (result['posts'] as List<dynamic>?) ?? [];
     final posts = items
         .whereType<Map<String, dynamic>>()
         .map(Post.fromJson)
         .toList();
-    final total = _toInt(result['total']);
+    final total = ApiService.toInt(result['total']);
 
     return (posts: posts, total: total);
   }
@@ -70,7 +114,11 @@ class PostService {
   /// [idx] 게시글 고유번호
   /// 반환: Post 객체
   static Future<Post> get(int idx) async {
-    final result = await _v7api('post.get', data: {'idx': idx});
+    final result = await ApiService.v7api(
+      'post.get',
+      data: {'idx': idx},
+      debug: true,
+    );
     return Post.fromJson(result);
   }
 
@@ -89,12 +137,15 @@ class PostService {
     required String content,
     String? category,
   }) async {
-    final result = await _v7api('post.create', data: {
-      'post_id': postId,
-      'subject': subject,
-      'content': content,
-      if (category != null) 'category': category,
-    });
+    final result = await ApiService.v7api(
+      'post.create',
+      data: {
+        'post_id': postId,
+        'subject': subject,
+        'content': content,
+        if (category != null) 'category': category,
+      },
+    );
     return Post.fromJson(result);
   }
 
@@ -111,11 +162,14 @@ class PostService {
     String? subject,
     String? content,
   }) async {
-    final result = await _v7api('post.update', data: {
-      'idx': idx,
-      if (subject != null) 'subject': subject,
-      if (content != null) 'content': content,
-    });
+    final result = await ApiService.v7api(
+      'post.update',
+      data: {
+        'idx': idx,
+        if (subject != null) 'subject': subject,
+        if (content != null) 'content': content,
+      },
+    );
     return Post.fromJson(result);
   }
 
@@ -126,64 +180,35 @@ class PostService {
   ///
   /// [idx] 게시글 고유번호
   static Future<void> delete(int idx) async {
-    await _v7api('post.delete', data: {'idx': idx});
+    await ApiService.v7api('post.delete', data: {'idx': idx});
   }
 
-  /// v7 API 내부 호출 헬퍼
+  /// 게시글 좋아요 토글
   ///
-  /// Firebase ID Token을 자동으로 추가하고, v7 서버에 HTTP POST 요청을 보낸다.
-  /// 에러 발생 시 Exception을 throw한다.
-  static Future<Map<String, dynamic>> _v7api(
-    String method, {
-    Map<String, dynamic>? data,
-  }) async {
-    data = data ?? {};
-    data['method'] = method;
-
-    // Firebase ID Token 자동 추가
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      try {
-        data['id_token'] = await user.getIdToken() ?? '';
-      } catch (_) {
-        data['id_token'] = '';
-      }
-    }
-
-    final dio = Dio();
-    // 디버그 모드에서 자체 서명 SSL 인증서 허용
-    if (kDebugMode) {
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-        final httpClient = HttpClient();
-        httpClient.badCertificateCallback = (_, _, _) => true;
-        return httpClient;
-      };
-    }
-
-    final response = await dio.post(_endpoint, data: data);
-
-    Map<String, dynamic> json;
-    if (response.data is Map<String, dynamic>) {
-      json = response.data;
-    } else if (response.data is String) {
-      json = jsonDecode(response.data) as Map<String, dynamic>;
-    } else {
-      throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
-    }
-
-    // v7 에러 판별: success == false일 때만 에러
-    if (json['success'] == false) {
-      throw Exception(json['message'] ?? '알 수 없는 오류');
-    }
-
-    return json;
+  /// API: post.like (인증 필수)
+  ///
+  /// [idx] 게시글 고유번호
+  /// 반환: 업데이트된 good(좋아요 수)와 liked(내가 좋아요 했는지 여부)
+  static Future<({int good, bool liked})> like(int idx) async {
+    final result = await ApiService.v7api('post.like', data: {'idx': idx});
+    final good = ApiService.toInt(result['good']);
+    final liked = result['liked'] == true || result['liked'] == 1;
+    return (good: good, liked: liked);
   }
 
-  /// 안전한 int 변환
-  static int _toInt(dynamic value) {
-    if (value == null) return 0;
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse(value.toString()) ?? 0;
+  /// 댓글 목록 조회
+  ///
+  /// API: post.commentList (인증 불필요)
+  ///
+  /// [idxRoot] 원글 idx
+  /// 반환: 댓글 Post 목록 (list_order DESC)
+  static Future<List<Post>> listComments(int idxRoot) async {
+    final result = await ApiService.v7api(
+      'post.commentList',
+      data: {'idx_root': idxRoot},
+    );
+    final raw = result['items'] ?? [];
+    final items = raw is List ? raw : [];
+    return items.whereType<Map<String, dynamic>>().map(Post.fromJson).toList();
   }
 }
