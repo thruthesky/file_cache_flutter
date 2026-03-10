@@ -23,6 +23,7 @@
 - [11. Docker 운영 명령어](#11-docker-운영-명령어)
 - [12. Windows 환경 설정](#12-windows-환경-설정)
 - [13. 주의사항](#13-주의사항)
+- [14. Dokploy 배포 (프로덕션)](#14-dokploy-배포-프로덕션)
 
 ---
 
@@ -763,3 +764,21 @@ docker compose -f compose.windows.yaml up -d
 - MariaDB 데이터는 Host OS의 `docker/var/lib/mysql/`에 영구 저장된다.
 - 컨테이너나 이미지를 삭제해도 데이터는 유지된다.
 - 단, 이 경로는 최초 `docker compose up` 전에 지정해야 한다.
+
+---
+
+## 14. Dokploy 배포 (프로덕션)
+
+> **⚠️ Dokploy 배포에 대한 상세 내용은 별도 문서를 참조한다.**
+
+### Dokploy 배포 → [v7-dokploy.md](v7-dokploy.md)
+
+필고 v7 프로젝트의 Dokploy 기반 프로덕션 배포 구성 전체를 다룹니다.
+Dokploy는 셀프호스팅 PaaS 도구로, Git 레포지토리(thruthesky/withcenter, 브랜치 v7)와 연동하여
+Docker Compose 기반 자동 배포를 수행합니다. Nginx + PHP-FPM 8.3.6을 하나의 단일 컨테이너(web)로
+통합하고 MariaDB 11.7.2를 별도 컨테이너로 운영하는 2-서비스 구조입니다. SSL/TLS 종단은
+Dokploy 내장 Traefik 리버스 프록시가 처리하므로 컨테이너는 HTTP(80)만 리슨합니다.
+모노레포 내 Compose Path(`./philgo/www/docker-compose.yml`), 환경변수 기반 DB 설정 자동 생성
+(entrypoint.sh), 로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.
+서버 접속 정보: Dokploy 관리 패널 `http://209.97.169.136:3000`,
+프리뷰 URL `http://philgo.209.97.169.136.traefik.me`.

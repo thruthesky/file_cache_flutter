@@ -324,7 +324,7 @@ $post = PostEntity::fromArray($row);  // ❌ array|false를 array로 전달 → 
 | `references/web/` | 웹/서버 전용 문서 | 웹서버, PHP, Vue.js, **Web Awesome Pro**, 폰트, 위젯, 레이아웃, SEO 등 웹 프론트엔드/백엔드 관련 내용만 포함 (**Bootstrap 미사용**) |
 | `references/app/` | Flutter 앱 전용 문서 | Flutter 앱 개발, Dart 코드, 앱 위젯, 앱 API 연동 등 앱 관련 내용만 포함 |
 | `references/event/` | 이벤트 시스템 문서 | 포인트 이벤트, 스피닝 휠, QR 코드 등 이벤트 관련 통합 문서 |
-| `references/server/` | 서버/인프라 문서 | Docker, DB, Nginx 등 서버 인프라 관련 문서 |
+| `references/server/` | 서버/인프라 문서 | Docker, Dokploy 배포, DB, Nginx 등 서버 인프라 관련 문서 |
 | `references/` (루트) | 공통 인프라 문서 | 아키텍처, DB 스키마 등 전체 시스템 공통 문서 |
 
 > **`references/api/`** 폴더의 문서는 **웹과 앱 모두에서 사용하는 공통 API 문서**이다.
@@ -367,17 +367,19 @@ Cloudflare 터널을 통한 외부 접속(`https://local.philgo.com` — Cloudfl
 로컬 Docker에 접속, IUAM 모드 호환을 위해 Nginx에서 `X-Forwarded-Proto` 헤더 기반 리다이렉트 예외 처리),
 Docker 운영 명령어, Windows 환경 설정 차이점을 포함합니다.
 
-### Dokploy 테스트 배포 — `docker/deploy/` 폴더
+### Dokploy 프로덕션 배포 → [v7-dokploy.md](references/server/v7-dokploy.md)
 
-`docker/deploy/` 폴더는 Dokploy PaaS에 v7 프로젝트를 테스트 배포하기 위한 설정 파일을 담고 있다.
-Nginx + PHP-FPM을 단일 컨테이너로 통합하여 Dokploy에서 실행하며, SSL은 Dokploy/Traefik이 처리한다.
-
-| 파일 | 설명 |
-|------|------|
-| `Dockerfile` | PHP 8.3.6-fpm 기반 Nginx + PHP-FPM 통합 이미지. pdo_mysql, gd, mbstring 등 확장 포함. 업로드 22MB 제한 |
-| `nginx.conf` | Dokploy용 Nginx 설정. HTTP(80) 전용, v6→v7 rewrite 규칙, 정적 파일 캐싱, PHP/XML fastcgi 처리 |
-| `entrypoint.sh` | 컨테이너 시작 시 `db.config.php` 자동 생성. 환경 변수(`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`) 또는 sample 파일 사용 |
-| `php-fpm-custom.conf` | PHP-FPM에서 `.xml` 파일도 PHP로 처리하도록 허용 |
+필고 v7 프로젝트의 Dokploy 기반 프로덕션 배포 구성 전체를 다룹니다.
+Dokploy는 셀프호스팅 PaaS 도구로, Git 레포지토리(thruthesky/withcenter, 브랜치 v7)와 연동하여
+Docker Compose 기반 자동 배포를 수행합니다. Nginx + PHP-FPM 8.3.6을 하나의 단일 컨테이너(web)로
+통합하고 MariaDB 11.7.2를 별도 컨테이너로 운영하는 2-서비스 구조입니다. SSL/TLS 종단은
+Dokploy 내장 Traefik 리버스 프록시가 처리하므로 컨테이너는 HTTP(80)만 리슨합니다.
+모노레포 내 Compose Path(`./philgo/www/docker-compose.yml`), 환경변수 기반 DB 설정 자동 생성
+(entrypoint.sh), PHP Extension(gd, mbstring, pdo_mysql 등), Dockerfile 빌드 단계,
+Nginx 라우팅 규칙(v6 호환 rewrite, 정적 파일 캐싱, Sitemap/Google 확인),
+로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.
+서버 접속: Dokploy 관리 패널 `http://209.97.169.136:3000`,
+프리뷰 URL `http://philgo.209.97.169.136.traefik.me`.
 
 ### 데이터베이스 관리 → [v7-db.md](references/server/v7-db.md)
 
