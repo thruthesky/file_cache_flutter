@@ -77,19 +77,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 
   Future<void> _toggleLike() async {
-    try {
-      final result = await PostService.like(_post.idx);
-      if (!mounted) return;
-      setState(() {
-        _liked = result.liked;
-        _goodCount = result.good;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('좋아요 실패: $e')));
-    }
+    final result = await PostService.like(_post.idx);
+    if (!mounted) return;
+    setState(() {
+      _liked = result.liked;
+      _goodCount = result.good;
+    });
   }
 
   Future<void> _editPost() async {
@@ -466,7 +459,6 @@ class PostViewFiles extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
             child: CachedNetworkImage(
               imageUrl: absoluteUrl,
               width: double.infinity,

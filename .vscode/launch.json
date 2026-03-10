@@ -156,6 +156,7 @@
             "deviceId": "42D835BF-0407-43B0-B9FE-80DFB4FBC929",
             "args": [
                 "--dart-define=ENV=dev",
+                "--dart-define=V7_API_ENDPOINT=https://v7-local.philgo.com/api.php"
             ]
         },
         {
