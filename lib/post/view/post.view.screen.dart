@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
+import 'package:philgo/post/view/widgets/post.action.btn.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -403,7 +404,7 @@ class PostActionButtons extends StatelessWidget {
     return Row(
       children: [
         // 좋아요
-        _ActionBtn(
+        PostActionBtn(
           icon: FontAwesomeIcons.lightThumbsUp,
           label: '${post.good > 0 ? post.good : ''}',
           color: scheme.onSurfaceVariant,
@@ -411,7 +412,7 @@ class PostActionButtons extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         // 댓글
-        _ActionBtn(
+        PostActionBtn(
           icon: FontAwesomeIcons.lightComment,
           label: '${post.noOfComment > 0 ? post.noOfComment : ''}',
           color: scheme.onSurfaceVariant,
@@ -422,7 +423,7 @@ class PostActionButtons extends StatelessWidget {
 
         if (isMine) ...[
           // 수정
-          _ActionBtn(
+          PostActionBtn(
             icon: FontAwesomeIcons.lightPenToSquare,
             label: '수정',
             color: scheme.onSurfaceVariant,
@@ -430,7 +431,7 @@ class PostActionButtons extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           // 삭제
-          _ActionBtn(
+          PostActionBtn(
             icon: FontAwesomeIcons.lightTrashCan,
             label: '삭제',
             color: scheme.error,
@@ -438,7 +439,7 @@ class PostActionButtons extends StatelessWidget {
           ),
         ] else ...[
           // 신고
-          _ActionBtn(
+          PostActionBtn(
             icon: FontAwesomeIcons.lightFlag,
             label: '신고',
             color: scheme.onSurfaceVariant,
@@ -446,7 +447,7 @@ class PostActionButtons extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           // 차단
-          _ActionBtn(
+          PostActionBtn(
             icon: FontAwesomeIcons.lightBan,
             label: '차단',
             color: scheme.onSurfaceVariant,
@@ -458,41 +459,3 @@ class PostActionButtons extends StatelessWidget {
   }
 }
 
-class _ActionBtn extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _ActionBtn({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FaIcon(icon, size: 16, color: color),
-            if (label.isNotEmpty) ...[
-              const SizedBox(width: 5),
-              Text(label,
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium
-                      ?.copyWith(color: color)),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
