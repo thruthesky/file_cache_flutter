@@ -18,6 +18,8 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
    - [app/v7-app-travel.md](references/app/v7-app-travel.md) — Travel spots
    - [app/v7-app-phone-login.md](references/app/v7-app-phone-login.md) — Phone login
    - [app/v7-app-settings.md](references/app/v7-app-settings.md) — App settings
+   - [app/v7-app-kakoatalk-social-login.md](references/app/v7-app-kakoatalk-social-login.md) — Kakao social login
+   - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event entry (spinning wheel)
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event/spinning wheel
 
 ### After Completing Each Task
@@ -413,6 +415,16 @@ TravelSpotViewScreen(texts API 로드, _spot 상태 변수),
 데이터 흐름 다이어그램(목록/상세), CoT/ToT 핵심 결정 사항을 포함합니다.
 JSON 데이터 관리(Source of Truth, 서버 경로, 앱 번들 동기화)는
 → [api/v7-travel.md](references/api/v7-travel.md) 3장 참조.
+
+### Flutter 앱 카카오톡 소셜 로그인 → [app/v7-app-kakoatalk-social-login.md](references/app/v7-app-kakoatalk-social-login.md)
+
+Flutter 앱(iOS, Android)에서 카카오톡 소셜 로그인을 구현하는 전체 가이드를 다룹니다.
+카카오 Flutter SDK를 통해 카카오 로그인 후 Firebase Custom Token 방식으로
+Firebase Authentication에 연동하는 흐름을 설명합니다. Android/iOS 플랫폼별 설정
+(AndroidManifest.xml, Info.plist), SDK 초기화, UserService의 카카오 로그인 구현,
+PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 처리,
+로그아웃/연결끊기(탈퇴), 카카오 SDK 주요 API 레퍼런스, 실전 트러블슈팅,
+관련 파일 목록을 포함합니다.
 
 ### 웹 문서 → [references/web/](references/web/)
 
