@@ -51,6 +51,10 @@ PEST 브라우저 테스트는 **PEST PHP 테스트 프레임워크**의 브라�
 | **설정 파일** | `tests/Pest.php` |
 | **공식 문서** | https://pestphp.com/docs/browser-testing |
 
+> **🔴 `./tests` 폴더 용도 — v7 전용 🔴**
+> `./tests` 폴더는 오직 v7 용 코드를 위한 테스트만 저장한다. v6(레거시) 테스트는 `tests/old-tests/`에 보관되며 새로 작성하지 않는다.
+> 테스트 대상: `v7/` 폴더 하위 코드, `lib/` 폴더의 v7 Controller/Service/Repository/Entity 클래스.
+
 ---
 
 ## 2. 설치 및 설정

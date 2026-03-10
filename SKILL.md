@@ -198,6 +198,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 - **디버그 로깅**: `Philgo\Utils\Debug::log()` → `var/debug.log` 기록 (레거시 `debug_log()` 사용 금지)
 - **에러 처리**: `throw new RuntimeException()` → api.php에서 catch → `{success: false}`
 - **테스트**: PEST v4 Unit Test (`tests/Unit/`) + PEST Browser Test (`tests/Browser/`) → [상세 가이드](references/v7-pest-browser-test.md)
+- **🔴 `./tests` 폴더는 오직 v7 용 코드 테스트만 저장한다.** v6(레거시) 테스트는 `tests/old-tests/`에 보관되며 새로 작성하지 않는다. 테스트 대상: `v7/` 폴더 하위 코드, `lib/` 폴더의 v7 Controller/Service/Repository/Entity 클래스.
 
 ---
 
@@ -365,6 +366,18 @@ PHP Dockerfile 구성(Extension 목록, FPM 프로세스 관리), MariaDB 11.7.2
 Cloudflare 터널을 통한 외부 접속(`https://local.philgo.com` — Cloudflare Tunnel + Proxied DNS 레코드로
 로컬 Docker에 접속, IUAM 모드 호환을 위해 Nginx에서 `X-Forwarded-Proto` 헤더 기반 리다이렉트 예외 처리),
 Docker 운영 명령어, Windows 환경 설정 차이점을 포함합니다.
+
+### Dokploy 테스트 배포 — `docker/deploy/` 폴더
+
+`docker/deploy/` 폴더는 Dokploy PaaS에 v7 프로젝트를 테스트 배포하기 위한 설정 파일을 담고 있다.
+Nginx + PHP-FPM을 단일 컨테이너로 통합하여 Dokploy에서 실행하며, SSL은 Dokploy/Traefik이 처리한다.
+
+| 파일 | 설명 |
+|------|------|
+| `Dockerfile` | PHP 8.3.6-fpm 기반 Nginx + PHP-FPM 통합 이미지. pdo_mysql, gd, mbstring 등 확장 포함. 업로드 22MB 제한 |
+| `nginx.conf` | Dokploy용 Nginx 설정. HTTP(80) 전용, v6→v7 rewrite 규칙, 정적 파일 캐싱, PHP/XML fastcgi 처리 |
+| `entrypoint.sh` | 컨테이너 시작 시 `db.config.php` 자동 생성. 환경 변수(`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`) 또는 sample 파일 사용 |
+| `php-fpm-custom.conf` | PHP-FPM에서 `.xml` 파일도 PHP로 처리하도록 허용 |
 
 ### 데이터베이스 관리 → [v7-db.md](references/server/v7-db.md)
 
