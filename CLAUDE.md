@@ -31,7 +31,14 @@ This project is a Flutter app for building PhilGo v7 application.
 
 - **State 클래스** (Provider의 ChangeNotifier): 상태 관리만 담당한다. API 호출, 비즈니스 로직, 데이터 변환 등을 직접 포함하지 않는다.
 - **Service 클래스**: API 호출, 비즈니스 로직, 데이터 처리를 담당한다. State 클래스는 Service 클래스의 메서드를 호출하여 데이터를 가져온 후 상태만 업데이트한다.
-- 예시: `UserState`는 `UserService.loadCurrentUser()`를 호출하고 결과를 `_user`에 저장만 한다. API 호출 로직은 `UserService`에 있다.
+- 예시: `UserState`는 `UserService.loadCurrentUser()`를 호출하고 결과 `UserModel`을 저장만 한다. API 호출 로직은 `UserService`에 있다.
+
+## 데이터 클래스 필수 사용 원칙
+
+- **`Map<String, dynamic>` 또는 JSON 타입 변수 사용 금지**: 서버/API 응답 데이터를 `Map<String, dynamic>`이나 `dynamic` 타입으로 직접 사용하지 않는다.
+- **반드시 데이터 클래스(Model)를 정의**하여 사용한다. 모든 API 응답은 데이터 클래스의 `fromJson()` 팩토리를 통해 변환한 후 사용한다.
+- **데이터 클래스 위치**: 해당 모듈의 `lib/{module}/` 폴더에 `{module}.model.dart` 파일로 생성한다 (예: `lib/user/user.model.dart`, `lib/post/post.model.dart`).
+- 예시: `UserService.loadCurrentUser()`는 `UserModel`을 반환하고, `UserState`는 `UserModel?`을 저장한다.
 
 
 # Design Principles

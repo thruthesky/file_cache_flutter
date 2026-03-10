@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/foundation.dart';
 
+import 'user.model.dart';
 import 'user.service.dart';
 
 /// v7 사용자 상태 관리
@@ -12,11 +13,11 @@ import 'user.service.dart';
 /// 로그인 시 v7 API로 사용자 데이터를 로드한다.
 class UserState extends ChangeNotifier {
   /// FirebaseAuth 상태 변화 구독
-  StreamSubscription<User?>? _authSubscription;
+  StreamSubscription? _authSubscription;
 
-  /// v7 API에서 가져온 사용자 데이터 전체
-  Map<String, dynamic>? _user;
-  Map<String, dynamic>? get user => _user;
+  /// v7 API에서 가져온 사용자 데이터
+  UserModel? _user;
+  UserModel? get user => _user;
 
   /// 사용자 데이터 로딩 중 여부
   bool _isLoading = false;
@@ -26,22 +27,22 @@ class UserState extends ChangeNotifier {
   bool get isLoggedIn => _user != null;
 
   /// 사용자 고유 ID
-  int? get idx => _user?['idx'] as int?;
+  int? get idx => _user?.idx;
 
   /// 사용자 이름
-  String? get name => _user?['name']?.toString();
+  String? get name => _user?.name;
 
   /// 사용자 닉네임
-  String? get nickname => _user?['nickname']?.toString();
+  String? get nickname => _user?.nickname;
 
   /// 사용자 전화번호
-  String? get phoneNumber => _user?['phone_number']?.toString();
+  String? get phoneNumber => _user?.phoneNumber;
 
   /// 사용자 포인트
-  int get point => (_user?['point'] as num?)?.toInt() ?? 0;
+  int get point => _user?.point ?? 0;
 
   /// 사용자 레벨
-  int get level => (_user?['level'] as num?)?.toInt() ?? 0;
+  int get level => _user?.level ?? 0;
 
   /// FirebaseAuth authStateChanges 스트림을 구독하여 로그인/로그아웃을 자동 감지한다.
   ///
@@ -52,10 +53,8 @@ class UserState extends ChangeNotifier {
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen(
       (firebaseUser) async {
         if (firebaseUser != null) {
-          // 로그인 상태 → v7 API로 사용자 데이터 로드
           await _loadCurrentUser();
         } else {
-          // 로그아웃 상태 → 사용자 데이터 초기화
           _user = null;
           notifyListeners();
         }
@@ -80,7 +79,7 @@ class UserState extends ChangeNotifier {
   }
 
   /// 사용자 데이터 설정 (로그인 성공 후 직접 설정할 때 사용)
-  void setUser(Map<String, dynamic>? userData) {
+  void setUser(UserModel? userData) {
     _user = userData;
     notifyListeners();
   }

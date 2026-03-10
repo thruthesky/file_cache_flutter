@@ -6,6 +6,8 @@ import 'package:dio/io.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import 'user.model.dart';
+
 /// 사용자 인증 및 v7 API 서비스
 class UserService {
   UserService._();
@@ -62,8 +64,8 @@ class UserService {
   /// 현재 Firebase 로그인 사용자의 v7 데이터를 로드한다.
   ///
   /// Firebase Auth에 로그인된 상태이면 v7 API(user.me)를 호출하여
-  /// 사용자 정보를 반환한다. 미로그인이면 null을 반환한다.
-  static Future<Map<String, dynamic>?> loadCurrentUser() async {
+  /// UserModel을 반환한다. 미로그인이면 null을 반환한다.
+  static Future<UserModel?> loadCurrentUser() async {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (firebaseUser == null) return null;
 
@@ -100,6 +102,6 @@ class UserService {
       throw Exception(json['message'] ?? '알 수 없는 오류');
     }
 
-    return json;
+    return UserModel.fromJson(json);
   }
 }
