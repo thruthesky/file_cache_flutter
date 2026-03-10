@@ -34,6 +34,21 @@ class ApiService {
     }
   }
 
+  /// Dio 인스턴스를 생성한다.
+  ///
+  /// 디버그 모드에서는 자체 서명 SSL 인증서를 허용한다.
+  static Dio _createDio() {
+    final dio = Dio();
+    if (kDebugMode) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        final httpClient = HttpClient();
+        httpClient.badCertificateCallback = (_, _, _) => true;
+        return httpClient;
+      };
+    }
+    return dio;
+  }
+
   /// v7 API 내부 호출 헬퍼
   ///
   /// Firebase ID Token을 자동으로 추가하고, v7 서버에 HTTP POST 요청을 보낸다.
@@ -47,15 +62,7 @@ class ApiService {
 
     await patchToken(data);
 
-    final dio = Dio();
-    // 디버그 모드에서 자체 서명 SSL 인증서 허용
-    if (kDebugMode) {
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-        final httpClient = HttpClient();
-        httpClient.badCertificateCallback = (_, _, _) => true;
-        return httpClient;
-      };
-    }
+    final dio = _createDio();
 
     try {
       final response = await dio.post(_endpoint, data: data);
@@ -79,7 +86,6 @@ class ApiService {
       debugPrint('[ApiService] v7api error — method: $method');
       debugPrint('[ApiService] error: $e');
       debugPrint('[ApiService] stackTrace: $stackTrace');
-      rethrow;
     }
   }
 
