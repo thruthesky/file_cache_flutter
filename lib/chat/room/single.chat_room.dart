@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/room/chat.room.message_input.dart';
+import 'package:philgo/chat/room/single.chat_room.header.dart';
+import 'package:philgo/chat/room/single.chat_room.init.dart';
+import 'package:philgo/chat/room/single.chat_room.message_list.dart';
+import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/util/util.functions.dart';
 
 /// Single Chat Room Screen
 /// Displays a 1:1 chat room with another user following Comic design theme
@@ -53,7 +59,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                     if (mounted) {
                       showSuccessSnackBar(
                         context,
-                        PhilgoTr.of(context)!.leftroom_successfully,
+                        "Left the room successfully",
                       );
                       if (Navigator.canPop(context)) {
                         Navigator.of(context).pop();
@@ -63,7 +69,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   error: (e) {
                     debugPrint('Error leaving room: $e');
                     if (mounted) {
-                      showErrorSnackBar(context, PhilgoTr.of(context)!.error);
+                      showErrorSnackBar(context, "Error leaving room");
                     }
                   },
                 );

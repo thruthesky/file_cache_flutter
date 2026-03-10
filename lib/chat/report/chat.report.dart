@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.message.dart';
+import 'package:philgo/util/util.functions.dart';
 
 /// Helper widget to report a room
 class ReportChatRoom extends StatelessWidget {
@@ -70,7 +73,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
   /// Handle report submission
   Future<void> _handleReportSubmit() async {
     if (_reportReason.isEmpty) {
-      showErrorSnackBar(context, PhilgoTr.of(context)!.report_select_reason);
+      showErrorSnackBar(context, "Select report reason.");
       return;
     }
 
@@ -82,7 +85,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
       reportee: widget.reportee,
       success: () {
         if (mounted) {
-          showSuccessSnackBar(context, PhilgoTr.of(context)!.report_success);
+          showSuccessSnackBar(context, "Report submitted successfully.");
           widget.onClose();
           setState(() => _isSubmitting = false);
         }
@@ -94,15 +97,12 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
             showErrorSnackBar(
               context,
               reportType == MESSAGE
-                  ? PhilgoTr.of(context)!.report_message_already_reported
-                  : PhilgoTr.of(context)!.report_room_already_reported,
+                  ? "You have already reported this message."
+                  : "You have already reported this room.",
             );
             widget.onClose();
           } else {
-            showErrorSnackBar(
-              context,
-              PhilgoTr.of(context)!.report_submission_failed,
-            );
+            showErrorSnackBar(context, "Failed to submit report.");
           }
         }
       },
@@ -143,8 +143,8 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                   Expanded(
                     child: Text(
                       reportType == ROOM
-                          ? PhilgoTr.of(context)!.report_chat_room
-                          : PhilgoTr.of(context)!.report_chat_message,
+                          ? "Report Chat Room"
+                          : "Report Chat Message",
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
@@ -188,7 +188,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                 children: [
                   // Report Reason Selection label
                   Text(
-                    PhilgoTr.of(context)!.report_select_reason,
+                    "Select Report Reason",
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
@@ -200,7 +200,8 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: reportReasons.map((reason) {
+                    children: reportReasons.entries.map((entry) {
+                      final reason = entry.key;
                       final isSelected = _reportReason == reason;
                       return InkWell(
                         onTap: () => setState(() => _reportReason = reason),
@@ -226,7 +227,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            PhilgoTr.of(context)!.get_report_reason(reason),
+                            "{reason, select, spam {Spam} abusive {Abusive} violence {Violence} hate_speech {Hate Speech} inappropriate_content {Inappropriate Content} other {reason}}",
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: isSelected
                                   ? colorScheme.onPrimary
@@ -286,7 +287,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                         theme.textTheme.bodySmall,
                       ),
                     ),
-                    child: Text(PhilgoTr.of(context)!.cancel),
+                    child: Text("Cancel"),
                   ),
                   const SizedBox(width: 8),
                   // Submit button - Comic design primary button
@@ -340,7 +341,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text(PhilgoTr.of(context)!.report_submit),
+                        : Text("Submit"),
                   ),
                 ],
               ),

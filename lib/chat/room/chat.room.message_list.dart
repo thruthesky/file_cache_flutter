@@ -1,8 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:flutter/material.dart';
-
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.message.dart';
+import 'package:philgo/chat/models/chat.room.dart';
+import 'package:philgo/chat/room/chat.room.message_bubble.dart';
+import 'package:philgo/user/user.firebase_model.dart';
+import 'package:philgo/user/user.functions.dart';
 
 class ChatRoomMessageListController {
   late final ChatRoomMessageListState state;
@@ -78,7 +82,7 @@ class ChatRoomMessageListState extends State<ChatRoomMessageList> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  PhilgoTr.of(context)!.send_message_to_start_conversation,
+                  "Send a message to start a conversation",
                   style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
@@ -123,7 +127,7 @@ class ChatRoomMessageListState extends State<ChatRoomMessageList> {
               final nextMessage = ChatMessage.fromDataSnapshot(nextMessageDoc);
               showSenderInfo = nextMessage.senderUid != message.senderUid;
             }
-            return FutureBuilder<User?>(
+            return FutureBuilder<UserFirebaseModel?>(
               key: ValueKey(
                 'user_${message.senderUid}',
               ), // Add key for consistent building
@@ -132,7 +136,7 @@ class ChatRoomMessageListState extends State<ChatRoomMessageList> {
                 // Use cached data if available to avoid rebuilds
                 final userData =
                     userSnapshot.data ??
-                    User.fromJson({"uid": message.senderUid});
+                    UserFirebaseModel.fromJson({"uid": message.senderUid});
 
                 return ChatRoomMessageBubble(
                   key: ValueKey(

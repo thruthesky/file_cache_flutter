@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/room/chat.room.message_list.dart';
+import 'package:philgo/chat/room/single.chat_room.dart';
+import 'package:philgo/user/widgets/login.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -39,22 +41,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         }
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text(PhilgoTr.of(context)!.invalid_chat_room_id),
-          ),
+          appBar: AppBar(title: Text("Invalid Chat Room ID")),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 16,
             children: [
-              Center(
-                child: Text(PhilgoTr.of(context)!.invalid_chat_room_id_message),
-              ),
+              Center(child: Text("Invalid Chat Room ID")),
               ElevatedButton(
                 onPressed: () {
                   context.go(widget.homeRouteName);
                 },
-                child: Text(PhilgoTr.of(context)!.go_back_to_home),
+                child: Text("Go Back to Home"),
               ),
             ],
           ),
@@ -64,10 +62,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // Loading of the Login of the user
       loading: loading(),
       notLoggedIn: Scaffold(
-        appBar: AppBar(title: Text(PhilgoTr.of(context)!.login_required)),
-        body: Center(
-          child: Text(PhilgoTr.of(context)!.please_log_in_to_continue),
-        ),
+        appBar: AppBar(title: Text("Login Required")),
+        body: Center(child: Text("Please log in to continue")),
       ),
     );
   }

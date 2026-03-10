@@ -2,7 +2,13 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.join.dart';
+import 'package:philgo/router.dart';
+import 'package:philgo/user/user.firebase_model.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/util/util.functions.dart';
 
 class SingleChatRoomInit extends StatefulWidget {
   const SingleChatRoomInit({
@@ -25,7 +31,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
   late String otherUserUid;
   late ChatJoin? _join;
   ChatJoin get join => _join!;
-  User? otherUser;
+  UserFirebaseModel? otherUser;
 
   bool isChatRoomLoading = true;
   StreamSubscription<DatabaseEvent>? newMessageSubscription;
@@ -62,7 +68,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
           "userPhotoUrl": otherUser!.photoUrl,
         }, roomId);
       } else {
-        otherUser = User.fromJson({'uid': otherUserUid});
+        otherUser = UserFirebaseModel.fromJson({'uid': otherUserUid});
       }
 
       // resetUnreadMessageCounter(roomId);
@@ -73,14 +79,11 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
     } catch (e, stack) {
       debugPrint('Error initializing chat room: $e');
       debugPrintStack(stackTrace: stack);
-      if (PhilgoConfig.globalContext.mounted) {
-        showErrorSnackBar(
-          PhilgoConfig.globalContext,
-          PhilgoTr.of(PhilgoConfig.globalContext)!.error_loading_chatroom,
-        );
+      if (globalContext.mounted) {
+        showErrorSnackBar(globalContext, "Error loading chat room");
         setState(() => isChatRoomLoading = false);
-        if (Navigator.canPop(PhilgoConfig.globalContext)) {
-          Navigator.of(PhilgoConfig.globalContext).pop();
+        if (Navigator.canPop(globalContext)) {
+          Navigator.of(globalContext).pop();
         }
       }
     }

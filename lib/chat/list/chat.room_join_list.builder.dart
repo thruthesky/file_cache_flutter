@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.join.dart';
+import 'package:philgo/user/widgets/login.dart';
 
 class ChatRoomJoinListBuilder extends StatelessWidget {
   const ChatRoomJoinListBuilder({super.key, required this.builder});
 
   final Widget Function(BuildContext context, ChatJoin room) builder;
+
+  String empty_chat_list(String order) {
+    if (order == RoomOrder.singleOrder) {
+      return "Your friends list is empty";
+    } else if (order == RoomOrder.groupOrder) {
+      return "Your group chat list is empty";
+    } else if (order == RoomOrder.openOrder) {
+      return "No open chat rooms available";
+    }
+    return "Chatroom list is empty";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Login(
       builder: (uid) => buildChatRoomList(uid),
       notLoggedIn: Center(
         child: Text(
-          PhilgoTr.of(context)!.login_required,
+          "Login required",
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
@@ -30,13 +45,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              PhilgoTr.of(
-                context,
-              )!.error_with_message(snapshot.error.toString()),
-            ),
-          );
+          return Center(child: Text("Error: ${snapshot.error.toString()}"));
         }
 
         if (snapshot.docs.isEmpty) {
@@ -51,7 +60,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  PhilgoTr.of(context)!.empty_chat_list(RoomOrder.order),
+                  empty_chat_list(RoomOrder.order),
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),

@@ -3,7 +3,10 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+
+import 'package:philgo/storage/storage.functions.dart';
+import 'package:philgo/util/util.functions.dart';
 
 /// Message input widget for typing and sending messages with multiple file support
 class ChatRoomMessageInput extends StatefulWidget {
@@ -93,9 +96,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text(
-            PhilgoTr.of(context)!.max_files_reached(widget.maxFiles),
-          ),
+          content: Text("You can select up to {widget.maxFiles} files."),
           backgroundColor: Colors.orange,
         ),
       );
@@ -121,7 +122,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        PhilgoTr.of(context)!.select_files,
+                        "Select Files",
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       IconButton(
@@ -143,7 +144,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListTile(
                   leading: const Icon(Icons.camera_alt),
-                  title: Text(PhilgoTr.of(context)!.camera),
+                  title: Text("Camera"),
                   onTap: () async {
                     Navigator.pop(context);
                     await _pickAndUploadImages(
@@ -159,7 +160,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
               padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
               child: ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: Text(PhilgoTr.of(context)!.gallery),
+                title: Text("Gallery"),
                 onTap: () async {
                   Navigator.pop(context);
                   await _pickAndUploadImages(
@@ -208,9 +209,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 behavior: SnackBarBehavior.floating,
-                content: Text(
-                  PhilgoTr.of(context)!.max_files_reached(widget.maxFiles),
-                ),
+                content: Text("You can select up to ${widget.maxFiles} files."),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -271,19 +270,13 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           });
 
           if (mounted) {
-            showErrorSnackBar(
-              context,
-              PhilgoTr.of(context)!.upload_photo_failed(e.toString()),
-            );
+            showErrorSnackBar(context, "Upload image failed: ${e.toString()}");
           }
         }
       }
     } catch (e) {
       if (mounted) {
-        showErrorSnackBar(
-          context,
-          PhilgoTr.of(context)!.upload_photo_failed(e.toString()),
-        );
+        showErrorSnackBar(context, "Upload failed: ${e.toString()}");
       }
     }
   }
@@ -330,10 +323,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     } catch (e) {
       debugPrint('Error sending message: $e');
       if (mounted) {
-        showErrorSnackBar(
-          context,
-          PhilgoTr.of(context)!.failed_to_send_message(e.toString()),
-        );
+        showErrorSnackBar(context, "Failed to send message: $e{e.toString()}");
       }
     } finally {
       isLoading = false;
@@ -499,7 +489,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           ),
           const SizedBox(width: 12),
           Text(
-            '${PhilgoTr.of(context)!.uploading_images} ($_completedUploads/${_selectedFiles.length})',
+            'Uploading images ($_completedUploads/${_selectedFiles.length})',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -578,7 +568,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                               ),
                           ],
                         ),
-                        tooltip: PhilgoTr.of(context)!.attach_files,
+                        tooltip: "Attach files",
                       ),
 
                       // Message Input Field - 80% minimum width
@@ -591,7 +581,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             autofocus: false,
                             controller: _messageController,
                             decoration: InputDecoration(
-                              hintText: PhilgoTr.of(context)!.type_message,
+                              hintText: "Type a message...",
                               hintStyle: theme.textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurface.withValues(
                                   alpha: 0.4,

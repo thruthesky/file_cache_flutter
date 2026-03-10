@@ -2,7 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/user/user.firebase_model.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/util/util.functions.dart';
+import 'package:philgo/user/widgets/avatar.dart';
 
 /// 친구 검색 다이얼로그
 /// Comic 스타일 적용: 2.0 테두리, 그림자 없음, 둥근 모서리
@@ -16,7 +21,7 @@ class SearchFriendsDialog extends StatefulWidget {
 class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<User> _searchResults = [];
+  List<UserFirebaseModel> _searchResults = [];
   bool _isSearching = false;
   Timer? _debounceTimer;
 
@@ -54,7 +59,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
           .equalTo(query)
           .get();
 
-      List<User> results = [];
+      List<UserFirebaseModel> results = [];
       if (snapshot.exists) {
         final usersData = snapshot.value as Map<dynamic, dynamic>;
         for (final entry in usersData.entries) {
@@ -65,7 +70,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             // Don't include current user in results
             if (loginUid() != null && loginUid() != uid) {
               results.add(
-                User(
+                UserFirebaseModel(
                   uid: uid,
                   nickname: userData[NICKNAME] ?? '',
                   nicknameLowerCase: userData[NICKNAME_LOWER_CASE] ?? '',
@@ -92,7 +97,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     }
   }
 
-  Future<void> _startChatWithUser(User user) async {
+  Future<void> _startChatWithUser(UserFirebaseModel user) async {
     if (loginUid() == null) return;
 
     try {
@@ -106,10 +111,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     } catch (e) {
       // Handle error
       if (mounted) {
-        showErrorSnackBar(
-          context,
-          PhilgoTr.of(context)!.failed_to_start_chat(e.toString()),
-        );
+        showErrorSnackBar(context, "Failed to start chat: ${e.toString()}");
       }
     }
   }
@@ -153,10 +155,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    PhilgoTr.of(context)!.search_friends,
-                    style: textTheme.titleMedium,
-                  ),
+                  Text("Search Friends", style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.of(context).pop(),
@@ -200,7 +199,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                         onChanged: _onSearchChanged,
                         style: textTheme.bodyLarge,
                         decoration: InputDecoration(
-                          hintText: PhilgoTr.of(context)!.search_by_nickname,
+                          hintText: "Search by nickname",
                           hintStyle: textTheme.bodyLarge?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -260,7 +259,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              PhilgoTr.of(context)!.search_by_nickname,
+              "Search by nickname",
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
           ],
@@ -281,7 +280,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              PhilgoTr.of(context)!.no_users_found,
+              "No users found",
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
           ],
@@ -343,7 +342,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     border: Border.all(color: colorScheme.primary, width: 2.0),
                   ),
                   child: Text(
-                    PhilgoTr.of(context)!.chat,
+                    "Chat",
                     style: textTheme.labelLarge?.copyWith(
                       color: colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,

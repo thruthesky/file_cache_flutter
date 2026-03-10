@@ -1,16 +1,52 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 
 import 'user.model.dart';
 
 /// 사용자 인증 및 v7 API 서비스
 class UserService {
+  static UserService? _instance;
+  static UserService get instance {
+    _instance ??= UserService._();
+    return _instance!;
+  }
+
   UserService._();
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseDatabase database = FirebaseDatabase.instance;
+
+  StreamSubscription<DatabaseEvent>? blockedUsersSubscription;
+  final Set<String> blockedUsers = <String>{};
+  final blockedUsersStream = ValueNotifier<Set<String>>(<String>{});
+
+  StreamSubscription<DatabaseEvent>? unreadCountSubscription;
+  int unreadCount = 0;
+  final unreadCountStream = ValueNotifier<int>(0);
+
+  int unreadSingleCount = 0;
+  final unreadSingleCountStream = ValueNotifier<int>(0);
+
+  /// Previous unread count - 이전 읽지 않은 메시지 수
+  /// Used to detect new message arrival - 새 메시지 도착 감지를 위해 사용
+  int _previousUnreadCount = 0;
+
+  // PINNED CHAT ROOMS
+  StreamSubscription<DatabaseEvent>? pinnedChatRoomsSubscription;
+  final Set<String> pinnedChatRooms = <String>{};
+  final pinnedChatRoomsStream = ValueNotifier<Set<String>>(<String>{});
+
+  // FAVORITE FOLDER
+  StreamSubscription<DatabaseEvent>? favoriteFoldersSubscription;
+  final List<Map<String, dynamic>> favoriteFolders = [];
+  final favoriteFoldersStream = ValueNotifier<List<Map<String, dynamic>>>([]);
 
   /// v7 API 엔드포인트
   static const String _endpoint = String.fromEnvironment(

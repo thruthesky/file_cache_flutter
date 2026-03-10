@@ -3,7 +3,18 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/chat/models/chat.join.dart';
+import 'package:philgo/chat/models/chat.room.dart';
+import 'package:philgo/chat/report/chat.report.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.service.dart';
+import 'package:philgo/user/widgets/avatar.dart';
+import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/user/widgets/block_user_dialog.dart';
+import 'package:philgo/user/widgets/online.status.dart';
+import 'package:philgo/util/util.functions.dart';
 
 class ChatRoomListTile extends StatefulWidget {
   const ChatRoomListTile({
@@ -157,7 +168,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         return chatRoomTile(
           blocked: true,
           subTitleWidget: Text(
-            PhilgoTr.of(context)!.blocked_message,
+            "Message from blocked user",
             style: TextStyle(
               color: Colors.grey[500],
               fontStyle: FontStyle.italic,
@@ -434,12 +445,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               color: colorScheme.primary,
             ),
             const SizedBox(width: 12),
-            Text(
-              isPinned
-                  ? PhilgoTr.of(context)!.unpin
-                  : PhilgoTr.of(context)!.pin,
-              style: theme.textTheme.bodyMedium,
-            ),
+            Text(isPinned ? "Unpin" : "Pin", style: theme.textTheme.bodyMedium),
           ],
         ),
       ),
@@ -460,10 +466,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 color: colorScheme.error,
               ),
               const SizedBox(width: 12),
-              Text(
-                PhilgoTr.of(context)!.report,
-                style: theme.textTheme.bodyMedium,
-              ),
+              Text("Report", style: theme.textTheme.bodyMedium),
             ],
           ),
         ),
@@ -488,7 +491,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  PhilgoTr.of(context)!.unblock_user,
+                  "Unblock User",
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.green,
                   ),
@@ -509,10 +512,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   color: colorScheme.error,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  PhilgoTr.of(context)!.block_user,
-                  style: theme.textTheme.bodyMedium,
-                ),
+                Text("Block User", style: theme.textTheme.bodyMedium),
               ],
             ),
           ),
@@ -533,7 +533,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             ),
             const SizedBox(width: 12),
             Text(
-              PhilgoTr.of(context)!.leave_room,
+              "Leave Room",
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: colorScheme.error,
               ),
@@ -557,7 +557,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               const SizedBox(width: 12),
               Text(
-                PhilgoTr.of(context)!.block_and_leave,
+                "Block & Leave",
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.error,
                 ),
@@ -621,9 +621,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       context: context,
       builder: (dialogContext) => Dialog(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
@@ -639,7 +637,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                 child: Text(
-                  PhilgoTr.of(dialogContext)!.leave_room,
+                  "Leave Room",
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -653,7 +651,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   vertical: 8,
                 ),
                 child: Text(
-                  PhilgoTr.of(dialogContext)!.leave_room_confirmation,
+                  "Are you sure you want to leave this room?",
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -697,16 +695,13 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                             theme.textTheme.bodyMedium,
                           ),
                         ),
-                        child: Text(
-                          PhilgoTr.of(dialogContext)!.block_and_leave,
-                        ),
+                        child: Text("Block & Leave"),
                       ),
                       const SizedBox(height: 8),
                     ],
                     // Leave only - outlined error button
                     ElevatedButton(
-                      onPressed: () =>
-                          Navigator.of(dialogContext).pop('leave'),
+                      onPressed: () => Navigator.of(dialogContext).pop('leave'),
                       style: ButtonStyle(
                         elevation: WidgetStateProperty.all(0),
                         shape: WidgetStateProperty.all(
@@ -734,7 +729,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(PhilgoTr.of(dialogContext)!.leave),
+                      child: Text("Leave"),
                     ),
                     const SizedBox(height: 8),
                     // Cancel - neutral button
@@ -767,7 +762,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(PhilgoTr.of(dialogContext)!.cancel),
+                      child: Text("Cancel"),
                     ),
                   ],
                 ),
@@ -792,10 +787,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
-            showSuccessSnackBar(
-              context,
-              PhilgoTr.of(context)!.leftroom_successfully,
-            );
+            showSuccessSnackBar(context, "Left the room successfully");
           }
         },
         error: (e) => debugPrint('Error leaving room: $e'),
@@ -805,10 +797,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
-            showSuccessSnackBar(
-              context,
-              PhilgoTr.of(context)!.leftroom_successfully,
-            );
+            showSuccessSnackBar(context, "Left the room successfully");
           }
         },
         error: (e) => debugPrint('Error leaving room: $e'),
@@ -829,10 +818,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
-            showSuccessSnackBar(
-              context,
-              PhilgoTr.of(context)!.leftroom_successfully,
-            );
+            showSuccessSnackBar(context, "Left the room successfully");
           }
         },
         error: (e) => debugPrint('Error leaving room: $e'),

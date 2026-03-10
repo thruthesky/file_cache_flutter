@@ -1,5 +1,12 @@
 // ignore_for_file: constant_identifier_names
 
+const String NICKNAME = 'nickname';
+const String NICKNAME_LOWER_CASE = 'nicknameLowerCase';
+
+const String USERS = 'users';
+const String DISPLAY_NAME = 'display_name';
+const String PHOTO_URL = 'photoUrl';
+
 const String ROOM = 'room';
 const String MESSAGE = 'message';
 
@@ -67,13 +74,13 @@ class ChatProtocol {
 }
 
 /// Available report reasons
-const List<String> reportReasons = [
-  'spam',
-  'abusive',
-  'violence',
-  'hate_speech',
-  'inappropriate_content',
-];
+const Map<String, String> reportReasons = {
+  'spam': "Spam",
+  'abusive': 'Abusive',
+  'violence': 'Violence',
+  'hate_speech': 'Hate Speech',
+  'inappropriate_content': 'Inappropriate Content',
+};
 
 const String REPORT_PATH = 'path';
 const String REPORT_REPORTER = 'reporter';

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/list/chat.room_list_tile.dart';
+import 'package:philgo/chat/models/chat.join.dart';
+import 'package:philgo/chat/models/chat.room.dart';
+import 'package:philgo/user/widgets/login.dart';
 
 class ChatRoomListView extends StatelessWidget {
   // singleOrder - returns a list of single chat rooms for the user
@@ -12,6 +17,18 @@ class ChatRoomListView extends StatelessWidget {
   final void Function(String roomId) onTap;
 
   const ChatRoomListView({super.key, required this.order, required this.onTap});
+
+  String empty_chat_list(String order) {
+    if (order == RoomOrder.singleOrder) {
+      return "Your friends list is empty";
+    } else if (order == RoomOrder.groupOrder) {
+      return "Your group chat list is empty";
+    } else if (order == RoomOrder.openOrder) {
+      return "No open chat rooms available";
+    }
+
+    return "Chatroom list is empty";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +51,7 @@ class ChatRoomListView extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              PhilgoTr.of(
-                context,
-              )!.error_with_message(snapshot.error.toString()),
-            ),
-          );
+          return Center(child: Text("Error: ${snapshot.error.toString()}"));
         }
 
         if (snapshot.docs.isEmpty) {
@@ -76,7 +87,7 @@ class ChatRoomListView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    PhilgoTr.of(context)!.empty_chat_list(order),
+                    empty_chat_list(order),
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),

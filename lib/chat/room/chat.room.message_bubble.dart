@@ -2,14 +2,24 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:philgo_api/philgo_api.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.message.dart';
+import 'package:philgo/chat/room/chat.room_screen.dart';
+import 'package:philgo/user/user.firebase_model.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/widgets/avatar.dart';
+import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/user/widgets/block_user_dialog.dart';
+import 'package:philgo/util/util.functions.dart';
+import 'package:philgo/util/widgets/full_screen_image_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Message bubble widget for displaying chat messages
 class ChatRoomMessageBubble extends StatelessWidget {
   final ChatMessage message;
-  final User? sender;
+  final UserFirebaseModel? sender;
   final bool isCurrentUser;
   final bool showSenderInfo;
   final bool?
@@ -103,7 +113,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      PhilgoTr.of(context)!.you,
+                      "You",
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(context).colorScheme.primary,
@@ -265,15 +275,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
     switch (message.protocol) {
       case ChatProtocol.create:
-        return PhilgoTr.of(context)!.protocol_create;
+        return "Room has been created";
       case ChatProtocol.join:
-        return PhilgoTr.of(context)!.protocol_join(senderName);
+        return "$senderName has joined the room";
       case ChatProtocol.invitationNotSent:
-        return PhilgoTr.of(context)!.protocol_invitation_not_sent;
+        return "Invitation not sent";
       case ChatProtocol.left:
-        return PhilgoTr.of(context)!.protocol_left(senderName);
+        return "$senderName left the room";
       case ChatProtocol.removed:
-        return PhilgoTr.of(context)!.protocol_removed(senderName);
+        return "$senderName has been removed from the room";
       default:
         // Fallback to the message text if protocol is not recognized
         return message.text ?? '';
@@ -380,9 +390,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
   Widget _buildBlindedMessage(BuildContext context) {
     String blindReason = '';
     if (message.moderated == 'M') {
-      blindReason = PhilgoTr.of(context)!.message_moderated_by_ai;
+      blindReason = "This message was blocked by AI moderation.";
     } else if (message.moderated == 'A') {
-      blindReason = PhilgoTr.of(context)!.message_moderated_as_advertisement;
+      blindReason = "This message was blocked as an advertisement.";
     }
 
     return Padding(
@@ -423,7 +433,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      PhilgoTr.of(context)!.you,
+                      "You",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -539,7 +549,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  PhilgoTr.of(context)!.blocked_message_tap_to_unblock,
+                  "This message was blocked.",
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 14,
@@ -575,7 +585,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    PhilgoTr.of(context)!.menu,
+                    "Menu",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -584,7 +594,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: PhilgoTr.of(context)!.close,
+                    tooltip: "Close",
                   ),
                 ],
               ),
@@ -594,7 +604,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               contentPadding: EdgeInsets.symmetric(horizontal: 8),
               visualDensity: VisualDensity(horizontal: -4),
               leading: userAvatar(),
-              title: Text(PhilgoTr.of(context)!.profile),
+              title: Text("Profile"),
               onTap: () {
                 Navigator.of(context).pop();
                 showProfileDialog(parentContext, sender!);
@@ -603,7 +613,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             const SizedBox(height: 8),
             ListTile(
               leading: const Icon(Icons.post_add),
-              title: Text(PhilgoTr.of(context)!.recent_post),
+              title: Text("Recent Posts"),
               onTap: () {
                 Navigator.of(context).pop();
                 showUserRecentPostsDialog(
@@ -616,10 +626,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             // Report option
             ListTile(
               leading: const Icon(Icons.report, color: Colors.red),
-              title: Text(
-                PhilgoTr.of(context)!.report,
-                style: const TextStyle(color: Colors.red),
-              ),
+              title: Text("Report", style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.of(context).pop();
                 showChatMessageReportDialog(
@@ -638,7 +645,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 yes: () => ListTile(
                   leading: Icon(Icons.person_add, color: Colors.green),
                   title: Text(
-                    PhilgoTr.of(context)!.unblock_user,
+                    "Unblock User",
                     style: TextStyle(color: Colors.green),
                   ),
                   onTap: () {
@@ -649,7 +656,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 no: () => ListTile(
                   leading: Icon(Icons.block, color: Colors.orange),
                   title: Text(
-                    PhilgoTr.of(context)!.block_user,
+                    "Block User",
                     style: TextStyle(color: Colors.orange),
                   ),
                   onTap: () {
@@ -715,7 +722,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    PhilgoTr.of(context)!.blocked_user_options,
+                    "Blocked User Options",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -724,7 +731,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: PhilgoTr.of(context)!.close,
+                    tooltip: "Close",
                   ),
                 ],
               ),
@@ -738,7 +745,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 userDisplayName(),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text(PhilgoTr.of(context)!.blocked_user_subtitle),
+              subtitle: Text("This message was blocked."),
             ),
             const SizedBox(height: 8),
 
@@ -746,10 +753,10 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.person_add, color: Colors.green),
               title: Text(
-                PhilgoTr.of(context)!.unblock_user,
+                "Unblock User",
                 style: const TextStyle(color: Colors.green),
               ),
-              subtitle: Text(PhilgoTr.of(context)!.unblock_user_description),
+              subtitle: Text("Unblock this user to view their messages."),
               onTap: () {
                 Navigator.of(context).pop();
                 _performUnblock(context);

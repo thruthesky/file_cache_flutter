@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/util/util.functions.dart';
 
 class CreateChatRoomScreen extends StatefulWidget {
   static const String routeName = '/create-chat-room';
@@ -34,7 +35,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(PhilgoTr.of(context)!.create_room),
+        title: Text("Create Room"),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => {
@@ -51,7 +52,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : Text(PhilgoTr.of(context)!.create),
+                : Text("Create"),
           ),
         ],
       ),
@@ -66,14 +67,14 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: '${PhilgoTr.of(context)!.room_name} *',
-                  hintText: PhilgoTr.of(context)!.enter_room_name,
+                  labelText: 'Room Name *',
+                  hintText: "Enter room name",
                   border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.group),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return PhilgoTr.of(context)!.room_name_required;
+                    return "Room name is required";
                   }
                   return null;
                 },
@@ -86,8 +87,8 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
               TextFormField(
                 controller: _descriptionController,
                 decoration: InputDecoration(
-                  labelText: PhilgoTr.of(context)!.room_description,
-                  hintText: PhilgoTr.of(context)!.enter_room_description,
+                  labelText: "Room Description",
+                  hintText: "Enter room description",
                   border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.description),
                 ),
@@ -98,8 +99,8 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
               const SizedBox(height: 24), // Open Room Toggle
               Card(
                 child: SwitchListTile(
-                  title: Text(PhilgoTr.of(context)!.open_room),
-                  subtitle: Text(PhilgoTr.of(context)!.open_room_description),
+                  title: Text("Open Room"),
+                  subtitle: Text("Allow anyone to join this room"),
                   value: _isOpen,
                   onChanged: _isLoading
                       ? null
@@ -115,10 +116,8 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
               const SizedBox(height: 16), // Block Advertisement Toggle
               Card(
                 child: SwitchListTile(
-                  title: Text(PhilgoTr.of(context)!.block_advertisement),
-                  subtitle: Text(
-                    PhilgoTr.of(context)!.block_advertisement_description,
-                  ),
+                  title: Text("Block Advertisement"),
+                  subtitle: Text("Block advertisement messages in this room"),
                   value: _blockAdvertisement,
                   onChanged: _isLoading
                       ? null
@@ -153,11 +152,11 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                             const SizedBox(width: 12),
-                            Text(PhilgoTr.of(context)!.creating),
+                            Text("Creating..."),
                           ],
                         )
                       : Text(
-                          PhilgoTr.of(context)!.create_room,
+                          "Create Room",
                           style: const TextStyle(fontSize: 16),
                         ),
                 ),
@@ -182,7 +181,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
       open: _isOpen,
-      test: PhilgoConfig.isProduction == true ? true : null,
+      // test: PhilgoConfig.isProduction == true ? true : null,
       blockAdvertisement: _blockAdvertisement ? true : null,
       onCreate: (roomId) {
         if (context.mounted && Navigator.of(context).canPop()) {
@@ -195,10 +194,7 @@ class _CreateChatRoomScreenState extends State<CreateChatRoomScreen> {
       },
       onError: (error) {
         if (context.mounted) {
-          showErrorSnackBar(
-            context,
-            PhilgoTr.of(context)!.failed_to_create_room(error),
-          );
+          showErrorSnackBar(context, "Failed to create room: $error");
           setState(() {
             _isLoading = false;
           });

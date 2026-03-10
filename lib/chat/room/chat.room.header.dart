@@ -3,14 +3,23 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:philgo_api/philgo_api.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.room.dart';
+import 'package:philgo/chat/report/chat.report.dart';
+import 'package:philgo/messaging/widget/push_notification_icon.dart';
+import 'package:philgo/user/user.firebase_model.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.service.dart';
+import 'package:philgo/user/widgets/avatar.dart';
+import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/util/util.functions.dart';
 
 /// Header widget for chat room screen showing room info and options
 class ChatRoomHeader extends StatelessWidget {
   final ChatRoom? room;
-  final User? otherUser;
+  final UserFirebaseModel? otherUser;
   final String roomId;
   final bool isSingleChat;
   final VoidCallback? onEditTap;
@@ -50,7 +59,7 @@ class ChatRoomHeader extends StatelessWidget {
         IconButton(
           onPressed: () => showMenuModal(context),
           icon: const Icon(Icons.settings),
-          tooltip: PhilgoTr.of(context)!.menu,
+          tooltip: "Menu",
         ),
       ],
     );
@@ -72,7 +81,7 @@ class ChatRoomHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    PhilgoTr.of(context)!.menu,
+                    "Menu",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -81,7 +90,7 @@ class ChatRoomHeader extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: PhilgoTr.of(context)!.close,
+                    tooltip: "Close",
                   ),
                 ],
               ),
@@ -114,7 +123,7 @@ class ChatRoomHeader extends StatelessWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                PhilgoTr.of(context)!.admin_chat_notice,
+                                "Admin Chat Notice",
                                 style: TextStyle(
                                   color: Colors.blue[700],
                                   fontSize: 14,
@@ -129,7 +138,7 @@ class ChatRoomHeader extends StatelessWidget {
                       if (shouldShowEditOption()) ...[
                         ListTile(
                           leading: const Icon(Icons.edit),
-                          title: Text(PhilgoTr.of(context)!.edit),
+                          title: Text("Edit"),
                           onTap: () {
                             Navigator.of(context).pop();
                             if (onEditTap != null) onEditTap!();
@@ -147,7 +156,7 @@ class ChatRoomHeader extends StatelessWidget {
                             vertical: -2,
                           ),
                           leading: Avatar(photoUrl: getPhotoUrl()),
-                          title: Text(PhilgoTr.of(context)!.profile),
+                          title: Text("Profile"),
                           onTap: () {
                             Navigator.of(context).pop();
                             showProfileDialog(parentContext, otherUser!);
@@ -156,7 +165,7 @@ class ChatRoomHeader extends StatelessWidget {
                         const SizedBox(height: 8),
                         ListTile(
                           leading: const Icon(Icons.post_add),
-                          title: Text(PhilgoTr.of(context)!.recent_post),
+                          title: Text("Recent Post"),
                           onTap: () {
                             Navigator.of(context).pop();
                             showUserRecentPostsDialog(
@@ -172,7 +181,7 @@ class ChatRoomHeader extends StatelessWidget {
                       if (!isSingleChat) ...[
                         ListTile(
                           leading: const Icon(Icons.link),
-                          title: Text(PhilgoTr.of(context)!.join_url),
+                          title: Text("Join URL"),
                           onTap: () {
                             Navigator.of(context).pop();
                             copyRoomIdToClipboard(context);
@@ -185,7 +194,7 @@ class ChatRoomHeader extends StatelessWidget {
                       // Report option
                       ListTile(
                         leading: const Icon(Icons.report),
-                        title: Text(PhilgoTr.of(context)!.report),
+                        title: Text("Report"),
                         onTap: () {
                           Navigator.of(context).pop();
                           reportRoom(parentContext);
@@ -203,7 +212,7 @@ class ChatRoomHeader extends StatelessWidget {
                               color: Colors.green,
                             ),
                             title: Text(
-                              PhilgoTr.of(context)!.unblock_user,
+                              "Unblock User",
                               style: TextStyle(color: Colors.green),
                             ),
                             onTap: () {
@@ -215,7 +224,7 @@ class ChatRoomHeader extends StatelessWidget {
                           ),
                           no: () => ListTile(
                             leading: Icon(Icons.block),
-                            title: Text(PhilgoTr.of(context)!.block_user),
+                            title: Text("Block User"),
                             onTap: () {
                               Navigator.of(context).pop();
                               showBlockDialog(
@@ -232,7 +241,7 @@ class ChatRoomHeader extends StatelessWidget {
                       // Leave option
                       ListTile(
                         leading: const Icon(Icons.exit_to_app),
-                        title: Text(PhilgoTr.of(context)!.leave),
+                        title: Text("Leave"),
                         onTap: () {
                           Navigator.of(context).pop();
                           showLeaveConfirmDialog(parentContext);
@@ -274,7 +283,7 @@ class ChatRoomHeader extends StatelessWidget {
       url = Uri.base.resolve('/chat/rooms.php?id=$roomId').toString();
     }
     Clipboard.setData(ClipboardData(text: url));
-    showSuccessSnackBar(context, PhilgoTr.of(context)!.copied_to_clipboard);
+    showSuccessSnackBar(context, "Copied to clipboard");
   }
 
   /// Report room - show report dialog
@@ -319,7 +328,7 @@ class ChatRoomHeader extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                 child: Text(
-                  PhilgoTr.of(context)!.leave_room,
+                  "Leave Room",
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -334,7 +343,7 @@ class ChatRoomHeader extends StatelessWidget {
                   vertical: 8,
                 ),
                 child: Text(
-                  PhilgoTr.of(context)!.leave_room_confirmation,
+                  "Are you sure you want to leave this room?",
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -383,7 +392,7 @@ class ChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(PhilgoTr.of(context)!.cancel),
+                      child: Text("Cancel"),
                     ),
                     const SizedBox(width: 8),
                     // Leave button - Comic design error button (destructive action)
@@ -422,7 +431,7 @@ class ChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(PhilgoTr.of(context)!.leave),
+                      child: Text("Leave"),
                     ),
                   ],
                 ),
@@ -466,7 +475,7 @@ class ChatRoomHeader extends StatelessWidget {
 
                 if (room != null && !isSingleChat && room!.users.isNotEmpty)
                   Text(
-                    PhilgoTr.of(context)!.members_count(room!.users.length),
+                    "${room!.users.length} members",
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
               ],
@@ -556,7 +565,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
       return IconButton(
         onPressed: () => _showFavoritesModal(context),
         icon: const Icon(Icons.star_border),
-        tooltip: PhilgoTr.of(context)!.add_to_favorites,
+        tooltip: "Add to Favorites",
       );
     }
 
@@ -569,7 +578,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
             isFavorited ? Icons.star : Icons.star_border,
             color: isFavorited ? Colors.amber : null,
           ),
-          tooltip: PhilgoTr.of(context)!.add_to_favorites,
+          tooltip: "Add to Favorites",
         );
       },
     );
@@ -716,7 +725,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close),
-                  tooltip: PhilgoTr.of(context)!.close,
+                  tooltip: "Close",
                 ),
               ],
             ),
@@ -739,7 +748,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         return Padding(
                           padding: const EdgeInsets.all(32.0),
                           child: Text(
-                            PhilgoTr.of(context)!.no_bookmarked_folders,
+                            "No bookmarked folders",
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         );

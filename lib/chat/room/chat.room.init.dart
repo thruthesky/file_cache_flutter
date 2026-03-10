@@ -3,7 +3,11 @@ import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.room.dart';
+import 'package:philgo/user/user.firebase_model.dart';
+import 'package:philgo/util/util.functions.dart';
 
 class ChatRoomInit extends StatefulWidget {
   const ChatRoomInit({
@@ -27,7 +31,7 @@ class ChatRoomInitState extends State<ChatRoomInit> {
   bool isSingleChat = false;
   late ChatRoom? _room;
   ChatRoom get room => _room!;
-  User? otherUser;
+  UserFirebaseModel? otherUser;
 
   //
   bool isChatRoomLoading = true;
@@ -104,7 +108,7 @@ class ChatRoomInitState extends State<ChatRoomInit> {
             .listen((event) {
               if (event.snapshot.exists) {
                 setState(() {
-                  otherUser = User.fromSnapshot(event.snapshot);
+                  otherUser = UserFirebaseModel.fromSnapshot(event.snapshot);
                 });
                 updateJoinRoomNickname(room, otherUser!.nickname);
                 updateJoinRoomPhotoUrl(room, otherUser!.photoUrl);

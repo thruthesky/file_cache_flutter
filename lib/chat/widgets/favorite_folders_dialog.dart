@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/user/user.service.dart';
 
 /// 즐겨찾기 폴더 목록 다이얼로그
 /// 사용자의 즐겨찾기 폴더와 각 폴더의 북마크 개수를 표시

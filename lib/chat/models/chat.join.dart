@@ -1,5 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/models/chat.last_message.dart';
 
 class ChatJoin {
   final String id;

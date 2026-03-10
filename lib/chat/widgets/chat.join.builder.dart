@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.join.dart';
 
 class ChatJoinBuilder extends StatefulWidget {
   const ChatJoinBuilder({

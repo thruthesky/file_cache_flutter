@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.room.dart';
+import 'package:philgo/storage/storage.functions.dart';
+import 'package:philgo/util/util.functions.dart';
 
 class ChatRoomEdit extends StatefulWidget {
   final ChatRoom room;
@@ -70,7 +73,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Text(
-                PhilgoTr.of(context)!.edit_chat_room,
+                "Edit Chat Room",
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -95,14 +98,14 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: '${PhilgoTr.of(context)!.room_name} *',
-                          hintText: PhilgoTr.of(context)!.enter_room_name,
+                          labelText: 'Room Name *',
+                          hintText: "Enter room name",
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.group),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return PhilgoTr.of(context)!.room_name_required;
+                            return "Room name is required";
                           }
                           return null;
                         },
@@ -115,10 +118,8 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                       TextFormField(
                         controller: _descriptionController,
                         decoration: InputDecoration(
-                          labelText: PhilgoTr.of(context)!.room_description,
-                          hintText: PhilgoTr.of(
-                            context,
-                          )!.enter_room_description,
+                          labelText: "Room Description",
+                          hintText: "Enter room description",
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.description),
                         ),
@@ -130,10 +131,8 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
 
                       // Open Room Toggle
                       SwitchListTile(
-                        title: Text(PhilgoTr.of(context)!.open_room),
-                        subtitle: Text(
-                          PhilgoTr.of(context)!.open_room_description,
-                        ),
+                        title: Text("Open Room"),
+                        subtitle: Text("Allow anyone to join this room"),
                         value: _isOpen,
                         onChanged: _isLoading
                             ? null
@@ -149,9 +148,9 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
 
                       // Block Advertisement Toggle
                       SwitchListTile(
-                        title: Text(PhilgoTr.of(context)!.block_advertisement),
+                        title: Text("Block Advertisement"),
                         subtitle: Text(
-                          PhilgoTr.of(context)!.block_advertisement_description,
+                          "Block advertisement messages in this room",
                         ),
                         value: _blockAdvertisement,
                         onChanged: _isLoading
@@ -216,7 +215,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                         theme.textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text(PhilgoTr.of(context)!.cancel),
+                    child: Text("Cancel"),
                   ),
                   const SizedBox(width: 8),
                   // Save button - Comic design primary button
@@ -270,7 +269,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text(PhilgoTr.of(context)!.save),
+                        : Text("Save"),
                   ),
                 ],
               ),
@@ -298,10 +297,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
       success: (room) {
         if (mounted) {
           // Show success message
-          showSuccessSnackBar(
-            context,
-            PhilgoTr.of(context)!.edit_chat_room_success,
-          );
+          showSuccessSnackBar(context, "Chat room updated successfully");
 
           // Call callback and close dialog
           widget.onRoomUpdated?.call();
@@ -315,7 +311,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
         if (mounted) {
           showErrorSnackBar(
             context,
-            PhilgoTr.of(context)!.failed_to_update_room(e),
+            "Failed to update chat room: ${e.toString()}",
           );
         }
       },
@@ -465,10 +461,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
           _isUploadingImage = false;
         });
         if (mounted) {
-          showSuccessSnackBar(
-            context,
-            PhilgoTr.of(context)!.profile_photo_updated,
-          );
+          showSuccessSnackBar(context, "Profile photo updated");
           // Call callback to refresh the UI
           widget.onRoomUpdated?.call();
         }
@@ -479,10 +472,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
         });
 
         if (mounted) {
-          showErrorSnackBar(
-            context,
-            '${PhilgoTr.of(context)!.upload_photo_failed}: $error',
-          );
+          showErrorSnackBar(context, "Upload failed: $error");
         }
       },
       onProgress: (progress) {
@@ -514,10 +504,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
       });
 
       if (mounted) {
-        showSuccessSnackBar(
-          context,
-          PhilgoTr.of(context)!.profile_photo_removed,
-        );
+        showSuccessSnackBar(context, "Profile photo removed");
         // Call callback to refresh the UI
         widget.onRoomUpdated?.call();
       }
@@ -529,7 +516,7 @@ class _ChatRoomEditState extends State<ChatRoomEdit> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          PhilgoTr.of(context)!.failed_to_remove_profile_photo(e.toString()),
+          "Failed to remove profile photo: ${e.toString()}",
         );
       }
     }

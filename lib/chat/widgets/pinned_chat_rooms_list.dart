@@ -1,7 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/widgets/chat.join.builder.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.service.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fa;
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/user/widgets/avatar.dart';
 
 /// 고정된 채팅방 목록 위젯
 ///
@@ -67,7 +72,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          PhilgoTr.of(context)!.pinned_chats,
+                          "Pinned Chats",
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.w600,
@@ -178,7 +183,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                 child: Text(
-                  PhilgoTr.of(context)!.unpin_chat_room_title,
+                  "Unpin Chat Room",
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -193,7 +198,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                   vertical: 8,
                 ),
                 child: Text(
-                  PhilgoTr.of(context)!.unpin_chat_room_message,
+                  "Are you sure you want to unpin this chat room?",
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -242,7 +247,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(PhilgoTr.of(context)!.cancel),
+                      child: Text("Cancel"),
                     ),
                     const SizedBox(width: 8),
                     // Unpin button - Comic design error button (destructive action)
@@ -281,7 +286,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(PhilgoTr.of(context)!.unpin),
+                      child: Text("Unpin"),
                     ),
                   ],
                 ),
@@ -313,7 +318,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 성공 메시지 표시 (선택적)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(PhilgoTr.of(context)!.chat_room_unpinned),
+            content: Text("Chat room unpinned"),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -323,9 +328,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 에러 메시지 표시
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              PhilgoTr.of(context)!.error_with_message(e.toString()),
-            ),
+            content: Text("Error: ${e.toString()}"),
             duration: const Duration(seconds: 3),
           ),
         );

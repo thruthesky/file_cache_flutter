@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/user/user.functions.dart';
 
 class ChatService {
   static ChatService? _instance;
@@ -30,9 +30,7 @@ class ChatService {
       context: context,
       builder: (dialogContext) => Dialog(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
@@ -56,7 +54,7 @@ class ChatService {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      PhilgoTr.of(dialogContext)!.block_and_leave,
+                      'Block & Leave',
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
@@ -72,7 +70,7 @@ class ChatService {
                   vertical: 8,
                 ),
                 child: Text(
-                  PhilgoTr.of(dialogContext)!.block_user_confirmation,
+                  'Are you sure you want to block this user and leave the chat?',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -114,7 +112,7 @@ class ChatService {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(PhilgoTr.of(dialogContext)!.cancel),
+                      child: Text('Cancel'),
                     ),
                     const SizedBox(width: 8),
                     // Confirm Block & Leave
@@ -147,9 +145,7 @@ class ChatService {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text(
-                        PhilgoTr.of(dialogContext)!.block_and_leave,
-                      ),
+                      child: Text('Block & Leave'),
                     ),
                   ],
                 ),

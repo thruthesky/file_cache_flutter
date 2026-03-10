@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/models/chat.join.dart';
+import 'package:philgo/chat/room/chat.room_screen.dart';
+import 'package:philgo/user/widgets/avatar.dart';
+import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/user/widgets/login.dart';
 
 /// 북마크된 채팅 목록 다이얼로그
 /// 특정 폴더에 저장된 북마크 채팅방 목록을 표시하고 선택 시 채팅방으로 이동
@@ -144,9 +149,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            PhilgoTr.of(
-                              context,
-                            )!.error_with_message(snapshot.error.toString()),
+                            "Error: ${snapshot.error.toString()}",
                             style: textTheme.bodyLarge?.copyWith(
                               color: colorScheme.error,
                             ),
@@ -336,9 +339,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                             Blocked(
                                               otherUserUid: otherUserUid,
                                               yes: () => Text(
-                                                PhilgoTr.of(
-                                                  context,
-                                                )!.blocked_message,
+                                                "Message from blocked user (tap to unblock)",
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: textTheme.bodySmall
@@ -488,7 +489,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      PhilgoTr.of(context)!.login_required,
+                      "Login required to view bookmarked chats",
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.outline,
                       ),

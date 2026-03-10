@@ -4,7 +4,16 @@ import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:philgo_api/philgo_api.dart';
+import 'package:philgo/chat/chat.defines.dart';
+import 'package:philgo/chat/models/chat.join.dart';
+import 'package:philgo/chat/models/chat.message.dart';
+import 'package:philgo/chat/models/chat.room.dart';
+import 'package:philgo/chat/report/chat.report.dart';
+import 'package:philgo/chat/widgets/search_friends_dialog.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.service.dart';
+import 'package:philgo/user/widgets/block_user_dialog.dart';
+import 'package:philgo/util/common.functions.dart';
 
 String get chatRoomsPath {
   return 'chat/rooms/';
@@ -254,15 +263,15 @@ bool isAdminChatRoom({required String roomId, String? otherUserUid}) {
 
 // Check if this user is an admin chat user
 bool isAdminChatUser(String uid) {
-  if (UserService.instance.adminUserUid.isEmpty) {
-    // If contactUserUid is not set, assume it's not an admin chat
-    return false;
-  }
+  // if (UserService.instance.adminUserUid.isEmpty) {
+  //   // If contactUserUid is not set, assume it's not an admin chat
+  //   return false;
+  // }
 
-  if (UserService.instance.adminUserUid.contains(uid)) {
-    // If other user is the contact user, it's an admin chat
-    return true;
-  }
+  // if (UserService.instance.adminUserUid.contains(uid)) {
+  //   // If other user is the contact user, it's an admin chat
+  //   return true;
+  // }
 
   return false; // Placeholder, replace with actual admin chat ID check
 }
@@ -470,10 +479,6 @@ void showChatMessageReportDialog({
     ),
   );
 }
-
-/// ====================================================================================
-/// TO BE DELETED IF NOT NEEDED FUNCTION BELOW
-/// ===================================================================================
 
 ///
 /// This create the chatRoom
@@ -844,10 +849,10 @@ Future<ChatRoom?> deleteChatRoomPhotoUrl(String roomId) async {
 
 @Deprecated('Use moderateChatMessage instead')
 Future<void> moderateChat(String roomId, String messageId) async {
-  await func(
-    ChatRoomApi.moderate,
-    data: {'room_id': roomId, 'message_id': messageId},
-  );
+  // await func(
+  //   ChatRoomApi.moderate,
+  //   data: {'room_id': roomId, 'message_id': messageId},
+  // );
 }
 
 Future<String?> showUserSearchDialog(BuildContext context) async {
