@@ -13,6 +13,7 @@
 9. [위젯 CSS 관리](#9-위젯-css-관리)
 10. [위젯 추가 방법](#10-위젯-추가-방법)
 11. [날씨+환율 통합 위젯 (shared.weather-currency)](#11-날씨환율-통합-위젯-sharedweather-currency)
+12. [게시글 목록 위젯 (post-list-widget)](#12-게시글-목록-위젯-post-list-widget)
 
 ---
 
@@ -606,4 +607,93 @@ include __DIR__ . '/../shared/shared.weather-currency.php';
 6. 캐시 파일 저장 (TTL 40분)
    │
 7. HTML 렌더링 (날씨 왼쪽 + 환율 오른쪽)
+```
+
+---
+
+## 12. 게시글 목록 위젯 (post-list-widget)
+
+### 개요
+
+`v7/widgets/post/list/post-list-widget.php`는 **게시글 목록 테이블 + 페이지네이션 + 관리자 일괄 작업 UI**를 하나로 묶은 재사용 가능한 위젯이다. `list.php`(게시판 목록 페이지)와 `view.php`(게시글 읽기 하단 목록) 등 여러 곳에서 동일한 디자인/로직으로 글 목록을 표시할 때 사용한다.
+
+### 파일 구조
+
+```
+v7/widgets/post/list/
+├── post-list-widget.php     ← 재사용 가능한 통합 위젯 (테이블+페이지네이션+관리자)
+├── post-list-tile.php       ← 개별 게시글 행 (타일 디자인)
+└── post-list-footer.php     ← 관리자 일괄 작업 UI
+```
+
+### 필수 변수
+
+| 변수 | 타입 | 설명 |
+|------|------|------|
+| `$_wPosts` | `array` | 게시글 배열 (`PostService::list()['items']`) |
+| `$_wPostId` | `string` | 게시판 ID (예: `'freetalk'`) |
+| `$_wCategory` | `string\|null` | 카테고리 (nullable) |
+| `$_wPage` | `int` | 현재 페이지 번호 |
+| `$_wTotalPages` | `int` | 총 페이지 수 |
+| `$_isAdmin` | `bool` | 관리자 여부 |
+| `$_blockedMemberIds` | `array` | 차단된 회원 ID 배열 |
+| `$_wPaginationUrlCallback` | `callable` | 페이지 번호 → URL 변환 콜백 |
+
+### 선택 변수
+
+| 변수 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `$_wShowAdminFooter` | `bool` | `true` | 관리자 일괄 작업 UI 표시 여부 |
+| `$_wCurrentPostIdx` | `int\|null` | `null` | 현재 보고 있는 글 번호 (강조 표시용) |
+| `$_wEmptyMessage` | `string` | `'등록된 글이 없습니다.'` | 글이 없을 때 메시지 |
+
+### 사용 예시
+
+```php
+// list.php에서 사용
+$_wPosts = $posts;
+$_wPostId = $postId;
+$_wCategory = $category;
+$_wPage = $page;
+$_wTotalPages = $totalPages;
+$_wPaginationUrlCallback = function (int $p) use ($postId, $category): string {
+    return Route::postList($postId, $category, $p);
+};
+$_wShowAdminFooter = true;
+include __DIR__ . '/../widgets/post/list/post-list-widget.php';
+
+// view.php 하단에서 사용 (관리자 footer 비표시, 현재 글 강조)
+$_wPosts = $bottomPosts;
+$_wPostId = $effectivePostId;
+$_wCategory = $effectiveCategory;
+$_wPage = $listPage;
+$_wTotalPages = $bottomTotalPages;
+$_wPaginationUrlCallback = function (int $p) use ($idx, $effectivePostId, $effectiveCategory): string {
+    return Route::postView($idx, $effectivePostId, $effectiveCategory, $p);
+};
+$_wShowAdminFooter = false;
+$_wCurrentPostIdx = $idx;
+include __DIR__ . '/../widgets/post/list/post-list-widget.php';
+```
+
+### 내부 구조
+
+위젯은 내부적으로 다음 3개 하위 위젯을 include한다:
+
+1. **`post-list-tile.php`** — 각 게시글 행을 타일 디자인으로 렌더링
+2. **`pagination.php`** — 페이지네이션 UI
+3. **`post-list-footer.php`** — 관리자 전용 일괄 작업 UI (선택적)
+
+### 현재 글 강조 표시
+
+`$_wCurrentPostIdx`를 설정하면, 해당 글 번호의 타일을 `.post-tile-current-wrapper` 클래스로 감싸서 CSS 강조 표시를 적용한다. `view.css`에 다음 스타일이 정의되어 있다:
+
+```css
+.post-tile-current-wrapper .post-tile-row {
+    background: var(--wa-color-neutral-50, #f8fafc);
+}
+.post-tile-current-wrapper .post-tile-subject {
+    color: var(--wa-color-brand-700, #1d4ed8);
+    font-weight: 600;
+}
 ```
