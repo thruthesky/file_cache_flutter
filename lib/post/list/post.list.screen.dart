@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
+import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/user/user.state.dart';
+import 'package:provider/provider.dart';
 
 class PostListScreen extends StatefulWidget {
   const PostListScreen({super.key});
@@ -35,6 +38,7 @@ class _PostListScreenState extends State<PostListScreen> {
       },
       fetchPage: _fetchPage,
     );
+
   }
 
   @override
@@ -79,6 +83,12 @@ class _PostListScreenState extends State<PostListScreen> {
             Expanded(child: _buildPostList(theme, scheme)),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openPostCreate,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+        child: const FaIcon(FontAwesomeIcons.lightPen, size: 20),
       ),
     );
   }
@@ -187,11 +197,42 @@ class _PostListScreenState extends State<PostListScreen> {
     );
   }
 
+  /// 게시글 작성 화면 열기
+  Future<void> _openPostCreate() async {
+    final userState = Provider.of<UserState>(context, listen: false);
+    if (!userState.isLoggedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('로그인이 필요합니다')),
+      );
+      return;
+    }
+
+    final (postId, category, _) = forumCategories[_selectedIndex];
+    final result = await Navigator.of(context).push<dynamic>(
+      MaterialPageRoute(
+        builder: (_) =>
+            PostCreateScreen(postId: postId, category: category),
+      ),
+    );
+
+    if (result is Post && mounted) {
+      // 목록 새로고침 (새 게시글이 서버에서 첫 번째로 반환됨)
+      _pagingController.refresh();
+      // 새 게시글 상세 화면 열기
+      _openPostView(result);
+    }
+  }
+
   /// 게시글 상세 화면 열기
-  void _openPostView(Post post) {
-    Navigator.of(context).push(
+  Future<void> _openPostView(Post post) async {
+    final result = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
     );
+
+    // 삭제 또는 수정 시 목록 새로고침
+    if ((result == 'deleted' || result is Post) && mounted) {
+      _pagingController.refresh();
+    }
   }
 }
 

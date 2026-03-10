@@ -4,6 +4,9 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
+import 'package:philgo/post/update/post.update.screen.dart';
+import 'package:philgo/user/user.state.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 게시글 상세 보기 화면
@@ -23,6 +26,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
   late Post _post;
   bool _isLoading = true;
   String? _error;
+  bool _postChanged = false;
 
   @override
   void initState() {
@@ -49,109 +53,187 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
+  /// 게시글 수정 화면 열기
+  Future<void> _editPost() async {
+    final result = await Navigator.of(context).push<Post>(
+      MaterialPageRoute(builder: (_) => PostUpdateScreen(post: _post)),
+    );
+
+    if (result != null && mounted) {
+      setState(() {
+        _post = result;
+        _postChanged = true;
+      });
+    }
+  }
+
+  /// 게시글 삭제
+  Future<void> _deletePost() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('게시글 삭제'),
+        content: const Text('정말 이 게시글을 삭제하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('삭제'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await PostService.delete(_post.idx);
+      if (!mounted) return;
+      Navigator.of(context).pop('deleted');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('삭제 실패: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final userState = Provider.of<UserState>(context, listen: false);
+    final isMine = userState.isLoggedIn && userState.idx == _post.idxMember;
 
-    return Scaffold(
-      backgroundColor: scheme.surface,
-      body: CustomScrollView(
-        slivers: [
-          // 앱바
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: scheme.surface,
-            foregroundColor: scheme.onSurface,
-            elevation: 0,
-            scrolledUnderElevation: 1,
-            title: Text(
-              _post.postId,
-              style: theme.textTheme.titleMedium,
-            ),
-          ),
-
-          // 본문
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 제목
-                  Text(
-                    _post.subject,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: scheme.onSurface,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        Navigator.of(context).pop(_postChanged ? _post : null);
+      },
+      child: Scaffold(
+        backgroundColor: scheme.surface,
+        body: CustomScrollView(
+          slivers: [
+            // 앱바
+            SliverAppBar(
+              pinned: true,
+              backgroundColor: scheme.surface,
+              foregroundColor: scheme.onSurface,
+              elevation: 0,
+              scrolledUnderElevation: 1,
+              title: Text(
+                _post.postId,
+                style: theme.textTheme.titleMedium,
+              ),
+              actions: [
+                if (isMine) ...[
+                  IconButton(
+                    onPressed: _editPost,
+                    icon: FaIcon(
+                      FontAwesomeIcons.lightPenToSquare,
+                      size: 18,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 12),
-
-                  // 메타 정보 (작성자, 날짜)
-                  _buildMeta(theme, scheme),
-                  const SizedBox(height: 16),
-
-                  Divider(color: scheme.outlineVariant),
-                  const SizedBox(height: 16),
-
-                  // 본문 이미지 (있으면)
-                  if (_post.imageUrl != null &&
-                      _post.imageUrl!.isNotEmpty) ...[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: CachedNetworkImage(
-                        imageUrl: _post.imageUrl!,
-                        width: double.infinity,
-                        fit: BoxFit.fitWidth,
-                        placeholder: (_, _) => Container(
-                          height: 200,
-                          color: scheme.surfaceContainerHigh,
-                          child: const Center(
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2)),
-                        ),
-                        errorWidget: (_, _, _) => const SizedBox.shrink(),
-                      ),
+                  IconButton(
+                    onPressed: _deletePost,
+                    icon: FaIcon(
+                      FontAwesomeIcons.lightTrashCan,
+                      size: 18,
+                      color: scheme.error,
                     ),
-                    const SizedBox(height: 16),
-                  ],
-
-                  // 본문 내용
-                  if (_isLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else if (_error != null)
-                    Text('내용을 불러올 수 없습니다',
-                        style: TextStyle(color: scheme.error))
-                  else
-                    SelectableLinkify(
-                      text: _post.content,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: scheme.onSurface,
-                        height: 1.6,
-                      ),
-                      linkStyle: TextStyle(
-                        color: scheme.primary,
-                        decoration: TextDecoration.underline,
-                      ),
-                      onOpen: (link) async {
-                        final uri = Uri.tryParse(link.url);
-                        if (uri != null && await canLaunchUrl(uri)) {
-                          await launchUrl(uri,
-                              mode: LaunchMode.externalApplication);
-                        }
-                      },
-                    ),
-
-                  const SizedBox(height: 24),
-
-                  // 통계 및 액션 버튼
-                  _buildStats(theme, scheme),
+                  ),
                 ],
+              ],
+            ),
+
+            // 본문
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 제목
+                    Text(
+                      _post.subject,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: scheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // 메타 정보 (작성자, 날짜)
+                    _buildMeta(theme, scheme),
+                    const SizedBox(height: 16),
+
+                    Divider(color: scheme.outlineVariant),
+                    const SizedBox(height: 16),
+
+                    // 본문 이미지 (있으면)
+                    if (_post.imageUrl != null &&
+                        _post.imageUrl!.isNotEmpty) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(
+                          imageUrl: _post.imageUrl!,
+                          width: double.infinity,
+                          fit: BoxFit.fitWidth,
+                          placeholder: (_, _) => Container(
+                            height: 200,
+                            color: scheme.surfaceContainerHigh,
+                            child: const Center(
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2)),
+                          ),
+                          errorWidget: (_, _, _) => const SizedBox.shrink(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    // 본문 내용
+                    if (_isLoading)
+                      const Center(child: CircularProgressIndicator())
+                    else if (_error != null)
+                      Text('내용을 불러올 수 없습니다',
+                          style: TextStyle(color: scheme.error))
+                    else
+                      SelectableLinkify(
+                        text: _post.content,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: scheme.onSurface,
+                          height: 1.6,
+                        ),
+                        linkStyle: TextStyle(
+                          color: scheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                        onOpen: (link) async {
+                          final uri = Uri.tryParse(link.url);
+                          if (uri != null && await canLaunchUrl(uri)) {
+                            await launchUrl(uri,
+                                mode: LaunchMode.externalApplication);
+                          }
+                        },
+                      ),
+
+                    const SizedBox(height: 24),
+
+                    // 통계 및 액션 버튼
+                    _buildStats(theme, scheme),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
