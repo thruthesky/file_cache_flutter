@@ -23,7 +23,7 @@ class ApiService {
   ///
   /// 로그인 상태일 때만 `id_token` 키를 추가하며,
   /// 토큰 획득 실패 시 빈 문자열을 사용한다.
-  static Future<void> patchToken(Map<String, dynamic> data) async {
+  static Future<void> _patchToken(Map<String, dynamic> data) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
@@ -60,7 +60,7 @@ class ApiService {
     data = data ?? {};
     data['method'] = method;
 
-    await patchToken(data);
+    await _patchToken(data);
 
     final dio = _createDio();
 
