@@ -143,7 +143,7 @@ mkcert -install
 #### 2. 인증서 생성 (이미 완료됨)
 
 ```bash
-cd /Users/thruthesky/apps/withcenter/philgo/docker/certs/
+cd /Users/thruthesky/apps/withcenter/philgo/www/docker/certs/
 
 # 와일드카드 인증서 생성 (*.philgo.com 포함)
 mkcert -cert-file ./dev.pem -key-file ./dev-key.pem \
@@ -931,7 +931,7 @@ echo "127.0.0.1 v7-local.philgo.com" | sudo tee -a /etc/hosts
 mkcert -install
 
 # 3. Docker 컨테이너 시작
-cd /Users/thruthesky/apps/withcenter/philgo/docker
+cd /Users/thruthesky/apps/withcenter/philgo/www/docker
 docker compose up -d
 
 # 4. Nginx 설정 변경 후 재시작

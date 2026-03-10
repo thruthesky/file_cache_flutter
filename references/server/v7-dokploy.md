@@ -12,6 +12,7 @@
   - [5.1 web 서비스](#51-web-서비스)
   - [5.2 mariadb 서비스](#52-mariadb-서비스)
   - [5.3 볼륨](#53-볼륨)
+  - [5.4 네트워크](#54-네트워크)
 - [6. Dockerfile](#6-dockerfile)
   - [6.1 빌드 단계](#61-빌드-단계)
   - [6.2 설치된 PHP Extension](#62-설치된-php-extension)
@@ -45,17 +46,17 @@ Nginx + PHP-FPM을 **하나의 단일 컨테이너**(web)로 통합하고, Maria
 - **단일 컨테이너 통합**: Nginx와 PHP-FPM을 하나의 이미지로 묶어 Dokploy에서 단일 포트(80) 노출만으로 서비스 가능
 - **SSL은 Traefik이 처리**: Dokploy가 내장한 Traefik 리버스 프록시가 SSL/TLS 종단을 처리하므로 컨테이너는 HTTP(80)만 리슨
 - **환경변수 기반 DB 설정**: Docker Compose 환경변수로 DB 접속 정보를 주입하여 `.gitignore` 대상 파일(db.config.php)을 자동 생성
-- **로컬 개발과 분리**: 로컬 개발용 Docker Compose(`docker/compose.yaml`)와 Dokploy 배포용(`docker-compose.yml`)을 분리하여 독립적으로 관리
+- **로컬 개발과 분리**: 로컬 개발용 Docker Compose(`docker/compose.yaml`)와 Dokploy 배포용(`docker/dokploy-deploy/docker-compose.yml`)을 분리하여 독립적으로 관리
 
 ### 핵심 파일 위치
 
-배포 관련 파일은 프로젝트 루트 및 `docker/deploy/` 폴더에 위치한다.
+배포 관련 파일은 프로젝트 루트 및 `docker/dokploy-deploy/` 폴더에 위치한다.
 
 ```
 www/                                     # 프로젝트 루트 (= philgo/www)
-├── docker-compose.yml                   # Dokploy 배포용 Docker Compose
 └── docker/
-    └── deploy/
+    └── dokploy-deploy/
+        ├── docker-compose.yml           # Dokploy 배포용 Docker Compose
         ├── Dockerfile                   # PHP 8.3.6-fpm + Nginx 단일 컨테이너
         ├── nginx.conf                   # Dokploy용 Nginx 설정 (HTTP 80만)
         ├── entrypoint.sh                # DB 설정 자동 생성 스크립트
@@ -72,20 +73,25 @@ www/                                     # 프로젝트 루트 (= philgo/www)
 | 프리뷰 URL | `http://philgo.209.97.169.136.traefik.me` |
 | Git 레포지토리 | `thruthesky/withcenter` |
 | Git 브랜치 | `v7` |
-| Compose Path | `./philgo/www/docker-compose.yml` |
+| Compose Path | `./philgo/www/docker/dokploy-deploy/docker-compose.yml` |
 | 서버 OS | Ubuntu (DigitalOcean Droplet) |
 | Traefik | Dokploy 내장 리버스 프록시 (SSL 종단 처리) |
 
 ### 모노레포 구조
 
-`thruthesky/withcenter` 레포지토리는 모노레포 구조이다. 필고 프로젝트는 `philgo/www/` 하위 디렉토리에 위치하므로, Dokploy의 Compose Path를 `./philgo/www/docker-compose.yml`로 지정해야 한다.
+`thruthesky/withcenter` 레포지토리는 모노레포 구조이다. 필고 프로젝트는 `philgo/www/` 하위 디렉토리에 위치하므로, Dokploy의 Compose Path를 `./philgo/www/docker/dokploy-deploy/docker-compose.yml`로 지정해야 한다.
 
 ```
 withcenter/                   # Git 레포지토리 루트
 └── philgo/
     └── www/                  # 필고 v7 프로젝트 루트
-        ├── docker-compose.yml
-        ├── docker/deploy/
+        ├── docker/
+        │   └── dokploy-deploy/
+        │       ├── docker-compose.yml
+        │       ├── Dockerfile
+        │       ├── nginx.conf
+        │       ├── entrypoint.sh
+        │       └── php-fpm-custom.conf
         ├── v7/
         ├── lib/
         ├── api.php
@@ -145,11 +151,11 @@ Dokploy 배포에서는 Nginx와 PHP-FPM을 **하나의 Docker 이미지**에 �
 
 | 파일 | 경로 | 역할 |
 |------|------|------|
-| **Docker Compose** | `docker-compose.yml` (프로젝트 루트) | Dokploy 배포용 서비스 정의 (web + mariadb) |
-| **Dockerfile** | `docker/deploy/Dockerfile` | PHP 8.3.6-fpm 기반 Nginx + PHP-FPM 단일 이미지 빌드 |
-| **Nginx 설정** | `docker/deploy/nginx.conf` | HTTP 80 포트만 리슨, Traefik이 SSL 처리 |
-| **Entrypoint** | `docker/deploy/entrypoint.sh` | 컨테이너 시작 시 db.config.php 자동 생성 |
-| **PHP-FPM 설정** | `docker/deploy/php-fpm-custom.conf` | `.php`와 `.xml` 파일 PHP-FPM 처리 허용 |
+| **Docker Compose** | `docker/dokploy-deploy/docker-compose.yml` | Dokploy 배포용 서비스 정의 (web + mariadb) |
+| **Dockerfile** | `docker/dokploy-deploy/Dockerfile` | PHP 8.3.6-fpm 기반 Nginx + PHP-FPM 단일 이미지 빌드 |
+| **Nginx 설정** | `docker/dokploy-deploy/nginx.conf` | HTTP 80 포트만 리슨, Traefik이 SSL 처리 |
+| **Entrypoint** | `docker/dokploy-deploy/entrypoint.sh` | 컨테이너 시작 시 db.config.php 자동 생성 |
+| **PHP-FPM 설정** | `docker/dokploy-deploy/php-fpm-custom.conf` | `.php`와 `.xml` 파일 PHP-FPM 처리 허용 |
 
 ---
 
@@ -157,17 +163,23 @@ Dokploy 배포에서는 Nginx와 PHP-FPM을 **하나의 Docker 이미지**에 �
 
 ### 핵심 소스코드
 
-파일 경로: `docker-compose.yml` (프로젝트 루트)
+파일 경로: `docker/dokploy-deploy/docker-compose.yml`
 
 ```yaml
 ## Dokploy 배포용 Docker Compose 설정
 ## PhilGo v7 홈페이지 (Nginx + PHP-FPM + MariaDB)
+##
+## 이 파일은 Dokploy Compose 서비스에서 사용됩니다.
+## 로컬 개발용 Docker Compose는 docker/compose.yaml 을 사용합니다.
+##
+## 주의: web과 mariadb 모두 dokploy-network에 연결해야 서비스 이름으로 통신 가능.
+## Dokploy가 web을 dokploy-network에 자동 연결하지만, mariadb는 별도 지정 필요.
 
 services:
   web:
     build:
-      context: .
-      dockerfile: docker/deploy/Dockerfile
+      context: ../..
+      dockerfile: docker/dokploy-deploy/Dockerfile
     ports:
       - 80
     depends_on:
@@ -178,6 +190,8 @@ services:
       DB_USER: philgo
       DB_PASSWORD: asdf
       DB_NAME: philgo
+    networks:
+      - dokploy-network
 
   mariadb:
     image: mariadb:11.7.2
@@ -194,20 +208,27 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    networks:
+      - dokploy-network
 
 volumes:
   mariadb-data:
+
+networks:
+  dokploy-network:
+    external: true
 ```
 
 ### 5.1 web 서비스
 
 | 항목 | 값 | 설명 |
 |------|-----|------|
-| **빌드 컨텍스트** | `.` (프로젝트 루트) | Dockerfile이 전체 소스를 COPY |
-| **Dockerfile** | `docker/deploy/Dockerfile` | Nginx + PHP-FPM 통합 이미지 |
+| **빌드 컨텍스트** | `../..` (프로젝트 루트) | docker-compose.yml이 `docker/dokploy-deploy/` 안에 있으므로 `../..`로 프로젝트 루트를 지정. Dockerfile이 전체 소스를 COPY |
+| **Dockerfile** | `docker/dokploy-deploy/Dockerfile` | Nginx + PHP-FPM 통합 이미지 |
 | **포트** | `80` | Traefik이 자동으로 매핑 |
 | **의존성** | `mariadb` (healthy) | MariaDB가 정상 시작된 후에만 web 시작 |
 | **환경변수** | `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | entrypoint.sh가 db.config.php 생성에 사용 |
+| **네트워크** | `dokploy-network` | Dokploy의 외부 네트워크에 연결하여 Traefik 라우팅 지원 |
 
 ### 5.2 mariadb 서비스
 
@@ -217,6 +238,7 @@ volumes:
 | **데이터 영속화** | `mariadb-data` Named Volume | 컨테이너 재생성 시에도 데이터 유지 |
 | **Healthcheck** | `healthcheck.sh --connect --innodb_initialized` | InnoDB 초기화 완료까지 대기 |
 | **시작 대기** | `start_period: 30s` | 첫 Healthcheck까지 30초 대기 |
+| **네트워크** | `dokploy-network` | web과 동일 네트워크에 연결해야 서비스 이름(`mariadb`)으로 DB 접속 가능 |
 
 ### 5.3 볼륨
 
@@ -227,13 +249,27 @@ volumes:
 
 Named Volume을 사용하여 `docker compose down` 후에도 DB 데이터가 유지된다. `docker compose down -v`를 실행하면 볼륨이 삭제되므로 주의해야 한다.
 
+### 5.4 네트워크
+
+```yaml
+networks:
+  dokploy-network:
+    external: true
+```
+
+- `dokploy-network`는 Dokploy가 사전에 생성한 **외부(external) Docker 네트워크**이다.
+- Dokploy의 Traefik 리버스 프록시가 이 네트워크를 통해 컨테이너에 접근한다.
+- `web`과 `mariadb` 서비스 모두 이 네트워크에 연결해야 한다.
+  - Dokploy가 `web` 서비스를 자동으로 `dokploy-network`에 연결하지만, `mariadb`는 **별도로 `networks` 항목을 명시**해야 서비스 이름(`mariadb`)으로 통신이 가능하다.
+  - `mariadb`에 `dokploy-network`를 지정하지 않으면, `web` 컨테이너에서 `DB_HOST: mariadb`로 접속할 수 없다.
+
 ---
 
 ## 6. Dockerfile
 
 ### 핵심 소스코드
 
-파일 경로: `docker/deploy/Dockerfile`
+파일 경로: `docker/dokploy-deploy/Dockerfile`
 
 ```dockerfile
 FROM php:8.3.6-fpm
@@ -265,10 +301,10 @@ RUN echo "upload_max_filesize = 22M" >> "$PHP_INI_DIR/php.ini" \
     && echo "memory_limit = 256M" >> "$PHP_INI_DIR/php.ini"
 
 # PHP-FPM 커스텀 설정 (XML 파일 처리)
-COPY docker/deploy/php-fpm-custom.conf /usr/local/etc/php-fpm.d/custom.conf
+COPY docker/dokploy-deploy/php-fpm-custom.conf /usr/local/etc/php-fpm.d/custom.conf
 
 # Nginx 설정
-COPY docker/deploy/nginx.conf /etc/nginx/nginx.conf
+COPY docker/dokploy-deploy/nginx.conf /etc/nginx/nginx.conf
 RUN rm -f /etc/nginx/sites-enabled/default
 
 # 소스 코드 복사
@@ -276,7 +312,7 @@ WORKDIR /www
 COPY . /www
 
 # entrypoint 스크립트 (CRLF -> LF 변환 포함)
-COPY docker/deploy/entrypoint.sh /entrypoint.sh
+COPY docker/dokploy-deploy/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 # www-data 권한 설정
@@ -328,7 +364,7 @@ CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
 
 ### 핵심 소스코드
 
-파일 경로: `docker/deploy/nginx.conf`
+파일 경로: `docker/dokploy-deploy/nginx.conf`
 
 ```nginx
 user www-data;
@@ -432,7 +468,7 @@ http {
 
 ### 핵심 소스코드
 
-파일 경로: `docker/deploy/entrypoint.sh`
+파일 경로: `docker/dokploy-deploy/entrypoint.sh`
 
 ```bash
 #!/bin/bash
@@ -485,7 +521,7 @@ exec "$@"
 
 ## 9. PHP-FPM 커스텀 설정
 
-파일 경로: `docker/deploy/php-fpm-custom.conf`
+파일 경로: `docker/dokploy-deploy/php-fpm-custom.conf`
 
 ```conf
 ; PhilGo v7 PHP-FPM 커스텀 설정
@@ -513,7 +549,7 @@ security.limit_extensions = .php .xml
 | **Source** | GitHub | Git 레포지토리 연동 |
 | **Repository** | `thruthesky/withcenter` | 모노레포 |
 | **Branch** | `v7` | v7 개발 브랜치 |
-| **Compose Path** | `./philgo/www/docker-compose.yml` | 모노레포 내 필고 프로젝트 위치 |
+| **Compose Path** | `./philgo/www/docker/dokploy-deploy/docker-compose.yml` | 모노레포 내 필고 프로젝트 위치 |
 
 4. **Deploy** 버튼으로 배포 실행
 
@@ -531,7 +567,7 @@ Dokploy는 Traefik을 내장하고 있어 자동으로 `*.traefik.me` 도메인�
 
 ## 11. 로컬 개발 환경과의 차이점
 
-| 항목 | 로컬 개발 (`docker/compose.yaml`) | Dokploy 배포 (`docker-compose.yml`) |
+| 항목 | 로컬 개발 (`docker/compose.yaml`) | Dokploy 배포 (`docker/dokploy-deploy/docker-compose.yml`) |
 |------|----------------------------------|--------------------------------------|
 | **Nginx/PHP 구조** | 별도 컨테이너 (nginx + php) | 단일 컨테이너 (web) |
 | **fastcgi_pass** | `php:9000` (컨테이너명) | `127.0.0.1:9000` (로컬호스트) |
@@ -540,6 +576,8 @@ Dokploy는 Traefik을 내장하고 있어 자동으로 `*.traefik.me` 도메인�
 | **소스 코드** | 볼륨 마운트 (실시간 반영) | COPY (빌드 시 복사, 재배포 필요) |
 | **DB 데이터** | Host OS 바인드 마운트 (`docker/var/lib/mysql/`) | Named Volume (`mariadb-data`) |
 | **DB 설정** | `etc/db.config.php` 수동 관리 | entrypoint.sh가 환경변수로 자동 생성 |
+| **Docker 네트워크** | 기본 Docker Compose 네트워크 | `dokploy-network` 외부 네트워크 (Traefik 연동) |
+| **빌드 컨텍스트** | `.` (docker/ 폴더가 컨텍스트) | `../..` (docker-compose.yml이 docker/dokploy-deploy/ 안에 있으므로 프로젝트 루트 지정) |
 | **v6 호환** | v6 서비스 포함 (old_philgo_nginx, old_philgo_php) | v7만 포함 (v6 없음) |
 | **PHP 버전** | 8.3.6 (v7) + 7.4.1 (v6) | 8.3.6만 |
 | **gd Extension** | 로컬 PHP Dockerfile에 미포함 | Freetype/JPEG/WebP 포함 |
@@ -551,11 +589,11 @@ Dokploy는 Traefik을 내장하고 있어 자동으로 `*.traefik.me` 도메인�
 
 ### 모노레포 Compose Path
 
-Dokploy에서 Compose Path를 `./philgo/www/docker-compose.yml`로 정확히 지정해야 한다. 레포지토리 루트(`./docker-compose.yml`)가 아니다.
+Dokploy에서 Compose Path를 `./philgo/www/docker/dokploy-deploy/docker-compose.yml`로 정확히 지정해야 한다. 레포지토리 루트(`./docker/dokploy-deploy/docker-compose.yml`)가 아니다.
 
 ### DB 비밀번호
 
-현재 `docker-compose.yml`에 DB 비밀번호가 하드코딩되어 있다. 프로덕션 환경에서는 Dokploy의 **Environment Variables** 기능으로 비밀번호를 관리하는 것을 권장한다.
+현재 `docker/dokploy-deploy/docker-compose.yml`에 DB 비밀번호가 하드코딩되어 있다. 프로덕션 환경에서는 Dokploy의 **Environment Variables** 기능으로 비밀번호를 관리하는 것을 권장한다.
 
 ### 소스 코드 업데이트
 
@@ -571,6 +609,14 @@ Dokploy 배포는 빌드 시 소스 코드를 COPY하므로, 코드 변경 시 *
 |------|--------|------|
 | **Named Volume** (`mariadb-data`) | Dokploy 배포 | Docker가 관리, `docker compose down`으로 삭제되지 않음, `-v` 플래그 시 삭제 |
 | **Bind Mount** (`./var/lib/mysql`) | 로컬 개발 | Host OS 경로에 직접 매핑, 파일 직접 접근 가능 |
+
+### dokploy-network 외부 네트워크
+
+`docker-compose.yml`에서 `dokploy-network`는 `external: true`로 선언되어 있다. 이 네트워크는 Dokploy가 서버에 설치될 때 사전에 생성한 Docker 네트워크이다. 로컬 개발 환경에서 이 `docker-compose.yml`을 직접 실행하면 `dokploy-network`가 존재하지 않아 에러가 발생한다. 이 파일은 **Dokploy 서버에서만 사용**하는 것이며, 로컬 개발 시에는 `docker/compose.yaml`을 사용한다.
+
+### build context 경로
+
+`docker-compose.yml`이 `docker/dokploy-deploy/` 폴더 안에 위치하므로, build context는 `../..`으로 프로젝트 루트(`www/`)를 가리킨다. Dokploy에서 이 파일을 사용할 때도 Compose Path에서 docker-compose.yml의 위치를 인식하여 상대 경로를 올바르게 해석한다.
 
 ### DB 스키마 초기화
 

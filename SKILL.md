@@ -374,7 +374,7 @@ Dokploy는 셀프호스팅 PaaS 도구로, Git 레포지토리(thruthesky/withce
 Docker Compose 기반 자동 배포를 수행합니다. Nginx + PHP-FPM 8.3.6을 하나의 단일 컨테이너(web)로
 통합하고 MariaDB 11.7.2를 별도 컨테이너로 운영하는 2-서비스 구조입니다. SSL/TLS 종단은
 Dokploy 내장 Traefik 리버스 프록시가 처리하므로 컨테이너는 HTTP(80)만 리슨합니다.
-모노레포 내 Compose Path(`./philgo/www/docker-compose.yml`), 환경변수 기반 DB 설정 자동 생성
+모노레포 내 Compose Path(`./philgo/www/docker/dokploy-deploy/docker-compose.yml`), 환경변수 기반 DB 설정 자동 생성
 (entrypoint.sh), PHP Extension(gd, mbstring, pdo_mysql 등), Dockerfile 빌드 단계,
 Nginx 라우팅 규칙(v6 호환 rewrite, 정적 파일 캐싱, Sitemap/Google 확인),
 로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.

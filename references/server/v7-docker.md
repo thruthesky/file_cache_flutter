@@ -41,7 +41,7 @@
 
 ### 핵심 파일 위치
 
-모든 도커 설정 파일은 `/Users/thruthesky/apps/withcenter/philgo/docker/` 폴더에 위치한다.
+모든 도커 설정 파일은 `/Users/thruthesky/apps/withcenter/philgo/www/docker/` 폴더에 위치한다. (docker 폴더가 프로젝트 루트 `philgo/www/` 내부에 존재)
 
 ```
 docker/
@@ -136,7 +136,7 @@ nginx:
   volumes:
     - .:/docker
     - ~/www/philgo:/philgo
-    - ../www:/www                                         # 신규 필고 소스코드
+    - ..:/www                                              # 신규 필고 소스코드 (프로젝트 루트)
     - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
     - ./var/log/nginx:/var/log/nginx
     - ~/apps/withcenter/philgo/www:/withcenter/philgo/www  # 개발 환경 소스코드
@@ -150,7 +150,7 @@ php:
     dockerfile: php.dockerfile    # PHP 8.3.6-fpm
   volumes:
     - .:/docker
-    - ../www:/www                 # 신규 필고 소스코드
+    - ..:/www                     # 신규 필고 소스코드 (프로젝트 루트)
     - ./etc/php.ini:/usr/local/etc/php/php.ini
     - ./var/logs/php:/var/logs/php
 ```
@@ -164,7 +164,7 @@ old_philgo_nginx:
   container_name: philgo_nginx
   volumes:
     - .:/docker
-    - ../www:/v6
+    - ..:/v6
     - ~/www/philgo:/philgo                                # 기존 필고 소스코드
     - ./old-philgo-etc:/docker/etc
     - ./old-philgo-etc/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -204,7 +204,7 @@ mariadb:
     MYSQL_ROOT_PASSWORD: asdf
   volumes:
     - .:/docker
-    - ../www:/www
+    - ..:/www                                                               # 신규 필고 소스코드 (프로젝트 루트)
     - ./var/lib/mysql:/var/lib/mysql                                       # DB 데이터 영구 저장
     - ./etc/mysql/mariadb.conf.d/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
 ```
@@ -507,7 +507,7 @@ mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo
 |-------------|-------------|------|
 | `docker/` (`.`) | `/docker` | 도커 설정 파일 |
 | `~/www/philgo` | `/philgo` | 기존 필고 소스 |
-| `docker/../www` | `/www` | **신규 필고 소스코드 (document root)** |
+| `docker/..` (프로젝트 루트) | `/www` | **신규 필고 소스코드 (document root)** |
 | `~/apps/withcenter/philgo/www` | `/withcenter/philgo/www` | 개발 환경 소스코드 |
 | `docker/etc/nginx/nginx.conf` | `/etc/nginx/nginx.conf` | Nginx 설정 |
 | `docker/etc/php.ini` | `/usr/local/etc/php/php.ini` | PHP 설정 |
@@ -519,7 +519,7 @@ mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo
 | Host OS 경로 | 컨테이너 경로 | 용도 |
 |-------------|-------------|------|
 | `docker/` (`.`) | `/docker` | 도커 설정 파일 |
-| `docker/../www` | `/v6` | 신규 필고 소스 (참조) |
+| `docker/..` (프로젝트 루트) | `/v6` | 신규 필고 소스 (참조) |
 | `~/www/philgo` | `/philgo` | **기존 필고 소스코드 (document root)** |
 | `docker/old-philgo-etc` | `/docker/etc` | 기존 Nginx/PHP 설정 |
 | `docker/old-philgo-etc/nginx/nginx.conf` | `/etc/nginx/nginx.conf` | Nginx 설정 |
@@ -672,7 +672,7 @@ curl "https://local.philgo.com/api.php?method=user.profile"
 ### 기본 명령어
 
 ```bash
-cd /Users/thruthesky/apps/withcenter/philgo/docker
+cd /Users/thruthesky/apps/withcenter/philgo/www/docker
 
 # 전체 서비스 시작
 docker compose up -d
@@ -733,7 +733,7 @@ Windows에서는 기존 필고가 기본 포트(80, 443)를 사용하고, 신규
 ### Windows 실행 명령
 
 ```bash
-cd /Users/thruthesky/apps/withcenter/philgo/docker
+cd /Users/thruthesky/apps/withcenter/philgo/www/docker
 docker compose -f compose.windows.yaml up -d
 ```
 
@@ -778,7 +778,7 @@ Dokploy는 셀프호스팅 PaaS 도구로, Git 레포지토리(thruthesky/withce
 Docker Compose 기반 자동 배포를 수행합니다. Nginx + PHP-FPM 8.3.6을 하나의 단일 컨테이너(web)로
 통합하고 MariaDB 11.7.2를 별도 컨테이너로 운영하는 2-서비스 구조입니다. SSL/TLS 종단은
 Dokploy 내장 Traefik 리버스 프록시가 처리하므로 컨테이너는 HTTP(80)만 리슨합니다.
-모노레포 내 Compose Path(`./philgo/www/docker-compose.yml`), 환경변수 기반 DB 설정 자동 생성
-(entrypoint.sh), 로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.
+모노레포 내 Compose Path(`./philgo/www/docker/dokploy-deploy/docker-compose.yml`), 환경변수 기반 DB 설정 자동 생성
+(entrypoint.sh), `dokploy-network` 외부 네트워크 설정, 로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.
 서버 접속 정보: Dokploy 관리 패널 `http://209.97.169.136:3000`,
 프리뷰 URL `http://philgo.209.97.169.136.traefik.me`.
