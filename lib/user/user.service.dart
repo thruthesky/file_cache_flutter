@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:philgo/app.config.dart';
@@ -87,7 +88,21 @@ class UserService {
 
   /// 로그아웃
   static Future<void> signOut() async {
+    await GoogleSignIn().signOut();
     await FirebaseAuth.instance.signOut();
+  }
+
+  /// Google 소셜 로그인
+  static Future<User> signInWithGoogle() async {
+    final googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) throw Exception('Google 로그인이 취소되었습니다.');
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    return userCredential.user!;
   }
 
   /// 현재 로그인된 사용자

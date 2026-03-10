@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/user/widgets/login.dart';
 
 class MenuScreen extends StatefulWidget {
   static const String routeName = '/Menu';
@@ -21,60 +23,92 @@ class _MenuScreenState extends State<MenuScreen> {
 
     return Scaffold(
       backgroundColor: scheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 앱바 영역
-            _buildAppBar(theme, scheme),
-            Container(height: 1, color: scheme.outlineVariant),
+      body: Login(
+        notLoggedIn: _buildNotLoggedIn(theme, scheme),
+        builder: (_) => SafeArea(
+          child: Column(
+            children: [
+              // 앱바 영역
+              _buildAppBar(theme, scheme),
+              Container(height: 1, color: scheme.outlineVariant),
 
-            // 스크롤 가능한 콘텐츠
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  spacing: 28,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
+              // 스크롤 가능한 콘텐츠
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    spacing: 28,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
 
-                    // 내 정보 섹션
-                    _buildSection(
-                      title: '내 정보',
-                      icon: FontAwesomeIcons.lightCircleUser,
-                      child: _buildProfileContent(theme, scheme),
-                    ).animate().fadeIn(duration: 400.ms).slideY(
-                      begin: 0.1,
-                      end: 0,
-                    ),
+                      // 내 정보 섹션
+                      _buildSection(
+                        title: '내 정보',
+                        icon: FontAwesomeIcons.lightCircleUser,
+                        child: _buildProfileContent(theme, scheme),
+                      ).animate().fadeIn(duration: 400.ms).slideY(
+                        begin: 0.1,
+                        end: 0,
+                      ),
 
-                    // 내 활동 섹션
-                    _buildSection(
-                      title: '내 활동',
-                      icon: FontAwesomeIcons.lightRectangleHistory,
-                      child: _buildActivityGrid(theme, scheme),
-                    ).animate().fadeIn(
-                      duration: 400.ms,
-                      delay: 100.ms,
-                    ).slideY(begin: 0.1, end: 0),
+                      // 내 활동 섹션
+                      _buildSection(
+                        title: '내 활동',
+                        icon: FontAwesomeIcons.lightRectangleHistory,
+                        child: _buildActivityGrid(theme, scheme),
+                      ).animate().fadeIn(
+                        duration: 400.ms,
+                        delay: 100.ms,
+                      ).slideY(begin: 0.1, end: 0),
 
-                    // 필리핀 생활 정보 섹션
-                    _buildSection(
-                      title: '필리핀 생활 정보',
-                      icon: FontAwesomeIcons.lightEarthAsia,
-                      child: _buildInfoGrid(theme, scheme),
-                    ).animate().fadeIn(
-                      duration: 400.ms,
-                      delay: 200.ms,
-                    ).slideY(begin: 0.1, end: 0),
-                  ],
+                      // 필리핀 생활 정보 섹션
+                      _buildSection(
+                        title: '필리핀 생활 정보',
+                        icon: FontAwesomeIcons.lightEarthAsia,
+                        child: _buildInfoGrid(theme, scheme),
+                      ).animate().fadeIn(
+                        duration: 400.ms,
+                        delay: 200.ms,
+                      ).slideY(begin: 0.1, end: 0),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  /// 비로그인 상태 UI
+  Widget _buildNotLoggedIn(ThemeData theme, ColorScheme scheme) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightCircleUser,
+            size: 64,
+            color: scheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
+          Text('로그인이 필요합니다', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Text(
+            '메뉴를 이용하려면 로그인해 주세요.',
+            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 24),
+          OutlinedButton.icon(
+            onPressed: () => UserLoginScreen.push(context),
+            icon: const FaIcon(FontAwesomeIcons.lightRightToBracket, size: 16),
+            label: const Text('로그인'),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms);
   }
 
   /// 앱바 영역
