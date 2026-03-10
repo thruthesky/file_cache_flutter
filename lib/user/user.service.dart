@@ -6,17 +6,15 @@ import 'package:dio/io.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import 'package:philgo/app.config.dart';
+
 import 'user.model.dart';
 
 /// 사용자 인증 및 v7 API 서비스
 class UserService {
   UserService._();
 
-  /// v7 API 엔드포인트
-  static const String _endpoint = String.fromEnvironment(
-    'V7_API_ENDPOINT',
-    defaultValue: 'https://philgo.com/api.php',
-  );
+  static final String _endpoint = v7ApiEndpoint;
 
   /// 이메일/비밀번호로 로그인
   ///

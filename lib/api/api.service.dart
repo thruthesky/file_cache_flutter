@@ -17,7 +17,7 @@ import 'package:philgo/app.config.dart';
 class ApiService {
   ApiService._();
 
-  static const String _endpoint = v7ApiEndpoint;
+  static final String _endpoint = v7ApiEndpoint;
 
   /// Firebase ID Token을 data 맵에 추가한다.
   ///
