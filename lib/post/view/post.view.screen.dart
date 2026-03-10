@@ -229,12 +229,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     ),
                   ),
 
-                  Divider(
-                    color: scheme.outlineVariant,
-                    height: 32,
-                    indent: 16,
-                    endIndent: 16,
-                  ),
+                  SizedBox(height: 32),
 
                   // ── 댓글 ──────────────────────────────────────────
                   CommentListView(

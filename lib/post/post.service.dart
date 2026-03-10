@@ -86,13 +86,16 @@ class PostService {
     int? limit,
     int? offset,
   }) async {
-    final result = await ApiService.v7api('post.list', data: {
-      'post_id': postId,
-      if (category != null) 'category': category,
-      if (orderby != null) 'orderby': orderby,
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-    });
+    final result = await ApiService.v7api(
+      'post.list',
+      data: {
+        'post_id': postId,
+        if (category != null) 'category': category,
+        if (orderby != null) 'orderby': orderby,
+        if (limit != null) 'limit': limit,
+        if (offset != null) 'offset': offset,
+      },
+    );
 
     final items = (result['posts'] as List<dynamic>?) ?? [];
     final posts = items
@@ -111,7 +114,11 @@ class PostService {
   /// [idx] 게시글 고유번호
   /// 반환: Post 객체
   static Future<Post> get(int idx) async {
-    final result = await ApiService.v7api('post.get', data: {'idx': idx});
+    final result = await ApiService.v7api(
+      'post.get',
+      data: {'idx': idx},
+      debug: true,
+    );
     return Post.fromJson(result);
   }
 
@@ -130,12 +137,15 @@ class PostService {
     required String content,
     String? category,
   }) async {
-    final result = await ApiService.v7api('post.create', data: {
-      'post_id': postId,
-      'subject': subject,
-      'content': content,
-      if (category != null) 'category': category,
-    });
+    final result = await ApiService.v7api(
+      'post.create',
+      data: {
+        'post_id': postId,
+        'subject': subject,
+        'content': content,
+        if (category != null) 'category': category,
+      },
+    );
     return Post.fromJson(result);
   }
 
@@ -152,11 +162,14 @@ class PostService {
     String? subject,
     String? content,
   }) async {
-    final result = await ApiService.v7api('post.update', data: {
-      'idx': idx,
-      if (subject != null) 'subject': subject,
-      if (content != null) 'content': content,
-    });
+    final result = await ApiService.v7api(
+      'post.update',
+      data: {
+        'idx': idx,
+        if (subject != null) 'subject': subject,
+        if (content != null) 'content': content,
+      },
+    );
     return Post.fromJson(result);
   }
 
@@ -185,17 +198,17 @@ class PostService {
 
   /// 댓글 목록 조회
   ///
-  /// API: post.list (인증 불필요) — depth > 0 (댓글)
+  /// API: post.commentList (인증 불필요)
   ///
-  /// [parentIdx] 부모 게시글 idx
-  /// 반환: 댓글 Post 목록
-  static Future<List<Post>> listComments(int parentIdx) async {
-    final result = await ApiService.v7api('post.list', data: {
-      'parent_idx': parentIdx,
-      'limit': 100,
-    });
-    final items = (result['posts'] as List<dynamic>?) ?? [];
+  /// [idxRoot] 원글 idx
+  /// 반환: 댓글 Post 목록 (list_order DESC)
+  static Future<List<Post>> listComments(int idxRoot) async {
+    final result = await ApiService.v7api(
+      'post.commentList',
+      data: {'idx_root': idxRoot},
+    );
+    final raw = result['items'] ?? [];
+    final items = raw is List ? raw : [];
     return items.whereType<Map<String, dynamic>>().map(Post.fromJson).toList();
   }
-
 }

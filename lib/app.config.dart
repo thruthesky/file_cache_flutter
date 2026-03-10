@@ -1,3 +1,9 @@
+/// v7 API 엔드포인트 (--dart-define=V7_API_ENDPOINT 으로 설정 가능)
+final String v7ApiEndpoint = const String.fromEnvironment(
+  'V7_API_ENDPOINT',
+  defaultValue: 'https://philgo.com/api.php',
+);
+
 /// v7 서버 베이스 URL (파일/이미지 URL 조합에 사용)
 /// 예: 'https://philgo.com' 또는 'https://v7-local.philgo.com'
 final String v7BaseUrl = () {
@@ -5,12 +11,6 @@ final String v7BaseUrl = () {
   if (uri == null) return 'https://philgo.com';
   return 'https://${uri.host}';
 }();
-
-/// v7 API 엔드포인트 (--dart-define=V7_API_ENDPOINT 으로 설정 가능)
-final String v7ApiEndpoint = String.fromEnvironment(
-  'V7_API_ENDPOINT',
-  defaultValue: '$v7BaseUrl/api.php',
-);
 
 /// 포럼 카테고리 데이터 (postId, category, 한글 라벨)
 const forumCategories = <(String, String?, String)>[

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
+import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
 
 class PostViewFiles extends StatelessWidget {
   final Post post;
@@ -27,7 +28,9 @@ class PostViewFiles extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [for (final url in urls) _buildMediaItem(context, toAbsoluteUrl(url))],
+      children: [
+        for (final url in urls) _buildMediaItem(context, toAbsoluteUrl(url)),
+      ],
     );
   }
 
@@ -102,20 +105,7 @@ class PostViewFiles extends StatelessWidget {
       case MediaType.video:
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              height: 200,
-              color: scheme.surfaceContainerHigh,
-              child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.circlePlay,
-                  size: 56,
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          ),
+          child: UploadedVideoPlayer(url: absoluteUrl),
         );
 
       case MediaType.unknown:

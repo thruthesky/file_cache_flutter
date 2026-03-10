@@ -23,6 +23,7 @@ class Post {
   final String? thumbnail400x400;
   final String? thumbnail800x800;
   final String? thumbnail1000;
+  final String userName;
 
   const Post({
     required this.idx,
@@ -48,6 +49,7 @@ class Post {
     this.thumbnail400x400,
     this.thumbnail800x800,
     this.thumbnail1000,
+    this.userName = '',
   });
 
   /// 댓글 여부 (depth > 0)
@@ -91,6 +93,7 @@ class Post {
       thumbnail400x400: json['varchar_10']?.toString(),
       thumbnail800x800: json['varchar_11']?.toString(),
       thumbnail1000: json['varchar_12']?.toString(),
+      userName: json['user_name']?.toString() ?? '',
     );
   }
 

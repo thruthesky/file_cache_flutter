@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -56,11 +57,23 @@ class ApiService {
   static Future<Map<String, dynamic>> v7api(
     String method, {
     Map<String, dynamic>? data,
+    bool debug = false,
   }) async {
     data = data ?? {};
     data['method'] = method;
 
     await _patchToken(data);
+
+    if (debug) {
+      // data를 쿼리 파라미터로 빌드하여 완전한 GET URL 생성
+      final queryParams = data.map(
+        (key, value) => MapEntry(key, value?.toString() ?? ''),
+      );
+      final fullUri = Uri.parse(
+        _endpoint,
+      ).replace(queryParameters: queryParams);
+      log('GET URL: $fullUri', name: 'v7api::');
+    }
 
     final dio = _createDio();
 
@@ -82,10 +95,7 @@ class ApiService {
       }
 
       return json;
-    } catch (e, stackTrace) {
-      debugPrint('[ApiService] v7api error — method: $method');
-      debugPrint('[ApiService] error: $e');
-      debugPrint('[ApiService] stackTrace: $stackTrace');
+    } catch (e) {
       rethrow;
     }
   }
