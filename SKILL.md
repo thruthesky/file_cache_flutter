@@ -459,6 +459,7 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | **웹 로그인 인증** | [web/v7-web-login.md](references/web/v7-web-login.md) | ✅ 완료 |
 | **검색 (Google CSE)** | [web/v7-search.md](references/web/v7-search.md) | ✅ 완료 |
 | **카카오톡 소셜 로그인** | [web/v7-web-kakoatalk-social-login.md](references/web/v7-web-kakoatalk-social-login.md) | ✅ 완료 |
+| **네이버 소셜 로그인** | [web/v7-web-naver-social-login.md](references/web/v7-web-naver-social-login.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 
 ### 관리자 대시보드 → [web/v7-admin.md](references/web/v7-admin.md)
@@ -548,6 +549,17 @@ v7 웹 홈페이지에서 카카오톡 소셜 로그인을 구현한 전체 가�
 Redirect URI는 `Config::kakaoRedirectUri()`로 동적 생성합니다.
 **카카오 로그인 관련 작업 시 반드시 이 문서를 참조한다.**
 
+### 네이버 소셜 로그인 (웹) → [web/v7-web-naver-social-login.md](references/web/v7-web-naver-social-login.md)
+
+v7 웹 홈페이지에서 네이버 소셜 로그인을 구현한 전체 가이드를 다룹니다.
+카카오톡과 동일한 Firebase Custom Token 방식을 사용하며,
+서버 측에서 네이버 OAuth Authorization Code 흐름(start → callback → complete 3파일)을
+처리합니다. `NaverLoginService`(lib/user/)가 네이버 API 호출과 Firebase Custom Token 발급을
+담당하고, complete.php에서 `signInWithCustomToken()` → `v7api('user.socialLogin')` 호출로
+기존 소셜 로그인 흐름에 합류합니다. 카카오와의 주요 차이점: `client_secret` 필수,
+토큰 교환 시 `state` 전달, 프로필 응답이 `response` 중첩 구조(`$data['response']['id']`).
+**네이버 로그인 관련 작업 시 반드시 이 문서를 참조한다.**
+
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
 필고 포인트 이벤트 시스템 전체를 하나로 통합 정리한 개요 문서입니다.
@@ -602,7 +614,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |
 | Company Visit Review | [api/v7-company-visit-review.md](references/api/v7-company-visit-review.md) | ✅ 완료 |
-| Post | [api/v7-post.md](references/api/v7-post.md) | ✅ 완료 |
+| Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (thread-line 절대 위치 세로선 + L자형 수평 연결선 + 접기/펼치기) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
