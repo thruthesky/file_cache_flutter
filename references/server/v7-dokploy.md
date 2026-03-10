@@ -70,6 +70,7 @@ www/                                     # 프로젝트 루트 (= philgo/www)
 | 항목 | 값 |
 |------|-----|
 | Dokploy 관리 패널 | `http://209.97.169.136:3000` |
+| 프로덕션 URL | `https://philgo.net` |
 | 프리뷰 URL | `http://philgo.209.97.169.136.traefik.me` |
 | Git 레포지토리 | `thruthesky/withcenter` |
 | Git 브랜치 | `v7` |
@@ -389,7 +390,7 @@ http {
         listen [::]:80;
         server_name _;
         root /www;
-        index index.php;
+        index v7.php;
 
         # v6 backward compatibility
         location ~ ^/post/(list|view)\.php$ {
@@ -422,7 +423,7 @@ http {
 
         # 기본 라우팅
         location / {
-            try_files $uri $uri/ /index.php;
+            try_files $uri $uri/ /v7.php;
         }
 
         # PHP/XML 처리

@@ -379,6 +379,7 @@ Dokploy 내장 Traefik 리버스 프록시가 처리하므로 컨테이너는 HT
 Nginx 라우팅 규칙(v6 호환 rewrite, 정적 파일 캐싱, Sitemap/Google 확인),
 로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.
 서버 접속: Dokploy 관리 패널 `http://209.97.169.136:3000`,
+프로덕션 URL `https://philgo.net`,
 프리뷰 URL `http://philgo.209.97.169.136.traefik.me`.
 
 ### 데이터베이스 관리 → [v7-db.md](references/server/v7-db.md)
