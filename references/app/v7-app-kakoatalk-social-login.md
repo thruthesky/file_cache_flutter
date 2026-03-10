@@ -64,7 +64,7 @@ Flutter 앱(iOS, Android)에서 카카오톡 소셜 로그인을 구현하는 �
 | **앱 키** | REST API 키 | **네이티브 앱 키** |
 | **플랫폼 설정** | 없음 | AndroidManifest.xml, Info.plist 설정 필요 |
 
-> **참고:** 웹 버전 가이드는 [web-kakoatalk-social-login.md](../web/web-kakoatalk-social-login.md)를 참조하세요.
+> **참고:** 웹 버전 가이드는 [v7-web-kakoatalk-social-login.md](../web/v7-web-kakoatalk-social-login.md)를 참조하세요.
 
 ### 1.5 다중 가맹사 로그인 동작
 
@@ -92,8 +92,12 @@ Flutter 앱(iOS, Android)에서 카카오톡 소셜 로그인을 구현하는 �
 | 카카오 디벨로퍼스 콘솔 | `https://developers.kakao.com/console/app/136610` |
 | 앱 이름 | `SONUB` |
 | 특징 | 비즈앱 |
-| **네이티브 앱 키** | Flutter 앱에서 사용 → `branch_meta` 테이블의 `kakao_native_key` |
-| REST API 키 | PHP 서버에서 사용 (웹 버전과 동일) |
+| **네이티브 앱 키** | `cf75184c7c72f507d6bb5e39627925d3` — Flutter 앱에서 사용 |
+| REST API 키 | `f5b07b420c2eb86be485058cc4dab56a` — PHP 서버에서 사용 |
+| JavaScript 키 | `46155a5c4b32a68ca0ec643ec6efd150` — 웹 SDK용 |
+
+> **키 관리**: 필고 v7에서는 `V7\Utils\Config` 클래스(`v7/utils/Config.php`)에서 `kakaoNativeKey()`, `kakaoRestApiKey()`, `kakaoJavascriptKey()` 메서드로 관리한다.
+> 센터 프로젝트에서는 각 가맹사 앱의 `xxx.config.dart`에서 네이티브 앱 키를 관리한다.
 
 > **Flutter 앱에서는 네이티브 앱 키(Native App Key)를 사용합니다.** REST API 키는 서버 측에서만 사용합니다.
 
@@ -833,9 +837,14 @@ Future<UserModel> signInWithKakao() async {
 
 ## 10. Firebase Custom Token 서버 연동 (PHP)
 
+> **필고 v7 웹 서버**: `lib/user/KakaoLoginService.php` (`Philgo\User\KakaoLoginService`)에서 카카오 OAuth + Firebase Custom Token을 처리한다.
+> 웹에서는 서버 리다이렉트 방식(`v7/auth/kakao/start.php` → `callback.php` → `complete.php`)을 사용하고,
+> 앱에서는 카카오 Flutter SDK로 access_token을 직접 획득한 후 서버에 전송하여 Custom Token을 발급받는다.
+> 상세 흐름은 → [v7-web-kakoatalk-social-login.md](../web/v7-web-kakoatalk-social-login.md) 참조.
+
 ### 10.1 API 엔드포인트: `kakao_firebase_token`
 
-**파일:** `/Users/thruthesky/apps/center/lib/api/api.allowed_functions.php` (기존 구현)
+**파일:** `/Users/thruthesky/apps/center/lib/api/api.allowed_functions.php` (센터 프로젝트 기존 구현)
 
 ```php
 <?php
@@ -1421,6 +1430,6 @@ debugPrint('현재 키 해시: $keyHash');
 
 | 문서 | 설명 |
 |------|------|
-| [web-kakoatalk-social-login.md](../web/web-kakoatalk-social-login.md) | 웹 버전 카카오 로그인 (PHP redirect 방식) |
+| [v7-web-kakoatalk-social-login.md](../web/v7-web-kakoatalk-social-login.md) | 웹 버전 카카오 로그인 (PHP redirect 방식) |
 | [카카오 공식 Flutter Getting Started](https://developers.kakao.com/docs/latest/en/flutter/getting-started) | SDK 설치, 플랫폼 설정, 초기화 |
 | [카카오 공식 Flutter Kakao Login](https://developers.kakao.com/docs/latest/en/kakaologin/flutter) | 로그인/로그아웃 API, 토큰 관리, 사용자 정보 |
