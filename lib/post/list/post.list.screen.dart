@@ -1,6 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
+import 'package:philgo/post/post.model.dart';
+import 'package:philgo/post/post.service.dart';
+import 'package:philgo/post/view/post.view.screen.dart';
 
 class PostListScreen extends StatefulWidget {
   const PostListScreen({super.key});
@@ -13,6 +18,50 @@ class _PostListScreenState extends State<PostListScreen> {
   /// 현재 선택된 카테고리 인덱스
   int _selectedIndex = 0;
 
+  /// 페이지당 게시글 수
+  static const _pageSize = 20;
+
+  /// 무한 스크롤 페이지네이션 컨트롤러
+  late final PagingController<int, Post> _pagingController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pagingController = PagingController<int, Post>(
+      getNextPageKey: (state) {
+        final keys = state.keys;
+        if (keys == null || keys.isEmpty) return 0;
+        return keys.last + _pageSize;
+      },
+      fetchPage: _fetchPage,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
+
+  /// 게시글 페이지 로드
+  Future<List<Post>> _fetchPage(int offset) async {
+    final (postId, category, _) = forumCategories[_selectedIndex];
+    final result = await PostService.list(
+      postId: postId,
+      category: category,
+      limit: _pageSize,
+      offset: offset,
+    );
+    return result.posts;
+  }
+
+  /// 카테고리 변경 시 목록 리프레시
+  void _onCategoryTap(int index) {
+    if (index == _selectedIndex) return;
+    setState(() => _selectedIndex = index);
+    _pagingController.refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -23,25 +72,11 @@ class _PostListScreenState extends State<PostListScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            /// 앱바 영역
             _buildAppBar(theme, scheme),
             Container(height: 1, color: scheme.outlineVariant),
-
-            /// 카테고리 목록 (가로 스크롤)
             _buildCategoryList(theme, scheme),
             Container(height: 1, color: scheme.outlineVariant),
-
-            /// 게시글 목록 영역 (추후 구현)
-            Expanded(
-              child: Center(
-                child: Text(
-                  _selectedCategoryLabel(),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ),
+            Expanded(child: _buildPostList(theme, scheme)),
           ],
         ),
       ),
@@ -80,9 +115,10 @@ class _PostListScreenState extends State<PostListScreen> {
           final isSelected = index == _selectedIndex;
 
           return GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
+            onTap: () => _onCategoryTap(index),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: isSelected
                     ? scheme.primary
@@ -113,12 +149,229 @@ class _PostListScreenState extends State<PostListScreen> {
     );
   }
 
-  /// 현재 선택된 카테고리 라벨
-  String _selectedCategoryLabel() {
-    final (postId, category, _) = forumCategories[_selectedIndex];
-    if (category != null) {
-      return '$postId / $category';
-    }
-    return postId;
+  /// 게시글 무한 스크롤 목록
+  Widget _buildPostList(ThemeData theme, ColorScheme scheme) {
+    return PagingListener(
+      controller: _pagingController,
+      builder: (context, state, fetchNextPage) {
+        return PagedListView<int, Post>.separated(
+          state: state,
+          fetchNextPage: fetchNextPage,
+          separatorBuilder: (_, _) => Divider(
+            height: 1,
+            color: scheme.outlineVariant.withValues(alpha: 0.3),
+          ),
+          builderDelegate: PagedChildBuilderDelegate<Post>(
+            itemBuilder: (context, post, index) => _PostListTile(
+              post: post,
+              theme: theme,
+              scheme: scheme,
+              onTap: () => _openPostView(post),
+            ),
+            firstPageProgressIndicatorBuilder: (_) =>
+                const Center(child: CircularProgressIndicator()),
+            newPageProgressIndicatorBuilder: (_) => const Padding(
+              padding: EdgeInsets.all(16),
+              child:
+                  Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            ),
+            noItemsFoundIndicatorBuilder: (_) =>
+                _EmptyPostList(scheme: scheme),
+            firstPageErrorIndicatorBuilder: (context) => _ErrorIndicator(
+              scheme: scheme,
+              onRetry: () => _pagingController.refresh(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// 게시글 상세 화면 열기
+  void _openPostView(Post post) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
+    );
+  }
+}
+
+/// 게시글 리스트 타일 (v6 CompactPostListTile 스타일)
+class _PostListTile extends StatelessWidget {
+  final Post post;
+  final ThemeData theme;
+  final ColorScheme scheme;
+  final VoidCallback onTap;
+
+  const _PostListTile({
+    required this.post,
+    required this.theme,
+    required this.scheme,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasThumbnail =
+        post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty;
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 제목
+                  Text(
+                    post.subject,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  // 날짜
+                  Text(
+                    _formatDate(post.stamp),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // 통계 (조회수, 댓글, 좋아요)
+                  Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.lightEye,
+                          size: 12, color: scheme.onSurfaceVariant),
+                      const SizedBox(width: 4),
+                      Text('${post.noOfView}',
+                          style: theme.textTheme.labelSmall
+                              ?.copyWith(color: scheme.onSurfaceVariant)),
+                      const SizedBox(width: 12),
+                      FaIcon(FontAwesomeIcons.lightComment,
+                          size: 12, color: scheme.onSurfaceVariant),
+                      const SizedBox(width: 4),
+                      Text('${post.noOfComment}',
+                          style: theme.textTheme.labelSmall
+                              ?.copyWith(color: scheme.onSurfaceVariant)),
+                      if (post.good > 0) ...[
+                        const SizedBox(width: 12),
+                        FaIcon(FontAwesomeIcons.lightThumbsUp,
+                            size: 12, color: scheme.onSurfaceVariant),
+                        const SizedBox(width: 4),
+                        Text('${post.good}',
+                            style: theme.textTheme.labelSmall
+                                ?.copyWith(color: scheme.onSurfaceVariant)),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // 썸네일
+            if (hasThumbnail) ...[
+              const SizedBox(width: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: CachedNetworkImage(
+                  imageUrl: post.thumbnail400x400!,
+                  width: 72,
+                  height: 72,
+                  fit: BoxFit.cover,
+                  placeholder: (_, _) => Container(
+                    width: 72,
+                    height: 72,
+                    color: scheme.surfaceContainerHigh,
+                  ),
+                  errorWidget: (_, _, _) => Container(
+                    width: 72,
+                    height: 72,
+                    color: scheme.surfaceContainerHigh,
+                    child: Icon(Icons.broken_image,
+                        color: scheme.onSurfaceVariant, size: 24),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Unix timestamp → 상대 시간 또는 날짜 문자열
+  String _formatDate(int stamp) {
+    if (stamp == 0) return '';
+    final date = DateTime.fromMillisecondsSinceEpoch(stamp * 1000);
+    final now = DateTime.now();
+    final diff = now.difference(date);
+
+    if (diff.inMinutes < 1) return '방금 전';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}분 전';
+    if (diff.inHours < 24) return '${diff.inHours}시간 전';
+    if (diff.inDays < 7) return '${diff.inDays}일 전';
+    if (diff.inDays < 365) return '${date.month}/${date.day}';
+    return '${date.year}/${date.month}/${date.day}';
+  }
+}
+
+/// 게시글 없음 표시
+class _EmptyPostList extends StatelessWidget {
+  final ColorScheme scheme;
+  const _EmptyPostList({required this.scheme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FaIcon(FontAwesomeIcons.lightFolderOpen,
+              size: 48,
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.5)),
+          const SizedBox(height: 16),
+          Text('게시글이 없습니다',
+              style:
+                  TextStyle(color: scheme.onSurfaceVariant, fontSize: 16)),
+        ],
+      ),
+    );
+  }
+}
+
+/// 에러 표시
+class _ErrorIndicator extends StatelessWidget {
+  final ColorScheme scheme;
+  final VoidCallback onRetry;
+  const _ErrorIndicator({required this.scheme, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FaIcon(FontAwesomeIcons.lightCircleExclamation,
+              size: 48, color: scheme.error),
+          const SizedBox(height: 16),
+          Text('게시글을 불러올 수 없습니다',
+              style:
+                  TextStyle(color: scheme.onSurfaceVariant, fontSize: 16)),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: onRetry,
+            icon: const FaIcon(FontAwesomeIcons.lightArrowRotateRight,
+                size: 14),
+            label: const Text('다시 시도'),
+          ),
+        ],
+      ),
+    );
   }
 }
