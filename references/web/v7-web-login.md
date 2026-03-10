@@ -9,14 +9,15 @@
 5. [API 인증 — api.php 엔드포인트 호출](#5-api-인증--apiphp-엔드포인트-호출)
 6. [소셜 로그인 전체 흐름 (Google)](#6-소셜-로그인-전체-흐름)
 7. [카카오톡 소셜 로그인](#7-카카오톡-소셜-로그인)
-8. [세션 ID 생성 및 쿠키 관리](#8-세션-id-생성-및-쿠키-관리)
-9. [관리자 권한 확인](#9-관리자-권한-확인)
-10. [Firebase ID Token 검증](#10-firebase-id-token-검증)
-11. [SSR 페이지에서의 실제 사용 사례](#11-ssr-페이지에서의-실제-사용-사례)
-12. [개발 환경 테스트 로그인](#12-개발-환경-테스트-로그인)
-13. [캐싱 메커니즘](#13-캐싱-메커니즘)
-14. [보안 특징](#14-보안-특징)
-15. [소스코드 파일 경로 목록](#15-소스코드-파일-경로-목록)
+8. [네이버 소셜 로그인](#8-네이버-소셜-로그인)
+9. [세션 ID 생성 및 쿠키 관리](#9-세션-id-생성-및-쿠키-관리)
+10. [관리자 권한 확인](#10-관리자-권한-확인)
+11. [Firebase ID Token 검증](#11-firebase-id-token-검증)
+12. [SSR 페이지에서의 실제 사용 사례](#12-ssr-페이지에서의-실제-사용-사례)
+13. [개발 환경 테스트 로그인](#13-개발-환경-테스트-로그인)
+14. [캐싱 메커니즘](#14-캐싱-메커니즘)
+15. [보안 특징](#15-보안-특징)
+16. [소스코드 파일 경로 목록](#16-소스코드-파일-경로-목록)
 
 ---
 
@@ -501,7 +502,67 @@ public static function socialLogin(array $input): UserEntity
 
 ---
 
-## 8. 세션 ID 생성 및 쿠키 관리
+## 8. 네이버 소셜 로그인
+
+네이버도 카카오와 마찬가지로 Firebase에서 직접 지원하지 않으므로 Firebase Custom Token 방식을 사용한다.
+카카오톡과 **100% 동일한 아키텍처 패턴**을 따르며, 서버 측에서 네이버 OAuth Authorization Code 흐름을 처리한다.
+
+> **상세 구현 문서**: [v7-web-naver-social-login.md](v7-web-naver-social-login.md)
+
+### 전체 흐름 (5단계)
+
+```
+[1] /user/login 네이버 버튼 클릭 → window.location.href = '/auth/naver/start'
+[2] v7/auth/naver/start.php → state 생성 → 302 → nid.naver.com/oauth2.0/authorize
+[3] 네이버 로그인 (사용자 인증) → 302 → /auth/naver/callback?code=XXX&state=YYY
+[4] v7/auth/naver/callback.php → state 검증 → code+state→token→ID→Custom Token → 302 → /auth/naver/complete
+[5] v7/auth/naver/complete.php → signInWithCustomToken → v7api('user.socialLogin') → 홈 리다이렉트
+```
+
+### 카카오톡 로그인과의 핵심 차이점
+
+| 구분 | 카카오톡 | 네이버 |
+|------|---------|--------|
+| Client Secret | 선택 | **필수** (토큰 교환 시 반드시 전달) |
+| 토큰 교환 시 state | 불필요 | **필요** (state도 함께 전달) |
+| 프로필 응답 구조 | `{ id: "..." }` (최상위) | `{ response: { id: "..." } }` (중첩 구조) |
+| Firebase UID | `kakao:{카카오ID}` | `naver:{네이버ID}` |
+| `login_provider` | `'kakaotalk'` | `'naver'` |
+| 브랜드 색상 | `#FEE500` (노란색) | `#03C75A` (초록색) |
+| 서비스 클래스 | `KakaoLoginService` | `NaverLoginService` |
+
+### 관련 파일
+
+| 파일 | 용도 |
+|------|------|
+| `lib/user/NaverLoginService.php` | 네이버 OAuth + Firebase Custom Token 서비스 (namespace: `Philgo\User`) |
+| `v7/auth/naver/start.php` | OAuth 인가 시작 (세션에 state 저장 → 네이버 리다이렉트) |
+| `v7/auth/naver/callback.php` | 콜백: code+state→access_token→naverUserId→Firebase Custom Token |
+| `v7/auth/naver/complete.php` | Firebase signInWithCustomToken → v7api('user.socialLogin') → 홈 |
+| `v7/user/login.php` | 네이버 버튼 + loginWithNaver() Vue 메서드 |
+| `v7/user/login.css` | 네이버 브랜드 색상 `.social-btn-naver` (#03C75A) |
+| `v7/utils/Config.php` | `naverClientId()`, `naverClientSecret()`, `naverRedirectUri()` |
+
+### 핵심 설계 결정
+
+- **UserService::socialLogin() 수정 불필요**: Custom Token으로 Firebase에 로그인하면 Firebase ID Token이 생성되고, 기존 socialLogin 흐름을 그대로 탄다
+- **NaverLoginService를 lib/user/에 배치**: 기존 `Philgo\User\` PSR-4 매핑 활용
+- **네이버 키를 Config 클래스에 통합**: `naverClientId()`, `naverClientSecret()`, `naverRedirectUri()` 3개 정적 메서드
+
+### 3사 소셜 로그인 비교 요약
+
+| 구분 | Google | 카카오톡 | 네이버 |
+|------|--------|---------|--------|
+| Firebase 지원 | 직접 지원 (`signInWithPopup`) | Custom Token 필요 | Custom Token 필요 |
+| 인증 흐름 | 팝업 1단계 (클라이언트 완결) | 리다이렉트 5단계 (서버 경유) | 리다이렉트 5단계 (서버 경유) |
+| 서버 역할 | 없음 | 필수 | 필수 |
+| `login_provider` | `'google'` | `'kakaotalk'` | `'naver'` |
+| Firebase UID | Google 자동 생성 | `kakao:{ID}` | `naver:{ID}` |
+| 브랜드 색상 | `#4285f4` (파란색) | `#FEE500` (노란색) | `#03C75A` (초록색) |
+
+---
+
+## 9. 세션 ID 생성 및 쿠키 관리
 
 ### 세션 ID 생성 알고리즘
 
@@ -602,7 +663,7 @@ function v7DevLogout() {
 
 ---
 
-## 9. 관리자 권한 확인
+## 10. 관리자 권한 확인
 
 ### AuthService::isAdmin() 메서드
 
@@ -663,7 +724,7 @@ public static function admins(): array
 
 ---
 
-## 10. Firebase ID Token 검증
+## 11. Firebase ID Token 검증
 
 ### FirebaseService::verifyIdToken()
 
@@ -733,7 +794,7 @@ private const TEST_TOKENS = [
 
 ---
 
-## 11. SSR 페이지에서의 실제 사용 사례
+## 12. SSR 페이지에서의 실제 사용 사례
 
 ### 패턴 1: 탑바 로그인/프로필 분기
 
@@ -818,7 +879,7 @@ $loginUser = AuthService::getLoginUser();
 
 ---
 
-## 12. 개발 환경 테스트 로그인
+## 13. 개발 환경 테스트 로그인
 
 ### 테스트 사용자 목록
 
@@ -858,7 +919,7 @@ function v7DevLogout() {
 
 ---
 
-## 13. 캐싱 메커니즘
+## 14. 캐싱 메커니즘
 
 ### 정적 캐시 변수
 
@@ -892,7 +953,7 @@ AuthService::setTestUser(['idx' => 123, 'firebase_uid' => 'test_uid']);
 
 ---
 
-## 14. 보안 특징
+## 15. 보안 특징
 
 ### 세션 위변조 방지
 
@@ -918,7 +979,7 @@ AuthService::setTestUser(['idx' => 123, 'firebase_uid' => 'test_uid']);
 
 ---
 
-## 15. 소스코드 파일 경로 목록
+## 16. 소스코드 파일 경로 목록
 
 | 파일 | 용도 | 주요 함수/메서드 |
 |------|------|-----------------|
@@ -929,16 +990,20 @@ AuthService::setTestUser(['idx' => 123, 'firebase_uid' => 'test_uid']);
 | `lib/utils/RequestUtils.php` | HTTP 입력 파라미터 처리 | `all()`, `get()`, `parseMethod()` |
 | `lib/utils/Db.php` | DB 연결 (PDO) | `fetch()`, `insert()`, `execute()` |
 | `v7/js/v7api.js` | v7 API 호출 래퍼 (JavaScript) | `v7api()` |
-| `v7/user/login.php` | 로그인 UI (Vue.js + Firebase) | `loginWithGoogle()`, `loginWithKakao()` |
-| `v7/user/login.css` | 로그인 페이지 CSS | `.social-btn-kakao` (카카오 브랜드 색상) |
+| `v7/user/login.php` | 로그인 UI (Vue.js + Firebase) | `loginWithGoogle()`, `loginWithKakao()`, `loginWithNaver()` |
+| `v7/user/login.css` | 로그인 페이지 CSS | `.social-btn-kakao`, `.social-btn-naver` (소셜 브랜드 색상) |
 | `lib/user/KakaoLoginService.php` | 카카오 OAuth + Firebase Custom Token | `getAuthorizeUrl()`, `exchangeCodeForToken()`, `getKakaoUserId()`, `createFirebaseCustomToken()` |
 | `v7/auth/kakao/start.php` | 카카오 OAuth 인가 시작 | state 생성, 카카오 리다이렉트 |
 | `v7/auth/kakao/callback.php` | 카카오 OAuth 콜백 | state 검증, 토큰 교환, Custom Token 발급 |
 | `v7/auth/kakao/complete.php` | 카카오 Firebase 로그인 완료 | `signInWithCustomToken()`, `v7api('user.socialLogin')` |
+| `lib/user/NaverLoginService.php` | 네이버 OAuth + Firebase Custom Token | `getAuthorizeUrl()`, `exchangeCodeForToken()`, `getNaverUserId()`, `createFirebaseCustomToken()` |
+| `v7/auth/naver/start.php` | 네이버 OAuth 인가 시작 | state 생성, 네이버 리다이렉트 |
+| `v7/auth/naver/callback.php` | 네이버 OAuth 콜백 | state 검증, 토큰 교환 (client_secret 필수), Custom Token 발급 |
+| `v7/auth/naver/complete.php` | 네이버 Firebase 로그인 완료 | `signInWithCustomToken()`, `v7api('user.socialLogin')` |
 | `v7/boot.php` | v7 부팅 (PSR-4 + 설정) | — |
 | `v7/layout.php` | v7 전체 레이아웃 | — |
 | `api.php` | API 엔트리포인트 | — |
-| `v7/utils/Config.php` | v7 설정 래퍼 | `admins()`, `devUsers()`, `devPassword()`, `kakaoRestApiKey()`, `kakaoRedirectUri()` |
+| `v7/utils/Config.php` | v7 설정 래퍼 | `admins()`, `devUsers()`, `devPassword()`, `kakaoRestApiKey()`, `kakaoRedirectUri()`, `naverClientId()`, `naverClientSecret()`, `naverRedirectUri()` |
 | `v7/widgets/layout/layout.topbar.php` | 탑바 (로그인 상태 표시 + 테스트 로그인) | — |
 | `v7/widgets/layout/layout.sidebar-left.login.php` | 사이드바 로그인 위젯 | — |
 | `v7/widgets/layout/layout.header-mobile.php` | 모바일 헤더 | — |

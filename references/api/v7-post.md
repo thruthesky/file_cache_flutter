@@ -17,10 +17,11 @@
 8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
 9. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
-   - [Reddit 스타일 스레드 구조 (thread-line 절대 위치 + L자형 수평 연결선)](#reddit-스타일-스레드-구조-thread-line-절대-위치-방식)
-   - [코멘트 HTML 구조 (SSR — thread-line 방식 재귀 트리)](#코멘트-html-구조-ssr--thread-line-방식-재귀-트리)
-   - [코멘트 CSS 핵심 스타일 (thread-line + L자형 수평 연결선)](#코멘트-css-핵심-스타일-thread-line-절대-위치-방식)
-   - [접기/펼치기 JavaScript (thread-line + collapse-btn 방식)](#접기펼치기-javascript-thread-line--collapse-btn-방식)
+   - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
+   - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
+   - [코멘트 CSS 핵심 스타일 (thread-line 절대 위치 + 동적 높이)](#코멘트-css-핵심-스타일-thread-line-절대-위치--동적-높이)
+   - [adjustThreadLines() — 세로선 높이 동적 계산 JavaScript](#adjustthreadlines--세로선-높이-동적-계산-javascript)
+   - [접기/펼치기 JavaScript (세로선 클릭 + 답글 텍스트 클릭)](#접기펼치기-javascript-세로선-클릭--답글-텍스트-클릭)
    - [코멘트 모바일 반응형](#코멘트-모바일-반응형-media-max-width-640px)
    - [빈 상태 디자인](#빈-상태-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
@@ -483,7 +484,7 @@ v7 코멘트 시스템은 `sf_post_data` 테이블을 게시글과 공유하며,
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
-| `idx_root` | int | 원글(게시글) idx — 모든 코멘트가 공유하는 루트 |
+| `idx_root` | int | 원글(게시글) idx -- 모든 코멘트가 공유하는 루트 |
 | `idx_parent` | int | 부모 코멘트 idx (최상위 코멘트는 idx_root와 동일) |
 | `depth` | int | 깊이 (0=글, 1=1차 코멘트, 2=대댓글, 3=대대댓글...) |
 | `list_order` | int | 트리 내 정렬 순서 (DESC 정렬, 큰 값=위쪽/오래된 것) |
@@ -497,7 +498,7 @@ v7 코멘트 시스템은 `sf_post_data` 테이블을 게시글과 공유하며,
 ```
 list_order = 0, depth = 1
 기존 모든 코멘트의 list_order를 +1 시프트
-→ DESC 정렬에서 맨 아래(최신)에 표시
+-> DESC 정렬에서 맨 아래(최신)에 표시
 ```
 
 #### 2. 대댓글 (idx_parent != idx_root)
@@ -506,7 +507,7 @@ list_order = 0, depth = 1
 depth = 부모.depth + 1
 부모의 마지막 자손(findLastChildComment) 위치의 list_order를 구함
 그 위치 이상인 코멘트들의 list_order를 +1 시프트
-→ DESC 정렬에서 부모 트리 바로 아래에 표시
+-> DESC 정렬에서 부모 트리 바로 아래에 표시
 ```
 
 #### 정렬 순서
@@ -541,7 +542,7 @@ Comment-C (third)        depth=1, list_order=0
 
 ### API 엔드포인트 (코멘트)
 
-#### post.commentCreate — 코멘트 생성
+#### post.commentCreate -- 코멘트 생성
 
 인증 필요.
 
@@ -554,12 +555,12 @@ method=post.commentCreate&idx_root=12345&idx_parent=67890&content=대댓글내�
 | 파라미터 | 타입 | 필수 | 설명 |
 |----------|------|------|------|
 | idx_root | int | O | 원글 idx |
-| idx_parent | int | X | 부모 코멘트 idx (생략 시 idx_root 사용 → 최상위 코멘트) |
+| idx_parent | int | X | 부모 코멘트 idx (생략 시 idx_root 사용 -> 최상위 코멘트) |
 | content | string | O | 코멘트 내용 |
 
 **응답**: 생성된 코멘트의 PostEntity 배열
 
-#### post.commentList — 코멘트 목록
+#### post.commentList -- 코멘트 목록
 
 인증 불필요.
 
@@ -587,19 +588,19 @@ GET /api.php?method=post.commentList&idx_root=12345
 
 | 파일 | 설명 |
 |------|------|
-| `v7/post/view.php` (라인 243~383) | SSR 코멘트 렌더링 — **Reddit 스타일 thread-line 절대 위치 방식 재귀 트리 구조** (`countDescendants()` + `renderCommentThread()` 재귀 함수) |
-| `v7/post/view.css` (라인 679~896) | 코멘트 영역 전용 CSS — `div.thread-line` 절대 위치 세로선, L자형 수평 연결선(`::before`), collapse-toggle 접기/펼치기, 반응형 |
-| `v7/js/comment.js` (라인 14~47) | Vue.js 코멘트 CRUD + thread-line 클릭 + collapse-btn/collapse-toggle 클릭 접기/펼치기 이벤트 위임 |
+| `v7/post/view.php` (라인 243~383) | SSR 코멘트 렌더링 -- **Reddit 스타일 avatar-col + body-col 방식 재귀 트리 구조** (`countDescendants()` + `renderCommentThread()` 재귀 함수) |
+| `v7/post/view.css` (라인 679~823) | 코멘트 영역 전용 CSS -- `div.thread-line` 절대 위치 세로선 (아바타 아래~마지막 자식 아바타 중앙), 접기/펼치기, 반응형 |
+| `v7/js/comment.js` (라인 14~83) | `adjustThreadLines()` 세로선 높이 동적 계산 + 세로선 클릭 / `[+N개 답글]` 클릭 접기/펼치기 이벤트 위임 + Vue.js 코멘트 CRUD |
 
-코멘트는 **`div.thread-line` 절대 위치 방식 + L자형 수평 연결선**으로 구현되어 있다.
-`$childrenMap`(부모 idx → 자식 배열 맵)을 구축한 후, `renderCommentThread()` 함수가 각 코멘트를
-재귀적으로 렌더링한다. 핵심 원리는 `$hasChildren`인 코멘트 노드에 `<div class="thread-line">`
-요소를 추가하고, `position: absolute`로 collapse 버튼 아래(`top: 30px`)에서 노드 하단(`bottom: 0`)까지
-끊기지 않는 연속 세로선을 구현하는 것이다. 추가로 `.thread-children > .comment-node::before`
-의사 요소로 부모 세로선에서 자식 코멘트까지 L자형 수평 연결선(2px 높이)을 렌더링한다.
-`.thread-children`에는 `border-left` 없이 `margin-left: 11px; padding-left: 21px`로 들여쓰기를
-처리하며, 수평 연결선은 `left: -21px`에서 시작하여 `width: 18px`로 부모 세로선까지 연결한다.
-접기/펼치기는 `.thread-line` 클릭, `.collapse-btn` 클릭, `.collapse-toggle` 영역 클릭 3가지로 제어한다.
+코멘트는 **`div.thread-line` 절대 위치 방식 + `adjustThreadLines()` 동적 높이 계산**으로 구현되어 있다.
+`$childrenMap`(부모 idx -> 자식 배열 맵)을 구축한 후, `renderCommentThread()` 함수가 각 코멘트를
+재귀적으로 렌더링한다. 핵심 원리:
+
+1. **아바타를 `.comment-avatar-col`로 독립 분리**: 코멘트 행은 `.comment-row > (.comment-avatar-col + .comment-body-col)` 구조이다
+2. **세로선이 아바타 바로 아래에서 시작**: `$hasChildren`인 코멘트 노드에 `<div class="thread-line">`을 추가하고, `position: absolute`로 아바타 하단에서부터 세로선을 렌더링한다
+3. **세로선 높이를 JS로 동적 계산**: `adjustThreadLines()` 함수가 마지막 직접 자식의 아바타 중앙까지만 세로선 높이를 계산한다 (기존 `bottom: 0` 고정 방식 제거)
+4. **L자형 수평 연결선 제거**: `::before` 의사 요소를 사용한 수평 연결선은 완전히 제거되었다
+5. **collapse-toggle/collapse-btn 제거**: 세로선 클릭과 `[+N개 답글]` 텍스트 클릭으로만 접기/펼치기를 제어한다
 
 ### 코멘트 디자인 시스템
 
@@ -611,63 +612,64 @@ GET /api.php?method=post.commentList&idx_root=12345
 | `wa-relative-time` | `date`, `lang="ko"` | 절대 시간(`2024-01-15 14:30`) 대신 상대 시간(`3시간 전`)으로 표시. date에 `date('c', $c->stamp)` ISO 8601 형식 전달 |
 | `wa-badge` | `variant="brand"`, `pill` | 코멘트 섹션 타이틀에 댓글 수를 블루 배지로 표시 |
 
-#### Reddit 스타일 스레드 구조 (thread-line 절대 위치 방식)
+#### Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)
 
 세로선은 **`<div class="thread-line">` 절대 위치 요소**로 구현한다.
 자식이 있는(`$hasChildren`) 코멘트 노드에 `<div class="thread-line">`을 삽입하고,
-`position: absolute`로 collapse 버튼 중앙 아래(`top: 30px`)에서 노드 하단(`bottom: 0`)까지
-끊기지 않는 연속 세로선을 렌더링한다. `.thread-children`에는 `border-left`를 적용하지 않고
-`margin-left: 11px; padding-left: 21px`로 들여쓰기를 처리한다.
+`position: absolute`로 아바타 바로 아래에서 세로선을 시작한다.
+세로선의 높이는 **`adjustThreadLines()` JavaScript 함수**가 마지막 직접 자식의 아바타 중앙 위치까지만 동적으로 계산하여 설정한다.
 
-**L자형 수평 연결선**: `.thread-children > .comment-node::before` 의사 요소로 부모 세로선에서
-자식 코멘트 아바타 높이까지 수평 연결선(2px 높이)을 렌더링한다. `left: -21px`에서 시작하여
-`width: 18px`로 부모 세로선의 위치까지 연결하며, 색상은 세로선과 동일한 `#64748b`이다.
+**이전 방식과의 핵심 차이:**
 
-**방식 변경 이력:**
-
-| 항목 | 이전 (border-left 방식) | 현재 (thread-line 절대 위치 방식) |
-|------|------------------------|-------------------------------|
-| **세로선 구현** | `.comment-node.has-children`에 `border-left: 3px solid` 적용 — 노드 전체 높이에 자동 관통 | `<div class="thread-line">` 요소를 `.comment-node` 내부에 삽입, `position: absolute; left: 10px; top: 30px; bottom: 0; width: 3px` — collapse 버튼 아래부터 노드 하단까지 |
-| **세로선 색상** | `#cbd5e1` (neutral-300 계열, 정적) | `#64748b` (neutral-500 계열), hover 시 `#3b82f6` (blue) |
-| **세로선 클릭 가능 여부** | 불가 (CSS border는 클릭 불가) | **가능** — `cursor: pointer`로 세로선 자체를 클릭하여 스레드 접기/펼치기 |
-| **들여쓰기 방식** | `.thread-children`에 `margin-left: 10px` | `.thread-children`에 `margin-left: 11px; padding-left: 21px` |
-| **L자형 수평 연결선** | 없음 | `.thread-children > .comment-node::before`로 부모 세로선에서 자식 코멘트까지 수평 연결선 (`left: -21px; top: 18px; width: 18px; height: 2px`) |
-| **접기/펼치기 영역** | `.collapse-toggle > .collapse-btn` (2가지 클릭) | `.thread-line` + `.collapse-btn` + `.collapse-toggle` (3가지 클릭) |
-| **접힌 상태 세로선** | border-left가 헤더까지만 표시 | `display: none`으로 세로선 완전 숨김 |
-| **CSS 컨테이너** | `.comment-node(.has-children) > .comment-row > (.collapse-toggle + .comment-content) + .thread-children` | `.comment-node(.has-children) > .thread-line + .comment-row > (.collapse-toggle + .comment-content) + .thread-children` |
-| **JavaScript** | collapse-btn/collapse-toggle 클릭만 처리 | `.thread-line` 클릭 우선 처리 + collapse-btn/collapse-toggle 클릭 보조 처리 |
+| 항목 | 이전 (collapse-btn + L자형 연결선) | **현재 (avatar-col + adjustThreadLines)** |
+|------|-----------------------------------|-----------------------------------------|
+| **HTML 구조** | `.comment-row > (.collapse-toggle + .comment-content > .comment-main-row > (.comment-avatar + .comment-body-wrap))` | **`.comment-row > (.comment-avatar-col + .comment-body-col)`** |
+| **아바타 위치** | `.comment-content` 내부의 `.comment-main-row` 안에 위치 | **`.comment-avatar-col`로 독립 분리**, `.comment-row`의 직속 자식 |
+| **본문 영역** | `.comment-content > .comment-body-wrap` | **`.comment-body-col`** (이름 변경) |
+| **collapse-toggle/collapse-btn** | 존재 (세로선 옆 ⊖/⊕ 아이콘 버튼) | **완전 제거** |
+| **접기/펼치기 방법** | 세로선 클릭 + collapse-btn 클릭 + collapse-toggle 클릭 (3가지) | **세로선 클릭 + `[+N개 답글]` 텍스트 클릭 (2가지)** |
+| **세로선 시작점** | collapse 버튼 아래 (`top: 30px` 고정) | **아바타 바로 아래** (JS `adjustThreadLines()`로 `padding-top + avatarSize + gap` 계산) |
+| **세로선 끝점** | 노드 하단 (`bottom: 0` 고정) | **마지막 직접 자식의 아바타 중앙** (JS `adjustThreadLines()`로 동적 계산) |
+| **세로선 높이 방식** | CSS `top`/`bottom`으로 고정 | **JS `adjustThreadLines()`로 `top`과 `height`를 동적 설정** |
+| **세로선 색상** | `#64748b` (neutral-500) | **`#94a3b8`** (neutral-400, 더 연한 톤) |
+| **L자형 수평 연결선** | `::before` 의사 요소 존재 (`left: -21px; width: 18px; height: 2px`) | **완전 제거** |
+| **들여쓰기** | `margin-left: 11px; padding-left: 21px` | **`margin-left: 18px; padding-left: 18px`** |
+| **세로선 left 위치** | `left: 10px` | **`left: 17px`** (avatar-col 36px/2 - 1px) |
 
 **핵심 함수:**
 
 | 함수 | 시그니처 | 설명 |
 |------|---------|------|
 | `countDescendants()` | `countDescendants(int $parentIdx, array &$childrenMap): int` | 재귀적으로 하위 코멘트 총 수를 계산. 접힌 상태에서 `[+N개 답글]` 표시에 사용 |
-| `renderCommentThread()` | `renderCommentThread(array $commentArr, array &$childrenMap, int $depth = 0): void` | thread-line 절대 위치 + L자형 수평 연결선 방식 재귀 렌더링. `$depth`로 data-depth 속성 설정. `ancestorLastFlags`/`isLast` 파라미터 제거 |
+| `renderCommentThread()` | `renderCommentThread(array $commentArr, array &$childrenMap, int $depth = 0): void` | avatar-col + body-col 방식 재귀 렌더링. `$depth`로 data-depth 속성 설정 |
+| `adjustThreadLines()` | `adjustThreadLines(): void` (JavaScript) | `.comment-node.has-children`의 `.thread-line` 높이를 마지막 직접 자식 아바타 중앙까지 동적 계산 |
 
 **데이터 흐름:**
 
 ```
 $comments (flat 배열, list_order DESC)
-  ↓
+  |
 $childrenMap[$parentIdx][] = $commentArr  (부모별 자식 맵 구축)
-  ↓
+  |
 최상위 코멘트: $childrenMap[$idx] (글의 idx가 부모인 코멘트들)
-  ↓
-renderCommentThread($comment, $childrenMap, $depth=0) — 재귀 호출
-  ↓
-countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
-  ↓
+  |
+renderCommentThread($comment, $childrenMap, $depth=0) -- 재귀 호출
+  |
+countDescendants($c->idx, $childrenMap) -- 전체 하위 수 계산
+  |
 각 코멘트: .comment-node(.has-children)
-           > .thread-line (position: absolute, 세로선)
-           + .comment-row > (.collapse-toggle + .comment-content)
-           + .thread-children (margin-left: 11px, padding-left: 21px, 재귀)
-               > .comment-node::before (L자형 수평 연결선, left: -21px, width: 18px)
+           > .thread-line (position: absolute, 세로선 -- 높이는 JS 동적 계산)
+           + .comment-row > (.comment-avatar-col + .comment-body-col)
+           + .thread-children (margin-left: 18px, padding-left: 18px, 재귀)
+  |
+DOMContentLoaded -> adjustThreadLines() -- 세로선 높이 계산
+                 -> window.resize -> adjustThreadLines() -- 리사이즈 대응
 ```
 
-#### 코멘트 HTML 구조 (SSR — thread-line 방식 재귀 트리)
+#### 코멘트 HTML 구조 (SSR -- avatar-col + body-col 재귀 트리)
 
 ```php
-<!-- 코멘트 목록 (SSR - Reddit 스타일 thread-line 절대 위치 방식 스레드) -->
+<!-- 코멘트 목록 (SSR - Reddit 스타일 세로선 클릭 접기/펼치기 스레드) -->
 <?php if (!empty($comments)): ?>
     <?php
     // flat 리스트를 부모별 자식 맵으로 변환 (트리 구조용)
@@ -690,16 +692,11 @@ countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
     }
 
     /**
-     * thread-line 절대 위치 방식 코멘트 스레드 재귀 렌더링 (Reddit 스타일)
+     * 코멘트 스레드 재귀 렌더링 (Reddit 스타일)
      *
-     * $hasChildren인 코멘트 노드에 <div class="thread-line">을 삽입하고,
-     * position: absolute로 collapse 버튼 아래(top:30px)에서 노드 하단(bottom:0)까지
-     * 끊기지 않는 연속 세로선 구현.
-     * .thread-children에는 border-left 없이 margin-left + padding-left로 들여쓰기만 처리.
-     *
-     * @param array $commentArr 코멘트 데이터 배열
-     * @param array $childrenMap 부모 idx → 자식 배열 맵 (참조)
-     * @param int $depth 현재 깊이 (0 = 최상위 코멘트)
+     * 구조: .comment-node > .thread-line + .comment-row > (.comment-avatar-col + .comment-body-col)
+     * 세로선 높이는 JS adjustThreadLines()로 동적 계산.
+     * collapse-toggle/collapse-btn 없음 -- 세로선 클릭 + [+N개 답글] 클릭으로 접기/펼치기.
      */
     function renderCommentThread(array $commentArr, array &$childrenMap, int $depth = 0): void {
         $c = PostEntity::fromArray($commentArr);
@@ -715,53 +712,40 @@ countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
                 <div class="thread-line" title="클릭하여 스레드 접기/펼치기"></div>
             <?php endif; ?>
             <div class="comment-row">
-                <!-- 접기/펼치기 토글 -->
-                <div class="collapse-toggle">
-                    <?php if ($hasChildren): ?>
-                        <button class="collapse-btn" aria-expanded="true" title="댓글 스레드 접기/펼치기">
-                            <i class="fa-regular fa-circle-minus collapse-icon-expanded"></i>
-                            <i class="fa-regular fa-circle-plus collapse-icon-collapsed"></i>
-                        </button>
-                    <?php endif; ?>
+                <!-- 아바타 컬럼: 독립 분리 -->
+                <div class="comment-avatar-col">
+                    <wa-avatar initials="<?= htmlspecialchars(mb_substr($c->user_name ?: '?', 0, 1)) ?>"
+                               label="<?= htmlspecialchars($c->user_name ?: '익명') ?>"
+                               shape="circle"></wa-avatar>
                 </div>
 
-                <!-- 코멘트 내용 -->
-                <div class="comment-content">
-                    <div class="comment-main-row">
-                        <div class="comment-avatar">
-                            <wa-avatar initials="<?= htmlspecialchars(mb_substr($c->user_name ?: '?', 0, 1)) ?>"
-                                       label="<?= htmlspecialchars($c->user_name ?: '익명') ?>"
-                                       shape="circle"></wa-avatar>
-                        </div>
-                        <div class="comment-body-wrap">
-                            <div class="post-comment-header">
-                                <strong class="comment-author"><?= htmlspecialchars($c->user_name ?: '익명') ?></strong>
-                                <span class="comment-date">
-                                    <?php if ($c->stamp > 0): ?>
-                                        <wa-relative-time date="<?= date('c', $c->stamp) ?>" lang="ko"></wa-relative-time>
-                                    <?php endif; ?>
-                                </span>
-                                <?php if ($hasChildren): ?>
-                                    <span class="thread-collapsed-info">[+<?= $totalDescendants ?>개 답글]</span>
-                                <?php else: ?>
-                                    <span class="thread-collapsed-info">[접힌 댓글]</span>
-                                <?php endif; ?>
-                            </div>
-                            <div class="post-comment-body">
-                                <!-- 본문 내용 (차단/블라인드 처리 포함) -->
-                            </div>
-                            <div class="comment-files"><!-- 첨부 이미지 --></div>
-                            <div class="post-comment-actions" data-idx="<?= $c->idx ?>"
-                                 data-idx-root="<?= $c->idx_root ?>" data-depth="<?= $c->depth ?>"></div>
-                        </div>
+                <!-- 코멘트 본문 -->
+                <div class="comment-body-col">
+                    <div class="post-comment-header">
+                        <strong class="comment-author"><?= htmlspecialchars($c->user_name ?: '익명') ?></strong>
+                        <span class="comment-date">
+                            <?php if ($c->stamp > 0): ?>
+                                <wa-relative-time date="<?= date('c', $c->stamp) ?>" lang="ko"></wa-relative-time>
+                            <?php endif; ?>
+                        </span>
+                        <?php if ($hasChildren): ?>
+                            <span class="thread-collapsed-info" role="button">[+<?= $totalDescendants ?>개 답글]</span>
+                        <?php else: ?>
+                            <span class="thread-collapsed-info" role="button">[접힌 댓글]</span>
+                        <?php endif; ?>
                     </div>
+                    <div class="post-comment-body">
+                        <!-- 본문 내용 (차단/블라인드 처리 포함) -->
+                    </div>
+                    <div class="comment-files"><!-- 첨부 이미지 --></div>
+                    <div class="post-comment-actions" data-idx="<?= $c->idx ?>"
+                         data-idx-root="<?= $c->idx_root ?>" data-depth="<?= $c->depth ?>"></div>
                 </div>
             </div>
 
-            <!-- 자식 코멘트: thread-line이 세로선, ::before가 L자형 수평 연결선 담당, 들여쓰기만 처리 -->
+            <!-- 자식 코멘트: 들여쓰기만 처리 (L자형 수평 연결선 없음) -->
             <?php if ($hasChildren): ?>
                 <div class="thread-children">
-                    <!-- 각 자식 .comment-node에 ::before 의사 요소로 L자형 수평 연결선 자동 렌더링 -->
                     <?php foreach ($children as $child):
                         renderCommentThread($child, $childrenMap, $depth + 1);
                     endforeach; ?>
@@ -774,7 +758,6 @@ countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
 
     <div class="post-comment-list reddit-threads" id="comment-list">
         <?php
-        // 최상위 코멘트 렌더링 (idx_parent == idx_root)
         $topLevelComments = $childrenMap[$idx] ?? [];
         foreach ($topLevelComments as $topComment):
             renderCommentThread($topComment, $childrenMap, 0);
@@ -784,26 +767,27 @@ countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
 <?php endif; ?>
 ```
 
-**border-left 방식과의 HTML 구조 차이:**
+**HTML 구조 핵심 차이 (이전 vs 현재):**
 
-| 요소 | border-left 방식 (이전) | thread-line 절대 위치 방식 (현재) |
-|------|------------------------|-------------------------------|
-| 세로선 렌더링 | `.comment-node.has-children`의 `border-left: 3px solid` (CSS만으로 자동) | `<div class="thread-line">` 요소, `position: absolute` (클릭 가능한 독립 요소) |
-| 세로선 인터랙션 | 클릭 불가 (CSS border) | **클릭 가능** (`cursor: pointer`, hover 시 파란색 `#3b82f6`) |
-| 토글 버튼 위치 | `.collapse-toggle > .collapse-btn` | `.collapse-toggle > .collapse-btn` (동일) |
-| 자식 코멘트 위치 | `.comment-node > .thread-children` (comment-row 외부) | `.comment-node > .thread-children` (동일, margin-left: 11px; padding-left: 21px) + L자형 수평 연결선(`.comment-node::before`) |
-| 접힌 상태 세로선 | border-left가 여전히 보임 | `.collapsed > .thread-line { display: none }` 으로 완전 숨김 |
+| 요소 | 이전 (collapse-toggle 방식) | 현재 (avatar-col 방식) |
+|------|---------------------------|----------------------|
+| 코멘트 행 내부 | `.comment-row > (.collapse-toggle + .comment-content > .comment-main-row > (.comment-avatar + .comment-body-wrap))` | **`.comment-row > (.comment-avatar-col + .comment-body-col)`** |
+| 아바타 | `.comment-content` 내부에 중첩 | **`.comment-avatar-col`로 `.comment-row` 직속 자식으로 독립** |
+| 본문 래퍼 | `.comment-body-wrap` | **`.comment-body-col`** |
+| 접기 버튼 | `.collapse-toggle > .collapse-btn` (⊖/⊕) | **없음** (제거됨) |
+| 접기 아이콘 | `.collapse-icon-expanded` / `.collapse-icon-collapsed` | **없음** (제거됨) |
+| 수평 연결선 | `.thread-children > .comment-node::before` (CSS) | **없음** (제거됨) |
 
-#### 코멘트 CSS 핵심 스타일 (thread-line 절대 위치 방식)
+#### 코멘트 CSS 핵심 스타일 (thread-line 절대 위치 + 동적 높이)
 
 ```css
 /* === 코멘트 노드: thread-line의 절대 위치 기준 === */
 .comment-node { position: relative; }
 
-/* 코멘트 행: toggle + content */
+/* 코멘트 행: avatar-col + body-col */
 .comment-row {
     display: flex;
-    align-items: stretch;
+    align-items: flex-start;
     position: relative;
 }
 
@@ -814,23 +798,45 @@ countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
     padding-top: 0.25rem;
 }
 
-/* === 절대 위치 세로선 (Reddit 동일) === */
-/* collapse 버튼 중앙 아래에서 노드 하단까지 관통 */
+/* === 아바타 컬럼: 독립 분리, 세로선 시작점 역할 === */
+.comment-avatar-col {
+    width: 36px;
+    flex: 0 0 36px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 6px;
+}
+
+/* 아바타 크기 */
+.comment-avatar-col wa-avatar {
+    --size: 1.75rem;
+    font-size: 0.7rem;
+}
+
+/* 최상위 코멘트 아바타 (약간 더 크게) */
+.reddit-threads > .comment-node > .comment-row > .comment-avatar-col wa-avatar {
+    --size: 2rem;
+    font-size: 0.75rem;
+}
+
+/* === 절대 위치 세로선: 아바타 바로 아래에서 시작 === */
+/* height는 JS adjustThreadLines()로 동적 계산 */
 .thread-line {
     position: absolute;
-    left: 10px;
-    top: 30px;
-    bottom: 0;
-    width: 3px;
-    background-color: #64748b;
-    border-radius: 2px;
+    left: 17px;       /* 아바타 컬럼 중앙 (36px/2 - 1px) */
+    top: 40px;        /* 초기값, JS adjustThreadLines()에서 재계산 */
+    width: 1px;
+    background-color: #94a3b8;
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.15s;
+    transition: background-color 0.15s, width 0.15s;
 }
 
 .thread-line:hover {
     background-color: #3b82f6;
+    width: 3px;
+    left: 16px;       /* hover 시 중앙 정렬 보정 */
 }
 
 /* 접힌 상태에서 세로선 숨김 */
@@ -838,67 +844,11 @@ countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
     display: none;
 }
 
-/* === 접기/펼치기 토글 영역 === */
-.collapse-toggle {
-    width: 24px;
-    flex: 0 0 24px;
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    z-index: 2;
-}
-
-/* === 접기/펼치기 버튼 (자식 있는 코멘트만) === */
-.collapse-btn {
-    position: relative;
-    margin-top: 8px;
-    width: 20px; height: 20px;
-    border: none; border-radius: 50%;
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem; z-index: 2;
-    cursor: pointer;
-    color: var(--wa-color-neutral-400, #94a3b8);
-    transition: color 0.15s, background-color 0.15s;
-    padding: 0;
-}
-.collapse-btn:hover {
-    color: var(--wa-color-brand-600, #2563eb);
-    background-color: var(--wa-color-brand-50, #eff6ff);
-}
-
-/* 기본(펼침) 상태: ⊖ 표시, ⊕ 숨김 */
-.collapse-icon-expanded { display: inline; }
-.collapse-icon-collapsed { display: none; }
-
-/* 접힌 상태 아이콘 전환 */
-.comment-node.collapsed .collapse-icon-expanded { display: none; }
-.comment-node.collapsed .collapse-icon-collapsed { display: inline; }
-
-/* === 코멘트 내용 영역 === */
-.comment-content {
-    flex: 1; min-width: 0;
+/* === 코멘트 본문 컬럼 === */
+.comment-body-col {
+    flex: 1;
+    min-width: 0;
     padding: 4px 0 6px 4px;
-}
-.comment-main-row { display: flex; gap: 0.5rem; padding: 0.2rem 0; }
-
-/* === 자식 코멘트 영역: 들여쓰기 (세로선은 thread-line이 담당) === */
-.thread-children {
-    margin-left: 11px;
-    padding-left: 21px;
-}
-
-/* === L자형 수평 연결선: 부모 세로선에서 자식 코멘트로 연결 === */
-.thread-children > .comment-node::before {
-    content: '';
-    position: absolute;
-    left: -21px;
-    top: 18px;
-    width: 18px;
-    height: 2px;
-    background-color: #64748b;
-    z-index: 5;
 }
 
 /* === 접힌 상태 처리 === */
@@ -910,27 +860,108 @@ countDescendants($c->idx, $childrenMap) — 전체 하위 수 계산
 /* 접힌 상태 알림 텍스트 (기본 숨김) */
 .thread-collapsed-info {
     display: none;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--wa-color-brand-600, #2563eb);
-    cursor: pointer; font-weight: 500;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 0.25rem;
 }
 .comment-node.collapsed .thread-collapsed-info { display: inline; }
 
-/* === 아바타 크기 === */
-.comment-node .comment-avatar wa-avatar { --size: 1.75rem; font-size: 0.7rem; }
-.reddit-threads > .comment-node > .comment-row > .comment-content > .comment-main-row .comment-avatar wa-avatar {
-    --size: 2rem; font-size: 0.75rem;
+/* === 자식 코멘트 영역: 아바타 중앙 기준 들여쓰기 === */
+.thread-children {
+    margin-left: 18px;
+    padding-left: 18px;
 }
 ```
 
-#### 접기/펼치기 JavaScript (thread-line + collapse-btn 방식)
+**제거된 CSS 요소 (이전에 존재했으나 현재 삭제됨):**
 
-`v7/js/comment.js` 라인 16~47에 이벤트 위임 코드로 구현되어 있다.
-3가지 클릭 대상을 지원한다: (1) `.thread-line` 세로선 클릭, (2) `.collapse-btn` 버튼 직접 클릭, (3) `.collapse-toggle` 영역 클릭.
-`.thread-line` 클릭이 최우선으로 처리되고, 이후 collapse-btn/collapse-toggle 클릭이 보조 처리된다.
+| 제거된 요소 | 설명 |
+|------------|------|
+| `.collapse-toggle` | 접기/펼치기 토글 영역 (24px 너비 컬럼) |
+| `.collapse-btn` | ⊖/⊕ 아이콘 버튼 |
+| `.collapse-icon-expanded` / `.collapse-icon-collapsed` | 접힘/펼침 상태 아이콘 전환 |
+| `.comment-content` | 코멘트 내용 래퍼 (`.comment-body-col`로 대체) |
+| `.comment-main-row` | 아바타 + 본문 수평 배치 행 (아바타가 avatar-col로 분리되어 불필요) |
+| `.comment-body-wrap` | 본문 래퍼 (`.comment-body-col`로 대체) |
+| `.thread-children > .comment-node::before` | L자형 수평 연결선 의사 요소 |
+
+#### adjustThreadLines() -- 세로선 높이 동적 계산 JavaScript
+
+`v7/js/comment.js` 라인 17~48에 정의되어 있다. 세로선의 시작점(`top`)과 높이(`height`)를 동적으로 계산하여 마지막 직접 자식의 아바타 중앙까지만 세로선을 표시한다.
 
 ```javascript
-// Reddit 스타일 스레드 접기/펼치기 (thread-line + collapse-btn 이벤트 위임)
+// === 세로선 높이 동적 계산: 마지막 직접 자식의 아바타 중앙까지만 ===
+function adjustThreadLines() {
+    document.querySelectorAll('.comment-node.has-children').forEach(function(node) {
+        var threadLine = node.querySelector(':scope > .thread-line');
+        if (!threadLine) return;
+
+        // 접힌 상태면 스킵
+        if (node.classList.contains('collapsed')) return;
+
+        var threadChildren = node.querySelector(':scope > .thread-children');
+        if (!threadChildren) return;
+
+        var lastChild = threadChildren.querySelector(':scope > .comment-node:last-child');
+        if (!lastChild) return;
+
+        var nodeRect = node.getBoundingClientRect();
+
+        // 세로선 시작: 부모 아바타 하단 (고정값 기반)
+        var depth = parseInt(node.getAttribute('data-depth')) || 0;
+        var avatarSize = depth === 0 ? 32 : 28; // 2rem vs 1.75rem
+        var lineTop = 6 + avatarSize + 2; // padding-top(6) + avatar + gap(2)
+
+        // 세로선 끝: 마지막 직접 자식의 아바타 중앙
+        var lastChildRect = lastChild.getBoundingClientRect();
+        var lastChildDepth = parseInt(lastChild.getAttribute('data-depth')) || 0;
+        var lastChildAvatarSize = lastChildDepth === 0 ? 32 : 28;
+        var lastChildAvatarCenterY = lastChildRect.top + 6 + lastChildAvatarSize / 2 - nodeRect.top;
+
+        // 세로선 위치/높이 설정
+        threadLine.style.top = lineTop + 'px';
+        threadLine.style.height = Math.max(0, lastChildAvatarCenterY - lineTop) + 'px';
+    });
+}
+
+// 글로벌 노출: Vue 앱에서 코멘트 추가/삭제 시 재계산 가능
+window.adjustThreadLines = adjustThreadLines;
+
+// Web Component(wa-avatar) 렌더링 후 세로선 계산
+adjustThreadLines();
+setTimeout(adjustThreadLines, 200);
+window.addEventListener('load', adjustThreadLines);
+window.addEventListener('resize', adjustThreadLines);
+```
+
+**adjustThreadLines() 계산 로직 상세:**
+
+| 단계 | 설명 | 계산식 |
+|------|------|--------|
+| 1. 대상 선택 | `.comment-node.has-children` 모든 노드 | `querySelectorAll()` |
+| 2. 접힌 상태 스킵 | `.collapsed` 클래스가 있으면 건너뜀 | `classList.contains('collapsed')` |
+| 3. 마지막 자식 탐색 | `.thread-children > .comment-node:last-child` | `:scope >` 직접 자식만 |
+| 4. lineTop 계산 | 부모 아바타 하단 = `padding-top + avatarSize + gap` | `6 + (depth===0 ? 32 : 28) + 2` |
+| 5. lineEnd 계산 | 마지막 자식 아바타 중앙의 부모 기준 Y좌표 | `lastChildRect.top + 6 + lastChildAvatarSize/2 - nodeRect.top` |
+| 6. height 설정 | `lineEnd - lineTop` (최소 0) | `Math.max(0, lastChildAvatarCenterY - lineTop)` |
+
+**호출 시점:**
+- `DOMContentLoaded`: 초기 렌더링 직후
+- `setTimeout(200)`: Web Component(`wa-avatar`) 렌더링 지연 대응
+- `window.load`: 모든 리소스 로드 완료 후
+- `window.resize`: 창 크기 변경 시
+- `requestAnimationFrame(adjustThreadLines)`: 접기/펼치기 후 재계산
+- Vue 앱에서 코멘트 추가/삭제 시 `window.adjustThreadLines()` 수동 호출 가능
+
+#### 접기/펼치기 JavaScript (세로선 클릭 + 답글 텍스트 클릭)
+
+`v7/js/comment.js` 라인 60~83에 이벤트 위임 코드로 구현되어 있다.
+**2가지 클릭 대상**을 지원한다: (1) `.thread-line` 세로선 클릭 (토글), (2) `.thread-collapsed-info` `[+N개 답글]` 텍스트 클릭 (펼치기만).
+
+```javascript
+// === Reddit 스타일 스레드 접기/펼치기 (이벤트 위임) ===
 document.addEventListener('click', function (e) {
     // 세로선 클릭: 해당 스레드 접기/펼치기
     var line = e.target.closest('.thread-line');
@@ -938,71 +969,57 @@ document.addEventListener('click', function (e) {
         var node = line.closest('.comment-node');
         if (node) {
             node.classList.toggle('collapsed');
-            var btn = node.querySelector('.collapse-btn');
-            if (btn) {
-                btn.setAttribute('aria-expanded', node.classList.contains('collapsed') ? 'false' : 'true');
-            }
+            // 접기/펼치기 후 세로선 높이 재계산
+            requestAnimationFrame(adjustThreadLines);
         }
         return;
     }
 
-    // collapse 버튼 또는 토글 영역 클릭
-    var btn = e.target.closest('.collapse-btn');
-    if (!btn) {
-        var toggle = e.target.closest('.collapse-toggle');
-        if (toggle) {
-            btn = toggle.querySelector('.collapse-btn');
+    // "[+N개 답글]" 클릭: 펼치기
+    var collapsedInfo = e.target.closest('.thread-collapsed-info');
+    if (collapsedInfo) {
+        var node = collapsedInfo.closest('.comment-node');
+        if (node && node.classList.contains('collapsed')) {
+            node.classList.remove('collapsed');
+            requestAnimationFrame(adjustThreadLines);
         }
+        return;
     }
-    if (!btn) return;
-
-    var node = btn.closest('.comment-node');
-    if (!node) return;
-
-    node.classList.toggle('collapsed');
-    btn.setAttribute('aria-expanded', node.classList.contains('collapsed') ? 'false' : 'true');
 });
 ```
 
 **동작 방식:**
 
-| 상태 | 아이콘 | thread-line 세로선 | 본문/파일/액션 | 자식 코멘트 | 알림 텍스트 |
-|------|--------|-------------------|-------------|-----------|-----------|
-| **펼침 (기본)** | `fa-circle-minus` (⊖) | 표시 (`#64748b`, hover 시 `#3b82f6`) | 표시 | 표시 | 숨김 |
-| **접힘 (자식 있음)** | `fa-circle-plus` (⊕) | **숨김** (`display: none`) | 숨김 | 숨김 | `[+N개 답글]` 표시 (전체 하위 수) |
-| **접힘 (리프)** | — (버튼 없음) | — | 숨김 | — | `[접힌 댓글]` 표시 |
+| 상태 | thread-line 세로선 | 본문/파일/액션 | 자식 코멘트 | 알림 텍스트 |
+|------|-------------------|-------------|-----------|-----------|
+| **펼침 (기본)** | 표시 (`#94a3b8`, hover 시 `#3b82f6`, hover 시 width 3px) | 표시 | 표시 | 숨김 |
+| **접힘 (자식 있음)** | **숨김** (`display: none`) | 숨김 | 숨김 | `[+N개 답글]` 표시 (클릭 시 펼치기) |
+| **접힘 (리프)** | -- | 숨김 | -- | `[접힌 댓글]` 표시 |
 
 **접힌 상태에서 숨겨지는 요소:**
-- `.thread-line` — 세로선 자체 (`display: none`)
-- `.post-comment-body` — 코멘트 본문 텍스트
-- `.comment-files` — 첨부 파일/이미지
-- `.post-comment-actions` — 답글/수정/삭제 등 액션 버튼
-- `.thread-children` — 하위 코멘트 전체
+- `.thread-line` -- 세로선 자체 (`display: none`)
+- `.post-comment-body` -- 코멘트 본문 텍스트
+- `.comment-files` -- 첨부 파일/이미지
+- `.post-comment-actions` -- 답글/수정/삭제 등 액션 버튼
+- `.thread-children` -- 하위 코멘트 전체
 
-**트리거 방법 (3가지):**
-- `.thread-line` 클릭 (세로선 자체) — **자식이 있는 코멘트에만 존재**, hover 시 파란색으로 변경되어 클릭 가능함을 시각적으로 표시
-- `.collapse-btn` 클릭 (⊖/⊕ 아이콘 버튼) — **자식이 있는 코멘트에만 존재**
-- `.collapse-toggle` 클릭 (토글 영역 전체)
+**트리거 방법 (2가지):**
+- `.thread-line` 클릭 (세로선 자체) -- **토글** (접기/펼치기 모두), hover 시 파란색(`#3b82f6`) + 두께 증가(`3px`)로 클릭 가능함을 시각적으로 표시
+- `.thread-collapsed-info` 클릭 (`[+N개 답글]` 텍스트) -- **펼치기만** (접힌 상태에서만 작동)
 
 #### 코멘트 모바일 반응형 (`@media max-width: 640px`)
 
 | 요소 | 데스크톱 | 모바일 (640px 이하) |
 |------|---------|------------------|
-| collapse-toggle 너비 | `24px` | `20px` |
+| avatar-col 너비 | `36px` | `30px` |
 | 코멘트 아바타 | `--size: 1.75rem` | `--size: 1.5rem` |
 | 최상위 아바타 | `--size: 2rem` | `--size: 1.75rem` |
-| collapse-btn 크기 | `20px x 20px` | `16px x 16px` |
-| collapse-btn margin-top | `8px` | `6px` |
-| **thread-line left** | `10px` | `9px` |
-| **thread-line top** | `30px` | `24px` |
-| **thread-line bottom** | `0` | `6px` |
-| comment-content padding-left | `4px` | `2px` |
-| 본문 행 간격 | `gap: 0.5rem` | `gap: 0.35rem` |
-| thread-children margin-left | `11px` | `9px` |
-| thread-children padding-left | `21px` | `15px` |
-| **수평 연결선 left** | `-21px` | `-15px` |
-| **수평 연결선 top** | `18px` | `14px` |
-| **수평 연결선 width** | `18px` | `12px` |
+| avatar-col padding-top | `6px` | `4px` |
+| **thread-line left** | `17px` | `14px` |
+| **thread-line hover left** | `16px` | `13px` |
+| comment-body-col padding-left | `4px` | `2px` |
+| thread-children margin-left | `18px` | `15px` |
+| thread-children padding-left | `18px` | `15px` |
 | 작성 폼 레이아웃 | 가로 (flex-row) | 세로 (flex-column) |
 | 입력 액션 위치 | textarea 옆 | textarea 아래 (우측 정렬) |
 
@@ -1033,20 +1050,23 @@ document.addEventListener('click', function (e) {
 
 | 규칙 | 설명 |
 |------|------|
-| **thread-line 절대 위치 구조 유지** | 코멘트 목록은 반드시 `renderCommentThread()` 재귀 함수로 thread-line 방식 트리 구조를 렌더링해야 한다. border-left 방식이나 gutter-slot 방식으로 되돌리지 않는다 |
-| **`.has-children` = thread-line 렌더링** | 자식이 있는 `.comment-node`에 `.has-children` 클래스를 추가하고, PHP에서 `<div class="thread-line">` 요소를 렌더링한다. 세로선은 CSS `position: absolute`로 구현한다 |
+| **avatar-col + body-col 구조 유지** | 코멘트 행은 반드시 `.comment-row > (.comment-avatar-col + .comment-body-col)` 구조를 유지해야 한다. 아바타를 body-col 내부로 이동하거나, collapse-toggle 컬럼을 추가하지 않는다 |
+| **collapse-toggle/collapse-btn 사용 금지** | 접기/펼치기는 오직 세로선 클릭과 `[+N개 답글]` 텍스트 클릭으로만 제어한다. ⊖/⊕ 아이콘 버튼을 추가하지 않는다 |
+| **`.has-children` = thread-line 렌더링** | 자식이 있는 `.comment-node`에 `.has-children` 클래스를 추가하고, PHP에서 `<div class="thread-line">` 요소를 렌더링한다 |
 | **`.thread-line`은 `.comment-row` 형제** | `.thread-line`은 `.comment-node`의 직속 자식으로, `.comment-row`와 형제 관계이다. `.comment-row` 내부에 넣지 않는다 |
-| **`.thread-children`에 border-left 금지** | `.thread-children`에는 `border-left`를 적용하지 않는다. 세로선은 오직 `.thread-line` 요소만 담당한다. `margin-left: 11px; padding-left: 21px`로 들여쓰기만 처리한다 |
-| **L자형 수평 연결선 유지** | `.thread-children > .comment-node::before` 의사 요소로 부모 세로선에서 자식 코멘트까지 수평 연결선을 렌더링한다. `left: -21px; top: 18px; width: 18px; height: 2px; background-color: #64748b`. 이 연결선은 CSS만으로 자동 렌더링되므로 PHP에서 별도 HTML을 추가할 필요 없다 |
-| **collapse-btn + thread-line은 자식 있는 코멘트만** | `.collapse-btn` 버튼과 `.thread-line` 요소는 `$hasChildren`이 true인 코멘트에만 렌더링한다. 리프 코멘트에는 없다 |
-| **`ancestorLastFlags`/`isLast` 사용 금지** | thread-line 방식에서는 이 파라미터들이 불필요하다. `renderCommentThread()` 호출 시 `$depth`만 전달한다 |
+| **`.thread-children`에 border-left 금지** | `.thread-children`에는 `border-left`를 적용하지 않는다. 세로선은 오직 `.thread-line` 요소만 담당한다. `margin-left: 18px; padding-left: 18px`로 들여쓰기만 처리한다 |
+| **L자형 수평 연결선(::before) 사용 금지** | `.thread-children > .comment-node::before` 수평 연결선은 제거되었다. 다시 추가하지 않는다 |
+| **adjustThreadLines() 필수** | 세로선 높이는 반드시 `adjustThreadLines()` JavaScript 함수로 동적 계산해야 한다. CSS `bottom: 0` 고정 방식을 사용하지 않는다 |
+| **세로선 top/height는 CSS 고정 금지** | 세로선의 `top`과 `height`는 `adjustThreadLines()`에서 JavaScript로 설정한다. CSS에서 `top: 30px; bottom: 0` 같은 고정값을 사용하면 세로선이 마지막 자식을 초과하여 표시된다 |
+| **`ancestorLastFlags`/`isLast` 사용 금지** | `renderCommentThread()` 호출 시 `$depth`만 전달한다 |
 | **`countDescendants()` 사용** | 접힌 상태 텍스트에는 직접 자식 수가 아닌 `countDescendants()`로 계산한 **전체 하위 코멘트 수**를 표시한다 |
-| **블루 테마 유지** | 코멘트 영역의 모든 interactive 요소(버튼, 포커스, hover)는 `--wa-color-brand-*` 블루 변수를 사용해야 한다. 빨간색(`#7f1d1d`, `#dc2626`)은 삭제 액션에만 허용 |
-| **3가지 접기 트리거** | `.thread-line` 클릭, `.collapse-btn` 클릭, `.collapse-toggle` 클릭이 접기/펼치기를 트리거한다. 이벤트 위임(`v7/js/comment.js` 라인 16~47)으로 구현되어 있다 |
-| **`collapsed` 클래스** | `.comment-node.collapsed` 클래스가 토글되면 thread-line 숨김, 본문/파일/액션/자식 숨김, 아이콘 전환, `[+N개 답글]` 또는 `[접힌 댓글]` 표시가 모두 CSS로 처리된다. JavaScript에서 `classList.toggle('collapsed')`만 호출하면 된다 |
-| **접힌 상태 세로선 숨김** | `.comment-node.collapsed > .thread-line { display: none }` — 접힌 상태에서 세로선이 **완전히 숨겨진다** (border-left 방식과 다름) |
-| **접힌 상태 표시 분기** | 자식이 있는 코멘트: `[+N개 답글]` (N = 전체 하위 수). 리프 코멘트: `[접힌 댓글]` |
+| **블루 테마 유지** | 코멘트 영역의 모든 interactive 요소는 `--wa-color-brand-*` 블루 변수를 사용. 빨간색은 삭제 액션에만 허용 |
+| **`collapsed` 클래스** | `.comment-node.collapsed` 클래스가 토글되면 thread-line 숨김, 본문/파일/액션/자식 숨김, `[+N개 답글]` 텍스트 표시가 모두 CSS로 처리된다. JavaScript에서 `classList.toggle('collapsed')`만 호출하면 된다 |
+| **접힌 상태 세로선 숨김** | `.comment-node.collapsed > .thread-line { display: none }` -- 접힌 상태에서 세로선이 완전히 숨겨진다 |
+| **접힌 상태 표시 분기** | 자식이 있는 코멘트: `[+N개 답글]` (N = 전체 하위 수, 클릭 시 펼치기). 리프 코멘트: `[접힌 댓글]` |
 | **wa-avatar initials 필수** | 코멘트 작성자 아바타는 `wa-avatar`의 `initials` 속성으로 구현. 이미지 URL 없이 이니셜로 표시 |
 | **wa-relative-time 필수** | 코멘트 시간은 `wa-relative-time`으로 표시. `date` 속성에 ISO 8601(`date('c', $stamp)`) 전달, `lang="ko"` 필수 |
 | **$childrenMap 구조** | `$childrenMap[$parentIdx][]`로 부모별 자식 맵을 구축한다. 최상위 코멘트는 `$childrenMap[$idx]`(글의 idx)에서 가져온다 |
-| **thread-line 세로선 색상** | 기본 `#64748b` (neutral-500 계열), hover 시 `#3b82f6` (blue — 클릭 가능함을 시각적으로 표시) |
+| **thread-line 세로선 색상** | 기본 `#94a3b8` (neutral-400 계열), hover 시 `#3b82f6` (blue) + width `3px`로 두께 증가 |
+| **thread-line left 위치** | 데스크톱 `left: 17px` (avatar-col 36px/2 - 1px), 모바일 `left: 14px` (30px/2 - 1px) |
+| **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |

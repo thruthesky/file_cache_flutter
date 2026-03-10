@@ -614,7 +614,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |
 | Company Visit Review | [api/v7-company-visit-review.md](references/api/v7-company-visit-review.md) | ✅ 완료 |
-| Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (thread-line 절대 위치 세로선 + L자형 수평 연결선 + 접기/펼치기) | ✅ 완료 |
+| Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (avatar-col 독립 분리 + thread-line 절대 위치 세로선 + adjustThreadLines() 동적 높이 계산 + 세로선 클릭/답글 텍스트 클릭 접기/펼치기) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
