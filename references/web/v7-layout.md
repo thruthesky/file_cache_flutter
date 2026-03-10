@@ -40,7 +40,7 @@
 
 ```css
 :root {
-    color-scheme: light dark;
+    color-scheme: light;            /* v7은 라이트 모드 전용 (다크 모드 미적용) */
     --v7-sidebar-width: 240px;      /* 좌/우 사이드바 너비 */
     --v7-wing-width: 120px;         /* 좌/우 날개 배너 너비 */
     --v7-gap: 16px;                 /* 모든 컬럼/섹션 간격 */
@@ -48,6 +48,8 @@
     --v7-topbar-height: 2.25rem;    /* 탑바 높이 (~36px) */
 }
 ```
+
+> **⛔ 절대 규칙**: v7 홈페이지는 **다크 모드를 적용하지 않는다.** `color-scheme`은 `light`만 지정하며, `@media (prefers-color-scheme: dark)` 미디어 쿼리를 작성하지 않는다. Web Awesome의 다크 테마 클래스(`wa-theme-dark`)도 적용하지 않는다.
 
 ### Web Awesome 변수 (폴백 값 포함)
 

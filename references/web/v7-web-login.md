@@ -7,15 +7,16 @@
 3. [SSR 인증 — 서버 사이드 렌더링에서의 로그인 확인](#3-ssr-인증--서버-사이드-렌더링에서의-로그인-확인)
 4. [CSR 인증 — 클라이언트 사이드 JavaScript API 호출](#4-csr-인증--클라이언트-사이드-javascript-api-호출)
 5. [API 인증 — api.php 엔드포인트 호출](#5-api-인증--apiphp-엔드포인트-호출)
-6. [소셜 로그인 전체 흐름](#6-소셜-로그인-전체-흐름)
-7. [세션 ID 생성 및 쿠키 관리](#7-세션-id-생성-및-쿠키-관리)
-8. [관리자 권한 확인](#8-관리자-권한-확인)
-9. [Firebase ID Token 검증](#9-firebase-id-token-검증)
-10. [SSR 페이지에서의 실제 사용 사례](#10-ssr-페이지에서의-실제-사용-사례)
-11. [개발 환경 테스트 로그인](#11-개발-환경-테스트-로그인)
-12. [캐싱 메커니즘](#12-캐싱-메커니즘)
-13. [보안 특징](#13-보안-특징)
-14. [소스코드 파일 경로 목록](#14-소스코드-파일-경로-목록)
+6. [소셜 로그인 전체 흐름 (Google)](#6-소셜-로그인-전체-흐름)
+7. [카카오톡 소셜 로그인](#7-카카오톡-소셜-로그인)
+8. [세션 ID 생성 및 쿠키 관리](#8-세션-id-생성-및-쿠키-관리)
+9. [관리자 권한 확인](#9-관리자-권한-확인)
+10. [Firebase ID Token 검증](#10-firebase-id-token-검증)
+11. [SSR 페이지에서의 실제 사용 사례](#11-ssr-페이지에서의-실제-사용-사례)
+12. [개발 환경 테스트 로그인](#12-개발-환경-테스트-로그인)
+13. [캐싱 메커니즘](#13-캐싱-메커니즘)
+14. [보안 특징](#14-보안-특징)
+15. [소스코드 파일 경로 목록](#15-소스코드-파일-경로-목록)
 
 ---
 
@@ -452,7 +453,55 @@ public static function socialLogin(array $input): UserEntity
 
 ---
 
-## 7. 세션 ID 생성 및 쿠키 관리
+## 7. 카카오톡 소셜 로그인
+
+카카오는 Firebase에서 직접 지원하지 않으므로 Firebase Custom Token 방식을 사용한다.
+서버 측에서 카카오 OAuth Authorization Code 흐름을 처리하고, Firebase Custom Token을 발급하여
+기존 `socialLogin` 흐름에 합류시킨다.
+
+> **상세 구현 문서**: [v7-web-kakoatalk-social-login.md](v7-web-kakoatalk-social-login.md)
+
+### 전체 흐름 (5단계)
+
+```
+[1] /user/login 카카오 버튼 클릭 → window.location.href = '/auth/kakao/start'
+[2] v7/auth/kakao/start.php → state 생성 → 302 → kauth.kakao.com/oauth/authorize
+[3] 카카오 로그인 (사용자 인증) → 302 → /auth/kakao/callback?code=XXX&state=YYY
+[4] v7/auth/kakao/callback.php → state 검증 → code→token→ID→Custom Token → 302 → /auth/kakao/complete
+[5] v7/auth/kakao/complete.php → signInWithCustomToken → v7api('user.socialLogin') → 홈 리다이렉트
+```
+
+### Google 로그인과의 차이
+
+| 구분 | Google 로그인 | 카카오톡 로그인 |
+|------|-------------|--------------|
+| Firebase 지원 | 직접 지원 (`signInWithPopup`) | Custom Token 필요 |
+| 인증 흐름 | 팝업 1단계 (클라이언트 완결) | 리다이렉트 5단계 (서버 경유) |
+| 서버 역할 | 없음 | 필수 (code→token→userId→customToken) |
+| `login_provider` | `'google'` | `'kakaotalk'` |
+| Firebase UID | Google 자동 생성 | `kakao:{카카오ID}` (커스텀) |
+
+### 관련 파일
+
+| 파일 | 용도 |
+|------|------|
+| `lib/user/KakaoLoginService.php` | 카카오 OAuth + Firebase Custom Token 서비스 (namespace: `Philgo\User`) |
+| `v7/auth/kakao/start.php` | OAuth 인가 시작 (세션에 state 저장 → 카카오 리다이렉트) |
+| `v7/auth/kakao/callback.php` | 콜백: code→access_token→kakaoUserId→Firebase Custom Token |
+| `v7/auth/kakao/complete.php` | Firebase signInWithCustomToken → v7api('user.socialLogin') → 홈 |
+| `v7/user/login.php` | 카카오 버튼 + loginWithKakao() Vue 메서드 |
+| `v7/user/login.css` | 카카오 브랜드 색상 (#FEE500) |
+| `v7/utils/Config.php` | `kakaoRestApiKey()`, `kakaoJavascriptKey()`, `kakaoNativeKey()`, `kakaoRedirectUri()` |
+
+### 핵심 설계 결정
+
+- **UserService::socialLogin() 수정 불필요**: Custom Token으로 Firebase에 로그인하면 Firebase ID Token이 생성되고, 기존 socialLogin 흐름을 그대로 탄다
+- **KakaoLoginService를 lib/user/에 배치**: 기존 `Philgo\User\` PSR-4 매핑 활용
+- **카카오 키를 Config 클래스에 통합**: 별도 config 파일 불필요
+
+---
+
+## 8. 세션 ID 생성 및 쿠키 관리
 
 ### 세션 ID 생성 알고리즘
 
@@ -553,7 +602,7 @@ function v7DevLogout() {
 
 ---
 
-## 8. 관리자 권한 확인
+## 9. 관리자 권한 확인
 
 ### AuthService::isAdmin() 메서드
 
@@ -614,7 +663,7 @@ public static function admins(): array
 
 ---
 
-## 9. Firebase ID Token 검증
+## 10. Firebase ID Token 검증
 
 ### FirebaseService::verifyIdToken()
 
@@ -684,7 +733,7 @@ private const TEST_TOKENS = [
 
 ---
 
-## 10. SSR 페이지에서의 실제 사용 사례
+## 11. SSR 페이지에서의 실제 사용 사례
 
 ### 패턴 1: 탑바 로그인/프로필 분기
 
@@ -769,7 +818,7 @@ $loginUser = AuthService::getLoginUser();
 
 ---
 
-## 11. 개발 환경 테스트 로그인
+## 12. 개발 환경 테스트 로그인
 
 ### 테스트 사용자 목록
 
@@ -809,7 +858,7 @@ function v7DevLogout() {
 
 ---
 
-## 12. 캐싱 메커니즘
+## 13. 캐싱 메커니즘
 
 ### 정적 캐시 변수
 
@@ -843,7 +892,7 @@ AuthService::setTestUser(['idx' => 123, 'firebase_uid' => 'test_uid']);
 
 ---
 
-## 13. 보안 특징
+## 14. 보안 특징
 
 ### 세션 위변조 방지
 
@@ -869,7 +918,7 @@ AuthService::setTestUser(['idx' => 123, 'firebase_uid' => 'test_uid']);
 
 ---
 
-## 14. 소스코드 파일 경로 목록
+## 15. 소스코드 파일 경로 목록
 
 | 파일 | 용도 | 주요 함수/메서드 |
 |------|------|-----------------|
@@ -880,11 +929,16 @@ AuthService::setTestUser(['idx' => 123, 'firebase_uid' => 'test_uid']);
 | `lib/utils/RequestUtils.php` | HTTP 입력 파라미터 처리 | `all()`, `get()`, `parseMethod()` |
 | `lib/utils/Db.php` | DB 연결 (PDO) | `fetch()`, `insert()`, `execute()` |
 | `v7/js/v7api.js` | v7 API 호출 래퍼 (JavaScript) | `v7api()` |
-| `v7/user/login.php` | 로그인 UI (Vue.js + Firebase) | `loginWithGoogle()` |
+| `v7/user/login.php` | 로그인 UI (Vue.js + Firebase) | `loginWithGoogle()`, `loginWithKakao()` |
+| `v7/user/login.css` | 로그인 페이지 CSS | `.social-btn-kakao` (카카오 브랜드 색상) |
+| `lib/user/KakaoLoginService.php` | 카카오 OAuth + Firebase Custom Token | `getAuthorizeUrl()`, `exchangeCodeForToken()`, `getKakaoUserId()`, `createFirebaseCustomToken()` |
+| `v7/auth/kakao/start.php` | 카카오 OAuth 인가 시작 | state 생성, 카카오 리다이렉트 |
+| `v7/auth/kakao/callback.php` | 카카오 OAuth 콜백 | state 검증, 토큰 교환, Custom Token 발급 |
+| `v7/auth/kakao/complete.php` | 카카오 Firebase 로그인 완료 | `signInWithCustomToken()`, `v7api('user.socialLogin')` |
 | `v7/boot.php` | v7 부팅 (PSR-4 + 설정) | — |
 | `v7/layout.php` | v7 전체 레이아웃 | — |
 | `api.php` | API 엔트리포인트 | — |
-| `v7/utils/Config.php` | v7 설정 래퍼 | `admins()`, `devUsers()`, `devPassword()` |
+| `v7/utils/Config.php` | v7 설정 래퍼 | `admins()`, `devUsers()`, `devPassword()`, `kakaoRestApiKey()`, `kakaoRedirectUri()` |
 | `v7/widgets/layout/layout.topbar.php` | 탑바 (로그인 상태 표시 + 테스트 로그인) | — |
 | `v7/widgets/layout/layout.sidebar-left.login.php` | 사이드바 로그인 위젯 | — |
 | `v7/widgets/layout/layout.header-mobile.php` | 모바일 헤더 | — |

@@ -458,6 +458,7 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | **관리자 대시보드** | [web/v7-admin.md](references/web/v7-admin.md) | ✅ 완료 |
 | **웹 로그인 인증** | [web/v7-web-login.md](references/web/v7-web-login.md) | ✅ 완료 |
 | **검색 (Google CSE)** | [web/v7-search.md](references/web/v7-search.md) | ✅ 완료 |
+| **카카오톡 소셜 로그인** | [web/v7-web-kakoatalk-social-login.md](references/web/v7-web-kakoatalk-social-login.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 
 ### 관리자 대시보드 → [web/v7-admin.md](references/web/v7-admin.md)
@@ -535,6 +536,17 @@ debounce 자동 제출), 모바일 헤더 검색 링크, `Route::postSearch()` U
 검색 CSS(`v7/post/search.css`), 검색 JS(`v7/js/search.js`),
 향후 활용 가능한 FULLTEXT 검색 서비스(`SearchService`), PEST 브라우저 테스트(7개)를 포함합니다.
 **검색 관련 작업 시 반드시 이 문서를 참조한다.**
+
+### 카카오톡 소셜 로그인 (웹) → [web/v7-web-kakoatalk-social-login.md](references/web/v7-web-kakoatalk-social-login.md)
+
+v7 웹 홈페이지에서 카카오톡 소셜 로그인을 구현한 전체 가이드를 다룹니다.
+카카오는 Firebase에서 직접 지원하지 않으므로 Firebase Custom Token 방식을 사용하며,
+서버 측에서 카카오 OAuth Authorization Code 흐름(start → callback → complete 3파일)을
+처리합니다. `KakaoLoginService`(lib/user/)가 카카오 API 호출과 Firebase Custom Token 발급을
+담당하고, complete.php에서 `signInWithCustomToken()` → `v7api('user.socialLogin')` 호출로
+기존 소셜 로그인 흐름에 합류합니다. 카카오 키는 `V7\Utils\Config` 클래스에 통합되어 있으며,
+Redirect URI는 `Config::kakaoRedirectUri()`로 동적 생성합니다.
+**카카오 로그인 관련 작업 시 반드시 이 문서를 참조한다.**
 
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
@@ -819,6 +831,29 @@ wa-select와 wa-option으로 카테고리 선택 드롭다운 만들어줘 (weba
 | **장점** | 간결, 빠른 개요 파악 | 상세한 코드 예제와 옵션 제공 |
 
 > 상세 내용은 → [web/v7-overview.md](references/web/v7-overview.md) 8장 「AI(Claude, LLM)를 활용한 Web Awesome 개발 방법」 참조.
+
+---
+
+## 🔴🔴🔴 v7 홈페이지는 다크 모드를 적용하지 않는다 — 절대 규칙 🔴🔴🔴
+
+> **⛔⛔⛔ v7 웹 홈페이지(`v7/` 폴더)에서는 다크 모드(Dark Mode)를 적용하지 않는다. ⛔⛔⛔**
+> **v7 홈페이지는 라이트 모드(Light Mode) 전용으로 운영된다.**
+> **다크 모드 관련 CSS, JavaScript, 미디어 쿼리를 작성하거나 테스트할 필요가 없다.**
+
+| 항목 | 규칙 |
+|------|------|
+| **다크 모드 CSS** | `@media (prefers-color-scheme: dark)` 미디어 쿼리 작성 금지 |
+| **color-scheme** | CSS `color-scheme` 속성은 `light`만 지정 (`light dark` 금지) |
+| **다크 모드 테스트** | 다크 모드에서의 디자인 확인/테스트 불필요 |
+| **다크 모드 변수** | 다크 모드 전용 CSS 변수(`--dark-*` 등) 작성 금지 |
+| **Web Awesome 다크 테마** | Web Awesome의 다크 테마 클래스(`wa-theme-dark` 등) 적용 금지 |
+
+**이유:**
+- v7 홈페이지는 라이트 모드 전용으로 설계되었다
+- 다크 모드를 지원하지 않음으로써 디자인 일관성과 유지보수 효율성을 높인다
+- Web Awesome Pro의 기본 라이트 테마(Blue)를 그대로 활용한다
+
+> **참고**: v6(레거시) 홈페이지는 Bootstrap 기반으로 다크 모드를 지원하지만, v7은 이와 무관하게 라이트 모드 전용이다.
 
 ---
 
