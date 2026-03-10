@@ -1,10 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+import 'package:philgo/api/api.service.dart';
 
 import 'post.model.dart';
 
@@ -20,12 +14,6 @@ import 'post.model.dart';
 /// ```
 class PostService {
   PostService._();
-
-  /// v7 API 엔드포인트 (--dart-define=V7_API_ENDPOINT 으로 설정 가능)
-  static const String _endpoint = String.fromEnvironment(
-    'V7_API_ENDPOINT',
-    defaultValue: 'https://philgo.com/api.php',
-  );
 
   /// 게시글 목록 조회
   ///
@@ -45,7 +33,7 @@ class PostService {
     int? limit,
     int? offset,
   }) async {
-    final result = await _v7api('post.list', data: {
+    final result = await ApiService.v7api('post.list', data: {
       'post_id': postId,
       if (category != null) 'category': category,
       if (orderby != null) 'orderby': orderby,
@@ -58,7 +46,7 @@ class PostService {
         .whereType<Map<String, dynamic>>()
         .map(Post.fromJson)
         .toList();
-    final total = _toInt(result['total']);
+    final total = ApiService.toInt(result['total']);
 
     return (posts: posts, total: total);
   }
@@ -70,7 +58,7 @@ class PostService {
   /// [idx] 게시글 고유번호
   /// 반환: Post 객체
   static Future<Post> get(int idx) async {
-    final result = await _v7api('post.get', data: {'idx': idx});
+    final result = await ApiService.v7api('post.get', data: {'idx': idx});
     return Post.fromJson(result);
   }
 
@@ -89,7 +77,7 @@ class PostService {
     required String content,
     String? category,
   }) async {
-    final result = await _v7api('post.create', data: {
+    final result = await ApiService.v7api('post.create', data: {
       'post_id': postId,
       'subject': subject,
       'content': content,
@@ -111,7 +99,7 @@ class PostService {
     String? subject,
     String? content,
   }) async {
-    final result = await _v7api('post.update', data: {
+    final result = await ApiService.v7api('post.update', data: {
       'idx': idx,
       if (subject != null) 'subject': subject,
       if (content != null) 'content': content,
@@ -126,64 +114,7 @@ class PostService {
   ///
   /// [idx] 게시글 고유번호
   static Future<void> delete(int idx) async {
-    await _v7api('post.delete', data: {'idx': idx});
+    await ApiService.v7api('post.delete', data: {'idx': idx});
   }
 
-  /// v7 API 내부 호출 헬퍼
-  ///
-  /// Firebase ID Token을 자동으로 추가하고, v7 서버에 HTTP POST 요청을 보낸다.
-  /// 에러 발생 시 Exception을 throw한다.
-  static Future<Map<String, dynamic>> _v7api(
-    String method, {
-    Map<String, dynamic>? data,
-  }) async {
-    data = data ?? {};
-    data['method'] = method;
-
-    // Firebase ID Token 자동 추가
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      try {
-        data['id_token'] = await user.getIdToken() ?? '';
-      } catch (_) {
-        data['id_token'] = '';
-      }
-    }
-
-    final dio = Dio();
-    // 디버그 모드에서 자체 서명 SSL 인증서 허용
-    if (kDebugMode) {
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-        final httpClient = HttpClient();
-        httpClient.badCertificateCallback = (_, _, _) => true;
-        return httpClient;
-      };
-    }
-
-    final response = await dio.post(_endpoint, data: data);
-
-    Map<String, dynamic> json;
-    if (response.data is Map<String, dynamic>) {
-      json = response.data;
-    } else if (response.data is String) {
-      json = jsonDecode(response.data) as Map<String, dynamic>;
-    } else {
-      throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
-    }
-
-    // v7 에러 판별: success == false일 때만 에러
-    if (json['success'] == false) {
-      throw Exception(json['message'] ?? '알 수 없는 오류');
-    }
-
-    return json;
-  }
-
-  /// 안전한 int 변환
-  static int _toInt(dynamic value) {
-    if (value == null) return 0;
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse(value.toString()) ?? 0;
-  }
 }
