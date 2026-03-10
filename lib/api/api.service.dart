@@ -57,23 +57,30 @@ class ApiService {
       };
     }
 
-    final response = await dio.post(_endpoint, data: data);
+    try {
+      final response = await dio.post(_endpoint, data: data);
 
-    Map<String, dynamic> json;
-    if (response.data is Map<String, dynamic>) {
-      json = response.data;
-    } else if (response.data is String) {
-      json = jsonDecode(response.data) as Map<String, dynamic>;
-    } else {
-      throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
+      Map<String, dynamic> json;
+      if (response.data is Map<String, dynamic>) {
+        json = response.data;
+      } else if (response.data is String) {
+        json = jsonDecode(response.data) as Map<String, dynamic>;
+      } else {
+        throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
+      }
+
+      // v7 에러 판별: success == false일 때만 에러
+      if (json['success'] == false) {
+        throw Exception(json['message'] ?? '알 수 없는 오류');
+      }
+
+      return json;
+    } catch (e, stackTrace) {
+      debugPrint('[ApiService] v7api error — method: $method');
+      debugPrint('[ApiService] error: $e');
+      debugPrint('[ApiService] stackTrace: $stackTrace');
+      rethrow;
     }
-
-    // v7 에러 판별: success == false일 때만 에러
-    if (json['success'] == false) {
-      throw Exception(json['message'] ?? '알 수 없는 오류');
-    }
-
-    return json;
   }
 
   /// 안전한 int 변환
