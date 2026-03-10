@@ -15,6 +15,7 @@
 6. [에러 처리](#에러-처리)
 7. [테스트](#테스트)
 8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
+9. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
 
 ---
 
@@ -460,3 +461,125 @@ if ($_v7LoginUser) {
 
 관리자 일괄 작업 UI, 글 이동 페이지, Vue.js 동적 카테고리 선택, 차단 사유 옵션 등
 상세 내용은 → [v7-admin.md 18장](../web/v7-admin.md#18-게시글-목록-관리자-기능-체크박스--일괄-작업--글-이동) 참조.
+
+---
+
+## 코멘트(댓글) 시스템
+
+### 개요
+
+v7 코멘트 시스템은 `sf_post_data` 테이블을 게시글과 공유하며, `depth > 0`인 레코드가 코멘트이다.
+대댓글(스레딩)은 v6의 `find_last_child_comment()` + `update_comment_thread()` 로직을 완벽 이식하여 트리 구조를 지원한다.
+
+### 핵심 필드 (코멘트 관련)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `idx_root` | int | 원글(게시글) idx — 모든 코멘트가 공유하는 루트 |
+| `idx_parent` | int | 부모 코멘트 idx (최상위 코멘트는 idx_root와 동일) |
+| `depth` | int | 깊이 (0=글, 1=1차 코멘트, 2=대댓글, 3=대대댓글...) |
+| `list_order` | int | 트리 내 정렬 순서 (DESC 정렬, 큰 값=위쪽/오래된 것) |
+
+### 트리 구조 알고리즘 (v6 완벽 이식)
+
+코멘트 생성 시 `PostRepository::updateCommentThread()`가 호출되어 `list_order`와 `depth`를 계산한다.
+
+#### 1. 최상위 코멘트 (idx_parent == idx_root)
+
+```
+list_order = 0, depth = 1
+기존 모든 코멘트의 list_order를 +1 시프트
+→ DESC 정렬에서 맨 아래(최신)에 표시
+```
+
+#### 2. 대댓글 (idx_parent != idx_root)
+
+```
+depth = 부모.depth + 1
+부모의 마지막 자손(findLastChildComment) 위치의 list_order를 구함
+그 위치 이상인 코멘트들의 list_order를 +1 시프트
+→ DESC 정렬에서 부모 트리 바로 아래에 표시
+```
+
+#### 정렬 순서
+
+```sql
+ORDER BY list_order DESC
+```
+
+`list_order`가 큰(오래된) 코멘트가 먼저 표시되고, 작은(최신) 코멘트가 나중에 표시된다.
+대댓글은 부모 코멘트 바로 아래에 들여쓰기와 함께 표시된다.
+
+### 트리 표시 예시
+
+```
+Comment-A (first)        depth=1, list_order=5
+  Reply-A-1              depth=2, list_order=4
+    Reply-A-1-1          depth=3, list_order=3
+  Reply-A-2              depth=2, list_order=2
+Comment-B (second)       depth=1, list_order=1
+Comment-C (third)        depth=1, list_order=0
+```
+
+### 핵심 메서드
+
+| 클래스 | 메서드 | 설명 |
+|--------|--------|------|
+| `PostRepository` | `findComments($idxRoot)` | 코멘트 목록 조회 (list_order DESC) |
+| `PostRepository` | `findLastChildComment($idx)` | 재귀적으로 마지막 자손 코멘트 탐색 |
+| `PostRepository` | `updateCommentThread($idxRoot, $idxParent)` | 새 코멘트 삽입 위치 계산 + list_order 시프트 |
+| `PostService` | `commentCreate($input)` | 코멘트 생성 (updateCommentThread 호출) |
+| `PostService` | `commentList($input)` | 코멘트 목록 반환 |
+
+### API 엔드포인트 (코멘트)
+
+#### post.commentCreate — 코멘트 생성
+
+인증 필요.
+
+```
+POST /api.php
+method=post.commentCreate&idx_root=12345&content=댓글내용
+method=post.commentCreate&idx_root=12345&idx_parent=67890&content=대댓글내용
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| idx_root | int | O | 원글 idx |
+| idx_parent | int | X | 부모 코멘트 idx (생략 시 idx_root 사용 → 최상위 코멘트) |
+| content | string | O | 코멘트 내용 |
+
+**응답**: 생성된 코멘트의 PostEntity 배열
+
+#### post.commentList — 코멘트 목록
+
+인증 불필요.
+
+```
+GET /api.php?method=post.commentList&idx_root=12345
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| idx_root | int | O | 원글 idx |
+
+**응답**: PostEntity 배열 (list_order DESC 정렬)
+
+### v6 함수와의 대응 관계
+
+| v6 (레거시) | v7 (신규) |
+|------------|-----------|
+| `find_last_child_comment($idx)` | `PostRepository::findLastChildComment($idx)` |
+| `update_comment_thread($idx_post, $idx_parent, $idx_comment)` | `PostRepository::updateCommentThread($idxRoot, $idxParent)` |
+| `get_comment($idx)` | `PostRepository::findByIdx($idx)` |
+| `comment_create($input)` | `PostService::commentCreate($input)` |
+| `ORDER BY list_order DESC` | `PostRepository::findComments()` 기본 정렬 |
+
+### 웹 페이지 (코멘트 렌더링)
+
+| 파일 | 설명 |
+|------|------|
+| `v7/post/view.php` | SSR 코멘트 렌더링 (PostService::commentList → depth 기반 들여쓰기) |
+| `v7/js/comment.js` | Vue.js 코멘트 CRUD (v7api 호출, 답글 UI) |
+
+코멘트는 `depth` 값에 따라 CSS 클래스 `depth-1`, `depth-2`, `depth-3` 등이 적용되어 들여쓰기로 표시된다.
