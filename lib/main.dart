@@ -50,9 +50,9 @@ class _MyAppState extends State<PhilGoV7App> {
   @override
   void initState() {
     super.initState();
-    // Firebase 초기화 완료 후 로그인 상태 확인 및 v7 사용자 데이터 로드
+    // FirebaseAuth 상태 변화 구독 시작 (로그인/로그아웃 자동 감지)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UserState>().loadCurrentUser();
+      context.read<UserState>().listenAuthState();
     });
   }
 
