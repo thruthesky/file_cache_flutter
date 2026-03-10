@@ -1371,3 +1371,60 @@ fetchPage(N) → 빈 리스트 반환 → 더 이상 로드하지 않음
 [v7API:ERROR] 에러 메시지: The connection errored: Connection timed out
 [v7API:ERROR] ==========================================
 ```
+
+---
+
+## 14. PostService — 게시글 API 서비스
+
+### 14.1 위치
+
+`lib/post/post.service.dart`
+
+### 14.2 모델
+
+`lib/post/post.model.dart` — Post 데이터 모델 (v7 PostEntity 기반, fromJson 팩토리)
+
+### 14.3 메서드
+
+| 메서드 | API | 인증 | 설명 |
+|--------|-----|------|------|
+| `PostService.list()` | `post.list` | 불필요 | 게시글 목록 (postId, category, orderby, limit, offset) |
+| `PostService.get()` | `post.get` | 불필요 | 단건 조회 |
+| `PostService.create()` | `post.create` | 필수 | 게시글 생성 |
+| `PostService.update()` | `post.update` | 필수 | 게시글 수정 |
+| `PostService.delete()` | `post.delete` | 필수 | 게시글 삭제 |
+
+### 14.4 사용 예시
+
+```dart
+// 게시글 목록 조회
+final result = await PostService.list(postId: 'freetalk', limit: 20, offset: 0);
+print('${result.posts.length}개 / 전체 ${result.total}개');
+
+// 단건 조회
+final post = await PostService.get(12345);
+print(post.subject);
+```
+
+### 14.5 PostListScreen 무한 스크롤 패턴
+
+`lib/post/list/post.list.screen.dart`에서 `infinite_scroll_pagination` 패키지의
+`PagingController<int, Post>`를 사용하여 카테고리별 게시글 무한 스크롤을 구현한다.
+카테고리 변경 시 `_pagingController.refresh()`로 목록을 리프레시한다.
+
+---
+
+## 15. UserService — 사용자 인증 서비스
+
+### 15.1 위치
+
+`lib/user/user.service.dart`
+
+### 15.2 메서드
+
+| 메서드 | 설명 |
+|--------|------|
+| `UserService.signInWithEmailAndPassword()` | Firebase 이메일/비밀번호 로그인 (계정 없으면 자동 생성) |
+| `UserService.signOut()` | 로그아웃 |
+| `UserService.currentUser` | 현재 로그인된 Firebase User |
+| `UserService.isLoggedIn` | 로그인 여부 |

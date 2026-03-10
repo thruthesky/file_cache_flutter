@@ -5,6 +5,31 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
 
 # 필고 v7 시스템 개발 가이드
 
+## 🔴🔴🔴 Mandatory Workflow — Follow for ALL Tasks 🔴🔴🔴
+
+> **Every v7 task MUST follow this workflow. No exceptions.**
+
+### Before Starting Work
+
+1. **Read at least 2 reference documents** from the v7-skill references before beginning any task. Choose documents relevant to the task at hand (e.g., architecture + module-specific API doc).
+2. **For Flutter app tasks**, always read and refer to (Create/Update/Read/Delete) the docs under `references/app/` folder:
+   - [app/v7-flutter-api.md](references/app/v7-flutter-api.md) — Flutter API integration
+   - [app/v7-app.md](references/app/v7-app.md) — Company/business listing
+   - [app/v7-app-travel.md](references/app/v7-app-travel.md) — Travel spots
+   - [app/v7-app-phone-login.md](references/app/v7-app-phone-login.md) — Phone login
+   - [app/v7-app-settings.md](references/app/v7-app-settings.md) — App settings
+   - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event/spinning wheel
+
+### After Completing Each Task
+
+3. **Git commit** the changes (do NOT push). Create a descriptive commit message summarizing what was done.
+
+### After Finishing All Work
+
+4. **Update the v7-skill reference documents** to reflect any new patterns, APIs, widgets, or architectural decisions introduced during the work. Keep the documentation in sync with the codebase.
+
+---
+
 ## 🔴🔴🔴 v7-skill 적용 범위: 백엔드 + 웹 홈페이지 + Flutter 앱 🔴🔴🔴
 
 > **⚠️ v7-skill은 PHP 백엔드 개발만을 위한 스킬이 아닙니다.**
@@ -75,38 +100,53 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 ---
 
-## 🔴🔴🔴 백엔드 소스코드 경로 — v7 API 파일만 수정 가능 🔴🔴🔴
+## 🔴🔴🔴 백엔드 소스코드 경로 — Entity/Service/Repository/Controller만 수정 가능 🔴🔴🔴
 
 > **필고 프로젝트의 PHP API 백엔드 소스코드 경로:**
 > `/Users/thruthesky/apps/withcenter/philgo/www`
+>
+> **API 엔트리포인트:** `/Users/thruthesky/apps/withcenter/philgo/www/api.php`
+> **API 접근 URL:** `https://v7-local.philgo.com/api.php?method=<module>.<action>`
+> **예시:** `https://v7-local.philgo.com/api.php?method=user.count`
 
-### ⚠️⚠️⚠️ 최우선 원칙: v7 API 관련 파일만 수정 가능 ⚠️⚠️⚠️
+### 🔴🔴🔴 필수 선행 조건: 백엔드 SKILL.md 읽기 🔴🔴🔴
 
-> **이 경로의 소스코드를 수정할 때는 반드시 v7 API 관련 파일만 수정해야 합니다.**
-> **기존 레거시 파일은 어떤 이유로든 절대 수정할 수 없습니다.**
-> **수정 전 반드시 이 v7-skill 문서를 확인하고, 해당 파일이 v7 시스템에 속하는지 검증한 후 작업하세요.**
+> **PhilGo v7 API 백엔드 코드를 수정하기 전에 반드시 아래 파일을 먼저 읽어야 한다:**
+> `/Users/thruthesky/apps/withcenter/philgo/www/.claude/skills/v7-skill/SKILL.md`
+>
+> 이 파일을 읽지 않고 백엔드 코드를 수정하는 것은 **절대 금지**한다.
+
+### ⚠️⚠️⚠️ 최우선 원칙: Entity/Service/Repository/Controller 파일만 수정 가능 ⚠️⚠️⚠️
+
+> **v7 API 백엔드에서 수정할 수 있는 파일은 Entity, Service, Repository, Controller 4가지 종류뿐이다.**
+> **그 외 모든 파일(api.php, utils, 레거시 파일 등)은 수정할 수 없다.**
+> **수정 전 반드시 백엔드 SKILL.md를 확인하고, 해당 파일이 허용된 종류인지 검증한 후 작업하세요.**
 
 | 규칙 | 설명 |
 |------|------|
 | **📖 참고용으로 적극 활용** | v7 시스템 개발 시 기존 백엔드 코드의 로직, DB 쿼리, 비즈니스 규칙, 테이블 구조 등을 **반드시 참고**하여 일관성을 유지한다 |
-| **✅ v7 API 파일만 수정** | `Philgo\*` 네임스페이스의 Controller, Service, Entity 등 **v7 시스템 파일만** 수정할 수 있다 |
+| **✅ Entity/Service/Repository/Controller만 수정** | `Philgo\*` 네임스페이스의 **Entity, Service, Repository, Controller** 4가지 종류의 파일만 수정할 수 있다 |
+| **🚫 그 외 v7 파일 수정 금지** | `api.php`, `lib/utils/` 등 Entity/Service/Repository/Controller가 아닌 v7 파일도 수정하지 않는다 |
 | **🚫 레거시 파일 수정 절대 금지** | `boot.php`, `*.functions.php`, `widget/`, `page.*.php` 등 **기존 레거시 파일은 절대로 수정, 삭제, 이동하지 않는다** |
 | **🚫 레거시 파일 쓰기 작업 금지** | `Edit`, `Write`, `Bash`(echo, sed, awk 등) 도구로 레거시 파일에 **어떠한 쓰기 작업도 수행하지 않는다** |
 
-### 수정 가능한 v7 파일 (화이트리스트)
+### 수정 가능한 v7 파일 (화이트리스트) — Entity/Service/Repository/Controller만
 
 | 수정 가능 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
-| ✅ 수정 가능 | `lib/*/` 내 v7 Controller/Service 클래스 | `lib/user/UserController.php`, `lib/user/UserService.php` |
-| ✅ 수정 가능 | `lib/utils/` 내 v7 유틸리티 클래스 | `lib/utils/Db.php`, `lib/utils/RequestUtils.php` |
-| ✅ 수정 가능 | `api.php` (v7 엔트리포인트) | `api.php` |
-| ✅ 수정 가능 | `tests/Unit/` 내 PEST 테스트 | `tests/Unit/UserControllerTest.php` |
-| ✅ 수정 가능 | `composer.json` (PSR-4 매핑 추가) | `composer.json` |
+| ✅ 수정 가능 | `lib/*/` 내 Entity 클래스 | `lib/user/UserEntity.php`, `lib/company/CompanyEntity.php` |
+| ✅ 수정 가능 | `lib/*/` 내 Service 클래스 | `lib/user/UserService.php`, `lib/company/CompanyService.php` |
+| ✅ 수정 가능 | `lib/*/` 내 Repository 클래스 | `lib/user/UserRepository.php`, `lib/company/CompanyRepository.php` |
+| ✅ 수정 가능 | `lib/*/` 내 Controller 클래스 | `lib/user/UserController.php`, `lib/company/CompanyController.php` |
 
-### 수정 불가능한 레거시 파일 (블랙리스트) — 절대 금지
+### 수정 불가능한 파일 (블랙리스트) — 절대 금지
 
 | 수정 불가 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
+| ❌ **절대 금지** | `api.php` (엔트리포인트) | `api.php` |
+| ❌ **절대 금지** | `lib/utils/` v7 유틸리티 클래스 | `lib/utils/Db.php`, `lib/utils/RequestUtils.php` |
+| ❌ **절대 금지** | `composer.json` | `composer.json` |
+| ❌ **절대 금지** | `tests/` 테스트 파일 | `tests/Unit/UserControllerTest.php` |
 | ❌ **절대 금지** | `boot.php` 및 설정 파일 | `boot.php`, `config.php` |
 | ❌ **절대 금지** | `*.functions.php` 레거시 함수 파일 | `user.functions.php`, `post.functions.php` |
 | ❌ **절대 금지** | `widget/` 레거시 위젯 | `widget/*.php` |
@@ -117,15 +157,16 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 > **🔴 PHP 백엔드 파일을 수정하기 전에 반드시 아래 절차를 따를 것 🔴**
 
-1. **v7-skill 문서 확인** — 이 문서의 화이트리스트에 해당하는 파일인지 확인
-2. **네임스페이스 확인** — 파일이 `namespace Philgo\*`를 사용하는 v7 클래스인지 확인
-3. **레거시 여부 판별** — `boot.php` include, 전역 함수(`pdo()`, `in()`, `login()`) 사용 여부로 레거시 파일 식별
-4. **v7 파일이 확실한 경우에만 수정** — 조금이라도 의심되면 수정하지 않고 사용자에게 확인
+1. **백엔드 SKILL.md 읽기** — `/Users/thruthesky/apps/withcenter/philgo/www/.claude/skills/v7-skill/SKILL.md`를 반드시 먼저 읽는다
+2. **파일 종류 확인** — 수정하려는 파일이 Entity, Service, Repository, Controller 중 하나인지 확인
+3. **네임스페이스 확인** — 파일이 `namespace Philgo\*`를 사용하는 v7 클래스인지 확인
+4. **Entity/Service/Repository/Controller가 확실한 경우에만 수정** — 조금이라도 의심되면 수정하지 않고 사용자에게 확인
 
 - ✅ `Read`, `Grep`, `Glob` 도구로 **모든 코드**를 읽고 참고하는 것은 적극 권장
 - ✅ 기존 API 로직, SQL 쿼리, 함수 동작 방식을 파악하여 v7 코드에 반영
 - ✅ DB 테이블 구조, 컬럼명, 데이터 타입 등을 확인하여 v7 Entity/Service에 활용
-- ✅ **v7 시스템 파일**(Controller, Service, Entity, api.php, 테스트)은 자유롭게 수정
+- ✅ **Entity, Service, Repository, Controller** 파일만 수정
+- ❌ **절대로** api.php, utils, composer.json, 테스트 파일 등을 수정하지 않는다
 - ❌ **절대로** 레거시 파일(`*.functions.php`, `widget/`, `boot.php`, `page.*.php` 등)을 수정하지 않는다
 - ❌ **절대로** 레거시 파일에 새 코드를 추가하지 않는다
 - ❌ **절대로** 레거시 파일을 삭제하거나 이동하지 않는다
