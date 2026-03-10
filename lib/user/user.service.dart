@@ -1,8 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'dart:io';
 
-/// 사용자 인증 서비스
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+
+/// 사용자 인증 및 v7 API 서비스
 class UserService {
   UserService._();
+
+  /// v7 API 엔드포인트
+  static const String _endpoint = String.fromEnvironment(
+    'V7_API_ENDPOINT',
+    defaultValue: 'https://philgo.com/api.php',
+  );
 
   /// 이메일/비밀번호로 로그인
   ///
@@ -46,4 +58,48 @@ class UserService {
 
   /// 로그인 여부
   static bool get isLoggedIn => currentUser != null;
+
+  /// 현재 Firebase 로그인 사용자의 v7 데이터를 로드한다.
+  ///
+  /// Firebase Auth에 로그인된 상태이면 v7 API(user.me)를 호출하여
+  /// 사용자 정보를 반환한다. 미로그인이면 null을 반환한다.
+  static Future<Map<String, dynamic>?> loadCurrentUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return null;
+
+    final data = <String, dynamic>{'method': 'user.me'};
+
+    // Firebase ID Token 추가
+    try {
+      data['id_token'] = await firebaseUser.getIdToken() ?? '';
+    } catch (_) {
+      data['id_token'] = '';
+    }
+
+    final dio = Dio();
+    if (kDebugMode) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        final httpClient = HttpClient();
+        httpClient.badCertificateCallback = (_, _, _) => true;
+        return httpClient;
+      };
+    }
+
+    final response = await dio.post(_endpoint, data: data);
+
+    Map<String, dynamic> json;
+    if (response.data is Map<String, dynamic>) {
+      json = response.data;
+    } else if (response.data is String) {
+      json = jsonDecode(response.data) as Map<String, dynamic>;
+    } else {
+      throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
+    }
+
+    if (json['success'] == false) {
+      throw Exception(json['message'] ?? '알 수 없는 오류');
+    }
+
+    return json;
+  }
 }

@@ -1,15 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+
+import 'user.service.dart';
 
 /// v7 사용자 상태 관리
 ///
-/// Firebase Auth 로그인 상태를 확인하고,
-/// 로그인된 경우 v7 API(user.me)로 사용자 데이터를 로드하여 보관한다.
+/// 상태만 관리하며, API 호출 로직은 UserService에 위임한다.
 class UserState extends ChangeNotifier {
   /// v7 API에서 가져온 사용자 데이터 전체
   Map<String, dynamic>? _user;
@@ -40,61 +35,15 @@ class UserState extends ChangeNotifier {
   /// 사용자 레벨
   int get level => (_user?['level'] as num?)?.toInt() ?? 0;
 
-  /// v7 API 엔드포인트
-  static const String _endpoint = String.fromEnvironment(
-    'V7_API_ENDPOINT',
-    defaultValue: 'https://philgo.com/api.php',
-  );
-
   /// Firebase Auth 로그인 상태를 확인하고, 로그인된 경우 v7 API로 사용자 데이터를 로드한다.
   ///
   /// 앱 시작 시 호출하여 이미 로그인된 사용자의 데이터를 복원한다.
   Future<void> loadCurrentUser() async {
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    if (firebaseUser == null) {
-      _user = null;
-      notifyListeners();
-      return;
-    }
-
     _isLoading = true;
     notifyListeners();
 
     try {
-      final data = <String, dynamic>{'method': 'user.me'};
-
-      // Firebase ID Token 추가
-      try {
-        data['id_token'] = await firebaseUser.getIdToken() ?? '';
-      } catch (_) {
-        data['id_token'] = '';
-      }
-
-      final dio = Dio();
-      if (kDebugMode) {
-        (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-          final httpClient = HttpClient();
-          httpClient.badCertificateCallback = (_, _, _) => true;
-          return httpClient;
-        };
-      }
-
-      final response = await dio.post(_endpoint, data: data);
-
-      Map<String, dynamic> json;
-      if (response.data is Map<String, dynamic>) {
-        json = response.data;
-      } else if (response.data is String) {
-        json = jsonDecode(response.data) as Map<String, dynamic>;
-      } else {
-        throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
-      }
-
-      if (json['success'] == false) {
-        throw Exception(json['message'] ?? '알 수 없는 오류');
-      }
-
-      _user = json;
+      _user = await UserService.loadCurrentUser();
     } catch (e) {
       debugPrint('UserState.loadCurrentUser 에러: $e');
       _user = null;

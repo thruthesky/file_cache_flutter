@@ -1,5 +1,15 @@
 This project is a Flutter app for building PhilGo v7 application.
 
+# 🔴🔴🔴 Mandatory Workflow — MUST Follow for EVERY Task 🔴🔴🔴
+
+> **THIS WORKFLOW IS NON-NEGOTIABLE. Every single task — no matter how small — MUST follow these steps. Skipping any step is strictly prohibited.**
+
+1. **Before starting work**: Read at least 2 relevant v7-skill reference documents from `.claude/skills/v7-skill/references/`.
+2. **For Flutter app tasks**: Refer to docs under `.claude/skills/v7-skill/references/app/` folder for CRUD operations and patterns.
+3. **After completing each task**: Git commit the changes (do NOT push).
+4. **After finishing all work**: Update the v7-skill markdown files to reflect any new patterns, APIs, or architectural decisions.
+
+
 # App Configuration
 
 - All app configuration is defined in `lib/app.config.dart` (forum categories, etc.).
@@ -9,9 +19,19 @@ This project is a Flutter app for building PhilGo v7 application.
 
 ## Never use packages/philgo_api/
 
-- **NEVER** use, import, or reference any code from the `packages/philgo_api/` folder.
-- This package is deprecated/legacy and must not be used in any new or existing code.
+- **NEVER** import or directly use any code from the `packages/philgo_api/` folder in the project.
+- This package is deprecated/legacy and must not be imported or referenced in any new or existing code.
+- **Reading is allowed**: You may read code in `packages/philgo_api/` to understand patterns, logic, or data structures, then regenerate equivalent code using the v7 API approach for this project.
 - If you encounter imports from `packages/philgo_api/`, do not follow that pattern. Use the v7 API approach instead.
+
+
+# Architecture Rules
+
+## State vs Service 분리 원칙
+
+- **State 클래스** (Provider의 ChangeNotifier): 상태 관리만 담당한다. API 호출, 비즈니스 로직, 데이터 변환 등을 직접 포함하지 않는다.
+- **Service 클래스**: API 호출, 비즈니스 로직, 데이터 처리를 담당한다. State 클래스는 Service 클래스의 메서드를 호출하여 데이터를 가져온 후 상태만 업데이트한다.
+- 예시: `UserState`는 `UserService.loadCurrentUser()`를 호출하고 결과를 `_user`에 저장만 한다. API 호출 로직은 `UserService`에 있다.
 
 
 # Design Principles
