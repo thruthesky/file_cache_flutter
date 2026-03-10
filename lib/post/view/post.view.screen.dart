@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
-import 'package:philgo/post/view/widgets/post.action.btn.dart';
+import 'package:philgo/post/view/widgets/post.action.bar.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,10 +26,19 @@ class _PostViewScreenState extends State<PostViewScreen> {
   String? _error;
   bool _postChanged = false;
 
+  // 좋아요 상태
+  bool _liked = false;
+  late int _goodCount;
+
+  // 댓글
+  List<Post> _comments = [];
+  bool _commentsLoading = false;
+
   @override
   void initState() {
     super.initState();
     _post = widget.post;
+    _goodCount = _post.good;
     _loadFullPost();
   }
 
@@ -39,14 +48,47 @@ class _PostViewScreenState extends State<PostViewScreen> {
       if (!mounted) return;
       setState(() {
         _post = fullPost;
+        _goodCount = fullPost.good;
         _isLoading = false;
       });
+      _loadComments();
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _loadComments() async {
+    setState(() => _commentsLoading = true);
+    try {
+      final comments = await PostService.listComments(_post.idx);
+      if (!mounted) return;
+      setState(() {
+        _comments = comments;
+        _commentsLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _commentsLoading = false);
+    }
+  }
+
+  Future<void> _toggleLike() async {
+    try {
+      final result = await PostService.like(_post.idx);
+      if (!mounted) return;
+      setState(() {
+        _liked = result.liked;
+        _goodCount = result.good;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('좋아요 실패: $e')));
     }
   }
 
@@ -89,9 +131,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
       Navigator.of(context).pop('deleted');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('삭제 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
     }
   }
 
@@ -121,92 +163,101 @@ class _PostViewScreenState extends State<PostViewScreen> {
             ),
 
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 제목
-                    Text(
-                      _post.subject,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: scheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // 메타 정보 (날짜, 카테고리)
-                    _buildMeta(theme, scheme),
-                    const SizedBox(height: 16),
-
-                    Divider(color: scheme.outlineVariant),
-                    const SizedBox(height: 16),
-
-                    // 대표 이미지
-                    if (_post.imageUrl != null &&
-                        _post.imageUrl!.isNotEmpty) ...[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(
-                          imageUrl: _post.imageUrl!,
-                          width: double.infinity,
-                          fit: BoxFit.fitWidth,
-                          placeholder: (_, _) => Container(
-                            height: 200,
-                            color: scheme.surfaceContainerHigh,
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── 원글 ──────────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _post.subject,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurface,
                           ),
-                          errorWidget: (_, _, _) => const SizedBox.shrink(),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                        const SizedBox(height: 12),
+                        _buildMeta(_post, theme, scheme),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
 
-                    // 본문
-                    if (_isLoading)
-                      const Center(child: CircularProgressIndicator())
-                    else if (_error != null)
-                      Text('내용을 불러올 수 없습니다',
-                          style: TextStyle(color: scheme.error))
-                    else
-                      SelectableLinkify(
-                        text: _post.content,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: scheme.onSurface,
-                          height: 1.6,
-                        ),
-                        linkStyle: TextStyle(
-                          color: scheme.primary,
-                          decoration: TextDecoration.underline,
-                        ),
-                        onOpen: (link) async {
-                          final uri = Uri.tryParse(link.url);
-                          if (uri != null && await canLaunchUrl(uri)) {
-                            await launchUrl(uri,
-                                mode: LaunchMode.externalApplication);
-                          }
-                        },
-                      ),
+                  // 첨부 파일 (전체 너비)
+                  PostViewFiles(post: _post, scheme: scheme),
 
-                    const SizedBox(height: 16),
+                  // 본문
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _error != null
+                        ? Text(
+                            '내용을 불러올 수 없습니다',
+                            style: TextStyle(color: scheme.error),
+                          )
+                        : SelectableLinkify(
+                            text: _post.content,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: scheme.onSurface,
+                              height: 1.6,
+                            ),
+                            linkStyle: TextStyle(
+                              color: scheme.primary,
+                              decoration: TextDecoration.underline,
+                            ),
+                            onOpen: (link) async {
+                              final uri = Uri.tryParse(link.url);
+                              if (uri != null && await canLaunchUrl(uri)) {
+                                await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              }
+                            },
+                          ),
+                  ),
 
-                    // 첨부 파일
-                    PostViewFiles(post: _post, scheme: scheme),
-
-                    const SizedBox(height: 8),
-
-                    // 액션 버튼
-                    PostActionButtons(
+                  // 원글 액션 바
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: PostActionBar(
                       post: _post,
                       isMine: isMine,
+                      liked: _liked,
+                      goodCount: _goodCount,
+                      onLike: _toggleLike,
                       onEdit: _editPost,
                       onDelete: _deletePost,
                     ),
-                  ],
-                ),
+                  ),
+
+                  Divider(
+                    color: scheme.outlineVariant,
+                    height: 32,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+
+                  // ── 댓글 ──────────────────────────────────────────
+                  if (_commentsLoading)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else
+                    for (final comment in _comments)
+                      _CommentTile(
+                        comment: comment,
+                        scheme: scheme,
+                        theme: theme,
+                      ),
+
+                  const SizedBox(height: 32),
+                ],
               ),
             ),
           ],
@@ -215,26 +266,34 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
-  Widget _buildMeta(ThemeData theme, ColorScheme scheme) {
+  Widget _buildMeta(Post post, ThemeData theme, ColorScheme scheme) {
     return Row(
       children: [
-        FaIcon(FontAwesomeIcons.lightClock,
-            size: 14, color: scheme.onSurfaceVariant),
+        FaIcon(
+          FontAwesomeIcons.lightClock,
+          size: 14,
+          color: scheme.onSurfaceVariant,
+        ),
         const SizedBox(width: 6),
         Text(
-          _formatFullDate(_post.stamp),
-          style: theme.textTheme.bodySmall
-              ?.copyWith(color: scheme.onSurfaceVariant),
+          _formatFullDate(post.stamp),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
         ),
-        if (_post.category.isNotEmpty) ...[
+        if (post.category.isNotEmpty) ...[
           const SizedBox(width: 16),
-          FaIcon(FontAwesomeIcons.lightTag,
-              size: 14, color: scheme.onSurfaceVariant),
+          FaIcon(
+            FontAwesomeIcons.lightTag,
+            size: 14,
+            color: scheme.onSurfaceVariant,
+          ),
           const SizedBox(width: 6),
           Text(
-            _post.category,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: scheme.onSurfaceVariant),
+            post.category,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
           ),
         ],
       ],
@@ -250,10 +309,127 @@ class _PostViewScreenState extends State<PostViewScreen> {
 }
 
 // ---------------------------------------------------------------------------
+// 댓글 타일 — 원글과 동일 포맷: 파일 상단 → 내용 → 액션 바
+// ---------------------------------------------------------------------------
+
+class _CommentTile extends StatefulWidget {
+  final Post comment;
+  final ColorScheme scheme;
+  final ThemeData theme;
+
+  const _CommentTile({
+    required this.comment,
+    required this.scheme,
+    required this.theme,
+  });
+
+  @override
+  State<_CommentTile> createState() => _CommentTileState();
+}
+
+class _CommentTileState extends State<_CommentTile> {
+  bool _liked = false;
+  late int _goodCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _goodCount = widget.comment.good;
+  }
+
+  Future<void> _toggleLike() async {
+    try {
+      final result = await PostService.like(widget.comment.idx);
+      if (!mounted) return;
+      setState(() {
+        _liked = result.liked;
+        _goodCount = result.good;
+      });
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final comment = widget.comment;
+    final scheme = widget.scheme;
+    final theme = widget.theme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 메타 (날짜)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Row(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.lightUser,
+                size: 13,
+                color: scheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                _formatDate(comment.stamp),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // 첨부 파일 (전체 너비)
+        PostViewFiles(post: comment, scheme: scheme),
+
+        // 내용
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Text(
+            comment.content,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurface,
+              height: 1.5,
+            ),
+          ),
+        ),
+
+        // 액션 바 (좋아요만 — isMine은 false로 단순화, 신고/차단 표시)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: PostActionBar(
+            post: comment,
+            isMine: false,
+            liked: _liked,
+            goodCount: _goodCount,
+            onLike: _toggleLike,
+            onEdit: () {},
+            onDelete: () {},
+          ),
+        ),
+
+        Divider(
+          color: scheme.outlineVariant,
+          height: 24,
+          indent: 16,
+          endIndent: 16,
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(int stamp) {
+    if (stamp == 0) return '';
+    final date = DateTime.fromMillisecondsSinceEpoch(stamp * 1000);
+    return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} '
+        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+// ---------------------------------------------------------------------------
 // PostViewFiles
 // ---------------------------------------------------------------------------
 
-/// 게시글 첨부 파일(이미지/비디오/유튜브)을 전체 너비로 세로 나열하는 위젯
+/// 게시글/댓글 첨부 파일(이미지/비디오/유튜브)을 전체 너비로 세로 나열하는 위젯
 class PostViewFiles extends StatelessWidget {
   final Post post;
   final ColorScheme scheme;
@@ -278,9 +454,7 @@ class PostViewFiles extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (final url in urls) _buildMediaItem(toAbsoluteUrl(url)),
-      ],
+      children: [for (final url in urls) _buildMediaItem(toAbsoluteUrl(url))],
     );
   }
 
@@ -301,7 +475,8 @@ class PostViewFiles extends StatelessWidget {
                 height: 200,
                 color: scheme.surfaceContainerHigh,
                 child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2)),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
               ),
               errorWidget: (_, _, _) => const SizedBox.shrink(),
             ),
@@ -335,16 +510,17 @@ class PostViewFiles extends StatelessWidget {
                     ),
                   )
                 else
-                  Container(
-                    height: 200,
-                    color: scheme.surfaceContainerHigh,
-                  ),
+                  Container(height: 200, color: scheme.surfaceContainerHigh),
                 Container(
                   width: double.infinity,
                   height: 200,
                   color: Colors.black38,
                 ),
-                FaIcon(FontAwesomeIcons.youtube, size: 56, color: Colors.red),
+                const FaIcon(
+                  FontAwesomeIcons.youtube,
+                  size: 56,
+                  color: Colors.red,
+                ),
               ],
             ),
           ),
@@ -374,88 +550,3 @@ class PostViewFiles extends StatelessWidget {
     }
   }
 }
-
-// ---------------------------------------------------------------------------
-// PostActionButtons
-// ---------------------------------------------------------------------------
-
-/// 게시글 하단 액션 버튼 행
-///
-/// 좌측: 좋아요 · 댓글
-/// 우측(isMine): 수정 · 삭제 / 내 글이 아닌 경우: 신고 · 차단
-class PostActionButtons extends StatelessWidget {
-  final Post post;
-  final bool isMine;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-
-  const PostActionButtons({
-    super.key,
-    required this.post,
-    required this.isMine,
-    required this.onEdit,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return Row(
-      children: [
-        // 좋아요
-        PostActionBtn(
-          icon: FontAwesomeIcons.lightThumbsUp,
-          label: '${post.good > 0 ? post.good : ''}',
-          color: scheme.onSurfaceVariant,
-          onTap: () {},
-        ),
-        const SizedBox(width: 8),
-        // 댓글
-        PostActionBtn(
-          icon: FontAwesomeIcons.lightComment,
-          label: '${post.noOfComment > 0 ? post.noOfComment : ''}',
-          color: scheme.onSurfaceVariant,
-          onTap: () {},
-        ),
-
-        const Spacer(),
-
-        if (isMine) ...[
-          // 수정
-          PostActionBtn(
-            icon: FontAwesomeIcons.lightPenToSquare,
-            label: '수정',
-            color: scheme.onSurfaceVariant,
-            onTap: onEdit,
-          ),
-          const SizedBox(width: 8),
-          // 삭제
-          PostActionBtn(
-            icon: FontAwesomeIcons.lightTrashCan,
-            label: '삭제',
-            color: scheme.error,
-            onTap: onDelete,
-          ),
-        ] else ...[
-          // 신고
-          PostActionBtn(
-            icon: FontAwesomeIcons.lightFlag,
-            label: '신고',
-            color: scheme.onSurfaceVariant,
-            onTap: () {},
-          ),
-          const SizedBox(width: 8),
-          // 차단
-          PostActionBtn(
-            icon: FontAwesomeIcons.lightBan,
-            label: '차단',
-            color: scheme.onSurfaceVariant,
-            onTap: () {},
-          ),
-        ],
-      ],
-    );
-  }
-}
-

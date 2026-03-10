@@ -170,4 +170,32 @@ class PostService {
     await ApiService.v7api('post.delete', data: {'idx': idx});
   }
 
+  /// 게시글 좋아요 토글
+  ///
+  /// API: post.like (인증 필수)
+  ///
+  /// [idx] 게시글 고유번호
+  /// 반환: 업데이트된 good(좋아요 수)와 liked(내가 좋아요 했는지 여부)
+  static Future<({int good, bool liked})> like(int idx) async {
+    final result = await ApiService.v7api('post.like', data: {'idx': idx});
+    final good = ApiService.toInt(result['good']);
+    final liked = result['liked'] == true || result['liked'] == 1;
+    return (good: good, liked: liked);
+  }
+
+  /// 댓글 목록 조회
+  ///
+  /// API: post.list (인증 불필요) — depth > 0 (댓글)
+  ///
+  /// [parentIdx] 부모 게시글 idx
+  /// 반환: 댓글 Post 목록
+  static Future<List<Post>> listComments(int parentIdx) async {
+    final result = await ApiService.v7api('post.list', data: {
+      'parent_idx': parentIdx,
+      'limit': 100,
+    });
+    final items = (result['posts'] as List<dynamic>?) ?? [];
+    return items.whereType<Map<String, dynamic>>().map(Post.fromJson).toList();
+  }
+
 }
