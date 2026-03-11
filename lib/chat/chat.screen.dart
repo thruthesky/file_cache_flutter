@@ -136,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         Expanded(
           child: ChatRoomListView(
-            order: 'single',
+            order: 'singleOrder',
             onTap: (roomId) {
               ChatRoomScreen.push(context, roomId);
             },

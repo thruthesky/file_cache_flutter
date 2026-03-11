@@ -109,7 +109,7 @@
         },
         
         {
-            "name": "🚀 Emulator : Charles Dev3",
+            "name": "🚀 Emulator : Charles Dev3 192.168.0.22",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
@@ -117,6 +117,18 @@
             "args": [
                 "--dart-define=ENV=dev",
                 "--dart-define=V7_API_ENDPOINT=http://192.168.0.22/api.php",
+            ]
+        },
+        
+        {
+            "name": "🚀 Emulator : Charles Dev3 philgo.net",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "emulator-5554",
+            "args": [
+                "--dart-define=ENV=dev",
+                "--dart-define=V7_API_ENDPOINT=https://philgo.net/api.php",
             ]
         },
         {
