@@ -2,6 +2,8 @@
 <a href="https://flutter.dev/docs/development/packages-and-plugins/favorites"><img src="https://raw.githubusercontent.com/fluttercommunity/font_awesome_flutter/master/assets/pub/flutter_favorite.png" width="100" alt="Flutter Favorite"></a>
 </p>
 
+from thruthesky.
+
 # font_awesome_flutter 
 
 [![Flutter Community: font_awesome_flutter](https://fluttercommunity.dev/_github/header/font_awesome_flutter)](https://github.com/fluttercommunity/community)
