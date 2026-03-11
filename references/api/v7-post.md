@@ -537,8 +537,10 @@ if ($_v7LoginUser) {
 
 | 항목 | 이전 | 현재 |
 |------|------|------|
-| 액션바 버튼 모양 | pill (`border-radius: 20px`) | 일반 사각형 (`border-radius: 6px`) |
-| 좋아요 버튼 배경 | 블루 배경 (`brand-50`) | 흰색 배경 (`#fff`) + 블루 텍스트/테두리 |
+| 액션바 버튼 모양 | 사각형 + 보더 | 보더 없는 미니멀 텍스트 버튼 |
+| 액션바 아이콘 | `fa-solid` (굵은 아이콘) | `fa-regular` (얇은 아웃라인 아이콘) |
+| 좋아요 버튼 | 블루 테두리 + 흰 배경 | 보더 없음, 블루 텍스트만 |
+| 삭제 버튼 | hover 시 빨간색 강조 | 다른 버튼과 동일 (강조 없음) |
 | 댓글 textarea 배경 | `neutral-50` (연한 회색) | 순백색 (`#fff`) |
 | 첨부 버튼 배경 | `neutral-50` (연한 회색) | 순백색 (`#fff`) |
 | 코멘트 노드 패딩 | 없음 | `padding: 0.4rem 0` 추가 |
@@ -582,22 +584,24 @@ if ($_v7LoginUser) {
 
 ### 액션 바 디자인
 
-좋아요/수정/삭제/목록 버튼은 **블루 테마의 일반 사각형(border-radius: 6px)** 형태로 표시된다.
+좋아요/수정/삭제/목록 버튼은 **보더 없는 미니멀 텍스트 버튼** 스타일로 표시된다. 아이콘은 `fa-regular` (얇은 아웃라인) 스타일을 사용한다.
 
-| 버튼 | 스타일 | 색상 | border-radius |
-|------|--------|------|---------------|
-| 좋아요 | `.post-like-btn` | 블루 (`brand-600` 텍스트, **흰색(`#fff`) 배경**, `brand-300` 테두리) | `6px` |
-| 수정/목록 | `.post-action-btn` | 중립 (회색 테두리, 흰 배경) | `6px` |
-| 삭제 확인 | `.post-delete-confirm-btn` | 빨간색 (삭제 액션에만 예외적으로 빨간색 허용) | `6px` |
+| 버튼 | 스타일 | 색상 | 아이콘 |
+|------|--------|------|--------|
+| 좋아요 | `.post-like-btn` | 블루 텍스트 (`brand-600`), 보더 없음, 투명 배경 | `fa-regular fa-thumbs-up` |
+| 수정 | `.post-action-btn` | 중립 회색 텍스트, 보더 없음, 투명 배경 | `fa-regular fa-pen-to-square` |
+| 삭제 | `.post-action-btn .post-delete-btn` | 중립 회색 텍스트 (다른 버튼과 동일), 보더 없음 | `fa-regular fa-trash-can` |
+| 목록 | `.post-action-btn` | 중립 회색 텍스트, 보더 없음, 투명 배경 | `fa-regular fa-rectangle-list` |
+| 삭제 확인 | `.post-delete-confirm-btn` | 빨간 배경 + 흰 텍스트 (확인 단계만) | `fa-regular fa-trash-can` |
 
-**디자인 변경 이력 (pill → 사각형):**
+**핵심 CSS 규칙:**
+- 모든 버튼: `border: none`, `background: transparent`, `font-size: 0.8rem`
+- 아이콘 크기: `font-size: 0.75rem` (본문보다 작게)
+- hover 시: 연한 배경색(`neutral-50`)만 표시, 보더 추가 금지
+- 좋아요 hover: `brand-50` 배경
+- 삭제 버튼: 다른 버튼과 동일한 스타일 (강조 없음, 빨간색 금지)
 
-| 항목 | 이전 | 현재 |
-|------|------|------|
-| 버튼 모양 | pill (`border-radius: 20px`) | 일반 사각형 (`border-radius: 6px`) |
-| 좋아요 배경 | 블루 (`brand-50` 배경) | 흰색 (`#fff` 배경) + 블루 텍스트/테두리 |
-
-**🔴 좋아요 버튼은 반드시 블루 테마**: `#dc2626` 빨간색 사용 금지. `--wa-color-brand-*` 변수 사용. 배경은 흰색이고 텍스트와 테두리만 블루이다.
+**🔴 좋아요 버튼은 반드시 블루 텍스트**: `--wa-color-brand-*` 변수 사용. 보더/배경 없이 텍스트 색상만 블루.
 
 ### 댓글 입력 폼 디자인
 
