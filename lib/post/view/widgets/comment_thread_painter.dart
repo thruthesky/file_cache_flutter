@@ -50,6 +50,11 @@ List<CommentNode> buildCommentTree(List<Post> flatComments) {
 /// 부모 코멘트에서 자식 코멘트로 연결되는 세로선과 L곡선을 그린다.
 /// - 마지막이 아닌 자식: 전체 높이 세로선 + L곡선
 /// - 마지막 자식: L곡선까지만 세로선
+///
+/// [lineXOffset]을 사용하여 세로선의 X 좌표를 조정할 수 있다.
+/// paddingLeft가 아바타 중앙(avatarRadius)보다 작을 때,
+/// lineXOffset = avatarRadius - paddingLeft 로 설정하면
+/// 부모 아바타 세로선과 정확히 정렬된다.
 class ThreadConnectorPainter extends CustomPainter {
   final bool isLast;
   final Color lineColor;
@@ -62,12 +67,16 @@ class ThreadConnectorPainter extends CustomPainter {
   /// 곡선 반경
   final double curveRadius;
 
+  /// 세로선 X 오프셋 (부모 아바타 세로선과 정렬하기 위한 보정값)
+  final double lineXOffset;
+
   ThreadConnectorPainter({
     required this.isLast,
     this.lineColor = const Color(0xFF94A3B8),
     this.lineWidth = 1.0,
     this.curveTargetY = 24.0,
     this.curveRadius = 8.0,
+    this.lineXOffset = 0.0,
   });
 
   @override
@@ -77,18 +86,20 @@ class ThreadConnectorPainter extends CustomPainter {
       ..strokeWidth = lineWidth
       ..style = PaintingStyle.stroke;
 
-    // 세로선: 위(0)에서 아래로
+    final lx = lineXOffset;
+
+    // 세로선: 위(0)에서 아래로 (X 오프셋 적용)
     final lineEndY = isLast ? curveTargetY - curveRadius : size.height;
     canvas.drawLine(
-      const Offset(0, 0),
-      Offset(0, lineEndY),
+      Offset(lx, 0),
+      Offset(lx, lineEndY),
       paint,
     );
 
     // L곡선: 세로선에서 수평으로 꺾어서 자식 아바타까지
     final path = Path()
-      ..moveTo(0, curveTargetY - curveRadius)
-      ..quadraticBezierTo(0, curveTargetY, curveRadius, curveTargetY)
+      ..moveTo(lx, curveTargetY - curveRadius)
+      ..quadraticBezierTo(lx, curveTargetY, lx + curveRadius, curveTargetY)
       ..lineTo(size.width, curveTargetY);
 
     canvas.drawPath(path, paint);
@@ -98,6 +109,7 @@ class ThreadConnectorPainter extends CustomPainter {
   bool shouldRepaint(covariant ThreadConnectorPainter oldDelegate) {
     return oldDelegate.isLast != isLast ||
         oldDelegate.lineColor != lineColor ||
+        oldDelegate.lineXOffset != lineXOffset ||
         oldDelegate.curveTargetY != curveTargetY;
   }
 }

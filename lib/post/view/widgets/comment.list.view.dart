@@ -177,17 +177,18 @@ class _CommentListViewState extends State<CommentListView> {
   /// 자식 코멘트 영역 (세로선 + 곡선 연결선 포함)
   ///
   /// 부모 아바타 중앙에서 세로선이 시작되어 마지막 직접 자식까지 연결된다.
-  /// 모든 깊이에서 일정한 패딩(12px)을 사용하여 세로선을 정확하게 정렬한다.
+  /// paddingLeft를 줄이되, lineXOffset으로 세로선 X 좌표를 보정하여
+  /// 부모 아바타 세로선과 정확하게 정렬한다.
   Widget _buildChildrenArea(CommentNode parentNode) {
     final children = parentNode.children;
 
-    // 모든 깊이에서 일정한 패딩 사용 (세로선 정렬 유지)
-    // 12px는 커넥터 너비(16px)보다 작으면서도 충분한 들여쓰기 제공
-    const paddingLeft = 12.0;
+    // 깊이 1-4: 정상 넓이 (paddingLeft = avatarRadius = 16)
+    // 깊이 5+: 좁은 넓이 (paddingLeft = 12) + lineXOffset 보정으로 세로선 정렬 유지
+    final paddingLeft = parentNode.depth >= 5 ? 12.0 : _avatarRadius;
+    final lineXOffset = _avatarRadius - paddingLeft;
 
     return Padding(
-      // 부모 아바타 중앙 기준 들여쓰기 (모든 깊이에서 동일)
-      padding: const EdgeInsets.only(left: paddingLeft),
+      padding: EdgeInsets.only(left: paddingLeft),
       child: Column(
         children: [
           for (var i = 0; i < children.length; i++)
@@ -195,7 +196,7 @@ class _CommentListViewState extends State<CommentListView> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 세로선 + L곡선 커넥터
+                  // 세로선 + L곡선 커넥터 (lineXOffset으로 부모 세로선과 정렬)
                   SizedBox(
                     width: _connectorWidth,
                     child: CustomPaint(
@@ -205,6 +206,7 @@ class _CommentListViewState extends State<CommentListView> {
                         lineWidth: 1.5,
                         curveTargetY: _curveTargetY,
                         curveRadius: 8.0,
+                        lineXOffset: lineXOffset,
                       ),
                     ),
                   ),
