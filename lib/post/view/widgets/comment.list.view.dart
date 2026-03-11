@@ -202,6 +202,7 @@ class _CommentListViewState extends State<CommentListView> {
                       painter: ThreadConnectorPainter(
                         isLast: i == children.length - 1,
                         lineColor: _lineColor,
+                        lineWidth: 1.5,
                         curveTargetY: _curveTargetY,
                         curveRadius: 8.0,
                       ),
