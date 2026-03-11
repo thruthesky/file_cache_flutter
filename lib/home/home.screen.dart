@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (!userState.isLoggedIn) {
             return Center(
               child: Text(
-                'home.loginRequired'.tr(),
+                '로그인이 필요합니다.'.tr(),
                 style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
             );
@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'home.nextLevel'.tr(args: ['${user.levelProgress}']),
+                '다음 레벨까지 {}%'.tr(args: ['${user.levelProgress}']),
                 style: TextStyle(fontSize: 12, color: Colors.grey[500]),
               ),
             ),
@@ -146,22 +146,22 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           if (user.phoneNumber.isNotEmpty)
-            _infoTile(Icons.phone, 'home.phoneNumber'.tr(), user.phoneNumber),
+            _infoTile(Icons.phone, '전화번호'.tr(), user.phoneNumber),
           _infoTile(
             Icons.article_outlined,
-            'home.posts'.tr(),
-            'home.countUnit'.tr(args: ['${user.noOfPost}']),
+            '게시글'.tr(),
+            '{}개'.tr(args: ['${user.noOfPost}']),
           ),
           _infoTile(
             Icons.comment_outlined,
-            'home.comments'.tr(),
-            'home.countUnit'.tr(args: ['${user.noOfComment}']),
+            '댓글'.tr(),
+            '{}개'.tr(args: ['${user.noOfComment}']),
           ),
           if (user.gender.isNotEmpty)
             _infoTile(
               Icons.person_outline,
-              'home.gender'.tr(),
-              user.gender == 'M' ? 'home.male'.tr() : 'home.female'.tr(),
+              '성별'.tr(),
+              user.gender == 'M' ? '남성'.tr() : '여성'.tr(),
             ),
         ],
       ),
@@ -190,21 +190,21 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'home.appSettings'.tr(),
+              '앱 설정'.tr(),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Divider(),
-            _configRow('home.apiEndpoint'.tr(), v7ApiEndpoint),
-            _configRow('home.baseUrl'.tr(), v7BaseUrl),
+            _configRow('API 엔드포인트'.tr(), v7ApiEndpoint),
+            _configRow('베이스 URL'.tr(), v7BaseUrl),
             _configRow(
-              'home.forumCategories'.tr(),
-              'home.countUnit'.tr(args: ['${forumCategories.length}']),
+              '포럼 카테고리'.tr(),
+              '{}개'.tr(args: ['${forumCategories.length}']),
             ),
             _configRow(
-              'home.kakaoAppKey'.tr(),
+              '카카오 앱 키'.tr(),
               '${kakaoNativeAppKey.substring(0, 8)}...',
             ),
           ],

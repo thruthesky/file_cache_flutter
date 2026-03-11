@@ -58,7 +58,7 @@ class UserLoginScreen extends StatelessWidget {
                   ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.8, 0.8)),
                   const SizedBox(height: 20),
                   Text(
-                    'loginScreen.welcome'.tr(),
+                    '필고에 오신 것을 환영합니다'.tr(),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -66,7 +66,7 @@ class UserLoginScreen extends StatelessWidget {
                   ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
                   const SizedBox(height: 8),
                   Text(
-                    'loginScreen.socialLoginMessage'.tr(),
+                    '소셜 계정으로 간편하게 로그인하세요'.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
@@ -137,7 +137,7 @@ class _KakaoSignInButton extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'loginScreen.kakao'.tr(),
+                    '카카오로 로그인'.tr(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF191919).withValues(alpha: 0.85),
@@ -178,7 +178,7 @@ class _GoogleSignInButton extends StatelessWidget {
                   FaIcon(FontAwesomeIcons.google, size: 20, color: scheme.onSurface),
                   const SizedBox(width: 12),
                   Text(
-                    'loginScreen.google'.tr(),
+                    'Google로 로그인'.tr(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface,

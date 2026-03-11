@@ -49,7 +49,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
                       // 내 정보 섹션
                       _buildSection(
-                        title: 'menu.myInfo'.tr(),
+                        title: '내 정보'.tr(),
                         icon: FontAwesomeIcons.lightCircleUser,
                         child: _buildProfileContent(theme, scheme),
                       ).animate().fadeIn(duration: 400.ms).slideY(
@@ -59,7 +59,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
                       // 내 활동 섹션
                       _buildSection(
-                        title: 'menu.myActivity'.tr(),
+                        title: '내 활동'.tr(),
                         icon: FontAwesomeIcons.lightRectangleHistory,
                         child: _buildActivityGrid(theme, scheme),
                       ).animate().fadeIn(
@@ -69,7 +69,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
                       // 필리핀 생활 정보 섹션
                       _buildSection(
-                        title: 'menu.philippinesInfo'.tr(),
+                        title: '필리핀 생활 정보'.tr(),
                         icon: FontAwesomeIcons.lightEarthAsia,
                         child: _buildInfoGrid(theme, scheme),
                       ).animate().fadeIn(
@@ -88,7 +88,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           color: scheme.error,
                         ),
                         label: Text(
-                          'logout'.tr(),
+                          '로그아웃'.tr(),
                           style: TextStyle(color: scheme.error),
                         ),
                         style: OutlinedButton.styleFrom(
@@ -121,17 +121,17 @@ class _MenuScreenState extends State<MenuScreen> {
             color: scheme.onSurfaceVariant,
           ),
           const SizedBox(height: 16),
-          Text('menu.loginRequired'.tr(), style: theme.textTheme.titleMedium),
+          Text('로그인이 필요합니다'.tr(), style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
           Text(
-            'menu.loginMessage'.tr(),
+            '메뉴를 이용하려면 로그인해 주세요.'.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: () => UserLoginScreen.push(context),
             icon: const FaIcon(FontAwesomeIcons.lightRightToBracket, size: 16),
-            label: Text('login'.tr()),
+            label: Text('로그인'.tr()),
           ),
         ],
       ),
@@ -150,7 +150,7 @@ class _MenuScreenState extends State<MenuScreen> {
             height: 40,
           ),
           const SizedBox(width: 8),
-          Text('menu.title'.tr(), style: theme.textTheme.titleLarge),
+          Text('메뉴'.tr(), style: theme.textTheme.titleLarge),
         ],
       ),
     );
@@ -273,7 +273,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'menu.postCount'.tr(args: ['${user.noOfPost}']),
+                    '{}개 게시물'.tr(args: ['${user.noOfPost}']),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
@@ -287,7 +287,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'menu.commentCount'.tr(args: ['${user.noOfComment}']),
+                    '{}개 댓글'.tr(args: ['${user.noOfComment}']),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
@@ -331,13 +331,13 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 내 활동 메뉴 그리드
   Widget _buildActivityGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
-      _MenuItemData(FontAwesomeIcons.lightPenToSquare, 'menu.editProfile'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightClockRotateLeft, 'menu.myPosts'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightPenNib, 'menu.write'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightMagnifyingGlass, 'menu.searchFriends'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightUserSlash, 'menu.blockedUsers'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightTicket, 'menu.eventCoupons'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCoins, 'menu.pointHistory'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightPenToSquare, '프로필 수정'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightClockRotateLeft, '내 게시글'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightPenNib, '글쓰기'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightMagnifyingGlass, '친구 검색'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightUserSlash, '차단된 사용자'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightTicket, '이벤트 쿠폰'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightCoins, '포인트 내역'.tr()),
     ];
 
     return _buildMenuGrid(items, theme, scheme);
@@ -348,16 +348,16 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightStarShooting,
-        'menu.essentialInfo'.tr(),
+        '필수 정보'.tr(),
         isHighlighted: true,
       ),
-      _MenuItemData(FontAwesomeIcons.lightBullhorn, 'menu.notices'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCoins, 'menu.exchangeRate'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCloudSun, 'menu.weather'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightPhoneVolume, 'menu.emergencyContacts'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCircleInfo, 'menu.beginnerGuide'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCalendarDays, 'menu.oneMonthLiving'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightMountain, 'menu.travel'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightBullhorn, '공지'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightCoins, '환율'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightCloudSun, '날씨'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightPhoneVolume, '긴급연락처'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightCircleInfo, '초보 필독'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightCalendarDays, '한달살기'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightMountain, '여행'.tr()),
     ];
 
     return _buildMenuGrid(items, theme, scheme);

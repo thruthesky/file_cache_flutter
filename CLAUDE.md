@@ -17,6 +17,15 @@ This project is a Flutter app for building PhilGo v7 application.
 
 # Important Rules
 
+## 🔴🔴🔴 Easy Localization 번역 키는 반드시 한글로 작성 🔴🔴🔴
+
+- **THIS IS NON-NEGOTIABLE. 번역 키(key)는 반드시 한글로 작성해야 한다. 영어 키 사용은 절대 금지.**
+- Easy Localization(이지 로컬리제이션)으로 텍스트를 번역할 때, `.tr` 또는 `tr()` 에 사용하는 **키(key)는 반드시 한글**이어야 한다.
+- 올바른 예시: `'로그인'.tr()`, `'회원가입'.tr()`, `'설정'.tr()`
+- **잘못된 예시 (절대 금지)**: `'login'.tr()`, `'signUp'.tr()`, `'settings'.tr()`
+- 한글 키를 사용하면 번역이 없는 언어에서도 기본값으로 한글이 그대로 표시되어 UX가 자연스럽다.
+- JSON 번역 파일에서도 키는 한글로 작성한다: `{ "로그인": "Login", "회원가입": "Sign Up" }`
+
 ## Never use packages/philgo_api/
 
 - **NEVER** import or directly use any code from the `packages/philgo_api/` folder in the project.

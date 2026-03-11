@@ -68,23 +68,23 @@ class _AppScreenState extends State<AppScreen> {
             items: [
               BottomNavigationBarItem(
                 icon: const Icon(Icons.home),
-                label: 'nav.home'.tr(),
+                label: '홈'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const Icon(Icons.list),
-                label: 'nav.forum'.tr(),
+                label: '게시판'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const Icon(Icons.chat),
-                label: 'nav.chat'.tr(),
+                label: '채팅'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const Icon(Icons.business),
-                label: 'nav.company'.tr(),
+                label: '업소록'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const Icon(Icons.menu),
-                label: 'nav.menu'.tr(),
+                label: '메뉴'.tr(),
               ),
             ],
           );
