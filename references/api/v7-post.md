@@ -25,6 +25,8 @@
    - [접기/펼치기 JavaScript (세로선 클릭 + 답글 텍스트 클릭)](#접기펼치기-javascript-세로선-클릭--답글-텍스트-클릭)
    - [코멘트 모바일 반응형](#코멘트-모바일-반응형-media-max-width-640px)
    - [빈 상태 디자인](#빈-상태-디자인)
+   - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
+   - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
 
 ---
@@ -1158,6 +1160,64 @@ document.addEventListener('click', function (e) {
 .post-comments-empty span {
     font-size: 0.8rem;
     color: var(--wa-color-neutral-400, #94a3b8);
+}
+```
+
+#### 기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)
+
+기본 댓글 작성 폼(`#comment-create-app`)은 화면 영역을 절약하기 위해 **접힌/펼친 두 가지 상태**로 동작한다.
+
+**접힌 상태 (기본)**:
+- 카메라 아이콘(`.comment-camera-btn`) + 한 줄 입력(`.comment-collapsed-input`, readonly) + 전송 아이콘(`.comment-send-btn`)
+- 둥근 pill 모양(`border-radius: 999px`), 회색 배경
+- 전체 영역이 클릭 가능
+
+**펼친 상태 (사용자 클릭 시)**:
+- 큰 textarea(4줄) + 하단에 카메라(왼쪽), 취소+저장(오른쪽)
+- 흰색 배경, 포커스 시 블루 하이라이트
+- `commentExpandIn` 애니메이션으로 부드럽게 전환
+
+**전환 트리거**:
+| 동작 | 트리거 |
+|------|--------|
+| 접힌 → 펼친 | 입력창 클릭, 카메라 아이콘 클릭, 전송 아이콘 클릭 |
+| 펼친 → 접힌 | 취소 버튼 클릭 (내용이 있으면 confirm 확인) |
+
+**Vue.js 상태**: `expanded: false`(기본) → `true`(펼친 상태)
+
+**핵심 CSS 클래스**:
+```css
+.comment-collapsed-row    /* 접힌 상태 한 줄 컨테이너 */
+.comment-collapsed-input   /* 접힌 상태 readonly input */
+.comment-camera-btn        /* 카메라 아이콘 버튼 (접힌/펼친 공통) */
+.comment-send-btn          /* 접힌 상태 전송 아이콘 */
+.comment-expanded-area     /* 펼친 상태 컨테이너 */
+.comment-expanded-actions  /* 펼친 상태 하단 버튼 영역 */
+.comment-expanded-right    /* 펼친 상태 우측 버튼 그룹 */
+.comment-save-btn          /* 저장 버튼 (비행기 아이콘 + "저장") */
+.comment-create-form.expanded  /* 펼친 상태 폼 컨테이너 */
+```
+
+#### 대댓글(답글) 작성 폼 — 개선된 디자인
+
+대댓글(답글) 작성 폼(`.comment-reply-form`)은 다음과 같은 디자인 원칙을 따른다:
+
+- **2행 구조**: textarea가 전체 너비를 차지하고, 버튼(첨부/등록/취소)이 하단 우측에 정렬
+- **왼쪽 파란색 액센트 보더**: `border-left: 3px solid #60a5fa`로 답글임을 시각적으로 표시
+- **흰색 배경**: 이전 회색(`#f8fafc`) 대신 깔끔한 흰색
+- **슬라이드인 애니메이션**: `replyFormSlideIn` 키프레임으로 부드러운 등장
+- **포커스 효과**: `focus-within` 시 블루 하이라이트 + 좌측 보더 진하게
+
+```css
+.comment-reply-form {
+    border-left: 3px solid var(--wa-color-brand-400, #60a5fa);
+    background: #fff;
+}
+.comment-reply-form .comment-input-row {
+    flex-direction: column;  /* 세로 배치 */
+}
+.comment-reply-form .comment-input-actions {
+    align-self: flex-end;   /* 버튼 우측 정렬 */
 }
 ```
 
