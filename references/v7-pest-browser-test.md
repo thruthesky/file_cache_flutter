@@ -37,6 +37,7 @@
   - [26.12 script() 메서드의 return 키워드 주의사항](#2612-script-메서드의-return-키워드-주의사항)
 - [27. CI/CD 설정 (GitHub Actions)](#27-cicd-설정-github-actions)
 - [28. 링크 검증 테스트 (LinkCheckerTest)](#28-링크-검증-테스트-linkchecktest)
+- [29. Playwright 전체 페이지 링크 테스트 (Node.js 스크립트)](#29-playwright-전체-페이지-링크-테스트-nodejs-스크립트)
 
 ---
 
@@ -1443,3 +1444,67 @@ foreach ($links as $link) {
 ```
 
 > **주의**: `$page->script()`는 `PendingAwaitablePage`의 `__call()` 매직 메서드를 통해 `Webpage::script()`를 호출하므로 실제로는 `mixed`를 반환한다. intelephense P1006 경고가 발생하지만, `/** @var string $변수 */` PHPDoc으로 해결한다.
+
+---
+
+## 29. Playwright 전체 페이지 링크 테스트 (Node.js 스크립트)
+
+PEST가 아닌 순수 `playwright` 라이브러리 + `tsx`를 사용하는 Node.js 스크립트 기반 테스트이다. 재귀 크롤링으로 모든 링크를 방문하고, 데스크탑/모바일 스크린캡쳐를 저장한다.
+
+### 29.1 개요
+
+| 항목 | 설명 |
+|------|------|
+| **파일** | `tests/e2e-playwright/page-link-test.ts` |
+| **실행** | `npx tsx tests/e2e-playwright/page-link-test.ts` |
+| **Claude 명령어** | `/test:page` |
+| **기본 URL** | `https://v7-local.philgo.com` |
+| **결과** | `/tmp/v7-page-test-{timestamp}/` (JSON + HTML 리포트 + 스크린샷) |
+
+### 29.2 기능
+
+- 시작 URL에서 모든 `<a href>` 링크를 재귀 수집 (같은 도메인만)
+- HTTP 상태 코드 확인 (400+ = 에러)
+- PHP 에러 감지: Fatal, Parse, Warning, Notice, Deprecated, Uncaught
+- 페이지 없음 감지: 404, "페이지를 찾을 수 없습니다"
+- 데스크탑(1920x1080) / 모바일(375x812) 풀페이지 스크린캡쳐
+- HTML 리포트 자동 생성
+
+### 29.3 실행
+
+```bash
+# 기본 실행 (홈페이지부터 최대 100페이지)
+npx tsx tests/e2e-playwright/page-link-test.ts
+
+# 최대 페이지 수 제한
+MAX_PAGES=20 npx tsx tests/e2e-playwright/page-link-test.ts
+
+# 시작 URL 변경
+START_URL=/post/list?post_id=freetalk npx tsx tests/e2e-playwright/page-link-test.ts
+
+# 패밀리사이트 테스트
+BASE_URL=https://banana.philgo.com npx tsx tests/e2e-playwright/page-link-test.ts
+```
+
+### 29.4 환경 변수
+
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `START_URL` | `/` | 크롤링 시작 경로 |
+| `MAX_PAGES` | `100` | 최대 테스트 페이지 수 |
+| `SCREENSHOT_DIR` | `/tmp/v7-page-test-{timestamp}` | 저장 폴더 |
+| `BASE_URL` | `https://v7-local.philgo.com` | 기본 도메인 |
+
+### 29.5 결과 구조
+
+```
+/tmp/v7-page-test-2026-03-11T12-45-23/
+├── desktop/          # 데스크탑 스크린샷 (1920x1080)
+│   ├── 001_.png
+│   └── 002_post_list_post_id_qna.png
+├── mobile/           # 모바일 스크린샷 (375x812)
+│   ├── 001_.png
+│   └── 002_post_list_post_id_qna.png
+├── results.json      # 상세 결과 (URL, 상태코드, 에러, 스크린샷 경로)
+└── report.html       # 시각적 HTML 리포트
+```
