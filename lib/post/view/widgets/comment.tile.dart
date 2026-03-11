@@ -123,7 +123,7 @@ class _CommentTileState extends State<CommentTile> {
             width: 32,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 8),
                 CircleAvatar(
@@ -139,11 +139,14 @@ class _CommentTileState extends State<CommentTile> {
                   ),
                 ),
                 const SizedBox(height: 2),
-                // 세로선: 아바타 하단에서 코멘트 하단까지
+                // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬)
                 Expanded(
-                  child: Container(
-                    width: 1,
-                    color: kThreadLineColor,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: 1.5,
+                      color: kThreadLineColor,
+                    ),
                   ),
                 ),
               ],
