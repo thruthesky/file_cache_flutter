@@ -410,6 +410,48 @@ curl "https://local.philgo.com/api.php?method=post.get&idx=12345"
 
 ---
 
+## 게시글 목록 글쓰기 버튼
+
+### 디자인
+
+글쓰기 버튼(`.post-write-btn`)은 블루 아웃라인 스타일로 표시된다.
+v7 홈페이지의 블루 테마에 맞춰 `--wa-color-brand-500/600` CSS 변수를 사용한다.
+
+| 속성 | 값 |
+|------|-----|
+| 색상 | `var(--wa-color-brand-600, #2563eb)` (블루) |
+| 보더 | `1px solid var(--wa-color-brand-500, #3b82f6)` |
+| 배경 | 투명 (hover 시 블루 채움) |
+| 폰트 | `0.9rem`, `font-weight: 600` |
+| 아이콘 | `fa-solid fa-pen-to-square` |
+
+### 비로그인 시 동작
+
+비로그인 사용자가 글쓰기 버튼을 클릭하면 `alert('로그인을 하셔야 글을 쓸 수 있습니다.')`를 표시한다.
+서버에서 `AuthService::getLoginUser()` 결과에 따라 PHP 조건문으로 분기한다.
+
+```php
+<?php if ($loginUser): ?>
+    <a href="<?= Route::postCreate($postId, $category) ?>" class="post-write-btn">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
+<?php else: ?>
+    <a href="#" class="post-write-btn" onclick="alert('로그인을 하셔야 글을 쓸 수 있습니다.'); return false;">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
+<?php endif; ?>
+```
+
+### 적용 위치
+
+| 파일 | 설명 |
+|------|------|
+| `v7/post/list.php` | 게시판 목록 페이지 헤더 |
+| `v7/post/view.php` | 글 읽기 페이지 하단 목록 헤더 |
+| `v7/post/list.css` | `.post-write-btn` 스타일 정의 |
+
+---
+
 ## 게시글 목록 관리자 기능
 
 ### 개요

@@ -10,6 +10,7 @@
 6. [Controller — AdvertisementController](#6-controller--advertisementcontroller)
 7. [API 엔드포인트 목록](#7-api-엔드포인트-목록)
 8. [배너 타입 및 위치 규칙](#8-배너-타입-및-위치-규칙)
+
 9. [배너 조회 로직 (홈페이지 표시용)](#9-배너-조회-로직-홈페이지-표시용)
 10. [캐시 시스템](#10-캐시-시스템)
 11. [에러 처리](#11-에러-처리)
@@ -44,11 +45,24 @@ lib/advertisement/
 
 v7/adv/
 ├── banner.php                       # 배너 광고 안내 페이지 (Vue.js + v7api)
+├── banner.css                       # 배너 광고 안내 페이지 스타일
+├── point.php                        # 포인트 광고 안내 페이지 (PHP 서버 렌더링)
+├── point.css                        # 포인트 광고 안내 페이지 스타일
 ├── massage.php                      # 마사지 배너 광고 안내 페이지 (Vue.js + v7api)
 └── massage.css                      # 마사지 배너 광고 안내 페이지 스타일
 
+v7/widgets/advertisement/
+├── point-purchase-info.php          # 포인트 구매 안내 위젯 (최소금액, 페소결제, 환불정책)
+├── payment-info.php                 # 공용 입금 정보 위젯 (배너/포인트/마사지 공통, 복사 버튼 포함)
+├── marketing-message.php            # 광고 마케팅 메시지 위젯
+├── point-advertisements.php         # 포인트 광고 목록 위젯 (게시판)
+├── square-banners.php               # 사각 배너 위젯
+└── small-banners.php                # 작은 배너 위젯
+
 tests/Unit/
-└── AdvertisementTest.php         # PEST v4 테스트 (57개 테스트, 260개 assertion)
+├── AdvertisementTest.php            # 광고 API PEST 테스트 (57개 테스트)
+├── AdvPointPageTest.php             # 포인트 광고 페이지 PEST 테스트 (23개 테스트)
+└── AdvPaymentWidgetTest.php         # 공용 입금 정보 위젯 PEST 테스트 (13개 테스트)
 ```
 
 ### PSR-4 매핑 (composer.json)
@@ -605,7 +619,84 @@ v7api('advertisement.massageBannerInfo').then(res => {
 
 **v7 페이지:** `/adv/massage` (v7/adv/massage.php + massage.css)
 
-### 7.4 배너 조회 (홈페이지 표시용)
+### 7.4 포인트 광고 안내 페이지
+
+**v7 페이지:** `/adv/point` (v7/adv/point.php + point.css)
+
+포인트 구매 안내, 결제 정보(계좌), 마케팅 메시지를 표시하는 서버 렌더링 페이지이다.
+API 호출 없이 PHP로 직접 렌더링한다.
+
+**페이지 구성:**
+
+| 섹션 | 위젯 파일 | 설명 |
+|------|-----------|------|
+| 공통 헤더/네비게이션 | `adv/adv-nav.php` | 아이콘 + 제목 + 설명 + 탭 네비게이션 |
+| 구매 안내 | `widgets/advertisement/point-purchase-info.php` | 최소 구매 금액, 페소 결제, 환불 정책 (3열 그리드) |
+| 입금 정보 | `widgets/advertisement/payment-info.php` | 공용 입금 정보 위젯 (배너/포인트/마사지 공통) |
+| 마케팅 메시지 | `widgets/advertisement/marketing-message.php` | 필고 광고 플랫폼 홍보 + 운영자 문의 버튼 |
+
+**모바일 앱 분기:** `RequestUtils::get('device') === 'mobile'`이면 입금 정보 섹션과 운영자 문의 버튼 숨김.
+
+### 7.5 공용 입금 정보 위젯 및 API
+
+#### API: `advertisement.paymentInfo`
+
+| 메서드 | 엔드포인트 | 설명 | 권한 |
+|--------|-----------|------|------|
+| `advertisement.paymentInfo` | `GET /api.php?method=advertisement.paymentInfo` | KB국민은행/BDO 계좌 정보 조회 | 누구나 |
+
+**응답 구조:**
+
+```json
+{
+  "notice": "입금 후 반드시 입금증을 보내주세요.",
+  "accounts": [
+    {
+      "bank": "국민은행",
+      "bank_en": "KB Kookmin Bank",
+      "currency": "KRW",
+      "account_name": "송재호",
+      "account_no": "655-601-04-1644-08"
+    },
+    {
+      "bank": "BDO",
+      "bank_en": "BDO Unibank",
+      "currency": "PHP",
+      "account_name": "JAEHO SONG",
+      "account_no": "008-018-022-138"
+    }
+  ]
+}
+```
+
+**서비스 메서드:** `AdvertisementService::getPaymentInfo()` (public static)
+
+**사용 상수 (etc/app.config.php):**
+- `KB_NAME`, `KB_ACCOUNT_NAME`, `KB_ACCOUNT_NO` — 국민은행 계좌
+- `BDO_NAME`, `BDO_ACCOUNT_NAME`, `BDO_ACCOUNT_NO` — BDO 계좌
+
+#### 공용 위젯: `widgets/advertisement/payment-info.php`
+
+배너, 포인트, 마사지 광고 페이지에서 동일한 디자인으로 사용되는 공용 위젯이다.
+
+**특징:**
+- PHP 서버사이드 렌더링 (API 호출 없이 상수 직접 사용)
+- `adv-payment-*` CSS 클래스 사용 (banner.css에 정의)
+- 복사 버튼 클릭 시 **은행명 + 예금주 + 계좌번호** 전체를 클립보드에 복사
+- 모바일 앱(`?device=mobile`) 시 위젯 전체 숨김 (위젯 내부에서 자동 처리)
+- `advCopyPaymentInfo(bank, name, accountNo)` JavaScript 함수 사용
+
+**사용법 (PHP include):**
+```php
+<?php include __DIR__ . '/../widgets/advertisement/payment-info.php'; ?>
+```
+
+세 광고 페이지에서의 사용 위치:
+- `banner.php`: Vue 앱 바깥(하단)에 PHP include
+- `point.php`: `<div class="v7-content-pad">` 내부에 PHP include
+- `massage.php`: Vue 앱 바깥(하단)에 `<div class="v7-content-pad">` 래퍼와 함께 PHP include
+
+### 7.6 배너 조회 (홈페이지 표시용)
 
 | 메서드 | 엔드포인트 | 설명 | 권한 |
 |--------|-----------|------|------|
