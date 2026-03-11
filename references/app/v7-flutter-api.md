@@ -1393,6 +1393,11 @@ fetchPage(N) → 빈 리스트 반환 → 더 이상 로드하지 않음
 | `PostService.create()` | `post.create` | 필수 | 게시글 생성 |
 | `PostService.update()` | `post.update` | 필수 | 게시글 수정 |
 | `PostService.delete()` | `post.delete` | 필수 | 게시글 삭제 |
+| `PostService.listComments()` | `post.commentList` | 불필요 | 코멘트 목록 조회 (list_order DESC) |
+| `PostService.createComment()` | `post.commentCreate` | 필수 | 코멘트/대댓글 생성 (idxRoot, content, idxParent?) |
+| `PostService.updateComment()` | `post.commentUpdate` | 필수 | 코멘트 수정 (자식 있으면 서버에서 차단) |
+| `PostService.deleteComment()` | `post.commentDelete` | 필수 | 코멘트 삭제 (자식 있으면 서버에서 차단) |
+| `PostService.like()` | `post.like` | 필수 | 좋아요 토글 |
 
 ### 14.4 사용 예시
 
@@ -1406,7 +1411,43 @@ final post = await PostService.get(12345);
 print(post.subject);
 ```
 
-### 14.5 PostListScreen 무한 스크롤 패턴
+### 14.5 댓글 CRUD 사용 예시
+
+```dart
+// 댓글 목록 조회
+final comments = await PostService.listComments(postIdx);
+
+// 최상위 댓글 생성
+await PostService.createComment(idxRoot: postIdx, content: '댓글 내용');
+
+// 대댓글 생성 (특정 댓글에 대한 답글)
+await PostService.createComment(
+  idxRoot: postIdx,
+  content: '대댓글 내용',
+  idxParent: parentCommentIdx,
+);
+
+// 댓글 수정 (자식 댓글이 있으면 서버에서 에러 반환)
+await PostService.updateComment(idx: commentIdx, content: '수정된 내용');
+
+// 댓글 삭제 (자식 댓글이 있으면 서버에서 에러 반환)
+await PostService.deleteComment(commentIdx);
+```
+
+### 14.6 댓글 위젯 구조
+
+| 위젯 | 파일 | 설명 |
+|------|------|------|
+| `CommentListView` | `lib/post/view/widgets/comment.list.view.dart` | 댓글 목록 + 최상위 댓글 입력 + 대댓글 인라인 입력 |
+| `CommentTile` | `lib/post/view/widgets/comment.tile.dart` | 개별 댓글 표시 (depth 기반 들여쓰기, 수정/삭제/답글 버튼) |
+| `CommentInput` | `lib/post/view/widgets/comment.input.dart` | 댓글/대댓글 입력 폼 (TextField + 전송 버튼) |
+| `CommentEditDialog` | `lib/post/view/widgets/comment.edit.dialog.dart` | 댓글 수정 다이얼로그 (AlertDialog) |
+
+**자식 댓글 제한 규칙**:
+- 자식 댓글이 있는 코멘트는 수정/삭제 버튼이 숨겨진다 (클라이언트 측 `_hasChildren()` 검사)
+- 서버에서도 `PostRepository::hasChildComments()` 이중 검증으로 자식 있는 코멘트의 수정/삭제를 차단한다
+
+### 14.7 PostListScreen 무한 스크롤 패턴
 
 `lib/post/list/post.list.screen.dart`에서 `infinite_scroll_pagination` 패키지의
 `PagingController<int, Post>`를 사용하여 카테고리별 게시글 무한 스크롤을 구현한다.
