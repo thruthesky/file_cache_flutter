@@ -131,6 +131,115 @@ class _PostViewScreenState extends State<PostViewScreen> {
     }
   }
 
+  // ── 댓글 CRUD ──────────────────────────────────────────
+
+  /// 댓글/대댓글 생성
+  Future<void> _createComment(String content, {int? idxParent}) async {
+    await PostService.createComment(
+      idxRoot: _post.idx,
+      content: content,
+      idxParent: idxParent,
+    );
+    _postChanged = true;
+    await _loadComments();
+    // 댓글 수 갱신
+    if (mounted) {
+      setState(() {
+        _post = Post(
+          idx: _post.idx,
+          idxMember: _post.idxMember,
+          idxRoot: _post.idxRoot,
+          idxParent: _post.idxParent,
+          postId: _post.postId,
+          subject: _post.subject,
+          content: _post.content,
+          stamp: _post.stamp,
+          stampUpdate: _post.stampUpdate,
+          depth: _post.depth,
+          noOfComment: _comments.length,
+          noOfView: _post.noOfView,
+          good: _goodCount,
+          category: _post.category,
+          earnedPoint: _post.earnedPoint,
+          secret: _post.secret,
+          checked: _post.checked,
+          blind: _post.blind,
+          hasImage: _post.hasImage,
+          hasVideo: _post.hasVideo,
+          imageUrl: _post.imageUrl,
+          videoUrl: _post.videoUrl,
+          thumbnail400x400: _post.thumbnail400x400,
+          thumbnail800x800: _post.thumbnail800x800,
+          thumbnail1000: _post.thumbnail1000,
+          userName: _post.userName,
+          files: _post.files,
+        );
+      });
+    }
+  }
+
+  /// 댓글 수정
+  Future<void> _editComment(Post comment, String content) async {
+    try {
+      await PostService.updateComment(idx: comment.idx, content: content);
+      _postChanged = true;
+      await _loadComments();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('댓글 수정 실패: $e')));
+    }
+  }
+
+  /// 댓글 삭제
+  Future<void> _deleteComment(Post comment) async {
+    try {
+      await PostService.deleteComment(comment.idx);
+      _postChanged = true;
+      await _loadComments();
+      // 댓글 수 갱신
+      if (mounted) {
+        setState(() {
+          _post = Post(
+            idx: _post.idx,
+            idxMember: _post.idxMember,
+            idxRoot: _post.idxRoot,
+            idxParent: _post.idxParent,
+            postId: _post.postId,
+            subject: _post.subject,
+            content: _post.content,
+            stamp: _post.stamp,
+            stampUpdate: _post.stampUpdate,
+            depth: _post.depth,
+            noOfComment: _comments.length,
+            noOfView: _post.noOfView,
+            good: _goodCount,
+            category: _post.category,
+            earnedPoint: _post.earnedPoint,
+            secret: _post.secret,
+            checked: _post.checked,
+            blind: _post.blind,
+            hasImage: _post.hasImage,
+            hasVideo: _post.hasVideo,
+            imageUrl: _post.imageUrl,
+            videoUrl: _post.videoUrl,
+            thumbnail400x400: _post.thumbnail400x400,
+            thumbnail800x800: _post.thumbnail800x800,
+            thumbnail1000: _post.thumbnail1000,
+            userName: _post.userName,
+            files: _post.files,
+          );
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('댓글 삭제 실패: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -229,13 +338,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
                   // ── 댓글 ──────────────────────────────────────────
                   CommentListView(
                     comments: _comments,
                     isLoading: _commentsLoading,
                     noOfComment: _post.noOfComment,
+                    idxRoot: _post.idx,
+                    onCreateComment: _createComment,
+                    onEditComment: _editComment,
+                    onDeleteComment: _deleteComment,
                   ),
 
                   const SizedBox(height: 32),

@@ -331,6 +331,17 @@ PostService::delete()
 | category | string | 카테고리 |
 | int_10 | int | 획득 포인트 |
 
+### 사용자 정보 필드
+
+| 필드 | 타입 | 설명 | 소스 |
+|------|------|------|------|
+| user_id | string | 작성자 ID | sf_post_data.user_id |
+| user_name | string | 작성자 이름/닉네임 | sf_post_data.user_name (글 생성 시 sf_member.nickname에서 복사) |
+| user_email | string | 작성자 이메일 | sf_post_data.user_email |
+| user_photo_url | string | 작성자 프로필 사진 URL | sf_member.photo_url (LEFT JOIN으로 실시간 조회) |
+
+> **참고**: `user_photo_url`은 sf_post_data 테이블에 저장되지 않고, `findByIdx()`, `findAll()`, `findComments()` 조회 시 `sf_member` 테이블과 LEFT JOIN하여 실시간으로 가져온다. 따라서 사용자가 프로필 사진을 변경하면 즉시 반영된다.
+
 ### 계산 필드 (toArray()에서 자동 추가)
 
 | 필드 | 타입 | 설명 |
@@ -365,6 +376,8 @@ PostService::delete()
 | 수정 권한 없음 | '게시글 수정 권한이 없습니다.' |
 | 삭제 권한 없음 | '게시글 삭제 권한이 없습니다.' |
 | 댓글 있는 글 삭제 | '댓글이 있는 게시글은 삭제할 수 없습니다.' |
+| 자식 댓글 있는 코멘트 수정 | '자식 댓글이 있는 코멘트는 수정할 수 없습니다.' |
+| 자식 댓글 있는 코멘트 삭제 | '자식 댓글이 있는 코멘트는 삭제할 수 없습니다.' |
 | 회원 미존재 | '회원 정보를 찾을 수 없습니다.' |
 
 ---

@@ -211,4 +211,60 @@ class PostService {
     final items = raw is List ? raw : [];
     return items.whereType<Map<String, dynamic>>().map(Post.fromJson).toList();
   }
+
+  /// 댓글 생성
+  ///
+  /// API: post.commentCreate (인증 필수)
+  ///
+  /// [idxRoot] 원글 idx
+  /// [content] 댓글 내용
+  /// [idxParent] 부모 댓글 idx (대댓글 시, 기본값: idxRoot)
+  /// 반환: 생성된 댓글 Post 객체
+  static Future<Post> createComment({
+    required int idxRoot,
+    required String content,
+    int? idxParent,
+  }) async {
+    final result = await ApiService.v7api(
+      'post.commentCreate',
+      data: {
+        'idx_root': idxRoot,
+        'content': content,
+        if (idxParent != null) 'idx_parent': idxParent,
+      },
+    );
+    return Post.fromJson(result);
+  }
+
+  /// 댓글 수정
+  ///
+  /// API: post.commentUpdate (인증 필수, 작성자 또는 관리자)
+  /// 자식 댓글이 있으면 수정 불가
+  ///
+  /// [idx] 댓글 idx
+  /// [content] 수정할 내용
+  /// 반환: 수정된 댓글 Post 객체
+  static Future<Post> updateComment({
+    required int idx,
+    required String content,
+  }) async {
+    final result = await ApiService.v7api(
+      'post.commentUpdate',
+      data: {
+        'idx': idx,
+        'content': content,
+      },
+    );
+    return Post.fromJson(result);
+  }
+
+  /// 댓글 삭제
+  ///
+  /// API: post.commentDelete (인증 필수, 작성자 또는 관리자)
+  /// 자식 댓글이 있으면 삭제 불가
+  ///
+  /// [idx] 댓글 idx
+  static Future<void> deleteComment(int idx) async {
+    await ApiService.v7api('post.commentDelete', data: {'idx': idx});
+  }
 }
