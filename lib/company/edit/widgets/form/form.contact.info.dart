@@ -11,7 +11,7 @@ class CompanyContactInfoForm extends StatelessWidget {
   final TextEditingController kakaoController;
   final TextEditingController telegramController;
 
-  const CompanyEditForm2({
+  const CompanyContactInfoForm({
     super.key,
     required this.locationController,
     required this.addressController,

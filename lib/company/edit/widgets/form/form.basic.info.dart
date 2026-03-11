@@ -29,7 +29,7 @@ class CompanyBasicInfoForm extends StatelessWidget {
     ('etc', 'Other', FontAwesomeIcons.ellipsis),
   ];
 
-  const CompanyEditForm1({
+  const CompanyBasicInfoForm({
     super.key,
     required this.nameController,
     required this.titleController,

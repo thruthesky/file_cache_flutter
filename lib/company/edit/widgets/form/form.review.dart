@@ -17,7 +17,7 @@ class CompanyReviewForm extends StatelessWidget {
   final String? titleImageUrl;
   final String? photoUrl;
 
-  const CompanyEditForm4({
+  const CompanyReviewForm({
     super.key,
     required this.name,
     required this.category,
