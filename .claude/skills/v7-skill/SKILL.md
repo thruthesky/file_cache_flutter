@@ -645,6 +645,23 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
+## 🔴🔴🔴 Flutter Driver / E2E 테스트 절대 금지 🔴🔴🔴
+
+> **⛔ Flutter 앱 개발 또는 소스 코딩 시 Flutter Driver 테스트, E2E 테스트, Integration Test를 절대로 작성하거나 실행하지 않는다. ⛔**
+
+| 금지 항목 | 설명 |
+|-----------|------|
+| ❌ **flutter_driver** | `flutter_driver` 패키지를 사용한 테스트 코드 작성 금지 |
+| ❌ **integration_test** | `integration_test` 패키지를 사용한 테스트 코드 작성 금지 |
+| ❌ **flutter_test** | `flutter_test` 패키지를 사용한 위젯/유닛 테스트 코드 작성 금지 |
+| ❌ **테스트 디렉토리** | `test/`, `integration_test/`, `test_driver/` 디렉토리에 파일 생성 금지 |
+| ❌ **테스트 실행 명령** | `flutter drive`, `flutter test` 등 테스트 실행 명령어 사용 금지 |
+
+- 테스트가 필요한 경우 **CLAUDE.md의 "Debugging with Dart Tooling Daemon (DTD)" 섹션에 정의된 DTD 방식만** 사용한다.
+- DTD 방식: hot reload를 사용하여 `initState()`에 임시 테스트 코드를 주입하는 방식
+
+---
+
 ## 🔴🔴🔴 Flutter v7 코드 저장 경로 — 예외 없음 🔴🔴🔴
 
 > **필고 앱(Flutter) 프로젝트 루트 경로:**

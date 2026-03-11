@@ -7,15 +7,26 @@ import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
+/// 세로선 색상 (Reddit 스타일)
+const kThreadLineColor = Color(0xFF94A3B8);
+
 /// 댓글 단일 타일
 ///
 /// 댓글 표시, 좋아요, 대댓글, 수정, 삭제 기능을 제공한다.
+/// [showThreadLine]이 true이면 아바타 아래에서 세로선이 시작되어
+/// 코멘트 하단까지 연결된다. (자식 코멘트가 있는 경우)
 class CommentTile extends StatefulWidget {
   final Post comment;
   final List<Post> allComments;
   final VoidCallback onReply;
   final Future<void> Function(Post comment, String content) onEdit;
   final Future<void> Function(Post comment) onDelete;
+
+  /// 자식 존재 여부 (외부에서 트리 구조 기반으로 전달)
+  final bool hasChildren;
+
+  /// 아바타 아래 세로선 표시 여부 (자식이 있는 노드에서 true)
+  final bool showThreadLine;
 
   const CommentTile({
     super.key,
@@ -24,6 +35,8 @@ class CommentTile extends StatefulWidget {
     required this.onReply,
     required this.onEdit,
     required this.onDelete,
+    this.hasChildren = false,
+    this.showThreadLine = false,
   });
 
   @override
@@ -51,11 +64,6 @@ class _CommentTileState extends State<CommentTile> {
     } catch (_) {}
   }
 
-  /// 현재 댓글에 자식 댓글이 있는지 확인
-  bool _hasChildren() {
-    return widget.allComments.any((c) => c.idxParent == widget.comment.idx);
-  }
-
   @override
   Widget build(BuildContext context) {
     final comment = widget.comment;
@@ -63,160 +71,233 @@ class _CommentTileState extends State<CommentTile> {
     final scheme = theme.colorScheme;
     final userState = Provider.of<UserState>(context, listen: false);
     final isMine = userState.isLoggedIn && userState.idx == comment.idxMember;
-    final hasChildren = _hasChildren();
-
-    // depth 1 = 댓글, depth 2+ = 대댓글 (들여쓰기)
-    final indent = ((comment.depth - 1) * 20.0).clamp(0.0, 60.0);
-    final isReply = comment.depth > 1;
+    final hasChildren = widget.hasChildren;
 
     // 아바타 이니셜
     final initial =
         comment.userName.isNotEmpty ? comment.userName[0].toUpperCase() : '?';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(16 + indent, 8, 16, 0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    // 세로선 표시 여부에 따라 레이아웃 분기
+    if (widget.showThreadLine) {
+      return _buildWithThreadLine(
+        context,
+        comment: comment,
+        theme: theme,
+        scheme: scheme,
+        isMine: isMine,
+        hasChildren: hasChildren,
+        initial: initial,
+      );
+    }
+
+    return _buildNormal(
+      context,
+      comment: comment,
+      theme: theme,
+      scheme: scheme,
+      isMine: isMine,
+      hasChildren: hasChildren,
+      initial: initial,
+    );
+  }
+
+  /// 세로선 포함 레이아웃 (자식 있는 노드)
+  ///
+  /// IntrinsicHeight > Row 구조로 아바타 아래에서 코멘트 하단까지
+  /// 세로선이 연결된다.
+  Widget _buildWithThreadLine(
+    BuildContext context, {
+    required Post comment,
+    required ThemeData theme,
+    required ColorScheme scheme,
+    required bool isMine,
+    required bool hasChildren,
+    required String initial,
+  }) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 아바타 + 세로선 컬럼
+          Column(
             children: [
-              // 아바타
+              const SizedBox(height: 8),
               CircleAvatar(
-                radius: 18,
+                radius: 16,
                 backgroundColor: scheme.primaryContainer,
                 child: Text(
                   initial,
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: scheme.onPrimaryContainer,
                     fontWeight: FontWeight.w600,
+                    fontSize: 12,
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-
+              const SizedBox(height: 2),
+              // 세로선: 아바타 하단에서 코멘트 하단까지
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 대댓글 표시
-                    if (isReply)
-                      Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.downRight,
-                            size: 12,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '답글',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                    // 작성자 + 날짜
-                    Row(
-                      children: [
-                        if (comment.userName.isNotEmpty) ...[
-                          Text(
-                            comment.userName,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurface,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                        Text(
-                          _formatDate(comment.stamp),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 4),
-
-                    // 내용
-                    Text(
-                      comment.content,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurface,
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
+                child: Center(
+                  child: Container(
+                    width: 1,
+                    color: kThreadLineColor,
+                  ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(width: 8),
+          // 내용 컬럼
+          Expanded(
+            child: _buildContentColumn(
+              comment: comment,
+              theme: theme,
+              scheme: scheme,
+              isMine: isMine,
+              hasChildren: hasChildren,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 기본 레이아웃 (자식 없는 노드)
+  Widget _buildNormal(
+    BuildContext context, {
+    required Post comment,
+    required ThemeData theme,
+    required ColorScheme scheme,
+    required bool isMine,
+    required bool hasChildren,
+    required String initial,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: scheme.primaryContainer,
+            child: Text(
+              initial,
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: scheme.onPrimaryContainer,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildContentColumn(
+              comment: comment,
+              theme: theme,
+              scheme: scheme,
+              isMine: isMine,
+              hasChildren: hasChildren,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 내용 컬럼 (작성자, 날짜, 내용, 첨부파일, 액션바)
+  Widget _buildContentColumn({
+    required Post comment,
+    required ThemeData theme,
+    required ColorScheme scheme,
+    required bool isMine,
+    required bool hasChildren,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.showThreadLine) const SizedBox(height: 8),
+
+        // 작성자 + 날짜
+        Row(
+          children: [
+            if (comment.userName.isNotEmpty) ...[
+              Flexible(
+                child: Text(
+                  comment.userName,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              _formatDate(comment.stamp),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 4),
+
+        // 내용
+        Text(
+          comment.content,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: scheme.onSurface,
+            height: 1.5,
           ),
         ),
 
         // 첨부 파일
         if (comment.imageUrl != null || comment.videoUrl != null)
-          Padding(
-            padding: EdgeInsets.only(left: indent),
-            child: PostViewFiles(post: comment),
-          ),
+          PostViewFiles(post: comment),
 
         // 액션 바
-        Padding(
-          padding: EdgeInsets.fromLTRB(8 + indent, 0, 8, 0),
-          child: Row(
-            children: [
-              // 좋아요
-              PostActionButton(
-                icon: _liked
-                    ? FontAwesomeIcons.solidThumbsUp
-                    : FontAwesomeIcons.lightThumbsUp,
-                label: '${_goodCount > 0 ? _goodCount : ''}',
-                color: _liked ? scheme.primary : scheme.onSurfaceVariant,
-                onTap: _toggleLike,
-              ),
-              const SizedBox(width: 8),
-              // 답글
-              PostActionButton(
-                icon: FontAwesomeIcons.lightReply,
-                label: '답글',
-                color: scheme.onSurfaceVariant,
-                onTap: widget.onReply,
-              ),
+        Row(
+          children: [
+            // 좋아요
+            PostActionButton(
+              icon: _liked
+                  ? FontAwesomeIcons.solidThumbsUp
+                  : FontAwesomeIcons.lightThumbsUp,
+              label: '${_goodCount > 0 ? _goodCount : ''}',
+              color: _liked ? scheme.primary : scheme.onSurfaceVariant,
+              onTap: _toggleLike,
+            ),
+            const SizedBox(width: 8),
+            // 답글
+            PostActionButton(
+              icon: FontAwesomeIcons.lightReply,
+              label: '답글',
+              color: scheme.onSurfaceVariant,
+              onTap: widget.onReply,
+            ),
 
-              const Spacer(),
+            const Spacer(),
 
-              if (isMine) ...[
-                // 수정 (자식 댓글 없을 때만)
-                if (!hasChildren)
-                  PostActionButton(
-                    icon: FontAwesomeIcons.lightPenToSquare,
-                    label: '수정',
-                    color: scheme.onSurfaceVariant,
-                    onTap: () => _showEditDialog(context),
-                  ),
-                if (!hasChildren) const SizedBox(width: 8),
-                // 삭제 (자식 댓글 없을 때만)
-                if (!hasChildren)
-                  PostActionButton(
-                    icon: FontAwesomeIcons.lightTrashCan,
-                    label: '삭제',
-                    color: scheme.error,
-                    onTap: () => _confirmDelete(context),
-                  ),
-              ],
+            if (isMine) ...[
+              if (!hasChildren)
+                PostActionButton(
+                  icon: FontAwesomeIcons.lightPenToSquare,
+                  label: '수정',
+                  color: scheme.onSurfaceVariant,
+                  onTap: () => _showEditDialog(context),
+                ),
+              if (!hasChildren) const SizedBox(width: 8),
+              if (!hasChildren)
+                PostActionButton(
+                  icon: FontAwesomeIcons.lightTrashCan,
+                  label: '삭제',
+                  color: scheme.error,
+                  onTap: () => _confirmDelete(context),
+                ),
             ],
-          ),
-        ),
-
-        Divider(
-          color: scheme.outlineVariant,
-          height: 24,
-          indent: 16 + indent,
-          endIndent: 16,
+          ],
         ),
       ],
     );

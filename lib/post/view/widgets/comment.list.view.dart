@@ -3,10 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/comment.input.dart';
 import 'package:philgo/post/view/widgets/comment.tile.dart';
+import 'package:philgo/post/view/widgets/comment_thread_painter.dart';
 
 /// 댓글 목록 위젯
 ///
-/// 댓글 목록 표시, 댓글 생성 폼, 대댓글 폼을 포함한다.
+/// Reddit 스타일 세로선(thread line)을 포함한 트리 기반 코멘트 렌더링.
+/// 플랫 리스트를 트리 구조로 변환하여 부모-자식 관계를 시각적으로 표현한다.
 class CommentListView extends StatefulWidget {
   final List<Post> comments;
   final bool isLoading;
@@ -34,6 +36,21 @@ class CommentListView extends StatefulWidget {
 class _CommentListViewState extends State<CommentListView> {
   /// 대댓글 대상 댓글 idx (null이면 최상위 댓글 입력 모드)
   int? _replyToIdx;
+
+  /// 세로선 색상
+  static const _lineColor = Color(0xFF94A3B8);
+
+  /// 아바타 반지름
+  static const _avatarRadius = 16.0;
+
+  /// 코멘트 행 상단 패딩
+  static const _commentTopPadding = 8.0;
+
+  /// 커넥터 너비 (곡선 수평 길이)
+  static const _connectorWidth = 16.0;
+
+  /// 곡선 타겟 Y (자식 아바타 중앙 = topPadding + avatarRadius)
+  static const _curveTargetY = _commentTopPadding + _avatarRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -82,32 +99,7 @@ class _CommentListViewState extends State<CommentListView> {
             ),
           )
         else
-          for (final comment in widget.comments) ...[
-            CommentTile(
-              comment: comment,
-              allComments: widget.comments,
-              onReply: () {
-                setState(() {
-                  // 토글: 같은 댓글 클릭 시 대댓글 폼 닫기
-                  _replyToIdx =
-                      _replyToIdx == comment.idx ? null : comment.idx;
-                });
-              },
-              onEdit: widget.onEditComment,
-              onDelete: widget.onDeleteComment,
-            ),
-            // 대댓글 입력 폼 (해당 댓글 아래에 표시)
-            if (_replyToIdx == comment.idx)
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  16 + ((comment.depth) * 20.0).clamp(0.0, 60.0),
-                  0,
-                  16,
-                  8,
-                ),
-                child: _buildReplyInput(comment),
-              ),
-          ],
+          _buildCommentTree(),
 
         const SizedBox(height: 8),
 
@@ -119,6 +111,107 @@ class _CommentListViewState extends State<CommentListView> {
           },
         ),
       ],
+    );
+  }
+
+  /// 트리 기반 코멘트 렌더링
+  Widget _buildCommentTree() {
+    final treeRoots = buildCommentTree(widget.comments);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var i = 0; i < treeRoots.length; i++) ...[
+            // 최상위 코멘트 간 구분선
+            if (i > 0)
+              Divider(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                height: 8,
+              ),
+            _buildCommentNode(treeRoots[i]),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 재귀적 코멘트 노드 렌더링 (세로선 포함)
+  Widget _buildCommentNode(CommentNode node) {
+    final hasChildren = node.children.isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 코멘트 타일
+        CommentTile(
+          comment: node.comment,
+          allComments: widget.comments,
+          hasChildren: hasChildren,
+          showThreadLine: hasChildren,
+          onReply: () {
+            setState(() {
+              _replyToIdx = _replyToIdx == node.comment.idx
+                  ? null
+                  : node.comment.idx;
+            });
+          },
+          onEdit: widget.onEditComment,
+          onDelete: widget.onDeleteComment,
+        ),
+
+        // 대댓글 입력 폼
+        if (_replyToIdx == node.comment.idx)
+          Padding(
+            padding: const EdgeInsets.only(left: 40),
+            child: _buildReplyInput(node.comment),
+          ),
+
+        // 자식 영역 (세로선 포함)
+        if (hasChildren) _buildChildrenArea(node),
+      ],
+    );
+  }
+
+  /// 자식 코멘트 영역 (세로선 + 곡선 연결선 포함)
+  ///
+  /// 부모 아바타 중앙에서 세로선이 시작되어 마지막 직접 자식까지 연결된다.
+  Widget _buildChildrenArea(CommentNode parentNode) {
+    final children = parentNode.children;
+
+    return Padding(
+      // 부모 아바타 중앙 기준 들여쓰기 (avatarRadius = 16)
+      padding: const EdgeInsets.only(left: _avatarRadius),
+      child: Column(
+        children: [
+          for (var i = 0; i < children.length; i++)
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // 세로선 + L곡선 커넥터
+                  SizedBox(
+                    width: _connectorWidth,
+                    child: CustomPaint(
+                      painter: ThreadConnectorPainter(
+                        isLast: i == children.length - 1,
+                        lineColor: _lineColor,
+                        curveTargetY: _curveTargetY,
+                        curveRadius: 8.0,
+                      ),
+                    ),
+                  ),
+
+                  // 자식 코멘트 노드 (재귀)
+                  Expanded(
+                    child: _buildCommentNode(children[i]),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 
