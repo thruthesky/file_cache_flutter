@@ -1,6 +1,3 @@
-[submodule ".claude/skills/flutter-skill"]
-	path = .claude/skills/flutter-skill
-	url = https://github.com/thruthesky/flutter-skill
 [submodule ".claude/skills/open-mateo-skill"]
 	path = .claude/skills/open-mateo-skill
 	url = https://github.com/thruthesky/open-meteo-skill
