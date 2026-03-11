@@ -22,13 +22,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Column(
       children: [
-        /// 상단 SafeArea 및 헤더 (Top SafeArea and Header)
-        /// Comic Design: 1.0px bottom border with outlineVariant color
         SafeArea(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              // Comic design: 1.0px border with outlineVariant color (matches bottom nav)
               border: Border(
                 bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
               ),
@@ -36,7 +33,6 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                /// 채팅 타이틀 (Chat Title)
                 Text(
                   "Chat",
                   style: theme.textTheme.titleLarge!.copyWith(
@@ -45,9 +41,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
 
                 const Spacer(),
-
-                /// 즐겨찾기 버튼 (Favorite/Bookmark Button)
-                /// 즐겨찾기 폴더 목록을 표시하고 선택한 폴더의 채팅 목록을 보여줌
                 IconButton(
                   icon: FaIcon(
                     FontAwesomeIcons.sharpSolidStar,
@@ -55,13 +48,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     color: scheme.onSurfaceVariant,
                   ),
                   onPressed: () async {
-                    // 즐겨찾기 폴더 목록 다이얼로그 표시
                     final folderName = await showDialog<String>(
                       context: context,
                       builder: (context) => const FavoriteFoldersDialog(),
                     );
 
-                    // 폴더가 선택되면 해당 폴더의 북마크된 채팅 목록 표시
                     if (folderName != null && context.mounted) {
                       await showDialog(
                         context: context,
@@ -72,8 +63,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
 
-                /// 사용자 검색 버튼 (User Search Button)
-                /// 사용자를 검색하여 1:1 채팅방으로 이동
                 IconButton(
                   icon: FaIcon(
                     FontAwesomeIcons.lightUserMagnifyingGlass,
@@ -83,14 +72,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () async {
                     final uid = await showUserSearchDialog(context);
                     if (uid != null && context.mounted) {
-                      // Navigate to chat room if a room ID is returned
                       ChatRoomScreen.push(context, uid);
                     }
                   },
                 ),
 
-                /// 채팅 메뉴 버튼 (운영자 문의 등)
-                /// Chat Menu Button (Admin contact, etc.)
                 PopupMenuButton<String>(
                   icon: FaIcon(
                     FontAwesomeIcons.bars,
@@ -128,7 +114,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ),
-        // 고정된 채팅방 목록 (가로 스크롤)
         PinnedChatRoomsList(
           onTap: (roomId) {
             ChatRoomScreen.push(context, roomId);
@@ -136,7 +121,6 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         Expanded(
           child: ChatRoomListView(
-            order: 'singleOrder',
             onTap: (roomId) {
               ChatRoomScreen.push(context, roomId);
             },

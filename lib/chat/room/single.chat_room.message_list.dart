@@ -140,16 +140,6 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
 
             final message = ChatMessage.fromDataSnapshot(messageDoc);
 
-            final isCurrentUser = message.senderUid == myUid();
-
-            // Determine if sender info should be shown
-            // bool showSenderInfo = true;
-
-            // if (!isSingleChat && index < snapshot.docs.length - 1) {
-            //   final nextMessageDoc = snapshot.docs[index + 1];
-            //   final nextMessage = ChatMessage.fromDataSnapshot(nextMessageDoc);
-            //   showSenderInfo = nextMessage.senderUid != message.senderUid;
-            // }
             return FutureBuilder<UserFirebaseModel?>(
               key: ValueKey(
                 'user_${message.senderUid}',
@@ -167,12 +157,10 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
                   ), // Add key for message bubble
                   message: message,
                   sender: userData,
-                  isCurrentUser: isCurrentUser,
+                  isCurrentUser: message.senderUid == myUid(),
                   showSenderInfo:
                       false, // isSingleChat ? false : showSenderInfo,
-                  roomBlocksAdvertisement: false, // room.blockAdvertisement,
                   roomId: widget.roomId,
-                  isSingleChat: true,
                   onImageTap: (String url) async {
                     // Extract all image URLs from current messages as a map
                     final allImageUrlsMap = _extractAllImageUrls(snapshot.docs);

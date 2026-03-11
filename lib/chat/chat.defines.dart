@@ -7,41 +7,23 @@ const String USERS = 'users';
 const String DISPLAY_NAME = 'display_name';
 const String PHOTO_URL = 'photoUrl';
 
-const String ROOM = 'room';
 const String MESSAGE = 'message';
+const String ROOM = 'room';
 
-const String ORDER = 'order';
 const String SINGLE_ORDER = 'singleOrder';
-const String GROUP_ORDER = 'groupOrder';
-const String OPEN_ORDER = 'openOrder';
 
 const String JOIN_NICKNAME = 'nickname';
 const String JOIN_PHOTO_URL = 'photoUrl';
-
-const String ROOM_USERS = 'users';
-const String ROOM_MASTER_USERS = 'masterUsers';
-const String ROOM_INVITED_USERS = 'invitedUsers';
-const String ROOM_NAME = 'name';
-const String ROOM_DESCRIPTION = 'description';
-const String ROOM_IMAGE_URL = 'imageUrl';
-const String ROOM_OPEN = 'open';
-const String ROOM_TEST = 'test';
-const String ROOM_BLOCK_ADVERTISEMENT = 'block_advertisement';
 
 const String SENDER_UID = 'senderUid';
 const String PROTOCOL = 'protocol';
 
 const String SENT_AT = 'sentAt';
 
-class RoomOrder {
-  static const order = ORDER;
-  static const singleOrder = SINGLE_ORDER;
-  static const groupOrder = GROUP_ORDER;
-  static const openOrder = OPEN_ORDER;
-}
-
 const String UNREAD = 'unread';
 const String LAST_READ_AT = 'lastReadAt';
+
+const String CREATED_AT = 'created_at';
 
 const String SINGLE_CHATROOM_JOIN_SEPARATOR = '---';
 

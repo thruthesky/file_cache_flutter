@@ -6,7 +6,6 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/models/chat.message.dart';
-import 'package:philgo/chat/room/chat.room_screen.dart';
 import 'package:philgo/user/user.firebase_model.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/widgets/avatar.dart';
@@ -22,10 +21,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
   final UserFirebaseModel? sender;
   final bool isCurrentUser;
   final bool showSenderInfo;
-  final bool?
-  roomBlocksAdvertisement; // Add room advertisement blocking setting
   final String? roomId; // Add roomId for reporting functionality
-  final bool isSingleChat; // Add flag to identify single chat rooms
   final Function(String url)? onImageTap;
 
   const ChatRoomMessageBubble({
@@ -34,9 +30,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     this.sender,
     required this.isCurrentUser,
     this.showSenderInfo = true,
-    this.roomBlocksAdvertisement,
     this.roomId,
-    this.isSingleChat = false,
     this.onImageTap,
   });
   @override
@@ -44,9 +38,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
     // Check if this is a protocol message
     if (ChatProtocol.isProtocolMessage(message.protocol)) {
       // Hide join and left messages for single chats
-      if (isSingleChat &&
-          (message.protocol == ChatProtocol.join ||
-              message.protocol == ChatProtocol.left)) {
+      if (message.protocol == ChatProtocol.join ||
+          message.protocol == ChatProtocol.left) {
         return const SizedBox.shrink(); // Return empty widget
       }
       return _buildProtocolMessage(context);
@@ -195,20 +188,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                 options: LinkifyOptions(humanize: false),
                                 onOpen: (link) async {
                                   log(link.toString(), name: 'link:onOpen');
-                                  if (link.url.contains(
-                                    '/chat/rooms.php?id=',
-                                  )) {
-                                    // Open chat room links within the app
-                                    String? roomId = Uri.parse(
-                                      link.url,
-                                    ).queryParameters['id'];
-                                    if (roomId != null && roomId.isNotEmpty) {
-                                      if (context.mounted) {
-                                        ChatRoomScreen.push(context, roomId);
-                                      }
-                                      return;
-                                    }
-                                  }
 
                                   if (!await launchUrl(Uri.parse(link.url))) {
                                     throw Exception(
@@ -375,11 +354,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
   bool _shouldBlindMessage() {
     // Blind if moderated by AI (M)
     if (message.moderated == 'M') {
-      return true;
-    }
-
-    // Blind if it's an advertisement (A) and room blocks advertisements
-    if (message.moderated == 'A' && roomBlocksAdvertisement == true) {
       return true;
     }
 
@@ -693,11 +667,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           otherUserUid: sender!.uid,
           displayName: sender!.nickname,
           onBlocked: () {
-            // Optionally refresh or show success message
-            if (isSingleChat) {
-              // Close the chat message if it's a single chat
-              Navigator.of(context).pop();
-            }
+            Navigator.of(context).pop();
           },
         ),
       ),
