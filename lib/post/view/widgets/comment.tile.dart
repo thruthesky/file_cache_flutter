@@ -258,46 +258,49 @@ class _CommentTileState extends State<CommentTile> {
           PostViewFiles(post: comment),
 
         // 액션 바
-        Row(
-          children: [
-            // 좋아요
-            PostActionButton(
-              icon: _liked
-                  ? FontAwesomeIcons.solidThumbsUp
-                  : FontAwesomeIcons.lightThumbsUp,
-              label: '${_goodCount > 0 ? _goodCount : ''}',
-              color: _liked ? scheme.primary : scheme.onSurfaceVariant,
-              onTap: _toggleLike,
-            ),
-            const SizedBox(width: 8),
-            // 답글
-            PostActionButton(
-              icon: FontAwesomeIcons.lightReply,
-              label: '답글',
-              color: scheme.onSurfaceVariant,
-              onTap: widget.onReply,
-            ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              // 좋아요
+              PostActionButton(
+                icon: _liked
+                    ? FontAwesomeIcons.solidThumbsUp
+                    : FontAwesomeIcons.lightThumbsUp,
+                label: '${_goodCount > 0 ? _goodCount : ''}',
+                color: _liked ? scheme.primary : scheme.onSurfaceVariant,
+                onTap: _toggleLike,
+              ),
+              const SizedBox(width: 8),
+              // 답글
+              PostActionButton(
+                icon: FontAwesomeIcons.lightReply,
+                label: '답글',
+                color: scheme.onSurfaceVariant,
+                onTap: widget.onReply,
+              ),
 
-            const Spacer(),
+              const SizedBox(width: 12),
 
-            if (isMine) ...[
-              if (!hasChildren)
-                PostActionButton(
-                  icon: FontAwesomeIcons.lightPenToSquare,
-                  label: '수정',
-                  color: scheme.onSurfaceVariant,
-                  onTap: () => _showEditDialog(context),
-                ),
-              if (!hasChildren) const SizedBox(width: 8),
-              if (!hasChildren)
-                PostActionButton(
-                  icon: FontAwesomeIcons.lightTrashCan,
-                  label: '삭제',
-                  color: scheme.error,
-                  onTap: () => _confirmDelete(context),
-                ),
+              if (isMine) ...[
+                if (!hasChildren)
+                  PostActionButton(
+                    icon: FontAwesomeIcons.lightPenToSquare,
+                    label: '수정',
+                    color: scheme.onSurfaceVariant,
+                    onTap: () => _showEditDialog(context),
+                  ),
+                if (!hasChildren) const SizedBox(width: 8),
+                if (!hasChildren)
+                  PostActionButton(
+                    icon: FontAwesomeIcons.lightTrashCan,
+                    label: '삭제',
+                    color: scheme.error,
+                    onTap: () => _confirmDelete(context),
+                  ),
+              ],
             ],
-          ],
+          ),
         ),
       ],
     );
