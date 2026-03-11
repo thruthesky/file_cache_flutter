@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
+import 'package:philgo/app/app.service.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/user/user.state.dart';
@@ -52,6 +53,7 @@ class _MyAppState extends State<PhilGoV7App> {
     super.initState();
     // FirebaseAuth 상태 변화 구독 시작 (로그인/로그아웃 자동 감지)
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppService.initialize(context: globalContext);
       context.read<UserState>().listenAuthState();
     });
   }
