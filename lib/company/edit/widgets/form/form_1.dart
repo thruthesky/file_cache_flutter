@@ -106,8 +106,6 @@ class _CategoryGrid extends StatelessWidget {
   final ValueChanged<String?> onSelected;
   final List<(String, String, IconData)> categories;
 
-  static const _activeColor = Color(0xFFFF6D00);
-
   const _CategoryGrid({
     required this.selected,
     required this.onSelected,
@@ -117,6 +115,7 @@ class _CategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final activeColor = scheme.primary;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -140,11 +139,11 @@ class _CategoryGrid extends StatelessWidget {
                 height: tileSize,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? _activeColor.withValues(alpha: 0.12)
+                      ? activeColor.withValues(alpha: 0.12)
                       : scheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: isSelected ? _activeColor : Colors.transparent,
+                    color: isSelected ? activeColor : Colors.transparent,
                     width: 1.5,
                   ),
                 ),
@@ -155,7 +154,7 @@ class _CategoryGrid extends StatelessWidget {
                       icon,
                       size: 20,
                       color: isSelected
-                          ? _activeColor
+                          ? activeColor
                           : scheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 5),
@@ -164,7 +163,7 @@ class _CategoryGrid extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         height: 1.2,
-                        color: isSelected ? _activeColor : scheme.onSurface,
+                        color: isSelected ? activeColor : scheme.onSurface,
                         fontWeight: isSelected
                             ? FontWeight.w700
                             : FontWeight.normal,

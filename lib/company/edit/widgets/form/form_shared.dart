@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const kFormActiveColor = Color(0xFFFF6D00);
+// Use colorScheme.primary from context instead of a hardcoded color
 
 /// Shared form field label wrapper
 class FormFieldLabel extends StatelessWidget {
@@ -29,10 +29,10 @@ class FormFieldLabel extends StatelessWidget {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             if (required)
-              const Text(
+              Text(
                 ' *',
                 style: TextStyle(
-                  color: kFormActiveColor,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),

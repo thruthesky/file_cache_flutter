@@ -19,8 +19,8 @@ class FormStepTracker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const activeColor = Color(0xFFFF6D00);
     final scheme = Theme.of(context).colorScheme;
+    final activeColor = scheme.primary;
 
     return Column(
       children: [

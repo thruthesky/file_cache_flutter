@@ -130,9 +130,9 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'),
-          backgroundColor: Color(0xFFFF6D00),
+        SnackBar(
+          content: const Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
       Navigator.of(context).pop(true); // return true = updated
@@ -268,7 +268,6 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
                     ? null
                     : (isLastStep ? _save : _goNext),
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6D00),
                   minimumSize: const Size(double.infinity, 44),
                 ),
                 child: _isSaving

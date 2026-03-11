@@ -97,7 +97,7 @@ class CompanyEditForm4 extends StatelessWidget {
           const SizedBox(height: 20),
           _InfoBanner(
             icon: FontAwesomeIcons.circleInfo,
-            color: const Color(0xFFFF6D00),
+            color: Theme.of(context).colorScheme.primary,
             text:
                 '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.',
           ),
