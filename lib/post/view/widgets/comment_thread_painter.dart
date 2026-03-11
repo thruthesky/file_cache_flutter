@@ -7,9 +7,13 @@ import 'package:philgo/post/post.model.dart';
 class CommentNode {
   final Post comment;
   final List<CommentNode> children;
+  final int depth;
 
-  CommentNode({required this.comment, List<CommentNode>? children})
-      : children = children ?? [];
+  CommentNode({
+    required this.comment,
+    List<CommentNode>? children,
+    this.depth = 1,
+  }) : children = children ?? [];
 }
 
 /// 플랫 코멘트 리스트를 트리 구조로 변환
@@ -29,15 +33,16 @@ List<CommentNode> buildCommentTree(List<Post> flatComments) {
     }
   }
 
-  CommentNode buildNode(Post comment) {
+  CommentNode buildNode(Post comment, {int nodeDepth = 1}) {
     final children = childrenMap[comment.idx] ?? [];
     return CommentNode(
       comment: comment,
-      children: children.map(buildNode).toList(),
+      children: children.map((child) => buildNode(child, nodeDepth: nodeDepth + 1)).toList(),
+      depth: nodeDepth,
     );
   }
 
-  return roots.map(buildNode).toList();
+  return roots.map((root) => buildNode(root, nodeDepth: 1)).toList();
 }
 
 /// Reddit 스타일 세로선 + L곡선 커넥터 페인터
