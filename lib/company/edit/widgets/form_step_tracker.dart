@@ -19,37 +19,78 @@ class FormStepTracker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     const activeColor = Color(0xFFFF6D00);
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
-        Row(
-          children: List.generate(totalSteps * 2 - 1, (i) {
-            if (i.isOdd) {
-              // connector line
-              final stepIndex = i ~/ 2;
-              final isCompleted = stepIndex < currentStep;
-              return Expanded(
-                child: Container(
-                  height: 2,
-                  color: isCompleted ? activeColor : colorScheme.outlineVariant,
+        // Circles + connector lines in a single Stack layer
+        SizedBox(
+          height: 28,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Connector lines drawn behind circles
+              Positioned.fill(
+                child: Row(
+                  children: List.generate(totalSteps, (i) {
+                    final leftCompleted = i > 0 && i <= currentStep;
+                    final rightCompleted = i < totalSteps - 1 && i < currentStep;
+                    return Expanded(
+                      child: Row(
+                        children: [
+                          // Left half-line (skip for first step)
+                          Expanded(
+                            child: i == 0
+                                ? const SizedBox.shrink()
+                                : Container(
+                                    height: 2,
+                                    color: leftCompleted
+                                        ? activeColor
+                                        : scheme.outlineVariant,
+                                  ),
+                          ),
+                          // Placeholder for the circle width
+                          const SizedBox(width: 28),
+                          // Right half-line (skip for last step)
+                          Expanded(
+                            child: i == totalSteps - 1
+                                ? const SizedBox.shrink()
+                                : Container(
+                                    height: 2,
+                                    color: rightCompleted
+                                        ? activeColor
+                                        : scheme.outlineVariant,
+                                  ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
                 ),
-              );
-            }
-            final stepIndex = i ~/ 2;
-            final isCompleted = stepIndex < currentStep;
-            final isActive = stepIndex == currentStep;
-
-            return _StepCircle(
-              index: stepIndex,
-              isCompleted: isCompleted,
-              isActive: isActive,
-              activeColor: activeColor,
-              colorScheme: colorScheme,
-            );
-          }),
+              ),
+              // Circles drawn on top
+              Row(
+                children: List.generate(totalSteps, (i) {
+                  final isCompleted = i < currentStep;
+                  final isActive = i == currentStep;
+                  return Expanded(
+                    child: Center(
+                      child: _StepCircle(
+                        index: i,
+                        isCompleted: isCompleted,
+                        isActive: isActive,
+                        activeColor: activeColor,
+                        scheme: scheme,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
+        // Labels row
         if (labels != null && labels!.length == totalSteps) ...[
           const SizedBox(height: 6),
           Row(
@@ -60,8 +101,8 @@ class FormStepTracker extends StatelessWidget {
                   labels![i],
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 10,
-                    color: isActive ? activeColor : colorScheme.onSurfaceVariant,
+                    fontSize: 11,
+                    color: isActive ? activeColor : scheme.onSurfaceVariant,
                     fontWeight:
                         isActive ? FontWeight.w700 : FontWeight.normal,
                   ),
@@ -82,42 +123,33 @@ class _StepCircle extends StatelessWidget {
   final bool isCompleted;
   final bool isActive;
   final Color activeColor;
-  final ColorScheme colorScheme;
+  final ColorScheme scheme;
 
   const _StepCircle({
     required this.index,
     required this.isCompleted,
     required this.isActive,
     required this.activeColor,
-    required this.colorScheme,
+    required this.scheme,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color bgColor;
-    Color fgColor;
+    final Color bgColor;
+    final Color fgColor;
 
-    if (isCompleted) {
-      bgColor = activeColor;
-      fgColor = Colors.white;
-    } else if (isActive) {
+    if (isCompleted || isActive) {
       bgColor = activeColor;
       fgColor = Colors.white;
     } else {
-      bgColor = colorScheme.surfaceContainerHighest;
-      fgColor = colorScheme.onSurfaceVariant;
+      bgColor = scheme.surfaceContainerHighest;
+      fgColor = scheme.onSurfaceVariant;
     }
 
     return Container(
       width: 28,
       height: 28,
-      decoration: BoxDecoration(
-        color: bgColor,
-        shape: BoxShape.circle,
-        border: isActive
-            ? Border.all(color: activeColor, width: 2)
-            : null,
-      ),
+      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
       child: Center(
         child: isCompleted
             ? Icon(Icons.check, size: 14, color: fgColor)
