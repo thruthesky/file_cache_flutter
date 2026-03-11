@@ -42,8 +42,13 @@ lib/advertisement/
 ├── AdvertisementRepository.php   # DB 접근 (14개 static 메서드)
 └── BannerEntity.php              # 배너 데이터 구조체 (EntityInterface 구현)
 
+v7/adv/
+├── banner.php                       # 배너 광고 안내 페이지 (Vue.js + v7api)
+├── massage.php                      # 마사지 배너 광고 안내 페이지 (Vue.js + v7api)
+└── massage.css                      # 마사지 배너 광고 안내 페이지 스타일
+
 tests/Unit/
-└── AdvertisementTest.php         # PEST v4 테스트 (33개 테스트, 91개 assertion)
+└── AdvertisementTest.php         # PEST v4 테스트 (57개 테스트, 260개 assertion)
 ```
 
 ### PSR-4 매핑 (composer.json)
@@ -484,7 +489,123 @@ public function topBanners(array $input): array
 | `advertisement.updateBanner` | `POST /api.php?method=advertisement.updateBanner&idx=456&idx_company=123&url=https://...` | 배너 수정 | 관리자 |
 | `advertisement.deleteBanner` | `POST /api.php?method=advertisement.deleteBanner&idx_company=123&key=123:qna:top` | 배너 삭제 | 관리자 |
 
-### 7.3 배너 조회 (홈페이지 표시용)
+### 7.3 배너 광고 안내 정보
+
+| 메서드 | 엔드포인트 | 설명 | 권한 |
+|--------|-----------|------|------|
+| `advertisement.bannerInfo` | `GET /api.php?method=advertisement.bannerInfo` | 배너 종류별 가격/기간/카테고리/환불정책/등록프로세스 조회 | 누구나 |
+
+**응답 구조:**
+
+```json
+{
+  "banner_types": {
+    "top": {
+      "name": "탑 배너",
+      "name_en": "Top Banner",
+      "size": "600 x 200",
+      "unit": "px",
+      "gif": true,
+      "position": "홈페이지 맨 위에 표시",
+      "packages": [
+        {
+          "code": "T1",
+          "name": "서브 게시판 1개",
+          "price": 21000,
+          "currency": "PHP",
+          "duration_months": 3,
+          "category_type": "minor",
+          "included_banners": [
+            {"type": "top", "size": "600 x 200", "gif": true},
+            {"type": "small", "size": "200 x 100", "gif": false}
+          ]
+        }
+      ]
+    }
+  },
+  "major_categories": {"질문답변": "qna", ...},
+  "minor_categories": {"마사지": "massage", ...},
+  "refund_policy": [
+    {"period": "결제 후 15일 이내", "rate": 65, "description": "65% 환불"},
+    {"period": "결제 후 30일 이내", "rate": 50, "description": "50% 환불"},
+    {"period": "30일 이후", "rate": 0, "description": "환불 불가"}
+  ],
+  "pause_policy": {"min_remaining_days": 7, "description": "..."},
+  "registration_process": [
+    {"step": 1, "title": "광고비 입금", "description": "..."},
+    {"step": 2, "title": "자료 제출", "description": "..."},
+    {"step": 3, "title": "배너 제작", "description": "..."},
+    {"step": 4, "title": "배너 등록", "description": "..."}
+  ]
+}
+```
+
+**JavaScript 호출 예시:**
+
+```javascript
+v7api('advertisement.bannerInfo').then(res => {
+    console.log(res.banner_types);        // 배너 종류별 상세 정보
+    console.log(res.major_categories);    // 메인 카테고리
+    console.log(res.minor_categories);    // 소 카테고리
+    console.log(res.refund_policy);       // 환불 정책
+    console.log(res.registration_process); // 등록 프로세스
+});
+```
+
+**v7 페이지:** `/adv/banner` (v7/adv/banner.php)
+
+**배너 위치 이미지:** 각 배너 타입별 위치 다이어그램 이미지가 `/res/img/banner/places/` 폴더에 존재한다:
+- `top-banner.png` — 탑 배너 위치 (헤더 좌/우)
+- `wing-banner.png` — 날개 배너 위치 (페이지 좌/우)
+- `square-banner.png` — 사각 배너 위치 (게시판 상단)
+- `small-banner.png` — 작은 배너 위치 (사각배너 아래)
+
+배너 안내 페이지에서 각 타입 카드 내에 해당 이미지를 표시하여 배너가 실제로 어디에 노출되는지 시각적으로 안내한다.
+
+### 7.3.1 마사지 배너 광고 안내 정보
+
+| 메서드 | 엔드포인트 | 설명 | 권한 |
+|--------|-----------|------|------|
+| `advertisement.massageBannerInfo` | `GET /api.php?method=advertisement.massageBannerInfo` | 마사지 업종 전용 배너 종류/비용/기간/규정/환불/입금정보 조회 | 누구나 |
+
+마사지 업종은 사각 배너(45,000 PHP/3개월)와 작은 배너(30,000 PHP/3개월)만 가능하다.
+대규모 스파 시설(100명 이상 수용)은 탑배너/날개배너도 가능 — `bannerInfo` API 참조.
+
+**응답 구조:**
+
+```json
+{
+  "banner_types": {
+    "square": {"name": "사각 배너", "price": 45000, "currency": "PHP", "duration_months": 3, "size": "400 x 400", ...},
+    "small": {"name": "작은 배너", "price": 30000, "currency": "PHP", "duration_months": 3, "size": "200 x 100", ...}
+  },
+  "spa_notice": "동시에 100명 이상 수용 가능한 스파 시설의 경우...",
+  "rules": [
+    {"title": "일반적인 마사지 내용만 포함", "items": [...]},
+    {"title": "일반적인 마사지 사진만 포함", "items": [...]},
+    {"title": "필수 포함 항목", "items": [...]}
+  ],
+  "refund_policy": [...],
+  "pause_policy": {...},
+  "payment_info": {"notice": "...", "accounts": [{...KRW...}, {...PHP...}]},
+  "marketing": {"title": "...", "description": "..."},
+  "kakaotalk_guide_url": "/page/help/kakaotalk-1-1-open-chat.php"
+}
+```
+
+**JavaScript 호출 예시:**
+
+```javascript
+v7api('advertisement.massageBannerInfo').then(res => {
+    console.log(res.banner_types);     // 사각/작은 배너 정보 (가격/기간 포함)
+    console.log(res.rules);            // 마사지 배너 규정 3개
+    console.log(res.payment_info);     // 입금 계좌 정보
+});
+```
+
+**v7 페이지:** `/adv/massage` (v7/adv/massage.php + massage.css)
+
+### 7.4 배너 조회 (홈페이지 표시용)
 
 | 메서드 | 엔드포인트 | 설명 | 권한 |
 |--------|-----------|------|------|
