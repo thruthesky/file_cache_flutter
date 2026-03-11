@@ -26,14 +26,15 @@ v7 웹 홈페이지의 세로선 구현(`v7-comment-thread-line.md`)을 Flutter 
 
 | 항목 | 설명 |
 |------|------|
-| 세로선 시작 위치 | 부모 아바타 바로 아래 (2px gap) |
+| 세로선 시작 위치 | 부모 아바타 바로 아래 (갭 없음, Align topCenter) |
 | 세로선 끝 위치 | 부모 코멘트의 내용/액션바 하단까지 (IntrinsicHeight로 자동 계산) |
 | 곡선 연결선 | 모든 직접 자식에 L자 곡선으로 연결 (CustomPainter) |
 | 마지막 자식 처리 | 곡선 연결점까지만 세로선 표시 |
-| 세로선 두께 | 1px |
+| 세로선 두께 | 1.5px |
 | 세로선 색상 | `#94A3B8` (slate-400) |
 | 아바타 크기 | radius 16 (직경 32px) |
-| 데이터 구조 | 서버 플랫 리스트 → 클라이언트 트리 변환 |
+| 깊이별 패딩 | depth < 3: 16px, depth >= 3: 6px (lineXOffset으로 보정) |
+| 데이터 구조 | 서버 플랫 리스트 → 클라이언트 트리 변환 (depth 필드 포함) |
 
 **관련 파일:**
 
@@ -59,16 +60,24 @@ v7 웹 홈페이지의 세로선 구현(`v7-comment-thread-line.md`)을 Flutter 
 - Flutter의 `IntrinsicHeight`가 자식의 intrinsic height를 계산하여 Row의 모든 자식에게 같은 높이를 강제
 - 이를 통해 아바타 Column의 `Expanded`가 내용 높이에 맞춰 세로선을 확장
 
+### 왜 lineXOffset이 필요한가?
+
+- 깊은 중첩(depth >= 3)에서 paddingLeft를 줄여 화면 공간을 절약한다
+- paddingLeft가 avatarRadius(16)보다 작아지면 세로선의 X좌표가 부모 아바타 세로선과 어긋난다
+- `lineXOffset = avatarRadius - paddingLeft`로 보정하여 부모 세로선과 정확히 정렬한다
+
 ### 해결 전략 (단계별)
 
 ```
 Step 1: 플랫 리스트 → 트리 구조 변환
   └─ buildCommentTree()로 CommentNode 트리 생성
   └─ depth == 1인 코멘트를 루트로, idxParent 기준 자식 매핑
+  └─ 각 노드에 nodeDepth 값 할당 (깊이별 패딩 계산에 사용)
 
 Step 2: 재귀적 위젯 렌더링
   └─ _buildCommentNode(node): CommentTile + 자식 영역
   └─ _buildChildrenArea(node): IntrinsicHeight > Row > [커넥터 | 자식(재귀)]
+  └─ 깊이별 동적 패딩 + lineXOffset 보정
 
 Step 3: 부모 아바타 아래 세로선 (CommentTile)
   └─ showThreadLine=true: IntrinsicHeight > Row > [아바타+세로선 Column | 내용]
@@ -77,6 +86,7 @@ Step 3: 부모 아바타 아래 세로선 (CommentTile)
 Step 4: 자식 영역 커넥터 (ThreadConnectorPainter)
   └─ 마지막 아닌 자식: 전체 높이 세로선 + L곡선
   └─ 마지막 자식: 곡선까지만 세로선 + L곡선
+  └─ lineXOffset으로 세로선 X 좌표 보정
 ```
 
 ---
@@ -100,11 +110,12 @@ lib/post/view/widgets/
 PostViewScreen
   └─ PostService.listComments(idxRoot) → List<Post> (플랫 리스트)
      └─ CommentListView(comments: flatList)
-        └─ buildCommentTree(flatList) → List<CommentNode> (트리)
+        └─ buildCommentTree(flatList) → List<CommentNode> (트리, depth 포함)
            └─ _buildCommentNode(node) (재귀 렌더링)
               ├─ CommentTile(showThreadLine: hasChildren)
               └─ _buildChildrenArea(node)
-                 └─ IntrinsicHeight > Row > [커넥터 | _buildCommentNode(child)]
+                 └─ 깊이별 paddingLeft + lineXOffset 계산
+                 └─ IntrinsicHeight > Row > [커넥터(lineXOffset) | _buildCommentNode(child)]
 ```
 
 ---
@@ -117,19 +128,30 @@ PostViewScreen
 
 ```dart
 /// 코멘트 트리 노드
+///
+/// 플랫 리스트를 트리 구조로 변환하기 위한 헬퍼 클래스.
 class CommentNode {
   final Post comment;
   final List<CommentNode> children;
+  final int depth;
 
-  CommentNode({required this.comment, List<CommentNode>? children})
-      : children = children ?? [];
+  CommentNode({
+    required this.comment,
+    List<CommentNode>? children,
+    this.depth = 1,
+  }) : children = children ?? [];
 }
 ```
+
+**depth 필드**: 트리 내 노드의 깊이를 저장한다. `_buildChildrenArea()`에서 깊이별 동적 패딩을 계산할 때 사용한다.
 
 ### 5.2 buildCommentTree() 함수
 
 ```dart
 /// 플랫 코멘트 리스트를 트리 구조로 변환
+///
+/// 서버에서 depth, idxParent 필드와 함께 플랫 리스트로 받은 코멘트를
+/// 부모-자식 관계의 트리 구조로 변환한다.
 List<CommentNode> buildCommentTree(List<Post> flatComments) {
   final Map<int, List<Post>> childrenMap = {};
   final List<Post> roots = [];
@@ -143,22 +165,23 @@ List<CommentNode> buildCommentTree(List<Post> flatComments) {
     }
   }
 
-  CommentNode buildNode(Post comment) {
+  CommentNode buildNode(Post comment, {int nodeDepth = 1}) {
     final children = childrenMap[comment.idx] ?? [];
     return CommentNode(
       comment: comment,
-      children: children.map(buildNode).toList(),
+      children: children.map((child) => buildNode(child, nodeDepth: nodeDepth + 1)).toList(),
+      depth: nodeDepth,
     );
   }
 
-  return roots.map(buildNode).toList();
+  return roots.map((root) => buildNode(root, nodeDepth: 1)).toList();
 }
 ```
 
 **동작 원리:**
 1. `depth == 1`인 코멘트 → 루트 노드 (최상위 댓글)
 2. `depth >= 2`인 코멘트 → `idxParent` 기준으로 `childrenMap`에 추가
-3. 재귀적으로 각 노드의 자식을 매핑하여 트리 구성
+3. 재귀적으로 각 노드의 자식을 매핑하며 `nodeDepth`를 증가시켜 트리 내 깊이를 추적
 
 ---
 
@@ -170,12 +193,29 @@ List<CommentNode> buildCommentTree(List<Post> flatComments) {
 
 ```dart
 /// Reddit 스타일 세로선 + L곡선 커넥터 페인터
+///
+/// 부모 코멘트에서 자식 코멘트로 연결되는 세로선과 L곡선을 그린다.
+/// - 마지막이 아닌 자식: 전체 높이 세로선 + L곡선
+/// - 마지막 자식: L곡선까지만 세로선
+///
+/// [lineXOffset]을 사용하여 세로선의 X 좌표를 조정할 수 있다.
+/// paddingLeft가 아바타 중앙(avatarRadius)보다 작을 때,
+/// lineXOffset = avatarRadius - paddingLeft 로 설정하면
+/// 부모 아바타 세로선과 정확히 정렬된다.
 class ThreadConnectorPainter extends CustomPainter {
   final bool isLast;
   final Color lineColor;
   final double lineWidth;
-  final double curveTargetY;  // 곡선 연결 Y (자식 아바타 중앙)
-  final double curveRadius;   // 곡선 반경
+
+  /// 곡선이 연결되는 Y 위치 (자식 아바타의 수직 중앙)
+  /// = 코멘트 행 상단 패딩(8) + 아바타 반지름(16) = 24
+  final double curveTargetY;
+
+  /// 곡선 반경
+  final double curveRadius;
+
+  /// 세로선 X 오프셋 (부모 아바타 세로선과 정렬하기 위한 보정값)
+  final double lineXOffset;
 
   ThreadConnectorPainter({
     required this.isLast,
@@ -183,6 +223,7 @@ class ThreadConnectorPainter extends CustomPainter {
     this.lineWidth = 1.0,
     this.curveTargetY = 24.0,
     this.curveRadius = 8.0,
+    this.lineXOffset = 0.0,
   });
 
   @override
@@ -192,18 +233,20 @@ class ThreadConnectorPainter extends CustomPainter {
       ..strokeWidth = lineWidth
       ..style = PaintingStyle.stroke;
 
-    // 세로선: 위(0)에서 아래로
+    final lx = lineXOffset;
+
+    // 세로선: 위(0)에서 아래로 (X 오프셋 적용)
     final lineEndY = isLast ? curveTargetY - curveRadius : size.height;
     canvas.drawLine(
-      const Offset(0, 0),
-      Offset(0, lineEndY),
+      Offset(lx, 0),
+      Offset(lx, lineEndY),
       paint,
     );
 
     // L곡선: 세로선에서 수평으로 꺾어서 자식 아바타까지
     final path = Path()
-      ..moveTo(0, curveTargetY - curveRadius)
-      ..quadraticBezierTo(0, curveTargetY, curveRadius, curveTargetY)
+      ..moveTo(lx, curveTargetY - curveRadius)
+      ..quadraticBezierTo(lx, curveTargetY, lx + curveRadius, curveTargetY)
       ..lineTo(size.width, curveTargetY);
 
     canvas.drawPath(path, paint);
@@ -213,6 +256,7 @@ class ThreadConnectorPainter extends CustomPainter {
   bool shouldRepaint(covariant ThreadConnectorPainter oldDelegate) {
     return oldDelegate.isLast != isLast ||
         oldDelegate.lineColor != lineColor ||
+        oldDelegate.lineXOffset != lineXOffset ||
         oldDelegate.curveTargetY != curveTargetY;
   }
 }
@@ -222,19 +266,23 @@ class ThreadConnectorPainter extends CustomPainter {
 
 **마지막이 아닌 자식 (isLast=false):**
 ```
-│  ← 세로선: (0,0) → (0, size.height) 전체 높이
+│  ← 세로선: (lx, 0) → (lx, size.height) 전체 높이
 │
-├──  ← L곡선: (0, curveTargetY-r) → 곡선 → (width, curveTargetY)
+├──  ← L곡선: (lx, curveTargetY-r) → 곡선 → (width, curveTargetY)
 │
 │  ← 세로선 계속
 ```
 
 **마지막 자식 (isLast=true):**
 ```
-│  ← 세로선: (0,0) → (0, curveTargetY-r) 곡선 시작점까지만
+│  ← 세로선: (lx, 0) → (lx, curveTargetY-r) 곡선 시작점까지만
 │
-└──  ← L곡선: (0, curveTargetY-r) → 곡선 → (width, curveTargetY)
+└──  ← L곡선: (lx, curveTargetY-r) → 곡선 → (width, curveTargetY)
 ```
+
+**lineXOffset 효과:**
+- `lineXOffset = 0`: 세로선이 커넥터 영역 왼쪽 끝에서 시작 (paddingLeft == avatarRadius일 때)
+- `lineXOffset > 0`: 세로선이 오른쪽으로 이동 (paddingLeft < avatarRadius일 때 보정)
 
 ---
 
@@ -264,6 +312,7 @@ Widget _buildCommentTree() {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < treeRoots.length; i++) ...[
+          // 최상위 코멘트 간 구분선
           if (i > 0)
             Divider(
               color: Theme.of(context).colorScheme.outlineVariant,
@@ -286,12 +335,19 @@ Widget _buildCommentNode(CommentNode node) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      // 코멘트 타일
       CommentTile(
         comment: node.comment,
         allComments: widget.comments,
         hasChildren: hasChildren,
         showThreadLine: hasChildren,
-        onReply: () { /* 답글 토글 */ },
+        onReply: () {
+          setState(() {
+            _replyToIdx = _replyToIdx == node.comment.idx
+                ? null
+                : node.comment.idx;
+          });
+        },
         onEdit: widget.onEditComment,
         onDelete: widget.onDeleteComment,
       ),
@@ -310,15 +366,24 @@ Widget _buildCommentNode(CommentNode node) {
 }
 ```
 
-### 7.4 _buildChildrenArea() — 세로선 + 곡선 커넥터
+### 7.4 _buildChildrenArea() — 세로선 + 곡선 커넥터 (깊이별 동적 패딩)
 
 ```dart
+/// 자식 코멘트 영역 (세로선 + 곡선 연결선 포함)
+///
+/// 부모 아바타 중앙에서 세로선이 시작되어 마지막 직접 자식까지 연결된다.
+/// paddingLeft를 줄이되, lineXOffset으로 세로선 X 좌표를 보정하여
+/// 부모 아바타 세로선과 정확하게 정렬한다.
 Widget _buildChildrenArea(CommentNode parentNode) {
   final children = parentNode.children;
 
+  // 깊이 1-2: 정상 넓이 (paddingLeft = avatarRadius = 16)
+  // 깊이 3+: 좁은 넓이 (paddingLeft = 6) + lineXOffset 보정으로 세로선 정렬 유지
+  final paddingLeft = parentNode.depth >= 3 ? 6.0 : _avatarRadius;
+  final lineXOffset = _avatarRadius - paddingLeft;
+
   return Padding(
-    // 부모 아바타 중앙 기준 들여쓰기
-    padding: const EdgeInsets.only(left: _avatarRadius),  // 16px
+    padding: EdgeInsets.only(left: paddingLeft),
     child: Column(
       children: [
         for (var i = 0; i < children.length; i++)
@@ -326,23 +391,23 @@ Widget _buildChildrenArea(CommentNode parentNode) {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // 세로선 + L곡선 커넥터
+                // 세로선 + L곡선 커넥터 (lineXOffset으로 부모 세로선과 정렬)
                 SizedBox(
-                  width: _connectorWidth,  // 16px
+                  width: _connectorWidth,
                   child: CustomPaint(
                     painter: ThreadConnectorPainter(
                       isLast: i == children.length - 1,
                       lineColor: _lineColor,
-                      curveTargetY: _curveTargetY,  // 24.0
+                      lineWidth: 1.5,
+                      curveTargetY: _curveTargetY,
                       curveRadius: 8.0,
+                      lineXOffset: lineXOffset,
                     ),
                   ),
                 ),
 
                 // 자식 코멘트 노드 (재귀)
-                Expanded(
-                  child: _buildCommentNode(children[i]),
-                ),
+                Expanded(child: _buildCommentNode(children[i])),
               ],
             ),
           ),
@@ -355,7 +420,9 @@ Widget _buildChildrenArea(CommentNode parentNode) {
 **핵심 포인트:**
 - `crossAxisAlignment: CrossAxisAlignment.stretch` — CustomPaint가 Row의 전체 높이를 받도록 필수
 - `IntrinsicHeight` — 자식 코멘트의 전체 높이(손자 포함)를 자동 계산
-- `padding: EdgeInsets.only(left: _avatarRadius)` — 부모 아바타 중앙 기준 들여쓰기
+- **깊이별 동적 패딩**: `parentNode.depth >= 3`이면 paddingLeft를 6px로 줄여 깊은 중첩에서 공간 절약
+- **lineXOffset 보정**: `_avatarRadius - paddingLeft`로 세로선 X좌표를 보정하여 부모 아바타 세로선과 정렬
+- **lineWidth: 1.5** — 모든 세로선과 L곡선의 두께
 
 ---
 
@@ -389,18 +456,27 @@ Widget _buildWithThreadLine(...) {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 아바타 + 세로선 컬럼
-        Column(
-          children: [
-            const SizedBox(height: 8),              // 상단 패딩
-            CircleAvatar(radius: 16, ...),           // 아바타
-            const SizedBox(height: 2),               // 아바타-세로선 간격
-            Expanded(                                // 세로선
-              child: Center(
-                child: Container(width: 1, color: kThreadLineColor),
+        // 아바타 + 세로선 컬럼 (SizedBox로 너비 32 고정)
+        SizedBox(
+          width: 32,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),              // 상단 패딩
+              CircleAvatar(radius: 16, ...),           // 아바타
+              // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬, 아바타와 붙어있음)
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 1.5,
+                    color: kThreadLineColor,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(width: 8),                   // 아바타-내용 간격
         Expanded(child: _buildContentColumn(...)),   // 내용
@@ -409,6 +485,13 @@ Widget _buildWithThreadLine(...) {
   );
 }
 ```
+
+**이전 버전과의 차이:**
+- `SizedBox(width: 32)` 래퍼로 아바타+세로선 Column의 너비를 아바타 직경과 동일하게 고정
+- `mainAxisAlignment: MainAxisAlignment.start`, `mainAxisSize: MainAxisSize.min` 설정
+- `SizedBox(height: 2)` 제거 — 아바타와 세로선 사이에 갭 없음
+- `Center` 대신 `Align(alignment: Alignment.topCenter)` 사용 — 세로선이 아바타 바로 아래에서 시작
+- 세로선 두께: `Container(width: 1.5)` (1px에서 1.5px로 변경)
 
 ### 8.4 기본 레이아웃 (_buildNormal)
 
@@ -430,18 +513,44 @@ Widget _buildNormal(...) {
 }
 ```
 
-### 8.5 IntrinsicHeight 동작 원리
+### 8.5 액션 바 — SingleChildScrollView 래핑
+
+깊은 중첩에서 액션 버튼들이 오버플로우되지 않도록 수평 스크롤로 감싼다.
+
+```dart
+// 액션 바
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child: Row(
+    children: [
+      // 좋아요
+      PostActionButton(...),
+      const SizedBox(width: 8),
+      // 답글
+      PostActionButton(...),
+      const SizedBox(width: 12),
+      if (isMine) ...[
+        if (!hasChildren) PostActionButton(/* 수정 */),
+        if (!hasChildren) const SizedBox(width: 8),
+        if (!hasChildren) PostActionButton(/* 삭제 */),
+      ],
+    ],
+  ),
+),
+```
+
+### 8.6 IntrinsicHeight 동작 원리
 
 ```
 IntrinsicHeight가 Row의 intrinsic height를 계산:
-  Column(아바타+세로선) intrinsic height = 8 + 32 + 2 = 42 (Expanded는 0)
+  SizedBox(w:32) > Column(아바타+세로선) intrinsic height = 8 + 32 = 40 (Expanded는 0)
   Expanded(내용) intrinsic height = 내용 높이 (보통 60~100+)
-  → Row height = max(42, 내용 높이) = 내용 높이
+  → Row height = max(40, 내용 높이) = 내용 높이
 
 Column with Expanded:
-  비-flex 자식: 42px
-  Expanded(세로선): 내용 높이 - 42 = 세로선 길이
-  → 세로선이 아바타 하단에서 코멘트 하단까지 자동 확장
+  비-flex 자식: 40px (8 + 32, 갭 없음)
+  Expanded(세로선): 내용 높이 - 40 = 세로선 길이
+  → 세로선이 아바타 바로 아래에서 코멘트 하단까지 자동 확장
 ```
 
 ---
@@ -455,21 +564,36 @@ Column with Expanded:
 아바타 상단 패딩: 8px
 아바타 중앙 Y: 8 + 16 = 24px
 아바타 하단 Y: 8 + 32 = 40px
-세로선 시작 Y: 40 + 2(gap) = 42px
+세로선 시작 Y: 40px (아바타 바로 아래, 갭 없음)
 ```
 
-### 세로선 x좌표 일치 검증
+### 세로선 x좌표 일치 검증 — 얕은 깊이 (depth < 3)
 
 ```
 부모 CommentTile (showThreadLine=true):
-  아바타 Column 너비 = CircleAvatar 직경 = 32px
-  Center > Container(w:1) → Column 중앙 = x=16
-  → 세로선 x = 16 (CommentTile 좌표계)
+  SizedBox(width: 32) 안의 Column
+  Align(topCenter) > Container(w:1.5)
+  → 세로선 x = 16 (SizedBox 중앙, CommentTile 좌표계)
 
-자식 영역:
-  padding-left = _avatarRadius = 16px
-  커넥터 세로선 x = 0 (커넥터 좌표계)
+자식 영역 (paddingLeft = _avatarRadius = 16):
+  lineXOffset = _avatarRadius - paddingLeft = 16 - 16 = 0
+  커넥터 세로선 x = lineXOffset = 0 (커넥터 좌표계)
   → 전체 좌표: 16(padding) + 0 = 16
+  → 부모 세로선 x와 일치 ✓
+```
+
+### 세로선 x좌표 일치 검증 — 깊은 깊이 (depth >= 3)
+
+```
+부모 CommentTile (showThreadLine=true):
+  SizedBox(width: 32) 안의 Column
+  Align(topCenter) > Container(w:1.5)
+  → 세로선 x = 16 (SizedBox 중앙, CommentTile 좌표계)
+
+자식 영역 (paddingLeft = 6):
+  lineXOffset = _avatarRadius - paddingLeft = 16 - 6 = 10
+  커넥터 세로선 x = lineXOffset = 10 (커넥터 좌표계)
+  → 전체 좌표: 6(padding) + 10 = 16
   → 부모 세로선 x와 일치 ✓
 ```
 
@@ -483,13 +607,20 @@ Column with Expanded:
   showThreadLine=false: Padding(top:8) + CircleAvatar 중앙(16) = 24 ✓
 ```
 
-### 들여쓰기 계산
+### 들여쓰기 계산 — 깊이별
 
 ```
-Level 0 아바타 중앙: 16(외부 패딩) + 16(아바타 중앙) = 32px
-Level 1 아바타 중앙: 32 + 16(children padding) + 16(connector) + 16(아바타 중앙) = 80px
-Level 2 아바타 중앙: 80 + 16 + 16 + 16 = 128px
-→ 각 레벨 차이: 48px (= avatarRadius + connectorWidth + avatarRadius)
+depth < 3 (paddingLeft = 16):
+  Level 0 아바타 중앙: 16(외부 패딩) + 16(아바타 중앙) = 32px
+  Level 1 아바타 중앙: 32 + 16(children padding) + 16(connector) + 16(아바타 중앙) = 80px
+  Level 2 아바타 중앙: 80 + 16 + 16 + 16 = 128px
+  → 각 레벨 차이: 48px (= avatarRadius + connectorWidth + avatarRadius)
+
+depth >= 3 (paddingLeft = 6):
+  Level 3 아바타 중앙: 128 + 6(children padding) + 16(connector) + 16(아바타 중앙) = 166px
+  Level 4 아바타 중앙: 166 + 6 + 16 + 16 = 204px
+  → 각 레벨 차이: 38px (= 6 + connectorWidth + avatarRadius)
+  → 깊은 중첩에서 레벨당 10px 절약
 ```
 
 ---
@@ -502,26 +633,27 @@ _buildCommentNode(root)
 │ CommentTile (showThreadLine=true)                  │
 │ IntrinsicHeight                                    │
 │ ┌──────────┐                                       │
-│ │ SizedBox  │ h:8                                  │
+│ │SizedBox  │ w:32                                  │
+│ │ Column   │ mainAxisSize:min                      │
+│ │ SizedBox │ h:8                                   │
 │ │ ┌──────┐ │                                       │
 │ │ │avatar│ │ CircleAvatar(r:16) → 직경 32px        │
 │ │ └──────┘ │                                       │
-│ │ SizedBox  │ h:2                                  │
-│ │ │        │                                       │
-│ │ │ 세로선 │ Container(w:1, color:#94A3B8)          │
-│ │ │        │ Expanded → 내용 높이까지 확장          │
+│ │ │        │ (갭 없음, 아바타 바로 아래)            │
+│ │ │ 세로선 │ Container(w:1.5, color:#94A3B8)       │
+│ │ │        │ Expanded > Align(topCenter)            │
 │ │ │        │                                       │
 │ │ ↓        │                                       │
 │ └──────────┘                                       │
 │                                                    │
-│  _buildChildrenArea                                │
-│  Padding(left: 16)  ← 아바타 중앙 기준             │
+│  _buildChildrenArea (depth < 3: paddingLeft=16)    │
+│  Padding(left: paddingLeft)                        │
 │  ┌──────────────────────────────────────┐          │
 │  │ IntrinsicHeight > Row(stretch)      │          │
 │  │ ┌──────────┬─────────────────┐      │          │
 │  │ │커넥터    │ 자식1 노드       │      │          │
 │  │ │w:16      │ (재귀)          │      │          │
-│  │ │          │                 │      │          │
+│  │ │lx=0     │                 │      │          │
 │  │ │ │        │ ┌────────────┐  │      │          │
 │  │ │ │        │ │avatar 자식1│  │      │          │
 │  │ │ ├──→     │ └────────────┘  │      │          │
@@ -534,11 +666,19 @@ _buildCommentNode(root)
 │  │ ┌──────────┬─────────────────┐      │          │
 │  │ │커넥터    │ 자식2 노드       │      │          │
 │  │ │w:16      │ (마지막)        │      │          │
-│  │ │          │ ┌────────────┐  │      │          │
+│  │ │lx=0     │ ┌────────────┐  │      │          │
 │  │ │ └──→     │ │avatar 자식2│  │      │          │
 │  │ │          │ └────────────┘  │      │          │
 │  │ │          │ 내용...         │      │          │
 │  │ └──────────┴─────────────────┘      │          │
+│  └──────────────────────────────────────┘          │
+│                                                    │
+│  _buildChildrenArea (depth >= 3: paddingLeft=6)    │
+│  Padding(left: 6)                                  │
+│  ┌──────────────────────────────────────┐          │
+│  │ 커넥터의 lineXOffset = 10            │          │
+│  │ → 세로선 실제 x = 6 + 10 = 16       │          │
+│  │ → 부모 아바타 중앙(16)과 정렬 ✓      │          │
 │  └──────────────────────────────────────┘          │
 └────────────────────────────────────────────────────┘
 ```
@@ -555,13 +695,15 @@ _buildCommentNode(root)
 
 ### 세로선이 끊기는 경우
 
-1. **부모 세로선 ↔ 커넥터 세로선 연결**: 부모 CommentTile의 세로선 x좌표와 커넥터 세로선 x좌표가 일치해야 함. `padding-left: _avatarRadius`가 아바타 Column 중앙과 같은지 확인.
-2. **대댓글 입력 폼**: 대댓글 폼이 부모 CommentTile과 자식 영역 사이에 위치하면 세로선 끊김 발생 (알려진 제한사항, 입력 폼은 임시 표시이므로 수용 가능).
+1. **부모 세로선 ↔ 커넥터 세로선 연결**: 부모 CommentTile의 세로선 x좌표와 커넥터 세로선 x좌표가 일치해야 함. `padding-left + lineXOffset`이 아바타 Column 중앙(16)과 같은지 확인.
+2. **lineXOffset 계산 오류**: `lineXOffset = _avatarRadius - paddingLeft`가 정확한지 확인. paddingLeft가 avatarRadius보다 큰 경우 lineXOffset이 음수가 되어 세로선이 왼쪽 밖으로 나갈 수 있음.
+3. **대댓글 입력 폼**: 대댓글 폼이 부모 CommentTile과 자식 영역 사이에 위치하면 세로선 끊김 발생 (알려진 제한사항, 입력 폼은 임시 표시이므로 수용 가능).
 
 ### 곡선 위치가 어긋나는 경우
 
 - `curveTargetY`가 자식 아바타의 중앙 Y와 일치하는지 확인
 - `curveTargetY = commentTopPadding(8) + avatarRadius(16) = 24`
+- 곡선의 시작점이 `(lx, curveTargetY - curveRadius)`인지 확인 (lineXOffset 적용)
 
 ### 세로선이 손자까지 관통하는 경우
 
@@ -570,9 +712,16 @@ _buildCommentNode(root)
 
 ### 깊은 중첩에서 공간 부족
 
-- 각 레벨 들여쓰기 = 48px (avatarRadius + connectorWidth + avatarRadius)
-- 360px 화면에서 Level 5까지 약 240px 사용, 나머지 120px 가용
-- 필요시 `_connectorWidth`를 줄이거나 `clamp`로 최대 깊이 제한
+- depth < 3: 각 레벨 들여쓰기 = 48px (avatarRadius + connectorWidth + avatarRadius)
+- depth >= 3: 각 레벨 들여쓰기 = 38px (6 + connectorWidth + avatarRadius)
+- 360px 화면에서도 깊은 중첩 가능하도록 paddingLeft를 6px로 축소
+- 액션 바가 오버플로우되면 `SingleChildScrollView(scrollDirection: Axis.horizontal)`로 수평 스크롤 처리됨
+
+### lineXOffset 관련 문제
+
+1. **세로선이 부모 아바타와 어긋남**: `paddingLeft + lineXOffset == _avatarRadius(16)`인지 확인
+2. **깊이 조건 변경 시**: `parentNode.depth >= 3` 조건을 변경하면 해당 깊이의 paddingLeft와 lineXOffset도 함께 업데이트해야 함
+3. **shouldRepaint에서 lineXOffset 비교 누락**: `oldDelegate.lineXOffset != lineXOffset` 비교가 `shouldRepaint`에 포함되어 있는지 확인 (누락 시 lineXOffset 변경이 반영되지 않음)
 
 ---
 
@@ -582,13 +731,19 @@ _buildCommentNode(root)
 
 ### comment_thread_painter.dart
 
-- [ ] `CommentNode` 클래스 (comment + children 필드)
+- [ ] `CommentNode` 클래스 (comment + children + depth 필드)
+  - [ ] `depth` 기본값 1
 - [ ] `buildCommentTree()` 함수 (depth==1 루트, idxParent 기준 자식 매핑)
+  - [ ] `buildNode()` 내부 함수에 `nodeDepth` 파라미터
+  - [ ] 재귀 호출 시 `nodeDepth: nodeDepth + 1`로 depth 전달
+  - [ ] `CommentNode(depth: nodeDepth)`로 depth 설정
 - [ ] `ThreadConnectorPainter` CustomPainter
   - [ ] `isLast` 파라미터로 마지막 자식 구분
-  - [ ] 세로선: `canvas.drawLine()` — isLast에 따라 높이 제한
-  - [ ] L곡선: `quadraticBezierTo()` — curveRadius 기반 둥근 모서리
+  - [ ] `lineXOffset` 파라미터 (기본값 0.0) — 세로선 X좌표 보정
+  - [ ] 세로선: `canvas.drawLine(Offset(lx, 0), Offset(lx, lineEndY))` — lineXOffset 적용
+  - [ ] L곡선: `quadraticBezierTo(lx, curveTargetY, lx + curveRadius, curveTargetY)` — lineXOffset 적용
   - [ ] 수평선: `lineTo(size.width, curveTargetY)`
+  - [ ] `shouldRepaint`: isLast, lineColor, lineXOffset, curveTargetY 비교
 
 ### comment.list.view.dart
 
@@ -599,9 +754,12 @@ _buildCommentNode(root)
   - [ ] 대댓글 입력 폼 (선택적)
   - [ ] `_buildChildrenArea(node)` (hasChildren일 때)
 - [ ] `_buildChildrenArea(parentNode)`:
-  - [ ] `Padding(left: _avatarRadius)` 들여쓰기
+  - [ ] 깊이별 동적 패딩: `parentNode.depth >= 3 ? 6.0 : _avatarRadius`
+  - [ ] lineXOffset 계산: `_avatarRadius - paddingLeft`
+  - [ ] `Padding(left: paddingLeft)` 들여쓰기
   - [ ] 각 자식: `IntrinsicHeight > Row(stretch)` 필수
   - [ ] `SizedBox(width: _connectorWidth) > CustomPaint(ThreadConnectorPainter)`
+  - [ ] ThreadConnectorPainter에 `lineWidth: 1.5`, `lineXOffset: lineXOffset` 전달
   - [ ] `Expanded > _buildCommentNode(child)` 재귀
 
 ### comment.tile.dart
@@ -610,8 +768,13 @@ _buildCommentNode(root)
 - [ ] `showThreadLine` 파라미터 (기본 false)
 - [ ] `hasChildren` 파라미터 (기본 false)
 - [ ] `showThreadLine=true`: `_buildWithThreadLine()` — IntrinsicHeight > Row
-  - [ ] 아바타 Column: SizedBox(h:8) + CircleAvatar(r:16) + SizedBox(h:2) + Expanded(세로선)
+  - [ ] `SizedBox(width: 32)` 래퍼로 Column 감싸기
+  - [ ] Column: `mainAxisAlignment: MainAxisAlignment.start`, `mainAxisSize: MainAxisSize.min`
+  - [ ] 아바타 Column: SizedBox(h:8) + CircleAvatar(r:16) + Expanded(세로선)
+  - [ ] 세로선: `Expanded > Align(alignment: Alignment.topCenter) > Container(width: 1.5)`
+  - [ ] 아바타와 세로선 사이 갭 없음 (SizedBox(height:2) 없음)
   - [ ] 내용 Column: _buildContentColumn()
 - [ ] `showThreadLine=false`: `_buildNormal()` — Padding(top:8) > Row
 - [ ] `_buildContentColumn()`: 작성자/날짜 + 내용 + 첨부파일 + 액션바
 - [ ] 작성자명 Row에 `Flexible` + `TextOverflow.ellipsis` (오버플로우 방지)
+- [ ] 액션 바: `SingleChildScrollView(scrollDirection: Axis.horizontal)` > Row (오버플로우 방지)
