@@ -6,39 +6,23 @@ import 'package:provider/provider.dart';
 
 import '../user.state.dart';
 
-class UserLoginScreen extends StatefulWidget {
+class UserLoginScreen extends StatelessWidget {
   static const String routeName = '/login';
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
   static Function(BuildContext ctx) go = (ctx) => ctx.go(routeName);
 
   const UserLoginScreen({super.key});
 
-  @override
-  State<UserLoginScreen> createState() => _UserLoginScreenState();
-}
-
-class _UserLoginScreenState extends State<UserLoginScreen> {
-  bool _loading = false;
-
-  Future<void> _signInWithGoogle() async {
-    setState(() => _loading = true);
-    final userState = context.read<UserState>();
-    final success = await userState.signInWithGoogle();
-    if (!mounted) return;
-    if (success) {
-      context.pop();
-    } else if (userState.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(userState.error!)),
-      );
-    }
-    setState(() => _loading = false);
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    final success = await UserState.of(context).signInWithGoogle(displayError: true);
+    if (success && context.mounted) context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final isLoading = context.watch<UserState>().isLoading;
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -89,8 +73,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
               // Google 로그인 버튼
               _GoogleSignInButton(
-                loading: _loading,
-                onTap: _signInWithGoogle,
+                loading: isLoading,
+                onTap: () => _signInWithGoogle(context),
               ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
 
               const SizedBox(height: 32),
