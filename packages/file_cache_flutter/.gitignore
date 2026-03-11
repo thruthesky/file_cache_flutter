@@ -29,3 +29,8 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 /build/
 /coverage/
+example/pubspec.lock
+example/**/generated_plugin_registrant.cc
+example/**/generated_plugin_registrant.h
+example/**/generated_plugins.cmake
+example/**/GeneratedPluginRegistrant.swift
