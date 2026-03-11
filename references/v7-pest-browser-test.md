@@ -36,6 +36,7 @@
   - [26.11 Vue.js v-model DOM 속성 — placeholder 셀렉터](#2611-vuejs-v-model-dom-속성--placeholder-셀렉터-사용)
   - [26.12 script() 메서드의 return 키워드 주의사항](#2612-script-메서드의-return-키워드-주의사항)
 - [27. CI/CD 설정 (GitHub Actions)](#27-cicd-설정-github-actions)
+- [28. 링크 검증 테스트 (LinkCheckerTest)](#28-링크-검증-테스트-linkchecktest)
 
 ---
 
@@ -1367,3 +1368,78 @@ test('패밀리사이트 홈페이지 접근', function () {
 | `withUserAgent()` | User Agent 설정 |
 | `withHost()` | 호스트 설정 |
 | `geolocation()` | 위치 설정 |
+
+---
+
+## 28. 링크 검증 테스트 (LinkCheckerTest)
+
+v7 홈페이지의 모든 내부 링크를 자동으로 수집하고 각 링크를 방문하여 정상 동작하는지 검증하는 테스트이다.
+
+### 28.1 개요
+
+| 항목 | 설명 |
+|------|------|
+| **파일** | `tests/Browser/LinkCheckerTest.php` |
+| **목적** | 홈페이지의 모든 내부 `<a href>` 링크가 404 없이 정상 로드되는지 검증 |
+| **검증 기준** | `footer.v7-footer` 존재, 404 텍스트 없음, PHP 에러 없음 |
+| **실행 시간** | 약 60초 (152개 링크 기준) |
+
+### 28.2 동작 방식
+
+1. `https://v7-local.philgo.com/` 홈페이지 방문
+2. JavaScript로 모든 `<a href>` 태그에서 내부 링크(`/`로 시작) 수집
+3. 각 링크를 `navigate()`로 방문
+4. 페이지 상태 확인: `document.title`, `footer.v7-footer` 존재, 404/PHP 에러 텍스트
+5. 결과를 성공/실패/경고로 분류하여 보고
+
+### 28.3 실행
+
+```bash
+# 링크 검증 테스트 실행
+./vendor/bin/pest tests/Browser/LinkCheckerTest.php
+
+# 브라우저 창 표시 (디버깅)
+./vendor/bin/pest tests/Browser/LinkCheckerTest.php --headed
+
+# 그룹 필터로 실행
+./vendor/bin/pest --group=link-checker
+```
+
+### 28.4 결과 분류
+
+| 분류 | 기준 | 의미 |
+|------|------|------|
+| **OK (성공)** | `footer.v7-footer` 존재 + 404/에러 없음 | 정상 동작 |
+| **XX (실패)** | 404 텍스트 발견 또는 PHP Fatal/Parse error | 깨진 링크 또는 서버 에러 |
+| **!! (경고)** | `footer.v7-footer` 없음 (타이틀은 정상) | v6 레거시 페이지 (예: `/post/adv.php`) |
+
+### 28.5 핵심 코드 패턴
+
+```php
+// JavaScript로 내부 링크 수집 (IIFE 패턴)
+/** @var string $linksJson */
+$linksJson = $page->script(
+    "(() => {" .
+    "  var links = Array.from(document.querySelectorAll('a[href]'))" .
+    "    .map(function(a) { return a.getAttribute('href'); })" .
+    "    .filter(function(h) { return h && h.startsWith('/'); });" .
+    "  return JSON.stringify([...new Set(links)]);" .
+    "})()"
+);
+$links = json_decode($linksJson, true);
+
+// 각 링크 방문 및 검증
+foreach ($links as $link) {
+    $page->navigate(V7_TEST_BASE_URL . $link);
+    /** @var string $resultJson */
+    $resultJson = $page->script(
+        "(() => {" .
+        "  var hasFooter = !!document.querySelector('footer.v7-footer');" .
+        "  var is404 = document.body.innerText.indexOf('404') !== -1;" .
+        "  return JSON.stringify({hasFooter: hasFooter, is404: is404});" .
+        "})()"
+    );
+}
+```
+
+> **주의**: `$page->script()`는 `PendingAwaitablePage`의 `__call()` 매직 메서드를 통해 `Webpage::script()`를 호출하므로 실제로는 `mixed`를 반환한다. intelephense P1006 경고가 발생하지만, `/** @var string $변수 */` PHPDoc으로 해결한다.
