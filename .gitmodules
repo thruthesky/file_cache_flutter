@@ -1,15 +1,6 @@
-[submodule "packages/easy_phone_sign_in"]
-	path = packages/easy_phone_sign_in
-	url = https://github.com/thruthesky/easy_phone_sign_in
-[submodule "packages/font_awesome_flutter"]
-	path = packages/font_awesome_flutter
-	url = https://github.com/thruthesky/font_awesome_flutter
 [submodule ".claude/skills/flutter-skill"]
 	path = .claude/skills/flutter-skill
 	url = https://github.com/thruthesky/flutter-skill
-[submodule "packages/philgo_api"]
-	path = packages/philgo_api
-	url = https://github.com/thruthesky/philgo_api
 [submodule ".claude/skills/open-mateo-skill"]
 	path = .claude/skills/open-mateo-skill
 	url = https://github.com/thruthesky/open-meteo-skill
@@ -19,9 +10,6 @@
 [submodule ".claude/skills/data-skill"]
 	path = .claude/skills/data-skill
 	url = https://github.com/thruthesky/data-skill
-[submodule "packages/file_cache_flutter"]
-	path = packages/file_cache_flutter
-	url = https://github.com/thruthesky/file_cache_flutter
 [submodule "docs"]
 	path = docs
 	url = https://github.com/thruthesky/docs
