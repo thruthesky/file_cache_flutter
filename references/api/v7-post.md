@@ -15,7 +15,8 @@
 6. [에러 처리](#에러-처리)
 7. [테스트](#테스트)
 8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
-9. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+9. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
+10. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -483,6 +484,78 @@ if ($_v7LoginUser) {
 
 관리자 일괄 작업 UI, 글 이동 페이지, Vue.js 동적 카테고리 선택, 차단 사유 옵션 등
 상세 내용은 → [v7-admin.md 18장](../web/v7-admin.md#18-게시글-목록-관리자-기능-체크박스--일괄-작업--글-이동) 참조.
+
+---
+
+## 게시글 보기 페이지 디자인
+
+### 파일 구조
+
+| 파일 | 용도 |
+|------|------|
+| `v7/post/view.php` | 게시글 보기 메인 페이지 (SSR) |
+| `v7/post/view.css` | 게시글 보기 전용 스타일 |
+| `v7/js/post-actions.js` | 액션바 Vue.js 앱 (좋아요/수정/삭제) |
+| `v7/js/comment.js` | 댓글 CRUD Vue.js 앱 |
+
+### 글 헤더 디자인
+
+글 헤더는 카테고리 뱃지, 제목, 작성자 정보(아바타 + 이름 + 메타)로 구성된다.
+
+```html
+<header class="post-view-header">
+    <span class="post-category-badge"><i class="fa-solid fa-tag"></i> 카테고리</span>
+    <h1 class="post-view-title">제목</h1>
+    <div class="post-view-author-row">
+        <wa-avatar initials="홍" image="프로필URL" shape="circle"></wa-avatar>
+        <div class="post-view-author-info">
+            <span class="post-view-author">홍길동</span>
+            <div class="post-view-meta">
+                <span class="post-view-date">2026-03-11 12:00</span>
+                <span class="post-view-stat"><i class="fa-regular fa-eye"></i> 조회수</span>
+            </div>
+        </div>
+    </div>
+</header>
+```
+
+**핵심 CSS 규칙:**
+- 카테고리 뱃지: 블루 pill 스타일 (`background: brand-50`, `color: brand-700`, `border-radius: 20px`)
+- 작성자 아바타: `wa-avatar --size: 2.25rem`, `shape="circle"`, `user_photo_url` 지원
+- 구분선: `border-bottom: 1px solid neutral-200` (얇은 회색, 두꺼운 검정 금지)
+
+### 액션 바 디자인
+
+좋아요/수정/삭제/목록 버튼은 **블루 테마** pill 형태로 표시된다.
+
+| 버튼 | 스타일 | 색상 |
+|------|--------|------|
+| 좋아요 | `.post-like-btn` | 블루 (`brand-600` 텍스트, `brand-50` 배경, `brand-300` 테두리) |
+| 수정/목록 | `.post-action-btn` | 중립 (회색 테두리, 흰 배경, `border-radius: 20px`) |
+| 삭제 확인 | `.post-delete-confirm-btn` | 빨간색 (삭제 액션에만 예외적으로 빨간색 허용) |
+
+**🔴 좋아요 버튼은 반드시 블루 테마**: `#dc2626` 빨간색 사용 금지. `--wa-color-brand-*` 변수 사용.
+
+### 댓글 입력 폼 디자인
+
+```css
+.comment-create-form {
+    background: #fff;           /* 흰 배경 */
+    border-radius: 12px;
+    border: 1px solid neutral-200;
+}
+.comment-create-form:focus-within {
+    border-color: brand-300;    /* 포커스 시 블루 테두리 */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+.comment-textarea {
+    background: neutral-50;     /* 연한 회색 배경 */
+    border-radius: 10px;
+}
+.comment-textarea:focus {
+    background: #fff;           /* 포커스 시 흰 배경 */
+}
+```
 
 ---
 
