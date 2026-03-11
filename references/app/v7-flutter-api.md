@@ -1425,6 +1425,151 @@ print(post.subject);
 | 메서드 | 설명 |
 |--------|------|
 | `UserService.signInWithEmailAndPassword()` | Firebase 이메일/비밀번호 로그인 (계정 없으면 자동 생성) |
+| `UserService.signInWithGoogle()` | Google 소셜 로그인 + v7 user.socialLogin 등록 |
+| `UserService.loadCurrentUser()` | v7 API(user.me)로 현재 사용자 데이터 로드 |
 | `UserService.signOut()` | 로그아웃 |
 | `UserService.currentUser` | 현재 로그인된 Firebase User |
 | `UserService.isLoggedIn` | 로그인 여부 |
+
+---
+
+## 16. 🔴 State vs Service 아키텍처 — 절대 원칙 🔴
+
+> **이 원칙은 모든 Flutter 앱 코드에 예외 없이 적용된다. 반드시 준수할 것.**
+
+### 16.1 핵심 규칙
+
+| 계층 | 역할 | 포함해야 할 것 | 포함하면 안 되는 것 |
+|------|------|---------------|-------------------|
+| **State 클래스** (ChangeNotifier) | 상태 저장 + UI 알림 | 필드 저장, `notifyListeners()`, Service 호출 | API 호출, 비즈니스 로직, 데이터 변환, 에러 처리 로직 |
+| **Service 클래스** | API 호출 + 비즈니스 로직 | v7api() 호출, 데이터 변환, 에러 메시지 변환, 복잡한 로직 | UI 코드, BuildContext, setState, notifyListeners |
+| **Screen/Widget** | UI 렌더링 + 사용자 입력 | 위젯 빌드, setState(로컬 UI 상태만), 네비게이션 | API 호출, 비즈니스 로직, 데이터 변환 |
+
+### 16.2 State 클래스 작성 원칙
+
+State 클래스는 **가능한 한 단순하고 짧게** 작성한다. 다음 패턴만 허용한다:
+
+```dart
+/// ✅ 올바른 State 클래스 — 최소한의 코드만 포함
+class UserState extends ChangeNotifier {
+  UserModel? _user;
+  UserModel? get user => _user;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  String? _error;
+  String? get error => _error;
+
+  /// Service를 호출하고 결과만 저장한다.
+  Future<bool> signInWithGoogle() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      _user = await UserService.signInWithGoogle();
+      return true;
+    } catch (e) {
+      _user = null;
+      _error = ApiService.friendlyErrorMessage(e);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+}
+```
+
+```dart
+/// ❌ 잘못된 State 클래스 — 로직이 State에 포함됨
+class UserState extends ChangeNotifier {
+  Future<void> signInWithGoogle() async {
+    // ❌ State에서 직접 Google Sign-In API 호출
+    final googleUser = await GoogleSignIn().signIn();
+    final googleAuth = await googleUser!.authentication;
+    final credential = GoogleAuthProvider.credential(...);
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    // ❌ State에서 직접 v7 API 호출
+    final json = await ApiService.v7api('user.socialLogin', data: {...});
+    // ❌ State에서 직접 데이터 변환
+    _user = UserModel.fromJson(json);
+    notifyListeners();
+  }
+}
+```
+
+### 16.3 Service 클래스 작성 원칙
+
+**모든 복잡한 로직은 Service 클래스에 모은다.** 재사용 가능한 함수, API 호출, 데이터 변환, 에러 처리 등은 반드시 Service에 위치한다.
+
+```dart
+/// ✅ 올바른 Service 클래스 — 모든 로직을 Service에 집중
+class UserService {
+  /// Google 소셜 로그인 + v7 DB 등록
+  static Future<UserModel> signInWithGoogle() async {
+    final googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) throw Exception('Google 로그인이 취소되었습니다.');
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    final json = await ApiService.v7api('user.socialLogin', data: {'login_provider': 'google'});
+    return UserModel.fromJson(json);
+  }
+
+  /// v7 API로 현재 사용자 데이터 로드
+  static Future<UserModel?> loadCurrentUser() async {
+    if (FirebaseAuth.instance.currentUser == null) return null;
+    final json = await ApiService.v7api('user.me');
+    return UserModel.fromJson(json);
+  }
+}
+```
+
+### 16.4 Screen에서의 호출 패턴
+
+Screen은 **State를 통해 간접적으로** Service를 호출하고, UI 관련 처리만 담당한다.
+
+```dart
+/// ✅ 올바른 Screen — UI만 담당, 로직 없음
+Future<void> _signInWithGoogle() async {
+  setState(() => _loading = true);
+  final userState = context.read<UserState>();
+  final success = await userState.signInWithGoogle();
+  if (!mounted) return;
+  if (success) {
+    context.pop();
+  } else if (userState.error != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(userState.error!)),
+    );
+  }
+  setState(() => _loading = false);
+}
+```
+
+```dart
+/// ❌ 잘못된 Screen — Screen에서 직접 Service 호출 및 에러 처리
+Future<void> _signInWithGoogle() async {
+  try {
+    await UserService.signInWithGoogle();  // ❌ Screen에서 직접 Service 호출
+    final json = await ApiService.v7api('user.me');  // ❌ Screen에서 직접 API 호출
+    context.read<UserState>().setUser(UserModel.fromJson(json));  // ❌ Screen에서 데이터 변환
+  } catch (e) {
+    // ❌ Screen에서 복잡한 에러 처리
+    if (e is DioException && e.response?.statusCode == 504) { ... }
+  }
+}
+```
+
+### 16.5 계층별 데이터 흐름 요약
+
+```
+[Screen] ──setState(로딩)──→ [State] ──Service 호출──→ [Service] ──v7api()──→ [서버]
+                                                           ↓
+[Screen] ←──UI 갱신──── [State] ←──결과 저장──── [Service] ←──응답──── [서버]
+                         notifyListeners()         UserModel.fromJson()
+```
+
+**핵심**: State는 Service의 결과를 받아 저장만 한다. 복잡한 로직은 전부 Service에 있다.

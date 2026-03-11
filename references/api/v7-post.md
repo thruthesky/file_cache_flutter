@@ -15,7 +15,8 @@
 6. [에러 처리](#에러-처리)
 7. [테스트](#테스트)
 8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
-9. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+9. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
+10. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -24,6 +25,8 @@
    - [접기/펼치기 JavaScript (세로선 클릭 + 답글 텍스트 클릭)](#접기펼치기-javascript-세로선-클릭--답글-텍스트-클릭)
    - [코멘트 모바일 반응형](#코멘트-모바일-반응형-media-max-width-640px)
    - [빈 상태 디자인](#빈-상태-디자인)
+   - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
+   - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
 
 ---
@@ -407,6 +410,48 @@ curl "https://local.philgo.com/api.php?method=post.get&idx=12345"
 
 ---
 
+## 게시글 목록 글쓰기 버튼
+
+### 디자인
+
+글쓰기 버튼(`.post-write-btn`)은 블루 아웃라인 스타일로 표시된다.
+v7 홈페이지의 블루 테마에 맞춰 `--wa-color-brand-500/600` CSS 변수를 사용한다.
+
+| 속성 | 값 |
+|------|-----|
+| 색상 | `var(--wa-color-brand-600, #2563eb)` (블루) |
+| 보더 | `1px solid var(--wa-color-brand-500, #3b82f6)` |
+| 배경 | 투명 (hover 시 블루 채움) |
+| 폰트 | `0.9rem`, `font-weight: 600` |
+| 아이콘 | `fa-solid fa-pen-to-square` |
+
+### 비로그인 시 동작
+
+비로그인 사용자가 글쓰기 버튼을 클릭하면 `alert('로그인을 하셔야 글을 쓸 수 있습니다.')`를 표시한다.
+서버에서 `AuthService::getLoginUser()` 결과에 따라 PHP 조건문으로 분기한다.
+
+```php
+<?php if ($loginUser): ?>
+    <a href="<?= Route::postCreate($postId, $category) ?>" class="post-write-btn">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
+<?php else: ?>
+    <a href="#" class="post-write-btn" onclick="alert('로그인을 하셔야 글을 쓸 수 있습니다.'); return false;">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
+<?php endif; ?>
+```
+
+### 적용 위치
+
+| 파일 | 설명 |
+|------|------|
+| `v7/post/list.php` | 게시판 목록 페이지 헤더 |
+| `v7/post/view.php` | 글 읽기 페이지 하단 목록 헤더 |
+| `v7/post/list.css` | `.post-write-btn` 스타일 정의 |
+
+---
+
 ## 게시글 목록 관리자 기능
 
 ### 개요
@@ -483,6 +528,111 @@ if ($_v7LoginUser) {
 
 관리자 일괄 작업 UI, 글 이동 페이지, Vue.js 동적 카테고리 선택, 차단 사유 옵션 등
 상세 내용은 → [v7-admin.md 18장](../web/v7-admin.md#18-게시글-목록-관리자-기능-체크박스--일괄-작업--글-이동) 참조.
+
+---
+
+## 게시글 보기 페이지 디자인
+
+### 최근 디자인 변경 이력
+
+| 항목 | 이전 | 현재 |
+|------|------|------|
+| 액션바 버튼 모양 | 사각형 + 보더 | 보더 없는 미니멀 텍스트 버튼 |
+| 액션바 아이콘 | `fa-solid` (굵은 아이콘) | `fa-regular` (얇은 아웃라인 아이콘) |
+| 좋아요 버튼 | 블루 테두리 + 흰 배경 | 보더 없음, 블루 텍스트만 |
+| 삭제 버튼 | hover 시 빨간색 강조 | 다른 버튼과 동일 (강조 없음) |
+| 댓글 textarea 배경 | `neutral-50` (연한 회색) | 순백색 (`#fff`) |
+| 첨부 버튼 배경 | `neutral-50` (연한 회색) | 순백색 (`#fff`) |
+| 코멘트 노드 패딩 | 없음 | `padding: 0.4rem 0` 추가 |
+| thread-line 색상 | `#94a3b8` (neutral-400) | `#cbd5e1` (neutral-300) |
+| L자 곡선 연결선 색상 | `#94a3b8` (neutral-400) | `#cbd5e1` (neutral-300, 세로선과 동일) |
+
+### 파일 구조
+
+| 파일 | 용도 |
+|------|------|
+| `v7/post/view.php` | 게시글 보기 메인 페이지 (SSR) |
+| `v7/post/view.css` | 게시글 보기 전용 스타일 |
+| `v7/js/post-actions.js` | 액션바 Vue.js 앱 (좋아요/수정/삭제) |
+| `v7/js/comment.js` | 댓글 CRUD Vue.js 앱 |
+
+### 글 헤더 디자인
+
+글 헤더는 카테고리 뱃지, 제목, 작성자 정보(아바타 + 이름 + 메타)로 구성된다.
+
+```html
+<header class="post-view-header">
+    <span class="post-category-badge"><i class="fa-solid fa-tag"></i> 카테고리</span>
+    <h1 class="post-view-title">제목</h1>
+    <div class="post-view-author-row">
+        <wa-avatar initials="홍" image="프로필URL" shape="circle"></wa-avatar>
+        <div class="post-view-author-info">
+            <span class="post-view-author">홍길동</span>
+            <div class="post-view-meta">
+                <span class="post-view-date">2026-03-11 12:00</span>
+                <span class="post-view-stat"><i class="fa-regular fa-eye"></i> 조회수</span>
+            </div>
+        </div>
+    </div>
+</header>
+```
+
+**핵심 CSS 규칙:**
+- 카테고리 뱃지: 블루 pill 스타일 (`background: brand-50`, `color: brand-700`, `border-radius: 20px`)
+- 작성자 아바타: `wa-avatar --size: 2.25rem`, `shape="circle"`, `user_photo_url` 지원
+- 구분선: `border-bottom: 1px solid neutral-200` (얇은 회색, 두꺼운 검정 금지)
+
+### 액션 바 디자인
+
+좋아요/수정/삭제/목록 버튼은 **보더 없는 미니멀 텍스트 버튼** 스타일로 표시된다. 아이콘은 `fa-regular` (얇은 아웃라인) 스타일을 사용한다.
+
+| 버튼 | 스타일 | 색상 | 아이콘 |
+|------|--------|------|--------|
+| 좋아요 | `.post-like-btn` | 블루 텍스트 (`brand-600`), 보더 없음, 투명 배경 | `fa-regular fa-thumbs-up` |
+| 수정 | `.post-action-btn` | 중립 회색 텍스트, 보더 없음, 투명 배경 | `fa-regular fa-pen-to-square` |
+| 삭제 | `.post-action-btn .post-delete-btn` | 중립 회색 텍스트 (다른 버튼과 동일), 보더 없음 | `fa-regular fa-trash-can` |
+| 목록 | `.post-action-btn` | 중립 회색 텍스트, 보더 없음, 투명 배경 | `fa-regular fa-rectangle-list` |
+| 삭제 확인 | `.post-delete-confirm-btn` | 빨간 배경 + 흰 텍스트 (확인 단계만) | `fa-regular fa-trash-can` |
+
+**핵심 CSS 규칙:**
+- 모든 버튼: `border: none`, `background: transparent`, `font-size: 0.8rem`
+- 아이콘 크기: `font-size: 0.75rem` (본문보다 작게)
+- hover 시: 연한 배경색(`neutral-50`)만 표시, 보더 추가 금지
+- 좋아요 hover: `brand-50` 배경
+- 삭제 버튼: 다른 버튼과 동일한 스타일 (강조 없음, 빨간색 금지)
+
+**🔴 좋아요 버튼은 반드시 블루 텍스트**: `--wa-color-brand-*` 변수 사용. 보더/배경 없이 텍스트 색상만 블루.
+
+### 댓글 입력 폼 디자인
+
+```css
+.comment-create-form {
+    background: #fff;           /* 흰 배경 */
+    border-radius: 12px;
+    border: 1px solid neutral-200;
+}
+.comment-create-form:focus-within {
+    border-color: brand-300;    /* 포커스 시 블루 테두리 */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+.comment-textarea {
+    background: #fff;           /* 순백색 배경 */
+    border-radius: 10px;
+}
+.comment-textarea:focus {
+    background: #fff;           /* 포커스 시에도 순백색 유지 */
+}
+.comment-attach-btn {
+    background: #fff;           /* 첨부 버튼도 순백색 배경 */
+}
+```
+
+**디자인 변경 이력 (배경색 통일):**
+
+| 항목 | 이전 | 현재 |
+|------|------|------|
+| 댓글 textarea 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
+| 첨부 버튼 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
 
 ---
 
@@ -644,7 +794,7 @@ GET /api.php?method=post.commentList&idx_root=12345
 | **세로선 시작점** | collapse 버튼 아래 (`top: 30px` 고정) | **아바타 바로 아래** (JS `adjustThreadLines()`로 `padding-top + avatarSize + gap` 계산) |
 | **세로선 끝점** | 노드 하단 (`bottom: 0` 고정) | **마지막 직접 자식의 아바타 중앙** (JS `adjustThreadLines()`로 동적 계산) |
 | **세로선 높이 방식** | CSS `top`/`bottom`으로 고정 | **JS `adjustThreadLines()`로 `top`과 `height`를 동적 설정** |
-| **세로선 색상** | `#64748b` (neutral-500) | **`#94a3b8`** (neutral-400, 더 연한 톤) |
+| **세로선 색상** | `#64748b` (neutral-500) | **`#cbd5e1`** (neutral-300, 더 연한 톤) |
 | **L자형 수평 연결선** | `::before` 의사 요소 존재 (`left: -21px; width: 18px; height: 2px`) | **완전 제거** |
 | **들여쓰기** | `margin-left: 11px; padding-left: 21px` | **`margin-left: 18px; padding-left: 18px`** |
 | **세로선 left 위치** | `left: 10px` | **`left: 17px`** (avatar-col 36px/2 - 1px) |
@@ -795,7 +945,7 @@ DOMContentLoaded -> adjustThreadLines() -- 세로선 높이 계산
 
 ```css
 /* === 코멘트 노드: thread-line의 절대 위치 기준 === */
-.comment-node { position: relative; }
+.comment-node { position: relative; padding: 0.4rem 0; }
 
 /* 코멘트 행: avatar-col + body-col */
 .comment-row {
@@ -840,7 +990,7 @@ DOMContentLoaded -> adjustThreadLines() -- 세로선 높이 계산
     left: 17px;       /* 아바타 컬럼 중앙 (36px/2 - 1px) */
     top: 40px;        /* 초기값, JS adjustThreadLines()에서 재계산 */
     width: 1px;
-    background-color: #94a3b8;
+    background-color: #cbd5e1;  /* neutral-300 */
     cursor: pointer;
     z-index: 10;
     transition: background-color 0.15s, width 0.15s;
@@ -1005,7 +1155,7 @@ document.addEventListener('click', function (e) {
 
 | 상태 | thread-line 세로선 | 본문/파일/액션 | 자식 코멘트 | 알림 텍스트 |
 |------|-------------------|-------------|-----------|-----------|
-| **펼침 (기본)** | 표시 (`#94a3b8`, hover 시 `#3b82f6`, hover 시 width 3px) | 표시 | 표시 | 숨김 |
+| **펼침 (기본)** | 표시 (`#cbd5e1` neutral-300, hover 시 `#3b82f6`, hover 시 width 3px) | 표시 | 표시 | 숨김 |
 | **접힘 (자식 있음)** | **숨김** (`display: none`) | 숨김 | 숨김 | `[+N개 답글]` 표시 (클릭 시 펼치기) |
 | **접힘 (리프)** | -- | 숨김 | -- | `[접힌 댓글]` 표시 |
 
@@ -1017,7 +1167,7 @@ document.addEventListener('click', function (e) {
 - `.thread-children` -- 하위 코멘트 전체
 
 **트리거 방법 (2가지):**
-- `.thread-line` 클릭 (세로선 자체) -- **토글** (접기/펼치기 모두), hover 시 파란색(`#3b82f6`) + 두께 증가(`3px`)로 클릭 가능함을 시각적으로 표시
+- `.thread-line` 클릭 (세로선 자체) -- **토글** (접기/펼치기 모두), 기본 `#cbd5e1`(neutral-300), hover 시 파란색(`#3b82f6`) + 두께 증가(`3px`)로 클릭 가능함을 시각적으로 표시
 - `.thread-collapsed-info` 클릭 (`[+N개 답글]` 텍스트) -- **펼치기만** (접힌 상태에서만 작동)
 
 #### 코멘트 모바일 반응형 (`@media max-width: 640px`)
@@ -1059,6 +1209,64 @@ document.addEventListener('click', function (e) {
 }
 ```
 
+#### 기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)
+
+기본 댓글 작성 폼(`#comment-create-app`)은 화면 영역을 절약하기 위해 **접힌/펼친 두 가지 상태**로 동작한다.
+
+**접힌 상태 (기본)**:
+- 카메라 아이콘(`.comment-camera-btn`) + 한 줄 입력(`.comment-collapsed-input`, readonly) + 전송 아이콘(`.comment-send-btn`)
+- 둥근 pill 모양(`border-radius: 999px`), 회색 배경
+- 전체 영역이 클릭 가능
+
+**펼친 상태 (사용자 클릭 시)**:
+- 큰 textarea(4줄) + 하단에 카메라(왼쪽), 취소+저장(오른쪽)
+- 흰색 배경, 포커스 시 블루 하이라이트
+- `commentExpandIn` 애니메이션으로 부드럽게 전환
+
+**전환 트리거**:
+| 동작 | 트리거 |
+|------|--------|
+| 접힌 → 펼친 | 입력창 클릭, 카메라 아이콘 클릭, 전송 아이콘 클릭 |
+| 펼친 → 접힌 | 취소 버튼 클릭 (내용이 있으면 confirm 확인) |
+
+**Vue.js 상태**: `expanded: false`(기본) → `true`(펼친 상태)
+
+**핵심 CSS 클래스**:
+```css
+.comment-collapsed-row    /* 접힌 상태 한 줄 컨테이너 */
+.comment-collapsed-input   /* 접힌 상태 readonly input */
+.comment-camera-btn        /* 카메라 아이콘 버튼 (접힌/펼친 공통) */
+.comment-send-btn          /* 접힌 상태 전송 아이콘 */
+.comment-expanded-area     /* 펼친 상태 컨테이너 */
+.comment-expanded-actions  /* 펼친 상태 하단 버튼 영역 */
+.comment-expanded-right    /* 펼친 상태 우측 버튼 그룹 */
+.comment-save-btn          /* 저장 버튼 (비행기 아이콘 + "저장") */
+.comment-create-form.expanded  /* 펼친 상태 폼 컨테이너 */
+```
+
+#### 대댓글(답글) 작성 폼 — 개선된 디자인
+
+대댓글(답글) 작성 폼(`.comment-reply-form`)은 다음과 같은 디자인 원칙을 따른다:
+
+- **2행 구조**: textarea가 전체 너비를 차지하고, 버튼(첨부/등록/취소)이 하단 우측에 정렬
+- **왼쪽 파란색 액센트 보더**: `border-left: 3px solid #60a5fa`로 답글임을 시각적으로 표시
+- **흰색 배경**: 이전 회색(`#f8fafc`) 대신 깔끔한 흰색
+- **슬라이드인 애니메이션**: `replyFormSlideIn` 키프레임으로 부드러운 등장
+- **포커스 효과**: `focus-within` 시 블루 하이라이트 + 좌측 보더 진하게
+
+```css
+.comment-reply-form {
+    border-left: 3px solid var(--wa-color-brand-400, #60a5fa);
+    background: #fff;
+}
+.comment-reply-form .comment-input-row {
+    flex-direction: column;  /* 세로 배치 */
+}
+.comment-reply-form .comment-input-actions {
+    align-self: flex-end;   /* 버튼 우측 정렬 */
+}
+```
+
 #### 코멘트 디자인 수정 시 주의사항
 
 | 규칙 | 설명 |
@@ -1080,6 +1288,6 @@ document.addEventListener('click', function (e) {
 | **wa-avatar initials 필수** | 코멘트 작성자 아바타는 `wa-avatar`의 `initials` 속성으로 구현. 이미지 URL 없이 이니셜로 표시 |
 | **wa-relative-time 필수** | 코멘트 시간은 `wa-relative-time`으로 표시. `date` 속성에 ISO 8601(`date('c', $stamp)`) 전달, `lang="ko"` 필수 |
 | **$childrenMap 구조** | `$childrenMap[$parentIdx][]`로 부모별 자식 맵을 구축한다. 최상위 코멘트는 `$childrenMap[$idx]`(글의 idx)에서 가져온다 |
-| **thread-line 세로선 색상** | 기본 `#94a3b8` (neutral-400 계열), hover 시 `#3b82f6` (blue) + width `3px`로 두께 증가 |
+| **thread-line 세로선 색상** | 기본 `#cbd5e1` (neutral-300), hover 시 `#3b82f6` (blue) + width `3px`로 두께 증가. L자 곡선 연결선도 동일하게 neutral-300(`#cbd5e1`) 적용 |
 | **thread-line left 위치** | 데스크톱 `left: 17px` (avatar-col 36px/2 - 1px), 모바일 `left: 14px` (30px/2 - 1px) |
 | **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |
