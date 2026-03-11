@@ -1,0 +1,492 @@
+# 필고 v7 데이터베이스 관리 가이드
+
+## 목차
+
+- [1. 개요](#1-개요)
+- [2. MariaDB 접속 정보](#2-mariadb-접속-정보)
+  - [2.1 설정 파일](#21-설정-파일)
+  - [2.2 Docker 컨테이너 접속](#22-docker-컨테이너-접속)
+  - [2.3 호스트에서 CLI 접속](#23-호스트에서-cli-접속)
+- [3. v7 Db 클래스 (Philgo\Utils\Db)](#3-v7-db-클래스-philgoutilsdb)
+  - [3.1 클래스 개요](#31-클래스-개요)
+  - [3.2 메서드 레퍼런스](#32-메서드-레퍼런스)
+  - [3.3 사용 예제](#33-사용-예제)
+  - [3.4 타입 안전성 규칙](#34-타입-안전성-규칙)
+- [4. 레거시 pdo() 함수](#4-레거시-pdo-함수)
+  - [4.1 함수 위치 및 구현](#41-함수-위치-및-구현)
+  - [4.2 레거시 DB 헬퍼 함수](#42-레거시-db-헬퍼-함수)
+- [5. v7 아키텍처에서 DB 접근 패턴](#5-v7-아키텍처에서-db-접근-패턴)
+  - [5.1 3계층 구조](#51-3계층-구조)
+  - [5.2 위젯에서 DB 접근 금지](#52-위젯에서-db-접근-금지)
+- [6. DB 스키마](#6-db-스키마)
+  - [6.1 스키마 파일 위치](#61-스키마-파일-위치)
+  - [6.2 주요 테이블](#62-주요-테이블)
+- [7. 테스트 환경 DB 설정](#7-테스트-환경-db-설정)
+- [8. v7 vs 레거시 비교](#8-v7-vs-레거시-비교)
+
+---
+
+## 1. 개요
+
+### 핵심 개념
+
+필고 v7은 **MariaDB 11.7.2** 를 데이터베이스로 사용한다. Docker 컨테이너 `mariadb`에서 실행되며, v6(레거시)과 v7(신규) 시스템이 **동일한 데이터베이스를 공유**한다.
+
+### 설계 의도
+
+- v6과 v7이 같은 DB/테이블을 사용하여 데이터 일관성 유지
+- v7은 `Philgo\Utils\Db` 클래스로 PDO 접근을 캡슐화
+- 레거시 `pdo()` 전역 함수와 100% 호환
+
+### 핵심 파일
+
+| 파일 | 용도 |
+|------|------|
+| `etc/db.config.php` | DB 접속 정보 (Docker 내부용, 호스트: `mariadb`) |
+| `etc/db.config.dev.php` | DB 접속 정보 (호스트 직접 접속용, 호스트: `127.0.0.1`) |
+| `etc/db.php` | 레거시 `pdo()` 함수 및 `db_*()` 헬퍼 함수 정의 |
+| `lib/utils/Db.php` | v7 `Philgo\Utils\Db` 클래스 (PSR-4) |
+| `.claude/skills/v7-skill/database/philgo.sql` | 전체 DB 스키마 덤프 |
+
+---
+
+## 2. MariaDB 접속 정보
+
+### 2.1 설정 파일
+
+**Docker 내부용** (`etc/db.config.php`):
+
+```php
+<?php
+$db_hostname = "mariadb";      // Docker 컨테이너 이름
+$db_username = "philgo";
+$db_password = "asdf";
+$db_database = "philgo";
+```
+
+**호스트 직접 접속용** (`etc/db.config.dev.php`):
+
+```php
+<?php
+$db_hostname = "127.0.0.1";    // 호스트에서 직접 접속
+$db_username = "philgo";
+$db_password = "asdf";
+$db_database = "philgo";
+```
+
+| 항목 | Docker 내부 | 호스트에서 접속 |
+|------|------------|---------------|
+| 호스트 | `mariadb` | `127.0.0.1` |
+| 포트 | `3306` | `3306` |
+| 데이터베이스 | `philgo` | `philgo` |
+| 사용자 | `philgo` | `philgo` |
+| 비밀번호 | `asdf` | `asdf` |
+| Root 비밀번호 | `asdf` | `asdf` |
+
+### 2.2 Docker 컨테이너 접속
+
+Docker 컨테이너 내부에서 MariaDB에 직접 접속하는 방법:
+
+```bash
+# MariaDB 컨테이너에 접속하여 mysql 클라이언트 실행
+docker exec -it mariadb mysql -u philgo -pasdf philgo
+
+# Root 계정으로 접속
+docker exec -it mariadb mysql -u root -pasdf philgo
+
+# 단일 쿼리 실행
+docker exec -it mariadb mysql -u philgo -pasdf philgo -e "SELECT COUNT(*) FROM sf_member;"
+
+# SQL 파일 실행
+docker exec -i mariadb mysql -u philgo -pasdf philgo < /path/to/query.sql
+```
+
+### 2.3 호스트에서 CLI 접속
+
+호스트 OS(Mac/Windows)에서 MariaDB에 접속하는 방법:
+
+```bash
+# mysql 클라이언트로 접속 (MariaDB/MySQL 클라이언트 필요)
+mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo
+
+# 단일 쿼리 실행
+mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo -e "SHOW TABLES;"
+
+# 테이블 구조 확인
+mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo -e "DESCRIBE sf_member;"
+
+# DB 덤프 (백업)
+mysqldump -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo > backup.sql
+
+# 특정 테이블만 덤프
+mysqldump -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo sf_member sf_post_data > tables.sql
+```
+
+> **참고:** 호스트에서 접속 시 Docker가 포트 3306을 호스트에 매핑하고 있어야 한다. Docker Compose 설정에서 `ports: - "3306:3306"`으로 매핑되어 있다.
+
+---
+
+## 3. v7 Db 클래스 (Philgo\Utils\Db)
+
+### 3.1 클래스 개요
+
+**파일**: `lib/utils/Db.php`
+**네임스페이스**: `Philgo\Utils\Db`
+**로딩**: PSR-4 Autoloading (Composer)
+
+v7 시스템에서 DB 접근은 반드시 `Db` 클래스를 통해서 한다. 싱글톤 패턴으로 PDO 인스턴스를 관리하며, prepared statement 기반으로 SQL 인젝션을 방지한다.
+
+### 3.2 메서드 레퍼런스
+
+```php
+<?php
+namespace Philgo\Utils;
+
+class Db
+{
+    // PDO 인스턴스 반환 (싱글톤)
+    public static function pdo(): PDO
+
+    // Prepared Statement 생성 (Intelephense 타입 경고 제거용 래퍼)
+    public static function prepare(string $sql): PDOStatement
+
+    // 단일 행 조회 (prepare → execute → fetch 를 1줄로)
+    // ⚠️ 반환값: array|false — false 체크 필수!
+    public static function fetch(string $sql, array $params = [], int $fetchMode = PDO::FETCH_ASSOC): array|false
+
+    // 다중 행 조회 (결과 없으면 빈 배열)
+    public static function fetchAll(string $sql, array $params = [], int $fetchMode = PDO::FETCH_ASSOC): array
+
+    // 단일 컬럼 값 (COUNT, MAX, MIN 등 스칼라 쿼리용)
+    public static function fetchColumn(string $sql, array $params = [], int $column = 0): mixed
+
+    // INSERT/UPDATE/DELETE 실행 (PDOStatement 반환 → rowCount() 접근 가능)
+    public static function execute(string $sql, array $params = []): PDOStatement
+
+    // INSERT 후 lastInsertId 정수 반환
+    public static function insert(string $sql, array $params = []): int
+
+    // DB 설정 파일 경로 수동 설정 (테스트용)
+    public static function setConfigPath(string $path): void
+
+    // PDO 연결 초기화 (테스트용)
+    public static function reset(): void
+}
+```
+
+### 3.3 사용 예제
+
+```php
+<?php
+use Philgo\Utils\Db;
+
+// ── 단일 행 조회 ──
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [123]);
+if ($user === false) {
+    throw new RuntimeException("사용자를 찾을 수 없습니다");
+}
+// 이 시점에서 $user는 array 타입 확정
+
+// Named parameter 사용
+$user = Db::fetch("SELECT * FROM sf_member WHERE firebase_uid = :uid", ['uid' => 'abc123']);
+
+// ── 다중 행 조회 ──
+$posts = Db::fetchAll("SELECT * FROM sf_post_data WHERE post_id = ? LIMIT 10", ['freetalk']);
+foreach ($posts as $post) {
+    echo $post['subject'];
+}
+
+// ── 단일 컬럼 값 (COUNT, MAX 등) ──
+$count = Db::fetchColumn("SELECT COUNT(*) FROM sf_member");
+$name = Db::fetchColumn("SELECT name FROM sf_member WHERE idx = ?", [123]);
+
+// ── UPDATE ──
+Db::execute("UPDATE sf_member SET name = ? WHERE idx = ?", ['홍길동', 123]);
+
+// ── DELETE (영향받은 행 수 확인) ──
+$stmt = Db::execute("DELETE FROM sf_member WHERE idx = ?", [999]);
+$affected = $stmt->rowCount();
+
+// ── INSERT (AUTO_INCREMENT ID 반환) ──
+$newIdx = Db::insert(
+    "INSERT INTO sf_member (name, phone_number) VALUES (?, ?)",
+    ['홍길동', '01012345678']
+);
+
+// ── PDO 인스턴스 직접 사용 ──
+$pdo = Db::pdo();
+$stmt = $pdo->prepare("SELECT * FROM sf_member WHERE idx = ?");
+$stmt->execute([123]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+```
+
+### 3.4 타입 안전성 규칙
+
+`Db::fetch()` 반환값은 `array|false`이다. `array` 타입이 필요한 곳에 바로 전달하면 **Intelephense P1006** 에러가 발생한다.
+
+```php
+// ✅ 올바른 사용법: false 체크 후 사용
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [123]);
+if ($user === false) {
+    throw new RuntimeException("사용자를 찾을 수 없습니다");
+}
+// 이 시점에서 $user는 array 타입으로 확정
+AuthService::loginUser($user);
+
+// ❌ 잘못된 사용법: false 체크 없이 array 기대 함수에 전달
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [123]);
+AuthService::loginUser($user); // array|false를 array로 전달 → P1006 에러!
+```
+
+**nullable 타입 반환 시 캐스팅 필수:**
+
+```php
+// ✅ 올바른 사용법
+public function isActive(): bool {
+    return (bool) $this->active; // ?bool → bool 캐스팅
+}
+
+// ❌ 잘못된 사용법
+public function isActive(): bool {
+    return $this->active; // ?bool을 bool로 반환 → P1006!
+}
+```
+
+---
+
+## 4. 레거시 pdo() 함수
+
+### 4.1 함수 위치 및 구현
+
+**파일**: `etc/db.php` (boot.php에 의해 자동 로드)
+
+```php
+<?php
+/**
+ * PDO 인스턴스 반환 (싱글톤)
+ */
+function pdo(): PDO
+{
+    global $db_hostname, $db_database, $db_username, $db_password;
+    static $pdo = null;
+
+    if (isset($pdo) && $pdo instanceof PDO) {
+        return $pdo;
+    }
+
+    try {
+        $dsn = "mysql:host=$db_hostname;dbname=$db_database;charset=utf8mb4";
+        $pdo = new PDO($dsn, $db_username, $db_password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        echo "DB Connection failed: " . $e->getMessage();
+        throw new Exception("DB Connection failed");
+    }
+
+    return $pdo;
+}
+
+// 별칭
+function get_db(): PDO {
+    return pdo();
+}
+```
+
+**핵심 로직:**
+- 싱글톤 패턴: `static $pdo`로 한 번만 연결 생성
+- 전역변수 `$db_hostname` 등을 `etc/db.config.php`에서 로드
+- `charset=utf8mb4`로 한글/이모지 지원
+- `ERRMODE_EXCEPTION`으로 에러 시 예외 발생
+
+### 4.2 레거시 DB 헬퍼 함수
+
+**파일**: `etc/db.php`
+
+> ⚠️ **v7에서는 레거시 `db_*()` 함수 사용 금지.** 반드시 `Db` 클래스 사용.
+
+| 레거시 함수 | 용도 | 반환값 | v7 대체 |
+|------------|------|--------|---------|
+| `db_select($query, $params)` | SELECT 다중 행 | `array` | `Db::fetchAll()` |
+| `db_select_row($query, $params)` | SELECT 단일 행 | `array` (빈배열 가능) | `Db::fetch()` |
+| `db_select_col($query, $params)` | SELECT 첫 컬럼 값 | `mixed\|null` | `Db::fetchColumn()` |
+| `db_count($table, $where, $params)` | COUNT 조회 | `int` | `Db::fetchColumn()` |
+| `db_insert($table, $data)` | INSERT | `int` (lastInsertId) | `Db::insert()` |
+| `db_update($table, $data, $where, $params)` | UPDATE | `bool` | `Db::execute()` |
+| `db_delete($table, $where, $params)` | DELETE | `bool` | `Db::execute()` |
+
+**레거시 `db_select()` 제한사항:**
+- `LIMIT` 필수 (없으면 에러)
+- 최대 LIMIT 2,000개
+- SELECT 쿼리만 허용
+
+---
+
+## 5. v7 아키텍처에서 DB 접근 패턴
+
+### 5.1 3계층 구조
+
+v7 시스템에서 DB 접근은 Controller → Service → Repository → Db 3계층 구조를 따른다.
+
+```
+JavaScript (func() 호출)
+    ↓
+api.php (API 게이트웨이)
+    ↓
+Controller (Philgo\<Module>\<Module>Controller)
+    ↓
+Service (Philgo\<Module>\<Module>Service)
+    ↓
+Repository (Philgo\<Module>\<Module>Repository)  [선택]
+    ↓
+Db::fetch(), Db::fetchAll(), Db::execute(), Db::insert()
+    ↓
+MariaDB
+```
+
+**Controller에서 직접 Db 사용 예제:**
+
+```php
+<?php
+namespace Philgo\Post;
+
+use Philgo\Utils\Db;
+
+class PostController
+{
+    public function create(array $input): array
+    {
+        // 입력값 검증 ...
+
+        $sql = "INSERT INTO sf_post_data (post_id, subject, content) VALUES (?, ?, ?)";
+        $newIdx = Db::insert($sql, [
+            $input['post_id'],
+            $input['subject'],
+            $input['content']
+        ]);
+
+        return ['idx' => $newIdx];
+    }
+}
+```
+
+### 5.2 위젯에서 DB 접근 금지
+
+v7 위젯(`v7/widgets/**/*.php`)에서는 **Db 클래스를 직접 사용하지 않는다**. Service/Repository 계층을 통해 접근한다.
+
+```php
+// ❌ 잘못된 방법 (위젯에서 직접 DB 접근)
+<?php
+use Philgo\Utils\Db;
+$posts = Db::fetchAll("SELECT * FROM sf_post_data LIMIT 10");
+?>
+
+// ✅ 올바른 방법 (Service 계층 사용)
+<?php
+use Philgo\Post\PostService;
+$posts = (new PostService())->latestPosts(10);
+?>
+```
+
+**이유:** Service → Repository → Db 캡슐화로 DB 변경 시 위젯 코드를 수정하지 않아도 된다.
+
+---
+
+## 6. DB 스키마
+
+### 6.1 스키마 파일 위치
+
+| 파일 | 용도 |
+|------|------|
+| `.claude/skills/v7-skill/database/philgo.sql` | 전체 DB 스키마 (최신 버전) |
+
+스키마 파일에는 모든 테이블의 CREATE TABLE 문이 포함되어 있다. 테이블 구조, 컬럼명, 데이터 타입, 인덱스 등을 확인할 때 이 파일을 참조한다.
+
+### 6.2 주요 테이블
+
+| 테이블 | 용도 | 주요 컬럼 |
+|--------|------|----------|
+| `sf_member` | 회원 정보 | `idx`, `id`, `name`, `nickname`, `phone_number`, `firebase_uid` |
+| `sf_post_data` | 게시글 | `idx`, `post_id`, `category`, `subject`, `content`, `idx_member` |
+| `sf_post_config` | 게시판 설정 | `id`, `name`, `description` |
+| `sf_comment_data` | 댓글 | `idx`, `idx_parent`, `idx_member`, `content` |
+| `company` | 업소록 | `idx`, `company_name`, `address`, `phone` |
+| `api_chat_message` | 채팅 메시지 | `idx`, `idx_chat_room`, `idx_member`, `message` |
+| `api_chat_my_room` | 내 채팅방 | `idx`, `idx_member`, `idx_chat_room` |
+| `sf_point_log` | 포인트 로그 | `idx`, `idx_member`, `point`, `reason` |
+
+**테이블 구조 확인 명령:**
+
+```bash
+# Docker 컨테이너에서 테이블 구조 확인
+docker exec -it mariadb mysql -u philgo -pasdf philgo -e "DESCRIBE sf_member;"
+
+# 호스트에서 테이블 구조 확인
+mysql -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo -e "DESCRIBE sf_post_data;"
+
+# 테이블 목록 확인
+docker exec -it mariadb mysql -u philgo -pasdf philgo -e "SHOW TABLES;"
+
+# 테이블 생성 SQL 확인
+docker exec -it mariadb mysql -u philgo -pasdf philgo -e "SHOW CREATE TABLE sf_member\G"
+```
+
+---
+
+## 7. 테스트 환경 DB 설정
+
+### PHP 테스트에서 DB 접속
+
+호스트에서 PHP 테스트를 직접 실행할 때는 `etc/db.config.dev.php` 설정 파일을 사용한다 (호스트: `127.0.0.1`).
+
+```bash
+# 테스트 실행 (호스트에서 직접)
+php tests/db/db.test.php --db-config=etc/db.config.dev.php
+```
+
+### v7 Db 클래스 테스트 설정
+
+```php
+<?php
+use Philgo\Utils\Db;
+
+// 테스트용 DB 설정 파일 지정
+Db::setConfigPath(__DIR__ . '/../../etc/db.config.dev.php');
+
+// 쿼리 실행
+$result = Db::fetch("SELECT 1 AS test");
+assert($result['test'] === '1');
+
+// 테스트 후 연결 초기화
+Db::reset();
+```
+
+### 설정 파일 로드 우선순위 (Db 클래스)
+
+1. `Db::setConfigPath()`로 설정된 경로
+2. `ROOT_DIR` 상수가 정의된 경우: `ROOT_DIR . '/etc/db.config.php'`
+3. 기본값: `lib/utils/../../etc/db.config.php` (= `etc/db.config.php`)
+
+---
+
+## 8. v7 vs 레거시 비교
+
+| 항목 | 레거시 (`pdo()`, `db_*()`) | v7 (`Db` 클래스) |
+|------|--------------------------|-----------------|
+| **파일** | `etc/db.php` | `lib/utils/Db.php` |
+| **네임스페이스** | 없음 (전역 함수) | `Philgo\Utils\Db` |
+| **로딩** | `boot.php` → `etc/includes.php` | PSR-4 Autoloading |
+| **단일 행 조회** | `db_select_row()` → `array` (빈배열) | `Db::fetch()` → `array\|false` |
+| **다중 행 조회** | `db_select()` → `array` (LIMIT 필수) | `Db::fetchAll()` → `array` |
+| **단일 값 조회** | `db_select_col()` → `mixed\|null` | `Db::fetchColumn()` → `mixed` |
+| **INSERT** | `db_insert($table, $data)` → `int` | `Db::insert($sql, $params)` → `int` |
+| **UPDATE** | `db_update($table, $data, $where, $params)` | `Db::execute($sql, $params)` |
+| **DELETE** | `db_delete($table, $where, $params)` | `Db::execute($sql, $params)` |
+| **LIMIT 제한** | 필수 (최대 2,000) | 없음 |
+| **에러 처리** | `error()` 함수 호출 | `RuntimeException` 예외 |
+| **사용 위치** | `page/`, `widget/` (레거시 페이지) | v7 Controller, Service, Repository |
+
+### 선택 기준
+
+- **v7 Controller/Service 개발**: `Db` 클래스 사용 (필수)
+- **레거시 페이지 유지보수**: 기존 `pdo()`, `db_*()` 함수 유지
+- **혼용**: 가능하지만 일관성 유지 권장 (같은 파일 내에서 하나만 사용)
