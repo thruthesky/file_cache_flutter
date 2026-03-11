@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../app.config.dart';
@@ -42,6 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildLevelCard(user),
                 const SizedBox(height: 16),
                 _buildInfoCard(user),
+                const SizedBox(height: 16),
+                _buildPostViewButton(context),
                 const SizedBox(height: 16),
                 _buildAppConfigCard(),
               ],
@@ -237,6 +240,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// 게시글 보기 버튼
+  Widget _buildPostViewButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        context.push('/post/view?idx=1275710403&post_id=qna');
+      },
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+        backgroundColor: Colors.blueAccent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Text(
+        '게시글 보기'.tr(),
+        style: const TextStyle(fontSize: 16, color: Colors.white),
       ),
     );
   }

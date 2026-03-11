@@ -137,6 +137,38 @@ ScaffoldMessenger.of(context).showSnackBar(
 );
 ```
 
+### Step 3-B: Capture Screenshot for Visual Verification
+
+**Important Workflow**: Instead of restarting the app or running Flutter Driver tests, capture screenshots directly from the running simulator using `xcrun simctl` commands:
+
+```bash
+# 기본 스크린샷 캡쳐 (결과 확인)
+xcrun simctl io booted screenshot ~/tmp/sim_screenshot.png && echo "스크린샷 완료"
+
+# 또는 더 자세한 정보와 함께
+xcrun simctl io booted screenshot /Users/thruthesky/tmp/sim_v3.png 2>&1 && echo "완료"
+
+# 추가 지연 시간을 포함한 버전 (레이아웃이 로드되는 시간을 고려)
+sleep 3 && xcrun simctl io booted screenshot ~/tmp/sim_screenshot.png && echo "스크린샷 완료"
+```
+
+**Key Points:**
+- 🔴 **앱을 재실행하지 말 것** — 현재 실행 중인 앱 유지
+- 🔴 **Flutter Driver 테스트를 실행하지 말 것** — DTD hot reload만 사용
+- Hot reload/restart로 코드 변경 적용 후 스크린캡쳐
+- 시뮬레이터 실행 상태 확인 후 스크린샷 파일 경로 지정
+- 스크린샷으로 UI 레이아웃 및 컴포넌트 렌더링 상태 검증
+
+**Workflow Example:**
+```
+1. initState() 코드 작성
+2. Hot reload/restart (Cmd+R 또는 DartDD)
+3. 원하는 페이지로 자동 이동 확인
+4. xcrun simctl 명령으로 스크린캡쳐
+5. 스크린샷 결과 확인 → 필요시 코드 수정
+6. 단계 2-5 반복
+```
+
 ### Step 4: Clean Up
 
 After testing is complete, **remove all temporary test code** from `initState()` methods before committing.
