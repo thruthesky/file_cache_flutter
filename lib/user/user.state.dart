@@ -88,6 +88,25 @@ class UserState extends ChangeNotifier {
     }
   }
 
+  /// 카카오톡 소셜 로그인 후 상태를 설정한다.
+  /// [displayError]가 true이면 에러 시 SnackBar를 자동 표시한다.
+  Future<bool> signInWithKakao({bool displayError = false}) async {
+    _socialLoginInProgress = true;
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _user = await UserService.signInWithKakao(displayError: displayError);
+      return true;
+    } catch (e) {
+      _user = null;
+      return false;
+    } finally {
+      _socialLoginInProgress = false;
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// v7 API로 현재 사용자 데이터를 로드한다.
   Future<void> _loadCurrentUser() async {
     _isLoading = true;

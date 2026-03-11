@@ -1,3 +1,6 @@
+/// 카카오 네이티브 앱 키 (Flutter/iOS/Android용)
+const String kakaoNativeAppKey = 'cf75184c7c72f507d6bb5e39627925d3';
+
 /// v7 API 엔드포인트 (--dart-define=V7_API_ENDPOINT 으로 설정 가능)
 final String v7ApiEndpoint = const String.fromEnvironment(
   'V7_API_ENDPOINT',

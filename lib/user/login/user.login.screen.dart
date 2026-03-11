@@ -18,6 +18,11 @@ class UserLoginScreen extends StatelessWidget {
     if (success && context.mounted) context.pop();
   }
 
+  Future<void> _signInWithKakao(BuildContext context) async {
+    final success = await UserState.of(context).signInWithKakao(displayError: true);
+    if (success && context.mounted) context.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -71,16 +76,74 @@ class UserLoginScreen extends StatelessWidget {
 
               const Spacer(),
 
+              // 카카오 로그인 버튼
+              _KakaoSignInButton(
+                loading: isLoading,
+                onTap: () => _signInWithKakao(context),
+              ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
+
+              const SizedBox(height: 12),
+
               // Google 로그인 버튼
               _GoogleSignInButton(
                 loading: isLoading,
                 onTap: () => _signInWithGoogle(context),
-              ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
+              ).animate().fadeIn(duration: 400.ms, delay: 250.ms).slideY(begin: 0.2, end: 0),
 
               const SizedBox(height: 32),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 카카오 로그인 버튼 (공식 디자인 가이드: 배경 #FEE500, 텍스트 #191919)
+class _KakaoSignInButton extends StatelessWidget {
+  final bool loading;
+  final VoidCallback onTap;
+
+  const _KakaoSignInButton({required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: loading ? null : onTap,
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEE500),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: loading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Color(0xFF191919),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 카카오 말풍선 아이콘
+                  FaIcon(
+                    FontAwesomeIcons.comment,
+                    size: 20,
+                    color: const Color(0xFF191919).withValues(alpha: 0.85),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    '카카오로 로그인',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF191919).withValues(alpha: 0.85),
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }

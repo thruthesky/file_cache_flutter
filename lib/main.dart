@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.service.dart';
+import 'package:philgo/app.config.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/user/user.state.dart';
@@ -17,6 +19,9 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // 카카오 SDK 초기화
+  KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
 
   OmniVideoPlayer.ensureInitialized();
 
