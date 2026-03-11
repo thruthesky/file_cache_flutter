@@ -22,7 +22,6 @@ class UserService {
 
   UserService._();
 
-<<<<<<< HEAD
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseDatabase database = FirebaseDatabase.instance;
 
@@ -52,13 +51,7 @@ class UserService {
   final favoriteFoldersStream = ValueNotifier<List<Map<String, dynamic>>>([]);
 
   /// v7 API 엔드포인트
-  static const String _endpoint = String.fromEnvironment(
-    'V7_API_ENDPOINT',
-    defaultValue: 'https://philgo.com/api.php',
-  );
-=======
   static final String _endpoint = v7ApiEndpoint;
->>>>>>> 73c2d758cae2d401fc9abbea476482ac216826d3
 
   /// 이메일/비밀번호로 로그인
   ///

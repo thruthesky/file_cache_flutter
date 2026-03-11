@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/widgets/chat.join.builder.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.service.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fa;
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 

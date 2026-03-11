@@ -11,7 +11,6 @@ import 'package:philgo/chat/models/chat.room.dart';
 import 'package:philgo/chat/report/chat.report.dart';
 import 'package:philgo/chat/widgets/search_friends_dialog.dart';
 import 'package:philgo/user/user.functions.dart';
-import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/block_user_dialog.dart';
 import 'package:philgo/util/common.functions.dart';
 
