@@ -25,6 +25,3 @@
 [submodule "docs"]
 	path = docs
 	url = https://github.com/thruthesky/docs
-[submodule ".claude/skills/v7-skill"]
-	path = .claude/skills/v7-skill
-	url = https://github.com/thruthesky/v7-skill
