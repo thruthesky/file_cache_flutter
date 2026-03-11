@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../app.config.dart';
 import '../user/user.model.dart';
 import '../user/user.state.dart';
 
@@ -40,6 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildLevelCard(user),
                 const SizedBox(height: 16),
                 _buildInfoCard(user),
+                const SizedBox(height: 16),
+                _buildAppConfigCard(),
               ],
             ),
           );
@@ -163,6 +166,62 @@ class _HomeScreenState extends State<HomeScreen> {
       trailing: Text(
         value,
         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  /// 앱 설정 카드: API 엔드포인트, 베이스 URL, 포럼 카테고리 수
+  Widget _buildAppConfigCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '앱 설정',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(),
+            _configRow('API 엔드포인트', v7ApiEndpoint),
+            _configRow('베이스 URL', v7BaseUrl),
+            _configRow('포럼 카테고리', '${forumCategories.length}개'),
+            _configRow('카카오 앱 키', '${kakaoNativeAppKey.substring(0, 8)}...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _configRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }
