@@ -177,25 +177,17 @@ class _CommentListViewState extends State<CommentListView> {
   /// 자식 코멘트 영역 (세로선 + 곡선 연결선 포함)
   ///
   /// 부모 아바타 중앙에서 세로선이 시작되어 마지막 직접 자식까지 연결된다.
-  /// 깊이가 깊어질수록 패딩을 점진적으로 줄여서 화면 폭을 확보한다.
+  /// 모든 깊이에서 일정한 패딩(12px)을 사용하여 세로선을 정확하게 정렬한다.
   Widget _buildChildrenArea(CommentNode parentNode) {
     final children = parentNode.children;
 
-    // 깊이에 따라 패딩을 동적으로 계산
-    // 깊이 1-3: 16px
-    // 깊이 4: 14px
-    // 깊이 5+: 12px
-    // 이렇게 하면 깊이가 깊어져도 라인이 끊기지 않음
-    double paddingLeft = _avatarRadius;
-    if (parentNode.depth >= 5) {
-      paddingLeft = 12.0;
-    } else if (parentNode.depth == 4) {
-      paddingLeft = 14.0;
-    }
+    // 모든 깊이에서 일정한 패딩 사용 (세로선 정렬 유지)
+    // 12px는 커넥터 너비(16px)보다 작으면서도 충분한 들여쓰기 제공
+    const paddingLeft = 12.0;
 
     return Padding(
-      // 부모 아바타 중앙 기준 들여쓰기 (깊이에 따라 조정)
-      padding: EdgeInsets.only(left: paddingLeft),
+      // 부모 아바타 중앙 기준 들여쓰기 (모든 깊이에서 동일)
+      padding: const EdgeInsets.only(left: paddingLeft),
       child: Column(
         children: [
           for (var i = 0; i < children.length; i++)
