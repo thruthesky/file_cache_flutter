@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,10 +24,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (!userState.isLoggedIn) {
-            return const Center(
+            return Center(
               child: Text(
-                '로그인이 필요합니다.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                'home.loginRequired'.tr(),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
             );
           }
@@ -127,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                '다음 레벨까지 ${user.levelProgress}%',
+                'home.nextLevel'.tr(args: ['${user.levelProgress}']),
                 style: TextStyle(fontSize: 12, color: Colors.grey[500]),
               ),
             ),
@@ -145,14 +146,22 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           if (user.phoneNumber.isNotEmpty)
-            _infoTile(Icons.phone, '전화번호', user.phoneNumber),
-          _infoTile(Icons.article_outlined, '게시글', '${user.noOfPost}개'),
-          _infoTile(Icons.comment_outlined, '댓글', '${user.noOfComment}개'),
+            _infoTile(Icons.phone, 'home.phoneNumber'.tr(), user.phoneNumber),
+          _infoTile(
+            Icons.article_outlined,
+            'home.posts'.tr(),
+            'home.countUnit'.tr(args: ['${user.noOfPost}']),
+          ),
+          _infoTile(
+            Icons.comment_outlined,
+            'home.comments'.tr(),
+            'home.countUnit'.tr(args: ['${user.noOfComment}']),
+          ),
           if (user.gender.isNotEmpty)
             _infoTile(
               Icons.person_outline,
-              '성별',
-              user.gender == 'M' ? '남성' : '여성',
+              'home.gender'.tr(),
+              user.gender == 'M' ? 'home.male'.tr() : 'home.female'.tr(),
             ),
         ],
       ),
@@ -180,18 +189,24 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '앱 설정',
-              style: TextStyle(
+            Text(
+              'home.appSettings'.tr(),
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Divider(),
-            _configRow('API 엔드포인트', v7ApiEndpoint),
-            _configRow('베이스 URL', v7BaseUrl),
-            _configRow('포럼 카테고리', '${forumCategories.length}개'),
-            _configRow('카카오 앱 키', '${kakaoNativeAppKey.substring(0, 8)}...'),
+            _configRow('home.apiEndpoint'.tr(), v7ApiEndpoint),
+            _configRow('home.baseUrl'.tr(), v7BaseUrl),
+            _configRow(
+              'home.forumCategories'.tr(),
+              'home.countUnit'.tr(args: ['${forumCategories.length}']),
+            ),
+            _configRow(
+              'home.kakaoAppKey'.tr(),
+              '${kakaoNativeAppKey.substring(0, 8)}...',
+            ),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -57,7 +58,7 @@ class UserLoginScreen extends StatelessWidget {
                   ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.8, 0.8)),
                   const SizedBox(height: 20),
                   Text(
-                    '필고에 오신 것을 환영합니다',
+                    'loginScreen.welcome'.tr(),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -65,7 +66,7 @@ class UserLoginScreen extends StatelessWidget {
                   ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
                   const SizedBox(height: 8),
                   Text(
-                    '소셜 계정으로 간편하게 로그인하세요',
+                    'loginScreen.socialLoginMessage'.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
@@ -136,7 +137,7 @@ class _KakaoSignInButton extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    '카카오로 로그인',
+                    'loginScreen.kakao'.tr(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF191919).withValues(alpha: 0.85),
@@ -177,7 +178,7 @@ class _GoogleSignInButton extends StatelessWidget {
                   FaIcon(FontAwesomeIcons.google, size: 20, color: scheme.onSurface),
                   const SizedBox(width: 12),
                   Text(
-                    'Google로 로그인',
+                    'loginScreen.google'.tr(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,7 @@ import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.service.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/firebase_options.dart';
+import 'package:philgo/l10n/code_asset_loader.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,7 @@ import 'package:omni_video_player/omni_video_player.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -26,21 +29,33 @@ void main() async {
   OmniVideoPlayer.ensureInitialized();
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FlutterError.onError = (details) {
+    debugPrint('🔴 FlutterError: ${details.exception}');
+    debugPrint('🔴 스택: ${details.stack}');
+    FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+  };
 
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('🔴 PlatformDispatcher 에러: $error');
+    debugPrint('🔴 스택 트레이스: $stack');
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserState()),
-        ChangeNotifierProvider(create: (_) => AppNavigationState()),
-      ],
-      child: const PhilGoV7App(),
+    EasyLocalization(
+      supportedLocales: const [Locale('ko'), Locale('en')],
+      path: 'unused',
+      assetLoader: const CodeAssetLoader(),
+      fallbackLocale: const Locale('ko'),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserState()),
+          ChangeNotifierProvider(create: (_) => AppNavigationState()),
+        ],
+        child: const PhilGoV7App(),
+      ),
     ),
   );
 }
@@ -72,6 +87,9 @@ class _MyAppState extends State<PhilGoV7App> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       routerConfig: router,
     );
   }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
@@ -46,7 +47,6 @@ class _AppScreenState extends State<AppScreen> {
             type: BottomNavigationBarType.fixed,
             currentIndex: currentIndex,
             onTap: (index) {
-              // Handle navigation based on the tapped index
               switch (index) {
                 case 0:
                   AppNavigationState.of(context).openHomeScreen();
@@ -65,15 +65,27 @@ class _AppScreenState extends State<AppScreen> {
                   break;
               }
             },
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Forum'),
-              BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chat'),
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.business),
-                label: 'Company',
+                icon: const Icon(Icons.home),
+                label: 'nav.home'.tr(),
               ),
-              BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.list),
+                label: 'nav.forum'.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.chat),
+                label: 'nav.chat'.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.business),
+                label: 'nav.company'.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.menu),
+                label: 'nav.menu'.tr(),
+              ),
             ],
           );
         },
