@@ -184,7 +184,7 @@ class _CommentListViewState extends State<CommentListView> {
 
     // 깊이 1-4: 정상 넓이 (paddingLeft = avatarRadius = 16)
     // 깊이 5+: 좁은 넓이 (paddingLeft = 12) + lineXOffset 보정으로 세로선 정렬 유지
-    final paddingLeft = parentNode.depth >= 5 ? 12.0 : _avatarRadius;
+    final paddingLeft = parentNode.depth >= 3 ? 6.0 : _avatarRadius;
     final lineXOffset = _avatarRadius - paddingLeft;
 
     return Padding(
@@ -212,9 +212,7 @@ class _CommentListViewState extends State<CommentListView> {
                   ),
 
                   // 자식 코멘트 노드 (재귀)
-                  Expanded(
-                    child: _buildCommentNode(children[i]),
-                  ),
+                  Expanded(child: _buildCommentNode(children[i])),
                 ],
               ),
             ),
@@ -266,10 +264,7 @@ class _CommentListViewState extends State<CommentListView> {
           autofocus: true,
           hintText: '답글을 입력하세요',
           onSubmit: (content) async {
-            await widget.onCreateComment(
-              content,
-              idxParent: parentComment.idx,
-            );
+            await widget.onCreateComment(content, idxParent: parentComment.idx);
             if (mounted) setState(() => _replyToIdx = null);
           },
         ),
