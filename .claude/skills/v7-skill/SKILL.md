@@ -670,6 +670,19 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
+## 🔴 Flutter State vs Service 아키텍처 — 절대 원칙 🔴
+
+> **State 클래스는 최소한의 상태 저장 코드만, 복잡한 로직은 반드시 Service 클래스에 모은다.**
+> 상세 가이드 및 코드 예시: [app/v7-flutter-api.md § 16. State vs Service 아키텍처](references/app/v7-flutter-api.md)
+
+| 계층 | 역할 | 금지 사항 |
+|------|------|-----------|
+| **State** (ChangeNotifier) | 필드 저장, `notifyListeners()`, Service 호출 결과 저장 | API 호출, 비즈니스 로직, 데이터 변환 금지 |
+| **Service** | API 호출, 데이터 변환, 에러 처리, 복잡한 비즈니스 로직 | UI 코드, BuildContext, setState 금지 |
+| **Screen/Widget** | 위젯 빌드, 로컬 UI 상태(setState), 네비게이션 | API 호출, 비즈니스 로직, 데이터 변환 금지 |
+
+---
+
 ## Flutter v7 위젯/함수 재활용 원칙
 
 > **⚠️⚠️⚠️ 재활용 필수 ⚠️⚠️⚠️**

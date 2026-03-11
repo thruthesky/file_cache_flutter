@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-import '../user.service.dart';
+import '../user.state.dart';
 
 class UserLoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -21,18 +22,17 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
   Future<void> _signInWithGoogle() async {
     setState(() => _loading = true);
-    try {
-      await UserService.signInWithGoogle();
-      if (mounted) context.pop();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
+    final userState = context.read<UserState>();
+    final success = await userState.signInWithGoogle();
+    if (!mounted) return;
+    if (success) {
+      context.pop();
+    } else if (userState.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(userState.error!)),
+      );
     }
+    setState(() => _loading = false);
   }
 
   @override

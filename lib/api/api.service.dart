@@ -9,6 +9,18 @@ import 'package:flutter/foundation.dart';
 
 import 'package:philgo/app.config.dart';
 
+/// v7 API 에러를 사용자 친화적으로 표현하는 예외
+class ApiException implements Exception {
+  final String message;
+  final int? statusCode;
+  final dynamic originalError;
+
+  ApiException(this.message, {this.statusCode, this.originalError});
+
+  @override
+  String toString() => message;
+}
+
 /// v7 공통 API 서비스
 ///
 /// v7 API 호출에 필요한 공통 로직을 제공한다.
@@ -106,5 +118,48 @@ class ApiService {
     if (value is int) return value;
     if (value is num) return value.toInt();
     return int.tryParse(value.toString()) ?? 0;
+  }
+
+  /// DioException 등 에러를 사용자 친화적 메시지로 변환한다.
+  static String friendlyErrorMessage(dynamic error) {
+    if (error is ApiException) return error.message;
+
+    if (error is DioException) {
+      if (error.response != null) {
+        final statusCode = error.response!.statusCode;
+        switch (statusCode) {
+          case 500:
+            return '서버 내부 오류가 발생했습니다. (500)';
+          case 502:
+            return '서버에 접속할 수 없습니다. (502)';
+          case 503:
+            return '서버가 일시적으로 사용할 수 없습니다. (503)';
+          case 504:
+            return '서버가 응답하지 않습니다. 잠시 후 다시 시도해주세요. (504)';
+          default:
+            if (statusCode != null && statusCode >= 400 && statusCode < 500) {
+              return '잘못된 요청입니다. ($statusCode)';
+            }
+            return '서버 오류가 발생했습니다. ($statusCode)';
+        }
+      }
+      switch (error.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+          return '서버 연결 시간이 초과되었습니다. 네트워크를 확인해주세요.';
+        case DioExceptionType.connectionError:
+          return '서버에 연결할 수 없습니다. 네트워크를 확인해주세요.';
+        default:
+          return '네트워크 오류가 발생했습니다.';
+      }
+    }
+
+    final msg = error.toString();
+    // "Exception: ..." 접두사 제거
+    if (msg.startsWith('Exception: ')) {
+      return msg.substring('Exception: '.length);
+    }
+    return msg;
   }
 }
