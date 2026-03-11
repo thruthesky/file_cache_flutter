@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'form_shared.dart';
 
 /// Step 1: 기본 정보 (업소명, 카테고리, 한줄 소개, 상세 설명)
 class CompanyEditForm1 extends StatelessWidget {
@@ -9,22 +11,22 @@ class CompanyEditForm1 extends StatelessWidget {
   final ValueChanged<String?> onCategoryChanged;
 
   static const _categories = [
-    ('public-office', '공공기관'),
-    ('education', '교육'),
-    ('food', '음식/식당'),
-    ('transport', '교통'),
-    ('hospital', '병원/의료'),
-    ('mart', '쇼핑/마트'),
-    ('bank', '은행/금융'),
-    ('gadget', '전자/IT'),
-    ('travel-agency', '여행사'),
-    ('hotel', '호텔/숙박'),
-    ('rentcar', '렌터카'),
-    ('beauty', '미용/뷰티'),
-    ('real-estate', '부동산'),
-    ('ktv', '유흥/엔터'),
-    ('spa', '스파/마사지'),
-    ('etc', '기타'),
+    ('public-office', 'Public\nOffice', FontAwesomeIcons.building),
+    ('education', 'Education', FontAwesomeIcons.graduationCap),
+    ('food', 'Food', FontAwesomeIcons.utensils),
+    ('transport', 'Transport', FontAwesomeIcons.bus),
+    ('hospital', 'Health', FontAwesomeIcons.hospital),
+    ('mart', 'Shopping', FontAwesomeIcons.cartShopping),
+    ('bank', 'Banking', FontAwesomeIcons.buildingColumns),
+    ('gadget', 'Gadgets', FontAwesomeIcons.mobileScreen),
+    ('travel-agency', 'Travel', FontAwesomeIcons.planeDeparture),
+    ('hotel', 'Hotels', FontAwesomeIcons.hotel),
+    ('rentcar', 'Car Rent', FontAwesomeIcons.car),
+    ('beauty', 'Beauty', FontAwesomeIcons.scissors),
+    ('real-estate', 'Real\nEstate', FontAwesomeIcons.houseChimney),
+    ('ktv', 'Entertain', FontAwesomeIcons.microphone),
+    ('spa', 'Spa', FontAwesomeIcons.spa),
+    ('etc', 'Other', FontAwesomeIcons.ellipsis),
   ];
 
   const CompanyEditForm1({
@@ -43,52 +45,49 @@ class CompanyEditForm1 extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionLabel('업소명 *'),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: nameController,
-            decoration: _inputDecoration('예: 필고 카페'),
-            validator: (v) =>
-                (v == null || v.trim().isEmpty) ? '업소명을 입력하세요' : null,
+          FormFieldLabel(
+            label: '업소명',
+            required: true,
+            child: TextFormField(
+              controller: nameController,
+              decoration: _inputDecoration('예: 필고 카페'),
+              validator: (v) =>
+                  (v == null || v.trim().isEmpty) ? '업소명을 입력하세요' : null,
+            ),
           ),
-          const SizedBox(height: 20),
-          _sectionLabel('카테고리 *'),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            initialValue: selectedCategory,
-            decoration: _inputDecoration('카테고리 선택'),
-            items: _categories
-                .map((c) => DropdownMenuItem(value: c.$1, child: Text(c.$2)))
-                .toList(),
-            onChanged: onCategoryChanged,
-            validator: (v) => v == null ? '카테고리를 선택하세요' : null,
+          const SizedBox(height: 24),
+          FormFieldLabel(
+            label: '카테고리',
+            required: true,
+            child: _CategoryGrid(
+              selected: selectedCategory,
+              onSelected: onCategoryChanged,
+              categories: _categories,
+            ),
           ),
-          const SizedBox(height: 20),
-          _sectionLabel('한줄 소개'),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: titleController,
-            decoration: _inputDecoration('예: 필리핀 최고의 한인 카페'),
-            maxLength: 100,
+          const SizedBox(height: 24),
+          FormFieldLabel(
+            label: '한줄 소개',
+            child: TextFormField(
+              controller: titleController,
+              decoration: _inputDecoration('예: 필리핀 최고의 한인 카페'),
+              maxLength: 100,
+            ),
           ),
-          const SizedBox(height: 20),
-          _sectionLabel('상세 설명'),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: descriptionController,
-            decoration: _inputDecoration('업소에 대한 자세한 설명을 입력하세요'),
-            maxLines: 5,
-            maxLength: 2000,
+          const SizedBox(height: 24),
+          FormFieldLabel(
+            label: '상세 설명',
+            child: TextFormField(
+              controller: descriptionController,
+              decoration: _inputDecoration(
+                '업소에 대한 자세한 설명을 입력하세요',
+              ).copyWith(alignLabelWithHint: true),
+              maxLines: 5,
+              maxLength: 2000,
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _sectionLabel(String text) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
     );
   }
 
@@ -96,7 +95,92 @@ class CompanyEditForm1 extends StatelessWidget {
     return InputDecoration(
       hintText: hint,
       border: const OutlineInputBorder(),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     );
   }
 }
+
+/// Category grid widget — icon + label tiles, 4 per row
+class _CategoryGrid extends StatelessWidget {
+  final String? selected;
+  final ValueChanged<String?> onSelected;
+  final List<(String, String, IconData)> categories;
+
+  static const _activeColor = Color(0xFFFF6D00);
+
+  const _CategoryGrid({
+    required this.selected,
+    required this.onSelected,
+    required this.categories,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const cols = 4;
+        const spacing = 8.0;
+        final tileSize =
+            (constraints.maxWidth - spacing * (cols - 1)) / cols;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: categories.map((cat) {
+            final (id, label, icon) = cat;
+            final isSelected = selected == id;
+
+            return GestureDetector(
+              onTap: () => onSelected(id),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: tileSize,
+                height: tileSize,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? _activeColor.withValues(alpha: 0.12)
+                      : scheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isSelected ? _activeColor : Colors.transparent,
+                    width: 1.5,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FaIcon(
+                      icon,
+                      size: 20,
+                      color: isSelected
+                          ? _activeColor
+                          : scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 10,
+                        height: 1.2,
+                        color: isSelected ? _activeColor : scheme.onSurface,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.normal,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+

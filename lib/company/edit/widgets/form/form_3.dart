@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'form_shared.dart';
 
 /// Step 3: 이미지 업로드 (로고, 대표 이미지, 추가 사진)
 class CompanyEditForm3 extends StatelessWidget {
@@ -27,71 +28,66 @@ class CompanyEditForm3 extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionLabel('로고 이미지'),
-          const SizedBox(height: 4),
-          Text(
-            '업소의 로고 또는 프로필 이미지',
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 12),
-          _buildImagePicker(
-            context,
-            imageUrl: logoUrl,
-            onPick: onPickLogo,
-            icon: FontAwesomeIcons.image,
-            hint: '로고 선택',
-            aspectRatio: 1,
+          FormFieldLabel(
+            label: '로고 이미지',
+            hint: '업소의 로고 또는 프로필 이미지',
+            child: _ImagePickerTile(
+              imageUrl: logoUrl,
+              onPick: onPickLogo,
+              icon: FontAwesomeIcons.image,
+              hint: '로고 선택',
+              aspectRatio: 1,
+            ),
           ),
           const SizedBox(height: 24),
-          const Divider(),
-          const SizedBox(height: 20),
-          _sectionLabel('대표 이미지'),
-          const SizedBox(height: 4),
-          Text(
-            '목록 및 상단에 표시되는 메인 이미지',
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 12),
-          _buildImagePicker(
-            context,
-            imageUrl: titleImageUrl,
-            onPick: onPickTitleImage,
-            icon: FontAwesomeIcons.panorama,
-            hint: '대표 이미지 선택',
-            aspectRatio: 16 / 9,
+          FormFieldLabel(
+            label: '대표 이미지',
+            hint: '목록 및 상단에 표시되는 메인 이미지',
+            child: _ImagePickerTile(
+              imageUrl: titleImageUrl,
+              onPick: onPickTitleImage,
+              icon: FontAwesomeIcons.panorama,
+              hint: '대표 이미지 선택',
+              aspectRatio: 16 / 9,
+            ),
           ),
           const SizedBox(height: 24),
-          const Divider(),
-          const SizedBox(height: 20),
-          _sectionLabel('추가 사진'),
-          const SizedBox(height: 4),
-          Text(
-            '업소 내부, 메뉴, 분위기 사진 등',
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 12),
-          _buildImagePicker(
-            context,
-            imageUrl: photoUrl,
-            onPick: onPickPhoto,
-            icon: FontAwesomeIcons.camera,
-            hint: '사진 선택',
-            aspectRatio: 4 / 3,
+          FormFieldLabel(
+            label: '추가 사진',
+            hint: '업소 내부, 메뉴, 분위기 사진 등',
+            child: _ImagePickerTile(
+              imageUrl: photoUrl,
+              onPick: onPickPhoto,
+              icon: FontAwesomeIcons.camera,
+              hint: '사진 선택',
+              aspectRatio: 4 / 3,
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildImagePicker(
-    BuildContext context, {
-    String? imageUrl,
-    VoidCallback? onPick,
-    required IconData icon,
-    required String hint,
-    required double aspectRatio,
-  }) {
+class _ImagePickerTile extends StatelessWidget {
+  final String? imageUrl;
+  final VoidCallback? onPick;
+  final IconData icon;
+  final String hint;
+  final double aspectRatio;
+
+  const _ImagePickerTile({
+    this.imageUrl,
+    this.onPick,
+    required this.icon,
+    required this.hint,
+    required this.aspectRatio,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
 
     return GestureDetector(
       onTap: onPick,
@@ -101,30 +97,19 @@ class CompanyEditForm3 extends StatelessWidget {
           decoration: BoxDecoration(
             color: scheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: scheme.outlineVariant),
-            image: imageUrl != null && imageUrl.isNotEmpty
+            border: Border.all(
+              color: scheme.outlineVariant,
+              style: hasImage ? BorderStyle.none : BorderStyle.solid,
+            ),
+            image: hasImage
                 ? DecorationImage(
-                    image: NetworkImage(imageUrl),
+                    image: NetworkImage(imageUrl!),
                     fit: BoxFit.cover,
                   )
                 : null,
           ),
-          child: imageUrl == null || imageUrl.isEmpty
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FaIcon(icon, size: 32, color: scheme.onSurfaceVariant),
-                    const SizedBox(height: 8),
-                    Text(
-                      hint,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                )
-              : Align(
+          child: hasImage
+              ? Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
                     padding: const EdgeInsets.all(8),
@@ -135,22 +120,52 @@ class CompanyEditForm3 extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
-                      child: const Text(
-                        '변경',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          FaIcon(FontAwesomeIcons.penToSquare,
+                              size: 11, color: Colors.white),
+                          SizedBox(width: 4),
+                          Text('변경',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 12)),
+                        ],
                       ),
                     ),
                   ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: scheme.surface,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: scheme.outlineVariant),
+                      ),
+                      child: Center(
+                        child: FaIcon(icon,
+                            size: 22, color: scheme.onSurfaceVariant),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      hint,
+                      style: TextStyle(
+                          fontSize: 13, color: scheme.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '탭하여 선택',
+                      style: TextStyle(
+                          fontSize: 11, color: scheme.outlineVariant),
+                    ),
+                  ],
                 ),
         ),
       ),
-    );
-  }
-
-  Widget _sectionLabel(String text) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
     );
   }
 }

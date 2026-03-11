@@ -36,112 +36,106 @@ class CompanyEditForm4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasContact =
+        [location, address, phone, mobile, kakao, telegram].any((s) => s.isNotEmpty);
+    final hasImages = [logoUrl, titleImageUrl, photoUrl]
+        .any((s) => s != null && s.isNotEmpty);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ReviewSection(
+          _ReviewCard(
             icon: FontAwesomeIcons.buildingColumns,
             title: '기본 정보',
-            items: [
-              ('업소명', name.isNotEmpty ? name : '(미입력)'),
-              ('카테고리', category.isNotEmpty ? category : '(미선택)'),
-              ('한줄 소개', title.isNotEmpty ? title : '(미입력)'),
+            rows: [
+              _Row('업소명', name.isNotEmpty ? name : '(미입력)', missing: name.isEmpty),
+              _Row('카테고리', category.isNotEmpty ? category : '(미선택)',
+                  missing: category.isEmpty),
+              if (title.isNotEmpty) _Row('한줄 소개', title),
               if (description.isNotEmpty)
-                (
+                _Row(
                   '상세 설명',
-                  description.length > 60
-                      ? '${description.substring(0, 60)}…'
-                      : description
+                  description.length > 80
+                      ? '${description.substring(0, 80)}…'
+                      : description,
                 ),
             ],
           ),
-          const SizedBox(height: 16),
-          _ReviewSection(
+          const SizedBox(height: 12),
+          _ReviewCard(
             icon: FontAwesomeIcons.locationDot,
             title: '위치 및 연락처',
-            items: [
-              if (location.isNotEmpty) ('지역', location),
-              if (address.isNotEmpty) ('주소', address),
-              if (phone.isNotEmpty) ('전화번호', phone),
-              if (mobile.isNotEmpty) ('휴대폰', mobile),
-              if (kakao.isNotEmpty) ('카카오톡', kakao),
-              if (telegram.isNotEmpty) ('텔레그램', telegram),
-              if ([location, address, phone, mobile, kakao, telegram]
-                  .every((s) => s.isEmpty))
-                ('', '연락처 정보가 없습니다'),
-            ],
+            rows: hasContact
+                ? [
+                    if (location.isNotEmpty) _Row('지역', location),
+                    if (address.isNotEmpty) _Row('주소', address),
+                    if (phone.isNotEmpty) _Row('전화번호', phone),
+                    if (mobile.isNotEmpty) _Row('휴대폰', mobile),
+                    if (kakao.isNotEmpty) _Row('카카오톡', kakao),
+                    if (telegram.isNotEmpty) _Row('텔레그램', telegram),
+                  ]
+                : [_Row('', '연락처 정보가 없습니다', missing: true)],
           ),
-          const SizedBox(height: 16),
-          _ReviewSection(
+          const SizedBox(height: 12),
+          _ReviewCard(
             icon: FontAwesomeIcons.image,
             title: '이미지',
-            items: [
-              (
-                '로고',
-                logoUrl != null && logoUrl!.isNotEmpty ? '등록됨' : '미등록'
-              ),
-              (
-                '대표 이미지',
-                titleImageUrl != null && titleImageUrl!.isNotEmpty
-                    ? '등록됨'
-                    : '미등록'
-              ),
-              (
-                '추가 사진',
-                photoUrl != null && photoUrl!.isNotEmpty ? '등록됨' : '미등록'
-              ),
+            rows: [
+              _Row('로고', _imgStatus(logoUrl)),
+              _Row('대표 이미지', _imgStatus(titleImageUrl)),
+              _Row('추가 사진', _imgStatus(photoUrl)),
             ],
-          ),
-          const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.orange.shade50,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange.shade200),
-            ),
-            child: Row(
-              children: [
-                const FaIcon(
-                  FontAwesomeIcons.circleInfo,
-                  size: 16,
-                  color: Color(0xFFFF6D00),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.',
-                    style: TextStyle(fontSize: 12, color: Colors.orange[900]),
+            trailing: hasImages
+                ? null
+                : Text(
+                    '이미지 없음',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                   ),
-                ),
-              ],
-            ),
+          ),
+          const SizedBox(height: 20),
+          _InfoBanner(
+            icon: FontAwesomeIcons.circleInfo,
+            color: const Color(0xFFFF6D00),
+            text:
+                '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.',
           ),
         ],
       ),
     );
   }
+
+  String _imgStatus(String? url) =>
+      (url != null && url.isNotEmpty) ? '등록됨 ✓' : '미등록';
 }
 
-class _ReviewSection extends StatelessWidget {
+class _Row {
+  final String key;
+  final String value;
+  final bool missing;
+  const _Row(this.key, this.value, {this.missing = false});
+}
+
+class _ReviewCard extends StatelessWidget {
   final IconData icon;
   final String title;
-  final List<(String, String)> items;
+  final List<_Row> rows;
+  final Widget? trailing;
 
-  const _ReviewSection({
+  const _ReviewCard({
     required this.icon,
     required this.title,
-    required this.items,
+    required this.rows,
+    this.trailing,
   });
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-
     return Card(
       elevation: 0,
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: scheme.outlineVariant),
@@ -153,7 +147,7 @@ class _ReviewSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                FaIcon(icon, size: 14, color: scheme.primary),
+                FaIcon(icon, size: 13, color: scheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   title,
@@ -163,20 +157,24 @@ class _ReviewSection extends StatelessWidget {
                     color: scheme.primary,
                   ),
                 ),
+                if (trailing != null) ...[
+                  const Spacer(),
+                  trailing!,
+                ],
               ],
             ),
             const SizedBox(height: 12),
-            ...items.map(
-              (item) => Padding(
+            ...rows.map(
+              (row) => Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (item.$1.isNotEmpty) ...[
+                    if (row.key.isNotEmpty)
                       SizedBox(
                         width: 72,
                         child: Text(
-                          item.$1,
+                          row.key,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],
@@ -184,12 +182,14 @@ class _ReviewSection extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                    ],
                     Expanded(
                       child: Text(
-                        item.$2,
-                        style: const TextStyle(fontSize: 13),
+                        row.value,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: row.missing ? Colors.grey[400] : null,
+                          fontStyle: row.missing ? FontStyle.italic : null,
+                        ),
                       ),
                     ),
                   ],
@@ -198,6 +198,43 @@ class _ReviewSection extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _InfoBanner extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String text;
+
+  const _InfoBanner({
+    required this.icon,
+    required this.color,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FaIcon(icon, size: 15, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 12, color: color),
+            ),
+          ),
+        ],
       ),
     );
   }

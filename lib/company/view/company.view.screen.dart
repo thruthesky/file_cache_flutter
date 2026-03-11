@@ -95,6 +95,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     return SliverAppBar(
       expandedHeight: 240,
       pinned: true,
+      automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).pop(),

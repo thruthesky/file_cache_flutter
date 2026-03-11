@@ -95,9 +95,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
       await Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => CompanyEditScreen(company: company),
-        ),
+        MaterialPageRoute(builder: (_) => CompanyEditScreen(company: company)),
       );
     } catch (e) {
       if (!mounted) return;
