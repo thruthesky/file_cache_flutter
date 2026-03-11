@@ -16,6 +16,7 @@ class CompanyListScreen extends StatefulWidget {
 
 class _CompanyListScreenState extends State<CompanyListScreen> {
   List<CompanyModel> _companies = [];
+  CompanyModel? _myCompany;
   bool _isLoading = true;
   bool _isFabLoading = false;
   String? _selectedCategoryId; // null = All
@@ -45,7 +46,27 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCompanies();
+    _loadAll();
+  }
+
+  Future<void> _loadAll() async {
+    setState(() => _isLoading = true);
+    try {
+      final results = await Future.wait([
+        CompanyService.list(category: _selectedCategoryId),
+        CompanyService.mine().catchError((_) => null),
+      ]);
+      if (mounted) {
+        setState(() {
+          _companies = results[0] as List<CompanyModel>;
+          _myCompany = results[1] as CompanyModel?;
+        });
+      }
+    } catch (_) {
+      // ignore
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _loadCompanies() async {
@@ -70,10 +91,22 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
   Future<void> _onFabPressed() async {
     if (_isFabLoading) return;
+
+    // Use cached company — no extra API call needed
+    if (_myCompany != null) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CompanyEditScreen(company: _myCompany!),
+        ),
+      );
+      return;
+    }
+
+    // Fallback: fetch if initState mine() failed
     setState(() => _isFabLoading = true);
     try {
-      // 내 업소 조회 (없으면 자동 생성)
-      CompanyModel? company = await CompanyService.mine();
+      final company = await CompanyService.mine();
       if (!mounted) return;
 
       if (company == null) {
@@ -83,7 +116,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         return;
       }
 
-      // 처음 만들어진 빈 업소인 경우 안내 스낵바
+      setState(() => _myCompany = company);
+
       if (company.name.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
