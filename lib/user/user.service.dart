@@ -128,10 +128,15 @@ class UserService {
     try {
       // 1. 카카오 로그인 → access_token 획득
       kakao.OAuthToken token;
-      if (await kakao.isKakaoTalkInstalled()) {
+      final isInstalled = await kakao.isKakaoTalkInstalled();
+      debugPrint('카카오톡 앱 설치 여부: $isInstalled');
+      final keyHash = await kakao.KakaoSdk.origin;
+      debugPrint('카카오 Android keyHash: $keyHash');
+      if (isInstalled) {
         try {
           token = await kakao.UserApi.instance.loginWithKakaoTalk();
         } catch (e) {
+          debugPrint('카카오톡 앱 로그인 실패, 웹 로그인으로 폴백: $e');
           // 카카오톡 로그인 실패 시 웹 로그인으로 폴백
           if (e is PlatformException && e.code == 'CANCELED') rethrow;
           token = await kakao.UserApi.instance.loginWithKakaoAccount();

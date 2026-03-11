@@ -60,6 +60,7 @@ dependencies:
   video_player: ^2.11.0
   webview_flutter: ^4.13.0
   kakao_flutter_sdk_user: ^1.10.0
+  easy_localization: ^3.0.8
 
 dependency_overrides:
   file_cache_flutter:
