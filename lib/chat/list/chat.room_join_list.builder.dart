@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
-import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/user/widgets/login.dart';
@@ -9,17 +8,6 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
   const ChatRoomJoinListBuilder({super.key, required this.builder});
 
   final Widget Function(BuildContext context, ChatJoin room) builder;
-
-  String empty_chat_list(String order) {
-    if (order == RoomOrder.singleOrder) {
-      return "Your friends list is empty";
-    } else if (order == RoomOrder.groupOrder) {
-      return "Your group chat list is empty";
-    } else if (order == RoomOrder.openOrder) {
-      return "No open chat rooms available";
-    }
-    return "Chatroom list is empty";
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +25,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
   Widget buildChatRoomList(String uid) {
     return FirebaseDatabaseQueryBuilder(
       reverseQuery: true,
-      query: roomQuery(RoomOrder.order, uid),
+      query: singleChatRoomListQuery(),
       pageSize: 20,
       builder: (context, snapshot, _) {
         if (snapshot.isFetching) {
@@ -60,7 +48,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  empty_chat_list(RoomOrder.order),
+                  "Your friends list is empty",
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),

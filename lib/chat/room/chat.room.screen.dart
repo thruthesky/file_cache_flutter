@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.functions.dart';
-import 'package:philgo/chat/room/chat.room.message_list.dart';
 import 'package:philgo/chat/room/single.chat_room.dart';
+import 'package:philgo/chat/room/single.chat_room.message_list.dart';
 import 'package:philgo/user/widgets/login.dart';
 
 import 'package:go_router/go_router.dart';
@@ -27,8 +27,8 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  ChatRoomMessageListController messageListController =
-      ChatRoomMessageListController();
+  SingleChatRoomMessageListController messageListController =
+      SingleChatRoomMessageListController();
   @override
   Widget build(BuildContext context) {
     return Login(

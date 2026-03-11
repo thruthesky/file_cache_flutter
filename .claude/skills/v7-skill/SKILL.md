@@ -645,6 +645,23 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 
 ---
 
+## 🔴🔴🔴 Flutter Driver / E2E 테스트 절대 금지 🔴🔴🔴
+
+> **⛔ Flutter 앱 개발 또는 소스 코딩 시 Flutter Driver 테스트, E2E 테스트, Integration Test를 절대로 작성하거나 실행하지 않는다. ⛔**
+
+| 금지 항목 | 설명 |
+|-----------|------|
+| ❌ **flutter_driver** | `flutter_driver` 패키지를 사용한 테스트 코드 작성 금지 |
+| ❌ **integration_test** | `integration_test` 패키지를 사용한 테스트 코드 작성 금지 |
+| ❌ **flutter_test** | `flutter_test` 패키지를 사용한 위젯/유닛 테스트 코드 작성 금지 |
+| ❌ **테스트 디렉토리** | `test/`, `integration_test/`, `test_driver/` 디렉토리에 파일 생성 금지 |
+| ❌ **테스트 실행 명령** | `flutter drive`, `flutter test` 등 테스트 실행 명령어 사용 금지 |
+
+- 테스트가 필요한 경우 **CLAUDE.md의 "Debugging with Dart Tooling Daemon (DTD)" 섹션에 정의된 DTD 방식만** 사용한다.
+- DTD 방식: hot reload를 사용하여 `initState()`에 임시 테스트 코드를 주입하는 방식
+
+---
+
 ## 🔴🔴🔴 Flutter v7 코드 저장 경로 — 예외 없음 🔴🔴🔴
 
 > **필고 앱(Flutter) 프로젝트 루트 경로:**
@@ -1364,3 +1381,56 @@ echo t()->게시판목록;
 
 include_once '../page.footer.php';
 ```
+
+---
+
+## Git Subtree 관리
+
+이 프로젝트는 Git Subtree를 사용하여 외부 패키지와 스킬을 관리한다.
+사용자가 "서브트리 업데이트", "subtree 업데이트", "subtree pull/push" 등을 요청하면 아래 절차를 수행한다.
+
+### Subtree 목록
+
+| 리모트 이름 | 경로 (prefix) | 브랜치 |
+|-------------|---------------|--------|
+| `easy_phone_sign_in` | `packages/easy_phone_sign_in` | `main` |
+| `file_cache_flutter` | `packages/file_cache_flutter` | `main` |
+| `font_awesome_flutter` | `packages/font_awesome_flutter` | `main` |
+| `philgo_api` | `packages/philgo_api` | `main` |
+| `flutter-skill` | `.claude/skills/flutter-skill` | `main` |
+| `v7-skill` | `.claude/skills/v7-skill` | `main` |
+
+### Subtree Pull (원격 → 로컬)
+
+각 subtree에 대해 `--squash` 옵션으로 pull한다:
+
+```bash
+git subtree pull --prefix=packages/easy_phone_sign_in easy_phone_sign_in main --squash
+git subtree pull --prefix=packages/file_cache_flutter file_cache_flutter main --squash
+git subtree pull --prefix=packages/font_awesome_flutter font_awesome_flutter main --squash
+git subtree pull --prefix=packages/philgo_api philgo_api main --squash
+git subtree pull --prefix=.claude/skills/flutter-skill flutter-skill main --squash
+git subtree pull --prefix=.claude/skills/v7-skill v7-skill main --squash
+```
+
+### Subtree Push (로컬 → 원격)
+
+각 subtree에 대해 push한다:
+
+```bash
+git subtree push --prefix=packages/easy_phone_sign_in easy_phone_sign_in main
+git subtree push --prefix=packages/file_cache_flutter file_cache_flutter main
+git subtree push --prefix=packages/font_awesome_flutter font_awesome_flutter main
+git subtree push --prefix=packages/philgo_api philgo_api main
+git subtree push --prefix=.claude/skills/flutter-skill flutter-skill main
+git subtree push --prefix=.claude/skills/v7-skill v7-skill main
+```
+
+### 작업 순서
+
+1. **커밋**: 현재 작업 중인 변경사항이 있으면 먼저 커밋한다
+2. **Pull**: 모든 subtree에 대해 pull을 수행한다 (충돌 발생 시 해결 후 진행)
+3. **Push**: 모든 subtree에 대해 push를 수행한다
+4. **메인 저장소 push**: 필요 시 `git push origin v7`으로 메인 저장소도 push한다
+
+> **참고:** subtree push는 전체 커밋 히스토리를 순회하므로 시간이 걸릴 수 있다.
