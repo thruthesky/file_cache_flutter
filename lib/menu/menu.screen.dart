@@ -3,8 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
+import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/login.dart';
+import 'package:provider/provider.dart';
 
 class MenuScreen extends StatefulWidget {
   static const String routeName = '/Menu';
@@ -218,17 +221,23 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 프로필 카드 내용
   Widget _buildProfileContent(ThemeData theme, ColorScheme scheme) {
+    final user = context.watch<UserState>().user;
+    if (user == null) return const SizedBox.shrink();
+
     return Row(
       children: [
         /// 프로필 이미지
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            'assets/img/logo/philgo_v6_app_logo.png',
-            width: 56,
-            height: 56,
-            fit: BoxFit.cover,
-          ),
+          child: user.photoUrl.isNotEmpty
+              ? Image.network(
+                  user.photoUrl,
+                  width: 56,
+                  height: 56,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _buildDefaultAvatar(scheme),
+                )
+              : _buildDefaultAvatar(scheme),
         ),
         const SizedBox(width: 12),
 
@@ -238,18 +247,21 @@ class _MenuScreenState extends State<MenuScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '필고',
+                user.displayName,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 2),
-              Text(
-                '송재호',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
+              if (user.id.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  user.id,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
+              ],
               const SizedBox(height: 6),
               Row(
                 children: [
@@ -260,7 +272,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '78개 게시물',
+                    '${user.noOfPost}개 게시물',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
@@ -274,7 +286,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '14개 댓글',
+                    '${user.noOfComment}개 댓글',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
@@ -293,6 +305,25 @@ class _MenuScreenState extends State<MenuScreen> {
           color: scheme.onSurfaceVariant,
         ),
       ],
+    );
+  }
+
+  /// 기본 프로필 아바타
+  Widget _buildDefaultAvatar(ColorScheme scheme) {
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: FaIcon(
+          FontAwesomeIcons.lightCircleUser,
+          size: 28,
+          color: scheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 
