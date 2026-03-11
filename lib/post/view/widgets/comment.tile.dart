@@ -138,8 +138,7 @@ class _CommentTileState extends State<CommentTile> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 2),
-                // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬)
+                // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬, 아바타와 붙어있음)
                 Expanded(
                   child: Align(
                     alignment: Alignment.topCenter,
