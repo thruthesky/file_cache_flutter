@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/chat/chat.screen.dart';
-import 'package:philgo/company/company.screen.dart';
+import 'package:philgo/company/list/company.list.screen.dart';
 import 'package:philgo/home/home.screen.dart';
 import 'package:philgo/menu/menu.screen.dart';
 import 'package:philgo/post/list/post.list.screen.dart';
@@ -34,7 +34,7 @@ class _AppScreenState extends State<AppScreen> {
 
               ChatScreen(),
 
-              CompanyScreen(),
+              CompanyListScreen(),
               MenuScreen(),
             ],
           );

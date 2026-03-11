@@ -17,7 +17,10 @@ class ReportChatRoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ReportChatDialog(path: getReportRoomPath(roomId), onClose: onClose);
+    return ReportChatDialog(
+      path: getReportMessagesPath(roomId),
+      onClose: onClose,
+    );
   }
 }
 

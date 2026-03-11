@@ -112,6 +112,81 @@ class ApiService {
     }
   }
 
+  /// 파일 업로드
+  ///
+  /// API: `upload.upload` (인증 필요)
+  ///
+  /// [filePath] 업로드할 로컬 파일 경로 (필수)
+  /// [module] 모듈명 (선택, 예: 'company', 'post', 'user')
+  /// [code] 세부 분류 (선택, 예: 'main_photo', 'gallery', 'profile_photo')
+  /// [extraData] FormData에 추가할 임의 필드 (선택)
+  /// [onProgress] 업로드 진행률 콜백 (0.0 ~ 1.0)
+  static Future<Map<String, dynamic>> fileUpload({
+    required String filePath,
+    String? module,
+    String? code,
+    Map<String, dynamic>? extraData,
+    void Function(double progress)? onProgress,
+  }) async {
+    final dio = _createDio();
+    final fileName = filePath.split('/').last;
+
+    String idToken = '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        idToken = await user.getIdToken() ?? '';
+      } catch (_) {}
+    }
+
+    final formData = FormData.fromMap({
+      'method': 'upload.upload',
+      'file': await MultipartFile.fromFile(filePath, filename: fileName),
+      if (idToken.isNotEmpty) 'id_token': idToken,
+      if (module != null) 'module': module,
+      if (code != null) 'code': code,
+      ...?extraData,
+    });
+
+    final response = await dio.post(
+      _endpoint,
+      data: formData,
+      onSendProgress: (sent, total) {
+        if (onProgress != null && total > 0) {
+          onProgress(sent / total);
+        }
+      },
+      options: Options(
+        contentType: 'multipart/form-data',
+        headers: {'Accept': 'application/json'},
+      ),
+    );
+
+    Map<String, dynamic> json;
+    if (response.data is Map<String, dynamic>) {
+      json = response.data;
+    } else if (response.data is String) {
+      json = jsonDecode(response.data) as Map<String, dynamic>;
+    } else {
+      throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
+    }
+
+    if (json['success'] == false) {
+      throw Exception(json['message'] ?? '파일 업로드에 실패했습니다.');
+    }
+
+    return json;
+  }
+
+  /// 파일 삭제
+  ///
+  /// API: `upload.delete` (인증 필요, 본인 파일만 삭제 가능)
+  ///
+  /// [idx] 삭제할 파일의 idx
+  static Future<void> fileDelete(int idx) async {
+    await v7api('upload.delete', data: {'idx': idx});
+  }
+
   /// 안전한 int 변환
   static int toInt(dynamic value) {
     if (value == null) return 0;

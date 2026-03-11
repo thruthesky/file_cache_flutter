@@ -1,49 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/list/chat.room_list_tile.dart';
 import 'package:philgo/chat/models/chat.join.dart';
-import 'package:philgo/chat/models/chat.room.dart';
 import 'package:philgo/user/widgets/login.dart';
 
 class ChatRoomListView extends StatelessWidget {
-  // singleOrder - returns a list of single chat rooms for the user
-  // groupOrder - returns a list of group chat rooms for the user
-  // openOrder - returns a list of open chat rooms
-  // order - returns a list of chat rooms based on the user's order
-  final String order;
   final void Function(String roomId) onTap;
 
-  const ChatRoomListView({super.key, required this.order, required this.onTap});
-
-  String empty_chat_list(String order) {
-    if (order == RoomOrder.singleOrder) {
-      return "Your friends list is empty";
-    } else if (order == RoomOrder.groupOrder) {
-      return "Your group chat list is empty";
-    } else if (order == RoomOrder.openOrder) {
-      return "No open chat rooms available";
-    }
-
-    return "Chatroom list is empty";
-  }
+  const ChatRoomListView({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Login(
-      builder: (uid) => buildChatRoomList(uid: uid),
+      builder: (uid) => buildChatRoomList(),
       notLoggedIn: const Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 
-  Widget buildChatRoomList({String? uid}) {
+  Widget buildChatRoomList() {
     return FirebaseDatabaseQueryBuilder(
       reverseQuery: true,
-      query: uid != null
-          ? roomQuery(order, uid)
-          : roomQuery(RoomOrder.openOrder, ''),
+      query: singleChatRoomListQuery(),
       pageSize: 20,
       builder: (context, snapshot, _) {
         if (snapshot.isFetching) {
@@ -87,7 +66,7 @@ class ChatRoomListView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    empty_chat_list(order),
+                    "Your friends list is empty",
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -125,14 +104,6 @@ class ChatRoomListView extends StatelessWidget {
             final doc = snapshot.docs[index];
             if (doc.key == null || doc.value == null) {
               return const SizedBox.shrink();
-            }
-
-            if (RoomOrder.openOrder == order || uid == null) {
-              return ChatRoomListTile(
-                key: ValueKey(doc.key),
-                room: ChatRoom.fromSnapshot(doc),
-                onTap: onTap,
-              );
             }
             return ChatRoomListTile(
               key: ValueKey(doc.key),

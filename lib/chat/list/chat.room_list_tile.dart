@@ -6,7 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/models/chat.join.dart';
-import 'package:philgo/chat/models/chat.room.dart';
 import 'package:philgo/chat/report/chat.report.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.service.dart';
@@ -17,17 +16,9 @@ import 'package:philgo/user/widgets/online.status.dart';
 import 'package:philgo/util/util.functions.dart';
 
 class ChatRoomListTile extends StatefulWidget {
-  const ChatRoomListTile({
-    super.key,
+  const ChatRoomListTile({super.key, required this.join, required this.onTap});
 
-    this.join,
-    this.room,
-
-    required this.onTap,
-  });
-
-  final ChatJoin? join;
-  final ChatRoom? room;
+  final ChatJoin join;
   final void Function(String roomId) onTap;
 
   @override
@@ -35,9 +26,8 @@ class ChatRoomListTile extends StatefulWidget {
 }
 
 class _ChatRoomListTileState extends State<ChatRoomListTile> {
-  ChatJoin? get join => widget.join;
-  ChatRoom? get room => widget.room;
-  String get roomId => join?.id ?? room!.id;
+  ChatJoin get join => widget.join;
+  String get roomId => join.id;
   bool get isSingle => isSingleChatRoom(roomId);
 
   /// 즐겨찾기 상태를 관리하는 ValueNotifier
@@ -46,51 +36,11 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
   // room name or user name
   String get name {
-    if (join != null) {
-      if (join!.customName.isNotEmpty) {
-        return join!.customName;
-      }
+    if (join.customName.isNotEmpty) return join.customName;
 
-      if (isSingle) {
-        return join!.userDisplayName.isNotEmpty
-            ? join!.userDisplayName
-            : 'no name';
-      } else {
-        return join!.roomName.isNotEmpty ? join!.roomName : 'No name';
-      }
-    }
+    if (join.userDisplayName.isNotEmpty) return join.userDisplayName;
 
-    if (room != null) {
-      return room!.name.isNotEmpty ? room!.name : 'No room name';
-    }
-    return 'no room name';
-  }
-
-  // photo URL for the room or user
-  String? get photoUrl {
-    if (isSingle && join != null) {
-      return join!.userPhotoUrl.isNotEmpty ? join!.userPhotoUrl : null;
-    }
-    return null;
-  }
-
-  int get unread {
-    // debugPrint(j);
-    if (join != null) return join!.unread;
-    return 0;
-  }
-
-  String get subTitle {
-    if (join?.lastMessage.text != null) return join!.lastMessage.text;
-    if (room != null) return room!.description;
-    return '';
-  }
-
-  int get lastMessageAt {
-    if (join?.lastMessage.sentAt != null) {
-      return join!.lastMessage.sentAt;
-    }
-    return 0;
+    return 'No name';
   }
 
   /// 채팅방 고정 여부 확인
@@ -256,17 +206,21 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                                 const SizedBox(height: 4),
                                 // Subtitle with date separator - flexible layout
                                 subTitleWidget ??
-                                    (subTitle.isNotEmpty || lastMessageAt > 0
+                                    (join.lastMessage.text.isNotEmpty ||
+                                            join.lastMessage.sentAt > 0
                                         ? Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             mainAxisSize: MainAxisSize.min,
                                             spacing: 4,
                                             children: [
-                                              if (subTitle.isNotEmpty)
+                                              if (join
+                                                  .lastMessage
+                                                  .text
+                                                  .isNotEmpty)
                                                 Flexible(
                                                   child: Text(
-                                                    subTitle,
+                                                    join.lastMessage.text,
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -283,8 +237,12 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                                                   ),
                                                 ),
                                               // Date with bullet separator
-                                              if (lastMessageAt > 0) ...[
-                                                if (subTitle.isNotEmpty)
+                                              if (join.lastMessage.sentAt >
+                                                  0) ...[
+                                                if (join
+                                                    .lastMessage
+                                                    .text
+                                                    .isNotEmpty)
                                                   Text(
                                                     '•',
                                                     style: theme
@@ -301,7 +259,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                                                 Text(
                                                   formatTimestamp(
                                                     context,
-                                                    lastMessageAt,
+                                                    join.lastMessage.sentAt,
                                                   ),
                                                   style: theme
                                                       .textTheme
@@ -393,7 +351,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Unread badge
-        if (unread > 0) ...[buildUnreadBadge(unread)],
+        if (join.unread > 0) ...[buildUnreadBadge(join.unread)],
         // Vertical 3-dot menu button
         PopupMenuButton<String>(
           icon: FaIcon(
@@ -867,7 +825,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       ),
       child: Stack(
         children: [
-          Avatar(photoUrl: photoUrl),
+          Avatar(photoUrl: join.userPhotoUrl),
 
           // Favorite icon - positioned at left bottom (left of online indicator)
           ValueListenableBuilder<bool>(
