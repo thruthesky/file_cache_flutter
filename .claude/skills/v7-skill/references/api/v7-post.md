@@ -550,7 +550,10 @@ Comment-C (third)        depth=1, list_order=0
 | `PostRepository` | `findComments($idxRoot)` | 코멘트 목록 조회 (list_order DESC) |
 | `PostRepository` | `findLastChildComment($idx)` | 재귀적으로 마지막 자손 코멘트 탐색 |
 | `PostRepository` | `updateCommentThread($idxRoot, $idxParent)` | 새 코멘트 삽입 위치 계산 + list_order 시프트 |
+| `PostRepository` | `hasChildComments($idx)` | 자식 댓글 존재 여부 확인 (idx_parent 기반) |
 | `PostService` | `commentCreate($input)` | 코멘트 생성 (updateCommentThread 호출) |
+| `PostService` | `commentUpdate($input)` | 코멘트 수정 (자식 있으면 차단) |
+| `PostService` | `commentDelete($input)` | 코멘트 삭제 (자식 있으면 차단) |
 | `PostService` | `commentList($input)` | 코멘트 목록 반환 |
 
 ### API 엔드포인트 (코멘트)
@@ -587,6 +590,45 @@ GET /api.php?method=post.commentList&idx_root=12345
 
 **응답**: PostEntity 배열 (list_order DESC 정렬)
 
+#### post.commentUpdate -- 코멘트 수정
+
+인증 필요 (작성자 또는 관리자).
+
+```
+POST /api.php
+method=post.commentUpdate&idx=67890&content=수정된댓글내용
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| idx | int | O | 코멘트 idx |
+| content | string | O | 수정할 내용 |
+
+**수정 제한**:
+- 자식 댓글이 있는 코멘트는 수정 불가 (`PostRepository::hasChildComments()` 검사)
+
+**응답**: 수정된 코멘트의 PostEntity 배열
+
+#### post.commentDelete -- 코멘트 삭제
+
+인증 필요 (작성자 또는 관리자).
+
+```
+POST /api.php
+method=post.commentDelete&idx=67890
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| idx | int | O | 코멘트 idx |
+
+**삭제 제한**:
+- 자식 댓글이 있는 코멘트는 삭제 불가 (`PostRepository::hasChildComments()` 검사)
+
+**삭제 방식**: 하드 삭제 (물리적 DELETE) + 원글의 `no_of_comment` 카운트 -1 갱신
+
+**응답**: `{ "success": true }`
+
 ### v6 함수와의 대응 관계
 
 | v6 (레거시) | v7 (신규) |
@@ -595,6 +637,8 @@ GET /api.php?method=post.commentList&idx_root=12345
 | `update_comment_thread($idx_post, $idx_parent, $idx_comment)` | `PostRepository::updateCommentThread($idxRoot, $idxParent)` |
 | `get_comment($idx)` | `PostRepository::findByIdx($idx)` |
 | `comment_create($input)` | `PostService::commentCreate($input)` |
+| `comment_update($input)` | `PostService::commentUpdate($input)` |
+| `comment_delete($idx)` | `PostService::commentDelete($input)` |
 | `ORDER BY list_order DESC` | `PostRepository::findComments()` 기본 정렬 |
 
 ### 웹 페이지 (코멘트 렌더링)
