@@ -119,32 +119,35 @@ class _CommentTileState extends State<CommentTile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 아바타 + 세로선 컬럼
-          Column(
-            children: [
-              const SizedBox(height: 8),
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: scheme.primaryContainer,
-                child: Text(
-                  initial,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: scheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
+          SizedBox(
+            width: 32,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 8),
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: scheme.primaryContainer,
+                  child: Text(
+                    initial,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              // 세로선: 아바타 하단에서 코멘트 하단까지
-              Expanded(
-                child: Center(
+                const SizedBox(height: 2),
+                // 세로선: 아바타 하단에서 코멘트 하단까지
+                Expanded(
                   child: Container(
                     width: 1,
                     color: kThreadLineColor,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(width: 8),
           // 내용 컬럼
