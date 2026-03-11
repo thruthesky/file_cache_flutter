@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Step 4: 검토 화면 — 입력한 정보를 요약하여 표시
-class CompanyEditForm4 extends StatelessWidget {
+class CompanyReviewForm extends StatelessWidget {
   final String name;
   final String category;
   final String title;

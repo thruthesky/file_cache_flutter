@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'form_shared.dart';
 
 /// Step 1: 기본 정보 (업소명, 카테고리, 한줄 소개, 상세 설명)
-class CompanyEditForm1 extends StatelessWidget {
+class CompanyBasicInfoForm extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController titleController;
   final TextEditingController descriptionController;

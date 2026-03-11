@@ -2,8 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file_upload/file_upload.model.dart';
-import 'package:philgo/file_upload/file_upload.service.dart';
 
 /// 파일 업로드 위젯
 ///
@@ -127,13 +127,14 @@ class _FileUploadState extends State<FileUpload> {
     setState(() => _uploading = true);
 
     try {
-      final model = await FileUploadService.upload(
+      final json = await ApiService.fileUpload(
         filePath: filePath,
         module: widget.module,
         code: widget.code,
         extraData: widget.extraData,
         onProgress: widget.onProgress,
       );
+      final model = FileUploadModel.fromJson(json);
       widget.onUploaded?.call(model);
     } catch (e) {
       widget.onError?.call(e);

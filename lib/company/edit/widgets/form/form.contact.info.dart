@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'form_shared.dart';
 
 /// Step 2: 위치 및 연락처
-class CompanyEditForm2 extends StatelessWidget {
+class CompanyContactInfoForm extends StatelessWidget {
   final TextEditingController locationController;
   final TextEditingController addressController;
   final TextEditingController phoneController;

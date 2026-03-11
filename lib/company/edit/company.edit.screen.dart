@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
-import 'package:philgo/company/edit/widgets/form/form_1.dart';
-import 'package:philgo/company/edit/widgets/form/form_2.dart';
-import 'package:philgo/company/edit/widgets/form/form_3.dart';
-import 'package:philgo/company/edit/widgets/form/form_4.dart';
+import 'package:philgo/company/edit/widgets/form/form.basic.info.dart';
+import 'package:philgo/company/edit/widgets/form/form.contact.info.dart';
+import 'package:philgo/company/edit/widgets/form/form.image.upload.dart';
+import 'package:philgo/company/edit/widgets/form/form.review.dart';
 import 'package:philgo/company/edit/widgets/form_step_tracker.dart';
 
 /// 업소 정보 수정 멀티 스텝 폼 화면
@@ -190,7 +190,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
   Widget _buildStepContent() {
     switch (_currentStep) {
       case 0:
-        return CompanyEditForm1(
+        return CompanyBasicInfoForm(
           nameController: _nameCtrl,
           titleController: _titleCtrl,
           descriptionController: _descCtrl,
@@ -198,7 +198,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
           onCategoryChanged: (v) => setState(() => _selectedCategory = v),
         );
       case 1:
-        return CompanyEditForm2(
+        return CompanyContactInfoForm(
           locationController: _locationCtrl,
           addressController: _addressCtrl,
           phoneController: _phoneCtrl,
@@ -207,16 +207,16 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
           telegramController: _telegramCtrl,
         );
       case 2:
-        return CompanyEditForm3(
+        return CompanyImageUploadForm(
           logoUrl: _logoUrl,
           titleImageUrl: _titleImageUrl,
           photoUrl: _photoUrl,
-          onPickLogo: () => _showImageNotice(),
-          onPickTitleImage: () => _showImageNotice(),
-          onPickPhoto: () => _showImageNotice(),
+          onLogoUploaded: (url) => setState(() => _logoUrl = url),
+          onTitleImageUploaded: (url) => setState(() => _titleImageUrl = url),
+          onPhotoUploaded: (url) => setState(() => _photoUrl = url),
         );
       case 3:
-        return CompanyEditForm4(
+        return CompanyReviewForm(
           name: _nameCtrl.text,
           category: _selectedCategory ?? '',
           title: _titleCtrl.text,
@@ -234,12 +234,6 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
       default:
         return const SizedBox.shrink();
     }
-  }
-
-  void _showImageNotice() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('이미지 업로드 기능 준비중')),
-    );
   }
 
   Widget _buildBottomBar(bool isLastStep) {
