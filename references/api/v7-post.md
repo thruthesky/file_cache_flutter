@@ -489,6 +489,18 @@ if ($_v7LoginUser) {
 
 ## 게시글 보기 페이지 디자인
 
+### 최근 디자인 변경 이력
+
+| 항목 | 이전 | 현재 |
+|------|------|------|
+| 액션바 버튼 모양 | pill (`border-radius: 20px`) | 일반 사각형 (`border-radius: 6px`) |
+| 좋아요 버튼 배경 | 블루 배경 (`brand-50`) | 흰색 배경 (`#fff`) + 블루 텍스트/테두리 |
+| 댓글 textarea 배경 | `neutral-50` (연한 회색) | 순백색 (`#fff`) |
+| 첨부 버튼 배경 | `neutral-50` (연한 회색) | 순백색 (`#fff`) |
+| 코멘트 노드 패딩 | 없음 | `padding: 0.4rem 0` 추가 |
+| thread-line 색상 | `#94a3b8` (neutral-400) | `#cbd5e1` (neutral-300) |
+| L자 곡선 연결선 색상 | `#94a3b8` (neutral-400) | `#cbd5e1` (neutral-300, 세로선과 동일) |
+
 ### 파일 구조
 
 | 파일 | 용도 |
@@ -526,15 +538,22 @@ if ($_v7LoginUser) {
 
 ### 액션 바 디자인
 
-좋아요/수정/삭제/목록 버튼은 **블루 테마** pill 형태로 표시된다.
+좋아요/수정/삭제/목록 버튼은 **블루 테마의 일반 사각형(border-radius: 6px)** 형태로 표시된다.
 
-| 버튼 | 스타일 | 색상 |
-|------|--------|------|
-| 좋아요 | `.post-like-btn` | 블루 (`brand-600` 텍스트, `brand-50` 배경, `brand-300` 테두리) |
-| 수정/목록 | `.post-action-btn` | 중립 (회색 테두리, 흰 배경, `border-radius: 20px`) |
-| 삭제 확인 | `.post-delete-confirm-btn` | 빨간색 (삭제 액션에만 예외적으로 빨간색 허용) |
+| 버튼 | 스타일 | 색상 | border-radius |
+|------|--------|------|---------------|
+| 좋아요 | `.post-like-btn` | 블루 (`brand-600` 텍스트, **흰색(`#fff`) 배경**, `brand-300` 테두리) | `6px` |
+| 수정/목록 | `.post-action-btn` | 중립 (회색 테두리, 흰 배경) | `6px` |
+| 삭제 확인 | `.post-delete-confirm-btn` | 빨간색 (삭제 액션에만 예외적으로 빨간색 허용) | `6px` |
 
-**🔴 좋아요 버튼은 반드시 블루 테마**: `#dc2626` 빨간색 사용 금지. `--wa-color-brand-*` 변수 사용.
+**디자인 변경 이력 (pill → 사각형):**
+
+| 항목 | 이전 | 현재 |
+|------|------|------|
+| 버튼 모양 | pill (`border-radius: 20px`) | 일반 사각형 (`border-radius: 6px`) |
+| 좋아요 배경 | 블루 (`brand-50` 배경) | 흰색 (`#fff` 배경) + 블루 텍스트/테두리 |
+
+**🔴 좋아요 버튼은 반드시 블루 테마**: `#dc2626` 빨간색 사용 금지. `--wa-color-brand-*` 변수 사용. 배경은 흰색이고 텍스트와 테두리만 블루이다.
 
 ### 댓글 입력 폼 디자인
 
@@ -549,13 +568,23 @@ if ($_v7LoginUser) {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
 }
 .comment-textarea {
-    background: neutral-50;     /* 연한 회색 배경 */
+    background: #fff;           /* 순백색 배경 */
     border-radius: 10px;
 }
 .comment-textarea:focus {
-    background: #fff;           /* 포커스 시 흰 배경 */
+    background: #fff;           /* 포커스 시에도 순백색 유지 */
+}
+.comment-attach-btn {
+    background: #fff;           /* 첨부 버튼도 순백색 배경 */
 }
 ```
+
+**디자인 변경 이력 (배경색 통일):**
+
+| 항목 | 이전 | 현재 |
+|------|------|------|
+| 댓글 textarea 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
+| 첨부 버튼 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
 
 ---
 
@@ -717,7 +746,7 @@ GET /api.php?method=post.commentList&idx_root=12345
 | **세로선 시작점** | collapse 버튼 아래 (`top: 30px` 고정) | **아바타 바로 아래** (JS `adjustThreadLines()`로 `padding-top + avatarSize + gap` 계산) |
 | **세로선 끝점** | 노드 하단 (`bottom: 0` 고정) | **마지막 직접 자식의 아바타 중앙** (JS `adjustThreadLines()`로 동적 계산) |
 | **세로선 높이 방식** | CSS `top`/`bottom`으로 고정 | **JS `adjustThreadLines()`로 `top`과 `height`를 동적 설정** |
-| **세로선 색상** | `#64748b` (neutral-500) | **`#94a3b8`** (neutral-400, 더 연한 톤) |
+| **세로선 색상** | `#64748b` (neutral-500) | **`#cbd5e1`** (neutral-300, 더 연한 톤) |
 | **L자형 수평 연결선** | `::before` 의사 요소 존재 (`left: -21px; width: 18px; height: 2px`) | **완전 제거** |
 | **들여쓰기** | `margin-left: 11px; padding-left: 21px` | **`margin-left: 18px; padding-left: 18px`** |
 | **세로선 left 위치** | `left: 10px` | **`left: 17px`** (avatar-col 36px/2 - 1px) |
@@ -868,7 +897,7 @@ DOMContentLoaded -> adjustThreadLines() -- 세로선 높이 계산
 
 ```css
 /* === 코멘트 노드: thread-line의 절대 위치 기준 === */
-.comment-node { position: relative; }
+.comment-node { position: relative; padding: 0.4rem 0; }
 
 /* 코멘트 행: avatar-col + body-col */
 .comment-row {
@@ -913,7 +942,7 @@ DOMContentLoaded -> adjustThreadLines() -- 세로선 높이 계산
     left: 17px;       /* 아바타 컬럼 중앙 (36px/2 - 1px) */
     top: 40px;        /* 초기값, JS adjustThreadLines()에서 재계산 */
     width: 1px;
-    background-color: #94a3b8;
+    background-color: #cbd5e1;  /* neutral-300 */
     cursor: pointer;
     z-index: 10;
     transition: background-color 0.15s, width 0.15s;
@@ -1078,7 +1107,7 @@ document.addEventListener('click', function (e) {
 
 | 상태 | thread-line 세로선 | 본문/파일/액션 | 자식 코멘트 | 알림 텍스트 |
 |------|-------------------|-------------|-----------|-----------|
-| **펼침 (기본)** | 표시 (`#94a3b8`, hover 시 `#3b82f6`, hover 시 width 3px) | 표시 | 표시 | 숨김 |
+| **펼침 (기본)** | 표시 (`#cbd5e1` neutral-300, hover 시 `#3b82f6`, hover 시 width 3px) | 표시 | 표시 | 숨김 |
 | **접힘 (자식 있음)** | **숨김** (`display: none`) | 숨김 | 숨김 | `[+N개 답글]` 표시 (클릭 시 펼치기) |
 | **접힘 (리프)** | -- | 숨김 | -- | `[접힌 댓글]` 표시 |
 
@@ -1090,7 +1119,7 @@ document.addEventListener('click', function (e) {
 - `.thread-children` -- 하위 코멘트 전체
 
 **트리거 방법 (2가지):**
-- `.thread-line` 클릭 (세로선 자체) -- **토글** (접기/펼치기 모두), hover 시 파란색(`#3b82f6`) + 두께 증가(`3px`)로 클릭 가능함을 시각적으로 표시
+- `.thread-line` 클릭 (세로선 자체) -- **토글** (접기/펼치기 모두), 기본 `#cbd5e1`(neutral-300), hover 시 파란색(`#3b82f6`) + 두께 증가(`3px`)로 클릭 가능함을 시각적으로 표시
 - `.thread-collapsed-info` 클릭 (`[+N개 답글]` 텍스트) -- **펼치기만** (접힌 상태에서만 작동)
 
 #### 코멘트 모바일 반응형 (`@media max-width: 640px`)
@@ -1153,6 +1182,6 @@ document.addEventListener('click', function (e) {
 | **wa-avatar initials 필수** | 코멘트 작성자 아바타는 `wa-avatar`의 `initials` 속성으로 구현. 이미지 URL 없이 이니셜로 표시 |
 | **wa-relative-time 필수** | 코멘트 시간은 `wa-relative-time`으로 표시. `date` 속성에 ISO 8601(`date('c', $stamp)`) 전달, `lang="ko"` 필수 |
 | **$childrenMap 구조** | `$childrenMap[$parentIdx][]`로 부모별 자식 맵을 구축한다. 최상위 코멘트는 `$childrenMap[$idx]`(글의 idx)에서 가져온다 |
-| **thread-line 세로선 색상** | 기본 `#94a3b8` (neutral-400 계열), hover 시 `#3b82f6` (blue) + width `3px`로 두께 증가 |
+| **thread-line 세로선 색상** | 기본 `#cbd5e1` (neutral-300), hover 시 `#3b82f6` (blue) + width `3px`로 두께 증가. L자 곡선 연결선도 동일하게 neutral-300(`#cbd5e1`) 적용 |
 | **thread-line left 위치** | 데스크톱 `left: 17px` (avatar-col 36px/2 - 1px), 모바일 `left: 14px` (30px/2 - 1px) |
 | **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |
