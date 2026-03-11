@@ -10,6 +10,7 @@
 6. [Controller — AdvertisementController](#6-controller--advertisementcontroller)
 7. [API 엔드포인트 목록](#7-api-엔드포인트-목록)
 8. [배너 타입 및 위치 규칙](#8-배너-타입-및-위치-규칙)
+
 9. [배너 조회 로직 (홈페이지 표시용)](#9-배너-조회-로직-홈페이지-표시용)
 10. [캐시 시스템](#10-캐시-시스템)
 11. [에러 처리](#11-에러-처리)
@@ -42,8 +43,26 @@ lib/advertisement/
 ├── AdvertisementRepository.php   # DB 접근 (14개 static 메서드)
 └── BannerEntity.php              # 배너 데이터 구조체 (EntityInterface 구현)
 
+v7/adv/
+├── banner.php                       # 배너 광고 안내 페이지 (Vue.js + v7api)
+├── banner.css                       # 배너 광고 안내 페이지 스타일
+├── point.php                        # 포인트 광고 안내 페이지 (PHP 서버 렌더링)
+├── point.css                        # 포인트 광고 안내 페이지 스타일
+├── massage.php                      # 마사지 배너 광고 안내 페이지 (Vue.js + v7api)
+└── massage.css                      # 마사지 배너 광고 안내 페이지 스타일
+
+v7/widgets/advertisement/
+├── point-purchase-info.php          # 포인트 구매 안내 위젯 (최소금액, 페소결제, 환불정책)
+├── payment-info.php                 # 공용 입금 정보 위젯 (배너/포인트/마사지 공통, 복사 버튼 포함)
+├── marketing-message.php            # 광고 마케팅 메시지 위젯
+├── point-advertisements.php         # 포인트 광고 목록 위젯 (게시판)
+├── square-banners.php               # 사각 배너 위젯
+└── small-banners.php                # 작은 배너 위젯
+
 tests/Unit/
-└── AdvertisementTest.php         # PEST v4 테스트 (33개 테스트, 91개 assertion)
+├── AdvertisementTest.php            # 광고 API PEST 테스트 (57개 테스트)
+├── AdvPointPageTest.php             # 포인트 광고 페이지 PEST 테스트 (23개 테스트)
+└── AdvPaymentWidgetTest.php         # 공용 입금 정보 위젯 PEST 테스트 (13개 테스트)
 ```
 
 ### PSR-4 매핑 (composer.json)
@@ -484,7 +503,200 @@ public function topBanners(array $input): array
 | `advertisement.updateBanner` | `POST /api.php?method=advertisement.updateBanner&idx=456&idx_company=123&url=https://...` | 배너 수정 | 관리자 |
 | `advertisement.deleteBanner` | `POST /api.php?method=advertisement.deleteBanner&idx_company=123&key=123:qna:top` | 배너 삭제 | 관리자 |
 
-### 7.3 배너 조회 (홈페이지 표시용)
+### 7.3 배너 광고 안내 정보
+
+| 메서드 | 엔드포인트 | 설명 | 권한 |
+|--------|-----------|------|------|
+| `advertisement.bannerInfo` | `GET /api.php?method=advertisement.bannerInfo` | 배너 종류별 가격/기간/카테고리/환불정책/등록프로세스 조회 | 누구나 |
+
+**응답 구조:**
+
+```json
+{
+  "banner_types": {
+    "top": {
+      "name": "탑 배너",
+      "name_en": "Top Banner",
+      "size": "600 x 200",
+      "unit": "px",
+      "gif": true,
+      "position": "홈페이지 맨 위에 표시",
+      "packages": [
+        {
+          "code": "T1",
+          "name": "서브 게시판 1개",
+          "price": 21000,
+          "currency": "PHP",
+          "duration_months": 3,
+          "category_type": "minor",
+          "included_banners": [
+            {"type": "top", "size": "600 x 200", "gif": true},
+            {"type": "small", "size": "200 x 100", "gif": false}
+          ]
+        }
+      ]
+    }
+  },
+  "major_categories": {"질문답변": "qna", ...},
+  "minor_categories": {"마사지": "massage", ...},
+  "refund_policy": [
+    {"period": "결제 후 15일 이내", "rate": 65, "description": "65% 환불"},
+    {"period": "결제 후 30일 이내", "rate": 50, "description": "50% 환불"},
+    {"period": "30일 이후", "rate": 0, "description": "환불 불가"}
+  ],
+  "pause_policy": {"min_remaining_days": 7, "description": "..."},
+  "registration_process": [
+    {"step": 1, "title": "광고비 입금", "description": "..."},
+    {"step": 2, "title": "자료 제출", "description": "..."},
+    {"step": 3, "title": "배너 제작", "description": "..."},
+    {"step": 4, "title": "배너 등록", "description": "..."}
+  ]
+}
+```
+
+**JavaScript 호출 예시:**
+
+```javascript
+v7api('advertisement.bannerInfo').then(res => {
+    console.log(res.banner_types);        // 배너 종류별 상세 정보
+    console.log(res.major_categories);    // 메인 카테고리
+    console.log(res.minor_categories);    // 소 카테고리
+    console.log(res.refund_policy);       // 환불 정책
+    console.log(res.registration_process); // 등록 프로세스
+});
+```
+
+**v7 페이지:** `/adv/banner` (v7/adv/banner.php)
+
+**배너 위치 이미지:** 각 배너 타입별 위치 다이어그램 이미지가 `/res/img/banner/places/` 폴더에 존재한다:
+- `top-banner.png` — 탑 배너 위치 (헤더 좌/우)
+- `wing-banner.png` — 날개 배너 위치 (페이지 좌/우)
+- `square-banner.png` — 사각 배너 위치 (게시판 상단)
+- `small-banner.png` — 작은 배너 위치 (사각배너 아래)
+
+배너 안내 페이지에서 각 타입 카드 내에 해당 이미지를 표시하여 배너가 실제로 어디에 노출되는지 시각적으로 안내한다.
+
+### 7.3.1 마사지 배너 광고 안내 정보
+
+| 메서드 | 엔드포인트 | 설명 | 권한 |
+|--------|-----------|------|------|
+| `advertisement.massageBannerInfo` | `GET /api.php?method=advertisement.massageBannerInfo` | 마사지 업종 전용 배너 종류/비용/기간/규정/환불/입금정보 조회 | 누구나 |
+
+마사지 업종은 사각 배너(45,000 PHP/3개월)와 작은 배너(30,000 PHP/3개월)만 가능하다.
+대규모 스파 시설(100명 이상 수용)은 탑배너/날개배너도 가능 — `bannerInfo` API 참조.
+
+**응답 구조:**
+
+```json
+{
+  "banner_types": {
+    "square": {"name": "사각 배너", "price": 45000, "currency": "PHP", "duration_months": 3, "size": "400 x 400", ...},
+    "small": {"name": "작은 배너", "price": 30000, "currency": "PHP", "duration_months": 3, "size": "200 x 100", ...}
+  },
+  "spa_notice": "동시에 100명 이상 수용 가능한 스파 시설의 경우...",
+  "rules": [
+    {"title": "일반적인 마사지 내용만 포함", "items": [...]},
+    {"title": "일반적인 마사지 사진만 포함", "items": [...]},
+    {"title": "필수 포함 항목", "items": [...]}
+  ],
+  "refund_policy": [...],
+  "pause_policy": {...},
+  "payment_info": {"notice": "...", "accounts": [{...KRW...}, {...PHP...}]},
+  "marketing": {"title": "...", "description": "..."},
+  "kakaotalk_guide_url": "/page/help/kakaotalk-1-1-open-chat.php"
+}
+```
+
+**JavaScript 호출 예시:**
+
+```javascript
+v7api('advertisement.massageBannerInfo').then(res => {
+    console.log(res.banner_types);     // 사각/작은 배너 정보 (가격/기간 포함)
+    console.log(res.rules);            // 마사지 배너 규정 3개
+    console.log(res.payment_info);     // 입금 계좌 정보
+});
+```
+
+**v7 페이지:** `/adv/massage` (v7/adv/massage.php + massage.css)
+
+### 7.4 포인트 광고 안내 페이지
+
+**v7 페이지:** `/adv/point` (v7/adv/point.php + point.css)
+
+포인트 구매 안내, 결제 정보(계좌), 마케팅 메시지를 표시하는 서버 렌더링 페이지이다.
+API 호출 없이 PHP로 직접 렌더링한다.
+
+**페이지 구성:**
+
+| 섹션 | 위젯 파일 | 설명 |
+|------|-----------|------|
+| 공통 헤더/네비게이션 | `adv/adv-nav.php` | 아이콘 + 제목 + 설명 + 탭 네비게이션 |
+| 구매 안내 | `widgets/advertisement/point-purchase-info.php` | 최소 구매 금액, 페소 결제, 환불 정책 (3열 그리드) |
+| 입금 정보 | `widgets/advertisement/payment-info.php` | 공용 입금 정보 위젯 (배너/포인트/마사지 공통) |
+| 마케팅 메시지 | `widgets/advertisement/marketing-message.php` | 필고 광고 플랫폼 홍보 + 운영자 문의 버튼 |
+
+**모바일 앱 분기:** `RequestUtils::get('device') === 'mobile'`이면 입금 정보 섹션과 운영자 문의 버튼 숨김.
+
+### 7.5 공용 입금 정보 위젯 및 API
+
+#### API: `advertisement.paymentInfo`
+
+| 메서드 | 엔드포인트 | 설명 | 권한 |
+|--------|-----------|------|------|
+| `advertisement.paymentInfo` | `GET /api.php?method=advertisement.paymentInfo` | KB국민은행/BDO 계좌 정보 조회 | 누구나 |
+
+**응답 구조:**
+
+```json
+{
+  "notice": "입금 후 반드시 입금증을 보내주세요.",
+  "accounts": [
+    {
+      "bank": "국민은행",
+      "bank_en": "KB Kookmin Bank",
+      "currency": "KRW",
+      "account_name": "송재호",
+      "account_no": "655-601-04-1644-08"
+    },
+    {
+      "bank": "BDO",
+      "bank_en": "BDO Unibank",
+      "currency": "PHP",
+      "account_name": "JAEHO SONG",
+      "account_no": "008-018-022-138"
+    }
+  ]
+}
+```
+
+**서비스 메서드:** `AdvertisementService::getPaymentInfo()` (public static)
+
+**사용 상수 (etc/app.config.php):**
+- `KB_NAME`, `KB_ACCOUNT_NAME`, `KB_ACCOUNT_NO` — 국민은행 계좌
+- `BDO_NAME`, `BDO_ACCOUNT_NAME`, `BDO_ACCOUNT_NO` — BDO 계좌
+
+#### 공용 위젯: `widgets/advertisement/payment-info.php`
+
+배너, 포인트, 마사지 광고 페이지에서 동일한 디자인으로 사용되는 공용 위젯이다.
+
+**특징:**
+- PHP 서버사이드 렌더링 (API 호출 없이 상수 직접 사용)
+- `adv-payment-*` CSS 클래스 사용 (banner.css에 정의)
+- 복사 버튼 클릭 시 **은행명 + 예금주 + 계좌번호** 전체를 클립보드에 복사
+- 모바일 앱(`?device=mobile`) 시 위젯 전체 숨김 (위젯 내부에서 자동 처리)
+- `advCopyPaymentInfo(bank, name, accountNo)` JavaScript 함수 사용
+
+**사용법 (PHP include):**
+```php
+<?php include __DIR__ . '/../widgets/advertisement/payment-info.php'; ?>
+```
+
+세 광고 페이지에서의 사용 위치:
+- `banner.php`: Vue 앱 바깥(하단)에 PHP include
+- `point.php`: `<div class="v7-content-pad">` 내부에 PHP include
+- `massage.php`: Vue 앱 바깥(하단)에 `<div class="v7-content-pad">` 래퍼와 함께 PHP include
+
+### 7.6 배너 조회 (홈페이지 표시용)
 
 | 메서드 | 엔드포인트 | 설명 | 권한 |
 |--------|-----------|------|------|
