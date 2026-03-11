@@ -120,98 +120,131 @@ class _UploadTileState extends State<_UploadTile> {
     final scheme = Theme.of(context).colorScheme;
     final hasImage = _url != null && _url!.isNotEmpty;
 
-    return FileUpload(
-      module: widget.module,
-      code: widget.code,
-      onUploaded: (model) {
-        setState(() => _url = model.url);
-        widget.onUploaded(model.url);
-      },
-      onError: (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '업로드 실패: ${e.toString().replaceFirst('Exception: ', '')}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      },
-      child: AspectRatio(
-        aspectRatio: widget.aspectRatio,
-        child: Container(
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border:
-                hasImage ? null : Border.all(color: scheme.outlineVariant),
-            image: hasImage
-                ? DecorationImage(
-                    image: NetworkImage(_url!),
-                    fit: BoxFit.cover,
-                  )
-                : null,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: hasImage
-                ? Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FaIcon(FontAwesomeIcons.penToSquare,
-                                size: 11, color: Colors.white),
-                            SizedBox(width: 4),
-                            Text('변경',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: scheme.surface,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: scheme.outlineVariant),
-                        ),
-                        child: Center(
-                          child: FaIcon(widget.icon,
-                              size: 22, color: scheme.onSurfaceVariant),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        widget.hint,
-                        style: TextStyle(
-                            fontSize: 13, color: scheme.onSurfaceVariant),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '탭하여 선택',
-                        style: TextStyle(
-                            fontSize: 11, color: scheme.outlineVariant),
-                      ),
-                    ],
-                  ),
+    Widget tileContent;
+    if (hasImage) {
+      tileContent = Align(
+        alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FaIcon(FontAwesomeIcons.penToSquare,
+                    size: 11, color: Colors.white),
+                SizedBox(width: 4),
+                Text('변경',
+                    style: TextStyle(color: Colors.white, fontSize: 12)),
+              ],
+            ),
           ),
         ),
+      );
+    } else {
+      tileContent = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: scheme.outlineVariant),
+            ),
+            child: Center(
+              child: FaIcon(widget.icon,
+                  size: 22, color: scheme.onSurfaceVariant),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            widget.hint,
+            style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '탭하여 선택',
+            style: TextStyle(fontSize: 11, color: scheme.outlineVariant),
+          ),
+        ],
+      );
+    }
+
+    final tile = AspectRatio(
+      aspectRatio: widget.aspectRatio,
+      child: Container(
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+          border: hasImage ? null : Border.all(color: scheme.outlineVariant),
+          image: hasImage
+              ? DecorationImage(image: NetworkImage(_url!), fit: BoxFit.cover)
+              : null,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: tileContent,
+        ),
       ),
+    );
+
+    // Wrap in Stack: FileUpload covers the tile, delete button sits on top-right
+    return Stack(
+      children: [
+        FileUpload(
+          module: widget.module,
+          code: widget.code,
+          onUploaded: (model) {
+            setState(() => _url = model.url);
+            widget.onUploaded(model.url);
+          },
+          onError: (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    '업로드 실패: ${e.toString().replaceFirst('Exception: ', '')}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          },
+          child: tile,
+        ),
+        if (hasImage)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () {
+                setState(() => _url = null);
+                widget.onUploaded('');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('사진이 삭제되었습니다')),
+                );
+              },
+              child: Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.xmark,
+                    size: 13,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

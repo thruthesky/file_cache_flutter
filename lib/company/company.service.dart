@@ -510,4 +510,15 @@ class CompanyService {
     ];
     return items;
   }
+
+  /// 업소 방문 후기 목록 조회
+  static Future<Map<String, dynamic>> getVisitReviews({
+    required int idxCompany,
+  }) async {
+    final result = await ApiService.v7api(
+      'company.getVisitReviews',
+      data: {'idx_company': idxCompany},
+    );
+    return result;
+  }
 }
