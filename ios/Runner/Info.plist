@@ -6,6 +6,8 @@
 	<string>$(CUSTOM_GROUP_ID)</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>GIDClientID</key>
+	<string>675064809117-1413b6s69jp8l9bc68ksjs8q1a9bu79f.apps.googleusercontent.com</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
