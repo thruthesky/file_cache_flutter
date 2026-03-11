@@ -130,6 +130,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     return Scaffold(
       backgroundColor: scheme.surface,
       floatingActionButton: FloatingActionButton(
+        heroTag: 'company_list_fab',
         onPressed: _isFabLoading ? null : _onFabPressed,
         child: _isFabLoading
             ? const SizedBox(
