@@ -26,6 +26,14 @@ This project is a Flutter app for building PhilGo v7 application.
 - 한글 키를 사용하면 번역이 없는 언어에서도 기본값으로 한글이 그대로 표시되어 UX가 자연스럽다.
 - JSON 번역 파일에서도 키는 한글로 작성한다: `{ "로그인": "Login", "회원가입": "Sign Up" }`
 
+## 🔴🔴🔴 Flutter Driver / E2E 테스트 절대 금지 🔴🔴🔴
+
+- **THIS IS NON-NEGOTIABLE. Flutter 앱 개발 또는 소스 코딩 시 Flutter Driver 테스트, E2E 테스트, Integration Test를 절대로 작성하거나 실행하지 않는다.**
+- `flutter_driver`, `integration_test`, `flutter_test` 패키지를 사용한 테스트 코드를 작성하지 않는다.
+- `test/`, `integration_test/`, `test_driver/` 디렉토리에 테스트 파일을 생성하지 않는다.
+- `flutter drive`, `flutter test` 등 테스트 실행 명령어를 사용하지 않는다.
+- 테스트가 필요한 경우 CLAUDE.md의 "Debugging with Dart Tooling Daemon (DTD)" 섹션에 정의된 DTD 방식만 사용한다.
+
 ## Never use packages/philgo_api/
 
 - **NEVER** import or directly use any code from the `packages/philgo_api/` folder in the project.
