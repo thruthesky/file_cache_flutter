@@ -2,6 +2,8 @@
 class Post {
   final int idx;
   final int idxMember;
+  final int idxRoot;
+  final int idxParent;
   final String postId;
   final String subject;
   final String content;
@@ -24,10 +26,13 @@ class Post {
   final String? thumbnail800x800;
   final String? thumbnail1000;
   final String userName;
+  final String files;
 
   const Post({
     required this.idx,
     required this.idxMember,
+    this.idxRoot = 0,
+    this.idxParent = 0,
     required this.postId,
     required this.subject,
     required this.content,
@@ -50,6 +55,7 @@ class Post {
     this.thumbnail800x800,
     this.thumbnail1000,
     this.userName = '',
+    this.files = '',
   });
 
   /// 댓글 여부 (depth > 0)
@@ -67,11 +73,16 @@ class Post {
   /// 비밀글 여부
   bool get isSecret => secret == 'Y';
 
+  /// 자식 댓글 존재 여부 (수정/삭제 가능 여부 판단용)
+  bool get hasChildren => noOfComment > 0 && isComment;
+
   /// JSON에서 Post 객체 생성
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       idx: _toInt(json['idx']),
       idxMember: _toInt(json['idx_member']),
+      idxRoot: _toInt(json['idx_root']),
+      idxParent: _toInt(json['idx_parent']),
       postId: json['post_id']?.toString() ?? '',
       subject: json['subject']?.toString() ?? '',
       content: json['content']?.toString() ?? '',
@@ -94,6 +105,7 @@ class Post {
       thumbnail800x800: json['varchar_11']?.toString(),
       thumbnail1000: json['varchar_12']?.toString(),
       userName: json['user_name']?.toString() ?? '',
+      files: json['files']?.toString() ?? '',
     );
   }
 
