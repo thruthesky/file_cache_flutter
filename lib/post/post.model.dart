@@ -112,6 +112,39 @@ class Post {
     );
   }
 
+  Post copyWith({int? noOfComment, int? good}) {
+    return Post(
+      idx: idx,
+      idxMember: idxMember,
+      idxRoot: idxRoot,
+      idxParent: idxParent,
+      postId: postId,
+      subject: subject,
+      content: content,
+      stamp: stamp,
+      stampUpdate: stampUpdate,
+      depth: depth,
+      noOfComment: noOfComment ?? this.noOfComment,
+      noOfView: noOfView,
+      good: good ?? this.good,
+      category: category,
+      earnedPoint: earnedPoint,
+      secret: secret,
+      checked: checked,
+      blind: blind,
+      hasImage: hasImage,
+      hasVideo: hasVideo,
+      imageUrl: imageUrl,
+      videoUrl: videoUrl,
+      thumbnail400x400: thumbnail400x400,
+      thumbnail800x800: thumbnail800x800,
+      thumbnail1000: thumbnail1000,
+      userName: userName,
+      userPhotoUrl: userPhotoUrl,
+      files: files,
+    );
+  }
+
   /// 안전한 int 변환
   static int _toInt(dynamic value) {
     if (value == null) return 0;
