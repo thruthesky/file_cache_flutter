@@ -23,6 +23,10 @@
 13. [layout.php 연동 — CSS/JS 조건부 로딩](#13-layoutphp-연동--cssjs-조건부-로딩)
 14. [PEST 브라우저 테스트](#14-pest-브라우저-테스트)
 15. [새 기능 추가 방법](#15-새-기능-추가-방법)
+16. [Firebase Presence — 온라인/오프라인 상태](#16-firebase-presence--온라인오프라인-상태)
+17. [FCM 포그라운드 수신 핸들러](#17-fcm-포그라운드-수신-핸들러)
+18. [메시지 수정/삭제](#18-메시지-수정삭제)
+19. [관리자 전용 기능](#19-관리자-전용-기능)
 
 ---
 
@@ -58,30 +62,30 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 ```
 v7/chat/
 ├── index.php              # 채팅 메인 페이지 (PHP — 로그인 확인, 설정 전달)
-└── chat.css               # 채팅 전용 CSS (~1168줄)
+└── chat.css               # 채팅 전용 CSS (~1400줄)
 
 v7/js/chat/
-├── chat-helpers.js        # 설정, 상수, 헬퍼 함수 (가장 먼저 로드)
+├── chat-helpers.js        # 설정, 상수, 헬퍼 함수, Presence, FCM (가장 먼저 로드)
 ├── chat-store.js          # 글로벌 반응형 스토어 (Vue.reactive)
 ├── chat-room-list.js      # 채팅방 목록 Vue 컴포넌트
 ├── chat-single-room.js    # 1:1 채팅방 Vue 컴포넌트 (핵심)
 ├── chat-search.js         # 사용자 검색 Vue 컴포넌트
-└── chat-app.js            # Vue 앱 초기화 (가장 마지막에 로드)
+└── chat-app.js            # Vue 앱 초기화 + Presence/FCM 시작 (가장 마지막에 로드)
 
 tests/Browser/
-└── ChatTest.php           # PEST 브라우저 테스트 (9개 테스트 케이스)
+└── ChatTest.php           # PEST 브라우저 테스트 (12개 테스트 케이스)
 ```
 
 ### 파일별 역할 요약
 
 | 파일 | 역할 | 줄 수 | 로드 순서 |
 |------|------|------:|-----------|
-| `chat-helpers.js` | 설정(v7ChatConfig), 상수(v7ChatRoute), 채팅방 ID 유틸, 시간 포맷, 파일 판별, URL 링크화, Firebase 작업(고정/신고), 무한 스크롤, 사운드 | ~291 | 1 |
+| `chat-helpers.js` | 설정(v7ChatConfig), 상수(v7ChatRoute), 채팅방 ID 유틸, 시간 포맷, 파일 판별, URL 링크화, Firebase 작업(고정/신고), 무한 스크롤, 사운드, **Presence**, **FCM** | ~370 | 1 |
 | `chat-store.js` | `v7ChatState` 전역 반응형 상태, `v7ChatActions` 액션 (방 열기/닫기, 리스너 관리) | ~163 | 2 |
 | `chat-room-list.js` | 채팅방 목록 표시, 무한 스크롤 페이지네이션, 고정/비고정 섹션 분리 | ~228 | 3 |
-| `chat-single-room.js` | 메시지 전송/수신, 파일 업로드, 이미지 뷰어, 고정/즐겨찾기/차단/신고/커스텀이름/나가기 | ~844 | 4 |
+| `chat-single-room.js` | 메시지 전송/수신, 파일 업로드, 이미지 뷰어, 고정/즐겨찾기/차단/신고/커스텀이름/나가기, **수정/삭제**, **Presence**, **관리자 기능** | ~960 | 4 |
 | `chat-search.js` | 사용자 검색 (Firebase RTDB users 노드), 새 채팅 시작 | ~126 | 5 |
-| `chat-app.js` | Firebase Auth 확인 후 Vue 앱 생성/마운트, 전역 리스너 초기화 | ~69 | 6 (최후) |
+| `chat-app.js` | Firebase Auth 확인 후 Vue 앱 생성/마운트, 전역 리스너 초기화, **Presence 설정**, **FCM 수신 핸들러** | ~89 | 6 (최후) |
 
 ---
 
@@ -177,6 +181,9 @@ chat-app.js          ← 위 모든 파일이 로드된 후 Vue 앱 생성
 | `user-private/{myUid}/blocks/{otherUid}` | 차단된 사용자 | 읽기 + 쓰기 |
 | `reports/{reporterUid}/{reportId}` | 내가 한 신고 | 쓰기 |
 | `reports-list/{reportId}` | 전체 신고 목록 (관리자 조회용) | 쓰기 |
+| `users/{uid}/online` | 사용자 온라인 상태 (Presence) | 읽기 + 쓰기 |
+| `users/{uid}/lastSeen` | 사용자 마지막 접속 시간 (Presence) | 읽기 + 쓰기 |
+| `.info/connected` | Firebase 연결 상태 (내장) | 읽기 |
 
 ### 4.2 joins 데이터 필드
 
@@ -394,6 +401,8 @@ const v7ChatRoute = {
 | `v7ChatInfiniteScroll(el, opts)` | `HTMLElement, Object` | `Object` | 무한 스크롤 초기화 |
 | `v7ChatPlaySendSound()` | 없음 | `void` | 메시지 전송 사운드 재생 |
 | `v7ChatPlayReceiveSound()` | 없음 | `void` | 메시지 수신 사운드 재생 (볼륨 0.5) |
+| `v7ChatSetupPresence(uid)` | `string` | `void` | Firebase Presence 설정 (온라인 상태 + onDisconnect) |
+| `v7ChatInitFCM()` | 없음 | `void` | FCM 포그라운드 메시지 수신 핸들러 초기화 |
 
 #### 시간 포맷 규칙
 
@@ -584,6 +593,11 @@ var v7ChatState = Vue.reactive({
     showReportModal: false,             // 신고 모달
     reportReason: '',                   // 신고 사유
     imageViewer: { show: false, images: [], currentIndex: 0 },  // 이미지 뷰어
+    editingMsgId: null,                 // 수정 중인 메시지 ID
+    editingText: '',                    // 수정 중인 텍스트
+    contextMsgId: null,                 // 컨텍스트 메뉴가 열린 메시지 ID
+    otherOnline: false,                 // 상대방 온라인 상태 (Presence)
+    otherLastSeen: null,                // 상대방 마지막 접속 시간 (Presence)
 }
 ```
 
@@ -599,6 +613,8 @@ var v7ChatState = Vue.reactive({
 | `isBlocked` | `boolean` | 상대방 차단 여부 |
 | `canSend` | `boolean` | 전송 가능 여부 (텍스트 또는 파일 있고, 업로드 중 아님) |
 | `profileUrl` | `string` | 상대방 공개 프로필 URL |
+| `isAdmin` | `boolean` | 현재 사용자 관리자 여부 (`window.v7chat.user.isAdmin`) |
+| `onlineStatusText` | `string` | 상대방 온라인 상태 텍스트 ("온라인" / "N분 전" / "오프라인") |
 
 #### methods 분류
 
@@ -655,6 +671,27 @@ var v7ChatState = Vue.reactive({
 | `saveFavorite()` | 즐겨찾기 추가 (Cloud Function 호출) |
 | `showReportDialog()` | 신고 모달 열기 |
 | `submitReport()` | 신고 제출 (`v7ChatCreateReport()` 호출) |
+
+**메시지 수정/삭제:**
+
+| 메서드명 | 설명 |
+|----------|------|
+| `startEdit(msg)` | 메시지 수정 모드 시작 (editingMsgId, editingText 설정) |
+| `cancelEdit()` | 수정 취소 |
+| `saveEdit()` | 수정 저장 (Firebase RTDB update: text, isEdited) |
+| `handleEditKeyDown(e)` | 수정 중 Enter → 저장, Shift+Enter → 줄바꿈, Esc → 취소 |
+| `deleteMessage(msg)` | 메시지 삭제 (confirm 후 isDeleted: true 설정) |
+| `toggleMsgMenu(msgId)` | 메시지 컨텍스트 메뉴 토글 |
+| `isMine(msg)` | 내 메시지인지 확인 |
+| `canEdit(msg)` | 수정 가능 여부 (내 메시지 + 삭제되지 않음) |
+| `canDelete(msg)` | 삭제 가능 여부 (내 메시지 또는 관리자 + 삭제되지 않음) |
+
+**Presence (온라인 상태):**
+
+| 메서드명 | 설명 |
+|----------|------|
+| `startPresenceListener()` | 상대방 온라인/lastSeen 실시간 리스너 시작 |
+| `setupMyPresence()` | 내 온라인 상태 설정 (`.info/connected` 기반) |
 
 **유틸리티:**
 
@@ -766,7 +803,13 @@ ready(function() {                              // (1) DOMContentLoaded 대기
             v7ChatActions.loadFavoriteFolders();
             v7ChatActions.attachNewRoomListener();
 
-            // (7) Vue 앱 생성 및 마운트
+            // (7) 내 Presence 설정 (전역)
+            v7ChatSetupPresence(user.uid);
+
+            // (8) FCM 수신 핸들러 (포그라운드 메시지)
+            v7ChatInitFCM();
+
+            // (9) Vue 앱 생성 및 마운트
             var app = Vue.createApp({
                 components: {
                     'v7-chat-room-list': v7ChatRoomListComponent(),
@@ -938,7 +981,43 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 | `.v7chat-user-info` | 사용자 정보 |
 | `.v7chat-search-empty` | 검색 결과 없음 |
 
-### 8.11 반응형
+### 8.11 Presence (온라인 상태) 클래스
+
+| 클래스명 | 설명 |
+|----------|------|
+| `.v7chat-presence-dot` | 온라인 상태 표시 원 (10px, 아바타에 절대 위치) |
+| `.v7chat-presence-dot.online` | 온라인 상태 (녹색 `#22c55e`, 그림자 애니메이션) |
+| `.v7chat-header-info` | 헤더 정보 래퍼 (flex column, 제목 + 상태 텍스트) |
+| `.v7chat-presence-text` | 상태 텍스트 ("온라인" / "N분 전") |
+| `.v7chat-presence-text.online` | 온라인 상태 텍스트 (녹색) |
+
+### 8.12 관리자 배지 클래스
+
+| 클래스명 | 설명 |
+|----------|------|
+| `.v7chat-admin-badge` | 관리자 배지 (파란 원형, 방패 아이콘) |
+
+### 8.13 메시지 컨텍스트 메뉴 클래스
+
+| 클래스명 | 설명 |
+|----------|------|
+| `.v7chat-msg-menu` | 메시지 메뉴 래퍼 (hover 시 opacity 1) |
+| `.v7chat-msg-menu-btn` | `...` 메뉴 버튼 (20x20px, 원형) |
+| `.v7chat-msg-menu-dropdown` | 드롭다운 메뉴 (absolute positioned) |
+| `.v7chat-msg-menu-item` | 메뉴 아이템 |
+| `.v7chat-msg-menu-item.danger` | 삭제 메뉴 아이템 (빨간색) |
+
+### 8.14 메시지 수정 모드 클래스
+
+| 클래스명 | 설명 |
+|----------|------|
+| `.v7chat-edit-area` | 수정 영역 래퍼 (textarea + 버튼) |
+| `.v7chat-edit-input` | 수정 textarea (파란 border focus) |
+| `.v7chat-edit-actions` | 수정 버튼 그룹 |
+| `.v7chat-edit-cancel` | 취소 버튼 (회색) |
+| `.v7chat-edit-save` | 저장 버튼 (파란색) |
+
+### 8.15 반응형
 
 ```css
 /* 모바일 (768px 이하) */
@@ -1040,12 +1119,45 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 | 49 | 메시지 수신 사운드 재생 (볼륨 0.5) | `chat-helpers.js` → `v7ChatPlayReceiveSound()` |
 | 50 | 사운드 재생 실패 무시 (try-catch) | `v7ChatPlaySendSound()` / `v7ChatPlayReceiveSound()` |
 
-### 9.7 기타 (2개)
+### 9.7 메시지 수정/삭제 (5개)
 
 | # | 기능 | 구현 위치 |
 |---|------|-----------|
-| 51 | Firebase Auth 미인증 시 로그인 안내 | `chat-app.js` → `onAuthStateChanged()` |
-| 52 | 새 채팅방 자동 감지 | `chat-store.js` → `attachNewRoomListener()` |
+| 51 | 내 메시지 수정 (인라인 편집) | `chat-single-room.js` → `startEdit()`, `saveEdit()` |
+| 52 | 수정 중 Enter 저장 / Esc 취소 | `chat-single-room.js` → `handleEditKeyDown()` |
+| 53 | 메시지 삭제 (isDeleted 플래그) | `chat-single-room.js` → `deleteMessage()` |
+| 54 | 메시지 hover 시 컨텍스트 메뉴 (`...`) | `chat-single-room.js` → `toggleMsgMenu()` |
+| 55 | 관리자는 모든 메시지 삭제 가능 | `chat-single-room.js` → `canDelete()` + `isAdmin` computed |
+
+### 9.8 Presence — 온라인/오프라인 상태 (4개)
+
+| # | 기능 | 구현 위치 |
+|---|------|-----------|
+| 56 | 내 온라인 상태 설정 + onDisconnect | `chat-helpers.js` → `v7ChatSetupPresence()` |
+| 57 | 상대방 온라인 상태 실시간 표시 (녹색 점) | `chat-single-room.js` → `startPresenceListener()` |
+| 58 | 상대방 마지막 접속 시간 표시 | `chat-single-room.js` → `onlineStatusText` computed |
+| 59 | beforeunload 시 오프라인 전환 | `chat-helpers.js` → `v7ChatSetupPresence()` |
+
+### 9.9 FCM 포그라운드 핸들러 (2개)
+
+| # | 기능 | 구현 위치 |
+|---|------|-----------|
+| 60 | 다른 방 메시지 수신 시 알림 사운드 | `chat-helpers.js` → `v7ChatInitFCM()` |
+| 61 | 브라우저 Notification API로 푸시 알림 | `chat-helpers.js` → `v7ChatInitFCM()` |
+
+### 9.10 관리자 기능 (2개)
+
+| # | 기능 | 구현 위치 |
+|---|------|-----------|
+| 62 | 관리자 배지 표시 (파란 방패 아이콘) | `chat-single-room.js` 템플릿 `.v7chat-admin-badge` |
+| 63 | 관리자 모든 메시지 삭제 권한 | `chat-single-room.js` → `canDelete()` |
+
+### 9.11 기타 (2개)
+
+| # | 기능 | 구현 위치 |
+|---|------|-----------|
+| 64 | Firebase Auth 미인증 시 로그인 안내 | `chat-app.js` → `onAuthStateChanged()` |
+| 65 | 새 채팅방 자동 감지 | `chat-store.js` → `attachNewRoomListener()` |
 
 ---
 
@@ -1207,12 +1319,62 @@ self.uploadProgress = totalBytes > 0
 
 ---
 
-## 13. layout.php 연동 — CSS/JS 조건부 로딩
+## 13. layout.php 연동 — CSS/JS 조건부 로딩 및 채팅 페이지 레이아웃
 
-`v7/layout.php`에서 URI가 `/chat`으로 시작할 때만 채팅 관련 CSS/JS 파일을 로드한다.
+`v7/layout.php`에서 URI가 `/chat`으로 시작할 때 다음과 같은 특별 처리를 한다:
+
+### 채팅 페이지 전용 레이아웃
+
+| 항목 | 일반 페이지 | 채팅 페이지 (`/chat`) |
+|------|------------|---------------------|
+| **푸터** | 표시 | 숨김 |
+| **왼쪽 사이드바** | 로그인/포인트랭킹/최근댓글/최신사진 위젯 | "채팅방" 텍스트만 표시 |
+| **#v7-chat 높이** | - | JS로 동적 계산 (`offsetTop` 기반) |
 
 ```php
-<!-- v7/layout.php 198~207행 -->
+// v7/layout.php — 채팅 페이지 판단
+$isChatPage = str_starts_with($route->getUri(), '/chat');
+
+// 왼쪽 사이드바: 채팅 페이지에서는 "채팅방" 텍스트만 표시
+<?php if ($isChatPage): ?>
+    <aside class="v7-sidebar v7-lg" id="left-sidebar">
+        <div style="padding: 0.75rem; font-weight: 600; font-size: 1.1em;">
+            <i class="fa-solid fa-comments"></i> 채팅방
+        </div>
+    </aside>
+<?php else: ?>
+    <?php include __DIR__ . '/widgets/layout/layout.sidebar-left.php'; ?>
+<?php endif; ?>
+
+// 푸터: 채팅 페이지에서는 숨김
+<?php if (!$isChatPage): ?>
+    <?php include __DIR__ . '/widgets/layout/layout.footer.php'; ?>
+<?php endif; ?>
+```
+
+### 채팅 컨테이너 높이 동적 계산
+
+`chat-app.js`에서 `#v7-chat` 요소의 `getBoundingClientRect().top`을 기준으로 뷰포트 높이에서 빼서 정확한 높이를 계산한다. 푸터가 숨겨져 있으므로 하단까지 꽉 차게 된다.
+
+```javascript
+// v7/js/chat/chat-app.js
+function v7ChatResizeContainer() {
+    var el = document.getElementById('v7-chat');
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    var vh = window.innerHeight;
+    var h = vh - top;
+    if (h < 400) h = 400;
+    el.style.height = h + 'px';
+}
+v7ChatResizeContainer();
+window.addEventListener('resize', v7ChatResizeContainer);
+```
+
+### CSS/JS 조건부 로딩
+
+```php
+<!-- v7/layout.php -->
 <?php if (str_starts_with($route->getUri(), '/chat')): ?>
 <link rel="stylesheet" href="/v7/chat/chat.css?v=<?= CACHE_VERSION ?>">
 <script defer src="/v7/js/chat/chat-helpers.js?v=<?= CACHE_VERSION ?>"></script>
@@ -1240,7 +1402,7 @@ self.uploadProgress = totalBytes > 0
 채팅 JS 파일들이 사용하는 전역 라이브러리는 layout.php에서 채팅 JS보다 먼저 로드된다:
 
 - `Vue.js CDN` (defer) — `Vue.createApp()`, `Vue.reactive()`
-- `Firebase compat SDK` (defer) — `firebase.database()`, `firebase.auth()`, `firebase.storage()`
+- `Firebase compat SDK 12.10.0` (defer) — `firebase.database()`, `firebase.auth()`, `firebase.storage()`, `firebase.messaging()`
 - `firebase-init.js` (defer) — Firebase 초기화 → `firebase_ready()` 콜백 실행
 - `ready()` 함수 — 인라인 스크립트로 `<head>`에 정의 (defer 불필요)
 
@@ -1271,7 +1433,7 @@ tests/Browser/ChatTest.php
 ./vendor/bin/pest --group=chat
 ```
 
-### 14.3 테스트 케이스 목록 (9개)
+### 14.3 테스트 케이스 목록 (12개)
 
 | # | 테스트명 | 그룹 | 검증 내용 |
 |---|----------|------|-----------|
@@ -1284,6 +1446,9 @@ tests/Browser/ChatTest.php
 | 7 | 채팅 스토어 로드 | store | `v7ChatState`, `v7ChatActions` 확인 |
 | 8 | Vue 컴포넌트 함수 로드 | components | 3개 컴포넌트 함수 확인 |
 | 9 | 채팅방 ID 함수 동작 검증 | helpers-unit | `v7ChatMakeRoomId("bbb","aaa")` → `"aaa---bbb"` 등 |
+| 10 | Presence 및 FCM 헬퍼 함수 로드 | presence-fcm | `v7ChatSetupPresence`, `v7ChatInitFCM` 함수 존재 확인 |
+| 11 | Firebase SDK 12.10.0 로드 | firebase-version | 4개 Firebase SDK 스크립트 태그에 `12.10.0` 버전 포함 확인 |
+| 12 | 수정/삭제/Presence 메서드 존재 | edit-delete-presence | `startEdit`, `cancelEdit`, `saveEdit`, `deleteMessage`, `startPresenceListener`, `setupMyPresence` 메서드 확인 |
 
 ### 14.4 테스트 URL
 
@@ -1407,3 +1572,218 @@ browserTest('채팅 페이지 — 새 기능이 동작한다', function () {
 - [ ] PEST 브라우저 테스트 추가
 - [ ] `chat.css`에 반응형 스타일 추가 (768px, 992px 분기점)
 - [ ] 이 문서(v7-chat.md) 업데이트
+
+---
+
+## 16. Firebase Presence — 온라인/오프라인 상태
+
+### 16.1 개요
+
+Firebase Realtime Database의 `.info/connected` 특수 경로와 `onDisconnect()` 메서드를 사용하여 사용자의 온라인/오프라인 상태를 실시간으로 관리한다.
+
+### 16.2 데이터 구조
+
+| Firebase 경로 | 값 | 설명 |
+|---------------|------|------|
+| `users/{uid}/online` | `true` / `false` | 현재 온라인 여부 |
+| `users/{uid}/lastSeen` | `ServerValue.TIMESTAMP` | 마지막 접속 시간 (오프라인 전환 시 기록) |
+
+### 16.3 전역 Presence 설정 — `v7ChatSetupPresence(uid)`
+
+`chat-helpers.js`에 정의된 전역 함수이다. `chat-app.js`에서 Firebase Auth 인증 후 1회 호출한다.
+
+```javascript
+function v7ChatSetupPresence(uid) {
+    if (!uid || window._v7PresenceInit) return;  // 중복 초기화 방지
+    window._v7PresenceInit = true;
+
+    var connRef = firebase.database().ref('.info/connected');
+    var userOnlineRef = firebase.database().ref('users/' + uid + '/online');
+    var userLastSeenRef = firebase.database().ref('users/' + uid + '/lastSeen');
+
+    connRef.on('value', function(snap) {
+        if (snap.val() === true) {
+            userOnlineRef.set(true);
+            userOnlineRef.onDisconnect().set(false);
+            userLastSeenRef.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+        }
+    });
+
+    window.addEventListener('beforeunload', function() {
+        userOnlineRef.set(false);
+        userLastSeenRef.set(firebase.database.ServerValue.TIMESTAMP);
+    });
+}
+```
+
+### 16.4 채팅방 내 상대방 상태 리스너
+
+`chat-single-room.js`의 `startPresenceListener()` 메서드에서 상대방의 온라인/lastSeen 값을 실시간 구독한다.
+
+```javascript
+startPresenceListener: function() {
+    var otherUid = this.otherUid;
+    if (!otherUid) return;
+
+    this._presenceRef = firebase.database().ref('users/' + otherUid + '/online');
+    this._presenceRef.on('value', function(snap) {
+        self.otherOnline = snap.val() === true;
+    });
+
+    this._lastSeenRef = firebase.database().ref('users/' + otherUid + '/lastSeen');
+    this._lastSeenRef.on('value', function(snap) {
+        self.otherLastSeen = snap.val();
+    });
+}
+```
+
+### 16.5 온라인 상태 텍스트
+
+`onlineStatusText` computed 속성이 상태를 사람이 읽을 수 있는 텍스트로 변환한다:
+
+| 조건 | 표시 텍스트 |
+|------|------------|
+| `otherOnline === true` | "온라인" (녹색) |
+| `otherLastSeen` 값 있음 | "N분 전 접속" / "N시간 전 접속" / "N일 전 접속" |
+| 둘 다 없음 | "오프라인" |
+
+### 16.6 리스너 정리
+
+`cleanupListeners()` 메서드에서 `_presenceRef`, `_lastSeenRef`, `_connRef`의 `off()` 호출을 포함한다.
+
+---
+
+## 17. FCM 포그라운드 수신 핸들러
+
+### 17.1 개요
+
+채팅 페이지가 열려 있는 동안 다른 채팅방에서 새 메시지가 도착하면, FCM(Firebase Cloud Messaging) 포그라운드 핸들러가 알림 사운드와 브라우저 Notification을 표시한다.
+
+### 17.2 Firebase SDK 의존성
+
+`layout.php`에서 `firebase-messaging-compat.js` (v12.10.0)를 defer로 로드한다.
+
+```html
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-messaging-compat.js"></script>
+```
+
+### 17.3 `v7ChatInitFCM()` 함수
+
+```javascript
+function v7ChatInitFCM() {
+    // firebase.messaging 함수가 없으면 건너뜀 (SDK 미로드)
+    if (typeof firebase === 'undefined' || typeof firebase.messaging !== 'function') return;
+
+    try {
+        var messaging = firebase.messaging();
+        messaging.onMessage(function(payload) {
+            var currentRoomId = v7ChatState.room && v7ChatState.room.id;
+            var messageRoomId = (payload.data || {}).roomId || '';
+
+            // 현재 열린 채팅방의 메시지이면 무시 (이미 실시간 리스너로 수신)
+            if (messageRoomId && messageRoomId !== currentRoomId) {
+                v7ChatPlayReceiveSound();
+
+                // 브라우저 Notification (권한이 있을 때만)
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    var title = (payload.notification || {}).title || '새 메시지';
+                    var body = (payload.notification || {}).body || '';
+                    new Notification(title, {
+                        body: body,
+                        icon: '/v7/res/favicons/philgo/favicon-32.png',
+                        tag: 'v7chat-' + messageRoomId
+                    });
+                }
+            }
+        });
+    } catch (e) {
+        console.warn('FCM 초기화 건너뜀:', e.message);
+    }
+}
+```
+
+### 17.4 동작 조건
+
+| 조건 | 동작 |
+|------|------|
+| `firebase.messaging` 함수 없음 | 건너뜀 (에러 없음) |
+| 현재 열린 방의 메시지 | 무시 (실시간 리스너가 이미 처리) |
+| 다른 방의 메시지 | 수신 사운드 + Notification |
+| `Notification.permission !== 'granted'` | 사운드만 재생 |
+
+---
+
+## 18. 메시지 수정/삭제
+
+### 18.1 수정 흐름
+
+```
+1. 메시지 hover → `...` 버튼 표시 (canEdit 조건)
+2. `...` 클릭 → 드롭다운 메뉴 (수정/삭제)
+3. "수정" 클릭 → startEdit(msg): editingMsgId 설정, editingText에 기존 텍스트 복사
+4. 인라인 textarea 표시 (말풍선 대체)
+5. Enter → saveEdit(): Firebase RTDB update({ text, isEdited: true })
+6. Esc → cancelEdit(): 수정 모드 해제
+```
+
+### 18.2 삭제 흐름
+
+```
+1. `...` 클릭 → 드롭다운 메뉴
+2. "삭제" 클릭 → confirm('이 메시지를 삭제하시겠습니까?')
+3. 확인 → deleteMessage(msg): Firebase RTDB update({ isDeleted: true })
+4. 삭제된 메시지는 "삭제된 메시지입니다" 이탤릭 텍스트로 표시
+```
+
+### 18.3 권한 규칙
+
+| 동작 | 내 메시지 | 상대 메시지 (일반) | 상대 메시지 (관리자) |
+|------|----------|-------------------|---------------------|
+| **수정** | ✅ | ❌ | ❌ |
+| **삭제** | ✅ | ❌ | ✅ |
+
+### 18.4 Firebase RTDB 업데이트
+
+```javascript
+// 수정
+firebase.database().ref('chat/messages/' + roomId + '/' + msgId)
+    .update({ text: newText, isEdited: true });
+
+// 삭제
+firebase.database().ref('chat/messages/' + roomId + '/' + msgId)
+    .update({ isDeleted: true });
+```
+
+---
+
+## 19. 관리자 전용 기능
+
+### 19.1 관리자 판별
+
+`v7/chat/index.php`에서 PHP가 `Config::admins()` Firebase UID 배열에 로그인 사용자의 `firebase_uid`가 포함되어 있는지 확인하고, `window.v7chat.user.isAdmin`에 설정한다.
+
+```php
+$isAdmin = in_array($firebaseUid, Config::admins());
+// → window.v7chat = { user: { isAdmin: true|false } };
+```
+
+### 19.2 관리자 배지
+
+채팅방 헤더에 파란 원형 방패 아이콘(`fa-shield-halved`)이 표시된다.
+
+```html
+<span v-if="isAdmin" class="v7chat-admin-badge">
+    <i class="fa-solid fa-shield-halved"></i>
+</span>
+```
+
+### 19.3 관리자 삭제 권한
+
+`canDelete(msg)` 메서드에서 `isAdmin`이 true이면 모든 메시지(상대방 포함)를 삭제할 수 있다.
+
+```javascript
+canDelete: function(msg) {
+    if (msg.isDeleted) return false;
+    return this.isMine(msg) || this.isAdmin;
+}
+```

@@ -461,6 +461,7 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | **카카오톡 소셜 로그인** | [web/v7-web-kakoatalk-social-login.md](references/web/v7-web-kakoatalk-social-login.md) | ✅ 완료 |
 | **네이버 소셜 로그인** | [web/v7-web-naver-social-login.md](references/web/v7-web-naver-social-login.md) | ✅ 완료 |
 | **도움말 페이지** | [web/v7-help.md](references/web/v7-help.md) | ✅ 완료 |
+| **1:1 채팅 시스템** | [web/v7-chat.md](references/web/v7-chat.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 | **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
 
