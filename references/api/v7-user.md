@@ -25,6 +25,7 @@
   - [7.7 v7 API에서의 레벨 반환 규칙](#77-v7-api에서의-레벨-반환-규칙)
 - [8. UserEntity](#8-userentity)
 - [9. 사용자 설정 페이지 (SSR)](#9-사용자-설정-페이지-ssr)
+- [10. 사용자 차단 기능](#10-사용자-차단-기능)
 
 ---
 
@@ -1512,6 +1513,7 @@ Web Awesome Pro 컴포넌트 기반, SSR 렌더링 방식으로 구현되었다.
 |------|----------|------------|
 | **로그인 방식** | provider 이름 + 아이콘 (Google, Apple, 카카오톡, 네이버, 전화번호 등) | 로그인 안내 + 로그인 버튼 |
 | **이메일** | `sf_member.email` 값 (비어있으면 미표시) | - |
+| **차단한 사용자** | `/user/blocked` 링크 (`url()->user->blocked`) | - |
 | **운영자 문의** | `/contact` 링크 (항상 표시) | `/contact` 링크 (항상 표시) |
 
 ### 9.3 provider 조회
@@ -1558,3 +1560,72 @@ if ($loginUser !== null) {
 | **이메일 표시** | ❌ 미표시 | ✅ 표시 |
 | **운영자 문의** | ✅ 표시 | ✅ 표시 |
 | **CSS 프레임워크** | Bootstrap 5 | Web Awesome Pro |
+
+---
+
+## 10. 사용자 차단 기능
+
+### 10.1 개요
+
+v7 사용자 차단 기능은 로그인 사용자가 특정 사용자를 차단하여 해당 사용자의 글과 댓글을 가릴 수 있는 기능이다.
+차단 백엔드는 레거시 `lib/user/member-block.functions.php`에 구현되어 있으며,
+v7 프론트엔드에서 `/func.php`를 통해 호출한다.
+
+| 항목 | 값 |
+|------|---|
+| **차단 목록 페이지** | `v7/user/blocked.php` |
+| **차단 목록 CSS** | `v7/user/blocked.css` |
+| **JS 유틸리티** | `v7/js/block.js` |
+| **URL** | `/user/blocked` |
+| **URL 헬퍼** | `url()->user->blocked` |
+| **설정 페이지 링크** | `v7/user/settings.php`에서 "차단한 사용자" 링크 표시 |
+| **테스트 파일** | `tests/Browser/BlockTest.php` |
+| **DB 테이블** | `sf_member_blocks` (`idx`, `idx_blocker`, `idx_blockee`, `created_at`) |
+
+### 10.2 JS API (block.js)
+
+`v7/js/block.js`는 `layout.php`에서 전역으로 로드되며, axios로 `/func.php`를 호출한다.
+
+| 함수 | 설명 | 파라미터 |
+|------|------|----------|
+| `blockApi(funcName, params)` | `/func.php` API 래퍼 | PHP 함수명 + 파라미터 객체 |
+| `toggleBlockMember(idxBlockee)` | 차단 토글 (차단 ↔ 해제) | 대상 사용자 idx |
+| `unblockMember(idxBlockee)` | 차단 해제 | 대상 사용자 idx |
+| `getBlockedMembers()` | 차단 목록 조회 | 없음 |
+| `confirmUnblockAndView(idxBlockee, type, targetUrl)` | 차단 해제 확인 다이얼로그 | 대상 idx, 'post'/'comment', 이동 URL |
+
+### 10.3 차단된 콘텐츠 표시
+
+#### 글 목록 (`post-list-tile.php`)
+
+차단된 사용자의 글은 "차단된 사용자의 글입니다" 텍스트로 대체 표시된다.
+클릭 시 `confirmUnblockAndView()`로 차단 해제 확인 다이얼로그가 표시된다.
+
+```php
+$_isBlockedPost = !empty($_blockedMemberIds) && in_array($post['idx_member'] ?? 0, $_blockedMemberIds);
+```
+
+#### 글 상세 (`view.php`)
+
+- 관리자 차단(blind): `$post->isBlockedOrBlinded()` → "이 글은 관리자에 의해 차단되었습니다"
+- 사용자 차단: `$isBlockedAuthor` → "차단된 사용자의 글입니다" + "차단 해제하고 내용 보기" 버튼
+- 첨부파일도 차단 시 숨김 처리
+
+#### 코멘트 (`view.php`)
+
+- 관리자 차단: "차단된 댓글입니다"
+- 사용자 차단: "차단된 사용자의 댓글입니다" + "해제하고 보기" 버튼
+- 코멘트 첨부파일도 차단 시 숨김
+
+### 10.4 차단 목록 페이지 (`blocked.php`)
+
+Vue.js CDN MPA 방식으로 구현된 차단 사용자 관리 페이지이다.
+
+- **비로그인**: "로그인 후 이용해 주세요" + 로그인 버튼
+- **로그인**: `getBlockedMembers()` API로 차단 목록 조회 → `wa-avatar` + 닉네임 + 차단일 + 해제 버튼
+- **해제**: `unblockMember()` 호출 → 목록에서 실시간 제거
+
+### 10.5 접근 경로
+
+1. 설정 페이지 → "차단한 사용자" 링크 (`url()->user->settings` → `url()->user->blocked`)
+2. 사이드바 설정 메뉴 → 설정 페이지 → 차단한 사용자 링크
