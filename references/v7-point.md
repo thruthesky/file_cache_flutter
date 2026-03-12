@@ -19,6 +19,7 @@
 15. [API 엔드포인트](#15-api-엔드포인트)
 16. [포인트 흐름도](#16-포인트-흐름도)
 17. [계산 예시](#17-계산-예시)
+18. [v7 웹 포인트 내역 페이지](#18-v7-웹-포인트-내역-페이지)
 
 ---
 
@@ -1155,3 +1156,120 @@ function point_log_controller(array $in, array $login_user): array
 - 최종: max(-7, 0) = 0
 - point_before=3, point=-10, point_after=0
 ```
+
+---
+
+## 18. v7 웹 포인트 내역 페이지
+
+### 개요
+
+v7 홈페이지에서 로그인한 사용자의 포인트 변동 이력을 확인하는 웹 페이지이다.
+v6 `page/point/history.php` + `widget/point/history.php`의 로직을 100% 동일하게 v7 아키텍처로 재구현한다.
+
+### 파일 구조
+
+| 파일 | 설명 |
+|------|------|
+| `v7/point/history.php` | 포인트 내역 페이지 (SSR) |
+| `v7/point/history.css` | 페이지 전용 CSS |
+| `tests/Unit/PointHistoryPageTest.php` | PEST 유닛 테스트 (33개 테스트) |
+
+### 접속 URL
+
+- **v7 로컬**: `https://v7-local.philgo.com/point/history`
+- **라우팅**: `/point/history` → `v7.php` → `v7/layout.php` → `v7/point/history.php`
+- **URL 헬퍼**: `url()->point->history` → `/point/history`
+
+### 주요 기능
+
+| 기능 | 설명 |
+|------|------|
+| **로그인 필수** | 비로그인 시 로그인 안내 + `wa-button` 로그인 링크 표시 |
+| **현재 포인트 표시** | 상단에 `나의 현재 포인트: N` 박스 표시 |
+| **포인트 내역 테이블** | sf_point_log 테이블에서 사유, 적용 포인트, 적용 후 포인트, 날짜/시간 표시 |
+| **색상 구분** | 양수(초록), 음수(빨강), 0(회색) |
+| **사유 배지** | Web Awesome `wa-badge` 컴포넌트로 사유별 variant 표시 |
+| **관련 글 링크** | 글 작성/댓글 작성 시 해당 글로 이동하는 `보기` 링크 |
+| **관리자 필터** | 관리자는 `idx_member`, `etc` 파라미터로 다른 사용자 조회 가능 |
+| **관리자 FROM/TO** | 관리자에게만 FROM/TO 사용자 칼럼 표시 |
+| **페이지네이션** | 10개씩, 최대 5개 페이지 버튼 표시 |
+| **반응형** | 모바일(<992px)에서 축약 날짜, 작은 폰트 |
+
+### 사유(etc) 라벨 매핑
+
+`getPointReasonLabel()` 함수에서 etc 값을 한글로 변환한다.
+
+| etc 값 | 한글 라벨 |
+|--------|----------|
+| `point_write` | 글 작성 |
+| `point_comment` | 댓글 작성 |
+| `point_write_delete` | 글 삭제 |
+| `point_comment_delete` | 댓글 삭제 |
+| `like` | 좋아요 |
+| `unlike` | 좋아요 취소 |
+| `post_on_top` | 포인트 광고 |
+| `admin-point-update` | 관리자 조정 |
+| `biz-point-buy` | 포인트 구매 |
+| `spin` | 스피닝 휠 |
+| `spin_reward` | 스피닝 휠 보상 |
+| `mukbang_event_base` | 먹방 이벤트 |
+| `register` | 회원가입 |
+| `login` | 로그인 |
+
+### 사유별 배지 variant
+
+`getPointReasonVariant()` 함수에서 etc 값에 따른 Web Awesome 배지 variant를 반환한다.
+
+| etc 값 | variant | 색상 |
+|--------|---------|------|
+| `biz-point-buy` | `danger` | 빨강 |
+| `admin-point-update` | `warning` | 노랑 |
+| `point_write_delete`, `point_comment_delete` | `neutral` | 회색 |
+| 그 외 | `primary` | 파랑 |
+
+### DB 쿼리 패턴
+
+```php
+// history.php에서 사용하는 WHERE 절 동적 구성
+$where = "(idx_member_from = :idx_member OR idx_member_to = :idx_member2)";
+$params = [
+    'idx_member' => $targetIdx,
+    'idx_member2' => $targetIdx,
+];
+
+// 관리자 etc 필터 (단일 값)
+$where .= " AND etc = :etc";
+
+// 관리자 etc 필터 (배열 - IN 쿼리)
+$where .= " AND etc IN (:etc_0, :etc_1, ...)";
+
+// 정렬 및 페이지네이션
+"ORDER BY stamp DESC, idx DESC LIMIT $offset, $limit"
+```
+
+### CSS 클래스 체계
+
+| 클래스 | 용도 |
+|--------|------|
+| `.point-login-required` | 비로그인 안내 래퍼 |
+| `.point-history-wrapper` | 전체 래퍼 |
+| `.point-current-box` | 현재 포인트 표시 박스 |
+| `.point-table` | 포인트 내역 테이블 |
+| `.point-positive` | 양수 포인트 (초록) |
+| `.point-negative` | 음수 포인트 (빨강) |
+| `.point-zero` | 0 포인트 (회색) |
+| `.point-pagination` | 페이지네이션 래퍼 |
+| `.point-page-link` | 페이지 버튼 |
+| `.point-page-link.active` | 현재 페이지 버튼 |
+
+### v6 → v7 대응
+
+| v6 | v7 |
+|----|----|
+| `page/point/history.php` | `v7/point/history.php` |
+| `widget/point/history.php` | `v7/point/history.php` (위젯 없이 페이지에 통합) |
+| `login()` | `AuthService::getLoginUser()` |
+| `pdo()` | `Db::pdo()`, `Db::fetchAll()`, `Db::fetchColumn()` |
+| Bootstrap CSS | Web Awesome Pro + 커스텀 CSS |
+| `href()->user->login` | `url()->user->login` |
+| `t()->{$etc}` | `getPointReasonLabel($etc)` 함수 |

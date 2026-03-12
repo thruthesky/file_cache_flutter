@@ -7,6 +7,10 @@
 - [3. API 엔드포인트](#3-api-엔드포인트)
   - [3.1 user.count](#31-usercount---총-사용자-수-조회)
   - [3.2 user.me](#32-userme---현재-로그인-사용자-정보-조회)
+  - [3.3 user.socialLogin](#33-usersociallogin---소셜-로그인)
+  - [3.4 공개 프로필 페이지 (SSR)](#34-공개-프로필-페이지-ssr)
+  - [3.5 user.updateMyProfile](#35-userupdatemyprofile---회원-정보-수정)
+  - [3.6 회원 정보 수정 페이지 (SSR)](#36-회원-정보-수정-페이지-ssr)
 - [4. 파일 구조](#4-파일-구조)
 - [5. 인증 시스템 (AuthService)](#5-인증-시스템-authservice)
 - [6. 테스트](#6-테스트)
@@ -317,17 +321,285 @@ curl -s -X POST "https://local.philgo.com:443/api.php" \
 
 ---
 
+### 3.4 공개 프로필 페이지 (SSR)
+
+> 공개 프로필은 API 엔드포인트가 아니라 **v7 웹 페이지(SSR)**로 구현되어 있다.
+> `UserService`와 `PostRepository` 메서드를 직접 호출하여 서버에서 렌더링한다.
+
+| 항목 | 값 |
+|------|-----|
+| **URL** | `/user/public-profile` |
+| **파일** | `v7/user/public-profile.php` (PHP), `v7/user/public-profile.css` (CSS) |
+| **파라미터** | `idx_member` (선택): 사용자 idx, `firebase_uid` (선택): Firebase UID |
+| **우선순위** | `firebase_uid` → `idx_member` → 로그인 사용자 (둘 다 없을 때) |
+
+**URL 예시**:
+```
+# idx_member로 조회
+https://v7-local.philgo.com/user/public-profile?idx_member=123
+
+# firebase_uid로 조회
+https://v7-local.philgo.com/user/public-profile?firebase_uid=abc123
+
+# 파라미터 없음 → 로그인 사용자 프로필 표시
+https://v7-local.philgo.com/user/public-profile
+```
+
+**사용하는 Service/Repository 메서드**:
+
+| 메서드 | 설명 |
+|--------|------|
+| `UserService::getByFirebaseUid($uid)` | firebase_uid로 사용자 조회 → `UserEntity\|null` |
+| `UserService::getPublicProfile($idx)` | idx로 공개 프로필 조회 → `UserEntity` (없으면 RuntimeException) |
+| `PostRepository::findPostsByIdxMember($idx, $limit)` | 사용자의 최근 글 목록 조회 |
+| `PostRepository::findCommentsByIdxMember($idx, $limit)` | 사용자의 최근 댓글 목록 조회 |
+| `AuthService::getLoginUser()` | 로그인 사용자 확인 (본인 프로필 여부 판단) |
+
+**페이지 구성**:
+
+| 영역 | 설명 |
+|------|------|
+| **프로필 헤더** | 아바타, 닉네임, 통계(글 수/댓글 수/레벨), 액션 버튼 |
+| **액션 버튼** | 본인: 회원정보 수정 / 타인: 채팅, 글 목록 |
+| **최근 글** | `findPostsByIdxMember()` — 최근 5개, 제목+날짜 |
+| **최근 댓글** | `findCommentsByIdxMember()` — 최근 5개, 내용 미리보기+날짜 |
+| **에러 상태** | 사용자 없음, 로그인 필요 시 에러 카드 표시 |
+
+**URL 헬퍼**:
+```php
+// v7 url() 함수로 공개 프로필 링크 생성
+url()->user->publicProfile(123)   // → '/user/public-profile?idx_member=123'
+url()->user->publicProfile()      // → '/user/public-profile'
+```
+
+#### 3.4.1 UserService::getByFirebaseUid()
+
+```php
+/**
+ * Firebase UID로 사용자를 조회한다.
+ *
+ * @param string $firebaseUid Firebase UID
+ * @return UserEntity|null 사용자 Entity 또는 null
+ */
+public static function getByFirebaseUid(string $firebaseUid): ?UserEntity
+```
+
+- 빈 문자열 전달 시 `null` 반환
+- 존재하지 않는 UID → `null` 반환
+- 반환된 UserEntity에 `password` 미포함
+- `level`, `level_progress`는 동적 계산
+
+#### 3.4.2 PostRepository::findPostsByIdxMember()
+
+```php
+/**
+ * 특정 사용자가 작성한 글 목록을 조회한다.
+ *
+ * @param int $idxMember 사용자 idx
+ * @param int $limit 조회 개수 (기본 5)
+ * @return array 글 배열 [{idx, subject, post_id, stamp, no_of_comment, good}, ...]
+ */
+public static function findPostsByIdxMember(int $idxMember, int $limit = 5): array
+```
+
+- `idx_parent = 0` (최상위 글만), `deleted = 0`, `blind = ''` 조건
+- `stamp DESC` 정렬
+- 존재하지 않는 사용자 → 빈 배열 반환
+
+#### 3.4.3 PostRepository::findCommentsByIdxMember()
+
+```php
+/**
+ * 특정 사용자가 작성한 댓글 목록을 조회한다.
+ *
+ * @param int $idxMember 사용자 idx
+ * @param int $limit 조회 개수 (기본 5)
+ * @return array 댓글 배열 [{idx, idx_root, post_id, content, stamp}, ...]
+ */
+public static function findCommentsByIdxMember(int $idxMember, int $limit = 5): array
+```
+
+- `idx_parent > 0` (댓글만), `deleted = 0`, `blind = ''` 조건
+- `content`는 256자로 잘라서 반환 (`SUBSTRING(content, 1, 256)`)
+- `stamp DESC` 정렬
+
+#### 3.4.4 PEST 유닛 테스트
+
+테스트 파일: `tests/Unit/PublicProfileTest.php` (15개 테스트, 30 assertions)
+
+| describe 블록 | 테스트 수 | 검증 내용 |
+|---------------|----------|----------|
+| `UserService::getByFirebaseUid()` | 5 | 빈 문자열, 존재하지 않는 UID, 정상 조회, password 미포함, level 계산 |
+| `UserService::getPublicProfile()` | 2 | 정상 조회, 존재하지 않는 idx → RuntimeException |
+| `PostRepository::findPostsByIdxMember()` | 4 | 배열 반환, 빈 배열, limit 적용, 필수 키 포함 |
+| `PostRepository::findCommentsByIdxMember()` | 4 | 배열 반환, 빈 배열, limit 적용, 필수 키 포함 |
+
+---
+
+### 3.5 user.updateMyProfile - 회원 정보 수정
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `user.updateMyProfile` |
+| **HTTP** | `POST /api.php` (body: `{method: "user.updateMyProfile", ...}`) |
+| **인증** | 필수 — 로그인 상태 (세션 또는 id_token) |
+| **응답** | `UserEntity` (수정된 사용자 정보) |
+
+**파라미터**:
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `nickname` | string | 선택 | 닉네임 (변경 가능한 경우만 적용, 2자 이상 한글/영문/숫자/_) |
+| `name` | string | 선택 | 실명 |
+| `gender` | string | 선택 | 성별 (M/F/"") |
+| `photo_url` | string | 선택 | 프로필 사진 URL |
+| `birth_year` | int/string | 선택 | 생년 (예: 1990) |
+| `birth_month` | int/string | 선택 | 생월 (1~12) |
+| `birth_day` | int/string | 선택 | 생일 (1~31) |
+
+**닉네임 변경 정책**:
+1. 닉네임이 비어있으면 최초 설정 가능 (자유롭게 설정)
+2. 닉네임이 있고 `varchar_8`(이전 닉네임)이 비어있으면 1회 변경 가능
+3. `varchar_8`이 있으면 변경 불가 (이미 1회 변경함)
+4. 닉네임 변경 시 기존 닉네임이 `varchar_8` 컬럼에 저장됨
+
+**닉네임 검증 규칙**:
+- 최소 2자 이상
+- 허용 문자: 한글, 영문, 숫자, 밑줄(`_`)
+- 중복 닉네임 사용 불가
+
+**JavaScript 호출 예시 (v7 홈페이지)**:
+```javascript
+// 프로필 업데이트
+await v7api('user.updateMyProfile', {
+    name: '홍길동',
+    gender: 'M',
+    birth_year: 1990,
+    birth_month: 3,
+    birth_day: 15,
+});
+
+// 닉네임 변경 (변경 가능한 경우)
+await v7api('user.updateMyProfile', { nickname: '새닉네임' });
+
+// 프로필 사진 변경
+const uploadResult = await v7apiUpload(file, 'user', 'profile_photo');
+await v7api('user.updateMyProfile', { photo_url: uploadResult.url });
+```
+
+**내부 처리 흐름**:
+```
+UserController::updateMyProfile($input)
+  └─ UserService::updateMyProfile($input)
+       ├─ AuthService::getLoginUser() → 로그인 사용자 확인
+       ├─ $input['idx'] = $user->idx  (자동 설정)
+       └─ UserService::update($input) → 실제 DB 업데이트
+```
+
+**관련 메서드**:
+
+| 메서드 | 설명 |
+|--------|------|
+| `UserService::updateMyProfile(array $input)` | 로그인 사용자의 프로필 수정 (idx 자동 설정) |
+| `UserService::canChangeNickname(array $user)` | 닉네임 변경 가능 여부 판단 |
+| `UserService::update(array $input)` | 실제 DB 업데이트 수행 |
+
+---
+
+### 3.6 회원 정보 수정 페이지 (SSR)
+
+> 회원 정보 수정은 v7 웹 페이지(SSR + Vue.js CSR)로 구현되어 있다.
+> PHP에서 초기 데이터를 렌더링하고, Vue.js에서 폼 제출과 사진 업로드를 처리한다.
+
+| 항목 | 값 |
+|------|-----|
+| **URL** | `/user/profile` |
+| **파일** | `v7/user/profile.php` (PHP), `v7/user/profile.css` (CSS) |
+| **인증** | 필수 — 비로그인 시 로그인 안내 표시 |
+| **API 호출** | `v7api('user.updateMyProfile', {...})`, `v7apiUpload(file, 'user', 'profile_photo')` |
+
+**페이지 구성**:
+
+| 영역 | 설명 |
+|------|------|
+| **비로그인 안내** | `wa-callout` 경고 + 로그인 버튼 |
+| **프로필 사진** | 원형 150px, 카메라 아이콘 오버레이 클릭으로 업로드 |
+| **닉네임** | 변경 가능 여부에 따라 readonly/editable 전환 |
+| **이름** | 텍스트 입력 |
+| **성별** | 라디오 버튼 (남성/여성/선택안함) |
+| **생년월일** | 3개 select (연도/월/일) |
+| **저장 버튼** | `wa-button` loading 상태 지원 |
+| **하단 링크** | 공개 프로필 보기 링크 |
+
+**Vue.js 데이터 초기화** (PHP → JS):
+```javascript
+data() {
+    return {
+        photoUrl: <?= json_encode($loginUser->photo_url) ?>,
+        nickname: <?= json_encode($loginUser->nickname) ?>,
+        name: <?= json_encode($loginUser->name) ?>,
+        gender: <?= json_encode($loginUser->gender) ?>,
+        birthYear: <?= json_encode((string) ($loginUser->birth_year ?: '')) ?>,
+        birthMonth: <?= json_encode((string) ($loginUser->birth_month ?: '')) ?>,
+        birthDay: <?= json_encode((string) ($loginUser->birth_day ?: '')) ?>,
+        canChangeNickname: <?= $canChangeNickname ? 'true' : 'false' ?>,
+    };
+}
+```
+
+> **주의**: 생년월일 값은 `(string)` 캐스팅 필수 — `<select>` option value는 문자열이므로 v-model과 타입 일치 필요.
+
+**사진 업로드 흐름**:
+```
+1. 프로필 사진 영역 클릭 → hidden <input type="file"> 트리거
+2. v7apiUpload(file, 'user', 'profile_photo') → 파일 업로드
+3. v7api('user.updateMyProfile', { photo_url: url }) → URL 저장
+4. photoUrl 업데이트 → 화면 반영
+```
+
+**URL 헬퍼**:
+```php
+url()->user->profile    // → '/user/profile'
+```
+
+**PEST 유닛 테스트**:
+
+테스트 파일: `tests/Unit/UserProfileTest.php` (13개 테스트, 22 assertions)
+
+| describe 블록 | 테스트 수 | 검증 내용 |
+|---------------|----------|----------|
+| `UserService::canChangeNickname()` | 6 | 빈 닉네임, 공백 닉네임, 변경 가능, 변경 불가, 키 누락 케이스 |
+| `UserService::updateMyProfile()` | 1 | 비로그인 시 RuntimeException |
+| `UserController::updateMyProfile()` | 1 | 비로그인 시 RuntimeException |
+| `UserEntity 생일/이전닉네임 필드` | 5 | birth_year/month/day, previous_nickname 필드 존재, toArray() 포함, 기본값 |
+
+---
+
 ## 4. 파일 구조
 
 ```
 lib/user/
 ├── UserController.php            # ★ Philgo\User\UserController (API 엔드포인트)
 ├── UserService.php               # ★ Philgo\User\UserService (비즈니스 로직)
+├── UserEntity.php                # ★ Philgo\User\UserEntity (사용자 엔티티)
 ├── user.functions.php            # ⚠️ 레거시 (새 코드에서 사용 금지)
 ├── user.login.functions.php      # ⚠️ 레거시
 ├── user.block.php                # ⚠️ 레거시
 ├── user.resign.functions.php     # ⚠️ 레거시
 └── member-block.functions.php    # ⚠️ 레거시
+
+v7/user/
+├── profile.php                   # ★ 회원 정보 수정 페이지 (Vue.js + v7api)
+├── profile.css                   # ★ 회원 정보 수정 전용 CSS
+├── public-profile.php            # ★ 공개 프로필 페이지 (SSR)
+├── public-profile.css            # ★ 공개 프로필 전용 CSS
+├── login.php                     # ★ 로그인 페이지
+└── login.css                     # ★ 로그인 전용 CSS
+
+tests/Unit/
+├── UserControllerTest.php        # ★ UserController PEST Unit Test
+├── UserProfileTest.php           # ★ 프로필 수정 PEST Unit Test (canChangeNickname, updateMyProfile, Entity 필드)
+└── PublicProfileTest.php         # ★ 공개 프로필 PEST Unit Test (getByFirebaseUid, getPublicProfile, PostRepository)
 
 lib/utils/
 ├── AuthService.php               # ★ Philgo\Utils\AuthService (2경로 인증: 세션 + Firebase)
@@ -1028,6 +1300,10 @@ return [
 | `level_progress` | int | ⚠️ **동적 계산** | 다음 레벨까지 진행률 (0~100%) |
 | `photo_url` | string | `sf_member.photo_url` | 프로필 사진 URL |
 | `gender` | string | `sf_member.gender` | 성별 (M/F) |
+| `birth_year` | int | `sf_member.birth_year` | 생년 (예: 1990) |
+| `birth_month` | int | `sf_member.birth_month` | 생월 (1~12) |
+| `birth_day` | int | `sf_member.birth_day` | 생일 (1~31) |
+| `previous_nickname` | string | `sf_member.varchar_8` | 이전 닉네임 (닉네임 1회 변경 시 저장) |
 | `no_of_post` | int | `sf_member.no_of_post` | 작성 글 수 |
 | `no_of_comment` | int | `sf_member.no_of_comment` | 작성 댓글 수 |
 | `stamp` | int | `sf_member.stamp` | 생성/수정 시간 |
