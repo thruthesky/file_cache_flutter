@@ -62,6 +62,11 @@ class FileUploadModel {
   /// 첨부 여부 (0=미첨부, 1=첨부됨)
   final int attached;
 
+  /// 상대경로 URL (예: /uploads/123/abc.webp)
+  ///
+  /// 서버 API에 files 파라미터로 전달할 때 사용한다.
+  String get path => Uri.parse(url).path;
+
   /// MIME 타입 기반 이미지 여부
   bool get isImage => type.startsWith('image/');
 

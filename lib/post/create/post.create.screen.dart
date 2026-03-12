@@ -50,7 +50,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         subject: _titleController.text.trim(),
         content: _contentController.text.trim(),
         category: widget.category,
-        files: _uploadedFiles.map((f) => f.url).toList(),
+        files: _uploadedFiles.map((f) => f.path).toList(),
       );
 
       if (!mounted) return;
@@ -200,6 +200,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         _uploadingCount += uploading ? 1 : -1);
                   },
                   onUploaded: (FileUploadModel model) {
+                    debugPrint('[PostCreate] 파일 업로드 완료: ${model.path} (${model.name}, ${model.type})');
                     setState(() => _uploadedFiles.add(model));
                   },
                   onError: (e) {

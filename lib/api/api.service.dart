@@ -192,6 +192,16 @@ class ApiService {
     await v7api('upload.delete', data: {'idx': idx}, debug: true);
   }
 
+  /// URL로 파일 삭제
+  ///
+  /// API: `upload.deleteByUrl` (인증 필요, 본인 파일만 삭제 가능)
+  ///
+  /// [url] 삭제할 파일의 상대경로 URL (예: /uploads/123/abc.webp)
+  static Future<void> fileDeleteByUrl(String url) async {
+    final path = Uri.tryParse(url)?.path ?? url;
+    await v7api('upload.deleteByUrl', data: {'url': path}, debug: true);
+  }
+
   /// 안전한 int 변환
   static int toInt(dynamic value) {
     if (value == null) return 0;
