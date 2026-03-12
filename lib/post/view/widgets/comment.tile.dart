@@ -119,32 +119,37 @@ class _CommentTileState extends State<CommentTile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 아바타 + 세로선 컬럼
-          Column(
-            children: [
-              const SizedBox(height: 8),
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: scheme.primaryContainer,
-                child: Text(
-                  initial,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: scheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
+          SizedBox(
+            width: 32,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: scheme.primaryContainer,
+                  child: Text(
+                    initial,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              // 세로선: 아바타 하단에서 코멘트 하단까지
-              Expanded(
-                child: Center(
-                  child: Container(
-                    width: 1,
-                    color: kThreadLineColor,
+                // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬, 아바타와 붙어있음)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: 1.5,
+                      color: kThreadLineColor,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(width: 8),
           // 내용 컬럼
@@ -258,46 +263,49 @@ class _CommentTileState extends State<CommentTile> {
           PostViewFiles(post: comment),
 
         // 액션 바
-        Row(
-          children: [
-            // 좋아요
-            PostActionButton(
-              icon: _liked
-                  ? FontAwesomeIcons.solidThumbsUp
-                  : FontAwesomeIcons.lightThumbsUp,
-              label: '${_goodCount > 0 ? _goodCount : ''}',
-              color: _liked ? scheme.primary : scheme.onSurfaceVariant,
-              onTap: _toggleLike,
-            ),
-            const SizedBox(width: 8),
-            // 답글
-            PostActionButton(
-              icon: FontAwesomeIcons.lightReply,
-              label: '답글',
-              color: scheme.onSurfaceVariant,
-              onTap: widget.onReply,
-            ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              // 좋아요
+              PostActionButton(
+                icon: _liked
+                    ? FontAwesomeIcons.solidThumbsUp
+                    : FontAwesomeIcons.lightThumbsUp,
+                label: '${_goodCount > 0 ? _goodCount : ''}',
+                color: _liked ? scheme.primary : scheme.onSurfaceVariant,
+                onTap: _toggleLike,
+              ),
+              const SizedBox(width: 8),
+              // 답글
+              PostActionButton(
+                icon: FontAwesomeIcons.lightReply,
+                label: '답글',
+                color: scheme.onSurfaceVariant,
+                onTap: widget.onReply,
+              ),
 
-            const Spacer(),
+              const SizedBox(width: 12),
 
-            if (isMine) ...[
-              if (!hasChildren)
-                PostActionButton(
-                  icon: FontAwesomeIcons.lightPenToSquare,
-                  label: '수정',
-                  color: scheme.onSurfaceVariant,
-                  onTap: () => _showEditDialog(context),
-                ),
-              if (!hasChildren) const SizedBox(width: 8),
-              if (!hasChildren)
-                PostActionButton(
-                  icon: FontAwesomeIcons.lightTrashCan,
-                  label: '삭제',
-                  color: scheme.error,
-                  onTap: () => _confirmDelete(context),
-                ),
+              if (isMine) ...[
+                if (!hasChildren)
+                  PostActionButton(
+                    icon: FontAwesomeIcons.lightPenToSquare,
+                    label: '수정',
+                    color: scheme.onSurfaceVariant,
+                    onTap: () => _showEditDialog(context),
+                  ),
+                if (!hasChildren) const SizedBox(width: 8),
+                if (!hasChildren)
+                  PostActionButton(
+                    icon: FontAwesomeIcons.lightTrashCan,
+                    label: '삭제',
+                    color: scheme.error,
+                    onTap: () => _confirmDelete(context),
+                  ),
+              ],
             ],
-          ],
+          ),
         ),
       ],
     );

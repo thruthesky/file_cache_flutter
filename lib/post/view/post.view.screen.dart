@@ -13,6 +13,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// 게시글 상세 보기 화면
 class PostViewScreen extends StatefulWidget {
+  static const String routeName = '/post/view';
+
   final Post post;
 
   const PostViewScreen({super.key, required this.post});

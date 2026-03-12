@@ -11,6 +11,9 @@ class PostViewFiles extends StatelessWidget {
   const PostViewFiles({super.key, required this.post});
 
   List<String> get _urls {
+    if (post.files.isNotEmpty) {
+      return post.files.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    }
     final urls = <String>[];
     if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
       urls.add(post.imageUrl!);
@@ -106,6 +109,70 @@ class PostViewFiles extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: UploadedVideoPlayer(url: absoluteUrl),
+        );
+
+      case MediaType.file:
+        final fileName = Uri.tryParse(absoluteUrl)?.pathSegments.lastOrNull ?? absoluteUrl;
+        final ext = fileName.contains('.')
+            ? fileName.split('.').last.toUpperCase()
+            : '';
+        final isPdf = ext == 'PDF';
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.lightFile,
+                        size: 32,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      if (ext.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: isPdf ? Colors.red : Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(
+                            ext,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 7,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      fileName,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  FaIcon(
+                    FontAwesomeIcons.lightArrowDownToLine,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
 
       case MediaType.unknown:

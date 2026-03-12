@@ -7,7 +7,7 @@ import 'post.model.dart';
 // 미디어 타입 판별 유틸리티 (display_thumbnail.dart 와 post view 에서 공유)
 // ---------------------------------------------------------------------------
 
-enum MediaType { image, video, youtube, unknown }
+enum MediaType { image, video, youtube, file, unknown }
 
 MediaType getMediaType(String? url) {
   if (url == null || url.isEmpty) return MediaType.unknown;
@@ -36,6 +36,11 @@ MediaType getMediaType(String? url) {
       path.endsWith('.svg') ||
       path.endsWith('.avif')) {
     return MediaType.image;
+  }
+
+  // 알려진 파일 확장자면 file 타입
+  if (path.contains('.')) {
+    return MediaType.file;
   }
 
   return MediaType.unknown;
@@ -130,12 +135,14 @@ class PostService {
   /// [subject] 제목
   /// [content] 내용
   /// [category] 카테고리 (선택)
+  /// [files] 첨부 파일 URL 목록 (선택, 업로드 후 반환된 URL)
   /// 반환: 생성된 Post 객체
   static Future<Post> create({
     required String postId,
     required String subject,
     required String content,
     String? category,
+    List<String>? files,
   }) async {
     final result = await ApiService.v7api(
       'post.create',
@@ -144,7 +151,9 @@ class PostService {
         'subject': subject,
         'content': content,
         if (category != null) 'category': category,
+        if (files != null && files.isNotEmpty) 'files': files.join(','),
       },
+      debug: true,
     );
     return Post.fromJson(result);
   }
@@ -250,10 +259,7 @@ class PostService {
   }) async {
     final result = await ApiService.v7api(
       'post.commentUpdate',
-      data: {
-        'idx': idx,
-        'content': content,
-      },
+      data: {'idx': idx, 'content': content},
     );
     return Post.fromJson(result);
   }

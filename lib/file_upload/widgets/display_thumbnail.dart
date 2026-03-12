@@ -104,6 +104,22 @@ class DisplayThumbnail extends StatelessWidget {
           ),
         );
 
+      case MediaType.file:
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              thumbnailPlaceholder(size, scheme),
+              FaIcon(
+                FontAwesomeIcons.lightFile,
+                size: size * 0.4,
+                color: scheme.onSurfaceVariant,
+              ),
+            ],
+          ),
+        );
+
       case MediaType.unknown:
         return thumbnailErrorWidget(size, scheme);
     }

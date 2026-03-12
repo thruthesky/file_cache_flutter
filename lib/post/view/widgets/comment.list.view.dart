@@ -177,12 +177,18 @@ class _CommentListViewState extends State<CommentListView> {
   /// 자식 코멘트 영역 (세로선 + 곡선 연결선 포함)
   ///
   /// 부모 아바타 중앙에서 세로선이 시작되어 마지막 직접 자식까지 연결된다.
+  /// paddingLeft를 줄이되, lineXOffset으로 세로선 X 좌표를 보정하여
+  /// 부모 아바타 세로선과 정확하게 정렬한다.
   Widget _buildChildrenArea(CommentNode parentNode) {
     final children = parentNode.children;
 
+    // 깊이 1-4: 정상 넓이 (paddingLeft = avatarRadius = 16)
+    // 깊이 5+: 좁은 넓이 (paddingLeft = 12) + lineXOffset 보정으로 세로선 정렬 유지
+    final paddingLeft = parentNode.depth >= 3 ? 6.0 : _avatarRadius;
+    final lineXOffset = _avatarRadius - paddingLeft;
+
     return Padding(
-      // 부모 아바타 중앙 기준 들여쓰기 (avatarRadius = 16)
-      padding: const EdgeInsets.only(left: _avatarRadius),
+      padding: EdgeInsets.only(left: paddingLeft),
       child: Column(
         children: [
           for (var i = 0; i < children.length; i++)
@@ -190,23 +196,23 @@ class _CommentListViewState extends State<CommentListView> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 세로선 + L곡선 커넥터
+                  // 세로선 + L곡선 커넥터 (lineXOffset으로 부모 세로선과 정렬)
                   SizedBox(
                     width: _connectorWidth,
                     child: CustomPaint(
                       painter: ThreadConnectorPainter(
                         isLast: i == children.length - 1,
                         lineColor: _lineColor,
+                        lineWidth: 1.5,
                         curveTargetY: _curveTargetY,
                         curveRadius: 8.0,
+                        lineXOffset: lineXOffset,
                       ),
                     ),
                   ),
 
                   // 자식 코멘트 노드 (재귀)
-                  Expanded(
-                    child: _buildCommentNode(children[i]),
-                  ),
+                  Expanded(child: _buildCommentNode(children[i])),
                 ],
               ),
             ),
@@ -258,10 +264,7 @@ class _CommentListViewState extends State<CommentListView> {
           autofocus: true,
           hintText: '답글을 입력하세요',
           onSubmit: (content) async {
-            await widget.onCreateComment(
-              content,
-              idxParent: parentComment.idx,
-            );
+            await widget.onCreateComment(content, idxParent: parentComment.idx);
             if (mounted) setState(() => _replyToIdx = null);
           },
         ),

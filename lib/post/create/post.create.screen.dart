@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/file_upload/file_upload.model.dart';
+import 'package:philgo/file_upload/widgets/file_upload.dart';
+import 'package:philgo/file_upload/widgets/uploaded_file_preview.dart';
 import 'package:philgo/post/post.service.dart';
 
 /// 게시글 작성 화면
@@ -13,11 +16,7 @@ class PostCreateScreen extends StatefulWidget {
   /// 서브 카테고리 (선택)
   final String? category;
 
-  const PostCreateScreen({
-    super.key,
-    required this.postId,
-    this.category,
-  });
+  const PostCreateScreen({super.key, required this.postId, this.category});
 
   @override
   State<PostCreateScreen> createState() => _PostCreateScreenState();
@@ -28,6 +27,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   bool _isSubmitting = false;
+  final List<FileUploadModel> _uploadedFiles = [];
 
   @override
   void dispose() {
@@ -49,6 +49,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         subject: _titleController.text.trim(),
         content: _contentController.text.trim(),
         category: widget.category,
+        files: _uploadedFiles.map((f) => f.url).toList(),
       );
 
       if (!mounted) return;
@@ -56,9 +57,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       Navigator.of(context).pop(post);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('게시글 작성 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('게시글 작성 실패: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -115,8 +116,11 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               ),
               child: Row(
                 children: [
-                  FaIcon(FontAwesomeIcons.lightNewspaper,
-                      size: 14, color: scheme.primary),
+                  FaIcon(
+                    FontAwesomeIcons.lightNewspaper,
+                    size: 14,
+                    color: scheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     widget.category != null
@@ -140,8 +144,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
               maxLength: 255,
               validator: (value) {
@@ -161,8 +167,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
               maxLines: 15,
               minLines: 8,
@@ -172,6 +180,59 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 }
                 return null;
               },
+            ),
+            const SizedBox(height: 12),
+
+            // 파일 업로드 버튼 + 미리보기
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FileUpload(
+                  module: 'post',
+                  code: 'content',
+                  camera: true,
+                  cameraVideo: true,
+                  gallery: true,
+                  file: true,
+                  onUploaded: (FileUploadModel model) {
+                    setState(() => _uploadedFiles.add(model));
+                  },
+                  onError: (e) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('업로드 실패: $e')));
+                  },
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: scheme.outlineVariant),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    alignment: Alignment.center,
+                    child: FaIcon(
+                      FontAwesomeIcons.lightCamera,
+                      size: 20,
+                      color: scheme.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (_uploadedFiles.isNotEmpty)
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _uploadedFiles.map((f) {
+                        return UploadedFilePreview(
+                          file: f,
+                          onDelete: () =>
+                              setState(() => _uploadedFiles.remove(f)),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),
