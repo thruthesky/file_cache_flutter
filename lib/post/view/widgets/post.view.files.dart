@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
-import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
 
 class PostViewFiles extends StatelessWidget {
@@ -12,7 +12,11 @@ class PostViewFiles extends StatelessWidget {
 
   List<String> get _urls {
     if (post.files.isNotEmpty) {
-      return post.files.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      return post.files
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
     }
     final urls = <String>[];
     if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
@@ -62,49 +66,6 @@ class PostViewFiles extends StatelessWidget {
           ),
         );
 
-      case MediaType.youtube:
-        final videoId = getYouTubeVideoId(absoluteUrl);
-        final thumbUrl = videoId != null
-            ? 'https://img.youtube.com/vi/$videoId/hqdefault.jpg'
-            : null;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (thumbUrl != null)
-                  CachedNetworkImage(
-                    imageUrl: thumbUrl,
-                    width: double.infinity,
-                    fit: BoxFit.fitWidth,
-                    placeholder: (_, _) => Container(
-                      height: 200,
-                      color: scheme.surfaceContainerHigh,
-                    ),
-                    errorWidget: (_, _, _) => Container(
-                      height: 200,
-                      color: scheme.surfaceContainerHigh,
-                    ),
-                  )
-                else
-                  Container(height: 200, color: scheme.surfaceContainerHigh),
-                Container(
-                  width: double.infinity,
-                  height: 200,
-                  color: Colors.black38,
-                ),
-                const FaIcon(
-                  FontAwesomeIcons.youtube,
-                  size: 56,
-                  color: Colors.red,
-                ),
-              ],
-            ),
-          ),
-        );
-
       case MediaType.video:
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -112,20 +73,16 @@ class PostViewFiles extends StatelessWidget {
         );
 
       case MediaType.file:
-        final fileName = Uri.tryParse(absoluteUrl)?.pathSegments.lastOrNull ?? absoluteUrl;
-        final ext = fileName.contains('.')
-            ? fileName.split('.').last.toUpperCase()
-            : '';
-        final isPdf = ext == 'PDF';
+        final fileName = getFileName(absoluteUrl);
+        final ext = getFileExtension(absoluteUrl).toUpperCase();
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: InkWell(
             onTap: () {},
-            borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                color: scheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -136,13 +93,16 @@ class PostViewFiles extends StatelessWidget {
                       FaIcon(
                         FontAwesomeIcons.lightFile,
                         size: 32,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: scheme.primary,
                       ),
                       if (ext.isNotEmpty)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 3,
+                            vertical: 1,
+                          ),
                           decoration: BoxDecoration(
-                            color: isPdf ? Colors.red : Theme.of(context).colorScheme.primary,
+                            color: scheme.primary,
                             borderRadius: BorderRadius.circular(3),
                           ),
                           child: Text(
@@ -167,16 +127,13 @@ class PostViewFiles extends StatelessWidget {
                   FaIcon(
                     FontAwesomeIcons.lightArrowDownToLine,
                     size: 16,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ],
               ),
             ),
           ),
         );
-
-      case MediaType.unknown:
-        return const SizedBox.shrink();
     }
   }
 }

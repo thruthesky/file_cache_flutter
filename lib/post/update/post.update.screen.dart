@@ -1,5 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/file/file.functions.dart';
+import 'package:philgo/file/upload/file_upload.model.dart';
+import 'package:philgo/file/upload/widgets/file_upload.dart';
+import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 
@@ -22,11 +27,26 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
   late final TextEditingController _contentController;
   bool _isSubmitting = false;
 
+  /// 기존 첨부파일 URL 목록 (서버에서 받아온 것)
+  late final List<String> _existingUrls;
+
+  /// 새로 업로드한 파일 목록
+  final List<FileUploadModel> _newFiles = [];
+
+  int _uploadingCount = 0;
+
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.post.subject);
     _contentController = TextEditingController(text: widget.post.content);
+    _existingUrls = widget.post.files.isNotEmpty
+        ? widget.post.files
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList()
+        : [];
   }
 
   @override
@@ -74,14 +94,19 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
     setState(() => _isSubmitting = true);
 
     try {
+      final allFiles = [
+        ..._existingUrls,
+        ..._newFiles.map((f) => f.url),
+      ];
+
       final updated = await PostService.update(
         idx: widget.post.idx,
         subject: _titleController.text.trim(),
         content: _contentController.text.trim(),
+        files: allFiles,
       );
 
       if (!mounted) return;
-      // 수정된 게시글을 결과로 반환
       Navigator.of(context).pop(updated);
     } catch (e) {
       if (!mounted) return;
@@ -97,6 +122,9 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+
+    final hasFiles =
+        _existingUrls.isNotEmpty || _newFiles.isNotEmpty || _uploadingCount > 0;
 
     return PopScope(
       canPop: false,
@@ -184,10 +212,176 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: 12),
+
+              // 파일 업로드 버튼 + 미리보기
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FileUpload(
+                    module: 'post',
+                    code: 'content',
+                    camera: true,
+                    cameraVideo: true,
+                    gallery: true,
+                    file: true,
+                    onUploadingChanged: (uploading) {
+                      setState(() => _uploadingCount += uploading ? 1 : -1);
+                    },
+                    onUploaded: (FileUploadModel model) {
+                      setState(() => _newFiles.add(model));
+                    },
+                    onError: (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('업로드 실패: $e')),
+                      );
+                    },
+                    child: FaIcon(
+                      FontAwesomeIcons.lightCamera,
+                      size: 20,
+                      color: scheme.primary,
+                    ),
+                  ),
+                  if (hasFiles) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        // 기존 파일 (URL 기반 미리보기)
+                        ..._existingUrls.map((url) {
+                          return _ExistingFileTile(
+                            url: url,
+                            onDelete: () =>
+                                setState(() => _existingUrls.remove(url)),
+                          );
+                        }),
+                        // 새로 업로드한 파일
+                        ..._newFiles.map((f) {
+                          return UploadedFilePreview(
+                            file: f,
+                            onDelete: () =>
+                                setState(() => _newFiles.remove(f)),
+                          );
+                        }),
+                        // 업로드 중 로딩 플레이스홀더
+                        for (int i = 0; i < _uploadingCount; i++)
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: scheme.outlineVariant),
+                              color: scheme.surfaceContainerHighest,
+                            ),
+                            alignment: Alignment.center,
+                            child: const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// 기존 첨부파일 URL을 썸네일로 표시하는 위젯
+class _ExistingFileTile extends StatelessWidget {
+  final String url;
+  final VoidCallback onDelete;
+
+  const _ExistingFileTile({required this.url, required this.onDelete});
+
+  MediaType get _mediaType => getMediaType(url);
+  String get _fileName => getFileName(url);
+  String get _ext => getFileExtension(url).toUpperCase();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    Widget preview = Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: scheme.outlineVariant),
+        color: scheme.surfaceContainerHighest,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: _mediaType == MediaType.image
+            ? CachedNetworkImage(
+                imageUrl: url,
+                fit: BoxFit.cover,
+                errorWidget: (_, _, _) => Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.lightFile,
+                    size: 24,
+                    color: scheme.primary,
+                  ),
+                ),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.lightFile,
+                    size: 24,
+                    color: scheme.primary,
+                  ),
+                  if (_ext.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      _fileName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+      ),
+    );
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        preview,
+        Positioned(
+          top: -6,
+          right: -6,
+          child: GestureDetector(
+            onTap: onDelete,
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: scheme.error,
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: FaIcon(
+                FontAwesomeIcons.xmark,
+                size: 10,
+                color: scheme.onError,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 
 import 'package:philgo/api/api.service.dart';
-import 'package:philgo/app/app.service.dart';
 
 import 'user.model.dart';
 
@@ -89,28 +88,20 @@ class UserService {
   }
 
   /// Google 소셜 로그인 + v7 user.socialLogin 등록
-  ///
-  /// [displayError]가 true이면 에러 시 SnackBar로 사용자에게 표시한다.
-  static Future<UserModel> signInWithGoogle({bool displayError = false}) async {
-    try {
-      final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) throw Exception('Google 로그인이 취소되었습니다.');
-      final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      // v7 DB에 사용자 등록/업데이트
-      final json = await ApiService.v7api(
-        'user.socialLogin',
-        data: {'login_provider': 'google'},
-      );
-      return UserModel.fromJson(json);
-    } catch (e) {
-      if (displayError) showError(e);
-      rethrow;
-    }
+  static Future<UserModel> signInWithGoogle() async {
+    final googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) throw Exception('Google 로그인이 취소되었습니다.');
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    final json = await ApiService.v7api(
+      'user.socialLogin',
+      data: {'login_provider': 'google'},
+    );
+    return UserModel.fromJson(json);
   }
 
   /// 카카오톡 소셜 로그인 + Firebase Custom Token + v7 user.socialLogin 등록
@@ -119,56 +110,37 @@ class UserService {
   /// 2. v7 서버에 access_token 전송 → Firebase Custom Token 발급
   /// 3. Firebase signInWithCustomToken()으로 Firebase 로그인
   /// 4. v7 user.socialLogin 호출하여 DB 등록/업데이트
-  ///
-  /// [displayError]가 true이면 에러 시 SnackBar로 사용자에게 표시한다.
-  static Future<UserModel> signInWithKakao({bool displayError = false}) async {
-    try {
-      // 1. 카카오 로그인 → access_token 획득
-      kakao.OAuthToken token;
-      final isInstalled = await kakao.isKakaoTalkInstalled();
-      debugPrint('카카오톡 앱 설치 여부: $isInstalled');
-      final keyHash = await kakao.KakaoSdk.origin;
-      debugPrint('카카오 Android keyHash: $keyHash');
-      if (isInstalled) {
-        try {
-          token = await kakao.UserApi.instance.loginWithKakaoTalk();
-        } catch (e) {
-          debugPrint('카카오톡 앱 로그인 실패, 웹 로그인으로 폴백: $e');
-          // 카카오톡 로그인 실패 시 웹 로그인으로 폴백
-          if (e is PlatformException && e.code == 'CANCELED') rethrow;
-          token = await kakao.UserApi.instance.loginWithKakaoAccount();
-        }
-      } else {
+  static Future<UserModel> signInWithKakao() async {
+    kakao.OAuthToken token;
+    final isInstalled = await kakao.isKakaoTalkInstalled();
+    debugPrint('카카오톡 앱 설치 여부: $isInstalled');
+    final keyHash = await kakao.KakaoSdk.origin;
+    debugPrint('카카오 Android keyHash: $keyHash');
+    if (isInstalled) {
+      try {
+        token = await kakao.UserApi.instance.loginWithKakaoTalk();
+      } catch (e) {
+        debugPrint('카카오톡 앱 로그인 실패, 웹 로그인으로 폴백: $e');
+        if (e is PlatformException && e.code == 'CANCELED') rethrow;
         token = await kakao.UserApi.instance.loginWithKakaoAccount();
       }
-
-      // 2. v7 서버에서 Firebase Custom Token 발급
-      final customTokenRes = await ApiService.v7api(
-        'user.kakaoFirebaseToken',
-        data: {'kakao_access_token': token.accessToken},
-      );
-      final customToken = customTokenRes['custom_token'] as String;
-
-      // 3. Firebase Custom Token으로 로그인
-      await FirebaseAuth.instance.signInWithCustomToken(customToken);
-
-      // 4. v7 DB에 사용자 등록/업데이트
-      final json = await ApiService.v7api(
-        'user.socialLogin',
-        data: {'login_provider': 'kakao'},
-      );
-      return UserModel.fromJson(json);
-    } catch (e) {
-      if (displayError) showError(e);
-      rethrow;
+    } else {
+      token = await kakao.UserApi.instance.loginWithKakaoAccount();
     }
-  }
 
-  /// 에러를 SnackBar로 화면에 표시한다.
-  static void showError(dynamic e) {
-    ScaffoldMessenger.of(
-      AppService.context,
-    ).showSnackBar(SnackBar(content: Text(ApiService.friendlyErrorMessage(e))));
+    final customTokenRes = await ApiService.v7api(
+      'user.kakaoFirebaseToken',
+      data: {'kakao_access_token': token.accessToken},
+    );
+    final customToken = customTokenRes['custom_token'] as String;
+
+    await FirebaseAuth.instance.signInWithCustomToken(customToken);
+
+    final json = await ApiService.v7api(
+      'user.socialLogin',
+      data: {'login_provider': 'kakao'},
+    );
+    return UserModel.fromJson(json);
   }
 
   /// 현재 로그인된 사용자

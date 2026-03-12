@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/file_upload/file_upload.model.dart';
-import 'package:philgo/file_upload/widgets/file_upload.dart';
-import 'package:philgo/file_upload/widgets/uploaded_file_preview.dart';
+import 'package:philgo/file/upload/file_upload.model.dart';
+import 'package:philgo/file/upload/widgets/file_upload.dart';
+import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/post/post.service.dart';
 
 /// 게시글 작성 화면
@@ -28,6 +28,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   final _contentController = TextEditingController();
   bool _isSubmitting = false;
   final List<FileUploadModel> _uploadedFiles = [];
+  int _uploadingCount = 0;
 
   @override
   void dispose() {
@@ -184,7 +185,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             const SizedBox(height: 12),
 
             // 파일 업로드 버튼 + 미리보기
-            Row(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FileUpload(
@@ -194,6 +195,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   cameraVideo: true,
                   gallery: true,
                   file: true,
+                  onUploadingChanged: (uploading) {
+                    setState(() =>
+                        _uploadingCount += uploading ? 1 : -1);
+                  },
                   onUploaded: (FileUploadModel model) {
                     setState(() => _uploadedFiles.add(model));
                   },
@@ -202,36 +207,44 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       context,
                     ).showSnackBar(SnackBar(content: Text('업로드 실패: $e')));
                   },
-                  child: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: scheme.outlineVariant),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    alignment: Alignment.center,
-                    child: FaIcon(
-                      FontAwesomeIcons.lightCamera,
-                      size: 20,
-                      color: scheme.primary,
-                    ),
+                  child: FaIcon(
+                    FontAwesomeIcons.lightCamera,
+                    size: 20,
+                    color: scheme.primary,
                   ),
                 ),
-                const SizedBox(width: 8),
-                if (_uploadedFiles.isNotEmpty)
-                  Expanded(
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: _uploadedFiles.map((f) {
+                if (_uploadedFiles.isNotEmpty || _uploadingCount > 0) ...[
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      ..._uploadedFiles.map((f) {
                         return UploadedFilePreview(
                           file: f,
                           onDelete: () =>
                               setState(() => _uploadedFiles.remove(f)),
                         );
-                      }).toList(),
-                    ),
+                      }),
+                      for (int i = 0; i < _uploadingCount; i++)
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: scheme.outlineVariant),
+                            color: scheme.surfaceContainerHighest,
+                          ),
+                          alignment: Alignment.center,
+                          child: const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                    ],
                   ),
+                ],
               ],
             ),
           ],

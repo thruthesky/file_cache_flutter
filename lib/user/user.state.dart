@@ -69,13 +69,12 @@ class UserState extends ChangeNotifier {
   }
 
   /// Google 소셜 로그인 후 상태를 설정한다.
-  /// [displayError]가 true이면 에러 시 SnackBar를 자동 표시한다.
   Future<bool> signInWithGoogle({bool displayError = false}) async {
     _socialLoginInProgress = true;
     _isLoading = true;
     notifyListeners();
     try {
-      _user = await UserService.signInWithGoogle(displayError: displayError);
+      _user = await UserService.signInWithGoogle();
       return true;
     } catch (e) {
       _user = null;
@@ -88,13 +87,12 @@ class UserState extends ChangeNotifier {
   }
 
   /// 카카오톡 소셜 로그인 후 상태를 설정한다.
-  /// [displayError]가 true이면 에러 시 SnackBar를 자동 표시한다.
   Future<bool> signInWithKakao({bool displayError = false}) async {
     _socialLoginInProgress = true;
     _isLoading = true;
     notifyListeners();
     try {
-      _user = await UserService.signInWithKakao(displayError: displayError);
+      _user = await UserService.signInWithKakao();
       return true;
     } catch (e) {
       _user = null;
@@ -138,5 +136,4 @@ class UserState extends ChangeNotifier {
     _authSubscription?.cancel();
     super.dispose();
   }
-
 }

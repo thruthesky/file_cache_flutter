@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:philgo/api/api.service.dart';
-import 'package:philgo/file_upload/file_upload.model.dart';
+import 'package:philgo/file/upload/file_upload.model.dart';
 
 /// 파일 업로드 위젯
 ///
@@ -70,6 +70,9 @@ class FileUpload extends StatefulWidget {
   /// 업로드 에러 콜백
   final void Function(dynamic error)? onError;
 
+  /// 업로드 상태 변경 콜백 (true: 업로드 중, false: 완료/실패)
+  final void Function(bool uploading)? onUploadingChanged;
+
   /// 사용자가 소스 선택을 취소했을 때 콜백
   final void Function()? onCancelled;
 
@@ -90,6 +93,7 @@ class FileUpload extends StatefulWidget {
     this.onProgress,
     this.onUploaded,
     this.onError,
+    this.onUploadingChanged,
     this.onCancelled,
   });
 
@@ -98,11 +102,7 @@ class FileUpload extends StatefulWidget {
 }
 
 class _FileUploadState extends State<FileUpload> {
-  bool _uploading = false;
-
   Future<void> _onTap() async {
-    if (_uploading) return;
-
     // 업로드 전 콜백
     if (widget.onBeforeUpload != null) {
       final proceed = await widget.onBeforeUpload!();
@@ -129,7 +129,7 @@ class _FileUploadState extends State<FileUpload> {
       return;
     }
 
-    setState(() => _uploading = true);
+    widget.onUploadingChanged?.call(true);
 
     try {
       final json = await ApiService.fileUpload(
@@ -144,7 +144,9 @@ class _FileUploadState extends State<FileUpload> {
     } catch (e) {
       widget.onError?.call(e);
     } finally {
-      if (mounted) setState(() => _uploading = false);
+      if (mounted) {
+        widget.onUploadingChanged?.call(false);
+      }
     }
   }
 
@@ -296,27 +298,7 @@ class _FileUploadState extends State<FileUpload> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _onTap,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          widget.child,
-          if (_uploading)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black26,
-                alignment: Alignment.center,
-                child: const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
+      child: widget.child,
     );
   }
 }

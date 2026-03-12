@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/file_upload/widgets/display_thumbnail.dart';
+import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 
 /// 게시글 리스트 타일
@@ -123,7 +123,7 @@ class PostListTile extends StatelessWidget {
             // 썸네일 미리보기
             if (previewUrl != null) ...[
               const SizedBox(width: 12),
-              DisplayThumbnail(url: previewUrl, scheme: scheme, size: 72),
+              DisplayThumbnail(url: previewUrl, size: 72),
             ],
           ],
         ),

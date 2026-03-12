@@ -6,8 +6,10 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'package:philgo/app.config.dart';
+import 'package:philgo/app/app.service.dart';
 
 /// v7 API 에러를 사용자 친화적으로 표현하는 예외
 class ApiException implements Exception {
@@ -108,6 +110,7 @@ class ApiService {
 
       return json;
     } catch (e) {
+      showError(e);
       rethrow;
     }
   }
@@ -172,7 +175,9 @@ class ApiService {
     }
 
     if (json['success'] == false) {
-      throw Exception(json['message'] ?? '파일 업로드에 실패했습니다.');
+      final e = Exception(json['message'] ?? '파일 업로드에 실패했습니다.');
+      showError(e);
+      throw e;
     }
 
     return json;
@@ -184,7 +189,7 @@ class ApiService {
   ///
   /// [idx] 삭제할 파일의 idx
   static Future<void> fileDelete(int idx) async {
-    await v7api('upload.delete', data: {'idx': idx});
+    await v7api('upload.delete', data: {'idx': idx}, debug: true);
   }
 
   /// 안전한 int 변환
@@ -236,5 +241,12 @@ class ApiService {
       return msg.substring('Exception: '.length);
     }
     return msg;
+  }
+
+  /// 에러를 SnackBar로 화면에 표시한다.
+  static void showError(dynamic error) {
+    ScaffoldMessenger.of(
+      AppService.context,
+    ).showSnackBar(SnackBar(content: Text(friendlyErrorMessage(error))));
   }
 }

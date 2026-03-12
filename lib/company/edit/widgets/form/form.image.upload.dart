@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/file_upload/widgets/file_upload.dart';
+import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'form_shared.dart';
 
 /// Step 3: 이미지 업로드 (로고, 대표 이미지, 추가 사진)

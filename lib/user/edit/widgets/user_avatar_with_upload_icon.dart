@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:philgo/file_upload/widgets/file_upload.dart';
-import 'package:philgo/file_upload/file_upload.model.dart';
+import 'package:philgo/file/upload/widgets/file_upload.dart';
+import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
 /// 프로필 사진 아바타 + 업로드 아이콘 위젯
