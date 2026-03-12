@@ -53,6 +53,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         subject: _titleController.text.trim(),
         content: _contentController.text.trim(),
         category: widget.category,
+        files: _uploadedFiles.map((f) => f.url).toList(),
       );
 
       if (!mounted) return;

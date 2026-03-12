@@ -130,12 +130,14 @@ class PostService {
   /// [subject] 제목
   /// [content] 내용
   /// [category] 카테고리 (선택)
+  /// [files] 첨부 파일 URL 목록 (선택, 업로드 후 반환된 URL)
   /// 반환: 생성된 Post 객체
   static Future<Post> create({
     required String postId,
     required String subject,
     required String content,
     String? category,
+    List<String>? files,
   }) async {
     final result = await ApiService.v7api(
       'post.create',
@@ -144,6 +146,7 @@ class PostService {
         'subject': subject,
         'content': content,
         if (category != null) 'category': category,
+        if (files != null && files.isNotEmpty) 'files': files.join(','),
       },
     );
     return Post.fromJson(result);
