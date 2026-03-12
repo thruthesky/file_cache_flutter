@@ -50,6 +50,7 @@ class UserService {
   final List<Map<String, dynamic>> favoriteFolders = [];
   final favoriteFoldersStream = ValueNotifier<List<Map<String, dynamic>>>([]);
 
+  /// This is needed for the reviewers, testers, and even unit test with claude code
   /// 이메일/비밀번호로 로그인
   ///
   /// Firebase Auth의 signInWithEmailAndPassword를 사용한다.
@@ -90,9 +91,7 @@ class UserService {
   /// Google 소셜 로그인 + v7 user.socialLogin 등록
   ///
   /// [displayError]가 true이면 에러 시 SnackBar로 사용자에게 표시한다.
-  static Future<UserModel> signInWithGoogle({
-    bool displayError = false,
-  }) async {
+  static Future<UserModel> signInWithGoogle({bool displayError = false}) async {
     try {
       final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) throw Exception('Google 로그인이 취소되었습니다.');
@@ -122,9 +121,7 @@ class UserService {
   /// 4. v7 user.socialLogin 호출하여 DB 등록/업데이트
   ///
   /// [displayError]가 true이면 에러 시 SnackBar로 사용자에게 표시한다.
-  static Future<UserModel> signInWithKakao({
-    bool displayError = false,
-  }) async {
+  static Future<UserModel> signInWithKakao({bool displayError = false}) async {
     try {
       // 1. 카카오 로그인 → access_token 획득
       kakao.OAuthToken token;
@@ -169,9 +166,9 @@ class UserService {
 
   /// 에러를 SnackBar로 화면에 표시한다.
   static void showError(dynamic e) {
-    ScaffoldMessenger.of(AppService.context).showSnackBar(
-      SnackBar(content: Text(ApiService.friendlyErrorMessage(e))),
-    );
+    ScaffoldMessenger.of(
+      AppService.context,
+    ).showSnackBar(SnackBar(content: Text(ApiService.friendlyErrorMessage(e))));
   }
 
   /// 현재 로그인된 사용자
@@ -188,5 +185,61 @@ class UserService {
     if (FirebaseAuth.instance.currentUser == null) return null;
     final json = await ApiService.v7api('user.me');
     return UserModel.fromJson(json);
+  }
+
+  /// 다른 사용자의 공개 프로필을 조회한다. (user.get)
+  ///
+  /// [idx] 조회할 사용자의 idx
+  static Future<UserModel> getUser({required int idx}) async {
+    final json = await ApiService.v7api('user.get', data: {'idx': idx});
+    return UserModel.fromJson(json);
+  }
+
+  /// 전체 사용자 수를 반환한다. (user.count)
+  static Future<int> getUserCount() async {
+    final json = await ApiService.v7api('user.count');
+    final count = json['count'];
+    if (count is int) return count;
+    return int.tryParse(count.toString()) ?? 0;
+  }
+
+  /// 현재 로그인된 사용자의 프로필을 업데이트한다. (user.update)
+  ///
+  /// [nickname] 닉네임 (선택)
+  /// [name] 이름 (선택)
+  /// [photoUrl] 프로필 사진 URL (선택)
+  static Future<UserModel> updateProfile({
+    required int idx,
+    String? nickname,
+    String? name,
+    String? photoUrl,
+  }) async {
+    final data = <String, dynamic>{'idx': idx};
+    if (nickname != null) data['nickname'] = nickname;
+    if (name != null) data['name'] = name;
+    if (photoUrl != null) data['photo_url'] = photoUrl;
+    final json = await ApiService.v7api('user.update', data: data);
+    return UserModel.fromJson(json);
+  }
+
+  /// 현재 로그인된 사용자의 계정을 삭제한다. (user.delete)
+  static Future<void> deleteAccount() async {
+    await ApiService.v7api('user.delete');
+    await FirebaseAuth.instance.signOut();
+  }
+
+  /// 사용자 목록을 조회한다. (user.list) - 관리자용
+  ///
+  /// [page] 페이지 번호 (선택, 기본값 1)
+  /// [limit] 페이지당 항목 수 (선택)
+  static Future<List<UserModel>> getUserList({int? page, int? limit}) async {
+    final data = <String, dynamic>{};
+    if (page != null) data['page'] = page;
+    if (limit != null) data['limit'] = limit;
+    final json = await ApiService.v7api('user.list', data: data);
+    final list = json['list'] as List<dynamic>? ?? [];
+    return list
+        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

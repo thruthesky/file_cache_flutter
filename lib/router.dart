@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
@@ -23,8 +24,13 @@ final router = GoRouter(
       builder: (context, state) => const UserLoginScreen(),
     ),
     GoRoute(
-      path: '/post/view',
-      name: 'post_view',
+      path: UserEditScreen.routeName,
+      name: UserEditScreen.routeName,
+      builder: (context, state) => const UserEditScreen(),
+    ),
+    GoRoute(
+      path: PostViewScreen.routeName,
+      name: PostViewScreen.routeName,
       builder: (context, state) {
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         final postId = state.uri.queryParameters['post_id'] ?? '';

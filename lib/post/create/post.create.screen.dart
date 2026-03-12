@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/file_upload/file_upload.model.dart';
+import 'package:philgo/file_upload/widgets/file_upload.dart';
 import 'package:philgo/post/post.service.dart';
+import 'package:philgo/post/widgets/uploaded_file_preview.dart';
 
 /// 게시글 작성 화면
 ///
@@ -28,6 +31,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   bool _isSubmitting = false;
+  final List<FileUploadModel> _uploadedFiles = [];
 
   @override
   void dispose() {
@@ -172,6 +176,59 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 }
                 return null;
               },
+            ),
+            const SizedBox(height: 12),
+
+            // 파일 업로드 버튼 + 미리보기
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FileUpload(
+                  module: 'post',
+                  code: 'content',
+                  camera: true,
+                  cameraVideo: true,
+                  gallery: true,
+                  file: true,
+                  onUploaded: (FileUploadModel model) {
+                    setState(() => _uploadedFiles.add(model));
+                  },
+                  onError: (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('업로드 실패: $e')),
+                    );
+                  },
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: scheme.outlineVariant),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    alignment: Alignment.center,
+                    child: FaIcon(
+                      FontAwesomeIcons.lightCamera,
+                      size: 20,
+                      color: scheme.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (_uploadedFiles.isNotEmpty)
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _uploadedFiles.map((f) {
+                        return UploadedFilePreview(
+                          file: f,
+                          onDelete: () =>
+                              setState(() => _uploadedFiles.remove(f)),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),

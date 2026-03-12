@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:philgo/api/api.service.dart';
@@ -8,7 +9,7 @@ import 'package:philgo/file_upload/file_upload.model.dart';
 /// 파일 업로드 위젯
 ///
 /// GestureDetector로 child를 감싸 탭 시 업로드 소스 선택 바텀시트를 표시한다.
-/// 카메라, 갤러리, 파일 세 가지 소스를 지원하며 선택 후 자동으로 업로드한다.
+/// 카메라 사진, 카메라 동영상, 갤러리, 파일 네 가지 소스를 지원하며 선택 후 자동으로 업로드한다.
 ///
 /// 사용 예시:
 /// ```dart
@@ -33,8 +34,11 @@ class FileUpload extends StatefulWidget {
   /// 세부 분류 (예: 'main_photo', 'gallery', 'profile_photo')
   final String? code;
 
-  /// 카메라 소스 활성화 여부 (기본: true)
+  /// 카메라 사진 소스 활성화 여부 (기본: true)
   final bool camera;
+
+  /// 카메라 동영상 소스 활성화 여부 (기본: false)
+  final bool cameraVideo;
 
   /// 갤러리 소스 활성화 여부 (기본: true)
   final bool gallery;
@@ -75,6 +79,7 @@ class FileUpload extends StatefulWidget {
     this.module,
     this.code,
     this.camera = true,
+    this.cameraVideo = false,
     this.gallery = true,
     this.file = false,
     this.maxWidth,
@@ -145,13 +150,18 @@ class _FileUploadState extends State<FileUpload> {
 
   /// 업로드 소스 선택 바텀시트 표시
   Future<_UploadSource?> _showSourceSheet() async {
+    final hasOptions =
+        widget.camera || widget.cameraVideo || widget.gallery || widget.file;
+
+    if (!hasOptions) return null;
+
+    // 단일 옵션이면 바텀시트 없이 바로 반환
     final sources = <_UploadSource>[
-      if (widget.camera) _UploadSource.camera,
+      if (widget.camera) _UploadSource.cameraPhoto,
+      if (widget.cameraVideo) _UploadSource.cameraVideo,
       if (widget.gallery) _UploadSource.gallery,
       if (widget.file) _UploadSource.file,
     ];
-
-    if (sources.isEmpty) return null;
     if (sources.length == 1) return sources.first;
 
     return showModalBottomSheet<_UploadSource>(
@@ -159,11 +169,12 @@ class _FileUploadState extends State<FileUpload> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (_) => SafeArea(
+      builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 8),
+            // 드래그 핸들
             Container(
               width: 40,
               height: 4,
@@ -172,26 +183,74 @@ class _FileUploadState extends State<FileUpload> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+            // 헤더
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '업로드 옵션 선택',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Divider(height: 1),
             if (widget.camera)
               ListTile(
-                leading: const Icon(Icons.camera_alt_outlined),
-                title: const Text('카메라'),
-                onTap: () => Navigator.pop(context, _UploadSource.camera),
+                leading: FaIcon(
+                  FontAwesomeIcons.lightCamera,
+                  size: 20,
+                  color: Colors.grey[700],
+                ),
+                title: const Text('카메라로 사진 찍기'),
+                onTap: () => Navigator.pop(ctx, _UploadSource.cameraPhoto),
+              ),
+            if (widget.cameraVideo)
+              ListTile(
+                leading: FaIcon(
+                  FontAwesomeIcons.lightVideo,
+                  size: 20,
+                  color: Colors.grey[700],
+                ),
+                title: const Text('카메라로 동영상 촬영'),
+                onTap: () => Navigator.pop(ctx, _UploadSource.cameraVideo),
               ),
             if (widget.gallery)
               ListTile(
-                leading: const Icon(Icons.photo_library_outlined),
-                title: const Text('갤러리'),
-                onTap: () => Navigator.pop(context, _UploadSource.gallery),
+                leading: FaIcon(
+                  FontAwesomeIcons.lightImages,
+                  size: 20,
+                  color: Colors.grey[700],
+                ),
+                title: const Text('갤러리에서 선택'),
+                onTap: () => Navigator.pop(ctx, _UploadSource.gallery),
               ),
             if (widget.file)
               ListTile(
-                leading: const Icon(Icons.attach_file_outlined),
-                title: const Text('파일'),
-                onTap: () => Navigator.pop(context, _UploadSource.file),
+                leading: FaIcon(
+                  FontAwesomeIcons.lightPaperclip,
+                  size: 20,
+                  color: Colors.grey[700],
+                ),
+                title: const Text('파일 업로드'),
+                onTap: () => Navigator.pop(ctx, _UploadSource.file),
               ),
-            const SizedBox(height: 8),
+            ListTile(
+              leading: FaIcon(
+                FontAwesomeIcons.lightXmark,
+                size: 20,
+                color: Colors.grey[500],
+              ),
+              title: Text('취소', style: TextStyle(color: Colors.grey[600])),
+              onTap: () => Navigator.pop(ctx, null),
+            ),
+            const SizedBox(height: 4),
           ],
         ),
       ),
@@ -201,7 +260,7 @@ class _FileUploadState extends State<FileUpload> {
   /// 선택한 소스에서 파일 경로 획득
   Future<String?> _pickFile(_UploadSource source) async {
     switch (source) {
-      case _UploadSource.camera:
+      case _UploadSource.cameraPhoto:
         final picked = await ImagePicker().pickImage(
           source: ImageSource.camera,
           maxWidth: widget.maxWidth,
@@ -210,9 +269,14 @@ class _FileUploadState extends State<FileUpload> {
         );
         return picked?.path;
 
+      case _UploadSource.cameraVideo:
+        final picked = await ImagePicker().pickVideo(
+          source: ImageSource.camera,
+        );
+        return picked?.path;
+
       case _UploadSource.gallery:
-        final picked = await ImagePicker().pickImage(
-          source: ImageSource.gallery,
+        final picked = await ImagePicker().pickMedia(
           maxWidth: widget.maxWidth,
           maxHeight: widget.maxHeight,
           imageQuality: widget.imageQuality,
@@ -257,4 +321,4 @@ class _FileUploadState extends State<FileUpload> {
   }
 }
 
-enum _UploadSource { camera, gallery, file }
+enum _UploadSource { cameraPhoto, cameraVideo, gallery, file }

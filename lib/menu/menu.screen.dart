@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
-import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/login.dart';
@@ -418,7 +418,7 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 내 활동 메뉴 그리드
   Widget _buildActivityGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
-      _MenuItemData(FontAwesomeIcons.lightPenToSquare, '프로필 수정'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightPenToSquare, '프로필 수정'.tr(), onTap: () => UserEditScreen.push(context)),
       _MenuItemData(FontAwesomeIcons.lightClockRotateLeft, '내 게시글'.tr()),
       _MenuItemData(FontAwesomeIcons.lightPenNib, '글쓰기'.tr()),
       _MenuItemData(FontAwesomeIcons.lightMagnifyingGlass, '친구 검색'.tr()),
@@ -696,7 +696,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ColorScheme scheme,
   ) {
     return GestureDetector(
-      onTap: () {},
+      onTap: item.onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -746,6 +746,7 @@ class _MenuItemData {
   final bool isHighlighted;
   final Color? backgroundColor;
   final Color? iconColor;
+  final VoidCallback? onTap;
 
   const _MenuItemData(
     this.icon,
@@ -753,5 +754,6 @@ class _MenuItemData {
     this.isHighlighted = false,
     this.backgroundColor,
     this.iconColor,
+    this.onTap,
   });
 }

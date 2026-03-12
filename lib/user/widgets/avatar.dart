@@ -51,10 +51,10 @@ class Avatar extends StatelessWidget {
     }
 
     // 유효한 URL인 경우 CachedNetworkImage로 이미지 로드
-    return Container(
+    return ClipOval(
+      child: SizedBox(
       width: size,
       height: size,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius)),
       child: CachedNetworkImage(
         imageUrl: photoUrl!,
         // 이미지 빌더: 원형 아바타로 표시
@@ -74,6 +74,7 @@ class Avatar extends StatelessWidget {
         fadeInDuration: Duration.zero,
         fadeOutDuration: Duration.zero,
       ),
+    ),
     );
   }
 }
