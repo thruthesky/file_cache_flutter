@@ -220,6 +220,42 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 ---
 
+## 🔴🔴🔴 데이터 모델 클래스를 통한 접근 필수 — 절대 규칙 (PHP + JavaScript 전 영역) 🔴🔴🔴
+
+> **⛔⛔⛔ 어떤 경우에도 연관 배열(`$arr['key']`), JSON 객체, Map 등으로 데이터에 직접 접근하지 않는다. ⛔⛔⛔**
+> **반드시 데이터 모델링 클래스(Entity, Model 등)를 통해 멤버 변수(`->`) 또는 멤버 함수로 값을 읽고 써야 한다.**
+> **이 규칙은 PHP, JavaScript 등 모든 코드 영역에 걸쳐 적용된다. 예외 없음.**
+
+| 규칙 | 설명 |
+|------|------|
+| **연관 배열 접근 금지** | `$c['idx_member']`, `$row['firebase_uid']` 등 배열 키로 직접 접근 금지 |
+| **모델 클래스 접근 필수** | `$c->idx_member`, `$post->content` 등 객체 멤버 변수/함수로 접근 |
+| **PHP Entity 변환 필수** | DB 조회 결과(배열)는 반드시 `PostEntity::fromArray()`, `UserEntity::fromArray()` 등으로 Entity 객체로 변환 후 사용 |
+| **JavaScript에서도 동일** | API 응답을 Vue.js data에 바인딩하여 프로퍼티로 접근 |
+| **Flutter에서도 동일** | API 응답을 반드시 데이터 모델 클래스(`fromJson()`)로 변환 후 사용. `Map<String, dynamic>` 직접 접근 금지 |
+
+**올바른 예시:**
+
+```php
+// ✅ PHP: Entity 객체를 통한 접근
+$c = PostEntity::fromArray($commentArr);
+$idxMember = $c->idx_member;        // ✅ 멤버 변수
+$content = $c->content;              // ✅ 멤버 변수
+$subject = $post->display_subject(); // ✅ 멤버 함수
+```
+
+**잘못된 예시 (절대 금지):**
+
+```php
+// ❌ PHP: 연관 배열로 직접 접근
+$idxMember = $c['idx_member'];       // ❌ 배열 키 접근 금지
+$content = $row['content'];           // ❌ DB 결과 직접 접근 금지
+```
+
+**적용 범위**: PHP 백엔드(Entity/Service/Repository/Controller), v7 웹 홈페이지(PHP + JavaScript), Flutter 앱(Dart 모델 클래스) — 모든 코드 영역에 예외 없이 적용.
+
+---
+
 ## 🔴 PHP 코딩 규칙: 타입 안전성 필수 🔴
 
 ### Intelephense / 정적 분석 타입 경고 방지 — 캐스팅 필수

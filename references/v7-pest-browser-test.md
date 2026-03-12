@@ -1033,11 +1033,14 @@ define('V7_TEST_BASE_URL', 'https://v7-local.philgo.com');
 // v7 홈페이지
 $page = $this->visit(V7_TEST_BASE_URL . '/');
 
-// v7 게시판 목록
+// v7 게시판 목록 (커뮤니티)
 $page = $this->visit(V7_TEST_BASE_URL . '/post/list?post_id=freetalk');
 
+// v7 게시판 목록 (질문답변) — 반드시 post_id 파라미터를 포함해야 한다
+$page = $this->visit(V7_TEST_BASE_URL . '/post/list?post_id=qna');
+
 // v7 게시글 보기
-$page = $this->visit(V7_TEST_BASE_URL . '/post/view?id=123');
+$page = $this->visit(V7_TEST_BASE_URL . '/post/view?idx=123');
 
 // v7 게시글 작성
 $page = $this->visit(V7_TEST_BASE_URL . '/post/create?post_id=freetalk');
