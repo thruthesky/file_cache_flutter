@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
@@ -74,10 +74,6 @@ class _CommentTileState extends State<CommentTile> {
     final isMine = userState.isLoggedIn && userState.idx == comment.idxMember;
     final hasChildren = widget.hasChildren;
 
-    // 아바타 이니셜 (사진 없을 때 fallback)
-    final initial =
-        comment.userName.isNotEmpty ? comment.userName[0].toUpperCase() : '?';
-
     // 세로선 표시 여부에 따라 레이아웃 분기
     if (widget.showThreadLine) {
       return _buildWithThreadLine(
@@ -87,7 +83,6 @@ class _CommentTileState extends State<CommentTile> {
         scheme: scheme,
         isMine: isMine,
         hasChildren: hasChildren,
-        initial: initial,
       );
     }
 
@@ -98,7 +93,6 @@ class _CommentTileState extends State<CommentTile> {
       scheme: scheme,
       isMine: isMine,
       hasChildren: hasChildren,
-      initial: initial,
     );
   }
 
@@ -113,7 +107,6 @@ class _CommentTileState extends State<CommentTile> {
     required ColorScheme scheme,
     required bool isMine,
     required bool hasChildren,
-    required String initial,
   }) {
     return IntrinsicHeight(
       child: Row(
@@ -127,7 +120,7 @@ class _CommentTileState extends State<CommentTile> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 8),
-                _buildAvatar(comment, initial, theme, scheme),
+                UserAvatar(photoUrl: comment.userPhotoUrl),
                 // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬, 아바타와 붙어있음)
                 Expanded(
                   child: Align(
@@ -165,14 +158,13 @@ class _CommentTileState extends State<CommentTile> {
     required ColorScheme scheme,
     required bool isMine,
     required bool hasChildren,
-    required String initial,
   }) {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildAvatar(comment, initial, theme, scheme),
+          UserAvatar(photoUrl: comment.userPhotoUrl),
           const SizedBox(width: 8),
           Expanded(
             child: _buildContentColumn(
@@ -184,28 +176,6 @@ class _CommentTileState extends State<CommentTile> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildAvatar(Post comment, String initial, ThemeData theme, ColorScheme scheme) {
-    if (comment.userPhotoUrl.isNotEmpty) {
-      return CircleAvatar(
-        radius: 16,
-        backgroundColor: scheme.primaryContainer,
-        backgroundImage: CachedNetworkImageProvider(comment.userPhotoUrl),
-      );
-    }
-    return CircleAvatar(
-      radius: 16,
-      backgroundColor: scheme.primaryContainer,
-      child: Text(
-        initial,
-        style: theme.textTheme.titleSmall?.copyWith(
-          color: scheme.onPrimaryContainer,
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
-        ),
       ),
     );
   }
