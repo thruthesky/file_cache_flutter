@@ -53,28 +53,28 @@ class Avatar extends StatelessWidget {
     // 유효한 URL인 경우 CachedNetworkImage로 이미지 로드
     return ClipOval(
       child: SizedBox(
-      width: size,
-      height: size,
-      child: CachedNetworkImage(
-        imageUrl: photoUrl!,
-        // 이미지 빌더: 원형 아바타로 표시
-        imageBuilder: (context, imageProvider) =>
-            CircleAvatar(backgroundImage: imageProvider),
-        // 로딩 중: 기본 아이콘 표시 (로딩 인디케이터 대신)
-        // 캐시된 이미지는 즉시 표시되므로 깜빡임 방지
-        placeholder: (context, url) =>
-            CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
-        // 에러 발생 시: 기본 아이콘 표시
-        errorWidget: (context, url, error) =>
-            CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
-        // 네트워크 타임아웃 방지를 위한 httpHeaders와 memCacheWidth/Height 설정
-        memCacheWidth: (size * 2).toInt(),
-        memCacheHeight: (size * 2).toInt(),
-        // fadeIn 애니메이션 비활성화로 빠른 표시
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
+        width: size,
+        height: size,
+        child: CachedNetworkImage(
+          imageUrl: photoUrl!,
+          // 이미지 빌더: 원형 아바타로 표시
+          imageBuilder: (context, imageProvider) =>
+              CircleAvatar(backgroundImage: imageProvider),
+          // 로딩 중: 기본 아이콘 표시 (로딩 인디케이터 대신)
+          // 캐시된 이미지는 즉시 표시되므로 깜빡임 방지
+          placeholder: (context, url) =>
+              CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
+          // 에러 발생 시: 기본 아이콘 표시
+          errorWidget: (context, url, error) =>
+              CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
+          // 네트워크 타임아웃 방지를 위한 httpHeaders와 memCacheWidth/Height 설정
+          memCacheWidth: (size * 2).toInt(),
+          memCacheHeight: (size * 2).toInt(),
+          // fadeIn 애니메이션 비활성화로 빠른 표시
+          fadeInDuration: Duration.zero,
+          fadeOutDuration: Duration.zero,
+        ),
       ),
-    ),
     );
   }
 }

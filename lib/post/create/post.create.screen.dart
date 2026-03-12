@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/widgets/uploaded_file_preview.dart';
@@ -196,11 +197,12 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   gallery: true,
                   file: true,
                   onUploadingChanged: (uploading) {
-                    setState(() =>
-                        _uploadingCount += uploading ? 1 : -1);
+                    setState(() => _uploadingCount += uploading ? 1 : -1);
                   },
                   onUploaded: (FileUploadModel model) {
-                    debugPrint('[PostCreate] 파일 업로드 완료: ${model.path} (${model.name}, ${model.type})');
+                    debugPrint(
+                      '[PostCreate] 파일 업로드 완료: ${model.path} (${model.name}, ${model.type})',
+                    );
                     setState(() => _uploadedFiles.add(model));
                   },
                   onError: (e) {
@@ -223,8 +225,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       ..._uploadedFiles.map((f) {
                         return UploadedFilePreview(
                           file: f,
-                          onDelete: () =>
-                              setState(() => _uploadedFiles.remove(f)),
+                          onDelete: () async {
+                            await ApiService.fileDelete(f.idx);
+                            setState(() => _uploadedFiles.remove(f));
+                          },
                         );
                       }),
                       for (int i = 0; i < _uploadingCount; i++)

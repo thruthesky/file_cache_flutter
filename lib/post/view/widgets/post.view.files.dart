@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PostViewFiles extends StatelessWidget {
   final Post post;
@@ -78,7 +79,7 @@ class PostViewFiles extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: InkWell(
-            onTap: () {},
+            onTap: () => launchUrl(Uri.parse(absoluteUrl), mode: LaunchMode.externalApplication),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
