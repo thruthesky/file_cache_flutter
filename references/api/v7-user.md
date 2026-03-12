@@ -9,6 +9,7 @@
   - [3.2 user.me](#32-userme---현재-로그인-사용자-정보-조회)
   - [3.3 user.socialLogin](#33-usersociallogin---소셜-로그인)
   - [3.4 공개 프로필 페이지 (SSR)](#34-공개-프로필-페이지-ssr)
+    - [3.4.a 디자인 구조 (보더리스 디자인)](#34a-디자인-구조-보더리스-디자인)
   - [3.5 user.updateMyProfile](#35-userupdatemyprofile---회원-정보-수정)
   - [3.6 회원 정보 수정 페이지 (SSR)](#36-회원-정보-수정-페이지-ssr)
 - [4. 파일 구조](#4-파일-구조)
@@ -365,6 +366,102 @@ https://v7-local.philgo.com/user/public-profile
 | **최근 댓글** | `findCommentsByIdxMember()` — 최근 5개, 내용 미리보기+날짜 |
 | **에러 상태** | 사용자 없음, 로그인 필요 시 에러 카드 표시 |
 
+#### 3.4.a 디자인 구조 (보더리스 디자인)
+
+v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-card` 태그를 사용하지 않으며, 영역 구분은 연한 배경색(`#f8fafc`)으로 한다.
+
+**아이콘 규칙**: 모든 아이콘은 Font Awesome **Light 스타일**(`fal`) 전용이다. `fa-solid`, `fa-regular` 사용 금지.
+
+```html
+<!-- ✅ 올바른 사용 -->
+<i class="fal fa-pen-to-square"></i>
+<i class="fal fa-comments"></i>
+<i class="fal fa-star"></i>
+<i class="fal fa-user-pen"></i>
+
+<!-- ❌ 금지 -->
+<i class="fa-solid fa-pen-to-square"></i>
+<i class="fa-regular fa-comments"></i>
+```
+
+**디자인 요소별 구조**:
+
+| 요소 | 구현 방식 | 핵심 CSS |
+|------|----------|----------|
+| **에러 상태** | `<div class="profile-error-card">` (wa-card 미사용) | `background: #f8fafc; border-radius: 16px; border 없음` |
+| **프로필 헤더** | `<section class="profile-header-section">` | 보더/배경 없음, 중앙 정렬, flex-column |
+| **아바타** | `<img class="profile-avatar">` 또는 `<div class="profile-avatar-placeholder">` | 100px 원형, **보더 없음**, placeholder: `background: var(--wa-color-brand-95, #e7f5ff)`, 아이콘 색: `var(--wa-color-brand-50, #3178c0)` |
+| **통계** | `<wa-tag size="small">` 컴포넌트 (span 미사용) | 아이콘+텍스트 조합, `flex-wrap: wrap`, 중앙 정렬 |
+| **최근 글/댓글 섹션** | `<section class="profile-recent-section">` | `background: #f8fafc; border-radius: 12px; border 없음` |
+| **글/댓글 아이템** | `<a class="profile-post-item">` / `<a class="profile-comment-item">` | hover 시 `background: #fff`, 구분선: `border-top: 1px solid #f1f5f9` (매우 연한 선) |
+| **빈 상태** | `<div class="profile-empty">` | 아이콘 `opacity: 0.5`, 텍스트 `neutral-60` |
+
+**통계 태그 핵심 코드**:
+```php
+<div class="profile-stats">
+    <wa-tag size="small">
+        <i class="fal fa-pen-to-square"></i>
+        글 <?= number_format($user->no_of_post) ?>
+    </wa-tag>
+    <wa-tag size="small">
+        <i class="fal fa-comments"></i>
+        댓글 <?= number_format($user->no_of_comment) ?>
+    </wa-tag>
+    <wa-tag size="small">
+        <i class="fal fa-star"></i>
+        레벨 <?= number_format($user->level) ?>
+    </wa-tag>
+</div>
+```
+
+**에러 상태 핵심 코드**:
+```php
+<div class="profile-error-card">
+    <i class="fal fa-circle-exclamation profile-error-icon"></i>
+    <h2>프로필을 볼 수 없음</h2>
+    <p><?= htmlspecialchars($errorMessage) ?></p>
+    <wa-button variant="brand" href="<?= url()->home ?>">
+        <i slot="start" class="fal fa-house"></i>
+        홈으로 돌아가기
+    </wa-button>
+</div>
+```
+
+**CSS 핵심 규칙**:
+
+```css
+/* 보더리스 디자인 — wa-card 미사용, 배경색으로 영역 구분 */
+.profile-error-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    /* border 없음 */
+}
+
+.profile-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    /* border 없음 */
+}
+
+.profile-avatar-placeholder {
+    background: var(--wa-color-brand-95, #e7f5ff);  /* 연한 브랜드 배경 */
+    color: var(--wa-color-brand-50, #3178c0);        /* 브랜드 아이콘 색상 */
+}
+
+.profile-recent-section {
+    background: #f8fafc;
+    border-radius: 12px;
+    /* border 없음 */
+}
+
+.profile-post-item:hover,
+.profile-comment-item:hover {
+    background: #fff;  /* hover 시 흰색 배경 */
+}
+```
+
+**반응형**: 모바일(< 992px)에서 아바타 84px, 패딩/간격 축소. 반응형 규칙은 `public-profile.css` 하단의 `@media (max-width: 991.98px)` 블록에 정의.
+
 **URL 헬퍼**:
 ```php
 // v7 url() 함수로 공개 프로필 링크 생성
@@ -591,8 +688,8 @@ lib/user/
 v7/user/
 ├── profile.php                   # ★ 회원 정보 수정 페이지 (Vue.js + v7api)
 ├── profile.css                   # ★ 회원 정보 수정 전용 CSS
-├── public-profile.php            # ★ 공개 프로필 페이지 (SSR)
-├── public-profile.css            # ★ 공개 프로필 전용 CSS
+├── public-profile.php            # ★ 공개 프로필 페이지 (SSR, 보더리스 디자인, fal 아이콘, wa-tag 통계)
+├── public-profile.css            # ★ 공개 프로필 전용 CSS (보더 없음, #f8fafc 배경, brand-95 placeholder)
 ├── login.php                     # ★ 로그인 페이지
 └── login.css                     # ★ 로그인 전용 CSS
 
