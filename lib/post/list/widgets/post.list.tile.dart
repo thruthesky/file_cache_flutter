@@ -24,8 +24,13 @@ class PostListTile extends StatelessWidget {
       return post.imageUrl;
     if (post.videoUrl != null && post.videoUrl!.isNotEmpty)
       return post.videoUrl;
-    if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty) {
+    if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty)
       return post.thumbnail400x400;
+    if (post.files.isNotEmpty) {
+      return post.files.split(',').map((e) => e.trim()).firstWhere(
+        (e) => e.isNotEmpty,
+        orElse: () => '',
+      );
     }
     return null;
   }

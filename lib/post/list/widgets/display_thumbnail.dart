@@ -89,14 +89,36 @@ class DisplayThumbnail extends StatelessWidget {
         );
 
       case MediaType.file:
+        final ext = getFileExtension(absoluteUrl).toUpperCase();
         return Stack(
           alignment: Alignment.center,
           children: [
             _placeholder(scheme),
-            FaIcon(
-              FontAwesomeIcons.lightFile,
-              size: size * 0.4,
-              color: scheme.onSurfaceVariant,
+            Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightFile,
+                  size: size * 0.4,
+                  color: scheme.primary,
+                ),
+                if (ext.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: scheme.primary,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: Text(
+                      ext,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 6,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ],
         );
