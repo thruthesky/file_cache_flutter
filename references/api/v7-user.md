@@ -24,6 +24,7 @@
   - [7.6 레거시 함수와의 관계](#76-레거시-함수와의-관계)
   - [7.7 v7 API에서의 레벨 반환 규칙](#77-v7-api에서의-레벨-반환-규칙)
 - [8. UserEntity](#8-userentity)
+- [9. 사용자 설정 페이지 (SSR)](#9-사용자-설정-페이지-ssr)
 
 ---
 
@@ -1487,3 +1488,73 @@ $responseData = $user->toArray();
 
 `UserEntity`는 보안상 `password` 필드를 포함하지 않는다.
 `toArray()`로 변환한 결과를 API 응답으로 직접 사용할 수 있다.
+
+---
+
+## 9. 사용자 설정 페이지 (SSR)
+
+### 9.1 개요
+
+사용자 설정 페이지(`v7/user/settings.php`)는 v6 `user/settings.php`를 v7 아키텍처로 재작성한 페이지이다.
+Web Awesome Pro 컴포넌트 기반, SSR 렌더링 방식으로 구현되었다.
+
+| 항목 | 값 |
+|------|---|
+| **페이지 파일** | `v7/user/settings.php` |
+| **CSS 파일** | `v7/user/settings.css` |
+| **URL** | `/user/settings` |
+| **URL 헬퍼** | `url()->user->settings` |
+| **테스트 파일** | `tests/Browser/SettingsTest.php` |
+
+### 9.2 표시 항목
+
+| 항목 | 로그인 시 | 비로그인 시 |
+|------|----------|------------|
+| **로그인 방식** | provider 이름 + 아이콘 (Google, Apple, 카카오톡, 네이버, 전화번호 등) | 로그인 안내 + 로그인 버튼 |
+| **이메일** | `sf_member.email` 값 (비어있으면 미표시) | - |
+| **운영자 문의** | `/contact` 링크 (항상 표시) | `/contact` 링크 (항상 표시) |
+
+### 9.3 provider 조회
+
+`UserEntity`에 `login_provider` 필드가 있으나 `email` 필드는 없으므로, `Db::fetch()`로 직접 조회한다.
+
+```php
+use Philgo\Utils\AuthService;
+use Philgo\Utils\Db;
+
+$loginUser = AuthService::getLoginUser();
+if ($loginUser !== null) {
+    $row = Db::fetch("SELECT email, login_provider FROM sf_member WHERE idx = ?", [$loginUser->idx]);
+    if ($row !== false) {
+        $email = $row['email'] ?? '';
+        $provider = $row['login_provider'] ?? '';
+    }
+}
+```
+
+### 9.4 provider 표시명 매핑
+
+| DB 값 | 표시명 | 아이콘 | 색상 |
+|-------|--------|--------|------|
+| `google` | Google | `fa-brands fa-google` | `#4285f4` |
+| `apple` | Apple | `fa-brands fa-apple` | `#333333` |
+| `kakaotalk` | 카카오톡 | `fa-solid fa-comment` | `#fee500` |
+| `naver` | 네이버 | `fa-solid fa-n` | `#03c75a` |
+| `phone_sign_in` | 전화번호 | `fa-solid fa-phone` | brand blue |
+| 기타/빈값 | 알 수 없음 | `fa-solid fa-right-to-bracket` | neutral |
+
+### 9.5 사이드바 메뉴
+
+왼쪽 사이드바 로그인 위젯(`v7/widgets/layout/layout.sidebar-left.login.php`)에
+"내 정보 / 내 글 / 채팅 / **설정**" 4개 빠른 메뉴가 표시된다.
+
+### 9.6 v6과의 차이점
+
+| 항목 | v6 | v7 |
+|------|----|----|
+| **전화번호 표시** | ✅ 표시 | ❌ 미표시 (provider + 이메일로 대체) |
+| **언어 설정** | ✅ 표시 | ❌ 미표시 (v7은 단일 언어) |
+| **로그인 provider** | ❌ 미표시 | ✅ provider명 + 아이콘 표시 |
+| **이메일 표시** | ❌ 미표시 | ✅ 표시 |
+| **운영자 문의** | ✅ 표시 | ✅ 표시 |
+| **CSS 프레임워크** | Bootstrap 5 | Web Awesome Pro |
