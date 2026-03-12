@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
+import 'package:philgo/file/widgets/video_thumbnail.dart';
 
 /// URL 기반 미디어 썸네일 위젯 (post list tile 용)
 ///
@@ -76,20 +77,7 @@ class DisplayThumbnail extends StatelessWidget {
         );
 
       case MediaType.video:
-        return Stack(
-          fit: StackFit.expand,
-          alignment: Alignment.center,
-          children: [
-            Container(color: Colors.black54),
-            Center(
-              child: FaIcon(
-                FontAwesomeIcons.solidCirclePlay,
-                size: size * 0.4,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        );
+        return VideoThumbnail(url: absoluteUrl, size: size, borderRadius: 0);
 
       case MediaType.file:
         final ext = getFileExtension(absoluteUrl).toUpperCase();

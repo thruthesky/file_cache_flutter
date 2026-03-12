@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
+import 'package:philgo/file/widgets/video_thumbnail.dart';
 
 /// 업로드된 파일 미리보기 위젯 (FileUploadModel 기반)
 ///
@@ -79,27 +80,27 @@ class UploadedFilePreview extends StatelessWidget {
     }
 
     if (file.isVideo) {
-      return Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.center,
-        children: [
-          if (file.thumbnail400x400Url.isNotEmpty)
+      if (file.thumbnail400x400Url.isNotEmpty) {
+        return Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.center,
+          children: [
             Image.network(
               file.thumbnail400x400Url,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(color: Colors.black54),
-            )
-          else
-            Container(color: Colors.black54),
-          const Center(
-            child: FaIcon(
-              FontAwesomeIcons.solidCirclePlay,
-              size: 28,
-              color: Colors.white,
+              errorBuilder: (_, _, _) => VideoThumbnail(url: file.url, size: size),
             ),
-          ),
-        ],
-      );
+            const Center(
+              child: FaIcon(
+                FontAwesomeIcons.solidCirclePlay,
+                size: 28,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        );
+      }
+      return VideoThumbnail(url: file.url, size: size);
     }
 
     return _fileIcon(scheme);
