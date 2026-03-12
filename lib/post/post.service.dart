@@ -7,7 +7,7 @@ import 'post.model.dart';
 // 미디어 타입 판별 유틸리티 (display_thumbnail.dart 와 post view 에서 공유)
 // ---------------------------------------------------------------------------
 
-enum MediaType { image, video, youtube, unknown }
+enum MediaType { image, video, youtube, file, unknown }
 
 MediaType getMediaType(String? url) {
   if (url == null || url.isEmpty) return MediaType.unknown;
@@ -36,6 +36,11 @@ MediaType getMediaType(String? url) {
       path.endsWith('.svg') ||
       path.endsWith('.avif')) {
     return MediaType.image;
+  }
+
+  // 알려진 파일 확장자면 file 타입
+  if (path.contains('.')) {
+    return MediaType.file;
   }
 
   return MediaType.unknown;
@@ -148,6 +153,7 @@ class PostService {
         if (category != null) 'category': category,
         if (files != null && files.isNotEmpty) 'files': files.join(','),
       },
+      debug: true,
     );
     return Post.fromJson(result);
   }
@@ -253,10 +259,7 @@ class PostService {
   }) async {
     final result = await ApiService.v7api(
       'post.commentUpdate',
-      data: {
-        'idx': idx,
-        'content': content,
-      },
+      data: {'idx': idx, 'content': content},
     );
     return Post.fromJson(result);
   }
