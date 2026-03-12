@@ -4,10 +4,11 @@
 
 1. [개요](#1-개요)
 2. [게시판 별 포인트 안내 페이지](#2-게시판-별-포인트-안내-페이지)
-3. [파일 구조](#3-파일-구조)
-4. [URL 라우팅](#4-url-라우팅)
-5. [DB 쿼리](#5-db-쿼리)
-6. [디자인 패턴](#6-디자인-패턴)
+3. [이용안내 페이지](#3-이용안내-페이지)
+4. [파일 구조](#4-파일-구조)
+5. [URL 라우팅](#5-url-라우팅)
+6. [DB 쿼리](#6-db-쿼리)
+7. [디자인 패턴](#7-디자인-패턴)
 
 ---
 
@@ -68,18 +69,69 @@ function v7_format_point_value(int $point): string
 
 ---
 
-## 3. 파일 구조
+## 3. 이용안내 페이지
+
+### 접속 URL
+
+- **v7**: `https://v7-local.philgo.com/help/guideline`
+- **v6 원본**: `https://local.philgo.com/page/help/guideline.php`
+
+### 기능
+
+v6 이용안내 페이지의 주요 항목을 Web Awesome `wa-details` 아코디언 컴포넌트로 표시한다.
+
+포함 항목:
+1. **문의하기** — 운영자 이메일/이름 (`Config::adminEmail()`, `Config::adminName()`)
+2. **포인트 구매 안내** — 은행 계좌 정보 (`Config::kbName()`, `Config::bdoName()` 등)
+3. **게시판 별 포인트 안내** — `url()->help->pointGuideline` 링크
+4. **포인트 이벤트** — `Config::pointEventDates()`로 이벤트 기간 표시
+5. **포인트 광고 등록** — 포인트 광고 사용 방법 안내
+6. **글 등록: 유튜브 추가하기** — 유튜브 링크 붙여넣기 방법
+7. **구인 구직 글 등록 안내** — 규정(5개 항목) + 작성 예제
+8. **업소록 관리 안내** — QR코드 발행 제한/만료 안내
+
+### 핵심 소스코드
+
+```php
+// Config 클래스를 통해 설정값 접근 (v6 레거시 직접 호출 방지)
+use V7\Utils\Config;
+
+// 포인트 이벤트 날짜 조회
+$eventDates = Config::pointEventDates();
+
+// 은행 정보
+Config::kbName();        // '국민은행'
+Config::kbAccountNo();   // 계좌번호
+Config::bdoName();       // 'BDO'
+
+// 관리자 정보
+Config::adminEmail();    // 'philgohelp@gmail.com'
+Config::adminName();     // '송재호'
+```
+
+### 디자인 특징
+
+- **아코디언**: `<wa-details>` Web Awesome 컴포넌트 사용
+- **아이콘**: Font Awesome Light(`fal`) 아이콘 + 색상별 배경 래퍼
+- **보더리스**: 연한 배경색(`#f8fafc`)으로 영역 구분, 보더 없음
+- **CSS 클래스**: `.guideline-page`, `.guideline-item`, `.guideline-summary`, `.guideline-icon-*`
+
+---
+
+## 4. 파일 구조
 
 | 파일 | 용도 |
 |------|------|
 | `v7/help/point-guideline.php` | 게시판 별 포인트 안내 페이지 (SSR) |
 | `v7/help/point-guideline.css` | 포인트 안내 페이지 전용 CSS |
+| `v7/help/guideline.php` | 이용안내 페이지 (wa-details 아코디언) |
+| `v7/help/guideline.css` | 이용안내 페이지 전용 CSS |
 | `v7/layout.php` | `/help` 경로에서 CSS 조건부 로드 |
 | `tests/Unit/PointGuidelinePageTest.php` | PEST 유닛 테스트 (8개 케이스) |
 
 ---
 
-## 4. URL 라우팅
+## 5. URL 라우팅
 
 `v7/utils/Url.php`의 `HelpUrl` 클래스에 정의되어 있다.
 
@@ -99,7 +151,7 @@ url()->help->guideline        // '/help/guideline'
 
 ---
 
-## 5. DB 쿼리
+## 6. DB 쿼리
 
 ### sf_post_config 테이블 (포인트 관련 컬럼)
 
@@ -114,7 +166,7 @@ url()->help->guideline        // '/help/guideline'
 
 ---
 
-## 6. 디자인 패턴
+## 7. 디자인 패턴
 
 - **UI 프레임워크**: Web Awesome Pro v3.3.1 (Bootstrap 미사용)
 - **아이콘**: Font Awesome Pro v7.2.0
