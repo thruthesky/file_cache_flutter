@@ -9,6 +9,7 @@ import 'package:philgo/app.config.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/l10n/code_asset_loader.dart';
 import 'package:philgo/router.dart';
+import 'package:philgo/theme.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -86,6 +87,7 @@ class _MyAppState extends State<PhilGoV7App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: philgoThemeData(context),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
