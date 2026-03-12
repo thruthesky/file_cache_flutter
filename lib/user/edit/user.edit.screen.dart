@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -164,7 +163,10 @@ class _UserEditScreenState extends State<UserEditScreen> {
                     },
                     onTapDelete: () async {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('사진을 삭제하는 중...'.tr()), duration: const Duration(seconds: 2)),
+                        SnackBar(
+                          content: Text('사진을 삭제하는 중...'.tr()),
+                          duration: const Duration(seconds: 2),
+                        ),
                       );
                       final oldUrl = _photoUrl;
                       final fileIdx = _uploadedFileIdx;
@@ -386,37 +388,6 @@ class _UserEditScreenState extends State<UserEditScreen> {
     );
   }
 
-  Widget _buildFieldLabelWithSuffix(
-    String label,
-    IconData icon, {
-    String? suffix,
-  }) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Row(
-      children: [
-        FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-            color: scheme.onSurfaceVariant,
-          ),
-        ),
-        if (suffix != null) ...[
-          const SizedBox(width: 6),
-          Text(
-            suffix,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
   Widget _buildStatChip({
     required IconData icon,
     required String label,
@@ -454,5 +425,4 @@ class _UserEditScreenState extends State<UserEditScreen> {
       ),
     );
   }
-
 }

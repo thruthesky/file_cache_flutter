@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/post/list/widgets/display_thumbnail.dart';
+import 'package:philgo/file_upload/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 
 /// 게시글 리스트 타일
@@ -20,8 +20,10 @@ class PostListTile extends StatelessWidget {
 
   /// Determine the best URL to use for the preview thumbnail
   String? get _previewUrl {
-    if (post.imageUrl != null && post.imageUrl!.isNotEmpty) return post.imageUrl;
-    if (post.videoUrl != null && post.videoUrl!.isNotEmpty) return post.videoUrl;
+    if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+      return post.imageUrl;
+    if (post.videoUrl != null && post.videoUrl!.isNotEmpty)
+      return post.videoUrl;
     if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty) {
       return post.thumbnail400x400;
     }

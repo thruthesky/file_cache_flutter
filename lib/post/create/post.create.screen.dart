@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file_upload/file_upload.model.dart';
 import 'package:philgo/file_upload/widgets/file_upload.dart';
+import 'package:philgo/file_upload/widgets/uploaded_file_preview.dart';
 import 'package:philgo/post/post.service.dart';
-import 'package:philgo/post/widgets/uploaded_file_preview.dart';
 
 /// 게시글 작성 화면
 ///
@@ -16,11 +16,7 @@ class PostCreateScreen extends StatefulWidget {
   /// 서브 카테고리 (선택)
   final String? category;
 
-  const PostCreateScreen({
-    super.key,
-    required this.postId,
-    this.category,
-  });
+  const PostCreateScreen({super.key, required this.postId, this.category});
 
   @override
   State<PostCreateScreen> createState() => _PostCreateScreenState();
@@ -61,9 +57,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       Navigator.of(context).pop(post);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('게시글 작성 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('게시글 작성 실패: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -120,8 +116,11 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               ),
               child: Row(
                 children: [
-                  FaIcon(FontAwesomeIcons.lightNewspaper,
-                      size: 14, color: scheme.primary),
+                  FaIcon(
+                    FontAwesomeIcons.lightNewspaper,
+                    size: 14,
+                    color: scheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     widget.category != null
@@ -145,8 +144,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
               maxLength: 255,
               validator: (value) {
@@ -166,8 +167,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
               maxLines: 15,
               minLines: 8,
@@ -195,9 +198,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     setState(() => _uploadedFiles.add(model));
                   },
                   onError: (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('업로드 실패: $e')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('업로드 실패: $e')));
                   },
                   child: Container(
                     width: 48,
