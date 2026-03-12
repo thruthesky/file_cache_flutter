@@ -1568,33 +1568,50 @@ if ($loginUser !== null) {
 ### 10.1 개요
 
 v7 사용자 차단 기능은 로그인 사용자가 특정 사용자를 차단하여 해당 사용자의 글과 댓글을 가릴 수 있는 기능이다.
-차단 백엔드는 레거시 `lib/user/member-block.functions.php`에 구현되어 있으며,
-v7 프론트엔드에서 `/func.php`를 통해 호출한다.
+차단 백엔드는 `lib/user/UserController.php`의 v7 Controller 메서드로 구현되어 있으며,
+v7 프론트엔드에서 `v7api()` → `/api.php`를 통해 호출한다.
+
+> **중요**: v6의 `/func.php` 호출 방식은 v7 세션(`session_id_v7`)과 호환되지 않으므로,
+> 반드시 `v7api()` → `/api.php` → `UserController` 경로를 사용해야 한다.
 
 | 항목 | 값 |
 |------|---|
+| **v7 Controller** | `lib/user/UserController.php` (`toggleBlock`, `unblock`, `blockedList`) |
 | **차단 목록 페이지** | `v7/user/blocked.php` |
 | **차단 목록 CSS** | `v7/user/blocked.css` |
 | **JS 유틸리티** | `v7/js/block.js` |
 | **URL** | `/user/blocked` |
 | **URL 헬퍼** | `url()->user->blocked` |
 | **설정 페이지 링크** | `v7/user/settings.php`에서 "차단한 사용자" 링크 표시 |
-| **테스트 파일** | `tests/Browser/BlockTest.php` |
+| **PEST 테스트** | `tests/Unit/MemberBlockTest.php` (16개 테스트) |
 | **DB 테이블** | `sf_member_blocks` (`idx`, `idx_blocker`, `idx_blockee`, `created_at`) |
 
-### 10.2 JS API (block.js)
+### 10.2 v7 API 엔드포인트 (UserController)
 
-`v7/js/block.js`는 `layout.php`에서 전역으로 로드되며, axios로 `/func.php`를 호출한다.
+`lib/user/UserController.php`에 차단 관련 3개 메서드가 정의되어 있다.
+`AuthService::getLoginUser()`로 v7 세션 인증을 수행한다.
+
+| API 메서드 | 설명 | 입력 | 반환 |
+|------|------|------|------|
+| `user.toggleBlock` | 차단/해제 토글 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: bool, message }` |
+| `user.unblock` | 차단 해제 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: false, message }` |
+| `user.blockedList` | 차단 목록 조회 | 없음 | `[{ idx, idx_blockee, nickname, photo_url, created_at }]` |
+
+### 10.3 JS API (block.js)
+
+`v7/js/block.js`는 차단 관련 유틸리티 함수를 제공한다. 차단 기능이 필요한 페이지에서 `<script defer>` 태그로 로드한다.
+
+- `v7/user/blocked.php` — 차단 목록 페이지
+- `v7/post/view.php` — 글 읽기 페이지 (액션바 + 코멘트 차단 버튼에서 사용)
 
 | 함수 | 설명 | 파라미터 |
 |------|------|----------|
-| `blockApi(funcName, params)` | `/func.php` API 래퍼 | PHP 함수명 + 파라미터 객체 |
-| `toggleBlockMember(idxBlockee)` | 차단 토글 (차단 ↔ 해제) | 대상 사용자 idx |
-| `unblockMember(idxBlockee)` | 차단 해제 | 대상 사용자 idx |
-| `getBlockedMembers()` | 차단 목록 조회 | 없음 |
+| `toggleBlockMember(idxBlockee)` | 차단 토글 (차단 ↔ 해제) → `v7api('user.toggleBlock', ...)` | 대상 사용자 idx |
+| `unblockMember(idxBlockee)` | 차단 해제 → `v7api('user.unblock', ...)` | 대상 사용자 idx |
+| `getBlockedMembers()` | 차단 목록 조회 → `v7api('user.blockedList', ...)` | 없음 |
 | `confirmUnblockAndView(idxBlockee, type, targetUrl)` | 차단 해제 확인 다이얼로그 | 대상 idx, 'post'/'comment', 이동 URL |
 
-### 10.3 차단된 콘텐츠 표시
+### 10.4 차단된 콘텐츠 표시
 
 #### 글 목록 (`post-list-tile.php`)
 
@@ -1610,22 +1627,39 @@ $_isBlockedPost = !empty($_blockedMemberIds) && in_array($post['idx_member'] ?? 
 - 관리자 차단(blind): `$post->isBlockedOrBlinded()` → "이 글은 관리자에 의해 차단되었습니다"
 - 사용자 차단: `$isBlockedAuthor` → "차단된 사용자의 글입니다" + "차단 해제하고 내용 보기" 버튼
 - 첨부파일도 차단 시 숨김 처리
+- 액션바에 차단/해제 토글 버튼 (`post-actions.js` Vue 앱)
+- `data-author-name` 속성으로 작성자 이름을 전달하여 confirm 메시지에 `"사용자명" 사용자를 차단하시겠습니까?` 형식으로 표시
+- 차단 성공 시 `"사용자명" 사용자가 차단되었습니다.` alert 후 페이지 새로고침
 
 #### 코멘트 (`view.php`)
 
 - 관리자 차단: "차단된 댓글입니다"
 - 사용자 차단: "차단된 사용자의 댓글입니다" + "해제하고 보기" 버튼
 - 코멘트 첨부파일도 차단 시 숨김
+- 각 코멘트 액션에 차단/해제 버튼 (`comment.js` Vue 앱)
+- `data-author-name` 속성으로 댓글 작성자 이름을 전달하여 confirm 메시지에 표시
 
-### 10.4 차단 목록 페이지 (`blocked.php`)
+#### 공개 프로필 (`public-profile.php`)
+
+- 타인 프로필에서 차단/해제 버튼 표시 (`toggleBlockMember()` 호출)
+- 차단 상태에 따라 버튼 색상 변경 (danger/neutral)
+
+### 10.5 차단 목록 페이지 (`blocked.php`)
 
 Vue.js CDN MPA 방식으로 구현된 차단 사용자 관리 페이지이다.
 
 - **비로그인**: "로그인 후 이용해 주세요" + 로그인 버튼
 - **로그인**: `getBlockedMembers()` API로 차단 목록 조회 → `wa-avatar` + 닉네임 + 차단일 + 해제 버튼
 - **해제**: `unblockMember()` 호출 → 목록에서 실시간 제거
+- **빈 목록**: "차단한 사용자가 없습니다" 표시
 
-### 10.5 접근 경로
+> **주의**: `wa-button`의 `:disabled` 바인딩은 Web Component 특성상 `null`을 반환해야 속성이 제거된다.
+> `!!expr` 대신 `expr || null` 패턴을 사용해야 한다.
+
+### 10.6 접근 경로
 
 1. 설정 페이지 → "차단한 사용자" 링크 (`url()->user->settings` → `url()->user->blocked`)
 2. 사이드바 설정 메뉴 → 설정 페이지 → 차단한 사용자 링크
+3. 글 보기 → 액션바 차단/해제 버튼 (타인 글에만 표시)
+4. 글 보기 → 코멘트 액션 차단/해제 버튼 (타인 댓글에만 표시)
+5. 공개 프로필 → 차단 버튼
