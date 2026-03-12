@@ -11,6 +11,9 @@ class PostViewFiles extends StatelessWidget {
   const PostViewFiles({super.key, required this.post});
 
   List<String> get _urls {
+    if (post.files.isNotEmpty) {
+      return post.files.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    }
     final urls = <String>[];
     if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
       urls.add(post.imageUrl!);
