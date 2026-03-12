@@ -282,7 +282,6 @@ class _FileUploadState extends State<FileUpload> {
           maxWidth: widget.maxWidth,
           maxHeight: widget.maxHeight,
           imageQuality: widget.imageQuality,
-          requestFullMetadata: false,
         );
         return picked?.path;
 
