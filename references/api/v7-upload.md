@@ -1017,6 +1017,47 @@ console.log(res.items); // [{idx: 1, url: '/uploads/...', ...}, ...]
 
 > 인증된 사용자가 파일 소유자인지 자동 검증.
 
+### 11.7 upload.deleteByUrl - URL 경로로 파일 삭제
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `upload.deleteByUrl` |
+| **인증** | **필수** — `session_id` 또는 `id_token` 파라미터 |
+| **HTTP** | `GET /api.php?method=upload.deleteByUrl&url=/uploads/123/abc.webp&session_id=xxx` 또는 POST |
+| **파라미터** | `url` (필수, 업로드 파일의 상대경로), `session_id` 또는 `id_token` (필수) |
+| **응답** | `{"deleted": true}` |
+
+> 게시글/코멘트에 첨부된 파일의 URL 경로만 알고 `idx`를 모를 때 사용한다.
+> `UploadRepository::findByUrl()`로 URL에 해당하는 레코드를 조회한 뒤, 소유자 검증 후 파일 시스템 + 썸네일 + DB를 모두 삭제한다.
+> 인증된 사용자가 파일 소유자인지 자동 검증. 불일치 시 "파일 삭제 권한이 없습니다." 에러.
+
+**삭제 흐름:**
+```
+클라이언트: func('upload.deleteByUrl', { url: '/uploads/123/abc.webp' })
+    ↓
+UploadController::deleteByUrl($input)
+    ↓ getAuthenticatedMemberIdx()로 인증 확인
+    ↓ 인증된 사용자의 idx를 idx_member로 자동 설정
+UploadService::removeByUrl($input)
+    ↓ UploadRepository::findByUrl($url) → URL로 DB 레코드 조회
+    ↓ 조회된 레코드의 idx를 사용하여 기존 remove() 재사용
+    ↓ 소유자 검증 + 파일 시스템 삭제 + 썸네일 삭제 + DB 삭제
+    ↓
+응답: {"deleted": true}
+```
+
+**curl 예시:**
+```bash
+curl -s "https://local.philgo.com/api.php?method=upload.deleteByUrl&url=/uploads/123/abc.webp&session_id=abc123def-456"
+```
+
+**JavaScript 호출 예시:**
+```javascript
+// 게시글/코멘트에 저장된 URL로 직접 삭제
+const res = await func('upload.deleteByUrl', { url: '/uploads/123/abc.webp' });
+// res.deleted === true 이면 삭제 성공
+```
+
 ---
 
 ## 12. PSR-4 Autoload 설정
