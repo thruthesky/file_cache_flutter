@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/models/chat.join.dart';
-import 'package:philgo/chat/room/chat.room_screen.dart';
+// import 'package:philgo/chat/room/chat.room_screen.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
 import 'package:philgo/user/widgets/login.dart';
@@ -227,7 +227,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                               return InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  ChatRoomScreen.push(context, roomId);
+                                  // ChatRoomScreen.push(context, roomId);
                                 },
                                 borderRadius: BorderRadius.circular(8),
                                 child: Container(
@@ -286,7 +286,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                               return InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  ChatRoomScreen.push(context, roomId);
+                                  // ChatRoomScreen.push(context, roomId);
                                 },
                                 borderRadius: BorderRadius.circular(8),
                                 child: Container(
@@ -413,7 +413,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                               return InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  ChatRoomScreen.push(context, roomId);
+                                  // ChatRoomScreen.push(context, roomId);
                                 },
                                 borderRadius: BorderRadius.circular(8),
                                 child: Container(

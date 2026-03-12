@@ -5,7 +5,7 @@ import 'package:philgo/category/category.list.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/list/chat.room_join_list.builder.dart';
 import 'package:philgo/chat/models/chat.join.dart';
-import 'package:philgo/chat/room/chat.room_screen.dart';
+// import 'package:philgo/chat/room/chat.room_screen.dart';
 import 'package:philgo/receive_share/receive.share.functions.dart';
 import 'package:philgo/receive_share/receive.share.service.dart';
 import 'package:philgo/receive_share/widgets/share.where.button.dart';
@@ -174,7 +174,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                             : () async {
                                 if (status[join.id] == 'sent') {
                                   if (globalContext.mounted) {
-                                    ChatRoomScreen.push(globalContext, join.id);
+                                    // ChatRoomScreen.push(globalContext, join.id);
                                   }
                                   return;
                                 }

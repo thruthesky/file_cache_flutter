@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/list/chat.room_list_view.dart';
-import 'package:philgo/chat/room/chat.room_screen.dart';
+// import 'package:philgo/chat/room/chat.room_screen.dart';
 import 'package:philgo/chat/widgets/bookmarked_chats_dialog.dart';
 import 'package:philgo/chat/widgets/favorite_folders_dialog.dart';
 import 'package:philgo/chat/widgets/pinned_chat_rooms_list.dart';
@@ -72,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () async {
                     final uid = await showUserSearchDialog(context);
                     if (uid != null && context.mounted) {
-                      ChatRoomScreen.push(context, uid);
+                      // ChatRoomScreen.push(context, uid);
                     }
                   },
                 ),
@@ -116,13 +116,13 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         PinnedChatRoomsList(
           onTap: (roomId) {
-            ChatRoomScreen.push(context, roomId);
+            // ChatRoomScreen.push(context, roomId);
           },
         ),
         Expanded(
           child: ChatRoomListView(
             onTap: (roomId) {
-              ChatRoomScreen.push(context, roomId);
+              // ChatRoomScreen.push(context, roomId);
             },
           ),
         ),
