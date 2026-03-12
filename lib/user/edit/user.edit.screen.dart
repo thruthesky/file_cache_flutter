@@ -163,6 +163,9 @@ class _UserEditScreenState extends State<UserEditScreen> {
                       }
                     },
                     onTapDelete: () async {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('사진을 삭제하는 중...'.tr()), duration: const Duration(seconds: 2)),
+                      );
                       final oldUrl = _photoUrl;
                       final fileIdx = _uploadedFileIdx;
                       if (oldUrl != null && oldUrl.isNotEmpty) {
