@@ -109,11 +109,14 @@ GET https://local.philgo.com/api.php?method=post.list&post_id=wanted&category=jo
 
 | 파라미터 | 타입 | 필수 | 설명 |
 |----------|------|------|------|
-| post_id | string | O | 게시판 ID |
+| post_id | string | 조건부 | 게시판 ID (`post_id` 또는 `idx_member` 중 하나 필수) |
+| idx_member | int | 조건부 | 작성자 회원 번호 — 특정 사용자의 글만 조회 (`post_id` 또는 `idx_member` 중 하나 필수) |
 | category | string | X | 카테고리 필터 |
 | orderby | string | X | 정렬 (기본: stamp DESC) |
 | limit | int | X | 최대 조회 수 (기본: 20, 최대: 100) |
 | offset | int | X | 오프셋 (기본: 0) |
+
+> **`post_id`와 `idx_member` 조합 규칙**: 둘 다 없으면 RuntimeException 발생. `post_id`만 전달하면 해당 게시판 전체 글 조회. `idx_member`만 전달하면 전체 게시판에서 해당 사용자의 글만 조회. 둘 다 전달하면 특정 게시판에서 특정 사용자의 글만 조회.
 
 **허용 정렬**:
 `stamp DESC/ASC`, `stamp_update DESC/ASC`, `stamp_last_comment DESC/ASC`,

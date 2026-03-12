@@ -390,29 +390,47 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
 |------|----------|----------|
 | **에러 상태** | `<div class="profile-error-card">` (wa-card 미사용) | `background: #f8fafc; border-radius: 16px; border 없음` |
 | **프로필 헤더** | `<section class="profile-header-section">` | 보더/배경 없음, 중앙 정렬, flex-column |
-| **아바타** | `<img class="profile-avatar">` 또는 `<div class="profile-avatar-placeholder">` | 100px 원형, **보더 없음**, placeholder: `background: var(--wa-color-brand-95, #e7f5ff)`, 아이콘 색: `var(--wa-color-brand-50, #3178c0)` |
-| **통계** | `<wa-tag size="small">` 컴포넌트 (span 미사용) | 아이콘+텍스트 조합, `flex-wrap: wrap`, 중앙 정렬 |
+| **아바타** | `<img class="profile-avatar">` 또는 `<div class="profile-avatar-placeholder">` | 120px 원형 (모바일 96px), **보더 없음**, placeholder: `background: var(--wa-color-brand-95, #e7f5ff)`, 아이콘 색: `var(--wa-color-brand-50, #3178c0)` |
+| **통계** | 숫자+레이블 스타일 (`profile-stat-item`) | Instagram 스타일, 숫자 강조(1.1rem bold) + 레이블(0.7rem subtle), `flex` + `gap: 2.5rem` |
 | **최근 글/댓글 섹션** | `<section class="profile-recent-section">` | `background: #f8fafc; border-radius: 12px; border 없음` |
 | **글/댓글 아이템** | `<a class="profile-post-item">` / `<a class="profile-comment-item">` | hover 시 `background: #fff`, 구분선: `border-top: 1px solid #f1f5f9` (매우 연한 선) |
 | **빈 상태** | `<div class="profile-empty">` | 아이콘 `opacity: 0.5`, 텍스트 `neutral-60` |
 
-**통계 태그 핵심 코드**:
+**통계 영역 핵심 코드** (Instagram 스타일 숫자+레이블):
 ```php
 <div class="profile-stats">
-    <wa-tag size="small">
-        <i class="fal fa-pen-to-square"></i>
-        글 <?= number_format($user->no_of_post) ?>
-    </wa-tag>
-    <wa-tag size="small">
-        <i class="fal fa-comments"></i>
-        댓글 <?= number_format($user->no_of_comment) ?>
-    </wa-tag>
-    <wa-tag size="small">
-        <i class="fal fa-star"></i>
-        레벨 <?= number_format($user->level) ?>
-    </wa-tag>
+    <div class="profile-stat-item">
+        <span class="profile-stat-number"><?= number_format($user->no_of_post) ?></span>
+        <span class="profile-stat-label">글</span>
+    </div>
+    <div class="profile-stat-item">
+        <span class="profile-stat-number"><?= number_format($user->no_of_comment) ?></span>
+        <span class="profile-stat-label">댓글</span>
+    </div>
+    <div class="profile-stat-item">
+        <span class="profile-stat-number"><?= number_format($user->level) ?></span>
+        <span class="profile-stat-label">레벨</span>
+    </div>
 </div>
 ```
+
+**글 목록 링크 — idx_member 기반 전체 게시판 조회**:
+
+공개 프로필의 "글" 버튼과 "더보기" 링크는 `Route::url()`을 사용하여 해당 사용자의 전체 게시판 글을 조회한다:
+```php
+<!-- 글 버튼 -->
+<wa-button variant="neutral" appearance="outlined" size="small"
+    href="<?= \V7\Utils\Route::url('/post/list', ['idx_member' => $user->idx]) ?>">
+    <i slot="start" class="fal fa-list"></i> 글
+</wa-button>
+
+<!-- 더보기 링크 -->
+<a href="<?= \V7\Utils\Route::url('/post/list', ['idx_member' => $user->idx]) ?>">
+    더보기 <i class="fal fa-chevron-right"></i>
+</a>
+```
+
+> **중요**: `url()->post->list->community`는 `post_id=freetalk`만 전달하므로, 특정 사용자의 전체 게시판 글을 조회하려면 반드시 `Route::url('/post/list', ['idx_member' => $user->idx])`를 사용해야 한다.
 
 **에러 상태 핵심 코드**:
 ```php
@@ -460,7 +478,31 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
 }
 ```
 
-**반응형**: 모바일(< 992px)에서 아바타 84px, 패딩/간격 축소. 반응형 규칙은 `public-profile.css` 하단의 `@media (max-width: 991.98px)` 블록에 정의.
+**통계 영역 CSS**:
+```css
+.profile-stats {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+}
+.profile-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+}
+.profile-stat-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--wa-color-neutral-10, #1e293b);
+}
+.profile-stat-label {
+    font-size: 0.7rem;
+    color: var(--wa-color-neutral-60, #64748b);
+}
+```
+
+**반응형**: 모바일(< 992px)에서 아바타 80px, 패딩/간격 축소. 반응형 규칙은 `public-profile.css` 하단의 `@media (max-width: 991.98px)` 블록에 정의.
 
 **URL 헬퍼**:
 ```php
@@ -553,6 +595,19 @@ public static function findCommentsByIdxMember(int $idxMember, int $limit = 5): 
 | `birth_year` | int/string | 선택 | 생년 (예: 1990) |
 | `birth_month` | int/string | 선택 | 생월 (1~12) |
 | `birth_day` | int/string | 선택 | 생일 (1~31) |
+
+**정수 필드 빈 문자열 변환 규칙**:
+
+> `birth_year`, `birth_month`, `birth_day`는 DB에서 정수 컬럼(`smallint`/`tinyint`)이다.
+> 프론트엔드에서 빈 문자열(`''`)이 전달될 수 있으므로(select에서 미선택 시),
+> `UserService::update()`에서 **빈 문자열을 `0`으로 자동 변환**한다.
+> v6의 `intval()` 호환 로직이며, 이를 통해 `SQLSTATE[22007]` 에러를 방지한다.
+
+| 입력값 | 변환 결과 | 설명 |
+|--------|----------|------|
+| `''` (빈 문자열) | `0` | 미선택 상태 |
+| `'2000'` (문자열 숫자) | `2000` | 폼에서 전송된 값 |
+| `1990` (정수) | `1990` | 정상 정수 |
 
 **닉네임 변경 정책**:
 1. 닉네임이 비어있으면 최초 설정 가능 (자유롭게 설정)
