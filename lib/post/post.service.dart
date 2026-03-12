@@ -18,7 +18,8 @@ class PostService {
   ///
   /// API: post.list (인증 불필요)
   ///
-  /// [postId] 게시판 ID (필수, 예: 'freetalk', 'qna')
+  /// [postId] 게시판 ID (선택, 예: 'freetalk', 'qna')
+  /// [idxMember] 회원 번호 필터 (선택, 내 글 목록에 사용)
   /// [category] 카테고리 필터 (선택)
   /// [orderby] 정렬 기준 (선택, 예: 'stamp DESC', 'no_of_view DESC')
   /// [limit] 최대 조회 수 (선택, 기본 20, 최대 100)
@@ -26,7 +27,8 @@ class PostService {
   ///
   /// 반환: posts 목록과 total 전체 개수
   static Future<({List<Post> posts, int total})> list({
-    required String postId,
+    String? postId,
+    int? idxMember,
     String? category,
     String? orderby,
     int? limit,
@@ -35,7 +37,8 @@ class PostService {
     final result = await ApiService.v7api(
       'post.list',
       data: {
-        'post_id': postId,
+        if (postId != null) 'post_id': postId,
+        if (idxMember != null) 'idx_member': idxMember,
         if (category != null) 'category': category,
         if (orderby != null) 'orderby': orderby,
         if (limit != null) 'limit': limit,
@@ -158,6 +161,7 @@ class PostService {
     final result = await ApiService.v7api(
       'post.commentList',
       data: {'idx_root': idxRoot},
+      debug: true,
     );
     final raw = result['items'] ?? [];
     final items = raw is List ? raw : [];

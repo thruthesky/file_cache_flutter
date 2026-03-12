@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/post/my/my.posts.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.service.dart';
@@ -419,7 +420,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildActivityGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
       _MenuItemData(FontAwesomeIcons.lightPenToSquare, '프로필 수정'.tr(), onTap: () => UserEditScreen.push(context)),
-      _MenuItemData(FontAwesomeIcons.lightClockRotateLeft, '내 게시글'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightClockRotateLeft, '내 게시글'.tr(), onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyPostsScreen()))),
       _MenuItemData(FontAwesomeIcons.lightPenNib, '글쓰기'.tr()),
       _MenuItemData(FontAwesomeIcons.lightMagnifyingGlass, '친구 검색'.tr()),
       _MenuItemData(FontAwesomeIcons.lightUserSlash, '차단된 사용자'.tr()),
