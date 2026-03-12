@@ -77,13 +77,16 @@ class DisplayThumbnail extends StatelessWidget {
 
       case MediaType.video:
         return Stack(
+          fit: StackFit.expand,
           alignment: Alignment.center,
           children: [
-            _placeholder(scheme),
-            FaIcon(
-              FontAwesomeIcons.circlePlay,
-              size: size * 0.4,
-              color: scheme.onSurfaceVariant,
+            Container(color: Colors.black54),
+            Center(
+              child: FaIcon(
+                FontAwesomeIcons.solidCirclePlay,
+                size: size * 0.4,
+                color: Colors.white,
+              ),
             ),
           ],
         );
@@ -104,7 +107,10 @@ class DisplayThumbnail extends StatelessWidget {
                 ),
                 if (ext.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 2,
+                      vertical: 1,
+                    ),
                     decoration: BoxDecoration(
                       color: scheme.primary,
                       borderRadius: BorderRadius.circular(2),

@@ -19,10 +19,6 @@ class UploadedFilePreview extends StatelessWidget {
     this.onDelete,
   });
 
-  Future<void> _handleDelete() async {
-    await ApiService.fileDelete(file.idx);
-    onDelete?.call();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +48,7 @@ class UploadedFilePreview extends StatelessWidget {
           top: -6,
           right: -6,
           child: GestureDetector(
-            onTap: _handleDelete,
+            onTap: onDelete,
             child: Container(
               width: 20,
               height: 20,
@@ -84,18 +80,24 @@ class UploadedFilePreview extends StatelessWidget {
 
     if (file.isVideo) {
       return Stack(
+        fit: StackFit.expand,
         alignment: Alignment.center,
         children: [
           if (file.thumbnail400x400Url.isNotEmpty)
             Image.network(
               file.thumbnail400x400Url,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => _fileIcon(scheme),
+              errorBuilder: (_, _, _) => Container(color: Colors.black54),
             )
           else
-            _fileIcon(scheme),
-          Container(color: Colors.black38),
-          FaIcon(FontAwesomeIcons.solidCirclePlay, size: 28, color: Colors.white),
+            Container(color: Colors.black54),
+          const Center(
+            child: FaIcon(
+              FontAwesomeIcons.solidCirclePlay,
+              size: 28,
+              color: Colors.white,
+            ),
+          ),
         ],
       );
     }
