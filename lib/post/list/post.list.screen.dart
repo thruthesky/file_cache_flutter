@@ -168,10 +168,7 @@ class _PostListScreenState extends State<PostListScreen> {
         return PagedListView<int, Post>.separated(
           state: state,
           fetchNextPage: fetchNextPage,
-          separatorBuilder: (_, _) => Divider(
-            height: 1,
-            color: scheme.outlineVariant.withValues(alpha: 0.3),
-          ),
+          separatorBuilder: (_, _) => const SizedBox.shrink(),
           builderDelegate: PagedChildBuilderDelegate<Post>(
             itemBuilder: (context, post, index) => PostListTile(
               post: post,

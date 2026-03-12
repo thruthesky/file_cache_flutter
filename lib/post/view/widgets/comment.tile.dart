@@ -181,6 +181,8 @@ class _CommentTileState extends State<CommentTile> {
   }
 
   /// 내용 컬럼 (작성자, 날짜, 내용, 첨부파일, 액션바)
+  ///
+  /// primaryContainer 배경 + 둥근 모서리 8px 카드 스타일 적용
   Widget _buildContentColumn({
     required Post comment,
     required ThemeData theme,
@@ -188,97 +190,104 @@ class _CommentTileState extends State<CommentTile> {
     required bool isMine,
     required bool hasChildren,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.showThreadLine) const SizedBox(height: 8),
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.showThreadLine) const SizedBox(height: 2),
 
-        // 작성자 + 날짜
-        Row(
-          children: [
-            if (comment.userName.isNotEmpty) ...[
-              Flexible(
-                child: Text(
-                  comment.userName,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w600,
+          // 작성자 + 날짜
+          Row(
+            children: [
+              if (comment.userName.isNotEmpty) ...[
+                Flexible(
+                  child: Text(
+                    comment.userName,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-            ],
-            Text(
-              _formatDate(comment.stamp),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 4),
-
-        // 내용
-        Text(
-          comment.content,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: scheme.onSurface,
-            height: 1.5,
-          ),
-        ),
-
-        // 첨부 파일
-        if (comment.imageUrl != null || comment.videoUrl != null)
-          PostViewFiles(post: comment),
-
-        // 액션 바
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              // 좋아요
-              PostActionButton(
-                icon: _liked
-                    ? FontAwesomeIcons.solidThumbsUp
-                    : FontAwesomeIcons.lightThumbsUp,
-                label: '${_goodCount > 0 ? _goodCount : ''}',
-                color: _liked ? scheme.primary : scheme.onSurfaceVariant,
-                onTap: _toggleLike,
-              ),
-              const SizedBox(width: 8),
-              // 답글
-              PostActionButton(
-                icon: FontAwesomeIcons.lightReply,
-                label: '답글',
-                color: scheme.onSurfaceVariant,
-                onTap: widget.onReply,
-              ),
-
-              const SizedBox(width: 12),
-
-              if (isMine) ...[
-                if (!hasChildren)
-                  PostActionButton(
-                    icon: FontAwesomeIcons.lightPenToSquare,
-                    label: '수정',
-                    color: scheme.onSurfaceVariant,
-                    onTap: () => _showEditDialog(context),
-                  ),
-                if (!hasChildren) const SizedBox(width: 8),
-                if (!hasChildren)
-                  PostActionButton(
-                    icon: FontAwesomeIcons.lightTrashCan,
-                    label: '삭제',
-                    color: scheme.error,
-                    onTap: () => _confirmDelete(context),
-                  ),
+                const SizedBox(width: 8),
               ],
+              Text(
+                _formatDate(comment.stamp),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.tertiary,
+                ),
+              ),
             ],
           ),
-        ),
-      ],
+
+          const SizedBox(height: 4),
+
+          // 내용
+          Text(
+            comment.content,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.onPrimaryContainer,
+              height: 1.5,
+            ),
+          ),
+
+          // 첨부 파일
+          if (comment.imageUrl != null || comment.videoUrl != null)
+            PostViewFiles(post: comment),
+
+          // 액션 바
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                // 좋아요
+                PostActionButton(
+                  icon: _liked
+                      ? FontAwesomeIcons.solidThumbsUp
+                      : FontAwesomeIcons.lightThumbsUp,
+                  label: '${_goodCount > 0 ? _goodCount : ''}',
+                  color: _liked ? scheme.primary : scheme.tertiary,
+                  onTap: _toggleLike,
+                ),
+                const SizedBox(width: 8),
+                // 답글
+                PostActionButton(
+                  icon: FontAwesomeIcons.lightReply,
+                  label: '답글',
+                  color: scheme.tertiary,
+                  onTap: widget.onReply,
+                ),
+
+                const SizedBox(width: 12),
+
+                if (isMine) ...[
+                  if (!hasChildren)
+                    PostActionButton(
+                      icon: FontAwesomeIcons.lightPenToSquare,
+                      label: '수정',
+                      color: scheme.tertiary,
+                      onTap: () => _showEditDialog(context),
+                    ),
+                  if (!hasChildren) const SizedBox(width: 8),
+                  if (!hasChildren)
+                    PostActionButton(
+                      icon: FontAwesomeIcons.lightTrashCan,
+                      label: '삭제',
+                      color: scheme.error,
+                      onTap: () => _confirmDelete(context),
+                    ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
