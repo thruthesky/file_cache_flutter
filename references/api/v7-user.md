@@ -12,6 +12,7 @@
     - [3.4.a 디자인 구조 (보더리스 디자인)](#34a-디자인-구조-보더리스-디자인)
   - [3.5 user.updateMyProfile](#35-userupdatemyprofile---회원-정보-수정)
   - [3.6 회원 정보 수정 페이지 (SSR)](#36-회원-정보-수정-페이지-ssr)
+  - [3.7 user.search — 닉네임으로 사용자 검색](#37-usersearch---닉네임으로-사용자-검색)
 - [4. 파일 구조](#4-파일-구조)
 - [5. 인증 시스템 (AuthService)](#5-인증-시스템-authservice)
 - [6. 테스트](#6-테스트)
@@ -729,6 +730,97 @@ url()->user->profile    // → '/user/profile'
 
 ---
 
+### 3.7 user.search - 닉네임으로 사용자 검색
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `user.search` |
+| **HTTP** | `GET /api.php?method=user.search&nickname=홍길` 또는 `POST /api.php` (body: `{method: "user.search", nickname: "홍길"}`) |
+| **파라미터** | `nickname` (string, 필수) — 검색할 닉네임 키워드 |
+| **인증** | 선택 — 로그인 시 본인 제외 |
+| **응답** | 검색된 사용자 배열 `[{idx, nickname, firebase_uid, photo_url}, ...]` |
+
+**파라미터 상세**:
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `nickname` | string | 필수 | 검색할 닉네임 키워드. 비어있으면 `RuntimeException` 발생 |
+
+**검색 동작**:
+- prefix 매칭 방식으로 검색한다 (`LIKE 'keyword%'`)
+- 최대 **20건**까지 반환한다
+- 로그인 상태인 경우, 본인은 검색 결과에서 제외된다
+
+**curl 예시**:
+```bash
+# GET 방식
+curl -s "https://v7-local.philgo.com/api.php?method=user.search&nickname=홍길"
+
+# POST 방식 (JSON)
+curl -s -X POST "https://v7-local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{"method": "user.search", "nickname": "홍길"}'
+```
+
+**JavaScript 호출 예시**:
+```javascript
+const users = await v7api('user.search', { nickname: '홍길' });
+// users: [{idx: 123, nickname: '홍길동', firebase_uid: 'abc...', photo_url: '...'}, ...]
+```
+
+**응답 형식** (성공):
+```json
+[
+    {
+        "idx": 123,
+        "nickname": "홍길동",
+        "firebase_uid": "abc123...",
+        "photo_url": "https://file.philgo.com/..."
+    },
+    {
+        "idx": 456,
+        "nickname": "홍길순",
+        "firebase_uid": "def456...",
+        "photo_url": ""
+    }
+]
+```
+
+**에러 응답**:
+```json
+{
+    "success": false,
+    "message": "nickname은 필수입니다."
+}
+```
+
+**에러 케이스**:
+
+| 조건 | 에러 메시지 |
+|------|-----------|
+| `nickname` 미전달 또는 빈 문자열 | `RuntimeException('nickname은 필수입니다.')` |
+
+**내부 처리 흐름**:
+```
+UserController::search($input)
+  └─ UserService::searchByNickname($input)
+       ├─ nickname 빈 값 체크 → RuntimeException
+       ├─ AuthService::getLoginUser() → 로그인 사용자 확인 (선택적)
+       ├─ LIKE 'keyword%' 쿼리 (prefix 매칭)
+       ├─ LIMIT 20
+       └─ 로그인 시 본인 idx 제외
+```
+
+**관련 소스 파일**:
+
+| 파일 | 설명 |
+|------|------|
+| `lib/user/UserController.php` | `search()` 메서드 — API 엔드포인트 |
+| `lib/user/UserService.php` | `searchByNickname()` 메서드 — 비즈니스 로직 |
+| `tests/Unit/UserSearchTest.php` | PEST 유닛 테스트 |
+
+---
+
 ## 4. 파일 구조
 
 ```
@@ -753,7 +845,8 @@ v7/user/
 tests/Unit/
 ├── UserControllerTest.php        # ★ UserController PEST Unit Test
 ├── UserProfileTest.php           # ★ 프로필 수정 PEST Unit Test (canChangeNickname, updateMyProfile, Entity 필드)
-└── PublicProfileTest.php         # ★ 공개 프로필 PEST Unit Test (getByFirebaseUid, getPublicProfile, PostRepository)
+├── PublicProfileTest.php         # ★ 공개 프로필 PEST Unit Test (getByFirebaseUid, getPublicProfile, PostRepository)
+└── UserSearchTest.php            # ★ 닉네임 검색 PEST Unit Test (searchByNickname, prefix 매칭, 본인 제외)
 
 lib/utils/
 ├── AuthService.php               # ★ Philgo\Utils\AuthService (2경로 인증: 세션 + Firebase)

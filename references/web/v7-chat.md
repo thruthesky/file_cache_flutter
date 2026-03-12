@@ -84,7 +84,7 @@ tests/Browser/
 | `chat-store.js` | `v7ChatState` 전역 반응형 상태, `v7ChatActions` 액션 (방 열기/닫기, 리스너 관리) | ~163 | 2 |
 | `chat-room-list.js` | 채팅방 목록 표시, 무한 스크롤 페이지네이션, 고정/비고정 섹션 분리 | ~228 | 3 |
 | `chat-single-room.js` | 메시지 전송/수신, 파일 업로드, 이미지 뷰어, 고정/즐겨찾기/차단/신고/커스텀이름/나가기, **수정/삭제**, **Presence**, **관리자 기능** | ~960 | 4 |
-| `chat-search.js` | 사용자 검색 (Firebase RTDB users 노드), 새 채팅 시작 | ~126 | 5 |
+| `chat-search.js` | 사용자 검색 (v7 API 닉네임 기반), 새 채팅 시작 | ~126 | 5 |
 | `chat-app.js` | Firebase Auth 확인 후 Vue 앱 생성/마운트, 전역 리스너 초기화, **Presence 설정**, **FCM 수신 핸들러** | ~89 | 6 (최후) |
 
 ---
@@ -739,7 +739,7 @@ var v7ChatState = Vue.reactive({
 
 ### 7.5 chat-search.js — 사용자 검색 컴포넌트
 
-`v7ChatSearchComponent()` 함수로 정의된 Vue 컴포넌트이다. Firebase RTDB의 `users` 노드에서 사용자를 검색하여 새 1:1 채팅을 시작한다.
+`v7ChatSearchComponent()` 함수로 정의된 Vue 컴포넌트이다. v7 API (`user.search`)를 호출하여 닉네임 기반으로 사용자를 검색하고, 새 1:1 채팅을 시작한다.
 
 #### data
 
@@ -747,7 +747,7 @@ var v7ChatState = Vue.reactive({
 {
     state: v7ChatState,   // 전역 스토어 참조
     query: '',            // 검색어
-    results: [],          // 검색 결과 배열 [{ uid, nickname, photoUrl }]
+    results: [],          // 검색 결과 배열 [{ idx, nickname, firebase_uid, photo_url }]
     loading: false,       // 검색 중 여부
     searched: false,      // 검색 수행 여부 (결과 없음 표시 조건)
 }
@@ -758,21 +758,30 @@ var v7ChatState = Vue.reactive({
 | 메서드명 | 설명 |
 |----------|------|
 | `goBack()` | 채팅방 목록으로 돌아가기 |
-| `search()` | Firebase에서 사용자 검색 (`displayName` 기준, startAt/endAt 접두사 매칭, 최대 20명) |
-| `startChat(user)` | 검색 결과에서 사용자 선택 → `v7ChatMakeRoomId()`로 방 ID 생성 → `v7ChatActions.openRoom()` 호출 |
+| `search()` | v7 API로 사용자 검색 (`v7api('user.search', { nickname: q })` 호출, `firebase_uid`가 없는 사용자는 건너뜀) |
+| `startChat(user)` | 검색 결과에서 사용자 선택 → `user.firebase_uid`를 사용하여 `v7ChatMakeRoomId()`로 방 ID 생성 → `v7ChatActions.openRoom()` 호출 |
 | `handleKeyDown(e)` | Enter 키 → 검색 실행 |
 | `initial(name)` | 이름 이니셜 반환 |
 
-#### 검색 쿼리
+#### 검색 방식
+
+기존에는 Firebase RTDB `users` 노드에서 `displayName` 기준으로 직접 검색하였으나, v7 API 호출 방식으로 변경되었다.
 
 ```javascript
-firebase.database().ref('users')
-    .orderByChild('displayName')
-    .startAt(query)
-    .endAt(query + '\uf8ff')   // Unicode 접두사 매칭
-    .limitToFirst(20)
-    .once('value')
+// v7 API를 호출하여 닉네임 기반 사용자 검색
+v7api('user.search', { nickname: query })
+    .then(function(res) {
+        // 서버 응답: [{ idx, nickname, firebase_uid, photo_url }, ...]
+        // firebase_uid가 없는 사용자는 채팅 불가이므로 건너뜀
+        self.results = res.filter(function(u) {
+            return u.firebase_uid;
+        });
+    });
 ```
+
+- **서버 응답 형식**: `[{ idx, nickname, firebase_uid, photo_url }, ...]` 배열
+- **firebase_uid 필수**: `firebase_uid`가 없는 사용자는 Firebase 채팅을 사용할 수 없으므로 검색 결과에서 제외한다.
+- **채팅 시작**: 검색 결과에서 사용자를 선택하면 `firebase_uid`를 사용하여 `v7ChatMakeRoomId()`로 채팅방 ID를 생성한다.
 
 ---
 
@@ -1105,7 +1114,7 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 
 | # | 기능 | 구현 위치 |
 |---|------|-----------|
-| 43 | 사용자 이름 검색 (접두사 매칭) | `chat-search.js` → `search()` |
+| 43 | 사용자 닉네임 검색 (v7 API) | `chat-search.js` → `search()` |
 | 44 | 검색 결과 목록 표시 | 템플릿 `.v7chat-user-item` |
 | 45 | 검색 결과에서 채팅 시작 | `chat-search.js` → `startChat()` |
 | 46 | Enter 키 검색 | `chat-search.js` → `handleKeyDown()` |
