@@ -1174,6 +1174,59 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 
 채팅 시스템은 일부 작업에 Firebase Cloud Functions를 호출한다. URL은 `window.v7chat.api` 객체를 통해 PHP에서 전달된다.
 
+### 10.0 Firebase Cloud Functions 소스 코드 위치
+
+채팅 기능의 서버 측 로직(Cloud Functions)은 **`firebase/chat-v2/`** 폴더에 위치한다.
+이 폴더는 필고 프로젝트 루트(`./`)에서 `firebase/chat-v2/` 경로에 있으며,
+Firebase Cloud Functions v2(Gen2)를 사용하는 **독립적인 TypeScript 프로젝트**이다.
+
+| 항목 | 설명 |
+|------|------|
+| **프로젝트 경로** | `./firebase/chat-v2/` |
+| **소스 코드** | `firebase/chat-v2/functions/src/` |
+| **런타임** | Node.js 22, TypeScript, Firebase Cloud Functions v2 (Gen2) |
+| **주요 의존성** | `firebase-admin` ^12.6.0, `firebase-functions` ^6.0.1 |
+| **테스트 프레임워크** | Mocha + Chai + Sinon |
+| **Firebase 프로젝트** | `philgo-64b1a` (프로덕션), `withcenter-test-5` (테스트) |
+| **CLAUDE.md** | `firebase/chat-v2/CLAUDE.md` — Cloud Functions 코딩 가이드라인 |
+| **문서 폴더** | `firebase/chat-v2/docs/chat/` — DB 스키마, 비즈니스 로직, 플로우차트, 코딩 가이드 |
+
+**소스 코드 모듈 구조** (`firebase/chat-v2/functions/src/`):
+
+| 모듈 | 파일 수 | 설명 |
+|------|---------|------|
+| `chat/` | 26개 | 채팅 핵심 로직 — 방 생성/수정/삭제, 메시지 처리, 입장/퇴장, 읽음 표시 초기화, 즐겨찾기, 검증 함수 |
+| `messaging/` | 11개 | FCM 푸시 알림 — 토큰 관리, 메시지 전송, 구독 처리, 데이터 준비, 검증 |
+| `user/` | 2개 | 사용자 관련 로직 및 export |
+| `lib/` | 2개 | 유틸리티 함수 (즐겨찾기 업데이트, 읽지 않은 메시지 카운트) |
+| `common/` | 1개 | 공통 유틸리티 (배열 청킹) |
+| `config.ts` | 1개 | 설정 파일 |
+| `index.ts` | 1개 | 진입점 — 모든 함수 export |
+
+**배포 대상 Cloud Functions** (8개):
+
+| 함수명 | 트리거 유형 | 기능 |
+|--------|-------------|------|
+| `onChatMessageCreated` | RTDB 트리거 | 메시지 생성 시 후처리 (읽지 않은 메시지 카운트, Join 업데이트) |
+| `onResetChatJoin` | RTDB 트리거 | 채팅 조인 초기화 (읽음 표시) |
+| `onCustomNameUpdated` | RTDB 트리거 | 사용자 정의 이름 업데이트 반영 |
+| `onFavorite` | RTDB 트리거 | 즐겨찾기 추가/제거 |
+| `onPushMessageCreated` | RTDB 트리거 | 푸시 메시지 생성 → FCM 전송 |
+| `onCreateGroupChatRoom` | HTTP 요청 | 그룹 채팅방 생성 |
+| `onUpdateGroupChatRoom` | RTDB 트리거 | 그룹 채팅방 정보 업데이트 |
+| `onUpdateGroupChatRoomImage` | RTDB 트리거 | 그룹 채팅방 이미지 업데이트 |
+
+**배포 명령어**:
+
+```bash
+cd firebase/chat-v2/functions
+npm run deploy:philgo    # 프로덕션(philgo-64b1a) 배포
+npm run deploy:test5     # 테스트(withcenter-test-5) 환경 배포
+```
+
+**⚠️ Cloud Functions 코드 수정 시 반드시 `firebase/chat-v2/CLAUDE.md`의 코딩 가이드라인을 준수해야 한다.**
+특히 배경 함수(database triggers)에서는 에러 발생 시 반드시 RTDB의 `errors/{timestamp}` 경로에 에러를 저장한 후 throw 해야 한다.
+
 ### 10.1 Cloud Function 호출 방식
 
 ```javascript
