@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
@@ -73,7 +74,7 @@ class _CommentTileState extends State<CommentTile> {
     final isMine = userState.isLoggedIn && userState.idx == comment.idxMember;
     final hasChildren = widget.hasChildren;
 
-    // 아바타 이니셜
+    // 아바타 이니셜 (사진 없을 때 fallback)
     final initial =
         comment.userName.isNotEmpty ? comment.userName[0].toUpperCase() : '?';
 
@@ -126,18 +127,7 @@ class _CommentTileState extends State<CommentTile> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 8),
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: scheme.primaryContainer,
-                  child: Text(
-                    initial,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: scheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
+                _buildAvatar(comment, initial, theme, scheme),
                 // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬, 아바타와 붙어있음)
                 Expanded(
                   child: Align(
@@ -182,18 +172,7 @@ class _CommentTileState extends State<CommentTile> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundColor: scheme.primaryContainer,
-            child: Text(
-              initial,
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: scheme.onPrimaryContainer,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
-            ),
-          ),
+          _buildAvatar(comment, initial, theme, scheme),
           const SizedBox(width: 8),
           Expanded(
             child: _buildContentColumn(
@@ -205,6 +184,28 @@ class _CommentTileState extends State<CommentTile> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar(Post comment, String initial, ThemeData theme, ColorScheme scheme) {
+    if (comment.userPhotoUrl.isNotEmpty) {
+      return CircleAvatar(
+        radius: 16,
+        backgroundColor: scheme.primaryContainer,
+        backgroundImage: CachedNetworkImageProvider(comment.userPhotoUrl),
+      );
+    }
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: scheme.primaryContainer,
+      child: Text(
+        initial,
+        style: theme.textTheme.titleSmall?.copyWith(
+          color: scheme.onPrimaryContainer,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
       ),
     );
   }

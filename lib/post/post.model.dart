@@ -26,6 +26,7 @@ class Post {
   final String? thumbnail800x800;
   final String? thumbnail1000;
   final String userName;
+  final String userPhotoUrl;
   final String files;
 
   const Post({
@@ -55,6 +56,7 @@ class Post {
     this.thumbnail800x800,
     this.thumbnail1000,
     this.userName = '',
+    this.userPhotoUrl = '',
     this.files = '',
   });
 
@@ -105,6 +107,7 @@ class Post {
       thumbnail800x800: json['varchar_11']?.toString(),
       thumbnail1000: json['varchar_12']?.toString(),
       userName: json['user_name']?.toString() ?? '',
+      userPhotoUrl: json['user_photo_url']?.toString() ?? '',
       files: json['files']?.toString() ?? '',
     );
   }
