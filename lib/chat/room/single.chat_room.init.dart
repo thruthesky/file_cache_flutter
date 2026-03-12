@@ -29,7 +29,7 @@ class SingleChatRoomInit extends StatefulWidget {
 class SingleChatRoomInitState extends State<SingleChatRoomInit> {
   late String roomId;
   late String otherUserUid;
-  late ChatJoin? _join;
+  ChatJoin? _join;
   ChatJoin get join => _join!;
   UserFirebaseModel? otherUser;
 
@@ -69,6 +69,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
         }, roomId);
       } else {
         otherUser = UserFirebaseModel.fromJson({'uid': otherUserUid});
+        _join ??= ChatJoin.fromJson({}, roomId);
       }
 
       // resetUnreadMessageCounter(roomId);
