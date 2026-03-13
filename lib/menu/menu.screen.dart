@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
@@ -461,6 +460,14 @@ class _MenuScreenState extends State<MenuScreen> {
     return _buildMenuGrid(items, theme, scheme);
   }
 
+  /// 메뉴에서 선택한 게시판으로 이동
+  void _navigateToForum(String postId, {String? category}) {
+    AppNavigationState.of(context).openPostListScreen(
+      postId: postId,
+      category: category,
+    );
+  }
+
   /// 게시판 섹션 콘텐츠 (서브카테고리 포함)
   Widget _buildForumContent(ThemeData theme, ColorScheme scheme) {
     return Column(
@@ -471,15 +478,32 @@ class _MenuScreenState extends State<MenuScreen> {
         const SizedBox(height: 16),
         _buildMenuGrid(
           [
-            _MenuItemData(FontAwesomeIcons.lightComments, '자유게시판'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightCircleQuestion, '묻고 답하기'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightPeopleArrows, '인사'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightBlog, '블로그'.tr()),
+            _MenuItemData(
+              FontAwesomeIcons.lightComments,
+              '자유게시판'.tr(),
+              onTap: () => _navigateToForum('freetalk'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightCircleQuestion,
+              '묻고 답하기'.tr(),
+              onTap: () => _navigateToForum('qna'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightPeopleArrows,
+              '인사'.tr(),
+              onTap: () => _navigateToForum('greeting'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightBlog,
+              '블로그'.tr(),
+              onTap: () => _navigateToForum('blog'),
+            ),
             _MenuItemData(
               FontAwesomeIcons.youtube,
               '유튜브'.tr(),
               backgroundColor: Colors.red.shade600,
               iconColor: Colors.white,
+              onTap: () => _navigateToForum('youtube'),
             ),
           ],
           theme,
@@ -493,8 +517,16 @@ class _MenuScreenState extends State<MenuScreen> {
         const SizedBox(height: 16),
         _buildMenuGrid(
           [
-            _MenuItemData(FontAwesomeIcons.lightCartShopping, '사고팔기'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightBriefcase, '구인구직'.tr()),
+            _MenuItemData(
+              FontAwesomeIcons.lightCartShopping,
+              '사고팔기'.tr(),
+              onTap: () => _navigateToForum('buyandsell'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightBriefcase,
+              '구인구직'.tr(),
+              onTap: () => _navigateToForum('wanted'),
+            ),
           ],
           theme,
           scheme,
@@ -507,17 +539,46 @@ class _MenuScreenState extends State<MenuScreen> {
         const SizedBox(height: 16),
         _buildMenuGrid(
           [
-            _MenuItemData(FontAwesomeIcons.lightSpa, '마사지'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightHouse, '하숙집/기숙사'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightPlaneDeparture, '여행'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightBuildingColumns, '비즈니스'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightGraduationCap, '학교'.tr()),
+            _MenuItemData(
+              FontAwesomeIcons.lightSpa,
+              '마사지'.tr(),
+              onTap: () => _navigateToForum('massage'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightHouse,
+              '하숙집/기숙사'.tr(),
+              onTap: () => _navigateToForum('boarding_house'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightPlaneDeparture,
+              '여행'.tr(),
+              onTap: () => _navigateToForum('travel'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightBuildingColumns,
+              '비즈니스'.tr(),
+              onTap: () => _navigateToForum('business'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightGraduationCap,
+              '학교'.tr(),
+              onTap: () => _navigateToForum('school'),
+            ),
             _MenuItemData(
               FontAwesomeIcons.lightTriangleExclamation,
               '주의/경고'.tr(),
+              onTap: () => _navigateToForum('caution'),
             ),
-            _MenuItemData(FontAwesomeIcons.lightUtensils, '음식배달'.tr()),
-            _MenuItemData(FontAwesomeIcons.lightBurger, '레스토랑'.tr()),
+            _MenuItemData(
+              FontAwesomeIcons.lightUtensils,
+              '음식배달'.tr(),
+              onTap: () => _navigateToForum('food_delivery'),
+            ),
+            _MenuItemData(
+              FontAwesomeIcons.lightBurger,
+              '레스토랑'.tr(),
+              onTap: () => _navigateToForum('rest'),
+            ),
           ],
           theme,
           scheme,

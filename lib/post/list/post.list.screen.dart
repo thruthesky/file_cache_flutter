@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
+import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/list/widgets/empty_post_list.dart';
 import 'package:philgo/post/list/widgets/post.list.tile.dart';
@@ -50,10 +51,10 @@ class _PostListScreenState extends State<PostListScreen> {
 
   /// 게시글 페이지 로드
   Future<List<Post>> _fetchPage(int offset) async {
-    final (postId, category, _) = forumCategories[_selectedIndex];
+    final nav = AppNavigationState.of(context);
     final result = await PostService.list(
-      postId: postId,
-      category: category,
+      postId: nav.selectedPostId,
+      category: nav.selectedCategory,
       limit: _pageSize,
       offset: offset,
     );
@@ -63,14 +64,34 @@ class _PostListScreenState extends State<PostListScreen> {
   /// 카테고리 변경 시 목록 리프레시
   void _onCategoryTap(int index) {
     if (index == _selectedIndex) return;
-    setState(() => _selectedIndex = index);
-    _pagingController.refresh();
+    final (postId, category, _) = forumCategories[index];
+    AppNavigationState.of(context).setSelectedForum(postId, category);
+  }
+
+  /// 전역 선택 인덱스를 현재 화면 상태에 반영
+  void _applySelectedForumIndex(int selectedForumIndex) {
+    final isInvalidIndex =
+        selectedForumIndex < 0 || selectedForumIndex >= forumCategories.length;
+    if (isInvalidIndex || selectedForumIndex == _selectedIndex) {
+      return;
+    }
+
+    _selectedIndex = selectedForumIndex;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _pagingController.refresh();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final selectedForumIndex = context.select<AppNavigationState, int>(
+      (state) => state.selectedForumIndex,
+    );
+    _applySelectedForumIndex(selectedForumIndex);
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -203,10 +224,13 @@ class _PostListScreenState extends State<PostListScreen> {
       return;
     }
 
-    final (postId, category, _) = forumCategories[_selectedIndex];
+    final nav = AppNavigationState.of(context);
     final result = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(
-        builder: (_) => PostCreateScreen(postId: postId, category: category),
+        builder: (_) => PostCreateScreen(
+          postId: nav.selectedPostId,
+          category: nav.selectedCategory,
+        ),
       ),
     );
 
