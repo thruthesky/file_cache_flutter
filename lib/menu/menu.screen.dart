@@ -9,6 +9,7 @@ import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
@@ -453,7 +454,15 @@ class _MenuScreenState extends State<MenuScreen> {
           context,
         ).push(MaterialPageRoute(builder: (_) => const MyPostsScreen())),
       ),
-      _MenuItemData(FontAwesomeIcons.lightPenNib, '글쓰기'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightPenNib,
+        '글쓰기'.tr(),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const PostCreateScreen(postId: 'freetalk'),
+          ),
+        ),
+      ),
       _MenuItemData(FontAwesomeIcons.lightMagnifyingGlass, '친구 검색'.tr()),
       _MenuItemData(FontAwesomeIcons.lightUserSlash, '차단된 사용자'.tr()),
       _MenuItemData(FontAwesomeIcons.lightTicket, '이벤트 쿠폰'.tr()),
@@ -653,7 +662,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => _buildCompanyPlaceholderIcon(scheme),
+                    errorWidget: (_, __, _) => _buildCompanyPlaceholderIcon(scheme),
                   )
                 : _buildCompanyPlaceholderIcon(scheme),
           ),
