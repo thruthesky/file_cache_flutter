@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
-import 'package:philgo/util/widgets/full_screen_image_viewer.dart';
+import 'package:philgo/util/widgets/full_screen_images.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PostViewFiles extends StatelessWidget {
@@ -43,12 +43,17 @@ class PostViewFiles extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final url in urls) _buildMediaItem(context, toAbsoluteUrl(url), imageUrls),
+        for (final url in urls)
+          _buildMediaItem(context, toAbsoluteUrl(url), imageUrls),
       ],
     );
   }
 
-  Widget _buildMediaItem(BuildContext context, String absoluteUrl, List<String> imageUrls) {
+  Widget _buildMediaItem(
+    BuildContext context,
+    String absoluteUrl,
+    List<String> imageUrls,
+  ) {
     final scheme = Theme.of(context).colorScheme;
     final type = getMediaType(absoluteUrl);
 
@@ -58,14 +63,10 @@ class PostViewFiles extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => FullScreenImageViewer(
-                  imageUrls: imageUrls,
-                  initialIndex: imageIndex >= 0 ? imageIndex : 0,
-                ),
-                maintainState: true,
-              ),
+            onTap: () => showFullScreenImages(
+              context: context,
+              imageUrls: imageUrls,
+              initialIndex: imageIndex >= 0 ? imageIndex : 0,
             ),
             child: ClipRRect(
               child: CachedNetworkImage(
@@ -97,7 +98,10 @@ class PostViewFiles extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: InkWell(
-            onTap: () => launchUrl(Uri.parse(absoluteUrl), mode: LaunchMode.externalApplication),
+            onTap: () => launchUrl(
+              Uri.parse(absoluteUrl),
+              mode: LaunchMode.externalApplication,
+            ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
