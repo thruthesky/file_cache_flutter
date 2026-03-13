@@ -39,11 +39,15 @@ class _MenuScreenState extends State<MenuScreen> {
   Future<void> _loadMyCompany() async {
     try {
       final company = await CompanyService.mine();
-      if (mounted && company != null && company.name.isNotEmpty) {
+      if (mounted && company != null) {
         setState(() => _myCompany = company);
       }
     } catch (_) {}
   }
+
+  /// 업소가 등록된 상태인지 (name이 비어 있으면 서버 자동 생성된 빈 업소)
+  bool get _hasRegisteredCompany =>
+      _myCompany != null && _myCompany!.name.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -630,12 +634,10 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 내 업소 섹션 콘텐츠
   Widget _buildMyCompanyContent(ThemeData theme, ColorScheme scheme) {
-    final company = _myCompany;
-
     return GestureDetector(
       onTap: () {
-        if (company != null) {
-          _openCompanyView(company);
+        if (_hasRegisteredCompany) {
+          _openCompanyView(_myCompany!);
         } else {
           _openCompanyEdit();
         }
@@ -645,9 +647,9 @@ class _MenuScreenState extends State<MenuScreen> {
           /// 업소 로고/이미지
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: company != null && company.primaryImageUrl.isNotEmpty
+            child: _hasRegisteredCompany && _myCompany!.primaryImageUrl.isNotEmpty
                 ? CachedNetworkImage(
-                    imageUrl: company.primaryImageUrl,
+                    imageUrl: _myCompany!.primaryImageUrl,
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
@@ -659,22 +661,22 @@ class _MenuScreenState extends State<MenuScreen> {
 
           /// 업소 정보
           Expanded(
-            child: company != null
+            child: _hasRegisteredCompany
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        company.name,
+                        _myCompany!.name,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (company.category.isNotEmpty) ...[
+                      if (_myCompany!.category.isNotEmpty) ...[
                         const SizedBox(height: 2),
                         Text(
-                          company.category,
+                          _myCompany!.category,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
@@ -682,10 +684,10 @@ class _MenuScreenState extends State<MenuScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                      if (company.address.isNotEmpty) ...[
+                      if (_myCompany!.address.isNotEmpty) ...[
                         const SizedBox(height: 2),
                         Text(
-                          company.address,
+                          _myCompany!.address,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
@@ -693,10 +695,10 @@ class _MenuScreenState extends State<MenuScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                      if (company.phoneNumber.isNotEmpty) ...[
+                      if (_myCompany!.phoneNumber.isNotEmpty) ...[
                         const SizedBox(height: 2),
                         Text(
-                          company.phoneNumber,
+                          _myCompany!.phoneNumber,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
@@ -762,27 +764,12 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 업소 등록/수정 화면 열기
   Future<void> _openCompanyEdit() async {
-    var company = _myCompany;
-    if (company == null) {
-      // 로딩 다이얼로그 표시
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => const Center(child: CircularProgressIndicator()),
-        );
-      }
-      try {
-        company = await CompanyService.mine();
-      } catch (_) {}
-      if (mounted) Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-      if (company == null || !mounted) return;
-      _myCompany = company;
-    }
+    final company = _myCompany;
+    if (company == null) return;
 
     final result = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(
-        builder: (_) => CompanyEditScreen(company: company!),
+        builder: (_) => CompanyEditScreen(company: company),
       ),
     );
 
@@ -800,10 +787,10 @@ class _MenuScreenState extends State<MenuScreen> {
         onTap: () => AppNavigationState.of(context).openCompanyScreen(),
       ),
       _MenuItemData(
-        _myCompany != null
+        _hasRegisteredCompany
             ? FontAwesomeIcons.lightPenToSquare
             : FontAwesomeIcons.lightCirclePlus,
-        _myCompany != null ? '업소 수정'.tr() : '업소 등록'.tr(),
+        _hasRegisteredCompany ? '업소 수정'.tr() : '업소 등록'.tr(),
         onTap: _openCompanyEdit,
       ),
     ];
