@@ -651,7 +651,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildCompanyPlaceholderIcon(scheme),
+                    errorWidget: (_, __, ___) => _buildCompanyPlaceholderIcon(scheme),
                   )
                 : _buildCompanyPlaceholderIcon(scheme),
           ),
