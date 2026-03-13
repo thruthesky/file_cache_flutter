@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Mar 13, 2026 at 02:11 AM
+-- Generation Time: Mar 13, 2026 at 03:34 PM
 -- Server version: 11.7.2-MariaDB-ubu2404
 -- PHP Version: 8.3.6
 
@@ -178,6 +178,37 @@ CREATE TABLE `auto_posting` (
   `posting_id` varchar(128) NOT NULL,
   `stamp` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bookmarks`
+--
+
+CREATE TABLE `bookmarks` (
+  `idx` int(10) UNSIGNED NOT NULL,
+  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '즐겨찾기한 회원 idx',
+  `idx_group` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '그룹 idx (0이면 미분류)',
+  `entity_type` varchar(20) NOT NULL COMMENT '대상 타입: post, comment, user, chat_room',
+  `entity_idx` int(10) UNSIGNED NOT NULL COMMENT '대상의 idx',
+  `entity_id` varchar(100) NOT NULL DEFAULT '' COMMENT '문자열 대상 ID (채팅방 등)',
+  `memo` varchar(255) NOT NULL DEFAULT '' COMMENT '사용자 메모 (선택)',
+  `created_at` int(10) UNSIGNED NOT NULL COMMENT '생성 Unix timestamp'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='즐겨찾기/북마크';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bookmark_groups`
+--
+
+CREATE TABLE `bookmark_groups` (
+  `idx` int(10) UNSIGNED NOT NULL,
+  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '그룹 소유자',
+  `name` varchar(50) NOT NULL COMMENT '그룹명',
+  `sort_order` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '정렬 순서',
+  `created_at` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='북마크 그룹';
 
 -- --------------------------------------------------------
 
@@ -1403,6 +1434,24 @@ ALTER TABLE `auto_posting`
   ADD UNIQUE KEY `posting_id_ix_post` (`posting_id`,`idx_post`);
 
 --
+-- Indexes for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  ADD PRIMARY KEY (`idx`),
+  ADD UNIQUE KEY `uk_member_entity` (`idx_member`,`entity_type`,`entity_idx`),
+  ADD KEY `idx_member` (`idx_member`),
+  ADD KEY `entity_type_idx` (`entity_type`,`entity_idx`),
+  ADD KEY `idx_member_group` (`idx_member`,`idx_group`);
+
+--
+-- Indexes for table `bookmark_groups`
+--
+ALTER TABLE `bookmark_groups`
+  ADD PRIMARY KEY (`idx`),
+  ADD UNIQUE KEY `uk_member_name` (`idx_member`,`name`),
+  ADD KEY `idx_member` (`idx_member`);
+
+--
 -- Indexes for table `company`
 --
 ALTER TABLE `company`
@@ -2026,6 +2075,18 @@ ALTER TABLE `api_chat_room`
 -- AUTO_INCREMENT for table `auto_posting`
 --
 ALTER TABLE `auto_posting`
+  MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bookmark_groups`
+--
+ALTER TABLE `bookmark_groups`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
