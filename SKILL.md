@@ -507,8 +507,9 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 PHP(서버)는 로그인 확인과 설정값 전달만 담당하며, 채팅 데이터의 읽기/쓰기/구독은 모두
 클라이언트 JavaScript에서 Firebase SDK를 직접 호출하여 처리한다.
 Vue.js 3 CDN + Firebase compat SDK 기반 CSR 방식이며, Web Awesome Pro UI를 사용한다.
-채팅방 생성, 메시지 전송, 읽음 표시, 즐겨찾기, 사운드 알림, 이미지/파일 업로드,
+채팅방 생성, 메시지 전송, 읽음 표시, 즐겨찾기(v7 API `bookmark.*` 기반), 사운드 알림, 이미지/파일 업로드,
 Presence(온라인/오프라인), FCM 푸시 알림, 메시지 수정/삭제, 관리자 기능 등을 지원한다.
+즐겨찾기 시스템은 Firebase RTDB에서 v7 API(`bookmarks`/`bookmark_groups` 테이블)로 마이그레이션되었다.
 
 #### 🔥 Firebase Cloud Functions 채팅 백엔드 코드
 
@@ -544,7 +545,7 @@ Firebase Cloud Functions v2(Gen2)를 사용하는 독립적인 TypeScript 프로
 | `onChatMessageCreated` | RTDB 트리거 | 메시지 생성 시 후처리 (읽지 않은 메시지 카운트, Join 업데이트) |
 | `onResetChatJoin` | RTDB 트리거 | 채팅 조인 초기화 (읽음 표시) |
 | `onCustomNameUpdated` | RTDB 트리거 | 사용자 정의 이름 업데이트 반영 |
-| `onFavorite` | RTDB 트리거 | 즐겨찾기 추가/제거 |
+| `onFavorite` | RTDB 트리거 | ~~즐겨찾기 추가/제거~~ -- v7 API(`bookmark.*`)로 마이그레이션됨. 앱 호환용으로 유지 |
 | `onPushMessageCreated` | RTDB 트리거 | 푸시 메시지 생성 → FCM 전송 |
 | `onCreateGroupChatRoom` | HTTP 요청 | 그룹 채팅방 생성 |
 | `onUpdateGroupChatRoom` | RTDB 트리거 | 그룹 채팅방 정보 업데이트 |

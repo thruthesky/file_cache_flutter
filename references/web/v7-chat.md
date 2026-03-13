@@ -2190,3 +2190,77 @@ ref.on('child_added', function(snap) {
 | `v7/js/chat/chat-store.js` | `listenPinnedRooms`에 페이지네이션 범위 밖 고정방 별도 로드 로직 추가 |
 
 > **참고**: 4.4.1절에서 이 버그의 상세 코드 패턴과 올바른 구현 방법을 확인할 수 있다.
+
+---
+
+## 22. v7 API 기반 즐겨찾기 시스템
+
+채팅방 즐겨찾기 시스템이 **Firebase RTDB + Cloud Functions** 기반에서 **v7 API(`bookmarks`/`bookmark_groups` MariaDB 테이블)** 기반으로 마이그레이션되었다.
+
+### 22.1 마이그레이션 개요
+
+| 항목 | 변경 전 (Firebase) | 변경 후 (v7 API) |
+|------|-------------------|-----------------|
+| **데이터 저장** | Firebase RTDB `chat/favorites/{uid}`, `chat/favorites-folder-list/{uid}` | MariaDB `bookmarks`, `bookmark_groups` 테이블 |
+| **폴더 목록 조회** | Firebase `on('value')` 실시간 리스너 | `v7api('bookmark.listGroups', { entity_type: 'chat_room' })` |
+| **즐겨찾기 추가** | Cloud Function `onFavorite` (RTDB 트리거) | `v7api('bookmark.add', { group_name, entity_type: 'chat_room', entity_id: roomId })` |
+| **폴더별 목록** | Firebase `once('value')` | `v7api('bookmark.listByGroup', { idx_group, entity_type: 'chat_room' })` |
+| **별 아이콘 기준** | 각 방의 `room.favorite` 필드 | `state.bookmarkedRoomIds` 배열에 roomId 포함 여부 |
+| **Cloud Function** | `onFavorite` 함수 사용 | 미사용 (앱 호환용으로 유지) |
+| **window.v7chat.api** | `favorite: Config::chatFavoriteUrl()` | 삭제됨 |
+
+### 22.2 Bookmark API 모듈
+
+새로 생성된 PHP 백엔드 모듈이다. 상세 API 문서: [api/v7-bookmark.md](../api/v7-bookmark.md)
+
+```
+lib/bookmark/
+├── BookmarkEntity.php        # bookmarks 테이블 Entity
+├── BookmarkGroupEntity.php   # bookmark_groups 테이블 Entity
+├── BookmarkService.php       # 비즈니스 로직 (그룹/항목 CRUD)
+└── BookmarkController.php    # API 엔드포인트 (bookmark.*)
+```
+
+### 22.3 사용되는 API 엔드포인트 (채팅 관련)
+
+| API | 호출 시점 | 설명 |
+|-----|----------|------|
+| `bookmark.listGroups` | 채팅 앱 초기화 시 | 즐겨찾기 폴더 목록 로드 (`entity_type: 'chat_room'`) |
+| `bookmark.myBookmarkedIds` | 채팅 앱 초기화 시 | 내 즐겨찾기 채팅방 ID 목록 로드 (별 아이콘 표시용) |
+| `bookmark.add` | 즐겨찾기 모달에서 저장 시 | 채팅방을 폴더에 즐겨찾기 추가 |
+| `bookmark.listByGroup` | 즐겨찾기 드롭다운에서 폴더 선택 시 | 폴더 내 채팅방 목록 로드 |
+
+### 22.4 JS 파일별 변경 사항
+
+| JS 파일 | 변경된 함수 | 변경 내용 |
+|---------|-----------|----------|
+| `chat-store.js` | `loadFavoriteFolders()` | Firebase `on('value')` 실시간 리스너 -> `v7api('bookmark.listGroups')` 1회성 API 호출 |
+| `chat-store.js` | `loadBookmarkedRoomIds()` | **신규 추가**. `v7api('bookmark.myBookmarkedIds')` 호출하여 `state.bookmarkedRoomIds` 설정 |
+| `chat-app.js` | 초기화 로직 | `loadBookmarkedRoomIds()` 호출 추가 |
+| `chat-single-room.js` | `saveFavorite()` | Cloud Function(`callCloudFn(window.v7chat.api.favorite, ...)`) -> `v7api('bookmark.add', ...)` 호출로 변경. 저장 후 `loadFavoriteFolders()` + `loadBookmarkedRoomIds()` 재호출 |
+| `chat-room-list.js` | `openFavFolder()` | Firebase `once('value')` -> `v7api('bookmark.listByGroup', ...)` 호출로 변경. 응답의 `bookmarks[].entity_id`로 roomId 추출 |
+| `chat-room-list.js` | 별 아이콘 표시 | `room.favorite` -> `state.bookmarkedRoomIds.includes(room.id)` 조건으로 변경 |
+
+### 22.5 v7ChatState 추가 필드
+
+```javascript
+const v7ChatState = Vue.reactive({
+    // ... 기존 필드 ...
+    bookmarkedRoomIds: [],  // 내 즐겨찾기 채팅방 ID 목록
+                            // bookmark.myBookmarkedIds API에서 로드
+                            // 채팅방 목록의 별 아이콘 표시에 사용
+});
+```
+
+### 22.6 DB 테이블
+
+채팅방 즐겨찾기는 `entity_type='chat_room'`, `entity_id=roomId` 형태로 `bookmarks` 테이블에 저장된다.
+
+```sql
+-- 예시: 채팅방 즐겨찾기 추가
+INSERT INTO bookmarks (idx_member, idx_group, entity_type, entity_idx, entity_id, memo, created_at)
+VALUES (186619, 1, 'chat_room', 0, 'uid1_uid2', '', UNIX_TIMESTAMP());
+
+-- 예시: 내 채팅방 즐겨찾기 ID 목록 조회
+SELECT entity_id FROM bookmarks WHERE idx_member = 186619 AND entity_type = 'chat_room';
+```
