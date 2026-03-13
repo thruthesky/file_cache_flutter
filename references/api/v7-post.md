@@ -12,11 +12,12 @@
    - [post.delete](#postdelete---게시글-삭제)
 4. [포인트 시스템](#포인트-시스템)
 5. [PostEntity 필드](#postentity-필드)
-6. [에러 처리](#에러-처리)
-7. [테스트](#테스트)
-8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
-9. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
-10. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+6. [content_type 판별 및 저장](#content_type-판별-및-저장)
+7. [에러 처리](#에러-처리)
+8. [테스트](#테스트)
+9. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
+10. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
+11. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -328,6 +329,7 @@ PostService::delete()
 | post_id | string | 게시판 ID |
 | subject | string | 제목 |
 | content | string | 내용 |
+| content_type | string | 콘텐츠 타입 (`text`, `markdown`, `html`). 저장 시 자동 계산 |
 | stamp | int | 작성 시간 (UNIX timestamp) |
 | stamp_update | int | 수정 시간 |
 | depth | int | 깊이 (0=글, 1=댓글, 2=대댓글) |
@@ -366,6 +368,77 @@ PostService::delete()
 | isBlockedOrBlinded() | bool | 검열 또는 블라인드 |
 | isSecret() | bool | 비밀글 (secret === 'Y') |
 | exists() | bool | 존재 여부 (idx > 0) |
+
+---
+
+## content_type 판별 및 저장
+
+글/코멘트의 `content` 필드를 분석하여 렌더링 타입(`text`, `markdown`, `html`)을 결정하고 DB에 저장한다.
+
+- 상세 계획: [tmp/plans/post-content-format-plan.md](../../../../../tmp/plans/post-content-format-plan.md)
+- DB 컬럼: `sf_post_data.content_type` VARCHAR(16) DEFAULT NULL
+- v6 원본 로직: `lib/functions.php`의 `is_markdown()`, `is_html()` + `lib/post/process_after_read.php`의 `detect_content_format()`
+
+### 판별 우선순위
+
+```
+markdown > html > text (기본값)
+```
+
+1. `content`가 비어 있으면 → `text`
+2. `is_markdown()` 규칙에 맞으면 → `markdown`
+3. `is_html()` 규칙에 맞으면 → `html`
+4. 그 외 → `text`
+
+### is_markdown() 판별 조건
+
+소스 위치: `lib/functions.php:857-894`
+
+조건 (하나라도 참이면 `markdown`):
+
+1. **헤딩**: `preg_match('/^#{1,6}\s+.+/', $text)` — 문자열 **시작**에 `#` 1~6개 + 공백 + 텍스트
+2. **이미지**: `![alt](url)` 구문 — `![` 와 `](` 가 존재하고, 그 사이에 줄바꿈 없음
+
+주의사항:
+- 최소 길이: `trim($text)` 2자 이상
+- 헤딩은 `^` 앵커 사용 → `"안녕\n# 제목"`은 `text`, `"# 제목\n안녕"`은 `markdown`
+
+### is_html() 판별 조건
+
+소스 위치: `lib/functions.php:676-849`
+
+- 최소 길이: `trim($text)` 3자 이상
+- `strtolower()` 후 검사 (대소문자 무관)
+- `strpos()` 기반 — 위치 무관, 어디에든 태그가 있으면 `true`
+
+닫는 태그 (54개): `</div>`, `</span>`, `</a>`, `</p>`, `</h1>`~`</h6>`, `</ul>`, `</ol>`, `</li>`, `</table>`, `</tbody>`, `</thead>`, `</tfoot>`, `</tr>`, `</td>`, `</th>`, `</blockquote>`, `</pre>`, `</code>`, `</strong>`, `</em>`, `</b>`, `</i>`, `</u>`, `</s>`, `</strike>`, `</del>`, `</ins>`, `</sub>`, `</sup>`, `</small>`, `</big>`, `</center>`, `</font>`, `</form>`, `</button>`, `</label>`, `</select>`, `</option>`, `</textarea>`, `</fieldset>`, `</legend>`, `</article>`, `</section>`, `</nav>`, `</aside>`, `</header>`, `</footer>`, `</main>`, `</figure>`, `</figcaption>`, `</video>`, `</audio>`, `</canvas>`, `</svg>`, `</iframe>`, `</object>`, `</script>`, `</style>`, `</title>`, `</head>`, `</body>`, `</html>`
+
+여는/self-closing 태그 (40+개): `<br`, `<img `, `<hr`, `<input `, `<meta `, `<link `, `<source `, `<track `, `<embed `, `<area `, `<base `, `<col `, `<param `, `<wbr`, `<div>`, `<div `, `<span>`, `<span `, `<a `, `<p>`, `<p `, `<h1>`~`<h6>`, `<ul>`, `<ol>`, `<li>`, `<table>`, `<tr>`, `<td>`, `<th>`, `<blockquote>`, `<pre>`, `<code>`, `<strong>`, `<em>`, `<b>`, `<i>`, `<u>`, `<form `, `<button>`, `<video `, `<audio `, `<iframe `, `<script>`, `<style>`, `<!doctype`, `<!--`
+
+### 저장 동작
+
+| 경로 | 메서드 | 동작 |
+|------|--------|------|
+| 글 생성 | `PostService::create()` | `content` 기반 content_type 계산 후 DB 저장 |
+| 글 수정 | `PostService::update()` | `content` 변경 시에만 재계산, 파일만 수정 시 유지 |
+| 코멘트 생성 | `PostService::commentCreate()` | 글 생성과 동일 |
+| 코멘트 수정 | `PostService::commentUpdate()` | 글 수정과 동일 |
+
+`PostRepository::create()`의 `$defaults`에 `content_type` 포함, 기본값 `'text'`.
+
+### 조회 동작
+
+- DB에 `content_type` 값이 있으면 그대로 사용
+- `NULL` 또는 빈 문자열이면 `PostEntity::fromArray()`에서 폴백 계산
+- 이 폴백은 기존 데이터(v6에서 생성된 레코드) 호환용
+
+### sanitize_user_input() 전처리 주의사항
+
+v6는 판별 전에 `html_entity_decode($str, ENT_QUOTES | ENT_HTML5, 'UTF-8')`을 거친다.
+v7 저장 시점에서는 클라이언트가 보낸 원본 `content`로 판별하므로,
+Quill 같은 리치 에디터가 HTML 엔티티로 인코딩해서 저장하는 경우 차이가 발생할 수 있다.
+
+대응: v7에서도 판별 전에 `html_entity_decode()` 1회 적용 후 판별할 것을 권장.
 
 ---
 
