@@ -693,6 +693,15 @@ class _MenuScreenState extends State<MenuScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
+                      if (company.phoneNumber.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          company.phoneNumber,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ],
                   )
                 : Column(
