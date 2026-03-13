@@ -63,7 +63,7 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 ```
 v7/chat/
 ├── index.php              # 채팅 메인 페이지 (PHP — 로그인 확인, 설정 전달)
-└── chat.css               # 채팅 전용 CSS (~1400줄)
+└── chat.css               # 채팅 전용 CSS (~1940줄)
 
 v7/js/chat/
 ├── chat-helpers.js        # 설정, 상수, 헬퍼 함수, Presence, FCM (가장 먼저 로드)
@@ -83,7 +83,7 @@ tests/Browser/
 |------|------|------:|-----------|
 | `chat-helpers.js` | 설정(v7ChatConfig), 상수(v7ChatRoute), 채팅방 ID 유틸, 시간 포맷, 파일 판별, URL 링크화, Firebase 작업(고정/신고), 무한 스크롤, 사운드, **Presence**, **FCM** | ~370 | 1 |
 | `chat-store.js` | `v7ChatState` 전역 반응형 상태, `v7ChatActions` 액션 (방 열기/닫기, 리스너 관리) | ~163 | 2 |
-| `chat-room-list.js` | 채팅방 목록 표시, 무한 스크롤 페이지네이션, 고정/비고정 섹션 분리 | ~228 | 3 |
+| `chat-room-list.js` | 채팅방 목록 표시, 무한 스크롤 페이지네이션, 고정 채팅방 가로 스크롤 아바타 + 전체 목록 노란 배경, 즐겨찾기 드롭다운/모달, 검색 아이콘, 고정/즐겨찾기 아이콘 | ~437 | 3 |
 | `chat-single-room.js` | 메시지 전송/수신, 파일 업로드, 이미지 뷰어, 고정/즐겨찾기/차단/신고/커스텀이름/나가기, **수정/삭제**, **Presence**, **관리자 기능** | ~960 | 4 |
 | `chat-search.js` | 사용자 검색 (v7 API 닉네임 기반), 새 채팅 시작 | ~126 | 5 |
 | `chat-app.js` | Firebase Auth 확인 후 Vue 앱 생성/마운트, 전역 리스너 초기화, **Presence 설정**, **FCM 수신 핸들러** | ~89 | 6 (최후) |
@@ -568,16 +568,23 @@ var v7ChatState = Vue.reactive({
 
 ### 7.3 chat-room-list.js — 채팅방 목록 컴포넌트
 
-`v7ChatRoomListComponent()` 함수로 정의된 Vue 컴포넌트이다. 채팅방 목록을 표시하고, 무한 스크롤 페이지네이션과 고정/비고정 섹션 분리를 제공한다.
+`v7ChatRoomListComponent()` 함수로 정의된 Vue 컴포넌트이다. v6 스타일을 적용하여 채팅방 목록을 표시하고, 무한 스크롤 페이지네이션, 즐겨찾기 드롭다운/모달, 고정 채팅방 가로 스크롤 아바타 섹션, 각 아이템의 즐겨찾기/고정 아이콘을 제공한다.
 
 #### data
 
 ```javascript
 {
-    state: v7ChatState,   // 전역 스토어 참조
-    loading: false,       // 로딩 중 여부
-    lastOrder: null,      // 페이지네이션 커서 (마지막 singleOrder)
-    scrollHelper: null,   // 무한 스크롤 헬퍼 인스턴스
+    state: v7ChatState,       // 전역 스토어 참조
+    loading: false,           // 로딩 중 여부
+    lastOrder: null,          // 페이지네이션 커서 (마지막 singleOrder)
+    scrollHelper: null,       // 무한 스크롤 헬퍼 인스턴스
+    /* 즐겨찾기 드롭다운 */
+    showFavDropdown: false,   // 즐겨찾기 드롭다운 표시 여부
+    /* 즐겨찾기 모달 */
+    favModalOpen: false,      // 즐겨찾기 폴더 모달 표시 여부
+    favModalFolder: '',       // 선택된 폴더 이름
+    favModalRooms: [],        // 모달에 표시할 채팅방 목록
+    favModalLoading: false,   // 모달 로딩 중 여부
 }
 ```
 
@@ -585,22 +592,28 @@ var v7ChatState = Vue.reactive({
 
 | 이름 | 설명 |
 |------|------|
-| `sortedRooms` | 모든 채팅방을 고정→일반 순으로 정렬. 고정방은 상단, 일반방은 `singleOrder` 내림차순 |
-| `firstNormalIdx` | 첫 번째 일반(비고정) 채팅방의 인덱스. 섹션 제목 표시에 사용 |
+| `sortedRooms` | 모든 채팅방을 고정→일반 순으로 정렬. 고정방은 상단, 일반방은 `singleOrder` 내림차순. 전체 목록 렌더링에 사용 |
+| `pinnedRooms` | `sortedRooms`에서 고정된 방만 필터. 가로 스크롤 아바타 섹션에 사용 |
+| `normalRooms` | `sortedRooms`에서 비고정 방만 필터 (참조용, 실제 렌더링은 `sortedRooms` 사용) |
 
 #### methods
 
 | 메서드명 | 설명 |
 |----------|------|
 | `loadRooms()` | Firebase에서 채팅방 목록 페이지네이션 로드. `singleOrder` 기준 `limitToLast(20)` |
+| `loadUsersFromApi(roomIds)` | 채팅방 목록의 상대방 UID를 일괄 수집 후 `user.getByFirebaseUids` v7 API 호출 → 닉네임/사진 업데이트 |
 | `openRoom(room)` | 채팅방 열기 — `v7ChatActions.openRoom()` 호출 |
 | `openSearch()` | 사용자 검색 화면 열기 — `v7ChatActions.openSearch()` 호출 |
-| `unpin(room)` | 채팅방 고정 해제 — `v7ChatTogglePin()` 호출 |
-| `loadUsersFromApi()` | 채팅방 목록의 상대방 UID를 일괄 수집 후 `user.getByFirebaseUids` v7 API 호출 → 닉네임/사진 업데이트 |
+| `togglePin(room)` | 채팅방 고정/해제 토글 — `v7ChatTogglePin()` 호출 (목록 아이템의 핀 버튼) |
+| `unpin(room)` | 채팅방 고정 해제 — `v7ChatTogglePin()` 호출 (가로 스크롤의 X 버튼) |
 | `getDisplayName(room)` | 채팅방 표시 이름 반환 (customName > userDisplayName > '사용자') |
 | `getInitial(room)` | 이름 이니셜 반환 (아바타 텍스트용) |
 | `getPreview(room)` | 마지막 메시지 미리보기 (30자 제한, 첨부파일 시 '첨부파일' 표시) |
 | `formatTime(ts)` | 시간 포맷 — `v7ChatFormatTime()` 호출 |
+| `openFavFolder(folderName)` | 즐겨찾기 폴더 열기 — Firebase `chat/favorites/{myUid}/{folderName}`에서 채팅방 목록 로드 후 모달 표시 |
+| `loadFavRoomUsers(rooms)` | 즐겨찾기 모달 채팅방의 사용자 정보 일괄 조회 (v7 API) |
+| `closeFavModal()` | 즐겨찾기 모달 닫기 |
+| `openFavRoom(room)` | 즐겨찾기 모달에서 채팅방 열기 → 모달 닫고 openRoom 호출 |
 
 #### 페이지네이션 동작
 
@@ -609,29 +622,64 @@ var v7ChatState = Vue.reactive({
 2. 무한 스크롤 하단 도달 → loadRooms() 재호출
 3. lastOrder(이전 최소 singleOrder)를 커서로 사용하여 endBefore() 쿼리
 4. 반환 수가 pageSize 미만이면 noMoreRooms = true → 추가 로드 중단
+5. 새 방 로드 후 loadUsersFromApi()로 상대방 정보 비동기 일괄 조회
 ```
 
-#### 채팅방 목록 UI 구조
+#### 채팅방 목록 UI 구조 (v6 스타일 적용)
 
 ```
-┌─────────────────────────────────────┐
-│ 채팅                         [새 채팅] │  ← 헤더
-├─────────────────────────────────────┤
-│ 📌 고정                              │  ← 고정 섹션 제목 (고정방 있을 때만)
-│ ┌─────────────────────────────────┐ │
-│ │ [아바타] 홍길동        3분 전    │ │  ← 채팅방 아이템 (고정)
-│ │         안녕하세요...    (3)    │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ 💬 전체                              │  ← 전체 섹션 제목
-│ ┌─────────────────────────────────┐ │
-│ │ [아바타] 김철수     1시간 전    │ │  ← 채팅방 아이템 (일반)
-│ │         감사합니다              │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ⏳ 로딩 중...                        │  ← 무한 스크롤 로딩
-└─────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│ 채팅     [★ 즐겨찾기 ▼] [🔍]            │  ← 헤더 (즐겨찾기 드롭다운 + 검색 아이콘)
+├──────────────────────────────────────────┤
+│ 📌 고정                                  │  ← 고정 섹션 제목 (고정방 있을 때만)
+│ ┌────┐ ┌────┐ ┌────┐                     │  ← 가로 스크롤 아바타 (고정된 채팅방)
+│ │ 🧑 │ │ 👩 │ │ 🧑 │  ←→ 가로 스크롤     │     각 아바타에 X(해제) 버튼 + 배지
+│ │홍길│ │김영│ │이수│                     │
+│ └────┘ └────┘ └────┘                     │
+├──────────────────────────────────────────┤
+│ 💬 전체                                  │  ← 전체 섹션 제목
+│ ┌────────────────────────────────────┐   │
+│ │▌[아바타] 홍길동  ⭐📌  3분 전 (3) │   │  ← 고정 방: 노란 배경 + 왼쪽 노란 테두리
+│ │         안녕하세요...              │   │     ⭐=즐겨찾기, 📌=고정 핀 아이콘
+│ └────────────────────────────────────┘   │
+│ ┌────────────────────────────────────┐   │
+│ │ [아바타] 김철수     📌  1시간 전   │   │  ← 일반 방: 흰색 배경, 📌 토글 가능
+│ │         감사합니다                 │   │
+│ └────────────────────────────────────┘   │
+│                                          │
+│ ⏳ 로딩 중...                             │  ← 무한 스크롤 로딩
+└──────────────────────────────────────────┘
 ```
+
+#### 헤더 영역 상세
+
+기존의 "새 채팅" 아이콘 버튼을 제거하고, 즐겨찾기 드롭다운 버튼과 검색 돋보기 아이콘으로 대체하였다.
+
+| 요소 | 설명 |
+|------|------|
+| **즐겨찾기 드롭다운** | `★ 즐겨찾기 ▼` 버튼 클릭 시 즐겨찾기 폴더 목록 드롭다운 표시. `state.favoriteFolders`에서 폴더명 + 채팅방 수 표시 |
+| **검색 아이콘** | 돋보기 아이콘(`fa-magnifying-glass`) 클릭 시 `openSearch()` 호출 |
+| **외부 클릭 닫기** | `document.addEventListener('click')` + `.closest('.v7chat-fav-dropdown')` 판정으로 외부 클릭 시 드롭다운 닫기 |
+
+#### 즐겨찾기 모달 상세
+
+드롭다운에서 폴더를 선택하면 해당 폴더의 채팅방 목록을 Firebase에서 로드하여 모달로 표시한다.
+
+```
+Firebase 경로: chat/favorites/{myUid}/{folderName}
+→ roomId 목록 추출
+→ state.rooms에서 찾거나, 없으면 chat/joins/{myUid}/{roomId}에서 별도 로드
+→ loadFavRoomUsers()로 사용자 정보 비동기 조회
+```
+
+#### 각 채팅방 아이템의 아이콘 표시
+
+| 아이콘 | 조건 | 위치 | 동작 |
+|--------|------|------|------|
+| ⭐ 즐겨찾기 별 | `room.favorite`가 truthy일 때 | 오른쪽 메타 영역 | 표시 전용 (노란 별) |
+| 📌 고정 핀 | 항상 표시 | 오른쪽 메타 영역 | 클릭 시 `togglePin(room)` — 고정/해제 토글 |
+
+고정된 채팅방은 전체 목록에서 노란색 배경(`rgba(255,193,7,0.1)`)과 왼쪽 노란 테두리(`#ffc107`)로 시각적으로 구분된다 (v6 스타일).
 
 ---
 
@@ -955,23 +1003,52 @@ if (otherUid) {
 | 클래스명 | 설명 |
 |----------|------|
 | `.v7chat-room-list` | 목록 전체 래퍼 |
-| `.v7chat-list-header` | 헤더 (제목 + 새 채팅 버튼) |
+| `.v7chat-list-header` | 헤더 (제목 + 즐겨찾기 드롭다운 + 검색 아이콘) |
 | `.v7chat-header-top` | 헤더 상단 (제목 + 액션) |
 | `.v7chat-header-actions` | 헤더 액션 버튼 그룹 |
+| `.v7chat-fav-dropdown` | 즐겨찾기 드롭다운 래퍼 (relative 포지셔닝) |
+| `.v7chat-fav-toggle` | 즐겨찾기 드롭다운 토글 버튼 (`★ 즐겨찾기 ▼`) |
+| `.v7chat-fav-dropdown-menu` | 즐겨찾기 폴더 드롭다운 메뉴 (absolute 포지셔닝) |
+| `.v7chat-fav-dropdown-menu.show` | 드롭다운 표시 상태 |
+| `.v7chat-fav-dropdown-item` | 드롭다운 폴더 아이템 |
+| `.v7chat-fav-dropdown-empty` | 폴더가 없을 때 메시지 |
+| `.v7chat-fav-count` | 폴더별 채팅방 수 배지 |
 | `.v7chat-room-list-scroll` | 스크롤 가능 영역 |
 | `.v7chat-section-title` | 섹션 제목 (고정/전체) |
-| `.v7chat-pinned-section` | 고정 섹션 래퍼 |
+| `.v7chat-pinned-scroll-section` | 고정 채팅방 가로 스크롤 영역 래퍼 |
+| `.v7chat-pinned-scroll` | 가로 스크롤 컨테이너 (flex, overflow-x: auto) |
+| `.v7chat-pinned-item` | 가로 스크롤 내 고정 아바타 아이템 |
+| `.v7chat-pinned-avatar-wrap` | 고정 아바타 래퍼 (relative, 48x48) |
+| `.v7chat-pinned-avatar-img` | 고정 아바타 이미지 |
+| `.v7chat-pinned-avatar-text` | 고정 아바타 이니셜 텍스트 |
+| `.v7chat-pinned-remove` | 고정 해제 X 버튼 (아바타 우상단) |
+| `.v7chat-pinned-badge` | 고정 아바타 읽지 않은 배지 |
+| `.v7chat-pinned-name` | 고정 아바타 아래 이름 텍스트 |
 | `.v7chat-room-item` | 채팅방 아이템 (flex, border, hover 효과) |
-| `.v7chat-room-item.pinned` | 고정된 채팅방 (노란 배경, 왼쪽 테두리) |
+| `.v7chat-room-item.pinned` | 고정된 채팅방 — 노란 배경(`rgba(255,193,7,0.1)`) + 왼쪽 노란 테두리(`#ffc107`) (v6 스타일) |
 | `.v7chat-room-content` | 방 정보 (이름, 미리보기) |
 | `.v7chat-room-name` | 방 이름 |
 | `.v7chat-last-message` | 마지막 메시지 미리보기 |
-| `.v7chat-room-meta` | 메타 (시간 + 배지) |
+| `.v7chat-room-meta` | 메타 (아이콘 + 시간 + 배지) |
+| `.v7chat-meta-icons` | 메타 아이콘 영역 (즐겨찾기 별 + 고정 핀) |
+| `.v7chat-fav-star` | 즐겨찾기 별 아이콘 (노란색, 표시 전용) |
+| `.v7chat-pin-btn` | 고정 핀 토글 버튼 |
+| `.v7chat-pin-btn.pinned` | 고정된 상태의 핀 버튼 (노란색) |
 | `.v7chat-time` | 시간 표시 |
 | `.v7chat-badge` | 읽지 않은 메시지 수 배지 (빨간 원) |
-| `.v7chat-unpin-btn` | 고정 해제 버튼 (hover 시 표시) |
 | `.v7chat-empty` | 빈 상태 표시 |
 | `.v7chat-loading-more` | 추가 로딩 표시 |
+
+### 8.2.1 즐겨찾기 모달 클래스
+
+| 클래스명 | 설명 |
+|----------|------|
+| `.v7chat-modal-backdrop` | 모달 배경 오버레이 (반투명 검정) |
+| `.v7chat-modal` | 모달 컨테이너 (max-width: 400px, border-radius) |
+| `.v7chat-modal-header` | 모달 헤더 (폴더명 + 닫기 버튼) |
+| `.v7chat-modal-body` | 모달 본문 (채팅방 목록 또는 로딩/빈 상태) |
+| `.v7chat-fav-room-item` | 즐겨찾기 모달 내 채팅방 아이템 |
+| `.v7chat-fav-room-name` | 즐겨찾기 모달 내 채팅방 이름 |
 
 ### 8.3 채팅방 뷰 클래스
 
@@ -1140,21 +1217,28 @@ if (otherUid) {
 
 채팅 시스템에서 지원하는 기능을 범주별로 정리한다.
 
-### 9.1 채팅방 목록 (11개)
+### 9.1 채팅방 목록 (18개)
 
 | # | 기능 | 구현 위치 |
 |---|------|-----------|
 | 1 | 채팅방 목록 실시간 업데이트 | `chat-store.js` → `joinRoomListener()` |
 | 2 | 무한 스크롤 페이지네이션 | `chat-room-list.js` → `loadRooms()` |
-| 3 | 고정된 채팅방 상단 표시 | `chat-room-list.js` → `sortedRooms` computed |
-| 4 | 고정 섹션 / 전체 섹션 제목 표시 | `chat-room-list.js` → `firstNormalIdx` computed |
+| 3 | 고정된 채팅방 상단 가로 스크롤 아바타 표시 | `chat-room-list.js` → `pinnedRooms` computed + 가로 스크롤 섹션 |
+| 4 | 고정된 채팅방 전체 목록에서 노란 배경 표시 (v6 스타일) | `chat-room-list.js` → `sortedRooms` + `.pinned` CSS 클래스 |
 | 5 | 마지막 메시지 미리보기 (30자 제한) | `chat-room-list.js` → `getPreview()` |
 | 6 | 읽지 않은 메시지 수 배지 | `chat-room-list.js` 템플릿 (99+ 처리) |
 | 7 | 시간 표시 (방금/N분 전/날짜) | `chat-helpers.js` → `v7ChatFormatTime()` |
 | 8 | 아바타 표시 (사진 또는 이니셜) | `chat-room-list.js` 템플릿 |
 | 9 | 빈 상태 표시 (채팅방 없을 때) | `chat-room-list.js` 템플릿 |
-| 10 | 고정 해제 버튼 (hover 시 표시) | `chat-room-list.js` → `unpin()` |
+| 10 | 가로 스크롤 고정 아바타의 X 버튼 고정 해제 | `chat-room-list.js` → `unpin()` |
 | 11 | 페이지네이션 범위 밖 고정방 별도 로드 | `chat-store.js` → `listenPinnedRooms()` |
+| 12 | 즐겨찾기 드롭다운 (폴더 목록 표시) | `chat-room-list.js` → `showFavDropdown` + 헤더 토글 버튼 |
+| 13 | 즐겨찾기 폴더 선택 시 모달에서 채팅방 목록 표시 | `chat-room-list.js` → `openFavFolder()` |
+| 14 | 즐겨찾기 모달 채팅방 사용자 정보 비동기 조회 | `chat-room-list.js` → `loadFavRoomUsers()` |
+| 15 | 검색 돋보기 아이콘 (새 채팅 아이콘 대체) | `chat-room-list.js` 헤더 템플릿 |
+| 16 | 각 채팅방 즐겨찾기 별 아이콘 표시 (room.favorite 기반) | `chat-room-list.js` 템플릿 → `.v7chat-fav-star` |
+| 17 | 각 채팅방 고정 핀 아이콘 토글 | `chat-room-list.js` → `togglePin()` |
+| 18 | 즐겨찾기 드롭다운 외부 클릭 닫기 | `chat-room-list.js` → `_closeFavDropdown` 이벤트 리스너 |
 
 ### 9.2 1:1 채팅방 메시지 (12개)
 
