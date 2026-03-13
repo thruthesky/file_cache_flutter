@@ -420,6 +420,13 @@ GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
 | isSecret() | bool | 비밀글 (secret === 'Y') |
 | exists() | bool | 존재 여부 (idx > 0) |
 
+### v7에서 사용하지 않는 DB 컬럼
+
+| DB 컬럼 | 설명 |
+|---------|------|
+| content_stripped | `strip_tags(content)` 값. v6에서 검색용으로 사용했으나, **v7에서는 사용하지 않는다**. PostEntity에 매핑하지 않으며, 글/코멘트 생성·수정 시에도 저장하지 않는다. DB 컬럼 charset가 4바이트 UTF-8(이모지)을 지원하지 않아 SQLSTATE[22007] 에러를 유발할 수 있으므로 v7 코드에서 완전히 제거되었다. |
+| content_stripped_private | content_stripped의 비공개 버전. v7에서 사용하지 않는다. |
+
 ---
 
 ## content_type 판별 및 저장
