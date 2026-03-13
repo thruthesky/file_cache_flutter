@@ -762,12 +762,27 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 업소 등록/수정 화면 열기
   Future<void> _openCompanyEdit() async {
-    final company = _myCompany ?? await CompanyService.mine();
-    if (company == null || !mounted) return;
+    var company = _myCompany;
+    if (company == null) {
+      // 로딩 다이얼로그 표시
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const Center(child: CircularProgressIndicator()),
+        );
+      }
+      try {
+        company = await CompanyService.mine();
+      } catch (_) {}
+      if (mounted) Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+      if (company == null || !mounted) return;
+      _myCompany = company;
+    }
 
     final result = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(
-        builder: (_) => CompanyEditScreen(company: company),
+        builder: (_) => CompanyEditScreen(company: company!),
       ),
     );
 
