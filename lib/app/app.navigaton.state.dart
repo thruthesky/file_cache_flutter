@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:philgo/app.config.dart';
 import 'package:provider/provider.dart';
 
 class AppNavigationState extends ChangeNotifier {
@@ -9,19 +8,11 @@ class AppNavigationState extends ChangeNotifier {
   int _currentIndex = 0;
   int get currentIndex => _currentIndex;
 
-  String _selectedPostId = forumCategories[0].$1;
+  String _selectedPostId = 'freetalk';
   String get selectedPostId => _selectedPostId;
 
-  String? _selectedCategory = forumCategories[0].$2;
+  String? _selectedCategory;
   String? get selectedCategory => _selectedCategory;
-
-  /// Computed index for backward compat (category tab highlighting)
-  int get selectedForumIndex {
-    final index = forumCategories.indexWhere(
-      (item) => item.$1 == _selectedPostId && item.$2 == _selectedCategory,
-    );
-    return index < 0 ? 0 : index;
-  }
 
   void openHomeScreen() {
     _currentIndex = 0;

@@ -68,15 +68,14 @@ class _PostListScreenState extends State<PostListScreen> {
     AppNavigationState.of(context).setSelectedForum(postId, category);
   }
 
-  /// 전역 선택 인덱스를 현재 화면 상태에 반영
-  void _applySelectedForumIndex(int selectedForumIndex) {
-    final isInvalidIndex =
-        selectedForumIndex < 0 || selectedForumIndex >= forumCategories.length;
-    if (isInvalidIndex || selectedForumIndex == _selectedIndex) {
-      return;
-    }
+  /// 전역 선택 포럼을 현재 화면 상태에 반영
+  void _applySelectedForum(String postId, String? category) {
+    final index = forumCategories.indexWhere(
+      (item) => item.$1 == postId && item.$2 == category,
+    );
+    if (index < 0 || index == _selectedIndex) return;
 
-    _selectedIndex = selectedForumIndex;
+    _selectedIndex = index;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _pagingController.refresh();
@@ -88,10 +87,10 @@ class _PostListScreenState extends State<PostListScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final selectedForumIndex = context.select<AppNavigationState, int>(
-      (state) => state.selectedForumIndex,
+    final (postId, category) = context.select<AppNavigationState, (String, String?)>(
+      (state) => (state.selectedPostId, state.selectedCategory),
     );
-    _applySelectedForumIndex(selectedForumIndex);
+    _applySelectedForum(postId, category);
 
     return Scaffold(
       backgroundColor: scheme.surface,
