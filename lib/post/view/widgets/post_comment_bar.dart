@@ -77,14 +77,17 @@ class _PostCommentBarState extends State<PostCommentBar> {
     final isReplying = widget.replyTo != null;
     final hintText = isReplying ? '답글을 입력하세요' : '댓글을 입력하세요';
 
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+    final effectiveBottomPadding = bottomInset > 0 ? bottomInset : bottomPadding;
+
     return Container(
       decoration: BoxDecoration(
         color: scheme.surface,
         border: Border(top: BorderSide(color: scheme.outlineVariant, width: 0.5)),
       ),
-      child: SafeArea(
-        top: false,
-        child: Column(
+      padding: EdgeInsets.only(bottom: effectiveBottomPadding),
+      child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
