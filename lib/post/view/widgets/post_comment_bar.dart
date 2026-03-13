@@ -88,12 +88,12 @@ class _PostCommentBarState extends State<PostCommentBar> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 답글 대상 표시 — 입력 행과 동일한 좌우 패딩으로 정렬
+            // 답글 대상 표시 — 카메라 아이콘과 동일한 좌측 정렬
             if (isReplying)
               Padding(
-                // 좌: 8(row 패딩) + 카메라영역 너비, 우: 8(row 패딩) + 전송버튼 36 + 8
-                padding: EdgeInsets.fromLTRB(8 + _cameraAreaWidth, 8, 8 + 36 + 8, 0),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FaIcon(
                       FontAwesomeIcons.reply,
@@ -102,15 +102,32 @@ class _PostCommentBarState extends State<PostCommentBar> {
                     ),
                     const SizedBox(width: 6),
                     Expanded(
-                      child: Text(
-                        '@${widget.replyTo!.userName}',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 답글 대상 이름
+                          Text(
+                            '@${widget.replyTo!.userName}',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: scheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          // 답글 대상 내용 미리보기
+                          if (widget.replyTo!.content.isNotEmpty)
+                            Text(
+                              widget.replyTo!.content,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
+                    const SizedBox(width: 8),
                     GestureDetector(
                       onTap: widget.onCancelReply,
                       child: FaIcon(
