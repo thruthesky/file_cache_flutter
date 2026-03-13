@@ -216,15 +216,13 @@ class _PostViewScreenState extends State<PostViewScreen> {
       },
       child: Scaffold(
         backgroundColor: scheme.surface,
-        resizeToAvoidBottomInset: false,
-        bottomNavigationBar: PostCommentBar(
-          idxRoot: _post.idx,
-          replyTo: _replyToComment,
-          onCancelReply: () => setState(() => _replyToComment = null),
-          onSubmit: _createComment,
-        ),
-        body: CustomScrollView(
-          slivers: [
+        resizeToAvoidBottomInset: true,
+        body: Column(
+          children: [
+            Expanded(
+              child: CustomScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                slivers: [
             SliverAppBar(
               pinned: true,
               backgroundColor: scheme.surface,
@@ -398,6 +396,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   const SizedBox(height: 32),
                 ],
               ),
+            ),
+                ],
+              ),
+            ),
+            PostCommentBar(
+              idxRoot: _post.idx,
+              replyTo: _replyToComment,
+              onCancelReply: () => setState(() => _replyToComment = null),
+              onSubmit: _createComment,
             ),
           ],
         ),
