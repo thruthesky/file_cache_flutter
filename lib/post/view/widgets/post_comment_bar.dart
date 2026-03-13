@@ -4,6 +4,8 @@ import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/post/post.model.dart';
+import 'package:philgo/user/user.state.dart';
+import 'package:provider/provider.dart';
 
 /// 게시글 하단 고정 댓글 입력 바
 ///
@@ -64,9 +66,14 @@ class _PostCommentBarState extends State<PostCommentBar> {
     }
   }
 
+  // 카메라 버튼 영역 너비 (왼쪽 패딩 8 + 아이콘버튼 36 + 간격 4 = 48)
+  static const double _cameraAreaWidth = 48.0;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final userState = Provider.of<UserState>(context, listen: false);
+    final isLoggedIn = userState.isLoggedIn;
     final isReplying = widget.replyTo != null;
     final hintText = isReplying ? '답글을 입력하세요' : '댓글을 입력하세요';
 
@@ -81,10 +88,11 @@ class _PostCommentBarState extends State<PostCommentBar> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 답글 대상 표시 칩
+            // 답글 대상 표시 — 입력 행과 동일한 좌우 패딩으로 정렬
             if (isReplying)
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                // 좌: 8(row 패딩) + 카메라영역 너비, 우: 8(row 패딩) + 전송버튼 36 + 8
+                padding: EdgeInsets.fromLTRB(8 + _cameraAreaWidth, 8, 8 + 36 + 8, 0),
                 child: Row(
                   children: [
                     FaIcon(
@@ -136,7 +144,20 @@ class _PostCommentBarState extends State<PostCommentBar> {
                 ),
               ),
 
-            // 입력 행
+            // 로그인 미입력 시 비활성 힌트
+            if (!isLoggedIn)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Text(
+                  '댓글을 작성하려면 로그인이 필요합니다.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+
+            // 입력 행 (로그인 시에만 표시)
+            if (isLoggedIn)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
