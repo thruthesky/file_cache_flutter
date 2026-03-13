@@ -38,7 +38,7 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 | 항목 | 설명 |
 |------|------|
 | **렌더링 방식** | CSR (클라이언트 사이드 렌더링) — Vue.js 3 CDN + Firebase compat SDK |
-| **데이터 저장소** | Firebase Realtime Database + v7 API (사용자 정보) |
+| **데이터 저장소** | Firebase Realtime Database + v7 API (사용자 정보, 즐겨찾기) |
 | **파일 저장소** | Firebase Storage |
 | **인증** | Firebase Auth (PHP 로그인 + Firebase Custom Token) |
 | **UI 프레임워크** | Web Awesome Pro (Bootstrap 미사용) |
