@@ -216,7 +216,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
       },
       child: Scaffold(
         backgroundColor: scheme.surface,
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         bottomNavigationBar: PostCommentBar(
           idxRoot: _post.idx,
           replyTo: _replyToComment,
