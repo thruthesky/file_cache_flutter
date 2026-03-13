@@ -801,8 +801,18 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 채팅 메뉴 그리드
   Widget _buildChatGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
-      _MenuItemData(FontAwesomeIcons.lightComments, '오픈 채팅방'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightHeadset, '운영자 문의'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightComments,
+        '오픈 채팅방'.tr(),
+        onTap: () => AppNavigationState.of(context).openChatScreen(),
+      ),
+      _MenuItemData(
+        FontAwesomeIcons.lightHeadset,
+        '운영자 문의'.tr(),
+        onTap: () {
+          // TODO: 운영자 1:1 채팅 - admin UID 설정 후 ChatRoomScreen 연동
+        },
+      ),
     ];
 
     return _buildMenuGrid(items, theme, scheme);
