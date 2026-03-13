@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/app.config.dart';
+import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
@@ -50,95 +52,95 @@ class _MenuScreenState extends State<MenuScreen> {
 
                       // 내 정보 섹션
                       _buildSection(
-                        title: '내 정보'.tr(),
-                        icon: FontAwesomeIcons.lightCircleUser,
-                        child: _buildProfileContent(theme, scheme),
-                      ).animate().fadeIn(duration: 400.ms).slideY(
-                        begin: 0.1,
-                        end: 0,
-                      ),
+                            title: '내 정보'.tr(),
+                            icon: FontAwesomeIcons.lightCircleUser,
+                            child: _buildProfileContent(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 내 활동 섹션
                       _buildSection(
-                        title: '내 활동'.tr(),
-                        child: _buildActivityGrid(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 100.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '내 활동'.tr(),
+                            child: _buildActivityGrid(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 100.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 필리핀 생활 정보 섹션
                       _buildSection(
-                        title: '필리핀 생활 정보'.tr(),
-                        child: _buildInfoGrid(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 200.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '필리핀 생활 정보'.tr(),
+                            child: _buildInfoGrid(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 200.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 게시판 섹션
                       _buildSection(
-                        title: '게시판'.tr(),
-                        child: _buildForumContent(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 300.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '게시판'.tr(),
+                            child: _buildForumContent(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 300.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 내 업소 섹션
                       _buildSection(
-                        title: '내 업소'.tr(),
-                        icon: FontAwesomeIcons.lightStore,
-                        child: _buildMyCompanyContent(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 350.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '내 업소'.tr(),
+                            icon: FontAwesomeIcons.lightStore,
+                            child: _buildMyCompanyContent(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 350.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 업소록 섹션
                       _buildSection(
-                        title: '업소록'.tr(),
-                        child: _buildCompanyGrid(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 400.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '업소록'.tr(),
+                            child: _buildCompanyGrid(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 400.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 채팅 섹션
                       _buildSection(
-                        title: '채팅'.tr(),
-                        child: _buildChatGrid(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 450.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '채팅'.tr(),
+                            child: _buildChatGrid(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 450.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 광고 섹션
                       _buildSection(
-                        title: '광고'.tr(),
-                        child: _buildAdGrid(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 500.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '광고'.tr(),
+                            child: _buildAdGrid(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 500.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 지원 섹션
                       _buildSection(
-                        title: '지원'.tr(),
-                        child: _buildSupportGrid(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 550.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '지원'.tr(),
+                            child: _buildSupportGrid(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 550.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 앱 정보 섹션
                       _buildSection(
-                        title: '앱 정보'.tr(),
-                        child: _buildAppInfoGrid(theme, scheme),
-                      ).animate().fadeIn(
-                        duration: 400.ms,
-                        delay: 600.ms,
-                      ).slideY(begin: 0.1, end: 0),
+                            title: '앱 정보'.tr(),
+                            child: _buildAppInfoGrid(theme, scheme),
+                          )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 600.ms)
+                          .slideY(begin: 0.1, end: 0),
 
                       // 계정 삭제
                       Center(
@@ -148,10 +150,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           },
                           child: Text(
                             '계정 삭제'.tr(),
-                            style: TextStyle(
-                              color: scheme.error,
-                              fontSize: 14,
-                            ),
+                            style: TextStyle(color: scheme.error, fontSize: 14),
                           ),
                         ),
                       ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
@@ -213,10 +212,7 @@ class _MenuScreenState extends State<MenuScreen> {
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: () => UserLoginScreen.push(context),
-            icon: const FaIcon(
-              FontAwesomeIcons.lightRightToBracket,
-              size: 16,
-            ),
+            icon: const FaIcon(FontAwesomeIcons.lightRightToBracket, size: 16),
             label: Text('로그인'.tr()),
           ),
         ],
@@ -324,7 +320,8 @@ class _MenuScreenState extends State<MenuScreen> {
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _buildDefaultAvatar(scheme),
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildDefaultAvatar(scheme),
                 )
               : _buildDefaultAvatar(scheme),
         ),
@@ -419,8 +416,18 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 내 활동 메뉴 그리드
   Widget _buildActivityGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
-      _MenuItemData(FontAwesomeIcons.lightPenToSquare, '프로필 수정'.tr(), onTap: () => UserEditScreen.push(context)),
-      _MenuItemData(FontAwesomeIcons.lightClockRotateLeft, '내 게시글'.tr(), onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyPostsScreen()))),
+      _MenuItemData(
+        FontAwesomeIcons.lightPenToSquare,
+        '프로필 수정'.tr(),
+        onTap: () => UserEditScreen.push(context),
+      ),
+      _MenuItemData(
+        FontAwesomeIcons.lightClockRotateLeft,
+        '내 게시글'.tr(),
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const MyPostsScreen())),
+      ),
       _MenuItemData(FontAwesomeIcons.lightPenNib, '글쓰기'.tr()),
       _MenuItemData(FontAwesomeIcons.lightMagnifyingGlass, '친구 검색'.tr()),
       _MenuItemData(FontAwesomeIcons.lightUserSlash, '차단된 사용자'.tr()),
@@ -465,10 +472,7 @@ class _MenuScreenState extends State<MenuScreen> {
         _buildMenuGrid(
           [
             _MenuItemData(FontAwesomeIcons.lightComments, '자유게시판'.tr()),
-            _MenuItemData(
-              FontAwesomeIcons.lightCircleQuestion,
-              '묻고 답하기'.tr(),
-            ),
+            _MenuItemData(FontAwesomeIcons.lightCircleQuestion, '묻고 답하기'.tr()),
             _MenuItemData(FontAwesomeIcons.lightPeopleArrows, '인사'.tr()),
             _MenuItemData(FontAwesomeIcons.lightBlog, '블로그'.tr()),
             _MenuItemData(
@@ -506,10 +510,7 @@ class _MenuScreenState extends State<MenuScreen> {
             _MenuItemData(FontAwesomeIcons.lightSpa, '마사지'.tr()),
             _MenuItemData(FontAwesomeIcons.lightHouse, '하숙집/기숙사'.tr()),
             _MenuItemData(FontAwesomeIcons.lightPlaneDeparture, '여행'.tr()),
-            _MenuItemData(
-              FontAwesomeIcons.lightBuildingColumns,
-              '비즈니스'.tr(),
-            ),
+            _MenuItemData(FontAwesomeIcons.lightBuildingColumns, '비즈니스'.tr()),
             _MenuItemData(FontAwesomeIcons.lightGraduationCap, '학교'.tr()),
             _MenuItemData(
               FontAwesomeIcons.lightTriangleExclamation,
@@ -634,10 +635,7 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(FontAwesomeIcons.lightCircleQuestion, '앱 사용 안내'.tr()),
       _MenuItemData(FontAwesomeIcons.lightFileContract, '이용 약관'.tr()),
-      _MenuItemData(
-        FontAwesomeIcons.lightShieldHalved,
-        '개인정보 처리방침'.tr(),
-      ),
+      _MenuItemData(FontAwesomeIcons.lightShieldHalved, '개인정보 처리방침'.tr()),
     ];
 
     return _buildMenuGrid(items, theme, scheme);
@@ -706,7 +704,8 @@ class _MenuScreenState extends State<MenuScreen> {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: item.backgroundColor ??
+              color:
+                  item.backgroundColor ??
                   (item.isHighlighted
                       ? scheme.primary.withValues(alpha: 0.1)
                       : scheme.surfaceContainerHigh.withValues(alpha: 0.5)),
@@ -716,7 +715,8 @@ class _MenuScreenState extends State<MenuScreen> {
               child: FaIcon(
                 item.icon,
                 size: 22,
-                color: item.iconColor ??
+                color:
+                    item.iconColor ??
                     (item.isHighlighted
                         ? scheme.primary
                         : scheme.onSurfaceVariant),

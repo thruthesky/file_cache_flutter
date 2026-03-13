@@ -19,7 +19,8 @@ class PostCommentBar extends StatefulWidget {
     String content,
     int? idxParent,
     List<FileUploadModel> files,
-  ) onSubmit;
+  )
+  onSubmit;
 
   const PostCommentBar({
     super.key,
@@ -66,8 +67,6 @@ class _PostCommentBarState extends State<PostCommentBar> {
     }
   }
 
-  // 카메라 버튼 영역 너비 (왼쪽 패딩 8 + 아이콘버튼 36 + 간격 4 = 48)
-  static const double _cameraAreaWidth = 48.0;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +79,9 @@ class _PostCommentBarState extends State<PostCommentBar> {
     return Container(
       decoration: BoxDecoration(
         color: scheme.surface,
-        border: Border(top: BorderSide(color: scheme.outlineVariant, width: 0.5)),
+        border: Border(
+          top: BorderSide(color: scheme.outlineVariant, width: 0.5),
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -108,10 +109,11 @@ class _PostCommentBarState extends State<PostCommentBar> {
                           // 답글 대상 이름
                           Text(
                             '@${widget.replyTo!.userName}',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: scheme.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: scheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                             overflow: TextOverflow.ellipsis,
                           ),
                           // 답글 대상 내용 미리보기
@@ -120,9 +122,8 @@ class _PostCommentBarState extends State<PostCommentBar> {
                               widget.replyTo!.content,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: scheme.onSurfaceVariant,
-                              ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: scheme.onSurfaceVariant),
                             ),
                         ],
                       ),
@@ -164,7 +165,10 @@ class _PostCommentBarState extends State<PostCommentBar> {
             // 로그인 미입력 시 비활성 힌트
             if (!isLoggedIn)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Text(
                   '댓글을 작성하려면 로그인이 필요합니다.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -175,116 +179,121 @@ class _PostCommentBarState extends State<PostCommentBar> {
 
             // 입력 행 (로그인 시에만 표시)
             if (isLoggedIn)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // 파일 업로드 버튼
-                  FileUpload(
-                    module: 'post',
-                    code: 'comment',
-                    camera: true,
-                    gallery: true,
-                    onUploadingChanged: (uploading) {
-                      setState(() => _isUploading = uploading);
-                    },
-                    onUploaded: (model) {
-                      setState(() => _files.add(model));
-                    },
-                    onError: (e) {
-                      if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('파일 업로드 실패: $e')),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 4, bottom: 4),
-                      child: _isUploading
-                          ? const SizedBox(
-                              width: 36,
-                              height: 36,
-                              child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: CircularProgressIndicator(strokeWidth: 2),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // 파일 업로드 버튼
+                    FileUpload(
+                      module: 'post',
+                      code: 'comment',
+                      camera: true,
+                      gallery: true,
+                      onUploadingChanged: (uploading) {
+                        setState(() => _isUploading = uploading);
+                      },
+                      onUploaded: (model) {
+                        setState(() => _files.add(model));
+                      },
+                      onError: (e) {
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('파일 업로드 실패: $e')),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4, bottom: 4),
+                        child: _isUploading
+                            ? const SizedBox(
+                                width: 36,
+                                height: 36,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: null,
+                                icon: FaIcon(
+                                  FontAwesomeIcons.lightCamera,
+                                  size: 20,
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 36,
+                                  minHeight: 36,
+                                ),
+                                padding: EdgeInsets.zero,
                               ),
-                            )
-                          : IconButton(
-                              onPressed: null,
-                              icon: FaIcon(
-                                FontAwesomeIcons.lightCamera,
-                                size: 20,
-                                color: scheme.onSurfaceVariant,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 36,
-                                minHeight: 36,
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                    ),
-                  ),
-
-                  // 텍스트 입력
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      minLines: 1,
-                      maxLines: 6,
-                      textInputAction: TextInputAction.newline,
-                      decoration: InputDecoration(
-                        hintText: hintText,
-                        hintStyle: TextStyle(color: scheme.onSurfaceVariant),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide(color: scheme.outline),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide(color: scheme.outline),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide(color: scheme.primary, width: 1.5),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        isDense: true,
                       ),
-                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  ),
 
-                  const SizedBox(width: 8),
-
-                  // 전송 버튼
-                  _isSending
-                      ? const SizedBox(
-                          width: 36,
-                          height: 36,
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                    // 텍스트 입력
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        minLines: 1,
+                        maxLines: 6,
+                        textInputAction: TextInputAction.newline,
+                        decoration: InputDecoration(
+                          hintText: hintText,
+                          hintStyle: TextStyle(color: scheme.onSurfaceVariant),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(color: scheme.outline),
                           ),
-                        )
-                      : IconButton(
-                          onPressed: _submit,
-                          icon: FaIcon(
-                            FontAwesomeIcons.solidPaperPlane,
-                            size: 18,
-                            color: scheme.primary,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(color: scheme.outline),
                           ),
-                          constraints: const BoxConstraints(
-                            minWidth: 36,
-                            minHeight: 36,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(
+                              color: scheme.primary,
+                              width: 1.5,
+                            ),
                           ),
-                          padding: EdgeInsets.zero,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          isDense: true,
                         ),
-                ],
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    // 전송 버튼
+                    _isSending
+                        ? const SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: _submit,
+                            icon: FaIcon(
+                              FontAwesomeIcons.solidPaperPlane,
+                              size: 18,
+                              color: scheme.primary,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 36,
+                              minHeight: 36,
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

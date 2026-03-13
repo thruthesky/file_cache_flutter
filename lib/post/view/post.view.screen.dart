@@ -48,10 +48,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
     super.initState();
     _post = widget.post;
     _goodCount = _post.good;
-    _loadFullPost();
+    _loadPost();
   }
 
-  Future<void> _loadFullPost() async {
+  Future<void> _loadPost() async {
     try {
       final fullPost = await PostService.get(_post.idx);
       if (!mounted) return;
@@ -221,182 +221,214 @@ class _PostViewScreenState extends State<PostViewScreen> {
           children: [
             Expanded(
               child: CustomScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 slivers: [
-            SliverAppBar(
-              pinned: true,
-              backgroundColor: scheme.surface,
-              foregroundColor: scheme.onSurface,
-              elevation: 0,
-              scrolledUnderElevation: 1,
-              actions: [
-                if (!_isLoading)
-                  PopupMenuButton<String>(
-                    icon: FaIcon(
-                      FontAwesomeIcons.lightEllipsisVertical,
-                      size: 18,
-                      color: scheme.onSurface,
-                    ),
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'edit':
-                          _editPost();
-                        case 'delete':
-                          _deletePost();
-                        case 'block':
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('차단 기능은 준비 중입니다.')),
-                          );
-                        case 'report':
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('신고 기능은 준비 중입니다.')),
-                          );
-                      }
-                    },
-                    itemBuilder: (ctx) {
-                      final popScheme = Theme.of(ctx).colorScheme;
-                      return isMine
-                          ? [
-                              PopupMenuItem(
-                                value: 'edit',
-                                child: Row(
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.lightPenToSquare, size: 15, color: popScheme.onSurface),
-                                    const SizedBox(width: 10),
-                                    const Text('수정'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'delete',
-                                child: Row(
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.lightTrashCan, size: 15, color: popScheme.error),
-                                    const SizedBox(width: 10),
-                                    Text('삭제', style: TextStyle(color: popScheme.error)),
-                                  ],
-                                ),
-                              ),
-                            ]
-                          : [
-                              PopupMenuItem(
-                                value: 'block',
-                                child: Row(
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.lightBan, size: 15, color: popScheme.onSurface),
-                                    const SizedBox(width: 10),
-                                    const Text('차단'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'report',
-                                child: Row(
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.lightFlag, size: 15, color: popScheme.error),
-                                    const SizedBox(width: 10),
-                                    Text('신고', style: TextStyle(color: popScheme.error)),
-                                  ],
-                                ),
-                              ),
-                            ];
-                    },
+                  SliverAppBar(
+                    pinned: true,
+                    backgroundColor: scheme.surface,
+                    foregroundColor: scheme.onSurface,
+                    elevation: 0,
+                    scrolledUnderElevation: 1,
+                    actions: [
+                      if (!_isLoading)
+                        PopupMenuButton<String>(
+                          icon: FaIcon(
+                            FontAwesomeIcons.lightEllipsisVertical,
+                            size: 18,
+                            color: scheme.onSurface,
+                          ),
+                          onSelected: (value) {
+                            switch (value) {
+                              case 'edit':
+                                _editPost();
+                              case 'delete':
+                                _deletePost();
+                              case 'block':
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('차단 기능은 준비 중입니다.'),
+                                  ),
+                                );
+                              case 'report':
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('신고 기능은 준비 중입니다.'),
+                                  ),
+                                );
+                            }
+                          },
+                          itemBuilder: (ctx) {
+                            final popScheme = Theme.of(ctx).colorScheme;
+                            return isMine
+                                ? [
+                                    PopupMenuItem(
+                                      value: 'edit',
+                                      child: Row(
+                                        children: [
+                                          FaIcon(
+                                            FontAwesomeIcons.lightPenToSquare,
+                                            size: 15,
+                                            color: popScheme.onSurface,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          const Text('수정'),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'delete',
+                                      child: Row(
+                                        children: [
+                                          FaIcon(
+                                            FontAwesomeIcons.lightTrashCan,
+                                            size: 15,
+                                            color: popScheme.error,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            '삭제',
+                                            style: TextStyle(
+                                              color: popScheme.error,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]
+                                : [
+                                    PopupMenuItem(
+                                      value: 'block',
+                                      child: Row(
+                                        children: [
+                                          FaIcon(
+                                            FontAwesomeIcons.lightBan,
+                                            size: 15,
+                                            color: popScheme.onSurface,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          const Text('차단'),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'report',
+                                      child: Row(
+                                        children: [
+                                          FaIcon(
+                                            FontAwesomeIcons.lightFlag,
+                                            size: 15,
+                                            color: popScheme.error,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            '신고',
+                                            style: TextStyle(
+                                              color: popScheme.error,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ];
+                          },
+                        ),
+                    ],
                   ),
-              ],
-            ),
 
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── 원글 ──────────────────────────────────────────
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  SliverToBoxAdapter(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          _post.subject,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: scheme.onSurface,
+                        // ── 원글 ──────────────────────────────────────────
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _post.subject,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: scheme.onSurface,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              _buildMeta(_post, theme, scheme),
+                              const SizedBox(height: 16),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        _buildMeta(_post, theme, scheme),
-                        const SizedBox(height: 16),
+
+                        // 첨부 파일 (전체 너비)
+                        PostViewFiles(post: _post),
+
+                        // 본문
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          child: _isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : _error != null
+                              ? Text(
+                                  '내용을 불러올 수 없습니다',
+                                  style: TextStyle(color: scheme.error),
+                                )
+                              : SelectableLinkify(
+                                  text: _post.content,
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    color: scheme.onSurface,
+                                    height: 1.6,
+                                  ),
+                                  linkStyle: TextStyle(
+                                    color: scheme.primary,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  onOpen: (link) async {
+                                    final uri = Uri.tryParse(link.url);
+                                    if (uri != null &&
+                                        await canLaunchUrl(uri)) {
+                                      await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    }
+                                  },
+                                ),
+                        ),
+
+                        // 원글 액션 바
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: PostActionBar(
+                            post: _post,
+                            isMine: isMine,
+                            liked: _liked,
+                            goodCount: _goodCount,
+                            onLike: _toggleLike,
+                            onEdit: _editPost,
+                            onDelete: _deletePost,
+                          ),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // ── 댓글 ──────────────────────────────────────────
+                        CommentListView(
+                          comments: _comments,
+                          isLoading: _commentsLoading,
+                          noOfComment: _post.noOfComment,
+                          idxRoot: _post.idx,
+                          onEditComment: _editComment,
+                          onDeleteComment: _deleteComment,
+                          onReplyTap: (comment) {
+                            setState(() => _replyToComment = comment);
+                          },
+                        ),
+
+                        const SizedBox(height: 32),
                       ],
                     ),
                   ),
-
-                  // 첨부 파일 (전체 너비)
-                  PostViewFiles(post: _post),
-
-                  // 본문
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: _isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _error != null
-                        ? Text(
-                            '내용을 불러올 수 없습니다',
-                            style: TextStyle(color: scheme.error),
-                          )
-                        : SelectableLinkify(
-                            text: _post.content,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: scheme.onSurface,
-                              height: 1.6,
-                            ),
-                            linkStyle: TextStyle(
-                              color: scheme.primary,
-                              decoration: TextDecoration.underline,
-                            ),
-                            onOpen: (link) async {
-                              final uri = Uri.tryParse(link.url);
-                              if (uri != null && await canLaunchUrl(uri)) {
-                                await launchUrl(
-                                  uri,
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              }
-                            },
-                          ),
-                  ),
-
-                  // 원글 액션 바
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: PostActionBar(
-                      post: _post,
-                      isMine: isMine,
-                      liked: _liked,
-                      goodCount: _goodCount,
-                      onLike: _toggleLike,
-                      onEdit: _editPost,
-                      onDelete: _deletePost,
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // ── 댓글 ──────────────────────────────────────────
-                  CommentListView(
-                    comments: _comments,
-                    isLoading: _commentsLoading,
-                    noOfComment: _post.noOfComment,
-                    idxRoot: _post.idx,
-                    onEditComment: _editComment,
-                    onDeleteComment: _deleteComment,
-                    onReplyTap: (comment) {
-                      setState(() => _replyToComment = comment);
-                    },
-                  ),
-
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
                 ],
               ),
             ),
