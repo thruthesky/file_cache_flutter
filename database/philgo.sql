@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Mar 03, 2026 at 01:34 PM
+-- Generation Time: Mar 13, 2026 at 02:11 AM
 -- Server version: 11.7.2-MariaDB-ubu2404
 -- PHP Version: 8.3.6
 
@@ -1080,6 +1080,7 @@ CREATE TABLE `sf_post_data` (
   `user_email` varchar(64) NOT NULL DEFAULT '',
   `subject` varchar(255) NOT NULL DEFAULT '',
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `content_type` varchar(16) DEFAULT NULL,
   `files` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `content_stripped` longtext DEFAULT NULL,
   `subject_private` varchar(255) NOT NULL DEFAULT '',
@@ -1871,7 +1872,8 @@ ALTER TABLE `sf_post_data`
   ADD KEY `idx_post_id_category_has_image_stamp` (`post_id`,`category`,`has_image`,`stamp`),
   ADD KEY `idx_post_id_category_has_video_stamp` (`post_id`,`category`,`has_video`,`stamp`),
   ADD KEY `idx_post_id_category_has_youtube_stamp` (`post_id`,`category`,`has_youtube`,`stamp`),
-  ADD KEY `stamp_int_10` (`stamp`,`int_10`);
+  ADD KEY `stamp_int_10` (`stamp`,`int_10`),
+  ADD KEY `idx_parent_deleted_blind` (`idx_parent`,`deleted`,`blind`);
 
 --
 -- Indexes for table `sf_post_search`

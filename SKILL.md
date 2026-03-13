@@ -220,6 +220,42 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 ---
 
+## 🔴🔴🔴 데이터 모델 클래스를 통한 접근 필수 — 절대 규칙 (PHP + JavaScript 전 영역) 🔴🔴🔴
+
+> **⛔⛔⛔ 어떤 경우에도 연관 배열(`$arr['key']`), JSON 객체, Map 등으로 데이터에 직접 접근하지 않는다. ⛔⛔⛔**
+> **반드시 데이터 모델링 클래스(Entity, Model 등)를 통해 멤버 변수(`->`) 또는 멤버 함수로 값을 읽고 써야 한다.**
+> **이 규칙은 PHP, JavaScript 등 모든 코드 영역에 걸쳐 적용된다. 예외 없음.**
+
+| 규칙 | 설명 |
+|------|------|
+| **연관 배열 접근 금지** | `$c['idx_member']`, `$row['firebase_uid']` 등 배열 키로 직접 접근 금지 |
+| **모델 클래스 접근 필수** | `$c->idx_member`, `$post->content` 등 객체 멤버 변수/함수로 접근 |
+| **PHP Entity 변환 필수** | DB 조회 결과(배열)는 반드시 `PostEntity::fromArray()`, `UserEntity::fromArray()` 등으로 Entity 객체로 변환 후 사용 |
+| **JavaScript에서도 동일** | API 응답을 Vue.js data에 바인딩하여 프로퍼티로 접근 |
+| **Flutter에서도 동일** | API 응답을 반드시 데이터 모델 클래스(`fromJson()`)로 변환 후 사용. `Map<String, dynamic>` 직접 접근 금지 |
+
+**올바른 예시:**
+
+```php
+// ✅ PHP: Entity 객체를 통한 접근
+$c = PostEntity::fromArray($commentArr);
+$idxMember = $c->idx_member;        // ✅ 멤버 변수
+$content = $c->content;              // ✅ 멤버 변수
+$subject = $post->display_subject(); // ✅ 멤버 함수
+```
+
+**잘못된 예시 (절대 금지):**
+
+```php
+// ❌ PHP: 연관 배열로 직접 접근
+$idxMember = $c['idx_member'];       // ❌ 배열 키 접근 금지
+$content = $row['content'];           // ❌ DB 결과 직접 접근 금지
+```
+
+**적용 범위**: PHP 백엔드(Entity/Service/Repository/Controller), v7 웹 홈페이지(PHP + JavaScript), Flutter 앱(Dart 모델 클래스) — 모든 코드 영역에 예외 없이 적용.
+
+---
+
 ## 🔴 PHP 코딩 규칙: 타입 안전성 필수 🔴
 
 ### Intelephense / 정적 분석 타입 경고 방지 — 캐스팅 필수
@@ -460,8 +496,69 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | **검색 (Google CSE)** | [web/v7-search.md](references/web/v7-search.md) | ✅ 완료 |
 | **카카오톡 소셜 로그인** | [web/v7-web-kakoatalk-social-login.md](references/web/v7-web-kakoatalk-social-login.md) | ✅ 완료 |
 | **네이버 소셜 로그인** | [web/v7-web-naver-social-login.md](references/web/v7-web-naver-social-login.md) | ✅ 완료 |
+| **도움말 페이지** | [web/v7-help.md](references/web/v7-help.md) | ✅ 완료 |
+| **1:1 채팅 시스템** | [web/v7-chat.md](references/web/v7-chat.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 | **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
+
+### 1:1 채팅 시스템 → [web/v7-chat.md](references/web/v7-chat.md)
+
+v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시간 1:1 채팅 기능이다.
+PHP(서버)는 로그인 확인과 설정값 전달만 담당하며, 채팅 데이터의 읽기/쓰기/구독은 모두
+클라이언트 JavaScript에서 Firebase SDK를 직접 호출하여 처리한다.
+Vue.js 3 CDN + Firebase compat SDK 기반 CSR 방식이며, Web Awesome Pro UI를 사용한다.
+채팅방 생성, 메시지 전송, 읽음 표시, 즐겨찾기, 사운드 알림, 이미지/파일 업로드,
+Presence(온라인/오프라인), FCM 푸시 알림, 메시지 수정/삭제, 관리자 기능 등을 지원한다.
+
+#### 🔥 Firebase Cloud Functions 채팅 백엔드 코드
+
+채팅 시스템의 서버 측 로직(Cloud Functions)은 **`firebase/chat-v2/`** 폴더에 위치한다.
+이 폴더는 필고 프로젝트 루트(`./`)에서 `firebase/chat-v2/` 경로에 있으며,
+Firebase Cloud Functions v2(Gen2)를 사용하는 독립적인 TypeScript 프로젝트이다.
+
+| 항목 | 설명 |
+|------|------|
+| **프로젝트 경로** | `./firebase/chat-v2/` |
+| **소스 코드** | `firebase/chat-v2/functions/src/` |
+| **런타임** | Node.js 22, TypeScript, Firebase Cloud Functions v2 (Gen2) |
+| **주요 의존성** | `firebase-admin` ^12.6.0, `firebase-functions` ^6.0.1 |
+| **테스트** | Mocha + Chai + Sinon |
+| **Firebase 프로젝트** | `philgo-64b1a` (프로덕션), `withcenter-test-5` (테스트) |
+| **CLAUDE.md** | `firebase/chat-v2/CLAUDE.md` — Cloud Functions 코딩 가이드라인 |
+| **문서** | `firebase/chat-v2/docs/chat/` — DB 스키마, 비즈니스 로직, 플로우차트, 코딩 가이드 |
+
+**소스 코드 모듈 구조** (`firebase/chat-v2/functions/src/`):
+
+| 모듈 | 파일 수 | 설명 |
+|------|---------|------|
+| `chat/` | 26개 | 채팅 핵심 로직 — 방 생성/수정, 메시지 처리, 입장/퇴장, 읽음 표시, 즐겨찾기 |
+| `messaging/` | 11개 | FCM 푸시 알림 — 토큰 관리, 메시지 전송, 구독 처리 |
+| `user/` | 2개 | 사용자 관련 로직 |
+| `lib/` | 2개 | 유틸리티 함수 (즐겨찾기, 읽지 않은 메시지 카운트) |
+| `common/` | 1개 | 공통 유틸리티 (배열 청킹) |
+
+**배포 대상 Cloud Functions** (8개):
+
+| 함수명 | 트리거 유형 | 기능 |
+|--------|-------------|------|
+| `onChatMessageCreated` | RTDB 트리거 | 메시지 생성 시 후처리 (읽지 않은 메시지 카운트, Join 업데이트) |
+| `onResetChatJoin` | RTDB 트리거 | 채팅 조인 초기화 (읽음 표시) |
+| `onCustomNameUpdated` | RTDB 트리거 | 사용자 정의 이름 업데이트 반영 |
+| `onFavorite` | RTDB 트리거 | 즐겨찾기 추가/제거 |
+| `onPushMessageCreated` | RTDB 트리거 | 푸시 메시지 생성 → FCM 전송 |
+| `onCreateGroupChatRoom` | HTTP 요청 | 그룹 채팅방 생성 |
+| `onUpdateGroupChatRoom` | RTDB 트리거 | 그룹 채팅방 정보 업데이트 |
+| `onUpdateGroupChatRoomImage` | RTDB 트리거 | 그룹 채팅방 이미지 업데이트 |
+
+**배포 명령어**:
+
+```bash
+cd firebase/chat-v2/functions
+npm run deploy:philgo    # 프로덕션 배포
+npm run deploy:test5     # 테스트 환경 배포
+```
+
+**채팅 관련 작업 시 반드시 이 문서와 `firebase/chat-v2/CLAUDE.md`를 함께 참조한다.**
 
 ### 코멘트 스레드 세로선 → [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md)
 
@@ -642,6 +739,23 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | **파일 위치** | 동일 폴더에 `<module>-<섹션>.md` 형태로 저장 (예: `upload-curl-guide.md`, `upload-test.md`) |
 | **본문 참조** | 분리된 파일은 원본 문서에서 링크로 참조: `→ [상세 가이드](upload-curl-guide.md)` |
 | **목차 유지** | 원본 문서의 목차에는 분리된 섹션도 링크 포함 |
+
+---
+
+## 🔴🔴🔴 Flutter Driver / E2E 테스트 절대 금지 🔴🔴🔴
+
+> **⛔ Flutter 앱 개발 또는 소스 코딩 시 Flutter Driver 테스트, E2E 테스트, Integration Test를 절대로 작성하거나 실행하지 않는다. ⛔**
+
+| 금지 항목 | 설명 |
+|-----------|------|
+| ❌ **flutter_driver** | `flutter_driver` 패키지를 사용한 테스트 코드 작성 금지 |
+| ❌ **integration_test** | `integration_test` 패키지를 사용한 테스트 코드 작성 금지 |
+| ❌ **flutter_test** | `flutter_test` 패키지를 사용한 위젯/유닛 테스트 코드 작성 금지 |
+| ❌ **테스트 디렉토리** | `test/`, `integration_test/`, `test_driver/` 디렉토리에 파일 생성 금지 |
+| ❌ **테스트 실행 명령** | `flutter drive`, `flutter test` 등 테스트 실행 명령어 사용 금지 |
+
+- 테스트가 필요한 경우 **CLAUDE.md의 "Debugging with Dart Tooling Daemon (DTD)" 섹션에 정의된 DTD 방식만** 사용한다.
+- DTD 방식: hot reload를 사용하여 `initState()`에 임시 테스트 코드를 주입하는 방식
 
 ---
 
@@ -1364,3 +1478,56 @@ echo t()->게시판목록;
 
 include_once '../page.footer.php';
 ```
+
+---
+
+## Git Subtree 관리
+
+이 프로젝트는 Git Subtree를 사용하여 외부 패키지와 스킬을 관리한다.
+사용자가 "서브트리 업데이트", "subtree 업데이트", "subtree pull/push" 등을 요청하면 아래 절차를 수행한다.
+
+### Subtree 목록
+
+| 리모트 이름 | 경로 (prefix) | 브랜치 |
+|-------------|---------------|--------|
+| `easy_phone_sign_in` | `packages/easy_phone_sign_in` | `main` |
+| `file_cache_flutter` | `packages/file_cache_flutter` | `main` |
+| `font_awesome_flutter` | `packages/font_awesome_flutter` | `main` |
+| `philgo_api` | `packages/philgo_api` | `main` |
+| `flutter-skill` | `.claude/skills/flutter-skill` | `main` |
+| `v7-skill` | `.claude/skills/v7-skill` | `main` |
+
+### Subtree Pull (원격 → 로컬)
+
+각 subtree에 대해 `--squash` 옵션으로 pull한다:
+
+```bash
+git subtree pull --prefix=packages/easy_phone_sign_in easy_phone_sign_in main --squash
+git subtree pull --prefix=packages/file_cache_flutter file_cache_flutter main --squash
+git subtree pull --prefix=packages/font_awesome_flutter font_awesome_flutter main --squash
+git subtree pull --prefix=packages/philgo_api philgo_api main --squash
+git subtree pull --prefix=.claude/skills/flutter-skill flutter-skill main --squash
+git subtree pull --prefix=.claude/skills/v7-skill v7-skill main --squash
+```
+
+### Subtree Push (로컬 → 원격)
+
+각 subtree에 대해 push한다:
+
+```bash
+git subtree push --prefix=packages/easy_phone_sign_in easy_phone_sign_in main
+git subtree push --prefix=packages/file_cache_flutter file_cache_flutter main
+git subtree push --prefix=packages/font_awesome_flutter font_awesome_flutter main
+git subtree push --prefix=packages/philgo_api philgo_api main
+git subtree push --prefix=.claude/skills/flutter-skill flutter-skill main
+git subtree push --prefix=.claude/skills/v7-skill v7-skill main
+```
+
+### 작업 순서
+
+1. **커밋**: 현재 작업 중인 변경사항이 있으면 먼저 커밋한다
+2. **Pull**: 모든 subtree에 대해 pull을 수행한다 (충돌 발생 시 해결 후 진행)
+3. **Push**: 모든 subtree에 대해 push를 수행한다
+4. **메인 저장소 push**: 필요 시 `git push origin v7`으로 메인 저장소도 push한다
+
+> **참고:** subtree push는 전체 커밋 히스토리를 순회하므로 시간이 걸릴 수 있다.

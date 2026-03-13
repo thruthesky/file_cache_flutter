@@ -38,6 +38,16 @@
   - [12.4 실전 통합 패턴: 업로드 상태 관리](#124-실전-통합-패턴-업로드-상태-관리)
   - [12.5 동작 원리](#125-동작-원리)
 - [13. v7 위젯 목록](#13-v7-위젯-목록)
+- [17. Reddit 스타일 코멘트 스레드 라인 (Flutter 앱)](#17-reddit-스타일-코멘트-스레드-라인-flutter-앱)
+  - [17.1 구조 개요](#171-구조-개요)
+  - [17.2 위젯 계층 구조](#172-위젯-계층-구조)
+  - [17.3 트리 변환: buildCommentTree()](#173-트리-변환-buildcommenttree)
+  - [17.4 세로선 정렬 핵심 원리](#174-세로선-정렬-핵심-원리)
+  - [17.5 ThreadConnectorPainter 상세](#175-threadconnectorpainter-상세)
+  - [17.6 주요 상수 정리](#176-주요-상수-정리)
+  - [17.7 깊이별 들여쓰기 전략](#177-깊이별-들여쓰기-전략)
+  - [17.8 주의사항 및 트러블슈팅](#178-주의사항-및-트러블슈팅)
+  - [17.9 파일 위치 참조](#179-파일-위치-참조)
 
 ---
 
@@ -1393,6 +1403,11 @@ fetchPage(N) → 빈 리스트 반환 → 더 이상 로드하지 않음
 | `PostService.create()` | `post.create` | 필수 | 게시글 생성 |
 | `PostService.update()` | `post.update` | 필수 | 게시글 수정 |
 | `PostService.delete()` | `post.delete` | 필수 | 게시글 삭제 |
+| `PostService.listComments()` | `post.commentList` | 불필요 | 코멘트 목록 조회 (list_order DESC) |
+| `PostService.createComment()` | `post.commentCreate` | 필수 | 코멘트/대댓글 생성 (idxRoot, content, idxParent?) |
+| `PostService.updateComment()` | `post.commentUpdate` | 필수 | 코멘트 수정 (자식 있으면 서버에서 차단) |
+| `PostService.deleteComment()` | `post.commentDelete` | 필수 | 코멘트 삭제 (자식 있으면 서버에서 차단) |
+| `PostService.like()` | `post.like` | 필수 | 좋아요 토글 |
 
 ### 14.4 사용 예시
 
@@ -1406,7 +1421,43 @@ final post = await PostService.get(12345);
 print(post.subject);
 ```
 
-### 14.5 PostListScreen 무한 스크롤 패턴
+### 14.5 댓글 CRUD 사용 예시
+
+```dart
+// 댓글 목록 조회
+final comments = await PostService.listComments(postIdx);
+
+// 최상위 댓글 생성
+await PostService.createComment(idxRoot: postIdx, content: '댓글 내용');
+
+// 대댓글 생성 (특정 댓글에 대한 답글)
+await PostService.createComment(
+  idxRoot: postIdx,
+  content: '대댓글 내용',
+  idxParent: parentCommentIdx,
+);
+
+// 댓글 수정 (자식 댓글이 있으면 서버에서 에러 반환)
+await PostService.updateComment(idx: commentIdx, content: '수정된 내용');
+
+// 댓글 삭제 (자식 댓글이 있으면 서버에서 에러 반환)
+await PostService.deleteComment(commentIdx);
+```
+
+### 14.6 댓글 위젯 구조
+
+| 위젯 | 파일 | 설명 |
+|------|------|------|
+| `CommentListView` | `lib/post/view/widgets/comment.list.view.dart` | 댓글 목록 + 최상위 댓글 입력 + 대댓글 인라인 입력 |
+| `CommentTile` | `lib/post/view/widgets/comment.tile.dart` | 개별 댓글 표시 (depth 기반 들여쓰기, 수정/삭제/답글 버튼) |
+| `CommentInput` | `lib/post/view/widgets/comment.input.dart` | 댓글/대댓글 입력 폼 (TextField + 전송 버튼) |
+| `CommentEditDialog` | `lib/post/view/widgets/comment.edit.dialog.dart` | 댓글 수정 다이얼로그 (AlertDialog) |
+
+**자식 댓글 제한 규칙**:
+- 자식 댓글이 있는 코멘트는 수정/삭제 버튼이 숨겨진다 (클라이언트 측 `_hasChildren()` 검사)
+- 서버에서도 `PostRepository::hasChildComments()` 이중 검증으로 자식 있는 코멘트의 수정/삭제를 차단한다
+
+### 14.7 PostListScreen 무한 스크롤 패턴
 
 `lib/post/list/post.list.screen.dart`에서 `infinite_scroll_pagination` 패키지의
 `PagingController<int, Post>`를 사용하여 카테고리별 게시글 무한 스크롤을 구현한다.
@@ -1573,3 +1624,223 @@ Future<void> _signInWithGoogle() async {
 ```
 
 **핵심**: State는 Service의 결과를 받아 저장만 한다. 복잡한 로직은 전부 Service에 있다.
+
+---
+
+## 17. Reddit 스타일 코멘트 스레드 라인 (Flutter 앱)
+
+Reddit/Hacker News 스타일의 세로선(thread line)을 사용하여 코멘트의 부모-자식 관계를 시각적으로 표현하는 구현이다. 부모 아바타 중앙에서 세로선이 시작되어 자식 코멘트까지 L곡선으로 연결된다.
+
+### 17.1 구조 개요
+
+코멘트 스레드 라인은 4개의 핵심 구성요소로 이루어진다:
+
+| 구성요소 | 파일 | 역할 |
+|---------|------|------|
+| **CommentListView** | `lib/post/view/widgets/comment.list.view.dart` | 트리 기반 코멘트 렌더링, 재귀적 노드 빌드 |
+| **CommentTile** | `lib/post/view/widgets/comment.tile.dart` | 개별 코멘트 타일, 세로선 표시/미표시 분기 |
+| **CommentNode** | `lib/post/view/widgets/comment_thread_painter.dart` | 트리 노드 (comment, children, depth 필드) |
+| **ThreadConnectorPainter** | `lib/post/view/widgets/comment_thread_painter.dart` | CustomPaint 기반 세로선 + L곡선 페인터 |
+| **buildCommentTree()** | `lib/post/view/widgets/comment_thread_painter.dart` | 플랫 리스트 → 트리 구조 변환 함수 |
+
+### 17.2 위젯 계층 구조
+
+```
+CommentListView
+├── _buildCommentTree()         ← 트리 루트 렌더링
+│   └── _buildCommentNode()     ← 재귀적 노드 렌더링
+│       ├── CommentTile         ← 개별 코멘트 (showThreadLine으로 세로선 분기)
+│       │   ├── _buildWithThreadLine()  ← 자식 있는 노드: IntrinsicHeight + 세로선
+│       │   └── _buildNormal()          ← 자식 없는 노드: 일반 레이아웃
+│       └── _buildChildrenArea()        ← 자식 영역 (ThreadConnectorPainter 포함)
+│           └── IntrinsicHeight > Row
+│               ├── SizedBox + CustomPaint(ThreadConnectorPainter)  ← 세로선 + L곡선
+│               └── Expanded > _buildCommentNode() (재귀)
+```
+
+**핵심 흐름**:
+1. `CommentListView`가 `buildCommentTree()`로 플랫 리스트를 트리로 변환
+2. 루트 노드부터 `_buildCommentNode()`를 재귀 호출
+3. 자식이 있는 노드: `CommentTile(showThreadLine: true)` → 아바타 아래 세로선
+4. 자식 영역: `_buildChildrenArea()`에서 `ThreadConnectorPainter`로 L곡선 연결
+5. 각 자식에 대해 다시 `_buildCommentNode()` 재귀 호출
+
+### 17.3 트리 변환: buildCommentTree()
+
+서버에서 `depth`, `idxParent` 필드와 함께 플랫 리스트로 받은 코멘트를 트리 구조로 변환한다.
+
+```dart
+/// 플랫 코멘트 리스트를 트리 구조로 변환
+List<CommentNode> buildCommentTree(List<Post> flatComments) {
+  final Map<int, List<Post>> childrenMap = {};
+  final List<Post> roots = [];
+
+  for (final comment in flatComments) {
+    if (comment.depth == 1) {
+      roots.add(comment);
+    } else {
+      final parentIdx = comment.idxParent;
+      childrenMap.putIfAbsent(parentIdx, () => []).add(comment);
+    }
+  }
+
+  CommentNode buildNode(Post comment, {int nodeDepth = 1}) {
+    final children = childrenMap[comment.idx] ?? [];
+    return CommentNode(
+      comment: comment,
+      children: children.map((child) => buildNode(child, nodeDepth: nodeDepth + 1)).toList(),
+      depth: nodeDepth,
+    );
+  }
+
+  return roots.map((root) => buildNode(root, nodeDepth: 1)).toList();
+}
+```
+
+**CommentNode 클래스**:
+- `comment`: Post 모델 (코멘트 데이터)
+- `children`: 자식 CommentNode 리스트
+- `depth`: 트리에서의 깊이 (1부터 시작)
+
+### 17.4 세로선 정렬 핵심 원리
+
+세로선이 부모 아바타 중앙과 정확히 정렬되려면, **아바타 중앙 X 좌표**를 기준으로 맞춰야 한다.
+
+```
+아바타 중앙 X = _avatarRadius = 16px
+
+┌─ paddingLeft ─┬── lineXOffset ──┐
+│               │                 │
+│               ↓                 │
+│           lineX = paddingLeft + lineXOffset = 항상 16px (아바타 중앙)
+```
+
+**정렬 공식**:
+```
+lineXOffset = _avatarRadius - paddingLeft
+실제 세로선 X = paddingLeft + lineXOffset = _avatarRadius = 16px (항상 일정)
+```
+
+**깊이별 동작**:
+
+| 깊이 | paddingLeft | lineXOffset | 실제 세로선 X | 설명 |
+|------|-------------|-------------|---------------|------|
+| 1-2 | 16px | 0px | 16px | 정상 너비, 보정 불필요 |
+| 3+ | 6px | 10px | 16px | 좁은 너비, lineXOffset으로 보정 |
+
+### 17.5 ThreadConnectorPainter 상세
+
+`CustomPainter`를 상속한 세로선 + L곡선 페인터이다.
+
+```dart
+ThreadConnectorPainter({
+  required this.isLast,       // 마지막 자식 여부
+  this.lineColor,             // 선 색상 (기본: Color(0xFF94A3B8))
+  this.lineWidth,             // 선 굵기 (기본: 1.0, 실제 사용: 1.5)
+  this.curveTargetY,          // 곡선 타겟 Y (기본: 24.0)
+  this.curveRadius,           // 곡선 반경 (기본: 8.0)
+  this.lineXOffset,           // X 오프셋 보정값 (기본: 0.0)
+})
+```
+
+**그리기 로직**:
+
+```
+마지막이 아닌 자식 (isLast=false)     마지막 자식 (isLast=true)
+
+│ (세로선: 0 → size.height)          │ (세로선: 0 → curveTargetY - curveRadius)
+│                                    │
+├── (L곡선 + 수평선)                  └── (L곡선 + 수평선)
+│
+│ (세로선 계속)
+```
+
+- **세로선**: `Offset(lx, 0)` → `Offset(lx, lineEndY)`
+  - 마지막이 아닌 자식: `lineEndY = size.height` (전체 높이)
+  - 마지막 자식: `lineEndY = curveTargetY - curveRadius` (곡선 시작점까지)
+- **L곡선**: `quadraticBezierTo`로 세로에서 수평으로 자연스럽게 꺾임
+  - 시작점: `(lx, curveTargetY - curveRadius)`
+  - 제어점: `(lx, curveTargetY)`
+  - 끝점: `(lx + curveRadius, curveTargetY)`
+  - 이후 수평선: `(lx + curveRadius, curveTargetY)` → `(size.width, curveTargetY)`
+
+**shouldRepaint 비교 필드**: `isLast`, `lineColor`, `lineXOffset`, `curveTargetY`
+
+### 17.6 주요 상수 정리
+
+```dart
+// CommentListView (comment.list.view.dart)
+static const _lineColor = Color(0xFF94A3B8);     // 세로선 색상
+static const _avatarRadius = 16.0;                // 아바타 반지름
+static const _commentTopPadding = 8.0;            // 코멘트 행 상단 패딩
+static const _connectorWidth = 16.0;              // 커넥터 너비 (곡선 수평 길이)
+static const _curveTargetY = _commentTopPadding + _avatarRadius;  // = 24.0 (자식 아바타 중앙 Y)
+
+// CommentTile (comment.tile.dart)
+const kThreadLineColor = Color(0xFF94A3B8);       // 전역 세로선 색상 상수
+// 아바타 radius: 16, 세로선 Container width: 1.5
+
+// ThreadConnectorPainter (comment_thread_painter.dart)
+// lineWidth: 1.5 (L곡선 포함 모든 선)
+// curveRadius: 8.0 (곡선 반경)
+```
+
+**선 굵기 통일**: 세로선(Container width)과 L곡선(ThreadConnectorPainter lineWidth) 모두 **1.5px**로 통일하여 시각적 일관성을 유지한다.
+
+### 17.7 깊이별 들여쓰기 전략
+
+깊이가 깊어질수록 화면 공간이 부족해지므로, 깊은 깊이에서는 들여쓰기를 줄이되 세로선은 정렬을 유지한다.
+
+```dart
+// _buildChildrenArea()에서의 깊이별 처리
+final paddingLeft = parentNode.depth >= 3 ? 6.0 : _avatarRadius;  // 16.0
+final lineXOffset = _avatarRadius - paddingLeft;
+
+// 깊이 1-2: paddingLeft=16, lineXOffset=0  → 정상 들여쓰기
+// 깊이 3+:  paddingLeft=6,  lineXOffset=10 → 좁은 들여쓰기 + 세로선 보정
+```
+
+**시각적 결과**:
+```
+depth 1: 코멘트 A
+         │ (paddingLeft=16, 정상)
+         └── depth 2: 코멘트 B
+              │ (paddingLeft=16, 정상)
+              └── depth 3: 코멘트 C
+                 │ (paddingLeft=6, 좁게 + lineXOffset=10 보정)
+                 └── depth 4: 코멘트 D
+                    │ (paddingLeft=6, 좁게 + lineXOffset=10 보정)
+                    └── depth 5+: ...
+```
+
+### 17.8 주의사항 및 트러블슈팅
+
+1. **paddingLeft를 줄이면 반드시 lineXOffset으로 보정해야 세로선이 어긋나지 않음**
+   - `lineXOffset = _avatarRadius - paddingLeft` 공식을 항상 적용
+   - 보정하지 않으면 자식 영역의 세로선이 부모 아바타 중앙에서 벗어남
+
+2. **ThreadConnectorPainter의 shouldRepaint에서 lineXOffset 비교 필수**
+   - `lineXOffset`이 0이 아닌 값을 가질 수 있으므로, `shouldRepaint`에서 비교해야 정확한 리페인트 발생
+
+3. **IntrinsicHeight 사용 주의**
+   - `CommentTile._buildWithThreadLine()`과 `_buildChildrenArea()`에서 `IntrinsicHeight`를 사용하여 세로선이 코멘트 높이에 맞게 확장됨
+   - `IntrinsicHeight`는 성능 비용이 있으므로, 대량 코멘트에서 성능 이슈 발생 시 고정 높이 방식으로 전환 고려
+
+4. **CommentTile의 showThreadLine 분기**
+   - `showThreadLine=true`: `_buildWithThreadLine()` → `IntrinsicHeight + Row(아바타+세로선 | 내용)` 구조
+   - `showThreadLine=false`: `_buildNormal()` → 일반 `Row(아바타 | 내용)` 구조
+   - 자식이 있는 노드만 세로선을 표시하므로, 외부에서 `hasChildren` 기반으로 결정
+
+5. **색상 일관성**
+   - `kThreadLineColor`(comment.tile.dart 전역 상수)와 `_lineColor`(CommentListView 내부 상수)가 동일한 `Color(0xFF94A3B8)` 값을 사용
+   - 색상 변경 시 두 곳 모두 수정해야 함
+
+### 17.9 파일 위치 참조
+
+| 파일 | 경로 | 핵심 내용 |
+|------|------|----------|
+| 코멘트 목록 위젯 | `lib/post/view/widgets/comment.list.view.dart` | CommentListView, 트리 렌더링, 들여쓰기 전략 |
+| 코멘트 타일 위젯 | `lib/post/view/widgets/comment.tile.dart` | CommentTile, 세로선 표시/미표시 분기 |
+| 스레드 페인터 | `lib/post/view/widgets/comment_thread_painter.dart` | CommentNode, buildCommentTree(), ThreadConnectorPainter |
+| 코멘트 입력 위젯 | `lib/post/view/widgets/comment.input.dart` | CommentInput (대댓글 입력 폼) |
+| 포스트 모델 | `lib/post/post.model.dart` | Post (depth, idxParent 필드 포함) |

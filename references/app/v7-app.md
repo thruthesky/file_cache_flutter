@@ -572,3 +572,146 @@ try {
 | **로그인 필수** | 인증된 사용자 | `mine`, `create`, `scanQrCode` |
 | **소유자/관리자** | 업소 소유자 또는 관리자 | `update`, `delete`, `issueQrCode` |
 | **관리자만** | 관리자 | `approve`, `reject`, `toggleQrCode` |
+
+---
+
+## 15. DTD를 사용한 디버깅 및 스크린캡쳐 가이드
+
+### 목적
+
+Dart Tooling Daemon (DTD)을 사용하여 앱을 재실행하지 않고 특정 화면으로 이동하여 UI/UX를 빠르게 검증합니다.
+
+### 주요 원칙
+
+- **앱 재실행 금지**: Hot reload/restart만 사용
+- **Flutter Driver 테스트 금지**: DTD 방식만 사용
+- **현재 앱 상태 유지**: 상태가 보존된 상태에서 화면 변경
+- **빠른 피드백 루프**: 스크린샷으로 결과 즉시 확인
+
+### 워크플로우
+
+#### 1단계: initState() 코드 작성
+
+원하는 화면으로 자동 이동하는 코드를 `AppScreen`의 `_AppScreenState.initState()`에 추가합니다.
+
+```dart
+@override
+void initState() {
+  super.initState();
+  // 임시: 특정 화면으로 이동 (예: CompanyViewScreen)
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    AppNavigationState.of(context).openCompanyScreen(idx: 1025);
+  });
+}
+```
+
+또는 특정 화면의 `initState()`에서 상호작용을 시뮬레이션합니다.
+
+```dart
+@override
+void initState() {
+  super.initState();
+  // 임시: UI가 빌드된 후 상호작용 시뮬레이션
+  Future.delayed(const Duration(seconds: 1), () {
+    _onSubmit(testData);
+  });
+}
+```
+
+#### 2단계: Hot Reload/Restart 실행
+
+코드 변경 후 Hot reload 또는 Hot restart를 실행합니다.
+
+```bash
+# 또는 IDE의 Hot reload 단축키 (보통 Cmd+R)
+# DTD URI가 필요하면 미리 준비
+```
+
+#### 3단계: xcrun simctl로 스크린캡쳐
+
+원하는 페이지로 이동한 후 다음 명령으로 시뮬레이터 화면을 스크린캡쳐합니다.
+
+```bash
+# 기본 스크린샷 캡쳐
+xcrun simctl io booted screenshot ~/tmp/sim_screenshot.png && echo "스크린샷 완료"
+
+# 지연 시간을 포함한 버전 (UI 로드 시간 고려)
+sleep 3 && xcrun simctl io booted screenshot ~/tmp/sim_v2.png && echo "스크린샷 완료"
+
+# 에러 처리 포함
+xcrun simctl io booted screenshot /Users/thruthesky/tmp/sim_v3.png 2>&1 && echo "완료"
+```
+
+#### 4단계: 스크린샷 결과 확인
+
+저장된 이미지 파일을 열어서 UI 레이아웃, 텍스트, 컬러, 애니메이션 등을 검증합니다.
+
+```bash
+# macOS에서 이미지 열기
+open ~/tmp/sim_screenshot.png
+
+# 또는 미리보기 앱
+open -a Preview ~/tmp/sim_screenshot.png
+```
+
+#### 5단계: 코드 수정 및 반복
+
+필요시 코드를 수정하고 단계 2-4를 반복합니다.
+
+### 주의사항
+
+| 항목 | ✅ 허용 | ❌ 금지 |
+|------|--------|--------|
+| **리로드 방식** | Hot reload / Hot restart | 앱 재실행 |
+| **테스트 타입** | DTD 방식 | Flutter Driver / E2E / Integration Test |
+| **파일 생성** | 기존 파일만 수정 | `test/` 디렉토리 생성 |
+| **앱 상태** | 현재 상태 유지 | 상태 초기화 |
+
+### 실제 사용 사례
+
+**시나리오**: CompanyViewScreen에서 후기 작성 UI 검증
+
+```dart
+// lib/screens/app/app_screen.dart
+class _AppScreenState extends State<AppScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 임시: CompanyViewScreen으로 이동
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppNavigationState.of(context).openCompanyScreen(idx: 1025);
+    });
+  }
+
+  // ... 나머지 코드
+}
+```
+
+```bash
+# 1. Hot reload 실행 (IDE에서 Cmd+R)
+# 2. 화면이 CompanyViewScreen으로 이동 확인
+# 3. 스크린캡쳐
+xcrun simctl io booted screenshot ~/tmp/company_view_screenshot.png && echo "완료"
+
+# 4. 결과 확인
+open ~/tmp/company_view_screenshot.png
+
+# 5. 필요시 코드 수정 → 단계 1-4 반복
+```
+
+### 테스트 완료 후
+
+임시 코드를 모두 제거하고 커밋하기 전에 정리합니다.
+
+```dart
+// ❌ 제거 필요
+// WidgetsBinding.instance.addPostFrameCallback((_) {
+//   AppNavigationState.of(context).openCompanyScreen(idx: 1025);
+// });
+
+// ✅ 일반적인 코드만 남김
+void initState() {
+  super.initState();
+  _loadData();
+}
+```
