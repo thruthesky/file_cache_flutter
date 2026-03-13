@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Image lightbox widget for viewing images in fullscreen
 ///
@@ -78,6 +79,44 @@ class _FullScreenImagesState extends State<FullScreenImages> {
               return _buildImageViewer(widget.imageUrls[index]);
             },
           ),
+
+          if (widget.imageUrls.length > 1 && !_isZoomed && _currentIndex > 0)
+            Positioned(
+              left: 16,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: _buildNavigationArrow(
+                  icon: FontAwesomeIcons.lightChevronLeft,
+                  onTap: () {
+                    _pageController.previousPage(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                    );
+                  },
+                ),
+              ),
+            ),
+
+          if (widget.imageUrls.length > 1 &&
+              !_isZoomed &&
+              _currentIndex < widget.imageUrls.length - 1)
+            Positioned(
+              right: 16,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: _buildNavigationArrow(
+                  icon: FontAwesomeIcons.lightChevronRight,
+                  onTap: () {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                    );
+                  },
+                ),
+              ),
+            ),
 
           // Top bar with close button and page indicator
           Positioned(
@@ -204,8 +243,8 @@ class _FullScreenImagesState extends State<FullScreenImages> {
                                         strokeWidth: 2,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                          Colors.white54,
-                                        ),
+                                              Colors.white54,
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -236,8 +275,8 @@ class _FullScreenImagesState extends State<FullScreenImages> {
   Widget _buildImageViewer(String imageUrl) {
     return GestureDetector(
       onDoubleTapDown: (details) {
-        final currentScale =
-            _transformationController.value.getMaxScaleOnAxis();
+        final currentScale = _transformationController.value
+            .getMaxScaleOnAxis();
         if (currentScale > 1.0) {
           _transformationController.value = Matrix4.identity();
         } else {
@@ -268,6 +307,25 @@ class _FullScreenImagesState extends State<FullScreenImages> {
               child: Icon(Icons.broken_image, size: 64, color: Colors.white54),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavigationArrow({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.black.withValues(alpha: 0.45),
+      shape: const CircleBorder(),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: SizedBox(
+          width: 48,
+          height: 48,
+          child: Center(child: FaIcon(icon, color: Colors.white, size: 20)),
         ),
       ),
     );
