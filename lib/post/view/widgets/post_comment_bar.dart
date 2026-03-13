@@ -288,7 +288,6 @@ class _PostCommentBarState extends State<PostCommentBar> {
           ],
         ),
       ),
-      ),
     );
   }
 }
