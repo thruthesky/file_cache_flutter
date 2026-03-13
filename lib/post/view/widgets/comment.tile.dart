@@ -20,6 +20,9 @@ class CommentTile extends StatefulWidget {
   final Post comment;
   final List<Post> allComments;
   final VoidCallback onReply;
+
+  /// 답글 탭 콜백 — 하단 고정 바에 답글 대상을 설정한다.
+  final void Function(Post comment)? onReplyTap;
   final Future<void> Function(Post comment, String content) onEdit;
   final Future<void> Function(Post comment) onDelete;
 
@@ -34,6 +37,7 @@ class CommentTile extends StatefulWidget {
     required this.comment,
     required this.allComments,
     required this.onReply,
+    this.onReplyTap,
     required this.onEdit,
     required this.onDelete,
     this.hasChildren = false,
@@ -261,7 +265,10 @@ class _CommentTileState extends State<CommentTile> {
                   icon: FontAwesomeIcons.lightReply,
                   label: '답글',
                   color: scheme.tertiary,
-                  onTap: widget.onReply,
+                  onTap: () {
+                    widget.onReplyTap?.call(widget.comment);
+                    widget.onReply();
+                  },
                 ),
 
                 const SizedBox(width: 12),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
-import 'package:philgo/post/view/widgets/comment.input.dart';
 import 'package:philgo/post/view/widgets/comment.tile.dart';
 import 'package:philgo/post/view/widgets/comment_thread_painter.dart';
 
@@ -14,9 +13,11 @@ class CommentListView extends StatefulWidget {
   final bool isLoading;
   final int noOfComment;
   final int idxRoot;
-  final Future<void> Function(String content, {int? idxParent}) onCreateComment;
   final Future<void> Function(Post comment, String content) onEditComment;
   final Future<void> Function(Post comment) onDeleteComment;
+
+  /// 답글 버튼 탭 시 호출 — 화면 레벨에서 하단 바 답글 모드를 활성화한다.
+  final void Function(Post comment)? onReplyTap;
 
   const CommentListView({
     super.key,
@@ -24,9 +25,9 @@ class CommentListView extends StatefulWidget {
     required this.isLoading,
     required this.noOfComment,
     required this.idxRoot,
-    required this.onCreateComment,
     required this.onEditComment,
     required this.onDeleteComment,
+    this.onReplyTap,
   });
 
   @override
@@ -34,9 +35,6 @@ class CommentListView extends StatefulWidget {
 }
 
 class _CommentListViewState extends State<CommentListView> {
-  /// 대댓글 대상 댓글 idx (null이면 최상위 댓글 입력 모드)
-  int? _replyToIdx;
-
   /// 세로선 색상
   static const _lineColor = Color(0xFF94A3B8);
 
@@ -102,14 +100,6 @@ class _CommentListViewState extends State<CommentListView> {
           _buildCommentTree(),
 
         const SizedBox(height: 8),
-
-        // 최상위 댓글 입력 폼
-        CommentInput(
-          idxRoot: widget.idxRoot,
-          onSubmit: (content) async {
-            await widget.onCreateComment(content);
-          },
-        ),
       ],
     );
   }
@@ -150,23 +140,11 @@ class _CommentListViewState extends State<CommentListView> {
           allComments: widget.comments,
           hasChildren: hasChildren,
           showThreadLine: hasChildren,
-          onReply: () {
-            setState(() {
-              _replyToIdx = _replyToIdx == node.comment.idx
-                  ? null
-                  : node.comment.idx;
-            });
-          },
+          onReply: () {},
+          onReplyTap: widget.onReplyTap,
           onEdit: widget.onEditComment,
           onDelete: widget.onDeleteComment,
         ),
-
-        // 대댓글 입력 폼
-        if (_replyToIdx == node.comment.idx)
-          Padding(
-            padding: const EdgeInsets.only(left: 40),
-            child: _buildReplyInput(node.comment),
-          ),
 
         // 자식 영역 (세로선 포함)
         if (hasChildren) _buildChildrenArea(node),
@@ -221,54 +199,4 @@ class _CommentListViewState extends State<CommentListView> {
     );
   }
 
-  /// 대댓글 입력 위젯
-  Widget _buildReplyInput(Post parentComment) {
-    final scheme = Theme.of(context).colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 대댓글 대상 표시
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4, left: 4),
-          child: Row(
-            children: [
-              FaIcon(
-                FontAwesomeIcons.downRight,
-                size: 12,
-                color: scheme.primary,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${parentComment.userName}님에게 답글',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: scheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              // 닫기 버튼
-              GestureDetector(
-                onTap: () => setState(() => _replyToIdx = null),
-                child: FaIcon(
-                  FontAwesomeIcons.lightXmark,
-                  size: 14,
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-        CommentInput(
-          idxRoot: widget.idxRoot,
-          idxParent: parentComment.idx,
-          autofocus: true,
-          hintText: '답글을 입력하세요',
-          onSubmit: (content) async {
-            await widget.onCreateComment(content, idxParent: parentComment.idx);
-            if (mounted) setState(() => _replyToIdx = null);
-          },
-        ),
-      ],
-    );
-  }
 }

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/widgets/comment.list.view.dart';
 import 'package:philgo/post/view/widgets/post.action.bar.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
+import 'package:philgo/post/view/widgets/post_comment_bar.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -36,6 +39,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
   // 댓글
   List<Post> _comments = [];
   bool _commentsLoading = false;
+
+  // 답글 대상 댓글 (null이면 최상위 댓글 모드)
+  Post? _replyToComment;
 
   @override
   void initState() {
@@ -136,7 +142,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
   // ── 댓글 CRUD ──────────────────────────────────────────
 
   /// 댓글/대댓글 생성
-  Future<void> _createComment(String content, {int? idxParent}) async {
+  Future<void> _createComment(
+    String content,
+    int? idxParent,
+    List<FileUploadModel> files,
+  ) async {
     final newComment = await PostService.createComment(
       idxRoot: _post.idx,
       content: content,
@@ -147,6 +157,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
     setState(() {
       _comments = [..._comments, newComment];
       _post = _post.copyWith(noOfComment: _comments.length);
+      _replyToComment = null;
     });
   }
 
@@ -205,6 +216,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
       },
       child: Scaffold(
         backgroundColor: scheme.surface,
+        bottomNavigationBar: PostCommentBar(
+          idxRoot: _post.idx,
+          replyTo: _replyToComment,
+          onCancelReply: () => setState(() => _replyToComment = null),
+          onSubmit: _createComment,
+        ),
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -213,6 +230,53 @@ class _PostViewScreenState extends State<PostViewScreen> {
               foregroundColor: scheme.onSurface,
               elevation: 0,
               scrolledUnderElevation: 1,
+              actions: [
+                if (!_isLoading)
+                  PopupMenuButton<String>(
+                    icon: FaIcon(
+                      FontAwesomeIcons.lightEllipsisVertical,
+                      size: 18,
+                      color: scheme.onSurface,
+                    ),
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'edit':
+                          _editPost();
+                        case 'delete':
+                          _deletePost();
+                        case 'block':
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('차단 기능은 준비 중입니다.')),
+                          );
+                        case 'report':
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('신고 기능은 준비 중입니다.')),
+                          );
+                      }
+                    },
+                    itemBuilder: (_) => isMine
+                        ? [
+                            const PopupMenuItem(
+                              value: 'edit',
+                              child: Text('수정'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('삭제'),
+                            ),
+                          ]
+                        : [
+                            const PopupMenuItem(
+                              value: 'block',
+                              child: Text('차단'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'report',
+                              child: Text('신고'),
+                            ),
+                          ],
+                  ),
+              ],
             ),
 
             SliverToBoxAdapter(
@@ -296,9 +360,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     isLoading: _commentsLoading,
                     noOfComment: _post.noOfComment,
                     idxRoot: _post.idx,
-                    onCreateComment: _createComment,
                     onEditComment: _editComment,
                     onDeleteComment: _deleteComment,
+                    onReplyTap: (comment) {
+                      setState(() => _replyToComment = comment);
+                    },
                   ),
 
                   const SizedBox(height: 32),
@@ -313,34 +379,60 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   Widget _buildMeta(Post post, ThemeData theme, ColorScheme scheme) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        FaIcon(
-          FontAwesomeIcons.lightClock,
-          size: 14,
-          color: scheme.onSurfaceVariant,
-        ),
-        const SizedBox(width: 6),
-        Text(
-          _formatFullDate(post.stamp),
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
+        // 아바타
+        UserAvatar(photoUrl: post.userPhotoUrl, radius: 16),
+        const SizedBox(width: 10),
+        // 이름 + 날짜 컬럼
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (post.userName.isNotEmpty)
+                Text(
+                  post.userName,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              Row(
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.lightClock,
+                    size: 11,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    _formatFullDate(post.stamp),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                  ),
+                  if (post.category.isNotEmpty) ...[
+                    const SizedBox(width: 12),
+                    FaIcon(
+                      FontAwesomeIcons.lightTag,
+                      size: 11,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      post.category,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
           ),
         ),
-        if (post.category.isNotEmpty) ...[
-          const SizedBox(width: 16),
-          FaIcon(
-            FontAwesomeIcons.lightTag,
-            size: 14,
-            color: scheme.onSurfaceVariant,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            post.category,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant,
-            ),
-          ),
-        ],
       ],
     );
   }
