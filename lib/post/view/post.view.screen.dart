@@ -254,27 +254,54 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           );
                       }
                     },
-                    itemBuilder: (_) => isMine
-                        ? [
-                            const PopupMenuItem(
-                              value: 'edit',
-                              child: Text('수정'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'delete',
-                              child: Text('삭제'),
-                            ),
-                          ]
-                        : [
-                            const PopupMenuItem(
-                              value: 'block',
-                              child: Text('차단'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'report',
-                              child: Text('신고'),
-                            ),
-                          ],
+                    itemBuilder: (ctx) {
+                      final popScheme = Theme.of(ctx).colorScheme;
+                      return isMine
+                          ? [
+                              PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.lightPenToSquare, size: 15, color: popScheme.onSurface),
+                                    const SizedBox(width: 10),
+                                    const Text('수정'),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.lightTrashCan, size: 15, color: popScheme.error),
+                                    const SizedBox(width: 10),
+                                    Text('삭제', style: TextStyle(color: popScheme.error)),
+                                  ],
+                                ),
+                              ),
+                            ]
+                          : [
+                              PopupMenuItem(
+                                value: 'block',
+                                child: Row(
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.lightBan, size: 15, color: popScheme.onSurface),
+                                    const SizedBox(width: 10),
+                                    const Text('차단'),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 'report',
+                                child: Row(
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.lightFlag, size: 15, color: popScheme.error),
+                                    const SizedBox(width: 10),
+                                    Text('신고', style: TextStyle(color: popScheme.error)),
+                                  ],
+                                ),
+                              ),
+                            ];
+                    },
                   ),
               ],
             ),
