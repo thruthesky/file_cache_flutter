@@ -10,6 +10,8 @@
    - [post.create](#postcreate---게시글-생성)
    - [post.update](#postupdate---게시글-수정)
    - [post.delete](#postdelete---게시글-삭제)
+   - [post.advertisementConfig](#postadvertisementconfig---포인트-광고-설정-조회)
+   - [post.advertise](#postadvertise---포인트-광고-등록연장)
 4. [포인트 시스템](#포인트-시스템)
 5. [PostEntity 필드](#postentity-필드)
 6. [content_type 판별 및 저장](#content_type-판별-및-저장)
@@ -316,6 +318,52 @@ PostService::delete()
 | point_write_delete | 글 삭제 시 차감 포인트 | -10 |
 | point_comment_delete | 댓글 삭제 시 차감 포인트 | -5 |
 
+### 포인트 광고 (글 상단 고정)
+
+게시글을 포인트로 구매하여 게시판 상단에 고정하는 기능이다.
+
+#### post.advertisementConfig — 포인트 광고 설정 조회
+
+인증 불필요. 게시판/카테고리가 광고 가능한지 여부와 기간별 비용 목록을 반환한다.
+
+```
+GET /api.php?method=post.advertisementConfig&post_id=buyandsell&category=개인장터
+```
+
+**응답:**
+```json
+{
+  "success": true,
+  "eligible": true,
+  "cost_per_hour": 240,
+  "days": [
+    {"days": 3, "points": 17280},
+    {"days": 7, "points": 40320}
+  ]
+}
+```
+
+#### post.advertise — 포인트 광고 등록/연장
+
+인증 필수. 본인 글만 광고 가능. 보유 포인트 ≥ 필요 포인트.
+
+```
+GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
+```
+
+**DB 필드 매핑:**
+| 필드 | 설명 |
+|------|------|
+| int_5 | 광고 종료 Unix timestamp (연장 시 기존 만료시간에 추가) |
+| int_6 | 마지막 등록 시간 |
+| int_7 | 마지막 등록 기간 (일) |
+| int_8 | 마지막 등록에 소비한 포인트 |
+
+**광고 가능 게시판/카테고리 (24개):**
+`boarding_house`, `business`, `buyandsell`, `massage`, `promotion`, `real_estate`, `rest`, `study`, `travel`, `wanted`, `blog`, `가전/생활용품`, `개인장터`, `골프`, `렌트카`, `주택임대`, `중고차`, `여권/비자`, `이민`, `컴퓨터/인터넷`, `페소환전`, `핸드폰`, `호텔`, `temp`
+
+**비용 계산:** `240P/시간 × 24시간 × 일수`
+
 ---
 
 ## PostEntity 필드
@@ -330,6 +378,9 @@ PostService::delete()
 | subject | string | 제목 |
 | content | string | 내용 |
 | content_type | string | 콘텐츠 타입 (`text`, `markdown`, `html`). 저장 시 자동 계산 |
+| is_markdown | bool | `content_type === 'markdown'` 편의 접근자 (DB 미저장, Entity에서 자동 계산) |
+| is_html | bool | `content_type === 'html'` 편의 접근자 (DB 미저장, Entity에서 자동 계산) |
+| is_text | bool | `content_type === 'text'` 또는 빈값 편의 접근자 (DB 미저장, Entity에서 자동 계산) |
 | stamp | int | 작성 시간 (UNIX timestamp) |
 | stamp_update | int | 수정 시간 |
 | depth | int | 깊이 (0=글, 1=댓글, 2=대댓글) |
@@ -396,12 +447,12 @@ markdown > html > text (기본값)
 
 조건 (하나라도 참이면 `markdown`):
 
-1. **헤딩**: `preg_match('/^#{1,6}\s+.+/', $text)` — 문자열 **시작**에 `#` 1~6개 + 공백 + 텍스트
-2. **이미지**: `![alt](url)` 구문 — `![` 와 `](` 가 존재하고, 그 사이에 줄바꿈 없음
+1. **헤딩**: `preg_match('/^#{1,6}\s+.+/m', $content)` — 각 줄의 시작에 `#` 1~6개 + 공백 + 텍스트 (`/m` multiline 플래그 사용)
+2. **이미지**: `preg_match('/!\[.*?\]\(.+?\)/', $content)` — 마크다운 이미지 `![alt](url)` 구문
 
 주의사항:
-- 최소 길이: `trim($text)` 2자 이상
-- 헤딩은 `^` 앵커 사용 → `"안녕\n# 제목"`은 `text`, `"# 제목\n안녕"`은 `markdown`
+- 최소 길이: `trim($decoded)` 2자 이상 (`html_entity_decode()` 후)
+- `/m` 플래그로 본문 중간의 헤딩도 감지 → `"안녕\n# 제목"`도 `markdown` (v6 개선)
 
 ### is_html() 판별 조건
 
@@ -428,17 +479,52 @@ markdown > html > text (기본값)
 
 ### 조회 동작
 
-- DB에 `content_type` 값이 있으면 그대로 사용
-- `NULL` 또는 빈 문자열이면 `PostEntity::fromArray()`에서 폴백 계산
-- 이 폴백은 기존 데이터(v6에서 생성된 레코드) 호환용
+- DB에 `content_type` 값이 있으면 `PostEntity::fromArray()`에서 그대로 매핑
+- `NULL` 또는 빈 문자열이면 빈 문자열(`''`)로 매핑 (Entity는 순수 데이터 구조체이므로 판별 로직을 포함하지 않음)
+- 기존 데이터(v6 레코드)는 `content_type`이 NULL → 클라이언트에서 빈 문자열 수신 시 자체 판별 또는 `'text'`로 간주
 
-### sanitize_user_input() 전처리 주의사항
+### html_entity_decode() 전처리 (구현 완료)
 
-v6는 판별 전에 `html_entity_decode($str, ENT_QUOTES | ENT_HTML5, 'UTF-8')`을 거친다.
-v7 저장 시점에서는 클라이언트가 보낸 원본 `content`로 판별하므로,
-Quill 같은 리치 에디터가 HTML 엔티티로 인코딩해서 저장하는 경우 차이가 발생할 수 있다.
+v7의 `PostService::detectContentType()`은 판별 전에 `html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8')`를 적용한다.
+이로써 Quill 같은 리치 에디터가 HTML 엔티티로 인코딩해서 보내는 경우에도 정확한 판별이 보장된다.
 
-대응: v7에서도 판별 전에 `html_entity_decode()` 1회 적용 후 판별할 것을 권장.
+### boolean 편의 속성 (is_markdown, is_html, is_text)
+
+v6 `PostModel`과 동일하게, `PostEntity`에 `content_type` 기반 boolean 편의 접근자를 제공한다.
+DB에 저장되지 않으며 `fromArray()` 시 `content_type` 값에서 자동 계산된다.
+
+```php
+// PostEntity — content_type 기반 boolean 편의 속성
+public bool $is_markdown = false; // content_type === 'markdown'
+public bool $is_html = false;     // content_type === 'html'
+public bool $is_text = false;     // content_type === 'text' 또는 빈값
+```
+
+`toArray()` / API 응답에도 포함되어 클라이언트에서 문자열 비교 없이 바로 사용 가능:
+
+```json
+{
+  "content_type": "html",
+  "is_markdown": false,
+  "is_html": true,
+  "is_text": false
+}
+```
+
+### 핵심 소스코드
+
+```php
+// PostService::detectContentType() — 콘텐츠 포맷 판별
+public static function detectContentType(string $content): string
+{
+    $decoded = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $decoded = trim($decoded);
+    if (mb_strlen($decoded) < 2) return 'text';
+    if (self::isMarkdown($decoded)) return 'markdown';
+    if (self::isHtml($decoded)) return 'html';
+    return 'text';
+}
+```
 
 ---
 
