@@ -147,7 +147,7 @@ v7/
 | 파일 | 용도 | 표시 조건 | CSS 클래스 |
 |------|------|----------|-----------|
 | `layout/layout.topbar.php` | 최상단 고정 바 (카테고리, 광고문의 등) | 데스크톱(>=992px) | `v7-topbar`, `v7-lg` |
-| `layout/layout.header-mobile.php` | 모바일 헤더 (메뉴 링크, 검색/햄버거) | 모바일(<992px) | `v7-header-mobile`, `v7-mobile-only` |
+| `layout/layout.header-mobile.php` | 모바일 헤더 (빠른 링크 + 검색/햄버거 + v6형 확장 메뉴 패널) | 모바일(<992px) | `v7-header-mobile`, `v7-mobile-only` |
 | `layout/layout.header-desktop.php` | 데스크톱 헤더 (로고, 검색, 4열 메뉴) | 데스크톱(>=992px) | `v7-header-desktop`, `v7-lg` |
 | `layout/layout.sidebar-left.php` | 왼쪽 사이드바 (로그인, 최신댓글, 최신사진) | 데스크톱(>=992px) | `v7-sidebar`, `v7-lg` |
 | `layout/layout.sidebar-right.php` | 오른쪽 사이드바 (shared 위젯 4개 포함) | XL(>=1200px), 홈만 | `v7-sidebar`, `v7-xl` |

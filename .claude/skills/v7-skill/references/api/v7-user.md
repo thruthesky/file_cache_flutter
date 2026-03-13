@@ -7,6 +7,12 @@
 - [3. API 엔드포인트](#3-api-엔드포인트)
   - [3.1 user.count](#31-usercount---총-사용자-수-조회)
   - [3.2 user.me](#32-userme---현재-로그인-사용자-정보-조회)
+  - [3.3 user.socialLogin](#33-usersociallogin---소셜-로그인)
+  - [3.4 공개 프로필 페이지 (SSR)](#34-공개-프로필-페이지-ssr)
+    - [3.4.a 디자인 구조 (보더리스 디자인)](#34a-디자인-구조-보더리스-디자인)
+  - [3.5 user.updateMyProfile](#35-userupdatemyprofile---회원-정보-수정)
+  - [3.6 회원 정보 수정 페이지 (SSR)](#36-회원-정보-수정-페이지-ssr)
+  - [3.7 user.search — 닉네임으로 사용자 검색](#37-usersearch---닉네임으로-사용자-검색)
 - [4. 파일 구조](#4-파일-구조)
 - [5. 인증 시스템 (AuthService)](#5-인증-시스템-authservice)
 - [6. 테스트](#6-테스트)
@@ -19,6 +25,8 @@
   - [7.6 레거시 함수와의 관계](#76-레거시-함수와의-관계)
   - [7.7 v7 API에서의 레벨 반환 규칙](#77-v7-api에서의-레벨-반환-규칙)
 - [8. UserEntity](#8-userentity)
+- [9. 사용자 설정 페이지 (SSR)](#9-사용자-설정-페이지-ssr)
+- [10. 사용자 차단 기능](#10-사용자-차단-기능)
 
 ---
 
@@ -317,17 +325,528 @@ curl -s -X POST "https://local.philgo.com:443/api.php" \
 
 ---
 
+### 3.4 공개 프로필 페이지 (SSR)
+
+> 공개 프로필은 API 엔드포인트가 아니라 **v7 웹 페이지(SSR)**로 구현되어 있다.
+> `UserService`와 `PostRepository` 메서드를 직접 호출하여 서버에서 렌더링한다.
+
+| 항목 | 값 |
+|------|-----|
+| **URL** | `/user/public-profile` |
+| **파일** | `v7/user/public-profile.php` (PHP), `v7/user/public-profile.css` (CSS) |
+| **파라미터** | `idx_member` (선택): 사용자 idx, `firebase_uid` (선택): Firebase UID |
+| **우선순위** | `firebase_uid` → `idx_member` → 로그인 사용자 (둘 다 없을 때) |
+
+**URL 예시**:
+```
+# idx_member로 조회
+https://v7-local.philgo.com/user/public-profile?idx_member=123
+
+# firebase_uid로 조회
+https://v7-local.philgo.com/user/public-profile?firebase_uid=abc123
+
+# 파라미터 없음 → 로그인 사용자 프로필 표시
+https://v7-local.philgo.com/user/public-profile
+```
+
+**사용하는 Service/Repository 메서드**:
+
+| 메서드 | 설명 |
+|--------|------|
+| `UserService::getByFirebaseUid($uid)` | firebase_uid로 사용자 조회 → `UserEntity\|null` |
+| `UserService::getPublicProfile($idx)` | idx로 공개 프로필 조회 → `UserEntity` (없으면 RuntimeException) |
+| `PostRepository::findPostsByIdxMember($idx, $limit)` | 사용자의 최근 글 목록 조회 |
+| `PostRepository::findCommentsByIdxMember($idx, $limit)` | 사용자의 최근 댓글 목록 조회 |
+| `AuthService::getLoginUser()` | 로그인 사용자 확인 (본인 프로필 여부 판단) |
+
+**페이지 구성**:
+
+| 영역 | 설명 |
+|------|------|
+| **프로필 헤더** | 아바타, 닉네임, 통계(글 수/댓글 수/레벨), 액션 버튼 |
+| **액션 버튼** | 본인: 회원정보 수정 / 타인: 채팅, 글 목록 |
+| **최근 글** | `findPostsByIdxMember()` — 최근 5개, 제목+날짜 |
+| **최근 댓글** | `findCommentsByIdxMember()` — 최근 5개, 내용 미리보기+날짜 |
+| **에러 상태** | 사용자 없음, 로그인 필요 시 에러 카드 표시 |
+
+#### 3.4.a 디자인 구조 (보더리스 디자인)
+
+v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-card` 태그를 사용하지 않으며, 영역 구분은 연한 배경색(`#f8fafc`)으로 한다.
+
+**아이콘 규칙**: 모든 아이콘은 Font Awesome **Light 스타일**(`fal`) 전용이다. `fa-solid`, `fa-regular` 사용 금지.
+
+```html
+<!-- ✅ 올바른 사용 -->
+<i class="fal fa-pen-to-square"></i>
+<i class="fal fa-comments"></i>
+<i class="fal fa-star"></i>
+<i class="fal fa-user-pen"></i>
+
+<!-- ❌ 금지 -->
+<i class="fa-solid fa-pen-to-square"></i>
+<i class="fa-regular fa-comments"></i>
+```
+
+**디자인 요소별 구조**:
+
+| 요소 | 구현 방식 | 핵심 CSS |
+|------|----------|----------|
+| **에러 상태** | `<div class="profile-error-card">` (wa-card 미사용) | `background: #f8fafc; border-radius: 16px; border 없음` |
+| **프로필 헤더** | `<section class="profile-header-section">` | 보더/배경 없음, 중앙 정렬, flex-column |
+| **아바타** | `<img class="profile-avatar">` 또는 `<div class="profile-avatar-placeholder">` | 120px 원형 (모바일 96px), **보더 없음**, placeholder: `background: var(--wa-color-brand-95, #e7f5ff)`, 아이콘 색: `var(--wa-color-brand-50, #3178c0)` |
+| **통계** | 숫자+레이블 스타일 (`profile-stat-item`) | Instagram 스타일, 숫자 강조(1.1rem bold) + 레이블(0.7rem subtle), `flex` + `gap: 2.5rem` |
+| **최근 글/댓글 섹션** | `<section class="profile-recent-section">` | `background: #f8fafc; border-radius: 12px; border 없음` |
+| **글/댓글 아이템** | `<a class="profile-post-item">` / `<a class="profile-comment-item">` | hover 시 `background: #fff`, 구분선: `border-top: 1px solid #f1f5f9` (매우 연한 선) |
+| **빈 상태** | `<div class="profile-empty">` | 아이콘 `opacity: 0.5`, 텍스트 `neutral-60` |
+
+**통계 영역 핵심 코드** (Instagram 스타일 숫자+레이블):
+```php
+<div class="profile-stats">
+    <div class="profile-stat-item">
+        <span class="profile-stat-number"><?= number_format($user->no_of_post) ?></span>
+        <span class="profile-stat-label">글</span>
+    </div>
+    <div class="profile-stat-item">
+        <span class="profile-stat-number"><?= number_format($user->no_of_comment) ?></span>
+        <span class="profile-stat-label">댓글</span>
+    </div>
+    <div class="profile-stat-item">
+        <span class="profile-stat-number"><?= number_format($user->level) ?></span>
+        <span class="profile-stat-label">레벨</span>
+    </div>
+</div>
+```
+
+**글 목록 링크 — idx_member 기반 전체 게시판 조회**:
+
+공개 프로필의 "글" 버튼과 "더보기" 링크는 `Route::url()`을 사용하여 해당 사용자의 전체 게시판 글을 조회한다:
+```php
+<!-- 글 버튼 -->
+<wa-button variant="neutral" appearance="outlined" size="small"
+    href="<?= \V7\Utils\Route::url('/post/list', ['idx_member' => $user->idx]) ?>">
+    <i slot="start" class="fal fa-list"></i> 글
+</wa-button>
+
+<!-- 더보기 링크 -->
+<a href="<?= \V7\Utils\Route::url('/post/list', ['idx_member' => $user->idx]) ?>">
+    더보기 <i class="fal fa-chevron-right"></i>
+</a>
+```
+
+> **중요**: `url()->post->list->community`는 `post_id=freetalk`만 전달하므로, 특정 사용자의 전체 게시판 글을 조회하려면 반드시 `Route::url('/post/list', ['idx_member' => $user->idx])`를 사용해야 한다.
+
+**에러 상태 핵심 코드**:
+```php
+<div class="profile-error-card">
+    <i class="fal fa-circle-exclamation profile-error-icon"></i>
+    <h2>프로필을 볼 수 없음</h2>
+    <p><?= htmlspecialchars($errorMessage) ?></p>
+    <wa-button variant="brand" href="<?= url()->home ?>">
+        <i slot="start" class="fal fa-house"></i>
+        홈으로 돌아가기
+    </wa-button>
+</div>
+```
+
+**CSS 핵심 규칙**:
+
+```css
+/* 보더리스 디자인 — wa-card 미사용, 배경색으로 영역 구분 */
+.profile-error-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    /* border 없음 */
+}
+
+.profile-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    /* border 없음 */
+}
+
+.profile-avatar-placeholder {
+    background: var(--wa-color-brand-95, #e7f5ff);  /* 연한 브랜드 배경 */
+    color: var(--wa-color-brand-50, #3178c0);        /* 브랜드 아이콘 색상 */
+}
+
+.profile-recent-section {
+    background: #f8fafc;
+    border-radius: 12px;
+    /* border 없음 */
+}
+
+.profile-post-item:hover,
+.profile-comment-item:hover {
+    background: #fff;  /* hover 시 흰색 배경 */
+}
+```
+
+**통계 영역 CSS**:
+```css
+.profile-stats {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+}
+.profile-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+}
+.profile-stat-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--wa-color-neutral-10, #1e293b);
+}
+.profile-stat-label {
+    font-size: 0.7rem;
+    color: var(--wa-color-neutral-60, #64748b);
+}
+```
+
+**반응형**: 모바일(< 992px)에서 아바타 80px, 패딩/간격 축소. 반응형 규칙은 `public-profile.css` 하단의 `@media (max-width: 991.98px)` 블록에 정의.
+
+**URL 헬퍼**:
+```php
+// v7 url() 함수로 공개 프로필 링크 생성
+url()->user->publicProfile(123)   // → '/user/public-profile?idx_member=123'
+url()->user->publicProfile()      // → '/user/public-profile'
+```
+
+#### 3.4.1 UserService::getByFirebaseUid()
+
+```php
+/**
+ * Firebase UID로 사용자를 조회한다.
+ *
+ * @param string $firebaseUid Firebase UID
+ * @return UserEntity|null 사용자 Entity 또는 null
+ */
+public static function getByFirebaseUid(string $firebaseUid): ?UserEntity
+```
+
+- 빈 문자열 전달 시 `null` 반환
+- 존재하지 않는 UID → `null` 반환
+- 반환된 UserEntity에 `password` 미포함
+- `level`, `level_progress`는 동적 계산
+
+#### 3.4.2 PostRepository::findPostsByIdxMember()
+
+```php
+/**
+ * 특정 사용자가 작성한 글 목록을 조회한다.
+ *
+ * @param int $idxMember 사용자 idx
+ * @param int $limit 조회 개수 (기본 5)
+ * @return array 글 배열 [{idx, subject, post_id, stamp, no_of_comment, good}, ...]
+ */
+public static function findPostsByIdxMember(int $idxMember, int $limit = 5): array
+```
+
+- `idx_parent = 0` (최상위 글만), `deleted = 0`, `blind = ''` 조건
+- `stamp DESC` 정렬
+- 존재하지 않는 사용자 → 빈 배열 반환
+
+#### 3.4.3 PostRepository::findCommentsByIdxMember()
+
+```php
+/**
+ * 특정 사용자가 작성한 댓글 목록을 조회한다.
+ *
+ * @param int $idxMember 사용자 idx
+ * @param int $limit 조회 개수 (기본 5)
+ * @return array 댓글 배열 [{idx, idx_root, post_id, content, stamp}, ...]
+ */
+public static function findCommentsByIdxMember(int $idxMember, int $limit = 5): array
+```
+
+- `idx_parent > 0` (댓글만), `deleted = 0`, `blind = ''` 조건
+- `content`는 256자로 잘라서 반환 (`SUBSTRING(content, 1, 256)`)
+- `stamp DESC` 정렬
+
+#### 3.4.4 PEST 유닛 테스트
+
+테스트 파일: `tests/Unit/PublicProfileTest.php` (15개 테스트, 30 assertions)
+
+| describe 블록 | 테스트 수 | 검증 내용 |
+|---------------|----------|----------|
+| `UserService::getByFirebaseUid()` | 5 | 빈 문자열, 존재하지 않는 UID, 정상 조회, password 미포함, level 계산 |
+| `UserService::getPublicProfile()` | 2 | 정상 조회, 존재하지 않는 idx → RuntimeException |
+| `PostRepository::findPostsByIdxMember()` | 4 | 배열 반환, 빈 배열, limit 적용, 필수 키 포함 |
+| `PostRepository::findCommentsByIdxMember()` | 4 | 배열 반환, 빈 배열, limit 적용, 필수 키 포함 |
+
+---
+
+### 3.5 user.updateMyProfile - 회원 정보 수정
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `user.updateMyProfile` |
+| **HTTP** | `POST /api.php` (body: `{method: "user.updateMyProfile", ...}`) |
+| **인증** | 필수 — 로그인 상태 (세션 또는 id_token) |
+| **응답** | `UserEntity` (수정된 사용자 정보) |
+
+**파라미터**:
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `nickname` | string | 선택 | 닉네임 (변경 가능한 경우만 적용, 2자 이상 한글/영문/숫자/_) |
+| `name` | string | 선택 | 실명 |
+| `gender` | string | 선택 | 성별 (M/F/"") |
+| `photo_url` | string | 선택 | 프로필 사진 URL |
+| `birth_year` | int/string | 선택 | 생년 (예: 1990) |
+| `birth_month` | int/string | 선택 | 생월 (1~12) |
+| `birth_day` | int/string | 선택 | 생일 (1~31) |
+
+**정수 필드 빈 문자열 변환 규칙**:
+
+> `birth_year`, `birth_month`, `birth_day`는 DB에서 정수 컬럼(`smallint`/`tinyint`)이다.
+> 프론트엔드에서 빈 문자열(`''`)이 전달될 수 있으므로(select에서 미선택 시),
+> `UserService::update()`에서 **빈 문자열을 `0`으로 자동 변환**한다.
+> v6의 `intval()` 호환 로직이며, 이를 통해 `SQLSTATE[22007]` 에러를 방지한다.
+
+| 입력값 | 변환 결과 | 설명 |
+|--------|----------|------|
+| `''` (빈 문자열) | `0` | 미선택 상태 |
+| `'2000'` (문자열 숫자) | `2000` | 폼에서 전송된 값 |
+| `1990` (정수) | `1990` | 정상 정수 |
+
+**닉네임 변경 정책**:
+1. 닉네임이 비어있으면 최초 설정 가능 (자유롭게 설정)
+2. 닉네임이 있고 `varchar_8`(이전 닉네임)이 비어있으면 1회 변경 가능
+3. `varchar_8`이 있으면 변경 불가 (이미 1회 변경함)
+4. 닉네임 변경 시 기존 닉네임이 `varchar_8` 컬럼에 저장됨
+
+**닉네임 검증 규칙**:
+- 최소 2자 이상
+- 허용 문자: 한글, 영문, 숫자, 밑줄(`_`)
+- 중복 닉네임 사용 불가
+
+**JavaScript 호출 예시 (v7 홈페이지)**:
+```javascript
+// 프로필 업데이트
+await v7api('user.updateMyProfile', {
+    name: '홍길동',
+    gender: 'M',
+    birth_year: 1990,
+    birth_month: 3,
+    birth_day: 15,
+});
+
+// 닉네임 변경 (변경 가능한 경우)
+await v7api('user.updateMyProfile', { nickname: '새닉네임' });
+
+// 프로필 사진 변경
+const uploadResult = await v7apiUpload(file, 'user', 'profile_photo');
+await v7api('user.updateMyProfile', { photo_url: uploadResult.url });
+```
+
+**내부 처리 흐름**:
+```
+UserController::updateMyProfile($input)
+  └─ UserService::updateMyProfile($input)
+       ├─ AuthService::getLoginUser() → 로그인 사용자 확인
+       ├─ $input['idx'] = $user->idx  (자동 설정)
+       └─ UserService::update($input) → 실제 DB 업데이트
+```
+
+**관련 메서드**:
+
+| 메서드 | 설명 |
+|--------|------|
+| `UserService::updateMyProfile(array $input)` | 로그인 사용자의 프로필 수정 (idx 자동 설정) |
+| `UserService::canChangeNickname(array $user)` | 닉네임 변경 가능 여부 판단 |
+| `UserService::update(array $input)` | 실제 DB 업데이트 수행 |
+
+---
+
+### 3.6 회원 정보 수정 페이지 (SSR)
+
+> 회원 정보 수정은 v7 웹 페이지(SSR + Vue.js CSR)로 구현되어 있다.
+> PHP에서 초기 데이터를 렌더링하고, Vue.js에서 폼 제출과 사진 업로드를 처리한다.
+
+| 항목 | 값 |
+|------|-----|
+| **URL** | `/user/profile` |
+| **파일** | `v7/user/profile.php` (PHP), `v7/user/profile.css` (CSS) |
+| **인증** | 필수 — 비로그인 시 로그인 안내 표시 |
+| **API 호출** | `v7api('user.updateMyProfile', {...})`, `v7apiUpload(file, 'user', 'profile_photo')` |
+
+**페이지 구성**:
+
+| 영역 | 설명 |
+|------|------|
+| **비로그인 안내** | `wa-callout` 경고 + 로그인 버튼 |
+| **프로필 사진** | 원형 150px, 카메라 아이콘 오버레이 클릭으로 업로드 |
+| **닉네임** | 변경 가능 여부에 따라 readonly/editable 전환 |
+| **이름** | 텍스트 입력 |
+| **성별** | 라디오 버튼 (남성/여성/선택안함) |
+| **생년월일** | 3개 select (연도/월/일) |
+| **저장 버튼** | `wa-button` loading 상태 지원 |
+| **하단 링크** | 공개 프로필 보기 링크 |
+
+**Vue.js 데이터 초기화** (PHP → JS):
+```javascript
+data() {
+    return {
+        photoUrl: <?= json_encode($loginUser->photo_url) ?>,
+        nickname: <?= json_encode($loginUser->nickname) ?>,
+        name: <?= json_encode($loginUser->name) ?>,
+        gender: <?= json_encode($loginUser->gender) ?>,
+        birthYear: <?= json_encode((string) ($loginUser->birth_year ?: '')) ?>,
+        birthMonth: <?= json_encode((string) ($loginUser->birth_month ?: '')) ?>,
+        birthDay: <?= json_encode((string) ($loginUser->birth_day ?: '')) ?>,
+        canChangeNickname: <?= $canChangeNickname ? 'true' : 'false' ?>,
+    };
+}
+```
+
+> **주의**: 생년월일 값은 `(string)` 캐스팅 필수 — `<select>` option value는 문자열이므로 v-model과 타입 일치 필요.
+
+**사진 업로드 흐름**:
+```
+1. 프로필 사진 영역 클릭 → hidden <input type="file"> 트리거
+2. v7apiUpload(file, 'user', 'profile_photo') → 파일 업로드
+3. v7api('user.updateMyProfile', { photo_url: url }) → URL 저장
+4. photoUrl 업데이트 → 화면 반영
+```
+
+**URL 헬퍼**:
+```php
+url()->user->profile    // → '/user/profile'
+```
+
+**PEST 유닛 테스트**:
+
+테스트 파일: `tests/Unit/UserProfileTest.php` (13개 테스트, 22 assertions)
+
+| describe 블록 | 테스트 수 | 검증 내용 |
+|---------------|----------|----------|
+| `UserService::canChangeNickname()` | 6 | 빈 닉네임, 공백 닉네임, 변경 가능, 변경 불가, 키 누락 케이스 |
+| `UserService::updateMyProfile()` | 1 | 비로그인 시 RuntimeException |
+| `UserController::updateMyProfile()` | 1 | 비로그인 시 RuntimeException |
+| `UserEntity 생일/이전닉네임 필드` | 5 | birth_year/month/day, previous_nickname 필드 존재, toArray() 포함, 기본값 |
+
+---
+
+### 3.7 user.search - 닉네임으로 사용자 검색
+
+| 항목 | 값 |
+|------|-----|
+| **method** | `user.search` |
+| **HTTP** | `GET /api.php?method=user.search&nickname=홍길` 또는 `POST /api.php` (body: `{method: "user.search", nickname: "홍길"}`) |
+| **파라미터** | `nickname` (string, 필수) — 검색할 닉네임 키워드 |
+| **인증** | 선택 — 로그인 시 본인 제외 |
+| **응답** | 검색된 사용자 배열 `[{idx, nickname, firebase_uid, photo_url}, ...]` |
+
+**파라미터 상세**:
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|---------|------|------|------|
+| `nickname` | string | 필수 | 검색할 닉네임 키워드. 비어있으면 `RuntimeException` 발생 |
+
+**검색 동작**:
+- prefix 매칭 방식으로 검색한다 (`LIKE 'keyword%'`)
+- 최대 **20건**까지 반환한다
+- 로그인 상태인 경우, 본인은 검색 결과에서 제외된다
+
+**curl 예시**:
+```bash
+# GET 방식
+curl -s "https://v7-local.philgo.com/api.php?method=user.search&nickname=홍길"
+
+# POST 방식 (JSON)
+curl -s -X POST "https://v7-local.philgo.com/api.php" \
+  -H "Content-Type: application/json" \
+  -d '{"method": "user.search", "nickname": "홍길"}'
+```
+
+**JavaScript 호출 예시**:
+```javascript
+const users = await v7api('user.search', { nickname: '홍길' });
+// users: [{idx: 123, nickname: '홍길동', firebase_uid: 'abc...', photo_url: '...'}, ...]
+```
+
+**응답 형식** (성공):
+```json
+[
+    {
+        "idx": 123,
+        "nickname": "홍길동",
+        "firebase_uid": "abc123...",
+        "photo_url": "https://file.philgo.com/..."
+    },
+    {
+        "idx": 456,
+        "nickname": "홍길순",
+        "firebase_uid": "def456...",
+        "photo_url": ""
+    }
+]
+```
+
+**에러 응답**:
+```json
+{
+    "success": false,
+    "message": "nickname은 필수입니다."
+}
+```
+
+**에러 케이스**:
+
+| 조건 | 에러 메시지 |
+|------|-----------|
+| `nickname` 미전달 또는 빈 문자열 | `RuntimeException('nickname은 필수입니다.')` |
+
+**내부 처리 흐름**:
+```
+UserController::search($input)
+  └─ UserService::searchByNickname($input)
+       ├─ nickname 빈 값 체크 → RuntimeException
+       ├─ AuthService::getLoginUser() → 로그인 사용자 확인 (선택적)
+       ├─ LIKE 'keyword%' 쿼리 (prefix 매칭)
+       ├─ LIMIT 20
+       └─ 로그인 시 본인 idx 제외
+```
+
+**관련 소스 파일**:
+
+| 파일 | 설명 |
+|------|------|
+| `lib/user/UserController.php` | `search()` 메서드 — API 엔드포인트 |
+| `lib/user/UserService.php` | `searchByNickname()` 메서드 — 비즈니스 로직 |
+| `tests/Unit/UserSearchTest.php` | PEST 유닛 테스트 |
+
+---
+
 ## 4. 파일 구조
 
 ```
 lib/user/
 ├── UserController.php            # ★ Philgo\User\UserController (API 엔드포인트)
 ├── UserService.php               # ★ Philgo\User\UserService (비즈니스 로직)
+├── UserEntity.php                # ★ Philgo\User\UserEntity (사용자 엔티티)
 ├── user.functions.php            # ⚠️ 레거시 (새 코드에서 사용 금지)
 ├── user.login.functions.php      # ⚠️ 레거시
 ├── user.block.php                # ⚠️ 레거시
 ├── user.resign.functions.php     # ⚠️ 레거시
 └── member-block.functions.php    # ⚠️ 레거시
+
+v7/user/
+├── profile.php                   # ★ 회원 정보 수정 페이지 (Vue.js + v7api)
+├── profile.css                   # ★ 회원 정보 수정 전용 CSS
+├── public-profile.php            # ★ 공개 프로필 페이지 (SSR, 보더리스 디자인, fal 아이콘, wa-tag 통계)
+├── public-profile.css            # ★ 공개 프로필 전용 CSS (보더 없음, #f8fafc 배경, brand-95 placeholder)
+├── login.php                     # ★ 로그인 페이지
+└── login.css                     # ★ 로그인 전용 CSS
+
+tests/Unit/
+├── UserControllerTest.php        # ★ UserController PEST Unit Test
+├── UserProfileTest.php           # ★ 프로필 수정 PEST Unit Test (canChangeNickname, updateMyProfile, Entity 필드)
+├── PublicProfileTest.php         # ★ 공개 프로필 PEST Unit Test (getByFirebaseUid, getPublicProfile, PostRepository)
+└── UserSearchTest.php            # ★ 닉네임 검색 PEST Unit Test (searchByNickname, prefix 매칭, 본인 제외)
 
 lib/utils/
 ├── AuthService.php               # ★ Philgo\Utils\AuthService (2경로 인증: 세션 + Firebase)
@@ -1028,6 +1547,10 @@ return [
 | `level_progress` | int | ⚠️ **동적 계산** | 다음 레벨까지 진행률 (0~100%) |
 | `photo_url` | string | `sf_member.photo_url` | 프로필 사진 URL |
 | `gender` | string | `sf_member.gender` | 성별 (M/F) |
+| `birth_year` | int | `sf_member.birth_year` | 생년 (예: 1990) |
+| `birth_month` | int | `sf_member.birth_month` | 생월 (1~12) |
+| `birth_day` | int | `sf_member.birth_day` | 생일 (1~31) |
+| `previous_nickname` | string | `sf_member.varchar_8` | 이전 닉네임 (닉네임 1회 변경 시 저장) |
 | `no_of_post` | int | `sf_member.no_of_post` | 작성 글 수 |
 | `no_of_comment` | int | `sf_member.no_of_comment` | 작성 댓글 수 |
 | `stamp` | int | `sf_member.stamp` | 생성/수정 시간 |
@@ -1059,3 +1582,177 @@ $responseData = $user->toArray();
 
 `UserEntity`는 보안상 `password` 필드를 포함하지 않는다.
 `toArray()`로 변환한 결과를 API 응답으로 직접 사용할 수 있다.
+
+---
+
+## 9. 사용자 설정 페이지 (SSR)
+
+### 9.1 개요
+
+사용자 설정 페이지(`v7/user/settings.php`)는 v6 `user/settings.php`를 v7 아키텍처로 재작성한 페이지이다.
+Web Awesome Pro 컴포넌트 기반, SSR 렌더링 방식으로 구현되었다.
+
+| 항목 | 값 |
+|------|---|
+| **페이지 파일** | `v7/user/settings.php` |
+| **CSS 파일** | `v7/user/settings.css` |
+| **URL** | `/user/settings` |
+| **URL 헬퍼** | `url()->user->settings` |
+| **테스트 파일** | `tests/Browser/SettingsTest.php` |
+
+### 9.2 표시 항목
+
+| 항목 | 로그인 시 | 비로그인 시 |
+|------|----------|------------|
+| **로그인 방식** | provider 이름 + 아이콘 (Google, Apple, 카카오톡, 네이버, 전화번호 등) | 로그인 안내 + 로그인 버튼 |
+| **이메일** | `sf_member.email` 값 (비어있으면 미표시) | - |
+| **차단한 사용자** | `/user/blocked` 링크 (`url()->user->blocked`) | - |
+| **운영자 문의** | `/contact` 링크 (항상 표시) | `/contact` 링크 (항상 표시) |
+
+### 9.3 provider 조회
+
+`UserEntity`에 `login_provider` 필드가 있으나 `email` 필드는 없으므로, `Db::fetch()`로 직접 조회한다.
+
+```php
+use Philgo\Utils\AuthService;
+use Philgo\Utils\Db;
+
+$loginUser = AuthService::getLoginUser();
+if ($loginUser !== null) {
+    $row = Db::fetch("SELECT email, login_provider FROM sf_member WHERE idx = ?", [$loginUser->idx]);
+    if ($row !== false) {
+        $email = $row['email'] ?? '';
+        $provider = $row['login_provider'] ?? '';
+    }
+}
+```
+
+### 9.4 provider 표시명 매핑
+
+| DB 값 | 표시명 | 아이콘 | 색상 |
+|-------|--------|--------|------|
+| `google` | Google | `fa-brands fa-google` | `#4285f4` |
+| `apple` | Apple | `fa-brands fa-apple` | `#333333` |
+| `kakaotalk` | 카카오톡 | `fa-solid fa-comment` | `#fee500` |
+| `naver` | 네이버 | `fa-solid fa-n` | `#03c75a` |
+| `phone_sign_in` | 전화번호 | `fa-solid fa-phone` | brand blue |
+| 기타/빈값 | 알 수 없음 | `fa-solid fa-right-to-bracket` | neutral |
+
+### 9.5 사이드바 메뉴
+
+왼쪽 사이드바 로그인 위젯(`v7/widgets/layout/layout.sidebar-left.login.php`)에
+"내 정보 / 내 글 / 채팅 / **설정**" 4개 빠른 메뉴가 표시된다.
+
+### 9.6 v6과의 차이점
+
+| 항목 | v6 | v7 |
+|------|----|----|
+| **전화번호 표시** | ✅ 표시 | ❌ 미표시 (provider + 이메일로 대체) |
+| **언어 설정** | ✅ 표시 | ❌ 미표시 (v7은 단일 언어) |
+| **로그인 provider** | ❌ 미표시 | ✅ provider명 + 아이콘 표시 |
+| **이메일 표시** | ❌ 미표시 | ✅ 표시 |
+| **운영자 문의** | ✅ 표시 | ✅ 표시 |
+| **CSS 프레임워크** | Bootstrap 5 | Web Awesome Pro |
+
+---
+
+## 10. 사용자 차단 기능
+
+### 10.1 개요
+
+v7 사용자 차단 기능은 로그인 사용자가 특정 사용자를 차단하여 해당 사용자의 글과 댓글을 가릴 수 있는 기능이다.
+차단 백엔드는 `lib/user/UserController.php`의 v7 Controller 메서드로 구현되어 있으며,
+v7 프론트엔드에서 `v7api()` → `/api.php`를 통해 호출한다.
+
+> **중요**: v6의 `/func.php` 호출 방식은 v7 세션(`session_id_v7`)과 호환되지 않으므로,
+> 반드시 `v7api()` → `/api.php` → `UserController` 경로를 사용해야 한다.
+
+| 항목 | 값 |
+|------|---|
+| **v7 Controller** | `lib/user/UserController.php` (`toggleBlock`, `unblock`, `blockedList`) |
+| **차단 목록 페이지** | `v7/user/blocked.php` |
+| **차단 목록 CSS** | `v7/user/blocked.css` |
+| **JS 유틸리티** | `v7/js/block.js` |
+| **URL** | `/user/blocked` |
+| **URL 헬퍼** | `url()->user->blocked` |
+| **설정 페이지 링크** | `v7/user/settings.php`에서 "차단한 사용자" 링크 표시 |
+| **PEST 테스트** | `tests/Unit/MemberBlockTest.php` (16개 테스트) |
+| **DB 테이블** | `sf_member_blocks` (`idx`, `idx_blocker`, `idx_blockee`, `created_at`) |
+
+### 10.2 v7 API 엔드포인트 (UserController)
+
+`lib/user/UserController.php`에 차단 관련 3개 메서드가 정의되어 있다.
+`AuthService::getLoginUser()`로 v7 세션 인증을 수행한다.
+
+| API 메서드 | 설명 | 입력 | 반환 |
+|------|------|------|------|
+| `user.toggleBlock` | 차단/해제 토글 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: bool, message }` |
+| `user.unblock` | 차단 해제 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: false, message }` |
+| `user.blockedList` | 차단 목록 조회 | 없음 | `[{ idx, idx_blockee, nickname, photo_url, created_at }]` |
+
+### 10.3 JS API (block.js)
+
+`v7/js/block.js`는 차단 관련 유틸리티 함수를 제공한다. 차단 기능이 필요한 페이지에서 `<script defer>` 태그로 로드한다.
+
+- `v7/user/blocked.php` — 차단 목록 페이지
+- `v7/post/view.php` — 글 읽기 페이지 (액션바 + 코멘트 차단 버튼에서 사용)
+
+| 함수 | 설명 | 파라미터 |
+|------|------|----------|
+| `toggleBlockMember(idxBlockee)` | 차단 토글 (차단 ↔ 해제) → `v7api('user.toggleBlock', ...)` | 대상 사용자 idx |
+| `unblockMember(idxBlockee)` | 차단 해제 → `v7api('user.unblock', ...)` | 대상 사용자 idx |
+| `getBlockedMembers()` | 차단 목록 조회 → `v7api('user.blockedList', ...)` | 없음 |
+| `confirmUnblockAndView(idxBlockee, type, targetUrl)` | 차단 해제 확인 다이얼로그 | 대상 idx, 'post'/'comment', 이동 URL |
+
+### 10.4 차단된 콘텐츠 표시
+
+#### 글 목록 (`post-list-tile.php`)
+
+차단된 사용자의 글은 "차단된 사용자의 글입니다" 텍스트로 대체 표시된다.
+클릭 시 `confirmUnblockAndView()`로 차단 해제 확인 다이얼로그가 표시된다.
+
+```php
+$_isBlockedPost = !empty($_blockedMemberIds) && in_array($post['idx_member'] ?? 0, $_blockedMemberIds);
+```
+
+#### 글 상세 (`view.php`)
+
+- 관리자 차단(blind): `$post->isBlockedOrBlinded()` → "이 글은 관리자에 의해 차단되었습니다"
+- 사용자 차단: `$isBlockedAuthor` → "차단된 사용자의 글입니다" + "차단 해제하고 내용 보기" 버튼
+- 첨부파일도 차단 시 숨김 처리
+- 액션바에 차단/해제 토글 버튼 (`post-actions.js` Vue 앱)
+- `data-author-name` 속성으로 작성자 이름을 전달하여 confirm 메시지에 `"사용자명" 사용자를 차단하시겠습니까?` 형식으로 표시
+- 차단 성공 시 `"사용자명" 사용자가 차단되었습니다.` alert 후 페이지 새로고침
+
+#### 코멘트 (`view.php`)
+
+- 관리자 차단: "차단된 댓글입니다"
+- 사용자 차단: "차단된 사용자의 댓글입니다" + "해제하고 보기" 버튼
+- 코멘트 첨부파일도 차단 시 숨김
+- 각 코멘트 액션에 차단/해제 버튼 (`comment.js` Vue 앱)
+- `data-author-name` 속성으로 댓글 작성자 이름을 전달하여 confirm 메시지에 표시
+
+#### 공개 프로필 (`public-profile.php`)
+
+- 타인 프로필에서 차단/해제 버튼 표시 (`toggleBlockMember()` 호출)
+- 차단 상태에 따라 버튼 색상 변경 (danger/neutral)
+
+### 10.5 차단 목록 페이지 (`blocked.php`)
+
+Vue.js CDN MPA 방식으로 구현된 차단 사용자 관리 페이지이다.
+
+- **비로그인**: "로그인 후 이용해 주세요" + 로그인 버튼
+- **로그인**: `getBlockedMembers()` API로 차단 목록 조회 → `wa-avatar` + 닉네임 + 차단일 + 해제 버튼
+- **해제**: `unblockMember()` 호출 → 목록에서 실시간 제거
+- **빈 목록**: "차단한 사용자가 없습니다" 표시
+
+> **주의**: `wa-button`의 `:disabled` 바인딩은 Web Component 특성상 `null`을 반환해야 속성이 제거된다.
+> `!!expr` 대신 `expr || null` 패턴을 사용해야 한다.
+
+### 10.6 접근 경로
+
+1. 설정 페이지 → "차단한 사용자" 링크 (`url()->user->settings` → `url()->user->blocked`)
+2. 사이드바 설정 메뉴 → 설정 페이지 → 차단한 사용자 링크
+3. 글 보기 → 액션바 차단/해제 버튼 (타인 글에만 표시)
+4. 글 보기 → 코멘트 액션 차단/해제 버튼 (타인 댓글에만 표시)
+5. 공개 프로필 → 차단 버튼
