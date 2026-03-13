@@ -160,10 +160,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
       _postChanged = true;
       if (!mounted) return;
       setState(() {
-        _comments = [
-          for (final c in _comments)
-            if (c.idx == updated.idx) updated else c,
-        ];
+        _comments = _comments
+            .map((c) => c.idx == updated.idx ? updated : c)
+            .toList();
       });
     } catch (e) {
       if (!mounted) return;
