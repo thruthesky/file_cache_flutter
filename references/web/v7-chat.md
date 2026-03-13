@@ -186,7 +186,7 @@ chat-app.js          ← 위 모든 파일이 로드된 후 Vue 앱 생성
 | `chat/favorites-folder-list/{myUid}` | 즐겨찾기 폴더 목록 | 읽기 |
 | `users/{uid}` | 사용자 실시간 데이터 (온라인 상태, 고정 채팅방 등) — ⚠️ 닉네임/프로필 사진은 v7 API에서 조회 | 읽기 |
 | `users/{uid}/pinnedChatRooms/{roomId}` | 고정된 채팅방 | 읽기 + 쓰기 |
-| `user-private/{myUid}/blocks/{otherUid}` | 차단된 사용자 | 읽기 + 쓰기 |
+| `user-private/{myUid}/blocks/{otherUid}` | 차단된 사용자 | 읽기 전용 (쓰기는 v7 API가 서버에서 동기화) |
 | `reports/{reporterUid}/{reportId}` | 내가 한 신고 | 쓰기 |
 | `reports-list/{reportId}` | 전체 신고 목록 (관리자 조회용) | 쓰기 |
 | `users/{uid}/online` | 사용자 온라인 상태 (Presence) | 읽기 + 쓰기 |
@@ -237,16 +237,79 @@ firebase.database().ref('users/' + uid + '/pinnedChatRooms/' + roomId).set(true)
 firebase.database().ref('users/' + uid + '/pinnedChatRooms/' + roomId).remove();
 ```
 
+#### 4.4.1 고정(pin) 기능 구현 시 주의 사항
+
+##### Object.assign 순서 — pinned 필드 덮어쓰기 방지
+
+채팅방 목록을 렌더링할 때 `Object.assign`으로 방 데이터를 병합하는 순서가 중요하다.
+Firebase `chat/joins/{uid}/{roomId}` 데이터에 `pinned` 필드가 포함되어 있을 수 있으며,
+이 필드가 계산된 `pinned` 값을 덮어쓰면 고정/해제 상태가 정상적으로 반영되지 않는다.
+
+```javascript
+// ❌ 잘못된 순서: room 데이터가 id/pinned를 덮어쓸 수 있음
+// room 객체에 pinned 필드가 있으면 계산된 pinned 값이 사라짐
+Object.assign({ id: roomId, pinned: !!pinned[roomId] }, room);
+
+// ✅ 올바른 순서: id/pinned를 마지막에 배치하여 항상 올바른 값 보장
+// 빈 객체에 room을 먼저 병합하고, id/pinned를 나중에 설정
+Object.assign({}, room, { id: roomId, pinned: !!pinned[roomId] });
+```
+
+이 패턴은 `chat-room-list.js`의 `sortedRooms` computed와 `chat-sidebar.js`의
+고정 채팅방 목록 렌더링에 모두 적용된다.
+
+##### listenPinnedRooms — 페이지네이션 범위 밖 고정방 별도 로드
+
+고정된 채팅방이 무한 스크롤 페이지네이션(`loadRooms()`)으로 아직 `state.rooms`에 로드되지 않은 경우,
+`listenPinnedRooms()`에서 Firebase `chat/joins/{uid}/{roomId}`를 `once('value')`로 별도 조회하여
+`state.rooms`에 추가한다. 이렇게 해야 오래된 채팅방을 고정했을 때에도 고정 섹션에 정상적으로 표시된다.
+
+```javascript
+// listenPinnedRooms 내부 — 고정방이 state.rooms에 없으면 별도 로드
+Object.keys(v7ChatState.pinnedChatRooms).forEach(function (roomId) {
+    if (v7ChatState.rooms[roomId] || !v7ChatIsSingleRoom(roomId)) return;
+    var joinRef = firebase.database().ref('chat/joins/' + myUid + '/' + roomId);
+    joinRef.once('value').then(function (joinSnap) {
+        if (!joinSnap.exists() || v7ChatState.rooms[roomId]) return;
+        v7ChatState.rooms[roomId] = joinSnap.val();
+        v7ChatActions.joinRoomListener(roomId);
+        // v7 API에서 상대방 사용자 정보 조회
+        var otherUid = v7ChatGetOtherUid(roomId, myUid);
+        if (otherUid) {
+            v7api('user.getByFirebaseUid', { firebase_uid: otherUid }, { alertOnError: false })
+                .then(function (u) {
+                    var room = v7ChatState.rooms[roomId];
+                    if (room) {
+                        room.userDisplayName = u.nickname || room.userDisplayName || '사용자';
+                        room.userPhotoUrl = u.photo_url || room.userPhotoUrl || '';
+                    }
+                })
+                .catch(function () { /* API 실패 시 Firebase 값 유지 */ });
+        }
+    });
+});
+```
+
 ### 4.5 blocks 데이터
 
 `user-private/{myUid}/blocks/{otherUid}` 경로에 `true` 값으로 저장한다.
 
+> **🔴 절대 규칙: Firebase RTDB에 직접 쓰기 금지**
+>
+> 차단/해제는 반드시 v7 API(`user.toggleBlock`)를 통해서만 수행한다.
+> v7 API가 MariaDB에 저장 후 Firebase RTDB에 자동 동기화(`UserService::syncBlockToFirebase()`)한다.
+> 클라이언트에서 Firebase RTDB에 직접 `set(true)` / `remove()`를 호출하지 않는다.
+
 ```javascript
-// 차단
-firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).set(true);
-// 해제
-firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).remove();
+// ✅ 올바른 방법: v7 API를 통한 차단/해제
+v7api('user.toggleBlock', { blockee_firebase_uid: otherUid });
+
+// ❌ 금지: Firebase RTDB 직접 쓰기
+// firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).set(true);
+// firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).remove();
 ```
+
+채팅방에서는 `listenBlockedUsers()` 리스너가 Firebase RTDB를 실시간 감지하여 `state.blockedUsers`를 자동 갱신한다.
 
 ### 4.6 reports 데이터
 
@@ -480,7 +543,7 @@ var v7ChatState = Vue.reactive({
 | `attachNewRoomListener()` | 없음 | 새 방 감지 리스너 (1회만 초기화) — 새 방 감지 시 v7 API로 상대방 정보 즉시 조회 |
 | `loadFavoriteFolders()` | 없음 | 즐겨찾기 폴더 목록 실시간 리스너 |
 | `listenBlockedUsers()` | 없음 | 차단된 사용자 실시간 리스너 |
-| `listenPinnedRooms()` | 없음 | 고정된 채팅방 실시간 리스너 |
+| `listenPinnedRooms()` | 없음 | 고정된 채팅방 실시간 리스너 — 고정된 방이 `state.rooms`에 페이지네이션으로 로드되지 않은 경우 Firebase에서 별도 로드하여 고정 목록에 표시 |
 
 #### 주요 Firebase 리스너 경로
 
@@ -673,7 +736,7 @@ var v7ChatState = Vue.reactive({
 | `togglePin()` | 채팅방 고정/해제 토글 |
 | `markAsRead()` | 읽음 표시 (RTDB unread=0 + Cloud Function 호출) |
 | `leaveRoom()` | 채팅방 나가기 (confirm 후 Cloud Function 호출 또는 직접 삭제) |
-| `toggleBlock()` | 상대방 차단/해제 토글 |
+| `toggleBlock()` | 상대방 차단/해제 토글 — v7 API(`user.toggleBlock`) 호출 (Firebase RTDB 직접 쓰기 금지) |
 | `showCustomNameDialog()` | 커스텀 이름 설정 모달 열기 |
 | `saveCustomName()` | 커스텀 이름 저장 (RTDB에 저장) |
 | `showFavoriteDialog()` | 즐겨찾기 모달 열기 |
@@ -1077,7 +1140,7 @@ if (otherUid) {
 
 채팅 시스템에서 지원하는 기능을 범주별로 정리한다.
 
-### 9.1 채팅방 목록 (10개)
+### 9.1 채팅방 목록 (11개)
 
 | # | 기능 | 구현 위치 |
 |---|------|-----------|
@@ -1091,6 +1154,7 @@ if (otherUid) {
 | 8 | 아바타 표시 (사진 또는 이니셜) | `chat-room-list.js` 템플릿 |
 | 9 | 빈 상태 표시 (채팅방 없을 때) | `chat-room-list.js` 템플릿 |
 | 10 | 고정 해제 버튼 (hover 시 표시) | `chat-room-list.js` → `unpin()` |
+| 11 | 페이지네이션 범위 밖 고정방 별도 로드 | `chat-store.js` → `listenPinnedRooms()` |
 
 ### 9.2 1:1 채팅방 메시지 (12개)
 
@@ -2001,3 +2065,35 @@ ref.on('child_added', function(snap) {
     }
 });
 ```
+
+---
+
+## 21. 버그 수정 이력
+
+### 21.1 채팅방 고정(pin) 기능 버그 수정 (2026-03-13)
+
+**문제**: 채팅방을 고정(pin)해도 고정 상태가 제대로 반영되지 않거나, 오래된 채팅방을 고정하면 고정 섹션에 표시되지 않는 문제가 발생했다.
+
+**원인 1 — Object.assign 순서 오류** (`chat-room-list.js`, `chat-sidebar.js`):
+
+`sortedRooms` computed에서 `Object.assign({ id, pinned }, room)` 순서로 병합했기 때문에, Firebase `chat/joins` 데이터에 `pinned` 필드가 포함되어 있을 경우 `room` 객체의 `pinned` 값이 계산된 `pinned` 값을 덮어썼다.
+
+| 수정 전 (버그) | 수정 후 (정상) |
+|----------------|----------------|
+| `Object.assign({ id, pinned }, room)` | `Object.assign({}, room, { id, pinned })` |
+
+**원인 2 — 페이지네이션 범위 밖 고정방 미로드** (`chat-store.js`):
+
+`listenPinnedRooms()`에서 `pinnedChatRooms` 값만 갱신하고, 해당 방이 `state.rooms`에 실제로 존재하는지 확인하지 않았다. 무한 스크롤 페이지네이션(`loadRooms`)으로 아직 로드되지 않은 오래된 채팅방을 고정하면 `state.rooms`에 데이터가 없어 고정 섹션에 표시되지 않았다.
+
+**수정**: `listenPinnedRooms()` 콜백에서 고정된 방의 roomId가 `state.rooms`에 없으면 Firebase `chat/joins/{uid}/{roomId}`를 `once('value')`로 별도 조회하여 `state.rooms`에 추가하고, `joinRoomListener`를 연결하며, v7 API로 상대방 사용자 정보도 조회하도록 로직을 추가했다.
+
+**관련 파일**:
+
+| 파일 | 수정 내용 |
+|------|-----------|
+| `v7/js/chat/chat-room-list.js` | `Object.assign` 순서 수정 — `pinned` 필드 덮어쓰기 방지 |
+| `v7/js/chat/chat-sidebar.js` | `Object.assign` 순서 수정 — `pinned` 필드 덮어쓰기 방지 |
+| `v7/js/chat/chat-store.js` | `listenPinnedRooms`에 페이지네이션 범위 밖 고정방 별도 로드 로직 추가 |
+
+> **참고**: 4.4.1절에서 이 버그의 상세 코드 패턴과 올바른 구현 방법을 확인할 수 있다.

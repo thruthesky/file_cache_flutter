@@ -1667,9 +1667,17 @@ v7 프론트엔드에서 `v7api()` → `/api.php`를 통해 호출한다.
 > **중요**: v6의 `/func.php` 호출 방식은 v7 세션(`session_id_v7`)과 호환되지 않으므로,
 > 반드시 `v7api()` → `/api.php` → `UserController` 경로를 사용해야 한다.
 
+> **🔴 절대 규칙: 차단/해제는 오직 v7 API를 통해서만 수행한다**
+>
+> 사용자 차단/해제는 반드시 필고 v7 API(`user.toggleBlock`, `user.unblock`)를 통해서만 수행해야 한다.
+> Firebase RTDB에 직접 쓰기(`set(true)`, `remove()`)로 차단/해제하는 것은 **엄격히 금지**한다.
+> v7 API가 MariaDB에 차단 정보를 저장한 후 Firebase RTDB에 자동 동기화(`UserService::syncBlockToFirebase()`)하므로,
+> 채팅방에서는 Firebase RTDB 리스너(`listenBlockedUsers()`)로 차단 여부를 실시간 감지하여 UI에 반영하면 된다.
+
 | 항목 | 값 |
 |------|---|
 | **v7 Controller** | `lib/user/UserController.php` (`toggleBlock`, `unblock`, `blockedList`) |
+| **v7 Service** | `lib/user/UserService.php` (`syncBlockToFirebase`) |
 | **차단 목록 페이지** | `v7/user/blocked.php` |
 | **차단 목록 CSS** | `v7/user/blocked.css` |
 | **JS 유틸리티** | `v7/js/block.js` |
@@ -1678,17 +1686,40 @@ v7 프론트엔드에서 `v7api()` → `/api.php`를 통해 호출한다.
 | **설정 페이지 링크** | `v7/user/settings.php`에서 "차단한 사용자" 링크 표시 |
 | **PEST 테스트** | `tests/Unit/MemberBlockTest.php` (16개 테스트) |
 | **DB 테이블** | `sf_member_blocks` (`idx`, `idx_blocker`, `idx_blockee`, `created_at`) |
+| **Firebase RTDB 경로** | `user-private/{blockerUid}/blocks/{blockeeUid}` (v7 API가 자동 동기화) |
 
 ### 10.2 v7 API 엔드포인트 (UserController)
 
 `lib/user/UserController.php`에 차단 관련 3개 메서드가 정의되어 있다.
 `AuthService::getLoginUser()`로 v7 세션 인증을 수행한다.
+`user.toggleBlock`과 `user.unblock`은 차단/해제 후 `UserService::syncBlockToFirebase()`를 호출하여
+Firebase RTDB에 자동 동기화한다 (채팅 앱에서 실시간 반영).
 
 | API 메서드 | 설명 | 입력 | 반환 |
 |------|------|------|------|
-| `user.toggleBlock` | 차단/해제 토글 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: bool, message }` |
-| `user.unblock` | 차단 해제 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: false, message }` |
+| `user.toggleBlock` | 차단/해제 토글 + Firebase RTDB 동기화 | `{ idx_blockee: int }` 또는 `{ blockee_firebase_uid: string }` | `{ idx_blockee, blocked: bool, message }` |
+| `user.unblock` | 차단 해제 + Firebase RTDB 동기화 | `{ idx_blockee: int }` 또는 `{ blockee_firebase_uid: string }` | `{ idx_blockee, blocked: false, message }` |
 | `user.blockedList` | 차단 목록 조회 | 없음 | `[{ idx, idx_blockee, nickname, photo_url, created_at }]` |
+
+> **`blockee_firebase_uid` 파라미터**: 채팅방에서는 상대방의 Firebase UID만 알고 있으므로,
+> `idx_blockee` 대신 `blockee_firebase_uid`를 전달할 수 있다.
+> 서버에서 `UserService::getByFirebaseUid()`로 idx를 자동 변환하여 처리한다.
+
+### 10.2.1 Firebase RTDB 동기화 (UserService)
+
+`UserService::syncBlockToFirebase(int $idxBlocker, int $idxBlockee, bool $blocked)` 메서드가
+차단/해제 시 Firebase RTDB에 동기화한다.
+
+```php
+// 차단 시: user-private/{blockerUid}/blocks/{blockeeUid} = true
+// 해제 시: user-private/{blockerUid}/blocks/{blockeeUid} 삭제
+UserService::syncBlockToFirebase($me->idx, $idxBlockee, true);  // 차단
+UserService::syncBlockToFirebase($me->idx, $idxBlockee, false); // 해제
+```
+
+- Kreait Firebase Admin SDK를 사용하여 `PROD_DATABASE_URL`에 접근
+- Firebase UID가 없는 사용자는 동기화 스킵
+- 동기화 실패 시 로그만 남기고 차단/해제 기능은 정상 작동
 
 ### 10.3 JS API (block.js)
 
