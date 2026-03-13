@@ -27,6 +27,7 @@
 17. [FCM 포그라운드 수신 핸들러](#17-fcm-포그라운드-수신-핸들러)
 18. [메시지 수정/삭제](#18-메시지-수정삭제)
 19. [관리자 전용 기능](#19-관리자-전용-기능)
+20. [v7 API 기반 사용자 정보 조회](#20-v7-api-기반-사용자-정보-조회)
 
 ---
 
@@ -37,7 +38,7 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 | 항목 | 설명 |
 |------|------|
 | **렌더링 방식** | CSR (클라이언트 사이드 렌더링) — Vue.js 3 CDN + Firebase compat SDK |
-| **데이터 저장소** | Firebase Realtime Database |
+| **데이터 저장소** | Firebase Realtime Database + v7 API (사용자 정보) |
 | **파일 저장소** | Firebase Storage |
 | **인증** | Firebase Auth (PHP 로그인 + Firebase Custom Token) |
 | **UI 프레임워크** | Web Awesome Pro (Bootstrap 미사용) |
@@ -134,20 +135,27 @@ v7ChatState.route = v7ChatRoute.list;    // 목록으로 돌아가기
 │  Firebase RTDB   │ ◄──── on('value') ──► │  v7ChatState       │
 │  /chat/joins     │      on('child_added')│  (Vue.reactive)    │
 │  /chat/messages  │                       │                    │
-│  /users          │                       │  .rooms            │
+│  /users (online) │                       │  .rooms            │
 │  /user-private   │                       │  .myUid            │
 │  /reports        │                       │  .route            │
 └──────────────────┘                       │  .blockedUsers     │
                                            │  .pinnedChatRooms  │
-      ┌────────────────────┐               │  .favoriteFolders  │
+┌──────────────────┐                       │  .favoriteFolders  │
+│  v7 API 백엔드   │  사용자 정보 조회     └────────────────────┘
+│  user.getBy...   │ ◄──── func() ────────►          │
+│  (닉네임, 사진)  │                                  ▼
+└──────────────────┘                       ┌────────────────────┐
+                                           │  Vue 컴포넌트       │
+      ┌────────────────────┐               │  (자동 렌더링)      │
       │  Firebase Storage  │               └────────────────────┘
-      │  /users/{uid}/...  │                         │
-      └────────────────────┘                         ▼
-              ▲                           ┌────────────────────┐
-              │ 파일 업로드               │  Vue 컴포넌트       │
-              └───────────────────────────│  (자동 렌더링)      │
-                                          └────────────────────┘
+      │  /users/{uid}/...  │                         ▲
+      └────────────────────┘                         │
+              ▲                                      │
+              │ 파일 업로드                           │
+              └──────────────────────────────────────┘
 ```
+
+> **⚠️ 사용자 정보 조회 변경 (v7 API 기반)**: 닉네임, 프로필 사진 등 사용자 정보는 Firebase RTDB의 `users/{uid}` 노드가 아닌 **v7 API** (`user.getByFirebaseUid`, `user.getByFirebaseUids`)를 통해 조회한다. Firebase RTDB의 `users/{uid}` 경로는 온라인 상태(Presence)와 고정 채팅방 관리 등 실시간 데이터에만 사용된다.
 
 ### 3.4 JS 파일 로드 순서 및 의존성
 
@@ -176,7 +184,7 @@ chat-app.js          ← 위 모든 파일이 로드된 후 Vue 앱 생성
 | `chat/joins/{myUid}/{roomId}` | 채팅방 참여 정보 (목록 표시용) | 읽기 + 쓰기 |
 | `chat/messages/{roomId}/{messageId}` | 메시지 데이터 | 읽기 + 쓰기 |
 | `chat/favorites-folder-list/{myUid}` | 즐겨찾기 폴더 목록 | 읽기 |
-| `users/{uid}` | 사용자 프로필 (닉네임, 프로필 사진 등) | 읽기 |
+| `users/{uid}` | 사용자 실시간 데이터 (온라인 상태, 고정 채팅방 등) — ⚠️ 닉네임/프로필 사진은 v7 API에서 조회 | 읽기 |
 | `users/{uid}/pinnedChatRooms/{roomId}` | 고정된 채팅방 | 읽기 + 쓰기 |
 | `user-private/{myUid}/blocks/{otherUid}` | 차단된 사용자 | 읽기 + 쓰기 |
 | `reports/{reporterUid}/{reportId}` | 내가 한 신고 | 쓰기 |
@@ -193,8 +201,8 @@ chat-app.js          ← 위 모든 파일이 로드된 후 Vue 앱 생성
 {
     singleOrder: 1710000000000,   // 정렬 기준 (타임스탬프) — 최신 메시지 시간
     unread: 3,                    // 읽지 않은 메시지 수
-    userDisplayName: "홍길동",     // 상대방 표시 이름
-    userPhotoUrl: "https://...",  // 상대방 프로필 사진 URL
+    userDisplayName: "홍길동",     // 상대방 표시 이름 — ⚠️ v7 API에서 조회한 값으로 덮어씀
+    userPhotoUrl: "https://...",  // 상대방 프로필 사진 URL — ⚠️ v7 API에서 조회한 값으로 보존
     customName: "회사 동료",       // 사용자가 설정한 커스텀 이름 (선택)
     lastMessage: {                // 마지막 메시지 요약
         text: "안녕하세요",
@@ -468,8 +476,8 @@ var v7ChatState = Vue.reactive({
 | `openRoom(room)` | `{ id, name, customName, userDisplayName, userPhotoUrl }` | 채팅방 열기 → route를 `single`로 변경 |
 | `closeRoom()` | 없음 | 채팅방 닫기 → route를 `list`로 변경 |
 | `openSearch()` | 없음 | 사용자 검색 화면 열기 → route를 `search`로 변경 |
-| `joinRoomListener(roomId)` | `string` | 개별 방 데이터 실시간 리스너 연결 |
-| `attachNewRoomListener()` | 없음 | 새 방 감지 리스너 (1회만 초기화) |
+| `joinRoomListener(roomId)` | `string` | 개별 방 데이터 실시간 리스너 연결 — Firebase 데이터 업데이트 시 v7 API에서 가져온 `userDisplayName`/`userPhotoUrl` 보존 |
+| `attachNewRoomListener()` | 없음 | 새 방 감지 리스너 (1회만 초기화) — 새 방 감지 시 v7 API로 상대방 정보 즉시 조회 |
 | `loadFavoriteFolders()` | 없음 | 즐겨찾기 폴더 목록 실시간 리스너 |
 | `listenBlockedUsers()` | 없음 | 차단된 사용자 실시간 리스너 |
 | `listenPinnedRooms()` | 없음 | 고정된 채팅방 실시간 리스너 |
@@ -525,6 +533,7 @@ var v7ChatState = Vue.reactive({
 | `openRoom(room)` | 채팅방 열기 — `v7ChatActions.openRoom()` 호출 |
 | `openSearch()` | 사용자 검색 화면 열기 — `v7ChatActions.openSearch()` 호출 |
 | `unpin(room)` | 채팅방 고정 해제 — `v7ChatTogglePin()` 호출 |
+| `loadUsersFromApi()` | 채팅방 목록의 상대방 UID를 일괄 수집 후 `user.getByFirebaseUids` v7 API 호출 → 닉네임/사진 업데이트 |
 | `getDisplayName(room)` | 채팅방 표시 이름 반환 (customName > userDisplayName > '사용자') |
 | `getInitial(room)` | 이름 이니셜 반환 (아바타 텍스트용) |
 | `getPreview(room)` | 마지막 메시지 미리보기 (30자 제한, 첨부파일 시 '첨부파일' 표시) |
@@ -698,7 +707,7 @@ var v7ChatState = Vue.reactive({
 | 메서드명 | 설명 |
 |----------|------|
 | `callCloudFn(url, data)` | Cloud Function 호출 헬퍼 (Firebase Auth 토큰 포함) |
-| `loadOtherUserData()` | 상대방 사용자 데이터 로드 (`users/{uid}` 노드) |
+| `loadOtherUserData()` | 상대방 사용자 데이터 로드 — v7 API `user.getByFirebaseUid` 호출 (기존 Firebase RTDB `users/{uid}` 대신) |
 | `showDateSep(msg, idx)` | 날짜 구분선 표시 여부 (날짜가 바뀌면 표시) |
 | `formatDate(ts)` | 날짜 포맷 ("2024년 3월 12일") |
 | `formatTime(ts)` | 시간 포맷 |
@@ -803,8 +812,9 @@ ready(function() {                              // (1) DOMContentLoaded 대기
             // (4) 현재 사용자 UID 설정
             v7ChatState.myUid = user.uid;
 
-            // (5) 사용자 정보 로드 (닉네임, 프로필 사진)
-            firebase.database().ref('users/' + user.uid).once('value')...
+            // (5) 사용자 정보 로드 — v7 API 호출 (기존 Firebase RTDB 대신)
+            // user.getByFirebaseUid API로 내 닉네임/프로필 사진 조회
+            func('user.getByFirebaseUid', { firebase_uid: user.uid })...
 
             // (6) 전역 리스너 시작
             v7ChatActions.listenBlockedUsers();
@@ -842,6 +852,25 @@ ready(function() {                              // (1) DOMContentLoaded 대기
     <v7-chat-single-room v-else-if="state.route === 'single'" />
     <v7-chat-search v-else-if="state.route === 'search'" />
 </div>
+```
+
+#### URL 파라미터 / popstate 처리
+
+`chat-app.js`는 URL의 `firebase_uid` 파라미터가 있으면 해당 상대방과의 채팅방을 자동으로 연다. popstate 이벤트 시에도 v7 API로 상대방 정보를 조회한다.
+
+```javascript
+// URL 파라미터로 상대방 지정 시 v7 API로 정보 조회
+var otherUid = new URLSearchParams(location.search).get('firebase_uid');
+if (otherUid) {
+    func('user.getByFirebaseUid', { firebase_uid: otherUid }).then(function(res) {
+        // res.nickname, res.photo_url 사용
+        v7ChatActions.openRoom({
+            id: v7ChatMakeRoomId(otherUid, user.uid),
+            name: res.nickname || '',
+            userPhotoUrl: res.photo_url || ''
+        });
+    });
+}
 ```
 
 ---
@@ -1848,4 +1877,127 @@ canDelete: function(msg) {
     if (msg.isDeleted) return false;
     return this.isMine(msg) || this.isAdmin;
 }
+```
+
+---
+
+## 20. v7 API 기반 사용자 정보 조회
+
+### 20.1 개요
+
+채팅 시스템에서 1:1 상대방의 **닉네임과 프로필 사진**은 Firebase RTDB가 아닌 **필고 v7 API 백엔드**에서 가져온다. Firebase RTDB의 `users/{uid}` 경로는 온라인 상태(Presence), 고정 채팅방 등 실시간 데이터에만 사용된다.
+
+### 20.2 이전 흐름 vs 새 흐름
+
+| 항목 | 이전 (Firebase RTDB) | 현재 (v7 API) |
+|------|---------------------|---------------|
+| **내 정보** | `firebase.database().ref('users/' + myUid).once('value')` | `func('user.getByFirebaseUid', { firebase_uid: myUid })` |
+| **상대방 정보 (단일)** | `firebase.database().ref('users/' + otherUid).once('value')` | `func('user.getByFirebaseUid', { firebase_uid: otherUid })` |
+| **상대방 정보 (일괄)** | 각 방마다 개별 조회 | `func('user.getByFirebaseUids', { firebase_uids: 'uid1,uid2,...' })` |
+| **데이터 출처** | Firebase RTDB `users/{uid}` 노드 | 필고 DB (v7 PHP 백엔드) |
+
+### 20.3 v7 API 엔드포인트
+
+#### `user.getByFirebaseUid` — 단일 사용자 조회
+
+| 항목 | 설명 |
+|------|------|
+| **호출 방식** | `func('user.getByFirebaseUid', { firebase_uid: '...' })` |
+| **파라미터** | `firebase_uid` (string, 필수) — Firebase UID |
+| **응답** | UserEntity 객체: `{ idx, nickname, photo_url, firebase_uid, ... }` |
+| **사용처** | `chat-app.js` (내 정보 로드, popstate/URL 파라미터 시 상대방 정보), `chat-single-room.js` (`loadOtherUserData`) |
+
+```javascript
+// 사용 예시 — 상대방 정보 조회
+func('user.getByFirebaseUid', { firebase_uid: otherUid }).then(function(res) {
+    self.otherUserData.nickname = res.nickname || '';
+    self.otherUserData.photoUrl = res.photo_url || '';  // ⚠️ 언더스코어
+});
+```
+
+#### `user.getByFirebaseUids` — 복수 사용자 일괄 조회
+
+| 항목 | 설명 |
+|------|------|
+| **호출 방식** | `func('user.getByFirebaseUids', { firebase_uids: 'uid1,uid2,uid3' })` |
+| **파라미터** | `firebase_uids` (string, 필수) — 쉼표 구분 Firebase UID 문자열, 최대 100개 |
+| **응답** | `{ firebase_uid: { idx, nickname, photo_url, level }, ... }` — UID를 키로 하는 객체 |
+| **사용처** | `chat-room-list.js` (`loadUsersFromApi` — 채팅방 목록 상대방 정보 일괄 로드) |
+
+```javascript
+// 사용 예시 — 채팅방 목록에서 상대방 정보 일괄 조회
+var uids = Object.keys(v7ChatState.rooms).map(function(roomId) {
+    return v7ChatGetOtherUid(roomId, v7ChatState.myUid);
+}).filter(Boolean);
+
+func('user.getByFirebaseUids', { firebase_uids: uids.join(',') }).then(function(res) {
+    // res = { 'uid1': { nickname: '홍길동', photo_url: '...' }, ... }
+    // 각 채팅방의 userDisplayName, userPhotoUrl 업데이트
+});
+```
+
+### 20.4 JS 파일별 변경 사항
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `chat-app.js` | 내 정보를 v7 API `user.getByFirebaseUid`로 조회. popstate/URL 파라미터 시 상대방 정보도 v7 API로 조회 |
+| `chat-room-list.js` | `loadUsersFromApi()` 메서드 추가 — 채팅방 목록의 상대방 UID를 일괄 수집 후 `user.getByFirebaseUids` 호출하여 닉네임/사진 업데이트 |
+| `chat-single-room.js` | `loadOtherUserData()`에서 Firebase RTDB `users/{uid}` 대신 v7 API `user.getByFirebaseUid` 호출 |
+| `chat-store.js` | `joinRoomListener`: Firebase 데이터 업데이트 시 v7 API에서 가져온 `userDisplayName`/`userPhotoUrl` 보존 (덮어쓰지 않음) |
+| `chat-store.js` | `attachNewRoomListener`: 새 방 감지 시 v7 API로 상대방 정보 즉시 조회하여 `userDisplayName`/`userPhotoUrl` 설정 |
+
+### 20.5 필드명 매핑 주의
+
+v7 API 응답과 Firebase RTDB/채팅방 데이터에서 필드명 규칙이 다르므로 주의가 필요하다.
+
+| 데이터 출처 | 닉네임 필드 | 프로필 사진 필드 | 네이밍 규칙 |
+|-------------|------------|-----------------|-------------|
+| **v7 API 응답** | `nickname` | `photo_url` | 언더스코어 (snake_case) |
+| **Firebase RTDB** | `displayName` | `photoUrl` | 카멜케이스 (camelCase) |
+| **채팅방 joins 데이터** | `userDisplayName` | `userPhotoUrl` | 카멜케이스 (camelCase) |
+
+```javascript
+// v7 API 응답 → 채팅방 joins 데이터로 변환 시
+room.userDisplayName = apiRes.nickname;    // nickname → userDisplayName
+room.userPhotoUrl = apiRes.photo_url;      // photo_url → userPhotoUrl
+```
+
+### 20.6 데이터 보존 전략 (chat-store.js)
+
+`joinRoomListener`에서 Firebase RTDB의 실시간 리스너가 joins 데이터를 업데이트할 때, v7 API에서 이미 가져온 `userDisplayName`과 `userPhotoUrl`을 보존하는 전략을 사용한다.
+
+```javascript
+// joinRoomListener 내부 — Firebase 데이터가 갱신될 때
+ref.on('value', function(snap) {
+    var data = snap.val();
+    if (data) {
+        // v7 API에서 가져온 기존 값이 있으면 보존
+        var existing = v7ChatState.rooms[roomId];
+        if (existing && existing.userDisplayName) {
+            data.userDisplayName = existing.userDisplayName;
+        }
+        if (existing && existing.userPhotoUrl) {
+            data.userPhotoUrl = existing.userPhotoUrl;
+        }
+        v7ChatState.rooms[roomId] = data;
+    }
+});
+```
+
+`attachNewRoomListener`에서 새 채팅방이 감지되면 즉시 v7 API를 호출하여 상대방 정보를 설정한다.
+
+```javascript
+// attachNewRoomListener 내부 — 새 방 감지 시
+ref.on('child_added', function(snap) {
+    var roomId = snap.key;
+    var otherUid = v7ChatGetOtherUid(roomId, v7ChatState.myUid);
+    if (otherUid) {
+        func('user.getByFirebaseUid', { firebase_uid: otherUid }).then(function(res) {
+            if (v7ChatState.rooms[roomId]) {
+                v7ChatState.rooms[roomId].userDisplayName = res.nickname || '';
+                v7ChatState.rooms[roomId].userPhotoUrl = res.photo_url || '';
+            }
+        });
+    }
+});
 ```
