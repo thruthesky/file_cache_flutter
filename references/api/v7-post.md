@@ -481,14 +481,19 @@ markdown > html > text (기본값)
 | 글 수정 | `PostService::update()` | `content` 변경 시에만 재계산, 파일만 수정 시 유지 |
 | 코멘트 생성 | `PostService::commentCreate()` | 글 생성과 동일 |
 | 코멘트 수정 | `PostService::commentUpdate()` | 글 수정과 동일 |
+| 조회 시 자동 판별 | `PostService::resolveContentType()` | content_type이 빈 값이면 런타임 판별 + DB UPDATE (영구 저장) |
 
 `PostRepository::create()`의 `$defaults`에 `content_type` 포함, 기본값 `'text'`.
 
-### 조회 동작
+### 조회 동작 (런타임 자동 판별)
 
 - DB에 `content_type` 값이 있으면 `PostEntity::fromArray()`에서 그대로 매핑
-- `NULL` 또는 빈 문자열이면 빈 문자열(`''`)로 매핑 (Entity는 순수 데이터 구조체이므로 판별 로직을 포함하지 않음)
-- 기존 데이터(v6 레코드)는 `content_type`이 NULL → 클라이언트에서 빈 문자열 수신 시 자체 판별 또는 `'text'`로 간주
+- `content_type`이 빈 값(`''` 또는 NULL)이면 **`PostService::resolveContentType()`이 런타임에 자동 판별**하여:
+  1. `detectContentType()`으로 content를 분석 (markdown > html > text 우선순위)
+  2. Entity의 `content_type`, `is_markdown`, `is_html`, `is_text` 속성을 업데이트
+  3. `PostRepository::update()`로 DB의 `content_type` 컬럼도 영구 업데이트 (다음 조회 시에는 재판별 불필요)
+- 호출 위치: `PostService::get()`, `PostService::list()`, `PostService::commentList()`
+- 기존 데이터(v6 레코드)도 처음 조회 시 자동으로 content_type이 판별되어 DB에 저장됨
 
 ### html_entity_decode() 전처리 (구현 완료)
 
@@ -521,6 +526,25 @@ public bool $is_text = false;     // content_type === 'text' 또는 빈값
 ### 핵심 소스코드
 
 ```php
+// PostService::resolveContentType() — 빈 content_type 런타임 판별 + DB 영구 저장
+public static function resolveContentType(PostEntity $entity): void
+{
+    if ($entity->content_type !== '') return;  // 이미 설정됨
+    if ($entity->content === '') {
+        $entity->content_type = 'text';
+        $entity->is_text = true;
+        return;
+    }
+    $detectedType = self::detectContentType($entity->content);
+    $entity->content_type = $detectedType;
+    $entity->is_markdown = ($detectedType === 'markdown');
+    $entity->is_html = ($detectedType === 'html');
+    $entity->is_text = ($detectedType === 'text');
+    if ($entity->idx > 0) {
+        PostRepository::update($entity->idx, ['content_type' => $detectedType]);
+    }
+}
+
 // PostService::detectContentType() — 콘텐츠 포맷 판별
 public static function detectContentType(string $content): string
 {
