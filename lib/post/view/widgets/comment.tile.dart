@@ -4,6 +4,7 @@ import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
+import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
@@ -233,12 +234,9 @@ class _CommentTileState extends State<CommentTile> {
           const SizedBox(height: 4),
 
           // 내용
-          Text(
-            comment.content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onPrimaryContainer,
-              height: 1.5,
-            ),
+          PostViewContent(
+            post: comment,
+            padding: EdgeInsets.zero,
           ),
 
           // 첨부 파일

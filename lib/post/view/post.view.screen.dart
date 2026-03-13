@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/post/post.model.dart';
@@ -7,12 +6,12 @@ import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/widgets/comment.list.view.dart';
 import 'package:philgo/post/view/widgets/post.action.bar.dart';
+import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/post/view/widgets/post_comment_bar.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// 게시글 상세 보기 화면
 class PostViewScreen extends StatefulWidget {
@@ -364,37 +363,20 @@ class _PostViewScreenState extends State<PostViewScreen> {
                         PostViewFiles(post: _post),
 
                         // 본문
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                          child: _isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : _error != null
-                              ? Text(
-                                  '내용을 불러올 수 없습니다',
-                                  style: TextStyle(color: scheme.error),
-                                )
-                              : SelectableLinkify(
-                                  text: _post.content,
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: scheme.onSurface,
-                                    height: 1.6,
-                                  ),
-                                  linkStyle: TextStyle(
-                                    color: scheme.primary,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  onOpen: (link) async {
-                                    final uri = Uri.tryParse(link.url);
-                                    if (uri != null &&
-                                        await canLaunchUrl(uri)) {
-                                      await launchUrl(
-                                        uri,
-                                        mode: LaunchMode.externalApplication,
-                                      );
-                                    }
-                                  },
-                                ),
-                        ),
+                        if (_error != null)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            child: Text(
+                              '내용을 불러올 수 없습니다',
+                              style: TextStyle(color: scheme.error),
+                            ),
+                          )
+                        else
+                          PostViewContent(
+                            post: _post,
+                            isLoading: _isLoading,
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          ),
 
                         // 원글 액션 바
                         Padding(

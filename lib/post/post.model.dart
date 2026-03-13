@@ -28,6 +28,26 @@ class Post {
   final String userName;
   final String userPhotoUrl;
   final String files;
+  final String contentType;
+  final bool isMarkdown;
+  final bool isHtml;
+  final bool isText;
+  final String hasYoutube;
+  final int deleted;
+  final String report;
+  final String reminder;
+  final int bad;
+  final int stampLastComment;
+  final int listOrder;
+  final String userId;
+  final String userEmail;
+  final String subCategory;
+  final String groupId;
+  final String gid;
+  final String link;
+  final String region;
+  final String ip;
+  final int noOfAttach;
 
   const Post({
     required this.idx,
@@ -58,6 +78,26 @@ class Post {
     this.userName = '',
     this.userPhotoUrl = '',
     this.files = '',
+    this.contentType = '',
+    this.isMarkdown = false,
+    this.isHtml = false,
+    this.isText = true,
+    this.hasYoutube = '',
+    this.deleted = 0,
+    this.report = '',
+    this.reminder = '',
+    this.bad = 0,
+    this.stampLastComment = 0,
+    this.listOrder = 0,
+    this.userId = '',
+    this.userEmail = '',
+    this.subCategory = '',
+    this.groupId = '',
+    this.gid = '',
+    this.link = '',
+    this.region = '',
+    this.ip = '',
+    this.noOfAttach = 0,
   });
 
   /// 댓글 여부 (depth > 0)
@@ -109,6 +149,30 @@ class Post {
       userName: json['user_name']?.toString() ?? '',
       userPhotoUrl: json['user_photo_url']?.toString() ?? '',
       files: json['files']?.toString() ?? '',
+      contentType: json['content_type']?.toString() ?? '',
+      isMarkdown: json['is_markdown'] == true || json['is_markdown'] == 1,
+      isHtml: json['is_html'] == true || json['is_html'] == 1,
+      isText: (json['is_text'] == true || json['is_text'] == 1) ||
+          (json['is_markdown'] != true &&
+              json['is_markdown'] != 1 &&
+              json['is_html'] != true &&
+              json['is_html'] != 1),
+      hasYoutube: json['has_youtube']?.toString() ?? '',
+      deleted: _toInt(json['deleted']),
+      report: json['report']?.toString() ?? '',
+      reminder: json['reminder']?.toString() ?? '',
+      bad: _toInt(json['bad']),
+      stampLastComment: _toInt(json['stamp_last_comment']),
+      listOrder: _toInt(json['list_order']),
+      userId: json['user_id']?.toString() ?? '',
+      userEmail: json['user_email']?.toString() ?? '',
+      subCategory: json['sub_category']?.toString() ?? '',
+      groupId: json['group_id']?.toString() ?? '',
+      gid: json['gid']?.toString() ?? '',
+      link: json['link']?.toString() ?? '',
+      region: json['region']?.toString() ?? '',
+      ip: json['ip']?.toString() ?? '',
+      noOfAttach: _toInt(json['no_of_attach']),
     );
   }
 
@@ -142,6 +206,26 @@ class Post {
       userName: userName,
       userPhotoUrl: userPhotoUrl,
       files: files,
+      contentType: contentType,
+      isMarkdown: isMarkdown,
+      isHtml: isHtml,
+      isText: isText,
+      hasYoutube: hasYoutube,
+      deleted: deleted,
+      report: report,
+      reminder: reminder,
+      bad: bad,
+      stampLastComment: stampLastComment,
+      listOrder: listOrder,
+      userId: userId,
+      userEmail: userEmail,
+      subCategory: subCategory,
+      groupId: groupId,
+      gid: gid,
+      link: link,
+      region: region,
+      ip: ip,
+      noOfAttach: noOfAttach,
     );
   }
 
