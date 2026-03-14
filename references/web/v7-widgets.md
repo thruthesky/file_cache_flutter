@@ -774,6 +774,8 @@ echo renderUserHoverDropdown([
 | `avatar_size` | `string` | `'2.25rem'` | `wa-avatar`의 `--size` CSS 변수. `'0'`이면 아바타 렌더링 안 함 |
 | `show_meta` | `bool` | `true` | `true`이면 닉네임+레벨 표시, `false`이면 아바타만 표시 |
 | `level` | `int` | `0` | 회원 레벨. `0`이면 레벨 표시 안 함 |
+| `content_idx` | `int` | `0` | 신고할 글/코멘트 idx (0이면 신고 버튼 숨김) |
+| `content_type` | `string` | `''` | 신고 대상 유형: `'post'` 또는 `'comment'` (빈 문자열이면 신고 버튼 숨김) |
 
 ### 13.6 CSS 클래스
 
@@ -787,6 +789,7 @@ echo renderUserHoverDropdown([
 | `.user-hover-menu-header` | 메뉴 상단 사용자 정보 | 아바타(2.5rem) + 이름 + 레벨 |
 | `.user-hover-menu-divider` | 구분선 | `height: 1px; background: neutral-100` |
 | `.user-hover-menu-item` | 메뉴 항목 (링크/버튼) | `font-size: 0.8rem; padding: 0.4rem 0.75rem` |
+| `.user-hover-report-btn` | 신고 버튼 | `content_idx` + `content_type` data 속성 보유. 클릭 시 `v7api('post.report')` 호출 |
 | `.user-hover-block-btn` | 차단 버튼 | hover 시 `color: danger-600` (빨간색) |
 | `.user-hover-admin-item` | 관리자 전용 항목 | 아이콘 색상 `neutral-500` |
 | `.user-hover-dropdown.open` | 모바일 토글 열림 상태 | `.user-hover-menu { display: block }` |
@@ -837,6 +840,7 @@ echo renderUserHoverDropdown([
 |------|------|
 | **데스크톱 (>=992px)** | CSS `:hover`로 메뉴 표시. `::before` 투명 영역으로 트리거-메뉴 간 마우스 이탈 방지 |
 | **모바일 (<992px)** | JS `click` 이벤트로 `.open` 클래스 토글. 외부 클릭 시 자동 닫힘 |
+| **신고** | `content_idx`와 `content_type`이 전달된 경우에만 신고 버튼 표시. `v7api('post.report', { type, idx })` 호출. 성공 시 "신고됨" 표시 및 버튼 비활성화 |
 | **차단** | `v7/js/block.js`의 `toggleBlockMember()` 함수 호출. 로딩 스피너 표시, 성공 시 페이지 리로드 |
 | **관리자 판별** | `global $loginIsAdmin` 변수 사용 |
 | **이중 include 방지** | `function_exists('renderUserHoverDropdown')` 가드로 중복 정의 방지 |
@@ -863,6 +867,11 @@ echo renderUserHoverDropdown([
         <a class="user-hover-menu-item" href="...">글 목록</a>
         <a class="user-hover-menu-item" href="...">코멘트 목록</a>
         <div class="user-hover-menu-divider"></div>
+        <!-- content_idx + content_type 전달 시에만 표시 -->
+        <button class="user-hover-menu-item user-hover-report-btn"
+                data-content-idx="12345" data-content-type="post" data-user-name="홍길동">
+            <i class="fa-solid fa-flag"></i> 신고
+        </button>
         <button class="user-hover-menu-item user-hover-block-btn" ...>차단</button>
         <a class="user-hover-menu-item user-hover-admin-item" href="...">회원 정보 수정</a>
     </div>

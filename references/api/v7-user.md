@@ -1827,3 +1827,112 @@ Vue.js CDN MPA 방식으로 구현된 차단 사용자 관리 페이지이다.
 3. 글 보기 → 액션바 차단/해제 버튼 (타인 글에만 표시)
 4. 글 보기 → 코멘트 액션 차단/해제 버튼 (타인 댓글에만 표시)
 5. 공개 프로필 → 차단 버튼
+
+---
+
+## 11. 사용자 신고 기능
+
+### 11.1 개요
+
+사용자를 신고하는 기능이다. 공개 프로필 페이지(`v7/user/public-profile.php`)에서 타인의 프로필을 신고할 수 있다.
+글/코멘트 신고는 `post.report` API를 사용하며, 사용자 신고는 `user.reportUser` API를 사용한다.
+
+### 11.2 user.reportUser — 사용자 신고 API
+
+인증 필수.
+
+```
+GET https://local.philgo.com/api.php?method=user.reportUser&session_id=xxx&idx_reported=190076&reason=스팸
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| idx_reported | int | O | 신고 대상 사용자의 sf_member.idx |
+| reason | string | X | 신고 사유 (기본값: 빈 문자열) |
+
+**성공 응답:**
+
+```json
+{ "idx_reported": 190076, "message": "사용자를 신고했습니다." }
+```
+
+**에러 응답:**
+
+| 메시지 | 상황 |
+|--------|------|
+| 로그인이 필요합니다. | 미인증 |
+| idx_reported는 필수입니다. | idx_reported 누락 또는 0 |
+| 자기 자신을 신고할 수 없습니다. | 본인 신고 시도 |
+| 이미 신고한 사용자입니다. | 동일 사용자에 대한 중복 신고 |
+
+**호출 경로:**
+
+```
+UserController::reportUser($input)
+  → UserService::reportUser($idxReporter, $idxReported, $reason)
+    → ensureUserReportsTable()  ← sf_user_reports 테이블 자동 생성
+    → Db::fetch() 중복 확인
+    → Db::insert() 신고 등록
+```
+
+### 11.3 DB 테이블: sf_user_reports
+
+사용자 신고 전용 테이블. `UserService::ensureUserReportsTable()`에서 자동 생성된다.
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `idx` | int (PK, AUTO_INCREMENT) | 신고 레코드 ID |
+| `idx_reporter` | int | 신고한 사용자의 sf_member.idx |
+| `idx_reported` | int | 신고당한 사용자의 sf_member.idx |
+| `reason` | varchar(255) | 신고 사유 (기본값: 빈 문자열) |
+| `stamp` | int | 신고 시각 (Unix timestamp) |
+
+**인덱스:**
+
+| 인덱스 | 컬럼 | 설명 |
+|--------|------|------|
+| UNIQUE `unique_report` | `(idx_reporter, idx_reported)` | 동일 사용자 간 중복 신고 방지 |
+| KEY `idx_reported` | `(idx_reported)` | 신고당한 사용자 기준 조회 |
+
+### 11.4 관리자용 신고 사용자 목록 조회
+
+`UserService::listReportedUsers($limit)`로 신고된 사용자 목록을 조회한다 (관리자 전용).
+
+**반환 데이터:**
+
+| 필드 | 설명 |
+|------|------|
+| `idx_reported` | 신고당한 사용자 idx |
+| `nickname` | 닉네임 |
+| `photo_url` | 프로필 사진 URL |
+| `report_count` | 신고 횟수 |
+| `last_report_stamp` | 최근 신고 시각 |
+| `reasons` | 신고 사유 모음 (콤마 구분) |
+
+### 11.5 공개 프로필 페이지 신고 버튼
+
+`v7/user/public-profile.php`에서 타인 프로필에 신고 버튼이 표시된다.
+
+```html
+<wa-button id="profile-report-btn" variant="neutral" appearance="outlined" size="small"
+           data-idx-reported="<?= $user->idx ?>"
+           data-user-name="<?= htmlspecialchars($user->nickname) ?>">
+    <i slot="start" class="fal fa-flag"></i> 신고
+</wa-button>
+```
+
+**JavaScript 동작:**
+
+1. 신고 버튼 클릭 → `confirm()` 확인 다이얼로그
+2. 확인 시 `v7api('user.reportUser', { idx_reported: ... })` 호출
+3. 성공 시 버튼 텍스트 "신고됨"으로 변경, variant를 `warning`으로 변경, 버튼 비활성화
+4. 에러 시 원래 상태로 복원
+
+### 11.6 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/user/UserController.php` | `reportUser()` API 엔드포인트 |
+| `lib/user/UserService.php` | `reportUser()`, `listReportedUsers()`, `ensureUserReportsTable()` 비즈니스 로직 |
+| `v7/user/public-profile.php` | 공개 프로필 신고 버튼 UI + JavaScript |
+| `v7/admin/reports.php` | 관리자 신고 관리 페이지 (사용자 신고 탭) |
