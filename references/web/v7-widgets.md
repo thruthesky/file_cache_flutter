@@ -932,13 +932,41 @@ echo renderUserHoverDropdown([
 | `.v7-bm-widget-item` | 각 즐겨찾기 항목 (링크) | `display: flex; align-items: center; gap: 8px; padding: 6px 0; text-decoration: none` |
 | `.v7-bm-widget-avatar` | 아바타 이미지 (채팅/사용자) | `width: 28px; height: 28px; border-radius: 50%; object-fit: cover` |
 | `.v7-bm-widget-icon` | 타입별 아이콘 컨테이너 | `width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center` |
-| `.v7-bm-widget-icon.type-post` | 게시글 아이콘 색상 | 파란색 배경 |
+| `.v7-bm-widget-icon.type-post` | 게시글 아이콘 색상 | 파란색 배경 (`background: #eff6ff; color: #2563eb`) |
 | `.v7-bm-widget-icon.type-comment` | 댓글 아이콘 색상 | 초록색 배경 |
 | `.v7-bm-widget-icon.type-user` | 사용자 아이콘 색상 | 보라색 배경 |
 | `.v7-bm-widget-icon.type-chat_room` | 채팅 아이콘 색상 | 주황색 배경 |
 | `.v7-bm-widget-text` | 텍스트 영역 | `flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px` |
-| `.v7-bm-widget-title` | 제목 (1줄 말줄임) | `flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.82em` |
+| `.v7-bm-widget-title` | 제목 (1줄 말줄임) | `flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.82em; color: #1e293b` |
 | `.v7-bm-widget-label` | 타입 라벨 태그 | `font-size: 0.68em; padding: 1px 6px; border-radius: 3px; flex-shrink: 0` |
+| `.v7-bm-widget-label.type-post` | 게시글 라벨 색상 | `background: #eff6ff; color: #1d4ed8` |
+
+#### 🔴 즐겨찾기 위젯 CSS: Web Awesome CSS 변수 대신 하드코딩 색상값 사용
+
+> **⛔ 즐겨찾기 위젯(`.v7-bm-widget-*`)의 CSS에서는 Web Awesome CSS 변수(`--wa-color-brand-*`, `--wa-color-neutral-*`)를 사용하지 않는다. ⛔**
+> **반드시 하드코딩된 색상값을 직접 지정한다.**
+
+**이유:**
+Web Awesome의 CSS 변수(`--wa-color-brand-50`, `--wa-color-neutral-200` 등)는 Tailwind CSS 색상 팔레트 기준이 아닌
+Web Awesome 자체 테마 색상으로 해석되어, 의도한 연한 파란색/회색 대신 진한 테마 색상이 적용되는 문제가 발생했다.
+예를 들어 `--wa-color-brand-50`이 연한 파란색(`#eff6ff`)이 아닌 Web Awesome 브랜드 색상의 50 단계로 해석되어
+아이콘/라벨 배경이 의도보다 진하게 표시되었다.
+
+**하드코딩 색상값 목록 (즐겨찾기 위젯 전용):**
+
+| 용도 | 하드코딩 값 | 기존 CSS 변수 (사용 금지) |
+|------|-----------|------------------------|
+| 항목 hover 배경 | `#e2e8f0` | ~~`--wa-color-neutral-200`~~ |
+| 항목 구분선 | `#f1f5f9` | ~~`--wa-color-neutral-100`~~ |
+| 아바타 배경 | `#f1f5f9` | ~~`--wa-color-neutral-100`~~ |
+| 게시글 아이콘 배경 | `#eff6ff` | ~~`--wa-color-brand-50`~~ |
+| 게시글 아이콘 색상 | `#2563eb` | ~~`--wa-color-brand-600`~~ |
+| 게시글 라벨 배경 | `#eff6ff` | ~~`--wa-color-brand-50`~~ |
+| 게시글 라벨 색상 | `#1d4ed8` | ~~`--wa-color-brand-700`~~ |
+| 제목 텍스트 색상 | `#1e293b` | ~~`--wa-color-neutral-800`~~ |
+
+> **참고**: 이 패턴은 즐겨찾기 위젯에만 해당한다. 다른 위젯에서도 Web Awesome CSS 변수의 해석 결과가
+> 의도와 다른 경우, 동일하게 하드코딩 색상값으로 교체하는 것을 검토해야 한다.
 
 ### 14.6 헬퍼 함수
 
