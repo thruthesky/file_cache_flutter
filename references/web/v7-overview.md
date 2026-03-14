@@ -21,6 +21,7 @@
 17. [URL 유틸리티 (url() 함수)](#17-url-유틸리티-url-함수)
 18. [게시판 목록 페이지 (v7/post/list.php)](#18-게시판-목록-페이지-v7postlistphp)
 19. [게시판 글 읽기 페이지 (v7/post/view.php)](#19-게시판-글-읽기-페이지-v7postviewphp)
+20. [전체 메뉴 페이지 (v7/menu/index.php)](#20-전체-메뉴-페이지-v7menuindexphp)
 
 ---
 
@@ -1083,6 +1084,8 @@ v6의 `href()` 함수와 동일한 패턴이다.
 // 기본 URL
 url()->home                         // '/'
 url()->search                       // '/post/search'
+url()->weather                      // '/weather'
+url()->currency                     // '/currency'
 
 // 게시판 목록 (프로퍼티)
 url()->post->list->community        // '/post/list?post_id=freetalk'
@@ -1095,14 +1098,45 @@ url()->post->list->golf             // '/post/list?post_id=buyandsell&category=�
 url()->post->view(123)              // '/post/view?idx=123'
 url()->post->create('qna')          // '/post/create?post_id=qna'
 url()->post->update(789)            // '/post/update?idx=789'
+url()->post->popular                // '/post/popular'
+url()->post->recentComments         // '/post/comments'
 
 // 사용자
 url()->user->login                  // '/user/login'
 url()->user->profile                // '/user/profile'
+url()->user->blocked                // '/user/blocked'
+url()->user->resign                 // '/user/resign'
+url()->user->accountDelete          // '/user/account-delete'
 
 // 업소록
 url()->company->home                // '/company'
 url()->company->view(99)            // '/company/view?idx=99'
+
+// 채팅
+url()->chat->openChatRooms          // '/chat'
+
+// 광고
+url()->adv->banner                  // '/adv/banner'
+url()->adv->point                   // '/adv/point'
+url()->adv->massage                 // '/adv/massage'
+
+// 도움말
+url()->help->guideline              // '/help/guideline'
+url()->help->terms                  // '/help/terms'
+url()->help->pointGuideline         // '/help/point-guideline'
+url()->help->pointEvent             // '/help/point-event'
+
+// 포인트
+url()->point->history               // '/point/history'
+
+// 설정
+url()->settings->notification       // '/settings/notification'
+
+// 즐겨찾기
+url()->bookmark->home               // '/bookmark'
+
+// 메뉴
+url()->menu->all                    // '/menu'
 ```
 
 ### HTML 템플릿 사용 예시
