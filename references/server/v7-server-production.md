@@ -1,13 +1,14 @@
-# 필고 v7 프로덕션 서버 환경 설정
+# 필고 v7 프로덕션 서버 환경 설정 (philgo.com)
 
 ## 목차
 
 - [1. 개요](#1-개요)
-- [2. 서버 시스템 정보](#2-서버-시스템-정보)
-- [3. 소스코드 경로](#3-소스코드-경로)
-- [4. PHP 설정](#4-php-설정)
-- [5. Nginx 설정](#5-nginx-설정)
-- [6. 로컬 개발 환경과의 차이점](#6-로컬-개발-환경과의-차이점)
+- [2. 서버 환경 구분](#2-서버-환경-구분)
+- [3. 서버 시스템 정보](#3-서버-시스템-정보)
+- [4. 소스코드 경로](#4-소스코드-경로)
+- [5. PHP 설정](#5-php-설정)
+- [6. Nginx 설정](#6-nginx-설정)
+- [7. 전체 환경 비교표](#7-전체-환경-비교표)
 
 ---
 
@@ -15,8 +16,8 @@
 
 ### 핵심 개념
 
-필고 v7 프로덕션 서버는 **네이티브 Ubuntu Linux** 환경에서 Nginx + PHP-FPM + MariaDB를 직접 설치하여 운영한다.
-로컬 개발 환경(Docker 기반)이나 Dokploy 배포(Docker Compose 기반)와 달리, 서버에 직접 패키지를 설치하여 운영하는 방식이다.
+이 문서는 **`https://philgo.com`** 라이브 프로덕션 서버의 환경 설정을 다룬다.
+**네이티브 Ubuntu Linux** 환경에서 Nginx + PHP-FPM + MariaDB를 직접 설치하여 운영한다.
 
 ### 설계 의도
 
@@ -26,19 +27,33 @@
 
 ---
 
-## 2. 서버 시스템 정보
+## 2. 서버 환경 구분
+
+필고 v7은 3개의 서버 환경으로 운영된다.
+
+| # | 환경 | URL | 방식 | 문서 |
+|---|------|-----|------|------|
+| 1 | **로컬 개발** | `https://local.philgo.com` | Docker Compose (Nginx + PHP-FPM + MariaDB) | [v7-docker.md](v7-docker.md) |
+| 2 | **원격 테스트** | `https://philgo.net` | Dokploy (Docker Compose 기반 자동 배포) | [v7-dokploy.md](v7-dokploy.md) |
+| 3 | **라이브 프로덕션** | **`https://philgo.com`** | **네이티브 Ubuntu** (Nginx + PHP-FPM 직접 설치) | **이 문서** |
+
+> **주의:** `philgo.net`은 테스트 서버이며, 프로덕션 서비스가 아니다. 실제 사용자에게 서비스되는 라이브 프로덕션은 `philgo.com`뿐이다.
+
+---
+
+## 3. 서버 시스템 정보
 
 | 항목 | 값 |
 |------|-----|
+| **서비스 URL** | `https://philgo.com` |
 | 호스트명 | `philgo-db` |
 | OS | Linux (Ubuntu) |
 | 커널 | `6.8.0-90-generic #91-Ubuntu SMP PREEMPT_DYNAMIC` |
 | 아키텍처 | `x86_64` |
-| SSH 접속 | `ssh root@philgo.net` |
 
 ---
 
-## 3. 소스코드 경로
+## 4. 소스코드 경로
 
 | 항목 | 경로 |
 |------|------|
@@ -49,7 +64,7 @@
 
 ---
 
-## 4. PHP 설정
+## 5. PHP 설정
 
 ### PHP 버전 및 기본 정보
 
@@ -93,7 +108,7 @@ php -i | grep "php.ini"
 
 ---
 
-## 5. Nginx 설정
+## 6. Nginx 설정
 
 ### 설정 파일 경로
 
@@ -206,21 +221,18 @@ nginx -t
 
 ---
 
-## 6. 로컬 개발 환경과의 차이점
+## 7. 전체 환경 비교표
 
-| 항목 | 로컬 개발 (Docker) | 프로덕션 서버 (네이티브) |
-|------|-------------------|----------------------|
-| **PHP 설치** | Docker 이미지 (`php:8.3.6-fpm`) | Ubuntu 패키지 (`php8.3-fpm`) |
-| **php.ini 경로** | `docker/etc/php.ini` → 컨테이너 내 `/usr/local/etc/php/php.ini` | `/etc/php/8.3/fpm/php.ini` |
-| **PHP-FPM 관리** | `docker compose restart php` | `systemctl restart php8.3-fpm` |
-| **소스코드 경로** | `/Users/thruthesky/apps/withcenter/philgo/www` | `/home/thruthesky/v7/withcenter/philgo/www` |
-| **Nginx 연결** | `fastcgi_pass php:9000` (컨테이너명) | `fastcgi_pass` Unix 소켓 또는 `127.0.0.1:9000` |
-| **Nginx 설정** | `docker/etc/nginx/nginx.conf` | `/etc/nginx/nginx.conf` + `etc/nginx/sites-enabled/*` |
-| **Nginx 관리** | `docker compose restart nginx` | `systemctl restart nginx` |
-| **CDN** | 없음 (직접 접속) | Cloudflare CDN (`real_ip_header CF-Connecting-IP`) |
-| **최대 업로드** | 22M (`client_max_body_size`) | 33M (`client_max_body_size`) |
-| **SSL/TLS** | 자체 서명 인증서 (`docker/certs/`) | Cloudflare SSL 또는 Let's Encrypt |
-
-> **관련 문서:**
-> - 로컬 Docker 개발 환경: [v7-docker.md](v7-docker.md)
-> - Dokploy 프로덕션 배포: [v7-dokploy.md](v7-dokploy.md)
+| 항목 | 로컬 개발 (Docker) | 테스트 (Dokploy) | 프로덕션 (네이티브) |
+|------|-------------------|-----------------|-------------------|
+| **URL** | `https://local.philgo.com` | `https://philgo.net` | **`https://philgo.com`** |
+| **PHP 설치** | Docker (`php:8.3.6-fpm`) | Docker (`php:8.3.6-fpm`) | Ubuntu 패키지 (`php8.3-fpm`) |
+| **php.ini 경로** | `docker/etc/php.ini` | Dockerfile 내장 | `/etc/php/8.3/fpm/php.ini` |
+| **PHP-FPM 관리** | `docker compose restart php` | Dokploy 자동 | `systemctl restart php8.3-fpm` |
+| **소스코드 경로** | `/Users/thruthesky/apps/withcenter/philgo/www` | Git 자동 배포 | `/home/thruthesky/v7/withcenter/philgo/www` |
+| **Nginx 연결** | `fastcgi_pass php:9000` | `fastcgi_pass 127.0.0.1:9000` | `fastcgi_pass` Unix 소켓 또는 `127.0.0.1:9000` |
+| **Nginx 설정** | `docker/etc/nginx/nginx.conf` | Dockerfile 내장 | `/etc/nginx/nginx.conf` + `sites-enabled/*` |
+| **CDN** | 없음 | Cloudflare | Cloudflare |
+| **최대 업로드** | 22M | 22M | 33M |
+| **SSL/TLS** | 자체 서명 인증서 | Traefik 자동 | Cloudflare SSL |
+| **문서** | [v7-docker.md](v7-docker.md) | [v7-dokploy.md](v7-dokploy.md) | **이 문서** |
