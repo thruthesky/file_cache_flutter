@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 호스트: localhost
--- 생성 시간: 26-03-14 16:03
+-- 생성 시간: 26-03-14 16:18
 -- 서버 버전: 11.7.2-MariaDB-ubu2404-log
 -- PHP 버전: 8.3.6
 
@@ -1441,7 +1441,8 @@ ALTER TABLE `bookmarks`
   ADD UNIQUE KEY `uk_member_entity` (`idx_member`,`entity_type`,`entity_idx`,`entity_id`),
   ADD KEY `idx_member` (`idx_member`),
   ADD KEY `entity_type_idx` (`entity_type`,`entity_idx`),
-  ADD KEY `idx_member_group` (`idx_member`,`idx_group`);
+  ADD KEY `idx_member_group` (`idx_member`,`idx_group`),
+  ADD KEY `idx_member_created_at` (`idx_member`,`created_at`);
 
 --
 -- 테이블의 인덱스 `bookmark_groups`
@@ -1922,7 +1923,11 @@ ALTER TABLE `sf_post_data`
   ADD KEY `idx_post_id_category_has_video_stamp` (`post_id`,`category`,`has_video`,`stamp`),
   ADD KEY `idx_post_id_category_has_youtube_stamp` (`post_id`,`category`,`has_youtube`,`stamp`),
   ADD KEY `stamp_int_10` (`stamp`,`int_10`),
-  ADD KEY `idx_parent_deleted_blind` (`idx_parent`,`deleted`,`blind`);
+  ADD KEY `idx_parent_deleted_blind` (`idx_parent`,`deleted`,`blind`),
+  ADD KEY `idx_int_10` (`int_10`),
+  ADD KEY `idx_parent_stamp` (`idx_parent`,`stamp`),
+  ADD KEY `idx_has_image_parent_stamp` (`has_image`,`idx_parent`,`stamp`),
+  ADD KEY `idx_parent_deleted_stamp` (`idx_parent`,`deleted`,`stamp`);
 
 --
 -- 테이블의 인덱스 `sf_post_search`
