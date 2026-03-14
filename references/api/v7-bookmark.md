@@ -112,6 +112,7 @@ lib/bookmark/
 v7/js/bookmark.js             # 공통 즐겨찾기 JS 모듈 (bookmarkToggle, bookmarkShowGroupDialog, bookmarkRemove)
 v7/bookmark/index.php         # 즐겨찾기 관리 페이지 (그룹 CRUD + 목록 + 해제)
 v7/bookmark/index.css         # 즐겨찾기 관리 페이지 CSS
+v7/widgets/layout/layout.sidebar-left.bookmarks.php  # 사이드바 즐겨찾기 위젯 (최근 3개)
 ```
 
 ### BookmarkEntity 필드
@@ -394,9 +395,57 @@ doToggleBookmark: function () {
 | `v7/bookmark/index.css` | 페이지 전용 CSS (채팅방 아바타 `.bookmark-chat-avatar`, 서브텍스트 `.bookmark-chat-sub` 포함) |
 | `v7/js/bookmark.js` | 공통 즐겨찾기 JS (그룹 선택 다이얼로그 등) |
 
-### 6.6 BookmarkService::getBookmarkedIdxs() 메서드
+### 6.6 BookmarkService::listRecent() 메서드
+
+사이드바 즐겨찾기 위젯(`layout.sidebar-left.bookmarks.php`)에서 사용하는 메서드이다.
+모든 entity_type의 최근 즐겨찾기를 enrichment 정보와 함께 반환한다.
+
+```php
+/**
+ * 최근 즐겨찾기 목록 (enrichment 포함, 사이드바 위젯용)
+ *
+ * @param int $idxMember 회원 idx
+ * @param int $limit 가져올 개수 (기본 3)
+ * @return array enrichment가 포함된 즐겨찾기 배열
+ */
+public static function listRecent(int $idxMember, int $limit = 3): array
+```
+
+**enrichment 로직 (entity_type별):**
+
+| entity_type | 추가 필드 | 데이터 소스 |
+|------------|----------|------------|
+| `post` | `subject`, `post_id` | `sf_post_data` 테이블 |
+| `comment` | `parent_idx` (idx_root), `content_preview` (80자) | `sf_post_data` 테이블 |
+| `user` | `nickname`, `photo_url` | `sf_member` 테이블 |
+| `chat_room` | `other_name`, `other_nickname`, `other_photo_url` | `sf_member` 테이블 (firebase_uid로 상대방 조회) |
+
+**chat_room enrichment 상세:**
+
+1. 로그인 사용자의 `firebase_uid`를 `sf_member`에서 1회 조회 (루프 밖에서 실행하여 N+1 방지)
+2. `entity_id`(roomId) 형식인 `uid1---uid2`를 `---` 구분자로 분리
+3. 로그인 사용자의 UID가 아닌 쪽을 상대방 UID로 결정
+4. `sf_member`에서 상대방의 `name`, `nickname`, `photo_url` 조회
+
+**사용 예시:**
+
+```php
+use Philgo\Bookmark\BookmarkService;
+use Philgo\Utils\AuthService;
+
+$loginUser = AuthService::getLoginUser();
+if ($loginUser !== null) {
+    $recentBookmarks = BookmarkService::listRecent($loginUser->idx, 3);
+    foreach ($recentBookmarks as $bm) {
+        // $bm['entity_type'], $bm['subject'], $bm['nickname'] 등 접근 가능
+    }
+}
+```
+
+### 6.7 BookmarkService::getBookmarkedIdxs() 메서드
 
 SSR에서 여러 entity_idx의 즐겨찾기 상태를 **한 번의 쿼리**로 일괄 확인하는 메서드이다.
+(상세는 기존 내용 참조)
 
 ```php
 /**
@@ -425,7 +474,7 @@ $bookmarkedCommentIdxs = BookmarkService::getBookmarkedIdxs($loginUser->idx, 'co
 // HTML에서: data-bookmarked="<?= in_array($comment->idx, $bookmarkedCommentIdxs) ? '1' : '0' ?>"
 ```
 
-### 6.7 연동 사용 페이지 요약
+### 6.8 연동 사용 페이지 요약
 
 | 페이지 | entity_type | SSR 확인 | CSR 토글 | JS 파일 |
 |--------|-------------|---------|---------|---------|
@@ -434,3 +483,4 @@ $bookmarkedCommentIdxs = BookmarkService::getBookmarkedIdxs($loginUser->idx, 'co
 | `v7/user/public-profile.php` | `user` | `getBookmarkedIdxs()` | 인라인 JS | `bookmark.js` |
 | `v7/bookmark/index.php` | 전체 | -- | Vue.js CSR | `bookmark.js` |
 | `v7/chat/index.php` | `chat_room` | -- | `chat-store.js` 등 | -- (채팅 전용 JS) |
+| `v7/widgets/layout/layout.sidebar-left.bookmarks.php` | 전체 | `listRecent()` | -- (SSR 전용) | -- |

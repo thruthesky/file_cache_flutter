@@ -15,6 +15,7 @@
 11. [날씨+환율 통합 위젯 (shared.weather-currency)](#11-날씨환율-통합-위젯-sharedweather-currency)
 12. [게시글 목록 위젯 (post-list-widget)](#12-게시글-목록-위젯-post-list-widget)
 13. [사용자 호버 드롭다운 위젯 (user-hover-dropdown)](#13-사용자-호버-드롭다운-위젯-user-hover-dropdown)
+14. [즐겨찾기 위젯 (sidebar-left.bookmarks)](#14-즐겨찾기-위젯-sidebar-leftbookmarks)
 
 ---
 
@@ -28,7 +29,7 @@ v7 홈페이지는 **PHP include 기반 위젯 시스템**을 사용한다.
 | **위젯 루트** | `v7/widgets/` |
 | **모듈 폴더** | `layout/`, `home/`, `shared/`, `user/`, `post/` |
 | **파일 네이밍** | `<module>/<module>.<name>.php` (예: `layout/layout.topbar.php`) |
-| **총 위젯 수** | 19개 이상 (layout 8 + home 5 + shared 5 + user 1+) |
+| **총 위젯 수** | 20개 이상 (layout 9 + home 5 + shared 5 + user 1+) |
 | **사용 방식** | `<?php include __DIR__ . '/widgets/<module>/<module>.<name>.php'; ?>` |
 | **CSS 관리** | 모듈별 하나의 CSS 파일 (`layout-widget.css`, `home-widget.css`) |
 | **공유 위젯** | 4개 (사이드바 + 모바일 양쪽에서 재사용) |
@@ -95,6 +96,7 @@ $_popularRows = Db::fetchAll("SELECT idx, subject FROM sf_post_data WHERE ...", 
 | `PostService::listRecentComments($limit)` | 최근 댓글 (회원 JOIN) | layout.sidebar-left.recent-comments |
 | `UserService::listRecent($limit)` | 최근 가입 회원 | home.admin-reminder |
 | `CompanyService::listPending($limit)` | 미승인 업소 | home.admin-reminder |
+| `BookmarkService::listRecent($idxMember, $limit)` | 최근 즐겨찾기 (enrichment 포함) | layout.sidebar-left.bookmarks |
 
 ---
 
@@ -117,6 +119,7 @@ v7/
     │   ├── layout.header-mobile.php
     │   ├── layout.header-desktop.php
     │   ├── layout.sidebar-left.php
+    │   ├── layout.sidebar-left.bookmarks.php  ← ★ 즐겨찾기 위젯 (로그인 시 최근 3개)
     │   ├── layout.sidebar-right.php
     │   ├── layout.wing-left.php
     │   ├── layout.wing-right.php
@@ -160,6 +163,7 @@ v7/
 | `layout/layout.wing-left.php` | 왼쪽 날개 배너 (광고 3개) | 데스크톱(>=992px) | `v7-wing`, `v7-lg` |
 | `layout/layout.wing-right.php` | 오른쪽 날개 배너 (광고 3개) | 데스크톱(>=992px) | `v7-wing`, `v7-lg` |
 | `layout/layout.footer.php` | 4열 푸터 (소개, 광고, 바로가기, 정책) | 공통 | `v7-footer` |
+| `layout/layout.sidebar-left.bookmarks.php` | 왼쪽 사이드바 즐겨찾기 (최근 3개) | 로그인 + 즐겨찾기 존재 시 | `v7-bm-widget-*` |
 
 ### shared 모듈 — 공유 위젯 (사이드바 + 모바일 공유)
 
@@ -406,6 +410,7 @@ v7/layout.php (메인 레이아웃)
 ├── widgets/layout/layout.header-mobile.php
 ├── widgets/layout/layout.header-desktop.php
 ├── widgets/layout/layout.sidebar-left.php
+│   └── layout.sidebar-left.bookmarks.php (← 최근 즐겨찾기 3개, 로그인 시만)
 ├── widgets/layout/layout.sidebar-right.php (← 컴포지트 위젯)
 │   ├── layout.sidebar-right.weather-currency.php → widgets/shared/shared.weather-currency.php
 │   ├── layout.sidebar-right.company-categories.php → widgets/shared/shared.company-categories.php
@@ -877,3 +882,113 @@ echo renderUserHoverDropdown([
     </div>
 </div>
 ```
+
+---
+
+## 14. 즐겨찾기 위젯 (sidebar-left.bookmarks)
+
+### 14.1 개요
+
+왼쪽 사이드바에 로그인 사용자의 **최근 즐겨찾기 3개**를 아이콘/아바타 + 제목 + 타입 라벨로 표시하는 위젯이다.
+"더보기" 링크를 통해 즐겨찾기 관리 페이지(`/bookmark`)로 이동할 수 있다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/widgets/layout/layout.sidebar-left.bookmarks.php` |
+| **CSS** | `v7/widgets/layout/layout-widget.css` (`.v7-bm-widget-*` 클래스) |
+| **데이터 소스** | `BookmarkService::listRecent($idxMember, 3)` |
+| **표시 조건** | 로그인 + 즐겨찾기 1개 이상 존재 시 |
+| **포함 위치** | `layout.sidebar-left.php` 내부 (로그인 박스 바로 아래) |
+| **v6 의존성** | 없음 -- v7 독립 구현 |
+
+### 14.2 표시 조건
+
+| 조건 | 동작 |
+|------|------|
+| 비로그인 | 위젯 미표시 (`return`) |
+| 로그인 + 즐겨찾기 0개 | 위젯 미표시 (`return`) |
+| 로그인 + 즐겨찾기 1개 이상 | 최근 3개 표시 |
+
+### 14.3 지원하는 entity_type
+
+| entity_type | 아이콘 | 라벨 | 타이틀 소스 | 링크 |
+|------------|--------|------|------------|------|
+| `post` | `fal fa-file-lines` | 글 | `subject` (게시글 제목) | `url()->post->view($idx)` |
+| `comment` | `fal fa-comment` | 댓글 | `content_preview` (80자) | `url()->post->view($parentIdx)#comment-$idx` |
+| `user` | `fal fa-user` | 사용자 | `nickname` | `url()->user->publicProfile($idx)` |
+| `chat_room` | `fal fa-comments` | 채팅 | `other_name` / `other_nickname` / `entity_id` 순서 폴백 | `/chat/index?room_id=...` |
+
+### 14.4 아이콘/아바타 표시 로직
+
+- **채팅방**: `other_photo_url`이 있으면 원형 아바타 이미지 표시, 없으면 채팅 아이콘
+- **사용자**: `photo_url`이 있으면 원형 아바타 이미지 표시, 없으면 사용자 아이콘
+- **게시글/댓글**: 항상 타입별 아이콘 표시
+- 아바타 이미지 로드 실패 시 `onerror`로 기본 SVG 아바타 표시
+
+### 14.5 CSS 클래스
+
+| 클래스 | 역할 | 주요 스타일 |
+|--------|------|-----------|
+| `.v7-bm-widget-item` | 각 즐겨찾기 항목 (링크) | `display: flex; align-items: center; gap: 8px; padding: 6px 0; text-decoration: none` |
+| `.v7-bm-widget-avatar` | 아바타 이미지 (채팅/사용자) | `width: 28px; height: 28px; border-radius: 50%; object-fit: cover` |
+| `.v7-bm-widget-icon` | 타입별 아이콘 컨테이너 | `width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center` |
+| `.v7-bm-widget-icon.type-post` | 게시글 아이콘 색상 | 파란색 배경 |
+| `.v7-bm-widget-icon.type-comment` | 댓글 아이콘 색상 | 초록색 배경 |
+| `.v7-bm-widget-icon.type-user` | 사용자 아이콘 색상 | 보라색 배경 |
+| `.v7-bm-widget-icon.type-chat_room` | 채팅 아이콘 색상 | 주황색 배경 |
+| `.v7-bm-widget-text` | 텍스트 영역 | `flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px` |
+| `.v7-bm-widget-title` | 제목 (1줄 말줄임) | `flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.82em` |
+| `.v7-bm-widget-label` | 타입 라벨 태그 | `font-size: 0.68em; padding: 1px 6px; border-radius: 3px; flex-shrink: 0` |
+
+### 14.6 헬퍼 함수
+
+| 함수명 | 반환 타입 | 용도 |
+|--------|----------|------|
+| `_v7_bm_title(array $bm)` | `string` | entity_type별 표시 제목 반환 |
+| `_v7_bm_link(array $bm)` | `string` | entity_type별 링크 URL 반환 |
+| `_v7_bm_icon(string $type)` | `string` | entity_type별 Font Awesome 아이콘 클래스 반환 |
+| `_v7_bm_label(string $type)` | `string` | entity_type별 한글 라벨 반환 |
+
+> 모든 함수는 `_v7_bm_` 접두사로 글로벌 네임스페이스 충돌을 방지한다.
+> `function_exists()` 가드로 이중 include를 방지한다.
+
+### 14.7 데이터 흐름
+
+```
+1. layout.sidebar-left.php에서 include
+   │
+2. AuthService::getLoginUser() → 비로그인이면 return
+   │
+3. BookmarkService::listRecent($idxMember, 3) 호출
+   │  └─ 최근 3개 즐겨찾기 조회 + entity_type별 enrichment
+   │     ├─ post: subject, post_id 추가
+   │     ├─ comment: parent_idx, content_preview 추가
+   │     ├─ user: nickname, photo_url 추가
+   │     └─ chat_room: other_name, other_nickname, other_photo_url 추가
+   │
+4. 즐겨찾기 0개면 return
+   │
+5. HTML 렌더링 (아이콘/아바타 + 제목 + 타입라벨)
+```
+
+### 14.8 BookmarkService::listRecent() 메서드
+
+```php
+/**
+ * 최근 즐겨찾기 목록 (enrichment 포함, 사이드바 위젯용)
+ *
+ * 모든 entity_type의 최근 즐겨찾기를 $limit개 반환한다.
+ * 각 항목에 entity_type별 추가 정보(제목, 닉네임, 프로필 사진 등)를 포함한다.
+ *
+ * @param int $idxMember 회원 idx
+ * @param int $limit 가져올 개수 (기본 3)
+ * @return array enrichment가 포함된 즐겨찾기 배열
+ */
+public static function listRecent(int $idxMember, int $limit = 3): array
+```
+
+**enrichment 로직:**
+- `post`: `sf_post_data`에서 `subject`, `post_id` 조회
+- `comment`: `sf_post_data`에서 `idx_root`(부모 글), `content`(80자 미리보기) 조회
+- `user`: `sf_member`에서 `nickname`, `photo_url` 조회
+- `chat_room`: 로그인 사용자의 `firebase_uid` 조회 후, `entity_id`(roomId)에서 상대방 UID 추출, `sf_member`에서 상대방 `name`, `nickname`, `photo_url` 조회
