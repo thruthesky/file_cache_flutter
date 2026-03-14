@@ -133,6 +133,9 @@ v7/bookmark/index.css         # 즐겨찾기 관리 페이지 CSS
 | `content_preview` | `string` | (enrichment) 내용 미리보기 80자 (entity_type='comment'일 때) |
 | `nickname` | `string` | (enrichment) 닉네임 (entity_type='user'일 때) |
 | `photo_url` | `string` | (enrichment) 프로필 사진 URL (entity_type='user'일 때) |
+| `other_name` | `string` | (enrichment) 채팅 상대방 이름 (entity_type='chat_room'일 때) |
+| `other_nickname` | `string` | (enrichment) 채팅 상대방 닉네임 (entity_type='chat_room'일 때) |
+| `other_photo_url` | `string` | (enrichment) 채팅 상대방 프로필 사진 URL (entity_type='chat_room'일 때) |
 
 > **enrichment 필드**: `bookmark.listByGroup` API 응답에서만 포함된다. `entity_type`에 따라 해당 필드가 동적으로 추가됨.
 
@@ -216,7 +219,17 @@ v7/bookmark/index.css         # 즐겨찾기 관리 페이지 CSS
 | `post` | `subject`, `post_id` | `sf_post_data` 테이블 |
 | `comment` | `parent_idx` (idx_root), `content_preview` (80자) | `sf_post_data` 테이블 |
 | `user` | `nickname`, `photo_url` | `sf_member` 테이블 |
-| `chat_room` | (추가 없음) | -- |
+| `chat_room` | `other_name`, `other_nickname`, `other_photo_url` | `sf_member` 테이블 (firebase_uid로 상대방 조회) |
+
+**chat_room enrichment 상세:**
+
+채팅방 즐겨찾기의 enrichment는 다음 로직으로 상대방 정보를 추출한다.
+
+1. 로그인 사용자의 `firebase_uid`를 `sf_member` 테이블에서 1회 조회 (루프 밖에서 실행하여 N+1 방지)
+2. `entity_id`(roomId) 형식인 `uid1---uid2`를 `---` 구분자로 분리
+3. 로그인 사용자의 UID가 아닌 쪽을 상대방 UID로 결정
+4. `sf_member` 테이블에서 상대방의 `name`, `nickname`, `photo_url` 조회
+5. 응답에 `other_name`, `other_nickname`, `other_photo_url` 필드로 추가
 
 ### bookmark.myBookmarkedIds -- 내 즐겨찾기 ID 목록
 
@@ -363,13 +376,22 @@ doToggleBookmark: function () {
 - 그룹별 즐겨찾기 목록 표시 (entity_type별 enrichment 정보 포함)
 - 즐겨찾기 해제 기능
 - 모든 entity_type(글, 코멘트, 사용자, 채팅방) 통합 관리
+- 채팅방 항목에 상대방 프로필 사진(원형 아바타) + 이름/닉네임 표시
+
+**채팅방 즐겨찾기 항목 표시 로직:**
+
+| 요소 | 표시 내용 | 폴백 |
+|------|----------|------|
+| **아이콘 영역** | `other_photo_url`이 있으면 원형 아바타 이미지, 없으면 기본 채팅 아이콘 | `.bookmark-chat-avatar` (32px 원형) |
+| **제목** | `other_name` → `other_nickname` → `entity_id` 순서로 폴백 | 이름이 없으면 채팅방 ID 표시 |
+| **서브텍스트** | `other_nickname`이 `other_name`과 다른 경우에만 닉네임 추가 표시 | `.bookmark-chat-sub` 스타일 |
 
 **관련 파일:**
 
 | 파일 | 설명 |
 |------|------|
 | `v7/bookmark/index.php` | 페이지 PHP + Vue.js 템플릿 |
-| `v7/bookmark/index.css` | 페이지 전용 CSS |
+| `v7/bookmark/index.css` | 페이지 전용 CSS (채팅방 아바타 `.bookmark-chat-avatar`, 서브텍스트 `.bookmark-chat-sub` 포함) |
 | `v7/js/bookmark.js` | 공통 즐겨찾기 JS (그룹 선택 다이얼로그 등) |
 
 ### 6.6 BookmarkService::getBookmarkedIdxs() 메서드
