@@ -397,10 +397,16 @@ v7/
 ├── 404.php                      # 404 에러 페이지 (선택)
 ├── user/
 │   ├── login.php                # 로그인 페이지
+│   ├── login.css                # 로그인 전용 CSS
 │   ├── profile.php              # 프로필 수정 페이지
+│   ├── profile.css              # 프로필 전용 CSS
 │   ├── public-profile.php       # 공개 프로필 페이지 (SSR)
 │   ├── public-profile.css       # 공개 프로필 전용 CSS
-│   └── register.php             # 회원가입 페이지
+│   ├── settings.php             # 설정 페이지 (알림 등, wa-breadcrumb 포함)
+│   ├── settings.css             # 설정 전용 CSS
+│   ├── blocked.php              # 차단 사용자 관리 페이지
+│   ├── blocked.css              # 차단 사용자 전용 CSS
+│   └── logout.php               # 로그아웃 처리
 ├── post/
 │   ├── list.php                 # 게시판 목록 (SSR)
 │   ├── view.php                 # 글 읽기 (SSR)
