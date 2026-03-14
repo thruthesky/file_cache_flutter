@@ -7,6 +7,7 @@
 3. [파일 구조](#3-파일-구조)
 4. [API 엔드포인트](#4-api-엔드포인트)
 5. [채팅방 즐겨찾기 연동](#5-채팅방-즐겨찾기-연동)
+6. [웹 프론트엔드 연동](#6-웹-프론트엔드-연동)
 
 ---
 
@@ -76,20 +77,41 @@ CREATE TABLE `bookmark_groups` (
 | entity_type | entity_idx | entity_id | 설명 |
 |------------|-----------|----------|------|
 | `chat_room` | 0 | 채팅방 ID (예: `uid1_uid2`) | 채팅방 즐겨찾기 |
-| `post` | 게시글 idx | `` | 게시글 즐겨찾기 (향후) |
-| `comment` | 댓글 idx | `` | 댓글 즐겨찾기 (향후) |
-| `user` | 회원 idx | `` | 사용자 즐겨찾기 (향후) |
+| `post` | 게시글 idx | `` | 게시글 즐겨찾기 |
+| `comment` | 댓글 idx | `` | 댓글 즐겨찾기 |
+| `user` | 회원 idx | `` | 사용자 즐겨찾기 |
+
+### 즐겨찾기 호환성 -- 그룹은 entity_type 무관하게 공유
+
+`bookmark_groups` 테이블에는 `entity_type` 필드가 **없다**. 따라서 채팅방/게시글/코멘트/사용자 모든 엔티티가 **동일한 그룹을 공유**한다.
+
+| 호출 방법 | count 동작 |
+|----------|-----------|
+| `bookmark.listGroups` (entity_type 미전달) | 전체 항목 수가 `count`로 표시 |
+| `bookmark.listGroups` (entity_type='post') | 해당 타입 항목만 `count`에 포함 |
+
+예를 들어 "가족" 그룹에 게시글 3개 + 채팅방 2개가 있을 때, entity_type 없이 호출하면 `count: 5`, `entity_type='post'`로 호출하면 `count: 3`이 반환된다.
 
 ---
 
 ## 3. 파일 구조
 
+### 백엔드 파일
+
 ```
 lib/bookmark/
 ├── BookmarkEntity.php        # bookmarks 테이블 Entity
 ├── BookmarkGroupEntity.php   # bookmark_groups 테이블 Entity
-├── BookmarkService.php       # 비즈니스 로직 (그룹/항목 CRUD)
-└── BookmarkController.php    # API 엔드포인트 (bookmark.*)
+├── BookmarkService.php       # 비즈니스 로직 (그룹/항목 CRUD, getBookmarkedIdxs)
+└── BookmarkController.php    # API 엔드포인트 (bookmark.*, listByGroup enrichment)
+```
+
+### 웹 프론트엔드 파일
+
+```
+v7/js/bookmark.js             # 공통 즐겨찾기 JS 모듈 (bookmarkToggle, bookmarkShowGroupDialog, bookmarkRemove)
+v7/bookmark/index.php         # 즐겨찾기 관리 페이지 (그룹 CRUD + 목록 + 해제)
+v7/bookmark/index.css         # 즐겨찾기 관리 페이지 CSS
 ```
 
 ### BookmarkEntity 필드
@@ -105,6 +127,14 @@ lib/bookmark/
 | `memo` | `string` | 사용자 메모 |
 | `created_at` | `int` | 생성 Unix timestamp |
 | `group_name` | `string` | 그룹명 (JOIN 시 계산) |
+| `subject` | `string` | (enrichment) 게시글 제목 (entity_type='post'일 때) |
+| `post_id` | `string` | (enrichment) 게시판 ID (entity_type='post'일 때) |
+| `parent_idx` | `int` | (enrichment) 부모 글 idx (entity_type='comment'일 때) |
+| `content_preview` | `string` | (enrichment) 내용 미리보기 80자 (entity_type='comment'일 때) |
+| `nickname` | `string` | (enrichment) 닉네임 (entity_type='user'일 때) |
+| `photo_url` | `string` | (enrichment) 프로필 사진 URL (entity_type='user'일 때) |
+
+> **enrichment 필드**: `bookmark.listByGroup` API 응답에서만 포함된다. `entity_type`에 따라 해당 필드가 동적으로 추가됨.
 
 ### BookmarkGroupEntity 필드
 
@@ -146,8 +176,9 @@ lib/bookmark/
 |------|---|
 | **URL** | `/api.php?method=bookmark.listGroups&entity_type=chat_room` |
 | **인증** | 필수 |
-| **입력** | `entity_type` (string, 선택) -- 타입 필터 |
+| **입력** | `entity_type` (string, 선택) -- 타입 필터. 생략 시 전체 entity_type 합산 count |
 | **출력** | `{ groups: BookmarkGroupEntity[] }` -- 각 그룹에 `count` 포함 |
+| **참고** | `bookmark_groups` 테이블에 `entity_type` 필드가 없으므로 그룹 자체는 모든 타입에서 공유됨 |
 
 ### bookmark.add -- 즐겨찾기 추가
 
@@ -176,6 +207,16 @@ lib/bookmark/
 | **인증** | 필수 |
 | **입력** | `idx_group` (int, 필수), `entity_type` (string, 선택) |
 | **출력** | `{ bookmarks: BookmarkEntity[] }` |
+| **enrichment** | entity_type에 따라 추가 정보를 자동으로 JOIN하여 반환 |
+
+**entity_type별 enrichment 추가 필드:**
+
+| entity_type | 추가 필드 | 데이터 소스 |
+|------------|----------|------------|
+| `post` | `subject`, `post_id` | `sf_post_data` 테이블 |
+| `comment` | `parent_idx` (idx_root), `content_preview` (80자) | `sf_post_data` 테이블 |
+| `user` | `nickname`, `photo_url` | `sf_member` 테이블 |
+| `chat_room` | (추가 없음) | -- |
 
 ### bookmark.myBookmarkedIds -- 내 즐겨찾기 ID 목록
 
@@ -235,3 +276,139 @@ bookmarkedRoomIds: [],  // 내 즐겨찾기 채팅방 ID 목록 (bookmark.myBook
         └─ v7api('bookmark.listByGroup', { idx_group: group.idx, entity_type: 'chat_room' })
             → favModalRooms = bookmarks
 ```
+
+---
+
+## 6. 웹 프론트엔드 연동
+
+### 6.1 공통 즐겨찾기 JS 모듈 (`v7/js/bookmark.js`)
+
+글, 코멘트, 사용자 프로필 등에서 즐겨찾기 추가/제거 기능을 제공하는 공통 JS 모듈이다. 의존: `v7/js/v7api.js`.
+
+| 함수 | 설명 |
+|------|------|
+| `bookmarkToggle(entityType, entityIdx, isBookmarked, callback)` | 즐겨찾기 토글 -- 이미 되어있으면 제거, 아니면 그룹 선택 다이얼로그 표시 후 추가 |
+| `bookmarkShowGroupDialog(entityType, entityIdx, callback)` | 그룹 선택 다이얼로그 표시 (기존 그룹 선택 / 새 그룹 생성 / 기본 그룹 추가) |
+| `bookmarkRemove(entityType, entityIdx, callback)` | 즐겨찾기 제거 (직접 호출용) |
+
+**그룹 선택 다이얼로그 동작:**
+
+1. `v7api('bookmark.listGroups', {})` 호출로 전체 그룹 목록 로드 (entity_type 미전달 -- 전체 count 표시)
+2. 기존 그룹 버튼 클릭 시 해당 그룹에 추가
+3. 새 그룹명 입력 후 추가 버튼 클릭 시 그룹 자동 생성 + 추가
+4. "기본 그룹에 추가" 클릭 시 `default` 그룹에 추가
+5. 다이얼로그는 Web Awesome Pro `wa-dialog` 컴포넌트 사용
+
+**사용 예시 (Vue.js 메서드에서):**
+
+```javascript
+doToggleBookmark: function () {
+    var self = this;
+    bookmarkToggle('post', this.idx, this.bookmarked, function (result) {
+        self.bookmarked = result.bookmarked;
+    });
+}
+```
+
+### 6.2 글 보기 페이지 (`v7/post/view.php` + `v7/js/post-actions.js`)
+
+글 보기 페이지 액션바에 즐겨찾기 버튼이 추가되었다.
+
+**SSR 측 (view.php):**
+
+- `BookmarkService::getBookmarkedIdxs($loginUser->idx, 'post', [$post->idx])` 호출로 현재 글의 즐겨찾기 상태 확인
+- `BookmarkService::getBookmarkedIdxs($loginUser->idx, 'comment', $_commentIdxs)` 호출로 코멘트들의 즐겨찾기 상태 일괄 확인
+- 즐겨찾기 상태를 `data-bookmarked="1"` / `data-bookmarked="0"` HTML 속성으로 전달
+
+**CSR 측 (post-actions.js):**
+
+- 로그인 사용자에게만 즐겨찾기 버튼 표시 (`v-if="canBookmark"`)
+- 별 아이콘: 즐겨찾기 됨 → `fa-solid fa-star`, 안 됨 → `fa-regular fa-star`
+- 클릭 시 `bookmarkToggle('post', idx, isBookmarked, callback)` 호출
+- 스피너 표시 중 중복 클릭 방지 (`bookmarking` 상태)
+
+### 6.3 코멘트 즐겨찾기 (`v7/js/comment.js`)
+
+코멘트 액션에 즐겨찾기 버튼이 추가되었다.
+
+- 로그인 사용자에게만 표시 (`v-if="canBookmark"`)
+- `bookmarkToggle('comment', idx, isBookmarked, callback)` 호출
+- SSR에서 `data-bookmarked` 속성으로 초기 상태 전달
+- 글 보기 페이지와 동일한 별 아이콘 + 스피너 패턴 사용
+
+### 6.4 타인 프로필 페이지 (`v7/user/public-profile.php`)
+
+타인의 공개 프로필 페이지에 즐겨찾기 버튼이 추가되었다.
+
+- SSR: `BookmarkService::getBookmarkedIdxs($loginUser->idx, 'user', [$user->idx])` 호출로 즐겨찾기 상태 확인
+- 즐겨찾기 버튼: `wa-button` 컴포넌트 + `data-bookmarked` 속성
+- 클릭 시 `bookmarkToggle('user', entityIdx, isBookmarked, callback)` 호출
+- 즐겨찾기 추가 시 별 아이콘 노란색(`#f59e0b`), variant `brand`로 변경
+
+### 6.5 즐겨찾기 관리 페이지 (`v7/bookmark/index.php`)
+
+즐겨찾기를 통합 관리하는 전용 페이지이다.
+
+| 항목 | 값 |
+|------|---|
+| **URL** | `url()->bookmark->home` → `/bookmark` |
+| **라우팅** | `/bookmark` → `v7.php` → `v7/layout.php` → `v7/bookmark/index.php` |
+| **구현 방식** | Vue.js 3 CDN 기반 CSR |
+| **인증** | 비로그인 시 로그인 유도 UI 표시 |
+
+**주요 기능:**
+
+- 그룹 목록 사이드바 (그룹별 항목 count 표시)
+- 그룹 생성/삭제 (그룹 삭제 시 하위 항목도 함께 삭제)
+- 그룹별 즐겨찾기 목록 표시 (entity_type별 enrichment 정보 포함)
+- 즐겨찾기 해제 기능
+- 모든 entity_type(글, 코멘트, 사용자, 채팅방) 통합 관리
+
+**관련 파일:**
+
+| 파일 | 설명 |
+|------|------|
+| `v7/bookmark/index.php` | 페이지 PHP + Vue.js 템플릿 |
+| `v7/bookmark/index.css` | 페이지 전용 CSS |
+| `v7/js/bookmark.js` | 공통 즐겨찾기 JS (그룹 선택 다이얼로그 등) |
+
+### 6.6 BookmarkService::getBookmarkedIdxs() 메서드
+
+SSR에서 여러 entity_idx의 즐겨찾기 상태를 **한 번의 쿼리**로 일괄 확인하는 메서드이다.
+
+```php
+/**
+ * @param int $idxMember 회원 idx
+ * @param string $entityType 대상 타입 (post, comment, user 등)
+ * @param array<int> $entityIdxs 확인할 entity_idx 배열
+ * @return array<int> 즐겨찾기된 entity_idx 배열
+ */
+public static function getBookmarkedIdxs(int $idxMember, string $entityType, array $entityIdxs): array
+```
+
+- `IN ($placeholders)` SQL 절로 한 번에 여러 idx를 조회 (N+1 문제 방지)
+- 빈 배열 입력 시 쿼리 없이 빈 배열 반환
+- 반환값은 즐겨찾기된 entity_idx만 포함하는 정수 배열
+
+**SSR 사용 패턴:**
+
+```php
+// 글의 즐겨찾기 상태 확인
+$bookmarkedPostIdxs = BookmarkService::getBookmarkedIdxs($loginUser->idx, 'post', [$post->idx]);
+$isPostBookmarked = in_array($post->idx, $bookmarkedPostIdxs);
+
+// 코멘트 목록의 즐겨찾기 상태 일괄 확인
+$commentIdxs = array_map(fn($c) => $c->idx, $comments);
+$bookmarkedCommentIdxs = BookmarkService::getBookmarkedIdxs($loginUser->idx, 'comment', $commentIdxs);
+// HTML에서: data-bookmarked="<?= in_array($comment->idx, $bookmarkedCommentIdxs) ? '1' : '0' ?>"
+```
+
+### 6.7 연동 사용 페이지 요약
+
+| 페이지 | entity_type | SSR 확인 | CSR 토글 | JS 파일 |
+|--------|-------------|---------|---------|---------|
+| `v7/post/view.php` | `post` | `getBookmarkedIdxs()` | `post-actions.js` | `bookmark.js` |
+| `v7/post/view.php` | `comment` | `getBookmarkedIdxs()` | `comment.js` | `bookmark.js` |
+| `v7/user/public-profile.php` | `user` | `getBookmarkedIdxs()` | 인라인 JS | `bookmark.js` |
+| `v7/bookmark/index.php` | 전체 | -- | Vue.js CSR | `bookmark.js` |
+| `v7/chat/index.php` | `chat_room` | -- | `chat-store.js` 등 | -- (채팅 전용 JS) |
