@@ -364,7 +364,7 @@ https://v7-local.philgo.com/user/public-profile
 | 영역 | 설명 |
 |------|------|
 | **프로필 헤더** | 아바타, 닉네임, 통계(글 수/댓글 수/레벨), 액션 버튼 |
-| **액션 버튼** | 본인: 회원정보 수정 / 타인: 채팅, 글 목록 |
+| **액션 버튼** | 본인: 회원정보 수정 / 타인: 채팅, 글 목록, 코멘트 목록 / 공통: 글, 코멘트 |
 | **최근 글** | `findPostsByIdxMember()` — 최근 5개, 제목+날짜 |
 | **최근 댓글** | `findCommentsByIdxMember()` — 최근 5개, 내용 미리보기+날짜 |
 | **에러 상태** | 사용자 없음, 로그인 필요 시 에러 카드 표시 |
@@ -417,14 +417,20 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
 </div>
 ```
 
-**글 목록 링크 — idx_member 기반 전체 게시판 조회**:
+**글/코멘트 목록 링크 — idx_member 기반 전체 게시판 조회**:
 
-공개 프로필의 "글" 버튼과 "더보기" 링크는 `Route::url()`을 사용하여 해당 사용자의 전체 게시판 글을 조회한다:
+공개 프로필의 "글" 버튼, "코멘트" 버튼, "더보기" 링크는 `Route::url()`을 사용하여 해당 사용자의 전체 게시판 글/코멘트를 조회한다:
 ```php
 <!-- 글 버튼 -->
 <wa-button variant="neutral" appearance="outlined" size="small"
     href="<?= \V7\Utils\Route::url('/post/list', ['idx_member' => $user->idx]) ?>">
     <i slot="start" class="fal fa-list"></i> 글
+</wa-button>
+
+<!-- 코멘트 버튼 -->
+<wa-button variant="neutral" appearance="outlined" size="small"
+    href="<?= \V7\Utils\Route::url('/post/comments', ['idx_member' => $user->idx]) ?>">
+    <i slot="start" class="fal fa-comment-lines"></i> 코멘트
 </wa-button>
 
 <!-- 더보기 링크 -->
@@ -434,6 +440,7 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
 ```
 
 > **중요**: `url()->post->list->community`는 `post_id=freetalk`만 전달하므로, 특정 사용자의 전체 게시판 글을 조회하려면 반드시 `Route::url('/post/list', ['idx_member' => $user->idx])`를 사용해야 한다.
+> 코멘트 버튼은 `/post/comments?idx_member=N` 경로로 이동하여 해당 사용자의 코멘트 목록을 조회한다.
 
 **에러 상태 핵심 코드**:
 ```php
@@ -504,6 +511,19 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
     color: var(--wa-color-neutral-60, #64748b);
 }
 ```
+
+**액션 버튼 구성**:
+
+| 버튼 | 조건 | URL | 아이콘 |
+|------|------|-----|--------|
+| **회원정보 수정** | 본인 프로필 | `url()->user->profile` | `fal fa-user-pen` |
+| **채팅** | 타인 프로필 | `/chat/index?uid={firebase_uid}` | `fal fa-comments` |
+| **글** | 공통 (항상 표시) | `Route::url('/post/list', ['idx_member' => N])` | `fal fa-list` |
+| **코멘트** | 공통 (항상 표시) | `Route::url('/post/comments', ['idx_member' => N])` | `fal fa-comment-lines` |
+| **즐겨찾기** | 타인 + 로그인 | JavaScript `bookmarkToggle()` | `fa-regular/fa-solid fa-star` |
+| **차단** | 타인 + 로그인 | JavaScript `toggleBlockMember()` | `fal fa-ban` |
+
+> "글" 버튼 다음에 "코멘트" 버튼이 위치하며, `/post/comments?idx_member=N` 경로로 이동한다.
 
 **반응형**: 모바일(< 992px)에서 아바타 80px, 패딩/간격 축소. 반응형 규칙은 `public-profile.css` 하단의 `@media (max-width: 991.98px)` 블록에 정의.
 
