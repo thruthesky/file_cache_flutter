@@ -289,6 +289,12 @@ systemctl reload nginx
 nginx -t
 ```
 
+### Cloudflare DNS 설정
+
+Cloudflare 대시보드에서 `*.philgo.com` **와일드카드 A 레코드**가 이미 Proxied 상태로 설정되어 있다. 따라서 `v7.philgo.com`, `banana.philgo.com` 등 새로운 서브도메인을 추가할 때 **별도의 Cloudflare DNS 설정은 필요 없다.** 와일드카드 레코드가 모든 서브도메인을 자동으로 매칭한다.
+
+새 서브도메인 연결 시 필요한 작업은 **Nginx 서버 블록 추가만** 하면 된다.
+
 ---
 
 ## 7. 전체 환경 비교표
