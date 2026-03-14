@@ -121,87 +121,122 @@ php -i | grep "php.ini"
 | **에러 로그** | `/var/log/nginx/error.log` |
 | **접근 로그** | `/var/log/nginx/access.log` |
 
-### 핵심 설정 요약
+### nginx.conf 전체 원본
+
+파일 경로: `/etc/nginx/nginx.conf`
 
 ```nginx
 user www-data;
 worker_processes auto;
 pid /run/nginx.pid;
 error_log /var/log/nginx/error.log notice;
-```
+include /etc/nginx/modules-enabled/*.conf;
 
-- **실행 사용자**: `www-data` (Ubuntu 기본 웹 서버 사용자)
-- **워커 프로세스**: `auto` (CPU 코어 수에 맞게 자동 설정)
-- **최대 업로드 크기**: `client_max_body_size 33M`
-- **gzip 압축**: 활성화
-
-### Cloudflare 통합
-
-프로덕션 서버는 **Cloudflare CDN** 뒤에서 운영되며, Cloudflare가 전달하는 실제 방문자 IP를 복원한다.
-
-```nginx
-# Cloudflare가 전달하는 실제 방문자 IP 복원
-real_ip_header CF-Connecting-IP;
-real_ip_recursive on;
-include /etc/nginx/conf.d/cloudflare-realip.conf;
-```
-
-### 로그 포맷
-
-Cloudflare 관련 헤더를 포함하는 커스텀 로그 포맷(`cf_log`)을 사용한다.
-
-```nginx
-log_format cf_log '$remote_addr - $remote_user [$time_local] '
-    '"$request" $status $body_bytes_sent '
-    '"$http_referer" "$http_user_agent" '
-    'cf_connecting_ip=$http_cf_connecting_ip '
-    'cf_ray=$http_cf_ray '
-    'x_forwarded_for=$http_x_forwarded_for '
-    'via=$http_via '
-    'host=$http_host';
-
-access_log /var/log/nginx/access.log cf_log;
-```
-
-로그에 포함되는 Cloudflare 헤더:
-- `CF-Connecting-IP`: 실제 방문자 IP
-- `CF-Ray`: Cloudflare 요청 추적 ID
-- `X-Forwarded-For`: 프록시 경유 IP 체인
-
-### SQL Injection 방어 (Nginx 레벨)
-
-쿼리스트링에서 SQL Injection 패턴을 감지하여 차단하는 `map` 규칙이 설정되어 있다.
-
-```nginx
-# 1) 키워드 검사: select 여부
-map $args $has_select {
-    default 0;
-    ~*select 1;
+events {
+	worker_connections 1024;
+	# multi_accept on;
 }
 
-# 2) 키워드 검사: 다른 SQL 키워드 여부
-map $args $has_other {
-    default 0;
-    ~*(union|concat|group|having|insert|update|delete|sleep|information_schema) 1;
-}
+http {
 
-# 3) 둘 다 있으면 차단
-map "$has_select$has_other" $block_sql {
-    default 0;
-    ~^11$ 1;
+	##
+	# Basic Settings
+	##
+
+	sendfile on;
+	tcp_nopush on;
+	types_hash_max_size 2048;
+	# server_tokens off;
+
+	# server_names_hash_bucket_size 64;
+	# server_name_in_redirect off;
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	##
+	# SSL Settings
+	##
+
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+	ssl_prefer_server_ciphers on;
+
+	##
+	# Logging Settings
+	##
+	# 기존 log_format 있으면 이름 다르게 하세요
+
+	      log_format cf_log '$remote_addr - $remote_user [$time_local] '
+                  '"$request" $status $body_bytes_sent '
+                  '"$http_referer" "$http_user_agent" '
+                  'cf_connecting_ip=$http_cf_connecting_ip '
+                  'cf_ray=$http_cf_ray '
+                  'x_forwarded_for=$http_x_forwarded_for '
+                  'via=$http_via '
+                  'host=$http_host';
+
+
+    access_log /var/log/nginx/access.log cf_log;
+
+    # access_log /var/log/nginx/access.log;
+
+	##
+	# Gzip Settings
+	##
+
+	gzip on;
+
+	# gzip_vary on;
+	# gzip_proxied any;
+	# gzip_comp_level 6;
+	# gzip_buffers 16 8k;
+	# gzip_http_version 1.1;
+	# gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+	client_max_body_size 33M;
+
+	# Cloudflare가 전달하는 실제 방문자 IP 복원
+	real_ip_header CF-Connecting-IP;
+	real_ip_recursive on;
+	include /etc/nginx/conf.d/cloudflare-realip.conf;
+
+	##
+	# Virtual Host Configs
+	##
+
+
+	# 1) 키워드 검사: select 여부
+	map $args $has_select {
+		default 0;
+		~*select 1;
+	}
+
+	# 2) 키워드 검사: 다른 SQL 키워드 여부
+	map $args $has_other {
+		default 0;
+		~*(union|concat|group|having|insert|update|delete|sleep|information_schema) 1;
+	}
+
+	# 3) 둘 다 있으면 1
+	map "$has_select$has_other" $block_sql {
+		default 0;
+		~^11$ 1;
+	}
+
+
+	##### rate limit -> 결론: 효과 미미 함. 그래서 제거.
+	# http {} 블록 안
+	# 1) 테스트용 zone: 클라이언트 IP당 초당 3 요청 허용
+	# limit_req_zone $binary_remote_addr zone=test_php_zone:10m rate=1r/s;
+	#####
+
+
+	include /etc/nginx/conf.d/*.conf;
+	# include /etc/nginx/sites-enabled/*;
+	include /home/thruthesky/withcenter/philgo/www/etc/nginx/sites-enabled/*;
+
 }
 ```
-
-**핵심 로직**: `select` 키워드와 `union`, `concat`, `sleep` 등 SQL 키워드가 쿼리스트링에 **동시에** 존재할 때만 차단한다. 단일 키워드만으로는 차단하지 않아 정상 요청에 영향을 최소화한다.
-
-### 사이트 설정 include 경로
-
-```nginx
-# 기본 sites-enabled 대신 프로젝트 내부 설정 사용
-include /home/thruthesky/withcenter/philgo/www/etc/nginx/sites-enabled/*;
-```
-
-> **참고:** Nginx 사이트별 설정 파일은 프로젝트 소스코드 내(`etc/nginx/sites-enabled/`)에 위치하여 Git으로 관리된다.
 
 ### Nginx 서비스 관리 명령어
 
