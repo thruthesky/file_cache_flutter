@@ -405,6 +405,9 @@ v7/
 │   ├── list.php                 # 게시판 목록 (SSR)
 │   ├── view.php                 # 글 읽기 (SSR)
 │   └── create.php               # 글 작성
+├── menu/
+│   ├── index.php                # 전체 메뉴 페이지
+│   └── index.css                # 메뉴 페이지 전용 CSS
 ├── company/
 │   ├── list.php                 # 업소록 목록
 │   └── view.php                 # 업소록 상세
@@ -1145,6 +1148,13 @@ url()->menu->all                    // '/menu'
 <a href="<?= url()->post->list->community ?>">자유게시판</a>
 <a href="<?= url()->user->login ?>">로그인</a>
 <a href="<?= url()->company->home ?>">업소록</a>
+<a href="<?= url()->bookmark->home ?>">즐겨찾기</a>
+<a href="<?= url()->post->popular ?>">인기글</a>
+<a href="<?= url()->post->recentComments ?>">최근 댓글</a>
+<a href="<?= url()->adv->massage ?>">마사지 광고</a>
+<a href="<?= url()->weather ?>">날씨</a>
+<a href="<?= url()->currency ?>">환율 계산기</a>
+<a href="<?= url()->menu->all ?>">전체 메뉴</a>
 ```
 
 ### 테스트
@@ -1291,3 +1301,31 @@ $bottomResult = PostService::list([
 | `Route::postList()` | `(string $postId, ?string $category, int $page)` | `/post/list?post_id=buyandsell&category=페소환전` |
 | `Route::postView()` | `(int $idx, ?string $postId, ?string $category, int $page)` | `/post/view?idx=123&post_id=buyandsell&category=페소환전` |
 | `Route::postCreate()` | `(string $postId, ?string $category)` | `/post/create?post_id=buyandsell&category=페소환전` |
+
+---
+
+## 20. 전체 메뉴 페이지 (v7/menu/index.php)
+
+### 개요
+
+v7 전체 메뉴 페이지는 사이트의 모든 주요 링크를 6개 섹션(커뮤니티, 광고 서비스, 내 정보, 도움말, 계정관리, 유틸리티)으로 분류하여 카드 형태의 그리드로 표시한다. v6 `page/menu/all.php`를 v7 시스템으로 이식했다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/menu/index.php` |
+| **CSS** | `v7/menu/index.css` |
+| **접속 URL** | `https://v7-local.philgo.com/menu` |
+| **렌더링** | SSR (PHP) |
+
+### 메뉴 섹션 구성
+
+| 섹션 | 주요 메뉴 항목 |
+|------|--------------|
+| **커뮤니티** | 채팅, 업소록, 즐겨찾기, 인기글, 최근 댓글 |
+| **광고 서비스** | 배너 광고, 포인트 광고, 게시판별 포인트 안내, 마사지 광고 |
+| **내 정보** | 프로필 수정, 공개 프로필, 포인트 기록, 차단 사용자, 설정, 계정 관리 요청 |
+| **도움말** | 이용 안내, 개인정보처리방침, 알림 설정, 포인트 이벤트 |
+| **계정관리** | 로그인/로그아웃 (로그인 상태별 분기) |
+| **유틸리티** | 검색, 날씨, 환율 계산기 |
+
+> 상세 문서: [web/v7-menu.md](v7-menu.md)

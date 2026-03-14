@@ -12,6 +12,8 @@
    - [post.delete](#postdelete---게시글-삭제)
    - [post.advertisementConfig](#postadvertisementconfig---포인트-광고-설정-조회)
    - [post.advertise](#postadvertise---포인트-광고-등록연장)
+   - [post.report](#postreport---글코멘트-신고)
+   - [post.reportList](#postreportlist---신고-목록-조회-관리자)
 4. [포인트 시스템](#포인트-시스템)
 5. [PostEntity 필드](#postentity-필드)
 6. [content_type 판별 및 저장](#content_type-판별-및-저장)
@@ -1541,6 +1543,111 @@ document.addEventListener('click', function (e) {
 | **thread-line left 위치** | 데스크톱 `left: 17px` (avatar-col 36px/2 - 1px), 모바일 `left: 14px` (30px/2 - 1px) |
 | **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |
 | **user-hover-dropdown 위젯 적용** | 코멘트 아바타(`.comment-avatar-col`)와 닉네임(`.post-comment-header`)에 `renderUserHoverDropdown()` 위젯을 적용하여 호버 드롭다운 메뉴를 표시한다 |
+
+---
+
+## 신고(Report) 기능
+
+글/코멘트 신고 기능은 사용자가 부적절한 콘텐츠를 관리자에게 알릴 수 있는 시스템이다.
+
+### post.report — 글/코멘트 신고
+
+인증 필수.
+
+```
+GET https://local.philgo.com/api.php?method=post.report&session_id=xxx&type=post&idx=12345
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| type | string | O | 신고 대상 유형: `'post'` 또는 `'comment'` |
+| idx | int | O | 신고할 글/코멘트의 sf_post_data.idx |
+
+**성공 응답:**
+
+```json
+{ "idx": 12345, "message": "신고가 접수되었습니다." }
+```
+
+**에러 응답:**
+
+| 에러 코드 | 메시지 | 상황 |
+|-----------|--------|------|
+| `login-required` | 로그인이 필요합니다. | 미인증 |
+| `invalid-parameters` | 유효하지 않은 파라미터입니다. | type/idx 누락 |
+| `invalid-type` | 유효하지 않은 신고 유형입니다. | type이 post/comment 아닌 경우 |
+| `not-found` | 신고할 항목을 찾을 수 없습니다. | idx에 해당하는 글이 없음 |
+| `already-reported` | 이미 신고를 하였습니다. | 동일 사용자가 이미 신고함 |
+
+**DB 처리:**
+
+- `sf_post_data.report` = `'Y'`로 설정
+- `sf_post_data.text_10`에 신고자 idx를 CSV 형식으로 누적 저장 (예: `'186619,190076,193824'`)
+- 내부적으로 `lib/post/report.functions.php`의 `report()` 함수를 호출 (레거시 함수 재사용)
+
+### post.reportList — 신고 목록 조회 (관리자)
+
+인증 필수, 관리자 전용.
+
+```
+GET https://local.philgo.com/api.php?method=post.reportList&session_id=xxx&limit=20
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| limit | int | X | 조회 개수 (기본 20) |
+
+**성공 응답:**
+
+```json
+[
+  {
+    "idx": 12345,
+    "subject": "신고된 글 제목",
+    "content": "내용 미리보기 (200자)",
+    "idx_member": 99,
+    "user_name": "작성자",
+    "report": "Y",
+    "text_10": "186619,190076",
+    "stamp_update": 1710000000,
+    "idx_parent": 0,
+    "idx_root": 0,
+    "post_id": "freetalk"
+  }
+]
+```
+
+**호출 경로:**
+
+```
+PostController::reportList()
+  → PostService::listReported($limit)
+    → PostRepository::findReported($limit)
+```
+
+**상세 호출 경로 (관리자 페이지에서 사용):**
+
+```
+PostController::reportList()        ← API 호출 시 (미사용, 직접 Service 호출)
+PostService::listReportedDetailed() ← v7/admin/reports.php에서 직접 호출
+  → PostRepository::findReportedDetailed()
+```
+
+### 신고 관련 Service/Repository 메서드
+
+| 클래스 | 메서드 | 설명 |
+|--------|--------|------|
+| `PostService` | `listReported($limit)` | 신고된 글 목록 (간략) — 위젯용 |
+| `PostService` | `listReportedDetailed($limit)` | 신고된 글/코멘트 상세 목록 — 관리자 페이지용 |
+| `PostRepository` | `findReported($limit)` | 신고된 글 DB 조회 (간략) |
+| `PostRepository` | `findReportedDetailed($limit)` | 신고된 글/코멘트 DB 조회 (상세) |
+
+### 신고 관련 DB 컬럼 (sf_post_data)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `report` | varchar | 신고 상태. `'Y'`이면 신고됨, `''`이면 미신고 |
+| `text_10` | text | 신고자 idx CSV (예: `'186619,190076'`). `REPORTER_LIST_FIELD` 상수로 참조 |
 
 ---
 

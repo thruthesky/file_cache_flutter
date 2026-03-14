@@ -515,6 +515,7 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | **1:1 채팅 시스템** | [web/v7-chat.md](references/web/v7-chat.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 | **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
+| **전체 메뉴 페이지** | [web/v7-menu.md](references/web/v7-menu.md) | ✅ 완료 |
 
 ### 1:1 채팅 시스템 → [web/v7-chat.md](references/web/v7-chat.md)
 
@@ -575,6 +576,15 @@ npm run deploy:test5     # 테스트 환경 배포
 ```
 
 **채팅 관련 작업 시 반드시 이 문서와 `firebase/chat-v2/CLAUDE.md`를 함께 참조한다.**
+
+### 전체 메뉴 페이지 → [web/v7-menu.md](references/web/v7-menu.md)
+
+v7 전체 메뉴 페이지(`v7/menu/index.php`)의 구현을 상세히 다룹니다.
+6개 섹션(커뮤니티, 광고 서비스, 내 정보, 도움말, 계정관리, 유틸리티)으로 구성된 그리드 레이아웃으로,
+사이트의 모든 주요 링크를 카드 형태로 배치합니다. 커뮤니티 섹션에 즐겨찾기, 인기글, 최근 댓글,
+광고 서비스에 마사지 광고, 유틸리티에 검색, 날씨, 환율 계산기 메뉴 항목이 포함됩니다.
+로그인 상태에 따른 계정관리 메뉴 분기, `url()` 헬퍼를 통한 전체 URL 프로퍼티 목록,
+CSS 클래스 체계, Web Awesome CSS 변수 기반 아이콘 색상 패턴을 포함합니다.
 
 ### 코멘트 스레드 세로선 → [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md)
 
