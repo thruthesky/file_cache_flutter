@@ -58,7 +58,7 @@ v7/menu/
 | **커뮤니티** | `fa-users` | 5 | 채팅, 업소록, 즐겨찾기, 인기글, 최근 댓글 |
 | **광고 서비스** | `fa-bullhorn` | 4 | 배너 광고, 포인트 광고, 게시판별 포인트 안내, 마사지 광고 |
 | **내 정보** | `fa-user-circle` | 6 | 프로필, 공개 프로필, 포인트 기록, 차단 사용자, 설정, 계정 관리 요청 |
-| **도움말** | `fa-circle-question` | 4 | 이용 안내, 개인정보처리방침, 알림 설정, 포인트 이벤트 |
+| **도움말** | `fa-circle-question` | 4 | 이용 안내, 이용약관, 개인정보처리방침, 포인트 이벤트 |
 | **계정관리** | `fa-user-cog` | 1~2 | 로그인/로그아웃 (로그인 상태에 따라 분기) |
 | **유틸리티** | `fa-toolbox` | 3 | 검색, 날씨, 환율 계산기 |
 
@@ -101,8 +101,8 @@ v7/menu/
 | 메뉴 항목 | URL 헬퍼 | 아이콘 | 아이콘 색상 |
 |-----------|---------|--------|-----------|
 | 이용 안내 | `url()->help->guideline` | `fa-book` | green |
-| 개인정보처리방침 | `url()->help->terms` | `fa-shield-halved` | neutral |
-| 알림 설정 | `url()->settings->notification` | `fa-bell` | cyan |
+| 이용약관 | `url()->help->terms` | `fa-file-contract` | blue |
+| 개인정보처리방침 | `url()->help->privacy` | `fa-shield-halved` | neutral |
 | 포인트 이벤트 | `url()->help->pointEvent` | `fa-gift` | red |
 
 ### 5.5 계정관리 섹션
@@ -162,7 +162,7 @@ v7/menu/
 | `url()->user->accountDelete` | `/user/account-delete` | `UserUrl` |
 | `url()->help->guideline` | `/help/guideline` | `HelpUrl` |
 | `url()->help->terms` | `/help/terms` | `HelpUrl` |
-| `url()->settings->notification` | `/settings/notification` | `SettingsUrl` |
+| `url()->help->privacy` | `/help/privacy` | `HelpUrl` |
 | `url()->help->pointEvent` | `/help/point-event` | `HelpUrl` |
 | `url()->user->logout` | `/user/logout` | `UserUrl` |
 | `url()->user->resign` | `/user/resign` | `UserUrl` |
