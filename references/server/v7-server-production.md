@@ -175,7 +175,7 @@ http {
                   'via=$http_via '
                   'host=$http_host';
 
-
+	      
     access_log /var/log/nginx/access.log cf_log;
 
     # access_log /var/log/nginx/access.log;
@@ -234,6 +234,7 @@ http {
 	include /etc/nginx/conf.d/*.conf;
 	# include /etc/nginx/sites-enabled/*;
 	include /home/thruthesky/withcenter/philgo/www/etc/nginx/sites-enabled/*;
+	include /home/thruthesky/v7/withcenter/philgo/www/etc/nginx/sites-enabled/*;
 
 }
 ```
