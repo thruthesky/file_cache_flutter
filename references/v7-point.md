@@ -547,10 +547,100 @@ module/action/etc 값:
 특정 기간(포인트 이벤트 기간)에 지정된 게시판에 글/코멘트를 작성하면 랜덤 포인트를 지급한다.
 랜덤 포인트가 설정된 게시판 포인트(point_write/point_comment)보다 크면 랜덤 포인트를 사용하고, 아니면 설정 포인트를 사용한다.
 
-### PointConfig 이벤트 설정 (v6 etc/app.config.php)
+### 이벤트 기간 관리 (DB 기반 — v7 신규)
+
+v7에서는 이벤트 기간을 **DB(sf_config 테이블)** 기반으로 관리한다.
+v6의 `PointConfig::$point_event_dates` 하드코딩 방식에서 DB 동적 관리로 전환되었다.
+
+| 항목 | v6 (레거시) | v7 (신규) |
+|------|------------|-----------|
+| **이벤트 기간 저장** | `PointConfig::$point_event_dates` PHP 배열 하드코딩 | `sf_config` 테이블에 JSON으로 저장 (키: `point_event_dates`) |
+| **이벤트 기간 판별** | `PointConfig::inEventDate()` | `SettingsService::isInPointEventDate()` |
+| **관리 방법** | 소스 코드 직접 수정 | 관리자 페이지(`/admin/point-event`)에서 추가/삭제 |
+| **데이터 형식** | `[[20260107, 20260111], ...]` (인덱스 기반 배열) | `[{"start": 20260107, "end": 20260111}, ...]` (키-값 객체 배열) |
+
+#### SettingsService 이벤트 기간 메서드
+
+| 메서드 | 설명 |
+|--------|------|
+| `getPointEventDates(): array` | DB에서 JSON 이벤트 기간 목록 조회 |
+| `addPointEventDate(int $start, int $end): void` | 이벤트 기간 추가 (start 기준 오름차순 자동 정렬) |
+| `deletePointEventDate(int $index): void` | 이벤트 기간 삭제 (인덱스 기반) |
+| `isInPointEventDate(?int $Ymd = null): bool` | 오늘(또는 지정 날짜)이 이벤트 기간인지 DB 기반 판별 |
+
+설정 키 상수: `SettingsService::KEY_POINT_EVENT_DATES = 'point_event_dates'`
+
+> 설정 키 상세 → [api/v7-settings.md](api/v7-settings.md) 참조
+
+#### 이벤트 기간 판별 호출 체인
+
+```
+Config::isPointEventDate()          ← v7 웹 홈페이지에서 호출 (요청 단위 캐싱)
+  → SettingsService::isInPointEventDate()  ← DB에서 이벤트 기간 목록 조회
+
+PostService::isInEventPeriod()      ← 글/코멘트 생성 시 호출
+  → SettingsService::isInPointEventDate()  ← DB에서 이벤트 기간 목록 조회
+```
+
+#### PostService::getEventPostIdsPublic()
+
+이벤트 대상 게시판 ID 목록을 외부에서 조회할 수 있도록 공개하는 public 메서드이다.
+관리자 페이지(`/admin/point-event`)에서 설정 정보 표시용으로 사용한다.
 
 ```php
-// 이벤트 기간 설정 (YYYYMMDD 형식)
+public static function getEventPostIdsPublic(): array
+{
+    return self::EVENT_POST_IDS;  // ['freetalk', 'qna']
+}
+```
+
+#### Config.php 요청 단위 캐싱
+
+`Config::isPointEventDate()`는 같은 요청 내에서 중복 DB 조회를 방지하기 위해 static 변수로 캐싱한다.
+
+```php
+// v7/utils/Config.php
+private static ?bool $cachedIsPointEventDate = null;
+
+public static function isPointEventDate(?int $Ymd = null): bool
+{
+    // 특정 날짜 지정 시 캐시 미사용
+    if ($Ymd !== null) {
+        return SettingsService::isInPointEventDate($Ymd);
+    }
+    // 오늘 날짜 판별: 요청 단위 캐시
+    if (self::$cachedIsPointEventDate === null) {
+        self::$cachedIsPointEventDate = SettingsService::isInPointEventDate();
+    }
+    return self::$cachedIsPointEventDate;
+}
+
+// 테스트용 캐시 초기화
+public static function resetPointEventDateCache(): void
+{
+    self::$cachedIsPointEventDate = null;
+}
+```
+
+#### 관리자 페이지
+
+이벤트 기간을 관리하는 전용 관리자 페이지가 제공된다.
+
+| 항목 | 설명 |
+|------|------|
+| **URL** | `/admin/point-event` |
+| **파일** | `v7/admin/point-event.php` |
+| **CSS** | `v7/admin/point-event.css` |
+| **기능** | 이벤트 기간 추가/삭제, 현재 이벤트 상태 표시, 이벤트 설정 정보(읽기 전용) 표시 |
+| **데이터 소스** | `SettingsService::getPointEventDates()`, `SettingsService::isInPointEventDate()`, `PostService::getEventPostIdsPublic()` |
+| **메뉴 위치** | `admin-nav.php` → `'/admin/point-event' => ['label' => '포인트이벤트', 'icon' => 'fa-solid fa-calendar-star']` |
+
+> 관리자 페이지 상세 → [web/v7-admin.md](web/v7-admin.md) 20장 참조
+
+### PointConfig 이벤트 설정 (v6 etc/app.config.php — 레거시 참고용)
+
+```php
+// v6 이벤트 기간 설정 (YYYYMMDD 형식) — 현재는 DB 기반으로 전환됨
 public static $point_event_dates = [
     [20260107, 20260111],  // 1/7(수) ~ 1/11(일)
     [20260210, 20260220],  // 설날
@@ -564,7 +654,7 @@ public static $event_post_ids = ['freetalk', 'qna'];
 // 최소 이벤트 점수
 public static $min_event_score = 5;
 
-// 이벤트 기간 판별 함수
+// v6 이벤트 기간 판별 함수 — v7에서는 SettingsService::isInPointEventDate() 사용
 public static function inEventDate(?int $Ymd = null): bool
 {
     $today = $Ymd ?? (int)date('Ymd');
@@ -699,18 +789,117 @@ $post->int_10 = 1500;
 // → -1500 포인트 차감 (전액 회수)
 ```
 
+### DB 기반 이벤트 기간 관리 (v7 신규)
+
+v6에서는 `PointConfig::$point_event_dates` 하드코딩 배열로 이벤트 기간을 관리했지만,
+v7에서는 **DB(`sf_config` 테이블) 기반**으로 이벤트 기간을 동적 관리한다.
+
+#### 아키텍처
+
+```
+PostService::isInEventPeriod()
+  ├─ 테스트 오버라이드 ($forceEventPeriod) 확인
+  └─ SettingsService::isInPointEventDate() 호출
+       └─ sf_config 테이블에서 'point_event_dates' 키 조회
+            └─ JSON 배열 파싱 → 오늘 날짜 포함 여부 판별
+
+Config::isPointEventDate()
+  ├─ 특정 날짜 지정 시 → SettingsService::isInPointEventDate($Ymd) 직접 호출 (캐시 미사용)
+  └─ 오늘 날짜 판별 시 → 요청 단위 static 캐싱 ($cachedIsPointEventDate)
+```
+
+#### 핵심 클래스/메서드
+
+| 클래스 | 메서드 | 설명 |
+|--------|--------|------|
+| `SettingsService` | `getPointEventDates()` | DB에서 이벤트 기간 목록 조회 (JSON 배열 → `array<{start, end}>`) |
+| `SettingsService` | `addPointEventDate($start, $end)` | 이벤트 기간 추가 (start 기준 오름차순 자동 정렬) |
+| `SettingsService` | `deletePointEventDate($index)` | 이벤트 기간 삭제 (인덱스 기반) |
+| `SettingsService` | `isInPointEventDate($Ymd)` | 지정 날짜가 이벤트 기간인지 판별 |
+| `Config` | `isPointEventDate($Ymd)` | `SettingsService` 위임 + 요청 단위 캐싱 |
+| `Config` | `resetPointEventDateCache()` | 이벤트 기간 캐시 초기화 (테스트용) |
+| `PostService` | `isInEventPeriod()` | `SettingsService::isInPointEventDate()` 호출 (테스트 오버라이드 지원) |
+| `PostService` | `getEventPostIdsPublic()` | 이벤트 대상 게시판 ID 목록 외부 공개 (관리자 페이지용) |
+
+#### DB 저장 구조
+
+`sf_config` 테이블에 키 `point_event_dates`로 JSON 배열 저장:
+
+```json
+[
+  {"start": 20260107, "end": 20260111},
+  {"start": 20260210, "end": 20260220},
+  {"start": 20260301, "end": 20260311}
+]
+```
+
+- 날짜는 `YYYYMMDD` 정수 형식
+- 추가 시 `start` 기준 오름차순 자동 정렬
+- 42개 이벤트 기간 데이터가 마이그레이션 완료됨
+
+#### 관리자 페이지
+
+| 파일 | URL | 설명 |
+|------|-----|------|
+| `v7/admin/point-event.php` | `/admin/point-event` | 이벤트 기간 추가/삭제 관리 UI |
+
+관리자 페이지 기능:
+- 현재 이벤트 상태 표시 (진행중/비이벤트)
+- 이벤트 기간 추가 (`<input type="date">` 폼)
+- 이벤트 기간 목록 (상태: 진행중/예정/종료)
+- 이벤트 기간 삭제
+- 이벤트 설정 정보 표시 (대상 게시판, 쓰로틀링, 배수 티어 등)
+
+#### 도움말 페이지
+
+| 파일 | URL | 설명 |
+|------|-----|------|
+| `v7/help/point-event.php` | `/help/point-event` | DB 기반 이벤트 날짜 표시 (사용자용) |
+
+- `SettingsService::getPointEventDates()`로 DB에서 직접 조회
+- 오늘 이후(진행 중 + 미래) 이벤트만 표시
+- 현재 이벤트 상태 안내 (`Config::isPointEventDate()`)
+
+#### v6 → v7 대응
+
+| v6 | v7 |
+|----|----|
+| `PointConfig::$point_event_dates` (하드코딩) | `sf_config.point_event_dates` (DB 저장) |
+| `PointConfig::inEventDate()` | `SettingsService::isInPointEventDate()` |
+| 코드 수정으로만 기간 변경 가능 | 관리자 웹 UI로 실시간 변경 가능 |
+
 ### v7 이벤트 설정 (테스트용)
 
 ```php
-// 이벤트 기간 강제 설정
+// 이벤트 기간 강제 설정 (테스트 오버라이드)
 PostService::setEventPeriod(true);
 
 // 이벤트 대상 게시판 설정
 PostService::setEventPostIds(['temp', 'freetalk']);
 
-// 이벤트 설정 초기화
+// 이벤트 설정 초기화 (DB 조회 모드로 복귀)
 PostService::resetEventSettings();
+
+// Config 캐시 초기화 (테스트에서 DB 변경 후 필요)
+\V7\Utils\Config::resetPointEventDateCache();
 ```
+
+### 유닛 테스트
+
+`tests/Unit/PostControllerTest.php`에 포인트 이벤트 관련 테스트가 포함되어 있다.
+
+| 테스트 그룹 | 테스트 수 | 설명 |
+|------------|----------|------|
+| 이벤트 포인트 (기존) | 7개 | 이벤트/비이벤트 기간 포인트, etc 값 구분, 쓰로틀링 등 |
+| DB 기반 포인트 이벤트 | 5개 | DB 이벤트 기간 판별, 랜덤 포인트 적용, 글/코멘트 전액 회수, 랜덤성 검증 |
+
+DB 기반 포인트 이벤트 테스트 목록:
+
+1. **DB에 이벤트 기간이 설정되면 isInEventPeriod()가 DB를 조회한다** — `SettingsService::addPointEventDate()`로 오늘 날짜 추가 후 `PostService::isInEventPeriod()` 확인
+2. **자유게시판(freetalk)에서 이벤트 기간 시 랜덤 포인트가 적용된다** — freetalk point_write=5 이상 포인트 지급, etc 값 `point_event_write` 확인
+3. **이벤트 포인트 글 삭제 시 전액 회수된다** — int_10 기반 전액 회수, 원래 포인트 복귀
+4. **이벤트 기간 코멘트 생성 시 랜덤 포인트가 적용되고 삭제 시 전액 회수된다** — 코멘트 이벤트 포인트 및 etc 값 `point_event_comment` 확인, 삭제 전액 회수
+5. **이벤트 포인트는 랜덤으로 생성되어 매번 다를 수 있다** — `randomizeEventPoint()` 50회 호출, 최소 2가지 다른 값 확인
 
 ---
 
@@ -956,6 +1145,8 @@ function point_log_controller(array $in, array $login_user): array
 | `point_update_controller()` | `PointLogController::changePoints()` |
 | `point_log_controller()` | `PointLogController::history()` |
 | `get_user_level()` | (v7 미구현) |
+| `PointConfig::inEventDate()` | `SettingsService::isInPointEventDate()` |
+| `PointConfig::$point_event_dates` (하드코딩) | `SettingsService::getPointEventDates()` (DB 기반) |
 
 ---
 

@@ -4,10 +4,11 @@
 
 1. [개요](#1-개요)
 2. [DB 테이블 구조](#2-db-테이블-구조)
-3. [파일 구조](#3-파일-구조)
-4. [API 엔드포인트](#4-api-엔드포인트)
-5. [채팅방 즐겨찾기 연동](#5-채팅방-즐겨찾기-연동)
-6. [웹 프론트엔드 연동](#6-웹-프론트엔드-연동)
+3. [DB 사용 주의사항](#3-db-사용-주의사항)
+4. [파일 구조](#4-파일-구조)
+5. [API 엔드포인트](#5-api-엔드포인트)
+6. [채팅방 즐겨찾기 연동](#6-채팅방-즐겨찾기-연동)
+7. [웹 프론트엔드 연동](#7-웹-프론트엔드-연동)
 
 ---
 
@@ -94,7 +95,31 @@ CREATE TABLE `bookmark_groups` (
 
 ---
 
-## 3. 파일 구조
+## 3. DB 사용 주의사항
+
+### LIMIT 바인딩 주의사항
+
+`Db::fetchAll()` 사용 시 `LIMIT ?`에 파라미터를 바인딩하면 PDO가 문자열로 처리하여 SQL 문법 에러가 발생한다. LIMIT 값은 `"LIMIT " . (int)$limit` 형태로 직접 SQL에 삽입해야 한다. 이는 `Db::fetch()`, `Db::fetchAll()` 등 모든 Db 헬퍼 메서드에 공통 적용된다.
+
+```php
+// ❌ 잘못된 방법: LIMIT에 ? 바인딩 → SQL 문법 에러 발생
+$rows = Db::fetchAll(
+    "SELECT * FROM bookmarks WHERE idx_member = ? ORDER BY created_at DESC LIMIT ?",
+    [$idxMember, $limit]
+);
+
+// ✅ 올바른 방법: LIMIT 값을 (int) 캐스팅 후 SQL에 직접 삽입
+$rows = Db::fetchAll(
+    "SELECT * FROM bookmarks WHERE idx_member = ? ORDER BY created_at DESC LIMIT " . (int)$limit,
+    [$idxMember]
+);
+```
+
+> **참고**: 이 제한은 PDO의 기본 동작에 기인한다. `PDO::ATTR_EMULATE_PREPARES`가 false인 경우, `?` 바인딩 값은 항상 문자열로 전달되어 `LIMIT '3'`처럼 따옴표가 붙어 문법 에러가 발생한다.
+
+---
+
+## 4. 파일 구조
 
 ### 백엔드 파일
 
@@ -153,7 +178,7 @@ v7/widgets/layout/layout.sidebar-left.bookmarks.php  # 사이드바 즐겨찾기
 
 ---
 
-## 4. API 엔드포인트
+## 5. API 엔드포인트
 
 ### bookmark.createGroup -- 그룹 생성
 
@@ -243,7 +268,7 @@ v7/widgets/layout/layout.sidebar-left.bookmarks.php  # 사이드바 즐겨찾기
 
 ---
 
-## 5. 채팅방 즐겨찾기 연동
+## 6. 채팅방 즐겨찾기 연동
 
 채팅 시스템에서 즐겨찾기 기능은 다음과 같이 v7 API를 호출한다.
 
@@ -293,9 +318,9 @@ bookmarkedRoomIds: [],  // 내 즐겨찾기 채팅방 ID 목록 (bookmark.myBook
 
 ---
 
-## 6. 웹 프론트엔드 연동
+## 7. 웹 프론트엔드 연동
 
-### 6.1 공통 즐겨찾기 JS 모듈 (`v7/js/bookmark.js`)
+### 7.1 공통 즐겨찾기 JS 모듈 (`v7/js/bookmark.js`)
 
 글, 코멘트, 사용자 프로필 등에서 즐겨찾기 추가/제거 기능을 제공하는 공통 JS 모듈이다. 의존: `v7/js/v7api.js`.
 
@@ -324,7 +349,7 @@ doToggleBookmark: function () {
 }
 ```
 
-### 6.2 글 보기 페이지 (`v7/post/view.php` + `v7/js/post-actions.js`)
+### 7.2 글 보기 페이지 (`v7/post/view.php` + `v7/js/post-actions.js`)
 
 글 보기 페이지 액션바에 즐겨찾기 버튼이 추가되었다.
 
@@ -341,7 +366,7 @@ doToggleBookmark: function () {
 - 클릭 시 `bookmarkToggle('post', idx, isBookmarked, callback)` 호출
 - 스피너 표시 중 중복 클릭 방지 (`bookmarking` 상태)
 
-### 6.3 코멘트 즐겨찾기 (`v7/js/comment.js`)
+### 7.3 코멘트 즐겨찾기 (`v7/js/comment.js`)
 
 코멘트 액션에 즐겨찾기 버튼이 추가되었다.
 
@@ -350,7 +375,7 @@ doToggleBookmark: function () {
 - SSR에서 `data-bookmarked` 속성으로 초기 상태 전달
 - 글 보기 페이지와 동일한 별 아이콘 + 스피너 패턴 사용
 
-### 6.4 타인 프로필 페이지 (`v7/user/public-profile.php`)
+### 7.4 타인 프로필 페이지 (`v7/user/public-profile.php`)
 
 타인의 공개 프로필 페이지에 즐겨찾기 버튼이 추가되었다.
 
@@ -359,7 +384,7 @@ doToggleBookmark: function () {
 - 클릭 시 `bookmarkToggle('user', entityIdx, isBookmarked, callback)` 호출
 - 즐겨찾기 추가 시 별 아이콘 노란색(`#f59e0b`), variant `brand`로 변경
 
-### 6.5 즐겨찾기 관리 페이지 (`v7/bookmark/index.php`)
+### 7.5 즐겨찾기 관리 페이지 (`v7/bookmark/index.php`)
 
 즐겨찾기를 통합 관리하는 전용 페이지이다.
 
@@ -395,7 +420,7 @@ doToggleBookmark: function () {
 | `v7/bookmark/index.css` | 페이지 전용 CSS (채팅방 아바타 `.bookmark-chat-avatar`, 서브텍스트 `.bookmark-chat-sub` 포함) |
 | `v7/js/bookmark.js` | 공통 즐겨찾기 JS (그룹 선택 다이얼로그 등) |
 
-### 6.6 BookmarkService::listRecent() 메서드
+### 7.6 BookmarkService::listRecent() 메서드
 
 사이드바 즐겨찾기 위젯(`layout.sidebar-left.bookmarks.php`)에서 사용하는 메서드이다.
 모든 entity_type의 최근 즐겨찾기를 enrichment 정보와 함께 반환한다.
@@ -442,7 +467,7 @@ if ($loginUser !== null) {
 }
 ```
 
-### 6.7 BookmarkService::getBookmarkedIdxs() 메서드
+### 7.7 BookmarkService::getBookmarkedIdxs() 메서드
 
 SSR에서 여러 entity_idx의 즐겨찾기 상태를 **한 번의 쿼리**로 일괄 확인하는 메서드이다.
 (상세는 기존 내용 참조)
@@ -474,7 +499,7 @@ $bookmarkedCommentIdxs = BookmarkService::getBookmarkedIdxs($loginUser->idx, 'co
 // HTML에서: data-bookmarked="<?= in_array($comment->idx, $bookmarkedCommentIdxs) ? '1' : '0' ?>"
 ```
 
-### 6.8 연동 사용 페이지 요약
+### 7.8 연동 사용 페이지 요약
 
 | 페이지 | entity_type | SSR 확인 | CSR 토글 | JS 파일 |
 |--------|-------------|---------|---------|---------|
