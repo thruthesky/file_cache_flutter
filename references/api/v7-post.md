@@ -31,6 +31,7 @@
    - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
    - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
+12. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
 
 ---
 
@@ -748,6 +749,9 @@ if ($_v7LoginUser) {
 | `v7/post/view.css` | 게시글 보기 전용 스타일 |
 | `v7/js/post-actions.js` | 액션바 Vue.js 앱 (좋아요/수정/삭제) |
 | `v7/js/comment.js` | 댓글 CRUD Vue.js 앱 |
+| `v7/widgets/user/user-hover-dropdown.php` | 사용자 아바타/닉네임 호버 드롭다운 위젯 |
+| `v7/widgets/user/user-hover-dropdown.css` | 드롭다운 스타일 (hover/모바일/차단/관리자) |
+| `v7/widgets/user/user-hover-dropdown.js` | 모바일 토글 + 차단 버튼 이벤트 처리 |
 
 ### 글 헤더 디자인
 

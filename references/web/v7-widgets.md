@@ -14,6 +14,7 @@
 10. [위젯 추가 방법](#10-위젯-추가-방법)
 11. [날씨+환율 통합 위젯 (shared.weather-currency)](#11-날씨환율-통합-위젯-sharedweather-currency)
 12. [게시글 목록 위젯 (post-list-widget)](#12-게시글-목록-위젯-post-list-widget)
+13. [사용자 호버 드롭다운 위젯 (user-hover-dropdown)](#13-사용자-호버-드롭다운-위젯-user-hover-dropdown)
 
 ---
 
@@ -25,9 +26,9 @@ v7 홈페이지는 **PHP include 기반 위젯 시스템**을 사용한다.
 | 항목 | 내용 |
 |------|------|
 | **위젯 루트** | `v7/widgets/` |
-| **모듈 폴더** | `layout/`, `home/`, `shared/` |
+| **모듈 폴더** | `layout/`, `home/`, `shared/`, `user/`, `post/` |
 | **파일 네이밍** | `<module>/<module>.<name>.php` (예: `layout/layout.topbar.php`) |
-| **총 위젯 수** | 18개 (layout 8 + home 5 + shared 5) |
+| **총 위젯 수** | 19개 이상 (layout 8 + home 5 + shared 5 + user 1+) |
 | **사용 방식** | `<?php include __DIR__ . '/widgets/<module>/<module>.<name>.php'; ?>` |
 | **CSS 관리** | 모듈별 하나의 CSS 파일 (`layout-widget.css`, `home-widget.css`) |
 | **공유 위젯** | 4개 (사이드바 + 모바일 양쪽에서 재사용) |
@@ -129,13 +130,18 @@ v7/
     │   ├── home.latest-posts.php
     │   └── home.popular-posts.php
     │
-    └── shared/                         ← 공유 위젯 (5개 — 사이드바 + 모바일 공용)
-        ├── shared.weather-currency.php    ← ★ 날씨+환율 통합 위젯 (API + 파일 캐시)
-        ├── shared.weather-currency.css    ← ★ 날씨+환율 위젯 전용 CSS
-        ├── shared.exchange-rate.php       ← (레거시 — weather-currency로 대체)
-        ├── shared.company-categories.php
-        ├── shared.latest-companies.php
-        └── shared.stats.php
+    ├── shared/                         ← 공유 위젯 (5개 — 사이드바 + 모바일 공용)
+    │   ├── shared.weather-currency.php    ← ★ 날씨+환율 통합 위젯 (API + 파일 캐시)
+    │   ├── shared.weather-currency.css    ← ★ 날씨+환율 위젯 전용 CSS
+    │   ├── shared.exchange-rate.php       ← (레거시 — weather-currency로 대체)
+    │   ├── shared.company-categories.php
+    │   ├── shared.latest-companies.php
+    │   └── shared.stats.php
+    │
+    └── user/                            ← 사용자 관련 위젯 (1개)
+        ├── user-hover-dropdown.php        ← ★ 사용자 아바타/닉네임 호버 드롭다운 메뉴
+        ├── user-hover-dropdown.css        ← ★ 드롭다운 스타일 (hover/모바일/차단/관리자)
+        └── user-hover-dropdown.js         ← ★ 모바일 토글 + 차단 버튼 이벤트 처리
 ```
 
 ---
@@ -387,7 +393,8 @@ layout.php의 `$content` 변수에 캡처되어 `<main>` 태그 안에 렌더링
 | `layout` | 레이아웃 뼈대를 구성하는 위젯 (탑바, 헤더, 사이드바, 날개, 푸터) |
 | `home` | 홈페이지 본문에서만 사용하는 콘텐츠 위젯 |
 | `shared` | 여러 위치(사이드바 + 모바일 등)에서 동일하게 재사용하는 위젯 |
-| `<새모듈>` | 특정 기능(예: `post`, `user`, `company`)에 속하는 위젯 |
+| `user` | 사용자 관련 위젯 (호버 드롭다운, 프로필 카드 등) |
+| `<새모듈>` | 특정 기능(예: `post`, `company`)에 속하는 위젯 |
 
 ### 시각적 include 계층 구조
 
@@ -696,4 +703,168 @@ include __DIR__ . '/../widgets/post/list/post-list-widget.php';
     color: var(--wa-color-brand-700, #1d4ed8);
     font-weight: 600;
 }
+```
+
+---
+
+## 13. 사용자 호버 드롭다운 위젯 (user-hover-dropdown)
+
+### 13.1 개요
+
+글 보기 페이지(`v7/post/view.php`)에서 글쓴이/코멘트 작성자의 아바타 또는 닉네임에 마우스를 올리면(데스크톱) 또는 탭하면(모바일) 드롭다운 메뉴가 표시되는 재사용 가능 위젯이다.
+
+| 항목 | 내용 |
+|------|------|
+| **PHP 파일** | `v7/widgets/user/user-hover-dropdown.php` |
+| **CSS 파일** | `v7/widgets/user/user-hover-dropdown.css` |
+| **JS 파일** | `v7/widgets/user/user-hover-dropdown.js` |
+| **함수명** | `renderUserHoverDropdown(array $opts): string` |
+| **사용 위치** | `v7/post/view.php` (글 작성자 영역 + 코멘트 아바타/닉네임) |
+| **데스크톱 동작** | CSS `:hover`로 드롭다운 표시 |
+| **모바일 동작** | JS `click` 토글로 드롭다운 표시/숨김 |
+| **의존성** | `v7/js/block.js` (`toggleBlockMember()` 함수) |
+
+### 13.2 드롭다운 메뉴 항목
+
+| 메뉴 항목 | URL/동작 | 표시 조건 | 아이콘 |
+|-----------|---------|----------|--------|
+| 사용자명 + 레벨 (헤더) | — | 항상 | `wa-avatar` |
+| 프로필 | `/user/public-profile?idx_member=N` | 항상 | `fa-regular fa-user` |
+| 채팅 | `/chat/index?uid=FIREBASE_UID` | 로그인 + 타인일 때만 | `fa-regular fa-comment-dots` |
+| 글 목록 | `/post/list?idx_member=N` | 항상 | `fa-regular fa-file-lines` |
+| 코멘트 목록 | `/post/comments?idx_member=N` | 항상 | `fa-regular fa-comments` |
+| 차단 | `toggleBlockMember()` 호출 | 로그인 + 타인일 때만 | `fa-solid fa-ban` |
+| 회원 정보 수정 | `/admin/users?q=N` | 관리자만 | `fa-solid fa-shield` |
+
+### 13.3 사용법
+
+```php
+// 1. 위젯 파일 include (한 번만)
+include_once __DIR__ . '/../widgets/user/user-hover-dropdown.php';
+
+// 2. 렌더링 함수 호출
+echo renderUserHoverDropdown([
+    'idx_member'   => (int) $post->idx_member,       // 필수: 사용자 idx
+    'user_name'    => (string) $post->user_name,      // 필수: 닉네임
+    'photo_url'    => (string) $post->user_photo_url, // 선택: 프로필 사진 URL
+    'firebase_uid' => (string) $post->firebase_uid,   // 선택: Firebase UID (채팅 링크용)
+    'avatar_size'  => '2.25rem',                      // 선택: 아바타 크기 (기본 '2.25rem', '0'이면 아바타 숨김)
+    'show_meta'    => true,                           // 선택: 닉네임/레벨 표시 (기본 true, false면 아바타만)
+    'level'        => (int) $post->level,             // 선택: 회원 레벨
+]);
+```
+
+### 13.4 필수 전역 변수
+
+위젯 내부에서 `global` 키워드로 접근하는 변수들이다. `view.php`에서 미리 설정해야 한다.
+
+| 변수 | 타입 | 설명 |
+|------|------|------|
+| `$loginIdxMember` | `int` | 로그인 사용자의 idx (비로그인이면 0) |
+| `$loginIsAdmin` | `bool` | 관리자 여부 |
+
+### 13.5 파라미터 상세
+
+| 파라미터 | 타입 | 기본값 | 설명 |
+|----------|------|--------|------|
+| `idx_member` | `int` | `0` | 대상 사용자의 sf_member.idx |
+| `user_name` | `string` | `'익명'` | 표시할 닉네임 |
+| `photo_url` | `string` | `''` | 프로필 사진 URL (없으면 이니셜 아바타) |
+| `firebase_uid` | `string` | `''` | Firebase UID (채팅 링크 생성용, 없으면 채팅 메뉴 숨김) |
+| `avatar_size` | `string` | `'2.25rem'` | `wa-avatar`의 `--size` CSS 변수. `'0'`이면 아바타 렌더링 안 함 |
+| `show_meta` | `bool` | `true` | `true`이면 닉네임+레벨 표시, `false`이면 아바타만 표시 |
+| `level` | `int` | `0` | 회원 레벨. `0`이면 레벨 표시 안 함 |
+
+### 13.6 CSS 클래스
+
+| 클래스 | 역할 | 주요 스타일 |
+|--------|------|-----------|
+| `.user-hover-dropdown` | 위젯 루트 컨테이너 | `position: relative; display: inline-flex` |
+| `.user-hover-trigger` | 트리거 영역 (아바타 + 닉네임) | `display: flex; align-items: center; gap: 0.5rem; cursor: pointer` |
+| `.user-hover-trigger-name` | 닉네임 텍스트 | `font-size: 0.82rem; font-weight: 600` |
+| `.user-hover-trigger-level` | 레벨 텍스트 | `font-size: 0.68rem; color: neutral-400` |
+| `.user-hover-menu` | 드롭다운 메뉴 패널 | `position: absolute; z-index: 1000; min-width: 180px; box-shadow` |
+| `.user-hover-menu-header` | 메뉴 상단 사용자 정보 | 아바타(2.5rem) + 이름 + 레벨 |
+| `.user-hover-menu-divider` | 구분선 | `height: 1px; background: neutral-100` |
+| `.user-hover-menu-item` | 메뉴 항목 (링크/버튼) | `font-size: 0.8rem; padding: 0.4rem 0.75rem` |
+| `.user-hover-block-btn` | 차단 버튼 | hover 시 `color: danger-600` (빨간색) |
+| `.user-hover-admin-item` | 관리자 전용 항목 | 아이콘 색상 `neutral-500` |
+| `.user-hover-dropdown.open` | 모바일 토글 열림 상태 | `.user-hover-menu { display: block }` |
+
+### 13.7 코멘트 영역 적용
+
+코멘트에서는 두 위치에 드롭다운을 적용한다:
+
+1. **아바타 컬럼** (`.comment-avatar-col`): 아바타만 표시 (`show_meta: false`, `avatar_size: '1.75rem'`)
+2. **코멘트 헤더** (`.post-comment-header`): 닉네임만 표시 (`avatar_size: '0'`, `show_meta: true`)
+
+```php
+// 코멘트 아바타 (아바타만)
+echo renderUserHoverDropdown([
+    'idx_member'   => $c->idx_member,
+    'user_name'    => $c->user_name,
+    'photo_url'    => $c->user_photo_url,
+    'firebase_uid' => $c->firebase_uid,
+    'avatar_size'  => ($depth === 0) ? '2rem' : '1.75rem',
+    'show_meta'    => false,
+    'level'        => $c->level,
+]);
+
+// 코멘트 닉네임 (아바타 없이 닉네임만)
+echo renderUserHoverDropdown([
+    'idx_member'   => $c->idx_member,
+    'user_name'    => $c->user_name,
+    'photo_url'    => $c->user_photo_url,
+    'firebase_uid' => $c->firebase_uid,
+    'avatar_size'  => '0',
+    'show_meta'    => true,
+    'level'        => $c->level,
+]);
+```
+
+### 13.8 CSS 파일 로딩
+
+`v7/layout.php`의 `<head>`에서 CSS와 JS를 로딩한다.
+
+```html
+<link rel="stylesheet" href="/v7/widgets/user/user-hover-dropdown.css?v=<?= CACHE_VERSION ?>">
+<script defer src="/v7/widgets/user/user-hover-dropdown.js?v=<?= CACHE_VERSION ?>"></script>
+```
+
+### 13.9 기술 세부사항
+
+| 항목 | 설명 |
+|------|------|
+| **데스크톱 (>=992px)** | CSS `:hover`로 메뉴 표시. `::before` 투명 영역으로 트리거-메뉴 간 마우스 이탈 방지 |
+| **모바일 (<992px)** | JS `click` 이벤트로 `.open` 클래스 토글. 외부 클릭 시 자동 닫힘 |
+| **차단** | `v7/js/block.js`의 `toggleBlockMember()` 함수 호출. 로딩 스피너 표시, 성공 시 페이지 리로드 |
+| **관리자 판별** | `global $loginIsAdmin` 변수 사용 |
+| **이중 include 방지** | `function_exists('renderUserHoverDropdown')` 가드로 중복 정의 방지 |
+| **v6 코드 미사용** | v7 전용 구현, v6 함수/위젯 미사용 |
+
+### 13.10 HTML 구조
+
+```html
+<div class="user-hover-dropdown">
+    <!-- 트리거: 아바타 + 닉네임 -->
+    <div class="user-hover-trigger">
+        <wa-avatar initials="홍" image="사진URL" shape="circle" style="--size: 2.25rem"></wa-avatar>
+        <div class="user-hover-trigger-info">
+            <span class="user-hover-trigger-name">홍길동</span>
+            <span class="user-hover-trigger-level">Lv. 5</span>
+        </div>
+    </div>
+    <!-- 드롭다운 메뉴 -->
+    <div class="user-hover-menu">
+        <div class="user-hover-menu-header">...</div>
+        <div class="user-hover-menu-divider"></div>
+        <a class="user-hover-menu-item" href="...">프로필</a>
+        <a class="user-hover-menu-item" href="...">채팅</a>
+        <a class="user-hover-menu-item" href="...">글 목록</a>
+        <a class="user-hover-menu-item" href="...">코멘트 목록</a>
+        <div class="user-hover-menu-divider"></div>
+        <button class="user-hover-menu-item user-hover-block-btn" ...>차단</button>
+        <a class="user-hover-menu-item user-hover-admin-item" href="...">회원 정보 수정</a>
+    </div>
+</div>
 ```
