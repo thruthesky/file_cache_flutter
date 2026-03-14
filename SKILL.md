@@ -363,6 +363,24 @@ $post = PostEntity::fromArray($row);  // ❌ array|false를 array로 전달 → 
 
 > **⛔⛔⛔ 코드 수정 후 반드시 LSP 진단(Diagnostics)을 실행하여 P1006 등 타입 에러가 없는지 검증할 것! ⛔⛔⛔**
 
+### 🔴🔴🔴 Repository findByIdx() nullable 반환값 — Service 계층 null 체크 필수 🔴🔴🔴
+
+> **⛔ `RepositoryInterface::findByIdx()`는 `?Entity`를 반환한다. Service에서 non-nullable Entity를 반환하는 메서드에서 null 체크 없이 직접 반환하면 P1006 에러가 발생한다. ⛔**
+
+```php
+// ❌ P1006 에러: ?PointLogEntity를 PointLogEntity로 직접 반환
+return PointLogRepository::findByIdx($idx);
+
+// ✅ null 체크 후 반환 (P1006 해결)
+$entity = PointLogRepository::findByIdx($idx);
+if ($entity === null) {
+    throw new RuntimeException('조회에 실패했습니다. idx=' . $idx);
+}
+return $entity;  // 이 시점에서 타입 확정
+```
+
+> 상세 패턴 및 실제 수정 사례는 → [v7-interface.md](references/v7-interface.md) 8.5절 참조.
+
 ---
 
 ## 레퍼런스 문서
