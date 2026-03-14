@@ -83,7 +83,7 @@ v7 포인트 시스템은 v6 `lib/point.functions.php`의 핵심 로직을 v7 �
 | `module` | varchar | 모듈명 (post, comment, vote, admin, adv, event, point_event) |
 | `action` | varchar | 액션명 (create, delete, like, unlike, update, point-post-advertisement, spin 등) |
 | `idx_post` | int | 관련 글/코멘트 idx (0이면 해당 없음) |
-| `etc` | varchar | 기타 정보 (point_write, point_comment, like, post_on_top, admin-point-update 등) |
+| `etc` | varchar | 기타 정보 (point_write, point_event_write, point_comment, point_event_comment, like, post_on_top, admin-point-update 등) |
 | `stamp` | int | Unix timestamp |
 | `ip` | char(15) | 사용자 IP (현재는 비워둠 - IPv6 호환성 이슈) |
 
@@ -268,6 +268,10 @@ function increase_user_points_for_post_create(array $post, array $config, array 
     // 이벤트 포인트 계산 (기본값 또는 랜덤)
     $points = get_event_points(config: $config, post: $post);
 
+    // 이벤트 포인트인지 판별: 반환된 포인트가 설정 기본 포인트보다 크면 이벤트 포인트
+    $config_points = $config[POINT_WRITE] ?? 0;
+    $pointEtc = ($points > $config_points && $config_points > 0) ? 'point_event_write' : POINT_WRITE;
+
     // 포인트 적용
     $re = change_user_points(
         points: $points,
@@ -275,7 +279,7 @@ function increase_user_points_for_post_create(array $post, array $config, array 
         module: MODULE_POST,     // 'post'
         action: ACTION_CREATE,   // 'create'
         idx_post: $post[IDX],
-        etc: POINT_WRITE,        // 'point_write'
+        etc: $pointEtc,          // 'point_write' 또는 'point_event_write'
         idx_member_to: $post[IDX_MEMBER]
     );
 
@@ -294,7 +298,32 @@ module/action/etc 값:
 |------|-----|
 | module | `post` |
 | action | `create` |
-| etc | `point_write` |
+| etc | `point_write` (일반) 또는 `point_event_write` (이벤트 포인트) |
+
+### 이벤트 포인트 etc 값 구분 (v7 신규)
+
+글/코멘트 생성 시 포인트가 이벤트 포인트인지 판별하여 `etc` 값을 다르게 저장한다.
+
+**판별 기준**: `get_event_points()` 반환값 > 게시판 설정 기본 포인트(`point_write` 또는 `point_comment`)이면 이벤트 포인트로 판정한다.
+
+```php
+// v6 (lib/point.functions.php)
+$config_points = $config[POINT_WRITE] ?? 0;
+$pointEtc = ($points > $config_points && $config_points > 0) ? 'point_event_write' : POINT_WRITE;
+
+// v7 (PostService.php)
+$configPoints = (int) ($config['point_write'] ?? 0);
+$pointEtc = ($points > $configPoints && $configPoints > 0) ? 'point_event_write' : 'point_write';
+```
+
+| 상황 | etc 값 |
+|------|--------|
+| 일반 글 작성 포인트 | `point_write` |
+| 이벤트 글 작성 포인트 (랜덤 포인트 > 기본 포인트) | `point_event_write` |
+| 일반 코멘트 작성 포인트 | `point_comment` |
+| 이벤트 코멘트 작성 포인트 (랜덤 포인트 > 기본 포인트) | `point_event_comment` |
+
+> **참고**: 이 구분은 포인트 내역 페이지에서 일반 포인트와 이벤트 포인트를 시각적으로 구별하기 위해 도입되었다.
 
 ### 글 삭제 시 (PostService::delete)
 
@@ -382,13 +411,17 @@ function increase_user_points_for_comment_create(array $comment, array $post, ar
 
     $points = get_event_points(config: $config, post: $post, comment: $comment, is_comment: true);
 
+    // 이벤트 포인트인지 판별: 반환된 포인트가 설정 기본 포인트보다 크면 이벤트 포인트
+    $config_points = $config[POINT_COMMENT] ?? 0;
+    $pointEtc = ($points > $config_points && $config_points > 0) ? 'point_event_comment' : POINT_COMMENT;
+
     $re = change_user_points(
         points: $points,
         login_user: $login_user,
         module: MODULE_COMMENT,    // 'comment'
         action: ACTION_CREATE,     // 'create'
         idx_post: $comment[IDX],
-        etc: POINT_COMMENT,        // 'point_comment'
+        etc: $pointEtc,            // 'point_comment' 또는 'point_event_comment'
         idx_member_to: $comment[IDX_MEMBER]
     );
 
@@ -423,8 +456,11 @@ private static function increasePointsForCommentCreate(PostEntity $comment, arra
 module/action/etc 값:
 | 작업 | module | action | etc |
 |------|--------|--------|-----|
-| 코멘트 생성 | `comment` | `create` | `point_comment` |
+| 코멘트 생성 (일반) | `comment` | `create` | `point_comment` |
+| 코멘트 생성 (이벤트) | `comment` | `create` | `point_event_comment` |
 | 코멘트 삭제 | `comment` | `delete` | `point_comment_delete` |
+
+> **이벤트 포인트 판별**: `get_event_points()` 반환값 > `point_comment` 설정값이면 `point_event_comment`, 아니면 `point_comment`
 
 ---
 
@@ -974,9 +1010,13 @@ function point_log_controller(array $in, array $login_user): array
     ↓
 [5] 최종 포인트 결정 (max(random_points, point_write))
     ↓
-[6] change_user_points() / PointLogService::changePoints()
+[6] etc 값 결정 (이벤트 포인트 판별)
+    ├─ 최종 포인트 > point_write 설정값 → etc = 'point_event_write'
+    └─ 그 외 → etc = 'point_write'
+    ↓
+[7] change_user_points() / PointLogService::changePoints()
     ├─ sf_member.point 업데이트 (합산)
-    ├─ sf_point_log 레코드 삽입
+    ├─ sf_point_log 레코드 삽입 (etc = 'point_write' 또는 'point_event_write')
     └─ 글의 int_10 필드에 획득 포인트 기록
     ↓
 완료
@@ -1189,7 +1229,7 @@ v6 `page/point/history.php` + `widget/point/history.php`의 로직을 100% 동�
 | **포인트 내역 테이블** | sf_point_log 테이블에서 사유, 적용 포인트, 적용 후 포인트, 날짜/시간 표시 |
 | **색상 구분** | 양수(초록), 음수(빨강), 0(회색) |
 | **사유 배지** | Web Awesome `wa-badge` 컴포넌트로 사유별 variant 표시 |
-| **관련 글 링크** | 글 작성/댓글 작성 시 해당 글로 이동하는 `보기` 링크 |
+| **관련 글 링크** | 글 작성/댓글 작성/이벤트 포인트(`point_event_write`, `point_event_comment`) 시 해당 글로 이동하는 `보기` 링크 |
 | **관리자 필터** | 관리자는 `idx_member`, `etc` 파라미터로 다른 사용자 조회 가능 |
 | **관리자 FROM/TO** | 관리자에게만 FROM/TO 사용자 칼럼 표시 |
 | **페이지네이션** | 10개씩, 최대 5개 페이지 버튼 표시 |
@@ -1203,6 +1243,8 @@ v6 `page/point/history.php` + `widget/point/history.php`의 로직을 100% 동�
 |--------|----------|
 | `point_write` | 글 작성 |
 | `point_comment` | 댓글 작성 |
+| `point_event_write` | 포인트 이벤트 |
+| `point_event_comment` | 포인트 이벤트 |
 | `point_write_delete` | 글 삭제 |
 | `point_comment_delete` | 댓글 삭제 |
 | `like` | 좋아요 |
@@ -1225,6 +1267,7 @@ v6 `page/point/history.php` + `widget/point/history.php`의 로직을 100% 동�
 | `biz-point-buy` | `danger` | 빨강 |
 | `admin-point-update` | `warning` | 노랑 |
 | `point_write_delete`, `point_comment_delete` | `neutral` | 회색 |
+| `point_event_write`, `point_event_comment` | `success` | 초록 |
 | 그 외 | `primary` | 파랑 |
 
 ### DB 쿼리 패턴
