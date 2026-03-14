@@ -1088,9 +1088,10 @@ function point_log_controller(array $in, array $login_user): array
 
 결과:
 - 최종 포인트: 10
+- etc: 'point_write' (10 > 10 아니므로 일반 포인트)
 - 사용자: 100 → 110
 - int_10: 10
-- sf_point_log: module='post', action='create', point=10
+- sf_point_log: module='post', action='create', etc='point_write', point=10
 ```
 
 ### 예시 2: 글 작성 (이벤트 기간, freetalk)
@@ -1105,8 +1106,10 @@ function point_log_controller(array $in, array $login_user): array
 결과:
 - random_points = 70 × 20 = 1,400
 - 최종 = max(1400, 5) = 1,400
+- etc: 'point_event_write' (1,400 > 5이므로 이벤트 포인트)
 - 사용자: 100 → 1,500
 - int_10: 1,400
+- sf_point_log: module='post', action='create', etc='point_event_write', point=1400
 ```
 
 ### 예시 3: 이벤트 글 삭제 (v7)
