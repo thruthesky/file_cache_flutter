@@ -412,7 +412,7 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 ### Interface 시스템 → [v7-interface.md](references/v7-interface.md)
 
 v7 시스템의 EntityInterface, RepositoryInterface, ServiceInterface, ControllerInterface를
-상세히 다룹니다. 모든 Entity(14개)는 `Philgo\Utils\EntityInterface`를 구현하여
+상세히 다룹니다. 모든 Entity(15개)는 `Philgo\Utils\EntityInterface`를 구현하여
 `fromArray(array $data): static` 정적 팩토리와 `toArray(): array` 배열 변환을 필수로 제공합니다.
 6개 Repository는 `Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`,
 `update()`, `deleteByIdx()` 표준 CRUD 메서드명을 강제합니다. 10개 Service는

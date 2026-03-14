@@ -16,12 +16,13 @@
    - [post.reportList](#postreportlist---신고-목록-조회-관리자)
 4. [포인트 시스템](#포인트-시스템)
 5. [PostEntity 필드](#postentity-필드)
-6. [content_type 판별 및 저장](#content_type-판별-및-저장)
-7. [에러 처리](#에러-처리)
-8. [테스트](#테스트)
-9. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
-10. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
-11. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+6. [PostConfigEntity — 게시판 설정 Entity](#postconfigentity--게시판-설정-entity)
+7. [content_type 판별 및 저장](#content_type-판별-및-저장)
+8. [에러 처리](#에러-처리)
+9. [테스트](#테스트)
+10. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
+11. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
+12. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -33,8 +34,8 @@
    - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
    - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
-12. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
-13. [신고(Report) 기능](#신고report-기능)
+13. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
+14. [신고(Report) 기능](#신고report-기능)
 
 ---
 
@@ -70,7 +71,8 @@ lib/post/
 ├── PostController.php    # API 엔드포인트 (인증 처리)
 ├── PostService.php       # 비즈니스 로직 (포인트 증/감 포함)
 ├── PostRepository.php    # DB CRUD (prepared statement)
-├── PostEntity.php        # 데이터 구조체 (POPO)
+├── PostEntity.php        # 게시글 데이터 구조체 (sf_post_data)
+├── PostConfigEntity.php  # 게시판 설정 데이터 구조체 (sf_post_config)
 │
 ├── post.functions.php          # (기존 v6 레거시)
 ├── post.create.functions.php   # (기존 v6 레거시)
@@ -430,6 +432,85 @@ GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
 |---------|------|
 | content_stripped | `strip_tags(content)` 값. v6에서 검색용으로 사용했으나, **v7에서는 사용하지 않는다**. PostEntity에 매핑하지 않으며, 글/코멘트 생성·수정 시에도 저장하지 않는다. DB 컬럼 charset가 4바이트 UTF-8(이모지)을 지원하지 않아 SQLSTATE[22007] 에러를 유발할 수 있으므로 v7 코드에서 완전히 제거되었다. |
 | content_stripped_private | content_stripped의 비공개 버전. v7에서 사용하지 않는다. |
+
+---
+
+## PostConfigEntity -- 게시판 설정 Entity
+
+`PostConfigEntity`는 `sf_post_config` 테이블의 데이터를 담는 Entity 클래스이다.
+기존에 연관 배열(`$config['key']`)로 접근하던 게시판 설정을 Entity 멤버 변수(`$config->key`)로 접근하도록 변환했다.
+
+**파일**: `lib/post/PostConfigEntity.php`
+**네임스페이스**: `Philgo\Post\PostConfigEntity`
+**구현 인터페이스**: `EntityInterface` (`fromArray()`, `toArray()`)
+
+### 사용 위치
+
+| 위치 | 변경 내용 |
+|------|----------|
+| `PostRepository::getPostConfig()` | 반환 타입을 `?array` -> `?PostConfigEntity`로 변경 |
+| `PostService.php` | 모든 `$config['key']` 패턴을 `$config->key`로 변경 (포인트 증/감 처리 포함) |
+| `v7/post/view.php` | 게시판 설정 배열 접근을 Entity 접근으로 변경 |
+| `v7/admin/boards-config.php` | 관리자 게시판 설정 페이지에서 배열 접근을 Entity 접근으로 변경 |
+
+### 핵심 필드
+
+| 분류 | 필드 | 타입 | 설명 |
+|------|------|------|------|
+| 식별자 | `idx` | int | PK |
+| 식별자 | `post_id` | string | 게시판 ID |
+| 식별자 | `group_id` | string | 그룹 ID |
+| 기본 정보 | `subject` | string | 게시판 제목 |
+| 기본 정보 | `description` | ?string | 게시판 설명 |
+| 기본 정보 | `category` | ?string | 카테고리 목록 |
+| 포인트 | `point_write` | int | 글 작성 시 지급 포인트 |
+| 포인트 | `point_comment` | int | 댓글 작성 시 지급 포인트 |
+| 포인트 | `point_write_delete` | int | 글 삭제 시 차감 포인트 |
+| 포인트 | `point_comment_delete` | int | 댓글 삭제 시 차감 포인트 |
+| 접근 레벨 | `level_list` | int | 목록 열람 레벨 |
+| 접근 레벨 | `level_view` | int | 글 열람 레벨 |
+| 접근 레벨 | `level_write` | int | 글 작성 레벨 |
+| 통계 | `no_of_post` | int | 글 수 |
+| 통계 | `no_of_comment` | int | 댓글 수 |
+
+### 편의 메서드
+
+| 메서드 | 반환 | 설명 |
+|--------|------|------|
+| `exists()` | bool | 유효한 레코드인지 확인 (`idx > 0`) |
+| `displayName()` | string | 게시판 표시 이름 (`subject`가 비어있으면 `post_id` 반환) |
+
+### 사용 예시
+
+```php
+// PostRepository에서 Entity 반환
+$config = PostRepository::getPostConfig('freetalk');
+if ($config === null) {
+    throw new RuntimeException('게시판 설정을 찾을 수 없습니다');
+}
+
+// ✅ Entity 멤버 변수로 접근
+$pointWrite = $config->point_write;
+$boardName = $config->displayName();
+
+// ❌ 배열 접근 금지 (기존 패턴)
+// $pointWrite = $config['point_write'];
+```
+
+### 테스트
+
+유닛 테스트 파일: `tests/Unit/PostConfigEntityTest.php` (18개 테스트)
+
+| 테스트 | 검증 내용 |
+|--------|----------|
+| EntityInterface 구현 검증 | `instanceof EntityInterface` |
+| fromArray() 기본 변환 | 핵심 필드 변환 확인 |
+| toArray() 왕복 변환 | `fromArray() -> toArray()` 데이터 일관성 |
+| 기본값 검증 | 빈 배열로 생성 시 기본값 확인 |
+| nullable 필드 처리 | `description`, `category`, `header`, `footer` 등 null 처리 |
+| exists() 메서드 | `idx > 0` 기준 검증 |
+| displayName() 메서드 | subject 유무에 따른 반환값 검증 |
+| 포인트/레벨/위젯 설정 필드 | 각 카테고리별 필드 변환 확인 |
 
 ---
 
