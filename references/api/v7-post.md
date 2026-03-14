@@ -756,19 +756,26 @@ if ($_v7LoginUser) {
 ### 글 헤더 디자인
 
 글 헤더는 카테고리 뱃지, 제목, 작성자 정보(아바타 + 이름 + 메타)로 구성된다.
+**작성자 아바타/닉네임에는 `renderUserHoverDropdown()` 위젯이 적용**되어 호버 시 드롭다운 메뉴(프로필, 채팅, 글 목록, 코멘트 목록, 차단, 관리자 메뉴)가 표시된다.
 
 ```html
 <header class="post-view-header">
     <span class="post-category-badge"><i class="fa-solid fa-tag"></i> 카테고리</span>
     <h1 class="post-view-title">제목</h1>
     <div class="post-view-author-row">
-        <wa-avatar initials="홍" image="프로필URL" shape="circle"></wa-avatar>
-        <div class="post-view-author-info">
-            <span class="post-view-author">홍길동</span>
-            <div class="post-view-meta">
-                <span class="post-view-date">2026-03-11 12:00</span>
-                <span class="post-view-stat"><i class="fa-regular fa-eye"></i> 조회수</span>
-            </div>
+        <!-- renderUserHoverDropdown() 위젯으로 아바타+닉네임 렌더링 -->
+        <?= renderUserHoverDropdown([
+            'idx_member'   => $post->idx_member,
+            'user_name'    => $post->user_name,
+            'photo_url'    => $post->user_photo_url,
+            'firebase_uid' => $post->firebase_uid,
+            'avatar_size'  => '2.25rem',
+            'show_meta'    => true,
+            'level'        => $post->level,
+        ]) ?>
+        <div class="post-view-meta">
+            <span class="post-view-date">2026-03-11 12:00</span>
+            <span class="post-view-stat"><i class="fa-regular fa-eye"></i> 조회수</span>
         </div>
     </div>
 </header>
@@ -777,6 +784,7 @@ if ($_v7LoginUser) {
 **핵심 CSS 규칙:**
 - 카테고리 뱃지: 블루 pill 스타일 (`background: brand-50`, `color: brand-700`, `border-radius: 20px`)
 - 작성자 아바타: `wa-avatar --size: 2.25rem`, `shape="circle"`, `user_photo_url` 지원
+- 작성자 호버 드롭다운: `renderUserHoverDropdown()` 위젯으로 아바타+닉네임에 드롭다운 메뉴 적용 → [v7-widgets.md 13장](../web/v7-widgets.md#13-사용자-호버-드롭다운-위젯-user-hover-dropdown) 참조
 - 구분선: `border-bottom: 1px solid neutral-200` (얇은 회색, 두꺼운 검정 금지)
 
 ### 액션 바 디자인
@@ -1532,3 +1540,32 @@ document.addEventListener('click', function (e) {
 | **thread-line 세로선 색상** | 기본 `#cbd5e1` (neutral-300), hover 시 `#3b82f6` (blue) + width `3px`로 두께 증가. L자 곡선 연결선도 동일하게 neutral-300(`#cbd5e1`) 적용 |
 | **thread-line left 위치** | 데스크톱 `left: 17px` (avatar-col 36px/2 - 1px), 모바일 `left: 14px` (30px/2 - 1px) |
 | **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |
+| **user-hover-dropdown 위젯 적용** | 코멘트 아바타(`.comment-avatar-col`)와 닉네임(`.post-comment-header`)에 `renderUserHoverDropdown()` 위젯을 적용하여 호버 드롭다운 메뉴를 표시한다 |
+
+---
+
+## 사용자 호버 드롭다운 (user-hover-dropdown)
+
+글 보기 페이지(`v7/post/view.php`)에서 글쓴이 및 코멘트 작성자의 **아바타/닉네임에 호버 시 드롭다운 메뉴**가 표시되는 기능이다.
+
+### 적용 위치
+
+| 위치 | 설명 | 파라미터 |
+|------|------|----------|
+| **글 작성자 영역** (`.post-view-author-row`) | 글 헤더의 아바타+닉네임 | `avatar_size: '2.25rem'`, `show_meta: true` |
+| **코멘트 아바타** (`.comment-avatar-col`) | 코멘트 왼쪽 아바타 | `avatar_size: '1.75rem'~'2rem'`, `show_meta: false` |
+| **코멘트 닉네임** (`.post-comment-header`) | 코멘트 본문 상단 닉네임 | `avatar_size: '0'`, `show_meta: true` |
+
+### 위젯 파일
+
+| 파일 | 역할 |
+|------|------|
+| `v7/widgets/user/user-hover-dropdown.php` | `renderUserHoverDropdown()` 함수 정의 — HTML 생성 |
+| `v7/widgets/user/user-hover-dropdown.css` | 드롭다운 스타일 (hover/모바일/차단/관리자 메뉴) |
+| `v7/widgets/user/user-hover-dropdown.js` | 모바일 토글 + 차단 버튼 이벤트 + 외부 클릭 닫기 |
+
+### 메뉴 항목
+
+프로필, 채팅(로그인+타인), 글 목록, 코멘트 목록, 차단(로그인+타인), 회원 정보 수정(관리자만).
+
+상세 사용법 및 파라미터: → [v7-widgets.md 13장](../web/v7-widgets.md#13-사용자-호버-드롭다운-위젯-user-hover-dropdown) 참조.

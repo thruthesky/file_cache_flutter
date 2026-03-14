@@ -595,11 +595,13 @@ CSS 변수(`--v7-sidebar-width: 240px`, `--v7-wing-width: 120px`, `--v7-gap: 16p
 ### 위젯 시스템 → [web/v7-widgets.md](references/web/v7-widgets.md)
 
 v7 홈페이지의 PHP include 기반 위젯 시스템을 상세히 다룹니다.
-`v7/widgets/` 폴더에 17개 독립 PHP 파일로 분리된 위젯 구조, 5-column 레이아웃 배치,
+`v7/widgets/` 폴더에 모듈별(`layout/`, `home/`, `shared/`, `user/`, `post/`) 독립 PHP 파일로 분리된 위젯 구조, 5-column 레이아웃 배치,
 레이아웃 위젯 8개(topbar, header-mobile/desktop, sidebar-left/right, wing-left/right, footer),
 공유 위젯 4개(exchange-rate, company-categories, latest-companies, stats — 사이드바와 모바일 양쪽에서
 동일 파일을 include하여 DRY 원칙 적용), 콘텐츠 위젯 5개(mobile-top-banners, news-tabs,
-mobile-wing-banners, latest-posts, popular-posts), layout.php 핵심 소스코드(~130줄),
+mobile-wing-banners, latest-posts, popular-posts), **사용자 호버 드롭다운 위젯**(user-hover-dropdown —
+글/코멘트 작성자 아바타/닉네임 호버 시 프로필/채팅/글목록/차단 등 드롭다운 메뉴 표시),
+게시글 목록 위젯(post-list-widget), layout.php 핵심 소스코드(~140줄),
 index.php 공유 위젯 사용 패턴, 새 위젯 추가 방법을 포함합니다.
 
 ### 폰트 로딩 및 적용 → [web/v7-fonts.md](references/web/v7-fonts.md)
