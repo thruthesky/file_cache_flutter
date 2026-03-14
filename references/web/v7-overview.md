@@ -382,6 +382,7 @@ if (file_exists($v7File)) {
 - 공통 레이아웃이 필요하면 `v7/layouts/` 폴더에서 별도 관리할 수 있다
 - `v7/boot.php`가 이미 로드되므로, v7 Service 클래스(`Db::pdo()`, `AuthService::getLoginUser()` 등) 직접 사용 가능
 - **v6 함수(`pdo()`, `login()`, `t()` 등)는 사용 불가** — v7 전용 클래스만 사용
+- v6 `pdo()->prepare()` + `->execute()` + `->fetch()` 패턴은 v7 `Db::fetch()`로 교체해야 함 (예: `public-profile.php` 차단 확인 로직)
 
 ---
 

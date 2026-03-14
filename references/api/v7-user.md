@@ -1767,6 +1767,25 @@ $_isBlockedPost = !empty($_blockedMemberIds) && in_array($post['idx_member'] ?? 
 
 - 타인 프로필에서 차단/해제 버튼 표시 (`toggleBlockMember()` 호출)
 - 차단 상태에 따라 버튼 색상 변경 (danger/neutral)
+- 차단 여부 확인은 `Db::fetch()`를 사용하여 `sf_member_blocks` 테이블을 조회
+
+```php
+// ✅ v7 방식: Db::fetch() 사용 (pdo() 사용 금지)
+use Philgo\Utils\Db;
+
+$isProfileBlocked = false;
+if ($loginUser) {
+    $blockRow = Db::fetch(
+        "SELECT idx FROM sf_member_blocks WHERE idx_blocker = ? AND idx_blockee = ?",
+        [$loginUser->idx, $user->idx]
+    );
+    $isProfileBlocked = $blockRow !== false;
+}
+```
+
+> **주의**: 이전에 v6 `pdo()` 함수를 직접 호출하던 코드(`pdo()->prepare()` + `->execute()` + `->fetch()`)는
+> v7 `Db::fetch()`로 교체되었다. v7 홈페이지(`v7/` 폴더)에서 `pdo()` 직접 호출은 금지이며,
+> 반드시 `Philgo\Utils\Db` 클래스를 통해 DB에 접근해야 한다.
 
 ### 10.5 차단 목록 페이지 (`blocked.php`)
 
