@@ -449,12 +449,12 @@ Dokploy 내장 Traefik 리버스 프록시가 처리하므로 컨테이너는 HT
 Nginx 라우팅 규칙(v6 호환 rewrite, 정적 파일 캐싱, Sitemap/Google 확인),
 로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.
 서버 접속: Dokploy 관리 패널 `http://209.97.169.136:3000`,
-프로덕션 URL `https://philgo.net`,
+테스트 서버 URL `https://philgo.net` (프로덕션은 `https://philgo.com`),
 프리뷰 URL `http://philgo.209.97.169.136.traefik.me`.
 
 ### 데이터베이스 관리 → [v7-db.md](references/server/v7-db.md)
 
-MariaDB 11.7.2 데이터베이스 접속·관리·사용 방법을 상세히 다룹니다.
+MariaDB 11.7.2 데이터베이스 접속·관리·사용·백업·복원 방법을 상세히 다룹니다.
 DB 접속 정보(`etc/db.config.php`, `etc/db.config.dev.php`), Docker 컨테이너에서
 `docker exec -it mariadb mysql` 명령으로 직접 접속하는 방법, 호스트에서
 `mysql -h 127.0.0.1 -P 3306` CLI 접속 방법을 포함합니다. v7 `Philgo\Utils\Db` 클래스의
@@ -462,7 +462,10 @@ DB 접속 정보(`etc/db.config.php`, `etc/db.config.dev.php`), Docker 컨테이
 Intelephense P1006 타입 안전성 규칙(`Db::fetch()` 반환값 `array|false` 체크 필수),
 레거시 `pdo()` 함수 및 `db_*()` 헬퍼 함수와의 비교, v7 3계층 DB 접근 패턴
 (Controller → Service → Repository → Db), 위젯에서 직접 DB 접근 금지 규칙,
-주요 테이블 목록(`sf_member`, `sf_post_data` 등), 테스트 환경 DB 설정을 포함합니다.
+주요 테이블 목록(`sf_member`, `sf_post_data` 등), 테스트 환경 DB 설정,
+프로덕션(`philgo.com`) DB 백업 구조(요일별 순환, `thruthesky@db:/mnt/volume_sgp1_03/`),
+백업 파일 로컬 다운로드(`scp`), 로컬 Docker 복원 방법(직접 복원/새 컨테이너 교체),
+테스트 서버(`philgo.net`) DB 백업 방법을 포함합니다.
 
 ### Flutter 앱 전화번호 로그인 → [app/v7-app-phone-login.md](references/app/v7-app-phone-login.md)
 

@@ -70,7 +70,7 @@ www/                                     # 프로젝트 루트 (= philgo/www)
 | 항목 | 값 |
 |------|-----|
 | Dokploy 관리 패널 | `http://209.97.169.136:3000` |
-| 프로덕션 URL | `https://philgo.net` |
+| 테스트 서버 URL | `https://philgo.net` (⚠️ 프로덕션이 아닌 테스트 서버. 프로덕션은 `https://philgo.com`) |
 | 프리뷰 URL | `http://philgo.209.97.169.136.traefik.me` |
 | Git 레포지토리 | `thruthesky/withcenter` |
 | Git 브랜치 | `v7` |

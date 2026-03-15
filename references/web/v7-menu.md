@@ -45,7 +45,8 @@ v7/menu/
 | 환경 | URL |
 |------|-----|
 | 개발 | `https://v7-local.philgo.com/menu` |
-| 프로덕션 | `https://philgo.net/menu` |
+| 테스트 서버 | `https://philgo.net/menu` |
+| 프로덕션 | `https://philgo.com/menu` |
 
 ---
 
