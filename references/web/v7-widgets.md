@@ -17,6 +17,7 @@
 13. [사용자 호버 드롭다운 위젯 (user-hover-dropdown)](#13-사용자-호버-드롭다운-위젯-user-hover-dropdown)
 14. [즐겨찾기 위젯 (sidebar-left.bookmarks)](#14-즐겨찾기-위젯-sidebar-leftbookmarks)
 15. [게시글 읽기 위젯 (post/view)](#15-게시글-읽기-위젯-postview)
+16. [부동산 위젯 (post/list, post/view)](#16-부동산-위젯-postlist-postview)
 
 ---
 
@@ -151,9 +152,11 @@ v7/
         ├── list/                          ← 게시글 목록 위젯
         │   ├── post-list-widget.php
         │   ├── post-list-tile.php
-        │   └── post-list-footer.php
+        │   ├── post-list-footer.php
+        │   └── post-list-real-estate-masonry.php  ← ★ 부동산 전용 Masonry 목록 위젯 (필터+오버레이)
         └── view/                          ← 게시글 읽기 위젯
             ├── post-view-default.php      ← ★ 일반 게시글 읽기 위젯 (브레드크럼, 헤더, 본문, 첨부, 액션바, AI 답변)
+            ├── post-view-real-estate.php   ← ★ 부동산 전용 상세보기 위젯 (필드 정보+Google Maps 지도)
             └── info/                      ← info 게시글 전용 위젯
                 ├── info-view.php          ← ★ 통합 info 글 읽기 위젯 (카테고리별 디자인 분기)
                 ├── info-meta-card.php     ← ★ 공통 메타 카드 (위치/연락처/운영시간/지도)
@@ -443,10 +446,16 @@ v7/index.php (홈페이지 본문)
     ├── widgets/shared/shared.latest-companies.php (공유)
     └── widgets/shared/shared.stats.php (공유)
 
+v7/post/list.php (게시판 목록)
+├── [부동산 카테고리] widgets/post/list/post-list-real-estate-masonry.php (Masonry+필터+오버레이)
+├── [Masonry 카테고리] widgets/post/list/post-list-masonry.php
+└── [일반 카테고리] widgets/post/list/post-list-widget.php
+
 v7/post/view.php (게시글 읽기)
 ├── [info 게시글] widgets/post/view/info/info-view.php
 │   └── widgets/post/view/info/info-meta-card.php
 ├── [일반 게시글] widgets/post/view/post-view-default.php
+│   └── [부동산 카테고리] widgets/post/view/post-view-real-estate.php (부동산 필드+Google Maps)
 ├── [댓글] 인라인 (renderCommentThread 재귀)
 └── [하단 글 목록] widgets/post/list/post-list-widget.php
 ```
@@ -1106,3 +1115,46 @@ $isAiAnswerTarget = !$post->isInfoPost()
     && in_array($post->post_id, ['qna', 'freetalk'], true)
     && $post->idx_parent == 0;
 ```
+
+---
+
+## 16. 부동산 위젯 (post/list, post/view)
+
+### 16.1 개요
+
+부동산 게시판(`category='real_estate'`)은 전용 Masonry 목록 위젯과 상세보기 위젯을 사용한다.
+글쓰기/수정 폼에서도 15개 커스텀 필드를 입력할 수 있는 전용 폼 섹션이 표시된다.
+
+| 항목 | 내용 |
+|------|------|
+| **목록 위젯** | `v7/widgets/post/list/post-list-real-estate-masonry.php` |
+| **상세보기 위젯** | `v7/widgets/post/view/post-view-real-estate.php` |
+| **CSS** | `v7/post/real-estate.css` (별도 파일) |
+| **폼** | `v7/js/post-form.js`에서 `isRealEstate` computed로 분기 |
+| **상세 문서** | [v7-post-real-estate.md](../api/v7-post-real-estate.md) |
+
+### 16.2 목록 — Masonry 위젯
+
+`list.php`에서 `$category === 'real_estate'` 조건으로 부동산 전용 Masonry 위젯을 렌더링한다.
+일반 Masonry(`post-list-masonry.php`)와 달리 상단 필터(지역, 판매 유형)와
+카드 오버레이(지역/건물명/침실, 가격 배지)를 추가로 표시한다.
+
+| 기능 | 설명 |
+|------|------|
+| **필터** | 지역(`region`) + 판매 유형(`char_1`) select 필터. 선택 시 즉시 페이지 갱신 |
+| **오버레이** | 이미지 상단에 지역/건물명/침실, 좌측 하단에 가격 배지 |
+| **라이브러리** | `masonry.pkgd.min.js` + `imagesloaded.pkgd.min.js` |
+
+### 16.3 상세보기 — 부동산 정보 + Google Maps
+
+`view.php`에서 일반 게시글 위젯(`post-view-default.php`) 뒤에 부동산 위젯을 include한다.
+매물 기본 정보(뱃지), 가격 및 공간(뱃지), 위치 정보(텍스트 + Google Maps 임베드)를 표시한다.
+부동산 필드가 하나도 없으면 위젯이 렌더링되지 않는다.
+
+### 16.4 글쓰기/수정 폼
+
+`post-form.js`에서 `isRealEstate` computed가 `true`일 때 2열 그리드 폼 섹션이 표시된다.
+15개 커스텀 필드(매물 형태, 가격, 침실, 욕실, 면적, 주차, 준공 연도, 거래 형태, 매물 상태,
+분양 형태, 호수, 건물명, 거리, 바랑가이, 지역)를 입력할 수 있다.
+
+> 커스텀 필드 매핑, 뱃지 색상 체계, 라벨 매핑 등 상세 내용은 -> [v7-post-real-estate.md](../api/v7-post-real-estate.md) 참조.

@@ -408,9 +408,10 @@ v7/
 │   ├── blocked.css              # 차단 사용자 전용 CSS
 │   └── logout.php               # 로그아웃 처리
 ├── post/
-│   ├── list.php                 # 게시판 목록 (SSR)
-│   ├── view.php                 # 글 읽기 (SSR)
-│   └── create.php               # 글 작성
+│   ├── list.php                 # 게시판 목록 (SSR) — 부동산: masonry 위젯 분기
+│   ├── view.php                 # 글 읽기 (SSR) — 부동산: 필드+지도 위젯 분기
+│   ├── create.php               # 글 작성 — 부동산: 커스텀 필드 폼 포함
+│   └── real-estate.css          # 부동산 전용 CSS (필터, 오버레이, 필드, 지도, 폼)
 ├── menu/
 │   ├── index.php                # 전체 메뉴 페이지
 │   └── index.css                # 메뉴 페이지 전용 CSS
@@ -1307,6 +1308,19 @@ $bottomResult = PostService::list([
 | `Route::postList()` | `(string $postId, ?string $category, int $page)` | `/post/list?post_id=buyandsell&category=페소환전` |
 | `Route::postView()` | `(int $idx, ?string $postId, ?string $category, int $page)` | `/post/view?idx=123&post_id=buyandsell&category=페소환전` |
 | `Route::postCreate()` | `(string $postId, ?string $category)` | `/post/create?post_id=buyandsell&category=페소환전` |
+
+### 게시글 유형별 위젯 분기
+
+`view.php`는 게시글 유형에 따라 다른 위젯을 렌더링한다:
+
+| 유형 | 조건 | 위젯 |
+|------|------|------|
+| **info 게시글** | `$post->isInfoPost()` | `widgets/post/view/info/info-view.php` |
+| **일반 게시글** | `!$post->isInfoPost()` | `widgets/post/view/post-view-default.php` |
+| **부동산 게시글** | `$post->category === 'real_estate'` | `post-view-default.php` + `widgets/post/view/post-view-real-estate.php` (추가) |
+
+부동산 게시글은 일반 게시글 위젯 뒤에 부동산 전용 위젯(필드 정보 + Google Maps 지도)이 추가로 include된다.
+상세 문서: [v7-post-real-estate.md](../api/v7-post-real-estate.md)
 
 ---
 

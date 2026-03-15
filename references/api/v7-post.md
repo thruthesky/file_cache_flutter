@@ -38,6 +38,7 @@
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
 15. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
 16. [신고(Report) 기능](#신고report-기능)
+17. [부동산 게시판 (real_estate)](#부동산-게시판-real_estate) → [별도 문서](v7-post-real-estate.md)
 
 ---
 
@@ -2168,3 +2169,12 @@ PostService::listReportedDetailed() ← v7/admin/reports.php에서 직접 호출
 프로필, 채팅(로그인+타인), 글 목록, 코멘트 목록, 신고(로그인+타인+content_idx/content_type 전달 시), 차단(로그인+타인), 회원 정보 수정(관리자만).
 
 상세 사용법 및 파라미터: → [v7-widgets.md 13장](../web/v7-widgets.md#13-사용자-호버-드롭다운-위젯-user-hover-dropdown) 참조.
+
+---
+
+## 부동산 게시판 (real_estate)
+
+부동산 게시판(`category='real_estate'`)은 전용 Masonry 목록, 상세보기 위젯, 커스텀 필드 폼을 사용한다.
+상세 문서는 별도 파일로 분리되어 있다.
+
+→ **[v7-post-real-estate.md](v7-post-real-estate.md)** 참조
