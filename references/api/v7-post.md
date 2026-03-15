@@ -23,7 +23,7 @@
 10. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
 11. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
 12. [구인구직 게시판 만료 정책](#구인구직-게시판-만료-정책)
-13. [구인구직 카테고리 탭 네비게이션](#구인구직-카테고리-탭-네비게이션)
+13. [범용 서브 카테고리 탭 시스템](#범용-서브-카테고리-탭-시스템)
 14. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
@@ -1082,148 +1082,256 @@ $isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6
 
 ---
 
-## 구인구직 카테고리 탭 네비게이션
+## 범용 서브 카테고리 탭 시스템
 
 ### 개요
 
-구인구직(`wanted`) 게시판 목록 페이지(`v7/post/list.php`)에는 **카테고리 탭 네비게이션**이 표시된다.
-"전체", "구인(hiring)", "구직(looking)" 3개의 탭으로 글을 필터링할 수 있으며,
-글쓰기 버튼도 "구인 등록"과 "구직 등록" 두 개로 분리된다.
+게시판 목록 페이지(`v7/post/list.php`)에는 **범용 서브 카테고리 탭 네비게이션**이 표시된다.
+`Config::subcategories($postId)` 메서드에 게시판별 카테고리 데이터를 정의하면,
+`list.php`가 자동으로 pill(알약) 스타일의 탭을 렌더링한다.
+글쓰기 버튼은 단일 "글쓰기" 버튼으로 통합되며, 현재 선택된 카테고리가 자동으로 전달된다.
 
-### DB category 값
+> **이전 구현 (v7 초기)**: 구인구직(`wanted`) 게시판만 하드코딩으로 탭을 표시하고, 글쓰기 버튼도 "구인 등록"/"구직 등록"으로 분리했었다.
+> **현재 구현**: `Config::subcategories()`에 데이터만 추가하면 모든 게시판에 자동 적용되는 범용 시스템으로 변경되었다.
 
-| 카테고리 | DB `category` 값 | 설명 |
-|----------|-------------------|------|
-| 전체 | `null` (category 파라미터 없음) | 구인+구직 모든 글 표시 |
-| 구인 | `hiring` | 구인(사람 찾는 글) |
-| 구직 | `looking` | 구직(일자리 찾는 글) |
+### 아키텍처
+
+```
+Config::subcategories($postId)  <-- 카테고리 데이터 정의 (1곳만 수정)
+        |
+v7/post/list.php                <-- 범용 탭 렌더링 (PHP SSR)
+        |
+v7/post/list.css                <-- pill 스타일 CSS
+        |
+Route::postList($postId, $cat)  <-- URL 생성
+```
+
+### Config::subcategories() 메서드 (`v7/utils/Config.php`)
+
+게시판별 서브 카테고리 데이터를 정의하는 정적 메서드이다.
+반환 형식은 `array<int, array{value: string, label: string, icon?: string}>`이다.
+
+```php
+/**
+ * 게시판별 서브 카테고리 목록 반환
+ *
+ * @return array<int, array{value: string, label: string, icon?: string}>
+ */
+public static function subcategories(string $postId): array
+{
+    $map = [
+        'wanted' => [
+            ['value' => 'hiring', 'label' => '구인', 'icon' => 'fa-solid fa-briefcase'],
+            ['value' => 'looking', 'label' => '구직', 'icon' => 'fa-solid fa-user-tie'],
+        ],
+        'buyandsell' => [
+            ['value' => '기타', 'label' => '기타'],
+            ['value' => '사업/동업구함', 'label' => '사업/동업구함'],
+            // ... 총 13개 카테고리
+        ],
+        'freetalk' => [
+            ['value' => 'discussion', 'label' => '토론'],
+            ['value' => '뉴스', 'label' => '뉴스'],
+            // ... 총 20개 카테고리
+        ],
+        'qna' => [
+            ['value' => '기타', 'label' => '기타'],
+            ['value' => '여권/비자', 'label' => '여권/비자'],
+            ['value' => '여행', 'label' => '여행'],
+        ],
+    ];
+
+    return $map[$postId] ?? [];
+}
+```
+
+#### 카테고리 항목 구조
+
+| 필드 | 필수 | 설명 |
+|------|------|------|
+| `value` | 필수 | `?category=` URL 파라미터 값. DB의 `sf_post_data.category` 컬럼 값과 일치해야 함 |
+| `label` | 필수 | 탭에 표시되는 한글 텍스트 |
+| `icon` | 선택 | Font Awesome Pro v7.2.0 아이콘 클래스. 없으면 텍스트만 표시 |
+
+### 적용된 게시판 목록
+
+| 게시판 | post_id | 카테고리 수 | 주요 카테고리 |
+|--------|---------|------------|-------------|
+| 구인구직 | `wanted` | 2 | 구인(hiring), 구직(looking) |
+| 사고팔고 | `buyandsell` | 13 | 중고차, 핸드폰, 호텔, 프로모션 등 |
+| 자유게시판 | `freetalk` | 20 | 토론, 뉴스, 사진, 먹방, 칼럼 등 |
+| 질문답변 | `qna` | 3 | 기타, 여권/비자, 여행 |
+
+`Config::subcategories()`에 정의되지 않은 게시판(블로그, 하숙/게하, 학원, 뉴스, 여행 등)은 탭이 표시되지 않는다.
 
 ### URL 패턴
 
 ```
-/post/list?post_id=wanted                    → 전체 (구인+구직)
-/post/list?post_id=wanted&category=hiring    → 구인 글만
-/post/list?post_id=wanted&category=looking   → 구직 글만
+/post/list?post_id=wanted                       -> 전체 (카테고리 미지정)
+/post/list?post_id=wanted&category=hiring       -> 구인글만
+/post/list?post_id=wanted&category=looking      -> 구직글만
+/post/list?post_id=freetalk&category=discussion -> 토론글만
+/post/list?post_id=buyandsell&category=중고차     -> 중고차만
+/post/list?post_id=qna&category=여권/비자         -> 여권/비자글만
 ```
 
-### 카테고리 탭 HTML 구조 (`v7/post/list.php`)
+### 카테고리 탭 렌더링 로직 (`v7/post/list.php`)
 
-게시판 헤더(`.post-list-header`) 바로 아래에 탭 네비게이션이 표시된다.
-`post_id === 'wanted'`일 때만 렌더링된다.
+게시판 헤더 아래에서 `Config::subcategories($postId)`를 호출하여 범용 렌더링한다.
+특정 게시판(`wanted` 등)에 대한 하드코딩 조건이 없으며, 데이터 기반으로 자동 표시된다.
 
 ```php
-<?php if ($postId === 'wanted'): ?>
-    <div class="post-category-tabs">
+<?php
+$subcategories = Config::subcategories($postId);
+if (!empty($subcategories)):
+?>
+    <nav class="post-category-tabs" aria-label="서브 카테고리">
         <a href="<?= Route::postList($postId) ?>"
            class="post-category-tab <?= $category === null ? 'active' : '' ?>">
             전체
         </a>
-        <a href="<?= Route::postList($postId, 'hiring') ?>"
-           class="post-category-tab <?= $category === 'hiring' ? 'active' : '' ?>">
-            <i class="fa-solid fa-briefcase"></i> 구인
-        </a>
-        <a href="<?= Route::postList($postId, 'looking') ?>"
-           class="post-category-tab <?= $category === 'looking' ? 'active' : '' ?>">
-            <i class="fa-solid fa-user-tie"></i> 구직
-        </a>
-    </div>
+        <?php foreach ($subcategories as $sub): ?>
+            <a href="<?= Route::postList($postId, $sub['value']) ?>"
+               class="post-category-tab <?= $category === $sub['value'] ? 'active' : '' ?>">
+                <?php if (!empty($sub['icon'])): ?>
+                    <i class="<?= $sub['icon'] ?>"></i>
+                <?php endif; ?>
+                <?= htmlspecialchars($sub['label']) ?>
+            </a>
+        <?php endforeach; ?>
+    </nav>
 <?php endif; ?>
 ```
 
-### 글쓰기 버튼 분리 (`v7/post/list.php`)
+#### 렌더링 규칙
 
-구인구직 게시판에서 로그인 사용자에게는 "구인 등록"과 "구직 등록" 두 개의 글쓰기 버튼이 표시된다.
+1. `Config::subcategories($postId)`가 빈 배열이면 탭을 표시하지 않음
+2. "전체" 탭은 항상 첫 번째에 자동 추가됨 (데이터에 정의할 필요 없음)
+3. 현재 선택된 카테고리(`$category`)와 `$sub['value']`가 일치하면 `.active` 클래스 적용
+4. `$category === null`이면 "전체" 탭이 활성화됨
+5. URL은 `Route::postList($postId, $sub['value'])`로 생성
+
+### 글쓰기 버튼 (`v7/post/list.php`)
+
+모든 게시판에서 단일 "글쓰기" 버튼으로 통합되었다.
+현재 선택된 카테고리(`$category`)가 글쓰기 URL에 자동 전달되므로, 카테고리별 분리 버튼이 필요 없다.
 
 ```php
-<?php if ($postId === 'wanted' && $_v7LoginUser): ?>
-    <div class="post-write-btn-group">
-        <a href="<?= Route::postCreate($postId, 'hiring') ?>" class="post-write-btn">
-            <i class="fa-solid fa-briefcase"></i> 구인 등록
-        </a>
-        <a href="<?= Route::postCreate($postId, 'looking') ?>" class="post-write-btn post-write-btn-secondary">
-            <i class="fa-solid fa-user-tie"></i> 구직 등록
-        </a>
-    </div>
-<?php elseif ($_v7LoginUser): ?>
-    <!-- 일반 게시판: 단일 글쓰기 버튼 -->
+<?php if ($_v7LoginUser): ?>
+    <a href="<?= Route::postCreate($postId, $category) ?>" class="post-write-btn">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
+<?php else: ?>
+    <a href="#" class="post-write-btn"
+       onclick="if(confirm('로그인해야 글을 쓸 수 있습니다. 로그인 하시겠습니까?')) location.href='/user/login.php'; return false;">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
 <?php endif; ?>
 ```
 
-| 버튼 | CSS 클래스 | category 값 | 아이콘 |
-|------|-----------|-------------|--------|
-| 구인 등록 | `.post-write-btn` (기본 brand 색상) | `hiring` | `fa-briefcase` |
-| 구직 등록 | `.post-write-btn.post-write-btn-secondary` (neutral 색상) | `looking` | `fa-user-tie` |
+> **이전 구현과의 차이**: 구인구직 게시판에서 "구인 등록"/"구직 등록" 두 개의 버튼이 분리되어 있었으나,
+> 현재는 단일 "글쓰기" 버튼으로 통합되었다. 카테고리 탭에서 "구인"을 선택한 상태에서 "글쓰기"를 클릭하면
+> `category=hiring`이 자동 전달된다.
 
 ### CSS 스타일 (`v7/post/list.css`)
 
-#### 카테고리 탭 스타일
+카테고리 탭은 **pill(알약 모양)** 디자인으로, 가로 스크롤을 지원하여 카테고리가 많은 게시판에서도 사용 가능하다.
+활성 탭은 블루 배경 + 흰색 텍스트로 반전 표시된다.
 
 ```css
-/* 카테고리 탭 컨테이너 */
+/* === 서브 카테고리 탭 네비게이션 === */
 .post-category-tabs {
     display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--wa-color-neutral-200, #e2e8f0);
-    margin-bottom: 0;
+    gap: 0.35rem;
+    padding: 0.5rem 0;
+    overflow-x: auto;           /* 카테고리가 많을 때 가로 스크롤 */
+    scrollbar-width: none;      /* Firefox: 스크롤바 숨김 */
+    -webkit-overflow-scrolling: touch;
 }
+.post-category-tabs::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
-/* 개별 탭 */
 .post-category-tab {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.85rem;
+    gap: 0.3rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
     font-weight: 500;
-    color: var(--wa-color-neutral-500, #64748b);
+    color: var(--wa-color-neutral-600, #475569);
     text-decoration: none;
-    border-bottom: 2px solid transparent;
+    background: var(--wa-color-neutral-100, #f1f5f9);
+    border-radius: 9999px;      /* pill 모양 */
+    white-space: nowrap;
+    flex-shrink: 0;
     transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .post-category-tab:hover {
     color: var(--wa-color-brand-600, #2563eb);
-    background: var(--wa-color-neutral-50, #f8fafc);
+    background: var(--wa-color-brand-50, #eff6ff);
+    border-color: var(--wa-color-brand-200, #bfdbfe);
 }
 
-/* 활성 탭 */
+/* 활성 탭: 블루 배경 반전 */
 .post-category-tab.active {
-    color: var(--wa-color-brand-600, #2563eb);
-    border-bottom-color: var(--wa-color-brand-600, #2563eb);
+    color: #fff;
+    background: var(--wa-color-brand-600, #2563eb);
+    border-color: var(--wa-color-brand-600, #2563eb);
     font-weight: 600;
 }
 ```
 
-#### 글쓰기 버튼 그룹 스타일
+#### CSS 디자인 원칙
 
-```css
-/* 버튼 그룹 (구인/구직 두 버튼 나란히) */
-.post-write-btn-group {
-    display: flex;
-    gap: 0.35rem;
-}
+| 원칙 | 설명 |
+|------|------|
+| **Pill 스타일** | `border-radius: 9999px`로 알약 모양 버튼 |
+| **블루 테마** | Web Awesome brand 변수 사용 (빨간색 금지) |
+| **가로 스크롤** | 카테고리가 많을 때 모바일에서 가로 스크롤 지원 |
+| **스크롤바 숨김** | 깔끔한 UI를 위해 스크롤바 비표시 (Firefox + Chrome/Safari) |
+| **활성 탭 반전** | 비활성: 회색 배경 + 어두운 텍스트, 활성: 블루 배경 + 흰색 텍스트 |
 
-/* 보조 버튼 (구직 등록) — neutral 색상 */
-.post-write-btn-secondary {
-    color: var(--wa-color-neutral-600, #475569);
-    border-color: var(--wa-color-neutral-400, #94a3b8);
-}
+### 새 게시판에 카테고리 추가하는 방법
 
-.post-write-btn-secondary:hover {
-    background: var(--wa-color-neutral-600, #475569);
-    border-color: var(--wa-color-neutral-600, #475569);
-    color: #fff;
-}
+`v7/utils/Config.php`의 `subcategories()` 메서드에 게시판 데이터만 추가하면 된다.
+**PHP/CSS 파일 수정 불필요** -- `list.php`와 `list.css`는 이미 범용 렌더링 시스템이 구현되어 있다.
+
+```php
+// v7/utils/Config.php — subcategories() 메서드에 추가
+'travel' => [
+    ['value' => '마닐라', 'label' => '마닐라', 'icon' => 'fa-solid fa-location-dot'],
+    ['value' => '세부', 'label' => '세부', 'icon' => 'fa-solid fa-location-dot'],
+    ['value' => '보라카이', 'label' => '보라카이', 'icon' => 'fa-solid fa-umbrella-beach'],
+],
+```
+
+### 백엔드 필터링 흐름
+
+```
+URL ?category=hiring
+    |
+Route::query('category')          -> 'hiring'
+    |
+PostService::list(['category' => 'hiring'])
+    |
+PostRepository::findAll($postId, 'hiring', ...)
+    |
+SQL: WHERE p.post_id = 'wanted' AND p.category = 'hiring'
+    |
+필터링된 글 목록 반환
 ```
 
 ### 파일 구조
 
 | 파일 | 관련 내용 |
 |------|-----------|
-| `v7/post/list.php` | 카테고리 탭 렌더링 (`post_id === 'wanted'` 조건), 글쓰기 버튼 분리 |
-| `v7/post/list.css` | `.post-category-tabs`, `.post-category-tab`, `.post-write-btn-group`, `.post-write-btn-secondary` 스타일 |
-| `v7/utils/Route.php` | `Route::postList($postId, $category)` — 카테고리 포함 목록 URL 생성 |
-| `v7/utils/Route.php` | `Route::postCreate($postId, $category)` — 카테고리 포함 글쓰기 URL 생성 |
+| `v7/utils/Config.php` | `subcategories()` 메서드 -- 게시판별 서브 카테고리 데이터 정의 |
+| `v7/post/list.php` | 범용 카테고리 탭 렌더링 (`Config::subcategories()` 기반), 단일 글쓰기 버튼 |
+| `v7/post/list.css` | `.post-category-tabs`, `.post-category-tab` pill 스타일, 가로 스크롤, 활성 탭 반전 |
+| `v7/utils/Route.php` | `Route::postList($postId, $category)` -- 카테고리 포함 목록 URL 생성 |
+| `v7/utils/Route.php` | `Route::postCreate($postId, $category)` -- 카테고리 포함 글쓰기 URL 생성 |
+| `.claude/commands/design/subcategory.md` | 서브 카테고리 디자인 커맨드 문서 |
 
 ---
 
