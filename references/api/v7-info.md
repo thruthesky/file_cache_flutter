@@ -1,6 +1,6 @@
 # v7 Info 시스템 — sf_post_data 기반
 
-> **✅ 구현 완료** — info 테이블 폐기, sf_post_data 단일 테이블 통합
+> **✅ 구현 완료** — sf_post_data 단일 테이블 기반 info 시스템
 
 ## 목차
 
@@ -22,7 +22,6 @@
 
 Info 시스템은 여행지, 병원, 경찰, 긴급연락처, 비자, 축제 등 **다양한 카테고리의 정보를 sf_post_data 테이블의 커스텀 필드**를 활용하여 저장·관리하는 시스템임.
 
-**별도의 info 테이블과 info API(info.create, info.update 등)는 폐기됨.**
 기존 Post API(post.create, post.update 등)를 그대로 사용하며, `group_id='info'`로 info 게시글을 식별함.
 
 | 항목 | 설명 |
@@ -38,8 +37,7 @@ Info 시스템은 여행지, 병원, 경찰, 긴급연락처, 비자, 축제 등
 
 | 원칙 | 설명 |
 |------|------|
-| **테이블 1개** | info 전용 테이블 없이 sf_post_data만 사용 |
-| **동기화 0** | 별도 테이블이 없으므로 동기화 불필요 |
+| **테이블 1개** | sf_post_data 테이블의 커스텀 필드 활용 |
 | **게시판 기능 100%** | 댓글, 좋아요, 포인트, 검색, 알림, 블라인드, 신고 자동 |
 | **Entity 래핑** | varchar_1 → english_name 등 의미 있는 이름으로 접근 |
 | **기존 API 재활용** | post.create, post.update, post.list, post.get 그대로 사용 |
