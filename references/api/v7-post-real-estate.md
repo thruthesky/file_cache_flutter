@@ -333,6 +333,118 @@ if (this.isRealEstate) {
 }
 ```
 
+### 샘플 데이터 주입 (개발 환경 전용)
+
+개발 환경(`Env::isDev()`)에서만 부동산 글쓰기 폼에 샘플 데이터를 한 번에 채워넣는 기능이다.
+v6의 `widgets/post/form/real-estate.php`에 있던 `inject_sample_data()` 함수를 v7에서 Vue.js 메서드로 재구현하였다.
+
+#### 동작 흐름
+
+1. **PHP 페이지**: `create.php`와 `update.php`에서 `data-is-dev="<?= Env::isDev() ? '1' : '0' ?>"` attribute를 렌더링
+2. **post-form.js 초기화**: `el.dataset.isDev === '1'`로 파싱하여 Vue.js `data`의 `isDev` 프로퍼티에 저장
+3. **버튼 표시 조건**: `v-if="isDev && isRealEstate"` -- 개발 환경이면서 부동산 카테고리일 때만 버튼 표시
+4. **클릭 시**: `@click="injectSampleData"`로 Vue.js data 프로퍼티를 직접 설정하여 폼 필드를 자동 채움
+
+#### create.php / update.php의 data attribute
+
+```php
+<!-- create.php -->
+<div id="post-form-app"
+     data-mode="create"
+     data-category="<?= htmlspecialchars($category) ?>"
+     data-is-dev="<?= Env::isDev() ? '1' : '0' ?>">
+
+<!-- update.php -->
+<div id="post-form-app"
+     data-mode="update"
+     data-idx="<?= $idx ?>"
+     data-is-dev="<?= Env::isDev() ? '1' : '0' ?>">
+```
+
+#### post-form.js의 isDev 초기화
+
+```javascript
+var isDev = el.dataset.isDev === '1';
+// ...
+data: {
+    isDev: isDev,
+    // ...
+}
+```
+
+#### injectSampleData() 메서드
+
+`post-form.js`의 Vue.js `methods`에 정의된 메서드로, Vue.js data를 직접 설정하여 폼을 채운다:
+
+```javascript
+injectSampleData: function () {
+    // 제목 (난수 포함하여 중복 방지)
+    this.subject = '고급 콘도미니엄 매물 - 마카티 시티 중심부: ' + Math.floor(Math.random() * 1000);
+
+    // 매물 기본 정보
+    this.reUnitType = 'Condominum / Apartment';
+    this.reSellingType = 'S';
+    this.reCondition = 'N';
+    this.reCompleted = 'A';
+
+    // 가격 및 세부 정보
+    this.rePrice = '15000000';
+    this.reBedroom = '3';
+    this.reBathroom = '2';
+    this.reFloorArea = '85';
+    this.reParking = '1';
+    this.reOpeningYear = '2020';
+
+    // 위치 정보
+    this.reRegion = 'Makati City';
+    this.reBuildingName = 'DMCI The Magnolia Residences';
+    this.reUnitNumber = '1205';
+    this.reStreet = 'Ayala Avenue';
+    this.reBarangay = 'Poblacion';
+
+    // 부동산 설명 (content)
+    this.content = '마카티 중심부 ... (상세 설명)';
+}
+```
+
+#### 주입 버튼 HTML 템플릿
+
+```html
+<div v-if="isDev && isRealEstate" style="margin-bottom: 0.5rem;">
+    <button type="button" @click="injectSampleData"
+            style="padding: 0.25rem 0.75rem; font-size: 0.8rem;
+                   border: 1px solid #94a3b8; border-radius: 6px;
+                   background: #f1f5f9; color: #475569; cursor: pointer;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 0.25rem;"></i>
+        샘플 데이터 주입
+    </button>
+</div>
+```
+
+#### 주입되는 샘플 데이터 요약
+
+| 필드 | Vue.js 변수 | 샘플 값 |
+|------|------------|--------|
+| 제목 | `subject` | `고급 콘도미니엄 매물 - 마카티 시티 중심부: {난수}` |
+| 매물 형태 | `reUnitType` | `Condominum / Apartment` |
+| 거래 형태 | `reSellingType` | `S` (매매) |
+| 매물 상태 | `reCondition` | `N` (신축) |
+| 분양 형태 | `reCompleted` | `A` (준공 후 분양) |
+| 가격 | `rePrice` | `15000000` (1,500만 PHP) |
+| 침실 수 | `reBedroom` | `3` |
+| 욕실 수 | `reBathroom` | `2` |
+| 면적 | `reFloorArea` | `85` (sqm) |
+| 주차 | `reParking` | `1` |
+| 준공 연도 | `reOpeningYear` | `2020` |
+| 지역 | `reRegion` | `Makati City` |
+| 건물명 | `reBuildingName` | `DMCI The Magnolia Residences` |
+| 호수 | `reUnitNumber` | `1205` |
+| 거리 | `reStreet` | `Ayala Avenue` |
+| 바랑가이 | `reBarangay` | `Poblacion` |
+| 설명 | `content` | 마카티 콘도 상세 설명 (특징, 위치, 시설) |
+
+> **참고**: 프로덕션 환경(`Env::isDev() === false`)에서는 `data-is-dev="0"`이 되어 `isDev`가 `false`이므로 버튼이 표시되지 않는다.
+
 ### 제출 시 필드 전송
 
 부동산 카테고리에서 글 작성/수정 시 빈 값이 아닌 필드만 API 파라미터에 추가된다:
