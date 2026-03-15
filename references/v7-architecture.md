@@ -104,7 +104,7 @@ v7 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택�
 7. **⚠️ 기존 함수 사용 금지**: v7 시스템에서는 가능한 기존 함수(`*.functions.php`)를 사용하지 않는다. 필요한 유틸리티는 `lib/utils/<Module>Utils.php` 클래스로 작성하여 PSR-4 autoloading으로 로드한다.
 8. **Utils 클래스**: 공통 유틸리티는 `lib/utils/` 폴더에 `<Module>Utils.php` 형식으로 작성 (예: `RequestUtils.php`, `Db.php`). 네임스페이스: `Philgo\Utils\`
 9. **boot.php 미포함**: `api.php`는 기존 `boot.php`를 로드하지 않는다. RequestUtils 등 Utils 클래스를 통해 독립적으로 동작한다.
-10. **에러 처리**: try/catch로 예외를 캐치하여 `{success: false, message: "에러 메시지"}` 형식으로 응답. 성공 시 `{success: true}` 추가 없이 Controller 리턴값 그대로 출력.
+10. **에러 처리**: try/catch로 예외를 캐치하여 `{success: false, message: "에러 메시지"}` 형식으로 응답. **🔴 성공 시 `{success: true}` 절대 금지** — Controller 리턴값 그대로 출력. 리턴할 데이터가 없으면 작업 대상 ID를 리턴하거나, 그마저 없으면 `['method' => 'module.action']`을 리턴한다.
 11. **⚠️ API 테스트 필수**: 모든 API endpoint는 반드시 **PEST Unit Test**로 테스트한다.
 12. **레거시 AllowedFunctions**: 기존 `AllowedFunctions` 클래스는 레거시로 유지하되, 새 코드는 Controller 방식 사용
 13. **위젯 DB 접근 금지**: v7 위젯(`v7/widgets/**/*.php`)에서 `Db::` 클래스를 직접 사용하지 않는다. 모든 DB 접근은 Service → Repository → Db 3계층을 통해야 한다. 필요한 Service 메서드가 없으면 Repository → Service 순으로 새 메서드를 추가한 후 위젯에서 호출한다.
@@ -322,6 +322,8 @@ require_once __DIR__ . '/etc/boot.php';
 > **참고**: 기존 시스템에서는 `func.php`를 API 엔트리포인트로 사용했으나, v7 시스템에서는 `api.php`를 사용한다. `api.php`의 필수 파라미터는 `method`이며, `<module>.<action>` 형식으로 호출할 Controller와 멤버 함수를 지정한다. (예: `method=post.create` → `PostController->create()`)
 >
 > ⚠️ **v7 시스템 원칙**: `api.php`는 `boot.php`를 포함하지 않으며, 기존 함수(`in()`, `http_param()`, `error()` 등)에 의존하지 않는다. 대신 `RequestUtils`, `Db` 등의 Utils 클래스를 사용한다.
+>
+> ✅ **`api.php`는 v7 시스템 전용 파일이므로 수정이 허용된다.** Entity, Service, Repository, Controller와 동일한 수정 가능 파일이다.
 
 ---
 
@@ -671,7 +673,8 @@ JavaScript: func('user.count')
 |-----------|-----------|----------------|
 | Entity 객체 (PostEntity 등) | `$res->toArray()` | `res.subject`, `res.idx` |
 | stdClass 객체 | `get_object_vars($res)` | `res.property` |
-| 배열 | 그대로 유지 | `res.key` |
+| 배열 (비어있지 않음) | 그대로 유지 | `res.key` |
+| **빈 배열** (`[]`) | **`['method' => 'module.action']` 자동 변환** | `res.method` |
 | 스칼라 (bool, int, string) | `['data' => $res]` | `res.data` |
 
 **핵심 소스코드** (`api.php` 응답 변환 로직):
@@ -684,11 +687,104 @@ if (is_object($res)) {
         $res = get_object_vars($res);  // 일반 객체
     }
 } else if (is_array($res)) {
-    // 배열은 그대로
+    // 빈 배열이면 호출된 method를 리턴 (성공 응답에 success:true 대신)
+    if (empty($res)) {
+        $res = ['method' => $module . '.' . $action];
+    }
 } else {
     $res = ['data' => $res];  // 스칼라 값은 data 키로 래핑
 }
 ```
+
+> **참고**: 빈 배열(`[]`)을 리턴하면 api.php가 자동으로 `['method' => 'module.action']`으로 변환한다.
+> 따라서 Controller에서 리턴할 데이터가 없을 때 `return [];`으로 리턴해도 안전하다.
+
+### 🔴🔴🔴 5.8 API 성공 응답 규칙 — `success: true` 절대 금지 🔴🔴🔴
+
+> **⛔⛔⛔ 최우선 절대 규칙: API 성공 응답에 `['success' => true]`를 포함하는 것은 엄격히 금지한다. ⛔⛔⛔**
+> **이 규칙은 어떤 상황에서도, 어떤 이유로도 예외가 없다.**
+> **`success` 필드는 오직 api.php의 에러 응답(`catch` 블록)에서만 `false` 값으로 사용된다.**
+> **Controller/Service가 정상 실행되었다는 것 자체가 성공을 의미하므로, `success: true`는 불필요한 중복이다.**
+
+#### 왜 `success: true`를 금지하는가
+
+1. **정보 가치 없음**: Controller가 예외 없이 리턴했다면 그 자체가 성공이다. `success: true`는 아무런 추가 정보를 전달하지 않는다.
+2. **클라이언트 혼란**: `v7api.js`는 `success === false`만 에러로 감지한다. 성공 응답에 `success` 키가 있으면 클라이언트가 에러 감지 로직과 혼동할 수 있다.
+3. **API 응답 일관성**: 어떤 API는 `success: true`를 포함하고 어떤 API는 포함하지 않으면 클라이언트에서 응답 구조를 예측할 수 없다.
+4. **무의미한 바이트 전송**: 네트워크로 쓸모없는 데이터를 전송하는 것은 낭비이다.
+
+#### 성공 응답 리턴 규칙 (우선순위 순)
+
+| 우선순위 | 상황 | 리턴 값 | 예시 |
+|----------|------|---------|------|
+| **1순위** | Entity를 생성/수정/조회한 경우 | **Entity 객체 또는 toArray()** | `return $entity;` 또는 `return $entity->toArray();` |
+| **2순위** | 의미 있는 데이터가 있는 경우 | **해당 데이터를 배열로** | `return ['reward_points' => 500, 'point_after' => 1500];` |
+| **3순위** | 리턴할 데이터가 명확하지 않지만 대상 ID가 있는 경우 | **작업 대상의 ID(idx)를 리턴** | `return ['idx' => $idx];` 또는 `return ['idx_company' => $idxCompany];` |
+| **4순위** | 리턴할 데이터가 전혀 없는 경우 | **호출된 method를 그대로 리턴** | `return ['method' => 'ai.saveAnswer'];` |
+
+#### 올바른 예시
+
+```php
+// ✅ 1순위: Entity 리턴
+public function get(array $input): array|EntityInterface
+{
+    return UserService::get($input);  // UserEntity 리턴
+}
+
+// ✅ 2순위: 의미 있는 데이터 리턴
+public function scanQrCode(array $input): array
+{
+    // ... QR 스캔 처리 ...
+    return [
+        'usage_idx' => $usageIdx,
+        'idx_company' => $qrCode->idx_company,
+        'reward_points' => $rewardPoints,
+    ];
+}
+
+// ✅ 3순위: 작업 대상 ID 리턴
+public function updateMultiple(array $input): array
+{
+    CompanyMetaService::upsertMultiple($input);
+    return ['idx_company' => $idxCompany];
+}
+
+// ✅ 4순위: method 리턴 (리턴할 데이터가 전혀 없을 때만)
+public function saveAnswer(array $input): array
+{
+    AiService::saveAnswer($input);
+    return ['method' => 'ai.saveAnswer'];
+}
+```
+
+#### 잘못된 예시 (절대 금지)
+
+```php
+// ❌ 절대 금지: success: true 리턴
+return ['success' => true];
+
+// ❌ 절대 금지: success를 다른 데이터와 함께 리턴
+return [
+    'success' => true,
+    'reward_points' => 500,
+    'point_after' => 1500,
+];
+
+// ❌ 절대 금지: 빈 배열 리턴
+return [];
+```
+
+#### 에러 응답 (api.php가 자동 처리 — Controller에서 직접 작성하지 않음)
+
+```php
+// Controller/Service에서 예외를 throw하면 api.php가 자동으로 에러 응답을 생성한다:
+// → {"success": false, "message": "에러 메시지"}
+throw new RuntimeException('사용자를 찾을 수 없습니다.');
+```
+
+> **요약**: `success` 필드는 **에러 응답에서만 `false` 값으로** 존재한다.
+> 성공 응답에는 `success` 필드가 **절대로 포함되지 않는다**.
+> 클라이언트에서 에러 판별: `if (res.success === false)` — 이 조건이 `true`이면 에러, 그 외 모든 경우는 성공.
 
 ---
 

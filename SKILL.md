@@ -151,6 +151,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 | 수정 가능 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
+| ✅ 수정 가능 | `api.php` (v7 API 엔트리포인트) | `api.php` — v7 시스템 전용이므로 수정 허용 |
 | ✅ 수정 가능 | `lib/*/` 내 Entity 클래스 | `lib/user/UserEntity.php`, `lib/company/CompanyEntity.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Service 클래스 | `lib/user/UserService.php`, `lib/company/CompanyService.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Repository 클래스 | `lib/user/UserRepository.php`, `lib/company/CompanyRepository.php` |
@@ -160,7 +161,6 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 | 수정 불가 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
-| ❌ **절대 금지** | `api.php` (엔트리포인트) | `api.php` |
 | ❌ **절대 금지** | `lib/utils/` v7 유틸리티 클래스 | `lib/utils/Db.php`, `lib/utils/RequestUtils.php` |
 | ❌ **절대 금지** | `composer.json` | `composer.json` |
 | ❌ **절대 금지** | `tests/` 테스트 파일 | `tests/Unit/UserControllerTest.php` |
