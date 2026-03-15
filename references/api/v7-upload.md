@@ -2076,7 +2076,39 @@ uploads/{idx_member}/
 | 변환 대상 | PNG, JPG/JPEG, WEBP, AVIF |
 | 변환 제외 | GIF (애니메이션 보존) |
 
-### 17.6 API 응답 변경
+### 17.6 썸네일 존재 보장 규칙 (절대 원칙)
+
+> **⛔ v7 업로드 시스템의 썸네일(`/uploads/` 경로)은 항상 존재한다고 가정한다. ⛔**
+> **`file_exists()`로 썸네일 존재 여부를 확인하지 않는다.**
+
+| 규칙 | 설명 |
+|------|------|
+| **썸네일 항상 존재** | Docker PHP 컨테이너에 GD 확장(JPEG, PNG, FreeType, WebP, AVIF)이 설치되어 있으므로, 이미지 업로드 시 썸네일(400x400, 800x800, 1000)이 반드시 생성된다 |
+| **file_exists() 금지** | 이미지를 표시할 때 `/uploads/` 경로의 썸네일에 대해 `file_exists()`를 호출하지 않는다. 매 글마다 파일 시스템 호출은 성능 저하를 유발한다 |
+| **DB URL 신뢰** | `varchar_10`(400x400), `varchar_11`(800x800), `varchar_12`(1000) 또는 `uploads` 테이블의 `thumbnail_*_url` 컬럼에 저장된 URL을 그대로 사용한다 |
+| **onerror 폴백** | 만약 예외적으로 썸네일이 없다면 HTML `<img>` 태그의 `onerror` 이벤트로 처리한다 (placeholder 표시) |
+
+**올바른 사용:**
+
+```php
+// ✅ 썸네일 URL을 그대로 사용 (file_exists 호출 없음)
+if (!empty($post['thumbnail_1000'])) {
+    $_thumbnailUrl = $post['thumbnail_1000'];
+} elseif (!empty($post['thumbnail_800x800'])) {
+    $_thumbnailUrl = $post['thumbnail_800x800'];
+}
+```
+
+**잘못된 사용 (금지):**
+
+```php
+// ❌ file_exists()로 썸네일 존재 확인 — 성능 저하, 불필요
+if (!empty($post['thumbnail_1000']) && file_exists(ROOT_DIR . $post['thumbnail_1000'])) {
+    $_thumbnailUrl = $post['thumbnail_1000'];
+}
+```
+
+### 17.7 API 응답 변경
 
 `toArray()` 응답에 썸네일 URL 필드가 추가되었다:
 
