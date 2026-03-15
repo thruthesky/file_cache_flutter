@@ -17,6 +17,14 @@ PHP 서버에서 Gemini API를 SSE(Server-Sent Events) 스트리밍으로 호출
 
 - `post_id` 기반으로 게시판을 검증한다.
 - 위 두 게시판 이외의 글에서는 AI 답변 기능이 동작하지 않는다.
+- **info 게시글 제외**: `group_id='info'`인 게시글(여행지, 병원, 긴급연락처 등 정보 게시글)은 `freetalk` 게시판에 속하더라도 AI 답변 대상에서 제외된다. info 게시글은 자체 정보 위젯으로 별도 렌더링되므로 AI 답변이 필요하지 않다.
+
+```php
+// view.php에서 AI 답변 대상 판별
+$isAiAnswerTarget = !$post->isInfoPost()
+    && in_array($post->post_id, ['qna', 'freetalk'], true)
+    && $post->idx_parent == 0;
+```
 
 ---
 

@@ -16,6 +16,7 @@
 12. [게시글 목록 위젯 (post-list-widget)](#12-게시글-목록-위젯-post-list-widget)
 13. [사용자 호버 드롭다운 위젯 (user-hover-dropdown)](#13-사용자-호버-드롭다운-위젯-user-hover-dropdown)
 14. [즐겨찾기 위젯 (sidebar-left.bookmarks)](#14-즐겨찾기-위젯-sidebar-leftbookmarks)
+15. [게시글 읽기 위젯 (post/view)](#15-게시글-읽기-위젯-postview)
 
 ---
 
@@ -141,10 +142,22 @@ v7/
     │   ├── shared.latest-companies.php
     │   └── shared.stats.php
     │
-    └── user/                            ← 사용자 관련 위젯 (1개)
-        ├── user-hover-dropdown.php        ← ★ 사용자 아바타/닉네임 호버 드롭다운 메뉴
-        ├── user-hover-dropdown.css        ← ★ 드롭다운 스타일 (hover/모바일/차단/관리자)
-        └── user-hover-dropdown.js         ← ★ 모바일 토글 + 차단 버튼 이벤트 처리
+    ├── user/                            ← 사용자 관련 위젯 (1개)
+    │   ├── user-hover-dropdown.php        ← ★ 사용자 아바타/닉네임 호버 드롭다운 메뉴
+    │   ├── user-hover-dropdown.css        ← ★ 드롭다운 스타일 (hover/모바일/차단/관리자)
+    │   └── user-hover-dropdown.js         ← ★ 모바일 토글 + 차단 버튼 이벤트 처리
+    │
+    └── post/                            ← 게시글 관련 위젯
+        ├── list/                          ← 게시글 목록 위젯
+        │   ├── post-list-widget.php
+        │   ├── post-list-tile.php
+        │   └── post-list-footer.php
+        └── view/                          ← 게시글 읽기 위젯
+            ├── post-view-default.php      ← ★ 일반 게시글 읽기 위젯 (브레드크럼, 헤더, 본문, 첨부, 액션바, AI 답변)
+            └── info/                      ← info 게시글 전용 위젯
+                ├── info-view.php          ← ★ 통합 info 글 읽기 위젯 (카테고리별 디자인 분기)
+                ├── info-meta-card.php     ← ★ 공통 메타 카드 (위치/연락처/운영시간/지도)
+                └── info-view.css          ← ★ info 위젯 CSS
 ```
 
 ---
@@ -429,6 +442,13 @@ v7/index.php (홈페이지 본문)
     ├── widgets/shared/shared.company-categories.php (공유)
     ├── widgets/shared/shared.latest-companies.php (공유)
     └── widgets/shared/shared.stats.php (공유)
+
+v7/post/view.php (게시글 읽기)
+├── [info 게시글] widgets/post/view/info/info-view.php
+│   └── widgets/post/view/info/info-meta-card.php
+├── [일반 게시글] widgets/post/view/post-view-default.php
+├── [댓글] 인라인 (renderCommentThread 재귀)
+└── [하단 글 목록] widgets/post/list/post-list-widget.php
 ```
 
 ---
@@ -1020,3 +1040,69 @@ public static function listRecent(int $idxMember, int $limit = 3): array
 - `comment`: `sf_post_data`에서 `idx_root`(부모 글), `content`(80자 미리보기) 조회
 - `user`: `sf_member`에서 `nickname`, `photo_url` 조회
 - `chat_room`: 로그인 사용자의 `firebase_uid` 조회 후, `entity_id`(roomId)에서 상대방 UID 추출, `sf_member`에서 상대방 `name`, `nickname`, `photo_url` 조회
+
+---
+
+## 15. 게시글 읽기 위젯 (post/view)
+
+### 15.1 개요
+
+`v7/post/view.php`에서 게시글 유형에 따라 다른 읽기 위젯을 렌더링하는 구조이다. 게시글은 크게 **일반 게시글**과 **info 게시글**(여행지, 병원, 축제 등)로 분류되며, 각각 전용 위젯으로 렌더링된다.
+
+### 15.2 파일 구조
+
+```
+v7/widgets/post/view/
+├── post-view-default.php          ← 일반 게시글 읽기 위젯 (브레드크럼, 헤더, 본문, 첨부파일, 액션바, AI 답변)
+└── info/                          ← info 게시글 전용 위젯
+    ├── info-view.php              ← 통합 info 글 읽기 위젯 (카테고리별 디자인 분기)
+    ├── info-meta-card.php         ← 공통 메타 카드 (위치/연락처/운영시간/지도)
+    └── info-view.css              ← info 위젯 CSS
+```
+
+### 15.3 view.php에서의 분기 로직
+
+```php
+<?php // --- Info 게시글 --- ?>
+<?php if ($post->isInfoPost()): ?>
+    <?php
+    $infoPost = \Philgo\Info\InfoPostEntity::fromPost($post);
+    include __DIR__ . '/../widgets/post/view/info/info-view.php';
+    ?>
+<?php endif; ?>
+
+<?php // --- 일반 게시글 --- ?>
+<?php if (!$post->isInfoPost()): ?>
+    <?php include __DIR__ . '/../widgets/post/view/post-view-default.php'; ?>
+<?php endif; ?>
+```
+
+### 15.4 일반 게시글 위젯 (post-view-default.php)
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/widgets/post/view/post-view-default.php` |
+| **용도** | 일반 게시글(info가 아닌 모든 글)의 읽기 화면 렌더링 |
+| **포함 요소** | 브레드크럼, 글 헤더(작성자/날짜), 본문, 첨부파일, 액션바(좋아요/공유/수정/삭제), AI 답변 |
+| **AI 답변** | `qna`/`freetalk` 게시판의 최상위 글에만 표시 (`group_id='info'`인 글은 제외) |
+
+### 15.5 info 게시글 위젯 (info/info-view.php)
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/widgets/post/view/info/info-view.php` |
+| **CSS** | `v7/widgets/post/view/info/info-view.css` |
+| **용도** | info 게시글(`group_id='info'`)의 읽기 화면 렌더링 |
+| **카테고리별 UI** | emergency/police(긴급연락처), hospital(병원), festival(축제) 등 카테고리에 따라 특수 UI 적용 |
+| **메타 카드** | `info-meta-card.php`로 공통 정보(위치, 연락처, 운영시간, 지도) 표시 |
+| **AI 답변** | info 게시글에서는 AI 답변 비표시 |
+
+### 15.6 AI 답변 비표시 규칙
+
+info 게시글은 자체적으로 구조화된 정보(여행지 상세, 병원 정보, 긴급연락처 등)를 제공하므로 AI 답변이 불필요하다. `view.php`에서 AI 답변 대상을 판별할 때 `isInfoPost()` 체크로 info 게시글을 제외한다.
+
+```php
+$isAiAnswerTarget = !$post->isInfoPost()
+    && in_array($post->post_id, ['qna', 'freetalk'], true)
+    && $post->idx_parent == 0;
+```
