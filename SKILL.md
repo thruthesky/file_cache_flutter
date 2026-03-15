@@ -783,6 +783,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
 | Bookmark | [api/v7-bookmark.md](references/api/v7-bookmark.md) — 즐겨찾기 그룹(폴더) 관리 + 즐겨찾기 항목 CRUD. 채팅방 즐겨찾기(`entity_type='chat_room'`)에 사용. Firebase RTDB 기반에서 v7 API(`bookmarks`/`bookmark_groups` 테이블)로 마이그레이션 완료 | ✅ 완료 |
+| Info | [api/v7-info.md](references/api/v7-info.md) — 다용도 정보 API (여행지, 병원, 경찰, 긴급연락처, 비자 등). 단일 테이블(info) 기반, JSON 컬럼(texts, extra_data)으로 유연한 확장. FULLTEXT 검색 지원. 웹/앱 공통 API | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
