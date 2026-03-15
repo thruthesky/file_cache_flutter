@@ -534,6 +534,7 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 | **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
 | **전체 메뉴 페이지** | [web/v7-menu.md](references/web/v7-menu.md) | ✅ 완료 |
+| **AI 답변 시스템** | [web/v7-ai-answer.md](references/web/v7-ai-answer.md) | ✅ 완료 |
 
 ### 1:1 채팅 시스템 → [web/v7-chat.md](references/web/v7-chat.md)
 
@@ -772,7 +773,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 |------|------|------|
 | User | [api/v7-user.md](references/api/v7-user.md) | ✅ 완료 |
 | Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
-| AI | [api/v7-ai.md](references/api/v7-ai.md) | ✅ 완료 |
+| AI | [api/v7-ai.md](references/api/v7-ai.md) — 텍스트 검열, 텍스트 생성, 영수증 분석, **AI 답변 SSE 스트리밍** (`ai.generateStream`), **AI 답변 저장** (`ai.saveAnswer`), `ai-api.php` 전용 엔트리포인트 | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |
 | Company Visit Review | [api/v7-company-visit-review.md](references/api/v7-company-visit-review.md) | ✅ 완료 |
