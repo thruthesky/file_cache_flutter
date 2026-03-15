@@ -27,7 +27,7 @@ v7 홈페이지는 **PHP include 기반 위젯 시스템**을 사용한다.
 | 항목 | 내용 |
 |------|------|
 | **위젯 루트** | `v7/widgets/` |
-| **모듈 폴더** | `layout/`, `home/`, `shared/`, `user/`, `post/` |
+| **모듈 폴더** | `layout/`, `home/`, `shared/`, `user/`, `post/` (하위에 `list/`, `view/`) |
 | **파일 네이밍** | `<module>/<module>.<name>.php` (예: `layout/layout.topbar.php`) |
 | **총 위젯 수** | 20개 이상 (layout 9 + home 5 + shared 5 + user 1+) |
 | **사용 방식** | `<?php include __DIR__ . '/widgets/<module>/<module>.<name>.php'; ?>` |

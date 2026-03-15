@@ -53,13 +53,10 @@ lib/info/
 ├── InfoPostEntity.php   # PostEntity 래핑 — sf_post_data 커스텀 필드를 의미 있는 이름으로 매핑
 └── InfoService.php      # 비즈니스 로직 — create, update, delete, list, get, 카테고리 메타
 
-v7/widgets/info/
+v7/widgets/post/view/info/
 ├── info-view.php        # 통합 info 글 읽기 위젯 (카테고리별 디자인 분기)
 ├── info-meta-card.php   # 공통 메타 카드 (위치/연락처/운영시간/지도)
 └── info-view.css        # info 위젯 CSS
-
-data/info/
-└── info-meta.json       # 카테고리 체계, post_link 매핑, 필드 규칙
 ```
 
 ---
@@ -462,7 +459,7 @@ const isInfoPost = (post) => post.group_id === 'info';
 ```php
 if ($post->isInfoPost()) {
     $infoPost = InfoPostEntity::fromPost($post);
-    include __DIR__ . '/../widgets/info/info-view.php';
+    include __DIR__ . '/../widgets/post/view/info/info-view.php';
 }
 ```
 
