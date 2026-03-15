@@ -22,7 +22,8 @@
 9. [테스트](#테스트)
 10. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
 11. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
-12. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+12. [구인구직 게시판 만료 정책](#구인구직-게시판-만료-정책)
+13. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -34,8 +35,8 @@
    - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
    - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
-13. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
-14. [신고(Report) 기능](#신고report-기능)
+14. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
+15. [신고(Report) 기능](#신고report-기능)
 
 ---
 
@@ -922,6 +923,118 @@ if ($_v7LoginUser) {
 |------|------|------|
 | 댓글 textarea 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
 | 첨부 버튼 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
+
+---
+
+## 구인구직 게시판 만료 정책
+
+### 개요
+
+구인구직(`wanted`) 게시판의 글은 작성일로부터 **6개월**이 지나면 글 본문 내용과 첨부파일이 자동으로 숨겨진다.
+이는 오래된 구인구직 정보로 인한 혼란을 방지하기 위한 정책이다.
+
+> **참고**: v6에서는 90일(3개월) 만료 정책이었으나, v7에서는 **6개월(약 180일)**로 변경되었다.
+
+### 판별 로직
+
+`v7/post/view.php`에서 글 조회 후 아래 변수로 만료 여부를 판별한다.
+
+```php
+// 구인구직(wanted) 게시판: 6개월 이전 글 내용 차단
+$isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6 months'));
+```
+
+| 조건 | 설명 |
+|------|------|
+| `post_id === 'wanted'` | 구인구직 게시판인지 확인 |
+| `stamp < strtotime('-6 months')` | 작성일이 현재로부터 6개월 이전인지 확인 |
+
+### 만료 시 동작
+
+만료된 구인구직 글에 대해 아래 항목이 숨겨진다.
+
+| 항목 | 만료 전 | 만료 후 |
+|------|---------|---------|
+| **글 제목** | 정상 표시 | 정상 표시 (유지) |
+| **글 헤더 (작성자, 날짜 등)** | 정상 표시 | 정상 표시 (유지) |
+| **글 본문 내용** | 정상 표시 | 만료 안내 메시지로 대체 |
+| **첨부파일** | 정상 표시 | 숨김 |
+| **댓글** | 정상 표시 | 정상 표시 (유지) |
+| **액션바 (좋아요 등)** | 정상 표시 | 정상 표시 (유지) |
+
+### 만료 안내 UI
+
+글 본문 영역에 차단/블라인드 체크 → 만료 체크 → 사용자 차단 체크 순서로 분기 처리된다.
+
+```php
+<?php if ($post->isBlockedOrBlinded()): ?>
+    <!-- 관리자 차단 안내 -->
+<?php elseif ($isExpiredJobPost): ?>
+    <div class="post-expired-job-notice">
+        <div class="expired-job-icon">
+            <i class="fa-solid fa-calendar-xmark"></i>
+        </div>
+        <div class="expired-job-message">
+            <strong>구인구직 글은 6개월이 지나면 볼 수 없습니다</strong>
+            <p>잘못된 정보를 방지하기 위해, 6개월 이상 지난 구인구직 글의 내용은 표시되지 않습니다.</p>
+        </div>
+    </div>
+<?php elseif ($isBlockedAuthor): ?>
+    <!-- 차단된 사용자 안내 -->
+<?php endif; ?>
+```
+
+첨부파일도 만료 글이면 숨김 처리된다.
+
+```php
+<?php if (!empty($fileUrls) && !$post->isBlockedOrBlinded() && !$isBlockedAuthor && !$isExpiredJobPost): ?>
+    <!-- 첨부파일 표시 -->
+<?php endif; ?>
+```
+
+### CSS 스타일 (`v7/post/view.css`)
+
+만료 안내 메시지는 노란색 경고 테마로 디자인되어 있다.
+
+```css
+/* 구인구직 만료 안내 (6개월 이전 글) */
+.post-expired-job-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: #fefce8;       /* 연한 노란색 배경 */
+    border-radius: 12px;
+    border: 1px solid #fde68a; /* 노란색 테두리 */
+}
+
+.expired-job-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #fef3c7;       /* 아이콘 원형 배경 */
+    /* fa-calendar-xmark 아이콘 표시 */
+}
+
+.expired-job-message strong {
+    font-size: 0.92rem;
+    color: #92400e;            /* 진한 갈색 텍스트 */
+}
+
+.expired-job-message p {
+    font-size: 0.8rem;
+    color: #a16207;            /* 중간 갈색 텍스트 */
+}
+```
+
+### 파일 구조
+
+| 파일 | 관련 내용 |
+|------|-----------|
+| `v7/post/view.php` | `$isExpiredJobPost` 변수 정의 (107~108행), 본문 분기 (271행), 첨부파일 분기 (345행) |
+| `v7/post/view.css` | `.post-expired-job-notice` 등 만료 안내 스타일 |
 
 ---
 
