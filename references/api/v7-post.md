@@ -1180,11 +1180,12 @@ public static function subcategories(string $postId): array
 
 게시판 헤더 아래에서 `Config::subcategories($postId)`를 호출하여 범용 렌더링한다.
 특정 게시판(`wanted` 등)에 대한 하드코딩 조건이 없으며, 데이터 기반으로 자동 표시된다.
+추가로 `Config::shouldHideSubcategories($postId, $category)`로 **특정 카테고리 진입 시 탭 숨김**을 지원한다.
 
 ```php
 <?php
 $subcategories = Config::subcategories($postId);
-if (!empty($subcategories)):
+if (!empty($subcategories) && !Config::shouldHideSubcategories($postId, $category)):
 ?>
     <nav class="post-category-tabs" aria-label="서브 카테고리">
         <a href="<?= Route::postList($postId) ?>"
@@ -1207,10 +1208,63 @@ if (!empty($subcategories)):
 #### 렌더링 규칙
 
 1. `Config::subcategories($postId)`가 빈 배열이면 탭을 표시하지 않음
-2. "전체" 탭은 항상 첫 번째에 자동 추가됨 (데이터에 정의할 필요 없음)
-3. 현재 선택된 카테고리(`$category`)와 `$sub['value']`가 일치하면 `.active` 클래스 적용
-4. `$category === null`이면 "전체" 탭이 활성화됨
-5. URL은 `Route::postList($postId, $sub['value'])`로 생성
+2. `Config::shouldHideSubcategories($postId, $category)`가 `true`이면 탭을 표시하지 않음 (아래 "서브 카테고리 탭 숨김" 참조)
+3. "전체" 탭은 항상 첫 번째에 자동 추가됨 (데이터에 정의할 필요 없음)
+4. 현재 선택된 카테고리(`$category`)와 `$sub['value']`가 일치하면 `.active` 클래스 적용
+5. `$category === null`이면 "전체" 탭이 활성화됨
+6. URL은 `Route::postList($postId, $sub['value'])`로 생성
+
+### 서브 카테고리 탭 숨김 (`Config::shouldHideSubcategories()`)
+
+특정 `post_id + category` 조합으로 진입했을 때 서브 카테고리 탭을 숨기는 기능이다.
+예를 들어, 부동산(`real_estate`) 카테고리는 독자적인 UI(Masonry 레이아웃, 전용 필터)를 가지므로
+상위 게시판(`buyandsell`)의 서브 카테고리 탭이 노출되면 혼란을 줄 수 있다.
+
+#### 관련 메서드 (`v7/utils/Config.php`)
+
+| 메서드 | 반환 타입 | 설명 |
+|--------|-----------|------|
+| `Config::hiddenSubcategoryRoutes()` | `string[]` | 탭 숨김 대상 `"post_id:category"` 문자열 배열 |
+| `Config::shouldHideSubcategories($postId, $category)` | `bool` | 해당 조합에서 탭을 숨겨야 하는지 여부 |
+
+```php
+// 숨김 대상 목록
+public static function hiddenSubcategoryRoutes(): array
+{
+    return [
+        'buyandsell:real_estate',
+    ];
+}
+
+// 숨김 여부 확인
+public static function shouldHideSubcategories(string $postId, ?string $category): bool
+{
+    if ($category === null) {
+        return false;
+    }
+    return in_array($postId . ':' . $category, self::hiddenSubcategoryRoutes(), true);
+}
+```
+
+#### 동작 예시
+
+| URL | `shouldHideSubcategories()` | 탭 표시 |
+|-----|---------------------------|---------|
+| `/post/list?post_id=buyandsell` | `false` (category=null) | 표시 |
+| `/post/list?post_id=buyandsell&category=중고차` | `false` | 표시 |
+| `/post/list?post_id=buyandsell&category=real_estate` | **`true`** | **숨김** |
+| `/post/list?post_id=freetalk&category=discussion` | `false` | 표시 |
+
+#### 새로운 숨김 대상 추가 방법
+
+`Config::hiddenSubcategoryRoutes()`의 반환 배열에 `"post_id:category"` 형식 문자열을 추가하면 된다.
+
+```php
+return [
+    'buyandsell:real_estate',
+    'freetalk:column',        // 예시: 자유게시판 칼럼 진입 시 탭 숨김
+];
+```
 
 ### 글쓰기 버튼 (`v7/post/list.php`)
 
