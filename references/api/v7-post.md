@@ -23,7 +23,8 @@
 10. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
 11. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
 12. [구인구직 게시판 만료 정책](#구인구직-게시판-만료-정책)
-13. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+13. [구인구직 카테고리 탭 네비게이션](#구인구직-카테고리-탭-네비게이션)
+14. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -35,8 +36,8 @@
    - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
    - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
-14. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
-15. [신고(Report) 기능](#신고report-기능)
+15. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
+16. [신고(Report) 기능](#신고report-기능)
 
 ---
 
@@ -1078,6 +1079,151 @@ $isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6
 | `lib/post/PostService.php` | `applyExpiredJobPostPolicy()` 메서드 — `get()`과 `list()` 양쪽에서 호출하여 모든 클라이언트에 적용 |
 | `v7/post/view.php` | `$isExpiredJobPost` 변수 (웹 UI용 예쁜 안내 박스 표시용), 본문 분기, 첨부파일 분기 |
 | `v7/post/view.css` | `.post-expired-job-notice` 등 만료 안내 스타일 |
+
+---
+
+## 구인구직 카테고리 탭 네비게이션
+
+### 개요
+
+구인구직(`wanted`) 게시판 목록 페이지(`v7/post/list.php`)에는 **카테고리 탭 네비게이션**이 표시된다.
+"전체", "구인(hiring)", "구직(looking)" 3개의 탭으로 글을 필터링할 수 있으며,
+글쓰기 버튼도 "구인 등록"과 "구직 등록" 두 개로 분리된다.
+
+### DB category 값
+
+| 카테고리 | DB `category` 값 | 설명 |
+|----------|-------------------|------|
+| 전체 | `null` (category 파라미터 없음) | 구인+구직 모든 글 표시 |
+| 구인 | `hiring` | 구인(사람 찾는 글) |
+| 구직 | `looking` | 구직(일자리 찾는 글) |
+
+### URL 패턴
+
+```
+/post/list?post_id=wanted                    → 전체 (구인+구직)
+/post/list?post_id=wanted&category=hiring    → 구인 글만
+/post/list?post_id=wanted&category=looking   → 구직 글만
+```
+
+### 카테고리 탭 HTML 구조 (`v7/post/list.php`)
+
+게시판 헤더(`.post-list-header`) 바로 아래에 탭 네비게이션이 표시된다.
+`post_id === 'wanted'`일 때만 렌더링된다.
+
+```php
+<?php if ($postId === 'wanted'): ?>
+    <div class="post-category-tabs">
+        <a href="<?= Route::postList($postId) ?>"
+           class="post-category-tab <?= $category === null ? 'active' : '' ?>">
+            전체
+        </a>
+        <a href="<?= Route::postList($postId, 'hiring') ?>"
+           class="post-category-tab <?= $category === 'hiring' ? 'active' : '' ?>">
+            <i class="fa-solid fa-briefcase"></i> 구인
+        </a>
+        <a href="<?= Route::postList($postId, 'looking') ?>"
+           class="post-category-tab <?= $category === 'looking' ? 'active' : '' ?>">
+            <i class="fa-solid fa-user-tie"></i> 구직
+        </a>
+    </div>
+<?php endif; ?>
+```
+
+### 글쓰기 버튼 분리 (`v7/post/list.php`)
+
+구인구직 게시판에서 로그인 사용자에게는 "구인 등록"과 "구직 등록" 두 개의 글쓰기 버튼이 표시된다.
+
+```php
+<?php if ($postId === 'wanted' && $_v7LoginUser): ?>
+    <div class="post-write-btn-group">
+        <a href="<?= Route::postCreate($postId, 'hiring') ?>" class="post-write-btn">
+            <i class="fa-solid fa-briefcase"></i> 구인 등록
+        </a>
+        <a href="<?= Route::postCreate($postId, 'looking') ?>" class="post-write-btn post-write-btn-secondary">
+            <i class="fa-solid fa-user-tie"></i> 구직 등록
+        </a>
+    </div>
+<?php elseif ($_v7LoginUser): ?>
+    <!-- 일반 게시판: 단일 글쓰기 버튼 -->
+<?php endif; ?>
+```
+
+| 버튼 | CSS 클래스 | category 값 | 아이콘 |
+|------|-----------|-------------|--------|
+| 구인 등록 | `.post-write-btn` (기본 brand 색상) | `hiring` | `fa-briefcase` |
+| 구직 등록 | `.post-write-btn.post-write-btn-secondary` (neutral 색상) | `looking` | `fa-user-tie` |
+
+### CSS 스타일 (`v7/post/list.css`)
+
+#### 카테고리 탭 스타일
+
+```css
+/* 카테고리 탭 컨테이너 */
+.post-category-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--wa-color-neutral-200, #e2e8f0);
+    margin-bottom: 0;
+}
+
+/* 개별 탭 */
+.post-category-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--wa-color-neutral-500, #64748b);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.post-category-tab:hover {
+    color: var(--wa-color-brand-600, #2563eb);
+    background: var(--wa-color-neutral-50, #f8fafc);
+}
+
+/* 활성 탭 */
+.post-category-tab.active {
+    color: var(--wa-color-brand-600, #2563eb);
+    border-bottom-color: var(--wa-color-brand-600, #2563eb);
+    font-weight: 600;
+}
+```
+
+#### 글쓰기 버튼 그룹 스타일
+
+```css
+/* 버튼 그룹 (구인/구직 두 버튼 나란히) */
+.post-write-btn-group {
+    display: flex;
+    gap: 0.35rem;
+}
+
+/* 보조 버튼 (구직 등록) — neutral 색상 */
+.post-write-btn-secondary {
+    color: var(--wa-color-neutral-600, #475569);
+    border-color: var(--wa-color-neutral-400, #94a3b8);
+}
+
+.post-write-btn-secondary:hover {
+    background: var(--wa-color-neutral-600, #475569);
+    border-color: var(--wa-color-neutral-600, #475569);
+    color: #fff;
+}
+```
+
+### 파일 구조
+
+| 파일 | 관련 내용 |
+|------|-----------|
+| `v7/post/list.php` | 카테고리 탭 렌더링 (`post_id === 'wanted'` 조건), 글쓰기 버튼 분리 |
+| `v7/post/list.css` | `.post-category-tabs`, `.post-category-tab`, `.post-write-btn-group`, `.post-write-btn-secondary` 스타일 |
+| `v7/utils/Route.php` | `Route::postList($postId, $category)` — 카테고리 포함 목록 URL 생성 |
+| `v7/utils/Route.php` | `Route::postCreate($postId, $category)` — 카테고리 포함 글쓰기 URL 생성 |
 
 ---
 
