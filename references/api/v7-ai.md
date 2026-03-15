@@ -26,7 +26,7 @@ Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모
   - [ai.moderate - 텍스트 검열](#aimoderate---텍스트-검열)
   - [ai.generate - 텍스트 생성](#aigenerate---텍스트-생성)
   - [ai.analyzeReceipt - 영수증 분석 (인증 필수)](#aianalyzereceipt---영수증-분석-인증-필수)
-  - [ai.generateStream - AI 답변 SSE 스트리밍](#aigeneratestream---ai-답변-sse-스트리밍)
+  - [ai.answerPost - AI 답변 SSE 스트리밍 + 자동 저장](#aianswerpost---ai-답변-sse-스트리밍--자동-저장)
   - [ai.saveAnswer - AI 답변 저장](#aisaveanswer---ai-답변-저장)
   - [ai-api.php 전용 엔트리포인트](#ai-apiphp-전용-엔트리포인트)
 - [인증 방식](#인증-방식)
@@ -266,25 +266,34 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 
 ---
 
-### ai.generateStream - AI 답변 SSE 스트리밍
+### ai.answerPost - AI 답변 SSE 스트리밍 + 자동 저장
 
-qna/freetalk 게시판의 글에 대해 Gemini AI가 실시간 SSE 스트리밍으로 답변을 생성한다.
+qna/freetalk 게시판의 글에 대해 Gemini AI가 실시간 SSE 스트리밍으로 답변을 생성하고, 스트리밍 완료 후 서버에서 자동으로 `sf_post_data.text_7`에 저장한다. 클라이언트는 `idx`만 전달하면 되며, 서버가 DB에서 제목+내용을 조회하여 프롬프트를 자동 구성한다.
 
 **⛔ 반드시 `/ai-api.php`를 통해 호출해야 한다. `/api.php`로 호출하면 에러 발생.**
+
+**이전 `ai.generateStream`과의 차이점:**
+
+| 항목 | ai.generateStream (이전) | ai.answerPost (현재) |
+|------|--------------------------|----------------------|
+| **입력 파라미터** | `prompt`, `post_idx`, `model` | `idx`, `model` (prompt 제거) |
+| **프롬프트 구성** | 클라이언트가 prompt를 직접 전달 | 서버가 idx로 DB 조회하여 자동 구성 |
+| **답변 저장** | 클라이언트가 별도로 `ai.saveAnswer` 호출 필요 | 서버에서 SSE 완료 후 자동 저장 |
+| **통신 횟수** | 2번 (SSE + saveAnswer) | 1번 (SSE만, 저장은 서버 자동) |
+| **30일 제한** | 없음 | 작성 후 30일 초과 글 거부 |
 
 **요청:**
 
 ```
 POST /ai-api.php
 Content-Type: application/x-www-form-urlencoded
-method=ai.generateStream&prompt=질문내용&post_idx=12345&model=gemini-3.1-flash-lite-preview
+method=ai.answerPost&idx=12345
 ```
 
 | 파라미터 | 타입 | 필수 | 설명 |
 |----------|------|------|------|
-| `prompt` | string | ✅ | 질문/프롬프트 |
-| `model` | string | ❌ | 모델명. 기본: gemini-3.1-flash-lite-preview. 대안: gemini-2.5-flash-lite |
-| `post_idx` | int | ❌ | 글 번호. 전달 시 게시판(qna/freetalk만) + 중복 방지 검증 |
+| `idx` | int | ✅ | 글 번호. 서버에서 제목+내용을 조회하여 프롬프트 자동 구성 |
+| `model` | string | ❌ | 모델명. 기본: `gemini-3.1-flash-lite-preview`. 대안: `gemini-2.5-flash-lite` |
 
 **응답:** `Content-Type: text/event-stream` (SSE)
 
@@ -294,26 +303,41 @@ data: {"candidates":[{"content":{"parts":[{"text":"안녕"}]}}]}
 data: {"candidates":[{"content":{"parts":[{"text":"하세요"}]}}]}
 ```
 
+**검증 조건:**
+
+| 조건 | 거부 사유 |
+|------|-----------|
+| 글 미존재 | '글을 찾을 수 없습니다.' |
+| 코멘트 (idx_parent > 0) | '코멘트에는 AI 답변을 생성할 수 없습니다.' |
+| qna/freetalk 외 게시판 | 'AI 답변은 질문답변/자유게시판에서만 사용할 수 있습니다.' |
+| text_7 이미 존재 | '이미 AI 답변이 존재합니다.' |
+| 작성 후 30일 초과 | '작성된 지 30일이 지난 글에는 AI 답변을 생성할 수 없습니다.' |
+
 **curl 예시:**
 
 ```bash
 curl -sk "https://v7-local.philgo.com/ai-api.php" \
-  -d "method=ai.generateStream&prompt=필리핀날씨&post_idx=12345"
+  -d "method=ai.answerPost&idx=12345"
 ```
 
 **내부 흐름:**
 
 ```
-AiController::generateStream()
+AiController::answerPost()
   → enforceAiApiEndpoint() (ai-api.php 경로 체크)
   → SSE 헤더 설정 (text/event-stream, X-Accel-Buffering: no)
-  → AiService::generateStream()
-    → 모델 화이트리스트 검증
+  → AiService::generatePostAnswerStream(idx, onChunk)
+    → DB에서 subject, content 조회
     → 게시판 검증 (qna/freetalk만)
-    → 중복 방지 (text_7 이미 있으면 거부)
+    → 30일 제한 검증 (AI_ANSWER_MAX_AGE_SECONDS = 2,592,000초)
+    → 중복 방지 (text_7 체크)
+    → 코멘트 거부 (idx_parent > 0)
+    → 프롬프트 자동 구성: "아래 게시글에 대해 답변해주세요.\n\n제목: {subject}\n\n내용: {strip_tags(content)}"
     → GeminiClient::generateContentStream()
       → cURL WRITEFUNCTION 콜백으로 청크 즉시 전달
       → streamGenerateContent?alt=sse 엔드포인트
+  → SSE 청크에서 텍스트 누적
+  → AiService::saveAnswer() 자동 호출 (text_7에 저장)
   → exit (api.php의 JSON 응답 우회)
 ```
 
