@@ -204,6 +204,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
   (위젯에서 Db:: 직접 사용 절대 금지)
 ```
 
+- **🔴 비즈니스 로직은 반드시 API 단(Service)에서 처리**: 데이터 변환, 기간 제한, 콘텐츠 차단, 권한 검증 등 모든 비즈니스 로직은 Service/Controller에서 처리한다. 웹뷰(`v7/*.php`)에서 처리하면 Flutter 앱 등 다른 클라이언트에 적용되지 않는다. 웹뷰는 Service 결과를 렌더링하거나 UI 표시용 분기만 담당한다. → [상세](references/v7-architecture.md) 2.2절
 - **엔트리포인트**: `api.php` (boot.php 미포함)
 - **네임스페이스**: `Philgo\{Module}\` (예: `Philgo\User\UserController`)
 - **DB 접근**: `Philgo\Utils\Db::pdo()` (레거시 `pdo()` 사용 금지)

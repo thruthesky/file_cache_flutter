@@ -935,14 +935,47 @@ if ($_v7LoginUser) {
 
 > **참고**: v6에서는 90일(3개월) 만료 정책이었으나, v7에서는 **6개월(약 180일)**로 변경되었다.
 
-### 판별 로직
+### 아키텍처: API 단(PostService)에서 처리
 
-`v7/post/view.php`에서 글 조회 후 아래 변수로 만료 여부를 판별한다.
+만료 정책은 **PostService** 계층에서 처리된다. 이를 통해 웹(v7 홈페이지), Flutter 앱 등
+**모든 클라이언트에 일관되게 적용**된다.
+
+`PostService::applyExpiredJobPostPolicy()` 메서드가 `get()`과 `list()` 양쪽에서 호출되어,
+글 조회 시 자동으로 만료 정책이 적용된다.
 
 ```php
-// 구인구직(wanted) 게시판: 6개월 이전 글 내용 차단
-$isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6 months'));
+// lib/post/PostService.php
+
+/**
+ * 구인구직(wanted) 게시판 6개월 만료 정책 적용
+ *
+ * wanted 게시판의 글이 6개월 이상 경과했으면:
+ * - content를 안내 메시지로 변경
+ * - content_type을 'text'로 설정
+ * - files를 빈 문자열로 설정
+ *
+ * DB 데이터는 변경하지 않고, 메모리(Entity 객체)에서만 변경한다.
+ */
+private static function applyExpiredJobPostPolicy(PostEntity $post): PostEntity
+{
+    if ($post->post_id === 'wanted' && $post->stamp < strtotime('-6 months')) {
+        $post->content = '구인구직 글은 6개월이 지나면 볼 수 없습니다. 잘못된 정보를 방지하기 위해, 6개월 이상 지난 구인구직 글의 내용은 표시되지 않습니다.';
+        $post->content_type = 'text';
+        $post->files = '';
+    }
+    return $post;
+}
 ```
+
+| 핵심 포인트 | 설명 |
+|------------|------|
+| **처리 위치** | `PostService::applyExpiredJobPostPolicy()` (API 단) |
+| **호출 시점** | `PostService::get()` 및 `PostService::list()` 양쪽에서 호출 |
+| **적용 범위** | 모든 클라이언트 (웹, Flutter 앱 등) |
+| **DB 영향** | 없음 — 메모리(Entity 객체)에서만 변경, DB 데이터는 원본 유지 |
+| **변경 항목** | `content` (안내 메시지), `content_type` ('text'), `files` (빈 문자열) |
+
+### 판별 조건
 
 | 조건 | 설명 |
 |------|------|
@@ -951,18 +984,27 @@ $isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6
 
 ### 만료 시 동작
 
-만료된 구인구직 글에 대해 아래 항목이 숨겨진다.
+만료된 구인구직 글에 대해 아래 항목이 변경/숨겨진다.
 
 | 항목 | 만료 전 | 만료 후 |
 |------|---------|---------|
 | **글 제목** | 정상 표시 | 정상 표시 (유지) |
 | **글 헤더 (작성자, 날짜 등)** | 정상 표시 | 정상 표시 (유지) |
-| **글 본문 내용** | 정상 표시 | 만료 안내 메시지로 대체 |
-| **첨부파일** | 정상 표시 | 숨김 |
+| **글 본문 내용** | 정상 표시 | 만료 안내 메시지로 대체 (API 단에서 처리) |
+| **content_type** | 원본 타입 | `'text'`로 변경 (API 단에서 처리) |
+| **첨부파일 (files)** | 정상 표시 | 빈 문자열로 변경 (API 단에서 처리) |
 | **댓글** | 정상 표시 | 정상 표시 (유지) |
 | **액션바 (좋아요 등)** | 정상 표시 | 정상 표시 (유지) |
 
-### 만료 안내 UI
+### 웹 UI: 만료 안내 박스 (v7/post/view.php)
+
+웹에서는 API 단에서 이미 content가 변경된 상태이지만, `$isExpiredJobPost` 변수를 별도로 유지하여
+예쁜 안내 박스 UI를 표시한다.
+
+```php
+// v7/post/view.php — 웹 UI용 만료 여부 변수 (API와 별개로 UI 분기용)
+$isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6 months'));
+```
 
 글 본문 영역에 차단/블라인드 체크 → 만료 체크 → 사용자 차단 체크 순서로 분기 처리된다.
 
@@ -1033,7 +1075,8 @@ $isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6
 
 | 파일 | 관련 내용 |
 |------|-----------|
-| `v7/post/view.php` | `$isExpiredJobPost` 변수 정의 (107~108행), 본문 분기 (271행), 첨부파일 분기 (345행) |
+| `lib/post/PostService.php` | `applyExpiredJobPostPolicy()` 메서드 — `get()`과 `list()` 양쪽에서 호출하여 모든 클라이언트에 적용 |
+| `v7/post/view.php` | `$isExpiredJobPost` 변수 (웹 UI용 예쁜 안내 박스 표시용), 본문 분기, 첨부파일 분기 |
 | `v7/post/view.css` | `.post-expired-job-notice` 등 만료 안내 스타일 |
 
 ---
