@@ -72,9 +72,10 @@ class PostMasonryCard extends StatelessWidget {
                             final imgHeight = info.image.height.toDouble();
                             final cardWidth = constraints.maxWidth;
                             final resolved = (imgHeight / imgWidth) * cardWidth;
-                            // Clamp between 120 and 350
                             final clamped = resolved.clamp(120.0, 350.0);
-                            onHeightResolved?.call(post.idx, clamped);
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              onHeightResolved?.call(post.idx, clamped);
+                            });
                           }));
                         }
                         return Image(image: imageProvider, fit: BoxFit.cover);
