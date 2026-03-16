@@ -21,12 +21,15 @@ class PostListTile extends StatelessWidget {
 
   /// Determine the best URL to use for the preview thumbnail
   String? get _previewUrl {
-    if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
+    if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
       return post.imageUrl;
-    if (post.videoUrl != null && post.videoUrl!.isNotEmpty)
+    }
+    if (post.videoUrl != null && post.videoUrl!.isNotEmpty) {
       return post.videoUrl;
-    if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty)
+    }
+    if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty) {
       return post.thumbnail400x400;
+    }
     if (post.files.isNotEmpty) {
       return post.files
           .split(',')
@@ -64,104 +67,104 @@ class PostListTile extends StatelessWidget {
                     const SizedBox(width: 12),
                   ],
                   Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Line 1: 제목
-                      Text(
-                        post.subject,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: scheme.onSurface,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Line 1: 제목
+                        Text(
+                          post.subject,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: scheme.onSurface,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      // Line 2: 아바타 + 이름 + 날짜 + 통계
-                      Row(
-                        children: [
-                          // 아바타
-                          UserAvatar(photoUrl: post.userPhotoUrl, radius: 12),
-                          const SizedBox(width: 6),
-                          // 이름 (길면 잘림)
-                          Flexible(
-                            flex: 0,
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 80),
-                              child: Text(
-                                post.userName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: scheme.onSurface,
-                                  fontWeight: FontWeight.w500,
+                        const SizedBox(height: 6),
+                        // Line 2: 아바타 + 이름 + 날짜 + 통계
+                        Row(
+                          children: [
+                            // 아바타
+                            UserAvatar(photoUrl: post.userPhotoUrl, radius: 12),
+                            const SizedBox(width: 6),
+                            // 이름 (길면 잘림)
+                            Flexible(
+                              flex: 0,
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 80),
+                                child: Text(
+                                  post.userName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: scheme.onSurface,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          // 날짜
-                          Text(
-                            _formatDate(post.stamp),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.outline,
-                            ),
-                          ),
-                          // 통계
-                          if (post.noOfView >= 10) ...[
                             const SizedBox(width: 8),
-                            FaIcon(
-                              FontAwesomeIcons.lightEye,
-                              size: 13,
-                              color: scheme.outline,
-                            ),
-                            const SizedBox(width: 3),
+                            // 날짜
                             Text(
-                              '${post.noOfView}',
+                              _formatDate(post.stamp),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.outline,
                               ),
                             ),
-                          ],
-                          if (post.noOfComment > 0) ...[
-                            const SizedBox(width: 8),
-                            FaIcon(
-                              FontAwesomeIcons.lightComment,
-                              size: 13,
-                              color: commentColor,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              '${post.noOfComment}',
-                              style: theme.textTheme.bodySmall?.copyWith(
+                            // 통계
+                            if (post.noOfView >= 10) ...[
+                              const SizedBox(width: 8),
+                              FaIcon(
+                                FontAwesomeIcons.lightEye,
+                                size: 13,
+                                color: scheme.outline,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                '${post.noOfView}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.outline,
+                                ),
+                              ),
+                            ],
+                            if (post.noOfComment > 0) ...[
+                              const SizedBox(width: 8),
+                              FaIcon(
+                                FontAwesomeIcons.lightComment,
+                                size: 13,
                                 color: commentColor,
-                                fontWeight: commentBold
-                                    ? FontWeight.w600
-                                    : null,
                               ),
-                            ),
-                          ],
-                          if (post.good > 0) ...[
-                            const SizedBox(width: 8),
-                            FaIcon(
-                              FontAwesomeIcons.lightThumbsUp,
-                              size: 13,
-                              color: scheme.outline,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              '${post.good}',
-                              style: theme.textTheme.bodySmall?.copyWith(
+                              const SizedBox(width: 3),
+                              Text(
+                                '${post.noOfComment}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: commentColor,
+                                  fontWeight: commentBold
+                                      ? FontWeight.w600
+                                      : null,
+                                ),
+                              ),
+                            ],
+                            if (post.good > 0) ...[
+                              const SizedBox(width: 8),
+                              FaIcon(
+                                FontAwesomeIcons.lightThumbsUp,
+                                size: 13,
                                 color: scheme.outline,
                               ),
-                            ),
+                              const SizedBox(width: 3),
+                              Text(
+                                '${post.good}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.outline,
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
               ),
             ),
           ),
