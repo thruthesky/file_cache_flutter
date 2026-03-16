@@ -28,6 +28,15 @@
 - [9. 사용자 설정 페이지 (SSR)](#9-사용자-설정-페이지-ssr)
 - [10. 사용자 차단 기능](#10-사용자-차단-기능)
 - [11. 사용자 신고 기능](#11-사용자-신고-기능)
+- [12. UserRepository](#12-userrepository)
+  - [12.1 개요](#121-개요)
+  - [12.2 RepositoryInterface 필수 메서드 (4개)](#122-repositoryinterface-필수-메서드-4개)
+  - [12.3 Firebase UID 기반 조회](#123-firebase-uid-기반-조회)
+  - [12.4 닉네임 관련 조회](#124-닉네임-관련-조회)
+  - [12.5 목록/통계 조회](#125-목록통계-조회)
+  - [12.6 사용자 활동 조회](#126-사용자-활동-조회)
+  - [12.7 사용자 신고 관련](#127-사용자-신고-관련)
+  - [12.8 UserService와의 관계](#128-userservice와의-관계)
 
 ---
 
@@ -39,6 +48,7 @@
 - **DB 테이블**: `sf_member`
 - **Controller**: `Philgo\User\UserController` (`lib/user/UserController.php`)
 - **Service**: `Philgo\User\UserService` (`lib/user/UserService.php`)
+- **Repository**: `Philgo\User\UserRepository` (`lib/user/UserRepository.php`) — `RepositoryInterface` 구현, sf_member 전체 DB 접근 중앙 집중
 - **인증 유틸**: `Philgo\Utils\AuthService` (`lib/utils/AuthService.php`)
 - **API 접두사**: `user.*`
 - **네임스페이스**: `Philgo\User`, `Philgo\Utils`
@@ -63,7 +73,8 @@ JavaScript: func('user.count')
     │  └─ UserService::getTotalCount()
     │
     ▼ Philgo\User\UserService::getTotalCount()
-    │  └─ Db::pdo() → SELECT COUNT(*) FROM sf_member
+    │  └─ UserRepository::countAll()
+    │     └─ Db::fetchColumn() → SELECT COUNT(*) FROM sf_member
     │
     ▼ JSON 응답: {"count": 188186}
 
@@ -915,6 +926,7 @@ UserController::search($input)
 lib/user/
 ├── UserController.php            # ★ Philgo\User\UserController (API 엔드포인트)
 ├── UserService.php               # ★ Philgo\User\UserService (비즈니스 로직)
+├── UserRepository.php            # ★ Philgo\User\UserRepository (sf_member DB CRUD — RepositoryInterface 구현)
 ├── UserEntity.php                # ★ Philgo\User\UserEntity (사용자 엔티티)
 ├── user.functions.php            # ⚠️ 레거시 (새 코드에서 사용 금지)
 ├── user.login.functions.php      # ⚠️ 레거시
@@ -932,6 +944,8 @@ v7/user/
 
 tests/Unit/
 ├── UserControllerTest.php        # ★ UserController PEST Unit Test
+├── UserServiceTest.php           # ★ UserService PEST Unit Test (41개 테스트 — Repository 위임 검증)
+├── UserRepositoryTest.php        # ★ UserRepository PEST Unit Test (33개 테스트 — CRUD, Firebase UID, 닉네임, 목록, 활동, 신고)
 ├── UserProfileTest.php           # ★ 프로필 수정 PEST Unit Test (canChangeNickname, updateMyProfile, Entity 필드)
 ├── PublicProfileTest.php         # ★ 공개 프로필 PEST Unit Test (getByFirebaseUid, getPublicProfile, PostRepository)
 └── UserSearchTest.php            # ★ 닉네임 검색 PEST Unit Test (searchByNickname, prefix 매칭, 본인 제외)
@@ -1959,9 +1973,9 @@ GET https://local.philgo.com/api.php?method=user.reportUser&session_id=xxx&idx_r
 ```
 UserController::reportUser($input)
   → UserService::reportUser($idxReporter, $idxReported, $reason)
-    → ensureUserReportsTable()  ← sf_user_reports 테이블 자동 생성
-    → Db::fetch() 중복 확인
-    → Db::insert() 신고 등록
+    → UserRepository::ensureUserReportsTable()  ← sf_user_reports 테이블 자동 생성
+    → UserRepository::hasReported() 중복 확인
+    → UserRepository::insertReport() 신고 등록
 ```
 
 ### 11.3 DB 테이블: sf_user_reports
@@ -1985,7 +1999,7 @@ UserController::reportUser($input)
 
 ### 11.4 관리자용 신고 사용자 목록 조회
 
-`UserService::listReportedUsers($limit)`로 신고된 사용자 목록을 조회한다 (관리자 전용).
+`UserService::listReportedUsers($limit)`로 신고된 사용자 목록을 조회한다 (관리자 전용). 내부적으로 `UserRepository::findReportedUsers()`를 호출한다.
 
 **반환 데이터:**
 
@@ -2022,6 +2036,127 @@ UserController::reportUser($input)
 | 파일 | 역할 |
 |------|------|
 | `lib/user/UserController.php` | `reportUser()` API 엔드포인트 |
-| `lib/user/UserService.php` | `reportUser()`, `listReportedUsers()`, `ensureUserReportsTable()` 비즈니스 로직 |
+| `lib/user/UserService.php` | `reportUser()`, `listReportedUsers()` 비즈니스 로직 (UserRepository에 위임) |
+| `lib/user/UserRepository.php` | `ensureUserReportsTable()`, `hasReported()`, `insertReport()`, `findReportedUsers()` DB 접근 |
 | `v7/user/public-profile.php` | 공개 프로필 신고 버튼 UI + JavaScript |
 | `v7/admin/reports.php` | 관리자 신고 관리 페이지 (사용자 신고 탭) |
+
+---
+
+## 12. UserRepository
+
+### 12.1 개요
+
+`UserRepository`는 `sf_member` 테이블의 모든 DB 접근을 중앙 집중하는 Repository 클래스이다.
+`RepositoryInterface`를 구현하여 표준 CRUD 4개 메서드를 제공하며,
+Firebase UID 조회, 닉네임 관련, 목록/통계, 사용자 활동, 신고 관련 등 확장 쿼리를 포함한다.
+
+- **파일**: `lib/user/UserRepository.php`
+- **네임스페이스**: `Philgo\User\UserRepository`
+- **테이블**: `sf_member` (CRUD), `sf_user_reports` (신고), `sf_post_data` (활동 조회)
+- **인터페이스**: `implements RepositoryInterface`
+
+**도입 배경**: UserService에서 `Db::` 직접 호출이 곳곳에 산재해 있어 DB 쿼리 중복 및 관심사 분리 위반 문제가 있었다.
+리팩토링으로 UserService의 모든 DB 접근 코드를 UserRepository로 이관하여 `Db::` 직접 호출 0개를 달성했다.
+
+**아키텍처 흐름:**
+
+```
+UserController → UserService → UserRepository → Db → MariaDB
+                 (비즈니스 로직)   (DB CRUD)       (PDO)
+```
+
+### 12.2 RepositoryInterface 필수 메서드 (4개)
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `create` | `create(array $data): int` | sf_member에 새 사용자 삽입, AUTO_INCREMENT idx 반환 |
+| `findByIdx` | `findByIdx(int $idx): ?UserEntity` | idx로 사용자 조회 (password 제외), 없으면 null |
+| `update` | `update(int $idx, array $data): bool` | idx로 사용자 정보 수정 |
+| `deleteByIdx` | `deleteByIdx(int $idx): bool` | idx로 사용자 삭제 |
+
+### 12.3 Firebase UID 기반 조회
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `findByFirebaseUid` | `findByFirebaseUid(string $firebaseUid): ?UserEntity` | Firebase UID로 사용자 Entity 조회 (password 제외) |
+| `findRawByFirebaseUid` | `findRawByFirebaseUid(string $firebaseUid): array\|false` | Firebase UID로 raw 배열 조회 (AuthService::loginUser()에 전달용) |
+| `findRawByIdx` | `findRawByIdx(int $idx): array\|false` | idx로 raw 배열 조회 (AuthService::loginUser()에 전달용) |
+| `findByFirebaseUids` | `findByFirebaseUids(array $firebaseUids): array` | 복수 Firebase UID로 일괄 조회 (최대 100개) |
+| `getFirebaseUidByIdx` | `getFirebaseUidByIdx(int $idx): string` | idx로 Firebase UID만 경량 조회 |
+
+### 12.4 닉네임 관련 조회
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `isNicknameTaken` | `isNicknameTaken(string $nickname, int $excludeIdx = 0): bool` | 닉네임 중복 검사 (자기 자신 제외 가능) |
+| `searchByNickname` | `searchByNickname(string $nickname, ?int $excludeIdx = null, int $limit = 20): array` | 닉네임으로 사용자 검색 |
+| `getNicknameInfo` | `getNicknameInfo(int $idx): array\|false` | 닉네임 + 변경 이력(varchar_8) 조회 |
+
+### 12.5 목록/통계 조회
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `findAll` | `findAll(int $page = 1, int $limit = 20): array` | 사용자 목록 페이지네이션 조회 (password 제외) |
+| `countAll` | `countAll(): int` | 전체 사용자 수 |
+| `findRecent` | `findRecent(int $limit = 3): array` | 최근 가입 사용자 목록 |
+
+### 12.6 사용자 활동 조회
+
+sf_post_data 테이블에서 특정 사용자의 글/댓글을 조회한다.
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `findRecentPosts` | `findRecentPosts(int $idxMember, int $limit = 5): array` | 최근 글 목록 (deleted=0) |
+| `findRecentComments` | `findRecentComments(int $idxMember, int $limit = 5): array` | 최근 댓글 목록 (idx_parent>0, deleted=0) |
+
+### 12.7 사용자 신고 관련
+
+sf_user_reports 테이블 관련 메서드이다.
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `ensureUserReportsTable` | `ensureUserReportsTable(): void` | sf_user_reports 테이블 자동 생성 (CREATE TABLE IF NOT EXISTS) |
+| `hasReported` | `hasReported(int $idxReporter, int $idxReported): bool` | 중복 신고 여부 확인 |
+| `insertReport` | `insertReport(int $idxReporter, int $idxReported, string $reason = ''): void` | 신고 등록 |
+| `findReportedUsers` | `findReportedUsers(int $limit = 20): array` | 신고된 사용자 목록 (관리자 전용, GROUP BY + COUNT) |
+
+### 12.8 UserService와의 관계
+
+UserService는 비즈니스 로직(검증, 권한 확인, 데이터 가공 등)만 담당하고,
+모든 DB 접근은 UserRepository를 통해 수행한다. `Db::` 직접 호출 0개.
+
+**호출 예시:**
+
+```php
+// UserService::getMe() — 비즈니스 로직
+public static function getMe(): array
+{
+    $me = AuthService::getLoginUser();
+    if (!$me) {
+        throw new RuntimeException('로그인이 필요합니다.');
+    }
+    // DB 접근은 UserRepository에 위임
+    $entity = UserRepository::findByIdx((int) $me['idx']);
+    // ... 비즈니스 로직 (레벨 계산, 필드 가공 등)
+    return $entity->toArray();
+}
+
+// UserService::reportUser() — 비즈니스 로직
+public static function reportUser(int $idxReporter, int $idxReported, string $reason = ''): void
+{
+    UserRepository::ensureUserReportsTable();
+    if (UserRepository::hasReported($idxReporter, $idxReported)) {
+        throw new RuntimeException('이미 신고한 사용자입니다.');
+    }
+    UserRepository::insertReport($idxReporter, $idxReported, $reason);
+}
+```
+
+**테스트 현황:**
+
+| 테스트 파일 | 테스트 수 | 대상 |
+|------------|----------|------|
+| `tests/Unit/UserRepositoryTest.php` | 33개 | CRUD, Firebase UID, 닉네임, 목록, 활동, 신고 |
+| `tests/Unit/UserServiceTest.php` | 41개 | Service 비즈니스 로직 + Repository 위임 검증 |
+| **합계** | **74개** | **100% 통과** |
