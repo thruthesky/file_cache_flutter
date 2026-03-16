@@ -72,9 +72,7 @@ class _VideoThumbnailState extends State<VideoThumbnail> {
   Future<void> _initializeVideo() async {
     _controller = VideoPlayerController.networkUrl(
       Uri.parse(widget.url),
-      videoPlayerOptions: VideoPlayerOptions(
-        mixWithOthers: true,
-      ),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
     );
 
     try {
@@ -175,11 +173,7 @@ class _VideoThumbnailState extends State<VideoThumbnail> {
       width: widget.width,
       height: widget.height,
       color: Colors.black87,
-      child: const Icon(
-        Icons.videocam,
-        color: Colors.white54,
-        size: 32,
-      ),
+      child: const Icon(Icons.videocam, color: Colors.white54, size: 32),
     );
   }
 
@@ -192,11 +186,7 @@ class _VideoThumbnailState extends State<VideoThumbnail> {
         color: Colors.black54,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Icon(
-        Icons.play_arrow,
-        color: Colors.white,
-        size: 20,
-      ),
+      child: const Icon(Icons.play_arrow, color: Colors.white, size: 20),
     );
   }
 }
