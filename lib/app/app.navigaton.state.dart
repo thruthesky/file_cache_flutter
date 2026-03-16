@@ -19,7 +19,7 @@ class AppNavigationState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void openPostListScreen({String? postId, String? category}) {
+  void openForumScreen({String? postId, String? category}) {
     if (postId != null) {
       _selectedPostId = postId;
       _selectedCategory = category;

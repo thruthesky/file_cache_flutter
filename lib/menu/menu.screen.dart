@@ -497,7 +497,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 메뉴에서 선택한 게시판으로 이동
   void _navigateToForum(String postId, {String? category}) {
-    AppNavigationState.of(context).openPostListScreen(
+    AppNavigationState.of(context).openForumScreen(
       postId: postId,
       category: category,
     );
