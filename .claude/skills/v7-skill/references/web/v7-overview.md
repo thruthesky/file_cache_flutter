@@ -21,6 +21,7 @@
 17. [URL 유틸리티 (url() 함수)](#17-url-유틸리티-url-함수)
 18. [게시판 목록 페이지 (v7/post/list.php)](#18-게시판-목록-페이지-v7postlistphp)
 19. [게시판 글 읽기 페이지 (v7/post/view.php)](#19-게시판-글-읽기-페이지-v7postviewphp)
+20. [전체 메뉴 페이지 (v7/menu/index.php)](#20-전체-메뉴-페이지-v7menuindexphp)
 
 ---
 
@@ -382,6 +383,7 @@ if (file_exists($v7File)) {
 - 공통 레이아웃이 필요하면 `v7/layouts/` 폴더에서 별도 관리할 수 있다
 - `v7/boot.php`가 이미 로드되므로, v7 Service 클래스(`Db::pdo()`, `AuthService::getLoginUser()` 등) 직접 사용 가능
 - **v6 함수(`pdo()`, `login()`, `t()` 등)는 사용 불가** — v7 전용 클래스만 사용
+- v6 `pdo()->prepare()` + `->execute()` + `->fetch()` 패턴은 v7 `Db::fetch()`로 교체해야 함 (예: `public-profile.php` 차단 확인 로직)
 
 ---
 
@@ -395,14 +397,24 @@ v7/
 ├── 404.php                      # 404 에러 페이지 (선택)
 ├── user/
 │   ├── login.php                # 로그인 페이지
+│   ├── login.css                # 로그인 전용 CSS
 │   ├── profile.php              # 프로필 수정 페이지
+│   ├── profile.css              # 프로필 전용 CSS
 │   ├── public-profile.php       # 공개 프로필 페이지 (SSR)
 │   ├── public-profile.css       # 공개 프로필 전용 CSS
-│   └── register.php             # 회원가입 페이지
+│   ├── settings.php             # 설정 페이지 (알림 등, wa-breadcrumb 포함)
+│   ├── settings.css             # 설정 전용 CSS
+│   ├── blocked.php              # 차단 사용자 관리 페이지
+│   ├── blocked.css              # 차단 사용자 전용 CSS
+│   └── logout.php               # 로그아웃 처리
 ├── post/
-│   ├── list.php                 # 게시판 목록 (SSR)
-│   ├── view.php                 # 글 읽기 (SSR)
-│   └── create.php               # 글 작성
+│   ├── list.php                 # 게시판 목록 (SSR) — 부동산: masonry 위젯 분기
+│   ├── view.php                 # 글 읽기 (SSR) — 부동산: 필드+지도 위젯 분기
+│   ├── create.php               # 글 작성 — 부동산: 커스텀 필드 폼 포함
+│   └── real-estate.css          # 부동산 전용 CSS (필터, 오버레이, 필드, 지도, 폼)
+├── menu/
+│   ├── index.php                # 전체 메뉴 페이지
+│   └── index.css                # 메뉴 페이지 전용 CSS
 ├── company/
 │   ├── list.php                 # 업소록 목록
 │   └── view.php                 # 업소록 상세
@@ -1082,6 +1094,8 @@ v6의 `href()` 함수와 동일한 패턴이다.
 // 기본 URL
 url()->home                         // '/'
 url()->search                       // '/post/search'
+url()->weather                      // '/weather'
+url()->currency                     // '/currency'
 
 // 게시판 목록 (프로퍼티)
 url()->post->list->community        // '/post/list?post_id=freetalk'
@@ -1094,14 +1108,45 @@ url()->post->list->golf             // '/post/list?post_id=buyandsell&category=�
 url()->post->view(123)              // '/post/view?idx=123'
 url()->post->create('qna')          // '/post/create?post_id=qna'
 url()->post->update(789)            // '/post/update?idx=789'
+url()->post->popular                // '/post/popular'
+url()->post->recentComments         // '/post/comments'
 
 // 사용자
 url()->user->login                  // '/user/login'
 url()->user->profile                // '/user/profile'
+url()->user->blocked                // '/user/blocked'
+url()->user->resign                 // '/user/resign'
+url()->user->accountDelete          // '/user/account-delete'
 
 // 업소록
 url()->company->home                // '/company'
 url()->company->view(99)            // '/company/view?idx=99'
+
+// 채팅
+url()->chat->openChatRooms          // '/chat'
+
+// 광고
+url()->adv->banner                  // '/adv/banner'
+url()->adv->point                   // '/adv/point'
+url()->adv->massage                 // '/adv/massage'
+
+// 도움말
+url()->help->guideline              // '/help/guideline'
+url()->help->terms                  // '/help/terms'
+url()->help->pointGuideline         // '/help/point-guideline'
+url()->help->pointEvent             // '/help/point-event'
+
+// 포인트
+url()->point->history               // '/point/history'
+
+// 설정
+url()->settings->notification       // '/settings/notification'
+
+// 즐겨찾기
+url()->bookmark->home               // '/bookmark'
+
+// 메뉴
+url()->menu->all                    // '/menu'
 ```
 
 ### HTML 템플릿 사용 예시
@@ -1110,6 +1155,13 @@ url()->company->view(99)            // '/company/view?idx=99'
 <a href="<?= url()->post->list->community ?>">자유게시판</a>
 <a href="<?= url()->user->login ?>">로그인</a>
 <a href="<?= url()->company->home ?>">업소록</a>
+<a href="<?= url()->bookmark->home ?>">즐겨찾기</a>
+<a href="<?= url()->post->popular ?>">인기글</a>
+<a href="<?= url()->post->recentComments ?>">최근 댓글</a>
+<a href="<?= url()->adv->massage ?>">마사지 광고</a>
+<a href="<?= url()->weather ?>">날씨</a>
+<a href="<?= url()->currency ?>">환율 계산기</a>
+<a href="<?= url()->menu->all ?>">전체 메뉴</a>
 ```
 
 ### 테스트
@@ -1256,3 +1308,44 @@ $bottomResult = PostService::list([
 | `Route::postList()` | `(string $postId, ?string $category, int $page)` | `/post/list?post_id=buyandsell&category=페소환전` |
 | `Route::postView()` | `(int $idx, ?string $postId, ?string $category, int $page)` | `/post/view?idx=123&post_id=buyandsell&category=페소환전` |
 | `Route::postCreate()` | `(string $postId, ?string $category)` | `/post/create?post_id=buyandsell&category=페소환전` |
+
+### 게시글 유형별 위젯 분기
+
+`view.php`는 게시글 유형에 따라 다른 위젯을 렌더링한다:
+
+| 유형 | 조건 | 위젯 |
+|------|------|------|
+| **info 게시글** | `$post->isInfoPost()` | `widgets/post/view/info/info-view.php` |
+| **일반 게시글** | `!$post->isInfoPost()` | `widgets/post/view/post-view-default.php` |
+| **부동산 게시글** | `$post->category === 'real_estate'` | `post-view-default.php` + `widgets/post/view/post-view-real-estate.php` (추가) |
+
+부동산 게시글은 일반 게시글 위젯 뒤에 부동산 전용 위젯(필드 정보 + Google Maps 지도)이 추가로 include된다.
+상세 문서: [v7-post-real-estate.md](../api/v7-post-real-estate.md)
+
+---
+
+## 20. 전체 메뉴 페이지 (v7/menu/index.php)
+
+### 개요
+
+v7 전체 메뉴 페이지는 사이트의 모든 주요 링크를 6개 섹션(커뮤니티, 광고 서비스, 내 정보, 도움말, 계정관리, 유틸리티)으로 분류하여 카드 형태의 그리드로 표시한다. v6 `page/menu/all.php`를 v7 시스템으로 이식했다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/menu/index.php` |
+| **CSS** | `v7/menu/index.css` |
+| **접속 URL** | `https://v7-local.philgo.com/menu` |
+| **렌더링** | SSR (PHP) |
+
+### 메뉴 섹션 구성
+
+| 섹션 | 주요 메뉴 항목 |
+|------|--------------|
+| **커뮤니티** | 채팅, 업소록, 즐겨찾기, 인기글, 최근 댓글 |
+| **광고 서비스** | 배너 광고, 포인트 광고, 게시판별 포인트 안내, 마사지 광고 |
+| **내 정보** | 프로필 수정, 공개 프로필, 포인트 기록, 차단 사용자, 설정, 계정 관리 요청 |
+| **도움말** | 이용 안내, 개인정보처리방침, 알림 설정, 포인트 이벤트 |
+| **계정관리** | 로그인/로그아웃 (로그인 상태별 분기) |
+| **유틸리티** | 검색, 날씨, 환율 계산기 |
+
+> 상세 문서: [web/v7-menu.md](v7-menu.md)

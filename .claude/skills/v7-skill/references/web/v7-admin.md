@@ -20,6 +20,8 @@
 16. [공통 코딩 패턴](#16-공통-코딩-패턴)
 17. [새 관리자 페이지 추가 방법](#17-새-관리자-페이지-추가-방법)
 18. [게시글 목록 관리자 기능](#18-게시글-목록-관리자-기능-체크박스--일괄-작업--글-이동)
+19. [신고 관리 페이지](#19-신고-관리-페이지-reportsphp)
+20. [포인트이벤트 관리 페이지](#20-포인트이벤트-관리-페이지-point-eventphp)
 
 ---
 
@@ -56,6 +58,8 @@ v7 전용 부팅(`v7/boot.php`), `Db::pdo()`, `AuthService`, Web Awesome Pro + F
 | `/admin/companies` | `v7/admin/companies.php` | 업소록 관리 |
 | `/admin/settings` | `v7/admin/settings.php` | 설정 관리 |
 | `/admin/move-post` | `v7/admin/move-post.php` | 글 이동 (체크박스 선택 후 이동) |
+| `/admin/reports` | `v7/admin/reports.php` | 신고 관리 (글/코멘트 + 사용자 신고) |
+| `/admin/point-event` | `v7/admin/point-event.php` | 포인트 이벤트 기간 관리 |
 
 ---
 
@@ -73,7 +77,10 @@ v7/admin/
 ├── comments.php        ← 코멘트 관리 (검색 + 페이지네이션)
 ├── companies.php       ← 업소록 관리 (카테고리 필터 + 검색 + 페이지네이션)
 ├── settings.php        ← 설정 관리 (Config 값 읽기 전용 표시)
-└── move-post.php       ← 글 이동 관리 (게시판/카테고리 선택 + 차단)
+├── move-post.php       ← 글 이동 관리 (게시판/카테고리 선택 + 차단)
+├── reports.php         ← 신고 관리 (글/코멘트 신고 + 사용자 신고)
+├── point-event.php     ← 포인트 이벤트 기간 관리 (추가/삭제)
+└── point-event.css     ← 포인트 이벤트 전용 CSS
 
 v7/widgets/post/list/
 ├── post-list-tile.php    ← 게시글 행 위젯 (관리자 체크박스 + 차단 글 표시)
@@ -1221,3 +1228,179 @@ document.addEventListener('DOMContentLoaded', function() {
    ↓
 7. POST 제출 → sf_post_data 업데이트 + (선택 시) sf_member_blocks 등록
 ```
+
+---
+
+## 19. 신고 관리 페이지 (reports.php)
+
+### 개요
+
+관리자가 신고된 글/코멘트와 신고된 사용자를 확인하고 관리하는 페이지이다.
+탭 UI로 "글/코멘트 신고"와 "사용자 신고" 두 섹션을 분리하여 표시한다.
+
+| 항목 | 설명 |
+|------|------|
+| **URL** | `/admin/reports` |
+| **파일** | `v7/admin/reports.php` |
+| **렌더링** | PHP SSR |
+| **데이터 소스** | `PostService::listReportedDetailed()` + `UserService::listReportedUsers()` |
+| **인증** | `admin-nav.php`에서 관리자 인증 (Firebase UID + 2차 인증) |
+
+### 탭 구성
+
+| 탭 | 아이콘 | 데이터 소스 | 설명 |
+|----|--------|------------|------|
+| **글/코멘트 신고** | `fa-solid fa-file-lines` | `PostService::listReportedDetailed(50)` | sf_post_data.report != '' 인 글/코멘트 |
+| **사용자 신고** | `fa-solid fa-users` | `UserService::listReportedUsers(50)` | sf_user_reports 테이블의 신고 내역 |
+
+### 글/코멘트 신고 탭
+
+테이블 형태로 신고된 글/코멘트 목록을 표시한다.
+
+| 컬럼 | 설명 |
+|------|------|
+| 유형 | `글` 또는 `코멘트` (배지). `idx_parent > 0`이면 코멘트 |
+| 내용 | 글은 제목(`subject`), 코멘트는 내용 앞 80자 |
+| 작성자 | `user_name` |
+| 신고 수 | `text_10`에 저장된 신고자 idx CSV의 개수 |
+| 최근 신고일 | `stamp_update` 기반 날짜 |
+| 관리 | "보기" 링크 → 해당 글 페이지로 이동 |
+
+### 사용자 신고 탭
+
+테이블 형태로 신고된 사용자 목록을 표시한다.
+
+| 컬럼 | 설명 |
+|------|------|
+| 사용자 | 프로필 사진 + 닉네임 |
+| 신고 횟수 | `GROUP BY idx_reported` 후 `COUNT` |
+| 사유 | `GROUP_CONCAT(reason)` — 모든 신고 사유 취합 |
+| 최근 신고일 | `MAX(stamp)` 기반 날짜 |
+| 관리 | "프로필" 링크 → 공개 프로필 페이지로 이동 |
+
+### DB 테이블 참조
+
+#### sf_post_data (글/코멘트 신고 관련 컬럼)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `report` | varchar | `'Y'`이면 신고된 글/코멘트 |
+| `text_10` | text | 신고자 idx CSV (예: `'186619,190076'`) |
+| `idx_parent` | int | 부모 글 idx. `0`이면 일반 글, `>0`이면 코멘트 |
+| `idx_root` | int | 최상위 글 idx. 코멘트의 원본 글을 가리킴 |
+
+#### sf_user_reports (사용자 신고 전용 테이블)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `idx` | int (PK) | AUTO_INCREMENT |
+| `idx_reporter` | int | 신고한 사용자 idx |
+| `idx_reported` | int | 신고당한 사용자 idx |
+| `reason` | varchar(255) | 신고 사유 |
+| `stamp` | int | 신고 시각 (Unix timestamp) |
+
+### 관리자 네비게이션 메뉴 항목
+
+`v7/widgets/admin/admin-nav.php`의 `$adminNavItems` 배열에 신고 메뉴가 포함되어 있다.
+
+```php
+'/admin/reports' => ['label' => '신고', 'icon' => 'fa-solid fa-flag'],
+```
+
+### 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `v7/admin/reports.php` | 신고 관리 페이지 (탭 UI + 테이블) |
+| `v7/widgets/admin/admin-nav.php` | 관리자 메뉴에 '신고' 항목 포함 |
+| `lib/post/PostService.php` | `listReportedDetailed()` — 글/코멘트 신고 목록 |
+| `lib/post/PostRepository.php` | `findReportedDetailed()` — 신고 글 DB 쿼리 |
+| `lib/user/UserService.php` | `listReportedUsers()` — 사용자 신고 목록 |
+
+---
+
+## 20. 포인트이벤트 관리 페이지 (`point-event.php`)
+
+### 개요
+
+관리자가 포인트 이벤트 기간을 추가/삭제할 수 있는 관리 페이지이다.
+v6에서는 `PointConfig::$point_event_dates` PHP 배열을 소스 코드에서 직접 수정해야 했지만,
+v7에서는 이 관리자 페이지를 통해 DB(`sf_config` 테이블)에서 실시간으로 관리할 수 있다.
+
+| 항목 | 설명 |
+|------|------|
+| **URL** | `/admin/point-event` |
+| **파일** | `v7/admin/point-event.php` |
+| **CSS** | `v7/admin/point-event.css` |
+| **렌더링** | PHP SSR |
+| **데이터 소스** | `SettingsService::getPointEventDates()`, `SettingsService::isInPointEventDate()`, `PostService::getEventPostIdsPublic()` |
+| **인증** | `admin-nav.php`에서 관리자 인증 (Firebase UID + 2차 인증) |
+
+### 기능
+
+| 기능 | 설명 |
+|------|------|
+| **현재 이벤트 상태** | 오늘이 이벤트 기간인지 `wa-badge`로 표시 (진행중: success / 비이벤트: neutral) |
+| **이벤트 기간 추가** | `<input type="date">` 폼으로 시작일/종료일 입력 후 저장 |
+| **이벤트 기간 목록** | 모든 이벤트 기간을 테이블로 표시 (상태: 진행중/예정/종료) |
+| **이벤트 기간 삭제** | 개별 이벤트 기간을 삭제 (confirm 확인 후) |
+| **이벤트 설정 정보** | 읽기 전용으로 대상 게시판, 쓰로틀링, 배수 티어 등 표시 |
+
+### POST 처리 흐름
+
+| action | 파라미터 | 처리 |
+|--------|----------|------|
+| `add` | `start_date`, `end_date` | YYYY-MM-DD → YYYYMMDD 변환 후 `SettingsService::addPointEventDate()` 호출 |
+| `delete` | `index` | `SettingsService::deletePointEventDate($index)` 호출 |
+
+### 이벤트 기간 목록 테이블
+
+| 컬럼 | 설명 |
+|------|------|
+| # | 인덱스 번호 |
+| 시작일 | `formatYmdKorean()` — "2026.1.7(수)" 형식 |
+| 종료일 | `formatYmdKorean()` — "2026.1.11(일)" 형식 |
+| 상태 | 진행중(success) / 예정(primary) / 종료(neutral) `wa-badge` |
+| 작업 | 삭제 버튼 (`wa-button variant="danger"`) |
+
+### 행 스타일
+
+| 상태 | CSS 클래스 | 설명 |
+|------|-----------|------|
+| 진행 중 | `.pe-row-active` | 오늘이 해당 기간 내 |
+| 종료 | `.pe-row-past` | 오늘이 종료일 이후 |
+| 예정 | (기본) | 오늘이 시작일 이전 |
+
+### 이벤트 설정 정보 (읽기 전용)
+
+| 항목 | 값 |
+|------|-----|
+| 대상 게시판 | `PostService::getEventPostIdsPublic()` — `['freetalk', 'qna']` |
+| 쓰로틀링 | 10분 내 3회 초과 시 기본 8점만 지급 |
+| 최소 점수 | 5점 |
+| 배수 티어 | 50% → 3배, 40% → 10배, 5% → 20배, 4% → 40배, 1% → 200배 |
+
+### 관리자 네비게이션 메뉴 항목
+
+`v7/widgets/admin/admin-nav.php`의 `$adminNavItems` 배열에 포인트이벤트 메뉴가 포함되어 있다.
+
+```php
+'/admin/point-event' => ['label' => '포인트이벤트', 'icon' => 'fa-solid fa-calendar-star'],
+```
+
+### 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `v7/admin/point-event.php` | 포인트 이벤트 기간 관리 페이지 |
+| `v7/admin/point-event.css` | 포인트 이벤트 페이지 전용 CSS |
+| `v7/widgets/admin/admin-nav.php` | 관리자 메뉴에 '포인트이벤트' 항목 포함 |
+| `lib/settings/SettingsService.php` | `getPointEventDates()`, `addPointEventDate()`, `deletePointEventDate()`, `isInPointEventDate()` |
+| `lib/post/PostService.php` | `getEventPostIdsPublic()`, `isInEventPeriod()` |
+| `v7/utils/Config.php` | `isPointEventDate()` — 요청 단위 캐싱, `resetPointEventDateCache()` |
+| `v7/help/point-event.php` | 사용자용 포인트 이벤트 도움말 페이지 (DB 기반 조회) |
+
+### 관련 문서
+
+- 포인트 이벤트 전체 → [v7-point.md](../v7-point.md) 9장
+- Settings API → [api/v7-settings.md](../api/v7-settings.md) 포인트 이벤트 기간 설정

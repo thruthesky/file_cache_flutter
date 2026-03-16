@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: mariadb
--- Generation Time: Mar 15, 2026 at 11:30 AM
--- Server version: 11.7.2-MariaDB-ubu2404
--- PHP Version: 8.3.6
+-- 호스트: localhost
+-- 생성 시간: 26-03-14 16:18
+-- 서버 버전: 11.7.2-MariaDB-ubu2404-log
+-- PHP 버전: 8.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `philgo`
+-- 데이터베이스: `philgo`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `adv_feature_view_log`
+-- 테이블 구조 `adv_feature_view_log`
 --
 
 CREATE TABLE `adv_feature_view_log` (
@@ -41,7 +41,7 @@ CREATE TABLE `adv_feature_view_log` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ad_agent`
+-- 테이블 구조 `ad_agent`
 --
 
 CREATE TABLE `ad_agent` (
@@ -64,7 +64,7 @@ CREATE TABLE `ad_agent` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ad_client`
+-- 테이블 구조 `ad_client`
 --
 
 CREATE TABLE `ad_client` (
@@ -85,7 +85,7 @@ CREATE TABLE `ad_client` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ad_log`
+-- 테이블 구조 `ad_log`
 --
 
 CREATE TABLE `ad_log` (
@@ -98,7 +98,7 @@ CREATE TABLE `ad_log` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ad_payment`
+-- 테이블 구조 `ad_payment`
 --
 
 CREATE TABLE `ad_payment` (
@@ -119,7 +119,7 @@ CREATE TABLE `ad_payment` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `api_chat_message`
+-- 테이블 구조 `api_chat_message`
 --
 
 CREATE TABLE `api_chat_message` (
@@ -136,7 +136,7 @@ CREATE TABLE `api_chat_message` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `api_chat_my_room`
+-- 테이블 구조 `api_chat_my_room`
 --
 
 CREATE TABLE `api_chat_my_room` (
@@ -151,7 +151,7 @@ CREATE TABLE `api_chat_my_room` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `api_chat_room`
+-- 테이블 구조 `api_chat_room`
 --
 
 CREATE TABLE `api_chat_room` (
@@ -169,7 +169,7 @@ CREATE TABLE `api_chat_room` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `auto_posting`
+-- 테이블 구조 `auto_posting`
 --
 
 CREATE TABLE `auto_posting` (
@@ -182,7 +182,7 @@ CREATE TABLE `auto_posting` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `bookmarks`
+-- 테이블 구조 `bookmarks`
 --
 
 CREATE TABLE `bookmarks` (
@@ -199,7 +199,7 @@ CREATE TABLE `bookmarks` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `bookmark_groups`
+-- 테이블 구조 `bookmark_groups`
 --
 
 CREATE TABLE `bookmark_groups` (
@@ -213,7 +213,7 @@ CREATE TABLE `bookmark_groups` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `company`
+-- 테이블 구조 `company`
 --
 
 CREATE TABLE `company` (
@@ -255,7 +255,7 @@ CREATE TABLE `company` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `company_meta`
+-- 테이블 구조 `company_meta`
 --
 
 CREATE TABLE `company_meta` (
@@ -275,7 +275,7 @@ CREATE TABLE `company_meta` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `company_qr_codes`
+-- 테이블 구조 `company_qr_codes`
 --
 
 CREATE TABLE `company_qr_codes` (
@@ -293,7 +293,7 @@ CREATE TABLE `company_qr_codes` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `company_qr_code_usages`
+-- 테이블 구조 `company_qr_code_usages`
 --
 
 CREATE TABLE `company_qr_code_usages` (
@@ -313,7 +313,7 @@ CREATE TABLE `company_qr_code_usages` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `company_reviews`
+-- 테이블 구조 `company_reviews`
 --
 
 CREATE TABLE `company_reviews` (
@@ -329,7 +329,7 @@ CREATE TABLE `company_reviews` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `coupon`
+-- 테이블 구조 `coupon`
 --
 
 CREATE TABLE `coupon` (
@@ -342,7 +342,7 @@ CREATE TABLE `coupon` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cron_data`
+-- 테이블 구조 `cron_data`
 --
 
 CREATE TABLE `cron_data` (
@@ -355,7 +355,7 @@ CREATE TABLE `cron_data` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `data_node_entity`
+-- 테이블 구조 `data_node_entity`
 --
 
 CREATE TABLE `data_node_entity` (
@@ -374,7 +374,7 @@ CREATE TABLE `data_node_entity` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `event_coupons`
+-- 테이블 구조 `event_coupons`
 --
 
 CREATE TABLE `event_coupons` (
@@ -399,7 +399,7 @@ CREATE TABLE `event_coupons` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `event_spin_history`
+-- 테이블 구조 `event_spin_history`
 --
 
 CREATE TABLE `event_spin_history` (
@@ -421,7 +421,7 @@ CREATE TABLE `event_spin_history` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `log_geoip`
+-- 테이블 구조 `log_geoip`
 --
 
 CREATE TABLE `log_geoip` (
@@ -437,7 +437,7 @@ CREATE TABLE `log_geoip` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ms_config`
+-- 테이블 구조 `ms_config`
 --
 
 CREATE TABLE `ms_config` (
@@ -450,7 +450,7 @@ CREATE TABLE `ms_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ms_share`
+-- 테이블 구조 `ms_share`
 --
 
 CREATE TABLE `ms_share` (
@@ -465,7 +465,7 @@ CREATE TABLE `ms_share` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `philgo_attend_node_entity`
+-- 테이블 구조 `philgo_attend_node_entity`
 --
 
 CREATE TABLE `philgo_attend_node_entity` (
@@ -479,7 +479,7 @@ CREATE TABLE `philgo_attend_node_entity` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `philgo_banner_node_entity`
+-- 테이블 구조 `philgo_banner_node_entity`
 --
 
 CREATE TABLE `philgo_banner_node_entity` (
@@ -500,7 +500,7 @@ CREATE TABLE `philgo_banner_node_entity` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `philgo_meta_entity`
+-- 테이블 구조 `philgo_meta_entity`
 --
 
 CREATE TABLE `philgo_meta_entity` (
@@ -514,7 +514,7 @@ CREATE TABLE `philgo_meta_entity` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `post_search`
+-- 테이블 구조 `post_search`
 --
 
 CREATE TABLE `post_search` (
@@ -530,7 +530,7 @@ CREATE TABLE `post_search` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `push_tokens`
+-- 테이블 구조 `push_tokens`
 --
 
 CREATE TABLE `push_tokens` (
@@ -544,7 +544,7 @@ CREATE TABLE `push_tokens` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `push_tokens_queue`
+-- 테이블 구조 `push_tokens_queue`
 --
 
 CREATE TABLE `push_tokens_queue` (
@@ -554,7 +554,7 @@ CREATE TABLE `push_tokens_queue` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `push_tokens_v2`
+-- 테이블 구조 `push_tokens_v2`
 --
 
 CREATE TABLE `push_tokens_v2` (
@@ -569,7 +569,7 @@ CREATE TABLE `push_tokens_v2` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_biz_point`
+-- 테이블 구조 `sf_biz_point`
 --
 
 CREATE TABLE `sf_biz_point` (
@@ -582,7 +582,7 @@ CREATE TABLE `sf_biz_point` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_block`
+-- 테이블 구조 `sf_block`
 --
 
 CREATE TABLE `sf_block` (
@@ -600,7 +600,7 @@ CREATE TABLE `sf_block` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_config`
+-- 테이블 구조 `sf_config`
 --
 
 CREATE TABLE `sf_config` (
@@ -611,7 +611,7 @@ CREATE TABLE `sf_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_data`
+-- 테이블 구조 `sf_data`
 --
 
 CREATE TABLE `sf_data` (
@@ -635,7 +635,7 @@ CREATE TABLE `sf_data` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_firewall_mass_access`
+-- 테이블 구조 `sf_firewall_mass_access`
 --
 
 CREATE TABLE `sf_firewall_mass_access` (
@@ -646,7 +646,7 @@ CREATE TABLE `sf_firewall_mass_access` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_group_config`
+-- 테이블 구조 `sf_group_config`
 --
 
 CREATE TABLE `sf_group_config` (
@@ -665,7 +665,7 @@ CREATE TABLE `sf_group_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_group_member`
+-- 테이블 구조 `sf_group_member`
 --
 
 CREATE TABLE `sf_group_member` (
@@ -681,7 +681,7 @@ CREATE TABLE `sf_group_member` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_log_browser`
+-- 테이블 구조 `sf_log_browser`
 --
 
 CREATE TABLE `sf_log_browser` (
@@ -696,7 +696,7 @@ CREATE TABLE `sf_log_browser` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_log_ip`
+-- 테이블 구조 `sf_log_ip`
 --
 
 CREATE TABLE `sf_log_ip` (
@@ -707,7 +707,7 @@ CREATE TABLE `sf_log_ip` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_log_referral`
+-- 테이블 구조 `sf_log_referral`
 --
 
 CREATE TABLE `sf_log_referral` (
@@ -725,7 +725,7 @@ CREATE TABLE `sf_log_referral` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_log_view`
+-- 테이블 구조 `sf_log_view`
 --
 
 CREATE TABLE `sf_log_view` (
@@ -737,7 +737,7 @@ CREATE TABLE `sf_log_view` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_member`
+-- 테이블 구조 `sf_member`
 --
 
 CREATE TABLE `sf_member` (
@@ -840,7 +840,7 @@ CREATE TABLE `sf_member` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_member_action`
+-- 테이블 구조 `sf_member_action`
 --
 
 CREATE TABLE `sf_member_action` (
@@ -854,7 +854,7 @@ CREATE TABLE `sf_member_action` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_member_blocks`
+-- 테이블 구조 `sf_member_blocks`
 --
 
 CREATE TABLE `sf_member_blocks` (
@@ -867,7 +867,7 @@ CREATE TABLE `sf_member_blocks` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_message`
+-- 테이블 구조 `sf_message`
 --
 
 CREATE TABLE `sf_message` (
@@ -885,7 +885,7 @@ CREATE TABLE `sf_message` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_multisite_config`
+-- 테이블 구조 `sf_multisite_config`
 --
 
 CREATE TABLE `sf_multisite_config` (
@@ -898,7 +898,7 @@ CREATE TABLE `sf_multisite_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_office_attendance`
+-- 테이블 구조 `sf_office_attendance`
 --
 
 CREATE TABLE `sf_office_attendance` (
@@ -913,7 +913,7 @@ CREATE TABLE `sf_office_attendance` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_point_adv_day`
+-- 테이블 구조 `sf_point_adv_day`
 --
 
 CREATE TABLE `sf_point_adv_day` (
@@ -929,7 +929,7 @@ CREATE TABLE `sf_point_adv_day` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_point_log`
+-- 테이블 구조 `sf_point_log`
 --
 
 CREATE TABLE `sf_point_log` (
@@ -950,7 +950,7 @@ CREATE TABLE `sf_point_log` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_post_comment_history`
+-- 테이블 구조 `sf_post_comment_history`
 --
 
 CREATE TABLE `sf_post_comment_history` (
@@ -966,7 +966,7 @@ CREATE TABLE `sf_post_comment_history` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_post_config`
+-- 테이블 구조 `sf_post_config`
 --
 
 CREATE TABLE `sf_post_config` (
@@ -1078,7 +1078,7 @@ CREATE TABLE `sf_post_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_post_data`
+-- 테이블 구조 `sf_post_data`
 --
 
 CREATE TABLE `sf_post_data` (
@@ -1091,9 +1091,9 @@ CREATE TABLE `sf_post_data` (
   `depth` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
   `gid` char(32) NOT NULL DEFAULT '',
   `post_id` varchar(64) NOT NULL,
-  `group_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `category` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `sub_category` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `group_id` varchar(64) DEFAULT '',
+  `category` varchar(32) NOT NULL DEFAULT '',
+  `sub_category` varchar(64) NOT NULL DEFAULT '',
   `reminder` char(1) NOT NULL DEFAULT '',
   `secret` char(1) NOT NULL DEFAULT '',
   `checked` char(1) NOT NULL DEFAULT '' COMMENT '체크를 했으면 Y 안했으면 empty, 통과를 못했으면 R',
@@ -1107,9 +1107,9 @@ CREATE TABLE `sf_post_data` (
   `user_agent` varchar(255) NOT NULL DEFAULT '',
   `user_id` varchar(64) NOT NULL DEFAULT '',
   `user_password` varchar(32) NOT NULL DEFAULT '',
-  `user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `user_name` varchar(64) NOT NULL DEFAULT '',
   `user_email` varchar(64) NOT NULL DEFAULT '',
-  `subject` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `subject` varchar(255) NOT NULL DEFAULT '',
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `content_type` varchar(16) DEFAULT NULL,
   `files` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
@@ -1117,7 +1117,7 @@ CREATE TABLE `sf_post_data` (
   `subject_private` varchar(255) NOT NULL DEFAULT '',
   `content_private` longtext DEFAULT NULL,
   `content_stripped_private` longtext DEFAULT NULL,
-  `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `link` varchar(255) NOT NULL DEFAULT '',
   `stamp_update` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `stamp_last_comment` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `show_image` char(1) NOT NULL DEFAULT '',
@@ -1130,7 +1130,7 @@ CREATE TABLE `sf_post_data` (
   `good` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
   `bad` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
   `access_code` varchar(32) NOT NULL DEFAULT '',
-  `region` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `region` varchar(64) NOT NULL DEFAULT '',
   `int_1` int(11) NOT NULL DEFAULT 0,
   `int_2` int(11) NOT NULL DEFAULT 0,
   `int_3` int(11) NOT NULL DEFAULT 0,
@@ -1151,36 +1151,36 @@ CREATE TABLE `sf_post_data` (
   `char_8` char(1) NOT NULL DEFAULT '',
   `char_9` char(1) NOT NULL DEFAULT '',
   `char_10` char(1) NOT NULL DEFAULT '',
-  `varchar_1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_4` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_5` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_6` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_7` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_8` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_9` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_10` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_11` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_12` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_13` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_14` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_15` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_16` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_17` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_18` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_19` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `varchar_20` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `text_1` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_2` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_3` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_4` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_5` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_6` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `varchar_1` varchar(255) NOT NULL DEFAULT '',
+  `varchar_2` varchar(255) NOT NULL DEFAULT '',
+  `varchar_3` varchar(255) NOT NULL DEFAULT '',
+  `varchar_4` varchar(255) NOT NULL DEFAULT '',
+  `varchar_5` varchar(255) NOT NULL DEFAULT '',
+  `varchar_6` varchar(255) NOT NULL DEFAULT '',
+  `varchar_7` varchar(255) NOT NULL DEFAULT '',
+  `varchar_8` varchar(255) NOT NULL DEFAULT '',
+  `varchar_9` varchar(255) NOT NULL DEFAULT '',
+  `varchar_10` varchar(255) NOT NULL DEFAULT '',
+  `varchar_11` varchar(255) NOT NULL DEFAULT '',
+  `varchar_12` varchar(255) NOT NULL DEFAULT '',
+  `varchar_13` varchar(255) NOT NULL DEFAULT '',
+  `varchar_14` varchar(255) NOT NULL DEFAULT '',
+  `varchar_15` varchar(255) NOT NULL DEFAULT '',
+  `varchar_16` varchar(255) NOT NULL DEFAULT '',
+  `varchar_17` varchar(255) NOT NULL DEFAULT '',
+  `varchar_18` varchar(255) NOT NULL DEFAULT '',
+  `varchar_19` varchar(255) NOT NULL DEFAULT '',
+  `varchar_20` varchar(255) NOT NULL DEFAULT '',
+  `text_1` longtext DEFAULT NULL,
+  `text_2` longtext DEFAULT NULL,
+  `text_3` longtext DEFAULT NULL,
+  `text_4` longtext DEFAULT NULL,
+  `text_5` longtext DEFAULT NULL,
+  `text_6` longtext DEFAULT NULL,
   `text_7` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_8` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_9` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_10` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_8` longtext DEFAULT NULL,
+  `text_9` longtext DEFAULT NULL,
+  `text_10` longtext DEFAULT NULL,
   `has_image` char(1) DEFAULT '',
   `has_video` char(1) DEFAULT '',
   `has_youtube` char(1) DEFAULT ''
@@ -1189,7 +1189,7 @@ CREATE TABLE `sf_post_data` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_post_search`
+-- 테이블 구조 `sf_post_search`
 --
 
 CREATE TABLE `sf_post_search` (
@@ -1205,7 +1205,7 @@ CREATE TABLE `sf_post_search` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_post_tag`
+-- 테이블 구조 `sf_post_tag`
 --
 
 CREATE TABLE `sf_post_tag` (
@@ -1218,7 +1218,7 @@ CREATE TABLE `sf_post_tag` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_post_vote_history`
+-- 테이블 구조 `sf_post_vote_history`
 --
 
 CREATE TABLE `sf_post_vote_history` (
@@ -1232,7 +1232,7 @@ CREATE TABLE `sf_post_vote_history` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_spam_trial`
+-- 테이블 구조 `sf_spam_trial`
 --
 
 CREATE TABLE `sf_spam_trial` (
@@ -1245,7 +1245,7 @@ CREATE TABLE `sf_spam_trial` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_subsite_config`
+-- 테이블 구조 `sf_subsite_config`
 --
 
 CREATE TABLE `sf_subsite_config` (
@@ -1258,7 +1258,7 @@ CREATE TABLE `sf_subsite_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_syndi`
+-- 테이블 구조 `sf_syndi`
 --
 
 CREATE TABLE `sf_syndi` (
@@ -1271,7 +1271,7 @@ CREATE TABLE `sf_syndi` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_system_log`
+-- 테이블 구조 `sf_system_log`
 --
 
 CREATE TABLE `sf_system_log` (
@@ -1285,21 +1285,7 @@ CREATE TABLE `sf_system_log` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sf_user_reports`
---
-
-CREATE TABLE `sf_user_reports` (
-  `idx` int(11) NOT NULL,
-  `idx_reporter` int(11) NOT NULL COMMENT '신고한 사용자 idx',
-  `idx_reported` int(11) NOT NULL COMMENT '신고당한 사용자 idx',
-  `reason` varchar(255) DEFAULT '' COMMENT '신고 사유',
-  `stamp` int(11) NOT NULL COMMENT '신고 시각'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `sf_widget_config`
+-- 테이블 구조 `sf_widget_config`
 --
 
 CREATE TABLE `sf_widget_config` (
@@ -1312,7 +1298,7 @@ CREATE TABLE `sf_widget_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `site`
+-- 테이블 구조 `site`
 --
 
 CREATE TABLE `site` (
@@ -1325,7 +1311,7 @@ CREATE TABLE `site` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `social`
+-- 테이블 구조 `social`
 --
 
 CREATE TABLE `social` (
@@ -1342,7 +1328,7 @@ CREATE TABLE `social` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sonub_site_config`
+-- 테이블 구조 `sonub_site_config`
 --
 
 CREATE TABLE `sonub_site_config` (
@@ -1355,7 +1341,7 @@ CREATE TABLE `sonub_site_config` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `uploads`
+-- 테이블 구조 `uploads`
 --
 
 CREATE TABLE `uploads` (
@@ -1376,44 +1362,44 @@ CREATE TABLE `uploads` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='v7 파일 업로드 메타데이터';
 
 --
--- Indexes for dumped tables
+-- 덤프된 테이블의 인덱스
 --
 
 --
--- Indexes for table `adv_feature_view_log`
+-- 테이블의 인덱스 `adv_feature_view_log`
 --
 ALTER TABLE `adv_feature_view_log`
   ADD PRIMARY KEY (`idx`),
   ADD KEY `id_stamp` (`id`,`stamp`);
 
 --
--- Indexes for table `ad_agent`
+-- 테이블의 인덱스 `ad_agent`
 --
 ALTER TABLE `ad_agent`
   ADD PRIMARY KEY (`idx`),
   ADD KEY `id` (`id`);
 
 --
--- Indexes for table `ad_client`
+-- 테이블의 인덱스 `ad_client`
 --
 ALTER TABLE `ad_client`
   ADD PRIMARY KEY (`idx`);
 
 --
--- Indexes for table `ad_log`
+-- 테이블의 인덱스 `ad_log`
 --
 ALTER TABLE `ad_log`
   ADD PRIMARY KEY (`idx_ad`,`ymd`);
 
 --
--- Indexes for table `ad_payment`
+-- 테이블의 인덱스 `ad_payment`
 --
 ALTER TABLE `ad_payment`
   ADD PRIMARY KEY (`idx`),
   ADD KEY `idx_payment_for_refund` (`idx_payment_for_refund`);
 
 --
--- Indexes for table `api_chat_message`
+-- 테이블의 인덱스 `api_chat_message`
 --
 ALTER TABLE `api_chat_message`
   ADD PRIMARY KEY (`idx`),
@@ -1422,7 +1408,7 @@ ALTER TABLE `api_chat_message`
   ADD KEY `idx_member_idx_chat_room` (`idx_member`,`idx_chat_room`);
 
 --
--- Indexes for table `api_chat_my_room`
+-- 테이블의 인덱스 `api_chat_my_room`
 --
 ALTER TABLE `api_chat_my_room`
   ADD PRIMARY KEY (`idx`),
@@ -1430,7 +1416,7 @@ ALTER TABLE `api_chat_my_room`
   ADD KEY `idx_room` (`idx_chat_room`);
 
 --
--- Indexes for table `api_chat_room`
+-- 테이블의 인덱스 `api_chat_room`
 --
 ALTER TABLE `api_chat_room`
   ADD PRIMARY KEY (`idx`),
@@ -1441,14 +1427,14 @@ ALTER TABLE `api_chat_room`
   ADD KEY `domain` (`domain`);
 
 --
--- Indexes for table `auto_posting`
+-- 테이블의 인덱스 `auto_posting`
 --
 ALTER TABLE `auto_posting`
   ADD PRIMARY KEY (`idx`),
   ADD UNIQUE KEY `posting_id_ix_post` (`posting_id`,`idx_post`);
 
 --
--- Indexes for table `bookmarks`
+-- 테이블의 인덱스 `bookmarks`
 --
 ALTER TABLE `bookmarks`
   ADD PRIMARY KEY (`idx`),
@@ -1459,7 +1445,7 @@ ALTER TABLE `bookmarks`
   ADD KEY `idx_member_created_at` (`idx_member`,`created_at`);
 
 --
--- Indexes for table `bookmark_groups`
+-- 테이블의 인덱스 `bookmark_groups`
 --
 ALTER TABLE `bookmark_groups`
   ADD PRIMARY KEY (`idx`),
@@ -1467,7 +1453,7 @@ ALTER TABLE `bookmark_groups`
   ADD KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `company`
+-- 테이블의 인덱스 `company`
 --
 ALTER TABLE `company`
   ADD PRIMARY KEY (`idx`),
@@ -1481,7 +1467,7 @@ ALTER TABLE `company`
   ADD KEY `idx_ad_end_date` (`ad_end_date`);
 
 --
--- Indexes for table `company_meta`
+-- 테이블의 인덱스 `company_meta`
 --
 ALTER TABLE `company_meta`
   ADD PRIMARY KEY (`idx`),
@@ -1495,7 +1481,7 @@ ALTER TABLE `company_meta`
   ADD KEY `idx_company_type` (`idx_company`,`type`);
 
 --
--- Indexes for table `company_qr_codes`
+-- 테이블의 인덱스 `company_qr_codes`
 --
 ALTER TABLE `company_qr_codes`
   ADD PRIMARY KEY (`idx`),
@@ -1507,7 +1493,7 @@ ALTER TABLE `company_qr_codes`
   ADD KEY `idx_status` (`status`);
 
 --
--- Indexes for table `company_qr_code_usages`
+-- 테이블의 인덱스 `company_qr_code_usages`
 --
 ALTER TABLE `company_qr_code_usages`
   ADD PRIMARY KEY (`idx`),
@@ -1519,7 +1505,7 @@ ALTER TABLE `company_qr_code_usages`
   ADD KEY `idx_verification_id` (`verification_id`);
 
 --
--- Indexes for table `company_reviews`
+-- 테이블의 인덱스 `company_reviews`
 --
 ALTER TABLE `company_reviews`
   ADD PRIMARY KEY (`idx`),
@@ -1528,7 +1514,7 @@ ALTER TABLE `company_reviews`
   ADD KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `coupon`
+-- 테이블의 인덱스 `coupon`
 --
 ALTER TABLE `coupon`
   ADD PRIMARY KEY (`idx`),
@@ -1536,7 +1522,7 @@ ALTER TABLE `coupon`
   ADD KEY `name` (`name`);
 
 --
--- Indexes for table `cron_data`
+-- 테이블의 인덱스 `cron_data`
 --
 ALTER TABLE `cron_data`
   ADD PRIMARY KEY (`id`),
@@ -1544,7 +1530,7 @@ ALTER TABLE `cron_data`
   ADD KEY `stamp` (`stamp`);
 
 --
--- Indexes for table `data_node_entity`
+-- 테이블의 인덱스 `data_node_entity`
 --
 ALTER TABLE `data_node_entity`
   ADD PRIMARY KEY (`id`),
@@ -1554,7 +1540,7 @@ ALTER TABLE `data_node_entity`
   ADD KEY `code` (`code`);
 
 --
--- Indexes for table `event_coupons`
+-- 테이블의 인덱스 `event_coupons`
 --
 ALTER TABLE `event_coupons`
   ADD PRIMARY KEY (`idx`),
@@ -1566,7 +1552,7 @@ ALTER TABLE `event_coupons`
   ADD KEY `coupon_type_status` (`coupon_type`,`status`);
 
 --
--- Indexes for table `event_spin_history`
+-- 테이블의 인덱스 `event_spin_history`
 --
 ALTER TABLE `event_spin_history`
   ADD PRIMARY KEY (`idx`),
@@ -1577,7 +1563,7 @@ ALTER TABLE `event_spin_history`
   ADD KEY `starbucks_coupon_file` (`starbucks_coupon_file`);
 
 --
--- Indexes for table `log_geoip`
+-- 테이블의 인덱스 `log_geoip`
 --
 ALTER TABLE `log_geoip`
   ADD PRIMARY KEY (`idx`),
@@ -1587,7 +1573,7 @@ ALTER TABLE `log_geoip`
   ADD KEY `source` (`source`);
 
 --
--- Indexes for table `ms_config`
+-- 테이블의 인덱스 `ms_config`
 --
 ALTER TABLE `ms_config`
   ADD PRIMARY KEY (`idx`),
@@ -1595,7 +1581,7 @@ ALTER TABLE `ms_config`
   ADD KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `ms_share`
+-- 테이블의 인덱스 `ms_share`
 --
 ALTER TABLE `ms_share`
   ADD PRIMARY KEY (`idx`),
@@ -1604,7 +1590,7 @@ ALTER TABLE `ms_share`
   ADD KEY `stamp` (`stamp`);
 
 --
--- Indexes for table `philgo_attend_node_entity`
+-- 테이블의 인덱스 `philgo_attend_node_entity`
 --
 ALTER TABLE `philgo_attend_node_entity`
   ADD PRIMARY KEY (`id`),
@@ -1613,7 +1599,7 @@ ALTER TABLE `philgo_attend_node_entity`
   ADD KEY `updated` (`updated`);
 
 --
--- Indexes for table `philgo_banner_node_entity`
+-- 테이블의 인덱스 `philgo_banner_node_entity`
 --
 ALTER TABLE `philgo_banner_node_entity`
   ADD PRIMARY KEY (`id`),
@@ -1621,7 +1607,7 @@ ALTER TABLE `philgo_banner_node_entity`
   ADD KEY `updated` (`updated`);
 
 --
--- Indexes for table `philgo_meta_entity`
+-- 테이블의 인덱스 `philgo_meta_entity`
 --
 ALTER TABLE `philgo_meta_entity`
   ADD PRIMARY KEY (`id`),
@@ -1630,7 +1616,7 @@ ALTER TABLE `philgo_meta_entity`
   ADD KEY `updated` (`updated`);
 
 --
--- Indexes for table `post_search`
+-- 테이블의 인덱스 `post_search`
 --
 ALTER TABLE `post_search`
   ADD PRIMARY KEY (`idx_post`),
@@ -1644,7 +1630,7 @@ ALTER TABLE `post_search`
 ALTER TABLE `post_search` ADD FULLTEXT KEY `ft_content` (`content`);
 
 --
--- Indexes for table `push_tokens`
+-- 테이블의 인덱스 `push_tokens`
 --
 ALTER TABLE `push_tokens`
   ADD PRIMARY KEY (`idx`),
@@ -1654,13 +1640,13 @@ ALTER TABLE `push_tokens`
   ADD KEY `domain` (`domain`);
 
 --
--- Indexes for table `push_tokens_queue`
+-- 테이블의 인덱스 `push_tokens_queue`
 --
 ALTER TABLE `push_tokens_queue`
   ADD PRIMARY KEY (`token`);
 
 --
--- Indexes for table `push_tokens_v2`
+-- 테이블의 인덱스 `push_tokens_v2`
 --
 ALTER TABLE `push_tokens_v2`
   ADD PRIMARY KEY (`idx`),
@@ -1670,14 +1656,14 @@ ALTER TABLE `push_tokens_v2`
   ADD KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `sf_biz_point`
+-- 테이블의 인덱스 `sf_biz_point`
 --
 ALTER TABLE `sf_biz_point`
   ADD PRIMARY KEY (`idx`),
   ADD KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `sf_block`
+-- 테이블의 인덱스 `sf_block`
 --
 ALTER TABLE `sf_block`
   ADD PRIMARY KEY (`idx`),
@@ -1691,13 +1677,13 @@ ALTER TABLE `sf_block`
   ADD KEY `md5_file_2` (`md5_file_2`);
 
 --
--- Indexes for table `sf_config`
+-- 테이블의 인덱스 `sf_config`
 --
 ALTER TABLE `sf_config`
   ADD PRIMARY KEY (`key`);
 
 --
--- Indexes for table `sf_data`
+-- 테이블의 인덱스 `sf_data`
 --
 ALTER TABLE `sf_data`
   ADD PRIMARY KEY (`idx`),
@@ -1711,13 +1697,13 @@ ALTER TABLE `sf_data`
   ADD KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `sf_firewall_mass_access`
+-- 테이블의 인덱스 `sf_firewall_mass_access`
 --
 ALTER TABLE `sf_firewall_mass_access`
   ADD PRIMARY KEY (`ip`);
 
 --
--- Indexes for table `sf_group_config`
+-- 테이블의 인덱스 `sf_group_config`
 --
 ALTER TABLE `sf_group_config`
   ADD PRIMARY KEY (`idx`),
@@ -1725,14 +1711,14 @@ ALTER TABLE `sf_group_config`
   ADD UNIQUE KEY `name` (`name`);
 
 --
--- Indexes for table `sf_group_member`
+-- 테이블의 인덱스 `sf_group_member`
 --
 ALTER TABLE `sf_group_member`
   ADD PRIMARY KEY (`idx`),
   ADD UNIQUE KEY `idx_group` (`idx_group`,`idx_member`);
 
 --
--- Indexes for table `sf_log_browser`
+-- 테이블의 인덱스 `sf_log_browser`
 --
 ALTER TABLE `sf_log_browser`
   ADD PRIMARY KEY (`idx`),
@@ -1740,13 +1726,13 @@ ALTER TABLE `sf_log_browser`
   ADD KEY `domain` (`domain`);
 
 --
--- Indexes for table `sf_log_ip`
+-- 테이블의 인덱스 `sf_log_ip`
 --
 ALTER TABLE `sf_log_ip`
   ADD PRIMARY KEY (`ymd`,`ip`);
 
 --
--- Indexes for table `sf_log_referral`
+-- 테이블의 인덱스 `sf_log_referral`
 --
 ALTER TABLE `sf_log_referral`
   ADD PRIMARY KEY (`idx`),
@@ -1754,13 +1740,13 @@ ALTER TABLE `sf_log_referral`
   ADD KEY `stamp_3` (`stamp`);
 
 --
--- Indexes for table `sf_log_view`
+-- 테이블의 인덱스 `sf_log_view`
 --
 ALTER TABLE `sf_log_view`
   ADD PRIMARY KEY (`ymd`,`code`);
 
 --
--- Indexes for table `sf_member`
+-- 테이블의 인덱스 `sf_member`
 --
 ALTER TABLE `sf_member`
   ADD PRIMARY KEY (`idx`),
@@ -1795,7 +1781,7 @@ ALTER TABLE `sf_member`
   ADD KEY `varchar_6` (`varchar_6`);
 
 --
--- Indexes for table `sf_member_action`
+-- 테이블의 인덱스 `sf_member_action`
 --
 ALTER TABLE `sf_member_action`
   ADD PRIMARY KEY (`idx`),
@@ -1805,7 +1791,7 @@ ALTER TABLE `sf_member_action`
   ADD KEY `stamp` (`stamp`);
 
 --
--- Indexes for table `sf_member_blocks`
+-- 테이블의 인덱스 `sf_member_blocks`
 --
 ALTER TABLE `sf_member_blocks`
   ADD PRIMARY KEY (`idx`),
@@ -1813,7 +1799,7 @@ ALTER TABLE `sf_member_blocks`
   ADD KEY `idx_blocker_created_at` (`idx`,`idx_blocker`);
 
 --
--- Indexes for table `sf_message`
+-- 테이블의 인덱스 `sf_message`
 --
 ALTER TABLE `sf_message`
   ADD PRIMARY KEY (`idx`),
@@ -1825,7 +1811,7 @@ ALTER TABLE `sf_message`
   ADD KEY `gid` (`gid`);
 
 --
--- Indexes for table `sf_multisite_config`
+-- 테이블의 인덱스 `sf_multisite_config`
 --
 ALTER TABLE `sf_multisite_config`
   ADD PRIMARY KEY (`idx`),
@@ -1833,7 +1819,7 @@ ALTER TABLE `sf_multisite_config`
   ADD KEY `priority` (`priority`);
 
 --
--- Indexes for table `sf_office_attendance`
+-- 테이블의 인덱스 `sf_office_attendance`
 --
 ALTER TABLE `sf_office_attendance`
   ADD PRIMARY KEY (`idx`),
@@ -1841,13 +1827,13 @@ ALTER TABLE `sf_office_attendance`
   ADD KEY `code` (`code`);
 
 --
--- Indexes for table `sf_point_adv_day`
+-- 테이블의 인덱스 `sf_point_adv_day`
 --
 ALTER TABLE `sf_point_adv_day`
   ADD PRIMARY KEY (`idx`);
 
 --
--- Indexes for table `sf_point_log`
+-- 테이블의 인덱스 `sf_point_log`
 --
 ALTER TABLE `sf_point_log`
   ADD PRIMARY KEY (`idx`),
@@ -1860,7 +1846,7 @@ ALTER TABLE `sf_point_log`
   ADD KEY `etc_stamp` (`etc`(191),`stamp`);
 
 --
--- Indexes for table `sf_post_comment_history`
+-- 테이블의 인덱스 `sf_post_comment_history`
 --
 ALTER TABLE `sf_post_comment_history`
   ADD PRIMARY KEY (`idx`),
@@ -1868,7 +1854,7 @@ ALTER TABLE `sf_post_comment_history`
   ADD KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `sf_post_config`
+-- 테이블의 인덱스 `sf_post_config`
 --
 ALTER TABLE `sf_post_config`
   ADD PRIMARY KEY (`idx`),
@@ -1876,7 +1862,7 @@ ALTER TABLE `sf_post_config`
   ADD KEY `group_id` (`group_id`);
 
 --
--- Indexes for table `sf_post_data`
+-- 테이블의 인덱스 `sf_post_data`
 --
 ALTER TABLE `sf_post_data`
   ADD PRIMARY KEY (`idx`),
@@ -1944,7 +1930,7 @@ ALTER TABLE `sf_post_data`
   ADD KEY `idx_parent_deleted_stamp` (`idx_parent`,`deleted`,`stamp`);
 
 --
--- Indexes for table `sf_post_search`
+-- 테이블의 인덱스 `sf_post_search`
 --
 ALTER TABLE `sf_post_search`
   ADD PRIMARY KEY (`idx`),
@@ -1956,7 +1942,7 @@ ALTER TABLE `sf_post_search`
   ADD KEY `domain` (`domain`);
 
 --
--- Indexes for table `sf_post_tag`
+-- 테이블의 인덱스 `sf_post_tag`
 --
 ALTER TABLE `sf_post_tag`
   ADD PRIMARY KEY (`idx`),
@@ -1966,7 +1952,7 @@ ALTER TABLE `sf_post_tag`
   ADD KEY `idx_post` (`idx_post`);
 
 --
--- Indexes for table `sf_post_vote_history`
+-- 테이블의 인덱스 `sf_post_vote_history`
 --
 ALTER TABLE `sf_post_vote_history`
   ADD KEY `idx_member` (`idx_member`),
@@ -1974,13 +1960,13 @@ ALTER TABLE `sf_post_vote_history`
   ADD KEY `idx_post_idx_member` (`idx_post`,`idx_member`);
 
 --
--- Indexes for table `sf_spam_trial`
+-- 테이블의 인덱스 `sf_spam_trial`
 --
 ALTER TABLE `sf_spam_trial`
   ADD PRIMARY KEY (`idx`);
 
 --
--- Indexes for table `sf_subsite_config`
+-- 테이블의 인덱스 `sf_subsite_config`
 --
 ALTER TABLE `sf_subsite_config`
   ADD PRIMARY KEY (`domain`),
@@ -1988,7 +1974,7 @@ ALTER TABLE `sf_subsite_config`
   ADD KEY `stamp_last_post` (`stamp_last_post`);
 
 --
--- Indexes for table `sf_syndi`
+-- 테이블의 인덱스 `sf_syndi`
 --
 ALTER TABLE `sf_syndi`
   ADD PRIMARY KEY (`idx`),
@@ -1996,7 +1982,7 @@ ALTER TABLE `sf_syndi`
   ADD KEY `stamp` (`stamp`);
 
 --
--- Indexes for table `sf_system_log`
+-- 테이블의 인덱스 `sf_system_log`
 --
 ALTER TABLE `sf_system_log`
   ADD PRIMARY KEY (`idx`),
@@ -2004,15 +1990,7 @@ ALTER TABLE `sf_system_log`
   ADD KEY `code` (`code`);
 
 --
--- Indexes for table `sf_user_reports`
---
-ALTER TABLE `sf_user_reports`
-  ADD PRIMARY KEY (`idx`),
-  ADD UNIQUE KEY `unique_report` (`idx_reporter`,`idx_reported`),
-  ADD KEY `idx_reported` (`idx_reported`);
-
---
--- Indexes for table `sf_widget_config`
+-- 테이블의 인덱스 `sf_widget_config`
 --
 ALTER TABLE `sf_widget_config`
   ADD PRIMARY KEY (`idx`),
@@ -2020,7 +1998,7 @@ ALTER TABLE `sf_widget_config`
   ADD KEY `stamp` (`stamp`);
 
 --
--- Indexes for table `site`
+-- 테이블의 인덱스 `site`
 --
 ALTER TABLE `site`
   ADD PRIMARY KEY (`idx`),
@@ -2029,21 +2007,21 @@ ALTER TABLE `site`
   ADD KEY `code` (`code`);
 
 --
--- Indexes for table `social`
+-- 테이블의 인덱스 `social`
 --
 ALTER TABLE `social`
   ADD PRIMARY KEY (`idx`),
   ADD UNIQUE KEY `idx_member` (`idx_member`);
 
 --
--- Indexes for table `sonub_site_config`
+-- 테이블의 인덱스 `sonub_site_config`
 --
 ALTER TABLE `sonub_site_config`
   ADD PRIMARY KEY (`idx`),
   ADD UNIQUE KEY `idx_member_code` (`idx_member`,`code`);
 
 --
--- Indexes for table `uploads`
+-- 테이블의 인덱스 `uploads`
 --
 ALTER TABLE `uploads`
   ADD PRIMARY KEY (`idx`),
@@ -2053,347 +2031,341 @@ ALTER TABLE `uploads`
   ADD KEY `attached_to` (`attached_to`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- 덤프된 테이블의 AUTO_INCREMENT
 --
 
 --
--- AUTO_INCREMENT for table `adv_feature_view_log`
+-- 테이블의 AUTO_INCREMENT `adv_feature_view_log`
 --
 ALTER TABLE `adv_feature_view_log`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `ad_agent`
+-- 테이블의 AUTO_INCREMENT `ad_agent`
 --
 ALTER TABLE `ad_agent`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `ad_client`
+-- 테이블의 AUTO_INCREMENT `ad_client`
 --
 ALTER TABLE `ad_client`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `ad_payment`
+-- 테이블의 AUTO_INCREMENT `ad_payment`
 --
 ALTER TABLE `ad_payment`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `api_chat_message`
+-- 테이블의 AUTO_INCREMENT `api_chat_message`
 --
 ALTER TABLE `api_chat_message`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `api_chat_my_room`
+-- 테이블의 AUTO_INCREMENT `api_chat_my_room`
 --
 ALTER TABLE `api_chat_my_room`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `api_chat_room`
+-- 테이블의 AUTO_INCREMENT `api_chat_room`
 --
 ALTER TABLE `api_chat_room`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `auto_posting`
+-- 테이블의 AUTO_INCREMENT `auto_posting`
 --
 ALTER TABLE `auto_posting`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `bookmarks`
+-- 테이블의 AUTO_INCREMENT `bookmarks`
 --
 ALTER TABLE `bookmarks`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `bookmark_groups`
+-- 테이블의 AUTO_INCREMENT `bookmark_groups`
 --
 ALTER TABLE `bookmark_groups`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `company`
+-- 테이블의 AUTO_INCREMENT `company`
 --
 ALTER TABLE `company`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `company_meta`
+-- 테이블의 AUTO_INCREMENT `company_meta`
 --
 ALTER TABLE `company_meta`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `company_qr_codes`
+-- 테이블의 AUTO_INCREMENT `company_qr_codes`
 --
 ALTER TABLE `company_qr_codes`
   MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT COMMENT 'QR 코드 고유 번호';
 
 --
--- AUTO_INCREMENT for table `company_qr_code_usages`
+-- 테이블의 AUTO_INCREMENT `company_qr_code_usages`
 --
 ALTER TABLE `company_qr_code_usages`
   MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT COMMENT '사용 기록 고유 번호';
 
 --
--- AUTO_INCREMENT for table `company_reviews`
+-- 테이블의 AUTO_INCREMENT `company_reviews`
 --
 ALTER TABLE `company_reviews`
   MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `coupon`
+-- 테이블의 AUTO_INCREMENT `coupon`
 --
 ALTER TABLE `coupon`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `cron_data`
+-- 테이블의 AUTO_INCREMENT `cron_data`
 --
 ALTER TABLE `cron_data`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `data_node_entity`
+-- 테이블의 AUTO_INCREMENT `data_node_entity`
 --
 ALTER TABLE `data_node_entity`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `event_coupons`
+-- 테이블의 AUTO_INCREMENT `event_coupons`
 --
 ALTER TABLE `event_coupons`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `event_spin_history`
+-- 테이블의 AUTO_INCREMENT `event_spin_history`
 --
 ALTER TABLE `event_spin_history`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `log_geoip`
+-- 테이블의 AUTO_INCREMENT `log_geoip`
 --
 ALTER TABLE `log_geoip`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `ms_config`
+-- 테이블의 AUTO_INCREMENT `ms_config`
 --
 ALTER TABLE `ms_config`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `ms_share`
+-- 테이블의 AUTO_INCREMENT `ms_share`
 --
 ALTER TABLE `ms_share`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `philgo_attend_node_entity`
+-- 테이블의 AUTO_INCREMENT `philgo_attend_node_entity`
 --
 ALTER TABLE `philgo_attend_node_entity`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `philgo_banner_node_entity`
+-- 테이블의 AUTO_INCREMENT `philgo_banner_node_entity`
 --
 ALTER TABLE `philgo_banner_node_entity`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `philgo_meta_entity`
+-- 테이블의 AUTO_INCREMENT `philgo_meta_entity`
 --
 ALTER TABLE `philgo_meta_entity`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `push_tokens`
+-- 테이블의 AUTO_INCREMENT `push_tokens`
 --
 ALTER TABLE `push_tokens`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `push_tokens_v2`
+-- 테이블의 AUTO_INCREMENT `push_tokens_v2`
 --
 ALTER TABLE `push_tokens_v2`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_biz_point`
+-- 테이블의 AUTO_INCREMENT `sf_biz_point`
 --
 ALTER TABLE `sf_biz_point`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_block`
+-- 테이블의 AUTO_INCREMENT `sf_block`
 --
 ALTER TABLE `sf_block`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_data`
+-- 테이블의 AUTO_INCREMENT `sf_data`
 --
 ALTER TABLE `sf_data`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_group_config`
+-- 테이블의 AUTO_INCREMENT `sf_group_config`
 --
 ALTER TABLE `sf_group_config`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_group_member`
+-- 테이블의 AUTO_INCREMENT `sf_group_member`
 --
 ALTER TABLE `sf_group_member`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_log_browser`
+-- 테이블의 AUTO_INCREMENT `sf_log_browser`
 --
 ALTER TABLE `sf_log_browser`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_log_referral`
+-- 테이블의 AUTO_INCREMENT `sf_log_referral`
 --
 ALTER TABLE `sf_log_referral`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_member`
+-- 테이블의 AUTO_INCREMENT `sf_member`
 --
 ALTER TABLE `sf_member`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_member_action`
+-- 테이블의 AUTO_INCREMENT `sf_member_action`
 --
 ALTER TABLE `sf_member_action`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_member_blocks`
+-- 테이블의 AUTO_INCREMENT `sf_member_blocks`
 --
 ALTER TABLE `sf_member_blocks`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_message`
+-- 테이블의 AUTO_INCREMENT `sf_message`
 --
 ALTER TABLE `sf_message`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_multisite_config`
+-- 테이블의 AUTO_INCREMENT `sf_multisite_config`
 --
 ALTER TABLE `sf_multisite_config`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_office_attendance`
+-- 테이블의 AUTO_INCREMENT `sf_office_attendance`
 --
 ALTER TABLE `sf_office_attendance`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_point_adv_day`
+-- 테이블의 AUTO_INCREMENT `sf_point_adv_day`
 --
 ALTER TABLE `sf_point_adv_day`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_point_log`
+-- 테이블의 AUTO_INCREMENT `sf_point_log`
 --
 ALTER TABLE `sf_point_log`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_post_comment_history`
+-- 테이블의 AUTO_INCREMENT `sf_post_comment_history`
 --
 ALTER TABLE `sf_post_comment_history`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_post_config`
+-- 테이블의 AUTO_INCREMENT `sf_post_config`
 --
 ALTER TABLE `sf_post_config`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_post_data`
+-- 테이블의 AUTO_INCREMENT `sf_post_data`
 --
 ALTER TABLE `sf_post_data`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_post_search`
+-- 테이블의 AUTO_INCREMENT `sf_post_search`
 --
 ALTER TABLE `sf_post_search`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_post_tag`
+-- 테이블의 AUTO_INCREMENT `sf_post_tag`
 --
 ALTER TABLE `sf_post_tag`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_spam_trial`
+-- 테이블의 AUTO_INCREMENT `sf_spam_trial`
 --
 ALTER TABLE `sf_spam_trial`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_syndi`
+-- 테이블의 AUTO_INCREMENT `sf_syndi`
 --
 ALTER TABLE `sf_syndi`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_system_log`
+-- 테이블의 AUTO_INCREMENT `sf_system_log`
 --
 ALTER TABLE `sf_system_log`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sf_user_reports`
---
-ALTER TABLE `sf_user_reports`
-  MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `sf_widget_config`
+-- 테이블의 AUTO_INCREMENT `sf_widget_config`
 --
 ALTER TABLE `sf_widget_config`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `site`
+-- 테이블의 AUTO_INCREMENT `site`
 --
 ALTER TABLE `site`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `social`
+-- 테이블의 AUTO_INCREMENT `social`
 --
 ALTER TABLE `social`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sonub_site_config`
+-- 테이블의 AUTO_INCREMENT `sonub_site_config`
 --
 ALTER TABLE `sonub_site_config`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `uploads`
+-- 테이블의 AUTO_INCREMENT `uploads`
 --
 ALTER TABLE `uploads`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;

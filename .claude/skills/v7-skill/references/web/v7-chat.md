@@ -27,6 +27,9 @@
 17. [FCM 포그라운드 수신 핸들러](#17-fcm-포그라운드-수신-핸들러)
 18. [메시지 수정/삭제](#18-메시지-수정삭제)
 19. [관리자 전용 기능](#19-관리자-전용-기능)
+20. [v7 API 기반 사용자 정보 조회](#20-v7-api-기반-사용자-정보-조회)
+21. [버그 수정 이력](#21-버그-수정-이력)
+22. [v7 API 기반 즐겨찾기 시스템](#22-v7-api-기반-즐겨찾기-시스템)
 
 ---
 
@@ -37,7 +40,7 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 | 항목 | 설명 |
 |------|------|
 | **렌더링 방식** | CSR (클라이언트 사이드 렌더링) — Vue.js 3 CDN + Firebase compat SDK |
-| **데이터 저장소** | Firebase Realtime Database |
+| **데이터 저장소** | Firebase Realtime Database + v7 API (사용자 정보, 즐겨찾기) |
 | **파일 저장소** | Firebase Storage |
 | **인증** | Firebase Auth (PHP 로그인 + Firebase Custom Token) |
 | **UI 프레임워크** | Web Awesome Pro (Bootstrap 미사용) |
@@ -62,7 +65,7 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 ```
 v7/chat/
 ├── index.php              # 채팅 메인 페이지 (PHP — 로그인 확인, 설정 전달)
-└── chat.css               # 채팅 전용 CSS (~1400줄)
+└── chat.css               # 채팅 전용 CSS (~1940줄)
 
 v7/js/chat/
 ├── chat-helpers.js        # 설정, 상수, 헬퍼 함수, Presence, FCM (가장 먼저 로드)
@@ -82,7 +85,7 @@ tests/Browser/
 |------|------|------:|-----------|
 | `chat-helpers.js` | 설정(v7ChatConfig), 상수(v7ChatRoute), 채팅방 ID 유틸, 시간 포맷, 파일 판별, URL 링크화, Firebase 작업(고정/신고), 무한 스크롤, 사운드, **Presence**, **FCM** | ~370 | 1 |
 | `chat-store.js` | `v7ChatState` 전역 반응형 상태, `v7ChatActions` 액션 (방 열기/닫기, 리스너 관리) | ~163 | 2 |
-| `chat-room-list.js` | 채팅방 목록 표시, 무한 스크롤 페이지네이션, 고정/비고정 섹션 분리 | ~228 | 3 |
+| `chat-room-list.js` | 채팅방 목록 표시, 무한 스크롤 페이지네이션, 고정 채팅방 가로 스크롤 아바타 + 전체 목록 노란 배경, 즐겨찾기 드롭다운/모달, 검색 아이콘, 고정/즐겨찾기 아이콘 | ~437 | 3 |
 | `chat-single-room.js` | 메시지 전송/수신, 파일 업로드, 이미지 뷰어, 고정/즐겨찾기/차단/신고/커스텀이름/나가기, **수정/삭제**, **Presence**, **관리자 기능** | ~960 | 4 |
 | `chat-search.js` | 사용자 검색 (v7 API 닉네임 기반), 새 채팅 시작 | ~126 | 5 |
 | `chat-app.js` | Firebase Auth 확인 후 Vue 앱 생성/마운트, 전역 리스너 초기화, **Presence 설정**, **FCM 수신 핸들러** | ~89 | 6 (최후) |
@@ -134,20 +137,31 @@ v7ChatState.route = v7ChatRoute.list;    // 목록으로 돌아가기
 │  Firebase RTDB   │ ◄──── on('value') ──► │  v7ChatState       │
 │  /chat/joins     │      on('child_added')│  (Vue.reactive)    │
 │  /chat/messages  │                       │                    │
-│  /users          │                       │  .rooms            │
+│  /users (online) │                       │  .rooms            │
 │  /user-private   │                       │  .myUid            │
 │  /reports        │                       │  .route            │
 └──────────────────┘                       │  .blockedUsers     │
                                            │  .pinnedChatRooms  │
-      ┌────────────────────┐               │  .favoriteFolders  │
-      │  Firebase Storage  │               └────────────────────┘
+┌──────────────────┐                       │  .favoriteFolders  │
+│  v7 API 백엔드   │  사용자 정보 조회     │  .bookmarkedRoomIds│
+│  user.getBy...   │ ◄──── v7api() ──────►└────────────────────┘
+│  (닉네임, 사진)  │                                 │
+├──────────────────┤                                 ▼
+│  v7 Bookmark API │  즐겨찾기 CRUD        ┌────────────────────┐
+│  bookmark.*      │ ◄──── v7api() ──────► │  Vue 컴포넌트       │
+│  (bookmarks 테이블)│                      │  (자동 렌더링)      │
+└──────────────────┘                       └────────────────────┘
+                                                     ▲
+      ┌────────────────────┐                         │
+      │  Firebase Storage  │                         │
       │  /users/{uid}/...  │                         │
-      └────────────────────┘                         ▼
-              ▲                           ┌────────────────────┐
-              │ 파일 업로드               │  Vue 컴포넌트       │
-              └───────────────────────────│  (자동 렌더링)      │
-                                          └────────────────────┘
+      └────────────────────┘                         │
+              ▲                                      │
+              │ 파일 업로드                           │
+              └──────────────────────────────────────┘
 ```
+
+> **⚠️ 사용자 정보 조회 변경 (v7 API 기반)**: 닉네임, 프로필 사진 등 사용자 정보는 Firebase RTDB의 `users/{uid}` 노드가 아닌 **v7 API** (`user.getByFirebaseUid`, `user.getByFirebaseUids`)를 통해 조회한다. Firebase RTDB의 `users/{uid}` 경로는 온라인 상태(Presence)와 고정 채팅방 관리 등 실시간 데이터에만 사용된다.
 
 ### 3.4 JS 파일 로드 순서 및 의존성
 
@@ -175,10 +189,10 @@ chat-app.js          ← 위 모든 파일이 로드된 후 Vue 앱 생성
 |---------------|------|-----------|
 | `chat/joins/{myUid}/{roomId}` | 채팅방 참여 정보 (목록 표시용) | 읽기 + 쓰기 |
 | `chat/messages/{roomId}/{messageId}` | 메시지 데이터 | 읽기 + 쓰기 |
-| `chat/favorites-folder-list/{myUid}` | 즐겨찾기 폴더 목록 | 읽기 |
-| `users/{uid}` | 사용자 프로필 (닉네임, 프로필 사진 등) | 읽기 |
+| ~~`chat/favorites-folder-list/{myUid}`~~ | ~~즐겨찾기 폴더 목록~~ | **v7 API로 마이그레이션됨** -- `bookmark.listGroups` API 사용 |
+| `users/{uid}` | 사용자 실시간 데이터 (온라인 상태, 고정 채팅방 등) — ⚠️ 닉네임/프로필 사진은 v7 API에서 조회 | 읽기 |
 | `users/{uid}/pinnedChatRooms/{roomId}` | 고정된 채팅방 | 읽기 + 쓰기 |
-| `user-private/{myUid}/blocks/{otherUid}` | 차단된 사용자 | 읽기 + 쓰기 |
+| `user-private/{myUid}/blocks/{otherUid}` | 차단된 사용자 | 읽기 전용 (쓰기는 v7 API가 서버에서 동기화) |
 | `reports/{reporterUid}/{reportId}` | 내가 한 신고 | 쓰기 |
 | `reports-list/{reportId}` | 전체 신고 목록 (관리자 조회용) | 쓰기 |
 | `users/{uid}/online` | 사용자 온라인 상태 (Presence) | 읽기 + 쓰기 |
@@ -193,8 +207,8 @@ chat-app.js          ← 위 모든 파일이 로드된 후 Vue 앱 생성
 {
     singleOrder: 1710000000000,   // 정렬 기준 (타임스탬프) — 최신 메시지 시간
     unread: 3,                    // 읽지 않은 메시지 수
-    userDisplayName: "홍길동",     // 상대방 표시 이름
-    userPhotoUrl: "https://...",  // 상대방 프로필 사진 URL
+    userDisplayName: "홍길동",     // 상대방 표시 이름 — ⚠️ v7 API에서 조회한 값으로 덮어씀
+    userPhotoUrl: "https://...",  // 상대방 프로필 사진 URL — ⚠️ v7 API에서 조회한 값으로 보존
     customName: "회사 동료",       // 사용자가 설정한 커스텀 이름 (선택)
     lastMessage: {                // 마지막 메시지 요약
         text: "안녕하세요",
@@ -229,16 +243,79 @@ firebase.database().ref('users/' + uid + '/pinnedChatRooms/' + roomId).set(true)
 firebase.database().ref('users/' + uid + '/pinnedChatRooms/' + roomId).remove();
 ```
 
+#### 4.4.1 고정(pin) 기능 구현 시 주의 사항
+
+##### Object.assign 순서 — pinned 필드 덮어쓰기 방지
+
+채팅방 목록을 렌더링할 때 `Object.assign`으로 방 데이터를 병합하는 순서가 중요하다.
+Firebase `chat/joins/{uid}/{roomId}` 데이터에 `pinned` 필드가 포함되어 있을 수 있으며,
+이 필드가 계산된 `pinned` 값을 덮어쓰면 고정/해제 상태가 정상적으로 반영되지 않는다.
+
+```javascript
+// ❌ 잘못된 순서: room 데이터가 id/pinned를 덮어쓸 수 있음
+// room 객체에 pinned 필드가 있으면 계산된 pinned 값이 사라짐
+Object.assign({ id: roomId, pinned: !!pinned[roomId] }, room);
+
+// ✅ 올바른 순서: id/pinned를 마지막에 배치하여 항상 올바른 값 보장
+// 빈 객체에 room을 먼저 병합하고, id/pinned를 나중에 설정
+Object.assign({}, room, { id: roomId, pinned: !!pinned[roomId] });
+```
+
+이 패턴은 `chat-room-list.js`의 `sortedRooms` computed와 `chat-sidebar.js`의
+고정 채팅방 목록 렌더링에 모두 적용된다.
+
+##### listenPinnedRooms — 페이지네이션 범위 밖 고정방 별도 로드
+
+고정된 채팅방이 무한 스크롤 페이지네이션(`loadRooms()`)으로 아직 `state.rooms`에 로드되지 않은 경우,
+`listenPinnedRooms()`에서 Firebase `chat/joins/{uid}/{roomId}`를 `once('value')`로 별도 조회하여
+`state.rooms`에 추가한다. 이렇게 해야 오래된 채팅방을 고정했을 때에도 고정 섹션에 정상적으로 표시된다.
+
+```javascript
+// listenPinnedRooms 내부 — 고정방이 state.rooms에 없으면 별도 로드
+Object.keys(v7ChatState.pinnedChatRooms).forEach(function (roomId) {
+    if (v7ChatState.rooms[roomId] || !v7ChatIsSingleRoom(roomId)) return;
+    var joinRef = firebase.database().ref('chat/joins/' + myUid + '/' + roomId);
+    joinRef.once('value').then(function (joinSnap) {
+        if (!joinSnap.exists() || v7ChatState.rooms[roomId]) return;
+        v7ChatState.rooms[roomId] = joinSnap.val();
+        v7ChatActions.joinRoomListener(roomId);
+        // v7 API에서 상대방 사용자 정보 조회
+        var otherUid = v7ChatGetOtherUid(roomId, myUid);
+        if (otherUid) {
+            v7api('user.getByFirebaseUid', { firebase_uid: otherUid }, { alertOnError: false })
+                .then(function (u) {
+                    var room = v7ChatState.rooms[roomId];
+                    if (room) {
+                        room.userDisplayName = u.nickname || room.userDisplayName || '사용자';
+                        room.userPhotoUrl = u.photo_url || room.userPhotoUrl || '';
+                    }
+                })
+                .catch(function () { /* API 실패 시 Firebase 값 유지 */ });
+        }
+    });
+});
+```
+
 ### 4.5 blocks 데이터
 
 `user-private/{myUid}/blocks/{otherUid}` 경로에 `true` 값으로 저장한다.
 
+> **🔴 절대 규칙: Firebase RTDB에 직접 쓰기 금지**
+>
+> 차단/해제는 반드시 v7 API(`user.toggleBlock`)를 통해서만 수행한다.
+> v7 API가 MariaDB에 저장 후 Firebase RTDB에 자동 동기화(`UserService::syncBlockToFirebase()`)한다.
+> 클라이언트에서 Firebase RTDB에 직접 `set(true)` / `remove()`를 호출하지 않는다.
+
 ```javascript
-// 차단
-firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).set(true);
-// 해제
-firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).remove();
+// ✅ 올바른 방법: v7 API를 통한 차단/해제
+v7api('user.toggleBlock', { blockee_firebase_uid: otherUid });
+
+// ❌ 금지: Firebase RTDB 직접 쓰기
+// firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).set(true);
+// firebase.database().ref('user-private/' + myUid + '/blocks/' + otherUid).remove();
 ```
+
+채팅방에서는 `listenBlockedUsers()` 리스너가 Firebase RTDB를 실시간 감지하여 `state.blockedUsers`를 자동 갱신한다.
 
 ### 4.6 reports 데이터
 
@@ -334,7 +411,7 @@ window.v7chat = {
     },
     api: {
         resetJoin: 'https://...',     // Cloud Function: 읽음 표시 초기화 URL
-        favorite: 'https://...',      // Cloud Function: 즐겨찾기 추가 URL
+        // favorite: 삭제됨 — v7api('bookmark.add')로 마이그레이션
         leaveChatRoom: 'https://...'  // Cloud Function: 채팅방 나가기 URL
     },
     href: {
@@ -453,7 +530,8 @@ var v7ChatState = Vue.reactive({
     },
     rooms: {},                          // 채팅방 목록 { roomId: joinData }
     pinnedChatRooms: {},                // 고정된 채팅방 { roomId: true }
-    favoriteFolders: [],                // 즐겨찾기 폴더 목록
+    favoriteFolders: [],                // 즐겨찾기 폴더 목록 (v7 API bookmark.listGroups에서 로드)
+    bookmarkedRoomIds: [],              // 내 즐겨찾기 채팅방 ID 목록 (v7 API bookmark.myBookmarkedIds에서 로드)
     initializedNewRoomListener: false,  // 새 방 리스너 초기화 여부
     noMoreRooms: false,                 // 방 목록 더보기 없음
     blockedUsers: {},                   // 차단된 사용자 { uid: true }
@@ -468,11 +546,12 @@ var v7ChatState = Vue.reactive({
 | `openRoom(room)` | `{ id, name, customName, userDisplayName, userPhotoUrl }` | 채팅방 열기 → route를 `single`로 변경 |
 | `closeRoom()` | 없음 | 채팅방 닫기 → route를 `list`로 변경 |
 | `openSearch()` | 없음 | 사용자 검색 화면 열기 → route를 `search`로 변경 |
-| `joinRoomListener(roomId)` | `string` | 개별 방 데이터 실시간 리스너 연결 |
-| `attachNewRoomListener()` | 없음 | 새 방 감지 리스너 (1회만 초기화) |
-| `loadFavoriteFolders()` | 없음 | 즐겨찾기 폴더 목록 실시간 리스너 |
+| `joinRoomListener(roomId)` | `string` | 개별 방 데이터 실시간 리스너 연결 — Firebase 데이터 업데이트 시 v7 API에서 가져온 `userDisplayName`/`userPhotoUrl` 보존 |
+| `attachNewRoomListener()` | 없음 | 새 방 감지 리스너 (1회만 초기화) — 새 방 감지 시 v7 API로 상대방 정보 즉시 조회 |
+| `loadFavoriteFolders()` | 없음 | 즐겨찾기 폴더 목록 로드 -- `v7api('bookmark.listGroups', { entity_type: 'chat_room' })` 호출 |
+| `loadBookmarkedRoomIds()` | 없음 | 내 즐겨찾기 채팅방 ID 목록 로드 -- `v7api('bookmark.myBookmarkedIds', { entity_type: 'chat_room' })` 호출 |
 | `listenBlockedUsers()` | 없음 | 차단된 사용자 실시간 리스너 |
-| `listenPinnedRooms()` | 없음 | 고정된 채팅방 실시간 리스너 |
+| `listenPinnedRooms()` | 없음 | 고정된 채팅방 실시간 리스너 — 고정된 방이 `state.rooms`에 페이지네이션으로 로드되지 않은 경우 Firebase에서 별도 로드하여 고정 목록에 표시 |
 
 #### 주요 Firebase 리스너 경로
 
@@ -483,8 +562,9 @@ var v7ChatState = Vue.reactive({
 // 새 채팅방 감지
 'chat/joins/' + myUid                   // attachNewRoomListener (singleOrder 기준)
 
-// 즐겨찾기 폴더 목록
-'chat/favorites-folder-list/' + myUid   // loadFavoriteFolders
+// 즐겨찾기 폴더 목록 — v7 API로 마이그레이션됨 (Firebase 리스너 아님)
+// v7api('bookmark.listGroups', { entity_type: 'chat_room' })   // loadFavoriteFolders
+// v7api('bookmark.myBookmarkedIds', { entity_type: 'chat_room' })  // loadBookmarkedRoomIds
 
 // 차단된 사용자
 'user-private/' + myUid + '/blocks'     // listenBlockedUsers
@@ -497,16 +577,23 @@ var v7ChatState = Vue.reactive({
 
 ### 7.3 chat-room-list.js — 채팅방 목록 컴포넌트
 
-`v7ChatRoomListComponent()` 함수로 정의된 Vue 컴포넌트이다. 채팅방 목록을 표시하고, 무한 스크롤 페이지네이션과 고정/비고정 섹션 분리를 제공한다.
+`v7ChatRoomListComponent()` 함수로 정의된 Vue 컴포넌트이다. v6 스타일을 적용하여 채팅방 목록을 표시하고, 무한 스크롤 페이지네이션, 즐겨찾기 드롭다운/모달, 고정 채팅방 가로 스크롤 아바타 섹션, 각 아이템의 즐겨찾기/고정 아이콘을 제공한다.
 
 #### data
 
 ```javascript
 {
-    state: v7ChatState,   // 전역 스토어 참조
-    loading: false,       // 로딩 중 여부
-    lastOrder: null,      // 페이지네이션 커서 (마지막 singleOrder)
-    scrollHelper: null,   // 무한 스크롤 헬퍼 인스턴스
+    state: v7ChatState,       // 전역 스토어 참조
+    loading: false,           // 로딩 중 여부
+    lastOrder: null,          // 페이지네이션 커서 (마지막 singleOrder)
+    scrollHelper: null,       // 무한 스크롤 헬퍼 인스턴스
+    /* 즐겨찾기 드롭다운 */
+    showFavDropdown: false,   // 즐겨찾기 드롭다운 표시 여부
+    /* 즐겨찾기 모달 */
+    favModalOpen: false,      // 즐겨찾기 폴더 모달 표시 여부
+    favModalFolder: '',       // 선택된 폴더 이름
+    favModalRooms: [],        // 모달에 표시할 채팅방 목록
+    favModalLoading: false,   // 모달 로딩 중 여부
 }
 ```
 
@@ -514,21 +601,28 @@ var v7ChatState = Vue.reactive({
 
 | 이름 | 설명 |
 |------|------|
-| `sortedRooms` | 모든 채팅방을 고정→일반 순으로 정렬. 고정방은 상단, 일반방은 `singleOrder` 내림차순 |
-| `firstNormalIdx` | 첫 번째 일반(비고정) 채팅방의 인덱스. 섹션 제목 표시에 사용 |
+| `sortedRooms` | 모든 채팅방을 고정→일반 순으로 정렬. 고정방은 상단, 일반방은 `singleOrder` 내림차순. 전체 목록 렌더링에 사용 |
+| `pinnedRooms` | `sortedRooms`에서 고정된 방만 필터. 가로 스크롤 아바타 섹션에 사용 |
+| `normalRooms` | `sortedRooms`에서 비고정 방만 필터 (참조용, 실제 렌더링은 `sortedRooms` 사용) |
 
 #### methods
 
 | 메서드명 | 설명 |
 |----------|------|
 | `loadRooms()` | Firebase에서 채팅방 목록 페이지네이션 로드. `singleOrder` 기준 `limitToLast(20)` |
+| `loadUsersFromApi(roomIds)` | 채팅방 목록의 상대방 UID를 일괄 수집 후 `user.getByFirebaseUids` v7 API 호출 → 닉네임/사진 업데이트 |
 | `openRoom(room)` | 채팅방 열기 — `v7ChatActions.openRoom()` 호출 |
 | `openSearch()` | 사용자 검색 화면 열기 — `v7ChatActions.openSearch()` 호출 |
-| `unpin(room)` | 채팅방 고정 해제 — `v7ChatTogglePin()` 호출 |
+| `togglePin(room)` | 채팅방 고정/해제 토글 — `v7ChatTogglePin()` 호출 (목록 아이템의 핀 버튼) |
+| `unpin(room)` | 채팅방 고정 해제 — `v7ChatTogglePin()` 호출 (가로 스크롤의 X 버튼) |
 | `getDisplayName(room)` | 채팅방 표시 이름 반환 (customName > userDisplayName > '사용자') |
 | `getInitial(room)` | 이름 이니셜 반환 (아바타 텍스트용) |
 | `getPreview(room)` | 마지막 메시지 미리보기 (30자 제한, 첨부파일 시 '첨부파일' 표시) |
 | `formatTime(ts)` | 시간 포맷 — `v7ChatFormatTime()` 호출 |
+| `openFavFolder(group)` | 즐겨찾기 폴더 열기 -- `v7api('bookmark.listByGroup', { idx_group: group.idx, entity_type: 'chat_room' })`로 채팅방 목록 로드 후 모달 표시 |
+| `loadFavRoomUsers(rooms)` | 즐겨찾기 모달 채팅방의 사용자 정보 일괄 조회 (v7 API) |
+| `closeFavModal()` | 즐겨찾기 모달 닫기 |
+| `openFavRoom(room)` | 즐겨찾기 모달에서 채팅방 열기 → 모달 닫고 openRoom 호출 |
 
 #### 페이지네이션 동작
 
@@ -537,29 +631,64 @@ var v7ChatState = Vue.reactive({
 2. 무한 스크롤 하단 도달 → loadRooms() 재호출
 3. lastOrder(이전 최소 singleOrder)를 커서로 사용하여 endBefore() 쿼리
 4. 반환 수가 pageSize 미만이면 noMoreRooms = true → 추가 로드 중단
+5. 새 방 로드 후 loadUsersFromApi()로 상대방 정보 비동기 일괄 조회
 ```
 
-#### 채팅방 목록 UI 구조
+#### 채팅방 목록 UI 구조 (v6 스타일 적용)
 
 ```
-┌─────────────────────────────────────┐
-│ 채팅                         [새 채팅] │  ← 헤더
-├─────────────────────────────────────┤
-│ 📌 고정                              │  ← 고정 섹션 제목 (고정방 있을 때만)
-│ ┌─────────────────────────────────┐ │
-│ │ [아바타] 홍길동        3분 전    │ │  ← 채팅방 아이템 (고정)
-│ │         안녕하세요...    (3)    │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ 💬 전체                              │  ← 전체 섹션 제목
-│ ┌─────────────────────────────────┐ │
-│ │ [아바타] 김철수     1시간 전    │ │  ← 채팅방 아이템 (일반)
-│ │         감사합니다              │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ⏳ 로딩 중...                        │  ← 무한 스크롤 로딩
-└─────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│ 채팅     [★ 즐겨찾기 ▼] [🔍]            │  ← 헤더 (즐겨찾기 드롭다운 + 검색 아이콘)
+├──────────────────────────────────────────┤
+│ 📌 고정                                  │  ← 고정 섹션 제목 (고정방 있을 때만)
+│ ┌────┐ ┌────┐ ┌────┐                     │  ← 가로 스크롤 아바타 (고정된 채팅방)
+│ │ 🧑 │ │ 👩 │ │ 🧑 │  ←→ 가로 스크롤     │     각 아바타에 X(해제) 버튼 + 배지
+│ │홍길│ │김영│ │이수│                     │
+│ └────┘ └────┘ └────┘                     │
+├──────────────────────────────────────────┤
+│ 💬 전체                                  │  ← 전체 섹션 제목
+│ ┌────────────────────────────────────┐   │
+│ │▌[아바타] 홍길동  ⭐📌  3분 전 (3) │   │  ← 고정 방: 노란 배경 + 왼쪽 노란 테두리
+│ │         안녕하세요...              │   │     ⭐=즐겨찾기, 📌=고정 핀 아이콘
+│ └────────────────────────────────────┘   │
+│ ┌────────────────────────────────────┐   │
+│ │ [아바타] 김철수     📌  1시간 전   │   │  ← 일반 방: 흰색 배경, 📌 토글 가능
+│ │         감사합니다                 │   │
+│ └────────────────────────────────────┘   │
+│                                          │
+│ ⏳ 로딩 중...                             │  ← 무한 스크롤 로딩
+└──────────────────────────────────────────┘
 ```
+
+#### 헤더 영역 상세
+
+기존의 "새 채팅" 아이콘 버튼을 제거하고, 즐겨찾기 드롭다운 버튼과 검색 돋보기 아이콘으로 대체하였다.
+
+| 요소 | 설명 |
+|------|------|
+| **즐겨찾기 드롭다운** | `★ 즐겨찾기 ▼` 버튼 클릭 시 즐겨찾기 폴더 목록 드롭다운 표시. `state.favoriteFolders`에서 폴더명 + 채팅방 수 표시 |
+| **검색 아이콘** | 돋보기 아이콘(`fa-magnifying-glass`) 클릭 시 `openSearch()` 호출 |
+| **외부 클릭 닫기** | `document.addEventListener('click')` + `.closest('.v7chat-fav-dropdown')` 판정으로 외부 클릭 시 드롭다운 닫기 |
+
+#### 즐겨찾기 모달 상세
+
+드롭다운에서 폴더를 선택하면 해당 폴더의 채팅방 목록을 v7 API에서 로드하여 모달로 표시한다.
+
+```
+v7api('bookmark.listByGroup', { idx_group: group.idx, entity_type: 'chat_room' })
+→ bookmarks 배열에서 entity_id(roomId) 추출
+→ state.rooms에서 찾거나, 없으면 chat/joins/{myUid}/{roomId}에서 별도 로드
+→ loadFavRoomUsers()로 사용자 정보 비동기 조회
+```
+
+#### 각 채팅방 아이템의 아이콘 표시
+
+| 아이콘 | 조건 | 위치 | 동작 |
+|--------|------|------|------|
+| ⭐ 즐겨찾기 별 | `state.bookmarkedRoomIds.includes(room.id)`가 true일 때 | 오른쪽 메타 영역 | 표시 전용 (노란 별) |
+| 📌 고정 핀 | 항상 표시 | 오른쪽 메타 영역 | 클릭 시 `togglePin(room)` — 고정/해제 토글 |
+
+고정된 채팅방은 전체 목록에서 노란색 배경(`rgba(255,193,7,0.1)`)과 왼쪽 노란 테두리(`#ffc107`)로 시각적으로 구분된다 (v6 스타일).
 
 ---
 
@@ -664,11 +793,11 @@ var v7ChatState = Vue.reactive({
 | `togglePin()` | 채팅방 고정/해제 토글 |
 | `markAsRead()` | 읽음 표시 (RTDB unread=0 + Cloud Function 호출) |
 | `leaveRoom()` | 채팅방 나가기 (confirm 후 Cloud Function 호출 또는 직접 삭제) |
-| `toggleBlock()` | 상대방 차단/해제 토글 |
+| `toggleBlock()` | 상대방 차단/해제 토글 — v7 API(`user.toggleBlock`) 호출 (Firebase RTDB 직접 쓰기 금지) |
 | `showCustomNameDialog()` | 커스텀 이름 설정 모달 열기 |
 | `saveCustomName()` | 커스텀 이름 저장 (RTDB에 저장) |
 | `showFavoriteDialog()` | 즐겨찾기 모달 열기 |
-| `saveFavorite()` | 즐겨찾기 추가 (Cloud Function 호출) |
+| `saveFavorite()` | 즐겨찾기 추가 -- `v7api('bookmark.add', { group_name, entity_type: 'chat_room', entity_id: roomId })` 호출 |
 | `showReportDialog()` | 신고 모달 열기 |
 | `submitReport()` | 신고 제출 (`v7ChatCreateReport()` 호출) |
 
@@ -698,7 +827,7 @@ var v7ChatState = Vue.reactive({
 | 메서드명 | 설명 |
 |----------|------|
 | `callCloudFn(url, data)` | Cloud Function 호출 헬퍼 (Firebase Auth 토큰 포함) |
-| `loadOtherUserData()` | 상대방 사용자 데이터 로드 (`users/{uid}` 노드) |
+| `loadOtherUserData()` | 상대방 사용자 데이터 로드 — v7 API `user.getByFirebaseUid` 호출 (기존 Firebase RTDB `users/{uid}` 대신) |
 | `showDateSep(msg, idx)` | 날짜 구분선 표시 여부 (날짜가 바뀌면 표시) |
 | `formatDate(ts)` | 날짜 포맷 ("2024년 3월 12일") |
 | `formatTime(ts)` | 시간 포맷 |
@@ -803,8 +932,9 @@ ready(function() {                              // (1) DOMContentLoaded 대기
             // (4) 현재 사용자 UID 설정
             v7ChatState.myUid = user.uid;
 
-            // (5) 사용자 정보 로드 (닉네임, 프로필 사진)
-            firebase.database().ref('users/' + user.uid).once('value')...
+            // (5) 사용자 정보 로드 — v7 API 호출 (기존 Firebase RTDB 대신)
+            // user.getByFirebaseUid API로 내 닉네임/프로필 사진 조회
+            func('user.getByFirebaseUid', { firebase_uid: user.uid })...
 
             // (6) 전역 리스너 시작
             v7ChatActions.listenBlockedUsers();
@@ -844,6 +974,25 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 </div>
 ```
 
+#### URL 파라미터 / popstate 처리
+
+`chat-app.js`는 URL의 `firebase_uid` 파라미터가 있으면 해당 상대방과의 채팅방을 자동으로 연다. popstate 이벤트 시에도 v7 API로 상대방 정보를 조회한다.
+
+```javascript
+// URL 파라미터로 상대방 지정 시 v7 API로 정보 조회
+var otherUid = new URLSearchParams(location.search).get('firebase_uid');
+if (otherUid) {
+    func('user.getByFirebaseUid', { firebase_uid: otherUid }).then(function(res) {
+        // res.nickname, res.photo_url 사용
+        v7ChatActions.openRoom({
+            id: v7ChatMakeRoomId(otherUid, user.uid),
+            name: res.nickname || '',
+            userPhotoUrl: res.photo_url || ''
+        });
+    });
+}
+```
+
 ---
 
 ## 8. CSS 클래스 체계
@@ -863,23 +1012,52 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 | 클래스명 | 설명 |
 |----------|------|
 | `.v7chat-room-list` | 목록 전체 래퍼 |
-| `.v7chat-list-header` | 헤더 (제목 + 새 채팅 버튼) |
+| `.v7chat-list-header` | 헤더 (제목 + 즐겨찾기 드롭다운 + 검색 아이콘) |
 | `.v7chat-header-top` | 헤더 상단 (제목 + 액션) |
 | `.v7chat-header-actions` | 헤더 액션 버튼 그룹 |
+| `.v7chat-fav-dropdown` | 즐겨찾기 드롭다운 래퍼 (relative 포지셔닝) |
+| `.v7chat-fav-toggle` | 즐겨찾기 드롭다운 토글 버튼 (`★ 즐겨찾기 ▼`) |
+| `.v7chat-fav-dropdown-menu` | 즐겨찾기 폴더 드롭다운 메뉴 (absolute 포지셔닝) |
+| `.v7chat-fav-dropdown-menu.show` | 드롭다운 표시 상태 |
+| `.v7chat-fav-dropdown-item` | 드롭다운 폴더 아이템 |
+| `.v7chat-fav-dropdown-empty` | 폴더가 없을 때 메시지 |
+| `.v7chat-fav-count` | 폴더별 채팅방 수 배지 |
 | `.v7chat-room-list-scroll` | 스크롤 가능 영역 |
 | `.v7chat-section-title` | 섹션 제목 (고정/전체) |
-| `.v7chat-pinned-section` | 고정 섹션 래퍼 |
+| `.v7chat-pinned-scroll-section` | 고정 채팅방 가로 스크롤 영역 래퍼 |
+| `.v7chat-pinned-scroll` | 가로 스크롤 컨테이너 (flex, overflow-x: auto) |
+| `.v7chat-pinned-item` | 가로 스크롤 내 고정 아바타 아이템 |
+| `.v7chat-pinned-avatar-wrap` | 고정 아바타 래퍼 (relative, 48x48) |
+| `.v7chat-pinned-avatar-img` | 고정 아바타 이미지 |
+| `.v7chat-pinned-avatar-text` | 고정 아바타 이니셜 텍스트 |
+| `.v7chat-pinned-remove` | 고정 해제 X 버튼 (아바타 우상단) |
+| `.v7chat-pinned-badge` | 고정 아바타 읽지 않은 배지 |
+| `.v7chat-pinned-name` | 고정 아바타 아래 이름 텍스트 |
 | `.v7chat-room-item` | 채팅방 아이템 (flex, border, hover 효과) |
-| `.v7chat-room-item.pinned` | 고정된 채팅방 (노란 배경, 왼쪽 테두리) |
+| `.v7chat-room-item.pinned` | 고정된 채팅방 — 노란 배경(`rgba(255,193,7,0.1)`) + 왼쪽 노란 테두리(`#ffc107`) (v6 스타일) |
 | `.v7chat-room-content` | 방 정보 (이름, 미리보기) |
 | `.v7chat-room-name` | 방 이름 |
 | `.v7chat-last-message` | 마지막 메시지 미리보기 |
-| `.v7chat-room-meta` | 메타 (시간 + 배지) |
+| `.v7chat-room-meta` | 메타 (아이콘 + 시간 + 배지) |
+| `.v7chat-meta-icons` | 메타 아이콘 영역 (즐겨찾기 별 + 고정 핀) |
+| `.v7chat-fav-star` | 즐겨찾기 별 아이콘 (노란색, 표시 전용) |
+| `.v7chat-pin-btn` | 고정 핀 토글 버튼 |
+| `.v7chat-pin-btn.pinned` | 고정된 상태의 핀 버튼 (노란색) |
 | `.v7chat-time` | 시간 표시 |
 | `.v7chat-badge` | 읽지 않은 메시지 수 배지 (빨간 원) |
-| `.v7chat-unpin-btn` | 고정 해제 버튼 (hover 시 표시) |
 | `.v7chat-empty` | 빈 상태 표시 |
 | `.v7chat-loading-more` | 추가 로딩 표시 |
+
+### 8.2.1 즐겨찾기 모달 클래스
+
+| 클래스명 | 설명 |
+|----------|------|
+| `.v7chat-modal-backdrop` | 모달 배경 오버레이 (반투명 검정) |
+| `.v7chat-modal` | 모달 컨테이너 (max-width: 400px, border-radius) |
+| `.v7chat-modal-header` | 모달 헤더 (폴더명 + 닫기 버튼) |
+| `.v7chat-modal-body` | 모달 본문 (채팅방 목록 또는 로딩/빈 상태) |
+| `.v7chat-fav-room-item` | 즐겨찾기 모달 내 채팅방 아이템 |
+| `.v7chat-fav-room-name` | 즐겨찾기 모달 내 채팅방 이름 |
 
 ### 8.3 채팅방 뷰 클래스
 
@@ -1048,20 +1226,28 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 
 채팅 시스템에서 지원하는 기능을 범주별로 정리한다.
 
-### 9.1 채팅방 목록 (10개)
+### 9.1 채팅방 목록 (18개)
 
 | # | 기능 | 구현 위치 |
 |---|------|-----------|
 | 1 | 채팅방 목록 실시간 업데이트 | `chat-store.js` → `joinRoomListener()` |
 | 2 | 무한 스크롤 페이지네이션 | `chat-room-list.js` → `loadRooms()` |
-| 3 | 고정된 채팅방 상단 표시 | `chat-room-list.js` → `sortedRooms` computed |
-| 4 | 고정 섹션 / 전체 섹션 제목 표시 | `chat-room-list.js` → `firstNormalIdx` computed |
+| 3 | 고정된 채팅방 상단 가로 스크롤 아바타 표시 | `chat-room-list.js` → `pinnedRooms` computed + 가로 스크롤 섹션 |
+| 4 | 고정된 채팅방 전체 목록에서 노란 배경 표시 (v6 스타일) | `chat-room-list.js` → `sortedRooms` + `.pinned` CSS 클래스 |
 | 5 | 마지막 메시지 미리보기 (30자 제한) | `chat-room-list.js` → `getPreview()` |
 | 6 | 읽지 않은 메시지 수 배지 | `chat-room-list.js` 템플릿 (99+ 처리) |
 | 7 | 시간 표시 (방금/N분 전/날짜) | `chat-helpers.js` → `v7ChatFormatTime()` |
 | 8 | 아바타 표시 (사진 또는 이니셜) | `chat-room-list.js` 템플릿 |
 | 9 | 빈 상태 표시 (채팅방 없을 때) | `chat-room-list.js` 템플릿 |
-| 10 | 고정 해제 버튼 (hover 시 표시) | `chat-room-list.js` → `unpin()` |
+| 10 | 가로 스크롤 고정 아바타의 X 버튼 고정 해제 | `chat-room-list.js` → `unpin()` |
+| 11 | 페이지네이션 범위 밖 고정방 별도 로드 | `chat-store.js` → `listenPinnedRooms()` |
+| 12 | 즐겨찾기 드롭다운 (폴더 목록 표시) | `chat-room-list.js` → `showFavDropdown` + 헤더 토글 버튼 |
+| 13 | 즐겨찾기 폴더 선택 시 모달에서 채팅방 목록 표시 | `chat-room-list.js` → `openFavFolder()` (v7 API `bookmark.listByGroup`) |
+| 14 | 즐겨찾기 모달 채팅방 사용자 정보 비동기 조회 | `chat-room-list.js` → `loadFavRoomUsers()` |
+| 15 | 검색 돋보기 아이콘 (새 채팅 아이콘 대체) | `chat-room-list.js` 헤더 템플릿 |
+| 16 | 각 채팅방 즐겨찾기 별 아이콘 표시 (`state.bookmarkedRoomIds` 기반) | `chat-room-list.js` 템플릿 → `.v7chat-fav-star` |
+| 17 | 각 채팅방 고정 핀 아이콘 토글 | `chat-room-list.js` → `togglePin()` |
+| 18 | 즐겨찾기 드롭다운 외부 클릭 닫기 | `chat-room-list.js` → `_closeFavDropdown` 이벤트 리스너 |
 
 ### 9.2 1:1 채팅방 메시지 (12개)
 
@@ -1101,8 +1287,8 @@ ready(function() {                              // (1) DOMContentLoaded 대기
 |---|------|-----------|
 | 33 | 채팅방 고정/해제 토글 | `chat-helpers.js` → `v7ChatTogglePin()` |
 | 34 | 커스텀 이름 설정/제거 | `chat-single-room.js` → `saveCustomName()` |
-| 35 | 즐겨찾기 폴더에 추가 | `chat-single-room.js` → `saveFavorite()` |
-| 36 | 즐겨찾기 폴더 목록 실시간 로드 | `chat-store.js` → `loadFavoriteFolders()` |
+| 35 | 즐겨찾기 폴더에 추가 | `chat-single-room.js` → `saveFavorite()` (v7 API `bookmark.add`) |
+| 36 | 즐겨찾기 폴더 목록 로드 | `chat-store.js` → `loadFavoriteFolders()` (v7 API `bookmark.listGroups`) |
 | 37 | 채팅방 나가기 | `chat-single-room.js` → `leaveRoom()` |
 | 38 | 상대방 프로필 보기 (새 탭) | 드롭다운 메뉴 링크 |
 | 39 | 상대방 차단/해제 | `chat-single-room.js` → `toggleBlock()` |
@@ -1210,7 +1396,7 @@ Firebase Cloud Functions v2(Gen2)를 사용하는 **독립적인 TypeScript 프�
 | `onChatMessageCreated` | RTDB 트리거 | 메시지 생성 시 후처리 (읽지 않은 메시지 카운트, Join 업데이트) |
 | `onResetChatJoin` | RTDB 트리거 | 채팅 조인 초기화 (읽음 표시) |
 | `onCustomNameUpdated` | RTDB 트리거 | 사용자 정의 이름 업데이트 반영 |
-| `onFavorite` | RTDB 트리거 | 즐겨찾기 추가/제거 |
+| `onFavorite` | RTDB 트리거 | ~~즐겨찾기 추가/제거~~ -- **v7 API(`bookmark.*`)로 마이그레이션됨**. 웹에서는 더 이상 호출하지 않음 (앱 호환용으로 유지) |
 | `onPushMessageCreated` | RTDB 트리거 | 푸시 메시지 생성 → FCM 전송 |
 | `onCreateGroupChatRoom` | HTTP 요청 | 그룹 채팅방 생성 |
 | `onUpdateGroupChatRoom` | RTDB 트리거 | 그룹 채팅방 정보 업데이트 |
@@ -1249,7 +1435,7 @@ callCloudFn: function(url, data) {
 | API 키 | 기능 | 호출 시점 | 전달 데이터 |
 |---------|------|-----------|-------------|
 | `resetJoin` | 읽음 표시 초기화 | 채팅방 진입 시, 새 메시지 수신 시 | `{ roomId }` |
-| `favorite` | 즐겨찾기 추가 | 즐겨찾기 모달에서 저장 시 | `{ roomId, folder }` |
+| ~~`favorite`~~ | ~~즐겨찾기 추가~~ | **v7 API로 마이그레이션됨** -- `v7api('bookmark.add')` 사용 | - |
 | `leaveChatRoom` | 채팅방 나가기 | 나가기 confirm 후 | `{ roomId }` |
 
 ### 10.3 URL 설정 (PHP → Config)
@@ -1259,7 +1445,7 @@ callCloudFn: function(url, data) {
 window.v7chat = {
     api: {
         resetJoin: '<?= Config::chatResetJoinUrl() ?>',
-        favorite: '<?= Config::chatFavoriteUrl() ?>',
+        // favorite: 삭제됨 — v7api('bookmark.add')로 마이그레이션
         leaveChatRoom: '<?= Config::chatRoomLeaveUrl() ?>'
     }
 };
@@ -1848,4 +2034,233 @@ canDelete: function(msg) {
     if (msg.isDeleted) return false;
     return this.isMine(msg) || this.isAdmin;
 }
+```
+
+---
+
+## 20. v7 API 기반 사용자 정보 조회
+
+### 20.1 개요
+
+채팅 시스템에서 1:1 상대방의 **닉네임과 프로필 사진**은 Firebase RTDB가 아닌 **필고 v7 API 백엔드**에서 가져온다. Firebase RTDB의 `users/{uid}` 경로는 온라인 상태(Presence), 고정 채팅방 등 실시간 데이터에만 사용된다.
+
+### 20.2 이전 흐름 vs 새 흐름
+
+| 항목 | 이전 (Firebase RTDB) | 현재 (v7 API) |
+|------|---------------------|---------------|
+| **내 정보** | `firebase.database().ref('users/' + myUid).once('value')` | `func('user.getByFirebaseUid', { firebase_uid: myUid })` |
+| **상대방 정보 (단일)** | `firebase.database().ref('users/' + otherUid).once('value')` | `func('user.getByFirebaseUid', { firebase_uid: otherUid })` |
+| **상대방 정보 (일괄)** | 각 방마다 개별 조회 | `func('user.getByFirebaseUids', { firebase_uids: 'uid1,uid2,...' })` |
+| **데이터 출처** | Firebase RTDB `users/{uid}` 노드 | 필고 DB (v7 PHP 백엔드) |
+
+### 20.3 v7 API 엔드포인트
+
+#### `user.getByFirebaseUid` — 단일 사용자 조회
+
+| 항목 | 설명 |
+|------|------|
+| **호출 방식** | `func('user.getByFirebaseUid', { firebase_uid: '...' })` |
+| **파라미터** | `firebase_uid` (string, 필수) — Firebase UID |
+| **응답** | UserEntity 객체: `{ idx, nickname, photo_url, firebase_uid, ... }` |
+| **사용처** | `chat-app.js` (내 정보 로드, popstate/URL 파라미터 시 상대방 정보), `chat-single-room.js` (`loadOtherUserData`) |
+
+```javascript
+// 사용 예시 — 상대방 정보 조회
+func('user.getByFirebaseUid', { firebase_uid: otherUid }).then(function(res) {
+    self.otherUserData.nickname = res.nickname || '';
+    self.otherUserData.photoUrl = res.photo_url || '';  // ⚠️ 언더스코어
+});
+```
+
+#### `user.getByFirebaseUids` — 복수 사용자 일괄 조회
+
+| 항목 | 설명 |
+|------|------|
+| **호출 방식** | `func('user.getByFirebaseUids', { firebase_uids: 'uid1,uid2,uid3' })` |
+| **파라미터** | `firebase_uids` (string, 필수) — 쉼표 구분 Firebase UID 문자열, 최대 100개 |
+| **응답** | `{ firebase_uid: { idx, nickname, photo_url, level }, ... }` — UID를 키로 하는 객체 |
+| **사용처** | `chat-room-list.js` (`loadUsersFromApi` — 채팅방 목록 상대방 정보 일괄 로드) |
+
+```javascript
+// 사용 예시 — 채팅방 목록에서 상대방 정보 일괄 조회
+var uids = Object.keys(v7ChatState.rooms).map(function(roomId) {
+    return v7ChatGetOtherUid(roomId, v7ChatState.myUid);
+}).filter(Boolean);
+
+func('user.getByFirebaseUids', { firebase_uids: uids.join(',') }).then(function(res) {
+    // res = { 'uid1': { nickname: '홍길동', photo_url: '...' }, ... }
+    // 각 채팅방의 userDisplayName, userPhotoUrl 업데이트
+});
+```
+
+### 20.4 JS 파일별 변경 사항
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `chat-app.js` | 내 정보를 v7 API `user.getByFirebaseUid`로 조회. popstate/URL 파라미터 시 상대방 정보도 v7 API로 조회 |
+| `chat-room-list.js` | `loadUsersFromApi()` 메서드 추가 — 채팅방 목록의 상대방 UID를 일괄 수집 후 `user.getByFirebaseUids` 호출하여 닉네임/사진 업데이트 |
+| `chat-single-room.js` | `loadOtherUserData()`에서 Firebase RTDB `users/{uid}` 대신 v7 API `user.getByFirebaseUid` 호출 |
+| `chat-store.js` | `joinRoomListener`: Firebase 데이터 업데이트 시 v7 API에서 가져온 `userDisplayName`/`userPhotoUrl` 보존 (덮어쓰지 않음) |
+| `chat-store.js` | `attachNewRoomListener`: 새 방 감지 시 v7 API로 상대방 정보 즉시 조회하여 `userDisplayName`/`userPhotoUrl` 설정 |
+
+### 20.5 필드명 매핑 주의
+
+v7 API 응답과 Firebase RTDB/채팅방 데이터에서 필드명 규칙이 다르므로 주의가 필요하다.
+
+| 데이터 출처 | 닉네임 필드 | 프로필 사진 필드 | 네이밍 규칙 |
+|-------------|------------|-----------------|-------------|
+| **v7 API 응답** | `nickname` | `photo_url` | 언더스코어 (snake_case) |
+| **Firebase RTDB** | `displayName` | `photoUrl` | 카멜케이스 (camelCase) |
+| **채팅방 joins 데이터** | `userDisplayName` | `userPhotoUrl` | 카멜케이스 (camelCase) |
+
+```javascript
+// v7 API 응답 → 채팅방 joins 데이터로 변환 시
+room.userDisplayName = apiRes.nickname;    // nickname → userDisplayName
+room.userPhotoUrl = apiRes.photo_url;      // photo_url → userPhotoUrl
+```
+
+### 20.6 데이터 보존 전략 (chat-store.js)
+
+`joinRoomListener`에서 Firebase RTDB의 실시간 리스너가 joins 데이터를 업데이트할 때, v7 API에서 이미 가져온 `userDisplayName`과 `userPhotoUrl`을 보존하는 전략을 사용한다.
+
+```javascript
+// joinRoomListener 내부 — Firebase 데이터가 갱신될 때
+ref.on('value', function(snap) {
+    var data = snap.val();
+    if (data) {
+        // v7 API에서 가져온 기존 값이 있으면 보존
+        var existing = v7ChatState.rooms[roomId];
+        if (existing && existing.userDisplayName) {
+            data.userDisplayName = existing.userDisplayName;
+        }
+        if (existing && existing.userPhotoUrl) {
+            data.userPhotoUrl = existing.userPhotoUrl;
+        }
+        v7ChatState.rooms[roomId] = data;
+    }
+});
+```
+
+`attachNewRoomListener`에서 새 채팅방이 감지되면 즉시 v7 API를 호출하여 상대방 정보를 설정한다.
+
+```javascript
+// attachNewRoomListener 내부 — 새 방 감지 시
+ref.on('child_added', function(snap) {
+    var roomId = snap.key;
+    var otherUid = v7ChatGetOtherUid(roomId, v7ChatState.myUid);
+    if (otherUid) {
+        func('user.getByFirebaseUid', { firebase_uid: otherUid }).then(function(res) {
+            if (v7ChatState.rooms[roomId]) {
+                v7ChatState.rooms[roomId].userDisplayName = res.nickname || '';
+                v7ChatState.rooms[roomId].userPhotoUrl = res.photo_url || '';
+            }
+        });
+    }
+});
+```
+
+---
+
+## 21. 버그 수정 이력
+
+### 21.1 채팅방 고정(pin) 기능 버그 수정 (2026-03-13)
+
+**문제**: 채팅방을 고정(pin)해도 고정 상태가 제대로 반영되지 않거나, 오래된 채팅방을 고정하면 고정 섹션에 표시되지 않는 문제가 발생했다.
+
+**원인 1 — Object.assign 순서 오류** (`chat-room-list.js`, `chat-sidebar.js`):
+
+`sortedRooms` computed에서 `Object.assign({ id, pinned }, room)` 순서로 병합했기 때문에, Firebase `chat/joins` 데이터에 `pinned` 필드가 포함되어 있을 경우 `room` 객체의 `pinned` 값이 계산된 `pinned` 값을 덮어썼다.
+
+| 수정 전 (버그) | 수정 후 (정상) |
+|----------------|----------------|
+| `Object.assign({ id, pinned }, room)` | `Object.assign({}, room, { id, pinned })` |
+
+**원인 2 — 페이지네이션 범위 밖 고정방 미로드** (`chat-store.js`):
+
+`listenPinnedRooms()`에서 `pinnedChatRooms` 값만 갱신하고, 해당 방이 `state.rooms`에 실제로 존재하는지 확인하지 않았다. 무한 스크롤 페이지네이션(`loadRooms`)으로 아직 로드되지 않은 오래된 채팅방을 고정하면 `state.rooms`에 데이터가 없어 고정 섹션에 표시되지 않았다.
+
+**수정**: `listenPinnedRooms()` 콜백에서 고정된 방의 roomId가 `state.rooms`에 없으면 Firebase `chat/joins/{uid}/{roomId}`를 `once('value')`로 별도 조회하여 `state.rooms`에 추가하고, `joinRoomListener`를 연결하며, v7 API로 상대방 사용자 정보도 조회하도록 로직을 추가했다.
+
+**관련 파일**:
+
+| 파일 | 수정 내용 |
+|------|-----------|
+| `v7/js/chat/chat-room-list.js` | `Object.assign` 순서 수정 — `pinned` 필드 덮어쓰기 방지 |
+| `v7/js/chat/chat-sidebar.js` | `Object.assign` 순서 수정 — `pinned` 필드 덮어쓰기 방지 |
+| `v7/js/chat/chat-store.js` | `listenPinnedRooms`에 페이지네이션 범위 밖 고정방 별도 로드 로직 추가 |
+
+> **참고**: 4.4.1절에서 이 버그의 상세 코드 패턴과 올바른 구현 방법을 확인할 수 있다.
+
+---
+
+## 22. v7 API 기반 즐겨찾기 시스템
+
+채팅방 즐겨찾기 시스템이 **Firebase RTDB + Cloud Functions** 기반에서 **v7 API(`bookmarks`/`bookmark_groups` MariaDB 테이블)** 기반으로 마이그레이션되었다.
+
+### 22.1 마이그레이션 개요
+
+| 항목 | 변경 전 (Firebase) | 변경 후 (v7 API) |
+|------|-------------------|-----------------|
+| **데이터 저장** | Firebase RTDB `chat/favorites/{uid}`, `chat/favorites-folder-list/{uid}` | MariaDB `bookmarks`, `bookmark_groups` 테이블 |
+| **폴더 목록 조회** | Firebase `on('value')` 실시간 리스너 | `v7api('bookmark.listGroups', { entity_type: 'chat_room' })` |
+| **즐겨찾기 추가** | Cloud Function `onFavorite` (RTDB 트리거) | `v7api('bookmark.add', { group_name, entity_type: 'chat_room', entity_id: roomId })` |
+| **폴더별 목록** | Firebase `once('value')` | `v7api('bookmark.listByGroup', { idx_group, entity_type: 'chat_room' })` |
+| **별 아이콘 기준** | 각 방의 `room.favorite` 필드 | `state.bookmarkedRoomIds` 배열에 roomId 포함 여부 |
+| **Cloud Function** | `onFavorite` 함수 사용 | 미사용 (앱 호환용으로 유지) |
+| **window.v7chat.api** | `favorite: Config::chatFavoriteUrl()` | 삭제됨 |
+
+### 22.2 Bookmark API 모듈
+
+새로 생성된 PHP 백엔드 모듈이다. 상세 API 문서: [api/v7-bookmark.md](../api/v7-bookmark.md)
+
+```
+lib/bookmark/
+├── BookmarkEntity.php        # bookmarks 테이블 Entity
+├── BookmarkGroupEntity.php   # bookmark_groups 테이블 Entity
+├── BookmarkService.php       # 비즈니스 로직 (그룹/항목 CRUD)
+└── BookmarkController.php    # API 엔드포인트 (bookmark.*)
+```
+
+### 22.3 사용되는 API 엔드포인트 (채팅 관련)
+
+| API | 호출 시점 | 설명 |
+|-----|----------|------|
+| `bookmark.listGroups` | 채팅 앱 초기화 시 | 즐겨찾기 폴더 목록 로드 (`entity_type: 'chat_room'`) |
+| `bookmark.myBookmarkedIds` | 채팅 앱 초기화 시 | 내 즐겨찾기 채팅방 ID 목록 로드 (별 아이콘 표시용) |
+| `bookmark.add` | 즐겨찾기 모달에서 저장 시 | 채팅방을 폴더에 즐겨찾기 추가 |
+| `bookmark.listByGroup` | 즐겨찾기 드롭다운에서 폴더 선택 시 | 폴더 내 채팅방 목록 로드 |
+
+### 22.4 JS 파일별 변경 사항
+
+| JS 파일 | 변경된 함수 | 변경 내용 |
+|---------|-----------|----------|
+| `chat-store.js` | `loadFavoriteFolders()` | Firebase `on('value')` 실시간 리스너 -> `v7api('bookmark.listGroups')` 1회성 API 호출 |
+| `chat-store.js` | `loadBookmarkedRoomIds()` | **신규 추가**. `v7api('bookmark.myBookmarkedIds')` 호출하여 `state.bookmarkedRoomIds` 설정 |
+| `chat-app.js` | 초기화 로직 | `loadBookmarkedRoomIds()` 호출 추가 |
+| `chat-single-room.js` | `saveFavorite()` | Cloud Function(`callCloudFn(window.v7chat.api.favorite, ...)`) -> `v7api('bookmark.add', ...)` 호출로 변경. 저장 후 `loadFavoriteFolders()` + `loadBookmarkedRoomIds()` 재호출 |
+| `chat-room-list.js` | `openFavFolder()` | Firebase `once('value')` -> `v7api('bookmark.listByGroup', ...)` 호출로 변경. 응답의 `bookmarks[].entity_id`로 roomId 추출 |
+| `chat-room-list.js` | 별 아이콘 표시 | `room.favorite` -> `state.bookmarkedRoomIds.includes(room.id)` 조건으로 변경 |
+
+### 22.5 v7ChatState 추가 필드
+
+```javascript
+const v7ChatState = Vue.reactive({
+    // ... 기존 필드 ...
+    bookmarkedRoomIds: [],  // 내 즐겨찾기 채팅방 ID 목록
+                            // bookmark.myBookmarkedIds API에서 로드
+                            // 채팅방 목록의 별 아이콘 표시에 사용
+});
+```
+
+### 22.6 DB 테이블
+
+채팅방 즐겨찾기는 `entity_type='chat_room'`, `entity_id=roomId` 형태로 `bookmarks` 테이블에 저장된다.
+
+```sql
+-- 예시: 채팅방 즐겨찾기 추가
+INSERT INTO bookmarks (idx_member, idx_group, entity_type, entity_idx, entity_id, memo, created_at)
+VALUES (186619, 1, 'chat_room', 0, 'uid1_uid2', '', UNIX_TIMESTAMP());
+
+-- 예시: 내 채팅방 즐겨찾기 ID 목록 조회
+SELECT entity_id FROM bookmarks WHERE idx_member = 186619 AND entity_type = 'chat_room';
 ```

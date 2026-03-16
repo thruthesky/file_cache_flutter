@@ -27,6 +27,7 @@
 - [8. UserEntity](#8-userentity)
 - [9. 사용자 설정 페이지 (SSR)](#9-사용자-설정-페이지-ssr)
 - [10. 사용자 차단 기능](#10-사용자-차단-기능)
+- [11. 사용자 신고 기능](#11-사용자-신고-기능)
 
 ---
 
@@ -364,7 +365,7 @@ https://v7-local.philgo.com/user/public-profile
 | 영역 | 설명 |
 |------|------|
 | **프로필 헤더** | 아바타, 닉네임, 통계(글 수/댓글 수/레벨), 액션 버튼 |
-| **액션 버튼** | 본인: 회원정보 수정 / 타인: 채팅, 글 목록 |
+| **액션 버튼** | 본인: 회원정보 수정 / 타인: 채팅, 글 목록, 코멘트 목록 / 공통: 글, 코멘트 |
 | **최근 글** | `findPostsByIdxMember()` — 최근 5개, 제목+날짜 |
 | **최근 댓글** | `findCommentsByIdxMember()` — 최근 5개, 내용 미리보기+날짜 |
 | **에러 상태** | 사용자 없음, 로그인 필요 시 에러 카드 표시 |
@@ -417,14 +418,20 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
 </div>
 ```
 
-**글 목록 링크 — idx_member 기반 전체 게시판 조회**:
+**글/코멘트 목록 링크 — idx_member 기반 전체 게시판 조회**:
 
-공개 프로필의 "글" 버튼과 "더보기" 링크는 `Route::url()`을 사용하여 해당 사용자의 전체 게시판 글을 조회한다:
+공개 프로필의 "글" 버튼, "코멘트" 버튼, "더보기" 링크는 `Route::url()`을 사용하여 해당 사용자의 전체 게시판 글/코멘트를 조회한다:
 ```php
 <!-- 글 버튼 -->
 <wa-button variant="neutral" appearance="outlined" size="small"
     href="<?= \V7\Utils\Route::url('/post/list', ['idx_member' => $user->idx]) ?>">
     <i slot="start" class="fal fa-list"></i> 글
+</wa-button>
+
+<!-- 코멘트 버튼 -->
+<wa-button variant="neutral" appearance="outlined" size="small"
+    href="<?= \V7\Utils\Route::url('/post/comments', ['idx_member' => $user->idx]) ?>">
+    <i slot="start" class="fal fa-comment-lines"></i> 코멘트
 </wa-button>
 
 <!-- 더보기 링크 -->
@@ -434,6 +441,7 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
 ```
 
 > **중요**: `url()->post->list->community`는 `post_id=freetalk`만 전달하므로, 특정 사용자의 전체 게시판 글을 조회하려면 반드시 `Route::url('/post/list', ['idx_member' => $user->idx])`를 사용해야 한다.
+> 코멘트 버튼은 `/post/comments?idx_member=N` 경로로 이동하여 해당 사용자의 코멘트 목록을 조회한다.
 
 **에러 상태 핵심 코드**:
 ```php
@@ -504,6 +512,19 @@ v7 디자인 표준에 따라 **보더 없는 디자인**을 적용한다. `wa-c
     color: var(--wa-color-neutral-60, #64748b);
 }
 ```
+
+**액션 버튼 구성**:
+
+| 버튼 | 조건 | URL | 아이콘 |
+|------|------|-----|--------|
+| **회원정보 수정** | 본인 프로필 | `url()->user->profile` | `fal fa-user-pen` |
+| **채팅** | 타인 프로필 | `/chat/index?uid={firebase_uid}` | `fal fa-comments` |
+| **글** | 공통 (항상 표시) | `Route::url('/post/list', ['idx_member' => N])` | `fal fa-list` |
+| **코멘트** | 공통 (항상 표시) | `Route::url('/post/comments', ['idx_member' => N])` | `fal fa-comment-lines` |
+| **즐겨찾기** | 타인 + 로그인 | JavaScript `bookmarkToggle()` | `fa-regular/fa-solid fa-star` |
+| **차단** | 타인 + 로그인 | JavaScript `toggleBlockMember()` | `fal fa-ban` |
+
+> "글" 버튼 다음에 "코멘트" 버튼이 위치하며, `/post/comments?idx_member=N` 경로로 이동한다.
 
 **반응형**: 모바일(< 992px)에서 아바타 80px, 패딩/간격 축소. 반응형 규칙은 `public-profile.css` 하단의 `@media (max-width: 991.98px)` 블록에 정의.
 
@@ -1667,9 +1688,17 @@ v7 프론트엔드에서 `v7api()` → `/api.php`를 통해 호출한다.
 > **중요**: v6의 `/func.php` 호출 방식은 v7 세션(`session_id_v7`)과 호환되지 않으므로,
 > 반드시 `v7api()` → `/api.php` → `UserController` 경로를 사용해야 한다.
 
+> **🔴 절대 규칙: 차단/해제는 오직 v7 API를 통해서만 수행한다**
+>
+> 사용자 차단/해제는 반드시 필고 v7 API(`user.toggleBlock`, `user.unblock`)를 통해서만 수행해야 한다.
+> Firebase RTDB에 직접 쓰기(`set(true)`, `remove()`)로 차단/해제하는 것은 **엄격히 금지**한다.
+> v7 API가 MariaDB에 차단 정보를 저장한 후 Firebase RTDB에 자동 동기화(`UserService::syncBlockToFirebase()`)하므로,
+> 채팅방에서는 Firebase RTDB 리스너(`listenBlockedUsers()`)로 차단 여부를 실시간 감지하여 UI에 반영하면 된다.
+
 | 항목 | 값 |
 |------|---|
 | **v7 Controller** | `lib/user/UserController.php` (`toggleBlock`, `unblock`, `blockedList`) |
+| **v7 Service** | `lib/user/UserService.php` (`syncBlockToFirebase`) |
 | **차단 목록 페이지** | `v7/user/blocked.php` |
 | **차단 목록 CSS** | `v7/user/blocked.css` |
 | **JS 유틸리티** | `v7/js/block.js` |
@@ -1678,17 +1707,40 @@ v7 프론트엔드에서 `v7api()` → `/api.php`를 통해 호출한다.
 | **설정 페이지 링크** | `v7/user/settings.php`에서 "차단한 사용자" 링크 표시 |
 | **PEST 테스트** | `tests/Unit/MemberBlockTest.php` (16개 테스트) |
 | **DB 테이블** | `sf_member_blocks` (`idx`, `idx_blocker`, `idx_blockee`, `created_at`) |
+| **Firebase RTDB 경로** | `user-private/{blockerUid}/blocks/{blockeeUid}` (v7 API가 자동 동기화) |
 
 ### 10.2 v7 API 엔드포인트 (UserController)
 
 `lib/user/UserController.php`에 차단 관련 3개 메서드가 정의되어 있다.
 `AuthService::getLoginUser()`로 v7 세션 인증을 수행한다.
+`user.toggleBlock`과 `user.unblock`은 차단/해제 후 `UserService::syncBlockToFirebase()`를 호출하여
+Firebase RTDB에 자동 동기화한다 (채팅 앱에서 실시간 반영).
 
 | API 메서드 | 설명 | 입력 | 반환 |
 |------|------|------|------|
-| `user.toggleBlock` | 차단/해제 토글 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: bool, message }` |
-| `user.unblock` | 차단 해제 | `{ idx_blockee: int }` | `{ idx_blockee, blocked: false, message }` |
+| `user.toggleBlock` | 차단/해제 토글 + Firebase RTDB 동기화 | `{ idx_blockee: int }` 또는 `{ blockee_firebase_uid: string }` | `{ idx_blockee, blocked: bool, message }` |
+| `user.unblock` | 차단 해제 + Firebase RTDB 동기화 | `{ idx_blockee: int }` 또는 `{ blockee_firebase_uid: string }` | `{ idx_blockee, blocked: false, message }` |
 | `user.blockedList` | 차단 목록 조회 | 없음 | `[{ idx, idx_blockee, nickname, photo_url, created_at }]` |
+
+> **`blockee_firebase_uid` 파라미터**: 채팅방에서는 상대방의 Firebase UID만 알고 있으므로,
+> `idx_blockee` 대신 `blockee_firebase_uid`를 전달할 수 있다.
+> 서버에서 `UserService::getByFirebaseUid()`로 idx를 자동 변환하여 처리한다.
+
+### 10.2.1 Firebase RTDB 동기화 (UserService)
+
+`UserService::syncBlockToFirebase(int $idxBlocker, int $idxBlockee, bool $blocked)` 메서드가
+차단/해제 시 Firebase RTDB에 동기화한다.
+
+```php
+// 차단 시: user-private/{blockerUid}/blocks/{blockeeUid} = true
+// 해제 시: user-private/{blockerUid}/blocks/{blockeeUid} 삭제
+UserService::syncBlockToFirebase($me->idx, $idxBlockee, true);  // 차단
+UserService::syncBlockToFirebase($me->idx, $idxBlockee, false); // 해제
+```
+
+- Kreait Firebase Admin SDK를 사용하여 `PROD_DATABASE_URL`에 접근
+- Firebase UID가 없는 사용자는 동기화 스킵
+- 동기화 실패 시 로그만 남기고 차단/해제 기능은 정상 작동
 
 ### 10.3 JS API (block.js)
 
@@ -1736,6 +1788,25 @@ $_isBlockedPost = !empty($_blockedMemberIds) && in_array($post['idx_member'] ?? 
 
 - 타인 프로필에서 차단/해제 버튼 표시 (`toggleBlockMember()` 호출)
 - 차단 상태에 따라 버튼 색상 변경 (danger/neutral)
+- 차단 여부 확인은 `Db::fetch()`를 사용하여 `sf_member_blocks` 테이블을 조회
+
+```php
+// ✅ v7 방식: Db::fetch() 사용 (pdo() 사용 금지)
+use Philgo\Utils\Db;
+
+$isProfileBlocked = false;
+if ($loginUser) {
+    $blockRow = Db::fetch(
+        "SELECT idx FROM sf_member_blocks WHERE idx_blocker = ? AND idx_blockee = ?",
+        [$loginUser->idx, $user->idx]
+    );
+    $isProfileBlocked = $blockRow !== false;
+}
+```
+
+> **주의**: 이전에 v6 `pdo()` 함수를 직접 호출하던 코드(`pdo()->prepare()` + `->execute()` + `->fetch()`)는
+> v7 `Db::fetch()`로 교체되었다. v7 홈페이지(`v7/` 폴더)에서 `pdo()` 직접 호출은 금지이며,
+> 반드시 `Philgo\Utils\Db` 클래스를 통해 DB에 접근해야 한다.
 
 ### 10.5 차단 목록 페이지 (`blocked.php`)
 
@@ -1756,3 +1827,112 @@ Vue.js CDN MPA 방식으로 구현된 차단 사용자 관리 페이지이다.
 3. 글 보기 → 액션바 차단/해제 버튼 (타인 글에만 표시)
 4. 글 보기 → 코멘트 액션 차단/해제 버튼 (타인 댓글에만 표시)
 5. 공개 프로필 → 차단 버튼
+
+---
+
+## 11. 사용자 신고 기능
+
+### 11.1 개요
+
+사용자를 신고하는 기능이다. 공개 프로필 페이지(`v7/user/public-profile.php`)에서 타인의 프로필을 신고할 수 있다.
+글/코멘트 신고는 `post.report` API를 사용하며, 사용자 신고는 `user.reportUser` API를 사용한다.
+
+### 11.2 user.reportUser — 사용자 신고 API
+
+인증 필수.
+
+```
+GET https://local.philgo.com/api.php?method=user.reportUser&session_id=xxx&idx_reported=190076&reason=스팸
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| idx_reported | int | O | 신고 대상 사용자의 sf_member.idx |
+| reason | string | X | 신고 사유 (기본값: 빈 문자열) |
+
+**성공 응답:**
+
+```json
+{ "idx_reported": 190076, "message": "사용자를 신고했습니다." }
+```
+
+**에러 응답:**
+
+| 메시지 | 상황 |
+|--------|------|
+| 로그인이 필요합니다. | 미인증 |
+| idx_reported는 필수입니다. | idx_reported 누락 또는 0 |
+| 자기 자신을 신고할 수 없습니다. | 본인 신고 시도 |
+| 이미 신고한 사용자입니다. | 동일 사용자에 대한 중복 신고 |
+
+**호출 경로:**
+
+```
+UserController::reportUser($input)
+  → UserService::reportUser($idxReporter, $idxReported, $reason)
+    → ensureUserReportsTable()  ← sf_user_reports 테이블 자동 생성
+    → Db::fetch() 중복 확인
+    → Db::insert() 신고 등록
+```
+
+### 11.3 DB 테이블: sf_user_reports
+
+사용자 신고 전용 테이블. `UserService::ensureUserReportsTable()`에서 자동 생성된다.
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `idx` | int (PK, AUTO_INCREMENT) | 신고 레코드 ID |
+| `idx_reporter` | int | 신고한 사용자의 sf_member.idx |
+| `idx_reported` | int | 신고당한 사용자의 sf_member.idx |
+| `reason` | varchar(255) | 신고 사유 (기본값: 빈 문자열) |
+| `stamp` | int | 신고 시각 (Unix timestamp) |
+
+**인덱스:**
+
+| 인덱스 | 컬럼 | 설명 |
+|--------|------|------|
+| UNIQUE `unique_report` | `(idx_reporter, idx_reported)` | 동일 사용자 간 중복 신고 방지 |
+| KEY `idx_reported` | `(idx_reported)` | 신고당한 사용자 기준 조회 |
+
+### 11.4 관리자용 신고 사용자 목록 조회
+
+`UserService::listReportedUsers($limit)`로 신고된 사용자 목록을 조회한다 (관리자 전용).
+
+**반환 데이터:**
+
+| 필드 | 설명 |
+|------|------|
+| `idx_reported` | 신고당한 사용자 idx |
+| `nickname` | 닉네임 |
+| `photo_url` | 프로필 사진 URL |
+| `report_count` | 신고 횟수 |
+| `last_report_stamp` | 최근 신고 시각 |
+| `reasons` | 신고 사유 모음 (콤마 구분) |
+
+### 11.5 공개 프로필 페이지 신고 버튼
+
+`v7/user/public-profile.php`에서 타인 프로필에 신고 버튼이 표시된다.
+
+```html
+<wa-button id="profile-report-btn" variant="neutral" appearance="outlined" size="small"
+           data-idx-reported="<?= $user->idx ?>"
+           data-user-name="<?= htmlspecialchars($user->nickname) ?>">
+    <i slot="start" class="fal fa-flag"></i> 신고
+</wa-button>
+```
+
+**JavaScript 동작:**
+
+1. 신고 버튼 클릭 → `confirm()` 확인 다이얼로그
+2. 확인 시 `v7api('user.reportUser', { idx_reported: ... })` 호출
+3. 성공 시 버튼 텍스트 "신고됨"으로 변경, variant를 `warning`으로 변경, 버튼 비활성화
+4. 에러 시 원래 상태로 복원
+
+### 11.6 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/user/UserController.php` | `reportUser()` API 엔드포인트 |
+| `lib/user/UserService.php` | `reportUser()`, `listReportedUsers()`, `ensureUserReportsTable()` 비즈니스 로직 |
+| `v7/user/public-profile.php` | 공개 프로필 신고 버튼 UI + JavaScript |
+| `v7/admin/reports.php` | 관리자 신고 관리 페이지 (사용자 신고 탭) |
