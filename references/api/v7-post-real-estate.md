@@ -23,7 +23,7 @@
 | **게시판 ID** | `buyandsell` |
 | **카테고리** | `real_estate` |
 | **목록 위젯** | `post-list-real-estate-masonry.php` (Masonry 레이아웃) |
-| **상세보기 위젯** | `post-view-real-estate.php` (부동산 필드 + Google Maps) |
+| **상세보기 위젯** | `post-view-real-estate-info.php` (기본 정보/가격/위치 텍스트) + `post-view-real-estate-map.php` (Google Maps 지도) |
 | **폼** | `post-form.js`의 `isRealEstate` computed 프로퍼티로 분기 |
 | **CSS** | `v7/post/real-estate.css` (별도 파일) |
 | **필드 상수** | `lib/post/post.fields.php`의 `RealEstateFields` 클래스 |
@@ -38,7 +38,7 @@
 v7/
 ├── post/
 │   ├── list.php                 ← $isRealEstateMasonry 조건으로 부동산 masonry 위젯 분기
-│   ├── view.php                 ← $post->category === 'real_estate' 조건으로 부동산 상세 위젯 include
+│   ├── view.php                 ← post-view-default.php를 include (부동산 위젯은 default 내부에서 조건부 include)
 │   ├── create.php               ← post-form.js 사용 (부동산 폼 포함)
 │   ├── update.php               ← post-form.js 사용 (부동산 폼 포함)
 │   └── real-estate.css          ← 부동산 전용 CSS (필터, masonry 오버레이, 상세 필드, 지도, 폼)
@@ -47,7 +47,9 @@ v7/
 │   ├── list/
 │   │   └── post-list-real-estate-masonry.php  ← 부동산 전용 Masonry 목록 위젯
 │   └── view/
-│       └── post-view-real-estate.php          ← 부동산 전용 상세보기 위젯
+│       ├── post-view-real-estate-info.php     ← 부동산 기본 정보/가격/위치 텍스트 위젯 (본문 앞)
+│       ├── post-view-real-estate-map.php       ← 부동산 Google Maps 지도 위젯 (액션 버튼 앞)
+│       └── post-view-real-estate.php          ← 기존 통합 위젯 (참고용, 현재 미사용)
 │
 ├── js/
 │   └── post-form.js             ← 부동산 커스텀 필드 15개 Vue.js data/computed/submit 로직
@@ -126,36 +128,101 @@ $isRealEstateMasonry = ($category === 'real_estate');
 
 ## 4. 상세보기 -- 부동산 정보 + 지도 위젯
 
+### 위젯 분리 구조
+
+부동산 상세보기 위젯은 **2개 파일로 분리**되어 `post-view-default.php` 내부에서 조건부로 include된다.
+기존에는 `view.php`에서 별도로 `post-view-real-estate.php`를 include하는 구조였으나,
+현재는 `post-view-default.php` 내부에서 적절한 위치에 각각 삽입된다.
+
+| 위젯 파일 | 역할 | 삽입 위치 |
+|-----------|------|----------|
+| `post-view-real-estate-info.php` | 기본 정보, 가격/공간, 위치 텍스트 (뱃지) | **글 헤더 뒤, 본문 앞** |
+| `post-view-real-estate-map.php` | Google Maps 임베드 지도 | **첨부파일 뒤, 액션 버튼 앞** |
+| `post-view-real-estate.php` | 기존 통합 위젯 (참고용, 현재 미사용) | - |
+
+### 표시 순서
+
+```
+제목/작성자/날짜 (헤더)
+    ↓
+[부동산 기본 정보 — post-view-real-estate-info.php]
+  - 매물 형태, 거래 형태, 매물 상태, 분양 형태 (뱃지)
+  - 가격, 침실, 욕실, 면적, 주차, 준공 연도 (뱃지)
+  - 위치 텍스트 (주소)
+    ↓
+글 본문 (content)
+    ↓
+첨부파일
+    ↓
+[Google Maps 지도 — post-view-real-estate-map.php]
+    ↓
+액션 버튼 (좋아요/수정/삭제/차단/목록)
+```
+
 ### 파일
 
 | 항목 | 내용 |
 |------|------|
-| **위젯 파일** | `v7/widgets/post/view/post-view-real-estate.php` |
+| **기본 정보 위젯** | `v7/widgets/post/view/post-view-real-estate-info.php` |
+| **지도 위젯** | `v7/widgets/post/view/post-view-real-estate-map.php` |
 | **CSS** | `v7/post/real-estate.css` |
-| **호출 조건** | `view.php`에서 `$post->category === 'real_estate'` |
-| **포함 위치** | `post-view-default.php` 뒤에 include |
+| **호출 위치** | `post-view-default.php` 내부에서 조건부 include |
 
-### 분기 로직 (view.php)
+### 분기 로직 (post-view-default.php)
+
+`view.php`에서 별도로 include하지 않고, `post-view-default.php` 내부에서 2곳에 조건부로 삽입된다:
 
 ```php
-<?php if (!$post->isInfoPost()): ?>
-    <?php include __DIR__ . '/../widgets/post/view/post-view-default.php'; ?>
+<!-- 글 헤더 뒤 -->
+</header>
 
-    <?php if ($post->category === 'real_estate'): ?>
-        <?php include __DIR__ . '/../widgets/post/view/post-view-real-estate.php'; ?>
-    <?php endif; ?>
+<!-- 부동산 기본 정보 (본문 앞에 표시) -->
+<?php if ($post->category === 'real_estate'): ?>
+    <?php include __DIR__ . '/post-view-real-estate-info.php'; ?>
 <?php endif; ?>
+
+<!-- 글 본문 -->
+...
+
+<!-- 부동산 지도 (액션 버튼 앞에 표시) -->
+<?php if ($post->category === 'real_estate'): ?>
+    <?php include __DIR__ . '/post-view-real-estate-map.php'; ?>
+<?php endif; ?>
+
+<!-- 액션 버튼 (좋아요/수정/삭제/차단/목록) -->
 ```
 
-### 표시 구조
+### 위젯 간 데이터 공유
 
-위젯은 부동산 필드가 하나라도 존재할 때만 렌더링되며, 3개 그룹으로 정보를 표시한다:
+`post-view-real-estate-info.php`에서 조합한 주소 배열을 `$GLOBALS['_reAddressParts']`에 저장하고,
+`post-view-real-estate-map.php`에서 이 값을 읽어 Google Maps 지도를 렌더링한다.
+
+```php
+// post-view-real-estate-info.php 내부
+$GLOBALS['_reAddressParts'] = $addressParts;
+
+// post-view-real-estate-map.php 내부
+$addressParts = $GLOBALS['_reAddressParts'] ?? [];
+if (empty($addressParts)) return;
+```
+
+### 표시 그룹
+
+위젯은 부동산 필드가 하나라도 존재할 때만 렌더링되며, 정보를 3개 그룹으로 나누어 표시한다:
+
+#### post-view-real-estate-info.php (기본 정보 + 가격/공간 + 위치 텍스트)
 
 | 그룹 | 표시 내용 | CSS 클래스 |
 |------|----------|-----------|
 | **기본 정보** | 매물 형태, 거래 형태, 매물 상태, 분양 형태 (뱃지) | `.re-detail-group`, `.re-badge-*` |
 | **가격 및 공간** | 가격, 침실, 욕실, 면적, 주차, 준공 연도 (뱃지) | `.re-badge-danger`, `.re-badge-neutral` |
-| **위치 정보** | 주소 텍스트 + Google Maps 임베드 지도 | `.re-address-text`, `.re-map-container` |
+| **위치 텍스트** | 주소 텍스트 | `.re-address-text` |
+
+#### post-view-real-estate-map.php (Google Maps 지도)
+
+| 그룹 | 표시 내용 | CSS 클래스 |
+|------|----------|-----------|
+| **지도** | Google Maps 임베드 지도 | `.re-map-section`, `.re-map-container` |
 
 ### 뱃지 색상 체계
 

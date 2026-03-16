@@ -2088,20 +2088,36 @@ uploads/{idx_member}/
 | **DB URL 신뢰** | `varchar_10`(400x400), `varchar_11`(800x800), `varchar_12`(1000) 또는 `uploads` 테이블의 `thumbnail_*_url` 컬럼에 저장된 URL을 그대로 사용한다 |
 | **onerror 폴백** | 만약 예외적으로 썸네일이 없다면 HTML `<img>` 태그의 `onerror` 이벤트로 처리한다 (placeholder 표시) |
 
-**올바른 사용:**
+### 🔴 varchar_10~12 커스텀 필드 충돌 주의
+
+> **⛔ v6 레거시 글에서 `varchar_10`, `varchar_11`, `varchar_12`가 게시판별 커스텀 필드로 사용될 수 있다. ⛔**
+> **썸네일 URL을 사용할 때 반드시 URL 형태(`/uploads/` 또는 `http`)인지 검증해야 한다.**
+
+| 컬럼 | v7 용도 | v6 부동산 용도 | 충돌 여부 |
+|------|---------|---------------|----------|
+| `varchar_10` | 400x400 썸네일 | 사용 안 함 | 안전 |
+| `varchar_11` | 800x800 썸네일 | 사용 안 함 | 안전 |
+| `varchar_12` | 1000px 썸네일 | **UNIT_NUMBER (호수/동)** | **🔴 충돌!** |
+
+예: v6 부동산 글의 `varchar_12 = "1동"` → v7에서 `thumbnail_1000 = "1동"` → 이미지 URL로 사용 시 깨짐
+
+**올바른 사용 (URL 검증 필수):**
 
 ```php
-// ✅ 썸네일 URL을 그대로 사용 (file_exists 호출 없음)
-if (!empty($post['thumbnail_1000'])) {
+// ✅ URL 형태인지 검증 후 사용
+if (!empty($post['thumbnail_1000']) && (str_starts_with($post['thumbnail_1000'], '/uploads/') || str_starts_with($post['thumbnail_1000'], 'http'))) {
     $_thumbnailUrl = $post['thumbnail_1000'];
-} elseif (!empty($post['thumbnail_800x800'])) {
-    $_thumbnailUrl = $post['thumbnail_800x800'];
 }
 ```
 
 **잘못된 사용 (금지):**
 
 ```php
+// ❌ URL 검증 없이 사용 — v6 커스텀 필드 값이 이미지 URL로 오인됨
+if (!empty($post['thumbnail_1000'])) {
+    $_thumbnailUrl = $post['thumbnail_1000'];
+}
+
 // ❌ file_exists()로 썸네일 존재 확인 — 성능 저하, 불필요
 if (!empty($post['thumbnail_1000']) && file_exists(ROOT_DIR . $post['thumbnail_1000'])) {
     $_thumbnailUrl = $post['thumbnail_1000'];
