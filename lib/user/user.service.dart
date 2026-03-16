@@ -169,7 +169,11 @@ class UserService {
         }
       } else {
         try {
+          log(
+            'UserService.initialize() ->Firebase user logged in: ${firebaseUser.uid}',
+          );
           final user = await UserService.loadCurrentUser();
+
           if (context.mounted) {
             UserState.of(context).setUser(user);
           }

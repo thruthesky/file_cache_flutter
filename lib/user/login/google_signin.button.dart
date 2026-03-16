@@ -67,11 +67,16 @@ class GoogleSignInButton extends StatelessWidget {
       idToken: googleAuth.idToken,
     );
     await FirebaseAuth.instance.signInWithCredential(credential);
+    log(
+      'Google 로그인 성공, Firebase 인증 완료. UID: ${FirebaseAuth.instance.currentUser?.uid}',
+    );
+
     final json = await ApiService.instance.v7api(
       'user.socialLogin',
       data: {'login_provider': 'google'},
       debug: true,
     );
+    log('Google 로그인 성공: v7 API 응답 수신');
     log('Google 로그인 성공: ${json.toString()}');
     if (context.mounted) {
       ScaffoldMessenger.of(

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart'
     as kakao_sdk;
 import 'package:philgo/api/api.service.dart';
@@ -64,7 +65,7 @@ class KakaoSignInButton extends StatelessWidget {
   /// 2. v7 서버에 access_token 전송 → Firebase Custom Token 발급
   /// 3. Firebase signInWithCustomToken()으로 Firebase 로그인
   /// 4. v7 user.socialLogin 호출하여 DB 등록/업데이트
-  _signInWithKakao(BuildContext context) async {
+  Future<UserModel> _signInWithKakao(BuildContext context) async {
     kakao_sdk.OAuthToken token;
     final isInstalled = await kakao_sdk.isKakaoTalkInstalled();
     debugPrint('카카오톡 앱 설치 여부: $isInstalled');
@@ -94,6 +95,12 @@ class KakaoSignInButton extends StatelessWidget {
       'user.socialLogin',
       data: {'login_provider': 'kakao'},
     );
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('카카오 로그인 성공!'.tr())));
+      context.pop();
+    }
     return UserModel.fromJson(json);
   }
 }
