@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:philgo/globals.dart';
+import 'package:philgo/user/user.ready.dart';
 
 import '../app.config.dart';
 import '../user/user.model.dart';
-import '../user/user.state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,20 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Consumer<UserState>(
-        builder: (context, userState, _) {
-          if (userState.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!userState.isLoggedIn) {
-            return Center(
-              child: Text(
-                '로그인이 필요합니다.'.tr(),
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            );
-          }
-          final user = userState.user!;
+      body: UserReady(
+        yes: (context, user) {
           return SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -51,6 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
+        no: (p0) => Center(
+          child: Text('로그인 후 이용할 수 있습니다.'.tr(), style: text.bodyMedium),
+        ),
       ),
     );
   }
@@ -62,12 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
         CircleAvatar(
           radius: 48,
           backgroundColor: Colors.grey[200],
-          backgroundImage:
-              user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
-          child:
-              user.photoUrl.isEmpty
-                  ? Icon(Icons.person, size: 48, color: Colors.grey[400])
-                  : null,
+          backgroundImage: user.photoUrl.isNotEmpty
+              ? NetworkImage(user.photoUrl)
+              : null,
+          child: user.photoUrl.isEmpty
+              ? Icon(Icons.person, size: 48, color: Colors.grey[400])
+              : null,
         ),
         const SizedBox(height: 12),
         Text(
@@ -194,10 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(
               '앱 설정'.tr(),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Divider(),
             _configRow('API 엔드포인트'.tr(), v7ApiEndpoint),
@@ -233,12 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 13),
-            ),
-          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),
         ],
       ),
     );

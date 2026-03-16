@@ -71,7 +71,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
       _existingUrls = List.from(_existingUrls)..remove(url);
     });
     try {
-      await ApiService.fileDeleteByUrl(url);
+      await ApiService.instance.fileDeleteByUrl(url);
       _latestPost = await PostService.update(
         idx: widget.post.idx,
         files: [..._existingUrls, ..._newFiles.map((f) => f.path)],

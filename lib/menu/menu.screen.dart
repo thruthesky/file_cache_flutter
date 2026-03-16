@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +9,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/company/company.model.dart';
-import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
@@ -34,16 +36,19 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    _loadMyCompany();
+    scheduleMicrotask(() => _loadMyCompany());
   }
 
   Future<void> _loadMyCompany() async {
-    try {
-      final company = await CompanyService.mine();
-      if (mounted && company != null) {
-        setState(() => _myCompany = company);
+    UserState.of(context).addListener(() {
+      if (UserState.of(context).user == null) {
+        setState(() => _myCompany = null);
+        log('User logged out, cleared my company data');
+      } else {
+        _loadMyCompany();
+        log('User logged in, loaded my company data');
       }
-    } catch (_) {}
+    });
   }
 
   /// 업소가 등록된 상태인지 (name이 비어 있으면 서버 자동 생성된 빈 업소)
@@ -497,10 +502,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 메뉴에서 선택한 게시판으로 이동
   void _navigateToForum(String postId, {String? category}) {
-    AppNavigationState.of(context).openForumScreen(
-      postId: postId,
-      category: category,
-    );
+    AppNavigationState.of(
+      context,
+    ).openForumScreen(postId: postId, category: category);
   }
 
   /// 게시판 섹션 콘텐츠 (서브카테고리 포함)
@@ -656,13 +660,15 @@ class _MenuScreenState extends State<MenuScreen> {
           /// 업소 로고/이미지
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: _hasRegisteredCompany && _myCompany!.primaryImageUrl.isNotEmpty
+            child:
+                _hasRegisteredCompany && _myCompany!.primaryImageUrl.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: _myCompany!.primaryImageUrl,
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, _) => _buildCompanyPlaceholderIcon(scheme),
+                    errorWidget: (_, __, _) =>
+                        _buildCompanyPlaceholderIcon(scheme),
                   )
                 : _buildCompanyPlaceholderIcon(scheme),
           ),
@@ -777,9 +783,7 @@ class _MenuScreenState extends State<MenuScreen> {
     if (company == null) return;
 
     final result = await Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(
-        builder: (_) => CompanyEditScreen(company: company),
-      ),
+      MaterialPageRoute(builder: (_) => CompanyEditScreen(company: company)),
     );
 
     if (result is CompanyModel && mounted) {

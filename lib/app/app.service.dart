@@ -1,9 +1,16 @@
 import 'package:flutter/cupertino.dart';
 
 class AppService {
-  static late BuildContext context;
+  static AppService instance = AppService._();
 
-  static void initialize({required BuildContext context}) {
-    AppService.context = context;
+  AppService._();
+
+  late BuildContext context;
+  bool isInitialized = false;
+
+  void initialize({required BuildContext context}) {
+    if (isInitialized) return;
+    isInitialized = true;
+    this.context = context;
   }
 }

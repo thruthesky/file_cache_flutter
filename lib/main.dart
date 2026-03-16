@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,54 +12,73 @@ import 'package:philgo/firebase_options.dart';
 import 'package:philgo/l10n/code_asset_loader.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/theme.dart';
+import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/util/run_zoned_guarded_error_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:omni_video_player/omni_video_player.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await EasyLocalization.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
-  // 카카오 SDK 초기화
-  KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
+      // 카카오 SDK 초기화
+      KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
 
-  OmniVideoPlayer.ensureInitialized();
+      OmniVideoPlayer.ensureInitialized();
 
-  // Pass all uncaught "fatal" errors from the framework to Crashlytics
-  FlutterError.onError = (details) {
-    debugPrint('🔴 FlutterError: ${details.exception}');
-    debugPrint('🔴 스택: ${details.stack}');
-    FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-  };
+      // Pass all uncaught "fatal" errors from the framework to Crashlytics
+      FlutterError.onError = (details) {
+        debugPrint('🔴 FlutterError: ${details.exception}');
+        debugPrint('🔴 스택: ${details.stack}');
+        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      };
 
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    debugPrint('🔴 PlatformDispatcher 에러: $error');
-    debugPrint('🔴 스택 트레이스: $stack');
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+      // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+      PlatformDispatcher.instance.onError = (error, stack) {
+        debugPrint('🔴 PlatformDispatcher 에러: $error');
+        debugPrint('🔴 스택 트레이스: $stack');
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
 
-  runApp(
-    EasyLocalization(
-      supportedLocales: const [Locale('ko'), Locale('en')],
-      path: 'unused',
-      assetLoader: const CodeAssetLoader(),
-      fallbackLocale: const Locale('ko'),
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => UserState()),
-          ChangeNotifierProvider(create: (_) => AppNavigationState()),
-        ],
-        child: const PhilGoV7App(),
-      ),
-    ),
+      runApp(
+        EasyLocalization(
+          supportedLocales: const [Locale('ko'), Locale('en')],
+          path: 'unused',
+          assetLoader: const CodeAssetLoader(),
+          fallbackLocale: const Locale('ko'),
+          child: MultiProvider(
+            providers: [
+              ChangeNotifierProvider(create: (_) => UserState()),
+              ChangeNotifierProvider(create: (_) => AppNavigationState()),
+            ],
+            child: const PhilGoV7App(),
+          ),
+        ),
+      );
+    },
+    (error, stack) {
+      FirebaseCrashlytics.instance.recordError(
+        error,
+        stack,
+        fatal: true,
+        printDetails: false,
+      );
+      runZoneGuardedErrorHandler(error, stack);
+    },
   );
 }
 
@@ -74,8 +95,8 @@ class _MyAppState extends State<PhilGoV7App> {
     super.initState();
     // FirebaseAuth 상태 변화 구독 시작 (로그인/로그아웃 자동 감지)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      AppService.initialize(context: globalContext);
-      context.read<UserState>().listenAuthState();
+      AppService.instance.initialize(context: globalContext);
+      UserService.instance.initialize(globalContext);
     });
   }
 

@@ -31,7 +31,7 @@ class CompanyService {
     int page = 1,
     int limit = 20,
   }) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'company.list',
       data: {
         if (category != null) 'category': category,
@@ -57,7 +57,10 @@ class CompanyService {
   /// [idx] 업소 고유번호
   /// 반환: CompanyModel 또는 null (업소가 없을 경우)
   static Future<CompanyModel?> get(int idx) async {
-    final result = await ApiService.v7api('company.get', data: {'idx': idx});
+    final result = await ApiService.instance.v7api(
+      'company.get',
+      data: {'idx': idx},
+    );
     if (result.isEmpty) return null;
     return CompanyModel.fromJson(result);
   }
@@ -69,7 +72,7 @@ class CompanyService {
   /// 업소가 없으면 서버에서 자동 생성된다 (status='').
   /// 반환: CompanyModel 또는 null
   static Future<CompanyModel?> mine() async {
-    final result = await ApiService.v7api('company.mine');
+    final result = await ApiService.instance.v7api('company.mine');
     if (result.isEmpty) return null;
     return CompanyModel.fromJson(result);
   }
@@ -80,7 +83,7 @@ class CompanyService {
   ///
   /// 반환: 생성된 CompanyModel 또는 null
   static Future<CompanyModel?> create() async {
-    final result = await ApiService.v7api('company.create');
+    final result = await ApiService.instance.v7api('company.create');
     if (result.isEmpty) return null;
     return CompanyModel.fromJson(result);
   }
@@ -96,7 +99,10 @@ class CompanyService {
   ///
   /// 반환: 수정된 CompanyModel 또는 null
   static Future<CompanyModel?> update(Map<String, dynamic> data) async {
-    final result = await ApiService.v7api('company.update', data: data);
+    final result = await ApiService.instance.v7api(
+      'company.update',
+      data: data,
+    );
     if (result.isEmpty) return null;
     return CompanyModel.fromJson(result);
   }

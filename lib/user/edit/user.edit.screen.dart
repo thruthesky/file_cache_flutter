@@ -175,7 +175,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
                       }
                       // 파일 삭제 API 호출
                       if (fileIdx != null) {
-                        await ApiService.fileDelete(fileIdx);
+                        await ApiService.instance.fileDelete(fileIdx);
                       }
                       // 프로필에서 사진 제거
                       final idx = context.read<UserState>().user?.idx;

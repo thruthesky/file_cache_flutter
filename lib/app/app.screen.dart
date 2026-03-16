@@ -2,11 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
-import 'package:philgo/chat/chat.screen.dart';
-import 'package:philgo/company/list/company.list.screen.dart';
 import 'package:philgo/home/home.screen.dart';
 import 'package:philgo/menu/menu.screen.dart';
-import 'package:philgo/post/list/forum.screen.dart';
 import 'package:provider/provider.dart';
 
 class AppScreen extends StatefulWidget {
@@ -30,11 +27,14 @@ class _AppScreenState extends State<AppScreen> {
             index: currentIndex,
             children: const [
               HomeScreen(),
-              ForumScreen(),
+              // ForumScreen(),
+              Text("ForumScreen은 준비 중입니다."),
 
-              ChatScreen(),
+              // ChatScreen(),
+              Text("ChatScreen은 준비 중입니다."),
 
-              CompanyListScreen(),
+              // CompanyListScreen(),
+              Text("CompanyListScreen은 준비 중입니다."),
               MenuScreen(),
             ],
           );
