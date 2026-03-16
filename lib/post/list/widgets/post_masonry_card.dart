@@ -44,41 +44,60 @@ class PostMasonryCard extends StatelessWidget {
       elevation: 1,
       child: InkWell(
         onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
+            // Full image or placeholder
             if (url != null)
               CachedNetworkImage(
                 imageUrl: url,
+                width: double.infinity,
                 fit: BoxFit.cover,
                 placeholder: (_, _) => Container(
-                  height: 120,
+                  height: 180,
                   color: scheme.surfaceContainerHigh,
                   child: const Center(
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ),
                 errorWidget: (_, _, _) => Container(
-                  height: 120,
+                  height: 180,
                   color: scheme.surfaceContainerHigh,
                   child: Icon(Icons.broken_image, color: scheme.outline),
                 ),
               )
             else
               Container(
-                height: 120,
+                height: 180,
                 color: scheme.surfaceContainerHigh,
-                child: Icon(Icons.image_outlined, color: scheme.outline, size: 40),
+                child: Center(
+                  child: Icon(Icons.image_outlined, color: scheme.outline, size: 40),
+                ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                post.subject,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.w500,
+            // Gradient overlay + title at bottom
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Color(0xCC000000),
+                      Color(0x00000000),
+                    ],
+                  ),
+                ),
+                padding: const EdgeInsets.fromLTRB(10, 24, 10, 10),
+                child: Text(
+                  post.subject,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
