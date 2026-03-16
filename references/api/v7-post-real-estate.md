@@ -9,6 +9,7 @@
 5. [글쓰기/수정 — 커스텀 필드 폼](#5-글쓰기수정--커스텀-필드-폼)
 6. [커스텀 필드 매핑 (15개)](#6-커스텀-필드-매핑-15개)
 7. [CSS (real-estate.css)](#7-css-real-estatecss)
+8. [RealEstateEntity 클래스](#8-realestateentity-클래스)
 
 ---
 
@@ -615,3 +616,232 @@ if (this.category === 'real_estate' || data.category === 'real_estate') {
 | 브레이크포인트 | 동작 |
 |--------------|------|
 | 640px 이하 | `.re-form-grid`가 1열로 전환 (`grid-template-columns: 1fr`), `gap: 0.7rem` |
+
+---
+
+## 8. RealEstateEntity 클래스
+
+### 개요
+
+`RealEstateEntity`는 `sf_post_data` 테이블의 범용 컬럼(`varchar_*`, `int_*`, `char_*`, `region`)에 저장된
+부동산 커스텀 필드를 **의미 있는 이름**으로 접근할 수 있도록 `PostEntity`를 래핑하는 클래스이다.
+`InfoPostEntity`와 동일한 래핑 패턴을 사용한다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `lib/post/RealEstateEntity.php` |
+| **네임스페이스** | `Philgo\Post\RealEstateEntity` |
+| **래핑 대상** | `PostEntity` (`category = 'real_estate'`인 게시글만) |
+| **패턴** | PostEntity wrapping (InfoPostEntity와 동일) |
+| **핵심 목적** | varchar_12 충돌 해결 + 부동산 필드 의미 있는 이름 매핑 + 이미지 URL 결정 로직 캡슐화 |
+
+### 8.1 클래스 구조
+
+```
+RealEstateEntity
+├── $post: PostEntity               ← 원본 게시글 Entity (public)
+│
+├── 매물 기본 정보
+│   ├── $unit_type: string          ← varchar_1 (매물 형태)
+│   ├── $selling_type: string       ← char_1 (거래 형태: S/R/W/E)
+│   ├── $condition: string          ← char_2 (매물 상태: N/T/R/E/O)
+│   └── $completed: string          ← char_3 (분양 형태: B/A)
+│
+├── 가격 및 세부 정보
+│   ├── $price: int                 ← int_1 (가격)
+│   ├── $bedroom: int               ← int_2 (침실 수)
+│   ├── $bathroom: int              ← int_3 (욕실 수)
+│   ├── $floor_area: int            ← int_4 (면적 sqm)
+│   ├── $parking: int               ← int_6 (주차 공간)
+│   └── $opening_year: int          ← int_7 (준공 연도)
+│
+├── 위치 정보
+│   ├── $building_name: string      ← varchar_2 (건물명)
+│   ├── $unit_number: string        ← varchar_12 (호수/동 ⚠️ 충돌 컬럼)
+│   ├── $street: string             ← varchar_13 (거리)
+│   ├── $barangay: string           ← varchar_14 (바랑가이)
+│   └── $region: string             ← region (지역)
+│
+└── 게시판 기본 필드 (편의 접근)
+    ├── $idx, $idx_member, $subject, $content, $post_id, $category
+    ├── $stamp, $no_of_view, $no_of_comment, $good
+    ├── $user_name, $user_photo_url, $has_image, $files
+    ├── $no_of_first_image, $gid
+    └── ...
+```
+
+### 8.2 생성 메서드
+
+#### fromPost() -- PostEntity로부터 생성
+
+```php
+use Philgo\Post\RealEstateEntity;
+
+// PostEntity 객체가 있는 경우 (예: view.php)
+$re = RealEstateEntity::fromPost($post);
+```
+
+#### fromArray() -- 배열에서 직접 생성
+
+```php
+use Philgo\Post\RealEstateEntity;
+
+// PostService::list() 결과 배열에서 직접 생성 (예: masonry 위젯)
+$re = RealEstateEntity::fromArray($postArr);
+```
+
+`fromArray()`는 내부적으로 `PostEntity::fromArray($data)`를 먼저 호출한 후 `fromPost()`로 래핑한다.
+
+### 8.3 주요 메서드
+
+| 메서드 | 반환 타입 | 설명 |
+|--------|----------|------|
+| `thumbnailUrl()` | `string` | 이미지 썸네일 URL 반환 (varchar_12 충돌 안전 처리, 4단계 폴백) |
+| `fullAddress()` | `string` | 주소 문자열 반환 (호수, 건물명, 거리, 바랑가이, 지역을 쉼표로 연결) |
+| `addressParts()` | `string[]` | 주소 구성 요소를 HTML escape 적용된 배열로 반환 |
+| `displayRegion()` | `string` | 표시용 지역명 ("City" 제거) |
+| `unitTypeLabel()` | `string` | 매물 형태 한글 레이블 (콘도, 사무실, 주택/빌리지, 땅, 기타) |
+| `sellingTypeLabel()` | `string` | 거래 형태 한글 레이블 (매매, 렌트, 공유, 기타) |
+| `conditionLabel()` | `string` | 매물 상태 한글 레이블 (신축, 임대중, 리모델링 중, 빈 공간, 기타) |
+| `completedLabel()` | `string` | 분양 형태 한글 레이블 (사전 분양, 준공 후 분양) |
+| `hasFields()` | `bool` | 부동산 필드가 하나라도 있는지 확인 |
+
+#### 편의 레이블 메서드 상세
+
+```php
+$re = RealEstateEntity::fromPost($post);
+
+$re->unitTypeLabel();      // 'Condominum / Apartment' → '콘도'
+$re->sellingTypeLabel();   // 'S' → '매매', 'R' → '렌트'
+$re->conditionLabel();     // 'N' → '신축', 'T' → '임대중'
+$re->completedLabel();     // 'B' → '사전 분양', 'A' → '준공 후 분양'
+```
+
+### 8.4 varchar_12 충돌 해결 아키텍처
+
+#### 문제 배경
+
+`sf_post_data` 테이블의 `varchar_12` 컬럼은 두 가지 용도로 사용된다:
+
+| 시스템 | varchar_12 용도 | 저장 값 예시 |
+|--------|----------------|-------------|
+| **v6 부동산** | `UNIT_NUMBER` (호수/동) | `'1205'`, `'Tower A-3F'` |
+| **v7 PostEntity** | `thumbnail_1000` (썸네일 URL) | `'/uploads/xxx/thumb_1000.webp'` |
+
+동일한 컬럼에 부동산 글에서는 호수 번호가, 일반 글에서는 썸네일 URL이 저장된다.
+부동산 글의 `varchar_12`를 썸네일 URL로 잘못 읽으면 `'1205'` 같은 텍스트가 이미지 URL로 사용되는 문제가 발생한다.
+
+#### 해결 방식 -- isImageUrl() 검증
+
+`RealEstateEntity::thumbnailUrl()` 메서드에서 `varchar_10~12` 값을 사용할 때
+**반드시 `isImageUrl()` 메서드로 URL 형태인지 검증**한 후에만 썸네일로 사용한다.
+
+```php
+// RealEstateEntity 내부 (thumbnailUrl 메서드)
+foreach (['thumbnail_1000', 'thumbnail_800x800', 'thumbnail_400x400'] as $field) {
+    $val = $post->$field;
+    if (!empty($val) && $this->isImageUrl($val)) {  // ← URL 형태 검증
+        return $val;
+    }
+}
+```
+
+```php
+// isImageUrl() — varchar_12 충돌 방지용
+private function isImageUrl(string $val): bool
+{
+    return str_starts_with($val, '/uploads/') || str_starts_with($val, 'http');
+}
+```
+
+| varchar_12 값 | `isImageUrl()` 결과 | 처리 |
+|---------------|---------------------|------|
+| `'/uploads/xxx/thumb_1000.webp'` | `true` | 썸네일 URL로 사용 |
+| `'https://file.philgo.com/...'` | `true` | 썸네일 URL로 사용 |
+| `'1205'` (부동산 호수) | `false` | 무시, 다음 단계(varchar_17, files, no_of_first_image)로 폴백 |
+| `'Tower A-3F'` (부동산 호수) | `false` | 무시, 다음 단계로 폴백 |
+
+#### thumbnailUrl() 4단계 폴백
+
+```
+1단계: v7 업로드 썸네일 (varchar_10~12, isImageUrl() 검증 필수)
+  ↓ (URL 아니면 무시)
+2단계: varchar_17 원본 이미지 URL
+  ↓ (비어 있으면)
+3단계: files 필드에서 첫 이미지 추출 (쉼표/줄바꿈 구분)
+  ↓ (없으면)
+4단계: no_of_first_image로 v4 파일 URL 생성
+  ↓ (0이면)
+빈 문자열 반환
+```
+
+### 8.5 위젯에서의 사용 패턴
+
+#### Masonry 목록 위젯 (`post-list-real-estate-masonry.php`)
+
+```php
+use Philgo\Post\RealEstateEntity;
+
+foreach ($_wPosts as $postArr):
+    // 배열에서 직접 RealEstateEntity 생성
+    $re = RealEstateEntity::fromArray($postArr);
+
+    // RealEstateEntity::thumbnailUrl()로 이미지 URL 안전 결정
+    $_thumbnailUrl = $re->thumbnailUrl();
+
+    // 의미 있는 필드명으로 접근
+    $_displayRegion = $re->displayRegion();
+    $_subject = htmlspecialchars($re->subject ?: '(제목 없음)');
+    $_userName = htmlspecialchars($re->user_name ?: '익명');
+
+    // 부동산 전용 필드 접근
+    $buildingName = $re->building_name;
+    $unitNumber = $re->unit_number;
+    $bedroom = $re->bedroom;
+    $price = $re->price;
+endforeach;
+```
+
+#### 상세보기 위젯 (`post-view-real-estate.php`)
+
+```php
+use Philgo\Post\RealEstateEntity;
+
+// PostEntity를 RealEstateEntity로 래핑
+$re = RealEstateEntity::fromPost($post);
+
+// 부동산 필드가 없으면 표시하지 않음
+if (!$re->hasFields()) return;
+
+// 한글 레이블 메서드 사용
+$unitTypeLabel = $re->unitTypeLabel();         // '콘도'
+$sellingTypeLabel = $re->sellingTypeLabel();   // '매매'
+$conditionLabel = $re->conditionLabel();       // '신축'
+
+// 주소 조합
+$addressParts = $re->addressParts();           // HTML escape 적용된 배열
+$fullAddress = $re->fullAddress();             // 쉼표로 연결된 문자열
+```
+
+### 8.6 InfoPostEntity와의 비교
+
+`RealEstateEntity`는 `InfoPostEntity`와 동일한 PostEntity 래핑 패턴을 사용한다.
+
+| 항목 | RealEstateEntity | InfoPostEntity |
+|------|------------------|----------------|
+| **대상** | `category = 'real_estate'` | `group_id = 'info'` |
+| **래핑 대상** | `PostEntity` | `PostEntity` |
+| **생성 메서드** | `fromPost()`, `fromArray()` | `fromPost()`, `fromArray()` |
+| **필드 매핑** | varchar/int/char/region → 부동산 필드 | varchar → 정보 필드 (website, phone 등) |
+| **충돌 해결** | varchar_12 (호수 vs 썸네일) isImageUrl() 검증 | 없음 |
+| **레이블 메서드** | `unitTypeLabel()`, `sellingTypeLabel()` 등 | 없음 |
+
+### 8.7 새 부동산 위젯에서 RealEstateEntity 사용 시 주의사항
+
+| 규칙 | 설명 |
+|------|------|
+| **배열 접근 금지** | `$postArr['varchar_12']` 등 연관 배열로 부동산 필드에 직접 접근하지 않는다 |
+| **Entity 래핑 필수** | 반드시 `RealEstateEntity::fromArray()` 또는 `fromPost()`로 래핑 후 사용 |
+| **thumbnailUrl() 사용** | 이미지 URL 결정 시 반드시 `$re->thumbnailUrl()` 메서드를 사용하여 varchar_12 충돌을 방지한다 |
+| **레이블 메서드 활용** | 코드 값(`S`, `N`, `B` 등)을 한글로 변환할 때 직접 매핑하지 말고 `unitTypeLabel()` 등 메서드를 사용한다 |
+| **hasFields() 체크** | 부동산 정보 렌더링 전 `$re->hasFields()`로 필드 존재 여부를 확인한다 |
