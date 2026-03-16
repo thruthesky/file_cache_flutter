@@ -731,10 +731,63 @@ $re->completedLabel();     // 'B' → '사전 분양', 'A' → '준공 후 분�
 동일한 컬럼에 부동산 글에서는 호수 번호가, 일반 글에서는 썸네일 URL이 저장된다.
 부동산 글의 `varchar_12`를 썸네일 URL로 잘못 읽으면 `'1205'` 같은 텍스트가 이미지 URL로 사용되는 문제가 발생한다.
 
-#### 해결 방식 -- isImageUrl() 검증
+#### 이중 방어 전략 (쓰기 시점 + 읽기 시점)
+
+varchar_12 충돌 문제는 **쓰기 시점(근본 방지)** 과 **읽기 시점(방어적 검증)** 두 계층에서 모두 방어한다.
+
+| 방어 계층 | 위치 | 방식 | 역할 |
+|-----------|------|------|------|
+| **1차: 쓰기 시점** | `PostService::setMediaFields()` | `$category === 'real_estate'`이면 varchar_12 스킵 | 근본 원인 차단 -- 부동산 호수 값을 썸네일 URL로 덮어쓰지 않음 |
+| **2차: 읽기 시점** | `RealEstateEntity::thumbnailUrl()` | `isImageUrl()` 검증 | 방어적 폴백 -- 기존 데이터나 외부 경로로 저장된 값도 안전하게 처리 |
+
+#### 1차 방어: 쓰기 시점 -- setMediaFields() 카테고리 분기
+
+`PostService::setMediaFields()` 메서드에 `string $category` 파라미터가 추가되었다.
+`category`가 `'real_estate'`이면 varchar_12 초기화 및 썸네일 URL 덮어쓰기를 스킵한다.
+
+```php
+// PostService::setMediaFields() 시그니처
+private static function setMediaFields(array &$data, array $fileList, string $category = ''): void
+```
+
+```php
+// 내부 로직 -- 부동산일 때 varchar_12 보호
+$isRealEstate = ($category === 'real_estate');
+$data['varchar_10'] = '';       // 400x400 썸네일 (항상 초기화)
+$data['varchar_11'] = '';       // 800x800 썸네일 (항상 초기화)
+if (!$isRealEstate) {
+    $data['varchar_12'] = '';   // 1000px 썸네일 (부동산이 아닐 때만 초기화)
+}
+
+// 썸네일 URL 저장 시에도 동일하게 분기
+if ($uploadEntity !== null && !empty($uploadEntity->thumbnail_400x400_url)) {
+    $data['varchar_10'] = $uploadEntity->thumbnail_400x400_url;
+    $data['varchar_11'] = $uploadEntity->thumbnail_800x800_url;
+    if (!$isRealEstate) {
+        $data['varchar_12'] = $uploadEntity->thumbnail_1000_url;
+    }
+}
+```
+
+**호출부에서 카테고리 전달:**
+
+```php
+// PostService::create() 내부
+self::setMediaFields($data, $fileList, $data['category'] ?? '');
+
+// PostService::update() 내부
+self::setMediaFields($data, $fileList, $data['category'] ?? $entity->category ?? '');
+```
+
+> **핵심**: 부동산 글의 varchar_12에는 호수/동 값(`'1205'`, `'Tower A-3F'` 등)이 저장되어 있으므로,
+> setMediaFields()가 이 값을 썸네일 URL로 덮어쓰면 호수 정보가 유실된다.
+> 쓰기 시점에서 아예 varchar_12를 건드리지 않음으로써 근본적으로 충돌을 방지한다.
+
+#### 2차 방어: 읽기 시점 -- isImageUrl() 검증
 
 `RealEstateEntity::thumbnailUrl()` 메서드에서 `varchar_10~12` 값을 사용할 때
 **반드시 `isImageUrl()` 메서드로 URL 형태인지 검증**한 후에만 썸네일로 사용한다.
+이는 1차 방어가 적용되기 전에 저장된 기존 데이터나, 외부 경로로 값이 설정된 경우를 위한 방어적 폴백이다.
 
 ```php
 // RealEstateEntity 내부 (thumbnailUrl 메서드)
