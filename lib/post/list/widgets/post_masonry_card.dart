@@ -7,6 +7,10 @@ class PostMasonryCard extends StatelessWidget {
   final ThemeData theme;
   final ColorScheme scheme;
   final VoidCallback onTap;
+  final double? cachedHeight;
+  final void Function(int idx, double height)? onHeightResolved;
+
+  static const double _placeholderHeight = 200;
 
   const PostMasonryCard({
     super.key,
@@ -14,6 +18,8 @@ class PostMasonryCard extends StatelessWidget {
     required this.theme,
     required this.scheme,
     required this.onTap,
+    this.cachedHeight,
+    this.onHeightResolved,
   });
 
   String? get _imageUrl {
@@ -37,6 +43,7 @@ class PostMasonryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final url = _imageUrl;
+    final height = cachedHeight ?? _placeholderHeight;
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -45,27 +52,45 @@ class PostMasonryCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: SizedBox(
-          height: 200,
+          height: height,
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // Full image or placeholder
               if (url != null)
-                CachedNetworkImage(
-                  imageUrl: url,
-                  width: double.infinity,
-                  height: 200,
-                  fit: BoxFit.cover,
-                  placeholder: (_, _) => Container(
-                    color: scheme.surfaceContainerHigh,
-                    child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-                  errorWidget: (_, _, _) => Container(
-                    color: scheme.surfaceContainerHigh,
-                    child: Icon(Icons.broken_image, color: scheme.outline),
-                  ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return CachedNetworkImage(
+                      imageUrl: url,
+                      fit: BoxFit.cover,
+                      imageBuilder: (context, imageProvider) {
+                        // Resolve height from image's intrinsic size
+                        if (cachedHeight == null) {
+                          imageProvider
+                              .resolve(ImageConfiguration.empty)
+                              .addListener(ImageStreamListener((info, _) {
+                            final imgWidth = info.image.width.toDouble();
+                            final imgHeight = info.image.height.toDouble();
+                            final cardWidth = constraints.maxWidth;
+                            final resolved = (imgHeight / imgWidth) * cardWidth;
+                            // Clamp between 120 and 350
+                            final clamped = resolved.clamp(120.0, 350.0);
+                            onHeightResolved?.call(post.idx, clamped);
+                          }));
+                        }
+                        return Image(image: imageProvider, fit: BoxFit.cover);
+                      },
+                      placeholder: (_, _) => Container(
+                        color: scheme.surfaceContainerHigh,
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (_, _, _) => Container(
+                        color: scheme.surfaceContainerHigh,
+                        child: Icon(Icons.broken_image, color: scheme.outline),
+                      ),
+                    );
+                  },
                 )
               else
                 Container(
@@ -74,34 +99,34 @@ class PostMasonryCard extends StatelessWidget {
                     child: Icon(Icons.image_outlined, color: scheme.outline, size: 40),
                   ),
                 ),
-            // Gradient overlay + title at bottom
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Color(0xCC000000),
-                      Color(0x00000000),
-                    ],
+              // Gradient overlay + title at bottom
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Color(0xCC000000),
+                        Color(0x00000000),
+                      ],
+                    ),
                   ),
-                ),
-                padding: const EdgeInsets.fromLTRB(10, 24, 10, 10),
-                child: Text(
-                  post.subject,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+                  padding: const EdgeInsets.fromLTRB(10, 24, 10, 10),
+                  child: Text(
+                    post.subject,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
-            ),
             ],
           ),
         ),

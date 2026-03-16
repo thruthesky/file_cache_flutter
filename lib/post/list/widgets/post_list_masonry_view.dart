@@ -3,7 +3,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/post/list/widgets/post_masonry_card.dart';
 import 'package:philgo/post/post.model.dart';
 
-class PostListMasonryView extends StatelessWidget {
+class PostListMasonryView extends StatefulWidget {
   final PagingController<int, Post> pagingController;
   final ThemeData theme;
   final ColorScheme scheme;
@@ -18,9 +18,22 @@ class PostListMasonryView extends StatelessWidget {
   });
 
   @override
+  State<PostListMasonryView> createState() => _PostListMasonryViewState();
+}
+
+class _PostListMasonryViewState extends State<PostListMasonryView> {
+  /// Cache of resolved image heights keyed by post idx
+  final Map<int, double> _heightCache = {};
+
+  void _onHeightResolved(int idx, double height) {
+    if (_heightCache[idx] == height) return;
+    setState(() => _heightCache[idx] = height);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PagingListener(
-      controller: pagingController,
+      controller: widget.pagingController,
       builder: (context, state, fetchNextPage) {
         return PagedMasonryGridView<int, Post>.count(
           state: state,
@@ -32,9 +45,11 @@ class PostListMasonryView extends StatelessWidget {
           builderDelegate: PagedChildBuilderDelegate<Post>(
             itemBuilder: (context, post, index) => PostMasonryCard(
               post: post,
-              theme: theme,
-              scheme: scheme,
-              onTap: () => onPostTap(post),
+              theme: widget.theme,
+              scheme: widget.scheme,
+              onTap: () => widget.onPostTap(post),
+              cachedHeight: _heightCache[post.idx],
+              onHeightResolved: _onHeightResolved,
             ),
             firstPageProgressIndicatorBuilder: (_) =>
                 const Center(child: CircularProgressIndicator()),
