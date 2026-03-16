@@ -14,6 +14,10 @@
 10. [위젯 추가 방법](#10-위젯-추가-방법)
 11. [날씨+환율 통합 위젯 (shared.weather-currency)](#11-날씨환율-통합-위젯-sharedweather-currency)
 12. [게시글 목록 위젯 (post-list-widget)](#12-게시글-목록-위젯-post-list-widget)
+13. [사용자 호버 드롭다운 위젯 (user-hover-dropdown)](#13-사용자-호버-드롭다운-위젯-user-hover-dropdown)
+14. [즐겨찾기 위젯 (sidebar-left.bookmarks)](#14-즐겨찾기-위젯-sidebar-leftbookmarks)
+15. [게시글 읽기 위젯 (post/view)](#15-게시글-읽기-위젯-postview)
+16. [부동산 위젯 (post/list, post/view)](#16-부동산-위젯-postlist-postview)
 
 ---
 
@@ -25,9 +29,9 @@ v7 홈페이지는 **PHP include 기반 위젯 시스템**을 사용한다.
 | 항목 | 내용 |
 |------|------|
 | **위젯 루트** | `v7/widgets/` |
-| **모듈 폴더** | `layout/`, `home/`, `shared/` |
+| **모듈 폴더** | `layout/`, `home/`, `shared/`, `user/`, `post/` (하위에 `list/`, `view/`) |
 | **파일 네이밍** | `<module>/<module>.<name>.php` (예: `layout/layout.topbar.php`) |
-| **총 위젯 수** | 18개 (layout 8 + home 5 + shared 5) |
+| **총 위젯 수** | 20개 이상 (layout 9 + home 5 + shared 5 + user 1+) |
 | **사용 방식** | `<?php include __DIR__ . '/widgets/<module>/<module>.<name>.php'; ?>` |
 | **CSS 관리** | 모듈별 하나의 CSS 파일 (`layout-widget.css`, `home-widget.css`) |
 | **공유 위젯** | 4개 (사이드바 + 모바일 양쪽에서 재사용) |
@@ -94,6 +98,7 @@ $_popularRows = Db::fetchAll("SELECT idx, subject FROM sf_post_data WHERE ...", 
 | `PostService::listRecentComments($limit)` | 최근 댓글 (회원 JOIN) | layout.sidebar-left.recent-comments |
 | `UserService::listRecent($limit)` | 최근 가입 회원 | home.admin-reminder |
 | `CompanyService::listPending($limit)` | 미승인 업소 | home.admin-reminder |
+| `BookmarkService::listRecent($idxMember, $limit)` | 최근 즐겨찾기 (enrichment 포함) | layout.sidebar-left.bookmarks |
 
 ---
 
@@ -116,6 +121,7 @@ v7/
     │   ├── layout.header-mobile.php
     │   ├── layout.header-desktop.php
     │   ├── layout.sidebar-left.php
+    │   ├── layout.sidebar-left.bookmarks.php  ← ★ 즐겨찾기 위젯 (로그인 시 최근 3개)
     │   ├── layout.sidebar-right.php
     │   ├── layout.wing-left.php
     │   ├── layout.wing-right.php
@@ -129,13 +135,32 @@ v7/
     │   ├── home.latest-posts.php
     │   └── home.popular-posts.php
     │
-    └── shared/                         ← 공유 위젯 (5개 — 사이드바 + 모바일 공용)
-        ├── shared.weather-currency.php    ← ★ 날씨+환율 통합 위젯 (API + 파일 캐시)
-        ├── shared.weather-currency.css    ← ★ 날씨+환율 위젯 전용 CSS
-        ├── shared.exchange-rate.php       ← (레거시 — weather-currency로 대체)
-        ├── shared.company-categories.php
-        ├── shared.latest-companies.php
-        └── shared.stats.php
+    ├── shared/                         ← 공유 위젯 (5개 — 사이드바 + 모바일 공용)
+    │   ├── shared.weather-currency.php    ← ★ 날씨+환율 통합 위젯 (API + 파일 캐시)
+    │   ├── shared.weather-currency.css    ← ★ 날씨+환율 위젯 전용 CSS
+    │   ├── shared.exchange-rate.php       ← (레거시 — weather-currency로 대체)
+    │   ├── shared.company-categories.php
+    │   ├── shared.latest-companies.php
+    │   └── shared.stats.php
+    │
+    ├── user/                            ← 사용자 관련 위젯 (1개)
+    │   ├── user-hover-dropdown.php        ← ★ 사용자 아바타/닉네임 호버 드롭다운 메뉴
+    │   ├── user-hover-dropdown.css        ← ★ 드롭다운 스타일 (hover/모바일/차단/관리자)
+    │   └── user-hover-dropdown.js         ← ★ 모바일 토글 + 차단 버튼 이벤트 처리
+    │
+    └── post/                            ← 게시글 관련 위젯
+        ├── list/                          ← 게시글 목록 위젯
+        │   ├── post-list-widget.php
+        │   ├── post-list-tile.php
+        │   ├── post-list-footer.php
+        │   └── post-list-real-estate-masonry.php  ← ★ 부동산 전용 Masonry 목록 위젯 (필터+오버레이)
+        └── view/                          ← 게시글 읽기 위젯
+            ├── post-view-default.php      ← ★ 일반 게시글 읽기 위젯 (브레드크럼, 헤더, 본문, 첨부, 액션바, AI 답변)
+            ├── post-view-real-estate.php   ← ★ 부동산 전용 상세보기 위젯 (필드 정보+Google Maps 지도)
+            └── info/                      ← info 게시글 전용 위젯
+                ├── info-view.php          ← ★ 통합 info 글 읽기 위젯 (카테고리별 디자인 분기)
+                ├── info-meta-card.php     ← ★ 공통 메타 카드 (위치/연락처/운영시간/지도)
+                └── info-view.css          ← ★ info 위젯 CSS
 ```
 
 ---
@@ -154,6 +179,7 @@ v7/
 | `layout/layout.wing-left.php` | 왼쪽 날개 배너 (광고 3개) | 데스크톱(>=992px) | `v7-wing`, `v7-lg` |
 | `layout/layout.wing-right.php` | 오른쪽 날개 배너 (광고 3개) | 데스크톱(>=992px) | `v7-wing`, `v7-lg` |
 | `layout/layout.footer.php` | 4열 푸터 (소개, 광고, 바로가기, 정책) | 공통 | `v7-footer` |
+| `layout/layout.sidebar-left.bookmarks.php` | 왼쪽 사이드바 즐겨찾기 (최근 3개) | 로그인 + 즐겨찾기 존재 시 | `v7-bm-widget-*` |
 
 ### shared 모듈 — 공유 위젯 (사이드바 + 모바일 공유)
 
@@ -387,7 +413,8 @@ layout.php의 `$content` 변수에 캡처되어 `<main>` 태그 안에 렌더링
 | `layout` | 레이아웃 뼈대를 구성하는 위젯 (탑바, 헤더, 사이드바, 날개, 푸터) |
 | `home` | 홈페이지 본문에서만 사용하는 콘텐츠 위젯 |
 | `shared` | 여러 위치(사이드바 + 모바일 등)에서 동일하게 재사용하는 위젯 |
-| `<새모듈>` | 특정 기능(예: `post`, `user`, `company`)에 속하는 위젯 |
+| `user` | 사용자 관련 위젯 (호버 드롭다운, 프로필 카드 등) |
+| `<새모듈>` | 특정 기능(예: `post`, `company`)에 속하는 위젯 |
 
 ### 시각적 include 계층 구조
 
@@ -399,6 +426,7 @@ v7/layout.php (메인 레이아웃)
 ├── widgets/layout/layout.header-mobile.php
 ├── widgets/layout/layout.header-desktop.php
 ├── widgets/layout/layout.sidebar-left.php
+│   └── layout.sidebar-left.bookmarks.php (← 최근 즐겨찾기 3개, 로그인 시만)
 ├── widgets/layout/layout.sidebar-right.php (← 컴포지트 위젯)
 │   ├── layout.sidebar-right.weather-currency.php → widgets/shared/shared.weather-currency.php
 │   ├── layout.sidebar-right.company-categories.php → widgets/shared/shared.company-categories.php
@@ -417,6 +445,19 @@ v7/index.php (홈페이지 본문)
     ├── widgets/shared/shared.company-categories.php (공유)
     ├── widgets/shared/shared.latest-companies.php (공유)
     └── widgets/shared/shared.stats.php (공유)
+
+v7/post/list.php (게시판 목록)
+├── [부동산 카테고리] widgets/post/list/post-list-real-estate-masonry.php (Masonry+필터+오버레이)
+├── [Masonry 카테고리] widgets/post/list/post-list-masonry.php
+└── [일반 카테고리] widgets/post/list/post-list-widget.php
+
+v7/post/view.php (게시글 읽기)
+├── [info 게시글] widgets/post/view/info/info-view.php
+│   └── widgets/post/view/info/info-meta-card.php
+├── [일반 게시글] widgets/post/view/post-view-default.php
+│   └── [부동산 카테고리] widgets/post/view/post-view-real-estate.php (부동산 필드+Google Maps)
+├── [댓글] 인라인 (renderCommentThread 재귀)
+└── [하단 글 목록] widgets/post/list/post-list-widget.php
 ```
 
 ---
@@ -697,3 +738,423 @@ include __DIR__ . '/../widgets/post/list/post-list-widget.php';
     font-weight: 600;
 }
 ```
+
+---
+
+## 13. 사용자 호버 드롭다운 위젯 (user-hover-dropdown)
+
+### 13.1 개요
+
+글 보기 페이지(`v7/post/view.php`)에서 글쓴이/코멘트 작성자의 아바타 또는 닉네임에 마우스를 올리면(데스크톱) 또는 탭하면(모바일) 드롭다운 메뉴가 표시되는 재사용 가능 위젯이다.
+
+| 항목 | 내용 |
+|------|------|
+| **PHP 파일** | `v7/widgets/user/user-hover-dropdown.php` |
+| **CSS 파일** | `v7/widgets/user/user-hover-dropdown.css` |
+| **JS 파일** | `v7/widgets/user/user-hover-dropdown.js` |
+| **함수명** | `renderUserHoverDropdown(array $opts): string` |
+| **사용 위치** | `v7/post/view.php` (글 작성자 영역 + 코멘트 아바타/닉네임) |
+| **데스크톱 동작** | CSS `:hover`로 드롭다운 표시 |
+| **모바일 동작** | JS `click` 토글로 드롭다운 표시/숨김 |
+| **의존성** | `v7/js/block.js` (`toggleBlockMember()` 함수) |
+
+### 13.2 드롭다운 메뉴 항목
+
+| 메뉴 항목 | URL/동작 | 표시 조건 | 아이콘 |
+|-----------|---------|----------|--------|
+| 사용자명 + 레벨 (헤더) | — | 항상 | `wa-avatar` |
+| 프로필 | `/user/public-profile?idx_member=N` | 항상 | `fa-regular fa-user` |
+| 채팅 | `/chat/index?uid=FIREBASE_UID` | 로그인 + 타인일 때만 | `fa-regular fa-comment-dots` |
+| 글 목록 | `/post/list?idx_member=N` | 항상 | `fa-regular fa-file-lines` |
+| 코멘트 목록 | `/post/comments?idx_member=N` | 항상 | `fa-regular fa-comments` |
+| 차단 | `toggleBlockMember()` 호출 | 로그인 + 타인일 때만 | `fa-solid fa-ban` |
+| 회원 정보 수정 | `/admin/users?q=N` | 관리자만 | `fa-solid fa-shield` |
+
+### 13.3 사용법
+
+```php
+// 1. 위젯 파일 include (한 번만)
+include_once __DIR__ . '/../widgets/user/user-hover-dropdown.php';
+
+// 2. 렌더링 함수 호출
+echo renderUserHoverDropdown([
+    'idx_member'   => (int) $post->idx_member,       // 필수: 사용자 idx
+    'user_name'    => (string) $post->user_name,      // 필수: 닉네임
+    'photo_url'    => (string) $post->user_photo_url, // 선택: 프로필 사진 URL
+    'firebase_uid' => (string) $post->firebase_uid,   // 선택: Firebase UID (채팅 링크용)
+    'avatar_size'  => '2.25rem',                      // 선택: 아바타 크기 (기본 '2.25rem', '0'이면 아바타 숨김)
+    'show_meta'    => true,                           // 선택: 닉네임/레벨 표시 (기본 true, false면 아바타만)
+    'level'        => (int) $post->level,             // 선택: 회원 레벨
+]);
+```
+
+### 13.4 필수 전역 변수
+
+위젯 내부에서 `global` 키워드로 접근하는 변수들이다. `view.php`에서 미리 설정해야 한다.
+
+| 변수 | 타입 | 설명 |
+|------|------|------|
+| `$loginIdxMember` | `int` | 로그인 사용자의 idx (비로그인이면 0) |
+| `$loginIsAdmin` | `bool` | 관리자 여부 |
+
+### 13.5 파라미터 상세
+
+| 파라미터 | 타입 | 기본값 | 설명 |
+|----------|------|--------|------|
+| `idx_member` | `int` | `0` | 대상 사용자의 sf_member.idx |
+| `user_name` | `string` | `'익명'` | 표시할 닉네임 |
+| `photo_url` | `string` | `''` | 프로필 사진 URL (없으면 이니셜 아바타) |
+| `firebase_uid` | `string` | `''` | Firebase UID (채팅 링크 생성용, 없으면 채팅 메뉴 숨김) |
+| `avatar_size` | `string` | `'2.25rem'` | `wa-avatar`의 `--size` CSS 변수. `'0'`이면 아바타 렌더링 안 함 |
+| `show_meta` | `bool` | `true` | `true`이면 닉네임+레벨 표시, `false`이면 아바타만 표시 |
+| `level` | `int` | `0` | 회원 레벨. `0`이면 레벨 표시 안 함 |
+| `content_idx` | `int` | `0` | 신고할 글/코멘트 idx (0이면 신고 버튼 숨김) |
+| `content_type` | `string` | `''` | 신고 대상 유형: `'post'` 또는 `'comment'` (빈 문자열이면 신고 버튼 숨김) |
+
+### 13.6 CSS 클래스
+
+| 클래스 | 역할 | 주요 스타일 |
+|--------|------|-----------|
+| `.user-hover-dropdown` | 위젯 루트 컨테이너 | `position: relative; display: inline-flex` |
+| `.user-hover-trigger` | 트리거 영역 (아바타 + 닉네임) | `display: flex; align-items: center; gap: 0.5rem; cursor: pointer` |
+| `.user-hover-trigger-name` | 닉네임 텍스트 | `font-size: 0.82rem; font-weight: 600` |
+| `.user-hover-trigger-level` | 레벨 텍스트 | `font-size: 0.68rem; color: neutral-400` |
+| `.user-hover-menu` | 드롭다운 메뉴 패널 | `position: absolute; z-index: 1000; min-width: 180px; box-shadow` |
+| `.user-hover-menu-header` | 메뉴 상단 사용자 정보 | 아바타(2.5rem) + 이름 + 레벨 |
+| `.user-hover-menu-divider` | 구분선 | `height: 1px; background: neutral-100` |
+| `.user-hover-menu-item` | 메뉴 항목 (링크/버튼) | `font-size: 0.8rem; padding: 0.4rem 0.75rem` |
+| `.user-hover-report-btn` | 신고 버튼 | `content_idx` + `content_type` data 속성 보유. 클릭 시 `v7api('post.report')` 호출 |
+| `.user-hover-block-btn` | 차단 버튼 | hover 시 `color: danger-600` (빨간색) |
+| `.user-hover-admin-item` | 관리자 전용 항목 | 아이콘 색상 `neutral-500` |
+| `.user-hover-dropdown.open` | 모바일 토글 열림 상태 | `.user-hover-menu { display: block }` |
+
+### 13.7 코멘트 영역 적용
+
+코멘트에서는 두 위치에 드롭다운을 적용한다:
+
+1. **아바타 컬럼** (`.comment-avatar-col`): 아바타만 표시 (`show_meta: false`, `avatar_size: '1.75rem'`)
+2. **코멘트 헤더** (`.post-comment-header`): 닉네임만 표시 (`avatar_size: '0'`, `show_meta: true`)
+
+```php
+// 코멘트 아바타 (아바타만)
+echo renderUserHoverDropdown([
+    'idx_member'   => $c->idx_member,
+    'user_name'    => $c->user_name,
+    'photo_url'    => $c->user_photo_url,
+    'firebase_uid' => $c->firebase_uid,
+    'avatar_size'  => ($depth === 0) ? '2rem' : '1.75rem',
+    'show_meta'    => false,
+    'level'        => $c->level,
+]);
+
+// 코멘트 닉네임 (아바타 없이 닉네임만)
+echo renderUserHoverDropdown([
+    'idx_member'   => $c->idx_member,
+    'user_name'    => $c->user_name,
+    'photo_url'    => $c->user_photo_url,
+    'firebase_uid' => $c->firebase_uid,
+    'avatar_size'  => '0',
+    'show_meta'    => true,
+    'level'        => $c->level,
+]);
+```
+
+### 13.8 CSS 파일 로딩
+
+`v7/layout.php`의 `<head>`에서 CSS와 JS를 로딩한다.
+
+```html
+<link rel="stylesheet" href="/v7/widgets/user/user-hover-dropdown.css?v=<?= CACHE_VERSION ?>">
+<script defer src="/v7/widgets/user/user-hover-dropdown.js?v=<?= CACHE_VERSION ?>"></script>
+```
+
+### 13.9 기술 세부사항
+
+| 항목 | 설명 |
+|------|------|
+| **데스크톱 (>=992px)** | CSS `:hover`로 메뉴 표시. `::before` 투명 영역으로 트리거-메뉴 간 마우스 이탈 방지 |
+| **모바일 (<992px)** | JS `click` 이벤트로 `.open` 클래스 토글. 외부 클릭 시 자동 닫힘 |
+| **신고** | `content_idx`와 `content_type`이 전달된 경우에만 신고 버튼 표시. `v7api('post.report', { type, idx })` 호출. 성공 시 "신고됨" 표시 및 버튼 비활성화 |
+| **차단** | `v7/js/block.js`의 `toggleBlockMember()` 함수 호출. 로딩 스피너 표시, 성공 시 페이지 리로드 |
+| **관리자 판별** | `global $loginIsAdmin` 변수 사용 |
+| **이중 include 방지** | `function_exists('renderUserHoverDropdown')` 가드로 중복 정의 방지 |
+| **v6 코드 미사용** | v7 전용 구현, v6 함수/위젯 미사용 |
+
+### 13.10 HTML 구조
+
+```html
+<div class="user-hover-dropdown">
+    <!-- 트리거: 아바타 + 닉네임 -->
+    <div class="user-hover-trigger">
+        <wa-avatar initials="홍" image="사진URL" shape="circle" style="--size: 2.25rem"></wa-avatar>
+        <div class="user-hover-trigger-info">
+            <span class="user-hover-trigger-name">홍길동</span>
+            <span class="user-hover-trigger-level">Lv. 5</span>
+        </div>
+    </div>
+    <!-- 드롭다운 메뉴 -->
+    <div class="user-hover-menu">
+        <div class="user-hover-menu-header">...</div>
+        <div class="user-hover-menu-divider"></div>
+        <a class="user-hover-menu-item" href="...">프로필</a>
+        <a class="user-hover-menu-item" href="...">채팅</a>
+        <a class="user-hover-menu-item" href="...">글 목록</a>
+        <a class="user-hover-menu-item" href="...">코멘트 목록</a>
+        <div class="user-hover-menu-divider"></div>
+        <!-- content_idx + content_type 전달 시에만 표시 -->
+        <button class="user-hover-menu-item user-hover-report-btn"
+                data-content-idx="12345" data-content-type="post" data-user-name="홍길동">
+            <i class="fa-solid fa-flag"></i> 신고
+        </button>
+        <button class="user-hover-menu-item user-hover-block-btn" ...>차단</button>
+        <a class="user-hover-menu-item user-hover-admin-item" href="...">회원 정보 수정</a>
+    </div>
+</div>
+```
+
+---
+
+## 14. 즐겨찾기 위젯 (sidebar-left.bookmarks)
+
+### 14.1 개요
+
+왼쪽 사이드바에 로그인 사용자의 **최근 즐겨찾기 3개**를 아이콘/아바타 + 제목 + 타입 라벨로 표시하는 위젯이다.
+"더보기" 링크를 통해 즐겨찾기 관리 페이지(`/bookmark`)로 이동할 수 있다.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/widgets/layout/layout.sidebar-left.bookmarks.php` |
+| **CSS** | `v7/widgets/layout/layout-widget.css` (`.v7-bm-widget-*` 클래스) |
+| **데이터 소스** | `BookmarkService::listRecent($idxMember, 3)` |
+| **표시 조건** | 로그인 + 즐겨찾기 1개 이상 존재 시 |
+| **포함 위치** | `layout.sidebar-left.php` 내부 (로그인 박스 바로 아래) |
+| **v6 의존성** | 없음 -- v7 독립 구현 |
+
+### 14.2 표시 조건
+
+| 조건 | 동작 |
+|------|------|
+| 비로그인 | 위젯 미표시 (`return`) |
+| 로그인 + 즐겨찾기 0개 | 위젯 미표시 (`return`) |
+| 로그인 + 즐겨찾기 1개 이상 | 최근 3개 표시 |
+
+### 14.3 지원하는 entity_type
+
+| entity_type | 아이콘 | 라벨 | 타이틀 소스 | 링크 |
+|------------|--------|------|------------|------|
+| `post` | `fal fa-file-lines` | 글 | `subject` (게시글 제목) | `url()->post->view($idx)` |
+| `comment` | `fal fa-comment` | 댓글 | `content_preview` (80자) | `url()->post->view($parentIdx)#comment-$idx` |
+| `user` | `fal fa-user` | 사용자 | `nickname` | `url()->user->publicProfile($idx)` |
+| `chat_room` | `fal fa-comments` | 채팅 | `other_name` / `other_nickname` / `entity_id` 순서 폴백 | `/chat/index?room_id=...` |
+
+### 14.4 아이콘/아바타 표시 로직
+
+- **채팅방**: `other_photo_url`이 있으면 원형 아바타 이미지 표시, 없으면 채팅 아이콘
+- **사용자**: `photo_url`이 있으면 원형 아바타 이미지 표시, 없으면 사용자 아이콘
+- **게시글/댓글**: 항상 타입별 아이콘 표시
+- 아바타 이미지 로드 실패 시 `onerror`로 기본 SVG 아바타 표시
+
+### 14.5 CSS 클래스
+
+| 클래스 | 역할 | 주요 스타일 |
+|--------|------|-----------|
+| `.v7-bm-widget-item` | 각 즐겨찾기 항목 (링크) | `display: flex; align-items: center; gap: 8px; padding: 6px 0; text-decoration: none` |
+| `.v7-bm-widget-avatar` | 아바타 이미지 (채팅/사용자) | `width: 28px; height: 28px; border-radius: 50%; object-fit: cover` |
+| `.v7-bm-widget-icon` | 타입별 아이콘 컨테이너 | `width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center` |
+| `.v7-bm-widget-icon.type-post` | 게시글 아이콘 색상 | 파란색 배경 (`background: #eff6ff; color: #2563eb`) |
+| `.v7-bm-widget-icon.type-comment` | 댓글 아이콘 색상 | 초록색 배경 |
+| `.v7-bm-widget-icon.type-user` | 사용자 아이콘 색상 | 보라색 배경 |
+| `.v7-bm-widget-icon.type-chat_room` | 채팅 아이콘 색상 | 주황색 배경 |
+| `.v7-bm-widget-text` | 텍스트 영역 | `flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px` |
+| `.v7-bm-widget-title` | 제목 (1줄 말줄임) | `flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.82em; color: #1e293b` |
+| `.v7-bm-widget-label` | 타입 라벨 태그 | `font-size: 0.68em; padding: 1px 6px; border-radius: 3px; flex-shrink: 0` |
+| `.v7-bm-widget-label.type-post` | 게시글 라벨 색상 | `background: #eff6ff; color: #1d4ed8` |
+
+#### 🔴 즐겨찾기 위젯 CSS: Web Awesome CSS 변수 대신 하드코딩 색상값 사용
+
+> **⛔ 즐겨찾기 위젯(`.v7-bm-widget-*`)의 CSS에서는 Web Awesome CSS 변수(`--wa-color-brand-*`, `--wa-color-neutral-*`)를 사용하지 않는다. ⛔**
+> **반드시 하드코딩된 색상값을 직접 지정한다.**
+
+**이유:**
+Web Awesome의 CSS 변수(`--wa-color-brand-50`, `--wa-color-neutral-200` 등)는 Tailwind CSS 색상 팔레트 기준이 아닌
+Web Awesome 자체 테마 색상으로 해석되어, 의도한 연한 파란색/회색 대신 진한 테마 색상이 적용되는 문제가 발생했다.
+예를 들어 `--wa-color-brand-50`이 연한 파란색(`#eff6ff`)이 아닌 Web Awesome 브랜드 색상의 50 단계로 해석되어
+아이콘/라벨 배경이 의도보다 진하게 표시되었다.
+
+**하드코딩 색상값 목록 (즐겨찾기 위젯 전용):**
+
+| 용도 | 하드코딩 값 | 기존 CSS 변수 (사용 금지) |
+|------|-----------|------------------------|
+| 항목 hover 배경 | `#e2e8f0` | ~~`--wa-color-neutral-200`~~ |
+| 항목 구분선 | `#f1f5f9` | ~~`--wa-color-neutral-100`~~ |
+| 아바타 배경 | `#f1f5f9` | ~~`--wa-color-neutral-100`~~ |
+| 게시글 아이콘 배경 | `#eff6ff` | ~~`--wa-color-brand-50`~~ |
+| 게시글 아이콘 색상 | `#2563eb` | ~~`--wa-color-brand-600`~~ |
+| 게시글 라벨 배경 | `#eff6ff` | ~~`--wa-color-brand-50`~~ |
+| 게시글 라벨 색상 | `#1d4ed8` | ~~`--wa-color-brand-700`~~ |
+| 제목 텍스트 색상 | `#1e293b` | ~~`--wa-color-neutral-800`~~ |
+
+> **참고**: 이 패턴은 즐겨찾기 위젯에만 해당한다. 다른 위젯에서도 Web Awesome CSS 변수의 해석 결과가
+> 의도와 다른 경우, 동일하게 하드코딩 색상값으로 교체하는 것을 검토해야 한다.
+
+### 14.6 헬퍼 함수
+
+| 함수명 | 반환 타입 | 용도 |
+|--------|----------|------|
+| `_v7_bm_title(array $bm)` | `string` | entity_type별 표시 제목 반환 |
+| `_v7_bm_link(array $bm)` | `string` | entity_type별 링크 URL 반환 |
+| `_v7_bm_icon(string $type)` | `string` | entity_type별 Font Awesome 아이콘 클래스 반환 |
+| `_v7_bm_label(string $type)` | `string` | entity_type별 한글 라벨 반환 |
+
+> 모든 함수는 `_v7_bm_` 접두사로 글로벌 네임스페이스 충돌을 방지한다.
+> `function_exists()` 가드로 이중 include를 방지한다.
+
+### 14.7 데이터 흐름
+
+```
+1. layout.sidebar-left.php에서 include
+   │
+2. AuthService::getLoginUser() → 비로그인이면 return
+   │
+3. BookmarkService::listRecent($idxMember, 3) 호출
+   │  └─ 최근 3개 즐겨찾기 조회 + entity_type별 enrichment
+   │     ├─ post: subject, post_id 추가
+   │     ├─ comment: parent_idx, content_preview 추가
+   │     ├─ user: nickname, photo_url 추가
+   │     └─ chat_room: other_name, other_nickname, other_photo_url 추가
+   │
+4. 즐겨찾기 0개면 return
+   │
+5. HTML 렌더링 (아이콘/아바타 + 제목 + 타입라벨)
+```
+
+### 14.8 BookmarkService::listRecent() 메서드
+
+```php
+/**
+ * 최근 즐겨찾기 목록 (enrichment 포함, 사이드바 위젯용)
+ *
+ * 모든 entity_type의 최근 즐겨찾기를 $limit개 반환한다.
+ * 각 항목에 entity_type별 추가 정보(제목, 닉네임, 프로필 사진 등)를 포함한다.
+ *
+ * @param int $idxMember 회원 idx
+ * @param int $limit 가져올 개수 (기본 3)
+ * @return array enrichment가 포함된 즐겨찾기 배열
+ */
+public static function listRecent(int $idxMember, int $limit = 3): array
+```
+
+**enrichment 로직:**
+- `post`: `sf_post_data`에서 `subject`, `post_id` 조회
+- `comment`: `sf_post_data`에서 `idx_root`(부모 글), `content`(80자 미리보기) 조회
+- `user`: `sf_member`에서 `nickname`, `photo_url` 조회
+- `chat_room`: 로그인 사용자의 `firebase_uid` 조회 후, `entity_id`(roomId)에서 상대방 UID 추출, `sf_member`에서 상대방 `name`, `nickname`, `photo_url` 조회
+
+---
+
+## 15. 게시글 읽기 위젯 (post/view)
+
+### 15.1 개요
+
+`v7/post/view.php`에서 게시글 유형에 따라 다른 읽기 위젯을 렌더링하는 구조이다. 게시글은 크게 **일반 게시글**과 **info 게시글**(여행지, 병원, 축제 등)로 분류되며, 각각 전용 위젯으로 렌더링된다.
+
+### 15.2 파일 구조
+
+```
+v7/widgets/post/view/
+├── post-view-default.php          ← 일반 게시글 읽기 위젯 (브레드크럼, 헤더, 본문, 첨부파일, 액션바, AI 답변)
+└── info/                          ← info 게시글 전용 위젯
+    ├── info-view.php              ← 통합 info 글 읽기 위젯 (카테고리별 디자인 분기)
+    ├── info-meta-card.php         ← 공통 메타 카드 (위치/연락처/운영시간/지도)
+    └── info-view.css              ← info 위젯 CSS
+```
+
+### 15.3 view.php에서의 분기 로직
+
+```php
+<?php // --- Info 게시글 --- ?>
+<?php if ($post->isInfoPost()): ?>
+    <?php
+    $infoPost = \Philgo\Info\InfoPostEntity::fromPost($post);
+    include __DIR__ . '/../widgets/post/view/info/info-view.php';
+    ?>
+<?php endif; ?>
+
+<?php // --- 일반 게시글 --- ?>
+<?php if (!$post->isInfoPost()): ?>
+    <?php include __DIR__ . '/../widgets/post/view/post-view-default.php'; ?>
+<?php endif; ?>
+```
+
+### 15.4 일반 게시글 위젯 (post-view-default.php)
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/widgets/post/view/post-view-default.php` |
+| **용도** | 일반 게시글(info가 아닌 모든 글)의 읽기 화면 렌더링 |
+| **포함 요소** | 브레드크럼, 글 헤더(작성자/날짜), 본문, 첨부파일, 액션바(좋아요/공유/수정/삭제), AI 답변 |
+| **AI 답변** | `qna`/`freetalk` 게시판의 최상위 글에만 표시 (`group_id='info'`인 글은 제외) |
+
+### 15.5 info 게시글 위젯 (info/info-view.php)
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/widgets/post/view/info/info-view.php` |
+| **CSS** | `v7/widgets/post/view/info/info-view.css` |
+| **용도** | info 게시글(`group_id='info'`)의 읽기 화면 렌더링 |
+| **카테고리별 UI** | emergency/police(긴급연락처), hospital(병원), festival(축제) 등 카테고리에 따라 특수 UI 적용 |
+| **메타 카드** | `info-meta-card.php`로 공통 정보(위치, 연락처, 운영시간, 지도) 표시 |
+| **AI 답변** | info 게시글에서는 AI 답변 비표시 |
+
+### 15.6 AI 답변 비표시 규칙
+
+info 게시글은 자체적으로 구조화된 정보(여행지 상세, 병원 정보, 긴급연락처 등)를 제공하므로 AI 답변이 불필요하다. `view.php`에서 AI 답변 대상을 판별할 때 `isInfoPost()` 체크로 info 게시글을 제외한다.
+
+```php
+$isAiAnswerTarget = !$post->isInfoPost()
+    && in_array($post->post_id, ['qna', 'freetalk'], true)
+    && $post->idx_parent == 0;
+```
+
+---
+
+## 16. 부동산 위젯 (post/list, post/view)
+
+### 16.1 개요
+
+부동산 게시판(`category='real_estate'`)은 전용 Masonry 목록 위젯과 상세보기 위젯을 사용한다.
+글쓰기/수정 폼에서도 15개 커스텀 필드를 입력할 수 있는 전용 폼 섹션이 표시된다.
+
+| 항목 | 내용 |
+|------|------|
+| **목록 위젯** | `v7/widgets/post/list/post-list-real-estate-masonry.php` |
+| **상세보기 위젯** | `v7/widgets/post/view/post-view-real-estate.php` |
+| **CSS** | `v7/post/real-estate.css` (별도 파일) |
+| **폼** | `v7/js/post-form.js`에서 `isRealEstate` computed로 분기 |
+| **상세 문서** | [v7-post-real-estate.md](../api/v7-post-real-estate.md) |
+
+### 16.2 목록 — Masonry 위젯
+
+`list.php`에서 `$category === 'real_estate'` 조건으로 부동산 전용 Masonry 위젯을 렌더링한다.
+일반 Masonry(`post-list-masonry.php`)와 달리 상단 필터(지역, 판매 유형)와
+카드 오버레이(지역/건물명/침실, 가격 배지)를 추가로 표시한다.
+
+| 기능 | 설명 |
+|------|------|
+| **필터** | 지역(`region`) + 판매 유형(`char_1`) select 필터. 선택 시 즉시 페이지 갱신 |
+| **오버레이** | 이미지 상단에 지역/건물명/침실, 좌측 하단에 가격 배지 |
+| **라이브러리** | `masonry.pkgd.min.js` + `imagesloaded.pkgd.min.js` |
+
+### 16.3 상세보기 — 부동산 정보 + Google Maps
+
+`view.php`에서 일반 게시글 위젯(`post-view-default.php`) 뒤에 부동산 위젯을 include한다.
+매물 기본 정보(뱃지), 가격 및 공간(뱃지), 위치 정보(텍스트 + Google Maps 임베드)를 표시한다.
+부동산 필드가 하나도 없으면 위젯이 렌더링되지 않는다.
+
+### 16.4 글쓰기/수정 폼
+
+`post-form.js`에서 `isRealEstate` computed가 `true`일 때 2열 그리드 폼 섹션이 표시된다.
+15개 커스텀 필드(매물 형태, 가격, 침실, 욕실, 면적, 주차, 준공 연도, 거래 형태, 매물 상태,
+분양 형태, 호수, 건물명, 거리, 바랑가이, 지역)를 입력할 수 있다.
+
+> 커스텀 필드 매핑, 뱃지 색상 체계, 라벨 매핑 등 상세 내용은 -> [v7-post-real-estate.md](../api/v7-post-real-estate.md) 참조.

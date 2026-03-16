@@ -12,14 +12,19 @@
    - [post.delete](#postdelete---게시글-삭제)
    - [post.advertisementConfig](#postadvertisementconfig---포인트-광고-설정-조회)
    - [post.advertise](#postadvertise---포인트-광고-등록연장)
+   - [post.report](#postreport---글코멘트-신고)
+   - [post.reportList](#postreportlist---신고-목록-조회-관리자)
 4. [포인트 시스템](#포인트-시스템)
 5. [PostEntity 필드](#postentity-필드)
-6. [content_type 판별 및 저장](#content_type-판별-및-저장)
-7. [에러 처리](#에러-처리)
-8. [테스트](#테스트)
-9. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
-10. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
-11. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+6. [PostConfigEntity — 게시판 설정 Entity](#postconfigentity--게시판-설정-entity)
+7. [content_type 판별 및 저장](#content_type-판별-및-저장)
+8. [에러 처리](#에러-처리)
+9. [테스트](#테스트)
+10. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
+11. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
+12. [구인구직 게시판 만료 정책](#구인구직-게시판-만료-정책)
+13. [범용 서브 카테고리 탭 시스템](#범용-서브-카테고리-탭-시스템)
+14. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -31,6 +36,9 @@
    - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
    - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
+15. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
+16. [신고(Report) 기능](#신고report-기능)
+17. [부동산 게시판 (real_estate)](#부동산-게시판-real_estate) → [별도 문서](v7-post-real-estate.md)
 
 ---
 
@@ -66,7 +74,8 @@ lib/post/
 ├── PostController.php    # API 엔드포인트 (인증 처리)
 ├── PostService.php       # 비즈니스 로직 (포인트 증/감 포함)
 ├── PostRepository.php    # DB CRUD (prepared statement)
-├── PostEntity.php        # 데이터 구조체 (POPO)
+├── PostEntity.php        # 게시글 데이터 구조체 (sf_post_data)
+├── PostConfigEntity.php  # 게시판 설정 데이터 구조체 (sf_post_config)
 │
 ├── post.functions.php          # (기존 v6 레거시)
 ├── post.create.functions.php   # (기존 v6 레거시)
@@ -429,6 +438,85 @@ GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
 
 ---
 
+## PostConfigEntity -- 게시판 설정 Entity
+
+`PostConfigEntity`는 `sf_post_config` 테이블의 데이터를 담는 Entity 클래스이다.
+기존에 연관 배열(`$config['key']`)로 접근하던 게시판 설정을 Entity 멤버 변수(`$config->key`)로 접근하도록 변환했다.
+
+**파일**: `lib/post/PostConfigEntity.php`
+**네임스페이스**: `Philgo\Post\PostConfigEntity`
+**구현 인터페이스**: `EntityInterface` (`fromArray()`, `toArray()`)
+
+### 사용 위치
+
+| 위치 | 변경 내용 |
+|------|----------|
+| `PostRepository::getPostConfig()` | 반환 타입을 `?array` -> `?PostConfigEntity`로 변경 |
+| `PostService.php` | 모든 `$config['key']` 패턴을 `$config->key`로 변경 (포인트 증/감 처리 포함) |
+| `v7/post/view.php` | 게시판 설정 배열 접근을 Entity 접근으로 변경 |
+| `v7/admin/boards-config.php` | 관리자 게시판 설정 페이지에서 배열 접근을 Entity 접근으로 변경 |
+
+### 핵심 필드
+
+| 분류 | 필드 | 타입 | 설명 |
+|------|------|------|------|
+| 식별자 | `idx` | int | PK |
+| 식별자 | `post_id` | string | 게시판 ID |
+| 식별자 | `group_id` | string | 그룹 ID |
+| 기본 정보 | `subject` | string | 게시판 제목 |
+| 기본 정보 | `description` | ?string | 게시판 설명 |
+| 기본 정보 | `category` | ?string | 카테고리 목록 |
+| 포인트 | `point_write` | int | 글 작성 시 지급 포인트 |
+| 포인트 | `point_comment` | int | 댓글 작성 시 지급 포인트 |
+| 포인트 | `point_write_delete` | int | 글 삭제 시 차감 포인트 |
+| 포인트 | `point_comment_delete` | int | 댓글 삭제 시 차감 포인트 |
+| 접근 레벨 | `level_list` | int | 목록 열람 레벨 |
+| 접근 레벨 | `level_view` | int | 글 열람 레벨 |
+| 접근 레벨 | `level_write` | int | 글 작성 레벨 |
+| 통계 | `no_of_post` | int | 글 수 |
+| 통계 | `no_of_comment` | int | 댓글 수 |
+
+### 편의 메서드
+
+| 메서드 | 반환 | 설명 |
+|--------|------|------|
+| `exists()` | bool | 유효한 레코드인지 확인 (`idx > 0`) |
+| `displayName()` | string | 게시판 표시 이름 (`subject`가 비어있으면 `post_id` 반환) |
+
+### 사용 예시
+
+```php
+// PostRepository에서 Entity 반환
+$config = PostRepository::getPostConfig('freetalk');
+if ($config === null) {
+    throw new RuntimeException('게시판 설정을 찾을 수 없습니다');
+}
+
+// ✅ Entity 멤버 변수로 접근
+$pointWrite = $config->point_write;
+$boardName = $config->displayName();
+
+// ❌ 배열 접근 금지 (기존 패턴)
+// $pointWrite = $config['point_write'];
+```
+
+### 테스트
+
+유닛 테스트 파일: `tests/Unit/PostConfigEntityTest.php` (18개 테스트)
+
+| 테스트 | 검증 내용 |
+|--------|----------|
+| EntityInterface 구현 검증 | `instanceof EntityInterface` |
+| fromArray() 기본 변환 | 핵심 필드 변환 확인 |
+| toArray() 왕복 변환 | `fromArray() -> toArray()` 데이터 일관성 |
+| 기본값 검증 | 빈 배열로 생성 시 기본값 확인 |
+| nullable 필드 처리 | `description`, `category`, `header`, `footer` 등 null 처리 |
+| exists() 메서드 | `idx > 0` 기준 검증 |
+| displayName() 메서드 | subject 유무에 따른 반환값 검증 |
+| 포인트/레벨/위젯 설정 필드 | 각 카테고리별 필드 변환 확인 |
+
+---
+
 ## content_type 판별 및 저장
 
 글/코멘트의 `content` 필드를 분석하여 렌더링 타입(`text`, `markdown`, `html`)을 결정하고 DB에 저장한다.
@@ -748,23 +836,33 @@ if ($_v7LoginUser) {
 | `v7/post/view.css` | 게시글 보기 전용 스타일 |
 | `v7/js/post-actions.js` | 액션바 Vue.js 앱 (좋아요/수정/삭제) |
 | `v7/js/comment.js` | 댓글 CRUD Vue.js 앱 |
+| `v7/widgets/user/user-hover-dropdown.php` | 사용자 아바타/닉네임 호버 드롭다운 위젯 |
+| `v7/widgets/user/user-hover-dropdown.css` | 드롭다운 스타일 (hover/모바일/차단/관리자) |
+| `v7/widgets/user/user-hover-dropdown.js` | 모바일 토글 + 차단 버튼 이벤트 처리 |
 
 ### 글 헤더 디자인
 
 글 헤더는 카테고리 뱃지, 제목, 작성자 정보(아바타 + 이름 + 메타)로 구성된다.
+**작성자 아바타/닉네임에는 `renderUserHoverDropdown()` 위젯이 적용**되어 호버 시 드롭다운 메뉴(프로필, 채팅, 글 목록, 코멘트 목록, 차단, 관리자 메뉴)가 표시된다.
 
 ```html
 <header class="post-view-header">
     <span class="post-category-badge"><i class="fa-solid fa-tag"></i> 카테고리</span>
     <h1 class="post-view-title">제목</h1>
     <div class="post-view-author-row">
-        <wa-avatar initials="홍" image="프로필URL" shape="circle"></wa-avatar>
-        <div class="post-view-author-info">
-            <span class="post-view-author">홍길동</span>
-            <div class="post-view-meta">
-                <span class="post-view-date">2026-03-11 12:00</span>
-                <span class="post-view-stat"><i class="fa-regular fa-eye"></i> 조회수</span>
-            </div>
+        <!-- renderUserHoverDropdown() 위젯으로 아바타+닉네임 렌더링 -->
+        <?= renderUserHoverDropdown([
+            'idx_member'   => $post->idx_member,
+            'user_name'    => $post->user_name,
+            'photo_url'    => $post->user_photo_url,
+            'firebase_uid' => $post->firebase_uid,
+            'avatar_size'  => '2.25rem',
+            'show_meta'    => true,
+            'level'        => $post->level,
+        ]) ?>
+        <div class="post-view-meta">
+            <span class="post-view-date">2026-03-11 12:00</span>
+            <span class="post-view-stat"><i class="fa-regular fa-eye"></i> 조회수</span>
         </div>
     </div>
 </header>
@@ -773,6 +871,7 @@ if ($_v7LoginUser) {
 **핵심 CSS 규칙:**
 - 카테고리 뱃지: 블루 pill 스타일 (`background: brand-50`, `color: brand-700`, `border-radius: 20px`)
 - 작성자 아바타: `wa-avatar --size: 2.25rem`, `shape="circle"`, `user_photo_url` 지원
+- 작성자 호버 드롭다운: `renderUserHoverDropdown()` 위젯으로 아바타+닉네임에 드롭다운 메뉴 적용 → [v7-widgets.md 13장](../web/v7-widgets.md#13-사용자-호버-드롭다운-위젯-user-hover-dropdown) 참조
 - 구분선: `border-bottom: 1px solid neutral-200` (얇은 회색, 두꺼운 검정 금지)
 
 ### 액션 바 디자인
@@ -826,6 +925,468 @@ if ($_v7LoginUser) {
 |------|------|------|
 | 댓글 textarea 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
 | 첨부 버튼 배경 | `neutral-50` (연한 회색) | `#fff` (순백색) |
+
+---
+
+## 구인구직 게시판 만료 정책
+
+### 개요
+
+구인구직(`wanted`) 게시판의 글은 작성일로부터 **6개월**이 지나면 글 본문 내용과 첨부파일이 자동으로 숨겨진다.
+이는 오래된 구인구직 정보로 인한 혼란을 방지하기 위한 정책이다.
+
+> **참고**: v6에서는 90일(3개월) 만료 정책이었으나, v7에서는 **6개월(약 180일)**로 변경되었다.
+
+### 아키텍처: API 단(PostService)에서 처리
+
+만료 정책은 **PostService** 계층에서 처리된다. 이를 통해 웹(v7 홈페이지), Flutter 앱 등
+**모든 클라이언트에 일관되게 적용**된다.
+
+`PostService::applyExpiredJobPostPolicy()` 메서드가 `get()`과 `list()` 양쪽에서 호출되어,
+글 조회 시 자동으로 만료 정책이 적용된다.
+
+```php
+// lib/post/PostService.php
+
+/**
+ * 구인구직(wanted) 게시판 6개월 만료 정책 적용
+ *
+ * wanted 게시판의 글이 6개월 이상 경과했으면:
+ * - content를 안내 메시지로 변경
+ * - content_type을 'text'로 설정
+ * - files를 빈 문자열로 설정
+ *
+ * DB 데이터는 변경하지 않고, 메모리(Entity 객체)에서만 변경한다.
+ */
+private static function applyExpiredJobPostPolicy(PostEntity $post): PostEntity
+{
+    if ($post->post_id === 'wanted' && $post->stamp < strtotime('-6 months')) {
+        $post->content = '구인구직 글은 6개월이 지나면 볼 수 없습니다. 잘못된 정보를 방지하기 위해, 6개월 이상 지난 구인구직 글의 내용은 표시되지 않습니다.';
+        $post->content_type = 'text';
+        $post->files = '';
+    }
+    return $post;
+}
+```
+
+| 핵심 포인트 | 설명 |
+|------------|------|
+| **처리 위치** | `PostService::applyExpiredJobPostPolicy()` (API 단) |
+| **호출 시점** | `PostService::get()` 및 `PostService::list()` 양쪽에서 호출 |
+| **적용 범위** | 모든 클라이언트 (웹, Flutter 앱 등) |
+| **DB 영향** | 없음 — 메모리(Entity 객체)에서만 변경, DB 데이터는 원본 유지 |
+| **변경 항목** | `content` (안내 메시지), `content_type` ('text'), `files` (빈 문자열) |
+
+### 판별 조건
+
+| 조건 | 설명 |
+|------|------|
+| `post_id === 'wanted'` | 구인구직 게시판인지 확인 |
+| `stamp < strtotime('-6 months')` | 작성일이 현재로부터 6개월 이전인지 확인 |
+
+### 만료 시 동작
+
+만료된 구인구직 글에 대해 아래 항목이 변경/숨겨진다.
+
+| 항목 | 만료 전 | 만료 후 |
+|------|---------|---------|
+| **글 제목** | 정상 표시 | 정상 표시 (유지) |
+| **글 헤더 (작성자, 날짜 등)** | 정상 표시 | 정상 표시 (유지) |
+| **글 본문 내용** | 정상 표시 | 만료 안내 메시지로 대체 (API 단에서 처리) |
+| **content_type** | 원본 타입 | `'text'`로 변경 (API 단에서 처리) |
+| **첨부파일 (files)** | 정상 표시 | 빈 문자열로 변경 (API 단에서 처리) |
+| **댓글** | 정상 표시 | 정상 표시 (유지) |
+| **액션바 (좋아요 등)** | 정상 표시 | 정상 표시 (유지) |
+
+### 웹 UI: 만료 안내 박스 (v7/post/view.php)
+
+웹에서는 API 단에서 이미 content가 변경된 상태이지만, `$isExpiredJobPost` 변수를 별도로 유지하여
+예쁜 안내 박스 UI를 표시한다.
+
+```php
+// v7/post/view.php — 웹 UI용 만료 여부 변수 (API와 별개로 UI 분기용)
+$isExpiredJobPost = ($post->post_id === 'wanted' && $post->stamp < strtotime('-6 months'));
+```
+
+글 본문 영역에 차단/블라인드 체크 → 만료 체크 → 사용자 차단 체크 순서로 분기 처리된다.
+
+```php
+<?php if ($post->isBlockedOrBlinded()): ?>
+    <!-- 관리자 차단 안내 -->
+<?php elseif ($isExpiredJobPost): ?>
+    <div class="post-expired-job-notice">
+        <div class="expired-job-icon">
+            <i class="fa-solid fa-calendar-xmark"></i>
+        </div>
+        <div class="expired-job-message">
+            <strong>구인구직 글은 6개월이 지나면 볼 수 없습니다</strong>
+            <p>잘못된 정보를 방지하기 위해, 6개월 이상 지난 구인구직 글의 내용은 표시되지 않습니다.</p>
+        </div>
+    </div>
+<?php elseif ($isBlockedAuthor): ?>
+    <!-- 차단된 사용자 안내 -->
+<?php endif; ?>
+```
+
+첨부파일도 만료 글이면 숨김 처리된다.
+
+```php
+<?php if (!empty($fileUrls) && !$post->isBlockedOrBlinded() && !$isBlockedAuthor && !$isExpiredJobPost): ?>
+    <!-- 첨부파일 표시 -->
+<?php endif; ?>
+```
+
+### CSS 스타일 (`v7/post/view.css`)
+
+만료 안내 메시지는 노란색 경고 테마로 디자인되어 있다.
+
+```css
+/* 구인구직 만료 안내 (6개월 이전 글) */
+.post-expired-job-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: #fefce8;       /* 연한 노란색 배경 */
+    border-radius: 12px;
+    border: 1px solid #fde68a; /* 노란색 테두리 */
+}
+
+.expired-job-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #fef3c7;       /* 아이콘 원형 배경 */
+    /* fa-calendar-xmark 아이콘 표시 */
+}
+
+.expired-job-message strong {
+    font-size: 0.92rem;
+    color: #92400e;            /* 진한 갈색 텍스트 */
+}
+
+.expired-job-message p {
+    font-size: 0.8rem;
+    color: #a16207;            /* 중간 갈색 텍스트 */
+}
+```
+
+### 파일 구조
+
+| 파일 | 관련 내용 |
+|------|-----------|
+| `lib/post/PostService.php` | `applyExpiredJobPostPolicy()` 메서드 — `get()`과 `list()` 양쪽에서 호출하여 모든 클라이언트에 적용 |
+| `v7/post/view.php` | `$isExpiredJobPost` 변수 (웹 UI용 예쁜 안내 박스 표시용), 본문 분기, 첨부파일 분기 |
+| `v7/post/view.css` | `.post-expired-job-notice` 등 만료 안내 스타일 |
+
+---
+
+## 범용 서브 카테고리 탭 시스템
+
+### 개요
+
+게시판 목록 페이지(`v7/post/list.php`)에는 **범용 서브 카테고리 탭 네비게이션**이 표시된다.
+`Config::subcategories($postId)` 메서드에 게시판별 카테고리 데이터를 정의하면,
+`list.php`가 자동으로 pill(알약) 스타일의 탭을 렌더링한다.
+글쓰기 버튼은 단일 "글쓰기" 버튼으로 통합되며, 현재 선택된 카테고리가 자동으로 전달된다.
+
+> **이전 구현 (v7 초기)**: 구인구직(`wanted`) 게시판만 하드코딩으로 탭을 표시하고, 글쓰기 버튼도 "구인 등록"/"구직 등록"으로 분리했었다.
+> **현재 구현**: `Config::subcategories()`에 데이터만 추가하면 모든 게시판에 자동 적용되는 범용 시스템으로 변경되었다.
+
+### 아키텍처
+
+```
+Config::subcategories($postId)  <-- 카테고리 데이터 정의 (1곳만 수정)
+        |
+v7/post/list.php                <-- 범용 탭 렌더링 (PHP SSR)
+        |
+v7/post/list.css                <-- pill 스타일 CSS
+        |
+Route::postList($postId, $cat)  <-- URL 생성
+```
+
+### Config::subcategories() 메서드 (`v7/utils/Config.php`)
+
+게시판별 서브 카테고리 데이터를 정의하는 정적 메서드이다.
+반환 형식은 `array<int, array{value: string, label: string, icon?: string}>`이다.
+
+```php
+/**
+ * 게시판별 서브 카테고리 목록 반환
+ *
+ * @return array<int, array{value: string, label: string, icon?: string}>
+ */
+public static function subcategories(string $postId): array
+{
+    $map = [
+        'wanted' => [
+            ['value' => 'hiring', 'label' => '구인', 'icon' => 'fa-solid fa-briefcase'],
+            ['value' => 'looking', 'label' => '구직', 'icon' => 'fa-solid fa-user-tie'],
+        ],
+        'buyandsell' => [
+            ['value' => '기타', 'label' => '기타'],
+            ['value' => '사업/동업구함', 'label' => '사업/동업구함'],
+            // ... 총 13개 카테고리
+        ],
+        'freetalk' => [
+            ['value' => 'discussion', 'label' => '토론'],
+            ['value' => '뉴스', 'label' => '뉴스'],
+            // ... 총 20개 카테고리
+        ],
+        'qna' => [
+            ['value' => '기타', 'label' => '기타'],
+            ['value' => '여권/비자', 'label' => '여권/비자'],
+            ['value' => '여행', 'label' => '여행'],
+        ],
+    ];
+
+    return $map[$postId] ?? [];
+}
+```
+
+#### 카테고리 항목 구조
+
+| 필드 | 필수 | 설명 |
+|------|------|------|
+| `value` | 필수 | `?category=` URL 파라미터 값. DB의 `sf_post_data.category` 컬럼 값과 일치해야 함 |
+| `label` | 필수 | 탭에 표시되는 한글 텍스트 |
+| `icon` | 선택 | Font Awesome Pro v7.2.0 아이콘 클래스. 없으면 텍스트만 표시 |
+
+### 적용된 게시판 목록
+
+| 게시판 | post_id | 카테고리 수 | 주요 카테고리 |
+|--------|---------|------------|-------------|
+| 구인구직 | `wanted` | 2 | 구인(hiring), 구직(looking) |
+| 사고팔고 | `buyandsell` | 13 | 중고차, 핸드폰, 호텔, 프로모션 등 |
+| 자유게시판 | `freetalk` | 20 | 토론, 뉴스, 사진, 먹방, 칼럼 등 |
+| 질문답변 | `qna` | 3 | 기타, 여권/비자, 여행 |
+
+`Config::subcategories()`에 정의되지 않은 게시판(블로그, 하숙/게하, 학원, 뉴스, 여행 등)은 탭이 표시되지 않는다.
+
+### URL 패턴
+
+```
+/post/list?post_id=wanted                       -> 전체 (카테고리 미지정)
+/post/list?post_id=wanted&category=hiring       -> 구인글만
+/post/list?post_id=wanted&category=looking      -> 구직글만
+/post/list?post_id=freetalk&category=discussion -> 토론글만
+/post/list?post_id=buyandsell&category=중고차     -> 중고차만
+/post/list?post_id=qna&category=여권/비자         -> 여권/비자글만
+```
+
+### 카테고리 탭 렌더링 로직 (`v7/post/list.php`)
+
+게시판 헤더 아래에서 `Config::subcategories($postId)`를 호출하여 범용 렌더링한다.
+특정 게시판(`wanted` 등)에 대한 하드코딩 조건이 없으며, 데이터 기반으로 자동 표시된다.
+추가로 `Config::shouldHideSubcategories($postId, $category)`로 **특정 카테고리 진입 시 탭 숨김**을 지원한다.
+
+```php
+<?php
+$subcategories = Config::subcategories($postId);
+if (!empty($subcategories) && !Config::shouldHideSubcategories($postId, $category)):
+?>
+    <nav class="post-category-tabs" aria-label="서브 카테고리">
+        <a href="<?= Route::postList($postId) ?>"
+           class="post-category-tab <?= $category === null ? 'active' : '' ?>">
+            전체
+        </a>
+        <?php foreach ($subcategories as $sub): ?>
+            <a href="<?= Route::postList($postId, $sub['value']) ?>"
+               class="post-category-tab <?= $category === $sub['value'] ? 'active' : '' ?>">
+                <?php if (!empty($sub['icon'])): ?>
+                    <i class="<?= $sub['icon'] ?>"></i>
+                <?php endif; ?>
+                <?= htmlspecialchars($sub['label']) ?>
+            </a>
+        <?php endforeach; ?>
+    </nav>
+<?php endif; ?>
+```
+
+#### 렌더링 규칙
+
+1. `Config::subcategories($postId)`가 빈 배열이면 탭을 표시하지 않음
+2. `Config::shouldHideSubcategories($postId, $category)`가 `true`이면 탭을 표시하지 않음 (아래 "서브 카테고리 탭 숨김" 참조)
+3. "전체" 탭은 항상 첫 번째에 자동 추가됨 (데이터에 정의할 필요 없음)
+4. 현재 선택된 카테고리(`$category`)와 `$sub['value']`가 일치하면 `.active` 클래스 적용
+5. `$category === null`이면 "전체" 탭이 활성화됨
+6. URL은 `Route::postList($postId, $sub['value'])`로 생성
+
+### 서브 카테고리 탭 숨김 (`Config::shouldHideSubcategories()`)
+
+특정 `post_id + category` 조합으로 진입했을 때 서브 카테고리 탭을 숨기는 기능이다.
+예를 들어, 부동산(`real_estate`) 카테고리는 독자적인 UI(Masonry 레이아웃, 전용 필터)를 가지므로
+상위 게시판(`buyandsell`)의 서브 카테고리 탭이 노출되면 혼란을 줄 수 있다.
+
+#### 관련 메서드 (`v7/utils/Config.php`)
+
+| 메서드 | 반환 타입 | 설명 |
+|--------|-----------|------|
+| `Config::hiddenSubcategoryRoutes()` | `string[]` | 탭 숨김 대상 `"post_id:category"` 문자열 배열 |
+| `Config::shouldHideSubcategories($postId, $category)` | `bool` | 해당 조합에서 탭을 숨겨야 하는지 여부 |
+
+```php
+// 숨김 대상 목록
+public static function hiddenSubcategoryRoutes(): array
+{
+    return [
+        'buyandsell:real_estate',
+    ];
+}
+
+// 숨김 여부 확인
+public static function shouldHideSubcategories(string $postId, ?string $category): bool
+{
+    if ($category === null) {
+        return false;
+    }
+    return in_array($postId . ':' . $category, self::hiddenSubcategoryRoutes(), true);
+}
+```
+
+#### 동작 예시
+
+| URL | `shouldHideSubcategories()` | 탭 표시 |
+|-----|---------------------------|---------|
+| `/post/list?post_id=buyandsell` | `false` (category=null) | 표시 |
+| `/post/list?post_id=buyandsell&category=중고차` | `false` | 표시 |
+| `/post/list?post_id=buyandsell&category=real_estate` | **`true`** | **숨김** |
+| `/post/list?post_id=freetalk&category=discussion` | `false` | 표시 |
+
+#### 새로운 숨김 대상 추가 방법
+
+`Config::hiddenSubcategoryRoutes()`의 반환 배열에 `"post_id:category"` 형식 문자열을 추가하면 된다.
+
+```php
+return [
+    'buyandsell:real_estate',
+    'freetalk:column',        // 예시: 자유게시판 칼럼 진입 시 탭 숨김
+];
+```
+
+### 글쓰기 버튼 (`v7/post/list.php`)
+
+모든 게시판에서 단일 "글쓰기" 버튼으로 통합되었다.
+현재 선택된 카테고리(`$category`)가 글쓰기 URL에 자동 전달되므로, 카테고리별 분리 버튼이 필요 없다.
+
+```php
+<?php if ($_v7LoginUser): ?>
+    <a href="<?= Route::postCreate($postId, $category) ?>" class="post-write-btn">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
+<?php else: ?>
+    <a href="#" class="post-write-btn"
+       onclick="if(confirm('로그인해야 글을 쓸 수 있습니다. 로그인 하시겠습니까?')) location.href='/user/login.php'; return false;">
+        <i class="fa-solid fa-pen-to-square"></i> 글쓰기
+    </a>
+<?php endif; ?>
+```
+
+> **이전 구현과의 차이**: 구인구직 게시판에서 "구인 등록"/"구직 등록" 두 개의 버튼이 분리되어 있었으나,
+> 현재는 단일 "글쓰기" 버튼으로 통합되었다. 카테고리 탭에서 "구인"을 선택한 상태에서 "글쓰기"를 클릭하면
+> `category=hiring`이 자동 전달된다.
+
+### CSS 스타일 (`v7/post/list.css`)
+
+카테고리 탭은 **pill(알약 모양)** 디자인으로, 가로 스크롤을 지원하여 카테고리가 많은 게시판에서도 사용 가능하다.
+활성 탭은 블루 배경 + 흰색 텍스트로 반전 표시된다.
+
+```css
+/* === 서브 카테고리 탭 네비게이션 === */
+.post-category-tabs {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.5rem 0;
+    overflow-x: auto;           /* 카테고리가 많을 때 가로 스크롤 */
+    scrollbar-width: none;      /* Firefox: 스크롤바 숨김 */
+    -webkit-overflow-scrolling: touch;
+}
+.post-category-tabs::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+.post-category-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--wa-color-neutral-600, #475569);
+    text-decoration: none;
+    background: var(--wa-color-neutral-100, #f1f5f9);
+    border-radius: 9999px;      /* pill 모양 */
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.post-category-tab:hover {
+    color: var(--wa-color-brand-600, #2563eb);
+    background: var(--wa-color-brand-50, #eff6ff);
+    border-color: var(--wa-color-brand-200, #bfdbfe);
+}
+
+/* 활성 탭: 블루 배경 반전 */
+.post-category-tab.active {
+    color: #fff;
+    background: var(--wa-color-brand-600, #2563eb);
+    border-color: var(--wa-color-brand-600, #2563eb);
+    font-weight: 600;
+}
+```
+
+#### CSS 디자인 원칙
+
+| 원칙 | 설명 |
+|------|------|
+| **Pill 스타일** | `border-radius: 9999px`로 알약 모양 버튼 |
+| **블루 테마** | Web Awesome brand 변수 사용 (빨간색 금지) |
+| **가로 스크롤** | 카테고리가 많을 때 모바일에서 가로 스크롤 지원 |
+| **스크롤바 숨김** | 깔끔한 UI를 위해 스크롤바 비표시 (Firefox + Chrome/Safari) |
+| **활성 탭 반전** | 비활성: 회색 배경 + 어두운 텍스트, 활성: 블루 배경 + 흰색 텍스트 |
+
+### 새 게시판에 카테고리 추가하는 방법
+
+`v7/utils/Config.php`의 `subcategories()` 메서드에 게시판 데이터만 추가하면 된다.
+**PHP/CSS 파일 수정 불필요** -- `list.php`와 `list.css`는 이미 범용 렌더링 시스템이 구현되어 있다.
+
+```php
+// v7/utils/Config.php — subcategories() 메서드에 추가
+'travel' => [
+    ['value' => '마닐라', 'label' => '마닐라', 'icon' => 'fa-solid fa-location-dot'],
+    ['value' => '세부', 'label' => '세부', 'icon' => 'fa-solid fa-location-dot'],
+    ['value' => '보라카이', 'label' => '보라카이', 'icon' => 'fa-solid fa-umbrella-beach'],
+],
+```
+
+### 백엔드 필터링 흐름
+
+```
+URL ?category=hiring
+    |
+Route::query('category')          -> 'hiring'
+    |
+PostService::list(['category' => 'hiring'])
+    |
+PostRepository::findAll($postId, 'hiring', ...)
+    |
+SQL: WHERE p.post_id = 'wanted' AND p.category = 'hiring'
+    |
+필터링된 글 목록 반환
+```
+
+### 파일 구조
+
+| 파일 | 관련 내용 |
+|------|-----------|
+| `v7/utils/Config.php` | `subcategories()` 메서드 -- 게시판별 서브 카테고리 데이터 정의 |
+| `v7/post/list.php` | 범용 카테고리 탭 렌더링 (`Config::subcategories()` 기반), 단일 글쓰기 버튼 |
+| `v7/post/list.css` | `.post-category-tabs`, `.post-category-tab` pill 스타일, 가로 스크롤, 활성 탭 반전 |
+| `v7/utils/Route.php` | `Route::postList($postId, $category)` -- 카테고리 포함 목록 URL 생성 |
+| `v7/utils/Route.php` | `Route::postCreate($postId, $category)` -- 카테고리 포함 글쓰기 URL 생성 |
+| `.claude/commands/design/subcategory.md` | 서브 카테고리 디자인 커맨드 문서 |
 
 ---
 
@@ -1528,3 +2089,146 @@ document.addEventListener('click', function (e) {
 | **thread-line 세로선 색상** | 기본 `#cbd5e1` (neutral-300), hover 시 `#3b82f6` (blue) + width `3px`로 두께 증가. L자 곡선 연결선도 동일하게 neutral-300(`#cbd5e1`) 적용 |
 | **thread-line left 위치** | 데스크톱 `left: 17px` (avatar-col 36px/2 - 1px), 모바일 `left: 14px` (30px/2 - 1px) |
 | **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |
+| **user-hover-dropdown 위젯 적용** | 코멘트 아바타(`.comment-avatar-col`)와 닉네임(`.post-comment-header`)에 `renderUserHoverDropdown()` 위젯을 적용하여 호버 드롭다운 메뉴를 표시한다 |
+
+---
+
+## 신고(Report) 기능
+
+글/코멘트 신고 기능은 사용자가 부적절한 콘텐츠를 관리자에게 알릴 수 있는 시스템이다.
+
+### post.report — 글/코멘트 신고
+
+인증 필수.
+
+```
+GET https://local.philgo.com/api.php?method=post.report&session_id=xxx&type=post&idx=12345
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| type | string | O | 신고 대상 유형: `'post'` 또는 `'comment'` |
+| idx | int | O | 신고할 글/코멘트의 sf_post_data.idx |
+
+**성공 응답:**
+
+```json
+{ "idx": 12345, "message": "신고가 접수되었습니다." }
+```
+
+**에러 응답:**
+
+| 에러 코드 | 메시지 | 상황 |
+|-----------|--------|------|
+| `login-required` | 로그인이 필요합니다. | 미인증 |
+| `invalid-parameters` | 유효하지 않은 파라미터입니다. | type/idx 누락 |
+| `invalid-type` | 유효하지 않은 신고 유형입니다. | type이 post/comment 아닌 경우 |
+| `not-found` | 신고할 항목을 찾을 수 없습니다. | idx에 해당하는 글이 없음 |
+| `already-reported` | 이미 신고를 하였습니다. | 동일 사용자가 이미 신고함 |
+
+**DB 처리:**
+
+- `sf_post_data.report` = `'Y'`로 설정
+- `sf_post_data.text_10`에 신고자 idx를 CSV 형식으로 누적 저장 (예: `'186619,190076,193824'`)
+- 내부적으로 `lib/post/report.functions.php`의 `report()` 함수를 호출 (레거시 함수 재사용)
+
+### post.reportList — 신고 목록 조회 (관리자)
+
+인증 필수, 관리자 전용.
+
+```
+GET https://local.philgo.com/api.php?method=post.reportList&session_id=xxx&limit=20
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| limit | int | X | 조회 개수 (기본 20) |
+
+**성공 응답:**
+
+```json
+[
+  {
+    "idx": 12345,
+    "subject": "신고된 글 제목",
+    "content": "내용 미리보기 (200자)",
+    "idx_member": 99,
+    "user_name": "작성자",
+    "report": "Y",
+    "text_10": "186619,190076",
+    "stamp_update": 1710000000,
+    "idx_parent": 0,
+    "idx_root": 0,
+    "post_id": "freetalk"
+  }
+]
+```
+
+**호출 경로:**
+
+```
+PostController::reportList()
+  → PostService::listReported($limit)
+    → PostRepository::findReported($limit)
+```
+
+**상세 호출 경로 (관리자 페이지에서 사용):**
+
+```
+PostController::reportList()        ← API 호출 시 (미사용, 직접 Service 호출)
+PostService::listReportedDetailed() ← v7/admin/reports.php에서 직접 호출
+  → PostRepository::findReportedDetailed()
+```
+
+### 신고 관련 Service/Repository 메서드
+
+| 클래스 | 메서드 | 설명 |
+|--------|--------|------|
+| `PostService` | `listReported($limit)` | 신고된 글 목록 (간략) — 위젯용 |
+| `PostService` | `listReportedDetailed($limit)` | 신고된 글/코멘트 상세 목록 — 관리자 페이지용 |
+| `PostRepository` | `findReported($limit)` | 신고된 글 DB 조회 (간략) |
+| `PostRepository` | `findReportedDetailed($limit)` | 신고된 글/코멘트 DB 조회 (상세) |
+
+### 신고 관련 DB 컬럼 (sf_post_data)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| `report` | varchar | 신고 상태. `'Y'`이면 신고됨, `''`이면 미신고 |
+| `text_10` | text | 신고자 idx CSV (예: `'186619,190076'`). `REPORTER_LIST_FIELD` 상수로 참조 |
+
+---
+
+## 사용자 호버 드롭다운 (user-hover-dropdown)
+
+글 보기 페이지(`v7/post/view.php`)에서 글쓴이 및 코멘트 작성자의 **아바타/닉네임에 호버 시 드롭다운 메뉴**가 표시되는 기능이다.
+
+### 적용 위치
+
+| 위치 | 설명 | 파라미터 |
+|------|------|----------|
+| **글 작성자 영역** (`.post-view-author-row`) | 글 헤더의 아바타+닉네임 | `avatar_size: '2.25rem'`, `show_meta: true` |
+| **코멘트 아바타** (`.comment-avatar-col`) | 코멘트 왼쪽 아바타 | `avatar_size: '1.75rem'~'2rem'`, `show_meta: false` |
+| **코멘트 닉네임** (`.post-comment-header`) | 코멘트 본문 상단 닉네임 | `avatar_size: '0'`, `show_meta: true` |
+
+### 위젯 파일
+
+| 파일 | 역할 |
+|------|------|
+| `v7/widgets/user/user-hover-dropdown.php` | `renderUserHoverDropdown()` 함수 정의 — HTML 생성 |
+| `v7/widgets/user/user-hover-dropdown.css` | 드롭다운 스타일 (hover/모바일/차단/관리자 메뉴) |
+| `v7/widgets/user/user-hover-dropdown.js` | 모바일 토글 + 차단 버튼 이벤트 + 외부 클릭 닫기 |
+
+### 메뉴 항목
+
+프로필, 채팅(로그인+타인), 글 목록, 코멘트 목록, 신고(로그인+타인+content_idx/content_type 전달 시), 차단(로그인+타인), 회원 정보 수정(관리자만).
+
+상세 사용법 및 파라미터: → [v7-widgets.md 13장](../web/v7-widgets.md#13-사용자-호버-드롭다운-위젯-user-hover-dropdown) 참조.
+
+---
+
+## 부동산 게시판 (real_estate)
+
+부동산 게시판(`category='real_estate'`)은 전용 Masonry 목록, 상세보기 위젯, 커스텀 필드 폼을 사용한다.
+상세 문서는 별도 파일로 분리되어 있다.
+
+→ **[v7-post-real-estate.md](v7-post-real-estate.md)** 참조
