@@ -156,12 +156,12 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 | ✅ 수정 가능 | `lib/*/` 내 Service 클래스 | `lib/user/UserService.php`, `lib/company/CompanyService.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Repository 클래스 | `lib/user/UserRepository.php`, `lib/company/CompanyRepository.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Controller 클래스 | `lib/user/UserController.php`, `lib/company/CompanyController.php` |
+| ✅ 수정 가능 | `lib/utils/` v7 유틸리티 클래스 (**사용자 요청 시**) | `lib/utils/FirebaseService.php` 등 — 사용자가 명시적으로 요청한 경우에만 수정 허용. 자의적 수정 금지 |
 
 ### 수정 불가능한 파일 (블랙리스트) — 절대 금지
 
 | 수정 불가 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
-| ❌ **절대 금지** | `lib/utils/` v7 유틸리티 클래스 | `lib/utils/Db.php`, `lib/utils/RequestUtils.php` |
 | ❌ **절대 금지** | `composer.json` | `composer.json` |
 | ❌ **절대 금지** | `tests/` 테스트 파일 | `tests/Unit/UserControllerTest.php` |
 | ❌ **절대 금지** | `boot.php` 및 설정 파일 | `boot.php`, `config.php` |
