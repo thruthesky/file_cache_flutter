@@ -120,10 +120,13 @@ $isRealEstateMasonry = ($category === 'real_estate');
 
 ### 썸네일 우선순위
 
-1. `thumbnail_1000` > `thumbnail_800x800` > `thumbnail_400x400`
-2. `varchar_17` (대표 이미지 URL) -> 썸네일 변환
-3. `files` 필드에서 첫 이미지 추출 -> 썸네일 변환
-4. `gid`로 v4 파일 테이블(`sf_data`) 일괄 조회 -> 썸네일 변환
+1. `varchar_17` (원본 이미지 URL) -> `ImageService::buildThumbnailUrl()`로 동적 썸네일 생성
+2. `files` 필드에서 첫 이미지 추출 -> 썸네일 변환
+3. `gid`로 v4 파일 테이블(`sf_data`) 일괄 조회 -> 썸네일 변환
+
+> **참고**: 이전에는 `thumbnail_1000`(varchar_12) > `thumbnail_800x800`(varchar_11) > `thumbnail_400x400`(varchar_10)을
+> 우선 참조했으나, varchar_10~12 썸네일 캐시 저장이 제거되어 새 글에서는 빈 값이다.
+> varchar_17에서 동적으로 썸네일을 생성하는 방식으로 전환되었다.
 
 ---
 
@@ -633,7 +636,7 @@ if (this.category === 'real_estate' || data.category === 'real_estate') {
 | **네임스페이스** | `Philgo\Post\RealEstateEntity` |
 | **래핑 대상** | `PostEntity` (`category = 'real_estate'`인 게시글만) |
 | **패턴** | PostEntity wrapping (InfoPostEntity와 동일) |
-| **핵심 목적** | varchar_12 충돌 해결 + 부동산 필드 의미 있는 이름 매핑 + 이미지 URL 결정 로직 캡슐화 |
+| **핵심 목적** | 부동산 필드 의미 있는 이름 매핑 + varchar_17 기반 동적 썸네일 생성 로직 캡슐화 (varchar_12 충돌은 varchar_10~12 저장 제거로 근본 해결) |
 
 ### 8.1 클래스 구조
 
@@ -696,7 +699,7 @@ $re = RealEstateEntity::fromArray($postArr);
 
 | 메서드 | 반환 타입 | 설명 |
 |--------|----------|------|
-| `thumbnailUrl()` | `string` | 이미지 썸네일 URL 반환 (varchar_12 충돌 안전 처리, 4단계 폴백) |
+| `thumbnailUrl()` | `string` | 이미지 썸네일 URL 반환 (varchar_17 기반 동적 생성, 3단계 폴백) |
 | `fullAddress()` | `string` | 주소 문자열 반환 (호수, 건물명, 거리, 바랑가이, 지역을 쉼표로 연결) |
 | `addressParts()` | `string[]` | 주소 구성 요소를 HTML escape 적용된 배열로 반환 |
 | `displayRegion()` | `string` | 표시용 지역명 ("City" 제거) |
@@ -726,107 +729,85 @@ $re->completedLabel();     // 'B' → '사전 분양', 'A' → '준공 후 분�
 | 시스템 | varchar_12 용도 | 저장 값 예시 |
 |--------|----------------|-------------|
 | **v6 부동산** | `UNIT_NUMBER` (호수/동) | `'1205'`, `'Tower A-3F'` |
-| **v7 PostEntity** | `thumbnail_1000` (썸네일 URL) | `'/uploads/xxx/thumb_1000.webp'` |
+| **v7 PostEntity** | `thumbnail_1000` (레거시 썸네일 URL) | `'/uploads/xxx/thumb_1000.webp'` |
 
-동일한 컬럼에 부동산 글에서는 호수 번호가, 일반 글에서는 썸네일 URL이 저장된다.
-부동산 글의 `varchar_12`를 썸네일 URL로 잘못 읽으면 `'1205'` 같은 텍스트가 이미지 URL로 사용되는 문제가 발생한다.
+동일한 컬럼에 부동산 글에서는 호수 번호가, 일반 글에서는 썸네일 URL이 저장되어
+부동산 글의 `varchar_12`를 썸네일 URL로 잘못 읽으면 `'1205'` 같은 텍스트가 이미지 URL로 사용되는 문제가 발생했었다.
 
-#### 이중 방어 전략 (쓰기 시점 + 읽기 시점)
+#### 해결: varchar_10~12 썸네일 캐시 완전 제거
 
-varchar_12 충돌 문제는 **쓰기 시점(근본 방지)** 과 **읽기 시점(방어적 검증)** 두 계층에서 모두 방어한다.
+이 충돌 문제는 **varchar_10~12에 썸네일을 저장하지 않는 방식**으로 근본적으로 해결되었다.
+이전의 이중 방어 전략(쓰기 시점 category 분기 + 읽기 시점 isImageUrl 검증)은 모두 제거되었고,
+현재는 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로 **읽기 시점에
+동적으로 썸네일 URL을 생성**하는 단일 방식으로 통일되었다.
 
-| 방어 계층 | 위치 | 방식 | 역할 |
-|-----------|------|------|------|
-| **1차: 쓰기 시점** | `PostService::setMediaFields()` | `$category === 'real_estate'`이면 varchar_12 스킵 | 근본 원인 차단 -- 부동산 호수 값을 썸네일 URL로 덮어쓰지 않음 |
-| **2차: 읽기 시점** | `RealEstateEntity::thumbnailUrl()` | `isImageUrl()` 검증 | 방어적 폴백 -- 기존 데이터나 외부 경로로 저장된 값도 안전하게 처리 |
+| 항목 | 이전 (제거됨) | 현재 |
+|------|-------------|------|
+| **쓰기 시점** | `setMediaFields()`에서 varchar_10~12에 썸네일 캐시 저장 (부동산은 category 분기로 스킵) | varchar_10~12 저장 로직 **완전 제거**. varchar_17(원본 URL)만 저장 |
+| **읽기 시점** | `isImageUrl()`로 varchar_10~12 값의 URL 여부 검증 후 사용 | varchar_17에서 `ImageService::buildThumbnailUrl()`로 **동적 썸네일 생성** |
+| **setMediaFields() 시그니처** | `setMediaFields(array &$data, array $fileList, string $category = '')` | `setMediaFields(array &$data, array $fileList)` -- category 파라미터 제거 |
 
-#### 1차 방어: 쓰기 시점 -- setMediaFields() 카테고리 분기
-
-`PostService::setMediaFields()` 메서드에 `string $category` 파라미터가 추가되었다.
-`category`가 `'real_estate'`이면 varchar_12 초기화 및 썸네일 URL 덮어쓰기를 스킵한다.
-
-```php
-// PostService::setMediaFields() 시그니처
-private static function setMediaFields(array &$data, array $fileList, string $category = ''): void
-```
+#### PostService::setMediaFields() 현재 구현
 
 ```php
-// 내부 로직 -- 부동산일 때 varchar_12 보호
-$isRealEstate = ($category === 'real_estate');
-$data['varchar_10'] = '';       // 400x400 썸네일 (항상 초기화)
-$data['varchar_11'] = '';       // 800x800 썸네일 (항상 초기화)
-if (!$isRealEstate) {
-    $data['varchar_12'] = '';   // 1000px 썸네일 (부동산이 아닐 때만 초기화)
-}
-
-// 썸네일 URL 저장 시에도 동일하게 분기
-if ($uploadEntity !== null && !empty($uploadEntity->thumbnail_400x400_url)) {
-    $data['varchar_10'] = $uploadEntity->thumbnail_400x400_url;
-    $data['varchar_11'] = $uploadEntity->thumbnail_800x800_url;
-    if (!$isRealEstate) {
-        $data['varchar_12'] = $uploadEntity->thumbnail_1000_url;
-    }
-}
-```
-
-**호출부에서 카테고리 전달:**
-
-```php
-// PostService::create() 내부
-self::setMediaFields($data, $fileList, $data['category'] ?? '');
-
-// PostService::update() 내부
-self::setMediaFields($data, $fileList, $data['category'] ?? $entity->category ?? '');
-```
-
-> **핵심**: 부동산 글의 varchar_12에는 호수/동 값(`'1205'`, `'Tower A-3F'` 등)이 저장되어 있으므로,
-> setMediaFields()가 이 값을 썸네일 URL로 덮어쓰면 호수 정보가 유실된다.
-> 쓰기 시점에서 아예 varchar_12를 건드리지 않음으로써 근본적으로 충돌을 방지한다.
-
-#### 2차 방어: 읽기 시점 -- isImageUrl() 검증
-
-`RealEstateEntity::thumbnailUrl()` 메서드에서 `varchar_10~12` 값을 사용할 때
-**반드시 `isImageUrl()` 메서드로 URL 형태인지 검증**한 후에만 썸네일로 사용한다.
-이는 1차 방어가 적용되기 전에 저장된 기존 데이터나, 외부 경로로 값이 설정된 경우를 위한 방어적 폴백이다.
-
-```php
-// RealEstateEntity 내부 (thumbnailUrl 메서드)
-foreach (['thumbnail_1000', 'thumbnail_800x800', 'thumbnail_400x400'] as $field) {
-    $val = $post->$field;
-    if (!empty($val) && $this->isImageUrl($val)) {  // ← URL 형태 검증
-        return $val;
-    }
-}
-```
-
-```php
-// isImageUrl() — varchar_12 충돌 방지용
-private function isImageUrl(string $val): bool
+// PostService::setMediaFields() -- varchar_10~12 저장 로직 완전 제거
+private static function setMediaFields(array &$data, array $fileList): void
 {
-    return str_starts_with($val, '/uploads/') || str_starts_with($val, 'http');
+    // has_image, varchar_17(첫 이미지 URL), has_video, varchar_18(첫 동영상 URL) 설정
+    // ...
+
+    // varchar_10~12에 썸네일 URL을 저장하지 않음.
+    // varchar_17(원본 이미지 URL)에서 읽기 시점에 ImageService::buildThumbnailUrl()로
+    // 동적으로 썸네일 URL을 생성한다.
+    // 이전에는 varchar_10~12에 캐시했으나, 부동산 카테고리에서 varchar_12가
+    // "호수/동" 커스텀 필드와 충돌하는 문제가 있었고, varchar_17만으로 충분하므로 제거.
 }
 ```
 
-| varchar_12 값 | `isImageUrl()` 결과 | 처리 |
-|---------------|---------------------|------|
-| `'/uploads/xxx/thumb_1000.webp'` | `true` | 썸네일 URL로 사용 |
-| `'https://file.philgo.com/...'` | `true` | 썸네일 URL로 사용 |
-| `'1205'` (부동산 호수) | `false` | 무시, 다음 단계(varchar_17, files, no_of_first_image)로 폴백 |
-| `'Tower A-3F'` (부동산 호수) | `false` | 무시, 다음 단계로 폴백 |
+#### RealEstateEntity::thumbnailUrl() 현재 구현
 
-#### thumbnailUrl() 4단계 폴백
+`isImageUrl()` 메서드는 삭제되었으며, varchar_10~12 의존 로직이 완전 제거되었다.
+현재는 varchar_17에서 `ImageService::buildThumbnailUrl()`로 동적 생성하는 것이 1순위이다.
+
+```php
+public function thumbnailUrl(): string
+{
+    $post = $this->post;
+
+    // 1단계: varchar_17 원본 이미지 URL -> 동적 썸네일 생성
+    if (!empty($post->varchar_17)) {
+        if (str_starts_with($post->varchar_17, '/uploads/')) {
+            $ext = strtolower(pathinfo($post->varchar_17, PATHINFO_EXTENSION));
+            if (ImageService::isConvertible($ext)) {
+                return ImageService::buildThumbnailUrl($post->varchar_17, 400, 'square');
+            }
+        }
+        return $post->varchar_17;
+    }
+
+    // 2단계: files 필드에서 첫 이미지 추출 (쉼표/줄바꿈 구분)
+    // 3단계: no_of_first_image로 v4 파일 URL 생성
+    // ...
+}
+```
+
+#### thumbnailUrl() 3단계 폴백
 
 ```
-1단계: v7 업로드 썸네일 (varchar_10~12, isImageUrl() 검증 필수)
-  ↓ (URL 아니면 무시)
-2단계: varchar_17 원본 이미지 URL
-  ↓ (비어 있으면)
-3단계: files 필드에서 첫 이미지 추출 (쉼표/줄바꿈 구분)
+1단계: varchar_17 원본 이미지 URL -> ImageService::buildThumbnailUrl()로 동적 썸네일 생성
+  ↓ (비어 있거나 변환 불가)
+2단계: files 필드에서 첫 이미지 추출 (쉼표/줄바꿈 구분)
   ↓ (없으면)
-4단계: no_of_first_image로 v4 파일 URL 생성
+3단계: no_of_first_image로 v4 파일 URL 생성
   ↓ (0이면)
 빈 문자열 반환
 ```
+
+#### 레거시 데이터 호환
+
+PostEntity의 `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성은 varchar_10~12에 매핑되어 있으며,
+기존에 저장된 레거시 데이터를 읽을 수 있도록 유지된다. 다만 새 글에서는 이 속성들이 빈 값이며,
+모든 위젯/페이지에서 varchar_17 기반 동적 썸네일 생성으로 전환 완료되었다.
 
 ### 8.5 위젯에서의 사용 패턴
 
@@ -886,7 +867,7 @@ $fullAddress = $re->fullAddress();             // 쉼표로 연결된 문자열
 | **래핑 대상** | `PostEntity` | `PostEntity` |
 | **생성 메서드** | `fromPost()`, `fromArray()` | `fromPost()`, `fromArray()` |
 | **필드 매핑** | varchar/int/char/region → 부동산 필드 | varchar → 정보 필드 (website, phone 등) |
-| **충돌 해결** | varchar_12 (호수 vs 썸네일) isImageUrl() 검증 | 없음 |
+| **충돌 해결** | varchar_12 (호수 vs 썸네일) -- varchar_10~12 저장 제거로 근본 해결, varchar_17 기반 동적 썸네일 | 없음 |
 | **레이블 메서드** | `unitTypeLabel()`, `sellingTypeLabel()` 등 | 없음 |
 
 ### 8.7 새 부동산 위젯에서 RealEstateEntity 사용 시 주의사항
@@ -895,6 +876,6 @@ $fullAddress = $re->fullAddress();             // 쉼표로 연결된 문자열
 |------|------|
 | **배열 접근 금지** | `$postArr['varchar_12']` 등 연관 배열로 부동산 필드에 직접 접근하지 않는다 |
 | **Entity 래핑 필수** | 반드시 `RealEstateEntity::fromArray()` 또는 `fromPost()`로 래핑 후 사용 |
-| **thumbnailUrl() 사용** | 이미지 URL 결정 시 반드시 `$re->thumbnailUrl()` 메서드를 사용하여 varchar_12 충돌을 방지한다 |
+| **thumbnailUrl() 사용** | 이미지 URL 결정 시 반드시 `$re->thumbnailUrl()` 메서드를 사용한다 (varchar_17 기반 동적 썸네일 생성) |
 | **레이블 메서드 활용** | 코드 값(`S`, `N`, `B` 등)을 한글로 변환할 때 직접 매핑하지 말고 `unitTypeLabel()` 등 메서드를 사용한다 |
 | **hasFields() 체크** | 부동산 정보 렌더링 전 `$re->hasFields()`로 필드 존재 여부를 확인한다 |

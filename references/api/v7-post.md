@@ -174,51 +174,53 @@ GET https://local.philgo.com/api.php?method=post.create&session_id=xxx&post_id=f
 | 필드 | 용도 | 설정 조건 |
 |------|------|-----------|
 | `has_image` | 이미지 포함 여부 (`'y'` 또는 `''`) | files에 이미지가 있으면 `'y'` |
-| `varchar_17` | 첫 번째 이미지 URL | files에서 첫 번째 이미지 URL |
-| `varchar_10` | 400x400 정사각형 center-crop 썸네일 URL | uploads 테이블에서 조회 |
-| `varchar_11` | 800x800 정사각형 center-crop 썸네일 URL | uploads 테이블에서 조회 |
-| `varchar_12` | 1000px 비율 유지 리사이즈 썸네일 URL | uploads 테이블에서 조회 |
+| `varchar_17` | 첫 번째 이미지 원본 URL | files에서 첫 번째 이미지 URL |
 | `has_video` | 동영상 포함 여부 (`'y'` 또는 `''`) | files에 동영상이 있으면 `'y'` |
 | `varchar_18` | 첫 번째 동영상 URL | files에서 첫 번째 동영상 URL |
 
-**썸네일 URL 조회 로직** (핵심):
+> **썸네일 URL 동적 생성 방식 (varchar_10~12 저장 제거)**:
+>
+> 이전에는 `varchar_10~12`에 썸네일 URL을 캐시 저장했으나, **부동산 카테고리에서 `varchar_12`가
+> "호수/동" 커스텀 필드와 충돌**하는 문제가 있었다. 이를 근본적으로 해결하기 위해
+> `setMediaFields()`에서 varchar_10~12 저장 로직을 **완전히 제거**하였다.
+>
+> 현재 모든 썸네일은 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로
+> **읽기 시점에 동적으로 생성**한다. DB에 썸네일 URL을 별도 저장하지 않는다.
+
+**썸네일 URL 생성 방식**:
 
 1. `files` 파라미터를 콤마로 분리하여 파일 목록 생성
 2. 파일 목록에서 **첫 번째 이미지**를 찾음 (jpg, jpeg, png, gif, webp, bmp, svg, avif)
-3. 첫 번째 이미지가 `/uploads/` 로 시작하면 → `UploadRepository::findByUrl()`로 uploads 테이블 검색
-4. **DB 조회 우선**: uploads 레코드가 있고 `thumbnail_400x400_url`이 비어있지 않으면 → DB 값 사용
-5. **폴백 처리**: uploads 레코드가 없거나, 레코드는 있지만 thumbnail URL이 비어있는 기존 파일 → `ImageService::buildThumbnailUrl()`로 URL 패턴 기반 생성 (변환 가능한 포맷만: jpg, jpeg, png, webp, bmp, avif)
-6. `/uploads/` 로 시작하지 않는 URL(레거시 외부 URL) → varchar_10~12는 빈 문자열
-7. GIF는 변환 불가이므로 uploads에 썸네일 없고, 폴백에서도 `isConvertible('gif')` = false → 빈 문자열
+3. 첫 번째 이미지 URL을 `varchar_17`에 저장
+4. 썸네일이 필요한 위젯/페이지에서 `varchar_17` 값을 읽어 `ImageService::buildThumbnailUrl()`로 동적 생성
 
 ```php
 // PostService::setMediaFields() 핵심 코드
-$data['varchar_10'] = '';
-$data['varchar_11'] = '';
-$data['varchar_12'] = '';
-if ($firstImage !== null && str_starts_with($firstImage, '/uploads/')) {
-    $uploadEntity = UploadRepository::findByUrl($firstImage);
-    if ($uploadEntity !== null && !empty($uploadEntity->thumbnail_400x400_url)) {
-        // uploads 테이블에 썸네일 URL이 저장되어 있으면 그대로 사용
-        $data['varchar_10'] = $uploadEntity->thumbnail_400x400_url;
-        $data['varchar_11'] = $uploadEntity->thumbnail_800x800_url;
-        $data['varchar_12'] = $uploadEntity->thumbnail_1000_url;
-    } else {
-        // uploads 테이블에 썸네일 URL이 없는 경우 (기존 업로드 파일)
-        // URL 패턴으로 썸네일 URL을 생성하여 폴백
-        $imgExt = strtolower(pathinfo($firstImage, PATHINFO_EXTENSION));
-        if (ImageService::isConvertible($imgExt)) {
-            $data['varchar_10'] = ImageService::buildThumbnailUrl($firstImage, 400, 'square');
-            $data['varchar_11'] = ImageService::buildThumbnailUrl($firstImage, 800, 'square');
-            $data['varchar_12'] = ImageService::buildThumbnailUrl($firstImage, 1000, 'resize');
-        }
+// varchar_17에 원본 이미지 URL만 저장.
+// varchar_10~12에 썸네일 URL을 저장하지 않음.
+// 읽기 시점에 ImageService::buildThumbnailUrl()로 동적 생성.
+if ($firstImage !== null) {
+    $data['varchar_17'] = $firstImage;
+    $data['has_image'] = 'y';
+}
+```
+
+```php
+// 위젯에서 썸네일 URL 동적 생성 예시
+use Philgo\Upload\ImageService;
+
+$originalUrl = $post->varchar_17; // 원본 이미지 URL
+if (!empty($originalUrl) && str_starts_with($originalUrl, '/uploads/')) {
+    $ext = strtolower(pathinfo($originalUrl, PATHINFO_EXTENSION));
+    if (ImageService::isConvertible($ext)) {
+        $thumb400 = ImageService::buildThumbnailUrl($originalUrl, 400, 'square');
+        $thumb800 = ImageService::buildThumbnailUrl($originalUrl, 800, 'square');
+        $thumb1000 = ImageService::buildThumbnailUrl($originalUrl, 1000, 'resize');
     }
 }
 ```
 
-> **중요**: 여러 이미지가 업로드된 경우, **오직 첫 번째 이미지**의 썸네일만 varchar_10~12에 저장된다.
-
-**PostEntity 편의 속성**: `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성으로 varchar_10~12에 직접 접근 가능하다. `toArray()` 출력에도 포함된다.
+**PostEntity 편의 속성**: `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성은 varchar_10~12에 매핑되어 있으며, 레거시 데이터 호환용으로 유지된다. 새 글에서는 이 속성들이 빈 값이며, 썸네일이 필요하면 `varchar_17`에서 `ImageService::buildThumbnailUrl()`로 동적 생성해야 한다.
 
 **포인트 처리**:
 - sf_post_config.point_write 설정에 따라 자동 포인트 지급
