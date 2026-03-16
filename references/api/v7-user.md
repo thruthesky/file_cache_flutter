@@ -185,6 +185,15 @@ console.log(res.count);  // 188186
 4. 세션 ID 생성 → 쿠키에 저장 (다음 요청부터 세션 기반 인증 가능)
 5. 사용자 레코드 리턴 (password 필드 제거)
 
+경로 3 — 자동 회원 가입 (Firebase ID Token이 있으나 sf_member에 레코드가 없는 경우):
+1. 경로 1, 2 모두 실패 (AuthService::getLoginUser()가 null 반환)
+2. `id_token` 파라미터가 존재하면 자동 회원 가입 시도
+3. `FirebaseService::verifyIdTokenWithClaims($idToken)` → Firebase UID + claims 획득
+4. sf_member에서 firebase_uid로 재확인 (AuthService 캐싱으로 누락 가능성 대비)
+5. 레코드가 없으면 `FirebaseService::getAuth()->getUser($uid)`로 Firebase Auth에서 상세 정보 조회
+6. displayName, email, photoUrl, phoneNumber, provider 정보를 기반으로 sf_member에 INSERT
+7. 세션 쿠키 저장 후 UserEntity 리턴
+
 **호출 환경별 가이드**:
 
 | 환경 | 인증 방법 | 파라미터 |
@@ -262,6 +271,64 @@ console.log(res.level_progress);  // 37 (다음 레벨까지 진행률 0~100%)
     "message": "로그인이 필요합니다."
 }
 ```
+
+#### 3.2.1 자동 회원 가입 (Auto Registration)
+
+`user.me` 호출 시 Firebase ID Token(`id_token`)이 있지만 `sf_member` 테이블에 해당 Firebase UID의 레코드가 없는 경우,
+**자동으로 사용자 레코드를 생성**한다. 이 기능은 소셜 로그인(Google, Apple, 카카오, 네이버 등)으로 Firebase에 인증된 사용자가
+별도의 회원 가입 절차 없이 바로 필고 서비스를 이용할 수 있도록 한다.
+
+**자동 회원 가입 흐름**:
+
+```
+UserService::getMe()
+    │
+    ├─ AuthService::getLoginUser() → null (세션 없음, DB에 firebase_uid 없음)
+    │
+    ├─ id_token 파라미터 확인 → 있음
+    │
+    ├─ FirebaseService::verifyIdTokenWithClaims($idToken)
+    │   └─ Firebase UID + claims (uid, email, name, picture) 획득
+    │
+    ├─ sf_member에서 firebase_uid로 재확인 (AuthService 캐싱 대비)
+    │   └─ 있으면 → loginUser() + UserEntity 리턴 (자동 가입 불필요)
+    │
+    ├─ getFirebaseAuthUser($uid) — Firebase Auth에서 상세 정보 조회
+    │   └─ displayName, email, photoUrl, phoneNumber, provider 가져옴
+    │
+    ├─ sf_member에 INSERT
+    │   ├─ id: email 또는 'social_{firebase_uid}'
+    │   ├─ firebase_uid: Firebase UID
+    │   ├─ login_provider: 'google.com', 'apple.com', 'phone' 등
+    │   ├─ email: Firebase Auth 또는 claims에서 가져온 이메일
+    │   ├─ name: displayName
+    │   ├─ nickname: displayName 또는 email 앞부분 또는 'User_{uid앞8자}'
+    │   ├─ photo_url: photoUrl
+    │   ├─ phone_number: phoneNumber
+    │   └─ stamp: time()
+    │
+    └─ AuthService::loginUser($row) → 세션 쿠키 저장 → UserEntity 리턴
+```
+
+**닉네임 자동 생성 규칙** (우선순위):
+1. Firebase Auth의 `displayName`이 있으면 그대로 사용
+2. `email`이 있으면 `@` 앞 부분을 닉네임으로 사용
+3. 둘 다 없으면 `User_{firebase_uid 앞 8자}`
+
+**getFirebaseAuthUser() private 메서드**:
+Firebase Auth Admin SDK(`FirebaseService::getAuth()->getUser($uid)`)를 호출하여
+Firebase에 저장된 사용자의 상세 정보를 조회한다. ID Token의 claims보다 더 풍부한 정보를 제공한다.
+
+| 반환 필드 | 타입 | 설명 |
+|-----------|------|------|
+| `email` | string | Firebase Auth에 등록된 이메일 |
+| `displayName` | string | Firebase Auth에 등록된 표시 이름 |
+| `photoUrl` | string | Firebase Auth에 등록된 프로필 사진 URL |
+| `phoneNumber` | string | Firebase Auth에 등록된 전화번호 |
+| `provider` | string | 로그인 제공자 (google.com, apple.com, phone, password 등) |
+
+> Firebase Auth 조회가 실패해도 에러를 throw하지 않고, 빈 문자열을 기본값으로 사용하여
+> claims 정보만으로도 자동 회원 가입이 진행되도록 한다.
 
 ### 3.3 user.socialLogin - 소셜 로그인
 
@@ -950,23 +1017,45 @@ class UserService
      * password 필드는 보안을 위해 제거하고 리턴한다.
      * point 기반으로 level과 level_progress를 동적으로 계산하여 포함한다.
      *
-     * @return array 사용자 정보 배열 (password 제외, level/level_progress 동적 계산)
+     * Firebase ID Token이 있으나 sf_member에 레코드가 없는 경우,
+     * Firebase Auth에서 사용자 정보를 조회하여 자동으로 회원 가입을 수행한다.
+     *
+     * @return UserEntity 사용자 엔티티 (password 제외, level/level_progress 동적 계산)
      * @throws RuntimeException 비로그인 시
      */
-    public static function getMe(): array
+    public static function getMe(): UserEntity
     {
         $user = AuthService::getLoginUser();
-        if ($user === null) {
+        if ($user !== null) {
+            return $user;
+        }
+
+        // Firebase ID Token이 있으면 자동 회원 가입 시도
+        $input = RequestUtils::all();
+        $idToken = (string)($input['id_token'] ?? '');
+        if ($idToken === '') {
             throw new RuntimeException('로그인이 필요합니다.');
         }
-        unset($user['password']);
 
-        // 포인트 기반 동적 레벨 계산
-        $points = (int) ($user['point'] ?? 0);
-        $user['level'] = self::calculateLevel($points);
-        $user['level_progress'] = self::calculateLevelProgress($points, $user['level']);
+        // Firebase ID Token 검증
+        $claims = FirebaseService::verifyIdTokenWithClaims($idToken);
+        $firebaseUid = $claims['uid'];
 
-        return $user;
+        // sf_member에서 다시 확인 (AuthService 캐싱 대비)
+        $existing = Db::fetch("SELECT * FROM sf_member WHERE firebase_uid = ?", [$firebaseUid]);
+        if ($existing !== false) {
+            AuthService::loginUser($existing);
+            unset($existing['password']);
+            return new UserEntity($existing);
+        }
+
+        // Firebase Auth에서 상세 정보 조회 후 sf_member에 INSERT (자동 회원 가입)
+        $firebaseUser = self::getFirebaseAuthUser($firebaseUid);
+        // ... email, displayName, photoUrl, phoneNumber, provider 조합
+        // ... Db::insert() → sf_member에 레코드 생성
+        // ... AuthService::loginUser() → 세션 쿠키 저장
+
+        return new UserEntity($row);
     }
 
     /**
