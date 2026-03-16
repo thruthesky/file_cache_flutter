@@ -39,13 +39,13 @@ class PostListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final previewUrl = _previewUrl;
 
-    // 카드 배경: primaryContainer (연한 파란색 계열)
-    // 텍스트/아이콘: onPrimaryContainer (진한 파란색, 가독성 높음)
-    // 보조 텍스트/아이콘: tertiary (보조 강조색)
+    final commentColor = _getCountColor(post.noOfComment);
+    final commentBold = post.noOfComment >= 5;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       child: Material(
-        color: scheme.primaryContainer,
+        color: scheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: onTap,
@@ -55,6 +55,11 @@ class PostListTile extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 썸네일 미리보기 (왼쪽)
+                if (previewUrl != null) ...[
+                  DisplayThumbnail(url: previewUrl, size: 72),
+                  const SizedBox(width: 12),
+                ],
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,9 +69,9 @@ class PostListTile extends StatelessWidget {
                         post.subject,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: scheme.onPrimaryContainer,
+                          color: scheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -102,13 +107,14 @@ class PostListTile extends StatelessWidget {
                             FaIcon(
                               FontAwesomeIcons.lightComment,
                               size: 12,
-                              color: scheme.tertiary,
+                              color: commentColor,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               '${post.noOfComment}',
                               style: theme.textTheme.labelSmall?.copyWith(
-                                color: scheme.tertiary,
+                                color: commentColor,
+                                fontWeight: commentBold ? FontWeight.w600 : null,
                               ),
                             ),
                           ],
@@ -134,17 +140,19 @@ class PostListTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                // 썸네일 미리보기
-                if (previewUrl != null) ...[
-                  const SizedBox(width: 12),
-                  DisplayThumbnail(url: previewUrl, size: 72),
-                ],
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// 댓글 수에 따른 색상 반환
+  Color _getCountColor(int count) {
+    if (count >= 10) return scheme.error;
+    if (count >= 5) return Colors.amber.shade700;
+    return scheme.tertiary;
   }
 
   /// Unix timestamp → 상대 시간 또는 날짜 문자열
