@@ -840,6 +840,25 @@ if ($_v7LoginUser) {
 | `v7/widgets/user/user-hover-dropdown.css` | 드롭다운 스타일 (hover/모바일/차단/관리자) |
 | `v7/widgets/user/user-hover-dropdown.js` | 모바일 토글 + 차단 버튼 이벤트 처리 |
 
+### URL 파라미터 전달 규칙 (post_id/category 유지)
+
+글 작성/수정 후 글 보기 페이지로 이동하거나, 글 보기 페이지에서 수정 페이지로 이동할 때,
+**반드시 `post_id`와 `category` 파라미터를 URL에 포함**해야 한다.
+이 파라미터가 누락되면 브레드크럼 네비게이션에 카테고리가 표시되지 않는다.
+
+| 흐름 | URL 형식 | 파일 |
+|------|----------|------|
+| 글 작성/수정 완료 -> 글 보기 | `/post/view?idx=N&post_id=XXX&category=YYY` | `v7/js/post-form.js` |
+| 글 보기 -> 수정 페이지 | `/post/update?idx=N&post_id=XXX&category=YYY` | `v7/widgets/post/view/post-view-default.php` |
+| 수정 페이지 -> Vue 앱 전달 | `data-post-id`, `data-category` 속성 | `v7/post/update.php` |
+
+**핵심 규칙:**
+
+- `post-form.js`에서 redirect 시 `this.postId`와 `this.category`를 URL에 `encodeURIComponent()`로 추가
+- `post-view-default.php`의 수정 버튼(`data-edit-url`)에 `post_id`/`category` 포함
+- `update.php`에서 `$route->query('post_id')`, `$route->query('category')`로 파라미터를 받아 `data-*` 속성으로 Vue 앱에 전달
+- `view.php`에서 `$effectiveCategory`는 URL 파라미터가 없으면 `$post->category`로 fallback하여 하단 목록과 브레드크럼에 사용
+
 ### 글 헤더 디자인
 
 글 헤더는 카테고리 뱃지, 제목, 작성자 정보(아바타 + 이름 + 메타)로 구성된다.
