@@ -1,12 +1,3 @@
-[submodule ".claude/skills/open-mateo-skill"]
-	path = .claude/skills/open-mateo-skill
-	url = https://github.com/thruthesky/open-meteo-skill
-[submodule ".claude/skills/currency-skill"]
-	path = .claude/skills/currency-skill
-	url = https://github.com/thruthesky/currency-skill
-[submodule ".claude/skills/data-skill"]
-	path = .claude/skills/data-skill
-	url = https://github.com/thruthesky/data-skill
 [submodule "docs"]
 	path = docs
 	url = https://github.com/thruthesky/docs

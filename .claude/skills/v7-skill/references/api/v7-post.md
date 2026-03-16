@@ -10,13 +10,16 @@
    - [post.create](#postcreate---게시글-생성)
    - [post.update](#postupdate---게시글-수정)
    - [post.delete](#postdelete---게시글-삭제)
+   - [post.advertisementConfig](#postadvertisementconfig---포인트-광고-설정-조회)
+   - [post.advertise](#postadvertise---포인트-광고-등록연장)
 4. [포인트 시스템](#포인트-시스템)
 5. [PostEntity 필드](#postentity-필드)
-6. [에러 처리](#에러-처리)
-7. [테스트](#테스트)
-8. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
-9. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
-10. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
+6. [content_type 판별 및 저장](#content_type-판별-및-저장)
+7. [에러 처리](#에러-처리)
+8. [테스트](#테스트)
+9. [게시글 목록 관리자 기능](#게시글-목록-관리자-기능)
+10. [게시글 보기 페이지 디자인](#게시글-보기-페이지-디자인)
+11. [코멘트(댓글) 시스템](#코멘트댓글-시스템)
    - [코멘트 디자인 시스템](#코멘트-디자인-시스템)
    - [Reddit 스타일 스레드 구조 (세로선 클릭 접기/펼치기 + adjustThreadLines 동적 높이)](#reddit-스타일-스레드-구조-세로선-클릭-접기펼치기--adjustthreadlines-동적-높이)
    - [코멘트 HTML 구조 (SSR — avatar-col + body-col 재귀 트리)](#코멘트-html-구조-ssr--avatar-col--body-col-재귀-트리)
@@ -109,11 +112,14 @@ GET https://local.philgo.com/api.php?method=post.list&post_id=wanted&category=jo
 
 | 파라미터 | 타입 | 필수 | 설명 |
 |----------|------|------|------|
-| post_id | string | O | 게시판 ID |
+| post_id | string | 조건부 | 게시판 ID (`post_id` 또는 `idx_member` 중 하나 필수) |
+| idx_member | int | 조건부 | 작성자 회원 번호 — 특정 사용자의 글만 조회 (`post_id` 또는 `idx_member` 중 하나 필수) |
 | category | string | X | 카테고리 필터 |
 | orderby | string | X | 정렬 (기본: stamp DESC) |
 | limit | int | X | 최대 조회 수 (기본: 20, 최대: 100) |
 | offset | int | X | 오프셋 (기본: 0) |
+
+> **`post_id`와 `idx_member` 조합 규칙**: 둘 다 없으면 RuntimeException 발생. `post_id`만 전달하면 해당 게시판 전체 글 조회. `idx_member`만 전달하면 전체 게시판에서 해당 사용자의 글만 조회. 둘 다 전달하면 특정 게시판에서 특정 사용자의 글만 조회.
 
 **허용 정렬**:
 `stamp DESC/ASC`, `stamp_update DESC/ASC`, `stamp_last_comment DESC/ASC`,
@@ -312,6 +318,52 @@ PostService::delete()
 | point_write_delete | 글 삭제 시 차감 포인트 | -10 |
 | point_comment_delete | 댓글 삭제 시 차감 포인트 | -5 |
 
+### 포인트 광고 (글 상단 고정)
+
+게시글을 포인트로 구매하여 게시판 상단에 고정하는 기능이다.
+
+#### post.advertisementConfig — 포인트 광고 설정 조회
+
+인증 불필요. 게시판/카테고리가 광고 가능한지 여부와 기간별 비용 목록을 반환한다.
+
+```
+GET /api.php?method=post.advertisementConfig&post_id=buyandsell&category=개인장터
+```
+
+**응답:**
+```json
+{
+  "success": true,
+  "eligible": true,
+  "cost_per_hour": 240,
+  "days": [
+    {"days": 3, "points": 17280},
+    {"days": 7, "points": 40320}
+  ]
+}
+```
+
+#### post.advertise — 포인트 광고 등록/연장
+
+인증 필수. 본인 글만 광고 가능. 보유 포인트 ≥ 필요 포인트.
+
+```
+GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
+```
+
+**DB 필드 매핑:**
+| 필드 | 설명 |
+|------|------|
+| int_5 | 광고 종료 Unix timestamp (연장 시 기존 만료시간에 추가) |
+| int_6 | 마지막 등록 시간 |
+| int_7 | 마지막 등록 기간 (일) |
+| int_8 | 마지막 등록에 소비한 포인트 |
+
+**광고 가능 게시판/카테고리 (24개):**
+`boarding_house`, `business`, `buyandsell`, `massage`, `promotion`, `real_estate`, `rest`, `study`, `travel`, `wanted`, `blog`, `가전/생활용품`, `개인장터`, `골프`, `렌트카`, `주택임대`, `중고차`, `여권/비자`, `이민`, `컴퓨터/인터넷`, `페소환전`, `핸드폰`, `호텔`, `temp`
+
+**비용 계산:** `240P/시간 × 24시간 × 일수`
+
 ---
 
 ## PostEntity 필드
@@ -325,6 +377,10 @@ PostService::delete()
 | post_id | string | 게시판 ID |
 | subject | string | 제목 |
 | content | string | 내용 |
+| content_type | string | 콘텐츠 타입 (`text`, `markdown`, `html`). 저장 시 자동 계산 |
+| is_markdown | bool | `content_type === 'markdown'` 편의 접근자 (DB 미저장, Entity에서 자동 계산) |
+| is_html | bool | `content_type === 'html'` 편의 접근자 (DB 미저장, Entity에서 자동 계산) |
+| is_text | bool | `content_type === 'text'` 또는 빈값 편의 접근자 (DB 미저장, Entity에서 자동 계산) |
 | stamp | int | 작성 시간 (UNIX timestamp) |
 | stamp_update | int | 수정 시간 |
 | depth | int | 깊이 (0=글, 1=댓글, 2=대댓글) |
@@ -363,6 +419,143 @@ PostService::delete()
 | isBlockedOrBlinded() | bool | 검열 또는 블라인드 |
 | isSecret() | bool | 비밀글 (secret === 'Y') |
 | exists() | bool | 존재 여부 (idx > 0) |
+
+### v7에서 사용하지 않는 DB 컬럼
+
+| DB 컬럼 | 설명 |
+|---------|------|
+| content_stripped | `strip_tags(content)` 값. v6에서 검색용으로 사용했으나, **v7에서는 사용하지 않는다**. PostEntity에 매핑하지 않으며, 글/코멘트 생성·수정 시에도 저장하지 않는다. DB 컬럼 charset가 4바이트 UTF-8(이모지)을 지원하지 않아 SQLSTATE[22007] 에러를 유발할 수 있으므로 v7 코드에서 완전히 제거되었다. |
+| content_stripped_private | content_stripped의 비공개 버전. v7에서 사용하지 않는다. |
+
+---
+
+## content_type 판별 및 저장
+
+글/코멘트의 `content` 필드를 분석하여 렌더링 타입(`text`, `markdown`, `html`)을 결정하고 DB에 저장한다.
+
+- 상세 계획: [tmp/plans/post-content-format-plan.md](../../../../../tmp/plans/post-content-format-plan.md)
+- DB 컬럼: `sf_post_data.content_type` VARCHAR(16) DEFAULT NULL
+- v6 원본 로직: `lib/functions.php`의 `is_markdown()`, `is_html()` + `lib/post/process_after_read.php`의 `detect_content_format()`
+
+### 판별 우선순위
+
+```
+markdown > html > text (기본값)
+```
+
+1. `content`가 비어 있으면 → `text`
+2. `is_markdown()` 규칙에 맞으면 → `markdown`
+3. `is_html()` 규칙에 맞으면 → `html`
+4. 그 외 → `text`
+
+### is_markdown() 판별 조건
+
+소스 위치: `lib/functions.php:857-894`
+
+조건 (하나라도 참이면 `markdown`):
+
+1. **헤딩**: `preg_match('/^#{1,6}\s+.+/m', $content)` — 각 줄의 시작에 `#` 1~6개 + 공백 + 텍스트 (`/m` multiline 플래그 사용)
+2. **이미지**: `preg_match('/!\[.*?\]\(.+?\)/', $content)` — 마크다운 이미지 `![alt](url)` 구문
+
+주의사항:
+- 최소 길이: `trim($decoded)` 2자 이상 (`html_entity_decode()` 후)
+- `/m` 플래그로 본문 중간의 헤딩도 감지 → `"안녕\n# 제목"`도 `markdown` (v6 개선)
+
+### is_html() 판별 조건
+
+소스 위치: `lib/functions.php:676-849`
+
+- 최소 길이: `trim($text)` 3자 이상
+- `strtolower()` 후 검사 (대소문자 무관)
+- `strpos()` 기반 — 위치 무관, 어디에든 태그가 있으면 `true`
+
+닫는 태그 (54개): `</div>`, `</span>`, `</a>`, `</p>`, `</h1>`~`</h6>`, `</ul>`, `</ol>`, `</li>`, `</table>`, `</tbody>`, `</thead>`, `</tfoot>`, `</tr>`, `</td>`, `</th>`, `</blockquote>`, `</pre>`, `</code>`, `</strong>`, `</em>`, `</b>`, `</i>`, `</u>`, `</s>`, `</strike>`, `</del>`, `</ins>`, `</sub>`, `</sup>`, `</small>`, `</big>`, `</center>`, `</font>`, `</form>`, `</button>`, `</label>`, `</select>`, `</option>`, `</textarea>`, `</fieldset>`, `</legend>`, `</article>`, `</section>`, `</nav>`, `</aside>`, `</header>`, `</footer>`, `</main>`, `</figure>`, `</figcaption>`, `</video>`, `</audio>`, `</canvas>`, `</svg>`, `</iframe>`, `</object>`, `</script>`, `</style>`, `</title>`, `</head>`, `</body>`, `</html>`
+
+여는/self-closing 태그 (40+개): `<br`, `<img `, `<hr`, `<input `, `<meta `, `<link `, `<source `, `<track `, `<embed `, `<area `, `<base `, `<col `, `<param `, `<wbr`, `<div>`, `<div `, `<span>`, `<span `, `<a `, `<p>`, `<p `, `<h1>`~`<h6>`, `<ul>`, `<ol>`, `<li>`, `<table>`, `<tr>`, `<td>`, `<th>`, `<blockquote>`, `<pre>`, `<code>`, `<strong>`, `<em>`, `<b>`, `<i>`, `<u>`, `<form `, `<button>`, `<video `, `<audio `, `<iframe `, `<script>`, `<style>`, `<!doctype`, `<!--`
+
+### 저장 동작
+
+| 경로 | 메서드 | 동작 |
+|------|--------|------|
+| 글 생성 | `PostService::create()` | `content` 기반 content_type 계산 후 DB 저장 |
+| 글 수정 | `PostService::update()` | `content` 변경 시에만 재계산, 파일만 수정 시 유지 |
+| 코멘트 생성 | `PostService::commentCreate()` | 글 생성과 동일 |
+| 코멘트 수정 | `PostService::commentUpdate()` | 글 수정과 동일 |
+| 조회 시 자동 판별 | `PostService::resolveContentType()` | content_type이 빈 값이면 런타임 판별 + DB UPDATE (영구 저장) |
+
+`PostRepository::create()`의 `$defaults`에 `content_type` 포함, 기본값 `'text'`.
+
+### 조회 동작 (런타임 자동 판별)
+
+- DB에 `content_type` 값이 있으면 `PostEntity::fromArray()`에서 그대로 매핑
+- `content_type`이 빈 값(`''` 또는 NULL)이면 **`PostService::resolveContentType()`이 런타임에 자동 판별**하여:
+  1. `detectContentType()`으로 content를 분석 (markdown > html > text 우선순위)
+  2. Entity의 `content_type`, `is_markdown`, `is_html`, `is_text` 속성을 업데이트
+  3. `PostRepository::update()`로 DB의 `content_type` 컬럼도 영구 업데이트 (다음 조회 시에는 재판별 불필요)
+- 호출 위치: `PostService::get()`, `PostService::list()`, `PostService::commentList()`
+- 기존 데이터(v6 레코드)도 처음 조회 시 자동으로 content_type이 판별되어 DB에 저장됨
+
+### html_entity_decode() 전처리 (구현 완료)
+
+v7의 `PostService::detectContentType()`은 판별 전에 `html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8')`를 적용한다.
+이로써 Quill 같은 리치 에디터가 HTML 엔티티로 인코딩해서 보내는 경우에도 정확한 판별이 보장된다.
+
+### boolean 편의 속성 (is_markdown, is_html, is_text)
+
+v6 `PostModel`과 동일하게, `PostEntity`에 `content_type` 기반 boolean 편의 접근자를 제공한다.
+DB에 저장되지 않으며 `fromArray()` 시 `content_type` 값에서 자동 계산된다.
+
+```php
+// PostEntity — content_type 기반 boolean 편의 속성
+public bool $is_markdown = false; // content_type === 'markdown'
+public bool $is_html = false;     // content_type === 'html'
+public bool $is_text = false;     // content_type === 'text' 또는 빈값
+```
+
+`toArray()` / API 응답에도 포함되어 클라이언트에서 문자열 비교 없이 바로 사용 가능:
+
+```json
+{
+  "content_type": "html",
+  "is_markdown": false,
+  "is_html": true,
+  "is_text": false
+}
+```
+
+### 핵심 소스코드
+
+```php
+// PostService::resolveContentType() — 빈 content_type 런타임 판별 + DB 영구 저장
+public static function resolveContentType(PostEntity $entity): void
+{
+    if ($entity->content_type !== '') return;  // 이미 설정됨
+    if ($entity->content === '') {
+        $entity->content_type = 'text';
+        $entity->is_text = true;
+        return;
+    }
+    $detectedType = self::detectContentType($entity->content);
+    $entity->content_type = $detectedType;
+    $entity->is_markdown = ($detectedType === 'markdown');
+    $entity->is_html = ($detectedType === 'html');
+    $entity->is_text = ($detectedType === 'text');
+    if ($entity->idx > 0) {
+        PostRepository::update($entity->idx, ['content_type' => $detectedType]);
+    }
+}
+
+// PostService::detectContentType() — 콘텐츠 포맷 판별
+public static function detectContentType(string $content): string
+{
+    $decoded = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $decoded = trim($decoded);
+    if (mb_strlen($decoded) < 2) return 'text';
+    if (self::isMarkdown($decoded)) return 'markdown';
+    if (self::isHtml($decoded)) return 'html';
+    return 'text';
+}
+```
 
 ---
 
