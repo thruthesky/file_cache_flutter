@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
+import 'package:philgo/user/widgets/user_avatar.dart';
 
 /// 게시글 리스트 타일
 class PostListTile extends StatelessWidget {
@@ -27,10 +28,10 @@ class PostListTile extends StatelessWidget {
     if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty)
       return post.thumbnail400x400;
     if (post.files.isNotEmpty) {
-      return post.files.split(',').map((e) => e.trim()).firstWhere(
-        (e) => e.isNotEmpty,
-        orElse: () => '',
-      );
+      return post.files
+          .split(',')
+          .map((e) => e.trim())
+          .firstWhere((e) => e.isNotEmpty, orElse: () => '');
     }
     return null;
   }
@@ -62,12 +63,12 @@ class PostListTile extends StatelessWidget {
                 ],
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // 제목
+                      // Line 1: 제목
                       Text(
                         post.subject,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
@@ -75,63 +76,82 @@ class PostListTile extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      // 날짜
-                      Text(
-                        _formatDate(post.stamp),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.tertiary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      // 통계 (조회수, 댓글, 좋아요)
+                      // Line 2: 아바타 + 이름 + 날짜 + 통계
                       Row(
                         children: [
-                          // 조회수: 10 이상일 때만 표시
+                          // 아바타
+                          UserAvatar(photoUrl: post.userPhotoUrl, radius: 10),
+                          const SizedBox(width: 6),
+                          // 이름 (길면 잘림)
+                          Flexible(
+                            flex: 0,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 80),
+                              child: Text(
+                                post.userName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: scheme.onSurface,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // 날짜
+                          Text(
+                            _formatDate(post.stamp),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: scheme.outline,
+                            ),
+                          ),
+                          // 통계
                           if (post.noOfView >= 10) ...[
+                            const SizedBox(width: 8),
                             FaIcon(
                               FontAwesomeIcons.lightEye,
-                              size: 12,
-                              color: scheme.tertiary,
+                              size: 11,
+                              color: scheme.outline,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 3),
                             Text(
                               '${post.noOfView}',
                               style: theme.textTheme.labelSmall?.copyWith(
-                                color: scheme.tertiary,
+                                color: scheme.outline,
                               ),
                             ),
                           ],
-                          // 댓글수: 1 이상일 때만 표시
                           if (post.noOfComment > 0) ...[
-                            if (post.noOfView >= 10) const SizedBox(width: 12),
+                            const SizedBox(width: 8),
                             FaIcon(
                               FontAwesomeIcons.lightComment,
-                              size: 12,
+                              size: 11,
                               color: commentColor,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 3),
                             Text(
                               '${post.noOfComment}',
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: commentColor,
-                                fontWeight: commentBold ? FontWeight.w600 : null,
+                                fontWeight: commentBold
+                                    ? FontWeight.w600
+                                    : null,
                               ),
                             ),
                           ],
-                          // 좋아요: 1 이상일 때만 표시
                           if (post.good > 0) ...[
-                            if (post.noOfView >= 10 || post.noOfComment > 0)
-                              const SizedBox(width: 12),
+                            const SizedBox(width: 8),
                             FaIcon(
                               FontAwesomeIcons.lightThumbsUp,
-                              size: 12,
-                              color: scheme.tertiary,
+                              size: 11,
+                              color: scheme.outline,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 3),
                             Text(
                               '${post.good}',
                               style: theme.textTheme.labelSmall?.copyWith(
-                                color: scheme.tertiary,
+                                color: scheme.outline,
                               ),
                             ),
                           ],
