@@ -7,6 +7,7 @@ import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/list/widgets/empty_post_list.dart';
 import 'package:philgo/post/list/widgets/post.list.tile.dart';
 import 'package:philgo/post/list/widgets/post_list_error_indicator.dart';
+import 'package:philgo/post/list/widgets/post_list_header_categories.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
@@ -105,9 +106,10 @@ class _PostListScreenState extends State<PostListScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final (postId, category) = context.select<AppNavigationState, (String, String?)>(
-      (state) => (state.selectedPostId, state.selectedCategory),
-    );
+    final (postId, category) = context
+        .select<AppNavigationState, (String, String?)>(
+          (state) => (state.selectedPostId, state.selectedCategory),
+        );
     _applySelectedForum(postId, category);
 
     return Scaffold(
@@ -121,12 +123,10 @@ class _PostListScreenState extends State<PostListScreen> {
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 heightFactor: _showHeader ? 1.0 : 0.0,
-                child: Column(
-                  children: [
-                    _buildAppBar(theme, scheme),
-                    Container(height: 1, color: scheme.outlineVariant),
-                    _buildCategoryList(theme, scheme),
-                  ],
+                child: PostListHeaderCategories(
+                  categories: forumCategories,
+                  selectedIndex: _selectedIndex,
+                  onCategoryTap: _onCategoryTap,
                 ),
               ),
             ),
@@ -145,72 +145,6 @@ class _PostListScreenState extends State<PostListScreen> {
         backgroundColor: scheme.primary,
         foregroundColor: scheme.onPrimary,
         child: const FaIcon(FontAwesomeIcons.lightPen, size: 20),
-      ),
-    );
-  }
-
-  /// 앱바 영역
-  Widget _buildAppBar(ThemeData theme, ColorScheme scheme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          FaIcon(
-            FontAwesomeIcons.lightNewspaper,
-            size: 20,
-            color: scheme.primary,
-          ),
-          const SizedBox(width: 8),
-          Text('게시판', style: theme.textTheme.titleLarge),
-        ],
-      ),
-    );
-  }
-
-  /// 카테고리 가로 스크롤 목록
-  Widget _buildCategoryList(ThemeData theme, ColorScheme scheme) {
-    return SizedBox(
-      height: 48,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        itemCount: forumCategories.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 6),
-        itemBuilder: (context, index) {
-          final (_, _, label) = forumCategories[index];
-          final isSelected = index == _selectedIndex;
-
-          return GestureDetector(
-            onTap: () => _onCategoryTap(index),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? scheme.primary
-                    : scheme.surfaceContainerHigh.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(20),
-                border: isSelected
-                    ? null
-                    : Border.all(
-                        color: scheme.outlineVariant.withValues(alpha: 0.5),
-                      ),
-              ),
-              child: Center(
-                child: Text(
-                  label,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: isSelected
-                        ? scheme.onPrimary
-                        : scheme.onSurfaceVariant,
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }
