@@ -44,35 +44,36 @@ class PostMasonryCard extends StatelessWidget {
       elevation: 1,
       child: InkWell(
         onTap: onTap,
-        child: Stack(
-          children: [
-            // Full image or placeholder
-            if (url != null)
-              CachedNetworkImage(
-                imageUrl: url,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: (_, _) => Container(
-                  height: 180,
+        child: SizedBox(
+          height: 200,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Full image or placeholder
+              if (url != null)
+                CachedNetworkImage(
+                  imageUrl: url,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  placeholder: (_, _) => Container(
+                    color: scheme.surfaceContainerHigh,
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  errorWidget: (_, _, _) => Container(
+                    color: scheme.surfaceContainerHigh,
+                    child: Icon(Icons.broken_image, color: scheme.outline),
+                  ),
+                )
+              else
+                Container(
                   color: scheme.surfaceContainerHigh,
-                  child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                  child: Center(
+                    child: Icon(Icons.image_outlined, color: scheme.outline, size: 40),
                   ),
                 ),
-                errorWidget: (_, _, _) => Container(
-                  height: 180,
-                  color: scheme.surfaceContainerHigh,
-                  child: Icon(Icons.broken_image, color: scheme.outline),
-                ),
-              )
-            else
-              Container(
-                height: 180,
-                color: scheme.surfaceContainerHigh,
-                child: Center(
-                  child: Icon(Icons.image_outlined, color: scheme.outline, size: 40),
-                ),
-              ),
             // Gradient overlay + title at bottom
             Positioned(
               left: 0,
@@ -101,7 +102,8 @@ class PostMasonryCard extends StatelessWidget {
                 ),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
