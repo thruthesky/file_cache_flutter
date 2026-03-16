@@ -24,6 +24,11 @@ class _PostListScreenState extends State<PostListScreen> {
   /// 현재 선택된 카테고리 인덱스
   int _selectedIndex = 0;
 
+  /// 헤더 표시 여부 (스크롤 시 숨김)
+  bool _showHeader = true;
+
+  static const _headerHideThreshold = 48.0;
+
   /// 페이지당 게시글 수
   static const _pageSize = 20;
 
@@ -83,6 +88,19 @@ class _PostListScreenState extends State<PostListScreen> {
     });
   }
 
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification) {
+      final delta = notification.scrollDelta ?? 0;
+      final offset = notification.metrics.pixels;
+      if (delta > 0 && offset > _headerHideThreshold) {
+        if (_showHeader) setState(() => _showHeader = false);
+      } else if (delta < 0) {
+        if (!_showHeader) setState(() => _showHeader = true);
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -97,11 +115,28 @@ class _PostListScreenState extends State<PostListScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(theme, scheme),
+            ClipRect(
+              child: AnimatedAlign(
+                alignment: Alignment.topCenter,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                heightFactor: _showHeader ? 1.0 : 0.0,
+                child: Column(
+                  children: [
+                    _buildAppBar(theme, scheme),
+                    Container(height: 1, color: scheme.outlineVariant),
+                    _buildCategoryList(theme, scheme),
+                  ],
+                ),
+              ),
+            ),
             Container(height: 1, color: scheme.outlineVariant),
-            _buildCategoryList(theme, scheme),
-            Container(height: 1, color: scheme.outlineVariant),
-            Expanded(child: _buildPostList(theme, scheme)),
+            Expanded(
+              child: NotificationListener<ScrollNotification>(
+                onNotification: _handleScrollNotification,
+                child: _buildPostList(theme, scheme),
+              ),
+            ),
           ],
         ),
       ),

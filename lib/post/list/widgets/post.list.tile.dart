@@ -53,25 +53,26 @@ class PostListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 썸네일 미리보기 (왼쪽)
-                if (previewUrl != null) ...[
-                  DisplayThumbnail(url: previewUrl, size: 72),
-                  const SizedBox(width: 12),
-                ],
-                Expanded(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 72),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // 썸네일 미리보기 (왼쪽)
+                  if (previewUrl != null) ...[
+                    DisplayThumbnail(url: previewUrl, size: 72),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Line 1: 제목
                       Text(
                         post.subject,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           color: scheme.onSurface,
                         ),
                       ),
@@ -80,7 +81,7 @@ class PostListTile extends StatelessWidget {
                       Row(
                         children: [
                           // 아바타
-                          UserAvatar(photoUrl: post.userPhotoUrl, radius: 10),
+                          UserAvatar(photoUrl: post.userPhotoUrl, radius: 12),
                           const SizedBox(width: 6),
                           // 이름 (길면 잘림)
                           Flexible(
@@ -91,7 +92,7 @@ class PostListTile extends StatelessWidget {
                                 post.userName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.labelSmall?.copyWith(
+                                style: theme.textTheme.bodySmall?.copyWith(
                                   color: scheme.onSurface,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -102,7 +103,7 @@ class PostListTile extends StatelessWidget {
                           // 날짜
                           Text(
                             _formatDate(post.stamp),
-                            style: theme.textTheme.labelSmall?.copyWith(
+                            style: theme.textTheme.bodySmall?.copyWith(
                               color: scheme.outline,
                             ),
                           ),
@@ -111,13 +112,13 @@ class PostListTile extends StatelessWidget {
                             const SizedBox(width: 8),
                             FaIcon(
                               FontAwesomeIcons.lightEye,
-                              size: 11,
+                              size: 13,
                               color: scheme.outline,
                             ),
                             const SizedBox(width: 3),
                             Text(
                               '${post.noOfView}',
-                              style: theme.textTheme.labelSmall?.copyWith(
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.outline,
                               ),
                             ),
@@ -126,13 +127,13 @@ class PostListTile extends StatelessWidget {
                             const SizedBox(width: 8),
                             FaIcon(
                               FontAwesomeIcons.lightComment,
-                              size: 11,
+                              size: 13,
                               color: commentColor,
                             ),
                             const SizedBox(width: 3),
                             Text(
                               '${post.noOfComment}',
-                              style: theme.textTheme.labelSmall?.copyWith(
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 color: commentColor,
                                 fontWeight: commentBold
                                     ? FontWeight.w600
@@ -144,13 +145,13 @@ class PostListTile extends StatelessWidget {
                             const SizedBox(width: 8),
                             FaIcon(
                               FontAwesomeIcons.lightThumbsUp,
-                              size: 11,
+                              size: 13,
                               color: scheme.outline,
                             ),
                             const SizedBox(width: 3),
                             Text(
                               '${post.good}',
-                              style: theme.textTheme.labelSmall?.copyWith(
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.outline,
                               ),
                             ),
@@ -161,6 +162,7 @@ class PostListTile extends StatelessWidget {
                   ),
                 ),
               ],
+              ),
             ),
           ),
         ),
