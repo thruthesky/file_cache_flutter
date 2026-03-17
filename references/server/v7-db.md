@@ -31,6 +31,12 @@
   - [9.5 로컬 Docker에 복원](#95-로컬-docker에-복원)
   - [9.6 테스트 서버(philgo.net) DB 백업](#96-테스트-서버philgonet-db-백업)
   - [9.7 특정 테이블만 백업/복원](#97-특정-테이블만-백업복원)
+- [10. 개발 환경 DB 설치/백업/복원 (backup.sh / restore.sh)](#10-개발-환경-db-설치백업복원-backupsh--restoresh)
+  - [10.1 개요](#101-개요)
+  - [10.2 백업 스크립트 (backup.sh)](#102-백업-스크립트-backupsh)
+  - [10.3 복원 스크립트 (restore.sh)](#103-복원-스크립트-restoresh)
+  - [10.4 전체 워크플로우 예시](#104-전체-워크플로우-예시)
+  - [10.5 주의사항](#105-주의사항)
 
 ---
 
@@ -131,6 +137,8 @@ mysqldump -u philgo -pasdf -h 127.0.0.1 -P 3306 philgo sf_member sf_post_data > 
 ```
 
 > **참고:** 호스트에서 접속 시 Docker가 포트 3306을 호스트에 매핑하고 있어야 한다. Docker Compose 설정에서 `ports: - "3306:3306"`으로 매핑되어 있다.
+
+> **참고:** 개발 환경 DB 초기 설치 및 경량 백업/복원은 [10장](#10-개발-환경-db-설치백업복원-backupsh--restoresh) 참조.
 
 ---
 
@@ -595,3 +603,155 @@ ssh thruthesky@db "mariadb-dump -uphilgo -pasdf philgo sf_post_data sf_member | 
 gunzip tables.sql.gz
 mariadb -uphilgo -pasdf -h127.0.0.1 philgo < tables.sql
 ```
+
+---
+
+## 10. 개발 환경 DB 설치/백업/복원 (backup.sh / restore.sh)
+
+### 10.1 개요
+
+새로운 개발 환경을 세팅하거나 DB를 초기화할 때 사용하는 **경량 백업/복원** 시스템이다. 프로덕션 전체 백업(9장)과 달리, **모든 테이블의 스키마 + 각 테이블의 최근 1,000개 레코드**만 추출하여 빠르게 개발 환경을 구축할 수 있다.
+
+| 항목 | 내용 |
+|------|------|
+| **백업 스크립트** | `etc/install/backup.sh` |
+| **복원 스크립트** | `etc/install/restore.sh` |
+| **출력 파일** | `etc/install/philgo_install.sql.gz` (gzip 압축) |
+| **추출 데이터** | 전체 테이블 스키마 + 각 테이블 최근 1,000개 레코드 |
+| **용도** | 새 개발 환경 초기 세팅, DB 초기화, 팀원 간 DB 동기화 |
+
+### 10.2 백업 스크립트 (backup.sh)
+
+#### 실행 방법
+
+```bash
+# 프로젝트 루트에서 실행
+cd /Users/thruthesky/apps/withcenter/philgo/www
+bash etc/install/backup.sh
+```
+
+#### 동작 순서
+
+1. Docker 컨테이너 `mariadb` 실행 여부 확인
+2. **스키마 덤프**: `mariadb-dump --no-data`로 전체 테이블 구조 추출
+3. **테이블 목록 조회**: `INFORMATION_SCHEMA`에서 모든 테이블과 PRIMARY KEY 정보 조회
+4. **데이터 덤프**: 각 테이블에서 PK 기준 내림차순으로 최근 1,000개 레코드 추출
+   - PK가 있는 테이블: `ORDER BY PK_COL DESC LIMIT 1000`
+   - PK가 없는 테이블: `LIMIT 1000`
+   - 빈 테이블: 건너뜀
+5. **SQL 파일 생성**: `etc/install/philgo_install.sql`
+6. **gzip 압축**: `etc/install/philgo_install.sql.gz` 생성 (원본 .sql 삭제)
+
+#### 옵션
+
+```bash
+# 기본 실행 (etc/install/philgo_install.sql.gz 생성)
+bash etc/install/backup.sh
+
+# 출력 경로 지정 (지정된 경로.gz로 압축 저장)
+bash etc/install/backup.sh --output /tmp/my_backup.sql
+
+# 테이블당 추출 레코드 수 변경
+bash etc/install/backup.sh --records 500
+
+# 도움말
+bash etc/install/backup.sh --help
+```
+
+| 옵션 | 기본값 | 설명 |
+|------|--------|------|
+| `--output <경로>` | `etc/install/philgo_install.sql` | 출력 SQL 파일 경로 (최종적으로 .gz로 압축) |
+| `--records <숫자>` | `1000` | 테이블당 추출할 최대 레코드 수 |
+
+### 10.3 복원 스크립트 (restore.sh)
+
+#### 실행 방법
+
+```bash
+# 기본 실행 (etc/install/philgo_install.sql.gz 복원)
+bash etc/install/restore.sh
+```
+
+#### 동작 순서
+
+1. Docker 컨테이너 `mariadb` 실행 여부 확인
+2. 입력 파일(`.sql.gz` 또는 `.sql`) 존재 확인
+3. 데이터베이스 생성 (없는 경우) 및 사용자 권한 설정
+4. (선택) `--drop-existing` 옵션 시 기존 테이블 전부 삭제
+5. SQL 주입:
+   - `.gz` 파일: `gunzip -c`로 해제하며 파이프로 전달
+   - `.sql` 파일: 직접 파이프로 전달
+6. 복원 결과 확인 (테이블 수 표시)
+
+#### 옵션
+
+```bash
+# 기본 실행
+bash etc/install/restore.sh
+
+# 특정 SQL 파일 복원
+bash etc/install/restore.sh --input /path/to/backup.sql.gz
+
+# 기존 테이블 삭제 후 복원 (클린 설치)
+bash etc/install/restore.sh --drop-existing
+
+# 다른 데이터베이스에 복원
+bash etc/install/restore.sh --db-name new_philgo
+
+# 도움말
+bash etc/install/restore.sh --help
+```
+
+| 옵션 | 기본값 | 설명 |
+|------|--------|------|
+| `--input <경로>` | `etc/install/philgo_install.sql.gz` | 입력 파일 (.sql.gz 또는 .sql) |
+| `--db-name <이름>` | `philgo` | 대상 데이터베이스 이름 |
+| `--db-user <사용자>` | `philgo` | DB 사용자 |
+| `--db-pass <비밀번호>` | `asdf` | DB 비밀번호 |
+| `--container <이름>` | `mariadb` | Docker 컨테이너 이름 |
+| `--drop-existing` | - | 기존 테이블 삭제 후 복원 |
+
+### 10.4 전체 워크플로우 예시
+
+#### 새 개발 환경 초기 세팅
+
+```bash
+# 1. Docker 컨테이너 시작
+docker compose up -d
+
+# 2. DB 복원 (기존 테이블 삭제 후 클린 설치)
+bash etc/install/restore.sh --drop-existing
+
+# 3. 웹사이트 접속 확인
+# https://local.philgo.com
+```
+
+#### DB 백업 후 팀원에게 공유
+
+```bash
+# 1. 현재 DB에서 백업 생성
+bash etc/install/backup.sh
+
+# 2. 생성된 파일: etc/install/philgo_install.sql.gz
+# 이 파일을 Git에 커밋하여 팀원과 공유
+
+# 3. 팀원은 아래 명령으로 복원
+bash etc/install/restore.sh --drop-existing
+```
+
+#### DB 초기화 (데이터 리셋)
+
+```bash
+# 기존 테이블 전부 삭제 후 백업 데이터로 복원
+bash etc/install/restore.sh --drop-existing
+```
+
+### 10.5 주의사항
+
+| 항목 | 내용 |
+|------|------|
+| **Docker 필수** | `mariadb` 컨테이너가 실행 중이어야 한다 |
+| **MariaDB 11.7+** | `mariadb`/`mariadb-dump` 명령 사용 (mysql/mysqldump 아님) |
+| **경량 백업** | 프로덕션 전체 데이터가 아닌 테이블당 최근 1,000개만 포함 |
+| **비밀번호 평문** | 개발 환경 전용. 프로덕션 비밀번호를 하드코딩하지 말 것 |
+| **gzip 압축** | backup.sh는 항상 `.sql.gz`로 압축 저장. restore.sh는 `.gz`와 `.sql` 모두 지원 |
