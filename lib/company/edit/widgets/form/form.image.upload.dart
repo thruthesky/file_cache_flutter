@@ -133,12 +133,12 @@ class _UploadTileState extends State<_UploadTile> {
               borderRadius: BorderRadius.circular(6),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                FaIcon(FontAwesomeIcons.penToSquare,
+                const FaIcon(FontAwesomeIcons.penToSquare,
                     size: 11, color: Colors.white),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text('변경'.tr(),
                     style: const TextStyle(color: Colors.white, fontSize: 12)),
               ],
