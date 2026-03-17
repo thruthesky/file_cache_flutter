@@ -219,6 +219,13 @@ class Translations {
     '텔레그램 ID': '텔레그램 ID',
     '사용자명 또는 링크': '사용자명 또는 링크',
 
+    // 파일 업로드 바텀시트
+    '업로드 옵션 선택': '업로드 옵션 선택',
+    '카메라로 사진 찍기': '카메라로 사진 찍기',
+    '카메라로 동영상 촬영': '카메라로 동영상 촬영',
+    '갤러리에서 선택': '갤러리에서 선택',
+    '파일 업로드': '파일 업로드',
+
     // 업소 편집 - 이미지 업로드
     '로고 이미지': '로고 이미지',
     '업소의 로고 또는 프로필 이미지': '업소의 로고 또는 프로필 이미지',
@@ -474,6 +481,13 @@ class Translations {
     '오픈채팅 ID 또는 링크': 'Open chat ID or link',
     '텔레그램 ID': 'Telegram ID',
     '사용자명 또는 링크': 'Username or link',
+
+    // 파일 업로드 바텀시트
+    '업로드 옵션 선택': 'Select Upload Option',
+    '카메라로 사진 찍기': 'Take Photo with Camera',
+    '카메라로 동영상 촬영': 'Record Video with Camera',
+    '갤러리에서 선택': 'Choose from Gallery',
+    '파일 업로드': 'Upload File',
 
     // 업소 편집 - 이미지 업로드
     '로고 이미지': 'Logo Image',

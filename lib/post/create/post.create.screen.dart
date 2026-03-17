@@ -195,6 +195,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   camera: true,
                   cameraVideo: true,
                   gallery: true,
+                  galleryVideo: true,
                   file: true,
                   onUploadingChanged: (uploading) {
                     setState(() => _uploadingCount += uploading ? 1 : -1);
