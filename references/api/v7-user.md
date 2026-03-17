@@ -8,6 +8,7 @@
   - [3.1 user.count](#31-usercount---총-사용자-수-조회)
   - [3.2 user.me](#32-userme---현재-로그인-사용자-정보-조회)
   - [3.3 user.socialLogin](#33-usersociallogin---소셜-로그인)
+    - [3.3.1 동시 호출 Race Condition 방지 — createOrUpdate() 패턴](#331-동시-호출-race-condition-방지--createorupdate-패턴)
   - [3.4 공개 프로필 페이지 (SSR)](#34-공개-프로필-페이지-ssr)
     - [3.4.a 디자인 구조 (보더리스 디자인)](#34a-디자인-구조-보더리스-디자인)
   - [3.5 user.updateMyProfile](#35-userupdatemyprofile---회원-정보-수정)
@@ -401,6 +402,57 @@ curl -s -X POST "https://local.philgo.com:443/api.php" \
     "level_progress": 50
 }
 ```
+
+#### 3.3.1 동시 호출 Race Condition 방지 — createOrUpdate() 패턴
+
+`user.socialLogin` 및 `user.me`(자동 회원 가입 경로)에서는 사용자 레코드 생성 시
+**`UserRepository::createOrUpdate()`** 메서드를 사용한다.
+
+**문제 배경 (Race Condition):**
+앱 기동 직후 또는 여러 탭에서 동시에 로그인 API를 호출하면, 아직 레코드가 없는 상태에서
+두 요청이 거의 동시에 `INSERT`를 실행하여 `Duplicate Key Error(1062)`가 발생한다.
+기존 `UserRepository::create()` 방식은 이 오류를 처리하지 못했다.
+
+**해결책 — `INSERT ... ON DUPLICATE KEY UPDATE` 패턴:**
+
+```php
+// lib/user/UserRepository.php
+public static function createOrUpdate(array $data): int
+{
+    $columns = array_keys($data);
+    $placeholders = array_map(fn($col) => ":$col", $columns);
+
+    // ON DUPLICATE KEY UPDATE: idx = LAST_INSERT_ID(idx) 만 실행
+    // - INSERT 성공 시: 새 AUTO_INCREMENT idx 반환
+    // - UNIQUE 충돌(UPDATE) 시: 기존 idx 를 LAST_INSERT_ID 로 설정하여 정확한 idx 반환
+    // 기존 사용자의 닉네임 등 변경된 데이터는 덮어쓰지 않음
+    $sql = "INSERT INTO " . self::TABLE . " (" . implode(', ', $columns) . ")"
+        . " VALUES (" . implode(', ', $placeholders) . ")"
+        . " ON DUPLICATE KEY UPDATE idx = LAST_INSERT_ID(idx)";
+
+    return Db::insert($sql, $data);
+}
+```
+
+**동작 원리:**
+
+| 상황 | INSERT 결과 | 반환값 |
+|------|------------|--------|
+| **신규 사용자** | INSERT 성공 | 새로 생성된 AUTO_INCREMENT idx |
+| **기존 사용자 (단일 호출)** | UNIQUE 충돌 → UPDATE 실행 | `LAST_INSERT_ID(idx)` = 기존 idx |
+| **동시 호출 (Race Condition)** | 두 번째 호출은 UNIQUE 충돌 → UPDATE 실행 | 기존 idx 반환 (에러 없음) |
+
+**적용 위치:**
+
+| 메서드 | 변경 전 | 변경 후 |
+|--------|---------|---------|
+| `UserService::socialLogin()` | `UserRepository::create()` | `UserRepository::createOrUpdate()` |
+| `UserService::getMe()` (자동 회원 가입 경로) | `UserRepository::create()` | `UserRepository::createOrUpdate()` |
+
+**주의사항:**
+- `ON DUPLICATE KEY UPDATE`에서 `idx = LAST_INSERT_ID(idx)` **만** 갱신한다. 닉네임, 포인트 등 사용자가 변경한 데이터는 절대 덮어쓰지 않는다.
+- UNIQUE 제약이 설정된 컬럼(`firebase_uid`, `id`)이 `$data`에 반드시 포함되어야 충돌 감지가 작동한다.
+- `Db::insert()` 내부에서 `PDO::lastInsertId()`를 호출하므로, UNIQUE 충돌 시 `LAST_INSERT_ID(idx)` 덕분에 올바른 기존 idx가 반환된다.
 
 ---
 
