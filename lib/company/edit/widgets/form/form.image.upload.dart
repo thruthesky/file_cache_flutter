@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'form_shared.dart';
 
@@ -137,11 +138,16 @@ class _UploadTileState extends State<_UploadTile> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const FaIcon(FontAwesomeIcons.penToSquare,
-                    size: 11, color: Colors.white),
+                const FaIcon(
+                  FontAwesomeIcons.penToSquare,
+                  size: 11,
+                  color: Colors.white,
+                ),
                 const SizedBox(width: 4),
-                Text('변경'.tr(),
-                    style: const TextStyle(color: Colors.white, fontSize: 12)),
+                Text(
+                  '변경'.tr(),
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -160,8 +166,11 @@ class _UploadTileState extends State<_UploadTile> {
               border: Border.all(color: scheme.outlineVariant),
             ),
             child: Center(
-              child: FaIcon(widget.icon,
-                  size: 22, color: scheme.onSurfaceVariant),
+              child: FaIcon(
+                widget.icon,
+                size: 22,
+                color: scheme.onSurfaceVariant,
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -200,6 +209,11 @@ class _UploadTileState extends State<_UploadTile> {
     return Stack(
       children: [
         FileUpload(
+          camera: true,
+          cameraVideo: false,
+          file: false,
+          gallery: true,
+
           module: widget.module,
           code: widget.code,
           onUploadingChanged: (uploading) {
@@ -213,7 +227,10 @@ class _UploadTileState extends State<_UploadTile> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                    '업로드 실패: {}'.tr(args: [e.toString().replaceFirst('Exception: ', '')])),
+                  '업로드 실패: {}'.tr(
+                    args: [e.toString().replaceFirst('Exception: ', '')],
+                  ),
+                ),
                 backgroundColor: Colors.red,
               ),
             );
@@ -244,12 +261,19 @@ class _UploadTileState extends State<_UploadTile> {
             top: 8,
             right: 8,
             child: GestureDetector(
-              onTap: () {
+              onTap: () async {
+                final urlToDelete = _url;
                 setState(() => _url = null);
                 widget.onUploaded('');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('사진이 삭제되었습니다'.tr())),
-                );
+                if (urlToDelete != null && urlToDelete.isNotEmpty) {
+                  try {
+                    await ApiService.instance.fileDeleteByUrl(urlToDelete);
+                  } catch (_) {}
+                }
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('사진이 삭제되었습니다'.tr())));
               },
               child: Container(
                 width: 28,
