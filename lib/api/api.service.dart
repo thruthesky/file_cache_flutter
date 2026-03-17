@@ -116,6 +116,47 @@ class ApiService {
     return json;
   }
 
+  /// v7 API 호출 (배열 응답용)
+  ///
+  /// `user.search`처럼 JSON 배열을 반환하는 API 엔드포인트를 호출할 때 사용한다.
+  /// 에러 응답({success: false})은 Map이므로 에러 판별도 수행한다.
+  Future<List<dynamic>> v7apiList(
+    String method, {
+    Map<String, dynamic>? data,
+  }) async {
+    data = data ?? {};
+    data['method'] = method;
+
+    await _patchToken(data);
+
+    final dio = _createDio();
+    final response = await dio.post(_endpoint, data: data);
+
+    dynamic decoded = response.data;
+    if (decoded is String) {
+      decoded = jsonDecode(decoded);
+    }
+
+    // 에러 응답은 Map 형태로 온다
+    if (decoded is Map<String, dynamic> && decoded['success'] == false) {
+      throw ApiException(
+        'api_error',
+        'API 오류',
+        decoded['message'] ?? '알 수 없는 오류',
+      );
+    }
+
+    if (decoded is List) {
+      return decoded;
+    }
+
+    throw ApiException(
+      'unexpected_response_type',
+      '예상치 못한 응답 타입',
+      '배열 응답을 기대했으나: ${decoded.runtimeType}',
+    );
+  }
+
   /// 파일 업로드
   ///
   /// API: `upload.upload` (인증 필요)

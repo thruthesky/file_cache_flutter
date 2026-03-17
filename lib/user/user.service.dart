@@ -146,6 +146,35 @@ class UserService {
     await FirebaseAuth.instance.signOut();
   }
 
+  /// 닉네임으로 사용자를 검색한다. (user.search)
+  ///
+  /// 접두사 매칭(LIKE 'keyword%')으로 최대 20명을 반환한다.
+  /// 로그인 상태이면 현재 사용자는 결과에서 제외된다.
+  ///
+  /// [nickname] 검색할 닉네임 키워드
+  static Future<List<UserModel>> search({required String nickname}) async {
+    final list = await ApiService.instance.v7apiList(
+      'user.search',
+      data: {'nickname': nickname},
+    );
+    return list
+        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Firebase UID로 사용자를 조회한다. (user.getByFirebaseUid)
+  ///
+  /// [firebaseUid] 조회할 사용자의 Firebase UID
+  static Future<UserModel> getByFirebaseUid({
+    required String firebaseUid,
+  }) async {
+    final json = await ApiService.instance.v7api(
+      'user.getByFirebaseUid',
+      data: {'firebase_uid': firebaseUid},
+    );
+    return UserModel.fromJson(json);
+  }
+
   /// 사용자 목록을 조회한다. (user.list) - 관리자용
   ///
   /// [page] 페이지 번호 (선택, 기본값 1)
