@@ -781,7 +781,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |
 | Company Visit Review | [api/v7-company-visit-review.md](references/api/v7-company-visit-review.md) | ✅ 완료 |
-| Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (avatar-col 독립 분리 + thread-line 절대 위치 세로선 + adjustThreadLines() 동적 높이 계산 + 세로선 클릭/답글 텍스트 클릭 접기/펼치기) | ✅ 완료 |
+| Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (avatar-col 독립 분리 + thread-line 절대 위치 세로선 + adjustThreadLines() 동적 높이 계산 + 세로선 클릭/답글 텍스트 클릭 접기/펼치기) + **유튜브 임베드** (글 내용 유튜브 URL 자동 감지 → has_youtube/varchar_19 저장, 글 보기 iframe 플레이어 변환, 목록 Masonry 썸네일+재생 아이콘, Tile 유튜브 아이콘, Shorts 9:16/일반 16:9 비율 자동 구분) | ✅ 완료 |
 | Post (부동산) | [api/v7-post-real-estate.md](references/api/v7-post-real-estate.md) — 부동산 게시판(`real_estate` 카테고리) 전용 Masonry 목록, 상세보기(필드+Google Maps), 커스텀 필드 15개 폼, `RealEstateEntity` 래핑 클래스(PostEntity wrapping, varchar_12 충돌을 varchar_10~12 썸네일 캐시 제거로 근본 해결, `thumbnailUrl()` varchar_17 기반 동적 썸네일 생성) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |

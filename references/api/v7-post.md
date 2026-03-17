@@ -39,6 +39,7 @@
 15. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
 16. [신고(Report) 기능](#신고report-기능)
 17. [부동산 게시판 (real_estate)](#부동산-게시판-real_estate) → [별도 문서](v7-post-real-estate.md)
+18. [유튜브 임베드 시스템](#유튜브-임베드-시스템)
 
 ---
 
@@ -177,6 +178,8 @@ GET https://local.philgo.com/api.php?method=post.create&session_id=xxx&post_id=f
 | `varchar_17` | 첫 번째 이미지 원본 URL | files에서 첫 번째 이미지 URL |
 | `has_video` | 동영상 포함 여부 (`'y'` 또는 `''`) | files에 동영상이 있으면 `'y'` |
 | `varchar_18` | 첫 번째 동영상 URL | files에서 첫 번째 동영상 URL |
+| `has_youtube` | 유튜브 URL 포함 여부 (`'y'` 또는 `''`) | content에 유튜브 URL이 있으면 `'y'` |
+| `varchar_19` | 첫 번째 유튜브 URL | content에서 추출한 첫 번째 유튜브 URL |
 
 > **썸네일 URL 동적 생성 방식 (varchar_10~12 저장 제거)**:
 >
@@ -2275,3 +2278,170 @@ PostService::listReportedDetailed() ← v7/admin/reports.php에서 직접 호출
 상세 문서는 별도 파일로 분리되어 있다.
 
 → **[v7-post-real-estate.md](v7-post-real-estate.md)** 참조
+
+---
+
+## 유튜브 임베드 시스템
+
+글 내용(content)에 포함된 유튜브 URL을 자동 감지하여, 글 보기에서는 임베드 플레이어로 변환하고, 글 목록에서는 유튜브 썸네일/아이콘을 표시하는 시스템이다.
+
+### 아키텍처
+
+```
+글 생성/수정 시:
+  PostService::create()/update()
+    → setYoutubeFields()
+      → has_youtube_url() (lib/youtube.functions.php)
+      → get_first_youtube_url() (lib/youtube.functions.php)
+      → has_youtube='y', varchar_19=첫 번째 유튜브 URL 저장
+
+글 보기 시:
+  v7/widgets/post/view/post-view-default.php
+    → v7_replace_youtube_urls_with_player() (v7/post/view.php)
+      → embed_youtube_player() (lib/youtube.functions.php)
+      → Shorts(9:16) / 일반(16:9) 비율 자동 구분하여 iframe 렌더링
+
+글 목록 (Masonry):
+  v7/widgets/post/list/post-list-masonry.php
+    → has_youtube + varchar_19 확인
+    → _v7MasonryYoutubeThumbnail()로 YouTube 썸네일 이미지 표시
+    → 유튜브 재생 아이콘 오버레이 (fa-brands fa-youtube)
+
+글 목록 (Tile):
+  v7/widgets/post/list/post-list-tile.php
+    → has_youtube 확인
+    → YouTube 아이콘 표시 (fa-brands fa-youtube, #ff0000)
+```
+
+### DB 필드
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `has_youtube` | varchar | 유튜브 URL 포함 여부. `'y'` 또는 빈 문자열 |
+| `varchar_19` | varchar | 글 내용에서 추출한 **첫 번째** 유튜브 URL (원본 URL 그대로 저장) |
+
+### 백엔드: PostService::setYoutubeFields()
+
+글 생성(`create()`) 및 수정(`update()`) 시 자동으로 호출된다.
+
+```php
+// PostService.php — setYoutubeFields() 핵심 코드
+private static function setYoutubeFields(array &$data): void
+{
+    require_once ROOT_DIR . '/lib/youtube.functions.php';
+    require_once ROOT_DIR . '/lib/file.functions.php';
+
+    $content = $data['content'] ?? '';
+
+    if (!empty($content) && has_youtube_url($content)) {
+        $data['has_youtube'] = 'y';
+        $data['varchar_19'] = get_first_youtube_url($content) ?? '';
+    } else {
+        $data['has_youtube'] = '';
+        $data['varchar_19'] = '';
+    }
+}
+```
+
+- `create()`: 항상 `setYoutubeFields()` 호출
+- `update()`: `$input['content']`가 있을 때만 호출 (내용 수정 시에만)
+
+### 프론트엔드: 글 보기 — 유튜브 플레이어 자동 변환
+
+`v7/post/view.php`에 정의된 `v7_replace_youtube_urls_with_player()` 함수가 텍스트 내 유튜브 URL을 찾아 `embed_youtube_player()` HTML로 교체한다.
+
+**처리 순서** (`post-view-default.php`):
+1. `htmlspecialchars()` → HTML 이스케이프
+2. `nl2br()` → 줄바꿈 처리
+3. 볼드(`**...**`) → `<strong>` 변환
+4. **`v7_replace_youtube_urls_with_player()`** → 유튜브 URL → iframe 플레이어
+5. `linkify_urls()` → 나머지 URL을 `<a>` 태그로 변환
+
+**지원 URL 패턴**:
+- `https://www.youtube.com/watch?v=VIDEO_ID`
+- `https://youtu.be/VIDEO_ID`
+- `https://www.youtube.com/shorts/VIDEO_ID`
+- `https://m.youtube.com/watch?v=VIDEO_ID`
+- `https://www.youtube.com/embed/VIDEO_ID`
+
+**Shorts(9:16) vs 일반(16:9) 자동 구분**:
+
+`embed_youtube_player()` 함수가 `is_shorts_url()`로 Shorts 여부를 판별하여 비율을 자동 결정한다.
+
+| 유형 | 비율 | max-width | padding-bottom |
+|------|------|-----------|----------------|
+| 일반 동영상 | 16:9 | 100% | 56.25% |
+| YouTube Shorts | 9:16 | 400px | 177.78% |
+
+### 프론트엔드: 글 목록 — 유튜브 썸네일/아이콘
+
+#### Masonry 레이아웃 (`post-list-masonry.php`)
+
+유튜브 썸네일은 이미지 URL 결정 우선순위의 **6단계**로 적용된다:
+
+| 우선순위 | 소스 | 설명 |
+|---------|------|------|
+| 1~5순위 | 기존 이미지 소스 | varchar_17, files, thumbnail, v4 레거시 등 |
+| **6순위** | `varchar_19` (유튜브 URL) | 이미지가 없지만 유튜브 URL이 있는 경우 `_v7MasonryYoutubeThumbnail()`로 썸네일 생성 |
+
+```php
+// 6단계: 유튜브 썸네일 (이미지가 없지만 유튜브 URL이 있는 경우)
+if (empty($_thumbnailUrl) && $_hasYoutube && !empty($post['varchar_19'])) {
+    $_thumbnailUrl = _v7MasonryYoutubeThumbnail($post['varchar_19']);
+}
+```
+
+`_v7MasonryYoutubeThumbnail()` 함수는 유튜브 URL에서 video ID를 추출하여 YouTube 썸네일 URL(`https://img.youtube.com/vi/{VIDEO_ID}/mqdefault.jpg`, 320x180)을 반환한다.
+
+유튜브 썸네일 위에는 **재생 아이콘 오버레이**(`.v7-masonry-youtube-overlay`)가 표시된다:
+
+```html
+<?php if ($_hasYoutube): ?>
+    <div class="v7-masonry-youtube-overlay">
+        <i class="fa-brands fa-youtube"></i>
+    </div>
+<?php endif; ?>
+```
+
+이미지가 전혀 없고 유튜브만 있는 경우에는 YouTube 플레이스홀더가 표시된다:
+
+```html
+<div class="v7-masonry-no-image v7-masonry-youtube-placeholder">
+    <i class="fa-brands fa-youtube" style="font-size: 1.5rem; color: #ff0000; opacity: 0.7;"></i>
+    <span>YouTube</span>
+</div>
+```
+
+#### Tile 레이아웃 (`post-list-tile.php`)
+
+유튜브 글에는 제목 앞에 YouTube 아이콘이 표시된다:
+
+```html
+<?php if (!empty($post['has_youtube'])): ?>
+    <i class="fa-brands fa-youtube" style="color:#ff0000; margin-right:4px; font-size:0.85em;"></i>
+<?php endif; ?>
+```
+
+### 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/youtube.functions.php` | 유튜브 URL 유틸리티 함수 (`has_youtube_url`, `get_first_youtube_url`, `embed_youtube_player`, `is_shorts_url` 등) |
+| `lib/post/PostService.php` | `setYoutubeFields()` — 글 생성/수정 시 has_youtube, varchar_19 자동 설정 |
+| `v7/post/view.php` | `v7_replace_youtube_urls_with_player()` — 텍스트 내 유튜브 URL → iframe 플레이어 변환 |
+| `v7/widgets/post/view/post-view-default.php` | 본문 렌더링 시 `v7_replace_youtube_urls_with_player()` 호출 |
+| `v7/widgets/post/list/post-list-masonry.php` | 유튜브 썸네일 이미지 + 재생 아이콘 오버레이 |
+| `v7/widgets/post/list/post-list-tile.php` | 유튜브 글에 YouTube 아이콘 표시 |
+
+### 유틸리티 함수 (lib/youtube.functions.php)
+
+| 함수 | 반환 | 설명 |
+|------|------|------|
+| `has_youtube_url(string $text)` | bool | 텍스트에 유튜브 URL이 포함되어 있는지 확인 |
+| `get_first_youtube_url(string $text)` | ?string | 텍스트에서 첫 번째 유튜브 URL 추출 |
+| `get_all_youtube_urls(string $text)` | array | 텍스트에서 모든 유튜브 URL 추출 |
+| `to_youtube_embed_url(string $url)` | ?string | 유튜브 URL을 embed URL로 변환 |
+| `embed_youtube_player(string $url)` | string | 유튜브 URL을 iframe 플레이어 HTML로 변환 (Shorts/일반 자동 구분) |
+| `is_youtube_url(string $url)` | bool | 유효한 유튜브 URL인지 확인 |
+| `is_shorts_url(string $url)` | bool | YouTube Shorts URL인지 확인 |
+| `is_youtube_shorts(string $url)` | bool | `is_shorts_url()`의 별칭 |
