@@ -33,6 +33,7 @@ class _ForumScreenState extends State<ForumScreen> {
     super.initState();
     _pagingController = PagingController<int, Post>(
       getNextPageKey: (state) {
+        if (state.lastPageIsEmpty) return null;
         final keys = state.keys;
         if (keys == null || keys.isEmpty) return 0;
         return keys.last + _pageSize;
