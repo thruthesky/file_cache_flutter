@@ -139,6 +139,10 @@ class _HomeScreenState extends State<HomeScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
+          _infoTile(Icons.tag, 'UID', '${user.idx}'),
+          _infoTile(Icons.badge_outlined, 'ID', user.id),
+          if (user.firebaseUid.isNotEmpty)
+            _infoTile(Icons.key, 'Firebase UID', user.firebaseUid),
           if (user.phoneNumber.isNotEmpty)
             _infoTile(Icons.phone, '전화번호'.tr(), user.phoneNumber),
           _infoTile(
