@@ -42,6 +42,9 @@
 17. [부동산 게시판 (real_estate)](#부동산-게시판-real_estate) → [별도 문서](v7-post-real-estate.md)
 18. [유튜브 임베드 시스템](#유튜브-임베드-시스템)
 19. [오늘의 글 (todayInHistory)](#오늘의-글-todayinhistory)
+20. [인기 게시글 페이지 (popular)](#인기-게시글-페이지-popular)
+21. [최근 게시글 페이지 (latest)](#최근-게시글-페이지-latest)
+22. [최근 사진 페이지 (photo/latest)](#최근-사진-페이지-photolatest)
 
 ---
 
@@ -2601,3 +2604,125 @@ $posts = PostService::todayInHistory(month: 12, day: 25);
 | **CSS** | `v7/today/today.css` |
 | **접속 URL** | `/today` |
 | **URL 헬퍼** | `url()->today` |
+
+---
+
+## 인기 게시글 페이지 (popular)
+
+인기 게시글 페이지는 **최근 1개월간 코멘트 수가 많은 순서**로 글을 표시하는 페이지이다.
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/post/popular.php` |
+| **CSS** | `v7/post/popular.css` |
+| **접속 URL** | `/post/popular` 또는 `/post/popular?page=2` |
+| **URL 헬퍼** | `url()->post->popular` |
+| **정렬 기준** | `no_of_comment DESC, stamp DESC` (코멘트 많은 순 -> 최신순) |
+| **기간 필터** | 최근 30일 (`stamp >= time() - 30일`) |
+| **제외 조건** | `deleted = 0 AND blind = '' AND idx_parent = 0` |
+| **페이지당 항목 수** | 30개 |
+| **SEO** | `Seo::title()`, `Seo::description()`, `Seo::canonical()` |
+
+### 표시 정보
+
+- 제목 + 코멘트 수 배지(`[N]`)
+- 이미지/첨부 아이콘
+- 카테고리 배지
+- 작성자, 작성일, 조회수, 좋아요 수
+
+---
+
+## 최근 게시글 페이지 (latest)
+
+전체 게시판의 최신 글을 시간 역순으로 표시하는 페이지이다.
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/post/latest.php` |
+| **CSS** | `v7/post/popular.css` (인기글과 공용 CSS 사용) |
+| **접속 URL** | `/post/latest` 또는 `/post/latest?page=2` |
+| **URL 헬퍼** | `url()->post->latest` |
+| **정렬 기준** | `stamp DESC` (최신순) |
+| **제외 조건** | `deleted = 0 AND blind = '' AND idx_parent = 0 AND post_id != 'temp'` |
+| **페이지당 항목 수** | 30개 |
+| **SEO** | `Seo::title()`, `Seo::description()`, `Seo::canonical()` |
+
+### 특이사항
+
+- `temp` 게시판은 제외한다 (임시 저장 글 목록 방지)
+- CSS는 `popular.css`를 공용으로 사용하여 동일한 디자인 유지
+- 표시 정보는 인기글 페이지와 동일 (제목, 코멘트 수, 이미지 아이콘, 카테고리, 작성자, 날짜, 조회수, 좋아요)
+
+---
+
+## 최근 사진 페이지 (photo/latest)
+
+전체 게시판의 글과 코멘트에서 이미지가 있는 항목을 Masonry 그리드로 표시하는 페이지이다.
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/photo/latest.php` |
+| **CSS** | `v7/photo/latest.css` + `v7/post/list.css` (Masonry 공용) |
+| **접속 URL** | `/photo/latest` 또는 `/photo/latest?page=2` |
+| **URL 헬퍼** | `url()->photo->latest` |
+| **정렬 기준** | `stamp DESC` (최신순) |
+| **제외 조건** | `deleted = 0 AND blind = '' AND post_id != 'temp'` |
+| **이미지 필터** | `has_image = 'y' OR varchar_17 != ''` |
+| **페이지당 항목 수** | 60개 |
+| **SEO** | `Seo::title()`, `Seo::description()`, `Seo::canonical()` |
+
+### Masonry 그리드 구현
+
+- Masonry.js + imagesLoaded.js 라이브러리 사용
+- `#v7PhotoMasonryGrid` 컨테이너에 `.v7-masonry-item` 카드를 배치
+- 이미지 로드 완료 후 Masonry 레이아웃 초기화
+
+### 이미지 URL 결정 우선순위
+
+1. `varchar_17` 필드 (첫 번째 이미지 URL)
+2. `files` 필드에서 이미지 확장자 파일 추출
+3. `no_of_first_image` 필드로 v4 파일 URL 직접 생성
+4. `gid` 필드로 `sf_data` 테이블 조회하여 v4 파일 URL 생성
+
+### 글/코멘트 링크 분기
+
+- **글 (depth=0)**: `/post/view?idx=N` -- 해당 글 읽기 페이지로 이동
+- **코멘트 (depth>0)**: `/post/view?idx=idx_root#comment-N` -- 원글의 코멘트 앵커로 이동
+
+### 코멘트 표시
+
+- 코멘트인 경우 이미지 위에 "댓글" 배지(`.photo-comment-badge`)를 표시
+- 코멘트의 제목은 내용의 처음 50자를 사용
+
+### 썸네일 생성
+
+- 개발 환경에서는 원본 이미지 URL을 그대로 사용
+- 프로덕션에서는 `file.philgo.com/v5-files/thumbnail.php`를 통한 동적 썸네일 생성 (폭 400px)
+- v7 Upload 시스템(`/uploads/`)의 이미지는 `ImageService::buildThumbnailUrl()`로 변환
+
+### URL 클래스 (Url.php)
+
+```php
+// v7/utils/Url.php에 PhotoUrl 클래스 추가
+
+class PhotoUrl
+{
+    /** @var string 최근 사진 목록 (Masonry) */
+    public string $latest = '/photo/latest';
+}
+
+// PostUrl에 latest 프로퍼티 추가
+class PostUrl
+{
+    public string $popular = '/post/popular';
+    public string $latest = '/post/latest';
+    // ...
+}
+```
+
+사용법:
+```php
+<a href="<?= url()->post->latest ?>">최근 글</a>
+<a href="<?= url()->post->popular ?>">인기글</a>
+<a href="<?= url()->photo->latest ?>">최근 사진</a>
+```

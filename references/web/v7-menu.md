@@ -56,7 +56,7 @@ v7/menu/
 
 | 섹션 | 아이콘 | 메뉴 항목 수 | 설명 |
 |------|--------|-------------|------|
-| **커뮤니티** | `fa-users` | 5 | 채팅, 업소록, 즐겨찾기, 인기글, 최근 댓글 |
+| **커뮤니티** | `fa-users` | 7 | 채팅, 업소록, 즐겨찾기, 최근 글, 인기글, 최근 사진, 최근 댓글 |
 | **광고 서비스** | `fa-bullhorn` | 4 | 배너 광고, 포인트 광고, 게시판별 포인트 안내, 마사지 광고 |
 | **내 정보** | `fa-user-circle` | 6 | 프로필, 공개 프로필, 포인트 기록, 차단 사용자, 설정, 계정 관리 요청 |
 | **도움말** | `fa-circle-question` | 4 | 이용 안내, 이용약관, 개인정보처리방침, 포인트 이벤트 |
@@ -74,7 +74,9 @@ v7/menu/
 | 채팅 | `url()->chat->openChatRooms` | `fa-comments` | blue |
 | 업소록 | `url()->company->home` | `fa-building` | green |
 | 즐겨찾기 | `url()->bookmark->home` | `fa-bookmark` | amber |
+| 최근 글 | `url()->post->latest` | `fa-newspaper` | indigo |
 | 인기글 | `url()->post->popular` | `fa-fire` | red |
+| 최근 사진 | `url()->photo->latest` | `fa-images` | purple |
 | 최근 댓글 | `url()->post->recentComments` | `fa-comment-dots` | cyan |
 
 ### 5.2 광고 서비스 섹션
@@ -149,7 +151,9 @@ v7/menu/
 | `url()->chat->openChatRooms` | `/chat` | `ChatUrl` |
 | `url()->company->home` | `/company` | `CompanyUrl` |
 | `url()->bookmark->home` | `/bookmark` | `BookmarkUrl` |
+| `url()->post->latest` | `/post/latest` | `PostUrl` |
 | `url()->post->popular` | `/post/popular` | `PostUrl` |
+| `url()->photo->latest` | `/photo/latest` | `PhotoUrl` |
 | `url()->post->recentComments` | `/post/comments` | `PostUrl` |
 | `url()->adv->banner` | `/adv/banner` | `AdvUrl` |
 | `url()->adv->point` | `/adv/point` | `AdvUrl` |
@@ -216,6 +220,8 @@ v7/menu/
 | amber | `--wa-color-amber-95` | `--wa-color-amber-50` | 즐겨찾기, 배너 광고, 로그아웃 |
 | red | `--wa-color-red-95` | `--wa-color-red-50` | 인기글, 포인트 광고, 차단 |
 | cyan | `--wa-color-cyan-95` | `--wa-color-cyan-50` | 최근 댓글, 프로필, 날씨 |
+| indigo | `--wa-color-indigo-95` | `--wa-color-indigo-50` | 최근 글 |
+| purple | `--wa-color-purple-95` | `--wa-color-purple-50` | 최근 사진 |
 | neutral | `--wa-color-neutral-95` | `--wa-color-neutral-50` | 개인정보처리방침 |
 
 ---

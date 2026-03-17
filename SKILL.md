@@ -1349,7 +1349,11 @@ url()
 │   ├── view(idx)                 → '/post/view?idx=123'
 │   ├── create(category)          → '/post/create?category=qna'
 │   ├── update(idx)               → '/post/update?idx=123'
+│   ├── popular                   → '/post/popular'
+│   ├── latest                    → '/post/latest'
 │   └── search(query)             → '/post/search?query=...'
+├── photo (PhotoUrl)
+│   └── latest                    → '/photo/latest'
 ├── user (UserUrl)
 │   ├── login                     → '/user/login'
 │   ├── profile                   → '/user/profile'
