@@ -109,6 +109,7 @@ class _UploadTile extends StatefulWidget {
 
 class _UploadTileState extends State<_UploadTile> {
   late String? _url;
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -195,12 +196,15 @@ class _UploadTileState extends State<_UploadTile> {
       ),
     );
 
-    // Wrap in Stack: FileUpload covers the tile, delete button sits on top-right
+    // Wrap in Stack: FileUpload covers the tile, loader + delete button on top
     return Stack(
       children: [
         FileUpload(
           module: widget.module,
           code: widget.code,
+          onUploadingChanged: (uploading) {
+            if (mounted) setState(() => _isUploading = uploading);
+          },
           onUploaded: (model) {
             setState(() => _url = model.url);
             widget.onUploaded(model.url);
@@ -216,7 +220,26 @@ class _UploadTileState extends State<_UploadTile> {
           },
           child: tile,
         ),
-        if (hasImage)
+        // Loading overlay
+        if (_isUploading)
+          Positioned.fill(
+            child: AspectRatio(
+              aspectRatio: widget.aspectRatio,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black45,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        if (hasImage && !_isUploading)
           Positioned(
             top: 8,
             right: 8,
