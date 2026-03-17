@@ -121,7 +121,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -254,7 +254,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
   Widget _buildSearchResults() {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     // Loading state - Comic 스타일
     if (_isSearching) {

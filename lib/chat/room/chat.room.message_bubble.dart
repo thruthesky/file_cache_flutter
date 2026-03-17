@@ -66,7 +66,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build normal message bubble
   Widget _buildNormalMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     final bubbleTheme = chatTheme.bubble;
 
     return Padding(
@@ -233,7 +233,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build protocol message (system messages) centered with light gray color
   Widget _buildProtocolMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     final bubbleTheme = chatTheme.bubble;
     String protocolText = _getProtocolText(context);
 
@@ -308,7 +308,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     final bubbleTheme = chatTheme.bubble;
     final urls = message.urls!;
 
@@ -379,7 +379,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build blinded message bubble for moderated content
   Widget _buildBlindedMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     final bubbleTheme = chatTheme.bubble;
 
     String blindReason = '';
@@ -532,7 +532,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build blocked message display with unblock option
   Widget _buildBlockedMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     final bubbleTheme = chatTheme.bubble;
 
     return Padding(
@@ -720,7 +720,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
   void _showUnblockOption(BuildContext context) {
     if (sender == null) return;
 
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     final bubbleTheme = chatTheme.bubble;
 
     showModalBottomSheet(

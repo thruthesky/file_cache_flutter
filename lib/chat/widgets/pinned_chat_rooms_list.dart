@@ -23,7 +23,7 @@ class PinnedChatRoomsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return ValueListenableBuilder<Set<String>>(
       valueListenable: UserService.instance.pinnedChatRoomsStream,
@@ -155,7 +155,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
   Future<void> _showUnpinConfirmDialog(BuildContext context) async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -330,7 +330,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return ChatJoinBuilder(
       roomId: roomId,

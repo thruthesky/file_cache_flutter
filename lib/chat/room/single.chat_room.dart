@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/chat/chat.service.dart';
-import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/room/chat.room.message_input.dart';
 import 'package:philgo/chat/room/single.chat_room.header.dart';
 import 'package:philgo/chat/room/single.chat_room.init.dart';
@@ -95,7 +94,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                       color: Theme.of(
                         context,
                       ).colorScheme.outlineVariant.withValues(alpha: 0.3),
-                      width: ChatThemeData.of(context).comicBorderWidthThin,
+                      width: 1.0,
                     ),
                   ),
                 ),

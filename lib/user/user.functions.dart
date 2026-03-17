@@ -76,7 +76,7 @@ Future toggleBlockUser(String otherUserUid) async {
     throw ('Cannot block yourself');
   }
 
-  final res = await ApiService.v7api(
+  final res = await ApiService.instance.v7api(
     'user.toggleBlock',
     data: {'blockee_firebase_uid': otherUserUid},
     // debug: true,

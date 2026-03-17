@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:philgo/chat/chat.theme.dart';
 
 /// 필고 앱 전체 테마 (라이트 모드 전용, 블루 컬러 스킴)
 ThemeData philgoThemeData(BuildContext context) {
@@ -17,9 +16,7 @@ ThemeData philgoThemeData(BuildContext context) {
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
-    extensions: [
-      ChatThemeData.defaults(),
-    ],
+    extensions: [],
     scaffoldBackgroundColor: colorScheme.surface,
     appBarTheme: AppBarTheme(
       backgroundColor: colorScheme.surface,

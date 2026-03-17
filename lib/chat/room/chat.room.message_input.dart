@@ -502,7 +502,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return Container(
       decoration: BoxDecoration(

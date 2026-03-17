@@ -150,7 +150,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     // 고정된 방은 배경색 강조
     final backgroundColor = isPinned
@@ -305,7 +305,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildPinnedIcon() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return ValueListenableBuilder<Set<String>>(
       valueListenable: UserService.instance.pinnedChatRoomsStream,
@@ -349,7 +349,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildTrailing() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -577,7 +577,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   void _showLeaveConfirmDialog() async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     // Returns null (dismissed), 'leave', or 'block_and_leave' (single only)
     final String? action = await showDialog<String>(
@@ -781,7 +781,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildUnreadBadge(int unreadCount) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return Container(
       padding: chatTheme.badge.padding,
@@ -807,7 +807,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildAvatar() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return Container(
       decoration: BoxDecoration(

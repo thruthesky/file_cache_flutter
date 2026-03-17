@@ -26,7 +26,7 @@ class ChatRoomListView extends StatelessWidget {
       query: singleChatRoomListQuery(),
       pageSize: 20,
       builder: (context, snapshot, _) {
-        final chatTheme = ChatThemeData.of(context);
+        final chatTheme = ChatThemeData.instance;
 
         if (snapshot.isFetching) {
           return const Center(child: CircularProgressIndicator.adaptive());

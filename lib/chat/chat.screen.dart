@@ -20,7 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
 
     return Column(
       children: [

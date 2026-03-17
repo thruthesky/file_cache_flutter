@@ -36,7 +36,7 @@ class SingleChatRoomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     return AppBar(
       leading: IconButton(
         onPressed: onBackPressed,
@@ -633,7 +633,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
   }) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
@@ -753,7 +753,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
 
   /// 즐겨찾기 모달 표시
   void _showFavoritesModal(BuildContext context) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     showModalBottomSheet(
       context: context,
 
@@ -884,7 +884,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
   /// 새 폴더 생성 다이얼로그 표시
   void _showCreateFolderDialog(BuildContext context) async {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     final TextEditingController folderNameController = TextEditingController();
 
     await showDialog(
@@ -1053,7 +1053,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
   @override
   Widget build(BuildContext context) {
-    final chatTheme = ChatThemeData.of(context);
+    final chatTheme = ChatThemeData.instance;
     /// Comic design: 2px border, rounded corners, no shadow
     return Container(
       decoration: BoxDecoration(
