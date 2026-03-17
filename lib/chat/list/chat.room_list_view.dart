@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/list/chat.room_list_tile.dart';
 import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/user/widgets/login.dart';
@@ -25,6 +26,8 @@ class ChatRoomListView extends StatelessWidget {
       query: singleChatRoomListQuery(),
       pageSize: 20,
       builder: (context, snapshot, _) {
+        final chatTheme = ChatThemeData.of(context);
+
         if (snapshot.isFetching) {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
@@ -39,32 +42,32 @@ class ChatRoomListView extends StatelessWidget {
 
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: chatTheme.roomList.emptyStatePadding,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Comic design - empty state container with 2.0px border
                   Container(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: chatTheme.roomList.emptyStateContainerPadding,
                     decoration: BoxDecoration(
                       color: colorScheme.primaryContainer.withValues(
                         alpha: 0.1,
                       ),
                       // Comic design - rounded corners 12 for large elements
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(chatTheme.roomList.emptyStateBorderRadius),
                       // Comic design - 2.0px outline border
                       border: Border.all(
                         color: colorScheme.outline,
-                        width: 2.0,
+                        width: chatTheme.roomList.emptyStateBorderWidth,
                       ),
                     ),
                     child: FaIcon(
                       FontAwesomeIcons.lightComments,
-                      size: 64,
+                      size: chatTheme.roomList.emptyStateIconSize,
                       color: colorScheme.primary,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: chatTheme.roomList.emptyStateSpacing),
                   Text(
                     "Your friends list is empty",
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -87,12 +90,12 @@ class ChatRoomListView extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(8),
+          padding: chatTheme.roomList.listPadding,
           itemCount: snapshot.docs.length + (snapshot.hasMore ? 1 : 0),
           itemBuilder: (context, index) {
             if (index >= snapshot.docs.length) {
-              return const Padding(
-                padding: EdgeInsets.all(16.0),
+              return Padding(
+                padding: chatTheme.roomList.loadingPadding,
                 child: Center(child: CircularProgressIndicator.adaptive()),
               );
             }

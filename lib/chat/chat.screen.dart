@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/list/chat.room_list_view.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/chat/widgets/bookmarked_chats_dialog.dart';
@@ -19,15 +20,16 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return Column(
       children: [
         SafeArea(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: chatTheme.header.padding,
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: scheme.outlineVariant, width: 1.0),
+                bottom: BorderSide(color: scheme.outlineVariant, width: chatTheme.header.bottomBorderWidth),
               ),
             ),
             child: Row(
@@ -44,7 +46,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton(
                   icon: FaIcon(
                     FontAwesomeIcons.sharpSolidStar,
-                    size: 18,
+                    size: chatTheme.header.iconSize,
                     color: scheme.onSurfaceVariant,
                   ),
                   onPressed: () async {
@@ -66,11 +68,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton(
                   icon: FaIcon(
                     FontAwesomeIcons.lightUserMagnifyingGlass,
-                    size: 18,
+                    size: chatTheme.header.iconSize,
                     color: scheme.onSurfaceVariant,
                   ),
                   onPressed: () async {
-                    final uid = await showUserSearchDialog(context);
+                    final uid = await ChatService.instance.showUserSearchDialog(context);
                     if (uid != null && context.mounted) {
                       ChatRoomScreen.push(context, uid);
                     }
@@ -80,7 +82,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 PopupMenuButton<String>(
                   icon: FaIcon(
                     FontAwesomeIcons.bars,
-                    size: 18,
+                    size: chatTheme.header.iconSize,
                     color: scheme.onSurfaceVariant,
                   ),
                   onSelected: (value) {
@@ -100,10 +102,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         children: [
                           FaIcon(
                             FontAwesomeIcons.headset,
-                            size: 16,
+                            size: chatTheme.header.menuIconSize,
                             color: scheme.onSurfaceVariant,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: chatTheme.dialog.itemSpacing),
                           Text("Contact Admin"),
                         ],
                       ),

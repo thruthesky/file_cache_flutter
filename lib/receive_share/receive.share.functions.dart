@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/receive_share/widgets/receive.share.dialog.dart';
 import 'package:philgo/storage/storage.functions.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -25,7 +25,7 @@ Future<void> sendReceiveShareToChat(
 ) async {
   // Shared from highlighted text only
   if (data.length == 1 && await isSharedMediaPlainText(data[0])) {
-    await sendMessage(roomId: roomId, text: data[0].path);
+    await ChatService.instance.sendMessage(roomId: roomId, text: data[0].path);
   } else {
     List<Future> promises = [];
     for (SharedMediaFile file in data) {
@@ -37,7 +37,7 @@ Future<void> sendReceiveShareToChat(
     if (data.isNotEmpty &&
         data[0].message != null &&
         data[0].message!.isNotEmpty) {
-      await sendMessage(roomId: roomId, text: data[0].message!);
+      await ChatService.instance.sendMessage(roomId: roomId, text: data[0].message!);
     }
   }
 }
@@ -47,7 +47,7 @@ Future<String> uploadReceivedFilesAndSentToChat(
   SharedMediaFile file,
 ) async {
   String url = await uploadReceivedFile(file);
-  await sendMessage(text: '', urls: [url], roomId: roomId);
+  await ChatService.instance.sendMessage(text: '', urls: [url], roomId: roomId);
   return url;
 }
 

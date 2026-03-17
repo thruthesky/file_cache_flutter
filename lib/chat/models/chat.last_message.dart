@@ -16,4 +16,12 @@ class LastMessage {
       text: json['text'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'senderUid': senderUid,
+      'sentAt': sentAt,
+      'text': text,
+    };
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.message.dart';
 import 'package:philgo/util/util.functions.dart';
 
@@ -82,7 +84,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
 
     setState(() => _isSubmitting = true);
 
-    createReport(
+    ChatService.instance.createReport(
       path: widget.path,
       reason: _reportReason,
       reportee: widget.reportee,
@@ -116,30 +118,31 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return Dialog(
       // Comic design: no shadow
-      elevation: 0,
-      // Comic design: rounded corners (borderRadius: 12)
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: chatTheme.dialog.elevation,
+      // Comic design: rounded corners
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius)),
       // Remove default background to use Container decoration
       backgroundColor: Colors.transparent,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 400),
+        constraints: BoxConstraints(maxWidth: chatTheme.dialog.maxWidth),
         decoration: BoxDecoration(
           // Comic design: surface background color
           color: colorScheme.surface,
-          // Comic design: 2.0px outline border with rounded corners
-          border: Border.all(color: colorScheme.outline, width: 2.0),
-          borderRadius: BorderRadius.circular(12),
+          // Comic design: outline border with rounded corners
+          border: Border.all(color: colorScheme.outline, width: chatTheme.dialog.borderWidth),
+          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Dialog Header - Comic design spacing (multiples of 8)
+            // Dialog Header - Comic design spacing
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              padding: chatTheme.dialog.titlePadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -158,19 +161,19 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                   // Close button - Comic design
                   InkWell(
                     onTap: widget.onClose,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(chatTheme.dialog.closeButtonBorderRadius),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(chatTheme.dialog.closeButtonBorderRadius),
                         border: Border.all(
                           color: colorScheme.outline,
-                          width: 2.0,
+                          width: chatTheme.dialog.closeButtonBorderWidth,
                         ),
                       ),
                       child: Icon(
                         Icons.close,
-                        size: 20,
+                        size: chatTheme.dialog.headerIconSize,
                         color: colorScheme.onSurface,
                       ),
                     ),
@@ -180,11 +183,11 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
             ),
 
             // Divider - Comic design
-            Container(height: 2, color: colorScheme.outline),
+            Container(height: chatTheme.dialog.dividerThickness, color: colorScheme.outline),
 
             // Content area - Comic design spacing
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: chatTheme.dialog.contentPadding,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -201,33 +204,30 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
 
                   // Report Reason Buttons - Comic design
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                    spacing: chatTheme.dialog.reportChipSpacing,
+                    runSpacing: chatTheme.dialog.reportChipRunSpacing,
                     children: reportReasons.entries.map((entry) {
                       final reason = entry.key;
                       final isSelected = _reportReason == reason;
                       return InkWell(
                         onTap: () => setState(() => _reportReason = reason),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
+                          padding: chatTheme.dialog.reportChipPadding,
                           decoration: BoxDecoration(
                             // Comic design: primary color when selected
                             color: isSelected
                                 ? colorScheme.primary
                                 : colorScheme.surface,
-                            // Comic design: 2.0px border
+                            // Comic design: border
                             border: Border.all(
                               color: isSelected
                                   ? colorScheme.primary
                                   : colorScheme.outline,
-                              width: 2.0,
+                              width: chatTheme.dialog.itemBorderWidth,
                             ),
-                            // Comic design: border radius 8 for small elements
-                            borderRadius: BorderRadius.circular(8),
+                            // Comic design: border radius for small elements
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
                           ),
                           child: Text(
                             "{reason, select, spam {Spam} abusive {Abusive} violence {Violence} hate_speech {Hate Speech} inappropriate_content {Inappropriate Content} other {reason}}",
@@ -250,7 +250,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
 
             // Action Buttons - Comic design
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              padding: EdgeInsets.fromLTRB(chatTheme.dialog.actionsPadding.left, 0, chatTheme.dialog.actionsPadding.right, chatTheme.dialog.actionsPadding.bottom),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -260,13 +260,13 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                     style: ButtonStyle(
                       // Comic design: no shadow
                       elevation: WidgetStateProperty.all(0),
-                      // Comic design: 2.0px border with rounded corners
+                      // Comic design: border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                           side: BorderSide(
                             color: colorScheme.outline,
-                            width: 2.0,
+                            width: chatTheme.dialog.actionButtonBorderWidth,
                           ),
                         ),
                       ),
@@ -278,12 +278,9 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                       foregroundColor: WidgetStateProperty.all(
                         colorScheme.onSurface,
                       ),
-                      // Comic design: padding in multiples of 8
+                      // Comic design: padding
                       padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                        chatTheme.dialog.actionButtonPadding,
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -292,22 +289,22 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                     ),
                     child: Text("Cancel"),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: chatTheme.dialog.itemSpacing),
                   // Submit button - Comic design primary button
                   ElevatedButton(
                     onPressed: _isSubmitting ? null : _handleReportSubmit,
                     style: ButtonStyle(
                       // Comic design: no shadow
                       elevation: WidgetStateProperty.all(0),
-                      // Comic design: 2.0px border with rounded corners
+                      // Comic design: border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                           side: BorderSide(
                             color: _isSubmitting
                                 ? colorScheme.outline
                                 : colorScheme.primary,
-                            width: 2.0,
+                            width: chatTheme.dialog.actionButtonBorderWidth,
                           ),
                         ),
                       ),
@@ -323,12 +320,9 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                             ? colorScheme.onSurface
                             : colorScheme.onPrimary,
                       ),
-                      // Comic design: padding in multiples of 8
+                      // Comic design: padding
                       padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                        chatTheme.dialog.actionButtonPadding,
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -337,10 +331,10 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                     ),
                     child: _isSubmitting
                         ? SizedBox(
-                            width: 16,
-                            height: 16,
+                            width: chatTheme.input.loadingIndicatorSize,
+                            height: chatTheme.input.loadingIndicatorSize,
                             child: CircularProgressIndicator(
-                              strokeWidth: 2,
+                              strokeWidth: chatTheme.input.loadingStrokeWidth,
                               color: colorScheme.onSurface,
                             ),
                           )

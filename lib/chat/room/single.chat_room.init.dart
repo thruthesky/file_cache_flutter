@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/user/user.firebase_model.dart';
@@ -56,7 +57,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
       roomId = convertUidToSingleChatRoomId(widget.id);
       otherUserUid = getOtherUserUidFromChatRoomId(roomId)!;
 
-      final join = await getChatJoin(roomId);
+      final join = await ChatService.instance.getChatJoin(roomId);
       if (join != null) {
         _join = join;
       }
@@ -72,8 +73,8 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
         _join ??= ChatJoin.fromJson({}, roomId);
       }
 
-      // resetUnreadMessageCounter(roomId);
-      resetChatJoin(otherUserUid);
+      // ChatService.instance.resetUnreadMessageCounter(roomId);
+      ChatService.instance.resetChatJoin(otherUserUid);
       setupNewMessageListener();
 
       setState(() => isChatRoomLoading = false);
@@ -106,7 +107,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
 
         // Only reset unread counter if message has no protocol (regular user message)
         if (protocol == null) {
-          resetUnreadMessageCounter(roomId);
+          ChatService.instance.resetUnreadMessageCounter(roomId);
         }
       }
     });

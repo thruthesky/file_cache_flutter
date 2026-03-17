@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/chat/report/chat.report.dart';
 import 'package:philgo/messaging/widget/push_notification_icon.dart';
@@ -35,6 +36,7 @@ class SingleChatRoomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final chatTheme = ChatThemeData.of(context);
     return AppBar(
       leading: IconButton(
         onPressed: onBackPressed,
@@ -43,7 +45,7 @@ class SingleChatRoomHeader extends StatelessWidget {
       title: buildRoomTitle(context),
       // Comic design: Transparent background, no shadow
       backgroundColor: Colors.transparent,
-      elevation: 0,
+      elevation: chatTheme.dialog.elevation,
       actions: [
         _FavoriteIconButton(roomId: join.id),
         PushNotificationIcon(subscriptionId: join.id, reverse: true),
@@ -60,23 +62,24 @@ class SingleChatRoomHeader extends StatelessWidget {
 
   /// Show menu modal with various options
   void showMenuModal(BuildContext parentContext) {
+    final chatTheme = ChatThemeData.of(parentContext);
     showModalBottomSheet(
       context: parentContext,
 
       /// Comic design: No elevation, transparent background
-      elevation: 0,
+      elevation: chatTheme.dialog.elevation,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         /// Comic design: 2px border, rounded corners, no shadow
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(chatTheme.dialog.borderRadius)),
           border: Border.all(
             color: Theme.of(context).colorScheme.outline,
-            width: 2.0,
+            width: chatTheme.dialog.borderWidth,
           ),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        padding: chatTheme.dialog.contentPadding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -106,8 +109,8 @@ class SingleChatRoomHeader extends StatelessWidget {
             /// Comic design: 2px divider
             Divider(
               color: Theme.of(context).colorScheme.outline,
-              thickness: 2.0,
-              height: 24,
+              thickness: chatTheme.dialog.dividerThickness,
+              height: chatTheme.dialog.dividerHeight,
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -121,19 +124,19 @@ class SingleChatRoomHeader extends StatelessWidget {
                     )) ...[
                       /// Admin chat notice with Comic design
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: chatTheme.dialog.contentPadding,
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           /// Comic design: Use theme primaryContainer for notice background
                           color: Theme.of(
                             context,
                           ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
 
                           /// Comic design: 2.0px border with primary color
                           border: Border.all(
                             color: Theme.of(context).colorScheme.primary,
-                            width: 2.0,
+                            width: chatTheme.dialog.borderWidth,
                           ),
                         ),
                         child: Row(
@@ -143,7 +146,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                               color: Theme.of(context).colorScheme.primary,
                               size: 24,
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: chatTheme.dialog.avatarSpacing),
                             Expanded(
                               child: Text(
                                 "Admin Chat Notice",
@@ -200,7 +203,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 );
                               },
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: chatTheme.dialog.itemSpacing),
 
                             /// Profile menu item
                             _buildComicMenuItem(
@@ -212,7 +215,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 showProfileDialog(parentContext, otherUser);
                               },
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: chatTheme.dialog.itemSpacing),
 
                             /// Recent posts menu item
                             _buildComicMenuItem(
@@ -230,7 +233,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 );
                               },
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: chatTheme.dialog.itemSpacing),
 
                             /// Report menu item
                             _buildComicMenuItem(
@@ -245,7 +248,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 reportRoom(parentContext);
                               },
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: chatTheme.dialog.itemSpacing),
 
                             /// Block user menu item
                             _buildComicMenuItem(
@@ -260,7 +263,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 showBlockDialog(parentContext);
                               },
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: chatTheme.dialog.itemSpacing),
 
                             /// Leave room menu item
                             _buildComicMenuItem(
@@ -275,7 +278,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 showLeaveConfirmDialog(parentContext);
                               },
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: chatTheme.dialog.itemSpacing),
 
                             /// Block & Leave menu item - blocks user then leaves
                             _buildComicMenuItem(
@@ -293,9 +296,9 @@ class SingleChatRoomHeader extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: chatTheme.dialog.itemSpacing),
                     ],
-                    const SizedBox(height: 8),
+                    SizedBox(height: chatTheme.dialog.itemSpacing),
                   ],
                 ),
               ),
@@ -323,15 +326,16 @@ class SingleChatRoomHeader extends StatelessWidget {
   void showLeaveConfirmDialog(BuildContext parentContext) async {
     final theme = Theme.of(parentContext);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(parentContext);
 
     // Returns null (dismissed), 'leave', or 'block_and_leave'
     final String? action = await showDialog<String>(
       context: parentContext,
       builder: (context) => Dialog(
         // Comic design: no shadow
-        elevation: 0,
+        elevation: chatTheme.dialog.elevation,
         // Comic design: rounded corners (borderRadius: 12)
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius)),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -339,8 +343,8 @@ class SingleChatRoomHeader extends StatelessWidget {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: 2.0px outline border with rounded corners
-            border: Border.all(color: colorScheme.outline, width: 2.0),
-            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colorScheme.outline, width: chatTheme.dialog.borderWidth),
+            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -348,7 +352,7 @@ class SingleChatRoomHeader extends StatelessWidget {
             children: [
               // Title section - Comic design spacing (multiples of 8)
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                padding: chatTheme.dialog.titlePadding,
                 child: Text(
                   "Leave Room",
                   style: theme.textTheme.titleLarge?.copyWith(
@@ -360,10 +364,7 @@ class SingleChatRoomHeader extends StatelessWidget {
 
               // Content section - Comic design spacing
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
+                padding: chatTheme.dialog.bodyPadding,
                 child: Text(
                   "Are you sure you want to leave this room?",
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -374,7 +375,7 @@ class SingleChatRoomHeader extends StatelessWidget {
 
               // Actions section - Column layout to fit 3 full-width buttons
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                padding: chatTheme.dialog.actionsPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -383,13 +384,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                       onPressed: () =>
                           Navigator.of(context).pop('block_and_leave'),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(0),
+                        elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.error,
-                              width: 2.0,
+                              width: chatTheme.dialog.actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -400,10 +401,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           colorScheme.onError,
                         ),
                         padding: WidgetStateProperty.all(
-                          const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          chatTheme.dialog.actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -417,13 +415,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop('leave'),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(0),
+                        elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.error,
-                              width: 2.0,
+                              width: chatTheme.dialog.actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -435,10 +433,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           colorScheme.error,
                         ),
                         padding: WidgetStateProperty.all(
-                          const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          chatTheme.dialog.actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -452,13 +447,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(0),
+                        elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.outline,
-                              width: 2.0,
+                              width: chatTheme.dialog.actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -469,10 +464,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           colorScheme.onSurface,
                         ),
                         padding: WidgetStateProperty.all(
-                          const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          chatTheme.dialog.actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -641,26 +633,27 @@ class SingleChatRoomHeader extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
   }) {
+    final chatTheme = ChatThemeData.of(context);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: chatTheme.dialog.itemPadding,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
 
           /// Comic design: 2.0px border with outline color
           border: Border.all(
             color: Theme.of(context).colorScheme.outline,
-            width: 2.0,
+            width: chatTheme.dialog.itemBorderWidth,
           ),
         ),
         child: Row(
           children: [
             /// Icon
             SizedBox(width: 32, height: 32, child: Center(child: icon)),
-            const SizedBox(width: 12),
+            SizedBox(width: chatTheme.dialog.avatarSpacing),
 
             /// Title
             Expanded(
@@ -760,11 +753,12 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
 
   /// 즐겨찾기 모달 표시
   void _showFavoritesModal(BuildContext context) {
+    final chatTheme = ChatThemeData.of(context);
     showModalBottomSheet(
       context: context,
 
       /// Comic design: No elevation, transparent background
-      elevation: 0,
+      elevation: chatTheme.dialog.elevation,
       backgroundColor: Colors.transparent,
       builder: (context) => _FavoritesModal(roomId: widget.roomId),
     );
@@ -890,22 +884,23 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
   /// 새 폴더 생성 다이얼로그 표시
   void _showCreateFolderDialog(BuildContext context) async {
+    final chatTheme = ChatThemeData.of(context);
     final TextEditingController folderNameController = TextEditingController();
 
     await showDialog(
       context: context,
       builder: (dialogContext) => Dialog(
         /// Comic design: No elevation, transparent background
-        elevation: 0,
+        elevation: chatTheme.dialog.elevation,
         backgroundColor: Colors.transparent,
         child: Container(
           /// Comic design: 2px border, rounded corners, no shadow
           decoration: BoxDecoration(
             color: Theme.of(dialogContext).colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
             border: Border.all(
               color: Theme.of(dialogContext).colorScheme.outline,
-              width: 2.0,
+              width: chatTheme.dialog.borderWidth,
             ),
           ),
           padding: const EdgeInsets.all(24),
@@ -931,24 +926,24 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
                   /// Comic design: 2px border
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.outline,
-                      width: 2.0,
+                      width: chatTheme.dialog.borderWidth,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.outline,
-                      width: 2.0,
+                      width: chatTheme.dialog.borderWidth,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.primary,
-                      width: 2.0,
+                      width: chatTheme.dialog.borderWidth,
                     ),
                   ),
                 ),
@@ -971,14 +966,14 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     onPressed: () => Navigator.of(dialogContext).pop(),
                     style: ButtonStyle(
                       // Comic design: no shadow
-                      elevation: WidgetStateProperty.all(0),
+                      elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
                       // Comic design: 2.0px border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                           side: BorderSide(
                             color: Theme.of(dialogContext).colorScheme.outline,
-                            width: 2.0,
+                            width: chatTheme.dialog.actionButtonBorderWidth,
                           ),
                         ),
                       ),
@@ -992,10 +987,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                       ),
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                        chatTheme.dialog.actionButtonPadding,
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -1018,14 +1010,14 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     },
                     style: ButtonStyle(
                       // Comic design: no shadow
-                      elevation: WidgetStateProperty.all(0),
+                      elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
                       // Comic design: 2.0px border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                           side: BorderSide(
                             color: Theme.of(dialogContext).colorScheme.primary,
-                            width: 2.0,
+                            width: chatTheme.dialog.actionButtonBorderWidth,
                           ),
                         ),
                       ),
@@ -1039,10 +1031,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                       ),
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                        chatTheme.dialog.actionButtonPadding,
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
@@ -1064,19 +1053,20 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
   @override
   Widget build(BuildContext context) {
+    final chatTheme = ChatThemeData.of(context);
     /// Comic design: 2px border, rounded corners, no shadow
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(chatTheme.dialog.borderRadius)),
 
         /// Comic design: 2px border with outline color, no shadow
         border: Border.all(
           color: Theme.of(context).colorScheme.outline,
-          width: 2.0,
+          width: chatTheme.dialog.borderWidth,
         ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      padding: chatTheme.dialog.contentPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1122,8 +1112,8 @@ class _FavoritesModalState extends State<_FavoritesModal> {
           /// Comic design: 2px divider with outline color
           Divider(
             color: Theme.of(context).colorScheme.outline,
-            thickness: 2.0,
-            height: 24,
+            thickness: chatTheme.dialog.dividerThickness,
+            height: chatTheme.dialog.dividerHeight,
           ),
 
           /// Folder list section - Shows folders from UserService
@@ -1153,12 +1143,12 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                               color: Theme.of(
                                 context,
                               ).colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
 
                               /// Comic design: 2px border, no shadow
                               border: Border.all(
                                 color: Theme.of(context).colorScheme.outline,
-                                width: 2.0,
+                                width: chatTheme.dialog.borderWidth,
                               ),
                             ),
                             child: Text(
@@ -1176,7 +1166,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
                         /// Comic design: Add spacing between items
                         separatorBuilder: (context, index) =>
-                            const SizedBox(height: 8),
+                            SizedBox(height: chatTheme.dialog.itemSpacing),
                         itemBuilder: (context, index) {
                           final folder = folders[index];
                           final folderName = folder['folderName'] as String;
@@ -1193,12 +1183,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                             onTap: isFolderLoading
                                 ? null
                                 : () => addToFavoriteFolder(folderName),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
+                              padding: chatTheme.dialog.itemPadding,
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? Theme.of(context)
@@ -1206,14 +1193,14 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                           .primaryContainer
                                           .withValues(alpha: 0.3)
                                     : Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
 
                                 /// Comic design: 2px border
                                 border: Border.all(
                                   color: isSelected
                                       ? Theme.of(context).colorScheme.primary
                                       : Theme.of(context).colorScheme.outline,
-                                  width: 2.0,
+                                  width: chatTheme.dialog.itemBorderWidth,
                                 ),
                               ),
                               child: Row(
@@ -1248,7 +1235,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                                 ),
                                           ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: chatTheme.dialog.avatarSpacing),
 
                                   /// Folder info
                                   Expanded(

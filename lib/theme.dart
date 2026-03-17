@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/chat/chat.theme.dart';
 
 ThemeData philgoThemeData(BuildContext context) {
   return Theme.of(context).copyWith(
+    extensions: [
+      ChatThemeData.defaults(),
+    ],
     colorScheme: Theme.of(context).colorScheme.copyWith(
       primary: const Color(0xFF007AFF), // iOS 스타일의 파란색
       secondary: const Color(0xFF34C759), // iOS 스타일의 녹색

@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.message.dart';
 import 'package:philgo/user/user.firebase_model.dart';
 import 'package:philgo/user/user.functions.dart';
@@ -64,8 +66,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build normal message bubble
   Widget _buildNormalMessage(BuildContext context) {
+    final chatTheme = ChatThemeData.of(context);
+    final bubbleTheme = chatTheme.bubble;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: bubbleTheme.messagePadding,
       child: Column(
         crossAxisAlignment: isCurrentUser
             ? CrossAxisAlignment.end
@@ -74,7 +79,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           // User info section (avatar + name) above the message
           if (showSenderInfo)
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: EdgeInsets.only(bottom: bubbleTheme.senderInfoSpacing),
               child: Row(
                 mainAxisAlignment: isCurrentUser
                     ? MainAxisAlignment.end
@@ -88,7 +93,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           : null,
                       child: userAvatar(),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: bubbleTheme.avatarNameSpacing),
                     // Other user name with long press
                     GestureDetector(
                       onTap: () => !isAdminChatUser(sender!.uid)
@@ -97,9 +102,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       child: Text(
                         userDisplayName(),
                         style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.w600,
+                          fontSize: bubbleTheme.senderNameFontSize,
+                          color: bubbleTheme.senderNameColor,
+                          fontWeight: bubbleTheme.senderNameFontWeight,
                         ),
                       ),
                     ),
@@ -108,9 +113,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
                     Text(
                       "You",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: bubbleTheme.senderNameFontSize,
                         color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: bubbleTheme.senderNameFontWeight,
                       ),
                     ),
                   ],
@@ -130,7 +135,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   // Message bubble content - max 80% width
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: constraints.maxWidth * 0.8,
+                      maxWidth:
+                          constraints.maxWidth * bubbleTheme.maxWidthFraction,
                     ),
                     child: Column(
                       crossAxisAlignment: isCurrentUser
@@ -141,42 +147,46 @@ class ChatRoomMessageBubble extends StatelessWidget {
                             message.urls!.isNotEmpty) ...[
                           _buildMultipleImages(context),
                           if (message.text?.isNotEmpty == true)
-                            const SizedBox(height: 8),
+                            SizedBox(height: bubbleTheme.imageSpacing),
                         ],
                         if (message.text?.isNotEmpty == true)
                           GestureDetector(
                             onLongPress: () => _showMessageOptions(context),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
+                              padding: bubbleTheme.textPadding,
                               decoration: BoxDecoration(
                                 color: isCurrentUser
                                     ? Theme.of(context).colorScheme.primary
                                           .withValues(alpha: 50)
-                                    : Theme.of(context).colorScheme.onSecondary,
-                                borderRadius: BorderRadius.circular(18)
-                                    .copyWith(
-                                      bottomLeft: Radius.circular(
-                                        !isCurrentUser && showSenderInfo
-                                            ? 4
-                                            : 18,
-                                      ),
-                                      bottomRight: Radius.circular(
-                                        isCurrentUser && showSenderInfo
-                                            ? 4
-                                            : 18,
-                                      ),
-                                    ),
+                                    : Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                borderRadius: BorderRadius.circular(
+                                  bubbleTheme.bubbleBorderRadius,
+                                ).copyWith(
+                                  bottomLeft: Radius.circular(
+                                    !isCurrentUser && showSenderInfo
+                                        ? bubbleTheme.bubbleTailRadius
+                                        : bubbleTheme.bubbleBorderRadius,
+                                  ),
+                                  bottomRight: Radius.circular(
+                                    isCurrentUser && showSenderInfo
+                                        ? bubbleTheme.bubbleTailRadius
+                                        : bubbleTheme.bubbleBorderRadius,
+                                  ),
+                                ),
                               ),
                               child: SelectableLinkify(
                                 text: message.text!,
                                 style: TextStyle(
                                   color: isCurrentUser
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.secondary,
-                                  fontSize: 16,
+                                      ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary
+                                      : Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                  fontSize: bubbleTheme.messageFontSize,
                                 ),
                                 linkStyle: isCurrentUser
                                     ? TextStyle(
@@ -199,14 +209,14 @@ class ChatRoomMessageBubble extends StatelessWidget {
                             ),
                           ),
 
-                        const SizedBox(height: 4),
+                        SizedBox(height: bubbleTheme.timestampSpacing),
 
                         // Timestamp
                         Text(
                           formatTimestamp(context, message.sentAt),
                           style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[500],
+                            fontSize: bubbleTheme.timestampFontSize,
+                            color: bubbleTheme.timestampColor,
                           ),
                         ),
                       ],
@@ -223,22 +233,25 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build protocol message (system messages) centered with light gray color
   Widget _buildProtocolMessage(BuildContext context) {
+    final chatTheme = ChatThemeData.of(context);
+    final bubbleTheme = chatTheme.bubble;
     String protocolText = _getProtocolText(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: bubbleTheme.protocolOuterPadding,
       child: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: bubbleTheme.protocolPadding,
           decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
+            color: bubbleTheme.protocolBgColor,
+            borderRadius:
+                BorderRadius.circular(bubbleTheme.protocolBorderRadius),
           ),
           child: Text(
             protocolText,
             style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[600],
+              fontSize: bubbleTheme.protocolFontSize,
+              color: bubbleTheme.protocolTextColor,
               fontStyle: FontStyle.italic,
             ),
             textAlign: TextAlign.center,
@@ -295,6 +308,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final chatTheme = ChatThemeData.of(context);
+    final bubbleTheme = chatTheme.bubble;
     final urls = message.urls!;
 
     return Column(
@@ -306,28 +321,30 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 ? onImageTap!(urls[i])
                 : _showFullScreenImage(context, urls, i),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius:
+                  BorderRadius.circular(bubbleTheme.imageBorderRadius),
               child: CachedNetworkImage(
                 imageUrl: urls[i],
-                width: 200,
+                width: bubbleTheme.imageWidth,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
-                  width: 200,
-                  height: 150,
-                  color: Colors.grey[300],
+                  width: bubbleTheme.imageWidth,
+                  height: bubbleTheme.imageHeight,
+                  color: bubbleTheme.imagePlaceholderColor,
                   child: const Center(child: CircularProgressIndicator()),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  width: 200,
-                  height: 150,
-                  color: Colors.grey[300],
+                  width: bubbleTheme.imageWidth,
+                  height: bubbleTheme.imageHeight,
+                  color: bubbleTheme.imagePlaceholderColor,
                   child: const Icon(Icons.error),
                 ),
               ),
             ),
           ),
           // Add spacing between images except for the last one
-          if (i < urls.length - 1) const SizedBox(height: 8),
+          if (i < urls.length - 1)
+            SizedBox(height: bubbleTheme.imageSpacing),
         ],
       ],
     );
@@ -362,6 +379,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build blinded message bubble for moderated content
   Widget _buildBlindedMessage(BuildContext context) {
+    final chatTheme = ChatThemeData.of(context);
+    final bubbleTheme = chatTheme.bubble;
+
     String blindReason = '';
     if (message.moderated == 'M') {
       blindReason = "This message was blocked by AI moderation.";
@@ -370,7 +390,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: bubbleTheme.messagePadding,
       child: Column(
         crossAxisAlignment: isCurrentUser
             ? CrossAxisAlignment.end
@@ -379,7 +399,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           // User info section (avatar + name) above the message
           if (showSenderInfo)
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: EdgeInsets.only(bottom: bubbleTheme.senderInfoSpacing),
               child: Row(
                 mainAxisAlignment: isCurrentUser
                     ? MainAxisAlignment.end
@@ -391,16 +411,16 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       onLongPress: () => _showMessageOptions(context),
                       child: userAvatar(),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: bubbleTheme.avatarNameSpacing),
                     // Other user name with long press
                     GestureDetector(
                       onLongPress: () => _showMessageOptions(context),
                       child: Text(
                         userDisplayName(),
                         style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.w600,
+                          fontSize: bubbleTheme.senderNameFontSize,
+                          color: bubbleTheme.senderNameColor,
+                          fontWeight: bubbleTheme.senderNameFontWeight,
                         ),
                       ),
                     ),
@@ -409,9 +429,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
                     Text(
                       "You",
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w600,
+                        fontSize: bubbleTheme.senderNameFontSize,
+                        color: bubbleTheme.senderNameColor,
+                        fontWeight: bubbleTheme.senderNameFontWeight,
                       ),
                     ),
                   ],
@@ -431,7 +451,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   // Blinded message content - max 80% width
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: constraints.maxWidth * 0.8,
+                      maxWidth:
+                          constraints.maxWidth * bubbleTheme.maxWidthFraction,
                     ),
                     child: Column(
                       crossAxisAlignment: isCurrentUser
@@ -439,18 +460,21 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           : CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
+                          padding: bubbleTheme.textPadding,
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(18).copyWith(
+                            color: bubbleTheme.blockedBgColor,
+                            borderRadius: BorderRadius.circular(
+                              bubbleTheme.bubbleBorderRadius,
+                            ).copyWith(
                               bottomLeft: Radius.circular(
-                                !isCurrentUser && showSenderInfo ? 4 : 18,
+                                !isCurrentUser && showSenderInfo
+                                    ? bubbleTheme.bubbleTailRadius
+                                    : bubbleTheme.bubbleBorderRadius,
                               ),
                               bottomRight: Radius.circular(
-                                isCurrentUser && showSenderInfo ? 4 : 18,
+                                isCurrentUser && showSenderInfo
+                                    ? bubbleTheme.bubbleTailRadius
+                                    : bubbleTheme.bubbleBorderRadius,
                               ),
                             ),
                           ),
@@ -463,15 +487,18 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                 children: [
                                   Icon(
                                     Icons.visibility_off,
-                                    size: 16,
-                                    color: Colors.grey[600],
+                                    size: bubbleTheme.blockedIconSize,
+                                    color: bubbleTheme.blockedTextColor,
                                   ),
-                                  const SizedBox(width: 6),
+                                  SizedBox(
+                                    width: bubbleTheme.blockedIconSpacing,
+                                  ),
                                   Text(
                                     blindReason,
                                     style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 14,
+                                      color: bubbleTheme.blockedTextColor,
+                                      fontSize:
+                                          bubbleTheme.blockedTextFontSize,
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
@@ -481,14 +508,14 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 4),
+                        SizedBox(height: bubbleTheme.timestampSpacing),
 
                         // Timestamp
                         Text(
                           formatTimestamp(context, message.sentAt),
                           style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[500],
+                            fontSize: bubbleTheme.timestampFontSize,
+                            color: bubbleTheme.timestampColor,
                           ),
                         ),
                       ],
@@ -505,34 +532,46 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build blocked message display with unblock option
   Widget _buildBlockedMessage(BuildContext context) {
+    final chatTheme = ChatThemeData.of(context);
+    final bubbleTheme = chatTheme.bubble;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: bubbleTheme.messagePadding,
       child: GestureDetector(
         onTap: () => _showUnblockOption(context),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: bubbleTheme.textPadding,
           decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.grey[400]!),
+            color: bubbleTheme.blockedBgColor,
+            borderRadius:
+                BorderRadius.circular(bubbleTheme.bubbleBorderRadius),
+            border: Border.all(color: bubbleTheme.blockedBorderColor),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.block, color: Colors.grey[600], size: 16),
-              const SizedBox(width: 8),
+              Icon(
+                Icons.block,
+                color: bubbleTheme.blockedTextColor,
+                size: bubbleTheme.blockedIconSize,
+              ),
+              SizedBox(width: bubbleTheme.avatarNameSpacing),
               Flexible(
                 child: Text(
                   "This message was blocked.",
                   style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
+                    color: bubbleTheme.blockedTextColor,
+                    fontSize: bubbleTheme.blockedTextFontSize,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
               ),
               const SizedBox(width: 4),
-              Icon(Icons.touch_app, color: Colors.grey[500], size: 14),
+              Icon(
+                Icons.touch_app,
+                color: bubbleTheme.timestampColor,
+                size: bubbleTheme.blockedTextFontSize,
+              ),
             ],
           ),
         ),
@@ -545,23 +584,26 @@ class ChatRoomMessageBubble extends StatelessWidget {
     // Don't show options for current user's messages or if roomId is null
     if (isCurrentUser || roomId == null) return;
 
+    final chatTheme = ChatThemeData.of(parentContext);
+    final bubbleTheme = chatTheme.bubble;
+
     showModalBottomSheet(
       context: parentContext,
       builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        padding: bubbleTheme.bottomSheetPadding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+              padding: bubbleTheme.bottomSheetHeaderPadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     "Menu",
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TextStyle(
+                      fontSize: bubbleTheme.bottomSheetHeaderFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -575,8 +617,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 8),
-              visualDensity: VisualDensity(horizontal: -4),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              visualDensity: const VisualDensity(horizontal: -4),
               leading: userAvatar(),
               title: Text("Profile"),
               onTap: () {
@@ -584,7 +626,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 showProfileDialog(parentContext, sender!);
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
             ListTile(
               leading: const Icon(Icons.post_add),
               title: Text("Recent Posts"),
@@ -596,21 +638,21 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
             // Report option
             ListTile(
               leading: const Icon(Icons.report, color: Colors.red),
               title: Text("Report", style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.of(context).pop();
-                showChatMessageReportDialog(
+                ChatService.instance.showChatMessageReportDialog(
                   context: parentContext,
                   message: message,
                   roomId: roomId!,
                 );
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
 
             // Block/Unblock option (only if sender is not current user)
             if (sender != null) ...[
@@ -640,7 +682,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
             ],
           ],
         ),
@@ -678,23 +720,26 @@ class ChatRoomMessageBubble extends StatelessWidget {
   void _showUnblockOption(BuildContext context) {
     if (sender == null) return;
 
+    final chatTheme = ChatThemeData.of(context);
+    final bubbleTheme = chatTheme.bubble;
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        padding: bubbleTheme.bottomSheetPadding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+              padding: bubbleTheme.bottomSheetHeaderPadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     "Blocked User Options",
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TextStyle(
+                      fontSize: bubbleTheme.bottomSheetHeaderFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -717,7 +762,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               ),
               subtitle: Text("This message was blocked."),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
 
             // Unblock option
             ListTile(
@@ -732,7 +777,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 _performUnblock(context);
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/user/user.firebase_model.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/user/user.functions.dart';
@@ -120,31 +121,42 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      elevation: 0,
+      elevation: chatTheme.dialog.elevation,
       child: Container(
-        constraints: const BoxConstraints(maxHeight: 500, maxWidth: 400),
+        constraints: BoxConstraints(
+          maxHeight: chatTheme.dialog.maxHeight,
+          maxWidth: chatTheme.dialog.maxWidth,
+        ),
         decoration: BoxDecoration(
           color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outline, width: 2.0),
+          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+          border: Border.all(
+            color: colorScheme.outline,
+            width: chatTheme.dialog.borderWidth,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header - Comic 스타일
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: chatTheme.dialog.headerPadding,
               decoration: BoxDecoration(
                 color: colorScheme.primaryContainer,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(chatTheme.dialog.headerBorderRadius),
+                  topRight:
+                      Radius.circular(chatTheme.dialog.headerBorderRadius),
                 ),
                 border: Border(
-                  bottom: BorderSide(color: colorScheme.outline, width: 2.0),
+                  bottom: BorderSide(
+                    color: colorScheme.outline,
+                    width: chatTheme.dialog.headerBorderWidth,
+                  ),
                 ),
               ),
               child: Row(
@@ -152,26 +164,30 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                   FaIcon(
                     FontAwesomeIcons.lightUserGroup,
                     color: colorScheme.primary,
-                    size: 20,
+                    size: chatTheme.dialog.headerIconSize,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: chatTheme.dialog.itemSpacing),
                   Text("Search Friends", style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.of(context).pop(),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(
+                      chatTheme.dialog.closeButtonBorderRadius,
+                    ),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(
+                          chatTheme.dialog.closeButtonBorderRadius,
+                        ),
                         border: Border.all(
                           color: colorScheme.outline,
-                          width: 2.0,
+                          width: chatTheme.dialog.closeButtonBorderWidth,
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.lightXmark,
-                        size: 16,
+                        size: chatTheme.dialog.closeIconSize,
                         color: colorScheme.onSurface,
                       ),
                     ),
@@ -181,17 +197,19 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: chatTheme.dialog.contentPadding,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Search field - Comic 스타일
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(
+                          chatTheme.dialog.searchFieldBorderRadius,
+                        ),
                         border: Border.all(
                           color: colorScheme.outline,
-                          width: 2.0,
+                          width: chatTheme.dialog.searchFieldBorderWidth,
                         ),
                       ),
                       child: TextField(
@@ -204,22 +222,22 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                             color: colorScheme.onSurfaceVariant,
                           ),
                           prefixIcon: Padding(
-                            padding: const EdgeInsets.all(12),
+                            padding: EdgeInsets.all(
+                              chatTheme.dialog.searchIconPadding,
+                            ),
                             child: FaIcon(
                               FontAwesomeIcons.lightMagnifyingGlass,
                               color: colorScheme.primary,
-                              size: 20,
+                              size: chatTheme.dialog.searchIconSize,
                             ),
                           ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          contentPadding:
+                              chatTheme.dialog.searchContentPadding,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: chatTheme.dialog.contentSpacing),
 
                     // Search results
                     Expanded(child: _buildSearchResults()),
@@ -236,6 +254,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
   Widget _buildSearchResults() {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final chatTheme = ChatThemeData.of(context);
 
     // Loading state - Comic 스타일
     if (_isSearching) {
@@ -254,10 +273,10 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
           children: [
             FaIcon(
               FontAwesomeIcons.lightMagnifyingGlass,
-              size: 48,
+              size: chatTheme.dialog.emptyIconSize,
               color: colorScheme.outline,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: chatTheme.dialog.emptySpacing),
             Text(
               "Search by nickname",
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
@@ -275,10 +294,10 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
           children: [
             FaIcon(
               FontAwesomeIcons.lightMagnifyingGlassChart,
-              size: 48,
+              size: chatTheme.dialog.emptyIconSize,
               color: colorScheme.outline,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: chatTheme.dialog.emptySpacing),
             Text(
               "No users found",
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
@@ -291,35 +310,48 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     // Results list - Comic 스타일
     return ListView.separated(
       itemCount: _searchResults.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
+      separatorBuilder: (context, index) =>
+          SizedBox(height: chatTheme.dialog.itemSpacing),
       itemBuilder: (context, index) {
         final user = _searchResults[index];
         return InkWell(
           onTap: () => _startChatWithUser(user),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius:
+              BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: chatTheme.dialog.itemPadding,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: colorScheme.outline, width: 2.0),
+              borderRadius:
+                  BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+              border: Border.all(
+                color: colorScheme.outline,
+                width: chatTheme.dialog.itemBorderWidth,
+              ),
             ),
             child: Row(
               children: [
                 // Avatar with Comic border
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: chatTheme.dialog.avatarSize,
+                  height: chatTheme.dialog.avatarSize,
                   decoration: BoxDecoration(
                     color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: colorScheme.primary, width: 2.0),
+                    borderRadius: BorderRadius.circular(
+                      chatTheme.dialog.avatarBorderRadius,
+                    ),
+                    border: Border.all(
+                      color: colorScheme.primary,
+                      width: chatTheme.dialog.avatarBorderWidth,
+                    ),
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(
+                      chatTheme.dialog.avatarBorderRadius - 2,
+                    ),
                     child: Avatar(photoUrl: user.photoUrl, size: 36),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: chatTheme.dialog.avatarSpacing),
                 // User info
                 Expanded(
                   child: Text(
@@ -329,17 +361,19 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: chatTheme.dialog.itemSpacing),
                 // Chat button - Comic style
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  padding: chatTheme.dialog.chatButtonPadding,
                   decoration: BoxDecoration(
                     color: colorScheme.primary,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: colorScheme.primary, width: 2.0),
+                    borderRadius: BorderRadius.circular(
+                      chatTheme.dialog.chatButtonBorderRadius,
+                    ),
+                    border: Border.all(
+                      color: colorScheme.primary,
+                      width: chatTheme.dialog.chatButtonBorderWidth,
+                    ),
                   ),
                   child: Text(
                     "Chat",

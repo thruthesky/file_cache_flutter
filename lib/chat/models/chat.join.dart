@@ -76,6 +76,7 @@ class ChatJoin {
       'openOrder': openOrder,
       'order': order,
       'unread': unread,
+      'lastMessage': lastMessage.toJson(),
     };
   }
 

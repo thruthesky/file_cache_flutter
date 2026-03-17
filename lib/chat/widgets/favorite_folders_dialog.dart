@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/user/user.service.dart';
 
 /// 즐겨찾기 폴더 목록 다이얼로그
@@ -12,31 +13,32 @@ class FavoriteFoldersDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      elevation: 0,
+      elevation: chatTheme.dialog.elevation,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 400),
+        constraints: BoxConstraints(maxWidth: chatTheme.dialog.maxWidth),
         decoration: BoxDecoration(
           color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outline, width: 2.0),
+          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+          border: Border.all(color: colorScheme.outline, width: chatTheme.dialog.borderWidth),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             /// 다이얼로그 헤더 - Comic 스타일
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: chatTheme.dialog.headerPadding,
               decoration: BoxDecoration(
                 color: colorScheme.primaryContainer,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(chatTheme.dialog.headerBorderRadius),
+                  topRight: Radius.circular(chatTheme.dialog.headerBorderRadius),
                 ),
                 border: Border(
-                  bottom: BorderSide(color: colorScheme.outline, width: 2.0),
+                  bottom: BorderSide(color: colorScheme.outline, width: chatTheme.dialog.headerBorderWidth),
                 ),
               ),
               child: Row(
@@ -44,26 +46,26 @@ class FavoriteFoldersDialog extends StatelessWidget {
                   FaIcon(
                     FontAwesomeIcons.lightStar,
                     color: colorScheme.primary,
-                    size: 20,
+                    size: chatTheme.dialog.headerIconSize,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: chatTheme.dialog.itemSpacing),
                   Text('Favorites', style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.pop(context),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(chatTheme.dialog.closeButtonBorderRadius),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(chatTheme.dialog.closeButtonBorderRadius),
                         border: Border.all(
                           color: colorScheme.outline,
-                          width: 2.0,
+                          width: chatTheme.dialog.closeButtonBorderWidth,
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.lightXmark,
-                        size: 16,
+                        size: chatTheme.dialog.closeIconSize,
                         color: colorScheme.onSurface,
                       ),
                     ),
@@ -79,26 +81,26 @@ class FavoriteFoldersDialog extends StatelessWidget {
                 // 폴더가 없는 경우 - Comic 스타일
                 if (folders.isEmpty) {
                   return Padding(
-                    padding: const EdgeInsets.all(32),
+                    padding: chatTheme.dialog.emptyPadding,
                     child: Column(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(24),
+                          padding: chatTheme.dialog.emptyContainerPadding,
                           decoration: BoxDecoration(
                             color: colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
                             border: Border.all(
                               color: colorScheme.outline,
-                              width: 2.0,
+                              width: chatTheme.dialog.borderWidth,
                             ),
                           ),
                           child: FaIcon(
                             FontAwesomeIcons.lightFolderOpen,
-                            size: 48,
+                            size: chatTheme.dialog.emptyIconSize,
                             color: colorScheme.outline,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: chatTheme.dialog.emptySpacing),
                         Text(
                           'No favorites yet',
                           style: textTheme.bodyLarge?.copyWith(
@@ -112,13 +114,13 @@ class FavoriteFoldersDialog extends StatelessWidget {
 
                 // 폴더 목록 표시 - Comic 스타일
                 return ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 400),
+                  constraints: BoxConstraints(maxHeight: chatTheme.dialog.listMaxHeight),
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemCount: folders.length,
-                    padding: const EdgeInsets.all(16),
+                    padding: chatTheme.dialog.contentPadding,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 8),
+                        SizedBox(height: chatTheme.dialog.itemSpacing),
                     itemBuilder: (context, index) {
                       final folder = folders[index];
                       final folderName = folder['folderName'] as String;
@@ -129,15 +131,15 @@ class FavoriteFoldersDialog extends StatelessWidget {
                           // 다이얼로그 닫고 폴더명 반환
                           Navigator.pop(context, folderName);
                         },
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
                         child: Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: chatTheme.dialog.folderItemPadding,
                           decoration: BoxDecoration(
                             // color: colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
                             border: Border.all(
                               color: colorScheme.outline,
-                              width: 2.0,
+                              width: chatTheme.dialog.itemBorderWidth,
                             ),
                           ),
                           child: Row(
@@ -145,27 +147,24 @@ class FavoriteFoldersDialog extends StatelessWidget {
                               FaIcon(
                                 FontAwesomeIcons.lightFolder,
                                 color: colorScheme.primary,
-                                size: 20,
+                                size: chatTheme.dialog.folderIconSize,
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: chatTheme.dialog.folderIconSpacing),
                               Expanded(
                                 child: Text(
                                   folderName,
                                   style: textTheme.bodyLarge,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: chatTheme.dialog.countBadgeSpacing),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
+                                padding: chatTheme.dialog.countBadgePadding,
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(chatTheme.dialog.countBadgeBorderRadius),
                                   border: Border.all(
                                     color: colorScheme.primary,
-                                    width: 2.0,
+                                    width: chatTheme.dialog.countBadgeBorderWidth,
                                   ),
                                 ),
                                 child: Text(

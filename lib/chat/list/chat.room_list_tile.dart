@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.functions.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/chat/report/chat.report.dart';
@@ -149,6 +150,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     // 고정된 방은 배경색 강조
     final backgroundColor = isPinned
@@ -159,26 +161,26 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       children: [
         // Main content
         Container(
-          margin: const EdgeInsets.only(top: 16.0, left: 8, right: 8),
+          margin: chatTheme.roomList.tileMargin,
           decoration: BoxDecoration(
             color: backgroundColor,
-            // Comic design - rounded corners 12 for large elements
-            borderRadius: BorderRadius.circular(12.0),
-            // Comic design - 2.0px outline border
+            // Comic design - rounded corners for large elements
+            borderRadius: BorderRadius.circular(chatTheme.roomList.tileBorderRadius),
+            // Comic design - outline border
             border: Border.all(
               color: isPinned
                   ? colorScheme.primary
                   : colorScheme.outline.withValues(alpha: 0.3),
-              width: 2.0,
+              width: chatTheme.roomList.tileBorderWidth,
             ),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(chatTheme.roomList.tileBorderRadius),
               onTap: onTap ?? () => widget.onTap(roomId),
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: chatTheme.roomList.tilePadding,
                 child: Row(
                   children: [
                     // Left Column: Avatar + Content
@@ -187,7 +189,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         children: [
                           // Avatar
                           buildAvatar(),
-                          const SizedBox(width: 12),
+                          SizedBox(width: chatTheme.roomList.avatarSpacing),
                           // Content: Title and Subtitle with date
                           Expanded(
                             child: Column(
@@ -203,7 +205,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: chatTheme.roomList.titleSubtitleSpacing),
                                 // Subtitle with date separator - flexible layout
                                 subTitleWidget ??
                                     (join.lastMessage.text.isNotEmpty ||
@@ -284,7 +286,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                     ),
                     // Right Column: Unread badge only
                     if (!blocked) ...[
-                      const SizedBox(width: 12),
+                      SizedBox(width: chatTheme.roomList.avatarSpacing),
                       buildTrailing(),
                     ],
                   ],
@@ -303,6 +305,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildPinnedIcon() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return ValueListenableBuilder<Set<String>>(
       valueListenable: UserService.instance.pinnedChatRoomsStream,
@@ -319,20 +322,20 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               setState(() {});
             },
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(chatTheme.roomList.pinnedIconPadding),
               decoration: BoxDecoration(
                 // Round container background for visibility
                 color: colorScheme.primaryContainer,
                 shape: BoxShape.circle,
-                // Comic design - 2.0px border
-                border: Border.all(color: colorScheme.primary, width: 2.0),
+                // Comic design - border
+                border: Border.all(color: colorScheme.primary, width: chatTheme.roomList.pinnedIconBorderWidth),
               ),
               child: Transform.rotate(
-                angle: 0.4, // Tilt angle in radians (~23 degrees)
+                angle: chatTheme.roomList.pinnedIconTiltAngle,
                 child: FaIcon(
                   FontAwesomeIcons.solidThumbtack,
                   color: colorScheme.primary,
-                  size: 16,
+                  size: chatTheme.roomList.pinnedIconSize,
                 ),
               ),
             ),
@@ -346,6 +349,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildTrailing() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -357,7 +361,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           icon: FaIcon(
             FontAwesomeIcons.lightEllipsisVertical,
             color: colorScheme.onSurface.withValues(alpha: 0.6),
-            size: 20,
+            size: chatTheme.roomList.menuIconSize,
           ),
           padding: EdgeInsets.zero,
           onSelected: (value) async {
@@ -573,19 +577,20 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   void _showLeaveConfirmDialog() async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     // Returns null (dismissed), 'leave', or 'block_and_leave' (single only)
     final String? action = await showDialog<String>(
       context: context,
       builder: (dialogContext) => Dialog(
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius)),
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
             color: colorScheme.surface,
-            border: Border.all(color: colorScheme.outline, width: 2.0),
-            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colorScheme.outline, width: chatTheme.dialog.borderWidth),
+            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -593,7 +598,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             children: [
               // Title
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                padding: chatTheme.dialog.titlePadding,
                 child: Text(
                   "Leave Room",
                   style: theme.textTheme.titleLarge?.copyWith(
@@ -604,10 +609,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               // Content
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
+                padding: chatTheme.dialog.bodyPadding,
                 child: Text(
                   "Are you sure you want to leave this room?",
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -617,7 +619,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               // Actions
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                padding: chatTheme.dialog.actionsPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -630,10 +632,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           elevation: WidgetStateProperty.all(0),
                           shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                               side: BorderSide(
                                 color: colorScheme.error,
-                                width: 2.0,
+                                width: chatTheme.dialog.actionButtonBorderWidth,
                               ),
                             ),
                           ),
@@ -644,10 +646,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                             colorScheme.onError,
                           ),
                           padding: WidgetStateProperty.all(
-                            const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
+                            chatTheme.dialog.actionButtonPadding,
                           ),
                           textStyle: WidgetStateProperty.all(
                             theme.textTheme.bodyMedium,
@@ -664,10 +663,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         elevation: WidgetStateProperty.all(0),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.error,
-                              width: 2.0,
+                              width: chatTheme.dialog.actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -678,10 +677,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           colorScheme.error,
                         ),
                         padding: WidgetStateProperty.all(
-                          const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          chatTheme.dialog.actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -697,10 +693,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         elevation: WidgetStateProperty.all(0),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.outline,
-                              width: 2.0,
+                              width: chatTheme.dialog.actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -711,10 +707,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           colorScheme.onSurface,
                         ),
                         padding: WidgetStateProperty.all(
-                          const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          chatTheme.dialog.actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -741,7 +734,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         debugPrint('Error blocking user before leave: $e');
       }
       if (!mounted) return;
-      leaveChatRoom(
+      ChatService.instance.leaveChatRoom(
         roomId: roomId,
         success: () {
           if (mounted) {
@@ -751,7 +744,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         error: (e) => debugPrint('Error leaving room: $e'),
       );
     } else if (action == 'leave') {
-      leaveChatRoom(
+      ChatService.instance.leaveChatRoom(
         roomId: roomId,
         success: () {
           if (mounted) {
@@ -772,7 +765,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     ChatService.instance.showBlockAndLeaveConfirmDialog(
       context: context,
       otherUserUid: otherUserUid,
-      onLeave: () => leaveChatRoom(
+      onLeave: () => ChatService.instance.leaveChatRoom(
         roomId: roomId,
         success: () {
           if (mounted) {
@@ -788,22 +781,23 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildUnreadBadge(int unreadCount) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: chatTheme.badge.padding,
       decoration: BoxDecoration(
         color: colorScheme.error,
-        // Comic design - rounded corners 32 for small elements
-        borderRadius: BorderRadius.circular(50),
-        // Comic design - 2.0px border
-        border: Border.all(color: colorScheme.error, width: 2.0),
+        // Comic design - rounded corners for small elements
+        borderRadius: BorderRadius.circular(chatTheme.badge.borderRadius),
+        // Comic design - border
+        border: Border.all(color: colorScheme.error, width: chatTheme.badge.borderWidth),
       ),
       child: Text(
         unreadCount > 99 ? '99+' : unreadCount.toString(),
         style: theme.textTheme.bodySmall?.copyWith(
           color: colorScheme.onError,
           fontWeight: FontWeight.w700,
-          fontSize: 10,
+          fontSize: chatTheme.badge.fontSize,
         ),
       ),
     );
@@ -813,14 +807,15 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildAvatar() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final chatTheme = ChatThemeData.of(context);
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        // Comic design - 2.0px outline border
+        borderRadius: BorderRadius.circular(chatTheme.roomList.avatarBorderRadius),
+        // Comic design - outline border
         border: Border.all(
           color: colorScheme.outline.withValues(alpha: 0.3),
-          width: 2.0,
+          width: chatTheme.roomList.avatarBorderWidth,
         ),
       ),
       child: Stack(
@@ -836,19 +831,19 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 left: 0,
                 bottom: 0,
                 child: Container(
-                  width: 16,
-                  height: 16,
+                  width: chatTheme.roomList.favoriteIndicatorSize,
+                  height: chatTheme.roomList.favoriteIndicatorSize,
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
                     shape: BoxShape.circle,
-                    // Comic design - 2.0px border
-                    border: Border.all(color: Colors.amber, width: 2.0),
+                    // Comic design - border
+                    border: Border.all(color: Colors.amber, width: chatTheme.roomList.favoriteIndicatorBorderWidth),
                   ),
                   child: Center(
                     child: FaIcon(
                       FontAwesomeIcons.solidStar,
                       color: Colors.amber,
-                      size: 8,
+                      size: chatTheme.roomList.favoriteIconSize,
                     ),
                   ),
                 ),
@@ -867,16 +862,16 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 no: () => OnlineStatus(
                   uid: getOtherUserUidFromChatRoomId(roomId)!,
                   yes: Container(
-                    width: 14,
-                    height: 14,
+                    width: chatTheme.roomList.onlineIndicatorSize,
+                    height: chatTheme.roomList.onlineIndicatorSize,
                     decoration: BoxDecoration(
                       color: Colors.green,
-                      // Comic design - 2.0px border
+                      // Comic design - border
                       border: Border.all(
                         color: colorScheme.surface,
-                        width: 2.0,
+                        width: chatTheme.roomList.onlineIndicatorBorderWidth,
                       ),
-                      borderRadius: BorderRadius.circular(7),
+                      borderRadius: BorderRadius.circular(chatTheme.roomList.onlineIndicatorBorderRadius),
                     ),
                   ),
                   // Only show when online - no indicator when offline
