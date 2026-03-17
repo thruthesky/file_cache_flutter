@@ -40,6 +40,7 @@
 16. [신고(Report) 기능](#신고report-기능)
 17. [부동산 게시판 (real_estate)](#부동산-게시판-real_estate) → [별도 문서](v7-post-real-estate.md)
 18. [유튜브 임베드 시스템](#유튜브-임베드-시스템)
+19. [오늘의 글 (todayInHistory)](#오늘의-글-todayinhistory)
 
 ---
 
@@ -2445,3 +2446,64 @@ if (empty($_thumbnailUrl) && $_hasYoutube && !empty($post['varchar_19'])) {
 | `is_youtube_url(string $url)` | bool | 유효한 유튜브 URL인지 확인 |
 | `is_shorts_url(string $url)` | bool | YouTube Shorts URL인지 확인 |
 | `is_youtube_shorts(string $url)` | bool | `is_shorts_url()`의 별칭 |
+
+---
+
+## 오늘의 글 (todayInHistory)
+
+### 개요
+
+매년 오늘(월/일)에 작성된 글을 연도별로 그룹화하여 반환하는 기능임.
+2009년부터 현재 연도까지 동일 월/일에 작성된 글을 검색함.
+
+### PostService::todayInHistory()
+
+```php
+public static function todayInHistory(
+    ?int $month = null,    // 월 (null이면 오늘 월)
+    ?int $day = null,      // 일 (null이면 오늘 일)
+    array $postIds = ['freetalk', 'qna'],  // 검색 대상 게시판
+    int $limit = 2000      // 최대 글 수
+): array                   // 반환: array<string, PostEntity[]> — 날짜(YYYY-MM-DD) => PostEntity 배열
+```
+
+| 파라미터 | 타입 | 기본값 | 설명 |
+|----------|------|--------|------|
+| `$month` | `?int` | `null` (오늘 월) | 검색할 월 |
+| `$day` | `?int` | `null` (오늘 일) | 검색할 일 |
+| `$postIds` | `string[]` | `['freetalk', 'qna']` | 검색 대상 게시판 ID 목록 |
+| `$limit` | `int` | `2000` | 최대 반환 글 수 |
+
+### 반환값
+
+`array<string, PostEntity[]>` — 날짜 키(YYYY-MM-DD)별 PostEntity 배열. 최신 연도 순으로 정렬됨.
+
+```php
+// 사용 예시
+$posts = PostService::todayInHistory();
+// 반환: ['2026-03-17' => [PostEntity, ...], '2025-03-17' => [...], ...]
+
+// 특정 날짜 지정
+$posts = PostService::todayInHistory(month: 12, day: 25);
+```
+
+### 동작 방식
+
+1. 2009년~현재 연도까지 동일 월/일에 대한 `stamp BETWEEN` 조건을 OR로 연결
+2. 유효하지 않은 날짜(예: 2월 30일)는 자동으로 건너뜀
+3. `post_id IN (...)` + `deleted = 'N'` + `blind = 'N'` 조건 적용
+4. `stamp DESC` 정렬 (최신순)
+5. 조회 결과를 날짜(YYYY-MM-DD) 기준으로 그룹화하여 반환
+
+### 조회 필드
+
+`idx`, `idx_member`, `post_id`, `subject`, `stamp`, `no_of_comment`, `no_of_view`, `good`, `deleted`, `has_image`, `has_youtube`, `varchar_17`, `category`
+
+### 웹 페이지
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/today/index.php` |
+| **CSS** | `v7/today/today.css` |
+| **접속 URL** | `/today` |
+| **URL 헬퍼** | `url()->today` |

@@ -1335,6 +1335,7 @@ v6의 `href()` 함수와 동일한 패턴으로, 중첩 프로퍼티를 통해 �
 url()
 ├── home                          → '/'
 ├── search                        → '/post/search'
+├── today                         → '/today'
 ├── post (PostUrl)
 │   ├── list (PostListUrl)
 │   │   ├── community             → '/post/list?category=freetalk'
