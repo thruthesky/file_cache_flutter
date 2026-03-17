@@ -216,6 +216,14 @@ class _UploadTileState extends State<_UploadTile> {
 
           module: widget.module,
           code: widget.code,
+          onBeforeUpload: () async {
+            if (_url != null && _url!.isNotEmpty) {
+              try {
+                await ApiService.instance.fileDeleteByUrl(_url!);
+              } catch (_) {}
+            }
+            return true;
+          },
           onUploadingChanged: (uploading) {
             if (mounted) setState(() => _isUploading = uploading);
           },
@@ -266,9 +274,7 @@ class _UploadTileState extends State<_UploadTile> {
                 setState(() => _url = null);
                 widget.onUploaded('');
                 if (urlToDelete != null && urlToDelete.isNotEmpty) {
-                  try {
-                    await ApiService.instance.fileDeleteByUrl(urlToDelete);
-                  } catch (_) {}
+                  await ApiService.instance.fileDeleteByUrl(urlToDelete);
                 }
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(
