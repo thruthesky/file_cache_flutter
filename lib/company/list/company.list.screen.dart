@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,22 +26,22 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
   static const _headerHideThreshold = 48.0;
 
   static const _categories = [
-    ('public-office', 'Public...', FontAwesomeIcons.building),
-    ('education', 'Educa...', FontAwesomeIcons.graduationCap),
-    ('food', 'Food...', FontAwesomeIcons.utensils),
-    ('transport', 'Trans...', FontAwesomeIcons.bus),
-    ('hospital', 'Health...', FontAwesomeIcons.hospital),
-    ('mart', 'Shop...', FontAwesomeIcons.cartShopping),
-    ('bank', 'Banki...', FontAwesomeIcons.buildingColumns),
-    ('gadget', 'Gadg...', FontAwesomeIcons.mobileScreen),
-    ('travel-agency', 'Travel...', FontAwesomeIcons.planeDeparture),
-    ('hotel', 'Hotels', FontAwesomeIcons.hotel),
-    ('rentcar', 'Car R...', FontAwesomeIcons.car),
-    ('beauty', 'Beaut...', FontAwesomeIcons.scissors),
-    ('real-estate', 'Real E...', FontAwesomeIcons.houseChimney),
-    ('ktv', 'Entert...', FontAwesomeIcons.microphone),
-    ('spa', 'Spa &...', FontAwesomeIcons.spa),
-    ('etc', 'Other...', FontAwesomeIcons.ellipsis),
+    ('public-office', '관공서', FontAwesomeIcons.building),
+    ('education', '교육', FontAwesomeIcons.graduationCap),
+    ('food', '음식', FontAwesomeIcons.utensils),
+    ('transport', '교통', FontAwesomeIcons.bus),
+    ('hospital', '병원', FontAwesomeIcons.hospital),
+    ('mart', '마트', FontAwesomeIcons.cartShopping),
+    ('bank', '은행', FontAwesomeIcons.buildingColumns),
+    ('gadget', '전자기기', FontAwesomeIcons.mobileScreen),
+    ('travel-agency', '여행사', FontAwesomeIcons.planeDeparture),
+    ('hotel', '호텔', FontAwesomeIcons.hotel),
+    ('rentcar', '렌터카', FontAwesomeIcons.car),
+    ('beauty', '뷰티', FontAwesomeIcons.scissors),
+    ('real-estate', '부동산', FontAwesomeIcons.houseChimney),
+    ('ktv', '유흥', FontAwesomeIcons.microphone),
+    ('spa', '스파', FontAwesomeIcons.spa),
+    ('etc', '기타', FontAwesomeIcons.ellipsis),
   ];
 
   @override
@@ -101,12 +102,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     // Use cached company — no extra API call needed
     if (_myCompany != null) {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CompanyEditScreen(company: _myCompany!),
-        ),
-      );
+      CompanyEditScreen.push(context, company: _myCompany!);
       return;
     }
 
@@ -118,7 +114,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
       if (company == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('업소를 가져올 수 없습니다. 다시 시도해주세요.')),
+          SnackBar(content: Text('업소를 가져올 수 없습니다. 다시 시도해주세요.'.tr())),
         );
         return;
       }
@@ -127,17 +123,14 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
       if (company.name.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('업소가 생성되었습니다. 정보를 입력해주세요.'),
-            backgroundColor: Color(0xFFFF6D00),
+          SnackBar(
+            content: Text('업소가 생성되었습니다. 정보를 입력해주세요.'.tr()),
+            backgroundColor: const Color(0xFFFF6D00),
           ),
         );
       }
 
-      await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => CompanyEditScreen(company: company)),
-      );
+      CompanyEditScreen.push(context, company: company);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -221,8 +214,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
           // All + 16 categories = 17 items
           final items = <(String?, String, IconData)>[
-            (null, 'All', FontAwesomeIcons.layerGroup),
-            ..._categories.map((c) => (c.$1, c.$2, c.$3)),
+            (null, '전체'.tr(), FontAwesomeIcons.layerGroup),
+            ..._categories.map((c) => (c.$1, c.$2.tr(), c.$3)),
           ];
 
           return Wrap(
@@ -285,13 +278,13 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     }
 
     if (_companies.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(FontAwesomeIcons.buildingCircleXmark, size: 48),
-            SizedBox(height: 16),
-            Text('등록된 업소가 없습니다'),
+            const FaIcon(FontAwesomeIcons.buildingCircleXmark, size: 48),
+            const SizedBox(height: 16),
+            Text('등록된 업소가 없습니다'.tr()),
           ],
         ),
       );
@@ -315,12 +308,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
             height: height,
             child: CompanyCard(
               company: company,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CompanyViewScreen(company: company),
-                ),
-              ),
+              onTap: () => CompanyViewScreen.push(context, company: company),
             ),
           );
         },

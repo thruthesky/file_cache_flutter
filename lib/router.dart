@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
+import 'package:philgo/company/company.model.dart';
+import 'package:philgo/company/edit/company.edit.screen.dart';
+import 'package:philgo/company/view/company.view.screen.dart';
 import 'package:philgo/post/post.model.dart';
+import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
@@ -35,10 +39,14 @@ final router = GoRouter(
       path: PostViewScreen.routeName,
       name: PostViewScreen.routeName,
       builder: (context, state) {
+        // 1. extra에서 Post 가져오기 (일반 네비게이션)
+        if (state.extra is Post) {
+          return PostViewScreen(post: state.extra as Post);
+        }
+        // 2. query parameters fallback (딥링크 등)
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         final postId = state.uri.queryParameters['post_id'] ?? '';
         final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        // 빈 Post 객체로 초기화하고, PostViewScreen의 initState에서 전체 데이터를 로드
         return PostViewScreen(
           post: Post(
             idx: idx,
@@ -82,6 +90,14 @@ final router = GoRouter(
     //   ),
     // ),
     GoRoute(
+      path: PostUpdateScreen.routeName,
+      name: PostUpdateScreen.routeName,
+      builder: (context, state) {
+        final post = state.extra as Post;
+        return PostUpdateScreen(post: post);
+      },
+    ),
+    GoRoute(
       path: PointHistoryScreen.routeName,
       name: PointHistoryScreen.routeName,
       builder: (context, state) => const PointHistoryScreen(),
@@ -93,6 +109,22 @@ final router = GoRouter(
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '');
         final firebaseUid = state.uri.queryParameters['firebase_uid'];
         return OtherUserScreen(idx: idx, firebaseUid: firebaseUid);
+      },
+    ),
+    GoRoute(
+      path: CompanyEditScreen.routeName,
+      name: CompanyEditScreen.routeName,
+      builder: (context, state) {
+        final company = state.extra as CompanyModel;
+        return CompanyEditScreen(company: company);
+      },
+    ),
+    GoRoute(
+      path: CompanyViewScreen.routeName,
+      name: CompanyViewScreen.routeName,
+      builder: (context, state) {
+        final company = state.extra as CompanyModel;
+        return CompanyViewScreen(company: company);
       },
     ),
     GoRoute(

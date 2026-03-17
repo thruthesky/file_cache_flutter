@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/widgets/form/form.basic.info.dart';
@@ -15,6 +17,11 @@ import 'package:philgo/company/edit/widgets/form_step_tracker.dart';
 /// Step 3: 이미지 업로드
 /// Step 4: 검토 및 저장
 class CompanyEditScreen extends StatefulWidget {
+  static const String routeName = '/CompanyEdit';
+  static Function(BuildContext ctx, {required CompanyModel company}) push =
+      (ctx, {required company}) =>
+          ctx.push(routeName, extra: company);
+
   final CompanyModel company;
 
   const CompanyEditScreen({super.key, required this.company});
@@ -50,7 +57,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  static const _stepLabels = ['기본정보', '연락처', '이미지', '검토'];
+  static final _stepLabels = ['기본정보'.tr(), '연락처'.tr(), '이미지'.tr(), '검토'.tr()];
 
   @override
   void initState() {
@@ -131,7 +138,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'),
+          content: Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'.tr()),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
@@ -140,7 +147,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('저장 실패: ${e.toString().replaceFirst('Exception: ', '')}'),
+          content: Text('저장 실패: {}'.tr(args: [e.toString().replaceFirst('Exception: ', '')])),
           backgroundColor: Colors.red,
         ),
       );
@@ -155,7 +162,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('업소 정보 수정'),
+        title: Text('업소 정보 수정'.tr()),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
@@ -253,7 +260,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(80, 44),
               ),
-              child: Text(_currentStep == 0 ? '취소' : '이전'),
+              child: Text(_currentStep == 0 ? '취소'.tr() : '이전'.tr()),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -273,7 +280,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : Text(isLastStep ? '저장하기' : '다음'),
+                    : Text(isLastStep ? '저장하기'.tr() : '다음'.tr()),
               ),
             ),
           ],

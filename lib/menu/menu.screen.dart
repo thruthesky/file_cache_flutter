@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/company/company.model.dart';
+import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
@@ -18,7 +19,6 @@ import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
-import 'package:philgo/user/widgets/login.dart';
 import 'package:provider/provider.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -37,19 +37,36 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    scheduleMicrotask(() => _loadMyCompany());
+    scheduleMicrotask(() {
+      UserState.of(context).addListener(_onUserChanged);
+      _loadMyCompany();
+    });
+  }
+
+  void _onUserChanged() {
+    if (!mounted) return;
+    if (UserState.of(context).user == null) {
+      setState(() {
+        _myCompany = null;
+      });
+    } else {
+      log('company loaded');
+      _loadMyCompany();
+    }
   }
 
   Future<void> _loadMyCompany() async {
-    UserState.of(context).addListener(() {
-      if (UserState.of(context).user == null) {
-        setState(() => _myCompany = null);
-        log('User logged out, cleared my company data');
-      } else {
-        _loadMyCompany();
-        log('User logged in, loaded my company data');
+    if (UserState.of(context).user == null) return;
+    final company = await CompanyService.mine();
+    if (mounted) {
+      setState(() => _myCompany = company);
     }
-    });
+  }
+
+  @override
+  void dispose() {
+    UserState.of(context).removeListener(_onUserChanged);
+    super.dispose();
   }
 
   /// 업소가 등록된 상태인지 (name이 비어 있으면 서버 자동 생성된 빈 업소)
@@ -63,126 +80,134 @@ class _MenuScreenState extends State<MenuScreen> {
 
     return Scaffold(
       backgroundColor: scheme.surface,
-      body: Login(
-        notLoggedIn: _buildNotLoggedIn(theme, scheme),
-        builder: (_) => SafeArea(
-          child: Column(
-            children: [
-              // 앱바 영역
-              _buildAppBar(theme, scheme),
-              Container(height: 1, color: scheme.outlineVariant),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 앱바 영역
+            _buildAppBar(theme, scheme),
+            Container(height: 1, color: scheme.outlineVariant),
 
-              // 스크롤 가능한 콘텐츠
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    spacing: 28,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
+            // 스크롤 가능한 콘텐츠
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  spacing: 28,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
 
-                      // 내 정보 섹션
-                      _buildSection(
-                            title: '내 정보'.tr(),
-                            icon: FontAwesomeIcons.lightCircleUser,
-                            child: _buildProfileContent(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 내 정보 섹션
+                    _buildSection(
+                          title: '내 정보'.tr(),
+                          icon: FontAwesomeIcons.lightCircleUser,
+                          child: _buildProfileContent(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 내 활동 섹션
-                      _buildSection(
-                            title: '내 활동'.tr(),
-                            child: _buildActivityGrid(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 100.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 내 활동 섹션
+                    _buildSection(
+                          title: '내 활동'.tr(),
+                          child: _buildActivityGrid(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 100.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 필리핀 생활 정보 섹션
-                      _buildSection(
-                            title: '필리핀 생활 정보'.tr(),
-                            child: _buildInfoGrid(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 200.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 필리핀 생활 정보 섹션
+                    _buildSection(
+                          title: '필리핀 생활 정보'.tr(),
+                          child: _buildInfoGrid(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 200.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 게시판 섹션
-                      _buildSection(
-                            title: '게시판'.tr(),
-                            child: _buildForumContent(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 300.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 게시판 섹션
+                    _buildSection(
+                          title: '게시판'.tr(),
+                          child: _buildForumContent(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 300.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 내 업소 섹션
-                      _buildSection(
-                            title: '내 업소'.tr(),
-                            icon: FontAwesomeIcons.lightStore,
-                            child: _buildMyCompanyContent(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 350.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 내 업소 섹션
+                    _buildSection(
+                          title: '내 업소'.tr(),
+                          icon: FontAwesomeIcons.lightStore,
+                          child: _buildMyCompanyContent(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 350.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 업소록 섹션
-                      _buildSection(
-                            title: '업소록'.tr(),
-                            child: _buildCompanyGrid(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 400.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 업소록 섹션
+                    _buildSection(
+                          title: '업소록'.tr(),
+                          child: _buildCompanyGrid(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 400.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 채팅 섹션
-                      _buildSection(
-                            title: '채팅'.tr(),
-                            child: _buildChatGrid(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 450.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 채팅 섹션
+                    _buildSection(
+                          title: '채팅'.tr(),
+                          child: _buildChatGrid(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 450.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 광고 섹션
-                      _buildSection(
-                            title: '광고'.tr(),
-                            child: _buildAdGrid(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 500.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 광고 섹션
+                    _buildSection(
+                          title: '광고'.tr(),
+                          child: _buildAdGrid(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 500.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 지원 섹션
-                      _buildSection(
-                            title: '지원'.tr(),
-                            child: _buildSupportGrid(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 550.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 지원 섹션
+                    _buildSection(
+                          title: '지원'.tr(),
+                          child: _buildSupportGrid(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 550.ms)
+                        .slideY(begin: 0.1, end: 0),
 
-                      // 앱 정보 섹션
-                      _buildSection(
-                            title: '앱 정보'.tr(),
-                            child: _buildAppInfoGrid(theme, scheme),
-                          )
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 600.ms)
-                          .slideY(begin: 0.1, end: 0),
+                    // 앱 정보 섹션
+                    _buildSection(
+                          title: '앱 정보'.tr(),
+                          child: _buildAppInfoGrid(theme, scheme),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 600.ms)
+                        .slideY(begin: 0.1, end: 0),
 
+                    // 계정 삭제 & 로그아웃 (로그인 시에만 표시)
+                    if (context.watch<UserState>().user != null) ...[
                       // 계정 삭제
                       Center(
-                        child: TextButton(
+                        child: TextButton.icon(
                           onPressed: () {
                             // TODO: 계정 삭제 로직
                           },
-                          child: Text(
+                          icon: FaIcon(
+                            FontAwesomeIcons.lightTrashCan,
+                            size: 14,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                          label: Text(
                             '계정 삭제'.tr(),
-                            style: TextStyle(color: scheme.error, fontSize: 14),
+                            style: TextStyle(
+                              color: scheme.onSurfaceVariant,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
@@ -208,48 +233,17 @@ class _MenuScreenState extends State<MenuScreen> {
                           minimumSize: const Size(double.infinity, 48),
                         ),
                       ).animate().fadeIn(duration: 400.ms, delay: 700.ms),
-
-                      const SizedBox(height: 8),
                     ],
-                  ),
+
+                    const SizedBox(height: 8),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  /// 비로그인 상태 UI
-  Widget _buildNotLoggedIn(ThemeData theme, ColorScheme scheme) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FaIcon(
-            FontAwesomeIcons.lightCircleUser,
-            size: 64,
-            color: scheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 16),
-          Text('로그인이 필요합니다'.tr(), style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          Text(
-            '메뉴를 이용하려면 로그인해 주세요.'.tr(),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 24),
-          OutlinedButton.icon(
-            onPressed: () => UserLoginScreen.push(context),
-            icon: const FaIcon(FontAwesomeIcons.lightRightToBracket, size: 16),
-            label: Text('로그인'.tr()),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms);
   }
 
   /// 앱바 영역
@@ -339,7 +333,43 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 프로필 카드 내용
   Widget _buildProfileContent(ThemeData theme, ColorScheme scheme) {
     final user = context.watch<UserState>().user;
-    if (user == null) return const SizedBox.shrink();
+
+    if (user == null) {
+      return GestureDetector(
+        onTap: () => UserLoginScreen.push(context),
+        child: Row(
+          children: [
+            _buildDefaultAvatar(scheme),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '로그인 해주세요'.tr(),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '로그인하여 모든 기능을 이용하세요'.tr(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            FaIcon(
+              FontAwesomeIcons.lightChevronRight,
+              size: 16,
+              color: scheme.onSurfaceVariant,
+            ),
+          ],
+        ),
+      );
+    }
 
     return Row(
       children: [
@@ -655,7 +685,7 @@ class _MenuScreenState extends State<MenuScreen> {
     return GestureDetector(
       onTap: () {
         if (_hasRegisteredCompany) {
-          _openCompanyView(_myCompany!);
+          _openCompanyView();
         } else {
           _openCompanyEdit();
         }
@@ -775,25 +805,16 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  /// 업소 상세 화면 열기
-  void _openCompanyView(CompanyModel company) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CompanyViewScreen(company: company)),
-    );
+  /// 업소 등록/수정 화면 열기
+  void _openCompanyEdit() {
+    if (_myCompany == null) return;
+    CompanyEditScreen.push(context, company: _myCompany!);
   }
 
-  /// 업소 등록/수정 화면 열기
-  Future<void> _openCompanyEdit() async {
-    final company = _myCompany;
-    if (company == null) return;
-
-    final result = await Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(builder: (_) => CompanyEditScreen(company: company)),
-    );
-
-    if (result is CompanyModel && mounted) {
-      setState(() => _myCompany = result);
-    }
+  /// 업소 상세 보기 화면 열기
+  void _openCompanyView() {
+    if (_myCompany == null) return;
+    CompanyViewScreen.push(context, company: _myCompany!);
   }
 
   /// 업소록 메뉴 그리드

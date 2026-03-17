@@ -48,6 +48,7 @@ class _ForumScreenState extends State<ForumScreen> {
     super.dispose();
   }
 
+  /// Returns an empty list when offset >= total to signal end of pagination.
   Future<List<Post>> _fetchPage(int offset) async {
     final nav = AppNavigationState.of(context);
     final result = await PostService.list(
@@ -56,6 +57,7 @@ class _ForumScreenState extends State<ForumScreen> {
       limit: _pageSize,
       offset: offset,
     );
+    if (offset >= result.total && result.total > 0) return [];
     return result.posts;
   }
 

@@ -72,7 +72,7 @@ class CompanyService {
   /// 업소가 없으면 서버에서 자동 생성된다 (status='').
   /// 반환: CompanyModel 또는 null
   static Future<CompanyModel?> mine() async {
-    final result = await ApiService.instance.v7api('company.mine');
+    final result = await ApiService.instance.v7api('company.mine', debug: true);
     if (result.isEmpty) return null;
     return CompanyModel.fromJson(result);
   }

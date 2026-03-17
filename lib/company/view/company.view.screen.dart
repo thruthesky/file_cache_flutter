@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
@@ -14,6 +15,11 @@ import 'package:url_launcher/url_launcher.dart';
 /// 스크롤에 따라 AppBar가 축소되며 업소명이 타이틀로 표시된다.
 /// 내 업소인 경우 수정 버튼이 표시된다.
 class CompanyViewScreen extends StatefulWidget {
+  static const String routeName = '/CompanyView';
+  static Function(BuildContext ctx, {required CompanyModel company}) push =
+      (ctx, {required company}) =>
+          ctx.push(routeName, extra: company);
+
   final CompanyModel company;
 
   const CompanyViewScreen({super.key, required this.company});
@@ -76,13 +82,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     return _company.idxMember == user.idx;
   }
 
-  Future<void> _navigateToEdit() async {
-    final result = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => CompanyEditScreen(company: _company)),
-    );
-    if (result == true && mounted) {
-      _loadCompany();
-    }
+  void _navigateToEdit() {
+    CompanyEditScreen.push(context, company: _company);
   }
 
   Future<void> _launchUrl(String url) async {
