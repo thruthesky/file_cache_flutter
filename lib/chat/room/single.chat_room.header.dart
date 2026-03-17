@@ -62,7 +62,7 @@ class SingleChatRoomHeader extends StatelessWidget {
 
   /// Show menu modal with various options
   void showMenuModal(BuildContext parentContext) {
-    final chatTheme = ChatThemeData.of(parentContext);
+    final chatTheme = ChatThemeData.instance;
     showModalBottomSheet(
       context: parentContext,
 
@@ -73,7 +73,9 @@ class SingleChatRoomHeader extends StatelessWidget {
         /// Comic design: 2px border, rounded corners, no shadow
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(chatTheme.dialog.borderRadius)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(chatTheme.dialog.borderRadius),
+          ),
           border: Border.all(
             color: Theme.of(context).colorScheme.outline,
             width: chatTheme.dialog.borderWidth,
@@ -131,7 +133,9 @@ class SingleChatRoomHeader extends StatelessWidget {
                           color: Theme.of(
                             context,
                           ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+                          borderRadius: BorderRadius.circular(
+                            chatTheme.dialog.borderRadius,
+                          ),
 
                           /// Comic design: 2.0px border with primary color
                           border: Border.all(
@@ -326,7 +330,7 @@ class SingleChatRoomHeader extends StatelessWidget {
   void showLeaveConfirmDialog(BuildContext parentContext) async {
     final theme = Theme.of(parentContext);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.of(parentContext);
+    final chatTheme = ChatThemeData.instance;
 
     // Returns null (dismissed), 'leave', or 'block_and_leave'
     final String? action = await showDialog<String>(
@@ -335,7 +339,9 @@ class SingleChatRoomHeader extends StatelessWidget {
         // Comic design: no shadow
         elevation: chatTheme.dialog.elevation,
         // Comic design: rounded corners (borderRadius: 12)
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+        ),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -343,7 +349,10 @@ class SingleChatRoomHeader extends StatelessWidget {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: 2.0px outline border with rounded corners
-            border: Border.all(color: colorScheme.outline, width: chatTheme.dialog.borderWidth),
+            border: Border.all(
+              color: colorScheme.outline,
+              width: chatTheme.dialog.borderWidth,
+            ),
             borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
           ),
           child: Column(
@@ -384,10 +393,14 @@ class SingleChatRoomHeader extends StatelessWidget {
                       onPressed: () =>
                           Navigator.of(context).pop('block_and_leave'),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
+                        elevation: WidgetStateProperty.all(
+                          chatTheme.dialog.elevation,
+                        ),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              chatTheme.dialog.actionButtonBorderRadius,
+                            ),
                             side: BorderSide(
                               color: colorScheme.error,
                               width: chatTheme.dialog.actionButtonBorderWidth,
@@ -415,10 +428,14 @@ class SingleChatRoomHeader extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop('leave'),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
+                        elevation: WidgetStateProperty.all(
+                          chatTheme.dialog.elevation,
+                        ),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              chatTheme.dialog.actionButtonBorderRadius,
+                            ),
                             side: BorderSide(
                               color: colorScheme.error,
                               width: chatTheme.dialog.actionButtonBorderWidth,
@@ -447,10 +464,14 @@ class SingleChatRoomHeader extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
+                        elevation: WidgetStateProperty.all(
+                          chatTheme.dialog.elevation,
+                        ),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              chatTheme.dialog.actionButtonBorderRadius,
+                            ),
                             side: BorderSide(
                               color: colorScheme.outline,
                               width: chatTheme.dialog.actionButtonBorderWidth,
@@ -641,7 +662,9 @@ class SingleChatRoomHeader extends StatelessWidget {
         padding: chatTheme.dialog.itemPadding,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+          borderRadius: BorderRadius.circular(
+            chatTheme.dialog.itemBorderRadius,
+          ),
 
           /// Comic design: 2.0px border with outline color
           border: Border.all(
@@ -926,21 +949,27 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
                   /// Comic design: 2px border
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                    borderRadius: BorderRadius.circular(
+                      chatTheme.dialog.actionButtonBorderRadius,
+                    ),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.outline,
                       width: chatTheme.dialog.borderWidth,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                    borderRadius: BorderRadius.circular(
+                      chatTheme.dialog.actionButtonBorderRadius,
+                    ),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.outline,
                       width: chatTheme.dialog.borderWidth,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                    borderRadius: BorderRadius.circular(
+                      chatTheme.dialog.actionButtonBorderRadius,
+                    ),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.primary,
                       width: chatTheme.dialog.borderWidth,
@@ -966,11 +995,15 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     onPressed: () => Navigator.of(dialogContext).pop(),
                     style: ButtonStyle(
                       // Comic design: no shadow
-                      elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
+                      elevation: WidgetStateProperty.all(
+                        chatTheme.dialog.elevation,
+                      ),
                       // Comic design: 2.0px border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                          borderRadius: BorderRadius.circular(
+                            chatTheme.dialog.actionButtonBorderRadius,
+                          ),
                           side: BorderSide(
                             color: Theme.of(dialogContext).colorScheme.outline,
                             width: chatTheme.dialog.actionButtonBorderWidth,
@@ -1010,11 +1043,15 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     },
                     style: ButtonStyle(
                       // Comic design: no shadow
-                      elevation: WidgetStateProperty.all(chatTheme.dialog.elevation),
+                      elevation: WidgetStateProperty.all(
+                        chatTheme.dialog.elevation,
+                      ),
                       // Comic design: 2.0px border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                          borderRadius: BorderRadius.circular(
+                            chatTheme.dialog.actionButtonBorderRadius,
+                          ),
                           side: BorderSide(
                             color: Theme.of(dialogContext).colorScheme.primary,
                             width: chatTheme.dialog.actionButtonBorderWidth,
@@ -1054,11 +1091,14 @@ class _FavoritesModalState extends State<_FavoritesModal> {
   @override
   Widget build(BuildContext context) {
     final chatTheme = ChatThemeData.instance;
+
     /// Comic design: 2px border, rounded corners, no shadow
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(chatTheme.dialog.borderRadius)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(chatTheme.dialog.borderRadius),
+        ),
 
         /// Comic design: 2px border with outline color, no shadow
         border: Border.all(
@@ -1143,7 +1183,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                               color: Theme.of(
                                 context,
                               ).colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+                              borderRadius: BorderRadius.circular(
+                                chatTheme.dialog.borderRadius,
+                              ),
 
                               /// Comic design: 2px border, no shadow
                               border: Border.all(
@@ -1183,7 +1225,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                             onTap: isFolderLoading
                                 ? null
                                 : () => addToFavoriteFolder(folderName),
-                            borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              chatTheme.dialog.itemBorderRadius,
+                            ),
                             child: Container(
                               padding: chatTheme.dialog.itemPadding,
                               decoration: BoxDecoration(
@@ -1193,7 +1237,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                           .primaryContainer
                                           .withValues(alpha: 0.3)
                                     : Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  chatTheme.dialog.itemBorderRadius,
+                                ),
 
                                 /// Comic design: 2px border
                                 border: Border.all(
@@ -1235,7 +1281,9 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                                 ),
                                           ),
                                   ),
-                                  SizedBox(width: chatTheme.dialog.avatarSpacing),
+                                  SizedBox(
+                                    width: chatTheme.dialog.avatarSpacing,
+                                  ),
 
                                   /// Folder info
                                   Expanded(

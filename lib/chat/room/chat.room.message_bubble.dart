@@ -158,34 +158,29 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                 color: isCurrentUser
                                     ? Theme.of(context).colorScheme.primary
                                           .withValues(alpha: 50)
-                                    : Theme.of(context)
-                                          .colorScheme
-                                          .onSecondary,
-                                borderRadius: BorderRadius.circular(
-                                  bubbleTheme.bubbleBorderRadius,
-                                ).copyWith(
-                                  bottomLeft: Radius.circular(
-                                    !isCurrentUser && showSenderInfo
-                                        ? bubbleTheme.bubbleTailRadius
-                                        : bubbleTheme.bubbleBorderRadius,
-                                  ),
-                                  bottomRight: Radius.circular(
-                                    isCurrentUser && showSenderInfo
-                                        ? bubbleTheme.bubbleTailRadius
-                                        : bubbleTheme.bubbleBorderRadius,
-                                  ),
-                                ),
+                                    : Theme.of(context).colorScheme.onSecondary,
+                                borderRadius:
+                                    BorderRadius.circular(
+                                      bubbleTheme.bubbleBorderRadius,
+                                    ).copyWith(
+                                      bottomLeft: Radius.circular(
+                                        !isCurrentUser && showSenderInfo
+                                            ? bubbleTheme.bubbleTailRadius
+                                            : bubbleTheme.bubbleBorderRadius,
+                                      ),
+                                      bottomRight: Radius.circular(
+                                        isCurrentUser && showSenderInfo
+                                            ? bubbleTheme.bubbleTailRadius
+                                            : bubbleTheme.bubbleBorderRadius,
+                                      ),
+                                    ),
                               ),
                               child: SelectableLinkify(
                                 text: message.text!,
                                 style: TextStyle(
                                   color: isCurrentUser
-                                      ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                      : Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.secondary,
                                   fontSize: bubbleTheme.messageFontSize,
                                 ),
                                 linkStyle: isCurrentUser
@@ -244,8 +239,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
           padding: bubbleTheme.protocolPadding,
           decoration: BoxDecoration(
             color: bubbleTheme.protocolBgColor,
-            borderRadius:
-                BorderRadius.circular(bubbleTheme.protocolBorderRadius),
+            borderRadius: BorderRadius.circular(
+              bubbleTheme.protocolBorderRadius,
+            ),
           ),
           child: Text(
             protocolText,
@@ -321,8 +317,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 ? onImageTap!(urls[i])
                 : _showFullScreenImage(context, urls, i),
             child: ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(bubbleTheme.imageBorderRadius),
+              borderRadius: BorderRadius.circular(
+                bubbleTheme.imageBorderRadius,
+              ),
               child: CachedNetworkImage(
                 imageUrl: urls[i],
                 width: bubbleTheme.imageWidth,
@@ -343,8 +340,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ),
           ),
           // Add spacing between images except for the last one
-          if (i < urls.length - 1)
-            SizedBox(height: bubbleTheme.imageSpacing),
+          if (i < urls.length - 1) SizedBox(height: bubbleTheme.imageSpacing),
         ],
       ],
     );
@@ -463,20 +459,21 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           padding: bubbleTheme.textPadding,
                           decoration: BoxDecoration(
                             color: bubbleTheme.blockedBgColor,
-                            borderRadius: BorderRadius.circular(
-                              bubbleTheme.bubbleBorderRadius,
-                            ).copyWith(
-                              bottomLeft: Radius.circular(
-                                !isCurrentUser && showSenderInfo
-                                    ? bubbleTheme.bubbleTailRadius
-                                    : bubbleTheme.bubbleBorderRadius,
-                              ),
-                              bottomRight: Radius.circular(
-                                isCurrentUser && showSenderInfo
-                                    ? bubbleTheme.bubbleTailRadius
-                                    : bubbleTheme.bubbleBorderRadius,
-                              ),
-                            ),
+                            borderRadius:
+                                BorderRadius.circular(
+                                  bubbleTheme.bubbleBorderRadius,
+                                ).copyWith(
+                                  bottomLeft: Radius.circular(
+                                    !isCurrentUser && showSenderInfo
+                                        ? bubbleTheme.bubbleTailRadius
+                                        : bubbleTheme.bubbleBorderRadius,
+                                  ),
+                                  bottomRight: Radius.circular(
+                                    isCurrentUser && showSenderInfo
+                                        ? bubbleTheme.bubbleTailRadius
+                                        : bubbleTheme.bubbleBorderRadius,
+                                  ),
+                                ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,8 +494,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                     blindReason,
                                     style: TextStyle(
                                       color: bubbleTheme.blockedTextColor,
-                                      fontSize:
-                                          bubbleTheme.blockedTextFontSize,
+                                      fontSize: bubbleTheme.blockedTextFontSize,
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
@@ -543,8 +539,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           padding: bubbleTheme.textPadding,
           decoration: BoxDecoration(
             color: bubbleTheme.blockedBgColor,
-            borderRadius:
-                BorderRadius.circular(bubbleTheme.bubbleBorderRadius),
+            borderRadius: BorderRadius.circular(bubbleTheme.bubbleBorderRadius),
             border: Border.all(color: bubbleTheme.blockedBorderColor),
           ),
           child: Row(
@@ -584,7 +579,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     // Don't show options for current user's messages or if roomId is null
     if (isCurrentUser || roomId == null) return;
 
-    final chatTheme = ChatThemeData.of(parentContext);
+    final chatTheme = ChatThemeData.instance;
     final bubbleTheme = chatTheme.bubble;
 
     showModalBottomSheet(
