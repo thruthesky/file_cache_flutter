@@ -96,8 +96,6 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
             builderDelegate: PagedChildBuilderDelegate<Post>(
               itemBuilder: (context, post, index) => PostListTile(
                 post: post,
-                theme: theme,
-                scheme: scheme,
                 onTap: () => _openPostView(post),
               ),
               firstPageProgressIndicatorBuilder: (_) =>

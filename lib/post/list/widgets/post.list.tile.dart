@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
@@ -7,15 +8,11 @@ import 'package:philgo/user/widgets/user_avatar.dart';
 /// 게시글 리스트 타일
 class PostListTile extends StatelessWidget {
   final Post post;
-  final ThemeData theme;
-  final ColorScheme scheme;
   final VoidCallback onTap;
 
   const PostListTile({
     super.key,
     required this.post,
-    required this.theme,
-    required this.scheme,
     required this.onTap,
   });
 
@@ -49,7 +46,7 @@ class PostListTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       child: Material(
-        color: scheme.surfaceContainerLow,
+        color: color.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: onTap,
@@ -75,8 +72,8 @@ class PostListTile extends StatelessWidget {
                           post.subject,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            color: scheme.onSurface,
+                          style: text.titleLarge?.copyWith(
+                            color: color.onSurface,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -95,8 +92,8 @@ class PostListTile extends StatelessWidget {
                                   post.userName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: scheme.onSurface,
+                                  style: text.bodySmall?.copyWith(
+                                    color: color.onSurface,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -106,8 +103,8 @@ class PostListTile extends StatelessWidget {
                             // 날짜
                             Text(
                               _formatDate(post.stamp),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.outline,
+                              style: text.bodySmall?.copyWith(
+                                color: color.outline,
                               ),
                             ),
                             // 통계
@@ -116,13 +113,13 @@ class PostListTile extends StatelessWidget {
                               FaIcon(
                                 FontAwesomeIcons.lightEye,
                                 size: 13,
-                                color: scheme.outline,
+                                color: color.outline,
                               ),
                               const SizedBox(width: 3),
                               Text(
                                 '${post.noOfView}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: scheme.outline,
+                                style: text.bodySmall?.copyWith(
+                                  color: color.outline,
                                 ),
                               ),
                             ],
@@ -136,7 +133,7 @@ class PostListTile extends StatelessWidget {
                               const SizedBox(width: 3),
                               Text(
                                 '${post.noOfComment}',
-                                style: theme.textTheme.bodySmall?.copyWith(
+                                style: text.bodySmall?.copyWith(
                                   color: commentColor,
                                   fontWeight: commentBold
                                       ? FontWeight.w600
@@ -149,13 +146,13 @@ class PostListTile extends StatelessWidget {
                               FaIcon(
                                 FontAwesomeIcons.lightThumbsUp,
                                 size: 13,
-                                color: scheme.outline,
+                                color: color.outline,
                               ),
                               const SizedBox(width: 3),
                               Text(
                                 '${post.good}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: scheme.outline,
+                                style: text.bodySmall?.copyWith(
+                                  color: color.outline,
                                 ),
                               ),
                             ],
@@ -175,9 +172,9 @@ class PostListTile extends StatelessWidget {
 
   /// 댓글 수에 따른 색상 반환
   Color _getCountColor(int count) {
-    if (count >= 10) return scheme.error;
+    if (count >= 10) return color.error;
     if (count >= 5) return Colors.amber.shade700;
-    return scheme.tertiary;
+    return color.tertiary;
   }
 
   /// Unix timestamp → 상대 시간 또는 날짜 문자열

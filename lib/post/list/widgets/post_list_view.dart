@@ -33,8 +33,6 @@ class PostListView extends StatelessWidget {
           builderDelegate: PagedChildBuilderDelegate<Post>(
             itemBuilder: (context, post, index) => PostListTile(
               post: post,
-              theme: theme,
-              scheme: scheme,
               onTap: () => onPostTap(post),
             ),
             firstPageProgressIndicatorBuilder: (_) =>
