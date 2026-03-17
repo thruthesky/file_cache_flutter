@@ -47,7 +47,7 @@ class _MenuScreenState extends State<MenuScreen> {
       } else {
         _loadMyCompany();
         log('User logged in, loaded my company data');
-      }
+    }
     });
   }
 

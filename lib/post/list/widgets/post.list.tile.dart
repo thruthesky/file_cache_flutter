@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
@@ -89,7 +90,7 @@ class PostListTile extends StatelessWidget {
                               child: ConstrainedBox(
                                 constraints: const BoxConstraints(maxWidth: 80),
                                 child: Text(
-                                  post.userName,
+                                  post.userName.isNotEmpty ? post.userName : '이름없음'.tr(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: text.bodySmall?.copyWith(

@@ -4,8 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/globals.dart';
-import 'package:philgo/user/login/google_signin.button.dart';
-import 'package:philgo/user/login/kakao_signin.button.dart';
+import 'package:philgo/user/login/widgets/google_signin.button.dart';
+import 'package:philgo/user/login/widgets/kakao_signin.button.dart';
 
 class UserLoginScreen extends StatefulWidget {
   static const String routeName = '/login';

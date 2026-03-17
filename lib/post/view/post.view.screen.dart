@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
@@ -10,7 +11,9 @@ import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/post/view/widgets/post_comment_bar.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 /// 게시글 상세 보기 화면
@@ -426,24 +429,34 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
   }
 
+  void _openUserProfile(int idxMember) {
+    if (idxMember == 0) return;
+    context.push(OtherUserScreen.routeByIdx(idxMember));
+  }
+
   Widget _buildMeta(Post post, ThemeData theme, ColorScheme scheme) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // 아바타
-        UserAvatar(photoUrl: post.userPhotoUrl, radius: 16),
+        GestureDetector(
+          onTap: () => _openUserProfile(post.idxMember),
+          child: UserAvatar(photoUrl: post.userPhotoUrl, radius: 16),
+        ),
         const SizedBox(width: 10),
         // 이름 + 날짜 컬럼
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (post.userName.isNotEmpty)
-                Text(
-                  post.userName,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w600,
+              GestureDetector(
+                  onTap: () => _openUserProfile(post.idxMember),
+                  child: Text(
+                    post.userName.isNotEmpty ? post.userName : '이름없음'.tr(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               Row(

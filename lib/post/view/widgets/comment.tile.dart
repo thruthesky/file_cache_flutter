@@ -1,6 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
@@ -57,6 +60,11 @@ class _CommentTileState extends State<CommentTile> {
   void initState() {
     super.initState();
     _goodCount = widget.comment.good;
+  }
+
+  void _openUserProfile(BuildContext context, int idxMember) {
+    if (idxMember == 0) return;
+    context.push(OtherUserScreen.routeByIdx(idxMember));
   }
 
   Future<void> _toggleLike() async {
@@ -125,7 +133,10 @@ class _CommentTileState extends State<CommentTile> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 8),
-                UserAvatar(photoUrl: comment.userPhotoUrl),
+                GestureDetector(
+                  onTap: () => _openUserProfile(context, comment.idxMember),
+                  child: UserAvatar(photoUrl: comment.userPhotoUrl),
+                ),
                 // 세로선: 아바타 하단에서 코멘트 하단까지 (중앙 정렬, 아바타와 붙어있음)
                 Expanded(
                   child: Align(
@@ -169,7 +180,10 @@ class _CommentTileState extends State<CommentTile> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          UserAvatar(photoUrl: comment.userPhotoUrl),
+          GestureDetector(
+            onTap: () => _openUserProfile(context, comment.idxMember),
+            child: UserAvatar(photoUrl: comment.userPhotoUrl),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: _buildContentColumn(
@@ -209,10 +223,11 @@ class _CommentTileState extends State<CommentTile> {
           // 작성자 + 날짜
           Row(
             children: [
-              if (comment.userName.isNotEmpty) ...[
-                Flexible(
+              Flexible(
+                child: GestureDetector(
+                  onTap: () => _openUserProfile(context, comment.idxMember),
                   child: Text(
-                    comment.userName,
+                    comment.userName.isNotEmpty ? comment.userName : '이름없음'.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onPrimaryContainer,
@@ -220,8 +235,8 @@ class _CommentTileState extends State<CommentTile> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-              ],
+              ),
+              const SizedBox(width: 8),
               Text(
                 _formatDate(comment.stamp),
                 style: theme.textTheme.bodySmall?.copyWith(

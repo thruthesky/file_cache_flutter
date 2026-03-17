@@ -8,6 +8,7 @@ class Translations {
 
   static const Map<String, dynamic> ko = {
     // 공통
+    '이름없음': '이름없음',
     '로그인': '로그인',
     '로그아웃': '로그아웃',
     '로그인이 필요합니다': '로그인이 필요합니다',
@@ -114,6 +115,19 @@ class Translations {
     '계정 삭제': '계정 삭제',
     '게시글 보기': '게시글 보기',
 
+    // 다른 사용자 프로필
+    '프로필': '프로필',
+    '글': '글',
+    '레벨': '레벨',
+    '사용자 정보를 불러올 수 없습니다': '사용자 정보를 불러올 수 없습니다',
+    '최근 글': '최근 글',
+    '차단': '차단',
+    '신고': '신고',
+    '차단 기능은 준비 중입니다.': '차단 기능은 준비 중입니다.',
+    '신고 기능은 준비 중입니다.': '신고 기능은 준비 중입니다.',
+    '채팅 기능은 준비 중입니다.': '채팅 기능은 준비 중입니다.',
+    '오류': '오류',
+
     // 추가 카테고리
     '로그인 후 이용할 수 있습니다.': '로그인 후 이용할 수 있습니다.',
     '질문답변': '질문답변',
@@ -145,6 +159,7 @@ class Translations {
 
   static const Map<String, dynamic> en = {
     // 공통
+    '이름없음': 'No name',
     '로그인': 'Login',
     '로그아웃': 'Logout',
     '로그인이 필요합니다': 'Login required',
@@ -250,6 +265,19 @@ class Translations {
     '버전 정보': 'Version Info',
     '계정 삭제': 'Delete Account',
     '게시글 보기': 'View Post',
+
+    // 다른 사용자 프로필
+    '프로필': 'Profile',
+    '글': 'Posts',
+    '레벨': 'Level',
+    '사용자 정보를 불러올 수 없습니다': 'Unable to load user information',
+    '최근 글': 'Recent Posts',
+    '차단': 'Block',
+    '신고': 'Report',
+    '차단 기능은 준비 중입니다.': 'Block feature is coming soon.',
+    '신고 기능은 준비 중입니다.': 'Report feature is coming soon.',
+    '채팅 기능은 준비 중입니다.': 'Chat feature is coming soon.',
+    '오류': 'Error',
 
     // 추가 카테고리
     '로그인 후 이용할 수 있습니다.': 'Please login to continue.',

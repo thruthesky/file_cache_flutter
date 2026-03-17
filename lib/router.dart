@@ -6,6 +6,7 @@ import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/user/other_user/other_user.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -79,6 +80,15 @@ final router = GoRouter(
     //     child: const EntryScreen(),
     //   ),
     // ),
+    GoRoute(
+      path: OtherUserScreen.routeName,
+      name: OtherUserScreen.routeName,
+      builder: (context, state) {
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '');
+        final firebaseUid = state.uri.queryParameters['firebase_uid'];
+        return OtherUserScreen(idx: idx, firebaseUid: firebaseUid);
+      },
+    ),
     GoRoute(
       path: ChatRoomScreen.routeName,
       name: ChatRoomScreen.routeName,
