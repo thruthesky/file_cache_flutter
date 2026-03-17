@@ -36,6 +36,7 @@
    - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
    - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
+   - [코멘트 앵커 스크롤 (#comment-{idx})](#코멘트-앵커-스크롤-comment-idx)
 15. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
 16. [신고(Report) 기능](#신고report-기능)
 17. [부동산 게시판 (real_estate)](#부동산-게시판-real_estate) → [별도 문서](v7-post-real-estate.md)
@@ -2137,6 +2138,99 @@ document.addEventListener('click', function (e) {
 | **thread-line left 위치** | 데스크톱 `left: 17px` (avatar-col 36px/2 - 1px), 모바일 `left: 14px` (30px/2 - 1px) |
 | **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |
 | **user-hover-dropdown 위젯 적용** | 코멘트 아바타(`.comment-avatar-col`)와 닉네임(`.post-comment-header`)에 `renderUserHoverDropdown()` 위젯을 적용하여 호버 드롭다운 메뉴를 표시한다 |
+
+#### 코멘트 앵커 스크롤 (#comment-{idx})
+
+글 읽기 페이지(`v7/post/view.php`)에서 URL 해시를 통해 특정 코멘트로 직접 스크롤하는 기능이다.
+사이드바 최근 댓글, 최근 댓글 목록 페이지, 공개 프로필, 관리자 페이지 등에서 코멘트 링크를 클릭하면 해당 코멘트 위치로 자동 이동한다.
+
+##### 앵커 형식
+
+```
+#comment-{idx}
+```
+
+- `{idx}`는 `sf_post_data.idx` 값 (코멘트의 고유 식별자)
+- 예시: `#comment-12345`, `#comment-99876`
+
+##### HTML 구조
+
+각 코멘트 노드(`.comment-node`)에 `id="comment-{idx}"` 속성을 추가하여 앵커 타겟으로 사용한다.
+
+```html
+<!-- PHP renderCommentThread()에서 렌더링 -->
+<div class="comment-node has-children" id="comment-<?= $comment->idx ?>">
+    <div class="comment-row">...</div>
+    <div class="thread-line">...</div>
+    <div class="thread-children">...</div>
+</div>
+```
+
+##### 자동 스크롤 + 하이라이트 동작
+
+페이지 로드 시 URL 해시에 `#comment-{idx}` 패턴이 있으면:
+
+1. **스크롤**: 해당 코멘트 요소를 뷰포트 중앙으로 부드럽게 스크롤 (`scrollIntoView({ behavior: 'smooth', block: 'center' })`)
+2. **하이라이트**: 코멘트에 `.comment-highlight` 클래스를 추가하여 시각적으로 강조 표시
+3. **하이라이트 해제**: 일정 시간(약 2~3초) 후 하이라이트 클래스를 자동 제거
+
+##### 하이라이트 CSS
+
+```css
+/* 코멘트 앵커 하이라이트 애니메이션 */
+.comment-node.comment-highlight > .comment-row {
+    background-color: rgba(59, 130, 246, 0.1);  /* 블루 계열 반투명 배경 */
+    border-radius: 6px;
+    transition: background-color 0.5s ease;
+}
+```
+
+##### 앵커 링크를 사용하는 페이지
+
+| 페이지 | 파일 경로 | 링크 형식 |
+|--------|-----------|-----------|
+| **사이드바 최근 댓글** | `v7/widgets/sidebar/latest-comments.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+| **최근 댓글 목록** | `v7/post/latest-comments.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+| **공개 프로필** | `v7/user/public-profile.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+| **관리자 코멘트 페이지** | `v7/admin/comments.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+
+> `$parentIdx`는 코멘트가 속한 최상위 게시글의 `idx` (코멘트의 `root_idx` 또는 게시글의 `idx`)
+
+##### JavaScript 구현
+
+글 읽기 페이지(`v7/post/view.php`)의 JavaScript에서 페이지 로드 시 해시를 감지한다.
+
+```javascript
+// 코멘트 앵커 스크롤 처리
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#comment-')) {
+        const target = document.querySelector(hash);
+        if (target) {
+            // 부드러운 스크롤
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);  // DOM 렌더링 완료 대기
+
+            // 하이라이트 효과
+            target.classList.add('comment-highlight');
+            setTimeout(() => {
+                target.classList.remove('comment-highlight');
+            }, 3000);  // 3초 후 하이라이트 해제
+        }
+    }
+});
+```
+
+##### 주의사항
+
+| 규칙 | 설명 |
+|------|------|
+| **id 형식 고정** | 코멘트 노드의 id는 반드시 `comment-{idx}` 형식이어야 한다. 다른 형식(`c-{idx}`, `cmt-{idx}` 등) 사용 금지 |
+| **scrollIntoView block: 'center'** | 코멘트를 뷰포트 **중앙**에 위치시킨다. `'start'`를 사용하면 탑바에 가려질 수 있다 |
+| **setTimeout 지연** | DOM 렌더링과 adjustThreadLines() 실행 완료 후 스크롤해야 하므로 약간의 지연(300ms)을 둔다 |
+| **접힌 코멘트 처리** | 앵커 대상 코멘트가 접힌(collapsed) 상태인 경우, 부모 노드를 펼친 후 스크롤해야 한다 |
+| **블루 테마 하이라이트** | 하이라이트 색상은 블루 계열(`rgba(59, 130, 246, ...)`)을 사용한다. 빨간색 금지 |
 
 ---
 
