@@ -220,6 +220,28 @@ if (!empty($originalUrl) && str_starts_with($originalUrl, '/uploads/')) {
 }
 ```
 
+**v4 레거시 이미지 폴백** (`no_of_first_image`):
+
+`varchar_17`이나 `thumbnail_400x400`이 모두 비어 있는 오래된 글(v4 시대 데이터)의 경우,
+`no_of_first_image` 필드를 사용하여 이미지 URL을 직접 생성하는 폴백 로직이 있다.
+이 로직은 **타일 레이아웃**(`post-list-tile.php`)과 **Masonry 레이아웃**(`post-list-masonry.php`) 양쪽에 모두 적용되어 있다.
+
+```php
+// v4 레거시 폴백: no_of_first_image로 이미지 URL 생성
+if (empty($_thumbnailUrl) && !empty($post['no_of_first_image'])) {
+    $nofi = (int)$post['no_of_first_image'];
+    if ($nofi > 0) {
+        $_thumbnailUrl = 'https://file.philgo.com/data/upload/' . ($nofi % 10) . '/' . $nofi;
+    }
+}
+```
+
+| 우선순위 | 소스 | 설명 |
+|---------|------|------|
+| 1순위 | `thumbnail_400x400` (varchar_10~12) | 레거시 캐시 썸네일 (있는 경우) |
+| 2순위 | `varchar_17` | v7 원본 이미지 URL → `ImageService::buildThumbnailUrl()`로 동적 생성 |
+| 3순위 | `no_of_first_image` | v4 레거시 폴백 — `https://file.philgo.com/data/upload/{idx%10}/{idx}` |
+
 **PostEntity 편의 속성**: `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성은 varchar_10~12에 매핑되어 있으며, 레거시 데이터 호환용으로 유지된다. 새 글에서는 이 속성들이 빈 값이며, 썸네일이 필요하면 `varchar_17`에서 `ImageService::buildThumbnailUrl()`로 동적 생성해야 한다.
 
 **포인트 처리**:
