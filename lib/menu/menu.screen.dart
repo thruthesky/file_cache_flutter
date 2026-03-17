@@ -11,6 +11,7 @@ import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
@@ -471,7 +472,11 @@ class _MenuScreenState extends State<MenuScreen> {
       _MenuItemData(FontAwesomeIcons.lightMagnifyingGlass, '친구 검색'.tr()),
       _MenuItemData(FontAwesomeIcons.lightUserSlash, '차단된 사용자'.tr()),
       _MenuItemData(FontAwesomeIcons.lightTicket, '이벤트 쿠폰'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCoins, '포인트 내역'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightCoins,
+        '포인트 내역'.tr(),
+        onTap: () => PointHistoryScreen.push(context),
+      ),
     ];
 
     return _buildMenuGrid(items, theme, scheme);

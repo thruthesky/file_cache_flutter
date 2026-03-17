@@ -6,6 +6,7 @@ import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
@@ -80,6 +81,11 @@ final router = GoRouter(
     //     child: const EntryScreen(),
     //   ),
     // ),
+    GoRoute(
+      path: PointHistoryScreen.routeName,
+      name: PointHistoryScreen.routeName,
+      builder: (context, state) => const PointHistoryScreen(),
+    ),
     GoRoute(
       path: OtherUserScreen.routeName,
       name: OtherUserScreen.routeName,
