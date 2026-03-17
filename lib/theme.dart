@@ -1,39 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.theme.dart';
 
+/// 필고 앱 전체 테마 (라이트 모드 전용, 블루 컬러 스킴)
 ThemeData philgoThemeData(BuildContext context) {
-  return Theme.of(context).copyWith(
+  const blue = Color(0xFF007AFF);
+
+  final colorScheme = ColorScheme.fromSeed(
+    seedColor: blue,
+    brightness: Brightness.light,
+    primary: blue,
+    onPrimary: Colors.white,
+    secondary: const Color(0xFF5AC8FA),
+    onSecondary: Colors.white,
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: colorScheme,
     extensions: [
       ChatThemeData.defaults(),
     ],
-    colorScheme: Theme.of(context).colorScheme.copyWith(
-      primary: const Color(0xFF007AFF), // iOS 스타일의 파란색
-      secondary: const Color(0xFF34C759), // iOS 스타일의 녹색
-    ),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF007AFF), // iOS 스타일의 파란색
-      foregroundColor: Colors.white, // 흰색 텍스트
-      elevation: 0, // 그림자 제거
+    scaffoldBackgroundColor: colorScheme.surface,
+    appBarTheme: AppBarTheme(
+      backgroundColor: colorScheme.surface,
+      foregroundColor: colorScheme.onSurface,
+      elevation: 0,
+      scrolledUnderElevation: 0,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF007AFF), // iOS 스타일의 파란색
-        foregroundColor: Colors.white, // 흰색 텍스트
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // 둥근 모서리
-        ),
+        backgroundColor: blue,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: const Color(0xFF007AFF), // iOS 스타일의 파란색
+      style: TextButton.styleFrom(foregroundColor: blue),
+    ),
+    cardTheme: CardThemeData(
+      elevation: 0,
+      shadowColor: Colors.transparent,
+      color: colorScheme.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     ),
-    cardTheme: const CardThemeData(
-      elevation: 0, // 그림자 제거
-      shadowColor: Colors.transparent, // 그림자 색상 제거
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)), // 둥근 모서리
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: blue,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      focusElevation: 0,
+      hoverElevation: 0,
+      highlightElevation: 0,
+    ),
+    dividerTheme: DividerThemeData(
+      color: colorScheme.outlineVariant,
+      thickness: 1,
+      space: 1,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: blue, width: 1.5),
       ),
     ),
   );

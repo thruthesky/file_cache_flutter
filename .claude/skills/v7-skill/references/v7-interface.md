@@ -13,7 +13,7 @@
   - [2.4 계산 필드 패턴](#24-계산-필드-패턴)
   - [2.5 런타임 속성 패턴](#25-런타임-속성-패턴)
   - [2.6 PointLogEntity 특수 패턴 (생성자 + fromArray 공존)](#26-pointlogentity-특수-패턴-생성자--fromarray-공존)
-  - [2.7 전체 Entity 목록 (14개)](#27-전체-entity-목록-14개)
+  - [2.7 전체 Entity 목록 (15개)](#27-전체-entity-목록-15개)
 - [3. RepositoryInterface](#3-repositoryinterface)
   - [3.1 인터페이스 소스코드](#31-인터페이스-소스코드)
   - [3.2 메서드 설명](#32-메서드-설명)
@@ -34,6 +34,7 @@
   - [6.6 EventCouponRepository — 리네이밍 + Entity 리턴 타입 수정](#66-eventcouponrepository--리네이밍--entity-리턴-타입-수정)
 - [7. 새 Entity/Repository 추가 워크플로우](#7-새-entityrepository-추가-워크플로우)
 - [8. 주의 사항 및 규칙](#8-주의-사항-및-규칙)
+  - [8.5 Service에서 findByIdx() nullable 반환값 null 체크 필수 (P1006 방지)](#85-service에서-findbyidx-nullable-반환값-null-체크-필수-p1006-방지)
 - [9. Interface 호환성 테스트 (PEST)](#9-interface-호환성-테스트-pest)
   - [9.1 테스트 파일 및 실행 방법](#91-테스트-파일-및-실행-방법)
   - [9.2 EntityInterface 테스트 패턴](#92-entityinterface-테스트-패턴)
@@ -71,7 +72,7 @@
 
 ### 1.1 도입 배경
 
-v7 시스템의 Entity 14개, Service 13개, Repository 11개 클래스 사이에 다음 문제가 있었다:
+v7 시스템의 Entity 15개, Service 13개, Repository 11개 클래스 사이에 다음 문제가 있었다:
 
 | 문제 | 예시 |
 |------|------|
@@ -97,7 +98,7 @@ v7 시스템의 Entity 14개, Service 13개, Repository 11개 클래스 사이�
 
 | 계층 | 인터페이스 | 적용 | 미적용 이유 |
 |------|-----------|------|-----------|
-| **Entity** | `EntityInterface` | 14개 전체 | — |
+| **Entity** | `EntityInterface` | 15개 전체 | — |
 | **Repository** | `RepositoryInterface` | 6개 | 5개 예외: CRUD 패턴과 안 맞는 도메인 |
 | **Service** | `ServiceInterface` | 10개 전체 | 모든 Service가 5개 CRUD를 직접 구현 |
 
@@ -324,7 +325,7 @@ class PointLogEntity implements EntityInterface
 }
 ```
 
-### 2.7 전체 Entity 목록 (14개)
+### 2.7 전체 Entity 목록 (15개)
 
 모든 Entity는 `EntityInterface`를 구현한다.
 
@@ -332,6 +333,7 @@ class PointLogEntity implements EntityInterface
 |--------|-------------|----------|--------|---------|
 | UserEntity | `Philgo\User` | `lib/user/UserEntity.php` | sf_member | level() 계산 필드 |
 | PostEntity | `Philgo\Post` | `lib/post/PostEntity.php` | sf_post_data | 800+ LOC, 확장 필드(int_1~10, varchar_1~20 등) |
+| PostConfigEntity | `Philgo\Post` | `lib/post/PostConfigEntity.php` | sf_post_config | 게시판 설정 Entity. `exists()`, `displayName()` 편의 메서드. `PostRepository::getPostConfig()` 반환 타입으로 사용 |
 | CompanyEntity | `Philgo\Company` | `lib/company/CompanyEntity.php` | company | 패밀리사이트 관련 필드 |
 | CompanyMetaEntity | `Philgo\Company` | `lib/company/CompanyMetaEntity.php` | company_meta | key-value 메타 |
 | QrCodeEntity | `Philgo\Company` | `lib/company/QrCodeEntity.php` | company_qr_codes | QR 발행 기록 |
@@ -1140,6 +1142,86 @@ return array_map(fn($row) => XxxEntity::fromArray($row), $rows);
 return $stmt->fetchAll(PDO::FETCH_ASSOC);
 ```
 
+### 8.5 Service에서 findByIdx() nullable 반환값 null 체크 필수 (P1006 방지)
+
+`RepositoryInterface::findByIdx()`는 `?EntityInterface`를 반환한다 (레코드가 없으면 `null`).
+Service 계층에서 `findByIdx()`를 호출한 후 **반드시 null 체크를 수행**해야 한다.
+null 체크 없이 Entity를 직접 반환하면 Intelephense P1006 타입 에러가 발생한다.
+
+**이 규칙이 적용되는 경우**:
+- Service의 `update()`, `get()`, `delete()` 등 **non-nullable Entity를 반환하는 메서드**에서 `findByIdx()`를 호출할 때
+- Repository에서 조회한 결과를 그대로 반환하는 모든 경우
+
+**실제 수정 사례 — PointLogService::updateLog()**:
+
+```php
+// ❌ BEFORE: P1006 에러 발생 — ?PointLogEntity를 PointLogEntity로 직접 반환
+public static function updateLog(int $idx, array $data): PointLogEntity
+{
+    PointLogRepository::update($idx, $data);
+    return PointLogRepository::findByIdx($idx);  // ❌ ?PointLogEntity → PointLogEntity 타입 불일치
+}
+
+// ✅ AFTER: null 체크 추가로 P1006 해결
+public static function updateLog(int $idx, array $data): PointLogEntity
+{
+    PointLogRepository::update($idx, $data);
+    $updated = PointLogRepository::findByIdx($idx);
+    if ($updated === null) {
+        throw new RuntimeException('포인트 로그 수정 후 조회에 실패했습니다. idx=' . $idx);
+    }
+    return $updated;  // ✅ 이 시점에서 PointLogEntity 타입 확정
+}
+```
+
+**표준 패턴 — Service에서 findByIdx() 호출 시 null 체크**:
+
+```php
+// ★ 패턴 1: get() 메서드 — 조회 실패 시 예외
+public static function get(array $input): XxxEntity
+{
+    $idx = (int) ($input['idx'] ?? 0);
+    $entity = XxxRepository::findByIdx($idx);
+    if ($entity === null) {
+        throw new RuntimeException('해당 레코드를 찾을 수 없습니다. idx=' . $idx);
+    }
+    return $entity;
+}
+
+// ★ 패턴 2: update() 메서드 — 수정 후 재조회 시 null 체크
+public static function update(array $input): XxxEntity
+{
+    $idx = (int) ($input['idx'] ?? 0);
+    XxxRepository::update($idx, $data);
+    $updated = XxxRepository::findByIdx($idx);
+    if ($updated === null) {
+        throw new RuntimeException('수정 후 조회에 실패했습니다. idx=' . $idx);
+    }
+    return $updated;
+}
+
+// ★ 패턴 3: delete() 메서드 — 삭제 전 존재 확인
+public static function delete(array $input): array
+{
+    $idx = (int) ($input['idx'] ?? 0);
+    $entity = XxxRepository::findByIdx($idx);
+    if ($entity === null) {
+        throw new RuntimeException('삭제할 레코드를 찾을 수 없습니다. idx=' . $idx);
+    }
+    XxxRepository::deleteByIdx($idx);
+    return ['deleted' => true];
+}
+```
+
+**핵심 원칙**:
+
+| 원칙 | 설명 |
+|------|------|
+| **nullable 반환값 직접 리턴 금지** | `findByIdx()`의 `?Entity` 반환값을 non-nullable 리턴 타입 메서드에서 직접 반환하면 P1006 |
+| **null 체크 후 예외 throw** | `$entity === null`이면 `RuntimeException`을 throw하여 타입을 확정시킨다 |
+| **에러 메시지에 idx 포함** | 디버깅을 위해 에러 메시지에 `idx` 값을 포함한다 |
+| **모든 Service CRUD에 적용** | `get()`, `update()`, `delete()` 등 `findByIdx()`를 호출하는 모든 Service 메서드에 적용 |
+
 ---
 
 ## 9. Interface 호환성 테스트 (PEST)
@@ -1162,7 +1244,7 @@ return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 | describe 블록 | 테스트 수 | 검증 내용 |
 |---------------|----------|----------|
-| EntityInterface 구현 검증 | 14 | 14개 Entity의 instanceof 체크 |
+| EntityInterface 구현 검증 | 15 | 15개 Entity의 instanceof 체크 |
 | EntityInterface 왕복 변환 | 8 | fromArray() → toArray() 데이터 일관성 |
 | RepositoryInterface 구현 검증 | 6 | 6개 Repository의 Reflection 체크 |
 | findByIdx() 반환 타입 검증 | 6 | Entity 인스턴스 반환 확인 (Fatal Error 방지) |
@@ -1173,7 +1255,7 @@ return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ### 9.2 EntityInterface 테스트 패턴
 
-**14개 Entity의 instanceof 검증**:
+**15개 Entity의 instanceof 검증**:
 
 ```php
 use Philgo\Utils\EntityInterface;

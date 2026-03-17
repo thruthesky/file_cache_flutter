@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
+import 'package:philgo/util/widgets/full_screen_images.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PostViewFiles extends StatelessWidget {
@@ -34,35 +35,53 @@ class PostViewFiles extends StatelessWidget {
     final urls = _urls;
     if (urls.isEmpty) return const SizedBox.shrink();
 
+    final imageUrls = urls
+        .map((u) => toAbsoluteUrl(u))
+        .where((u) => getMediaType(u) == MediaType.image)
+        .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final url in urls) _buildMediaItem(context, toAbsoluteUrl(url)),
+        for (final url in urls)
+          _buildMediaItem(context, toAbsoluteUrl(url), imageUrls),
       ],
     );
   }
 
-  Widget _buildMediaItem(BuildContext context, String absoluteUrl) {
+  Widget _buildMediaItem(
+    BuildContext context,
+    String absoluteUrl,
+    List<String> imageUrls,
+  ) {
     final scheme = Theme.of(context).colorScheme;
     final type = getMediaType(absoluteUrl);
 
     switch (type) {
       case MediaType.image:
+        final imageIndex = imageUrls.indexOf(absoluteUrl);
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ClipRRect(
-            child: CachedNetworkImage(
-              imageUrl: absoluteUrl,
-              width: double.infinity,
-              fit: BoxFit.fitWidth,
-              placeholder: (_, _) => Container(
-                height: 200,
-                color: scheme.surfaceContainerHigh,
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
+          child: GestureDetector(
+            onTap: () => showFullScreenImages(
+              context: context,
+              imageUrls: imageUrls,
+              initialIndex: imageIndex >= 0 ? imageIndex : 0,
+            ),
+            child: ClipRRect(
+              child: CachedNetworkImage(
+                imageUrl: absoluteUrl,
+                width: double.infinity,
+                fit: BoxFit.fitWidth,
+                placeholder: (_, _) => Container(
+                  height: 200,
+                  color: scheme.surfaceContainerHigh,
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
                 ),
+                errorWidget: (_, _, _) => const SizedBox.shrink(),
               ),
-              errorWidget: (_, _, _) => const SizedBox.shrink(),
             ),
           ),
         );
@@ -79,7 +98,10 @@ class PostViewFiles extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: InkWell(
-            onTap: () => launchUrl(Uri.parse(absoluteUrl), mode: LaunchMode.externalApplication),
+            onTap: () => launchUrl(
+              Uri.parse(absoluteUrl),
+              mode: LaunchMode.externalApplication,
+            ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(

@@ -771,6 +771,14 @@ docker compose -f compose.windows.yaml up -d
 
 > **⚠️ Dokploy 배포에 대한 상세 내용은 별도 문서를 참조한다.**
 
+### 프로덕션 서버 환경 → [v7-server-production.md](v7-server-production.md)
+
+필고 v7 프로덕션 서버의 네이티브(non-Docker) 환경 설정을 다룹니다.
+Ubuntu Linux에 직접 설치된 PHP 8.3 FPM/FastCGI 환경으로, 소스코드 경로는
+`/home/thruthesky/v7/withcenter/philgo/www`이다. php.ini는 `/etc/php/8.3/fpm/php.ini`에
+위치하며, 추가 설정은 `/etc/php/8.3/fpm/conf.d/` 디렉토리에서 관리한다.
+로컬 Docker 개발 환경과의 차이점(설치 방식, 설정 경로, 서비스 관리 명령어)을 상세히 기술한다.
+
 ### Dokploy 배포 → [v7-dokploy.md](v7-dokploy.md)
 
 필고 v7 프로젝트의 Dokploy 기반 프로덕션 배포 구성 전체를 다룹니다.

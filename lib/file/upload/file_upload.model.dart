@@ -10,7 +10,7 @@ import 'package:philgo/app.config.dart';
 /// 사용 예시:
 /// ```dart
 /// // 업로드 직후
-/// final json = await ApiService.fileUpload(filePath: '/path/to/photo.jpg');
+/// final json = await ApiService.instance.fileUpload(filePath: '/path/to/photo.jpg');
 /// final model = FileUploadModel.fromJson(json);
 /// print(model.url); // https://philgo.com/uploads/123/abc.webp
 ///

@@ -183,14 +183,16 @@ naver:{네이버사용자ID}
 | 환경 | Callback URL |
 |------|-------------|
 | 로컬 개발 | `https://v7-local.philgo.com/auth/naver/callback` |
-| 프로덕션 | `https://philgo.net/auth/naver/callback` |
+| 테스트 서버 | `https://philgo.net/auth/naver/callback` |
+| 프로덕션 | `https://philgo.com/auth/naver/callback` |
 
 ### 4.3 서비스 URL
 
 | 환경 | 서비스 URL |
 |------|-----------|
 | 로컬 개발 | `https://v7-local.philgo.com` |
-| 프로덕션 | `https://philgo.net` |
+| 테스트 서버 | `https://philgo.net` |
+| 프로덕션 | `https://philgo.com` |
 
 > 네이버 디벨로퍼스 콘솔에 등록한 Callback URL과 코드에서 생성하는 URI가 100% 일치해야 한다.
 > `Config::naverRedirectUri()`가 현재 서버의 scheme + host를 기반으로 동적으로 URI를 생성한다.
@@ -847,7 +849,7 @@ public static function naverRedirectUri(): string
 ### naverRedirectUri() 동적 생성 이유
 
 Redirect URI를 하드코딩하지 않고 현재 서버의 `scheme + host`에서 동적으로 생성한다.
-이렇게 하면 로컬 개발(`v7-local.philgo.com`)과 프로덕션(`philgo.net`)에서 별도 설정 없이 동작한다.
+이렇게 하면 로컬 개발(`v7-local.philgo.com`), 테스트 서버(`philgo.net`), 프로덕션(`philgo.com`)에서 별도 설정 없이 동작한다.
 단, 네이버 디벨로퍼스 콘솔에 각 환경의 Callback URL을 모두 등록해야 한다.
 
 ---

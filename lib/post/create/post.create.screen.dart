@@ -226,7 +226,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         return UploadedFilePreview(
                           file: f,
                           onDelete: () async {
-                            await ApiService.fileDelete(f.idx);
+                            await ApiService.instance.fileDelete(f.idx);
                             setState(() => _uploadedFiles.remove(f));
                           },
                         );

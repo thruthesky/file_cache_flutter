@@ -1,13 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:flutter/material.dart';
 
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/user/user.state.dart';
+import 'package:philgo/util/util.functions.dart';
 
 import 'user.model.dart';
 
@@ -37,7 +37,7 @@ class UserService {
 
   /// Previous unread count - 이전 읽지 않은 메시지 수
   /// Used to detect new message arrival - 새 메시지 도착 감지를 위해 사용
-  int _previousUnreadCount = 0;
+  // int _previousUnreadCount = 0;
 
   // PINNED CHAT ROOMS
   StreamSubscription<DatabaseEvent>? pinnedChatRoomsSubscription;
@@ -87,62 +87,6 @@ class UserService {
     await FirebaseAuth.instance.signOut();
   }
 
-  /// Google 소셜 로그인 + v7 user.socialLogin 등록
-  static Future<UserModel> signInWithGoogle() async {
-    final googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) throw Exception('Google 로그인이 취소되었습니다.');
-    final googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    await FirebaseAuth.instance.signInWithCredential(credential);
-    final json = await ApiService.v7api(
-      'user.socialLogin',
-      data: {'login_provider': 'google'},
-    );
-    return UserModel.fromJson(json);
-  }
-
-  /// 카카오톡 소셜 로그인 + Firebase Custom Token + v7 user.socialLogin 등록
-  ///
-  /// 1. 카카오 SDK로 로그인 (앱 설치 시 앱 로그인, 미설치 시 웹 로그인)
-  /// 2. v7 서버에 access_token 전송 → Firebase Custom Token 발급
-  /// 3. Firebase signInWithCustomToken()으로 Firebase 로그인
-  /// 4. v7 user.socialLogin 호출하여 DB 등록/업데이트
-  static Future<UserModel> signInWithKakao() async {
-    kakao.OAuthToken token;
-    final isInstalled = await kakao.isKakaoTalkInstalled();
-    debugPrint('카카오톡 앱 설치 여부: $isInstalled');
-    final keyHash = await kakao.KakaoSdk.origin;
-    debugPrint('카카오 Android keyHash: $keyHash');
-    if (isInstalled) {
-      try {
-        token = await kakao.UserApi.instance.loginWithKakaoTalk();
-      } catch (e) {
-        debugPrint('카카오톡 앱 로그인 실패, 웹 로그인으로 폴백: $e');
-        if (e is PlatformException && e.code == 'CANCELED') rethrow;
-        token = await kakao.UserApi.instance.loginWithKakaoAccount();
-      }
-    } else {
-      token = await kakao.UserApi.instance.loginWithKakaoAccount();
-    }
-
-    final customTokenRes = await ApiService.v7api(
-      'user.kakaoFirebaseToken',
-      data: {'kakao_access_token': token.accessToken},
-    );
-    final customToken = customTokenRes['custom_token'] as String;
-
-    await FirebaseAuth.instance.signInWithCustomToken(customToken);
-
-    final json = await ApiService.v7api(
-      'user.socialLogin',
-      data: {'login_provider': 'kakao'},
-    );
-    return UserModel.fromJson(json);
-  }
-
   /// 현재 로그인된 사용자
   static User? get currentUser => FirebaseAuth.instance.currentUser;
 
@@ -154,8 +98,7 @@ class UserService {
   /// Firebase Auth에 로그인된 상태이면 v7 API(user.me)를 호출하여
   /// UserModel을 반환한다. 미로그인이면 null을 반환한다.
   static Future<UserModel?> loadCurrentUser() async {
-    if (FirebaseAuth.instance.currentUser == null) return null;
-    final json = await ApiService.v7api('user.me');
+    final json = await ApiService.instance.v7api('user.me', debug: true);
     return UserModel.fromJson(json);
   }
 
@@ -163,13 +106,16 @@ class UserService {
   ///
   /// [idx] 조회할 사용자의 idx
   static Future<UserModel> getUser({required int idx}) async {
-    final json = await ApiService.v7api('user.get', data: {'idx': idx});
+    final json = await ApiService.instance.v7api(
+      'user.get',
+      data: {'idx': idx},
+    );
     return UserModel.fromJson(json);
   }
 
   /// 전체 사용자 수를 반환한다. (user.count)
   static Future<int> getUserCount() async {
-    final json = await ApiService.v7api('user.count');
+    final json = await ApiService.instance.v7api('user.count');
     final count = json['count'];
     if (count is int) return count;
     return int.tryParse(count.toString()) ?? 0;
@@ -190,14 +136,43 @@ class UserService {
     if (nickname != null) data['nickname'] = nickname;
     if (name != null) data['name'] = name;
     if (photoUrl != null) data['photo_url'] = photoUrl;
-    final json = await ApiService.v7api('user.update', data: data);
+    final json = await ApiService.instance.v7api('user.update', data: data);
     return UserModel.fromJson(json);
   }
 
   /// 현재 로그인된 사용자의 계정을 삭제한다. (user.delete)
   static Future<void> deleteAccount() async {
-    await ApiService.v7api('user.delete');
+    await ApiService.instance.v7api('user.delete');
     await FirebaseAuth.instance.signOut();
+  }
+
+  /// 닉네임으로 사용자를 검색한다. (user.search)
+  ///
+  /// 접두사 매칭(LIKE 'keyword%')으로 최대 20명을 반환한다.
+  /// 로그인 상태이면 현재 사용자는 결과에서 제외된다.
+  ///
+  /// [nickname] 검색할 닉네임 키워드
+  static Future<List<UserModel>> search({required String nickname}) async {
+    final list = await ApiService.instance.v7apiList(
+      'user.search',
+      data: {'nickname': nickname},
+    );
+    return list
+        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Firebase UID로 사용자를 조회한다. (user.getByFirebaseUid)
+  ///
+  /// [firebaseUid] 조회할 사용자의 Firebase UID
+  static Future<UserModel> getByFirebaseUid({
+    required String firebaseUid,
+  }) async {
+    final json = await ApiService.instance.v7api(
+      'user.getByFirebaseUid',
+      data: {'firebase_uid': firebaseUid},
+    );
+    return UserModel.fromJson(json);
   }
 
   /// 사용자 목록을 조회한다. (user.list) - 관리자용
@@ -208,10 +183,70 @@ class UserService {
     final data = <String, dynamic>{};
     if (page != null) data['page'] = page;
     if (limit != null) data['limit'] = limit;
-    final json = await ApiService.v7api('user.list', data: data);
+    final json = await ApiService.instance.v7api('user.list', data: data);
     final list = json['list'] as List<dynamic>? ?? [];
     return list
         .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  /// Listen to blocked users from Firebase: user-private/{uid}/blocks
+  void listenBlockedUsers(String uid) {
+    blockedUsersSubscription?.cancel();
+    final ref = FirebaseDatabase.instance.ref('user-private/$uid/blocks');
+    blockedUsersSubscription = ref.onValue.listen((event) {
+      blockedUsers.clear();
+      if (event.snapshot.exists && event.snapshot.value != null) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>;
+        blockedUsers.addAll(data.keys.cast<String>());
+      }
+      blockedUsersStream.value = Set<String>.from(blockedUsers);
+    });
+  }
+
+  /// Cancel blocked users listener and clear state
+  void cancelBlockedUsersListener() {
+    blockedUsersSubscription?.cancel();
+    blockedUsersSubscription = null;
+    blockedUsers.clear();
+    blockedUsersStream.value = <String>{};
+  }
+
+  void initialize(BuildContext context) {
+    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
+      if (firebaseUser == null) {
+        cancelBlockedUsersListener();
+        if (context.mounted) {
+          UserState.of(context).clear();
+        }
+      } else {
+        try {
+          log(
+            'UserService.initialize() ->Firebase user logged in: ${firebaseUser.uid}',
+          );
+          final user = await UserService.loadCurrentUser();
+
+          listenBlockedUsers(firebaseUser.uid);
+
+          if (context.mounted) {
+            UserState.of(context).setUser(user);
+          }
+        } catch (e) {
+          // v7 API 호출 실패 시에도 Firebase 로그인 상태는 유지하므로, 사용자에게 알리고 로그아웃 처리
+          if (context.mounted) {
+            showErrorDialog(
+              context,
+              'Code: 182, Login fails on backend. If this persists, please report it to admin',
+            );
+          }
+          log(
+            'Code: 182, Login fails on backend. If this persists, please report it to admin',
+          );
+          await UserService.signOut();
+
+          rethrow;
+        }
+      }
+    });
   }
 }

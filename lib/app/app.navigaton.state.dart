@@ -8,13 +8,30 @@ class AppNavigationState extends ChangeNotifier {
   int _currentIndex = 0;
   int get currentIndex => _currentIndex;
 
+  String _selectedPostId = 'freetalk';
+  String get selectedPostId => _selectedPostId;
+
+  String? _selectedCategory;
+  String? get selectedCategory => _selectedCategory;
+
   void openHomeScreen() {
     _currentIndex = 0;
     notifyListeners();
   }
 
-  void openPostListScreen() {
+  void openForumScreen({String? postId, String? category}) {
+    if (postId != null) {
+      _selectedPostId = postId;
+      _selectedCategory = category;
+    }
     _currentIndex = 1;
+    notifyListeners();
+  }
+
+  void setSelectedForum(String postId, String? category) {
+    if (_selectedPostId == postId && _selectedCategory == category) return;
+    _selectedPostId = postId;
+    _selectedCategory = category;
     notifyListeners();
   }
 

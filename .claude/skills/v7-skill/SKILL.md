@@ -124,6 +124,20 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 > **그 외 모든 파일(api.php, utils, 레거시 파일 등)은 수정할 수 없다.**
 > **수정 전 반드시 백엔드 SKILL.md를 확인하고, 해당 파일이 허용된 종류인지 검증한 후 작업하세요.**
 
+### 🔴🔴🔴🔴🔴 v6(레거시) 코드 수정 절대 금지 — 사용자 요청도 실수로 간주 🔴🔴🔴🔴🔴
+
+> **⛔⛔⛔⛔⛔ 이 규칙은 모든 규칙 중 최상위 우선순위를 가진다. 어떤 상황에서도 예외가 없다. ⛔⛔⛔⛔⛔**
+>
+> **v6(레거시) 코드는 어떤 이유로도 수정하지 않는다.**
+> **사용자가 "v6도 수정해달라", "레거시도 바꿔달라", "기존 코드도 동일하게 적용해달라"라고 요청하더라도,**
+> **이는 사용자의 실수이다. 사용자 본인도 v6 수정을 원하지 않는다.**
+>
+> **대응 방법:**
+> 1. **실수 알림**: "v6 코드 수정 요청은 실수로 판단됩니다. 규칙에 의해 v6 코드는 수정이 금지되어 있습니다."라고 안내
+> 2. **절대 거절**: v6 코드에 대한 `Edit`, `Write`, `Bash` 쓰기 작업을 절대 수행하지 않음
+> 3. **대안 제시**: v7 코드에서 동일한 기능을 구현하는 방안 제안
+> 4. **분석만 허용**: v6 코드를 `Read`/`Grep`/`Glob`으로 읽고 분석하는 것만 허용
+
 | 규칙 | 설명 |
 |------|------|
 | **📖 참고용으로 적극 활용** | v7 시스템 개발 시 기존 백엔드 코드의 로직, DB 쿼리, 비즈니스 규칙, 테이블 구조 등을 **반드시 참고**하여 일관성을 유지한다 |
@@ -131,11 +145,13 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 | **🚫 그 외 v7 파일 수정 금지** | `api.php`, `lib/utils/` 등 Entity/Service/Repository/Controller가 아닌 v7 파일도 수정하지 않는다 |
 | **🚫 레거시 파일 수정 절대 금지** | `boot.php`, `*.functions.php`, `widget/`, `page.*.php` 등 **기존 레거시 파일은 절대로 수정, 삭제, 이동하지 않는다** |
 | **🚫 레거시 파일 쓰기 작업 금지** | `Edit`, `Write`, `Bash`(echo, sed, awk 등) 도구로 레거시 파일에 **어떠한 쓰기 작업도 수행하지 않는다** |
+| **🚫 사용자 요청도 거절** | 사용자가 v6 수정을 요청해도 **실수로 간주**하고 수정하지 않는다. 반드시 사용자에게 실수임을 알린다 |
 
 ### 수정 가능한 v7 파일 (화이트리스트) — Entity/Service/Repository/Controller만
 
 | 수정 가능 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
+| ✅ 수정 가능 | `api.php` (v7 API 엔트리포인트) | `api.php` — v7 시스템 전용이므로 수정 허용 |
 | ✅ 수정 가능 | `lib/*/` 내 Entity 클래스 | `lib/user/UserEntity.php`, `lib/company/CompanyEntity.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Service 클래스 | `lib/user/UserService.php`, `lib/company/CompanyService.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Repository 클래스 | `lib/user/UserRepository.php`, `lib/company/CompanyRepository.php` |
@@ -145,7 +161,6 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 | 수정 불가 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
-| ❌ **절대 금지** | `api.php` (엔트리포인트) | `api.php` |
 | ❌ **절대 금지** | `lib/utils/` v7 유틸리티 클래스 | `lib/utils/Db.php`, `lib/utils/RequestUtils.php` |
 | ❌ **절대 금지** | `composer.json` | `composer.json` |
 | ❌ **절대 금지** | `tests/` 테스트 파일 | `tests/Unit/UserControllerTest.php` |
@@ -189,6 +204,7 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
   (위젯에서 Db:: 직접 사용 절대 금지)
 ```
 
+- **🔴 비즈니스 로직은 반드시 API 단(Service)에서 처리**: 데이터 변환, 기간 제한, 콘텐츠 차단, 권한 검증 등 모든 비즈니스 로직은 Service/Controller에서 처리한다. 웹뷰(`v7/*.php`)에서 처리하면 Flutter 앱 등 다른 클라이언트에 적용되지 않는다. 웹뷰는 Service 결과를 렌더링하거나 UI 표시용 분기만 담당한다. → [상세](references/v7-architecture.md) 2.2절
 - **엔트리포인트**: `api.php` (boot.php 미포함)
 - **네임스페이스**: `Philgo\{Module}\` (예: `Philgo\User\UserController`)
 - **DB 접근**: `Philgo\Utils\Db::pdo()` (레거시 `pdo()` 사용 금지)
@@ -348,6 +364,24 @@ $post = PostEntity::fromArray($row);  // ❌ array|false를 array로 전달 → 
 
 > **⛔⛔⛔ 코드 수정 후 반드시 LSP 진단(Diagnostics)을 실행하여 P1006 등 타입 에러가 없는지 검증할 것! ⛔⛔⛔**
 
+### 🔴🔴🔴 Repository findByIdx() nullable 반환값 — Service 계층 null 체크 필수 🔴🔴🔴
+
+> **⛔ `RepositoryInterface::findByIdx()`는 `?Entity`를 반환한다. Service에서 non-nullable Entity를 반환하는 메서드에서 null 체크 없이 직접 반환하면 P1006 에러가 발생한다. ⛔**
+
+```php
+// ❌ P1006 에러: ?PointLogEntity를 PointLogEntity로 직접 반환
+return PointLogRepository::findByIdx($idx);
+
+// ✅ null 체크 후 반환 (P1006 해결)
+$entity = PointLogRepository::findByIdx($idx);
+if ($entity === null) {
+    throw new RuntimeException('조회에 실패했습니다. idx=' . $idx);
+}
+return $entity;  // 이 시점에서 타입 확정
+```
+
+> 상세 패턴 및 실제 수정 사례는 → [v7-interface.md](references/v7-interface.md) 8.5절 참조.
+
 ---
 
 ## 레퍼런스 문서
@@ -379,7 +413,7 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 ### Interface 시스템 → [v7-interface.md](references/v7-interface.md)
 
 v7 시스템의 EntityInterface, RepositoryInterface, ServiceInterface, ControllerInterface를
-상세히 다룹니다. 모든 Entity(14개)는 `Philgo\Utils\EntityInterface`를 구현하여
+상세히 다룹니다. 모든 Entity(15개)는 `Philgo\Utils\EntityInterface`를 구현하여
 `fromArray(array $data): static` 정적 팩토리와 `toArray(): array` 배열 변환을 필수로 제공합니다.
 6개 Repository는 `Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`,
 `update()`, `deleteByIdx()` 표준 CRUD 메서드명을 강제합니다. 10개 Service는
@@ -415,12 +449,12 @@ Dokploy 내장 Traefik 리버스 프록시가 처리하므로 컨테이너는 HT
 Nginx 라우팅 규칙(v6 호환 rewrite, 정적 파일 캐싱, Sitemap/Google 확인),
 로컬 개발 환경과의 차이점(fastcgi_pass, SSL, 볼륨 방식)을 상세히 기술합니다.
 서버 접속: Dokploy 관리 패널 `http://209.97.169.136:3000`,
-프로덕션 URL `https://philgo.net`,
+테스트 서버 URL `https://philgo.net` (프로덕션은 `https://philgo.com`),
 프리뷰 URL `http://philgo.209.97.169.136.traefik.me`.
 
 ### 데이터베이스 관리 → [v7-db.md](references/server/v7-db.md)
 
-MariaDB 11.7.2 데이터베이스 접속·관리·사용 방법을 상세히 다룹니다.
+MariaDB 11.7.2 데이터베이스 접속·관리·사용·백업·복원 방법을 상세히 다룹니다.
 DB 접속 정보(`etc/db.config.php`, `etc/db.config.dev.php`), Docker 컨테이너에서
 `docker exec -it mariadb mysql` 명령으로 직접 접속하는 방법, 호스트에서
 `mysql -h 127.0.0.1 -P 3306` CLI 접속 방법을 포함합니다. v7 `Philgo\Utils\Db` 클래스의
@@ -428,7 +462,10 @@ DB 접속 정보(`etc/db.config.php`, `etc/db.config.dev.php`), Docker 컨테이
 Intelephense P1006 타입 안전성 규칙(`Db::fetch()` 반환값 `array|false` 체크 필수),
 레거시 `pdo()` 함수 및 `db_*()` 헬퍼 함수와의 비교, v7 3계층 DB 접근 패턴
 (Controller → Service → Repository → Db), 위젯에서 직접 DB 접근 금지 규칙,
-주요 테이블 목록(`sf_member`, `sf_post_data` 등), 테스트 환경 DB 설정을 포함합니다.
+주요 테이블 목록(`sf_member`, `sf_post_data` 등), 테스트 환경 DB 설정,
+프로덕션(`philgo.com`) DB 백업 구조(요일별 순환, `thruthesky@db:/mnt/volume_sgp1_03/`),
+백업 파일 로컬 다운로드(`scp`), 로컬 Docker 복원 방법(직접 복원/새 컨테이너 교체),
+테스트 서버(`philgo.net`) DB 백업 방법을 포함합니다.
 
 ### Flutter 앱 전화번호 로그인 → [app/v7-app-phone-login.md](references/app/v7-app-phone-login.md)
 
@@ -500,6 +537,8 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | **1:1 채팅 시스템** | [web/v7-chat.md](references/web/v7-chat.md) | ✅ 완료 |
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 | **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
+| **전체 메뉴 페이지** | [web/v7-menu.md](references/web/v7-menu.md) | ✅ 완료 |
+| **AI 답변 시스템** | [web/v7-ai-answer.md](references/web/v7-ai-answer.md) | ✅ 완료 |
 
 ### 1:1 채팅 시스템 → [web/v7-chat.md](references/web/v7-chat.md)
 
@@ -507,8 +546,9 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 PHP(서버)는 로그인 확인과 설정값 전달만 담당하며, 채팅 데이터의 읽기/쓰기/구독은 모두
 클라이언트 JavaScript에서 Firebase SDK를 직접 호출하여 처리한다.
 Vue.js 3 CDN + Firebase compat SDK 기반 CSR 방식이며, Web Awesome Pro UI를 사용한다.
-채팅방 생성, 메시지 전송, 읽음 표시, 즐겨찾기, 사운드 알림, 이미지/파일 업로드,
+채팅방 생성, 메시지 전송, 읽음 표시, 즐겨찾기(v7 API `bookmark.*` 기반), 사운드 알림, 이미지/파일 업로드,
 Presence(온라인/오프라인), FCM 푸시 알림, 메시지 수정/삭제, 관리자 기능 등을 지원한다.
+즐겨찾기 시스템은 Firebase RTDB에서 v7 API(`bookmarks`/`bookmark_groups` 테이블)로 마이그레이션되었다.
 
 #### 🔥 Firebase Cloud Functions 채팅 백엔드 코드
 
@@ -544,7 +584,7 @@ Firebase Cloud Functions v2(Gen2)를 사용하는 독립적인 TypeScript 프로
 | `onChatMessageCreated` | RTDB 트리거 | 메시지 생성 시 후처리 (읽지 않은 메시지 카운트, Join 업데이트) |
 | `onResetChatJoin` | RTDB 트리거 | 채팅 조인 초기화 (읽음 표시) |
 | `onCustomNameUpdated` | RTDB 트리거 | 사용자 정의 이름 업데이트 반영 |
-| `onFavorite` | RTDB 트리거 | 즐겨찾기 추가/제거 |
+| `onFavorite` | RTDB 트리거 | ~~즐겨찾기 추가/제거~~ -- v7 API(`bookmark.*`)로 마이그레이션됨. 앱 호환용으로 유지 |
 | `onPushMessageCreated` | RTDB 트리거 | 푸시 메시지 생성 → FCM 전송 |
 | `onCreateGroupChatRoom` | HTTP 요청 | 그룹 채팅방 생성 |
 | `onUpdateGroupChatRoom` | RTDB 트리거 | 그룹 채팅방 정보 업데이트 |
@@ -560,6 +600,15 @@ npm run deploy:test5     # 테스트 환경 배포
 
 **채팅 관련 작업 시 반드시 이 문서와 `firebase/chat-v2/CLAUDE.md`를 함께 참조한다.**
 
+### 전체 메뉴 페이지 → [web/v7-menu.md](references/web/v7-menu.md)
+
+v7 전체 메뉴 페이지(`v7/menu/index.php`)의 구현을 상세히 다룹니다.
+6개 섹션(커뮤니티, 광고 서비스, 내 정보, 도움말, 계정관리, 유틸리티)으로 구성된 그리드 레이아웃으로,
+사이트의 모든 주요 링크를 카드 형태로 배치합니다. 커뮤니티 섹션에 즐겨찾기, 인기글, 최근 댓글,
+광고 서비스에 마사지 광고, 유틸리티에 검색, 날씨, 환율 계산기 메뉴 항목이 포함됩니다.
+로그인 상태에 따른 계정관리 메뉴 분기, `url()` 헬퍼를 통한 전체 URL 프로퍼티 목록,
+CSS 클래스 체계, Web Awesome CSS 변수 기반 아이콘 색상 패턴을 포함합니다.
+
 ### 코멘트 스레드 세로선 → [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md)
 
 Reddit 스타일 코멘트 스레드 세로선의 완전 구현 가이드이다. PHP 재귀 렌더링(`renderCommentThread()`)으로
@@ -574,7 +623,7 @@ HTML/CSS/JS 전체 소스코드, 좌표 계산 다이어그램, 복구 체크리
 v7 관리자 대시보드 시스템(`/admin/**` 경로)의 전체 아키텍처를 상세히 문서화합니다.
 `v7/layout.php`에서 `/admin` 경로 감지 시 관리자 전용 레이아웃(`admin-layout.php`)으로 분기하며,
 `AuthService::getLoginUser()`와 `Config::admins()` Firebase UID 배열 대조로 관리자 인증을 처리합니다.
-8개 관리자 페이지(대시보드, 회원, 게시판, 글 목록, 코멘트, 업소록, 설정, **글 이동**)의 PHP SSR 구현,
+9개 관리자 페이지(대시보드, 회원, 게시판, 글 목록, 코멘트, 업소록, 설정, **글 이동**, **신고 관리**)의 PHP SSR 구현,
 `Db::pdo()` 직접 쿼리 패턴, 검색/필터/페이지네이션 공통 코딩 패턴, `admin.css` CSS 클래스 체계(탑바·네비·통계카드·테이블·배지·버튼·페이지네이션),
 반응형 모바일 대응, `admin.js` 유틸리티 함수, DB 테이블 컬럼 참조(sf_member, sf_post_data, sf_post_config, sf_member_blocks, company),
 새 관리자 페이지 추가 방법, **게시글 목록 관리자 기능**(체크박스 선택, 일괄 작업 UI, 글 이동/차단/임시보관, Vue.js 동적 카테고리 선택)을 포함합니다.
@@ -594,11 +643,13 @@ CSS 변수(`--v7-sidebar-width: 240px`, `--v7-wing-width: 120px`, `--v7-gap: 16p
 ### 위젯 시스템 → [web/v7-widgets.md](references/web/v7-widgets.md)
 
 v7 홈페이지의 PHP include 기반 위젯 시스템을 상세히 다룹니다.
-`v7/widgets/` 폴더에 17개 독립 PHP 파일로 분리된 위젯 구조, 5-column 레이아웃 배치,
+`v7/widgets/` 폴더에 모듈별(`layout/`, `home/`, `shared/`, `user/`, `post/`) 독립 PHP 파일로 분리된 위젯 구조, 5-column 레이아웃 배치,
 레이아웃 위젯 8개(topbar, header-mobile/desktop, sidebar-left/right, wing-left/right, footer),
 공유 위젯 4개(exchange-rate, company-categories, latest-companies, stats — 사이드바와 모바일 양쪽에서
 동일 파일을 include하여 DRY 원칙 적용), 콘텐츠 위젯 5개(mobile-top-banners, news-tabs,
-mobile-wing-banners, latest-posts, popular-posts), layout.php 핵심 소스코드(~130줄),
+mobile-wing-banners, latest-posts, popular-posts), **사용자 호버 드롭다운 위젯**(user-hover-dropdown —
+글/코멘트 작성자 아바타/닉네임 호버 시 프로필/채팅/글목록/차단 등 드롭다운 메뉴 표시),
+게시글 목록 위젯(post-list-widget), layout.php 핵심 소스코드(~140줄),
 index.php 공유 위젯 사용 패턴, 새 위젯 추가 방법을 포함합니다.
 
 ### 폰트 로딩 및 적용 → [web/v7-fonts.md](references/web/v7-fonts.md)
@@ -667,6 +718,15 @@ v7 웹 홈페이지에서 네이버 소셜 로그인을 구현한 전체 가이�
 토큰 교환 시 `state` 전달, 프로필 응답이 `response` 중첩 구조(`$data['response']['id']`).
 **네이버 로그인 관련 작업 시 반드시 이 문서를 참조한다.**
 
+### 포인트 이벤트 전체 흐름/플로차트 → [event/v7-point-event.md](references/event/v7-point-event.md)
+
+필고 포인트 이벤트 시스템 3개 서브시스템(글/코멘트 포인트 이벤트, 스피닝 휠 이벤트, QR 코드 삼단콤보)의
+전체 흐름을 **Mermaid 플로차트**로 시각화한 통합 문서입니다.
+전체 아키텍처 다이어그램, 글 작성 시 랜덤 배율 계산 흐름, 스피닝 휠 트랜잭션 시퀀스,
+QR 삼단콤보(발행→스캔→재방문→후기) 흐름, 쿠폰 상태 전환도, ER 다이어그램,
+API 엔드포인트 매트릭스, 관리자/사용자 페이지 맵, 안티치트 보안 메커니즘을 포함합니다.
+**포인트 이벤트 관련 작업 시 이 문서를 먼저 참조하여 전체 흐름을 파악한다.**
+
 ### 이벤트 통합 개요 → [event/v7-event-overview.md](references/event/v7-event-overview.md)
 
 필고 포인트 이벤트 시스템 전체를 하나로 통합 정리한 개요 문서입니다.
@@ -717,14 +777,17 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 |------|------|------|
 | User | [api/v7-user.md](references/api/v7-user.md) | ✅ 완료 |
 | Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
-| AI | [api/v7-ai.md](references/api/v7-ai.md) | ✅ 완료 |
+| AI | [api/v7-ai.md](references/api/v7-ai.md) — 텍스트 검열, 텍스트 생성, 영수증 분석, **AI 답변 SSE 스트리밍 + 자동 저장** (`ai.answerPost` — 서버에서 프롬프트 구성+저장, 1번 통신), **AI 답변 저장** (`ai.saveAnswer`), `ai-api.php` 전용 엔트리포인트 | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |
 | Company Visit Review | [api/v7-company-visit-review.md](references/api/v7-company-visit-review.md) | ✅ 완료 |
 | Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (avatar-col 독립 분리 + thread-line 절대 위치 세로선 + adjustThreadLines() 동적 높이 계산 + 세로선 클릭/답글 텍스트 클릭 접기/펼치기) | ✅ 완료 |
+| Post (부동산) | [api/v7-post-real-estate.md](references/api/v7-post-real-estate.md) — 부동산 게시판(`real_estate` 카테고리) 전용 Masonry 목록, 상세보기(필드+Google Maps), 커스텀 필드 15개 폼, `RealEstateEntity` 래핑 클래스(PostEntity wrapping, varchar_12 충돌 해결, `isImageUrl()` 검증, `thumbnailUrl()` 4단계 폴백) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
+| Bookmark | [api/v7-bookmark.md](references/api/v7-bookmark.md) — 즐겨찾기 그룹(폴더) 관리 + 즐겨찾기 항목 CRUD. 채팅방 즐겨찾기(`entity_type='chat_room'`)에 사용. Firebase RTDB 기반에서 v7 API(`bookmarks`/`bookmark_groups` 테이블)로 마이그레이션 완료 | ✅ 완료 |
+| Info | [api/v7-info.md](references/api/v7-info.md) — 다용도 정보 시스템 (여행지, 병원, 경찰, 긴급연락처, 비자 등). sf_post_data 커스텀 필드(group_id='info') 기반. 기존 Post API 활용. 웹/앱 공통 | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 

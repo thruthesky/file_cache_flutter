@@ -132,7 +132,7 @@ class _FileUploadState extends State<FileUpload> {
     widget.onUploadingChanged?.call(true);
 
     try {
-      final json = await ApiService.fileUpload(
+      final json = await ApiService.instance.fileUpload(
         filePath: filePath,
         module: widget.module,
         code: widget.code,
@@ -296,10 +296,7 @@ class _FileUploadState extends State<FileUpload> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _onTap,
-      child: widget.child,
-    );
+    return GestureDetector(onTap: _onTap, child: widget.child);
   }
 }
 

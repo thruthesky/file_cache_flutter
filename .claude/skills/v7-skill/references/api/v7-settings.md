@@ -12,6 +12,7 @@
 
 - [아키텍처](#아키텍처)
 - [설정 키 정의](#설정-키-정의)
+- [포인트 이벤트 기간 설정](#포인트-이벤트-기간-설정)
 - [API 엔드포인트](#api-엔드포인트)
   - [settings.get](#settingsget)
   - [settings.get 관리자 목록 조회](#settingsget-관리자-목록-조회)
@@ -51,6 +52,57 @@
 | `event_spin_weights` | `KEY_EVENT_SPIN_WEIGHTS` | JSON | `'{"0":379,"1":80,...,"8":2}'` | 스피닝 휠 섹션별 weight (합계 1000) |
 | `event_starbucks_24h_weight` | `KEY_EVENT_STARBUCKS_24H_WEIGHT` | int | `'1'` | 24시간 이내 스타벅스 재당첨 weight |
 | `event_spin_cost` | `KEY_EVENT_SPIN_COST` | int | `'200'` | 스피닝 휠 1회 참가비 (포인트) |
+| `point_event_dates` | `KEY_POINT_EVENT_DATES` | JSON | `'[]'` | 포인트 이벤트 기간 목록 (DB 기반 관리) |
+
+## 포인트 이벤트 기간 설정
+
+### 개요
+
+포인트 이벤트 기간을 DB(`sf_config` 테이블)에서 JSON 배열로 관리한다.
+v6의 `PointConfig::$point_event_dates` 하드코딩 방식에서 전환되어, 관리자 페이지(`/admin/point-event`)에서 실시간으로 추가/삭제할 수 있다.
+
+### 설정 키: point_event_dates
+
+JSON 배열 형태로 이벤트 기간 목록을 저장한다. 각 항목은 `start`(시작일)와 `end`(종료일) 필드를 가진 객체이다.
+
+**JSON 형식:**
+```json
+[
+  {"start": 20260107, "end": 20260111},
+  {"start": 20260210, "end": 20260220},
+  {"start": 20260301, "end": 20260311}
+]
+```
+
+- 날짜는 `YYYYMMDD` 정수 형식
+- 추가 시 `start` 기준 오름차순 자동 정렬
+
+### 핵심 Service 메서드
+
+```php
+// SettingsService — 포인트 이벤트 기간 관리
+SettingsService::getPointEventDates(): array
+// DB에서 JSON 파싱 → [['start' => 20260107, 'end' => 20260111], ...], 잘못된 JSON이면 빈 배열
+
+SettingsService::addPointEventDate(int $start, int $end): void
+// 이벤트 기간 추가 후 start 기준 오름차순 자동 정렬
+
+SettingsService::deletePointEventDate(int $index): void
+// 인덱스 기반 이벤트 기간 삭제
+
+SettingsService::isInPointEventDate(?int $Ymd = null): bool
+// 오늘(또는 지정 날짜)이 이벤트 기간인지 DB 기반 판별
+```
+
+### 관리자 페이지
+
+`/admin/point-event` 경로에서 이벤트 기간을 관리할 수 있다.
+상세 → [web/v7-admin.md](../web/v7-admin.md) 20장 참조
+
+### 관련 문서
+
+- 포인트 이벤트 전체 → [v7-point.md](../v7-point.md) 9장
+- 이벤트 통합 개요 → [event/v7-event-overview.md](../event/v7-event-overview.md)
 
 ## API 엔드포인트
 

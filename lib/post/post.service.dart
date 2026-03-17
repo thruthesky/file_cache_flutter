@@ -34,7 +34,7 @@ class PostService {
     int? limit,
     int? offset,
   }) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'post.list',
       data: {
         if (postId != null) 'post_id': postId,
@@ -63,7 +63,7 @@ class PostService {
   /// [idx] 게시글 고유번호
   /// 반환: Post 객체
   static Future<Post> get(int idx) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'post.get',
       data: {'idx': idx},
       debug: true,
@@ -88,7 +88,7 @@ class PostService {
     String? category,
     List<String>? files,
   }) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'post.create',
       data: {
         'post_id': postId,
@@ -116,7 +116,7 @@ class PostService {
     String? content,
     List<String>? files,
   }) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'post.update',
       data: {
         'idx': idx,
@@ -135,7 +135,7 @@ class PostService {
   ///
   /// [idx] 게시글 고유번호
   static Future<void> delete(int idx) async {
-    await ApiService.v7api('post.delete', data: {'idx': idx});
+    await ApiService.instance.v7api('post.delete', data: {'idx': idx});
   }
 
   /// 게시글 좋아요 토글
@@ -145,7 +145,10 @@ class PostService {
   /// [idx] 게시글 고유번호
   /// 반환: 업데이트된 good(좋아요 수)와 liked(내가 좋아요 했는지 여부)
   static Future<({int good, bool liked})> like(int idx) async {
-    final result = await ApiService.v7api('post.like', data: {'idx': idx});
+    final result = await ApiService.instance.v7api(
+      'post.like',
+      data: {'idx': idx},
+    );
     final good = ApiService.toInt(result['good']);
     final liked = result['liked'] == true || result['liked'] == 1;
     return (good: good, liked: liked);
@@ -158,7 +161,7 @@ class PostService {
   /// [idxRoot] 원글 idx
   /// 반환: 댓글 Post 목록 (list_order DESC)
   static Future<List<Post>> listComments(int idxRoot) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'post.commentList',
       data: {'idx_root': idxRoot},
       debug: true,
@@ -181,7 +184,7 @@ class PostService {
     required String content,
     int? idxParent,
   }) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'post.commentCreate',
       data: {
         'idx_root': idxRoot,
@@ -204,7 +207,7 @@ class PostService {
     required int idx,
     required String content,
   }) async {
-    final result = await ApiService.v7api(
+    final result = await ApiService.instance.v7api(
       'post.commentUpdate',
       data: {'idx': idx, 'content': content},
     );
@@ -218,6 +221,6 @@ class PostService {
   ///
   /// [idx] 댓글 idx
   static Future<void> deleteComment(int idx) async {
-    await ApiService.v7api('post.commentDelete', data: {'idx': idx});
+    await ApiService.instance.v7api('post.commentDelete', data: {'idx': idx});
   }
 }

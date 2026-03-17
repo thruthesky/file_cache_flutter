@@ -26,6 +26,9 @@ Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모
   - [ai.moderate - 텍스트 검열](#aimoderate---텍스트-검열)
   - [ai.generate - 텍스트 생성](#aigenerate---텍스트-생성)
   - [ai.analyzeReceipt - 영수증 분석 (인증 필수)](#aianalyzereceipt---영수증-분석-인증-필수)
+  - [ai.answerPost - AI 답변 SSE 스트리밍 + 자동 저장](#aianswerpost---ai-답변-sse-스트리밍--자동-저장)
+  - [ai.saveAnswer - AI 답변 저장](#aisaveanswer---ai-답변-저장)
+  - [ai-api.php 전용 엔트리포인트](#ai-apiphp-전용-엔트리포인트)
 - [인증 방식](#인증-방식)
 - [Entity 구조](#entity-구조)
   - [ModerationEntity](#moderationentity)
@@ -52,6 +55,8 @@ lib/ai/
 ├── ModerationEntity.php   # 검열 결과 Entity (POPO)
 ├── GenerateEntity.php     # 텍스트 생성 결과 Entity (POPO)
 └── ReceiptEntity.php      # 영수증 분석 결과 Entity (POPO)
+
+ai-api.php                 # AI 전용 엔트리포인트 (api.php require 래퍼)
 ```
 
 | 클래스 | 네임스페이스 | 역할 |
@@ -261,6 +266,148 @@ curl -k -X POST "https://local.philgo.com/api.php" \
 
 ---
 
+### ai.answerPost - AI 답변 SSE 스트리밍 + 자동 저장
+
+qna/freetalk 게시판의 글에 대해 Gemini AI가 실시간 SSE 스트리밍으로 답변을 생성하고, 스트리밍 완료 후 서버에서 자동으로 `sf_post_data.text_7`에 저장한다. 클라이언트는 `idx`만 전달하면 되며, 서버가 DB에서 제목+내용을 조회하여 프롬프트를 자동 구성한다.
+
+**⛔ 반드시 `/ai-api.php`를 통해 호출해야 한다. `/api.php`로 호출하면 에러 발생.**
+
+**이전 `ai.generateStream`과의 차이점:**
+
+| 항목 | ai.generateStream (이전) | ai.answerPost (현재) |
+|------|--------------------------|----------------------|
+| **입력 파라미터** | `prompt`, `post_idx`, `model` | `idx`, `model` (prompt 제거) |
+| **프롬프트 구성** | 클라이언트가 prompt를 직접 전달 | 서버가 idx로 DB 조회하여 자동 구성 |
+| **답변 저장** | 클라이언트가 별도로 `ai.saveAnswer` 호출 필요 | 서버에서 SSE 완료 후 자동 저장 |
+| **통신 횟수** | 2번 (SSE + saveAnswer) | 1번 (SSE만, 저장은 서버 자동) |
+| **30일 제한** | 없음 | 작성 후 30일 초과 글 거부 |
+
+**요청:**
+
+```
+POST /ai-api.php
+Content-Type: application/x-www-form-urlencoded
+method=ai.answerPost&idx=12345
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| `idx` | int | ✅ | 글 번호. 서버에서 제목+내용을 조회하여 프롬프트 자동 구성 |
+| `model` | string | ❌ | 모델명. 기본: `gemini-3.1-flash-lite-preview`. 대안: `gemini-2.5-flash-lite` |
+
+**응답:** `Content-Type: text/event-stream` (SSE)
+
+```
+data: {"candidates":[{"content":{"parts":[{"text":"안녕"}]}}]}
+
+data: {"candidates":[{"content":{"parts":[{"text":"하세요"}]}}]}
+```
+
+**검증 조건:**
+
+| 조건 | 거부 사유 |
+|------|-----------|
+| 글 미존재 | '글을 찾을 수 없습니다.' |
+| 코멘트 (idx_parent > 0) | '코멘트에는 AI 답변을 생성할 수 없습니다.' |
+| qna/freetalk 외 게시판 | 'AI 답변은 질문답변/자유게시판에서만 사용할 수 있습니다.' |
+| text_7 이미 존재 | '이미 AI 답변이 존재합니다.' |
+| 작성 후 30일 초과 | '작성된 지 30일이 지난 글에는 AI 답변을 생성할 수 없습니다.' |
+
+**curl 예시:**
+
+```bash
+curl -sk "https://v7-local.philgo.com/ai-api.php" \
+  -d "method=ai.answerPost&idx=12345"
+```
+
+**내부 흐름:**
+
+```
+AiController::answerPost()
+  → enforceAiApiEndpoint() (ai-api.php 경로 체크)
+  → SSE 헤더 설정 (text/event-stream, X-Accel-Buffering: no)
+  → AiService::generatePostAnswerStream(idx, onChunk)
+    → DB에서 subject, content 조회
+    → 게시판 검증 (qna/freetalk만)
+    → 30일 제한 검증 (AI_ANSWER_MAX_AGE_SECONDS = 2,592,000초)
+    → 중복 방지 (text_7 체크)
+    → 코멘트 거부 (idx_parent > 0)
+    → 프롬프트 자동 구성: "아래 게시글에 대해 답변해주세요.\n\n제목: {subject}\n\n내용: {strip_tags(content)}"
+    → GeminiClient::generateContentStream()
+      → cURL WRITEFUNCTION 콜백으로 청크 즉시 전달
+      → streamGenerateContent?alt=sse 엔드포인트
+  → SSE 청크에서 텍스트 누적
+  → AiService::saveAnswer() 자동 호출 (text_7에 저장)
+  → exit (api.php의 JSON 응답 우회)
+```
+
+---
+
+### ai.saveAnswer - AI 답변 저장
+
+AI 답변을 sf_post_data.text_7 필드에 저장한다. v6의 update_other_post()와 동일한 역할.
+
+**⛔ 반드시 `/ai-api.php`를 통해 호출해야 한다.**
+
+**요청:**
+
+```
+POST /ai-api.php
+Content-Type: application/x-www-form-urlencoded
+method=ai.saveAnswer&idx=12345&text_7=AI답변내용
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| `idx` | int | ✅ | 글 번호 |
+| `text_7` | string | ✅ | AI 답변 내용 (마크다운) |
+
+**응답 (성공):**
+
+```json
+{"idx": 12345}
+```
+
+**응답 (에러):**
+
+```json
+{"success": false, "message": "이미 AI 답변이 존재합니다."}
+```
+
+**검증:**
+
+- 글 존재 여부
+- 게시판 검증 (qna/freetalk만)
+- 코멘트 거부 (idx_parent > 0)
+- 중복 방지 (text_7 이미 있으면 거부)
+
+---
+
+### ai-api.php 전용 엔트리포인트
+
+모든 AI API 호출은 `/ai-api.php`를 통해야 한다. 이 파일은 `api.php`를 그대로 require하는 래퍼이며, Nginx에서 AI 전용 PHP-FPM 풀(포트 9001)로 분기된다.
+
+```php
+// ai-api.php
+require __DIR__ . '/api.php';
+```
+
+AiController의 모든 메서드에서 `enforceAiApiEndpoint()`를 호출하여 `$_SERVER['SCRIPT_NAME']`이 `ai-api.php`인지 체크한다. `/api.php`로 직접 호출하면 RuntimeException.
+
+**Nginx 설정:**
+
+```nginx
+location = /ai-api.php {
+    fastcgi_pass php:9001;       # AI 전용 FPM 풀
+    fastcgi_buffering off;        # SSE 스트리밍 필수
+    fastcgi_read_timeout 120;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+}
+```
+
+---
+
 ## 인증 방식
 
 영수증 분석 API(`ai.analyzeReceipt`)는 사용자 인증이 필수이다. v7 시스템은 `AuthService::getLoginUser()`를 통해 2가지 경로로 인증한다.
@@ -422,14 +569,18 @@ Gemini REST API에 cURL로 요청을 보내는 클라이언트 클래스이다.
 | `generateJson($systemInstruction, $userText, $responseSchema, ?$model)` | `array` | JSON 구조화 응답 요청 |
 | `generateContentWithImage($systemInstruction, $imageBase64, $imageMimeType, $userText, ?$generationConfig, ?$model)` | `array` | 이미지+텍스트 생성 요청 |
 | `generateJsonWithImage($systemInstruction, $imageBase64, $imageMimeType, $userText, $responseSchema, ?$model)` | `array` | 이미지+텍스트 JSON 응답 요청 |
+| `generateContentStream($systemInstruction, $userText, $onChunk, ?$model)` | `void` | SSE 스트리밍 텍스트 생성 |
 | `getModel()` | `string` | 기본 모델명 조회 |
 
 ### API 설정
 
 - **엔드포인트**: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`
+- **SSE 엔드포인트**: `https://generativelanguage.googleapis.com/v1beta/models/{model}:streamGenerateContent?alt=sse`
 - **API 키**: `GEMINI_API_KEY` 상수 (`etc/app.config.php`)
 - **기본 모델**: `gemini-3-flash-preview`
 - **영수증 분석 모델**: `gemini-2.5-flash-lite-preview-09-2025`
+- **AI 답변 기본 모델**: `gemini-3.1-flash-lite-preview`
+- **AI 답변 폴백 모델**: `gemini-2.5-flash-lite`
 
 ---
 

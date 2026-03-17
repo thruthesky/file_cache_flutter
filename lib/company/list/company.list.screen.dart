@@ -57,10 +57,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         CompanyService.mine().catchError((_) => null),
       ]);
       if (mounted) {
-        var companies = results[0] as List<CompanyModel>;
-        if (companies.isEmpty) {
-          companies = _filterSeed(_selectedCategoryId);
-        }
+        final companies = results[0] as List<CompanyModel>;
         setState(() {
           _companies = companies;
           _myCompany = results[1] as CompanyModel?;
@@ -68,7 +65,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       }
     } catch (_) {
       if (mounted) {
-        setState(() => _companies = _filterSeed(_selectedCategoryId));
+        setState(() => _companies = []);
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -82,23 +79,15 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         category: _selectedCategoryId,
       );
       if (mounted) {
-        setState(() => _companies = companies.isEmpty
-            ? _filterSeed(_selectedCategoryId)
-            : companies);
+        setState(() => _companies = companies);
       }
     } catch (_) {
       if (mounted) {
-        setState(() => _companies = _filterSeed(_selectedCategoryId));
+        setState(() => _companies = []);
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  List<CompanyModel> _filterSeed(String? categoryId) {
-    final seed = CompanyService.seedData();
-    if (categoryId == null) return seed;
-    return seed.where((c) => c.category == categoryId).toList();
   }
 
   void _onCategorySelected(String? categoryId) {

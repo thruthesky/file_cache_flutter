@@ -14,10 +14,11 @@ import 'package:philgo/app/app.service.dart';
 /// v7 API 에러를 사용자 친화적으로 표현하는 예외
 class ApiException implements Exception {
   final String message;
-  final int? statusCode;
+  final String code;
+  final String title;
   final dynamic originalError;
 
-  ApiException(this.message, {this.statusCode, this.originalError});
+  ApiException(this.code, this.title, this.message, [this.originalError]);
 
   @override
   String toString() => message;
@@ -30,9 +31,10 @@ class ApiException implements Exception {
 /// - Dio 인스턴스 생성 (디버그 모드에서 자체 서명 SSL 허용)
 /// - v7 에러 판별 및 예외 발생
 class ApiService {
+  static ApiService instance = ApiService._();
   ApiService._();
 
-  static final String _endpoint = v7ApiEndpoint;
+  final String _endpoint = v7ApiEndpoint;
 
   /// Firebase ID Token을 data 맵에 추가한다.
   ///
@@ -68,7 +70,7 @@ class ApiService {
   ///
   /// Firebase ID Token을 자동으로 추가하고, v7 서버에 HTTP POST 요청을 보낸다.
   /// 에러 발생 시 Exception을 throw한다.
-  static Future<Map<String, dynamic>> v7api(
+  Future<Map<String, dynamic>> v7api(
     String method, {
     Map<String, dynamic>? data,
     bool debug = false,
@@ -91,28 +93,68 @@ class ApiService {
 
     final dio = _createDio();
 
-    try {
-      final response = await dio.post(_endpoint, data: data);
+    final response = await dio.post(_endpoint, data: data);
 
-      Map<String, dynamic> json;
-      if (response.data is Map<String, dynamic>) {
-        json = response.data;
-      } else if (response.data is String) {
-        json = jsonDecode(response.data) as Map<String, dynamic>;
-      } else {
-        throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
-      }
-
-      // v7 에러 판별: success == false일 때만 에러
-      if (json['success'] == false) {
-        throw Exception(json['message'] ?? '알 수 없는 오류');
-      }
-
-      return json;
-    } catch (e) {
-      showError(e);
-      rethrow;
+    Map<String, dynamic> json;
+    if (response.data is Map<String, dynamic>) {
+      json = response.data;
+    } else if (response.data is String) {
+      json = jsonDecode(response.data) as Map<String, dynamic>;
+    } else {
+      throw ApiException(
+        'unexpected_response_type',
+        '예상치 못한 응답 타입',
+        '예상치 못한 응답 타입: ${response.data.runtimeType}',
+      );
     }
+
+    // v7 에러 판별: success == false일 때만 에러
+    if (json['success'] == false) {
+      throw ApiException('api_error', 'API 오류', json['message'] ?? '알 수 없는 오류');
+    }
+
+    return json;
+  }
+
+  /// v7 API 호출 (배열 응답용)
+  ///
+  /// `user.search`처럼 JSON 배열을 반환하는 API 엔드포인트를 호출할 때 사용한다.
+  /// 에러 응답({success: false})은 Map이므로 에러 판별도 수행한다.
+  Future<List<dynamic>> v7apiList(
+    String method, {
+    Map<String, dynamic>? data,
+  }) async {
+    data = data ?? {};
+    data['method'] = method;
+
+    await _patchToken(data);
+
+    final dio = _createDio();
+    final response = await dio.post(_endpoint, data: data);
+
+    dynamic decoded = response.data;
+    if (decoded is String) {
+      decoded = jsonDecode(decoded);
+    }
+
+    // 에러 응답은 Map 형태로 온다
+    if (decoded is Map<String, dynamic> && decoded['success'] == false) {
+      throw ApiException(
+        'api_error',
+        'API 오류',
+        decoded['message'] ?? '알 수 없는 오류',
+      );
+    }
+
+    if (decoded is List) {
+      return decoded;
+    }
+
+    throw ApiException(
+      'unexpected_response_type',
+      '예상치 못한 응답 타입',
+      '배열 응답을 기대했으나: ${decoded.runtimeType}',
+    );
   }
 
   /// 파일 업로드
@@ -124,7 +166,7 @@ class ApiService {
   /// [code] 세부 분류 (선택, 예: 'main_photo', 'gallery', 'profile_photo')
   /// [extraData] FormData에 추가할 임의 필드 (선택)
   /// [onProgress] 업로드 진행률 콜백 (0.0 ~ 1.0)
-  static Future<Map<String, dynamic>> fileUpload({
+  Future<Map<String, dynamic>> fileUpload({
     required String filePath,
     String? module,
     String? code,
@@ -171,11 +213,19 @@ class ApiService {
     } else if (response.data is String) {
       json = jsonDecode(response.data) as Map<String, dynamic>;
     } else {
-      throw Exception('예상치 못한 응답 타입: ${response.data.runtimeType}');
+      throw ApiException(
+        'unexpected_response_type',
+        '예상치 못한 응답 타입',
+        '예상치 못한 응답 타입: ${response.data.runtimeType}',
+      );
     }
 
     if (json['success'] == false) {
-      final e = Exception(json['message'] ?? '파일 업로드에 실패했습니다.');
+      final e = ApiException(
+        'file_upload_error',
+        '파일 업로드 오류',
+        json['message'] ?? '파일 업로드에 실패했습니다.',
+      );
       showError(e);
       throw e;
     }
@@ -188,7 +238,7 @@ class ApiService {
   /// API: `upload.delete` (인증 필요, 본인 파일만 삭제 가능)
   ///
   /// [idx] 삭제할 파일의 idx
-  static Future<void> fileDelete(int idx) async {
+  Future<void> fileDelete(int idx) async {
     await v7api('upload.delete', data: {'idx': idx}, debug: true);
   }
 
@@ -197,7 +247,7 @@ class ApiService {
   /// API: `upload.deleteByUrl` (인증 필요, 본인 파일만 삭제 가능)
   ///
   /// [url] 삭제할 파일의 상대경로 URL (예: /uploads/123/abc.webp)
-  static Future<void> fileDeleteByUrl(String url) async {
+  Future<void> fileDeleteByUrl(String url) async {
     final path = Uri.tryParse(url)?.path ?? url;
     await v7api('upload.deleteByUrl', data: {'url': path}, debug: true);
   }
@@ -256,7 +306,7 @@ class ApiService {
   /// 에러를 SnackBar로 화면에 표시한다.
   static void showError(dynamic error) {
     ScaffoldMessenger.of(
-      AppService.context,
+      AppService.instance.context,
     ).showSnackBar(SnackBar(content: Text(friendlyErrorMessage(error))));
   }
 }

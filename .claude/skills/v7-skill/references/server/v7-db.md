@@ -23,6 +23,14 @@
   - [6.2 주요 테이블](#62-주요-테이블)
 - [7. 테스트 환경 DB 설정](#7-테스트-환경-db-설정)
 - [8. v7 vs 레거시 비교](#8-v7-vs-레거시-비교)
+- [9. 프로덕션 DB 백업 및 로컬 복원](#9-프로덕션-db-백업-및-로컬-복원)
+  - [9.1 서버 환경 구분](#91-서버-환경-구분)
+  - [9.2 프로덕션 백업 구조](#92-프로덕션-백업-구조)
+  - [9.3 백업 파일명 규칙](#93-백업-파일명-규칙)
+  - [9.4 로컬로 백업 파일 다운로드](#94-로컬로-백업-파일-다운로드)
+  - [9.5 로컬 Docker에 복원](#95-로컬-docker에-복원)
+  - [9.6 테스트 서버(philgo.net) DB 백업](#96-테스트-서버philgonet-db-백업)
+  - [9.7 특정 테이블만 백업/복원](#97-특정-테이블만-백업복원)
 
 ---
 
@@ -490,3 +498,100 @@ Db::reset();
 - **v7 Controller/Service 개발**: `Db` 클래스 사용 (필수)
 - **레거시 페이지 유지보수**: 기존 `pdo()`, `db_*()` 함수 유지
 - **혼용**: 가능하지만 일관성 유지 권장 (같은 파일 내에서 하나만 사용)
+
+---
+
+## 9. 프로덕션 DB 백업 및 로컬 복원
+
+### 9.1 서버 환경 구분
+
+| # | 환경 | URL | DB 서버 |
+|---|------|-----|---------|
+| 1 | **로컬 개발** | `https://local.philgo.com` | Docker `mariadb` 컨테이너 (127.0.0.1:3306) |
+| 2 | **테스트 서버** | `https://philgo.net` | Dokploy Docker `mariadb` 컨테이너 |
+| 3 | **프로덕션** | **`https://philgo.com`** | 네이티브 MariaDB (`thruthesky@db`) |
+
+> **⚠️ 주의:** `philgo.net`은 테스트 서버이다. 프로덕션은 `philgo.com`이다.
+
+### 9.2 프로덕션 백업 구조
+
+| 항목 | 내용 |
+|------|------|
+| **DB 서버 SSH** | `thruthesky@db` |
+| **백업 저장 경로** | `/mnt/volume_sgp1_03` |
+| **백업 스크립트** | `/home/thruthesky/backup.sh` |
+| **백업 도구** | `mariadb-dump` |
+| **백업 주기** | 매일 1회 (UTC 1:10 = KST 10:10) |
+| **보존 방식** | 1주일 요일별 순환 |
+
+### 9.3 백업 파일명 규칙
+
+```
+일반: 요일.sql.gz (예: Monday.sql.gz, Sunday.sql.gz)
+매월 2일: 월.2nd.sql.gz (예: January.2nd.sql.gz)
+```
+
+**백업 파일 목록 확인:**
+
+```bash
+ssh thruthesky@db ls -lh /mnt/volume_sgp1_03
+```
+
+### 9.4 로컬로 백업 파일 다운로드
+
+```bash
+# 특정 요일 백업 다운로드
+scp thruthesky@db:/mnt/volume_sgp1_03/Monday.sql.gz .
+
+# 지정 폴더에 다운로드
+scp thruthesky@db:/mnt/volume_sgp1_03/Monday.sql.gz ~/Data/philgo
+```
+
+> **팁:** 화요일에 작업하면 월요일 백업(`Monday.sql.gz`)을 다운로드한다.
+
+### 9.5 로컬 Docker에 복원
+
+**방법 1: 직접 복원 (⚠️ 5시간 이상 소요, 작업 중단됨)**
+
+```bash
+# 1. gzip 압축 해제
+gunzip Monday.sql.gz
+
+# 2. 로컬 MariaDB에 복원
+mariadb -uphilgo -pasdf -h127.0.0.1 philgo < Monday.sql
+```
+
+**방법 2: 새 컨테이너 생성 후 교체 (권장 — 작업 중단 없음)**
+
+1. 새 MariaDB 컨테이너 생성
+2. 새 컨테이너에 백업 데이터 복구 (기존 컨테이너는 정상 작동)
+3. 복구 완료 후 기존 컨테이너 중지
+4. 새 컨테이너를 기존 이름으로 변경하여 교체
+
+### 9.6 테스트 서버(philgo.net) DB 백업
+
+테스트 서버는 Dokploy Docker 컨테이너로 운영된다.
+
+```bash
+# 서버 접속
+ssh root@philgo.net
+
+# Docker 컨테이너에서 덤프
+docker exec <mariadb-컨테이너명> mysqldump -u philgo -pasdf philgo > /root/backup.sql
+
+# 로컬로 다운로드
+scp root@philgo.net:/root/backup.sql .
+```
+
+> Dokploy 환경에서는 컨테이너 이름이 자동 생성되므로 `docker ps | grep mariadb`로 확인 필요.
+
+### 9.7 특정 테이블만 백업/복원
+
+```bash
+# 프로덕션에서 특정 테이블만 덤프
+ssh thruthesky@db "mariadb-dump -uphilgo -pasdf philgo sf_post_data sf_member | gzip" > tables.sql.gz
+
+# 로컬에 복원
+gunzip tables.sql.gz
+mariadb -uphilgo -pasdf -h127.0.0.1 philgo < tables.sql
+```

@@ -83,7 +83,7 @@ v7 포인트 시스템은 v6 `lib/point.functions.php`의 핵심 로직을 v7 �
 | `module` | varchar | 모듈명 (post, comment, vote, admin, adv, event, point_event) |
 | `action` | varchar | 액션명 (create, delete, like, unlike, update, point-post-advertisement, spin 등) |
 | `idx_post` | int | 관련 글/코멘트 idx (0이면 해당 없음) |
-| `etc` | varchar | 기타 정보 (point_write, point_comment, like, post_on_top, admin-point-update 등) |
+| `etc` | varchar | 기타 정보 (point_write, point_event_write, point_comment, point_event_comment, like, post_on_top, admin-point-update 등) |
 | `stamp` | int | Unix timestamp |
 | `ip` | char(15) | 사용자 IP (현재는 비워둠 - IPv6 호환성 이슈) |
 
@@ -268,6 +268,10 @@ function increase_user_points_for_post_create(array $post, array $config, array 
     // 이벤트 포인트 계산 (기본값 또는 랜덤)
     $points = get_event_points(config: $config, post: $post);
 
+    // 이벤트 포인트인지 판별: 반환된 포인트가 설정 기본 포인트보다 크면 이벤트 포인트
+    $config_points = $config[POINT_WRITE] ?? 0;
+    $pointEtc = ($points > $config_points && $config_points > 0) ? 'point_event_write' : POINT_WRITE;
+
     // 포인트 적용
     $re = change_user_points(
         points: $points,
@@ -275,7 +279,7 @@ function increase_user_points_for_post_create(array $post, array $config, array 
         module: MODULE_POST,     // 'post'
         action: ACTION_CREATE,   // 'create'
         idx_post: $post[IDX],
-        etc: POINT_WRITE,        // 'point_write'
+        etc: $pointEtc,          // 'point_write' 또는 'point_event_write'
         idx_member_to: $post[IDX_MEMBER]
     );
 
@@ -294,7 +298,32 @@ module/action/etc 값:
 |------|-----|
 | module | `post` |
 | action | `create` |
-| etc | `point_write` |
+| etc | `point_write` (일반) 또는 `point_event_write` (이벤트 포인트) |
+
+### 이벤트 포인트 etc 값 구분 (v7 신규)
+
+글/코멘트 생성 시 포인트가 이벤트 포인트인지 판별하여 `etc` 값을 다르게 저장한다.
+
+**판별 기준**: `get_event_points()` 반환값 > 게시판 설정 기본 포인트(`point_write` 또는 `point_comment`)이면 이벤트 포인트로 판정한다.
+
+```php
+// v6 (lib/point.functions.php)
+$config_points = $config[POINT_WRITE] ?? 0;
+$pointEtc = ($points > $config_points && $config_points > 0) ? 'point_event_write' : POINT_WRITE;
+
+// v7 (PostService.php)
+$configPoints = (int) ($config['point_write'] ?? 0);
+$pointEtc = ($points > $configPoints && $configPoints > 0) ? 'point_event_write' : 'point_write';
+```
+
+| 상황 | etc 값 |
+|------|--------|
+| 일반 글 작성 포인트 | `point_write` |
+| 이벤트 글 작성 포인트 (랜덤 포인트 > 기본 포인트) | `point_event_write` |
+| 일반 코멘트 작성 포인트 | `point_comment` |
+| 이벤트 코멘트 작성 포인트 (랜덤 포인트 > 기본 포인트) | `point_event_comment` |
+
+> **참고**: 이 구분은 포인트 내역 페이지에서 일반 포인트와 이벤트 포인트를 시각적으로 구별하기 위해 도입되었다.
 
 ### 글 삭제 시 (PostService::delete)
 
@@ -382,13 +411,17 @@ function increase_user_points_for_comment_create(array $comment, array $post, ar
 
     $points = get_event_points(config: $config, post: $post, comment: $comment, is_comment: true);
 
+    // 이벤트 포인트인지 판별: 반환된 포인트가 설정 기본 포인트보다 크면 이벤트 포인트
+    $config_points = $config[POINT_COMMENT] ?? 0;
+    $pointEtc = ($points > $config_points && $config_points > 0) ? 'point_event_comment' : POINT_COMMENT;
+
     $re = change_user_points(
         points: $points,
         login_user: $login_user,
         module: MODULE_COMMENT,    // 'comment'
         action: ACTION_CREATE,     // 'create'
         idx_post: $comment[IDX],
-        etc: POINT_COMMENT,        // 'point_comment'
+        etc: $pointEtc,            // 'point_comment' 또는 'point_event_comment'
         idx_member_to: $comment[IDX_MEMBER]
     );
 
@@ -423,8 +456,11 @@ private static function increasePointsForCommentCreate(PostEntity $comment, arra
 module/action/etc 값:
 | 작업 | module | action | etc |
 |------|--------|--------|-----|
-| 코멘트 생성 | `comment` | `create` | `point_comment` |
+| 코멘트 생성 (일반) | `comment` | `create` | `point_comment` |
+| 코멘트 생성 (이벤트) | `comment` | `create` | `point_event_comment` |
 | 코멘트 삭제 | `comment` | `delete` | `point_comment_delete` |
+
+> **이벤트 포인트 판별**: `get_event_points()` 반환값 > `point_comment` 설정값이면 `point_event_comment`, 아니면 `point_comment`
 
 ---
 
@@ -511,10 +547,100 @@ module/action/etc 값:
 특정 기간(포인트 이벤트 기간)에 지정된 게시판에 글/코멘트를 작성하면 랜덤 포인트를 지급한다.
 랜덤 포인트가 설정된 게시판 포인트(point_write/point_comment)보다 크면 랜덤 포인트를 사용하고, 아니면 설정 포인트를 사용한다.
 
-### PointConfig 이벤트 설정 (v6 etc/app.config.php)
+### 이벤트 기간 관리 (DB 기반 — v7 신규)
+
+v7에서는 이벤트 기간을 **DB(sf_config 테이블)** 기반으로 관리한다.
+v6의 `PointConfig::$point_event_dates` 하드코딩 방식에서 DB 동적 관리로 전환되었다.
+
+| 항목 | v6 (레거시) | v7 (신규) |
+|------|------------|-----------|
+| **이벤트 기간 저장** | `PointConfig::$point_event_dates` PHP 배열 하드코딩 | `sf_config` 테이블에 JSON으로 저장 (키: `point_event_dates`) |
+| **이벤트 기간 판별** | `PointConfig::inEventDate()` | `SettingsService::isInPointEventDate()` |
+| **관리 방법** | 소스 코드 직접 수정 | 관리자 페이지(`/admin/point-event`)에서 추가/삭제 |
+| **데이터 형식** | `[[20260107, 20260111], ...]` (인덱스 기반 배열) | `[{"start": 20260107, "end": 20260111}, ...]` (키-값 객체 배열) |
+
+#### SettingsService 이벤트 기간 메서드
+
+| 메서드 | 설명 |
+|--------|------|
+| `getPointEventDates(): array` | DB에서 JSON 이벤트 기간 목록 조회 |
+| `addPointEventDate(int $start, int $end): void` | 이벤트 기간 추가 (start 기준 오름차순 자동 정렬) |
+| `deletePointEventDate(int $index): void` | 이벤트 기간 삭제 (인덱스 기반) |
+| `isInPointEventDate(?int $Ymd = null): bool` | 오늘(또는 지정 날짜)이 이벤트 기간인지 DB 기반 판별 |
+
+설정 키 상수: `SettingsService::KEY_POINT_EVENT_DATES = 'point_event_dates'`
+
+> 설정 키 상세 → [api/v7-settings.md](api/v7-settings.md) 참조
+
+#### 이벤트 기간 판별 호출 체인
+
+```
+Config::isPointEventDate()          ← v7 웹 홈페이지에서 호출 (요청 단위 캐싱)
+  → SettingsService::isInPointEventDate()  ← DB에서 이벤트 기간 목록 조회
+
+PostService::isInEventPeriod()      ← 글/코멘트 생성 시 호출
+  → SettingsService::isInPointEventDate()  ← DB에서 이벤트 기간 목록 조회
+```
+
+#### PostService::getEventPostIdsPublic()
+
+이벤트 대상 게시판 ID 목록을 외부에서 조회할 수 있도록 공개하는 public 메서드이다.
+관리자 페이지(`/admin/point-event`)에서 설정 정보 표시용으로 사용한다.
 
 ```php
-// 이벤트 기간 설정 (YYYYMMDD 형식)
+public static function getEventPostIdsPublic(): array
+{
+    return self::EVENT_POST_IDS;  // ['freetalk', 'qna']
+}
+```
+
+#### Config.php 요청 단위 캐싱
+
+`Config::isPointEventDate()`는 같은 요청 내에서 중복 DB 조회를 방지하기 위해 static 변수로 캐싱한다.
+
+```php
+// v7/utils/Config.php
+private static ?bool $cachedIsPointEventDate = null;
+
+public static function isPointEventDate(?int $Ymd = null): bool
+{
+    // 특정 날짜 지정 시 캐시 미사용
+    if ($Ymd !== null) {
+        return SettingsService::isInPointEventDate($Ymd);
+    }
+    // 오늘 날짜 판별: 요청 단위 캐시
+    if (self::$cachedIsPointEventDate === null) {
+        self::$cachedIsPointEventDate = SettingsService::isInPointEventDate();
+    }
+    return self::$cachedIsPointEventDate;
+}
+
+// 테스트용 캐시 초기화
+public static function resetPointEventDateCache(): void
+{
+    self::$cachedIsPointEventDate = null;
+}
+```
+
+#### 관리자 페이지
+
+이벤트 기간을 관리하는 전용 관리자 페이지가 제공된다.
+
+| 항목 | 설명 |
+|------|------|
+| **URL** | `/admin/point-event` |
+| **파일** | `v7/admin/point-event.php` |
+| **CSS** | `v7/admin/point-event.css` |
+| **기능** | 이벤트 기간 추가/삭제, 현재 이벤트 상태 표시, 이벤트 설정 정보(읽기 전용) 표시 |
+| **데이터 소스** | `SettingsService::getPointEventDates()`, `SettingsService::isInPointEventDate()`, `PostService::getEventPostIdsPublic()` |
+| **메뉴 위치** | `admin-nav.php` → `'/admin/point-event' => ['label' => '포인트이벤트', 'icon' => 'fa-solid fa-calendar-star']` |
+
+> 관리자 페이지 상세 → [web/v7-admin.md](web/v7-admin.md) 20장 참조
+
+### PointConfig 이벤트 설정 (v6 etc/app.config.php — 레거시 참고용)
+
+```php
+// v6 이벤트 기간 설정 (YYYYMMDD 형식) — 현재는 DB 기반으로 전환됨
 public static $point_event_dates = [
     [20260107, 20260111],  // 1/7(수) ~ 1/11(일)
     [20260210, 20260220],  // 설날
@@ -528,7 +654,7 @@ public static $event_post_ids = ['freetalk', 'qna'];
 // 최소 이벤트 점수
 public static $min_event_score = 5;
 
-// 이벤트 기간 판별 함수
+// v6 이벤트 기간 판별 함수 — v7에서는 SettingsService::isInPointEventDate() 사용
 public static function inEventDate(?int $Ymd = null): bool
 {
     $today = $Ymd ?? (int)date('Ymd');
@@ -663,18 +789,117 @@ $post->int_10 = 1500;
 // → -1500 포인트 차감 (전액 회수)
 ```
 
+### DB 기반 이벤트 기간 관리 (v7 신규)
+
+v6에서는 `PointConfig::$point_event_dates` 하드코딩 배열로 이벤트 기간을 관리했지만,
+v7에서는 **DB(`sf_config` 테이블) 기반**으로 이벤트 기간을 동적 관리한다.
+
+#### 아키텍처
+
+```
+PostService::isInEventPeriod()
+  ├─ 테스트 오버라이드 ($forceEventPeriod) 확인
+  └─ SettingsService::isInPointEventDate() 호출
+       └─ sf_config 테이블에서 'point_event_dates' 키 조회
+            └─ JSON 배열 파싱 → 오늘 날짜 포함 여부 판별
+
+Config::isPointEventDate()
+  ├─ 특정 날짜 지정 시 → SettingsService::isInPointEventDate($Ymd) 직접 호출 (캐시 미사용)
+  └─ 오늘 날짜 판별 시 → 요청 단위 static 캐싱 ($cachedIsPointEventDate)
+```
+
+#### 핵심 클래스/메서드
+
+| 클래스 | 메서드 | 설명 |
+|--------|--------|------|
+| `SettingsService` | `getPointEventDates()` | DB에서 이벤트 기간 목록 조회 (JSON 배열 → `array<{start, end}>`) |
+| `SettingsService` | `addPointEventDate($start, $end)` | 이벤트 기간 추가 (start 기준 오름차순 자동 정렬) |
+| `SettingsService` | `deletePointEventDate($index)` | 이벤트 기간 삭제 (인덱스 기반) |
+| `SettingsService` | `isInPointEventDate($Ymd)` | 지정 날짜가 이벤트 기간인지 판별 |
+| `Config` | `isPointEventDate($Ymd)` | `SettingsService` 위임 + 요청 단위 캐싱 |
+| `Config` | `resetPointEventDateCache()` | 이벤트 기간 캐시 초기화 (테스트용) |
+| `PostService` | `isInEventPeriod()` | `SettingsService::isInPointEventDate()` 호출 (테스트 오버라이드 지원) |
+| `PostService` | `getEventPostIdsPublic()` | 이벤트 대상 게시판 ID 목록 외부 공개 (관리자 페이지용) |
+
+#### DB 저장 구조
+
+`sf_config` 테이블에 키 `point_event_dates`로 JSON 배열 저장:
+
+```json
+[
+  {"start": 20260107, "end": 20260111},
+  {"start": 20260210, "end": 20260220},
+  {"start": 20260301, "end": 20260311}
+]
+```
+
+- 날짜는 `YYYYMMDD` 정수 형식
+- 추가 시 `start` 기준 오름차순 자동 정렬
+- 42개 이벤트 기간 데이터가 마이그레이션 완료됨
+
+#### 관리자 페이지
+
+| 파일 | URL | 설명 |
+|------|-----|------|
+| `v7/admin/point-event.php` | `/admin/point-event` | 이벤트 기간 추가/삭제 관리 UI |
+
+관리자 페이지 기능:
+- 현재 이벤트 상태 표시 (진행중/비이벤트)
+- 이벤트 기간 추가 (`<input type="date">` 폼)
+- 이벤트 기간 목록 (상태: 진행중/예정/종료)
+- 이벤트 기간 삭제
+- 이벤트 설정 정보 표시 (대상 게시판, 쓰로틀링, 배수 티어 등)
+
+#### 도움말 페이지
+
+| 파일 | URL | 설명 |
+|------|-----|------|
+| `v7/help/point-event.php` | `/help/point-event` | DB 기반 이벤트 날짜 표시 (사용자용) |
+
+- `SettingsService::getPointEventDates()`로 DB에서 직접 조회
+- 오늘 이후(진행 중 + 미래) 이벤트만 표시
+- 현재 이벤트 상태 안내 (`Config::isPointEventDate()`)
+
+#### v6 → v7 대응
+
+| v6 | v7 |
+|----|----|
+| `PointConfig::$point_event_dates` (하드코딩) | `sf_config.point_event_dates` (DB 저장) |
+| `PointConfig::inEventDate()` | `SettingsService::isInPointEventDate()` |
+| 코드 수정으로만 기간 변경 가능 | 관리자 웹 UI로 실시간 변경 가능 |
+
 ### v7 이벤트 설정 (테스트용)
 
 ```php
-// 이벤트 기간 강제 설정
+// 이벤트 기간 강제 설정 (테스트 오버라이드)
 PostService::setEventPeriod(true);
 
 // 이벤트 대상 게시판 설정
 PostService::setEventPostIds(['temp', 'freetalk']);
 
-// 이벤트 설정 초기화
+// 이벤트 설정 초기화 (DB 조회 모드로 복귀)
 PostService::resetEventSettings();
+
+// Config 캐시 초기화 (테스트에서 DB 변경 후 필요)
+\V7\Utils\Config::resetPointEventDateCache();
 ```
+
+### 유닛 테스트
+
+`tests/Unit/PostControllerTest.php`에 포인트 이벤트 관련 테스트가 포함되어 있다.
+
+| 테스트 그룹 | 테스트 수 | 설명 |
+|------------|----------|------|
+| 이벤트 포인트 (기존) | 7개 | 이벤트/비이벤트 기간 포인트, etc 값 구분, 쓰로틀링 등 |
+| DB 기반 포인트 이벤트 | 5개 | DB 이벤트 기간 판별, 랜덤 포인트 적용, 글/코멘트 전액 회수, 랜덤성 검증 |
+
+DB 기반 포인트 이벤트 테스트 목록:
+
+1. **DB에 이벤트 기간이 설정되면 isInEventPeriod()가 DB를 조회한다** — `SettingsService::addPointEventDate()`로 오늘 날짜 추가 후 `PostService::isInEventPeriod()` 확인
+2. **자유게시판(freetalk)에서 이벤트 기간 시 랜덤 포인트가 적용된다** — freetalk point_write=5 이상 포인트 지급, etc 값 `point_event_write` 확인
+3. **이벤트 포인트 글 삭제 시 전액 회수된다** — int_10 기반 전액 회수, 원래 포인트 복귀
+4. **이벤트 기간 코멘트 생성 시 랜덤 포인트가 적용되고 삭제 시 전액 회수된다** — 코멘트 이벤트 포인트 및 etc 값 `point_event_comment` 확인, 삭제 전액 회수
+5. **이벤트 포인트는 랜덤으로 생성되어 매번 다를 수 있다** — `randomizeEventPoint()` 50회 호출, 최소 2가지 다른 값 확인
 
 ---
 
@@ -920,6 +1145,8 @@ function point_log_controller(array $in, array $login_user): array
 | `point_update_controller()` | `PointLogController::changePoints()` |
 | `point_log_controller()` | `PointLogController::history()` |
 | `get_user_level()` | (v7 미구현) |
+| `PointConfig::inEventDate()` | `SettingsService::isInPointEventDate()` |
+| `PointConfig::$point_event_dates` (하드코딩) | `SettingsService::getPointEventDates()` (DB 기반) |
 
 ---
 
@@ -974,9 +1201,13 @@ function point_log_controller(array $in, array $login_user): array
     ↓
 [5] 최종 포인트 결정 (max(random_points, point_write))
     ↓
-[6] change_user_points() / PointLogService::changePoints()
+[6] etc 값 결정 (이벤트 포인트 판별)
+    ├─ 최종 포인트 > point_write 설정값 → etc = 'point_event_write'
+    └─ 그 외 → etc = 'point_write'
+    ↓
+[7] change_user_points() / PointLogService::changePoints()
     ├─ sf_member.point 업데이트 (합산)
-    ├─ sf_point_log 레코드 삽입
+    ├─ sf_point_log 레코드 삽입 (etc = 'point_write' 또는 'point_event_write')
     └─ 글의 int_10 필드에 획득 포인트 기록
     ↓
 완료
@@ -1048,9 +1279,10 @@ function point_log_controller(array $in, array $login_user): array
 
 결과:
 - 최종 포인트: 10
+- etc: 'point_write' (10 > 10 아니므로 일반 포인트)
 - 사용자: 100 → 110
 - int_10: 10
-- sf_point_log: module='post', action='create', point=10
+- sf_point_log: module='post', action='create', etc='point_write', point=10
 ```
 
 ### 예시 2: 글 작성 (이벤트 기간, freetalk)
@@ -1065,8 +1297,10 @@ function point_log_controller(array $in, array $login_user): array
 결과:
 - random_points = 70 × 20 = 1,400
 - 최종 = max(1400, 5) = 1,400
+- etc: 'point_event_write' (1,400 > 5이므로 이벤트 포인트)
 - 사용자: 100 → 1,500
 - int_10: 1,400
+- sf_point_log: module='post', action='create', etc='point_event_write', point=1400
 ```
 
 ### 예시 3: 이벤트 글 삭제 (v7)
@@ -1189,7 +1423,7 @@ v6 `page/point/history.php` + `widget/point/history.php`의 로직을 100% 동�
 | **포인트 내역 테이블** | sf_point_log 테이블에서 사유, 적용 포인트, 적용 후 포인트, 날짜/시간 표시 |
 | **색상 구분** | 양수(초록), 음수(빨강), 0(회색) |
 | **사유 배지** | Web Awesome `wa-badge` 컴포넌트로 사유별 variant 표시 |
-| **관련 글 링크** | 글 작성/댓글 작성 시 해당 글로 이동하는 `보기` 링크 |
+| **관련 글 링크** | 글 작성/댓글 작성/이벤트 포인트(`point_event_write`, `point_event_comment`) 시 해당 글로 이동하는 `보기` 링크 |
 | **관리자 필터** | 관리자는 `idx_member`, `etc` 파라미터로 다른 사용자 조회 가능 |
 | **관리자 FROM/TO** | 관리자에게만 FROM/TO 사용자 칼럼 표시 |
 | **페이지네이션** | 10개씩, 최대 5개 페이지 버튼 표시 |
@@ -1203,6 +1437,8 @@ v6 `page/point/history.php` + `widget/point/history.php`의 로직을 100% 동�
 |--------|----------|
 | `point_write` | 글 작성 |
 | `point_comment` | 댓글 작성 |
+| `point_event_write` | 포인트 이벤트 |
+| `point_event_comment` | 포인트 이벤트 |
 | `point_write_delete` | 글 삭제 |
 | `point_comment_delete` | 댓글 삭제 |
 | `like` | 좋아요 |
@@ -1225,6 +1461,7 @@ v6 `page/point/history.php` + `widget/point/history.php`의 로직을 100% 동�
 | `biz-point-buy` | `danger` | 빨강 |
 | `admin-point-update` | `warning` | 노랑 |
 | `point_write_delete`, `point_comment_delete` | `neutral` | 회색 |
+| `point_event_write`, `point_event_comment` | `success` | 초록 |
 | 그 외 | `primary` | 파랑 |
 
 ### DB 쿼리 패턴

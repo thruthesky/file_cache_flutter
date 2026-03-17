@@ -33,6 +33,7 @@ dependencies:
   flutter_animate: ^4.5.2
   flutter_driver:
     sdk: flutter
+  flutter_html: ^3.0.0
   flutter_linkify: ^6.0.0
   flutter_localizations:
     sdk: flutter

@@ -6,7 +6,7 @@ import 'package:philgo/chat/chat.screen.dart';
 import 'package:philgo/company/list/company.list.screen.dart';
 import 'package:philgo/home/home.screen.dart';
 import 'package:philgo/menu/menu.screen.dart';
-import 'package:philgo/post/list/post.list.screen.dart';
+import 'package:philgo/post/list/forum.screen.dart';
 import 'package:provider/provider.dart';
 
 class AppScreen extends StatefulWidget {
@@ -30,10 +30,8 @@ class _AppScreenState extends State<AppScreen> {
             index: currentIndex,
             children: const [
               HomeScreen(),
-              PostListScreen(),
-
+              ForumScreen(),
               ChatScreen(),
-
               CompanyListScreen(),
               MenuScreen(),
             ],
@@ -52,7 +50,7 @@ class _AppScreenState extends State<AppScreen> {
                   AppNavigationState.of(context).openHomeScreen();
                   break;
                 case 1:
-                  AppNavigationState.of(context).openPostListScreen();
+                  AppNavigationState.of(context).openForumScreen();
                   break;
                 case 2:
                   AppNavigationState.of(context).openChatScreen();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/widgets/video_thumbnail.dart';
 
@@ -80,26 +79,6 @@ class UploadedFilePreview extends StatelessWidget {
     }
 
     if (file.isVideo) {
-      if (file.thumbnail400x400Url.isNotEmpty) {
-        return Stack(
-          fit: StackFit.expand,
-          alignment: Alignment.center,
-          children: [
-            Image.network(
-              file.thumbnail400x400Url,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => VideoThumbnail(url: file.url, size: size),
-            ),
-            const Center(
-              child: FaIcon(
-                FontAwesomeIcons.solidCirclePlay,
-                size: 28,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        );
-      }
       return VideoThumbnail(url: file.url, size: size);
     }
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Mar 13, 2026 at 02:11 AM
+-- Generation Time: Mar 15, 2026 at 11:30 AM
 -- Server version: 11.7.2-MariaDB-ubu2404
 -- PHP Version: 8.3.6
 
@@ -178,6 +178,37 @@ CREATE TABLE `auto_posting` (
   `posting_id` varchar(128) NOT NULL,
   `stamp` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bookmarks`
+--
+
+CREATE TABLE `bookmarks` (
+  `idx` int(10) UNSIGNED NOT NULL,
+  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '즐겨찾기한 회원 idx',
+  `idx_group` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '그룹 idx (0이면 미분류)',
+  `entity_type` varchar(20) NOT NULL COMMENT '대상 타입: post, comment, user, chat_room',
+  `entity_idx` int(10) UNSIGNED NOT NULL COMMENT '대상의 idx',
+  `entity_id` varchar(100) NOT NULL DEFAULT '' COMMENT '문자열 대상 ID (채팅방 등)',
+  `memo` varchar(255) NOT NULL DEFAULT '' COMMENT '사용자 메모 (선택)',
+  `created_at` int(10) UNSIGNED NOT NULL COMMENT '생성 Unix timestamp'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='즐겨찾기/북마크';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bookmark_groups`
+--
+
+CREATE TABLE `bookmark_groups` (
+  `idx` int(10) UNSIGNED NOT NULL,
+  `idx_member` int(10) UNSIGNED NOT NULL COMMENT '그룹 소유자',
+  `name` varchar(50) NOT NULL COMMENT '그룹명',
+  `sort_order` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '정렬 순서',
+  `created_at` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='북마크 그룹';
 
 -- --------------------------------------------------------
 
@@ -1060,9 +1091,9 @@ CREATE TABLE `sf_post_data` (
   `depth` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
   `gid` char(32) NOT NULL DEFAULT '',
   `post_id` varchar(64) NOT NULL,
-  `group_id` varchar(64) DEFAULT '',
-  `category` varchar(32) NOT NULL DEFAULT '',
-  `sub_category` varchar(64) NOT NULL DEFAULT '',
+  `group_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `category` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `sub_category` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `reminder` char(1) NOT NULL DEFAULT '',
   `secret` char(1) NOT NULL DEFAULT '',
   `checked` char(1) NOT NULL DEFAULT '' COMMENT '체크를 했으면 Y 안했으면 empty, 통과를 못했으면 R',
@@ -1076,9 +1107,9 @@ CREATE TABLE `sf_post_data` (
   `user_agent` varchar(255) NOT NULL DEFAULT '',
   `user_id` varchar(64) NOT NULL DEFAULT '',
   `user_password` varchar(32) NOT NULL DEFAULT '',
-  `user_name` varchar(64) NOT NULL DEFAULT '',
+  `user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `user_email` varchar(64) NOT NULL DEFAULT '',
-  `subject` varchar(255) NOT NULL DEFAULT '',
+  `subject` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `content_type` varchar(16) DEFAULT NULL,
   `files` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
@@ -1086,7 +1117,7 @@ CREATE TABLE `sf_post_data` (
   `subject_private` varchar(255) NOT NULL DEFAULT '',
   `content_private` longtext DEFAULT NULL,
   `content_stripped_private` longtext DEFAULT NULL,
-  `link` varchar(255) NOT NULL DEFAULT '',
+  `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `stamp_update` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `stamp_last_comment` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `show_image` char(1) NOT NULL DEFAULT '',
@@ -1099,7 +1130,7 @@ CREATE TABLE `sf_post_data` (
   `good` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
   `bad` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
   `access_code` varchar(32) NOT NULL DEFAULT '',
-  `region` varchar(64) NOT NULL DEFAULT '',
+  `region` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `int_1` int(11) NOT NULL DEFAULT 0,
   `int_2` int(11) NOT NULL DEFAULT 0,
   `int_3` int(11) NOT NULL DEFAULT 0,
@@ -1120,36 +1151,36 @@ CREATE TABLE `sf_post_data` (
   `char_8` char(1) NOT NULL DEFAULT '',
   `char_9` char(1) NOT NULL DEFAULT '',
   `char_10` char(1) NOT NULL DEFAULT '',
-  `varchar_1` varchar(255) NOT NULL DEFAULT '',
-  `varchar_2` varchar(255) NOT NULL DEFAULT '',
-  `varchar_3` varchar(255) NOT NULL DEFAULT '',
-  `varchar_4` varchar(255) NOT NULL DEFAULT '',
-  `varchar_5` varchar(255) NOT NULL DEFAULT '',
-  `varchar_6` varchar(255) NOT NULL DEFAULT '',
-  `varchar_7` varchar(255) NOT NULL DEFAULT '',
-  `varchar_8` varchar(255) NOT NULL DEFAULT '',
-  `varchar_9` varchar(255) NOT NULL DEFAULT '',
-  `varchar_10` varchar(255) NOT NULL DEFAULT '',
-  `varchar_11` varchar(255) NOT NULL DEFAULT '',
-  `varchar_12` varchar(255) NOT NULL DEFAULT '',
-  `varchar_13` varchar(255) NOT NULL DEFAULT '',
-  `varchar_14` varchar(255) NOT NULL DEFAULT '',
-  `varchar_15` varchar(255) NOT NULL DEFAULT '',
-  `varchar_16` varchar(255) NOT NULL DEFAULT '',
-  `varchar_17` varchar(255) NOT NULL DEFAULT '',
-  `varchar_18` varchar(255) NOT NULL DEFAULT '',
-  `varchar_19` varchar(255) NOT NULL DEFAULT '',
-  `varchar_20` varchar(255) NOT NULL DEFAULT '',
-  `text_1` longtext DEFAULT NULL,
-  `text_2` longtext DEFAULT NULL,
-  `text_3` longtext DEFAULT NULL,
-  `text_4` longtext DEFAULT NULL,
-  `text_5` longtext DEFAULT NULL,
-  `text_6` longtext DEFAULT NULL,
+  `varchar_1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_4` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_5` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_6` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_7` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_8` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_9` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_10` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_11` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_12` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_13` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_14` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_15` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_16` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_17` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_18` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_19` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `varchar_20` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `text_1` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_2` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_3` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_4` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_5` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_6` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `text_7` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text_8` longtext DEFAULT NULL,
-  `text_9` longtext DEFAULT NULL,
-  `text_10` longtext DEFAULT NULL,
+  `text_8` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_9` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text_10` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `has_image` char(1) DEFAULT '',
   `has_video` char(1) DEFAULT '',
   `has_youtube` char(1) DEFAULT ''
@@ -1250,6 +1281,20 @@ CREATE TABLE `sf_system_log` (
   `value` varchar(64) NOT NULL DEFAULT '',
   `count` int(10) UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sf_user_reports`
+--
+
+CREATE TABLE `sf_user_reports` (
+  `idx` int(11) NOT NULL,
+  `idx_reporter` int(11) NOT NULL COMMENT '신고한 사용자 idx',
+  `idx_reported` int(11) NOT NULL COMMENT '신고당한 사용자 idx',
+  `reason` varchar(255) DEFAULT '' COMMENT '신고 사유',
+  `stamp` int(11) NOT NULL COMMENT '신고 시각'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1401,6 +1446,25 @@ ALTER TABLE `api_chat_room`
 ALTER TABLE `auto_posting`
   ADD PRIMARY KEY (`idx`),
   ADD UNIQUE KEY `posting_id_ix_post` (`posting_id`,`idx_post`);
+
+--
+-- Indexes for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  ADD PRIMARY KEY (`idx`),
+  ADD UNIQUE KEY `uk_member_entity` (`idx_member`,`entity_type`,`entity_idx`,`entity_id`),
+  ADD KEY `idx_member` (`idx_member`),
+  ADD KEY `entity_type_idx` (`entity_type`,`entity_idx`),
+  ADD KEY `idx_member_group` (`idx_member`,`idx_group`),
+  ADD KEY `idx_member_created_at` (`idx_member`,`created_at`);
+
+--
+-- Indexes for table `bookmark_groups`
+--
+ALTER TABLE `bookmark_groups`
+  ADD PRIMARY KEY (`idx`),
+  ADD UNIQUE KEY `uk_member_name` (`idx_member`,`name`),
+  ADD KEY `idx_member` (`idx_member`);
 
 --
 -- Indexes for table `company`
@@ -1873,7 +1937,11 @@ ALTER TABLE `sf_post_data`
   ADD KEY `idx_post_id_category_has_video_stamp` (`post_id`,`category`,`has_video`,`stamp`),
   ADD KEY `idx_post_id_category_has_youtube_stamp` (`post_id`,`category`,`has_youtube`,`stamp`),
   ADD KEY `stamp_int_10` (`stamp`,`int_10`),
-  ADD KEY `idx_parent_deleted_blind` (`idx_parent`,`deleted`,`blind`);
+  ADD KEY `idx_parent_deleted_blind` (`idx_parent`,`deleted`,`blind`),
+  ADD KEY `idx_int_10` (`int_10`),
+  ADD KEY `idx_parent_stamp` (`idx_parent`,`stamp`),
+  ADD KEY `idx_has_image_parent_stamp` (`has_image`,`idx_parent`,`stamp`),
+  ADD KEY `idx_parent_deleted_stamp` (`idx_parent`,`deleted`,`stamp`);
 
 --
 -- Indexes for table `sf_post_search`
@@ -1934,6 +2002,14 @@ ALTER TABLE `sf_system_log`
   ADD PRIMARY KEY (`idx`),
   ADD UNIQUE KEY `ymd_code_value` (`ymd`,`code`,`value`),
   ADD KEY `code` (`code`);
+
+--
+-- Indexes for table `sf_user_reports`
+--
+ALTER TABLE `sf_user_reports`
+  ADD PRIMARY KEY (`idx`),
+  ADD UNIQUE KEY `unique_report` (`idx_reporter`,`idx_reported`),
+  ADD KEY `idx_reported` (`idx_reported`);
 
 --
 -- Indexes for table `sf_widget_config`
@@ -2026,6 +2102,18 @@ ALTER TABLE `api_chat_room`
 -- AUTO_INCREMENT for table `auto_posting`
 --
 ALTER TABLE `auto_posting`
+  MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bookmark_groups`
+--
+ALTER TABLE `bookmark_groups`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -2273,6 +2361,12 @@ ALTER TABLE `sf_syndi`
 --
 ALTER TABLE `sf_system_log`
   MODIFY `idx` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `sf_user_reports`
+--
+ALTER TABLE `sf_user_reports`
+  MODIFY `idx` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `sf_widget_config`
