@@ -33,12 +33,6 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
         if (state.lastPageIsEmpty) return null;
         final keys = state.keys;
         if (keys == null || keys.isEmpty) return 0;
-        final pages = state.pages;
-        if (pages != null &&
-            pages.isNotEmpty &&
-            pages.last.length < _pageSize) {
-          return null;
-        }
         return keys.last + _pageSize;
       },
       fetchPage: _fetchPage,

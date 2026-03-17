@@ -36,12 +36,6 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
         if (state.lastPageIsEmpty) return null;
         final keys = state.keys;
         if (keys == null || keys.isEmpty) return 1;
-        final pages = state.pages;
-        if (pages != null &&
-            pages.isNotEmpty &&
-            pages.last.length < _pageLimit) {
-          return null;
-        }
         return keys.last + 1;
       },
       fetchPage: _fetchPage,
