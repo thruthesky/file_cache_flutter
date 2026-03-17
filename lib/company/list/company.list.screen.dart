@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/widgets/company.card.dart';
 import 'package:philgo/company/company.model.dart';
@@ -16,14 +17,13 @@ class CompanyListScreen extends StatefulWidget {
 }
 
 class _CompanyListScreenState extends State<CompanyListScreen> {
-  List<CompanyModel> _companies = [];
   CompanyModel? _myCompany;
-  bool _isLoading = true;
   bool _isFabLoading = false;
   String? _selectedCategoryId; // null = All
   bool _showHeader = true;
 
   static const _headerHideThreshold = 48.0;
+  static const _pageSize = 20;
 
   static const _categories = [
     ('public-office', '관공서', FontAwesomeIcons.building),
@@ -44,38 +44,57 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     ('etc', '기타', FontAwesomeIcons.ellipsis),
   ];
 
+  late final PagingController<int, CompanyModel> _pagingController;
+
   @override
   void initState() {
     super.initState();
-    _loadAll();
+    _pagingController = PagingController<int, CompanyModel>(
+      getNextPageKey: (state) {
+        if (state.lastPageIsEmpty) return null;
+        final keys = state.keys;
+        if (keys == null || keys.isEmpty) return 1;
+        final pages = state.pages;
+        if (pages != null &&
+            pages.isNotEmpty &&
+            pages.last.length < _pageSize) {
+          return null;
+        }
+        return keys.last + 1;
+      },
+      fetchPage: _fetchPage,
+    );
+    _loadMyCompany();
   }
 
-  Future<void> _loadAll() async {
-    setState(() => _isLoading = true);
-    final results = await Future.wait([
-      CompanyService.list(category: _selectedCategoryId),
-      CompanyService.mine(),
-    ]);
-    if (mounted) {
-      final companies = results[0] as List<CompanyModel>;
-      setState(() {
-        _companies = companies;
-        _myCompany = results[1] as CompanyModel?;
-      });
-    }
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 
-  Future<void> _loadCompanies() async {
-    final companies = await CompanyService.list(category: _selectedCategoryId);
+  Future<List<CompanyModel>> _fetchPage(int page) async {
+    final result = await CompanyService.list(
+      category: _selectedCategoryId,
+      status: 'a',
+      page: page,
+      limit: _pageSize,
+    );
+    if (page > 1 && result.items.isEmpty) return [];
+    return result.items;
+  }
+
+  Future<void> _loadMyCompany() async {
+    final company = await CompanyService.mine();
     if (mounted) {
-      setState(() => _companies = companies);
+      setState(() => _myCompany = company);
     }
   }
 
   void _onCategorySelected(String? categoryId) {
     if (_selectedCategoryId == categoryId) return;
     setState(() => _selectedCategoryId = categoryId);
-    _loadCompanies();
+    _pagingController.refresh();
   }
 
   Future<void> _onFabPressed() async {
@@ -173,7 +192,71 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
             ),
             const Divider(height: 1),
             // Company list
-            Expanded(child: _buildBody(scheme)),
+            Expanded(
+              child: NotificationListener<ScrollNotification>(
+                onNotification: _handleScrollNotification,
+                child: PagingListener(
+                  controller: _pagingController,
+                  builder: (context, state, fetchNextPage) {
+                    return PagedMasonryGridView.count(
+                      state: state,
+                      fetchNextPage: fetchNextPage,
+                      padding: const EdgeInsets.all(8),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      builderDelegate:
+                          PagedChildBuilderDelegate<CompanyModel>(
+                        itemBuilder: (context, company, index) {
+                          final hasImage =
+                              company.primaryImageUrl.isNotEmpty;
+                          final height =
+                              hasImage ? (index.isEven ? 220.0 : 180.0) : 140.0;
+                          return SizedBox(
+                            height: height,
+                            child: CompanyCard(
+                              company: company,
+                              onTap: () => CompanyViewScreen.push(
+                                context,
+                                company: company,
+                              ),
+                            ),
+                          );
+                        },
+                        firstPageProgressIndicatorBuilder: (_) =>
+                            const Center(child: CircularProgressIndicator()),
+                        noItemsFoundIndicatorBuilder: (_) => Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const FaIcon(
+                                FontAwesomeIcons.buildingCircleXmark,
+                                size: 48,
+                              ),
+                              const SizedBox(height: 16),
+                              Text('등록된 업소가 없습니다'.tr()),
+                            ],
+                          ),
+                        ),
+                        firstPageErrorIndicatorBuilder: (_) => Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('업소를 가져올 수 없습니다. 다시 시도해주세요.'.tr()),
+                              const SizedBox(height: 8),
+                              TextButton(
+                                onPressed: () => _pagingController.refresh(),
+                                child: Text('다시 시도'.tr()),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -247,50 +330,6 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                 ),
               );
             }).toList(),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildBody(ColorScheme scheme) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_companies.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const FaIcon(FontAwesomeIcons.buildingCircleXmark, size: 48),
-            const SizedBox(height: 16),
-            Text('등록된 업소가 없습니다'.tr()),
-          ],
-        ),
-      );
-    }
-
-    return NotificationListener<ScrollNotification>(
-      onNotification: _handleScrollNotification,
-      child: MasonryGridView.count(
-        padding: const EdgeInsets.all(8),
-        physics: const ClampingScrollPhysics(),
-        crossAxisCount: 2,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        itemCount: _companies.length,
-        itemBuilder: (context, index) {
-          final company = _companies[index];
-          // Vary heights for staggered effect based on image presence
-          final hasImage = company.primaryImageUrl.isNotEmpty;
-          final height = hasImage ? (index.isEven ? 220.0 : 180.0) : 140.0;
-          return SizedBox(
-            height: height,
-            child: CompanyCard(
-              company: company,
-              onTap: () => CompanyViewScreen.push(context, company: company),
-            ),
           );
         },
       ),
