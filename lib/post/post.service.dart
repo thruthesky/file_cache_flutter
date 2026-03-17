@@ -1,5 +1,6 @@
 import 'package:philgo/api/api.service.dart';
 import 'post.model.dart';
+import 'post_list_result.model.dart';
 
 /// v7 Post API 서비스
 ///
@@ -26,7 +27,7 @@ class PostService {
   /// [offset] 오프셋 (선택, 기본 0)
   ///
   /// 반환: posts 목록과 total 전체 개수
-  static Future<({List<Post> posts, int total})> list({
+  static Future<PostListResult> list({
     String? postId,
     int? idxMember,
     String? category,
@@ -44,16 +45,10 @@ class PostService {
         if (limit != null) 'limit': limit,
         if (offset != null) 'offset': offset,
       },
+      debug: true,
     );
 
-    final items = (result['posts'] as List<dynamic>?) ?? [];
-    final posts = items
-        .whereType<Map<String, dynamic>>()
-        .map(Post.fromJson)
-        .toList();
-    final total = ApiService.toInt(result['total']);
-
-    return (posts: posts, total: total);
+    return PostListResult.fromJson(result);
   }
 
   /// 게시글 단건 조회
