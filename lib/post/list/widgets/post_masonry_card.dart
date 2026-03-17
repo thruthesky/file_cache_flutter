@@ -26,15 +26,17 @@ class PostMasonryCard extends StatelessWidget {
     if (post.thumbnail800x800 != null && post.thumbnail800x800!.isNotEmpty) {
       return post.thumbnail800x800;
     }
-    if (post.imageUrl != null && post.imageUrl!.isNotEmpty) return post.imageUrl;
+    if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
+      return post.imageUrl;
+    }
     if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty) {
       return post.thumbnail400x400;
     }
     if (post.files.isNotEmpty) {
-      final first = post.files.split(',').map((e) => e.trim()).firstWhere(
-            (e) => e.isNotEmpty,
-            orElse: () => '',
-          );
+      final first = post.files
+          .split(',')
+          .map((e) => e.trim())
+          .firstWhere((e) => e.isNotEmpty, orElse: () => '');
       if (first.isNotEmpty) return first;
     }
     return null;
@@ -67,16 +69,22 @@ class PostMasonryCard extends StatelessWidget {
                         if (cachedHeight == null) {
                           imageProvider
                               .resolve(ImageConfiguration.empty)
-                              .addListener(ImageStreamListener((info, _) {
-                            final imgWidth = info.image.width.toDouble();
-                            final imgHeight = info.image.height.toDouble();
-                            final cardWidth = constraints.maxWidth;
-                            final resolved = (imgHeight / imgWidth) * cardWidth;
-                            final clamped = resolved.clamp(120.0, 350.0);
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              onHeightResolved?.call(post.idx, clamped);
-                            });
-                          }));
+                              .addListener(
+                                ImageStreamListener((info, _) {
+                                  final imgWidth = info.image.width.toDouble();
+                                  final imgHeight = info.image.height
+                                      .toDouble();
+                                  final cardWidth = constraints.maxWidth;
+                                  final resolved =
+                                      (imgHeight / imgWidth) * cardWidth;
+                                  final clamped = resolved.clamp(120.0, 350.0);
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    onHeightResolved?.call(post.idx, clamped);
+                                  });
+                                }),
+                              );
                         }
                         return Image(image: imageProvider, fit: BoxFit.cover);
                       },
@@ -97,7 +105,11 @@ class PostMasonryCard extends StatelessWidget {
                 Container(
                   color: scheme.surfaceContainerHigh,
                   child: Center(
-                    child: Icon(Icons.image_outlined, color: scheme.outline, size: 40),
+                    child: Icon(
+                      Icons.image_outlined,
+                      color: scheme.outline,
+                      size: 40,
+                    ),
                   ),
                 ),
               // Gradient overlay + title at bottom
@@ -110,10 +122,7 @@ class PostMasonryCard extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
-                      colors: [
-                        Color(0xCC000000),
-                        Color(0x00000000),
-                      ],
+                      colors: [Color(0xCC000000), Color(0x00000000)],
                     ),
                   ),
                   padding: const EdgeInsets.fromLTRB(10, 24, 10, 10),
