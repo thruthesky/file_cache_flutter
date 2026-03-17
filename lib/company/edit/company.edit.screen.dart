@@ -131,6 +131,9 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
         'mobile_number': _mobileCtrl.text.trim(),
         'kakaotalk_id': _kakaoCtrl.text.trim(),
         'telegram_id': _telegramCtrl.text.trim(),
+        'logo_url': _logoUrl ?? '',
+        'title_image_url': _titleImageUrl ?? '',
+        'photo_url': _photoUrl ?? '',
       };
 
       await CompanyService.update(data);
