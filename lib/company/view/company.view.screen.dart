@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -208,7 +209,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        '업소 정보를 불러오지 못했습니다.',
+                        '업소 정보를 불러오지 못했습니다.'.tr(),
                         style: theme.textTheme.titleMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -219,7 +220,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           FontAwesomeIcons.arrowRotateRight,
                           size: 16,
                         ),
-                        label: const Text('다시 시도'),
+                        label: Text('다시 시도'.tr()),
                       ),
                     ],
                   ),
@@ -237,7 +238,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
                     // 1. 기본 정보
                     _buildSection(
-                      title: '업소 정보',
+                      title: '업소 정보'.tr(),
                       icon: FontAwesomeIcons.building,
                       child: _buildCompanyInfoContent(),
                     ),
@@ -246,7 +247,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     // 2. 연락처
                     if (_hasContactInfo()) ...[
                       _buildSection(
-                        title: '연락처',
+                        title: '연락처'.tr(),
                         icon: FontAwesomeIcons.addressBook,
                         child: _buildContactContent(),
                       ),
@@ -256,7 +257,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     // 3. 설명
                     if (_company.description.isNotEmpty) ...[
                       _buildSection(
-                        title: '상세 설명',
+                        title: '상세 설명'.tr(),
                         icon: FontAwesomeIcons.alignLeft,
                         child: _buildDescriptionContent(),
                       ),
@@ -421,7 +422,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           const SizedBox(height: 16),
           _buildInfoRow(
             icon: FontAwesomeIcons.locationDot,
-            label: '위치',
+            label: '위치'.tr(),
             value: _getValidLocation(),
           ),
         ],
@@ -467,21 +468,21 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.phoneNumber.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.phone,
-            label: '전화번호',
+            label: '전화번호'.tr(),
             value: _company.phoneNumber,
             onTap: () => _launchUrl('tel:${_company.phoneNumber}'),
           ),
         if (_company.mobileNumber.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.mobileScreen,
-            label: '휴대폰',
+            label: '휴대폰'.tr(),
             value: _company.mobileNumber,
             onTap: () => _launchUrl('tel:${_company.mobileNumber}'),
           ),
         if (_company.kakaotalkId.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.comment,
-            label: '카카오톡',
+            label: '카카오톡'.tr(),
             value: _company.kakaotalkId,
             onTap: () =>
                 _launchUrl('https://open.kakao.com/o/${_company.kakaotalkId}'),
@@ -489,7 +490,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.telegramId.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.telegram,
-            label: '텔레그램',
+            label: '텔레그램'.tr(),
             value: _company.telegramId,
             onTap: () => _launchUrl('https://t.me/${_company.telegramId}'),
             isLast: true,

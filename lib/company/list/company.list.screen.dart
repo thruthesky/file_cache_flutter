@@ -52,42 +52,23 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
   Future<void> _loadAll() async {
     setState(() => _isLoading = true);
-    try {
-      final results = await Future.wait([
-        CompanyService.list(category: _selectedCategoryId),
-        CompanyService.mine().catchError((_) => null),
-      ]);
-      if (mounted) {
-        final companies = results[0] as List<CompanyModel>;
-        setState(() {
-          _companies = companies;
-          _myCompany = results[1] as CompanyModel?;
-        });
-      }
-    } catch (_) {
-      if (mounted) {
-        setState(() => _companies = []);
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+    final results = await Future.wait([
+      CompanyService.list(category: _selectedCategoryId),
+      CompanyService.mine(),
+    ]);
+    if (mounted) {
+      final companies = results[0] as List<CompanyModel>;
+      setState(() {
+        _companies = companies;
+        _myCompany = results[1] as CompanyModel?;
+      });
     }
   }
 
   Future<void> _loadCompanies() async {
-    setState(() => _isLoading = true);
-    try {
-      final companies = await CompanyService.list(
-        category: _selectedCategoryId,
-      );
-      if (mounted) {
-        setState(() => _companies = companies);
-      }
-    } catch (_) {
-      if (mounted) {
-        setState(() => _companies = []);
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+    final companies = await CompanyService.list(category: _selectedCategoryId);
+    if (mounted) {
+      setState(() => _companies = companies);
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
@@ -33,12 +34,12 @@ class CompanyImageUploadForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FormFieldLabel(
-            label: '로고 이미지',
-            hint: '업소의 로고 또는 프로필 이미지',
+            label: '로고 이미지'.tr(),
+            hint: '업소의 로고 또는 프로필 이미지'.tr(),
             child: _UploadTile(
               imageUrl: logoUrl,
               icon: FontAwesomeIcons.image,
-              hint: '로고 선택',
+              hint: '로고 선택'.tr(),
               aspectRatio: 1,
               module: 'company',
               code: 'logo',
@@ -47,12 +48,12 @@ class CompanyImageUploadForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
-            label: '대표 이미지',
-            hint: '목록 및 상단에 표시되는 메인 이미지',
+            label: '대표 이미지'.tr(),
+            hint: '목록 및 상단에 표시되는 메인 이미지'.tr(),
             child: _UploadTile(
               imageUrl: titleImageUrl,
               icon: FontAwesomeIcons.panorama,
-              hint: '대표 이미지 선택',
+              hint: '대표 이미지 선택'.tr(),
               aspectRatio: 16 / 9,
               module: 'company',
               code: 'title_image',
@@ -61,12 +62,12 @@ class CompanyImageUploadForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
-            label: '추가 사진',
-            hint: '업소 내부, 메뉴, 분위기 사진 등',
+            label: '추가 사진'.tr(),
+            hint: '업소 내부, 메뉴, 분위기 사진 등'.tr(),
             child: _UploadTile(
               imageUrl: photoUrl,
               icon: FontAwesomeIcons.camera,
-              hint: '사진 선택',
+              hint: '사진 선택'.tr(),
               aspectRatio: 4 / 3,
               module: 'company',
               code: 'photo',
@@ -138,8 +139,8 @@ class _UploadTileState extends State<_UploadTile> {
                 FaIcon(FontAwesomeIcons.penToSquare,
                     size: 11, color: Colors.white),
                 SizedBox(width: 4),
-                Text('변경',
-                    style: TextStyle(color: Colors.white, fontSize: 12)),
+                Text('변경'.tr(),
+                    style: const TextStyle(color: Colors.white, fontSize: 12)),
               ],
             ),
           ),
@@ -169,7 +170,7 @@ class _UploadTileState extends State<_UploadTile> {
           ),
           const SizedBox(height: 4),
           Text(
-            '탭하여 선택',
+            '탭하여 선택'.tr(),
             style: TextStyle(fontSize: 11, color: scheme.outlineVariant),
           ),
         ],
@@ -208,7 +209,7 @@ class _UploadTileState extends State<_UploadTile> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                    '업로드 실패: ${e.toString().replaceFirst('Exception: ', '')}'),
+                    '업로드 실패: {}'.tr(args: [e.toString().replaceFirst('Exception: ', '')])),
                 backgroundColor: Colors.red,
               ),
             );
@@ -224,7 +225,7 @@ class _UploadTileState extends State<_UploadTile> {
                 setState(() => _url = null);
                 widget.onUploaded('');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('사진이 삭제되었습니다')),
+                  SnackBar(content: Text('사진이 삭제되었습니다'.tr())),
                 );
               },
               child: Container(

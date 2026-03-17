@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -52,22 +53,22 @@ class CompanyReviewForm extends StatelessWidget {
         children: [
           _ReviewCard(
             icon: FontAwesomeIcons.buildingColumns,
-            title: '기본 정보',
+            title: '기본 정보'.tr(),
             rows: [
               _Row(
-                '업소명',
-                name.isNotEmpty ? name : '(미입력)',
+                '업소명'.tr(),
+                name.isNotEmpty ? name : '(미입력)'.tr(),
                 missing: name.isEmpty,
               ),
               _Row(
-                '카테고리',
-                category.isNotEmpty ? category : '(미선택)',
+                '카테고리'.tr(),
+                category.isNotEmpty ? category : '(미선택)'.tr(),
                 missing: category.isEmpty,
               ),
-              if (title.isNotEmpty) _Row('한줄 소개', title),
+              if (title.isNotEmpty) _Row('한줄 소개'.tr(), title),
               if (description.isNotEmpty)
                 _Row(
-                  '상세 설명',
+                  '상세 설명'.tr(),
                   description.length > 80
                       ? '${description.substring(0, 80)}…'
                       : description,
@@ -77,17 +78,17 @@ class CompanyReviewForm extends StatelessWidget {
           const SizedBox(height: 12),
           _ReviewCard(
             icon: FontAwesomeIcons.locationDot,
-            title: '위치 및 연락처',
+            title: '위치 및 연락처'.tr(),
             rows: hasContact
                 ? [
-                    if (location.isNotEmpty) _Row('지역', location),
-                    if (address.isNotEmpty) _Row('주소', address),
-                    if (phone.isNotEmpty) _Row('전화번호', phone),
-                    if (mobile.isNotEmpty) _Row('휴대폰', mobile),
-                    if (kakao.isNotEmpty) _Row('카카오톡', kakao),
-                    if (telegram.isNotEmpty) _Row('텔레그램', telegram),
+                    if (location.isNotEmpty) _Row('지역'.tr(), location),
+                    if (address.isNotEmpty) _Row('주소'.tr(), address),
+                    if (phone.isNotEmpty) _Row('전화번호'.tr(), phone),
+                    if (mobile.isNotEmpty) _Row('휴대폰'.tr(), mobile),
+                    if (kakao.isNotEmpty) _Row('카카오톡'.tr(), kakao),
+                    if (telegram.isNotEmpty) _Row('텔레그램'.tr(), telegram),
                   ]
-                : [_Row('', '연락처 정보가 없습니다', missing: true)],
+                : [_Row('', '연락처 정보가 없습니다'.tr(), missing: true)],
           ),
           const SizedBox(height: 12),
           _ImageReviewCard(
@@ -99,7 +100,7 @@ class CompanyReviewForm extends StatelessWidget {
           _InfoBanner(
             icon: FontAwesomeIcons.circleInfo,
             color: Theme.of(context).colorScheme.primary,
-            text: '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.',
+            text: '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.'.tr(),
           ),
         ],
       ),
@@ -119,9 +120,9 @@ class _ImageReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final items = [
-      ('로고', logoUrl, 1.0),
-      ('대표 이미지', titleImageUrl, 16 / 9),
-      ('추가 사진', photoUrl, 4 / 3),
+      ('로고'.tr(), logoUrl, 1.0),
+      ('대표 이미지'.tr(), titleImageUrl, 16 / 9),
+      ('추가 사진'.tr(), photoUrl, 4 / 3),
     ];
 
     return Card(
@@ -141,7 +142,7 @@ class _ImageReviewCard extends StatelessWidget {
                 FaIcon(FontAwesomeIcons.image, size: 13, color: scheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '이미지',
+                  '이미지'.tr(),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -196,7 +197,7 @@ class _ImageReviewCard extends StatelessWidget {
                       )
                     else
                       Text(
-                        '미등록',
+                        '미등록'.tr(),
                         style: TextStyle(
                           fontSize: 13,
                           color: Colors.grey[400],
