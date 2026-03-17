@@ -249,17 +249,23 @@ class ChatBubbleTheme {
     senderInfoSpacing: 4.0,
     avatarNameSpacing: 8.0,
     timestampSpacing: 4.0,
-    protocolOuterPadding:
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    protocolOuterPadding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 8,
+    ),
     protocolPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     protocolBorderRadius: 12.0,
     blockedIconSize: 16.0,
     blockedTextFontSize: 14.0,
     blockedIconSpacing: 6.0,
-    bottomSheetPadding:
-        const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-    bottomSheetHeaderPadding:
-        const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+    bottomSheetPadding: const EdgeInsets.symmetric(
+      vertical: 20,
+      horizontal: 16,
+    ),
+    bottomSheetHeaderPadding: const EdgeInsets.symmetric(
+      horizontal: 4,
+      vertical: 10,
+    ),
     bottomSheetHeaderFontSize: 18.0,
     bottomSheetItemSpacing: 8.0,
     senderNameColor: Colors.grey[700]!,
@@ -375,8 +381,6 @@ class ChatDialogTheme {
   final double avatarBorderRadius;
   final double avatarBorderWidth;
   final double avatarSpacing;
-  final double searchFieldBorderRadius;
-  final double searchFieldBorderWidth;
   final double searchIconSize;
   final double searchIconPadding;
   final EdgeInsets searchContentPadding;
@@ -433,8 +437,6 @@ class ChatDialogTheme {
     required this.avatarBorderRadius,
     required this.avatarBorderWidth,
     required this.avatarSpacing,
-    required this.searchFieldBorderRadius,
-    required this.searchFieldBorderWidth,
     required this.searchIconSize,
     required this.searchIconPadding,
     required this.searchContentPadding,
@@ -492,8 +494,6 @@ class ChatDialogTheme {
     avatarBorderRadius: 20.0,
     avatarBorderWidth: 2.0,
     avatarSpacing: 12.0,
-    searchFieldBorderRadius: 8.0,
-    searchFieldBorderWidth: 2.0,
     searchIconSize: 20.0,
     searchIconPadding: 12.0,
     searchContentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -530,24 +530,25 @@ class ChatDialogTheme {
   );
 
   BoxDecoration containerDecoration(ColorScheme scheme) => BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: scheme.outline, width: borderWidth),
-      );
+    color: scheme.surface,
+    borderRadius: BorderRadius.circular(borderRadius),
+    border: Border.all(color: scheme.outline, width: borderWidth),
+  );
 
-  ButtonStyle actionButtonStyle(ColorScheme scheme,
-          {bool destructive = false}) =>
-      ElevatedButton.styleFrom(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(actionButtonBorderRadius),
-          side: BorderSide(
-            color: destructive ? scheme.error : scheme.outline,
-            width: actionButtonBorderWidth,
-          ),
-        ),
-        padding: actionButtonPadding,
-      );
+  ButtonStyle actionButtonStyle(
+    ColorScheme scheme, {
+    bool destructive = false,
+  }) => ElevatedButton.styleFrom(
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(actionButtonBorderRadius),
+      side: BorderSide(
+        color: destructive ? scheme.error : scheme.outline,
+        width: actionButtonBorderWidth,
+      ),
+    ),
+    padding: actionButtonPadding,
+  );
 }
 
 // ============================================================================

@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 
@@ -193,14 +194,14 @@ class UserService {
   /// Listen to blocked users from Firebase: user-private/{uid}/blocks
   void listenBlockedUsers(String uid) {
     blockedUsersSubscription?.cancel();
-    final ref = FirebaseDatabase.instance.ref('user-private/$uid/blocks');
+    final ref = userPrivateBlocksRef(uid);
     blockedUsersSubscription = ref.onValue.listen((event) {
-      blockedUsers.clear();
+      final newSet = <String>{};
       if (event.snapshot.exists && event.snapshot.value != null) {
         final data = event.snapshot.value as Map<dynamic, dynamic>;
-        blockedUsers.addAll(data.keys.cast<String>());
+        newSet.addAll(data.keys.cast<String>());
       }
-      blockedUsersStream.value = Set<String>.from(blockedUsers);
+      blockedUsersStream.value = newSet;
     });
   }
 

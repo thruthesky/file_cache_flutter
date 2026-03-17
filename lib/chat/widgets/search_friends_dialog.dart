@@ -149,8 +149,9 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                 color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(chatTheme.dialog.headerBorderRadius),
-                  topRight:
-                      Radius.circular(chatTheme.dialog.headerBorderRadius),
+                  topRight: Radius.circular(
+                    chatTheme.dialog.headerBorderRadius,
+                  ),
                 ),
                 border: Border(
                   bottom: BorderSide(
@@ -201,40 +202,27 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Search field - Comic 스타일
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          chatTheme.dialog.searchFieldBorderRadius,
+                    TextField(
+                      controller: _searchController,
+                      onChanged: _onSearchChanged,
+                      style: textTheme.bodyLarge,
+                      decoration: InputDecoration(
+                        hintText: "Search by nickname",
+                        hintStyle: textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
                         ),
-                        border: Border.all(
-                          color: colorScheme.outline,
-                          width: chatTheme.dialog.searchFieldBorderWidth,
-                        ),
-                      ),
-                      child: TextField(
-                        controller: _searchController,
-                        onChanged: _onSearchChanged,
-                        style: textTheme.bodyLarge,
-                        decoration: InputDecoration(
-                          hintText: "Search by nickname",
-                          hintStyle: textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(
+                            chatTheme.dialog.searchIconPadding,
                           ),
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.all(
-                              chatTheme.dialog.searchIconPadding,
-                            ),
-                            child: FaIcon(
-                              FontAwesomeIcons.lightMagnifyingGlass,
-                              color: colorScheme.primary,
-                              size: chatTheme.dialog.searchIconSize,
-                            ),
+                          child: FaIcon(
+                            FontAwesomeIcons.lightMagnifyingGlass,
+                            color: colorScheme.primary,
+                            size: chatTheme.dialog.searchIconSize,
                           ),
-                          border: InputBorder.none,
-                          contentPadding:
-                              chatTheme.dialog.searchContentPadding,
                         ),
+                        border: InputBorder.none,
+                        contentPadding: chatTheme.dialog.searchContentPadding,
                       ),
                     ),
                     SizedBox(height: chatTheme.dialog.contentSpacing),
@@ -316,13 +304,15 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
         final user = _searchResults[index];
         return InkWell(
           onTap: () => _startChatWithUser(user),
-          borderRadius:
-              BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+          borderRadius: BorderRadius.circular(
+            chatTheme.dialog.itemBorderRadius,
+          ),
           child: Container(
             padding: chatTheme.dialog.itemPadding,
             decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+              borderRadius: BorderRadius.circular(
+                chatTheme.dialog.itemBorderRadius,
+              ),
               border: Border.all(
                 color: colorScheme.outline,
                 width: chatTheme.dialog.itemBorderWidth,
