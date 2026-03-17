@@ -38,6 +38,7 @@ class _PostListMasonryViewState extends State<PostListMasonryView> {
         return PagedMasonryGridView<int, Post>.count(
           state: state,
           fetchNextPage: fetchNextPage,
+          physics: const ClampingScrollPhysics(),
           crossAxisCount: 2,
           padding: const EdgeInsets.all(8),
           mainAxisSpacing: 8,

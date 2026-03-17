@@ -32,8 +32,8 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
       getNextPageKey: (state) {
         if (state.lastPageIsEmpty) return null;
         final keys = state.keys;
-        if (keys == null || keys.isEmpty) return 0;
-        return keys.last + _pageSize;
+        if (keys == null || keys.isEmpty) return 1;
+        return keys.last + 1;
       },
       fetchPage: _fetchPage,
     );
@@ -45,14 +45,14 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
     super.dispose();
   }
 
-  Future<List<Post>> _fetchPage(int offset) async {
+  Future<List<Post>> _fetchPage(int page) async {
     final userState = Provider.of<UserState>(context, listen: false);
     final result = await PostService.list(
       idxMember: userState.idx,
       limit: _pageSize,
-      offset: offset,
+      page: page,
     );
-    if (offset >= result.total && result.total > 0) return [];
+    if (page > 1 && result.posts.isEmpty) return [];
     return result.posts;
   }
 

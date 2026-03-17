@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -218,9 +220,8 @@ class _UploadTileState extends State<_UploadTile> {
           code: widget.code,
           onBeforeUpload: () async {
             if (_url != null && _url!.isNotEmpty) {
-              try {
-                await ApiService.instance.fileDeleteByUrl(_url!);
-              } catch (_) {}
+              await ApiService.instance.fileDeleteByUrl(_url!);
+              log('DELETED EXISTING FILE: $_url');
             }
             return true;
           },
@@ -274,6 +275,7 @@ class _UploadTileState extends State<_UploadTile> {
                 setState(() => _url = null);
                 widget.onUploaded('');
                 if (urlToDelete != null && urlToDelete.isNotEmpty) {
+                  log('DELETED EXISTING FILE: $urlToDelete');
                   await ApiService.instance.fileDeleteByUrl(urlToDelete);
                 }
                 if (!context.mounted) return;

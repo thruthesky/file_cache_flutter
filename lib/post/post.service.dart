@@ -24,7 +24,7 @@ class PostService {
   /// [category] 카테고리 필터 (선택)
   /// [orderby] 정렬 기준 (선택, 예: 'stamp DESC', 'no_of_view DESC')
   /// [limit] 최대 조회 수 (선택, 기본 20, 최대 100)
-  /// [offset] 오프셋 (선택, 기본 0)
+  /// [page] 페이지 번호 (선택, 1부터 시작)
   ///
   /// 반환: posts 목록과 total 전체 개수
   static Future<PostListResult> list({
@@ -33,7 +33,7 @@ class PostService {
     String? category,
     String? orderby,
     int? limit,
-    int? offset,
+    int? page,
   }) async {
     final result = await ApiService.instance.v7api(
       'post.list',
@@ -43,7 +43,7 @@ class PostService {
         if (category != null) 'category': category,
         if (orderby != null) 'orderby': orderby,
         if (limit != null) 'limit': limit,
-        if (offset != null) 'offset': offset,
+        if (page != null) 'page': page,
       },
       debug: true,
     );

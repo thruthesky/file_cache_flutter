@@ -83,7 +83,7 @@ class CompanyBasicInfoForm extends StatelessWidget {
               decoration: _inputDecoration(
                 '업소에 대한 자세한 설명을 입력하세요'.tr(),
               ).copyWith(alignLabelWithHint: true),
-              maxLines: 5,
+              maxLines: 12,
               maxLength: 2000,
             ),
           ),
@@ -122,8 +122,7 @@ class _CategoryGrid extends StatelessWidget {
       builder: (context, constraints) {
         const cols = 4;
         const spacing = 8.0;
-        final tileSize =
-            (constraints.maxWidth - spacing * (cols - 1)) / cols;
+        final tileSize = (constraints.maxWidth - spacing * (cols - 1)) / cols;
 
         return Wrap(
           spacing: spacing,
@@ -154,9 +153,7 @@ class _CategoryGrid extends StatelessWidget {
                     FaIcon(
                       icon,
                       size: 20,
-                      color: isSelected
-                          ? activeColor
-                          : scheme.onSurfaceVariant,
+                      color: isSelected ? activeColor : scheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -183,4 +180,3 @@ class _CategoryGrid extends StatelessWidget {
     );
   }
 }
-

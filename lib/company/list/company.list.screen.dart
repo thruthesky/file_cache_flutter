@@ -195,17 +195,17 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                     return PagedMasonryGridView.count(
                       state: state,
                       fetchNextPage: fetchNextPage,
+                      physics: const ClampingScrollPhysics(),
                       padding: const EdgeInsets.all(8),
                       crossAxisCount: 2,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
-                      builderDelegate:
-                          PagedChildBuilderDelegate<CompanyModel>(
+                      builderDelegate: PagedChildBuilderDelegate<CompanyModel>(
                         itemBuilder: (context, company, index) {
-                          final hasImage =
-                              company.primaryImageUrl.isNotEmpty;
-                          final height =
-                              hasImage ? (index.isEven ? 220.0 : 180.0) : 140.0;
+                          final hasImage = company.primaryImageUrl.isNotEmpty;
+                          final height = hasImage
+                              ? (index.isEven ? 220.0 : 180.0)
+                              : 140.0;
                           return SizedBox(
                             height: height,
                             child: CompanyCard(
