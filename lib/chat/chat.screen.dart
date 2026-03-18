@@ -55,16 +55,18 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: scheme.onSurfaceVariant,
                     ),
                     onPressed: () async {
-                      final folderName = await showDialog<String>(
+                      final group = await showDialog(
                         context: context,
                         builder: (context) => const FavoriteFoldersDialog(),
                       );
 
-                      if (folderName != null && context.mounted) {
+                      if (group != null && context.mounted) {
                         await showDialog(
                           context: context,
-                          builder: (context) =>
-                              BookmarkedChatsDialog(folderName: folderName),
+                          builder: (context) => BookmarkedChatsDialog(
+                            groupIdx: group.idx,
+                            groupName: group.name,
+                          ),
                         );
                       }
                     },
