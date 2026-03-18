@@ -23,6 +23,11 @@ class BookmarkModel {
   final String? nickname; // user
   final String? photoUrl; // user
 
+  // chat_room enrichment
+  final String? otherName; // chat_room
+  final String? otherNickname; // chat_room
+  final String? otherPhotoUrl; // chat_room
+
   const BookmarkModel({
     required this.idx,
     required this.idxMember,
@@ -39,6 +44,9 @@ class BookmarkModel {
     this.contentPreview,
     this.nickname,
     this.photoUrl,
+    this.otherName,
+    this.otherNickname,
+    this.otherPhotoUrl,
   });
 
   factory BookmarkModel.fromJson(Map<String, dynamic> json) {
@@ -60,6 +68,9 @@ class BookmarkModel {
       contentPreview: json['content_preview']?.toString(),
       nickname: json['nickname']?.toString(),
       photoUrl: json['photo_url']?.toString(),
+      otherName: json['other_name']?.toString(),
+      otherNickname: json['other_nickname']?.toString(),
+      otherPhotoUrl: json['other_photo_url']?.toString(),
     );
   }
 }

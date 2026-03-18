@@ -64,7 +64,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     super.initState();
     _post = widget.post;
     _goodCount = _post.good;
-    _bookmarked = BookmarkService.instance.isBookmarked('post', _post.idx);
     _loadPost();
   }
 
@@ -85,11 +84,6 @@ class _PostViewScreenState extends State<PostViewScreen> {
     setState(() {
       _comments = comments;
       _commentsLoading = false;
-      // 캐시에서 댓글 북마크 상태 초기화
-      _bookmarkedCommentIdxs = comments
-          .where((c) => BookmarkService.instance.isBookmarked('comment', c.idx))
-          .map((c) => c.idx)
-          .toSet();
     });
   }
 

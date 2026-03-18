@@ -7,9 +7,8 @@ import 'bookmark_list_result.model.dart';
 
 /// v7 Bookmark API 서비스 (싱글톤)
 ///
-/// 앱 초기화 시 [loadMyFolderBookmarks]를 호출하여 그룹 목록과
-/// 전체 북마크 entity_idx 캐시를 로드한다.
-/// 이후 [isBookmarked]로 즉시 북마크 여부를 판별할 수 있다.
+/// 앱 초기화 시 [loadMyFolderBookmarks]를 호출하여 그룹 목록을 로드한다.
+/// 그룹 목록은 [bookmarkGroups] ValueNotifier를 통해 접근 가능.
 class BookmarkService {
   static final BookmarkService instance = BookmarkService._();
   BookmarkService._();
@@ -22,87 +21,20 @@ class BookmarkService {
   /// 북마크 그룹 목록 getter
   ValueNotifier<List<BookmarkGroupModel>> get bookmarkGroups => _groupsNotifier;
 
-  /// entity_type별 북마크된 entity_idx 캐시
-  final Set<int> _bookmarkedPostIdxs = {};
-  final Set<int> _bookmarkedCommentIdxs = {};
-  final Set<int> _bookmarkedUserIdxs = {};
+  // ── 초기화 ──────────────────────────────────────
 
-  // ── 초기화 / 캐시 ──────────────────────────────────────
-
-  /// 내 그룹 목록 로드 + 전체 북마크 캐시 구축
+  /// 내 그룹 목록 로드
   ///
   /// 앱 초기화 시 UserService.initialize()에서 호출된다.
-  /// 그룹 목록을 가져온 뒤, 각 그룹의 북마크를 로드하여 캐시를 구축한다.
   Future<void> loadMyFolderBookmarks() async {
     final result = await ApiService.instance.v7api('bookmark.listGroups');
     final groupListResult = BookmarkGroupListResult.fromJson(result);
     _groupsNotifier.value = groupListResult.groups;
-
-    // 캐시 리빌드: 모든 그룹의 북마크를 로드하여 entity_idx 캐시에 추가
-    _bookmarkedPostIdxs.clear();
-    _bookmarkedCommentIdxs.clear();
-    _bookmarkedUserIdxs.clear();
-
-    await Future.wait(
-      groupListResult.groups.map((group) async {
-        final res = await ApiService.instance.v7api(
-          'bookmark.listByGroup',
-          data: {'idx_group': group.idx},
-        );
-        final listResult = BookmarkListResult.fromJson(res);
-        for (final bm in listResult.bookmarks) {
-          _addToCache(bm.entityType, bm.entityIdx);
-        }
-      }),
-    );
   }
 
   /// 상태 초기화 (로그아웃 시)
   void clear() {
     _groupsNotifier.value = [];
-    _bookmarkedPostIdxs.clear();
-    _bookmarkedCommentIdxs.clear();
-    _bookmarkedUserIdxs.clear();
-  }
-
-  /// 엔티티가 북마크되어 있는지 캐시에서 확인
-  bool isBookmarked(String entityType, int entityIdx) {
-    return _cacheFor(entityType).contains(entityIdx);
-  }
-
-  Set<int> _cacheFor(String entityType) {
-    switch (entityType) {
-      case 'post':
-        return _bookmarkedPostIdxs;
-      case 'comment':
-        return _bookmarkedCommentIdxs;
-      case 'user':
-        return _bookmarkedUserIdxs;
-      default:
-        return {};
-    }
-  }
-
-  void _addToCache(String entityType, int entityIdx) {
-    switch (entityType) {
-      case 'post':
-        _bookmarkedPostIdxs.add(entityIdx);
-      case 'comment':
-        _bookmarkedCommentIdxs.add(entityIdx);
-      case 'user':
-        _bookmarkedUserIdxs.add(entityIdx);
-    }
-  }
-
-  void _removeFromCache(String entityType, int entityIdx) {
-    switch (entityType) {
-      case 'post':
-        _bookmarkedPostIdxs.remove(entityIdx);
-      case 'comment':
-        _bookmarkedCommentIdxs.remove(entityIdx);
-      case 'user':
-        _bookmarkedUserIdxs.remove(entityIdx);
-    }
   }
 
   /// 그룹 count를 delta만큼 조정
@@ -134,7 +66,6 @@ class BookmarkService {
       },
     );
     final bm = BookmarkModel.fromJson(result);
-    if (entityIdx != null) _addToCache(entityType, entityIdx);
     _updateGroupCount(bm.idxGroup, 1);
     return bm;
   }
@@ -153,11 +84,7 @@ class BookmarkService {
         if (entityId != null) 'entity_id': entityId,
       },
     );
-    final removed = result['removed'] == true;
-    if (removed && entityIdx != null) {
-      _removeFromCache(entityType, entityIdx);
-    }
-    return removed;
+    return result['removed'] == true;
   }
 
   /// 그룹별 북마크 목록 조회

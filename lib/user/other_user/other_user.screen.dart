@@ -59,10 +59,6 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _bookmarked = BookmarkService.instance.isBookmarked(
-          'user',
-          _user!.idx,
-        );
       });
       _loadRecentPosts();
     } catch (e) {

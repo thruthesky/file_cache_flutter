@@ -8,6 +8,7 @@ import 'package:philgo/bookmark/bookmark_group.model.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 
@@ -128,6 +129,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       case 'user':
         if (bookmark.entityIdx > 0) {
           context.push(OtherUserScreen.routeByIdx(bookmark.entityIdx));
+        }
+      case 'chat_room':
+        if (bookmark.entityId.isNotEmpty) {
+          ChatRoomScreen.push(context, bookmark.entityId);
         }
     }
   }
@@ -326,6 +331,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         );
       case 'user':
         return UserAvatar(photoUrl: bookmark.photoUrl ?? '');
+      case 'chat_room':
+        return FaIcon(
+          FontAwesomeIcons.lightComments,
+          size: 20,
+          color: color.onSurfaceVariant,
+        );
       default:
         return FaIcon(
           FontAwesomeIcons.lightBookmark,
@@ -343,6 +354,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         return bookmark.contentPreview ?? '내용 미리보기 없음'.tr();
       case 'user':
         return bookmark.nickname ?? '이름없음'.tr();
+      case 'chat_room':
+        return bookmark.otherNickname ?? bookmark.otherName ?? bookmark.entityId;
       default:
         return bookmark.entityId.isNotEmpty
             ? bookmark.entityId
@@ -358,6 +371,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         return '댓글'.tr();
       case 'user':
         return '사용자'.tr();
+      case 'chat_room':
+        return '채팅'.tr();
       default:
         return bookmark.entityType;
     }
