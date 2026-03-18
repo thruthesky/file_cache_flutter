@@ -186,10 +186,8 @@ bool isAdminChatUser(String uid) {
   if (uid.isEmpty) {
     return false;
   }
-  final adminUid =
-      SettingsState.of(globalContext).settings?.chatAdmin ?? chatAdminUid;
 
-  if (uid == adminUid) {
+  if (uid == SettingsState.of(globalContext).adminChatUid) {
     return true;
   }
   return false; // Placeholder, replace with actual admin chat ID check
