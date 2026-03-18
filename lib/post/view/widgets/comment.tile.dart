@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
-import 'package:go_router/go_router.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
@@ -72,7 +71,7 @@ class _CommentTileState extends State<CommentTile> {
 
   void _openUserProfile(BuildContext context, int idxMember) {
     if (idxMember == 0) return;
-    context.push(OtherUserScreen.routeByIdx(idxMember));
+    OtherUserScreen.pushByIdx(context, idxMember);
   }
 
   Future<void> _toggleLike() async {
@@ -149,10 +148,7 @@ class _CommentTileState extends State<CommentTile> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: Container(
-                      width: 1.5,
-                      color: kThreadLineColor,
-                    ),
+                    child: Container(width: 1.5, color: kThreadLineColor),
                   ),
                 ),
               ],
@@ -235,7 +231,9 @@ class _CommentTileState extends State<CommentTile> {
                 child: GestureDetector(
                   onTap: () => _openUserProfile(context, comment.idxMember),
                   child: Text(
-                    comment.userName.isNotEmpty ? comment.userName : '이름없음'.tr(),
+                    comment.userName.isNotEmpty
+                        ? comment.userName
+                        : '이름없음'.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onPrimaryContainer,
@@ -257,10 +255,7 @@ class _CommentTileState extends State<CommentTile> {
           const SizedBox(height: 4),
 
           // 내용
-          PostViewContent(
-            post: comment,
-            padding: EdgeInsets.zero,
-          ),
+          PostViewContent(post: comment, padding: EdgeInsets.zero),
 
           // 첨부 파일
           if (comment.imageUrl != null || comment.videoUrl != null)
@@ -300,9 +295,7 @@ class _CommentTileState extends State<CommentTile> {
                         ? FontAwesomeIcons.solidBookmark
                         : FontAwesomeIcons.lightBookmark,
                     label: '',
-                    color: widget.bookmarked
-                        ? scheme.primary
-                        : scheme.tertiary,
+                    color: widget.bookmarked ? scheme.primary : scheme.tertiary,
                     onTap: widget.onBookmark!,
                   ),
                 ],

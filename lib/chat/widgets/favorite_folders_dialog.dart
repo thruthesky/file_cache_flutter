@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/bookmark/bookmark.service.dart';
+import 'package:philgo/bookmark/bookmark_group.model.dart';
 import 'package:philgo/chat/chat.theme.dart';
-import 'package:philgo/user/user.service.dart';
 
 /// 즐겨찾기 폴더 목록 다이얼로그
 /// 사용자의 즐겨찾기 폴더와 각 폴더의 북마크 개수를 표시
@@ -74,11 +75,11 @@ class FavoriteFoldersDialog extends StatelessWidget {
             ),
 
             /// 폴더 목록 - Comic 스타일
-            ValueListenableBuilder<List<Map<String, dynamic>>>(
-              valueListenable: UserService.instance.favoriteFoldersStream,
-              builder: (context, folders, child) {
+            ValueListenableBuilder<List<BookmarkGroupModel>>(
+              valueListenable: BookmarkService.instance.bookmarkGroups,
+              builder: (context, groups, child) {
                 // 폴더가 없는 경우 - Comic 스타일
-                if (folders.isEmpty) {
+                if (groups.isEmpty) {
                   return Padding(
                     padding: dialogEmptyPadding,
                     child: Column(
@@ -116,19 +117,16 @@ class FavoriteFoldersDialog extends StatelessWidget {
                   constraints: BoxConstraints(maxHeight: dialogListMaxHeight),
                   child: ListView.separated(
                     shrinkWrap: true,
-                    itemCount: folders.length,
+                    itemCount: groups.length,
                     padding: dialogContentPadding,
                     separatorBuilder: (context, index) =>
                         SizedBox(height: dialogItemSpacing),
                     itemBuilder: (context, index) {
-                      final folder = folders[index];
-                      final folderName = folder['folderName'] as String;
-                      final count = folder['countFavorites'] as int;
+                      final group = groups[index];
 
                       return InkWell(
                         onTap: () {
-                          // 다이얼로그 닫고 폴더명 반환
-                          Navigator.pop(context, folderName);
+                          Navigator.pop(context, group);
                         },
                         borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                         child: Container(
@@ -151,7 +149,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                               SizedBox(width: folderIconSpacing),
                               Expanded(
                                 child: Text(
-                                  folderName,
+                                  group.name,
                                   style: textTheme.bodyLarge,
                                 ),
                               ),
@@ -167,7 +165,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  count.toString(),
+                                  group.count.toString(),
                                   style: textTheme.labelLarge?.copyWith(
                                     color: colorScheme.primary,
                                     fontWeight: FontWeight.bold,

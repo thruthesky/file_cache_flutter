@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/room/single.chat_room.dart';
 import 'package:philgo/chat/room/single.chat_room.message_list.dart';
+import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/widgets/login.dart';
 
 import 'package:go_router/go_router.dart';
@@ -13,6 +14,11 @@ class ChatRoomScreen extends StatefulWidget {
       ctx.push(routeName.replaceFirst(':id', roomId));
   static Function(BuildContext ctx, String roomId) go = (ctx, roomId) =>
       ctx.go(routeName.replaceFirst(':id', roomId));
+
+  // helper for admin chat
+  static Function(BuildContext ctx) pushAdminChat = (ctx) => ctx.push(
+    routeName.replaceFirst(':id', SettingsState.of(ctx).adminChatUid),
+  );
 
   final String id; // This can be roomId or uid for single chat
 

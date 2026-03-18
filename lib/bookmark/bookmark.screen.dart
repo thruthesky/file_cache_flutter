@@ -128,7 +128,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         if (parentIdx != null && parentIdx > 0) _navigateToPost(parentIdx);
       case 'user':
         if (bookmark.entityIdx > 0) {
-          context.push(OtherUserScreen.routeByIdx(bookmark.entityIdx));
+          OtherUserScreen.pushByIdx(context, bookmark.entityIdx);
         }
       case 'chat_room':
         if (bookmark.entityId.isNotEmpty) {
@@ -154,19 +154,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _selectedGroup != null ? _selectedGroup!.name : '북마크'.tr(),
-        ),
+        title: Text(_selectedGroup != null ? _selectedGroup!.name : '북마크'.tr()),
         backgroundColor: color.surface,
         foregroundColor: color.onSurface,
         elevation: 0,
         scrolledUnderElevation: 1,
         leading: _selectedGroup != null
             ? IconButton(
-                icon: const FaIcon(
-                  FontAwesomeIcons.lightChevronLeft,
-                  size: 18,
-                ),
+                icon: const FaIcon(FontAwesomeIcons.lightChevronLeft, size: 18),
                 onPressed: _backToGroups,
               )
             : null,
@@ -191,15 +186,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       valueListenable: BookmarkService.instance.bookmarkGroups,
       builder: (context, groups, _) {
         if (groups.isEmpty) {
-          return _buildEmpty(
-            FontAwesomeIcons.lightFolderOpen,
-            '그룹이 없습니다'.tr(),
-          );
+          return _buildEmpty(FontAwesomeIcons.lightFolderOpen, '그룹이 없습니다'.tr());
         }
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 8),
           itemCount: groups.length,
-          separatorBuilder: (_, __) => Divider(
+          separatorBuilder: (_, _) => Divider(
             height: 1,
             indent: 16,
             endIndent: 16,
@@ -259,16 +251,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     }
 
     if (_bookmarks.isEmpty) {
-      return _buildEmpty(
-        FontAwesomeIcons.lightBookmark,
-        '북마크가 없습니다'.tr(),
-      );
+      return _buildEmpty(FontAwesomeIcons.lightBookmark, '북마크가 없습니다'.tr());
     }
 
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _bookmarks.length,
-      separatorBuilder: (_, __) => Divider(
+      separatorBuilder: (_, _) => Divider(
         height: 1,
         indent: 16,
         endIndent: 16,
@@ -355,7 +344,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       case 'user':
         return bookmark.nickname ?? '이름없음'.tr();
       case 'chat_room':
-        return bookmark.otherNickname ?? bookmark.otherName ?? bookmark.entityId;
+        return bookmark.otherNickname ??
+            bookmark.otherName ??
+            bookmark.entityId;
       default:
         return bookmark.entityId.isNotEmpty
             ? bookmark.entityId

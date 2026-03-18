@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +32,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
   /// 즐겨찾기 상태를 관리하는 ValueNotifier
   final _isFavoritedNotifier = ValueNotifier<bool>(false);
-  StreamSubscription<DatabaseEvent>? _favoritesSubscription;
 
   // room name or user name
   String get name {
@@ -68,43 +65,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _listenToFavorites();
-  }
-
-  @override
   void dispose() {
-    _favoritesSubscription?.cancel();
     _isFavoritedNotifier.dispose();
     super.dispose();
-  }
-
-  /// Firebase에서 즐겨찾기 상태를 실시간으로 구독
-  /// chat/favorites/{uid} 경로의 모든 폴더를 확인하여 현재 roomId가 존재하는지 체크
-  void _listenToFavorites() {
-    if (loginUid() == null) return;
-
-    final database = FirebaseDatabase.instance;
-    final favoritesRef = database.ref('chat/favorites/${loginUid()}');
-
-    _favoritesSubscription = favoritesRef.onValue.listen((event) {
-      bool isFavorited = false;
-
-      if (event.snapshot.exists && event.snapshot.value != null) {
-        final data = event.snapshot.value as Map<dynamic, dynamic>;
-
-        // 모든 폴더를 순회하며 현재 roomId가 있는지 확인
-        for (var roomsData in data.values) {
-          if (roomsData is Map && roomsData.containsKey(roomId)) {
-            isFavorited = true;
-            break;
-          }
-        }
-      }
-
-      _isFavoritedNotifier.value = isFavorited;
-    });
   }
 
   @override
@@ -325,7 +288,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 color: colorScheme.primaryContainer,
                 shape: BoxShape.circle,
                 // Comic design - border
-                border: Border.all(color: colorScheme.primary, width: pinnedIconBorderWidth),
+                border: Border.all(
+                  color: colorScheme.primary,
+                  width: pinnedIconBorderWidth,
+                ),
               ),
               child: Transform.rotate(
                 angle: pinnedIconTiltAngle,
@@ -402,7 +368,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               color: colorScheme.primary,
             ),
             SizedBox(width: menuItemSpacing),
-            Text(isPinned ? '고정 해제'.tr() : '고정'.tr(), style: theme.textTheme.bodyMedium),
+            Text(
+              isPinned ? '고정 해제'.tr() : '고정'.tr(),
+              style: theme.textTheme.bodyMedium,
+            ),
           ],
         ),
       ),
@@ -577,12 +546,17 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       context: context,
       builder: (dialogContext) => Dialog(
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(dialogBorderRadius)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(dialogBorderRadius),
+        ),
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
             color: colorScheme.surface,
-            border: Border.all(color: colorScheme.outline, width: dialogBorderWidth),
+            border: Border.all(
+              color: colorScheme.outline,
+              width: dialogBorderWidth,
+            ),
             borderRadius: BorderRadius.circular(dialogBorderRadius),
           ),
           child: Column(
@@ -625,7 +599,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           elevation: WidgetStateProperty.all(0),
                           shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(actionButtonBorderRadius),
+                              borderRadius: BorderRadius.circular(
+                                actionButtonBorderRadius,
+                              ),
                               side: BorderSide(
                                 color: colorScheme.error,
                                 width: actionButtonBorderWidth,
@@ -638,9 +614,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           foregroundColor: WidgetStateProperty.all(
                             colorScheme.onError,
                           ),
-                          padding: WidgetStateProperty.all(
-                            actionButtonPadding,
-                          ),
+                          padding: WidgetStateProperty.all(actionButtonPadding),
                           textStyle: WidgetStateProperty.all(
                             theme.textTheme.bodyMedium,
                           ),
@@ -656,7 +630,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         elevation: WidgetStateProperty.all(0),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(actionButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              actionButtonBorderRadius,
+                            ),
                             side: BorderSide(
                               color: colorScheme.error,
                               width: actionButtonBorderWidth,
@@ -669,9 +645,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         foregroundColor: WidgetStateProperty.all(
                           colorScheme.error,
                         ),
-                        padding: WidgetStateProperty.all(
-                          actionButtonPadding,
-                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
@@ -686,7 +660,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         elevation: WidgetStateProperty.all(0),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(actionButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              actionButtonBorderRadius,
+                            ),
                             side: BorderSide(
                               color: colorScheme.outline,
                               width: actionButtonBorderWidth,
@@ -699,9 +675,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         foregroundColor: WidgetStateProperty.all(
                           colorScheme.onSurface,
                         ),
-                        padding: WidgetStateProperty.all(
-                          actionButtonPadding,
-                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
@@ -775,7 +749,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-
     return Container(
       padding: badgePadding,
       decoration: BoxDecoration(
@@ -800,7 +773,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildAvatar() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
 
     return Container(
       decoration: BoxDecoration(
@@ -830,7 +802,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                     color: colorScheme.surface,
                     shape: BoxShape.circle,
                     // Comic design - border
-                    border: Border.all(color: Colors.amber, width: favoriteIndicatorBorderWidth),
+                    border: Border.all(
+                      color: Colors.amber,
+                      width: favoriteIndicatorBorderWidth,
+                    ),
                   ),
                   child: Center(
                     child: FaIcon(
@@ -864,7 +839,9 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         color: colorScheme.surface,
                         width: onlineIndicatorBorderWidth,
                       ),
-                      borderRadius: BorderRadius.circular(onlineIndicatorBorderRadius),
+                      borderRadius: BorderRadius.circular(
+                        onlineIndicatorBorderRadius,
+                      ),
                     ),
                   ),
                   // Only show when online - no indicator when offline

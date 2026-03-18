@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/list/chat.room_list_view.dart';
@@ -55,16 +54,18 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: scheme.onSurfaceVariant,
                     ),
                     onPressed: () async {
-                      final folderName = await showDialog<String>(
+                      final group = await showDialog(
                         context: context,
                         builder: (context) => const FavoriteFoldersDialog(),
                       );
 
-                      if (folderName != null && context.mounted) {
+                      if (group != null && context.mounted) {
                         await showDialog(
                           context: context,
-                          builder: (context) =>
-                              BookmarkedChatsDialog(folderName: folderName),
+                          builder: (context) => BookmarkedChatsDialog(
+                            groupIdx: group.idx,
+                            groupName: group.name,
+                          ),
                         );
                       }
                     },
@@ -93,8 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     onSelected: (value) {
                       if (value == 'admin_chat') {
-                        // 운영자와 1:1 채팅방 입
-                        ChatRoomScreen.push(context, chatAdminUid);
+                        ChatRoomScreen.pushAdminChat(context);
                       }
                     },
                     itemBuilder: (context) => [
