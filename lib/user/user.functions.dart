@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
@@ -122,16 +123,7 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          // UserService.instance.onTapViewProfile != null
-                          //     ? UserService.instance.onTapViewProfile!.call(
-                          //         context,
-                          //         otherUser,
-                          //       )
-                          //     : showInfoDialog(
-                          //         context,
-                          //         'View profile',
-                          //         'Use UserService to initialize onTapViewProfile',
-                          //       );
+                          OtherUserScreen.pushByIdx(context, otherUser.idx);
                         },
                         style: ButtonStyle(
                           // Comic design: no shadow

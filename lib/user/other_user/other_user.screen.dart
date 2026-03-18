@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:philgo/bookmark/bookmark.service.dart';
 import 'package:philgo/bookmark/widgets/bookmark_group_picker.dart';
+import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
@@ -19,8 +21,10 @@ import 'package:philgo/user/widgets/user_avatar.dart';
 class OtherUserScreen extends StatefulWidget {
   static const String routeName = '/user/profile';
 
-  static String routeByIdx(int idx) => '$routeName?idx=$idx';
-  static String routeByUid(String uid) => '$routeName?firebase_uid=$uid';
+  static Function(BuildContext ctx, int idx) pushByIdx = (ctx, idx) =>
+      ctx.push('$routeName?idx=$idx');
+  static Function(BuildContext ctx, String uid) pushByUid = (ctx, uid) =>
+      ctx.push('$routeName?firebase_uid=$uid');
 
   final int? idx;
   final String? firebaseUid;
@@ -293,9 +297,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                 FontAwesomeIcons.lightCommentDots,
                 '채팅'.tr(),
                 () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('채팅 기능은 준비 중입니다.'.tr())),
-                  );
+                  ChatRoomScreen.push(context, user.firebaseUid);
                 },
               ),
               const SizedBox(width: 16),

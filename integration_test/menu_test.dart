@@ -32,8 +32,11 @@ void main() {
       // 메뉴 페이지가 표시되는지 확인 (Verify menu page is displayed)
       // MenuHome 위젯의 타이틀 "메뉴"를 찾아 확인
       // 메뉴 섹션들이 표시되는지 확인
-      expect(find.byType(SingleChildScrollView), findsWidgets,
-          reason: '메뉴 페이지의 스크롤 뷰가 표시되어야 합니다');
+      expect(
+        find.byType(SingleChildScrollView),
+        findsWidgets,
+        reason: '메뉴 페이지의 스크롤 뷰가 표시되어야 합니다',
+      );
 
       debugPrint('메뉴 페이지 테스트 성공!');
     });

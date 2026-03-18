@@ -407,8 +407,10 @@ GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
 | user_name | string | 작성자 이름/닉네임 | sf_post_data.user_name (글 생성 시 sf_member.nickname에서 복사) |
 | user_email | string | 작성자 이메일 | sf_post_data.user_email |
 | user_photo_url | string | 작성자 프로필 사진 URL | sf_member.photo_url (LEFT JOIN으로 실시간 조회) |
+| user_nickname | string | 작성자 현재 닉네임 (최신값) | sf_member.nickname (LEFT JOIN으로 실시간 조회) |
+| user_firebase_uid | string | 작성자 Firebase UID | sf_member.firebase_uid (LEFT JOIN으로 실시간 조회) |
 
-> **참고**: `user_photo_url`은 sf_post_data 테이블에 저장되지 않고, `findByIdx()`, `findAll()`, `findComments()` 조회 시 `sf_member` 테이블과 LEFT JOIN하여 실시간으로 가져온다. 따라서 사용자가 프로필 사진을 변경하면 즉시 반영된다.
+> **참고**: `user_photo_url`, `user_nickname`, `user_firebase_uid`는 sf_post_data 테이블에 저장되지 않고, `findByIdx()`, `findAll()`, `findComments()` 조회 시 `sf_member` 테이블과 LEFT JOIN하여 실시간으로 가져온다. 따라서 사용자가 프로필 사진이나 닉네임을 변경하면 즉시 반영된다. `user_name`은 글 생성 시점에 sf_post_data에 복사된 값이고, `user_nickname`은 sf_member에서 실시간으로 가져오는 최신 닉네임이다.
 
 ### 계산 필드 (toArray()에서 자동 추가)
 

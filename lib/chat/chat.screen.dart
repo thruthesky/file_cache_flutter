@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/list/chat.room_list_view.dart';
@@ -9,8 +8,6 @@ import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/chat/widgets/bookmarked_chats_dialog.dart';
 import 'package:philgo/chat/widgets/favorite_folders_dialog.dart';
 import 'package:philgo/chat/widgets/pinned_chat_rooms_list.dart';
-import 'package:philgo/setting/setting.model.dart';
-import 'package:philgo/setting/setting.state.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
