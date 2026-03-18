@@ -22,6 +22,7 @@
 18. [게시판 목록 페이지 (v7/post/list.php)](#18-게시판-목록-페이지-v7postlistphp)
 19. [게시판 글 읽기 페이지 (v7/post/view.php)](#19-게시판-글-읽기-페이지-v7postviewphp)
 20. [전체 메뉴 페이지 (v7/menu/index.php)](#20-전체-메뉴-페이지-v7menuindexphp)
+21. [오늘의 글 페이지 (v7/today/index.php)](#21-오늘의-글-페이지-v7todayindexphp)
 
 ---
 
@@ -292,6 +293,7 @@ docker restart nginx
 | `/post/list.php` | `/post/list` | `./v7/post/list.php` (v6 호환) |
 | `/post/view.php` | `/post/view` | `./v7/post/view.php` (v6 호환) |
 | `/company/list` | `/company/list` | `./v7/company/list.php` |
+| `/today` | `/today` | `./v7/today/index.php` |
 | `/없는경로` | `/없는경로` | 404 (v7/404.php 또는 기본 메시지) |
 
 ### v6 URL Backward Compatibility (v6 URL 하위 호환)
@@ -1094,6 +1096,7 @@ v6의 `href()` 함수와 동일한 패턴이다.
 // 기본 URL
 url()->home                         // '/'
 url()->search                       // '/post/search'
+url()->today                        // '/today'
 url()->weather                      // '/weather'
 url()->currency                     // '/currency'
 
@@ -1161,6 +1164,7 @@ url()->menu->all                    // '/menu'
 <a href="<?= url()->adv->massage ?>">마사지 광고</a>
 <a href="<?= url()->weather ?>">날씨</a>
 <a href="<?= url()->currency ?>">환율 계산기</a>
+<a href="<?= url()->today ?>">오늘의 글</a>
 <a href="<?= url()->menu->all ?>">전체 메뉴</a>
 ```
 
@@ -1349,3 +1353,36 @@ v7 전체 메뉴 페이지는 사이트의 모든 주요 링크를 6개 섹션(�
 | **유틸리티** | 검색, 날씨, 환율 계산기 |
 
 > 상세 문서: [web/v7-menu.md](v7-menu.md)
+
+---
+
+## 21. 오늘의 글 페이지 (v7/today/index.php)
+
+### 개요
+
+매년 오늘(월/일)에 해당하는 날짜에 작성된 글을 연도별로 그룹화하여 보여주는 페이지임.
+2009년부터 현재 연도까지 동일 월/일에 작성된 글을 `PostService::todayInHistory()`로 조회하여
+연도별 섹션으로 렌더링함. v6 `page/today.php`를 v7 방식으로 새로 구현.
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | `v7/today/index.php` |
+| **CSS** | `v7/today/today.css` |
+| **접속 URL** | `https://v7-local.philgo.com/today` |
+| **URL 헬퍼** | `url()->today` → `/today` |
+| **렌더링** | SSR (PHP) |
+| **핵심 Service** | `PostService::todayInHistory()` |
+
+### 기능
+
+- 매년 오늘과 같은 월/일에 작성된 글을 연도별로 묶어 표시
+- 검색 대상 게시판: freetalk, qna (기본값)
+- 각 글에 썸네일, 제목, 게시판명, 시간, 조회수, 댓글수 메타 표시
+- 해당 날짜에 글이 없으면 빈 상태("오늘 날짜에 작성된 글이 없습니다") 표시
+- SEO: 동적 title/description 설정 ("오늘의 글 (3월 17일) - 필고")
+
+### 헤더 메뉴 링크
+
+데스크톱/모바일 헤더의 "오늘" 메뉴 링크가 `/today`를 가리킴.
+- 데스크톱 헤더: `layout.header-desktop.php`
+- 모바일 헤더: `layout.header-mobile.php`

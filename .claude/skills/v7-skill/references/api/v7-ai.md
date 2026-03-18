@@ -2,8 +2,9 @@
 
 ## 개요
 
-Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모듈이다.
+Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석, **AI 챗봇** 모듈이다.
 기존 레거시 검열 코드(`lib/moderate/gemini-moderate-api.php`)를 v7 Controller+Service 아키텍처로 재구현한 것이다.
+AI 챗봇(`ai.chatbot`)은 v6의 `widgets/ai/chatbot.php`(클라이언트 Vertex AI SDK 직접 호출)를 v7 아키텍처(PHP SSE + Gemini REST API)로 전환한 것이다.
 
 ### 영수증 진위 판별 API 상세 → [v7-ai-receipt.md](v7-ai-receipt.md)
 
@@ -26,6 +27,7 @@ Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모
   - [ai.moderate - 텍스트 검열](#aimoderate---텍스트-검열)
   - [ai.generate - 텍스트 생성](#aigenerate---텍스트-생성)
   - [ai.analyzeReceipt - 영수증 분석 (인증 필수)](#aianalyzereceipt---영수증-분석-인증-필수)
+  - [ai.chatbot - AI 챗봇 SSE 스트리밍](#aichatbot---ai-챗봇-sse-스트리밍)
   - [ai.answerPost - AI 답변 SSE 스트리밍 + 자동 저장](#aianswerpost---ai-답변-sse-스트리밍--자동-저장)
   - [ai.saveAnswer - AI 답변 저장](#aisaveanswer---ai-답변-저장)
   - [ai-api.php 전용 엔트리포인트](#ai-apiphp-전용-엔트리포인트)
@@ -50,13 +52,19 @@ Gemini API를 활용한 콘텐츠 검열, 텍스트 생성, 영수증 분석 모
 ```
 lib/ai/
 ├── AiController.php       # API 엔드포인트 (method=ai.*)
-├── AiService.php          # 비즈니스 로직 (Gemini API 호출)
+├── AiService.php          # 비즈니스 로직 (Gemini API 호출, 챗봇 Enhanced Prompt)
 ├── GeminiClient.php       # Gemini REST API cURL 클라이언트
 ├── ModerationEntity.php   # 검열 결과 Entity (POPO)
 ├── GenerateEntity.php     # 텍스트 생성 결과 Entity (POPO)
 └── ReceiptEntity.php      # 영수증 분석 결과 Entity (POPO)
 
 ai-api.php                 # AI 전용 엔트리포인트 (api.php require 래퍼)
+etc/data/philippines-info.json  # 필리핀 정보 키워드 매칭 데이터 (챗봇 Enhanced Prompt용)
+
+v7/ai/
+├── index.php              # AI 챗봇 웹 페이지 (URL: /ai)
+├── chatbot.css            # 챗봇 CSS 스타일
+└── chatbot.js             # Vue.js 챗봇 컴포넌트 + Firebase RTDB 연동
 ```
 
 | 클래스 | 네임스페이스 | 역할 |
@@ -262,6 +270,93 @@ curl -k -X POST "https://local.philgo.com/api.php" \
   -F "method=ai.analyzeReceipt" \
   -F "id_token=eyJhbGciOiJSUzI1NiIs..." \
   -F "file=@/path/to/receipt.jpg"
+```
+
+---
+
+### ai.chatbot - AI 챗봇 SSE 스트리밍
+
+필리핀 전문 도우미 "필립(Philip)" AI 챗봇. 사용자 메시지를 받아 Enhanced Prompt(필리핀 정보 키워드 매칭)를 생성하고, Gemini API로 SSE 스트리밍 답변을 전달한다. 채팅 기록은 클라이언트(Firebase RTDB)에서 관리한다.
+
+**⛔ 반드시 `/ai-api.php`를 통해 호출해야 한다. `/api.php`로 호출하면 에러 발생.**
+
+**v6 → v7 전환 요약:**
+
+| 항목 | v6 (기존) | v7 (현재) |
+|------|-----------|-----------|
+| **AI 호출** | 클라이언트 JS에서 Vertex AI SDK 직접 호출 | PHP 서버에서 Gemini REST API + SSE 스트리밍 |
+| **Enhanced Prompt** | 클라이언트 JS에서 `enhance-prompt.js`로 처리 | PHP `AiService::generateEnhancedPrompt()`에서 처리 |
+| **채팅 기록** | Firebase RTDB `/ai/chatbot` | Firebase RTDB `/ai/chatbot` (동일 구조) |
+
+**요청:**
+
+```
+POST /ai-api.php
+Content-Type: application/x-www-form-urlencoded
+method=ai.chatbot&message=대사관 연락처 알려주세요
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| `message` | string | ✅ | 사용자 메시지 |
+| `model` | string | ❌ | 모델명. 기본: `gemini-2.5-flash-lite`. 대안: `gemini-3.1-flash-lite-preview` |
+
+**응답:** `Content-Type: text/event-stream` (SSE)
+
+```
+data: {"candidates":[{"content":{"parts":[{"text":"대사관"}]}}]}
+
+data: {"candidates":[{"content":{"parts":[{"text":" 연락처는"}]}}]}
+```
+
+**내부 흐름:**
+
+```
+AiController::chatbot()
+  → enforceAiApiEndpoint() (ai-api.php 경로 체크)
+  → SSE 헤더 설정 (text/event-stream, X-Accel-Buffering: no)
+  → AiService::chatbotStream(input, onChunk, model)
+    → message 유효성 검증
+    → 모델 화이트리스트 검증 (ALLOWED_CHATBOT_MODELS)
+    → generateEnhancedPrompt(message) — 필리핀 정보 키워드 매칭
+      → etc/data/philippines-info.json 로드
+      → 사용자 질문에서 required_keywords(가중치3) + optional_keywords(가중치1) 매칭
+      → 점수 >= MIN_RELEVANCE_SCORE인 카테고리의 content를 컨텍스트로 추가
+    → GeminiClient::generateContentStream(systemPrompt, enhancedPrompt, onChunk, model)
+  → echo + flush (청크 즉시 전달)
+  → exit (api.php의 JSON 응답 우회)
+```
+
+**Enhanced Prompt 구조:**
+
+```
+[사용자 질문]
+
+---
+참고 정보:
+[카테고리1]: [관련 콘텐츠]
+[카테고리2]: [관련 콘텐츠]
+```
+
+- `philippines-info.json`에서 키워드 매칭으로 관련 카테고리를 찾아 컨텍스트에 추가
+- 매칭 점수가 `MIN_RELEVANCE_SCORE` 이상인 카테고리만 포함
+- 매칭 카테고리가 없으면 사용자 질문만 전달
+
+**시스템 프롬프트:**
+
+`AiService::getChatbotSystemPrompt()`에서 "필립(Philip)" 역할의 시스템 프롬프트를 생성한다.
+
+- 한국어 전용 답변
+- 인사말 생략, 바로 답변 시작
+- 불확실하면 "모르겠습니다" 명시
+- 필리핀 무관 주제 거부
+- 이모지 마크다운 포맷
+
+**curl 예시:**
+
+```bash
+curl -sk "https://v7-local.philgo.com/ai-api.php" \
+  -d "method=ai.chatbot&message=대사관 연락처 알려주세요"
 ```
 
 ---
@@ -581,6 +676,8 @@ Gemini REST API에 cURL로 요청을 보내는 클라이언트 클래스이다.
 - **영수증 분석 모델**: `gemini-2.5-flash-lite-preview-09-2025`
 - **AI 답변 기본 모델**: `gemini-3.1-flash-lite-preview`
 - **AI 답변 폴백 모델**: `gemini-2.5-flash-lite`
+- **AI 챗봇 기본 모델**: `gemini-2.5-flash-lite`
+- **AI 챗봇 허용 모델**: `gemini-2.5-flash-lite`, `gemini-3.1-flash-lite-preview`
 
 ---
 
