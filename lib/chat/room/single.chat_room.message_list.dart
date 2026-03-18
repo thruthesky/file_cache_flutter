@@ -1,10 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.message.dart';
 import 'package:philgo/chat/room/chat.room.message_bubble.dart';
-import 'package:philgo/user/user.firebase_model.dart';
 import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.model.dart';
+import 'package:philgo/user/user.service.dart';
 import 'package:philgo/util/widgets/full_screen_image_viewer.dart';
 
 class SingleChatRoomMessageListController {
@@ -98,13 +100,13 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
               children: [
                 Icon(
                   Icons.chat_bubble_outline,
-                  size: 80,
-                  color: Colors.grey[400],
+                  size: msgListEmptyIconSize,
+                  color: msgListEmptyIconColor,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: msgListEmptySpacing),
                 Text(
                   "Send a message to start a conversation",
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: msgListEmptyTextFontSize, color: msgListEmptyTextColor),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -140,16 +142,18 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
 
             final message = ChatMessage.fromDataSnapshot(messageDoc);
 
-            return FutureBuilder<UserFirebaseModel?>(
+            return FutureBuilder<UserModel?>(
               key: ValueKey(
                 'user_${message.senderUid}',
               ), // Add key for consistent building
-              future: getUser(message.senderUid),
+              future: UserService.getByFirebaseUid(
+                firebaseUid: message.senderUid,
+              ),
               builder: (context, userSnapshot) {
                 // Use cached data if available to avoid rebuilds
                 final userData =
                     userSnapshot.data ??
-                    UserFirebaseModel.fromJson({"uid": message.senderUid});
+                    UserModel.fromJson({"uid": message.senderUid});
 
                 return ChatRoomMessageBubble(
                   key: ValueKey(

@@ -150,8 +150,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
-
     // 고정된 방은 배경색 강조
     final backgroundColor = isPinned
         ? colorScheme.primaryContainer.withValues(alpha: 0.3)
@@ -161,26 +159,26 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
       children: [
         // Main content
         Container(
-          margin: chatTheme.roomList.tileMargin,
+          margin: tileMargin,
           decoration: BoxDecoration(
             color: backgroundColor,
             // Comic design - rounded corners for large elements
-            borderRadius: BorderRadius.circular(chatTheme.roomList.tileBorderRadius),
+            borderRadius: BorderRadius.circular(tileBorderRadius),
             // Comic design - outline border
             border: Border.all(
               color: isPinned
                   ? colorScheme.primary
                   : colorScheme.outline.withValues(alpha: 0.3),
-              width: chatTheme.roomList.tileBorderWidth,
+              width: tileBorderWidth,
             ),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(chatTheme.roomList.tileBorderRadius),
+              borderRadius: BorderRadius.circular(tileBorderRadius),
               onTap: onTap ?? () => widget.onTap(roomId),
               child: Padding(
-                padding: chatTheme.roomList.tilePadding,
+                padding: tilePadding,
                 child: Row(
                   children: [
                     // Left Column: Avatar + Content
@@ -189,7 +187,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         children: [
                           // Avatar
                           buildAvatar(),
-                          SizedBox(width: chatTheme.roomList.avatarSpacing),
+                          SizedBox(width: avatarSpacing),
                           // Content: Title and Subtitle with date
                           Expanded(
                             child: Column(
@@ -205,7 +203,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
-                                SizedBox(height: chatTheme.roomList.titleSubtitleSpacing),
+                                SizedBox(height: titleSubtitleSpacing),
                                 // Subtitle with date separator - flexible layout
                                 subTitleWidget ??
                                     (join.lastMessage.text.isNotEmpty ||
@@ -286,7 +284,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                     ),
                     // Right Column: Unread badge only
                     if (!blocked) ...[
-                      SizedBox(width: chatTheme.roomList.avatarSpacing),
+                      SizedBox(width: avatarSpacing),
                       buildTrailing(),
                     ],
                   ],
@@ -305,8 +303,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildPinnedIcon() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
-
     return ValueListenableBuilder<Set<String>>(
       valueListenable: UserService.instance.pinnedChatRoomsStream,
       builder: (context, pinnedRooms, _) {
@@ -322,20 +318,20 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               setState(() {});
             },
             child: Container(
-              padding: EdgeInsets.all(chatTheme.roomList.pinnedIconPadding),
+              padding: EdgeInsets.all(pinnedIconPadding),
               decoration: BoxDecoration(
                 // Round container background for visibility
                 color: colorScheme.primaryContainer,
                 shape: BoxShape.circle,
                 // Comic design - border
-                border: Border.all(color: colorScheme.primary, width: chatTheme.roomList.pinnedIconBorderWidth),
+                border: Border.all(color: colorScheme.primary, width: pinnedIconBorderWidth),
               ),
               child: Transform.rotate(
-                angle: chatTheme.roomList.pinnedIconTiltAngle,
+                angle: pinnedIconTiltAngle,
                 child: FaIcon(
                   FontAwesomeIcons.solidThumbtack,
                   color: colorScheme.primary,
-                  size: chatTheme.roomList.pinnedIconSize,
+                  size: pinnedIconSize,
                 ),
               ),
             ),
@@ -349,8 +345,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildTrailing() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -361,7 +355,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           icon: FaIcon(
             FontAwesomeIcons.lightEllipsisVertical,
             color: colorScheme.onSurface.withValues(alpha: 0.6),
-            size: chatTheme.roomList.menuIconSize,
+            size: roomListMenuIconSize,
           ),
           padding: EdgeInsets.zero,
           onSelected: (value) async {
@@ -403,10 +397,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               isPinned
                   ? FontAwesomeIcons.lightThumbtack
                   : FontAwesomeIcons.solidThumbtack,
-              size: 16,
+              size: menuItemIconSize,
               color: colorScheme.primary,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: menuItemSpacing),
             Text(isPinned ? "Unpin" : "Pin", style: theme.textTheme.bodyMedium),
           ],
         ),
@@ -424,10 +418,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             children: [
               FaIcon(
                 FontAwesomeIcons.lightFlag,
-                size: 16,
+                size: menuItemIconSize,
                 color: colorScheme.error,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: menuItemSpacing),
               Text("Report", style: theme.textTheme.bodyMedium),
             ],
           ),
@@ -448,10 +442,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               children: [
                 FaIcon(
                   FontAwesomeIcons.lightUserPlus,
-                  size: 16,
+                  size: menuItemIconSize,
                   color: Colors.green,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: menuItemSpacing),
                 Text(
                   "Unblock User",
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -470,10 +464,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               children: [
                 FaIcon(
                   FontAwesomeIcons.lightBan,
-                  size: 16,
+                  size: menuItemIconSize,
                   color: colorScheme.error,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: menuItemSpacing),
                 Text("Block User", style: theme.textTheme.bodyMedium),
               ],
             ),
@@ -490,10 +484,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
           children: [
             FaIcon(
               FontAwesomeIcons.lightArrowRightFromBracket,
-              size: 16,
+              size: menuItemIconSize,
               color: colorScheme.error,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: menuItemSpacing),
             Text(
               "Leave Room",
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -514,10 +508,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             children: [
               FaIcon(
                 FontAwesomeIcons.lightBan,
-                size: 16,
+                size: menuItemIconSize,
                 color: colorScheme.error,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: menuItemSpacing),
               Text(
                 "Block & Leave",
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -577,20 +571,18 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   void _showLeaveConfirmDialog() async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
-
     // Returns null (dismissed), 'leave', or 'block_and_leave' (single only)
     final String? action = await showDialog<String>(
       context: context,
       builder: (dialogContext) => Dialog(
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(dialogBorderRadius)),
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
             color: colorScheme.surface,
-            border: Border.all(color: colorScheme.outline, width: chatTheme.dialog.borderWidth),
-            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+            border: Border.all(color: colorScheme.outline, width: dialogBorderWidth),
+            borderRadius: BorderRadius.circular(dialogBorderRadius),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -598,7 +590,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             children: [
               // Title
               Padding(
-                padding: chatTheme.dialog.titlePadding,
+                padding: dialogTitlePadding,
                 child: Text(
                   "Leave Room",
                   style: theme.textTheme.titleLarge?.copyWith(
@@ -609,7 +601,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               // Content
               Padding(
-                padding: chatTheme.dialog.bodyPadding,
+                padding: dialogBodyPadding,
                 child: Text(
                   "Are you sure you want to leave this room?",
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -619,7 +611,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               // Actions
               Padding(
-                padding: chatTheme.dialog.actionsPadding,
+                padding: dialogActionsPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -632,10 +624,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           elevation: WidgetStateProperty.all(0),
                           shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                              borderRadius: BorderRadius.circular(actionButtonBorderRadius),
                               side: BorderSide(
                                 color: colorScheme.error,
-                                width: chatTheme.dialog.actionButtonBorderWidth,
+                                width: actionButtonBorderWidth,
                               ),
                             ),
                           ),
@@ -646,7 +638,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                             colorScheme.onError,
                           ),
                           padding: WidgetStateProperty.all(
-                            chatTheme.dialog.actionButtonPadding,
+                            actionButtonPadding,
                           ),
                           textStyle: WidgetStateProperty.all(
                             theme.textTheme.bodyMedium,
@@ -654,7 +646,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         ),
                         child: Text("Block & Leave"),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: dialogButtonSpacing),
                     ],
                     // Leave only - outlined error button
                     ElevatedButton(
@@ -663,10 +655,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         elevation: WidgetStateProperty.all(0),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(actionButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.error,
-                              width: chatTheme.dialog.actionButtonBorderWidth,
+                              width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -677,7 +669,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           colorScheme.error,
                         ),
                         padding: WidgetStateProperty.all(
-                          chatTheme.dialog.actionButtonPadding,
+                          actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -685,7 +677,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                       ),
                       child: Text("Leave"),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: dialogButtonSpacing),
                     // Cancel - neutral button
                     ElevatedButton(
                       onPressed: () => Navigator.of(dialogContext).pop(),
@@ -693,10 +685,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         elevation: WidgetStateProperty.all(0),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(chatTheme.dialog.actionButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(actionButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.outline,
-                              width: chatTheme.dialog.actionButtonBorderWidth,
+                              width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -707,7 +699,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           colorScheme.onSurface,
                         ),
                         padding: WidgetStateProperty.all(
-                          chatTheme.dialog.actionButtonPadding,
+                          actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -781,23 +773,23 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildUnreadBadge(int unreadCount) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
+
 
     return Container(
-      padding: chatTheme.badge.padding,
+      padding: badgePadding,
       decoration: BoxDecoration(
         color: colorScheme.error,
         // Comic design - rounded corners for small elements
-        borderRadius: BorderRadius.circular(chatTheme.badge.borderRadius),
+        borderRadius: BorderRadius.circular(badgeBorderRadius),
         // Comic design - border
-        border: Border.all(color: colorScheme.error, width: chatTheme.badge.borderWidth),
+        border: Border.all(color: colorScheme.error, width: badgeBorderWidth),
       ),
       child: Text(
         unreadCount > 99 ? '99+' : unreadCount.toString(),
         style: theme.textTheme.bodySmall?.copyWith(
           color: colorScheme.onError,
           fontWeight: FontWeight.w700,
-          fontSize: chatTheme.badge.fontSize,
+          fontSize: badgeFontSize,
         ),
       ),
     );
@@ -807,15 +799,15 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget buildAvatar() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
+
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(chatTheme.roomList.avatarBorderRadius),
+        borderRadius: BorderRadius.circular(avatarBorderRadius),
         // Comic design - outline border
         border: Border.all(
           color: colorScheme.outline.withValues(alpha: 0.3),
-          width: chatTheme.roomList.avatarBorderWidth,
+          width: avatarBorderWidth,
         ),
       ),
       child: Stack(
@@ -831,19 +823,19 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 left: 0,
                 bottom: 0,
                 child: Container(
-                  width: chatTheme.roomList.favoriteIndicatorSize,
-                  height: chatTheme.roomList.favoriteIndicatorSize,
+                  width: favoriteIndicatorSize,
+                  height: favoriteIndicatorSize,
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
                     shape: BoxShape.circle,
                     // Comic design - border
-                    border: Border.all(color: Colors.amber, width: chatTheme.roomList.favoriteIndicatorBorderWidth),
+                    border: Border.all(color: Colors.amber, width: favoriteIndicatorBorderWidth),
                   ),
                   child: Center(
                     child: FaIcon(
                       FontAwesomeIcons.solidStar,
                       color: Colors.amber,
-                      size: chatTheme.roomList.favoriteIconSize,
+                      size: favoriteIconSize,
                     ),
                   ),
                 ),
@@ -862,16 +854,16 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 no: () => OnlineStatus(
                   uid: getOtherUserUidFromChatRoomId(roomId)!,
                   yes: Container(
-                    width: chatTheme.roomList.onlineIndicatorSize,
-                    height: chatTheme.roomList.onlineIndicatorSize,
+                    width: onlineIndicatorSize,
+                    height: onlineIndicatorSize,
                     decoration: BoxDecoration(
                       color: Colors.green,
                       // Comic design - border
                       border: Border.all(
                         color: colorScheme.surface,
-                        width: chatTheme.roomList.onlineIndicatorBorderWidth,
+                        width: onlineIndicatorBorderWidth,
                       ),
-                      borderRadius: BorderRadius.circular(chatTheme.roomList.onlineIndicatorBorderRadius),
+                      borderRadius: BorderRadius.circular(onlineIndicatorBorderRadius),
                     ),
                   ),
                   // Only show when online - no indicator when offline
