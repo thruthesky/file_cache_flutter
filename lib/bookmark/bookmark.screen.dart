@@ -199,7 +199,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 8),
           itemCount: groups.length,
-          separatorBuilder: (_, __) => Divider(
+          separatorBuilder: (_, _) => Divider(
             height: 1,
             indent: 16,
             endIndent: 16,
@@ -268,7 +268,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _bookmarks.length,
-      separatorBuilder: (_, __) => Divider(
+      separatorBuilder: (_, _) => Divider(
         height: 1,
         indent: 16,
         endIndent: 16,

@@ -6,7 +6,6 @@ import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/chat/report/chat.report.dart';
 import 'package:philgo/messaging/widget/push_notification_icon.dart';
-import 'package:philgo/router.dart';
 import 'package:philgo/bookmark/bookmark.service.dart';
 import 'package:philgo/bookmark/widgets/bookmark_group_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

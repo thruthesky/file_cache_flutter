@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.screen.dart';
+import 'package:philgo/app_info/app_info.screen.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
@@ -13,6 +15,8 @@ import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
+import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/webview/webview.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -144,6 +148,29 @@ final router = GoRouter(
           homeRouteName: AppScreen.routeName,
         );
       },
+    ),
+    GoRoute(
+      path: WebViewScreen.routeName,
+      name: WebViewScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, String>;
+        return WebViewScreen(url: extra['url']!, title: extra['title']!);
+      },
+    ),
+    GoRoute(
+      path: EventCouponScreen.routeName,
+      name: EventCouponScreen.routeName,
+      builder: (context, state) => const EventCouponScreen(),
+    ),
+    GoRoute(
+      path: AppInfoScreen.routeName,
+      name: AppInfoScreen.routeName,
+      builder: (context, state) => const AppInfoScreen(),
+    ),
+    GoRoute(
+      path: VersionScreen.routeName,
+      name: VersionScreen.routeName,
+      builder: (context, state) => const VersionScreen(),
     ),
   ],
 );

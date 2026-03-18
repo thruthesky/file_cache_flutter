@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
+import 'package:philgo/app_info/app_info.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
 import 'package:philgo/bookmark/bookmark.screen.dart';
+import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
@@ -18,6 +21,8 @@ import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
+import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/webview/webview.screen.dart';
 import 'package:provider/provider.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -497,7 +502,7 @@ class _MenuScreenState extends State<MenuScreen> {
       _MenuItemData(
         FontAwesomeIcons.lightTicket,
         '이벤트 쿠폰'.tr(),
-        onTap: _requireLogin(() {}),
+        onTap: _requireLogin(() => EventCouponScreen.push(context)),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightCoins,
@@ -862,8 +867,15 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 광고 메뉴 그리드
   Widget _buildAdGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
-      _MenuItemData(FontAwesomeIcons.lightRectangleAd, '배너 광고'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightDollarSign, '포인트 광고'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightRectangleAd,
+        '배너 광고'.tr(),
+        onTap: () => WebViewScreen.push(
+          context,
+          url: '$v7BaseUrl/adv/banner',
+          title: '배너 광고'.tr(),
+        ),
+      ),
     ];
 
     return _buildMenuGrid(items, theme, scheme);
@@ -873,8 +885,24 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildSupportGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
       _MenuItemData(FontAwesomeIcons.lightCircleQuestion, '앱 사용 안내'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightFileContract, '이용 약관'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightShieldHalved, '개인정보 처리방침'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightFileContract,
+        '이용 약관'.tr(),
+        onTap: () => WebViewScreen.push(
+          context,
+          url: '$v7BaseUrl/help/terms',
+          title: '이용 약관'.tr(),
+        ),
+      ),
+      _MenuItemData(
+        FontAwesomeIcons.lightShieldHalved,
+        '개인정보 처리방침'.tr(),
+        onTap: () => WebViewScreen.push(
+          context,
+          url: '$v7BaseUrl/help/privacy',
+          title: '개인정보 처리방침'.tr(),
+        ),
+      ),
     ];
 
     return _buildMenuGrid(items, theme, scheme);
@@ -883,8 +911,16 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 앱 정보 메뉴 그리드
   Widget _buildAppInfoGrid(ThemeData theme, ColorScheme scheme) {
     final items = [
-      _MenuItemData(FontAwesomeIcons.lightFloppyDisk, '앱 정보'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCircleInfo, '버전 정보'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightFloppyDisk,
+        '앱 정보'.tr(),
+        onTap: () => AppInfoScreen.push(context),
+      ),
+      _MenuItemData(
+        FontAwesomeIcons.lightCircleInfo,
+        '버전 정보'.tr(),
+        onTap: () => VersionScreen.push(context),
+      ),
     ];
 
     return _buildMenuGrid(items, theme, scheme);

@@ -151,7 +151,12 @@ class _UserEditScreenState extends State<UserEditScreen> {
                         _uploadedFileIdx = model.idx;
                       });
                       // 업로드 즉시 프로필 저장
-                      final idx = context.read<UserState>().user?.idx;
+                      int? idx;
+
+                      if (context.mounted) {
+                        idx = context.read<UserState>().user?.idx;
+                      }
+
                       if (idx == null) return;
                       final updated = await UserService.updateProfile(
                         idx: idx,
@@ -178,7 +183,11 @@ class _UserEditScreenState extends State<UserEditScreen> {
                         await ApiService.instance.fileDelete(fileIdx);
                       }
                       // 프로필에서 사진 제거
-                      final idx = context.read<UserState>().user?.idx;
+                      int? idx;
+                      if (context.mounted) {
+                        idx = context.read<UserState>().user?.idx;
+                      }
+
                       if (idx == null) return;
                       final updated = await UserService.updateProfile(
                         idx: idx,

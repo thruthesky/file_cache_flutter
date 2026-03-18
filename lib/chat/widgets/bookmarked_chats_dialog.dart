@@ -172,7 +172,7 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                   shrinkWrap: true,
                   itemCount: _bookmarks.length,
                   padding: dialogContentPadding,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       SizedBox(height: dialogItemSpacing),
                   itemBuilder: (_, i) => _buildItem(_bookmarks[i]),
                 ),
