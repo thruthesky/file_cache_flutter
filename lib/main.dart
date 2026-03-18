@@ -15,6 +15,7 @@ import 'package:philgo/theme.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/run_zoned_guarded_error_handler.dart';
+import 'package:philgo/setting/setting.state.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -64,6 +65,7 @@ void main() async {
             providers: [
               ChangeNotifierProvider(create: (_) => UserState()),
               ChangeNotifierProvider(create: (_) => AppNavigationState()),
+              ChangeNotifierProvider(create: (_) => SettingsState()),
             ],
             child: const PhilGoV7App(),
           ),
