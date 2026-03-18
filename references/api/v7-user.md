@@ -8,6 +8,7 @@
   - [3.1 user.count](#31-usercount---총-사용자-수-조회)
   - [3.2 user.me](#32-userme---현재-로그인-사용자-정보-조회)
   - [3.3 user.socialLogin](#33-usersociallogin---소셜-로그인)
+    - [3.3.1 동시 호출 Race Condition 방지 — createOrUpdate() 패턴](#331-동시-호출-race-condition-방지--createorupdate-패턴)
   - [3.4 공개 프로필 페이지 (SSR)](#34-공개-프로필-페이지-ssr)
     - [3.4.a 디자인 구조 (보더리스 디자인)](#34a-디자인-구조-보더리스-디자인)
   - [3.5 user.updateMyProfile](#35-userupdatemyprofile---회원-정보-수정)
@@ -28,6 +29,21 @@
 - [9. 사용자 설정 페이지 (SSR)](#9-사용자-설정-페이지-ssr)
 - [10. 사용자 차단 기능](#10-사용자-차단-기능)
 - [11. 사용자 신고 기능](#11-사용자-신고-기능)
+- [12. UserRepository](#12-userrepository)
+  - [12.1 개요](#121-개요)
+  - [12.2 RepositoryInterface 필수 메서드 (4개)](#122-repositoryinterface-필수-메서드-4개)
+  - [12.3 Firebase UID 기반 조회](#123-firebase-uid-기반-조회)
+  - [12.4 닉네임 관련 조회](#124-닉네임-관련-조회)
+  - [12.5 목록/통계 조회](#125-목록통계-조회)
+  - [12.6 사용자 활동 조회](#126-사용자-활동-조회)
+  - [12.7 사용자 신고 관련](#127-사용자-신고-관련)
+  - [12.8 UserService와의 관계](#128-userservice와의-관계)
+- [13. Firebase RTDB 사용자 정보 동기화](#13-firebase-rtdb-사용자-정보-동기화)
+  - [13.1 개요](#131-개요)
+  - [13.2 syncUserToFirebase() 메서드](#132-syncusertofirebase-메서드)
+  - [13.3 호출 위치](#133-호출-위치)
+  - [13.4 RTDB 데이터 구조](#134-rtdb-데이터-구조)
+  - [13.5 에러 처리](#135-에러-처리)
 
 ---
 
@@ -39,6 +55,7 @@
 - **DB 테이블**: `sf_member`
 - **Controller**: `Philgo\User\UserController` (`lib/user/UserController.php`)
 - **Service**: `Philgo\User\UserService` (`lib/user/UserService.php`)
+- **Repository**: `Philgo\User\UserRepository` (`lib/user/UserRepository.php`) — `RepositoryInterface` 구현, sf_member 전체 DB 접근 중앙 집중
 - **인증 유틸**: `Philgo\Utils\AuthService` (`lib/utils/AuthService.php`)
 - **API 접두사**: `user.*`
 - **네임스페이스**: `Philgo\User`, `Philgo\Utils`
@@ -63,7 +80,8 @@ JavaScript: func('user.count')
     │  └─ UserService::getTotalCount()
     │
     ▼ Philgo\User\UserService::getTotalCount()
-    │  └─ Db::pdo() → SELECT COUNT(*) FROM sf_member
+    │  └─ UserRepository::countAll()
+    │     └─ Db::fetchColumn() → SELECT COUNT(*) FROM sf_member
     │
     ▼ JSON 응답: {"count": 188186}
 
@@ -185,6 +203,15 @@ console.log(res.count);  // 188186
 4. 세션 ID 생성 → 쿠키에 저장 (다음 요청부터 세션 기반 인증 가능)
 5. 사용자 레코드 리턴 (password 필드 제거)
 
+경로 3 — 자동 회원 가입 (Firebase ID Token이 있으나 sf_member에 레코드가 없는 경우):
+1. 경로 1, 2 모두 실패 (AuthService::getLoginUser()가 null 반환)
+2. `id_token` 파라미터가 존재하면 자동 회원 가입 시도
+3. `FirebaseService::verifyIdTokenWithClaims($idToken)` → Firebase UID + claims 획득
+4. sf_member에서 firebase_uid로 재확인 (AuthService 캐싱으로 누락 가능성 대비)
+5. 레코드가 없으면 `FirebaseService::getAuth()->getUser($uid)`로 Firebase Auth에서 상세 정보 조회
+6. displayName, email, photoUrl, phoneNumber, provider 정보를 기반으로 sf_member에 INSERT
+7. 세션 쿠키 저장 후 UserEntity 리턴
+
 **호출 환경별 가이드**:
 
 | 환경 | 인증 방법 | 파라미터 |
@@ -263,6 +290,64 @@ console.log(res.level_progress);  // 37 (다음 레벨까지 진행률 0~100%)
 }
 ```
 
+#### 3.2.1 자동 회원 가입 (Auto Registration)
+
+`user.me` 호출 시 Firebase ID Token(`id_token`)이 있지만 `sf_member` 테이블에 해당 Firebase UID의 레코드가 없는 경우,
+**자동으로 사용자 레코드를 생성**한다. 이 기능은 소셜 로그인(Google, Apple, 카카오, 네이버 등)으로 Firebase에 인증된 사용자가
+별도의 회원 가입 절차 없이 바로 필고 서비스를 이용할 수 있도록 한다.
+
+**자동 회원 가입 흐름**:
+
+```
+UserService::getMe()
+    │
+    ├─ AuthService::getLoginUser() → null (세션 없음, DB에 firebase_uid 없음)
+    │
+    ├─ id_token 파라미터 확인 → 있음
+    │
+    ├─ FirebaseService::verifyIdTokenWithClaims($idToken)
+    │   └─ Firebase UID + claims (uid, email, name, picture) 획득
+    │
+    ├─ sf_member에서 firebase_uid로 재확인 (AuthService 캐싱 대비)
+    │   └─ 있으면 → loginUser() + UserEntity 리턴 (자동 가입 불필요)
+    │
+    ├─ getFirebaseAuthUser($uid) — Firebase Auth에서 상세 정보 조회
+    │   └─ displayName, email, photoUrl, phoneNumber, provider 가져옴
+    │
+    ├─ sf_member에 INSERT
+    │   ├─ id: email 또는 'social_{firebase_uid}'
+    │   ├─ firebase_uid: Firebase UID
+    │   ├─ login_provider: 'google.com', 'apple.com', 'phone' 등
+    │   ├─ email: Firebase Auth 또는 claims에서 가져온 이메일
+    │   ├─ name: displayName
+    │   ├─ nickname: displayName 또는 email 앞부분 또는 'User_{uid앞8자}'
+    │   ├─ photo_url: photoUrl
+    │   ├─ phone_number: phoneNumber
+    │   └─ stamp: time()
+    │
+    └─ AuthService::loginUser($row) → 세션 쿠키 저장 → UserEntity 리턴
+```
+
+**닉네임 자동 생성 규칙** (우선순위):
+1. Firebase Auth의 `displayName`이 있으면 그대로 사용
+2. `email`이 있으면 `@` 앞 부분을 닉네임으로 사용
+3. 둘 다 없으면 `User_{firebase_uid 앞 8자}`
+
+**getFirebaseAuthUser() private 메서드**:
+Firebase Auth Admin SDK(`FirebaseService::getAuth()->getUser($uid)`)를 호출하여
+Firebase에 저장된 사용자의 상세 정보를 조회한다. ID Token의 claims보다 더 풍부한 정보를 제공한다.
+
+| 반환 필드 | 타입 | 설명 |
+|-----------|------|------|
+| `email` | string | Firebase Auth에 등록된 이메일 |
+| `displayName` | string | Firebase Auth에 등록된 표시 이름 |
+| `photoUrl` | string | Firebase Auth에 등록된 프로필 사진 URL |
+| `phoneNumber` | string | Firebase Auth에 등록된 전화번호 |
+| `provider` | string | 로그인 제공자 (google.com, apple.com, phone, password 등) |
+
+> Firebase Auth 조회가 실패해도 에러를 throw하지 않고, 빈 문자열을 기본값으로 사용하여
+> claims 정보만으로도 자동 회원 가입이 진행되도록 한다.
+
 ### 3.3 user.socialLogin - 소셜 로그인
 
 | 항목 | 값 |
@@ -323,6 +408,57 @@ curl -s -X POST "https://local.philgo.com:443/api.php" \
     "level_progress": 50
 }
 ```
+
+#### 3.3.1 동시 호출 Race Condition 방지 — createOrUpdate() 패턴
+
+`user.socialLogin` 및 `user.me`(자동 회원 가입 경로)에서는 사용자 레코드 생성 시
+**`UserRepository::createOrUpdate()`** 메서드를 사용한다.
+
+**문제 배경 (Race Condition):**
+앱 기동 직후 또는 여러 탭에서 동시에 로그인 API를 호출하면, 아직 레코드가 없는 상태에서
+두 요청이 거의 동시에 `INSERT`를 실행하여 `Duplicate Key Error(1062)`가 발생한다.
+기존 `UserRepository::create()` 방식은 이 오류를 처리하지 못했다.
+
+**해결책 — `INSERT ... ON DUPLICATE KEY UPDATE` 패턴:**
+
+```php
+// lib/user/UserRepository.php
+public static function createOrUpdate(array $data): int
+{
+    $columns = array_keys($data);
+    $placeholders = array_map(fn($col) => ":$col", $columns);
+
+    // ON DUPLICATE KEY UPDATE: idx = LAST_INSERT_ID(idx) 만 실행
+    // - INSERT 성공 시: 새 AUTO_INCREMENT idx 반환
+    // - UNIQUE 충돌(UPDATE) 시: 기존 idx 를 LAST_INSERT_ID 로 설정하여 정확한 idx 반환
+    // 기존 사용자의 닉네임 등 변경된 데이터는 덮어쓰지 않음
+    $sql = "INSERT INTO " . self::TABLE . " (" . implode(', ', $columns) . ")"
+        . " VALUES (" . implode(', ', $placeholders) . ")"
+        . " ON DUPLICATE KEY UPDATE idx = LAST_INSERT_ID(idx)";
+
+    return Db::insert($sql, $data);
+}
+```
+
+**동작 원리:**
+
+| 상황 | INSERT 결과 | 반환값 |
+|------|------------|--------|
+| **신규 사용자** | INSERT 성공 | 새로 생성된 AUTO_INCREMENT idx |
+| **기존 사용자 (단일 호출)** | UNIQUE 충돌 → UPDATE 실행 | `LAST_INSERT_ID(idx)` = 기존 idx |
+| **동시 호출 (Race Condition)** | 두 번째 호출은 UNIQUE 충돌 → UPDATE 실행 | 기존 idx 반환 (에러 없음) |
+
+**적용 위치:**
+
+| 메서드 | 변경 전 | 변경 후 |
+|--------|---------|---------|
+| `UserService::socialLogin()` | `UserRepository::create()` | `UserRepository::createOrUpdate()` |
+| `UserService::getMe()` (자동 회원 가입 경로) | `UserRepository::create()` | `UserRepository::createOrUpdate()` |
+
+**주의사항:**
+- `ON DUPLICATE KEY UPDATE`에서 `idx = LAST_INSERT_ID(idx)` **만** 갱신한다. 닉네임, 포인트 등 사용자가 변경한 데이터는 절대 덮어쓰지 않는다.
+- UNIQUE 제약이 설정된 컬럼(`firebase_uid`, `id`)이 `$data`에 반드시 포함되어야 충돌 감지가 작동한다.
+- `Db::insert()` 내부에서 `PDO::lastInsertId()`를 호출하므로, UNIQUE 충돌 시 `LAST_INSERT_ID(idx)` 덕분에 올바른 기존 idx가 반환된다.
 
 ---
 
@@ -848,6 +984,7 @@ UserController::search($input)
 lib/user/
 ├── UserController.php            # ★ Philgo\User\UserController (API 엔드포인트)
 ├── UserService.php               # ★ Philgo\User\UserService (비즈니스 로직)
+├── UserRepository.php            # ★ Philgo\User\UserRepository (sf_member DB CRUD — RepositoryInterface 구현)
 ├── UserEntity.php                # ★ Philgo\User\UserEntity (사용자 엔티티)
 ├── user.functions.php            # ⚠️ 레거시 (새 코드에서 사용 금지)
 ├── user.login.functions.php      # ⚠️ 레거시
@@ -865,6 +1002,8 @@ v7/user/
 
 tests/Unit/
 ├── UserControllerTest.php        # ★ UserController PEST Unit Test
+├── UserServiceTest.php           # ★ UserService PEST Unit Test (41개 테스트 — Repository 위임 검증)
+├── UserRepositoryTest.php        # ★ UserRepository PEST Unit Test (33개 테스트 — CRUD, Firebase UID, 닉네임, 목록, 활동, 신고)
 ├── UserProfileTest.php           # ★ 프로필 수정 PEST Unit Test (canChangeNickname, updateMyProfile, Entity 필드)
 ├── PublicProfileTest.php         # ★ 공개 프로필 PEST Unit Test (getByFirebaseUid, getPublicProfile, PostRepository)
 └── UserSearchTest.php            # ★ 닉네임 검색 PEST Unit Test (searchByNickname, prefix 매칭, 본인 제외)
@@ -950,23 +1089,45 @@ class UserService
      * password 필드는 보안을 위해 제거하고 리턴한다.
      * point 기반으로 level과 level_progress를 동적으로 계산하여 포함한다.
      *
-     * @return array 사용자 정보 배열 (password 제외, level/level_progress 동적 계산)
+     * Firebase ID Token이 있으나 sf_member에 레코드가 없는 경우,
+     * Firebase Auth에서 사용자 정보를 조회하여 자동으로 회원 가입을 수행한다.
+     *
+     * @return UserEntity 사용자 엔티티 (password 제외, level/level_progress 동적 계산)
      * @throws RuntimeException 비로그인 시
      */
-    public static function getMe(): array
+    public static function getMe(): UserEntity
     {
         $user = AuthService::getLoginUser();
-        if ($user === null) {
+        if ($user !== null) {
+            return $user;
+        }
+
+        // Firebase ID Token이 있으면 자동 회원 가입 시도
+        $input = RequestUtils::all();
+        $idToken = (string)($input['id_token'] ?? '');
+        if ($idToken === '') {
             throw new RuntimeException('로그인이 필요합니다.');
         }
-        unset($user['password']);
 
-        // 포인트 기반 동적 레벨 계산
-        $points = (int) ($user['point'] ?? 0);
-        $user['level'] = self::calculateLevel($points);
-        $user['level_progress'] = self::calculateLevelProgress($points, $user['level']);
+        // Firebase ID Token 검증
+        $claims = FirebaseService::verifyIdTokenWithClaims($idToken);
+        $firebaseUid = $claims['uid'];
 
-        return $user;
+        // sf_member에서 다시 확인 (AuthService 캐싱 대비)
+        $existing = Db::fetch("SELECT * FROM sf_member WHERE firebase_uid = ?", [$firebaseUid]);
+        if ($existing !== false) {
+            AuthService::loginUser($existing);
+            unset($existing['password']);
+            return new UserEntity($existing);
+        }
+
+        // Firebase Auth에서 상세 정보 조회 후 sf_member에 INSERT (자동 회원 가입)
+        $firebaseUser = self::getFirebaseAuthUser($firebaseUid);
+        // ... email, displayName, photoUrl, phoneNumber, provider 조합
+        // ... Db::insert() → sf_member에 레코드 생성
+        // ... AuthService::loginUser() → 세션 쿠키 저장
+
+        return new UserEntity($row);
     }
 
     /**
@@ -979,6 +1140,19 @@ class UserService
      * 다음 레벨까지 진행률 계산 (0~100, 레거시 get_user_level_progress()와 동일 로직)
      */
     public static function calculateLevelProgress(int $points, int $level): int { /* ... */ }
+
+    /**
+     * Firebase RTDB에 사용자 정보(닉네임, 프로필 사진)를 동기화한다.
+     * v6 레거시 user.functions.php:784-804의 동일 로직을 v7 구조로 구현.
+     *
+     * RTDB 경로: users/{firebaseUid}
+     * 동기화 필드: nickname, nicknameLowerCase(소문자 변환), photoUrl
+     *
+     * @param string $firebaseUid Firebase UID
+     * @param string|null $nickname 닉네임 (null이면 동기화하지 않음)
+     * @param string|null $photoUrl 프로필 사진 URL (null이면 동기화하지 않음)
+     */
+    public static function syncUserToFirebase(string $firebaseUid, ?string $nickname = null, ?string $photoUrl = null): void { /* ... */ }
 }
 ```
 
@@ -1870,9 +2044,9 @@ GET https://local.philgo.com/api.php?method=user.reportUser&session_id=xxx&idx_r
 ```
 UserController::reportUser($input)
   → UserService::reportUser($idxReporter, $idxReported, $reason)
-    → ensureUserReportsTable()  ← sf_user_reports 테이블 자동 생성
-    → Db::fetch() 중복 확인
-    → Db::insert() 신고 등록
+    → UserRepository::ensureUserReportsTable()  ← sf_user_reports 테이블 자동 생성
+    → UserRepository::hasReported() 중복 확인
+    → UserRepository::insertReport() 신고 등록
 ```
 
 ### 11.3 DB 테이블: sf_user_reports
@@ -1896,7 +2070,7 @@ UserController::reportUser($input)
 
 ### 11.4 관리자용 신고 사용자 목록 조회
 
-`UserService::listReportedUsers($limit)`로 신고된 사용자 목록을 조회한다 (관리자 전용).
+`UserService::listReportedUsers($limit)`로 신고된 사용자 목록을 조회한다 (관리자 전용). 내부적으로 `UserRepository::findReportedUsers()`를 호출한다.
 
 **반환 데이터:**
 
@@ -1933,6 +2107,255 @@ UserController::reportUser($input)
 | 파일 | 역할 |
 |------|------|
 | `lib/user/UserController.php` | `reportUser()` API 엔드포인트 |
-| `lib/user/UserService.php` | `reportUser()`, `listReportedUsers()`, `ensureUserReportsTable()` 비즈니스 로직 |
+| `lib/user/UserService.php` | `reportUser()`, `listReportedUsers()` 비즈니스 로직 (UserRepository에 위임) |
+| `lib/user/UserRepository.php` | `ensureUserReportsTable()`, `hasReported()`, `insertReport()`, `findReportedUsers()` DB 접근 |
 | `v7/user/public-profile.php` | 공개 프로필 신고 버튼 UI + JavaScript |
 | `v7/admin/reports.php` | 관리자 신고 관리 페이지 (사용자 신고 탭) |
+
+---
+
+## 12. UserRepository
+
+### 12.1 개요
+
+`UserRepository`는 `sf_member` 테이블의 모든 DB 접근을 중앙 집중하는 Repository 클래스이다.
+`RepositoryInterface`를 구현하여 표준 CRUD 4개 메서드를 제공하며,
+Firebase UID 조회, 닉네임 관련, 목록/통계, 사용자 활동, 신고 관련 등 확장 쿼리를 포함한다.
+
+- **파일**: `lib/user/UserRepository.php`
+- **네임스페이스**: `Philgo\User\UserRepository`
+- **테이블**: `sf_member` (CRUD), `sf_user_reports` (신고), `sf_post_data` (활동 조회)
+- **인터페이스**: `implements RepositoryInterface`
+
+**도입 배경**: UserService에서 `Db::` 직접 호출이 곳곳에 산재해 있어 DB 쿼리 중복 및 관심사 분리 위반 문제가 있었다.
+리팩토링으로 UserService의 모든 DB 접근 코드를 UserRepository로 이관하여 `Db::` 직접 호출 0개를 달성했다.
+
+**아키텍처 흐름:**
+
+```
+UserController → UserService → UserRepository → Db → MariaDB
+                 (비즈니스 로직)   (DB CRUD)       (PDO)
+```
+
+### 12.2 RepositoryInterface 필수 메서드 (4개)
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `create` | `create(array $data): int` | sf_member에 새 사용자 삽입, AUTO_INCREMENT idx 반환 |
+| `findByIdx` | `findByIdx(int $idx): ?UserEntity` | idx로 사용자 조회 (password 제외), 없으면 null |
+| `update` | `update(int $idx, array $data): bool` | idx로 사용자 정보 수정 |
+| `deleteByIdx` | `deleteByIdx(int $idx): bool` | idx로 사용자 삭제 |
+
+### 12.3 Firebase UID 기반 조회
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `findByFirebaseUid` | `findByFirebaseUid(string $firebaseUid): ?UserEntity` | Firebase UID로 사용자 Entity 조회 (password 제외) |
+| `findRawByFirebaseUid` | `findRawByFirebaseUid(string $firebaseUid): array\|false` | Firebase UID로 raw 배열 조회 (AuthService::loginUser()에 전달용) |
+| `findRawByIdx` | `findRawByIdx(int $idx): array\|false` | idx로 raw 배열 조회 (AuthService::loginUser()에 전달용) |
+| `findByFirebaseUids` | `findByFirebaseUids(array $firebaseUids): array` | 복수 Firebase UID로 일괄 조회 (최대 100개) |
+| `getFirebaseUidByIdx` | `getFirebaseUidByIdx(int $idx): string` | idx로 Firebase UID만 경량 조회 |
+
+### 12.4 닉네임 관련 조회
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `isNicknameTaken` | `isNicknameTaken(string $nickname, int $excludeIdx = 0): bool` | 닉네임 중복 검사 (자기 자신 제외 가능) |
+| `searchByNickname` | `searchByNickname(string $nickname, ?int $excludeIdx = null, int $limit = 20): array` | 닉네임으로 사용자 검색 |
+| `getNicknameInfo` | `getNicknameInfo(int $idx): array\|false` | 닉네임 + 변경 이력(varchar_8) 조회 |
+
+### 12.5 목록/통계 조회
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `findAll` | `findAll(int $page = 1, int $limit = 20): array` | 사용자 목록 페이지네이션 조회 (password 제외) |
+| `countAll` | `countAll(): int` | 전체 사용자 수 |
+| `findRecent` | `findRecent(int $limit = 3): array` | 최근 가입 사용자 목록 |
+
+### 12.6 사용자 활동 조회
+
+sf_post_data 테이블에서 특정 사용자의 글/댓글을 조회한다.
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `findRecentPosts` | `findRecentPosts(int $idxMember, int $limit = 5): array` | 최근 글 목록 (deleted=0) |
+| `findRecentComments` | `findRecentComments(int $idxMember, int $limit = 5): array` | 최근 댓글 목록 (idx_parent>0, deleted=0) |
+
+### 12.7 사용자 신고 관련
+
+sf_user_reports 테이블 관련 메서드이다.
+
+| 메서드 | 시그니처 | 설명 |
+|--------|----------|------|
+| `ensureUserReportsTable` | `ensureUserReportsTable(): void` | sf_user_reports 테이블 자동 생성 (CREATE TABLE IF NOT EXISTS) |
+| `hasReported` | `hasReported(int $idxReporter, int $idxReported): bool` | 중복 신고 여부 확인 |
+| `insertReport` | `insertReport(int $idxReporter, int $idxReported, string $reason = ''): void` | 신고 등록 |
+| `findReportedUsers` | `findReportedUsers(int $limit = 20): array` | 신고된 사용자 목록 (관리자 전용, GROUP BY + COUNT) |
+
+### 12.8 UserService와의 관계
+
+UserService는 비즈니스 로직(검증, 권한 확인, 데이터 가공 등)만 담당하고,
+모든 DB 접근은 UserRepository를 통해 수행한다. `Db::` 직접 호출 0개.
+
+**호출 예시:**
+
+```php
+// UserService::getMe() — 비즈니스 로직
+public static function getMe(): array
+{
+    $me = AuthService::getLoginUser();
+    if (!$me) {
+        throw new RuntimeException('로그인이 필요합니다.');
+    }
+    // DB 접근은 UserRepository에 위임
+    $entity = UserRepository::findByIdx((int) $me['idx']);
+    // ... 비즈니스 로직 (레벨 계산, 필드 가공 등)
+    return $entity->toArray();
+}
+
+// UserService::reportUser() — 비즈니스 로직
+public static function reportUser(int $idxReporter, int $idxReported, string $reason = ''): void
+{
+    UserRepository::ensureUserReportsTable();
+    if (UserRepository::hasReported($idxReporter, $idxReported)) {
+        throw new RuntimeException('이미 신고한 사용자입니다.');
+    }
+    UserRepository::insertReport($idxReporter, $idxReported, $reason);
+}
+```
+
+**테스트 현황:**
+
+| 테스트 파일 | 테스트 수 | 대상 |
+|------------|----------|------|
+| `tests/Unit/UserRepositoryTest.php` | 33개 | CRUD, Firebase UID, 닉네임, 목록, 활동, 신고 |
+| `tests/Unit/UserServiceTest.php` | 41개 | Service 비즈니스 로직 + Repository 위임 검증 |
+| **합계** | **74개** | **100% 통과** |
+
+---
+
+## 13. Firebase RTDB 사용자 정보 동기화
+
+### 13.1 개요
+
+`UserService::syncUserToFirebase()` 메서드는 사용자의 닉네임과 프로필 사진 URL을
+Firebase Realtime Database(RTDB)에 동기화한다.
+
+이 기능은 v6 레거시 `user.functions.php`(784~804행)의 동일 로직을 v7 아키텍처(Service 계층)로 재구현한 것이다.
+채팅 시스템 등 Firebase RTDB를 참조하는 클라이언트가 최신 사용자 정보를 실시간으로 조회할 수 있도록 한다.
+
+| 항목 | 값 |
+|------|-----|
+| **메서드** | `UserService::syncUserToFirebase(string $firebaseUid, ?string $nickname, ?string $photoUrl): void` |
+| **RTDB 경로** | `users/{firebaseUid}` |
+| **동기화 필드** | `nickname`, `nicknameLowerCase`, `photoUrl` |
+| **Firebase SDK** | Kreait Firebase Admin SDK (`FirebaseService::getDatabase()`) |
+| **레거시 대응** | `user.functions.php:784-804` 동일 로직 |
+
+### 13.2 syncUserToFirebase() 메서드
+
+```php
+// lib/user/UserService.php
+public static function syncUserToFirebase(
+    string $firebaseUid,
+    ?string $nickname = null,
+    ?string $photoUrl = null
+): void {
+    if ($firebaseUid === '') {
+        return;
+    }
+
+    $up = [];
+    if ($nickname !== null && $nickname !== '') {
+        $up['nickname'] = $nickname;
+        $up['nicknameLowerCase'] = strtolower($nickname);
+    }
+    if ($photoUrl !== null && $photoUrl !== '') {
+        $up['photoUrl'] = $photoUrl;
+    }
+
+    if (empty($up)) {
+        return;
+    }
+
+    try {
+        $database = FirebaseService::getDatabase();
+        $database->getReference('users/' . $firebaseUid)->update($up);
+    } catch (\Exception $e) {
+        Debug::log("Firebase RTDB 사용자 동기화 실패: " . $e->getMessage());
+    }
+}
+```
+
+**동기화 필드 상세**:
+
+| RTDB 필드 | 값 | 설명 |
+|-----------|-----|------|
+| `nickname` | 원본 닉네임 | 화면 표시용 닉네임 |
+| `nicknameLowerCase` | `strtolower($nickname)` | 대소문자 무시 검색용 (소문자 변환) |
+| `photoUrl` | 프로필 사진 URL | 채팅 등에서 사용하는 프로필 사진 |
+
+**동기화 조건**:
+- `$firebaseUid`가 빈 문자열이면 즉시 반환 (동기화 스킵)
+- `$nickname`이 null 또는 빈 문자열이면 nickname 관련 필드는 업데이트하지 않음
+- `$photoUrl`이 null 또는 빈 문자열이면 photoUrl 필드는 업데이트하지 않음
+- 모든 필드가 비어 있으면(`$up`이 빈 배열) 즉시 반환
+
+### 13.3 호출 위치
+
+`syncUserToFirebase()`는 사용자 정보가 변경되는 3곳에서 호출된다.
+
+| 호출 위치 | 메서드 | 동기화 시점 | 동기화 데이터 |
+|-----------|--------|------------|--------------|
+| **회원 정보 수정** | `UserService::update()` | nickname 또는 photo_url이 변경된 경우에만 | 변경된 nickname, photo_url |
+| **소셜 로그인** | `UserService::socialLogin()` | 신규/기존 사용자 로그인 완료 후 | nickname, photo_url |
+| **자동 회원 가입** | `UserService::getMe()` | Firebase 인증 후 신규 사용자 자동 가입 시 | nickname, photo_url |
+
+**각 호출 위치의 코드 패턴**:
+
+```php
+// 1. UserService::update() — nickname/photo_url 변경 시만 동기화
+$syncNickname = $updateData['nickname'] ?? null;
+$syncPhotoUrl = $updateData['photo_url'] ?? null;
+if ($syncNickname !== null || $syncPhotoUrl !== null) {
+    self::syncUserToFirebase($entity->firebase_uid, $syncNickname, $syncPhotoUrl);
+}
+
+// 2. UserService::socialLogin() — 소셜 로그인 완료 후
+self::syncUserToFirebase(
+    $firebaseUid,
+    (string)($row['nickname'] ?? ''),
+    (string)($row['photo_url'] ?? '')
+);
+
+// 3. UserService::getMe() — 신규 사용자 자동 가입 시
+self::syncUserToFirebase(
+    $firebaseUid,
+    (string)($user['nickname'] ?? ''),
+    (string)($user['photo_url'] ?? '')
+);
+```
+
+### 13.4 RTDB 데이터 구조
+
+```
+Firebase Realtime Database
+└── users/
+    └── {firebaseUid}/
+        ├── nickname: "홍길동"
+        ├── nicknameLowerCase: "홍길동"
+        └── photoUrl: "https://file.philgo.com/..."
+```
+
+> **참고**: `update()` 메서드를 사용하므로 해당 필드만 업데이트되며,
+> `users/{firebaseUid}` 노드의 다른 기존 데이터(예: 채팅 관련 필드)는 보존된다.
+
+### 13.5 에러 처리
+
+- 동기화 실패 시 예외를 throw하지 않고 `Debug::log()`로 로그만 남긴다
+- 메인 비즈니스 로직(회원 정보 수정, 소셜 로그인, 자동 가입)은 RTDB 동기화 실패와 무관하게 정상 작동한다
+- 로그 경로: `var/debug.log`
+
+> **10.2.1절의 `syncBlockToFirebase()`와의 관계**: 두 메서드 모두 `FirebaseService::getDatabase()`를 사용하여
+> Firebase RTDB에 데이터를 동기화하는 동일한 패턴을 따른다. `syncUserToFirebase()`는 사용자 프로필 정보를,
+> `syncBlockToFirebase()`는 차단 정보를 각각 다른 RTDB 경로에 동기화한다.

@@ -1,10 +1,18 @@
-# v7 AI 답변 시스템 (웹 홈페이지)
+# v7 AI 시스템 (웹 홈페이지) — 답변 + 챗봇
 
 ## 1. 개요
 
+이 문서는 v7 웹 홈페이지의 AI 관련 기능 두 가지를 다룬다:
+
+1. **AI 답변 시스템** (1~13장): qna/freetalk 게시판의 글에 AI 답변을 제공
+2. **AI 챗봇** (14장~): 필리핀 전문 도우미 "필립(Philip)" 대화형 챗봇
+
+두 기능 모두 PHP 서버에서 Gemini API를 SSE(Server-Sent Events) 스트리밍으로 호출하고,
+브라우저에서 실시간으로 응답을 렌더링한다.
+
+### 1.1. AI 답변 시스템
+
 qna/freetalk 게시판의 글에 AI 답변을 제공하는 시스템이다.
-PHP 서버에서 Gemini API를 SSE(Server-Sent Events) 스트리밍으로 호출하고,
-브라우저에서 실시간으로 답변을 렌더링한다.
 
 ---
 
@@ -248,3 +256,196 @@ PHP 측에서도 `X-Accel-Buffering: no` 헤더를 전송하여 Nginx 버퍼링�
 | **postSubject 변수** | 사용 | 제거 |
 | **data-subject 속성** | 사용 | 제거 |
 | **저장 호출** | `ai.saveAnswer` 별도 호출 | 불필요 (서버 자동) |
+
+---
+
+## 14. AI 챗봇 — 필립(Philip) 필리핀 전문 도우미
+
+### 14.1. 개요
+
+v7 AI 챗봇은 필리핀 전문 도우미 "필립(Philip)"으로, 사용자와 대화형 인터페이스로 필리핀 관련 정보를 제공한다.
+v6의 `widgets/ai/chatbot.php` + `page/ai/index.php`를 v7 아키텍처로 재구현한 것이다.
+
+| 항목 | v6 (기존) | v7 (현재) |
+|------|-----------|-----------|
+| **AI 호출** | 클라이언트 JS에서 Vertex AI SDK 직접 호출 | PHP 서버에서 Gemini REST API + SSE 스트리밍 |
+| **Enhanced Prompt** | 클라이언트 JS (`enhance-prompt.js`) | PHP `AiService::generateEnhancedPrompt()` |
+| **채팅 기록** | Firebase RTDB `/ai/chatbot` | Firebase RTDB `/ai/chatbot` (동일 구조) |
+| **UI** | v6 위젯 | Vue.js 3 Options API + Web Awesome Pro CSS |
+
+### 14.2. 접속 URL
+
+| 환경 | URL |
+|------|-----|
+| **로컬 개발** | `https://v7-local.philgo.com/ai` |
+| **테스트 서버** | `https://philgo.net/ai` |
+| **프로덕션** | `https://philgo.com/ai` |
+
+### 14.3. 전체 아키텍처
+
+```
+사용자 입력
+  → Vue.js sendMessage()
+  → Firebase RTDB /ai/chatbot/{pushId} 에 사용자 메시지 저장
+  → fetch('/ai-api.php', method=ai.chatbot, message=...) SSE 요청
+  → PHP: AiController::chatbot()
+    → AiService::chatbotStream()
+      → generateEnhancedPrompt(message) — philippines-info.json 키워드 매칭
+      → GeminiClient::generateContentStream(systemPrompt, enhancedPrompt)
+    → SSE 청크 echo + flush
+  → 클라이언트: parseGeminiSSEStream() 파싱 + markdown() 렌더링
+  → 스트리밍 완료 후: Firebase RTDB /ai/chatbot/{pushId} 에 AI 응답 저장
+    (sender_uid: 'ai-bot', metadata: {model, processedAt})
+```
+
+### 14.4. 파일 구조
+
+| 파일 | 설명 |
+|------|------|
+| `v7/ai/index.php` | AI 챗봇 웹 페이지 (PHP SSR + Vue.js CSR) |
+| `v7/ai/chatbot.css` | 챗봇 CSS 스타일 (Web Awesome Pro CSS 변수 기반) |
+| `v7/ai/chatbot.js` | Vue.js 3 Options API 챗봇 컴포넌트 + Firebase RTDB 연동 |
+| `lib/ai/AiController.php` | `chatbot()` 메서드 — SSE 엔드포인트 |
+| `lib/ai/AiService.php` | `chatbotStream()`, `generateEnhancedPrompt()`, `getChatbotSystemPrompt()` |
+| `etc/data/philippines-info.json` | Enhanced Prompt용 필리핀 정보 키워드 데이터 |
+| `v7/js/ai-stream.js` | `parseGeminiSSEStream()` — SSE 스트림 파서 (AI 답변 시스템과 공유) |
+| `v7/js/ai-markdown.js` | `markdown()` — 마크다운 렌더러 (AI 답변 시스템과 공유) |
+
+### 14.5. Firebase RTDB 데이터 구조
+
+```
+/ai/chatbot/{pushId}: {
+    message: string,           // 메시지 내용
+    sender_uid: string,        // 사용자 Firebase UID 또는 'ai-bot'
+    sender: string,            // 'user' 또는 'ai'
+    created_at: timestamp,     // firebase.database.ServerValue.TIMESTAMP
+    metadata?: {               // AI 응답에만 포함
+        model: string,         // 예: 'gemini-2.5-flash-lite'
+        processedAt: string    // ISO 8601 문자열
+    }
+}
+```
+
+- v6과 동일한 RTDB 경로(`/ai/chatbot`)와 데이터 구조를 사용
+- 사용자 메시지: `sender_uid`에 사용자의 Firebase UID, `sender: 'user'`
+- AI 응답: `sender_uid: 'ai-bot'`, `sender: 'ai'`, `metadata` 포함
+
+### 14.6. Vue.js 챗봇 컴포넌트 (chatbot.js)
+
+Vue.js 3 Options API로 구현된 챗봇 컴포넌트이다.
+
+**주요 data:**
+
+| 속성 | 타입 | 설명 |
+|------|------|------|
+| `inputMessage` | string | 사용자 입력 메시지 |
+| `allMessages` | array | 모든 채팅 메시지 목록 |
+| `chunkTexts` | string | SSE 스트리밍 중인 AI 응답 텍스트 |
+| `isAiThinking` | boolean | AI 응답 대기 중 여부 |
+| `isLoadingInitial` | boolean | 초기 메시지 로딩 중 여부 |
+| `suggestions` | array | 추천 질문 목록 |
+
+**주요 methods:**
+
+| 메서드 | 설명 |
+|--------|------|
+| `loadInitialMessages()` | Firebase RTDB에서 최근 20개 메시지 로드 |
+| `setupRealtimeListener()` | `child_added` 이벤트로 실시간 메시지 수신 |
+| `loadPreviousMessages()` | 스크롤 상단 도달 시 이전 20개 메시지 로드 (무한 스크롤) |
+| `sendMessage()` | 메시지 전송: Firebase RTDB 저장 + SSE 요청 |
+| `requestAiResponse(message)` | `fetch('/ai-api.php')` → `parseGeminiSSEStream()` → `markdown()` 렌더링 |
+| `useSuggestion(s)` | 추천 질문 클릭 시 자동 전송 |
+| `renderMarkdown(text)` | 기존 `markdown()` 함수 재활용 |
+| `scrollToBottom()` | 메시지 영역 맨 아래로 스크롤 |
+
+**메시지 전송 흐름:**
+
+1. `sendMessage()` 호출
+2. Firebase RTDB에 사용자 메시지 push (`sender: 'user'`)
+3. `requestAiResponse(message)` 호출
+4. `fetch('/ai-api.php', {method: 'POST', body: {method: 'ai.chatbot', message}})` SSE 요청
+5. `parseGeminiSSEStream(response)` — `for await` 루프로 청크 수신
+6. 청크마다 `chunkTexts`에 누적 → `markdown()` 렌더링으로 실시간 표시
+7. 스트리밍 완료 → Firebase RTDB에 AI 응답 push (`sender_uid: 'ai-bot'`, `metadata` 포함)
+8. `chunkTexts` 초기화, `isAiThinking` 해제
+
+### 14.7. Enhanced Prompt 시스템
+
+v6에서는 클라이언트 JS(`enhance-prompt.js`)에서 처리하던 Enhanced Prompt를 v7에서는 PHP 서버(`AiService::generateEnhancedPrompt()`)에서 처리한다.
+
+**`etc/data/philippines-info.json` 구조:**
+
+```json
+{
+    "embassy_info": {
+        "content": "주 필리핀 대한민국 대사관 주소: ...",
+        "required_keywords": ["대사관", "Embassy", "영사관"],
+        "optional_keywords": ["비자", "여권", "공증"]
+    },
+    "hospital_info": {
+        "content": "마닐라 주요 병원: ...",
+        "required_keywords": ["병원", "Hospital", "의원"],
+        "optional_keywords": ["응급", "진료", "약국"]
+    }
+}
+```
+
+**키워드 매칭 알고리즘:**
+
+1. 사용자 질문을 소문자로 변환
+2. 각 카테고리의 `required_keywords`(가중치 3) + `optional_keywords`(가중치 1) 매칭
+3. 점수 >= `MIN_RELEVANCE_SCORE`인 카테고리의 `content`를 컨텍스트로 추가
+4. 매칭 카테고리가 없으면 사용자 질문만 전달
+
+### 14.8. 시스템 프롬프트 (필립)
+
+`AiService::getChatbotSystemPrompt()`에서 생성하는 시스템 프롬프트의 핵심 규칙:
+
+- 역할: 필리핀 전문 도우미 "필립(Philip)"
+- 한국어 전용 답변
+- 인사말 생략, 바로 답변 시작
+- 간결하고 정확한 정보 제공
+- 불확실하면 "모르겠습니다" 명시
+- 필리핀 무관 주제: 거부 메시지 표시
+- 이모지 마크다운 포맷 적극 사용
+
+### 14.9. 로그인 분기
+
+- 로그인 사용자: Vue.js 챗봇 앱 마운트, 입력 폼 활성화
+- 비로그인 사용자: 로그인 안내 메시지 + 로그인 링크 표시
+- PHP에서 `AuthService::getLoginUser()`로 로그인 상태 확인
+- Firebase UID는 PHP에서 `window.v7AiChatbot.firebaseUid`로 JS에 전달
+
+### 14.10. 공유 모듈 재활용
+
+AI 챗봇은 AI 답변 시스템과 다음 모듈을 공유한다:
+
+| 공유 모듈 | 파일 | 설명 |
+|-----------|------|------|
+| SSE 스트림 파서 | `v7/js/ai-stream.js` | `parseGeminiSSEStream()` — Gemini SSE 응답 파싱 |
+| 마크다운 렌더러 | `v7/js/ai-markdown.js` | `markdown()` — 마크다운 → HTML 변환 |
+| SSE 엔트리포인트 | `ai-api.php` | AI 전용 PHP-FPM 풀 (포트 9001) |
+| Gemini 클라이언트 | `lib/ai/GeminiClient.php` | `generateContentStream()` SSE 스트리밍 |
+
+### 14.11. CSS 스타일
+
+`v7/ai/chatbot.css` — Web Awesome Pro CSS 변수 기반, Bootstrap 미사용, 다크 모드 미적용.
+
+- 전체 높이 채움: `height: calc(100vh - 8rem)`
+- 헤더: 블루 배경 (`--wa-color-brand-600`)
+- 메시지 영역: flex column + 스크롤
+- 사용자 메시지: 오른쪽 정렬, 블루 배경 (`--wa-color-brand-600`)
+- AI 메시지: 왼쪽 정렬, 흰 배경 + 테두리
+- AI 생각중: 점 3개 바운스 애니메이션
+- 추천 질문 칩: pill 형태 버튼
+- 모바일 반응형: `@media (max-width: 991px)`
+
+### 14.12. 보안
+
+| 항목 | 설명 |
+|------|------|
+| `enforceAiApiEndpoint()` | `ai-api.php` 경로 강제 |
+| 로그인 필수 | 비로그인 시 챗봇 입력 비활성화 (PHP SSR 분기) |
+| 모델 화이트리스트 | `ALLOWED_CHATBOT_MODELS` 배열로 허용 모델 제한 |
+| Enhanced Prompt 서버 처리 | 클라이언트가 프롬프트를 직접 구성하지 않음 |
+| Firebase RTDB 규칙 | `/ai/chatbot` 경로에 Firebase Security Rules 적용 |
