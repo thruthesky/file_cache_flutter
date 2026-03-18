@@ -33,9 +33,10 @@ class _ForumScreenState extends State<ForumScreen> {
     super.initState();
     _pagingController = PagingController<int, Post>(
       getNextPageKey: (state) {
+        if (state.lastPageIsEmpty) return null;
         final keys = state.keys;
-        if (keys == null || keys.isEmpty) return 0;
-        return keys.last + _pageSize;
+        if (keys == null || keys.isEmpty) return 1;
+        return keys.last + 1;
       },
       fetchPage: _fetchPage,
     );
@@ -47,14 +48,15 @@ class _ForumScreenState extends State<ForumScreen> {
     super.dispose();
   }
 
-  Future<List<Post>> _fetchPage(int offset) async {
+  Future<List<Post>> _fetchPage(int page) async {
     final nav = AppNavigationState.of(context);
     final result = await PostService.list(
       postId: nav.selectedPostId,
       category: nav.selectedCategory,
       limit: _pageSize,
-      offset: offset,
+      page: page,
     );
+    if (page > 1 && result.posts.isEmpty) return [];
     return result.posts;
   }
 

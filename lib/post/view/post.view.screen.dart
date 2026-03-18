@@ -14,11 +14,18 @@ import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
 
 /// 게시글 상세 보기 화면
 class PostViewScreen extends StatefulWidget {
   static const String routeName = '/post/view';
+
+  /// PostViewScreen으로 이동 (삭제 결과 자동 처리 포함)
+  static Future<dynamic> push(BuildContext ctx, Post post) async {
+    final result = await ctx.push<dynamic>(routeName, extra: post);
+    return result;
+  }
 
   final Post post;
 
@@ -40,7 +47,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   // 댓글
   List<Post> _comments = [];
-  bool _commentsLoading = false;
+  bool _commentsLoading = true;
 
   // 답글 대상 댓글 (null이면 최상위 댓글 모드)
   Post? _replyToComment;
@@ -54,52 +61,40 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 
   Future<void> _loadPost() async {
-    try {
-      final fullPost = await PostService.get(_post.idx);
-      if (!mounted) return;
-      setState(() {
-        _post = fullPost;
-        _goodCount = fullPost.good;
-        _isLoading = false;
-      });
-      _loadComments();
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
+    final fullPost = await PostService.get(_post.idx);
+    if (!mounted) return;
+    setState(() {
+      _post = fullPost;
+      _goodCount = fullPost.good;
+      _isLoading = false;
+    });
+    _loadComments();
   }
 
   Future<void> _loadComments() async {
-    setState(() => _commentsLoading = true);
-    try {
-      final comments = await PostService.listComments(_post.idx);
-      if (!mounted) return;
-      setState(() {
-        _comments = comments;
-        _commentsLoading = false;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _commentsLoading = false);
-    }
-  }
-
-  Future<void> _toggleLike() async {
-    final result = await PostService.like(_post.idx);
+    final comments = await PostService.listComments(_post.idx);
     if (!mounted) return;
     setState(() {
-      _liked = result.liked;
-      _goodCount = result.good;
+      _comments = comments;
+      _commentsLoading = false;
     });
   }
 
+  Future<void> _toggleLike() async {
+    try {
+      final result = await PostService.like(_post.idx);
+      if (!mounted) return;
+      setState(() {
+        _liked = result.liked;
+        _goodCount = result.good;
+      });
+    } catch (e) {
+      showErrorSnackBar(context, '$e');
+    }
+  }
+
   Future<void> _editPost() async {
-    final result = await Navigator.of(context).push<Post>(
-      MaterialPageRoute(builder: (_) => PostUpdateScreen(post: _post)),
-    );
+    final result = await PostUpdateScreen.push(context, _post);
     if (result != null && mounted) {
       setState(() {
         _post = result;
@@ -129,16 +124,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
     );
     if (confirm != true) return;
 
-    try {
-      await PostService.delete(_post.idx);
-      if (!mounted) return;
-      Navigator.of(context).pop('deleted');
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
-    }
+    await PostService.delete(_post.idx);
+    if (!mounted) return;
+    Navigator.of(context).pop('deleted');
   }
 
   // ── 댓글 CRUD ──────────────────────────────────────────
@@ -165,42 +153,28 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   /// 댓글 수정
   Future<void> _editComment(Post comment, String content) async {
-    try {
-      final updated = await PostService.updateComment(
-        idx: comment.idx,
-        content: content,
-      );
-      _postChanged = true;
-      if (!mounted) return;
-      setState(() {
-        _comments = _comments
-            .map((c) => c.idx == updated.idx ? updated : c)
-            .toList();
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('댓글 수정 실패: $e')));
-    }
+    final updated = await PostService.updateComment(
+      idx: comment.idx,
+      content: content,
+    );
+    _postChanged = true;
+    if (!mounted) return;
+    setState(() {
+      _comments = _comments
+          .map((c) => c.idx == updated.idx ? updated : c)
+          .toList();
+    });
   }
 
   /// 댓글 삭제
   Future<void> _deleteComment(Post comment) async {
-    try {
-      await PostService.deleteComment(comment.idx);
-      _postChanged = true;
-      if (!mounted) return;
-      setState(() {
-        _comments = _comments.where((c) => c.idx != comment.idx).toList();
-        _post = _post.copyWith(noOfComment: _comments.length);
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('댓글 삭제 실패: $e')));
-    }
+    await PostService.deleteComment(comment.idx);
+    _postChanged = true;
+    if (!mounted) return;
+    setState(() {
+      _comments = _comments.where((c) => c.idx != comment.idx).toList();
+      _post = _post.copyWith(noOfComment: _comments.length);
+    });
   }
 
   @override
@@ -450,15 +424,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
-                  onTap: () => _openUserProfile(post.idxMember),
-                  child: Text(
-                    post.userName.isNotEmpty ? post.userName : '이름없음'.tr(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurface,
-                      fontWeight: FontWeight.w600,
-                    ),
+                onTap: () => _openUserProfile(post.idxMember),
+                child: Text(
+                  post.userName.isNotEmpty ? post.userName : '이름없음'.tr(),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
               Row(
                 children: [
                   FaIcon(
@@ -468,7 +442,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    _formatFullDate(post.stamp),
+                    formatDate(
+                      context,
+                      DateTime.fromMillisecondsSinceEpoch(post.stamp),
+                    ),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
@@ -497,12 +474,5 @@ class _PostViewScreenState extends State<PostViewScreen> {
         ),
       ],
     );
-  }
-
-  String _formatFullDate(int stamp) {
-    if (stamp == 0) return '';
-    final date = DateTime.fromMillisecondsSinceEpoch(stamp * 1000);
-    return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

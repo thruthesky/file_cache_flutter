@@ -11,8 +11,7 @@ import 'package:philgo/point/point_log.model.dart';
 class PointHistoryScreen extends StatefulWidget {
   static const String routeName = '/point-history';
 
-  static Future<dynamic> push(BuildContext context) =>
-      context.push(routeName);
+  static Future push(BuildContext context) => context.push(routeName);
 
   const PointHistoryScreen({super.key});
 
@@ -34,6 +33,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
     super.initState();
     _pagingController = PagingController<int, PointLog>(
       getNextPageKey: (state) {
+        if (state.lastPageIsEmpty) return null;
         final keys = state.keys;
         if (keys == null || keys.isEmpty) return 1;
         return keys.last + 1;
@@ -50,24 +50,17 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
   }
 
   Future<List<PointLog>> _fetchPage(int page) async {
-    return PointService.history(page: page, limit: _pageLimit);
+    final response = await PointService.history(page: page, limit: _pageLimit);
+    return response.items;
   }
 
   Future<void> _loadCurrentPoint() async {
-    try {
-      final point = await PointService.memberPoint();
-      if (!mounted) return;
-      setState(() {
-        _currentPoint = point;
-        _isPointLoading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _pointError = e.toString();
-        _isPointLoading = false;
-      });
-    }
+    final point = await PointService.memberPoint();
+    if (!mounted) return;
+    setState(() {
+      _currentPoint = point;
+      _isPointLoading = false;
+    });
   }
 
   String _formatDate(int stamp) {
@@ -116,10 +109,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
     final scheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('포인트 내역'.tr()),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: Text('포인트 내역'.tr()), elevation: 0),
       body: Column(
         children: [
           _buildPointCard(theme, scheme),
@@ -180,9 +170,9 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
             Flexible(
               child: Text(
                 _pointError!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: scheme.onErrorContainer,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onErrorContainer),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -218,9 +208,9 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
         children: [
           Text(
             '보유 포인트'.tr(),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: scheme.onPrimaryContainer,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: scheme.onPrimaryContainer),
           ),
           const SizedBox(height: 8),
           Row(
@@ -235,17 +225,17 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
               Text(
                 _formatPoint(_currentPoint),
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: scheme.onPrimaryContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: scheme.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(width: 4),
               Text(
                 'P',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: scheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: scheme.onPrimaryContainer,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -270,9 +260,9 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
             Text(
               '포인트 내역이 없습니다'.tr(),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ],
         ).animate().fadeIn(duration: 400.ms),
@@ -284,9 +274,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
     return Card(
       elevation: 0,
       color: scheme.surfaceContainerLowest,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
@@ -317,9 +305,9 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                 children: [
                   Text(
                     _getLogDescription(log.module, log.action, log.etc),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: scheme.onSurface,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -327,8 +315,8 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                   Text(
                     _formatDate(log.stamp),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -339,16 +327,16 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                 Text(
                   '${log.isPositive ? '+' : ''}${_formatPoint(log.point)}P',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: log.isPositive ? scheme.primary : scheme.error,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: log.isPositive ? scheme.primary : scheme.error,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '${_formatPoint(log.pointAfter)}P',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
+                    color: scheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),

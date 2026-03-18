@@ -29,6 +29,7 @@ class PostListView extends StatelessWidget {
         return PagedListView<int, Post>.separated(
           state: state,
           fetchNextPage: fetchNextPage,
+          physics: const ClampingScrollPhysics(),
           separatorBuilder: (_, _) => const SizedBox.shrink(),
           builderDelegate: PagedChildBuilderDelegate<Post>(
             itemBuilder: (context, post, index) => PostListTile(

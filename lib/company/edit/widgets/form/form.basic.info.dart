@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'form_shared.dart';
@@ -46,18 +47,18 @@ class CompanyBasicInfoForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FormFieldLabel(
-            label: '업소명',
+            label: '업소명'.tr(),
             required: true,
             child: TextFormField(
               controller: nameController,
-              decoration: _inputDecoration('예: 필고 카페'),
+              decoration: _inputDecoration('예: 필고 카페'.tr()),
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? '업소명을 입력하세요' : null,
+                  (v == null || v.trim().isEmpty) ? '업소명을 입력하세요'.tr() : null,
             ),
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
-            label: '카테고리',
+            label: '카테고리'.tr(),
             required: true,
             child: _CategoryGrid(
               selected: selectedCategory,
@@ -67,22 +68,22 @@ class CompanyBasicInfoForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
-            label: '한줄 소개',
+            label: '한줄 소개'.tr(),
             child: TextFormField(
               controller: titleController,
-              decoration: _inputDecoration('예: 필리핀 최고의 한인 카페'),
+              decoration: _inputDecoration('예: 필리핀 최고의 한인 카페'.tr()),
               maxLength: 100,
             ),
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
-            label: '상세 설명',
+            label: '상세 설명'.tr(),
             child: TextFormField(
               controller: descriptionController,
               decoration: _inputDecoration(
-                '업소에 대한 자세한 설명을 입력하세요',
+                '업소에 대한 자세한 설명을 입력하세요'.tr(),
               ).copyWith(alignLabelWithHint: true),
-              maxLines: 5,
+              maxLines: 12,
               maxLength: 2000,
             ),
           ),
@@ -121,8 +122,7 @@ class _CategoryGrid extends StatelessWidget {
       builder: (context, constraints) {
         const cols = 4;
         const spacing = 8.0;
-        final tileSize =
-            (constraints.maxWidth - spacing * (cols - 1)) / cols;
+        final tileSize = (constraints.maxWidth - spacing * (cols - 1)) / cols;
 
         return Wrap(
           spacing: spacing,
@@ -153,9 +153,7 @@ class _CategoryGrid extends StatelessWidget {
                     FaIcon(
                       icon,
                       size: 20,
-                      color: isSelected
-                          ? activeColor
-                          : scheme.onSurfaceVariant,
+                      color: isSelected ? activeColor : scheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -182,4 +180,3 @@ class _CategoryGrid extends StatelessWidget {
     );
   }
 }
-
