@@ -29,7 +29,6 @@ class PointService {
     final response = await ApiService.instance.v7api(
       'pointLog.history',
       data: {'page': page, 'limit': limit, ?module: module, ?action: action},
-      debug: true,
     );
     return PointLogHistory.fromJson(response);
   }

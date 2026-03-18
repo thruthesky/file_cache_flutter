@@ -56,7 +56,6 @@ class CompanyService {
         'page': page,
         'limit': limit,
       },
-      debug: true,
     );
 
     return CompanyListResult.fromJson(result);
@@ -84,7 +83,7 @@ class CompanyService {
   /// 업소가 없으면 서버에서 자동 생성된다 (status='').
   /// 반환: CompanyModel 또는 null
   Future<void> loadMyCompany() async {
-    final result = await ApiService.instance.v7api('company.mine', debug: true);
+    final result = await ApiService.instance.v7api('company.mine');
     if (result.isEmpty) return;
 
     _companyListenable.value = CompanyModel.fromJson(result);

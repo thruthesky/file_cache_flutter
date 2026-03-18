@@ -45,7 +45,6 @@ class PostService {
         if (limit != null) 'limit': limit,
         if (page != null) 'page': page,
       },
-      debug: true,
     );
 
     return PostListResult.fromJson(result);
@@ -61,7 +60,6 @@ class PostService {
     final result = await ApiService.instance.v7api(
       'post.get',
       data: {'idx': idx},
-      debug: true,
     );
     return Post.fromJson(result);
   }
@@ -92,7 +90,6 @@ class PostService {
         if (category != null) 'category': category,
         if (files != null && files.isNotEmpty) 'files': files.join(','),
       },
-      debug: true,
     );
     return Post.fromJson(result);
   }
@@ -159,7 +156,6 @@ class PostService {
     final result = await ApiService.instance.v7api(
       'post.commentList',
       data: {'idx_root': idxRoot},
-      debug: true,
     );
     final raw = result['items'] ?? [];
     final items = raw is List ? raw : [];

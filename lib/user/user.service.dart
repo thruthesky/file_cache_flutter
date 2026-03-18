@@ -99,7 +99,7 @@ class UserService {
   /// Firebase Auth에 로그인된 상태이면 v7 API(user.me)를 호출하여
   /// UserModel을 반환한다. 미로그인이면 null을 반환한다.
   static Future<UserModel?> loadCurrentUser() async {
-    final json = await ApiService.instance.v7api('user.me', debug: true);
+    final json = await ApiService.instance.v7api('user.me');
     return UserModel.fromJson(json);
   }
 
