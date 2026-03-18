@@ -14,12 +14,12 @@ class BookmarkService {
   BookmarkService._();
 
   /// 북마크 그룹 목록 (ValueNotifier)
-  final ValueNotifier<List<BookmarkGroupModel>> _groupsNotifier = ValueNotifier(
-    [],
-  );
+  final ValueNotifier<List<BookmarkGroupModel>> _bookmarkNotifier =
+      ValueNotifier([]);
 
   /// 북마크 그룹 목록 getter
-  ValueNotifier<List<BookmarkGroupModel>> get bookmarkGroups => _groupsNotifier;
+  ValueNotifier<List<BookmarkGroupModel>> get bookmarkGroups =>
+      _bookmarkNotifier;
 
   // ── 초기화 ──────────────────────────────────────
 
@@ -27,19 +27,22 @@ class BookmarkService {
   ///
   /// 앱 초기화 시 UserService.initialize()에서 호출된다.
   Future<void> loadMyFolderBookmarks() async {
-    final result = await ApiService.instance.v7api('bookmark.listGroups');
+    final result = await ApiService.instance.v7api(
+      'bookmark.listGroups',
+      debug: true,
+    );
     final groupListResult = BookmarkGroupListResult.fromJson(result);
-    _groupsNotifier.value = groupListResult.groups;
+    _bookmarkNotifier.value = groupListResult.groups;
   }
 
   /// 상태 초기화 (로그아웃 시)
   void clear() {
-    _groupsNotifier.value = [];
+    _bookmarkNotifier.value = [];
   }
 
   /// 그룹 count를 delta만큼 조정
   void _updateGroupCount(int idxGroup, int delta) {
-    _groupsNotifier.value = _groupsNotifier.value.map((g) {
+    _bookmarkNotifier.value = _bookmarkNotifier.value.map((g) {
       if (g.idx == idxGroup) return g.copyWith(count: g.count + delta);
       return g;
     }).toList();
@@ -109,7 +112,7 @@ class BookmarkService {
       data: {'name': name},
     );
     final group = BookmarkGroupModel.fromJson(result);
-    _groupsNotifier.value = [..._groupsNotifier.value, group];
+    _bookmarkNotifier.value = [..._bookmarkNotifier.value, group];
     return group;
   }
 
@@ -121,7 +124,7 @@ class BookmarkService {
     );
     final deleted = result['deleted'] == true;
     if (deleted) {
-      _groupsNotifier.value = _groupsNotifier.value
+      _bookmarkNotifier.value = _bookmarkNotifier.value
           .where((g) => g.idx != idxGroup)
           .toList();
     }
