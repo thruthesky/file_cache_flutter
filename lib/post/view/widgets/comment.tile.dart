@@ -67,6 +67,7 @@ class _CommentTileState extends State<CommentTile> {
   @override
   void initState() {
     super.initState();
+    _liked = widget.comment.liked;
     _goodCount = widget.comment.good;
   }
 

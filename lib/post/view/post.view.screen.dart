@@ -73,6 +73,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
     setState(() {
       _post = fullPost;
       _goodCount = fullPost.good;
+      _liked = fullPost.liked;
+      _bookmarked = fullPost.bookmarked;
       _isLoading = false;
     });
     _loadComments();
@@ -83,6 +85,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
     if (!mounted) return;
     setState(() {
       _comments = comments;
+      _bookmarkedCommentIdxs =
+          comments.where((c) => c.bookmarked).map((c) => c.idx).toSet();
       _commentsLoading = false;
     });
   }

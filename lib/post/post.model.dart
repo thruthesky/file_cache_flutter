@@ -49,6 +49,12 @@ class Post {
   final String ip;
   final int noOfAttach;
 
+  // 사용자 상호작용 상태 (런타임, API 응답에서 설정)
+  final bool liked;
+  final bool bookmarked;
+  final bool reported;
+  final bool blocked;
+
   const Post({
     required this.idx,
     required this.idxMember,
@@ -98,6 +104,10 @@ class Post {
     this.region = '',
     this.ip = '',
     this.noOfAttach = 0,
+    this.liked = false,
+    this.bookmarked = false,
+    this.reported = false,
+    this.blocked = false,
   });
 
   /// 댓글 여부 (depth > 0)
@@ -173,10 +183,21 @@ class Post {
       region: json['region']?.toString() ?? '',
       ip: json['ip']?.toString() ?? '',
       noOfAttach: _toInt(json['no_of_attach']),
+      liked: json['liked'] == true,
+      bookmarked: json['bookmarked'] == true,
+      reported: json['reported'] == true,
+      blocked: json['blocked'] == true,
     );
   }
 
-  Post copyWith({int? noOfComment, int? good}) {
+  Post copyWith({
+    int? noOfComment,
+    int? good,
+    bool? liked,
+    bool? bookmarked,
+    bool? reported,
+    bool? blocked,
+  }) {
     return Post(
       idx: idx,
       idxMember: idxMember,
@@ -226,6 +247,10 @@ class Post {
       region: region,
       ip: ip,
       noOfAttach: noOfAttach,
+      liked: liked ?? this.liked,
+      bookmarked: bookmarked ?? this.bookmarked,
+      reported: reported ?? this.reported,
+      blocked: blocked ?? this.blocked,
     );
   }
 
