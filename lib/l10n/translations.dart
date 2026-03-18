@@ -285,6 +285,7 @@ class Translations {
     '내용 미리보기 없음': '내용 미리보기 없음',
     '원글을 찾을 수 없습니다': '원글을 찾을 수 없습니다',
     '사용자': '사용자',
+    '북마크 해제': '북마크 해제',
   };
 
   static const Map<String, dynamic> en = {
@@ -566,5 +567,6 @@ class Translations {
     '내용 미리보기 없음': 'No Preview',
     '원글을 찾을 수 없습니다': 'Original post not found',
     '사용자': 'User',
+    '북마크 해제': 'Remove Bookmark',
   };
 }

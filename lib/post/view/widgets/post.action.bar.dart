@@ -11,6 +11,8 @@ class PostActionBar extends StatelessWidget {
   final VoidCallback onLike;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final bool bookmarked;
+  final VoidCallback? onBookmark;
 
   const PostActionBar({
     super.key,
@@ -21,6 +23,8 @@ class PostActionBar extends StatelessWidget {
     required this.onLike,
     required this.onEdit,
     required this.onDelete,
+    this.bookmarked = false,
+    this.onBookmark,
   });
 
   @override
@@ -46,6 +50,19 @@ class PostActionBar extends StatelessWidget {
           color: scheme.onSurfaceVariant,
           onTap: () {},
         ),
+
+        // 북마크
+        if (onBookmark != null) ...[
+          const SizedBox(width: 8),
+          PostActionButton(
+            icon: bookmarked
+                ? FontAwesomeIcons.solidBookmark
+                : FontAwesomeIcons.lightBookmark,
+            label: '',
+            color: bookmarked ? scheme.primary : scheme.onSurfaceVariant,
+            onTap: onBookmark!,
+          ),
+        ],
 
         const Spacer(),
 

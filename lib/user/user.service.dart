@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/bookmark/bookmark.service.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
@@ -203,6 +204,7 @@ class UserService {
       if (firebaseUser == null) {
         cancelBlockedUsersListener();
         CompanyService.instance.clear();
+        BookmarkService.instance.clear();
         if (context.mounted) {
           UserState.of(context).clear();
         }
@@ -216,6 +218,7 @@ class UserService {
           listenBlockedUsers(firebaseUser.uid);
 
           CompanyService.instance.loadMyCompany();
+          BookmarkService.instance.loadMyFolderBookmarks();
 
           if (context.mounted) {
             UserState.of(context).setUser(user);

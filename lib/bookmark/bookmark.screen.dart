@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/bookmark/bookmark.model.dart';
-import 'package:philgo/bookmark/bookmark_group.model.dart';
 import 'package:philgo/bookmark/bookmark.service.dart';
+import 'package:philgo/bookmark/bookmark_group.model.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
@@ -14,6 +14,8 @@ import 'package:philgo/user/widgets/user_avatar.dart';
 /// 북마크 관리 화면
 ///
 /// 그룹 목록 → 그룹 내 북마크 목록 2단 구조.
+/// 그룹 목록은 [BookmarkService.instance.bookmarkGroups] ValueNotifier를 통해
+/// 항상 최신 상태로 유지된다.
 class BookmarkScreen extends StatefulWidget {
   static const String routeName = '/bookmark';
 
@@ -26,37 +28,21 @@ class BookmarkScreen extends StatefulWidget {
 }
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
-  List<BookmarkGroupModel> _groups = [];
-  bool _isLoadingGroups = true;
-
   BookmarkGroupModel? _selectedGroup;
   List<BookmarkModel> _bookmarks = [];
   bool _isLoadingBookmarks = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadGroups();
-  }
-
-  Future<void> _loadGroups() async {
-    final groups = await BookmarkService.listGroups();
-    if (!mounted) return;
-    setState(() {
-      _groups = groups;
-      _isLoadingGroups = false;
-    });
-  }
 
   Future<void> _loadBookmarks(BookmarkGroupModel group) async {
     setState(() {
       _selectedGroup = group;
       _isLoadingBookmarks = true;
     });
-    final bookmarks = await BookmarkService.listByGroup(idxGroup: group.idx);
+    final result = await BookmarkService.instance.listByGroup(
+      idxGroup: group.idx,
+    );
     if (!mounted) return;
     setState(() {
-      _bookmarks = bookmarks;
+      _bookmarks = result.bookmarks;
       _isLoadingBookmarks = false;
     });
   }
@@ -94,9 +80,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       },
     );
     if (name == null) return;
-
-    await BookmarkService.createGroup(name: name);
-    _loadGroups();
+    await BookmarkService.instance.createGroup(name: name);
   }
 
   Future<void> _deleteGroup(BookmarkGroupModel group) async {
@@ -119,13 +103,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       ),
     );
     if (confirm != true) return;
-
-    await BookmarkService.deleteGroup(idxGroup: group.idx);
-    _loadGroups();
+    await BookmarkService.instance.deleteGroup(idxGroup: group.idx);
   }
 
   Future<void> _removeBookmark(BookmarkModel bookmark) async {
-    await BookmarkService.remove(
+    await BookmarkService.instance.remove(
       entityType: bookmark.entityType,
       entityIdx: bookmark.entityIdx > 0 ? bookmark.entityIdx : null,
       entityId: bookmark.entityId.isNotEmpty ? bookmark.entityId : null,
@@ -139,14 +121,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _onBookmarkTap(BookmarkModel bookmark) {
     switch (bookmark.entityType) {
       case 'post':
-        if (bookmark.entityIdx > 0) {
-          _navigateToPost(bookmark.entityIdx);
-        }
+        if (bookmark.entityIdx > 0) _navigateToPost(bookmark.entityIdx);
       case 'comment':
         final parentIdx = bookmark.parentIdx;
-        if (parentIdx != null && parentIdx > 0) {
-          _navigateToPost(parentIdx);
-        }
+        if (parentIdx != null && parentIdx > 0) _navigateToPost(parentIdx);
       case 'user':
         if (bookmark.entityIdx > 0) {
           context.push(OtherUserScreen.routeByIdx(bookmark.entityIdx));
@@ -165,7 +143,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       _selectedGroup = null;
       _bookmarks = [];
     });
-    _loadGroups();
   }
 
   @override
@@ -181,7 +158,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         scrolledUnderElevation: 1,
         leading: _selectedGroup != null
             ? IconButton(
-                icon: const FaIcon(FontAwesomeIcons.lightChevronLeft, size: 18),
+                icon: const FaIcon(
+                  FontAwesomeIcons.lightChevronLeft,
+                  size: 18,
+                ),
                 onPressed: _backToGroups,
               )
             : null,
@@ -202,27 +182,27 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   // ── 그룹 목록 ──────────────────────────────────────
 
   Widget _buildGroupList() {
-    if (_isLoadingGroups) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_groups.isEmpty) {
-      return _buildEmpty(
-        FontAwesomeIcons.lightFolderOpen,
-        '그룹이 없습니다'.tr(),
-      );
-    }
-
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: _groups.length,
-      separatorBuilder: (_, __) => Divider(
-        height: 1,
-        indent: 16,
-        endIndent: 16,
-        color: color.outlineVariant,
-      ),
-      itemBuilder: (_, i) => _buildGroupTile(_groups[i]),
+    return ValueListenableBuilder<List<BookmarkGroupModel>>(
+      valueListenable: BookmarkService.instance.bookmarkGroups,
+      builder: (context, groups, _) {
+        if (groups.isEmpty) {
+          return _buildEmpty(
+            FontAwesomeIcons.lightFolderOpen,
+            '그룹이 없습니다'.tr(),
+          );
+        }
+        return ListView.separated(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: groups.length,
+          separatorBuilder: (_, __) => Divider(
+            height: 1,
+            indent: 16,
+            endIndent: 16,
+            color: color.outlineVariant,
+          ),
+          itemBuilder: (_, i) => _buildGroupTile(groups[i]),
+        );
+      },
     );
   }
 

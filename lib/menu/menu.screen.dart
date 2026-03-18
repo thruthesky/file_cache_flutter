@@ -9,6 +9,7 @@ import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
@@ -502,6 +503,11 @@ class _MenuScreenState extends State<MenuScreen> {
         FontAwesomeIcons.lightCoins,
         '포인트 내역'.tr(),
         onTap: _requireLogin(() => PointHistoryScreen.push(context)),
+      ),
+      _MenuItemData(
+        FontAwesomeIcons.lightBookmark,
+        '북마크'.tr(),
+        onTap: _requireLogin(() => BookmarkScreen.push(context)),
       ),
     ];
 

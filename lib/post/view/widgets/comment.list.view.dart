@@ -19,6 +19,12 @@ class CommentListView extends StatefulWidget {
   /// 답글 버튼 탭 시 호출 — 화면 레벨에서 하단 바 답글 모드를 활성화한다.
   final void Function(Post comment)? onReplyTap;
 
+  /// 북마크된 댓글 idx 목록
+  final Set<int> bookmarkedCommentIdxs;
+
+  /// 댓글 북마크 토글 콜백
+  final Future<void> Function(int commentIdx)? onToggleBookmark;
+
   const CommentListView({
     super.key,
     required this.comments,
@@ -28,6 +34,8 @@ class CommentListView extends StatefulWidget {
     required this.onEditComment,
     required this.onDeleteComment,
     this.onReplyTap,
+    this.bookmarkedCommentIdxs = const {},
+    this.onToggleBookmark,
   });
 
   @override
@@ -144,6 +152,10 @@ class _CommentListViewState extends State<CommentListView> {
           onReplyTap: widget.onReplyTap,
           onEdit: widget.onEditComment,
           onDelete: widget.onDeleteComment,
+          bookmarked: widget.bookmarkedCommentIdxs.contains(node.comment.idx),
+          onBookmark: widget.onToggleBookmark != null
+              ? () => widget.onToggleBookmark!(node.comment.idx)
+              : null,
         ),
 
         // 자식 영역 (세로선 포함)

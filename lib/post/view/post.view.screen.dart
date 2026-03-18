@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/post/post.model.dart';
+import 'package:philgo/bookmark/bookmark.service.dart';
+import 'package:philgo/bookmark/widgets/bookmark_group_picker.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/widgets/comment.list.view.dart';
@@ -11,6 +13,7 @@ import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/post/view/widgets/post_comment_bar.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:go_router/go_router.dart';
@@ -52,11 +55,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
   // 답글 대상 댓글 (null이면 최상위 댓글 모드)
   Post? _replyToComment;
 
+  // 북마크 상태 (캐시에서 초기화)
+  bool _bookmarked = false;
+  Set<int> _bookmarkedCommentIdxs = {};
+
   @override
   void initState() {
     super.initState();
     _post = widget.post;
     _goodCount = _post.good;
+    _bookmarked = BookmarkService.instance.isBookmarked('post', _post.idx);
     _loadPost();
   }
 
@@ -77,6 +85,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
     setState(() {
       _comments = comments;
       _commentsLoading = false;
+      // 캐시에서 댓글 북마크 상태 초기화
+      _bookmarkedCommentIdxs = comments
+          .where((c) => BookmarkService.instance.isBookmarked('comment', c.idx))
+          .map((c) => c.idx)
+          .toSet();
     });
   }
 
@@ -127,6 +140,75 @@ class _PostViewScreenState extends State<PostViewScreen> {
     await PostService.delete(_post.idx);
     if (!mounted) return;
     Navigator.of(context).pop('deleted');
+  }
+
+  // ── 북마크 ──────────────────────────────────────────
+
+  Future<void> _toggleBookmark() async {
+    final userState = Provider.of<UserState>(context, listen: false);
+    if (!userState.isLoggedIn) {
+      LoginRequiredDialog.show(context);
+      return;
+    }
+    final result = await showBookmarkGroupPicker(
+      context: context,
+      isBookmarked: _bookmarked,
+    );
+    if (result == null || !mounted) return;
+
+    if (result.removed) {
+      await BookmarkService.instance.remove(
+        entityType: 'post',
+        entityIdx: _post.idx,
+      );
+      if (!mounted) return;
+      setState(() => _bookmarked = false);
+    } else {
+      await BookmarkService.instance.add(
+        entityType: 'post',
+        entityIdx: _post.idx,
+        groupName: result.groupName ?? '',
+      );
+      if (!mounted) return;
+      setState(() => _bookmarked = true);
+    }
+  }
+
+  Future<void> _toggleCommentBookmark(int commentIdx) async {
+    final userState = Provider.of<UserState>(context, listen: false);
+    if (!userState.isLoggedIn) {
+      LoginRequiredDialog.show(context);
+      return;
+    }
+    final isBookmarked = _bookmarkedCommentIdxs.contains(commentIdx);
+    final result = await showBookmarkGroupPicker(
+      context: context,
+      isBookmarked: isBookmarked,
+    );
+    if (result == null || !mounted) return;
+
+    if (result.removed) {
+      await BookmarkService.instance.remove(
+        entityType: 'comment',
+        entityIdx: commentIdx,
+      );
+      if (!mounted) return;
+      setState(() {
+        _bookmarkedCommentIdxs = _bookmarkedCommentIdxs
+            .where((idx) => idx != commentIdx)
+            .toSet();
+      });
+    } else {
+      await BookmarkService.instance.add(
+        entityType: 'comment',
+        entityIdx: commentIdx,
+        groupName: result.groupName ?? '',
+      );
+      if (!mounted) return;
+      setState(() {
+        _bookmarkedCommentIdxs = {..._bookmarkedCommentIdxs, commentIdx};
+      });
+    }
   }
 
   // ── 댓글 CRUD ──────────────────────────────────────────
@@ -366,6 +448,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             onLike: _toggleLike,
                             onEdit: _editPost,
                             onDelete: _deletePost,
+                            bookmarked: _bookmarked,
+                            onBookmark: _toggleBookmark,
                           ),
                         ),
 
@@ -382,6 +466,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           onReplyTap: (comment) {
                             setState(() => _replyToComment = comment);
                           },
+                          bookmarkedCommentIdxs: _bookmarkedCommentIdxs,
+                          onToggleBookmark: _toggleCommentBookmark,
                         ),
 
                         const SizedBox(height: 32),
