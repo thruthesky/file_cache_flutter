@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:philgo/chat/chat.functions.dart';
@@ -15,7 +16,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
       builder: (uid) => buildChatRoomList(uid),
       notLoggedIn: Center(
         child: Text(
-          "Login required",
+          '로그인이 필요합니다'.tr(),
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ),
@@ -33,7 +34,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error.toString()}"));
+          return Center(child: Text('오류: {}'.tr(args: [snapshot.error.toString()])));
         }
 
         if (snapshot.docs.isEmpty) {
@@ -48,7 +49,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "Your friends list is empty",
+                  '친구 목록이 비어있습니다'.tr(),
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),

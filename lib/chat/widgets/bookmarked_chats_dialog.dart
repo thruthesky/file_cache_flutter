@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -59,7 +60,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Bookmarked Chats', style: textTheme.titleMedium),
+                        Text('북마크된 채팅'.tr(), style: textTheme.titleMedium),
                         SizedBox(height: subtitleSpacing),
                         Text(
                           folderName,
@@ -149,7 +150,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                           ),
                           SizedBox(height: dialogEmptySpacing),
                           Text(
-                            "Error: ${snapshot.error.toString()}",
+                            '오류: {}'.tr(args: [snapshot.error.toString()]),
                             style: textTheme.bodyLarge?.copyWith(
                               color: colorScheme.error,
                             ),
@@ -185,7 +186,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                           ),
                           SizedBox(height: dialogEmptySpacing),
                           Text(
-                            'No bookmarked chats yet',
+                            '북마크된 채팅이 없습니다'.tr(),
                             style: textTheme.bodyLarge?.copyWith(
                               color: colorScheme.outline,
                             ),
@@ -339,7 +340,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                             Blocked(
                                               otherUserUid: otherUserUid,
                                               yes: () => Text(
-                                                "Message from blocked user (tap to unblock)",
+                                                '차단된 사용자의 메시지 (탭하여 차단 해제)'.tr(),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: textTheme.bodySmall
@@ -486,7 +487,7 @@ class BookmarkedChatsDialog extends StatelessWidget {
                     ),
                     SizedBox(height: dialogEmptySpacing),
                     Text(
-                      "Login required to view bookmarked chats",
+                      '북마크된 채팅을 보려면 로그인하세요'.tr(),
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.outline,
                       ),

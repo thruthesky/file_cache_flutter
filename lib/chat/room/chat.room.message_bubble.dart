@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -108,7 +109,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      "You",
+                      '나'.tr(),
                       style: TextStyle(
                         fontSize: senderNameFontSize,
                         color: Theme.of(context).colorScheme.primary,
@@ -258,15 +259,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
     switch (message.protocol) {
       case ChatProtocol.create:
-        return "Room has been created";
+        return '채팅방이 생성되었습니다'.tr();
       case ChatProtocol.join:
-        return "$senderName has joined the room";
+        return '{}님이 입장했습니다'.tr(args: [senderName]);
       case ChatProtocol.invitationNotSent:
-        return "Invitation not sent";
+        return '초대가 전송되지 않았습니다'.tr();
       case ChatProtocol.left:
-        return "$senderName left the room";
+        return '{}님이 퇴장했습니다'.tr(args: [senderName]);
       case ChatProtocol.removed:
-        return "$senderName has been removed from the room";
+        return '{}님이 방에서 제거되었습니다'.tr(args: [senderName]);
       default:
         // Fallback to the message text if protocol is not recognized
         return message.text ?? '';
@@ -284,12 +285,12 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Get user display name
   String userDisplayName() {
-    if (sender == null) return 'no-name';
+    if (sender == null) return '이름없음'.tr();
 
     if (sender!.nickname.isNotEmpty) {
       return sender!.nickname;
     } else {
-      return 'no-name';
+      return '이름없음'.tr();
     }
   }
 
@@ -370,9 +371,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
   Widget _buildBlindedMessage(BuildContext context) {
     String blindReason = '';
     if (message.moderated == 'M') {
-      blindReason = "This message was blocked by AI moderation.";
+      blindReason = '이 메시지는 AI 검토에 의해 차단되었습니다.'.tr();
     } else if (message.moderated == 'A') {
-      blindReason = "This message was blocked as an advertisement.";
+      blindReason = '이 메시지는 광고로 차단되었습니다.'.tr();
     }
 
     return Padding(
@@ -413,7 +414,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      "You",
+                      '나'.tr(),
                       style: TextStyle(
                         fontSize: senderNameFontSize,
                         color: senderNameColor,
@@ -540,7 +541,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               SizedBox(width: avatarNameSpacing),
               Flexible(
                 child: Text(
-                  "This message was blocked.",
+                  '이 메시지는 차단되었습니다.'.tr(),
                   style: TextStyle(
                     color: blockedTextColor,
                     fontSize: blockedTextFontSize,
@@ -580,7 +581,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Menu",
+                    '메뉴'.tr(),
                     style: TextStyle(
                       fontSize: bottomSheetHeaderFontSize,
                       fontWeight: FontWeight.bold,
@@ -589,7 +590,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: "Close",
+                    tooltip: '닫기'.tr(),
                   ),
                 ],
               ),
@@ -599,7 +600,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               visualDensity: const VisualDensity(horizontal: -4),
               leading: userAvatar(),
-              title: Text("Profile"),
+              title: Text('프로필'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
                 showProfileDialog(parentContext, sender!);
@@ -608,7 +609,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             SizedBox(height: bottomSheetItemSpacing),
             ListTile(
               leading: const Icon(Icons.post_add),
-              title: Text("Recent Posts"),
+              title: Text('최근 글'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
                 showUserRecentPostsDialog(
@@ -621,7 +622,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             // Report option
             ListTile(
               leading: const Icon(Icons.report, color: Colors.red),
-              title: Text("Report", style: const TextStyle(color: Colors.red)),
+              title: Text('신고'.tr(), style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.of(context).pop();
                 ChatService.instance.showChatMessageReportDialog(
@@ -640,7 +641,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 yes: () => ListTile(
                   leading: Icon(Icons.person_add, color: Colors.green),
                   title: Text(
-                    "Unblock User",
+                    '차단 해제'.tr(),
                     style: TextStyle(color: Colors.green),
                   ),
                   onTap: () {
@@ -651,7 +652,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 no: () => ListTile(
                   leading: Icon(Icons.block, color: Colors.orange),
                   title: Text(
-                    "Block User",
+                    '사용자 차단'.tr(),
                     style: TextStyle(color: Colors.orange),
                   ),
                   onTap: () {
@@ -713,7 +714,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Blocked User Options",
+                    '차단된 사용자 옵션'.tr(),
                     style: TextStyle(
                       fontSize: bottomSheetHeaderFontSize,
                       fontWeight: FontWeight.bold,
@@ -722,7 +723,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: "Close",
+                    tooltip: '닫기'.tr(),
                   ),
                 ],
               ),
@@ -736,7 +737,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 userDisplayName(),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text("This message was blocked."),
+              subtitle: Text('이 메시지는 차단되었습니다.'.tr()),
             ),
             SizedBox(height: bottomSheetItemSpacing),
 
@@ -744,10 +745,10 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.person_add, color: Colors.green),
               title: Text(
-                "Unblock User",
+                '차단 해제'.tr(),
                 style: const TextStyle(color: Colors.green),
               ),
-              subtitle: Text("Unblock this user to view their messages."),
+              subtitle: Text('이 사용자의 차단을 해제하면 메시지를 볼 수 있습니다.'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
                 _performUnblock(context);

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -97,7 +98,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text("You can select up to {widget.maxFiles} files."),
+          content: Text('최대 {}개 파일을 선택할 수 있습니다.'.tr(args: ['${widget.maxFiles}'])),
           backgroundColor: Colors.orange,
         ),
       );
@@ -123,7 +124,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Select Files",
+                        '파일 선택'.tr(),
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       IconButton(
@@ -145,7 +146,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListTile(
                   leading: const Icon(Icons.camera_alt),
-                  title: Text("Camera"),
+                  title: Text('카메라'.tr()),
                   onTap: () async {
                     Navigator.pop(context);
                     await _pickAndUploadImages(
@@ -161,7 +162,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
               padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
               child: ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: Text("Gallery"),
+                title: Text('갤러리'.tr()),
                 onTap: () async {
                   Navigator.pop(context);
                   await _pickAndUploadImages(
@@ -210,7 +211,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 behavior: SnackBarBehavior.floating,
-                content: Text("You can select up to ${widget.maxFiles} files."),
+                content: Text('최대 {}개 파일을 선택할 수 있습니다.'.tr(args: ['${widget.maxFiles}'])),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -271,13 +272,13 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           });
 
           if (mounted) {
-            showErrorSnackBar(context, "Upload image failed: ${e.toString()}");
+            showErrorSnackBar(context, '이미지 업로드 실패: {}'.tr(args: [e.toString()]));
           }
         }
       }
     } catch (e) {
       if (mounted) {
-        showErrorSnackBar(context, "Upload failed: ${e.toString()}");
+        showErrorSnackBar(context, '업로드 실패: {}'.tr(args: [e.toString()]));
       }
     }
   }
@@ -324,7 +325,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     } catch (e) {
       debugPrint('Error sending message: $e');
       if (mounted) {
-        showErrorSnackBar(context, "Failed to send message: $e{e.toString()}");
+        showErrorSnackBar(context, '메시지 전송 실패: {}'.tr(args: [e.toString()]));
       }
     } finally {
       isLoading = false;
@@ -490,7 +491,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           ),
           SizedBox(width: loadingSpacing),
           Text(
-            'Uploading images ($_completedUploads/${_selectedFiles.length})',
+            '이미지 업로드 중 ({}/{})'.tr(args: ['$_completedUploads', '${_selectedFiles.length}']),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -563,7 +564,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                               ),
                           ],
                         ),
-                        tooltip: "Attach files",
+                        tooltip: '파일 첨부'.tr(),
                       ),
 
                       // Message Input Field - 80% minimum width
@@ -576,7 +577,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             autofocus: false,
                             controller: _messageController,
                             decoration: InputDecoration(
-                              hintText: "Type a message...",
+                              hintText: '메시지를 입력하세요...'.tr(),
                               hintStyle: theme.textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurface.withValues(
                                   alpha: 0.4,

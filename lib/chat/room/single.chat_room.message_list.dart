@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +106,7 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
                 ),
                 SizedBox(height: msgListEmptySpacing),
                 Text(
-                  "Send a message to start a conversation",
+                  '메시지를 보내 대화를 시작하세요'.tr(),
                   style: TextStyle(fontSize: msgListEmptyTextFontSize, color: msgListEmptyTextColor),
                   textAlign: TextAlign.center,
                 ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.service.dart';
@@ -39,7 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Chat",
+                    '채팅'.tr(),
                     style: theme.textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.normal,
                     ),
@@ -110,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               color: scheme.onSurfaceVariant,
                             ),
                             SizedBox(width: dialogItemSpacing),
-                            Text("Contact Admin"),
+                            Text('운영자 문의'.tr()),
                           ],
                         ),
                       ),

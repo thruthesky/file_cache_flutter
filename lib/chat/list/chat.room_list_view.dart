@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,7 +32,7 @@ class ChatRoomListView extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error.toString()}"));
+          return Center(child: Text('오류: {}'.tr(args: [snapshot.error.toString()])));
         }
 
         if (snapshot.docs.isEmpty) {
@@ -67,7 +68,7 @@ class ChatRoomListView extends StatelessWidget {
                   ),
                   SizedBox(height: emptyStateSpacing),
                   Text(
-                    "Your friends list is empty",
+                    '친구 목록이 비어있습니다'.tr(),
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -75,7 +76,7 @@ class ChatRoomListView extends StatelessWidget {
                   ),
                   SizedBox(height: dialogButtonSpacing),
                   Text(
-                    'Start a conversation to see it here',
+                    '대화를 시작하면 여기에 표시됩니다'.tr(),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurface.withValues(alpha: 0.4),
                     ),

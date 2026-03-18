@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -71,7 +72,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                         ),
                         SizedBox(width: pinnedSectionIconSpacing),
                         Text(
-                          "Pinned Chats",
+                          '고정된 채팅'.tr(),
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.w600,
@@ -179,7 +180,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
               Padding(
                 padding: unpinTitlePadding,
                 child: Text(
-                  "Unpin Chat Room",
+                  '채팅방 고정 해제'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -191,7 +192,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
               Padding(
                 padding: unpinBodyPadding,
                 child: Text(
-                  "Are you sure you want to unpin this chat room?",
+                  '이 채팅방의 고정을 해제하시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -237,7 +238,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Cancel"),
+                      child: Text('취소'.tr()),
                     ),
                     SizedBox(width: unpinButtonSpacing),
                     // Unpin button - Comic design error button (destructive action)
@@ -273,7 +274,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Unpin"),
+                      child: Text('고정 해제'.tr()),
                     ),
                   ],
                 ),
@@ -305,7 +306,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 성공 메시지 표시 (선택적)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Chat room unpinned"),
+            content: Text('채팅방 고정이 해제되었습니다'.tr()),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -315,7 +316,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 에러 메시지 표시
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Error: ${e.toString()}"),
+            content: Text('오류: {}'.tr(args: [e.toString()])),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -348,7 +349,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         } else if (isSingle) {
           name = join.userDisplayName.isNotEmpty
               ? join.userDisplayName
-              : 'No name';
+              : '이름없음'.tr();
         } else {
           name = join.roomName.isNotEmpty ? join.roomName : 'No name';
         }

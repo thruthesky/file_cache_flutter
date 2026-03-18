@@ -4,6 +4,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -152,7 +153,7 @@ class ChatService {
           .get();
 
       if (snapshot.exists) {
-        throw ('You already have reported this.');
+        throw ('이미 신고하셨습니다.'.tr());
       }
 
       final data = {
@@ -302,7 +303,7 @@ class ChatService {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Block & Leave',
+                      '차단 및 나가기'.tr(),
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
@@ -318,7 +319,7 @@ class ChatService {
                   vertical: 8,
                 ),
                 child: Text(
-                  'Are you sure you want to block this user and leave the chat?',
+                  '이 사용자를 차단하고 채팅방을 나가시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -360,7 +361,7 @@ class ChatService {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text('Cancel'),
+                      child: Text('취소'.tr()),
                     ),
                     const SizedBox(width: 8),
                     // Confirm Block & Leave
@@ -393,7 +394,7 @@ class ChatService {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text('Block & Leave'),
+                      child: Text('차단 및 나가기'.tr()),
                     ),
                   ],
                 ),

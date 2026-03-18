@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.defines.dart';
@@ -86,7 +87,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
       debugPrint('Error initializing chat room: $e');
       debugPrintStack(stackTrace: stack);
       if (globalContext.mounted) {
-        showErrorSnackBar(globalContext, "Error loading chat room");
+        showErrorSnackBar(globalContext, '채팅방 로딩 오류'.tr());
         setState(() => isChatRoomLoading = false);
         if (Navigator.canPop(globalContext)) {
           Navigator.of(globalContext).pop();

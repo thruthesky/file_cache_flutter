@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
@@ -53,7 +54,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         IconButton(
           onPressed: () => showMenuModal(context),
           icon: const Icon(Icons.settings),
-          tooltip: "Menu",
+          tooltip: '메뉴'.tr(),
         ),
       ],
     );
@@ -90,7 +91,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Menu",
+                    '메뉴'.tr(),
 
                     /// Comic design: Use theme text style
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -100,7 +101,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: "Close",
+                    tooltip: '닫기'.tr(),
                   ),
                 ],
               ),
@@ -151,7 +152,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             SizedBox(width: dialogAvatarSpacing),
                             Expanded(
                               child: Text(
-                                "Admin Chat Notice",
+                                '관리자 채팅 안내'.tr(),
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: Theme.of(
@@ -173,7 +174,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             FontAwesomeIcons.lightUserPlus,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                          title: "Unblock User",
+                          title: '차단 해제'.tr(),
                           onTap: () {
                             Navigator.of(context).pop();
                             showUnblockDialog(parentContext);
@@ -197,7 +198,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                       context,
                                     ).colorScheme.primary,
                                   ),
-                                  title: isPinned ? "Unpin Chat" : "Pin Chat",
+                                  title: isPinned ? '채팅 고정 해제'.tr() : '채팅 고정'.tr(),
                                   onTap: () async {
                                     Navigator.of(context).pop();
                                     await togglePinned(parentContext);
@@ -211,7 +212,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             _buildComicMenuItem(
                               context: context,
                               icon: Avatar(photoUrl: getPhotoUrl()),
-                              title: "Profile",
+                              title: '프로필'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showProfileDialog(parentContext, otherUser);
@@ -226,7 +227,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightNewspaper,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
-                              title: "Recent Posts",
+                              title: '최근 글'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showUserRecentPostsDialog(
@@ -244,7 +245,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightFlag,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Report",
+                              title: '신고'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 reportRoom(parentContext);
@@ -259,7 +260,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightBan,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Block User",
+                              title: '사용자 차단'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showBlockDialog(parentContext);
@@ -274,7 +275,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightArrowRightFromBracket,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Leave Room",
+                              title: '방 나가기'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showLeaveConfirmDialog(parentContext);
@@ -289,7 +290,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightBan,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Block & Leave",
+                              title: '차단 및 나가기'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showBlockAndLeaveConfirmDialog(parentContext);
@@ -359,7 +360,7 @@ class SingleChatRoomHeader extends StatelessWidget {
               Padding(
                 padding: dialogTitlePadding,
                 child: Text(
-                  "Leave Room",
+                  '방 나가기'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -371,7 +372,7 @@ class SingleChatRoomHeader extends StatelessWidget {
               Padding(
                 padding: dialogBodyPadding,
                 child: Text(
-                  "Are you sure you want to leave this room?",
+                  '이 방을 나가시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -416,7 +417,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Block & Leave"),
+                      child: Text('차단 및 나가기'.tr()),
                     ),
                     SizedBox(height: dialogButtonSpacing),
 
@@ -452,7 +453,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Leave"),
+                      child: Text('나가기'.tr()),
                     ),
                     SizedBox(height: dialogButtonSpacing),
 
@@ -487,7 +488,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Cancel"),
+                      child: Text('취소'.tr()),
                     ),
                   ],
                 ),
@@ -570,19 +571,19 @@ class SingleChatRoomHeader extends StatelessWidget {
         await ref.remove();
 
         if (context.mounted) {
-          showSuccessSnackBar(context, "Chat room unpinned successfully");
+          showSuccessSnackBar(context, '채팅방 고정 해제 완료'.tr());
         }
       } else {
         // Pin: Set value to true in Firebase
         await ref.set(true);
 
         if (context.mounted) {
-          showSuccessSnackBar(context, "Chat room pinned successfully");
+          showSuccessSnackBar(context, '채팅방 고정 완료'.tr());
         }
       }
     } catch (e) {
       if (context.mounted) {
-        showErrorSnackBar(context, "Error: ${e.toString()}");
+        showErrorSnackBar(context, '오류: {}'.tr(args: [e.toString()]));
       }
     }
   }
@@ -639,7 +640,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     if (join.userDisplayName.isNotEmpty) {
       return join.userDisplayName;
     }
-    return "No name";
+    return '이름없음'.tr();
   }
 
   /// Build a menu item with Comic design
@@ -749,7 +750,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
       return IconButton(
         onPressed: () => _showFavoritesModal(context),
         icon: const Icon(Icons.star_border),
-        tooltip: "Add to Favorites",
+        tooltip: '즐겨찾기에 추가'.tr(),
       );
     }
 
@@ -763,7 +764,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
             // Comic design: Use theme primary color instead of hardcoded amber
             color: isFavorited ? Colors.amberAccent : null,
           ),
-          tooltip: "Add to Favorites",
+          tooltip: '즐겨찾기에 추가'.tr(),
         );
       },
     );
@@ -880,8 +881,8 @@ class _FavoritesModalState extends State<_FavoritesModal> {
           showSuccessSnackBar(
             context,
             selectedFolders.contains(folderName)
-                ? "Added to {folderName}"
-                : "Removed from {folderName}",
+                ? '{}에 추가됨'.tr(args: [folderName])
+                : '{}에서 제거됨'.tr(args: [folderName]),
           );
         }
       }
@@ -889,7 +890,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          "Failed to update favorite: ${e.toString()}",
+          '즐겨찾기 업데이트 실패: {}'.tr(args: [e.toString()]),
         );
       }
     } finally {
@@ -926,7 +927,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
             children: [
               /// Title
               Text(
-                "Create New Folder",
+                '새 폴더 만들기'.tr(),
                 style: Theme.of(
                   dialogContext,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
@@ -937,8 +938,8 @@ class _FavoritesModalState extends State<_FavoritesModal> {
               TextField(
                 controller: folderNameController,
                 decoration: InputDecoration(
-                  labelText: "Folder Name",
-                  hintText: "Enter folder name",
+                  labelText: '폴더 이름'.tr(),
+                  hintText: '폴더 이름을 입력하세요'.tr(),
 
                   /// Comic design: 2px border
                   border: OutlineInputBorder(
@@ -1020,7 +1021,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         Theme.of(dialogContext).textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text("Cancel"),
+                    child: Text('취소'.tr()),
                   ),
                   const SizedBox(width: 8),
                   // Create button - Comic design primary button
@@ -1068,7 +1069,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         Theme.of(dialogContext).textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text("Create"),
+                    child: Text('만들기'.tr()),
                   ),
                 ],
               ),
@@ -1111,7 +1112,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                   children: [
                     /// Comic design: Use theme titleLarge style with font weight
                     Text(
-                      "Add to Favorites",
+                      '즐겨찾기에 추가'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -1125,7 +1126,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         FontAwesomeIcons.lightCirclePlus,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      tooltip: "Create New Folder",
+                      tooltip: '새 폴더 만들기'.tr(),
                     ),
                   ],
                 ),
@@ -1134,7 +1135,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close),
-                  tooltip: "Close",
+                  tooltip: '닫기'.tr(),
                 ),
               ],
             ),
@@ -1185,7 +1186,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                               ),
                             ),
                             child: Text(
-                              "No bookmarked folders",
+                              '북마크된 폴더가 없습니다'.tr(),
                               style: Theme.of(context).textTheme.bodyMedium,
                               textAlign: TextAlign.center,
                             ),

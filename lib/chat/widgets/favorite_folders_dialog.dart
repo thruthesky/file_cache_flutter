@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.theme.dart';
@@ -47,7 +48,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                     size: dialogHeaderIconSize,
                   ),
                   SizedBox(width: dialogItemSpacing),
-                  Text('Favorites', style: textTheme.titleMedium),
+                  Text('즐겨찾기'.tr(), style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.pop(context),
@@ -100,7 +101,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                         ),
                         SizedBox(height: dialogEmptySpacing),
                         Text(
-                          'No favorites yet',
+                          '즐겨찾기가 없습니다'.tr(),
                           style: textTheme.bodyLarge?.copyWith(
                             color: colorScheme.outline,
                           ),

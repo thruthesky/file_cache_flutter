@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -41,7 +42,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
     if (join.userDisplayName.isNotEmpty) return join.userDisplayName;
 
-    return 'No name';
+    return '이름없음'.tr();
   }
 
   /// 채팅방 고정 여부 확인
@@ -119,7 +120,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         return chatRoomTile(
           blocked: true,
           subTitleWidget: Text(
-            "Message from blocked user",
+            '차단된 사용자의 메시지'.tr(),
             style: TextStyle(
               color: Colors.grey[500],
               fontStyle: FontStyle.italic,
@@ -401,7 +402,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               color: colorScheme.primary,
             ),
             SizedBox(width: menuItemSpacing),
-            Text(isPinned ? "Unpin" : "Pin", style: theme.textTheme.bodyMedium),
+            Text(isPinned ? '고정 해제'.tr() : '고정'.tr(), style: theme.textTheme.bodyMedium),
           ],
         ),
       ),
@@ -422,7 +423,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 color: colorScheme.error,
               ),
               SizedBox(width: menuItemSpacing),
-              Text("Report", style: theme.textTheme.bodyMedium),
+              Text('신고'.tr(), style: theme.textTheme.bodyMedium),
             ],
           ),
         ),
@@ -447,7 +448,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 ),
                 SizedBox(width: menuItemSpacing),
                 Text(
-                  "Unblock User",
+                  '차단 해제'.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.green,
                   ),
@@ -468,7 +469,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   color: colorScheme.error,
                 ),
                 SizedBox(width: menuItemSpacing),
-                Text("Block User", style: theme.textTheme.bodyMedium),
+                Text('사용자 차단'.tr(), style: theme.textTheme.bodyMedium),
               ],
             ),
           ),
@@ -489,7 +490,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             ),
             SizedBox(width: menuItemSpacing),
             Text(
-              "Leave Room",
+              '방 나가기'.tr(),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: colorScheme.error,
               ),
@@ -513,7 +514,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               SizedBox(width: menuItemSpacing),
               Text(
-                "Block & Leave",
+                '차단 및 나가기'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.error,
                 ),
@@ -592,7 +593,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               Padding(
                 padding: dialogTitlePadding,
                 child: Text(
-                  "Leave Room",
+                  '방 나가기'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -603,7 +604,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               Padding(
                 padding: dialogBodyPadding,
                 child: Text(
-                  "Are you sure you want to leave this room?",
+                  '이 방을 나가시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -644,7 +645,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                             theme.textTheme.bodyMedium,
                           ),
                         ),
-                        child: Text("Block & Leave"),
+                        child: Text('차단 및 나가기'.tr()),
                       ),
                       SizedBox(height: dialogButtonSpacing),
                     ],
@@ -675,7 +676,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Leave"),
+                      child: Text('나가기'.tr()),
                     ),
                     SizedBox(height: dialogButtonSpacing),
                     // Cancel - neutral button
@@ -705,7 +706,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Cancel"),
+                      child: Text('취소'.tr()),
                     ),
                   ],
                 ),
@@ -730,7 +731,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
-            showSuccessSnackBar(context, "Left the room successfully");
+            showSuccessSnackBar(context, '방을 나갔습니다'.tr());
           }
         },
         error: (e) => debugPrint('Error leaving room: $e'),
@@ -740,7 +741,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
-            showSuccessSnackBar(context, "Left the room successfully");
+            showSuccessSnackBar(context, '방을 나갔습니다'.tr());
           }
         },
         error: (e) => debugPrint('Error leaving room: $e'),
@@ -761,7 +762,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
-            showSuccessSnackBar(context, "Left the room successfully");
+            showSuccessSnackBar(context, '방을 나갔습니다'.tr());
           }
         },
         error: (e) => debugPrint('Error leaving room: $e'),

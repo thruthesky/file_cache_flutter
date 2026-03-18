@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -112,7 +113,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     } catch (e) {
       // Handle error
       if (mounted) {
-        showErrorSnackBar(context, "Failed to start chat: ${e.toString()}");
+        showErrorSnackBar(context, '채팅 시작 실패: {}'.tr(args: [e.toString()]));
       }
     }
   }
@@ -166,7 +167,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     size: dialogHeaderIconSize,
                   ),
                   SizedBox(width: dialogItemSpacing),
-                  Text("Search Friends", style: textTheme.titleMedium),
+                  Text('친구 검색'.tr(), style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.of(context).pop(),
@@ -205,7 +206,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                       onChanged: _onSearchChanged,
                       style: textTheme.bodyLarge,
                       decoration: InputDecoration(
-                        hintText: "Search by nickname",
+                        hintText: '닉네임으로 검색'.tr(),
                         hintStyle: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -262,7 +263,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             SizedBox(height: dialogEmptySpacing),
             Text(
-              "Search by nickname",
+              '닉네임으로 검색'.tr(),
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
           ],
@@ -283,7 +284,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             SizedBox(height: dialogEmptySpacing),
             Text(
-              "No users found",
+              '사용자를 찾을 수 없습니다'.tr(),
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
           ],
@@ -362,7 +363,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     ),
                   ),
                   child: Text(
-                    "Chat",
+                    '채팅'.tr(),
                     style: textTheme.labelLarge?.copyWith(
                       color: colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,

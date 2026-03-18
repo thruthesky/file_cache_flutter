@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/chat/chat.service.dart';
@@ -60,7 +61,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                     if (mounted) {
                       showSuccessSnackBar(
                         context,
-                        "Left the room successfully",
+                        '방을 나갔습니다'.tr(),
                       );
                       if (Navigator.canPop(context)) {
                         Navigator.of(context).pop();
@@ -70,7 +71,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   error: (e) {
                     debugPrint('Error leaving room: $e');
                     if (mounted) {
-                      showErrorSnackBar(context, "Error leaving room");
+                      showErrorSnackBar(context, '방 나가기 오류'.tr());
                     }
                   },
                 );

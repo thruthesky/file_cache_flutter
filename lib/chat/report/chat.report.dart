@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
@@ -78,7 +79,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
   /// Handle report submission
   Future<void> _handleReportSubmit() async {
     if (_reportReason.isEmpty) {
-      showErrorSnackBar(context, "Select report reason.");
+      showErrorSnackBar(context, '신고 사유를 선택하세요.'.tr());
       return;
     }
 
@@ -90,7 +91,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
       reportee: widget.reportee,
       success: () {
         if (mounted) {
-          showSuccessSnackBar(context, "Report submitted successfully.");
+          showSuccessSnackBar(context, '신고가 접수되었습니다.'.tr());
           widget.onClose();
           setState(() => _isSubmitting = false);
         }
@@ -102,12 +103,12 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
             showErrorSnackBar(
               context,
               reportType == MESSAGE
-                  ? "You have already reported this message."
-                  : "You have already reported this room.",
+                  ? '이미 이 메시지를 신고하셨습니다.'.tr()
+                  : '이미 이 채팅방을 신고하셨습니다.'.tr(),
             );
             widget.onClose();
           } else {
-            showErrorSnackBar(context, "Failed to submit report.");
+            showErrorSnackBar(context, '신고 접수에 실패했습니다.'.tr());
           }
         }
       },
@@ -152,8 +153,8 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                   Expanded(
                     child: Text(
                       reportType == ROOM
-                          ? "Report Chat Room"
-                          : "Report Chat Message",
+                          ? '채팅방 신고'.tr()
+                          : '채팅 메시지 신고'.tr(),
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
@@ -204,7 +205,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                 children: [
                   // Report Reason Selection label
                   Text(
-                    "Select Report Reason",
+                    '신고 사유 선택'.tr(),
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
@@ -308,7 +309,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                         theme.textTheme.bodySmall,
                       ),
                     ),
-                    child: Text("Cancel"),
+                    child: Text('취소'.tr()),
                   ),
                   SizedBox(width: dialogItemSpacing),
                   // Submit button - Comic design primary button
@@ -361,7 +362,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text("Submit"),
+                        : Text('제출'.tr()),
                   ),
                 ],
               ),
