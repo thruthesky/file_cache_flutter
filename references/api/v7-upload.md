@@ -186,6 +186,7 @@ CREATE TABLE `uploads` (
     `code` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '모듈 내 용도 (예: profile_photo, cover_photo, content)',
     `url` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '다운로드 URL (상대경로, 예: /uploads/123/abc.jpg)',
     `attached` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '사용 여부 (0=미사용, 1=사용중)',
+    `thumbnail_600_url` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '600px 비율 유지 리사이즈 썸네일 URL',
     PRIMARY KEY (`idx`),
     KEY `idx_member` (`idx_member`),
     KEY `module_code` (`module`, `code`),
@@ -208,6 +209,7 @@ CREATE TABLE `uploads` (
 | `code` | VARCHAR(50) | 모듈 내 용도 | `profile_photo`, `cover_photo`, `content` |
 | `url` | VARCHAR(500) | 다운로드 상대경로 | `/uploads/123/67a1b2c3_1709876543.jpg` |
 | `attached` | TINYINT(1) | 사용 여부 | 0=미사용, 1=사용중 |
+| `thumbnail_600_url` | VARCHAR(500) | 600px 비율 유지 리사이즈 썸네일 URL | `/uploads/123/600-abc123_1709876543.webp` |
 
 ### 인덱스 설계
 
@@ -322,6 +324,7 @@ class UploadEntity
     public string $code = '';
     public string $url = '';
     public int $attached = 0;
+    public string $thumbnail_600_url = '';
 
     /**
      * 배열(DB 행)을 UploadEntity 객체로 변환한다.
@@ -343,6 +346,7 @@ class UploadEntity
         $entity->code = (string)($data['code'] ?? '');
         $entity->url = (string)($data['url'] ?? '');
         $entity->attached = (int)($data['attached'] ?? 0);
+        $entity->thumbnail_600_url = (string)($data['thumbnail_600_url'] ?? '');
         return $entity;
     }
 
@@ -365,7 +369,20 @@ class UploadEntity
             'code' => $this->code,
             'url' => $this->url,
             'attached' => $this->attached,
+            'thumbnail_600_url' => $this->thumbnail_600_url,
+            'thumbnail_url_600' => $this->thumbnailUrl600(),
         ];
+    }
+
+    /**
+     * 600px 비율 유지 썸네일 URL을 반환한다.
+     * thumbnail_600_url이 비어있으면 null을 반환한다.
+     *
+     * @return string|null 600px 썸네일 URL 또는 null
+     */
+    public function thumbnailUrl600(): ?string
+    {
+        return $this->thumbnail_600_url !== '' ? $this->thumbnail_600_url : null;
     }
 }
 ```
@@ -2017,7 +2034,7 @@ if (res.data.idx) {
 ### 17.1 개요
 
 업로드되는 이미지 파일을 자동으로 WebP 형식으로 변환하고, 최대 1600px 너비로 리사이즈한다.
-추가로 400x400, 800x800 정사각형 center-crop 썸네일을 자동 생성한다.
+추가로 400x400, 800x800 정사각형 center-crop 썸네일과 600px, 1000px 비율 유지 리사이즈 썸네일을 자동 생성한다.
 
 ### 17.2 ImageService 클래스
 
@@ -2032,7 +2049,7 @@ if (res.data.idx) {
 | `createSquareThumbnail(string $src, string $dest, int $size): bool` | 정사각형 center-crop 썸네일 생성 |
 | `generateSquareThumbnails(string $src, string $dir, string $baseName): void` | 400x400 + 800x800 두 개 생성 |
 | `createResizedThumbnail(string $src, string $dest, int $maxWidth): bool` | 비율 유지 리사이즈 썸네일 생성 |
-| `generateResizedThumbnails(string $src, string $dir, string $baseName): void` | 1000px 비율 유지 썸네일 생성 |
+| `generateResizedThumbnails(string $src, string $dir, string $baseName): void` | 600px, 1000px 비율 유지 썸네일 생성 |
 
 ### 17.3 처리 흐름
 
@@ -2048,6 +2065,8 @@ move_uploaded_file() → 원본 저장
   │        ↓
   │        400x400 정사각형 center-crop 썸네일 생성
   │        800x800 정사각형 center-crop 썸네일 생성
+  │        600px 비율 유지 리사이즈 썸네일 생성
+  │        1000px 비율 유지 리사이즈 썸네일 생성
   │        (실패 시 원본 복사로 에러 방지)
   │
   └─ NO → 원본 그대로 저장 (GIF, PDF, 비이미지 등)
@@ -2060,6 +2079,7 @@ uploads/{idx_member}/
 ├── abc123_1709876543.webp          ← 원본 (WebP 변환, 최대 1600px, 비율 유지)
 ├── 400x400-abc123_1709876543.webp  ← 400x400 정사각형 center-crop
 ├── 800x800-abc123_1709876543.webp  ← 800x800 정사각형 center-crop
+├── 600-abc123_1709876543.webp      ← 최대 600px 비율 유지 리사이즈
 ├── 1000-abc123_1709876543.webp     ← 최대 1000px 비율 유지 리사이즈
 └── def456_1709876600.gif           ← GIF는 원본 그대로 (썸네일 없음)
 ```
@@ -2072,7 +2092,7 @@ uploads/{idx_member}/
 | 품질 (quality) | 80% |
 | 원본 최대 너비 | 1600px (비율 유지 리사이즈) |
 | 정사각형 썸네일 | 400x400, 800x800 (center-crop) |
-| 비율 유지 썸네일 | 1000px 너비 (가로/세로 비율 유지) |
+| 비율 유지 썸네일 | 600px, 1000px 너비 (가로/세로 비율 유지) |
 | 변환 대상 | PNG, JPG/JPEG, WEBP, AVIF |
 | 변환 제외 | GIF (애니메이션 보존) |
 
@@ -2083,7 +2103,7 @@ uploads/{idx_member}/
 
 | 규칙 | 설명 |
 |------|------|
-| **썸네일 항상 존재** | Docker PHP 컨테이너에 GD 확장(JPEG, PNG, FreeType, WebP, AVIF)이 설치되어 있으므로, 이미지 업로드 시 썸네일(400x400, 800x800, 1000)이 반드시 생성된다 |
+| **썸네일 항상 존재** | Docker PHP 컨테이너에 GD 확장(JPEG, PNG, FreeType, WebP, AVIF)이 설치되어 있으므로, 이미지 업로드 시 썸네일(400x400, 800x800, 600, 1000)이 반드시 생성된다 |
 | **file_exists() 금지** | 이미지를 표시할 때 `/uploads/` 경로의 썸네일에 대해 `file_exists()`를 호출하지 않는다. 매 글마다 파일 시스템 호출은 성능 저하를 유발한다 |
 | **DB URL 신뢰** | `uploads` 테이블의 `thumbnail_*_url` 컬럼에 저장된 URL을 그대로 사용한다 |
 | **동적 썸네일 생성** | 게시글의 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로 동적 생성한다. `varchar_10~12`에는 썸네일을 저장하지 않는다 |
@@ -2123,11 +2143,12 @@ if (!empty($post->varchar_17) && str_starts_with($post->varchar_17, '/uploads/')
   "url": "/uploads/123/abc123_1709876543.webp",
   "thumbnail_url_400": "/uploads/123/400x400-abc123_1709876543.webp",
   "thumbnail_url_800": "/uploads/123/800x800-abc123_1709876543.webp",
+  "thumbnail_url_600": "/uploads/123/600-abc123_1709876543.webp",
   "thumbnail_url_1000": "/uploads/123/1000-abc123_1709876543.webp"
 }
 ```
 
-GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800`, `thumbnail_url_1000`이 `null`이다.
+GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800`, `thumbnail_url_600`, `thumbnail_url_1000`이 `null`이다.
 
 ### 17.7 에러 처리
 
@@ -2141,7 +2162,7 @@ GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800
 
 ### 17.8 파일 삭제 시 썸네일 연동
 
-`UploadService::remove()`에서 원본 삭제 시 400x400, 800x800 정사각형 썸네일과 1000px 비율 유지 썸네일도 자동 삭제한다.
+`UploadService::remove()`에서 원본 삭제 시 400x400, 800x800 정사각형 썸네일과 600px, 1000px 비율 유지 썸네일도 자동 삭제한다.
 
 ### 17.9 PEST Unit Test
 
@@ -2190,6 +2211,7 @@ v7 시스템에서 **각 객체(글/코멘트/후기/기타 테이블)에 여러
 | `url` | 원본 이미지 URL | 자동 WebP 변환됨 |
 | `thumbnail_400x400_url` | 정사각형 썸네일 URL | 자동 생성 |
 | `thumbnail_800x800_url` | 정사각형 썸네일 URL | 자동 생성 |
+| `thumbnail_600_url` | 600px 비율 유지 썸네일 URL | 자동 생성 |
 | `thumbnail_1000_url` | 비율 유지 썸네일 URL | 자동 생성 |
 
 ### 18.4 실전 예시: 업체 방문 후기 사진

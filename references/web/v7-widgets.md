@@ -18,6 +18,7 @@
 14. [즐겨찾기 위젯 (sidebar-left.bookmarks)](#14-즐겨찾기-위젯-sidebar-leftbookmarks)
 15. [게시글 읽기 위젯 (post/view)](#15-게시글-읽기-위젯-postview)
 16. [부동산 위젯 (post/list, post/view)](#16-부동산-위젯-postlist-postview)
+17. [Masonry 공통 레이아웃 시스템](#17-masonry-공통-레이아웃-시스템)
 
 ---
 
@@ -31,7 +32,7 @@ v7 홈페이지는 **PHP include 기반 위젯 시스템**을 사용한다.
 | **위젯 루트** | `v7/widgets/` |
 | **모듈 폴더** | `layout/`, `home/`, `shared/`, `user/`, `post/` (하위에 `list/`, `view/`) |
 | **파일 네이밍** | `<module>/<module>.<name>.php` (예: `layout/layout.topbar.php`) |
-| **총 위젯 수** | 20개 이상 (layout 9 + home 5 + shared 5 + user 1+) |
+| **총 위젯 수** | 25개 이상 (layout 9 + home 5 + shared 5 + user 1 + post/list 10 + post/view 3+) |
 | **사용 방식** | `<?php include __DIR__ . '/widgets/<module>/<module>.<name>.php'; ?>` |
 | **CSS 관리** | 모듈별 하나의 CSS 파일 (`layout-widget.css`, `home-widget.css`) |
 | **공유 위젯** | 4개 (사이드바 + 모바일 양쪽에서 재사용) |
@@ -153,7 +154,13 @@ v7/
         │   ├── post-list-widget.php
         │   ├── post-list-tile.php
         │   ├── post-list-footer.php
-        │   └── post-list-real-estate-masonry.php  ← ★ 부동산 전용 Masonry 목록 위젯 (필터+오버레이)
+        │   ├── masonry-helpers.php           ← ★ Masonry 공통 헬퍼 함수 (썸네일, 파일추출, v4조회, 유튜브, 날짜포맷)
+        │   ├── masonry-layout.php            ← ★ Masonry 공통 레이아웃 (컨테이너 + JS 초기화 + 페이지네이션)
+        │   ├── masonry-item-default.php      ← ★ 일반 게시판 Masonry 아이템 템플릿
+        │   ├── masonry-item-realestate.php   ← ★ 부동산 Masonry 아이템 템플릿
+        │   ├── masonry-item-photo.php        ← ★ 최근 사진 Masonry 아이템 템플릿
+        │   ├── post-list-masonry.php         ← 얇은 래퍼 (masonry-layout + masonry-item-default)
+        │   └── post-list-real-estate-masonry.php  ← 부동산 래퍼 (필터 UI + masonry-layout + masonry-item-realestate)
         └── view/                          ← 게시글 읽기 위젯
             ├── post-view-default.php      ← ★ 일반 게시글 읽기 위젯 (브레드크럼, 헤더, 본문, 첨부, 액션바, AI 답변)
             ├── post-view-real-estate.php   ← ★ 부동산 전용 상세보기 위젯 (필드 정보+Google Maps 지도)
@@ -447,9 +454,20 @@ v7/index.php (홈페이지 본문)
     └── widgets/shared/shared.stats.php (공유)
 
 v7/post/list.php (게시판 목록)
-├── [부동산 카테고리] widgets/post/list/post-list-real-estate-masonry.php (Masonry+필터+오버레이)
-├── [Masonry 카테고리] widgets/post/list/post-list-masonry.php
+├── [부동산 카테고리] widgets/post/list/post-list-real-estate-masonry.php (래퍼)
+│   └── masonry-layout.php (공통 레이아웃)
+│       ├── masonry-helpers.php (공통 헬퍼 함수)
+│       └── masonry-item-realestate.php (부동산 아이템 템플릿)
+├── [Masonry 카테고리] widgets/post/list/post-list-masonry.php (래퍼)
+│   └── masonry-layout.php (공통 레이아웃)
+│       ├── masonry-helpers.php (공통 헬퍼 함수)
+│       └── masonry-item-default.php (일반 아이템 템플릿)
 └── [일반 카테고리] widgets/post/list/post-list-widget.php
+
+v7/photo/latest.php (최근 사진)
+└── masonry-layout.php (공통 레이아웃)
+    ├── masonry-helpers.php (공통 헬퍼 함수)
+    └── masonry-item-photo.php (사진 아이템 템플릿)
 
 v7/post/view.php (게시글 읽기)
 ├── [info 게시글] widgets/post/view/info/info-view.php
@@ -1136,14 +1154,15 @@ $isAiAnswerTarget = !$post->isInfoPost()
 ### 16.2 목록 — Masonry 위젯
 
 `list.php`에서 `$category === 'real_estate'` 조건으로 부동산 전용 Masonry 위젯을 렌더링한다.
-일반 Masonry(`post-list-masonry.php`)와 달리 상단 필터(지역, 판매 유형)와
-카드 오버레이(지역/건물명/침실, 가격 배지)를 추가로 표시한다.
+`post-list-real-estate-masonry.php`는 공통 Masonry 레이아웃(`masonry-layout.php`)의 래퍼이며,
+필터 UI를 `$_wMasonryBeforeGrid`로, 부동산 아이템 템플릿(`masonry-item-realestate.php`)을
+`$_wMasonryItemFile`로 전달한다. → [17장 Masonry 공통 레이아웃 시스템](#17-masonry-공통-레이아웃-시스템) 참조
 
 | 기능 | 설명 |
 |------|------|
 | **필터** | 지역(`region`) + 판매 유형(`char_1`) select 필터. 선택 시 즉시 페이지 갱신 |
 | **오버레이** | 이미지 상단에 지역/건물명/침실, 좌측 하단에 가격 배지 |
-| **라이브러리** | `masonry.pkgd.min.js` + `imagesloaded.pkgd.min.js` |
+| **라이브러리** | `masonry.pkgd.min.js` + `imagesloaded.pkgd.min.js` (masonry-layout.php에서 로드) |
 
 ### 16.3 상세보기 — 부동산 정보 + Google Maps
 
@@ -1158,3 +1177,253 @@ $isAiAnswerTarget = !$post->isInfoPost()
 분양 형태, 호수, 건물명, 거리, 바랑가이, 지역)를 입력할 수 있다.
 
 > 커스텀 필드 매핑, 뱃지 색상 체계, 라벨 매핑 등 상세 내용은 -> [v7-post-real-estate.md](../api/v7-post-real-estate.md) 참조.
+
+---
+
+## 17. Masonry 공통 레이아웃 시스템
+
+### 17.1 개요
+
+Masonry 레이아웃은 이미지 중심 게시판(맛집, 유튜브, 부동산 등)과 최근 사진 페이지에서 사용하는 핀터레스트 스타일 그리드이다. 기존에 3개 위젯(`post-list-masonry.php`, `post-list-real-estate-masonry.php`, `v7/photo/latest.php`)에서 각각 중복 구현되던 공통 로직(썸네일 생성, v4 파일 조회, Masonry JS 초기화, 페이지네이션)을 분리하여 **공통 헬퍼 + 공통 레이아웃 + 아이템 템플릿** 3계층으로 통합했다.
+
+| 항목 | 내용 |
+|------|------|
+| **공통 헬퍼** | `v7/widgets/post/list/masonry-helpers.php` — 썸네일, 파일추출, v4조회, 유튜브, 날짜포맷 |
+| **공통 레이아웃** | `v7/widgets/post/list/masonry-layout.php` — 그리드 컨테이너, JS 초기화, 페이지네이션, 관리자 UI |
+| **아이템 템플릿** | `masonry-item-default.php` / `masonry-item-realestate.php` / `masonry-item-photo.php` |
+| **래퍼 파일** | `post-list-masonry.php` (일반), `post-list-real-estate-masonry.php` (부동산) |
+| **의존 라이브러리** | `masonry.pkgd.min.js` + `imagesloaded.pkgd.min.js` (masonry-layout.php에서 로드) |
+
+### 17.2 아키텍처 다이어그램
+
+```
+래퍼 파일 (얇은 진입점)
+│
+├── post-list-masonry.php
+│   └── $_wMasonryItemFile = masonry-item-default.php
+│
+├── post-list-real-estate-masonry.php
+│   ├── $_wMasonryBeforeGrid = 필터 UI (ob_get_clean)
+│   ├── $_wMasonryItemFile = masonry-item-realestate.php
+│   └── $_wMasonryExtraClass = 're-masonry-grid'
+│
+└── (v7/photo/latest.php에서 직접 사용)
+    └── $_wMasonryItemFile = masonry-item-photo.php
+│
+▼
+masonry-layout.php (공통 레이아웃)
+├── include_once masonry-helpers.php (헬퍼 함수)
+├── _v7MasonryBuildV4FileMap() → v4 파일 일괄 조회
+├── [빈 목록 처리]
+├── $_wMasonryBeforeGrid 출력 (필터 등)
+├── Masonry/imagesLoaded JS 로드
+├── <div class="v7-masonry-grid">
+│   ├── <div class="v7-masonry-sizer">
+│   └── foreach $_wPosts as $post:
+│       └── include $_wMasonryItemFile (아이템 템플릿)
+├── Masonry JS 초기화 스크립트
+├── 페이지네이션 (pagination.php)
+└── 관리자 일괄 작업 UI (post-list-footer.php)
+```
+
+### 17.3 파일 상세
+
+#### masonry-helpers.php — 공통 헬퍼 함수
+
+모든 Masonry 위젯에서 공유하는 유틸리티 함수를 정의한다. `function_exists()` 가드로 이중 정의를 방지한다.
+
+| 함수명 | 반환 타입 | 용도 |
+|--------|----------|------|
+| `v7FormatDate(int $stamp)` | `string` | 날짜 포맷: 오늘 → `HH:mm`, 올해 → `mm.dd`, 그 외 → `yy.mm.dd` |
+| `_v7MasonryThumbnail(string $imageUrl, int $width)` | `string` | 이미지 URL → 동적 썸네일 URL 생성. `uploaded-files/` 경로는 프로덕션에서 썸네일 서버 사용, `/uploads/` 경로는 ImageService로 정사각형 썸네일 생성 |
+| `_v7MasonryExtractFirstImage(string $files)` | `string` | files 필드(쉼표/줄바꿈 구분)에서 첫 번째 이미지 URL 추출 |
+| `_v7MasonryYoutubeThumbnail(string $youtubeUrl)` | `string` | 유튜브 URL → `mqdefault.jpg` 썸네일 URL 변환 |
+| `_v7MasonryGetV4FileMap(array $gids)` | `array<string, string>` | gid 목록 → sf_data 테이블에서 v4 파일 URL 일괄 조회 (N+1 방지) |
+| `_v7MasonryResolveThumbnail(array $post, array $v4FileMap, bool $includeYoutube)` | `string` | 게시글에서 썸네일 URL 결정 (5단계 우선순위) |
+| `_v7MasonryBuildV4FileMap(array $posts)` | `array<string, string>` | 게시글 배열에서 gid 추출 → v4 파일 맵 빌드 |
+
+**썸네일 결정 우선순위 (`_v7MasonryResolveThumbnail`):**
+
+1. `varchar_17` (첫 번째 이미지 URL) → 동적 썸네일 생성
+2. `files` 필드에서 이미지 추출
+3. `no_of_first_image`로 v4 URL 직접 생성
+4. `gid`로 sf_data 테이블에서 v4 파일 조회
+5. (선택) 유튜브 썸네일
+
+> 모든 함수명은 `_v7Masonry` 접두사로 글로벌 네임스페이스 충돌을 방지한다.
+
+#### masonry-layout.php — 공통 레이아웃
+
+Masonry 그리드의 컨테이너, JS 초기화, 페이지네이션, 관리자 UI를 하나로 통합한 공통 레이아웃 파일이다. 아이템 렌더링은 외부에서 전달하는 템플릿 파일(`$_wMasonryItemFile`)에 위임한다.
+
+**필수 변수:**
+
+| 변수 | 타입 | 설명 |
+|------|------|------|
+| `$_wPosts` | `array` | 게시글 배열 |
+| `$_wMasonryGridId` | `string` | 그리드 DOM ID (고유해야 함) |
+| `$_wMasonryItemFile` | `string` | 아이템 템플릿 파일 절대 경로 |
+| `$_wPostId` | `string` | 게시판 ID |
+| `$_wCategory` | `string\|null` | 카테고리 |
+| `$_wPage` | `int` | 현재 페이지 번호 |
+| `$_wTotalPages` | `int` | 총 페이지 수 |
+| `$_isAdmin` | `bool` | 관리자 여부 |
+| `$_blockedMemberIds` | `array` | 차단된 회원 ID 배열 |
+| `$_wPaginationUrlCallback` | `callable` | 페이지 번호 → URL 변환 콜백 |
+
+**선택 변수:**
+
+| 변수 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `$_wShowPagination` | `bool` | `true` | 페이지네이션 표시 여부 |
+| `$_wShowAdminFooter` | `bool` | `true` | 관리자 일괄 작업 UI 표시 여부 |
+| `$_wMasonryExtraClass` | `string` | `''` | 그리드에 추가할 CSS 클래스 |
+| `$_wMasonryBeforeGrid` | `string` | `''` | 그리드 앞에 삽입할 HTML (예: 부동산 필터 UI) |
+
+#### masonry-item-default.php — 일반 게시판 아이템
+
+일반 게시판(맛집, 유튜브 등 이미지 중심 게시판)용 Masonry 카드이다.
+
+| 기능 | 설명 |
+|------|------|
+| 썸네일 | `_v7MasonryResolveThumbnail()` (유튜브 포함) |
+| 차단 처리 | `$_blockedMemberIds`로 차단 사용자 글 표시 |
+| 관리자 체크박스 | `$_isAdmin` true면 카드에 체크박스 표시 |
+| 유튜브 오버레이 | 유튜브 글에 재생 아이콘 오버레이 |
+| 메타 정보 | 작성자, 시간, 조회수, 댓글수 (hover 시 표시) |
+
+#### masonry-item-realestate.php — 부동산 아이템
+
+부동산(`real_estate`) 전용 Masonry 카드이다. `RealEstateEntity`로 래핑하여 varchar_10~12 커스텀 필드 충돌을 안전하게 처리한다.
+
+| 기능 | 설명 |
+|------|------|
+| 썸네일 | `RealEstateEntity::thumbnailUrl()` (Entity 자체 처리) |
+| 부동산 오버레이 | 상단에 지역/건물명/침실 정보 |
+| 가격 배지 | 좌측 하단에 가격 표시, 임대(`/월`) 표시 |
+| 차단/관리자 | default 아이템과 동일 패턴 |
+
+#### masonry-item-photo.php — 최근 사진 아이템
+
+최근 사진 페이지(`v7/photo/latest.php`) 전용 카드이다. 글(depth=0)과 코멘트(depth>0) 모두 포함한다.
+
+| 기능 | 설명 |
+|------|------|
+| 썸네일 | `_v7MasonryResolveThumbnail()` (유튜브 미포함) |
+| 이미지 없음 처리 | 이미지 URL이 없으면 아이템 자체를 렌더링하지 않음 (`return`) |
+| 코멘트 처리 | 코멘트는 내용 50자를 제목으로 표시, 원글의 `#comment-N` 앵커로 링크 |
+| 코멘트 배지 | 코멘트인 경우 카드에 "댓글" 배지 표시 |
+| 좋아요 수 | `good` 필드로 좋아요 수 표시 |
+
+### 17.4 래퍼 파일 사용법
+
+래퍼 파일은 공통 변수(`$_wMasonryGridId`, `$_wMasonryItemFile` 등)를 설정한 뒤 `masonry-layout.php`를 include하는 얇은 진입점이다.
+
+#### 일반 게시판 래퍼 (post-list-masonry.php)
+
+```php
+// 가장 간단한 래퍼 — 변수 3개만 설정
+$_wMasonryGridId = 'v7MasonryGrid';
+$_wMasonryItemFile = __DIR__ . '/masonry-item-default.php';
+$_wShowAdminFooter = $_wShowAdminFooter ?? true;
+
+include __DIR__ . '/masonry-layout.php';
+```
+
+#### 부동산 래퍼 (post-list-real-estate-masonry.php)
+
+```php
+// 필터 UI HTML을 ob_start/ob_get_clean으로 생성
+ob_start();
+// ... 필터 HTML ...
+$_wMasonryBeforeGrid = ob_get_clean();
+
+$_wMasonryGridId = 'v7RealEstateMasonryGrid';
+$_wMasonryItemFile = __DIR__ . '/masonry-item-realestate.php';
+$_wMasonryExtraClass = 're-masonry-grid';
+$_wShowAdminFooter = $_wShowAdminFooter ?? true;
+
+include __DIR__ . '/masonry-layout.php';
+```
+
+#### 최근 사진 (v7/photo/latest.php에서 직접 사용)
+
+```php
+$_wMasonryGridId = 'v7LatestPhotosGrid';
+$_wMasonryItemFile = __DIR__ . '/../widgets/post/list/masonry-item-photo.php';
+$_wShowPagination = true;
+$_wShowAdminFooter = false;
+
+include __DIR__ . '/../widgets/post/list/masonry-layout.php';
+```
+
+### 17.5 새 Masonry 아이템 템플릿 추가 방법
+
+새로운 유형의 Masonry 카드를 추가하려면 다음 절차를 따른다.
+
+1. **아이템 템플릿 생성**: `v7/widgets/post/list/masonry-item-<name>.php` 파일 생성
+2. **변수 사용**: 템플릿 내에서 `$post`(현재 게시글), `$_v4FileMap`(v4 파일 맵), `$_wPostId`, `$_wCategory`, `$_wPage`, `$_isAdmin`, `$_blockedMemberIds` 변수를 사용 가능
+3. **헬퍼 함수 활용**: `_v7MasonryResolveThumbnail()`, `v7FormatDate()` 등 masonry-helpers.php의 공통 함수 활용
+4. **래퍼 생성 (선택)**: 자주 사용하는 경우 래퍼 파일(`post-list-<name>-masonry.php`)을 생성
+5. **래퍼에서 변수 설정**: `$_wMasonryGridId`(고유), `$_wMasonryItemFile`(절대 경로), 필요시 `$_wMasonryExtraClass`, `$_wMasonryBeforeGrid` 설정
+6. **masonry-layout.php include**: 래퍼 마지막에 `include __DIR__ . '/masonry-layout.php';`
+
+**아이템 템플릿 작성 규칙:**
+
+| 규칙 | 설명 |
+|------|------|
+| **루트 요소** | `<div class="v7-masonry-item">` 필수 |
+| **카드 링크** | `<a class="v7-masonry-card" href="...">` 패턴 사용 |
+| **이미지 래퍼** | `<div class="v7-masonry-image-wrap">` 안에 이미지/placeholder 배치 |
+| **오버레이** | `<div class="v7-masonry-overlay">` + `<h6 class="v7-masonry-title">` 패턴 |
+| **메타 정보** | `<div class="v7-masonry-meta">` + `.v7-masonry-meta-item` 패턴 |
+| **차단 처리** | `$_blockedMemberIds` 체크로 차단 사용자 글 별도 렌더링 |
+| **관리자 체크박스** | `$_isAdmin` 체크로 체크박스 표시 |
+
+### 17.6 CSS 클래스 (공통)
+
+| 클래스 | 역할 | 주요 스타일 |
+|--------|------|-----------|
+| `.v7-masonry-grid` | Masonry 그리드 컨테이너 | Masonry.js 초기화 대상 |
+| `.v7-masonry-sizer` | 열 너비 기준 요소 | Masonry `columnWidth` 옵션 |
+| `.v7-masonry-item` | 개별 아이템 컨테이너 | `percentPosition: true` |
+| `.v7-masonry-card` | 카드 링크 | `display: block; text-decoration: none` |
+| `.v7-masonry-image-wrap` | 이미지 래퍼 | `position: relative; overflow: hidden` |
+| `.v7-masonry-img` | 썸네일 이미지 | `width: 100%; display: block` |
+| `.v7-masonry-no-image` | 이미지 없음 placeholder | `display: flex; align-items: center; justify-content: center` |
+| `.v7-masonry-overlay` | 하단 그라디언트 오버레이 | `position: absolute; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7))` |
+| `.v7-masonry-title` | 제목 텍스트 | `color: white; font-size: 0.85em` |
+| `.v7-masonry-meta` | 메타 정보 컨테이너 | hover 시 표시 |
+| `.v7-masonry-meta-item` | 메타 정보 항목 | `font-size: 0.72em; color: rgba(255,255,255,0.8)` |
+| `.v7-masonry-avatar` | 작성자 이니셜 아바타 | 원형 배경 |
+| `.v7-masonry-checkbox` | 관리자 체크박스 | `position: absolute; top: 8px; left: 8px; z-index: 10` |
+| `.v7-masonry-blocked` | 차단된 글 카드 | 흐릿한 스타일 |
+| `.v7-masonry-youtube-overlay` | 유튜브 재생 아이콘 오버레이 | `position: absolute; center; color: #ff0000` |
+
+### 17.7 데이터 흐름
+
+```
+1. 래퍼 파일에서 $_wMasonryGridId, $_wMasonryItemFile 등 설정
+   │
+2. masonry-layout.php include
+   │
+3. include_once masonry-helpers.php (헬퍼 함수 로드)
+   │
+4. _v7MasonryBuildV4FileMap($_wPosts) → v4 파일 일괄 조회 (N+1 방지)
+   │
+5. $_wPosts가 비어있으면 "등록된 글이 없습니다" 표시
+   │
+6. $_wMasonryBeforeGrid 출력 (필터 UI 등)
+   │
+7. Masonry.js + imagesLoaded.js 스크립트 로드
+   │
+8. foreach $_wPosts → include $_wMasonryItemFile
+   │  ├── 아이템 템플릿에서 $post, $_v4FileMap 등 접근
+   │  └── _v7MasonryResolveThumbnail() 등 헬퍼 함수 호출
+   │
+9. Masonry JS 초기화 (DOMContentLoaded → imagesLoaded → new Masonry)
+   │
+10. 페이지네이션 (pagination.php)
+    │
+11. 관리자 일괄 작업 UI (post-list-footer.php)
+```
