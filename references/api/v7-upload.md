@@ -2328,6 +2328,7 @@ public static function deleteByAttached(string $module, string $code, int $attac
 | 사용자 커버 사진 | `'user'` | `'cover_photo'` | 프로필 커버 이미지 |
 | 업체 대표 사진 | `'company'` | `'main_photo'` | 업체 대표 이미지 |
 | 업체 갤러리 | `'company'` | `'gallery'` | 업체 사진 갤러리 |
+| 채팅 메시지 첨부 파일 | `'chat'` | `'message'` | 채팅 메시지에 첨부된 이미지/파일 (v7 Upload API로 업로드, Firebase Storage에서 변경됨) |
 
 > **새로운 기능에서 사진/파일 첨부가 필요하면**, 대상 테이블에 URL 컬럼을 추가하지 말고
 > 위 패턴을 따라 `module`과 `code`를 정의하여 uploads 테이블로 연결한다.
