@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/company/company.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 
@@ -175,21 +176,6 @@ class UserService {
     return UserModel.fromJson(json);
   }
 
-  /// 사용자 목록을 조회한다. (user.list) - 관리자용
-  ///
-  /// [page] 페이지 번호 (선택, 기본값 1)
-  /// [limit] 페이지당 항목 수 (선택)
-  static Future<List<UserModel>> getUserList({int? page, int? limit}) async {
-    final data = <String, dynamic>{};
-    if (page != null) data['page'] = page;
-    if (limit != null) data['limit'] = limit;
-    final json = await ApiService.instance.v7api('user.list', data: data);
-    final list = json['list'] as List<dynamic>? ?? [];
-    return list
-        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
   /// Listen to blocked users from Firebase: user-private/{uid}/blocks
   void listenBlockedUsers(String uid) {
     blockedUsersSubscription?.cancel();
@@ -216,6 +202,7 @@ class UserService {
     FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
       if (firebaseUser == null) {
         cancelBlockedUsersListener();
+        CompanyService.instance.clear();
         if (context.mounted) {
           UserState.of(context).clear();
         }
@@ -227,6 +214,8 @@ class UserService {
           final user = await UserService.loadCurrentUser();
 
           listenBlockedUsers(firebaseUser.uid);
+
+          CompanyService.instance.loadMyCompany();
 
           if (context.mounted) {
             UserState.of(context).setUser(user);
