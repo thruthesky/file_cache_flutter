@@ -105,6 +105,14 @@ class BookmarkService {
     }
   }
 
+  /// 그룹 count를 delta만큼 조정
+  void _updateGroupCount(int idxGroup, int delta) {
+    _groupsNotifier.value = _groupsNotifier.value.map((g) {
+      if (g.idx == idxGroup) return g.copyWith(count: g.count + delta);
+      return g;
+    }).toList();
+  }
+
   // ── API 호출 ──────────────────────────────────────
 
   /// 북마크 추가
@@ -127,6 +135,7 @@ class BookmarkService {
     );
     final bm = BookmarkModel.fromJson(result);
     if (entityIdx != null) _addToCache(entityType, entityIdx);
+    _updateGroupCount(bm.idxGroup, 1);
     return bm;
   }
 

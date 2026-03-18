@@ -20,6 +20,17 @@ class BookmarkGroupModel {
     required this.count,
   });
 
+  BookmarkGroupModel copyWith({int? count}) {
+    return BookmarkGroupModel(
+      idx: idx,
+      idxMember: idxMember,
+      name: name,
+      sortOrder: sortOrder,
+      createdAt: createdAt,
+      count: count ?? this.count,
+    );
+  }
+
   factory BookmarkGroupModel.fromJson(Map<String, dynamic> json) {
     return BookmarkGroupModel(
       idx: ApiService.toInt(json['idx']),
