@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
+import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
@@ -16,6 +17,7 @@ import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
+import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.service.dart';
@@ -856,7 +858,7 @@ class _MenuScreenState extends State<MenuScreen> {
         FontAwesomeIcons.lightHeadset,
         '운영자 문의'.tr(),
         onTap: () {
-          // TODO: 운영자 1:1 채팅 - admin UID 설정 후 ChatRoomScreen 연동
+          ChatRoomScreen.pushAdminChat(context);
         },
       ),
     ];

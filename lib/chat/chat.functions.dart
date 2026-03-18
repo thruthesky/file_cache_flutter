@@ -190,7 +190,7 @@ bool isAdminChatUser(String uid) {
   if (uid == SettingsState.of(globalContext).adminChatUid) {
     return true;
   }
-  return false; // Placeholder, replace with actual admin chat ID check
+  return false;
 }
 
 @Deprecated('Use moderateChatMessage instead')

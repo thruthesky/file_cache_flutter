@@ -9,6 +9,8 @@ import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/chat/widgets/bookmarked_chats_dialog.dart';
 import 'package:philgo/chat/widgets/favorite_folders_dialog.dart';
 import 'package:philgo/chat/widgets/pinned_chat_rooms_list.dart';
+import 'package:philgo/setting/setting.model.dart';
+import 'package:philgo/setting/setting.state.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -95,8 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     onSelected: (value) {
                       if (value == 'admin_chat') {
-                        // 운영자와 1:1 채팅방 입
-                        ChatRoomScreen.push(context, chatAdminUid);
+                        ChatRoomScreen.pushAdminChat(context);
                       }
                     },
                     itemBuilder: (context) => [
