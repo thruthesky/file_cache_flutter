@@ -6,7 +6,7 @@ import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
-import 'package:philgo/post/list/widgets/display_thumbnail.dart';
+import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/util/util.functions.dart';
 
 /// Message input widget for typing and sending messages with multiple file support
@@ -91,78 +91,29 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   Widget _buildFilesPreview() {
     if (_uploadedFiles.isEmpty && !_isUploading) return const SizedBox.shrink();
 
-    return Container(
-      margin: EdgeInsets.only(top: filePreviewMarginTop),
-      height: filePreviewHeight,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _isUploading ? _uploadedFiles.length + 1 : _uploadedFiles.length,
-        itemBuilder: (context, index) {
-          final colorScheme = Theme.of(context).colorScheme;
-
-          // Last slot: uploading placeholder
-          if (_isUploading && index == _uploadedFiles.length) {
-            return Container(
-              margin: EdgeInsets.only(
-                right: filePreviewSpacing,
-                left: index == 0 ? filePreviewSpacing : 0,
-              ),
-              width: filePreviewWidth,
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-                border: Border.all(
-                  color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-                  width: 1,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      child: Row(
+        children: [
+          ..._uploadedFiles.map((file) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: UploadedFilePreview(
+                  file: file,
+                  size: 72,
+                  onDelete: () => _removeFileAt(_uploadedFiles.indexOf(file)),
                 ),
-              ),
-              child: const Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          return Container(
-            margin: EdgeInsets.only(
-              right: filePreviewSpacing,
-              left: index == 0 ? filePreviewSpacing : 0,
-            ),
-            width: filePreviewWidth,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-              border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-                width: 1,
+              )),
+          if (_isUploading)
+            const Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: SizedBox(
+                width: 72,
+                height: 72,
+                child: Center(child: CircularProgressIndicator()),
               ),
             ),
-            child: Stack(
-              children: [
-                DisplayThumbnail(
-                  url: _uploadedFiles[index].url,
-                  size: filePreviewWidth,
-                ),
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: GestureDetector(
-                    onTap: () => _removeFileAt(index),
-                    child: Container(
-                      padding: EdgeInsets.all(deleteButtonPadding),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: deleteIconSize,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+        ],
       ),
     );
   }
@@ -207,8 +158,6 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                         code: 'message',
                         camera: true,
                         gallery: true,
-                        galleryVideo: true,
-                        cameraVideo: true,
                         imageQuality: 80,
                         maxWidth: 1024,
                         maxHeight: 1024,
@@ -237,41 +186,54 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                           context,
                           '업로드 실패: {}'.tr(args: [e.toString()]),
                         ),
-                        child: IconButton(
-                          onPressed: busy ? null : () {},
-                          icon: Stack(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.lightPaperclip,
-                                size: 20,
-                                color: busy
-                                    ? colorScheme.onSurface.withValues(alpha: 0.3)
-                                    : colorScheme.onSurface,
-                              ),
-                              if (_uploadedFiles.isNotEmpty)
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Text(
-                                      '${_uploadedFiles.length}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: fileBadgeFontSize,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                        child: busy
+                            ? const SizedBox(
+                                width: 36,
+                                height: 36,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
                                   ),
                                 ),
-                            ],
-                          ),
-                          tooltip: '파일 첨부'.tr(),
-                        ),
+                              )
+                            : IconButton(
+                                onPressed: null,
+                                icon: Stack(
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.lightPaperclip,
+                                      size: 20,
+                                      color: busy
+                                          ? colorScheme.onSurface.withValues(
+                                              alpha: 0.3,
+                                            )
+                                          : colorScheme.onSurface,
+                                    ),
+                                    if (_uploadedFiles.isNotEmpty)
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Text(
+                                            '${_uploadedFiles.length}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: fileBadgeFontSize,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                tooltip: '파일 첨부'.tr(),
+                              ),
                       ),
 
                       // Message Input Field - 80% minimum width
@@ -293,7 +255,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                               filled: true,
                               fillColor: colorScheme.surfaceContainerHighest,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(inputBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  inputBorderRadius,
+                                ),
                                 borderSide: BorderSide(
                                   color: colorScheme.outlineVariant.withValues(
                                     alpha: 0.3,
@@ -302,7 +266,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(inputBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  inputBorderRadius,
+                                ),
                                 borderSide: BorderSide(
                                   color: colorScheme.outlineVariant.withValues(
                                     alpha: 0.3,
@@ -311,7 +277,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(inputBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  inputBorderRadius,
+                                ),
                                 borderSide: BorderSide(
                                   color: colorScheme.primary.withValues(
                                     alpha: 0.5,
@@ -349,19 +317,29 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                 end: Alignment.bottomRight,
                                 colors: busy
                                     ? [
-                                        colorScheme.secondary.withValues(alpha: 0.7),
-                                        colorScheme.secondary.withValues(alpha: 0.5),
+                                        colorScheme.secondary.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                        colorScheme.secondary.withValues(
+                                          alpha: 0.5,
+                                        ),
                                       ]
                                     : [
                                         colorScheme.primary,
-                                        colorScheme.primary.withValues(alpha: 0.8),
+                                        colorScheme.primary.withValues(
+                                          alpha: 0.8,
+                                        ),
                                       ],
                               ),
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: busy
-                                    ? colorScheme.secondary.withValues(alpha: 0.3)
-                                    : colorScheme.primary.withValues(alpha: 0.3),
+                                    ? colorScheme.secondary.withValues(
+                                        alpha: 0.3,
+                                      )
+                                    : colorScheme.primary.withValues(
+                                        alpha: 0.3,
+                                      ),
                                 width: 1,
                               ),
                             ),
