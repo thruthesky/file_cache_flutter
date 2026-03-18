@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
 
 class PostMasonryCard extends StatelessWidget {
@@ -44,6 +46,40 @@ class PostMasonryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 차단된 사용자의 글이면 차단 안내 표시
+    if (post.blocked) {
+      return Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 1,
+        child: InkWell(
+          onTap: onTap,
+          child: SizedBox(
+            height: 120,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.lightBan,
+                    size: 20,
+                    color: scheme.outline,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '차단된 사용자의 글입니다'.tr(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.outline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     final url = _imageUrl;
     final height = cachedHeight ?? _placeholderHeight;
 

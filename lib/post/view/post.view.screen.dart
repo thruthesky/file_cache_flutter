@@ -12,6 +12,7 @@ import 'package:philgo/post/view/widgets/post.action.bar.dart';
 import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/post/view/widgets/post_comment_bar.dart';
+import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
@@ -85,8 +86,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
     if (!mounted) return;
     setState(() {
       _comments = comments;
-      _bookmarkedCommentIdxs =
-          comments.where((c) => c.bookmarked).map((c) => c.idx).toSet();
+      _bookmarkedCommentIdxs = comments
+          .where((c) => c.bookmarked)
+          .map((c) => c.idx)
+          .toSet();
       _commentsLoading = false;
     });
   }
@@ -138,6 +141,101 @@ class _PostViewScreenState extends State<PostViewScreen> {
     await PostService.delete(_post.idx);
     if (!mounted) return;
     Navigator.of(context).pop('deleted');
+  }
+
+  // ── 신고 ──────────────────────────────────────────
+
+  Future<void> _reportPost() async {
+    if (_post.reported) {
+      if (mounted) showErrorSnackBar(context, '이미 신고한 글입니다'.tr());
+      return;
+    }
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('신고'.tr()),
+        content: Text('이 글을 신고하시겠습니까?'.tr()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('취소'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('신고'.tr()),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true || !mounted) return;
+
+    try {
+      await PostService.report(idx: _post.idx, type: 'post');
+      if (!mounted) return;
+      setState(() {
+        _post = _post.copyWith(reported: true);
+        _postChanged = true;
+      });
+      showSuccessSnackBar(context, '신고가 접수되었습니다'.tr());
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString();
+      if (msg.contains('already-reported')) {
+        setState(() => _post = _post.copyWith(reported: true));
+        showErrorSnackBar(context, '이미 신고한 글입니다'.tr());
+      } else {
+        showErrorSnackBar(context, msg);
+      }
+    }
+  }
+
+  // ── 차단 ──────────────────────────────────────────
+
+  Future<void> _blockAuthor() async {
+    final label = _post.blocked ? '차단 해제'.tr() : '차단'.tr();
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(label),
+        content: Text(
+          _post.blocked
+              ? '이 사용자의 차단을 해제하시겠습니까?'.tr()
+              : '이 사용자를 차단하시겠습니까?\n차단하면 이 사용자의 글이 목록에서 숨겨집니다.'.tr(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('취소'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(
+              foregroundColor: _post.blocked ? null : Colors.red,
+            ),
+            child: Text(label),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true || !mounted) return;
+
+    try {
+      final blocked = await toggleBlockUserByIdx(_post.idxMember);
+      if (!mounted) return;
+      if (blocked) {
+        Navigator.of(context).pop('blocked');
+      } else {
+        setState(() {
+          _post = _post.copyWith(blocked: false);
+          _postChanged = true;
+        });
+        showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
+      }
+    } catch (e) {
+      if (!mounted) return;
+      showErrorSnackBar(context, '$e');
+    }
   }
 
   // ── 북마크 ──────────────────────────────────────────
@@ -301,17 +399,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                               case 'delete':
                                 _deletePost();
                               case 'block':
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('차단 기능은 준비 중입니다.'),
-                                  ),
-                                );
+                                _blockAuthor();
                               case 'report':
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('신고 기능은 준비 중입니다.'),
-                                  ),
-                                );
+                                _reportPost();
                             }
                           },
                           itemBuilder: (ctx) {
@@ -358,12 +448,16 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       child: Row(
                                         children: [
                                           FaIcon(
-                                            FontAwesomeIcons.lightBan,
+                                            _post.blocked
+                                                ? FontAwesomeIcons.solidBan
+                                                : FontAwesomeIcons.lightBan,
                                             size: 15,
                                             color: popScheme.onSurface,
                                           ),
                                           const SizedBox(width: 10),
-                                          const Text('차단'),
+                                          Text(_post.blocked
+                                              ? '차단 해제'
+                                              : '차단'),
                                         ],
                                       ),
                                     ),
@@ -372,13 +466,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                       child: Row(
                                         children: [
                                           FaIcon(
-                                            FontAwesomeIcons.lightFlag,
+                                            _post.reported
+                                                ? FontAwesomeIcons.solidFlag
+                                                : FontAwesomeIcons.lightFlag,
                                             size: 15,
                                             color: popScheme.error,
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            '신고',
+                                            _post.reported
+                                                ? '신고됨'
+                                                : '신고',
                                             style: TextStyle(
                                               color: popScheme.error,
                                             ),
@@ -528,7 +626,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                   Text(
                     formatDate(
                       context,
-                      DateTime.fromMillisecondsSinceEpoch(post.stamp),
+                      DateTime.fromMillisecondsSinceEpoch(post.stamp * 1000),
                     ),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,

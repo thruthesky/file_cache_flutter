@@ -156,6 +156,7 @@ class PostService {
     final result = await ApiService.instance.v7api(
       'post.commentList',
       data: {'idx_root': idxRoot},
+      debug: true,
     );
     final raw = result['items'] ?? [];
     final items = raw is List ? raw : [];
@@ -213,5 +214,18 @@ class PostService {
   /// [idx] 댓글 idx
   static Future<void> deleteComment(int idx) async {
     await ApiService.instance.v7api('post.commentDelete', data: {'idx': idx});
+  }
+
+  /// 글/댓글 신고
+  ///
+  /// API: post.report (인증 필수)
+  ///
+  /// [idx] 대상 idx
+  /// [type] 'post' 또는 'comment'
+  static Future<void> report({required int idx, required String type}) async {
+    await ApiService.instance.v7api(
+      'post.report',
+      data: {'idx': idx, 'type': type},
+    );
   }
 }

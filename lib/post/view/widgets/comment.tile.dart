@@ -9,7 +9,9 @@ import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
 import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
+import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
 
 /// 세로선 색상 (Reddit 스타일)
@@ -63,12 +65,14 @@ class CommentTile extends StatefulWidget {
 class _CommentTileState extends State<CommentTile> {
   bool _liked = false;
   late int _goodCount;
+  bool _reported = false;
 
   @override
   void initState() {
     super.initState();
     _liked = widget.comment.liked;
     _goodCount = widget.comment.good;
+    _reported = widget.comment.reported;
   }
 
   void _openUserProfile(BuildContext context, int idxMember) {
@@ -85,6 +89,62 @@ class _CommentTileState extends State<CommentTile> {
         _goodCount = result.good;
       });
     } catch (_) {}
+  }
+
+  Future<void> _reportComment() async {
+    if (_reported) {
+      showErrorSnackBar(context, '이미 신고한 댓글입니다'.tr());
+      return;
+    }
+    try {
+      await PostService.report(idx: widget.comment.idx, type: 'comment');
+      if (!mounted) return;
+      setState(() => _reported = true);
+      showSuccessSnackBar(context, '신고가 접수되었습니다'.tr());
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString();
+      if (msg.contains('already-reported')) {
+        setState(() => _reported = true);
+        showErrorSnackBar(context, '이미 신고한 댓글입니다'.tr());
+      } else {
+        showErrorSnackBar(context, msg);
+      }
+    }
+  }
+
+  Future<void> _blockCommentAuthor() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('차단'.tr()),
+        content: Text('이 사용자를 차단하시겠습니까?'.tr()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('취소'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('차단'.tr()),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true || !mounted) return;
+
+    try {
+      final blocked = await toggleBlockUserByIdx(widget.comment.idxMember);
+      if (!mounted) return;
+      showSuccessSnackBar(
+        context,
+        blocked ? '사용자를 차단했습니다'.tr() : '차단이 해제되었습니다'.tr(),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showErrorSnackBar(context, '$e');
+    }
   }
 
   @override
@@ -326,6 +386,69 @@ class _CommentTileState extends State<CommentTile> {
                       color: scheme.error,
                       onTap: () => _confirmDelete(context),
                     ),
+                ],
+
+                // 신고/차단 (타인의 댓글에만 표시)
+                if (!isMine) ...[
+                  const SizedBox(width: 4),
+                  PopupMenuButton<String>(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    iconSize: 14,
+                    icon: FaIcon(
+                      FontAwesomeIcons.lightEllipsis,
+                      size: 14,
+                      color: scheme.tertiary,
+                    ),
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'report':
+                          _reportComment();
+                        case 'block':
+                          _blockCommentAuthor();
+                      }
+                    },
+                    itemBuilder: (ctx) {
+                      final popScheme = Theme.of(ctx).colorScheme;
+                      return [
+                        PopupMenuItem(
+                          value: 'report',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FaIcon(
+                                _reported
+                                    ? FontAwesomeIcons.solidFlag
+                                    : FontAwesomeIcons.lightFlag,
+                                size: 14,
+                                color: popScheme.error,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _reported ? '신고됨' : '신고',
+                                style: TextStyle(color: popScheme.error),
+                              ),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'block',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.lightBan,
+                                size: 14,
+                                color: popScheme.onSurface,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text('차단'),
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
+                  ),
                 ],
               ],
             ),

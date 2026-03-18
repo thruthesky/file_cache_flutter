@@ -39,6 +39,11 @@ class PostListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 차단된 사용자의 글이면 차단 안내 표시
+    if (post.blocked) {
+      return _buildBlockedTile();
+    }
+
     final previewUrl = _previewUrl;
 
     final commentColor = _getCountColor(post.noOfComment);
@@ -160,6 +165,43 @@ class PostListTile extends StatelessWidget {
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 차단된 사용자의 글 타일
+  Widget _buildBlockedTile() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      child: Material(
+        color: color.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 72),
+              child: Row(
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.lightBan,
+                    size: 16,
+                    color: color.outline,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '차단된 사용자의 글입니다'.tr(),
+                    style: text.bodyMedium?.copyWith(
+                      color: color.outline,
                     ),
                   ),
                 ],
