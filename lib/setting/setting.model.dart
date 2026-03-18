@@ -41,15 +41,15 @@ class Settings {
       appVersionIosBuild: json['app_version_ios_build']?.toString() ?? '',
       companyQrEventEnabled: json['company_qr_event_enabled'] == 'Y',
       eventEntryEnabled: json['event_entry_enabled'] == 'Y',
-      adminUids:
-          admins != null ? List<String>.from(admins['admins'] ?? []) : [],
+      adminUids: admins != null
+          ? List<String>.from(admins['admins'] ?? [])
+          : [],
       chatAdmin: admins?['chat_admin']?.toString() ?? '',
       availableStarbucksCoupons: _toInt(json['available_starbucks_coupons']),
       spinCost: _toInt(json['spin_cost']),
-      spinSections:
-          sectionsList
-              .map((e) => SpinSection.fromJson(e as Map<String, dynamic>))
-              .toList(),
+      spinSections: sectionsList
+          .map((e) => SpinSection.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
