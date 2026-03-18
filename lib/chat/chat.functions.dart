@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/user/user.functions.dart';
 
@@ -180,6 +181,9 @@ bool isAdminChatRoom({required String roomId, String? otherUserUid}) {
 
 // Check if this user is an admin chat user
 bool isAdminChatUser(String uid) {
+  if (uid == chatAdminUid) {
+    return true;
+  }
   return false; // Placeholder, replace with actual admin chat ID check
 }
 

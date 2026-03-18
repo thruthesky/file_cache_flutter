@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/list/chat.room_list_view.dart';
@@ -92,12 +93,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     onSelected: (value) {
                       if (value == 'admin_chat') {
-                        // 운영자와 1:1 채팅방 입장
-                        // @TODO: UPDATE with actual admin UID when available
-                        // ChatRoomScreen.push(
-                        //   context,
-                        //   UserService.instance.adminUserUid,
-                        // );
+                        // 운영자와 1:1 채팅방 입
+                        ChatRoomScreen.push(context, chatAdminUid);
                       }
                     },
                     itemBuilder: (context) => [
