@@ -1,0 +1,27 @@
+{
+  "ja": [
+    "uploadInProgress",
+    "deleteFileConfirmation",
+    "failedToDeleteFile",
+    "failedToUpdateComment",
+    "failedToPostReply",
+    "fileDeleted",
+    "commentLiked",
+    "alreadyLikedComment",
+    "failedToDeleteComment",
+    "deleteNewFilesConfirmation"
+  ],
+
+  "zh": [
+    "uploadInProgress",
+    "deleteFileConfirmation",
+    "failedToDeleteFile",
+    "failedToUpdateComment",
+    "failedToPostReply",
+    "fileDeleted",
+    "commentLiked",
+    "alreadyLikedComment",
+    "failedToDeleteComment",
+    "deleteNewFilesConfirmation"
+  ]
+}
