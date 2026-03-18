@@ -18,6 +18,7 @@ import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
@@ -38,8 +39,7 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -47,7 +47,7 @@ class _MenuScreenState extends State<MenuScreen> {
         child: Column(
           children: [
             // 앱바 영역
-            _buildAppBar(theme, scheme),
+            _buildAppBar(context),
             Container(height: 1, color: scheme.outlineVariant),
 
             // 스크롤 가능한 콘텐츠
@@ -61,10 +61,18 @@ class _MenuScreenState extends State<MenuScreen> {
                     const SizedBox(height: 8),
 
                     // 내 정보 섹션
-                    _buildSection(
-                          title: '내 정보'.tr(),
-                          icon: FontAwesomeIcons.lightCircleUser,
-                          child: _buildProfileContent(theme, scheme),
+                    Consumer<UserState>(
+                          builder: (context, userState, _) {
+                            return _buildSection(
+                              context,
+                              title: '내 정보'.tr(),
+                              icon: FontAwesomeIcons.lightCircleUser,
+                              child: _buildProfileContent(
+                                context,
+                                userState.user,
+                              ),
+                            );
+                          },
                         )
                         .animate()
                         .fadeIn(duration: 400.ms)
@@ -72,8 +80,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 내 활동 섹션
                     _buildSection(
+                          context,
                           title: '내 활동'.tr(),
-                          child: _buildActivityGrid(theme, scheme),
+                          child: _buildActivityGrid(context),
                         )
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 100.ms)
@@ -81,8 +90,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 필리핀 생활 정보 섹션
                     _buildSection(
+                          context,
                           title: '필리핀 생활 정보'.tr(),
-                          child: _buildInfoGrid(theme, scheme),
+                          child: _buildInfoGrid(context),
                         )
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 200.ms)
@@ -90,8 +100,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 게시판 섹션
                     _buildSection(
+                          context,
                           title: '게시판'.tr(),
-                          child: _buildForumContent(theme, scheme),
+                          child: _buildForumContent(context),
                         )
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 300.ms)
@@ -103,6 +114,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               CompanyService.instance.companyNotifier,
                           builder: (context, myCompany, _) {
                             return _buildSection(
+                              context,
                               title: '내 업소'.tr(),
                               icon: FontAwesomeIcons.lightStore,
                               child: _buildMyCompanyContent(context, myCompany),
@@ -119,6 +131,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               CompanyService.instance.companyNotifier,
                           builder: (context, myCompany, _) {
                             return _buildSection(
+                              context,
                               title: '업소록'.tr(),
                               child: _buildCompanyGrid(context, myCompany),
                             );
@@ -130,8 +143,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 채팅 섹션
                     _buildSection(
+                          context,
                           title: '채팅'.tr(),
-                          child: _buildChatGrid(theme, scheme),
+                          child: _buildChatGrid(context),
                         )
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 450.ms)
@@ -139,8 +153,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 광고 섹션
                     _buildSection(
+                          context,
                           title: '광고'.tr(),
-                          child: _buildAdGrid(theme, scheme),
+                          child: _buildAdGrid(context),
                         )
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 500.ms)
@@ -148,8 +163,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 지원 섹션
                     _buildSection(
+                          context,
                           title: '지원'.tr(),
-                          child: _buildSupportGrid(theme, scheme),
+                          child: _buildSupportGrid(context),
                         )
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 550.ms)
@@ -157,58 +173,68 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 앱 정보 섹션
                     _buildSection(
+                          context,
                           title: '앱 정보'.tr(),
-                          child: _buildAppInfoGrid(theme, scheme),
+                          child: _buildAppInfoGrid(context),
                         )
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 600.ms)
                         .slideY(begin: 0.1, end: 0),
 
                     // 계정 삭제 & 로그아웃 (로그인 시에만 표시)
-                    if (context.watch<UserState>().user != null) ...[
-                      // 계정 삭제
-                      Center(
-                        child: TextButton.icon(
-                          onPressed: () {
-                            // TODO: 계정 삭제 로직
-                          },
-                          icon: FaIcon(
-                            FontAwesomeIcons.lightTrashCan,
-                            size: 14,
-                            color: scheme.onSurfaceVariant,
-                          ),
-                          label: Text(
-                            '계정 삭제'.tr(),
-                            style: TextStyle(
-                              color: scheme.onSurfaceVariant,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
+                    Consumer<UserState>(
+                      builder: (context, userState, _) {
+                        if (userState.user == null)
+                          return const SizedBox.shrink();
+                        return Column(
+                          spacing: 28,
+                          children: [
+                            // 계정 삭제
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  // TODO: 계정 삭제 로직
+                                },
+                                icon: FaIcon(
+                                  FontAwesomeIcons.lightTrashCan,
+                                  size: 14,
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                                label: Text(
+                                  '계정 삭제'.tr(),
+                                  style: TextStyle(
+                                    color: scheme.onSurfaceVariant,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
 
-                      // 로그아웃
-                      OutlinedButton.icon(
-                        onPressed: () async {
-                          await UserService.signOut();
-                        },
-                        icon: FaIcon(
-                          FontAwesomeIcons.lightRightFromBracket,
-                          size: 16,
-                          color: scheme.error,
-                        ),
-                        label: Text(
-                          '로그아웃'.tr(),
-                          style: TextStyle(color: scheme.error),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: scheme.error.withValues(alpha: 0.4),
-                          ),
-                          minimumSize: const Size(double.infinity, 48),
-                        ),
-                      ).animate().fadeIn(duration: 400.ms, delay: 700.ms),
-                    ],
+                            // 로그아웃
+                            OutlinedButton.icon(
+                              onPressed: () async {
+                                await UserService.signOut();
+                              },
+                              icon: FaIcon(
+                                FontAwesomeIcons.lightRightFromBracket,
+                                size: 16,
+                                color: scheme.error,
+                              ),
+                              label: Text(
+                                '로그아웃'.tr(),
+                                style: TextStyle(color: scheme.error),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: scheme.error.withValues(alpha: 0.4),
+                                ),
+                                minimumSize: const Size(double.infinity, 48),
+                              ),
+                            ).animate().fadeIn(duration: 400.ms, delay: 700.ms),
+                          ],
+                        );
+                      },
+                    ),
 
                     const SizedBox(height: 8),
                   ],
@@ -222,7 +248,8 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 앱바 영역
-  Widget _buildAppBar(ThemeData theme, ColorScheme scheme) {
+  Widget _buildAppBar(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -240,7 +267,8 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 섹션 컨테이너 빌드 (아이콘 옵셔널)
-  Widget _buildSection({
+  Widget _buildSection(
+    BuildContext context, {
     required String title,
     IconData? icon,
     required Widget child,
@@ -306,15 +334,16 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 프로필 카드 내용
-  Widget _buildProfileContent(ThemeData theme, ColorScheme scheme) {
-    final user = context.watch<UserState>().user;
+  Widget _buildProfileContent(BuildContext context, UserModel? user) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     if (user == null) {
       return GestureDetector(
         onTap: () => UserLoginScreen.push(context),
         child: Row(
           children: [
-            _buildDefaultAvatar(scheme),
+            _buildDefaultAvatar(context),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -358,9 +387,9 @@ class _MenuScreenState extends State<MenuScreen> {
                   height: 56,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
-                      _buildDefaultAvatar(scheme),
+                      _buildDefaultAvatar(context),
                 )
-              : _buildDefaultAvatar(scheme),
+              : _buildDefaultAvatar(context),
         ),
         const SizedBox(width: 12),
 
@@ -432,7 +461,8 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 기본 프로필 아바타
-  Widget _buildDefaultAvatar(ColorScheme scheme) {
+  Widget _buildDefaultAvatar(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: 56,
       height: 56,
@@ -462,7 +492,7 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 내 활동 메뉴 그리드
-  Widget _buildActivityGrid(ThemeData theme, ColorScheme scheme) {
+  Widget _buildActivityGrid(BuildContext context) {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightPenToSquare,
@@ -516,11 +546,11 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     ];
 
-    return _buildMenuGrid(items, theme, scheme);
+    return _buildMenuGrid(items, context);
   }
 
   /// 필리핀 생활 정보 메뉴 그리드
-  Widget _buildInfoGrid(ThemeData theme, ColorScheme scheme) {
+  Widget _buildInfoGrid(BuildContext context) {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightStarShooting,
@@ -539,7 +569,7 @@ class _MenuScreenState extends State<MenuScreen> {
       _MenuItemData(FontAwesomeIcons.lightBowlRice, '배달K'.tr()),
     ];
 
-    return _buildMenuGrid(items, theme, scheme);
+    return _buildMenuGrid(items, context);
   }
 
   /// 메뉴에서 선택한 게시판으로 이동
@@ -550,126 +580,115 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 게시판 섹션 콘텐츠 (서브카테고리 포함)
-  Widget _buildForumContent(ThemeData theme, ColorScheme scheme) {
+  Widget _buildForumContent(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 커뮤니티 서브카테고리
-        _buildSubCategoryLabel('커뮤니티'.tr(), scheme),
+        _buildSubCategoryLabel('커뮤니티'.tr(), context),
         const SizedBox(height: 16),
-        _buildMenuGrid(
-          [
-            _MenuItemData(
-              FontAwesomeIcons.lightComments,
-              '자유게시판'.tr(),
-              onTap: () => _navigateToForum('freetalk'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightCircleQuestion,
-              '묻고 답하기'.tr(),
-              onTap: () => _navigateToForum('qna'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightPeopleArrows,
-              '인사'.tr(),
-              onTap: () => _navigateToForum('greeting'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightBlog,
-              '블로그'.tr(),
-              onTap: () => _navigateToForum('blog'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.youtube,
-              '유튜브'.tr(),
-              backgroundColor: Colors.red.shade600,
-              iconColor: Colors.white,
-              onTap: () => _navigateToForum('youtube'),
-            ),
-          ],
-          theme,
-          scheme,
-        ),
+        _buildMenuGrid([
+          _MenuItemData(
+            FontAwesomeIcons.lightComments,
+            '자유게시판'.tr(),
+            onTap: () => _navigateToForum('freetalk'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightCircleQuestion,
+            '묻고 답하기'.tr(),
+            onTap: () => _navigateToForum('qna'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightPeopleArrows,
+            '인사'.tr(),
+            onTap: () => _navigateToForum('greeting'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightBlog,
+            '블로그'.tr(),
+            onTap: () => _navigateToForum('blog'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.youtube,
+            '유튜브'.tr(),
+            backgroundColor: Colors.red.shade600,
+            iconColor: Colors.white,
+            onTap: () => _navigateToForum('youtube'),
+          ),
+        ], context),
 
         const SizedBox(height: 24),
 
         // 회원장터 서브카테고리
-        _buildSubCategoryLabel('회원장터'.tr(), scheme),
+        _buildSubCategoryLabel('회원장터'.tr(), context),
         const SizedBox(height: 16),
-        _buildMenuGrid(
-          [
-            _MenuItemData(
-              FontAwesomeIcons.lightCartShopping,
-              '사고팔기'.tr(),
-              onTap: () => _navigateToForum('buyandsell'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightBriefcase,
-              '구인구직'.tr(),
-              onTap: () => _navigateToForum('wanted'),
-            ),
-          ],
-          theme,
-          scheme,
-        ),
+        _buildMenuGrid([
+          _MenuItemData(
+            FontAwesomeIcons.lightCartShopping,
+            '사고팔기'.tr(),
+            onTap: () => _navigateToForum('buyandsell'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightBriefcase,
+            '구인구직'.tr(),
+            onTap: () => _navigateToForum('wanted'),
+          ),
+        ], context),
 
         const SizedBox(height: 24),
 
         // 기타 서브카테고리
-        _buildSubCategoryLabel('기타'.tr(), scheme),
+        _buildSubCategoryLabel('기타'.tr(), context),
         const SizedBox(height: 16),
-        _buildMenuGrid(
-          [
-            _MenuItemData(
-              FontAwesomeIcons.lightSpa,
-              '마사지'.tr(),
-              onTap: () => _navigateToForum('massage'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightHouse,
-              '하숙집/기숙사'.tr(),
-              onTap: () => _navigateToForum('boarding_house'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightPlaneDeparture,
-              '여행'.tr(),
-              onTap: () => _navigateToForum('travel'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightBuildingColumns,
-              '비즈니스'.tr(),
-              onTap: () => _navigateToForum('business'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightGraduationCap,
-              '학교'.tr(),
-              onTap: () => _navigateToForum('school'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightTriangleExclamation,
-              '주의/경고'.tr(),
-              onTap: () => _navigateToForum('caution'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightUtensils,
-              '음식배달'.tr(),
-              onTap: () => _navigateToForum('food_delivery'),
-            ),
-            _MenuItemData(
-              FontAwesomeIcons.lightBurger,
-              '레스토랑'.tr(),
-              onTap: () => _navigateToForum('rest'),
-            ),
-          ],
-          theme,
-          scheme,
-        ),
+        _buildMenuGrid([
+          _MenuItemData(
+            FontAwesomeIcons.lightSpa,
+            '마사지'.tr(),
+            onTap: () => _navigateToForum('massage'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightHouse,
+            '하숙집/기숙사'.tr(),
+            onTap: () => _navigateToForum('boarding_house'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightPlaneDeparture,
+            '여행'.tr(),
+            onTap: () => _navigateToForum('travel'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightBuildingColumns,
+            '비즈니스'.tr(),
+            onTap: () => _navigateToForum('business'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightGraduationCap,
+            '학교'.tr(),
+            onTap: () => _navigateToForum('school'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightTriangleExclamation,
+            '주의/경고'.tr(),
+            onTap: () => _navigateToForum('caution'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightUtensils,
+            '음식배달'.tr(),
+            onTap: () => _navigateToForum('food_delivery'),
+          ),
+          _MenuItemData(
+            FontAwesomeIcons.lightBurger,
+            '레스토랑'.tr(),
+            onTap: () => _navigateToForum('rest'),
+          ),
+        ], context),
       ],
     );
   }
 
   /// 서브카테고리 라벨 칩
-  Widget _buildSubCategoryLabel(String label, ColorScheme scheme) {
+  Widget _buildSubCategoryLabel(String label, BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
@@ -714,9 +733,9 @@ class _MenuScreenState extends State<MenuScreen> {
                     height: 56,
                     fit: BoxFit.cover,
                     errorWidget: (_, __, _) =>
-                        _buildCompanyPlaceholderIcon(scheme),
+                        _buildCompanyPlaceholderIcon(context),
                   )
-                : _buildCompanyPlaceholderIcon(scheme),
+                : _buildCompanyPlaceholderIcon(context),
           ),
           const SizedBox(width: 12),
 
@@ -798,7 +817,8 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  Widget _buildCompanyPlaceholderIcon(ColorScheme scheme) {
+  Widget _buildCompanyPlaceholderIcon(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: 56,
       height: 56,
@@ -818,8 +838,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 업소록 메뉴 그리드
   Widget _buildCompanyGrid(BuildContext context, CompanyModel? myCompany) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final hasRegistered = myCompany != null && myCompany.name.isNotEmpty;
 
     final items = [
@@ -841,11 +859,11 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     ];
 
-    return _buildMenuGrid(items, theme, scheme);
+    return _buildMenuGrid(items, context);
   }
 
   /// 채팅 메뉴 그리드
-  Widget _buildChatGrid(ThemeData theme, ColorScheme scheme) {
+  Widget _buildChatGrid(BuildContext context) {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightComments,
@@ -861,11 +879,11 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     ];
 
-    return _buildMenuGrid(items, theme, scheme);
+    return _buildMenuGrid(items, context);
   }
 
   /// 광고 메뉴 그리드
-  Widget _buildAdGrid(ThemeData theme, ColorScheme scheme) {
+  Widget _buildAdGrid(BuildContext context) {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightRectangleAd,
@@ -878,11 +896,11 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     ];
 
-    return _buildMenuGrid(items, theme, scheme);
+    return _buildMenuGrid(items, context);
   }
 
   /// 지원 메뉴 그리드
-  Widget _buildSupportGrid(ThemeData theme, ColorScheme scheme) {
+  Widget _buildSupportGrid(BuildContext context) {
     final items = [
       _MenuItemData(FontAwesomeIcons.lightCircleQuestion, '앱 사용 안내'.tr()),
       _MenuItemData(
@@ -905,11 +923,11 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     ];
 
-    return _buildMenuGrid(items, theme, scheme);
+    return _buildMenuGrid(items, context);
   }
 
   /// 앱 정보 메뉴 그리드
-  Widget _buildAppInfoGrid(ThemeData theme, ColorScheme scheme) {
+  Widget _buildAppInfoGrid(BuildContext context) {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightFloppyDisk,
@@ -923,15 +941,11 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     ];
 
-    return _buildMenuGrid(items, theme, scheme);
+    return _buildMenuGrid(items, context);
   }
 
   /// 4열 메뉴 그리드 빌드
-  Widget _buildMenuGrid(
-    List<_MenuItemData> items,
-    ThemeData theme,
-    ColorScheme scheme,
-  ) {
+  Widget _buildMenuGrid(List<_MenuItemData> items, BuildContext context) {
     const crossAxisCount = 4;
     List<List<_MenuItemData>> rows = [];
     for (var i = 0; i < items.length; i += crossAxisCount) {
@@ -952,7 +966,7 @@ class _MenuScreenState extends State<MenuScreen> {
           Row(
             children: [
               for (var item in rows[i])
-                Expanded(child: _buildMenuItem(item, theme, scheme)),
+                Expanded(child: _buildMenuItem(item, context)),
               // 빈 공간 채우기
               for (var j = rows[i].length; j < crossAxisCount; j++)
                 const Expanded(child: SizedBox()),
@@ -964,11 +978,10 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 개별 메뉴 아이템 위젯
-  Widget _buildMenuItem(
-    _MenuItemData item,
-    ThemeData theme,
-    ColorScheme scheme,
-  ) {
+  Widget _buildMenuItem(_MenuItemData item, BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return GestureDetector(
       onTap: item.onTap,
       child: Column(
