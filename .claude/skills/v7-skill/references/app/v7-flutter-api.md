@@ -646,14 +646,12 @@ print(result['count']);  // 188186
 
 | 파일 | 경로 | 설명 |
 |------|------|------|
-| **v7api(), v7apiFileUpload()** | `lib/v7_api/v7_api.dart` | v7 API 호출 + 파일 업로드 함수 |
-| **ApiService** | `lib/api/api.service.dart` | 핵심 구현 (v7api, fileUpload, fileDelete) |
-| **FileUploadModel** | `lib/file/upload/file_upload.model.dart` | 업로드 응답 데이터 모델 |
-| **FileUpload (V7FileUpload)** | `lib/file/upload/widgets/file_upload.dart` | 파일 업로드 위젯 (실제 구현) |
-| **V7FileUpload (별칭)** | `lib/v7_api/widgets/upload/v7_file_upload.dart` | FileUpload의 v7_api 경로 별칭 |
+| **v7api() 함수** | `lib/v7_api/v7_api.dart` | v7 API 호출 함수 (앱 레벨) |
 | func() 함수 | `packages/philgo_api/lib/src/philgo/philgo.api.functions.dart` | v6 API 호출 함수 (패키지) |
-| v7ApiEndpoint 설정 | `lib/app.config.dart` | v7ApiEndpoint, v7BaseUrl 상수 |
-| 사용 예시 | `lib/company/edit/widgets/form/form.image.upload.dart` | FileUpload 실전 활용 예제 |
+| createDio() | `packages/philgo_api/lib/src/philgo/philgo.api.functions.dart:268` | Dio 인스턴스 생성 |
+| patchToken() | `packages/philgo_api/lib/src/philgo/philgo.api.functions.dart:285` | Firebase ID Token 자동 추가 |
+| PhilgoConfig | `packages/philgo_api/lib/src/philgo.config.dart` | v7ApiEndpoint 등 설정 상수 |
+| 사용 예시 | `lib/screens/company/company.qr_code_scanned.screen.dart` | user.me 호출 실전 예제 |
 
 ### v7 서버 측
 
@@ -678,66 +676,58 @@ print(result['count']);  // 188186
 ## 11. v7apiFileUpload() 파일 업로드 함수
 
 v7 서버(api.php)에 multipart/form-data로 파일을 업로드하는 전용 함수.
-웹의 `v7apiUpload()`와 동일하게 **백엔드 서버에 업로드**한다. Firebase Storage는 사용하지 않는다.
-
-> **🔴 Firebase Storage 사용 금지**: `lib/storage/storage.functions.dart`의 `uploadImage()` 등
-> Firebase Storage 직접 업로드 함수는 절대로 사용하지 않는다.
-> 모든 파일 업로드는 반드시 이 함수(백엔드 api.php)를 통해야 한다.
+`v7api()`는 JSON POST만 지원하므로, 파일 업로드는 반드시 이 함수를 사용해야 한다.
 
 ### 11.1 함수 시그니처
 
 ```dart
 import 'package:philgo/v7_api/v7_api.dart';
 
-Future<FileUploadModel> v7apiFileUpload({
+Future<Map<String, dynamic>> v7apiFileUpload({
   required String filePath,
+  required String idxMember,
   String? module,
   String? code,
-  Map<String, dynamic>? extraData,
   void Function(double progress)? onProgress,
+  bool debug = false,
 }) async
 ```
-
-**실제 구현 위치**: `lib/v7_api/v7_api.dart` → `ApiService.instance.fileUpload()` 위임
-**핵심 구현**: `lib/api/api.service.dart` → `ApiService.fileUpload()`
 
 ### 11.2 매개변수
 
 | 매개변수 | 타입 | 필수 | 기본값 | 설명 |
 |---------|------|------|-------|------|
 | `filePath` | `String` | ✅ | — | 업로드할 로컬 파일 경로 |
-| `module` | `String?` | ❌ | `null` | 모듈명 분류 (예: `'company'`, `'post'`, `'user'`) |
-| `code` | `String?` | ❌ | `null` | 코드 분류 (모듈 내 세부 분류, 예: `'main_photo'`, `'gallery'`) |
-| `extraData` | `Map<String, dynamic>?` | ❌ | `null` | FormData에 추가할 임의 필드 |
+| `idxMember` | `String` | ✅ | — | 회원번호 (sf_member.idx) |
+| `module` | `String?` | ❌ | `null` | 모듈명 분류 (예: `'receipt'`, `'profile'`, `'post'`) |
+| `code` | `String?` | ❌ | `null` | 코드 분류 (모듈 내 세부 분류) |
 | `onProgress` | `void Function(double)?` | ❌ | `null` | 업로드 진행률 콜백 (0.0 ~ 1.0) |
+| `debug` | `bool` | ❌ | `false` | 디버그 로깅 |
 
-> **인증**: `idxMember` 파라미터 불필요. Firebase ID Token이 자동으로 첨부된다.
+### 11.3 반환값 (upload.upload 응답)
 
-### 11.3 반환값 (FileUploadModel)
+성공 시 v7 upload.upload 응답 Map:
 
-성공 시 `FileUploadModel` 반환 (`lib/file/upload/file_upload.model.dart`):
+```json
+{
+  "idx": 42,
+  "idx_member": "123",
+  "name": "receipt_20240101.jpg",
+  "size": 245760,
+  "type": "image/jpeg",
+  "module": "receipt",
+  "code": null,
+  "url": "/uploads/123/unique_filename.jpg",
+  "attached": "N",
+  "created_at": "2024-01-01 12:00:00",
+  "updated_at": "2024-01-01 12:00:00"
+}
+```
 
-| 필드 | 타입 | 설명 |
-|------|------|------|
-| `idx` | `int` | 업로드 파일 고유 번호 |
-| `idxMember` | `int` | 업로드한 회원번호 |
-| `name` | `String` | 원본 파일명 |
-| `size` | `int` | 파일 크기 (bytes) |
-| `type` | `String` | MIME 타입 (예: `image/webp`) |
-| `module` | `String` | 모듈 분류 |
-| `code` | `String` | 코드 분류 |
-| `url` | `String` | 파일 full URL (도메인 포함, 자동 변환) |
-| `thumbnail400x400Url` | `String` | 400×400 썸네일 URL |
-| `thumbnail800x800Url` | `String` | 800×800 썸네일 URL |
-| `thumbnail1000Url` | `String` | 1000px 너비 썸네일 URL |
-| `path` | `String` (getter) | 상대경로 (예: `/uploads/123/abc.webp`) |
-| `isImage` | `bool` (getter) | MIME 타입 기반 이미지 여부 |
-| `isVideo` | `bool` (getter) | MIME 타입 기반 영상 여부 |
+> **URL 형식**: `/uploads/{회원번호}/{유니크파일명}` — 상대경로. 화면 표시 시 도메인 prefix 필요:
+> `'${PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '')}$url'`
 
-> **URL**: `FileUploadModel.url`은 이미 full URL이다 (도메인 prefix 불필요).
-> 서버 응답의 상대경로를 `v7BaseUrl` 기반으로 자동 변환한다.
-
-에러 시 `ApiException` throw.
+에러 시 Exception throw (v7api()와 동일한 패턴).
 
 ### 11.4 사용 예시
 
@@ -745,21 +735,22 @@ Future<FileUploadModel> v7apiFileUpload({
 import 'package:philgo/v7_api/v7_api.dart';
 
 // 기본 업로드
-final model = await v7apiFileUpload(
+final result = await v7apiFileUpload(
   filePath: '/path/to/receipt.jpg',
-  module: 'company',
-  code: 'main_photo',
+  idxMember: '123',
+  module: 'receipt',
 );
-print(model.url);   // https://philgo.com/uploads/123/abc.webp (full URL)
-print(model.path);  // /uploads/123/abc.webp (상대경로)
+print(result['url']); // /uploads/123/unique_file.jpg
 
 // 진행률 추적 업로드
-final model = await v7apiFileUpload(
+final result = await v7apiFileUpload(
   filePath: photo.path,
-  module: 'post',
+  idxMember: userInfo!['idx'].toString(),
+  module: 'receipt',
+  debug: true,
   onProgress: (progress) {
-    setState(() => uploadProgress = progress);
-    debugPrint('${(progress * 100).toInt()}%');
+    setState(() { uploadProgress = progress; });
+    print('${(progress * 100).toInt()}%');
   },
 );
 ```
@@ -771,11 +762,9 @@ final model = await v7apiFileUpload(
 | **Content-Type** | `application/x-www-form-urlencoded` | `multipart/form-data` |
 | **데이터 형식** | `Map<String, dynamic>` (JSON) | `FormData` + `MultipartFile` |
 | **method 전달** | `data['method'] = method` | `FormData` 내 `method: 'upload.upload'` 고정 |
-| **id_token** | `_patchToken(data)` 자동 | Firebase ID Token → FormData에 자동 추가 |
+| **id_token** | `patchToken(data)` 자동 | `patchToken({})` → id_token 추출 → FormData에 추가 |
 | **진행률** | 지원 안함 | `onSendProgress` 콜백 지원 |
-| **반환값** | `Map<String, dynamic>` | `FileUploadModel` (타입 안전) |
 | **용도** | 일반 API 호출 | 파일 업로드 전용 |
-| **저장소** | — | 백엔드 서버 (Firebase Storage 아님) |
 
 ---
 
@@ -788,67 +777,60 @@ final model = await v7apiFileUpload(
 > v7 시스템에서 파일 업로드가 필요한 **모든 곳**에서 이 위젯을 재활용해야 한다.
 > **절대로 새로운 업로드 위젯을 만들지 말 것.** 기존 V7FileUpload 위젯의 옵션을 활용하여
 > 영수증, 프로필 사진, 게시글 첨부, 문서 업로드 등 모든 파일 업로드 시나리오를 처리한다.
->
-> **🔴 Firebase Storage 사용 금지**: `lib/storage/storage.functions.dart`의 Firebase 업로드 함수는 절대 사용하지 않는다.
 
-**위치**: `lib/v7_api/widgets/upload/v7_file_upload.dart` (타입 별칭)
-**실제 구현**: `lib/file/upload/widgets/file_upload.dart` (`FileUpload` 위젯)
-
-```dart
-// v7_file_upload.dart 에서 FileUpload를 V7FileUpload로 별칭 제공
-import 'package:philgo/file/upload/widgets/file_upload.dart';
-typedef V7FileUpload = FileUpload;
-```
+**위치**: `lib/widgets/upload/v7_file_upload.dart`
 
 **역할**: child 위젯을 GestureDetector로 감싸서, 탭 시 Bottom Sheet로 업로드 옵션(카메라/갤러리/파일)을
-표시하고, `ApiService.fileUpload()`를 호출하여 백엔드 서버(api.php)에 파일을 업로드한다.
+표시하고, `v7apiFileUpload()`를 호출하여 v7 서버에 파일을 업로드한다.
 
-**업로드 흐름**: 웹의 `v7apiUpload()`와 동일
-- 웹: `v7apiUpload(file)` → `POST /api.php` (multipart/form-data)
-- 앱: `V7FileUpload` → `ApiService.fileUpload()` → `POST /api.php` (multipart/form-data)
+**기존 FileUpload(v6) 대비 차이점**:
+- v6 FileUpload: `philgoApiFileUpload()` → `PhilgoConfig.fileUploadUrl` (func.php)
+- **V7FileUpload**: `v7apiFileUpload()` → `PhilgoConfig.v7ApiEndpoint` (api.php, upload.upload)
 
 ### 12.2 위젯 속성 (Props)
 
 | 속성 | 타입 | 필수 | 기본값 | 설명 |
 |------|------|------|-------|------|
 | `child` | `Widget` | ✅ | — | 탭 가능한 자식 위젯 (버튼, 아바타, 아이콘 등) |
-| `onUploaded` | `Function(FileUploadModel)?` | ❌ | `null` | 업로드 완료 콜백 (`FileUploadModel` 전달) |
-| `onBeforeUpload` | `Future<bool> Function()?` | ❌ | `null` | 업로드 시작 전 콜백 (false 반환 시 취소) |
+| `idxMember` | `String` | ✅ | — | 회원번호 (필수) |
+| `onUploaded` | `Function(Map<String, dynamic>)` | ✅ | — | 업로드 완료 콜백 (v7 응답 Map 전달) |
+| `onBeforeUpload` | `VoidCallback?` | ❌ | `null` | 업로드 시작 전 콜백 |
 | `onCancelled` | `VoidCallback?` | ❌ | `null` | 업로드 취소 시 콜백 |
 | `onProgress` | `void Function(double)?` | ❌ | `null` | 진행률 콜백 (0.0 ~ 1.0) |
-| `onError` | `void Function(dynamic)?` | ❌ | `null` | 에러 콜백 |
-| `onUploadingChanged` | `void Function(bool)?` | ❌ | `null` | 업로드 상태 변경 콜백 (true=업로드 중) |
-| `module` | `String?` | ❌ | `null` | 모듈명 분류 (예: `'company'`, `'post'`, `'user'`) |
-| `code` | `String?` | ❌ | `null` | 코드 분류 (예: `'main_photo'`, `'gallery'`) |
-| `extraData` | `Map<String, dynamic>?` | ❌ | `null` | FormData에 추가할 임의 필드 |
-| `camera` | `bool` | ❌ | `true` | 카메라 사진 소스 활성화 |
-| `cameraVideo` | `bool` | ❌ | `false` | 카메라 동영상 소스 활성화 |
-| `gallery` | `bool` | ❌ | `true` | 갤러리 소스 활성화 |
-| `galleryVideo` | `bool` | ❌ | `false` | 갤러리에서 동영상도 선택 가능 |
-| `file` | `bool` | ❌ | `false` | 파일 피커 소스 활성화 |
+| `onError` | `void Function(String)?` | ❌ | `null` | 에러 콜백 (에러 메시지 전달) |
+| `module` | `String?` | ❌ | `null` | 모듈명 분류 (예: `'receipt'`, `'profile'`) |
+| `code` | `String?` | ❌ | `null` | 코드 분류 |
+| `image` | `bool` | ❌ | `true` | 이미지 선택 가능 여부 |
+| `video` | `bool` | ❌ | `false` | 비디오 선택 가능 여부 |
+| `file` | `bool` | ❌ | `false` | 일반 파일 선택 가능 여부 |
+| `camera` | `bool` | ❌ | `true` | 카메라 촬영 옵션 표시 여부 |
+| `gallery` | `bool` | ❌ | `true` | 갤러리 선택 옵션 표시 여부 |
 | `imageQuality` | `int` | ❌ | `85` | 이미지 압축 품질 (0~100) |
 | `maxWidth` | `double?` | ❌ | `null` | 이미지 최대 너비 (픽셀) |
 | `maxHeight` | `double?` | ❌ | `null` | 이미지 최대 높이 (픽셀) |
-
-> **인증**: `idxMember` 파라미터 불필요. Firebase ID Token이 자동으로 첨부된다.
+| `maxDuration` | `Duration?` | ❌ | `null` | 비디오 최대 촬영 시간 |
+| `showErrorSnackBar` | `bool` | ❌ | `true` | 에러 시 스낵바 자동 표시 여부 |
+| `debug` | `bool` | ❌ | `true` | 디버그 로깅 |
 
 ### 12.3 사용 예시
 
-#### (1) 회사 메인 사진 업로드 (카메라 + 갤러리)
+#### (1) 영수증 이미지 업로드 (카메라 + 갤러리)
 
 ```dart
-import 'package:philgo/v7_api/widgets/upload/v7_file_upload.dart';
-
 V7FileUpload(
-  module: 'company',
-  code: 'main_photo',
-  onUploaded: (model) {
-    setState(() => photoUrl = model.url);
+  idxMember: userInfo!['idx'].toString(),
+  module: 'receipt',
+  onUploaded: (result) {
+    setState(() { receiptUrl = result['url']?.toString(); });
   },
   onProgress: (progress) {
-    setState(() => uploadProgress = progress);
+    setState(() { uploadProgress = progress; });
   },
-  child: FaIcon(FontAwesomeIcons.lightCamera, size: 32),
+  child: FilledButton.icon(
+    onPressed: () {},
+    icon: const FaIcon(FontAwesomeIcons.receipt, size: 18),
+    label: const Text('영수증 업로드'),
+  ),
 )
 ```
 
@@ -856,28 +838,35 @@ V7FileUpload(
 
 ```dart
 V7FileUpload(
-  module: 'user',
-  code: 'profile_photo',
-  gallery: false,
-  maxWidth: 512,
+  idxMember: '123',
+  module: 'profile',
+  gallery: false,       // 갤러리 비활성
+  maxWidth: 512,         // 최대 512px
   maxHeight: 512,
-  imageQuality: 70,
-  onUploaded: (model) => updateProfilePhoto(model.url),
-  child: CircleAvatar(radius: 40, child: FaIcon(FontAwesomeIcons.lightCamera)),
+  imageQuality: 70,      // 품질 70%
+  onUploaded: (result) => updateProfilePhoto(result['url']),
+  child: CircleAvatar(
+    radius: 40,
+    child: Icon(Icons.camera_alt),
+  ),
 )
 ```
 
-#### (3) 게시글 첨부파일 (이미지 + 동영상 + 파일)
+#### (3) 게시글 첨부파일 (이미지 + 비디오 + 파일)
 
 ```dart
 V7FileUpload(
+  idxMember: '123',
   module: 'post',
   code: 'freetalk',
-  cameraVideo: true,
-  galleryVideo: true,
-  file: true,
-  onUploaded: (model) => addAttachment(model),
-  child: FaIcon(FontAwesomeIcons.lightPaperclip),
+  video: true,          // 비디오 활성
+  file: true,           // 일반 파일 활성
+  maxDuration: const Duration(minutes: 5),
+  onUploaded: (result) => addAttachment(result),
+  child: IconButton(
+    onPressed: () {},
+    icon: const Icon(Icons.attach_file),
+  ),
 )
 ```
 
@@ -885,70 +874,121 @@ V7FileUpload(
 
 ```dart
 V7FileUpload(
+  idxMember: '123',
   module: 'gallery',
-  camera: false,
-  onUploaded: (model) => addToGallery(model.url),
+  camera: false,        // 카메라 비활성
+  onUploaded: (result) => addToGallery(result['url']),
   child: const Text('사진 선택'),
 )
 ```
 
-### 12.4 실전 통합 패턴: 업로드 상태 관리
+### 12.4 실전 통합 패턴: 업로드 상태 관리 + 리턴값 표시
+
+화면에서 V7FileUpload를 사용할 때 권장하는 상태 관리 패턴.
+**핵심: `receiptData`에 전체 응답 Map을 저장하여 리턴값 전체를 화면에 표시한다.**
 
 ```dart
-import 'package:philgo/v7_api/widgets/upload/v7_file_upload.dart';
-import 'package:philgo/file/upload/file_upload.model.dart';
-
 class _MyScreenState extends State<MyScreen> {
-  FileUploadModel? _uploadedFile;
-  bool _isUploading = false;
-  double _uploadProgress = 0.0;
+  /// 업로드 상태 변수 — 전체 응답 Map 저장 (URL만이 아니라 idx, name, size, type 등 포함)
+  Map<String, dynamic>? receiptData;
+  bool isUploading = false;
+  double uploadProgress = 0.0;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // 업로드 결과 표시 (FileUploadModel 사용)
-        if (_uploadedFile != null) ...[
-          Image.network(_uploadedFile!.url),  // full URL — 도메인 prefix 불필요
-          Text('파일명: ${_uploadedFile!.name}'),
-          Text('크기: ${_uploadedFile!.size} bytes'),
-          Text('타입: ${_uploadedFile!.type}'),
+        /// 업로드 결과 전체 표시 (이미지 미리보기 + 상세 정보)
+        if (receiptData != null) ...[
+          /// 이미지 미리보기
+          Image.network(
+            '${PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '')}${receiptData!['url']}',
+          ),
+
+          /// 상세 정보 표시 (리턴값 필드 활용)
+          Text('IDX: ${receiptData!['idx']}'),
+          Text('파일명: ${receiptData!['name']}'),
+          Text('크기: ${receiptData!['size']} bytes'),
+          Text('타입: ${receiptData!['type']}'),
+          Text('URL: ${receiptData!['url']}'),
+          Text('업로드 시간: ${receiptData!['created_at']}'),
         ],
 
-        // 업로드 버튼
+        /// 업로드 버튼
         V7FileUpload(
-          module: 'company',
-          code: 'main_photo',
-          onBeforeUpload: () async {
-            setState(() { _isUploading = true; _uploadProgress = 0.0; });
-            return true; // false 반환 시 업로드 취소
-          },
-          onProgress: (p) => setState(() => _uploadProgress = p),
-          onUploaded: (model) => setState(() {
-            _uploadedFile = model;
-            _isUploading = false;
+          idxMember: userIdx,
+          module: 'receipt',
+          onBeforeUpload: () => setState(() {
+            isUploading = true;
+            uploadProgress = 0.0;
           }),
-          onError: (_) => setState(() => _isUploading = false),
-          onCancelled: () => setState(() => _isUploading = false),
+          onProgress: (p) => setState(() { uploadProgress = p; }),
+          onUploaded: (result) => setState(() {
+            receiptData = result;  // 전체 응답 Map 저장
+            isUploading = false;
+          }),
+          onError: (_) => setState(() {
+            isUploading = false;
+            uploadProgress = 0.0;
+          }),
+          onCancelled: () => setState(() {
+            isUploading = false;
+            uploadProgress = 0.0;
+          }),
           child: FilledButton.icon(
             onPressed: () {},
-            icon: _isUploading
+            icon: isUploading
                 ? SizedBox(
                     width: 18, height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      value: _uploadProgress > 0 ? _uploadProgress : null,
+                      value: uploadProgress > 0 ? uploadProgress : null,
                     ),
                   )
-                : FaIcon(FontAwesomeIcons.lightCloudArrowUp, size: 18),
-            label: Text(_isUploading
-                ? '업로드 중... ${(_uploadProgress * 100).toInt()}%'
-                : '사진 업로드'),
+                : const Icon(Icons.upload),
+            label: Text(isUploading
+                ? '업로드 중... ${(uploadProgress * 100).toInt()}%'
+                : '파일 업로드'),
           ),
         ),
       ],
     );
   }
+}
+```
+
+> **핵심 포인트**: `onUploaded` 콜백에서 `result['url']`만 저장하지 말고,
+> `receiptData = result`로 **전체 응답 Map을 저장**하면 idx, name, size, type, url, created_at 등
+> 모든 리턴값을 화면에 자유롭게 표시할 수 있다.
+
+### 12.6 업로드 응답 필드 활용 가이드
+
+upload.upload 응답 Map의 주요 필드와 활용법:
+
+| 필드 | 타입 | 설명 | 활용 예시 |
+|------|------|------|---------|
+| `idx` | `int` | 업로드 파일 고유 번호 | DB 연동, 파일 관리 |
+| `idx_member` | `String` | 업로드한 회원번호 | 권한 확인 |
+| `name` | `String` | 원본 파일명 | 파일명 표시 |
+| `size` | `int` | 파일 크기 (bytes) | 용량 표시 |
+| `type` | `String` | MIME 타입 | 파일 유형 아이콘 표시 |
+| `module` | `String?` | 모듈 분류 | 용도별 분류 |
+| `code` | `String?` | 코드 분류 | 세부 분류 |
+| `url` | `String` | 파일 URL (상대경로) | 이미지 표시, 다운로드 |
+| `created_at` | `String` | 업로드 일시 | 시간 표시 |
+
+**URL을 이미지로 표시할 때**: 상대경로이므로 도메인 prefix 필요:
+```dart
+'${PhilgoConfig.v7ApiEndpoint.replaceAll('/api.php', '')}${data['url']}'
+```
+
+**파일 크기 포맷팅**:
+```dart
+String formatFileSize(dynamic bytes) {
+  final b = bytes is int ? bytes : int.tryParse(bytes.toString()) ?? 0;
+  if (b < 1024) return '$b B';
+  if (b < 1024 * 1024) return '${(b / 1024).toStringAsFixed(1)} KB';
+  return '${(b / (1024 * 1024)).toStringAsFixed(1)} MB';
 }
 ```
 
@@ -961,19 +1001,19 @@ Bottom Sheet 표시 (카메라/갤러리/파일/취소)
     ▼ 옵션 선택
 ImagePicker 또는 FilePicker 실행
     ▼ 파일 선택 완료
-onBeforeUpload() 콜백 (false 반환 시 취소)
+onBeforeUpload() 콜백
     ▼
-ApiService.fileUpload(filePath, module, code, ...)
-    → POST /api.php (multipart/form-data, method=upload.upload)
+v7apiFileUpload(filePath, idxMember, module, ...)
     ▼ onSendProgress → onProgress() 콜백
     ▼
-업로드 완료 → FileUploadModel.fromJson(response)
-    → onUploaded(FileUploadModel) 콜백
+업로드 완료 → onUploaded(결과 Map) 콜백
     또는
-업로드 에러 → onError(error) 콜백
+업로드 에러 → onError(에러메시지) 콜백 + showSafeErrorSnackBar()
 ```
 
-> **주의**: `onBeforeUpload`는 `Future<bool>`을 반환해야 한다. `false` 반환 시 업로드가 취소된다.
+**IgnorePointer 패턴**: V7FileUpload는 child를 `IgnorePointer`로 감싸서,
+child(예: FilledButton)의 자체 탭 이벤트가 GestureDetector를 방해하지 않도록 한다.
+따라서 child 내 `onPressed: () {}`는 실행되지 않으며, V7FileUpload의 GestureDetector가 탭을 처리한다.
 
 ---
 
@@ -999,7 +1039,7 @@ v7 시스템에서 제공하는 Flutter 위젯 및 함수 목록.
 
 | 위젯 | 파일 | 용도 | 재활용 |
 |------|------|------|--------|
-| `V7FileUpload` | `lib/v7_api/widgets/upload/v7_file_upload.dart` (→ `lib/file/upload/widgets/file_upload.dart`) | 백엔드 파일 업로드 (카메라/갤러리/파일, Firebase Storage 아님) | ✅ **필수** — 모든 v7 업로드에 이 위젯 사용 |
+| `V7FileUpload` | `lib/widgets/upload/v7_file_upload.dart` | v7 파일 업로드 (카메라/갤러리/파일) | ✅ **필수** — 모든 v7 업로드에 이 위젯 사용 |
 
 ### 13.4 사용 중인 화면
 
