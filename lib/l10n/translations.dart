@@ -12,6 +12,8 @@ class Translations {
     '로그인': '로그인',
     '로그아웃': '로그아웃',
     '로그인이 필요합니다': '로그인이 필요합니다',
+    '로그인 해주세요': '로그인 해주세요',
+    '로그인하여 모든 기능을 이용하세요': '로그인하여 모든 기능을 이용하세요',
 
     // 하단 네비게이션
     '홈': '홈',
@@ -108,6 +110,7 @@ class Translations {
     '나의 업소를 등록하고 홍보하세요': '나의 업소를 등록하고 홍보하세요',
     '업소 검색': '업소 검색',
     '업소 등록': '업소 등록',
+    '업소 수정': '업소 수정',
 
     // 채팅
     '오픈 채팅방': '오픈 채팅방',
@@ -352,6 +355,22 @@ class Translations {
     '업소 정보를 불러오지 못했습니다.': '업소 정보를 불러오지 못했습니다.',
     '다시 시도': '다시 시도',
     '업소 정보': '업소 정보',
+
+    // 북마크
+    '북마크': '북마크',
+    '그룹 생성': '그룹 생성',
+    '그룹 이름': '그룹 이름',
+    '그룹 삭제': '그룹 삭제',
+    '그룹의 모든 북마크도 함께 삭제됩니다': '그룹의 모든 북마크도 함께 삭제됩니다',
+    '북마크가 없습니다': '북마크가 없습니다',
+    '그룹이 없습니다': '그룹이 없습니다',
+    '생성': '생성',
+    '삭제': '삭제',
+    '제목 없음': '제목 없음',
+    '내용 미리보기 없음': '내용 미리보기 없음',
+    '원글을 찾을 수 없습니다': '원글을 찾을 수 없습니다',
+    '사용자': '사용자',
+    '북마크 해제': '북마크 해제',
   };
 
   static const Map<String, dynamic> en = {
@@ -360,6 +379,8 @@ class Translations {
     '로그인': 'Login',
     '로그아웃': 'Logout',
     '로그인이 필요합니다': 'Login required',
+    '로그인 해주세요': 'Please login',
+    '로그인하여 모든 기능을 이용하세요': 'Login to access all features',
 
     // 하단 네비게이션
     '홈': 'Home',
@@ -456,6 +477,7 @@ class Translations {
     '나의 업소를 등록하고 홍보하세요': 'Register and promote your business',
     '업소 검색': 'Search Business',
     '업소 등록': 'Register Business',
+    '업소 수정': 'Edit Business',
 
     // 채팅
     '오픈 채팅방': 'Open Chat',
@@ -700,5 +722,21 @@ class Translations {
     '업소 정보를 불러오지 못했습니다.': 'Failed to load business info.',
     '다시 시도': 'Try Again',
     '업소 정보': 'Business Info',
+
+    // 북마크
+    '북마크': 'Bookmark',
+    '그룹 생성': 'Create Group',
+    '그룹 이름': 'Group Name',
+    '그룹 삭제': 'Delete Group',
+    '그룹의 모든 북마크도 함께 삭제됩니다': 'All bookmarks in this group will also be deleted',
+    '북마크가 없습니다': 'No bookmarks',
+    '그룹이 없습니다': 'No groups',
+    '생성': 'Create',
+    '삭제': 'Delete',
+    '제목 없음': 'No Title',
+    '내용 미리보기 없음': 'No Preview',
+    '원글을 찾을 수 없습니다': 'Original post not found',
+    '사용자': 'User',
+    '북마크 해제': 'Remove Bookmark',
   };
 }

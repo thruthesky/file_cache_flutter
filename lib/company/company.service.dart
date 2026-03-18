@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:philgo/api/api.service.dart';
 
 import 'company.model.dart';
@@ -17,7 +20,17 @@ import 'company_list_result.model.dart';
 /// final updated = await CompanyService.update({'name': '새 이름'});
 /// ```
 class CompanyService {
+  static final CompanyService instance = CompanyService._();
+
   CompanyService._();
+
+  final ValueNotifier<CompanyModel?> _companyListenable =
+      ValueNotifier<CompanyModel?>(null);
+
+  ValueNotifier<CompanyModel?> get companyNotifier => _companyListenable;
+  CompanyModel? get company => _companyListenable.value;
+
+  void clear() => _companyListenable.value = null;
 
   /// 업소 목록 조회
   ///
@@ -43,7 +56,6 @@ class CompanyService {
         'page': page,
         'limit': limit,
       },
-      debug: true,
     );
 
     return CompanyListResult.fromJson(result);
@@ -70,10 +82,13 @@ class CompanyService {
   ///
   /// 업소가 없으면 서버에서 자동 생성된다 (status='').
   /// 반환: CompanyModel 또는 null
-  static Future<CompanyModel?> mine() async {
-    final result = await ApiService.instance.v7api('company.mine', debug: true);
-    if (result.isEmpty) return null;
-    return CompanyModel.fromJson(result);
+  Future<void> loadMyCompany() async {
+    final result = await ApiService.instance.v7api('company.mine');
+    if (result.isEmpty) return;
+
+    _companyListenable.value = CompanyModel.fromJson(result);
+
+    log('[loadMyCompany func] Company is loaded : $result');
   }
 
   /// 업소 생성 (최초 등록)
@@ -103,6 +118,8 @@ class CompanyService {
       data: data,
     );
     if (result.isEmpty) return null;
-    return CompanyModel.fromJson(result);
+    final company = CompanyModel.fromJson(result);
+    instance._companyListenable.value = company;
+    return company;
   }
 }

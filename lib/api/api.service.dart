@@ -239,7 +239,7 @@ class ApiService {
   ///
   /// [idx] 삭제할 파일의 idx
   Future<void> fileDelete(int idx) async {
-    await v7api('upload.delete', data: {'idx': idx}, debug: true);
+    await v7api('upload.delete', data: {'idx': idx});
   }
 
   /// URL로 파일 삭제
@@ -249,7 +249,7 @@ class ApiService {
   /// [url] 삭제할 파일의 상대경로 URL (예: /uploads/123/abc.webp)
   Future<void> fileDeleteByUrl(String url) async {
     final path = Uri.tryParse(url)?.path ?? url;
-    await v7api('upload.deleteByUrl', data: {'url': path}, debug: true);
+    await v7api('upload.deleteByUrl', data: {'url': path});
   }
 
   /// 안전한 int 변환

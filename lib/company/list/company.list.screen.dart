@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
@@ -8,6 +7,7 @@ import 'package:philgo/company/widgets/company.card.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/user/user.service.dart';
 
 class CompanyListScreen extends StatefulWidget {
   const CompanyListScreen({super.key});
@@ -17,8 +17,6 @@ class CompanyListScreen extends StatefulWidget {
 }
 
 class _CompanyListScreenState extends State<CompanyListScreen> {
-  CompanyModel? _myCompany;
-  bool _isFabLoading = false;
   String? _selectedCategoryId; // null = All
   bool _showHeader = true;
 
@@ -58,7 +56,6 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
       },
       fetchPage: _fetchPage,
     );
-    _loadMyCompany();
   }
 
   @override
@@ -78,64 +75,10 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
     return result.items;
   }
 
-  Future<void> _loadMyCompany() async {
-    final company = await CompanyService.mine();
-    if (mounted) {
-      setState(() => _myCompany = company);
-    }
-  }
-
   void _onCategorySelected(String? categoryId) {
     if (_selectedCategoryId == categoryId) return;
     setState(() => _selectedCategoryId = categoryId);
     _pagingController.refresh();
-  }
-
-  Future<void> _onFabPressed() async {
-    if (_isFabLoading) return;
-
-    // Use cached company — no extra API call needed
-    if (_myCompany != null) {
-      CompanyEditScreen.push(context, company: _myCompany!);
-      return;
-    }
-
-    // Fallback: fetch if initState mine() failed
-    setState(() => _isFabLoading = true);
-    try {
-      final company = await CompanyService.mine();
-      if (!mounted) return;
-
-      if (company == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('업소를 가져올 수 없습니다. 다시 시도해주세요.'.tr())),
-        );
-        return;
-      }
-
-      setState(() => _myCompany = company);
-
-      if (company.name.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('업소가 생성되었습니다. 정보를 입력해주세요.'.tr()),
-            backgroundColor: const Color(0xFFFF6D00),
-          ),
-        );
-      }
-
-      CompanyEditScreen.push(context, company: company);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceFirst('Exception: ', '')),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _isFabLoading = false);
-    }
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
@@ -157,20 +100,21 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     return Scaffold(
       backgroundColor: scheme.surface,
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'company_list_fab',
-        onPressed: _isFabLoading ? null : _onFabPressed,
-        child: _isFabLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : const FaIcon(FontAwesomeIcons.penToSquare),
-      ),
+      floatingActionButton: !UserService.isLoggedIn
+          ? null
+          : ValueListenableBuilder<CompanyModel?>(
+              valueListenable: CompanyService.instance.companyNotifier,
+              builder: (context, myCompany, _) {
+                return FloatingActionButton(
+                  heroTag: 'company_list_fab',
+                  onPressed: myCompany != null
+                      ? () =>
+                          CompanyEditScreen.push(context, company: myCompany)
+                      : null,
+                  child: const FaIcon(FontAwesomeIcons.penToSquare),
+                );
+              },
+            ),
       body: SafeArea(
         child: Column(
           children: [
