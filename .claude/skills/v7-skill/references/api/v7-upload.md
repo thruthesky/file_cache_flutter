@@ -186,6 +186,7 @@ CREATE TABLE `uploads` (
     `code` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '모듈 내 용도 (예: profile_photo, cover_photo, content)',
     `url` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '다운로드 URL (상대경로, 예: /uploads/123/abc.jpg)',
     `attached` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '사용 여부 (0=미사용, 1=사용중)',
+    `thumbnail_600_url` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '600px 비율 유지 리사이즈 썸네일 URL',
     PRIMARY KEY (`idx`),
     KEY `idx_member` (`idx_member`),
     KEY `module_code` (`module`, `code`),
@@ -208,6 +209,7 @@ CREATE TABLE `uploads` (
 | `code` | VARCHAR(50) | 모듈 내 용도 | `profile_photo`, `cover_photo`, `content` |
 | `url` | VARCHAR(500) | 다운로드 상대경로 | `/uploads/123/67a1b2c3_1709876543.jpg` |
 | `attached` | TINYINT(1) | 사용 여부 | 0=미사용, 1=사용중 |
+| `thumbnail_600_url` | VARCHAR(500) | 600px 비율 유지 리사이즈 썸네일 URL | `/uploads/123/600-abc123_1709876543.webp` |
 
 ### 인덱스 설계
 
@@ -322,6 +324,7 @@ class UploadEntity
     public string $code = '';
     public string $url = '';
     public int $attached = 0;
+    public string $thumbnail_600_url = '';
 
     /**
      * 배열(DB 행)을 UploadEntity 객체로 변환한다.
@@ -343,6 +346,7 @@ class UploadEntity
         $entity->code = (string)($data['code'] ?? '');
         $entity->url = (string)($data['url'] ?? '');
         $entity->attached = (int)($data['attached'] ?? 0);
+        $entity->thumbnail_600_url = (string)($data['thumbnail_600_url'] ?? '');
         return $entity;
     }
 
@@ -365,7 +369,20 @@ class UploadEntity
             'code' => $this->code,
             'url' => $this->url,
             'attached' => $this->attached,
+            'thumbnail_600_url' => $this->thumbnail_600_url,
+            'thumbnail_url_600' => $this->thumbnailUrl600(),
         ];
+    }
+
+    /**
+     * 600px 비율 유지 썸네일 URL을 반환한다.
+     * thumbnail_600_url이 비어있으면 null을 반환한다.
+     *
+     * @return string|null 600px 썸네일 URL 또는 null
+     */
+    public function thumbnailUrl600(): ?string
+    {
+        return $this->thumbnail_600_url !== '' ? $this->thumbnail_600_url : null;
     }
 }
 ```
@@ -933,8 +950,23 @@ curl -s -X POST "https://local.philgo.com/api.php" \
   -F "file=@/path/to/photo.jpg"
 ```
 
-**JavaScript 호출 예시:**
+**JavaScript 호출 예시 (v7apiUpload 함수 -- 권장):**
 ```javascript
+// v7apiUpload()는 /v7/js/v7api.js에 정의된 v7 전용 업로드 래퍼 함수이다.
+// FormData 구성, 에러 처리, 진행률 콜백을 내장하고 있다.
+const result = await v7apiUpload(fileInput.files[0], 'post', 'content');
+console.log(result.url); // /uploads/123/67a1b2c3_1709876543.webp
+
+// onProgress 콜백으로 업로드 진행률(0~100%) 추적 가능
+const result2 = await v7apiUpload(file, 'chat', 'message', {
+    onProgress: (percent) => console.log(`업로드 진행률: ${percent}%`)
+});
+```
+
+**JavaScript 호출 예시 (FormData 직접 구성 -- 비권장):**
+```javascript
+// v7 홈페이지(v7/ 폴더)에서는 v7apiUpload() 사용을 권장한다.
+// FormData 직접 구성은 v6 레거시 페이지에서만 사용한다.
 const formData = new FormData();
 formData.append('method', 'upload.upload');
 formData.append('session_id', getSessionId()); // 또는 id_token
@@ -1932,7 +1964,72 @@ curl -sk "https://local.philgo.com/api.php?method=upload.list&idx_member=123"
 curl -sk "https://local.philgo.com/api.php?method=upload.delete&idx=$IDX&idx_member=123"
 ```
 
-### 15.9 JavaScript (FormData) 업로드 예시
+### 15.9 JavaScript 업로드 예시
+
+#### v7apiUpload() 함수 사용 (v7 홈페이지 -- 권장)
+
+v7 홈페이지(`v7/` 폴더)에서는 `/v7/js/v7api.js`에 정의된 `v7apiUpload()` 함수를 사용한다.
+이 함수는 FormData 구성, 에러 처리, 업로드 진행률 콜백을 내장하고 있다.
+
+**함수 시그니처:**
+```javascript
+async function v7apiUpload(file, module, code, options)
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| `file` | `File` | 필수 | 업로드할 파일 객체 |
+| `module` | `string` | 필수 | 모듈명 (예: `'post'`, `'company'`, `'chat'`) |
+| `code` | `string` | 필수 | 코드 (예: `'content'`, `'visit_review'`, `'message'`) |
+| `options` | `Object` | 선택 | 옵션 객체 |
+| `options.onProgress` | `Function` | 선택 | 업로드 진행률 콜백 함수. 0~100 범위의 퍼센트 정수를 인자로 받는다 |
+
+**기본 사용:**
+```javascript
+// HTML: <input type="file" id="fileInput">
+const file = document.getElementById('fileInput').files[0];
+
+// 기본 업로드 (세션 쿠키 자동 전송)
+const result = await v7apiUpload(file, 'post', 'content');
+console.log('업로드 성공:', result.url); // /uploads/123/67a1b2c3_1709876543.webp
+```
+
+**진행률 추적:**
+```javascript
+// onProgress 콜백으로 업로드 진행률(0~100%) 실시간 추적
+const result = await v7apiUpload(file, 'chat', 'message', {
+    onProgress: (percent) => {
+        console.log(`업로드 진행률: ${percent}%`);
+        // Vue.js 예시: this.uploadProgress = percent;
+    }
+});
+```
+
+**채팅 파일 업로드 (즉시 업로드 패턴):**
+```javascript
+// 파일 선택 즉시 업로드 시작 (전송 버튼 클릭 전에 완료됨)
+async onFileSelected(e) {
+    const files = e.target.files;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const previewIdx = this.uploadPreviews.length;
+        this.uploadPreviews.push({ progress: 0, url: null, done: false });
+
+        const result = await v7apiUpload(file, 'chat', 'message', {
+            onProgress: (percent) => {
+                this.uploadPreviews[previewIdx].progress = percent;
+            }
+        });
+        this.uploadPreviews[previewIdx].url = result.url;
+        this.uploadPreviews[previewIdx].done = true;
+    }
+}
+```
+
+#### FormData 직접 구성 (v6 레거시 페이지)
+
+v6 레거시 페이지에서는 FormData를 직접 구성하여 업로드한다.
+v7 홈페이지에서는 이 방식 대신 `v7apiUpload()` 사용을 권장한다.
 
 ```javascript
 // HTML: <input type="file" id="fileInput">
@@ -2017,7 +2114,7 @@ if (res.data.idx) {
 ### 17.1 개요
 
 업로드되는 이미지 파일을 자동으로 WebP 형식으로 변환하고, 최대 1600px 너비로 리사이즈한다.
-추가로 400x400, 800x800 정사각형 center-crop 썸네일을 자동 생성한다.
+추가로 400x400, 800x800 정사각형 center-crop 썸네일과 600px, 1000px 비율 유지 리사이즈 썸네일을 자동 생성한다.
 
 ### 17.2 ImageService 클래스
 
@@ -2032,7 +2129,7 @@ if (res.data.idx) {
 | `createSquareThumbnail(string $src, string $dest, int $size): bool` | 정사각형 center-crop 썸네일 생성 |
 | `generateSquareThumbnails(string $src, string $dir, string $baseName): void` | 400x400 + 800x800 두 개 생성 |
 | `createResizedThumbnail(string $src, string $dest, int $maxWidth): bool` | 비율 유지 리사이즈 썸네일 생성 |
-| `generateResizedThumbnails(string $src, string $dir, string $baseName): void` | 1000px 비율 유지 썸네일 생성 |
+| `generateResizedThumbnails(string $src, string $dir, string $baseName): void` | 600px, 1000px 비율 유지 썸네일 생성 |
 
 ### 17.3 처리 흐름
 
@@ -2048,6 +2145,8 @@ move_uploaded_file() → 원본 저장
   │        ↓
   │        400x400 정사각형 center-crop 썸네일 생성
   │        800x800 정사각형 center-crop 썸네일 생성
+  │        600px 비율 유지 리사이즈 썸네일 생성
+  │        1000px 비율 유지 리사이즈 썸네일 생성
   │        (실패 시 원본 복사로 에러 방지)
   │
   └─ NO → 원본 그대로 저장 (GIF, PDF, 비이미지 등)
@@ -2060,6 +2159,7 @@ uploads/{idx_member}/
 ├── abc123_1709876543.webp          ← 원본 (WebP 변환, 최대 1600px, 비율 유지)
 ├── 400x400-abc123_1709876543.webp  ← 400x400 정사각형 center-crop
 ├── 800x800-abc123_1709876543.webp  ← 800x800 정사각형 center-crop
+├── 600-abc123_1709876543.webp      ← 최대 600px 비율 유지 리사이즈
 ├── 1000-abc123_1709876543.webp     ← 최대 1000px 비율 유지 리사이즈
 └── def456_1709876600.gif           ← GIF는 원본 그대로 (썸네일 없음)
 ```
@@ -2072,7 +2172,7 @@ uploads/{idx_member}/
 | 품질 (quality) | 80% |
 | 원본 최대 너비 | 1600px (비율 유지 리사이즈) |
 | 정사각형 썸네일 | 400x400, 800x800 (center-crop) |
-| 비율 유지 썸네일 | 1000px 너비 (가로/세로 비율 유지) |
+| 비율 유지 썸네일 | 600px, 1000px 너비 (가로/세로 비율 유지) |
 | 변환 대상 | PNG, JPG/JPEG, WEBP, AVIF |
 | 변환 제외 | GIF (애니메이션 보존) |
 
@@ -2083,44 +2183,29 @@ uploads/{idx_member}/
 
 | 규칙 | 설명 |
 |------|------|
-| **썸네일 항상 존재** | Docker PHP 컨테이너에 GD 확장(JPEG, PNG, FreeType, WebP, AVIF)이 설치되어 있으므로, 이미지 업로드 시 썸네일(400x400, 800x800, 1000)이 반드시 생성된다 |
+| **썸네일 항상 존재** | Docker PHP 컨테이너에 GD 확장(JPEG, PNG, FreeType, WebP, AVIF)이 설치되어 있으므로, 이미지 업로드 시 썸네일(400x400, 800x800, 600, 1000)이 반드시 생성된다 |
 | **file_exists() 금지** | 이미지를 표시할 때 `/uploads/` 경로의 썸네일에 대해 `file_exists()`를 호출하지 않는다. 매 글마다 파일 시스템 호출은 성능 저하를 유발한다 |
-| **DB URL 신뢰** | `varchar_10`(400x400), `varchar_11`(800x800), `varchar_12`(1000) 또는 `uploads` 테이블의 `thumbnail_*_url` 컬럼에 저장된 URL을 그대로 사용한다 |
+| **DB URL 신뢰** | `uploads` 테이블의 `thumbnail_*_url` 컬럼에 저장된 URL을 그대로 사용한다 |
+| **동적 썸네일 생성** | 게시글의 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로 동적 생성한다. `varchar_10~12`에는 썸네일을 저장하지 않는다 |
 | **onerror 폴백** | 만약 예외적으로 썸네일이 없다면 HTML `<img>` 태그의 `onerror` 이벤트로 처리한다 (placeholder 표시) |
 
-### 🔴 varchar_10~12 커스텀 필드 충돌 주의
+### varchar_10~12 썸네일 저장 제거
 
-> **⛔ v6 레거시 글에서 `varchar_10`, `varchar_11`, `varchar_12`가 게시판별 커스텀 필드로 사용될 수 있다. ⛔**
-> **썸네일 URL을 사용할 때 반드시 URL 형태(`/uploads/` 또는 `http`)인지 검증해야 한다.**
-
-| 컬럼 | v7 용도 | v6 부동산 용도 | 충돌 여부 |
-|------|---------|---------------|----------|
-| `varchar_10` | 400x400 썸네일 | 사용 안 함 | 안전 |
-| `varchar_11` | 800x800 썸네일 | 사용 안 함 | 안전 |
-| `varchar_12` | 1000px 썸네일 | **UNIT_NUMBER (호수/동)** | **🔴 충돌!** |
-
-예: v6 부동산 글의 `varchar_12 = "1동"` → v7에서 `thumbnail_1000 = "1동"` → 이미지 URL로 사용 시 깨짐
-
-**올바른 사용 (URL 검증 필수):**
+> **varchar_10~12에는 더 이상 썸네일 URL을 저장하지 않는다.**
+> 이전에는 `PostService::setMediaFields()`에서 varchar_10(400x400), varchar_11(800x800), varchar_12(1000) 에 캐시했으나,
+> 부동산 카테고리에서 `varchar_12`가 "호수/동" 커스텀 필드와 충돌하는 문제가 있어 **완전 제거**되었다.
+>
+> 현재 모든 썸네일은 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로 **읽기 시점에 동적 생성**한다.
 
 ```php
-// ✅ URL 형태인지 검증 후 사용
-if (!empty($post['thumbnail_1000']) && (str_starts_with($post['thumbnail_1000'], '/uploads/') || str_starts_with($post['thumbnail_1000'], 'http'))) {
-    $_thumbnailUrl = $post['thumbnail_1000'];
-}
-```
+// ✅ 올바른 사용: varchar_17에서 동적 썸네일 생성
+use Philgo\Upload\ImageService;
 
-**잘못된 사용 (금지):**
-
-```php
-// ❌ URL 검증 없이 사용 — v6 커스텀 필드 값이 이미지 URL로 오인됨
-if (!empty($post['thumbnail_1000'])) {
-    $_thumbnailUrl = $post['thumbnail_1000'];
-}
-
-// ❌ file_exists()로 썸네일 존재 확인 — 성능 저하, 불필요
-if (!empty($post['thumbnail_1000']) && file_exists(ROOT_DIR . $post['thumbnail_1000'])) {
-    $_thumbnailUrl = $post['thumbnail_1000'];
+if (!empty($post->varchar_17) && str_starts_with($post->varchar_17, '/uploads/')) {
+    $ext = strtolower((string) pathinfo($post->varchar_17, PATHINFO_EXTENSION));
+    if (ImageService::isConvertible($ext)) {
+        $thumb400 = ImageService::buildThumbnailUrl($post->varchar_17, 400, 'square');
+    }
 }
 ```
 
@@ -2138,11 +2223,12 @@ if (!empty($post['thumbnail_1000']) && file_exists(ROOT_DIR . $post['thumbnail_1
   "url": "/uploads/123/abc123_1709876543.webp",
   "thumbnail_url_400": "/uploads/123/400x400-abc123_1709876543.webp",
   "thumbnail_url_800": "/uploads/123/800x800-abc123_1709876543.webp",
+  "thumbnail_url_600": "/uploads/123/600-abc123_1709876543.webp",
   "thumbnail_url_1000": "/uploads/123/1000-abc123_1709876543.webp"
 }
 ```
 
-GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800`, `thumbnail_url_1000`이 `null`이다.
+GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800`, `thumbnail_url_600`, `thumbnail_url_1000`이 `null`이다.
 
 ### 17.7 에러 처리
 
@@ -2156,7 +2242,7 @@ GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800
 
 ### 17.8 파일 삭제 시 썸네일 연동
 
-`UploadService::remove()`에서 원본 삭제 시 400x400, 800x800 정사각형 썸네일과 1000px 비율 유지 썸네일도 자동 삭제한다.
+`UploadService::remove()`에서 원본 삭제 시 400x400, 800x800 정사각형 썸네일과 600px, 1000px 비율 유지 썸네일도 자동 삭제한다.
 
 ### 17.9 PEST Unit Test
 
@@ -2205,6 +2291,7 @@ v7 시스템에서 **각 객체(글/코멘트/후기/기타 테이블)에 여러
 | `url` | 원본 이미지 URL | 자동 WebP 변환됨 |
 | `thumbnail_400x400_url` | 정사각형 썸네일 URL | 자동 생성 |
 | `thumbnail_800x800_url` | 정사각형 썸네일 URL | 자동 생성 |
+| `thumbnail_600_url` | 600px 비율 유지 썸네일 URL | 자동 생성 |
 | `thumbnail_1000_url` | 비율 유지 썸네일 URL | 자동 생성 |
 
 ### 18.4 실전 예시: 업체 방문 후기 사진
@@ -2321,6 +2408,7 @@ public static function deleteByAttached(string $module, string $code, int $attac
 | 사용자 커버 사진 | `'user'` | `'cover_photo'` | 프로필 커버 이미지 |
 | 업체 대표 사진 | `'company'` | `'main_photo'` | 업체 대표 이미지 |
 | 업체 갤러리 | `'company'` | `'gallery'` | 업체 사진 갤러리 |
+| 채팅 메시지 첨부 파일 | `'chat'` | `'message'` | 채팅 메시지에 첨부된 이미지/파일 (v7 Upload API로 업로드, Firebase Storage에서 변경됨) |
 
 > **새로운 기능에서 사진/파일 첨부가 필요하면**, 대상 테이블에 URL 컬럼을 추가하지 말고
 > 위 패턴을 따라 `module`과 `code`를 정의하여 uploads 테이블로 연결한다.

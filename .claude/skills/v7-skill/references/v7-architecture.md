@@ -1493,7 +1493,7 @@ ready(() => {
 | `Philgo\Utils\RequestUtils` | `lib/utils/RequestUtils.php` | `in()`, `http_param()`, `http_params()` | 클라이언트 요청 입력 처리 |
 | `Philgo\Utils\Db` | `lib/utils/Db.php` | `pdo()`, `db_select()`, `db_insert()` 등 | PDO 데이터베이스 연결 |
 | `Philgo\Utils\AuthService` | `lib/utils/AuthService.php` | `login()`, `get_user_from_session_id()`, `verify_login()` | 2경로 인증 (세션 + Firebase ID Token) |
-| `Philgo\Utils\FirebaseService` | `lib/utils/FirebaseService.php` | `verifyFirebaseToken()`, `config()->tokens` | Firebase ID Token 검증 유틸리티 |
+| `Philgo\Utils\FirebaseService` | `lib/utils/FirebaseService.php` | `verifyFirebaseToken()`, `config()->tokens` | Firebase 서비스 유틸리티 — ID Token 검증, Auth 사용자 조회, Realtime Database 접근 |
 | `Philgo\Utils\Debug` | `lib/utils/Debug.php` | `debug_log()` | 디버그 로그 기록 (`var/debug.log`) |
 
 ### 14.2 RequestUtils 클래스
@@ -1629,8 +1629,19 @@ AuthService::reset();
 
 **파일**: `lib/utils/FirebaseService.php` | **네임스페이스**: `Philgo\Utils\FirebaseService`
 
-Firebase ID Token 검증 전용 유틸리티. v7에서 boot.php 없이 독립적으로 동작한다.
-Kreait Firebase PHP SDK를 직접 사용하여 레거시 `verifyFirebaseToken()` 함수와 동일한 검증을 수행한다.
+Firebase 서비스 유틸리티. v7에서 boot.php 없이 독립적으로 동작한다.
+Kreait Firebase PHP SDK를 직접 사용하여 ID Token 검증, Auth 사용자 관리, Realtime Database 접근 등을 제공한다.
+
+**제공 메서드**:
+
+| 메서드 | 반환 타입 | 설명 |
+|--------|-----------|------|
+| `verifyIdToken(string $token)` | `string` (Firebase UID) | Firebase ID Token 검증. 테스트 토큰 우회 지원 |
+| `verifyIdTokenWithClaims(string $token)` | `array` | ID Token 검증 + claims(uid, email, name, picture) 반환 |
+| `factory()` | `Kreait\Firebase\Factory` | Kreait Firebase Factory 싱글톤. Auth, Database 등 여러 서비스 생성 가능 |
+| `getAuth()` | `Kreait\Firebase\Contract\Auth` | Firebase Auth 인스턴스 싱글톤. 사용자 조회, 커스텀 토큰 생성 등 |
+| `getDatabase()` | `Kreait\Firebase\Contract\Database` | Firebase Realtime Database 인스턴스 싱글톤. RTDB 읽기/쓰기 |
+| `reset()` | `void` | 싱글톤 인스턴스 초기화 (테스트용) |
 
 ```php
 namespace Philgo\Utils;
@@ -1643,14 +1654,37 @@ class FirebaseService
     /**
      * Firebase ID Token을 검증하고 Firebase UID를 반환한다.
      * 테스트 토큰이면 Firebase 인증 우회, 실제 토큰이면 Kreait SDK로 검증.
-     *
-     * @param string $token Firebase ID Token 또는 테스트 토큰
-     * @return string Firebase UID
-     * @throws \RuntimeException 토큰 검증 실패 시
      */
     public static function verifyIdToken(string $token): string { ... }
 
-    /** 싱글톤 초기화 (테스트용) */
+    /**
+     * Firebase ID Token을 검증하고 사용자 정보(claims)를 반환한다.
+     * 소셜 로그인 시 email, name, picture 등 추가 정보가 필요할 때 사용.
+     * @return array ['uid' => string, 'email' => string, 'name' => string, 'picture' => string]
+     */
+    public static function verifyIdTokenWithClaims(string $token): array { ... }
+
+    /**
+     * Kreait Firebase Factory 싱글톤 인스턴스를 반환한다.
+     * Auth, Database 등 여러 Firebase 서비스를 생성할 수 있는 Factory 제공.
+     * 항상 philgo 프로덕션 서비스 계정을 사용한다.
+     */
+    public static function factory(): Factory { ... }
+
+    /**
+     * Firebase Auth 인스턴스를 반환한다. (싱글톤)
+     * 사용자 조회(getUser), 커스텀 토큰 생성 등에 사용.
+     */
+    public static function getAuth(): \Kreait\Firebase\Contract\Auth { ... }
+
+    /**
+     * Firebase Realtime Database 인스턴스를 반환한다. (싱글톤)
+     * RTDB에 접근할 때 사용 (채팅 차단 동기화 등).
+     * PROD_DATABASE_URL 상수를 사용하여 프로덕션 RTDB에 연결.
+     */
+    public static function getDatabase(): \Kreait\Firebase\Contract\Database { ... }
+
+    /** 싱글톤 인스턴스를 초기화한다. (테스트용) */
     public static function reset(): void { ... }
 }
 ```
@@ -1659,12 +1693,24 @@ class FirebaseService
 ```php
 use Philgo\Utils\FirebaseService;
 
-// 테스트 토큰으로 검증
+// ID Token 검증 (UID만 필요한 경우)
 $uid = FirebaseService::verifyIdToken('LOCAL_BANANA_TOKEN');
 // → 'DA76oHESU0YnHo7i9lzu85vdirA2'
 
-// 실제 Firebase ID Token으로 검증
-$uid = FirebaseService::verifyIdToken($realFirebaseToken);
+// ID Token 검증 + claims (소셜 로그인 시 email, name 등 필요한 경우)
+$claims = FirebaseService::verifyIdTokenWithClaims($realFirebaseToken);
+// → ['uid' => '...', 'email' => 'user@gmail.com', 'name' => '홍길동', 'picture' => '...']
+
+// Firebase Auth 사용자 조회 (displayName, photoUrl, phoneNumber, provider 조회)
+$auth = FirebaseService::getAuth();
+$userRecord = $auth->getUser($uid);
+echo $userRecord->displayName;  // '홍길동'
+echo $userRecord->email;        // 'user@gmail.com'
+
+// Firebase Realtime Database 접근 (채팅 차단 동기화 등)
+$database = FirebaseService::getDatabase();
+$database->getReference('path/to/data')->set(['key' => 'value']);
+$snapshot = $database->getReference('path/to/data')->getSnapshot();
 ```
 
 > 테스트 토큰 목록, Firebase 프로젝트 설정, 핵심 소스코드는 → [api/user.md 섹션 5.5](api/user.md#55-firebaseservice-핵심-소스코드) 참조

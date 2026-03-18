@@ -41,7 +41,7 @@ v7 1:1 채팅 시스템은 **Firebase Realtime Database(RTDB)** 기반의 실시
 |------|------|
 | **렌더링 방식** | CSR (클라이언트 사이드 렌더링) — Vue.js 3 CDN + Firebase compat SDK |
 | **데이터 저장소** | Firebase Realtime Database + v7 API (사용자 정보, 즐겨찾기) |
-| **파일 저장소** | Firebase Storage |
+| **파일 저장소** | v7 Upload API (`v7apiUpload()` → `uploads` 테이블, 서버 저장) — 기존 Firebase Storage에서 변경됨. 이전 메시지의 Firebase Storage 절대 URL은 계속 정상 표시됨 |
 | **인증** | Firebase Auth (PHP 로그인 + Firebase Custom Token) |
 | **UI 프레임워크** | Web Awesome Pro (Bootstrap 미사용) |
 | **다크 모드** | 미적용 (라이트 모드 전용) |
@@ -153,11 +153,12 @@ v7ChatState.route = v7ChatRoute.list;    // 목록으로 돌아가기
 └──────────────────┘                       └────────────────────┘
                                                      ▲
       ┌────────────────────┐                         │
-      │  Firebase Storage  │                         │
-      │  /users/{uid}/...  │                         │
+      │  v7 Upload API     │                         │
+      │  v7apiUpload()     │                         │
+      │  uploads 테이블    │                         │
       └────────────────────┘                         │
               ▲                                      │
-              │ 파일 업로드                           │
+              │ 파일 업로드 (module='chat', code='message')
               └──────────────────────────────────────┘
 ```
 
@@ -773,9 +774,9 @@ v7api('bookmark.listByGroup', { idx_group: group.idx, entity_type: 'chat_room' }
 | 메서드명 | 설명 |
 |----------|------|
 | `triggerFileInput()` | 숨겨진 `<input type="file">` 클릭 트리거 |
-| `onFileSelected(e)` | 파일 선택 시 미리보기 생성 (이미지는 FileReader로 DataURL 생성) |
+| `onFileSelected(e)` | 파일 선택 시 **즉시** `v7apiUpload(file, 'chat', 'message', { onProgress })` 호출하여 업로드 시작. 각 파일별 진행률(`uploadPreviews[i].progress`)을 추적하고, 완료 시 서버 URL로 이미지 미리보기를 표시한다 |
 | `removeFile(idx)` | 선택된 파일 제거 |
-| `uploadFiles(files)` | Firebase Storage에 파일 순차 업로드 → URL 배열 반환 |
+| ~~`uploadFiles(files)`~~ | **더 이상 사용하지 않음** — `onFileSelected()`에서 즉시 업로드하므로 별도 업로드 메서드가 불필요해짐 |
 
 **이미지 전체화면 뷰어:**
 
@@ -1273,7 +1274,7 @@ if (otherUid) {
 | 23 | 파일 선택 (multiple 지원) | `chat-single-room.js` → `onFileSelected()` |
 | 24 | 이미지 파일 미리보기 (DataURL) | `chat-single-room.js` → `onFileSelected()` |
 | 25 | 파일 미리보기 제거 | `chat-single-room.js` → `removeFile()` |
-| 26 | Firebase Storage 업로드 (순차) | `chat-single-room.js` → `uploadFiles()` |
+| 26 | v7 Upload API 업로드 (순차) | `chat-single-room.js` → `uploadFiles()` → `v7apiUpload(file, "chat", "message")` |
 | 27 | 업로드 진행률 표시 (%) | `chat-single-room.js` → `uploadProgress` |
 | 28 | 이미지 첨부 렌더링 (max 200x200px) | 템플릿 `.v7chat-attach-image` |
 | 29 | 비디오 첨부 렌더링 (controls) | 템플릿 `.v7chat-attach-video` |
@@ -1502,33 +1503,48 @@ function v7ChatPlaySendSound() {
 ```
 (1) 사용자가 📎 버튼 클릭 → triggerFileInput() → <input type="file" multiple> 팝업
 (2) 파일 선택 → onFileSelected():
-    - selectedFiles 배열에 File 객체 추가
-    - 이미지이면 FileReader로 DataURL 생성 → uploadPreviews에 미리보기 추가
+    - 각 파일마다 uploadPreviews 배열에 미리보기 항목 추가 (progress: 0, url: null)
+    - 이미지이면 FileReader로 DataURL 생성 → 미리보기 이미지 표시
     - 비이미지이면 파일명만 표시
+    - **즉시** v7apiUpload(file, 'chat', 'message', { onProgress }) 호출하여 업로드 시작
+    - onProgress 콜백으로 각 파일별 진행률(%) 실시간 업데이트
+    - 업로드 완료 시 서버 URL로 미리보기 이미지 교체 + done 플래그 설정
+    - uploads 테이블에 module='chat', code='message'로 메타데이터 저장
 (3) 전송 버튼 클릭 → sendMessage():
-    - 파일이 있으면 uploadFiles() 호출
-    - Firebase Storage에 순차 업로드 (진행률 표시)
-    - 모든 업로드 완료 후 URL 배열을 포함한 메시지 전송
+    - uploadPreviews에서 완료된(done) 파일의 URL 배열 수집
+    - 텍스트 + URL 배열을 포함한 메시지 전송
 (4) Firebase RTDB에 메시지 저장 (urls 필드에 URL 배열)
 ```
 
-### 12.2 Firebase Storage 업로드 경로
+> **핵심 변경점**: 기존에는 전송 버튼 클릭 시 `uploadFiles()`를 호출하여 일괄 업로드했으나,
+> 현재는 **파일 선택 즉시 업로드가 시작**되어 전송 버튼 클릭 전에 이미 업로드가 완료된다.
+> 이를 통해 사용자가 메시지 입력 중에도 파일 업로드가 백그라운드로 진행되어 UX가 개선된다.
 
-```
-users/{myUid}/{timestamp}-{filename}
+> **하위 호환성**: 기존 Firebase Storage URL로 저장된 이전 메시지들은 절대 URL이므로 계속 정상 표시된다.
+> 새 메시지부터 v7 Upload API의 상대 경로 URL이 사용된다.
+
+### 12.2 v7 Upload API 업로드 방식
+
+채팅에서 파일 업로드 시 `v7apiUpload(file, 'chat', 'message')` 함수를 사용한다.
+서버의 `uploads` 테이블에 `module='chat'`, `code='message'`로 메타데이터가 저장된다.
+
+```javascript
+// 파일 업로드 예시
+const result = await v7apiUpload(file, 'chat', 'message');
+// result.url → 업로드된 파일의 상대 경로 URL
 ```
 
-예시: `users/abc123/1710000000000-photo.jpg`
+> **변경 전 (Firebase Storage)**: `firebase.storage().ref().child('users/{uid}/{timestamp}-{filename}').put(file)` → `getDownloadURL()`
+> **변경 후 (v7 Upload API)**: `v7apiUpload(file, 'chat', 'message')` → `result.url` (상대 경로)
 
 ### 12.3 업로드 진행률
 
 ```javascript
-// totalBytes: 모든 파일의 총 바이트
-// uploadedBytes: 이미 업로드된 바이트
-// snap.bytesTransferred: 현재 파일의 전송된 바이트
-var progress = uploadedBytes + snap.bytesTransferred;
-self.uploadProgress = totalBytes > 0
-    ? Math.round((progress / totalBytes) * 100)
+// 여러 파일 순차 업로드 시 진행률 계산
+// completedCount: 완료된 파일 수
+// totalCount: 전체 파일 수
+self.uploadProgress = totalCount > 0
+    ? Math.round((completedCount / totalCount) * 100)
     : 0;
 ```
 

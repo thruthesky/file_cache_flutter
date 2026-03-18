@@ -1,5 +1,20 @@
+# Pub examples
+example/lib/firebase_options.dart
+example/.dart_tool
+example/.idea
+example/android
+example/build
+example/ios
+example/macos
+example/test
+example/README.md
+example/analysis_options.yaml
+example/pubspec.lock
+
+
+
+
 # Miscellaneous
-example/
 *.class
 *.log
 *.pyc
@@ -27,6 +42,4 @@ migrate_working_dir/
 /pubspec.lock
 **/doc/api/
 .dart_tool/
-.flutter-plugins-dependencies
-/build/
-/coverage/
+build/

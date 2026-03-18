@@ -1371,6 +1371,7 @@ CREATE TABLE `uploads` (
   `url` varchar(500) NOT NULL DEFAULT '' COMMENT '다운로드 URL (상대경로, 예: /uploads/123/abc.jpg)',
   `thumbnail_400x400_url` varchar(500) NOT NULL DEFAULT '',
   `thumbnail_800x800_url` varchar(500) NOT NULL DEFAULT '',
+  `thumbnail_600_url` varchar(500) NOT NULL DEFAULT '',
   `thumbnail_1000_url` varchar(500) NOT NULL DEFAULT '',
   `attached_to` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '파일 소유/첨부 대상 (0=미사용, 글 번호, 코멘트 번호, 회원번호=해당 회원에게 전송됨)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='v7 파일 업로드 메타데이터';

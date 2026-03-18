@@ -36,9 +36,15 @@
    - [기본 댓글 작성 폼 — 접기/펼치기 (Collapsed/Expanded)](#기본-댓글-작성-폼--접기펼치기-collapsedexpanded)
    - [대댓글(답글) 작성 폼 — 개선된 디자인](#대댓글답글-작성-폼--개선된-디자인)
    - [코멘트 디자인 수정 시 주의사항](#코멘트-디자인-수정-시-주의사항)
+   - [코멘트 앵커 스크롤 (#comment-{idx})](#코멘트-앵커-스크롤-comment-idx)
 15. [사용자 호버 드롭다운 (user-hover-dropdown)](#사용자-호버-드롭다운-user-hover-dropdown)
 16. [신고(Report) 기능](#신고report-기능)
 17. [부동산 게시판 (real_estate)](#부동산-게시판-real_estate) → [별도 문서](v7-post-real-estate.md)
+18. [유튜브 임베드 시스템](#유튜브-임베드-시스템)
+19. [오늘의 글 (todayInHistory)](#오늘의-글-todayinhistory)
+20. [인기 게시글 페이지 (popular)](#인기-게시글-페이지-popular)
+21. [최근 게시글 페이지 (latest)](#최근-게시글-페이지-latest)
+22. [최근 사진 페이지 (photo/latest)](#최근-사진-페이지-photolatest)
 
 ---
 
@@ -108,6 +114,8 @@ GET https://local.philgo.com/api.php?method=post.get&idx=12345
 
 **응답**: PostEntity 배열 (toArray())
 
+> **사용자 상호작용 상태 포함**: 로그인한 사용자의 경우, 응답에 `liked`, `bookmarked`, `reported`, `blocked` 필드가 포함된다. 비로그인 시 모두 `false`. -> [사용자 상호작용 상태 필드 (런타임)](#사용자-상호작용-상태-필드-런타임) 참조
+
 ---
 
 ### post.list — 게시글 목록
@@ -125,7 +133,7 @@ GET https://local.philgo.com/api.php?method=post.list&post_id=wanted&category=jo
 | idx_member | int | 조건부 | 작성자 회원 번호 — 특정 사용자의 글만 조회 (`post_id` 또는 `idx_member` 중 하나 필수) |
 | category | string | X | 카테고리 필터 |
 | orderby | string | X | 정렬 (기본: stamp DESC) |
-| limit | int | X | 최대 조회 수 (기본: 20, 최대: 100) |
+| limit | int | X | 최대 조회 수 (기본: 20, 최대: 256). 256을 초과하면 자동으로 256으로 제한됨 (`if ($limit > 256) $limit = 256;`) |
 | offset | int | X | 오프셋 (기본: 0) |
 
 > **`post_id`와 `idx_member` 조합 규칙**: 둘 다 없으면 RuntimeException 발생. `post_id`만 전달하면 해당 게시판 전체 글 조회. `idx_member`만 전달하면 전체 게시판에서 해당 사용자의 글만 조회. 둘 다 전달하면 특정 게시판에서 특정 사용자의 글만 조회.
@@ -141,6 +149,8 @@ GET https://local.philgo.com/api.php?method=post.list&post_id=wanted&category=jo
   "total": 42
 }
 ```
+
+> **사용자 상호작용 상태 포함**: 각 PostEntity에 `liked`, `bookmarked`, `reported`, `blocked` 필드가 포함된다. -> [사용자 상호작용 상태 필드 (런타임)](#사용자-상호작용-상태-필드-런타임) 참조
 
 ---
 
@@ -174,51 +184,77 @@ GET https://local.philgo.com/api.php?method=post.create&session_id=xxx&post_id=f
 | 필드 | 용도 | 설정 조건 |
 |------|------|-----------|
 | `has_image` | 이미지 포함 여부 (`'y'` 또는 `''`) | files에 이미지가 있으면 `'y'` |
-| `varchar_17` | 첫 번째 이미지 URL | files에서 첫 번째 이미지 URL |
-| `varchar_10` | 400x400 정사각형 center-crop 썸네일 URL | uploads 테이블에서 조회 |
-| `varchar_11` | 800x800 정사각형 center-crop 썸네일 URL | uploads 테이블에서 조회 |
-| `varchar_12` | 1000px 비율 유지 리사이즈 썸네일 URL | uploads 테이블에서 조회 |
+| `varchar_17` | 첫 번째 이미지 원본 URL | files에서 첫 번째 이미지 URL |
 | `has_video` | 동영상 포함 여부 (`'y'` 또는 `''`) | files에 동영상이 있으면 `'y'` |
 | `varchar_18` | 첫 번째 동영상 URL | files에서 첫 번째 동영상 URL |
+| `has_youtube` | 유튜브 URL 포함 여부 (`'y'` 또는 `''`) | content에 유튜브 URL이 있으면 `'y'` |
+| `varchar_19` | 첫 번째 유튜브 URL | content에서 추출한 첫 번째 유튜브 URL |
 
-**썸네일 URL 조회 로직** (핵심):
+> **썸네일 URL 동적 생성 방식 (varchar_10~12 저장 제거)**:
+>
+> 이전에는 `varchar_10~12`에 썸네일 URL을 캐시 저장했으나, **부동산 카테고리에서 `varchar_12`가
+> "호수/동" 커스텀 필드와 충돌**하는 문제가 있었다. 이를 근본적으로 해결하기 위해
+> `setMediaFields()`에서 varchar_10~12 저장 로직을 **완전히 제거**하였다.
+>
+> 현재 모든 썸네일은 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로
+> **읽기 시점에 동적으로 생성**한다. DB에 썸네일 URL을 별도 저장하지 않는다.
+
+**썸네일 URL 생성 방식**:
 
 1. `files` 파라미터를 콤마로 분리하여 파일 목록 생성
 2. 파일 목록에서 **첫 번째 이미지**를 찾음 (jpg, jpeg, png, gif, webp, bmp, svg, avif)
-3. 첫 번째 이미지가 `/uploads/` 로 시작하면 → `UploadRepository::findByUrl()`로 uploads 테이블 검색
-4. **DB 조회 우선**: uploads 레코드가 있고 `thumbnail_400x400_url`이 비어있지 않으면 → DB 값 사용
-5. **폴백 처리**: uploads 레코드가 없거나, 레코드는 있지만 thumbnail URL이 비어있는 기존 파일 → `ImageService::buildThumbnailUrl()`로 URL 패턴 기반 생성 (변환 가능한 포맷만: jpg, jpeg, png, webp, bmp, avif)
-6. `/uploads/` 로 시작하지 않는 URL(레거시 외부 URL) → varchar_10~12는 빈 문자열
-7. GIF는 변환 불가이므로 uploads에 썸네일 없고, 폴백에서도 `isConvertible('gif')` = false → 빈 문자열
+3. 첫 번째 이미지 URL을 `varchar_17`에 저장
+4. 썸네일이 필요한 위젯/페이지에서 `varchar_17` 값을 읽어 `ImageService::buildThumbnailUrl()`로 동적 생성
 
 ```php
 // PostService::setMediaFields() 핵심 코드
-$data['varchar_10'] = '';
-$data['varchar_11'] = '';
-$data['varchar_12'] = '';
-if ($firstImage !== null && str_starts_with($firstImage, '/uploads/')) {
-    $uploadEntity = UploadRepository::findByUrl($firstImage);
-    if ($uploadEntity !== null && !empty($uploadEntity->thumbnail_400x400_url)) {
-        // uploads 테이블에 썸네일 URL이 저장되어 있으면 그대로 사용
-        $data['varchar_10'] = $uploadEntity->thumbnail_400x400_url;
-        $data['varchar_11'] = $uploadEntity->thumbnail_800x800_url;
-        $data['varchar_12'] = $uploadEntity->thumbnail_1000_url;
-    } else {
-        // uploads 테이블에 썸네일 URL이 없는 경우 (기존 업로드 파일)
-        // URL 패턴으로 썸네일 URL을 생성하여 폴백
-        $imgExt = strtolower(pathinfo($firstImage, PATHINFO_EXTENSION));
-        if (ImageService::isConvertible($imgExt)) {
-            $data['varchar_10'] = ImageService::buildThumbnailUrl($firstImage, 400, 'square');
-            $data['varchar_11'] = ImageService::buildThumbnailUrl($firstImage, 800, 'square');
-            $data['varchar_12'] = ImageService::buildThumbnailUrl($firstImage, 1000, 'resize');
-        }
+// varchar_17에 원본 이미지 URL만 저장.
+// varchar_10~12에 썸네일 URL을 저장하지 않음.
+// 읽기 시점에 ImageService::buildThumbnailUrl()로 동적 생성.
+if ($firstImage !== null) {
+    $data['varchar_17'] = $firstImage;
+    $data['has_image'] = 'y';
+}
+```
+
+```php
+// 위젯에서 썸네일 URL 동적 생성 예시
+use Philgo\Upload\ImageService;
+
+$originalUrl = $post->varchar_17; // 원본 이미지 URL
+if (!empty($originalUrl) && str_starts_with($originalUrl, '/uploads/')) {
+    $ext = strtolower(pathinfo($originalUrl, PATHINFO_EXTENSION));
+    if (ImageService::isConvertible($ext)) {
+        $thumb400 = ImageService::buildThumbnailUrl($originalUrl, 400, 'square');
+        $thumb800 = ImageService::buildThumbnailUrl($originalUrl, 800, 'square');
+        $thumb1000 = ImageService::buildThumbnailUrl($originalUrl, 1000, 'resize');
     }
 }
 ```
 
-> **중요**: 여러 이미지가 업로드된 경우, **오직 첫 번째 이미지**의 썸네일만 varchar_10~12에 저장된다.
+**v4 레거시 이미지 폴백** (`no_of_first_image`):
 
-**PostEntity 편의 속성**: `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성으로 varchar_10~12에 직접 접근 가능하다. `toArray()` 출력에도 포함된다.
+`varchar_17`이나 `thumbnail_400x400`이 모두 비어 있는 오래된 글(v4 시대 데이터)의 경우,
+`no_of_first_image` 필드를 사용하여 이미지 URL을 직접 생성하는 폴백 로직이 있다.
+이 로직은 **타일 레이아웃**(`post-list-tile.php`)과 **Masonry 레이아웃**(`post-list-masonry.php`) 양쪽에 모두 적용되어 있다.
+
+```php
+// v4 레거시 폴백: no_of_first_image로 이미지 URL 생성
+if (empty($_thumbnailUrl) && !empty($post['no_of_first_image'])) {
+    $nofi = (int)$post['no_of_first_image'];
+    if ($nofi > 0) {
+        $_thumbnailUrl = 'https://file.philgo.com/data/upload/' . ($nofi % 10) . '/' . $nofi;
+    }
+}
+```
+
+| 우선순위 | 소스 | 설명 |
+|---------|------|------|
+| 1순위 | `thumbnail_400x400` (varchar_10~12) | 레거시 캐시 썸네일 (있는 경우) |
+| 2순위 | `varchar_17` | v7 원본 이미지 URL → `ImageService::buildThumbnailUrl()`로 동적 생성 |
+| 3순위 | `no_of_first_image` | v4 레거시 폴백 — `https://file.philgo.com/data/upload/{idx%10}/{idx}` |
+
+**PostEntity 편의 속성**: `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성은 varchar_10~12에 매핑되어 있으며, 레거시 데이터 호환용으로 유지된다. 새 글에서는 이 속성들이 빈 값이며, 썸네일이 필요하면 `varchar_17`에서 `ImageService::buildThumbnailUrl()`로 동적 생성해야 한다.
 
 **포인트 처리**:
 - sf_post_config.point_write 설정에 따라 자동 포인트 지급
@@ -407,10 +443,36 @@ GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
 | user_name | string | 작성자 이름/닉네임 | sf_post_data.user_name (글 생성 시 sf_member.nickname에서 복사) |
 | user_email | string | 작성자 이메일 | sf_post_data.user_email |
 | user_photo_url | string | 작성자 프로필 사진 URL | sf_member.photo_url (LEFT JOIN으로 실시간 조회) |
-| user_nickname | string | 작성자 현재 닉네임 (최신값) | sf_member.nickname (LEFT JOIN으로 실시간 조회) |
-| user_firebase_uid | string | 작성자 Firebase UID | sf_member.firebase_uid (LEFT JOIN으로 실시간 조회) |
 
-> **참고**: `user_photo_url`, `user_nickname`, `user_firebase_uid`는 sf_post_data 테이블에 저장되지 않고, `findByIdx()`, `findAll()`, `findComments()` 조회 시 `sf_member` 테이블과 LEFT JOIN하여 실시간으로 가져온다. 따라서 사용자가 프로필 사진이나 닉네임을 변경하면 즉시 반영된다. `user_name`은 글 생성 시점에 sf_post_data에 복사된 값이고, `user_nickname`은 sf_member에서 실시간으로 가져오는 최신 닉네임이다.
+> **참고**: `user_photo_url`은 sf_post_data 테이블에 저장되지 않고, `findByIdx()`, `findAll()`, `findComments()` 조회 시 `sf_member` 테이블과 LEFT JOIN하여 실시간으로 가져온다. 따라서 사용자가 프로필 사진을 변경하면 즉시 반영된다.
+
+### 사용자 상호작용 상태 필드 (런타임)
+
+`PostService::enrichUserInteractions()`에서 설정되는 런타임 속성이다.
+`get()`, `list()`, `commentList()` API 응답의 각 게시글/코멘트에 포함된다.
+비로그인 시 모두 `false`로 반환된다.
+
+| 필드 | 타입 | 설명 | 데이터 소스 |
+|------|------|------|-------------|
+| liked | bool | 현재 사용자가 좋아요 했는지 | sf_post_vote_history 테이블 (`PostRepository::getVotedIdxsByMember()`) |
+| bookmarked | bool | 현재 사용자가 즐겨찾기 했는지 | bookmarks 테이블 (`BookmarkService::getBookmarkedIdxs()`) |
+| reported | bool | 현재 사용자가 신고 했는지 | text_10 필드 (쉼표 구분 신고자 idx 목록에서 파싱) |
+| blocked | bool | 현재 사용자가 작성자를 차단했는지 | sf_member_blocks 테이블 (`PostRepository::getBlockedAuthorIdxs()`) |
+
+**구현 파일**:
+
+| 파일 | 역할 |
+|------|------|
+| `lib/post/PostEntity.php` | `liked`, `bookmarked`, `reported`, `blocked` 런타임 속성 선언 (기본값 `false`), `toArray()`에서 응답에 포함 |
+| `lib/post/PostRepository.php` | `getVotedIdxsByMember()` -- 좋아요 idx 일괄 조회, `getBlockedAuthorIdxs()` -- 차단 작성자 idx 일괄 조회 |
+| `lib/post/PostService.php` | `enrichUserInteractions()` -- 4가지 상태를 일괄 조회하여 각 PostEntity에 설정 |
+
+**동작 방식**:
+
+1. `enrichUserInteractions()`가 전달받은 PostEntity 배열에서 글/코멘트 idx와 작성자 idx를 수집
+2. 좋아요, 즐겨찾기(post+comment 타입), 차단 여부를 각각 일괄 조회 (N+1 쿼리 방지)
+3. 신고 여부는 각 PostEntity의 `text_10` 필드를 파싱하여 확인
+4. 조회 결과를 각 PostEntity의 런타임 속성에 설정
 
 ### 계산 필드 (toArray()에서 자동 추가)
 
@@ -841,6 +903,25 @@ if ($_v7LoginUser) {
 | `v7/widgets/user/user-hover-dropdown.php` | 사용자 아바타/닉네임 호버 드롭다운 위젯 |
 | `v7/widgets/user/user-hover-dropdown.css` | 드롭다운 스타일 (hover/모바일/차단/관리자) |
 | `v7/widgets/user/user-hover-dropdown.js` | 모바일 토글 + 차단 버튼 이벤트 처리 |
+
+### URL 파라미터 전달 규칙 (post_id/category 유지)
+
+글 작성/수정 후 글 보기 페이지로 이동하거나, 글 보기 페이지에서 수정 페이지로 이동할 때,
+**반드시 `post_id`와 `category` 파라미터를 URL에 포함**해야 한다.
+이 파라미터가 누락되면 브레드크럼 네비게이션에 카테고리가 표시되지 않는다.
+
+| 흐름 | URL 형식 | 파일 |
+|------|----------|------|
+| 글 작성/수정 완료 -> 글 보기 | `/post/view?idx=N&post_id=XXX&category=YYY` | `v7/js/post-form.js` |
+| 글 보기 -> 수정 페이지 | `/post/update?idx=N&post_id=XXX&category=YYY` | `v7/widgets/post/view/post-view-default.php` |
+| 수정 페이지 -> Vue 앱 전달 | `data-post-id`, `data-category` 속성 | `v7/post/update.php` |
+
+**핵심 규칙:**
+
+- `post-form.js`에서 redirect 시 `this.postId`와 `this.category`를 URL에 `encodeURIComponent()`로 추가
+- `post-view-default.php`의 수정 버튼(`data-edit-url`)에 `post_id`/`category` 포함
+- `update.php`에서 `$route->query('post_id')`, `$route->query('category')`로 파라미터를 받아 `data-*` 속성으로 Vue 앱에 전달
+- `view.php`에서 `$effectiveCategory`는 URL 파라미터가 없으면 `$post->category`로 fallback하여 하단 목록과 브레드크럼에 사용
 
 ### 글 헤더 디자인
 
@@ -1496,6 +1577,8 @@ GET /api.php?method=post.commentList&idx_root=12345
 
 **응답**: PostEntity 배열 (list_order DESC 정렬)
 
+> **사용자 상호작용 상태 포함**: 각 코멘트에 `liked`, `bookmarked`, `reported`, `blocked` 필드가 포함된다. -> [사용자 상호작용 상태 필드 (런타임)](#사용자-상호작용-상태-필드-런타임) 참조
+
 #### post.commentUpdate -- 코멘트 수정
 
 인증 필요 (작성자 또는 관리자).
@@ -2093,6 +2176,99 @@ document.addEventListener('click', function (e) {
 | **adjustThreadLines() 재호출 필수** | 코멘트 추가/삭제/접기/펼치기 후 반드시 `requestAnimationFrame(adjustThreadLines)` 또는 `window.adjustThreadLines()` 호출하여 세로선 높이를 재계산해야 한다 |
 | **user-hover-dropdown 위젯 적용** | 코멘트 아바타(`.comment-avatar-col`)와 닉네임(`.post-comment-header`)에 `renderUserHoverDropdown()` 위젯을 적용하여 호버 드롭다운 메뉴를 표시한다 |
 
+#### 코멘트 앵커 스크롤 (#comment-{idx})
+
+글 읽기 페이지(`v7/post/view.php`)에서 URL 해시를 통해 특정 코멘트로 직접 스크롤하는 기능이다.
+사이드바 최근 댓글, 최근 댓글 목록 페이지, 공개 프로필, 관리자 페이지 등에서 코멘트 링크를 클릭하면 해당 코멘트 위치로 자동 이동한다.
+
+##### 앵커 형식
+
+```
+#comment-{idx}
+```
+
+- `{idx}`는 `sf_post_data.idx` 값 (코멘트의 고유 식별자)
+- 예시: `#comment-12345`, `#comment-99876`
+
+##### HTML 구조
+
+각 코멘트 노드(`.comment-node`)에 `id="comment-{idx}"` 속성을 추가하여 앵커 타겟으로 사용한다.
+
+```html
+<!-- PHP renderCommentThread()에서 렌더링 -->
+<div class="comment-node has-children" id="comment-<?= $comment->idx ?>">
+    <div class="comment-row">...</div>
+    <div class="thread-line">...</div>
+    <div class="thread-children">...</div>
+</div>
+```
+
+##### 자동 스크롤 + 하이라이트 동작
+
+페이지 로드 시 URL 해시에 `#comment-{idx}` 패턴이 있으면:
+
+1. **스크롤**: 해당 코멘트 요소를 뷰포트 중앙으로 부드럽게 스크롤 (`scrollIntoView({ behavior: 'smooth', block: 'center' })`)
+2. **하이라이트**: 코멘트에 `.comment-highlight` 클래스를 추가하여 시각적으로 강조 표시
+3. **하이라이트 해제**: 일정 시간(약 2~3초) 후 하이라이트 클래스를 자동 제거
+
+##### 하이라이트 CSS
+
+```css
+/* 코멘트 앵커 하이라이트 애니메이션 */
+.comment-node.comment-highlight > .comment-row {
+    background-color: rgba(59, 130, 246, 0.1);  /* 블루 계열 반투명 배경 */
+    border-radius: 6px;
+    transition: background-color 0.5s ease;
+}
+```
+
+##### 앵커 링크를 사용하는 페이지
+
+| 페이지 | 파일 경로 | 링크 형식 |
+|--------|-----------|-----------|
+| **사이드바 최근 댓글** | `v7/widgets/sidebar/latest-comments.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+| **최근 댓글 목록** | `v7/post/latest-comments.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+| **공개 프로필** | `v7/user/public-profile.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+| **관리자 코멘트 페이지** | `v7/admin/comments.php` | `url()->post->view($parentIdx) . '#comment-' . $comment->idx` |
+
+> `$parentIdx`는 코멘트가 속한 최상위 게시글의 `idx` (코멘트의 `root_idx` 또는 게시글의 `idx`)
+
+##### JavaScript 구현
+
+글 읽기 페이지(`v7/post/view.php`)의 JavaScript에서 페이지 로드 시 해시를 감지한다.
+
+```javascript
+// 코멘트 앵커 스크롤 처리
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#comment-')) {
+        const target = document.querySelector(hash);
+        if (target) {
+            // 부드러운 스크롤
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);  // DOM 렌더링 완료 대기
+
+            // 하이라이트 효과
+            target.classList.add('comment-highlight');
+            setTimeout(() => {
+                target.classList.remove('comment-highlight');
+            }, 3000);  // 3초 후 하이라이트 해제
+        }
+    }
+});
+```
+
+##### 주의사항
+
+| 규칙 | 설명 |
+|------|------|
+| **id 형식 고정** | 코멘트 노드의 id는 반드시 `comment-{idx}` 형식이어야 한다. 다른 형식(`c-{idx}`, `cmt-{idx}` 등) 사용 금지 |
+| **scrollIntoView block: 'center'** | 코멘트를 뷰포트 **중앙**에 위치시킨다. `'start'`를 사용하면 탑바에 가려질 수 있다 |
+| **setTimeout 지연** | DOM 렌더링과 adjustThreadLines() 실행 완료 후 스크롤해야 하므로 약간의 지연(300ms)을 둔다 |
+| **접힌 코멘트 처리** | 앵커 대상 코멘트가 접힌(collapsed) 상태인 경우, 부모 노드를 펼친 후 스크롤해야 한다 |
+| **블루 테마 하이라이트** | 하이라이트 색상은 블루 계열(`rgba(59, 130, 246, ...)`)을 사용한다. 빨간색 금지 |
+
 ---
 
 ## 신고(Report) 기능
@@ -2234,3 +2410,353 @@ PostService::listReportedDetailed() ← v7/admin/reports.php에서 직접 호출
 상세 문서는 별도 파일로 분리되어 있다.
 
 → **[v7-post-real-estate.md](v7-post-real-estate.md)** 참조
+
+---
+
+## 유튜브 임베드 시스템
+
+글 내용(content)에 포함된 유튜브 URL을 자동 감지하여, 글 보기에서는 임베드 플레이어로 변환하고, 글 목록에서는 유튜브 썸네일/아이콘을 표시하는 시스템이다.
+
+### 아키텍처
+
+```
+글 생성/수정 시:
+  PostService::create()/update()
+    → setYoutubeFields()
+      → has_youtube_url() (lib/youtube.functions.php)
+      → get_first_youtube_url() (lib/youtube.functions.php)
+      → has_youtube='y', varchar_19=첫 번째 유튜브 URL 저장
+
+글 보기 시:
+  v7/widgets/post/view/post-view-default.php
+    → v7_replace_youtube_urls_with_player() (v7/post/view.php)
+      → embed_youtube_player() (lib/youtube.functions.php)
+      → Shorts(9:16) / 일반(16:9) 비율 자동 구분하여 iframe 렌더링
+
+글 목록 (Masonry):
+  v7/widgets/post/list/post-list-masonry.php
+    → has_youtube + varchar_19 확인
+    → _v7MasonryYoutubeThumbnail()로 YouTube 썸네일 이미지 표시
+    → 유튜브 재생 아이콘 오버레이 (fa-brands fa-youtube)
+
+글 목록 (Tile):
+  v7/widgets/post/list/post-list-tile.php
+    → has_youtube 확인
+    → YouTube 아이콘 표시 (fa-brands fa-youtube, #ff0000)
+```
+
+### DB 필드
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `has_youtube` | varchar | 유튜브 URL 포함 여부. `'y'` 또는 빈 문자열 |
+| `varchar_19` | varchar | 글 내용에서 추출한 **첫 번째** 유튜브 URL (원본 URL 그대로 저장) |
+
+### 백엔드: PostService::setYoutubeFields()
+
+글 생성(`create()`) 및 수정(`update()`) 시 자동으로 호출된다.
+
+```php
+// PostService.php — setYoutubeFields() 핵심 코드
+private static function setYoutubeFields(array &$data): void
+{
+    require_once ROOT_DIR . '/lib/youtube.functions.php';
+    require_once ROOT_DIR . '/lib/file.functions.php';
+
+    $content = $data['content'] ?? '';
+
+    if (!empty($content) && has_youtube_url($content)) {
+        $data['has_youtube'] = 'y';
+        $data['varchar_19'] = get_first_youtube_url($content) ?? '';
+    } else {
+        $data['has_youtube'] = '';
+        $data['varchar_19'] = '';
+    }
+}
+```
+
+- `create()`: 항상 `setYoutubeFields()` 호출
+- `update()`: `$input['content']`가 있을 때만 호출 (내용 수정 시에만)
+
+### 프론트엔드: 글 보기 — 유튜브 플레이어 자동 변환
+
+`v7/post/view.php`에 정의된 `v7_replace_youtube_urls_with_player()` 함수가 텍스트 내 유튜브 URL을 찾아 `embed_youtube_player()` HTML로 교체한다.
+
+**처리 순서** (`post-view-default.php`):
+1. `htmlspecialchars()` → HTML 이스케이프
+2. `nl2br()` → 줄바꿈 처리
+3. 볼드(`**...**`) → `<strong>` 변환
+4. **`v7_replace_youtube_urls_with_player()`** → 유튜브 URL → iframe 플레이어
+5. `linkify_urls()` → 나머지 URL을 `<a>` 태그로 변환
+
+**지원 URL 패턴**:
+- `https://www.youtube.com/watch?v=VIDEO_ID`
+- `https://youtu.be/VIDEO_ID`
+- `https://www.youtube.com/shorts/VIDEO_ID`
+- `https://m.youtube.com/watch?v=VIDEO_ID`
+- `https://www.youtube.com/embed/VIDEO_ID`
+
+**Shorts(9:16) vs 일반(16:9) 자동 구분**:
+
+`embed_youtube_player()` 함수가 `is_shorts_url()`로 Shorts 여부를 판별하여 비율을 자동 결정한다.
+
+| 유형 | 비율 | max-width | padding-bottom |
+|------|------|-----------|----------------|
+| 일반 동영상 | 16:9 | 100% | 56.25% |
+| YouTube Shorts | 9:16 | 400px | 177.78% |
+
+### 프론트엔드: 글 목록 — 유튜브 썸네일/아이콘
+
+#### Masonry 레이아웃 (`post-list-masonry.php`)
+
+유튜브 썸네일은 이미지 URL 결정 우선순위의 **6단계**로 적용된다:
+
+| 우선순위 | 소스 | 설명 |
+|---------|------|------|
+| 1~5순위 | 기존 이미지 소스 | varchar_17, files, thumbnail, v4 레거시 등 |
+| **6순위** | `varchar_19` (유튜브 URL) | 이미지가 없지만 유튜브 URL이 있는 경우 `_v7MasonryYoutubeThumbnail()`로 썸네일 생성 |
+
+```php
+// 6단계: 유튜브 썸네일 (이미지가 없지만 유튜브 URL이 있는 경우)
+if (empty($_thumbnailUrl) && $_hasYoutube && !empty($post['varchar_19'])) {
+    $_thumbnailUrl = _v7MasonryYoutubeThumbnail($post['varchar_19']);
+}
+```
+
+`_v7MasonryYoutubeThumbnail()` 함수는 유튜브 URL에서 video ID를 추출하여 YouTube 썸네일 URL(`https://img.youtube.com/vi/{VIDEO_ID}/mqdefault.jpg`, 320x180)을 반환한다.
+
+유튜브 썸네일 위에는 **재생 아이콘 오버레이**(`.v7-masonry-youtube-overlay`)가 표시된다:
+
+```html
+<?php if ($_hasYoutube): ?>
+    <div class="v7-masonry-youtube-overlay">
+        <i class="fa-brands fa-youtube"></i>
+    </div>
+<?php endif; ?>
+```
+
+이미지가 전혀 없고 유튜브만 있는 경우에는 YouTube 플레이스홀더가 표시된다:
+
+```html
+<div class="v7-masonry-no-image v7-masonry-youtube-placeholder">
+    <i class="fa-brands fa-youtube" style="font-size: 1.5rem; color: #ff0000; opacity: 0.7;"></i>
+    <span>YouTube</span>
+</div>
+```
+
+#### Tile 레이아웃 (`post-list-tile.php`)
+
+유튜브 글에는 제목 앞에 YouTube 아이콘이 표시된다:
+
+```html
+<?php if (!empty($post['has_youtube'])): ?>
+    <i class="fa-brands fa-youtube" style="color:#ff0000; margin-right:4px; font-size:0.85em;"></i>
+<?php endif; ?>
+```
+
+### 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `lib/youtube.functions.php` | 유튜브 URL 유틸리티 함수 (`has_youtube_url`, `get_first_youtube_url`, `embed_youtube_player`, `is_shorts_url` 등) |
+| `lib/post/PostService.php` | `setYoutubeFields()` — 글 생성/수정 시 has_youtube, varchar_19 자동 설정 |
+| `v7/post/view.php` | `v7_replace_youtube_urls_with_player()` — 텍스트 내 유튜브 URL → iframe 플레이어 변환 |
+| `v7/widgets/post/view/post-view-default.php` | 본문 렌더링 시 `v7_replace_youtube_urls_with_player()` 호출 |
+| `v7/widgets/post/list/post-list-masonry.php` | 유튜브 썸네일 이미지 + 재생 아이콘 오버레이 |
+| `v7/widgets/post/list/post-list-tile.php` | 유튜브 글에 YouTube 아이콘 표시 |
+
+### 유틸리티 함수 (lib/youtube.functions.php)
+
+| 함수 | 반환 | 설명 |
+|------|------|------|
+| `has_youtube_url(string $text)` | bool | 텍스트에 유튜브 URL이 포함되어 있는지 확인 |
+| `get_first_youtube_url(string $text)` | ?string | 텍스트에서 첫 번째 유튜브 URL 추출 |
+| `get_all_youtube_urls(string $text)` | array | 텍스트에서 모든 유튜브 URL 추출 |
+| `to_youtube_embed_url(string $url)` | ?string | 유튜브 URL을 embed URL로 변환 |
+| `embed_youtube_player(string $url)` | string | 유튜브 URL을 iframe 플레이어 HTML로 변환 (Shorts/일반 자동 구분) |
+| `is_youtube_url(string $url)` | bool | 유효한 유튜브 URL인지 확인 |
+| `is_shorts_url(string $url)` | bool | YouTube Shorts URL인지 확인 |
+| `is_youtube_shorts(string $url)` | bool | `is_shorts_url()`의 별칭 |
+
+---
+
+## 오늘의 글 (todayInHistory)
+
+### 개요
+
+매년 오늘(월/일)에 작성된 글을 연도별로 그룹화하여 반환하는 기능임.
+2009년부터 현재 연도까지 동일 월/일에 작성된 글을 검색함.
+
+### PostService::todayInHistory()
+
+```php
+public static function todayInHistory(
+    ?int $month = null,    // 월 (null이면 오늘 월)
+    ?int $day = null,      // 일 (null이면 오늘 일)
+    array $postIds = ['freetalk', 'qna'],  // 검색 대상 게시판
+    int $limit = 2000      // 최대 글 수
+): array                   // 반환: array<string, PostEntity[]> — 날짜(YYYY-MM-DD) => PostEntity 배열
+```
+
+| 파라미터 | 타입 | 기본값 | 설명 |
+|----------|------|--------|------|
+| `$month` | `?int` | `null` (오늘 월) | 검색할 월 |
+| `$day` | `?int` | `null` (오늘 일) | 검색할 일 |
+| `$postIds` | `string[]` | `['freetalk', 'qna']` | 검색 대상 게시판 ID 목록 |
+| `$limit` | `int` | `2000` | 최대 반환 글 수 |
+
+### 반환값
+
+`array<string, PostEntity[]>` — 날짜 키(YYYY-MM-DD)별 PostEntity 배열. 최신 연도 순으로 정렬됨.
+
+```php
+// 사용 예시
+$posts = PostService::todayInHistory();
+// 반환: ['2026-03-17' => [PostEntity, ...], '2025-03-17' => [...], ...]
+
+// 특정 날짜 지정
+$posts = PostService::todayInHistory(month: 12, day: 25);
+```
+
+### 동작 방식
+
+1. 2009년~현재 연도까지 동일 월/일에 대한 `stamp BETWEEN` 조건을 OR로 연결
+2. 유효하지 않은 날짜(예: 2월 30일)는 자동으로 건너뜀
+3. `post_id IN (...)` + `deleted = 'N'` + `blind = 'N'` 조건 적용
+4. `stamp DESC` 정렬 (최신순)
+5. 조회 결과를 날짜(YYYY-MM-DD) 기준으로 그룹화하여 반환
+
+### 조회 필드
+
+`idx`, `idx_member`, `post_id`, `subject`, `stamp`, `no_of_comment`, `no_of_view`, `good`, `deleted`, `has_image`, `has_youtube`, `varchar_17`, `category`
+
+### 웹 페이지
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/today/index.php` |
+| **CSS** | `v7/today/today.css` |
+| **접속 URL** | `/today` |
+| **URL 헬퍼** | `url()->today` |
+
+---
+
+## 인기 게시글 페이지 (popular)
+
+인기 게시글 페이지는 **최근 1개월간 코멘트 수가 많은 순서**로 글을 표시하는 페이지이다.
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/post/popular.php` |
+| **CSS** | `v7/post/popular.css` |
+| **접속 URL** | `/post/popular` 또는 `/post/popular?page=2` |
+| **URL 헬퍼** | `url()->post->popular` |
+| **정렬 기준** | `no_of_comment DESC, stamp DESC` (코멘트 많은 순 -> 최신순) |
+| **기간 필터** | 최근 30일 (`stamp >= time() - 30일`) |
+| **제외 조건** | `deleted = 0 AND blind = '' AND idx_parent = 0` |
+| **페이지당 항목 수** | 30개 |
+| **SEO** | `Seo::title()`, `Seo::description()`, `Seo::canonical()` |
+
+### 표시 정보
+
+- 제목 + 코멘트 수 배지(`[N]`)
+- 이미지/첨부 아이콘
+- 카테고리 배지
+- 작성자, 작성일, 조회수, 좋아요 수
+
+---
+
+## 최근 게시글 페이지 (latest)
+
+전체 게시판의 최신 글을 시간 역순으로 표시하는 페이지이다.
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/post/latest.php` |
+| **CSS** | `v7/post/popular.css` (인기글과 공용 CSS 사용) |
+| **접속 URL** | `/post/latest` 또는 `/post/latest?page=2` |
+| **URL 헬퍼** | `url()->post->latest` |
+| **정렬 기준** | `stamp DESC` (최신순) |
+| **제외 조건** | `deleted = 0 AND blind = '' AND idx_parent = 0 AND post_id != 'temp'` |
+| **페이지당 항목 수** | 30개 |
+| **SEO** | `Seo::title()`, `Seo::description()`, `Seo::canonical()` |
+
+### 특이사항
+
+- `temp` 게시판은 제외한다 (임시 저장 글 목록 방지)
+- CSS는 `popular.css`를 공용으로 사용하여 동일한 디자인 유지
+- 표시 정보는 인기글 페이지와 동일 (제목, 코멘트 수, 이미지 아이콘, 카테고리, 작성자, 날짜, 조회수, 좋아요)
+
+---
+
+## 최근 사진 페이지 (photo/latest)
+
+전체 게시판의 글과 코멘트에서 이미지가 있는 항목을 Masonry 그리드로 표시하는 페이지이다.
+
+| 항목 | 내용 |
+|------|------|
+| **페이지 파일** | `v7/photo/latest.php` |
+| **CSS** | `v7/photo/latest.css` + `v7/post/list.css` (Masonry 공용) |
+| **접속 URL** | `/photo/latest` 또는 `/photo/latest?page=2` |
+| **URL 헬퍼** | `url()->photo->latest` |
+| **정렬 기준** | `stamp DESC` (최신순) |
+| **제외 조건** | `deleted = 0 AND blind = '' AND post_id != 'temp'` |
+| **이미지 필터** | `has_image = 'y' OR varchar_17 != ''` |
+| **페이지당 항목 수** | 60개 |
+| **SEO** | `Seo::title()`, `Seo::description()`, `Seo::canonical()` |
+
+### Masonry 그리드 구현
+
+- Masonry.js + imagesLoaded.js 라이브러리 사용
+- `#v7PhotoMasonryGrid` 컨테이너에 `.v7-masonry-item` 카드를 배치
+- 이미지 로드 완료 후 Masonry 레이아웃 초기화
+
+### 이미지 URL 결정 우선순위
+
+1. `varchar_17` 필드 (첫 번째 이미지 URL)
+2. `files` 필드에서 이미지 확장자 파일 추출
+3. `no_of_first_image` 필드로 v4 파일 URL 직접 생성
+4. `gid` 필드로 `sf_data` 테이블 조회하여 v4 파일 URL 생성
+
+### 글/코멘트 링크 분기
+
+- **글 (depth=0)**: `/post/view?idx=N` -- 해당 글 읽기 페이지로 이동
+- **코멘트 (depth>0)**: `/post/view?idx=idx_root#comment-N` -- 원글의 코멘트 앵커로 이동
+
+### 코멘트 표시
+
+- 코멘트인 경우 이미지 위에 "댓글" 배지(`.photo-comment-badge`)를 표시
+- 코멘트의 제목은 내용의 처음 50자를 사용
+
+### 썸네일 생성
+
+- 개발 환경에서는 원본 이미지 URL을 그대로 사용
+- 프로덕션에서는 `file.philgo.com/v5-files/thumbnail.php`를 통한 동적 썸네일 생성 (폭 400px)
+- v7 Upload 시스템(`/uploads/`)의 이미지는 `ImageService::buildThumbnailUrl()`로 변환
+
+### URL 클래스 (Url.php)
+
+```php
+// v7/utils/Url.php에 PhotoUrl 클래스 추가
+
+class PhotoUrl
+{
+    /** @var string 최근 사진 목록 (Masonry) */
+    public string $latest = '/photo/latest';
+}
+
+// PostUrl에 latest 프로퍼티 추가
+class PostUrl
+{
+    public string $popular = '/post/popular';
+    public string $latest = '/post/latest';
+    // ...
+}
+```
+
+사용법:
+```php
+<a href="<?= url()->post->latest ?>">최근 글</a>
+<a href="<?= url()->post->popular ?>">인기글</a>
+<a href="<?= url()->photo->latest ?>">최근 사진</a>
+```
