@@ -15,8 +15,9 @@ class BookmarkService {
   BookmarkService._();
 
   /// 북마크 그룹 목록 (ValueNotifier)
-  final ValueNotifier<List<BookmarkGroupModel>> _groupsNotifier =
-      ValueNotifier([]);
+  final ValueNotifier<List<BookmarkGroupModel>> _groupsNotifier = ValueNotifier(
+    [],
+  );
 
   /// 북마크 그룹 목록 getter
   ValueNotifier<List<BookmarkGroupModel>> get bookmarkGroups => _groupsNotifier;
@@ -126,8 +127,6 @@ class BookmarkService {
     );
     final bm = BookmarkModel.fromJson(result);
     if (entityIdx != null) _addToCache(entityType, entityIdx);
-    // 그룹 목록 리프레시
-    loadMyFolderBookmarks();
     return bm;
   }
 
@@ -149,8 +148,6 @@ class BookmarkService {
     if (removed && entityIdx != null) {
       _removeFromCache(entityType, entityIdx);
     }
-    // 그룹 목록 리프레시
-    loadMyFolderBookmarks();
     return removed;
   }
 
@@ -176,8 +173,7 @@ class BookmarkService {
       data: {'name': name},
     );
     final group = BookmarkGroupModel.fromJson(result);
-    // 그룹 목록 리프레시
-    loadMyFolderBookmarks();
+    _groupsNotifier.value = [..._groupsNotifier.value, group];
     return group;
   }
 
@@ -189,8 +185,9 @@ class BookmarkService {
     );
     final deleted = result['deleted'] == true;
     if (deleted) {
-      // 캐시 리빌드 (삭제된 그룹의 북마크가 캐시에서 제거되어야 함)
-      loadMyFolderBookmarks();
+      _groupsNotifier.value = _groupsNotifier.value
+          .where((g) => g.idx != idxGroup)
+          .toList();
     }
     return deleted;
   }
