@@ -774,9 +774,9 @@ v7api('bookmark.listByGroup', { idx_group: group.idx, entity_type: 'chat_room' }
 | 메서드명 | 설명 |
 |----------|------|
 | `triggerFileInput()` | 숨겨진 `<input type="file">` 클릭 트리거 |
-| `onFileSelected(e)` | 파일 선택 시 미리보기 생성 (이미지는 FileReader로 DataURL 생성) |
+| `onFileSelected(e)` | 파일 선택 시 **즉시** `v7apiUpload(file, 'chat', 'message', { onProgress })` 호출하여 업로드 시작. 각 파일별 진행률(`uploadPreviews[i].progress`)을 추적하고, 완료 시 서버 URL로 이미지 미리보기를 표시한다 |
 | `removeFile(idx)` | 선택된 파일 제거 |
-| `uploadFiles(files)` | v7 Upload API(`v7apiUpload()`)로 파일 순차 업로드 → URL 배열 반환. `uploads` 테이블에 `module='chat'`, `code='message'`로 저장됨 |
+| ~~`uploadFiles(files)`~~ | **더 이상 사용하지 않음** — `onFileSelected()`에서 즉시 업로드하므로 별도 업로드 메서드가 불필요해짐 |
 
 **이미지 전체화면 뷰어:**
 
@@ -1503,16 +1503,22 @@ function v7ChatPlaySendSound() {
 ```
 (1) 사용자가 📎 버튼 클릭 → triggerFileInput() → <input type="file" multiple> 팝업
 (2) 파일 선택 → onFileSelected():
-    - selectedFiles 배열에 File 객체 추가
-    - 이미지이면 FileReader로 DataURL 생성 → uploadPreviews에 미리보기 추가
+    - 각 파일마다 uploadPreviews 배열에 미리보기 항목 추가 (progress: 0, url: null)
+    - 이미지이면 FileReader로 DataURL 생성 → 미리보기 이미지 표시
     - 비이미지이면 파일명만 표시
+    - **즉시** v7apiUpload(file, 'chat', 'message', { onProgress }) 호출하여 업로드 시작
+    - onProgress 콜백으로 각 파일별 진행률(%) 실시간 업데이트
+    - 업로드 완료 시 서버 URL로 미리보기 이미지 교체 + done 플래그 설정
+    - uploads 테이블에 module='chat', code='message'로 메타데이터 저장
 (3) 전송 버튼 클릭 → sendMessage():
-    - 파일이 있으면 uploadFiles() 호출
-    - v7 Upload API(`v7apiUpload(file, 'chat', 'message')`)로 순차 업로드 (진행률 표시)
-    - 서버의 `uploads` 테이블에 `module='chat'`, `code='message'`로 메타데이터 저장
-    - 모든 업로드 완료 후 URL 배열을 포함한 메시지 전송
+    - uploadPreviews에서 완료된(done) 파일의 URL 배열 수집
+    - 텍스트 + URL 배열을 포함한 메시지 전송
 (4) Firebase RTDB에 메시지 저장 (urls 필드에 URL 배열)
 ```
+
+> **핵심 변경점**: 기존에는 전송 버튼 클릭 시 `uploadFiles()`를 호출하여 일괄 업로드했으나,
+> 현재는 **파일 선택 즉시 업로드가 시작**되어 전송 버튼 클릭 전에 이미 업로드가 완료된다.
+> 이를 통해 사용자가 메시지 입력 중에도 파일 업로드가 백그라운드로 진행되어 UX가 개선된다.
 
 > **하위 호환성**: 기존 Firebase Storage URL로 저장된 이전 메시지들은 절대 URL이므로 계속 정상 표시된다.
 > 새 메시지부터 v7 Upload API의 상대 경로 URL이 사용된다.
