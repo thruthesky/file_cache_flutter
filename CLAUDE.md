@@ -51,6 +51,40 @@ This project is a Flutter app for building PhilGo v7 application.
 
 # Architecture Rules
 
+## 모듈별 폴더/파일 구조
+
+- 각 기능 모듈은 `lib/{module}/` 폴더에 State, Service, Model 파일을 함께 관리한다.
+- 파일 네이밍 규칙: `{module}.state.dart`, `{module}.service.dart`, `{module}.model.dart`
+- 새로운 기능을 추가할 때 반드시 이 구조를 따른다.
+
+| 역할 | 파일 네이밍 | 예시 |
+|------|------------|------|
+| **Model** (데이터 클래스) | `{module}.model.dart` | `lib/user/user.model.dart`, `lib/setting/setting.model.dart` |
+| **State** (상태 관리, ChangeNotifier) | `{module}.state.dart` | `lib/user/user.state.dart`, `lib/setting/setting.state.dart` |
+| **Service** (API 호출, 비즈니스 로직) | `{module}.service.dart` | `lib/user/user.service.dart`, `lib/setting/setting.service.dart` |
+| **Screen** (화면 위젯) | `{module}.screen.dart` | `lib/user/user.screen.dart` |
+
+**폴더 구조 예시:**
+```
+lib/
+├── app/                    # 앱 초기화, 네비게이션
+│   ├── app.service.dart
+│   ├── app.screen.dart
+│   └── app.navigaton.state.dart
+├── user/                   # 사용자 모듈
+│   ├── user.model.dart
+│   ├── user.state.dart
+│   └── user.service.dart
+├── setting/                # v7 설정 모듈
+│   ├── setting.model.dart
+│   ├── setting.state.dart
+│   └── setting.service.dart
+├── post/                   # 게시판 모듈
+├── chat/                   # 채팅 모듈
+├── company/                # 업소록 모듈
+└── point/                  # 포인트 모듈
+```
+
 ## State vs Service 분리 원칙
 
 - **State 클래스** (Provider의 ChangeNotifier): 상태 관리만 담당한다. API 호출, 비즈니스 로직, 데이터 변환 등을 직접 포함하지 않는다.
