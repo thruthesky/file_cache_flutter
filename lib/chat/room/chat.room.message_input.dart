@@ -4,11 +4,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:philgo/api/api.service.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
-
+import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
-import 'package:philgo/storage/storage.functions.dart';
 import 'package:philgo/util/util.functions.dart';
 
 /// Message input widget for typing and sending messages with multiple file support
@@ -73,12 +73,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       }
       if (index < _uploadedUrls.length) {
         final urlToDelete = _uploadedUrls.removeAt(index);
-        deleteImage(
-          urlToDelete,
-          onError: (error) {
-            debugLog('There should not be Error deleting file $index: $error');
-          },
-        );
+        ApiService.instance.fileDeleteByUrl(urlToDelete).catchError((error) {
+          debugLog('There should not be Error deleting file $index: $error');
+        });
       }
       _uploadProgress.remove(index);
       // Update progress indices
@@ -235,26 +232,27 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
         setState(() {});
 
         try {
-          // Upload the new files
+          // Upload the new files one by one to the v7 backend
           final startIndex = _uploadedUrls.length;
-          final urls = await uploadMultipleImages(
-            images,
-            onProgress: (index, progress) {
-              debugLog("index: $index, progress: $progress");
-              setState(() {
-                _uploadProgress[startIndex + index] = progress;
-                if (_completedUploads <= images.length &&
-                    _uploadProgress[startIndex + index] == 100) {
-                  _completedUploads++;
-                }
-              });
-            },
-            onFileCompleted: (completed, total) {
-              setState(() {
-                _completedUploads = completed;
-              });
-            },
-          );
+          final urls = <String>[];
+          for (int i = 0; i < images.length; i++) {
+            final result = await ApiService.instance.fileUpload(
+              filePath: images[i].path,
+              module: 'chat',
+              code: 'message',
+              onProgress: (progress) {
+                debugLog("file $i progress: $progress");
+                setState(() {
+                  _uploadProgress[startIndex + i] = progress;
+                });
+              },
+            );
+            final model = FileUploadModel.fromJson(result);
+            urls.add(model.url);
+            setState(() {
+              _completedUploads = i + 1;
+            });
+          }
 
           setState(() {
             _uploadedUrls.addAll(urls);
