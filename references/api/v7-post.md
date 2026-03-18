@@ -114,6 +114,8 @@ GET https://local.philgo.com/api.php?method=post.get&idx=12345
 
 **응답**: PostEntity 배열 (toArray())
 
+> **사용자 상호작용 상태 포함**: 로그인한 사용자의 경우, 응답에 `liked`, `bookmarked`, `reported`, `blocked` 필드가 포함된다. 비로그인 시 모두 `false`. -> [사용자 상호작용 상태 필드 (런타임)](#사용자-상호작용-상태-필드-런타임) 참조
+
 ---
 
 ### post.list — 게시글 목록
@@ -147,6 +149,8 @@ GET https://local.philgo.com/api.php?method=post.list&post_id=wanted&category=jo
   "total": 42
 }
 ```
+
+> **사용자 상호작용 상태 포함**: 각 PostEntity에 `liked`, `bookmarked`, `reported`, `blocked` 필드가 포함된다. -> [사용자 상호작용 상태 필드 (런타임)](#사용자-상호작용-상태-필드-런타임) 참조
 
 ---
 
@@ -441,6 +445,34 @@ GET /api.php?method=post.advertise&session_id=xxx&idx=12345&days=7
 | user_photo_url | string | 작성자 프로필 사진 URL | sf_member.photo_url (LEFT JOIN으로 실시간 조회) |
 
 > **참고**: `user_photo_url`은 sf_post_data 테이블에 저장되지 않고, `findByIdx()`, `findAll()`, `findComments()` 조회 시 `sf_member` 테이블과 LEFT JOIN하여 실시간으로 가져온다. 따라서 사용자가 프로필 사진을 변경하면 즉시 반영된다.
+
+### 사용자 상호작용 상태 필드 (런타임)
+
+`PostService::enrichUserInteractions()`에서 설정되는 런타임 속성이다.
+`get()`, `list()`, `commentList()` API 응답의 각 게시글/코멘트에 포함된다.
+비로그인 시 모두 `false`로 반환된다.
+
+| 필드 | 타입 | 설명 | 데이터 소스 |
+|------|------|------|-------------|
+| liked | bool | 현재 사용자가 좋아요 했는지 | sf_post_vote_history 테이블 (`PostRepository::getVotedIdxsByMember()`) |
+| bookmarked | bool | 현재 사용자가 즐겨찾기 했는지 | bookmarks 테이블 (`BookmarkService::getBookmarkedIdxs()`) |
+| reported | bool | 현재 사용자가 신고 했는지 | text_10 필드 (쉼표 구분 신고자 idx 목록에서 파싱) |
+| blocked | bool | 현재 사용자가 작성자를 차단했는지 | sf_member_blocks 테이블 (`PostRepository::getBlockedAuthorIdxs()`) |
+
+**구현 파일**:
+
+| 파일 | 역할 |
+|------|------|
+| `lib/post/PostEntity.php` | `liked`, `bookmarked`, `reported`, `blocked` 런타임 속성 선언 (기본값 `false`), `toArray()`에서 응답에 포함 |
+| `lib/post/PostRepository.php` | `getVotedIdxsByMember()` -- 좋아요 idx 일괄 조회, `getBlockedAuthorIdxs()` -- 차단 작성자 idx 일괄 조회 |
+| `lib/post/PostService.php` | `enrichUserInteractions()` -- 4가지 상태를 일괄 조회하여 각 PostEntity에 설정 |
+
+**동작 방식**:
+
+1. `enrichUserInteractions()`가 전달받은 PostEntity 배열에서 글/코멘트 idx와 작성자 idx를 수집
+2. 좋아요, 즐겨찾기(post+comment 타입), 차단 여부를 각각 일괄 조회 (N+1 쿼리 방지)
+3. 신고 여부는 각 PostEntity의 `text_10` 필드를 파싱하여 확인
+4. 조회 결과를 각 PostEntity의 런타임 속성에 설정
 
 ### 계산 필드 (toArray()에서 자동 추가)
 
@@ -1544,6 +1576,8 @@ GET /api.php?method=post.commentList&idx_root=12345
 | idx_root | int | O | 원글 idx |
 
 **응답**: PostEntity 배열 (list_order DESC 정렬)
+
+> **사용자 상호작용 상태 포함**: 각 코멘트에 `liked`, `bookmarked`, `reported`, `blocked` 필드가 포함된다. -> [사용자 상호작용 상태 필드 (런타임)](#사용자-상호작용-상태-필드-런타임) 참조
 
 #### post.commentUpdate -- 코멘트 수정
 
