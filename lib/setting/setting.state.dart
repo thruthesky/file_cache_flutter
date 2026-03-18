@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:philgo/app.config.dart';
 import 'package:provider/provider.dart';
 
 import 'package:philgo/setting/setting.model.dart';
@@ -10,6 +11,8 @@ import 'package:philgo/setting/setting.model.dart';
 class SettingsState extends ChangeNotifier {
   Settings? _settings;
   Settings? get settings => _settings;
+
+  String get adminChatUid => _settings?.chatAdmin ?? chatAdminUid;
 
   /// 설정 데이터 업데이트
   void setSettings(Settings settings) {
