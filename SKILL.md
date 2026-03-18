@@ -156,12 +156,12 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 | ✅ 수정 가능 | `lib/*/` 내 Service 클래스 | `lib/user/UserService.php`, `lib/company/CompanyService.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Repository 클래스 | `lib/user/UserRepository.php`, `lib/company/CompanyRepository.php` |
 | ✅ 수정 가능 | `lib/*/` 내 Controller 클래스 | `lib/user/UserController.php`, `lib/company/CompanyController.php` |
+| ✅ 수정 가능 | `lib/utils/` v7 유틸리티 클래스 (**사용자 요청 시**) | `lib/utils/FirebaseService.php` 등 — 사용자가 명시적으로 요청한 경우에만 수정 허용. 자의적 수정 금지 |
 
 ### 수정 불가능한 파일 (블랙리스트) — 절대 금지
 
 | 수정 불가 | 경로 패턴 | 예시 |
 |-----------|-----------|------|
-| ❌ **절대 금지** | `lib/utils/` v7 유틸리티 클래스 | `lib/utils/Db.php`, `lib/utils/RequestUtils.php` |
 | ❌ **절대 금지** | `composer.json` | `composer.json` |
 | ❌ **절대 금지** | `tests/` 테스트 파일 | `tests/Unit/UserControllerTest.php` |
 | ❌ **절대 금지** | `boot.php` 및 설정 파일 | `boot.php`, `config.php` |
@@ -415,7 +415,7 @@ Vue.js CDN MPA 방식, Utils 클래스, PSR-4 Autoloading 설정, 문서 분할 
 v7 시스템의 EntityInterface, RepositoryInterface, ServiceInterface, ControllerInterface를
 상세히 다룹니다. 모든 Entity(15개)는 `Philgo\Utils\EntityInterface`를 구현하여
 `fromArray(array $data): static` 정적 팩토리와 `toArray(): array` 배열 변환을 필수로 제공합니다.
-6개 Repository는 `Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`,
+7개 Repository는 `Philgo\Utils\RepositoryInterface`를 구현하여 `create()`, `findByIdx()`,
 `update()`, `deleteByIdx()` 표준 CRUD 메서드명을 강제합니다. 10개 Service는
 `Philgo\Utils\ServiceInterface`를 구현하여 `create()`, `update()`, `delete()`, `get()`,
 `list()` 표준 CRUD 메서드를 강제하며, CRUD를 지원하지 않는 Service는
@@ -538,7 +538,7 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 | SEO | [web/v7-seo.md](references/web/v7-seo.md) | 작성 예정 |
 | **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
 | **전체 메뉴 페이지** | [web/v7-menu.md](references/web/v7-menu.md) | ✅ 완료 |
-| **AI 답변 시스템** | [web/v7-ai-answer.md](references/web/v7-ai-answer.md) | ✅ 완료 |
+| **AI 답변 시스템 + AI 챗봇** | [web/v7-ai-answer.md](references/web/v7-ai-answer.md) — AI 답변(1~13장) + AI 챗봇 필립(14장~, `/ai` 페이지, Enhanced Prompt, Firebase RTDB) | ✅ 완료 |
 
 ### 1:1 채팅 시스템 → [web/v7-chat.md](references/web/v7-chat.md)
 
@@ -777,12 +777,12 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 |------|------|------|
 | User | [api/v7-user.md](references/api/v7-user.md) | ✅ 완료 |
 | Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
-| AI | [api/v7-ai.md](references/api/v7-ai.md) — 텍스트 검열, 텍스트 생성, 영수증 분석, **AI 답변 SSE 스트리밍 + 자동 저장** (`ai.answerPost` — 서버에서 프롬프트 구성+저장, 1번 통신), **AI 답변 저장** (`ai.saveAnswer`), `ai-api.php` 전용 엔트리포인트 | ✅ 완료 |
+| AI | [api/v7-ai.md](references/api/v7-ai.md) — 텍스트 검열, 텍스트 생성, 영수증 분석, **AI 챗봇 SSE 스트리밍** (`ai.chatbot` — Enhanced Prompt + Firebase RTDB), **AI 답변 SSE 스트리밍 + 자동 저장** (`ai.answerPost` — 서버에서 프롬프트 구성+저장, 1번 통신), **AI 답변 저장** (`ai.saveAnswer`), `ai-api.php` 전용 엔트리포인트 | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |
 | Company Visit Review | [api/v7-company-visit-review.md](references/api/v7-company-visit-review.md) | ✅ 완료 |
-| Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (avatar-col 독립 분리 + thread-line 절대 위치 세로선 + adjustThreadLines() 동적 높이 계산 + 세로선 클릭/답글 텍스트 클릭 접기/펼치기) | ✅ 완료 |
-| Post (부동산) | [api/v7-post-real-estate.md](references/api/v7-post-real-estate.md) — 부동산 게시판(`real_estate` 카테고리) 전용 Masonry 목록, 상세보기(필드+Google Maps), 커스텀 필드 15개 폼, `RealEstateEntity` 래핑 클래스(PostEntity wrapping, varchar_12 충돌 해결, `isImageUrl()` 검증, `thumbnailUrl()` 4단계 폴백) | ✅ 완료 |
+| Post | [api/v7-post.md](references/api/v7-post.md) — 게시글 CRUD + Reddit 스타일 코멘트 스레드 (avatar-col 독립 분리 + thread-line 절대 위치 세로선 + adjustThreadLines() 동적 높이 계산 + 세로선 클릭/답글 텍스트 클릭 접기/펼치기) + **유튜브 임베드** (글 내용 유튜브 URL 자동 감지 → has_youtube/varchar_19 저장, 글 보기 iframe 플레이어 변환, 목록 Masonry 썸네일+재생 아이콘, Tile 유튜브 아이콘, Shorts 9:16/일반 16:9 비율 자동 구분) | ✅ 완료 |
+| Post (부동산) | [api/v7-post-real-estate.md](references/api/v7-post-real-estate.md) — 부동산 게시판(`real_estate` 카테고리) 전용 Masonry 목록, 상세보기(필드+Google Maps), 커스텀 필드 15개 폼, `RealEstateEntity` 래핑 클래스(PostEntity wrapping, varchar_12 충돌을 varchar_10~12 썸네일 캐시 제거로 근본 해결, `thumbnailUrl()` varchar_17 기반 동적 썸네일 생성) | ✅ 완료 |
 | Event | [api/v7-event.md](references/api/v7-event.md) | ✅ 완료 |
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
@@ -1335,6 +1335,7 @@ v6의 `href()` 함수와 동일한 패턴으로, 중첩 프로퍼티를 통해 �
 url()
 ├── home                          → '/'
 ├── search                        → '/post/search'
+├── today                         → '/today'
 ├── post (PostUrl)
 │   ├── list (PostListUrl)
 │   │   ├── community             → '/post/list?category=freetalk'
@@ -1348,7 +1349,11 @@ url()
 │   ├── view(idx)                 → '/post/view?idx=123'
 │   ├── create(category)          → '/post/create?category=qna'
 │   ├── update(idx)               → '/post/update?idx=123'
+│   ├── popular                   → '/post/popular'
+│   ├── latest                    → '/post/latest'
 │   └── search(query)             → '/post/search?query=...'
+├── photo (PhotoUrl)
+│   └── latest                    → '/photo/latest'
 ├── user (UserUrl)
 │   ├── login                     → '/user/login'
 │   ├── profile                   → '/user/profile'
