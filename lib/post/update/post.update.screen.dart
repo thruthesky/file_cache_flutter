@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
@@ -14,6 +15,14 @@ import 'package:philgo/util/util.functions.dart';
 /// v6 PostUpdateScreen + PostUpdateForm 로직 적용.
 /// 기존 게시글의 제목/내용을 수정하고 v7 API로 업데이트.
 class PostUpdateScreen extends StatefulWidget {
+  static const String routeName = '/post/update';
+
+  /// PostUpdateScreen으로 이동하고 수정된 Post를 반환
+  static Future<Post?> push(BuildContext ctx, Post post) async {
+    final result = await ctx.push<Post>(routeName, extra: post);
+    return result;
+  }
+
   final Post post;
 
   const PostUpdateScreen({super.key, required this.post});
@@ -222,6 +231,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                   camera: true,
                   cameraVideo: true,
                   gallery: true,
+                  galleryVideo: true,
                   file: true,
                   onUploadingChanged: (uploading) {
                     setState(() => _uploadingCount += uploading ? 1 : -1);

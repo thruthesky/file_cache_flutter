@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
@@ -7,11 +8,11 @@ import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/chat/report/chat.report.dart';
 import 'package:philgo/messaging/widget/push_notification_icon.dart';
 import 'package:philgo/router.dart';
-import 'package:philgo/user/user.firebase_model.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
@@ -22,7 +23,7 @@ import 'package:philgo/util/util.functions.dart';
 /// Header widget for chat room screen showing room info and options
 class SingleChatRoomHeader extends StatelessWidget {
   final ChatJoin join;
-  final UserFirebaseModel otherUser;
+  final UserModel otherUser;
   final VoidCallback? onLeave;
   final VoidCallback? onBackPressed;
 
@@ -36,7 +37,6 @@ class SingleChatRoomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatTheme = ChatThemeData.instance;
     return AppBar(
       leading: IconButton(
         onPressed: onBackPressed,
@@ -45,7 +45,7 @@ class SingleChatRoomHeader extends StatelessWidget {
       title: buildRoomTitle(context),
       // Comic design: Transparent background, no shadow
       backgroundColor: Colors.transparent,
-      elevation: chatTheme.dialog.elevation,
+      elevation: dialogElevation,
       actions: [
         _FavoriteIconButton(roomId: join.id),
         PushNotificationIcon(subscriptionId: join.id, reverse: true),
@@ -54,7 +54,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         IconButton(
           onPressed: () => showMenuModal(context),
           icon: const Icon(Icons.settings),
-          tooltip: "Menu",
+          tooltip: '메뉴'.tr(),
         ),
       ],
     );
@@ -62,26 +62,25 @@ class SingleChatRoomHeader extends StatelessWidget {
 
   /// Show menu modal with various options
   void showMenuModal(BuildContext parentContext) {
-    final chatTheme = ChatThemeData.instance;
     showModalBottomSheet(
       context: parentContext,
 
       /// Comic design: No elevation, transparent background
-      elevation: chatTheme.dialog.elevation,
+      elevation: dialogElevation,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         /// Comic design: 2px border, rounded corners, no shadow
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.vertical(
-            top: Radius.circular(chatTheme.dialog.borderRadius),
+            top: Radius.circular(dialogBorderRadius),
           ),
           border: Border.all(
             color: Theme.of(context).colorScheme.outline,
-            width: chatTheme.dialog.borderWidth,
+            width: dialogBorderWidth,
           ),
         ),
-        padding: chatTheme.dialog.contentPadding,
+        padding: dialogContentPadding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -92,7 +91,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Menu",
+                    '메뉴'.tr(),
 
                     /// Comic design: Use theme text style
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -102,7 +101,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: "Close",
+                    tooltip: '닫기'.tr(),
                   ),
                 ],
               ),
@@ -111,8 +110,8 @@ class SingleChatRoomHeader extends StatelessWidget {
             /// Comic design: 2px divider
             Divider(
               color: Theme.of(context).colorScheme.outline,
-              thickness: chatTheme.dialog.dividerThickness,
-              height: chatTheme.dialog.dividerHeight,
+              thickness: dialogDividerThickness,
+              height: dialogDividerHeight,
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -122,11 +121,11 @@ class SingleChatRoomHeader extends StatelessWidget {
                     // Show admin notice for admin chats, or regular options for other chats
                     if (isAdminChatRoom(
                       roomId: join.id,
-                      otherUserUid: otherUser.uid,
+                      otherUserUid: otherUser.firebaseUid,
                     )) ...[
                       /// Admin chat notice with Comic design
                       Container(
-                        padding: chatTheme.dialog.contentPadding,
+                        padding: dialogContentPadding,
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           /// Comic design: Use theme primaryContainer for notice background
@@ -134,13 +133,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                             context,
                           ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(
-                            chatTheme.dialog.borderRadius,
+                            dialogBorderRadius,
                           ),
 
                           /// Comic design: 2.0px border with primary color
                           border: Border.all(
                             color: Theme.of(context).colorScheme.primary,
-                            width: chatTheme.dialog.borderWidth,
+                            width: dialogBorderWidth,
                           ),
                         ),
                         child: Row(
@@ -150,10 +149,10 @@ class SingleChatRoomHeader extends StatelessWidget {
                               color: Theme.of(context).colorScheme.primary,
                               size: 24,
                             ),
-                            SizedBox(width: chatTheme.dialog.avatarSpacing),
+                            SizedBox(width: dialogAvatarSpacing),
                             Expanded(
                               child: Text(
-                                "Admin Chat Notice",
+                                '관리자 채팅 안내'.tr(),
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: Theme.of(
@@ -168,14 +167,14 @@ class SingleChatRoomHeader extends StatelessWidget {
                       ),
                     ] else ...[
                       Blocked(
-                        otherUserUid: otherUser.uid,
+                        otherUserUid: otherUser.firebaseUid,
                         yes: () => _buildComicMenuItem(
                           context: context,
                           icon: FaIcon(
                             FontAwesomeIcons.lightUserPlus,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                          title: "Unblock User",
+                          title: '차단 해제'.tr(),
                           onTap: () {
                             Navigator.of(context).pop();
                             showUnblockDialog(parentContext);
@@ -199,7 +198,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                       context,
                                     ).colorScheme.primary,
                                   ),
-                                  title: isPinned ? "Unpin Chat" : "Pin Chat",
+                                  title: isPinned ? '채팅 고정 해제'.tr() : '채팅 고정'.tr(),
                                   onTap: () async {
                                     Navigator.of(context).pop();
                                     await togglePinned(parentContext);
@@ -207,19 +206,19 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 );
                               },
                             ),
-                            SizedBox(height: chatTheme.dialog.itemSpacing),
+                            SizedBox(height: dialogItemSpacing),
 
                             /// Profile menu item
                             _buildComicMenuItem(
                               context: context,
                               icon: Avatar(photoUrl: getPhotoUrl()),
-                              title: "Profile",
+                              title: '프로필'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showProfileDialog(parentContext, otherUser);
                               },
                             ),
-                            SizedBox(height: chatTheme.dialog.itemSpacing),
+                            SizedBox(height: dialogItemSpacing),
 
                             /// Recent posts menu item
                             _buildComicMenuItem(
@@ -228,7 +227,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightNewspaper,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
-                              title: "Recent Posts",
+                              title: '최근 글'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showUserRecentPostsDialog(
@@ -237,7 +236,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 );
                               },
                             ),
-                            SizedBox(height: chatTheme.dialog.itemSpacing),
+                            SizedBox(height: dialogItemSpacing),
 
                             /// Report menu item
                             _buildComicMenuItem(
@@ -246,13 +245,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightFlag,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Report",
+                              title: '신고'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 reportRoom(parentContext);
                               },
                             ),
-                            SizedBox(height: chatTheme.dialog.itemSpacing),
+                            SizedBox(height: dialogItemSpacing),
 
                             /// Block user menu item
                             _buildComicMenuItem(
@@ -261,13 +260,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightBan,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Block User",
+                              title: '사용자 차단'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showBlockDialog(parentContext);
                               },
                             ),
-                            SizedBox(height: chatTheme.dialog.itemSpacing),
+                            SizedBox(height: dialogItemSpacing),
 
                             /// Leave room menu item
                             _buildComicMenuItem(
@@ -276,13 +275,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightArrowRightFromBracket,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Leave Room",
+                              title: '방 나가기'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showLeaveConfirmDialog(parentContext);
                               },
                             ),
-                            SizedBox(height: chatTheme.dialog.itemSpacing),
+                            SizedBox(height: dialogItemSpacing),
 
                             /// Block & Leave menu item - blocks user then leaves
                             _buildComicMenuItem(
@@ -291,7 +290,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightBan,
                                 color: Theme.of(context).colorScheme.error,
                               ),
-                              title: "Block & Leave",
+                              title: '차단 및 나가기'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 showBlockAndLeaveConfirmDialog(parentContext);
@@ -300,9 +299,9 @@ class SingleChatRoomHeader extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: chatTheme.dialog.itemSpacing),
+                      SizedBox(height: dialogItemSpacing),
                     ],
-                    SizedBox(height: chatTheme.dialog.itemSpacing),
+                    SizedBox(height: dialogItemSpacing),
                   ],
                 ),
               ),
@@ -330,17 +329,15 @@ class SingleChatRoomHeader extends StatelessWidget {
   void showLeaveConfirmDialog(BuildContext parentContext) async {
     final theme = Theme.of(parentContext);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
-
     // Returns null (dismissed), 'leave', or 'block_and_leave'
     final String? action = await showDialog<String>(
       context: parentContext,
       builder: (context) => Dialog(
         // Comic design: no shadow
-        elevation: chatTheme.dialog.elevation,
+        elevation: dialogElevation,
         // Comic design: rounded corners (borderRadius: 12)
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+          borderRadius: BorderRadius.circular(dialogBorderRadius),
         ),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
@@ -351,9 +348,9 @@ class SingleChatRoomHeader extends StatelessWidget {
             // Comic design: 2.0px outline border with rounded corners
             border: Border.all(
               color: colorScheme.outline,
-              width: chatTheme.dialog.borderWidth,
+              width: dialogBorderWidth,
             ),
-            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+            borderRadius: BorderRadius.circular(dialogBorderRadius),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -361,9 +358,9 @@ class SingleChatRoomHeader extends StatelessWidget {
             children: [
               // Title section - Comic design spacing (multiples of 8)
               Padding(
-                padding: chatTheme.dialog.titlePadding,
+                padding: dialogTitlePadding,
                 child: Text(
-                  "Leave Room",
+                  '방 나가기'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
@@ -373,9 +370,9 @@ class SingleChatRoomHeader extends StatelessWidget {
 
               // Content section - Comic design spacing
               Padding(
-                padding: chatTheme.dialog.bodyPadding,
+                padding: dialogBodyPadding,
                 child: Text(
-                  "Are you sure you want to leave this room?",
+                  '이 방을 나가시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -384,7 +381,7 @@ class SingleChatRoomHeader extends StatelessWidget {
 
               // Actions section - Column layout to fit 3 full-width buttons
               Padding(
-                padding: chatTheme.dialog.actionsPadding,
+                padding: dialogActionsPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -394,16 +391,16 @@ class SingleChatRoomHeader extends StatelessWidget {
                           Navigator.of(context).pop('block_and_leave'),
                       style: ButtonStyle(
                         elevation: WidgetStateProperty.all(
-                          chatTheme.dialog.elevation,
+                          dialogElevation,
                         ),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              chatTheme.dialog.actionButtonBorderRadius,
+                              actionButtonBorderRadius,
                             ),
                             side: BorderSide(
                               color: colorScheme.error,
-                              width: chatTheme.dialog.actionButtonBorderWidth,
+                              width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -414,31 +411,31 @@ class SingleChatRoomHeader extends StatelessWidget {
                           colorScheme.onError,
                         ),
                         padding: WidgetStateProperty.all(
-                          chatTheme.dialog.actionButtonPadding,
+                          actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Block & Leave"),
+                      child: Text('차단 및 나가기'.tr()),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: dialogButtonSpacing),
 
                     // Leave only button - Comic design error outlined button
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop('leave'),
                       style: ButtonStyle(
                         elevation: WidgetStateProperty.all(
-                          chatTheme.dialog.elevation,
+                          dialogElevation,
                         ),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              chatTheme.dialog.actionButtonBorderRadius,
+                              actionButtonBorderRadius,
                             ),
                             side: BorderSide(
                               color: colorScheme.error,
-                              width: chatTheme.dialog.actionButtonBorderWidth,
+                              width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -450,31 +447,31 @@ class SingleChatRoomHeader extends StatelessWidget {
                           colorScheme.error,
                         ),
                         padding: WidgetStateProperty.all(
-                          chatTheme.dialog.actionButtonPadding,
+                          actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Leave"),
+                      child: Text('나가기'.tr()),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: dialogButtonSpacing),
 
                     // Cancel button - Comic design neutral button
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ButtonStyle(
                         elevation: WidgetStateProperty.all(
-                          chatTheme.dialog.elevation,
+                          dialogElevation,
                         ),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              chatTheme.dialog.actionButtonBorderRadius,
+                              actionButtonBorderRadius,
                             ),
                             side: BorderSide(
                               color: colorScheme.outline,
-                              width: chatTheme.dialog.actionButtonBorderWidth,
+                              width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -485,13 +482,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                           colorScheme.onSurface,
                         ),
                         padding: WidgetStateProperty.all(
-                          chatTheme.dialog.actionButtonPadding,
+                          actionButtonPadding,
                         ),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
                       ),
-                      child: Text("Cancel"),
+                      child: Text('취소'.tr()),
                     ),
                   ],
                 ),
@@ -507,7 +504,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     if (action == 'block_and_leave') {
       // Block the other user first, then leave the room
       try {
-        await toggleBlockUser(otherUser.uid);
+        await toggleBlockUser(otherUser.firebaseUid);
       } catch (e) {
         debugPrint('Error blocking user before leave: $e');
       }
@@ -523,7 +520,7 @@ class SingleChatRoomHeader extends StatelessWidget {
   void showBlockAndLeaveConfirmDialog(BuildContext parentContext) {
     ChatService.instance.showBlockAndLeaveConfirmDialog(
       context: parentContext,
-      otherUserUid: otherUser.uid,
+      otherUserUid: otherUser.firebaseUid,
       onLeave: () => onLeave?.call(),
     );
   }
@@ -533,7 +530,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     showDialog(
       context: parentContext,
       builder: (context) => BlockUserDialog(
-        otherUserUid: otherUser.uid,
+        otherUserUid: otherUser.firebaseUid,
         displayName: otherUser.nickname,
         onBlocked: () {
           Navigator.of(parentContext).pop(); // Close chat message.
@@ -547,7 +544,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     showDialog(
       context: parentContext,
       builder: (context) => UnblockUserDialog(
-        otherUserUid: otherUser.uid,
+        otherUserUid: otherUser.firebaseUid,
         onUnblocked: () {
           // Optionally refresh or show success message
         },
@@ -574,19 +571,19 @@ class SingleChatRoomHeader extends StatelessWidget {
         await ref.remove();
 
         if (context.mounted) {
-          showSuccessSnackBar(context, "Chat room unpinned successfully");
+          showSuccessSnackBar(context, '채팅방 고정 해제 완료'.tr());
         }
       } else {
         // Pin: Set value to true in Firebase
         await ref.set(true);
 
         if (context.mounted) {
-          showSuccessSnackBar(context, "Chat room pinned successfully");
+          showSuccessSnackBar(context, '채팅방 고정 완료'.tr());
         }
       }
     } catch (e) {
       if (context.mounted) {
-        showErrorSnackBar(context, "Error: ${e.toString()}");
+        showErrorSnackBar(context, '오류: {}'.tr(args: [e.toString()]));
       }
     }
   }
@@ -624,7 +621,7 @@ class SingleChatRoomHeader extends StatelessWidget {
   }
 
   String? getPhotoUrl() {
-    if (otherUser.photoUrl != null && otherUser.photoUrl!.isNotEmpty) {
+    if (otherUser.photoUrl.isNotEmpty) {
       return otherUser.photoUrl;
     }
     if (join.userPhotoUrl.isNotEmpty) {
@@ -643,7 +640,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     if (join.userDisplayName.isNotEmpty) {
       return join.userDisplayName;
     }
-    return "No name";
+    return '이름없음'.tr();
   }
 
   /// Build a menu item with Comic design
@@ -654,29 +651,28 @@ class SingleChatRoomHeader extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
   }) {
-    final chatTheme = ChatThemeData.instance;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+      borderRadius: BorderRadius.circular(dialogItemBorderRadius),
       child: Container(
-        padding: chatTheme.dialog.itemPadding,
+        padding: dialogItemPadding,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(
-            chatTheme.dialog.itemBorderRadius,
+            dialogItemBorderRadius,
           ),
 
           /// Comic design: 2.0px border with outline color
           border: Border.all(
             color: Theme.of(context).colorScheme.outline,
-            width: chatTheme.dialog.itemBorderWidth,
+            width: dialogItemBorderWidth,
           ),
         ),
         child: Row(
           children: [
             /// Icon
             SizedBox(width: 32, height: 32, child: Center(child: icon)),
-            SizedBox(width: chatTheme.dialog.avatarSpacing),
+            SizedBox(width: dialogAvatarSpacing),
 
             /// Title
             Expanded(
@@ -754,7 +750,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
       return IconButton(
         onPressed: () => _showFavoritesModal(context),
         icon: const Icon(Icons.star_border),
-        tooltip: "Add to Favorites",
+        tooltip: '즐겨찾기에 추가'.tr(),
       );
     }
 
@@ -768,7 +764,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
             // Comic design: Use theme primary color instead of hardcoded amber
             color: isFavorited ? Colors.amberAccent : null,
           ),
-          tooltip: "Add to Favorites",
+          tooltip: '즐겨찾기에 추가'.tr(),
         );
       },
     );
@@ -776,12 +772,11 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
 
   /// 즐겨찾기 모달 표시
   void _showFavoritesModal(BuildContext context) {
-    final chatTheme = ChatThemeData.instance;
     showModalBottomSheet(
       context: context,
 
       /// Comic design: No elevation, transparent background
-      elevation: chatTheme.dialog.elevation,
+      elevation: dialogElevation,
       backgroundColor: Colors.transparent,
       builder: (context) => _FavoritesModal(roomId: widget.roomId),
     );
@@ -886,8 +881,8 @@ class _FavoritesModalState extends State<_FavoritesModal> {
           showSuccessSnackBar(
             context,
             selectedFolders.contains(folderName)
-                ? "Added to {folderName}"
-                : "Removed from {folderName}",
+                ? '{}에 추가됨'.tr(args: [folderName])
+                : '{}에서 제거됨'.tr(args: [folderName]),
           );
         }
       }
@@ -895,7 +890,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
       if (mounted) {
         showErrorSnackBar(
           context,
-          "Failed to update favorite: ${e.toString()}",
+          '즐겨찾기 업데이트 실패: {}'.tr(args: [e.toString()]),
         );
       }
     } finally {
@@ -907,23 +902,22 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
   /// 새 폴더 생성 다이얼로그 표시
   void _showCreateFolderDialog(BuildContext context) async {
-    final chatTheme = ChatThemeData.instance;
     final TextEditingController folderNameController = TextEditingController();
 
     await showDialog(
       context: context,
       builder: (dialogContext) => Dialog(
         /// Comic design: No elevation, transparent background
-        elevation: chatTheme.dialog.elevation,
+        elevation: dialogElevation,
         backgroundColor: Colors.transparent,
         child: Container(
           /// Comic design: 2px border, rounded corners, no shadow
           decoration: BoxDecoration(
             color: Theme.of(dialogContext).colorScheme.surface,
-            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+            borderRadius: BorderRadius.circular(dialogBorderRadius),
             border: Border.all(
               color: Theme.of(dialogContext).colorScheme.outline,
-              width: chatTheme.dialog.borderWidth,
+              width: dialogBorderWidth,
             ),
           ),
           padding: const EdgeInsets.all(24),
@@ -933,7 +927,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
             children: [
               /// Title
               Text(
-                "Create New Folder",
+                '새 폴더 만들기'.tr(),
                 style: Theme.of(
                   dialogContext,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
@@ -944,35 +938,35 @@ class _FavoritesModalState extends State<_FavoritesModal> {
               TextField(
                 controller: folderNameController,
                 decoration: InputDecoration(
-                  labelText: "Folder Name",
-                  hintText: "Enter folder name",
+                  labelText: '폴더 이름'.tr(),
+                  hintText: '폴더 이름을 입력하세요'.tr(),
 
                   /// Comic design: 2px border
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(
-                      chatTheme.dialog.actionButtonBorderRadius,
+                      actionButtonBorderRadius,
                     ),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.outline,
-                      width: chatTheme.dialog.borderWidth,
+                      width: dialogBorderWidth,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(
-                      chatTheme.dialog.actionButtonBorderRadius,
+                      actionButtonBorderRadius,
                     ),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.outline,
-                      width: chatTheme.dialog.borderWidth,
+                      width: dialogBorderWidth,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(
-                      chatTheme.dialog.actionButtonBorderRadius,
+                      actionButtonBorderRadius,
                     ),
                     borderSide: BorderSide(
                       color: Theme.of(dialogContext).colorScheme.primary,
-                      width: chatTheme.dialog.borderWidth,
+                      width: dialogBorderWidth,
                     ),
                   ),
                 ),
@@ -996,17 +990,17 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     style: ButtonStyle(
                       // Comic design: no shadow
                       elevation: WidgetStateProperty.all(
-                        chatTheme.dialog.elevation,
+                        dialogElevation,
                       ),
                       // Comic design: 2.0px border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
-                            chatTheme.dialog.actionButtonBorderRadius,
+                            actionButtonBorderRadius,
                           ),
                           side: BorderSide(
                             color: Theme.of(dialogContext).colorScheme.outline,
-                            width: chatTheme.dialog.actionButtonBorderWidth,
+                            width: actionButtonBorderWidth,
                           ),
                         ),
                       ),
@@ -1020,14 +1014,14 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                       ),
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
-                        chatTheme.dialog.actionButtonPadding,
+                        actionButtonPadding,
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
                         Theme.of(dialogContext).textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text("Cancel"),
+                    child: Text('취소'.tr()),
                   ),
                   const SizedBox(width: 8),
                   // Create button - Comic design primary button
@@ -1044,17 +1038,17 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                     style: ButtonStyle(
                       // Comic design: no shadow
                       elevation: WidgetStateProperty.all(
-                        chatTheme.dialog.elevation,
+                        dialogElevation,
                       ),
                       // Comic design: 2.0px border with rounded corners
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
-                            chatTheme.dialog.actionButtonBorderRadius,
+                            actionButtonBorderRadius,
                           ),
                           side: BorderSide(
                             color: Theme.of(dialogContext).colorScheme.primary,
-                            width: chatTheme.dialog.actionButtonBorderWidth,
+                            width: actionButtonBorderWidth,
                           ),
                         ),
                       ),
@@ -1068,14 +1062,14 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                       ),
                       // Comic design: padding in multiples of 8
                       padding: WidgetStateProperty.all(
-                        chatTheme.dialog.actionButtonPadding,
+                        actionButtonPadding,
                       ),
                       // Comic design: text style from Theme
                       textStyle: WidgetStateProperty.all(
                         Theme.of(dialogContext).textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text("Create"),
+                    child: Text('만들기'.tr()),
                   ),
                 ],
               ),
@@ -1090,23 +1084,21 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
   @override
   Widget build(BuildContext context) {
-    final chatTheme = ChatThemeData.instance;
-
     /// Comic design: 2px border, rounded corners, no shadow
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(chatTheme.dialog.borderRadius),
+          top: Radius.circular(dialogBorderRadius),
         ),
 
         /// Comic design: 2px border with outline color, no shadow
         border: Border.all(
           color: Theme.of(context).colorScheme.outline,
-          width: chatTheme.dialog.borderWidth,
+          width: dialogBorderWidth,
         ),
       ),
-      padding: chatTheme.dialog.contentPadding,
+      padding: dialogContentPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1120,7 +1112,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                   children: [
                     /// Comic design: Use theme titleLarge style with font weight
                     Text(
-                      "Add to Favorites",
+                      '즐겨찾기에 추가'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -1134,7 +1126,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                         FontAwesomeIcons.lightCirclePlus,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      tooltip: "Create New Folder",
+                      tooltip: '새 폴더 만들기'.tr(),
                     ),
                   ],
                 ),
@@ -1143,7 +1135,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close),
-                  tooltip: "Close",
+                  tooltip: '닫기'.tr(),
                 ),
               ],
             ),
@@ -1152,8 +1144,8 @@ class _FavoritesModalState extends State<_FavoritesModal> {
           /// Comic design: 2px divider with outline color
           Divider(
             color: Theme.of(context).colorScheme.outline,
-            thickness: chatTheme.dialog.dividerThickness,
-            height: chatTheme.dialog.dividerHeight,
+            thickness: dialogDividerThickness,
+            height: dialogDividerHeight,
           ),
 
           /// Folder list section - Shows folders from UserService
@@ -1184,17 +1176,17 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                 context,
                               ).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(
-                                chatTheme.dialog.borderRadius,
+                                dialogBorderRadius,
                               ),
 
                               /// Comic design: 2px border, no shadow
                               border: Border.all(
                                 color: Theme.of(context).colorScheme.outline,
-                                width: chatTheme.dialog.borderWidth,
+                                width: dialogBorderWidth,
                               ),
                             ),
                             child: Text(
-                              "No bookmarked folders",
+                              '북마크된 폴더가 없습니다'.tr(),
                               style: Theme.of(context).textTheme.bodyMedium,
                               textAlign: TextAlign.center,
                             ),
@@ -1208,7 +1200,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
 
                         /// Comic design: Add spacing between items
                         separatorBuilder: (context, index) =>
-                            SizedBox(height: chatTheme.dialog.itemSpacing),
+                            SizedBox(height: dialogItemSpacing),
                         itemBuilder: (context, index) {
                           final folder = folders[index];
                           final folderName = folder['folderName'] as String;
@@ -1226,10 +1218,10 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                 ? null
                                 : () => addToFavoriteFolder(folderName),
                             borderRadius: BorderRadius.circular(
-                              chatTheme.dialog.itemBorderRadius,
+                              dialogItemBorderRadius,
                             ),
                             child: Container(
-                              padding: chatTheme.dialog.itemPadding,
+                              padding: dialogItemPadding,
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? Theme.of(context)
@@ -1238,7 +1230,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                           .withValues(alpha: 0.3)
                                     : Theme.of(context).colorScheme.surface,
                                 borderRadius: BorderRadius.circular(
-                                  chatTheme.dialog.itemBorderRadius,
+                                  dialogItemBorderRadius,
                                 ),
 
                                 /// Comic design: 2px border
@@ -1246,7 +1238,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                   color: isSelected
                                       ? Theme.of(context).colorScheme.primary
                                       : Theme.of(context).colorScheme.outline,
-                                  width: chatTheme.dialog.itemBorderWidth,
+                                  width: dialogItemBorderWidth,
                                 ),
                               ),
                               child: Row(
@@ -1282,7 +1274,7 @@ class _FavoritesModalState extends State<_FavoritesModal> {
                                           ),
                                   ),
                                   SizedBox(
-                                    width: chatTheme.dialog.avatarSpacing,
+                                    width: dialogAvatarSpacing,
                                   ),
 
                                   /// Folder info

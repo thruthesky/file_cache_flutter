@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.defines.dart';
@@ -7,8 +8,8 @@ import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/models/chat.join.dart';
 import 'package:philgo/router.dart';
-import 'package:philgo/user/user.firebase_model.dart';
-import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.model.dart';
+import 'package:philgo/user/user.service.dart';
 import 'package:philgo/util/util.functions.dart';
 
 class SingleChatRoomInit extends StatefulWidget {
@@ -32,7 +33,8 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
   late String otherUserUid;
   ChatJoin? _join;
   ChatJoin get join => _join!;
-  UserFirebaseModel? otherUser;
+  // UserFirebaseModel? otherUser;
+  UserModel? otherUserProfile;
 
   bool isChatRoomLoading = true;
   StreamSubscription<DatabaseEvent>? newMessageSubscription;
@@ -62,18 +64,21 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
         _join = join;
       }
 
-      otherUser = await getUser(otherUserUid);
-      if (otherUser != null) {
+      // otherUser = await getUser(otherUserUid);
+      otherUserProfile = await UserService.getByFirebaseUid(
+        firebaseUid: otherUserUid,
+      );
+      if (otherUserProfile != null) {
         _join = ChatJoin.fromJson({
-          "userDisplayName": otherUser!.nickname,
-          "userPhotoUrl": otherUser!.photoUrl,
+          "userDisplayName": otherUserProfile!.nickname,
+          "userPhotoUrl": otherUserProfile!.photoUrl,
         }, roomId);
       } else {
-        otherUser = UserFirebaseModel.fromJson({'uid': otherUserUid});
+        otherUserProfile = UserModel.fromJson({'firebase_uid': otherUserUid});
         _join ??= ChatJoin.fromJson({}, roomId);
       }
 
-      // ChatService.instance.resetUnreadMessageCounter(roomId);
+      // resetUnreadMessageCounter(roomId);
       ChatService.instance.resetChatJoin(otherUserUid);
       setupNewMessageListener();
 
@@ -82,7 +87,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
       debugPrint('Error initializing chat room: $e');
       debugPrintStack(stackTrace: stack);
       if (globalContext.mounted) {
-        showErrorSnackBar(globalContext, "Error loading chat room");
+        showErrorSnackBar(globalContext, '채팅방 로딩 오류'.tr());
         setState(() => isChatRoomLoading = false);
         if (Navigator.canPop(globalContext)) {
           Navigator.of(globalContext).pop();

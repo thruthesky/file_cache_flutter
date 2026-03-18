@@ -16,7 +16,6 @@ ThemeData philgoThemeData(BuildContext context) {
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
-    extensions: [],
     scaffoldBackgroundColor: colorScheme.surface,
     appBarTheme: AppBarTheme(
       backgroundColor: colorScheme.surface,

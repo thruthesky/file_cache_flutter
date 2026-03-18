@@ -6,6 +6,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/bookmark/bookmark.service.dart';
+import 'package:philgo/company/company.service.dart';
+import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 
@@ -98,7 +101,7 @@ class UserService {
   /// Firebase Auth에 로그인된 상태이면 v7 API(user.me)를 호출하여
   /// UserModel을 반환한다. 미로그인이면 null을 반환한다.
   static Future<UserModel?> loadCurrentUser() async {
-    final json = await ApiService.instance.v7api('user.me', debug: true);
+    final json = await ApiService.instance.v7api('user.me');
     return UserModel.fromJson(json);
   }
 
@@ -175,32 +178,17 @@ class UserService {
     return UserModel.fromJson(json);
   }
 
-  /// 사용자 목록을 조회한다. (user.list) - 관리자용
-  ///
-  /// [page] 페이지 번호 (선택, 기본값 1)
-  /// [limit] 페이지당 항목 수 (선택)
-  static Future<List<UserModel>> getUserList({int? page, int? limit}) async {
-    final data = <String, dynamic>{};
-    if (page != null) data['page'] = page;
-    if (limit != null) data['limit'] = limit;
-    final json = await ApiService.instance.v7api('user.list', data: data);
-    final list = json['list'] as List<dynamic>? ?? [];
-    return list
-        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
   /// Listen to blocked users from Firebase: user-private/{uid}/blocks
   void listenBlockedUsers(String uid) {
     blockedUsersSubscription?.cancel();
-    final ref = FirebaseDatabase.instance.ref('user-private/$uid/blocks');
+    final ref = userPrivateBlocksRef(uid);
     blockedUsersSubscription = ref.onValue.listen((event) {
-      blockedUsers.clear();
+      final newSet = <String>{};
       if (event.snapshot.exists && event.snapshot.value != null) {
         final data = event.snapshot.value as Map<dynamic, dynamic>;
-        blockedUsers.addAll(data.keys.cast<String>());
+        newSet.addAll(data.keys.cast<String>());
       }
-      blockedUsersStream.value = Set<String>.from(blockedUsers);
+      blockedUsersStream.value = newSet;
     });
   }
 
@@ -216,6 +204,8 @@ class UserService {
     FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
       if (firebaseUser == null) {
         cancelBlockedUsersListener();
+        CompanyService.instance.clear();
+        BookmarkService.instance.clear();
         if (context.mounted) {
           UserState.of(context).clear();
         }
@@ -227,6 +217,9 @@ class UserService {
           final user = await UserService.loadCurrentUser();
 
           listenBlockedUsers(firebaseUser.uid);
+
+          CompanyService.instance.loadMyCompany();
+          BookmarkService.instance.loadMyFolderBookmarks();
 
           if (context.mounted) {
             UserState.of(context).setUser(user);

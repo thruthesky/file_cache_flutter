@@ -21,7 +21,7 @@ class MyPostsScreen extends StatefulWidget {
 }
 
 class _MyPostsScreenState extends State<MyPostsScreen> {
-  static const _pageSize = 20;
+  final int _pageSize = 20;
 
   late final PagingController<int, Post> _pagingController;
 
@@ -30,9 +30,10 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
     super.initState();
     _pagingController = PagingController<int, Post>(
       getNextPageKey: (state) {
+        if (state.lastPageIsEmpty) return null;
         final keys = state.keys;
-        if (keys == null || keys.isEmpty) return 0;
-        return keys.last + _pageSize;
+        if (keys == null || keys.isEmpty) return 1;
+        return keys.last + 1;
       },
       fetchPage: _fetchPage,
     );
@@ -44,20 +45,19 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
     super.dispose();
   }
 
-  Future<List<Post>> _fetchPage(int offset) async {
+  Future<List<Post>> _fetchPage(int page) async {
     final userState = Provider.of<UserState>(context, listen: false);
     final result = await PostService.list(
       idxMember: userState.idx,
       limit: _pageSize,
-      offset: offset,
+      page: page,
     );
+    if (page > 1 && result.posts.isEmpty) return [];
     return result.posts;
   }
 
   Future<void> _openPostView(Post post) async {
-    final result = await Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
-    );
+    final result = await PostViewScreen.push(context, post);
     if ((result == 'deleted' || result is Post) && mounted) {
       _pagingController.refresh();
     }
@@ -77,7 +77,11 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
         scrolledUnderElevation: 1,
         title: Row(
           children: [
-            FaIcon(FontAwesomeIcons.lightRectangleList, size: 18, color: scheme.primary),
+            FaIcon(
+              FontAwesomeIcons.lightRectangleList,
+              size: 18,
+              color: scheme.primary,
+            ),
             const SizedBox(width: 8),
             Text('내 글 목록', style: theme.textTheme.titleMedium),
           ],
@@ -94,21 +98,21 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
               color: scheme.outlineVariant.withValues(alpha: 0.3),
             ),
             builderDelegate: PagedChildBuilderDelegate<Post>(
-              itemBuilder: (context, post, index) => PostListTile(
-                post: post,
-                onTap: () => _openPostView(post),
-              ),
+              itemBuilder: (context, post, index) =>
+                  PostListTile(post: post, onTap: () => _openPostView(post)),
               firstPageProgressIndicatorBuilder: (_) =>
                   const Center(child: CircularProgressIndicator()),
               newPageProgressIndicatorBuilder: (_) => const Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
               ),
-              noItemsFoundIndicatorBuilder: (_) => EmptyPostList(scheme: scheme),
-              firstPageErrorIndicatorBuilder: (context) => PostListErrorIndicator(
-                scheme: scheme,
-                onRetry: () => _pagingController.refresh(),
-              ),
+              noItemsFoundIndicatorBuilder: (_) =>
+                  EmptyPostList(scheme: scheme),
+              firstPageErrorIndicatorBuilder: (context) =>
+                  PostListErrorIndicator(
+                    scheme: scheme,
+                    onRetry: () => _pagingController.refresh(),
+                  ),
             ),
           );
         },

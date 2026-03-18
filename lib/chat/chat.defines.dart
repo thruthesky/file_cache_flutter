@@ -1,5 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:easy_localization/easy_localization.dart';
+
 const String NICKNAME = 'nickname';
 const String NICKNAME_LOWER_CASE = 'nicknameLowerCase';
 
@@ -56,12 +58,13 @@ class ChatProtocol {
 }
 
 /// Available report reasons
-const Map<String, String> reportReasons = {
-  'spam': "Spam",
-  'abusive': 'Abusive',
-  'violence': 'Violence',
-  'hate_speech': 'Hate Speech',
-  'inappropriate_content': 'Inappropriate Content',
+/// Keys are DB values, values are Korean translation keys for display
+Map<String, String> get reportReasons => {
+  'spam': '스팸'.tr(),
+  'abusive': '욕설'.tr(),
+  'violence': '폭력'.tr(),
+  'hate_speech': '혐오 발언'.tr(),
+  'inappropriate_content': '부적절한 콘텐츠'.tr(),
 };
 
 const String REPORT_PATH = 'path';

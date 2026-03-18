@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/room/single.chat_room.dart';
@@ -41,18 +42,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         }
 
         return Scaffold(
-          appBar: AppBar(title: Text("Invalid Chat Room ID")),
+          appBar: AppBar(title: Text('잘못된 채팅방 ID'.tr())),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 16,
             children: [
-              Center(child: Text("Invalid Chat Room ID")),
+              Center(child: Text('잘못된 채팅방 ID'.tr())),
               ElevatedButton(
                 onPressed: () {
                   context.go(widget.homeRouteName);
                 },
-                child: Text("Go Back to Home"),
+                child: Text('홈으로 돌아가기'.tr()),
               ),
             ],
           ),
@@ -62,8 +63,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // Loading of the Login of the user
       loading: loading(),
       notLoggedIn: Scaffold(
-        appBar: AppBar(title: Text("Login Required")),
-        body: Center(child: Text("Please log in to continue")),
+        appBar: AppBar(title: Text('로그인이 필요합니다'.tr())),
+        body: Center(child: Text('로그인 후 이용해 주세요'.tr())),
       ),
     );
   }

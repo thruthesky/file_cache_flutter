@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -43,6 +44,10 @@ class FileUpload extends StatefulWidget {
   /// 갤러리 소스 활성화 여부 (기본: true)
   final bool gallery;
 
+  /// 갤러리에서 동영상도 선택 가능 여부 (기본: false)
+  /// false이면 이미지만, true이면 이미지+동영상 모두 선택 가능
+  final bool galleryVideo;
+
   /// 파일 피커 소스 활성화 여부 (기본: false)
   final bool file;
 
@@ -84,6 +89,7 @@ class FileUpload extends StatefulWidget {
     this.camera = true,
     this.cameraVideo = false,
     this.gallery = true,
+    this.galleryVideo = false,
     this.file = false,
     this.maxWidth,
     this.maxHeight,
@@ -192,7 +198,7 @@ class _FileUploadState extends State<FileUpload> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '업로드 옵션 선택',
+                  '업로드 옵션 선택'.tr(),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -210,7 +216,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
-                title: const Text('카메라로 사진 찍기'),
+                title: Text('카메라로 사진 찍기'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.cameraPhoto),
               ),
             if (widget.cameraVideo)
@@ -220,7 +226,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
-                title: const Text('카메라로 동영상 촬영'),
+                title: Text('카메라로 동영상 촬영'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.cameraVideo),
               ),
             if (widget.gallery)
@@ -230,7 +236,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
-                title: const Text('갤러리에서 선택'),
+                title: Text('갤러리에서 선택'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.gallery),
               ),
             if (widget.file)
@@ -240,7 +246,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
-                title: const Text('파일 업로드'),
+                title: Text('파일 업로드'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.file),
               ),
             ListTile(
@@ -249,7 +255,7 @@ class _FileUploadState extends State<FileUpload> {
                 size: 20,
                 color: Colors.grey[500],
               ),
-              title: Text('취소', style: TextStyle(color: Colors.grey[600])),
+              title: Text('취소'.tr(), style: TextStyle(color: Colors.grey[600])),
               onTap: () => Navigator.pop(ctx, null),
             ),
             const SizedBox(height: 4),
@@ -278,12 +284,22 @@ class _FileUploadState extends State<FileUpload> {
         return picked?.path;
 
       case _UploadSource.gallery:
-        final picked = await ImagePicker().pickMedia(
-          maxWidth: widget.maxWidth,
-          maxHeight: widget.maxHeight,
-          imageQuality: widget.imageQuality,
-        );
-        return picked?.path;
+        if (widget.galleryVideo) {
+          final picked = await ImagePicker().pickMedia(
+            maxWidth: widget.maxWidth,
+            maxHeight: widget.maxHeight,
+            imageQuality: widget.imageQuality,
+          );
+          return picked?.path;
+        } else {
+          final picked = await ImagePicker().pickImage(
+            source: ImageSource.gallery,
+            maxWidth: widget.maxWidth,
+            maxHeight: widget.maxHeight,
+            imageQuality: widget.imageQuality,
+          );
+          return picked?.path;
+        }
 
       case _UploadSource.file:
         final result = await FilePicker.platform.pickFiles(

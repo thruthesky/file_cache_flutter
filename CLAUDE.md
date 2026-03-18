@@ -105,6 +105,12 @@ lib/
 
 - Use .claude/commands/design/*.md files as design references for UI and UX decisions.
 
+## Use global `color` and `text` shortcuts
+
+- **Do NOT use** `Theme.of(context).textTheme` or `Theme.of(context).colorScheme` directly.
+- Instead, use the global getters defined in `lib/globals.dart`: `color` for `ColorScheme` and `text` for `TextTheme`.
+- Examples: `text.titleLarge`, `color.primary`, `color.surface`.
+
 ## Font Awesome icons only
 
 - Use only Font Awesome icons for all UI elements to maintain visual consistency and reduce asset management overhead.

@@ -1,5 +1,6 @@
 import 'package:philgo/api/api.service.dart';
 import 'post.model.dart';
+import 'post_list_result.model.dart';
 
 /// v7 Post API 서비스
 ///
@@ -23,16 +24,16 @@ class PostService {
   /// [category] 카테고리 필터 (선택)
   /// [orderby] 정렬 기준 (선택, 예: 'stamp DESC', 'no_of_view DESC')
   /// [limit] 최대 조회 수 (선택, 기본 20, 최대 100)
-  /// [offset] 오프셋 (선택, 기본 0)
+  /// [page] 페이지 번호 (선택, 1부터 시작)
   ///
   /// 반환: posts 목록과 total 전체 개수
-  static Future<({List<Post> posts, int total})> list({
+  static Future<PostListResult> list({
     String? postId,
     int? idxMember,
     String? category,
     String? orderby,
     int? limit,
-    int? offset,
+    int? page,
   }) async {
     final result = await ApiService.instance.v7api(
       'post.list',
@@ -42,18 +43,11 @@ class PostService {
         if (category != null) 'category': category,
         if (orderby != null) 'orderby': orderby,
         if (limit != null) 'limit': limit,
-        if (offset != null) 'offset': offset,
+        if (page != null) 'page': page,
       },
     );
 
-    final items = (result['posts'] as List<dynamic>?) ?? [];
-    final posts = items
-        .whereType<Map<String, dynamic>>()
-        .map(Post.fromJson)
-        .toList();
-    final total = ApiService.toInt(result['total']);
-
-    return (posts: posts, total: total);
+    return PostListResult.fromJson(result);
   }
 
   /// 게시글 단건 조회
@@ -66,7 +60,6 @@ class PostService {
     final result = await ApiService.instance.v7api(
       'post.get',
       data: {'idx': idx},
-      debug: true,
     );
     return Post.fromJson(result);
   }
@@ -97,7 +90,6 @@ class PostService {
         if (category != null) 'category': category,
         if (files != null && files.isNotEmpty) 'files': files.join(','),
       },
-      debug: true,
     );
     return Post.fromJson(result);
   }
@@ -164,7 +156,6 @@ class PostService {
     final result = await ApiService.instance.v7api(
       'post.commentList',
       data: {'idx_root': idxRoot},
-      debug: true,
     );
     final raw = result['items'] ?? [];
     final items = raw is List ? raw : [];

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -21,32 +22,30 @@ class BookmarkedChatsDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final chatTheme = ChatThemeData.instance;
-
     return Dialog(
       backgroundColor: Colors.transparent,
-      elevation: chatTheme.dialog.elevation,
+      elevation: dialogElevation,
       child: Container(
-        constraints: BoxConstraints(maxWidth: chatTheme.dialog.maxWidth),
+        constraints: BoxConstraints(maxWidth: dialogMaxWidth),
         decoration: BoxDecoration(
           color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
-          border: Border.all(color: colorScheme.outline, width: chatTheme.dialog.borderWidth),
+          borderRadius: BorderRadius.circular(dialogBorderRadius),
+          border: Border.all(color: colorScheme.outline, width: dialogBorderWidth),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             /// 다이얼로그 헤더 - Comic 스타일
             Container(
-              padding: chatTheme.dialog.headerPadding,
+              padding: dialogHeaderPadding,
               decoration: BoxDecoration(
                 color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(chatTheme.dialog.headerBorderRadius),
-                  topRight: Radius.circular(chatTheme.dialog.headerBorderRadius),
+                  topLeft: Radius.circular(dialogHeaderBorderRadius),
+                  topRight: Radius.circular(dialogHeaderBorderRadius),
                 ),
                 border: Border(
-                  bottom: BorderSide(color: colorScheme.outline, width: chatTheme.dialog.headerBorderWidth),
+                  bottom: BorderSide(color: colorScheme.outline, width: dialogHeaderBorderWidth),
                 ),
               ),
               child: Row(
@@ -54,15 +53,15 @@ class BookmarkedChatsDialog extends StatelessWidget {
                   FaIcon(
                     FontAwesomeIcons.lightComments,
                     color: colorScheme.primary,
-                    size: chatTheme.dialog.headerIconSize,
+                    size: dialogHeaderIconSize,
                   ),
-                  SizedBox(width: chatTheme.dialog.itemSpacing),
+                  SizedBox(width: dialogItemSpacing),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Bookmarked Chats', style: textTheme.titleMedium),
-                        const SizedBox(height: 4),
+                        Text('북마크된 채팅'.tr(), style: textTheme.titleMedium),
+                        SizedBox(height: subtitleSpacing),
                         Text(
                           folderName,
                           style: textTheme.bodySmall?.copyWith(
@@ -74,19 +73,19 @@ class BookmarkedChatsDialog extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () => Navigator.pop(context),
-                    borderRadius: BorderRadius.circular(chatTheme.dialog.closeButtonBorderRadius),
+                    borderRadius: BorderRadius.circular(closeButtonBorderRadius),
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: dialogCloseButtonPadding,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(chatTheme.dialog.closeButtonBorderRadius),
+                        borderRadius: BorderRadius.circular(closeButtonBorderRadius),
                         border: Border.all(
                           color: colorScheme.outline,
-                          width: chatTheme.dialog.closeButtonBorderWidth,
+                          width: closeButtonBorderWidth,
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.lightXmark,
-                        size: chatTheme.dialog.closeIconSize,
+                        size: closeIconSize,
                         color: colorScheme.onSurface,
                       ),
                     ),
@@ -105,16 +104,16 @@ class BookmarkedChatsDialog extends StatelessWidget {
                   // 로딩 중 - Comic 스타일
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Padding(
-                      padding: chatTheme.dialog.emptyPadding,
+                      padding: dialogEmptyPadding,
                       child: Center(
                         child: Container(
-                          padding: chatTheme.dialog.emptyContainerPadding,
+                          padding: dialogEmptyContainerPadding,
                           decoration: BoxDecoration(
                             color: colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+                            borderRadius: BorderRadius.circular(dialogBorderRadius),
                             border: Border.all(
                               color: colorScheme.outline,
-                              width: chatTheme.dialog.borderWidth,
+                              width: dialogBorderWidth,
                             ),
                           ),
                           child: CircularProgressIndicator.adaptive(
@@ -130,28 +129,28 @@ class BookmarkedChatsDialog extends StatelessWidget {
                   // 에러 발생 - Comic 스타일
                   if (snapshot.hasError) {
                     return Padding(
-                      padding: chatTheme.dialog.emptyPadding,
+                      padding: dialogEmptyPadding,
                       child: Column(
                         children: [
                           Container(
-                            padding: chatTheme.dialog.emptyContainerPadding,
+                            padding: dialogEmptyContainerPadding,
                             decoration: BoxDecoration(
                               color: colorScheme.errorContainer,
-                              borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+                              borderRadius: BorderRadius.circular(dialogBorderRadius),
                               border: Border.all(
                                 color: colorScheme.error,
-                                width: chatTheme.dialog.borderWidth,
+                                width: dialogBorderWidth,
                               ),
                             ),
                             child: FaIcon(
                               FontAwesomeIcons.lightCircleExclamation,
-                              size: chatTheme.dialog.emptyIconSize,
+                              size: dialogEmptyIconSize,
                               color: colorScheme.error,
                             ),
                           ),
-                          SizedBox(height: chatTheme.dialog.emptySpacing),
+                          SizedBox(height: dialogEmptySpacing),
                           Text(
-                            "Error: ${snapshot.error.toString()}",
+                            '오류: {}'.tr(args: [snapshot.error.toString()]),
                             style: textTheme.bodyLarge?.copyWith(
                               color: colorScheme.error,
                             ),
@@ -166,28 +165,28 @@ class BookmarkedChatsDialog extends StatelessWidget {
                   if (!snapshot.hasData ||
                       snapshot.data?.snapshot.value == null) {
                     return Padding(
-                      padding: chatTheme.dialog.emptyPadding,
+                      padding: dialogEmptyPadding,
                       child: Column(
                         children: [
                           Container(
-                            padding: chatTheme.dialog.emptyContainerPadding,
+                            padding: dialogEmptyContainerPadding,
                             decoration: BoxDecoration(
                               color: colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+                              borderRadius: BorderRadius.circular(dialogBorderRadius),
                               border: Border.all(
                                 color: colorScheme.outline,
-                                width: chatTheme.dialog.borderWidth,
+                                width: dialogBorderWidth,
                               ),
                             ),
                             child: FaIcon(
                               FontAwesomeIcons.lightComments,
-                              size: chatTheme.dialog.emptyIconSize,
+                              size: dialogEmptyIconSize,
                               color: colorScheme.outline,
                             ),
                           ),
-                          SizedBox(height: chatTheme.dialog.emptySpacing),
+                          SizedBox(height: dialogEmptySpacing),
                           Text(
-                            'No bookmarked chats yet',
+                            '북마크된 채팅이 없습니다'.tr(),
                             style: textTheme.bodyLarge?.copyWith(
                               color: colorScheme.outline,
                             ),
@@ -205,13 +204,13 @@ class BookmarkedChatsDialog extends StatelessWidget {
 
                   // 채팅방 목록 표시 - Comic 스타일
                   return ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: chatTheme.dialog.listMaxHeight),
+                    constraints: BoxConstraints(maxHeight: dialogListMaxHeight),
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: chatRoomIds.length,
-                      padding: chatTheme.dialog.contentPadding,
+                      padding: dialogContentPadding,
                       separatorBuilder: (context, index) =>
-                          SizedBox(height: chatTheme.dialog.itemSpacing),
+                          SizedBox(height: dialogItemSpacing),
                       itemBuilder: (context, index) {
                         final roomId = chatRoomIds[index].toString();
 
@@ -231,40 +230,40 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                   Navigator.pop(context);
                                   ChatRoomScreen.push(context, roomId);
                                 },
-                                borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                                borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                                 child: Container(
-                                  padding: chatTheme.dialog.itemPadding,
+                                  padding: dialogItemPadding,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                                    borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                                     border: Border.all(
                                       color: colorScheme.outline,
-                                      width: chatTheme.dialog.itemBorderWidth,
+                                      width: dialogItemBorderWidth,
                                     ),
                                   ),
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: chatTheme.dialog.avatarSize,
-                                        height: chatTheme.dialog.avatarSize,
+                                        width: dialogAvatarSize,
+                                        height: dialogAvatarSize,
                                         decoration: BoxDecoration(
                                           color: colorScheme.primaryContainer,
                                           borderRadius: BorderRadius.circular(
-                                            chatTheme.dialog.avatarBorderRadius,
+                                            dialogAvatarBorderRadius,
                                           ),
                                           border: Border.all(
                                             color: colorScheme.primary,
-                                            width: chatTheme.dialog.avatarBorderWidth,
+                                            width: dialogAvatarBorderWidth,
                                           ),
                                         ),
                                         child: Center(
                                           child: FaIcon(
                                             FontAwesomeIcons.lightComments,
-                                            size: chatTheme.dialog.closeIconSize,
+                                            size: closeIconSize,
                                             color: colorScheme.primary,
                                           ),
                                         ),
                                       ),
-                                      SizedBox(width: chatTheme.dialog.avatarSpacing),
+                                      SizedBox(width: dialogAvatarSpacing),
                                       Expanded(
                                         child: Text(
                                           roomId,
@@ -290,37 +289,37 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                   Navigator.pop(context);
                                   ChatRoomScreen.push(context, roomId);
                                 },
-                                borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                                borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                                 child: Container(
-                                  padding: chatTheme.dialog.itemPadding,
+                                  padding: dialogItemPadding,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                                    borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                                     border: Border.all(
                                       color: colorScheme.outline,
-                                      width: chatTheme.dialog.itemBorderWidth,
+                                      width: dialogItemBorderWidth,
                                     ),
                                   ),
                                   child: Row(
                                     children: [
                                       // Avatar with Comic border
                                       Container(
-                                        width: chatTheme.dialog.avatarSize,
-                                        height: chatTheme.dialog.avatarSize,
+                                        width: dialogAvatarSize,
+                                        height: dialogAvatarSize,
                                         decoration: BoxDecoration(
                                           color: colorScheme.primaryContainer,
                                           borderRadius: BorderRadius.circular(
-                                            chatTheme.dialog.avatarBorderRadius,
+                                            dialogAvatarBorderRadius,
                                           ),
                                           border: Border.all(
                                             color: colorScheme.primary,
-                                            width: chatTheme.dialog.avatarBorderWidth,
+                                            width: dialogAvatarBorderWidth,
                                           ),
                                         ),
                                         child: Avatar(
                                           photoUrl: chatJoin.userPhotoUrl,
                                         ),
                                       ),
-                                      SizedBox(width: chatTheme.dialog.avatarSpacing),
+                                      SizedBox(width: dialogAvatarSpacing),
                                       // Chat info
                                       Expanded(
                                         child: Column(
@@ -337,11 +336,11 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
-                                            const SizedBox(height: 4),
+                                            SizedBox(height: subtitleSpacing),
                                             Blocked(
                                               otherUserUid: otherUserUid,
                                               yes: () => Text(
-                                                "Message from blocked user (tap to unblock)",
+                                                '차단된 사용자의 메시지 (탭하여 차단 해제)'.tr(),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: textTheme.bodySmall
@@ -377,19 +376,19 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                       ),
                                       // Unread badge with Comic style
                                       if (chatJoin.unread > 0) ...[
-                                        const SizedBox(width: 8),
+                                        SizedBox(width: dialogItemSpacing),
                                         Blocked(
                                           otherUserUid: otherUserUid,
                                           yes: () => SizedBox.shrink(),
                                           no: () => Container(
-                                            padding: chatTheme.dialog.dialogUnreadBadgePadding,
+                                            padding: dialogUnreadBadgePadding,
                                             decoration: BoxDecoration(
                                               color: colorScheme.error,
                                               borderRadius:
-                                                  BorderRadius.circular(chatTheme.dialog.dialogUnreadBadgeBorderRadius),
+                                                  BorderRadius.circular(dialogUnreadBadgeBorderRadius),
                                               border: Border.all(
                                                 color: colorScheme.error,
-                                                width: chatTheme.dialog.dialogUnreadBadgeBorderWidth,
+                                                width: dialogUnreadBadgeBorderWidth,
                                               ),
                                             ),
                                             child: Text(
@@ -414,40 +413,40 @@ class BookmarkedChatsDialog extends StatelessWidget {
                                   Navigator.pop(context);
                                   ChatRoomScreen.push(context, roomId);
                                 },
-                                borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                                borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                                 child: Container(
-                                  padding: chatTheme.dialog.itemPadding,
+                                  padding: dialogItemPadding,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(chatTheme.dialog.itemBorderRadius),
+                                    borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                                     border: Border.all(
                                       color: colorScheme.outline,
-                                      width: chatTheme.dialog.itemBorderWidth,
+                                      width: dialogItemBorderWidth,
                                     ),
                                   ),
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: chatTheme.dialog.avatarSize,
-                                        height: chatTheme.dialog.avatarSize,
+                                        width: dialogAvatarSize,
+                                        height: dialogAvatarSize,
                                         decoration: BoxDecoration(
                                           color: colorScheme.primaryContainer,
                                           borderRadius: BorderRadius.circular(
-                                            chatTheme.dialog.avatarBorderRadius,
+                                            dialogAvatarBorderRadius,
                                           ),
                                           border: Border.all(
                                             color: colorScheme.primary,
-                                            width: chatTheme.dialog.avatarBorderWidth,
+                                            width: dialogAvatarBorderWidth,
                                           ),
                                         ),
                                         child: Center(
                                           child: FaIcon(
                                             FontAwesomeIcons.lightComments,
-                                            size: chatTheme.dialog.closeIconSize,
+                                            size: closeIconSize,
                                             color: colorScheme.primary,
                                           ),
                                         ),
                                       ),
-                                      SizedBox(width: chatTheme.dialog.avatarSpacing),
+                                      SizedBox(width: dialogAvatarSpacing),
                                       Expanded(
                                         child: Text(
                                           roomId,
@@ -467,28 +466,28 @@ class BookmarkedChatsDialog extends StatelessWidget {
                 },
               ),
               notLoggedIn: Padding(
-                padding: chatTheme.dialog.emptyPadding,
+                padding: dialogEmptyPadding,
                 child: Column(
                   children: [
                     Container(
-                      padding: chatTheme.dialog.emptyContainerPadding,
+                      padding: dialogEmptyContainerPadding,
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(chatTheme.dialog.borderRadius),
+                        borderRadius: BorderRadius.circular(dialogBorderRadius),
                         border: Border.all(
                           color: colorScheme.outline,
-                          width: chatTheme.dialog.borderWidth,
+                          width: dialogBorderWidth,
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.lightCircleExclamation,
-                        size: chatTheme.dialog.emptyIconSize,
+                        size: dialogEmptyIconSize,
                         color: colorScheme.outline,
                       ),
                     ),
-                    SizedBox(height: chatTheme.dialog.emptySpacing),
+                    SizedBox(height: dialogEmptySpacing),
                     Text(
-                      "Login required to view bookmarked chats",
+                      '북마크된 채팅을 보려면 로그인하세요'.tr(),
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.outline,
                       ),

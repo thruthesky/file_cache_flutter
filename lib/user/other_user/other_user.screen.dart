@@ -1,12 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/bookmark/bookmark.service.dart';
+import 'package:philgo/bookmark/widgets/bookmark_group_picker.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
+import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 
 /// 다른 사용자의 공개 프로필 화면
@@ -36,6 +39,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
   UserModel? _user;
   List<Post> _recentPosts = [];
   bool _isLoading = true;
+  bool _bookmarked = false;
 
   @override
   void initState() {
@@ -104,6 +108,36 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
     setState(() {
       _recentPosts = result.posts;
     });
+  }
+
+  Future<void> _toggleBookmark() async {
+    if (!UserService.isLoggedIn) {
+      LoginRequiredDialog.show(context);
+      return;
+    }
+    if (_user == null) return;
+    final result = await showBookmarkGroupPicker(
+      context: context,
+      isBookmarked: _bookmarked,
+    );
+    if (result == null || !mounted) return;
+
+    if (result.removed) {
+      await BookmarkService.instance.remove(
+        entityType: 'user',
+        entityIdx: _user!.idx,
+      );
+      if (!mounted) return;
+      setState(() => _bookmarked = false);
+    } else {
+      await BookmarkService.instance.add(
+        entityType: 'user',
+        entityIdx: _user!.idx,
+        groupName: result.groupName ?? '',
+      );
+      if (!mounted) return;
+      setState(() => _bookmarked = true);
+    }
   }
 
   @override
@@ -247,6 +281,14 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              _buildActionButton(
+                _bookmarked
+                    ? FontAwesomeIcons.solidBookmark
+                    : FontAwesomeIcons.lightBookmark,
+                '북마크'.tr(),
+                _toggleBookmark,
+              ),
+              const SizedBox(width: 16),
               _buildActionButton(
                 FontAwesomeIcons.lightCommentDots,
                 '채팅'.tr(),

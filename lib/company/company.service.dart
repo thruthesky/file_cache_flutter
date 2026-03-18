@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:philgo/api/api.service.dart';
 
 import 'company.model.dart';
+import 'company_list_result.model.dart';
 
 /// 업소록 API 서비스
 ///
@@ -9,25 +13,38 @@ import 'company.model.dart';
 ///
 /// 사용 예시:
 /// ```dart
-/// final companies = await CompanyService.list(category: 'food');
+/// final result = await CompanyService.list(category: 'food');
+/// final companies = result.items;
 /// final company = await CompanyService.get(1025);
 /// final mine = await CompanyService.mine();
 /// final updated = await CompanyService.update({'name': '새 이름'});
 /// ```
 class CompanyService {
+  static final CompanyService instance = CompanyService._();
+
   CompanyService._();
+
+  final ValueNotifier<CompanyModel?> _companyListenable =
+      ValueNotifier<CompanyModel?>(null);
+
+  ValueNotifier<CompanyModel?> get companyNotifier => _companyListenable;
+  CompanyModel? get company => _companyListenable.value;
+
+  void clear() => _companyListenable.value = null;
 
   /// 업소 목록 조회
   ///
   /// API: company.list (인증 불필요)
   ///
   /// [category] 카테고리 필터 (선택)
+  /// [status] 업소 상태 필터 (선택, 예: 'a' = 승인됨)
   /// [page] 페이지 번호 (기본 1)
   /// [limit] 최대 조회 수 (기본 20, 최대 100)
   ///
-  /// 반환: CompanyModel 목록
-  static Future<List<CompanyModel>> list({
+  /// 반환: CompanyListResult (items, total, page, limit)
+  static Future<CompanyListResult> list({
     String? category,
+    String? status,
     int page = 1,
     int limit = 20,
   }) async {
@@ -35,19 +52,13 @@ class CompanyService {
       'company.list',
       data: {
         if (category != null) 'category': category,
+        if (status != null) 'status': status,
         'page': page,
         'limit': limit,
       },
-      debug: true,
     );
 
-    final raw = result['items'];
-    if (raw == null || raw is! List) return [];
-
-    return raw
-        .whereType<Map<String, dynamic>>()
-        .map(CompanyModel.fromJson)
-        .toList();
+    return CompanyListResult.fromJson(result);
   }
 
   /// 업소 단건 조회
@@ -71,10 +82,13 @@ class CompanyService {
   ///
   /// 업소가 없으면 서버에서 자동 생성된다 (status='').
   /// 반환: CompanyModel 또는 null
-  static Future<CompanyModel?> mine() async {
+  Future<void> loadMyCompany() async {
     final result = await ApiService.instance.v7api('company.mine');
-    if (result.isEmpty) return null;
-    return CompanyModel.fromJson(result);
+    if (result.isEmpty) return;
+
+    _companyListenable.value = CompanyModel.fromJson(result);
+
+    log('[loadMyCompany func] Company is loaded : $result');
   }
 
   /// 업소 생성 (최초 등록)
@@ -104,6 +118,8 @@ class CompanyService {
       data: data,
     );
     if (result.isEmpty) return null;
-    return CompanyModel.fromJson(result);
+    final company = CompanyModel.fromJson(result);
+    instance._companyListenable.value = company;
+    return company;
   }
 }

@@ -74,7 +74,6 @@ class GoogleSignInButton extends StatelessWidget {
     final json = await ApiService.instance.v7api(
       'user.socialLogin',
       data: {'login_provider': 'google'},
-      debug: true,
     );
     log('Google 로그인 성공: v7 API 응답 수신');
     log('Google 로그인 성공: ${json.toString()}');

@@ -1,15 +1,16 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.message.dart';
-import 'package:philgo/user/user.firebase_model.dart';
 import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
 import 'package:philgo/user/widgets/block_user_dialog.dart';
@@ -20,7 +21,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// Message bubble widget for displaying chat messages
 class ChatRoomMessageBubble extends StatelessWidget {
   final ChatMessage message;
-  final UserFirebaseModel? sender;
+  final UserModel? sender;
   final bool isCurrentUser;
   final bool showSenderInfo;
   final String? roomId; // Add roomId for reporting functionality
@@ -55,7 +56,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     // Check if message is from a blocked user (only for other users' messages)
     if (!isCurrentUser && sender != null) {
       return Blocked(
-        otherUserUid: sender!.uid,
+        otherUserUid: sender!.firebaseUid,
         yes: () => _buildBlockedMessage(context),
         no: () => _buildNormalMessage(context),
       );
@@ -66,11 +67,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build normal message bubble
   Widget _buildNormalMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.instance;
-    final bubbleTheme = chatTheme.bubble;
-
     return Padding(
-      padding: bubbleTheme.messagePadding,
+      padding: messagePadding,
       child: Column(
         crossAxisAlignment: isCurrentUser
             ? CrossAxisAlignment.end
@@ -79,7 +77,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           // User info section (avatar + name) above the message
           if (showSenderInfo)
             Padding(
-              padding: EdgeInsets.only(bottom: bubbleTheme.senderInfoSpacing),
+              padding: EdgeInsets.only(bottom: senderInfoSpacing),
               child: Row(
                 mainAxisAlignment: isCurrentUser
                     ? MainAxisAlignment.end
@@ -88,34 +86,34 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   if (!isCurrentUser) ...[
                     // Other user avatar with long press
                     GestureDetector(
-                      onTap: () => !isAdminChatUser(sender!.uid)
+                      onTap: () => !isAdminChatUser(sender!.firebaseUid)
                           ? _showMessageOptions(context)
                           : null,
                       child: userAvatar(),
                     ),
-                    SizedBox(width: bubbleTheme.avatarNameSpacing),
+                    SizedBox(width: avatarNameSpacing),
                     // Other user name with long press
                     GestureDetector(
-                      onTap: () => !isAdminChatUser(sender!.uid)
+                      onTap: () => !isAdminChatUser(sender!.firebaseUid)
                           ? _showMessageOptions(context)
                           : null,
                       child: Text(
                         userDisplayName(),
                         style: TextStyle(
-                          fontSize: bubbleTheme.senderNameFontSize,
-                          color: bubbleTheme.senderNameColor,
-                          fontWeight: bubbleTheme.senderNameFontWeight,
+                          fontSize: senderNameFontSize,
+                          color: senderNameColor,
+                          fontWeight: senderNameFontWeight,
                         ),
                       ),
                     ),
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      "You",
+                      '나'.tr(),
                       style: TextStyle(
-                        fontSize: bubbleTheme.senderNameFontSize,
+                        fontSize: senderNameFontSize,
                         color: Theme.of(context).colorScheme.primary,
-                        fontWeight: bubbleTheme.senderNameFontWeight,
+                        fontWeight: senderNameFontWeight,
                       ),
                     ),
                   ],
@@ -136,7 +134,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       maxWidth:
-                          constraints.maxWidth * bubbleTheme.maxWidthFraction,
+                          constraints.maxWidth * maxWidthFraction,
                     ),
                     child: Column(
                       crossAxisAlignment: isCurrentUser
@@ -147,13 +145,13 @@ class ChatRoomMessageBubble extends StatelessWidget {
                             message.urls!.isNotEmpty) ...[
                           _buildMultipleImages(context),
                           if (message.text?.isNotEmpty == true)
-                            SizedBox(height: bubbleTheme.imageSpacing),
+                            SizedBox(height: imageSpacing),
                         ],
                         if (message.text?.isNotEmpty == true)
                           GestureDetector(
                             onLongPress: () => _showMessageOptions(context),
                             child: Container(
-                              padding: bubbleTheme.textPadding,
+                              padding: textPadding,
                               decoration: BoxDecoration(
                                 color: isCurrentUser
                                     ? Theme.of(context).colorScheme.primary
@@ -161,17 +159,17 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                     : Theme.of(context).colorScheme.onSecondary,
                                 borderRadius:
                                     BorderRadius.circular(
-                                      bubbleTheme.bubbleBorderRadius,
+                                      bubbleBorderRadius,
                                     ).copyWith(
                                       bottomLeft: Radius.circular(
                                         !isCurrentUser && showSenderInfo
-                                            ? bubbleTheme.bubbleTailRadius
-                                            : bubbleTheme.bubbleBorderRadius,
+                                            ? bubbleTailRadius
+                                            : bubbleBorderRadius,
                                       ),
                                       bottomRight: Radius.circular(
                                         isCurrentUser && showSenderInfo
-                                            ? bubbleTheme.bubbleTailRadius
-                                            : bubbleTheme.bubbleBorderRadius,
+                                            ? bubbleTailRadius
+                                            : bubbleBorderRadius,
                                       ),
                                     ),
                               ),
@@ -181,7 +179,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                   color: isCurrentUser
                                       ? Theme.of(context).colorScheme.onPrimary
                                       : Theme.of(context).colorScheme.secondary,
-                                  fontSize: bubbleTheme.messageFontSize,
+                                  fontSize: messageFontSize,
                                 ),
                                 linkStyle: isCurrentUser
                                     ? TextStyle(
@@ -204,14 +202,14 @@ class ChatRoomMessageBubble extends StatelessWidget {
                             ),
                           ),
 
-                        SizedBox(height: bubbleTheme.timestampSpacing),
+                        SizedBox(height: timestampSpacing),
 
                         // Timestamp
                         Text(
                           formatTimestamp(context, message.sentAt),
                           style: TextStyle(
-                            fontSize: bubbleTheme.timestampFontSize,
-                            color: bubbleTheme.timestampColor,
+                            fontSize: timestampFontSize,
+                            color: timestampColor,
                           ),
                         ),
                       ],
@@ -228,26 +226,24 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build protocol message (system messages) centered with light gray color
   Widget _buildProtocolMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.instance;
-    final bubbleTheme = chatTheme.bubble;
     String protocolText = _getProtocolText(context);
 
     return Padding(
-      padding: bubbleTheme.protocolOuterPadding,
+      padding: protocolOuterPadding,
       child: Center(
         child: Container(
-          padding: bubbleTheme.protocolPadding,
+          padding: protocolPadding,
           decoration: BoxDecoration(
-            color: bubbleTheme.protocolBgColor,
+            color: protocolBgColor,
             borderRadius: BorderRadius.circular(
-              bubbleTheme.protocolBorderRadius,
+              protocolBorderRadius,
             ),
           ),
           child: Text(
             protocolText,
             style: TextStyle(
-              fontSize: bubbleTheme.protocolFontSize,
-              color: bubbleTheme.protocolTextColor,
+              fontSize: protocolFontSize,
+              color: protocolTextColor,
               fontStyle: FontStyle.italic,
             ),
             textAlign: TextAlign.center,
@@ -263,15 +259,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
     switch (message.protocol) {
       case ChatProtocol.create:
-        return "Room has been created";
+        return '채팅방이 생성되었습니다'.tr();
       case ChatProtocol.join:
-        return "$senderName has joined the room";
+        return '{}님이 입장했습니다'.tr(args: [senderName]);
       case ChatProtocol.invitationNotSent:
-        return "Invitation not sent";
+        return '초대가 전송되지 않았습니다'.tr();
       case ChatProtocol.left:
-        return "$senderName left the room";
+        return '{}님이 퇴장했습니다'.tr(args: [senderName]);
       case ChatProtocol.removed:
-        return "$senderName has been removed from the room";
+        return '{}님이 방에서 제거되었습니다'.tr(args: [senderName]);
       default:
         // Fallback to the message text if protocol is not recognized
         return message.text ?? '';
@@ -281,20 +277,20 @@ class ChatRoomMessageBubble extends StatelessWidget {
   /// Build user avatar widget
   Widget userAvatar() {
     return Avatar(
-      photoUrl: sender?.photoUrl != null && sender!.photoUrl!.isNotEmpty
-          ? sender!.photoUrl!
+      photoUrl: sender?.photoUrl != null && sender!.photoUrl.isNotEmpty
+          ? sender!.photoUrl
           : null,
     );
   }
 
   /// Get user display name
   String userDisplayName() {
-    if (sender == null) return 'no-name';
+    if (sender == null) return '이름없음'.tr();
 
     if (sender!.nickname.isNotEmpty) {
       return sender!.nickname;
     } else {
-      return 'no-name';
+      return '이름없음'.tr();
     }
   }
 
@@ -304,8 +300,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final chatTheme = ChatThemeData.instance;
-    final bubbleTheme = chatTheme.bubble;
     final urls = message.urls!;
 
     return Column(
@@ -316,31 +310,13 @@ class ChatRoomMessageBubble extends StatelessWidget {
             onTap: () => onImageTap != null
                 ? onImageTap!(urls[i])
                 : _showFullScreenImage(context, urls, i),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                bubbleTheme.imageBorderRadius,
-              ),
-              child: CachedNetworkImage(
-                imageUrl: urls[i],
-                width: bubbleTheme.imageWidth,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  width: bubbleTheme.imageWidth,
-                  height: bubbleTheme.imageHeight,
-                  color: bubbleTheme.imagePlaceholderColor,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  width: bubbleTheme.imageWidth,
-                  height: bubbleTheme.imageHeight,
-                  color: bubbleTheme.imagePlaceholderColor,
-                  child: const Icon(Icons.error),
-                ),
-              ),
+            child: DisplayThumbnail(
+              url: urls[i],
+              size: bubbleImageWidth,
             ),
           ),
           // Add spacing between images except for the last one
-          if (i < urls.length - 1) SizedBox(height: bubbleTheme.imageSpacing),
+          if (i < urls.length - 1) SizedBox(height: imageSpacing),
         ],
       ],
     );
@@ -375,18 +351,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build blinded message bubble for moderated content
   Widget _buildBlindedMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.instance;
-    final bubbleTheme = chatTheme.bubble;
-
     String blindReason = '';
     if (message.moderated == 'M') {
-      blindReason = "This message was blocked by AI moderation.";
+      blindReason = '이 메시지는 AI 검토에 의해 차단되었습니다.'.tr();
     } else if (message.moderated == 'A') {
-      blindReason = "This message was blocked as an advertisement.";
+      blindReason = '이 메시지는 광고로 차단되었습니다.'.tr();
     }
 
     return Padding(
-      padding: bubbleTheme.messagePadding,
+      padding: messagePadding,
       child: Column(
         crossAxisAlignment: isCurrentUser
             ? CrossAxisAlignment.end
@@ -395,7 +368,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           // User info section (avatar + name) above the message
           if (showSenderInfo)
             Padding(
-              padding: EdgeInsets.only(bottom: bubbleTheme.senderInfoSpacing),
+              padding: EdgeInsets.only(bottom: senderInfoSpacing),
               child: Row(
                 mainAxisAlignment: isCurrentUser
                     ? MainAxisAlignment.end
@@ -407,27 +380,27 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       onLongPress: () => _showMessageOptions(context),
                       child: userAvatar(),
                     ),
-                    SizedBox(width: bubbleTheme.avatarNameSpacing),
+                    SizedBox(width: avatarNameSpacing),
                     // Other user name with long press
                     GestureDetector(
                       onLongPress: () => _showMessageOptions(context),
                       child: Text(
                         userDisplayName(),
                         style: TextStyle(
-                          fontSize: bubbleTheme.senderNameFontSize,
-                          color: bubbleTheme.senderNameColor,
-                          fontWeight: bubbleTheme.senderNameFontWeight,
+                          fontSize: senderNameFontSize,
+                          color: senderNameColor,
+                          fontWeight: senderNameFontWeight,
                         ),
                       ),
                     ),
                   ] else ...[
                     // "You" text for current user
                     Text(
-                      "You",
+                      '나'.tr(),
                       style: TextStyle(
-                        fontSize: bubbleTheme.senderNameFontSize,
-                        color: bubbleTheme.senderNameColor,
-                        fontWeight: bubbleTheme.senderNameFontWeight,
+                        fontSize: senderNameFontSize,
+                        color: senderNameColor,
+                        fontWeight: senderNameFontWeight,
                       ),
                     ),
                   ],
@@ -448,7 +421,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       maxWidth:
-                          constraints.maxWidth * bubbleTheme.maxWidthFraction,
+                          constraints.maxWidth * maxWidthFraction,
                     ),
                     child: Column(
                       crossAxisAlignment: isCurrentUser
@@ -456,22 +429,22 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           : CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: bubbleTheme.textPadding,
+                          padding: textPadding,
                           decoration: BoxDecoration(
-                            color: bubbleTheme.blockedBgColor,
+                            color: blockedBgColor,
                             borderRadius:
                                 BorderRadius.circular(
-                                  bubbleTheme.bubbleBorderRadius,
+                                  bubbleBorderRadius,
                                 ).copyWith(
                                   bottomLeft: Radius.circular(
                                     !isCurrentUser && showSenderInfo
-                                        ? bubbleTheme.bubbleTailRadius
-                                        : bubbleTheme.bubbleBorderRadius,
+                                        ? bubbleTailRadius
+                                        : bubbleBorderRadius,
                                   ),
                                   bottomRight: Radius.circular(
                                     isCurrentUser && showSenderInfo
-                                        ? bubbleTheme.bubbleTailRadius
-                                        : bubbleTheme.bubbleBorderRadius,
+                                        ? bubbleTailRadius
+                                        : bubbleBorderRadius,
                                   ),
                                 ),
                           ),
@@ -484,17 +457,17 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                 children: [
                                   Icon(
                                     Icons.visibility_off,
-                                    size: bubbleTheme.blockedIconSize,
-                                    color: bubbleTheme.blockedTextColor,
+                                    size: blockedIconSize,
+                                    color: blockedTextColor,
                                   ),
                                   SizedBox(
-                                    width: bubbleTheme.blockedIconSpacing,
+                                    width: blockedIconSpacing,
                                   ),
                                   Text(
                                     blindReason,
                                     style: TextStyle(
-                                      color: bubbleTheme.blockedTextColor,
-                                      fontSize: bubbleTheme.blockedTextFontSize,
+                                      color: blockedTextColor,
+                                      fontSize: blockedTextFontSize,
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
@@ -504,14 +477,14 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: bubbleTheme.timestampSpacing),
+                        SizedBox(height: timestampSpacing),
 
                         // Timestamp
                         Text(
                           formatTimestamp(context, message.sentAt),
                           style: TextStyle(
-                            fontSize: bubbleTheme.timestampFontSize,
-                            color: bubbleTheme.timestampColor,
+                            fontSize: timestampFontSize,
+                            color: timestampColor,
                           ),
                         ),
                       ],
@@ -528,35 +501,32 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Build blocked message display with unblock option
   Widget _buildBlockedMessage(BuildContext context) {
-    final chatTheme = ChatThemeData.instance;
-    final bubbleTheme = chatTheme.bubble;
-
     return Padding(
-      padding: bubbleTheme.messagePadding,
+      padding: messagePadding,
       child: GestureDetector(
         onTap: () => _showUnblockOption(context),
         child: Container(
-          padding: bubbleTheme.textPadding,
+          padding: textPadding,
           decoration: BoxDecoration(
-            color: bubbleTheme.blockedBgColor,
-            borderRadius: BorderRadius.circular(bubbleTheme.bubbleBorderRadius),
-            border: Border.all(color: bubbleTheme.blockedBorderColor),
+            color: blockedBgColor,
+            borderRadius: BorderRadius.circular(bubbleBorderRadius),
+            border: Border.all(color: blockedBorderColor),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 Icons.block,
-                color: bubbleTheme.blockedTextColor,
-                size: bubbleTheme.blockedIconSize,
+                color: blockedTextColor,
+                size: blockedIconSize,
               ),
-              SizedBox(width: bubbleTheme.avatarNameSpacing),
+              SizedBox(width: avatarNameSpacing),
               Flexible(
                 child: Text(
-                  "This message was blocked.",
+                  '이 메시지는 차단되었습니다.'.tr(),
                   style: TextStyle(
-                    color: bubbleTheme.blockedTextColor,
-                    fontSize: bubbleTheme.blockedTextFontSize,
+                    color: blockedTextColor,
+                    fontSize: blockedTextFontSize,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -564,8 +534,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
               const SizedBox(width: 4),
               Icon(
                 Icons.touch_app,
-                color: bubbleTheme.timestampColor,
-                size: bubbleTheme.blockedTextFontSize,
+                color: timestampColor,
+                size: blockedTextFontSize,
               ),
             ],
           ),
@@ -579,33 +549,30 @@ class ChatRoomMessageBubble extends StatelessWidget {
     // Don't show options for current user's messages or if roomId is null
     if (isCurrentUser || roomId == null) return;
 
-    final chatTheme = ChatThemeData.instance;
-    final bubbleTheme = chatTheme.bubble;
-
     showModalBottomSheet(
       context: parentContext,
       builder: (context) => Container(
-        padding: bubbleTheme.bottomSheetPadding,
+        padding: bottomSheetPadding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
             Container(
-              padding: bubbleTheme.bottomSheetHeaderPadding,
+              padding: bottomSheetHeaderPadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Menu",
+                    '메뉴'.tr(),
                     style: TextStyle(
-                      fontSize: bubbleTheme.bottomSheetHeaderFontSize,
+                      fontSize: bottomSheetHeaderFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: "Close",
+                    tooltip: '닫기'.tr(),
                   ),
                 ],
               ),
@@ -615,16 +582,16 @@ class ChatRoomMessageBubble extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               visualDensity: const VisualDensity(horizontal: -4),
               leading: userAvatar(),
-              title: Text("Profile"),
+              title: Text('프로필'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
                 showProfileDialog(parentContext, sender!);
               },
             ),
-            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
+            SizedBox(height: bottomSheetItemSpacing),
             ListTile(
               leading: const Icon(Icons.post_add),
-              title: Text("Recent Posts"),
+              title: Text('최근 글'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
                 showUserRecentPostsDialog(
@@ -633,11 +600,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
+            SizedBox(height: bottomSheetItemSpacing),
             // Report option
             ListTile(
               leading: const Icon(Icons.report, color: Colors.red),
-              title: Text("Report", style: const TextStyle(color: Colors.red)),
+              title: Text('신고'.tr(), style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.of(context).pop();
                 ChatService.instance.showChatMessageReportDialog(
@@ -647,16 +614,16 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
+            SizedBox(height: bottomSheetItemSpacing),
 
             // Block/Unblock option (only if sender is not current user)
             if (sender != null) ...[
               Blocked(
-                otherUserUid: sender!.uid,
+                otherUserUid: sender!.firebaseUid,
                 yes: () => ListTile(
                   leading: Icon(Icons.person_add, color: Colors.green),
                   title: Text(
-                    "Unblock User",
+                    '차단 해제'.tr(),
                     style: TextStyle(color: Colors.green),
                   ),
                   onTap: () {
@@ -667,7 +634,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 no: () => ListTile(
                   leading: Icon(Icons.block, color: Colors.orange),
                   title: Text(
-                    "Block User",
+                    '사용자 차단'.tr(),
                     style: TextStyle(color: Colors.orange),
                   ),
                   onTap: () {
@@ -677,7 +644,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
+              SizedBox(height: bottomSheetItemSpacing),
             ],
           ],
         ),
@@ -693,15 +660,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => Blocked(
-        otherUserUid: sender!.uid,
+        otherUserUid: sender!.firebaseUid,
         yes: () => UnblockUserDialog(
-          otherUserUid: sender!.uid,
+          otherUserUid: sender!.firebaseUid,
           onUnblocked: () {
             // Optionally refresh or show success message
           },
         ),
         no: () => BlockUserDialog(
-          otherUserUid: sender!.uid,
+          otherUserUid: sender!.firebaseUid,
           displayName: sender!.nickname,
           onBlocked: () {
             Navigator.of(context).pop();
@@ -715,33 +682,30 @@ class ChatRoomMessageBubble extends StatelessWidget {
   void _showUnblockOption(BuildContext context) {
     if (sender == null) return;
 
-    final chatTheme = ChatThemeData.instance;
-    final bubbleTheme = chatTheme.bubble;
-
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        padding: bubbleTheme.bottomSheetPadding,
+        padding: bottomSheetPadding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
             Container(
-              padding: bubbleTheme.bottomSheetHeaderPadding,
+              padding: bottomSheetHeaderPadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Blocked User Options",
+                    '차단된 사용자 옵션'.tr(),
                     style: TextStyle(
-                      fontSize: bubbleTheme.bottomSheetHeaderFontSize,
+                      fontSize: bottomSheetHeaderFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    tooltip: "Close",
+                    tooltip: '닫기'.tr(),
                   ),
                 ],
               ),
@@ -755,24 +719,24 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 userDisplayName(),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text("This message was blocked."),
+              subtitle: Text('이 메시지는 차단되었습니다.'.tr()),
             ),
-            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
+            SizedBox(height: bottomSheetItemSpacing),
 
             // Unblock option
             ListTile(
               leading: const Icon(Icons.person_add, color: Colors.green),
               title: Text(
-                "Unblock User",
+                '차단 해제'.tr(),
                 style: const TextStyle(color: Colors.green),
               ),
-              subtitle: Text("Unblock this user to view their messages."),
+              subtitle: Text('이 사용자의 차단을 해제하면 메시지를 볼 수 있습니다.'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
                 _performUnblock(context);
               },
             ),
-            SizedBox(height: bubbleTheme.bottomSheetItemSpacing),
+            SizedBox(height: bottomSheetItemSpacing),
           ],
         ),
       ),
@@ -786,7 +750,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => UnblockUserDialog(
-        otherUserUid: sender!.uid,
+        otherUserUid: sender!.firebaseUid,
         onUnblocked: () {
           // Show success message
         },

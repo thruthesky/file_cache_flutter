@@ -36,6 +36,12 @@ class CommentTile extends StatefulWidget {
   /// 아바타 아래 세로선 표시 여부 (자식이 있는 노드에서 true)
   final bool showThreadLine;
 
+  /// 북마크 상태
+  final bool bookmarked;
+
+  /// 북마크 토글 콜백
+  final VoidCallback? onBookmark;
+
   const CommentTile({
     super.key,
     required this.comment,
@@ -46,6 +52,8 @@ class CommentTile extends StatefulWidget {
     required this.onDelete,
     this.hasChildren = false,
     this.showThreadLine = false,
+    this.bookmarked = false,
+    this.onBookmark,
   });
 
   @override
@@ -283,6 +291,21 @@ class _CommentTileState extends State<CommentTile> {
                     widget.onReply();
                   },
                 ),
+
+                // 북마크
+                if (widget.onBookmark != null) ...[
+                  const SizedBox(width: 8),
+                  PostActionButton(
+                    icon: widget.bookmarked
+                        ? FontAwesomeIcons.solidBookmark
+                        : FontAwesomeIcons.lightBookmark,
+                    label: '',
+                    color: widget.bookmarked
+                        ? scheme.primary
+                        : scheme.tertiary,
+                    onTap: widget.onBookmark!,
+                  ),
+                ],
 
                 const SizedBox(width: 12),
 
