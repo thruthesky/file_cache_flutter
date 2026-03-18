@@ -114,11 +114,18 @@ class _CommentTileState extends State<CommentTile> {
   }
 
   Future<void> _blockCommentAuthor() async {
+    final name = widget.comment.userName.isNotEmpty
+        ? widget.comment.userName
+        : '이름없음'.tr();
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('차단'.tr()),
-        content: Text('이 사용자를 차단하시겠습니까?'.tr()),
+        content: Text(
+          '{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name}) +
+              '\n' +
+              '차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr(),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),

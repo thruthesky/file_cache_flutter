@@ -194,14 +194,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   Future<void> _blockAuthor() async {
     final label = _post.blocked ? '차단 해제'.tr() : '차단'.tr();
+    final name = _post.userName.isNotEmpty ? _post.userName : '이름없음'.tr();
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(label),
         content: Text(
           _post.blocked
-              ? '이 사용자의 차단을 해제하시겠습니까?'.tr()
-              : '이 사용자를 차단하시겠습니까?\n차단하면 이 사용자의 글이 목록에서 숨겨집니다.'.tr(),
+              ? '{name}님의 차단을 해제하시겠습니까?'.tr(namedArgs: {'name': name})
+              : '{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name}) +
+                  '\n' +
+                  '차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr(),
         ),
         actions: [
           TextButton(
@@ -546,6 +549,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             onDelete: _deletePost,
                             bookmarked: _bookmarked,
                             onBookmark: _toggleBookmark,
+                            reported: _post.reported,
+                            onReport: _reportPost,
+                            blocked: _post.blocked,
+                            onBlock: _blockAuthor,
                           ),
                         ),
 

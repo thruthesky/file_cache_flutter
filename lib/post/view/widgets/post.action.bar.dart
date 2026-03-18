@@ -15,6 +15,10 @@ class PostActionBar extends StatelessWidget {
   final VoidCallback onDelete;
   final bool bookmarked;
   final VoidCallback? onBookmark;
+  final bool reported;
+  final VoidCallback? onReport;
+  final bool blocked;
+  final VoidCallback? onBlock;
 
   const PostActionBar({
     super.key,
@@ -27,6 +31,10 @@ class PostActionBar extends StatelessWidget {
     required this.onDelete,
     this.bookmarked = false,
     this.onBookmark,
+    this.reported = false,
+    this.onReport,
+    this.blocked = false,
+    this.onBlock,
   });
 
   @override
@@ -47,9 +55,11 @@ class PostActionBar extends StatelessWidget {
         const SizedBox(width: 8),
         // 댓글
         PostActionButton(
-          icon: FontAwesomeIcons.lightComment,
+          icon: post.noOfComment > 0
+              ? FontAwesomeIcons.solidComment
+              : FontAwesomeIcons.lightComment,
           label: '${post.noOfComment > 0 ? post.noOfComment : ''}',
-          color: scheme.onSurfaceVariant,
+          color: post.noOfComment > 0 ? scheme.primary : scheme.onSurfaceVariant,
           onTap: () async {
             final user = await UserService.getUser(idx: post.idxMember);
             if (context.mounted) ChatRoomScreen.push(context, user.firebaseUid);
@@ -90,18 +100,22 @@ class PostActionBar extends StatelessWidget {
         ] else ...[
           // 신고
           PostActionButton(
-            icon: FontAwesomeIcons.lightFlag,
-            label: '신고',
-            color: scheme.onSurfaceVariant,
-            onTap: () {},
+            icon: reported
+                ? FontAwesomeIcons.solidFlag
+                : FontAwesomeIcons.lightFlag,
+            label: reported ? '신고됨' : '신고',
+            color: reported ? scheme.error : scheme.onSurfaceVariant,
+            onTap: onReport ?? () {},
           ),
           const SizedBox(width: 8),
           // 차단
           PostActionButton(
-            icon: FontAwesomeIcons.lightBan,
-            label: '차단',
-            color: scheme.onSurfaceVariant,
-            onTap: () {},
+            icon: blocked
+                ? FontAwesomeIcons.solidBan
+                : FontAwesomeIcons.lightBan,
+            label: blocked ? '차단 해제' : '차단',
+            color: blocked ? scheme.error : scheme.onSurfaceVariant,
+            onTap: onBlock ?? () {},
           ),
         ],
       ],
