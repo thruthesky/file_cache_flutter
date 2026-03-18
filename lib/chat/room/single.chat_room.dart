@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/room/chat.room.message_input.dart';
 import 'package:philgo/chat/room/single.chat_room.header.dart';
 import 'package:philgo/chat/room/single.chat_room.init.dart';
@@ -39,7 +40,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
           child: CircularProgressIndicator(
             // Use theme primary color for loading indicator
             color: Theme.of(context).colorScheme.primary,
-            strokeWidth: 3.0,
+            strokeWidth: msgListLoadingStrokeWidth,
           ),
         ),
       ),
@@ -51,7 +52,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: SingleChatRoomHeader(
               join: init.join,
-              otherUser: init.otherUser!,
+              otherUser: init.otherUserProfile!,
               onLeave: () {
                 ChatService.instance.leaveChatRoom(
                   roomId: init.join.id,
@@ -94,7 +95,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                       color: Theme.of(
                         context,
                       ).colorScheme.outlineVariant.withValues(alpha: 0.3),
-                      width: 1.0,
+                      width: msgListTopBorderWidth,
                     ),
                   ),
                 ),
@@ -114,7 +115,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                 ),
               ),
               Blocked(
-                otherUserUid: init.otherUser!.uid,
+                otherUserUid: init.otherUserProfile!.firebaseUid,
                 no: () => ChatRoomMessageInput(
                   roomId: init.join.id,
                   onSend: () {

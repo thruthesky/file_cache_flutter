@@ -23,8 +23,6 @@ class PinnedChatRoomsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
-
     return ValueListenableBuilder<Set<String>>(
       valueListenable: UserService.instance.pinnedChatRoomsStream,
       builder: (context, pinnedChatRooms, _) {
@@ -54,7 +52,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                 color: colorScheme.primaryContainer.withValues(alpha: 0.1),
                 // Comic design - outline border at bottom
                 border: Border(
-                  bottom: BorderSide(color: colorScheme.outline, width: chatTheme.pinned.sectionBorderWidth),
+                  bottom: BorderSide(color: colorScheme.outline, width: pinnedSectionBorderWidth),
                 ),
               ),
               child: Column(
@@ -63,15 +61,15 @@ class PinnedChatRoomsList extends StatelessWidget {
                 children: [
                   // 섹션 헤더 - Comic design with Theme-based spacing
                   Padding(
-                    padding: chatTheme.pinned.headerPadding,
+                    padding: pinnedHeaderPadding,
                     child: Row(
                       children: [
                         FaIcon(
                           FontAwesomeIcons.solidThumbtack,
-                          size: chatTheme.pinned.iconSize,
+                          size: pinnedSectionIconSize,
                           color: colorScheme.primary,
                         ),
-                        SizedBox(width: chatTheme.pinned.iconSpacing),
+                        SizedBox(width: pinnedSectionIconSpacing),
                         Text(
                           "Pinned Chats",
                           style: theme.textTheme.labelLarge?.copyWith(
@@ -79,17 +77,17 @@ class PinnedChatRoomsList extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(width: chatTheme.pinned.iconSpacing),
+                        SizedBox(width: pinnedSectionIconSpacing),
                         // Comic design - badge with border and rounded corners
                         // Show filtered count (excluding blocked users)
                         Container(
-                          padding: chatTheme.pinned.countBadgePadding,
+                          padding: pinnedCountBadgePadding,
                           decoration: BoxDecoration(
                             color: colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(chatTheme.pinned.countBadgeBorderRadius),
+                            borderRadius: BorderRadius.circular(pinnedCountBadgeBorderRadius),
                             border: Border.all(
                               color: colorScheme.primary,
-                              width: chatTheme.pinned.countBadgeBorderWidth,
+                              width: pinnedCountBadgeBorderWidth,
                             ),
                           ),
                           child: Text(
@@ -106,7 +104,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                   // 가로 스크롤 리스트 (높이 축소: 108 → 80)
                   // Filter out blocked users from the pinned chat rooms list
                   SizedBox(
-                    height: chatTheme.pinned.listHeight,
+                    height: pinnedListHeight,
                     child: Builder(
                       builder: (context) {
                         final filteredRoomIds = pinnedChatRooms.where((roomId) {
@@ -119,7 +117,7 @@ class PinnedChatRoomsList extends StatelessWidget {
 
                         return ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          padding: chatTheme.pinned.listPadding,
+                          padding: pinnedListPadding,
                           itemCount: filteredRoomIds.length,
                           itemBuilder: (context, index) {
                             final roomId = filteredRoomIds[index];
@@ -132,7 +130,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(height: chatTheme.pinned.dividerSpacing),
+                  SizedBox(height: pinnedDividerSpacing),
                 ],
               ),
             );
@@ -155,15 +153,14 @@ class _PinnedChatRoomItem extends StatelessWidget {
   Future<void> _showUnpinConfirmDialog(BuildContext context) async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
         // Comic design: no shadow
-        elevation: chatTheme.dialog.elevation,
+        elevation: dialogElevation,
         // Comic design: rounded corners
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(chatTheme.pinned.unpinDialogBorderRadius)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(unpinDialogBorderRadius)),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -171,8 +168,8 @@ class _PinnedChatRoomItem extends StatelessWidget {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: outline border with rounded corners
-            border: Border.all(color: colorScheme.outline, width: chatTheme.pinned.unpinDialogBorderWidth),
-            borderRadius: BorderRadius.circular(chatTheme.pinned.unpinDialogBorderRadius),
+            border: Border.all(color: colorScheme.outline, width: unpinDialogBorderWidth),
+            borderRadius: BorderRadius.circular(unpinDialogBorderRadius),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -180,7 +177,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
             children: [
               // Title section - Comic design spacing (multiples of 8)
               Padding(
-                padding: chatTheme.pinned.unpinTitlePadding,
+                padding: unpinTitlePadding,
                 child: Text(
                   "Unpin Chat Room",
                   style: theme.textTheme.titleLarge?.copyWith(
@@ -192,7 +189,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
 
               // Content section - Comic design spacing
               Padding(
-                padding: chatTheme.pinned.unpinBodyPadding,
+                padding: unpinBodyPadding,
                 child: Text(
                   "Are you sure you want to unpin this chat room?",
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -203,7 +200,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
 
               // Actions section - Comic design buttons with spacing
               Padding(
-                padding: chatTheme.pinned.unpinActionsPadding,
+                padding: unpinActionsPadding,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -216,10 +213,10 @@ class _PinnedChatRoomItem extends StatelessWidget {
                         // Comic design: border with rounded corners
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(chatTheme.pinned.unpinButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(unpinButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.outline,
-                              width: chatTheme.pinned.unpinButtonBorderWidth,
+                              width: unpinButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -233,7 +230,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                         ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
-                          chatTheme.pinned.unpinButtonPadding,
+                          unpinButtonPadding,
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
@@ -242,7 +239,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                       ),
                       child: Text("Cancel"),
                     ),
-                    SizedBox(width: chatTheme.pinned.unpinButtonSpacing),
+                    SizedBox(width: unpinButtonSpacing),
                     // Unpin button - Comic design error button (destructive action)
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(true),
@@ -252,10 +249,10 @@ class _PinnedChatRoomItem extends StatelessWidget {
                         // Comic design: border with rounded corners
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(chatTheme.pinned.unpinButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(unpinButtonBorderRadius),
                             side: BorderSide(
                               color: colorScheme.error,
-                              width: chatTheme.pinned.unpinButtonBorderWidth,
+                              width: unpinButtonBorderWidth,
                             ),
                           ),
                         ),
@@ -269,7 +266,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                         ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
-                          chatTheme.pinned.unpinButtonPadding,
+                          unpinButtonPadding,
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
@@ -330,7 +327,6 @@ class _PinnedChatRoomItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
 
     return ChatJoinBuilder(
       roomId: roomId,
@@ -362,7 +358,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
 
         return Padding(
           // 좌우 간격 축소 (8 → 4)
-          padding: chatTheme.pinned.itemHPadding,
+          padding: pinnedItemHPadding,
           child: Material(
             color: Colors.transparent,
             child: InkWell(
@@ -370,9 +366,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
               onTap: onTap,
               child: Container(
                 // 너비 축소 (80 → 64)
-                width: chatTheme.pinned.itemWidth,
+                width: pinnedItemWidth,
                 // 패딩 축소 (8 → 4)
-                padding: chatTheme.pinned.itemPadding,
+                padding: pinnedItemPadding,
                 // 보더 없는 미니멀 디자인
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -382,7 +378,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                       clipBehavior: Clip.none,
                       children: [
                         // 아바타 크기 축소 (56 → 44)
-                        Avatar(photoUrl: photoUrl, size: chatTheme.pinned.avatarSize, radius: chatTheme.pinned.avatarSize / 2),
+                        Avatar(photoUrl: photoUrl, size: pinnedAvatarSize, radius: pinnedAvatarSize / 2),
                         // 우측 상단 닫기 버튼 - 축소된 크기
                         Positioned(
                           right: -2,
@@ -391,15 +387,15 @@ class _PinnedChatRoomItem extends StatelessWidget {
                             onTap: () => _showUnpinConfirmDialog(context),
                             child: Container(
                               // 크기 축소 (24 → 18)
-                              width: chatTheme.pinned.closeButtonSize,
-                              height: chatTheme.pinned.closeButtonSize,
+                              width: pinnedCloseButtonSize,
+                              height: pinnedCloseButtonSize,
                               decoration: BoxDecoration(
                                 color: colorScheme.errorContainer,
                                 shape: BoxShape.circle,
                                 // 테두리 두께 축소 (2.0 → 1.5)
                                 border: Border.all(
                                   color: colorScheme.error,
-                                  width: chatTheme.pinned.closeButtonBorderWidth,
+                                  width: pinnedCloseButtonBorderWidth,
                                 ),
                               ),
                               child: Center(
@@ -407,7 +403,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                                   FontAwesomeIcons.xmark,
                                   color: colorScheme.error,
                                   // 아이콘 크기 축소 (12 → 9)
-                                  size: chatTheme.pinned.closeIconSize,
+                                  size: pinnedCloseIconSize,
                                 ),
                               ),
                             ),
@@ -420,14 +416,14 @@ class _PinnedChatRoomItem extends StatelessWidget {
                             bottom: -2,
                             child: Container(
                               // 패딩 축소 (horizontal: 8 → 5, vertical: 2 → 1)
-                              padding: chatTheme.pinned.unreadBadgePadding,
+                              padding: pinnedUnreadBadgePadding,
                               decoration: BoxDecoration(
                                 color: colorScheme.error,
-                                borderRadius: BorderRadius.circular(chatTheme.pinned.unreadBadgeBorderRadius),
+                                borderRadius: BorderRadius.circular(pinnedUnreadBadgeBorderRadius),
                                 // 테두리 두께 축소 (2.0 → 1.5)
                                 border: Border.all(
                                   color: colorScheme.surface,
-                                  width: chatTheme.pinned.unreadBadgeBorderWidth,
+                                  width: pinnedUnreadBadgeBorderWidth,
                                 ),
                               ),
                               child: Text(
@@ -438,14 +434,14 @@ class _PinnedChatRoomItem extends StatelessWidget {
                                   color: colorScheme.onError,
                                   fontWeight: FontWeight.w700,
                                   // 폰트 크기 축소 (10 → 8)
-                                  fontSize: chatTheme.pinned.unreadBadgeFontSize,
+                                  fontSize: pinnedUnreadBadgeFontSize,
                                 ),
                               ),
                             ),
                           ),
                       ],
                     ),
-                    SizedBox(height: chatTheme.pinned.nameSpacing),
+                    SizedBox(height: pinnedNameSpacing),
                     // 채팅방 이름 표시
                     Text(
                       name,

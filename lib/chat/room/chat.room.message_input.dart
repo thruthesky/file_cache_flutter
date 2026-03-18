@@ -339,14 +339,14 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     super.dispose();
   }
 
-  Widget _buildFilesPreview(ChatThemeData chatTheme) {
+  Widget _buildFilesPreview() {
     if (_selectedFiles.isEmpty && _uploadedUrls.isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Container(
-      margin: EdgeInsets.only(top: chatTheme.input.filePreviewMarginTop),
-      height: chatTheme.input.filePreviewHeight,
+      margin: EdgeInsets.only(top: filePreviewMarginTop),
+      height: filePreviewHeight,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: _selectedFiles.length,
@@ -356,11 +356,11 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           final colorScheme = Theme.of(context).colorScheme;
 
           return Container(
-            margin: EdgeInsets.only(right: chatTheme.input.filePreviewSpacing, left: index == 0 ? chatTheme.input.filePreviewSpacing : 0),
-            width: chatTheme.input.filePreviewWidth,
+            margin: EdgeInsets.only(right: filePreviewSpacing, left: index == 0 ? filePreviewSpacing : 0),
+            width: filePreviewWidth,
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(chatTheme.input.filePreviewBorderRadius),
+              borderRadius: BorderRadius.circular(filePreviewBorderRadius),
 
               /// Flat design - subtle border
               border: Border.all(
@@ -371,21 +371,21 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
             child: Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(chatTheme.input.filePreviewBorderRadius),
+                  borderRadius: BorderRadius.circular(filePreviewBorderRadius),
                   child: index < _uploadedUrls.length
                       ? Image.network(
                           _uploadedUrls[index],
-                          height: chatTheme.input.filePreviewHeight,
-                          width: chatTheme.input.filePreviewWidth + 20,
+                          height: filePreviewHeight,
+                          width: filePreviewWidth + 20,
                           fit: BoxFit.cover,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Container(
-                              height: chatTheme.input.filePreviewHeight,
-                              width: chatTheme.input.filePreviewWidth + 20,
+                              height: filePreviewHeight,
+                              width: filePreviewWidth + 20,
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(chatTheme.input.filePreviewBorderRadius),
+                                borderRadius: BorderRadius.circular(filePreviewBorderRadius),
                               ),
                               child: const Center(
                                 child: CircularProgressIndicator(),
@@ -394,11 +394,11 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              height: chatTheme.input.filePreviewHeight,
-                              width: chatTheme.input.filePreviewWidth + 20,
+                              height: filePreviewHeight,
+                              width: filePreviewWidth + 20,
                               decoration: BoxDecoration(
                                 color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(chatTheme.input.filePreviewBorderRadius),
+                                borderRadius: BorderRadius.circular(filePreviewBorderRadius),
                               ),
                               child: const Icon(Icons.error, color: Colors.red),
                             );
@@ -419,7 +419,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.black54,
-                        borderRadius: BorderRadius.circular(chatTheme.input.filePreviewBorderRadius),
+                        borderRadius: BorderRadius.circular(filePreviewBorderRadius),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -437,7 +437,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: chatTheme.input.uploadProgressFontSize,
+                              fontSize: uploadProgressFontSize,
                             ),
                           ),
                         ],
@@ -453,7 +453,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     child: GestureDetector(
                       onTap: () => _removeFileAt(index),
                       child: Container(
-                        padding: EdgeInsets.all(chatTheme.input.deleteButtonPadding),
+                        padding: EdgeInsets.all(deleteButtonPadding),
                         decoration: const BoxDecoration(
                           color: Colors.red,
                           shape: BoxShape.circle,
@@ -461,7 +461,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                         child: Icon(
                           Icons.close,
                           color: Colors.white,
-                          size: chatTheme.input.deleteIconSize,
+                          size: deleteIconSize,
                         ),
                       ),
                     ),
@@ -474,7 +474,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     );
   }
 
-  Widget _buildUploadingStatus(ChatThemeData chatTheme) {
+  Widget _buildUploadingStatus() {
     if (!_isUploading || _selectedFiles.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -484,11 +484,11 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       child: Row(
         children: [
           SizedBox(
-            width: chatTheme.input.loadingIndicatorSize,
-            height: chatTheme.input.loadingIndicatorSize,
-            child: CircularProgressIndicator(strokeWidth: chatTheme.input.loadingStrokeWidth),
+            width: loadingIndicatorSize,
+            height: loadingIndicatorSize,
+            child: CircularProgressIndicator(strokeWidth: loadingStrokeWidth),
           ),
-          SizedBox(width: chatTheme.input.loadingSpacing),
+          SizedBox(width: loadingSpacing),
           Text(
             'Uploading images ($_completedUploads/${_selectedFiles.length})',
             style: Theme.of(context).textTheme.bodySmall,
@@ -502,15 +502,13 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final chatTheme = ChatThemeData.instance;
-
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
           top: BorderSide(
             color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-            width: chatTheme.input.topBorderWidth,
+            width: inputTopBorderWidth,
           ),
         ),
       ),
@@ -519,10 +517,10 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Upload status
-            _buildUploadingStatus(chatTheme),
+            _buildUploadingStatus(),
 
             // Files preview
-            _buildFilesPreview(chatTheme),
+            _buildFilesPreview(),
             LayoutBuilder(
               builder: (context, constraints) {
                 final availableWidth = constraints.maxWidth;
@@ -532,7 +530,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                     availableWidth * 0.8 - iconButtonWidth - sendButtonWidth;
 
                 return Padding(
-                  padding: chatTheme.input.inputAreaPadding,
+                  padding: inputAreaPadding,
                   child: Row(
                     children: [
                       // Attachment Button
@@ -557,7 +555,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                     '${_selectedFiles.length}',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: chatTheme.input.fileBadgeFontSize,
+                                      fontSize: fileBadgeFontSize,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -587,7 +585,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                               filled: true,
                               fillColor: colorScheme.surfaceContainerHighest,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(chatTheme.input.inputBorderRadius),
+                                borderRadius: BorderRadius.circular(inputBorderRadius),
                                 borderSide: BorderSide(
                                   color: colorScheme.outlineVariant.withValues(
                                     alpha: 0.3,
@@ -596,7 +594,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(chatTheme.input.inputBorderRadius),
+                                borderRadius: BorderRadius.circular(inputBorderRadius),
                                 borderSide: BorderSide(
                                   color: colorScheme.outlineVariant.withValues(
                                     alpha: 0.3,
@@ -605,15 +603,15 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(chatTheme.input.inputBorderRadius),
+                                borderRadius: BorderRadius.circular(inputBorderRadius),
                                 borderSide: BorderSide(
                                   color: colorScheme.primary.withValues(
                                     alpha: 0.5,
                                   ),
-                                  width: chatTheme.input.inputFocusBorderWidth,
+                                  width: inputFocusBorderWidth,
                                 ),
                               ),
-                              contentPadding: chatTheme.input.inputContentPadding,
+                              contentPadding: inputContentPadding,
                             ),
                             minLines: 1,
                             maxLines: 4,
@@ -624,7 +622,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                         ),
                       ),
 
-                      SizedBox(width: chatTheme.input.sendButtonSpacing),
+                      SizedBox(width: sendButtonSpacing),
 
                       // Send Button with enhanced flat design
                       GestureDetector(
@@ -637,8 +635,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                         child: Material(
                           color: Colors.transparent,
                           child: Container(
-                            width: chatTheme.input.sendButtonSize,
-                            height: chatTheme.input.sendButtonSize,
+                            width: sendButtonSize,
+                            height: sendButtonSize,
                             decoration: BoxDecoration(
                               /// Gradient background for visual interest
                               gradient: LinearGradient(
@@ -677,17 +675,17 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             child: Center(
                               child: (isLoading || _isUploading)
                                   ? SizedBox(
-                                      width: chatTheme.input.sendIconSize,
-                                      height: chatTheme.input.sendIconSize,
+                                      width: sendIconSize,
+                                      height: sendIconSize,
                                       child: CircularProgressIndicator(
-                                        strokeWidth: chatTheme.input.loadingStrokeWidth,
+                                        strokeWidth: loadingStrokeWidth,
                                         color: colorScheme.onPrimary,
                                       ),
                                     )
                                   : Icon(
                                       Icons.send,
                                       color: colorScheme.onPrimary,
-                                      size: chatTheme.input.sendIconSize,
+                                      size: sendIconSize,
                                     ),
                             ),
                           ),
