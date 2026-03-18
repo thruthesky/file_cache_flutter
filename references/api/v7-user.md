@@ -38,6 +38,12 @@
   - [12.6 사용자 활동 조회](#126-사용자-활동-조회)
   - [12.7 사용자 신고 관련](#127-사용자-신고-관련)
   - [12.8 UserService와의 관계](#128-userservice와의-관계)
+- [13. Firebase RTDB 사용자 정보 동기화](#13-firebase-rtdb-사용자-정보-동기화)
+  - [13.1 개요](#131-개요)
+  - [13.2 syncUserToFirebase() 메서드](#132-syncusertofirebase-메서드)
+  - [13.3 호출 위치](#133-호출-위치)
+  - [13.4 RTDB 데이터 구조](#134-rtdb-데이터-구조)
+  - [13.5 에러 처리](#135-에러-처리)
 
 ---
 
@@ -1134,6 +1140,19 @@ class UserService
      * 다음 레벨까지 진행률 계산 (0~100, 레거시 get_user_level_progress()와 동일 로직)
      */
     public static function calculateLevelProgress(int $points, int $level): int { /* ... */ }
+
+    /**
+     * Firebase RTDB에 사용자 정보(닉네임, 프로필 사진)를 동기화한다.
+     * v6 레거시 user.functions.php:784-804의 동일 로직을 v7 구조로 구현.
+     *
+     * RTDB 경로: users/{firebaseUid}
+     * 동기화 필드: nickname, nicknameLowerCase(소문자 변환), photoUrl
+     *
+     * @param string $firebaseUid Firebase UID
+     * @param string|null $nickname 닉네임 (null이면 동기화하지 않음)
+     * @param string|null $photoUrl 프로필 사진 URL (null이면 동기화하지 않음)
+     */
+    public static function syncUserToFirebase(string $firebaseUid, ?string $nickname = null, ?string $photoUrl = null): void { /* ... */ }
 }
 ```
 
@@ -2212,3 +2231,131 @@ public static function reportUser(int $idxReporter, int $idxReported, string $re
 | `tests/Unit/UserRepositoryTest.php` | 33개 | CRUD, Firebase UID, 닉네임, 목록, 활동, 신고 |
 | `tests/Unit/UserServiceTest.php` | 41개 | Service 비즈니스 로직 + Repository 위임 검증 |
 | **합계** | **74개** | **100% 통과** |
+
+---
+
+## 13. Firebase RTDB 사용자 정보 동기화
+
+### 13.1 개요
+
+`UserService::syncUserToFirebase()` 메서드는 사용자의 닉네임과 프로필 사진 URL을
+Firebase Realtime Database(RTDB)에 동기화한다.
+
+이 기능은 v6 레거시 `user.functions.php`(784~804행)의 동일 로직을 v7 아키텍처(Service 계층)로 재구현한 것이다.
+채팅 시스템 등 Firebase RTDB를 참조하는 클라이언트가 최신 사용자 정보를 실시간으로 조회할 수 있도록 한다.
+
+| 항목 | 값 |
+|------|-----|
+| **메서드** | `UserService::syncUserToFirebase(string $firebaseUid, ?string $nickname, ?string $photoUrl): void` |
+| **RTDB 경로** | `users/{firebaseUid}` |
+| **동기화 필드** | `nickname`, `nicknameLowerCase`, `photoUrl` |
+| **Firebase SDK** | Kreait Firebase Admin SDK (`FirebaseService::getDatabase()`) |
+| **레거시 대응** | `user.functions.php:784-804` 동일 로직 |
+
+### 13.2 syncUserToFirebase() 메서드
+
+```php
+// lib/user/UserService.php
+public static function syncUserToFirebase(
+    string $firebaseUid,
+    ?string $nickname = null,
+    ?string $photoUrl = null
+): void {
+    if ($firebaseUid === '') {
+        return;
+    }
+
+    $up = [];
+    if ($nickname !== null && $nickname !== '') {
+        $up['nickname'] = $nickname;
+        $up['nicknameLowerCase'] = strtolower($nickname);
+    }
+    if ($photoUrl !== null && $photoUrl !== '') {
+        $up['photoUrl'] = $photoUrl;
+    }
+
+    if (empty($up)) {
+        return;
+    }
+
+    try {
+        $database = FirebaseService::getDatabase();
+        $database->getReference('users/' . $firebaseUid)->update($up);
+    } catch (\Exception $e) {
+        Debug::log("Firebase RTDB 사용자 동기화 실패: " . $e->getMessage());
+    }
+}
+```
+
+**동기화 필드 상세**:
+
+| RTDB 필드 | 값 | 설명 |
+|-----------|-----|------|
+| `nickname` | 원본 닉네임 | 화면 표시용 닉네임 |
+| `nicknameLowerCase` | `strtolower($nickname)` | 대소문자 무시 검색용 (소문자 변환) |
+| `photoUrl` | 프로필 사진 URL | 채팅 등에서 사용하는 프로필 사진 |
+
+**동기화 조건**:
+- `$firebaseUid`가 빈 문자열이면 즉시 반환 (동기화 스킵)
+- `$nickname`이 null 또는 빈 문자열이면 nickname 관련 필드는 업데이트하지 않음
+- `$photoUrl`이 null 또는 빈 문자열이면 photoUrl 필드는 업데이트하지 않음
+- 모든 필드가 비어 있으면(`$up`이 빈 배열) 즉시 반환
+
+### 13.3 호출 위치
+
+`syncUserToFirebase()`는 사용자 정보가 변경되는 3곳에서 호출된다.
+
+| 호출 위치 | 메서드 | 동기화 시점 | 동기화 데이터 |
+|-----------|--------|------------|--------------|
+| **회원 정보 수정** | `UserService::update()` | nickname 또는 photo_url이 변경된 경우에만 | 변경된 nickname, photo_url |
+| **소셜 로그인** | `UserService::socialLogin()` | 신규/기존 사용자 로그인 완료 후 | nickname, photo_url |
+| **자동 회원 가입** | `UserService::getMe()` | Firebase 인증 후 신규 사용자 자동 가입 시 | nickname, photo_url |
+
+**각 호출 위치의 코드 패턴**:
+
+```php
+// 1. UserService::update() — nickname/photo_url 변경 시만 동기화
+$syncNickname = $updateData['nickname'] ?? null;
+$syncPhotoUrl = $updateData['photo_url'] ?? null;
+if ($syncNickname !== null || $syncPhotoUrl !== null) {
+    self::syncUserToFirebase($entity->firebase_uid, $syncNickname, $syncPhotoUrl);
+}
+
+// 2. UserService::socialLogin() — 소셜 로그인 완료 후
+self::syncUserToFirebase(
+    $firebaseUid,
+    (string)($row['nickname'] ?? ''),
+    (string)($row['photo_url'] ?? '')
+);
+
+// 3. UserService::getMe() — 신규 사용자 자동 가입 시
+self::syncUserToFirebase(
+    $firebaseUid,
+    (string)($user['nickname'] ?? ''),
+    (string)($user['photo_url'] ?? '')
+);
+```
+
+### 13.4 RTDB 데이터 구조
+
+```
+Firebase Realtime Database
+└── users/
+    └── {firebaseUid}/
+        ├── nickname: "홍길동"
+        ├── nicknameLowerCase: "홍길동"
+        └── photoUrl: "https://file.philgo.com/..."
+```
+
+> **참고**: `update()` 메서드를 사용하므로 해당 필드만 업데이트되며,
+> `users/{firebaseUid}` 노드의 다른 기존 데이터(예: 채팅 관련 필드)는 보존된다.
+
+### 13.5 에러 처리
+
+- 동기화 실패 시 예외를 throw하지 않고 `Debug::log()`로 로그만 남긴다
+- 메인 비즈니스 로직(회원 정보 수정, 소셜 로그인, 자동 가입)은 RTDB 동기화 실패와 무관하게 정상 작동한다
+- 로그 경로: `var/debug.log`
+
+> **10.2.1절의 `syncBlockToFirebase()`와의 관계**: 두 메서드 모두 `FirebaseService::getDatabase()`를 사용하여
+> Firebase RTDB에 데이터를 동기화하는 동일한 패턴을 따른다. `syncUserToFirebase()`는 사용자 프로필 정보를,
+> `syncBlockToFirebase()`는 차단 정보를 각각 다른 RTDB 경로에 동기화한다.
