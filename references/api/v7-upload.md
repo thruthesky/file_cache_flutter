@@ -950,8 +950,23 @@ curl -s -X POST "https://local.philgo.com/api.php" \
   -F "file=@/path/to/photo.jpg"
 ```
 
-**JavaScript 호출 예시:**
+**JavaScript 호출 예시 (v7apiUpload 함수 -- 권장):**
 ```javascript
+// v7apiUpload()는 /v7/js/v7api.js에 정의된 v7 전용 업로드 래퍼 함수이다.
+// FormData 구성, 에러 처리, 진행률 콜백을 내장하고 있다.
+const result = await v7apiUpload(fileInput.files[0], 'post', 'content');
+console.log(result.url); // /uploads/123/67a1b2c3_1709876543.webp
+
+// onProgress 콜백으로 업로드 진행률(0~100%) 추적 가능
+const result2 = await v7apiUpload(file, 'chat', 'message', {
+    onProgress: (percent) => console.log(`업로드 진행률: ${percent}%`)
+});
+```
+
+**JavaScript 호출 예시 (FormData 직접 구성 -- 비권장):**
+```javascript
+// v7 홈페이지(v7/ 폴더)에서는 v7apiUpload() 사용을 권장한다.
+// FormData 직접 구성은 v6 레거시 페이지에서만 사용한다.
 const formData = new FormData();
 formData.append('method', 'upload.upload');
 formData.append('session_id', getSessionId()); // 또는 id_token
@@ -1949,7 +1964,72 @@ curl -sk "https://local.philgo.com/api.php?method=upload.list&idx_member=123"
 curl -sk "https://local.philgo.com/api.php?method=upload.delete&idx=$IDX&idx_member=123"
 ```
 
-### 15.9 JavaScript (FormData) 업로드 예시
+### 15.9 JavaScript 업로드 예시
+
+#### v7apiUpload() 함수 사용 (v7 홈페이지 -- 권장)
+
+v7 홈페이지(`v7/` 폴더)에서는 `/v7/js/v7api.js`에 정의된 `v7apiUpload()` 함수를 사용한다.
+이 함수는 FormData 구성, 에러 처리, 업로드 진행률 콜백을 내장하고 있다.
+
+**함수 시그니처:**
+```javascript
+async function v7apiUpload(file, module, code, options)
+```
+
+| 파라미터 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| `file` | `File` | 필수 | 업로드할 파일 객체 |
+| `module` | `string` | 필수 | 모듈명 (예: `'post'`, `'company'`, `'chat'`) |
+| `code` | `string` | 필수 | 코드 (예: `'content'`, `'visit_review'`, `'message'`) |
+| `options` | `Object` | 선택 | 옵션 객체 |
+| `options.onProgress` | `Function` | 선택 | 업로드 진행률 콜백 함수. 0~100 범위의 퍼센트 정수를 인자로 받는다 |
+
+**기본 사용:**
+```javascript
+// HTML: <input type="file" id="fileInput">
+const file = document.getElementById('fileInput').files[0];
+
+// 기본 업로드 (세션 쿠키 자동 전송)
+const result = await v7apiUpload(file, 'post', 'content');
+console.log('업로드 성공:', result.url); // /uploads/123/67a1b2c3_1709876543.webp
+```
+
+**진행률 추적:**
+```javascript
+// onProgress 콜백으로 업로드 진행률(0~100%) 실시간 추적
+const result = await v7apiUpload(file, 'chat', 'message', {
+    onProgress: (percent) => {
+        console.log(`업로드 진행률: ${percent}%`);
+        // Vue.js 예시: this.uploadProgress = percent;
+    }
+});
+```
+
+**채팅 파일 업로드 (즉시 업로드 패턴):**
+```javascript
+// 파일 선택 즉시 업로드 시작 (전송 버튼 클릭 전에 완료됨)
+async onFileSelected(e) {
+    const files = e.target.files;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const previewIdx = this.uploadPreviews.length;
+        this.uploadPreviews.push({ progress: 0, url: null, done: false });
+
+        const result = await v7apiUpload(file, 'chat', 'message', {
+            onProgress: (percent) => {
+                this.uploadPreviews[previewIdx].progress = percent;
+            }
+        });
+        this.uploadPreviews[previewIdx].url = result.url;
+        this.uploadPreviews[previewIdx].done = true;
+    }
+}
+```
+
+#### FormData 직접 구성 (v6 레거시 페이지)
+
+v6 레거시 페이지에서는 FormData를 직접 구성하여 업로드한다.
+v7 홈페이지에서는 이 방식 대신 `v7apiUpload()` 사용을 권장한다.
 
 ```javascript
 // HTML: <input type="file" id="fileInput">
