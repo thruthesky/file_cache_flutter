@@ -4,10 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/api/api.service.dart';
-import 'package:philgo/post/list/widgets/post.list.tile.dart';
-import 'package:philgo/post/post.model.dart';
-import 'package:philgo/post/post.service.dart';
 import 'package:philgo/user/user.firebase_model.dart';
+import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
 String? loginUid() => FirebaseAuth.instance.currentUser?.uid;
@@ -86,7 +84,7 @@ Future toggleBlockUser(String otherUserUid) async {
 }
 
 /// Show user profile dialog with Comic design
-void showProfileDialog(BuildContext context, UserFirebaseModel otherUser) {
+void showProfileDialog(BuildContext context, UserModel otherUser) {
   final theme = Theme.of(context);
   final colorScheme = theme.colorScheme;
 
@@ -246,7 +244,7 @@ void showProfileDialog(BuildContext context, UserFirebaseModel otherUser) {
 /// Shows recent posts in a bottom sheet
 void showUserRecentPostsDialog({
   required BuildContext context,
-  required UserFirebaseModel otherUser,
+  required UserModel otherUser,
 }) {
   showModalBottomSheet(
     context: context,
