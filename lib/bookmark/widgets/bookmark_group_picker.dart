@@ -104,22 +104,23 @@ class _BookmarkGroupPickerSheet extends StatelessWidget {
                     color: color.outlineVariant,
                   ),
 
-                // 'default' 그룹 (항상 표시)
-                ListTile(
-                  leading: FaIcon(
-                    FontAwesomeIcons.lightFolder,
-                    size: 18,
-                    color: color.onSurfaceVariant,
+                // 'default' 그룹 (DB에 없을 때만 표시)
+                if (!groups.any((g) => g.name == 'default'))
+                  ListTile(
+                    leading: FaIcon(
+                      FontAwesomeIcons.lightFolder,
+                      size: 18,
+                      color: color.onSurfaceVariant,
+                    ),
+                    title: Text(
+                      'default',
+                      style: text.bodyMedium?.copyWith(color: color.onSurface),
+                    ),
+                    onTap: () => Navigator.pop(
+                      context,
+                      const BookmarkGroupPickerResult(groupName: ''),
+                    ),
                   ),
-                  title: Text(
-                    'default',
-                    style: text.bodyMedium?.copyWith(color: color.onSurface),
-                  ),
-                  onTap: () => Navigator.pop(
-                    context,
-                    const BookmarkGroupPickerResult(groupName: ''),
-                  ),
-                ),
 
                 // 사용자 그룹 목록
                 ...groups.map(
