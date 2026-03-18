@@ -72,7 +72,7 @@
 
 ### 1.1 도입 배경
 
-v7 시스템의 Entity 15개, Service 13개, Repository 11개 클래스 사이에 다음 문제가 있었다:
+v7 시스템의 Entity 15개, Service 13개, Repository 12개 클래스 사이에 다음 문제가 있었다:
 
 | 문제 | 예시 |
 |------|------|
@@ -99,7 +99,7 @@ v7 시스템의 Entity 15개, Service 13개, Repository 11개 클래스 사이�
 | 계층 | 인터페이스 | 적용 | 미적용 이유 |
 |------|-----------|------|-----------|
 | **Entity** | `EntityInterface` | 15개 전체 | — |
-| **Repository** | `RepositoryInterface` | 6개 | 5개 예외: CRUD 패턴과 안 맞는 도메인 |
+| **Repository** | `RepositoryInterface` | 7개 | 5개 예외: CRUD 패턴과 안 맞는 도메인 |
 | **Service** | `ServiceInterface` | 10개 전체 | 모든 Service가 5개 CRUD를 직접 구현 |
 
 ---
@@ -501,7 +501,7 @@ class XxxRepository implements RepositoryInterface
 }
 ```
 
-### 3.4 적용된 Repository (6개)
+### 3.4 적용된 Repository (7개)
 
 표준 CRUD 패턴을 따르며 `RepositoryInterface`를 구현하는 Repository 목록이다.
 
@@ -513,6 +513,7 @@ class XxxRepository implements RepositoryInterface
 | PointLogRepository | `lib/point_log/PointLogRepository.php` | sf_point_log | `insert()` → `create()`, `getByIdx()` → `findByIdx()`, `delete()` → `deleteByIdx()` |
 | QrCodeRepository | `lib/company/QrCodeRepository.php` | company_qr_codes | `insert()` → `create()`, `update()` 추가 |
 | EventCouponRepository | `lib/event/EventCouponRepository.php` | event_coupons | `findByIdx()` 리턴 `?array` → `?EventCouponEntity`, `delete()` → `deleteByIdx()` |
+| UserRepository | `lib/user/UserRepository.php` | sf_member | 신규 생성. UserService의 모든 Db:: 직접 호출을 Repository로 이관 |
 
 **리네이밍 상세**:
 
@@ -557,7 +558,7 @@ UploadRepository:
 | QrCodeUsageRepository | `lib/company/QrCodeUsageRepository.php` | 삭제 메서드 없음 (사용 기록은 삭제 불가) |
 | VisitReviewRepository | `lib/company/VisitReviewRepository.php` | 수정/삭제 없음 (후기는 생성/조회만) |
 
-### 3.6 전체 Repository 목록 (11개)
+### 3.6 전체 Repository 목록 (12개)
 
 | Repository | 인터페이스 | 테이블 |
 |-----------|-----------|--------|
@@ -567,6 +568,7 @@ UploadRepository:
 | PointLogRepository | ✅ RepositoryInterface | sf_point_log |
 | QrCodeRepository | ✅ RepositoryInterface | company_qr_codes |
 | EventCouponRepository | ✅ RepositoryInterface | event_coupons |
+| UserRepository | ✅ RepositoryInterface | sf_member |
 | CompanyMetaRepository | ❌ (예외) | company_meta |
 | SettingsRepository | ❌ (예외) | sf_config |
 | EventRepository | ❌ (예외) | event_spin_history |
@@ -1246,11 +1248,11 @@ public static function delete(array $input): array
 |---------------|----------|----------|
 | EntityInterface 구현 검증 | 15 | 15개 Entity의 instanceof 체크 |
 | EntityInterface 왕복 변환 | 8 | fromArray() → toArray() 데이터 일관성 |
-| RepositoryInterface 구현 검증 | 6 | 6개 Repository의 Reflection 체크 |
+| RepositoryInterface 구현 검증 | 7 | 7개 Repository의 Reflection 체크 |
 | findByIdx() 반환 타입 검증 | 6 | Entity 인스턴스 반환 확인 (Fatal Error 방지) |
 | Service 계층 연동 검증 | 5 | Service가 배열을 반환하는지 확인 |
 | Settings API 호환성 | 4 | Controller/Service 종단 간 검증 |
-| Reflection 시그니처 검증 | 24 | 6 Repository × 4 메서드 시그니처 |
+| Reflection 시그니처 검증 | 28 | 7 Repository × 4 메서드 시그니처 |
 | CRUD 전체 사이클 | 1 | create → find → update → delete 전 과정 |
 
 ### 9.2 EntityInterface 테스트 패턴
@@ -1314,6 +1316,7 @@ $repositoryClasses = [
     UploadRepository::class,
     EventCouponRepository::class,
     PointLogRepository::class,
+    UserRepository::class,
 ];
 
 foreach ($repositoryClasses as $repoClass) {

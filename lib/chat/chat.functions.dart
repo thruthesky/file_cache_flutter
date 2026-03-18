@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/setting/setting.state.dart';

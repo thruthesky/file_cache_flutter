@@ -38,6 +38,10 @@
   - [12.4 실전 통합 패턴: 업로드 상태 관리](#124-실전-통합-패턴-업로드-상태-관리)
   - [12.5 동작 원리](#125-동작-원리)
 - [13. v7 위젯 목록](#13-v7-위젯-목록)
+- [15. 🔴 모듈별 폴더/파일 구조 — 필수 규칙 🔴](#15--모듈별-폴더파일-구조--필수-규칙-)
+  - [15.1 폴더/파일 네이밍 규칙](#151-폴더파일-네이밍-규칙)
+  - [15.2 폴더 구조 예시](#152-폴더-구조-예시)
+  - [15.3 데이터 클래스(Model) 필수 사용 원칙](#153-데이터-클래스model-필수-사용-원칙)
 - [17. Reddit 스타일 코멘트 스레드 라인 (Flutter 앱)](#17-reddit-스타일-코멘트-스레드-라인-flutter-앱)
   - [17.1 구조 개요](#171-구조-개요)
   - [17.2 위젯 계층 구조](#172-위젯-계층-구조)
@@ -1481,6 +1485,63 @@ await PostService.deleteComment(commentIdx);
 | `UserService.signOut()` | 로그아웃 |
 | `UserService.currentUser` | 현재 로그인된 Firebase User |
 | `UserService.isLoggedIn` | 로그인 여부 |
+
+---
+
+## 15. 🔴 모듈별 폴더/파일 구조 — 필수 규칙 🔴
+
+> **이 구조는 모든 Flutter 앱 모듈에 예외 없이 적용된다. 반드시 준수할 것.**
+
+### 15.1 폴더/파일 네이밍 규칙
+
+각 기능 모듈은 `lib/{module}/` 폴더에 State, Service, Model 파일을 함께 관리한다.
+
+| 역할 | 파일 네이밍 | 예시 |
+|------|------------|------|
+| **Model** (데이터 클래스) | `{module}.model.dart` | `lib/user/user.model.dart`, `lib/setting/setting.model.dart` |
+| **State** (상태 관리, ChangeNotifier) | `{module}.state.dart` | `lib/user/user.state.dart`, `lib/setting/setting.state.dart` |
+| **Service** (API 호출, 비즈니스 로직) | `{module}.service.dart` | `lib/user/user.service.dart`, `lib/setting/setting.service.dart` |
+| **Screen** (화면 위젯) | `{module}.screen.dart` | `lib/user/user.screen.dart` |
+
+### 15.2 폴더 구조 예시
+
+```
+lib/
+├── api/                    # v7 API 공통 서비스
+│   └── api.service.dart
+├── app/                    # 앱 초기화, 네비게이션
+│   ├── app.service.dart
+│   ├── app.screen.dart
+│   └── app.navigaton.state.dart
+├── user/                   # 사용자 모듈
+│   ├── user.model.dart
+│   ├── user.state.dart
+│   └── user.service.dart
+├── setting/                # v7 설정 모듈
+│   ├── setting.model.dart
+│   ├── setting.state.dart
+│   └── setting.service.dart
+├── post/                   # 게시판 모듈
+├── chat/                   # 채팅 모듈
+├── company/                # 업소록 모듈
+└── point/                  # 포인트 모듈
+```
+
+### 15.3 데이터 클래스(Model) 필수 사용 원칙
+
+- **`Map<String, dynamic>` 또는 JSON 타입 변수 사용 금지**: 서버/API 응답 데이터를 `Map<String, dynamic>`이나 `dynamic` 타입으로 직접 사용하지 않는다.
+- **반드시 데이터 클래스(Model)를 정의**하여 사용한다. 모든 API 응답은 데이터 클래스의 `fromJson()` 팩토리를 통해 변환한 후 사용한다.
+- **데이터 클래스 위치**: 해당 모듈의 `lib/{module}/` 폴더에 `{module}.model.dart` 파일로 생성한다.
+
+```dart
+/// ✅ 올바른 사용: 데이터 클래스로 변환 후 사용
+final json = await ApiService.instance.v7api('settings.get');
+final settings = Settings.fromJson(json);  // 모델 클래스 사용
+
+/// ❌ 잘못된 사용: Map으로 직접 접근
+final json = await ApiService.instance.v7api('settings.get');
+final version = json['app_version_android'];  // Map 직접 접근 금지
+```
 
 ---
 

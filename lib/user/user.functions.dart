@@ -1,9 +1,14 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/post/list/widgets/post.list.tile.dart';
+import 'package:philgo/post/post.model.dart';
+import 'package:philgo/post/post.service.dart';
+import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
@@ -136,16 +141,7 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          // UserService.instance.onTapViewProfile != null
-                          //     ? UserService.instance.onTapViewProfile!.call(
-                          //         context,
-                          //         otherUser,
-                          //       )
-                          //     : showInfoDialog(
-                          //         context,
-                          //         'View profile',
-                          //         'Use UserService to initialize onTapViewProfile',
-                          //       );
+                          OtherUserScreen.pushByIdx(context, otherUser.idx);
                         },
                         style: ButtonStyle(
                           // Comic design: no shadow
@@ -272,7 +268,7 @@ void showUserRecentPostsDialog({
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Recent post',
+                      '최근 게시글'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -280,7 +276,7 @@ void showUserRecentPostsDialog({
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close),
-                      tooltip: 'Close',
+                      tooltip: '닫기'.tr(),
                     ),
                   ],
                 ),
@@ -288,66 +284,54 @@ void showUserRecentPostsDialog({
 
               /// 컨텐츠 영역 - 게시글 리스트
               /// Content area with posts list
-              // Expanded(
-              //   child: FutureBuilder(
-              //     future: PostService.list(firebase_uid: otherUser.uid),
-              //     builder: (context, asyncSnapshot) {
-              //       if (asyncSnapshot.connectionState ==
-              //           ConnectionState.waiting) {
-              //         return const Center(child: CircularProgressIndicator());
-              //       }
+              Expanded(
+                child: FutureBuilder(
+                  future: PostService.list(idxMember: otherUser.idx),
+                  builder: (context, asyncSnapshot) {
+                    if (asyncSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-              //       if (asyncSnapshot.hasError) {
-              //         return Center(
-              //           child: Text('Error: ${asyncSnapshot.error}'),
-              //         );
-              //       }
+                    if (asyncSnapshot.hasError) {
+                      return Center(
+                        child: Text('오류: {}'.tr(args: [asyncSnapshot.error.toString()])),
+                      );
+                    }
 
-              //       final List<Post>? posts = asyncSnapshot.data?.posts ?? [];
-              //       final int total = asyncSnapshot.data?.total ?? 0;
+                    final List<Post> posts = asyncSnapshot.data?.posts ?? [];
 
-              //       if (posts?.isEmpty ?? true) {
-              //         return Center(
-              //           child: Padding(
-              //             padding: const EdgeInsets.all(16.0),
-              //             child: Text('No recent posts'),
-              //           ),
-              //         );
-              //       }
+                    if (posts.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text('최근 게시글이 없습니다'.tr()),
+                        ),
+                      );
+                    }
 
-              //       return ListView.separated(
-              //         controller: scrollController,
-              //         padding: const EdgeInsets.symmetric(vertical: 8),
-              //         itemCount: posts!.length,
-              //         separatorBuilder: (context, index) =>
-              //             const SizedBox(height: 8),
-              //         itemBuilder: (context, index) {
-              //           final post = posts[index];
-              //           return Padding(
-              //             padding: const EdgeInsets.symmetric(horizontal: 16),
-              //             // child:    PostListTile(
-              //             //   post: post,
-              //             //   showProfile: false,
-              //             //   onTap: () {
-              //             //     UserService.instance.onTapUserRecentPostItem !=
-              //             //             null
-              //             //         ? UserService
-              //             //               .instance
-              //             //               .onTapUserRecentPostItem!
-              //             //               .call(context, post)
-              //             //         : showInfoDialog(
-              //             //             context,
-              //             //             'Recent post on tap',
-              //             //             'Use UserService to initialize onTapUserRecentPostItem',
-              //             //           );
-              //             //   },
-              //             // ),
-              //           );
-              //         },
-              //       );
-              //     },
-              //   ),
-              // ),
+                    return ListView.separated(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: posts.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: PostListTile(
+                            post: post,
+                            onTap: () {
+                              OtherUserScreen.pushByIdx(context, otherUser.idx);
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
             ],
           );
         },

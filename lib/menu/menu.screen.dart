@@ -17,7 +17,6 @@ import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
-import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.model.dart';
@@ -186,8 +185,10 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 계정 삭제 & 로그아웃 (로그인 시에만 표시)
                     Consumer<UserState>(
                       builder: (context, userState, _) {
-                        if (userState.user == null)
+                        if (userState.user == null) {
                           return const SizedBox.shrink();
+                        }
+
                         return Column(
                           spacing: 28,
                           children: [
@@ -734,7 +735,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, _) =>
+                    errorWidget: ($, $$, $$$) =>
                         _buildCompanyPlaceholderIcon(context),
                   )
                 : _buildCompanyPlaceholderIcon(context),

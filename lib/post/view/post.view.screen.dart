@@ -594,7 +594,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   void _openUserProfile(int idxMember) {
     if (idxMember == 0) return;
-    context.push(OtherUserScreen.routeByIdx(idxMember));
+    OtherUserScreen.pushByIdx(context, idxMember);
   }
 
   Widget _buildMeta(Post post, ThemeData theme, ColorScheme scheme) {

@@ -1,11 +1,79 @@
-## 1.0.0
+## 0.0.18
 
-* This package is now stable.
+- Add retry button for SMS resend functionality
+- Allow users to resend SMS code immediately if needed
+- Simplify UI by removing countdown timer
+
+## 0.0.17
+
+- Document update
+- Update dependencies
+- Use material 3 design
+
+
+## 0.0.16
+
+- Document update
+- `codeAutoRetrievalTimeoutText` has been added to the `PhoneSignIn` widget.
+
+## 0.0.15
+
+- Exporting country picker package.
+
+## 0.0.14
+
+- Add. Debug option to show the debug message.
+
+## 0.0.13
+
+- Refactor. Change the package name and put it in the easy packages series.
+
+## 0.0.12
+
+- Update. document update only.
+
+## 0.0.11
+
+- Update. sms text error message
+
+## 0.0.10
+
+- Update. documentation.
+
+## 0.0.9
+
+- Add. more design properies.
+- Update. documentation.
+
+## 0.0.8
+
+- Change. `lableOnCountryPicker` -> `labelCountryPicker`
+
+## 0.0.7
+
+- Add. link current user option
+
+## 0.0.6
+
+- Update. dependencies
+
+## 0.0.5
+
+- Update. document
+
+## 0.0.4
+
+- Fix. malformed phone number string
 
 ## 0.0.3
 
-* Complete the functionalities.
+- Update. minor ui update
+
+## 0.0.2
+
+- Add. review accounts and email login
+- Fix. Firebase phone sign in
 
 ## 0.0.1
 
-* Describe initial release.
+- Initial release
