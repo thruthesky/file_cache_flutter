@@ -1,20 +1,32 @@
-name: file_cache_flutter
-description: "A generic file cache library for Flutter applications with memory + file dual caching, TTL support, and key-value storage."
-version: 1.0.0
-homepage: https://github.com/thruthesky/file_cache_flutter
+name: easy_phone_sign_in
+description: "Phone number sign-in package for easy phone sign-in with firebase auth."
+version: 0.0.17
+homepage: https://github.com/thruthesky/easy_phone_sign_in
 
 environment:
-  sdk: ^3.7.1
-  flutter: ">=3.29.0"
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=1.17.0"
 
 dependencies:
+  country_picker: ^2.0.27
+  firebase_auth: ^5.6.1
+  firebase_core: ^3.15.1
   flutter:
     sdk: flutter
-  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  path_provider_platform_interface: ^2.1.2
-  plugin_platform_interface: ^2.1.8
+
+flutter:
+  uses-material-design: true
+
+repository: https://github.com/thruthesky/easy_phone_sign_in
+issue_tracker: https://github.com/thruthesky/easy_phone_sign_in/issues
+topics:
+  - phone-sign-in
+  - auth
+  - sign-in
+  - firebase-auth
+  - easy-packages
