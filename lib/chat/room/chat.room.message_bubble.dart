@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.service.dart';
@@ -310,27 +310,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
             onTap: () => onImageTap != null
                 ? onImageTap!(urls[i])
                 : _showFullScreenImage(context, urls, i),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                bubbleImageBorderRadius,
-              ),
-              child: CachedNetworkImage(
-                imageUrl: urls[i],
-                width: bubbleImageWidth,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  width: bubbleImageWidth,
-                  height: bubbleImageHeight,
-                  color: imagePlaceholderColor,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  width: bubbleImageWidth,
-                  height: bubbleImageHeight,
-                  color: imagePlaceholderColor,
-                  child: const Icon(Icons.error),
-                ),
-              ),
+            child: DisplayThumbnail(
+              url: urls[i],
+              size: bubbleImageWidth,
             ),
           ),
           // Add spacing between images except for the last one

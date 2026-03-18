@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.theme.dart';
-import 'package:philgo/user/user.firebase_model.dart';
-import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.model.dart';
+import 'package:philgo/user/user.service.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
@@ -23,7 +22,7 @@ class SearchFriendsDialog extends StatefulWidget {
 class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<UserFirebaseModel> _searchResults = [];
+  List<UserModel> _searchResults = [];
   bool _isSearching = false;
   Timer? _debounceTimer;
 
@@ -54,39 +53,10 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     debugPrint('Searching for users with query: $query');
 
     try {
-      // Search users by nickname_lower_case
-      final usersRef = FirebaseDatabase.instance.ref(USERS);
-      final snapshot = await usersRef
-          .orderByChild(NICKNAME_LOWER_CASE)
-          .equalTo(query)
-          .get();
-
-      List<UserFirebaseModel> results = [];
-      if (snapshot.exists) {
-        final usersData = snapshot.value as Map<dynamic, dynamic>;
-        for (final entry in usersData.entries) {
-          final uid = entry.key as String;
-          final userData = entry.value as Map<dynamic, dynamic>;
-
-          if (mounted) {
-            // Don't include current user in results
-            if (loginUid() != null && loginUid() != uid) {
-              results.add(
-                UserFirebaseModel(
-                  uid: uid,
-                  nickname: userData[NICKNAME] ?? '',
-                  nicknameLowerCase: userData[NICKNAME_LOWER_CASE] ?? '',
-                  photoUrl: userData[PHOTO_URL],
-                ),
-              );
-            }
-          }
-        }
-      }
-
+      List<UserModel> users = await UserService.search(nickname: query);
       if (mounted) {
         setState(() {
-          _searchResults = results;
+          _searchResults = users;
           _isSearching = false;
         });
       }
@@ -99,12 +69,12 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     }
   }
 
-  Future<void> _startChatWithUser(UserFirebaseModel user) async {
+  Future<void> _startChatWithUser(UserModel user) async {
     if (loginUid() == null) return;
 
     try {
       // Create single chat room ID
-      final roomId = makeSingleChatRoomId(loginUid()!, user.uid);
+      final roomId = makeSingleChatRoomId(loginUid()!, user.firebaseUid);
 
       // Navigate to chat room
       if (mounted) {
@@ -148,9 +118,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                 color: colorScheme.primaryContainer,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(dialogHeaderBorderRadius),
-                  topRight: Radius.circular(
-                    dialogHeaderBorderRadius,
-                  ),
+                  topRight: Radius.circular(dialogHeaderBorderRadius),
                 ),
                 border: Border(
                   bottom: BorderSide(
@@ -211,9 +179,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                         prefixIcon: Padding(
-                          padding: EdgeInsets.all(
-                            searchIconPadding,
-                          ),
+                          padding: EdgeInsets.all(searchIconPadding),
                           child: FaIcon(
                             FontAwesomeIcons.lightMagnifyingGlass,
                             color: colorScheme.primary,
@@ -295,21 +261,16 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     // Results list - Comic 스타일
     return ListView.separated(
       itemCount: _searchResults.length,
-      separatorBuilder: (context, index) =>
-          SizedBox(height: dialogItemSpacing),
+      separatorBuilder: (context, index) => SizedBox(height: dialogItemSpacing),
       itemBuilder: (context, index) {
         final user = _searchResults[index];
         return InkWell(
           onTap: () => _startChatWithUser(user),
-          borderRadius: BorderRadius.circular(
-            dialogItemBorderRadius,
-          ),
+          borderRadius: BorderRadius.circular(dialogItemBorderRadius),
           child: Container(
             padding: dialogItemPadding,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                dialogItemBorderRadius,
-              ),
+              borderRadius: BorderRadius.circular(dialogItemBorderRadius),
               border: Border.all(
                 color: colorScheme.outline,
                 width: dialogItemBorderWidth,
@@ -354,9 +315,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                   padding: chatButtonPadding,
                   decoration: BoxDecoration(
                     color: colorScheme.primary,
-                    borderRadius: BorderRadius.circular(
-                      chatButtonBorderRadius,
-                    ),
+                    borderRadius: BorderRadius.circular(chatButtonBorderRadius),
                     border: Border.all(
                       color: colorScheme.primary,
                       width: chatButtonBorderWidth,

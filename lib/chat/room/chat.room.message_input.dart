@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 
+import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/storage/storage.functions.dart';
 import 'package:philgo/util/util.functions.dart';
 
@@ -371,48 +372,26 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
             ),
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-                  child: index < _uploadedUrls.length
-                      ? Image.network(
-                          _uploadedUrls[index],
-                          height: filePreviewHeight,
-                          width: filePreviewWidth + 20,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              height: filePreviewHeight,
-                              width: filePreviewWidth + 20,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-                              ),
-                              child: const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: filePreviewHeight,
-                              width: filePreviewWidth + 20,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-                              ),
-                              child: const Icon(Icons.error, color: Colors.red),
-                            );
-                          },
-                        )
-                      : Center(
+                index < _uploadedUrls.length
+                    ? DisplayThumbnail(
+                        url: _uploadedUrls[index],
+                        size: filePreviewWidth,
+                      )
+                    : Container(
+                        width: filePreviewWidth,
+                        height: filePreviewHeight,
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHigh,
+                          borderRadius: BorderRadius.circular(filePreviewBorderRadius),
+                        ),
+                        child: Center(
                           child: Icon(
                             Icons.image,
                             size: 48,
                             color: Colors.grey[600],
                           ),
                         ),
-                ),
+                      ),
 
                 // Upload progress overlay
                 if (_isUploading && _uploadProgress.containsKey(index))

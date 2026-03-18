@@ -4,21 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/api/api.service.dart';
-import 'package:philgo/user/user.firebase_model.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
 String? loginUid() => FirebaseAuth.instance.currentUser?.uid;
 // Short alias for loginUid. Note that this is non-nullable function.
 String myUid() => loginUid()!;
-
-String userPath(String uid) {
-  return 'users/$uid';
-}
-
-DatabaseReference userRef(String uid) {
-  return FirebaseDatabase.instance.ref(userPath(uid));
-}
 
 DatabaseReference userChatUnreadCountRef(String uid) {
   return FirebaseDatabase.instance.ref('users/$uid/chatUnreadCount');
@@ -50,18 +41,6 @@ DatabaseReference myBlockedUsersRef() {
 
 DatabaseReference myBlockedUserRef(String uid) {
   return myBlockedUsersRef().child(uid);
-}
-
-Future<UserFirebaseModel?> getUser(String uid) async {
-  try {
-    final event = await userRef(uid).once();
-    if (event.snapshot.exists) {
-      return UserFirebaseModel.fromSnapshot(event.snapshot);
-    }
-    return null;
-  } catch (e) {
-    throw Exception('Failed to get user: $e');
-  }
 }
 
 /// Block a user
