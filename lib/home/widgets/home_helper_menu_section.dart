@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// 홈 헬퍼 메뉴 섹션 - 필리핀 생활 필수 바로가기
 ///
 /// 대사관, 한인회, 환율, 날씨, 긴급연락처 등 필수 정보 링크를
-/// 가로 스크롤 원형 아이콘으로 표시한다.
+/// 둥근 사각형 아이콘 그리드로 표시한다 (스크롤 없이 한 번에 표시).
 class HomeHelperMenuSection extends StatelessWidget {
   const HomeHelperMenuSection({super.key});
 
@@ -26,52 +26,60 @@ class HomeHelperMenuSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 76,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: _items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final (label, icon, iconColor, url) = _items[index];
-          return GestureDetector(
-            onTap: () {
-              if (url != null) {
-                final uri = Uri.tryParse(url);
-                if (uri != null) {
-                  launchUrl(uri, mode: LaunchMode.externalApplication);
-                }
-              }
-            },
-            child: SizedBox(
-              width: 56,
-              child: Column(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: iconColor.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: FaIcon(icon, size: 18, color: iconColor),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    label.tr(),
-                    style: text.labelSmall?.copyWith(fontSize: 10),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 8,
+        children: _items.map((item) {
+          final (label, icon, iconColor, url) = item;
+          return _buildItem(context, label, icon, iconColor, url);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildItem(
+    BuildContext context,
+    String label,
+    IconData icon,
+    Color iconColor,
+    String? url,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        if (url != null) {
+          final uri = Uri.tryParse(url);
+          if (uri != null) {
+            launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      },
+      child: SizedBox(
+        width: 56,
+        child: Column(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: FaIcon(icon, size: 18, color: iconColor),
               ),
             ),
-          );
-        },
+            const SizedBox(height: 3),
+            Text(
+              label.tr(),
+              style: text.labelSmall?.copyWith(fontSize: 10),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
