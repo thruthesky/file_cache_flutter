@@ -41,6 +41,15 @@ This project is a Flutter app for building PhilGo v7 application.
 - `git subtree split --prefix=<path> --rejoin`은 이미 처리된 커밋 히스토리를 캐싱하여 push 시 전체 히스토리 순회를 방지한다. **push 전에 반드시 실행**한다.
 - 병렬 실행 시 각 subtree 작업을 별도의 Agent 또는 백그라운드 Bash 명령으로 동시에 실행한다.
 
+## 🔴🔴🔴 v7 기준 작업 원칙 — v6 코드 참조/안내/수정 절대 금지 🔴🔴🔴
+
+- **THIS IS NON-NEGOTIABLE. 모든 질문 답변, 작업 문서, 코드 생성/수정은 반드시 v7 기준으로 수행한다.**
+- `v6/` 폴더의 코드를 **절대로 수정하지 않는다**. v6 코드는 레거시이며 어떤 상황에서도 편집/수정 대상이 아니다.
+- `v6/` 폴더의 코드를 사용자에게 안내하거나 참조로 제시하지 않는다. v6 코드는 사용자에게 혼란을 준다.
+- 코드 검색 결과에 `v6/` 경로가 포함되더라도, 응답에서 v6 코드를 언급하거나 보여주지 않는다.
+- v6에 있는 기능이 필요한 경우, v6 코드를 재사용하지 말고 **반드시 v7 아키텍처에 맞는 새 코드를 생성**한다.
+- v7 코드(`lib/` 폴더)만을 기준으로 설명하고 작업한다.
+
 ## Never use packages/philgo_api/
 
 - **NEVER** import or directly use any code from the `packages/philgo_api/` folder in the project.

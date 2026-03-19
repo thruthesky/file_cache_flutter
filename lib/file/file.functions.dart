@@ -124,6 +124,10 @@ String getFileName(String url) {
 }
 
 /// YouTube URL 에서 비디오 ID 추출
+///
+/// @deprecated 대신 `lib/youtube/youtube.service.dart`의 `getYoutubeVideoId()`를 사용하세요.
+/// 이 함수는 watch?v=, youtu.be 형식만 지원합니다. 새 함수는 shorts, embed 등 6가지 형식을 모두 지원합니다.
+@Deprecated('lib/youtube/youtube.service.dart의 getYoutubeVideoId()를 사용하세요')
 String? getYouTubeVideoId(String url) {
   final uri = Uri.tryParse(url);
   if (uri == null) return null;

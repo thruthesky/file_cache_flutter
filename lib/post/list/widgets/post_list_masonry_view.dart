@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
 import 'package:philgo/common_widgets/masonry_image_card.dart';
+import 'package:philgo/common_widgets/youtube_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 
 /// 게시글 Masonry 뷰 (회원장터 등에서 사용)
@@ -57,6 +58,10 @@ class PostListMasonryView extends StatelessWidget {
           .map((e) => e.trim())
           .firstWhere((e) => e.isNotEmpty, orElse: () => '');
       if (first.isNotEmpty) return first;
+    }
+    // YouTube 썸네일 폴백
+    if (post.isYoutube && post.youtubeUrl != null) {
+      return getYoutubeThumbnailUrl(post.youtubeUrl);
     }
     return null;
   }

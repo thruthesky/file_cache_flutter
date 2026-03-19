@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/common_widgets/youtube_thumbnail.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/user/user.functions.dart';
@@ -85,19 +86,36 @@ class PostListTile extends StatelessWidget {
                   if (previewUrl != null) ...[
                     DisplayThumbnail(url: previewUrl, size: 72),
                     const SizedBox(width: 12),
+                  ] else if (post.isYoutube && post.youtubeUrl != null && post.youtubeUrl!.isNotEmpty) ...[
+                    YoutubeThumbnail(youtubeUrl: post.youtubeUrl!, size: 72),
+                    const SizedBox(width: 12),
                   ],
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Line 1: 제목
-                        Text(
-                          post.subject,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: text.titleLarge?.copyWith(
-                            color: color.onSurface,
-                          ),
+                        // Line 1: 제목 (YouTube 포함 시 아이콘 표시)
+                        Row(
+                          children: [
+                            if (post.isYoutube) ...[
+                              const FaIcon(
+                                FontAwesomeIcons.youtube,
+                                size: 14,
+                                color: Color(0xFFFF0000),
+                              ),
+                              const SizedBox(width: 5),
+                            ],
+                            Expanded(
+                              child: Text(
+                                post.subject,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: text.titleLarge?.copyWith(
+                                  color: color.onSurface,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         // Line 2: 아바타 + 이름 + 날짜 + 통계
