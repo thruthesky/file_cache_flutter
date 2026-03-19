@@ -17,6 +17,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  /// 섹션 간 여백
+  static const _sectionGap = SliverToBoxAdapter(child: SizedBox(height: 16));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,20 +47,32 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
+          _sectionGap,
+
           /// [상단 배너] 좌/우 배너 로테이션
           const SliverToBoxAdapter(child: HomeTopBanners()),
+
+          _sectionGap,
 
           /// [최신글] 6개 게시판 캐러셀 (2열 × 3페이지)
           const SliverToBoxAdapter(child: HomeLatestPostsSection()),
 
+          _sectionGap,
+
           /// [날개 배너] 5열 그리드
           const SliverToBoxAdapter(child: HomeWingBanners()),
+
+          _sectionGap,
 
           /// [공지사항] 최신 공지
           const SliverToBoxAdapter(child: HomeNoticesSection()),
 
+          _sectionGap,
+
           /// [인기글] 댓글 많은 게시글
           const SliverToBoxAdapter(child: HomePopularPostSection()),
+
+          _sectionGap,
 
           /// [주요 게시판] Wrap 레이아웃 포럼 칩
           const SliverToBoxAdapter(child: HomeMajorForumSection()),
