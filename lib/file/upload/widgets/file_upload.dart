@@ -111,9 +111,9 @@ class FileUpload extends StatefulWidget {
 
 class _FileUploadState extends State<FileUpload> {
   Future<void> _onTap() async {
-    log(
-      '[FileUpload] Upload button tapped. Module: ${widget.module}, Code: ${widget.code}',
-    );
+    // log(
+    //   '[FileUpload] Upload button tapped. Module: ${widget.module}, Code: ${widget.code}',
+    // );
     // 업로드 전 콜백
     if (widget.onBeforeUpload != null) {
       final proceed = await widget.onBeforeUpload!();
