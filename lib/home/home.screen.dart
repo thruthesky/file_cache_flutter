@@ -7,6 +7,7 @@ import 'widgets/home_popular_post_section.dart';
 import 'widgets/home_major_forum_section.dart';
 import 'widgets/home_helper_menu_section.dart';
 import 'widgets/home_notices_section.dart';
+import 'widgets/home_dev_mode_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,6 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+
+          /// [개발 모드] API 연결 상태 표시 (디버그 모드에서만)
+          const SliverToBoxAdapter(child: HomeDevModeBanner()),
 
           /// [헬퍼 메뉴] 필리핀 생활 필수 바로가기 (둥근 사각형 아이콘 그리드)
           const SliverToBoxAdapter(

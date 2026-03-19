@@ -54,10 +54,10 @@ class _AppScreenState extends State<AppScreen> {
                   AppNavigationState.of(context).openForumScreen();
                   break;
                 case 2:
-                  AppNavigationState.of(context).openCompanyScreen();
+                  AppNavigationState.of(context).openChatScreen();
                   break;
                 case 3:
-                  AppNavigationState.of(context).openChatScreen();
+                  AppNavigationState.of(context).openCompanyScreen();
                   break;
                 case 4:
                   AppNavigationState.of(context).openMenuScreen();
