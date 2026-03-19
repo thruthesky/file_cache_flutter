@@ -60,8 +60,9 @@ class _HomeDevModeBannerState extends State<HomeDevModeBanner> {
               return Text(
                 '설정 리로드: ${seconds}s',
                 style: TextStyle(
-                  fontSize: 8,
-                  color: textColor.withValues(alpha: 0.6),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
                 ),
               );
             },
