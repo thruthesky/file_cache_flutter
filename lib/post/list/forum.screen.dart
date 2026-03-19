@@ -11,6 +11,7 @@ import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
@@ -183,8 +184,12 @@ class _ForumScreenState extends State<ForumScreen> {
   }
 
   Future<void> _openPostView(Post post) async {
-    // 차단된 사용자의 글이면 차단 해제 확인 다이얼로그 표시
-    if (post.blocked) {
+    // 실시간 Firebase 차단 상태 확인 (서버 플래그 대신)
+    final isBlocked = post.userFirebaseUid.isNotEmpty
+        ? UserService.instance.blockedUsersStream.value
+              .contains(post.userFirebaseUid)
+        : post.blocked;
+    if (isBlocked) {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
