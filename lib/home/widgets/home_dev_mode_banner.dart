@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/app.config.dart';
+import 'package:philgo/setting/setting.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
@@ -52,6 +53,19 @@ class _HomeDevModeBannerState extends State<HomeDevModeBanner> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 설정 리로드 카운트다운 타이머
+          ValueListenableBuilder<int>(
+            valueListenable: SettingService.instance.remainingSeconds,
+            builder: (_, seconds, __) {
+              return Text(
+                '설정 리로드: ${seconds}s',
+                style: TextStyle(
+                  fontSize: 8,
+                  color: textColor.withValues(alpha: 0.6),
+                ),
+              );
+            },
+          ),
           Row(
             children: [
               if (isProd) ...[
