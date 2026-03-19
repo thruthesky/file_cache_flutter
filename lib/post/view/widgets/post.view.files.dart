@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
-import 'package:philgo/util/widgets/full_screen_images.dart';
+import 'package:philgo/util/widgets/full_screen_image_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PostViewFiles extends StatelessWidget {
@@ -35,16 +35,19 @@ class PostViewFiles extends StatelessWidget {
     final urls = _urls;
     if (urls.isEmpty) return const SizedBox.shrink();
 
-    final imageUrls = urls
+    final mediaUrls = urls
         .map((u) => toAbsoluteUrl(u))
-        .where((u) => getMediaType(u) == MediaType.image)
+        .where((u) {
+          final type = getMediaType(u);
+          return type == MediaType.image || type == MediaType.video;
+        })
         .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final url in urls)
-          _buildMediaItem(context, toAbsoluteUrl(url), imageUrls),
+          _buildMediaItem(context, toAbsoluteUrl(url), mediaUrls),
       ],
     );
   }
@@ -52,21 +55,21 @@ class PostViewFiles extends StatelessWidget {
   Widget _buildMediaItem(
     BuildContext context,
     String absoluteUrl,
-    List<String> imageUrls,
+    List<String> mediaUrls,
   ) {
     final scheme = Theme.of(context).colorScheme;
     final type = getMediaType(absoluteUrl);
 
     switch (type) {
       case MediaType.image:
-        final imageIndex = imageUrls.indexOf(absoluteUrl);
+        final mediaIndex = mediaUrls.indexOf(absoluteUrl);
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: GestureDetector(
-            onTap: () => showFullScreenImages(
-              context: context,
-              imageUrls: imageUrls,
-              initialIndex: imageIndex >= 0 ? imageIndex : 0,
+            onTap: () => _showFullScreenMedia(
+              context,
+              mediaUrls,
+              mediaIndex >= 0 ? mediaIndex : 0,
             ),
             child: ClipRRect(
               child: CachedNetworkImage(
@@ -87,9 +90,17 @@ class PostViewFiles extends StatelessWidget {
         );
 
       case MediaType.video:
+        final mediaIndex = mediaUrls.indexOf(absoluteUrl);
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: UploadedVideoPlayer(url: absoluteUrl),
+          child: GestureDetector(
+            onTap: () => _showFullScreenMedia(
+              context,
+              mediaUrls,
+              mediaIndex >= 0 ? mediaIndex : 0,
+            ),
+            child: UploadedVideoPlayer(url: absoluteUrl),
+          ),
         );
 
       case MediaType.file:
@@ -158,5 +169,21 @@ class PostViewFiles extends StatelessWidget {
           ),
         );
     }
+  }
+
+  void _showFullScreenMedia(
+    BuildContext context,
+    List<String> mediaUrls,
+    int initialIndex,
+  ) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => FullScreenImageViewer(
+          mediaUrls: mediaUrls,
+          initialIndex: initialIndex,
+        ),
+      ),
+    );
   }
 }

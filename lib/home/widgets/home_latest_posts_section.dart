@@ -14,10 +14,7 @@ import 'package:philgo/post/view/post.view.screen.dart';
 /// 6개 게시판에서 각 4개씩 최신글을 가져와 3페이지 캐러셀로 표시한다.
 /// 각 페이지는 좌/우 2열 레이아웃이다. 7초마다 자동 스크롤.
 class HomeLatestPostsSection extends StatefulWidget {
-  const HomeLatestPostsSection({
-    super.key,
-    this.forums = _defaultForums,
-  });
+  const HomeLatestPostsSection({super.key, this.forums = _defaultForums});
 
   /// 캐러셀에 표시할 게시판 목록 (postId, category, label)
   final List<(String, String?, String)> forums;
