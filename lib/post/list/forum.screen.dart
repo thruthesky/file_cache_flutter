@@ -133,8 +133,6 @@ class _ForumScreenState extends State<ForumScreen> {
                 child: isBuyAndSell
                     ? PostListMasonryView(
                         pagingController: _pagingController,
-                        theme: theme,
-                        scheme: scheme,
                         onPostTap: _openPostView,
                       )
                     : PostListView(
