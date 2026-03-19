@@ -112,36 +112,15 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                           ),
                         ),
                       Expanded(
-                        child: FutureBuilder(
-                          future: canShareToChat(widget.data),
-                          builder: (context, snapshot) {
-                            final sharable = snapshot.data == true;
-                            return ShareWhereButton(
-                              onTap: () {
-                                if (sharable) {
-                                  setState(() => tab = 'chat');
-                                } else {
-                                  showErrorDialog(
-                                    context,
-                                    "Only image or text can be sent to chat",
-                                  );
-                                }
-                              },
-                              text: "Send to chat friend",
-                              color: sharable
-                                  ? Colors.orange
-                                  : Colors.grey[300]!,
-                              icon: FaIcon(
-                                size: 64,
-                                FontAwesomeIcons.thinComments,
-                                // color: sharable
-                                //     ? Colors.orange.shade800
-                                //     : Colors.grey[300]!,
-                              ),
-                              primaryColor: Colors.blue.shade50,
-                              secondaryColor: Colors.orangeAccent.shade100,
-                            );
+                        child: ShareWhereButton(
+                          onTap: () {
+                            setState(() => tab = 'chat');
                           },
+                          text: "Send to chat friend",
+                          color: Colors.orange,
+                          icon: FaIcon(size: 64, FontAwesomeIcons.thinComments),
+                          primaryColor: Colors.blue.shade50,
+                          secondaryColor: Colors.orangeAccent.shade100,
                         ),
                       ),
                     ],
