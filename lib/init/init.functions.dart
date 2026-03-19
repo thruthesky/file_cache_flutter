@@ -122,7 +122,7 @@ void initializeReceiveShareService() {
   /// 외부 공유 수신 서비스 초기화
   /// Initialize receive share service
   ReceiveShareService.instance.initialize(
-    categories: majorForumCategories(),
+    categories: Config.majorForumCategories(),
     onCategorySelect:
         (String postId, String? category, List<SharedMediaFile> data) async {
           // log(

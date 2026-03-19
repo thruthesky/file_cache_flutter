@@ -12,7 +12,7 @@ class SettingsState extends ChangeNotifier {
   Settings? _settings;
   Settings? get settings => _settings;
 
-  String get adminChatUid => _settings?.chatAdmin ?? chatAdminUid;
+  String get adminChatUid => _settings?.chatAdmin ?? Config.chatAdminUid;
 
   /// 설정 데이터 업데이트
   void setSettings(Settings settings) {

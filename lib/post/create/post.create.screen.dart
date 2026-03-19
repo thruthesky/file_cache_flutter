@@ -99,16 +99,14 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
   /// 게시판 라벨 가져오기
   String _getPostLabel(String postId) {
-    final found = forumCategories.where(
-      (c) => c.$1 == postId && c.$2 == null,
-    );
+    final found = Config.forumCategories.where((c) => c.$1 == postId && c.$2 == null);
     if (found.isNotEmpty) return found.first.$3;
     return postId;
   }
 
   /// 해당 postId의 서브 카테고리 목록
   List<(String, String)> _getSubCategories(String postId) {
-    return forumCategories
+    return Config.forumCategories
         .where((c) => c.$1 == postId && c.$2 != null)
         .map((c) => (c.$2!, c.$3))
         .toList();
@@ -117,7 +115,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   /// 카테고리 라벨 가져오기
   String _getCategoryLabel(String? category) {
     if (category == null) return '카테고리 선택'.tr();
-    final found = forumCategories.where(
+    final found = Config.forumCategories.where(
       (c) => c.$1 == _selectedPostId && c.$2 == category,
     );
     if (found.isNotEmpty) return found.first.$3;
@@ -126,7 +124,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
   /// POST_ID 선택 바텀시트
   void _showPostIdSelector() {
-    final categories = majorForumCategories(
+    final categories = Config.majorForumCategories(
       includeTemp: isDeveloperModeEnabled,
     );
     showModalBottomSheet(
@@ -575,9 +573,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       galleryVideo: true,
                       file: true,
                       onUploadingChanged: (uploading) {
-                        setState(
-                          () => _uploadingCount += uploading ? 1 : -1,
-                        );
+                        setState(() => _uploadingCount += uploading ? 1 : -1);
                       },
                       onUploaded: (FileUploadModel model) {
                         debugPrint(
@@ -587,9 +583,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       },
                       onError: (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${'업로드 실패'.tr()}: $e'),
-                          ),
+                          SnackBar(content: Text('${'업로드 실패'.tr()}: $e')),
                         );
                       },
                       child: FaIcon(

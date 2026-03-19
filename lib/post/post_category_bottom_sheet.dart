@@ -42,16 +42,14 @@ void showPostCategoryBottomSheet(
 
 /// majorForumCategories의 각 postId에 대한 라벨 가져오기
 String _getCategoryLabel(String postId) {
-  final found = forumCategories.where(
-    (c) => c.$1 == postId && c.$2 == null,
-  );
+  final found = Config.forumCategories.where((c) => c.$1 == postId && c.$2 == null);
   if (found.isNotEmpty) return found.first.$3;
   return postId;
 }
 
 /// 특정 postId의 서브 카테고리 목록 가져오기
 List<(String, String)> _getSubCategories(String postId) {
-  return forumCategories
+  return Config.forumCategories
       .where((c) => c.$1 == postId && c.$2 != null)
       .map((c) => (c.$2!, c.$3))
       .toList();
@@ -90,7 +88,7 @@ class _PostCategoryBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categories = majorForumCategories(
+    final categories = Config.majorForumCategories(
       includeTemp: isDeveloperModeEnabled,
     );
 

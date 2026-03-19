@@ -41,7 +41,7 @@ void main() async {
       );
 
       // 카카오 SDK 초기화
-      KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
+      KakaoSdk.init(nativeAppKey: Config.kakaoNativeAppKey);
 
       OmniVideoPlayer.ensureInitialized();
 

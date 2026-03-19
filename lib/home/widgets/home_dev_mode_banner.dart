@@ -22,7 +22,7 @@ class _HomeDevModeBannerState extends State<HomeDevModeBanner> {
   bool _dismissed = false;
 
   bool get _isProduction {
-    final uri = Uri.tryParse(v7ApiEndpoint);
+    final uri = Uri.tryParse(Config.v7ApiEndpoint);
     final host = uri?.host ?? '';
     // Only exact 'philgo.com' is production, not subdomains like v7-local.philgo.com
     final isProductionHost = host == 'philgo.com' || host == 'www.philgo.com';
@@ -97,7 +97,7 @@ class _HomeDevModeBannerState extends State<HomeDevModeBanner> {
           ),
           if (isProd) const SizedBox(height: 2),
           Text(
-            'API: $v7ApiEndpoint',
+            'API: ${Config.v7ApiEndpoint}',
             style: TextStyle(
               fontSize: 10,
               fontWeight: isProd ? FontWeight.bold : FontWeight.normal,

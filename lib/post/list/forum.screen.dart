@@ -62,12 +62,12 @@ class _ForumScreenState extends State<ForumScreen> {
 
   void _onCategoryTap(int index) {
     if (index == _selectedIndex) return;
-    final (postId, category, _) = forumCategories[index];
+    final (postId, category, _) = Config.forumCategories[index];
     AppNavigationState.of(context).setSelectedForum(postId, category);
   }
 
   void _applySelectedForum(String postId, String? category) {
-    final index = forumCategories.indexWhere(
+    final index = Config.forumCategories.indexWhere(
       (item) => item.$1 == postId && item.$2 == category,
     );
     if (index < 0 || index == _selectedIndex) return;
@@ -105,7 +105,9 @@ class _ForumScreenState extends State<ForumScreen> {
 
     // PHP Config::masonryCategories()와 동일한 로직: category ?? postId 로 판별
     final masonryCategoryOrPostId = category ?? postId;
-    final isMasonryLayout = masonryCategories.contains(masonryCategoryOrPostId);
+    final isMasonryLayout = Config.masonryCategories.contains(
+      masonryCategoryOrPostId,
+    );
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -119,7 +121,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 curve: Curves.easeInOut,
                 heightFactor: _showHeader ? 1.0 : 0.0,
                 child: PostListHeaderCategories(
-                  categories: forumCategories,
+                  categories: Config.forumCategories,
                   selectedIndex: _selectedIndex,
                   onCategoryTap: _onCategoryTap,
                 ),
@@ -153,8 +155,9 @@ class _ForumScreenState extends State<ForumScreen> {
   Future<void> _openPostView(Post post) async {
     // 실시간 Firebase 차단 상태 확인 (서버 플래그 대신)
     final isBlocked = post.userFirebaseUid.isNotEmpty
-        ? UserService.instance.blockedUsersStream.value
-              .contains(post.userFirebaseUid)
+        ? UserService.instance.blockedUsersStream.value.contains(
+            post.userFirebaseUid,
+          )
         : post.blocked;
     if (isBlocked) {
       final confirm = await showDialog<bool>(
