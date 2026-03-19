@@ -21,6 +21,31 @@
 
 ---
 
+## 🔴🔴🔴 절대경로 규칙 — 모든 이미지/파일 URL은 절대경로로 제공 🔴🔴🔴
+
+> **⛔ v7 시스템에서 모든 이미지/파일/썸네일 URL은 절대경로(`https://...`)로 제공한다. ⛔**
+> **상대경로(`/uploads/...`)가 클라이언트(Flutter 앱, 웹 PHP)에 노출되어서는 안 된다.**
+
+| 규칙 | 설명 |
+|------|------|
+| **Entity에서 자동 변환** | 모든 Entity의 `fromArray()`에서 `UploadService::toAbsoluteUrl()`로 상대경로 → 절대경로 자동 변환 |
+| **API 응답** | `toArray()` 반환값의 모든 URL 필드는 절대경로 |
+| **웹(PHP)** | Entity 필드를 그대로 사용하면 절대경로 — 경로 변환 불필요 |
+| **Flutter 앱** | API 응답의 URL을 그대로 사용 — 경로 변환 불필요 |
+
+**절대경로 변환이 적용된 Entity 필드:**
+
+| Entity | 변환되는 URL 필드 |
+|--------|-----------------|
+| **PostEntity** | `varchar_17`, `files`, `user_photo_url`, `thumbnail_400x400`, `thumbnail_600`, `thumbnail_800x800`, `thumbnail_1000`, `resolved_thumbnail` |
+| **UploadEntity** | `url`, `thumbnail_400x400_url`, `thumbnail_800x800_url`, `thumbnail_600_url`, `thumbnail_1000_url` |
+| **UserEntity** | `photo_url` |
+| **CompanyEntity** | `photo_url`, `logo_url`, `title_image_url`, `business_license_url`, `kakaotalk_qr_code_url`, `family_site_logo_url` |
+| **BannerEntity** | `imageUrl` |
+| **EventCouponEntity** | `image_url` |
+
+---
+
 ## 1. 개요: 왜 URL 경로 변환이 필요한가
 
 필고 시스템은 **v4(2010년대 초~중반)**, **v6(2017~2024)**, **v7(2024~현재)** 세 버전의 데이터가 하나의 DB에 공존한다.
