@@ -792,6 +792,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 |------|------|------|
 | User | [api/v7-user.md](references/api/v7-user.md) | ✅ 완료 |
 | Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
+| Upload URL 변환 | [api/v7-upload-url-resolve.md](references/api/v7-upload-url-resolve.md) — v4/v6/v7 세 버전의 파일 경로 통합 변환 로직. `UploadService::resolveImageThumbnail()`(단일 이미지 URL → 버전 자동 감지 → 썸네일 URL 변환), `resolvePostThumbnail()`(게시글 최종 대표 썸네일 결정, varchar_17→files→no_of_first_image 우선순위), `buildV4FileUrl()`(v4 인덱스→URL), `extractFirstImageFromFiles()`(files 필드 다형식 파싱), PostEntity 런타임 썸네일 설정, `enrichThumbnails()`(gid 배치 v4 조회 + 유튜브 폴백), sf_post_data 미디어 필드 매핑, 웹(PHP)/앱(Flutter) 플랫폼별 처리 차이. 핵심 소스 코드 + 테스트 커버리지 포함 | ✅ 완료 |
 | AI | [api/v7-ai.md](references/api/v7-ai.md) — 텍스트 검열, 텍스트 생성, 영수증 분석, **AI 챗봇 SSE 스트리밍** (`ai.chatbot` — Enhanced Prompt + Firebase RTDB), **AI 답변 SSE 스트리밍 + 자동 저장** (`ai.answerPost` — 서버에서 프롬프트 구성+저장, 1번 통신), **AI 답변 저장** (`ai.saveAnswer`), `ai-api.php` 전용 엔트리포인트 | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |

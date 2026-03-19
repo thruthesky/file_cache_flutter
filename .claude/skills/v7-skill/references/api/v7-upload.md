@@ -22,6 +22,7 @@
 - [16. 기존 시스템과의 차이점](#16-기존-시스템과의-차이점)
 - [17. 이미지 처리 (썸네일/WebP 변환)](#17-이미지-처리-썸네일webp-변환)
 - [18. 1:N 관계 파일 첨부 패턴 (attached_to 활용)](#18-1n-관계-파일-첨부-패턴-attached_to-활용)
+- [19. URL 경로 변환 (v4/v6/v7 통합) → 서브 문서](#19-url-경로-변환-v4v6v7-통합--서브-문서)
 
 ---
 
@@ -2252,6 +2253,72 @@ GIF 또는 이미지가 아닌 파일은 `thumbnail_url_400`, `thumbnail_url_800
 
 ---
 
+## 17-B. API 응답 이미지 절대경로 변환 (toAbsoluteUrl)
+
+### 17-B.1 개요
+
+v7 Upload API로 업로드된 파일은 DB에 `/uploads/{idx_member}/filename.webp` 형태의 **상대경로**로 저장된다.
+API 응답(JSON)에서 클라이언트(Flutter 앱 등)에게 이미지 경로를 반환할 때는 현재 접속 도메인 기준의 **절대경로**로 변환하여 반환한다.
+
+| 입력 (DB 저장값) | 출력 (API 응답) |
+|------|-----|
+| `/uploads/99801/abc123.webp` | `https://philgo.com/uploads/99801/abc123.webp` |
+| `/uploads/99801/400x400-abc123.webp` | `https://philgo.com/uploads/99801/400x400-abc123.webp` |
+| `https://file.philgo.com/...` (v6 외부 URL) | `https://file.philgo.com/...` (그대로) |
+| `https://file.philgo.com/data/upload/...` (v4 URL) | `https://file.philgo.com/data/upload/...` (그대로) |
+
+### 17-B.2 핵심 메서드: `UploadService::toAbsoluteUrl()`
+
+```php
+use Philgo\Upload\UploadService;
+
+// /uploads/ 경로만 절대경로로 변환. 이미 절대 URL이면 그대로.
+$absoluteUrl = UploadService::toAbsoluteUrl('/uploads/99801/abc123.webp');
+// → "https://현재도메인/uploads/99801/abc123.webp"
+
+$absoluteUrl = UploadService::toAbsoluteUrl('https://file.philgo.com/...');
+// → "https://file.philgo.com/..." (그대로)
+
+$absoluteUrl = UploadService::toAbsoluteUrl('');
+// → "" (빈 문자열)
+```
+
+**변환 조건:**
+- `/uploads/`로 시작하는 v7 업로드 경로만 변환
+- 이미 `http://` 또는 `https://`로 시작하면 그대로 반환
+- `$_SERVER['HTTP_HOST']`가 없는 환경(CLI 등)에서는 원본 그대로 반환
+
+### 17-B.3 files 필드 변환: `UploadService::resolveFilesFieldToAbsolute()`
+
+게시글의 `files` 필드에 포함된 모든 URL을 절대경로로 변환한다.
+쉼표/줄바꿈 구분 문자열과 JSON 배열 형식 모두 지원한다.
+
+```php
+$absoluteFiles = UploadService::resolveFilesFieldToAbsolute($post->files);
+```
+
+### 17-B.4 적용 범위 — Entity별 변환 필드
+
+| Entity | 변환 필드 | 적용 위치 |
+|--------|-----------|-----------|
+| **PostEntity** | `varchar_17`, `files`, `user_photo_url`, `thumbnail_*`, `resolved_thumbnail` | `fromArray()` |
+| **UploadEntity** | `url`, `thumbnail_400x400_url`, `thumbnail_800x800_url`, `thumbnail_600_url`, `thumbnail_1000_url`, 동적 `thumbnail_url_*` | `fromArray()` + `getThumbnailUrl()` |
+| **UserEntity** | `photo_url` | `__construct()` |
+| **CompanyEntity** | `logo_url`, `business_license_url`, `photo_url`, `title_image_url`, `family_site_logo_url`, `kakaotalk_qr_code_url` | `fromArray()` |
+| **EventCouponEntity** | `image_url` | `__construct()` |
+| **BannerEntity** | `imageUrl` | `fromArray()` |
+
+> **v4/v6 업로드 파일**: 이미 `https://file.philgo.com/...` 절대경로로 저장되어 있으므로 `toAbsoluteUrl()`이 그대로 반환한다.
+> **v7 업로드 파일**: `/uploads/...` 상대경로 → 현재 도메인 기준 절대경로로 변환된다.
+
+### 17-B.5 `resolveImageThumbnail()` 내부 적용
+
+`UploadService::resolveImageThumbnail()`은 v7 업로드 경로(`/uploads/`)의 썸네일 URL을 생성한 후
+`toAbsoluteUrl()`을 통해 절대경로로 반환한다. 따라서 `thumbnail_400x400`, `thumbnail_800x800`,
+`thumbnail_1000`, `resolved_thumbnail` 등 모든 썸네일 편의 필드가 자동으로 절대경로가 된다.
+
+---
+
 ## 18. 1:N 관계 파일 첨부 패턴 (attached_to 활용)
 
 ### 18.1 개요
@@ -2412,3 +2479,26 @@ public static function deleteByAttached(string $module, string $code, int $attac
 
 > **새로운 기능에서 사진/파일 첨부가 필요하면**, 대상 테이블에 URL 컬럼을 추가하지 말고
 > 위 패턴을 따라 `module`과 `code`를 정의하여 uploads 테이블로 연결한다.
+
+---
+
+## 19. URL 경로 변환 (v4/v6/v7 통합) → 서브 문서
+
+> **상세 문서**: [api/v7-upload-url-resolve.md](v7-upload-url-resolve.md)
+
+필고 시스템은 v4(2010년대), v6(2017~2024), v7(2024~현재) 세 버전의 데이터가 하나의 DB에 공존하며, 각 버전이 서로 다른 파일 저장 경로를 사용한다. `UploadService`의 공용 메서드들이 어떤 버전의 URL이든 받아서 적절한 썸네일 URL로 변환한다. v7은 로컬 `/uploads/` 폴더(WebP 자동 변환 + `ImageService::buildThumbnailUrl()` 동적 생성), v6은 외부 `file.philgo.com`의 `thumbnail.php` 스크립트, v4는 파일 인덱스 기반(`/data/upload/{idx%10}/{idx}`)으로 동적 썸네일이 불가하여 원본을 반환한다. `PostEntity::fromArray()`에서 `varchar_17` 기반 3가지 썸네일과 `resolved_thumbnail`(우선순위: varchar_17 → files → no_of_first_image)을 자동 설정하고, `PostService::enrichThumbnails()`에서 gid 기반 v4 배치 조회와 유튜브 썸네일 폴백을 배치로 보강한다. URL 변환은 서버(PHP)에서만 실행되며 Flutter 앱은 변환된 결과만 소비한다.
+
+### 서브 문서에 포함된 내용
+
+| 섹션 | 내용 |
+|------|------|
+| 버전별 파일 경로 패턴 | v4/v6/v7 저장 위치, 경로 형식, 식별 키워드 비교 |
+| `resolveImageThumbnail()` | 단일 이미지 URL을 버전 자동 감지하여 썸네일 URL로 변환 (핵심 소스 코드 포함) |
+| `resolvePostThumbnail()` | 게시글의 최종 대표 썸네일을 우선순위 기반으로 결정 (varchar_17 → files → no_of_first_image) |
+| `buildV4FileUrl()` | v4 파일 인덱스를 `https://file.philgo.com/data/upload/{idx%10}/{idx}` URL로 변환 |
+| `extractFirstImageFromFiles()` | files 필드의 다양한 형식(쉼표/줄바꿈/JSON)에서 첫 이미지 추출 |
+| PostEntity 런타임 썸네일 | `fromArray()`에서 thumbnail_400x400/800x800/1000 + resolved_thumbnail 자동 설정 |
+| `enrichThumbnails()` | gid 배치 조회(sf_data) + 유튜브 썸네일 폴백 배치 처리 |
+| sf_post_data 필드 매핑 | varchar_17, files, no_of_first_image, gid, has_image, has_youtube 등 미디어 필드 용도 |
+| 웹/앱 플랫폼별 차이 | PHP 서버사이드 처리 vs Flutter 클라이언트 소비 |
+| 테스트 커버리지 | UploadServiceResolveTest, PostThumbnailTest 테스트 케이스 목록 |
