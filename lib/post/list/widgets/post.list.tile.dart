@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
+import 'package:philgo/user/widgets/block.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 
 /// 게시글 리스트 타일
@@ -39,11 +40,24 @@ class PostListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 차단된 사용자의 글이면 차단 안내 표시
+    // Firebase 실시간 차단 상태 반영 (채팅 등에서 차단 시 즉시 반영)
+    if (post.userFirebaseUid.isNotEmpty) {
+      return Blocked(
+        otherUserUid: post.userFirebaseUid,
+        yes: () => _buildBlockedTile(),
+        no: () => _buildNormalTile(),
+      );
+    }
+
+    // userFirebaseUid가 없으면 서버 플래그로 폴백
     if (post.blocked) {
       return _buildBlockedTile();
     }
 
+    return _buildNormalTile();
+  }
+
+  Widget _buildNormalTile() {
     final previewUrl = _previewUrl;
 
     final commentColor = _getCountColor(post.noOfComment);
