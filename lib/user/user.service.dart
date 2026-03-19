@@ -157,20 +157,26 @@ class UserService {
   ///
   /// [nickname] 검색할 닉네임 키워드
   static Future<List<UserModel>> search({required String nickname}) async {
-    final list = await ApiService.instance.v7apiList(
+    final items = await ApiService.instance.v7api<List>(
       'user.search',
       data: {'nickname': nickname},
+      debug: true,
     );
-    return list
-        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(UserModel.fromJson)
         .toList();
   }
 
   /// 차단된 사용자 목록을 가져온다. (user.blockedList)
   static Future<List<BlockedUserModel>> getBlockedList() async {
-    final list = await ApiService.instance.v7apiList('user.blockedList');
-    return list
-        .map((e) => BlockedUserModel.fromJson(e as Map<String, dynamic>))
+    final items = await ApiService.instance.v7api<List>(
+      'user.blockedList',
+      debug: true,
+    );
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(BlockedUserModel.fromJson)
         .toList();
   }
 
