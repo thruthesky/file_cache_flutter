@@ -22,7 +22,7 @@ String chatJoinPath(String uid) {
 }
 
 // Chat Message Path
-String chatMessagePath(String roomId) {
+String chatMessagesPath(String roomId) {
   return 'chat/messages/$roomId';
 }
 
@@ -33,7 +33,7 @@ DatabaseReference chatJoinRef(String uid) {
 
 // Returns a ref of the chat message path from specific room
 DatabaseReference chatMessageRef(String roomId) {
-  return FirebaseDatabase.instance.ref(chatMessagePath(roomId));
+  return FirebaseDatabase.instance.ref(chatMessagesPath(roomId));
 }
 
 Query messageQuery(String roomId) {
@@ -74,11 +74,11 @@ DatabaseReference reportsListRef() {
 }
 
 String getReportMessagesPath(String roomId) {
-  return '${chatMessagePath(roomId)}/$roomId';
+  return chatMessagesPath(roomId);
 }
 
 String getReportMessagePath(String messageId, String roomId) {
-  return '${chatMessagePath(roomId)}/$messageId';
+  return '${chatMessagesPath(roomId)}/$messageId';
 }
 
 // ===================== Room ID Helpers =====================

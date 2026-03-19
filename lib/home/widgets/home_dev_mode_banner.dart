@@ -12,12 +12,13 @@ class HomeDevModeBanner extends StatelessWidget {
   const HomeDevModeBanner({super.key});
 
   static const _env = String.fromEnvironment('ENV');
-  static const _defaultEndpoint = 'https://philgo.com/api.php';
 
   bool get _isProduction {
-    return v7ApiEndpoint == _defaultEndpoint ||
-        v7ApiEndpoint.contains('philgo.com') ||
-        (_env != 'dev' && _env.isEmpty);
+    final uri = Uri.tryParse(v7ApiEndpoint);
+    final host = uri?.host ?? '';
+    // Only exact 'philgo.com' is production, not subdomains like v7-local.philgo.com
+    final isProductionHost = host == 'philgo.com' || host == 'www.philgo.com';
+    return isProductionHost || (_env != 'dev' && _env.isEmpty);
   }
 
   @override

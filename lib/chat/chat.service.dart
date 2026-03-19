@@ -1,6 +1,7 @@
 // ChatService
 // This is a singleton service to manage chat functionalities.
 // Contains API calls, business logic, and UI dialog operations.
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -24,10 +25,36 @@ class ChatService {
   static ChatService get instance => _instance ??= ChatService._();
   ChatService._();
 
+  bool initialized = false;
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseDatabase database = FirebaseDatabase.instance;
 
+  // PINNED CHAT ROOMS
+  StreamSubscription<DatabaseEvent>? pinnedChatRoomsSubscription;
+  final Set<String> pinnedChatRooms = <String>{};
+  final pinnedChatRoomsStream = ValueNotifier<Set<String>>(<String>{});
+
+  // UNREAD MESSAGE COUNT
+  StreamSubscription<DatabaseEvent>? unreadCountSubscription;
+  final unreadCountStream = ValueNotifier<int>(0);
+  int get unreadCount => unreadCountStream.value;
+
+  /// Previous unread count - 이전 읽지 않은 메시지 수
+  /// Used to detect new message arrival - 새 메시지 도착 감지를 위해 사용
+  int _previousUnreadCount = 0;
+
+  /// Callback when new message arrives - 새 메시지 도착 콜백
+  /// Called when unread count increases - 읽지 않은 메시지 수가 증가할 때 호출
+  Function()? onNewMessageArrived;
+
   // ===================== API / Business Logic =====================
+
+  Future<void> initialize({Function()? onNewMessageArrived}) async {
+    if (initialized) return;
+    initialized = true;
+    this.onNewMessageArrived = onNewMessageArrived;
+  }
 
   /// Get Chat Join
   Future<ChatJoin?> getChatJoin(String roomId) async {
@@ -415,5 +442,74 @@ class ChatService {
         onLeave();
       }
     }
+  }
+
+  void initPinnedChatRooms(String firebaseUid) {
+    pinnedChatRoomsSubscription?.cancel();
+    final pinnedChatRoomsRef = userPinnedChatRoomsRef(firebaseUid);
+    pinnedChatRoomsSubscription = pinnedChatRoomsRef.onValue.listen(
+      (event) {
+        pinnedChatRooms.clear();
+
+        if (event.snapshot.exists && event.snapshot.value != null) {
+          final data = event.snapshot.value as Map<dynamic, dynamic>;
+          // debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
+          data.forEach((key, value) {
+            if (value == true) {
+              pinnedChatRooms.add(key.toString());
+            }
+          });
+        }
+        // debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
+        pinnedChatRoomsStream.value = {...pinnedChatRooms};
+      },
+      onError: (error) {
+        log('-----> Failed to load pinnedChatRooms: $error');
+      },
+    );
+  }
+
+  void cancelPinnedChatRoomsListener() {
+    pinnedChatRoomsSubscription?.cancel();
+    pinnedChatRoomsSubscription = null;
+    pinnedChatRooms.clear();
+    pinnedChatRoomsStream.value = <String>{};
+  }
+
+  void initCountUnreadMessage(String firebaseUid) {
+    unreadCountSubscription?.cancel();
+    final unreadCountRef = userChatUnreadCountRef(firebaseUid);
+
+    // 초기화 시 이전 읽지 않은 메시지 수 초기화
+    _previousUnreadCount = 0;
+
+    unreadCountSubscription = unreadCountRef.onValue.listen(
+      (event) {
+        if (event.snapshot.exists && event.snapshot.value != null) {
+          final count = event.snapshot.value as int;
+
+          // 새 메시지 도착 감지: 현재 값이 이전 값보다 크고, 첫 로드가 아닌 경우
+          if (count > _previousUnreadCount && _previousUnreadCount > 0) {
+            onNewMessageArrived?.call();
+          }
+
+          _previousUnreadCount = count;
+
+          // ValueNotifier 업데이트 - Update ValueNotifiers
+          // Badge 위젯에서 이 stream을 listen함
+          unreadCountStream.value = count;
+
+          debugPrint('[UserService] 📬 Firebase unread count updated: $count');
+        } else {
+          _previousUnreadCount = 0;
+
+          // ValueNotifier 초기화 - Reset ValueNotifiers
+          unreadCountStream.value = 0;
+        }
+      },
+      onError: (error) {
+        log('-----> Failed to load unread_count: $error');
+      },
+    );
   }
 }

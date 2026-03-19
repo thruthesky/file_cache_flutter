@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/bookmark/bookmark.service.dart';
+import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
@@ -42,16 +45,6 @@ class UserService {
   /// Previous unread count - 이전 읽지 않은 메시지 수
   /// Used to detect new message arrival - 새 메시지 도착 감지를 위해 사용
   // int _previousUnreadCount = 0;
-
-  // PINNED CHAT ROOMS
-  StreamSubscription<DatabaseEvent>? pinnedChatRoomsSubscription;
-  final Set<String> pinnedChatRooms = <String>{};
-  final pinnedChatRoomsStream = ValueNotifier<Set<String>>(<String>{});
-
-  // FAVORITE FOLDER
-  StreamSubscription<DatabaseEvent>? favoriteFoldersSubscription;
-  final List<Map<String, dynamic>> favoriteFolders = [];
-  final favoriteFoldersStream = ValueNotifier<List<Map<String, dynamic>>>([]);
 
   /// This is needed for the reviewers, testers, and even unit test with claude code
   /// 이메일/비밀번호로 로그인
@@ -202,14 +195,17 @@ class UserService {
   }
 
   void initialize(BuildContext context) {
-    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
+    FirebaseAuth.instance.authStateChanges().listen((User? firebaseUser) async {
       if (firebaseUser == null) {
         cancelBlockedUsersListener();
+        ChatService.instance.cancelPinnedChatRoomsListener();
         CompanyService.instance.clear();
         BookmarkService.instance.clear();
         if (context.mounted) {
           UserState.of(context).clear();
         }
+
+        FirebaseCrashlytics.instance.setUserIdentifier('');
       } else {
         try {
           log(
@@ -217,8 +213,9 @@ class UserService {
           );
           final user = await UserService.loadCurrentUser();
 
-          initPinnedChatRooms(firebaseUser.uid);
+          ChatService.instance.initPinnedChatRooms(firebaseUser.uid);
           listenBlockedUsers(firebaseUser.uid);
+          initUserPresence(firebaseUser.uid);
 
           CompanyService.instance.loadMyCompany();
           BookmarkService.instance.loadMyFolderBookmarks();
@@ -226,6 +223,8 @@ class UserService {
           if (context.mounted) {
             UserState.of(context).setUser(user);
           }
+
+          FirebaseCrashlytics.instance.setUserIdentifier(firebaseUser.uid);
         } catch (e) {
           // v7 API 호출 실패 시에도 Firebase 로그인 상태는 유지하므로, 사용자에게 알리고 로그아웃 처리
           if (context.mounted) {
@@ -238,8 +237,6 @@ class UserService {
             'Code: 182, Login fails on backend. If this persists, please report it to admin',
           );
           await UserService.signOut();
-          cancelBlockedUsersListener();
-          cancelPinnedChatRoomsListener();
 
           rethrow;
         }
@@ -269,35 +266,33 @@ class UserService {
     blockedUsersStream.value = <String>{};
   }
 
-  void initPinnedChatRooms(String firebaseUid) {
-    pinnedChatRoomsSubscription?.cancel();
-    final pinnedChatRoomsRef = userPinnedChatRoomsRef(firebaseUid);
-    pinnedChatRoomsSubscription = pinnedChatRoomsRef.onValue.listen(
-      (event) {
-        pinnedChatRooms.clear();
-
-        if (event.snapshot.exists && event.snapshot.value != null) {
-          final data = event.snapshot.value as Map<dynamic, dynamic>;
-          // debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
-          data.forEach((key, value) {
-            if (value == true) {
-              pinnedChatRooms.add(key.toString());
-            }
-          });
-        }
-        // debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
-        pinnedChatRoomsStream.value = {...pinnedChatRooms};
-      },
-      onError: (error) {
-        log('-----> Failed to load pinnedChatRooms: $error');
-      },
+  void initUserPresence(String firebaseUid) {
+    DatabaseReference myConnectionsRef = database.ref(
+      "status/$firebaseUid/connections",
     );
-  }
+    DatabaseReference lastOnlineRef = database.ref(
+      "status/$firebaseUid/last_changed",
+    );
+    DatabaseReference connectedRef = database.ref('.info/connected');
 
-  void cancelPinnedChatRoomsListener() {
-    pinnedChatRoomsSubscription?.cancel();
-    pinnedChatRoomsSubscription = null;
-    pinnedChatRooms.clear();
-    pinnedChatRoomsStream.value = <String>{};
+    connectedRef.onValue.listen((event) {
+      // If we're not currently connected, don't do anything.
+      // true - connected, false - not connected
+      if (event.snapshot.value == false) {
+        return;
+      }
+      // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
+      DatabaseReference con = myConnectionsRef.push();
+      // debugPrint('Connected to Firebase Realtime Database:: ${con.key}');
+      // When I disconnect, remove this device
+      con.onDisconnect().remove();
+
+      // Add this device to my connections list
+      // this value could contain info about the device or a timestamp too
+      con.set(true);
+
+      // When I disconnect, update the last time I was seen online
+      lastOnlineRef.onDisconnect().set(ServerValue.timestamp);
+    });
   }
 }
