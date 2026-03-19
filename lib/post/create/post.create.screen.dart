@@ -559,37 +559,61 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             ),
             const SizedBox(height: 12),
 
-            // 파일 업로드 버튼 + 미리보기
+            // 파일 업로드 버튼 + 전송 버튼 + 미리보기
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FileUpload(
-                  module: 'post',
-                  code: 'content',
-                  camera: true,
-                  cameraVideo: true,
-                  gallery: true,
-                  galleryVideo: true,
-                  file: true,
-                  onUploadingChanged: (uploading) {
-                    setState(() => _uploadingCount += uploading ? 1 : -1);
-                  },
-                  onUploaded: (FileUploadModel model) {
-                    debugPrint(
-                      '[PostCreate] 파일 업로드 완료: ${model.path} (${model.name}, ${model.type})',
-                    );
-                    setState(() => _uploadedFiles.add(model));
-                  },
-                  onError: (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${'업로드 실패'.tr()}: $e')),
-                    );
-                  },
-                  child: FaIcon(
-                    FontAwesomeIcons.lightCamera,
-                    size: 20,
-                    color: scheme.primary,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    FileUpload(
+                      module: 'post',
+                      code: 'content',
+                      camera: true,
+                      cameraVideo: true,
+                      gallery: true,
+                      galleryVideo: true,
+                      file: true,
+                      onUploadingChanged: (uploading) {
+                        setState(
+                          () => _uploadingCount += uploading ? 1 : -1,
+                        );
+                      },
+                      onUploaded: (FileUploadModel model) {
+                        debugPrint(
+                          '[PostCreate] 파일 업로드 완료: ${model.path} (${model.name}, ${model.type})',
+                        );
+                        setState(() => _uploadedFiles.add(model));
+                      },
+                      onError: (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${'업로드 실패'.tr()}: $e'),
+                          ),
+                        );
+                      },
+                      child: FaIcon(
+                        FontAwesomeIcons.lightCamera,
+                        size: 20,
+                        color: scheme.primary,
+                      ),
+                    ),
+                    // 전송 버튼
+                    _isSubmitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : IconButton(
+                            onPressed: _submit,
+                            icon: FaIcon(
+                              FontAwesomeIcons.lightPaperPlaneTop,
+                              size: 20,
+                              color: scheme.primary,
+                            ),
+                          ),
+                  ],
                 ),
                 if (_uploadedFiles.isNotEmpty || _uploadingCount > 0) ...[
                   const SizedBox(height: 8),
