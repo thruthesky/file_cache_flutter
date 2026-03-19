@@ -5,21 +5,21 @@ import 'package:philgo/file/widgets/video_thumbnail.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
 
 /// Full screen media viewer with pinch-to-zoom for images and video playback
-class FullScreenImageViewer extends StatefulWidget {
+class FullScreenMediaViewer extends StatefulWidget {
   final List<String> mediaUrls;
   final int initialIndex;
 
-  const FullScreenImageViewer({
+  const FullScreenMediaViewer({
     super.key,
     required this.mediaUrls,
     this.initialIndex = 0,
   });
 
   @override
-  State<FullScreenImageViewer> createState() => _FullScreenImageViewerState();
+  State<FullScreenMediaViewer> createState() => _FullScreenMediaViewerState();
 }
 
-class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
+class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
   late PageController _pageController;
   late int _currentIndex;
 

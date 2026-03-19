@@ -84,8 +84,7 @@ class _HomeTopBannersState extends State<HomeTopBanners> {
     }
 
     final result = _result;
-    if (result == null ||
-        (result.left.isEmpty && result.right.isEmpty)) {
+    if (result == null || (result.left.isEmpty && result.right.isEmpty)) {
       return const SizedBox.shrink();
     }
 
@@ -126,8 +125,8 @@ class _HomeTopBannersState extends State<HomeTopBanners> {
             key: ValueKey(banner.idx),
             imageUrl: banner.imageUrl,
             fit: BoxFit.cover,
-            placeholder: (_, __) => Container(color: color.surfaceContainerLow),
-            errorWidget: (_, __, ___) => Container(
+            placeholder: (_, _) => Container(color: color.surfaceContainerLow),
+            errorWidget: (_, _, _) => Container(
               color: color.surfaceContainerLow,
               child: Icon(Icons.image_not_supported, color: color.outline),
             ),
