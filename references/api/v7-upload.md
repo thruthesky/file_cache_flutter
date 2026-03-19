@@ -2187,27 +2187,15 @@ uploads/{idx_member}/
 | **썸네일 항상 존재** | Docker PHP 컨테이너에 GD 확장(JPEG, PNG, FreeType, WebP, AVIF)이 설치되어 있으므로, 이미지 업로드 시 썸네일(400x400, 800x800, 600, 1000)이 반드시 생성된다 |
 | **file_exists() 금지** | 이미지를 표시할 때 `/uploads/` 경로의 썸네일에 대해 `file_exists()`를 호출하지 않는다. 매 글마다 파일 시스템 호출은 성능 저하를 유발한다 |
 | **DB URL 신뢰** | `uploads` 테이블의 `thumbnail_*_url` 컬럼에 저장된 URL을 그대로 사용한다 |
-| **동적 썸네일 생성** | 게시글의 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로 동적 생성한다. `varchar_10~12`에는 썸네일을 저장하지 않는다 |
+| **동적 썸네일 생성** | 게시글의 `varchar_17`(원본 이미지 URL)에서 `UploadService::resolveImageThumbnail()`로 동적 생성한다 |
 | **onerror 폴백** | 만약 예외적으로 썸네일이 없다면 HTML `<img>` 태그의 `onerror` 이벤트로 처리한다 (placeholder 표시) |
 
-### varchar_10~12 썸네일 저장 제거
-
-> **varchar_10~12에는 더 이상 썸네일 URL을 저장하지 않는다.**
-> 이전에는 `PostService::setMediaFields()`에서 varchar_10(400x400), varchar_11(800x800), varchar_12(1000) 에 캐시했으나,
-> 부동산 카테고리에서 `varchar_12`가 "호수/동" 커스텀 필드와 충돌하는 문제가 있어 **완전 제거**되었다.
->
-> 현재 모든 썸네일은 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로 **읽기 시점에 동적 생성**한다.
-
 ```php
-// ✅ 올바른 사용: varchar_17에서 동적 썸네일 생성
-use Philgo\Upload\ImageService;
-
-if (!empty($post->varchar_17) && str_starts_with($post->varchar_17, '/uploads/')) {
-    $ext = strtolower((string) pathinfo($post->varchar_17, PATHINFO_EXTENSION));
-    if (ImageService::isConvertible($ext)) {
-        $thumb400 = ImageService::buildThumbnailUrl($post->varchar_17, 400, 'square');
-    }
-}
+// ✅ 올바른 사용: PostEntity의 resolved_thumbnail 직접 사용
+$_thumbnailUrl = $post->resolved_thumbnail;
+// 또는 특정 크기가 필요한 경우:
+$_thumb400 = $post->thumbnail_400x400;
+$_thumb800 = $post->thumbnail_800x800;
 ```
 
 ### 17.7 API 응답 변경
