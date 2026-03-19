@@ -90,7 +90,7 @@ $isRealEstateMasonry = ($category === 'real_estate');
 
 | 변수 | 타입 | 설명 |
 |------|------|------|
-| `$_wPosts` | `array` | 게시글 배열 (`PostService::list()['items']`) |
+| `$_wPosts` | `array` | 게시글 배열 (`PostService::list()['posts']`) |
 | `$_wPostId` | `string` | 게시판 ID (`'buyandsell'`) |
 | `$_wCategory` | `string\|null` | 카테고리 (`'real_estate'`) |
 | `$_wPage` | `int` | 현재 페이지 번호 |
