@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
-import 'package:philgo/common_widgets/masonry_card.dart';
 import 'package:philgo/file/file.functions.dart';
+import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 
 /// 게시글 Masonry 뷰 (회원장터 등에서 사용)
 ///
-/// [AppMasonryGrid]와 [MasonryCard]를 사용하여 게시글을 Masonry 레이아웃으로 표시한다.
-/// 미디어 우선순위: YouTube > 동영상 > 이미지 > 제목만(컴팩트)
+/// [AppMasonryGrid]와 [DisplayThumbnail] 공통 위젯을 사용하여 게시글을 Masonry 레이아웃으로 표시한다.
 class PostListMasonryView extends StatelessWidget {
   final PagingController<int, Post> pagingController;
   final void Function(Post) onPostTap;
@@ -24,6 +23,7 @@ class PostListMasonryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return AppMasonryGrid<Post>(
       pagingController: pagingController,
@@ -32,12 +32,55 @@ class PostListMasonryView extends StatelessWidget {
         if (post.blocked) {
           return _buildBlockedCard(context, scheme, post);
         }
-        return MasonryCard(
-          title: post.subject,
-          youtubeUrl: post.isYoutube ? post.youtubeUrl : null,
-          videoUrl: post.videoUrl,
-          imageUrl: _getImageUrl(post),
-          onTap: () => onPostTap(post),
+
+        final imageUrl = _getImageUrl(post);
+
+        // 이미지가 없으면 제목만 표시하는 컴팩트 카드
+        if (imageUrl == null) {
+          return _buildTextOnlyCard(
+            context,
+            scheme,
+            textTheme,
+            post,
+          );
+        }
+
+        // 이미지가 있으면 DisplayThumbnail 공통 위젯으로 표시
+        return Card(
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 1,
+          child: InkWell(
+            onTap: () => onPostTap(post),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // DisplayThumbnail 공통 위젯으로 이미지 표시
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: DisplayThumbnail(
+                    url: imageUrl,
+                    size: double.infinity,
+                  ),
+                ),
+                // 제목
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    post.subject,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -63,6 +106,34 @@ class PostListMasonryView extends StatelessWidget {
       if (first.isNotEmpty) url = first;
     }
     return url != null ? toAbsoluteUrl(url) : null;
+  }
+
+  /// 이미지 없는 글: 제목만 표시하는 컴팩트 카드
+  Widget _buildTextOnlyCard(
+    BuildContext context,
+    ColorScheme scheme,
+    TextTheme textTheme,
+    Post post,
+  ) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      child: InkWell(
+        onTap: () => onPostTap(post),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          child: Text(
+            post.subject,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildBlockedCard(
