@@ -44,11 +44,13 @@ class PostListMasonryView extends StatelessWidget {
   }
 
   /// 게시글에서 이미지 URL을 추출한다.
-  /// resolvedThumbnail(600px 썸네일) > imageUrl > files 첫 번째 순서로 우선순위.
+  /// thumbnail600(600px 비율유지) > resolvedThumbnail > imageUrl > files 순서로 우선순위.
   /// 상대 경로(/uploads/...)는 절대 경로로 변환한다.
   String? _getImageUrl(Post post) {
     String? url;
-    if (post.resolvedThumbnail != null &&
+    if (post.thumbnail600 != null && post.thumbnail600!.isNotEmpty) {
+      url = post.thumbnail600;
+    } else if (post.resolvedThumbnail != null &&
         post.resolvedThumbnail!.isNotEmpty) {
       url = post.resolvedThumbnail;
     } else if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {

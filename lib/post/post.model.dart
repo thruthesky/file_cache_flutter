@@ -27,6 +27,7 @@ class Post {
   final String? videoUrl;
   final String? thumbnail400x400;
   final String? thumbnail800x800;
+  final String? thumbnail600;
   final String? thumbnail1000;
   final String? resolvedThumbnail;
   final String userName;
@@ -87,6 +88,7 @@ class Post {
     this.videoUrl,
     this.thumbnail400x400,
     this.thumbnail800x800,
+    this.thumbnail600,
     this.thumbnail1000,
     this.resolvedThumbnail,
     this.userName = '',
@@ -201,6 +203,7 @@ class Post {
       videoUrl: json['varchar_18']?.toString(),
       thumbnail400x400: json['varchar_10']?.toString(),
       thumbnail800x800: json['varchar_11']?.toString(),
+      thumbnail600: json['thumbnail_600']?.toString(),
       thumbnail1000: json['varchar_12']?.toString(),
       resolvedThumbnail: json['resolved_thumbnail']?.toString(),
       userName: json['user_name']?.toString() ?? '',
@@ -274,6 +277,7 @@ class Post {
       videoUrl: videoUrl,
       thumbnail400x400: thumbnail400x400,
       thumbnail800x800: thumbnail800x800,
+      thumbnail600: thumbnail600,
       thumbnail1000: thumbnail1000,
       resolvedThumbnail: resolvedThumbnail,
       userName: userName,
