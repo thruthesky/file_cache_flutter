@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/messaging/messaging.service.dart';
