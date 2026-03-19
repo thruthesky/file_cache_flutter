@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/chat/chat.screen.dart';
@@ -31,8 +32,8 @@ class _AppScreenState extends State<AppScreen> {
             children: const [
               HomeScreen(),
               ForumScreen(),
-              ChatScreen(),
               CompanyListScreen(),
+              ChatScreen(),
               MenuScreen(),
             ],
           );
@@ -65,23 +66,23 @@ class _AppScreenState extends State<AppScreen> {
             },
             items: [
               BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
+                icon: const FaIcon(FontAwesomeIcons.house),
                 label: '홈'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.list),
+                icon: const FaIcon(FontAwesomeIcons.clipboard),
                 label: '게시판'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.chat),
-                label: '채팅'.tr(),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.business),
+                icon: const FaIcon(FontAwesomeIcons.building),
                 label: '업소록'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.menu),
+                icon: const FaIcon(FontAwesomeIcons.commentDots),
+                label: '채팅'.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const FaIcon(FontAwesomeIcons.bars),
                 label: '메뉴'.tr(),
               ),
             ],

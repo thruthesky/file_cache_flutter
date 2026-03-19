@@ -15,6 +15,7 @@ import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 
+import 'blocked_user.model.dart';
 import 'user.model.dart';
 
 /// 사용자 인증 및 v7 API 서비스
@@ -149,13 +150,35 @@ class UserService {
   ///
   /// [nickname] 검색할 닉네임 키워드
   static Future<List<UserModel>> search({required String nickname}) async {
-    final list = await ApiService.instance.v7apiList(
+    final items = await ApiService.instance.v7api<List>(
       'user.search',
       data: {'nickname': nickname},
+      debug: true,
     );
-    return list
-        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(UserModel.fromJson)
         .toList();
+  }
+
+  /// 차단된 사용자 목록을 가져온다. (user.blockedList)
+  static Future<List<BlockedUserModel>> getBlockedList() async {
+    final items = await ApiService.instance.v7api<List>(
+      'user.blockedList',
+      debug: true,
+    );
+    return items
+        .whereType<Map<String, dynamic>>()
+        .map(BlockedUserModel.fromJson)
+        .toList();
+  }
+
+  /// 사용자 차단을 해제한다. (user.unblock)
+  static Future<void> unblock({required int idxBlockee}) async {
+    await ApiService.instance.v7api(
+      'user.unblock',
+      data: {'idx_blockee': idxBlockee},
+    );
   }
 
   /// Firebase UID로 사용자를 조회한다. (user.getByFirebaseUid)

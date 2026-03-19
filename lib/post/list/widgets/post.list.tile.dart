@@ -4,7 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
+import 'package:philgo/user/user.functions.dart';
+import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/router.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
+import 'package:philgo/util/util.functions.dart';
 
 /// 게시글 리스트 타일
 class PostListTile extends StatelessWidget {
@@ -39,11 +43,24 @@ class PostListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 차단된 사용자의 글이면 차단 안내 표시
+    // Firebase 실시간 차단 상태 반영 (채팅 등에서 차단 시 즉시 반영)
+    if (post.userFirebaseUid.isNotEmpty) {
+      return Blocked(
+        otherUserUid: post.userFirebaseUid,
+        yes: () => _buildBlockedTile(),
+        no: () => _buildNormalTile(),
+      );
+    }
+
+    // userFirebaseUid가 없으면 서버 플래그로 폴백
     if (post.blocked) {
       return _buildBlockedTile();
     }
 
+    return _buildNormalTile();
+  }
+
+  Widget _buildNormalTile() {
     final previewUrl = _previewUrl;
 
     final commentColor = _getCountColor(post.noOfComment);
@@ -176,7 +193,7 @@ class PostListTile extends StatelessWidget {
     );
   }
 
-  /// 차단된 사용자의 글 타일
+  /// 차단된 사용자의 글 타일 — 탭하면 차단 해제 확인
   Widget _buildBlockedTile() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -184,7 +201,38 @@ class PostListTile extends StatelessWidget {
         color: color.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
-          onTap: onTap,
+          onTap: () async {
+            final context = globalNavigatorKey.currentContext;
+            if (context == null) return;
+            final confirm = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: Text('차단 해제'.tr()),
+                content: Text(
+                  '차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'.tr(),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: Text('취소'.tr()),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: Text('차단 해제'.tr()),
+                  ),
+                ],
+              ),
+            );
+            if (confirm != true || !context.mounted) return;
+            try {
+              await toggleBlockUserByIdx(post.idxMember);
+              if (context.mounted) {
+                showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
+              }
+            } catch (e) {
+              if (context.mounted) showErrorSnackBar(context, '$e');
+            }
+          },
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -198,11 +246,18 @@ class PostListTile extends StatelessWidget {
                     color: color.outline,
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    '차단된 사용자의 글입니다'.tr(),
-                    style: text.bodyMedium?.copyWith(
-                      color: color.outline,
+                  Expanded(
+                    child: Text(
+                      '차단된 사용자의 글입니다'.tr(),
+                      style: text.bodyMedium?.copyWith(
+                        color: color.outline,
+                      ),
                     ),
+                  ),
+                  FaIcon(
+                    FontAwesomeIcons.lightCircleXmark,
+                    size: 14,
+                    color: color.outline,
                   ),
                 ],
               ),

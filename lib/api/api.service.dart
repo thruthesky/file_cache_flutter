@@ -70,7 +70,7 @@ class ApiService {
   ///
   /// Firebase ID Token을 자동으로 추가하고, v7 서버에 HTTP POST 요청을 보낸다.
   /// 에러 발생 시 Exception을 throw한다.
-  Future<Map<String, dynamic>> v7api(
+  Future<T> v7api<T>(
     String method, {
     Map<String, dynamic>? data,
     bool debug = false,
@@ -95,66 +95,33 @@ class ApiService {
 
     final response = await dio.post(_endpoint, data: data);
 
+    final responseData = response.data;
+
     Map<String, dynamic> json;
-    if (response.data is Map<String, dynamic>) {
-      json = response.data;
-    } else if (response.data is String) {
-      json = jsonDecode(response.data) as Map<String, dynamic>;
+    if (responseData is Map<String, dynamic>) {
+      json = responseData;
+    } else if (responseData is List) {
+      return responseData as T;
+    } else if (responseData is String) {
+      json = jsonDecode(responseData) as Map<String, dynamic>;
     } else {
       throw ApiException(
         'unexpected_response_type',
         '예상치 못한 응답 타입',
-        '예상치 못한 응답 타입: ${response.data.runtimeType}',
+        '예상치 못한 응답 타입: ${responseData.runtimeType}',
       );
     }
 
     // v7 에러 판별: success == false일 때만 에러
     if (json['success'] == false) {
-      throw ApiException('api_error', 'API 오류', json['message'] ?? '알 수 없는 오류');
-    }
-
-    return json;
-  }
-
-  /// v7 API 호출 (배열 응답용)
-  ///
-  /// `user.search`처럼 JSON 배열을 반환하는 API 엔드포인트를 호출할 때 사용한다.
-  /// 에러 응답({success: false})은 Map이므로 에러 판별도 수행한다.
-  Future<List<dynamic>> v7apiList(
-    String method, {
-    Map<String, dynamic>? data,
-  }) async {
-    data = data ?? {};
-    data['method'] = method;
-
-    await _patchToken(data);
-
-    final dio = _createDio();
-    final response = await dio.post(_endpoint, data: data);
-
-    dynamic decoded = response.data;
-    if (decoded is String) {
-      decoded = jsonDecode(decoded);
-    }
-
-    // 에러 응답은 Map 형태로 온다
-    if (decoded is Map<String, dynamic> && decoded['success'] == false) {
       throw ApiException(
         'api_error',
         'API 오류',
-        decoded['message'] ?? '알 수 없는 오류',
+        json['message'] ?? '알 수 없는 오류',
       );
     }
 
-    if (decoded is List) {
-      return decoded;
-    }
-
-    throw ApiException(
-      'unexpected_response_type',
-      '예상치 못한 응답 타입',
-      '배열 응답을 기대했으나: ${decoded.runtimeType}',
-    );
+    return json as T;
   }
 
   /// 파일 업로드

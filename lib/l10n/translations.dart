@@ -78,6 +78,17 @@ class Translations {
     '카카오로 로그인': '카카오로 로그인',
     'Google로 로그인': 'Google로 로그인',
 
+    // 홈 섹션
+    '더보기': '더보기',
+    '인기글': '인기글',
+    '주요 게시판': '주요 게시판',
+    '공지사항': '공지사항',
+    '필수정보': '필수정보',
+    '대사관': '대사관',
+    '한인회': '한인회',
+    '경찰서': '경찰서',
+    'e트래블': 'e트래블',
+
     // 홈 카테고리
     '여행 명소': '여행 명소',
     '음식 배달': '음식 배달',
@@ -236,6 +247,8 @@ class Translations {
     '차단이 해제되었습니다': '차단이 해제되었습니다',
     '차단된 사용자의 글입니다': '차단된 사용자의 글입니다',
     '차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?': '차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?',
+    '차단된 사용자가 없습니다': '차단된 사용자가 없습니다',
+    '차단 목록을 불러오는 중 오류가 발생했습니다': '차단 목록을 불러오는 중 오류가 발생했습니다',
     '채팅 기능은 준비 중입니다.': '채팅 기능은 준비 중입니다.',
     '오류': '오류',
 
@@ -483,6 +496,17 @@ class Translations {
     '카카오로 로그인': 'Sign in with Kakao',
     'Google로 로그인': 'Sign in with Google',
 
+    // 홈 섹션
+    '더보기': 'More',
+    '인기글': 'Popular Posts',
+    '주요 게시판': 'Major Forums',
+    '공지사항': 'Notices',
+    '필수정보': 'Essentials',
+    '대사관': 'Embassy',
+    '한인회': 'Korean Assoc.',
+    '경찰서': 'Police',
+    'e트래블': 'eTravel',
+
     // 홈 카테고리
     '여행 명소': 'Tourist Spots',
     '음식 배달': 'Food Delivery',
@@ -641,6 +665,8 @@ class Translations {
     '차단이 해제되었습니다': 'User has been unblocked',
     '차단된 사용자의 글입니다': 'Post from a blocked user',
     '차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?': 'This user is blocked. Do you want to unblock them to view the post?',
+    '차단된 사용자가 없습니다': 'No blocked users',
+    '차단 목록을 불러오는 중 오류가 발생했습니다': 'Failed to load blocked users list',
     '채팅 기능은 준비 중입니다.': 'Chat feature is coming soon.',
     '오류': 'Error',
 

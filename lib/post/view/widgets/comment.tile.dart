@@ -121,9 +121,7 @@ class _CommentTileState extends State<CommentTile> {
       builder: (ctx) => AlertDialog(
         title: Text('차단'.tr()),
         content: Text(
-          '{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name}) +
-              '\n' +
-              '차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr(),
+          '${'{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name})}\n${'차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr()}',
         ),
         actions: [
           TextButton(
