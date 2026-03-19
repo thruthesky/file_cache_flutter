@@ -530,12 +530,6 @@ $entity->resolved_thumbnail = \Philgo\Upload\UploadService::resolvePostThumbnail
 > **이 단계에서 gid 기반 v4 파일 조회와 유튜브 썸네일은 처리되지 않는다.**
 > gid 기반 조회는 DB 추가 쿼리가 필요하므로, `PostService::enrichThumbnails()`에서 배치로 처리한다.
 
-### varchar_10~12 썸네일 캐시 제거 경위
-
-- **이전 방식**: 글 작성 시 `PostService::setMediaFields()`에서 varchar_10(400x400), varchar_11(800x800), varchar_12(1000)에 썸네일 URL을 캐시
-- **문제**: 부동산 카테고리에서 `varchar_12`가 "호수/동" 커스텀 필드와 충돌
-- **현재 방식**: varchar_10~12에 썸네일을 저장하지 않음. `varchar_17`(원본 이미지 URL)에서 **읽기 시점에 동적 생성**
-
 ---
 
 ## 8. enrichThumbnails() — 배치 썸네일 보강
@@ -729,10 +723,6 @@ PostService::list()
 | `has_youtube` | 유튜브 포함 여부 | v6, v7 | 비어있지 않으면 유튜브 포함 |
 | `varchar_18` | 첫 번째 동영상 URL | v7 | 동영상 URL 저장 |
 | `varchar_19` | 유튜브 URL | v6, v7 | 유튜브 썸네일 폴백에 사용 |
-| `varchar_10` | (레거시) 400x400 썸네일 | ~~사용 안 함~~ | 부동산 충돌로 제거됨 |
-| `varchar_11` | (레거시) 800x800 썸네일 | ~~사용 안 함~~ | varchar_17에서 동적 생성 |
-| `varchar_12` | 부동산: 호수/동 | 부동산 전용 | 썸네일 용도로 사용하지 않음 |
-
 ---
 
 ## 12. 웹(PHP)과 앱(Flutter) 플랫폼별 차이

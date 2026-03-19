@@ -190,15 +190,6 @@ GET https://local.philgo.com/api.php?method=post.create&session_id=xxx&post_id=f
 | `has_youtube` | 유튜브 URL 포함 여부 (`'y'` 또는 `''`) | content에 유튜브 URL이 있으면 `'y'` |
 | `varchar_19` | 첫 번째 유튜브 URL | content에서 추출한 첫 번째 유튜브 URL |
 
-> **썸네일 URL 동적 생성 방식 (varchar_10~12 저장 제거)**:
->
-> 이전에는 `varchar_10~12`에 썸네일 URL을 캐시 저장했으나, **부동산 카테고리에서 `varchar_12`가
-> "호수/동" 커스텀 필드와 충돌**하는 문제가 있었다. 이를 근본적으로 해결하기 위해
-> `setMediaFields()`에서 varchar_10~12 저장 로직을 **완전히 제거**하였다.
->
-> 현재 모든 썸네일은 `varchar_17`(원본 이미지 URL)에서 `ImageService::buildThumbnailUrl()`로
-> **읽기 시점에 동적으로 생성**한다. DB에 썸네일 URL을 별도 저장하지 않는다.
-
 **썸네일 URL 생성 방식**:
 
 1. `files` 파라미터를 콤마로 분리하여 파일 목록 생성
@@ -209,8 +200,6 @@ GET https://local.philgo.com/api.php?method=post.create&session_id=xxx&post_id=f
 ```php
 // PostService::setMediaFields() 핵심 코드
 // varchar_17에 원본 이미지 URL만 저장.
-// varchar_10~12에 썸네일 URL을 저장하지 않음.
-// 읽기 시점에 ImageService::buildThumbnailUrl()로 동적 생성.
 if ($firstImage !== null) {
     $data['varchar_17'] = $firstImage;
     $data['has_image'] = 'y';
@@ -218,43 +207,23 @@ if ($firstImage !== null) {
 ```
 
 ```php
-// 위젯에서 썸네일 URL 동적 생성 예시
-use Philgo\Upload\ImageService;
-
-$originalUrl = $post->varchar_17; // 원본 이미지 URL
-if (!empty($originalUrl) && str_starts_with($originalUrl, '/uploads/')) {
-    $ext = strtolower(pathinfo($originalUrl, PATHINFO_EXTENSION));
-    if (ImageService::isConvertible($ext)) {
-        $thumb400 = ImageService::buildThumbnailUrl($originalUrl, 400, 'square');
-        $thumb800 = ImageService::buildThumbnailUrl($originalUrl, 800, 'square');
-        $thumb1000 = ImageService::buildThumbnailUrl($originalUrl, 1000, 'resize');
-    }
-}
+// 위젯에서 썸네일 사용 예시 — PostEntity의 resolved_thumbnail 직접 사용
+$_thumbnailUrl = $post['resolved_thumbnail'] ?? '';
+// 또는 PostEntity 객체일 경우:
+$_thumbnailUrl = $post->resolved_thumbnail;
 ```
 
-**v4 레거시 이미지 폴백** (`no_of_first_image`):
-
-`varchar_17`이나 `thumbnail_400x400`이 모두 비어 있는 오래된 글(v4 시대 데이터)의 경우,
-`no_of_first_image` 필드를 사용하여 이미지 URL을 직접 생성하는 폴백 로직이 있다.
-이 로직은 **타일 레이아웃**(`post-list-tile.php`)과 **Masonry 레이아웃**(`post-list-masonry.php`) 양쪽에 모두 적용되어 있다.
-
-```php
-// v4 레거시 폴백: no_of_first_image로 이미지 URL 생성
-if (empty($_thumbnailUrl) && !empty($post['no_of_first_image'])) {
-    $nofi = (int)$post['no_of_first_image'];
-    if ($nofi > 0) {
-        $_thumbnailUrl = 'https://file.philgo.com/data/upload/' . ($nofi % 10) . '/' . $nofi;
-    }
-}
-```
+**썸네일 우선순위** (`PostEntity::fromArray()` + `PostService::enrichThumbnails()`에서 자동 처리):
 
 | 우선순위 | 소스 | 설명 |
 |---------|------|------|
-| 1순위 | `thumbnail_400x400` (varchar_10~12) | 레거시 캐시 썸네일 (있는 경우) |
-| 2순위 | `varchar_17` | v7 원본 이미지 URL → `ImageService::buildThumbnailUrl()`로 동적 생성 |
-| 3순위 | `no_of_first_image` | v4 레거시 폴백 — `https://file.philgo.com/data/upload/{idx%10}/{idx}` |
+| 1순위 | `varchar_17` | 원본 이미지 URL → `UploadService::resolveImageThumbnail()`로 동적 생성 |
+| 2순위 | `files` | 첨부파일에서 첫 번째 이미지 추출 → 썸네일 변환 |
+| 3순위 | `no_of_first_image` | v4 레거시 폴백 — `UploadService::buildV4FileUrl()` |
+| 4순위 | `gid` | v4 파일 그룹 배치 조회 (`enrichThumbnails()`에서 처리) |
+| 5순위 | `varchar_19` | 유튜브 URL → 유튜브 썸네일 (`enrichThumbnails()`에서 처리) |
 
-**PostEntity 편의 속성**: `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성은 varchar_10~12에 매핑되어 있으며, 레거시 데이터 호환용으로 유지된다. 새 글에서는 이 속성들이 빈 값이며, 썸네일이 필요하면 `varchar_17`에서 `ImageService::buildThumbnailUrl()`로 동적 생성해야 한다.
+**PostEntity 편의 속성**: `resolved_thumbnail`, `thumbnail_400x400`, `thumbnail_800x800`, `thumbnail_1000` 속성은 `PostEntity::fromArray()`에서 `UploadService`로 자동 생성된다. 클라이언트(웹/Flutter)에서는 `resolved_thumbnail` 필드만 읽으면 된다.
 
 **포인트 처리**:
 - sf_post_config.point_write 설정에 따라 자동 포인트 지급

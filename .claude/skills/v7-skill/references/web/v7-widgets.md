@@ -1314,7 +1314,7 @@ Masonry 그리드의 컨테이너, JS 초기화, 페이지네이션, 관리자 U
 
 #### masonry-item-realestate.php — 부동산 아이템
 
-부동산(`real_estate`) 전용 Masonry 카드이다. `RealEstateEntity`로 래핑하여 varchar_10~12 커스텀 필드 충돌을 안전하게 처리한다.
+부동산(`real_estate`) 전용 Masonry 카드이다. `RealEstateEntity`로 래핑하여 부동산 필드에 의미 있는 이름으로 접근한다.
 
 | 기능 | 설명 |
 |------|------|
