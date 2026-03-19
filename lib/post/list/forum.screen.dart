@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
-import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/list/widgets/post_list_masonry_view.dart';
 import 'package:philgo/post/list/widgets/post_list_view.dart';
 import 'package:philgo/post/list/widgets/post_list_header_categories.dart';
@@ -12,7 +10,6 @@ import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.service.dart';
-import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
 
@@ -149,38 +146,8 @@ class _ForumScreenState extends State<ForumScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openPostCreate,
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
-        child: const FaIcon(FontAwesomeIcons.lightPen, size: 20),
-      ),
+      // FAB는 AppScreen에서 통합 관리
     );
-  }
-
-  Future<void> _openPostCreate() async {
-    final userState = Provider.of<UserState>(context, listen: false);
-    if (!userState.isLoggedIn) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('로그인이 필요합니다')));
-      return;
-    }
-
-    final nav = AppNavigationState.of(context);
-    final result = await Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(
-        builder: (_) => PostCreateScreen(
-          postId: nav.selectedPostId,
-          category: nav.selectedCategory,
-        ),
-      ),
-    );
-
-    if (result is Post && mounted) {
-      _pagingController.refresh();
-      _openPostView(result);
-    }
   }
 
   Future<void> _openPostView(Post post) async {
