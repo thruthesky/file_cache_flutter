@@ -28,6 +28,7 @@ class Post {
   final String? thumbnail400x400;
   final String? thumbnail800x800;
   final String? thumbnail1000;
+  final String? resolvedThumbnail;
   final String userName;
   final String userNickname;
   final String userFirebaseUid;
@@ -87,6 +88,7 @@ class Post {
     this.thumbnail400x400,
     this.thumbnail800x800,
     this.thumbnail1000,
+    this.resolvedThumbnail,
     this.userName = '',
     this.userNickname = '',
     this.userFirebaseUid = '',
@@ -200,6 +202,7 @@ class Post {
       thumbnail400x400: json['varchar_10']?.toString(),
       thumbnail800x800: json['varchar_11']?.toString(),
       thumbnail1000: json['varchar_12']?.toString(),
+      resolvedThumbnail: json['resolved_thumbnail']?.toString(),
       userName: json['user_name']?.toString() ?? '',
       userNickname: json['user_nickname']?.toString() ?? '',
       userFirebaseUid: json['user_firebase_uid']?.toString() ?? '',
@@ -272,6 +275,7 @@ class Post {
       thumbnail400x400: thumbnail400x400,
       thumbnail800x800: thumbnail800x800,
       thumbnail1000: thumbnail1000,
+      resolvedThumbnail: resolvedThumbnail,
       userName: userName,
       userNickname: userNickname,
       userFirebaseUid: userFirebaseUid,

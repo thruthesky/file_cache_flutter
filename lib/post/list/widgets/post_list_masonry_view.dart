@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
 import 'package:philgo/common_widgets/masonry_card.dart';
+import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 
 /// 게시글 Masonry 뷰 (회원장터 등에서 사용)
@@ -43,25 +44,23 @@ class PostListMasonryView extends StatelessWidget {
   }
 
   /// 게시글에서 이미지 URL을 추출한다.
-  /// thumbnail800 > imageUrl > thumbnail400 > files 첫 번째 순서로 우선순위.
+  /// resolvedThumbnail(600px 썸네일) > imageUrl > files 첫 번째 순서로 우선순위.
+  /// 상대 경로(/uploads/...)는 절대 경로로 변환한다.
   String? _getImageUrl(Post post) {
-    if (post.thumbnail800x800 != null && post.thumbnail800x800!.isNotEmpty) {
-      return post.thumbnail800x800;
-    }
-    if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
-      return post.imageUrl;
-    }
-    if (post.thumbnail400x400 != null && post.thumbnail400x400!.isNotEmpty) {
-      return post.thumbnail400x400;
-    }
-    if (post.files.isNotEmpty) {
+    String? url;
+    if (post.resolvedThumbnail != null &&
+        post.resolvedThumbnail!.isNotEmpty) {
+      url = post.resolvedThumbnail;
+    } else if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
+      url = post.imageUrl;
+    } else if (post.files.isNotEmpty) {
       final first = post.files
           .split(',')
           .map((e) => e.trim())
           .firstWhere((e) => e.isNotEmpty, orElse: () => '');
-      if (first.isNotEmpty) return first;
+      if (first.isNotEmpty) url = first;
     }
-    return null;
+    return url != null ? toAbsoluteUrl(url) : null;
   }
 
   Widget _buildBlockedCard(
