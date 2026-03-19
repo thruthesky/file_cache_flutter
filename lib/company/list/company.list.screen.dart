@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
-import 'package:philgo/common_widgets/masonry_image_card.dart';
+import 'package:philgo/common_widgets/masonry_card.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
@@ -137,7 +137,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                 child: AppMasonryGrid<CompanyModel>(
                   pagingController: _pagingController,
                   itemBuilder: (context, company, index) {
-                    return MasonryImageCard(
+                    return MasonryCard(
                       imageUrl: company.primaryImageUrl.isNotEmpty
                           ? company.primaryImageUrl
                           : null,

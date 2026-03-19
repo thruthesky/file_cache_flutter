@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
-import 'package:philgo/common_widgets/masonry_image_card.dart';
-import 'package:philgo/common_widgets/youtube_thumbnail.dart';
+import 'package:philgo/common_widgets/masonry_card.dart';
 import 'package:philgo/post/post.model.dart';
 
 /// 게시글 Masonry 뷰 (회원장터 등에서 사용)
 ///
-/// [AppMasonryGrid]와 [MasonryImageCard]를 사용하여 게시글을 Masonry 레이아웃으로 표시한다.
+/// [AppMasonryGrid]와 [MasonryCard]를 사용하여 게시글을 Masonry 레이아웃으로 표시한다.
+/// 미디어 우선순위: YouTube > 동영상 > 이미지 > 제목만(컴팩트)
 class PostListMasonryView extends StatelessWidget {
   final PagingController<int, Post> pagingController;
   final void Function(Post) onPostTap;
@@ -31,9 +31,11 @@ class PostListMasonryView extends StatelessWidget {
         if (post.blocked) {
           return _buildBlockedCard(context, scheme, post);
         }
-        return MasonryImageCard(
-          imageUrl: _getImageUrl(post),
+        return MasonryCard(
           title: post.subject,
+          youtubeUrl: post.isYoutube ? post.youtubeUrl : null,
+          videoUrl: post.videoUrl,
+          imageUrl: _getImageUrl(post),
           onTap: () => onPostTap(post),
         );
       },
@@ -58,10 +60,6 @@ class PostListMasonryView extends StatelessWidget {
           .map((e) => e.trim())
           .firstWhere((e) => e.isNotEmpty, orElse: () => '');
       if (first.isNotEmpty) return first;
-    }
-    // YouTube 썸네일 폴백
-    if (post.isYoutube && post.youtubeUrl != null) {
-      return getYoutubeThumbnailUrl(post.youtubeUrl);
     }
     return null;
   }

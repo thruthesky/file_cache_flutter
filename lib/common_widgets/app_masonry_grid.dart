@@ -10,9 +10,10 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 /// ```dart
 /// AppMasonryGrid<Post>(
 ///   pagingController: _pagingController,
-///   itemBuilder: (context, post, index) => MasonryImageCard(
-///     imageUrl: post.thumbnail,
+///   itemBuilder: (context, post, index) => MasonryCard(
 ///     title: post.subject,
+///     youtubeUrl: post.youtubeUrl,
+///     imageUrl: post.thumbnail,
 ///     onTap: () => openPost(post),
 ///   ),
 /// )
