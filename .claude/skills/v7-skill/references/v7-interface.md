@@ -325,7 +325,7 @@ class PointLogEntity implements EntityInterface
 }
 ```
 
-### 2.7 전체 Entity 목록 (15개)
+### 2.7 전체 Entity 목록 (16개)
 
 모든 Entity는 `EntityInterface`를 구현한다.
 
@@ -346,6 +346,7 @@ class PointLogEntity implements EntityInterface
 | ModerationEntity | `Philgo\Ai` | `lib/ai/ModerationEntity.php` | — (API 응답) | Gemini 검열 결과 |
 | ReceiptEntity | `Philgo\Ai` | `lib/ai/ReceiptEntity.php` | — (API 응답) | Gemini 영수증 인식 결과 |
 | SettingsEntity | `Philgo\Settings` | `lib/settings/SettingsEntity.php` | sf_config | key-value 설정 |
+| ReportEntity | `Philgo\Report` | `lib/report/ReportEntity.php` | sf_post_data | report + text_10(REPORTER_LIST_FIELD) 기반, reporter_count 계산 필드 |
 
 ---
 
@@ -601,7 +602,7 @@ UploadRepository:
 - 모든 Service는 5개 CRUD를 직접 구현한다. 미지원 메서드는 도메인에 맞는 구체적인 에러 메시지로 `RuntimeException`을 throw한다
 - 유틸리티 Service (AuthService, FirebaseService, ImageService)는 도메인별 메서드를 자유롭게 정의한다
 
-### 4.2 전체 Service 목록 (13개)
+### 4.2 전체 Service 목록 (14개)
 
 | Service | 네임스페이스 | 주요 역할 |
 |---------|-------------|----------|
@@ -618,6 +619,7 @@ UploadRepository:
 | AuthService | `Philgo\Utils` | 인증 (세션 + Firebase) |
 | FirebaseService | `Philgo\Utils` | Firebase ID Token 검증 |
 | ImageService | `Philgo\Upload` | 이미지 변환/리사이즈 |
+| ReportService | `Philgo\Report` | 글/코멘트 신고 처리 + 목록 조회 + 해제 |
 
 ---
 
@@ -1580,7 +1582,7 @@ interface ControllerInterface
 ```text
 ```
 
-### 11.3 적용된 Controller (10개)
+### 11.3 적용된 Controller (11개)
 
 모든 Controller가 5개 CRUD 메서드를 직접 구현한다.
 아직 비즈니스 로직이 없는 메서드는 RuntimeException을 던진다.
@@ -1597,6 +1599,7 @@ interface ControllerInterface
 | AiController | generate 래퍼 | 미구현 | 미구현 | 미구현 | 미구현 |
 | TravelController | 미구현 | 미구현 | 미구현 | Service 호출 | Service 호출 |
 | EventController | spin 래퍼 | 미구현 | 미구현 | 미구현 | history 래퍼 |
+| ReportController | report 래퍼 | 미구현 | 미구현 | 미구현 | Service 호출 |
 
 ### 11.5 list 페이지네이션 표준
 
