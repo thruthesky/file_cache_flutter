@@ -30,6 +30,8 @@ const masonryCategories = <String>{
   '중고차',
   '호텔',
   '렌트카',
+  'buyandsell',
+  'real_estate',
 };
 
 /// 포럼 카테고리 데이터 (postId, category, 한글 라벨)
