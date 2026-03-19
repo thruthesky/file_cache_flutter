@@ -116,6 +116,25 @@ class BookmarkService {
     return group;
   }
 
+  /// 내 특정 타입의 모든 즐겨찾기 ID 목록
+  ///
+  /// 서버의 `bookmark.myBookmarkedIds` API를 호출하여,
+  /// 해당 entity_type에 대해 즐겨찾기된 entity_id 문자열 목록을 반환한다.
+  ///
+  /// 참고: 현재 백엔드는 `entity_id`(문자열)만 반환하므로,
+  /// `chat_room` 타입에만 정상 동작한다.
+  /// `user`/`post`/`comment`는 `entity_idx`(정수)를 사용하므로 빈 문자열이 반환된다.
+  Future<List<String>> myBookmarkedIds({
+    required String entityType,
+  }) async {
+    final result = await ApiService.instance.v7api(
+      'bookmark.myBookmarkedIds',
+      data: {'entity_type': entityType},
+    );
+    final List<dynamic> ids = result['ids'] ?? [];
+    return ids.map((e) => e.toString()).toList();
+  }
+
   /// 그룹 삭제 (하위 북마크 함께 삭제)
   Future<bool> deleteGroup({required int idxGroup}) async {
     final result = await ApiService.instance.v7api(
