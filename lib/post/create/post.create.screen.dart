@@ -4,9 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/app.config.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/widgets/uploaded_file_preview.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/post/post.service.dart';
 
 /// 게시글 작성 화면
@@ -75,11 +77,253 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   final List<FileUploadModel> _uploadedFiles = [];
   int _uploadingCount = 0;
 
+  /// 선택된 게시판 ID (드롭다운으로 변경 가능)
+  late String _selectedPostId;
+
+  /// 선택된 서브 카테고리 (드롭다운으로 변경 가능)
+  String? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedPostId = widget.postId;
+    _selectedCategory = widget.category;
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  /// 게시판 라벨 가져오기
+  String _getPostLabel(String postId) {
+    final found = forumCategories.where(
+      (c) => c.$1 == postId && c.$2 == null,
+    );
+    if (found.isNotEmpty) return found.first.$3;
+    return postId;
+  }
+
+  /// 해당 postId의 서브 카테고리 목록
+  List<(String, String)> _getSubCategories(String postId) {
+    return forumCategories
+        .where((c) => c.$1 == postId && c.$2 != null)
+        .map((c) => (c.$2!, c.$3))
+        .toList();
+  }
+
+  /// 카테고리 라벨 가져오기
+  String _getCategoryLabel(String? category) {
+    if (category == null) return '카테고리 선택'.tr();
+    final found = forumCategories.where(
+      (c) => c.$1 == _selectedPostId && c.$2 == category,
+    );
+    if (found.isNotEmpty) return found.first.$3;
+    return category;
+  }
+
+  /// POST_ID 선택 바텀시트
+  void _showPostIdSelector() {
+    final categories = majorForumCategories(
+      includeTemp: isDeveloperModeEnabled,
+    );
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.85,
+          expand: false,
+          builder: (_, scrollController) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: color.onSurfaceVariant.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
+                  child: Text(
+                    '게시판을 선택해주세요'.tr(),
+                    style: text.titleMedium?.copyWith(
+                      color: color.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: categories.length,
+                    itemBuilder: (_, index) {
+                      final postId = categories[index];
+                      final label = _getPostLabel(postId);
+                      final isSelected = postId == _selectedPostId;
+
+                      return ListTile(
+                        title: Text(
+                          label.tr(),
+                          style: isSelected
+                              ? TextStyle(
+                                  color: color.primary,
+                                  fontWeight: FontWeight.w600,
+                                )
+                              : null,
+                        ),
+                        trailing: isSelected
+                            ? FaIcon(
+                                FontAwesomeIcons.check,
+                                size: 14,
+                                color: color.primary,
+                              )
+                            : null,
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          setState(() {
+                            _selectedPostId = postId;
+                            _selectedCategory = null;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// 카테고리 선택 바텀시트
+  void _showCategorySelector() {
+    final subCategories = _getSubCategories(_selectedPostId);
+    if (subCategories.isEmpty) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.5,
+          minChildSize: 0.3,
+          maxChildSize: 0.85,
+          expand: false,
+          builder: (_, scrollController) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: color.onSurfaceVariant.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
+                  child: Text(
+                    '카테고리를 선택해주세요'.tr(),
+                    style: text.titleMedium?.copyWith(
+                      color: color.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: subCategories.length + 1,
+                    itemBuilder: (_, index) {
+                      // 첫 번째 항목: 카테고리 없음
+                      if (index == 0) {
+                        final isSelected = _selectedCategory == null;
+                        return ListTile(
+                          title: Text(
+                            '전체'.tr(),
+                            style: isSelected
+                                ? TextStyle(
+                                    color: color.primary,
+                                    fontWeight: FontWeight.w600,
+                                  )
+                                : null,
+                          ),
+                          trailing: isSelected
+                              ? FaIcon(
+                                  FontAwesomeIcons.check,
+                                  size: 14,
+                                  color: color.primary,
+                                )
+                              : null,
+                          onTap: () {
+                            Navigator.pop(ctx);
+                            setState(() => _selectedCategory = null);
+                          },
+                        );
+                      }
+
+                      final (categoryId, categoryLabel) =
+                          subCategories[index - 1];
+                      final isSelected = categoryId == _selectedCategory;
+
+                      return ListTile(
+                        title: Text(
+                          categoryLabel.tr(),
+                          style: isSelected
+                              ? TextStyle(
+                                  color: color.primary,
+                                  fontWeight: FontWeight.w600,
+                                )
+                              : null,
+                        ),
+                        trailing: isSelected
+                            ? FaIcon(
+                                FontAwesomeIcons.check,
+                                size: 14,
+                                color: color.primary,
+                              )
+                            : null,
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          setState(() => _selectedCategory = categoryId);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   /// 게시글 제출
@@ -91,10 +335,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
     try {
       final post = await PostService.create(
-        postId: widget.postId,
+        postId: _selectedPostId,
         subject: _titleController.text.trim(),
         content: _contentController.text.trim(),
-        category: widget.category,
+        category: _selectedCategory,
         files: _uploadedFiles.map((f) => f.path).toList(),
       );
 
@@ -153,32 +397,118 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // 게시판 정보
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: scheme.primaryContainer.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.lightNewspaper,
-                    size: 14,
-                    color: scheme.primary,
+            // 게시판 / 카테고리 드롭다운 선택 버튼
+            Row(
+              children: [
+                // POST_ID 선택 드롭다운
+                Expanded(
+                  child: InkWell(
+                    onTap: _showPostIdSelector,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.lightNewspaper,
+                            size: 14,
+                            color: scheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _getPostLabel(_selectedPostId).tr(),
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: scheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          FaIcon(
+                            FontAwesomeIcons.lightChevronDown,
+                            size: 12,
+                            color: scheme.primary,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+                ),
+                // 카테고리 선택 드롭다운 (서브카테고리가 있을 때만)
+                if (_getSubCategories(_selectedPostId).isNotEmpty) ...[
                   const SizedBox(width: 8),
-                  Text(
-                    widget.category != null
-                        ? '${widget.postId} / ${widget.category}'
-                        : widget.postId,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: scheme.primary,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: InkWell(
+                      onTap: _showCategorySelector,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _selectedCategory != null
+                              ? scheme.primaryContainer.withValues(alpha: 0.3)
+                              : scheme.surfaceContainerHighest.withValues(
+                                  alpha: 0.5,
+                                ),
+                          borderRadius: BorderRadius.circular(8),
+                          border: _selectedCategory == null
+                              ? Border.all(
+                                  color: scheme.outlineVariant.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.lightTag,
+                              size: 14,
+                              color: _selectedCategory != null
+                                  ? scheme.primary
+                                  : scheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _getCategoryLabel(_selectedCategory),
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: _selectedCategory != null
+                                      ? scheme.primary
+                                      : scheme.onSurfaceVariant,
+                                  fontWeight: _selectedCategory != null
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            FaIcon(
+                              FontAwesomeIcons.lightChevronDown,
+                              size: 12,
+                              color: _selectedCategory != null
+                                  ? scheme.primary
+                                  : scheme.onSurfaceVariant,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
-              ),
+              ],
             ),
             const SizedBox(height: 16),
 
