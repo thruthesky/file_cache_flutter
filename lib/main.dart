@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,6 +9,8 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.service.dart';
 import 'package:philgo/app.config.dart';
+import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/chat/chat_sound.service.dart';
 import 'package:philgo/firebase_options.dart';
 import 'package:philgo/l10n/code_asset_loader.dart';
 import 'package:philgo/router.dart';
@@ -99,6 +102,15 @@ class _MyAppState extends State<PhilGoV7App> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AppService.instance.initialize(context: globalContext);
       UserService.instance.initialize(globalContext);
+      ChatService.instance.initialize(
+        onNewMessageArrived: () => {
+          log(
+            'New message arrived callback triggered',
+            name: 'onNewMessageArrived:',
+          ),
+        },
+      );
+      ChatSoundService.instance.initialize();
     });
   }
 
