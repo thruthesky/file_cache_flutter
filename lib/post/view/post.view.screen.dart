@@ -100,10 +100,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
       final result = await PostService.like(_post.idx);
       if (!mounted) return;
       setState(() {
-        _liked = result.liked;
+        _liked = !_liked;
         _goodCount = result.good;
       });
     } catch (e) {
+      if (!mounted) return;
       showErrorSnackBar(context, '$e');
     }
   }
@@ -457,7 +458,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                             color: popScheme.onSurface,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text(_post.blocked ? '차단 해제'.tr() : '차단'.tr()),
+                                          Text(
+                                            _post.blocked
+                                                ? '차단 해제'.tr()
+                                                : '차단'.tr(),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -474,7 +479,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            _post.reported ? '신고됨'.tr() : '신고'.tr(),
+                                            _post.reported
+                                                ? '신고됨'.tr()
+                                                : '신고'.tr(),
                                             style: TextStyle(
                                               color: popScheme.error,
                                             ),
