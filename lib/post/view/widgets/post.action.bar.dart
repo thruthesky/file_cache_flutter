@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
@@ -54,14 +55,11 @@ class PostActionBar extends StatelessWidget {
         const SizedBox(width: 8),
         // 댓글
         PostActionButton(
-          icon: post.noOfComment > 0
-              ? FontAwesomeIcons.solidComment
-              : FontAwesomeIcons.lightComment,
-          label: '${post.noOfComment > 0 ? post.noOfComment : ''}',
+          icon: FontAwesomeIcons.message,
+          label: '',
           color: scheme.onSurfaceVariant,
-          onTap: () async {
-            final user = await UserService.getUser(idx: post.idxMember);
-            if (context.mounted) ChatRoomScreen.push(context, user.firebaseUid);
+          onTap: () {
+            ChatRoomScreen.push(context, post.userFirebaseUid);
           },
         ),
 
@@ -84,7 +82,7 @@ class PostActionBar extends StatelessWidget {
           // 수정
           PostActionButton(
             icon: FontAwesomeIcons.lightPenToSquare,
-            label: '수정',
+            label: '수정'.tr(),
             color: scheme.onSurfaceVariant,
             onTap: onEdit,
           ),
@@ -92,7 +90,7 @@ class PostActionBar extends StatelessWidget {
           // 삭제
           PostActionButton(
             icon: FontAwesomeIcons.lightTrashCan,
-            label: '삭제',
+            label: '삭제'.tr(),
             color: scheme.error,
             onTap: onDelete,
           ),
@@ -102,7 +100,7 @@ class PostActionBar extends StatelessWidget {
             icon: reported
                 ? FontAwesomeIcons.solidFlag
                 : FontAwesomeIcons.lightFlag,
-            label: reported ? '신고됨' : '신고',
+            label: reported ? '신고됨'.tr() : '신고'.tr(),
             color: reported ? scheme.error : scheme.onSurfaceVariant,
             onTap: onReport ?? () {},
           ),
@@ -112,7 +110,7 @@ class PostActionBar extends StatelessWidget {
             icon: blocked
                 ? FontAwesomeIcons.solidBan
                 : FontAwesomeIcons.lightBan,
-            label: blocked ? '차단 해제' : '차단',
+            label: blocked ? '차단 해제'.tr() : '차단'.tr(),
             color: blocked ? scheme.error : scheme.onSurfaceVariant,
             onTap: onBlock ?? () {},
           ),

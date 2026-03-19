@@ -347,7 +347,7 @@ class _CommentTileState extends State<CommentTile> {
                 // 답글
                 PostActionButton(
                   icon: FontAwesomeIcons.lightReply,
-                  label: '답글',
+                  label: '답글'.tr(),
                   color: scheme.tertiary,
                   onTap: () {
                     widget.onReplyTap?.call(widget.comment);
@@ -374,7 +374,7 @@ class _CommentTileState extends State<CommentTile> {
                   if (!hasChildren)
                     PostActionButton(
                       icon: FontAwesomeIcons.lightPenToSquare,
-                      label: '수정',
+                      label: '수정'.tr(),
                       color: scheme.tertiary,
                       onTap: () => _showEditDialog(context),
                     ),
@@ -382,7 +382,7 @@ class _CommentTileState extends State<CommentTile> {
                   if (!hasChildren)
                     PostActionButton(
                       icon: FontAwesomeIcons.lightTrashCan,
-                      label: '삭제',
+                      label: '삭제'.tr(),
                       color: scheme.error,
                       onTap: () => _confirmDelete(context),
                     ),
@@ -425,7 +425,7 @@ class _CommentTileState extends State<CommentTile> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                _reported ? '신고됨' : '신고',
+                                _reported ? '신고됨'.tr() : '신고'.tr(),
                                 style: TextStyle(color: popScheme.error),
                               ),
                             ],
@@ -442,7 +442,7 @@ class _CommentTileState extends State<CommentTile> {
                                 color: popScheme.onSurface,
                               ),
                               const SizedBox(width: 8),
-                              const Text('차단'),
+                              Text('차단'.tr()),
                             ],
                           ),
                         ),
@@ -464,21 +464,21 @@ class _CommentTileState extends State<CommentTile> {
     final content = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('댓글 수정'),
+        title: Text('댓글 수정'.tr()),
         content: TextField(
           controller: controller,
           autofocus: true,
           minLines: 2,
           maxLines: 8,
-          decoration: const InputDecoration(
-            hintText: '댓글 내용을 입력하세요',
+          decoration: InputDecoration(
+            hintText: '댓글 내용을 입력하세요'.tr(),
             border: OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('취소'),
+            child: Text('취소'.tr()),
           ),
           FilledButton(
             onPressed: () {
@@ -486,7 +486,7 @@ class _CommentTileState extends State<CommentTile> {
               if (text.isEmpty) return;
               Navigator.pop(ctx, text);
             },
-            child: const Text('수정'),
+            child: Text('수정'.tr()),
           ),
         ],
       ),
@@ -502,17 +502,17 @@ class _CommentTileState extends State<CommentTile> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('댓글 삭제'),
-        content: const Text('정말 이 댓글을 삭제하시겠습니까?'),
+        title: Text('댓글 삭제'.tr()),
+        content: Text('정말 이 댓글을 삭제하시겠습니까?'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('취소'),
+            child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('삭제'),
+            child: Text('삭제'.tr()),
           ),
         ],
       ),

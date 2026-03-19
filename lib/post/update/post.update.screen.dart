@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -91,7 +92,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
       setState(() => _existingUrls = List.from(_existingUrls)..add(url));
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('파일 삭제 실패: $e')));
+      ).showSnackBar(SnackBar(content: Text('${'파일 삭제 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isDeletingFile = false);
     }
@@ -120,7 +121,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('게시글 수정 실패: $e')));
+      ).showSnackBar(SnackBar(content: Text('${'게시글 수정 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -145,7 +146,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(_latestPost),
         ),
-        title: Text('글 수정', style: theme.textTheme.titleMedium),
+        title: Text('글 수정'.tr(), style: theme.textTheme.titleMedium),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -178,7 +179,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
             TextFormField(
               controller: _titleController,
               decoration: InputDecoration(
-                hintText: '제목',
+                hintText: '제목'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -190,7 +191,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               maxLength: 255,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return '제목을 입력하세요';
+                  return '제목을 입력하세요'.tr();
                 }
                 return null;
               },
@@ -201,7 +202,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
             TextFormField(
               controller: _contentController,
               decoration: InputDecoration(
-                hintText: '내용을 입력하세요',
+                hintText: '내용을 입력하세요'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -214,7 +215,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               minLines: 8,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return '내용을 입력하세요';
+                  return '내용을 입력하세요'.tr();
                 }
                 return null;
               },
@@ -242,7 +243,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                   onError: (e) {
                     ScaffoldMessenger.of(
                       context,
-                    ).showSnackBar(SnackBar(content: Text('업로드 실패: $e')));
+                    ).showSnackBar(SnackBar(content: Text('${'업로드 실패'.tr()}: $e')));
                   },
                   child: FaIcon(
                     FontAwesomeIcons.lightCamera,

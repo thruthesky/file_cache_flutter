@@ -226,6 +226,7 @@ class PostService {
     await ApiService.instance.v7api(
       'post.report',
       data: {'idx': idx, 'type': type},
+      debug: true,
     );
   }
 }

@@ -121,17 +121,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('게시글 삭제'),
-        content: const Text('정말 이 게시글을 삭제하시겠습니까?'),
+        title: Text('게시글 삭제'.tr()),
+        content: Text('정말 이 게시글을 삭제하시겠습니까?'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소'),
+            child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('삭제'),
+            child: Text('삭제'.tr()),
           ),
         ],
       ),
@@ -203,8 +203,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
           _post.blocked
               ? '{name}님의 차단을 해제하시겠습니까?'.tr(namedArgs: {'name': name})
               : '{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name}) +
-                  '\n' +
-                  '차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr(),
+                    '\n' +
+                    '차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr(),
         ),
         actions: [
           TextButton(
@@ -421,7 +421,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                             color: popScheme.onSurface,
                                           ),
                                           const SizedBox(width: 10),
-                                          const Text('수정'),
+                                          Text('수정'.tr()),
                                         ],
                                       ),
                                     ),
@@ -436,7 +436,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            '삭제',
+                                            '삭제'.tr(),
                                             style: TextStyle(
                                               color: popScheme.error,
                                             ),
@@ -458,9 +458,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                             color: popScheme.onSurface,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text(_post.blocked
-                                              ? '차단 해제'
-                                              : '차단'),
+                                          Text(_post.blocked ? '차단 해제'.tr() : '차단'.tr()),
                                         ],
                                       ),
                                     ),
@@ -477,9 +475,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            _post.reported
-                                                ? '신고됨'
-                                                : '신고',
+                                            _post.reported ? '신고됨'.tr() : '신고'.tr(),
                                             style: TextStyle(
                                               color: popScheme.error,
                                             ),
@@ -525,7 +521,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                             child: Text(
-                              '내용을 불러올 수 없습니다',
+                              '내용을 불러올 수 없습니다'.tr(),
                               style: TextStyle(color: scheme.error),
                             ),
                           )

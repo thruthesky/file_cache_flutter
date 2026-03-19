@@ -383,6 +383,32 @@ class Translations {
     '원글을 찾을 수 없습니다': '원글을 찾을 수 없습니다',
     '사용자': '사용자',
     '북마크 해제': '북마크 해제',
+
+    // 게시글 작성/수정
+    '제목': '제목',
+    '제목을 입력하세요': '제목을 입력하세요',
+    '내용을 입력하세요': '내용을 입력하세요',
+    '게시글 작성 실패': '게시글 작성 실패',
+    '업로드 실패': '업로드 실패',
+    '글 수정': '글 수정',
+    '게시글 수정 실패': '게시글 수정 실패',
+    '파일 삭제 실패': '파일 삭제 실패',
+    '수정': '수정',
+    '게시글 삭제': '게시글 삭제',
+    '정말 이 게시글을 삭제하시겠습니까?': '정말 이 게시글을 삭제하시겠습니까?',
+    '내용을 불러올 수 없습니다': '내용을 불러올 수 없습니다',
+
+    // 댓글
+    '댓글이 없습니다.': '댓글이 없습니다.',
+    '답글': '답글',
+    '댓글 수정': '댓글 수정',
+    '댓글 내용을 입력하세요': '댓글 내용을 입력하세요',
+    '댓글을 입력하세요': '댓글을 입력하세요',
+    '답글을 입력하세요': '답글을 입력하세요',
+    '댓글 작성 실패': '댓글 작성 실패',
+    '정말 이 댓글을 삭제하시겠습니까?': '정말 이 댓글을 삭제하시겠습니까?',
+    '댓글을 작성하려면 로그인이 필요합니다.': '댓글을 작성하려면 로그인이 필요합니다.',
+    '파일 업로드 실패': '파일 업로드 실패',
   };
 
   static const Map<String, dynamic> en = {
@@ -762,5 +788,31 @@ class Translations {
     '원글을 찾을 수 없습니다': 'Original post not found',
     '사용자': 'User',
     '북마크 해제': 'Remove Bookmark',
+
+    // 게시글 작성/수정
+    '제목': 'Title',
+    '제목을 입력하세요': 'Please enter a title',
+    '내용을 입력하세요': 'Please enter content',
+    '게시글 작성 실패': 'Failed to create post',
+    '업로드 실패': 'Upload failed',
+    '글 수정': 'Edit Post',
+    '게시글 수정 실패': 'Failed to update post',
+    '파일 삭제 실패': 'Failed to delete file',
+    '수정': 'Edit',
+    '게시글 삭제': 'Delete Post',
+    '정말 이 게시글을 삭제하시겠습니까?': 'Are you sure you want to delete this post?',
+    '내용을 불러올 수 없습니다': 'Unable to load content',
+
+    // 댓글
+    '댓글이 없습니다.': 'No comments yet.',
+    '답글': 'Reply',
+    '댓글 수정': 'Edit Comment',
+    '댓글 내용을 입력하세요': 'Please enter comment content',
+    '댓글을 입력하세요': 'Write a comment',
+    '답글을 입력하세요': 'Write a reply',
+    '댓글 작성 실패': 'Failed to create comment',
+    '정말 이 댓글을 삭제하시겠습니까?': 'Are you sure you want to delete this comment?',
+    '댓글을 작성하려면 로그인이 필요합니다.': 'Please login to write a comment.',
+    '파일 업로드 실패': 'File upload failed',
   };
 }
