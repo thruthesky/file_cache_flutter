@@ -1585,7 +1585,6 @@ include_once '../page.footer.php';
 | `file_cache_flutter` | `packages/file_cache_flutter` | `main` |
 | `font_awesome_flutter` | `packages/font_awesome_flutter` | `main` |
 | `philgo_api` | `packages/philgo_api` | `main` |
-| `flutter-skill` | `.claude/skills/flutter-skill` | `main` |
 | `v7-skill` | `.claude/skills/v7-skill` | `main` |
 
 ### Subtree Pull (원격 → 로컬)
@@ -1597,7 +1596,6 @@ git subtree pull --prefix=packages/easy_phone_sign_in easy_phone_sign_in main --
 git subtree pull --prefix=packages/file_cache_flutter file_cache_flutter main --squash
 git subtree pull --prefix=packages/font_awesome_flutter font_awesome_flutter main --squash
 git subtree pull --prefix=packages/philgo_api philgo_api main --squash
-git subtree pull --prefix=.claude/skills/flutter-skill flutter-skill main --squash
 git subtree pull --prefix=.claude/skills/v7-skill v7-skill main --squash
 ```
 
@@ -1612,7 +1610,6 @@ git subtree split --prefix=packages/easy_phone_sign_in --rejoin
 git subtree split --prefix=packages/file_cache_flutter --rejoin
 git subtree split --prefix=packages/font_awesome_flutter --rejoin
 git subtree split --prefix=packages/philgo_api --rejoin
-git subtree split --prefix=.claude/skills/flutter-skill --rejoin
 git subtree split --prefix=.claude/skills/v7-skill --rejoin
 ```
 
@@ -1622,7 +1619,6 @@ git subtree push --prefix=packages/easy_phone_sign_in easy_phone_sign_in main
 git subtree push --prefix=packages/file_cache_flutter file_cache_flutter main
 git subtree push --prefix=packages/font_awesome_flutter font_awesome_flutter main
 git subtree push --prefix=packages/philgo_api philgo_api main
-git subtree push --prefix=.claude/skills/flutter-skill flutter-skill main
 git subtree push --prefix=.claude/skills/v7-skill v7-skill main
 ```
 
