@@ -1603,8 +1603,20 @@ git subtree pull --prefix=.claude/skills/v7-skill v7-skill main --squash
 
 ### Subtree Push (로컬 → 원격)
 
-각 subtree에 대해 push한다:
+각 subtree에 대해 **먼저 `split --rejoin`으로 분할 포인트를 기록한 후** push한다.
+`split --rejoin`은 이미 처리된 커밋 히스토리를 캐싱하여 push 속도를 대폭 향상시킨다.
 
+**Step 1: Split --rejoin (병렬 실행)**
+```bash
+git subtree split --prefix=packages/easy_phone_sign_in --rejoin
+git subtree split --prefix=packages/file_cache_flutter --rejoin
+git subtree split --prefix=packages/font_awesome_flutter --rejoin
+git subtree split --prefix=packages/philgo_api --rejoin
+git subtree split --prefix=.claude/skills/flutter-skill --rejoin
+git subtree split --prefix=.claude/skills/v7-skill --rejoin
+```
+
+**Step 2: Push (병렬 실행)**
 ```bash
 git subtree push --prefix=packages/easy_phone_sign_in easy_phone_sign_in main
 git subtree push --prefix=packages/file_cache_flutter file_cache_flutter main
@@ -1618,7 +1630,8 @@ git subtree push --prefix=.claude/skills/v7-skill v7-skill main
 
 1. **커밋**: 현재 작업 중인 변경사항이 있으면 먼저 커밋한다
 2. **Pull**: 모든 subtree에 대해 pull을 수행한다 (충돌 발생 시 해결 후 진행)
-3. **Push**: 모든 subtree에 대해 push를 수행한다
-4. **메인 저장소 push**: 필요 시 `git push origin v7`으로 메인 저장소도 push한다
+3. **Split --rejoin**: 모든 subtree에 대해 `split --rejoin`을 수행한다 (push 속도 최적화)
+4. **Push**: 모든 subtree에 대해 push를 수행한다
+5. **메인 저장소 push**: 필요 시 `git push origin v7`으로 메인 저장소도 push한다
 
-> **참고:** subtree push는 전체 커밋 히스토리를 순회하므로 시간이 걸릴 수 있다.
+> **참고:** `split --rejoin`을 먼저 실행하면 분할 포인트가 기록되어 push 시 전체 히스토리를 순회하지 않아도 된다.
