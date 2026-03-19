@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -109,6 +111,9 @@ class FileUpload extends StatefulWidget {
 
 class _FileUploadState extends State<FileUpload> {
   Future<void> _onTap() async {
+    log(
+      '[FileUpload] Upload button tapped. Module: ${widget.module}, Code: ${widget.code}',
+    );
     // 업로드 전 콜백
     if (widget.onBeforeUpload != null) {
       final proceed = await widget.onBeforeUpload!();
