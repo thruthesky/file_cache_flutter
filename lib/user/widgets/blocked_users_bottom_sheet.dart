@@ -1,0 +1,233 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
+import 'package:philgo/user/blocked_user.model.dart';
+import 'package:philgo/user/user.service.dart';
+import 'package:philgo/user/widgets/user_avatar.dart';
+import 'package:philgo/util/util.functions.dart';
+
+/// 차단된 사용자 목록을 바텀시트로 표시한다.
+void showBlockedUsersBottomSheet({required BuildContext context}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: color.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) => const _BlockedUsersSheet(),
+  );
+}
+
+class _BlockedUsersSheet extends StatefulWidget {
+  const _BlockedUsersSheet();
+
+  @override
+  State<_BlockedUsersSheet> createState() => _BlockedUsersSheetState();
+}
+
+class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
+  late Future<List<BlockedUserModel>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = UserService.getBlockedList();
+  }
+
+  void _refresh() {
+    setState(() {
+      _future = UserService.getBlockedList();
+    });
+  }
+
+  Future<void> _unblock(BlockedUserModel user) async {
+    final name = user.nickname.isNotEmpty ? user.nickname : '이름없음'.tr();
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('차단 해제'.tr()),
+        content: Text('{name}님의 차단을 해제하시겠습니까?'.tr(namedArgs: {'name': name})),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('취소'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('차단 해제'.tr()),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true || !mounted) return;
+
+    try {
+      await UserService.unblock(idxBlockee: user.idxBlockee);
+      if (!mounted) return;
+      showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
+      _refresh();
+    } catch (e) {
+      if (!mounted) return;
+      showErrorSnackBar(context, '$e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (context, scrollController) {
+        return Column(
+          children: [
+            // 헤더
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: color.surfaceContainerHigh,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '차단된 사용자'.tr(),
+                    style: text.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: FaIcon(
+                      FontAwesomeIcons.lightXmark,
+                      size: 18,
+                      color: color.onSurface,
+                    ),
+                    tooltip: '닫기'.tr(),
+                  ),
+                ],
+              ),
+            ),
+
+            // 리스트
+            Expanded(
+              child: FutureBuilder<List<BlockedUserModel>>(
+                future: _future,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          '차단 목록을 불러오는 중 오류가 발생했습니다'.tr(),
+                          style: TextStyle(color: color.error),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final users = snapshot.data ?? [];
+
+                  if (users.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.lightUserSlash,
+                            size: 40,
+                            color: color.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            '차단된 사용자가 없습니다'.tr(),
+                            style: text.bodyMedium?.copyWith(
+                              color: color.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.separated(
+                    controller: scrollController,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: users.length,
+                    separatorBuilder: (_, _) => Divider(
+                      height: 1,
+                      indent: 68,
+                      color: color.outlineVariant.withValues(alpha: 0.5),
+                    ),
+                    itemBuilder: (context, index) {
+                      final user = users[index];
+                      return _BlockedUserTile(
+                        user: user,
+                        onUnblock: () => _unblock(user),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _BlockedUserTile extends StatelessWidget {
+  final BlockedUserModel user;
+  final VoidCallback onUnblock;
+
+  const _BlockedUserTile({required this.user, required this.onUnblock});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          UserAvatar(photoUrl: user.photoUrl, radius: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              user.nickname.isNotEmpty ? user.nickname : '이름없음'.tr(),
+              style: text.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          TextButton.icon(
+            onPressed: onUnblock,
+            icon: FaIcon(
+              FontAwesomeIcons.lightBan,
+              size: 14,
+              color: color.error,
+            ),
+            label: Text(
+              '차단 해제'.tr(),
+              style: TextStyle(color: color.error, fontSize: 13),
+            ),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

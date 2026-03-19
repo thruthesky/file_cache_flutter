@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
+import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
@@ -22,6 +23,7 @@ import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/user/widgets/blocked_users_bottom_sheet.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:philgo/version/version.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
@@ -525,12 +527,19 @@ class _MenuScreenState extends State<MenuScreen> {
       _MenuItemData(
         FontAwesomeIcons.lightMagnifyingGlass,
         '친구 검색'.tr(),
-        onTap: _requireLogin(() {}),
+        onTap: _requireLogin(() async {
+          final uid = await ChatService.instance.showUserSearchDialog(context);
+          if (uid != null && context.mounted) {
+            ChatRoomScreen.push(context, uid);
+          }
+        }),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightUserSlash,
         '차단된 사용자'.tr(),
-        onTap: _requireLogin(() {}),
+        onTap: _requireLogin(
+          () => showBlockedUsersBottomSheet(context: context),
+        ),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightTicket,
