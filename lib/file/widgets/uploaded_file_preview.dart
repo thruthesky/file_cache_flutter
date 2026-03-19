@@ -72,7 +72,7 @@ class UploadedFilePreview extends StatelessWidget {
   Widget _buildPreview(ColorScheme scheme) {
     if (file.isImage) {
       return Image.network(
-        file.thumbnail400x400Url.isNotEmpty ? file.thumbnail400x400Url : file.url,
+        file.previewUrl,
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) => _fileIcon(scheme),
       );

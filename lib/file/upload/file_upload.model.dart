@@ -59,6 +59,18 @@ class FileUploadModel {
   /// 1000px 너비 썸네일 full URL (이미지가 아니면 빈 문자열)
   final String thumbnail1000Url;
 
+  /// 600px 비율 유지 썸네일 full URL (이미지가 아니면 빈 문자열)
+  final String thumbnail600Url;
+
+  /// 미리보기에 사용할 최적 썸네일 URL
+  ///
+  /// thumbnail_600_url → thumbnail_400x400_url → url 순으로 첫 번째 비어있지 않은 값을 반환한다.
+  String get previewUrl {
+    if (thumbnail600Url.isNotEmpty) return thumbnail600Url;
+    if (thumbnail400x400Url.isNotEmpty) return thumbnail400x400Url;
+    return url;
+  }
+
   /// 첨부 여부 (0=미첨부, 1=첨부됨)
   final int attached;
 
@@ -90,6 +102,7 @@ class FileUploadModel {
     required this.thumbnail400x400Url,
     required this.thumbnail800x800Url,
     required this.thumbnail1000Url,
+    required this.thumbnail600Url,
     required this.attached,
   });
 
@@ -117,6 +130,9 @@ class FileUploadModel {
       ),
       thumbnail1000Url: _toFullUrl(
         json['thumbnail_1000_url']?.toString() ?? '',
+      ),
+      thumbnail600Url: _toFullUrl(
+        json['thumbnail_600_url']?.toString() ?? '',
       ),
       attached: _toInt(json['attached']),
     );

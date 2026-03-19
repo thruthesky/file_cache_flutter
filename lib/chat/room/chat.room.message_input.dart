@@ -1,14 +1,12 @@
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/api/api.service.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
-
-import 'package:philgo/post/list/widgets/display_thumbnail.dart';
-import 'package:philgo/storage/storage.functions.dart';
+import 'package:philgo/file/upload/file_upload.model.dart';
+import 'package:philgo/file/upload/widgets/file_upload.dart';
+import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/util/util.functions.dart';
 
 /// Message input widget for typing and sending messages with multiple file support
@@ -16,14 +14,12 @@ class ChatRoomMessageInput extends StatefulWidget {
   final String roomId; // Room ID for sending messages
   final Function() onSend;
   final int maxFiles; // Maximum number of files allowed
-  // final bool enableBuyAndSell; // Enable buy and sell post feature
 
   const ChatRoomMessageInput({
     super.key,
     required this.roomId,
     required this.onSend,
     this.maxFiles = 5, // Default maximum of 5 files
-    // this.enableBuyAndSell = false, // Enable buy and sell post feature
   });
 
   @override
@@ -33,293 +29,44 @@ class ChatRoomMessageInput extends StatefulWidget {
 class _MessageInputState extends State<ChatRoomMessageInput> {
   final TextEditingController _messageController = TextEditingController();
 
-  final List<XFile> _selectedFiles = [];
-  final List<String> _uploadedUrls = [];
+  final List<FileUploadModel> _uploadedFiles = [];
   bool _isUploading = false;
-
   bool isLoading = false;
-  Map<int, double> _uploadProgress = {}; // Track progress for each file
-  int _completedUploads = 0;
 
   void _handleSend() {
     final text = _messageController.text.trim();
 
-    // Handle regular message
-    if ((text.isEmpty && _uploadedUrls.isEmpty) || isLoading || _isUploading) {
+    if ((text.isEmpty && _uploadedFiles.isEmpty) || isLoading || _isUploading) {
       return;
     }
 
-    // Send message with text and/or multiple URLs
-    _sendMessage(text, _uploadedUrls.isNotEmpty ? _uploadedUrls : null);
+    final urls = _uploadedFiles.isNotEmpty
+        ? _uploadedFiles.map((f) => f.url).toList()
+        : null;
+    _sendMessage(text, urls);
 
-    _clearFiles();
-    // GestureDetector를 사용하므로 포커스가 유지되어 키보드가 사라지지 않음
-  }
-
-  void _clearFiles() {
-    // TEST
-    setState(() {
-      _selectedFiles.clear();
-      _uploadedUrls.clear();
-      _uploadProgress.clear();
-      _completedUploads = 0;
-    });
+    setState(() => _uploadedFiles.clear());
   }
 
   void _removeFileAt(int index) {
-    setState(() {
-      if (index < _selectedFiles.length) {
-        _selectedFiles.removeAt(index);
-      }
-      if (index < _uploadedUrls.length) {
-        final urlToDelete = _uploadedUrls.removeAt(index);
-        deleteImage(
-          urlToDelete,
-          onError: (error) {
-            debugLog('There should not be Error deleting file $index: $error');
-          },
-        );
-      }
-      _uploadProgress.remove(index);
-      // Update progress indices
-      final newProgress = <int, double>{};
-      _uploadProgress.forEach((key, value) {
-        if (key > index) {
-          newProgress[key - 1] = value;
-        } else if (key < index) {
-          newProgress[key] = value;
-        }
-      });
-      _uploadProgress = newProgress;
+    final file = _uploadedFiles[index];
+    setState(() => _uploadedFiles.removeAt(index));
+    ApiService.instance.fileDeleteByUrl(file.url).catchError((error) {
+      debugLog('Error deleting file: $error');
     });
   }
 
-  Future<void> _showFilePicker() async {
-    if (_selectedFiles.length >= widget.maxFiles) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('최대 {}개 파일을 선택할 수 있습니다.'.tr(args: ['${widget.maxFiles}'])),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Wrap(
-          runSpacing: 16,
-          children: [
-            // Header with title and close button
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16.0,
-                    top: 8.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '파일 선택'.tr(),
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(),
-              ],
-            ),
-
-            // Camera option
-            if (!kIsWeb)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: Text('카메라'.tr()),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    await _pickAndUploadImages(
-                      ImageSource.camera,
-                      single: true,
-                    );
-                  },
-                ),
-              ),
-
-            // Gallery  and Multiple files option
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
-              child: ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: Text('갤러리'.tr()),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await _pickAndUploadImages(
-                    ImageSource.gallery,
-                    single: false,
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pickAndUploadImages(
-    ImageSource source, {
-    bool single = false,
-  }) async {
-    try {
-      List<XFile> images = [];
-      final ImagePicker imagePicker = ImagePicker();
-      if (single) {
-        final XFile? image = await imagePicker.pickImage(
-          source: source,
-          imageQuality: 80,
-          maxWidth: 1024,
-          maxHeight: 1024,
-        );
-        if (image != null) {
-          images = [image];
-        }
-      } else {
-        final remainingSlots = widget.maxFiles - _selectedFiles.length;
-        final selectedImages = await imagePicker.pickMultiImage(
-          imageQuality: 80,
-          maxWidth: 1024,
-          maxHeight: 1024,
-        );
-        images = selectedImages;
-
-        // Limit to remaining slots
-        if (images.length > remainingSlots) {
-          images = images.take(remainingSlots).toList();
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('최대 {}개 파일을 선택할 수 있습니다.'.tr(args: ['${widget.maxFiles}'])),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-        }
-      }
-
-      if (images.isNotEmpty) {
-        // final files = images.map((image) => File(image.path)).toList();
-        _selectedFiles.addAll(images);
-        _isUploading = true;
-        _completedUploads = 0;
-        // Initialize progress for new files
-        _uploadProgress.clear();
-        log('_uploadProgress: $_uploadProgress');
-        for (int i = _uploadedUrls.length; i < _selectedFiles.length; i++) {
-          _uploadProgress[i] = 0.0;
-          log('Initialized upload progress for file $i: ${_uploadProgress[i]}');
-        }
-        setState(() {});
-
-        try {
-          // Upload the new files
-          final startIndex = _uploadedUrls.length;
-          final urls = await uploadMultipleImages(
-            images,
-            onProgress: (index, progress) {
-              debugLog("index: $index, progress: $progress");
-              setState(() {
-                _uploadProgress[startIndex + index] = progress;
-                if (_completedUploads <= images.length &&
-                    _uploadProgress[startIndex + index] == 100) {
-                  _completedUploads++;
-                }
-              });
-            },
-            onFileCompleted: (completed, total) {
-              setState(() {
-                _completedUploads = completed;
-              });
-            },
-          );
-
-          setState(() {
-            _uploadedUrls.addAll(urls);
-            _isUploading = false;
-          });
-        } catch (e) {
-          setState(() {
-            _isUploading = false;
-            // Remove the files that failed to upload
-            for (int i = 0; i < images.length; i++) {
-              if (_selectedFiles.isNotEmpty) {
-                _selectedFiles.removeLast();
-              }
-            }
-            _uploadProgress.clear();
-          });
-
-          if (mounted) {
-            showErrorSnackBar(context, '이미지 업로드 실패: {}'.tr(args: [e.toString()]));
-          }
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        showErrorSnackBar(context, '업로드 실패: {}'.tr(args: [e.toString()]));
-      }
-    }
-  }
-
   Future<String> _sendMessage(String text, List<String>? urls) async {
-    // if ((text.isEmpty && (urls == null || urls.isEmpty)) || isLoading) {
-    //   return '';
-    // }
     isLoading = true;
     setState(() {});
     String messageId = '';
     try {
       debugPrint('Sending message: text="$text", urls=$urls');
-
-      if (urls != null && urls.isNotEmpty) {
-        // Send message with multiple files
-        messageId = await ChatService.instance.sendMessage(
-          roomId: widget.roomId,
-          text: text.isEmpty ? '' : text,
-          urls: urls,
-        );
-      } else {
-        // Send text message
-        messageId = await ChatService.instance.sendMessage(roomId: widget.roomId, text: text);
-      }
-
-      // moderate the message if it has an ID
-      // if (messageId.isNotEmpty) {
-      //   // Add 1 second delay before moderating the message
-      //   Future.delayed(const Duration(seconds: 1), () {
-      //     moderateChat(widget.roomId, messageId)
-      //         .then((_) {
-      //           debugPrint('Message moderated successfully');
-      //         })
-      //         .catchError((e) {
-      //           debugPrint('Error moderating message: $e');
-      //         });
-      //   });
-      // }
-
+      messageId = await ChatService.instance.sendMessage(
+        roomId: widget.roomId,
+        text: text.isEmpty ? '' : text,
+        urls: urls,
+      );
       _messageController.clear();
       debugPrint('Message sent successfully');
       widget.onSend.call();
@@ -342,137 +89,30 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   }
 
   Widget _buildFilesPreview() {
-    if (_selectedFiles.isEmpty && _uploadedUrls.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (_uploadedFiles.isEmpty && !_isUploading) return const SizedBox.shrink();
 
-    return Container(
-      margin: EdgeInsets.only(top: filePreviewMarginTop),
-      height: filePreviewHeight,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _selectedFiles.length,
-        itemBuilder: (context, index) {
-          // debugLog("ListView.builder index: $index, uploadedUrls: $_uploadProgress");
-
-          final colorScheme = Theme.of(context).colorScheme;
-
-          return Container(
-            margin: EdgeInsets.only(right: filePreviewSpacing, left: index == 0 ? filePreviewSpacing : 0),
-            width: filePreviewWidth,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-
-              /// Flat design - subtle border
-              border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-            child: Stack(
-              children: [
-                index < _uploadedUrls.length
-                    ? DisplayThumbnail(
-                        url: _uploadedUrls[index],
-                        size: filePreviewWidth,
-                      )
-                    : Container(
-                        width: filePreviewWidth,
-                        height: filePreviewHeight,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.image,
-                            size: 48,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
-
-                // Upload progress overlay
-                if (_isUploading && _uploadProgress.containsKey(index))
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(filePreviewBorderRadius),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            value: _uploadProgress[index],
-                            backgroundColor: Colors.grey[300],
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '${(_uploadProgress[index]! * 100).round()}%',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: uploadProgressFontSize,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                // Delete button
-                if (!_isUploading || index >= _uploadedUrls.length)
-                  Positioned(
-                    top: 4,
-                    right: 4,
-                    child: GestureDetector(
-                      onTap: () => _removeFileAt(index),
-                      child: Container(
-                        padding: EdgeInsets.all(deleteButtonPadding),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: deleteIconSize,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildUploadingStatus() {
-    if (!_isUploading || _selectedFiles.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
       child: Row(
         children: [
-          SizedBox(
-            width: loadingIndicatorSize,
-            height: loadingIndicatorSize,
-            child: CircularProgressIndicator(strokeWidth: loadingStrokeWidth),
-          ),
-          SizedBox(width: loadingSpacing),
-          Text(
-            '이미지 업로드 중 ({}/{})'.tr(args: ['$_completedUploads', '${_selectedFiles.length}']),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          ..._uploadedFiles.map((file) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: UploadedFilePreview(
+                  file: file,
+                  size: 72,
+                  onDelete: () => _removeFileAt(_uploadedFiles.indexOf(file)),
+                ),
+              )),
+          if (_isUploading)
+            const Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: SizedBox(
+                width: 72,
+                height: 72,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ),
         ],
       ),
     );
@@ -482,6 +122,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final busy = isLoading || _isUploading;
+
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -496,16 +138,13 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Upload status
-            _buildUploadingStatus(),
-
             // Files preview
             _buildFilesPreview(),
             LayoutBuilder(
               builder: (context, constraints) {
                 final availableWidth = constraints.maxWidth;
-                final iconButtonWidth = 48.0; // Attachment button width
-                final sendButtonWidth = 56.0; // Send button width + spacing
+                final iconButtonWidth = 48.0;
+                final sendButtonWidth = 56.0;
                 final minTextFieldWidth =
                     availableWidth * 0.8 - iconButtonWidth - sendButtonWidth;
 
@@ -513,37 +152,88 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                   padding: inputAreaPadding,
                   child: Row(
                     children: [
-                      // Attachment Button
-                      IconButton(
-                        onPressed: (isLoading || _isUploading)
-                            ? null
-                            : _showFilePicker,
-                        icon: Stack(
-                          children: [
-                            const Icon(Icons.add),
-                            if (_selectedFiles.isNotEmpty)
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Text(
-                                    '${_selectedFiles.length}',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: fileBadgeFontSize,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                      // Attachment Button — reuses FileUpload widget
+                      FileUpload(
+                        module: 'chat',
+                        code: 'message',
+                        camera: true,
+                        gallery: true,
+                        imageQuality: 80,
+                        maxWidth: 1024,
+                        maxHeight: 1024,
+                        onBeforeUpload: () async {
+                          if (_uploadedFiles.length >= widget.maxFiles) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                content: Text(
+                                  '최대 {}개 파일을 선택할 수 있습니다.'.tr(
+                                    args: ['${widget.maxFiles}'],
                                   ),
                                 ),
+                                backgroundColor: Colors.orange,
                               ),
-                          ],
+                            );
+                            return false;
+                          }
+                          return true;
+                        },
+                        onUploadingChanged: (uploading) =>
+                            setState(() => _isUploading = uploading),
+                        onUploaded: (FileUploadModel model) =>
+                            setState(() => _uploadedFiles.add(model)),
+                        onError: (e) => showErrorSnackBar(
+                          context,
+                          '업로드 실패: {}'.tr(args: [e.toString()]),
                         ),
-                        tooltip: '파일 첨부'.tr(),
+                        child: busy
+                            ? const SizedBox(
+                                width: 36,
+                                height: 36,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: null,
+                                icon: Stack(
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.lightPaperclip,
+                                      size: 20,
+                                      color: busy
+                                          ? colorScheme.onSurface.withValues(
+                                              alpha: 0.3,
+                                            )
+                                          : colorScheme.onSurface,
+                                    ),
+                                    if (_uploadedFiles.isNotEmpty)
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Text(
+                                            '${_uploadedFiles.length}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: fileBadgeFontSize,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                tooltip: '파일 첨부'.tr(),
+                              ),
                       ),
 
                       // Message Input Field - 80% minimum width
@@ -565,7 +255,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                               filled: true,
                               fillColor: colorScheme.surfaceContainerHighest,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(inputBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  inputBorderRadius,
+                                ),
                                 borderSide: BorderSide(
                                   color: colorScheme.outlineVariant.withValues(
                                     alpha: 0.3,
@@ -574,7 +266,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(inputBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  inputBorderRadius,
+                                ),
                                 borderSide: BorderSide(
                                   color: colorScheme.outlineVariant.withValues(
                                     alpha: 0.3,
@@ -583,7 +277,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(inputBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  inputBorderRadius,
+                                ),
                                 borderSide: BorderSide(
                                   color: colorScheme.primary.withValues(
                                     alpha: 0.5,
@@ -596,7 +292,6 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             minLines: 1,
                             maxLines: 4,
                             textCapitalization: TextCapitalization.sentences,
-                            // enabled: !isLoading && !_isUploading,
                             onSubmitted: (_) => _handleSend(),
                           ),
                         ),
@@ -604,10 +299,9 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
 
                       SizedBox(width: sendButtonSpacing),
 
-                      // Send Button with enhanced flat design
+                      // Send Button
                       GestureDetector(
-                        // Use onTapDown to trigger send before focus changes
-                        onTapDown: (isLoading || _isUploading)
+                        onTapDown: busy
                             ? null
                             : (_) {
                                 _handleSend();
@@ -618,11 +312,10 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             width: sendButtonSize,
                             height: sendButtonSize,
                             decoration: BoxDecoration(
-                              /// Gradient background for visual interest
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: (isLoading || _isUploading)
+                                colors: busy
                                     ? [
                                         colorScheme.secondary.withValues(
                                           alpha: 0.7,
@@ -639,10 +332,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                       ],
                               ),
                               shape: BoxShape.circle,
-
-                              /// Flat design - subtle border
                               border: Border.all(
-                                color: (isLoading || _isUploading)
+                                color: busy
                                     ? colorScheme.secondary.withValues(
                                         alpha: 0.3,
                                       )
@@ -653,7 +344,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                               ),
                             ),
                             child: Center(
-                              child: (isLoading || _isUploading)
+                              child: busy
                                   ? SizedBox(
                                       width: sendIconSize,
                                       height: sendIconSize,

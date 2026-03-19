@@ -2,10 +2,10 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:philgo/api/api.service.dart';
 import 'package:philgo/chat/chat.service.dart';
+import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/receive_share/widgets/receive.share.dialog.dart';
-import 'package:philgo/storage/storage.functions.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 Future<String?> showReceiveShareDialog(
@@ -52,12 +52,13 @@ Future<String> uploadReceivedFilesAndSentToChat(
 }
 
 Future<String> uploadReceivedFile(SharedMediaFile file) async {
-  XFile xFile = XFile(file.path);
-
-  final url = await uploadImage(
-    xFile, // XFile is now supported directly
+  final result = await ApiService.instance.fileUpload(
+    filePath: file.path,
+    module: 'chat',
+    code: 'message',
   );
-  return url;
+  final model = FileUploadModel.fromJson(result);
+  return model.url;
 }
 
 Future<bool> canShareToChat(List<SharedMediaFile> files) async {

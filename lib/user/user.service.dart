@@ -195,6 +195,52 @@ class UserService {
     return UserModel.fromJson(json);
   }
 
+  void initialize(BuildContext context) {
+    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
+      if (firebaseUser == null) {
+        cancelBlockedUsersListener();
+        CompanyService.instance.clear();
+        BookmarkService.instance.clear();
+        if (context.mounted) {
+          UserState.of(context).clear();
+        }
+      } else {
+        try {
+          log(
+            'UserService.initialize() ->Firebase user logged in: ${firebaseUser.uid}',
+          );
+          final user = await UserService.loadCurrentUser();
+
+          initPinnedChatRooms(firebaseUser.uid);
+          listenBlockedUsers(firebaseUser.uid);
+
+          CompanyService.instance.loadMyCompany();
+          BookmarkService.instance.loadMyFolderBookmarks();
+
+          if (context.mounted) {
+            UserState.of(context).setUser(user);
+          }
+        } catch (e) {
+          // v7 API 호출 실패 시에도 Firebase 로그인 상태는 유지하므로, 사용자에게 알리고 로그아웃 처리
+          if (context.mounted) {
+            showErrorDialog(
+              context,
+              'Code: 182, Login fails on backend. If this persists, please report it to admin',
+            );
+          }
+          log(
+            'Code: 182, Login fails on backend. If this persists, please report it to admin',
+          );
+          await UserService.signOut();
+          cancelBlockedUsersListener();
+          cancelPinnedChatRoomsListener();
+
+          rethrow;
+        }
+      }
+    });
+  }
+
   /// Listen to blocked users from Firebase: user-private/{uid}/blocks
   void listenBlockedUsers(String uid) {
     blockedUsersSubscription?.cancel();
@@ -217,46 +263,35 @@ class UserService {
     blockedUsersStream.value = <String>{};
   }
 
-  void initialize(BuildContext context) {
-    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
-      if (firebaseUser == null) {
-        cancelBlockedUsersListener();
-        CompanyService.instance.clear();
-        BookmarkService.instance.clear();
-        if (context.mounted) {
-          UserState.of(context).clear();
+  void initPinnedChatRooms(String firebaseUid) {
+    pinnedChatRoomsSubscription?.cancel();
+    final pinnedChatRoomsRef = userPinnedChatRoomsRef(firebaseUid);
+    pinnedChatRoomsSubscription = pinnedChatRoomsRef.onValue.listen(
+      (event) {
+        pinnedChatRooms.clear();
+
+        if (event.snapshot.exists && event.snapshot.value != null) {
+          final data = event.snapshot.value as Map<dynamic, dynamic>;
+          // debugPrint('pinnedChatRoomsRef:: ${data.toString()}');
+          data.forEach((key, value) {
+            if (value == true) {
+              pinnedChatRooms.add(key.toString());
+            }
+          });
         }
-      } else {
-        try {
-          log(
-            'UserService.initialize() ->Firebase user logged in: ${firebaseUser.uid}',
-          );
-          final user = await UserService.loadCurrentUser();
+        // debugPrint('pinnedChatRooms:: ${pinnedChatRooms.toString()}');
+        pinnedChatRoomsStream.value = {...pinnedChatRooms};
+      },
+      onError: (error) {
+        log('-----> Failed to load pinnedChatRooms: $error');
+      },
+    );
+  }
 
-          listenBlockedUsers(firebaseUser.uid);
-
-          CompanyService.instance.loadMyCompany();
-          BookmarkService.instance.loadMyFolderBookmarks();
-
-          if (context.mounted) {
-            UserState.of(context).setUser(user);
-          }
-        } catch (e) {
-          // v7 API 호출 실패 시에도 Firebase 로그인 상태는 유지하므로, 사용자에게 알리고 로그아웃 처리
-          if (context.mounted) {
-            showErrorDialog(
-              context,
-              'Code: 182, Login fails on backend. If this persists, please report it to admin',
-            );
-          }
-          log(
-            'Code: 182, Login fails on backend. If this persists, please report it to admin',
-          );
-          await UserService.signOut();
-
-          rethrow;
-        }
-      }
-    });
+  void cancelPinnedChatRoomsListener() {
+    pinnedChatRoomsSubscription?.cancel();
+    pinnedChatRoomsSubscription = null;
+    pinnedChatRooms.clear();
+    pinnedChatRoomsStream.value = <String>{};
   }
 }
