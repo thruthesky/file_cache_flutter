@@ -78,6 +78,17 @@ class Translations {
     '카카오로 로그인': '카카오로 로그인',
     'Google로 로그인': 'Google로 로그인',
 
+    // 홈 섹션
+    '더보기': '더보기',
+    '인기글': '인기글',
+    '주요 게시판': '주요 게시판',
+    '공지사항': '공지사항',
+    '필수정보': '필수정보',
+    '대사관': '대사관',
+    '한인회': '한인회',
+    '경찰서': '경찰서',
+    'e트래블': 'e트래블',
+
     // 홈 카테고리
     '여행 명소': '여행 명소',
     '음식 배달': '음식 배달',
@@ -484,6 +495,17 @@ class Translations {
     '소셜 계정으로 간편하게 로그인하세요': 'Sign in with your social account',
     '카카오로 로그인': 'Sign in with Kakao',
     'Google로 로그인': 'Sign in with Google',
+
+    // 홈 섹션
+    '더보기': 'More',
+    '인기글': 'Popular Posts',
+    '주요 게시판': 'Major Forums',
+    '공지사항': 'Notices',
+    '필수정보': 'Essentials',
+    '대사관': 'Embassy',
+    '한인회': 'Korean Assoc.',
+    '경찰서': 'Police',
+    'e트래블': 'eTravel',
 
     // 홈 카테고리
     '여행 명소': 'Tourist Spots',
