@@ -2,8 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:philgo/common_widgets/app_masonry_grid.dart';
+import 'package:philgo/common_widgets/masonry_card.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
-import 'package:philgo/company/widgets/company.card.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
@@ -129,73 +130,88 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
               ),
             ),
             const Divider(height: 1),
-            // Company list
+            // 업소 목록
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
-                child: PagingListener(
-                  controller: _pagingController,
-                  builder: (context, state, fetchNextPage) {
-                    return PagedMasonryGridView.count(
-                      state: state,
-                      fetchNextPage: fetchNextPage,
-                      physics: const ClampingScrollPhysics(),
-                      padding: const EdgeInsets.all(8),
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                      builderDelegate: PagedChildBuilderDelegate<CompanyModel>(
-                        itemBuilder: (context, company, index) {
-                          final hasImage = company.primaryImageUrl.isNotEmpty;
-                          final height = hasImage
-                              ? (index.isEven ? 220.0 : 180.0)
-                              : 140.0;
-                          return SizedBox(
-                            height: height,
-                            child: CompanyCard(
-                              company: company,
-                              onTap: () => CompanyViewScreen.push(
-                                context,
-                                company: company,
-                              ),
-                            ),
-                          );
-                        },
-                        firstPageProgressIndicatorBuilder: (_) =>
-                            const Center(child: CircularProgressIndicator()),
-                        noItemsFoundIndicatorBuilder: (_) => Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const FaIcon(
-                                FontAwesomeIcons.buildingCircleXmark,
-                                size: 48,
-                              ),
-                              const SizedBox(height: 16),
-                              Text('등록된 업소가 없습니다'.tr()),
-                            ],
-                          ),
-                        ),
-                        firstPageErrorIndicatorBuilder: (_) => Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('업소를 가져올 수 없습니다. 다시 시도해주세요.'.tr()),
-                              const SizedBox(height: 8),
-                              TextButton(
-                                onPressed: () => _pagingController.refresh(),
-                                child: Text('다시 시도'.tr()),
-                              ),
-                            ],
-                          ),
-                        ),
+                child: AppMasonryGrid<CompanyModel>(
+                  pagingController: _pagingController,
+                  itemBuilder: (context, company, index) {
+                    return MasonryCard(
+                      imageUrl: company.primaryImageUrl.isNotEmpty
+                          ? company.primaryImageUrl
+                          : null,
+                      title: company.name.isNotEmpty
+                          ? company.name
+                          : '(이름 없음)'.tr(),
+                      onTap: () => CompanyViewScreen.push(
+                        context,
+                        company: company,
                       ),
+                      placeholder: _buildCompanyPlaceholder(company),
+                      defaultHeight:
+                          company.primaryImageUrl.isNotEmpty ? 200 : 140,
                     );
                   },
+                  emptyBuilder: (_) => Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const FaIcon(
+                          FontAwesomeIcons.buildingCircleXmark,
+                          size: 48,
+                        ),
+                        const SizedBox(height: 16),
+                        Text('등록된 업소가 없습니다'.tr()),
+                      ],
+                    ),
+                  ),
+                  errorBuilder: (_) => Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('업소를 가져올 수 없습니다. 다시 시도해주세요.'.tr()),
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: () => _pagingController.refresh(),
+                          child: Text('다시 시도'.tr()),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// 이미지가 없는 업소 카드의 플레이스홀더 (그라디언트 + 카테고리 아이콘)
+  Widget _buildCompanyPlaceholder(CompanyModel company) {
+    final scheme = Theme.of(context).colorScheme;
+    final icon = _categories
+            .where((c) => c.$1 == company.category)
+            .map((c) => c.$3)
+            .firstOrNull ??
+        FontAwesomeIcons.buildingColumns;
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            scheme.primaryContainer,
+            scheme.secondaryContainer,
+          ],
+        ),
+      ),
+      child: Center(
+        child: FaIcon(
+          icon,
+          size: 48,
+          color: scheme.onPrimaryContainer.withValues(alpha: 0.6),
         ),
       ),
     );

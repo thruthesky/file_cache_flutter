@@ -4,7 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
+<<<<<<< HEAD
+import 'package:philgo/common_widgets/full_screen_images.dart';
+=======
 import 'package:philgo/util/widgets/full_screen_image_viewer.dart';
+>>>>>>> 9c24fc6e956affc9748e8c6b5823883f96e58051
 import 'package:url_launcher/url_launcher.dart';
 
 class PostViewFiles extends StatelessWidget {
