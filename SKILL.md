@@ -803,6 +803,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
 | Bookmark | [api/v7-bookmark.md](references/api/v7-bookmark.md) — 즐겨찾기 그룹(폴더) 관리 + 즐겨찾기 항목 CRUD. 채팅방 즐겨찾기(`entity_type='chat_room'`)에 사용. Firebase RTDB 기반에서 v7 API(`bookmarks`/`bookmark_groups` 테이블)로 마이그레이션 완료 | ✅ 완료 |
 | Info | [api/v7-info.md](references/api/v7-info.md) — 다용도 정보 시스템 (여행지, 병원, 경찰, 긴급연락처, 비자 등). sf_post_data 커스텀 필드(group_id='info') 기반. 기존 Post API 활용. 웹/앱 공통 | ✅ 완료 |
+| Report | [api/v7-report.md](references/api/v7-report.md) — 글/코멘트 신고 시스템. sf_post_data의 report + text_10(REPORTER_LIST_FIELD) 컬럼 사용. 신고(report.report), 목록(report.list, 관리자), 해제(report.dismiss, 관리자). PostController/PostService가 ReportService로 위임하여 하위 호환 유지 | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
