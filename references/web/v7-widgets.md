@@ -146,8 +146,8 @@ v7/
     │
     ├── user/                            ← 사용자 관련 위젯 (1개)
     │   ├── user-hover-dropdown.php        ← ★ 사용자 아바타/닉네임 호버 드롭다운 메뉴
-    │   ├── user-hover-dropdown.css        ← ★ 드롭다운 스타일 (hover/모바일/차단/관리자)
-    │   └── user-hover-dropdown.js         ← ★ 모바일 토글 + 차단 버튼 이벤트 처리
+    │   ├── user-hover-dropdown.css        ← ★ 드롭다운 스타일 (hover+클릭/fade-in/차단/관리자)
+    │   └── user-hover-dropdown.js         ← ★ 클릭/탭 토글 + 차단/신고 버튼 이벤트 처리
     │
     └── post/                            ← 게시글 관련 위젯
         ├── list/                          ← 게시글 목록 위젯
@@ -763,7 +763,7 @@ include __DIR__ . '/../widgets/post/list/post-list-widget.php';
 
 ### 13.1 개요
 
-글 보기 페이지(`v7/post/view.php`)에서 글쓴이/코멘트 작성자의 아바타 또는 닉네임에 마우스를 올리면(데스크톱) 또는 탭하면(모바일) 드롭다운 메뉴가 표시되는 재사용 가능 위젯이다.
+글 보기 페이지(`v7/post/view.php`)에서 글쓴이/코멘트 작성자의 아바타 또는 닉네임을 클릭/탭하면(모든 디바이스) 또는 마우스를 올리면(데스크톱) 드롭다운 메뉴가 표시되는 재사용 가능 위젯이다.
 
 | 항목 | 내용 |
 |------|------|
@@ -772,15 +772,17 @@ include __DIR__ . '/../widgets/post/list/post-list-widget.php';
 | **JS 파일** | `v7/widgets/user/user-hover-dropdown.js` |
 | **함수명** | `renderUserHoverDropdown(array $opts): string` |
 | **사용 위치** | `v7/post/view.php` (글 작성자 영역 + 코멘트 아바타/닉네임) |
-| **데스크톱 동작** | CSS `:hover`로 드롭다운 표시 |
-| **모바일 동작** | JS `click` 토글로 드롭다운 표시/숨김 |
+| **데스크톱 동작** | CSS `:hover` + JS 클릭 토글 (양쪽 모두 지원) |
+| **모바일 동작** | JS 클릭/탭 토글로 드롭다운 표시/숨김 |
 | **의존성** | `v7/js/block.js` (`toggleBlockMember()` 함수) |
+
+> **동작 방식 요약:** 모든 디바이스에서 클릭/탭으로 `.open` 클래스를 토글하여 드롭다운을 열고 닫는다. 데스크톱(>=992px)에서는 CSS `:hover`도 함께 동작하므로, 마우스를 올리기만 해도 메뉴가 표시된다. 외부 영역 클릭 시 열린 드롭다운은 자동으로 닫힌다.
 
 ### 13.2 드롭다운 메뉴 항목
 
 | 메뉴 항목 | URL/동작 | 표시 조건 | 아이콘 |
 |-----------|---------|----------|--------|
-| 사용자명 + 레벨 (헤더) | — | 항상 | `wa-avatar` |
+| 사용자명 + 레벨 (헤더) | -- | 항상 | `wa-avatar` |
 | 프로필 | `/user/public-profile?idx_member=N` | 항상 | `fa-regular fa-user` |
 | 채팅 | `/chat/index?uid=FIREBASE_UID` | 로그인 + 타인일 때만 | `fa-regular fa-comment-dots` |
 | 글 목록 | `/post/list?idx_member=N` | 항상 | `fa-regular fa-file-lines` |
@@ -834,17 +836,18 @@ echo renderUserHoverDropdown([
 | 클래스 | 역할 | 주요 스타일 |
 |--------|------|-----------|
 | `.user-hover-dropdown` | 위젯 루트 컨테이너 | `position: relative; display: inline-flex` |
-| `.user-hover-trigger` | 트리거 영역 (아바타 + 닉네임) | `display: flex; align-items: center; gap: 0.5rem; cursor: pointer` |
+| `.user-hover-trigger` | 트리거 영역 (아바타 + 닉네임) | `display: flex; align-items: center; gap: 0.5rem; cursor: pointer; border-radius: 8px; padding: 3px 6px` |
 | `.user-hover-trigger-name` | 닉네임 텍스트 | `font-size: 0.82rem; font-weight: 600` |
 | `.user-hover-trigger-level` | 레벨 텍스트 | `font-size: 0.68rem; color: neutral-400` |
-| `.user-hover-menu` | 드롭다운 메뉴 패널 | `position: absolute; z-index: 1000; min-width: 180px; box-shadow` |
-| `.user-hover-menu-header` | 메뉴 상단 사용자 정보 | 아바타(2.5rem) + 이름 + 레벨 |
+| `.user-hover-menu` | 드롭다운 메뉴 패널 | `position: absolute; z-index: 1000; min-width: 210px; border-radius: 12px; overflow: hidden; box-shadow 강화` |
+| `.user-hover-menu-header` | 메뉴 상단 사용자 정보 | 아바타(2.25rem) + 이름 + 레벨. **배경색(`neutral-50`) + 하단 구분선(`neutral-100`)** 적용 |
+| `.user-hover-menu-items` | 메뉴 아이템 목록 래퍼 | `padding: 0.35rem 0` -- 헤더와 아이템 영역을 구조적으로 분리 |
 | `.user-hover-menu-divider` | 구분선 | `height: 1px; background: neutral-100` |
-| `.user-hover-menu-item` | 메뉴 항목 (링크/버튼) | `font-size: 0.8rem; padding: 0.4rem 0.75rem` |
+| `.user-hover-menu-item` | 메뉴 항목 (링크/버튼) | `font-size: 0.8rem; padding: 0.5rem 0.9rem; text-align: left` |
 | `.user-hover-report-btn` | 신고 버튼 | `content_idx` + `content_type` data 속성 보유. 클릭 시 `v7api('post.report')` 호출 |
 | `.user-hover-block-btn` | 차단 버튼 | hover 시 `color: danger-600` (빨간색) |
 | `.user-hover-admin-item` | 관리자 전용 항목 | 아이콘 색상 `neutral-500` |
-| `.user-hover-dropdown.open` | 모바일 토글 열림 상태 | `.user-hover-menu { display: block }` |
+| `.user-hover-dropdown.open` | 클릭/탭 토글 열림 상태 | `.user-hover-menu { display: block }` + fade-in 애니메이션 |
 
 ### 13.7 코멘트 영역 적용
 
@@ -890,8 +893,9 @@ echo renderUserHoverDropdown([
 
 | 항목 | 설명 |
 |------|------|
-| **데스크톱 (>=992px)** | CSS `:hover`로 메뉴 표시. `::before` 투명 영역으로 트리거-메뉴 간 마우스 이탈 방지 |
-| **모바일 (<992px)** | JS `click` 이벤트로 `.open` 클래스 토글. 외부 클릭 시 자동 닫힘 |
+| **모든 디바이스** | JS `click` 이벤트로 `.open` 클래스 토글. 외부 클릭 시 자동 닫힘. **다른 열린 드롭다운은 자동으로 닫힘** |
+| **데스크톱 (>=992px)** | CSS `:hover`로도 메뉴 표시 (클릭 토글과 병행). `::before` 투명 영역(8px)으로 트리거-메뉴 간 마우스 이탈 방지 |
+| **열림 애니메이션** | `@keyframes userHoverMenuFadeIn` -- `opacity: 0 + translateY(-6px)` -> `opacity: 1 + translateY(0)`, 0.15초 ease. CSS hover와 `.open` 토글 양쪽 모두 동일 애니메이션 적용 |
 | **신고** | `content_idx`와 `content_type`이 전달된 경우에만 신고 버튼 표시. `v7api('post.report', { type, idx })` 호출. 성공 시 "신고됨" 표시 및 버튼 비활성화 |
 | **차단** | `v7/js/block.js`의 `toggleBlockMember()` 함수 호출. 로딩 스피너 표시, 성공 시 페이지 리로드 |
 | **관리자 판별** | `global $loginIsAdmin` 변수 사용 |
@@ -913,22 +917,38 @@ echo renderUserHoverDropdown([
     <!-- 드롭다운 메뉴 -->
     <div class="user-hover-menu">
         <div class="user-hover-menu-header">...</div>
-        <div class="user-hover-menu-divider"></div>
-        <a class="user-hover-menu-item" href="...">프로필</a>
-        <a class="user-hover-menu-item" href="...">채팅</a>
-        <a class="user-hover-menu-item" href="...">글 목록</a>
-        <a class="user-hover-menu-item" href="...">코멘트 목록</a>
-        <div class="user-hover-menu-divider"></div>
-        <!-- content_idx + content_type 전달 시에만 표시 -->
-        <button class="user-hover-menu-item user-hover-report-btn"
-                data-content-idx="12345" data-content-type="post" data-user-name="홍길동">
-            <i class="fa-solid fa-flag"></i> 신고
-        </button>
-        <button class="user-hover-menu-item user-hover-block-btn" ...>차단</button>
-        <a class="user-hover-menu-item user-hover-admin-item" href="...">회원 정보 수정</a>
+        <!-- 메뉴 아이템 목록 래퍼 -->
+        <div class="user-hover-menu-items">
+            <a class="user-hover-menu-item" href="...">프로필</a>
+            <a class="user-hover-menu-item" href="...">채팅</a>
+            <a class="user-hover-menu-item" href="...">글 목록</a>
+            <a class="user-hover-menu-item" href="...">코멘트 목록</a>
+            <div class="user-hover-menu-divider"></div>
+            <!-- content_idx + content_type 전달 시에만 표시 -->
+            <button class="user-hover-menu-item user-hover-report-btn"
+                    data-content-idx="12345" data-content-type="post" data-user-name="홍길동">
+                <i class="fa-solid fa-flag"></i> 신고
+            </button>
+            <button class="user-hover-menu-item user-hover-block-btn" ...>차단</button>
+            <a class="user-hover-menu-item user-hover-admin-item" href="...">회원 정보 수정</a>
+        </div>
     </div>
 </div>
 ```
+
+> **PHP 구조 변경 사항:** 기존에는 메뉴 아이템들이 `.user-hover-menu` 바로 아래에 평면적으로 나열되었으나, 현재는 `.user-hover-menu-header` 다음에 `.user-hover-menu-items` div로 아이템들을 감싸서 구조화했다. 이를 통해 메뉴 헤더(배경색+구분선)와 아이템 목록(패딩) 영역이 명확하게 분리된다.
+
+### 13.11 디자인 스타일 상세
+
+| 디자인 요소 | 스타일 | 설명 |
+|------------|--------|------|
+| **드롭다운 패널** | `border-radius: 12px; overflow: hidden` | 둥근 모서리 + 자식 요소 잘림 처리 |
+| **그림자** | `0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.04)` | 깊이감 있는 이중 box-shadow |
+| **메뉴 헤더 배경** | `background: var(--wa-color-neutral-50, #f8fafc)` | 연한 회색 배경으로 헤더 영역 구분 |
+| **메뉴 헤더 구분선** | `border-bottom: 1px solid var(--wa-color-neutral-100, #f1f5f9)` | 헤더와 아이템 영역 시각적 분리 |
+| **트리거 hover** | `background-color: var(--wa-color-neutral-100, #f1f5f9)` | 마우스 올림 시 연한 배경색 |
+| **아이템 hover** | `background-color: var(--wa-color-neutral-50, #f8fafc)` | 메뉴 항목 hover 시 미세한 배경색 |
+| **열림 애니메이션** | `opacity 0->1 + translateY(-6px->0)` 0.15초 | 자연스러운 fade-in + 슬라이드 다운 |
 
 ---
 

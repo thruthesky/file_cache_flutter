@@ -5,6 +5,21 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
 
 # 필고 v7 시스템 개발 가이드
 
+## ⛔⛔⛔⛔⛔ v7 테스트 URL 절대 규칙 — 모든 브라우저 테스트에 적용 ⛔⛔⛔⛔⛔
+
+> **🔴🔴🔴 v7 페이지 테스트 시 반드시 `https://v7-local.philgo.com`을 사용한다. 🔴🔴🔴**
+> **🔴🔴🔴 `https://local.philgo.com/v7/...` 경로로 접속하는 것은 절대 금지한다. 🔴🔴🔴**
+>
+> | 올바른 URL | 잘못된 URL (절대 금지) |
+> |-----------|----------------------|
+> | `https://v7-local.philgo.com/` | ~~`https://local.philgo.com/v7/`~~ |
+> | `https://v7-local.philgo.com/post/list.php?post_id=freetalk` | ~~`https://local.philgo.com/v7/post/list.php?post_id=freetalk`~~ |
+>
+> **이유:** `local.philgo.com/v7/...`로 접속하면 v7 프론트 컨트롤러(v7.php)를 거치지 않아 PSR-4 오토로더, Route, Config 등 v7 핵심 클래스가 로드되지 않고 Fatal Error가 발생한다.
+> Chrome DevTools MCP, Playwright, PEST 브라우저 테스트, 수동 테스트 등 **모든 v7 브라우저 테스트**에서 이 규칙을 따른다.
+
+---
+
 ## 🔴🔴🔴 Mandatory Workflow — Follow for ALL Tasks 🔴🔴🔴
 
 > **Every v7 task MUST follow this workflow. No exceptions.**
@@ -788,6 +803,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
 | Bookmark | [api/v7-bookmark.md](references/api/v7-bookmark.md) — 즐겨찾기 그룹(폴더) 관리 + 즐겨찾기 항목 CRUD. 채팅방 즐겨찾기(`entity_type='chat_room'`)에 사용. Firebase RTDB 기반에서 v7 API(`bookmarks`/`bookmark_groups` 테이블)로 마이그레이션 완료 | ✅ 완료 |
 | Info | [api/v7-info.md](references/api/v7-info.md) — 다용도 정보 시스템 (여행지, 병원, 경찰, 긴급연락처, 비자 등). sf_post_data 커스텀 필드(group_id='info') 기반. 기존 Post API 활용. 웹/앱 공통 | ✅ 완료 |
+| Report | [api/v7-report.md](references/api/v7-report.md) — 글/코멘트 신고 시스템. sf_post_data의 report + text_10(REPORTER_LIST_FIELD) 컬럼 사용. 신고(report.report), 목록(report.list, 관리자), 해제(report.dismiss, 관리자). PostController/PostService가 ReportService로 위임하여 하위 호환 유지 | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
@@ -1428,8 +1444,14 @@ v7 홈페이지는 **v6 `boot.php`를 사용하지 않는** 완전히 독립적�
 | **v6 홈페이지** | `https://local.philgo.com` | 기존 레거시 v6 홈페이지 |
 | **v7 홈페이지** | `https://v7-local.philgo.com` | 신규 v7 홈페이지 |
 
-> Chrome DevTools MCP 테스트 시 v7 페이지는 반드시 `https://v7-local.philgo.com` URL을 사용한다.
-> 예: v7 홈페이지 테스트 → `https://v7-local.philgo.com/`
+> 🔴🔴🔴 **절대 규칙: v7 로컬 개발 시 반드시 `https://v7-local.philgo.com` URL을 사용한다.** 🔴🔴🔴
+>
+> - **올바른 접속**: `https://v7-local.philgo.com/post/list.php?post_id=community`
+> - **잘못된 접속**: ~~`https://local.philgo.com/v7/post/list.php?post_id=community`~~ (PHP 클래스 로딩 실패, Fatal Error 발생)
+>
+> `https://local.philgo.com/v7/...` 경로로 접속하면 v7 부팅 시스템(v7.php 프론트 컨트롤러)을 거치지 않아
+> PSR-4 오토로더, Route, Config 등 v7 핵심 클래스가 로드되지 않는다.
+> Chrome DevTools MCP 테스트, PEST 브라우저 테스트, 수동 테스트 등 **모든 v7 테스트**에서 이 규칙을 따른다.
 
 ### v6 URL Backward Compatibility (v6 URL 하위 호환)
 
