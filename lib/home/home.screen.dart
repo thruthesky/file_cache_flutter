@@ -8,6 +8,7 @@ import 'widgets/home_major_forum_section.dart';
 import 'widgets/home_helper_menu_section.dart';
 import 'widgets/home_notices_section.dart';
 import 'widgets/home_dev_mode_banner.dart';
+import 'widgets/home_quick_post_box.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,6 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+
+          /// [가짜 글쓰기 입력창] 클릭 시 게시판 선택 후 글 작성
+          const SliverToBoxAdapter(child: HomeQuickPostBox()),
 
           /// [개발 모드] API 연결 상태 표시 (디버그 모드에서만)
           const SliverToBoxAdapter(child: HomeDevModeBanner()),
