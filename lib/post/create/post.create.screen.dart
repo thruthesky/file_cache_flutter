@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
@@ -12,13 +14,54 @@ import 'package:philgo/post/post.service.dart';
 /// v6 PostCreateScreen + PostCreateForm 로직 적용.
 /// 제목, 내용 입력 후 v7 API로 게시글 생성.
 class PostCreateScreen extends StatefulWidget {
+  static const String routeName = '/post-create';
+
   /// 게시판 ID (예: 'freetalk', 'qna')
   final String postId;
 
   /// 서브 카테고리 (선택)
   final String? category;
 
-  const PostCreateScreen({super.key, required this.postId, this.category});
+  /// Navigate to post create screen with postId and category
+  static Function(
+    BuildContext ctx, {
+    required String postId,
+    String? category,
+    List<XFile>? xFiles,
+    String? content,
+  })
+  push =
+      (
+        ctx, {
+        required String postId,
+        String? category,
+        List<XFile>? xFiles,
+        String? content,
+      }) => ctx.push(
+        routeName,
+        extra: {
+          'postId': postId,
+          'category': category,
+          'xFiles': xFiles,
+          'content': content,
+        },
+      );
+
+  /// 외부에서 공유된 파일 목록
+  /// Files shared from external apps
+  final List<XFile>? xFiles;
+
+  /// 외부에서 공유된 텍스트 컨텐츠
+  /// Text content shared from external apps
+  final String? content;
+
+  const PostCreateScreen({
+    super.key,
+    required this.postId,
+    this.category,
+    this.xFiles,
+    this.content,
+  });
 
   @override
   State<PostCreateScreen> createState() => _PostCreateScreenState();

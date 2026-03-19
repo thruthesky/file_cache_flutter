@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/widgets/chat.join.builder.dart';
 import 'package:philgo/user/user.functions.dart';
@@ -25,7 +26,7 @@ class PinnedChatRoomsList extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     return ValueListenableBuilder<Set<String>>(
-      valueListenable: UserService.instance.pinnedChatRoomsStream,
+      valueListenable: ChatService.instance.pinnedChatRoomsStream,
       builder: (context, pinnedChatRooms, _) {
         // 고정된 채팅방이 없으면 빈 위젯 반환
         if (pinnedChatRooms.isEmpty) {
@@ -53,7 +54,10 @@ class PinnedChatRoomsList extends StatelessWidget {
                 color: colorScheme.primaryContainer.withValues(alpha: 0.1),
                 // Comic design - outline border at bottom
                 border: Border(
-                  bottom: BorderSide(color: colorScheme.outline, width: pinnedSectionBorderWidth),
+                  bottom: BorderSide(
+                    color: colorScheme.outline,
+                    width: pinnedSectionBorderWidth,
+                  ),
                 ),
               ),
               child: Column(
@@ -85,7 +89,9 @@ class PinnedChatRoomsList extends StatelessWidget {
                           padding: pinnedCountBadgePadding,
                           decoration: BoxDecoration(
                             color: colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(pinnedCountBadgeBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              pinnedCountBadgeBorderRadius,
+                            ),
                             border: Border.all(
                               color: colorScheme.primary,
                               width: pinnedCountBadgeBorderWidth,
@@ -161,7 +167,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // Comic design: no shadow
         elevation: dialogElevation,
         // Comic design: rounded corners
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(unpinDialogBorderRadius)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(unpinDialogBorderRadius),
+        ),
         // Remove default background to use Container decoration
         backgroundColor: Colors.transparent,
         child: Container(
@@ -169,7 +177,10 @@ class _PinnedChatRoomItem extends StatelessWidget {
             // Comic design: surface background color
             color: colorScheme.surface,
             // Comic design: outline border with rounded corners
-            border: Border.all(color: colorScheme.outline, width: unpinDialogBorderWidth),
+            border: Border.all(
+              color: colorScheme.outline,
+              width: unpinDialogBorderWidth,
+            ),
             borderRadius: BorderRadius.circular(unpinDialogBorderRadius),
           ),
           child: Column(
@@ -214,7 +225,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
                         // Comic design: border with rounded corners
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(unpinButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              unpinButtonBorderRadius,
+                            ),
                             side: BorderSide(
                               color: colorScheme.outline,
                               width: unpinButtonBorderWidth,
@@ -230,9 +243,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           colorScheme.onSurface,
                         ),
                         // Comic design: padding in multiples of 8
-                        padding: WidgetStateProperty.all(
-                          unpinButtonPadding,
-                        ),
+                        padding: WidgetStateProperty.all(unpinButtonPadding),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -250,7 +261,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
                         // Comic design: border with rounded corners
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(unpinButtonBorderRadius),
+                            borderRadius: BorderRadius.circular(
+                              unpinButtonBorderRadius,
+                            ),
                             side: BorderSide(
                               color: colorScheme.error,
                               width: unpinButtonBorderWidth,
@@ -266,9 +279,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           colorScheme.onError,
                         ),
                         // Comic design: padding in multiples of 8
-                        padding: WidgetStateProperty.all(
-                          unpinButtonPadding,
-                        ),
+                        padding: WidgetStateProperty.all(unpinButtonPadding),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
@@ -379,7 +390,11 @@ class _PinnedChatRoomItem extends StatelessWidget {
                       clipBehavior: Clip.none,
                       children: [
                         // 아바타 크기 축소 (56 → 44)
-                        Avatar(photoUrl: photoUrl, size: pinnedAvatarSize, radius: pinnedAvatarSize / 2),
+                        Avatar(
+                          photoUrl: photoUrl,
+                          size: pinnedAvatarSize,
+                          radius: pinnedAvatarSize / 2,
+                        ),
                         // 우측 상단 닫기 버튼 - 축소된 크기
                         Positioned(
                           right: -2,
@@ -420,7 +435,9 @@ class _PinnedChatRoomItem extends StatelessWidget {
                               padding: pinnedUnreadBadgePadding,
                               decoration: BoxDecoration(
                                 color: colorScheme.error,
-                                borderRadius: BorderRadius.circular(pinnedUnreadBadgeBorderRadius),
+                                borderRadius: BorderRadius.circular(
+                                  pinnedUnreadBadgeBorderRadius,
+                                ),
                                 // 테두리 두께 축소 (2.0 → 1.5)
                                 border: Border.all(
                                   color: colorScheme.surface,

@@ -11,6 +11,7 @@ import 'package:philgo/post/view/widgets/comment.list.view.dart';
 import 'package:philgo/post/view/widgets/post.action.bar.dart';
 import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
+import 'package:philgo/common_widgets/youtube_player_list.dart';
 import 'package:philgo/post/view/widgets/post_comment_bar.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
@@ -527,6 +528,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
                         // 첨부 파일 (전체 너비)
                         PostViewFiles(post: _post),
+
+                        // YouTube 영상 재생
+                        if (_post.isYoutube)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                            child: YoutubePlayerList(
+                              youtubeInfos: _post.getAllYoutubeUrlInfos(),
+                            ),
+                          ),
 
                         // 본문
                         if (_error != null)

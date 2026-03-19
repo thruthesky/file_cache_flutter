@@ -23,6 +23,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:omni_video_player/omni_video_player.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   runZonedGuarded(
@@ -106,12 +107,16 @@ class _MyAppState extends State<PhilGoV7App> {
         onNewMessageArrived: () => {
           log(
             'New message arrived callback triggered',
-            name: 'onNewMessageArrived:',
+            name: 'onNewMessageArrived::',
           ),
+        },
+        onMessageSent: () => {
+          log('Message sent callback triggered', name: 'onMessageSent::'),
         },
       );
       ChatSoundService.instance.initialize();
     });
+    FirebaseAnalytics.instance.logAppOpen();
   }
 
   @override

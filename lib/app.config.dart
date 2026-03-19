@@ -18,6 +18,20 @@ final String v7BaseUrl = () {
   return '${uri.scheme}://${uri.host}';
 }();
 
+/// Masonry 레이아웃을 사용하는 게시판/카테고리 목록
+/// v7/utils/Config.php의 masonryCategories()와 동일
+const masonryCategories = <String>{
+  'rest',
+  'youtube',
+  '주택임대',
+  '사진',
+  '먹방',
+  '유튜브',
+  '중고차',
+  '호텔',
+  '렌트카',
+};
+
 /// 포럼 카테고리 데이터 (postId, category, 한글 라벨)
 const forumCategories = <(String, String?, String)>[
   ('freetalk', null, '자유게시판'),

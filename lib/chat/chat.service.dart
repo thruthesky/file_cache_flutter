@@ -48,12 +48,18 @@ class ChatService {
   /// Called when unread count increases - 읽지 않은 메시지 수가 증가할 때 호출
   Function()? onNewMessageArrived;
 
+  Function()? onMessageSent;
+
   // ===================== API / Business Logic =====================
 
-  Future<void> initialize({Function()? onNewMessageArrived}) async {
+  Future<void> initialize({
+    Function()? onNewMessageArrived,
+    Function()? onMessageSent,
+  }) async {
     if (initialized) return;
     initialized = true;
     this.onNewMessageArrived = onNewMessageArrived;
+    this.onMessageSent = onMessageSent;
   }
 
   /// Get Chat Join
@@ -131,7 +137,7 @@ class ChatService {
 
     await messageRef.set(messageData);
 
-    ChatConfig.onMessageSent?.call();
+    onMessageSent?.call();
 
     return messageRef.key!;
   }

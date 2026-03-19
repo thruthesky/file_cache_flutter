@@ -1,3 +1,6 @@
+import '../youtube/youtube.service.dart';
+import '../youtube/youtube.model.dart';
+
 /// v7 PostEntity 기반 게시글 모델
 class Post {
   final int idx;
@@ -35,6 +38,7 @@ class Post {
   final bool isHtml;
   final bool isText;
   final String hasYoutube;
+  final String? youtubeUrl;
   final int deleted;
   final String report;
   final String reminder;
@@ -93,6 +97,7 @@ class Post {
     this.isHtml = false,
     this.isText = true,
     this.hasYoutube = '',
+    this.youtubeUrl,
     this.deleted = 0,
     this.report = '',
     this.reminder = '',
@@ -131,6 +136,41 @@ class Post {
 
   /// 자식 댓글 존재 여부 (수정/삭제 가능 여부 판단용)
   bool get hasChildren => noOfComment > 0 && isComment;
+
+  /// YouTube 포함 여부
+  bool get isYoutube => hasYoutube == 'y';
+
+  /// 게시글에서 모든 YouTube URL 정보 추출
+  ///
+  /// youtubeUrl(varchar_19) 우선, content에서 추가 추출, 중복 제거
+  List<YoutubeUrlInfo> getAllYoutubeUrlInfos() {
+    final List<YoutubeUrlInfo> result = [];
+    final Set<String> seenVideoIds = {};
+
+    // 1단계: youtubeUrl(varchar_19)에서 추출 (우선순위 1)
+    if (youtubeUrl != null && youtubeUrl!.isNotEmpty) {
+      final infos = extractYoutubeUrlInfos(youtubeUrl!);
+      for (final info in infos) {
+        if (!seenVideoIds.contains(info.videoId)) {
+          seenVideoIds.add(info.videoId);
+          result.add(info);
+        }
+      }
+    }
+
+    // 2단계: content에서 추출 (우선순위 2)
+    if (content.isNotEmpty) {
+      final infos = extractYoutubeUrlInfos(content);
+      for (final info in infos) {
+        if (!seenVideoIds.contains(info.videoId)) {
+          seenVideoIds.add(info.videoId);
+          result.add(info);
+        }
+      }
+    }
+
+    return result;
+  }
 
   /// JSON에서 Post 객체 생성
   factory Post.fromJson(Map<String, dynamic> json) {
@@ -174,6 +214,7 @@ class Post {
               json['is_html'] != true &&
               json['is_html'] != 1),
       hasYoutube: json['has_youtube']?.toString() ?? '',
+      youtubeUrl: json['varchar_19']?.toString(),
       deleted: _toInt(json['deleted']),
       report: json['report']?.toString() ?? '',
       reminder: json['reminder']?.toString() ?? '',
@@ -203,6 +244,7 @@ class Post {
     bool? bookmarked,
     bool? reported,
     bool? blocked,
+    String? youtubeUrl,
   }) {
     return Post(
       idx: idx,
@@ -240,6 +282,7 @@ class Post {
       isHtml: isHtml,
       isText: isText,
       hasYoutube: hasYoutube,
+      youtubeUrl: youtubeUrl ?? this.youtubeUrl,
       deleted: deleted,
       report: report,
       reminder: reminder,

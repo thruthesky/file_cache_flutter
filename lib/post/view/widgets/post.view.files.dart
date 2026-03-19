@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/common_widgets/full_screen_image_viewer.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
-import 'package:philgo/util/widgets/full_screen_image_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PostViewFiles extends StatelessWidget {
@@ -35,13 +35,10 @@ class PostViewFiles extends StatelessWidget {
     final urls = _urls;
     if (urls.isEmpty) return const SizedBox.shrink();
 
-    final mediaUrls = urls
-        .map((u) => toAbsoluteUrl(u))
-        .where((u) {
-          final type = getMediaType(u);
-          return type == MediaType.image || type == MediaType.video;
-        })
-        .toList();
+    final mediaUrls = urls.map((u) => toAbsoluteUrl(u)).where((u) {
+      final type = getMediaType(u);
+      return type == MediaType.image || type == MediaType.video;
+    }).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
