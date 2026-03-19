@@ -72,3 +72,24 @@ const forumCategories = <(String, String?, String)>[
   ('youtube', null, '유튜브'),
   ('blog', null, '블로그'),
 ];
+
+List<String> majorForumCategories({bool includeTemp = false}) {
+  return [
+    if (includeTemp) 'temp', // 임시, Test forum.
+    'freetalk', // 행불 포함
+    'qna',
+    'buyandsell',
+    'wanted', // 구인구직
+    'massage',
+    'boarding_house',
+    'travel',
+    'business',
+    'school',
+    'caution', // 주의사항
+    'greeting',
+    'food_delivery',
+    'rest',
+    'blog',
+    'youtube',
+  ];
+}

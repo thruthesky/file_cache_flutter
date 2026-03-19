@@ -37,7 +37,10 @@ Future<void> sendReceiveShareToChat(
     if (data.isNotEmpty &&
         data[0].message != null &&
         data[0].message!.isNotEmpty) {
-      await ChatService.instance.sendMessage(roomId: roomId, text: data[0].message!);
+      await ChatService.instance.sendMessage(
+        roomId: roomId,
+        text: data[0].message!,
+      );
     }
   }
 }
@@ -61,17 +64,17 @@ Future<String> uploadReceivedFile(SharedMediaFile file) async {
   return model.url;
 }
 
-Future<bool> canShareToChat(List<SharedMediaFile> files) async {
-  if (files.length == 1 && await isSharedMediaPlainText(files[0])) return true;
-  bool canShare = true;
-  for (SharedMediaFile file in files) {
-    if (file.type != SharedMediaType.image) {
-      canShare = false;
-      break;
-    }
-  }
-  return canShare;
-}
+// Future<bool> canShareToChat(List<SharedMediaFile> files) async {
+//   if (files.length == 1 && await isSharedMediaPlainText(files[0])) return true;
+//   bool canShare = true;
+//   for (SharedMediaFile file in files) {
+//     if (file.type != SharedMediaType.image) {
+//       canShare = false;
+//       break;
+//     }
+//   }
+//   return canShare;
+// }
 
 Future<bool> isSharedMediaPlainText(SharedMediaFile file) async {
   if (file.type != SharedMediaType.text) return false;
