@@ -7,7 +7,6 @@ This project is a Flutter app for building PhilGo v7 application.
 1. **Before starting work**: Read at least 2 relevant v7-skill reference documents from `.claude/skills/v7-skill/references/`.
 2. **For Flutter app tasks**: Refer to docs under `.claude/skills/v7-skill/references/app/` folder for CRUD operations and patterns.
 3. **After completing each task**: Git commit the changes (do NOT push).
-4. **After finishing all work**: Update the v7-skill markdown files to reflect any new patterns, APIs, or architectural decisions.
 
 
 # App Configuration
