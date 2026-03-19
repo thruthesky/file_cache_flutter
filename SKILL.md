@@ -36,6 +36,7 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
    - [app/v7-app-kakoatalk-social-login.md](references/app/v7-app-kakoatalk-social-login.md) — Kakao social login
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event entry (spinning wheel)
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event/spinning wheel
+   - [app/v7-app-masonry-image.md](references/app/v7-app-masonry-image.md) — Masonry image display & debugging
 
 ### After Completing Each Task
 
@@ -529,6 +530,16 @@ Firebase Authentication에 연동하는 흐름을 설명합니다. Android/iOS �
 PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 처리,
 로그아웃/연결끊기(탈퇴), 카카오 SDK 주요 API 레퍼런스, 실전 트러블슈팅,
 관련 파일 목록을 포함합니다.
+
+### Flutter 앱 Masonry 이미지 표시 → [app/v7-app-masonry-image.md](references/app/v7-app-masonry-image.md)
+
+Flutter 앱의 Masonry 그리드 목록에서 게시글/업소록 이미지를 표시하는 전체 흐름을 다룹니다.
+MasonryCard 위젯(`lib/common_widgets/masonry_card.dart`)의 이미지 렌더링 구조,
+서버 API 썸네일 필드 매핑(`thumbnail_600`, `resolved_thumbnail`, `varchar_17` 우선순위),
+CachedNetworkImage의 `imageBuilder` 콜백에서 발생하는 빌드 중 setState 에러
+(`setState() or markNeedsBuild() called during build`)의 원인과 `addPostFrameCallback()` 해결법,
+업소록(`CompanyModel.primaryImageUrl`) 이미지 처리, 상대/절대 경로 변환(`toAbsoluteUrl()`),
+CachedNetworkImage 에러 캐시로 인한 hot restart 필요성, 디버깅 순서를 포함합니다.
 
 ### 웹 문서 → [references/web/](references/web/)
 
