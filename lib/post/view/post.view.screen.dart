@@ -202,9 +202,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
         content: Text(
           _post.blocked
               ? '{name}님의 차단을 해제하시겠습니까?'.tr(namedArgs: {'name': name})
-              : '{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name}) +
-                    '\n' +
-                    '차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr(),
+              : '${'{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name})}\n${'차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr()}',
         ),
         actions: [
           TextButton(

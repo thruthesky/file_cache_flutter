@@ -48,29 +48,32 @@ class _HomeWingBannersState extends State<HomeWingBanners> {
     final itemSize =
         (screenWidth - (crossAxisCount - 1) * spacing) / crossAxisCount;
 
-    return Wrap(
-      spacing: spacing,
-      runSpacing: spacing,
-      children: _banners.map((banner) {
-        return GestureDetector(
-          onTap: () => _openBannerUrl(banner.clickUrl),
-          child: SizedBox(
-            width: itemSize,
-            height: itemSize,
-            child: CachedNetworkImage(
-              imageUrl: banner.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (_, _) =>
-                  Container(color: color.surfaceContainerLow),
-              errorWidget: (_, _, _) => Container(
-                color: color.surfaceContainerLow,
-                child: Icon(Icons.image_not_supported,
-                    size: 16, color: color.outline),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Wrap(
+        spacing: spacing,
+        runSpacing: spacing,
+        children: _banners.map((banner) {
+          return GestureDetector(
+            onTap: () => _openBannerUrl(banner.clickUrl),
+            child: SizedBox(
+              width: itemSize,
+              height: itemSize,
+              child: CachedNetworkImage(
+                imageUrl: banner.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (_, _) =>
+                    Container(color: color.surfaceContainerLow),
+                errorWidget: (_, _, _) => Container(
+                  color: color.surfaceContainerLow,
+                  child: Icon(Icons.image_not_supported,
+                      size: 16, color: color.outline),
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 

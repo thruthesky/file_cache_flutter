@@ -89,25 +89,28 @@ class _HomeTopBannersState extends State<HomeTopBanners> {
       return const SizedBox.shrink();
     }
 
-    return Row(
-      children: [
-        if (result.left.isNotEmpty)
-          Expanded(
-            child: _buildBannerSlot(
-              result.left,
-              _leftIndex % result.left.length,
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          if (result.left.isNotEmpty)
+            Expanded(
+              child: _buildBannerSlot(
+                result.left,
+                _leftIndex % result.left.length,
+              ),
             ),
-          ),
-        if (result.left.isNotEmpty && result.right.isNotEmpty)
-          const SizedBox(width: 2),
-        if (result.right.isNotEmpty)
-          Expanded(
-            child: _buildBannerSlot(
-              result.right,
-              _rightIndex % result.right.length,
+          if (result.left.isNotEmpty && result.right.isNotEmpty)
+            const SizedBox(width: 2),
+          if (result.right.isNotEmpty)
+            Expanded(
+              child: _buildBannerSlot(
+                result.right,
+                _rightIndex % result.right.length,
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
